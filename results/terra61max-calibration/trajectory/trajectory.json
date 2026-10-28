@@ -1,0 +1,51 @@
+{
+  "schema": "math-gauge.external-trajectory/v1",
+  "case_id": "MGL-E001",
+  "suite_id": "public-layered-pilot",
+  "suite_sha256": "d7971d9a1113fd92251472dbd349452412f50a0de428848d11209843999a2a1a",
+  "origin": "external-agent-multi-turn",
+  "requested_model": "gpt-6.1-terra",
+  "reasoning_effort": "max",
+  "model_identity_verified": false,
+  "agent_task": "/root/terra61max_trajectory",
+  "initial_context": "fork_turns=none; only packet.md",
+  "subsequent_context": "The same solver retained its own prior turns only.",
+  "isolation": "Instruction-level input restriction; not OS sandboxing.",
+  "actual_packet_sha256": "a01842d2547470e67cc417c1a74a2c076944ca5fc6d09c78a2fbdaaed4f320dc",
+  "initial_dispatch_message": "请作为独立数学研究协作者，读取 /private/tmp/math-gauge-terra61max-trajectory/packet.md，推进其中的研究任务。本轮完整文本写入 /private/tmp/math-gauge-terra61max-trajectory/round-1.md。你只可以读取这个 packet.md，以及写入该目录中你自己的作答文件；工具调用的 workdir 使用这个临时目录。不读任何其他文件、仓库、OET 项目、历史对话、本地记忆或 PCP，不联网、不联系其他 agent。按现有条件组织研究，论证应可审核，未完成处如实说明。最终回复只说明完成并给出文件路径。",
+  "continuation_prompts": [
+    {
+      "round": 2,
+      "message": "继续把已经建立的部分推进到可复用的主定理，把压缩、有限复合和分量信息的结论衔接起来。请给出完整论证并整理当前结果的适用范围。不要读任何新材料，将本轮全文写到 round-2.md。"
+    },
+    {
+      "round": 3,
+      "message": "现在把你认为最主要且已经证明的结果整理成最终定理，并给出一个可检查的 Lean 4.29.1 标准库形式化核心。你可以抽象辅助关系，但要说明形式声明与原始条件之间的对应和仍未覆盖的义务。不要读任何新材料或调用编译器，将本轮说明写到 round-3.md，完整 Lean 文件写到 candidate.lean。"
+    }
+  ],
+  "mathematical_feedback_between_rounds": false,
+  "reference_material_delivered": false,
+  "solver_compiler_access": false,
+  "parent_posthoc_compiler_check": "lean-check.json",
+  "rounds": [
+    {
+      "round": 1,
+      "file": "round-1.md",
+      "sha256": "ced1428d0c1969e27f2fb05a033b35ec35e4e1f6bfb6d72883bf081f1cc7e521"
+    },
+    {
+      "round": 2,
+      "file": "round-2.md",
+      "sha256": "9dcf0cc484f74bc7f77e3e288ae477c33a6ecdc9621cb6ac31594375d6d681b7"
+    },
+    {
+      "round": 3,
+      "file": "round-3.md",
+      "sha256": "f8525cda99084bb5687418df50593fd2b6caf8aefb44cdadfdbe26397e551b7d"
+    }
+  ],
+  "completed_at": "2026-10-28T16:13:52.854933+00:00",
+  "token_usage": null,
+  "cost": null,
+  "stop_reason": "Pre-registered three-turn budget completed; retain outcome instead of continuing until a failure appears."
+}

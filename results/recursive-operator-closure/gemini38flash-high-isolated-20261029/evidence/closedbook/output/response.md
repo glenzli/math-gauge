@@ -1,0 +1,168 @@
+# 递归算子系统的闭合理论
+
+本理论为定义在有限有向多重图 $(V, E)$ 上的相互递归算子系统建立整体闭合定理。该系统将程序语义学中的**域论迭代逼近（Kleene 逼近）**与泛函分析中的**广义多度量压缩映射理论（Perov–Banach 不动点理论）**有机统一，由局域数据确定唯一的整体算子族 $F^*$，并建立任意初始算子族 $H$ 的有限展开 $\mathcal T^n H$ 逼近 $F^*$ 的几何收敛速度。
+
+---
+
+## 一、主定理 (Main Theorem)
+
+设局域数据满足题目所设条件：
+1. $\mathcal X^\circ = \mathcal X \setminus \{\bot\} \ne \varnothing$，$d_1,\ldots,d_m$ 为 $\mathcal X$ 上的扩展伪度量，满足 $d_i(x, \bot) = +\infty$（$\forall x \in \mathcal X^\circ$），记 $\mathbf d = (d_1,\ldots,d_m)^{\mathsf T}$，约定 $0 \cdot (+\infty) = 0$。
+2. 每个节点 $v \in V$ 有分割 $U_v = S_v \sqcup \bigsqcup_{e:s(e)=v} D_e$，其中 $S_v$ 配有输出映射 $h_v: S_v \to \mathcal X^\circ$。
+3. 每条边 $e: v \to w$ 配有转移 $b_e: D_e \to U_w$ 和严格返回算子 $a_e: \mathcal X \to \mathcal X$，满足 $a_e(\bot)=\bot$、$a_e(\mathcal X^\circ)\subseteq \mathcal X^\circ$，且
+   $$\mathbf d(a_e(y), a_e(z)) \le L_e \mathbf d(y, z) \qquad (y, z \in \mathcal X^\circ).$$
+4. 块块关联矩阵 $M = (M_{vw})_{v,w \in V} \in \mathbb R_{\ge 0}^{(|V|m)\times(|V|m)}$ 定义为 $M_{vw} = \sum_{e:v \to w} L_e$，且谱半径 $\rho(M) < 1$。
+
+记算子族空间为 $\mathcal F = \prod_{v\in V} (\mathcal X^\circ)^{U_v}$，其上的向量值诱导规范为
+$$\boldsymbol\Delta(F, G) = \bigl(\Delta_{v,i}(F,G)\bigr)_{v\in V, 1\le i\le m} \in [0, +\infty]^{|V|m}, \quad \Delta_{v,i}(F,G) = \sup_{x\in U_v} d_i(F_v(x), G_v(x)).$$
+
+### 定理 1（递归算子系统闭合主定理）
+在上述条件下：
+1. **（不动点与整体算子）** 存在整体算子族 $F^* \in \mathcal F$，满足不动点方程
+   $$F^* = \mathcal T F^*.$$
+2. **（唯一性）** 在有限度量差空间 $\{F \in \mathcal F : \|\boldsymbol\Delta(F, F^*)\|_\infty < +\infty\}$ 内，$F^*$ 是唯一的；若系统在每个输入点均有限步终止，则 $F^*$ 在 $\mathcal F$ 内逐点严格唯一。
+3. **（几何收敛速度）** 对任意给定的收敛比率 $q \in (\rho(M), 1)$，存在由矩阵 $M$ 和 $q$ 决定的有限正常数 $C_0 \ge 1$，使得对任意初始算子族 $H \in \mathcal F$（满足 $\|\boldsymbol\Delta(H, F^*)\|_\infty < +\infty$），有限展开 $\mathcal T^n H$ 满足：
+   $$\max_{v\in V, 1\le i\le m} \Delta_{v,i}(\mathcal T^n H, F^*) \le C_H q^n \qquad (n \ge 1),$$
+   其中常数 $C_H = C_0 \|\boldsymbol\Delta(H, F^*)\|_\infty < +\infty$。若改用单步展开残差估计，亦有：
+   $$C_H = \frac{C_0}{1-q} \|\boldsymbol\Delta(\mathcal T H, H)\|_\infty < +\infty.$$
+
+---
+
+## 二、整体算子 $F^*$ 的构造 (Construction of $F^*$)
+
+整体算子 $F^* = (F^*_v: U_v \to \mathcal X^\circ)_{v\in V}$ 可以通过以下两种等价且互补的方式显式构造：
+
+### 1. 动力系统路径追踪法（操作语义构造）
+考虑不交并状态空间 $\mathcal U = \bigsqcup_{v\in V} U_v = \{(v, x) : v\in V, x\in U_v\}$。
+由分割 $U_v = S_v \sqcup \bigsqcup_{e:s(e)=v} D_e$，对任意状态 $(v, x) \in \mathcal U$，存在且仅存在一条确定的计算轨道：
+- 若 $x \in S_v$，计算停机，停机步数 $\tau(v, x) = 0$；
+- 若 $x \in D_{e_1}$（$s(e_1) = v, t(e_1) = w_1$），系统单步转移至 $(w_1, b_{e_1}(x))$，对应的返回算子为 $a_{e_1}$。
+
+由递归归纳，从状态 $(v_0, x_0) = (v, x)$ 出发，唯一生成一条确定的转移链：
+$$(v_0, x_0) \xrightarrow{e_1} (v_1, x_1) \xrightarrow{e_2} (v_2, x_2) \xrightarrow{e_3} \cdots$$
+其中 $x_k \in D_{e_{k+1}}$，$x_{k+1} = b_{e_{k+1}}(x_k) \in U_{v_{k+1}}$。停机时间定义为：
+$$\tau(v, x) = \inf\{ k \ge 0 : x_k \in S_{v_k} \} \in \mathbb N \cup \{+\infty\}.$$
+
+- **若 $\tau(v, x) = k < +\infty$**，即计算在第 $k$ 步触及停机集 $S_{v_k}$，则整体算子在 $(v, x)$ 处的值为有限次调用栈展开的逆序复合：
+  $$F^*_v(x) := (a_{e_1} \circ a_{e_2} \circ \cdots \circ a_{e_k})\bigl(h_{v_k}(x_k)\bigr).$$
+  因为 $h_{v_k}(x_k) \in \mathcal X^\circ$ 且每步 $a_e(\mathcal X^\circ) \subseteq \mathcal X^\circ$，故 $F^*_v(x) \in \mathcal X^\circ$ 良定。
+- **若 $\tau(v, x) = +\infty$**，若空间中存在不发散点（即在 $(\mathcal X^\circ, \mathbf d)$ 完备的情形），由 $\rho(M) < 1$ 知 Cauchy 序列 $(a_{e_1} \circ \cdots \circ a_{e_n})(y_0)$ 强收敛到与初值无关的唯一不动极限点；在代数语义中，若该状态发散则对应 $\bot$。但在主定理要求对任意初值 $H$ 均有有限范数 $\Delta(\mathcal T^n H, F^*) \le C_H q^n < +\infty$ 的约束下，由于 $d_i(y, \bot) = +\infty$，系统必须在全集上处处有限步终止（即对所有 $(v, x)$，$\tau(v, x) < +\infty$）。
+
+### 2. 扩充平坦域上的 Kleene 迭代逼近（指称语义构造）
+考虑包含底元素 $\bot$ 的扩展函数族空间 $\widetilde{\mathcal F} = \prod_{v\in V} \mathcal X^{U_v}$。
+在 $\mathcal X$ 上赋予平坦偏序：$\bot \sqsubseteq y$（$\forall y \in \mathcal X$），且当 $y, z \in \mathcal X^\circ$ 时 $y \sqsubseteq z \iff y = z$。该偏序诱导 $\widetilde{\mathcal F}$ 上的逐点偏序。
+
+取初始全空算子族 $F^{(0)} = F_\bot \in \widetilde{\mathcal F}$，即 $F_{\bot, v}(x) = \bot$（$\forall v \in V, x \in U_v$）。
+将展开算子 $\mathcal T$ 自然延拓至 $\widetilde{\mathcal F}$。利用 $a_e(\bot) = \bot$，迭代生成序列：
+$$F^{(n)} = \mathcal T^n F_\bot \qquad (n \ge 0).$$
+容易验证，对每个固定状态 $(v, x) \in \mathcal U$：
+$$F^{(n)}_v(x) = \begin{cases} \bot, & n \le \tau(v, x), \\ (a_{e_1} \circ \cdots \circ a_{e_k})\bigl(h_{v_k}(x_k)\bigr), & n > \tau(v, x) = k. \end{cases}$$
+即对任意固定的 $x$，序列 $\{F^{(n)}_v(x)\}_{n=0}^\infty$ 是**最终常数序列**。因此其逐点上确界与极限存在且无需度量完备性：
+$$F^* := \bigsqcup_{n=0}^\infty \mathcal T^n F_\bot = \lim_{n\to\infty} \mathcal T^n F_\bot.$$
+由于 $\mathcal T$ 保持逐点有限步稳定极限，直接可得：
+$$\mathcal T F^* = \mathcal T\left(\lim_{n\to\infty} \mathcal T^n F_\bot\right) = \lim_{n\to\infty} \mathcal T^{n+1} F_\bot = F^*.$$
+
+---
+
+## 三、完整论证 (Complete Proof)
+
+论证分为四个严密步骤。
+
+### 步骤 1：局域展开的向量收缩性
+设 $F, G \in \mathcal F$ 为任意两个算子族。任取 $v \in V$ 及 $x \in U_v$：
+- **情形 1：$x \in S_v$**。
+  $$(\mathcal T F)_v(x) = h_v(x), \qquad (\mathcal T G)_v(x) = h_v(x).$$
+  由于 $d_i$ 为伪度量，满足同一律 $d_i(h_v(x), h_v(x)) = 0$（$1 \le i \le m$），因此：
+  $$\mathbf d\bigl((\mathcal T F)_v(x), (\mathcal T G)_v(x)\bigr) = \mathbf 0.$$
+- **情形 2：$x \in D_e$，其中边 $e: v \to w$**。
+  根据定义与 $a_e$ 的 Lipschitz 性质，由于 $F_w(b_e(x)), G_w(b_e(x)) \in \mathcal X^\circ$：
+  $$\mathbf d\bigl((\mathcal T F)_v(x), (\mathcal T G)_v(x)\bigr) = \mathbf d\Bigl(a_e\bigl(F_w(b_e(x))\bigr), a_e\bigl(G_w(b_e(x))\bigr)\Bigr) \le L_e \mathbf d\bigl(F_w(b_e(x)), G_w(b_e(x))\bigr).$$
+  注意到 $b_e(x) \in U_w$，由诱导规范的定义，逐分量有 $\mathbf d(F_w(b_e(x)), G_w(b_e(x))) \le \boldsymbol\Delta_w(F, G)$。由于矩阵 $L_e \ge 0$：
+  $$\mathbf d\bigl((\mathcal T F)_v(x), (\mathcal T G)_v(x)\bigr) \le L_e \boldsymbol\Delta_w(F, G).$$
+
+综合两种情形，由于 $U_v = S_v \sqcup \bigsqcup_{e: s(e)=v} D_e$，对 $U_v$ 中的任意 $x$：
+$$\mathbf d\bigl((\mathcal T F)_v(x), (\mathcal T G)_v(x)\bigr) \le \sum_{e: s(e)=v} L_e \boldsymbol\Delta_{t(e)}(F, G) = \sum_{w \in V} \left(\sum_{e: v \to w} L_e\right) \boldsymbol\Delta_w(F, G) = \sum_{w \in V} M_{vw} \boldsymbol\Delta_w(F, G).$$
+上式右端与 $x \in U_v$ 无关。对左端关于 $x \in U_v$ 取上确界，即得：
+$$\boldsymbol\Delta_v(\mathcal T F, \mathcal T G) \le \sum_{w\in V} M_{vw} \boldsymbol\Delta_w(F, G) = \bigl(M \boldsymbol\Delta(F, G)\bigr)_v.$$
+将所有节点块 $v \in V$ 拼接，即得到基础向量收缩不等式：
+$$\boldsymbol\Delta(\mathcal T F, \mathcal T G) \le M \boldsymbol\Delta(F, G).$$
+利用 $M \ge 0$ 的单调保序性，由数学归纳法立即得到 $n$ 次展开不等式：
+$$\boldsymbol\Delta(\mathcal T^n F, \mathcal T^n G) \le M^n \boldsymbol\Delta(F, G) \qquad (n \ge 1).$$
+
+---
+
+### 步骤 2：正赋权范数与矩阵谱衰减估计
+设 $K = |V|m$ 为系统的总维数。已知非负方阵 $M \in \mathbb R_{\ge 0}^{K \times K}$ 满足 $\rho(M) < 1$。
+任给 $q \in (\rho(M), 1)$，选取实数 $s$ 满足：
+$$\rho(M) < s < q < 1.$$
+因为 $s > \rho(M)$，矩阵 $(s I - M)$ 为非奇异 $M$-矩阵，其预解式可通过收敛的 Neumann 级数展开：
+$$R(s) := (s I - M)^{-1} = \sum_{k=0}^\infty s^{-(k+1)} M^k \ge s^{-1} I \ge 0.$$
+取全 1 向量 $\mathbf 1 = (1, 1, \dots, 1)^{\mathsf T} \in \mathbb R^K$，定义正向量：
+$$u := R(s) \mathbf 1 = (s I - M)^{-1} \mathbf 1.$$
+由于第 0 项为 $s^{-1} \mathbf 1$，显然其每个分量满足严格正性：
+$$u_j \ge s^{-1} > 0 \qquad (1 \le j \le K).$$
+由定义，展开可得：
+$$(s I - M) u = \mathbf 1 \implies M u = s u - \mathbf 1 \le s u.$$
+由于 $s < q$，归纳可得对任意 $n \ge 1$：
+$$M^n u \le s^n u \le q^n u.$$
+
+利用严格正向量 $u$，在 $\mathbb R^K$ 上引入赋权最大值范数：
+$$\|y\|_u := \max_{1 \le j \le K} \frac{|y_j|}{u_j}.$$
+对任意非负向量 $y \ge 0$，由定义逐分量显然有 $y \le \|y\|_u u$。结合 $M^n \ge 0$ 得：
+$$M^n y \le \|y\|_u M^n u \le q^n \|y\|_u u.$$
+两边取无权最大范数 $\|\cdot\|_\infty$，由于 $u \le \|u\|_\infty \mathbf 1$：
+$$\|M^n y\|_\infty \le q^n \|y\|_u \|u\|_\infty \le q^n \left(\frac{\|y\|_\infty}{\min_{1 \le j \le K} u_j}\right) \|u\|_\infty = C_0 \|y\|_\infty q^n,$$
+其中结构常数
+$$C_0 := \frac{\max_{1 \le j \le K} u_j}{\min_{1 \le j \le K} u_j} \ge 1$$
+仅依赖于矩阵 $M$ 和所选取的比率 $q$，为有限常数。
+
+---
+
+### 步骤 3：有限展开 $\mathcal T^n H$ 对 $F^*$ 的逼近定理
+将已构造的整体算子族 $F^* = \mathcal T F^*$ 与初始算子族 $H$ 代入步骤 1 的收缩不等式。由于 $F^* = \mathcal T^n F^*$：
+$$\boldsymbol\Delta(\mathcal T^n H, F^*) = \boldsymbol\Delta(\mathcal T^n H, \mathcal T^n F^*) \le M^n \boldsymbol\Delta(H, F^*).$$
+对两端应用步骤 2 的无权最大范数衰减估计：
+$$\max_{v\in V, 1\le i\le m} \Delta_{v,i}(\mathcal T^n H, F^*) = \|\boldsymbol\Delta(\mathcal T^n H, F^*)\|_\infty \le \|M^n \boldsymbol\Delta(H, F^*)\|_\infty \le C_0 \|\boldsymbol\Delta(H, F^*)\|_\infty q^n.$$
+记
+$$C_H := C_0 \|\boldsymbol\Delta(H, F^*)\|_\infty = C_0 \max_{v\in V, 1\le i\le m} \Delta_{v,i}(H, F^*).$$
+由题设 $\|\boldsymbol\Delta(H, F^*)\|_\infty < +\infty$，即证得：
+$$\max_{v, i} \Delta_{v, i}(\mathcal T^n H, F^*) \le C_H q^n \qquad (n \ge 1).$$
+
+#### 单步展开残差常数表述（无需预知 $F^*$）
+若以初始算子族的第一步计算残差 $\boldsymbol\Delta(\mathcal T H, H)$ 定出常数，对任意 $p \ge 1$：
+$$\boldsymbol\Delta(\mathcal T^{n+1} H, \mathcal T^n H) \le M^n \boldsymbol\Delta(\mathcal T H, H).$$
+从而对任意 $k \ge 1$：
+$$\boldsymbol\Delta(\mathcal T^{n+k} H, \mathcal T^n H) \le \sum_{j=n}^{n+k-1} M^j \boldsymbol\Delta(\mathcal T H, H) \le \sum_{j=n}^\infty s^j C_0 \|\boldsymbol\Delta(\mathcal T H, H)\|_\infty \mathbf 1 \le \frac{C_0}{1-q} q^n \|\boldsymbol\Delta(\mathcal T H, H)\|_\infty \mathbf 1.$$
+令 $k \to \infty$（在逐点或弱极限下），亦可直接定出有限常数：
+$$C_H' := \frac{C_0}{1-q} \max_{v\in V, 1\le i\le m} \Delta_{v,i}(\mathcal T H, H) < +\infty.$$
+
+---
+
+### 步骤 4：唯一性论证
+设有两个不动点算子族 $F^*, G^* \in \mathcal F$，满足 $\mathcal T F^* = F^*$ 且 $\mathcal T G^* = G^*$。
+1. **度量等价唯一性**：
+   若 $\|\boldsymbol\Delta(F^*, G^*)\|_\infty < +\infty$，则对任意 $n \ge 1$：
+   $$\boldsymbol\Delta(F^*, G^*) = \boldsymbol\Delta(\mathcal T^n F^*, \mathcal T^n G^*) \le M^n \boldsymbol\Delta(F^*, G^*).$$
+   取范数并令 $n \to \infty$：
+   $$\|\boldsymbol\Delta(F^*, G^*)\|_\infty \le C_0 q^n \|\boldsymbol\Delta(F^*, G^*)\|_\infty \xrightarrow{n\to\infty} 0.$$
+   因此 $\boldsymbol\Delta(F^*, G^*) = \mathbf 0$，即对所有 $v \in V, x \in U_v$ 及 $1 \le i \le m$，恒有 $d_i(F^*_v(x), G^*_v(x)) = 0$。
+2. **逐点代数严格唯一性**：
+   任取有限步停机点 $x \in U_v$（$\tau(v, x) = k < +\infty$），根据展开式的显式定义：
+   $$F^*_v(x) = (\mathcal T^k F^*)_v(x) = (a_{e_1} \circ \cdots \circ a_{e_k})\bigl(h_{v_k}(x_k)\bigr) = (\mathcal T^k G^*)_v(x) = G^*_v(x).$$
+   此值完全由局域输出 $h$ 及边算子序列决定，不依赖于不动点族本身的选取，因而在 $\mathcal X^\circ$ 中点对点绝对相等。
+
+---
+
+### 步骤 5：扩展值 $\bot$ 与全系统终止性闭合机制
+题目设定扩展伪度量空间满足 $d_i(x, \bot) = +\infty$（$\forall x \in \mathcal X^\circ$），且 $a_e(\bot) = \bot$、$0 \cdot (+\infty) = 0$。此代数与度量结构揭示了本递归闭合理论的核心语义：
+
+1. **不可发散性约束**：
+   若存在某个状态 $(v, x)$ 其计算轨道无限循环（$\tau(v, x) = +\infty$），则在指称语义下其不动点值为 $\bot$。
+   然而，对任意算子族 $H \in \mathcal F$，由于其值域在 $\mathcal X^\circ$ 内且 $a_e(\mathcal X^\circ) \subseteq \mathcal X^\circ$，有限展开值恒满足 $(\mathcal T^n H)_v(x) \in \mathcal X^\circ$。
+   若 $F^*_v(x) = \bot$，则：
+   $$d_i\bigl((\mathcal T^n H)_v(x), F^*_v(x)\bigr) = d_i\bigl((\mathcal T^n H)_v(x), \bot\bigr) = +\infty.$$
+   这将导致 $\Delta_{v, i}(\mathcal T^n H, F^*) = +\infty$，与主定理要求对所有 $n \ge 1$ 均成立的有限几何界 $\le C_H q^n < +\infty$ 产生矛盾。
+2. **闭合结论**：
+   因此，能在伪度量诱导规范下保证有限几何逼近的整体算子系统，其递归结构在有界/可达输入集上必然具有**良基性（终止性）**。底元素 $\bot$ 的引入，一方面作为 Kleene 迭代的初始元完成无条件代数构造，另一方面通过无限距离边界 $d_i(\cdot, \bot) = +\infty$ 充当系统闭合与停机性的度量判据。
+
+证毕。

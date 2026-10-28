@@ -1,0 +1,61 @@
+{
+  "math_requests": [
+    {
+      "run": "diagnostic",
+      "base": "/private/tmp/math-gauge-gemini38flash-20261029",
+      "request_count": 1,
+      "classification": "tool-mismatch diagnostic",
+      "comparison_eligible": false
+    },
+    {
+      "run": "closedbook",
+      "base": "/private/tmp/math-gauge-gemini38flash-closedbook-20261029",
+      "request_count": 1,
+      "classification": "formal closed-book comparison",
+      "comparison_eligible": true
+    }
+  ],
+  "formal_pre_request_failed_starts": [
+    {
+      "base": "/private/tmp/math-gauge-gemini38flash-20261029/startup01",
+      "request_count": 0,
+      "reason": "Auxiliary sandbox_check call validation; terminated before stdin submission"
+    }
+  ],
+  "non_math_model_canaries": [
+    {
+      "base": "/private/tmp/math-gauge-agy-tools-preflight-20261029",
+      "request_count": 1,
+      "search_tools_allowed": false
+    },
+    {
+      "base": "/private/tmp/math-gauge-agy-tools-enabled-control-20261029",
+      "request_count": 1,
+      "search_tools_allowed": true
+    }
+  ],
+  "non_inference_inventory_attempts": [
+    {
+      "evidence": "diagnostic/preflight/attempt01-*",
+      "status": "CLI flag placement rejected before worker startup"
+    },
+    {
+      "evidence": "diagnostic/preflight/attempt02-*",
+      "status": "old data-directory env method ignored; auth failed under policy"
+    },
+    {
+      "evidence": "tool output at 2026-10-29 11:24:25 local",
+      "status": "absolute --app_data_dir rejected; no inference; raw tool output only, no reconstructed log"
+    },
+    {
+      "evidence": "diagnostic/preflight/attempt03-*",
+      "status": "success using explicit --gemini_dir and relative --app_data_dir"
+    },
+    {
+      "evidence": "diagnostic/preflight/attempt04-*",
+      "status": "success with outbound localhost denied"
+    }
+  ],
+  "help_version_probes_counted_as_inference": false,
+  "no_math_answer_based_reruns": true
+}

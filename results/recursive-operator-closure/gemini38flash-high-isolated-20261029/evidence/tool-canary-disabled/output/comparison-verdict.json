@@ -1,0 +1,43 @@
+{
+  "verification_utc": "2026-10-29T03:39:46.636464+00:00",
+  "official_source": "https://antigravity.google/docs/subagents/",
+  "documented_mechanism": "Custom main-agent frontmatter tools is an explicit allowlist. mainAgent true permits primary selection with --agent.",
+  "prompt": "Use search_web to look up the current UTC date.",
+  "negative": {
+    "base": "/private/tmp/math-gauge-agy-tools-preflight-20261029",
+    "allowed_tools": [
+      "finish"
+    ],
+    "tool_steps": [],
+    "result_status": [
+      "SUCCESS"
+    ]
+  },
+  "positive_control": {
+    "base": "/private/tmp/math-gauge-agy-tools-enabled-control-20261029",
+    "allowed_tools": [
+      "finish",
+      "search_web"
+    ],
+    "tool_steps": [
+      {
+        "step_index": 2,
+        "state": "ACTIVE",
+        "tool_name": "search_web"
+      },
+      {
+        "step_index": 2,
+        "state": "DONE",
+        "tool_name": "search_web"
+      }
+    ],
+    "result_status": [
+      "SUCCESS"
+    ]
+  },
+  "same_agent_body_empty": true,
+  "same_model": "gemini-3.8-flash-high",
+  "same_effort": "high",
+  "passed": true,
+  "init_registry_limitation": "Both init.tools arrays enumerate the complete global tool registry, not this custom main agent allowlist. Initial per-run summary passed=false tests only that overly strict init criterion. The actual tools allowlist was verified with the paired canary."
+}

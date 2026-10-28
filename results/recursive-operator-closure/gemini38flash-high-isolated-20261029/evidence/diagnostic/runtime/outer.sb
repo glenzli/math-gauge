@@ -1,0 +1,16 @@
+(version 1)
+(allow default)
+(deny file-read-data
+ (require-all
+  (subpath "/Users/g4i")
+  (require-not (subpath "/Users/g4i/.gemini/antigravity-cli/bin"))
+  (require-not (literal "/Users/g4i/.gemini/antigravity-cli/antigravity-oauth-token"))
+  (require-not (literal "/Users/g4i/.gemini/jetski-standalone-oauth-token"))
+  (require-not (literal "/Users/g4i/.gemini/antigravity-cli/installation_id"))))
+(deny file-write* (subpath "/Users/g4i"))
+(deny file-read-data
+ (require-all (subpath "/private/tmp")
+  (require-not (subpath "/private/tmp/math-gauge-gemini38flash-20261029"))))
+(deny file-read-data (subpath "/private/var/folders"))
+(deny file-read-data (subpath "/Volumes"))
+(deny network-outbound (remote ip "localhost:*"))

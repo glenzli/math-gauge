@@ -32,7 +32,8 @@ Math Gauge 源于算子演化论（OET）写作与研究中的实际数学协作
 
 **正在建设中（Work in progress）。** 当前提供首批公开题目初稿和基础 runner。
 题目审核、难度与区分度校准、评分规则以及模型接入仍在推进，尚未形成稳定榜单。
-所有题目已经 AI 首轮审校，仍待人工审定；当前示例为流程回放，没有真实模型评测成绩。
+所有题目已经 AI 首轮审校，仍待人工审定。已完成一次 Terra 6.1 Max 独立子 agent 校准，
+包括单轮题组和三轮研究轨迹；结果仅经 AI 复核，不计为正式模型比较成绩。流程回放示例另行保留。
 
 ## 首版内容
 
@@ -40,6 +41,9 @@ Math Gauge 源于算子演化论（OET）写作与研究中的实际数学协作
 - [评测协议](protocol/evaluation.md)：条件忠实、证明有效与范围保持分别审核。
 - [来源与 AI 参与说明](SOURCES.md)：仅取材于 OET 已公开第一卷与经典弱结构。
 - [初版审核与验证记录](results/initial-validation.md)。
+- [独立加难初稿](cases/public-challenge/README.md)与[长链／持续研究初稿](cases/public-layered/README.md)。
+- [Terra 6.1 Max 校准结果](results/terra61max-calibration/README.md)：当前确定性与一致性题仍饱和；末轮 Lean 核心未通过编译。
+- [长链条件保持与正文—Lean 覆盖的评测设计](protocol/layered-design.md)。
 
 首批题优先验证数学边界和评测流程；这些基础题的通过不代表前沿数学研究能力。
 各题的人工审定状态与后续修订均记录在题目元数据中。
@@ -88,7 +92,8 @@ python3 -m math_gauge report --run runs/model-a-001 --out runs/report-001
 ~~~
 
 适配器路径需绝对路径；默认工作目录只有作答材料，但这不构成操作系统访问隔离。
-v0.1 尚无内置供应商适配器，未声称已完成真实模型评测。
+v0.1 尚无内置供应商适配器；上述真实校准通过外部子 agent 执行并保留原始记录，
+不表示命令接口已经完成通用的多轮模型接入。
 不要把任意脚本的输出标签伪装成供应商模型成绩。
 
 同一 runner 可读取另一目录的题集：
