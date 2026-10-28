@@ -1,0 +1,56 @@
+"""An explicit synthetic replay, never a model benchmark."""
+
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from math_gauge.catalog import Suite, write_json
+from math_gauge.execution import run
+from math_gauge.review import apply_reviews, report, templates
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    out = Path(args.out).resolve()
+    out.mkdir(parents=True, exist_ok=False)
+    responses = {
+        "MG-D001": "成立。固定 x,y∈U 且所有 d_i(x,y)=0。任取输出分量 j，由合法上界得 0≤d_j(φx,φy)≤Σ_i L_ji·0=0。有限和每项均为零，包括 L_ji=∞ 时按 ∞·0=0 处理。因此全部输出分量零距。这里没有推出点相等，也未扩大点对的范围。□",
+        "MG-F004": "Lean 证明的是额外给定 Certificate 后的存在性。Certificate 的 r、projects、fixes 三个字段已经包含目标，candidate 只是将它们取出，未从 hf 构造回缩。原题仍然成立：定义 r(x)=⟨f(x),x,rfl⟩；投影等式按定义，若 y=f(x)，则 f(y)=f(f(x))=f(x)=y，由子类型外延性得到回缩等式。不需增加非空性。□",
+        "MG-E003": "称 S 前向封闭，若 x∈S 且 R(x,y) 则 y∈S。取所有包含 A 的前向封闭 S 的交 C(A)。该族非空，因为 X 属于其中。逐点检查交包含 A 且前向封闭，并包含于每个候选 S。A⊆B 时 C(B) 是 A 的候选，所以 C(A)⊆C(B)；C(A) 已封闭给出 C(C(A))=C(A)。空集封闭给 C(∅)=∅。这构造了原集合幂集上的闭包算子，没有要求原 X 具备额外结构。取 ℕ 上后继关系、A={0}，有限第 n 步只有 {0,…,n}，最小封闭集为 ℕ，因此不能要求有限步停止。□",
+    }
+    write_json(out / "replay.json", responses)
+    suite = Suite.load(root / "cases/public")
+    run(suite, out / "run", list(responses), replay=out / "replay.json")
+    review = templates(out / "run")
+    for item in review:
+        item.update(
+            reviewer="bundled replay fixture",
+            reviewer_kind="fixture",
+            decision="pass",
+            assumption_fidelity="clean",
+            proof_validity="valid",
+            scope_accuracy="correct",
+            notes="预先编写的流程测试材料；此记录不代表独立评审或真实模型表现。",
+        )
+        if item["case_id"] == "MG-E003":
+            item["findings"] = [
+                "以交定义最小前向闭包，并证明广延、单调、幂等。",
+                "给出无限传播不会有限步停止的例子。",
+            ]
+    write_json(out / "fixture-reviews.json", review)
+    apply_reviews(out / "run", review)
+    result, md = report(out / "run")
+    assert (
+        sum(x["eligible_for_model_comparison"] for x in result["tracks"].values()) == 0
+    )
+    write_json(out / "report.json", result)
+    (out / "report.md").write_text(md, encoding="utf-8")
+    print(out / "report.md")
+
+
+if __name__ == "__main__":
+    main()
