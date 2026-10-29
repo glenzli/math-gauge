@@ -1,0 +1,555 @@
+{
+  "schema": "math-gauge.independent-semantic-review/v1",
+  "case_id": "MG-GR003",
+  "case_version": "0.1.1",
+  "reviewer": "author-lean-r11-r20",
+  "status": "pass",
+  "review_scope": "Complete candidate task, reference, rubric, contract, case/review metadata and all actual mathematical source modules; current author alignment read after direct source review. Independent mathematical alignment audit; exact unchanged fresh compiler evidence reused, no candidate model execution.",
+  "source_hashes": {
+    "drafts/progressive-groups-20261030/MG-GR003/author-contract.json": "87f7fe93f8232d27e5b335f082199bfda9d0a606cdd4b6460175831b097719ea",
+    "drafts/progressive-groups-20261030/MG-GR003/case.json": "42a1bae15ff7c3e6b26217be82e14817f6c87e989d123a76c25f8caced4c89a1",
+    "drafts/progressive-groups-20261030/MG-GR003/contract.json": "31ee35c97bb513e8eace44e254ffc8e757822bc2210744c684314706e67bffaa",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/AverageRates.lean": "8abb6e06dfffb9575e46dfaaab16b6e067e87327f3e2333cebae8374814ceb7b",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/BinomialSmoothing.lean": "18dc0d5d759887fb8fcb7111833a221a6019cf1bc1e7635600c16d1f07de2572",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/COVERAGE.md": "5e3acd9be43ca79f45344c284b2bcaedcd61fb7b0dc792a931cf4fe4d2ce8ecc",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/CurrentAudit.lean": "2a14ebd2a8fa7cf08ac3b10eb904b60593099ee4ae1c3a4b79cbc9db90cf6e89",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/DiagonalSlow.lean": "8e149890f9278155c43b44b83f7aa0c546631b2f4a066dbe1344289a64a5acf9",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicComparison.lean": "6736b65072c4561c9b4d678bc8c62330dd27a896bd3c4705b02acd6a344f5fed",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicConsequences.lean": "2efa7fead8213b03380eb35fb1b9306123b45ce83826de2bc2842766eb51ea32",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicCoordinates.lean": "81cc37aa647c94d4a1dec0519d191e6b3ed9b9df56f39d76c14c03f3036c60a5",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicCounterexample.lean": "0b3996bd2b495031a9ba8a04a9d660b054ed8aa68808314f54c665d2e8288a86",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicOperators.lean": "5ebf11cf138a51f2fa385eeedb4a70b84e2f740c251cca120dbd92871185af28",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicQuotient.lean": "6fe593ad3fb21db34f5fab6439d37d044a3c562f9e51035a15a8c3b4ffae7abf",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicRecoveryCore.lean": "637dfada8798daad66335a4a839171b2684fc2042407f9bb6c227167f3dd5e54",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ErgodicRecoveryMap.lean": "c7cbf091f1581ea117e77fdcb3c4caf0848673cbeb9e1b357b4794d13f34142d",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/FullRecovery.lean": "871ee8f42af8e52ef92541e0b6f240d1e682ebfec41051d227197b26fad036b7",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/NoisyProjection.lean": "67ad2c3d5d5b6ed784e21af26152cbe928d575c2d53085d0d046ede83b9a75b8",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/OrthogonalComponents.lean": "5f6ec539ff8cec500ff7af52ab97a920feffdc2e2749f6b641a6376984b05c7e",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/ProjectionDynamics.lean": "304bfdd553d05590f294c5f40f596b3ea47cd41af9b0d1a8977d937ad10470f8",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/SharpNoise.lean": "48354a72e2764a2159434aea985044a4427a227e3380b32c99c31da772ddfcb1",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/UniformPowers.lean": "9a123d40845a7cdb351ef8f18058f4e187834345ae9586aee4771bccb71b8227",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/alignment.json": "d6b3fe8ea71ac9596ec53a6003d841462e8ab4ad19bb413132923c8162c35a67",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/declarations.json": "93b44dfc5c06a2b8f457a77c72871e7afcd4d2caf70f85a5386a48ed501ecc44",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/manifest.json": "cde184d821c8971d59e9edd6a033bcae43de115542e6d9055635286e6859cd6d",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/provenance.json": "5586790652b543f70a86cd85a5487fbe9a40407220aabb2cb1bfde74d7316675",
+    "drafts/progressive-groups-20261030/MG-GR003/formal/verification-report.json": "3689e1860fd4664c085d304105d622cac4a56a331677083c6d9af8cd1a1d2ea7",
+    "drafts/progressive-groups-20261030/MG-GR003/provenance.json": "548e273b9999fb0878fe57e690c7227e6bad2ba587825644e25751adc7931d5f",
+    "drafts/progressive-groups-20261030/MG-GR003/reference.md": "ed9dfb75bc611409cbb5d7885aa9fb1472927dab2e7b96aa8f6e3d2fca898582",
+    "drafts/progressive-groups-20261030/MG-GR003/review.json": "6b0f668384333a4ce460939c15b669e3ca3e65a15cc2b66569b4b89ec358ec01",
+    "drafts/progressive-groups-20261030/MG-GR003/rubric.json": "66df4d7742de6c965855c8218ceaeee9b727827b8a62e31341848343500a7407",
+    "drafts/progressive-groups-20261030/MG-GR003/task.md": "983606a7dacab95b4d6a09563240707a8624ca06dbe54266155031a8c3377366"
+  },
+  "items": [
+    {
+      "id": "S1",
+      "status": "pass",
+      "analysis": "The actual four products of T or I-T and S or I-S are self-adjoint idempotents, pairwise annihilate, sum to I and have orthogonal images. Pythagoras proves the sharp max rather than a sum estimate. On those products the actual double Cesaro average and actual R power have exactly the task coefficients. Both operator norm limits and Y=ker(TS), Z=range(TS) are proved, including zero components. Natural indexing n+1,m+1 covers every positive N,M.",
+      "declarations": [
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.component"
+        },
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.component_star"
+        },
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.component_cross"
+        },
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.component_sum"
+        },
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.component_decomposition"
+        },
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.component_orthogonal"
+        },
+        {
+          "module": "OrthogonalComponents",
+          "name": "MathGauge.OrthogonalComponents.weighted_norm_square"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.avg_projection"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.rectangle_component"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.iteration_component"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.rectangle_operator_bound"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.iteration_operator_bound"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.rectangle_operator_converges"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.iteration_operator_converges"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.differences_eq_kernel"
+        },
+        {
+          "module": "ProjectionDynamics",
+          "name": "MathGauge.OrthogonalComponents.fixed_eq_range"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S2",
+      "status": "pass",
+      "analysis": "The noisy sequence uses the original R and errors in the original Y; Y=ker(TS) yields preservation of Px0. The scalar half-contraction induction proves the exact finite-n estimate. Eventual tail control proves convergence for arbitrary vanishing errors without summability. On actual real one-dimensional T=I,S=0 the specified state obeys the recurrence, all errors belong to Y, its norm attains the formula, and every proposed uniform factor below 2 fails.",
+      "declarations": [
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.projection_iteration"
+        },
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.projection_noise_invariant"
+        },
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.half_recursion_bound"
+        },
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.half_recursion_vanishing"
+        },
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.projection_noise_step"
+        },
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.projection_noise_bound"
+        },
+        {
+          "module": "NoisyProjection",
+          "name": "MathGauge.OrthogonalComponents.projection_noise_vanishing"
+        },
+        {
+          "module": "SharpNoise",
+          "name": "MathGauge.SharpNoise.legal"
+        },
+        {
+          "module": "SharpNoise",
+          "name": "MathGauge.SharpNoise.state_recurrence"
+        },
+        {
+          "module": "SharpNoise",
+          "name": "MathGauge.SharpNoise.errors_in_difference"
+        },
+        {
+          "module": "SharpNoise",
+          "name": "MathGauge.SharpNoise.exact_error"
+        },
+        {
+          "module": "SharpNoise",
+          "name": "MathGauge.SharpNoise.constant_two_minimal"
+        },
+        {
+          "module": "SharpNoise",
+          "name": "MathGauge.SharpNoise.no_smaller_uniform_noise_constant"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S3",
+      "status": "pass",
+      "analysis": "The nine original mathematical modules were read in full. They prove actual binomial smoothing, peak decay and total variation, actual rectangle telescopes and R factorization, then extend vanishing from the two algebraic ranges to their norm closure using uniform bounds. The comparison theorem proves both directions for every x and z. The constructed recovery on the genuine Z+Y has uniqueness, range Z, kernel Y and norm at most KT*KS; the actual quotient inverse is defined only on q(Z). Quotient infimum approximation gives both stability inequalities, and completeness plus antilipschitzness proves q(Z) and its inverse image D closed. No Hilbert, reflexivity, finite-dimensional or unclosed-range substitution enters.",
+      "declarations": [
+        {
+          "module": "BinomialSmoothing",
+          "name": "MathGauge.BinomialSmoothing.variation"
+        },
+        {
+          "module": "BinomialSmoothing",
+          "name": "MathGauge.BinomialSmoothing.b_sqrt_bound"
+        },
+        {
+          "module": "BinomialSmoothing",
+          "name": "MathGauge.BinomialSmoothing.b_tendsto_zero"
+        },
+        {
+          "module": "BinomialSmoothing",
+          "name": "MathGauge.BinomialSmoothing.smoothing_bound"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.rectangle_formula"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.iteration_power"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.iteration_bound"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.rectangle_difference_T_bound"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.rectangle_difference_S_bound"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.iteration_difference_T_bound"
+        },
+        {
+          "module": "ErgodicOperators",
+          "name": "MathGauge.ErgodicOperators.iteration_difference_S_bound"
+        },
+        {
+          "module": "ErgodicComparison",
+          "name": "MathGauge.ErgodicRecovery.comparison"
+        },
+        {
+          "module": "ErgodicComparison",
+          "name": "MathGauge.ErgodicRecovery.equal_convergence_and_limits"
+        },
+        {
+          "module": "ErgodicComparison",
+          "name": "MathGauge.ErgodicRecovery.rectangle_record"
+        },
+        {
+          "module": "ErgodicComparison",
+          "name": "MathGauge.ErgodicRecovery.iteration_record"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.full_convergence_domain"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.direct_sum"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.recovery"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.recovery_stable"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.recovery_surjective"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.recovery_eq_zero_iff"
+        },
+        {
+          "module": "ErgodicRecoveryMap",
+          "name": "MathGauge.ErgodicRecovery.recovery_depends_only_on_record"
+        },
+        {
+          "module": "ErgodicConsequences",
+          "name": "MathGauge.ErgodicRecovery.recovery_norm"
+        },
+        {
+          "module": "ErgodicConsequences",
+          "name": "MathGauge.ErgodicRecovery.full_iteration_convergence_domain"
+        },
+        {
+          "module": "ErgodicConsequences",
+          "name": "MathGauge.ErgodicRecovery.quotient_recovery_agrees"
+        },
+        {
+          "module": "ErgodicQuotient",
+          "name": "MathGauge.ErgodicRecovery.record_recovery"
+        },
+        {
+          "module": "ErgodicQuotient",
+          "name": "MathGauge.ErgodicRecovery.record_recovery_two_sided"
+        },
+        {
+          "module": "ErgodicQuotient",
+          "name": "MathGauge.ErgodicRecovery.domain_iff_record_recoverable"
+        },
+        {
+          "module": "ErgodicQuotient",
+          "name": "MathGauge.ErgodicRecovery.record_range_closed"
+        },
+        {
+          "module": "ErgodicQuotient",
+          "name": "MathGauge.ErgodicRecovery.recovery_domain_closed"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S4",
+      "status": "pass",
+      "analysis": "The counterexample is actual lp over the naturals with exponent 1, an isometric right shift and identity. Its continuous mass functional annihilates the original closed difference range, while e0 has mass 1 and the common fixed space is zero. Actual binomial and averaging coordinate formulas give coordinate decay and both process norms equal 1. The proved general convergence criterion excludes every norm limit; this is a genuine all-input obstruction, not just failure of one proposed estimate.",
+      "declarations": [
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.shift"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.shift_power_bound"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.identity_power_bound"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.shift_power_norm_one"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.identity_power_norm_one"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.shift_fixed_zero"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.differences_in_mass_kernel"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.e₀_not_zero_record"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.no_recovery_e₀"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.rectangle_e₀_norm"
+        },
+        {
+          "module": "ErgodicCounterexample",
+          "name": "MathGauge.ErgodicCounterexample.iteration_e₀_norm"
+        },
+        {
+          "module": "ErgodicCoordinates",
+          "name": "MathGauge.ErgodicCounterexample.rectangle_coordinate"
+        },
+        {
+          "module": "ErgodicCoordinates",
+          "name": "MathGauge.ErgodicCounterexample.rectangle_coordinate_decay"
+        },
+        {
+          "module": "ErgodicCoordinates",
+          "name": "MathGauge.ErgodicCounterexample.iteration_coordinate"
+        },
+        {
+          "module": "ErgodicCoordinates",
+          "name": "MathGauge.ErgodicCounterexample.iteration_coordinate_decay"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S5",
+      "status": "pass",
+      "analysis": "The diagonal is constructed on actual lp exponent 2 with coefficient (n+1)/(n+2), exactly j/(j+1) after the declared positive-index reindexing. Weighted square summability and the norm estimate establish the real continuous linear operator. Every single coordinate lies in range(I-T), and actual lp summation gives dense range and Y=E. Both processes therefore converge in norm to zero for every vector. For each fixed process depth, unit coordinate tests and the coefficient limit as j tends to infinity prove operator norm exactly 1, and pointwise uniqueness rules out any other operator norm limit.",
+      "declarations": [
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.T"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.T_apply"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.T_power_bound"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.identity_power_bound"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.fixed_eq_zero"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.differences_eq_top"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.pointwise_rectangle"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.pointwise_iteration"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.rectangle_coordinate"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.iteration_coordinate"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.rectangle_norm_one"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.iteration_norm_one"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.rectangle_no_operator_limit"
+        },
+        {
+          "module": "DiagonalSlow",
+          "name": "MathGauge.DiagonalSlow.iteration_no_operator_limit"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S6",
+      "status": "pass",
+      "analysis": "The global projection is the S3 recovery transported from D=E. The genuine closed invariant subspace Y and actual restricted R are constructed, with equality of restricted powers and original powers on Y. Both comparison inequalities between the restriction norm and the full error norm are proved. The exact I-R decomposition yields the stated two-term b_NM bound. A norm-convergent Neumann series on Y supplies the actual inverse and its 1/(1-r) bound, producing the requested average estimate. The full iff uses positive power contraction and quotient/remainder bounds; necessity comes from restricted norm decay. No nontriviality of E or Y is assumed, so the zero-subspace boundary is included.",
+      "declarations": [
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.liftDomain"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.fullProjection"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.fullProjection_norm"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.fullProjection_fixed"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.fullProjection_difference"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.fullProjection_on_difference"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.restrictedIteration"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.restricted_power_apply"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.restricted_power_bound"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.iteration_error_identity"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.iteration_error_bound"
+        },
+        {
+          "module": "FullRecovery",
+          "name": "MathGauge.ErgodicUniform.restricted_error_bound"
+        },
+        {
+          "module": "UniformPowers",
+          "name": "MathGauge.ErgodicUniform.operator_power_bound"
+        },
+        {
+          "module": "UniformPowers",
+          "name": "MathGauge.ErgodicUniform.powers_tendsto_of_some_contraction"
+        },
+        {
+          "module": "UniformPowers",
+          "name": "MathGauge.ErgodicUniform.iteration_geometric_bound"
+        },
+        {
+          "module": "UniformPowers",
+          "name": "MathGauge.ErgodicUniform.uniform_iteration_iff_restricted"
+        },
+        {
+          "module": "UniformPowers",
+          "name": "MathGauge.ErgodicUniform.uniform_iteration_iff_some_power"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.iteration_difference_identity"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.defectBound"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.rectangle_iteration_defect"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.restricted_geometric_summable"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.neumannOperator_norm"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.neumannOperator_right"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.lifted_difference"
+        },
+        {
+          "module": "AverageRates",
+          "name": "MathGauge.ErgodicUniform.rectangle_geometric_bound"
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "verification": {
+    "fresh_report_status": "passed",
+    "manifest_sha256": "cde184d821c8971d59e9edd6a033bcae43de115542e6d9055635286e6859cd6d",
+    "all_current_frozen_and_formal_hashes_match": true,
+    "declarations": 384,
+    "all_alignment_declarations_exist": true,
+    "fresh_compilation_repeated_for_review": false
+  },
+  "findings": [],
+  "human_approval": "pending",
+  "candidate_model_execution": "not-run"
+}

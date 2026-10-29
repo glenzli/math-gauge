@@ -1,0 +1,153 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-C002",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "candidate/ATTRIBUTION.md": "4f84e89f43df6c3f3c346efcbc39202f277772762ce638c7b342817ec9d145c7",
+    "candidate/LICENSE": "4d2ea5dcaf833d41947541479bda77bd84f918f351af7ea7fbe404d56296f0cf",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060",
+    "candidate/dependencies.md": "3c447a70dcad863e1b9ad98e1c6f78f99f18ef12e70d3ebfcad725496c21d588",
+    "candidate/obligations.json": "d5f95ad3846f25646f794891c4e4e455f2a384617e7dd54ab3b9aceaa76e3d0d",
+    "candidate/source/01-foundations.md": "e6c5fc230ffa4099166bb789f90264ac8bbc5e6e78467c7aec3ac072dbef1526",
+    "candidate/source/02-operator-bounds.md": "481e3e6ac6d021e7c56c6453831bf2e6e0b795b2e7e93dece4e61ef0488c86c3",
+    "candidate/task.md": "169e81ec2da04e14db00430e05e2f24113ad8aca10831f04e69656a7344a9916",
+    "case.json": "00899d612d1e632041eba778a415a1a6ca3684732d1d4c32fc78976dc1ad1435",
+    "contract.json": "095e7993a0969c15bc65e9faf778ddc1c41c82a4046b6acf1be874ab6a263084",
+    "reference.md": "ce9468a0b98527742666501bbb4ce63b001e0ee16f3727feca376252d2595cc4",
+    "rubric.json": "4340f304ba44547b3c5b95cd7f4fe87dcac6b893a8faac1baa54fe2beb09cc5c"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "fba2cd302f7b1604fb538aa801018fc4bb11e8c2580e9e7fb6c15ec42387bb0d"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "77648f317ba4fa20bd43975997dc8c17ff6bc0243a52a78799da83830e66b525"
+  },
+  "modules": [
+    {
+      "module": "formal_oet.vol_01.ch_01_foundations.gauge_space",
+      "source": "formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+      "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+      "imports": [
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_01_foundations.operator_space",
+      "source": "formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+      "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060",
+      "imports": [
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Tactic",
+        "formal_oet.vol_01.ch_01_foundations.gauge_space"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean",
+      "sha256": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.gauge_space",
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "Mathlib.Data.ENNReal.Basic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.decoupling",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean",
+      "sha256": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.gauge_choice",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/gauge_choice.lean",
+      "sha256": "fa79e0afad9d7a5fe56bf75750f2e0d925f5deef0686c181e8d04aceea8a2d58",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+        "Mathlib.Data.Real.ENatENNReal"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.matrix_composition",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/matrix_composition.lean",
+      "sha256": "458c4fdcefb8d6c0873b383b893d348355fee3fe725f0fe3218910ec37b7bcac",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.path_algebra",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/path_algebra.lean",
+      "sha256": "d84c10c482aebe8ece764e822e5c7a43d8a2d52ba601706bbee2b3f9eade0acb",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.matrix_composition"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.single_channel",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean",
+      "sha256": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix"
+      ]
+    },
+    {
+      "module": "MathGauge.C002.SourceBridge",
+      "source": "MathGauge/C002/SourceBridge.lean",
+      "sha256": "5d3fb6b173ba05eace8506bb9926d18b53135558fe93df718c508292c10a5303",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.gauge_space",
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+        "formal_oet.vol_01.ch_02_operator_bounds.decoupling",
+        "formal_oet.vol_01.ch_02_operator_bounds.gauge_choice",
+        "formal_oet.vol_01.ch_02_operator_bounds.matrix_composition",
+        "formal_oet.vol_01.ch_02_operator_bounds.path_algebra",
+        "formal_oet.vol_01.ch_02_operator_bounds.single_channel"
+      ]
+    },
+    {
+      "module": "MathGauge.C002.Completeness",
+      "source": "MathGauge/C002/Completeness.lean",
+      "sha256": "7c634f1be91cefdfed4ef6194d69d9960112004cbe82f25e2b6430c8faf231d8",
+      "imports": [
+        "MathGauge.C002.SourceBridge",
+        "Mathlib.Data.Matrix.Mul"
+      ]
+    },
+    {
+      "module": "MathGauge.C002.PathRepresentation",
+      "source": "MathGauge/C002/PathRepresentation.lean",
+      "sha256": "080ee88d38198b36e891303bb9e55bc37204b790077061989f8147b6e7caa28d",
+      "imports": [
+        "MathGauge.C002.Completeness"
+      ]
+    },
+    {
+      "module": "Main",
+      "source": "Main.lean",
+      "sha256": "5b9ebf12424a71c6ee17e293a689fcb2db88af6c9664cee7303a9f88a4ffd109",
+      "imports": [
+        "MathGauge.C002.PathRepresentation"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "256c244a5dc6053fe9be15818c75bcb3a7fe3d6728b07656e64e8c0583a48a88",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

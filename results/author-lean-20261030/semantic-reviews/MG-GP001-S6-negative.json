@@ -1,0 +1,35 @@
+{
+  "schema": "math-gauge.independent-semantic-review/v1",
+  "case_id": "MG-GP001",
+  "stage": "S6 negative half",
+  "reviewer": "author-lean-chapters",
+  "author": "author-lean-r11-r20",
+  "human_review": "pending",
+  "verdict": "aligned",
+  "source_hashes": {
+    "task.md": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+    "formal/MathGauge/GP001/GraphExamples.lean": "a0a5ed799637ee9b0fac5be400e711564bab5e3260d3b238b4051c43f881b2e6",
+    "formal/MathGauge/GP001/GraphNonEquivalence.lean": "f2c7b5f0c7fa0224185058e79d2ce083856aa285cf31925e111cbf7bcc708eb2",
+    "formal/vendor/tauceti-graph/SOURCE-CLOSURE.json": "b4216ac40546c98b6d9f74a82621ce7e17c37f2f3293b4526745827193c4f54e",
+    "formal/MathGauge/GP001/Borrowed/Graph/TauCeti/AlgebraicTopology/Sphere/Contractible.lean": "18a8021d66f279a41b07eafdf84ae811f4def0a6522336d0c1abeab887ad7197",
+    "formal/MathGauge/GP001/Borrowed/Graph/TauCeti/AlgebraicTopology/SimplicialComplex/Simplex/BoundarySphere.lean": "dac7e1ab522a2920a5312d526867a5101b1c0fe69627890919688c138712a513"
+  },
+  "findings": [],
+  "checks": [
+    "graphAt has exactly the requested finite edges and singleton on Fin6; graphOne has triangles012 and034 plus isolated5, graphTwo has triangles012 and345. Nonempty is proved by actual vertex0.",
+    "graphOne empty link at5 is proved by checking every finite face and contradiction with any barycentric support. isolatedSumHomeomorph is the actual coordinate realization homeomorphism, not an assumed decomposition.",
+    "graphTwo_eq_triangles and triangle_faces_disjoint identify the exact face set with disjoint simplex boundaries. realizationDisjointSumHomeomorph proves injection from disjoint supports and total barycentric mass1, surjection from the union face predicate; compact-to-T2 yields the actual homeomorphism.",
+    "coordinatePolyhedronHomeomorph explicitly identifies finite barycentric realizations with support-defined subspaces of the weak full-simplex realization. It does not add unused vertices to P; support condition remains P.",
+    "Each triangle boundary is actually homeomorphic to the Euclidean plane unit sphere. Ambient finrank2 yields connectedness. Borrowed not_contractibleSpace_sphere derives contradiction from actual reduced integer sphere homology and is applicable to the nontrivial finite-dimensional real Euclidean plane.",
+    "The sum obstruction uses both genuine inverse homotopies. The left homotopy keeps the Bool disjoint-sum tag of the isolated point, forcing the inverse at its image to be the isolated point. Preconnectedness makes the entire selected X component map back to that point. The right inverse homotopy then contracts X, contradicting its proved noncontractibility. This handles either target component symmetrically.",
+    "The final graph_not_homotopy_equiv has no additional assumption, no homology certificate and excludes every genuine HomotopyEquiv. This completes only the negative half; positive suspension equivalence is separately authored by this reviewer and needs root independent review."
+  ],
+  "compiler_evidence": {
+    "status": "passed",
+    "output": "/private/tmp/math-gauge-gp001-complete-final-20261030c",
+    "modules": 64,
+    "local_declarations": 1666,
+    "report_sha256": "80efb577b0944e3e64d2c7418abf427b63ce28f1f683319d1a54895dd1f9489c",
+    "only_base_axioms": true
+  }
+}

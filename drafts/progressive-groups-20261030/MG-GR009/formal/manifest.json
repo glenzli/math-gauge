@@ -1,0 +1,316 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR009",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "d3c45cbc530b244d373d7e09823fb8eaa4969925a44cbabe7ac92d433a8f98c4",
+    "contract.json": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a",
+    "reference.md": "ed6a569d9ed574c65d931262e24a053478f3b0d419be9d9620ee91f4602c92ee",
+    "rubric.json": "5461942bd5353f7069401cd9e91d696ae5209179df00329cc8dcc51416d57135",
+    "task.md": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "ffe5711b50a133af311f7b13777f2970e04dbf9e815494082f911be4dce08a0f"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "76035290669a065697fe0835223c37d0aadc768a094a44e266557c7123698bc7"
+  },
+  "modules": [
+    {
+      "module": "SheafUniverseLocal",
+      "source": "SheafUniverseLocal.lean",
+      "sha256": "837f5025b9b7e65e554de54ab20637a0a6fe9fd1c58b059a6357fea880526578",
+      "imports": [
+        "Mathlib.CategoryTheory.Sites.LocallyBijective"
+      ]
+    },
+    {
+      "module": "SheafOrbitQuotient",
+      "source": "SheafOrbitQuotient.lean",
+      "sha256": "f3f294a26ca8f4d0bf7b6522babeff8dd288ce3f513bfda66c37855ddd3d29ab",
+      "imports": [
+        "SheafUniverseLocal",
+        "Mathlib.CategoryTheory.Sites.Coherent.LocallySurjective",
+        "Mathlib.Condensed.TopComparison",
+        "Mathlib.Topology.Category.Profinite.EffectiveEpi",
+        "Mathlib.GroupTheory.GroupAction.Quotient"
+      ]
+    },
+    {
+      "module": "SheafFibreProducts",
+      "source": "SheafFibreProducts.lean",
+      "sha256": "899a1356d62fb23b1f331bfe3b4493c8ed023fa3cb9efa16532f4b095a394103",
+      "imports": [
+        "SheafOrbitQuotient"
+      ]
+    },
+    {
+      "module": "SheafDescentCriterion",
+      "source": "SheafDescentCriterion.lean",
+      "sha256": "16bb293990b4df7fd4dc65a37442d1f0f07fb25c2374bc26c98319888f48a325",
+      "imports": [
+        "SheafFibreProducts"
+      ]
+    },
+    {
+      "module": "SheafQuotientRecovery",
+      "source": "SheafQuotientRecovery.lean",
+      "sha256": "6d1a2b2188c3eb86dcfb7c274c795300eb2d32cdf31ce80cda1b5d0622ad7b03",
+      "imports": [
+        "SheafDescentCriterion"
+      ]
+    },
+    {
+      "module": "SheafDescentMorphisms",
+      "source": "SheafDescentMorphisms.lean",
+      "sha256": "f49a77f48bc81b7204fbcf5525d379d63552ae6dc77189f98c13b982df4a32a4",
+      "imports": [
+        "SheafQuotientRecovery"
+      ]
+    },
+    {
+      "module": "SheafDescentEquivalence",
+      "source": "SheafDescentEquivalence.lean",
+      "sha256": "96ccca21df688aeacb9fe799ade5e660d7936683f7a979edb45f14cedbe0f420",
+      "imports": [
+        "SheafDescentMorphisms",
+        "Mathlib.CategoryTheory.Comma.Over.Basic"
+      ]
+    },
+    {
+      "module": "SheafBaseChange",
+      "source": "SheafBaseChange.lean",
+      "sha256": "4bb288b819495d6bce34c5dca1c85ea16f8a7108908b16ba34e0f746cbff8bbf",
+      "imports": [
+        "SheafDescentEquivalence"
+      ]
+    },
+    {
+      "module": "SheafBaseQuotient",
+      "source": "SheafBaseQuotient.lean",
+      "sha256": "7de556c4bece9ef60368a84c147f0717a3f88f6b974cfb1c072725a74f225395",
+      "imports": [
+        "SheafBaseChange"
+      ]
+    },
+    {
+      "module": "SheafQuotientExtras",
+      "source": "SheafQuotientExtras.lean",
+      "sha256": "77f38b590a4dae140ac8fca4be20ff1cd3a4f48d1ae32b22b49a1dff2ec8b155",
+      "imports": [
+        "SheafBaseChange"
+      ]
+    },
+    {
+      "module": "Kification",
+      "source": "Kification.lean",
+      "sha256": "abe59c8d3af0340e70d48daa84be7240834c0981b769a59bae48ab6528684ffb",
+      "imports": [
+        "Mathlib.Topology.Compactness.CompactlyGeneratedSpace",
+        "Mathlib.Topology.CompactOpen",
+        "Mathlib.Topology.Category.Profinite.EffectiveEpi",
+        "Mathlib.Topology.Category.TopCat.Yoneda"
+      ]
+    },
+    {
+      "module": "MappingExponential",
+      "source": "MappingExponential.lean",
+      "sha256": "b99450a5b097cd6e0b602990836f98975b98c0e411afcdd862b5b92afbf661d8",
+      "imports": [
+        "Kification"
+      ]
+    },
+    {
+      "module": "ProbeNaturality",
+      "source": "ProbeNaturality.lean",
+      "sha256": "bddfce51e7f3f721c86b5542255c49067123785d7cb955859182e8595a7b8a72",
+      "imports": [
+        "MappingExponential"
+      ]
+    },
+    {
+      "module": "MappingRecords",
+      "source": "MappingRecords.lean",
+      "sha256": "ffc24e9ba6ef16a10c873019b0455decec390c14cf9cf9e21c41e160a6df3282",
+      "imports": [
+        "ProbeNaturality"
+      ]
+    },
+    {
+      "module": "MappingNaturality",
+      "source": "MappingNaturality.lean",
+      "sha256": "fab7976dad16603a6c68ca5bbe5b2aec7ace4a8b92bf579a1f0d51d807c1e108",
+      "imports": [
+        "MappingRecords"
+      ]
+    },
+    {
+      "module": "MappingUniverse",
+      "source": "MappingUniverse.lean",
+      "sha256": "6054a5c252f1c2d19dea093c314f65b43bdf332347016649bb29a3f82ac027f2",
+      "imports": [
+        "MappingNaturality"
+      ]
+    },
+    {
+      "module": "ProfiniteDescent",
+      "source": "ProfiniteDescent.lean",
+      "sha256": "723cc6154c2aea2ee4134107e69cc3074d64d9d69032909afcf8c35ecf83338c",
+      "imports": [
+        "SheafBaseChange",
+        "MappingUniverse"
+      ]
+    },
+    {
+      "module": "ProfiniteOrbitLocal",
+      "source": "ProfiniteOrbitLocal.lean",
+      "sha256": "247203cff5124890c7cc56ccd35c88d2378e32027878d1bab39cf1e6135e9bcf",
+      "imports": [
+        "ProfiniteDescent"
+      ]
+    },
+    {
+      "module": "PointInvisibleAction",
+      "source": "PointInvisibleAction.lean",
+      "sha256": "8f1b4417868b717c2c2b274c5654701809b5e7fa7b01fe1b8b78ce9a135a14dc",
+      "imports": [
+        "ProfiniteOrbitLocal",
+        "Mathlib.Topology.Instances.CantorSet",
+        "Mathlib.Data.ZMod.Basic"
+      ]
+    },
+    {
+      "module": "PadicBoundary",
+      "source": "PadicBoundary.lean",
+      "sha256": "e11d562e9efdc0fff4794f6907e9af008a121b8a30e431ee1fa5990f072c7ebd",
+      "imports": [
+        "ProfiniteOrbitLocal",
+        "Mathlib.NumberTheory.Padics.ProperSpace",
+        "Mathlib.Topology.MetricSpace.Ultra.TotallySeparated",
+        "Mathlib.Topology.Baire.LocallyCompactRegular",
+        "Mathlib.Topology.Baire.Lemmas"
+      ]
+    },
+    {
+      "module": "R009Audit",
+      "source": "R009Audit.lean",
+      "sha256": "fcf4d5a9dfcb7bc322db1b32bde2abb694348436729ce91f07e5cbe25d9dc257",
+      "imports": [
+        "SheafQuotientExtras",
+        "SheafBaseQuotient",
+        "PointInvisibleAction",
+        "PadicBoundary",
+        "Lean.Util.CollectAxioms"
+      ]
+    },
+    {
+      "module": "FiniteOrbitSpace",
+      "source": "FiniteOrbitSpace.lean",
+      "sha256": "eea58385bd71bd5ef1d4e0f36d1ea2596a21c7244d6b04b6b236523ccc63f96f",
+      "imports": [
+        "ProfiniteOrbitLocal",
+        "Mathlib.Topology.Algebra.ConstMulAction",
+        "Mathlib.Topology.Separation.Profinite"
+      ]
+    },
+    {
+      "module": "FiniteOrbitSheaf",
+      "source": "FiniteOrbitSheaf.lean",
+      "sha256": "4882f6b0436062d1d2fc8d81b17d568753f7aaaedd7a29134a752694dd41e204",
+      "imports": [
+        "FiniteOrbitSpace"
+      ]
+    },
+    {
+      "module": "FreeOrbitDescent",
+      "source": "FreeOrbitDescent.lean",
+      "sha256": "4fa3c78ab3e1e7c91352a07206459956a79fc84f394682ea48c4e2f762dfabe6",
+      "imports": [
+        "FiniteOrbitSheaf"
+      ]
+    },
+    {
+      "module": "InducedFibre",
+      "source": "InducedFibre.lean",
+      "sha256": "a1c6c67d68b40bc711269a4e55a3b8fac7d60e872811cf5d4598dfe4d7892b25",
+      "imports": [
+        "Mathlib.GroupTheory.GroupAction.Quotient",
+        "Mathlib.GroupTheory.GroupAction.Hom",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "OrbitFibres",
+      "source": "OrbitFibres.lean",
+      "sha256": "5a0623080c3bf60519bfa10d2c6ee502bca605ae27f26eb920697395b11dd66d",
+      "imports": [
+        "InducedFibre"
+      ]
+    },
+    {
+      "module": "FibreReconstruction",
+      "source": "FibreReconstruction.lean",
+      "sha256": "4b65936b6b12f541871c83dba5e152e7074171bf22a12fd90f45662173f5450a",
+      "imports": [
+        "OrbitFibres"
+      ]
+    },
+    {
+      "module": "FibreMorphisms",
+      "source": "FibreMorphisms.lean",
+      "sha256": "73ba30efd955d34eef804f257c4a96fd35a0c2cc4b219133c9cfdececc998a1c",
+      "imports": [
+        "OrbitFibres"
+      ]
+    },
+    {
+      "module": "FibreAutomorphisms",
+      "source": "FibreAutomorphisms.lean",
+      "sha256": "3eb6b0a9d30d0c045c92f36214d78347fbdfb2a31b218d06add51377261db8d6",
+      "imports": [
+        "FibreMorphisms"
+      ]
+    },
+    {
+      "module": "FiniteRepresentedDescent",
+      "source": "FiniteRepresentedDescent.lean",
+      "sha256": "556ca70b9fd09ae3ca8a35e3131b9159b09d4d3e2282ab533df97b599c081090",
+      "imports": [
+        "FibreAutomorphisms",
+        "FreeOrbitDescent"
+      ]
+    },
+    {
+      "module": "LocalBaseDetection",
+      "source": "LocalBaseDetection.lean",
+      "sha256": "0ded44b32384db7b1a3cd54414754121c9879a83e4754821530628ba758c7d20",
+      "imports": [
+        "SheafBaseChange"
+      ]
+    },
+    {
+      "module": "NoncoveringBase",
+      "source": "NoncoveringBase.lean",
+      "sha256": "d3c5619ecb2a43b73508460e9fa11308437c181c07f30ff305942967eee545b7",
+      "imports": [
+        "PointInvisibleAction",
+        "LocalBaseDetection"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "0f756be9b8a347d7e848480f872b73781745fe20e09913246316dc6fdeeccc25",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

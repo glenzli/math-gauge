@@ -1,0 +1,274 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR001",
+  "case_version": "0.1.2",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "2e703b034d2f2e92a48780912ed9f378fe86b402d0d8720826edea285b340e08",
+    "contract.json": "734840d0e52fb6174a712d6c435dad58a3826eb386206be1b037aca7afe459f3",
+    "reference.md": "12d08fb170ddbae854df13e5f4b029c1daefb33648597be3386eb4390850e5ec",
+    "rubric.json": "f36ccda7da0e7052ffbb833205fa95d56ba63eb48bb17b3090be8495a33efd20",
+    "task.md": "36ba7bc90f0cccd6d1a7336aeb7833968c6f1009c75bb0b6ef2636bf66c061e9"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "5793e4cd4cc7c6437fbf07c29648ca44ab8c0e4957f8f71701d556982cfb4d7b"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "4a4541b060ecec2dd5fd02abb2188760ac5b75c20428385e124774a807c7f0e3"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "43b2eeadca67e0ac39f1018009576634c19f49e4a60c29b0e675495f87accf5a",
+      "imports": [
+        "Mathlib.Analysis.Normed.Algebra.GelfandFormula",
+        "Mathlib.Analysis.Matrix.Normed",
+        "Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs",
+        "Mathlib.Topology.Instances.ENNReal.Lemmas",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "Partial",
+      "source": "Partial.lean",
+      "sha256": "cf6a366ee9e5593f037e6b7650c615591be4163d143b840256f50f8b735e0a4e",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Bounds",
+      "source": "Bounds.lean",
+      "sha256": "262739382b36a0c21275f2dffa61ce2be71bab545f453146e7f8dd40f269894c",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Spectral",
+      "source": "Spectral.lean",
+      "sha256": "b353f0e9a6a2b5477960888f5e9a775ba02c2d381d30ff51674045c1f3740aae",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Weighted",
+      "source": "Weighted.lean",
+      "sha256": "80451dd41897e1218f6621706ec51bb52bd2c0b410f4afe7860f1c48da84373c",
+      "imports": [
+        "Bounds",
+        "Spectral",
+        "Mathlib.Analysis.SpecificLimits.Basic"
+      ]
+    },
+    {
+      "module": "Counterexample",
+      "source": "Counterexample.lean",
+      "sha256": "90b148b7d1d55e0b0b8bbf28597b861d7c33a49bd8979dba554090123c19e6be",
+      "imports": [
+        "Bounds",
+        "Partial",
+        "Mathlib.LinearAlgebra.Eigenspace.Basic",
+        "Mathlib.Analysis.SpecificLimits.Normed"
+      ]
+    },
+    {
+      "module": "Obstructions",
+      "source": "Obstructions.lean",
+      "sha256": "01204fd26d27d50619062b9523d735c1bd4c03cceac942c707789774b8042682",
+      "imports": [
+        "Core",
+        "Bounds",
+        "Spectral"
+      ]
+    },
+    {
+      "module": "Limits",
+      "source": "Limits.lean",
+      "sha256": "a8514de9637ea9e65b692efc385d927fffbcba70f2cd64a568b059681d780ec1",
+      "imports": [
+        "Counterexample"
+      ]
+    },
+    {
+      "module": "Extra",
+      "source": "Extra.lean",
+      "sha256": "e8ce297972b8f16a86fc2883e1605d5e397af534ff8f1bb8eab433e3e14a4c4d",
+      "imports": [
+        "Limits",
+        "Obstructions",
+        "Weighted",
+        "Mathlib.Topology.UniformSpace.Compact"
+      ]
+    },
+    {
+      "module": "Routes",
+      "source": "Routes.lean",
+      "sha256": "bf02b7195c3a962feef1b192ad0f81e77f473c4b13c3f68b7a6268346eaccf3b",
+      "imports": [
+        "Partial"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "d71c37aa1ea59c60aeca040e8d8d16ff30b3105b90a05acc6fd251bf8bff4bae",
+      "imports": [
+        "Extra",
+        "Routes"
+      ]
+    },
+    {
+      "module": "PathBounds",
+      "source": "PathBounds.lean",
+      "sha256": "7c036720fbeb20b7eb3a9a8299a538fa3d3d71e1503738005d1684afa8ada323",
+      "imports": [
+        "Routes",
+        "Bounds"
+      ]
+    },
+    {
+      "module": "Partitions",
+      "source": "Partitions.lean",
+      "sha256": "4ca0654d8eb37f44f3a96c276b034a3a1c0a153901d3f6e719061bb299c04e96",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "InputTransport",
+      "source": "InputTransport.lean",
+      "sha256": "e5ceb722b4293c9bd691a981391f14ecba27281d0c15f0369ab9d3fd402df816",
+      "imports": [
+        "Limits",
+        "Extra",
+        "Mathlib.LinearAlgebra.Matrix.Reindex"
+      ]
+    },
+    {
+      "module": "FiniteResidual",
+      "source": "FiniteResidual.lean",
+      "sha256": "2c7e41c888ecf15faed1af17f1173c26179859463065cbb110862af65c432446",
+      "imports": [
+        "Weighted"
+      ]
+    },
+    {
+      "module": "TerminationBoundary",
+      "source": "TerminationBoundary.lean",
+      "sha256": "21b8a8e0bc0fd39d4ef959794f6176757889897bc67ebf990c174344dc262571",
+      "imports": [
+        "Partial",
+        "Spectral",
+        "Bounds"
+      ]
+    },
+    {
+      "module": "AbsorbingTransport",
+      "source": "AbsorbingTransport.lean",
+      "sha256": "92d2b56f36982c5878576ddfcab55926235253cfe77ed0502aed17f2e2825cc5",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "FullTarget",
+      "source": "FullTarget.lean",
+      "sha256": "49152fbac17070a5d834b24f5f96cd77dddecfb6a7fe5aa4beaacf1dbff3e9c8",
+      "imports": [
+        "InputTransport",
+        "Partitions",
+        "FiniteResidual",
+        "PathBounds",
+        "TerminationBoundary"
+      ]
+    },
+    {
+      "module": "FullAudit",
+      "source": "FullAudit.lean",
+      "sha256": "911375408d18e04bc442a7e0fc5454cf91d8de2a48e71b0dff3a5906ace159b8",
+      "imports": [
+        "Core",
+        "Partial",
+        "Bounds",
+        "Spectral",
+        "Weighted",
+        "Counterexample",
+        "Obstructions",
+        "Limits",
+        "Extra",
+        "Routes",
+        "Reference",
+        "PathBounds",
+        "Partitions",
+        "InputTransport",
+        "FiniteResidual",
+        "TerminationBoundary",
+        "AbsorbingTransport",
+        "FullTarget",
+        "Lean.Util.CollectAxioms"
+      ]
+    },
+    {
+      "module": "CompleteFamilies",
+      "source": "CompleteFamilies.lean",
+      "sha256": "0359c98c8970ae12e57710b6a656298218441fae713dab209a7ee1062ceb99d0",
+      "imports": [
+        "FiniteResidual",
+        "Mathlib.Topology.MetricSpace.UniformConvergence",
+        "Mathlib.Topology.MetricSpace.Contracting"
+      ]
+    },
+    {
+      "module": "MatrixComparison",
+      "source": "MatrixComparison.lean",
+      "sha256": "524bddca09b92b2f5c19d0d5918cf079d3eec90f2b0514b9edd04caa0084075a",
+      "imports": [
+        "Spectral",
+        "Mathlib.LinearAlgebra.Matrix.NonsingularInverse"
+      ]
+    },
+    {
+      "module": "Perturbation",
+      "source": "Perturbation.lean",
+      "sha256": "dd0d518467a220b0d3c9c89fa218dd349bcadf6fe2cade201d4b4288e76e1b5c",
+      "imports": [
+        "CompleteFamilies",
+        "MatrixComparison"
+      ]
+    },
+    {
+      "module": "ScalarExamples",
+      "source": "ScalarExamples.lean",
+      "sha256": "037fecde9a806740dba79145d80afbc9259619df4ce6879513d842c3e2ffcfe5",
+      "imports": [
+        "CompleteFamilies",
+        "Partial"
+      ]
+    },
+    {
+      "module": "TerminationRates",
+      "source": "TerminationRates.lean",
+      "sha256": "92e210e8c41f78c42914c9ef717f35f73c027031492d577bc85289b32c8a8861",
+      "imports": [
+        "ScalarExamples"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "e061e70815c7385463898d2721a3dc74e4e4d8312623851a39d9f6a264bb7257",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR006",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "d21def873ba6e1494ed750ce39a70cad5dcf9aae8cfd9b56e9011a047a57557a",
+    "contract.json": "167a26b77d1495e9d04eb0dc1bc4e7a2fdaf908ac28dac5fccd81e095d7e8761",
+    "reference.md": "25534d64af63642e9a838f0868329bddff433ea26c6c47fa3b64f2953c8d921f",
+    "rubric.json": "c4e49a7305bb857c4bdba52b305de3f2c6e8c5ccefb4ca4bb8f0cd249b1be14a",
+    "task.md": "b20ec39e18239c62e1ad42a5f08d679e068677196d54327d31a47aca4b279f35"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "0f3b7b592d62c982c93a2c739c06751cd371d98d328f6c5834be3b62442d0b86"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "1c742c4c1fb19df302b8d488db293e5b333ca01f42a655d4ab50a5d48841d2a9"
+  },
+  "modules": [
+    {
+      "module": "AdicCounterexample",
+      "source": "AdicCounterexample.lean",
+      "sha256": "649cb782337869613e43d1fe42425a7a160ab3d9b45648a02506370e3df57208",
+      "imports": [
+        "Mathlib.Data.ZMod.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "AbelianTower",
+      "source": "AbelianTower.lean",
+      "sha256": "2ed1063b46b89f4e30591ae0cd0704e153bc7906125e9962cb20136943c257d3",
+      "imports": [
+        "Mathlib.GroupTheory.QuotientGroup.Basic",
+        "Mathlib.Algebra.Module.Pi",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "Obstruction",
+      "source": "Obstruction.lean",
+      "sha256": "76969955e7798a05eb94eafc92c506d363a435e2cdb95bf4b4ad5f4969e6835c",
+      "imports": [
+        "AbelianTower"
+      ]
+    },
+    {
+      "module": "ObstructionNaturality",
+      "source": "ObstructionNaturality.lean",
+      "sha256": "6062481e646ebbddde0ee422c129f50b77529d1706134baba06e05d2eec0b876",
+      "imports": [
+        "Obstruction"
+      ]
+    },
+    {
+      "module": "AdicObstruction",
+      "source": "AdicObstruction.lean",
+      "sha256": "30fba9a38ef253f4a9a0551c07e155180f416b2dee0f59caf22304b835a061f2",
+      "imports": [
+        "ObstructionNaturality",
+        "AdicCounterexample"
+      ]
+    },
+    {
+      "module": "R006Audit",
+      "source": "R006Audit.lean",
+      "sha256": "0c9fe573deea5d07078310a8ed4af442ebb8db0459a86b15cf059d2874a7fdb9",
+      "imports": [
+        "AdicCounterexample",
+        "AbelianTower",
+        "Obstruction",
+        "ObstructionNaturality",
+        "AdicObstruction",
+        "Lean.Util.CollectAxioms"
+      ]
+    },
+    {
+      "module": "FinitePrefixes",
+      "source": "FinitePrefixes.lean",
+      "sha256": "18fd66d9155399207811d2a2461564461731e1d5d282a7e1d1e8a864b06abf6c",
+      "imports": [
+        "ObstructionNaturality",
+        "Mathlib.CategoryTheory.CofilteredSystem",
+        "Mathlib.CategoryTheory.Functor.OfSequence"
+      ]
+    },
+    {
+      "module": "FiniteFibers",
+      "source": "FiniteFibers.lean",
+      "sha256": "d2dc16c58b21b5843439401f9cb7812dccd76d636170364123ac925781701890",
+      "imports": [
+        "FinitePrefixes"
+      ]
+    },
+    {
+      "module": "TowerChoices",
+      "source": "TowerChoices.lean",
+      "sha256": "004dc77cc8646c0cf544c90c7dc7dc6194eb94f89994605222b46180fb107113",
+      "imports": [
+        "FiniteFibers",
+        "Mathlib.Data.ZMod.Basic"
+      ]
+    },
+    {
+      "module": "TowerNaturality",
+      "source": "TowerNaturality.lean",
+      "sha256": "a260cfbe4324f818e45f58836cdf2eb2c966aee1fd02dbda03bd7a343a7a6739",
+      "imports": [
+        "TowerChoices"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "c3bb4ff920a9f3f852e0e05aba50cb97141d9e2e3047bec41b58ed0239286cb6",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

@@ -15,7 +15,7 @@ python3 -m math_gauge prepare --suite drafts/chapter-exams-20261030 \
   --case MG-C002 --out runs/chapter02
 ```
 
-每次使用新的输出目录。上述命令仅校验或准备材料，不调用模型。确切题目版本以各题`case.json`和修订记录为准；当前仍为draft / human pending，新增目标的完整作者Lean核验未完成。
+每次使用新的输出目录。上述命令仅校验或准备材料，不调用模型。确切题目版本以各题`case.json`和修订记录为准；当前仍为draft / human pending。[新增作者Lean账本](../results/author-lean-20261030/README.md)记录完整覆盖及GP003的未完成边界。
 
 三次独立初答及八题两轮自查的[材料包](../protocol/reliability-20261030/README.md)已有计划、消息和检查入口，但共享runner的多轮调度、历史绑定与KEEP/FULL组合尚未实现验收。下文单轮`run`命令不是该计划的一键执行器；新实验参数和执行须另行冻结与授权。
 
@@ -86,7 +86,19 @@ python3 scripts/formal/verify_suite.py \
   --out /absolute/path/to/new-author-verification --jobs 2
 ```
 
-P001 使用单独的 Lean 4.36/TauCeti profile，不能和默认 4.29.1 profile 混在一次调用。既有依赖缓存可复用，改变的题目模块须重新核验。当前 40 题完整作者主任务覆盖、P003 部分覆盖，不由“编译通过”自动扩大范围。
+P001与GP001使用单独的Lean4.36/TauCeti profile，不能和默认4.29.1 profile混在一次调用。既有依赖缓存可复用，改变的题目模块须重新核验。原版40题完整作者主任务覆盖、P003部分覆盖；新增43份使用独立v2清单和[逐项审核账本](../results/author-lean-20261030/README.md)，不由“编译通过”自动扩大范围。
+
+例如重新编译一份新增题组：
+
+```sh
+python3 scripts/formal/verify.py \
+  --manifest drafts/progressive-groups-20261030/MG-GR103/formal/manifest.json \
+  --dependency-root /absolute/path/to/pinned-dependency-project \
+  --lean /absolute/path/to/lean-4.29.1 \
+  --out /absolute/path/to/new-gr103-verification
+```
+
+仅复核本轮保存的源码、编译日志和独立审核身份，可运行`python3 results/author-lean-20261030/check_evidence.py`；它不调用模型或重新编译Lean，也不自动判断数学等价。
 
 **候选交付。** 使用 `math_gauge.execution.verify_candidate_lean` 从冻结答卷逐字提取文件，在受限环境原样编译并检查全部本地声明及公理依赖。参数和收据状态见[候选源码合同](../protocol/candidate-lean.md)。当前候选隔离实现要求 macOS 的 `sandbox-exec`；不支持的环境返回基础设施错误，不能当作候选数学失败。CLI 的旧 `check-lean` 入口不等同于这个候选答卷核验入口。
 

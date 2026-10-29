@@ -23,6 +23,7 @@ exercises/                           原41题章节/类型/版本目录、能力
 drafts/long-form-design-20261030/     长篇研究设计、来源和独立复核
 drafts/recursive-operator-closure/    R001前身及历史作者形式化
 results/                             明确归档的答卷、审核与运行证据
+results/author-lean-20261030/          新43份作者Lean的逐项审核、覆盖账本和证据身份复核
 archive/                             退役题集、原版本与归档说明
 examples/                            合成工作流演示
 ```
@@ -55,7 +56,7 @@ examples/                            合成工作流演示
 
 | 材料 | 身份与状态 |
 | --- | --- |
-| [当前递进题组](../drafts/progressive-groups-20261030/README.md)和[整章题](../drafts/chapter-exams-20261030/README.md) | 43份试卷，版本以逐题记录为准；draft/human pending；无新模型成绩，新增作者Lean完整核验待完成 |
+| [当前递进题组](../drafts/progressive-groups-20261030/README.md)和[整章题](../drafts/chapter-exams-20261030/README.md) | 43份试卷，版本以逐题记录为准；draft/human pending；无新模型成绩，作者Lean逐项覆盖见[独立证据账本](../results/author-lean-20261030/README.md) |
 | [原41题目录](../exercises/README.md)及四个源suite | 原单题集合与已有实验的阅读入口；当前目录R005为0.3.1，首轮冻结实验用0.3.0 |
 | [版本历史](../exercises/history.md)与`archive/` | 退役与前身材料，不重复计入当前试卷；部分仍是测试和目录检查的实际输入 |
 | [长篇研究设计](../drafts/long-form-design-20261030/README.md) | 研究依据、独立复核及尚未启用的方向，不计作实测样本 |

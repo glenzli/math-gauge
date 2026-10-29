@@ -1,0 +1,311 @@
+{
+  "schema": "math-gauge.independent-semantic-review/v1",
+  "case_id": "MG-GR002",
+  "case_version": "0.1.1",
+  "reviewer": "author-lean-r11-r20",
+  "status": "pass",
+  "review_scope": "Complete candidate task, reference, rubric, contract, case/review metadata and all actual mathematical source modules; current author alignment read after direct source review. Independent mathematical alignment audit; exact unchanged fresh compiler evidence reused, no candidate model execution.",
+  "source_hashes": {
+    "drafts/progressive-groups-20261030/MG-GR002/author-contract.json": "4d73306f974a09c04a606995f3839739eef3c245366c379bd0973ebcf8e68eb8",
+    "drafts/progressive-groups-20261030/MG-GR002/case.json": "88b086fa94d968c18cac22b88380f3ea11d1d09cf2d298b6e63c07e3bfc52256",
+    "drafts/progressive-groups-20261030/MG-GR002/contract.json": "8c2875d3e8ab39ba65f9914441af3c02aa85ae1e0258915d85bb11fc8b2f2dd2",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/COVERAGE.md": "3fe819143b7aada672eed78f34f15bd7890eaf4fa375904ddf82c2b1ab75f952",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/CompatibleRecords.lean": "df7e23dfa8a20dd380ff4eaaa063095000d52bcc1349b3816b79edc9885d8ab2",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/CurrentAudit.lean": "95c25aa94f5a3e2b2b2c1e604877feef04933d8fa002c99670f9eaabb9d874a9",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/FiniteMatching.lean": "664b9f3874475815bfdb8cb78c11e42d30abb0c6376d077bf5ca3a6e8a1c9b7d",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/RecordBidual.lean": "8f992f3ce6f2eb3d1efd98443b19820b3d5cd92468464ba1f0a4aa8912d49a17",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/RecordInstantiation.lean": "12da463daafd18947d13f5f7be14dac7a2fb0aa542a9222027ac0b052f359b08",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/RecordRealization.lean": "32c784fe4b81df92c8e91a052e0fdba20328a064549949b3ef368b536571b94a",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/RecordTransform.lean": "08de6ed2113f07b82b28ecb1598cf50dd5efb8666c1dd5e147a1bbed5ee6024b",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/ReflexiveRecovery.lean": "2eb4c58390204c573049173e5e78b3acb4e3c59c3b199717549853c944472f02",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/SharpFiniteBoundary.lean": "7a0f5443906499ac20012dac06fef8fe49b4c6ed459edd76b433901afdd9aaaa",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/SubspaceRecovery.lean": "3dfc63d3c7be4e37c699d110ae8580e7535ba41645be10dd435d33a9515d7f49",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/alignment.json": "b45731e069c1a3fcea5ad78d792c1abdac1977dd348dd895ba51e6f549afdd60",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/declarations.json": "750afcddfa0af3d68071cf3d06754216401e38216cd6187ed5e38cde90144504",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/manifest.json": "6536b75fbeb50ebde43a9c2c71b3958ac8a3e16d7655a66d59fe919611ed4d36",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/provenance.json": "b307be86c90da82922ef5b81ea605c3a5b5ae6fad4fcfc2bc3d9e2c46ad1f49c",
+    "drafts/progressive-groups-20261030/MG-GR002/formal/verification-report.json": "96d904918428c8f133ab51b814d1fedb14d4d3acdb0d296cf8acf4a3fe4fc646",
+    "drafts/progressive-groups-20261030/MG-GR002/provenance.json": "03b7913c8721be26d9f68f4ac502dc4f8ccd506aabed3750538975677e0af7df",
+    "drafts/progressive-groups-20261030/MG-GR002/reference.md": "6349cfc29883c26e03c9e853b4417dd58e4a40c8f40014cb05811a9d613bc5dd",
+    "drafts/progressive-groups-20261030/MG-GR002/review.json": "140371657096c6af7c7af7fa331d12c5f433a17c8fa3656b11c6bfe9a2b53821",
+    "drafts/progressive-groups-20261030/MG-GR002/rubric.json": "93da91bd5086f6fb4005c5d9e36e33c3a162ed6bd331d09a4c5ab0b3be107957",
+    "drafts/progressive-groups-20261030/MG-GR002/task.md": "919538d38d1904d79b25bf93437f5921d85962bcaad026af2735090da39b0f27"
+  },
+  "items": [
+    {
+      "id": "S1",
+      "status": "pass",
+      "analysis": "Record contains exactly local linear values on ALL finite-dimensional dual subspaces, compatibility under all inclusions, and existence of one uniform finite bound; it does not assume a bidual functional. Line and pair-subspace constructions establish an actual global bounded linear functional. Restriction and reconstruction are mutually inverse. recordDistance is the stated supremum over the closed unit dual ball, and its equality with the bidual norm is proved, including boundedness of the supremum set. J is the actual norm-preserving canonical embedding. T image subspaces and the exact local transform formula are proved before identification with the true double transpose, and canonical naturality is literal evaluation.",
+      "declarations": [
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.Record"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.Record.eval_eq"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.Record.toBidual"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.restrict"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.toBidual_restrict"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.restrict_toBidual"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.recordEquiv"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.recordDistance_eq_norm"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.J"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.J_norm"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.J_injective"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_formula"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_bound"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_toBidual"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.canonical_naturality"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S2",
+      "status": "pass",
+      "analysis": "Reflexivity is expressed as surjectivity of the same canonical J, not an extra noncanonical isomorphism. reflexiveRecover is selected from its actual preimage; representation, uniqueness, the supplied C bound and covariance for EVERY bounded T are proved. The two-operator inequality has exactly the task factors ||T|| times record distance plus ||T-U|| times the recovered second-vector norm, with no invertibility or commutativity hypothesis. Transformed record bounds are correctly C||T||.",
+      "declarations": [
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_represents"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_unique"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_given_bound"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_covariant"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.two_operator_stability"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.exact_stability"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S3",
+      "status": "pass",
+      "analysis": "The annihilator is the actual set of continuous functionals vanishing on Y. quotientMap is the genuine quotient and its norm is exactly infDist. Hahn-Banach on that quotient constructs a norm-at-most-one norming annihilator. This yields both inequalities for the actual supremum distance formula. Closedness is invoked only when infDist=0 is converted to membership, rather than quietly replacing Y by its closure. These statements specialize to the recovered reflexive-space record without extra assumptions.",
+      "declarations": [
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.quotientMap"
+        },
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.exists_norming_annihilator"
+        },
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.record_distance_formula"
+        },
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.member_iff_annihilator"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_represents"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S4",
+      "status": "pass",
+      "analysis": "The negative record is constructed on the actual continuous dual of the complete real c0 model C_0(N,R), via a genuine Hahn-Banach extension of scalar limits applied to bounded partial-one tests. This alternative avoids assuming c0 dual=l1; the compatibility, uniform C=1 bound and every coordinate value 1 are explicitly proved on that actual dual. Coordinate tests force a hypothetical original representative to be the constant-one sequence, contradicting vanishing at infinity. RecordInstantiation identifies this same example with the general Record representation.",
+      "declarations": [
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.original_space_complete"
+        },
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.counterexample"
+        },
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.z_bound"
+        },
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.z_coordinate"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0Record"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0Record_no_realization"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0Record_bidual_norm"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0_bidual_outside_original"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.realization_unique"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.exact_stability"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S5",
+      "status": "pass",
+      "analysis": "The topology in the hypothesis is the native WeakDual topology sigma(E prime,E), through the actual weak-to-strong underlying linear equivalence. The continuous-linear dual embedding theorem for that weak topology produces a genuine vector x, which is proved to represent all finite records. The converse is continuity of evaluation at x. The theorem is an iff for a single record on arbitrary normed E; it neither assumes reflexivity nor replaces weak-star continuity with norm continuity.",
+      "declarations": [
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.weakStar_continuous_iff_realizable"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.realization_unique"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.realization_given_bound"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.exact_stability"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_realization"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S6",
+      "status": "pass",
+      "analysis": "finiteObservation is exactly q_F with no norm constraint. Surjectivity follows from injectivity of the finite-dimensional pairing, and the actual kernel annihilator is proved to equal F. The quotient norm of every representative is bounded by the supplied C through a norming annihilator; norm_mk_lt then yields exact matching with C+epsilon for every positive epsilon, without assuming a minimum. The same actual c0 counterrecord and a norm-convergent sum of positive geometric weights define a continuous witness with record value 1, whereas every original norm<=1 vector has witness value strictly below 1. The final theorem explicitly combines ALL finite exact matches at every positive slack with no global representative.",
+      "declarations": [
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finiteObservation"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finiteObservation_surjective"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finite_kernel_annihilator"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finiteMatching_quotient_bound"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finite_exact_matching"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.weight_sum"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.witness_norm"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.record_witness"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.witness_not_attained"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.zero_epsilon_fails"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.finite_does_not_global"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.weakStar_continuous_iff_realizable"
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "verification": {
+    "fresh_report_status": "passed",
+    "manifest_sha256": "6536b75fbeb50ebde43a9c2c71b3958ac8a3e16d7655a66d59fe919611ed4d36",
+    "all_current_frozen_and_formal_hashes_match": true,
+    "declarations": 226,
+    "all_alignment_declarations_exist": true,
+    "fresh_compilation_repeated_for_review": false
+  },
+  "findings": [],
+  "human_approval": "pending",
+  "candidate_model_execution": "not-run"
+}

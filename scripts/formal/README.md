@@ -40,7 +40,23 @@ python3 cases/public/MG-R001/formal/verify.py \
 
 独立题集中的 `MG-P001` 等 `MG-P` 三位题号，以及 Lean 对齐题集的 `MG-F101` 等 `MG-F` 三位题号，也使用这个入口和相同的文件、公理审计合同；它们不自动加入默认二十题清单。现行全部 41 题的覆盖另见[习题账本](../../exercises/instructor-guide.md)。编译报告的 `passed` 只表示清单内模块通过核验。是否覆盖完整题面，仍须逐项核对 COVERAGE 与语义审查，不能将辅助模块通过改写为整题形式化完成。
 
-动态审计遍历实际载入的全部 `MathGauge` 常量，包括恢复私有名称后的辅助声明、定义、实例、归纳类型、生成声明和定理。它验证声明来自该题 manifest 的模块，遍历全部根的完整依赖闭包，仅允许 `propext`、`Classical.choice`、`Quot.sound`。结果中的 `dynamic_declaration_count` 是声明数，不能称为定理数。`declarations.json` 分别记录每个声明的名称、原用户名称、模块和种类。
+新增题组 `MG-GR/GP/GF` 和章节卷 `MG-C` 使用 `math-gauge.formal-case/v2`。除有序模块闭包之外，v2 绑定当前 `case.json`、题面、参考、评分标准、题组合同及全部候选附件；章节卷的 `candidate/task.md` 也按实际路径绑定。每个 `formal/alignment.json` 必须与合同的阶段或义务逐项对应，记录实际声明、假设、量词、定义域、结论、表示方式、依赖和未完成范围。`complete` 项必须列出声明且没有已知缺口；部分覆盖如实使用 `partial` 或 `pending`。
+
+先写真实证明、`COVERAGE.md` 和逐项对应表，再显式列出模块生成冻结清单：
+
+```sh
+python3 scripts/formal/prepare_author.py \
+  --case drafts/progressive-groups-20261030/MG-GR103 \
+  --module BlockFixedPoints --module TransferBoundaries
+```
+
+该命令只生成清单及审计源码，不编译也不生成覆盖结论。随后用上面的共用 `verify.py` 在新输出目录核验。v2 审计显式模块内的全部本地声明，包括非 `MathGauge` 命名空间和私有声明；对应表引用的声明必须实际出现在编译后的清单中。依赖包的公理仍由每个根的完整依赖闭包检查。原 v1 模板、历史源码与报告不改写。
+
+清单一致、声明存在和编译通过都不能自动证明题面等价。语义复核须检查每项的实际定理类型和定义展开，尤其是量词顺序、空域、严格/非严格边界、无穷值、代表元选择、反例满足的全部前提，以及前序题的加强条件是否被误带入。作者自述、独立 AI 审核与人工批准分别记录。
+
+v1 动态审计遍历实际载入的全部 `MathGauge` 常量；v2 遍历显式本地模块的所有命名空间。两者均包含恢复私有名称后的辅助声明、定义、实例、归纳类型、生成声明和定理，遍历全部根的完整公理依赖闭包，仅允许 `propext`、`Classical.choice`、`Quot.sound`。结果中的声明数不能称为定理数。`declarations.json` 分别记录每个声明的名称、原用户名称、模块和种类。
+
+新增43份试卷的[作者证据账本](../../results/author-lean-20261030/README.md)将固定输入、逐项语义审核和编译报告分别绑定。冻结参考或原作者合同中的“当时未生成 Lean”是历史状态；本轮增补状态以该账本和当前 `formal/` 为准，不能改写冻结参考制造事前已有证明的记录。
 
 每题 `report.json` 记录原始命令、源码/日志/olean 散列及公理审计；总报告记录逐题状态和 manifest 散列。坏散列、题目绑定变化、未证明占位符、缺失依赖、错误模块顺序、被替换的审计源码或额外公理都会失败。源码或依赖身份变化后，旧报告不能直接复用。
 

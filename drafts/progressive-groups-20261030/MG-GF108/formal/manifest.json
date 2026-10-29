@@ -1,0 +1,80 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF108",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "8da7abaa33d6c45caa4150353b6c88a43bac134d1696e56b937cf4e1f805a754",
+    "contract.json": "da53ea2db9a10a8c7025efedb11910e20e8bd4a0f90ad38dcd3c4ece781717c3",
+    "input/Candidate.lean": "bf3dc8364ac752fde665548fc59decc7045a7cbc2802dbcb687fc0a65159cbc4",
+    "input/Core.lean": "e75e22bbe2b82c240d47cf4dfc83d7d638421cb4bc4e528f8c7cb90256564156",
+    "input/Multiplier.lean": "51787e030e17b5187c88605b87d88c5b4bf482abb1848ded8a116787acc29c0b",
+    "reference.md": "de4007c7fbd0fd6219da4ac8ac34a58108e77d313a93780517578cb20c6ea156",
+    "rubric.json": "eb184913fcb12ce5f1b65bc05654ee8e91861c910a8fa241666b4b2a09de1a1e",
+    "task.md": "d7e316899535ee45eeb0140e9c27dab00ee6a1d2f4253d1cb7862a3ba563ea9a"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "48d1b26299e9da8133183446b857d43bafb28586d450dba11bfb48a845fc835c"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "84e9bb6e0ff9f18e6af961a6f5eca079674ca4490ae531e3ce91ce188fa4b413"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "e75e22bbe2b82c240d47cf4dfc83d7d638421cb4bc4e528f8c7cb90256564156",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "Multiplier",
+      "source": "Multiplier.lean",
+      "sha256": "51787e030e17b5187c88605b87d88c5b4bf482abb1848ded8a116787acc29c0b",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "ef6d1c3ca32e93f1116339cc8d3d06e67fd1eb6270501089ecb096f61b80ad46",
+      "imports": [
+        "Multiplier"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "4022ec1d1a3c0cb58d66d416576611d8f5d7b467e8950928ef5be9fed2618d79",
+      "imports": [
+        "Reference"
+      ]
+    },
+    {
+      "module": "Extensions",
+      "source": "Extensions.lean",
+      "sha256": "63a0e4710f55376e0ddfb269a94e5ea9265f6fda631ff982dea190bbe82cf03f",
+      "imports": [
+        "Reference",
+        "Candidate"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "21bc1501a3c34dd3b8296ab72506c48019f8e16f98fa482d0711f0949491dd61",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

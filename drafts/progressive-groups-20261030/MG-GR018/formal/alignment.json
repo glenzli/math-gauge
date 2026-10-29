@@ -1,0 +1,396 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR018",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.finite_point_unique"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.empty_no_record"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.evalFinite"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.evalFinite_natural"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.evalFinite_unique"
+        }
+      ],
+      "assumptions": [
+        "ZFC choice through Classical",
+        "Finite X, including empty X",
+        "All finite test maps satisfy naturality"
+      ],
+      "quantifiers": [
+        "Every X : Type u, with no restriction u=0",
+        "Every coherent r",
+        "Unique actual point x"
+      ],
+      "domains": [
+        "Record X uses Type 0 tests",
+        "evalFinite transports to every finite target universe"
+      ],
+      "conclusions": [
+        "Every record on finite X is a unique point record",
+        "No record exists on empty X",
+        "Finite skeleton transport and its uniqueness are proved"
+      ],
+      "representation": [
+        "Lean universes model the stated size separation; X can be in any larger universe",
+        "No use of X itself as a small test"
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.FiniteOperation"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.coordinateOperation"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.finite_operation_classification"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.no_nullary_operation"
+        }
+      ],
+      "assumptions": [
+        "Naturality for all finite targets and all maps",
+        "Fixed m : Nat"
+      ],
+      "quantifiers": [
+        "Every natural finite m-ary operation",
+        "Unique j : Fin m",
+        "Every finite A and every tuple Fin m → A"
+      ],
+      "domains": [
+        "FiniteOperation m",
+        "Includes m=0"
+      ],
+      "conclusions": [
+        "Exactly the coordinate operations",
+        "No nullary operation"
+      ],
+      "representation": [
+        "Generic tuple is id : Fin m → Fin m; transporting by each tuple proves necessity",
+        "Coordinate operations contain their full naturality proof"
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.BinaryRecord"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.majorityRecord"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.three_values_repeat"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.majority_natural"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.majority_not_point"
+        }
+      ],
+      "assumptions": [
+        "Bottom set Fin 3",
+        "Every allowed finite test has cardinality ≤2"
+      ],
+      "quantifiers": [
+        "All A,B of cardinality ≤2",
+        "Every f and every g, including constant maps",
+        "For every alleged point x a distinguishing Bool observation"
+      ],
+      "domains": [
+        "BinaryRecord (Fin 3)",
+        "Empty target admitted; there is no input Fin 3 → Empty"
+      ],
+      "conclusions": [
+        "Majority defines a fully natural allowed record",
+        "It differs from each point record"
+      ],
+      "representation": [
+        "Majority is literal if f 0=f 1 then f 0 else f 2",
+        "Three values repeat is derived from card ≤2, not assumed"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.classification"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.choose_fibre"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.map"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.point"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.flatten"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.map_id"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.map_comp"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.map_point"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.flatten_point"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.flatten_map_point"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.flatten_assoc"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.Record.flatten_natural"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.to_map"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.to_point"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.to_flatten_join"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.point_injective"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.point_surjective_iff_finite"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.evalFinite_natural"
+        },
+        {
+          "module": "FiniteObservations",
+          "name": "MathGauge.FiniteObservations.evalFinite_unique"
+        }
+      ],
+      "assumptions": [
+        "All finite-test naturality",
+        "Arbitrary X : Type u",
+        "ZFC"
+      ],
+      "quantifiers": [
+        "All records and all ultrafilters",
+        "Arbitrary maps across arbitrary universes",
+        "All second/third-order records for monad laws"
+      ],
+      "domains": [
+        "Record X ↔ Ultrafilter X",
+        "Finite target skeleton and universe transport"
+      ],
+      "conclusions": [
+        "Explicit inverse classification",
+        "Prescribed functor, unit and multiplication with all laws",
+        "Compatibility with ultrafilter pushforward, pure and join",
+        "Point records exhaust iff finite X"
+      ],
+      "representation": [
+        "Byte-identical copied author module from public MG-R018",
+        "Actual filter axioms and finite-fibre uniqueness proved; no classification axiom"
+      ],
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.selected_eq_extend"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.selected_continuous"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.continuous_observation_unique"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.clopen_is_basic"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.recordTopology"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.recordHomeomorph"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.record_observation_continuous"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.record_observation_unique"
+        }
+      ],
+      "assumptions": [
+        "Stone topology on ultrafilters",
+        "Finite discrete A, possibly empty",
+        "Record topology transported by proved classification"
+      ],
+      "quantifiers": [
+        "Every map X → A",
+        "Every continuous h : Record X → A",
+        "Unique originating f",
+        "Every clopen subset of ultrafilters"
+      ],
+      "domains": [
+        "Actual mathlib Stone topology generated by membership basic opens",
+        "No topology on X needed"
+      ],
+      "conclusions": [
+        "Each observation is continuous",
+        "Every continuous finite-valued observation is uniquely one e_A,f",
+        "Every clopen is one membership basic set"
+      ],
+      "representation": [
+        "Uses mathlib proved dense pure range and continuous extension, then derives uniqueness and clopen assertion",
+        "Construction valid for empty X or target"
+      ],
+      "dependencies": [
+        "S1",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.flatten_witness"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.flatten_not_injective_infinite"
+        },
+        {
+          "module": "ProgressiveObservations",
+          "name": "MathGauge.ProgressiveObservations.flatten_injective_iff_finite"
+        }
+      ],
+      "assumptions": [
+        "Same actual Record monad",
+        "Arbitrary X; ZFC for infinite free ultrafilter"
+      ],
+      "quantifiers": [
+        "Every X",
+        "Every non-point record gives two specific witnesses"
+      ],
+      "domains": [
+        "Record (Record X) → Record X"
+      ],
+      "conclusions": [
+        "Multiplication injective iff X finite",
+        "At a free record point r and map point r are distinct but have common flatten r"
+      ],
+      "representation": [
+        "Distinctness uses the set of all principal records via proved ultrafilter map formula",
+        "Finite case uses bijective point identification and the unit laws"
+      ],
+      "dependencies": [
+        "S1",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "source_hashes": {
+    "case.json": "b567032954096ab1252a574be1503ee13946aa155eb5eeccea13038a8f2818ee",
+    "task.md": "605eaea3498151f56829775c6bbf541ff0bf7d6c64f3767b6ff029d074238454",
+    "reference.md": "3d6b3cd679d1d9f4f7adf8f6b35d731f74365861956127a8e10d7f188a93c598",
+    "rubric.json": "2ccccabd12bac14254f6ff0fc447dc856b8dbf6755e0b5a567bed9b4d8f96934",
+    "contract.json": "78c240b95316852f302f52eaa03079f627fbb33351c36e7ae572cb84118c12c0"
+  },
+  "provenance": [
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R018/formal/FiniteObservations.lean",
+      "sha256": "2e83c8a373ced40ee2a06d00b7c3746b50220910ac12d0f5ac99a72dc16c70e6",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    }
+  ],
+  "human_review": "pending",
+  "candidate_model_execution": "not-run"
+}

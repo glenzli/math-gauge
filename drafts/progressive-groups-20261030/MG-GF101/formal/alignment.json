@@ -1,0 +1,272 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GF101",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Transfer",
+          "name": "MathGauge.F101.mapped_power"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_power_zero_iff"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.zero_exponent_iff"
+        }
+      ],
+      "assumptions": [
+        "R 为任意交换含幺环",
+        "A、B 为任意理想",
+        "r∈ℕ，允许 r=0"
+      ],
+      "quantifiers": "任意交换含幺环 R、任意理想 A,B 与所有 r∈ℕ。",
+      "domains": "理想 map 与 pow 为原定义；r=0 精确等价 B=⊤，允许零环。",
+      "conclusions": [
+        "证明 (q_B(A))^r=q_B(A^r)",
+        "证明 (q_B(A))^r=0 当且仅当 A^r⊆B，包含 r=0"
+      ],
+      "representation": "理想 map 与 pow 为原定义；r=0 精确等价 B=⊤，允许零环。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_power_zero"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_transition"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_composition"
+        },
+        {
+          "module": "Core",
+          "name": "MathGauge.F101.transition"
+        }
+      ],
+      "assumptions": [
+        "I 任意，无源理想幂零或有限生成假设",
+        "l≤m≤n 为自然数"
+      ],
+      "quantifiers": "任意 I，不给 SourceData；所有 l≤m≤n。",
+      "domains": "pow_le_pow_right 给自然理想包含，商映射存在；J 的精确 n+1 次幂为零。",
+      "conclusions": [
+        "证明 J_n^(n+1)=0",
+        "证明 ρ_mn(J_n)=J_m",
+        "证明 ρ_lm∘ρ_mn=ρ_ln"
+      ],
+      "representation": "pow_le_pow_right 给自然理想包含，商映射存在；J 的精确 n+1 次幂为零。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.transition_surjective"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.transition_kernel"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.transition_bijective_iff"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.transition_equiv_of_powers_eq"
+        }
+      ],
+      "assumptions": [
+        "R、I 同上",
+        "m≤n"
+      ],
+      "quantifiers": "每对 m≤n，核为 q_n(I^(m+1))，指定过渡同态双射 iff 两幂理想相等。",
+      "domains": "从真实双射构造 RingEquiv；没有把仅存在抽象同构当作指定同态同构。",
+      "conclusions": [
+        "证明 ρ_mn 满射",
+        "证明 ker ρ_mn=q_n(I^(m+1))",
+        "证明 ρ_mn 为同构当且仅当 I^(m+1)=I^(n+1)"
+      ],
+      "representation": "从真实双射构造 RingEquiv；没有把仅存在抽象同构当作指定同态同构。",
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.uniform_bound_iff_intersection"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.uniform_top_int"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.top_int_not_nilpotent"
+        }
+      ],
+      "assumptions": [
+        "R、I 同上",
+        "存在固定 N∈ℕ 使对每个 n∈ℕ，J_n^N=0"
+      ],
+      "quantifiers": "ℤ 的单位理想，单个 N=1 对所有 n 同时有效，源理想所有幂均非零。",
+      "domains": "一般条件只推出 I^N≤iInf powers，不能擅自把交集换为0。",
+      "conclusions": [
+        "判断该条件是否推出 I 幂零",
+        "给出所有 n 同时满足条件而 I 不幂零的反例",
+        "解释单层与源理想的逻辑差别"
+      ],
+      "representation": "一般条件只推出 I^N≤iInf powers，不能擅自把交集换为0。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.separated_uniform_iff"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.zero_exponent_iff"
+        }
+      ],
+      "assumptions": [
+        "R、I 同上",
+        "⋂_{n∈ℕ} I^(n+1)=0",
+        "固定 N∈ℕ"
+      ],
+      "quantifiers": "已知 iInf_n I^(n+1)=⊥，每个固定 N（含0）两边等价。",
+      "domains": "保留同一个指数，不使用 Noether/Krull 定理或非零环假设。",
+      "conclusions": [
+        "证明 (∀n,J_n^N=0) 当且仅当 I^N=0",
+        "保留同一个 N，不仅证明某个幂零次数",
+        "处理 N=0 的零环边界"
+      ],
+      "representation": "保留同一个指数，不使用 Noether/Krull 定理或非零环假设。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F101.candidate_nilpotent"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F101.candidate_transition"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F101.candidate_composition"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F101.no_source_data_top_int"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_power_zero"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_transition"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F101.residual_composition"
+        }
+      ],
+      "assumptions": [
+        "回到 S2 的任意 R、I 条件",
+        "只把附件中真实提供的字段和定理视为已有证明"
+      ],
+      "quantifiers": "按 Candidate 三项逐一审计其参数和输出。",
+      "domains": "SourceData 的指数/annihilates 是额外源幂零假设且对单位整数理想不可构造；修复直接证商的指定幂。像与复合仍正确。",
+      "conclusions": [
+        "逐一核对 Candidate 三项与 S2 的全部条件及结论",
+        "指出 SourceData 的数学含义和调用义务",
+        "区分精确次数、存在某次数和真正的可编译性",
+        "给出无需 SourceData 的正确修复路线"
+      ],
+      "representation": "SourceData 的指数/annihilates 是额外源幂零假设且对单位整数理想不可构造；修复直接证商的指定幂。像与复合仍正确。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "attribution": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Candidate.lean",
+      "source_sha256": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879",
+      "author_copy": "Candidate.lean",
+      "author_sha256": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Core.lean",
+      "source_sha256": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+      "author_copy": "Core.lean",
+      "author_sha256": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Reference.lean",
+      "source_sha256": "be44257dc8620733ed98789d42ff13f43885fa09a773c6fc3f9530cbe1e5a339",
+      "author_copy": "Reference.lean",
+      "author_sha256": "be44257dc8620733ed98789d42ff13f43885fa09a773c6fc3f9530cbe1e5a339",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Transfer.lean",
+      "source_sha256": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+      "author_copy": "Transfer.lean",
+      "author_sha256": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+      "unchanged": true
+    }
+  ]
+}

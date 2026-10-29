@@ -1,6 +1,6 @@
 # 文档导航
 
-Math Gauge 的当前主试卷是 **43 份材料**：41 个递进题组，以及两份整章 Lean 考试。确切版本以逐题 `case.json` 和修订记录为准；它们仍为 draft / human pending，尚无模型成绩。新增目标的完整作者 Lean 核验与多轮调度验收也未完成。
+Math Gauge 的当前主试卷是 **43 份材料**：41 个递进题组，以及两份整章 Lean 考试。确切版本以逐题 `case.json` 和修订记录为准；它们仍为 draft / human pending，尚无模型成绩。[作者 Lean 证据账本](../results/author-lean-20261030/README.md)记录逐项形式化、真实编译及独立语义审核，明确保留 GP003 的未完成部分。多轮调度仍待实现验收。
 
 已经实测的原版是另一套 **41 道单题**。其七章目录、原始答卷和冻结成绩继续保留，不能将其成绩套到新试卷上。
 
@@ -14,6 +14,7 @@ Math Gauge 的当前主试卷是 **43 份材料**：41 个递进题组，以及�
 | 研究评测设计 | [评测方法](evaluation-methods.md) → [基础协议](../protocol/evaluation.md) → [题组合同](../protocol/question-groups.md) | 实验单位、输入边界、严格完成与错误传播 |
 | 准备或规划新实验 | [使用指南](usage.md) → [重复执行协议](../protocol/reliability-execution.md) → [评分标准](../protocol/reliability-scoring.md) → [材料包](../protocol/reliability-20261030/README.md) | 可用单轮入口，以及尚未实现验收的多轮部分 |
 | 复核已有成绩 | [结果与版本](results.md) → 对应结果 README → 逐题答卷与审核 → [离线复算](usage.md) | 冻结版本、分母、实际运行条件及保存判断的汇总一致性 |
+| 复核新增题目的作者 Lean | [作者证据账本](../results/author-lean-20261030/README.md) → 逐题 alignment、源码、编译报告与独立语义审核 | 实际命题与题面的对应、固定源码身份和未完成边界 |
 | 新增题目或维护代码 | [仓库地图](repository-map.md) → [贡献指南](../CONTRIBUTING.md) | 唯一材料来源、代码职责、对应验证与保存要求 |
 | 阅读原版习题 | [原 41 题七章目录](../exercises/README.md) → [任务类型](../exercises/task-types.md) → [版本历史](../exercises/history.md) | 原版题目的主题、变体相关性与历史身份 |
 

@@ -1,0 +1,375 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR017",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.discrete_lifts"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.coproduct_lifts"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.finite_coproduct_profinite"
+        }
+      ],
+      "assumptions": [
+        "Finite discrete source, or finite family of profinite sources with full lifting property",
+        "ZFC choice"
+      ],
+      "quantifiers": [
+        "All profinite Y,Z in arbitrary universes",
+        "All continuous surjections q and continuous f",
+        "Includes empty source/family"
+      ],
+      "domains": [
+        "Actual topological Sigma coproduct",
+        "Lifts is the exact original universal property"
+      ],
+      "conclusions": [
+        "Finite discrete source has full lifting property",
+        "Finite coproduct is profinite and has full lifting property"
+      ],
+      "representation": [
+        "discrete_lifts and coproduct_lifts are stronger lifting statements without finiteness; finite_coproduct_profinite separately supplies exactly the required finiteness-dependent compactness"
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.retract_lifts"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.product_discrete_lifts"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.finite_product_profinite"
+        }
+      ],
+      "assumptions": [
+        "Actual continuous i:P→Q,r:Q→P with r∘i=id",
+        "Q has full lifting property",
+        "Finite discrete factor A"
+      ],
+      "quantifiers": [
+        "All lifting diagrams",
+        "All points of Q×A"
+      ],
+      "domains": [
+        "Original continuous maps and product topology"
+      ],
+      "conclusions": [
+        "Retraction preserves full lifting property",
+        "Q×A profinite and has full lifting property"
+      ],
+      "representation": [
+        "Lift constructed as g∘i in the retraction case",
+        "Product lift glued along open discrete-coordinate fibers; finite_product_profinite proves compactness, with empty factor included"
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.ultrafilter_lifts"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.ultrafilter_profinite"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.counit"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.counit_continuous"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.counit_surjective"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.projective_has_counit_section"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.counit_section_projective"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.projective_iff_counit_retract"
+        }
+      ],
+      "assumptions": [
+        "Arbitrary set D; actual Stone ultrafilter topology",
+        "P compact Hausdorff totally disconnected",
+        "ZFC"
+      ],
+      "quantifiers": [
+        "Every profinite lifting diagram",
+        "Both directions of projectivity iff actual counit retract"
+      ],
+      "domains": [
+        "Ultrafilter D from pinned Mathlib",
+        "counit=Ultrafilter.extend id"
+      ],
+      "conclusions": [
+        "Ultrafilter D profinite and projective",
+        "Counit continuous surjective",
+        "Projectivity gives continuous section; any such section gives full projectivity"
+      ],
+      "representation": [
+        "Necessity instantiates original Lifts in the universe containing P and Ultrafilter P",
+        "Sufficiency quantifies over arbitrary target universes, so the same-universe iff does not restrict the resulting universal property",
+        "No set-theoretic choice is silently called continuous: discrete principal-point map is continuously extended"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.factor_profinite"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.ultrafilter_lifts"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.diagonalPoints_open"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.closure_diagonalPoints"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.diagonal_not_open"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.coverSet_closed"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.coverMap_continuous"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.coverMap_surjective"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.coverMap_no_section"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.counterexample"
+        },
+        {
+          "module": "ProductLifting",
+          "name": "MathGauge.ProductLifting.product_not_lifts"
+        }
+      ],
+      "assumptions": [
+        "Both factors actual Ultrafilter Nat profinite and have full lifting property"
+      ],
+      "quantifiers": [
+        "All source/target diagrams for factors",
+        "Explicit cover of product has no continuous section"
+      ],
+      "domains": [
+        "Concrete closed two-sheeted cover",
+        "Product Stone topology"
+      ],
+      "conclusions": [
+        "Both factor assumptions verified",
+        "Actual continuous surjective coverMap",
+        "No continuous section, hence product fails full lifting property"
+      ],
+      "representation": [
+        "ProductLifting copied byte-identically with frozen provenance",
+        "Closure of principal diagonal is nonopen diagonal proved explicitly"
+      ],
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.finite_range_lift"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.range_fiber_open"
+        }
+      ],
+      "assumptions": [
+        "Continuous f with finite actual range in Hausdorff Z",
+        "Surjective q; original continuity/profinite conditions may be retained"
+      ],
+      "quantifiers": [
+        "Every such f, no projectivity assumption on source",
+        "Actual empty-range case included"
+      ],
+      "domains": [
+        "Subspace topology of range f, proved discrete by finite T1",
+        "Original source P and target Y"
+      ],
+      "conclusions": [
+        "Construct continuous lift",
+        "Actual finite fibers of f are open (and closed under original assumptions)"
+      ],
+      "representation": [
+        "Choice is made on the finite discrete range, composed with continuous range factorization; no continuity of an arbitrary global section is assumed"
+      ],
+      "dependencies": [
+        "S1",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.LiftSpace"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.FiberMaps"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.restrictLift"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.glue"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.glue_restrict"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.glue_continuous"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.liftFiberEquiv"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.ClopenPartitions"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.mapPartition"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.partitionMap"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.partitionMap_fiber"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.partitionMap_continuous"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.continuousMapPartitionEquiv"
+        },
+        {
+          "module": "ProgressiveLifting",
+          "name": "MathGauge.ProgressiveLifting.finiteLiftPartitionEquiv"
+        }
+      ],
+      "assumptions": [
+        "Same finite-range continuous f",
+        "Hausdorff Z",
+        "For partition specialization each actual Y_z is finite and Y Hausdorff"
+      ],
+      "quantifiers": [
+        "All continuous lifts",
+        "All families of arbitrary continuous maps P_z→Y_z",
+        "All labelled clopen partitions, including empty blocks"
+      ],
+      "domains": [
+        "LiftSpace uses original continuous maps satisfying qg=f",
+        "FiberMaps uses actual subspace fibers indexed by actual range f"
+      ],
+      "conclusions": [
+        "Explicit restriction/gluing equivalence with both inverse laws and continuity",
+        "Finite-fiber lifts equivalent to full labelled clopen partition families"
+      ],
+      "representation": [
+        "No claim that all lifts are constant on fibers",
+        "partitionMap chooses the unique label from a genuine partition and proves continuity; no map-existence certificate in the partition definition"
+      ],
+      "dependencies": [
+        "S1",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "source_hashes": {
+    "case.json": "eb20f723d7f1ad7c510a0beedb521f057b253de1f7e467716aac04d0b49fd78b",
+    "task.md": "6f23f69e51d915885bce87e783d84d9a880da1feb0f3b696dd25546b7182394e",
+    "reference.md": "77b5201fd682b2d4f810548872cfcbbdf6fa045307d5c5d35cad946c2209c293",
+    "rubric.json": "54a185f6829139a8067998749ad15d23a5d8f7af0bcdf074a12db84c82afdff0",
+    "contract.json": "1c954e80c2f98316b091ae7892f073f189ebbf93a9ce7a900f09c50177718e4f"
+  },
+  "provenance": [
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R017/formal/ProductLifting.lean",
+      "sha256": "324896cc42f0bedb9725012ce4fb18f0c6b20e958754454302d50d395e7ae8af",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    }
+  ],
+  "human_review": "pending",
+  "candidate_model_execution": "not-run"
+}

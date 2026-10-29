@@ -1,0 +1,287 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GF104",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.induced_injective_discrete"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.singleton_discrete_initial"
+        },
+        {
+          "module": "Boundary",
+          "name": "MathGauge.F104.legacyAssembled_eq_bot"
+        }
+      ],
+      "assumptions": [
+        "A 为单元素集",
+        "Y 带离散拓扑",
+        "f:X→Y 为单射",
+        "X 可为空"
+      ],
+      "quantifiers": "单个单射到离散空间；X可空。",
+      "domains": "任意U=f^-1(f(U))使诱导拓扑离散；原sInf可行拓扑构造总离散，恰在此特例正确。",
+      "conclusions": [
+        "证明使 f 连续的最粗拓扑是 X 的离散拓扑",
+        "说明附件 assembled 在这个范围的值并检查是否满足此特殊目标"
+      ],
+      "representation": "任意U=f^-1(f(U))使诱导拓扑离散；原sInf可行拓扑构造总离散，恰在此特例正确。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_realizes"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_coarsest"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_inbound"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_unique"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.empty_family"
+        }
+      ],
+      "assumptions": [
+        "A 任意，含空指标族",
+        "X、Y_a 任意",
+        "目标拓扑任意，不假设离散或 T0"
+      ],
+      "quantifiers": "任意指标/源/目标族，所有测试域Z与s,g，含空族。",
+      "domains": "修复 assembled 为iInf induced；无单射、离散、T0或非空前提。",
+      "conclusions": [
+        "构造唯一最粗 τ_f 并证明每个 f_a 连续",
+        "证明对任意 Z,s,g，Continuous g ↔ ∀a Continuous(f_a∘g)",
+        "解释 A 为空时的拓扑"
+      ],
+      "representation": "修复 assembled 为iInf induced；无单射、离散、T0或非空前提。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.subspace_initial"
+        }
+      ],
+      "assumptions": [
+        "A、X、Y、f 同 S2",
+        "E⊆X 任意，含空集",
+        "E 取 τ_f 的子空间拓扑"
+      ],
+      "quantifiers": "任意E:Set X，包括空集；包含为Subtype.val。",
+      "domains": "induced_iInf与induced_compose给严格相等，无E开闭要求。",
+      "conclusions": [
+        "证明子空间拓扑等于限制映射 f_a|E 的初始拓扑",
+        "明确包含映射 i:E→X 及所有合成",
+        "不假设 E 开、闭或非空"
+      ],
+      "representation": "induced_iInf与induced_compose给严格相等，无E开闭要求。",
+      "dependencies": [
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.jointly_injective_t0"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.subspace_t0"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.empty_joint_subsingleton"
+        }
+      ],
+      "assumptions": [
+        "每个 Y_a 为 T0 空间",
+        "观测族联合单射：若 ∀a,f_a(x)=f_a(x′)，则 x=x′",
+        "A 仍允许为空"
+      ],
+      "quantifiers": "每目标T0，∀x,y,(∀i,f_i x=f_i y)→x=y；指标可无限/空。",
+      "domains": "用标准T0Space及Inseparable连续像证明；限制族仍联合单射，任意E成立。空族强制Subsingleton X。",
+      "conclusions": [
+        "判断 (X,τ_f) 是否必为 T0",
+        "证明不同点能被一个开集区分",
+        "核查空指标族与空/单点 X"
+      ],
+      "representation": "用标准T0Space及Inseparable连续像证明；限制族仍联合单射，任意E成立。空族强制Subsingleton X。",
+      "dependencies": [
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.top_bool_not_t0"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.t0_targets_counterexample"
+        }
+      ],
+      "assumptions": [
+        "每个 Y_a 为 T0 空间",
+        "不再假设观测族联合单射",
+        "其余仍同 S2"
+      ],
+      "quantifiers": "Bool源、Unit唯一目标为T0，常值观测。",
+      "domains": "精确算τ=⊤且Bool非T0，同时证明联合单射条件失败。",
+      "conclusions": [
+        "判断 (X,τ_f) 是否必为 T0",
+        "给出完全明确的有限反例并计算 τ_f",
+        "解释 S4 哪条条件不再满足"
+      ],
+      "representation": "精确算τ=⊤且Bool非T0，同时证明联合单射条件失败。",
+      "dependencies": [
+        "S2",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Boundary",
+          "name": "MathGauge.F104.legacyAssembled_eq_bot"
+        },
+        {
+          "module": "Boundary",
+          "name": "MathGauge.F104.discrete_fails_coarsest"
+        },
+        {
+          "module": "Boundary",
+          "name": "MathGauge.F104.inbound_reverse_fails"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_realizes"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_coarsest"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_inbound"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F104.candidate_unique"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.subspace_initial"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.jointly_injective_t0"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F104.t0_targets_counterexample"
+        }
+      ],
+      "assumptions": [
+        "保持 S2 的完整范围",
+        "S3、S4、S5 各自只使用本阶段声明的条件",
+        "允许替换错误构造，但不得增加原目标假设"
+      ],
+      "quantifiers": "原错误构造由Legacy保存为legacyAssembled；修复仅修改作者侧Construction/Candidate。",
+      "domains": "证明原构造恒离散及完整映入逆向失败见证；不是把编译错误当数学反例。所有候选输入原件未动。",
+      "conclusions": [
+        "提交修复后的 Core/Construction/Candidate 及新增所需完整源码",
+        "完整形式化 S2 的连续、最粗、唯一、映入 iff 四项",
+        "形式化 S3 子空间等式、S4 T0 结论及 S5 有限反例",
+        "给出 assembled 恒为离散及一般情形失效的形式化见证",
+        "逐声明映射数学义务并真实编译、审计公理"
+      ],
+      "representation": "证明原构造恒离散及完整映入逆向失败见证；不是把编译错误当数学反例。所有候选输入原件未动。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "attribution": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Boundary.lean",
+      "source_sha256": "1fba57b1421205f094bf5ae58b43182abcda091ab80f5068496d73832ff1c986",
+      "author_copy": "Boundary.lean",
+      "author_sha256": "c470665df0b44dd42a6a339646c7ea0f2ff7f0949a3cc7ca256eb7bf5d86e708",
+      "unchanged": false
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Candidate.lean",
+      "source_sha256": "7b1279b41b9f312f5a6add9cad0b3be42beaf3285e07cbaa17ac75c4f86d4abd",
+      "author_copy": "Candidate.lean",
+      "author_sha256": "5566b734b4eada0590b9176025561cceb76c689fa89c2cf0f00aa88e44251383",
+      "unchanged": false
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Construction.lean",
+      "source_sha256": "67bbe2203a4c1f57fd67a2c4788ecaff0aaf01334de888bccfb89c2dbda32e58",
+      "author_copy": "Construction.lean",
+      "author_sha256": "16bc9c113fea00de5423ef91b6b51bfd0bee7a541f36196cd05d1674b50c08fd",
+      "unchanged": false
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Core.lean",
+      "source_sha256": "d59012829c811a3807727ecc79ddad2d42772564e4cf48f92271bf582f3bae45",
+      "author_copy": "Core.lean",
+      "author_sha256": "d59012829c811a3807727ecc79ddad2d42772564e4cf48f92271bf582f3bae45",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Reference.lean",
+      "source_sha256": "276e0820b5164de97dd6ceab5f8cba5046e2fbf361b2c0025bc8856582d69c1e",
+      "author_copy": "Reference.lean",
+      "author_sha256": "276e0820b5164de97dd6ceab5f8cba5046e2fbf361b2c0025bc8856582d69c1e",
+      "unchanged": true
+    }
+  ]
+}

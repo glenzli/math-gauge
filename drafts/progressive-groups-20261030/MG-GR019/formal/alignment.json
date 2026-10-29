@@ -1,0 +1,406 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR019",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observe"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observationMap"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observationMap_continuous"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observationMap_surjective"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observation_profinite"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observation_kernel"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observation_fiber"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observation_universal"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.componentObservationHomeomorph"
+        }
+      ],
+      "assumptions": [
+        "X compact Hausdorff"
+      ],
+      "quantifiers": [
+        "All X : Type u",
+        "Every finite discrete target in any universe",
+        "Unique continuous factor"
+      ],
+      "domains": [
+        "Actual clopen Bool observation map",
+        "P is its actual range with subspace product topology"
+      ],
+      "conclusions": [
+        "P compact Hausdorff totally disconnected",
+        "Continuous surjection",
+        "Full universal property",
+        "Fibers exactly connected components"
+      ],
+      "representation": [
+        "Bool is the stated two-point discrete test",
+        "Universal property proved for all T2 totally disconnected targets, hence finite discrete targets"
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.component_product"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.componentProductHomeomorph"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observationProductHomeomorph"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observation_product_natural"
+        }
+      ],
+      "assumptions": [
+        "X,Y compact Hausdorff"
+      ],
+      "quantifiers": [
+        "Every pair of spaces, including empty spaces"
+      ],
+      "domains": [
+        "Actual observation images of X,Y,X×Y"
+      ],
+      "conclusions": [
+        "Natural map P(X×Y)→P(X)×P(Y) is a homeomorphism"
+      ],
+      "representation": [
+        "First proves equality of actual connected components with their products, then transports through proved observation/component homeomorphisms"
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.componentMap"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.connected_fiber_component_preimage"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.connected_fiber_preimage_connected"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.connected_fiber_component_bijective"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.connectedFiberObservationHomeomorph"
+        }
+      ],
+      "assumptions": [
+        "Continuous surjection between compact Hausdorff spaces",
+        "Every actual fiber is connected"
+      ],
+      "quantifiers": [
+        "Every y and every connected component of Y"
+      ],
+      "domains": [
+        "Original subspace preimages and the induced map on component quotients"
+      ],
+      "conclusions": [
+        "Preimage of each component is a connected component",
+        "Induced map of observation images is a homeomorphism"
+      ],
+      "representation": [
+        "Uses the closed quotient property derived from compactness, continuity, Hausdorffness and surjectivity; connected-fiber condition is used by the connected-preimage theorem"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.Algebra"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.mem_join"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.mem_pushforward"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.kernel_closed"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.main"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.hom_iff_continuous"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.fromTopology"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.topology_roundtrip"
+        },
+        {
+          "module": "UltrafilterAlgebras",
+          "name": "MathGauge.UltrafilterAlgebras.algebra_roundtrip"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.Reflection"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.reflection_universal"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.project_fibre"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.finiteAlgebra_limit_iff"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.finite_observation_factorization"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.project_eq_iff_finite"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.project_injective_iff_observations"
+        },
+        {
+          "module": "ProfiniteReflection",
+          "name": "MathGauge.UltrafilterAlgebras.finite_observations_separate_iff"
+        }
+      ],
+      "assumptions": [
+        "Only the two supplied algebra laws on a set",
+        "Classical choice"
+      ],
+      "quantifiers": [
+        "Every set X in arbitrary universe",
+        "Every target profinite space and every finite target in arbitrary universe",
+        "All maps"
+      ],
+      "domains": [
+        "Native Ultrafilter X with exact set-membership formulas",
+        "Coinduced topology from the Stone ultrafilter space",
+        "Actual connected-component quotient"
+      ],
+      "conclusions": [
+        "Unique compact Hausdorff topology with exactly the specified ultrafilter limits",
+        "Both topology/algebra round trips",
+        "All homomorphisms exactly continuous maps",
+        "Full profinite reflection and fiber classification",
+        "Exact injectivity criterion via all finite observations"
+      ],
+      "representation": [
+        "No topology assumed as part of Algebra",
+        "Finite skeleton criterion is bridged to every finite target",
+        "S1 additionally identifies the reflection with the literal clopen-observation image"
+      ],
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProductAlgebras",
+          "name": "MathGauge.ProductAlgebras.map_join"
+        },
+        {
+          "module": "ProductAlgebras",
+          "name": "MathGauge.ProductAlgebras.product"
+        },
+        {
+          "module": "ProductAlgebras",
+          "name": "MathGauge.ProductAlgebras.product_topology"
+        },
+        {
+          "module": "ProductAlgebras",
+          "name": "MathGauge.ProductAlgebras.productObservationHomeomorph"
+        },
+        {
+          "module": "ObservationTopology",
+          "name": "MathGauge.ObservationTopology.observation_product_natural"
+        }
+      ],
+      "assumptions": [
+        "a,b satisfy exactly unit and associativity"
+      ],
+      "quantifiers": [
+        "All X,Y and all ultrafilters on their product",
+        "All second ultrafilters for associativity"
+      ],
+      "domains": [
+        "Actual ultrafilters U(X×Y), not pairs U(X)×U(Y)"
+      ],
+      "conclusions": [
+        "Coordinate formula defines an algebra",
+        "Recovered topology equals the ordinary product of recovered topologies",
+        "Finite-observation quotient is the natural product quotient"
+      ],
+      "representation": [
+        "Unit and associativity are fields proved in the constructor",
+        "Topology equality is obtained from actual filter convergence to pairs",
+        "Quotient homeomorphism stated in the equal product topology"
+      ],
+      "dependencies": [
+        "S2",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.fold"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.fold_continuous"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.fold_surjective"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.fold_component_bijective"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.quotientHomeomorph"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.quotient_natural"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.fiber_not_connected"
+        },
+        {
+          "module": "DisconnectedFiber",
+          "name": "MathGauge.DisconnectedFiber.counterexample"
+        }
+      ],
+      "assumptions": [
+        "Actual X=[−1,1],Y=[0,1] with real subspace topologies"
+      ],
+      "quantifiers": [
+        "All original points for the induced quotient identity",
+        "A specified disconnected fiber over 1"
+      ],
+      "domains": [
+        "f(x)=x²",
+        "Compact Hausdorff connected interval spaces"
+      ],
+      "conclusions": [
+        "Continuous surjection",
+        "Induced observation map is a homeomorphism",
+        "Fiber over 1 is not connected"
+      ],
+      "representation": [
+        "Surjectivity constructed using real square root",
+        "Disconnectedness derived from intermediate value on the fiber image, which would force zero to square to one",
+        "No abstract homeomorphism substituted for the actual induced map"
+      ],
+      "dependencies": [
+        "S1",
+        "S3"
+      ],
+      "gaps": []
+    }
+  ],
+  "source_hashes": {
+    "case.json": "20b1f6e717c168663595a272bee3be9ee0984e228ba6cba98a549a0a457209d6",
+    "task.md": "551ac5ee723b990d0fad9eee2630344579eeedf6ec93cd1ab3faca6a81775d0b",
+    "reference.md": "13566f6c0456218813f120fc9807dbcf93a97b83f8e5de0a37c5d5a58baa9bf0",
+    "rubric.json": "83bb4b1d0f3461514c1ac956984f8f10ce353330fdc9d9a5b4137532543577f8",
+    "contract.json": "7326f9af21075f39b993d64785c9ca9f2ed836084698f1d7df51a046152a3866"
+  },
+  "provenance": [
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R019/formal/UltrafilterAlgebras.lean",
+      "sha256": "a4720b71d7291ff0ef110eba5c870ada6d67e993992e573db43fb4e271540b4a",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    },
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R019/formal/ProfiniteReflection.lean",
+      "sha256": "a2fd39c1a63a3f8a9d5abc89f1bec7dc534dccfaf8c21d51bd598d47d837b162",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    }
+  ],
+  "human_review": "pending",
+  "candidate_model_execution": "not-run"
+}

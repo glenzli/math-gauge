@@ -1,0 +1,385 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GP002",
+  "case_version": "0.1.1",
+  "review": {
+    "author_semantic_review": "complete",
+    "independent_review": "pending",
+    "human": "pending",
+    "candidate_model_execution": "not-run"
+  },
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MathGauge.GP002.FiniteBand",
+          "name": "MathGauge.GP002.radius"
+        },
+        {
+          "module": "MathGauge.GP002.FiniteBand",
+          "name": "MathGauge.GP002.mem_frequencyBand"
+        },
+        {
+          "module": "MathGauge.GP002.FiniteBand",
+          "name": "MathGauge.GP002.frequencyBand_nonempty"
+        },
+        {
+          "module": "MathGauge.GP002.FiniteBand",
+          "name": "MathGauge.GP002.supported_series_eq_finite_sum"
+        },
+        {
+          "module": "MathGauge.GP002.FiniteBand",
+          "name": "MathGauge.GP002.bandConstant_formula"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.nativeBand_iff_fourier_support"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_solves"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_unique"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.nativeTransport_band"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_left_inverse"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_norm"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_norm_attained"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_best_constant"
+        }
+      ],
+      "assumptions": "α无理，任意实截断N≥1和任意实Sobolev阶r；没有把有限频带的下界当成全频带下界。",
+      "quantifiers": [
+        "MathGauge.GP002.radius: MathGauge.PublicProof.Torus.PairFrequency → ℝ",
+        "MathGauge.GP002.mem_frequencyBand: ∀ (N : ℝ) (k : MathGauge.PublicProof.Torus.PairFrequency),\n  k ∈ MathGauge.GP002.frequencyBand N ↔ k ≠ 0 ∧ MathGauge.GP002.radius k ≤ N",
+        "MathGauge.GP002.frequencyBand_nonempty: ∀ {N : ℝ}, 1 ≤ N → (MathGauge.GP002.frequencyBand N).Nonempty",
+        "MathGauge.GP002.supported_series_eq_finite_sum: ∀ {B : Finset MathGauge.PublicProof.Torus.PairFrequency} {a : MathGauge.PublicProof.Torus.PairFrequency → ℂ},\n  MathGauge.GP002.Supported B a →\n    ∀ (x : MathGauge.PublicProof.Torus.Borrowed.TorusInverse.Plane),\n      MathGauge.PublicProof.Torus.Borrowed.TorusInverse.series a x =\n        ∑ k ∈ B, a k * MathGauge.PublicProof.Torus.Borrowed.TorusInverse.mode k x",
+        "MathGauge.GP002.bandConstant_formula: ∀ (α N : ℝ) (hN : 1 ≤ N),\n  MathGauge.GP002.bandConstant α N hN =\n    (MathGauge.GP002.frequencyBand N).sup' ⋯ fun k => 1 / (2 * Real.pi * |MathGauge.PublicProof.Torus.pairDivisor α k|)",
+        "MathGauge.GP002.nativeBand_iff_fourier_support: ∀ (N : ℝ) (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.GP002.NativeBand N u ↔\n    MathGauge.PublicProof.Torus.Smooth u ∧\n      MathGauge.GP002.Supported (MathGauge.GP002.frequencyBand N)\n        (MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.coefficient (MathGauge.PublicProof.Torus.coverOf u))",
+        "MathGauge.GP002.finiteNativeInverse: ℝ → ℝ → C(MathGauge.PublicProof.Torus.Torus2, ℂ) → C(MathGauge.PublicProof.Torus.Torus2, ℂ)",
+        "MathGauge.GP002.finiteNativeInverse_solves: ∀ {α : ℝ},\n  Irrational α →\n    ∀ (N : ℝ) (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n      MathGauge.GP002.NativeBand N F →\n        MathGauge.GP002.NativeBand N (MathGauge.GP002.finiteNativeInverse α N F) ∧\n          MathGauge.PublicProof.Torus.Smooth (MathGauge.GP002.finiteNativeInverse α N F) ∧\n            MathGauge.PublicProof.Torus.MeanZero ⇑(MathGauge.GP002.finiteNativeInverse α N F) ∧\n              ∀ (y : MathGauge.PublicProof.Torus.Torus2),\n                MathGauge.PublicProof.Torus.transport α (⇑(MathGauge.GP002.finiteNativeInverse α N F)) y = F y",
+        "MathGauge.GP002.finiteNativeInverse_unique: ∀ {α : ℝ},\n  Irrational α →\n    ∀ (N : ℝ) (F u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n      MathGauge.GP002.NativeBand N F →\n        MathGauge.GP002.NativeBand N u →\n          (∀ (y : MathGauge.PublicProof.Torus.Torus2), MathGauge.PublicProof.Torus.transport α (⇑u) y = F y) →\n            u = MathGauge.GP002.finiteNativeInverse α N F",
+        "MathGauge.GP002.nativeTransport_band: ∀ (α N : ℝ) (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)) (hu : MathGauge.GP002.NativeBand N u),\n  MathGauge.GP002.NativeBand N (MathGauge.PublicProof.Torus.nativeTransport α u ⋯)",
+        "MathGauge.GP002.finiteNativeInverse_left_inverse: ∀ {α : ℝ},\n  Irrational α →\n    ∀ (N : ℝ) (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)) (hu : MathGauge.GP002.NativeBand N u),\n      MathGauge.GP002.finiteNativeInverse α N (MathGauge.PublicProof.Torus.nativeTransport α u ⋯) = u",
+        "MathGauge.GP002.finiteNativeInverse_norm: ∀ (α N : ℝ) (hN : 1 ≤ N) (r : ℝ) (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.GP002.NativeBand N F →\n    MathGauge.PublicProof.Torus.nativeHNorm r ⇑(MathGauge.GP002.finiteNativeInverse α N F) ≤\n      MathGauge.GP002.bandConstant α N hN * MathGauge.PublicProof.Torus.nativeHNorm r ⇑F",
+        "MathGauge.GP002.finiteNativeInverse_norm_attained: ∀ (α N : ℝ) (hN : 1 ≤ N) (r : ℝ),\n  ∃ F,\n    MathGauge.GP002.NativeBand N F ∧\n      0 < MathGauge.PublicProof.Torus.nativeHNorm r ⇑F ∧\n        MathGauge.PublicProof.Torus.nativeHNorm r ⇑(MathGauge.GP002.finiteNativeInverse α N F) =\n          MathGauge.GP002.bandConstant α N hN * MathGauge.PublicProof.Torus.nativeHNorm r ⇑F",
+        "MathGauge.GP002.finiteNativeInverse_best_constant: ∀ (α N : ℝ) (hN : 1 ≤ N) (r C : ℝ),\n  (∀ (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n      MathGauge.GP002.NativeBand N F →\n        MathGauge.PublicProof.Torus.nativeHNorm r ⇑(MathGauge.GP002.finiteNativeInverse α N F) ≤\n          C * MathGauge.PublicProof.Torus.nativeHNorm r ⇑F) →\n    MathGauge.GP002.bandConstant α N hN ≤ C"
+      ],
+      "domains": "实际T²上的复值有限三角多项式；0<Euclidean |k|≤N。频率先用ℤ×ℤ，母题frequencyEquiv证明与Fin 2→ℤ的对应。",
+      "conclusions": "实际微分算子保持H_N，构造双侧逆与唯一性；最优范数是有限频带上1/(2π|αk1+k2|)的最大值，任意r相同且单频取到。",
+      "representation": "NativeBand是实际有限Fourier和的像，并与真实系数支持条件等价；supported_series_eq_finite_sum把级数落实为有限和。以对所有输入的上界、非零输入取等和best_constant刻画实际逆范数；不是未证明的证书常量。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.small_divisor_hypothesis_iff"
+        },
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.cutoffWeight_le_pairWeight"
+        },
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.cutoffWeight_power"
+        },
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.truncate_inverse_commute"
+        },
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.inverse_tail_bound"
+        },
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.truncation_estimate"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.nativeSeries_reconstruct"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.nativeSeries_sub"
+        },
+        {
+          "module": "MathGauge.GP002.FunctionModels",
+          "name": "MathGauge.GP002.finiteNativeInverse_solves"
+        },
+        {
+          "module": "MathGauge.GP002.Quantitative",
+          "name": "MathGauge.GP002.uniform_truncation_estimate"
+        }
+      ],
+      "assumptions": "α无理；c>0、s≥0且全部非零整频率满足原下界；F真实光滑零均值；r任意实，q≥0，N≥1。",
+      "quantifiers": [
+        "MathGauge.GP002.small_divisor_hypothesis_iff: ∀ (α s c : ℝ),\n  (∀ (k : MathGauge.PublicProof.Torus.PairFrequency),\n      k ≠ 0 → c * MathGauge.PublicProof.Torus.pairWeight k ^ (-s) ≤ |MathGauge.PublicProof.Torus.pairDivisor α k|) ↔\n    ∀ (k : MathGauge.PublicProof.Torus.PairFrequency),\n      k ≠ 0 → c ≤ MathGauge.PublicProof.Torus.pairWeight k ^ s * |MathGauge.PublicProof.Torus.pairDivisor α k|",
+        "MathGauge.GP002.cutoffWeight_le_pairWeight: ∀ {N : ℝ},\n  0 ≤ N →\n    ∀ (k : MathGauge.PublicProof.Torus.PairFrequency),\n      N ≤ MathGauge.GP002.radius k → MathGauge.GP002.cutoffWeight N ≤ MathGauge.PublicProof.Torus.pairWeight k",
+        "MathGauge.GP002.cutoffWeight_power: ∀ (N q : ℝ), MathGauge.GP002.cutoffWeight N ^ (-q) = (1 + N ^ 2) ^ (-q / 2)",
+        "MathGauge.GP002.truncate_inverse_commute: ∀ (α N : ℝ) (a : MathGauge.PublicProof.Torus.PairFrequency → ℂ),\n  MathGauge.GP002.truncate N (MathGauge.PublicProof.Torus.generalInverseCoefficients α a) =\n    MathGauge.PublicProof.Torus.generalInverseCoefficients α (MathGauge.GP002.truncate N a)",
+        "MathGauge.GP002.inverse_tail_bound: ∀ {α s c : ℝ},\n  Irrational α →\n    0 ≤ s →\n      0 < c →\n        (∀ (k : MathGauge.PublicProof.Torus.PairFrequency),\n            k ≠ 0 → c ≤ MathGauge.PublicProof.Torus.pairWeight k ^ s * |MathGauge.PublicProof.Torus.pairDivisor α k|) →\n          ∀ (a : MathGauge.PublicProof.Torus.PairFrequency → ℂ),\n            MathGauge.PublicProof.Torus.Borrowed.TorusInverse.Rapid a →\n              a 0 = 0 →\n                ∀ (N r q : ℝ),\n                  0 ≤ N →\n                    0 ≤ q →\n                      MathGauge.GP002.sequenceNorm r\n                          (MathGauge.PublicProof.Torus.generalInverseCoefficients α a -\n                            MathGauge.GP002.truncate N (MathGauge.PublicProof.Torus.generalInverseCoefficients α a)) ≤\n                        1 / (2 * Real.pi * c) * (1 + N ^ 2) ^ (-q / 2) * MathGauge.GP002.sequenceNorm (r + s + q) a",
+        "MathGauge.GP002.truncation_estimate: ∀ {α s c : ℝ},\n  Irrational α →\n    0 ≤ s →\n      0 < c →\n        (∀ (k : MathGauge.PublicProof.Torus.PairFrequency),\n            k ≠ 0 → c ≤ MathGauge.PublicProof.Torus.pairWeight k ^ s * |MathGauge.PublicProof.Torus.pairDivisor α k|) →\n          ∀ (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n            MathGauge.PublicProof.Torus.Smooth F →\n              MathGauge.PublicProof.Torus.MeanZero ⇑F →\n                ∀ (N r q : ℝ),\n                  1 ≤ N →\n                    0 ≤ q →\n                      ∃ u,\n                        MathGauge.PublicProof.Torus.Smooth u ∧\n                          MathGauge.PublicProof.Torus.MeanZero ⇑u ∧\n                            (∀ (y : MathGauge.PublicProof.Torus.Torus2),\n                                MathGauge.PublicProof.Torus.transport α (⇑u) y = F y) ∧\n                              MathGauge.PublicProof.Torus.nativeHNorm r\n                                  (⇑u - ⇑(MathGauge.GP002.finiteNativeInverse α N F)) ≤\n                                1 / (2 * Real.pi * c) * (1 + N ^ 2) ^ (-q / 2) *\n                                  MathGauge.PublicProof.Torus.nativeHNorm (r + s + q) ⇑F",
+        "MathGauge.GP002.nativeSeries_reconstruct: ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)) (hu : MathGauge.PublicProof.Torus.Smooth u),\n  MathGauge.GP002.nativeSeries\n      (MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.coefficient (MathGauge.PublicProof.Torus.coverOf u)) ⋯ =\n    u",
+        "MathGauge.GP002.nativeSeries_sub: ∀ {a b : MathGauge.PublicProof.Torus.PairFrequency → ℂ} (ha : MathGauge.PublicProof.Torus.Borrowed.TorusInverse.Rapid a)\n  (hb : MathGauge.PublicProof.Torus.Borrowed.TorusInverse.Rapid b),\n  MathGauge.GP002.nativeSeries (a - b) ⋯ = MathGauge.GP002.nativeSeries a ha - MathGauge.GP002.nativeSeries b hb",
+        "MathGauge.GP002.finiteNativeInverse_solves: ∀ {α : ℝ},\n  Irrational α →\n    ∀ (N : ℝ) (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n      MathGauge.GP002.NativeBand N F →\n        MathGauge.GP002.NativeBand N (MathGauge.GP002.finiteNativeInverse α N F) ∧\n          MathGauge.PublicProof.Torus.Smooth (MathGauge.GP002.finiteNativeInverse α N F) ∧\n            MathGauge.PublicProof.Torus.MeanZero ⇑(MathGauge.GP002.finiteNativeInverse α N F) ∧\n              ∀ (y : MathGauge.PublicProof.Torus.Torus2),\n                MathGauge.PublicProof.Torus.transport α (⇑(MathGauge.GP002.finiteNativeInverse α N F)) y = F y",
+        "MathGauge.GP002.uniform_truncation_estimate: for fixed irrational α, real s≥0,c>0 and the actual small-divisor bound, every actual smooth zero-mean torus F admits one u, Smooth u and MeanZero u and transport α u = F, such that for all real N,r,q with 1≤N and 0≤q the exact tail inequality holds. The existential u precedes every N,r,q quantifier."
+      ],
+      "domains": "实际归一化T²，实际原生方向导数、真实积分Fourier系数及题定Euclidean Sobolev范数。",
+      "conclusions": "构造同一个实际光滑零均值解u，有限频带解就是对F_N逐模求逆；证明精确(2πc)^−1(1+N²)^(-q/2)尾估计，包含q=0。",
+      "representation": "先证明原文c⟨k⟩^(-s)下界与乘权形式等价，再由Rapid的真正导数级数收敛构造nativeSeries；Parseval/Fourier表示桥保持实际范数，尾部差不是虚构形式级数。 uniform_truncation_estimate 先以 N=1,r=q=0 固定一个解，再由已证真实零均值解唯一性将所有 N,r,q 的精确估计转到该同一个解；没有依赖范数指标重新选解。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MathGauge.GP002.DirectionDifference",
+          "name": "MathGauge.GP002.multiplier_difference"
+        },
+        {
+          "module": "MathGauge.GP002.DirectionDifference",
+          "name": "MathGauge.GP002.multiplier_difference_norm"
+        },
+        {
+          "module": "MathGauge.GP002.DirectionDifference",
+          "name": "MathGauge.GP002.multiplier_difference_bound"
+        },
+        {
+          "module": "MathGauge.GP002.DirectionDifference",
+          "name": "MathGauge.GP002.finite_direction_difference"
+        },
+        {
+          "module": "MathGauge.GP002.DirectionDifference",
+          "name": "MathGauge.GP002.native_direction_difference"
+        }
+      ],
+      "assumptions": "相同有限频带N≥1；两个方向都在该带满足同一个δ>0下界；原文α、β无理可用于S1的逆身份。",
+      "quantifiers": [
+        "MathGauge.GP002.multiplier_difference: ∀ (α β : ℝ) (k : MathGauge.PublicProof.Torus.PairFrequency),\n  MathGauge.PublicProof.Torus.pairDivisor α k ≠ 0 →\n    MathGauge.PublicProof.Torus.pairDivisor β k ≠ 0 →\n      MathGauge.PublicProof.Torus.generalMultiplier α k - MathGauge.PublicProof.Torus.generalMultiplier β k =\n        ↑((β - α) * ↑k.1) /\n          (MathGauge.PublicProof.Torus.Borrowed.TorusInverse.omega * ↑(MathGauge.PublicProof.Torus.pairDivisor α k) *\n            ↑(MathGauge.PublicProof.Torus.pairDivisor β k))",
+        "MathGauge.GP002.multiplier_difference_norm: ∀ (α β : ℝ) (k : MathGauge.PublicProof.Torus.PairFrequency),\n  MathGauge.PublicProof.Torus.pairDivisor α k ≠ 0 →\n    MathGauge.PublicProof.Torus.pairDivisor β k ≠ 0 →\n      ‖MathGauge.PublicProof.Torus.generalMultiplier α k - MathGauge.PublicProof.Torus.generalMultiplier β k‖ =\n        |α - β| * |↑k.1| /\n          (2 * Real.pi * |MathGauge.PublicProof.Torus.pairDivisor α k| * |MathGauge.PublicProof.Torus.pairDivisor β k|)",
+        "MathGauge.GP002.multiplier_difference_bound: ∀ {α β δ N : ℝ},\n  0 < δ →\n    ∀ k ∈ MathGauge.GP002.frequencyBand N,\n      δ ≤ |MathGauge.PublicProof.Torus.pairDivisor α k| →\n        δ ≤ |MathGauge.PublicProof.Torus.pairDivisor β k| →\n          ‖MathGauge.PublicProof.Torus.generalMultiplier α k - MathGauge.PublicProof.Torus.generalMultiplier β k‖ ≤\n            |α - β| * N / (2 * Real.pi * δ ^ 2)",
+        "MathGauge.GP002.finite_direction_difference: ∀ {α β δ N : ℝ},\n  0 < δ →\n    1 ≤ N →\n      (∀ k ∈ MathGauge.GP002.frequencyBand N, δ ≤ |MathGauge.PublicProof.Torus.pairDivisor α k|) →\n        (∀ k ∈ MathGauge.GP002.frequencyBand N, δ ≤ |MathGauge.PublicProof.Torus.pairDivisor β k|) →\n          ∀ (r : ℝ) (a : MathGauge.PublicProof.Torus.PairFrequency → ℂ),\n            MathGauge.GP002.Supported (MathGauge.GP002.frequencyBand N) a →\n              MathGauge.GP002.sequenceNorm r\n                  (MathGauge.PublicProof.Torus.generalInverseCoefficients α a -\n                    MathGauge.PublicProof.Torus.generalInverseCoefficients β a) ≤\n                |α - β| * N / (2 * Real.pi * δ ^ 2) * MathGauge.GP002.sequenceNorm r a",
+        "MathGauge.GP002.native_direction_difference: ∀ {α β δ N : ℝ},\n  0 < δ →\n    1 ≤ N →\n      (∀ k ∈ MathGauge.GP002.frequencyBand N, δ ≤ |MathGauge.PublicProof.Torus.pairDivisor α k|) →\n        (∀ k ∈ MathGauge.GP002.frequencyBand N, δ ≤ |MathGauge.PublicProof.Torus.pairDivisor β k|) →\n          ∀ (r : ℝ) (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n            MathGauge.GP002.NativeBand N F →\n              MathGauge.PublicProof.Torus.nativeHNorm r\n                  (⇑(MathGauge.GP002.finiteNativeInverse α N F) - ⇑(MathGauge.GP002.finiteNativeInverse β N F)) ≤\n                |α - β| * N / (2 * Real.pi * δ ^ 2) * MathGauge.PublicProof.Torus.nativeHNorm r ⇑F"
+      ],
+      "domains": "同一实际F∈H_N，任意实r；比较两实际环面函数的H^r范数。",
+      "conclusions": "精确证明||uα−uβ||≤|α−β|N/(2πδ²)||F||；没有扩展为全频率或所有参数统一界。",
+      "representation": "复逆乘子差先作真实代数恒等式，再取模；保留两个不同小除数因子，最后通过已证明的真实Fourier函数桥求和。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MathGauge.PublicProof.Torus.Functions",
+          "name": "MathGauge.PublicProof.Torus.Smooth"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Functions",
+          "name": "MathGauge.PublicProof.Torus.MeanZero"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Functions",
+          "name": "MathGauge.PublicProof.Torus.transport"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Representation",
+          "name": "MathGauge.PublicProof.Torus.smooth_iff_coverOf"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Representation",
+          "name": "MathGauge.PublicProof.Torus.nativeHNorm_eq_cover"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.NativeAnalysis",
+          "name": "MathGauge.PublicProof.Torus.nativeCNorm_eq_cover"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.NativeTheorems",
+          "name": "MathGauge.PublicProof.Torus.native_solution_unique"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.NativeTheorems",
+          "name": "MathGauge.PublicProof.Torus.native_smoothSurjective_iff"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.NativeTheorems",
+          "name": "MathGauge.PublicProof.Torus.native_sobolev_iff"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.NativeTheorems",
+          "name": "MathGauge.PublicProof.Torus.native_quadratic_sobolev_iff"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.FullTarget",
+          "name": "MathGauge.PublicProof.Torus.native_fixed_full_solution"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.FullTarget",
+          "name": "MathGauge.PublicProof.Torus.native_fixed_Cm_bound"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.FullTarget",
+          "name": "MathGauge.PublicProof.Torus.native_sobolev_summable"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.FullTarget",
+          "name": "MathGauge.PublicProof.Torus.native_CMValues_bounded"
+        }
+      ],
+      "assumptions": "任意无理α；全部非负实损失s和所有实阶r；特定α*=√2−1；m任意自然数。",
+      "quantifiers": [
+        "MathGauge.PublicProof.Torus.Smooth: C(MathGauge.PublicProof.Torus.Torus2, ℂ) → Prop",
+        "MathGauge.PublicProof.Torus.MeanZero: (MathGauge.PublicProof.Torus.Torus2 → ℂ) → Prop",
+        "MathGauge.PublicProof.Torus.transport: ℝ → (MathGauge.PublicProof.Torus.Torus2 → ℂ) → MathGauge.PublicProof.Torus.Torus2 → ℂ",
+        "MathGauge.PublicProof.Torus.smooth_iff_coverOf: ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.PublicProof.Torus.Smooth u ↔ ContDiff ℝ (↑⊤) (MathGauge.PublicProof.Torus.coverOf u)",
+        "MathGauge.PublicProof.Torus.nativeHNorm_eq_cover: ∀ (r : ℝ) (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.PublicProof.Torus.nativeHNorm r ⇑u =\n    MathGauge.PublicProof.Torus.hNorm r (MathGauge.PublicProof.Torus.coverOf u)",
+        "MathGauge.PublicProof.Torus.nativeCNorm_eq_cover: ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.PublicProof.Torus.Smooth u →\n    ∀ (m : ℕ),\n      MathGauge.PublicProof.Torus.nativeCNorm m ⇑u =\n        MathGauge.PublicProof.Torus.cmNormCover m (MathGauge.PublicProof.Torus.coverOf u)",
+        "MathGauge.PublicProof.Torus.native_solution_unique: ∀ {α : ℝ},\n  Irrational α →\n    ∀ {u v : C(MathGauge.PublicProof.Torus.Torus2, ℂ)},\n      MathGauge.PublicProof.Torus.Smooth u →\n        MathGauge.PublicProof.Torus.Smooth v →\n          MathGauge.PublicProof.Torus.MeanZero ⇑u →\n            MathGauge.PublicProof.Torus.MeanZero ⇑v →\n              (∀ (y : MathGauge.PublicProof.Torus.Torus2),\n                  MathGauge.PublicProof.Torus.transport α (⇑u) y = MathGauge.PublicProof.Torus.transport α (⇑v) y) →\n                u = v",
+        "MathGauge.PublicProof.Torus.native_smoothSurjective_iff: ∀ {α : ℝ},\n  Irrational α →\n    (MathGauge.PublicProof.Torus.NativeSmoothSurjective α ↔\n      ∃ s, 0 ≤ s ∧ MathGauge.PublicProof.Torus.HasDivisorBound α s)",
+        "MathGauge.PublicProof.Torus.native_sobolev_iff: ∀ (α s : ℝ), MathGauge.PublicProof.Torus.NativeSobolevEstimates α s ↔ MathGauge.PublicProof.Torus.HasDivisorBound α s",
+        "MathGauge.PublicProof.Torus.native_quadratic_sobolev_iff: ∀ {s : ℝ},\n  0 ≤ s → (MathGauge.PublicProof.Torus.NativeSobolevEstimates MathGauge.PublicProof.Torus.quadraticDirection s ↔ 1 ≤ s)",
+        "MathGauge.PublicProof.Torus.native_fixed_full_solution: ∀ (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)) (hF : MathGauge.PublicProof.Torus.Smooth F),\n  MathGauge.PublicProof.Torus.MeanZero ⇑F →\n    MathGauge.PublicProof.Torus.Smooth (MathGauge.PublicProof.Torus.nativeFixedInverse F hF) ∧\n      MathGauge.PublicProof.Torus.MeanZero ⇑(MathGauge.PublicProof.Torus.nativeFixedInverse F hF) ∧\n        (∀ (y : MathGauge.PublicProof.Torus.Torus2),\n            MathGauge.PublicProof.Torus.transport MathGauge.PublicProof.Torus.quadraticDirection\n                (⇑(MathGauge.PublicProof.Torus.nativeFixedInverse F hF)) y =\n              F y) ∧\n          (∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n              MathGauge.PublicProof.Torus.Smooth u →\n                MathGauge.PublicProof.Torus.MeanZero ⇑u →\n                  (∀ (y : MathGauge.PublicProof.Torus.Torus2),\n                      MathGauge.PublicProof.Torus.transport MathGauge.PublicProof.Torus.quadraticDirection (⇑u) y =\n                        F y) →\n                    u = MathGauge.PublicProof.Torus.nativeFixedInverse F hF) ∧\n            ∀ (m : ℕ),\n              MathGauge.PublicProof.Torus.nativeCNorm m ⇑(MathGauge.PublicProof.Torus.nativeFixedInverse F hF) ≤\n                MathGauge.PublicProof.Torus.fourConstant m * MathGauge.PublicProof.Torus.nativeCNorm (m + 4) ⇑F",
+        "MathGauge.PublicProof.Torus.native_fixed_Cm_bound: ∀ (m : ℕ) (F : C(MathGauge.PublicProof.Torus.Torus2, ℂ)) (hF : MathGauge.PublicProof.Torus.Smooth F),\n  MathGauge.PublicProof.Torus.nativeCNorm m ⇑(MathGauge.PublicProof.Torus.nativeFixedInverse F hF) ≤\n    MathGauge.PublicProof.Torus.fourConstant m * MathGauge.PublicProof.Torus.nativeCNorm (m + 4) ⇑F",
+        "MathGauge.PublicProof.Torus.native_sobolev_summable: ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.PublicProof.Torus.Smooth u →\n    ∀ (r : ℝ),\n      Summable fun k => MathGauge.PublicProof.Torus.weight k ^ (2 * r) * ‖MathGauge.PublicProof.Torus.coeff (⇑u) k‖ ^ 2",
+        "MathGauge.PublicProof.Torus.native_CMValues_bounded: ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.PublicProof.Torus.Smooth u → ∀ (m : ℕ), BddAbove (MathGauge.PublicProof.Torus.nativeCMValues m ⇑u)"
+      ],
+      "domains": "真正UnitAddTorus(Fin 2)、归一化Haar、实际平移曲线导数、光滑阶∞、零积分、Euclidean Fourier权和指定有序混合偏导C^m范数。",
+      "conclusions": "光滑唯一可解iff存在有限多项式小除数下界；全部Sobolev损失精确端点判据；α*最小损失1且取到；所有m的真实C^(m+4)到C^m估计。",
+      "representation": "完整母题19模块逐字节复用并重编译，全部表示与分析桥在闭包内。旧母题可选的最优算术常数/最近整数替代刻画不是本阶段新增义务；没有把母题模型成绩或旧证据继承为本组成绩。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MathGauge.GP002.ParameterBoundary",
+          "name": "MathGauge.GP002.divisor_bound_of_zero_order_estimate"
+        },
+        {
+          "module": "MathGauge.GP002.ParameterBoundary",
+          "name": "MathGauge.GP002.nativeL2Norm"
+        },
+        {
+          "module": "MathGauge.GP002.ParameterBoundary",
+          "name": "MathGauge.GP002.nativeL2Norm_eq_h0"
+        },
+        {
+          "module": "MathGauge.GP002.ParameterBoundary",
+          "name": "MathGauge.GP002.no_uniform_estimate_on_open"
+        }
+      ],
+      "assumptions": "任意非空开集J（因此涵盖任意含α*的开区间）；任意有限实常数C及s≥0；所有测试方向依然无理。",
+      "quantifiers": [
+        "MathGauge.GP002.divisor_bound_of_zero_order_estimate: ∀ {α s C : ℝ},\n  (∀ (f : MathGauge.PublicProof.Torus.Borrowed.TorusInverse.Plane → ℂ),\n      ContDiff ℝ (↑⊤) f →\n        MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.UnitPeriodic f →\n          MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.coefficient f 0 = 0 →\n            MathGauge.PublicProof.Torus.hNorm 0 f ≤\n              C * MathGauge.PublicProof.Torus.hNorm s (MathGauge.PublicProof.Torus.transportCover α f)) →\n    MathGauge.PublicProof.Torus.PairHasDivisorBound α s",
+        "MathGauge.GP002.nativeL2Norm: (MathGauge.PublicProof.Torus.Torus2 → ℂ) → ℝ",
+        "MathGauge.GP002.nativeL2Norm_eq_h0: ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n  MathGauge.GP002.nativeL2Norm ⇑u = MathGauge.PublicProof.Torus.nativeHNorm 0 ⇑u",
+        "MathGauge.GP002.no_uniform_estimate_on_open: ∀ (J : Set ℝ),\n  IsOpen J →\n    J.Nonempty →\n      ∀ (s C : ℝ),\n        0 ≤ s →\n          ¬∀ α ∈ J,\n              Irrational α →\n                ∀ (u : C(MathGauge.PublicProof.Torus.Torus2, ℂ)),\n                  MathGauge.PublicProof.Torus.Smooth u →\n                    MathGauge.PublicProof.Torus.MeanZero ⇑u →\n                      MathGauge.GP002.nativeL2Norm ⇑u ≤\n                        C * MathGauge.PublicProof.Torus.nativeHNorm s (MathGauge.PublicProof.Torus.transport α ⇑u)"
+      ],
+      "domains": "实际归一化积分L²范数、真实T²光滑零均值函数；只用给定的零阶估计，不偷偷要求所有r。",
+      "conclusions": "不存在题定参数邻域一致估计。",
+      "representation": "母题单频论证从单个r=0估计提取真实小除数下界；Mathlib的Liouville稠密性提供J内无理反例；显式证明积分L²等于题定Fourier H⁰，不仅改名。",
+      "dependencies": [
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MathGauge.GP002.ArithmeticFailures",
+          "name": "MathGauge.GP002.factorialDirection"
+        },
+        {
+          "module": "MathGauge.GP002.ArithmeticFailures",
+          "name": "MathGauge.GP002.factorialDirection_eq"
+        },
+        {
+          "module": "MathGauge.GP002.ArithmeticFailures",
+          "name": "MathGauge.GP002.factorialDirection_liouville"
+        },
+        {
+          "module": "MathGauge.GP002.ArithmeticFailures",
+          "name": "MathGauge.GP002.factorialDirection_irrational"
+        },
+        {
+          "module": "MathGauge.GP002.ArithmeticFailures",
+          "name": "MathGauge.GP002.liouville_no_polynomial_bound"
+        },
+        {
+          "module": "MathGauge.GP002.ArithmeticFailures",
+          "name": "MathGauge.GP002.factorialDirection_unsolvable"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Necessity",
+          "name": "MathGauge.PublicProof.Torus.bad_frequency_sequence"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Necessity",
+          "name": "MathGauge.PublicProof.Torus.exists_rapid_bad_inverse"
+        },
+        {
+          "module": "MathGauge.PublicProof.Torus.Classification",
+          "name": "MathGauge.PublicProof.Torus.exists_smooth_unsolvable"
+        }
+      ],
+      "assumptions": "精确α=Σ_{n≥1}10^(−n!)；不以任意Liouville数替换指定值。",
+      "quantifiers": [
+        "MathGauge.GP002.factorialDirection: ℝ",
+        "MathGauge.GP002.factorialDirection_eq: MathGauge.GP002.factorialDirection = liouvilleNumber 10 - 1 / 10",
+        "MathGauge.GP002.factorialDirection_liouville: Liouville MathGauge.GP002.factorialDirection",
+        "MathGauge.GP002.factorialDirection_irrational: Irrational MathGauge.GP002.factorialDirection",
+        "MathGauge.GP002.liouville_no_polynomial_bound: ∀ {α : ℝ}, Liouville α → ¬MathGauge.PublicProof.Torus.PolynomialDivisorBound α",
+        "MathGauge.GP002.factorialDirection_unsolvable: ∃ F,\n  MathGauge.PublicProof.Torus.Smooth F ∧\n    MathGauge.PublicProof.Torus.MeanZero ⇑F ∧\n      ¬∃ u,\n          MathGauge.PublicProof.Torus.Smooth u ∧\n            MathGauge.PublicProof.Torus.MeanZero ⇑u ∧\n              ∀ (y : MathGauge.PublicProof.Torus.Torus2),\n                MathGauge.PublicProof.Torus.transport MathGauge.GP002.factorialDirection (⇑u) y = F y",
+        "MathGauge.PublicProof.Torus.bad_frequency_sequence: ∀ {α : ℝ},\n  Irrational α →\n    ¬MathGauge.PublicProof.Torus.PolynomialDivisorBound α →\n      ∃ q,\n        Function.Injective q ∧\n          ∀ (n : ℕ),\n            q n ≠ 0 ∧\n              MathGauge.PublicProof.Torus.Borrowed.TorusInverse.weight (q n) ^ n *\n                  ‖↑(n + 1) *\n                      (MathGauge.PublicProof.Torus.Borrowed.TorusInverse.omega *\n                        ↑(MathGauge.PublicProof.Torus.pairDivisor α (q n)))‖ ≤\n                (1 / 2) ^ n",
+        "MathGauge.PublicProof.Torus.exists_rapid_bad_inverse: ∀ {α : ℝ},\n  Irrational α →\n    ¬MathGauge.PublicProof.Torus.PolynomialDivisorBound α →\n      ∃ a,\n        MathGauge.PublicProof.Torus.Borrowed.TorusInverse.Rapid a ∧\n          a 0 = 0 ∧ ∀ (C : ℝ), ∃ k, C < ‖MathGauge.PublicProof.Torus.generalInverseCoefficients α a k‖",
+        "MathGauge.PublicProof.Torus.exists_smooth_unsolvable: ∀ {α : ℝ},\n  Irrational α →\n    ¬MathGauge.PublicProof.Torus.PolynomialDivisorBound α →\n      ∃ f,\n        ContDiff ℝ (↑⊤) f ∧\n          MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.UnitPeriodic f ∧\n            MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.coefficient f 0 = 0 ∧\n              ¬∃ u,\n                  ContDiff ℝ (↑⊤) u ∧\n                    MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.UnitPeriodic u ∧\n                      MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData.coefficient u 0 = 0 ∧\n                        MathGauge.PublicProof.Torus.transportCover α u = f"
+      ],
+      "domains": "一个固定的实际T²上光滑零均值复函数F；所有候选光滑零均值解同时被排除。",
+      "conclusions": "指定α无理，存在同一个F使原生方向微分方程无光滑零均值解。",
+      "representation": "Mathlib的liouvilleNumber从n=0开始，已证明精确减1/10与题目相同；证明其Liouville性，再直接由任意逼近阶构造没有多项式频率下界。注入坏频率和Rapid系数的已有明确构造经真实Fourier重构产生一个F，不是每个C分别换右端。",
+      "dependencies": [
+        "S4"
+      ],
+      "gaps": []
+    }
+  ]
+}

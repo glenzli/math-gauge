@@ -1,0 +1,331 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-C003",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "candidate/ATTRIBUTION.md": "4f84e89f43df6c3f3c346efcbc39202f277772762ce638c7b342817ec9d145c7",
+    "candidate/LICENSE": "4d2ea5dcaf833d41947541479bda77bd84f918f351af7ea7fbe404d56296f0cf",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060",
+    "candidate/background/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa",
+    "candidate/background/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d",
+    "candidate/background/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465",
+    "candidate/dependencies.md": "3c447a70dcad863e1b9ad98e1c6f78f99f18ef12e70d3ebfcad725496c21d588",
+    "candidate/obligations.json": "3549d7c2b56d9f5bc9a1314033cb7b9acd6d7a2a1ff88d9091a0f5b5e97bd625",
+    "candidate/source/01-foundations.md": "e6c5fc230ffa4099166bb789f90264ac8bbc5e6e78467c7aec3ac072dbef1526",
+    "candidate/source/02-operator-bounds.md": "481e3e6ac6d021e7c56c6453831bf2e6e0b795b2e7e93dece4e61ef0488c86c3",
+    "candidate/source/03-operator-local-degeneracy.md": "bc455c908c80eceaf47f3d41aeebb9a54246b5cfd3d1e58e27d572f904d0fdda",
+    "candidate/task.md": "20c00cd6388ba9577efe1653f3bb5ae98708b322665a809d005b7d4f6c2a7741",
+    "case.json": "10c840e9c2bd638119350f3505bc07e66658e798e474e40784197b0cf854bc62",
+    "contract.json": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527",
+    "reference.md": "68f022dfc25dced3ac92053626485143eeaf7512432b8b0fd48a89cdee6e90c9",
+    "rubric.json": "f4f34b7f622ee103a6ab882eb63b050cf031c27d1750404f72da9819e039ea73"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "9e5073e3346372d5a95a412757093d6dc9a3ecbe51b9146f4c66e33f2abb6415"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "8ddf9f011a53e3f3c314c636713e8c99ca4c9077cc42382018f08b399628f653"
+  },
+  "modules": [
+    {
+      "module": "formal_oet.vol_01.ch_01_foundations.gauge_space",
+      "source": "formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+      "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+      "imports": [
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_01_foundations.operator_space",
+      "source": "formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+      "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060",
+      "imports": [
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Tactic",
+        "formal_oet.vol_01.ch_01_foundations.gauge_space"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean",
+      "sha256": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.gauge_space",
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "Mathlib.Data.ENNReal.Basic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.single_channel",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean",
+      "sha256": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+      "source": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+      "sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.gauge_space",
+        "Mathlib.Analysis.SpecialFunctions.Log.Base",
+        "Mathlib.Data.EReal.Basic",
+        "Mathlib.Data.Finset.Card",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/component_partition.lean",
+      "sha256": "a2fe5ed39fddb73786d877f0c8c073708de3e4e8045fdd95c1c2c9f7aa3dd983",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/computational_fiber.lean",
+      "sha256": "1e348219a6574256c7c4a2daea6763fbc4f0c269ba3976b16698ba37f23ad9db",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Data.Set.Image",
+        "Mathlib.Data.Finset.Basic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/annihilation_matrix.lean",
+      "sha256": "163f38c0a9af7b7c61577f3d34f37f5bf059f8a1506b496f9f9cc8a01d42ae97",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_02_operator_bounds.single_channel",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Data.ENNReal.Operations",
+        "Mathlib.Data.Finset.Basic",
+        "Mathlib.Data.Finset.Lattice.Fold"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_02_operator_bounds.decoupling",
+      "source": "formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean",
+      "sha256": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_transfer",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/component_transfer.lean",
+      "sha256": "9f5d8c71f0442eb3c628d8c3b2ce928d3dbffbc9e43f3f3848f73c63dfb82687",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_02_operator_bounds.decoupling",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/finite_counterexamples.lean",
+      "sha256": "a8c3e10fd73522a8e86fc6cda34a7a584e66017a4a708519bfbea92820e28547",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/image_factorization.lean",
+      "sha256": "5ad9a5e17820f709d42ec0647d4e37fe82da2c058320cc1400657ae797be3f84",
+      "imports": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/threshold_classification.lean",
+      "sha256": "ca05a6092c761705df0970a93c9d9a35bb3a59f430bfb225ad47e2571b9a41da",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+        "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/mapping_entropy.lean",
+      "sha256": "d5c25649b8cdfb7355fafe3fb710967f0b148bb18ffd28dadd7bbc61d3f5a51e",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+        "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Data.EReal.Operations",
+        "Mathlib.Data.Finset.Basic",
+        "Mathlib.Data.Finset.Card"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/threshold_examples.lean",
+      "sha256": "1a44d14d9aa210696159ce4d9dec49d23fd54388a51d7b3856ce73099f33d05c",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/pointwise_uniform_radius_example.lean",
+      "sha256": "3b38aef0115497a917d3d856d74f61a2f651cf832e79ae7e90e04cd63dd54512",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+        "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/pseudometric_composition.lean",
+      "sha256": "76b795d7fa5e7ab50f8e85c3a5066a74f086503b86fed06822d4ebdb01f9f4e6",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+        "Mathlib.Data.Real.ENatENNReal"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zeroing_composition",
+      "source": "formal_oet/vol_01/ch_03_operator_local_degeneracy/zeroing_composition.lean",
+      "sha256": "8803ee1885a748dead57bc723087c69d5e833755fdab961c4e7928cf0a67bf04",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.exercise_solutions.distance_gap",
+      "source": "formal_oet/vol_01/exercise_solutions/distance_gap.lean",
+      "sha256": "2eedc2e2e6dfd18f57c9fd215bf06cb235c2829a613cee101037551c8dc15b39",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.exercise_solutions.foundation_examples",
+      "source": "formal_oet/vol_01/exercise_solutions/foundation_examples.lean",
+      "sha256": "f960638207b280c1504332e52452465e83a37a94a662af3214a973857ab491e0",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+        "formal_oet.vol_01.ch_01_foundations.operator_space"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+      "source": "formal_oet/vol_01/exercise_solutions/translation_entropy.lean",
+      "sha256": "23f60d5bd0ea94a05789f48fbc3bc23e66a76e0ffcb5c24e998999891eaca7a0",
+      "imports": [
+        "formal_oet.vol_01.exercise_solutions.foundation_examples",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition"
+      ]
+    },
+    {
+      "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+      "source": "formal_oet/vol_01/exercise_solutions/four_point_covering.lean",
+      "sha256": "785255be710032e79f546b05fe834d0e56df966261850798a880ca84c36a39c2",
+      "imports": [
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "MathGauge.C003.SourceBridge",
+      "source": "MathGauge/C003/SourceBridge.lean",
+      "sha256": "b7362e1d2094ebc75d8d3a76d9cdd22d659ad476dc3bf0321f5c4702cdace30a",
+      "imports": [
+        "formal_oet.vol_01.ch_01_foundations.gauge_space",
+        "formal_oet.vol_01.ch_01_foundations.operator_space",
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix",
+        "formal_oet.vol_01.ch_02_operator_bounds.single_channel",
+        "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+        "formal_oet.vol_01.ch_02_operator_bounds.decoupling",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_transfer",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+        "formal_oet.vol_01.ch_03_operator_local_degeneracy.zeroing_composition",
+        "formal_oet.vol_01.exercise_solutions.distance_gap",
+        "formal_oet.vol_01.exercise_solutions.foundation_examples",
+        "formal_oet.vol_01.exercise_solutions.translation_entropy",
+        "formal_oet.vol_01.exercise_solutions.four_point_covering"
+      ]
+    },
+    {
+      "module": "MathGauge.C003.Completeness",
+      "source": "MathGauge/C003/Completeness.lean",
+      "sha256": "d9dccbb0db8bfde9c1538d18dce9ad661b6fb33d89fa5fab8fd493f3a5cacfbb",
+      "imports": [
+        "MathGauge.C003.SourceBridge"
+      ]
+    },
+    {
+      "module": "MathGauge.C003.CoveringConstructions",
+      "source": "MathGauge/C003/CoveringConstructions.lean",
+      "sha256": "88bddce52970343b1840fca6b0e1c5706e81847421062e2c6f89f16e4a6bd453",
+      "imports": [
+        "MathGauge.C003.Completeness"
+      ]
+    },
+    {
+      "module": "MathGauge.C003.ExampleLegality",
+      "source": "MathGauge/C003/ExampleLegality.lean",
+      "sha256": "404004db7cdd65e3b6f7cd98c21b2d3b77970f8a24b41d1e3af028f59ddda879",
+      "imports": [
+        "MathGauge.C003.Completeness"
+      ]
+    },
+    {
+      "module": "Main",
+      "source": "Main.lean",
+      "sha256": "99ff79a175ddd60ec3ea0d387c5abbe91424f959f3b4a5bff4f36d0c5cb1f9a7",
+      "imports": [
+        "MathGauge.C003.CoveringConstructions",
+        "MathGauge.C003.ExampleLegality"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "8325c712b3445309998e13147386d7d1bc47d15a312704ce2778def2d595cd24",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

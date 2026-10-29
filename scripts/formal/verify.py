@@ -131,8 +131,21 @@ def manifest_profile(manifest):
         require('tauceti_revision' not in manifest, 'TauCeti revision requires its fixed verification profile')
     return profile
 
-def render_audit(modules, profile=DEFAULT_PROFILE):
+def render_audit(modules, profile=DEFAULT_PROFILE, *, all_case_declarations=False):
     template = (HERE / profile_config(profile)['audit_template']).read_text(encoding='utf-8')
+    if all_case_declarations:
+        # Author projects may contain frozen background namespaces as well as
+        # MathGauge. Audit every declaration owned by the explicit local closure.
+        old = '(privateToUserName entry.1).toString.startsWith "MathGauge."'
+        require(template.count(old) == 1, 'Audit template root selector changed')
+        template = template.replace(old, '''let origin := match env.getModuleIdxFor? entry.1 with
+      | some index => env.header.moduleNames[index]!.toString
+      | none => env.mainModule.toString
+    expectedModules.contains origin''')
+        template = template.replace('every loaded MathGauge constant',
+                                    'every constant owned by the explicit case modules')
+        template = template.replace('no MathGauge constants were loaded',
+                                    'no case-owned constants were loaded')
     require(template.count('{{IMPORTS}}') == template.count('{{MODULES}}') == 1, 'Invalid audit template')
     return template.replace('{{IMPORTS}}', '\n'.join('import ' + name for name in modules)).replace(
         '{{MODULES}}', '#[' + ', '.join(json.dumps(name) for name in modules) + ']')
@@ -203,15 +216,86 @@ def inspect_dependencies(dependency_root, lean_choice=None, profile=DEFAULT_PROF
         result.update(verification_profile=profile, tauceti_revision=config['tauceti_revision'])
     return result
 
+def author_frozen_inputs(case_root):
+    """The current case is the authority for the complete new-paper projection."""
+    case_root = Path(case_root).resolve()
+    case_path = safe_relative(case_root, 'case.json')
+    case = load(case_path)
+    require(case.get('schema') == 'math-gauge.case/v1', 'Invalid author case schema')
+    names = {'case.json'}
+    source_names = [case.get(k) for k in ('task', 'reference', 'rubric', 'group_contract')]
+    source_names += [row.get('source') for row in case.get('solver_files', [])]
+    for source in source_names:
+        path = safe_relative(case_root.parent, source)
+        require(path.is_relative_to(case_root), 'Author input must belong to the exact case')
+        names.add(path.relative_to(case_root).as_posix())
+    return case, {name: digest(safe_relative(case_root, name)) for name in sorted(names)}
+
+def validate_author_alignment(root, manifest, case):
+    binding = manifest.get('alignment', {})
+    require(binding.get('source') == 'alignment.json', 'Author manifest must bind alignment.json')
+    path = safe_relative(root, 'alignment.json')
+    require(digest(path) == binding.get('sha256'), 'Author alignment SHA256 mismatch')
+    alignment = load(path)
+    require(alignment.get('schema') == 'math-gauge.author-alignment/v1', 'Invalid author alignment schema')
+    require(alignment.get('case_id') == case['id'] and alignment.get('case_version') == case['version'],
+            'Author alignment identity differs from the current case')
+    contract = load(safe_relative(root.parent.parent, case['group_contract']))
+    require(contract['id'] == case['id'] and contract['version'] == case['version'],
+            'Author case and stage contract identities differ')
+    stage_ids = {row['id'] for row in contract['stages']}
+    items = alignment.get('items', [])
+    require(isinstance(items, list) and all(isinstance(row, dict) for row in items), 'Invalid author alignment items')
+    ids = [row.get('id') for row in items]
+    require(len(ids) == len(set(ids)) and set(ids) == stage_ids,
+            'Author alignment must cover every stage exactly once')
+    modules = {row['module'] for row in manifest['modules']}
+    for row in items:
+        status = row.get('status')
+        require(status in {'complete', 'partial', 'pending'}, 'Invalid author alignment status')
+        for key in ('assumptions', 'quantifiers', 'domains', 'conclusions', 'representation'):
+            value = row.get(key)
+            require((isinstance(value, str) and bool(value.strip())) or
+                    (isinstance(value, list) and bool(value) and
+                     all(isinstance(x, str) and x.strip() for x in value)),
+                    'Missing author semantic description: ' + row['id'] + '/' + key)
+        dependencies = row.get('dependencies')
+        require(isinstance(dependencies, list) and len(dependencies) == len(set(dependencies))
+                and set(dependencies) <= stage_ids and row['id'] not in dependencies,
+                'Invalid author stage dependencies')
+        gaps = row.get('gaps')
+        require(isinstance(gaps, list) and all(isinstance(g, str) and g.strip() for g in gaps),
+                'Author alignment must explicitly list gaps')
+        declarations = row.get('declarations')
+        require(isinstance(declarations, list), 'Invalid author declaration list')
+        for declaration in declarations:
+            require(isinstance(declaration, dict) and declaration.get('module') in modules
+                    and isinstance(declaration.get('name'), str) and declaration['name'].strip(),
+                    'Author declaration must belong to an explicit local module')
+        require(status != 'complete' or (bool(declarations) and not gaps),
+                'Complete author stage needs declarations and no known gaps')
+        require(status == 'complete' or bool(gaps), 'Incomplete author stage needs an explicit gap')
+    # This is an evidence-structure check. A human or independent AI must still
+    # inspect the actual definitions, theorem types and proofs for equivalence.
+    return alignment
+
 def validate_case(manifest_path):
     manifest_path = Path(manifest_path).resolve(); root = manifest_path.parent
     manifest = load(manifest_path)
-    require(manifest.get('schema') == 'math-gauge.formal-case/v1', 'Invalid formal manifest schema')
+    schema = manifest.get('schema')
+    require(schema in {'math-gauge.formal-case/v1', 'math-gauge.formal-case/v2'}, 'Invalid formal manifest schema')
     cid = manifest.get('case_id', '')
-    require(bool(re.fullmatch(r'MG-[RPF]\d{3}|MG-TEST-[A-Za-z0-9-]+', cid)), 'Invalid case id')
+    require(bool(re.fullmatch(r'MG-(?:[RPF]|G[RPF]|C)\d{3}|MG-TEST-[A-Za-z0-9-]+', cid)), 'Invalid case id')
+    new_paper = bool(re.fullmatch(r'MG-(?:G[RPF]|C)\d{3}', cid))
+    require(not new_paper or schema == 'math-gauge.formal-case/v2', 'New papers require the v2 author contract')
     profile = manifest_profile(manifest)
     frozen = manifest.get('frozen_inputs', {})
-    require(set(frozen) == {'task.md', 'reference.md', 'rubric.json'}, 'Manifest must bind all three frozen case inputs')
+    if schema == 'math-gauge.formal-case/v2':
+        case, expected_inputs = author_frozen_inputs(root.parent)
+        require(case['id'] == cid and case['version'] == manifest.get('case_version'), 'Author manifest case identity mismatch')
+        require(frozen == expected_inputs, 'Author manifest must bind the complete case, contract and candidate input bytes')
+    else:
+        require(set(frozen) == {'task.md', 'reference.md', 'rubric.json'}, 'Manifest must bind all three frozen case inputs')
     for filename, expected in frozen.items():
         path = safe_relative(root.parent, filename)
         require(digest(path) == expected, 'Frozen case input SHA256 mismatch: ' + filename)
@@ -241,9 +325,11 @@ def validate_case(manifest_path):
     audit = manifest.get('audit', {})
     require(audit.get('module') == 'CurrentAudit' and audit.get('source') == 'CurrentAudit.lean', 'Invalid current audit entry')
     path = safe_relative(root, audit['source'])
-    expected_audit = render_audit(names, profile).encode('utf-8')
+    expected_audit = render_audit(names, profile, all_case_declarations=schema == 'math-gauge.formal-case/v2').encode('utf-8')
     require(path.read_bytes() == expected_audit and digest(path) == audit.get('sha256'), 'Current audit must exactly match shared generator and ordered case modules')
     all_external.update(('Lean.Util.CollectAxioms', 'Lean.PrivateName', 'Lean.Elab.Command'))
+    if schema == 'math-gauge.formal-case/v2':
+        validate_author_alignment(root, manifest, case)
     return manifest, root, sources, path, all_external
 
 def resolve_imports(imports, dependency):
@@ -275,6 +361,10 @@ def verify_case(manifest_path, dependency, output):
               'dependency': dependency, 'frozen_inputs': manifest['frozen_inputs'], 'coverage': manifest['coverage'], 'modules': [], 'audit': None,
               'fresh_output': True, 'source_side_oleans_reused': False,
               'sibling_case_outputs_used': False, 'mathematical_or_human_review': None}
+    if manifest['schema'] == 'math-gauge.formal-case/v2':
+        report.update(alignment=manifest['alignment'],
+                      semantic_alignment_inferred=False,
+                      local_declaration_audit_scope='all-explicit-case-modules')
     save(output / 'report.json', report)
     try:
         report['direct_external_imports'] = resolve_imports(imports, dependency)
@@ -317,6 +407,19 @@ def verify_case(manifest_path, dependency, output):
                 require(len({x['name'] for x in declarations}) == len(declarations), 'Duplicate audit root')
                 require(not (set(summaries[0]['axiom_union']) - ALLOWED_AXIOMS), 'Forbidden axiom in dynamic audit')
                 require(all(x['module'] in [r['module'] for r in sources] for x in declarations), 'Foreign module in audit inventory')
+                if manifest['schema'] == 'math-gauge.formal-case/v2':
+                    actual = {(d['module'], d['name']) for d in declarations}
+                    actual.update((d['module'], d['user_name']) for d in declarations)
+                    alignment = load(original / 'alignment.json')
+                    for row in alignment['items']:
+                        for declaration in row['declarations']:
+                            require((declaration['module'], declaration['name']) in actual,
+                                    'Author alignment declaration missing from kernel inventory: ' + declaration['name'])
+                    report['author_coverage'] = {
+                        'items': len(alignment['items']),
+                        'claimed_complete': sum(x['status'] == 'complete' for x in alignment['items']),
+                        'declaration_inventory_verified': True,
+                        'semantic_correctness_automatically_established': False}
             else:
                 report['modules'].append(item)
                 require(result.returncode == 0, 'Compilation failed: ' + name + '; see ' + str(log))

@@ -1,0 +1,147 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR010",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "f1bb02e079bc0fdaa3972fe3ff6a75a374c328ecd39903e9e1085fcae88c3eba",
+    "contract.json": "640b8fb583ef50a57c73c44a328f29e2d0e68db0e91e191003fd8bf966d35a50",
+    "reference.md": "42887ebe3c8785025c338c7d34cd92e6e2cc286ccb4c412aa1314e7bcdeb785d",
+    "rubric.json": "9c27e179a68dd99a3efa8b0c421ceb4b59552f64373d8e6e03b32659f9d33fba",
+    "task.md": "93603e217bd159a03ee18a346532e42d6a9b52fa4b04b1fbcdaeb861b3edb9bf"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "ebced3a87025426e873d5d1ad3c1f71f82d61b4c6c3ad1c68a6135025aed4b50"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "c59d7f467519f47ecd60e3ed8a704942fcb3c1f1750b79d590ac309950f41561"
+  },
+  "modules": [
+    {
+      "module": "Kification",
+      "source": "Kification.lean",
+      "sha256": "abe59c8d3af0340e70d48daa84be7240834c0981b769a59bae48ab6528684ffb",
+      "imports": [
+        "Mathlib.Topology.Compactness.CompactlyGeneratedSpace",
+        "Mathlib.Topology.CompactOpen",
+        "Mathlib.Topology.Category.Profinite.EffectiveEpi",
+        "Mathlib.Topology.Category.TopCat.Yoneda"
+      ]
+    },
+    {
+      "module": "MappingExponential",
+      "source": "MappingExponential.lean",
+      "sha256": "b99450a5b097cd6e0b602990836f98975b98c0e411afcdd862b5b92afbf661d8",
+      "imports": [
+        "Kification"
+      ]
+    },
+    {
+      "module": "ProbeNaturality",
+      "source": "ProbeNaturality.lean",
+      "sha256": "bddfce51e7f3f721c86b5542255c49067123785d7cb955859182e8595a7b8a72",
+      "imports": [
+        "MappingExponential"
+      ]
+    },
+    {
+      "module": "MappingRecords",
+      "source": "MappingRecords.lean",
+      "sha256": "ffc24e9ba6ef16a10c873019b0455decec390c14cf9cf9e21c41e160a6df3282",
+      "imports": [
+        "ProbeNaturality"
+      ]
+    },
+    {
+      "module": "MappingNaturality",
+      "source": "MappingNaturality.lean",
+      "sha256": "fab7976dad16603a6c68ca5bbe5b2aec7ace4a8b92bf579a1f0d51d807c1e108",
+      "imports": [
+        "MappingRecords"
+      ]
+    },
+    {
+      "module": "MappingTopologyBoundary",
+      "source": "MappingTopologyBoundary.lean",
+      "sha256": "1ef704282233bda8aa803d29bb60587ba10aeb9af0a47ea625e7092cf3c4f3e6",
+      "imports": [
+        "MappingNaturality",
+        "Mathlib.Data.Set.Countable",
+        "Mathlib.Topology.DiscreteSubset"
+      ]
+    },
+    {
+      "module": "MappingEvaluationBoundary",
+      "source": "MappingEvaluationBoundary.lean",
+      "sha256": "82f414f9666025c77aad86ca0a4f59ba52086120fab419ed4eb777701842221d",
+      "imports": [
+        "MappingNaturality",
+        "Mathlib.Topology.Instances.Rat",
+        "Mathlib.Topology.UrysohnsLemma",
+        "Mathlib.Topology.Algebra.IsUniformGroup.Basic",
+        "Mathlib.Topology.Algebra.Group.Pointwise",
+        "Mathlib.Topology.UniformSpace.CompleteSeparated",
+        "Mathlib.NumberTheory.Real.Irrational",
+        "Mathlib.Tactic.NormNum"
+      ]
+    },
+    {
+      "module": "MappingUniverse",
+      "source": "MappingUniverse.lean",
+      "sha256": "6054a5c252f1c2d19dea093c314f65b43bdf332347016649bb29a3f82ac027f2",
+      "imports": [
+        "MappingNaturality"
+      ]
+    },
+    {
+      "module": "LocalCompact",
+      "source": "LocalCompact.lean",
+      "sha256": "66f28a048e021e0cebcdb27c1ac0e1345407fb0bc42b63dd4363b8e48bf43e4a",
+      "imports": [
+        "MappingNaturality"
+      ]
+    },
+    {
+      "module": "ProbeRecognition",
+      "source": "ProbeRecognition.lean",
+      "sha256": "8b78e781eec5b7697d017aec995b29280ac50ba0e2bf53ab3fce0180b397f048",
+      "imports": [
+        "MappingTopologyBoundary",
+        "MappingEvaluationBoundary"
+      ]
+    },
+    {
+      "module": "JointComposition",
+      "source": "JointComposition.lean",
+      "sha256": "bc266561ab3b8f3415ef5f588fed3f79a18c456d95a6b34a0901b4c22f3e61bb",
+      "imports": [
+        "MappingUniverse"
+      ]
+    },
+    {
+      "module": "R010Audit",
+      "source": "R010Audit.lean",
+      "sha256": "c2c3f40cef78e3e7adc38abf7f25f2fc60b3794e9c313ed254c7570119cbb6ec",
+      "imports": [
+        "MappingUniverse",
+        "MappingTopologyBoundary",
+        "MappingEvaluationBoundary",
+        "Lean.Util.CollectAxioms"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "426071156ce81c6e06f53ed5850de988a9f599bf3f59a6c654860ca5d9fa0e3b",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

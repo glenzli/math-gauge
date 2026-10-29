@@ -32,6 +32,62 @@ class FixtureMixin:
             data.update(verification_profile=profile,lean_toolchain=config['toolchain'],mathlib_revision=config['mathlib_revision'],tauceti_revision=config['tauceti_revision'])
         manifest=self.root/'manifest.json';manifest.write_text(json.dumps(data));return manifest,data
 class ManifestTests(FixtureMixin, unittest.TestCase):
+    def author_fixture(self, cid='MG-GR001'):
+        path, manifest = self.fixture()
+        case = {'schema':'math-gauge.case/v1','id':cid,'version':'0.1.1',
+                'task':'case/task.md','reference':'case/reference.md',
+                'rubric':'case/rubric.json','group_contract':'case/contract.json',
+                'solver_files':[{'source':'case/input.lean','target':'Input.lean'}]}
+        V.save(self.case/'case.json',case)
+        (self.case/'input.lean').write_text('def frozenBackground := 0\n')
+        V.save(self.case/'contract.json',{'id':cid,'version':'0.1.1','stages':[{'id':'S1'}]})
+        alignment={'schema':'math-gauge.author-alignment/v1','case_id':cid,'case_version':'0.1.1',
+                   'items':[{'id':'S1','status':'complete','declarations':[{'module':'Example','name':'MathGauge.Fixture.value'}],
+                             'assumptions':'No extra assumptions','quantifiers':'No parameters','domains':'Nat',
+                             'conclusions':'Value is one','representation':'Direct natural number definition',
+                             'dependencies':[],'gaps':[]}]}
+        V.save(self.root/'alignment.json',alignment)
+        manifest.update(schema='math-gauge.formal-case/v2',case_id=cid,case_version='0.1.1',
+                        frozen_inputs=V.author_frozen_inputs(self.case)[1],
+                        alignment={'source':'alignment.json','sha256':V.digest(self.root/'alignment.json')})
+        audit=self.root/'CurrentAudit.lean'
+        audit.write_text(V.render_audit(['Example'],all_case_declarations=True))
+        manifest['audit']['sha256']=V.digest(audit)
+        V.save(path,manifest)
+        return path,manifest,alignment
+    def test_new_paper_binds_contract_and_all_candidate_attachments(self):
+        path,_,_=self.author_fixture()
+        V.validate_case(path)
+        (self.case/'input.lean').write_text('def frozenBackground := 1\n')
+        with self.assertRaisesRegex(V.VerificationError,'complete case'):V.validate_case(path)
+    def test_new_paper_cannot_use_legacy_contract_or_drop_an_obligation(self):
+        path,manifest,alignment=self.author_fixture()
+        manifest['schema']='math-gauge.formal-case/v1';V.save(path,manifest)
+        with self.assertRaisesRegex(V.VerificationError,'v2 author contract'):V.validate_case(path)
+        manifest['schema']='math-gauge.formal-case/v2'
+        alignment['items']=[];V.save(self.root/'alignment.json',alignment)
+        manifest['alignment']['sha256']=V.digest(self.root/'alignment.json');V.save(path,manifest)
+        with self.assertRaisesRegex(V.VerificationError,'every stage'):V.validate_case(path)
+    def test_complete_author_stage_cannot_keep_a_known_gap(self):
+        path,manifest,alignment=self.author_fixture()
+        alignment['items'][0]['gaps']=['Reverse implication missing']
+        V.save(self.root/'alignment.json',alignment)
+        manifest['alignment']['sha256']=V.digest(self.root/'alignment.json');V.save(path,manifest)
+        with self.assertRaisesRegex(V.VerificationError,'no known gaps'):V.validate_case(path)
+    def test_chapter_task_path_and_obligation_input_are_bound(self):
+        path,manifest,_=self.author_fixture('MG-C002')
+        (self.case/'candidate').mkdir()
+        (self.case/'task.md').rename(self.case/'candidate/task.md')
+        case=V.load(self.case/'case.json');case['task']='case/candidate/task.md';V.save(self.case/'case.json',case)
+        manifest['frozen_inputs']=V.author_frozen_inputs(self.case)[1];V.save(path,manifest)
+        V.validate_case(path)
+        self.assertIn('candidate/task.md',manifest['frozen_inputs'])
+        self.assertNotIn('task.md',manifest['frozen_inputs'])
+    def test_new_audit_includes_non_mathgauge_local_namespaces(self):
+        for profile in V.PROFILES:
+            audit=V.render_audit(['Example'],profile,all_case_declarations=True)
+            self.assertIn('expectedModules.contains origin',audit)
+            self.assertNotIn('startsWith "MathGauge."',audit)
     def test_public_extraction_keeps_frozen_input_contract(self):
         p,d=self.fixture();d['case_id']='MG-P001';p.write_text(json.dumps(d))
         manifest,*_=V.validate_case(p)
@@ -208,6 +264,33 @@ class LiveKernelTests(FixtureMixin, unittest.TestCase):
             if old is None:os.environ.pop('LEAN_PATH',None)
             else:os.environ['LEAN_PATH']=old
         self.assertEqual(report['status'],'failed');self.assertIn('Missing compiled external import',report['error'])
+
+@unittest.skipUnless(os.environ.get('MATH_GAUGE_TEST_DEPENDENCY_ROOT'),'Set MATH_GAUGE_TEST_DEPENDENCY_ROOT for pinned live Lean tests')
+class LiveAuthorKernelTests(FixtureMixin, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dependency=V.inspect_dependencies(os.environ['MATH_GAUGE_TEST_DEPENDENCY_ROOT'],os.environ.get('MATH_GAUGE_TEST_LEAN'))
+    def author_compile(self,text,name):
+        path,manifest,alignment=ManifestTests.author_fixture(self)
+        (self.root/'Example.lean').write_text(text)
+        manifest['modules'][0]['sha256']=V.digest(self.root/'Example.lean')
+        alignment['items'][0]['declarations'][0]['name']=name
+        V.save(self.root/'alignment.json',alignment)
+        manifest['alignment']['sha256']=V.digest(self.root/'alignment.json')
+        V.save(path,manifest)
+        out=self.root/'out';out.mkdir()
+        return V.verify_case(path,self.dependency,out)
+    def test_unused_non_mathgauge_private_axiom_is_rejected(self):
+        report=self.author_compile('namespace OtherAuthor\nprivate axiom unused : False\ndef value : Nat := 1\nend OtherAuthor\n','OtherAuthor.value')
+        self.assertEqual(report['modules'][0]['exit_code'],0)
+        self.assertEqual(report['status'],'failed')
+        self.assertTrue(any(d['user_name']=='OtherAuthor.unused' for d in report['audit']['declarations']))
+        self.assertTrue(any('unused' in n for n in report['audit']['summary']['unexpected_axioms']))
+    def test_named_stage_evidence_must_exist_in_compiled_inventory(self):
+        report=self.author_compile('namespace OtherAuthor\ndef value : Nat := 1\nend OtherAuthor\n','OtherAuthor.missing')
+        self.assertEqual(report['modules'][0]['exit_code'],0)
+        self.assertEqual(report['status'],'failed')
+        self.assertIn('missing from kernel inventory',report['error'])
 
 @unittest.skipUnless(os.environ.get('MATH_GAUGE_TEST_TAUCETI_ROOT'),'Set MATH_GAUGE_TEST_TAUCETI_ROOT for pinned Lean 4.36 live tests')
 class LiveTauCetiKernelTests(LiveKernelTests):

@@ -1,0 +1,506 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR012",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.operator"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.operator_coordinates"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.operator_positive"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.operator_positive_definite"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.energy_coordinates"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.quadratic_coordinates"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.gradient_coordinates"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.matrix_data"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.support_identity"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.quad_support"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.graph_subgradient"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.graph_cyclic"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.derivative_of_supports"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.quad_hasFDerivAt"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.subgradient_iff"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.normalized_potential_unique"
+        }
+      ],
+      "assumptions": [
+        "Original real symmetric positive-definite matrix and b",
+        "The full gradient record on all vectors"
+      ],
+      "quantifiers": [
+        "Every x and every supporting continuous linear functional",
+        "Every extended-valued normalized potential with all supplied subgradients"
+      ],
+      "domains": [
+        "Native EuclideanSpace R (Fin d), native matrix multiplication and inner products",
+        "Actual EReal-valued potentials and the original Subgradient definition"
+      ],
+      "conclusions": [
+        "Support square identity, cyclic monotonicity and exact singleton subdifferential",
+        "Every normalized supporting potential equals the stated quadratic"
+      ],
+      "representation": [
+        "The matrix-to-operator bridge proves hypotheses and coordinate identities",
+        "Uniqueness follows by proving differentiability from the two support inequalities and a quadratic remainder estimate; no differentiability of the competing potential is assumed",
+        "The proof even works under positive semidefiniteness and does not need extra convexity assumptions on g"
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.objective"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.conjugate"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.complete_square"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.inverseEquiv"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.inverseOperator"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.apply_inverse"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.inverse_apply"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.dualValue"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.conjugate_positive"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.unique_optimizer"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.fenchel_gap"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.fenchel_equality"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.dualValue_hasFDerivAt"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.gradient_inverse_relations"
+        }
+      ],
+      "assumptions": [
+        "S1 positive-definite data",
+        "Full original finite-dimensional space"
+      ],
+      "quantifiers": [
+        "Every dual vector, every primal vector and all maximizers"
+      ],
+      "domains": [
+        "Actual EReal supremum over every primal x",
+        "Actual inverse linear equivalence derived from positive definiteness and finite dimension"
+      ],
+      "conclusions": [
+        "Conjugate equals half inner(y−b,Q inverse(y−b))",
+        "Unique maximizing point Q inverse(y−b)",
+        "Fenchel gap and equality iff y=Qx+b",
+        "Actual derivative of the dual and both gradient inverse identities"
+      ],
+      "representation": [
+        "No inverse is assumed as a certificate; injectivity and surjectivity are proved before its construction",
+        "The b translation occurs in all formulas"
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.conjugate_on_image"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.all_optimizers"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.optimizer_coset"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.optimizer_unique_iff_kernel_zero"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.value_independent"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.conjugate_unbounded_direction"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.kernel_witness"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.conjugate_off_image"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.finite_domain"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.zero_example"
+        },
+        {
+          "module": "QuadraticConjugates",
+          "name": "MathGauge.QuadraticConjugates.singular_scalar_counterexample"
+        },
+        {
+          "module": "QuadraticPotentials",
+          "name": "MathGauge.QuadraticPotentials.energy_zero_iff"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.operator_positive"
+        },
+        {
+          "module": "MatrixQuadratics",
+          "name": "MathGauge.MatrixQuadratics.energy_coordinates"
+        }
+      ],
+      "assumptions": [
+        "Real symmetric positive-semidefinite matrix only",
+        "Finite dimension for the image/orthogonal-kernel equality"
+      ],
+      "quantifiers": [
+        "Every y, every preimage v and every possible optimizer"
+      ],
+      "domains": [
+        "Actual operator image and kernel, no quotient of the original optimization domain",
+        "Native EReal top for unbounded objectives"
+      ],
+      "conclusions": [
+        "Finite iff y−b is in im Q",
+        "Value half inner(Qv,v), independent of v",
+        "All optimizers exactly v+ker Q; uniqueness iff ker Q=0",
+        "Actual zero scalar matrix counterexample has an infinite conjugate at y=1 and all x optimize y=0"
+      ],
+      "representation": [
+        "Zero quadratic energy iff actual Qx=0 is proved from positivity",
+        "Outside the image an actual kernel direction with nonzero pairing is constructed and explicit scalar multiples exceed every real bound"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.path_value"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_ne_bot"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_base"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_epigraph_convex"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_epigraph_closed"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_lsc"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_subgradient"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.potential_minimal"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.main"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.least_unique"
+        }
+      ],
+      "assumptions": [
+        "Exactly the original real topological vector space",
+        "Nonempty cyclically monotone records and selected base record"
+      ],
+      "quantifiers": [
+        "Every finite path, every original record and every competing normalized supporting function"
+      ],
+      "domains": [
+        "Original continuous real dual; no inner product, norm, Hausdorff, local convexity or completeness assumed",
+        "EReal potential proved never bottom; real-height epigraph encodes extended convexity"
+      ],
+      "conclusions": [
+        "Actual normalized proper lower-semicontinuous convex potential",
+        "All graph supports with finite base values",
+        "Pointwise minimality and equality uniqueness"
+      ],
+      "representation": [
+        "Full byte-identical parent proof freshly compiled within this closure",
+        "No potential existence or subgradient property is taken as a hypothesis of its construction"
+      ],
+      "dependencies": [
+        "S1",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.singleton_graph"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.singleton_cyclic"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.singleton_potential_zero"
+        },
+        {
+          "module": "CyclicPotential",
+          "name": "MathGauge.CyclicPotential.singleton_strict_extension"
+        }
+      ],
+      "assumptions": [
+        "Original S4 assumptions"
+      ],
+      "quantifiers": [
+        "Full actual subgradient graph versus original singleton record"
+      ],
+      "domains": [
+        "E=R, actual canonical least potential"
+      ],
+      "conclusions": [
+        "The least potential is zero everywhere and has an extra (1,0) subgradient record"
+      ],
+      "representation": [
+        "Strict inclusion refutes equality while preserving all normalization and minimality requirements"
+      ],
+      "dependencies": [
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.potential_mono"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.cyclic_mono"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.finiteGraph"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.finiteGraph_subset"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.base_mem_finiteGraph"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.finiteGraph_finite"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.finiteGraph_mono"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.every_finite_subgraph"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.potential_finite_sup"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.path_difference_bound"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.finite_potential_finite"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.realPotential"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.realPotential_coe"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.realPotential_convex"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.realPotential_continuous"
+        },
+        {
+          "module": "FinitePotentials",
+          "name": "MathGauge.FinitePotentials.finite_net_uniform"
+        }
+      ],
+      "assumptions": [
+        "Original S4 assumptions for monotonicity and the finite-record supremum",
+        "For uniform convergence only: finite-dimensional real normed E and full potential finite everywhere"
+      ],
+      "quantifiers": [
+        "All finite subrecords containing the same base record",
+        "The actual directed Finset Γ net and every compact set, including empty sets"
+      ],
+      "domains": [
+        "Same path-defined potentials, EReal before finiteness is proved",
+        "Real-valued coercion only after excluding top and bottom"
+      ],
+      "conclusions": [
+        "Monotone finite potentials and exact supremum equal to the full potential",
+        "Every finite potential is actually finite",
+        "Continuous finite-dimensional convex potentials",
+        "Actual TendstoUniformlyOn of the finite-subset net on each compact set"
+      ],
+      "representation": [
+        "All finite subrecords are represented, with an explicit representation theorem",
+        "Alternative finite-potential proof: finite slope norms and cyclic bounds at the base uniformly bound all finite path values; no cycle deletion is assumed",
+        "Continuity follows from the standard finite-dimensional convex continuity theorem; monotone real supremum convergence then feeds the genuine directed-net Dini theorem"
+      ],
+      "dependencies": [
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "source_hashes": {
+    "case.json": "9b5898cabf3d3c04b3bf3cba296b3afaf576510219d22022ba7233e6e6f4ec68",
+    "task.md": "fe7bb45739a9f226ae67c9ab6e12b6f835d9a780a5b42bee9862394880e91abf",
+    "reference.md": "eada6f0d62d81ee10843bcb37ae8f5ee77b2d6bcf4fa571989f80704206403d9",
+    "rubric.json": "210d510836c15e75c35c202a9ef738ad5f612bd261a81d95e61ba4c52dd723ea",
+    "contract.json": "e7ac3965eecdc619b7e5f58f349b5aca53124e162776d99aa967b5a065cf688d"
+  },
+  "provenance": [
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R012/formal/CyclicPotential.lean",
+      "sha256": "a23da4c438da6aa7911672d7ab67281f420cea49e13c85afc58b73b9390b95ae",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    }
+  ],
+  "human_review": "pending",
+  "candidate_model_execution": "not-run"
+}

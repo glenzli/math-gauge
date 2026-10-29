@@ -1,0 +1,318 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR104",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.correct_identity"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.correction_defect"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.correction_image"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.polynomial_lift_unique"
+        }
+      ],
+      "assumptions": "交换含幺环可为零环，q满射，核中每个元素幂零；不要求核统一幂零。",
+      "quantifiers": "每个幂等e选择其任意原像a，仅选择a²−a的幂零指数N。",
+      "domains": "实际多项式Q=3a²−2a³及真实递归correctionIter。",
+      "conclusions": "给出某次多项式修正为幂等、像为e，且所有幂等提升与其相等。",
+      "representation": "缺陷=c*(a²−a)^(2^n)逐次证明，N≤2^N；没有除以2。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.limit_ring"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.augmentation_independent"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.stage_lift_compatible"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.unique_limit_lift"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.lift_family_complete"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.unique_lift_family"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.lifted_product_equiv"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.map_limit"
+        },
+        {
+          "module": "NilpotentDescent",
+          "name": "MathGauge.R104.System.lift_family_natural"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.familyAugmentation"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.familyAugmentation_bijective"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.familyEquiv"
+        }
+      ],
+      "assumptions": "任意非空有向Preorder（强于仅偏序的结论）、每层交换环/满射nil增广。",
+      "quantifiers": "任意有限J含空、任意相容环同态；指定i₀提供非空见证。",
+      "domains": "真实相容Pi子环、完整正交幂等族Subtype、真实理想商乘积。",
+      "conclusions": "增广指标无关，实际D_J双射、规范商乘积RingEquiv与自然性。",
+      "representation": "System只带题给结构，不假设极限增广满射或极限核nil；唯一性逐层组装。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.truncIdeal_antitone"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.truncAugmentation_surjective"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.truncKernel_nil"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.truncatedSystem"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.coherentVariable"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.coherentVariable_in_kernel"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.coherentVariable_power_ne_zero"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.limit_kernel_not_nil"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.truncated_idempotents_still_lift"
+        }
+      ],
+      "assumptions": "任意域k；Lean下标n对应题目正整数n+1。",
+      "quantifiers": "每层每核元有幂零指数；相容t的任意N次幂非零，包括N=0。",
+      "domains": "实际k[X]/(X^(n+2))、自然factor环同态、常数项增广与实际System.Limit。",
+      "conclusions": "每层nil核且增广满射；极限核存在非幂零相容元，S2幂等唯一提升仍成立。",
+      "representation": "通过第N层的X^N系数非零直接排除幂零；无∀∃量词交换。",
+      "dependencies": [
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.Tower.limitRing"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.Tower.evaluation"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.Tower.augmentation_independent"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.Tower.chosenSequence"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.Tower.chosenSequence_compatible"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.Tower.augmentation_surjective"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.no_mod_two_to_mod_four_ring_hom"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.modFourReduction_surjective"
+        }
+      ],
+      "assumptions": "任意含幺环塔，不需交换或nil；每个相邻过渡满射，甚至只需首层增广满射。",
+      "quantifiers": "任意基环元素，逐n递归选取原像。",
+      "domains": "实际相邻相容元组Subring；相邻条件等价于塔全部复合相容。",
+      "conclusions": "极限增广满射且值与层无关；构造只有集合选取，不提供环截面。",
+      "representation": "0索引对应题1索引；Z/4→Z/2实际满射且反向无任何含幺环同态。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivative_polynomial_product"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivativeFun_mul"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivativeTransition"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.dualAug_surjective"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.dualKernel_square_zero"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivativeSystem"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.polynomial_recurrence_impossible"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.variable_has_no_coherent_lift"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivative_limit_not_surjective"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivative_idempotents_still_lift"
+        }
+      ],
+      "assumptions": "R_n=TrivSqZeroExt ℚ[X] ℚ[X]，增广fst，每层核平方零。",
+      "quantifiers": "所有n；假设X的真实相容提升后推得每个系数恒1，超出natDegree矛盾。",
+      "domains": "真实交换平方零扩张、ρ(s,m)=(s,Xm+s′)、任意i≤j的ρ^(j−i)实际System。",
+      "conclusions": "所有题给条件成立，X无极限提升，因此极限增广非满射；幂等仍唯一提升。",
+      "representation": "Leibniz真实验证含幺乘法，未将ρ满射作为输入；相容性给实际多项式系数递推。",
+      "dependencies": [
+        "S2",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.square_zero_lift"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.upper"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.diagonal"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.diagonal_surjective"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.diagonal_kernel_square_zero"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.idempotentMatrix_idempotent"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.idempotent_lift_not_unique"
+        },
+        {
+          "module": "TowerAndLifts",
+          "name": "MathGauge.GR104.no_mod_two_to_mod_four_ring_hom"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.limit_kernel_not_nil"
+        },
+        {
+          "module": "TruncatedTower",
+          "name": "MathGauge.GR104.truncated_idempotents_still_lift"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivative_limit_not_surjective"
+        },
+        {
+          "module": "DerivativeTower",
+          "name": "MathGauge.GR104.derivative_idempotents_still_lift"
+        }
+      ],
+      "assumptions": "一般非交换环满射，核元素两两乘积为零；反例为任意域上的真实上三角矩阵子环。",
+      "quantifiers": "任意基幂等元存在提升；实际E₀≠E₁同像为(1,0)。",
+      "domains": "Matrix(Fin 2)(Fin 2)k的上三角Subring、对角RingHom。",
+      "conclusions": "一般平方零核仍多项式存在，但唯一性失败；逐类蕴含与不蕴含分别由前面实际定理/反例给出。",
+      "representation": "单元素多项式恒等式用非交换环证明；绝不沿用交换环的幂等唯一性。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ]
+}

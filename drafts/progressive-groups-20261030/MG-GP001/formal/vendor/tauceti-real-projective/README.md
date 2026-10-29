@@ -1,0 +1,7 @@
+# GP001 S3: actual projective-plane counterexample
+
+The 20 borrowed Lean files form exactly the missing compiled dependency closure of Tau Ceti’s real-projective-space homology calculation in the pinned GP001 environment. Source origins, revisions, SHA-256 values, rewritten module names, and exact changes are recorded in `SOURCE-CLOSURE.json`. Both upstream Apache 2.0 licenses are retained. Only import paths changed; mathematical declarations and their original namespaces are preserved. There are no local `TauCeti/` or `Mathlib/` module directories that shadow external dependencies.
+
+`MathGauge.GP001.RealProjectiveCounterexample` proves the full S3 construction. The input is any actual finite triangulation homeomorphism to RP². It computes the projective plane’s H₁ over ℤ as ZMod 2 and all its reduced rational homology as zero, then transports those facts through the genuine two-cone open cover. Reduced degree zero is proved using path connectedness. The nonzero H₂ of the actual output space rules out contractibility. The final theorem constructs K, v and the edge B, proves both original geometric hypotheses, and handles arbitrary input universes by an actual finite relabeling homeomorphism.
+
+`S3-ALIGNMENT.json` supplies the precise stage mapping and the module integration order. Every new module passed local Lean compilation. The case maintainer must still run the shared fresh verifier on the integrated manifest and audit all local declaration namespaces. These author proofs are not candidate model exam results or human approval.

@@ -1,0 +1,96 @@
+--- upstream/TorusInverse.lean
++++ MathGauge/PublicProof/Torus/Borrowed/TorusInverse.lean
+@@ -1,7 +1,17 @@
+-import NavierStokes.DiophantineGraph
++/-
++Ported from OpenAI NavierStokesAndEuler, Apache-2.0.
++Original: https://github.com/openai/NavierStokesAndEuler/blob/f9e8bc5b38b6e212696e8a30e3e91517af887bbd/NavierStokes/TorusInverse.lean
++Git blob: 4ab23593f44933403cc852ec7cf5065728ff6ca7
++Changes: module and namespace isolation under MathGauge.PublicProof.Torus.Borrowed;
++compatibility repairs, if any, are recorded in PORTING.md.
++-/
++
++import MathGauge.PublicProof.Torus.Borrowed.DiophantineGraph
+ import Mathlib.Analysis.Calculus.SmoothSeries
+ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+ import Mathlib.Analysis.Fourier.AddCircle
++import Mathlib.Analysis.Normed.Module.FiniteDimension
++import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+ import Mathlib.MeasureTheory.Integral.Prod
+ import Mathlib.MeasureTheory.Integral.DominatedConvergence
+ 
+@@ -14,7 +24,7 @@
+ 
+ noncomputable section
+ 
+-namespace NavierStokes.TorusInverse
++namespace MathGauge.PublicProof.Torus.Borrowed.TorusInverse
+ 
+ open scoped BigOperators Topology ContDiff
+ 
+@@ -69,7 +79,7 @@
+ 
+ theorem phase_formula (k : Frequency) (x : Plane) :
+     phase k x = omega * ((k.1 : ℂ) * (x.1 : ℂ) + (k.2 : ℂ) * (x.2 : ℂ)) := by
+-  simp only [phase, freqX, freqY, add_apply,
++  simp only [phase, freqX, freqY, ContinuousLinearMap.add_apply,
+     liftX_apply, liftY_apply, Complex.real_smul]
+   ring
+ 
+@@ -125,7 +135,7 @@
+     apply ContinuousLinearMap.ext
+     intro y
+     simp only [termDeriv, phase, derivX, derivY, liftX_apply, liftY_apply,
+-      add_apply, smul_apply,
++      ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+       Complex.real_smul, smul_eq_mul, mode]
+     ring
+   simpa only [mode, hd] using h
+@@ -314,7 +324,7 @@
+     termDeriv (inverseCoeff d a) k x (vector d) =
+         (omega * (symbol d k : ℂ) * inverseCoeff d a k) * mode k x := by
+       rw [hs]
+-      simp only [termDeriv, add_apply, liftX_apply, liftY_apply,
++      simp only [termDeriv, ContinuousLinearMap.add_apply, liftX_apply, liftY_apply,
+         derivX, derivY, freqX, freqY, Complex.real_smul]
+       ring
+     _ = a k * mode k x := by rw [coefficient_cancel d hzero k]
+@@ -396,9 +406,14 @@
+     (∫ z, torusMode k z ∂torusMeasure) = if k = 0 then 1 else 0 := by
+   change (∫ z : Torus, fourier k.1 z.1 * fourier k.2 z.2
+     ∂(AddCircle.haarAddCircle : Measure UnitAddCircle).prod AddCircle.haarAddCircle) = _
+-  rw [integral_prod_mul, integral_fourier, integral_fourier]
+-  by_cases h₁ : k.1 = 0 <;> by_cases h₂ : k.2 = 0 <;>
+-    simp [h₁, h₂, Prod.ext_iff]
++  calc
++    _ = (∫ z : UnitAddCircle, fourier k.1 z ∂AddCircle.haarAddCircle) *
++        (∫ z : UnitAddCircle, fourier k.2 z ∂AddCircle.haarAddCircle) :=
++      MeasureTheory.integral_prod_mul _ _
++    _ = _ := by
++      rw [integral_fourier, integral_fourier]
++      by_cases h₁ : k.1 = 0 <;> by_cases h₂ : k.2 = 0 <;>
++        simp [h₁, h₂, Prod.ext_iff]
+ 
+ theorem integrable_torusTerm (a : Frequency → ℂ) (k : Frequency) :
+     Integrable (fun z => a k * torusMode k z) torusMeasure := by
+@@ -415,7 +430,12 @@
+       probReal_univ, one_smul] using ha.summable_norm
+   unfold torusSeries
+   rw [← integral_tsum_of_summable_integral_norm (integrable_torusTerm a) hsum]
+-  simp only [integral_const_mul, integral_torusMode]
++  have hint (k : Frequency) :
++      (∫ z, a k * torusMode k z ∂torusMeasure) = a k * (if k = 0 then 1 else 0) := by
++    calc
++      _ = a k * (∫ z, torusMode k z ∂torusMeasure) := integral_const_mul _ _
++      _ = _ := by rw [integral_torusMode]
++  simp_rw [hint]
+   simp only [mul_ite, mul_one, mul_zero]
+   rw [tsum_eq_single (0 : Frequency) (fun i hi => by simp [hi])]
+   simp
+@@ -603,4 +623,5 @@
+   · rw [hpull]
+     exact directionalInverse_solves d ha hzero
+ 
+-end NavierStokes.TorusInverse
++end MathGauge.PublicProof.Torus.Borrowed.TorusInverse
++

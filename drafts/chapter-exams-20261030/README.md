@@ -24,6 +24,6 @@ python3 -m math_gauge prepare --suite drafts/chapter-exams-20261030 --case MG-C0
 
 来源为公开OET提交539b40cec73184d98e06d54fbd10e4b4698bd6e7，CC BY 4.0，作者Zhe Li / Glen Li / glenzli。Lean固定4.29.1，mathlib固定5e932f97dd25535344f80f9dd8da3aab83df0fe6；逐文件来源与散列见各题provenance.json。基础模块原有编译证据仅在字节与环境完全相同的范围复用。先前设计说明作为历史审计材料保留，不覆盖本版考试合同。
 
-当前是 **draft / human pending**，没有新模型答卷或通过率。考试合同的完整性与目标章作者Lean的完整覆盖是两件事：本版已有完整自然语言参考、明确考试及判卷约束；尚未据此宣称第2/3章全部新义务的作者Lean实现已经逐项对齐、编译并独立审定。这个边界保存在case、contract和来源记录中。
+当前是 **draft / human pending**，没有新模型答卷或通过率。第2/3章的34/92项义务已分别补齐作者Lean、逐项语义对应、整组真实编译与独立AI审核，见[新增作者证据账本](../../results/author-lean-20261030/README.md)和各题`formal/`。这不等于人工批准或候选模型完成。case、contract及旧来源记录保留冻结时点的原字节，后续作者证明不改写其历史状态。
 
 两章126项义务已完成[独立AI复核](reviews/README.md)，数学范围、逐项参考与考试合同的发现均已闭环。共享runner也已执行清单完整性和声明身份检查：缺少alignment.json、ID不齐、与答卷不符的声明映射不能通过，incomplete不能被评审抬为完整完成。允许直接复用背景定义的CH03-D07已在公开义务清单标明。

@@ -1,0 +1,300 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GF102",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.level_zero_equiv"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.square_zero_higher_power"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.square_zero_level_equiv"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.square_zero_residual"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.square_zero_transition"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.square_zero_to_zero"
+        }
+      ],
+      "assumptions": [
+        "I²=0",
+        "n∈ℕ"
+      ],
+      "quantifiers": "只在此阶段有 I²=0；所有 n≥1 的指定 q_n 构成同构，Q0=R/I。",
+      "domains": "同构的底层映射就是原商映射；map I=J，层间及到第0层的图精确交换。",
+      "conclusions": [
+        "确定 Q_0 以及 n≥1 的 Q_n",
+        "说明 n≥1 时 q_n 是环同构",
+        "给出这些同构下 J_n 和过渡映射的解释"
+      ],
+      "representation": "同构的底层映射就是原商映射；map I=J，层间及到第0层的图精确交换。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Reference",
+          "name": "MathGauge.F102.residual_power_zero"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F102.residual_transition"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F102.residual_composition"
+        },
+        {
+          "module": "Core",
+          "name": "MathGauge.F102.transition"
+        }
+      ],
+      "assumptions": [
+        "删除 I²=0",
+        "R、I 任意",
+        "l≤m≤n"
+      ],
+      "quantifiers": "任意交换含幺环、任意 I、所有 l≤m≤n；不含平方零假设。",
+      "domains": "原目标三项均直接对 quotient/pow/map 证明，指定次数 n+1。",
+      "conclusions": [
+        "证明 J_n^(n+1)=0",
+        "证明像相容和过渡复合",
+        "证明映射存在，不增加源幂零假设"
+      ],
+      "representation": "原目标三项均直接对 quotient/pow/map 证明，指定次数 n+1。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.sourceMap"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.source_injective_iff"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.nilpotent_iff_eventual_source_injective"
+        }
+      ],
+      "assumptions": [
+        "R、I 任意",
+        "q_n 为源环到第 n 层的指定自然映射"
+      ],
+      "quantifiers": "IsNilpotent I iff ∃N∀n≥N,指定sourceMap I n单射。",
+      "domains": "正向可取N=e，反向N+1给幂零次数；不把过渡同构/抽象同构偷换为源映射单射。",
+      "conclusions": [
+        "证明 I 幂零当且仅当存在 N 使所有 n≥N 时 q_n 单射",
+        "说明 N 与幂零次数的关系",
+        "不把过渡同构替换成源映射单射"
+      ],
+      "representation": "正向可取N=e，反向N+1给幂零次数；不把过渡同构/抽象同构偷换为源映射单射。",
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.twoIdeal"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.matching_zero_levels"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.integer_level_one_equiv"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.zero_ideal_level_equiv"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.higher_levels_not_isomorphic"
+        }
+      ],
+      "assumptions": [
+        "允许两个不同交换环及其理想 (R,I)、(S,L)",
+        "只知 R/I 与 S/L 同构"
+      ],
+      "quantifiers": "R=ℤ,I=(2),S=ZMod2,L=⊥；第0层显式RingEquiv，第1层不存在任何RingEquiv。",
+      "domains": "通过真实理想商同构识别第1层为ZMod4/ZMod2，基数4≠2排除抽象同构。",
+      "conclusions": [
+        "判断第 0 层同构是否保证全部同层商环同构",
+        "给出明确第 0 层同构以及某个更高层不同构的证明"
+      ],
+      "representation": "通过真实理想商同构识别第1层为ZMod4/ZMod2，基数4≠2排除抽象同构。",
+      "dependencies": [
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.inducedLevel"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.induced_source"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.induced_transition"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.modulo_two_compatible"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.induced_example_not_injective"
+        }
+      ],
+      "assumptions": [
+        "R、S 任意交换含幺环，I⊆R、L⊆S",
+        "φ:R→S 为含幺环同态",
+        "φ(I)⊆L"
+      ],
+      "quantifiers": "任意 φ:R→+*S 满足 I.map φ≤L，所有 n 和 m≤n。",
+      "domains": "像幂包含构造 quotientMap；模2具体例仍在第1层非单射，故自然性只保证同态。",
+      "conclusions": [
+        "构造每层 φ_n:Q_n(R,I)→Q_n(S,L)",
+        "证明与源商映射和全部过渡映射相容",
+        "说明该条件只保证同态而不保证同构"
+      ],
+      "representation": "像幂包含构造 quotientMap；模2具体例仍在第1层非单射，故自然性只保证同态。",
+      "dependencies": [
+        "S2",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.square_zero_level_equiv"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.nilpotent_iff_eventual_source_injective"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.matching_zero_levels"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.higher_levels_not_isomorphic"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.inducedLevel"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.induced_source"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.induced_transition"
+        },
+        {
+          "module": "Answer",
+          "name": "MathGauge.F102.induced_example_not_injective"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F102.residual_power_zero"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F102.residual_transition"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F102.residual_composition"
+        }
+      ],
+      "assumptions": [
+        "逐阶段保持 S1–S5 的各自范围",
+        "仅以附件 Core 及固定 Mathlib 为外部数学库"
+      ],
+      "quantifiers": "每阶段只使用本阶段条件；完整 Answer 与声明闭包。",
+      "domains": "保留 Core 原定义，不把 I 幂零/平方零设为全局上下文，也不凭类型声明代替证明。",
+      "conclusions": [
+        "Answer.lean 完整形式化 S1–S5 的正结论和反例",
+        "覆盖全部三项原目标而非只实现商对象",
+        "声明对应表、实际编译与公理审计"
+      ],
+      "representation": "保留 Core 原定义，不把 I 幂零/平方零设为全局上下文，也不凭类型声明代替证明。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "attribution": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F102/formal/Core.lean",
+      "source_sha256": "868860a5c5fc4ea1a629f07147435d10e30b16c585682360dc24b35bb9fb6b7c",
+      "author_copy": "Core.lean",
+      "author_sha256": "868860a5c5fc4ea1a629f07147435d10e30b16c585682360dc24b35bb9fb6b7c",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F102/formal/Reference.lean",
+      "source_sha256": "6f3fa413b744b0b0d5b1be16c4f6715517aec3652dab1fd8a25664ed3f3dcfc6",
+      "author_copy": "Reference.lean",
+      "author_sha256": "6f3fa413b744b0b0d5b1be16c4f6715517aec3652dab1fd8a25664ed3f3dcfc6",
+      "unchanged": true
+    }
+  ]
+}

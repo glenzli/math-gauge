@@ -1,0 +1,275 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GF111",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.bound_iff_regular"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.empty_ratio"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.empty_least"
+        },
+        {
+          "module": "ExtendedBounds",
+          "name": "MathGauge.F111.ratio_le_iff"
+        }
+      ],
+      "assumptions": [
+        "对所有 x，0<d(x)<∞",
+        "X 可为空",
+        "c 可为 0 或 ∞"
+      ],
+      "quantifiers": "任意 X，包括空类型；所有 c:ENNReal，含0和∞。",
+      "domains": "regular subtype 为 d≠0且d≠∞，等价正有限；不要求 e/c 有限。",
+      "conclusions": [
+        "证明 Bound(c)↔r≤c",
+        "检查 c=0、c=∞ 及空 X",
+        "给出除法不等式所需非零有限条件"
+      ],
+      "representation": "regular subtype 为 d≠0且d≠∞，等价正有限；不要求 e/c 有限。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.bound_iff_no_top"
+        },
+        {
+          "module": "ExtendedBounds",
+          "name": "MathGauge.F111.bound_iff"
+        }
+      ],
+      "assumptions": [
+        "允许 d(x)=0",
+        "仍排除 d(x)=∞",
+        "其余如总设定"
+      ],
+      "quantifiers": "所有 x 的 d≠∞，允许 d=0；所有 c。",
+      "domains": "零分母分支强制 e=0，对 c=∞ 同样成立。",
+      "conclusions": [
+        "证明 Bound(c)↔Z∧r≤c",
+        "证明零分母分支与 c 无关",
+        "保留 c=∞"
+      ],
+      "representation": "零分母分支强制 e=0，对 c=∞ 同样成立。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ExtendedBounds",
+          "name": "MathGauge.F111.bound_iff"
+        },
+        {
+          "module": "CoefficientClassification",
+          "name": "MathGauge.F111.finite_bound_exists_iff"
+        },
+        {
+          "module": "CoefficientClassification",
+          "name": "MathGauge.F111.least_finite_exists_iff"
+        },
+        {
+          "module": "CoefficientClassification",
+          "name": "MathGauge.F111.least_coefficient_eq"
+        }
+      ],
+      "assumptions": [
+        "d、e 任意 ENNReal 值",
+        "X 任意",
+        "不增加有限性或非空性"
+      ],
+      "quantifiers": "任意 X,d,e,c；分别全系数、∃有限系数、∃有限最小系数。",
+      "domains": "保留 r=0 -> H；有限存在用 r+1，最小不存在时不能把 infimum 当取得。",
+      "conclusions": [
+        "证明 Bound(c)↔Z∧r≤c∧(c=0→H)",
+        "证明有限系数存在 iff Z∧r≠∞",
+        "证明有限最小值存在 iff Z∧r≠∞∧(r=0→H)，且值为 r"
+      ],
+      "representation": "保留 r=0 -> H；有限存在用 r+1，最小不存在时不能把 infimum 当取得。",
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.LocalFiniteBounds"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.natural_local_bounds"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.natural_no_global_bound"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.natural_ratio_top"
+        }
+      ],
+      "assumptions": [
+        "X 可无限",
+        "每个有限 F⊆X 都存在有限 c_F 使 ∀x∈F,e(x)≤c_F d(x)",
+        "c_F 无统一上界"
+      ],
+      "quantifiers": "X=ℕ,d=1,e=n；∀有限F∃有限cF，但不存在全域有限c。",
+      "domains": "局部常数取 F.sup id，空集为0；用 ENNReal Archimedean 性证明全域无界及 r=∞。",
+      "conclusions": [
+        "判断全域是否必存在有限系数",
+        "给逐有限子域可行而全域不可行的反例",
+        "验证每个有限子域的有限界与全域 r=∞"
+      ],
+      "representation": "局部常数取 F.sup id，空集为0；用 ENNReal Archimedean 性证明全域无界及 r=∞。",
+      "dependencies": [
+        "S2",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.uniform_local_implies_global"
+        }
+      ],
+      "assumptions": [
+        "存在固定有限 C",
+        "每个有限 F⊆X 有某个 c_F≤C 满足 F 上全部不等式"
+      ],
+      "quantifiers": "∀有限F∃cF≤C，得 Bound C；给定 C 有限即可得到有限全域界。",
+      "domains": "只取单点，无除法；故 d=0/∞ 和空 X 一并覆盖。",
+      "conclusions": [
+        "证明 Bound(C)",
+        "只使用单点子域与乘法单调性即可",
+        "处理 X 为空及 d=0、∞ 的边界"
+      ],
+      "representation": "只取单点，无除法；故 d=0/∞ 和空 X 一并覆盖。",
+      "dependencies": [
+        "S3",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ExtendedBounds",
+          "name": "MathGauge.F111.ratio_le_iff"
+        },
+        {
+          "module": "ExtendedBounds",
+          "name": "MathGauge.F111.bound_iff"
+        },
+        {
+          "module": "CoefficientClassification",
+          "name": "MathGauge.F111.finite_bound_exists_iff"
+        },
+        {
+          "module": "CoefficientClassification",
+          "name": "MathGauge.F111.least_finite_exists_iff"
+        },
+        {
+          "module": "CoefficientClassification",
+          "name": "MathGauge.F111.least_coefficient_eq"
+        },
+        {
+          "module": "BoundaryExample",
+          "name": "MathGauge.F111.boundary_ratio"
+        },
+        {
+          "module": "BoundaryExample",
+          "name": "MathGauge.F111.boundary_feasible"
+        },
+        {
+          "module": "BoundaryExample",
+          "name": "MathGauge.F111.boundary_not_attained"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.boundary_bound_iff"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F111.boundary_finite_iff"
+        }
+      ],
+      "assumptions": [
+        "以 S3 为原目标",
+        "含附件给定的边界例子"
+      ],
+      "quantifiers": "逐项审计原分类及 Unit 无限分母边界。",
+      "domains": "旧声明对 S3 对齐；S4/S5 为当前新增证明，不能以旧编译替代。",
+      "conclusions": [
+        "核对上确界仅在正有限分母子类型上取",
+        "核对所有 c 与有限/最小分类",
+        "核对 Unit 无限分母正分子例子的未取得最小值",
+        "说明 S4/S5 不由旧编译自动覆盖"
+      ],
+      "representation": "旧声明对 S3 对齐；S4/S5 为当前新增证明，不能以旧编译替代。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "attribution": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F111/formal/BoundaryExample.lean",
+      "source_sha256": "50b83782642172982537070bbafb5b8b829f0bb1ef0a0fabba5a3a133e8b76f0",
+      "author_copy": "BoundaryExample.lean",
+      "author_sha256": "50b83782642172982537070bbafb5b8b829f0bb1ef0a0fabba5a3a133e8b76f0",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F111/formal/CoefficientClassification.lean",
+      "source_sha256": "a22d901273fc1b9e472d71786699b94e4f2398a16b43a1e20806a7de0dbc58e6",
+      "author_copy": "CoefficientClassification.lean",
+      "author_sha256": "a22d901273fc1b9e472d71786699b94e4f2398a16b43a1e20806a7de0dbc58e6",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F111/formal/ExtendedBounds.lean",
+      "source_sha256": "aa989e8c1b64f5bae41e1268623019f1229eb124f76e57ab7faf5ea16fc4b40f",
+      "author_copy": "ExtendedBounds.lean",
+      "author_sha256": "aa989e8c1b64f5bae41e1268623019f1229eb124f76e57ab7faf5ea16fc4b40f",
+      "unchanged": true
+    }
+  ]
+}

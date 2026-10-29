@@ -8,7 +8,7 @@ Math Gauge 是数学推理与 Lean 语义对齐习题及评测工具。它考察
 
 ## 当前试卷
 
-当前主试卷为 **43 份**。它们已准备数学参考、逐项判准、来源和 AI 复核材料，仍为 **draft / human pending**。GR001 已作[0.1.2 数学范围修订](drafts/progressive-groups-20261030/reviews/strict-amendment-0.1.2.json)，其余40组及两章保持0.1.1；确切版本以各题 `case.json` 与修订记录为准。新版没有模型答卷或通过率，新增目标的完整作者 Lean 核验尚未完成。
+当前主试卷为 **43 份**。它们已准备数学参考、逐项判准、来源和 AI 复核材料，仍为 **draft / human pending**。GR001 已作[0.1.2 数学范围修订](drafts/progressive-groups-20261030/reviews/strict-amendment-0.1.2.json)，其余40组及两章保持0.1.1；确切版本以各题 `case.json` 与修订记录为准。新版没有模型答卷或通过率。新增目标的作者 Lean、真实编译和逐项独立语义复核见[作者证据账本](results/author-lean-20261030/README.md)；GP003 的剩余几何缺口单独列明，不能称为全库完整形式化。
 
 | 题集 | 规模 | 入口 |
 | --- | --- | --- |
@@ -49,7 +49,7 @@ python3 -m math_gauge prepare --suite drafts/chapter-exams-20261030 --case MG-C0
 
 原版 41 道单题保留为历史基准。首轮完整比较有 82 次独立数学请求，AI 审核严格完成为 Terra 6.1 Max 40/41、Gemini 3.8 Flash High 27/41，题目与答卷仍待人工验收。R005 澄清版另作两次请求，双方通过，不回填首轮旧版本成绩。原始答卷、失败、过滤通知、候选源码及冻结评分完整保留，见[结果索引](docs/results.md)。
 
-数学与语义审核、固定源码的真实编译、公理检查、人工批准是不同证据。原版 40 题有完整作者主任务 Lean 证据，P003 保留部分覆盖边界；这些证据不覆盖新增题组目标。工程测试通过也不构成模型通过率，见[评测方法中的证据说明](docs/evaluation-methods.md)。
+数学与语义审核、固定源码的真实编译、公理检查、人工批准是不同证据。原版 40 题有完整作者主任务 Lean 证据，P003 保留部分覆盖边界；新增题组使用[独立冻结的作者工程与审核](results/author-lean-20261030/README.md)，不继承母题覆盖结论。工程测试通过也不构成模型通过率，见[评测方法中的证据说明](docs/evaluation-methods.md)。
 
 本轮[严格数学复核](results/strict-review-20261030/README.md)与旧版独立AI审查分别记录。GR001的0.1.2修订处理真实作用域歧义，不以编辑等价代替数学审核。
 
