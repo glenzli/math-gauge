@@ -1,2 +1,0 @@
-import MathGauge.C003.CoveringConstructions
-import MathGauge.C003.ExampleLegality

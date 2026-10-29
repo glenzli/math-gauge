@@ -1,1 +1,0 @@
-Lean 证明的是额外给定 Certificate 后的存在性。Certificate 的 r、projects、fixes 三个字段已经包含目标，candidate 只是将它们取出，未从 hf 构造回缩。原题仍然成立：定义 r(x)=⟨f(x),x,rfl⟩；投影等式按定义，若 y=f(x)，则 f(y)=f(f(x))=f(x)=y，由子类型外延性得到回缩等式。不需增加非空性。□
