@@ -2,9 +2,26 @@
 
 本文从仓库根目录执行命令。共享 runner 需要 Python 3.10+，无需第三方运行依赖；Lean 编译和真实模型调用需要另备对应环境。下文的绝对路径是待替换的占位路径，不要复用已有输出目录。
 
-## 选择题集
+当前主试卷是41个递进题组和两份整章题，共43份，尚无模型成绩；原41道单题及其结果另行保留。项目定位、规范与实现的区别见[评测方法](evaluation-methods.md)，按能力选题见[重点索引](../exercises/by-focus.md)。
 
-现行目录共 41 题，分属四个 suite。省略 `--suite` 时只使用 `cases/public` 的 20 题。
+## 当前43份试卷
+
+```sh
+python3 -m math_gauge validate --suite drafts/progressive-groups-20261030
+python3 -m math_gauge validate --suite drafts/chapter-exams-20261030
+python3 -m math_gauge prepare --suite drafts/progressive-groups-20261030 \
+  --case MG-GR001 --out runs/group-r001
+python3 -m math_gauge prepare --suite drafts/chapter-exams-20261030 \
+  --case MG-C002 --out runs/chapter02
+```
+
+每次使用新的输出目录。上述命令仅校验或准备材料，不调用模型。确切题目版本以各题`case.json`和修订记录为准；当前仍为draft / human pending，新增目标的完整作者Lean核验未完成。
+
+三次独立初答及八题两轮自查的[材料包](../protocol/reliability-20261030/README.md)已有计划、消息和检查入口，但共享runner的多轮调度、历史绑定与KEEP/FULL组合尚未实现验收。下文单轮`run`命令不是该计划的一键执行器；新实验参数和执行须另行冻结与授权。
+
+## 原41道单题的四套suite
+
+原版目录共 41 题，分属四个 suite。省略 `--suite` 时只使用 `cases/public` 的 20 题，不会自动选择43份新试卷。
 
 ```sh
 python3 -m math_gauge validate
@@ -114,4 +131,4 @@ python3 exercises/refresh_catalog.py --check
 
 发布前可复用与当前源散列、依赖及环境合同一致的已完成检查，无需仅因创建提交而重编所有题。最近验收见[最终工程记录](../results/full-comparison-20261030/validation/finalization/README.md)。
 
-[返回首页](../README.md) · [结果与版本](results.md) · [贡献指南](../CONTRIBUTING.md)
+[文档导航](README.md) · [返回首页](../README.md) · [结果与版本](results.md) · [贡献指南](../CONTRIBUTING.md)

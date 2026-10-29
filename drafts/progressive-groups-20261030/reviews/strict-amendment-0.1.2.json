@@ -1,0 +1,87 @@
+{
+  "schema": "math-gauge.strict-mathematical-amendment/v1",
+  "created_at": "2026-10-30T06:07:41.487312+00:00",
+  "previous_suite_version": "0.1.1",
+  "suite_version": "0.1.2",
+  "previous_files_archive": "history/0.1.1-gr001.tar.gz",
+  "previous_files_archive_sha256": "90afe8943c1551b53de93ce12f1892d04ab19d71e89cf6d21a89d2eaba46e9f4",
+  "previous_archive_manifest": "history/0.1.1-gr001.json",
+  "previous_git_commit": "9e536ad5ebce182ffcb6bcaabdc24c7fbec221c3",
+  "suite_version_only_edit": true,
+  "cases": [
+    {
+      "case_id": "MG-GR001",
+      "previous_version": "0.1.1",
+      "version": "0.1.2",
+      "finding_id": "MATH-001",
+      "severity": "exam-contract-domain-ambiguity",
+      "finding": "The common extended pseudometrics are infinite between bottom and any nonabsorbing point. An unrestricted finite metric assumption in S6 is inconsistent with that setting. The reference and S2 use the nonabsorbing output space.",
+      "resolution": "Restrict the finite complete metric assumption explicitly to X° in the task and S6 contract. This resolves a genuine scope ambiguity and is not represented as byte-only editorial equivalence.",
+      "task_edits": [
+        {
+          "before": "版本 0.1.1。",
+          "after": "版本 0.1.2。"
+        },
+        {
+          "before": "在共同设定下，假设d=max d_i是有限值完备度量，但不要求直径有限。",
+          "after": "在共同设定下，假设d=max d_i在X°上是有限值完备度量，但不要求直径有限。"
+        }
+      ],
+      "contract_edits": [
+        {
+          "path": [
+            "version"
+          ],
+          "before": "0.1.1",
+          "after": "0.1.2"
+        },
+        {
+          "path": [
+            "stages",
+            5,
+            "assumptions",
+            1
+          ],
+          "before": "d为有限值完备度量",
+          "after": "d在X°上为有限值完备度量"
+        }
+      ],
+      "old_files_sha256": {
+        "MG-GR001/task.md": "5107c692c4ee557d5effeaca26463c616cc52578692d659f188640ddcaa8d52f",
+        "MG-GR001/case.json": "811855299aacc92b7124410e5b8259d2b1bd2e3d199eb77aef4d46a347a55922",
+        "MG-GR001/contract.json": "7bf187392a55af3e6b9ab7448e2d0eff7d37a5531e1c822c52b723d6ec35d9a2",
+        "MG-GR001/review.json": "4cd79886cfac98621131ba58e1fef43200180c6266c520a347d415777126187f"
+      },
+      "new_files_sha256": {
+        "MG-GR001/task.md": "36ba7bc90f0cccd6d1a7336aeb7833968c6f1009c75bb0b6ef2636bf66c061e9",
+        "MG-GR001/case.json": "2e703b034d2f2e92a48780912ed9f378fe86b402d0d8720826edea285b340e08",
+        "MG-GR001/contract.json": "734840d0e52fb6174a712d6c435dad58a3826eb386206be1b037aca7afe459f3",
+        "MG-GR001/review.json": "736f237b04f4c4f64800ae20f96166f831b8086c0c9380b6852863476fd50ef6"
+      },
+      "unchanged_files_sha256": {
+        "reference.md": "12d08fb170ddbae854df13e5f4b029c1daefb33648597be3386eb4390850e5ec",
+        "rubric.json": "f36ccda7da0e7052ffbb833205fa95d56ba63eb48bb17b3090be8495a33efd20",
+        "author-contract.json": "214933c0599a1a357bb8a96f6108756de6c92c150cb92a0eca03b5bf16cad7c9",
+        "provenance.json": "792deeeb95d42347807de751fb7869458615ff6356be1dbcd9e03c94a1b1b95d"
+      },
+      "stage_ids": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7"
+      ],
+      "reference_check": "S6 uses completeness of X° to prove completeness of the finite-distance function branch; finite residual makes T invariant; contraction yields branch uniqueness only. S5 remains a counterexample to uniqueness across branches.",
+      "fresh_ai_review": true,
+      "independent_review_repeated": false,
+      "human": "pending",
+      "new_lean_compilation": false,
+      "candidate_calls": 0
+    }
+  ],
+  "scope": "Only GR001 is revised to 0.1.2; other 40 progressive groups remain 0.1.1. Immutable 0.1.0 independent reviews and the 0.1.1 editorial receipt are preserved.",
+  "candidate_calls": 0,
+  "human_approved": false
+}

@@ -519,6 +519,7 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
             group_contract = validate_group_contract(read_json(contract_path))
             if group_contract['id'] != request['case_id']:
                 return finish('infrastructure_error', 'Frozen group identity differs from request')
+            report['group_contract_sha256'] = record['group_contract_sha256']
             if group_contract.get('alignment_manifest_required'):
                 if group_contract['version'] != request['case_version']:
                     return finish('infrastructure_error', 'Frozen group version differs from request')
@@ -556,6 +557,8 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
         manifest = {"schema": "math-gauge.candidate-lean-manifest/v1",
                     "case_id": request['case_id'],
                     "response_sha256": response_hash, "request_sha256": request_hash,
+                    **({'group_contract_sha256': report['group_contract_sha256']}
+                       if group_contract else {}),
                     "files_sha256": report["files_sha256"],
                     "input_files_sha256": report["input_files_sha256"],
                     "alignment_manifest_sha256": report.get("alignment_manifest_sha256"),

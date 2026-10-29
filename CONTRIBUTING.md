@@ -4,9 +4,11 @@
 
 本指南面向出题、审核和运行器维护。候选模型只能收到每题明确允许的投影，不能收到本指南、目录标签、参考解、评分标准或历史答卷。
 
+当前43份主试卷与已测原41道单题分开登记。完整阅读路径见[文档导航](docs/README.md)，各目录职责见[仓库地图](docs/repository-map.md)。递进题组和整章题的义务、含证明原文、逐项判卷及新增材料状态另遵循[题组合同](protocol/question-groups.md)；三次作答及自查仍是[待实现验收的执行规格](protocol/reliability-execution.md)。
+
 ## 题目放在哪里
 
-当前习题集统一索引四个 suite，实际文件仍各有唯一来源：
+原41道单题统一索引四个 suite，实际文件仍各有唯一来源：
 
 | Suite 根目录 | 当前范围 | 用途 |
 | --- | --- | --- |
@@ -16,6 +18,8 @@
 | [drafts/lean-alignment-20261029](drafts/lean-alignment-20261029/README.md) | MG-F101–MG-F112 | Lean 对齐判定、生成与修复 |
 
 目录中的 `drafts/` 不表示没有参考或验证；生命周期以题目及审核记录为准。当前所有题目仍为 `draft / human pending`。私有题集另放在受控目录，使用相同的 `Suite` 和 runner，通过 `--suite` 选择；不复制一套私有运行器。
+
+新43份试卷放在`drafts/progressive-groups-20261030`和`drafts/chapter-exams-20261030`，使用同一runner；逐题版本以case和修订记录为准，不与原41题重复计数。原`exercises/catalog.json`的固定范围不随它们自动扩展。
 
 ## 每道新题的材料
 
@@ -34,7 +38,7 @@
 
 ## 输入与评分的边界
 
-`solver_files` 是候选附件白名单，`evaluator_files` 是评审专用材料。参考与 rubric 不得作为本题或其他题的候选附件。附件目标名须为唯一的平面文件名；由共享 runner 生成输入，避免手工拼接参考或标签。
+`solver_files` 是候选附件白名单，`evaluator_files` 是评审专用材料。参考与 rubric 不得作为本题或其他题的候选附件。附件目标可使用安全相对目录；禁止绝对路径、父目录穿越、大小写重复和文件/目录遮蔽。由共享 runner 生成输入，避免手工拼接参考或标签。
 
 `candidate_instruction` 缺省会使用兼容旧题的通用提示；设为空字符串才表示不追加该提示。当前二十道默认研究题只有题面，准备后的 `prompt.md` 与 `task.md` 相同。Lean 题可能另有明确附件；通用适配器应使用共享的 `candidate_message(request)`，完整传递这些附件，不自行概括。
 

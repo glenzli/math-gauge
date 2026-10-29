@@ -2,6 +2,10 @@
 
 本页按实际实验范围组织材料。每次运行的题面、参考、评分、工具条件和版本独立冻结；不同批次不拼成一次实验，历史文件中的“未提交”“未试跑”等文字描述其记录时点。
 
+当前43份新试卷是41个递进题组与两份整章题，尚无模型答卷或通过率；本页的实测成绩属于原41道单题及独立补测。新材料状态与待测问题见[项目定位](project-positioning.md)和[评测方法](evaluation-methods.md)，不沿用旧分数。
+
+本轮[严格数学复核](../results/strict-review-20261030/README.md)属于题包审核，不是新模型实验；其中GR001的[0.1.2局部修订](../drafts/progressive-groups-20261030/reviews/strict-amendment-0.1.2.json)另保留原文件和修订身份，其余40组与两章仍为0.1.1。
+
 ## 当前完整比较
 
 | 实验 | 题目范围 | 数学请求 | AI 审核严格完成 |
@@ -43,4 +47,4 @@ R005 旧题面没有明确竞争函数取负无穷的范围；现行版本增加
 
 详见[逐题证据账本](../exercises/instructor-guide.md)、[候选核验合同](../protocol/candidate-lean.md)和[最终工程验收](../results/full-comparison-20261030/validation/finalization/README.md)。人工确认应另留明确记录；提交、推送或离线复算成功本身不改变审核状态。
 
-[返回首页](../README.md) · [使用与复核](usage.md)
+[文档导航](README.md) · [返回首页](../README.md) · [使用与复核](usage.md)

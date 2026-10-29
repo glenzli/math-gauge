@@ -2,7 +2,7 @@
 
 0.1.1 清理了候选题面的分值、判卷提示和后序泄露的判断答案，并明确 audit 的书面交付范围；数学义务、权重、参考和 Lean 输入不变。旧材料与原复核保存在[0.1.0历史快照](history/0.1.0.json)，当前题面通过[编辑等价记录](reviews/editorial-amendment-0.1.1.json)衔接原数学复核。执行与评分采用[重复作答协议](../../protocol/reliability-execution.md)，八题子集见[选择说明](../../protocol/reliability-20261030/selection.md)。
 
-本目录把两份整章草案具体化为可由共享 runner 接收、逐项审核的考试合同。数学原文与允许的外部 Lean 定义保持冻结；考试范围、提交格式、背景不可修改规则和判卷门槛均明确。旧草案仍保存在 `../long-form-design-20261030/`，新题不进入原41题成绩。
+本目录把两份整章草案具体化为可由共享 runner 接收、逐项审核的考试合同。数学原文与允许的外部 Lean 定义保持冻结；考试范围、提交格式、背景不可修改规则和判卷门槛均明确。上层研究设计保留在 `../long-form-design-20261030/`；已被接替的两份pilot按精确Git提交保留，见[退役归档与恢复清单](../../archive/retired-pilots-20261030/README.md)。新题不进入原41题成绩。
 
 | 试卷 | 候选题面 | 必答义务 | 出题侧参考 |
 |---|---|---:|---|
@@ -10,6 +10,8 @@
 | MG-C003：卷1第3章局部退化 | [task](MG-C003/candidate/task.md) | 92：8组定义/表示 + 84证明 | [reference](MG-C003/reference.md) · [contract](MG-C003/contract.json) |
 
 第3章将30个原有源单元继续按方向、分项、构造合法性及边界拆清；章末五题给出完整计算与论证。第2章明确有限链证书、乘积次序和路径表示的桥接。数学上的有效短证、通用有限索引表示及不同分解均可接受，不把“与作者代码不同”当错。
+
+两题的`reference-design-notes.md`保留原pilot的冻结设计状态：[第2章](MG-C002/reference-design-notes.md)与[第3章](MG-C003/reference-design-notes.md)。其中“尚未拆完”等文字、30源单元口径及`coverage-registry.json`等路径描述当时设计，不能替代当前完整的34/92项义务。当前考试范围以各题`case.json`、`contract.json`及候选`obligations.json`为准；旧pilot和coverage-registry路径按[归档manifest](../../archive/retired-pilots-20261030/manifest.json)从提交`9e536ad5ebce182ffcb6bcaabdc24c7fbec221c3`恢复。冻结设计记录字节保持不变。
 
 候选接收完整章节（包括自然语言证明）、前置章节、冻结背景模块、公开义务清单及许可证。第2章8个附件、第3章13个附件；参考、评分、作者实现位置、审核状态和历史结果不进入请求。背景模块在消息中使用其真实 `formal_oet/...` 模块路径，无需改写源文件。`candidate/` 是材料存放位置，唯一投影以case.json的solver_files为准。
 

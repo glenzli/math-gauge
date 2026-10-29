@@ -8,6 +8,7 @@ from pathlib import Path
 from math_gauge.catalog import (
     LEGACY_CANDIDATE_INSTRUCTION,
     Suite,
+    digest_bytes,
     read_json,
     write_json,
 )
@@ -215,6 +216,124 @@ class RunnerContractTests(unittest.TestCase):
         (path / "MG-D001/response.md").write_text("changed")
         with self.assertRaises(ValueError):
             report(path)
+
+    def test_changed_request_invalidates_inspection_review_and_report(self):
+        path = self.replay(["MG-D001"])
+        entries = self.reviewed(path)
+        apply_reviews(path, entries)
+        request_path = path / "MG-D001/solver/request.json"
+        request = read_json(request_path)
+        request["task"] += "\nChanged after execution."
+        write_json(request_path, request)
+        for operation in (lambda: inspect_run(path), lambda: templates(path),
+                          lambda: apply_reviews(path, entries), lambda: report(path)):
+            with self.subTest(operation=operation), self.assertRaisesRegex(ValueError, "candidate input"):
+                operation()
+
+    def test_request_identity_is_checked_even_with_a_matching_record_hash(self):
+        path = self.replay(["MG-D001"])
+        request_path = path / "MG-D001/solver/request.json"
+        record_path = path / "MG-D001/record.json"
+        original_request = read_json(request_path)
+        record = read_json(record_path)
+        for key, value in (("case_id", "another-case"), ("case_version", "another-version"),
+                           ("track", "exploration")):
+            with self.subTest(field=key):
+                request = dict(original_request, **{key: value})
+                write_json(request_path, request)
+                record["request_sha256"] = digest_bytes(
+                    json.dumps(request, ensure_ascii=False, sort_keys=True).encode())
+                write_json(record_path, record)
+                with self.assertRaisesRegex(ValueError, "identity changed"):
+                    inspect_run(path)
+
+    def test_stored_candidate_message_hash_is_checked_in_run_and_record(self):
+        path = self.replay(["MG-D001"])
+        for target, nested in ((path / "run.json", True), (path / "MG-D001/record.json", False)):
+            data = read_json(target)
+            descriptor = data["cases"][0] if nested else data
+            original = descriptor["candidate_message_sha256"]
+            descriptor["candidate_message_sha256"] = "0" * 64
+            write_json(target, data)
+            with self.subTest(path=target), self.assertRaisesRegex(ValueError, "message binding"):
+                report(path)
+            descriptor["candidate_message_sha256"] = original
+            write_json(target, data)
+        inspect_run(path)
+
+    def test_legacy_non_group_run_without_message_hashes_remains_reviewable(self):
+        path = self.replay(["MG-D001"])
+        for target, nested in ((path / "run.json", True), (path / "MG-D001/record.json", False)):
+            data = read_json(target)
+            descriptor = data["cases"][0] if nested else data
+            descriptor.pop("candidate_message_sha256")
+            write_json(target, data)
+        apply_reviews(path, self.reviewed(path))
+        result, _ = report(path)
+        self.assertEqual(result["tracks"]["determinate"]["reviewed"], 1)
+        self.assertEqual(result["tracks"]["determinate"]["eligible_for_model_comparison"], 0)
+
+    def test_old_import_without_archived_input_is_readable_but_unverified(self):
+        path = self.replay(["MG-D001"])
+        apply_reviews(path, self.reviewed(path))
+        meta_path = path / "run.json"
+        meta = read_json(meta_path)
+        meta.pop("run_id")
+        meta.update(origin="external-agent")
+        meta["cases"][0].pop("candidate_message_sha256")
+        meta["cases"][0]["case_approved"] = True
+        write_json(meta_path, meta)
+        record_path = path / "MG-D001/record.json"
+        record = read_json(record_path)
+        record.pop("candidate_message_sha256")
+        write_json(record_path, record)
+        (path / "MG-D001/solver/request.json").unlink()
+        reviews = read_json(path / "reviews.json")
+        reviews["MG-D001"]["reviewer_kind"] = "human"
+        write_json(path / "reviews.json", reviews)
+        _, records = inspect_run(path)
+        self.assertFalse(records["MG-D001"]["input_identity"]["verified"])
+        result, markdown = report(path)
+        self.assertEqual(result["input_identity"]["MG-D001"]["status"], "historical/unverifiable")
+        self.assertIn("historical/unverifiable", markdown)
+        self.assertEqual(result["tracks"]["determinate"]["eligible_for_model_comparison"], 0)
+        self.assertEqual(result["tracks"]["determinate"]["strict_passes"], 0)
+
+    def test_old_raw_task_import_is_not_promoted_to_verified_request(self):
+        path = self.replay(["MG-D001"])
+        meta_path = path / "run.json"
+        meta = read_json(meta_path)
+        meta.pop("run_id")
+        meta["origin"] = "isolated-cli-evidence-import"
+        meta["cases"][0].pop("candidate_message_sha256")
+        write_json(meta_path, meta)
+        record_path = path / "MG-D001/record.json"
+        record = read_json(record_path)
+        record.pop("candidate_message_sha256")
+        request = read_json(path / "MG-D001/solver/request.json")
+        record.update(request_format="raw-task-utf8", request_sha256=digest_bytes(request["task"].encode()))
+        write_json(record_path, record)
+        _, records = inspect_run(path)
+        self.assertFalse(records["MG-D001"]["input_identity"]["verified"])
+        self.assertEqual(records["MG-D001"]["input_identity"]["recorded_request_format"], "raw-task-utf8")
+        self.assertTrue(records["MG-D001"]["input_identity"]["raw_task_hash_matches"])
+        with self.assertRaisesRegex(ValueError, "unverified"):
+            apply_reviews(path, self.reviewed(path))
+
+    def test_current_run_cannot_use_a_generic_legacy_marker_to_hide_missing_input(self):
+        path = self.replay(["MG-D001"])
+        meta_path = path / "run.json"
+        meta = read_json(meta_path)
+        meta.update(origin="external-agent", legacy=True)
+        meta["cases"][0].pop("candidate_message_sha256")
+        write_json(meta_path, meta)
+        record_path = path / "MG-D001/record.json"
+        record = read_json(record_path)
+        record.pop("candidate_message_sha256")
+        write_json(record_path, record)
+        (path / "MG-D001/solver/request.json").unlink()
+        with self.assertRaisesRegex(ValueError, "input verification failed"):
+            inspect_run(path)
 
     def test_reviews_bind_to_exact_response_before_any_write(self):
         path = self.replay()

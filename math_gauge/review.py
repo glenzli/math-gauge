@@ -1,10 +1,56 @@
 """Review ownership: bind opinions to exact responses and keep fixture/AI/human evidence distinct."""
 
+import json
 from pathlib import Path
 
-from .catalog import (digest_bytes, read_json, safe_file, validate_alignment_manifest,
-                      validate_group_contract, write_json)
+from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
+                      validate_alignment_manifest, validate_group_contract, write_json)
 from .execution import extract_candidate_alignment, now, validate_alignment_audit
+
+
+def _input_identity(root, meta, case, record):
+    cid = case["id"]
+    is_group = bool(case.get("group_contract") or record.get("group_contract_sha256"))
+    # These early external imports predate run IDs and message bindings. Their
+    # original archive format may omit the request or bind only raw task bytes.
+    # Keep them readable without granting current verified-input eligibility.
+    historical_import = (
+        not is_group and "run_id" not in meta
+        and meta.get("origin") in {"external-agent", "isolated-cli-evidence-import"}
+        and all("candidate_message_sha256" not in item for item in (case, record))
+    )
+    request = None
+    try:
+        request = read_json(safe_file(root, cid + "/solver/request.json"))
+        if not isinstance(request, dict):
+            raise ValueError("Request must be an object")
+        request_hash = digest_bytes(json.dumps(request, ensure_ascii=False, sort_keys=True).encode())
+        if request_hash != record.get("request_sha256"):
+            if historical_import and record.get("request_format") == "raw-task-utf8":
+                raise ValueError("Legacy raw-task hash does not bind the canonical request JSON")
+            raise ValueError("Frozen candidate input changed")
+        if (request.get("schema") != "math-gauge.request/v1"
+                or request.get("case_id") != cid
+                or ("version" in case and request.get("case_version") != case["version"])
+                or ("track" in case and request.get("track") != case["track"])):
+            raise ValueError("Frozen candidate input identity changed")
+        message_hash = digest_bytes(candidate_message(request).encode("utf-8"))
+        for descriptor in (case, record):
+            # Earlier non-group runs did not store a separate message hash.
+            if ((is_group or "candidate_message_sha256" in descriptor)
+                    and descriptor.get("candidate_message_sha256") != message_hash):
+                raise ValueError("Frozen candidate input message binding changed")
+    except (ValueError, OSError, KeyError, TypeError) as error:
+        if not historical_import:
+            raise ValueError(f"{cid}: candidate input verification failed: {error}") from error
+        identity = {"status": "historical/unverifiable", "verified": False,
+                    "reason": str(error), "recorded_request_format": record.get("request_format", "canonical-request-json")}
+        if (record.get("request_format") == "raw-task-utf8" and isinstance(request, dict)
+                and isinstance(request.get("task"), str)):
+            identity["raw_task_hash_matches"] = digest_bytes(request["task"].encode("utf-8")) == record.get("request_sha256")
+        return identity
+    return {"status": "verified", "verified": True,
+            "request_sha256": request_hash, "candidate_message_sha256": message_hash}
 
 
 def inspect_run(root):
@@ -22,6 +68,7 @@ def inspect_run(root):
             != record["response_sha256"]
         ):
             raise ValueError(f"{cid}: response changed after execution")
+        record = dict(record, input_identity=_input_identity(root, meta, case, record))
         records[cid] = record
         descriptor = case.get("group_contract")
         if descriptor or record.get("group_contract_sha256"):
@@ -120,8 +167,9 @@ def _validate_group_review(root, case, record, entry):
                 or receipt.get("case_id") != case["id"]
                 or receipt.get("response_sha256") != record["response_sha256"]
                 or receipt.get("request_sha256") != record["request_sha256"]
+                or receipt.get("group_contract_sha256") != case["group_contract"]["sha256"]
                 or receipt.get("status") != "passed" or receipt.get("source_repaired") is not False):
-            raise ValueError("Stage Lean pass needs bound, unrepaired candidate compilation evidence")
+            raise ValueError("Stage Lean pass needs bound, unrepaired candidate compilation evidence for this group contract")
         audited = {(d["module"], d["name"]) for d in receipt.get("audit", {}).get("declarations", [])}
         alignment_items = None
         if contract.get("alignment_manifest_required"):
@@ -215,6 +263,8 @@ def apply_reviews(root, entries):
             raise ValueError(
                 f"{cid}: review already exists; keep original record and use a new run for revisions in v0.1"
             )
+        if not records[cid]["input_identity"]["verified"]:
+            raise ValueError(f"{cid}: historical candidate input is unverified; archived reviews remain read-only")
         if (
             entry.get("reviewer_kind") not in {"human", "ai", "fixture"}
             or not entry.get("reviewer", "").strip()
@@ -277,6 +327,7 @@ def report(root):
             and r["reviewer_kind"] == "human"
             and meta["origin"] != "replay"
             and r["decision"] != "unresolved"
+            and records[c["id"]]["input_identity"]["verified"]
         ]
         tracks[track] = {
             "attempted": len(cases),
@@ -306,6 +357,7 @@ def report(root):
         "run": meta,
         "tracks": tracks,
         "group_diagnostics": group_diagnostics,
+        "input_identity": {cid: record["input_identity"] for cid, record in records.items()},
         "automatically_establishes_mathematical_correctness": False,
         "notice": "Replay、AI/fixture 审核与未人工审定的题目不计为模型比较成绩；开放构造单独记录发现，不生成统一总分。",
     }
@@ -331,15 +383,21 @@ def report(root):
         "",
         "## 每题证据",
         "",
-        "| 题目 | 执行 | 审核来源 | 结论 |",
-        "|---|---|---|---|",
+        "| 题目 | 执行 | 输入身份 | 审核来源 | 结论 |",
+        "|---|---|---|---|---|",
     ]
     for c in meta["cases"]:
         cid = c["id"]
         r = reviews.get(cid, {})
         lines.append(
-            f"| {cid} | {records[cid]['status']} | {r.get('reviewer_kind', 'pending')} | {r.get('decision', 'pending')} |"
+            f"| {cid} | {records[cid]['status']} | {records[cid]['input_identity']['status']} | {r.get('reviewer_kind', 'pending')} | {r.get('decision', 'pending')} |"
         )
+    unverified = [(cid, record["input_identity"]) for cid, record in records.items()
+                  if not record["input_identity"]["verified"]]
+    if unverified:
+        lines += ["", "以下旧导入记录仅供历史阅读，输入身份未验证，不具备当前模型比较资格："]
+        lines += [f"- {cid}: {identity['reason']}（{identity['recorded_request_format']}）"
+                  for cid, identity in unverified]
     if group_diagnostics:
         lines += ["", "## 题组诊断", "", "以下是相关阶段的完成情况，不是独立样本通过率。", "",
                   "| 题组 | 完成阶段 | 完成权重 | 独立错误根项 | 题目问题待复核 |",
@@ -359,7 +417,6 @@ def compare_models(case_index, model_runs, *, execution_receipts, lean_reports=N
     """
     from .catalog import candidate_message
     from collections import Counter
-    import json
 
     index = {c["case_id"]: c for c in case_index}
     if not index or len(index) != len(case_index):

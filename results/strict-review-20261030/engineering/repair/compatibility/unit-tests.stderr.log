@@ -1,0 +1,176 @@
+.......................sssss..........EEEEFFFFFF.FF.....sssssssss..........Cannot mix verification profiles in one invocation
+......................................s.........................................
+======================================================================
+ERROR: test_candidate_projection_has_no_focus_material (test_focus_catalog.FocusCatalogTests.test_candidate_projection_has_no_focus_material)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 138, in test_candidate_projection_has_no_focus_material
+    catalog, _ = focus_catalog.build()
+                 ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 289, in build
+    suites, sources = load_sources(root, taxonomy)
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 155, in load_sources
+    require(summary == specification, f"{relative}: suite drift; review before rebinding")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 45, in require
+    raise ValueError(message)
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+======================================================================
+ERROR: test_check_is_read_only_and_legacy_identity_stays_fixed (test_focus_catalog.FocusCatalogTests.test_check_is_read_only_and_legacy_identity_stays_fixed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 111, in test_check_is_read_only_and_legacy_identity_stays_fixed
+    before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths}
+                     ~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/g4i/lab/math-gauge/exercises/focus-catalog.json'
+
+======================================================================
+ERROR: test_exact_paper_units_and_independent_review_statuses (test_focus_catalog.FocusCatalogTests.test_exact_paper_units_and_independent_review_statuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 30, in test_exact_paper_units_and_independent_review_statuses
+    catalog, _ = focus_catalog.build()
+                 ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 289, in build
+    suites, sources = load_sources(root, taxonomy)
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 155, in load_sources
+    require(summary == specification, f"{relative}: suite drift; review before rebinding")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 45, in require
+    raise ValueError(message)
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+======================================================================
+ERROR: test_refresh_writes_only_the_two_new_derived_outputs (test_focus_catalog.FocusCatalogTests.test_refresh_writes_only_the_two_new_derived_outputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 123, in test_refresh_writes_only_the_two_new_derived_outputs
+    catalog, document = focus_catalog.build()
+                        ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 289, in build
+    suites, sources = load_sources(root, taxonomy)
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 155, in load_sources
+    require(summary == specification, f"{relative}: suite drift; review before rebinding")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/g4i/lab/math-gauge/exercises/refresh_focus_catalog.py", line 45, in require
+    raise ValueError(message)
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+======================================================================
+FAIL: test_rejects_duplicate_primary_or_focus_tag (test_focus_catalog.FocusCatalogTests.test_rejects_duplicate_primary_or_focus_tag) (field='role')
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 67, in test_rejects_duplicate_primary_or_focus_tag
+    with self.assertRaisesRegex(ValueError, message):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "exactly one leading primary" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_duplicate_primary_or_focus_tag (test_focus_catalog.FocusCatalogTests.test_rejects_duplicate_primary_or_focus_tag) (field='focus_id')
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 67, in test_rejects_duplicate_primary_or_focus_tag
+    with self.assertRaisesRegex(ValueError, message):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "duplicate focus tag" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_missing_or_repeated_paper (test_focus_catalog.FocusCatalogTests.test_rejects_missing_or_repeated_paper) (duplicate=False)
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 56, in test_rejects_missing_or_repeated_paper
+    with self.assertRaisesRegex(ValueError, "exactly the 43"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "exactly the 43" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_missing_or_repeated_paper (test_focus_catalog.FocusCatalogTests.test_rejects_missing_or_repeated_paper) (duplicate=True)
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 56, in test_rejects_missing_or_repeated_paper
+    with self.assertRaisesRegex(ValueError, "exactly the 43"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "exactly the 43" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_nonexistent_stage_or_obligation (test_focus_catalog.FocusCatalogTests.test_rejects_nonexistent_stage_or_obligation) (cid='MG-GR001')
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 83, in test_rejects_nonexistent_stage_or_obligation
+    with self.assertRaisesRegex(ValueError, "invalid evidence ID"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "invalid evidence ID" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_nonexistent_stage_or_obligation (test_focus_catalog.FocusCatalogTests.test_rejects_nonexistent_stage_or_obligation) (cid='MG-C003')
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 83, in test_rejects_nonexistent_stage_or_obligation
+    with self.assertRaisesRegex(ValueError, "invalid evidence ID"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "invalid evidence ID" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_stale_task_locator (test_focus_catalog.FocusCatalogTests.test_rejects_stale_task_locator)
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 103, in test_rejects_stale_task_locator
+    with self.assertRaisesRegex(ValueError, "task heading locator drift"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "task heading locator drift" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+======================================================================
+FAIL: test_rejects_tag_without_evidence (test_focus_catalog.FocusCatalogTests.test_rejects_tag_without_evidence)
+----------------------------------------------------------------------
+ValueError: drafts/progressive-groups-20261030: suite drift; review before rebinding
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/g4i/lab/math-gauge/tests/test_focus_catalog.py", line 73, in test_rejects_tag_without_evidence
+    with self.assertRaisesRegex(ValueError, "tag lacks evidence"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "tag lacks evidence" does not match "drafts/progressive-groups-20261030: suite drift; review before rebinding"
+
+----------------------------------------------------------------------
+Ran 152 tests in 12.665s
+
+FAILED (failures=8, errors=4, skipped=15)

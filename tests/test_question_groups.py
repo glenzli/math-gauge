@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from math_gauge.catalog import (Suite, candidate_message, digest_bytes, read_json,
                                 validate_alignment_manifest, write_json)
@@ -87,6 +88,7 @@ class QuestionGroupContracts(unittest.TestCase):
         manifest, span, _ = extract_candidate_alignment(response)
         receipt = {'schema': 'math-gauge.candidate-lean/v1', 'case_id': self.cid,
                    'response_sha256': record['response_sha256'], 'request_sha256': record['request_sha256'],
+                   'group_contract_sha256': record['group_contract_sha256'],
                    'status': 'passed', 'source_repaired': False, 'fixture_only': True,
                    'files_sha256': {'Main.lean': 'fixture'},
                    'audit': {'declarations': [{'module': 'Main', 'name': 'groupAnswer'},
@@ -166,6 +168,51 @@ class QuestionGroupContracts(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'not audited'):
             validate_alignment_audit(manifest, self.contract, receipt)
 
+    def test_lean_receipt_cannot_cross_group_contracts(self):
+        manifest = self.alignment()
+        response = self.alignment_response(manifest)
+        self.replay(response)
+        old_record = read_json(self.run_path/self.cid/'record.json')
+        self.contract['required_output_files'] = ['Main.lean']
+        self.save()
+        self.run_path = self.root/'stronger-contract-run'
+        run(Suite.load(self.suite_path), self.run_path, [self.cid],
+            replay=self.root/'responses.json')
+        record = read_json(self.run_path/self.cid/'record.json')
+        self.assertEqual(record['request_sha256'], old_record['request_sha256'])
+        self.assertEqual(record['response_sha256'], old_record['response_sha256'])
+        self.assertNotEqual(record['group_contract_sha256'], old_record['group_contract_sha256'])
+        entry, receipt, path = self.alignment_receipt_fixture(response)
+        for value in (old_record['group_contract_sha256'], None):
+            with self.subTest(contract_hash=value):
+                if value is None:
+                    receipt.pop('group_contract_sha256', None)
+                else:
+                    receipt['group_contract_sha256'] = value
+                write_json(path, receipt)
+                entry['candidate_lean_report_sha256'] = digest_bytes(path.read_bytes())
+                with self.assertRaisesRegex(ValueError, 'group contract'):
+                    apply_reviews(self.run_path, [entry])
+                self.assertFalse((self.run_path/'reviews.json').exists())
+        receipt['group_contract_sha256'] = record['group_contract_sha256']
+        write_json(path, receipt)
+        entry['candidate_lean_report_sha256'] = digest_bytes(path.read_bytes())
+        apply_reviews(self.run_path, [entry])
+        self.assertEqual(report(self.run_path)[0]['group_diagnostics'][self.cid]['stage_passes'], 5)
+
+    def test_candidate_manifest_freezes_group_contract_before_compilation(self):
+        manifest = self.alignment()
+        self.replay(self.alignment_response(manifest))
+        record = read_json(self.run_path/self.cid/'record.json')
+        with patch('math_gauge.execution.sys.platform', 'unsupported'):
+            receipt = verify_candidate_lean(self.run_path/self.cid, self.root/'verify',
+                                            dependency_root=self.root/'absent')
+        self.assertEqual(receipt['status'], 'infrastructure_error')
+        self.assertEqual(receipt['group_contract_sha256'], record['group_contract_sha256'])
+        artifact = read_json(self.root/'verify/manifest.json')
+        self.assertEqual(artifact['group_contract_sha256'], record['group_contract_sha256'])
+        self.assertEqual(receipt['artifact_sha256'], digest_bytes((self.root/'verify/manifest.json').read_bytes()))
+
     def test_nested_projection_is_exact_and_contract_is_hidden(self):
         source = self.suite_path / self.cid / 'Background.lean'
         source.write_text('def backgroundValue := 1\n')
@@ -242,6 +289,20 @@ class QuestionGroupContracts(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'binding'):
             templates(self.run_path)
 
+    def test_group_cannot_drop_candidate_message_bindings(self):
+        self.replay()
+        for path, nested in ((self.run_path/'run.json', True),
+                             (self.run_path/self.cid/'record.json', False)):
+            saved = read_json(path)
+            changed = copy.deepcopy(saved)
+            descriptor = changed['cases'][0] if nested else changed
+            descriptor.pop('candidate_message_sha256')
+            write_json(path, changed)
+            with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'message binding'):
+                templates(self.run_path)
+            write_json(path, saved)
+        self.assertEqual(len(templates(self.run_path)[0]['stages']), 5)
+
     def test_changed_frozen_contract_and_stale_review_are_rejected(self):
         self.replay(); e = self.passing()
         e['group_contract_sha256'] = '0'*64
@@ -260,6 +321,7 @@ class QuestionGroupContracts(unittest.TestCase):
         record = read_json(self.run_path/self.cid/'record.json')
         receipt = {'schema': 'math-gauge.candidate-lean/v1', 'case_id': self.cid,
                    'response_sha256': record['response_sha256'], 'request_sha256': record['request_sha256'],
+                   'group_contract_sha256': record['group_contract_sha256'],
                    'status': 'passed', 'source_repaired': True, 'fixture_only': True}
         path = self.run_path/'lean-fixture.json'
         write_json(path, receipt)
@@ -287,6 +349,7 @@ class QuestionGroupContracts(unittest.TestCase):
         record = read_json(self.run_path/self.cid/'record.json')
         receipt = {'schema': 'math-gauge.candidate-lean/v1', 'case_id': self.cid,
                    'response_sha256': record['response_sha256'], 'request_sha256': record['request_sha256'],
+                   'group_contract_sha256': record['group_contract_sha256'],
                    'status': 'passed', 'source_repaired': False, 'fixture_only': True,
                    'files_sha256': {'Main.lean': 'fixture'},
                    'audit': {'declarations': [{'module': 'Main', 'name': 'Fixture.answer'}]}}
@@ -338,6 +401,10 @@ class QuestionGroupContracts(unittest.TestCase):
         receipt = verify_candidate_lean(self.run_path/self.cid, self.run_path/'candidate-validation',
                                         dependency_root=os.environ['MATH_GAUGE_CANDIDATE_DEPENDENCIES'], timeout=60)
         self.assertEqual(receipt['status'], 'passed', receipt)
+        self.assertEqual(receipt['group_contract_sha256'],
+                         read_json(self.run_path/self.cid/'record.json')['group_contract_sha256'])
+        self.assertEqual(read_json(self.run_path/'candidate-validation/manifest.json')['group_contract_sha256'],
+                         receipt['group_contract_sha256'])
         e = self.passing()
         for row in e['stages']:
             row.update(lean_status='passed', declarations=[{'file': 'Main.lean', 'name': 'groupAnswer'}])
