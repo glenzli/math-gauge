@@ -1,0 +1,71 @@
+{
+  "schema": "math-gauge.r004-route-closure/v1",
+  "date": "2026-10-29",
+  "case_id": "MG-R004",
+  "reviewer": {
+    "kind": "ai",
+    "model": "gpt-6-astra",
+    "reasoning_effort": "max",
+    "role": "independent reviewer; R005-R007 author, not R004 author"
+  },
+  "scope": "Narrow closure of the R004 proof-method prescription and resulting right-inverse wording; no re-audit of other cases.",
+  "verdict": "closed",
+  "integration_justified_for_reviewed_snapshot": true,
+  "open_findings": [],
+  "blocking_findings": [],
+  "issue_dispositions": [
+    {
+      "issue": "Prescribed Laplacian-led construction route",
+      "status": "closed",
+      "location": "functional/MG-R004/task.md:19",
+      "verification": "The task specifies bounded contractions and bounded linear right inverses with norm control as outputs, without requiring either to be constructed through the other."
+    }
+  ],
+  "independent_mathematical_checks": {
+    "kernel": "Reduced acyclicity gives ker d_j = closure ran d_(j-1). If L_j x=0, its quadratic form yields d_j x=0 and d_(j-1)^* x=0. Thus x lies in that closed range and is orthogonal to it, hence x=0. The endpoint and zero-space cases are included.",
+    "inverse_equivalence": "If L_j G_j=I, then L_j(G_j L_j-I)=0. Injectivity gives G_j L_j=I. A bounded right inverse therefore is exactly a bounded two-sided inverse under the existing assumptions.",
+    "counterexample": "For the length-one complex on complex l2 with d=diag(1/n), injectivity and dense range give both reduced records zero. A bounded contraction would send e_n to n e_n. A right inverse of L=diag(1/n^2) would send e_n to n^2 e_n. Both are impossible.",
+    "norm_control": "The reference's conditional closed-range proof retains ||G_j|| <= M_j^2 and finite maxima of the operator norms. It does not infer existence or a positive lower bound merely from reduced acyclicity.",
+    "completion_fairness": "Any complete counterexample to the requested universal conjunction suffices. The rubric remains unchanged and does not require the author example, closed-range classification, or displayed contraction formula.",
+    "prompt_restraint": "No additional assumption, correct weakening, boundary hint or mandatory proof method was added. The right-inverse requirement is an exact output specification.",
+    "changed_reference_locations": [
+      23,
+      33,
+      69,
+      101
+    ],
+    "new_mathematical_defects_found": 0
+  },
+  "reviewed_root": "/private/tmp/math-gauge-optimization-20261029/functional/MG-R004",
+  "reviewed_sha256": {
+    "task.md": "ff03d4b674680281bde97e73b5316f01fc4837fa5c58625eb0dc54706ae2650a",
+    "reference.md": "6277ce8d8c50683c24d97b37784c237adedd00f97e17dd07d326e446c965e0b3",
+    "rubric.json": "4150650a577d363f4d76e3ec681836dd10ce8b38eb7b4c38b77901c59b6fd7b3",
+    "design.json": "39fd25ca549ec3f746449e78f3857b42d35d415c591f57f06a9a3d0ba661238f"
+  },
+  "hashes_stable_through_report_creation": true,
+  "matches_author_receipt": true,
+  "rubric_unchanged_from_prior_review": true,
+  "author_receipt": {
+    "path": "/private/tmp/math-gauge-optimization-20261029/reviews/r004-author-route-repair.json",
+    "sha256": "c0e5686f8c4951225689ddf392df8d7ef0fe04aec71d366d52e8c413b2f8494a",
+    "used_as_proof": false
+  },
+  "preserved_prior_reports_sha256": {
+    "peer-functional.md": "bbb832ac67121ecf964bf152bd7539a0880c0f444c8a7f1eab37e16780c3cd79",
+    "peer-functional.json": "c6964fecd9c8965bfb7d2e679a3fed0d00f6030b88d8f7b953fad1f5430d8629",
+    "peer-functional-closure.md": "a935d028407fbb46b403302a2951aa007076c089a4e4459c31a3511a10bdf62f",
+    "peer-functional-closure.json": "33ccacfabbaa493839f52d64b3621a14d976f3bea105569f70eca8fe2a21f734",
+    "peer-category.md": "bc76d43745e5c24694eed5391f12ba889c35afb68c8e11dafd2eb395395db15a",
+    "peer-category.json": "f173c39431bd3b66058837653f64df8f3990aa9e00e6edfb5db9ad8ac0c04add"
+  },
+  "evidence_limits": {
+    "earlier_reviews_preserved": true,
+    "repository_or_staged_cases_edited": false,
+    "other_cases_reaudited": false,
+    "candidate_model_trials": 0,
+    "lean_compilations": 0,
+    "human_approval": false,
+    "author_pending_wording": "Frozen author-stage metadata; this separate report records the subsequent independent narrow closure."
+  }
+}

@@ -5,7 +5,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from math_gauge.catalog import Suite, read_json, write_json
+from math_gauge.catalog import (
+    LEGACY_CANDIDATE_INSTRUCTION,
+    Suite,
+    read_json,
+    write_json,
+)
 from math_gauge.execution import run
 from math_gauge.review import apply_reviews, inspect_run, report, templates
 
@@ -17,7 +22,7 @@ class RunnerContractTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        self.suite = Suite.load(ROOT / "cases/public")
+        self.suite = Suite.load(ROOT / "archive/legacy-v0/public")
 
     def replay(self, ids=None):
         ids = ids or ["MG-D001", "MG-F004", "MG-E003"]
@@ -47,7 +52,7 @@ class RunnerContractTests(unittest.TestCase):
         shutil.copytree(self.suite.root, target)
         return target
 
-    def test_seed_catalog_is_balanced_and_unapproved(self):
+    def test_legacy_catalog_is_balanced_and_unapproved(self):
         self.assertEqual(len(self.suite.cases), 15)
         self.assertEqual(
             [
@@ -89,6 +94,55 @@ class RunnerContractTests(unittest.TestCase):
         self.assertNotIn("reviewer/repair.lean", json.dumps(req))
         self.assertNotIn("required_evidence", json.dumps(req))
         self.assertNotIn("misaligned", json.dumps(req))
+
+    def test_absent_candidate_instruction_preserves_legacy_prompt(self):
+        case = self.suite.cases["MG-D001"]
+        self.assertNotIn("candidate_instruction", case)
+        request = self.suite.prepare(case, self.root / "legacy-prompt")
+        self.assertEqual(request["instruction"], LEGACY_CANDIDATE_INSTRUCTION)
+        self.assertEqual(
+            (self.root / "legacy-prompt/prompt.md").read_bytes(),
+            (LEGACY_CANDIDATE_INSTRUCTION + "\n\n" + request["task"]).encode(),
+        )
+
+    def test_custom_candidate_instruction_is_used_exactly(self):
+        target = self.copy_suite()
+        p = target / "MG-D001/case.json"
+        case = read_json(p)
+        case["candidate_instruction"] = "单独的任务说明。\n保留此换行。"
+        write_json(p, case)
+        suite = Suite.load(target)
+        request = suite.prepare(suite.cases["MG-D001"], self.root / "custom")
+        self.assertEqual(request["instruction"], case["candidate_instruction"])
+        self.assertEqual(
+            (self.root / "custom/prompt.md").read_bytes(),
+            (case["candidate_instruction"] + "\n\n" + request["task"]).encode(),
+        )
+
+    def test_empty_candidate_instruction_preserves_task_bytes(self):
+        target = self.copy_suite()
+        p = target / "MG-D001/case.json"
+        case = read_json(p)
+        case["candidate_instruction"] = ""
+        write_json(p, case)
+        task = "题面第一行。\r\n第二行。\r\n".encode()
+        (target / case["task"]).write_bytes(task)
+        suite = Suite.load(target)
+        request = suite.prepare(suite.cases["MG-D001"], self.root / "task-only")
+        self.assertEqual(request["instruction"], "")
+        self.assertEqual(request["task"].encode(), task)
+        self.assertEqual((self.root / "task-only/prompt.md").read_bytes(), task)
+
+    def test_candidate_instruction_rejects_non_string_values(self):
+        target = self.copy_suite()
+        p = target / "MG-D001/case.json"
+        case = read_json(p)
+        for invalid in (None, False, 0, [], {}):
+            with self.subTest(value=invalid):
+                case["candidate_instruction"] = invalid
+                write_json(p, case)
+                with self.assertRaisesRegex(ValueError, "candidate_instruction"):
+                    Suite.load(target)
 
     def test_replay_and_fixture_reviews_never_become_model_scores(self):
         path = self.replay()

@@ -1,0 +1,308 @@
+{
+  "schema": "math-gauge.authoring-review/v1",
+  "date": "2026-10-29",
+  "reviewer": "Astra Max requested mathematical review subagent",
+  "reviewer_kind": "ai",
+  "review_type": "authoring-review-not-blind-evaluation",
+  "scope": [
+    "MG-R001",
+    "MG-R002",
+    "MG-R003",
+    "MG-R004",
+    "MG-R005",
+    "MG-R006"
+  ],
+  "overall": "core-mathematics-accepted-all-findings-addressed",
+  "critical_core_errors": 0,
+  "new_model_runs": 0,
+  "new_lean_runs": 0,
+  "repository_mutations": false,
+  "human_approval": false,
+  "findings": [
+    {
+      "id": "F01",
+      "priority": 2,
+      "kind": "mathematical-overrestriction",
+      "case": "MG-R002",
+      "file": "cases/public/MG-R002/reference.md",
+      "lines": [
+        30,
+        30
+      ],
+      "title": "Finite exact interpolation is possible; only the sharp norm bound can fail",
+      "blocking_core_truth": false,
+      "recommended_before_freeze": true,
+      "description": "The reference unqualifiedly says exact finite interpolation has not been obtained. Since Q(E) is a finite-dimensional closed subspace and b lies in closure Q(C B_E), b is in Q(E). A finite-dimensional right inverse corrects approximants to exact interpolants with norm < C+epsilon.",
+      "correction": "Qualify the failure as exact interpolation together with the sharp bound norm <= C. State and justify exact finite interpolation with arbitrary C+epsilon slack. Preserve failure of simultaneous realization of all observations.",
+      "witness": "E=c0, C=1, z(a)=sum a_n, phi=(2^-n) in l1. z(phi)=1, but phi(x)<1 for every x in c0 with sup norm <=1. Finite supported exact interpolants have norm (1-2^-m)^-1 decreasing to 1.",
+      "proof": "Use b in closure Q(CB_E), W=Q(E) closed, and a continuous linear right inverse R:W->E. For u in C B_E sufficiently accurate, u+R(b-Qu) is exact and has norm < C+epsilon.",
+      "grading_impact": "Accept proved exact finite interpolation as a positive result, not an E-versus-E-bidual scope error.",
+      "status": "addressed-and-reverified",
+      "resolved_by": "Parent agent edits, independently reread by reviewer",
+      "verified_current_file_sha256": "65ac0d1859ee201e2087de11339466581270ce22777d8274d5aa201fc95d5fe5",
+      "verification": "Reference lines 30-38 now prove exact interpolation using a finite-dimensional right inverse and give the sharp-bound c0 obstruction. The use of a sequence is legitimate for a fixed finite-dimensional observation target."
+    },
+    {
+      "id": "F02",
+      "priority": 2,
+      "kind": "rubric-overrestriction",
+      "case": "MG-R001",
+      "file": "cases/public/MG-R001/rubric.json",
+      "lines": [
+        7,
+        7
+      ],
+      "title": "Matrix bounds are not necessary for every positive construction",
+      "blocking_core_truth": false,
+      "recommended_before_freeze": true,
+      "description": "The criterion says any positive claim must connect to the matrix bound, but the reference least partial solution is proved directly from deterministic paths and bottom preservation, without spectral or matrix hypotheses. This can conflict with completion_policy and reject a valid short refutation plus partial solution.",
+      "related_locations": [
+        {
+          "file": "cases/public/MG-R001/reference.md",
+          "lines": [
+            79,
+            85
+          ]
+        },
+        {
+          "file": "cases/public/MG-R001/rubric.json",
+          "lines": [
+            20,
+            21
+          ]
+        }
+      ],
+      "correction": "For contraction, quantitative approximation, or convergence claims that use the local Lipschitz data, justify the bound on the actual unfolding in the correct extended-value setting. Other valid constructions need only the hypotheses and arguments they actually use.",
+      "status": "addressed-and-reverified",
+      "resolved_by": "Parent agent edits, independently reread by reviewer",
+      "verified_current_file_sha256": "a35f2fbbfe6723614222a8e81e3e687494e1a3526b72581e45d03eb6a8e16569",
+      "verification": "Criterion now applies only to matrix-based contraction/convergence claims and exempts algebraic partial solutions."
+    },
+    {
+      "id": "F03",
+      "priority": 3,
+      "kind": "source-attribution",
+      "case": "MG-R003",
+      "file": "cases/public/sources.json",
+      "lines": [
+        21,
+        21
+      ],
+      "title": "The cited author is Larry Susanka",
+      "blocking_core_truth": false,
+      "recommended_before_freeze": true,
+      "description": "The linked PDF title page says Larry Susanka, not Stephen Susanka. The cited Theorem 12.7 is otherwise appropriate.",
+      "source_url": "https://susanka.org/Notes/LinSpandHilbSp.pdf",
+      "correction": "Change Stephen Susanka to Larry Susanka.",
+      "status": "addressed-and-reverified",
+      "resolved_by": "Parent agent edits, independently reread by reviewer",
+      "verified_current_file_sha256": "5ea9195a6d2892dd60be46dfe1c65f2f356af07348f58a32176bd4bbaee8efae",
+      "verification": "Current source table says Larry Susanka, matching the PDF title page."
+    },
+    {
+      "id": "F04",
+      "priority": 3,
+      "kind": "prompt-clarity-advisory",
+      "case": "MG-R005",
+      "file": "cases/public/MG-R005/task.md",
+      "lines": [
+        13,
+        15
+      ],
+      "title": "Specify the role of compatibility without preselecting an undefined relation",
+      "blocking_core_truth": false,
+      "recommended_before_freeze": false,
+      "description": "Compatibility can naturally mean raw fiber-infimum equality or monotonic pullback inequality after relaxation. They differ, while the task does not define which is required and the rubric expects monotonic compatibility.",
+      "related_locations": [
+        {
+          "file": "cases/public/MG-R005/reference.md",
+          "lines": [
+            9,
+            13
+          ]
+        },
+        {
+          "file": "cases/public/MG-R005/reference.md",
+          "lines": [
+            53,
+            57
+          ]
+        }
+      ],
+      "correction": "Replace the vague additional requirement with a request to derive and explain the relations under restriction maps and how they determine the global recovered function. This avoids revealing missing hypotheses or the answer.",
+      "witness": "E=R2, f indicator of closed convex {(u,v):u>0,v>=1/u}, K=E dual, F observes u. The relaxed F record is 0 at u=0, whereas inf_v of the relaxed K record at (0,v) is infinity.",
+      "status": "addressed-and-reverified",
+      "resolved_by": "Parent agent revised the task without stating a compatibility formula",
+      "verification": "Current task asks to derive record relations under restriction maps and explain how they determine the global recovery, rather than imposing an undefined compatibility axiom. It does not disclose the inequality, missing hypotheses, or proof route.",
+      "verified_current_file_sha256": "fd77657a98dc8747d9f129caa3fb486fff8187eb578ab09ba02ddfa91888422a"
+    },
+    {
+      "id": "F05",
+      "priority": 3,
+      "kind": "rubric-clarity-advisory",
+      "case": "MG-R003",
+      "file": "cases/public/MG-R003/rubric.json",
+      "lines": [
+        8,
+        8
+      ],
+      "title": "Do not add a hidden closedness completion obligation",
+      "blocking_core_truth": false,
+      "recommended_before_freeze": false,
+      "description": "Closedness of the convergence domain is true and correctly proved, but the task explicitly asks for the full domain and its bounded projection, not separately for closedness. A response proving those targets without asserting closedness should not fail solely for omitting this extra property.",
+      "related_locations": [
+        {
+          "file": "cases/public/MG-R003/task.md",
+          "lines": [
+            17,
+            17
+          ]
+        }
+      ],
+      "correction": "Either ask for the topological linear structure of the domain in the task, or make the rubric require proof of any asserted decomposition or closedness. Accept equivalent standard proofs.",
+      "status": "addressed-and-reverified",
+      "resolved_by": "Parent agent edits, independently reread by reviewer",
+      "verified_current_file_sha256": "3476fa7c03615a69c0299ddb1aad10c7781864b54beb3c71ed2ee081eef644e2",
+      "verification": "Closedness is explicitly optional; full domain, decomposition, and bounded projection remain required."
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "MG-R001",
+      "author_goal_status": "false-strong-target",
+      "core_mathematics": "accepted",
+      "human_status": "pending-unmodified",
+      "findings": [
+        "F02"
+      ],
+      "files": {
+        "task.md": "779bf275a6184fb848a12f3d72089a21d4704513512e10323aa48d4ee462cecd",
+        "reference.md": "dd01173445122c9f91b22d07ff05dc49ae385d58edf1dece0e39927a59c41186",
+        "rubric.json": "a35f2fbbfe6723614222a8e81e3e687494e1a3526b72581e45d03eb6a8e16569"
+      },
+      "initial_reviewed_files": {
+        "task.md": "779bf275a6184fb848a12f3d72089a21d4704513512e10323aa48d4ee462cecd",
+        "reference.md": "dd01173445122c9f91b22d07ff05dc49ae385d58edf1dece0e39927a59c41186",
+        "rubric.json": "8430b7c9048b6ed0c346898ba2a0434049acacd4d79047e6e9325711fc59b7a1"
+      }
+    },
+    {
+      "case_id": "MG-R002",
+      "author_goal_status": "false-strong-target",
+      "core_mathematics": "accepted",
+      "human_status": "pending-unmodified",
+      "findings": [
+        "F01"
+      ],
+      "files": {
+        "task.md": "26465cc9b26e10becfc1716e0a66a5a15a5d34b456465c3298ebdc2122feb0e4",
+        "reference.md": "65ac0d1859ee201e2087de11339466581270ce22777d8274d5aa201fc95d5fe5",
+        "rubric.json": "f588be5d994d6c43b542cb8f160867b079bed0992ef0900024d433d6cbfdebb3"
+      },
+      "initial_reviewed_files": {
+        "task.md": "26465cc9b26e10becfc1716e0a66a5a15a5d34b456465c3298ebdc2122feb0e4",
+        "reference.md": "fa4af5828e1eabeb8af41d6cac9cefa6a480b697f457b5fc1c0541a062dc4ac3",
+        "rubric.json": "f588be5d994d6c43b542cb8f160867b079bed0992ef0900024d433d6cbfdebb3"
+      }
+    },
+    {
+      "case_id": "MG-R003",
+      "author_goal_status": "true-weak-target",
+      "core_mathematics": "accepted",
+      "human_status": "pending-unmodified",
+      "findings": [
+        "F03",
+        "F05"
+      ],
+      "files": {
+        "task.md": "b3f236573d573eff51e940c9784e6ae15ddc697eb89a5007a6e1fbdff8f4621a",
+        "reference.md": "31bc2a0237319d72e86f5f0521d2d6fac4a277b14fee08b15e6a2657f0d050fe",
+        "rubric.json": "3476fa7c03615a69c0299ddb1aad10c7781864b54beb3c71ed2ee081eef644e2"
+      },
+      "initial_reviewed_files": {
+        "task.md": "3efebff091b4ed9a45e708370a480bf3fb072e598d765d92b6c9d2b9f5c283ac",
+        "reference.md": "31bc2a0237319d72e86f5f0521d2d6fac4a277b14fee08b15e6a2657f0d050fe",
+        "rubric.json": "ef70db137b8c02a21f279848da37df19f9368575b9517f6bbbaeef55b5000f28"
+      }
+    },
+    {
+      "case_id": "MG-R004",
+      "author_goal_status": "false-strong-target",
+      "core_mathematics": "accepted",
+      "human_status": "pending-unmodified",
+      "findings": [],
+      "files": {
+        "task.md": "6dd68fcc8f60e0be857ac7f8ba56dc0c07b10a320c33dedfb86f9caaf989a815",
+        "reference.md": "4e307351a1bf074e94fdbf4f29c7939b04e0929c5a59f0081cf5eb5e1a3b2dd9",
+        "rubric.json": "07712a3216a604f9cfd1ef724f97ff6e92c520b7ad3fb03a09e250a9800ec394"
+      },
+      "initial_reviewed_files": {
+        "task.md": "6dd68fcc8f60e0be857ac7f8ba56dc0c07b10a320c33dedfb86f9caaf989a815",
+        "reference.md": "4e307351a1bf074e94fdbf4f29c7939b04e0929c5a59f0081cf5eb5e1a3b2dd9",
+        "rubric.json": "07712a3216a604f9cfd1ef724f97ff6e92c520b7ad3fb03a09e250a9800ec394"
+      }
+    },
+    {
+      "case_id": "MG-R005",
+      "author_goal_status": "true-weak-target",
+      "core_mathematics": "accepted",
+      "human_status": "pending-unmodified",
+      "findings": [
+        "F04"
+      ],
+      "files": {
+        "task.md": "fd77657a98dc8747d9f129caa3fb486fff8187eb578ab09ba02ddfa91888422a",
+        "reference.md": "1459b1f750ad6b22a048695fd4b69206536a433e37940d50cf881ef8ba862edf",
+        "rubric.json": "def3e3525c12a1da57d5ff050830ec446af317e8cc7d018d87d6eb37063a1942"
+      },
+      "initial_reviewed_files": {
+        "task.md": "09fd9ca652acae7f77e820c35b2839291b5223d4e345461764bc0a92779f1227",
+        "reference.md": "1459b1f750ad6b22a048695fd4b69206536a433e37940d50cf881ef8ba862edf",
+        "rubric.json": "def3e3525c12a1da57d5ff050830ec446af317e8cc7d018d87d6eb37063a1942"
+      }
+    },
+    {
+      "case_id": "MG-R006",
+      "author_goal_status": "false-strong-target",
+      "core_mathematics": "accepted",
+      "human_status": "pending-unmodified",
+      "findings": [],
+      "files": {
+        "task.md": "b26a92cfdbc9103f9c901759357d4b9a06eb93ca146c79f8b16149b96a35d1ca",
+        "reference.md": "54ea919465e5fbf19c5778ff67ed0cb2d1a4ceacd73e61f900c76b6a60b2f141",
+        "rubric.json": "fd7b36de7b8edbbcfc0ade50bebe25f4a76786d985cb40c50959775691e115d9"
+      },
+      "initial_reviewed_files": {
+        "task.md": "b26a92cfdbc9103f9c901759357d4b9a06eb93ca146c79f8b16149b96a35d1ca",
+        "reference.md": "54ea919465e5fbf19c5778ff67ed0cb2d1a4ceacd73e61f900c76b6a60b2f141",
+        "rubric.json": "fd7b36de7b8edbbcfc0ade50bebe25f4a76786d985cb40c50959775691e115d9"
+      }
+    }
+  ],
+  "existing_lean_evidence": {
+    "case": "MG-R001",
+    "module_count": 12,
+    "audited_theorems": 81,
+    "all_source_hashes_match_saved_report": true,
+    "task_matches_prior_draft": true,
+    "scope": "Source identity checked; saved kernel report inspected, not rerun; no new human or model-result status."
+  },
+  "source_table_sha256": "5ea9195a6d2892dd60be46dfe1c65f2f356af07348f58a32176bd4bbaee8efae",
+  "report": "review.md",
+  "correction_verification": {
+    "date": "2026-10-29",
+    "resolved": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05"
+    ],
+    "remaining_advisory": [],
+    "repository_mutated_by_reviewer": false
+  },
+  "prompt_clarifications": {
+    "MG-R003": "Accepted: replacing informal elimination with norm convergence A_NM x -> 0 only defines the intended existing target.",
+    "MG-R005": "Accepted: derivation of restriction-map relations is explicit without giving the result or prescribing a parametrization."
+  }
+}

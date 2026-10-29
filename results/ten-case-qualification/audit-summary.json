@@ -1,0 +1,202 @@
+{
+  "schema": "math-gauge.qualification-audit/v1",
+  "date": "2026-10-29",
+  "completed_utc": "2026-10-29T07:43:36.709296+00:00",
+  "suite_sha256": "5b548b126f2d7e06c5aa534267c8fe3aee1c07a291190a9b2f190bd1836d69a5",
+  "reviewers": {
+    "count": 3,
+    "model": "gpt-6-astra",
+    "reasoning_effort": "max",
+    "roles": [
+      "task-only design and shortest-route assessment",
+      "R002-R010 proof and grading audit",
+      "R001 proof and complete existing Lean semantic audit"
+    ],
+    "task_only_review_is_solver_trial": false,
+    "prompt_reviewer_resumed_same_model_after_capacity_error": true
+  },
+  "verdict": {
+    "mathematical_core_under_intended_readings": "no reproducible defects found",
+    "r004_wording_clarification_before_freeze": true,
+    "candidate_visible_projection": "exact tasks only",
+    "question_set_ready_for_math_pilot": "after resolving R004 wording ambiguity",
+    "qualified_as_high_difficulty_long_horizon_suite": false,
+    "all_ten_fully_lean_aligned": false,
+    "new_nine_empirical_difficulty_calibrated": false
+  },
+  "scoring_wording_risks": [
+    "R001 critical error wording must not penalize explicit conditional theorems",
+    "R003 should accept equivalent full convergence-domain characterizations"
+  ],
+  "prompt_scope_risks": [
+    "R004 finite length versus finite-dimensional wording",
+    "R002 final implementation-space request must not override the explicit E-valued target"
+  ],
+  "formalization": {
+    "r001_core_alignment": "passed independent semantic review with explicit assembly and side-claim boundaries",
+    "current_lean_source_modules": 12,
+    "current_audited_theorems": 81,
+    "new_builds": 0,
+    "prior_build_identity_matches": true,
+    "r002_r010": "no corresponding Lean files"
+  },
+  "calibration": {
+    "historical_r001": "one valid Terra Max pass and one valid Gemini Flash High fail; AI-reviewed; different native harnesses remain",
+    "new_candidate_solver_runs": 0,
+    "stable_failure_probabilities_estimated": false
+  },
+  "preservation": {
+    "original_case_files_checked": 73,
+    "source_files_changed": [],
+    "case_source_and_rubric_edits": false,
+    "lean_edits": false,
+    "commit_created": false,
+    "pushed": false
+  },
+  "cases": [
+    {
+      "case_id": "MG-R001",
+      "task_sha256": "779bf275a6184fb848a12f3d72089a21d4704513512e10323aa48d4ee462cecd",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "最短合法答复只有一个标量固定点反例；自愿建立修正理论不算题目被迫难度。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "可测完备性、分离性与有限距离的偷换；主要是开场条件检查，长线诊断偏低。"
+      },
+      "recommendation": "精简并保留作短反例对照。若定位长线题，须让图结构真正参与仍可成立的后续目标，不能用节点数或底元素增加表面难度。"
+    },
+    {
+      "case_id": "MG-R002",
+      "task_sha256": "26465cc9b26e10becfc1716e0a66a5a15a5d34b456465c3298ebdc2122feb0e4",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "经典反身性边界；稳定性和自然性只是直接计算。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "可测 E 与 E'' 以及有限兼容与真实实现的混淆，但长链很短。"
+      },
+      "recommendation": "保留为短条件检查题，澄清“实现空间”的范围；长线用途需增加真实依赖实现子空间的目标，而非更多记录记号。"
+    },
+    {
+      "case_id": "MG-R003",
+      "task_sha256": "b3f236573d573eff51e940c9784e6ae15ddc697eb89a5007a6e1fbdff8f4621a",
+      "prompt_only_math_difficulty": {
+        "level": "中",
+        "reason": "有几个需正确串联的估计，但都是标准短链。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "仍可测闭包和投影作用域，然而限域与核心核判据已被预告。"
+      },
+      "recommendation": "保留真目标，精简第 17 行的路线式细分。若想测边界发现，可集中要求刻画平均确定的状态恢复，保留实际对象和极限方式。"
+    },
+    {
+      "case_id": "MG-R004",
+      "task_sha256": "6dd68fcc8f60e0be857ac7f8ba56dc0c07b10a320c33dedfb86f9caaf989a815",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "一个标准闭像反例足以终结；若误读为有限维则又是标准 Hodge 分解。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "可测稠密正合／实际正合、形式逆／有界逆的区别，主要仍是开场边界。"
+      },
+      "recommendation": "先澄清有限长度。若目标是自行构造稳定消元，撤去指定拉普拉斯有界解算子的路线；保留作短反例对照，长线用途需重设计。"
+    },
+    {
+      "case_id": "MG-R005",
+      "task_sha256": "fd77657a98dc8747d9f129caa3fb486fff8187eb578ab09ba02ddfa91888422a",
+      "prompt_only_math_difficulty": {
+        "level": "中",
+        "reason": "标准对偶部分短，投影与闭包关系有真实数学内容。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "可测下确界取到、闭凸投影闭性、正则化交换以及 f=f** 的过强断言，是较有价值的真目标。"
+      },
+      "recommendation": "保留真目标与记录关系，可删去过于直接的对偶路线线索，但保留规范恢复的精确含义。不能把其经典性直接当作不合格，也不能把高维记号算成难度。"
+    },
+    {
+      "case_id": "MG-R006",
+      "task_sha256": "b26a92cfdbc9103f9c901759357d4b9a06eb93ca146c79f8b16149b96a35d1ca",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "一个整数塔及一条模方程即可；完整障碍理论属于可选的更长工作。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "有限商／无限纤维、B 满射／A 满射区分有针对性，但并未强迫长链。"
+      },
+      "recommendation": "保留为短反例题。若希望长线诊断，应让发现障碍后仍有真实且非空的后续目标，而不是仅追加自然性要求或直接提示缺失条件。"
+    },
+    {
+      "case_id": "MG-R007",
+      "task_sha256": "b603682f5e78aecf561e808d1329244a74d888fe56b2e03942fb9c137e256127",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "最短合法路线是线性代数；H¹ 是可选的更精细组织。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "低",
+        "reason": "可检测非法除以群阶，但标题与存在条件已明说边界，长线空间很小。"
+      },
+      "recommendation": "保留作真目标短构造题；如要更深结构，须把其真实用途列为主目标。当前不能只接受 H¹，也不应直接把余循环公式加进题面。"
+    },
+    {
+      "case_id": "MG-R008",
+      "task_sha256": "c4f0877cff901cb555438cd1c25ce1491e33945ceeb7cfb96186c34a93cfe3ed",
+      "prompt_only_math_difficulty": {
+        "level": "中",
+        "reason": "需要想到表示函子保乘积并找到无统一消去次数的元素；一旦找到，论证很短。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "能区分逐层有限、有限兼容与全体表示；是本批较实质的条件区别，但仍可短路。"
+      },
+      "recommendation": "保留并定位为表示性条件检查。若要长线题，应设置表示性失败后仍然成立的主要后续目标，而不是增加范畴记号。"
+    },
+    {
+      "case_id": "MG-R009",
+      "task_sha256": "04ab8ed989c75de3f9bc9735b8196ba1a613b44989bfa36da802c42c9fcbfa6e",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "术语门槛较高，实际是一页以内的通用 sheaf 证明。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "中",
+        "reason": "可测逐值商／sheaf 商及全局截面／局部提升的混淆，但标准通性允许直接结束。"
+      },
+      "recommendation": "可保留作真目标基础对照。长线版本应从未预给目标商的实际关系出发，并重新验证问题；不能只靠 condensed 名称判高难。"
+    },
+    {
+      "case_id": "MG-R010",
+      "task_sha256": "638f1e32ebc5f1b9dd2aec4eef59212ae583affd9a0a8bf77c8d0f7c3067e404",
+      "prompt_only_math_difficulty": {
+        "level": "低",
+        "reason": "通用拓扑构造即可，未迫使使用紧生成或 condensed 深结果。"
+      },
+      "prompt_only_drift_potential": {
+        "level": "低",
+        "reason": "主要原空间／重构空间边界和拓扑方向已给出，剩下是短距离检查。"
+      },
+      "recommendation": "保留作通用真构造题；长线边界用途需重设计，并让 profinite 的特殊性质参与某个真正主要目标，而非只增加高级背景。"
+    }
+  ],
+  "evidence_sha256": {
+    "README.md": "a886a7da01604de7949942a46c673afad7e8f88dd2fa8ea43bd8660618778f9f",
+    "calibration-evidence.json": "0d0537a1cab5516022fcc96cb1691dd34e66efac7f02bcaf6ae04494fe94b25c",
+    "cross-review-addendum.md": "2e1820cdafff03fa87d230f12d1ebfad4eae22f6831f3b14d6262e3edb202098",
+    "input-and-formal-inventory.json": "99b71a713516055943a880bbae504a2c85825721227938d098d6892af2fe74f7",
+    "lean-findings.json": "f37d3d0307f8b022cd0b7ae04b695e62e3a075a5535e300077ff14d438ffb659",
+    "lean-review.md": "96026d6cae379dc9842099a9f67b359d29523e49099348bfcbcf3d2cbe87d9cd",
+    "math-findings.json": "e8c88d0f2c5869a64b8d6b8ba55b30bafc2aae507c7c8ae73e76fb14ffaac567",
+    "math-review.md": "a5948aef0aa4a328ace1218102c67665afa5cc5f0741060631155583d04e4a36",
+    "prompt-findings.json": "53026947fba18129ffb9ad45b58eee3be79eb4f31aa0fa8783325d7512583eb6",
+    "prompt-manifest.json": "234e1a5a8bb921b598bac5c6ed38fe2b7f7c9cdaf18aebfd4b60038cdab9b9ba",
+    "prompt-review.md": "acc3540faaf9869353e4f395dfd9848680c2be1fbeda1074e2c8344aaf7ae3e2",
+    "review-source-snapshot.json": "6e532cfa60f45309988549e482674f933676c458c11c3ef457d39cc8f741e665"
+  }
+}

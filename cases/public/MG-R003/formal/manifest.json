@@ -1,0 +1,118 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R003",
+  "case_version": "0.3.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "930ab2a419e333c96146a5413ad9eeb252488b74e1c4c36e39c2b82c4aa904ed",
+    "reference.md": "c68352c003110d1499081c61995552f507c2a60f3f713e20aed1298a0b898e76",
+    "rubric.json": "5969abcb8d1bbf9d0796aa3dadeb28dd0a285bc35d44c968a61d28dfb2e6e538"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "a40ddecafc77bf19e10d4f944543eb8f748092d4d33582ad742abca0f38132ec"
+  },
+  "modules": [
+    {
+      "module": "BinomialSmoothing",
+      "source": "BinomialSmoothing.lean",
+      "sha256": "18dc0d5d759887fb8fcb7111833a221a6019cf1bc1e7635600c16d1f07de2572",
+      "imports": [
+        "Mathlib.Analysis.Normed.Operator.Banach",
+        "Mathlib.Analysis.SpecificLimits.Basic",
+        "Mathlib.Data.Nat.Choose.Central",
+        "Mathlib.Data.Nat.Choose.Sum",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ErgodicOperators",
+      "source": "ErgodicOperators.lean",
+      "sha256": "5ebf11cf138a51f2fa385eeedb4a70b84e2f740c251cca120dbd92871185af28",
+      "imports": [
+        "BinomialSmoothing",
+        "Mathlib.Algebra.Ring.GeomSum",
+        "Mathlib.Order.Filter.AtTopBot.Prod"
+      ]
+    },
+    {
+      "module": "ErgodicRecoveryCore",
+      "source": "ErgodicRecoveryCore.lean",
+      "sha256": "637dfada8798daad66335a4a839171b2684fc2042407f9bb6c227167f3dd5e54",
+      "imports": [
+        "ErgodicOperators",
+        "Mathlib.Analysis.Normed.Group.Quotient"
+      ]
+    },
+    {
+      "module": "ErgodicComparison",
+      "source": "ErgodicComparison.lean",
+      "sha256": "6736b65072c4561c9b4d678bc8c62330dd27a896bd3c4705b02acd6a344f5fed",
+      "imports": [
+        "ErgodicRecoveryCore"
+      ]
+    },
+    {
+      "module": "ErgodicRecoveryMap",
+      "source": "ErgodicRecoveryMap.lean",
+      "sha256": "c7cbf091f1581ea117e77fdcb3c4caf0848673cbeb9e1b357b4794d13f34142d",
+      "imports": [
+        "ErgodicComparison",
+        "Mathlib.Algebra.Module.Submodule.Equiv"
+      ]
+    },
+    {
+      "module": "ErgodicQuotient",
+      "source": "ErgodicQuotient.lean",
+      "sha256": "6fe593ad3fb21db34f5fab6439d37d044a3c562f9e51035a15a8c3b4ffae7abf",
+      "imports": [
+        "ErgodicRecoveryMap",
+        "Mathlib.Topology.MetricSpace.Antilipschitz"
+      ]
+    },
+    {
+      "module": "ErgodicConsequences",
+      "source": "ErgodicConsequences.lean",
+      "sha256": "2efa7fead8213b03380eb35fb1b9306123b45ce83826de2bc2842766eb51ea32",
+      "imports": [
+        "ErgodicQuotient"
+      ]
+    },
+    {
+      "module": "ErgodicCounterexample",
+      "source": "ErgodicCounterexample.lean",
+      "sha256": "0b3996bd2b495031a9ba8a04a9d660b054ed8aa68808314f54c665d2e8288a86",
+      "imports": [
+        "ErgodicQuotient",
+        "Mathlib.Analysis.Normed.Lp.lpSpace"
+      ]
+    },
+    {
+      "module": "ErgodicCoordinates",
+      "source": "ErgodicCoordinates.lean",
+      "sha256": "81cc37aa647c94d4a1dec0519d191e6b3ed9b9df56f39d76c14c03f3036c60a5",
+      "imports": [
+        "ErgodicCounterexample"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "c070f0539b290e91239019177acb8a8646fda94cca729f9df684ee18e9363f7d",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.BinomialSmoothing.",
+      "MathGauge.ErgodicOperators.",
+      "MathGauge.ErgodicRecovery.",
+      "MathGauge.ErgodicCounterexample."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "historical_author_audits": "Any author audit module listed above is preserved input; CurrentAudit is the common final kernel acceptance entry."
+}

@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 TRACKS = {"determinate", "alignment", "exploration"}
+LEGACY_CANDIDATE_INSTRUCTION = (
+    "使用题面实际给定的条件。区分已证明的结论、附加假设下的结果和未证猜想。给出可审核的论证。"
+)
 
 
 def read_json(path):
@@ -105,6 +108,10 @@ class Suite:
             for key in ("version", "title", "language"):
                 if not isinstance(case.get(key), str) or not case[key]:
                     raise ValueError(f"{cid}: missing {key}")
+            if "candidate_instruction" in case and not isinstance(
+                case["candidate_instruction"], str
+            ):
+                raise ValueError(f"{cid}: candidate_instruction must be a string")
             if not case.get("sources") or any(
                 s not in sources for s in case["sources"]
             ):
@@ -185,8 +192,10 @@ class Suite:
             "case_id": case["id"],
             "case_version": case["version"],
             "track": case["track"],
-            "instruction": "使用题面实际给定的条件。区分已证明的结论、附加假设下的结果和未证猜想。给出可审核的论证。",
-            "task": safe_file(self.root, case["task"]).read_text(encoding="utf-8"),
+            "instruction": case.get(
+                "candidate_instruction", LEGACY_CANDIDATE_INSTRUCTION
+            ),
+            "task": safe_file(self.root, case["task"]).read_bytes().decode("utf-8"),
             "files": [
                 {
                     "name": x["target"],
@@ -204,9 +213,10 @@ class Suite:
             raise ValueError("Solver workspace must be outside the question suite")
         dest.mkdir(parents=True, exist_ok=False)
         request = self.request(case)
-        (dest / "prompt.md").write_text(
-            request["instruction"] + "\n\n" + request["task"], encoding="utf-8"
-        )
+        prompt = request["task"]
+        if request["instruction"]:
+            prompt = request["instruction"] + "\n\n" + prompt
+        (dest / "prompt.md").write_bytes(prompt.encode("utf-8"))
         for item in request["files"]:
             (dest / item["name"]).write_text(item["content"], encoding="utf-8")
         write_json(dest / "request.json", request)

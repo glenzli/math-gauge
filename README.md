@@ -2,51 +2,42 @@
 
 Measure the capability, not just the answer.
 
-在给定的弱数学结构下，检验模型能否正确证明、识别形式化偏差并推进构造。
+在给定的弱数学结构下，检验模型能否保持条件、完成证明、识别不可达目标，并推进有效构造。
 
 ## 建立初衷
 
-Math Gauge 源于算子演化论（OET）写作与研究中的实际数学协作需求：
-模型需要在明确给定、尽可能弱的结构下推进工作，严格保留假设、量词、定义域和结论强度。
-既要识别推导中暗加的条件，也要识别本来能够证明、却被无必要地收紧条件的情形。
+Math Gauge 源于算子演化论（OET）写作与研究中的实际协作需求：模型应在明确给定、尽可能弱的结构下工作，保留假设、量词、定义域和结论强度。既要识别为了得到漂亮结论而暗加条件，也要识别本来能证明、却被无必要收紧条件的结果。
 
-项目关注三个方面：在弱条件下完成证明或给出反例；检查形式化是否忠实表达原命题；
-在方向确定而结论开放的问题中，提出能够逐项审核的构造与结果。
-题目来自已公开的 OET 内容以及其他数学领域的弱结构，并先审核题面、参考论证和判分依据。
+题材覆盖 OET 已公开内容及整个数学领域。本阶段重点放在泛函分析、同调与范畴构造、凝聚集合等抽象结构：熟悉的强定理往往只差一个结构条件就能使用；评测关注模型能否持续记住实际拥有的条件，而不是顺着熟悉结论补齐它们。
 
-目标是在新模型出现时，用明确、可追溯的题目与运行记录，持续判断它们是否适合这种数学工作方式。
-有效的不同证明路线和意外结果应当被接受；具体结论的正确性、适用范围与数学贡献分别评价。
+有效的短反例、不同证明路线和意外结果都应被接受。结论真假、证明有效性、条件保持和构造贡献分别审核，不按篇幅或预设证明路线评分。
 
 ## 公开与私有测试集合
 
-项目设置公开测试集合与私有测试集合，两者共享本仓库的 runner 和通用评测协议。
+公开测试集合包含题面、参考证明或反例、评审依据和可发布的结果；私有测试集合另行保存未公开题目、参考材料、依据及记录。两者共享本仓库的 runner 和评测协议。私有原题和完整回答不随本仓库披露；对外汇总须说明复现边界。
 
-- **公开测试集合**：题面、参考证明或反例、判分依据和可发布的结果放在本仓库，供审阅与复现实验。
-- **私有测试集合**：单独维护未公开题目、参考材料、具体判分依据和完整评测记录，不随本仓库披露。
-  对外结果只发布经审核的汇总，并说明其复现范围。
+目前先校准公开集合，私有集合随后建设。新题只使用公开数学概念与独立构造，不抽取 OET 未发布内容。
 
-目前先建设并校准公开集合；私有集合的题目与执行环境随后补充。
-公开集合用于透明审阅，私有集合用于持续评估未公开问题，两部分的运行与审核方法保持一致。
+## 当前状态
 
-## 建设状态
+**正在建设中（Work in progress）。** 默认公开集合为 [0.3.0 版十道研究式题目](cases/public/README.md)，全部采用相同的 exploration 输入类别。题面只给实际条件和主目标，不附加边界提醒、反例提示、审核清单或 runner 的默认保条件提示。
 
-**正在建设中（Work in progress）。** 当前提供首批公开题目初稿和基础 runner。
-题目审核、难度与区分度校准、评分规则以及模型接入仍在推进，尚未形成稳定榜单。
-所有题目已经 AI 首轮审校，仍待人工审定。已完成一次 Terra 6.1 Max 独立子 agent 校准，
-包括单轮题组和三轮研究轨迹；结果仅经 AI 复核，不计为正式模型比较成绩。流程回放示例另行保留。
+出题侧保留 MG-R001、MG-R002、MG-R004、MG-R006 四道边界基线，允许完整短反例作为决定性完成。MG-R003、MG-R005、MG-R007、MG-R008、MG-R009、MG-R010 要求成立的构造、分类或映射空间结果；其中 MG-R003、MG-R007、MG-R008、MG-R009、MG-R010 做了实质重设计。真假和诱惑点仅在评审材料中。所有题均为 draft、human pending。本轮已完成十题独立隔离的 Terra 6.1 Max 单次校准，AI 审核为 **10/10 通过**；这批题目前可作条件忠实性的基线，尚未体现对该配置的区分度。
 
-## 首版内容
+十题均已提供作者参考 Lean，覆盖原任务的成立结论或完整合法反例，以及相应的恢复、分类和自然性构造。逐题覆盖表明确区分实际编码结论、等价证明路线和可选旁支；Lean 核验不等于人工审定，也不等于候选答卷经过了形式化。统一核验入口见 [参考 Lean 复核](scripts/formal/README.md)，本轮答卷、审核和证据见 [完整 Lean 与 Terra 校准](results/full-lean-terra/README.md)。
 
-- [15 道公开初稿及参考审核材料](cases/public/README.md)：6 道确定性正反题、6 道形式化一致性题、3 道开放构造题。
-- [评测协议](protocol/evaluation.md)：条件忠实、证明有效与范围保持分别审核。
-- [来源与 AI 参与说明](SOURCES.md)：仅取材于 OET 已公开第一卷与经典弱结构。
-- [初版审核与验证记录](results/initial-validation.md)。
-- [独立加难初稿](cases/public-challenge/README.md)与[长链／持续研究初稿](cases/public-layered/README.md)。
-- [Terra 6.1 Max 校准结果](results/terra61max-calibration/README.md)：当前确定性与一致性题仍饱和；末轮 Lean 核心未通过编译。
-- [长链条件保持与正文—Lean 覆盖的评测设计](protocol/layered-design.md)。
+第一题的题面保持不变：前次 Terra 6.1 Max 通过，本次也通过；此前 Gemini 3.8 Flash High 单次闭卷失败，见 [旧对照与限制](results/recursive-operator-closure/comparison.md)。Gemini 本轮没有运行其余九题，不能据此生成十题模型排名。
 
-首批题优先验证数学边界和评测流程；这些基础题的通过不代表前沿数学研究能力。
-各题的人工审定状态与后续修订均记录在题目元数据中。
+优化前的十题 0.2.0 版逐字节保存在 [研究题集归档](archive/research-v0.2/README.md)。更早的基础组、加难组和长链组保存在 [历史归档](archive/legacy-v0/README.md)；已有题面、答卷与审核记录继续绑定原版本。
+
+## 阅读与审核
+
+- [当前十题索引](cases/public/README.md)：题面、参考论证及逐题审核。
+- [研究题设计标准](protocol/research-case-design.md)：诱惑、弱记录和范围保持。
+- [评测协议](protocol/evaluation.md)：输入边界、证据绑定与评分。
+- [来源及作者说明](SOURCES.md)：公开来源和独立改编范围。
+- [本轮优化验证记录](results/ten-case-optimization/README.md)：数学审校、全新题面盲审、文件身份与输入投影核对；[首版记录](results/ten-case-validation/README.md) 保留历史范围。
+- [隔离 CLI 流程](protocol/isolated-cli-runs.md)：参数化准备、探测、运行与证据核验。
 
 ## 本地使用
 
@@ -56,58 +47,35 @@ Python 3.10+，runner 无第三方运行依赖。在仓库目录运行：
 python3 -m math_gauge validate
 python3 -m math_gauge list
 python3 -m unittest discover -s tests
+python3 -m math_gauge prepare --case MG-R001 --out /absolute/path/to/new-question-dir
 ~~~
 
-六份形式化审核输入与两份修复示例使用 Lean 4.29.1 标准库，无 mathlib 下载或构建要求：
+新题的 prompt.md 与 task.md 字节一致。request.json 仍含题号、版本和共同题型这些传输字段，但不含来源、真假、参考解或 rubric。目录分离本身不构成访问权限隔离；实际模型运行应使用隔离流程并保存探测结果。
 
-~~~sh
-python3 -m math_gauge check-lean --out runs/lean-check.json
-~~~
+当前十题不要求候选提交 Lean，故普通 check-lean 清单仍为空。作者参考形式化由独立的 [逐题验证器](scripts/formal/README.md) 复核：固定 Lean / Mathlib 版本，每题独立编译，并检查全部项目声明的公理依赖。输入投影仍只有 task.md。
 
-这里验证固定的题库文件能编译；三份故意失配的输入也应通过。语义对齐仍由审核负责。
-
-## 跑通一个不调用模型的示例
+原三题型的纯流程回放继续使用历史题集：
 
 ~~~sh
 python3 examples/demo.py --out runs/demo
 ~~~
 
-它回放三个明确标注的示例响应，覆盖三类题，导入 fixture 审核并生成报告。
-示例报告的模型比较资格数必须为零。重复执行请使用新的输出目录。
+该命令不调用模型，fixture 结果没有正式模型比较资格。它用于验证传输和审核管线，不是当前十题的答题成绩。
 
-## 接入真实模型
+## 接入模型与私有集合
 
-runner 提供供应商无关的命令接口。适配器从标准输入读取一次 JSON 请求，
-请求含 task、instruction 与明确列出的 files；把模型完整作答写到标准输出。
-runner 为每题建立独立工作目录，保留实际请求、响应、失败与超时。
+通用 runner 接收供应商无关的命令适配器：从标准输入读取 JSON 请求，将完整回答写入标准输出。每题单独建目录，保留请求、响应、失败与超时。适配器负责验证实际模型身份和工具条件；模型标签不能替代证据。
 
 ~~~sh
-python3 -m math_gauge run --case MG-D001 --out runs/model-a-001 \
-  --model '具体模型与配置标签' \
-  --command-json '["python3", "/absolute/path/to/your_adapter.py"]'
+python3 -m math_gauge run --case MG-R001 --out runs/model-a-001 \
+  --model '具体型号与推理设置' \
+  --command-json '["python3", "/absolute/path/to/adapter.py"]'
 python3 -m math_gauge review-template --run runs/model-a-001 --out runs/reviews-001.json
-# 人工填入审核依据后：
 python3 -m math_gauge review --run runs/model-a-001 --input runs/reviews-001.json
 python3 -m math_gauge report --run runs/model-a-001 --out runs/report-001
-~~~
-
-适配器路径需绝对路径；默认工作目录只有作答材料，但这不构成操作系统访问隔离。
-v0.1 尚无内置供应商适配器；上述真实校准通过外部子 agent 执行并保留原始记录，
-不表示命令接口已经完成通用的多轮模型接入。
-不要把任意脚本的输出标签伪装成供应商模型成绩。
-
-同一 runner 可读取另一目录的题集：
-
-~~~sh
 python3 -m math_gauge validate --suite /absolute/path/to/math-gauge-private/cases
 ~~~
 
-## 代码职责
+填写审核文件后才执行 review。公开和私有数据均使用这一套 runner；私有仓库不复制实现。
 
-- math_gauge/catalog.py：题目合同、来源、指纹与作答材料投影。
-- math_gauge/execution.py：命令或回放执行、原始记录、固定 Lean 文件检查。
-- math_gauge/review.py：响应绑定、审核和按类别报告。
-- math_gauge/cli.py：命令入口。
-
-安装为命令行工具可使用 python3 -m pip install -e .；直接运行上述模块命令无需安装。
-新增题目先补全数学审核依据，通用 runner 只在出现真实协议需要时扩展。
+代码职责保持为：catalog.py 管题目合同与可见投影，execution.py 管运行证据，review.py 管响应绑定与报告，cli.py 管命令入口。参数化 CLI 隔离辅助工具位于 scripts/isolated_cli，不承担数学评分。

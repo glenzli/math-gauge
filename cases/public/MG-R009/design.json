@@ -1,0 +1,134 @@
+{
+  "schema": "math-gauge.optimization-design/v1",
+  "date": "2026-10-29",
+  "author_model_requested": "gpt-6-astra / max",
+  "state": "author-complete-independent-review-pending",
+  "scope": "Mathematics-only staging draft; metadata and versioning are managed centrally. No repository, Git, runner, or formal fixture edits.",
+  "candidate_projection": [
+    "task.md"
+  ],
+  "evaluator_only": [
+    "reference.md",
+    "rubric.json",
+    "design.json"
+  ],
+  "candidate_prompt_audit": {
+    "actual_data_and_major_goals_only": true,
+    "missing_axiom_checklist": false,
+    "intermediate_lemmas_supplied": false,
+    "correct_repair_supplied": false,
+    "boundary_warning_supplied": false,
+    "method_hints_supplied": false,
+    "quantifiers_and_universes_explicit": true,
+    "valid_short_proofs_accepted": true
+  },
+  "review_status": {
+    "author_self_check": "complete",
+    "independent_ai": "pending",
+    "human": "pending",
+    "candidate_model_trials": 0,
+    "empirical_difficulty": "uncalibrated"
+  },
+  "formalization": {
+    "previous_coverage": "none",
+    "new_coverage": "none",
+    "candidate_lean_required": false,
+    "semantic_change_invalidates_old_model_and_review_claims": true,
+    "note": "No Lean claim may be inferred from file validation. This replacement requires new mathematical review and, if formalized later, new declarations matching the revised target."
+  },
+  "provenance": {
+    "visibility": "public",
+    "composition": "Independently written synthesis of public mathematical structures and explicit arguments; no unpublished OET material accessed.",
+    "sources_verified": "2026-10-29",
+    "verbatim_source_reuse": false
+  },
+  "unresolved_issues": [
+    "Independent AI mathematical cross-review pending.",
+    "Human approval pending.",
+    "No empirical evidence yet that the revised prompt forces long reasoning or discriminates models."
+  ],
+  "baseline_policy": "The repository baseline was read only and remains available. Do not integrate this staging replacement until independent review accepts its mathematics and prompt contract.",
+  "title": "群作用下局部记录的下降分类",
+  "goal_status": "true-classification-target",
+  "previous_design_failure": "The former input supplied a profinite surjection T to S and its kernel pair, so the desired quotient was already h_S and general sheaf descent largely finished the target.",
+  "changed_hypotheses": {
+    "retained": [
+      "Fixed profinite site, finite jointly surjective covers, and V-valued sheaves.",
+      "U-small profinite input T.",
+      "Arbitrary condensed base changes."
+    ],
+    "replaced": [
+      "Remove the supplied quotient space S, surjection p, and kernel pair.",
+      "Supply instead an arbitrary U-small discrete group acting by homeomorphisms on T.",
+      "Allow arbitrary Gamma-equivariant sheaf objects E over h_T, not only topological or representable ones."
+    ],
+    "not_added": [
+      "No freeness, properness, compactness, or finiteness of Gamma.",
+      "No Hausdorff or representable orbit quotient.",
+      "No global lifts or continuous choices."
+    ]
+  },
+  "changed_target": "Construct the sheaf orbit quotient and classify exactly which equivariant sheaves are pullbacks from it, including morphisms and arbitrary sheaf base change.",
+  "terminal_result": "The criterion is trivial stabilizer action on every section over every profinite test. The realization is E/Gamma, and its comparison to h_T fiber-product_Q E/Gamma is an isomorphism precisely under that criterion. Quotient and pullback give the full category equivalence.",
+  "minimum_acceptable_completion": [
+    "Sheaf quotient universal property, with correct local representatives/equality.",
+    "Necessary and sufficient non-circular descent criterion on the actual sheaf action.",
+    "Construction and full morphism correspondence of realizations.",
+    "Base-changed quotient and classification for every sheaf B over Q."
+  ],
+  "alternate_routes": [
+    "Explicit separated local-orbit presheaf followed by its matching-family sheafification.",
+    "Internal action groupoid, effective equivalence relation, and valid topos descent.",
+    "Trivial action of the internal isotropy group followed by factorization through the kernel-pair groupoid."
+  ],
+  "shortest_valid_completion": {
+    "route": "An expert can cite effective descent for topoi after proving that the action factors through the actual local orbit relation exactly when internal stabilizers act trivially. This is a valid concise solution.",
+    "assessment": "The complete classification now needs multiple linked facts about local orbit equality, injectivity of the comparison, local surjectivity, and morphisms. Difficulty remains uncalibrated.",
+    "short_counterexample_status": "T=* with a nontrivial action only refutes universal descendability; it does not classify all allowed objects or prove base-change compatibility."
+  },
+  "proof_dependency_chain": [
+    "Construct the local orbit relation using finite covers.",
+    "Show its quotient presheaf is separated and explicitly glue it to a sheaf Q.",
+    "Derive quotient local surjectivity and exact local orbit equality.",
+    "Construct D=E/Gamma and the canonical comparison E to H fiber-product_Q D.",
+    "Prove comparison locally surjective without global representatives.",
+    "Identify its injectivity precisely with testwise trivial stabilizer action.",
+    "Use the resulting isomorphism plus quotient universality to obtain the full category equivalence.",
+    "Apply the same local relation argument to nonrepresentable H_B to prove arbitrary base change."
+  ],
+  "optional_fully_proved_developments": [
+    "Dense integer translations on the profinite 2-adic group give a quotient with no Hausdorff realization.",
+    "The quotient h_R/R_discrete has one ordinary point but a nontrivial negation action, showing singleton isotropy is inadequate."
+  ],
+  "likely_illicit_strengthenings": [
+    "Topological orbit set is assumed to be profinite.",
+    "A locally chosen group element is assumed global.",
+    "Point values are treated as a conservative family for arbitrary sheaves.",
+    "Equivariance alone is treated as descent data for the coarse quotient.",
+    "Arbitrary base changes are assumed representable or assumed to reflect descendability."
+  ],
+  "formalization_effects": [
+    "Requires new sheaf quotient, local orbit equality, internal/testwise stabilizer, and descent equivalence statements.",
+    "Pointwise set quotients or finite group-action examples alone would not formalize the general result."
+  ],
+  "public_sources": [
+    {
+      "url": "https://www.math.uni-bonn.de/people/scholze/Condensed.pdf",
+      "role": "Profinite site and sheaf-valued condensed structures."
+    },
+    {
+      "url": "https://stacks.math.columbia.edu/tag/00WL",
+      "role": "Local epimorphisms and effective kernel-pair quotients."
+    },
+    {
+      "url": "https://stacks.math.columbia.edu/tag/00ZG",
+      "role": "Separated presheaves and sheafification."
+    }
+  ],
+  "case_id": "MG-R009",
+  "source_hashes": {
+    "task.md": "9281a387aa63823bc3ffb6a23d4c00a54fa5b473cf1aa58575544f44befd0958",
+    "reference.md": "041910443d36dd0457938acbc7102faca16d95290efc4ba84e8ba060c6dc4c9c",
+    "rubric.json": "1170933a34f33996ff05ede77f44c9572e34b8bc2c18a5a763f8d7fcba5cd527"
+  }
+}

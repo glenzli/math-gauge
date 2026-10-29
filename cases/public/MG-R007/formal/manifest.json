@@ -1,0 +1,145 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R007",
+  "case_version": "0.3.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "8fd7814c8b5c4ce93c2ee35c6556bd480cb11b296e74b699457571f29719f9da",
+    "reference.md": "87c66808eb136a45f7fca3200d39e5cf00575d91943b71cf0bd4c2982f859661",
+    "rubric.json": "49f12b86c8f86e3364d43a50b91ad098aa232ae569bc082426f1f0ef0973e934"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "5886e050c980d5b11fd4ba65fab9ceef03d9a056da81386c963e7e109d6d7e86"
+  },
+  "modules": [
+    {
+      "module": "LinearTower",
+      "source": "LinearTower.lean",
+      "sha256": "7617ca371f1e6f76d480eeea3709ae25fe19aa1725cf0c2bed3faeba4fb92401",
+      "imports": [
+        "Mathlib.LinearAlgebra.FiniteDimensional.Basic",
+        "Mathlib.RingTheory.Artinian.Module",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "RepresentationTower",
+      "source": "RepresentationTower.lean",
+      "sha256": "11f95087948c75ccf607f93b931429ccc1c047ee8fd9d8452f1b92d3a6c12562",
+      "imports": [
+        "LinearTower",
+        "Mathlib.RepresentationTheory.Intertwining"
+      ]
+    },
+    {
+      "module": "SplitRepresentation",
+      "source": "SplitRepresentation.lean",
+      "sha256": "ef8cca632b1fdae0da9a15209218be498156bb95ec65826113515c22c8c40275",
+      "imports": [
+        "Mathlib.RepresentationTheory.Intertwining",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "TowerSplit",
+      "source": "TowerSplit.lean",
+      "sha256": "7a2d1ab801b96e96bb4c01e7165d6dd1e6c9e2f14e25366524562440b509d8e3",
+      "imports": [
+        "RepresentationTower",
+        "SplitRepresentation"
+      ]
+    },
+    {
+      "module": "SectionTransport",
+      "source": "SectionTransport.lean",
+      "sha256": "b2603b0d27371ad4253e6924fc2e558849abb9d323f334ed5dd7f811c52862cf",
+      "imports": [
+        "Mathlib.RepresentationTheory.Intertwining",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "CoherentTransport",
+      "source": "CoherentTransport.lean",
+      "sha256": "6ff9babbf0244fc2d502fbf047521d7665b46d037a9b50715f5da2be2b58694d",
+      "imports": [
+        "SectionTransport"
+      ]
+    },
+    {
+      "module": "SplitClassification",
+      "source": "SplitClassification.lean",
+      "sha256": "aaec97ba57576039a83530d0c5b32154af2238b57b434cae5f00d4504e839acd",
+      "imports": [
+        "SplitRepresentation",
+        "CoherentTransport"
+      ]
+    },
+    {
+      "module": "TowerBoundaries",
+      "source": "TowerBoundaries.lean",
+      "sha256": "79cee84216ef7a8766f3f37bba65063366d3b4e57058f78792830f46eb0e6bb0",
+      "imports": [
+        "Mathlib.RepresentationTheory.Intertwining",
+        "Mathlib.Algebra.Polynomial.Degree.Defs",
+        "Mathlib.Data.ZMod.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "BoundaryData",
+      "source": "BoundaryData.lean",
+      "sha256": "3254fbe66dba7926a492b718bb925d76c8c002e2418dcf55f21dd35ef984ebfd",
+      "imports": [
+        "TowerBoundaries"
+      ]
+    },
+    {
+      "module": "ModularBoundary",
+      "source": "ModularBoundary.lean",
+      "sha256": "6d572981d3e45e11302bfae1581f47d2e743d9429ad532d6c1a04cb55d01f1f1",
+      "imports": [
+        "BoundaryData"
+      ]
+    },
+    {
+      "module": "R007Audit",
+      "source": "R007Audit.lean",
+      "sha256": "b5e61e4d89849f2cd0459a124dbe70a0617e6fd68dc5729f254653d14ea23f58",
+      "imports": [
+        "LinearTower",
+        "RepresentationTower",
+        "SplitRepresentation",
+        "TowerSplit",
+        "SectionTransport",
+        "CoherentTransport",
+        "SplitClassification",
+        "TowerBoundaries",
+        "BoundaryData",
+        "ModularBoundary",
+        "Lean.Util.CollectAxioms"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "5d543b25f8e1544e5c3c5483aba09adba0c0f1dec004472415eb23c56d096615",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.LinearTower.",
+      "MathGauge.RepresentationTower.",
+      "MathGauge.SplitRepresentation.",
+      "MathGauge.SectionTransport.",
+      "MathGauge.TowerBoundaries."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "historical_author_audits": "Any author audit module listed above is preserved input; CurrentAudit is the common final kernel acceptance entry."
+}

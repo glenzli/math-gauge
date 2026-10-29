@@ -1,0 +1,119 @@
+{
+  "schema": "math-gauge.optimization-design/v1",
+  "date": "2026-10-29",
+  "author_kind": "ai",
+  "author_model_configuration": "gpt-6-astra / max",
+  "status": "author-proof-complete-independent-review-pending",
+  "human_review": "pending",
+  "new_model_runs": 0,
+  "difficulty_status": "uncalibrated",
+  "candidate_projection": {
+    "only": "task.md",
+    "candidate_instruction": "",
+    "solver_files": [],
+    "design_reference_and_rubric_visible": false
+  },
+  "scope": "Staged proposal only. No repository or Git edits; no new candidate model run; no public or private OET source beyond the cited public mathematics.",
+  "formal_coverage_impact": {
+    "old": "No Lean files or general Lean coverage for this case.",
+    "new": "Not formalized; no proof-checker execution performed.",
+    "inheritance": "No empty check list or old AI review may be represented as new formal or human validation."
+  },
+  "title": "有限观测下的凸成本恢复",
+  "recommendation": "adopt-reduced-route-hinting",
+  "proposed_version": "0.3.0",
+  "goal_status": "true-weak-target",
+  "changed_assumptions": {
+    "preserved": [
+      "Real Hausdorff locally convex E and its continuous dual.",
+      "Proper nonnegative extended-valued convex f.",
+      "Every finite-dimensional observation subspace F, its finite-dimensional dual, and the exact fiber-infimum record.",
+      "Restriction maps and the convention inf(empty)=+infinity."
+    ],
+    "added": [],
+    "removed": []
+  },
+  "changed_goal": {
+    "preserved": [
+      "Construct the maximal lower semicontinuous convex minorant from all finite records.",
+      "Establish observation-enlargement record relations and their role in reconstruction."
+    ],
+    "removed": [
+      "The independent requirement to produce the continuous-affine dual formula."
+    ],
+    "added": [],
+    "reason": "Maximality identifies the requested object and remains necessary. The affine-duality request prescribed a solution route and is not needed to specify that object."
+  },
+  "necessary_main_goal_specs": [
+    "The exact pointwise maximality among all lsc convex minorants.",
+    "The original space E, the record domains F*, all finite-dimensional F and the restriction maps.",
+    "Connection between the records and the constructed global function."
+  ],
+  "advance_solution_hints_removed": [
+    "Continuous affine lower bounds as an explicitly requested dual route."
+  ],
+  "precise_minimal_completion_criterion": "Give one valid record-based construction of G, prove 0 <= G <= f, lower semicontinuity, convexity and maximality, and prove the raw restriction/inf-projection relation with a mathematically correct link to the global reconstruction. A candidate need not state an affine dual formula, a biconjugate identity, the optional reclosure relation or any warning/counterexample.",
+  "shortest_valid_route": {
+    "description": "Take each record epigraph closure, form the supremum of its pullbacks, use continuous affine separation of the closed epigraph of f to prove maximality, and use fiber partition plus envelope maximality for record relations. An equally short correctly scoped Fenchel-Moreau proof is accepted.",
+    "difficulty_caveat": "Removing the duality recipe reduces hinting, but this remains a standard medium-length convex-analytic reconstruction. No long-chain or empirical-difficulty claim is established."
+  },
+  "authentic_dependency_chain": [
+    {
+      "step": "Raw fiber record",
+      "depends_on": "Actual f and q_F",
+      "produces": "Proper nonnegative convex g_F and exact inf-projection compatibility."
+    },
+    {
+      "step": "Local relaxation",
+      "depends_on": "Convexity, nonnegativity and finite point",
+      "produces": "Closed epigraph defining bar(g_F), without optimizer existence."
+    },
+    {
+      "step": "Observation enlargement",
+      "depends_on": "Raw compatibility and maximality of each local relaxation",
+      "produces": "Monotone pullbacks under restriction."
+    },
+    {
+      "step": "Global assembly",
+      "depends_on": "All finite observation spaces",
+      "produces": "Lsc convex G <= f."
+    },
+    {
+      "step": "Global maximality",
+      "depends_on": "Locally convex separation and the fact every continuous slope belongs to a finite F",
+      "produces": "G equals the maximal lsc convex minorant of f."
+    }
+  ],
+  "temptation_points": [
+    "Convexity is mistaken for lower semicontinuity.",
+    "Fiber infima are promoted to minima.",
+    "A closed convex set is assumed to have a closed finite-dimensional projection.",
+    "A finite-dimensional conjugacy statement is silently applied on arbitrary E."
+  ],
+  "public_provenance": {
+    "sources": [
+      {
+        "id": "convex",
+        "url": "https://ocw.mit.edu/courses/6-253-convex-analysis-and-optimization-spring-2012/6c63c6219c60378bc27d5b4a9167f1bc_MIT6_253S12_lec_comp.pdf",
+        "scope": "Background on convex epigraphs and duality; general locally convex reconstruction independently proved."
+      }
+    ],
+    "source_accessed": "2026-10-29",
+    "reuse": "Existing public case structures retained; proof independently expanded. No copied exercise or unpublished OET material."
+  },
+  "unresolved_issues": [
+    "Independent AI review of this exact staged revision remains pending.",
+    "Human approval, actual model calibration and Lean formalization remain absent."
+  ],
+  "case_id": "MG-R005",
+  "source_snapshot": {
+    "task.md": "fd77657a98dc8747d9f129caa3fb486fff8187eb578ab09ba02ddfa91888422a",
+    "reference.md": "1459b1f750ad6b22a048695fd4b69206536a433e37940d50cf881ef8ba862edf",
+    "rubric.json": "def3e3525c12a1da57d5ff050830ec446af317e8cc7d018d87d6eb37063a1942"
+  },
+  "staged_snapshot": {
+    "task.md": "cda77a5ed5e6ece09a0159cff60b232092fb1c20c0ce8eec669fe832bc23f0bb",
+    "reference.md": "e95b3aa010968a109248e39a018c3d712257ff41da8384a3b5551141bd318d09",
+    "rubric.json": "1ef16c8932393e82ac8e5cbb2b5caab07d9f0921cd7699e59f6c93df5490595f"
+  }
+}
