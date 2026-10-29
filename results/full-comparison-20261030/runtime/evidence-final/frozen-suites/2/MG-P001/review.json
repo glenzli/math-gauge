@@ -1,0 +1,81 @@
+{
+  "schema": "math-gauge.author-review/v1",
+  "case_id": "MG-P001",
+  "version": "0.1.0",
+  "date": "2026-10-29",
+  "mathematical": "ai-author-self-check-complete",
+  "human": "pending",
+  "goal_status": "true-classification-and-local-criterion",
+  "author": {
+    "reviewer_kind": "ai",
+    "role": "mathematical-author",
+    "model_requested": "gpt-6-astra / max",
+    "independent_review": false
+  },
+  "independent_ai_review": "pending",
+  "task_only_blind_review": "pending",
+  "candidate_model_trials": 0,
+  "empirical_difficulty": "uncalibrated",
+  "review_scope": "Author self-check only, bound to exact authored bytes. Not independent review, human approval, a candidate answer, or formal verification.",
+  "source_hashes": {
+    "task.md": "585af7452212b4da2ea392a9fa9c3ab391dfd2d38786ba9a22c663bced02008b",
+    "reference.md": "8597ec6a28736ee6e3473d427b3452de52d26f146e42e5678d4cb6cf6eb6647f",
+    "rubric.json": "96762d2e720086854b1969d7d5d013a53396ade574d19e38aeb299fdf5602f01",
+    "design.json": "2b818eb61da17956d47fb90566e6683dfc95fa8a2e3be41925753ece484437f7",
+    "case.json": "10e05ef026f948c4284f34de5c04bdd58b708bda4982dba97e987857569e5a6a",
+    "source-notes.md": "9c68ae07e5ae9aa43fa579502af58ff3588a3fb9d32e15d9cca04c18ab458f93",
+    "source-record.json": "67572c4f3959b24fd50ae5349f66b30b98528bd096fcf33890e021ed58956e14",
+    "formal/COVERAGE.md": "09609a6d8506e08eefbb7b7b17ed5280aed112b638474477fbe9b73e2f280589"
+  },
+  "candidate_task_sha256": "585af7452212b4da2ea392a9fa9c3ab391dfd2d38786ba9a22c663bced02008b",
+  "reference_sha256": "8597ec6a28736ee6e3473d427b3452de52d26f146e42e5678d4cb6cf6eb6647f",
+  "rubric_sha256": "96762d2e720086854b1969d7d5d013a53396ade574d19e38aeb299fdf5602f01",
+  "author_design_sha256": "2b818eb61da17956d47fb90566e6683dfc95fa8a2e3be41925753ece484437f7",
+  "assumption_checks": [
+    "K is finite abstract simplicial, v is a vertex and B is an actual subcomplex containing v.",
+    "The punctured realization is explicitly nonempty and contractible; no compactness or closed-subcomplex status is attributed to it.",
+    "The punctured B inclusion being a homotopy equivalence excludes isolated v by path-component surjectivity, hence link has a vertex.",
+    "Every realization uses two finite cones and a genuine closed edge B; punctured edge inclusion has an explicit homotopy inverse."
+  ],
+  "proof_checks": [
+    "Barycentric normalization is continuous on O, remains in each original simplex, fixes the deletion, and is never extended across v.",
+    "Only the closed deletion subcomplex is collapsed using its CW homotopy extension property; the quotient is the unreduced suspension of the link.",
+    "Reduced integral suspension homology handles degree zero and torsion. Acyclicity gives path-connected link before van Kampen is applied.",
+    "The contractible conclusion uses simple connectivity, Hurewicz and Whitehead for CW complexes; it is not inferred from arbitrary acyclicity.",
+    "The finite augmented chain complex is recoverable from the local incident-face data and decidable by integer matrix normal forms.",
+    "The optional balanced presentation has determinant 1, while explicit A5 permutations certify nontrivial fundamental group; the finite simplicial model theorem applies.",
+    "The type-range theorem neither assumes nor concludes that suspension reflects homotopy equivalence."
+  ],
+  "source_checks": [
+    "Original 2003 published proof context, Mnev 2007 version 3, and author 2009 erratum were read.",
+    "Only an acknowledged proof gap is attributed to the historical source; no disproof of the original theorem or full present-day status claim is made.",
+    "Replacement of the original matroid posets by arbitrary finite complexes and replacement of the deleted subcomplex by one vertex are explicit independent adaptations."
+  ],
+  "formalization": {
+    "status": "not-formalized",
+    "coverage": "formal/COVERAGE.md",
+    "candidate_lean_required": false,
+    "compile_evidence": null
+  },
+  "mechanical_validation": {
+    "status": "passed",
+    "scope": "Draft JSON, isolated one-case unified-runner load, exact candidate projection and author file hashes; no runner contract changed.",
+    "checks": [
+      "All five JSON files parse.",
+      "Existing math_gauge.catalog.Suite.load accepts a temporary copied one-case public suite.",
+      "Existing Suite.prepare produces prompt.md byte-identical to task.md, with empty instruction and no attached files.",
+      "Request has only the seven standard transport fields; solver directory has only prompt.md and request.json.",
+      "All eight author review source hashes match.",
+      "The optional 2 by 2 integer determinant and permutation product were checked directly; this is not topology formalization."
+    ],
+    "full_runner_tests": "not rerun: no runner implementation or contract changed",
+    "lean": "not run: no Lean files supplied"
+  },
+  "open_items": [
+    "Independent mathematical review",
+    "Task-only blind review",
+    "Human approval",
+    "Candidate calibration if later authorized",
+    "Actual-object formalization if later undertaken"
+  ]
+}

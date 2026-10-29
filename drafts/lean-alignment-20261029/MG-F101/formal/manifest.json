@@ -1,0 +1,54 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-F101",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "c7fc4e0375bf49eb01591c7e59cf90f80a3913d2009115ac69260cd5a86422f1",
+    "reference.md": "b08898c9b13ee4e2b66a72a573b541f6151d14d00a4338d0c8a23f1032dfb204",
+    "rubric.json": "6ea35895b8228084263855db27eb66b46ad4e4baf30658178a42877d98188ca6"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "5c378093037e158c434130ac6b8ab27a16e879cdabe18bfe6be07696f2a64709"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+      "imports": [
+        "Mathlib.RingTheory.Ideal.Quotient.Operations"
+      ]
+    },
+    {
+      "module": "Transfer",
+      "source": "Transfer.lean",
+      "sha256": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879",
+      "imports": [
+        "Transfer"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "be44257dc8620733ed98789d42ff13f43885fa09a773c6fc3f9530cbe1e5a339",
+      "imports": [
+        "Core"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "b03418123a86fe02e005800fd200895c170c3f415aee5a9bfbd29ca322608f79"
+  }
+}

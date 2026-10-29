@@ -1,0 +1,230 @@
+{
+  "schema": "math-gauge.independent-case-review/v1",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "author": "/root/alignment_research",
+  "independence": "Reviewer did not author or edit F105-F108. This is non-author cross-review with shared project context, not a blind candidate run.",
+  "status": "passed",
+  "human": "pending",
+  "candidate_model_run": false,
+  "review_round": 2,
+  "scope": [
+    "Full task/reference/rubric/source/design/review material",
+    "Every mathematical Lean module and actual definitions",
+    "Original mathematical domain, quantifiers and exact quantitative constants",
+    "Solver projection and generation answer/route leakage",
+    "Final author manifests and development compilation source hashes"
+  ],
+  "source_verification": [
+    {
+      "source": "teorth/pfr",
+      "revision": "f6bdcac2365623d3667d3ff8fd8ddb7f95ce2313",
+      "path": "PFR/Main.lean",
+      "verified_git_blob_sha": "605110d6c580cc7ff0f1902a915b119dd16b486d",
+      "method": "Independent GitHub connector retrieval of complete source, with focused reading of the dense-coset/Ruzsa bridge at lines 246-270 and its surrounding hypotheses.",
+      "conclusion": "Source really uses nonempty A intersect translated H, Ruzsa covering, the A+B subset A+A cardinal estimate, and B-B subset H. Benchmark generalization and omitted entropy stage are explicitly disclosed."
+    },
+    {
+      "source": "openai/NavierStokesAndEuler",
+      "revision": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+      "path": "NavierStokes/SmoothFamilyTorusInverse.lean",
+      "verified_git_blob_sha": "c607eb6f2460a3ba55dc2218072cd504bf6253bf",
+      "method": "Independent GitHub connector retrieval with focused reading of norm_derivativeWord_inverse_le at 1059-1080. Direct PDF text inspection at page index 94/printed 95, Lemma 8.6 equation 8.19, and next-page proof. Public commentary Example 3.1 independently checked.",
+      "paper_url": "https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf",
+      "commentary_url": "https://arxiv.org/html/2610.08144v1#S3.SS1",
+      "conclusion": "The inspected paper states m+4 and the pinned local Lean declaration assumes w.length+5. This supports only the local order-of-control adaptation; neither review nor cases infer falsity of the original estimate or main PDE claim.",
+      "limitation": "PDF URL has no immutable revision/hash in the source record. Observations are access-date scoped; no full PDE proof audit was conducted."
+    }
+  ],
+  "results": [
+    {
+      "case_id": "MG-F105",
+      "decision": "pass",
+      "mathematical_review": "ai-independent-review-passed",
+      "human": "pending",
+      "task_kind": "audit",
+      "source_family": "pfr-dense-coset",
+      "findings": [],
+      "reasoning": [
+        "The actual Finset slice consists of a in A with a-x in H; the actual Covers predicate requires finite representatives lying in the proposed F. No quotient finiteness, characteristic-two, x-in-H, or finiteness-of-H premise is added.",
+        "Nonemptiness of the slice supplies a positive denominator. A+B is a subset of A+A, so the exact K*card(A)/card(B) coefficient follows without a discarded multiplicative constant.",
+        "The imported Ruzsa covering theorem produces F subset A and A subset F+(B-B); Bridge derives B-B subset H by cancellation of the shared coset offset, then converts that set inclusion to Covers.",
+        "The complete prose reference justifies the covering theorem using a maximal disjoint-translate family, so the public reference is mathematically self-contained. The Lean proof legitimately uses the library theorem.",
+        "The full upstream PFR proof uses stronger ambient hypotheses to produce a dense coset. The benchmark explicitly isolates the subsequent covering bridge and proves its stated generalization to arbitrary additive commutative groups; it does not claim to formalize entropy or the complete PFR theorem."
+      ],
+      "reviewed_file_sha256": {
+        "case.json": "681a303a1b50252cb03c293fb4f86aa9608f9e8ee6edcc36a227707517dc3627",
+        "design.json": "cc2f3de26e9e9c71bdb800fb405f8210c786a575759a9fd20dbf45df297a1f69",
+        "formal/Bridge.lean": "dce9b4ee59677e0bfd072e81852e4df453d7dede6f057ff4d3eff9aa1798c7cc",
+        "formal/COVERAGE.md": "00965a9955b91ee3bf600ced4b0af5d3241229c808e106724680d46262611ac9",
+        "formal/Candidate.lean": "3263ced44cd9baaeb420fad4b15dda94e82e212de6456d45551033b78406831f",
+        "formal/Core.lean": "a4a26950f66b87cd8323a197af99230f1860ff3b86cd087f055659fe36bfa409",
+        "formal/CurrentAudit.lean": "f97f29f7bf4697eee324bca067af238d042864a3c584930f774e3f56c4447826",
+        "formal/lean-toolchain": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+        "formal/manifest.json": "7576d6be6d92214b17b67c4a8674106ecd1ed0e49ef55cba0cdba11fef17d1b3",
+        "reference.md": "4e49d29ff7e0afa001387ccde2f4ac75c58b24396d35954abb4b9d9e38dd134c",
+        "review.json": "19d5c1f8da06444e97781c04fe1f40d42e067aeaee96762be5dfa3c472aca817",
+        "rubric.json": "7af614d334ea383a37373f371b8cc1bdfd7c8fae0ceba2c27f98fda52011c9bf",
+        "source-evidence.json": "d728c338ea8d0f68684b7d802d3db4a3fea2dce20d582c7e6c43fc3acd953209",
+        "source-notes.md": "b3cbd1bf0866841ca4d35c54e8dfa57967a8d432e35dd37632aa7b876414c7e0",
+        "sources.fragment.json": "1921b32e08c3c80584401e54280e8313d2a29210083f8d3c7d17d69f4e82c90e",
+        "task.md": "db2b84d282cc2366fe83e896aefc6c2e83c67d5c8bd73095ea7cffa6550d9b5b",
+        "validation/development-compile.json": "d185a7360a388e91aca8eb1881c49972ee9b8bbb9bde9d20d1453d2331f797e1"
+      },
+      "candidate_projection_checked": [
+        "Core.lean",
+        "Bridge.lean",
+        "Candidate.lean"
+      ],
+      "formal_compilation_claim": "Not rerun by this reviewer. Author development success and source hashes were inspected; shared final verifier evidence is separate."
+    },
+    {
+      "case_id": "MG-F106",
+      "decision": "pass",
+      "mathematical_review": "ai-independent-review-passed",
+      "human": "pending",
+      "task_kind": "generate",
+      "source_family": "pfr-dense-coset",
+      "findings": [
+        {
+          "id": "F106-generation-import-cue",
+          "severity": "low",
+          "status": "resolved",
+          "initial_observation": "The generation scaffold directly imported Mathlib.Combinatorics.Additive.RuzsaCovering, identifying the intended library route. This was a projection-quality issue, not a mathematical error.",
+          "author_change": "Use only basic structure imports in visible Core; move the specialized import to hidden Reference.",
+          "reviewer_verification": "Read the revised complete Core and Reference, compared theorem bodies and statements, verified all manifest module hashes and the renewed compilation source hashes.",
+          "final_core_sha256": "db71cf6eeafd33d715d74f43417f5c702a988f569cd220d7db4ec7d7b80667de"
+        }
+      ],
+      "reasoning": [
+        "Only Core.lean is exposed. It defines the slice, membership, subset relation and cover predicate, with no complete target theorem type or proof.",
+        "After revision, candidate-visible imports describe basic finite sets, subgroups, real numbers and tactics. The specialized RuzsaCovering import occurs only in hidden Reference.lean.",
+        "The reference gives the complete witness construction and preserves F subset A, the exact denominator and constant, and the actual subgroup-coset meaning.",
+        "The generation rubric accepts equivalent valid formulations and independent routes. It does not require the author-chosen helper names or a separate full PFR theorem."
+      ],
+      "reviewed_file_sha256": {
+        "case.json": "b48c836a5745dc6580bbe16fc9011132b88e5c185a28efb8b9c7565077bce6ca",
+        "design.json": "6a2f6545eb25c0cedc72119b463e090a5f877f3293156df425942d0bf8f9108a",
+        "formal/Bridge.lean": "8a65d2e15884b0ebc6ea364bdfc2c67d9a60707d58ee926b1e96453eec1738d1",
+        "formal/COVERAGE.md": "508be909d60274b14be8b2dd450a18dcf3211c2f26d7ebd60a31547f8a74720e",
+        "formal/Core.lean": "db71cf6eeafd33d715d74f43417f5c702a988f569cd220d7db4ec7d7b80667de",
+        "formal/CurrentAudit.lean": "f4359d6293258f6f386fab30d3a974007558d986e729441d6cec294f73bb29cb",
+        "formal/Reference.lean": "639617e492a91f392d018e909bdde16d53caf863f92ea0d2ab81d395e1aa1525",
+        "formal/lean-toolchain": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+        "formal/manifest.json": "a2d5fdec5cc287b12591641cda217a4d40031c577d816a7f463996bc13c9e10b",
+        "reference.md": "4e49d29ff7e0afa001387ccde2f4ac75c58b24396d35954abb4b9d9e38dd134c",
+        "review.json": "69b127758c850e1ef6dce0790dd5f39d3edfd09124e60eef252bbf2f5e335866",
+        "rubric.json": "dea5bfc9e0376e841662211e9a54f44dc2caf088650b6099b1fdb7c039cf223a",
+        "source-evidence.json": "d728c338ea8d0f68684b7d802d3db4a3fea2dce20d582c7e6c43fc3acd953209",
+        "source-notes.md": "b3cbd1bf0866841ca4d35c54e8dfa57967a8d432e35dd37632aa7b876414c7e0",
+        "sources.fragment.json": "1921b32e08c3c80584401e54280e8313d2a29210083f8d3c7d17d69f4e82c90e",
+        "task.md": "13ccd6bf775d7949042a029a1aa2335e77bd0f733d695835c59f72ba2cf433fc",
+        "validation/development-compile.json": "5b4ee4873ddad9fcedffc3f53f099610da080e62e29a78e907f30250593ecd13"
+      },
+      "candidate_projection_checked": [
+        "Core.lean"
+      ],
+      "formal_compilation_claim": "Not rerun by this reviewer. Author development success and source hashes were inspected; shared final verifier evidence is separate."
+    },
+    {
+      "case_id": "MG-F107",
+      "decision": "pass",
+      "mathematical_review": "ai-independent-review-passed",
+      "human": "pending",
+      "task_kind": "audit",
+      "source_family": "sequence-regularity-loss",
+      "findings": [],
+      "reasoning": [
+        "Core uses actual real sequences and the actual weight n+1. Multiplier proves both inverse identities, uniqueness, linearity and rapid-decay preservation without a certificate containing the target conclusion.",
+        "The supplied InputControl expands to order r+2, whereas the task requires order r+1 at the same fixed C. This is an actual stronger premise despite the validity of the other conclusions.",
+        "The sequence supported at n=1 with value 1/2 satisfies Control(1,1) but fails Control(2,1), while its solved output satisfies Control(0,1). This separates the fixed-order interfaces; rapid decay does not recover the missing same-C bound.",
+        "The identity w(n)^r*abs(Sf(n)) = w(n)^(r+1)*abs(f(n)) proves the original one-order estimate. Therefore the misalignment is not a counterexample to the true requested estimate.",
+        "The source attribution is limited to a publicly documented derivative-order mismatch mechanism. The independent sequence model is not represented as an upstream PDE counterexample, original model output, or a proof that the source main theorem is false."
+      ],
+      "reviewed_file_sha256": {
+        "case.json": "858b696ec42cd52cd8c1aee8c4104f6c28ae50c983d99ab97b6e1fc44ad6da6b",
+        "design.json": "0ad6b82bebcf356c2c7af8d5ef60563fcc707e82c7d89660681e1e60766d071b",
+        "formal/COVERAGE.md": "ff5431f42daeda2fd264b5a4f1c98bfc5b504b316aebfff1f6146e806b36b10b",
+        "formal/Candidate.lean": "7e7d7709475a59b58bc029e6e65164f1b88b2d19c6977e61c6aaee75476ef87a",
+        "formal/Core.lean": "dfea64ecc2da70bf23f7c30669df87ca829a0c0d275324f89ac856421aa66939",
+        "formal/CurrentAudit.lean": "83e367682e60a1ae140a538718fc2af4b2a486869f3ca4c0919171b45e435ede",
+        "formal/Multiplier.lean": "37acff4b386d4793ddaa48d3d27a779d9c8a639c7b2deb95b045f68b63e0f72a",
+        "formal/Reference.lean": "7b8056b8192c311efef23b3a399005a7b2f51d41996dd32ac37f5b714d49f361",
+        "formal/lean-toolchain": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+        "formal/manifest.json": "6cd6ea2370ffbb738fe4443ba67edbb1d7f0bbe95e3594243726f43cd631a700",
+        "reference.md": "4f1dac9422429f732d85377f43bb2db966a83919aac641381aa6d7159f0745c9",
+        "review.json": "19d5c1f8da06444e97781c04fe1f40d42e067aeaee96762be5dfa3c472aca817",
+        "rubric.json": "3fa2505d05848c25fcba53221ebd018a36f6edd27cebf64266dfd0c505095383",
+        "source-evidence.json": "1c4673f708f5e13fe1d602995781bd9ff612df226b8128b7398aa9f8d6dbf8d1",
+        "source-notes.md": "ebc03db74d5a2177e9e3722c053bceb592d4612b256bcd240655df490f2b4483",
+        "sources.fragment.json": "657bff9179d791e4303ed2dece37de49c94b7d2fc145458940cfece6de0db7af",
+        "task.md": "49637774ca72561fbca7a13a226ca1f5d3edb3cb73c359f34beebebaa35a0a1c",
+        "validation/development-compile.json": "462a4ea2a46dc1c619c4eae3458f07717c3ed9a9336cbcbcb8c9c4e9ecb424d5"
+      },
+      "candidate_projection_checked": [
+        "Core.lean",
+        "Multiplier.lean",
+        "Candidate.lean"
+      ],
+      "formal_compilation_claim": "Not rerun by this reviewer. Author development success and source hashes were inspected; shared final verifier evidence is separate."
+    },
+    {
+      "case_id": "MG-F108",
+      "decision": "pass",
+      "mathematical_review": "ai-independent-review-passed",
+      "human": "pending",
+      "task_kind": "repair",
+      "source_family": "sequence-regularity-loss",
+      "findings": [],
+      "reasoning": [
+        "The repair task explicitly preserves all real sequences, the background control definition, the same C, inverse/uniqueness/linearity and rapid decay. The original target is true.",
+        "Reference.control_solve proves the exact one-order estimate; CompleteResult constructs an actual solution with uniqueness and estimate, and complete_rapid retains rapid decay. The unchanged Multiplier file supplies the algebraic linearity identities.",
+        "The supplied r+2 interface must be revised rather than certified by using smoothness/rapid decay or by changing C. The rubric correctly distinguishes a repair from a claim that the original interface was already aligned.",
+        "The reference has a concrete fixed-C separation witness. Its additional no-uniform-zero-loss theorem is explicitly optional and is not a hidden task obligation.",
+        "The visible Core, Multiplier and Candidate contain the intended auditable gap; Reference and all source/evaluator materials remain outside solver_files."
+      ],
+      "reviewed_file_sha256": {
+        "case.json": "42f4c891f1451f623b4e7789dd01860eac33034f588777becd6fd50b496c0c1c",
+        "design.json": "fe54e0389f74ad3922d3880b88a0dc2ab948c5c5cedd7b3d4df1485fe492edb5",
+        "formal/COVERAGE.md": "2961b03a53c4f2ef35eb2d4a653bfb77444a737afa7eea166afc6cb2c8b2ee85",
+        "formal/Candidate.lean": "bf3dc8364ac752fde665548fc59decc7045a7cbc2802dbcb687fc0a65159cbc4",
+        "formal/Core.lean": "e75e22bbe2b82c240d47cf4dfc83d7d638421cb4bc4e528f8c7cb90256564156",
+        "formal/CurrentAudit.lean": "83e367682e60a1ae140a538718fc2af4b2a486869f3ca4c0919171b45e435ede",
+        "formal/Multiplier.lean": "51787e030e17b5187c88605b87d88c5b4bf482abb1848ded8a116787acc29c0b",
+        "formal/Reference.lean": "ef6d1c3ca32e93f1116339cc8d3d06e67fd1eb6270501089ecb096f61b80ad46",
+        "formal/lean-toolchain": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+        "formal/manifest.json": "5f0b399c1c110dd9d20e7a75ab8bd076230ab6791b50963e4cb714d52b4a3aea",
+        "reference.md": "4f1dac9422429f732d85377f43bb2db966a83919aac641381aa6d7159f0745c9",
+        "review.json": "19d5c1f8da06444e97781c04fe1f40d42e067aeaee96762be5dfa3c472aca817",
+        "rubric.json": "c1eb095756ba1e44e46958b99fffc40eb06029b785178b1619eb515ca332934c",
+        "source-evidence.json": "1c4673f708f5e13fe1d602995781bd9ff612df226b8128b7398aa9f8d6dbf8d1",
+        "source-notes.md": "ebc03db74d5a2177e9e3722c053bceb592d4612b256bcd240655df490f2b4483",
+        "sources.fragment.json": "657bff9179d791e4303ed2dece37de49c94b7d2fc145458940cfece6de0db7af",
+        "task.md": "1d2ea0859111d75266e72d9d0b15ff1e61be5f6cad95e27c44bf27bab22563d0",
+        "validation/development-compile.json": "c288733e04ce071a8316da3746f2a6696fbe514cf829489c9898951cf74b6cb3"
+      },
+      "candidate_projection_checked": [
+        "Core.lean",
+        "Multiplier.lean",
+        "Candidate.lean"
+      ],
+      "formal_compilation_claim": "Not rerun by this reviewer. Author development success and source hashes were inspected; shared final verifier evidence is separate."
+    }
+  ],
+  "limitations": [
+    "AI review is not human approval.",
+    "No candidate model run or difficulty calibration was performed.",
+    "Compiler success and semantic alignment remain separate evidence.",
+    "Original upstream projects and full research papers were not independently re-proved."
+  ],
+  "revision_history": [
+    {
+      "round": 1,
+      "outcome": "No core mathematical or source-attribution defect found. One low-severity candidate-projection finding: F106 specialized import suggested the intended route."
+    },
+    {
+      "round": 2,
+      "outcome": "Author moved the specialized import to hidden Reference and recompiled all affected modules. Reviewer inspected final source and hash-bound evidence; finding resolved. All four cases pass non-author mathematical/semantic review."
+    }
+  ]
+}

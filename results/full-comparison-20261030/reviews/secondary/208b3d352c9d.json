@@ -1,0 +1,37 @@
+{
+  "packet_id": "208b3d352c9d",
+  "case_id": "MG-R011",
+  "response_sha256": "608333776fd2f6719a9bab44697be022257d93c4a00be8bc81c6985af27c39e2",
+  "request_sha256": "31733e2a7958e9ea08593fda306646c1e1b8694f49c54f8eb4ce5b3f0ce76458",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "review_role": "independent-secondary",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "独立二审建议 pass，保留第60行冗余估计错误：||Px||≤B 不由题设推出。但同一行原文已写出正确且充分的有限上界 d_F(x)≤||x−Px||，并在第63行明确以 ||x−Px||² 界定 L；Px 已由第43–47行投影定理合法构造。因此删除错误的后缀估计即可阅读到原文中现成、完整的主证明，无需添加新的不等式或替候选补证明。所有必需目标均完整：共同可行点及唯一投影、整个有限子集网的范数收敛、最优值精确恢复、非扩张性。proof_validity=valid 指这些目标已有有效证明，不声称答卷每一附带不等式均正确。",
+  "findings": [
+    "真实但冗余的错误（第60行）：H=ℝ，I为单点，C_i=[0,+∞)，B=0，每个有限子集均可取z_F=0，完全满足题设；对x=1，全局投影Px=1，故||Px||=1>B=0。不能把共同可行集与B闭球相交非空，误当成任意x的投影也落在该球。",
+    "该错误没有阻断上确界/Cauchy论证：原文第59–60行已经由C⊆C_F给出d_F(x)≤||x−Px||；第43–47行已建立Px∈H，因此该量是有限实数；第63行又明确写L=sup_F d_F²≤||x−Px||²。所需有限上界直接存在于原答卷，不依赖||Px||≤B，也不需要评审另加与z比较的修复证明。",
+    "共同可行域与映射构造（第30–47行）：统一B使闭球K弱紧，闭凸C_i弱闭，有限交性质在K内给出C∩K非空；再对非空闭凸C调用Hilbert投影定理，得到每个x的唯一最小点Px。没有只用无界有限可行性推出全交非空。",
+    "全网强收敛（第53–113行）：有限问题的距离平方单调且已有有限上界；投影变分估计给嵌套F_1⊆F_2的增量界；任意两个尾指标通过并集F_3比较得到真正的Cauchy网。完备性给全网极限，逐i的单点集尾和C_i闭性保证全约束可行，有限最优性取极限并用唯一性识别为Px。第87行可数子列用于完备度量空间的Cauchy网收敛证明，并未声称存在可数共尾约束族。",
+    "最优值恢复（第119–131行）：由全网强收敛和距离范数连续性，结合单调性，证明dist(x,C)=sup_F dist(x,C_F)以及平方版本；额外能量差误差界也由已给投影变分不等式正确导出。",
+    "非扩张性（第140–163行）：对全局投影分别代入另一投影点，将两条变分不等式相加得firm nonexpansive不等式，Cauchy–Schwarz并分零距离情况给出所需1-Lipschitz界。第二个沿有限投影网取极限的证明同样成立。",
+    "范围保持：H允许无限维，I允许任意指标集；空I时有限子集网只有空集、C=H，构造也成立。文中“有限维子问题”的小标题不精确，但实际所用投影定理和C_F始终位于原H，没有增添有限维假设。"
+  ],
+  "needs_second_review": true,
+  "adjudication_needed": "Independent secondary review complete; root should retain the redundant false projection-norm bound and resolve the disputed pass status.",
+  "candidate_lean_report_path": null,
+  "candidate_lean_report_sha256": null,
+  "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/208b3d352c9d",
+  "review_material_sha256": {
+    "task.md": "5c10468869f540845f55edc530dcf6950af5c3735c0cc0abd83576b89b97641d",
+    "reference.md": "01e5c456a2d2b1ab8b0b85e6a2f87cf8055b16d4b7d9f22d5efb352aff33a7b0",
+    "rubric.json": "87cb325ba46d71d943ba80f6c3eb9effa05994f86ff7d6e5241d76e610ba7a87"
+  },
+  "blinding_note": "未读取packet-map、模型身份映射、先前模型答卷或本包初审文件；独立读取本包冻结答卷/请求、完整题面、参考及rubric。",
+  "no_candidate_modification": true,
+  "score_applied": false
+}

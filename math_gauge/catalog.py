@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
@@ -25,6 +26,33 @@ def write_json(path, value):
 
 def digest_bytes(value):
     return hashlib.sha256(value).hexdigest()
+
+
+def candidate_message(request):
+    """Neutral transport of the explicit projection; no evaluator metadata.
+
+    The original task/instruction prefix is unchanged. A longer fence prevents
+    source backticks from terminating an attachment. A framing newline after a
+    non-newline-terminated file is not part of that file's request content.
+    """
+    task = request["task"]
+    instruction = request.get("instruction", "")
+    if not isinstance(task, str) or not isinstance(instruction, str):
+        raise ValueError("Task and instruction must be text")
+    message = instruction + "\n\n" + task if instruction else task
+    seen = set()
+    for item in request.get("files", []):
+        name, content = item["name"], item["content"]
+        path = relative_name(name)
+        if len(path.parts) != 1 or name in seen or not isinstance(content, str):
+            raise ValueError("Attachment must have a unique flat filename and text content")
+        seen.add(name)
+        length = max([2, *(len(x) for x in re.findall(r"`+", content))]) + 1
+        fence = "`" * length
+        language = "lean" if name.endswith(".lean") else "text"
+        separator = "" if content.endswith("\n") else "\n"
+        message += f"\n\nFile: `{name}`\n{fence}{language}\n{content}{separator}{fence}\n"
+    return message
 
 
 def relative_name(value):
@@ -199,9 +227,7 @@ class Suite:
             "files": [
                 {
                     "name": x["target"],
-                    "content": safe_file(self.root, x["source"]).read_text(
-                        encoding="utf-8"
-                    ),
+                    "content": safe_file(self.root, x["source"]).read_bytes().decode("utf-8"),
                 }
                 for x in case["solver_files"]
             ],
@@ -218,6 +244,6 @@ class Suite:
             prompt = request["instruction"] + "\n\n" + prompt
         (dest / "prompt.md").write_bytes(prompt.encode("utf-8"))
         for item in request["files"]:
-            (dest / item["name"]).write_text(item["content"], encoding="utf-8")
+            (dest / item["name"]).write_bytes(item["content"].encode("utf-8"))
         write_json(dest / "request.json", request)
         return request

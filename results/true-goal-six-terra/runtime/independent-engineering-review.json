@@ -1,0 +1,1126 @@
+{
+  "schema": "math-gauge.engineering-review/v1",
+  "reviewer_kind": "ai",
+  "reviewer": "Codex delegated agent /root/qualification_a",
+  "reviewed_utc": "2026-10-29T15:12:13.360468+00:00",
+  "workspace": "/private/tmp/math-gauge-six-terra-20261029",
+  "scope": {
+    "primary_runtime_cases": [
+      "MG-R101",
+      "MG-R102"
+    ],
+    "supplemental_metadata_checks": [
+      "MG-R103",
+      "MG-R104",
+      "MG-R105",
+      "MG-R106"
+    ],
+    "scripts": [
+      "prepare_six.py",
+      "run_six.py",
+      "audit_six.py",
+      "open_six.py",
+      "network-probe.py"
+    ],
+    "read_only": true,
+    "files_written_by_reviewer": [
+      "/private/tmp/math-gauge-six-terra-engineering-review.json"
+    ],
+    "new_model_requests": 0,
+    "queue_interrupted": false,
+    "responses_opened": false,
+    "mathematical_event_text_exposed_or_assessed": false,
+    "event_read_limit": "Only R101/R102 item.type=error messages were extracted; mathematical agent_message/reasoning text was not surfaced or evaluated. Other event evidence came from runtime summaries.",
+    "human_review": "pending"
+  },
+  "decision": {
+    "engineering_ready_for_answer_review": true,
+    "blocking_findings": [],
+    "nonblocking_findings": [
+      "ENG-01"
+    ],
+    "mathematical_correctness": null,
+    "isolation_scope": "Recorded task-only local context isolation, actual file/PID policy probes and no effective tool events. This is not offline networking or independent attestation of the backend model/effort."
+  },
+  "findings": [
+    {
+      "id": "ENG-01",
+      "severity": "nonblocking",
+      "title": "Original final-audit script does not compare archived evaluator material back to frozen hashes",
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/audit_six.py",
+          "lines": [
+            75,
+            75
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/audit_six.py",
+          "lines": [
+            99,
+            107
+          ]
+        }
+      ],
+      "reviewed_script_sha256": "f1720497ad5e50c960af667cb8b5b059355e52b1172a2b01a9d0207ca75a08aa",
+      "detail": "The inspected script selects evaluator-freeze paths from pre-run-freeze.json, then computes new archive hashes, without comparing their current SHA256 and byte sizes to the pre-run frozen entries. Its own engineering_checks_passed flag therefore omits this binding check.",
+      "current_evidence": "Independently compared all 153 frozen evaluator files by SHA256 and size during this engineering review; all match, so no actual drift or queue blocker was found.",
+      "action": "Add an explicit final frozen SHA256/size comparison or incorporate this independently bound comparison into the final engineering verdict. Preserve before/after script identities; do not alter submitted prompts, argv or model runs.",
+      "parent_disposition": "Parent acknowledged and said the final audit will add all 153 comparisons while preserving before/after tool identities.",
+      "latest_audit_script_sha256": "ba5d72278a9a7a058c53b5fc79ede85a152cfa6cba315316341120b76aea257a",
+      "updated_script_reviewed": false
+    }
+  ],
+  "checks": {
+    "shared_tools": {
+      "passed": true,
+      "detail": "Preparation dynamically imports the shared scripts/isolated_cli/prepare.py; runtime/probe.py is byte-identical to the shared probe; environment construction and final helper audit are reused. The operator wrapper supplies launch/queue/process-tree duties that the shared preparation helper intentionally does not perform.",
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/prepare_six.py",
+          "lines": [
+            8,
+            11
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/prepare_six.py",
+          "lines": [
+            64,
+            70
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            5,
+            7
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/audit_six.py",
+          "lines": [
+            18,
+            23
+          ]
+        }
+      ]
+    },
+    "qualification_before_submission": {
+      "passed": true,
+      "gate_utc": "2026-10-29T15:01:15.022015+00:00",
+      "freeze_utc": "2026-10-29T15:02:45.016811+00:00",
+      "gate_sha256": "50f528054e830b797c3b4522bbcd8c064ae2336249dbfff94414eab9cf4485c8",
+      "pre_run_freeze_sha256": "cbf336395cb8fd390385b6646ccb4986001e14a3653d5acb4026e39c94b73331"
+    },
+    "frozen_material": {
+      "files_compared": 153,
+      "errors": [],
+      "all_sha256_and_sizes_match": true
+    },
+    "single_submission": {
+      "passed": true,
+      "math_attempts": 6,
+      "total_request_count": 6,
+      "one_attempt_per_case": {
+        "MG-R102": 1,
+        "MG-R101": 1,
+        "MG-R103": 1,
+        "MG-R104": 1,
+        "MG-R105": 1,
+        "MG-R106": 1
+      },
+      "preflight_failure_preserved": true,
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            90,
+            104
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            130,
+            133
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            187,
+            198
+          ]
+        }
+      ]
+    },
+    "reference_history_isolation": {
+      "passed": true,
+      "detail": "All five deny roots are retained, covering user data, data-volume alias, private temp, private per-user temp and /Volumes/Data. Only the case-specific run directory is exempted as a subtree. Exact CLI/auth/installation-ID literals are the only read exceptions. Real-open probes deny all 11 existing negative targets with EPERM, and actual CLI PID probes repeat the exact target list before submission. Each run has separate SQLite/log locations; ephemeral exec does not resume or fork old sessions.",
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/outer.sb",
+          "lines": [
+            1,
+            16
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/prepare_six.py",
+          "lines": [
+            43,
+            63
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            112,
+            129
+          ]
+        }
+      ]
+    },
+    "proxy_exception": {
+      "passed": true,
+      "detail": "The original loopback deny remains. Exactly localhost TCP port 7897 is added as the existing model-service proxy exception. Real connects allow 127.0.0.1:7897 and deny 127.0.0.1 ports 22/7898/4000 and IPv6 ::1:7898; no data is sent by those probes. This is not an external-network allowlist: necessary model-service networking remains available.",
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/prepare_six.py",
+          "lines": [
+            71,
+            78
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/network-probe.py",
+          "lines": [
+            3,
+            12
+          ]
+        }
+      ]
+    },
+    "installation_id_exception": {
+      "passed": true,
+      "detail": "The added write exception is a literal path to the existing non-history installation_id. No broad Codex directory write/read permission was added, and before/after content hashes match for all six runs."
+    },
+    "model_identity": {
+      "passed": true,
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "inventory_fetched_at": "2026-10-29T14:48:08.636047Z",
+      "cli_version": "codex-cli 0.165.0-alpha.1.2",
+      "backend_model_observed": null,
+      "backend_effort_observed": null,
+      "detail": "Current model inventory lists the requested slug and max effort. Actual strict-start argv requests those values. The event summaries have no explicit backend metadata, and execution keeps observed_model/observed_effort null with a clear limitation; the final-audit wording distinguishes the request from backend attestation.",
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            82,
+            85
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/run_six.py",
+          "lines": [
+            171,
+            176
+          ]
+        },
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/audit_six.py",
+          "lines": [
+            44,
+            61
+          ]
+        }
+      ]
+    },
+    "tool_conditions": {
+      "passed_with_explicit_limit": true,
+      "canary_inference_performed": false,
+      "detail": "Explicit settings disable web search, context sources, shell, multi-agent, plugins, apps and code mode. No separate canary inference was authorized or performed; execution records that limitation and the final audit must preserve it. Recorded completed events contain only agent_message and startup-error items. No proof of universally unavailable tool capability is claimed."
+    },
+    "startup_error_events": {
+      "case_ids": [
+        "MG-R101",
+        "MG-R102"
+      ],
+      "count_per_case": 3,
+      "classification": [
+        "skip_host_skill_discovery is an under-development feature warning",
+        "global AGENTS.md read denied with EPERM",
+        "code mode unavailable and fail-closed because its host is disabled"
+      ],
+      "blocking": false,
+      "detail": "These messages support expected configured restrictions and do not report extra model requests, access to references or a mathematical failure."
+    },
+    "archive_design": {
+      "passed": true,
+      "detail": "The archive uses an explicit path whitelist, rejects symlinks and paths escaping the workspace, excludes state/auth/installation_id, scans for credential patterns, and preserves failures. This review did not run the archiver or open answer bodies; final response hashes/credential-scan execution remain the parent final-audit responsibility.",
+      "evidence": [
+        {
+          "file": "/private/tmp/math-gauge-six-terra-20261029/audit_six.py",
+          "lines": [
+            65,
+            116
+          ]
+        }
+      ]
+    }
+  },
+  "cases": {
+    "MG-R101": {
+      "checks": {
+        "input_only_regular_task": true,
+        "task_identity_all_layers": true,
+        "candidate_projection_exact": true,
+        "prepared_hashes_unchanged": true,
+        "settings_match_all_argv_configs": true,
+        "actual_argv_equals_plan": true,
+        "new_session_flags": true,
+        "request_after_gate_and_freeze": true,
+        "exact_single_stdin_write": true,
+        "all_pid_probe_paths_match": true,
+        "pid_probe_before_request": true,
+        "actual_pid_identity_bound": true,
+        "actual_open_probe": true,
+        "network_probe": true,
+        "completed_one_turn": true,
+        "no_tool_events_in_recorded_summary": true,
+        "installation_id_unchanged": true,
+        "backend_identity_not_filled_from_request": true
+      },
+      "all_checks_passed": true,
+      "task_sha256": "232836a493368d62a0bdb8ce83900b094bfc69b8255d9c06493f3891755b83b1",
+      "task_bytes": 947,
+      "attempt_id": "MG-R101-math-1",
+      "request_count": 1,
+      "request_utc": "2026-10-29T15:02:57.433355+00:00",
+      "finished_utc": "2026-10-29T15:03:41.508198+00:00",
+      "parent_pid": 97027,
+      "worker_pids": [
+        97027
+      ],
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "observed_model": null,
+      "observed_effort": null,
+      "thread_id": "01a1882f-82a4-7d12-9b83-818662592d43",
+      "event_types": {
+        "thread.started": 1,
+        "item.completed": 4,
+        "turn.started": 1,
+        "turn.completed": 1
+      },
+      "item_types": {
+        "error": 3,
+        "agent_message": 1
+      },
+      "prepared_mismatches": [],
+      "evidence_scope": "Runtime JSON, plan/settings/policy/probe records, and task hashes only; no answer text used."
+    },
+    "MG-R102": {
+      "checks": {
+        "input_only_regular_task": true,
+        "task_identity_all_layers": true,
+        "candidate_projection_exact": true,
+        "prepared_hashes_unchanged": true,
+        "settings_match_all_argv_configs": true,
+        "actual_argv_equals_plan": true,
+        "new_session_flags": true,
+        "request_after_gate_and_freeze": true,
+        "exact_single_stdin_write": true,
+        "all_pid_probe_paths_match": true,
+        "pid_probe_before_request": true,
+        "actual_pid_identity_bound": true,
+        "actual_open_probe": true,
+        "network_probe": true,
+        "completed_one_turn": true,
+        "no_tool_events_in_recorded_summary": true,
+        "installation_id_unchanged": true,
+        "backend_identity_not_filled_from_request": true
+      },
+      "all_checks_passed": true,
+      "task_sha256": "f7413c2d2d0e2b808001bfdadbe597e26d0642ac66d723a574e725a80912718a",
+      "task_bytes": 884,
+      "attempt_id": "MG-R102-math-1",
+      "request_count": 1,
+      "request_utc": "2026-10-29T15:02:57.433203+00:00",
+      "finished_utc": "2026-10-29T15:04:02.036007+00:00",
+      "parent_pid": 97025,
+      "worker_pids": [
+        97025
+      ],
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "observed_model": null,
+      "observed_effort": null,
+      "thread_id": "01a1882f-82a2-7e52-b852-5f4ae491dd7e",
+      "event_types": {
+        "thread.started": 1,
+        "item.completed": 4,
+        "turn.started": 1,
+        "turn.completed": 1
+      },
+      "item_types": {
+        "error": 3,
+        "agent_message": 1
+      },
+      "prepared_mismatches": [],
+      "evidence_scope": "Runtime JSON, plan/settings/policy/probe records, and task hashes only; no answer text used."
+    },
+    "MG-R103": {
+      "checks": {
+        "input_only_regular_task": true,
+        "task_identity_all_layers": true,
+        "candidate_projection_exact": true,
+        "prepared_hashes_unchanged": true,
+        "settings_match_all_argv_configs": true,
+        "actual_argv_equals_plan": true,
+        "new_session_flags": true,
+        "request_after_gate_and_freeze": true,
+        "exact_single_stdin_write": true,
+        "all_pid_probe_paths_match": true,
+        "pid_probe_before_request": true,
+        "actual_pid_identity_bound": true,
+        "actual_open_probe": true,
+        "network_probe": true,
+        "completed_one_turn": true,
+        "no_tool_events_in_recorded_summary": true,
+        "installation_id_unchanged": true,
+        "backend_identity_not_filled_from_request": true
+      },
+      "all_checks_passed": true,
+      "task_sha256": "11a608e8da8fe5468eeda13cac5027447ccc1114cde1099a51fff6b1c16d0648",
+      "task_bytes": 1394,
+      "attempt_id": "MG-R103-math-1",
+      "request_count": 1,
+      "request_utc": "2026-10-29T15:03:42.111211+00:00",
+      "finished_utc": "2026-10-29T15:04:57.214586+00:00",
+      "parent_pid": 97883,
+      "worker_pids": [
+        97883
+      ],
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "observed_model": null,
+      "observed_effort": null,
+      "thread_id": "01a18830-313c-71e3-960c-0973db78c180",
+      "event_types": {
+        "thread.started": 1,
+        "item.completed": 4,
+        "turn.started": 1,
+        "turn.completed": 1
+      },
+      "item_types": {
+        "error": 3,
+        "agent_message": 1
+      },
+      "prepared_mismatches": [],
+      "evidence_scope": "Runtime JSON, plan/settings/policy/probe records, and task hashes only; no answer text used."
+    },
+    "MG-R104": {
+      "checks": {
+        "input_only_regular_task": true,
+        "task_identity_all_layers": true,
+        "candidate_projection_exact": true,
+        "prepared_hashes_unchanged": true,
+        "settings_match_all_argv_configs": true,
+        "actual_argv_equals_plan": true,
+        "new_session_flags": true,
+        "request_after_gate_and_freeze": true,
+        "exact_single_stdin_write": true,
+        "all_pid_probe_paths_match": true,
+        "pid_probe_before_request": true,
+        "actual_pid_identity_bound": true,
+        "actual_open_probe": true,
+        "network_probe": true,
+        "completed_one_turn": true,
+        "no_tool_events_in_recorded_summary": true,
+        "installation_id_unchanged": true,
+        "backend_identity_not_filled_from_request": true
+      },
+      "all_checks_passed": true,
+      "task_sha256": "a61c30cd381dc0d73c942cadfd81085ca4360bfde0a29988c85d1302a99867ea",
+      "task_bytes": 1370,
+      "attempt_id": "MG-R104-math-1",
+      "request_count": 1,
+      "request_utc": "2026-10-29T15:04:02.792148+00:00",
+      "finished_utc": "2026-10-29T15:07:09.914749+00:00",
+      "parent_pid": 98702,
+      "worker_pids": [
+        98702
+      ],
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "observed_model": null,
+      "observed_effort": null,
+      "thread_id": "01a18830-81f1-7a30-ab33-edbb84fb6d39",
+      "event_types": {
+        "thread.started": 1,
+        "item.completed": 5,
+        "turn.started": 1,
+        "turn.completed": 1
+      },
+      "item_types": {
+        "error": 3,
+        "agent_message": 2
+      },
+      "prepared_mismatches": [],
+      "evidence_scope": "Runtime JSON, plan/settings/policy/probe records, and task hashes only; no answer text used."
+    },
+    "MG-R105": {
+      "checks": {
+        "input_only_regular_task": true,
+        "task_identity_all_layers": true,
+        "candidate_projection_exact": true,
+        "prepared_hashes_unchanged": true,
+        "settings_match_all_argv_configs": true,
+        "actual_argv_equals_plan": true,
+        "new_session_flags": true,
+        "request_after_gate_and_freeze": true,
+        "exact_single_stdin_write": true,
+        "all_pid_probe_paths_match": true,
+        "pid_probe_before_request": true,
+        "actual_pid_identity_bound": true,
+        "actual_open_probe": true,
+        "network_probe": true,
+        "completed_one_turn": true,
+        "no_tool_events_in_recorded_summary": true,
+        "installation_id_unchanged": true,
+        "backend_identity_not_filled_from_request": true
+      },
+      "all_checks_passed": true,
+      "task_sha256": "cab4dc7f1330529059ba1331ee5407f90c3e425b6499b792c1a28119cad946e7",
+      "task_bytes": 903,
+      "attempt_id": "MG-R105-math-1",
+      "request_count": 1,
+      "request_utc": "2026-10-29T15:04:57.848900+00:00",
+      "finished_utc": "2026-10-29T15:06:18.032221+00:00",
+      "parent_pid": 99955,
+      "worker_pids": [
+        99955
+      ],
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "observed_model": null,
+      "observed_effort": null,
+      "thread_id": "01a18831-593c-7531-aa75-1d4c83b0c013",
+      "event_types": {
+        "thread.started": 1,
+        "item.completed": 4,
+        "turn.started": 1,
+        "turn.completed": 1
+      },
+      "item_types": {
+        "error": 3,
+        "agent_message": 1
+      },
+      "prepared_mismatches": [],
+      "evidence_scope": "Runtime JSON, plan/settings/policy/probe records, and task hashes only; no answer text used."
+    },
+    "MG-R106": {
+      "checks": {
+        "input_only_regular_task": true,
+        "task_identity_all_layers": true,
+        "candidate_projection_exact": true,
+        "prepared_hashes_unchanged": true,
+        "settings_match_all_argv_configs": true,
+        "actual_argv_equals_plan": true,
+        "new_session_flags": true,
+        "request_after_gate_and_freeze": true,
+        "exact_single_stdin_write": true,
+        "all_pid_probe_paths_match": true,
+        "pid_probe_before_request": true,
+        "actual_pid_identity_bound": true,
+        "actual_open_probe": true,
+        "network_probe": true,
+        "completed_one_turn": true,
+        "no_tool_events_in_recorded_summary": true,
+        "installation_id_unchanged": true,
+        "backend_identity_not_filled_from_request": true
+      },
+      "all_checks_passed": true,
+      "task_sha256": "131c32faec80b3721b34cbf8d349a10168c0f68bbd74a1ecbe653b78ff6b6758",
+      "task_bytes": 1046,
+      "attempt_id": "MG-R106-math-1",
+      "request_count": 1,
+      "request_utc": "2026-10-29T15:06:18.665126+00:00",
+      "finished_utc": "2026-10-29T15:08:08.222352+00:00",
+      "parent_pid": 2650,
+      "worker_pids": [
+        2650
+      ],
+      "requested_model": "gpt-6.1-terra",
+      "requested_effort": "max",
+      "observed_model": null,
+      "observed_effort": null,
+      "thread_id": "01a18832-94b4-7e40-86dd-ad50fa54af44",
+      "event_types": {
+        "thread.started": 1,
+        "item.completed": 5,
+        "turn.started": 1,
+        "turn.completed": 1
+      },
+      "item_types": {
+        "error": 3,
+        "agent_message": 2
+      },
+      "prepared_mismatches": [],
+      "evidence_scope": "Runtime JSON, plan/settings/policy/probe records, and task hashes only; no answer text used."
+    }
+  },
+  "source_and_record_hashes": {
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/execution.json": {
+      "sha256": "8a4abb2988d3df3410ff5dc1a27132800367f073d2d3a4b2afc403b08e4c940c",
+      "bytes": 14889
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/plan.json": {
+      "sha256": "bab546c69bc3ce23703215af6722d0bbadc1b3a1c1b61da33d0a3c8c3a923452",
+      "bytes": 4731
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/codex-settings.json": {
+      "sha256": "0167db1d88a63e21cdb3f6c6792419340eb06c4591236279e6ea4e05d8edffd3",
+      "bytes": 1308
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/outer.sb": {
+      "sha256": "3ef01f337a6c16beb030a450b5e70fd00f235209d8236e4bd1b466f017a1545f",
+      "bytes": 2810
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/prepared-hashes.json": {
+      "sha256": "7f2b80e210fdb0a6d6f723d5f8ecc1811b609ec9d30c158cf730702095f01542",
+      "bytes": 860
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/execution.template.json": {
+      "sha256": "51c8eb751a33f989b17807f69c8db88d496e75c53a88aef9702ae02dd36a8fdc",
+      "bytes": 2795
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/parent-pid-check.json": {
+      "sha256": "17b5dedf911c2ad48669f28d46b2254f01900e747dc6efbc440e2b4305d0029f",
+      "bytes": 2468
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/worker-pid-check.json": {
+      "sha256": "ee66851f905dd21cdacb97da1ec32297f6e7efab09a40b3346fee471d374e55b",
+      "bytes": 2468
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/open-probe.json": {
+      "sha256": "4ac52062177021d311dfc9224e0ef956f2e2069d841f587dc1a831048a06c0d0",
+      "bytes": 3245
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/network-probe.json": {
+      "sha256": "d7297500a54a8eb529647ec20bb23e02aa6082ad4d0b63e8504d527590c902a2",
+      "bytes": 908
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/probes.json": {
+      "sha256": "d867326f5ee9a0e800224645be9d19ba4c059ae696984f4bd5c32d745f5ac470",
+      "bytes": 1977
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/cli-identity.json": {
+      "sha256": "72d896966a223c8fec9fca63e63ab56894763bf1bed50c0ce68cf39fa9988915",
+      "bytes": 1216
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/process-identity.json": {
+      "sha256": "f9234165e7fa7a9fd6ee4ea077773219757037bb7a2177a880a580c8568e6b70",
+      "bytes": 573
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/process-identity-final.json": {
+      "sha256": "21ea8cf5fa9bc3f969ce04189fec3af855a354a6cf7550bd8aff3349d6495272",
+      "bytes": 5707
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/runtime/attempt-ledger.json": {
+      "sha256": "37f98939680c365ac3f8d1d8124b602a89072917d87d6790f69a6a499869ce26",
+      "bytes": 727
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R101/input/task.md": {
+      "sha256": "232836a493368d62a0bdb8ce83900b094bfc69b8255d9c06493f3891755b83b1",
+      "bytes": 947
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/execution.json": {
+      "sha256": "42a415d412f308a1f7f5dd3de73912b1655bafc9eb6d885011f8440b5c6fc1f7",
+      "bytes": 14898
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/plan.json": {
+      "sha256": "153af2fac6613ea9cb9a637bfe3bdc74dc8935e6faed407942e279fca49abb7d",
+      "bytes": 4731
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/codex-settings.json": {
+      "sha256": "30354e8d325cab8f2f5cc465e7efc39c7ca5d6f238a5cbf2f3ae117d80640750",
+      "bytes": 1308
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/outer.sb": {
+      "sha256": "9c9bb8662d1fc3592d913b382ae0f66b72e116bc7b945e77a1c1024725401674",
+      "bytes": 2810
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/prepared-hashes.json": {
+      "sha256": "15f25a9fbe070270251b22a484384245af7c5eda793c9534a105d7f3be264949",
+      "bytes": 860
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/execution.template.json": {
+      "sha256": "b7888e4a2de64e21a6bea658e9879bf7d6dc9a0b4106aa3f7e7be156b094f649",
+      "bytes": 2795
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/parent-pid-check.json": {
+      "sha256": "3d629ddd7b013cf077eef781a8b48c1f20506c67728c231aa1cab3c589857184",
+      "bytes": 2471
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/worker-pid-check.json": {
+      "sha256": "3811924e0d96677daad3d2ab28b392866904431100cda6bd1b36e12ca2d13025",
+      "bytes": 2471
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/open-probe.json": {
+      "sha256": "0ea3811903ff9ca24ed4f8676d9e5c6221fd068ba0cf39bc6c05cbbc16eb815c",
+      "bytes": 3248
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/network-probe.json": {
+      "sha256": "570fe51e924b7d3c4f70dcc5f07b63149302708613250902e9ef36819131a4ad",
+      "bytes": 908
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/probes.json": {
+      "sha256": "adb3b60494eedc3115badafa55ea8925d52f16bf4dadf9ee7e1774761b4f1f51",
+      "bytes": 1980
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/cli-identity.json": {
+      "sha256": "72d896966a223c8fec9fca63e63ab56894763bf1bed50c0ce68cf39fa9988915",
+      "bytes": 1216
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/process-identity.json": {
+      "sha256": "4c4567e063cab538839aea016b40b107db2ad13db75952ec0cf0ac9dc1d66635",
+      "bytes": 573
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/process-identity-final.json": {
+      "sha256": "d8f297fd02ec8d9117620373c3819627499acc82ecb678cf6cdf360fe9008419",
+      "bytes": 5710
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/runtime/attempt-ledger.json": {
+      "sha256": "10414b0ff0574374e8294b306884b42daa2387143d4cc2c6e924cccf34f93017",
+      "bytes": 727
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R102/input/task.md": {
+      "sha256": "f7413c2d2d0e2b808001bfdadbe597e26d0642ac66d723a574e725a80912718a",
+      "bytes": 884
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/execution.json": {
+      "sha256": "bcef82c692160b738a4dad55e40d520767a159a0889458526a0479a6a4d11bde",
+      "bytes": 14882
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/plan.json": {
+      "sha256": "d2d369d0de183b94beb8c54963f1046375e679b772507203b14af6f1424b7a72",
+      "bytes": 4731
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/codex-settings.json": {
+      "sha256": "65673489ce6a4461a5658da451518c26639bb0f44d539cfff703b08b6f86d03d",
+      "bytes": 1308
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/outer.sb": {
+      "sha256": "92c784a2e763edcf357d4198677a08d981190c4a22be1776b4dae2aa376c67aa",
+      "bytes": 2810
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/prepared-hashes.json": {
+      "sha256": "f8b0b000bc6491d95deb1e9eb8bac35ce367735f961b24b7e2d733d9f2849cdb",
+      "bytes": 860
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/execution.template.json": {
+      "sha256": "f67628383d002bd311a3ce182e417ffa881180e8d32019ac112a476c89261633",
+      "bytes": 2795
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/parent-pid-check.json": {
+      "sha256": "409eea94416f37e2d72e659bee77554a5d4fe34d4c1cb48869f1f060c74e32dc",
+      "bytes": 2463
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/worker-pid-check.json": {
+      "sha256": "388eab5da94820cad4734d641aaa1312cba36effa9cabcc5ab8cb19f02e8be9a",
+      "bytes": 2463
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/open-probe.json": {
+      "sha256": "c32796f49180af3000c2dd8da0dfd72810035baf07f98f38ba78faab50fea09f",
+      "bytes": 3240
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/network-probe.json": {
+      "sha256": "254e4baf56bc7ffb3eed4397997713d953092c704444f4b7f3f195f5f336d9a4",
+      "bytes": 908
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/probes.json": {
+      "sha256": "f18b4fc27e2037dcba01cc3a407308c870b0f77d295cd0c717a9573fb50bdb42",
+      "bytes": 1972
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/cli-identity.json": {
+      "sha256": "72d896966a223c8fec9fca63e63ab56894763bf1bed50c0ce68cf39fa9988915",
+      "bytes": 1216
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/process-identity.json": {
+      "sha256": "690bbabde55d4ca0bcb4c2787d542cd50c96218e426d694a70fb33b8d61d67f9",
+      "bytes": 573
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/process-identity-final.json": {
+      "sha256": "66b1b5bd491d4fec4e059ff32ff506eb183a51b6e6664ca7a9068933988286de",
+      "bytes": 5702
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/runtime/attempt-ledger.json": {
+      "sha256": "225bf591629a5b4fde7ff5f36c38d626e6e17d8501f92ef20b1375e2c45fdf9e",
+      "bytes": 727
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R103/input/task.md": {
+      "sha256": "11a608e8da8fe5468eeda13cac5027447ccc1114cde1099a51fff6b1c16d0648",
+      "bytes": 1394
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/execution.json": {
+      "sha256": "4f148a8002dbe6605716708f9617a8a90308f1724359f42b36096324f97bf3ea",
+      "bytes": 14888
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/plan.json": {
+      "sha256": "3c8313328e3dff0aaed557a1f40e3a7ee7599f93dfc2210918058dcd61b286ab",
+      "bytes": 4731
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/codex-settings.json": {
+      "sha256": "011c6cadef7f63e9d21225fef5a189baa9532e779aa9d5b9bc4dc19e3763ea2b",
+      "bytes": 1308
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/outer.sb": {
+      "sha256": "22cad55839bd74563ec3ff70bbb24d7a0181157635713575e4e427be31927c21",
+      "bytes": 2810
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/prepared-hashes.json": {
+      "sha256": "15badc82265d9352fb38e8c2f7ba4b3bd857d39fe25e41c17a15b8aeb7d664d7",
+      "bytes": 860
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/execution.template.json": {
+      "sha256": "72d181065c4773b6fb10b5e8cbebbb4e54492422c78363a045f36487a542c246",
+      "bytes": 2795
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/parent-pid-check.json": {
+      "sha256": "b73196ce38dd7c68076311d73e198f252719b6bbbcb0a3a51891e1b12fa8ea47",
+      "bytes": 2463
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/worker-pid-check.json": {
+      "sha256": "ba943cc344ea5d113047215b0e68b8d0fee01fd989a49172582bb07872e5af78",
+      "bytes": 2463
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/open-probe.json": {
+      "sha256": "51272d554186a3a0de1522eb5e80ea081b5eb0ad50d6a74af3ee8d6d93025dee",
+      "bytes": 3240
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/network-probe.json": {
+      "sha256": "cf04f8529922ac2efb84fd1aad141b6792bf762ee5ee8c8d7ba6b6dae2527542",
+      "bytes": 908
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/probes.json": {
+      "sha256": "87d1b1467310a9d1b869f7ca540d69bb5a71631aa0ccd588fb6ce8fc5024ac2b",
+      "bytes": 1972
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/cli-identity.json": {
+      "sha256": "72d896966a223c8fec9fca63e63ab56894763bf1bed50c0ce68cf39fa9988915",
+      "bytes": 1216
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/process-identity.json": {
+      "sha256": "1db4d74f5f3aed5ccf5a6b0c366b7ea4a33fa90b1a35307472a917b08166de56",
+      "bytes": 573
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/process-identity-final.json": {
+      "sha256": "0b20e0d3656184c68ed51588dc12f9f7ff747d30f919e3ad98eb81103bbbc1e3",
+      "bytes": 5702
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/runtime/attempt-ledger.json": {
+      "sha256": "d0c66e5aceb9d721bb712a797a9c45262c5345192b75a3eaa8a433dbf2bbfd0b",
+      "bytes": 727
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R104/input/task.md": {
+      "sha256": "a61c30cd381dc0d73c942cadfd81085ca4360bfde0a29988c85d1302a99867ea",
+      "bytes": 1370
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/execution.json": {
+      "sha256": "b6a3e7da98c5fa5e0856c8aeceee67db7f70cdad2675b3547e06df79514d6dbe",
+      "bytes": 14888
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/plan.json": {
+      "sha256": "d8ececc60658c53385a35d053644dba220fa833ffe4761f0223f2c10ba6b1268",
+      "bytes": 4731
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/codex-settings.json": {
+      "sha256": "428fcd72ddeec99d1304414bef2713f4fb22ed4e7b702acf104fc0b5b18562f6",
+      "bytes": 1308
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/outer.sb": {
+      "sha256": "91c57a5128fcf6be2bfe2df7c244bd8f0353358145e52abae7a49508ab070eb3",
+      "bytes": 2810
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/prepared-hashes.json": {
+      "sha256": "e29b050d8bc6b3fa74d430c8c53e82d21f74f4ad4077a424de9049d16a524a53",
+      "bytes": 860
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/execution.template.json": {
+      "sha256": "cedecba0245bc5731a68bd1f60c52bdf81a4fb0bc4b333d73963cbe2f5d3730c",
+      "bytes": 2795
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/parent-pid-check.json": {
+      "sha256": "5aae26d8b4df821c968b306236133476b85e55eca2034faa79bfb01e0e6bfcca",
+      "bytes": 2466
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/worker-pid-check.json": {
+      "sha256": "7e6365b62388153f50aa036baaaebf2babf4a8de727a5af04052c5d0dec7a759",
+      "bytes": 2466
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/open-probe.json": {
+      "sha256": "64185fd32c7d9240837d226120bba02aa5280dbd5b42423117aa77aac96b312c",
+      "bytes": 3243
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/network-probe.json": {
+      "sha256": "1e117f60ec9d58907a195cd3609f52c0e4e91d40421f1cb06df515875f31770b",
+      "bytes": 908
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/probes.json": {
+      "sha256": "bcce7ca8273ba8fdf934c02bc4bfb88c6a9a19ca47c0794cb353d7ecce329aa0",
+      "bytes": 1975
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/cli-identity.json": {
+      "sha256": "72d896966a223c8fec9fca63e63ab56894763bf1bed50c0ce68cf39fa9988915",
+      "bytes": 1216
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/process-identity.json": {
+      "sha256": "eb381e6270775a61e5d4808bab9b6efd86a4d99dd922abbae7af4490dd2029a2",
+      "bytes": 573
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/process-identity-final.json": {
+      "sha256": "c3428ad1b933401295e1b611a6c52dea4f00f83a4d9194b84b78e3021ebd5bdc",
+      "bytes": 5705
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/runtime/attempt-ledger.json": {
+      "sha256": "4ece122a0f820272e1f39b9e3e08f069bfb3a7dcaa81060f417553842b37d764",
+      "bytes": 727
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R105/input/task.md": {
+      "sha256": "cab4dc7f1330529059ba1331ee5407f90c3e425b6499b792c1a28119cad946e7",
+      "bytes": 903
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/execution.json": {
+      "sha256": "c154ef0c9bb73a3331573fbc7c4f3d8a67c496f3ad50b8ee1230a4d0fd028d24",
+      "bytes": 14866
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/plan.json": {
+      "sha256": "092b303a446775b789f01e2cded00e34e3885d0549c338a1dd827b45d547b2b8",
+      "bytes": 4731
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/codex-settings.json": {
+      "sha256": "ef3d28fde484ea4c7861ab611f45201b89b05ce35a25a4c5a482f62ed294c904",
+      "bytes": 1308
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/outer.sb": {
+      "sha256": "91a1236f53075f970869246addb47f21f1da620cc3706c5f806053889311045e",
+      "bytes": 2810
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/prepared-hashes.json": {
+      "sha256": "e0df51c73fc18e3b5cd28146835037bb4f2a457a19504cfec5d184d7fa57571f",
+      "bytes": 860
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/execution.template.json": {
+      "sha256": "0c33536e4757c99bf1cdf44709d0fd80d6cc5a808d52edf3f54da383335ec98f",
+      "bytes": 2795
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/parent-pid-check.json": {
+      "sha256": "a84ab234cf781ef0ac39fa030ab738107ba9f1c76f654f8ba27c1c68320f1b9c",
+      "bytes": 2458
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/worker-pid-check.json": {
+      "sha256": "c0bb4f2b97a5ba2a4130294dd0a501190f293752c76d79657d69dd19a6739e79",
+      "bytes": 2458
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/open-probe.json": {
+      "sha256": "28b9fa65c9a39b193c96b8df8eb33f4d663d7c6b32ad1b815de7e401b537a10b",
+      "bytes": 3237
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/network-probe.json": {
+      "sha256": "7627ad60bc3c5c8403f05602befade33454dc1576eff4f05ff1c58175bd78644",
+      "bytes": 908
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/probes.json": {
+      "sha256": "2f71e89a12d4756337a98494c945e0c77a614e5f7683cce105c901d4b0ff4b93",
+      "bytes": 1969
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/cli-identity.json": {
+      "sha256": "72d896966a223c8fec9fca63e63ab56894763bf1bed50c0ce68cf39fa9988915",
+      "bytes": 1216
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/process-identity.json": {
+      "sha256": "7b5470ac11d18706fc50ed05bc99aaf5144cc0899306af957bddeae309327b5e",
+      "bytes": 572
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/process-identity-final.json": {
+      "sha256": "48cb07c76634d41c0f871bfadccb367ddddc8b64871df3560305d4bd2289fcfa",
+      "bytes": 5693
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/runtime/attempt-ledger.json": {
+      "sha256": "eaba9adb7107a359ae3185e7ad1e4026bee74fa4de86463b33130435de65349a",
+      "bytes": 727
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/runs/MG-R106/input/task.md": {
+      "sha256": "131c32faec80b3721b34cbf8d349a10168c0f68bbd74a1ecbe653b78ff6b6758",
+      "bytes": 1046
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/prepare_six.py": {
+      "sha256": "bf8753a7f6a918f3783bd0d0d998c3fb474a60e69625c43b8fe2e190f1488ac8",
+      "bytes": 5162
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/run_six.py": {
+      "sha256": "03f455c17b313a278f598693dbd07f32af84f8fd8fbc3e0e39582f89be75f633",
+      "bytes": 16965
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/audit_six.py": {
+      "sha256": "ba5d72278a9a7a058c53b5fc79ede85a152cfa6cba315316341120b76aea257a",
+      "bytes": 8659
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/open_six.py": {
+      "sha256": "c9a5423ec0f6fecd6470be504eb2400ae28cf41e099c5d229fe53e95f4632310",
+      "bytes": 2562
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/network-probe.py": {
+      "sha256": "f25ab4082cd79de6ae625e95f460884473db3de8beefec134783027d3bd2d53a",
+      "bytes": 994
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/qualification-gate.json": {
+      "sha256": "50f528054e830b797c3b4522bbcd8c064ae2336249dbfff94414eab9cf4485c8",
+      "bytes": 6480
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/pre-run-freeze.json": {
+      "sha256": "cbf336395cb8fd390385b6646ccb4986001e14a3653d5acb4026e39c94b73331",
+      "bytes": 28878
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/tool-source-identity.json": {
+      "sha256": "75638a8cac821b9dd1f3112213502c484d106ae652cf492b54d988bf206648d5",
+      "bytes": 1223
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/policy-exceptions.json": {
+      "sha256": "4dfb5cf28d21795eb31d9f943be0c903e1f5ee9ddacf1649d46f158ed57f6e33",
+      "bytes": 911
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/historical-policy.json": {
+      "sha256": "1c570ead812b9f208ddf4b9e8e282e0a149d78e23b723dfd71e502742a70b9a4",
+      "bytes": 1052
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/attempt-ledger.json": {
+      "sha256": "2cbedde12b53abb4a0909eb4863116ef1d296c86f083e77bc6023b8474735745",
+      "bytes": 5275
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/model-inventory.json": {
+      "sha256": "fbfac527a61414b4100d2eae7f5f645811d2bbca0f6457b587d9ee3f9c6be02e",
+      "bytes": 1217
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/run-summary.json": {
+      "sha256": "ed7b73801d9bad21c1759214aab26e88f517898a31fa18712d1ef2f621c705b1",
+      "bytes": 2229
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/open-probe-summary.json": {
+      "sha256": "600aef4aec36ffbc7bd17ec2ba6a0ddf0288e812ee3cb06aeb89458b87672fb3",
+      "bytes": 8303
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/preflight-local-error.json": {
+      "sha256": "fb460d4edd7fd30f9a3de19b5cd30b99c3b7b8f3620eae0938985edd0e8bbf2c",
+      "bytes": 146
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/candidate-projection.json": {
+      "sha256": "c7334d660df30f1f2844d7bac6eab1952f0ed110bf3ed1e731c442d7e7a744d3",
+      "bytes": 2508
+    },
+    "/private/tmp/math-gauge-six-terra-20261029/installation-id-before.json": {
+      "sha256": "94ec88a19cbd2686d199be3aeab8e8c2caa4ea093e7f0fca78ef674b24b4fb29",
+      "bytes": 205
+    },
+    "/Users/g4i/lab/math-gauge/scripts/isolated_cli/prepare.py": {
+      "sha256": "2ca56c8ca1aaeb1ee01f31c28151516063f7ddf001ea629256ddc3fea14d547b",
+      "bytes": 28700
+    },
+    "/Users/g4i/lab/math-gauge/scripts/isolated_cli/probe.py": {
+      "sha256": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80",
+      "bytes": 3817
+    },
+    "/Users/g4i/lab/math-gauge/protocol/isolated-cli-runs.md": {
+      "sha256": "0794680ad1cec3cc3e311e2c9f06a13a54c5f693d4e47d0588872c6b8eb0d585",
+      "bytes": 15179
+    }
+  },
+  "official_documentation": {
+    "url": "https://learn.chatgpt.com/docs/developer-commands#codex-exec",
+    "checked": "Official exec documentation supports scripted noninteractive execution, JSON events, stdin prompt input and ephemeral sessions. Exact nonpublic/local flag behavior was judged from the inspected CLI and actual strict startup, not inferred from generic docs."
+  },
+  "limitations": [
+    "No candidate mathematical answer was evaluated in this engineering report.",
+    "No fresh model request or OS probe was launched; existing source-bound probe records were audited.",
+    "PID identity is bound to observed new CLI processes and the recorded in-process-worker architecture; no nonexistent separate worker PID is claimed.",
+    "This report is not human approval and does not replace backend identity attestation."
+  ]
+}

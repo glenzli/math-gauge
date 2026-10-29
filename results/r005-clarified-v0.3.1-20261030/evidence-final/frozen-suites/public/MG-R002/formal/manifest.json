@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R002",
+  "case_version": "0.3.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "71ef332d811b63392929e7bb0d889fef75acde3fe1db4ad1545a5f8a7f4f040c",
+    "reference.md": "d2872f9be3c04d69b34a6a95f9511fc21c3d27bf04616fb4746394ca4ef73dbd",
+    "rubric.json": "f30438a9f1179019ce0a857438793a55f6186c26422e1d785412d2c8c1c3eb33"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "c77d8734bfca2856eeb26f9e99f92eb996bdccb485adad3625901ae729ba0e68"
+  },
+  "modules": [
+    {
+      "module": "CompatibleRecords",
+      "source": "CompatibleRecords.lean",
+      "sha256": "df7e23dfa8a20dd380ff4eaaa063095000d52bcc1349b3816b79edc9885d8ab2",
+      "imports": [
+        "Mathlib.Topology.ContinuousMap.ZeroAtInfty",
+        "Mathlib.Analysis.Normed.Lp.lpSpace",
+        "Mathlib.Analysis.Normed.Module.HahnBanach",
+        "Mathlib.Topology.Order.Compact",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "RecordBidual",
+      "source": "RecordBidual.lean",
+      "sha256": "8f992f3ce6f2eb3d1efd98443b19820b3d5cd92468464ba1f0a4aa8912d49a17",
+      "imports": [
+        "Mathlib.Analysis.Normed.Module.DoubleDual",
+        "Mathlib.LinearAlgebra.FiniteDimensional.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "RecordRealization",
+      "source": "RecordRealization.lean",
+      "sha256": "32c784fe4b81df92c8e91a052e0fdba20328a064549949b3ef368b536571b94a",
+      "imports": [
+        "RecordBidual"
+      ]
+    },
+    {
+      "module": "RecordTransform",
+      "source": "RecordTransform.lean",
+      "sha256": "08de6ed2113f07b82b28ecb1598cf50dd5efb8666c1dd5e147a1bbed5ee6024b",
+      "imports": [
+        "RecordRealization"
+      ]
+    },
+    {
+      "module": "RecordInstantiation",
+      "source": "RecordInstantiation.lean",
+      "sha256": "12da463daafd18947d13f5f7be14dac7a2fb0aa542a9222027ac0b052f359b08",
+      "imports": [
+        "RecordTransform",
+        "CompatibleRecords"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "53d3a0378a2449363fc6fe7dc9cc73802a28601b74f0ec4bd9a7afe708fc18df",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.CompatibleRecords.",
+      "MathGauge.RecordBidual.",
+      "MathGauge.RecordInstantiation."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "historical_author_audits": "Any author audit module listed above is preserved input; CurrentAudit is the common final kernel acceptance entry."
+}

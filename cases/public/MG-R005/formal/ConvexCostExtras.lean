@@ -11,14 +11,13 @@ namespace MathGauge.ConvexCost
 variable {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
   [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] [LocallyConvexSpace ℝ E]
 
-/-- The maximality assertion does not restrict competitors to nonnegative values;
-indeed, for convex `f`, every extended-real lower semicontinuous minorant is bounded. -/
-theorem reconstruct_maximal_ereal {f : E → ℝ≥0∞} (hf : JensenConvex f)
-    (hp : ∃ x, f x ≠ ⊤) (h : E → EReal) (hc : LowerSemicontinuous h)
-    (hle : ∀ x, h x ≤ (f x : EReal)) : ∀ x, h x ≤ (reconstruct f x : EReal) := by
-  have hclosed : IsClosed {p : E × ℝ | h p.1 ≤ (p.2 : EReal)} :=
-    hc.isClosed_epigraph.preimage
-      (continuous_fst.prodMk (continuous_coe_real_ereal.comp continuous_snd))
+/-- Every minorant with a closed real-height epigraph lies below the reconstruction. -/
+theorem reconstruct_maximal_ereal_of_isClosed_real_epigraph
+    {f : E → ℝ≥0∞} (hf : ConvexCost f) (hp : ∃ x, f x ≠ ⊤)
+    (h : E → EReal)
+    (hclosed : IsClosed {p : E × ℝ | h p.1 ≤ (p.2 : EReal)})
+    (hle : ∀ x, h x ≤ (f x : EReal)) :
+    ∀ x, h x ≤ (reconstruct f x : EReal) := by
   have hsub : closure (epigraph f) ⊆ {p : E × ℝ | h p.1 ≤ (p.2 : EReal)} := by
     apply closure_minimal _ hclosed
     intro p hp'
@@ -31,8 +30,18 @@ theorem reconstruct_maximal_ereal {f : E → ℝ≥0∞} (hf : JensenConvex f)
   · simp [hx]
   have hm : (x, (affineHull f x).toReal) ∈ epigraph (affineHull f) :=
     ⟨ENNReal.toReal_nonneg, (ENNReal.ofReal_toReal hx).ge⟩
-  rw [epigraph_affineHull_eq_closure (convexCost_of_jensen hf) hp] at hm
+  rw [epigraph_affineHull_eq_closure hf hp] at hm
   simpa only [Set.mem_setOf_eq, EReal.coe_ennreal_toReal hx] using hsub hm
+
+/-- The existing lower-semicontinuity interface follows from the direct epigraph theorem. -/
+theorem reconstruct_maximal_ereal {f : E → ℝ≥0∞} (hf : JensenConvex f)
+    (hp : ∃ x, f x ≠ ⊤) (h : E → EReal) (hc : LowerSemicontinuous h)
+    (hle : ∀ x, h x ≤ (f x : EReal)) : ∀ x, h x ≤ (reconstruct f x : EReal) := by
+  have hclosed : IsClosed {p : E × ℝ | h p.1 ≤ (p.2 : EReal)} :=
+    hc.isClosed_epigraph.preimage
+      (continuous_fst.prodMk (continuous_coe_real_ereal.comp continuous_snd))
+  exact reconstruct_maximal_ereal_of_isClosed_real_epigraph
+    (convexCost_of_jensen hf) hp h hclosed hle
 
 theorem fiberInf_mono {X Y : Type*} (q : X → Y) {f g : X → ℝ≥0∞} (h : f ≤ g) :
     fiberInf q f ≤ fiberInf q g := by

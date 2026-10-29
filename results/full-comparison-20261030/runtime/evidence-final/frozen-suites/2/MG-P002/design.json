@@ -1,0 +1,112 @@
+{
+  "schema": "math-gauge.extraction-design/v1",
+  "case_id": "MG-P002",
+  "version": "0.1.0",
+  "date": "2026-10-29",
+  "author": {
+    "reviewer_kind": "ai",
+    "agent": "proof-derivatives",
+    "requested_model": "gpt-6-astra",
+    "requested_reasoning_effort": "max",
+    "backend_identity": "not-independently-attested"
+  },
+  "mathematical_status": "author-self-check-complete-independent-review-pending",
+  "human_status": "pending",
+  "candidate_model_runs": 0,
+  "candidate_projection": "task.md only; candidate_instruction is empty and solver_files is empty",
+  "private_mathematics_used": false,
+  "source_id": "navier-stokes-estimate-alignment",
+  "source_classification": "public-proof-local-regularity-discrepancy",
+  "extraction_kind": "actual-operator-analysis-with-explicit-generalization",
+  "author_goal_status": "classification-with-true-fixed-direction-target",
+  "motivation": "The source exposes how an extra input derivative weakens an estimate. This extraction asks for the true inverse and its exact regularity range on actual torus functions; merely recognizing the published plus4/plus5 discrepancy does not solve it.",
+  "assumption_changes": {
+    "preserved": [
+      "The torus is R^2/Z^2 with normalized Haar measure.",
+      "The source and solution are smooth complex-valued functions with zero mean.",
+      "The operator is a constant directional derivative.",
+      "The fixed direction (sqrt(2)-1,1) remains a required special case.",
+      "The fixed-direction C^m target uses m+4 input derivatives for each nonnegative integer m with constants independent of F."
+    ],
+    "generalized": [
+      "The fixed coefficient sqrt(2)-1 is replaced in the classification part by an arbitrary irrational real alpha."
+    ],
+    "added": [
+      "Precisely normalized Sobolev norms for every real order r.",
+      "Classification of smooth surjectivity for all irrational alpha.",
+      "Exact set of nonnegative Sobolev losses including endpoints.",
+      "Proof of the attained minimum Sobolev loss for the fixed quadratic direction."
+    ],
+    "removed_from_extraction": [
+      "Slow parameters and mixed parameter derivatives.",
+      "Radial/axial support preservation, chart covering compatibility and physical field reconstruction.",
+      "All Navier-Stokes evolution equations and claims about the full blow-up theorem."
+    ],
+    "unchanged_truth_boundary": "The public local discrepancy does not imply that the m+4 estimate or the source's full theorem is false; the reference independently proves the fixed-direction m+4 estimate."
+  },
+  "minimal_completion_criterion": [
+    "Characterize exactly which irrational alpha make N_alpha surjective on smooth complex zero-mean functions, and justify uniqueness and both directions of the characterization. A finite polynomial small-divisor lower bound, the equivalent rational-approximation condition, or an equivalent correctly proved formulation is sufficient.",
+    "Determine all nonnegative Sobolev losses s under the stated quantifiers, including an exact criterion at the endpoint. Establish both sufficiency and necessity; a one-sided sufficient bound is incomplete.",
+    "For alpha=sqrt(2)-1, prove that the smallest Sobolev loss is 1 and is attained, with a valid obstruction for every smaller nonnegative loss.",
+    "Prove the requested C^(m+4)-to-C^m estimate for every nonnegative integer m, with a finite constant independent of the smooth forcing. A stronger valid estimate that implies this bound is also accepted."
+  ],
+  "shortest_valid_completion": {
+    "route": "Diagonalize the actual directional derivative in torus Fourier modes. The multiplier bound characterizes exactly the weighted Sobolev estimates. Prove that smooth surjectivity is equivalent to a polynomial divisor bound, either through a rapidly decaying bad-forcing construction or a valid closed-graph argument. For sqrt(2)-1 use its quadratic conjugate for the one-derivative upper bound and rational approximation for sharpness. Derive the C^m target by Fourier summation or a sufficiently strong valid Sobolev embedding.",
+    "substantive_steps": [
+      "Use Fourier coefficient identities to get uniqueness and an explicit candidate inverse, then prove its regularity under the exact bound.",
+      "Test actual single Fourier modes to force the same small-divisor bound in every proposed Sobolev estimate.",
+      "Bridge lack of every polynomial bound to failure of smooth surjectivity for one fixed smooth forcing, or use the closed graph theorem with its hypotheses checked.",
+      "Control the fixed quadratic irrational and establish a matching sequence of nearly resonant modes.",
+      "Complete the specified m+4 input estimate without increasing the target's allowed input regularity."
+    ],
+    "static_difficulty": "Standard graduate Fourier analysis and elementary Diophantine approximation with a genuine global-smoothness quantifier step; difficulty uncalibrated, not asserted to be frontier-hard.",
+    "long_chain_required": false
+  },
+  "hidden_strengthening_temptations": [
+    "Convert absence of exact resonances into a uniform polynomial lower bound.",
+    "Confuse pointwise division of Fourier coefficients with preservation of rapid decay.",
+    "Keep only sufficient Sobolev losses and silently fill in the critical endpoint.",
+    "Conflate the absence of each fixed tame estimate with failure for a single smooth forcing.",
+    "Use one extra input derivative and report the original quantitative target solved.",
+    "Conflate Sobolev and C^m derivative losses.",
+    "Extrapolate local source/code mismatch to global theorem falsity."
+  ],
+  "acceptance_policy": "Valid shorter proofs, correct applicable theorems and stronger estimates that imply the task target are accepted. No proof-length, advanced-vocabulary, source-citation-count or author-route criterion.",
+  "formal_coverage": {
+    "status": "not-formalized",
+    "candidate_lean_required": false,
+    "author_lean_files": [],
+    "externally_compiled_in_this_task": false,
+    "mathematical_boundary": [
+      "Fourier smooth solvability and the fixed smooth obstruction have a complete prose reference only.",
+      "Exact Sobolev loss classification and quadratic-irrational sharpness have a complete prose reference only.",
+      "The C^(m+4)-to-C^m estimate has a complete prose reference only.",
+      "Reading the pinned external Lean declaration is provenance evidence; it is not a compilation or semantic certificate for this new case."
+    ]
+  },
+  "source_versions": [
+    {
+      "url": "https://arxiv.org/html/2610.08144v1#S3.SS1",
+      "version": "arXiv:2610.08144v1",
+      "location": "Example 3.1, Remark 3.2, subsection 3.1.1",
+      "accessed": "2026-10-29"
+    },
+    {
+      "url": "https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf",
+      "version": "retrieved 2026-10-29; immutable PDF revision not independently established",
+      "location": "Lemma 8.6 / equation (8.19), printed pages 95-96 in the retrieved 166-page document"
+    },
+    {
+      "url": "https://github.com/openai/NavierStokesAndEuler/blob/f9e8bc5b38b6e212696e8a30e3e91517af887bbd/NavierStokes/SmoothFamilyTorusInverse.lean#L1059-L1080",
+      "version": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+      "blob_sha": "c607eb6f2460a3ba55dc2218072cd504bf6253bf",
+      "location": "norm_derivativeWord_inverse_le, lines 1059-1080",
+      "accessed": "2026-10-29"
+    }
+  ],
+  "unresolved_issues": [
+    "Independent mathematical and fresh task-only reviews pending.",
+    "No candidate calibration, human approval, or Lean formalization for this case.",
+    "The extracted Fourier-analysis classification is independently proved; it is not a full audit of the source PDE theorem or its formal dependency graph."
+  ]
+}

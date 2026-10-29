@@ -1,0 +1,56 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-F110",
+  "case_version": "0.1.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "f8c7c41f0686add16302c2cb63298d4d5d7263036cdd5622b2481dd3b56da31c",
+    "reference.md": "9814214c24f0b3a30fc137d9217533373672e3df3ae37179212da5460b6d4525",
+    "rubric.json": "afd99990afbdb605bad796676375325437e973a82ec7c3837c534ca002ba0b56"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "cbcc5867e2c1d752ed7216a53c412fd2378a42e055c01d308cf1d3e7c465e38e"
+  },
+  "modules": [
+    {
+      "module": "RecordLayers",
+      "source": "RecordLayers.lean",
+      "sha256": "325cb97e7b2bd3000070442db40cb1ad95c6927e362804afb86c00b4827dc538",
+      "imports": [
+        "Mathlib.Data.Finset.Card",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "OrbitModel",
+      "source": "OrbitModel.lean",
+      "sha256": "47a48a246e3c18cafe568b9a27d8f238237a48241ceba756519db52d5083a043",
+      "imports": [
+        "RecordLayers"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "e084d7950cc6a6b128fe8591862bbb2d98b15f438f4f1213be13967dbe109135",
+      "imports": [
+        "OrbitModel"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "67db561b6bd9a3de22632040f991be235cf7bf7b6d57a8bf7591c9daab9ea5ab",
+      "imports": [
+        "Candidate"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "b05b14d9af84fb8c66070d4b2f4e4716bde696c401316ac43f2234b4c354983e"
+  }
+}

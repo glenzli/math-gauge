@@ -1,6 +1,6 @@
 # 参考审核：有限观测下的凸成本恢复
 
-主目标成立。这里的最大性是精确的主结论；它不等于恢复未经下半连续化的 $f$。仿射分离可用于证明，但题面没有指定共轭或对偶路线。
+主目标成立。竞争函数的值域明确为 $[-\infty,+\infty]$，下半连续性与凸性采用题面的实高度上图约定。这里的最大性是精确的主结论；它不等于恢复未经下半连续化的 $f$。仿射分离可用于证明，但题面没有指定共轭或对偶路线。
 
 ## 1. 原始记录与投影
 
@@ -20,7 +20,7 @@ $$D=\overline{\operatorname{epi}u}\subset V\times\mathbb R.$$
 
 $D$ 非空、闭、凸，包含于 $t\ge0$，并且沿正的垂直方向稳定。每个非空垂直截面因此是 $[a,+\infty)$，其中 $a\ge0$；空截面对应函数值 $+\infty$。由此唯一确定 $\bar u:V\to[0,+\infty]$，使 $D=\operatorname{epi}\bar u$。它下半连续且凸，并满足 $\bar u\le u$；在 $u$ 的任一有限点仍有限。
 
-若 $h\le u$ 是任意下半连续凸函数，则 $\operatorname{epi}u\subset\operatorname{epi}h$。后者闭，故 $D\subset\operatorname{epi}h$，即 $h\le\bar u$。因此 $\bar u$ 是最大下半连续凸下界。这里不需要把竞争函数 $h$ 额外限制为非负。
+若 $h:V\to[-\infty,+\infty]$ 满足 $h\le u$ 且实高度上图闭，则 $\operatorname{epi}_{\mathbb R}u\subset\operatorname{epi}_{\mathbb R}h$，进而 $D\subset\operatorname{epi}_{\mathbb R}h$。若 $\bar u(v)<+\infty$，则 $(v,\bar u(v))\in D$ 给出 $h(v)\le\bar u(v)$；若 $\bar u(v)=+\infty$，同一不等式直接由扩展实数序成立。因此 $h\le\bar u$，包括 $h$ 取负无穷以及同时取两个无穷端点的情况。最大性于是对题面要求的所有下半连续凸竞争者成立；这一步甚至不需要额外使用 $h$ 的凸性，不要求 $h$ 正规、非负或有实值仿射下界。
 
 还需要一个分离事实：$\bar u$ 是 $u$ 的所有连续实值仿射下界的上确界。为证明它，取 $(v_0,t_0)\notin D$。Hahn–Banach 的点与闭凸集严格分离给出 $\ell\in V'$、$\beta\in\mathbb R$ 和 $a\in\mathbb R$，使
 

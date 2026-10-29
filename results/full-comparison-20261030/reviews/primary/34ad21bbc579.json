@@ -1,0 +1,47 @@
+{
+  "packet_id": "34ad21bbc579",
+  "case_id": "MG-F111",
+  "response_sha256": "83cc18ab2b907e2ad9d5c71bd895fa0c54a471378abbb463dcae55ae3740e39a",
+  "request_sha256": "72595ba4851d96f36f63177aaca2e42f9b4a722b51eb7ab278fec83510573634",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "assumption_fidelity": "clean",
+  "unnecessary_restriction": false,
+  "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/34ad21bbc579",
+  "review_material_sha256": {
+    "task.md": "945f70be878cb2d556d113e59e032629eb55b7a6328dbe20d9f269995c99baaf",
+    "reference.md": "66edeedfdb8242b4028e5ea6efd791c677501b331b003bc2628b6ddfc7a63204",
+    "rubric.json": "b1bdbda941c1914eccf111172109a054bc03971effaaa89c27bed103d1277810"
+  },
+  "input_attachment_sha256": {
+    "ExtendedBounds.lean": "aa989e8c1b64f5bae41e1268623019f1229eb124f76e57ab7faf5ea16fc4b40f",
+    "CoefficientClassification.lean": "a22d901273fc1b9e472d71786699b94e4f2398a16b43a1e20806a7de0dbc58e6",
+    "BoundaryExample.lean": "50b83782642172982537070bbafb5b8b829f0bb1ef0a0fabba5a3a133e8b76f0"
+  },
+  "candidate_message_sha256": "91663a746524d41ac7aa1f0d331f475855f8d993ff8a3b9334a49f11602ca3e8",
+  "decision": "pass",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "needs_second_review": true,
+  "notes": "完整正控审计通过。候选准确核对有限正源值子类型、空索引上确界0、零源值条件Z、无穷源值与零系数触发H的分支；有限存在判据、最小值存在判据和值等于r、实际Unit非取到例均对应原附件。没有添加非空、源值有限或度量公理。答卷声称经 #print axioms 检验但无候选执行证据，单独记录而非生成编译凭证；原答卷会话路径身份提示亦保留，人审待定。",
+  "findings": [
+    "ratioSup 使用 d(x)≠0且d(x)≠∞ 的真实点子类型，精确对应0<d(x)<∞；空子类型的iSup为0，未默认为所有源值有限。",
+    "Bound 是对全部 x 的乘法上界；有限存在与LeastFinite通过 c≠∞限定系数范围。bound_iff 三条件 Z、r≤c、c=0→H 均被准确解释。",
+    "d=0 必须e=0；d=∞且c>0右端∞，c=0则要求e=0，保持题设0*∞=0的运算约定。",
+    "有限可行存在的充分性取r+1，有限且正，故无需H；最小存在判据保留r=0→H，最小值公式单独为c=r，没有把任意可行系数当成最小值。",
+    "Unit上d=∞、e=1的实际数据使r=0，c=1可行但H假，故无最小有限系数；正有限系数全可行、0不可行的数学解释正确。",
+    "表中“空间与度量”只是标题误称；正文和类型分析明确d,e是任意数值函数且没有附加拓扑/非空假设，不构成量词漂移。",
+    "确定性 #print axioms 报告无候选执行收据，不用作者编译替代；原答卷身份路径提示单列。"
+  ],
+  "candidate_audit_verdict": "aligned",
+  "expected_audit_verdict": "aligned",
+  "candidate_execution_claim_status": "definite-compilation-report-without-candidate-execution-evidence",
+  "candidate_compilation_performed": false,
+  "candidate_lean_report_sha256": null,
+  "candidate_lean_report_path": null,
+  "blinding": {
+    "model_map_accessed": false,
+    "identity_hint_in_response": true,
+    "limitation": "The original response itself contains model-label components in absolute session links."
+  }
+}

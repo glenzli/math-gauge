@@ -1,0 +1,266 @@
+# 有限观察的相容选择：分类、单子结构与刚性刻画
+
+在集合论公理系统 $\mathsf{ZFC}$ 下，固定一个包含自然数集 $\mathbb N$ 的 Grothendieck 宇宙 $\mathcal U \in \mathcal V$。记有限测试集合构成的完全子范畴为 $\mathbf{Fin}_{\mathcal U} = \{A \in \mathcal U \mid A \text{ 有限}\}$。对于任意集合 $X \in \mathcal V$，$X$ 上的**相容记录**（consistent record）是指一个族 $r = (r_A)_{A \in \mathbf{Fin}_{\mathcal U}}$，满足对所有 $A, B \in \mathbf{Fin}_{\mathcal U}$ 以及映射 $f: X \to A$、$g: A \to B$，均有：
+$$r_A: \operatorname{Map}(X, A) \to A, \qquad g(r_A(f)) = r_B(g \circ f).$$
+全部相容记录的集合记为 $R(X)$，观察求值映射定义为 $e_{A,f}(r) = r_A(f)$。
+
+---
+
+## 一、主定理陈述
+
+为了避免符号混淆，我们将 Grothendieck 宇宙记为 $\mathcal U$，而将 $X$ 上的超滤子（ultrafilter）用哥特体字母 $\mathfrak u, \mathfrak v$ 或花体字母 $\mathcal F$ 表示，全部超滤子构成的集合记为 $\beta X$。
+
+### 定理 1（内在分类定理）
+> 对任意集合 $X \in \mathcal V$，观察求值诱导了 $R(X)$ 与 $X$ 上的超滤子集合 $\beta X$ 之间典则的双射：
+> $$\Phi_X: R(X) \xrightarrow{\ \sim\ } \beta X, \qquad r \longmapsto \{S \subseteq X \mid r_2(\chi_S) = 1\},$$
+> 其中 $2 = \{0, 1\} \in \mathcal U$，$\chi_S: X \to 2$ 为 $S$ 的特征函数。
+> 进一步，若定义 $R$ 在集合态射 $h: X \to Y$ 上的作用为 $(R(h)(r))_A(g) = r_A(g \circ h)$，则 $\Phi: R \Rightarrow \beta$ 构成了集合范畴 $\mathbf{Set}_{\mathcal V}$ 上的自然同构（其中 $\beta$ 为前推超滤子函子）。
+
+### 定理 2（单子结构与观察求值表征）
+> 存在唯一的自然变换 $\eta: \operatorname{Id}_{\mathbf{Set}_{\mathcal V}} \Rightarrow R$ 与 $\mu: R^2 \Rightarrow R$，分别由观察求值条件满足：
+> $$e_{A,f} \circ \eta_X = f, \qquad e_{A,f} \circ \mu_X = e_{A, e_{A,f}} \quad (\forall A \in \mathbf{Fin}_{\mathcal U},\ f \in \operatorname{Map}(X,A)).$$
+> 三元组 $(R, \eta, \mu)$ 构成 $\mathbf{Set}_{\mathcal V}$ 上的单子（Monad），且通过自然同构 $\Phi$ 与经典的超滤子单子 $(\beta, \eta^\beta, \mu^\beta)$ 严格同构。
+
+### 定理 3（点值刚性刻画定理）
+> 集合 $X \in \mathcal V$ 满足“全部相容记录都唯一地由某个 $x \in X$ 的点值求值得到”（即单位映射 $\eta_X: X \to R(X)$ 为双射）当且仅当 **$X$ 是有限集合**（$|X| < \aleph_0$，包含空集 $\emptyset$）。
+
+---
+
+## 二、$R(X)$ 的内在分类与自然同构
+
+### 2.1 观察记录的外延性与范畴论本质
+由定义，$R(X)$ 中的元素 $r$ 是函子间自然变换集合 $\operatorname{Nat}(\operatorname{Map}(X, -), \operatorname{Id}_{\mathbf{Fin}_{\mathcal U}})$ 的元素：
+$$\begin{array}{ccc}
+\operatorname{Map}(X, A) & \xrightarrow{r_A} & A \\
+\Big\downarrow g_* & & \Big\downarrow g \\
+\operatorname{Map}(X, B) & \xrightarrow{r_B} & B
+\end{array} \qquad g \circ r_A = r_B \circ g_*.$$
+特别地，$r_1 = r_2$ 当且仅当对所有 $A \in \mathbf{Fin}_{\mathcal U}$ 及 $f \in \operatorname{Map}(X, A)$，均有 $e_{A,f}(r_1) = e_{A,f}(r_2)$（观察求值的外延性原理）。
+
+### 2.2 从记录到超滤子：$\Phi_X$ 的构造与良定义性
+由于 $\mathbb N \in \mathcal U$，故有限序数 $0 = \emptyset, 1 = \{0\}, 2 = \{0, 1\}, 4 = 2 \times 2$ 均属于 $\mathbf{Fin}_{\mathcal U}$。
+给定 $r \in R(X)$，定义：
+$$\mathcal F_r = \Phi_X(r) := \{S \subseteq X \mid r_2(\chi_S) = 1\}.$$
+
+我们证明 $\mathcal F_r$ 是布尔代数 $\mathcal P(X)$ 上的超滤子：
+1. **非平凡性与补元性**：
+   考虑 $2$ 上的常值映射 $c_1: 2 \to 2$（$c_1(0) = c_1(1) = 1$）与逻辑非映射 $\neg: 2 \to 2$（$\neg(0)=1, \neg(1)=0$）。
+   - 由于 $c_1 \circ \chi_X = \chi_X$ 且 $c_1 \circ \chi_\emptyset = \chi_X$（若 $X \neq \emptyset$），由相容性：
+     $$r_2(\chi_X) = r_2(c_1 \circ \chi_X) = c_1(r_2(\chi_X)) = 1 \implies X \in \mathcal F_r.$$
+   - 对任意 $S \subseteq X$，$\neg \circ \chi_S = \chi_{X \setminus S}$。由相容性：
+     $$r_2(\chi_{X \setminus S}) = r_2(\neg \circ \chi_S) = \neg(r_2(\chi_S)).$$
+     因为 $r_2(\chi_S) \in \{0, 1\}$，故 $r_2(\chi_{X \setminus S}) = 1 \iff r_2(\chi_S) = 0$。
+     特别地，$r_2(\chi_\emptyset) = \neg(r_2(\chi_X)) = \neg(1) = 0$，即 $\emptyset \notin \mathcal F_r$。
+     且对任意 $S \subseteq X$，$S \in \mathcal F_r$ 与 $X \setminus S \in \mathcal F_r$ 恰有一者成立（**素性/极大性**）。
+2. **有限交封闭性**：
+   设 $S, T \subseteq X$。考虑积集合 $2 \times 2 = \{(0,0), (0,1), (1,0), (1,1)\} \in \mathbf{Fin}_{\mathcal U}$，以及函数：
+   $$f = (\chi_S, \chi_T): X \to 2 \times 2, \quad x \mapsto (\chi_S(x), \chi_T(x)).$$
+   设 $\pi_1, \pi_2: 2 \times 2 \to 2$ 为投影映射。由于 $\pi_1 \circ f = \chi_S, \pi_2 \circ f = \chi_T$，由相容性：
+   $$\pi_1(r_{2 \times 2}(f)) = r_2(\pi_1 \circ f) = r_2(\chi_S), \quad \pi_2(r_{2 \times 2}(f)) = r_2(\pi_2 \circ f) = r_2(\chi_T).$$
+   因此 $r_{2 \times 2}(f) = (r_2(\chi_S), r_2(\chi_T)) \in 2 \times 2$。
+   现考虑逻辑与运算 $\wedge: 2 \times 2 \to 2$（$\wedge(a, b) = a \cdot b$）。显然 $\wedge \circ f = \chi_{S \cap T}$。由相容性：
+   $$r_2(\chi_{S \cap T}) = r_2(\wedge \circ f) = \wedge(r_{2 \times 2}(f)) = r_2(\chi_S) \cdot r_2(\chi_T).$$
+   故 $S \cap T \in \mathcal F_r \iff r_2(\chi_{S \cap T}) = 1 \iff r_2(\chi_S) = 1 \text{ 且 } r_2(\chi_T) = 1 \iff S \in \mathcal F_r \text{ 且 } T \in \mathcal F_r$。
+3. **滤子上闭性**：
+   若 $S \in \mathcal F_r$ 且 $S \subseteq T$，则 $S \cap T = S$。于是 $r_2(\chi_S) \cdot r_2(\chi_T) = r_2(\chi_S) = 1$，迫使 $r_2(\chi_T) = 1$，即 $T \in \mathcal F_r$。
+
+综上，$\mathcal F_r$ 严格满足超滤子定义。若 $X = \emptyset$，测试映射 $\neg: 2 \to 2$ 满足 $\neg \circ \emptyset_2 = \emptyset_2$（其中 $\emptyset_2: \emptyset \to 2$），若存在记录 $r$，则 $\neg(r_2(\emptyset_2)) = r_2(\emptyset_2)$，但 $\neg$ 在 $2$ 上无不动点，矛盾！故 $R(\emptyset) = \emptyset$。而 $\beta \emptyset = \emptyset$，此时 $\Phi_\emptyset: \emptyset \to \emptyset$ 自然为良定义的空双射。
+
+### 2.3 从超滤子到记录：$\Psi_X$ 的构造与逆映射证明
+设 $\mathfrak u \in \beta X$。对任意 $A \in \mathbf{Fin}_{\mathcal U}$ 与 $f: X \to A$，由于 $A$ 有限，原象族构成 $X$ 的有限互不相交划分：
+$$X = \biguplus_{a \in A} f^{-1}(a).$$
+根据超滤子的有限可加性（素性），**存在且仅存在唯一的** $a^* \in A$ 使得 $f^{-1}(a^*) \in \mathfrak u$。
+定义：
+$$\Psi_X(\mathfrak u)_A(f) := a^* \quad (\text{其中 } f^{-1}(a^*) \in \mathfrak u).$$
+
+1. **验证相容性**：
+   设 $g: A \to B$。令 $a^* = \Psi_X(\mathfrak u)_A(f)$，即 $f^{-1}(a^*) \in \mathfrak u$。
+   对映射 $g \circ f: X \to B$，其在元素 $g(a^*) \in B$ 处的原象为：
+   $$(g \circ f)^{-1}(g(a^*)) = f^{-1}(g^{-1}(g(a^*))) \supseteq f^{-1}(a^*).$$
+   由超滤子的上闭性，$(g \circ f)^{-1}(g(a^*)) \in \mathfrak u$。根据超滤子划分选取的唯一性，必有：
+   $$\Psi_X(\mathfrak u)_B(g \circ f) = g(a^*) = g(\Psi_X(\mathfrak u)_A(f)).$$
+   因此 $\Psi_X(\mathfrak u) \in R(X)$。
+
+2. **验证互逆性**：
+   - **$\Phi_X \circ \Psi_X = \operatorname{id}_{\beta X}$**：
+     对任意 $\mathfrak u \in \beta X$ 和 $S \subseteq X$，考虑特征映射 $\chi_S: X \to 2$。
+     $\Psi_X(\mathfrak u)_2(\chi_S) = 1 \iff \chi_S^{-1}(1) \in \mathfrak u \iff S \in \mathfrak u$。
+     故 $\Phi_X(\Psi_X(\mathfrak u)) = S \iff S \in \mathfrak u$。
+   - **$\Psi_X \circ \Phi_X = \operatorname{id}_{R(X)}$**：
+     设 $r \in R(X)$，$\mathfrak u = \Phi_X(r)$。对于任意 $A \in \mathbf{Fin}_{\mathcal U}$ 及 $f: X \to A$，记 $a = r_A(f) \in A$。
+     对每个 $a' \in A$，考虑单点检验映射 $\delta_{a'}: A \to 2$（当 $x = a'$ 时为 $1$，否则为 $0$）。由相容性：
+     $$r_2(\chi_{f^{-1}(a')}) = r_2(\delta_{a'} \circ f) = \delta_{a'}(r_A(f)) = \delta_{a'}(a) = \begin{cases} 1, & a' = a \\ 0, & a' \neq a \end{cases}.$$
+     这意味着 $f^{-1}(a') \in \mathfrak u \iff a' = a$。
+     按 $\Psi_X(\mathfrak u)$ 的定义，$\Psi_X(\mathfrak u)_A(f)$ 恰为满足 $f^{-1}(a') \in \mathfrak u$ 的唯一元素，故 $\Psi_X(\mathfrak u)_A(f) = a = r_A(f)$。
+     由外延性，$\Psi_X(\Phi_X(r)) = r$。
+
+### 2.4 函子性与自然性
+对任意映射 $h: X \to Y$ 与 $r \in R(X)$，定义 $R(h)(r)$ 在 $g: Y \to A$ 上的取值为：
+$$(R(h)(r))_A(g) := r_A(g \circ h) = e_{A, g \circ h}(r).$$
+- **相容性**：若 $k: A \to B$，则：
+  $$k((R(h)(r))_A(g)) = k(r_A(g \circ h)) = r_B(k \circ g \circ h) = (R(h)(r))_B(k \circ g).$$
+- **函子律**：
+  $(R(\operatorname{id}_X)(r))_A(f) = r_A(f \circ \operatorname{id}_X) = r_A(f)$，故 $R(\operatorname{id}_X) = \operatorname{id}_{R(X)}$；
+  对 $h_1: X \to Y, h_2: Y \to Z$：
+  $$(R(h_2 \circ h_1)(r))_A(g) = r_A(g \circ h_2 \circ h_1) = (R(h_1)(r))_A(g \circ h_2) = (R(h_2)(R(h_1)(r)))_A(g),$$
+  故 $R(h_2 \circ h_1) = R(h_2) \circ R(h_1)$。
+- **$\Phi$ 的自然性**：
+  回忆超滤子函子在态射上的前推定义为 $\beta(h)(\mathfrak u) = \{T \subseteq Y \mid h^{-1}(T) \in \mathfrak u\}$。
+  对任意 $r \in R(X)$ 与 $T \subseteq Y$，注意 $\chi_T \circ h = \chi_{h^{-1}(T)}$，因此：
+  $$\begin{aligned}
+  T \in \Phi_Y(R(h)(r)) &\iff (R(h)(r))_2(\chi_T) = 1 \\
+  &\iff r_2(\chi_T \circ h) = 1 \\
+  &\iff r_2(\chi_{h^{-1}(T)}) = 1 \\
+  &\iff h^{-1}(T) \in \Phi_X(r) \iff T \in \beta(h)(\Phi_X(r)).
+  \end{aligned}$$
+  这证明了 $\Phi_Y \circ R(h) = \beta(h) \circ \Phi_X$。即 $\Phi: R \Rightarrow \beta$ 是函子同构。 $\blacksquare$
+
+---
+
+## 三、观察求值诱导的单子结构与单子律论证
+
+### 3.1 单位变换 $\eta_X: X \to R(X)$
+根据要求，$e_{A,f} \circ \eta_X = f$。即对任意 $x \in X$：
+$$(\eta_X(x))_A(f) := f(x).$$
+1. **良定义性**：
+   对 $g: A \to B$，$g((\eta_X(x))_A(f)) = g(f(x)) = (g \circ f)(x) = (\eta_X(x))_B(g \circ f)$。故 $\eta_X(x) \in R(X)$。
+2. **自然性**：
+   对任意 $h: X \to Y$，$x \in X$ 与 $g: Y \to A$：
+   $$((R(h) \circ \eta_X)(x))_A(g) = (\eta_X(x))_A(g \circ h) = (g \circ h)(x) = g(h(x)) = (\eta_Y(h(x)))_A(g) = ((\eta_Y \circ h)(x))_A(g).$$
+   故 $R(h) \circ \eta_X = \eta_Y \circ h$。
+
+### 3.2 乘法变换 $\mu_X: R(R(X)) \to R(X)$
+乘法由条件 $e_{A,f} \circ \mu_X = e_{A, e_{A,f}}$ 确定。
+注意 $e_{A,f}: R(X) \to A$ 构成了一个从 $R(X)$ 到有限集 $A$ 的映射。对于记录 $\Phi \in R(R(X))$，其在测试集 $A$ 上的分量 $\Phi_A$ 作用于映射 $e_{A,f} \in \operatorname{Map}(R(X), A)$ 上，故定义：
+$$(\mu_X(\Phi))_A(f) := \Phi_A(e_{A,f}) = e_{A, e_{A,f}}(\Phi).$$
+
+#### 引理 1（观察求值的自然对偶性）
+> 对任意 $g: A \to B$ 与 $f \in \operatorname{Map}(X, A)$，在映射空间 $\operatorname{Map}(R(X), B)$ 中恒有恒等式：
+> $$e_{B, g \circ f} = g \circ e_{A,f}.$$
+
+*证明*：
+对任意 $r \in R(X)$，由 $r$ 满足的相容性定义：
+$$e_{B, g \circ f}(r) = r_B(g \circ f) = g(r_A(f)) = g(e_{A,f}(r)) = (g \circ e_{A,f})(r). \quad \square$$
+
+利用引理 1，我们立即证明 $\mu_X$ 的良定义性与自然性：
+1. **良定义性（相容性）**：
+   对于 $g: A \to B$，由于 $\Phi \in R(R(X))$ 满足相容性：
+   $$(\mu_X(\Phi))_B(g \circ f) = \Phi_B(e_{B, g \circ f}) \overset{\text{引理 1}}{=} \Phi_B(g \circ e_{A,f}) = g(\Phi_A(e_{A,f})) = g((\mu_X(\Phi))_A(f)).$$
+   因此 $\mu_X(\Phi) \in R(X)$。
+
+2. **自然性**：
+   我们需要证明对任意映射 $h: X \to Y$，恒有 $R(h) \circ \mu_X = \mu_Y \circ R(R(h))$。
+   任取 $\Phi \in R(R(X))$ 与测试映射 $g \in \operatorname{Map}(Y, A)$：
+   - 左边在 $(A, g)$ 上的求值为：
+     $$((R(h) \circ \mu_X)(\Phi))_A(g) = (\mu_X(\Phi))_A(g \circ h) = \Phi_A(e_{A, g \circ h}).$$
+   - 右边在 $(A, g)$ 上的求值为：
+     $$((\mu_Y \circ R(R(h)))(\Phi))_A(g) = (R(R(h))(\Phi))_A(e_{A,g}).$$
+     根据函子 $R$ 在态射 $R(h): R(X) \to R(Y)$ 上的定义：
+     $$(R(R(h))(\Phi))_A(e_{A,g}) = \Phi_A(e_{A,g} \circ R(h)).$$
+   注意对任意 $r \in R(X)$：
+   $$(e_{A,g} \circ R(h))(r) = e_{A,g}(R(h)(r)) = (R(h)(r))_A(g) = r_A(g \circ h) = e_{A, g \circ h}(r).$$
+   即映射恒等式 $e_{A,g} \circ R(h) = e_{A, g \circ h}$ 成立！代入即得：
+   $$\Phi_A(e_{A,g} \circ R(h)) = \Phi_A(e_{A, g \circ h}).$$
+   由外延性，$R(h) \circ \mu_X = \mu_Y \circ R(R(h))$。
+
+### 3.3 单子律的完全代数验证
+根据外延性原理，要验证单子态射的相等性，只需检验在任意观察求值 $e_{A,f}$ 下的作用。
+
+#### 1. 左单位律：$\mu_X \circ \eta_{R(X)} = \operatorname{id}_{R(X)}$
+任取 $r \in R(X)$，由 $\mu_X$ 的定义及 $\eta_{R(X)}$ 的定义：
+$$e_{A,f}(\mu_X(\eta_{R(X)}(r))) = e_{A, e_{A,f}}(\eta_{R(X)}(r)).$$
+应用单位映射 $\eta$ 的定义公式 $e_{B, \psi}(\eta_Z(z)) = \psi(z)$（此处令 $Z = R(X), B = A, \psi = e_{A,f}, z = r$）：
+$$e_{A, e_{A,f}}(\eta_{R(X)}(r)) = e_{A,f}(r).$$
+两端消去观察求值，即得 $\mu_X(\eta_{R(X)}(r)) = r$。
+
+#### 2. 右单位律：$\mu_X \circ R(\eta_X) = \operatorname{id}_{R(X)}$
+任取 $r \in R(X)$，由定义：
+$$e_{A,f}(\mu_X(R(\eta_X)(r))) = e_{A, e_{A,f}}(R(\eta_X)(r)).$$
+根据函子在态射上的作用规则，对任意测试映射 $\psi: R(X) \to A$，有 $e_{A,\psi}(R(\eta_X)(r)) = e_{A, \psi \circ \eta_X}(r)$。
+取 $\psi = e_{A,f}$，则考察复合映射 $e_{A,f} \circ \eta_X: X \to A$。根据单位定义 $e_{A,f} \circ \eta_X = f$！因此：
+$$e_{A, e_{A,f}}(R(\eta_X)(r)) = e_{A, e_{A,f} \circ \eta_X}(r) = e_{A,f}(r).$$
+由外延性，$\mu_X(R(\eta_X)(r)) = r$。
+
+#### 3. 结合律：$\mu_X \circ \mu_{R(X)} = \mu_X \circ R(\mu_X)$
+任取 $\mathbb M \in R(R(R(X)))$：
+- 计算左边在 $e_{A,f}$ 下的求值：
+  $$e_{A,f}(\mu_X(\mu_{R(X)}(\mathbb M))) = e_{A, e_{A,f}}(\mu_{R(X)}(\mathbb M)).$$
+  再次应用 $\mu$ 的定义（此时外层空间为 $R(X)$，测试映射为 $e_{A,f}: R(X) \to A$）：
+  $$e_{A, e_{A,f}}(\mu_{R(X)}(\mathbb M)) = e_{A, e_{A, e_{A,f}}}(\mathbb M) = \mathbb M_A(e_{A, e_{A,f}}).$$
+- 计算右边在 $e_{A,f}$ 下的求值：
+  $$e_{A,f}(\mu_X(R(\mu_X)(\mathbb M))) = e_{A, e_{A,f}}(R(\mu_X)(\mathbb M)) = \mathbb M_A(e_{A, e_{A,f}} \circ \mu_X).$$
+  考察映射 $e_{A, e_{A,f}} \circ \mu_X: R(R(X)) \to A$。对任意 $\Phi \in R(R(X))$：
+  $$(e_{A, e_{A,f}} \circ \mu_X)(\Phi) = e_{A, e_{A,f}}(\mu_X(\Phi)) = \Phi_A(e_{A,f}) = e_{A, e_{A,f}}(\Phi).$$
+  即存在完全的函数恒等式：$e_{A,f} \circ \mu_X = e_{A, e_{A,f}}$。
+  从而：
+  $$\mathbb M_A(e_{A,f} \circ \mu_X) = \mathbb M_A(e_{A, e_{A,f}}).$$
+两端完全相等，由外延性得 $\mu_X \circ \mu_{R(X)} = \mu_X \circ R(\mu_X)$。
+
+至此，完全证明了 $(R, \eta, \mu)$ 构成严格的单子。 $\blacksquare$
+
+---
+
+## 四、点值求值唯一刻画定理的完整证明
+
+问题要求准确刻画满足如下性质的集合 $X$：
+$$\forall r \in R(X), \ \exists! x \in X \quad \text{使得} \quad r = \eta_X(x).$$
+这在范畴与集合论语言下等价于说：**单位映射 $\eta_X: X \to R(X)$ 是双射**。
+
+### 4.1 单射性：对任意集合 $X$ 恒成立
+设 $x_1 \neq x_2 \in X$。由于 $2 = \{0, 1\} \in \mathbf{Fin}_{\mathcal U}$，构造区分两点的特征函数：
+$$f = \chi_{\{x_1\}}: X \to 2.$$
+由单位定义：
+$$e_{2, f}(\eta_X(x_1)) = f(x_1) = 1, \qquad e_{2, f}(\eta_X(x_2)) = f(x_2) = 0.$$
+由于 $1 \neq 0$，必有 $\eta_X(x_1) \neq \eta_X(x_2)$。
+因此对任何集合 $X$，$\eta_X$ 均是单射。
+
+### 4.2 满射性与主超滤子性质的等价转化
+通过定理 1 的同构 $\Phi_X: R(X) \xrightarrow{\sim} \beta X$，容易看到：
+$$\Phi_X(\eta_X(x)) = \{S \subseteq X \mid (\eta_X(x))_2(\chi_S) = 1\} = \{S \subseteq X \mid \chi_S(x) = 1\} = \{S \subseteq X \mid x \in S\} =: \mathfrak u_x.$$
+$\mathfrak u_x$ 正是以 $x$ 为主元的主超滤子（principal ultrafilter）。
+因此：
+$$\eta_X \text{ 是满射} \iff \beta X \text{ 中的每一个超滤子都是主超滤子}。$$
+
+### 4.3 充分性：$X$ 有限时 $\eta_X$ 为双射
+1. **$X = \emptyset$**：
+   前已证 $R(\emptyset) = \emptyset$。映射 $\eta_\emptyset: \emptyset \to \emptyset$ 显然是双射。条件“对所有 $r \in R(\emptyset)$ 存在唯一的 $x \in \emptyset$ 使得 $r = \eta_\emptyset(x)$”作为全称命题在前件为假时**空虚真（vacuously true）**。
+2. **$X$ 为非空有限集**：
+   设 $X = \{x_1, x_2, \dots, x_n\}$（$n \ge 1$）。
+   任取 $\mathfrak u \in \beta X$。因为 $X = \bigcup_{i=1}^n \{x_i\} \in \mathfrak u$，由超滤子的有限可加性，必存在某个 $i \in \{1, \dots, n\}$ 使得单点集 $\{x_i\} \in \mathfrak u$。
+   - 若 $x_i \in S$，则 $\{x_i\} \subseteq S \implies S \in \mathfrak u$；
+   - 若 $x_i \notin S$，则 $\{x_i\} \subseteq X \setminus S \implies X \setminus S \in \mathfrak u \implies S \notin \mathfrak u$。
+   因此 $\mathfrak u = \mathfrak u_{x_i} = \Phi_X(\eta_X(x_i))$。
+   这说明 $\beta X$ 中所有超滤子全为主超滤子，故 $\eta_X$ 为满射。结合单射性知 $\eta_X$ 为双射。
+
+### 4.4 必要性：$X$ 无限时 $\eta_X$ 绝非满射
+若 $X$ 是无限集，在 $\mathsf{ZFC}$ 系统下：
+1. 考虑 $X$ 上的 Fréchet 滤子（余有限滤子）：
+   $$\mathcal F_{\mathrm{cof}} = \{S \subseteq X \mid X \setminus S \text{ 是有限集}\}.$$
+   由于 $X$ 无限，对任意有限个有限子集 $F_1, \dots, F_k$，其并集仍有限，故其补集交集非空。因此 $\mathcal F_{\mathrm{cof}}$ 满足有限交性质（FIP），且不包含 $\emptyset$。
+2. 由超滤子引理（在 $\mathsf{ZFC}$ 中由 Zorn 引理保证），存在 $X$ 上的超滤子 $\mathfrak u_{\mathrm{free}} \in \beta X$ 包含 $\mathcal F_{\mathrm{cof}}$，即 $\mathcal F_{\mathrm{cof}} \subseteq \mathfrak u_{\mathrm{free}}$。
+3. 假设 $\mathfrak u_{\mathrm{free}}$ 是主超滤子，即存在某个 $x_0 \in X$ 使得 $\mathfrak u_{\mathrm{free}} = \mathfrak u_{x_0}$。
+   则单点集 $\{x_0\} \in \mathfrak u_{\mathrm{free}}$。
+   但单点集是有限集，从而其补集 $X \setminus \{x_0\} \in \mathcal F_{\mathrm{cof}} \subseteq \mathfrak u_{\mathrm{free}}$。
+   由超滤子对交封闭性：
+   $$\emptyset = \{x_0\} \cap (X \setminus \{x_0\}) \in \mathfrak u_{\mathrm{free}},$$
+   这与超滤子不包含空集矛盾！
+4. 因此 $\mathfrak u_{\mathrm{free}}$ 必须是自由超滤子（非主超滤子）。
+   令 $r_{\mathrm{free}} = \Psi_X(\mathfrak u_{\mathrm{free}}) \in R(X)$。若存在 $x \in X$ 使得 $r_{\mathrm{free}} = \eta_X(x)$，则 $\mathfrak u_{\mathrm{free}} = \Phi_X(r_{\mathrm{free}}) = \mathfrak u_x$，产生矛盾。
+
+综上所述，$\eta_X$ 为双射当且仅当 $X$ 为有限集合。 $\blacksquare$
+
+---
+
+## 五、结构总结与范畴论深层透视
+
+本题所研究的结构具有深刻的范畴论背景与对偶几何意义：
+
+1. **Codensity 单子与极限算子**：
+   全子范畴包含函子 $J: \mathbf{Fin}_{\mathcal U} \hookrightarrow \mathbf{Set}_{\mathcal V}$ 的**余密度单子**（Codensity Monad）在任意集合 $X$ 上的取值恰好由端子（end）给出：
+   $$T^J(X) = \int_{A \in \mathbf{Fin}_{\mathcal U}} A^{\operatorname{Map}(X, A)} \cong \operatorname{Nat}(\operatorname{Map}(X, -), \operatorname{Id}_{\mathbf{Fin}_{\mathcal U}}) = R(X).$$
+   Kennison-Gildenhuys 定理指出包含函子 $\mathbf{Fin} \hookrightarrow \mathbf{Set}$ 的余密度单子正是**超滤子单子** $\beta$。
+   由观察求值所规定的单位式 $e_{A,f} \circ \eta_X = f$ 与乘法式 $e_{A,f} \circ \mu_X = e_{A, e_{A,f}}$ 正是余密度单子的规范典则构造。
+2. **有限离散观测与拓扑紧化**：
+   任意相容记录 $r \in R(X)$ 实际上是离散空间 $X$ 上的“广义极限定向”：对任何有限离散 Hausdorff 空间 $A$ 以及观测 $f: X \to A$，记录 $r_A(f)$ 均是在超滤子 $\mathfrak u_r$ 视角下的收敛极限：
+   $$r_A(f) = \lim_{\mathfrak u_r} f(x).$$
+   有限集合的刚性（定理 3）精确刻画了：**有限集合上的所有相容系统是完全被其内部点完全决定的；而一旦观察对象无限，有限观察之间的相容性就会不可避免地在系统边界涌现出由自由超滤子所描述的“无穷远理想点”**。

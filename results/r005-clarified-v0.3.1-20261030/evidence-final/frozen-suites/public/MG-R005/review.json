@@ -1,0 +1,132 @@
+{
+  "case_id": "MG-R005",
+  "version": "0.3.1",
+  "date": "2026-10-30",
+  "mathematical": "ai-independent-review-passed",
+  "human": "pending",
+  "goal_status": "true-weak-target",
+  "proof_dependency_chain": [
+    "Raw fiber record: Proper nonnegative convex g_F and exact inf-projection compatibility.",
+    "Local relaxation: Closed epigraph defining bar(g_F), without optimizer existence.",
+    "Observation enlargement: Monotone pullbacks under restriction.",
+    "Global assembly: Lsc convex G <= f.",
+    "Global maximality: G equals the maximal lsc convex minorant of f."
+  ],
+  "boundary_checks": [
+    "Author-identified temptation: Convexity is mistaken for lower semicontinuity.",
+    "Author-identified temptation: Fiber infima are promoted to minima.",
+    "Author-identified temptation: A closed convex set is assumed to have a closed finite-dimensional projection.",
+    "Author-identified temptation: A finite-dimensional conjugacy statement is silently applied on arbitrary E.",
+    "Independent peer check: Convex proper raw records and exact fiber-infimum compatibility, without attained infima.",
+    "Independent peer check: Closed nonnegative epigraph gives proper lsc convex envelope; strict separation beta=0 perturbation is valid because t>=0.",
+    "Independent peer check: Supremum of local envelope pullbacks reconstructs the global maximal minorant; one-dimensional slopes suffice.",
+    "Independent peer check: Refined reclosure identity and closed-hyperbola projection counterexample are valid.",
+    "Independent peer check: Maximality specifies the main mathematical object; no mandated dual formula or proof roadmap.",
+    "Independent peer check: Optional refined relation, author route, and examples are not mandatory.",
+    "0.3.1 independent source review: every h:E→[-∞,+∞] with closed convex real-height epigraph is included, even if h takes -∞ or is improper.",
+    "0.3.1 direct Lean wrapper accepts closed real-height epigraph; it uses the original nonnegative epigraph and treats top reconstruction values separately without converting infinity to a real number.",
+    "0.3.1 reference does not assume a proper-only Fenchel–Moreau theorem for arbitrary improper competitors; equivalent complete routes remain accepted."
+  ],
+  "candidate_task_sha256": "5f4e433ca8be831d5355eb99fa061854f2bbf2bafa0aeaaafe99f063621c890e",
+  "reference_sha256": "4e4d4cbe21425c832c998886fe095de715477ed284027d515a1e1e206a1272aa",
+  "rubric_sha256": "5552e998f9b539f89758133031060f4dfb464a82e2bdeaa8b194015eb3e51af4",
+  "author_design_sha256": "0b3f07c357dce7cae833d505b2313b380d465e01a3d7f374058c46a39971b872",
+  "author_stage": {
+    "file": "MG-R005/design.json",
+    "role": "Historical 0.3.0 author-stage snapshot, copied byte-identically. The 0.3.1 changes and their independent source review are recorded separately; this historical design is not claimed to have been rewritten or re-reviewed as a new design.",
+    "proof_dependency_chain": [
+      "Raw fiber record: Proper nonnegative convex g_F and exact inf-projection compatibility.",
+      "Local relaxation: Closed epigraph defining bar(g_F), without optimizer existence.",
+      "Observation enlargement: Monotone pullbacks under restriction.",
+      "Global assembly: Lsc convex G <= f.",
+      "Global maximality: G equals the maximal lsc convex minorant of f."
+    ]
+  },
+  "formalization": {
+    "status": "main-task-kernel-verified",
+    "candidate_lean_required": false,
+    "lean_toolchain": "leanprover/lean4:v4.29.1",
+    "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+    "source_manifest": "MG-R005/formal/manifest.json",
+    "source_manifest_sha256": "c41826ab26c890e59102ba35bb1e90f4224c625856cf511209674c7c0217f41f",
+    "coverage": "MG-R005/formal/COVERAGE.md",
+    "coverage_sha256": "db6e9295ad6f2a6b4f157f1218d6a2c41ca5f8bd442781e8fd3fdff32539d1ff",
+    "source_module_count": 5,
+    "dynamic_declaration_count": 119,
+    "declaration_count_is_not_theorem_count": true,
+    "current_evidence": "MG-R005/formal/current-formal.json",
+    "scope": "The original finite-record reconstruction plus the explicit full EReal competitor class under the task real-height epigraph convention. Exact obligations and optional branches are itemized in COVERAGE.md.",
+    "alignment_reviewer_kind": "ai",
+    "alignment_reviewer": "/root/alignment_corrections",
+    "alignment_report": "MG-R005/reviews/v0.3.1-semantic.json",
+    "human_review": "pending",
+    "current_evidence_sha256": "b5a851655e32d55b48616b4ce68c684831f6fc58e839eb57a8dabbb2381f0191",
+    "alignment_report_sha256": "f2012da98b1cb2ccab6e2cc05d9528acfc2cf7cf354a70d0042e79fd6aec7529",
+    "verification_report": "MG-R005/formal/verification-report.json",
+    "verification_report_sha256": "8ba11bb0bd012a770a33478ae4bb8a41f9b9cb792876bd687e19922319022a04",
+    "source_manifest_equals_compiled_manifest": true
+  },
+  "difficulty_status": "Not assessed by this author/material review; current-version candidate evaluations live in the separate clarified-version results.",
+  "review_scope": "Exact 0.3.1 task/reference/rubric and Lean-source semantic review, followed by a fresh five-module kernel audit. The reviewer had source/reference context; this is not a new task-only blind review, a candidate score, or human approval.",
+  "independent_reviews": [
+    {
+      "kind": "mathematical-and-lean-semantic-source-review",
+      "closed": true,
+      "result": "passed-for-exact-prepared-materials-now-adopted",
+      "reviewer_kind": "ai",
+      "reviewer": "/root/alignment_corrections",
+      "task_only_context": false,
+      "reviewed_files": {
+        "MG-R005/reference.md": "4e4d4cbe21425c832c998886fe095de715477ed284027d515a1e1e206a1272aa",
+        "MG-R005/rubric.json": "5552e998f9b539f89758133031060f4dfb464a82e2bdeaa8b194015eb3e51af4",
+        "MG-R005/task.md": "5f4e433ca8be831d5355eb99fa061854f2bbf2bafa0aeaaafe99f063621c890e",
+        "MG-R005/formal/ConvexCostExtras.lean": "17d45dde3126ab02deba0e0027c1cf90401f583fe3f60c593f046d4ecfb19ebb",
+        "MG-R005/formal/COVERAGE.md": "db6e9295ad6f2a6b4f157f1218d6a2c41ca5f8bd442781e8fd3fdff32539d1ff"
+      },
+      "unchanged_supporting_lean_sha256": {
+        "ConvexCost.lean": "eeb22e10446d7363a459bc38c7f95940221b254fe87a84e88269e5bb996803ce",
+        "FiniteObservation.lean": "b2f8b937ea723e2c47998174d23b1721363d343ca816f6875d8bed5daa19654e",
+        "ProjectionExample.lean": "6c552e0baa18e868baee0152e7e6df102a257efdcdb0f51b8675c20b4c4217ab",
+        "RelaxationGeometry.lean": "82a8d873b99799c1212d04c661053902f210ebe3e1ccd37c97e68f747c4cd890"
+      },
+      "report": "MG-R005/reviews/v0.3.1-semantic.json",
+      "report_sha256": "f2012da98b1cb2ccab6e2cc05d9528acfc2cf7cf354a70d0042e79fd6aec7529",
+      "scope": "The preserved report describes prepared source review and the standalone bridge, not final kernel acceptance. Final integrated five-module acceptance is supplied by current-formal.json and verification-report.json.",
+      "human_review": "pending"
+    }
+  ],
+  "historical_reviews": {
+    "case_version": "0.3.0",
+    "source": "MG-R005/history/v0.3.0/review.json",
+    "sha256": "4a28344bd8597dddc87fec6e87f65124bd94f92e7780baef5fe25fbb97f70aba",
+    "scope": "All earlier independent mathematical and task-only reviews, difficulty statements, one-run calibration and formal evidence remain historical at their original hashes; they are not current 0.3.1 review or score evidence."
+  },
+  "historical_calibration": {
+    "case_version": "0.3.0",
+    "new_model_runs": 1,
+    "difficulty_status": "single-isolated-terra-max-sample-passed-no-discrimination-observed",
+    "calibration": {
+      "result": "pass",
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "requested_model": "gpt-6.1-terra",
+      "requested_reasoning_effort": "max",
+      "observed_backend_model": null,
+      "observed_backend_reasoning_effort": null,
+      "response_sha256": "711b69c243d1a6e819c97b2f5863a137bffc97e6447601bc900ec3034ce8eee8",
+      "review_report": "results/full-lean-terra/reviews.json",
+      "raw_evidence": "results/full-lean-terra/evidence-bundle.zip",
+      "effective_answers": 1,
+      "tool_events": 0,
+      "identity_limit": "CLI accepted requested settings; JSON events did not independently attest backend model/effort.",
+      "comparison_limit": "One sample, AI review, draft case; no formal model ranking or stable failure-rate claim."
+    }
+  },
+  "current_calibration": {
+    "case_version": "0.3.1",
+    "record_owner": "separate-results",
+    "results": "results/r005-clarified-v0.3.1-20261030",
+    "scope": "This author/material review does not contain or assign candidate scores. New-version candidate execution, its pending/completed state and adjudication are maintained only in the separate results; no old-version score or mutable run count is adopted here.",
+    "human_review": "pending"
+  }
+}

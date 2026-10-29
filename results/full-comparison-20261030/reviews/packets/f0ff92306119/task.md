@@ -1,0 +1,15 @@
+# 逐层可解系统的兼容提升
+
+对每个 $n\ge1$ 给定阿贝尔群的短正合列
+
+$$0\longrightarrow A_n\xrightarrow{\iota_n}B_n\xrightarrow{\pi_n}C_n\longrightarrow0.$$
+
+给定群同态 $\alpha_n:A_{n+1}\to A_n$、$\beta_n:B_{n+1}\to B_n$、$\gamma_n:C_{n+1}\to C_n$，使相邻两行的图表交换。所有 $C_n$ 均为有限群，所有 $\beta_n$、$\gamma_n$ 均满射。
+
+整体记录是满足 $\gamma_n(c_{n+1})=c_n$ 的序列 $c=(c_n)$。每一层都可选择 $b_n\in B_n$，使 $\pi_n(b_n)=c_n$。整体实现要求这些选择同时满足 $\beta_n(b_{n+1})=b_n$。
+
+建立逐层可解数据的整体提升理论。目标是把这些局域提升组织成兼容整体实现，并由此得到自然短正合列
+
+$$0\longrightarrow\varprojlim A_n\longrightarrow\varprojlim B_n\longrightarrow\varprojlim C_n\longrightarrow0.$$
+
+请给出与局域选择相容的构造，说明整体解的自由度，并完成自然性和正合性的论证。

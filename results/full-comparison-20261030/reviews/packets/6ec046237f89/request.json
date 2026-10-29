@@ -1,0 +1,22 @@
+{
+  "schema": "math-gauge.request/v1",
+  "case_id": "MG-F104",
+  "case_version": "0.1.0",
+  "track": "alignment",
+  "instruction": "",
+  "task": "# 一族映射诱导的拓扑\n\n设 $X$ 为任意集合，$A$ 为任意指标集。对每个 $a\\in A$，给定拓扑空间 $(Y_a,\\tau_a)$ 和映射 $f_a:X\\to Y_a$。构造 $X$ 上使全部 $f_a$ 连续的最粗拓扑 $\\tau$，并证明这个拓扑唯一。\n\n还须证明其映射性质：对任意拓扑空间 $(Z,\\sigma)$ 及映射 $g:Z\\to X$，$g:(Z,\\sigma)\\to(X,\\tau)$ 连续，当且仅当每个 $f_a\\circ g:(Z,\\sigma)\\to(Y_a,\\tau_a)$ 连续。\n\n附件是针对上述任务的一个形式化提交。先判断其实际覆盖范围，再修改或补充 Lean，使最终交付完成上述任务。保持正文的对象、条件与结论。\n\n提交完整 Lean 文件和覆盖说明。每个文件用独立的代码块交付，格式为 ` ```lean filename=文件名.lean `（实际使用三个反引号），不得只引用本地文件路径。允许等价表述和不同证明路线。说明最终各声明对应正文哪一部分，以及尚未完成的部分。\n\n附件为 Core.lean、Construction.lean、Candidate.lean。\n\n环境为 Lean 4.29.1，Mathlib 固定修订 5e932f97dd25535344f80f9dd8da3aab83df0fe6。\n",
+  "files": [
+    {
+      "name": "Core.lean",
+      "content": "import Mathlib.Topology.Order\nopen scoped Topology\nnamespace MathGauge.F104\nuniverse u v w\nvariable {ι : Type u} {X : Type v} {Y : ι → Type w}\ndef Realizes (t : ∀ i, TopologicalSpace (Y i)) (f : ∀ i, X → Y i)\n    (s : TopologicalSpace X) : Prop := ∀ i, Continuous[s, t i] (f i)\nend MathGauge.F104\n"
+    },
+    {
+      "name": "Construction.lean",
+      "content": "import Core\nopen scoped Topology\nnamespace MathGauge.F104\nuniverse u v w\nvariable {ι : Type u} {X : Type v} {Y : ι → Type w}\n@[reducible] def assembled (t : ∀ i, TopologicalSpace (Y i))\n    (f : ∀ i, X → Y i) : TopologicalSpace X :=\n  sInf {s | Realizes t f s}\ntheorem construction_bound (t : ∀ i, TopologicalSpace (Y i)) (f : ∀ i, X → Y i)\n    (s : TopologicalSpace X) (hs : Realizes t f s) : assembled t f ≤ s := by\n  exact sInf_le hs\nend MathGauge.F104\n"
+    },
+    {
+      "name": "Candidate.lean",
+      "content": "import Construction\nopen scoped Topology\nnamespace MathGauge.F104\nuniverse u v w z\nvariable {ι : Type u} {X : Type v} {Y : ι → Type w}\ntheorem candidate_realizes (t : ∀ i, TopologicalSpace (Y i)) (f : ∀ i, X → Y i) :\n    Realizes t f (assembled t f) := by\n  intro i\n  have hb : Realizes t f (⊥ : TopologicalSpace X) := fun _ => continuous_bot\n  exact continuous_le_dom (construction_bound t f ⊥ hb) continuous_bot\ntheorem candidate_inbound (t : ∀ i, TopologicalSpace (Y i)) (f : ∀ i, X → Y i)\n    {Z : Type z} (s : TopologicalSpace Z) (g : Z → X)\n    (hg : Continuous[s, assembled t f] g) :\n    ∀ i, Continuous[s, t i] (f i ∘ g) := by\n  intro i\n  letI : TopologicalSpace Z := s\n  letI : TopologicalSpace X := assembled t f\n  letI : TopologicalSpace (Y i) := t i\n  exact (candidate_realizes t f i).comp hg\n#print axioms candidate_realizes\n#print axioms candidate_inbound\nend MathGauge.F104\n"
+    }
+  ]
+}

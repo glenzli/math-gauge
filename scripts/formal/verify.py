@@ -21,6 +21,32 @@ import time
 LEAN_VERSION = '4.29.1'
 TOOLCHAIN = 'leanprover/lean4:v4.29.1'
 MATHLIB_REV = '5e932f97dd25535344f80f9dd8da3aab83df0fe6'
+DEFAULT_PROFILE = 'lean-4.29.1'
+TAUCETI_PROFILE = 'lean-4.36.0-rc1-tauceti'
+# These are trust profiles, not manifest-supplied package policies. Keep the
+# legacy profile and its audit bytes stable for existing compilation evidence.
+PROFILES = {
+    DEFAULT_PROFILE: {'lean_version': LEAN_VERSION, 'toolchain': TOOLCHAIN,
+                      'mathlib_revision': MATHLIB_REV, 'audit_template': 'audit.lean.in'},
+    TAUCETI_PROFILE: {
+        'lean_version': '4.36.0-rc1', 'toolchain': 'leanprover/lean4:v4.36.0-rc1',
+        'mathlib_revision': '2cabef97b63d3275776b8b060d802de6a6fa1055',
+        'tauceti_revision': 'ab0153c648bc0f1364ea268fc806793beb01473a',
+        'audit_template': 'audit-4.36.lean.in',
+        'packages': {
+            'mathlib': '2cabef97b63d3275776b8b060d802de6a6fa1055',
+            'TauCeti': 'ab0153c648bc0f1364ea268fc806793beb01473a',
+            'plausible': 'c2d7840c65673533e15b499f25beecdc6227f7d8',
+            'LeanSearchClient': '9d39f9bb0c30aa2f6200808805ff16e6ce950890',
+            'importGraph': 'b3cc36c295aa5e3e3c0197b09a6556298e710447',
+            'proofwidgets': '17137fad38a2cc782ff00b323a13c3a991d085ab',
+            'aesop': '29c64c56cc38211d39b306db2df11701e3d3de11',
+            'Qq': '6d26f8bb4b2bb78f929ad160feac508866821316',
+            'batteries': '30691c775364967184547c94468bf6b5f25400fb',
+            'Cli': '34d2efffcb6dc8d5f3537cf6a7f88bfaa999ec49',
+        },
+    },
+}
 ALLOWED_AXIOMS = frozenset(('propext', 'Classical.choice', 'Quot.sound'))
 MODULE_RE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\Z')
 HERE = Path(__file__).resolve().parent
@@ -90,31 +116,57 @@ def source_imports(text):
             imports.append(name)
     return imports
 
-def render_audit(modules):
-    template = (HERE / 'audit.lean.in').read_text(encoding='utf-8')
+def profile_config(profile=DEFAULT_PROFILE):
+    require(isinstance(profile, str) and profile in PROFILES, 'Unknown verification profile: ' + str(profile))
+    return PROFILES[profile]
+
+def manifest_profile(manifest):
+    profile = manifest.get('verification_profile', DEFAULT_PROFILE)
+    config = profile_config(profile)
+    require(manifest.get('lean_toolchain') == config['toolchain'], 'Manifest toolchain is not pinned for profile ' + profile)
+    require(manifest.get('mathlib_revision') == config['mathlib_revision'], 'Manifest Mathlib revision is not pinned for profile ' + profile)
+    if 'tauceti_revision' in config:
+        require(manifest.get('tauceti_revision') == config['tauceti_revision'], 'Manifest TauCeti revision is not pinned for profile ' + profile)
+    else:
+        require('tauceti_revision' not in manifest, 'TauCeti revision requires its fixed verification profile')
+    return profile
+
+def render_audit(modules, profile=DEFAULT_PROFILE):
+    template = (HERE / profile_config(profile)['audit_template']).read_text(encoding='utf-8')
     require(template.count('{{IMPORTS}}') == template.count('{{MODULES}}') == 1, 'Invalid audit template')
     return template.replace('{{IMPORTS}}', '\n'.join('import ' + name for name in modules)).replace(
         '{{MODULES}}', '#[' + ', '.join(json.dumps(name) for name in modules) + ']')
 
-def inspect_dependencies(dependency_root, lean_choice=None):
+def inspect_dependencies(dependency_root, lean_choice=None, profile=DEFAULT_PROFILE):
+    config = profile_config(profile)
     root = Path(dependency_root).resolve()
     require(root.is_dir(), 'Dependency root does not exist')
     lock = root / 'lake-manifest.json'
     require(lock.is_file(), 'Dependency root has no lake-manifest.json')
     data = load(lock)
     packages = data.get('packages', [])
+    require(isinstance(packages, list) and all(isinstance(p, dict) for p in packages), 'Invalid dependency package list')
+    names = [p.get('name') for p in packages]
+    require(all(isinstance(n, str) and MODULE_RE.fullmatch(n) and '.' not in n for n in names), 'Invalid package name')
+    require(len(names) == len(set(names)), 'Duplicate dependency package name')
     mathlib = next((p for p in packages if p.get('name') == 'mathlib'), None)
-    require(mathlib is not None and mathlib.get('rev') == MATHLIB_REV, 'Dependency Mathlib revision is not the pinned revision')
+    require(mathlib is not None and mathlib.get('rev') == config['mathlib_revision'], 'Dependency Mathlib revision is not the pinned revision')
+    if 'packages' in config:
+        require({p['name']: p.get('rev') for p in packages} == config['packages'], 'Dependency packages differ from the fixed profile whitelist')
+        toolchain = root / 'lean-toolchain'
+        require(toolchain.is_file() and toolchain.read_text(encoding='utf-8').strip() == config['toolchain'], 'Dependency root toolchain differs from the fixed profile')
     choice = str(lean_choice or shutil.which('lean') or '')
     require(bool(choice), 'Lean executable is unavailable; supply --lean')
     version = command([choice, '--version'], cwd=root)
-    require(bool(re.search(r'\bversion ' + re.escape(LEAN_VERSION) + r'(?:,|\s|\))', version)), 'Expected Lean ' + LEAN_VERSION + ': ' + version)
+    require(bool(re.search(r'\bversion ' + re.escape(config['lean_version']) + r'(?:,|\s|\))', version)), 'Expected Lean ' + config['lean_version'] + ': ' + version)
     prefix = Path(command([choice, '--print-prefix'], cwd=root)).resolve()
     lean = prefix / 'bin' / ('lean.exe' if os.name == 'nt' else 'lean')
     require(lean.is_file(), 'Resolved Lean installation is missing its executable')
     require(command([lean, '--version'], cwd=root) == version, 'Resolved Lean installation identity changed')
     package_dir = Path(data.get('packagesDir', '.lake/packages'))
     require(not package_dir.is_absolute() and '..' not in package_dir.parts, 'Unsafe packagesDir')
+    if 'packages' in config:
+        require(str(package_dir) == '.lake/packages', 'Fixed profile requires .lake/packages')
     paths = []; records = []; tracked_state = None
     for package in packages:
         name = package.get('name', '')
@@ -122,33 +174,42 @@ def inspect_dependencies(dependency_root, lean_choice=None):
         package_root = root / package_dir / name
         build = package_root / '.lake/build/lib/lean'
         require(package_root.is_dir(), 'Missing dependency checkout: ' + name)
-        if name == 'mathlib': require(build.is_dir(), 'Missing compiled dependency: mathlib')
+        if name in ('mathlib', 'TauCeti'): require(build.is_dir(), 'Missing compiled dependency: ' + name)
+        if 'packages' in config:
+            actual_root = Path(command(['git', '--no-optional-locks', '-C', package_root, 'rev-parse', '--show-toplevel'])).resolve()
+            require(actual_root == package_root.resolve(), 'Dependency is not its own pinned checkout: ' + name)
         head = command(['git', '--no-optional-locks', '-C', package_root, 'rev-parse', 'HEAD'])
         require(head == package.get('rev'), 'Dependency checkout differs from lockfile: ' + name)
-        if name == 'mathlib':
+        state = None
+        if name == 'mathlib' or 'packages' in config:
             dirty = command(['git', '--no-optional-locks', '-C', package_root,
                              'status', '--porcelain', '--untracked-files=no'])
             diff = command(['git', '--no-optional-locks', '-C', package_root, 'diff', '--binary', 'HEAD'])
-            tracked_state = {'clean': not dirty, 'status_porcelain': dirty, 'diff_sha256': hashlib.sha256(diff.encode('utf-8')).hexdigest(), 'diff_bytes': len(diff.encode('utf-8'))}
-            require(not dirty, 'Mathlib tracked sources are modified; not clean pinned evidence: ' + json.dumps(tracked_state))
+            state = {'clean': not dirty, 'status_porcelain': dirty, 'diff_sha256': hashlib.sha256(diff.encode('utf-8')).hexdigest(), 'diff_bytes': len(diff.encode('utf-8'))}
+            if name == 'mathlib': tracked_state = state
+            require(not dirty, name + ' tracked sources are modified; not clean pinned evidence: ' + json.dumps(state))
         if build.is_dir(): paths.append(build.resolve())
         records.append({'name': name, 'revision': head, 'build_library': str(build.resolve()), 'compiled_library_present': build.is_dir()})
+        if 'packages' in config: records[-1]['tracked_state'] = state
     standard = prefix / 'lib/lean'
     require((standard / 'Lean/Util/CollectAxioms.olean').is_file(), 'Lean kernel audit dependency is missing')
     paths.append(standard)
-    return {'root': str(root), 'lockfile_sha256': digest(lock), 'mathlib_revision': MATHLIB_REV,
+    result = {'root': str(root), 'lockfile_sha256': digest(lock), 'mathlib_revision': config['mathlib_revision'],
             'lean': str(lean), 'lean_version': version, 'lean_sha256': digest(lean),
             'packages': records, 'mathlib_tracked_state': tracked_state, 'search_paths': list(map(str, paths)),
             'dependency_project_build_excluded': True, 'ambient_lean_path_excluded': True}
+    # Preserve the legacy receipt shape for coverage-only evidence rebinding.
+    if profile != DEFAULT_PROFILE:
+        result.update(verification_profile=profile, tauceti_revision=config['tauceti_revision'])
+    return result
 
 def validate_case(manifest_path):
     manifest_path = Path(manifest_path).resolve(); root = manifest_path.parent
     manifest = load(manifest_path)
     require(manifest.get('schema') == 'math-gauge.formal-case/v1', 'Invalid formal manifest schema')
     cid = manifest.get('case_id', '')
-    require(bool(re.fullmatch(r'MG-R\d{3}|MG-TEST-[A-Za-z0-9-]+', cid)), 'Invalid case id')
-    require(manifest.get('lean_toolchain') == TOOLCHAIN, 'Manifest toolchain is not pinned')
-    require(manifest.get('mathlib_revision') == MATHLIB_REV, 'Manifest Mathlib revision is not pinned')
+    require(bool(re.fullmatch(r'MG-[RPF]\d{3}|MG-TEST-[A-Za-z0-9-]+', cid)), 'Invalid case id')
+    profile = manifest_profile(manifest)
     frozen = manifest.get('frozen_inputs', {})
     require(set(frozen) == {'task.md', 'reference.md', 'rubric.json'}, 'Manifest must bind all three frozen case inputs')
     for filename, expected in frozen.items():
@@ -180,7 +241,7 @@ def validate_case(manifest_path):
     audit = manifest.get('audit', {})
     require(audit.get('module') == 'CurrentAudit' and audit.get('source') == 'CurrentAudit.lean', 'Invalid current audit entry')
     path = safe_relative(root, audit['source'])
-    expected_audit = render_audit(names).encode('utf-8')
+    expected_audit = render_audit(names, profile).encode('utf-8')
     require(path.read_bytes() == expected_audit and digest(path) == audit.get('sha256'), 'Current audit must exactly match shared generator and ordered case modules')
     all_external.update(('Lean.Util.CollectAxioms', 'Lean.PrivateName', 'Lean.Elab.Command'))
     return manifest, root, sources, path, all_external
@@ -197,6 +258,14 @@ def resolve_imports(imports, dependency):
 
 def verify_case(manifest_path, dependency, output):
     manifest, original, sources, audit_source, imports = validate_case(manifest_path)
+    profile = manifest_profile(manifest)
+    require(dependency.get('verification_profile', DEFAULT_PROFILE) == profile,
+            'Manifest and dependency verification profiles differ')
+    require(dependency['mathlib_revision'] == profile_config(profile)['mathlib_revision'],
+            'Dependency Mathlib revision differs from the manifest profile')
+    if profile == TAUCETI_PROFILE:
+        require(dependency.get('tauceti_revision') == profile_config(profile)['tauceti_revision'],
+                'Dependency TauCeti revision differs from the manifest profile')
     cid = manifest['case_id']; output = Path(output) / cid
     output.mkdir(exist_ok=False)
     staged = output / 'sources'; build = output / 'oleans'; logs = output / 'logs'
@@ -238,7 +307,8 @@ def verify_case(manifest_path, dependency, output):
                 report['audit'] = {'command': item, 'declarations': declarations,
                                    'summary': summaries[0] if len(summaries) == 1 else None,
                                    'all_mathgauge_constants_including_private': True,
-                                   'dependency_traversal': 'Complete union of every root via Lean.CollectAxioms with a shared visited set',
+                                   'dependency_traversal': ('Complete union of every root via Lean.CollectAxioms with a shared visited set'
+                                       if profile == DEFAULT_PROFILE else 'Union of public Lean.collectAxioms results for every audited root'),
                                    'allowed_axioms': sorted(ALLOWED_AXIOMS)}
                 save(output / 'declarations.json', declarations)
                 require(result.returncode == 0, 'Kernel audit failed; see ' + str(log))
@@ -280,7 +350,9 @@ def main(argv=None):
         validated = [validate_case(p) for p in args.manifest]
         ids = [m[0]['case_id'] for m in validated]
         require(len(ids) == len(set(ids)), 'Repeated case id')
-        dependency = inspect_dependencies(args.dependency_root, args.lean)
+        profiles = {manifest_profile(m[0]) for m in validated}
+        require(len(profiles) == 1, 'Cannot mix verification profiles in one invocation')
+        dependency = inspect_dependencies(args.dependency_root, args.lean, profiles.pop())
         for manifest in args.manifest:
             case = verify_case(manifest, dependency, out)
             report['case_reports'].append({'case_id': case['case_id'], 'status': case['status'],

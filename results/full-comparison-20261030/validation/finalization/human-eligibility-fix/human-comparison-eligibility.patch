@@ -1,0 +1,83 @@
+--- a/math_gauge/review.py
++++ b/math_gauge/review.py
+@@ -442,6 +442,7 @@
+             row["human_comparison_eligible"] = (
+                 row["valid_execution"]
+                 and row["resolved"]
++                and decision != "unresolved"
+                 and info["case_approved"]
+                 and review["reviewer_kind"] == "human"
+             )
+--- a/tests/test_comparison_report.py
++++ b/tests/test_comparison_report.py
+@@ -152,6 +152,70 @@
+             result["models"]["synthetic-a"]["human_comparison_eligible"], 0
+         )
+ 
++    def test_lean_failure_does_not_resolve_human_review_eligibility(self):
++        for task_kind in ("generate", "repair"):
++            for lean_status in ("compile_error", "axiom_rejected"):
++                for decision in ("unresolved", "fail", "partial"):
++                    with self.subTest(
++                        task_kind=task_kind,
++                        lean_status=lean_status,
++                        decision=decision,
++                    ):
++                        self.index[0]["task_kind"] = task_kind
++                        reports = {}
++                        for label, paths in self.runs.items():
++                            root = paths[0]
++                            p = root / "run.json"
++                            meta = json.loads(p.read_text())
++                            meta["cases"][0]["case_approved"] = True
++                            write_json(p, meta)
++                            lean_path = root / "candidate-lean.json"
++                            write_json(
++                                lean_path,
++                                {
++                                    "case_id": self.cid,
++                                    "response_sha256": self.response_hash,
++                                    "request_sha256": self.request_hash,
++                                    "status": lean_status,
++                                },
++                            )
++                            reports[label] = {self.cid: lean_path}
++                            p = root / "reviews.json"
++                            reviews = json.loads(p.read_text())
++                            reviews[self.cid].update(
++                                reviewer_kind="human",
++                                decision=decision,
++                                assumption_fidelity="unknown",
++                                proof_validity="unknown",
++                                scope_accuracy="unknown",
++                                candidate_lean_report_sha256=digest_bytes(
++                                    lean_path.read_bytes()
++                                ),
++                            )
++                            write_json(p, reviews)
++                        result = self.result(lean_reports=reports)
++                        # A Lean rejection settles strict failure, not the human opinion.
++                        self.assertTrue(result["complete"])
++                        self.assertEqual(
++                            result["paired"]["counts"]["neither_pass"], 1
++                        )
++                        for model in result["models"].values():
++                            row = model["cases"][0]
++                            self.assertTrue(row["resolved"])
++                            self.assertFalse(row["strict_pass"])
++                            self.assertEqual(row["decision"], decision)
++                            self.assertEqual(
++                                row["outcome"], "candidate_lean_" + lean_status
++                            )
++                            self.assertEqual(
++                                row["human_comparison_eligible"],
++                                decision != "unresolved",
++                            )
++                            self.assertEqual(
++                                model["human_comparison_eligible"],
++                                int(decision != "unresolved"),
++                            )
++
+     def test_audit_polarity_is_paired_and_stratified(self):
+         self.index[0].update(task_kind="audit", audit_expected="misaligned")
+         result = self.result()

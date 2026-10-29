@@ -1,0 +1,48 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R014",
+  "case_version": "0.4.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "f3cbe276673e8dc41f449afd5d55e5ea4c7bc0ddf8d97d83d2aa521bca513346",
+    "reference.md": "4f9508aba3ab9958ea050e62615d2dd83b526eca34499f1037a51b81e0e6b198",
+    "rubric.json": "bdfe40f5898cb1cc367adb890155015c6e8f90e7c00e6da50f22ca283161133e"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "e640e940fa6bf5ba43726bd283ad8103b802bb677a3ad601cebbc5cfac4c7849"
+  },
+  "modules": [
+    {
+      "module": "LinearSystems",
+      "source": "LinearSystems.lean",
+      "sha256": "440c5a813ccecb769ad804f8a98b7894c6f54cebff164294b71b663b8600612f",
+      "imports": [
+        "Mathlib.LinearAlgebra.Basis.VectorSpace",
+        "Mathlib.LinearAlgebra.Finsupp.LinearCombination",
+        "Mathlib.LinearAlgebra.Quotient.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "CoordinateFibers",
+      "source": "CoordinateFibers.lean",
+      "sha256": "89eff13c566ddc5e6ad0f9edf5e65122aab64c6078c927af466c37e94b345a44",
+      "imports": [
+        "LinearSystems"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "8520bcb018d666dc4c902ec5990eb6c5df336b1b06812f1344563a0455abf748",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

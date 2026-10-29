@@ -1,0 +1,36 @@
+{
+  "MG-F107": {
+    "packet_id": "c1721a293868",
+    "case_id": "MG-F107",
+    "response_sha256": "4e79c551dd2ffb925f81d2829079579c545309a998d2264b818ba8e8b2cc23f5",
+    "reviewer": "/root",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "needs_second_review": false,
+    "candidate_audit_verdict": "misaligned",
+    "expected_audit_verdict": "misaligned",
+    "notes": "完整读取题面、参考、rubric、全部3附件与答卷。主审计正确：逐一认可solve在全部序列定义、双边逆/唯一/线性/rapid；展开InputControl=Control(r+2)并保持同一C，明确原公开估计只提供两阶输入，正确用精确加权恒等式说明一阶目标成立且原接口尚未给出。补全代码明确作为新建议而非原附件已有。额外提出“无条件顶层算子独立导出”是包装层偏好：Core.solve和全部相关公共引理已可导入使用，不能把必须另建bundled API当原目标缺口。这一措辞与其已覆盖表自己的准确陈述有张力，保留该不必要建议但不据此抹去已完整呈现的主审计。未要求提交修复Lean，本次不把示例代码自动当可编译交付。",
+    "findings": [
+      "所谓未独立导出无条件线性算子不是额外数学缺口：导入的solve、solve_add/solve_smul和逆定理已经全局公开；仅顶层candidate封装要求InputControl。该附加API偏好不属题面义务，不采纳为失配理由。",
+      "确定编译/公理检验文字缺少候选实际执行凭证；不计为候选Lean编译通过。",
+      "原答卷路径自带模型标签，不能声称完全盲审。"
+    ],
+    "candidate_execution_claim_status": "definite-compilation-report-without-candidate-execution-evidence",
+    "candidate_compilation_performed": false,
+    "reviewed_material_sha256": {
+      "task.md": "49637774ca72561fbca7a13a226ca1f5d3edb3cb73c359f34beebebaa35a0a1c",
+      "reference.md": "4f1dac9422429f732d85377f43bb2db966a83919aac641381aa6d7159f0745c9",
+      "rubric.json": "3fa2505d05848c25fcba53221ebd018a36f6edd27cebf64266dfd0c505095383",
+      "response.md": "4e79c551dd2ffb925f81d2829079579c545309a998d2264b818ba8e8b2cc23f5",
+      "request.json": "35e1eebad79f88bac2a5e0835ba6e237eeb333492df3c89457d4b77384c2aace"
+    },
+    "primary_review_sha256": "816aef3f1c9d830783ac615f2fa8e9f7ede3aec8e7ae3c251bba74f729e3ff7d",
+    "secondary_review_sha256": "cf44e4d5f5478a681ee80e53684414eedb009c0eac079476025ee6f7e1109ff6",
+    "adjudication": "独立两审一致。保留原始答卷和全部问题，按题面必需义务及真实编译结果判断，不改写候选代码或增加原题未要求的API包装。",
+    "recorded_at": "2026-10-29T19:35:41.044624+00:00"
+  }
+}

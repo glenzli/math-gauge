@@ -1,0 +1,37 @@
+{
+  "MG-F110": {
+    "packet_id": "5d4f83d72d3c",
+    "case_id": "MG-F110",
+    "response_sha256": "feb6c973c2f51dcd97d5538ffdf459f758d73f62525b1f6e9bbf1bc0de0c2858",
+    "reviewer": "/root",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "unknown",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": false,
+    "needs_second_review": false,
+    "notes": "独立完整核对题面、参考、rubric、原三附件及候选全源码，读取真实原样编译报告和Candidate日志。数学修复思路准确：Unit/Bool停顿反例、terminal原像的安全方向、Realizes恢复等式、真正Safe不变与最大性均对应原范围；Safe零步已经直接含于A，不再追加独立包装声明义务。但实际Candidate第50、57行无法合成DecidableEq cex_Y，故必需的形式化反例及原主张否定没有成功交付。RecordLayers和OrbitModel编译通过，Candidate失败后全声明审计未运行；不得因日志中其他声明打印标准公理便算完整通过。",
+    "findings": [
+      "Candidate.lean:50、57 failed to synthesize DecidableEq cex_Y；不为候选添加classical或instance，不修改cex_Y定义后回填成绩。",
+      "反例声明日志的sorryAx来自编译错误恢复，报告统一保持compile_error，而非成功编译后的axiom_rejected。",
+      "原附件push Not是固定Mathlib版本支持的语法，候选将其称非法语法的附加诊断错误；原附件作者验证已通过。",
+      "文字“x∈B”混淆X/Y，实际形式化Evolves正确为q x∈B，主路线未因此改域。",
+      "首次核验探针在外层限制下失败，未执行任何候选模块；新目录同字节实际编译结果才是成绩证据，两次过程都保留。"
+    ],
+    "candidate_lean_report_path": "/private/tmp/math-gauge-review-f/5d4f83d72d3c/lean-isolated/report.json",
+    "candidate_lean_report_sha256": "41ec38ace6c8e8603cba29b56c5231bdfe6772e414f045306c49d0a7f175bc2a",
+    "candidate_lean_status": "compile_error",
+    "reviewed_material_sha256": {
+      "task.md": "f8c7c41f0686add16302c2cb63298d4d5d7263036cdd5622b2481dd3b56da31c",
+      "reference.md": "9814214c24f0b3a30fc137d9217533373672e3df3ae37179212da5460b6d4525",
+      "rubric.json": "afd99990afbdb605bad796676375325437e973a82ec7c3837c534ca002ba0b56",
+      "request.json": "92e0c083d2aa1d571c05c5d4ec443b41c02352b3462e2d4b8ac0e9d4521ed2be",
+      "response.md": "feb6c973c2f51dcd97d5538ffdf459f758d73f62525b1f6e9bbf1bc0de0c2858"
+    },
+    "primary_review_sha256": "f65ea4a99ce058ba50625207ed524d1a74e595a088a432b0feabc0927886e136",
+    "secondary_review_sha256": "6b5534feb1f18f6bbc196d969548e9d5b62bb0acbd6db6348084ebbc83ce89e9",
+    "adjudication": "两审独立一致。按原题必需义务及真实原字节编译结果判定；不修复候选代码后回填成绩，执行/附带诊断问题原样保留。",
+    "recorded_at": "2026-10-29T19:44:12.172397+00:00"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R011",
+  "case_version": "0.4.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "5c10468869f540845f55edc530dcf6950af5c3735c0cc0abd83576b89b97641d",
+    "reference.md": "01e5c456a2d2b1ab8b0b85e6a2f87cf8055b16d4b7d9f22d5efb352aff33a7b0",
+    "rubric.json": "87cb325ba46d71d943ba80f6c3eb9effa05994f86ff7d6e5241d76e610ba7a87"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "8dd90ad0004a7a52815cbb75abac5465f6ba4b14971e3eb75c10501afe181e9a"
+  },
+  "modules": [
+    {
+      "module": "ConvexProjection",
+      "source": "ConvexProjection.lean",
+      "sha256": "bcf610427ac6904bb1f81d6c28e3384c934b77e46e2a1800e8354f66a35ea604",
+      "imports": [
+        "Mathlib.Analysis.InnerProductSpace.Projection.Minimal",
+        "Mathlib.Topology.Order.MonotoneConvergence",
+        "Mathlib.Topology.MetricSpace.Cauchy",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "FiniteConstraints",
+      "source": "FiniteConstraints.lean",
+      "sha256": "ba3e25b83364d09e500a050400fbf7b03469e2e838d576b324107f695438c95e",
+      "imports": [
+        "ConvexProjection"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "e076edfbc10823cdec185cf3bfc7abf3390603eb697b57c7156f38e08024a92e",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.FiniteConstraints."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

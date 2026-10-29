@@ -1,0 +1,953 @@
+{
+  "schema": "math-gauge.comparison-freeze/v1",
+  "utc": "2026-10-29T16:49:50.143257+00:00",
+  "catalog_path": "/private/tmp/math-gauge-full-comparison-20261030/runtime/catalog.frozen.json",
+  "catalog_original_path": "/Users/g4i/lab/math-gauge/exercises/catalog.json",
+  "catalog_sha256": "7828d0b636f9dfeebebadacd4bf6c8c312d914164f337f08b0f989840f9c6faf",
+  "runtime_root": "/private/tmp/math-gauge-full-comparison-20261030",
+  "runner_sha256": "d4da219f4642bd2c50ab2f7f5793361472153ab710796cd8aca18fcb282abded",
+  "code_identity": {
+    "scripts/benchmark/cli_adapter.py": "16c12e842ad04591f0c74813cf65849d7bd8a410e6c0e9b9e52d94b8fbac4cb7",
+    "scripts/benchmark/common.py": "a7a034347666d08fd9c67559ad2a8be039504d21fed6ae57f0306f713df1c8b5",
+    "scripts/benchmark/isolation.py": "59adb85b7e4ccb1ce4bbfd6d72d4fc45d7363c6235f10231cab0503ffa50af33",
+    "scripts/benchmark/preflight.py": "45f0b8db427f700fbcf19dbabac7106c2f95d4b555c4910e17da8c46a3633b86",
+    "scripts/benchmark/run_comparison.py": "abd655336fb1626b6efdda9acd72577f228d2121992d7d736f7266e3330779d3",
+    "scripts/benchmark/test_runtime.py": "d0cc30c22f7dee4dd73dcfa3f24527ff501932555fb5b73f56cdb9d337118201",
+    "scripts/isolated_cli/prepare.py": "2ca56c8ca1aaeb1ee01f31c28151516063f7ddf001ea629256ddc3fea14d547b",
+    "scripts/isolated_cli/probe.py": "70ba1a6d7404195a1f9b4a9668197d60c583731d8980066d0c82e266f4ef3b80"
+  },
+  "preflight_bindings": [
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-disabled-verdict.json",
+      "sha256": "42529729a5bbf979f456aad199b9d1bd88fa3ee280dcbaef7502e0d63f245db8"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-enabled-verdict.json",
+      "sha256": "02594e9b60c8588a15e89fef17ab9da567acc6581170f882d89b9a9b8f2f8b79"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/identity/terra/identity.json",
+      "sha256": "58a421dda357f9b9d76e7ee2b4a975d0da5a63058b09697c1a78b4d49874018b"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/config/terra.json",
+      "sha256": "10db384cff0cd7270c95b4f464e57d4906de154f59473586cc45f67789d895d6"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-model-inventory.json",
+      "sha256": "21074c06b632671625d1ae8a41137472fb0a3aa3dcc08f5f2d1c9d17a598444f"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/gemini-disabled-verdict.json",
+      "sha256": "ca15cfcbecbe91c9a0ecd953ade48c620698045ff7fa1b4c594cd04bf2abb1c0"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/gemini-enabled-verdict.json",
+      "sha256": "0a29488949c8f3c2d40598f5ddee518d18091cebb89a0268c8ecad69b29cb4fa"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/identity/gemini-02/identity.json",
+      "sha256": "e3b76764af25eeb11a71dec19332f20c0df3a2636068fd6b6028754ebd953b51"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/config/gemini.json",
+      "sha256": "b7499c1661ddabf8f0701fe26c93a755553d4f18871bbf85f50d7d0ce70cf826"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/gemini-model-inventory.json",
+      "sha256": "d3121665d81b5908edb2f43b3facf5bab232dd5448e6940b09e1aee8ddd8869d"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/gemini-canary-disabled-02/runtime/execution.json",
+      "sha256": "5b2bf51f4ef0833d20844fa6f1c539d56ce18cd6cd10cb5dfbf1c2f3b02c58e8"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/gemini-canary-enabled-02/runtime/execution.json",
+      "sha256": "4471287139337338874df1769ee007035d32d5ec8dd8794cf458b10d95d03059"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/gemini-canary-enabled-03/runtime/execution.json",
+      "sha256": "f84be9ae274adef34fea5919fef2d7cabb9720f2878009056f6d7ecdda6b25c8"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-canary-disabled-01/runtime/execution.json",
+      "sha256": "ce7dd7138788f2b3a617a04c6f59a22b0dc38c635e4f0c0f3021a3728c5b9364"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-canary-disabled-03/runtime/execution.json",
+      "sha256": "41e69d43a230395c76b1c5761e8aed76174f9549027d6e144bbcb4d7b8b0790f"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-canary-enabled-01/runtime/execution.json",
+      "sha256": "0a0102c051bc0ae37e332296ffb66ca6d93cd31cd9591a6d43ce6feb4065d508"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-canary-enabled-03/runtime/execution.json",
+      "sha256": "1e26a0e84eb3f7f550ed72aaf94ebf490f715fa99a13340e834f4420a9c573b0"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/terra-canary-enabled-04/runtime/execution.json",
+      "sha256": "6c81ca4f32a266fc85c79ae56233ab7dcab648617abdbc1a88ff17b219e19ef7"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-43-51.906747+00-00.json",
+      "sha256": "c4c9186e23f8aa8d2b0c454909bfe8bc8cdfc19041d69d2a476bdbb99c84ffbd"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-44-31.673668+00-00.json",
+      "sha256": "1d932ec2338aff34588d6188535a0b5d6029ec0ab81280a42fc962631bff20a1"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-44-37.168908+00-00.json",
+      "sha256": "e16a07a8c634798f0d0492014f7c118c7c180d9b286be8b493cd64486bd01a63"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-44-48.373209+00-00.json",
+      "sha256": "f858c84b071f081b7b909ba114737929498d691960e2e9a0761ac1dd6ee2790b"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-44-50.490755+00-00.json",
+      "sha256": "81a413da993f19fbf01162fb43e237f2e2938b98fe998e434929aacc4b712707"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-45-11.257843+00-00.json",
+      "sha256": "95e6c05330e901a650878b5bb6316d90a2b9fa7602fc49a272c68ba8b9d80e04"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-45-13.728229+00-00.json",
+      "sha256": "e8f7f6b98a11762282465212d038cb5fee6e594ff6f5669946f26f117b43c723"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-47-12.931481+00-00.json",
+      "sha256": "fb066806303681d3de6bee2c4f9ecf6509a87ed26997ba6ca4458a0d2ec86fb5"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-47-15.853064+00-00.json",
+      "sha256": "66512a880a0f25cfd9ee52c560d9545c69e35131f5f1675fee8e707fba364fc7"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/invocations/2026-10-29T16-48-23.861063+00-00.json",
+      "sha256": "a4778c71e363b4f1f097f71e5f8acd6bc2d795b9c82765016b16b3dfc817f34b"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/early-attempt-notes.json",
+      "sha256": "e56e2e96fac085b2bf4537da7037ed8e27760bfdb194fde36e4e76d27f0c0116"
+    },
+    {
+      "path": "/private/tmp/math-gauge-full-comparison-20261030/preflight/qualification.json",
+      "sha256": "06d0136722fd4ef2b866e8fce211798547369ccf7ab4f1fa6f2b5a4874b1513a"
+    }
+  ],
+  "suite_snapshots": [
+    {
+      "root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "original_root": "/Users/g4i/lab/math-gauge/cases/public",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde"
+    },
+    {
+      "root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "original_root": "/Users/g4i/lab/math-gauge/drafts/true-goal-six-20261029",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa"
+    },
+    {
+      "root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/2",
+      "original_root": "/Users/g4i/lab/math-gauge/drafts/public-proof-extractions-20261029",
+      "suite_sha256": "183ff9585facd68e422609bcb24199878c45da6bb2708a8ddf570c11c0738a8b"
+    },
+    {
+      "root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "original_root": "/Users/g4i/lab/math-gauge/drafts/lean-alignment-20261029",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "MG-R001",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r001",
+      "section": "01-operators-and-dynamics",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "6cf714406174fe7bfb82e74f2563534d7bc4f84824537eb4fbd968db63526027",
+      "candidate_message_sha256": "779bf275a6184fb848a12f3d72089a21d4704513512e10323aa48d4ee462cecd",
+      "candidate_message_bytes": 1756,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R001",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R001"
+      }
+    },
+    {
+      "case_id": "MG-R002",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r002",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "6b07ca2dd9b4a63926d0d2789a536c048efcea9a22b211e2caedb282e28fd601",
+      "candidate_message_sha256": "71ef332d811b63392929e7bb0d889fef75acde3fe1db4ad1545a5f8a7f4f040c",
+      "candidate_message_bytes": 1214,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R002",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R002"
+      }
+    },
+    {
+      "case_id": "MG-R003",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r003",
+      "section": "01-operators-and-dynamics",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "d1ddb10ef38fcce1ad5072c38712d6490500e2a523297d956ae69658cd19fc10",
+      "candidate_message_sha256": "930ab2a419e333c96146a5413ad9eeb252488b74e1c4c36e39c2b82c4aa904ed",
+      "candidate_message_bytes": 882,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R003",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R003"
+      }
+    },
+    {
+      "case_id": "MG-R004",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r004",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "c88beac5cbdb5d1e95e04c79ce3f7f17351d3a7b718f3949eae61f9c48fba4e6",
+      "candidate_message_sha256": "ff03d4b674680281bde97e73b5316f01fc4837fa5c58625eb0dc54706ae2650a",
+      "candidate_message_bytes": 822,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R004",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R004"
+      }
+    },
+    {
+      "case_id": "MG-R005",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r005",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "2b00d0dad529781646f5869cd48d013aab457d102f44b0f5f38fb97d4781db5f",
+      "candidate_message_sha256": "cda77a5ed5e6ece09a0159cff60b232092fb1c20c0ce8eec669fe832bc23f0bb",
+      "candidate_message_bytes": 773,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R005",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R005"
+      }
+    },
+    {
+      "case_id": "MG-R006",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r006",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "a2f79e656819e41055048316206689866f02831bbfe40b12760032e322dbbf36",
+      "candidate_message_sha256": "b26a92cfdbc9103f9c901759357d4b9a06eb93ca146c79f8b16149b96a35d1ca",
+      "candidate_message_bytes": 956,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R006",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R006"
+      }
+    },
+    {
+      "case_id": "MG-R007",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r007",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "5f20ece664bb5a294b8a73078c89772a6b99efb6c9bc2cef1f52a94b453963e9",
+      "candidate_message_sha256": "8fd7814c8b5c4ce93c2ee35c6556bd480cb11b296e74b699457571f29719f9da",
+      "candidate_message_bytes": 1270,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R007",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R007"
+      }
+    },
+    {
+      "case_id": "MG-R008",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r008",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "ac893ab89ea1d9bd7f0acc13d848c54f0f686f571c65ac928579862e7067b253",
+      "candidate_message_sha256": "8147620b629ddb512b50b067548b725948ea02b4e66731d2ba643f8e7300346f",
+      "candidate_message_bytes": 1683,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R008",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R008"
+      }
+    },
+    {
+      "case_id": "MG-R009",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r009",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "ba252c15ab685fd0df52bb9dc448cc882b0addceef248570e0f9af34c58acb28",
+      "candidate_message_sha256": "9281a387aa63823bc3ffb6a23d4c00a54fa5b473cf1aa58575544f44befd0958",
+      "candidate_message_bytes": 1823,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R009",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R009"
+      }
+    },
+    {
+      "case_id": "MG-R010",
+      "version": "0.3.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r010",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "baa389f803e11f5828cbe2e8c9783aeadc2e2bf3d5008b0e74e3841c29d9aab9",
+      "candidate_message_sha256": "3fad78784dcb0b49a4a828e6cd1fff1e668e479f86b0083a490e766156b4d503",
+      "candidate_message_bytes": 1366,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R010",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R010"
+      }
+    },
+    {
+      "case_id": "MG-R011",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r011",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "31733e2a7958e9ea08593fda306646c1e1b8694f49c54f8eb4ce5b3f0ce76458",
+      "candidate_message_sha256": "5c10468869f540845f55edc530dcf6950af5c3735c0cc0abd83576b89b97641d",
+      "candidate_message_bytes": 859,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R011",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R011"
+      }
+    },
+    {
+      "case_id": "MG-R012",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r012",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "64013d3cc9c9d0206912b0f14d2ee58f3dd50b123288ab138ab841ff9a9eadeb",
+      "candidate_message_sha256": "5db570d44ca6cb63f839c80d9ba14728eb164b1d012bab34f6b6a52fc2ceb8a8",
+      "candidate_message_bytes": 971,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R012",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R012"
+      }
+    },
+    {
+      "case_id": "MG-R013",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r013",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "08cb51e04940cd94566f60eb961d8c031f0ba362d3f6de303510dfbb95dcf948",
+      "candidate_message_sha256": "b3de9be919cb8d11e54a2768d2ccfb4075f1b2e9d599ae45caa085de2ecc597b",
+      "candidate_message_bytes": 736,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R013",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R013"
+      }
+    },
+    {
+      "case_id": "MG-R014",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r014",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "b82f9642389881db3d3302f0b42a911633c9f2895cd34d99edf09eca9c3daa4b",
+      "candidate_message_sha256": "f3cbe276673e8dc41f449afd5d55e5ea4c7bc0ddf8d97d83d2aa521bca513346",
+      "candidate_message_bytes": 790,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R014",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R014"
+      }
+    },
+    {
+      "case_id": "MG-R015",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r015",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "c1a7a1b7ad73468a7c38e5571eeac313dfb6d0cca16e688fe23365b0c93afc8b",
+      "candidate_message_sha256": "0e13641c42d225731bfe68fe0d550e4a32c637f8b1858a7d2c3d100f95b8c9b9",
+      "candidate_message_bytes": 818,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R015",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R015"
+      }
+    },
+    {
+      "case_id": "MG-R016",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r016",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "baf0a031af2b5c01d0a8db69eadc06fb7c7cbdca1efe19c755a93720cb10752c",
+      "candidate_message_sha256": "b4948adf21f4d834fbc4a137f3e5c23bd6f4f0b6c061c951d876c62cd82fdc9b",
+      "candidate_message_bytes": 808,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R016",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R016"
+      }
+    },
+    {
+      "case_id": "MG-R017",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r017",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "bc30e53927870757eeb1ad1303dca3c57e806cad5b448918c84e362402859797",
+      "candidate_message_sha256": "9561596614f31ed95f03e6e6bdfe72ecda71800154fb98545dcbd5f90f4d7931",
+      "candidate_message_bytes": 622,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R017",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R017"
+      }
+    },
+    {
+      "case_id": "MG-R018",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r018",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "6603567cb8409fe261dbfad785eb30eedd19667b11cf38f2a96c200ddf38e094",
+      "candidate_message_sha256": "62c61ec69911410ea7dde1bf26cecfbc57b475930b092aceac5a63817f9cce4b",
+      "candidate_message_bytes": 1077,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R018",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R018"
+      }
+    },
+    {
+      "case_id": "MG-R019",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r019",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "3cbcf37a2850550fafa6c1728e8d0c0dc19a5a067293f843eb727df42b1670cd",
+      "candidate_message_sha256": "e1785aabc869200ad877465d0fe4becdda05f90945277c792cb42159eb8afc10",
+      "candidate_message_bytes": 1524,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R019",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R019"
+      }
+    },
+    {
+      "case_id": "MG-R020",
+      "version": "0.4.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r020",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/0",
+      "suite_sha256": "68a223f0a697fc02d0b4ac20f0be8f88b45d8e0906b6cd8bbaad138832efddde",
+      "request_sha256": "d2d210e6677ae457369cd40f279ebc5bd41c481f7eaedcf654d9d5a9e1d663dd",
+      "candidate_message_sha256": "fb74c5f65e2e8b99f12b98526d5f3a6a90cf1e69763592f597d86cb8f2d745f6",
+      "candidate_message_bytes": 833,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R020",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R020"
+      }
+    },
+    {
+      "case_id": "MG-R101",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r101",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+      "request_sha256": "3f0e9dfc24d4736d0d006b1fe3955911c90ca97435f46fc8d6ab6fb615c46494",
+      "candidate_message_sha256": "232836a493368d62a0bdb8ce83900b094bfc69b8255d9c06493f3891755b83b1",
+      "candidate_message_bytes": 947,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R101",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R101"
+      }
+    },
+    {
+      "case_id": "MG-R102",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r102",
+      "section": "01-operators-and-dynamics",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+      "request_sha256": "10f9710b9a1e21c331fa3da89b28ace360d504744b3d4b8b9048662971205267",
+      "candidate_message_sha256": "f7413c2d2d0e2b808001bfdadbe597e26d0642ac66d723a574e725a80912718a",
+      "candidate_message_bytes": 884,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R102",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R102"
+      }
+    },
+    {
+      "case_id": "MG-R103",
+      "version": "0.1.1",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r103",
+      "section": "01-operators-and-dynamics",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+      "request_sha256": "c3f2354d6a1287635014eb59389d5f3f9b8c5de61a59168e51ae25b8315b0ef0",
+      "candidate_message_sha256": "11a608e8da8fe5468eeda13cac5027447ccc1114cde1099a51fff6b1c16d0648",
+      "candidate_message_bytes": 1394,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R103",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R103"
+      }
+    },
+    {
+      "case_id": "MG-R104",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r104",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+      "request_sha256": "75e30267fb29f3de07368fce4ae245d5dcda4b31fac82b8bad160766b1a510ce",
+      "candidate_message_sha256": "a61c30cd381dc0d73c942cadfd81085ca4360bfde0a29988c85d1302a99867ea",
+      "candidate_message_bytes": 1370,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R104",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R104"
+      }
+    },
+    {
+      "case_id": "MG-R105",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r105",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+      "request_sha256": "b0429c08ae541c92805ffe19c9493e692fe325bb36708a1c0e98ac9d175d6ac5",
+      "candidate_message_sha256": "cab4dc7f1330529059ba1331ee5407f90c3e425b6499b792c1a28119cad946e7",
+      "candidate_message_bytes": 903,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R105",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R105"
+      }
+    },
+    {
+      "case_id": "MG-R106",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-r106",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/1",
+      "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+      "request_sha256": "8f0044b20dec5b69b1633917e00a49728e4d984932f3eabdb9308c2e31bcbb3c",
+      "candidate_message_sha256": "131c32faec80b3721b34cbf8d349a10168c0f68bbd74a1ecbe653b78ff6b6758",
+      "candidate_message_bytes": 1046,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-R106",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-R106"
+      }
+    },
+    {
+      "case_id": "MG-P001",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-p001",
+      "section": "07-geometric-proof-mechanisms",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/2",
+      "suite_sha256": "183ff9585facd68e422609bcb24199878c45da6bb2708a8ddf570c11c0738a8b",
+      "request_sha256": "27aa0a4975416d176cedf8a5c292b7f55866c981dcbb58c9dfe6600d942456dd",
+      "candidate_message_sha256": "585af7452212b4da2ea392a9fa9c3ab391dfd2d38786ba9a22c663bced02008b",
+      "candidate_message_bytes": 677,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-P001",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-P001"
+      }
+    },
+    {
+      "case_id": "MG-P002",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-p002",
+      "section": "06-fourier-and-regularity",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/2",
+      "suite_sha256": "183ff9585facd68e422609bcb24199878c45da6bb2708a8ddf570c11c0738a8b",
+      "request_sha256": "1ffa32fcb08df383e1ac15fd545fb0700c08b79b39be966bd31dc8b286470a14",
+      "candidate_message_sha256": "61f9638c22208839d098783881ba3d15148f10002ae30eae40c95f0432513f16",
+      "candidate_message_bytes": 1572,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-P002",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-P002"
+      }
+    },
+    {
+      "case_id": "MG-P003",
+      "version": "0.1.0",
+      "task_kind": "written",
+      "family_id": "exercise-mg-p003",
+      "section": "07-geometric-proof-mechanisms",
+      "author_lean_coverage": "partial-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/2",
+      "suite_sha256": "183ff9585facd68e422609bcb24199878c45da6bb2708a8ddf570c11c0738a8b",
+      "request_sha256": "a8b8ee21397461c10db919482ebf969e061760ba2c15aed318ab6bc1691663e3",
+      "candidate_message_sha256": "f7915d84516e1bd5853c81ceb6e5c20dfa715e0bdf1c1ec8f0c9517f4e44e80b",
+      "candidate_message_bytes": 1428,
+      "attachment_names": [],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-P003",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-P003"
+      }
+    },
+    {
+      "case_id": "MG-F101",
+      "version": "0.1.0",
+      "task_kind": "audit",
+      "family_id": "quotient-ideal-nilpotence",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "273c5d1704f7e8f8dadb4a0834519f68244c7106dcd2bcbccd127c4ba166804f",
+      "candidate_message_sha256": "54c47d323578209b6911db513aa38ad7506f4e252af58ead71455511b886851d",
+      "candidate_message_bytes": 3178,
+      "attachment_names": [
+        "Core.lean",
+        "Transfer.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F101",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F101"
+      }
+    },
+    {
+      "case_id": "MG-F102",
+      "version": "0.1.0",
+      "task_kind": "generate",
+      "family_id": "quotient-ideal-nilpotence",
+      "section": "03-algebra-and-compatible-lifting",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "432d773c7e9eb637bdf4e59fc2b9af4e99c0a99cb98a37600abcdd79dc6e2732",
+      "candidate_message_sha256": "f8e100faa504704f154258b0a16540dfd17bbdf345a1d5a8df486c3c8e32e84b",
+      "candidate_message_bytes": 1538,
+      "attachment_names": [
+        "Core.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F102",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F102"
+      }
+    },
+    {
+      "case_id": "MG-F103",
+      "version": "0.1.0",
+      "task_kind": "audit",
+      "family_id": "initial-topology-universal-property",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "c93db7bad161f68ea267a198f729b55723dafb0c33a35e7e41990ce0d5370050",
+      "candidate_message_sha256": "3c8e8b75735c6faf76cca01dbc3517c43c157ecf191a0a1f0b18a6c86c3a250f",
+      "candidate_message_bytes": 2912,
+      "attachment_names": [
+        "Core.lean",
+        "Construction.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F103",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F103"
+      }
+    },
+    {
+      "case_id": "MG-F104",
+      "version": "0.1.0",
+      "task_kind": "repair",
+      "family_id": "initial-topology-universal-property",
+      "section": "04-topology-and-descent",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "8cb480c8eb5e193060cf9f8bdd2fa29bbde60c1b40936ea5c95a4efdd85b7058",
+      "candidate_message_sha256": "dca947364f3645be303d7ab44db2c34f24d706ab8da70c3a45fa447180493003",
+      "candidate_message_bytes": 2922,
+      "attachment_names": [
+        "Core.lean",
+        "Construction.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F104",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F104"
+      }
+    },
+    {
+      "case_id": "MG-F105",
+      "version": "0.1.0",
+      "task_kind": "audit",
+      "family_id": "pfr-dense-coset",
+      "section": "05-finite-covering",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "055585bb7fcd8198468f4403a29a7efe564b9a36bca4dcc69e88c9d6feb92df0",
+      "candidate_message_sha256": "52664d3135614ae4e55e7aac4f80f61701951152bb64b4deaf343ecee541ea2d",
+      "candidate_message_bytes": 3602,
+      "attachment_names": [
+        "Core.lean",
+        "Bridge.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F105",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F105"
+      }
+    },
+    {
+      "case_id": "MG-F106",
+      "version": "0.1.0",
+      "task_kind": "generate",
+      "family_id": "pfr-dense-coset",
+      "section": "05-finite-covering",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "18ea9b05b66ed3f991485b485355ed10515e72ddcedb8dceac8a658164a65413",
+      "candidate_message_sha256": "b756571f67f7c90a2ed5a34076300a25340f7d9a5db6c63b6380d82da694c684",
+      "candidate_message_bytes": 1684,
+      "attachment_names": [
+        "Core.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F106",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F106"
+      }
+    },
+    {
+      "case_id": "MG-F107",
+      "version": "0.1.0",
+      "task_kind": "audit",
+      "family_id": "sequence-regularity-loss",
+      "section": "06-fourier-and-regularity",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "ffa584c6936c4ec13bfe5c7b127b9bc87c0f46c2410eb44f3404683433c4db8d",
+      "candidate_message_sha256": "12b3e1426314f3596a3f3db066344f10941899747896cde0bfe44b9496efbf52",
+      "candidate_message_bytes": 4160,
+      "attachment_names": [
+        "Core.lean",
+        "Multiplier.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F107",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F107"
+      }
+    },
+    {
+      "case_id": "MG-F108",
+      "version": "0.1.0",
+      "task_kind": "repair",
+      "family_id": "sequence-regularity-loss",
+      "section": "06-fourier-and-regularity",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "195a006cd810ab146893c5fa458d3b8c958ab115d5fc3d87d59d4cf92896aeb8",
+      "candidate_message_sha256": "ea7fbbb02cbd594984b53dde49a5fc4ff071f76c800cae1dd19535bd0b62b632",
+      "candidate_message_bytes": 4237,
+      "attachment_names": [
+        "Core.lean",
+        "Multiplier.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F108",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F108"
+      }
+    },
+    {
+      "case_id": "MG-F109",
+      "version": "0.1.0",
+      "task_kind": "audit",
+      "family_id": "finite-record-stuttering-v1",
+      "section": "01-operators-and-dynamics",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "fd703083803cf7b04f71e91afa523fe7ae58e39e01ba7d6d9a1f7df1f178c2b8",
+      "candidate_message_sha256": "402e3bc3f838368a3d3bfeaa2d116d7da44b2e00e0a72f7cf9f610291f1ad997",
+      "candidate_message_bytes": 5974,
+      "attachment_names": [
+        "RecordLayers.lean",
+        "OrbitModel.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F109",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F109"
+      }
+    },
+    {
+      "case_id": "MG-F110",
+      "version": "0.1.0",
+      "task_kind": "repair",
+      "family_id": "finite-record-stuttering-v1",
+      "section": "01-operators-and-dynamics",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "361f10d0ca938c9e22f2b0776a1d2d901b09ba6cbffd2df7ce198191cdac7253",
+      "candidate_message_sha256": "9b2b08640ab6501a2fa0a502f8174b732f52c466c56ac45042fd76d0273db1e5",
+      "candidate_message_bytes": 6084,
+      "attachment_names": [
+        "RecordLayers.lean",
+        "OrbitModel.lean",
+        "Candidate.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F110",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F110"
+      }
+    },
+    {
+      "case_id": "MG-F111",
+      "version": "0.1.0",
+      "task_kind": "audit",
+      "family_id": "extended-bound-attainment-v1",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "72595ba4851d96f36f63177aaca2e42f9b4a722b51eb7ab278fec83510573634",
+      "candidate_message_sha256": "91663a746524d41ac7aa1f0d331f475855f8d993ff8a3b9334a49f11602ca3e8",
+      "candidate_message_bytes": 6040,
+      "attachment_names": [
+        "ExtendedBounds.lean",
+        "CoefficientClassification.lean",
+        "BoundaryExample.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F111",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F111"
+      }
+    },
+    {
+      "case_id": "MG-F112",
+      "version": "0.1.0",
+      "task_kind": "generate",
+      "family_id": "extended-bound-attainment-v1",
+      "section": "02-analysis-and-recovery",
+      "author_lean_coverage": "full-main-task",
+      "suite_root": "/private/tmp/math-gauge-full-comparison-20261030/frozen-suites/3",
+      "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+      "request_sha256": "bdeb5d75ae5e365162cadc81ffad90c3ac2cd3975e1d456072b5d305e023ddfc",
+      "candidate_message_sha256": "47fa51cf7c9e96e39de0ea1f89dbbde25be6b1124bc62e976dc32c4aa9c584cf",
+      "candidate_message_bytes": 1924,
+      "attachment_names": [
+        "ExtendedData.lean"
+      ],
+      "sessions": {
+        "terra": "/private/tmp/math-gauge-full-comparison-20261030/sessions/terra/MG-F112",
+        "gemini": "/private/tmp/math-gauge-full-comparison-20261030/sessions/gemini/MG-F112"
+      }
+    }
+  ],
+  "model_order": [
+    "terra",
+    "gemini"
+  ],
+  "parallel_per_model": 2,
+  "timeout_seconds": 2700,
+  "automatic_retry": false,
+  "mathematical_requests": 0
+}

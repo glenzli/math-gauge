@@ -1,0 +1,44 @@
+{
+  "packet_id": "76a7d10c4e85",
+  "case_id": "MG-F112",
+  "response_sha256": "ba561a713f3aabfd87c068aebef1a196567c129e342c08648fa66cb30e8b2547",
+  "request_sha256": "bdeb5d75ae5e365162cadc81ffad90c3ac2cd3975e1d456072b5d305e023ddfc",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "decision": "partial",
+  "assumption_fidelity": "clean",
+  "proof_validity": "unknown",
+  "scope_accuracy": "incorrect",
+  "unnecessary_restriction": false,
+  "notes": "候选给出正确的三项分类公式与实际 Unit 上 d=∞、e=1 的非取到例，完整保留零源、无穷源和零系数分支；最小值用严格中间系数反证的数学路线也正确。但完整 Lean 原样交付未通过：ExtendedData 成功，Solution 中两次 hbc.not_le 字段投影在固定环境不存在，最小值辅助引理失败，全声明公理审计未运行。答卷自称完整形式化证明及反例验证，超出了已实现的源码状态，因此 partial，proof_validity unknown，scope_accuracy incorrect 仅指完成状态。围栏前中文文件标题均唯一明确，自动解析首报 format_error 已保留，人工复核严格提取两个完整原始块、未改任何代码。需 root 独立二审，人审待定。",
+  "findings": [
+    "重交 ExtendedData.lean 与冻结附件逐字节相同，Bound、ZeroCompatible、TopCompatible、ratioSup 的有限正源子类型和 LeastFinite 的有限比较量词均保持。",
+    "exists_finite_bound_iff 的条件为 Z且r≠∞；反向在r=0取1、r≠0取r，二者均有限正，正确避免额外H条件。没有将全部源值或目标值限制为实数。",
+    "bound_zero_of_conditions 和 bound_ratioSup 保留 d=0、d=∞、有限正值三分支及0*∞=0；exists_least_finite_iff 条件完整为Z、r有限、r=0→H。",
+    "least_finite_eq 以所有可行系数≥r和若r<c则取r<b<c的严格中间系数反证得到c=r，数学论证有效；原Lean实现未通过，不将自然语言正确路线替换为可编译证明。",
+    "实际反例 counter_d:Unit→ENNReal 为∞、counter_e为1；显式构造c=1有限可行、比值域为空所以r=0，再从最小值等于0推出1≤0矛盾。它没有用证书把目标当输入。",
+    "真实错误：Solution.lean:126:39 与 :129:12 error(lean.invalidField)，hbc.not_le 不存在，诊断为环境不含 WithBot.LT.not_le。该错误发生在 leastFinite_le_ratioSup 的有限性和最小性矛盾步骤，是源码编译失败，不是缺依赖或超时。",
+    "两个块分别由“文件1：ExtendedData.lean”“文件2：Solution.lean”唯一命名，中间一句说明导致自动提取失败；完整原字节手工span提取符合题面块前标名合同，不据此当数学失败。",
+    "完整公理审计未到达，不能报告全部声明无sorryAx；原始代码没有被修复或删减。附带“实际数据/实测数据”的文字是明确给定函数实例，并非经验采样证据，不影响所需数学反例。"
+  ],
+  "needs_second_review": true,
+  "candidate_lean_report_path": "/private/tmp/math-gauge-review-f/76a7d10c4e85/lean-manual-extraction/report.json",
+  "candidate_lean_report_sha256": "a9273c13227ee73965ae9c2bdcae8483e66d6252bdd85f6b6e7f7707b98a3614",
+  "candidate_lean_status": "compile_error",
+  "candidate_artifact_sha256": "5905c6f45bed9b8c7dcefb544fa48ef7a36262d89b44e946d3032558aa2de3a6",
+  "initial_extraction_report_path": "/private/tmp/math-gauge-review-f/76a7d10c4e85/lean/report.json",
+  "initial_extraction_report_sha256": "d18aeb452ca64c4f865455fd5c9be0f651aef6632c2058ef1a30c430f397ae26",
+  "extraction_override_path": "/private/tmp/math-gauge-review-f/76a7d10c4e85/lean-manual-extraction/extraction-override.json",
+  "extraction_override_sha256": "9c26e8e417260c5e4c9072935e48f6ad926424639041911b5ecf5ec2c2e33776",
+  "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/76a7d10c4e85",
+  "review_material_sha256": {
+    "task.md": "623e8a47cfe51bb7c200437601b0a3d39dd7eae2518d5b8b9830a25db9600c6f",
+    "reference.md": "ea5dddfc2f0c534d646083160f5c4d3a229be631e23b966b775f68a0355d02ca",
+    "rubric.json": "e99313429e076f956fb37cad393ef7df7815451dfa6eb4a95ae031c17e5ccc34"
+  },
+  "input_attachment_sha256": {
+    "ExtendedData.lean": "f98f279532b4dbb2a621b0270621a8004cb6ef516af9b822dde11a9e188bbc7b"
+  },
+  "candidate_message_sha256": "47fa51cf7c9e96e39de0ea1f89dbbde25be6b1124bc62e976dc32c4aa9c584cf",
+  "second_review_request": "Confirm the unambiguous whole-block extraction and original hbc.not_le failures at Solution lines 126/129. Judge partial for missing compilable Lean delivery, not for parser formatting; do not rewrite source or count a hypothetical repair."
+}

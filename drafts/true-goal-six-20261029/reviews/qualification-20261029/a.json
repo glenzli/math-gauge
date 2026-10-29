@@ -1,0 +1,1872 @@
+{
+  "schema": "math-gauge.adversarial-qualification/v1",
+  "review_id": "qualification-a-20261029",
+  "reviewer_kind": "ai",
+  "reviewer": "Codex delegated agent /root/qualification_a; backend identity not independently attested",
+  "reviewed_at_utc": "2026-10-29T14:58:33.155693+00:00",
+  "scope": [
+    "MG-R101",
+    "MG-R104",
+    "MG-R105"
+  ],
+  "review_method": {
+    "task_first": true,
+    "task_first_record": {
+      "stage": "task_only_before_reference",
+      "reviewer_kind": "ai",
+      "created_at": "2026-10-29T14:46:46.288768+00:00",
+      "cases": {
+        "MG-R101": {
+          "main_goal": "true",
+          "independent_argument": "Choose t with t-x∈A and t-y∈B using x-y∈A+B; δ([(x,y,z)])=[t-z] mod ((A∩B)+C). Changing t adds A∩B; changing representatives adds C modulo the same class. t-z lies in both A+C and B+C. Kernel is diagonal realizability; image is all O via (0,0,-h). Fibres of realizations are cosets of A∩B∩C.",
+          "boundaries": "Arbitrary unital, possibly noncommutative ring; zero module; equal or zero submodules; O=0; no split or surjectivity of j assumed."
+        },
+        "MG-R104": {
+          "main_goal": "true",
+          "independent_argument": "Directedness makes p_i(r_i) independent of i. A nil kernel gives unique idempotent lifting for each commutative ring R_i→S. Uniqueness forces compatibility across the inverse system, orthogonality and the sum-one condition, yielding all finite decompositions. The product quotient map is the standard central-idempotent CRT map; compatible ring maps preserve lifts.",
+          "boundaries": "No surjective transition maps or uniform nilpotence bound required. Nilpotence of ker(p:L→S) and surjectivity of p are not required. Empty J entails S=0, whence all R_i and L are zero."
+        },
+        "MG-R105": {
+          "main_goal": "true",
+          "independent_argument": "Q is isometric to range(A). Use closure(range(A)) in H as completion, with inclusion J. Density proves uniqueness of an isometric extension on a fixed completion. Orthogonal projection onto closure(range(A)) gives the unique minimizer and a linear contraction. Infima over the range and its closure agree. Original minimizers exist exactly when the orthogonal projection lies in range(A), and then form x0+ker(A).",
+          "boundaries": "E is purely algebraic, A need not be continuous for any presupposed norm. Zero A, zero H, nonclosed range, and nontrivial kernel all included."
+        }
+      }
+    },
+    "independence": "All three task-only judgments were recorded before reading references, rubrics or Lean. Existing peer report files were not opened or used. Case/validation metadata contains old peer status labels; those labels were explicitly ignored as mathematical evidence.",
+    "repository_access": "read-only; no repository files changed; report and evidence written only under /private/tmp",
+    "skills": [
+      "math-writing",
+      "lean-formalization"
+    ],
+    "prepare_not_run": "The explicit read-only assignment overrides generated-project preparation. This benchmark is reviewed using its own actual source/manifests rather than creating Math Workspace indexes.",
+    "new_compilation": false,
+    "compilation_reason": "Current task/reference/rubric, Lean source, coverage, manifest, compiler binary, direct imported oleans, existing output oleans and logs match existing hash-bound verification evidence. No Lean source was changed, so rebuilding unchanged fixtures was unnecessary.",
+    "new_model_trials": 0,
+    "human_approval": "pending",
+    "difficulty": "uncalibrated; expert short proofs remain legitimate",
+    "new_model_trials_scope": "Zero runs performed by this qualification agent; aggregate pilot activity is owned and recorded separately by the parent."
+  },
+  "overall": {
+    "ready_for_pilot": true,
+    "blocking_findings": [],
+    "non_blocking_findings": [],
+    "required_repairs": [],
+    "qualification": "All three cases qualify for a pilot on the exact reviewed bytes. This is an independent AI qualification, not human approval, a model result, or evidence of high empirical difficulty."
+  },
+  "cases": {
+    "MG-R101": {
+      "ready_for_pilot": true,
+      "main_goal_truth": "true",
+      "blocking_findings": [],
+      "non_blocking_findings": [],
+      "required_repairs": [],
+      "decision_reason": "The explicit partial-gluing obstruction is well-defined in the specified image submodule O, has the exact diagonal kernel, is onto with the prescribed sign, and classifies every realization fibre. All actual objects are present in Lean under the original arbitrary-ring/module assumptions.",
+      "quantifiers_and_boundaries": [
+        {
+          "checked": "R may be noncommutative or the zero ring; M is any left module. Only the additive group is commutative. No freeness, finiteness, complement or lattice distributivity is assumed.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/task.md",
+              "lines": [
+                3,
+                7
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                8,
+                22
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "All A,B,C are allowed, including 0, M, equal submodules and degenerate M=0. P and E are genuine submodules; L⊆H follows from A∩B⊆A,B and C⊆A+C,B+C.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                7,
+                7
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                90,
+                109
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                153,
+                170
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The implementation identifies P/E using precisely the three coordinate changes, rather than using pairwise compatibility as a replacement for a quotient. The target is the image of H in M/L, not all M/L.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                266,
+                274
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                302,
+                306
+              ]
+            }
+          ]
+        }
+      ],
+      "reference_argument_checks": [
+        {
+          "checked": "Write x−y=a+b and take w=x−a=y+b. Then w−x∈A and w−y∈B; using x−z∈A+C and y−z∈B+C gives w−z∈H. All signs agree with the requested normalization.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                9,
+                20
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                24,
+                48
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Changing w changes the obstruction by A∩B. A representative shift in A×B×C preserves the same partial solution and changes w−z only by −c∈C. Additivity/scalar compatibility is established after passing to the quotient; no linear selection of w is assumed.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                22,
+                24
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                118,
+                180
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "If w−z=u+c with u∈A∩B, t=w−u solves all three congruences. Conversely any complete solution makes the obstruction zero. Thus the kernel equals the diagonal image; the diagonal kernel is exactly I.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                28,
+                38
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                57,
+                75
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                214,
+                264
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "For h∈H the actual representative (0,0,−h) is compatible and has partial solution 0, giving δ=[h]. This proves surjectivity onto the specified O. Every nonempty realization set is exactly t0+I.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                40,
+                50
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                276,
+                300
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+              "lines": [
+                77,
+                88
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The extra uniqueness claim for δ is valid: every record is the diagonal class of w plus the elementary class (0,0,−(w−z)). It is not added to candidate obligations.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                52,
+                56
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/rubric.json",
+              "lines": [
+                13,
+                16
+              ]
+            }
+          ]
+        }
+      ],
+      "invalid_route_witnesses": [
+        {
+          "checked": "The three distinct lines in Q² have pairwise sum Q². The record (0,0,(1,0)) is compatible, but the first two conditions force t=0 and the third fails because (−1,0) is not diagonal. H=M and L=C, so its obstruction is nonzero. This refutes both pairwise-to-global gluing and the proposed distributive identity while satisfying all task hypotheses.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                60,
+                60
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "With A=B=M≠0,C=0 and the zero record, every w is a partial solution but the obstruction class lies in M/L=0. This only refutes uniqueness at the wrong object level.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                61,
+                61
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "With A=B=C=M≠0 there is one record and every vector realizes it. This refutes original-vector uniqueness without contradicting uniqueness modulo I.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+              "lines": [
+                62,
+                62
+              ]
+            }
+          ]
+        }
+      ],
+      "rubric_assessment": {
+        "checked": "Required evidence matches the task exactly: construction/independence, exactness/normalization and realization fibres. The completion policy expressly accepts shorter proofs and alternate routes and does not demand the three optional examples or splitting.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R101/rubric.json",
+            "lines": [
+              11,
+              24
+            ]
+          }
+        ]
+      },
+      "lean_semantics": {
+        "checked": "The chain records → records/noise → obstruction_image uses real submodules, actual quotients, an actual linear map and proved injectivity/kernel/image/surjectivity. No desired conclusion is an input certificate. Ring R does not become CommRing R. The algebraic lemmas cover zero and equal-submodule cases automatically.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+            "lines": [
+              8,
+              22
+            ]
+          },
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean",
+            "lines": [
+              90,
+              306
+            ]
+          }
+        ]
+      },
+      "formal_boundary": {
+        "checked": "Only the supplementary uniqueness-of-δ statement and the three paper examples lack separate Lean declarations; this is explicitly disclosed and does not omit a task obligation.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R101/formal/COVERAGE.md",
+            "lines": [
+              19,
+              23
+            ]
+          }
+        ]
+      },
+      "provenance": {
+        "checked": "Public Mathlib quotient background is identified with the pinned revision, independently composed triple-congruence synthesis is declared, and no private OET source is claimed.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R101/sources.local.json",
+            "lines": [
+              2,
+              9
+            ]
+          },
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+            "lines": [
+              66,
+              70
+            ]
+          }
+        ]
+      }
+    },
+    "MG-R104": {
+      "ready_for_pilot": true,
+      "main_goal_truth": "true",
+      "blocking_findings": [],
+      "non_blocking_findings": [],
+      "required_repairs": [],
+      "decision_reason": "Stagewise idempotent existence and uniqueness, rather than a false global nil-kernel claim, produces the coherent family. Completeness, the exact quotient-factor map and naturality are fully proved. The unrestricted directed index and empty family are retained in the Lean semantics.",
+      "quantifiers_and_boundaries": [
+        {
+          "checked": "I is a nonempty arbitrary directed poset. Lean generalizes to a preorder with an explicit directedness premise and a chosen i0, which retains all task cases and does not add countability or a maximum index.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/task.md",
+              "lines": [
+                3,
+                8
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                7,
+                21
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                58,
+                67
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                119,
+                138
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The nil premise is element-dependent at each level. Neither transition surjectivity, a nil limit kernel, surjectivity of the limit augmentation, nor a common nilpotence exponent is used.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/task.md",
+              "lines": [
+                8,
+                8
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                10,
+                21
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                16,
+                35
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Fintype J permits empty J and zero components. If J is empty and D_J(S) is inhabited, S is zero, hence 1 in every R_i is nilpotent and R_i=0; L=0 and the empty product is the zero ring. If S is nonzero both empty-family sets are empty. Singleton J is {1}; no factor is required nonzero.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/task.md",
+              "lines": [
+                14,
+                26
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                39,
+                53
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                140,
+                191
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Both system morphism maps may fail injectivity or surjectivity. Sending some idempotent components to zero is legal and preserved.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/task.md",
+              "lines": [
+                29,
+                33
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                195,
+                240
+              ]
+            }
+          ]
+        }
+      ],
+      "reference_argument_checks": [
+        {
+          "checked": "A common upper bound k identifies p_i(r_i),p_j(r_j); this constructs a unital ring homomorphism without any inverse-limit exactness assumption.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                7,
+                12
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                27,
+                67
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "For a lifted idempotent, d=a²−a is nilpotent. Q(a)=3a²−2a³ satisfies Q(a)²−Q(a)=(4a²−4a−3)d² and maps to the same base idempotent. By induction the defect after m iterations lies in (d)^(2^m), so a sufficiently large finite m kills it. No division by 2 occurs.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                16,
+                23
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                76,
+                88
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "If a,b are idempotents with the same image, a(1−b),b(1−a) are commuting idempotent elements of the nil kernel, hence zero. Thus a=ab=b. This is enough to force all transitions of the separately constructed lifts to agree.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                25,
+                35
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                69,
+                74
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                90,
+                138
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Products of distinct lifted idempotents are idempotents mapping to zero, so they vanish by restricted injectivity. Their finite sum is idempotent and maps to one, so equals one by the same restricted injectivity. This proves existence and uniqueness of every finite complete family, and the ordinary forward map preserves its defining equalities.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                39,
+                43
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                143,
+                177
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The factor ideals really are (1−e_j)L. The quotient map is injective since e_j x=0 for every j implies x=(sum e_j)x=0; it is onto by sum e_j a_j for representatives of the factor values. Its definition is independent of the representative choice.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                47,
+                53
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                179,
+                191
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The coordinate maps give an actual limit ring homomorphism U, p′U=up, and unique idempotent lifting then makes the lifts and every family natural. Naturality of the separately described quotient factor isomorphism is not an added task obligation.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                57,
+                65
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+              "lines": [
+                200,
+                240
+              ]
+            }
+          ]
+        }
+      ],
+      "invalid_route_witnesses": [
+        {
+          "checked": "In k[t]/(t^(n+1)), the element t gives a compatible kernel tuple. For each positive N its Nth power survives in level N, so the tuple is not nilpotent. Every stage augmentation is unital/surjective with nil kernel and the transitions are compatible. This is a valid refutation of a nil limit kernel.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                69,
+                71
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "For Q[x]⊕εQ[x], the map (s,m)↦(s,xm+s′) is additive, unital and multiplicative by Leibniz. Its augmentation is the same surjective projection with square-zero kernel. A lift of x would force m_n=xm_(n+1)+1, contradicting finite degree after iteration. Thus the limit augmentation need not be onto. The non-surjective transitions are permitted by the task.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                73,
+                89
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "In k[x1,x2,...]/(xi²), every kernel element uses finitely many variables and a high enough power repeats a variable. Each squarefree monomial x1...xm nevertheless survives in N^m. Hence the ideal is nil but not nilpotent. This witness distinguishes ideal nilpotence from the stated elementwise hypothesis; no characteristic restriction is needed for that distinction.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+              "lines": [
+                91,
+                95
+              ]
+            }
+          ]
+        }
+      ],
+      "rubric_assessment": {
+        "checked": "All four required items are task obligations. The rubric permits applicable background theorems, short rigidity proofs, all finite J and zero components. It does not demand the three counterexamples, a power-series description, or global p surjectivity.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R104/rubric.json",
+            "lines": [
+              11,
+              28
+            ]
+          }
+        ]
+      },
+      "lean_semantics": {
+        "checked": "System fields are just real input data. Limit is the compatible subtype of the dependent product, and the chosen stage augmentation is independent of index. The library lift theorem is applied at each R_i, with actual nil_kernel and actual augmentation_surjective. The quotient-product equivalence is formed from the actual Pi.ringHom, and lift_family_natural uses actual system maps.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+            "lines": [
+              10,
+              67
+            ]
+          },
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+            "lines": [
+              82,
+              191
+            ]
+          },
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean",
+            "lines": [
+              200,
+              240
+            ]
+          }
+        ]
+      },
+      "library_contracts_checked": [
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/RingTheory/Idempotents.lean",
+          "lines": [
+            49,
+            53
+          ],
+          "conclusion": "OrthogonalIdempotents means actual idempotency and pairwise zero products."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/RingTheory/Idempotents.lean",
+          "lines": [
+            120,
+            129
+          ],
+          "conclusion": "CompleteOrthogonalIdempotents adds exactly the finite sum-one property, including empty types."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/RingTheory/Idempotents.lean",
+          "lines": [
+            363,
+            379
+          ],
+          "conclusion": "Unique lift requires only a commutative source, pointwise nil kernel, membership of e in the actual image and idempotency."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/RingTheory/Idempotents.lean",
+          "lines": [
+            422,
+            437
+          ],
+          "conclusion": "Product equivalence theorem is for the requested canonical quotient map and ideals generated by 1−e_i."
+        }
+      ],
+      "formal_boundary": {
+        "checked": "Three infinite counterexample constructions are prose-only and explicitly excluded from the Lean claim. This does not omit a main target.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R104/formal/COVERAGE.md",
+            "lines": [
+              18,
+              20
+            ]
+          }
+        ]
+      },
+      "provenance": {
+        "checked": "The Stacks and pinned Mathlib public sources support the stated background. Source files explicitly disavow private-source material and copied problem/proof prose.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R104/sources.local.json",
+            "lines": [
+              2,
+              19
+            ]
+          }
+        ]
+      }
+    },
+    "MG-R105": {
+      "ready_for_pilot": true,
+      "main_goal_truth": "true",
+      "blocking_findings": [],
+      "non_blocking_findings": [],
+      "required_repairs": [],
+      "decision_reason": "The quotient has the prescribed observation norm and is isometric to the actual image. Completion is realized as its closure, so orthogonal projection yields the unique completed minimizer and contraction; original attainment and all original solutions are separately characterized. Lean constructs these objects rather than receiving an assumed recovery equivalence.",
+      "quantifiers_and_boundaries": [
+        {
+          "checked": "E has only AddCommGroup and Module R instances: no topology or norm is supplied or inferred. H is a real complete inner-product normed space, exactly the real Hilbert premise; A is an arbitrary linear map.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/task.md",
+              "lines": [
+                3,
+                8
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                16,
+                35
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "A=0, E=0, H=0 and nontrivial ker(A) are all included. In particular A=0 yields Q=0, completed carrier 0, recovery R=0 and M_y=E. The statement is 1-Lipschitz, not that 1 is the sharp constant in every case.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                31,
+                36
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                53,
+                57
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                119,
+                124
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The image may be nonclosed or dense proper; original minimizers can be absent. Every norm-infimum set is nonempty because E and the completion contain 0, and is bounded below by 0.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/task.md",
+              "lines": [
+                10,
+                19
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                167,
+                181
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                216,
+                234
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Uniqueness is for the realization on the fixed constructed completion; it follows from agreement on the actual dense copy of Q. The proof does not claim original-vector uniqueness.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/task.md",
+              "lines": [
+                8,
+                8
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                19,
+                19
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                89,
+                98
+              ]
+            }
+          ]
+        }
+      ],
+      "reference_argument_checks": [
+        {
+          "checked": "Kernel equality makes the norm well-defined and positive; it is exactly the norm pulled back through Q≅range(A). In Lean the quotient is literally E/ker(A) and norm_quotient_map is the prescribed equality, not a quotient norm from an extra norm on E.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                7,
+                17
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                19,
+                44
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Images of Cauchy approximants converge in H and independence follows from the isometry. Conversely every closure point has an approximating image sequence whose preimages in Q are Cauchy. This proves the exact closed image, not merely containment; continuity and density prove uniqueness.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                13,
+                19
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                46,
+                98
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The closure is a closed linear subspace of the Hilbert target. R=J⁻¹P_Z is a constructed continuous linear map. Pythagoras gives the objective as a fixed nonnegative residual square plus ‖R(y)−u‖²; this proves actual existence and uniqueness without assuming original attainment.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                21,
+                35
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                100,
+                165
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "Isometry of J and contraction of P_Z give the 1-Lipschitz bound. Density of range(A) in Z gives equality of the original infimum and completed minimum. No limit point is silently identified with an original image point.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                31,
+                43
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                119,
+                124
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                167,
+                181
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The original objective attains its infimum exactly when Ax=P_Zy; hence attainment iff P_Zy∈range(A), and the whole nonempty solution set is x0+ker(A). The equivalent completion criterion R(y)∈ι(Q) follows from injectivity of J and surjectivity of the quotient map.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                44,
+                56
+              ]
+            },
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+              "lines": [
+                183,
+                234
+              ]
+            }
+          ]
+        }
+      ],
+      "invalid_route_witnesses": [
+        {
+          "checked": "For c00⊂ell2, finite truncations give density and the sequence 2^(-(n+1)) (n starting at 0) has square sum 1/3 and infinite support. It is in H but not the image, giving infimum 0 without original attainment. All task assumptions hold.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                63,
+                63
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "The same target sequence defines a bounded linear functional on c00 by Cauchy–Schwarz. Testing coordinate basis vectors forces any representing vector to equal the infinite-support target, impossible in c00. Thus a Hilbert adjoint on E cannot be presumed even after choosing the inherited incomplete inner product.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                65,
+                65
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "For A(x)=2x on R, kernel zero gives original-norm quotient |x|, whereas the prescribed observation norm is 2|x|. Extra original norms cannot replace the task norm.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                67,
+                67
+              ]
+            }
+          ]
+        },
+        {
+          "checked": "For A(s,t)=s from R² to R the optimal observation is uniquely y, but every (y,t) is an original minimizer. This refutes original uniqueness while respecting all task hypotheses.",
+          "evidence": [
+            {
+              "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+              "lines": [
+                69,
+                69
+              ]
+            }
+          ]
+        }
+      ],
+      "rubric_assessment": {
+        "checked": "The rubric matches all requested construction, uniqueness, linear stability, infimum and fibre obligations. It explicitly accepts completion plus projection as a short solution, and it does not require the four optional witnesses or candidate Lean.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R105/rubric.json",
+            "lines": [
+              11,
+              26
+            ]
+          }
+        ]
+      },
+      "lean_semantics": {
+        "checked": "ObservationQuotient is the actual algebraic quotient; its norm is induced by the actual first-isomorphism equivalence. completion_equiv is constructed by dense isometric extension into the closure; it is not an assumption. recovered projects only onto the complete closure. The exact infimum-equality solution-set definition is linked explicitly, so the order-minimum helper is not a weakened proxy.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+            "lines": [
+              19,
+              102
+            ]
+          },
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean",
+            "lines": [
+              146,
+              234
+            ]
+          }
+        ]
+      },
+      "library_contracts_checked": [
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/LinearAlgebra/Isomorphisms.lean",
+          "lines": [
+            24,
+            52
+          ],
+          "conclusion": "quotKerEquivRange is defined on the actual algebraic kernel quotient of an arbitrary linear map; no norm or completeness is assumed on its domain, and its value on the quotient class of x is exactly f(x)."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/Analysis/Normed/Operator/Extend.lean",
+          "lines": [
+            313,
+            350
+          ],
+          "conclusion": "The extension consumes actual algebraic equivalence, dense embeddings and norm equality into complete targets, and returns an isometric linear equivalence with the required agreement law."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/Analysis/InnerProductSpace/Projection/Basic.lean",
+          "lines": [
+            46,
+            59
+          ],
+          "conclusion": "The projection-existence instance is derived from completeness of the actual subspace, supplied here by closure_complete."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/Analysis/InnerProductSpace/Projection/Basic.lean",
+          "lines": [
+            142,
+            169
+          ],
+          "conclusion": "orthogonalProjection is an actual continuous linear map with norm bound 1, not a mere existence certificate."
+        },
+        {
+          "file": "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/Analysis/InnerProductSpace/Projection/Basic.lean",
+          "lines": [
+            248,
+            252
+          ],
+          "conclusion": "starProjection_minimal expresses the genuine real infimum over the subspace."
+        }
+      ],
+      "formal_boundary": {
+        "checked": "The four counterexamples and the optional R(y)∈ι(Q) rephrasing have no separate Lean declarations; the ledger states this accurately. Main task obligations have actual-object proofs.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R105/formal/COVERAGE.md",
+            "lines": [
+              7,
+              18
+            ]
+          }
+        ]
+      },
+      "provenance": {
+        "checked": "Three public, revision-pinned Mathlib sources are specified. The task/proof/witness combination is declared independently composed; no private source is asserted and empirical difficulty is explicitly untested.",
+        "evidence": [
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R105/sources.local.json",
+            "lines": [
+              2,
+              29
+            ]
+          },
+          {
+            "file": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+            "lines": [
+              73,
+              75
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "current_evidence_checks": {
+    "MG-R101": {
+      "hash_checks": 24,
+      "mismatches": [],
+      "status": "passed",
+      "declarations_count": 64,
+      "log_declarations_equal_report": true,
+      "log_summary_equal_report": true,
+      "declarations_json_type": "list",
+      "all_declaration_modules": [
+        "CongruenceObstruction"
+      ],
+      "axiom_declarations": [],
+      "summary": {
+        "axiom_union": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "declaration_count": 64,
+        "passed": true,
+        "unexpected_axioms": []
+      },
+      "config": {
+        "lakefile.toml": "name = \"math_gauge_mg_r101\"\nversion = \"0.1.0\"\n\n[[require]]\nname = \"mathlib\"\ngit = \"https://github.com/leanprover-community/mathlib4\"\nrev = \"5e932f97dd25535344f80f9dd8da3aab83df0fe6\"\n",
+        "lean-toolchain": "leanprover/lean4:v4.29.1\n"
+      }
+    },
+    "MG-R104": {
+      "hash_checks": 24,
+      "mismatches": [],
+      "status": "passed",
+      "declarations_count": 95,
+      "log_declarations_equal_report": true,
+      "log_summary_equal_report": true,
+      "declarations_json_type": "list",
+      "all_declaration_modules": [
+        "NilpotentDescent"
+      ],
+      "axiom_declarations": [],
+      "summary": {
+        "axiom_union": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "declaration_count": 95,
+        "passed": true,
+        "unexpected_axioms": []
+      },
+      "config": {
+        "lakefile.toml": "name = \"math_gauge_mg_r104\"\nversion = \"0.1.0\"\n\n[[require]]\nname = \"mathlib\"\ngit = \"https://github.com/leanprover-community/mathlib4\"\nrev = \"5e932f97dd25535344f80f9dd8da3aab83df0fe6\"\n",
+        "lean-toolchain": "leanprover/lean4:v4.29.1\n"
+      }
+    },
+    "MG-R105": {
+      "hash_checks": 28,
+      "mismatches": [],
+      "status": "passed",
+      "declarations_count": 90,
+      "log_declarations_equal_report": true,
+      "log_summary_equal_report": true,
+      "declarations_json_type": "list",
+      "all_declaration_modules": [
+        "ObservationRecovery"
+      ],
+      "axiom_declarations": [],
+      "summary": {
+        "axiom_union": [
+          "Classical.choice",
+          "Quot.sound",
+          "propext"
+        ],
+        "declaration_count": 90,
+        "passed": true,
+        "unexpected_axioms": []
+      },
+      "config": {
+        "lakefile.toml": "name = \"math_gauge_mg_r105\"\nversion = \"0.1.0\"\n\n[[require]]\nname = \"mathlib\"\ngit = \"https://github.com/leanprover-community/mathlib4\"\nrev = \"5e932f97dd25535344f80f9dd8da3aab83df0fe6\"\n",
+        "lean-toolchain": "leanprover/lean4:v4.29.1\n"
+      }
+    }
+  },
+  "snapshot_binding": {
+    "compared_currently_read_core_files": 53,
+    "all_match": true,
+    "files": [
+      {
+        "file": "MG-R101/task.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/reference.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/rubric.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/COVERAGE.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/CongruenceObstruction.lean",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/CurrentAudit.lean",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/manifest.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/verification-report.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/declarations.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/logs/CurrentAudit.log",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/logs/CongruenceObstruction.log",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/design.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/sources.local.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/case.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/lakefile.toml",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/lean-toolchain",
+        "matches": true
+      },
+      {
+        "file": "MG-R101/formal/current-formal.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/task.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/reference.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/rubric.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/COVERAGE.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/NilpotentDescent.lean",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/CurrentAudit.lean",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/manifest.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/verification-report.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/declarations.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/logs/CurrentAudit.log",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/logs/NilpotentDescent.log",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/design.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/sources.local.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/case.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/lakefile.toml",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/lean-toolchain",
+        "matches": true
+      },
+      {
+        "file": "MG-R104/formal/current-formal.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/task.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/reference.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/rubric.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/COVERAGE.md",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/ObservationRecovery.lean",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/CurrentAudit.lean",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/manifest.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/verification-report.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/declarations.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/logs/CurrentAudit.log",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/logs/ObservationRecovery.log",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/design.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/sources.local.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/case.json",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/lakefile.toml",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/lean-toolchain",
+        "matches": true
+      },
+      {
+        "file": "MG-R105/formal/current-formal.json",
+        "matches": true
+      },
+      {
+        "file": "formal-suite.json",
+        "matches": true
+      },
+      {
+        "file": "suite.json",
+        "matches": true
+      }
+    ]
+  },
+  "file_sha256_inventory": {
+    "drafts/true-goal-six-20261029/MG-R101/task.md": {
+      "sha256": "232836a493368d62a0bdb8ce83900b094bfc69b8255d9c06493f3891755b83b1",
+      "bytes": 947,
+      "lines": 37
+    },
+    "drafts/true-goal-six-20261029/MG-R101/reference.md": {
+      "sha256": "295a236133dd01ce3e4f2d154fafef89a0a033964140cbf4898a77a3e3220505",
+      "bytes": 4538,
+      "lines": 70
+    },
+    "drafts/true-goal-six-20261029/MG-R101/rubric.json": {
+      "sha256": "5c79e9207d50b4c320c6363deb4b0d4a514be96466d92a18d06f0bf5ec6da1b4",
+      "bytes": 1658,
+      "lines": 26
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/COVERAGE.md": {
+      "sha256": "1606221429b8efd9992a34890b2de55c17fd5d892e78bdf9341e0ec2db37f056",
+      "bytes": 2429,
+      "lines": 23
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/CongruenceObstruction.lean": {
+      "sha256": "498403a7981ed6f4082c143d3891488ade2abdc8d074e3ce0ae698adbbf2457c",
+      "bytes": 13613,
+      "lines": 308
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/CurrentAudit.lean": {
+      "sha256": "c218cd225bdd24dbc4d82d8ac85afa675cc69ea6f3b9cb7ab6a4684529282a8a",
+      "bytes": 2345,
+      "lines": 50
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/manifest.json": {
+      "sha256": "333fe10870d5f1e4d06eee9db769cdcd4895a7c87b5a0ecc81b748910b4c82f0",
+      "bytes": 1355,
+      "lines": 41
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/verification-report.json": {
+      "sha256": "d8b8ec35fc8895259867bd90fa1f17d1647536dfe780e9f9abddca8b826b0883",
+      "bytes": 22467,
+      "lines": 571
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/declarations.json": {
+      "sha256": "f0f7d4a16bd6dbb8a393c3068760caad74ff1a350d06667566a15256fa279620",
+      "bytes": 10991,
+      "lines": 386
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/logs/CurrentAudit.log": {
+      "sha256": "1998e165b0c769254255c1206d0caec082f314f251cd8d7f74e8a310e2bbc72f",
+      "bytes": 10237,
+      "lines": 65
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/logs/CongruenceObstruction.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "lines": 0
+    },
+    "/private/tmp/math-gauge-six-kernel-first-four-20261029/MG-R101/oleans/CongruenceObstruction.olean": {
+      "sha256": "549ddd308032f62b07504db99607494359ed5b366c5b475ecfb67a494c6c31f9",
+      "bytes": 814384,
+      "lines": 2977
+    },
+    "/private/tmp/math-gauge-six-kernel-first-four-20261029/MG-R101/oleans/CurrentAudit.olean": {
+      "sha256": "ee705d9f211d0ec4f53c5092fe87ce20fd5d90342edd2c6c16a7bbe8ec3df573",
+      "bytes": 2784,
+      "lines": 19
+    },
+    "/Users/g4i/.elan/toolchains/leanprover--lean4---v4.29.1/lib/lean/Lean/Elab/Command.olean": {
+      "sha256": "469b7f0098bbcde858651291c10faf80efb7ac08e7e9ce9c535ad4786414e5c2",
+      "bytes": 503680,
+      "lines": 1179
+    },
+    "/Users/g4i/.elan/toolchains/leanprover--lean4---v4.29.1/lib/lean/Lean/PrivateName.olean": {
+      "sha256": "3fc511acc856676a513f53111ad633063edf7fae666c86112e8158b32fdd5d09",
+      "bytes": 10808,
+      "lines": 53
+    },
+    "/Users/g4i/.elan/toolchains/leanprover--lean4---v4.29.1/lib/lean/Lean/Util/CollectAxioms.olean": {
+      "sha256": "6097884e9c60a4d8097f7d18212c18a65f686eaf6e01191cb34a206041ed8868",
+      "bytes": 37280,
+      "lines": 153
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/LinearAlgebra/Quotient/Basic.olean": {
+      "sha256": "ce3561b6bab6adc4528418421f18c31d7aa49d39a3bc0e44dbe8c7b8f31526d0",
+      "bytes": 678392,
+      "lines": 2087
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Tactic.olean": {
+      "sha256": "2d8af3a4f68ffb1060236ae89a9c2ba2c4db68a53ba10f53fd9f07dedf00fe19",
+      "bytes": 36232,
+      "lines": 177
+    },
+    "/Users/g4i/.elan/toolchains/leanprover--lean4---v4.29.1/bin/lean": {
+      "sha256": "b48bc5ab229bd8b320a224b87e20fc428dba6fa8a1c054bd4fa6def846e19997",
+      "bytes": 49968,
+      "lines": 4
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/lake-manifest.json": {
+      "sha256": "ab1934568a75956307f17be6a33da82594423e220de703b09e43bd57108e21b5",
+      "bytes": 3134,
+      "lines": 95
+    },
+    "drafts/true-goal-six-20261029/MG-R101/design.json": {
+      "sha256": "a93ce19030404ad4c9ae7c4f0c69877099289feec2e8cba2b1204bda5ffa278c",
+      "bytes": 1294,
+      "lines": 26
+    },
+    "drafts/true-goal-six-20261029/MG-R101/sources.local.json": {
+      "sha256": "a59a37e54de8292bb2f979c0ec2e035f3bc3e00da93bb3583975c4f77e501ede",
+      "bytes": 600,
+      "lines": 11
+    },
+    "drafts/true-goal-six-20261029/MG-R101/case.json": {
+      "sha256": "5bb3dc09cb39dc5f9cdfdc29a579bc32a60d5f9be0a33ab8772598451af62fbe",
+      "bytes": 1786,
+      "lines": 49
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/lakefile.toml": {
+      "sha256": "d6999bf355f5829096d001d8661f504b8a253fdae787d48a086e00828ba368d9",
+      "bytes": 182,
+      "lines": 7
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/lean-toolchain": {
+      "sha256": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+      "bytes": 25,
+      "lines": 1
+    },
+    "drafts/true-goal-six-20261029/MG-R101/formal/current-formal.json": {
+      "sha256": "d9e5bc7be591242bbcc72e1311b73befa4507219bf4ca9f6f09194cd46cdf5a6",
+      "bytes": 1273,
+      "lines": 29
+    },
+    "drafts/true-goal-six-20261029/MG-R104/task.md": {
+      "sha256": "a61c30cd381dc0d73c942cadfd81085ca4360bfde0a29988c85d1302a99867ea",
+      "bytes": 1370,
+      "lines": 33
+    },
+    "drafts/true-goal-six-20261029/MG-R104/reference.md": {
+      "sha256": "5b3e7b55615242859b35c0aa099ac4b63e238679c158434391412015b3e8e424",
+      "bytes": 6984,
+      "lines": 101
+    },
+    "drafts/true-goal-six-20261029/MG-R104/rubric.json": {
+      "sha256": "c38573b5178eef0a4ef18ddfaff82a48ccab131e0715db946f8e05772245512f",
+      "bytes": 2581,
+      "lines": 29
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/COVERAGE.md": {
+      "sha256": "845d6eef3459ccca5401b37aaed5e7449f7eaee1ec8fc88c411923fa99e8f8eb",
+      "bytes": 3234,
+      "lines": 20
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/NilpotentDescent.lean": {
+      "sha256": "cea64fb8486f9c427c05ec5e0f8e934fd4d3a4f3739c501435a47ba7cd58b9bb",
+      "bytes": 10290,
+      "lines": 246
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/CurrentAudit.lean": {
+      "sha256": "47087a4a23976dac62b0bf6ee811f144a7991b8da9158e6d1c2c51f834eac1d5",
+      "bytes": 2335,
+      "lines": 50
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/manifest.json": {
+      "sha256": "0cae4a3e15466540fbd8b5d599b6584bd5f70db8daf1ee01b3a1fc2875de4dfc",
+      "bytes": 1339,
+      "lines": 41
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/verification-report.json": {
+      "sha256": "4592dc4b3490e66869c1acb7631eebcd9f9fa4bd9f016ec3cf5cc9fa5b38b119",
+      "bytes": 29347,
+      "lines": 757
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/declarations.json": {
+      "sha256": "0bcc7e4406c070915b9c35be1b7977d8ef166392aed4b2f253a0a2dbccc823a8",
+      "bytes": 17160,
+      "lines": 572
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/logs/CurrentAudit.log": {
+      "sha256": "69cbf4936a9448955a63dbbc5361d81d5c33f6f72aabfee7feda88abab228d20",
+      "bytes": 15972,
+      "lines": 96
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/logs/NilpotentDescent.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "lines": 0
+    },
+    "/private/tmp/math-gauge-six-kernel-first-four-20261029/MG-R104/oleans/NilpotentDescent.olean": {
+      "sha256": "c70de07084c595a1b607e124bb38739a088e5e46da8ab88fd5721beeaef6f9f3",
+      "bytes": 1065936,
+      "lines": 3137
+    },
+    "/private/tmp/math-gauge-six-kernel-first-four-20261029/MG-R104/oleans/CurrentAudit.olean": {
+      "sha256": "a31863fb75bf591610e260ff473e622f0fe609853f1738e8e4c9936cc288f2ea",
+      "bytes": 2784,
+      "lines": 19
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/RingTheory/Idempotents.olean": {
+      "sha256": "ac4643d34cb165c07cb38de2dcf3efca2bd70794223e8e077ec506830c24e7e5",
+      "bytes": 414432,
+      "lines": 1167
+    },
+    "drafts/true-goal-six-20261029/MG-R104/design.json": {
+      "sha256": "bfa14051647444aa605c49388ff4bdd6e659cdcf0b91ba22e4c61a51cef2a1d5",
+      "bytes": 2042,
+      "lines": 33
+    },
+    "drafts/true-goal-six-20261029/MG-R104/sources.local.json": {
+      "sha256": "6db642eb94355a3e9cc93237c448fedf9a02535eb116db9ca3eca15ddf8efee5",
+      "bytes": 1290,
+      "lines": 21
+    },
+    "drafts/true-goal-six-20261029/MG-R104/case.json": {
+      "sha256": "edddb5733c9aab4bd8c832d40557302d334e32154a8ae77a7ffd040f1d553820",
+      "bytes": 1802,
+      "lines": 50
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/lakefile.toml": {
+      "sha256": "609084d306ff1caa524ef501142b2825638ebe25ec76bd852d9da95e3d6e5bda",
+      "bytes": 182,
+      "lines": 7
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/lean-toolchain": {
+      "sha256": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+      "bytes": 25,
+      "lines": 1
+    },
+    "drafts/true-goal-six-20261029/MG-R104/formal/current-formal.json": {
+      "sha256": "e68e4415bf89e4eed03418052759c5a6e477b65353ca69e41611fab6a106938e",
+      "bytes": 1273,
+      "lines": 29
+    },
+    "drafts/true-goal-six-20261029/MG-R105/task.md": {
+      "sha256": "cab4dc7f1330529059ba1331ee5407f90c3e425b6499b792c1a28119cad946e7",
+      "bytes": 903,
+      "lines": 19
+    },
+    "drafts/true-goal-six-20261029/MG-R105/reference.md": {
+      "sha256": "dfd830a7171ef11b7962576900af2ff6c88a36fa5da4d3907f551c36fbceb4de",
+      "bytes": 4920,
+      "lines": 75
+    },
+    "drafts/true-goal-six-20261029/MG-R105/rubric.json": {
+      "sha256": "3d692cd8d32a0150ea920d9805cf05bb6dbaebde7826130ce5b98c9c0cac3cdd",
+      "bytes": 2250,
+      "lines": 27
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/COVERAGE.md": {
+      "sha256": "9a5874795f3b13f5cd391bfa059e84d4d818f030f3cbe18b97992f77ccb47ae3",
+      "bytes": 3148,
+      "lines": 18
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/ObservationRecovery.lean": {
+      "sha256": "d332401d9df0e69afa5f540a38b88cd0f07196da877b4ebd3dec8e6aa5a768cb",
+      "bytes": 10669,
+      "lines": 236
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/CurrentAudit.lean": {
+      "sha256": "1445e6c45e1f741e3a2bbfdfe53cb30ac801c3d2bde6c9f36039fc8432b76253",
+      "bytes": 2341,
+      "lines": 50
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/manifest.json": {
+      "sha256": "073005d64f130c222d7f5225900af897b44c5aa1631a1c56ffd3d1dd3daa95e2",
+      "bytes": 1576,
+      "lines": 45
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/verification-report.json": {
+      "sha256": "19405e70ae560015bfe940fb7cfffae643dc7212578db8b6b676d1644516b1e6",
+      "bytes": 30802,
+      "lines": 747
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/declarations.json": {
+      "sha256": "63b9c2eb8116e617c82f421efc0311aa58902e00aad3291e04038e7b11c95274",
+      "bytes": 17374,
+      "lines": 542
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/logs/CurrentAudit.log": {
+      "sha256": "6af368a374531957996f48dfe6757b180d42e657c25659401cd222b3e33bc6ee",
+      "bytes": 16256,
+      "lines": 91
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/logs/ObservationRecovery.log": {
+      "sha256": "d648b36ac360c3cb288311a03e5ba6063001fba823d13d5224209d353b8e553c",
+      "bytes": 1402,
+      "lines": 18
+    },
+    "/private/tmp/math-gauge-six-kernel-last-two-20261029/MG-R105/oleans/ObservationRecovery.olean": {
+      "sha256": "2c6d0864ad756b5442c08d87cbfbf55e3333012f30adc879f740abc46f106ea2",
+      "bytes": 742064,
+      "lines": 1996
+    },
+    "/private/tmp/math-gauge-six-kernel-last-two-20261029/MG-R105/oleans/CurrentAudit.olean": {
+      "sha256": "96d7a3a83c6a687799e13bfa4178b8add3019e1f3ab657dd5e2501be32dfa6d8",
+      "bytes": 2784,
+      "lines": 19
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/InnerProductSpace/Projection/Basic.olean": {
+      "sha256": "17336a051816cd1fdb2ca8b17b6ebb8f63b1a888cc983172d75376af1dfb2a3d",
+      "bytes": 358368,
+      "lines": 916
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/Normed/Module/Completion.olean": {
+      "sha256": "6cbd5f9f07c3dd7a31c22c1e7813b0c8c323f36ed606b091299c22662132f602",
+      "bytes": 170280,
+      "lines": 524
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Analysis/Normed/Operator/Extend.olean": {
+      "sha256": "2afc5ad056d776dd9884d305d5bbe9a98fd88e5089d9cb50bc5dbd0ab8e06a3f",
+      "bytes": 704672,
+      "lines": 2053
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Topology/MetricSpace/HausdorffDistance.olean": {
+      "sha256": "13a64ed3977920ba228d09deab398b99dca0675fd12e46e31ea82d0f90977586",
+      "bytes": 196784,
+      "lines": 501
+    },
+    "drafts/true-goal-six-20261029/MG-R105/design.json": {
+      "sha256": "badb2f3f68aeb4190b403983f6228f671a803180162c06823fac8b4ead664b81",
+      "bytes": 2529,
+      "lines": 37
+    },
+    "drafts/true-goal-six-20261029/MG-R105/sources.local.json": {
+      "sha256": "a3be9d8bda5137d12026161cea1fae28f99ec6a77b544e3ec664b829f64b8d38",
+      "bytes": 2051,
+      "lines": 31
+    },
+    "drafts/true-goal-six-20261029/MG-R105/case.json": {
+      "sha256": "70e2e85a6fa45279c5ac0acbf65d6f180e1712cbb34e1cd455cecec1c8744543",
+      "bytes": 1928,
+      "lines": 52
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/lakefile.toml": {
+      "sha256": "431fbc7f393292bec89c12ed36c6aa993d699ba308f61a459d893b651495e764",
+      "bytes": 182,
+      "lines": 7
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/lean-toolchain": {
+      "sha256": "7dc000621e0046d1aada809e2b7177e64454645cf4c741e9daaf79c99ec2e7a2",
+      "bytes": 25,
+      "lines": 1
+    },
+    "drafts/true-goal-six-20261029/MG-R105/formal/current-formal.json": {
+      "sha256": "e31c2e35ab98ab78494e90b655cc1916670eee695c8cf1da30a81fd2774acda3",
+      "bytes": 1273,
+      "lines": 29
+    },
+    "README.md": {
+      "sha256": "82fe5a9ab63a0718713acf6c70254afb91f3726f13b96ffcd80c149ac656955f",
+      "bytes": 6470,
+      "lines": 81
+    },
+    "protocol/evaluation.md": {
+      "sha256": "8464a254bd9d657ca9f487664c41671c1c0dbb635deba612a3eb7a76000c5a9f",
+      "bytes": 5065,
+      "lines": 47
+    },
+    "protocol/research-case-design.md": {
+      "sha256": "a0d887b2cfe88a6fa42e31e7a126d14fa01e0e212f73a7f4b0825b3d37b6ffbf",
+      "bytes": 4034,
+      "lines": 31
+    },
+    "drafts/true-goal-six-20261029/formal-suite.json": {
+      "sha256": "18c4641422a48903d52237d504b8d27a5c9d81df71bda0c23963939f65f23452",
+      "bytes": 805,
+      "lines": 30
+    },
+    "drafts/true-goal-six-20261029/suite.json": {
+      "sha256": "cd0c394a5f71f3a012cced5f7f594c6a9a157e432ca5210a09812370244264ee",
+      "bytes": 697,
+      "lines": 19,
+      "latest_observed_sha256": "25f3fd124efe50e3676d0666cd7017d2951126960b605c8ae4a39d817105e7e1",
+      "known_change_during_review": true
+    },
+    "drafts/true-goal-six-20261029/validation/runner-tests.json": {
+      "sha256": "18766dd66c668cdee7a8070897df1df0bd40ffab0c77c0ce90676728ea83cb99",
+      "bytes": 357,
+      "lines": 15
+    },
+    "drafts/true-goal-six-20261029/validation/catalog-validation.json": {
+      "sha256": "28cae74508ca75e7afb122886733162d88f7b247dea1b513846ee5eb15290780",
+      "bytes": 732,
+      "lines": 29
+    },
+    "drafts/true-goal-six-20261029/validation/final-verification.json": {
+      "sha256": "7ace7efcdfbfb32455c71d10d08833fda9502ca84969bd9ef7b6fc64624b35e1",
+      "bytes": 4594,
+      "lines": 128
+    },
+    "drafts/true-goal-six-20261029/validation/candidate-projection.json": {
+      "sha256": "74dfa38b88ff752a8f73c130f086c0930b80e3432df2fb599ec68855ff2f0162",
+      "bytes": 3930,
+      "lines": 141
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/RingTheory/Idempotents.lean": {
+      "sha256": "974d5aeb0d6a96821b102a0481579f52b9b11a07d41359ae5b857c61253e9099",
+      "bytes": 27738,
+      "lines": 589
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/Analysis/Normed/Operator/Extend.lean": {
+      "sha256": "44806ff5a517fde5af1d232e9e57e6bfc5aa007dea4ebf36d7bea6779ebdb375",
+      "bytes": 17324,
+      "lines": 363
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/Analysis/InnerProductSpace/Projection/Basic.lean": {
+      "sha256": "0457835f43221940112a96509aa2d33386cf1043ef5cc28e54fd609df66c44e4",
+      "bytes": 30917,
+      "lines": 640
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/LinearAlgebra/Quotient/Basic.lean": {
+      "sha256": "7caa5121402f2ad71621293efdde9ea779b20eedd38a79e9d4cddec4a99ad8b6",
+      "bytes": 17576,
+      "lines": 453
+    },
+    "drafts/true-goal-six-20261029/validation/final-snapshot.json": {
+      "sha256": "daca23135b91b1e546fb57e5a4c36c06e25e347f7e2f8323b66fe544781cc5d7",
+      "bytes": 14497,
+      "lines": 149
+    },
+    "drafts/true-goal-six-20261029/validation/first-four-formal-suite.json": {
+      "sha256": "bf5951c22903b24c05bb7531b91c02e62491d4dbdc3fbdde6b53861a371ceda2",
+      "bytes": 565,
+      "lines": 22
+    },
+    "drafts/true-goal-six-20261029/validation/last-two-formal-suite.json": {
+      "sha256": "62547cc72151288f1f4ceda07cd13bd37e036f51d06be6042b53573003707561",
+      "bytes": 325,
+      "lines": 14
+    },
+    "drafts/true-goal-six-20261029/validation/dependency-inventory.json": {
+      "sha256": "9ba112084d78ae665e20587a04da63bf01d23ccaebd1880e4aa1d203f1ae94bf",
+      "bytes": 4327,
+      "lines": 83
+    },
+    "drafts/true-goal-six-20261029/validation/repository-context.json": {
+      "sha256": "7957e0e512ef1da5615438fb7dee2f5dfc80eb4fa6f2572e7d7707de29ab2fa3",
+      "bytes": 1054,
+      "lines": 23
+    },
+    "/Users/g4i/.codex/plugins/cache/glenzli-local/math-workspace/0.11.0/skills/math-writing/SKILL.md": {
+      "sha256": "8fb031d89d51c03e9bd82477bcf5a03905088bdb6e0aa63345b88f4c2dceebf3",
+      "bytes": 11366,
+      "lines": 97
+    },
+    "/Users/g4i/.codex/plugins/cache/glenzli-local/math-workspace/0.11.0/skills/lean-formalization/SKILL.md": {
+      "sha256": "f150f53746d7f4b314d5e84f374a0ed554e48c21e548453c7dd5519ae72717d5",
+      "bytes": 6844,
+      "lines": 60
+    },
+    "/Users/g4i/lab/oet-dev/the-operator-evolution-theory/formal-oet/.lake/packages/mathlib/Mathlib/LinearAlgebra/Isomorphisms.lean": {
+      "sha256": "5606403bb6dfac5d14a8cec6fc1870fd38e8175805d04889870555beed737bfc",
+      "bytes": 8778,
+      "lines": 198
+    }
+  },
+  "external_sources_checked": [
+    {
+      "url": "https://stacks.math.columbia.edu/tag/00J9",
+      "purpose": "Public provenance for unique lifting of idempotents across nil ideals; the reviewed reference also supplies its own proof."
+    },
+    {
+      "url": "https://leanprover-community.github.io/mathlib4_docs/Mathlib/RingTheory/Idempotents.html",
+      "purpose": "Source existence/provenance; semantic dependency checking used the local pinned source at 5e932f97dd25535344f80f9dd8da3aab83df0fe6."
+    },
+    {
+      "url": "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Normed/Operator/Extend.html",
+      "purpose": "Public API documentation; pinned source signatures were independently inspected."
+    },
+    {
+      "url": "https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/InnerProductSpace/Projection/Basic.html",
+      "purpose": "Public API documentation; pinned projection construction, completeness instance and minimum theorem inspected."
+    },
+    {
+      "url": "https://leanprover-community.github.io/mathlib4_docs/Mathlib/LinearAlgebra/Quotient/Basic.html",
+      "purpose": "Public quotient background; actual quotient/lift definitions inspected."
+    }
+  ],
+  "limits": [
+    "The prose-only invalid-route examples were checked mathematically here, not separately compiled in Lean.",
+    "The report does not certify unpublished provenance beyond the explicit public-source declarations and observed local material.",
+    "The existing runner/projection validation was inspected; no runner code was changed or tests rerun in this read-only mathematical qualification.",
+    "No candidate model answer was generated or scored, and no formal comparative model conclusion follows."
+  ],
+  "concurrent_metadata_change": {
+    "file": "drafts/true-goal-six-20261029/suite.json",
+    "review_start_sha256": "cd0c394a5f71f3a012cced5f7f594c6a9a157e432ca5210a09812370244264ee",
+    "latest_observed_sha256": "25f3fd124efe50e3676d0666cd7017d2951126960b605c8ae4a39d817105e7e1",
+    "change": "Suite metadata was updated by the parent from 0.1.0 to 0.1.1 with new calibration links while this audit was running.",
+    "parent_explanation": "The parent confirmed a rubric wording fix confined to MG-R103, outside this assigned audit, and the suite version/calibration-link update.",
+    "review_identity": "This report preserves its original as-read identity and hash inventory; MG-R101, MG-R104 and MG-R105 remain reviewed at their unchanged 0.1.0 core bytes. It does not certify MG-R103 or the aggregate suite update.",
+    "independent_check": "All recorded files for the assigned three cases remained hash-identical at the end-of-review check. The only changed recorded repository file was suite.json."
+  }
+}

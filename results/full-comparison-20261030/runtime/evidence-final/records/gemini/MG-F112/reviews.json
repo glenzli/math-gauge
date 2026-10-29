@@ -1,0 +1,36 @@
+{
+  "MG-F112": {
+    "packet_id": "76a7d10c4e85",
+    "case_id": "MG-F112",
+    "response_sha256": "ba561a713f3aabfd87c068aebef1a196567c129e342c08648fa66cb30e8b2547",
+    "reviewer": "/root",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "unknown",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": false,
+    "needs_second_review": false,
+    "notes": "独立完整读取题面、参考、rubric、背景附件及全部答卷。有限存在Z且r有限、最小存在再加r=0蕴含H、最小值r及Unit无最小系数反例的数学路线正确，并保留任意X和0/无穷边界。完整源码交付没有通过：Solution第126、129行对严格不等式使用hbc.not_le的field notation在固定Lean/Mathlib中失败，关键最小值上界证明未完成，因此其完整形式化声称不成立。代码未修复，公理审计未运行。",
+    "findings": [
+      "文件名在两个唯一标题中，块前隔一说明行；题面允许块前标名，人工只确定文件名和原始完整围栏区间。root逐一比对UTF8区间与submitted字节完全相同，首份format_error单独保留，不计数学失败。",
+      "ExtendedData原样通过；Solution.lean:126:39、129:12 Invalid field not_le，环境无WithBot.LT.not_le。不能改成not_le_of_gt后回填原结果。",
+      "该错误是形式化实现失败；数学最小性论证通过r<b<c和正有限可行b的反证路线正确，proof_validity记unknown而不是数学反例。"
+    ],
+    "candidate_lean_report_path": "/private/tmp/math-gauge-review-f/76a7d10c4e85/lean-manual-extraction/report.json",
+    "candidate_lean_report_sha256": "a9273c13227ee73965ae9c2bdcae8483e66d6252bdd85f6b6e7f7707b98a3614",
+    "candidate_lean_status": "compile_error",
+    "extraction_override_sha256": "9c26e8e417260c5e4c9072935e48f6ad926424639041911b5ecf5ec2c2e33776",
+    "reviewed_material_sha256": {
+      "task.md": "623e8a47cfe51bb7c200437601b0a3d39dd7eae2518d5b8b9830a25db9600c6f",
+      "reference.md": "ea5dddfc2f0c534d646083160f5c4d3a229be631e23b966b775f68a0355d02ca",
+      "rubric.json": "e99313429e076f956fb37cad393ef7df7815451dfa6eb4a95ae031c17e5ccc34",
+      "request.json": "3c3c70148fcfb906b8b39d6a4529570f82781d7174f066aa8781705b0f1c13d0",
+      "response.md": "ba561a713f3aabfd87c068aebef1a196567c129e342c08648fa66cb30e8b2547"
+    },
+    "primary_review_sha256": "0b19197c4845311dfc419c6a4ab296748dbbdf9f8b868433cbdcf5b54a4e77b7",
+    "secondary_review_sha256": "c15cc0502cc20b0817725d5e5cd3bed43e46f09f58d8fb20c230f3e855ae3d82",
+    "adjudication": "独立两审一致；文件标题与围栏区间由原答卷唯一确定，保持首报并按原字节编译失败裁定partial；没有修复代码或追加模型请求。",
+    "recorded_at": "2026-10-29T19:46:56.878402+00:00"
+  }
+}

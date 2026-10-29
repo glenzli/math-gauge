@@ -1,0 +1,30 @@
+--- upstream/DiophantineGraph.lean
++++ MathGauge/PublicProof/Torus/Borrowed/DiophantineGraph.lean
+@@ -1,3 +1,11 @@
++/-
++Ported from OpenAI NavierStokesAndEuler, Apache-2.0.
++Original: https://github.com/openai/NavierStokesAndEuler/blob/f9e8bc5b38b6e212696e8a30e3e91517af887bbd/NavierStokes/DiophantineGraph.lean
++Git blob: b8372e829aeb2b15ee4b9c98e48fdb16497b7dd6
++Changes: module and namespace isolation under MathGauge.PublicProof.Torus.Borrowed;
++compatibility repairs, if any, are recorded in PORTING.md.
++-/
++
+ import Mathlib.NumberTheory.Real.Irrational
+ import Mathlib.Tactic.FieldSimp
+ import Mathlib.Tactic.Linarith
+@@ -17,7 +25,7 @@
+ 
+ noncomputable section
+ 
+-namespace NavierStokes.DiophantineGraph
++namespace MathGauge.PublicProof.Torus.Borrowed.DiophantineGraph
+ 
+ def quadraticForm (p q : ℤ) : ℝ := (p : ℝ) + Real.sqrt 2 * (q : ℝ)
+ 
+@@ -316,4 +324,5 @@
+     1 < 4 - Real.sqrt 2 ∧ 1 < 4 + Real.sqrt 2 := by
+   constructor <;> nlinarith [sqrt_two_le_two, Real.sqrt_nonneg (2 : ℝ)]
+ 
+-end NavierStokes.DiophantineGraph
++end MathGauge.PublicProof.Torus.Borrowed.DiophantineGraph
++

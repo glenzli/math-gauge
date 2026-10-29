@@ -1,0 +1,9 @@
+{
+  "schema": "math-gauge.request/v1",
+  "case_id": "MG-R001",
+  "case_version": "0.3.0",
+  "track": "exploration",
+  "instruction": "",
+  "task": "# 递归算子系统的闭合\n\n设 $\\mathcal X^\\circ=\\mathcal X\\setminus\\{\\bot\\}\\ne\\varnothing$，$d_1,\\ldots,d_m$ 是 $\\mathcal X$ 上的扩展伪度量，$m\\ge1$，且 $d_i(x,\\bot)=+\\infty$ 对 $x\\ne\\bot$ 成立。记 $\\mathbf d=(d_1,\\ldots,d_m)^{\\mathsf T}$，扩展非负实数运算采用 $0\\cdot(+\\infty)=0$。\n\n给定有限有向多重图 $(V,E)$，$V\\ne\\varnothing$。每个节点 $v$ 配有非空集合 $U_v\\subseteq\\mathcal X^\\circ$，并有分割\n\n$$\nU_v=S_v\\sqcup\\bigsqcup_{e:s(e)=v}D_e.\n$$\n\n在 $S_v$ 上给定输出映射 $h_v:S_v\\to\\mathcal X^\\circ$。每条边 $e:v\\to w$ 配有输入转移 $b_e:D_e\\to U_w$ 和返回算子 $a_e:\\mathcal X\\to\\mathcal X$，满足 $a_e(\\bot)=\\bot$、$a_e(\\mathcal X^\\circ)\\subseteq\\mathcal X^\\circ$，以及\n\n$$\n\\mathbf d(a_e(y),a_e(z))\\le L_e\\mathbf d(y,z)\n\\qquad(y,z\\in\\mathcal X^\\circ),\n$$\n\n其中 $L_e$ 是给定的有限值非负 $m\\times m$ 矩阵。不等式按分量理解。以节点为块指标，令\n\n$$\nM_{vw}=\\sum_{e:v\\to w}L_e,\n\\qquad \\rho(M)<1.\n$$\n\n对算子族 $F=(F_v:U_v\\to\\mathcal X^\\circ)_{v\\in V}$，定义一次展开\n\n$$\n(\\mathcal TF)_v(x)=\n\\begin{cases}\nh_v(x),&x\\in S_v,\\\\\na_e\\bigl(F_w(b_e(x))\\bigr),&x\\in D_e,\\ e:v\\to w.\n\\end{cases}\n$$\n\n算子族之间采用诱导规范\n\n$$\n\\Delta_{v,i}(F,G)=\\sup_{x\\in U_v}d_i(F_v(x),G_v(x)).\n$$\n\n为这套相互递归的算子系统建立闭合理论。目标是由给定局域数据得到唯一的整体算子族 $F^*=\\mathcal TF^*$，并证明任意初始族 $H$ 的有限展开 $\\mathcal T^nH$ 以由 $M$ 决定的几何速度逼近 $F^*$：存在 $q\\in(0,1)$，对每个 $H$ 存在有限常数 $C_H$，使\n\n$$\n\\max_{v,i}\\Delta_{v,i}(\\mathcal T^nH,F^*)\\le C_Hq^n\n\\qquad(n\\ge1).\n$$\n\n请给出主定理、整体算子的构造及完整论证。\n",
+  "files": []
+}

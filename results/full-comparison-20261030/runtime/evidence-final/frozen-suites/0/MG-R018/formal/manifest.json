@@ -1,0 +1,42 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R018",
+  "case_version": "0.4.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "62c61ec69911410ea7dde1bf26cecfbc57b475930b092aceac5a63817f9cce4b",
+    "reference.md": "9bb14fc8367c393127f7bad842d8f6e93f556e0ec0066f8e32895b2b34bcd661",
+    "rubric.json": "206eda3e21644afba06867f8e679f2425a87f784bc5e7b3d24115d90abcbe980"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "d48876227a69899f3930332fe3db770a41c1ba906b9607f734ef0087adc8b69b"
+  },
+  "modules": [
+    {
+      "module": "FiniteObservations",
+      "source": "FiniteObservations.lean",
+      "sha256": "2e83c8a373ced40ee2a06d00b7c3746b50220910ac12d0f5ac99a72dc16c70e6",
+      "imports": [
+        "Mathlib.Order.Filter.Ultrafilter.Basic",
+        "Mathlib.Data.Fintype.EquivFin",
+        "Mathlib.Tactic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "c30ead233b14790f13b9e9ff792976998c51c10494fb2c8509ab7c31118451fe",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.FiniteObservations."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

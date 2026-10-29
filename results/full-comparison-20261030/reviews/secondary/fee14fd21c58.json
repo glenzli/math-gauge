@@ -1,0 +1,43 @@
+{
+  "packet_id": "fee14fd21c58",
+  "case_id": "MG-R008",
+  "response_sha256": "08d9ff4f4188ed4c5c0cbdd7937c3e978d098160cc207ad86138a1627ba9b125",
+  "request_sha256": "ac893ab89ea1d9bd7f0acc13d848c54f0f686f571c65ac928579862e7067b253",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "review_role": "independent-secondary",
+  "decision": "partial",
+  "assumption_fidelity": "clean",
+  "proof_validity": "invalid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "独立读完冻结答卷及完整题面、参考、rubric，形成判断后再核对初审，结论同意 partial。候选的张量模型、无挠/平坦性、可数积强迫有限生成、自然变换与复合分类均有实质正确贡献；所列稳定像准则R本身不是错误判据。但充分性证明第147行需要的稳定像回缩不由所写R及任意固定n≥n0推出，实际可为非纯子群，导致表示自然同构的满射性尚未按原文证明。可数极限充分性又引用同一未完成步骤。不能将评审可补出的充分后层延拓/回缩论证算作候选已交付。主目标和判据方向保持，故范围轴记correct；缺口计于proof_validity，不把有效替代判据当成范围缩减。",
+  "findings": [
+    "决定性错误位于充分性第145–151行：从R中稳定像自由及稳定像间同构，直接断言固定层I_n是P_n的纯子群/直和项并选p_n:P_n→I_n。自由子群本身不必是直和项；必要性部分在已假设可表示并使结构映射满射后讨论的饱和像，不能作为充分性无条件可用的纯性引理。",
+    "反例仅针对该中间步骤：全层P_n=ℤ，ρ_0=乘2，ρ_n=id(n≥1)。R以n0=0成立，I_0=2ℤ，I_n=ℤ(n≥1)，ρ_0|I_1:ℤ→2ℤ为群同构；但2ℤ在ℤ中非纯，故无恒等于2ℤ的回缩。取A=ℤ及f′:2ℤ→ℤ、f′(2)=1，则任意延拓u:ℤ→ℤ须满足2u(1)=1，不可能。逆极限π_0同构到2ℤ，故这正是候选所需延拓的合法实例。",
+    "该塔的记录函子事实上仍由ℤ表示，后层可承载所有记录。因此不是R分类结论或Θ全局满射性的反例；需要补的是选取适当后层并证明可延拓的桥梁。原答卷选择固定n≥n0后立即援引不存在的回缩，没有写出这个桥梁，也未另给一条完整充分性路线。",
+    "必要性第116–125行从对偶核稳定首先得到的是像的饱和稳定，随后把饱和像记为I_n并断言实际像稳定。以已给的i_m α_n,m=i_n和满射结构映射能够进行额外分裂核对，但原文未建立这一步。此处列为另一个需补的核对，partial的决定性依据仍是充分性中明确错误的回缩断言。",
+    "有效贡献：有限自由求值同构及滤过余极限与张量交换给F_P≅M_P⊗−；无挠性通过最终相等证明而未假设层到余极限单射；可数性来自可数个有限秩群的余极限。张量积元素有限展开与全群枚举证明可表示/保持可数整数积⇒M_P有限生成，继而有限秩自由，这些必要性主干成立。",
+    "有效贡献：R下π_n:P_∞→I_n的同构和Θ单射性由稳定像及限制同构成立；缺的是对任意目标群A的Θ满射性。表示对象唯一性的Yoneda论证在自然同构建成后适用；当前不能越过其缺口宣称整项已经完成。",
+    "可数图表可由可数积与等化子构造，平坦张量保持有限极限，这一还原正确；可数整数积检测有限生成的第二个严格子群链证明也有效。但第175行可数极限充分性直接依赖未完成的表示充分性，所以同一缺口影响两个必答分类的完整证明。",
+    "自然变换部分完整且方向正确：Nat(F_P,F_Q)≅lim_n colim_m Hom(Q_m,P_n)≅Hom(M_P,M_Q)，有限自由的有限呈示性使Hom(P_n*,−)与滤过余极限交换。显式相容记录的作用、恒等代表以及θ_n∘ψ_mn的复合公式均相容，不把这一已完成部分判失败。"
+  ],
+  "needs_second_review": true,
+  "adjudication_needed": "Independent secondary review agrees with the initial partial decision; root adjudication pending.",
+  "candidate_lean_report_path": null,
+  "candidate_lean_report_sha256": null,
+  "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/fee14fd21c58",
+  "review_material_sha256": {
+    "task.md": "8147620b629ddb512b50b067548b725948ea02b4e66731d2ba643f8e7300346f",
+    "reference.md": "41bb83d47eb827da2d0bbbb10478869d7bf9d1eaabe17f7db6ed46dde3c23fc4",
+    "rubric.json": "2508cd85f4f6f82319c62c8995424268da9e218b1c478e35463718bdf35ffe8b"
+  },
+  "initial_review_checked_after_independent_read": {
+    "path": "/private/tmp/math-gauge-review-r/fee14fd21c58.json",
+    "sha256": "3b7244d83a7cc0c32a76644a322dda19b243107335ababc39afdf843f82e05a5",
+    "agreement": "partial; decisive missing retract/lifting step and preserved valid classification contributions"
+  },
+  "blinding_note": "未读取模型映射或其他答卷。先独立读取本包及全部评审材料，再按委派读取指定初审JSON；未改候选源码或评分。",
+  "no_candidate_modification": true,
+  "score_applied": false
+}

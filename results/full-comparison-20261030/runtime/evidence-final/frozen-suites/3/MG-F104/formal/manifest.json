@@ -1,0 +1,62 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-F104",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "52f911c0cdbe74289e1342807f5adf848ea00c50b38efe2bf98b9480a8662e56",
+    "reference.md": "cc37bede7c6f2fa93faab66f8953b72a5671cc26f0018f1ae7f20145f760fbae",
+    "rubric.json": "1d77e8c25fc9ee994969cf95de67c628c79af5a0618b2144c8426acb2cd80caa"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "5360dfa0846c5d4f49a6657696bb7f77d08d24bb638355aaeb8d09ab66c1b532"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "d59012829c811a3807727ecc79ddad2d42772564e4cf48f92271bf582f3bae45",
+      "imports": [
+        "Mathlib.Topology.Order"
+      ]
+    },
+    {
+      "module": "Construction",
+      "source": "Construction.lean",
+      "sha256": "67bbe2203a4c1f57fd67a2c4788ecaff0aaf01334de888bccfb89c2dbda32e58",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "7b1279b41b9f312f5a6add9cad0b3be42beaf3285e07cbaa17ac75c4f86d4abd",
+      "imports": [
+        "Construction"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "276e0820b5164de97dd6ceab5f8cba5046e2fbf361b2c0025bc8856582d69c1e",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Boundary",
+      "source": "Boundary.lean",
+      "sha256": "1fba57b1421205f094bf5ae58b43182abcda091ab80f5068496d73832ff1c986",
+      "imports": [
+        "Candidate"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "49e0d1e74ecb366da96b977edf89cf7d78c9b0421be19aa50792c34a58e326ae"
+  }
+}

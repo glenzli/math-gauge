@@ -1,0 +1,65 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-F108",
+  "case_version": "0.1.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "1d2ea0859111d75266e72d9d0b15ff1e61be5f6cad95e27c44bf27bab22563d0",
+    "reference.md": "4f1dac9422429f732d85377f43bb2db966a83919aac641381aa6d7159f0745c9",
+    "rubric.json": "c1eb095756ba1e44e46958b99fffc40eb06029b785178b1619eb515ca332934c"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "2961b03a53c4f2ef35eb2d4a653bfb77444a737afa7eea166afc6cb2c8b2ee85"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "e75e22bbe2b82c240d47cf4dfc83d7d638421cb4bc4e528f8c7cb90256564156",
+      "imports": [
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "Multiplier",
+      "source": "Multiplier.lean",
+      "sha256": "51787e030e17b5187c88605b87d88c5b4bf482abb1848ded8a116787acc29c0b",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "bf3dc8364ac752fde665548fc59decc7045a7cbc2802dbcb687fc0a65159cbc4",
+      "imports": [
+        "Multiplier"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "ef6d1c3ca32e93f1116339cc8d3d06e67fd1eb6270501089ecb096f61b80ad46",
+      "imports": [
+        "Multiplier"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "83e367682e60a1ae140a538718fc2af4b2a486869f3ca4c0919171b45e435ede",
+    "root_selection": "All loaded MathGauge constants including private user names",
+    "expected_namespace_prefixes": [
+      "MathGauge.F108."
+    ],
+    "allowed_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "math-gauge.isolated-cli-plan/v1",
+  "status": "prepared-not-executed",
+  "prepared_utc": "2026-10-29T19:50:15.482569+00:00",
+  "client": "agy",
+  "model": "gemini-3.8-flash-high",
+  "effort": "high",
+  "run_dir": "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh",
+  "prompt_source": "/private/tmp/math-gauge-r005-clarified-20261030/preflight/inventory-unused-prompt.md",
+  "prompt_sha256": "3b78c4c43ea8c84dcdda54efb6ccc11f08754f7f24549fba2e89348b53ab61c5",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh/runtime/outer.sb",
+    "/private/tmp/math-gauge-r005-clarified-20261030/identity/gemini-pinned/agy",
+    "--gemini_dir",
+    "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh/state",
+    "--app_data_dir",
+    "antigravity-cli",
+    "--new-project",
+    "--agent",
+    "text-only",
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--model",
+    "gemini-3.8-flash-high",
+    "--effort",
+    "high",
+    "--disable-slash-commands",
+    "--sandbox",
+    "--print-timeout",
+    "45m",
+    "--log-file",
+    "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh/output/agy.log"
+  ],
+  "cwd": "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh/work",
+  "stdin_file": "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh/runtime/request.ndjson",
+  "stdin_sha256": "de432ce89143b71bc8213f4112dba4c9cd570dce83965768dfe1c00ff85798da",
+  "environment_keys": [
+    "AGY_CLI_DISABLE_AUTO_UPDATE",
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "LC_CTYPE",
+    "LOGNAME",
+    "NO_PROXY",
+    "PATH",
+    "SHELL",
+    "TERM",
+    "TMPDIR",
+    "USER",
+    "no_proxy"
+  ],
+  "environment_overrides": {
+    "TMPDIR": "/private/tmp/math-gauge-r005-clarified-20261030/preflight/gemini-inventory-fresh/runtime/tmp",
+    "AGY_CLI_DISABLE_AUTO_UPDATE": "1"
+  },
+  "credential_links": [
+    {
+      "source": "/Users/g4i/.gemini/antigravity-cli/antigravity-oauth-token",
+      "target": "antigravity-cli/antigravity-oauth-token"
+    },
+    {
+      "source": "/Users/g4i/.gemini/jetski-standalone-oauth-token",
+      "target": "jetski-standalone-oauth-token"
+    }
+  ],
+  "deny_read_roots": [
+    "/Users/g4i",
+    "/private/tmp",
+    "/private/var/folders",
+    "/Volumes"
+  ],
+  "read_exceptions": [
+    {
+      "path": "/Users/g4i/.gemini/antigravity-cli/bin",
+      "kind": "subpath",
+      "purpose": "CLI installation only"
+    },
+    {
+      "path": "/Users/g4i/.gemini/antigravity-cli/installation_id",
+      "kind": "literal",
+      "purpose": "Non-history installation identity"
+    },
+    {
+      "path": "/private/tmp/math-gauge-r005-clarified-20261030/identity/gemini-pinned/agy",
+      "kind": "literal",
+      "purpose": "Pinned inspected CLI executable only"
+    },
+    {
+      "path": "/Users/g4i/.gemini/antigravity-cli/antigravity-oauth-token",
+      "kind": "literal",
+      "purpose": "authentication"
+    },
+    {
+      "path": "/Users/g4i/.gemini/jetski-standalone-oauth-token",
+      "kind": "literal",
+      "purpose": "authentication"
+    }
+  ],
+  "manual_gates": [
+    "prove model/effort availability",
+    "review complete deny roots and exceptions",
+    "record paired non-math capability canary for this CLI/config",
+    "verify actual parent and worker PIDs before submitting task",
+    "record every attempt and pre-answer tool mismatch decision",
+    "remove authentication links and exclude state from evidence",
+    "apply and verify agy strict task-settings at the version-specific location"
+  ]
+}

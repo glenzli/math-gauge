@@ -1,0 +1,33 @@
+{
+  "packet_id": "b24c41e7b25b",
+  "case_id": "MG-F109",
+  "response_sha256": "b146bc66c57c113d65e5dffe27c6c1454f0e57ba16f932096a0b4098784120c1",
+  "request_sha256": "fd703083803cf7b04f71e91afa523fe7ae58e39e01ba7d6d9a1f7df1f178c2b8",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "答卷完整识别附件额外的逐步交换律，承认该较强前提下的有限筛选、精确桥接和最大性相关结论，同时用满足原停顿条件的两点例证明原等式确实失败。还正确说明原条件下 terminal 拉回的安全充分方向及真正安全集 K 的最大不变性。可定位的定义及使用点准确，没有把编译、公理检查或可补出的结论混同自然语言对齐。未重复编译作者fixture，audit不追加Lean产物义务。",
+  "findings": [
+    "OrbitModel.Realizes 要求 q(f(x))=g(q(x))，不能由允许q(f(x))=q(x)的析取前提推出；safe_in_layers确实在归纳后继步使用该强等式。",
+    "layers递减与有限基数稳定性、terminal_mem固定点条件解读正确；没有将有限记录范围误作X或Y有限。",
+    "反例X=Y={0,1}、B={0}、q=f=id、g恒1满足原条件，K={0}而T1为空，且新增Realizes在0失败；决定性影响已验证。",
+    "对terminal的拉回，下一记录的停顿或g步都留在terminal，所以原条件仍有q⁻¹(terminal)⊆K；实际K的最大前向不变性不依赖强交换律。",
+    "准确区分maximal_invariant的包含声明与借助其他已证性质识别最大集合；显式Realizes参数不会在#print axioms中作为新全局公理列出，这一说明正确。"
+  ],
+  "needs_second_review": false,
+  "candidate_audit_verdict": "misaligned",
+  "expected_audit_verdict": "misaligned",
+  "candidate_lean_report_path": null,
+  "candidate_lean_report_sha256": null,
+  "blinding_note": "原答卷自身的文件引用包含可识别模型目录的绝对运行路径，因此不能声称本份文本完全盲化。未读取packet-map、运行索引或外部身份资料；数学判读只依据冻结答卷及题材。",
+  "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/b24c41e7b25b",
+  "review_material_sha256": {
+    "task.md": "f810df928a75446c1c7bff737c959514398c4841d743559df9eb8c9c8fac4e09",
+    "reference.md": "75e44c2362f10206478904766fe2ed3e5e049a8d6b8ab95b85fb51322e3ee3ac",
+    "rubric.json": "99c78d488cd418e18b1bb94a2dc61f1c76b465e78185e322bbb8a1b136d8afa3"
+  }
+}

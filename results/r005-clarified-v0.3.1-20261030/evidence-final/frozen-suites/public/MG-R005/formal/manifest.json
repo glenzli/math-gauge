@@ -1,0 +1,85 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R005",
+  "case_version": "0.3.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "5f4e433ca8be831d5355eb99fa061854f2bbf2bafa0aeaaafe99f063621c890e",
+    "reference.md": "4e4d4cbe21425c832c998886fe095de715477ed284027d515a1e1e206a1272aa",
+    "rubric.json": "5552e998f9b539f89758133031060f4dfb464a82e2bdeaa8b194015eb3e51af4"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "db6e9295ad6f2a6b4f157f1218d6a2c41ca5f8bd442781e8fd3fdff32539d1ff"
+  },
+  "modules": [
+    {
+      "module": "ConvexCost",
+      "source": "ConvexCost.lean",
+      "sha256": "eeb22e10446d7363a459bc38c7f95940221b254fe87a84e88269e5bb996803ce",
+      "imports": [
+        "Mathlib.Analysis.LocallyConvex.Separation",
+        "Mathlib.Topology.Semicontinuity.Basic",
+        "Mathlib.Topology.Instances.ENNReal.Lemmas",
+        "Mathlib.Tactic.Linarith",
+        "Mathlib.Tactic.Positivity",
+        "Mathlib.Tactic.FieldSimp"
+      ]
+    },
+    {
+      "module": "FiniteObservation",
+      "source": "FiniteObservation.lean",
+      "sha256": "b2f8b937ea723e2c47998174d23b1721363d343ca816f6875d8bed5daa19654e",
+      "imports": [
+        "ConvexCost",
+        "Mathlib.Analysis.LocallyConvex.WeakDual",
+        "Mathlib.LinearAlgebra.Dual.Lemmas",
+        "Mathlib.Data.ENNReal.Inv"
+      ]
+    },
+    {
+      "module": "ConvexCostExtras",
+      "source": "ConvexCostExtras.lean",
+      "sha256": "17d45dde3126ab02deba0e0027c1cf90401f583fe3f60c593f046d4ecfb19ebb",
+      "imports": [
+        "FiniteObservation",
+        "Mathlib.Topology.Instances.EReal.Lemmas",
+        "Mathlib.Analysis.Convex.SpecificFunctions.Basic"
+      ]
+    },
+    {
+      "module": "ProjectionExample",
+      "source": "ProjectionExample.lean",
+      "sha256": "6c552e0baa18e868baee0152e7e6df102a257efdcdb0f51b8675c20b4c4217ab",
+      "imports": [
+        "ConvexCostExtras",
+        "Mathlib.Tactic.Ring"
+      ]
+    },
+    {
+      "module": "RelaxationGeometry",
+      "source": "RelaxationGeometry.lean",
+      "sha256": "82a8d873b99799c1212d04c661053902f210ebe3e1ccd37c97e68f747c4cd890",
+      "imports": [
+        "ProjectionExample"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "5e2efdc766535e23bff458f669b33c142572e1d0c51b2fc7b1459a5579624bcd",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.ConvexCost.",
+      "MathGauge.FiniteObservation."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "historical_author_audits": "Any author audit module listed above is preserved input; CurrentAudit is the common final kernel acceptance entry."
+}

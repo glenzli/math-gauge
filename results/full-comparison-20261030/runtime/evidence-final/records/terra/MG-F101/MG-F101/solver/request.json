@@ -1,0 +1,22 @@
+{
+  "schema": "math-gauge.request/v1",
+  "case_id": "MG-F101",
+  "case_version": "0.1.0",
+  "track": "alignment",
+  "instruction": "",
+  "task": "# 商环层中的理想\n\n设 $R$ 为任意交换含幺环，$I$ 为 $R$ 的理想。对每个 $n\\in\\mathbb N$，令\n\\[\nQ_n=R/I^{n+1},\\qquad q_n:R\\longrightarrow Q_n,\\qquad J_n=q_n(I),\n\\]\n其中 $q_n(I)$ 表示理想的像。若 $m\\le n$，令 $\\rho_{m,n}:Q_n\\to Q_m$ 为满足 $\\rho_{m,n}q_n=q_m$ 的商环同态。\n\n所要求的结果是：每个 $J_n^{n+1}$ 都等于零理想；对于 $m\\le n$，$\\rho_{m,n}(J_n)=J_m$；对于 $l\\le m\\le n$，$\\rho_{l,m}\\circ\\rho_{m,n}=\\rho_{l,n}$。\n\n审核附件作为上述结果的形式化提交是否完整对齐。说明各声明实际使用的前提、证明的结论及它们和正文的对应关系，并给出支持判断的数学依据。编译结果和语义判断分别报告；不能把自己补充的论证说成附件已经完成。\n\n附件为 Core.lean、Transfer.lean、Candidate.lean。\n\n环境为 Lean 4.29.1，Mathlib 固定修订 5e932f97dd25535344f80f9dd8da3aab83df0fe6。\n",
+  "files": [
+    {
+      "name": "Core.lean",
+      "content": "import Mathlib.RingTheory.Ideal.Quotient.Operations\nnamespace MathGauge.F101\nvariable {R : Type*} [CommRing R]\nabbrev Level (I : Ideal R) (n : ℕ) := R ⧸ I ^ (n + 1)\ndef residual (I : Ideal R) (n : ℕ) : Ideal (Level I n) :=\n  I.map (Ideal.Quotient.mk (I ^ (n + 1)))\ndef transition (I : Ideal R) {m n : ℕ} (h : m ≤ n) : Level I n →+* Level I m :=\n  Ideal.Quotient.factor (Ideal.pow_le_pow_right (Nat.add_le_add_right h 1))\nend MathGauge.F101\n"
+    },
+    {
+      "name": "Transfer.lean",
+      "content": "import Core\nnamespace MathGauge.F101\nvariable {R : Type*} [CommRing R]\nstructure SourceData (I : Ideal R) where\n  exponent : ℕ\n  annihilates : I ^ exponent = ⊥\ntheorem mapped_power (I J : Ideal R) (n : ℕ) :\n    (I.map (Ideal.Quotient.mk J)) ^ n = (I ^ n).map (Ideal.Quotient.mk J) := by\n  exact (Ideal.map_pow _ _ _).symm\ntheorem transport (I J : Ideal R) (d : SourceData I) :\n    IsNilpotent (I.map (Ideal.Quotient.mk J)) := by\n  refine ⟨d.exponent, ?_⟩\n  change (I.map (Ideal.Quotient.mk J)) ^ d.exponent = ⊥\n  rw [mapped_power, d.annihilates, Ideal.map_bot]\ntheorem transition_image (I : Ideal R) {m n : ℕ} (h : m ≤ n) :\n    (residual I n).map (transition I h) = residual I m := by\n  simp only [residual, transition, Ideal.map_map, Ideal.Quotient.factor_comp_mk]\ntheorem transition_comp (I : Ideal R) {l m n : ℕ} (h : l ≤ m) (k : m ≤ n) :\n    (transition I h).comp (transition I k) = transition I (h.trans k) := by\n  unfold transition\n  exact Ideal.Quotient.factor_comp _ _\nend MathGauge.F101\n"
+    },
+    {
+      "name": "Candidate.lean",
+      "content": "import Transfer\nnamespace MathGauge.F101\nvariable {R : Type*} [CommRing R]\ntheorem candidate_nilpotent (I : Ideal R) (d : SourceData I) (n : ℕ) :\n    IsNilpotent (residual I n) := transport I (I ^ (n + 1)) d\ntheorem candidate_transition (I : Ideal R) {m n : ℕ} (h : m ≤ n) :\n    (residual I n).map (transition I h) = residual I m := transition_image I h\ntheorem candidate_composition (I : Ideal R) {l m n : ℕ} (h : l ≤ m) (k : m ≤ n) :\n    (transition I h).comp (transition I k) = transition I (h.trans k) :=\n  transition_comp I h k\n#print axioms candidate_nilpotent\n#print axioms candidate_transition\n#print axioms candidate_composition\nend MathGauge.F101\n"
+    }
+  ]
+}

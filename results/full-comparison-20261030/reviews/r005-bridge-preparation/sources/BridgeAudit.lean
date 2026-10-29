@@ -1,0 +1,5 @@
+import ClarifiedMaximality
+
+#print MathGauge.ConvexCost.reconstruct_maximal_ereal_of_isClosed_real_epigraph
+#print axioms MathGauge.ConvexCost.reconstruct_maximal_ereal_of_isClosed_real_epigraph
+#print axioms MathGauge.ConvexCost.reconstruct_maximal_ereal

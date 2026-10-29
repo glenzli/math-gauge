@@ -1,0 +1,45 @@
+{
+  "packet_id": "20d783f0cca0",
+  "case_id": "MG-F101",
+  "response_sha256": "ad25cde1f7e473fb6c2a19ef6cb943d12743f5fd7f0f524e8bcfcab20999de06",
+  "request_sha256": "273c5d1704f7e8f8dadb4a0834519f68244c7106dcd2bcbccd127c4ba166804f",
+  "reviewer": "/root/alignment_corrections",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "答卷完整、正确地判定附件整体失配：展开 SourceData 的原环幂零额外前提，区分存在幂零指数与指定 n+1 次幂，并正确认可过渡像和复合两项。整数环理想 (2) 的分离例与商理想像保幂/核消去论证正确。数学审计的四项必需证据均已给出。另需保留证据表述问题：答卷以“编译结果报告”“均被 Lean 内核无错误接受”报告编译和公理依赖，却没有候选执行收据，也未说这是静态预测。其编译与公理结论和作者既有真实输出一致，且没有明确声称自己调用工具，但不应被报告系统当作候选实际执行证据。本项不破坏核心语义审计，提交 root 二审该表述的最终处理。此为匿名 AI 审核，人审仍待定。",
+  "findings": [
+    "SourceData I 含 exponent:ℕ 和 I^exponent=⊥；candidate_nilpotent 实际保留此额外输入。答卷将其准确识别为原环理想的幂零条件。",
+    "答卷准确指出 transport 选择 d.exponent，结论 IsNilpotent 不能作为附件已经建立指定 J_n^(n+1)=0 的证据。",
+    "整数环中 I=2ℤ 符合原题而原理想并不幂零；答卷给出的商映射保理想幂及核关系正确说明原目标无额外条件成立。",
+    "candidate_transition 与 candidate_composition 的声明、量词和证明均逐项正确解释，答卷没有把自己的补充证明说成附件已完成。",
+    "编译/公理部分为未经候选执行证据支持的确定性报告；作者 validation/author-development.json 确实记录三声明仅依赖 propext、Classical.choice、Quot.sound。作者证据不替代候选实际执行。",
+    "“对于绝大多数环与非零理想”是没有定义统计意义的附带措辞；明确的 (2)⊂ℤ 分离例和通用论证独立完成所需数学依据，不依赖这句话。"
+  ],
+  "needs_second_review": true,
+  "candidate_audit_verdict": "misaligned",
+  "expected_audit_verdict": "misaligned",
+  "candidate_lean_report_sha256": null,
+  "candidate_lean_report_path": null,
+  "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/20d783f0cca0",
+  "review_material_sha256": {
+    "task.md": "c7fc4e0375bf49eb01591c7e59cf90f80a3913d2009115ac69260cd5a86422f1",
+    "reference.md": "b08898c9b13ee4e2b66a72a573b541f6151d14d00a4338d0c8a23f1032dfb204",
+    "rubric.json": "6ea35895b8228084263855db27eb66b46ad4e4baf30658178a42877d98188ca6"
+  },
+  "input_attachment_sha256": {
+    "Core.lean": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+    "Transfer.lean": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+    "Candidate.lean": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879"
+  },
+  "candidate_message_sha256": "54c47d323578209b6911db513aa38ad7506f4e252af58ead71455511b886851d",
+  "compilation_evidence_note": {
+    "candidate_execution_receipt": null,
+    "author_evidence_path": "/Users/g4i/lab/math-gauge/drafts/lean-alignment-20261029/MG-F101/validation/author-development.json",
+    "author_evidence_sha256": "5ba85c30c22ca36d70fbc60418229ca57906ca1d7d5de034de8d5cc9bc762d4b",
+    "new_compilation_performed": false
+  }
+}

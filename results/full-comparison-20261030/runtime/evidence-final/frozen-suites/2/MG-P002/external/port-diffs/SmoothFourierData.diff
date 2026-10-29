@@ -1,0 +1,79 @@
+--- upstream/SmoothFourierData.lean
++++ MathGauge/PublicProof/Torus/Borrowed/SmoothFourierData.lean
+@@ -1,4 +1,12 @@
+-import NavierStokes.TorusInverse
++/-
++Ported from OpenAI NavierStokesAndEuler, Apache-2.0.
++Original: https://github.com/openai/NavierStokesAndEuler/blob/f9e8bc5b38b6e212696e8a30e3e91517af887bbd/NavierStokes/SmoothFourierData.lean
++Git blob: 1de68214bc1f62781e3fbaac44f294a25d97886d
++Changes: module and namespace isolation under MathGauge.PublicProof.Torus.Borrowed;
++compatibility repairs, if any, are recorded in PORTING.md.
++-/
++
++import MathGauge.PublicProof.Torus.Borrowed.TorusInverse
+ import Mathlib.Analysis.Fourier.AddCircleMulti
+ import Mathlib.Analysis.Calculus.FDeriv.Add
+ import Mathlib.Analysis.Calculus.Deriv.Prod
+@@ -15,7 +23,7 @@
+ 
+ noncomputable section
+ 
+-namespace NavierStokes.SmoothFourierData
++namespace MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData
+ 
+ open Set Function MeasureTheory TorusInverse
+ open scoped BigOperators ContDiff Interval Topology
+@@ -88,6 +96,7 @@
+   intro z k
+   have hfun : (fun w : Plane => f (w + ((k.1 : ℝ), (k.2 : ℝ)))) = f := funext fun w => hf w k
+   have h := congrArg (fun g : Plane → ℂ => fderiv ℝ g z) hfun
++  dsimp only at h
+   rw [fderiv_comp_add_right] at h
+   exact congrArg (fun L : Plane →L[ℝ] ℂ => L (1, 0)) h
+ 
+@@ -161,11 +170,14 @@
+   apply intervalIntegral.integral_congr
+   intro y _
+   dsimp only
+-  rw [unitCoeff_eq_integral, ← intervalIntegral.integral_const_mul]
+-  apply intervalIntegral.integral_congr
+-  intro x _
+-  unfold kernel
+-  ring
++  rw [unitCoeff_eq_integral]
++  trans ∫ x in (0 : ℝ)..1, fourier (-k.2) (y : UnitAddCircle) *
++    (fourier (-k.1) (x : UnitAddCircle) * f (x, y))
++  · exact (intervalIntegral.integral_const_mul _ _).symm
++  · apply intervalIntegral.integral_congr
++    intro x _
++    unfold kernel
++    ring
+ 
+ theorem integral_square_swap {f : Plane → ℂ} (hf : Continuous f) :
+     (∫ y in (0 : ℝ)..1, ∫ x in (0 : ℝ)..1, f (x, y)) =
+@@ -428,11 +440,13 @@
+   simp only [smul_eq_mul]
+   apply integral_congr_ae
+   filter_upwards with y
+-  rw [← integral_const_mul]
+-  apply integral_congr_ae
+-  filter_upwards with x
+-  simp only [torusMode, ContinuousMap.coe_mk, Prod.fst_neg, Prod.snd_neg]
+-  ring
++  trans ∫ x : UnitAddCircle, fourier (-k.2) y *
++    (fourier (-k.1) x * f (x, y)) ∂AddCircle.haarAddCircle
++  · exact (integral_const_mul _ _).symm
++  · apply integral_congr_ae
++    filter_upwards with x
++    simp only [torusMode, ContinuousMap.coe_mk, Prod.fst_neg, Prod.snd_neg]
++    ring
+ 
+ /-- The same continuous function on Mathlib's native finite-product torus. -/
+ noncomputable def nativeFunction (f : C(Torus, ℂ)) : C(UnitAddTorus (Fin 2), ℂ) where
+@@ -569,4 +583,5 @@
+   have hz : coefficient f 0 = 0 := by rw [coefficient_zero_eq_integral, hmean]
+   rw [directionalInverse_solves d (rapid_coefficient hf hp) hz, series_coefficient hf hp]
+ 
+-end NavierStokes.SmoothFourierData
++end MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData
++

@@ -1,0 +1,27 @@
+{
+  "packet_id": "e91453b9092d",
+  "case_id": "MG-R013",
+  "decision": "fail",
+  "assumption_fidelity": "drift",
+  "proof_validity": "invalid",
+  "scope_accuracy": "incorrect",
+  "unnecessary_restriction": false,
+  "needs_second_review": true,
+  "notes": "原目标为假，候选却断言在原全部假设下已证明。证明有两个独立决定性错误：对带孔紧集错误使用多项式Runge逼近，以及把每个幂分别最终成立的范数下界当作同一固定算子对所有幂同时成立。无法据此推出谱点逼近；没有给出合法反例或明确缩小后的替代结论。",
+  "findings": [
+    "题设的精确范数稳定是∀p ∃N_p ∀n≥N_p，不是存在统一N对所有多项式成立。候选后半段对每个m得到N_m，却在固定n处令m趋于无穷，用谱半径公式推出r(h(T_n))≥1。缺少同一个n满足所有m的条件，属于关键量词交换；这是直接误用原题核心假设。",
+    "Runge步骤选K_delta={|z|≤1,|z−lambda|≥delta}，宣称1/(lambda−z)可在其上任意精确地由多项式逼近。lambda位于单位圆盘内部时该紧集有孔，不能如此应用多项式逼近。取lambda=1/2、delta=1/4，则整个圆周lambda+delta exp(it)包含在K_delta中；若其结论给h(z)=1−(lambda−z)p(z)在该圆周上模≤1/2，而h(lambda)=1，就与最大模原理矛盾。画割线而不改变需要一致控制的原紧集并不能消除这个障碍。",
+    "该内部谱点情形确在题设允许范围：c0上的单侧右移S与截断幂零算子N_n满足收缩、有限秩、强收敛；对任意多项式p，n大于次数时两者范数都恰为系数绝对值之和。lambda=1/2属于S的谱，例如解(lambda I−S)x=e_0所需坐标不趋于零；每个N_n的谱却仅为{0}。所以候选的谱隙情形不能被题设排除。",
+    "有限秩算子代数性、有限维的强收敛到范数收敛、以及无限维时0属于各有限秩算子的谱等局部论述并不能修复上述两个错误。最终结论仍称原定理全部成立，未达到假目标题的最低反驳标准。",
+    "完整阅读task/reference/rubric/response后作AI初审；未读packet-map或上一阶段答卷。阶段时序可能推断模型，不称完全盲审。未apply，human pending。"
+  ],
+  "reviewer": "/root/alignment_research",
+  "reviewer_kind": "ai",
+  "evidence_sha256": {
+    "task.md": "b3de9be919cb8d11e54a2768d2ccfb4075f1b2e9d599ae45caa085de2ecc597b",
+    "reference.md": "02528103f2923a03e6ae7ffc7b701dcf09f2f9a88635c55dc513830905c072f3",
+    "rubric.json": "8cabfcb848e3c89e3c23d4d0461ee1c1fcd089168011bafad9ccd699d4190597",
+    "response.md": "4cb109f146238166e16dd7e2c78633ac9a76c6cf74ee4612af24f6b4e6afcf24"
+  },
+  "response_sha256": "4cb109f146238166e16dd7e2c78633ac9a76c6cf74ee4612af24f6b4e6afcf24"
+}

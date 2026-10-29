@@ -1,0 +1,97 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-P003",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "semantic_coverage": {
+    "status": "partial-substantive-lemmas",
+    "full_task_formalization": false,
+    "scope": "Actual finite-prime localization schemes, spectrum neighborhoods, actual Ab direct limits and neighborhood colimits, canonical small-site sheafification comparison and singleton isomorphism, auxiliary diagram chase; motivic geometric bridges remain unproved."
+  },
+  "frozen_inputs": {
+    "task.md": "f7915d84516e1bd5853c81ceb6e5c20dfa715e0bdf1c1ec8f0c9517f4e44e80b",
+    "reference.md": "76f129a0c6d1e18f5297a3857de5840bcacf206e86a24c1f186de9df114fb4f3",
+    "rubric.json": "c838c1445a4ae9c7197976977380f6d4fbf415b817c11ba4902421ef582e157d"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "2b90d1ae01477088c08c01c758fdec03d6040ca9ddcf00f8f08a2473bbf789b6"
+  },
+  "modules": [
+    {
+      "module": "FinitePrimeLocalization",
+      "source": "FinitePrimeLocalization.lean",
+      "sha256": "ea8a86c1c8be5536b23db708d107d4c2d811474ba55145b4afdf2f57456606db",
+      "imports": [
+        "Mathlib.RingTheory.Localization.Ideal",
+        "Mathlib.RingTheory.Ideal.Operations",
+        "Mathlib.RingTheory.Spectrum.Prime.Topology",
+        "Mathlib.Topology.Sets.Opens",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "NeighborhoodRefinement",
+      "source": "NeighborhoodRefinement.lean",
+      "sha256": "0988194897503caebf8a89cfbba1476451d90ea88278d3ba428e01ff0070b9de",
+      "imports": [
+        "FinitePrimeLocalization"
+      ]
+    },
+    {
+      "module": "AffineScheme",
+      "source": "AffineScheme.lean",
+      "sha256": "1cefa69c9b1447ef90774eb036b0493fc0002b788a005e83323b8f3be28872f6",
+      "imports": [
+        "NeighborhoodRefinement",
+        "Mathlib.AlgebraicGeometry.Scheme"
+      ]
+    },
+    {
+      "module": "FilteredExactness",
+      "source": "FilteredExactness.lean",
+      "sha256": "02bb4e20e23e9782f180b2e10bfc6e4fc150d3082e75ac2308d23c431e2e59cd",
+      "imports": [
+        "Mathlib.Algebra.Colimit.DirectLimit",
+        "Mathlib.Algebra.Exact",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ComparisonDiagram",
+      "source": "ComparisonDiagram.lean",
+      "sha256": "1dc34f0a0ab4e581866fc1d3cc4403a180bc90d5dac5bdf06e7f505fefb5c9e4",
+      "imports": [
+        "Mathlib.Algebra.Exact",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "SheafificationStalk",
+      "source": "SheafificationStalk.lean",
+      "sha256": "6bebd89f8b459b3e82ffc789e3e0744bc17dd5b52b3b10534ef21e90e2fbc964",
+      "imports": [
+        "Mathlib.Topology.Sheaves.Sheafify",
+        "Mathlib.CategoryTheory.Sites.LeftExact",
+        "Mathlib.Algebra.Category.Grp.FilteredColimits",
+        "Mathlib.Algebra.Category.Grp.Colimits",
+        "Mathlib.Algebra.Category.Grp.Limits"
+      ]
+    },
+    {
+      "module": "NeighborhoodValues",
+      "source": "NeighborhoodValues.lean",
+      "sha256": "881d7cec0f315b9cfc5060a86664e683c0c1dab568f6dca027b3d1edd1c86d63",
+      "imports": [
+        "SheafificationStalk",
+        "Mathlib.Algebra.Category.Grp.AB",
+        "Mathlib.CategoryTheory.Limits.Final"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "fcf427c81a7fefd1ccae827c6f0bfbb379568832821a5715a2d761ee61e9f9e6"
+  }
+}

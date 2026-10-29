@@ -1,0 +1,91 @@
+{
+  "schema": "math-gauge.formal-case/v1",
+  "case_id": "MG-R006",
+  "case_version": "0.3.0",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "task.md": "b26a92cfdbc9103f9c901759357d4b9a06eb93ca146c79f8b16149b96a35d1ca",
+    "reference.md": "a58e02cd7dc374dfc2cc372145606504003f25d963008c12d0fef6adb6bbe7a6",
+    "rubric.json": "fd7b36de7b8edbbcfc0ade50bebe25f4a76786d985cb40c50959775691e115d9"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "73591373fe7ffffeae8446d84b8b19124f0825cb437d761d8806724b6b732622"
+  },
+  "modules": [
+    {
+      "module": "AdicCounterexample",
+      "source": "AdicCounterexample.lean",
+      "sha256": "649cb782337869613e43d1fe42425a7a160ab3d9b45648a02506370e3df57208",
+      "imports": [
+        "Mathlib.Data.ZMod.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "AbelianTower",
+      "source": "AbelianTower.lean",
+      "sha256": "2ed1063b46b89f4e30591ae0cd0704e153bc7906125e9962cb20136943c257d3",
+      "imports": [
+        "Mathlib.GroupTheory.QuotientGroup.Basic",
+        "Mathlib.Algebra.Module.Pi",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "Obstruction",
+      "source": "Obstruction.lean",
+      "sha256": "76969955e7798a05eb94eafc92c506d363a435e2cdb95bf4b4ad5f4969e6835c",
+      "imports": [
+        "AbelianTower"
+      ]
+    },
+    {
+      "module": "ObstructionNaturality",
+      "source": "ObstructionNaturality.lean",
+      "sha256": "6062481e646ebbddde0ee422c129f50b77529d1706134baba06e05d2eec0b876",
+      "imports": [
+        "Obstruction"
+      ]
+    },
+    {
+      "module": "AdicObstruction",
+      "source": "AdicObstruction.lean",
+      "sha256": "30fba9a38ef253f4a9a0551c07e155180f416b2dee0f59caf22304b835a061f2",
+      "imports": [
+        "ObstructionNaturality",
+        "AdicCounterexample"
+      ]
+    },
+    {
+      "module": "R006Audit",
+      "source": "R006Audit.lean",
+      "sha256": "0c9fe573deea5d07078310a8ed4af442ebb8db0459a86b15cf059d2874a7fdb9",
+      "imports": [
+        "AdicCounterexample",
+        "AbelianTower",
+        "Obstruction",
+        "ObstructionNaturality",
+        "AdicObstruction",
+        "Lean.Util.CollectAxioms"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "bfb5efb88c8c10b5c068ca3a6746d79eb206eb8a919c62614a0a31a86218f90a",
+    "root_selection": "All loaded MathGauge constants including private user names; no theorem subset",
+    "expected_namespace_prefixes": [
+      "MathGauge.AdicCounterexample.",
+      "MathGauge.AbelianTower."
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "historical_author_audits": "Any author audit module listed above is preserved input; CurrentAudit is the common final kernel acceptance entry."
+}

@@ -1,0 +1,66 @@
+{
+  "case_id": "MG-P002",
+  "version": "0.1.0",
+  "date": "2026-10-29",
+  "mathematical": "author-self-check-complete-independent-review-pending",
+  "human": "pending",
+  "goal_status": "classification-with-true-fixed-direction-target",
+  "author": {
+    "reviewer_kind": "ai",
+    "agent": "proof-derivatives",
+    "requested_model": "gpt-6-astra",
+    "requested_reasoning_effort": "max",
+    "backend_identity": "not-independently-attested"
+  },
+  "review_scope": "Author self-check only. Exact files below have not yet passed an independent mathematical or fresh task-only review.",
+  "reviewed_files": {
+    "case.json": "e2af61c12a82bb605c65abfcf9719c6c64efe390fab4487a0ca347515e2fc81e",
+    "design.json": "d08b9f4903a48878aad6de6bcd59ecf71ba1c6fa9dc7fd422de7b3eb8326409d",
+    "reference.md": "82e99722c180299d3a680d42af44524f81e82e3a52160101c93b18c10531cf1b",
+    "rubric.json": "8117cf949d4a0a90a6559f5807ab04b53662cb0ea2277e4e6222516a786a4051",
+    "source-notes.md": "716667daceca7605de1f5c476e25bcf6bedaed50658f865e0753c91491d859ab",
+    "task.md": "61f9638c22208839d098783881ba3d15148f10002ae30eae40c95f0432513f16"
+  },
+  "proof_dependency_chain": [
+    "Fourier coefficient identity and irrationality yield uniqueness on zero-mean functions.",
+    "A polynomial divisor lower bound preserves rapid Fourier decay and constructs a smooth inverse.",
+    "Single Fourier modes and a weighted coefficient sum prove the exact Sobolev loss criterion in both directions.",
+    "Failure of every polynomial bound produces one fixed smooth forcing whose necessarily prescribed solution coefficients are unbounded.",
+    "The quadratic conjugate gives an attained one-derivative bound for sqrt(2)-1; Pell frequencies show every smaller nonnegative loss fails.",
+    "Integration by parts with m+4 derivatives leaves a summable cubic decay on the two-dimensional lattice and yields the required C^m estimate."
+  ],
+  "boundary_checks": [
+    "All functions are complex-valued smooth functions on the exact unit-period torus, and both forcing and chosen solution have zero mean.",
+    "No finite derivative bound is assumed for arbitrary irrational alpha; nonresonance and tame inversion are separated.",
+    "The bad forcing is a single actual smooth function, not a family chosen after each estimate.",
+    "Sobolev estimates cover every real r and their constants are independent of u.",
+    "The exact arithmetic criterion retains endpoint information; the optional irrationality exponent is not an additional candidate obligation.",
+    "The minimum one-derivative claim concerns Sobolev norms; four is not claimed optimal for C^m norms.",
+    "The local source/formal estimate discrepancy does not refute the fixed-direction estimate or the global PDE theorem."
+  ],
+  "formalization": {
+    "status": "not-formalized",
+    "candidate_lean_required": false,
+    "author_lean_files": [],
+    "compilation_performed": false,
+    "coverage": "No new theorem in this case has been Lean-verified. External pinned code was read for provenance only."
+  },
+  "independent_reviews": [],
+  "new_model_runs": 0,
+  "difficulty_status": "uncalibrated",
+  "validation": {
+    "status": "passed-targeted-file-contract-and-projection-check",
+    "runner_contracts_changed": false,
+    "scope": "Author-side temporary one-case suite using the existing catalog and prepare implementation; root integration validation remains separate.",
+    "checks": [
+      "All case JSON parses; Suite.load accepts the case with public provenance and all referenced files.",
+      "Suite.prepare produces only prompt.md and request.json; prompt.md is byte-identical to task.md.",
+      "Candidate instruction and solver attachments are empty; request keys contain no reference, rubric, design, source or review record.",
+      "Every author-reviewed file digest matches the exact local file bytes."
+    ],
+    "lean_compilation": false,
+    "candidate_model_runs": 0,
+    "broader_test_scope": "No runner implementation or contracts changed; the author did not repeat the full repository test suite."
+  },
+  "human_review": "pending"
+}

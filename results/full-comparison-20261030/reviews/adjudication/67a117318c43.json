@@ -1,0 +1,33 @@
+{
+  "packet_id": "67a117318c43",
+  "case_id": "MG-F106",
+  "response_sha256": "013aef3980c547d1d97dcca23b4dd6085d83075e196ec0921f5e60b358604007",
+  "reviewer": "/root",
+  "reviewer_kind": "ai",
+  "decision": "partial",
+  "assumption_fidelity": "clean",
+  "proof_validity": "unknown",
+  "scope_accuracy": "incorrect",
+  "unnecessary_restriction": false,
+  "needs_second_review": false,
+  "candidate_lean_report_sha256": "d565f2b4cc24e397f5b2eed2a4b23d19abe45465b0024e53024613364534eb80",
+  "candidate_lean_report_path": "/private/tmp/math-gauge-review-f/67a117318c43/lean-manual-extraction/report.json",
+  "notes": "完整读原题、Core依赖定义、参考/rubric与原答卷。选相交陪集代表组成F，再用F×B加法单射证明基数界，是完整有效数学路线，保留任意阿贝尔群、原切片/常数和经典选择。唯一代码块的紧邻标题明确Solution.lean；独立核对人工提取字节区间等于保存的完整submitted源码，未增删任何代码，首次format_error原报告另存。真实固定环境编译在Solution:99乘积成员rewrite失败，未完成可编译交付。按实际compile_error而非格式问题计partial；公理审计未达到。",
+  "findings": [
+    "Solution.lean:99 的 rw [Finset.mem_coe, Finset.mem_product] 无法匹配 F.product B 的实际成员表达，主基数证明失败。",
+    "原块完整字节一致，人工仅补文件归属；保留首次提取报告与人工override审阅。",
+    "说明声称完整存在证明，形式化完成状态过度；数学证明思路正确不替代源码编译。"
+  ],
+  "initial_extraction_report_sha256": "2bd657a6cf56325172e15730bb9aea41e1cc45efc9171c01a23beca0d77f255c",
+  "extraction_override_sha256": "1545da493edc77fa5f9d77448098fd16a78001c2b0a0e8537a8b88076fef2e90",
+  "reviewed_material_sha256": {
+    "task.md": "13ccd6bf775d7949042a029a1aa2335e77bd0f733d695835c59f72ba2cf433fc",
+    "reference.md": "4e49d29ff7e0afa001387ccde2f4ac75c58b24396d35954abb4b9d9e38dd134c",
+    "rubric.json": "dea5bfc9e0376e841662211e9a54f44dc2caf088650b6099b1fdb7c039cf223a",
+    "response.md": "013aef3980c547d1d97dcca23b4dd6085d83075e196ec0921f5e60b358604007",
+    "request.json": "be17af49ea84187a072651c3c29d413e4a49140790437dda229059cfb1aa3529"
+  },
+  "primary_review_sha256": "0dd56d1ecb0cf6e1089474fbedd2c12b8c1069a3c4b374c6c0a90f8056118577",
+  "secondary_review_sha256": "4789125a570e8352740b71a7c5edcc00e1a813be4f8023d2b3462a6c612e6b31",
+  "adjudication": "独立两审一致。保留原始答卷和全部问题，按题面必需义务及真实编译结果判断，不改写候选代码或增加原题未要求的API包装。"
+}

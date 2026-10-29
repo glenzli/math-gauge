@@ -1,0 +1,35 @@
+{
+  "MG-F108": {
+    "packet_id": "e52a72990aea",
+    "case_id": "MG-F108",
+    "response_sha256": "9df9e19dc1c5388d30c3051e0db82eed906bfc42ca9647f639d7420e42735f7b",
+    "request_sha256": "195a006cd810ab146893c5fa458d3b8c958ab115d5fc3d87d59d4cf92896aeb8",
+    "reviewer": "/root/alignment_corrections",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "三个完整修订文件均原样编译通过，62个本地声明公理审计通过。最终交付保留所有背景定义及任意实序列范围，构造了全域线性等价 S，证明逆与唯一性、同一C的一阶估计及快速衰减保持，并将InputControl改为r+1输入。答卷明确指出原接口多用一阶以及修订理由；逐点恒等式提供数学依据。无需附加题面未要求的最优阶数论证或指定反例。候选未伪称自身已经编译，实际证据来自本次对原始源码的独立核验。",
+    "findings": [
+      "Core的Seq、weight、Control、Rapid、transport、solve含义与冻结输入一致，定义域仍为全部实序列，C仍为任意实数。",
+      "S的toFun=solve、invFun=transport；transport_S、S_transport、solution_unique_S及加法/数乘结论在全域成立，没有控制条件作为全域逆的额外前提。",
+      "control_solve/control_S 用精确恒等式 w^r|Sf|=w^(r+1)|f| 从Control(r+1,C,f)推得Control(r,C,Sf)，常数未增大且不增设C≥0。",
+      "rapid_solve/rapid_S 从每一输出阶r选择输入阶r+1的非负控制常数，完整保留快速衰减定义。",
+      "Candidate中的InputControl确已改成r+1；Result的解、唯一性及估计字段由实际证明构造，未把目标字段当作外来证书。",
+      "原两阶估计仅作为合法较弱推论保留，未冒充目标已经由原接口完成；所有三模块和审计退出0，公理并集仅含propext、Classical.choice、Quot.sound。"
+    ],
+    "needs_second_review": false,
+    "candidate_lean_report_path": "/private/tmp/math-gauge-review-f/e52a72990aea/lean/report.json",
+    "candidate_lean_report_sha256": "c0d3cbdc1ac5c12a27baecc837b55815dfdbeb9969743fa333d2f90f0180a7ac",
+    "candidate_artifact_sha256": "58d6f7cee376bb54fd2f54fdc9a4652e0c3e9cc01ab7e3dcf62eb8771bf659fb",
+    "reviewed_packet": "/Users/g4i/lab/math-gauge/results/full-comparison-20261030/reviews/packets/e52a72990aea",
+    "review_material_sha256": {
+      "task.md": "1d2ea0859111d75266e72d9d0b15ff1e61be5f6cad95e27c44bf27bab22563d0",
+      "reference.md": "4f1dac9422429f732d85377f43bb2db966a83919aac641381aa6d7159f0745c9",
+      "rubric.json": "c1eb095756ba1e44e46958b99fffc40eb06029b785178b1619eb515ca332934c"
+    },
+    "recorded_at": "2026-10-29T18:04:43.293222+00:00"
+  }
+}

@@ -1,0 +1,1 @@
+Use web search to look up the current UTC date. Report the source.

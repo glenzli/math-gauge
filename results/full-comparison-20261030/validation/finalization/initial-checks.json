@@ -1,0 +1,75 @@
+{
+  "schema": "math-gauge.finalization-checks/v1",
+  "phase": "initial",
+  "commands": [
+    "python3 -B -m unittest discover -s tests",
+    "python3 -B -m math_gauge validate",
+    "python3 -B -m math_gauge validate --suite drafts/true-goal-six-20261029",
+    "python3 -B -m math_gauge validate --suite drafts/public-proof-extractions-20261029",
+    "python3 -B -m math_gauge validate --suite drafts/lean-alignment-20261029",
+    "python3 -B exercises/refresh_catalog.py --check"
+  ],
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "c06ff0",
+        "wall_time_seconds": 0.000006958,
+        "session_id": 36055,
+        "original_token_count": 450,
+        "output": ".......................sssss...............sssssssss..........Cannot mix verification profiles in one invocation\n......................FF........................\n======================================================================\nFAIL: test_active_suite_has_twenty_task_only_unapproved_research_cases (test_research_suite.ResearchSuiteTests.test_active_suite_has_twenty_task_only_unapproved_research_cases)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/g4i/lab/math-gauge/tests/test_research_suite.py\", line 29, in test_active_suite_has_twenty_task_only_unapproved_research_cases\n    self.assertEqual(self.suite.metadata[\"version\"], \"0.4.0\")\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: '0.4.1' != '0.4.0'\n- 0.4.1\n?     ^\n+ 0.4.0\n?     ^\n\n\n======================================================================\nFAIL: test_baseline_case_bytes_versions_and_projection_are_preserved (test_research_suite.ResearchSuiteTests.test_baseline_case_bytes_versions_and_projection_are_preserved)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/g4i/lab/math-gauge/tests/test_research_suite.py\", line 58, in test_baseline_case_bytes_versions_and_projection_are_preserved\n    self.assertEqual(identity.hexdigest(), evidence[\"baseline_suite_sha256\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'd8c9461eadffd262f6f7455fc956d5d23875c5e1e6a609d6f39f9f6fc946aa16' != '3e7f5f288fa8e8c7576279e9ccd9b021f077b0fc25e82076791efea58bea42a8'\n- d8c9461eadffd262f6f7455fc956d5d23875c5e1e6a609d6f39f9f6fc946aa16\n+ 3e7f5f288fa8e8c7576279e9ccd9b021f077b0fc25e82076791efea58bea42a8\n\n\n----------------------------------------------------------------------\nRan 110 tests in 7.012s\n\nFAILED (failures=2, skipped=14)\n",
+        "exit_code": 1
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "7019ae",
+        "wall_time_seconds": 0.512341375,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "{\"cases\": 20, \"suite_sha256\": \"6ad8a8a7c80a7ba769b0677ef250bf9998d9601d190f271ce6b357fa91f5308d\", \"human_approved\": 0}\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "5a68e5",
+        "wall_time_seconds": 0.223374625,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "{\"cases\": 6, \"suite_sha256\": \"fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa\", \"human_approved\": 0}\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "921b1f",
+        "wall_time_seconds": 0.333710416,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "{\"cases\": 3, \"suite_sha256\": \"183ff9585facd68e422609bcb24199878c45da6bb2708a8ddf570c11c0738a8b\", \"human_approved\": 0}\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "dc2fd0",
+        "wall_time_seconds": 0.272157083,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "{\"cases\": 12, \"suite_sha256\": \"f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9\", \"human_approved\": 0}\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "b53f77",
+        "wall_time_seconds": 0.764895625,
+        "exit_code": 0,
+        "original_token_count": 62,
+        "output": "{\"catalog_sha256\": \"408c7e31a16d619aa4a5fa3bedb534a03d0dac79dd59f8e1e9e111b1b0781df2\", \"source_files_checked\": 747, \"local_links_checked\": 334, \"current_cases\": 41, \"chapters\": 7, \"status\": \"passed\", \"snapshot_status\": \"final-catalog-snapshot\"}\n"
+      }
+    }
+  ]
+}
