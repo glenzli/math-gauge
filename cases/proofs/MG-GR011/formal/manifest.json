@@ -1,0 +1,73 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR011",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "3a41715f64beceb811ec05d35333ea2b45fb44da01ec3a39135e130c7d7951c0",
+    "contract.json": "4dc269c70cce26bec4d4e3b70b7b1294162b72d055f9f361d2c8c2408c6cce1e",
+    "reference.md": "de1f0050a7e4defbca7f2850c880db57bf112159775a8a612d037de2c956fccc",
+    "rubric.json": "71e7ec5a8ac679e7778f2aa7e73c8a49c054797dd72f47279a5b1e00f2790349",
+    "task.md": "89b2584ecfb16039782392a10b8b4e2f0790338b74382282558310c9db92b0f4"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "cfa86e8b07d80093b87348d9cabbef35a582494087624848194c0a82cd5f4256"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "9d0e69b7a3e1cf243e114eb395e6b1ef3940294ea977eb74e9ce895986e7651d"
+  },
+  "modules": [
+    {
+      "module": "ConvexProjection",
+      "source": "ConvexProjection.lean",
+      "sha256": "bcf610427ac6904bb1f81d6c28e3384c934b77e46e2a1800e8354f66a35ea604",
+      "imports": [
+        "Mathlib.Analysis.InnerProductSpace.Projection.Minimal",
+        "Mathlib.Topology.Order.MonotoneConvergence",
+        "Mathlib.Topology.MetricSpace.Cauchy",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "FiniteConstraints",
+      "source": "FiniteConstraints.lean",
+      "sha256": "ba3e25b83364d09e500a050400fbf7b03469e2e838d576b324107f695438c95e",
+      "imports": [
+        "ConvexProjection"
+      ]
+    },
+    {
+      "module": "AffineProjections",
+      "source": "AffineProjections.lean",
+      "sha256": "0bd35ecb0a0baaaeaf837876b00f7e3eea49d963f294360c815e3f4ce2d6e118",
+      "imports": [
+        "Mathlib.Analysis.InnerProductSpace.Adjoint",
+        "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "VariationalIteration",
+      "source": "VariationalIteration.lean",
+      "sha256": "89cb4f3ee6930024f6bff6b6c797bfd345b7e495a723a08eff1331c8e004af19",
+      "imports": [
+        "FiniteConstraints",
+        "Mathlib.Topology.MetricSpace.Contracting"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "fd4cf33312011d8fd11eee1912f379e552a0cbbb5eb03eedb3e8eb8b68f02dd9",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

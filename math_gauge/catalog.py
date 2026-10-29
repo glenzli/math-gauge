@@ -81,6 +81,37 @@ def fingerprint(root, names):
     return h.hexdigest()
 
 
+def case_paths(root, manifest, case):
+    """Keep manifest-local storage paths suite-relative inside the runner.
+
+    Candidate target names are workspace paths and never use this base. Checking
+    the local file before joining also prevents a case-local symlink from
+    reaching a neighbouring case, even when that file is inside the suite.
+    """
+    path_base = case.get("path_base", "suite")
+    if not isinstance(path_base, str) or path_base not in {"suite", "case"}:
+        raise ValueError(f"{case['id']}: path_base must be suite or case")
+    if path_base == "suite":
+        return case
+    prefix = relative_name(manifest).parent
+    base = root / prefix
+
+    def local(name):
+        safe_file(base, name)
+        return str(prefix / name)
+
+    normalized = dict(case)
+    for key in ("task", "reference", "rubric"):
+        normalized[key] = local(case[key])
+    if case.get("group_contract"):
+        normalized["group_contract"] = local(case["group_contract"])
+    normalized["solver_files"] = [dict(item, source=local(item["source"]))
+                                  for item in case["solver_files"]]
+    normalized["lean_checks"] = [local(name) for name in case["lean_checks"]]
+    normalized["evaluator_files"] = [local(name) for name in case.get("evaluator_files", [])]
+    return normalized
+
+
 def validate_group_contract(contract):
     """Validate evaluator-only stage contracts, never supply their truth labels."""
     if not isinstance(contract, dict) or contract.get("schema") != "math-gauge.group-contract/v1":
@@ -257,6 +288,9 @@ class Suite:
                 case.get("lean_checks"), list
             ):
                 raise ValueError(f"{cid}: input/check lists required")
+            if not isinstance(case.get("evaluator_files", []), list):
+                raise ValueError(f"{cid}: evaluator files must be a list")
+            case = case_paths(root, manifest, case)
             paths = [
                 manifest,
                 case["task"],

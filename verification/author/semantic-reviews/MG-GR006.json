@@ -1,0 +1,320 @@
+{
+  "schema": "math-gauge.independent-semantic-review/v1",
+  "case_id": "MG-GR006",
+  "case_version": "0.1.1",
+  "reviewer": "author-lean-r11-r20",
+  "status": "pass",
+  "review_scope": "Complete candidate task, reference, rubric, contract, case/review metadata, all nine mathematical source modules plus both audit command modules, current author alignment and fresh verification identity. Independent mathematical review; unchanged fresh proof evidence reused by exact hashes.",
+  "source_hashes": {
+    "drafts/progressive-groups-20261030/MG-GR006/author-contract.json": "d33771ea8d8edd39ce51d07ff7577803f95fcb18bf855588bfb6614a49dd52cd",
+    "drafts/progressive-groups-20261030/MG-GR006/case.json": "d21def873ba6e1494ed750ce39a70cad5dcf9aae8cfd9b56e9011a047a57557a",
+    "drafts/progressive-groups-20261030/MG-GR006/contract.json": "167a26b77d1495e9d04eb0dc1bc4e7a2fdaf908ac28dac5fccd81e095d7e8761",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/AbelianTower.lean": "2ed1063b46b89f4e30591ae0cd0704e153bc7906125e9962cb20136943c257d3",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/AdicCounterexample.lean": "649cb782337869613e43d1fe42425a7a160ab3d9b45648a02506370e3df57208",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/AdicObstruction.lean": "30fba9a38ef253f4a9a0551c07e155180f416b2dee0f59caf22304b835a061f2",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/COVERAGE.md": "0f3b7b592d62c982c93a2c739c06751cd371d98d328f6c5834be3b62442d0b86",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/CurrentAudit.lean": "c3bb4ff920a9f3f852e0e05aba50cb97141d9e2e3047bec41b58ed0239286cb6",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/FiniteFibers.lean": "d2dc16c58b21b5843439401f9cb7812dccd76d636170364123ac925781701890",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/FinitePrefixes.lean": "18fd66d9155399207811d2a2461564461731e1d5d282a7e1d1e8a864b06abf6c",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/Obstruction.lean": "76969955e7798a05eb94eafc92c506d363a435e2cdb95bf4b4ad5f4969e6835c",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/ObstructionNaturality.lean": "6062481e646ebbddde0ee422c129f50b77529d1706134baba06e05d2eec0b876",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/R006Audit.lean": "0c9fe573deea5d07078310a8ed4af442ebb8db0459a86b15cf059d2874a7fdb9",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/TowerChoices.lean": "004dc77cc8646c0cf544c90c7dc7dc6194eb94f89994605222b46180fb107113",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/TowerNaturality.lean": "a260cfbe4324f818e45f58836cdf2eb2c966aee1fd02dbda03bd7a343a7a6739",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/alignment.json": "1c742c4c1fb19df302b8d488db293e5b333ca01f42a655d4ab50a5d48841d2a9",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/declarations.json": "c04db22d1ac03493702d05153cf5e83143866ab48ea8277382619090ab4471a8",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/manifest.json": "d20a7aa58634fe9304ed5e6ecc145a845030b84c2fee02d5227de2c7e5625fe9",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/provenance.json": "0f7deec528e10d4a2fa67893578e3b763ba7d5ad66dfc4db2274cc0dfec38a3f",
+    "drafts/progressive-groups-20261030/MG-GR006/formal/verification-report.json": "07c826a5a53504ceb0162ea5c5219979877cc84322e1e2f9dc13d552e6eb13a8",
+    "drafts/progressive-groups-20261030/MG-GR006/provenance.json": "c14aa671e78c975f1c7ababa814d9bc817fb0a6a686f4d51310a0486e23e1856",
+    "drafts/progressive-groups-20261030/MG-GR006/reference.md": "25534d64af63642e9a838f0868329bddff433ea26c6c47fa3b64f2953c8d921f",
+    "drafts/progressive-groups-20261030/MG-GR006/review.json": "ff5a54cae7b28e6cb7898563c285083a78cebf252d0a9be81fb2dae5fa73d5ce",
+    "drafts/progressive-groups-20261030/MG-GR006/rubric.json": "c4e49a7305bb857c4bdba52b305de3f2c6e8c5ccefb4ca4bb8f0cd249b1be14a",
+    "drafts/progressive-groups-20261030/MG-GR006/task.md": "b20ec39e18239c62e1ad42a5f08d679e068677196d54327d31a47aca4b279f35"
+  },
+  "items": [
+    {
+      "id": "S1",
+      "status": "pass",
+      "analysis": "FinitePrefixes defines the actual finite compatible subgroup on Fin(N+1), where N=0 is the first prose row. prefix_lift selects only a representative at the highest available row and transports it by the actual composite beta maps. No infinite record or transition surjectivity is assumed. prefix_freedom proves unique compatible kernel translation between every pair of lifts, and prefix_kernel_translation_preserves_record proves the converse action stays in the fiber.",
+      "declarations": [
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.down"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.down_natural"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.Prefix"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.prefix_down"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.prefix_lift"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.prefixMap"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.prefix_freedom"
+        },
+        {
+          "module": "FinitePrefixes",
+          "name": "MathGauge.GR006.prefix_kernel_translation_preserves_record"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S2",
+      "status": "pass",
+      "analysis": "delta_surjective is an actual Nat.rec choice recursion on a surjective tower. Applied to the genuine row-lift defect, it produces a compatible lift. limitMap_injective, limit_kernel and the preservation-of-record theorem establish both sides of exactness rather than a one-way witness. lift_freedom gives unique transitive translations. limit_square and kernel_action_natural apply to arbitrary commuting homomorphisms, and the same general square specializes to the B/C square; there is no preferred point asserted.",
+      "declarations": [
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.delta_surjective"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.limitMap_injective"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.limit_kernel"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.surjective_limit_of_kernel_surjective"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.lift_freedom"
+        },
+        {
+          "module": "TowerNaturality",
+          "name": "MathGauge.GR006.limit_square"
+        },
+        {
+          "module": "TowerNaturality",
+          "name": "MathGauge.GR006.kernel_action_natural"
+        },
+        {
+          "module": "TowerNaturality",
+          "name": "MathGauge.GR006.kernel_translation_preserves_record"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S3",
+      "status": "pass",
+      "analysis": "The constant split integer row has actual inclusion, projection and splitting; all transition maps are identity. shear is an AddEquiv with its actual inverse and fixes both ends. For every lift of record 1, shear 1 moves it. no_natural_constant_lift quantifies over every compatible lift and every allowed shear, so the obstruction is to a natural selection, not to the equivariance of one arbitrary point or to the natural torsor itself.",
+      "declarations": [
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Shear.split_row"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Shear.shear"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Shear.shear_preserves_ends"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Shear.shear_commutes_constant_transition"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Shear.no_invariant_lift"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Shear.no_natural_constant_lift"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S4",
+      "status": "pass",
+      "analysis": "The counterexample uses the genuine kernel of Z to ZMod(2^(n+1)); mem_A identifies it with the required power-of-two subgroup. Every row is proved exact, gamma is actual reduction and surjective, beta is identity, and record is the unique inverse of 3. Actual finite prefixes admit one integer lift. Any global compatible lift is constant and forces every power of 2 to divide 3b-1, hence 3b=1 over Z, a contradiction. The statement is transferred to the actual inverse-limit augmentation, with its B-limit identified with Z.",
+      "declarations": [
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.rows_exact"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.diagram_commutes"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.pi_surjective"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.gamma_surjective"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.record_compatible"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.finite_prefix_lift"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.no_compatible_lift"
+        },
+        {
+          "module": "AdicCounterexample",
+          "name": "MathGauge.AdicCounterexample.kernel_limit_zero"
+        },
+        {
+          "module": "AdicObstruction",
+          "name": "MathGauge.AdicCounterexample.inverse_limit_not_surjective"
+        },
+        {
+          "module": "AdicObstruction",
+          "name": "MathGauge.AdicCounterexample.integerLimitEquiv"
+        },
+        {
+          "module": "AdicObstruction",
+          "name": "MathGauge.AdicCounterexample.actual_obstruction_nontrivial"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S5",
+      "status": "pass",
+      "analysis": "rowFiberEquiv gives a genuine bijection from A_n to the actual fiber of p_n. This proves finiteness of lifting fibers, not merely finiteness of the quotient. Nonemptiness follows from row surjectivity; beta restricts to fibers using the commuting square and compatibility of the supplied record. The genuine resulting Functor.ofOpSequence is passed to the proved finite nonempty inverse-system theorem with no surjectivity requirement on its arrows. The resulting section is unpacked into the original limit b.",
+      "declarations": [
+        {
+          "module": "FiniteFibers",
+          "name": "MathGauge.GR006.rowFiberEquiv"
+        },
+        {
+          "module": "FiniteFibers",
+          "name": "MathGauge.GR006.finite_kernel_lift"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.lift_freedom"
+        },
+        {
+          "module": "TowerNaturality",
+          "name": "MathGauge.GR006.kernel_translation_preserves_record"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "S6",
+      "status": "pass",
+      "analysis": "ObstructionGroup is the actual additive quotient of the full product by the range of Delta_A. chosenDefect is derived from row exactness for actual chosen row lifts. defect_class_independent proves quotient independence by kernel differences; obstructionHom proves additivity using sums of lifts; obstruction_natural covers arbitrary commuting tower maps. obstruction_zero_iff is the precise single-record criterion. Exactness at lim A/B is supplied by earlier actual-map lemmas, exactness at lim C by zero_iff, and terminal surjectivity by beta-surjectivity through delta_surjective. The same legitimate S4 tower C_0=ZMod2 and C_n=ZMod4 for n>0 has infinite kernels, nonsurjective alpha_0, yet surjective augmentation; it disproves necessity of both sufficient conditions without leaving the S4 hypotheses.",
+      "declarations": [
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.delta"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.defect_exists"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.defect_change"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.limitMap_injective"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.limit_kernel"
+        },
+        {
+          "module": "AbelianTower",
+          "name": "MathGauge.AbelianTower.lift_iff_coboundary"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.defect_class_independent"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.obstructionHom"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.obstruction_zero_iff"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.obstruction_surjective"
+        },
+        {
+          "module": "Obstruction",
+          "name": "MathGauge.AbelianTower.lift_freedom"
+        },
+        {
+          "module": "ObstructionNaturality",
+          "name": "MathGauge.AbelianTower.obstruction_natural"
+        },
+        {
+          "module": "ObstructionNaturality",
+          "name": "MathGauge.AbelianTower.obstruction_trivial_iff"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Nonnecessary.rows_exact"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Nonnecessary.kernel_diagram"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Nonnecessary.transitions_surjective"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Nonnecessary.alpha_zero_not_surjective"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Nonnecessary.augmentation_surjective"
+        },
+        {
+          "module": "TowerChoices",
+          "name": "MathGauge.GR006.Nonnecessary.infinite_kernel"
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "verification": {
+    "fresh_report_status": "passed",
+    "manifest_sha256": "d20a7aa58634fe9304ed5e6ecc145a845030b84c2fee02d5227de2c7e5625fe9",
+    "all_current_frozen_and_formal_hashes_match": true,
+    "declarations": 193,
+    "all_alignment_declarations_exist": true,
+    "fresh_compilation_repeated_for_review": false
+  },
+  "findings": [],
+  "human_approval": "pending",
+  "candidate_model_execution": "not-run"
+}

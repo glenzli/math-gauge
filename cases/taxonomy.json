@@ -1,0 +1,4898 @@
+{
+  "schema": "math-gauge.focus-taxonomy/v1",
+  "version": "1.0.0",
+  "title": "当前43份试卷考察重点",
+  "operator_only": true,
+  "definitions": [
+    {
+      "id": "F01",
+      "label": "假设及作用域",
+      "includes": "核查结构假设的实际作用与局部生效范围；区分必要条件、充分条件与某条证明路线的要求。",
+      "boundary": "不因题中存在假设就自动标记；需有明确的假设改变、删除或作用对象切换。"
+    },
+    {
+      "id": "F02",
+      "label": "量词与常数一致性",
+      "includes": "保持量词顺序、统一或逐对象常数、同一个界、共同阶段及固定参数的依赖关系。",
+      "boundary": "收敛方式本身归F04；有限/无限或常数更换涉及量词交换时使用本标签。"
+    },
+    {
+      "id": "F03",
+      "label": "定义域、局部整体与提升",
+      "includes": "区分原对象、商、完成、实际像域及受限域；核查有限或局部数据提升到整体的条件。",
+      "boundary": "仅出现子集或商记号不足以标记，需实际的值域或实现边界。"
+    },
+    {
+      "id": "F04",
+      "label": "结论强度与收敛",
+      "includes": "区分包含与相等、单向与等价、必要与充分、逐点/强收敛与一致/范数收敛，以及能否逆推。",
+      "boundary": "存在性或极值取得的专门障碍归F05；同一要求可交叉标记但不重复充数。"
+    },
+    {
+      "id": "F05",
+      "label": "存在、取到与极限",
+      "includes": "区分可行解、极值、下确界/上确界、端点取得及合法极限对象和交换。",
+      "boundary": "不因证明中出现一个极限就标记；需存在、取得或极限合法性本身属于任务重点。"
+    },
+    {
+      "id": "F06",
+      "label": "构造、分类与自然性",
+      "includes": "完成实际对象的双向构造、全部解/态射/自由度分类，区分自然运输与自然首选。",
+      "boundary": "不以只给一个实例替代全分类；并不规定必须复刻作者路线。"
+    },
+    {
+      "id": "F07",
+      "label": "证明链与依赖管理",
+      "includes": "在条件变化后核对前序结论的合法复用、共享构造的一致性及长证明链中真实依赖。",
+      "boundary": "不指参数连续依赖；不因contract有depends_on就标记；参考图不强制唯一证明路线。"
+    },
+    {
+      "id": "F08",
+      "label": "Lean语义对齐",
+      "includes": "核对自然语言与Lean实际编码的对象、条件、量词、定义域、结论和覆盖；区分编译与语义完成。",
+      "boundary": "书面审计不自动附加候选Lean源码义务；不以旧编译覆盖新阶段。"
+    },
+    {
+      "id": "F09",
+      "label": "完整Lean工程交付",
+      "includes": "交付完整且可共同编译的源码、实际声明对应和依赖闭包，并满足逐项语义、公理及冻结背景合同。",
+      "boundary": "一个阶段或背景编译不能替代完整交付；源代码交付是本主题的必要任务事实。"
+    }
+  ],
+  "assignment_policy": {
+    "one_primary_per_paper": true,
+    "secondary_min": 2,
+    "secondary_max": 4,
+    "evidence_required_for_every_tag": true,
+    "evidence_ids": "actual contract stage IDs; chapter papers use actual CH02/CH03 obligation IDs",
+    "proof_dependencies": "descriptive evidence only; valid alternative proof routes remain accepted",
+    "no_truth_or_rubric_changes": true
+  },
+  "excluded_execution_axes": [
+    {
+      "axis": "neutral-self-check",
+      "classification": "execution-dimension",
+      "source": "protocol/reliability-execution.md"
+    },
+    {
+      "axis": "support-vs-skepticism",
+      "classification": "execution-dimension",
+      "source": "protocol/reliability-execution.md"
+    }
+  ],
+  "source_suites": [
+    {
+      "root": "cases",
+      "id": "math-gauge-benchmark",
+      "version": "0.2.0",
+      "suite_sha256": "643fdbb579ebf22437136e92ca84ec602be6dad9ebc3e40f9d5517708f4ef371",
+      "paper_count": 43
+    }
+  ],
+  "paper_assignments": [
+    {
+      "case_id": "MG-C002",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/chapters/MG-C002/case.json": "8bd4389881d7097407470b16f896a2d9de2c2dd44c266d6b49bb29c3175bbbb3",
+        "cases/chapters/MG-C002/candidate/task.md": "169e81ec2da04e14db00430e05e2f24113ad8aca10831f04e69656a7344a9916",
+        "cases/chapters/MG-C002/contract.json": "095e7993a0969c15bc65e9faf778ddc1c41c82a4046b6acf1be874ab6a263084",
+        "cases/chapters/MG-C002/candidate/obligations.json": "d5f95ad3846f25646f794891c4e4e455f2a384617e7dd54ab3b9aceaa76e3d0d"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "整章task要求所有34项定义、表示及证明在一个完整项目中统一编译，并交Main.lean和逐ID清单。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "定义与证书表示须证明同原文等价，不能只提供更弱可编译声明。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            },
+            {
+              "stage_id": "CH02-D03",
+              "note": "Lean矩阵条目须对应原文输出行、输入列约定。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-D03"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D05",
+              "note": "表示实际中间像域，而非任意选一个下游域。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-D05"
+              },
+              "source_anchor": "oet-c80171fa685dc795"
+            },
+            {
+              "stage_id": "CH02-P04",
+              "note": "两步Lip复合须使用精确中间像域。",
+              "contract_pointer": "/stages/10/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-P04"
+              },
+              "source_anchor": "oet-193cebcc1a7f9259"
+            },
+            {
+              "stage_id": "CH02-P08",
+              "note": "co-Lip复合还须保留非空性。",
+              "contract_pointer": "/stages/13/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-P08"
+              },
+              "source_anchor": "oet-0f256e6f1d38a612"
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-P09",
+              "note": "从逐步证书通过合法的有限链构造复合证书。",
+              "contract_pointer": "/stages/26/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-P09"
+              },
+              "source_anchor": "oet-c80171fa685dc795"
+            },
+            {
+              "stage_id": "CH02-P10",
+              "note": "co-Lip链的实际域递推与连乘次序要一致。",
+              "contract_pointer": "/stages/27/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-P10"
+              },
+              "source_anchor": "oet-c80171fa685dc795"
+            },
+            {
+              "stage_id": "CH02-P13",
+              "note": "零值路径判据与正值判据的依赖须对应真实有限路径表示。",
+              "contract_pointer": "/stages/28/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-P13"
+              },
+              "source_anchor": "oet-e4154c34e95d3c23"
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D02",
+              "note": "co-Lip证书自带非空受限域条件。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-D02"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            },
+            {
+              "stage_id": "CH02-D04",
+              "note": "空乘积和正长度乘积范围不同。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-D04"
+              },
+              "source_anchor": "oet-11006ddd8c43bfec"
+            },
+            {
+              "stage_id": "CH02-P21",
+              "note": "规范非分离时结论只到族零距，不自动增加分离性。",
+              "contract_pointer": "/stages/31/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C002/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C002/candidate/obligations.json",
+                "id": "CH02-P21"
+              },
+              "source_anchor": "oet-f82672ec0dd48f28"
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-C003",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/chapters/MG-C003/case.json": "83c84723f4dd00fec04f7218096af0473e5ed6d39d6ef6493894025131a8d471",
+        "cases/chapters/MG-C003/candidate/task.md": "20c00cd6388ba9577efe1653f3bb5ae98708b322665a809d005b7d4f6c2a7741",
+        "cases/chapters/MG-C003/contract.json": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527",
+        "cases/chapters/MG-C003/candidate/obligations.json": "3549d7c2b56d9f5bc9a1314033cb7b9acd6d7a2a1ff88d9091a0f5b5e97bd625"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "CH03-D01",
+              "note": "整章task要求所有92项定义、表示及证明共同编译，并交Main.lean及逐义务alignment.json。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-D01"
+              },
+              "source_anchor": "oet-273361882c9d8ace"
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH03-D03",
+              "note": "Lean表示须区分点相等、全族零距、实际像和商关系。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-D03"
+              },
+              "source_anchor": "oet-77b9589cc080d4f0"
+            },
+            {
+              "stage_id": "CH03-D07",
+              "note": "允许直接复用冻结内部覆盖定义，仍须给真实声明映射及原文对应。",
+              "contract_pointer": "/stages/6/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-D07"
+              },
+              "source_anchor": "oet-9a382b889145a3a6"
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH03-D05",
+              "note": "统一半径在A上取inf但在U评估。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-D05"
+              },
+              "source_anchor": "oet-bb1487a09d8bf151"
+            },
+            {
+              "stage_id": "CH03-P15-02",
+              "note": "复合下界使用下游实际像域上的半径。",
+              "contract_pointer": "/stages/51/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P15-02"
+              },
+              "source_anchor": "oet-1217d1061a2c95ce"
+            },
+            {
+              "stage_id": "CH03-P17-03",
+              "note": "同时缩小评估域和取inf基点集须分别追踪。",
+              "contract_pointer": "/stages/57/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P17-03"
+              },
+              "source_anchor": "oet-451ca2134cd62db4"
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH03-P10-02",
+              "note": "逐基点计算合法半径及正点态半径。",
+              "contract_pointer": "/stages/37/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P10-02"
+              },
+              "source_anchor": "oet-ae07c4b78c2b63cd"
+            },
+            {
+              "stage_id": "CH03-P10-03",
+              "note": "在同一固定域上再取基点下确界。",
+              "contract_pointer": "/stages/38/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P10-03"
+              },
+              "source_anchor": "oet-ae07c4b78c2b63cd"
+            },
+            {
+              "stage_id": "CH03-P20-01",
+              "note": "对任意输入尺度在同一阶跃例中选择二点，保留量词顺序。",
+              "contract_pointer": "/stages/65/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P20-01"
+              },
+              "source_anchor": "oet-9ecc7d0b4b541992"
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH03-P08-03",
+              "note": "商值判据回到点值判据需核验两实际像集分离。",
+              "contract_pointer": "/stages/32/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P08-03"
+              },
+              "source_anchor": "oet-c21391963ef67ef0"
+            },
+            {
+              "stage_id": "CH03-P23-03",
+              "note": "熵差为零仅在差值良定的范围使用。",
+              "contract_pointer": "/stages/71/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P23-03"
+              },
+              "source_anchor": "oet-56e96ed2cda64242"
+            },
+            {
+              "stage_id": "CH03-P29-05",
+              "note": "删除直径条件后对整体零化的加强另作反例义务。",
+              "contract_pointer": "/stages/87/required_evidence",
+              "task_locator": {
+                "path": "cases/chapters/MG-C003/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/chapters/MG-C003/candidate/obligations.json",
+                "id": "CH03-P29-05"
+              },
+              "source_anchor": "oet-7ade05e895653cab"
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF101",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-audit/MG-GF101/case.json": "0a726e90ea1bad4027ee874d38023c9d10d6730290d8e61ce6f73caab9cb4006",
+        "cases/lean-audit/MG-GF101/task.md": "1b481889c955e7875c70580949ca101394b70c9fe4a6a94ebfc2238a11820760",
+        "cases/lean-audit/MG-GF101/contract.json": "e872779bdc5edb95ed856ed3fbc228868849a0fa3b6eb63bd93293a83e51287c"
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "逐项展开SourceData与Candidate，核对原S2覆盖、次数及真实假设。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF101/task.md",
+                "line": 34,
+                "heading": "## S6　完整输入的语义审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "原有限层目标允许任意理想。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF101/task.md",
+                "line": 18,
+                "heading": "## S2　任意理想的有限层"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "审计源码所给源幂零数据是否属于原条件。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF101/task.md",
+                "line": 34,
+                "heading": "## S6　完整输入的语义审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "统一N覆盖所有层。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF101/task.md",
+                "line": 26,
+                "heading": "## S4　统一有限层界"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "分离条件下保持同一个N，不改成逐层存在指数。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF101/task.md",
+                "line": 30,
+                "heading": "## S5　分离条件下的统一次数"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF102",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-construction/MG-GF102/case.json": "5d56e2a9aca50cfdcd794faca258afbfe83270116c8b3e7db2c0e828925b1c94",
+        "cases/lean-construction/MG-GF102/task.md": "fde1c88fd60080caaefdd0b07aa7b595edf8b1d53ff6cf0ffc916dc5cc29e52c",
+        "cases/lean-construction/MG-GF102/contract.json": "0191aaa353629db724d811624833fce11a55b344038c615fe95e693ba97c239d"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "Answer.lean须共同形式化S1–S5及反例，附阶段声明表并实际编译、公理审计。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF102/task.md",
+                "line": 35,
+                "heading": "## S6　完整 Lean 实现"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "删除S1平方零条件，通用定理须覆盖任意R和I。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF102/task.md",
+                "line": 19,
+                "heading": "## S2　任意理想的三项相容性"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "指定q_n的单射性不能换成抽象环同构。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF102/task.md",
+                "line": 23,
+                "heading": "## S3　最终从源环无损进入各层"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "构造指定同态的全部层自然性而非预设同构。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF102/task.md",
+                "line": 31,
+                "heading": "## S5　有指定同态时的自然性"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "完整实现须保留各阶段自己的数学范围及全部原相容性目标。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF102/task.md",
+                "line": 35,
+                "heading": "## S6　完整 Lean 实现"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF103",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-audit/MG-GF103/case.json": "7effd85dd37a80f6a2b25994d596546ebf0354e67c365461b033d41f43248609",
+        "cases/lean-audit/MG-GF103/task.md": "2edfaf51dd3465a80dac59678fec5e6ddb41839475d1fdd32e6c31c3301dcc10",
+        "cases/lean-audit/MG-GF103/contract.json": "c8ed42065834fecdc34092457897cdbf3afc013966da8e36524e98c2c0518cda"
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "核对源码四项声明、Lean拓扑序方向及完整映入范围。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF103/task.md",
+                "line": 33,
+                "heading": "## S6　附件的语义与范围审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "所有单点映射与任意测试空间的全称量词分开。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF103/task.md",
+                "line": 25,
+                "heading": "## S4　只以点作测试"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "指定方向的一个恒等测试与S4的点测试不同。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF103/task.md",
+                "line": 29,
+                "heading": "## S5　一个指定测试是否足够"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "核对拓扑粗细与连续恒等映射方向。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF103/task.md",
+                "line": 17,
+                "heading": "## S2　加细目标拓扑"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "初始拓扑相等与目标拓扑相等分开判定。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF103/task.md",
+                "line": 21,
+                "heading": "## S3　能否从初始拓扑恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "原构造保持任意指标、任意空间和空指标族范围。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF103/task.md",
+                "line": 13,
+                "heading": "## S1　完整映入性质"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF104",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-construction/MG-GF104/case.json": "a20026786cb8bad36d0d0040332a2ff9ad468723f84ae02f0609ca09740aeadf",
+        "cases/lean-construction/MG-GF104/task.md": "c3be3a56aa26e5f92c309a2aab5175d80596c55a7f93c7e2040f5216a024004f",
+        "cases/lean-construction/MG-GF104/contract.json": "391bd817e5fb50a63539df60961a9256971849511a222418137ea73416a0f6db"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "四个必交文件共同修复一般构造并覆盖子空间、T0及完整反例。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF104/task.md",
+                "line": 35,
+                "heading": "## S6　修复并交付完整 Lean"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "须说明原assembled的一般行为、实际修改和每个声明对应。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF104/task.md",
+                "line": 35,
+                "heading": "## S6　修复并交付完整 Lean"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "不能携带S1单射离散条件。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF104/task.md",
+                "line": 19,
+                "heading": "## S2　一般观测族的完整构造"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "删除联合单射后重新判定T0。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF104/task.md",
+                "line": 31,
+                "heading": "## S5　只保留目标的分离性"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "任意E的子空间拓扑须与受限观测的初始拓扑相等。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF104/task.md",
+                "line": 23,
+                "heading": "## S3　限制定义域"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF105",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-audit/MG-GF105/case.json": "52c10c4a087f668c8958435cd6be17b0795599d413da1e4d8597024bd4001020",
+        "cases/lean-audit/MG-GF105/task.md": "308bc4afaf7fd35bbc7455bd6312b353e640d2b3774b8d2360c9cdd719c60c71",
+        "cases/lean-audit/MG-GF105/contract.json": "918673b7a2b84d6e8c3622f7861481823198800f7293a3b5759e0f0c09753a56"
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "逐步核对切片、差集、覆盖和除法接口的语义。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF105/task.md",
+                "line": 33,
+                "heading": "## S6　原实现的完整对齐审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "非空切片支持分母除法。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF105/task.md",
+                "line": 17,
+                "heading": "## S2　原切片覆盖界"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "空切片阶段改成乘积界，不能直接复用商式界。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF105/task.md",
+                "line": 29,
+                "heading": "## S5　清除分母后的空切片范围"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "构造精确最小覆盖数并证明上下两个方向。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF105/task.md",
+                "line": 21,
+                "heading": "## S3　精确最小覆盖数"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "将F⊆A加强为F⊆B须另判。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF105/task.md",
+                "line": 25,
+                "heading": "## S4　代表点能否全部取自切片"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "定量上界与最小覆盖数的精确等式分开。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF105/task.md",
+                "line": 21,
+                "heading": "## S3　精确最小覆盖数"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF106",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-construction/MG-GF106/case.json": "9a0dd9e024d5a64349ff5369ae53a6a90811706a6de3e7fc1cb4f6893144d0e1",
+        "cases/lean-construction/MG-GF106/task.md": "5cc87a9906bf9b24af3a996efe21a682599f12fb7b1b47c522ee8caa40f29a68",
+        "cases/lean-construction/MG-GF106/contract.json": "d4bb29983b2e2a4bd1d37ec091c70cc3f9f2fbfd1341bdaccb0ea3844203e42e"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "Answer.lean须完整形式化S1–S5，包含具体有限反例、选择和计数证明。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF106/task.md",
+                "line": 35,
+                "heading": "## S6　完整 Lean 生成"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "用指定商映射的像描述覆盖与精确最小覆盖数。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF106/task.md",
+                "line": 23,
+                "heading": "## S3　商群中的精确最小值"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "对所有切片估计后是否能去掉密度因子须完整判定。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF106/task.md",
+                "line": 27,
+                "heading": "## S4　所有切片能否消去密度因子"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "放大子群后需从给定F_H重新选代表，不能直接继承更强基数界。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF106/task.md",
+                "line": 31,
+                "heading": "## S5　放大子群后重新选择代表"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "允许等价表示，但须证明其与原覆盖和基数条件的对应。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF106/task.md",
+                "line": 35,
+                "heading": "## S6　完整 Lean 生成"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF107",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-audit/MG-GF107/case.json": "ffc5fa8ea7541ac8593bf4be0418cc47d083600731a9c7890a237e2ca69c012f",
+        "cases/lean-audit/MG-GF107/task.md": "b263cae699d7817e51f7743f91ade314983095f43a52fc09226c6f63e96a4a70",
+        "cases/lean-audit/MG-GF107/contract.json": "09ca978d5aef588493172facd216ae5db86182674b23dd8d2fd48d4d7997488c"
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "完整展开InputControl与Result，分别审计原逆和一阶固定常数估计。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF107/task.md",
+                "line": 33,
+                "heading": "## S6　缓冲阶数实现的审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "一阶控制保留完全同一个C。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF107/task.md",
+                "line": 17,
+                "heading": "## S2　原目标的一阶损失"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "全体序列统一D。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF107/task.md",
+                "line": 25,
+                "heading": "## S4　全体快速衰减序列的统一零损失"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "改成每条序列各自存在D。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF107/task.md",
+                "line": 29,
+                "heading": "## S5　交换常数选择的量词"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "零阶估计仅在共同支撑端点M的范围给出，常数须记录对M的依赖。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF107/task.md",
+                "line": 21,
+                "heading": "## S3　共同支撑范围内的零阶损失"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "r+1到r目标与r+2输入接口的强度差异须给具体见证。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF107/task.md",
+                "line": 33,
+                "heading": "## S6　缓冲阶数实现的审计"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF108",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-construction/MG-GF108/case.json": "a6c422231304b08a29429879d52ccbc3f5455a4dc5d768def785f673679cc492",
+        "cases/lean-construction/MG-GF108/task.md": "d7e316899535ee45eeb0140e9c27dab00ee6a1d2f4253d1cb7862a3ba563ea9a",
+        "cases/lean-construction/MG-GF108/contract.json": "da53ea2db9a10a8c7025efedb11910e20e8bd4a0f90ad38dcd3c4ece781717c3"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "原接口和Extensions须共同编译，完整实现扩展权重判断及反例。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF108/task.md",
+                "line": 35,
+                "heading": "## S6　修复原接口并实现扩展"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "把v≥1改为逐点v>0，核对每条证明的实际用法。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF108/task.md",
+                "line": 23,
+                "heading": "## S3　取消统一正下界"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "再允许零权重时重新检查逆问题。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF108/task.md",
+                "line": 27,
+                "heading": "## S4　允许零权重的逆问题"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "修复后的原主接口只接受一阶Control，不能改名后保留r+2。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF108/task.md",
+                "line": 35,
+                "heading": "## S6　修复原接口并实现扩展"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "一阶估计须保留固定C。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF108/task.md",
+                "line": 15,
+                "heading": "## S1　正且有下界的权重"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "C=0端点另查，不能推广为任意正常数估计。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF108/task.md",
+                "line": 31,
+                "heading": "## S5　常数为零的原估计端点"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF109",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-audit/MG-GF109/case.json": "3defd09b6fec82009705b3050abc3411cc12c05101813fb15c8fbd2d1cbdfe32",
+        "cases/lean-audit/MG-GF109/task.md": "4852d4fa2b765a0b024b8cf37da234cbe9ef824c86f9b2be52c756aa392d7f68",
+        "cases/lean-audit/MG-GF109/contract.json": "fc14aad903adc4448f51e5d8a8c2d77f3eec5208b2f05cebed4facb932e90944"
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "展开Realizes和真实定理参数，逐层核对有限层、安全两方向及最大性。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 33,
+                "heading": "## S6　源码假设的逐层审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "弱记录允许停留而不给最终前进。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 17,
+                "heading": "## S2　允许停留的原条件"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "迟延实现是额外条件，不能回填为原输入。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 25,
+                "heading": "## S4　安全轨道上的迟延实现"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "可靠内近似、精确安全核相等和真实最大性分别证明。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 21,
+                "heading": "## S3　弱条件下保留的方向与最大性"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "相等能否反推精确记录另判。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 29,
+                "heading": "## S5　安全核相等能否反推精确记录"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "每个安全x的迟延可依赖x，不要求统一上界。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 25,
+                "heading": "## S4　安全轨道上的迟延实现"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "每次使用局部精确条件前要保证当前轨道仍在A。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 13,
+                "heading": "## S1　精确记录下的安全核"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "迟延迭代后仍安全须先证，才可复用记录归纳。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF109/task.md",
+                "line": 25,
+                "heading": "## S4　安全轨道上的迟延实现"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF110",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-construction/MG-GF110/case.json": "91428c00145d8927aa6570b22498aeba6c25130491f4cecf3b0fbf067995214f",
+        "cases/lean-construction/MG-GF110/task.md": "9c99b5226c10675c0fb1cd39cf033c3894be380933d2304cfc7fb625ac0f8f5a",
+        "cases/lean-construction/MG-GF110/contract.json": "9e4aa08ec9e627ec0f901be58dd66b0b70f546bc8dfef50e4a08cfd960281e3d"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "完整交付四模块并形式化弱条件反例、可靠性、真实最大核及替代充分条件。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF110/task.md",
+                "line": 35,
+                "heading": "## S6　交付分层修复"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "不能将W重命名为E，或只编译未变化的有限层来声称完整修复。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF110/task.md",
+                "line": 35,
+                "heading": "## S6　交付分层修复"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "E只在A中给出，迭代调用需检查局部适用范围。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF110/task.md",
+                "line": 19,
+                "heading": "## S2　精确实现的正确范围"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "返回W后删除E，重新判定精确恢复。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF110/task.md",
+                "line": 23,
+                "heading": "## S3　原弱条件的精确恢复判断"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "可靠包含与终层最大性、真实K最大性不能混同。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF110/task.md",
+                "line": 27,
+                "heading": "## S4　保留可靠性和真实最大核"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF111",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-audit/MG-GF111/case.json": "b68b53bdcdfa5be503aaedb032599ed48ab39802c4ba1185913af3bec4e5601d",
+        "cases/lean-audit/MG-GF111/task.md": "8409bf70e5f6cd376952bdc0a89d427d2432131ec16f66fea73517fdcfa60849",
+        "cases/lean-audit/MG-GF111/contract.json": "1376d4c6fd2419c687eae724c856cc37f60d08d699fc1397ff3ac35341adc32a"
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "审计正有限分母子类型、全部系数分类、有限/最小分类及边界例。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF111/task.md",
+                "line": 33,
+                "heading": "## S6　完整分类代码审计"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "各有限子域可有不同且无统一上界的c_F。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF111/task.md",
+                "line": 25,
+                "heading": "## S4　每个有限子域可控"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "改给固定有限C，检查C本身的全域可行性。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF111/task.md",
+                "line": 29,
+                "heading": "## S5　统一有界的有限子域证据"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "分别分类有限系数存在、有限最小值存在及其值。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF111/task.md",
+                "line": 21,
+                "heading": "## S3　完整域与最小值取得"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "仅正有限分母域可直接使用通常除法等价。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF111/task.md",
+                "line": 13,
+                "heading": "## S1　正有限分母域"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "回到含零和无穷分母的完整域，需额外边界分支。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/MG-GF111/task.md",
+                "line": 21,
+                "heading": "## S3　完整域与最小值取得"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GF112",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/lean-construction/MG-GF112/case.json": "5ac53b3a9db9274b66dae26b2f73e6ed0bafb2325885806a3e7745dd50202407",
+        "cases/lean-construction/MG-GF112/task.md": "a85c88843e3b4c4769ae32e82dda12fe20e5f6529ef58e2bcc31ed6a55a87ec3",
+        "cases/lean-construction/MG-GF112/contract.json": "7d7753d73f619125301836247eb9745372823e93af00b4cd5c3ea4de7257ce27"
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "Answer.lean需共同实现全部分类、两个具体反例、不交并定理及逐阶段声明表。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF112/task.md",
+                "line": 35,
+                "heading": "## S6　完整 Lean 分类与组合"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "最优系数与某点实际达到比值上确界分开。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF112/task.md",
+                "line": 15,
+                "heading": "## S1　良好分母下的最优界"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "可行有限系数存在与最小值取得另算。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF112/task.md",
+                "line": 23,
+                "heading": "## S3　有限可行但不取得的端点"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "定义两个分支的不交并并证明Bound拆分及全部最小性。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF112/task.md",
+                "line": 27,
+                "heading": "## S4　两个系统的不交并"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "保留原ENNReal运算及三种分类，不能仅交声明类型。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF112/task.md",
+                "line": 35,
+                "heading": "## S6　完整 Lean 分类与组合"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "并系统最小值反推各支最小值是对S4的独立逆向判定。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-construction/MG-GF112/task.md",
+                "line": 31,
+                "heading": "## S5　最小值能否反向分解"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GP001",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GP001/case.json": "b0eb57773168912570b5ff144656bee60652e8d0515805d0b9a52c9c9bd0a563",
+        "cases/proofs/MG-GP001/task.md": "2624fb1589e29be3f19df37b781c59c5ecc2f4607c18afe864ed0ce3173755fa",
+        "cases/proofs/MG-GP001/contract.json": "a5f4ffc51ae831299d7dd2e895d233338829a576b2fba133962fbeb7441945cd"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "要求全部可能同伦类型、全部类型的实际实现以及有限充要判据。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "商同伦使用非空可缩子复形条件。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 7,
+                "heading": "## S1 可缩子复形的商"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "删除B后需重新处理空link和孤立顶点。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 35,
+                "heading": "## S5 不提供子复形 B"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "判据须仅使用含v单形及其面关联的局部数据，并连接整体同伦型。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "有理同调和整数扭结信息分开。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 15,
+                "heading": "## S3 整数扭结的实例"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "悬挂等价能否逆向消去需另给完整论证。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 39,
+                "heading": "## S6 悬挂信息的逆向恢复"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "使用S1/S2的商和拼接结论前，须验证闭子复形、cofibration或实际替代条件。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP001/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GP002",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GP002/case.json": "c07dc510c0d6297c13ed32ba4d49323dabc5284c2946ff986d59b5a1c59afbbb",
+        "cases/proofs/MG-GP002/task.md": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e",
+        "cases/proofs/MG-GP002/contract.json": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73"
+      },
+      "focus": [
+        {
+          "focus_id": "F02",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "全部允许损失的估计要求同一参数下常数独立于所有u。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "邻近全部无理方向另要求共同s和C。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 54,
+                "heading": "## S5 邻近方向的一致估计"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "不可解构造要求同一个光滑F，而非每阶各一个坏频率。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 58,
+                "heading": "## S6 一个具体方向的不可解数据"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "完整分类可逆方向和全部非负Sobolev损失。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "有限频带形式逆须升级为真正光滑解及截断误差。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 11,
+                "heading": "## S2 有算术界的截断误差"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "给定C^(m+4)到C^m结论不能由更弱输入范数要求代替。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "最小允许损失和端点是否取到须分别证明。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP002/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GP003",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GP003/case.json": "8d23e979f11f513c2d7c99071b00590515c9c153aa4f8666b5fa1002158e9faa",
+        "cases/proofs/MG-GP003/task.md": "fa81237b179de3caaa4b3c957a0701165162fde8f7a7a46309ccb66c72760ee6",
+        "cases/proofs/MG-GP003/contract.json": "139229d2bb321a4f21c04e0badcad84d9c25e766114d57d65f9f374e800cd124"
+      },
+      "focus": [
+        {
+          "focus_id": "F07",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "图追依赖保覆盖收缩的正合输入和交上单射。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP003/task.md",
+                "line": 11,
+                "heading": "## S2 分离预层的比较图"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "几何定理的实际条件、保点收缩与层化比较须逐项核对，可用合法直接定理路线。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP003/task.md",
+                "line": 23,
+                "heading": "## S5 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "包含指定点的邻域系需证明实际余终。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP003/task.md",
+                "line": 15,
+                "heading": "## S3 含指定点的开集"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "稠密开与保留全部半局部点不能混同。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP003/task.md",
+                "line": 19,
+                "heading": "## S4 稠密开与邻域系统"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "域任意且点不必在原X闭，不能增添无限、完美域或闭点条件。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP003/task.md",
+                "line": 23,
+                "heading": "## S5 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "逐同调类在某后阶段消失与统一尾部阶段正合的量词分开。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GP003/task.md",
+                "line": 52,
+                "heading": "## S6 极限正合与阶段正合"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR001",
+      "version": "0.1.2",
+      "source_bindings": {
+        "cases/proofs/MG-GR001/case.json": "4ddc791a47996c4d5f7ad64c085838010d06a06b85999ad3d90811d29e5fec11",
+        "cases/proofs/MG-GR001/task.md": "36ba7bc90f0cccd6d1a7336aeb7833968c6f1009c75bb0b6ef2636bf66c061e9",
+        "cases/proofs/MG-GR001/contract.json": "734840d0e52fb6174a712d6c435dad58a3826eb386206be1b037aca7afe459f3"
+      },
+      "focus": [
+        {
+          "focus_id": "F01",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "加入完备度量及有限直径后构造固定族。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 49,
+                "heading": "## S2　有界完整输出空间"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "回到共同的扩展伪度量结构，重新判定整体目标。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 57,
+                "heading": "## S4　原始结构的整体目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S7",
+              "note": "分别检查逐输入有限终止和统一终止深度能支持的误差范围。",
+              "contract_pointer": "/stages/6/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 69,
+                "heading": "## S7　终止与偏定义解"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "把唯一性限定在给定有限残差的有限距离分支，并检查能否跨分支。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 65,
+                "heading": "## S6　有限残差的分支"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "同时计算指定展开的点态行为和全输入sup误差。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 61,
+                "heading": "## S5　完整但无界的状态空间"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "稳定估计只在同图、同输入分割与同b的系统之间复用展开比较。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 53,
+                "heading": "## S3　局部数据的稳定性"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "重新证明分支完备和不变，才可复用压缩固定点论证。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR001/task.md",
+                "line": 65,
+                "heading": "## S6　有限残差的分支"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR002",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR002/case.json": "ca24a195d239b8cda0fa68a823c6bd9aa72eda0962ab9d791624b0678721e42f",
+        "cases/proofs/MG-GR002/task.md": "919538d38d1904d79b25bf93437f5921d85962bcaad026af2735090da39b0f27",
+        "cases/proofs/MG-GR002/contract.json": "8c2875d3e8ab39ba65f9914441af3c02aa85ae1e0258915d85bb11fc8b2f2dd2"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "记录先与E″双向等距识别，而不直接视为原E元素。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 24,
+                "heading": "## S1　记录的完整载体"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "一般Banach阶段明确要求恢复值属于原E。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 36,
+                "heading": "## S4　一般Banach空间"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "全记录恢复阶段增加自反性。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 28,
+                "heading": "## S2　可恢复记录的稳定性"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "单条记录改用明确的弱星连续条件，要求充要性。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 40,
+                "heading": "## S5　单条记录的拓扑条件"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "证明C+ε的有限观测精确匹配，并另判定ε=0是否可取。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 44,
+                "heading": "## S6　有限观测的精确匹配"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "给出记录载体与T″作用的双向构造。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 24,
+                "heading": "## S1　记录的完整载体"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "由记录完整描述闭子空间成员及距离的对偶公式。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR002/task.md",
+                "line": 32,
+                "heading": "## S3　子空间约束"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR003",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR003/case.json": "975f8ca433899fab2cabfe774ba75d832756a1686fc2bb0f8bc70d99df540283",
+        "cases/proofs/MG-GR003/task.md": "983606a7dacab95b4d6a09563240707a8624ca06dbe54266155031a8c3377366",
+        "cases/proofs/MG-GR003/contract.json": "31ee35c97bb513e8eace44e254ffc8e757822bc2210744c684314706e67bffaa"
+      },
+      "focus": [
+        {
+          "focus_id": "F04",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "比较双平均与实际R迭代的范数收敛域及共同极限。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR003/task.md",
+                "line": 33,
+                "heading": "## S3　一般幂有界系统"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "分别判定逐向量范数收敛和算子范数收敛。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR003/task.md",
+                "line": 41,
+                "heading": "## S5　逐点速度"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "特殊阶段使用交换正交投影。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR003/task.md",
+                "line": 25,
+                "heading": "## S1　交换正交投影"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "一般阶段只保留Banach、交换和分别幂有界。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR003/task.md",
+                "line": 33,
+                "heading": "## S3　一般幂有界系统"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "检查逐向量的逼近阶段能否统一到整个单位球。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR003/task.md",
+                "line": 41,
+                "heading": "## S5　逐点速度"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR004",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR004/case.json": "745251801b0771d3d923cdf5b5da488589f6cad31c0fdeb3fd89b3d0a005e654",
+        "cases/proofs/MG-GR004/task.md": "0003d1abc69107fd900e85fe46980851dae6010838ac2f825372160633eee92a",
+        "cases/proofs/MG-GR004/contract.json": "fd48d7bd2c5849ddf6dc0709d84942d4b01c3dc0db2c3f215898d9fcb2a9f4f3"
+      },
+      "focus": [
+        {
+          "focus_id": "F04",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "证明正则化的逐向量极限，并另判定算子范数极限。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR004/task.md",
+                "line": 21,
+                "heading": "## S4　正则化消元"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "有限维消元阶段不能只由复形长度有限代替层空间有限维。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR004/task.md",
+                "line": 9,
+                "heading": "## S1　有限维消元"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "原阶段仅给约化无环，不给正谱下界或闭值域。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR004/task.md",
+                "line": 17,
+                "heading": "## S3　约化记录"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "同时比较有界收缩、有界右逆、闭值域及正则化范数极限的存在。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR004/task.md",
+                "line": 25,
+                "heading": "## S5　完整边界"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR005",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR005/case.json": "dff4f6fa1e867c3604a4eed7469abc16d2210d72aa855d392311401273cbca62",
+        "cases/proofs/MG-GR005/task.md": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+        "cases/proofs/MG-GR005/contract.json": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef"
+      },
+      "focus": [
+        {
+          "focus_id": "F05",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "纤维公式明确要求说明是否使用下确界取到。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 9,
+                "heading": "## S1　原始记录"
+              }
+            },
+            {
+              "stage_id": "S2",
+              "note": "在紧次水平集条件下处理真实最优点。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 13,
+                "heading": "## S2　紧次水平集"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "下半连续和次水平集紧性有独立职责。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 13,
+                "heading": "## S2　紧次水平集"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "保留闭凸而不给次水平紧性时，重新检查有限投影。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 25,
+                "heading": "## S5　闭成本的有限投影"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "全记录实现须在同一个统一成本界的紧集内处理有限交。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 17,
+                "heading": "## S3　兼容成本记录的实现"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "一般目标是最大下半连续凸下界。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 21,
+                "heading": "## S4　一般成本的恢复"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "区分恢复原f、投影闭化和能否省略外层闭化。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR005/task.md",
+                "line": 29,
+                "heading": "## S6　恢复与投影的精确关系"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR006",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR006/case.json": "08f3003e6c9d7c53a5d0c32bbd2af8c958b63ed109a778dc53d609b1f37c1d03",
+        "cases/proofs/MG-GR006/task.md": "b20ec39e18239c62e1ad42a5f08d679e068677196d54327d31a47aca4b279f35",
+        "cases/proofs/MG-GR006/contract.json": "167a26b77d1495e9d04eb0dc1bc4e7a2fdaf908ac28dac5fccd81e095d7e8761"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "有限相容前缀和整体相容序列分开处理。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 9,
+                "heading": "## S1　有限前缀"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "要求核验有限商记录下的整体提升。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 21,
+                "heading": "## S4　有限商记录"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "有限性落在C且β、γ满射。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 21,
+                "heading": "## S4　有限商记录"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "另将有限性改到A，不要求过渡满射。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 25,
+                "heading": "## S5　有限核纤维"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "区分自然提升空间与对全部整塔同构自然的首选提升。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 17,
+                "heading": "## S3　首选提升"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "构造选择无关且自然的完整障碍及全部提升。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 29,
+                "heading": "## S6　选择误差与完整障碍"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "用实际障碍说明S2和S5的充分条件不能倒写为必要条件。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR006/task.md",
+                "line": 29,
+                "heading": "## S6　选择误差与完整障碍"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR007",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR007/case.json": "d46685106f201e5bd8f7204a22ba46ad6ed773bc9438ac02c100d8a0a43fd884",
+        "cases/proofs/MG-GR007/task.md": "4ae139bae167e5538dae0928fe76f4f4064cfcdafe6e06f1b41bf1e645c48728",
+        "cases/proofs/MG-GR007/contract.json": "02d2be78c329c7f4453d10d98760095f02a16c3d3c0cb86810ca6b4cb1de2092"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "分类全部相容分裂、直和同构和整塔同构运输。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR007/task.md",
+                "line": 13,
+                "heading": "## S2　完整有限维塔"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "整理存在、唯一、自然运输及自然首选四者关系。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR007/task.md",
+                "line": 29,
+                "heading": "## S6　解空间和首选解"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "只要求实际方向空间Hom_G(C,A_n)有限维，而不要求A_n、B_n有限维。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR007/task.md",
+                "line": 21,
+                "heading": "## S4　分裂参数的有限性"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "指定多项式塔须分别核验有限前缀和整体相容分裂。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR007/task.md",
+                "line": 25,
+                "heading": "## S5　无限参数塔"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "稳定后参数空间的评价同构还要给出相容分裂唯一的充要条件。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR007/task.md",
+                "line": 17,
+                "heading": "## S3　稳定后的参数"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR008",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR008/case.json": "194b31aac05834accd300e0e06cc0d3f5c3e0deed66565fe882da7ddec84bcaa",
+        "cases/proofs/MG-GR008/task.md": "dbc3bdb16d54ae5ecb580c61520c7781e79020e51c727e5449c7885252d2aaec",
+        "cases/proofs/MG-GR008/contract.json": "1c46c6f0281f41b098cd8fcd9e05b75c50761a736e4146baadfd1a026b0c8ad9"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "分类全部群值自然变换及复合。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 13,
+                "heading": "## S2　有限图表和变换"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "给出非循环表示性判据并构造全部表示对象。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 17,
+                "heading": "## S3　完整表示分类"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "区分每个当前层与存在足够后层的回缩要求。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 25,
+                "heading": "## S5　稳定像中的延拓"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "检查无限积各坐标代表能否使用同一有限层。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 29,
+                "heading": "## S6　具体变换与无限积"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "从实际稳定像构造延拓，并核验F_P与Hom(I_n0,-)的实际记录对应。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 25,
+                "heading": "## S5　稳定像中的延拓"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "余极限结构映射不预设单射。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 9,
+                "heading": "## S1　实际记录与张量"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "秩一过渡允许零和负整数，分类须覆盖全部分支。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR008/task.md",
+                "line": 21,
+                "heading": "## S4　秩一塔"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR009",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR009/case.json": "3f4e39c0f71bd16dd078015d6d0ce89b406cac5c80529aa386a9d01efd1bf5dd",
+        "cases/proofs/MG-GR009/task.md": "7e31b5d96ed639bdbe4a968811976882952cd586209de60bfcece2b43343e143",
+        "cases/proofs/MG-GR009/contract.json": "71d532a3a82548f9cab8a15c5fff21560d89b1ca3fcd7ead62665bcca64d841a"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "建立一般层的完整下降判据和任意层基底相容性。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 17,
+                "heading": "## S3　一般层的完整下降"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "使用局部满射基底反映下降。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 25,
+                "heading": "## S5　局部满射的基底检验"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "另检查仅非空可表示基底的检验范围。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 29,
+                "heading": "## S6　非空基底与全局结论"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "只在单点上的稳定子检验与全部测试对象的检验分开。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 21,
+                "heading": "## S4　单点上的检验"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "分类对象、全部态射和自同构群。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 13,
+                "heading": "## S2　有限集合上的纤维分类"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "不预选D而分类所有实现。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 17,
+                "heading": "## S3　一般层的完整下降"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "有限自由作用是特殊实现阶段的条件，后续一般层阶段不保留该假设。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR009/task.md",
+                "line": 9,
+                "heading": "## S1　有限群的自由作用"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR010",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR010/case.json": "0cfb82ceafee5a0b12556a52e07c4db37e193a7973d201c0c43555e7672b9ef1",
+        "cases/proofs/MG-GR010/task.md": "93603e217bd159a03ee18a346532e42d6a9b52fa4b04b1fbcdaeb861b3edb9bf",
+        "cases/proofs/MG-GR010/contract.json": "640b8fb583ef50a57c73c44a328f29e2d0e68db0e91e191003fd8bf966d35a50"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "探针识别的连续映射目标是kX、kY。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR010/task.md",
+                "line": 13,
+                "heading": "## S2　探针能检测的映射"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "再检查探针同构能否提升为原拓扑同胚。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR010/task.md",
+                "line": 25,
+                "heading": "## S5　空间实现的识别"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "第一可数与局部紧分别支持不同的求值和k化结论。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR010/task.md",
+                "line": 21,
+                "heading": "## S4　可数邻域基的输入"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "构造全部参数化映射记录的Hausdorff实现和指数律。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR010/task.md",
+                "line": 17,
+                "heading": "## S3　全部参数化映射记录"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "构造同时变化的连续复合并验证单位与结合。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR010/task.md",
+                "line": 29,
+                "heading": "## S6　复合与可识别范围"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "区分探针自然同构与原拓扑同胚的结论层级。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR010/task.md",
+                "line": 25,
+                "heading": "## S5　空间实现的识别"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR011",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR011/case.json": "3a41715f64beceb811ec05d35333ea2b45fb44da01ec3a39135e130c7d7951c0",
+        "cases/proofs/MG-GR011/task.md": "89b2584ecfb16039782392a10b8b4e2f0790338b74382282558310c9db92b0f4",
+        "cases/proofs/MG-GR011/contract.json": "4dc269c70cce26bec4d4e3b70b7b1294162b72d055f9f361d2c8c2408c6cce1e"
+      },
+      "focus": [
+        {
+          "focus_id": "F07",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "S1的仿射投影性质不能只因S4恢复唯一稳定就直接复用。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 41,
+                "heading": "## S5 恢复映射的代数性质"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "后续变分迭代须基于S4实际闭凸交及非扩张性，而不能借用线性。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 45,
+                "heading": "## S6 一个后续变分恢复"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "任意指标族通过全有限子集网恢复整体交，不能未经共尾证明换成序列。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "要求范数收敛、准确最优值和非扩张估计。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "进一步单独判定恢复映射的仿射性质。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 41,
+                "heading": "## S5 恢复映射的代数性质"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "有限线性投影复合明确要求交换。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 15,
+                "heading": "## S3 交换投影的有限复合"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "一般阶段只有闭凸约束及统一有限可行界。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR011/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR012",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR012/case.json": "de92471983f1ec32c494453d5c9c7bd2fabc506fa958bcea211c487b3541bc2d",
+        "cases/proofs/MG-GR012/task.md": "fe7bb45739a9f226ae67c9ab6e12b6f835d9a780a5b42bee9862394880e91abf",
+        "cases/proofs/MG-GR012/contract.json": "e7ac3965eecdc619b7e5f58f349b5aca53124e162776d99aa967b5a065cf688d"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "构造规范化的逐点最小下半连续凸势，并证明完整最小性和唯一性。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR012/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "只给拓扑向量空间，不额外要求Hilbert、局部凸或Hausdorff。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR012/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "另判定输入记录包含能否升级为次梯度图相等。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR012/task.md",
+                "line": 42,
+                "heading": "## S5 势的图是否恰好等于输入"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "有限记录极限还要求在附加条件下紧上一致。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR012/task.md",
+                "line": 46,
+                "heading": "## S6 有限记录的恢复极限"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "半正定阶段须描述共轭函数有限值域及全部最优点，而不沿用唯一取到。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR012/task.md",
+                "line": 15,
+                "heading": "## S3 退化二次型"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "有限子记录必须保留同一基点，且紧上一致证明须核对有限势连续性。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR012/task.md",
+                "line": 46,
+                "heading": "## S6 有限记录的恢复极限"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR013",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR013/case.json": "045ff7b5f7f5ebeb784e46014d469ccee8271687940760f6c8d0fb84bf94ca4a",
+        "cases/proofs/MG-GR013/task.md": "cf7281c8a58613f3ebcb137712d3778daa086e4ac4ea0c66b9d3eee3df65d71f",
+        "cases/proofs/MG-GR013/contract.json": "07283dfe8c8556c4d7ebdb449bad842dc9f404cfa0f595809a0afd9e9072fb0f"
+      },
+      "focus": [
+        {
+          "focus_id": "F02",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "最终精确范数记录的阈值N_p可依赖每个固定多项式。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR013/task.md",
+                "line": 21,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "用两种迭代极限明确谱半径公式允许的量词顺序。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR013/task.md",
+                "line": 45,
+                "heading": "## S6 两种极限顺序"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "共同有限维空间中比较强收敛和算子范数收敛。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR013/task.md",
+                "line": 9,
+                "heading": "## S1 共同有限维空间"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "一般Banach阶段仅给强收敛及固定多项式作用。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR013/task.md",
+                "line": 17,
+                "heading": "## S3 共同 Banach 空间的多项式作用"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "有限维像模型仍作用在同一个可能无限维的Banach空间上，含多项式常数项。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR013/task.md",
+                "line": 21,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "两个内层极限均需实际证明，不能未经论证交换模型极限与幂次极限。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR013/task.md",
+                "line": 45,
+                "heading": "## S6 两种极限顺序"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR014",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR014/case.json": "23d17c3e77d311618ba362af1ccd11a40a09f3298e52788235ee69e7cd9d96af",
+        "cases/proofs/MG-GR014/task.md": "dea93393ad89196a1b8980f25e795c92713bc0b155e2d78b609d0ea64d9a2e3f",
+        "cases/proofs/MG-GR014/contract.json": "6ec6c601b860f4518149c654d78ee15f571cc0850d8f2d451b6fd759f02d9d1d"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "从给定行和常数构造整体解，并完整分类所有坐标像和非空纤维。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR014/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "把全赋值空间改为有限支持赋值空间后，重新检查整体可解性。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR014/task.md",
+                "line": 37,
+                "heading": "## S5 赋值空间的支持"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "允许任意域和任意指标，不能保留S3有限域紧性作为隐藏条件。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR014/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "无限离散域的坐标像闭性须给代数延拓或有限闭方程证明，不能把某条紧像证明的要求当作结论的必要条件。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR014/task.md",
+                "line": 41,
+                "heading": "## S6 无限域的坐标像"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR015",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR015/case.json": "58fc6ec9c9d81f9c3ef318a3dd66fb09a7f130d89561167a84ad8462a87d45e5",
+        "cases/proofs/MG-GR015/task.md": "a34711fd03d875d26e59196f7170199b84a44645f760a9b2fedc40144d24a6e0",
+        "cases/proofs/MG-GR015/contract.json": "0298e7d3b8146740cfba6c759b1b6bcf62b6df090fbcb9f0c232be1c2144a6bc"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "完成模型的支持条件逐商层有限，须与全积区分。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 11,
+                "heading": "## S2 可数自由模的完成模型"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "每层原模代表与一个原模整体代表分开。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 42,
+                "heading": "## S5 原模与完成的值域"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "初始完成正合阶段给定真实截面。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 7,
+                "heading": "## S1 分裂列的完成"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "对角指数另有统一界。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 15,
+                "heading": "## S3 有界对角指数"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "原呈示仅保留可数自由，不能继承前述条件。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "显式给出商记录与完成序列族的双向构造及模运算。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 11,
+                "heading": "## S2 可数自由模的完成模型"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "在合法支持条件下写出全部提升。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 15,
+                "heading": "## S3 有界对角指数"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "再次完成须证明实际t^n商和典范映射身份，不能由对象名直接复用。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR015/task.md",
+                "line": 46,
+                "heading": "## S6 再次完成"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR016",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR016/case.json": "ebcd56020d81a85cabdda9835ae2696b2cd5d20bbd4aeb53132f5d4202db39d3",
+        "cases/proofs/MG-GR016/task.md": "18bc72dd9a110ec2c7b58fa90fb6c229a4b09465a2dea71cac924cdbd14583cf",
+        "cases/proofs/MG-GR016/contract.json": "493a232381b0debd580c1c8aa6e8954bd42a221f277bf631bc06630126ea62de"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "每个素点处分裂与整体截面的构造须核验。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR016/task.md",
+                "line": 21,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "另给有限主开覆盖上已相容的实际截面，要求唯一拼接。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR016/task.md",
+                "line": 40,
+                "heading": "## S6 给定相容的开集截面"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "理想有限生成是本阶段明确条件。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR016/task.md",
+                "line": 13,
+                "heading": "## S2 有限生成理想的局部检验"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "原商仅循环，不能当作有限呈示。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR016/task.md",
+                "line": 21,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "另删去幂等理想的有限生成条件。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR016/task.md",
+                "line": 36,
+                "heading": "## S5 只保留幂等理想等式"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "用Hom_R(C,A)描述全部截面及与原包含、投影相容的全部直和同构。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR016/task.md",
+                "line": 17,
+                "heading": "## S3 全部截面的自由度"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR017",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR017/case.json": "773e17c5f65e897884d1dd6ccb004dbb3ede05cc0e174cb815947946d1c98eba",
+        "cases/proofs/MG-GR017/task.md": "6f23f69e51d915885bce87e783d84d9a880da1feb0f3b696dd25546b7182394e",
+        "cases/proofs/MG-GR017/contract.json": "1c954e80c2f98316b091ae7892f073f189ebbf93a9ce7a900f09c50177718e4f"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "有限离散因子的乘积通过有限开闭拼接处理。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR017/task.md",
+                "line": 11,
+                "heading": "## S2 回缩与有限因子的乘积"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "改为两个任意具有全提升性质的profinite因子。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR017/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "βD回缩刻画要验证实际连续延拓与连续截面。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR017/task.md",
+                "line": 15,
+                "heading": "## S3 超滤子紧化的回缩描述"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "双向分类全部连续提升；有限纤维时用允许空块的开闭划分描述。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR017/task.md",
+                "line": 33,
+                "heading": "## S6 这些提升的全部自由度"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "对给定有限像映射的可提升性与对所有映射的全提升性质分开。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR017/task.md",
+                "line": 29,
+                "heading": "## S5 有限像的参数映射"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR018",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR018/case.json": "4e2fcdd2a0d7aad60e17b78a29d24877c27d5d60f110c32210b77b46e353653f",
+        "cases/proofs/MG-GR018/task.md": "605eaea3498151f56829775c6bbf541ff0bf7d6c64f3767b6ff029d074238454",
+        "cases/proofs/MG-GR018/contract.json": "78c240b95316852f302f52eaa03079f627fbb33351c36e7ae572cb84118c12c0"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "完整分类相容记录，构造实际函子、单位、乘法并证明全部单子律。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR018/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "自然性量化所有有限集合映射而非只量化置换。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR018/task.md",
+                "line": 11,
+                "heading": "## S2 有限集合上的多元自然选择"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "只允许两值测试时重新判定点值结论。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR018/task.md",
+                "line": 15,
+                "heading": "## S3 只使用两值测试"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "刻画哪些底集的全部记录来自原点值，并处理有限、空及无限范围。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR018/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "将单位分裂与乘法的单射性分开判定。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR018/task.md",
+                "line": 46,
+                "heading": "## S6 乘法的单射性"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR019",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR019/case.json": "8c95c384b25622436d4dbcca6b93964091736ae1f5ecc44a9e94114b69cd833b",
+        "cases/proofs/MG-GR019/task.md": "551ac5ee723b990d0fad9eee2630344579eeedf6ec93cd1ab3faca6a81775d0b",
+        "cases/proofs/MG-GR019/contract.json": "7326f9af21075f39b993d64785c9ca9f2ed836084698f1d7df51a046152a3866"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "从两条代数律重建实际拓扑、双向对象对应、全部态射和有限观察商。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR019/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "不能在拓扑重建之前使用紧Hausdorff或输入运算连续性。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR019/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "有限观察商及其纤维须在实际紧Hausdorff空间上构造。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR019/task.md",
+                "line": 7,
+                "heading": "## S1 已知拓扑的有限观察商"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "把连通纤维的充分结论另作逆向判定。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR019/task.md",
+                "line": 57,
+                "heading": "## S6 观察商同构的逆向"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "代数乘积须验证真实推前与乘法律，再用S4拓扑唯一性识别乘积。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR019/task.md",
+                "line": 53,
+                "heading": "## S5 代数侧的乘积构造"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR020",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR020/case.json": "6965d2f2ee691509f0ae79dbf3dcb66f563b1c10545b83d5fd36c62dfb98e8d1",
+        "cases/proofs/MG-GR020/task.md": "1ade99789e41fdd7afc45d8a3ca8409adfa2b0dafb2c4931922e9e59e83a7987",
+        "cases/proofs/MG-GR020/contract.json": "e9e27804a35fa89cb767a415aec120ec9bb93842efd6833edf63b26c174a6acd"
+      },
+      "focus": [
+        {
+          "focus_id": "F01",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "完备DVR构造阶段明确给2为单位。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR020/task.md",
+                "line": 11,
+                "heading": "## S2 二可逆时的完备环构造"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "原结构仅给特征零DVR，须重新核查分母和Hensel条件。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR020/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "实际已有解后分类全部相容比较。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR020/task.md",
+                "line": 15,
+                "heading": "## S3 全部比较的参数群"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "对全部c参数给出存在与不存在的完整分类。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR020/task.md",
+                "line": 43,
+                "heading": "## S6 二维一参数的完整分类"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "不可行论证须排除全部正交交织矩阵，不能只否定一个归一化公式。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR020/task.md",
+                "line": 43,
+                "heading": "## S6 二维一参数的完整分类"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "更深同余条件下需验证带分母级数的实际收敛和全部矩阵条件。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR020/task.md",
+                "line": 39,
+                "heading": "## S5 二进环中的更深同余"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR101",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR101/case.json": "aca2a704f60d3b11b79bca109c31f535e8790d359e7f2e951ef49a5197cd908f",
+        "cases/proofs/MG-GR101/task.md": "c52de168321520a52f9304251cf8baae1b5883b4ce83cdccba3b939278b30361",
+        "cases/proofs/MG-GR101/contract.json": "89b66645b1050a9ee7872980c6ad680383f7ddb6011651433e620234e234b445"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "构造代表无关的线性障碍、完整正合列及全部实现。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR101/task.md",
+                "line": 28,
+                "heading": "## S4　一般三份记录"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "构造逐项障碍并说明排序改变后的最终和中间数据。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR101/task.md",
+                "line": 36,
+                "heading": "## S6　逐项实现与顺序"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "全部三元子族可实现与四份记录共同实现分开检查。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR101/task.md",
+                "line": 32,
+                "heading": "## S5　四份记录"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "H=L是三记录特殊阶段的显式条件。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR101/task.md",
+                "line": 20,
+                "heading": "## S2　三份记录的实现"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "一般障碍列阶段不保留H=L。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR101/task.md",
+                "line": 28,
+                "heading": "## S4　一般三份记录"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "每一步障碍只在前缀已有实现时定义，需核验选择无关及合法复用。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR101/task.md",
+                "line": 36,
+                "heading": "## S6　逐项实现与顺序"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR102",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR102/case.json": "1c22c3a5b09a669a087f7604626c032d7373fafbbb0d4a87241ffde7f5fb1966",
+        "cases/proofs/MG-GR102/task.md": "ddfe0d8c6a0bdfa20b8e193ab69709bb88987807bef7a30962da183abc5ca517",
+        "cases/proofs/MG-GR102/contract.json": "8dedc66acdc1019a6b16eee5f894f8719cc1256253bb6333c5739703392143ea"
+      },
+      "focus": [
+        {
+          "focus_id": "F02",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "逐点有限轨道不给统一幂次。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR102/task.md",
+                "line": 21,
+                "heading": "## S3　逐点有限轨道"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "另要求一个对全模有效的多项式公式。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR102/task.md",
+                "line": 25,
+                "heading": "## S4　一个多项式公式"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "有限维轨道张成与轨道集合有限是不同条件。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR102/task.md",
+                "line": 29,
+                "heading": "## S5　有限维轨道张成"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "构造规范投影、完整直和与核像，并证明任意交织映射自然性。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR102/task.md",
+                "line": 21,
+                "heading": "## S3　逐点有限轨道"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "联合分解须利用真正的自然性证明投影交换，不能假设S4的统一多项式存在。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR102/task.md",
+                "line": 33,
+                "heading": "## S6　有限维判据与联合分解"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR103",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR103/case.json": "589a872d64bfcf5e762471ace931b52e487c937ca3713c48deb862967d60e06a",
+        "cases/proofs/MG-GR103/task.md": "7c8645c443de5ba37266654e184a5313213f6acdc4deb14b916771be21afd972",
+        "cases/proofs/MG-GR103/contract.json": "14f0f2ea15def7bbf5d172d63f2f1de376926322a873a7a24f4f3d71bd39f638"
+      },
+      "focus": [
+        {
+          "focus_id": "F04",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "分别给两个单边更新关系的有向比较。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 17,
+                "heading": "## S3　单边更新关系"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "精确半共轭的固定点像与最小固定点等式分开。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 21,
+                "heading": "## S4　单调半共轭"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "精确传递使用左伴随。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 13,
+                "heading": "## S2　伴随结构的精确传递"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "改用保持底元和ω链上确界的另一机制，仍不要求右伴随。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 25,
+                "heading": "## S5　连续递推的传递"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F05",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S6",
+              "note": "可数迭代上确界成为最小固定点须给出必要充分条件。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 29,
+                "heading": "## S6　可数阶段与边界"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "各中间参数最小解及约化系统须先良定义且单调。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 9,
+                "heading": "## S1　参数与消元"
+              }
+            },
+            {
+              "stage_id": "S2",
+              "note": "传递结论须与所有分块结果及同一参数恢复一致。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR103/task.md",
+                "line": 13,
+                "heading": "## S2　伴随结构的精确传递"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR104",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR104/case.json": "ba36fc240d867b5b3042fa4254a6103d0e995df132d6fe3b2df72f7a452965e5",
+        "cases/proofs/MG-GR104/task.md": "fb7da84c419886b040a649aca388efc993833e76735510ba9234cd0c447667bf",
+        "cases/proofs/MG-GR104/contract.json": "92d8cbf60e0f042caa785a5f6e80958b3ff6be2bf187a800504816dabdf0c197"
+      },
+      "focus": [
+        {
+          "focus_id": "F02",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S1",
+              "note": "单层只要求每个核元素各自幂零，不给统一指数。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 9,
+                "heading": "## S1　单层提升"
+              }
+            },
+            {
+              "stage_id": "S3",
+              "note": "比较逐层指数与极限元素的共同幂零指数。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 17,
+                "heading": "## S3　极限核"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "各增广满射与过渡满射分别核验。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 25,
+                "heading": "## S5　逐层增广"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "非交换平方零核阶段另查唯一性所需乘法结构。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 29,
+                "heading": "## S6　乘法结构与唯一性"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "幂等族相容提升与任意元素的整体提升不等同。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 13,
+                "heading": "## S2　任意有向逆系"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "重新判定极限增广的全部元素满射性。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 25,
+                "heading": "## S5　逐层增广"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S2",
+              "note": "由单层提升唯一性建立相容族，并逐项验证正交、求和及分解。",
+              "contract_pointer": "/stages/1/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR104/task.md",
+                "line": 13,
+                "heading": "## S2　任意有向逆系"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR105",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR105/case.json": "f669593ba5d65461193674d09f9a8f379a0243309e707b6ed96bda8ac5f02fe2",
+        "cases/proofs/MG-GR105/task.md": "eff38b882bab7028c604e07448889f558c2f7f169647828d9259d2cef1031b99",
+        "cases/proofs/MG-GR105/contract.json": "681c38e4d7fd8f4630717502efa7f27da7828f624fc86f15d85b4c9d80b4e71c"
+      },
+      "focus": [
+        {
+          "focus_id": "F05",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "完成态最优值与原空间极小点存在的充要条件分别证明。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR105/task.md",
+                "line": 17,
+                "heading": "## S3　一般观测像"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "正则化的原向量范数极限与原最优点取到作双向比较。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR105/task.md",
+                "line": 29,
+                "heading": "## S6　正则化与取到边界"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "完备化等距映射的像确定为观测像闭包，不能直接拉回原E。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR105/task.md",
+                "line": 17,
+                "heading": "## S3　一般观测像"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S5",
+              "note": "投影逐点收敛与算子范数收敛分别证明并给精确判据。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR105/task.md",
+                "line": 25,
+                "heading": "## S5　有限观测子空间的极限"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "原Hilbert范数完备与观测范数完备分别检查。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR105/task.md",
+                "line": 21,
+                "heading": "## S4　完整的输入空间"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "伴随与正则化公式只在此处明确的Hilbert结构下使用。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR105/task.md",
+                "line": 29,
+                "heading": "## S6　正则化与取到边界"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    },
+    {
+      "case_id": "MG-GR106",
+      "version": "0.1.1",
+      "source_bindings": {
+        "cases/proofs/MG-GR106/case.json": "8f6ddf43fb08c457e56491c373f18b005d357ae5ca7e6badf0da2170a1f0279b",
+        "cases/proofs/MG-GR106/task.md": "5929d5e403c0d6bea61de82e3b7beba83b574835ba5eb9f926e154ac119f3f7c",
+        "cases/proofs/MG-GR106/contract.json": "6b79a37d0d99b5540c9ab6ad306ac0a0e4d5df39956923fd5da6d1e090c2e014"
+      },
+      "focus": [
+        {
+          "focus_id": "F04",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "完成域上要求各紧集一致及同步移动输入极限。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            },
+            {
+              "stage_id": "S5",
+              "note": "另判定全完成域一致。",
+              "contract_pointer": "/stages/4/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 42,
+                "heading": "## S5 全完成域的一致性"
+              }
+            },
+            {
+              "stage_id": "S6",
+              "note": "检查全有界但不闭子集上的结论。",
+              "contract_pointer": "/stages/5/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 46,
+                "heading": "## S6 全有界子集"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F02",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "保留任意真滤子，不能未经理由替换为可枚举序列或共尾子族。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S4",
+              "note": "从稠密观测构造实际完备化上的唯一Lipschitz恢复及各延拓。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "S3",
+              "note": "同步复合需分别恢复并控制变化输入。",
+              "contract_pointer": "/stages/2/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 15,
+                "heading": "## S3 同步复合的极限"
+              }
+            },
+            {
+              "stage_id": "S4",
+              "note": "移动输入不能只引用紧集一致而不证明公共紧集存在。",
+              "contract_pointer": "/stages/3/required_evidence",
+              "task_locator": {
+                "path": "cases/proofs/MG-GR106/task.md",
+                "line": 19,
+                "heading": "## S4 整体对象与全部恢复目标"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-root-reviewed",
+        "reviewer": "root mathematical review",
+        "human": "pending",
+        "evidence": {
+          "git_revision": "6a48027baa33e06e913a554fb8bac9394a82b480",
+          "path_at_revision": "results/strict-review-20261030/mathematical-review.json",
+          "scope": "historical AI classification evidence; path rebinding is engineering-only"
+        }
+      }
+    }
+  ],
+  "scope": {
+    "id": "current-benchmark",
+    "paper_count": 43,
+    "progressive_papers": 41,
+    "progressive_stages": 246,
+    "chapter_papers": 2,
+    "chapter_obligations": {
+      "MG-C002": 34,
+      "MG-C003": 92
+    },
+    "sample_unit": "one full paper"
+  },
+  "candidate_input_policy": "Operator-only classification. Never attach these files to candidates; preserve the shared runner exact task and solver_files projection."
+}

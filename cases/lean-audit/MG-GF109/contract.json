@@ -1,0 +1,276 @@
+{
+  "id": "MG-GF109",
+  "version": "0.1.1",
+  "parent_case_id": "MG-F109",
+  "title": "有限记录、安全核与迟延前进",
+  "track": "determinate",
+  "task_kind": "audit",
+  "stages": [
+    {
+      "id": "S1",
+      "title": "精确记录下的安全核",
+      "kind": "prove",
+      "depends_on": [],
+      "assumptions": [
+        "精确记录条件",
+        "B 有限"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 T_n 在 |B| 步稳定且 T={y∈B:g(y)∈T}",
+        "证明 K=q⁻¹(T)",
+        "证明 K 为包含于 A 的最大 f 前向不变集"
+      ],
+      "critical_errors": [
+        "将精确条件只验证第一步而不使用安全轨迹保证后续仍在 A",
+        "把最大不变集定义改成单步留在 A"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S2",
+      "title": "允许停留的原条件",
+      "kind": "decide",
+      "depends_on": [
+        "S1"
+      ],
+      "assumptions": [
+        "改为弱记录条件",
+        "仍无任何迟延上界或最终前进条件"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断 K=q⁻¹(T) 是否仍成立",
+        "逐项验证弱条件、K 和 T 的有限反例",
+        "明确反例并未满足精确记录条件"
+      ],
+      "critical_errors": [
+        "默认每个停留最终结束",
+        "只说不交换却不展示错误结论"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S3",
+      "title": "弱条件下保留的方向与最大性",
+      "kind": "prove",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "assumptions": [
+        "弱记录条件用于 q⁻¹(T) 的安全性",
+        "最大性结论只用 K 的定义"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 q⁻¹(T)⊆K",
+        "证明 K⊆A 且 f(K)⊆K",
+        "证明任意 S⊆A、f(S)⊆S 有 S⊆K",
+        "注明最大性不需要弱记录条件"
+      ],
+      "critical_errors": [
+        "把可靠内近似错误称为等于安全核",
+        "把不变性仅写成 q 层面"
+      ],
+      "points": 20,
+      "lean_required": false
+    },
+    {
+      "id": "S4",
+      "title": "安全轨道上的迟延实现",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S3"
+      ],
+      "assumptions": [
+        "弱记录条件",
+        "另假设对每个 x∈K，存在 k≥1，使 q(f^k x)=g(qx)",
+        "k 可随 x 变化，无统一上界"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "判断该条件是否恢复 K=q⁻¹(T)",
+        "证明安全核对任意正整数迭代封闭",
+        "通过逐层归纳证明 K 的记录属于每个 T_n",
+        "不引入统一迟延界或全域精确交换"
+      ],
+      "critical_errors": [
+        "把迟延实现擅改为下一步精确交换",
+        "未证明迟延后的状态仍安全"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S5",
+      "title": "安全核相等能否反推精确记录",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "assumptions": [
+        "弱记录条件",
+        "已知 K=q⁻¹(T)",
+        "不假设 S4 的迟延实现条件"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断该相等是否必推出精确记录",
+        "给出 K 与 T 明确且等式成立的反例",
+        "验证精确记录在某点失败"
+      ],
+      "critical_errors": [
+        "把一个充分条件误作必要条件",
+        "沿用 S2 中等式本来失败的反例"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S6",
+      "title": "源码假设的逐层审计",
+      "kind": "audit",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "assumptions": [
+        "以 S2 原弱条件下的待判命题为输入",
+        "附件的 Realizes 定义及实际定理参数全部展开"
+      ],
+      "expected": "misaligned",
+      "required_evidence": [
+        "指出 Realizes 实为精确交换",
+        "分别检查稳定层、正反安全方向和最大性定理",
+        "给出弱条件下可保留结论与不可保留等式",
+        "不把新增迟延条件当成原始输入"
+      ],
+      "critical_errors": [
+        "把名为 Realizes 的参数当作题面弱条件",
+        "漏掉正向内近似仍正确",
+        "从 S5 等式反推出不具备的精确交换"
+      ],
+      "points": 20,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S2",
+      "earlier_stage_ids": [
+        "S1"
+      ],
+      "changed_assumptions": "精确下一步记录改为允许停留或推进",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把每次停留都视为最终可以忽略的有限等待",
+      "correct_boundary": "允许永久停留会保留 g 已排除的真实安全点",
+      "mechanism": "stuttering versus exact dynamics",
+      "target_claim": "仅弱记录条件下仍有 K=q⁻¹(T)。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S3"
+      ],
+      "changed_assumptions": "加入安全轨道上逐点有限迟延实现，不要求统一迟延",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "错误要求每步精确交换或统一等待上界",
+      "correct_boundary": "安全轨道移位与逐层归纳足以恢复所有有限层",
+      "mechanism": "eventual progress without uniformity",
+      "target_claim": "弱记录条件加每个安全 x 在某个正时刻实现一次 g(qx)，足以得到 K=q⁻¹(T)。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S4"
+      ],
+      "changed_assumptions": "只给安全核集合相等，要求反推逐步精确记录",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把足以证明集合相等的动力学条件当成必要条件",
+      "correct_boundary": "相同安全核可来自不同的记录演化",
+      "mechanism": "sufficient versus necessary conditions",
+      "target_claim": "弱记录条件加 K=q⁻¹(T) 必然推出逐步精确记录条件。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "drafts/lean-alignment-20261029/MG-F109/task.md",
+    "drafts/lean-alignment-20261029/MG-F109/reference.md",
+    "drafts/lean-alignment-20261029/MG-F109/rubric.json",
+    "drafts/lean-alignment-20261029/MG-F109/case.json",
+    "drafts/lean-alignment-20261029/MG-F109/formal/RecordLayers.lean",
+    "drafts/lean-alignment-20261029/MG-F109/formal/OrbitModel.lean",
+    "drafts/lean-alignment-20261029/MG-F109/formal/Candidate.lean",
+    "results/failure-analysis-20261030/README.md",
+    "results/failure-analysis-20261030/lean-failures.json"
+  ],
+  "source_attachments": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/RecordLayers.lean",
+      "target": "RecordLayers.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/OrbitModel.lean",
+      "target": "OrbitModel.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/Candidate.lean",
+      "target": "Candidate.lean"
+    }
+  ],
+  "source_sha256": {
+    "drafts/lean-alignment-20261029/MG-F109/task.md": "f810df928a75446c1c7bff737c959514398c4841d743559df9eb8c9c8fac4e09",
+    "drafts/lean-alignment-20261029/MG-F109/reference.md": "75e44c2362f10206478904766fe2ed3e5e049a8d6b8ab95b85fb51322e3ee3ac",
+    "drafts/lean-alignment-20261029/MG-F109/rubric.json": "99c78d488cd418e18b1bb94a2dc61f1c76b465e78185e322bbb8a1b136d8afa3",
+    "drafts/lean-alignment-20261029/MG-F109/case.json": "4dda0e6ecf479c2f2eb1482c1dd54deda75bc29f8c1486c1305542e0bd22d120",
+    "drafts/lean-alignment-20261029/MG-F109/formal/RecordLayers.lean": "ce467e0e9ab8473c3c032cf4f2bbbdb2f9e6d78b69f9cb77cd372a229e4cc483",
+    "drafts/lean-alignment-20261029/MG-F109/formal/OrbitModel.lean": "ec4d80b9458c6b40c26db71fcfc5d528625ad60b48ac0d4f8d147a698ab9e041",
+    "drafts/lean-alignment-20261029/MG-F109/formal/Candidate.lean": "07b746ed68b7b41f61d199ab67ed1d8f99f9bc1b803847768bc55d34137e0b92",
+    "results/failure-analysis-20261030/README.md": "885d88d42832a30dde970a6cc9f9c4b8b41f4233d47ebf3465ecc792d328ae32",
+    "results/failure-analysis-20261030/lean-failures.json": "40b599cd566d198ec5933ffa5f6831421ee135bb17f1d37db967bf5a6eb0bdb4"
+  },
+  "environment": {
+    "lean": "4.29.1",
+    "lean_commit": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+    "mathlib_commit": "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+  },
+  "grading": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage passes its mathematical and semantic criteria; every Lean-required stage is present in the complete submitted source and compiles without sorry or added axioms. Partial points do not constitute group pass."
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending",
+    "formalization": {
+      "status": "pending-new-obligations",
+      "new_group_compilation_performed": false,
+      "old_fixture_compilation_is_not_new_group_evidence": true
+    }
+  },
+  "required_output_files": [],
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/lean-alignment-20261029",
+    "case_id": "MG-F109",
+    "version": "0.1.0",
+    "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+    "case_manifest_sha256": "4dda0e6ecf479c2f2eb1482c1dd54deda75bc29f8c1486c1305542e0bd22d120"
+  }
+}

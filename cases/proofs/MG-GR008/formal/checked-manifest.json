@@ -1,0 +1,223 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR008",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "3968d939c63865c970e0c84c2184d544114111be9be2ec95a82047dd5ef5aeb6",
+    "contract.json": "1c46c6f0281f41b098cd8fcd9e05b75c50761a736e4146baadfd1a026b0c8ad9",
+    "reference.md": "9f3c36a609132236e18f9c79847eaa0713eb7074b019172c5b0f6d4955ff273f",
+    "rubric.json": "0ce012b116c1b1ca0d67bfe21322c3c77303ba4609db5782b30654e93bc820fb",
+    "task.md": "dbc3bdb16d54ae5ecb580c61520c7781e79020e51c727e5449c7885252d2aaec"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "ee2635152101c622945ab72ebfd753074e2dc207837ab9a8cf0504d6121e7f1f"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "592d25a7b10dffdab3d9e1d7f2bf7fadded149a48654fc1a7c3a895c1277a327"
+  },
+  "modules": [
+    {
+      "module": "SequentialTower",
+      "source": "SequentialTower.lean",
+      "sha256": "a6b6662973751f8d0c039eb6c8fa3251d48e9a9b88340b1d2a74224992015d27",
+      "imports": [
+        "Mathlib.LinearAlgebra.TensorProduct.DirectLimit",
+        "Mathlib.LinearAlgebra.Contraction",
+        "Mathlib.LinearAlgebra.FreeModule.PID",
+        "Mathlib.LinearAlgebra.Countable",
+        "Mathlib.Algebra.Category.ModuleCat.Basic"
+      ]
+    },
+    {
+      "module": "TensorNatural",
+      "source": "TensorNatural.lean",
+      "sha256": "8ebc8a75e742cdca296c979ab0263fbe87be9f6d5c9eb74204a1a6159cdc916e",
+      "imports": [
+        "Mathlib.Algebra.Category.ModuleCat.Basic",
+        "Mathlib.LinearAlgebra.TensorProduct.Map",
+        "Mathlib.LinearAlgebra.Contraction",
+        "Mathlib.Algebra.Module.ULift",
+        "Mathlib.LinearAlgebra.FreeModule.PID",
+        "Mathlib.Data.Countable.Defs"
+      ]
+    },
+    {
+      "module": "TensorRepresentability",
+      "source": "TensorRepresentability.lean",
+      "sha256": "5a0938c34f9e07e64a37af76b616f655f9b91daf848ab10db26a87b73df63a88",
+      "imports": [
+        "TensorNatural",
+        "Mathlib.RingTheory.Finiteness.Basic"
+      ]
+    },
+    {
+      "module": "TensorLimits",
+      "source": "TensorLimits.lean",
+      "sha256": "07c6f710b0aa0d666ba6f078f6d50cc44a6d269d7ba823d40243b99491294042",
+      "imports": [
+        "TensorRepresentability",
+        "Mathlib.Algebra.Category.ModuleCat.Limits"
+      ]
+    },
+    {
+      "module": "CategoryLimits",
+      "source": "CategoryLimits.lean",
+      "sha256": "a7d83aaeda2092e03f27ea159dd9b5426fb3599970e3df5c7ffb18524d9f8a3c",
+      "imports": [
+        "TensorLimits",
+        "Mathlib.CategoryTheory.Limits.Preserves.Basic",
+        "Mathlib.CategoryTheory.Discrete.Basic",
+        "Mathlib.CategoryTheory.Countable"
+      ]
+    },
+    {
+      "module": "TowerClassification",
+      "source": "TowerClassification.lean",
+      "sha256": "b5a9a5ce4d4d04c1dfa3064158e9aa764098bf75e41a8a70aa5adf6079e5664c",
+      "imports": [
+        "SequentialTower",
+        "CategoryLimits"
+      ]
+    },
+    {
+      "module": "TowerStageTools",
+      "source": "TowerStageTools.lean",
+      "sha256": "bca43b73049d818ae78e1f4e37e0fd112a1a30b1289a9a48f9b129f1d680a4fb",
+      "imports": [
+        "TowerClassification",
+        "Mathlib.Data.Finset.Lattice.Fold"
+      ]
+    },
+    {
+      "module": "TowerFiniteLimits",
+      "source": "TowerFiniteLimits.lean",
+      "sha256": "a1e5995700aa4e63bb3ed1bdeceb93ce59bc64367e0435d2f16d072829637627",
+      "imports": [
+        "TowerStageTools",
+        "Mathlib.CategoryTheory.Limits.Preserves.Finite"
+      ]
+    },
+    {
+      "module": "TowerFiniteStage",
+      "source": "TowerFiniteStage.lean",
+      "sha256": "26a1c838f0055d3d9f3fed6bdcd30de2ffaf840d7fbd795a18a3424b09ad5e21",
+      "imports": [
+        "TowerStageTools"
+      ]
+    },
+    {
+      "module": "TowerProjectionExample",
+      "source": "TowerProjectionExample.lean",
+      "sha256": "35640da8c916752200f7f07043c7e90a7959cab214e36f84325b48c033a7e9cd",
+      "imports": [
+        "TowerFiniteStage",
+        "TowerFiniteLimits",
+        "Mathlib.Tactic.NormNum"
+      ]
+    },
+    {
+      "module": "TowerDoublingExample",
+      "source": "TowerDoublingExample.lean",
+      "sha256": "0192c16d74e579b1dd7540487567364bc2fccd2d533e0a43768212b6973d01ca",
+      "imports": [
+        "TowerFiniteStage",
+        "TowerFiniteLimits",
+        "Mathlib.Data.Rat.Cast.Order",
+        "Mathlib.Tactic.FieldSimp",
+        "Mathlib.Tactic.NormNum",
+        "Mathlib.Tactic.Ring"
+      ]
+    },
+    {
+      "module": "TowerExtrasAudit",
+      "source": "TowerExtrasAudit.lean",
+      "sha256": "bb03731b16230ce8d1ecea63665ce5191730c6bc90545c92e82167b58c394ace",
+      "imports": [
+        "TowerProjectionExample",
+        "TowerDoublingExample",
+        "Lean.Util.CollectAxioms"
+      ]
+    },
+    {
+      "module": "RankOneClassification",
+      "source": "RankOneClassification.lean",
+      "sha256": "e5b985c051557c145e0f290cb6133111a397d37758499ffaa3de313c3edf62e2",
+      "imports": [
+        "TowerDoublingExample"
+      ]
+    },
+    {
+      "module": "RankOneModels",
+      "source": "RankOneModels.lean",
+      "sha256": "bf1ac6e538c7fcb524bc238695600f0887cf754033b2f543341e7fd1ce0104c2",
+      "imports": [
+        "RankOneClassification"
+      ]
+    },
+    {
+      "module": "StableImages",
+      "source": "StableImages.lean",
+      "sha256": "b07ad5636052fe3a63fade05cd791cc2efb230d600e4a5fe050e49e45bcc3066",
+      "imports": [
+        "TowerFiniteStage"
+      ]
+    },
+    {
+      "module": "StableRecords",
+      "source": "StableRecords.lean",
+      "sha256": "9e29deda110297ba056f378a3c41b2fc2708336ab76b408a233e8904f270cff1",
+      "imports": [
+        "StableImages"
+      ]
+    },
+    {
+      "module": "StableBoundary",
+      "source": "StableBoundary.lean",
+      "sha256": "ff042b5834daec4353e7d68cd050d6c5499c810ef00765720c51d23293338a5f",
+      "imports": [
+        "StableRecords",
+        "RankOneModels"
+      ]
+    },
+    {
+      "module": "DyadicEndomorphisms",
+      "source": "DyadicEndomorphisms.lean",
+      "sha256": "c2b2f933685f4e4e11f56720f62112952df572ab3f4b5aa4582b96b17de562ad",
+      "imports": [
+        "TowerDoublingExample"
+      ]
+    },
+    {
+      "module": "DyadicUnits",
+      "source": "DyadicUnits.lean",
+      "sha256": "c2d872e0d025931d3f17ef65bf70237b9919e2a376578e1cc6ef5b8c1394a893",
+      "imports": [
+        "DyadicEndomorphisms",
+        "Mathlib.Data.Nat.Prime.Basic"
+      ]
+    },
+    {
+      "module": "DyadicNatural",
+      "source": "DyadicNatural.lean",
+      "sha256": "24c891bbc8d34867fbd1284b58e5258c1971d06ae6e3b45053fa5b4cf930e064",
+      "imports": [
+        "DyadicUnits"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "cee472583b05ce1038b6c6a83e71a3b546ad0977f7e76894a0d44b345e18ece5",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

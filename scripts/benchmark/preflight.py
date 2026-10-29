@@ -11,7 +11,7 @@ from pathlib import Path
 from common import REPO, code_identity, digest, helper, load, now, save
 from isolation import execute_session, open_probe, prepare_session
 
-DEFAULT_ROOT = Path("/private/tmp/math-gauge-full-comparison-20261030")
+DEFAULT_ROOT = REPO / "runs/comparison"
 BINARY = {
     "terra": "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
     "gemini": "/opt/homebrew/bin/agy",
@@ -37,13 +37,13 @@ def config_for(root, model):
         exceptions = [{"path": str(home / ".gemini/antigravity-cli/bin"), "kind": "subpath", "purpose": "CLI installation only"}, {"path": str(home / ".gemini/antigravity-cli/installation_id"), "kind": "literal", "purpose": "Non-history installation identity"}]
         links = [{"source": str(home / ".gemini" / relative), "target": relative} for relative in ["antigravity-cli/antigravity-oauth-token", "jetski-standalone-oauth-token"]]
     negative = [
-        ("reference", REPO / "cases/public/MG-R001/reference.md"),
+        ("reference", REPO / "cases/proofs/MG-GR001/reference.md"),
         ("history", sessions[0]),
-        ("prior_run", REPO / "results/true-goal-six-terra/MG-R101/response.md"),
-        ("memory", home / ".codex/memories_v2/memory_summary.md"),
+        ("prior_run", root / "preflight/prior-output-probe.txt"),
+        ("memory", home / ".codex/memories/memory_summary.md"),
         ("global_config", home / ".codex/config.toml"),
         ("global_rules", home / ".codex/AGENTS.md"),
-        ("formal_reference", REPO / "drafts/lean-alignment-20261029/MG-F110/formal/Reference.lean"),
+        ("formal_reference", REPO / "cases/lean-construction/MG-GF110/formal/Reference.lean"),
         ("formal_dependency_project", home / "lab/oet-dev/the-operator-evolution-theory/formal-oet/lake-manifest.json"),
     ]
     return {"schema": "math-gauge.isolated-cli/v1", "client": "codex" if model == "terra" else "agy", "cli_identity": str(root / "identity" / model / "identity.json"), "model": "gpt-6.1-terra" if model == "terra" else "gemini-3.8-flash-high", "effort": "max" if model == "terra" else "high", "deny_read_roots": [str(home), "/private/tmp", "/private/var/folders", "/Volumes"], "read_exceptions": exceptions, "credential_links": links, "probes": [{"category": kind, "path": str(path)} for kind, path in negative], "print_timeout": "45m"}
@@ -69,6 +69,10 @@ def network_probe(session):
 
 def inspect(root):
     root.mkdir(parents=True, exist_ok=True)
+    save(root / "preflight/prior-output-probe.txt", {
+        "synthetic_probe_only": True,
+        "contents": "Synthetic prior-output boundary probe; no model response.",
+    }, exclusive=True)
     for model, binary in BINARY.items():
         helper.inspect_cli("codex" if model == "terra" else "agy", binary, root / "identity" / model)
     source = Path.home() / ".codex/models_cache.json"

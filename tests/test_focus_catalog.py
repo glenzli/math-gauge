@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "focus_catalog", ROOT / "exercises/refresh_focus_catalog.py"
+    "focus_catalog", ROOT / "scripts/catalog.py"
 )
 focus_catalog = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(focus_catalog)
@@ -118,11 +118,8 @@ class FocusCatalogTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, message):
                     focus_catalog.build(taxonomy_data=taxonomy)
 
-    def test_check_is_read_only_and_legacy_identity_stays_fixed(self):
-        paths = [ROOT / name for name in (
-            focus_catalog.TAXONOMY, *focus_catalog.OUTPUTS,
-            "exercises/catalog.json", "exercises/refresh_catalog.py",
-        )]
+    def test_check_is_read_only_and_has_no_legacy_dependency(self):
+        paths = [ROOT / name for name in (focus_catalog.TAXONOMY, *focus_catalog.OUTPUTS)]
         before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths}
         with patch.object(Path, "write_text", side_effect=AssertionError("write in check")):
             with patch.object(Path, "write_bytes", side_effect=AssertionError("write in check")):
@@ -131,23 +128,38 @@ class FocusCatalogTests(unittest.TestCase):
         self.assertEqual(before, {
             path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths
         })
-        expected = self.taxonomy["protected_legacy_files"]["exercises/catalog.json"]
-        self.assertEqual(hashlib.sha256((ROOT / "exercises/catalog.json").read_bytes()).hexdigest(), expected)
+        catalog, _ = focus_catalog.build()
+        self.assertNotIn("protected_legacy_files", self.taxonomy)
+        self.assertNotIn("protected_legacy_files", catalog)
+        self.assertEqual([row["root"] for row in catalog["suites"]], ["cases"])
 
-    def test_refresh_writes_only_the_two_new_derived_outputs(self):
+    def test_refresh_writes_only_current_derived_outputs(self):
         catalog, document = focus_catalog.build()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "exercises").mkdir()
-            legacy = root / "exercises/catalog.json"
-            legacy.write_text("frozen legacy sentinel\n")
+            (root / "cases").mkdir()
             with patch.object(focus_catalog, "build", return_value=(catalog, document)):
                 focus_catalog.refresh(root)
-            self.assertEqual(legacy.read_text(), "frozen legacy sentinel\n")
             self.assertEqual(
                 {str(path.relative_to(root)) for path in root.rglob("*") if path.is_file()},
-                {"exercises/catalog.json", *focus_catalog.OUTPUTS},
+                set(focus_catalog.OUTPUTS),
             )
+
+    def test_exact_current_categories_and_run_catalog_interface(self):
+        catalog, _ = focus_catalog.build()
+        self.assertEqual(catalog["schema"], "math-gauge.case-catalog/v1")
+        self.assertEqual(catalog["snapshot_status"], "final-catalog-snapshot")
+        self.assertEqual([(item["id"], item["count"]) for item in catalog["categories"]],
+                         [("proofs", 29), ("lean-audit", 6),
+                          ("lean-construction", 6), ("chapters", 2)])
+        ids = [cid for item in catalog["categories"] for cid in item["case_ids"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual(set(ids), {item["case_id"] for item in catalog["entries"]})
+        self.assertEqual(set(catalog["suites"][0]["cases"]), set(ids))
+        for item in catalog["entries"]:
+            self.assertEqual(item["paths"]["case"],
+                             f"cases/{item['category']}/{item['case_id']}/case.json")
+            self.assertIn(item["task_kind"], {"written", "audit", "repair", "generate"})
 
     def test_check_rejects_stale_derived_text(self):
         catalog, document = focus_catalog.build()

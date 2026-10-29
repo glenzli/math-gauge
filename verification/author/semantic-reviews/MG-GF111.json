@@ -1,0 +1,64 @@
+{
+  "schema": "math-gauge.author-semantic-review/v1",
+  "case_id": "MG-GF111",
+  "case_version": "0.1.1",
+  "reviewer": "/root",
+  "author": "/root/author_lean_families_f",
+  "reviewer_kind": "independent-ai",
+  "reviewed_at_utc": "2026-10-30T08:44:43.626232+00:00",
+  "status": "passed",
+  "human": "pending",
+  "compile_is_semantic_proof": false,
+  "files": {
+    "case.json": "c09e957931b8b8c6a254b115901cef86ad4f2ffda48d927d283f08e4f9daaee8",
+    "task.md": "8409bf70e5f6cd376952bdc0a89d427d2432131ec16f66fea73517fdcfa60849",
+    "reference.md": "5e14de8421e4014a1c9daf2616c9d598f6f0ff9d4c0ed2a494a998d262f3a4ae",
+    "contract.json": "1376d4c6fd2419c687eae724c856cc37f60d08d699fc1397ff3ac35341adc32a",
+    "rubric.json": "1414a56bf0b1d1c0a7a8b96ef580d70ebaffbfd25810136729627636313fc329",
+    "formal/alignment.json": "ff0f9453b4e2efdacb95368b0383d90755ed063d26c7edbd10bdd798f2ac45d3",
+    "formal/COVERAGE.md": "a280f6630831ae8d04cd23c59cb7dde80e89c5ac260ed06d03bafc8781d1ea88",
+    "formal/manifest.json": "f6f20da6ec13709bdab986a7a70e3b4834c2843b00d1ebfbc67ffd23157418fd",
+    "formal/verification-report.json": "211f8f48bfa6d92f4c47d22bf583a0305be53db88d024c420a441123a8aabf50",
+    "formal/ExtendedBounds.lean": "aa989e8c1b64f5bae41e1268623019f1229eb124f76e57ab7faf5ea16fc4b40f",
+    "formal/CoefficientClassification.lean": "a22d901273fc1b9e472d71786699b94e4f2398a16b43a1e20806a7de0dbc58e6",
+    "formal/BoundaryExample.lean": "50b83782642172982537070bbafb5b8b829f0bb1ef0a0fabba5a3a133e8b76f0",
+    "formal/Extensions.lean": "22532fe5baabd76836fc0a1659d9ef892c1d8d5f207608495dd5f23da99614e3",
+    "input/BoundaryExample.lean": "50b83782642172982537070bbafb5b8b829f0bb1ef0a0fabba5a3a133e8b76f0",
+    "input/CoefficientClassification.lean": "a22d901273fc1b9e472d71786699b94e4f2398a16b43a1e20806a7de0dbc58e6",
+    "input/ExtendedBounds.lean": "aa989e8c1b64f5bae41e1268623019f1229eb124f76e57ab7faf5ea16fc4b40f"
+  },
+  "items": [
+    {
+      "id": "S1",
+      "status": "passed",
+      "checks": "The actual ENNReal ratio supremum ranges only over nonzero finite denominators; div_le_iff is used with both required hypotheses. All coefficients, including zero and infinity, and empty domains are covered."
+    },
+    {
+      "id": "S2",
+      "status": "passed",
+      "checks": "Allowing zero denominators adds exactly ZeroCompatible, independent of c, and retains c=infinity under ENNReal infinity*0=0."
+    },
+    {
+      "id": "S3",
+      "status": "passed",
+      "checks": "The complete classification separately treats zero, finite positive and infinite denominators. Finite existence uses r+1; least existence and equality to r use a genuine intermediate finite positive coefficient to rule out r<c. No attainment assumption is hidden."
+    },
+    {
+      "id": "S4",
+      "status": "passed",
+      "checks": "For d=1,e(n)=n every finite F has the actual finite maximum F.sup id as a bound, including empty F. Archimedean unboundedness rules out every global finite coefficient and proves ratioSup=infinity."
+    },
+    {
+      "id": "S5",
+      "status": "passed",
+      "checks": "The theorem selects a singleton local coefficient and applies ENNReal multiplication monotonicity, so it covers zero/infinite denominators and empty X. It proves a stronger result valid even before assuming C finite."
+    },
+    {
+      "id": "S6",
+      "status": "passed",
+      "checks": "Original input bytes are preserved and all three classifications are semantically aligned. The Unit infinity/one example proves finite feasibility but excludes every least finite coefficient. New finite-subdomain results are separately proved in Extensions."
+    }
+  ],
+  "findings": [],
+  "candidate_model_execution": "not-run"
+}

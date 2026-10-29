@@ -5,14 +5,23 @@ import importlib.util
 import json
 import os
 import shutil
+import sys
 import tempfile
 import unittest
+from copy import deepcopy
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('formal_verifier', ROOT/'scripts/formal/verify.py')
 V = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(V)
+with patch.dict(sys.modules, {'verify': V}):
+    E_SPEC = importlib.util.spec_from_file_location('formal_evidence', ROOT/'scripts/formal/check_evidence.py')
+    E = importlib.util.module_from_spec(E_SPEC)
+    E_SPEC.loader.exec_module(E)
+    S_SPEC = importlib.util.spec_from_file_location('formal_suite', ROOT/'scripts/formal/verify_suite.py')
+    S = importlib.util.module_from_spec(S_SPEC)
+    S_SPEC.loader.exec_module(S)
 
 class FixtureMixin:
     def setUp(self):
@@ -83,6 +92,21 @@ class ManifestTests(FixtureMixin, unittest.TestCase):
         V.validate_case(path)
         self.assertIn('candidate/task.md',manifest['frozen_inputs'])
         self.assertNotIn('task.md',manifest['frozen_inputs'])
+    def test_case_relative_author_contract_and_invalid_path_base(self):
+        path, manifest, _ = self.author_fixture()
+        case = V.load(self.case/'case.json')
+        case['path_base'] = 'case'
+        for key in ('task', 'reference', 'rubric', 'group_contract'):
+            case[key] = case[key].removeprefix('case/')
+        for row in case['solver_files']:
+            row['source'] = row['source'].removeprefix('case/')
+        V.save(self.case/'case.json', case)
+        manifest['frozen_inputs'] = V.author_frozen_inputs(self.case)[1]
+        V.save(path, manifest)
+        V.validate_case(path)
+        case['path_base'] = 'guess'; V.save(self.case/'case.json', case)
+        with self.assertRaisesRegex(V.VerificationError, 'path_base'):
+            V.author_frozen_inputs(self.case)
     def test_new_audit_includes_non_mathgauge_local_namespaces(self):
         for profile in V.PROFILES:
             audit=V.render_audit(['Example'],profile,all_case_declarations=True)
@@ -160,6 +184,298 @@ class ManifestTests(FixtureMixin, unittest.TestCase):
                                     '--dependency-root',str(self.root),'--out',str(out)]),1)
         inspect.assert_not_called()
         self.assertIn('Cannot mix verification profiles',V.load(out/'report.json')['error'])
+
+class RetainedEvidenceTests(FixtureMixin, unittest.TestCase):
+    """Synthetic saved output tests receipt integrity without claiming a Lean run."""
+    def setUp(self):
+        super().setUp()
+        _, manifest, alignment = ManifestTests.author_fixture(self)
+        cid = manifest['case_id']
+        old_case = V.load(self.case/'case.json')
+        for key in ('task', 'reference', 'rubric', 'group_contract'):
+            old_case[key] = old_case[key].replace('case/', cid + '/')
+        old_case['solver_files'][0]['source'] = cid + '/input.lean'
+        old_case['review'] = {'mathematical': 'fixture-ai-review', 'human': 'pending'}
+        old_case['evaluator_files'] = [cid + '/provenance.json', 'reviews/old-shared.json']
+        V.save(self.case/'case.json', old_case)
+        V.save(self.case/'provenance.json', {'kind': 'synthetic-test-fixture'})
+        self.repo = Path(self.temp.name)/'export'
+        new_case = self.repo/'cases/proofs'/cid
+        new_case.parent.mkdir(parents=True)
+        self.case.rename(new_case); self.case = new_case; self.root = new_case/'formal'
+        manifest['frozen_inputs'] = V.author_frozen_inputs(self.case)[1]
+        V.save(self.root/'manifest.json', manifest)
+        shutil.copyfile(self.case/'case.json', self.root/'checked-case.json')
+        shutil.copyfile(self.root/'manifest.json', self.root/'checked-manifest.json')
+        declarations = [{'module': 'Example', 'name': 'MathGauge.Fixture.value',
+                         'user_name': 'MathGauge.Fixture.value', 'kind': 'definition'}]
+        summary = {'passed': True, 'unexpected_axioms': [], 'axiom_union': [], 'declaration_count': 1}
+        (self.root/'logs').mkdir()
+        (self.root/'logs/Example.log').write_text('')
+        (self.root/'logs/CurrentAudit.log').write_text(
+            'MATH_GAUGE_DECL ' + json.dumps(declarations[0]) + '\n' +
+            'MATH_GAUGE_AUDIT_SUMMARY ' + json.dumps(summary) + '\n')
+
+        def command(row):
+            name = row['module']; log = 'logs/' + name + '.log'
+            return {'module': name, 'source_sha256': row['sha256'], 'exit_code': 0,
+                    'log': log, 'log_sha256': V.digest(self.root/log)}
+
+        report = {
+            'schema': 'math-gauge.formal-verification/v1', 'case_id': cid, 'status': 'passed',
+            'manifest_sha256': V.digest(self.root/'manifest.json'),
+            'started_utc': '2000-01-01T00:00:00+00:00', 'finished_utc': '2000-01-01T00:00:01+00:00',
+            'frozen_inputs': manifest['frozen_inputs'], 'alignment': manifest['alignment'],
+            'coverage': manifest['coverage'], 'fresh_output': True,
+            'source_side_oleans_reused': False, 'sibling_case_outputs_used': False,
+            'semantic_alignment_inferred': False, 'local_declaration_audit_scope': 'all-explicit-case-modules',
+            'dependency': {'mathlib_revision': V.MATHLIB_REV, 'lean_version': 'Lean 4.29.1 fixture',
+                           'ambient_lean_path_excluded': True, 'dependency_project_build_excluded': True},
+            'modules': [command(manifest['modules'][0])],
+            'audit': {'command': command(manifest['audit']), 'declarations': declarations,
+                      'summary': summary, 'allowed_axioms': sorted(V.ALLOWED_AXIOMS)},
+        }
+        V.save(self.root/'verification-report.json', report)
+        V.save(self.root/'declarations.json', declarations)
+        evidence = self.repo/'verification/author'; (evidence/'semantic-reviews').mkdir(parents=True)
+        review_path = evidence/'semantic-reviews'/f'{cid}.json'
+        hashes = {name: V.digest(self.case/name) for name in manifest['frozen_inputs']}
+        hashes['formal/manifest.json'] = V.digest(self.root/'checked-manifest.json')
+        hashes['formal/Example.lean'] = V.digest(self.root/'Example.lean')
+        review = {'case_id': cid, 'case_version': manifest['case_version'],
+                  'reviewer': 'fixture-independent-reviewer', 'status': 'passed',
+                  'files': hashes, 'items': [{'id': 'S1', 'status': 'passed'}]}
+        V.save(review_path, review)
+        self.mapping = {'id': cid, 'previous': 'drafts/fixture/' + cid,
+                        'current': 'cases/proofs/' + cid}
+        self.layout = {
+            'schema': E.LAYOUT_SCHEMA, 'baseline_commit': '6a48027baa33e06e913a554fb8bac9394a82b480',
+            'case_paths': [self.mapping],
+            'path_prefixes': [{'previous': 'results/author-fixture', 'current': 'verification/author'}],
+        }
+        V.save(self.repo/'verification/layout.json', self.layout)
+        self.baseline = {
+            'id': cid, 'case_version': manifest['case_version'], 'case_path': self.mapping['previous'],
+            'manifest_sha256': V.digest(self.root/'checked-manifest.json'),
+            'verification_report_sha256': V.digest(self.root/'verification-report.json'),
+            'declarations_sha256': V.digest(self.root/'declarations.json'),
+            'compile_started_utc': report['started_utc'], 'compile_finished_utc': report['finished_utc'],
+            'complete_items': ['S1'], 'incomplete_items': [],
+            'independent_semantic_review': {
+                'path': 'results/author-fixture/semantic-reviews/' + cid + '.json',
+                'sha256': V.digest(review_path), 'reviewer': review['reviewer'], 'status': 'passed',
+                'bound_files_rechecked': len(hashes), 'stage_ids': ['S1'],
+            },
+        }
+        V.save(evidence/'checked-ledger.json', {
+            'schema': 'math-gauge.author-evidence-ledger/v1', 'baseline_commit': '1'*40,
+            'counts': {'papers': 1, 'fully_formalized_papers': 1, 'items': 1, 'complete_items': 1,
+                       'modules': 1, 'declarations_with_per_case_repetition': 1},
+            'cases': [self.baseline],
+        })
+        self.layout['migration'] = {'checked_ledger_sha256': V.digest(evidence/'checked-ledger.json')}
+        V.save(self.repo/'verification/layout.json', self.layout)
+        V.save(self.repo/'cases/suite.json', {'schema': 'math-gauge.suite/v1',
+                                           'cases': ['proofs/' + cid + '/case.json']})
+        current = deepcopy(old_case); current['path_base'] = 'case'
+        for key in ('task', 'reference', 'rubric', 'group_contract'):
+            current[key] = current[key].removeprefix(cid + '/')
+        current['solver_files'][0]['source'] = 'input.lean'
+        current['evaluator_files'] = ['provenance.json'] + sorted(E.REQUIRED_EVALUATOR_FILES)
+        current['review']['formalization'] = E.canonical_formalization(alignment)
+        V.save(self.case/'case.json', current)
+        manifest['frozen_inputs'] = V.author_frozen_inputs(self.case)[1]
+        V.save(self.root/'manifest.json', manifest)
+        E.check_case(self.repo, self.layout, self.mapping, self.baseline, write_binding=True)
+
+    def check(self, **kwargs):
+        return E.check_case(self.repo, self.layout, self.mapping, self.baseline, **kwargs)
+
+    def update_current_manifest(self):
+        manifest = V.load(self.root/'manifest.json')
+        manifest['frozen_inputs'] = V.author_frozen_inputs(self.case)[1]
+        V.save(self.root/'manifest.json', manifest)
+
+    def test_metadata_reroute_uses_checked_inputs_and_preserves_original_compile_time(self):
+        report = (self.root/'verification-report.json').read_bytes()
+        with patch.object(V, 'command', side_effect=AssertionError('Offline checks cannot invoke tools')):
+            row = self.check()
+            ledger = E.check_all(self.repo)
+        self.assertEqual(row['compile_started_utc'], '2000-01-01T00:00:00+00:00')
+        self.assertNotEqual(row['manifest_sha256'], row['checked_manifest_sha256'])
+        self.assertNotEqual(row['case_sha256'], row['checked_case_sha256'])
+        self.assertEqual((self.root/'verification-report.json').read_bytes(), report)
+        self.assertEqual(ledger['counts']['fully_formalized_papers'], 1)
+        self.assertFalse(ledger['fresh_compilation_repeated'])
+
+    def test_human_version_and_unlisted_metadata_changes_are_rejected_even_after_rehash(self):
+        original = V.load(self.case/'case.json')
+        for field, value in [('version', '9.9.9'), ('title', 'Unapproved metadata'),
+                             ('injected', True), ('review', {'human': 'approved'})]:
+            with self.subTest(field=field):
+                current = deepcopy(original); current[field] = value
+                V.save(self.case/'case.json', current); self.update_current_manifest()
+                with self.assertRaises(V.VerificationError): self.check(write_binding=True)
+        V.save(self.case/'case.json', original); self.update_current_manifest()
+        self.check()
+
+    def test_checked_ledger_cannot_be_replaced_during_binding_refresh(self):
+        path = self.repo/'verification/author/checked-ledger.json'
+        baseline = V.load(path)
+        baseline['baseline_commit'] = '9' * 40
+        V.save(path, baseline)
+        binding = (self.root/'input-binding.json').read_bytes()
+        with self.assertRaisesRegex(V.VerificationError, 'recorded migration identity'):
+            E.check_all(self.repo, write_bindings=True)
+        self.assertEqual((self.root/'input-binding.json').read_bytes(), binding)
+        with self.assertRaisesRegex(V.VerificationError, 'recorded migration identity'):
+            E.original_row(self.repo, self.layout, self.mapping['id'])
+
+    def test_mathematical_inputs_cannot_be_changed_and_rehashed_as_a_relocation(self):
+        original_manifest = (self.root/'manifest.json').read_bytes()
+        for name in ('task.md', 'reference.md', 'rubric.json', 'contract.json', 'input.lean'):
+            with self.subTest(name=name):
+                path = self.case/name; original = path.read_bytes()
+                path.write_bytes(original + b'\n')
+                self.update_current_manifest()
+                with self.assertRaisesRegex(V.VerificationError, 'Only the current case.json hash'):
+                    self.check(write_binding=True)
+                path.write_bytes(original); (self.root/'manifest.json').write_bytes(original_manifest)
+
+    def test_lean_source_and_coverage_cannot_be_rebound(self):
+        for name, field in [('Example.lean', 'modules'), ('COVERAGE.md', 'coverage')]:
+            with self.subTest(name=name):
+                path = self.root/name; original = path.read_bytes()
+                manifest = V.load(self.root/'manifest.json'); original_manifest = deepcopy(manifest)
+                path.write_bytes(original + b'\n')
+                if field == 'modules': manifest[field][0]['sha256'] = V.digest(path)
+                else: manifest[field]['sha256'] = V.digest(path)
+                V.save(self.root/'manifest.json', manifest)
+                with self.assertRaisesRegex(V.VerificationError, 'Only the current case.json hash'):
+                    self.check(write_binding=True)
+                path.write_bytes(original); V.save(self.root/'manifest.json', original_manifest)
+
+    def test_original_report_and_checked_manifest_tampering_is_rejected(self):
+        for filename in ('verification-report.json', 'checked-manifest.json'):
+            with self.subTest(filename=filename):
+                path = self.root/filename; original = path.read_bytes()
+                path.write_bytes(original + b'\n')
+                with self.assertRaisesRegex(V.VerificationError, 'Original compiler evidence|Checked manifest'):
+                    self.check(write_binding=True)
+                path.write_bytes(original)
+
+    def test_stale_review_hash_and_binding_tampering_are_not_ignored(self):
+        path = self.repo/'verification/author/semantic-reviews/MG-GR001.json'
+        original = path.read_bytes(); path.write_bytes(original + b'\n')
+        with self.assertRaisesRegex(V.VerificationError, 'Original independent semantic review changed'):
+            self.check()
+        path.write_bytes(original)
+        binding = V.load(self.root/'input-binding.json'); binding['current_case']['sha256'] = '0'*64
+        V.save(self.root/'input-binding.json', binding)
+        with self.assertRaisesRegex(V.VerificationError, 'Input binding differs'): self.check()
+
+    def test_recorded_review_source_hash_is_checked_after_path_translation(self):
+        path = self.repo/'verification/author/semantic-reviews/MG-GR001.json'
+        review = V.load(path)
+        # An original review can itself contain a stale hash. Retaining and
+        # correctly hashing that document must not make its source claim true.
+        review['files']['task.md'] = '0'*64
+        V.save(path, review)
+        baseline = deepcopy(self.baseline)
+        baseline['independent_semantic_review']['sha256'] = V.digest(path)
+        with self.assertRaisesRegex(V.VerificationError, 'source hash is stale'):
+            E.check_review(self.repo, self.layout, self.case, baseline)
+
+    def test_missing_mapped_declaration_is_rejected_despite_valid_compiler_summary(self):
+        manifest = V.load(self.root/'checked-manifest.json')
+        alignment = V.load(self.root/'alignment.json')
+        alignment['items'][0]['declarations'][0]['name'] = 'MathGauge.Fixture.absent'
+        V.save(self.root/'alignment.json', alignment)
+        manifest['alignment']['sha256'] = V.digest(self.root/'alignment.json')
+        # Exercise report validation directly: its source binding is internally
+        # consistent, but the mapped theorem is absent from actual audit output.
+        report = V.load(self.root/'verification-report.json'); report['alignment'] = manifest['alignment']
+        V.save(self.root/'verification-report.json', report)
+        with self.assertRaisesRegex(V.VerificationError, 'Mapped declaration missing'):
+            E.check_compiler_report(self.root, manifest, manifest, self.baseline)
+
+    def test_local_axiom_is_rejected_even_if_summary_claims_allowed_union(self):
+        report = V.load(self.root/'verification-report.json')
+        report['audit']['declarations'][0]['kind'] = 'axiom'
+        V.save(self.root/'verification-report.json', report)
+        V.save(self.root/'declarations.json', report['audit']['declarations'])
+        checked = V.load(self.root/'checked-manifest.json')
+        with self.assertRaisesRegex(V.VerificationError, 'local axiom'):
+            E.check_compiler_report(self.root, checked, checked, self.baseline)
+
+    def test_compiler_log_and_audit_inventory_must_match(self):
+        log = self.root/'logs/Example.log'; log.write_text('different compiler output')
+        checked = V.load(self.root/'checked-manifest.json')
+        with self.assertRaisesRegex(V.VerificationError, 'Saved compiler log changed'):
+            E.check_compiler_report(self.root, checked, checked, self.baseline)
+
+    def test_reported_audit_inventory_must_match_the_log_even_after_log_rehash(self):
+        report = V.load(self.root/'verification-report.json')
+        log = self.root/'logs/CurrentAudit.log'
+        log.write_text('MATH_GAUGE_AUDIT_SUMMARY ' + json.dumps(report['audit']['summary']) + '\n')
+        report['audit']['command']['log_sha256'] = V.digest(log)
+        V.save(self.root/'verification-report.json', report)
+        checked = V.load(self.root/'checked-manifest.json')
+        with self.assertRaisesRegex(V.VerificationError, 'audit log and reported inventory'):
+            E.check_compiler_report(self.root, checked, checked, self.baseline)
+
+    def test_partial_coverage_stays_partial_in_derived_metadata(self):
+        alignment = {'items': [{'status': 'complete'}, {'status': 'partial'}, {'status': 'pending'}]}
+        self.assertEqual(E.canonical_formalization(alignment), {
+            'status': 'partial', 'complete_obligations': 1, 'total_obligations': 3,
+            'evidence': 'formal/manifest.json'})
+
+    def test_canonical_suite_resolves_author_manifests_without_a_second_catalog(self):
+        manifests = S.indexed_manifests(self.repo/'cases/suite.json')
+        self.assertEqual(manifests, [(self.root/'manifest.json').resolve()])
+        suite = self.repo/'cases/suite.json'; data = V.load(suite); data['cases'] *= 2; V.save(suite, data)
+        with self.assertRaisesRegex(V.VerificationError, 'Duplicate'): S.indexed_manifests(suite)
+
+    def test_suite_selects_exact_profile_before_inspecting_dependencies(self):
+        modern = self.case.with_name('MG-GP001'); shutil.copytree(self.case, modern)
+        case = V.load(modern/'case.json'); case['id'] = 'MG-GP001'; V.save(modern/'case.json', case)
+        contract = V.load(modern/'contract.json'); contract['id'] = 'MG-GP001'; V.save(modern/'contract.json', contract)
+        alignment = V.load(modern/'formal/alignment.json'); alignment['case_id'] = 'MG-GP001'
+        V.save(modern/'formal/alignment.json', alignment)
+        manifest = V.load(modern/'formal/manifest.json'); config = V.profile_config(V.TAUCETI_PROFILE)
+        manifest.update(case_id='MG-GP001', verification_profile=V.TAUCETI_PROFILE,
+                        lean_toolchain=config['toolchain'], mathlib_revision=config['mathlib_revision'],
+                        tauceti_revision=config['tauceti_revision'])
+        manifest['frozen_inputs'] = V.author_frozen_inputs(modern)[1]
+        manifest['alignment']['sha256'] = V.digest(modern/'formal/alignment.json')
+        audit = modern/'formal/CurrentAudit.lean'
+        audit.write_text(V.render_audit(['Example'], V.TAUCETI_PROFILE, all_case_declarations=True))
+        manifest['audit']['sha256'] = V.digest(audit); V.save(modern/'formal/manifest.json', manifest)
+        suite = self.repo/'cases/suite.json'; data = V.load(suite)
+        data['cases'].append('proofs/MG-GP001/case.json'); V.save(suite, data)
+
+        def compile_stub(path, dependency, out):
+            current = V.load(path)
+            return {'case_id': current['case_id'], 'status': 'passed', 'modules': current['modules'],
+                    'audit': {'summary': {}}, 'manifest_sha256': V.digest(path)}
+
+        for profile, selected, excluded in [(V.DEFAULT_PROFILE, 'MG-GR001', 'MG-GP001'),
+                                             (V.TAUCETI_PROFILE, 'MG-GP001', 'MG-GR001')]:
+            with self.subTest(profile=profile):
+                output = self.repo/('output-' + profile)
+                with patch.object(V, 'inspect_dependencies', return_value={}) as inspect, \
+                     patch.object(V, 'verify_case', side_effect=compile_stub) as compile_case:
+                    self.assertEqual(S.main(['--suite', str(suite), '--profile', profile,
+                                             '--dependency-root', str(self.repo/'unused'),
+                                             '--out', str(output)]), 0)
+                self.assertEqual(inspect.call_args.args[2], profile)
+                self.assertEqual(compile_case.call_count, 1)
+                report = V.load(output/'report.json')
+                self.assertEqual(report['suite_case_count'], 2)
+                self.assertEqual(report['selected_case_count'], 1)
+                self.assertEqual(report['cases'][0]['case_id'], selected)
+                self.assertEqual(report['excluded_cases'], [excluded])
+
 
 class DependencyProfileTests(FixtureMixin, unittest.TestCase):
     def dependency_fixture(self):

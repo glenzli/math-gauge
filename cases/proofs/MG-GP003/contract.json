@@ -1,0 +1,244 @@
+{
+  "schema": "math-gauge.group-contract/v1",
+  "id": "MG-GP003",
+  "parent_case_id": "MG-P003",
+  "version": "0.1.1",
+  "title": "半局部邻域、下降与层化的依赖比较",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "层的半局部拼接",
+      "kind": "prove",
+      "assumptions": [
+        "G 已是 Zariski 层",
+        "S 的闭点有限非空",
+        "所有值采用邻域余极限"
+      ],
+      "required_evidence": [
+        "保留全部闭点的开覆盖系统",
+        "有限等化子与滤过余极限"
+      ],
+      "critical_errors": [
+        "把局部化直接称为开覆盖"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "true",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "分离预层的比较图",
+      "kind": "prove",
+      "assumptions": [
+        "分离 H 及明示单射/局部同构",
+        "可保覆盖收缩的正合输入"
+      ],
+      "required_evidence": [
+        "收缩保留所需闭点",
+        "交上单射与图追"
+      ],
+      "critical_errors": [
+        "要求任意原覆盖未经收缩正合",
+        "无证要求交本身半局部"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "含指定点的开集",
+      "kind": "prove",
+      "assumptions": [
+        "W 开且 Σ⊂W",
+        "反变阿贝尔群预层"
+      ],
+      "required_evidence": [
+        "实际共同细化",
+        "余极限代表和关系两方向"
+      ],
+      "critical_errors": [
+        "只说稠密就代替包含"
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 10,
+      "expected": "true",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "稠密开与邻域系统",
+      "kind": "decide",
+      "assumptions": [
+        "任意域",
+        "光滑积分仿射 X",
+        "W 稠密开而无保点条件"
+      ],
+      "required_evidence": [
+        "合法密开反例",
+        "余终性真正失败"
+      ],
+      "critical_errors": [
+        "将反例误作层化比较为假"
+      ],
+      "depends_on": [
+        "S3"
+      ],
+      "points": 10,
+      "expected": "false",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "设 $k$ 为域，$\\mathrm{Sm}/k$ 为光滑、分离、有限型 $k$-概形的范畴。令 $\\mathrm{Cor}_k$ 为有限对应的加性范畴：对象与 $\\mathrm{Sm}/k$ 相同，$\\mathrm{Cor}_k(Y,Z)$ 是由 $Y\\times_k Z$ 中那些在 $Y$ 的某个连通分支上有限且满射的整的闭子概形（即不可约且约化的闭子概形）生成的自由阿贝尔群，复合采用有限对应的通常交积与推前。概形态射通过其图给出有限对应。\n\n给定加性反变函子\n\n$$F:\\mathrm{Cor}_k^{\\mathrm{op}}\\longrightarrow\\mathrm{Ab},$$\n\n并假设对每个 $Y\\in\\mathrm{Sm}/k$，投影诱导的同态\n\n$$F(Y)\\longrightarrow F(Y\\times_k\\mathbb A^1_k)$$\n\n是同构。记 $F_{\\mathrm{Zar}}$ 为 $F$ 的底层普通预层关于 Zariski 开覆盖的层化，$\\eta:F\\to F_{\\mathrm{Zar}}$ 为典范态射。\n\n设 $X$ 是光滑拟射影 $k$-概形，$\\Sigma\\subset |X|$ 是有限非空点集。在包含 $\\Sigma$ 的一个仿射开集 $\\operatorname{Spec}A$ 中，以 $\\mathfrak p_x$ 表示点 $x$ 对应的素理想，置\n\n$$M=A\\setminus\\bigcup_{x\\in\\Sigma}\\mathfrak p_x,\n\\qquad S=\\operatorname{Spec}(M^{-1}A).$$\n\n对 $H=F$ 或 $F_{\\mathrm{Zar}}$，约定\n\n$$H(S)=\\varinjlim_{\\Sigma\\subset U\\subset X\\,\\text{开}}H(U),$$\n\n其中转移映射为向更小开邻域的限制。"
+      ],
+      "required_evidence": [
+        "Establish that the canonical map F(S) -> F_Zar(S), with both values defined by the specified neighborhood colimits, is an isomorphism for every field k and every finite nonempty point set in smooth quasi-projective X.",
+        "Justify each invoked geometric result with hypotheses that match the actual homotopy invariant presheaf with transfers and essentially smooth semilocal setting. Correct direct application of MVW Lemma 22.12 is sufficient.",
+        "When using a reconstruction proof, justify both injectivity and surjectivity and preserve the distinction between sections on the original covering opens, sections after shrinking, and the resulting semilocal colimits."
+      ],
+      "critical_errors": [
+        "Use the original Proposition 4.23 as though it established short exactness for every unchanged two-open cover, without a valid independent justification.",
+        "Treat F as a Zariski sheaf before proving or otherwise justifying the relevant comparison.",
+        "Pass from stalkwise equality at individual points directly to equality of presheaf values on a semilocal scheme without a valid descent or comparison argument.",
+        "Use a shrinking lemma in a colimit argument without checking that the shrunk neighborhoods remain in the same cofinal neighborhood system.",
+        "Silently impose that k is perfect or infinite, or that the points of Sigma are closed in X; proving only such a restricted result is not completion of this task.",
+        "Conflate the closed points of S with closed points of X, or require all intersections of semilocal localizations to be semilocal.",
+        "Infer the existence of transfers on a separated quotient or sheafification merely from the ordinary presheaf quotient or sheafification universal property.",
+        "Confuse a proved known theorem with a new independent reconstruction of all standard-triple geometry, or claim Lean/human/model evidence not present."
+      ],
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "points": 35,
+      "expected": "true",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "极限正合与阶段正合",
+      "kind": "decide",
+      "assumptions": [
+        "滤过复形系统",
+        "后项为逐同调类最终消失假设"
+      ],
+      "required_evidence": [
+        "第一断言为假：给出每阶段不正合而滤过余极限正合的实际复形与相容转移映射。",
+        "第二断言为真：若每个阶段的每个同调类在某后续阶段消失，则逐代表证明余极限复形正合；不得要求统一消失阶段。"
+      ],
+      "critical_errors": [
+        "极限正合倒推阶段正合",
+        "无限量词统一尾部"
+      ],
+      "depends_on": [
+        "S2",
+        "S5"
+      ],
+      "points": 15,
+      "expected": "false",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S3"
+      ],
+      "changed_assumptions": "包含 Σ 的开集改为仅稠密开",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把泛点邻域当成保留所有半局部点的邻域",
+      "correct_boundary": "稠密不保证含指定点",
+      "mechanism": "generic_to_semilocal",
+      "scope": "stage",
+      "target_claim": "任意稠密开集 W 的内部仍可选到包含指定有限点集 Σ 的余终邻域系。"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S2",
+        "S4"
+      ],
+      "changed_assumptions": "不预设 F 是层，仅保留同伦不变及转移；点集可非闭、域可有限",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "把普通层拼接直接用于 F，或因稠密开反例否定主定理",
+      "correct_boundary": "需适用的几何输入与保点收缩，或准确匹配已知主定理",
+      "mechanism": "local_to_global_with_geometric_input",
+      "scope": "stage",
+      "target_claim": "对每个域和题定任意有限非空点集，原预层与其 Zariski 层化的半局部邻域余极限之典范映射都是同构。"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S2",
+        "S5"
+      ],
+      "changed_assumptions": "从阶段正合推出极限正合改问逆向",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "将余极限结论回填每个有限阶段",
+      "correct_boundary": "逐类最终消失足以极限正合但不迫使某阶段正合",
+      "mechanism": "converse_and_eventual_quantifiers",
+      "scope": "subclaim",
+      "target_claim": "一列复形的滤过余极限正合，必推出所有充分后面的阶段复形正合。"
+    }
+  ],
+  "source_paths": [
+    "drafts/public-proof-extractions-20261029/MG-P003/task.md",
+    "drafts/public-proof-extractions-20261029/MG-P003/reference.md",
+    "drafts/public-proof-extractions-20261029/MG-P003/rubric.json",
+    "results/failure-analysis-20261030/math-failures.md",
+    "drafts/public-proof-extractions-20261029/MG-P003/case.json",
+    "drafts/public-proof-extractions-20261029/MG-P003/source-notes.md",
+    "drafts/public-proof-extractions-20261029/MG-P003/source-evidence.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.1.0",
+    "parent_source_ids": [
+      "weak-lemma-repair"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  },
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/public-proof-extractions-20261029",
+    "case_id": "MG-P003",
+    "version": "0.1.0",
+    "suite_sha256": "183ff9585facd68e422609bcb24199878c45da6bb2708a8ddf570c11c0738a8b",
+    "case_manifest_sha256": "8c4f6d9adb2baaee1ddd97ea2ea050a526c170066c3d0a283a197eccc57a0cf0"
+  }
+}

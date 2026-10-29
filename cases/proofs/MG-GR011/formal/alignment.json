@@ -1,0 +1,375 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR011",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.closed_submodule_complete"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.translate"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.affineProject"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.affineProject_mem"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.affineProject_orthogonal"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.affineProject_nearest_unique"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.affineProject_linear_iff"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.zero_in_translate_iff"
+        }
+      ],
+      "assumptions": [
+        "Real Hilbert H",
+        "Closed linear subspace L and arbitrary p"
+      ],
+      "quantifiers": [
+        "Every x and every competitor z in p+L",
+        "Exact iff characterization of linearity"
+      ],
+      "domains": [
+        "Affine set represented literally as {z | z-p∈L}",
+        "Projection formula p+P_L(x-p)"
+      ],
+      "conclusions": [
+        "Actual membership, orthogonality, nearest-point existence and uniqueness",
+        "Projection linear iff p∈L iff 0∈p+L"
+      ],
+      "representation": [
+        "Closed L gives CompleteSpace L by closed_submodule_complete, and mathlib constructs its actual orthogonal projection",
+        "Theorem uses the equivalent HasOrthogonalProjection instance, never a nearest-point conclusion certificate"
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.translate_rebase"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.translate_subset_iff"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.nested_first"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.nested_second"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.nested_affine_projections"
+        }
+      ],
+      "assumptions": [
+        "Nested nonempty closed affine sets in real Hilbert space"
+      ],
+      "quantifiers": [
+        "Every input x"
+      ],
+      "domains": [
+        "Each affine set translated from its closed direction subspace",
+        "Rebase at a point of the smaller set; translate_rebase and translate_subset_iff justify the common origin"
+      ],
+      "conclusions": [
+        "Both absorption identities P1P2=P2 and P2P1=P2",
+        "Exact squared norm Pythagorean identity"
+      ],
+      "representation": [
+        "Nested_affine_projections applies to arbitrary common p and M≤L",
+        "The common-origin presentation is justified explicitly, not a claim that original origins agree"
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.finite_product_range"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.finite_product_actual_orthogonal"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.finite_subspace_product"
+        },
+        {
+          "module": "AffineProjections",
+          "name": "MathGauge.AffineProjections.two_projection_product_iff"
+        }
+      ],
+      "assumptions": [
+        "Finite family of closed linear subspaces",
+        "Pairwise commuting actual orthogonal projections"
+      ],
+      "quantifiers": [
+        "Every finite n including n=0",
+        "Every permutation of the factors",
+        "Two-factor necessity as well as sufficiency"
+      ],
+      "domains": [
+        "Continuous linear endomorphisms of H with actual adjoint",
+        "Product has range exactly infimum of supplied subspaces"
+      ],
+      "conclusions": [
+        "Finite product is the actual orthogonal projection onto the intersection",
+        "Order independent, including empty product identity",
+        "For two orthogonal projections product is orthogonal iff they commute"
+      ],
+      "representation": [
+        "finite_subspace_product specializes the proved generic star-projection algebra to actual submodule projections",
+        "finite_product_actual_orthogonal uses mathlib proved equivalence of selfadjoint idempotents and metric orthogonal projections"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.finite_project"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.finite_project_cauchy"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_nonempty"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_project"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_mem"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.finite_project_tendsto"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_energy_eq_sup"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_nonexpansive"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_unique"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.finite_empty"
+        },
+        {
+          "module": "FiniteConstraints",
+          "name": "MathGauge.FiniteConstraints.global_empty"
+        }
+      ],
+      "assumptions": [
+        "Arbitrary I",
+        "Each C_i closed convex",
+        "Uniform finite feasibility in a ball of finite radius B"
+      ],
+      "quantifiers": [
+        "All finite subsets including empty",
+        "Every x",
+        "Full directed finite-subset net, with no cofinal sequence assumption"
+      ],
+      "domains": [
+        "Actual finite intersections and their actual Hilbert projections",
+        "Global intersection and all original norm minimizers"
+      ],
+      "conclusions": [
+        "Global nonemptiness, constructed unique nearest point",
+        "Norm convergence of full finite-subset net",
+        "Global squared optimal distance is supremum of finite squared distances",
+        "Nonexpansiveness"
+      ],
+      "representation": [
+        "Both parent modules copied byte-identically",
+        "Actual Cauchy net proof and completeness; no weak compactness assumption or certificate"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.positive_ray_project"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.positive_ray_not_midpoint_affine"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.positive_ray_finitely_feasible"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.positive_ray_global"
+        }
+      ],
+      "assumptions": [
+        "All original S4 conditions are fulfilled by the one-element family [0,∞) in R, B=0"
+      ],
+      "quantifiers": [
+        "Every finite subsystem, and its global projection",
+        "Explicit midpoint test at -1 and 1"
+      ],
+      "domains": [
+        "Full real Hilbert space",
+        "Actual global_project of the singleton constraint family"
+      ],
+      "conclusions": [
+        "Finite feasibility at zero",
+        "Global projection equals max x 0",
+        "Failure of midpoint identity and hence affinity"
+      ],
+      "representation": [
+        "positive_ray_global connects max directly to the copied S4 construction, rather than an unrelated example"
+      ],
+      "dependencies": [
+        "S1",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.projection_variational_iff"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.fixed_iff_vi"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.rate_range"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.forward_step_bound"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.step_contracting"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.complete_vi_iteration"
+        },
+        {
+          "module": "VariationalIteration",
+          "name": "MathGauge.VariationalIteration.vi_iteration_converges"
+        }
+      ],
+      "assumptions": [
+        "Nonempty closed convex C, supplied by S4",
+        "A strongly monotone with m>0 and Lipschitz with L>0",
+        "0<gamma<2m/L²"
+      ],
+      "quantifiers": [
+        "Every initial point and every iteration number",
+        "Unique VI point in C",
+        "Includes the zero Hilbert space"
+      ],
+      "domains": [
+        "Actual metric projection and actual projected iteration",
+        "q=sqrt(1−2 gamma m+gamma²L²)"
+      ],
+      "conclusions": [
+        "VI iff fixed point",
+        "Construct unique VI solution using Banach contraction",
+        "0≤q<1 and norm error ≤q^n times initial error",
+        "Norm convergence"
+      ],
+      "representation": [
+        "No m≤L silently inferred: forward_step_bound uses s≤sqrt(s)^2 also when s<0",
+        "Strong monotonicity and Lipschitz assumptions explicitly appear in estimates; no fixed-point certificate input"
+      ],
+      "dependencies": [
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "source_hashes": {
+    "case.json": "e2961d95b092c25e04e43eb7c7f3ab72fa50094e4f04ecdacdb2c74ef90d1deb",
+    "task.md": "89b2584ecfb16039782392a10b8b4e2f0790338b74382282558310c9db92b0f4",
+    "reference.md": "de1f0050a7e4defbca7f2850c880db57bf112159775a8a612d037de2c956fccc",
+    "rubric.json": "71e7ec5a8ac679e7778f2aa7e73c8a49c054797dd72f47279a5b1e00f2790349",
+    "contract.json": "4dc269c70cce26bec4d4e3b70b7b1294162b72d055f9f361d2c8c2408c6cce1e"
+  },
+  "provenance": [
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R011/formal/ConvexProjection.lean",
+      "sha256": "bcf610427ac6904bb1f81d6c28e3384c934b77e46e2a1800e8354f66a35ea604",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    },
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R011/formal/FiniteConstraints.lean",
+      "sha256": "ba3e25b83364d09e500a050400fbf7b03469e2e838d576b324107f695438c95e",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    }
+  ],
+  "human_review": "pending",
+  "candidate_model_execution": "not-run"
+}

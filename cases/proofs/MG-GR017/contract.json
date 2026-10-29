@@ -1,0 +1,226 @@
+{
+  "schema": "math-gauge.group-contract/v1",
+  "id": "MG-GR017",
+  "parent_case_id": "MG-R017",
+  "version": "0.1.1",
+  "title": "连续提升的有限拼接与积",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "有限开闭分块上的提升",
+      "kind": "prove",
+      "assumptions": [
+        "profinite 范畴",
+        "有限开闭不交并",
+        "ZFC"
+      ],
+      "required_evidence": [
+        "逐点选择的连续性依据",
+        "有限不交并仍 profinite"
+      ],
+      "critical_errors": [
+        "把任意无限离散并称紧空间"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "true",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "回缩与有限因子的乘积",
+      "kind": "prove",
+      "assumptions": [
+        "P,Q profinite",
+        "实际连续回缩",
+        "有限离散 A"
+      ],
+      "required_evidence": [
+        "正确复合顺序",
+        "有限积到有限余积身份"
+      ],
+      "critical_errors": [
+        "把任意因子当有限开闭分块"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "超滤子紧化的回缩描述",
+      "kind": "construct",
+      "assumptions": [
+        "ZFC",
+        "实际 Stone 超滤子拓扑",
+        "P profinite"
+      ],
+      "required_evidence": [
+        "紧化和连续延拓适用条件",
+        "实际截面与回缩两向"
+      ],
+      "critical_errors": [
+        "将集合截面直接当连续"
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 15,
+      "expected": "construction",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "采用 ZFC。这里的 profinite 空间指紧、Hausdorff、全不连通拓扑空间，映射均为连续映射。\n\n给定两个 profinite 空间 $P_1,P_2$。对 $i=1,2$，假设它具有以下性质：对任意 profinite 空间 $Y,Z$、连续满射 $q:Y\\to Z$ 及连续映射 $f:P_i\\to Z$，均存在连续映射 $g:P_i\\to Y$ 满足 $qg=f$。\n\n以通常的积拓扑赋予 $P_1\\times P_2$。"
+      ],
+      "required_evidence": [
+        "Give a complete proof of the universal lifting target or a counterexample satisfying all stated hypotheses.",
+        "For a counterexample, verify that both factors satisfy the complete stated lifting property and that the product fails it. This may be done by an explicit continuous surjection q, continuous f and a proof of no continuous lift, or by a correctly applied exact characterization equivalent to the stated lifting property, with every factor and product hypothesis verified."
+      ],
+      "critical_errors": [
+        "Assume projectivity is preserved by products without proving the joint continuity of a lift.",
+        "Use a factor that lacks compactness, Hausdorffness, total disconnectedness or the full lifting property.",
+        "Choose a set-theoretic section and silently call it continuous.",
+        "Show only that a product is not extremally disconnected without connecting this to the exact lifting target.",
+        "Claim failure of lifting without either validating an explicit obstruction or correctly applying an exact equivalent characterization with all hypotheses checked."
+      ],
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "points": 25,
+      "expected": "false",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "有限像的参数映射",
+      "kind": "decide",
+      "assumptions": [
+        "任意 profinite P",
+        "f 连续且有限像",
+        "q 连续满射"
+      ],
+      "required_evidence": [
+        "有限像的离散性",
+        "开闭分块上的连续提升"
+      ],
+      "critical_errors": [
+        "由全部有限像可提升推出全部映射可提升"
+      ],
+      "depends_on": [
+        "S1",
+        "S4"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "这些提升的全部自由度",
+      "kind": "synthesize",
+      "assumptions": [
+        "S5 的有限像",
+        "后半有限纤维"
+      ],
+      "required_evidence": [
+        "双向限制/拼接",
+        "完整开闭划分分类"
+      ],
+      "critical_errors": [
+        "误称所有提升都必须在 P_z 上常值"
+      ],
+      "depends_on": [
+        "S1",
+        "S5"
+      ],
+      "points": 15,
+      "expected": "classification",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "有限离散因子改为两个任意有提升性质的 profinite 因子",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把有限开闭拼接推广为无限参数下联合连续选择",
+      "correct_boundary": "因子上的单独提升不保证乘积提升",
+      "mechanism": "finite_to_infinite_and_joint_continuity",
+      "scope": "stage",
+      "target_claim": "两个任意具有题定提升性质的 profinite 空间之乘积仍具有该提升性质。"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S4"
+      ],
+      "changed_assumptions": "源不再要求有提升性质，但 f 的像要求有限",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "因乘积反例而否定所有有限观测的提升",
+      "correct_boundary": "有限像给真正有限开闭分块",
+      "mechanism": "finite_observation_vs_full_property",
+      "scope": "stage",
+      "target_claim": "任意 profinite 源到题定 Hausdorff 目标的有限像连续映射均能沿给定连续满射提升。"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R017/task.md",
+    "cases/public/MG-R017/reference.md",
+    "cases/public/MG-R017/rubric.json",
+    "cases/public/MG-R017/case.json",
+    "cases/public/MG-R017/sources.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.4.0",
+    "parent_source_ids": [
+      "gleason-projective1958",
+      "mathlib-ultrafilter-pinned"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  },
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "cases/public",
+    "case_id": "MG-R017",
+    "version": "0.4.0",
+    "suite_sha256": "6ad8a8a7c80a7ba769b0677ef250bf9998d9601d190f271ce6b357fa91f5308d",
+    "case_manifest_sha256": "877e90f6f45516da703415efdefe03e0660960c26e852f8ed3e4d8bdbef6fae4"
+  }
+}

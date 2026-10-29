@@ -1,0 +1,256 @@
+{
+  "id": "MG-GR103",
+  "parent_case_id": "MG-R103",
+  "version": "0.1.0",
+  "title": "参数最小不动点、消元与近似传递",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "参数与消元",
+      "kind": "construct",
+      "assumptions": [
+        "P仅偏序，不要求完备",
+        "A,B,C完备格",
+        "F,G,H对所有变量联合单调"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "最小前不动点构造",
+        "中间约化函数单调",
+        "每种分块结果的最小性"
+      ],
+      "critical_errors": [
+        "只验证不动性",
+        "把其他变量永久冻结底元"
+      ],
+      "id": "S1",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "伴随结构的精确传递",
+      "kind": "prove",
+      "assumptions": [
+        "S1全部条件",
+        "α左伴随γ",
+        "M完备格、Ψ联合单调",
+        "精确一步交织αΦ_p=Ψ_pα"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "两个方向不等式",
+        "伴随在逆方向的实际用途",
+        "与分块及参数相容"
+      ],
+      "critical_errors": [
+        "任意单调半共轭都保存最小点",
+        "默认α可逆或为嵌入"
+      ],
+      "id": "S2",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "单边更新关系",
+      "kind": "synthesize",
+      "assumptions": [
+        "L,M完备格",
+        "T,U单调",
+        "α⊣γ",
+        "分别只给所列一个点态序不等式"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "不等式方向分别证明",
+        "两个严格有限例"
+      ],
+      "critical_errors": [
+        "将lax交织方向倒置",
+        "单边关系直接推出等式"
+      ],
+      "id": "S3",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "单调半共轭",
+      "kind": "decide",
+      "assumptions": [
+        "L,M完备格",
+        "T,U和α单调",
+        "精确交织",
+        "不假设α有右伴随"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "required_evidence": [
+        "合法最小有限格反例",
+        "指出总成立的一侧比较"
+      ],
+      "critical_errors": [
+        "不动点像即最小不动点"
+      ],
+      "id": "S4",
+      "points": 10,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "连续递推的传递",
+      "kind": "decide",
+      "assumptions": [
+        "L,M完备格",
+        "T,U保持递增ω上确界且单调",
+        "α单调并保持底元和递增ω上确界",
+        "精确交织"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1",
+        "S4"
+      ],
+      "required_evidence": [
+        "Kleene序列确实固定且最小",
+        "α与极限实际交换"
+      ],
+      "critical_errors": [
+        "单调自动ω连续",
+        "不保持底元也搬同一归纳"
+      ],
+      "id": "S5",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "可数阶段与边界",
+      "kind": "synthesize",
+      "assumptions": [
+        "L完备格",
+        "T单调",
+        "x_ω按可数迭代上确界定义"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "x_ω固定的充要条件",
+        "单调非ω连续完整例",
+        "两种充分机制范围"
+      ],
+      "critical_errors": [
+        "使用未给连续性",
+        "把充分条件反称必要"
+      ],
+      "id": "S6",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "一步交织等式换成一侧序不等式",
+      "expected_truth": "true",
+      "mechanism": "不等式方向和结论强度",
+      "tempting_invalid_transfer": "单边lax关系仍给相等",
+      "correct_boundary": "分别给αμT≤μU或μU≤αμT",
+      "target_claim": "所给单边交织分别推出αμT≤μU或μU≤αμT的对应有向比较。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "只给单调精确交织，无伴随",
+      "expected_truth": "false",
+      "mechanism": "结构条件丢失",
+      "tempting_invalid_transfer": "像是不动点便是最小点",
+      "correct_boundary": "只能普遍得到μU≤αμT",
+      "target_claim": "任意单调精确半共轭都满足αμT=μU。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S4"
+      ],
+      "changed_assumptions": "加入底元和ω链连续性但仍无伴随",
+      "expected_truth": "true",
+      "mechanism": "另一充分机制",
+      "tempting_invalid_transfer": "没有伴随就判传递不可能",
+      "correct_boundary": "可数迭代及α连续给精确传递",
+      "target_claim": "保持底元及递增ω上确界的精确交织在所给ω连续系统中保存最小不动点。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S5"
+      ],
+      "changed_assumptions": "T仅单调而不要求ω链连续",
+      "expected_truth": "false",
+      "mechanism": "可数到一般极限",
+      "tempting_invalid_transfer": "把ω阶段上确界当不动点",
+      "correct_boundary": "需实际证明Tx_ω≤x_ω",
+      "target_claim": "仅单调时，从底元可数次迭代的上确界必为最小不动点。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "drafts/true-goal-six-20261029/MG-R103/task.md",
+    "drafts/true-goal-six-20261029/MG-R103/reference.md",
+    "drafts/true-goal-six-20261029/MG-R103/rubric.json"
+  ],
+  "source_sha256": {
+    "drafts/true-goal-six-20261029/MG-R103/task.md": "11a608e8da8fe5468eeda13cac5027447ccc1114cde1099a51fff6b1c16d0648",
+    "drafts/true-goal-six-20261029/MG-R103/reference.md": "d6f9f7768adfa09cf98c60b1f74bdca28044e0a196f9744986461e52ae947f69",
+    "drafts/true-goal-six-20261029/MG-R103/rubric.json": "f32b1aa6097b5cf8c8a4ba4c85b222b3e8ae4fd9b0c4073aee895bb877e5663e"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。"
+}

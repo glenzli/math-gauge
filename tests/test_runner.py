@@ -23,10 +23,10 @@ class RunnerContractTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        self.suite = Suite.load(ROOT / "archive/legacy-v0/public")
+        self.suite = Suite.load(ROOT / "tests/fixtures/runner-suite")
 
     def replay(self, ids=None):
-        ids = ids or ["MG-D001", "MG-F004", "MG-E003"]
+        ids = ids or ["TEST-D001", "TEST-F004", "TEST-E003"]
         path = self.root / "responses.json"
         write_json(
             path, {cid: "测试响应：此内容仅检查传输，不是数学成绩。" for cid in ids}
@@ -53,14 +53,14 @@ class RunnerContractTests(unittest.TestCase):
         shutil.copytree(self.suite.root, target)
         return target
 
-    def test_legacy_catalog_is_balanced_and_unapproved(self):
-        self.assertEqual(len(self.suite.cases), 15)
+    def test_synthetic_catalog_covers_tracks_without_human_approval(self):
+        self.assertEqual(len(self.suite.cases), 5)
         self.assertEqual(
             [
                 sum(c["track"] == t for c in self.suite.cases.values())
                 for t in ("determinate", "alignment", "exploration")
             ],
-            [6, 6, 3],
+            [2, 2, 1],
         )
         self.assertTrue(
             all(c["review"]["human"] == "pending" for c in self.suite.cases.values())
@@ -70,11 +70,11 @@ class RunnerContractTests(unittest.TestCase):
             for c in self.suite.cases.values()
             if c["track"] == "alignment"
         ]
-        self.assertEqual(labels.count("aligned"), 3)
-        self.assertEqual(labels.count("misaligned"), 3)
+        self.assertEqual(labels.count("aligned"), 1)
+        self.assertEqual(labels.count("misaligned"), 1)
 
     def test_solver_projection_omits_all_evaluator_fields(self):
-        case = self.suite.cases["MG-F004"]
+        case = self.suite.cases["TEST-F004"]
         req = self.suite.prepare(case, self.root / "solver")
         self.assertEqual(
             {x.name for x in (self.root / "solver").iterdir()},
@@ -97,7 +97,7 @@ class RunnerContractTests(unittest.TestCase):
         self.assertNotIn("misaligned", json.dumps(req))
 
     def test_absent_candidate_instruction_preserves_legacy_prompt(self):
-        case = self.suite.cases["MG-D001"]
+        case = self.suite.cases["TEST-D001"]
         self.assertNotIn("candidate_instruction", case)
         request = self.suite.prepare(case, self.root / "legacy-prompt")
         self.assertEqual(request["instruction"], LEGACY_CANDIDATE_INSTRUCTION)
@@ -108,12 +108,12 @@ class RunnerContractTests(unittest.TestCase):
 
     def test_custom_candidate_instruction_is_used_exactly(self):
         target = self.copy_suite()
-        p = target / "MG-D001/case.json"
+        p = target / "TEST-D001/case.json"
         case = read_json(p)
         case["candidate_instruction"] = "单独的任务说明。\n保留此换行。"
         write_json(p, case)
         suite = Suite.load(target)
-        request = suite.prepare(suite.cases["MG-D001"], self.root / "custom")
+        request = suite.prepare(suite.cases["TEST-D001"], self.root / "custom")
         self.assertEqual(request["instruction"], case["candidate_instruction"])
         self.assertEqual(
             (self.root / "custom/prompt.md").read_bytes(),
@@ -122,21 +122,21 @@ class RunnerContractTests(unittest.TestCase):
 
     def test_empty_candidate_instruction_preserves_task_bytes(self):
         target = self.copy_suite()
-        p = target / "MG-D001/case.json"
+        p = target / "TEST-D001/case.json"
         case = read_json(p)
         case["candidate_instruction"] = ""
         write_json(p, case)
         task = "题面第一行。\r\n第二行。\r\n".encode()
         (target / case["task"]).write_bytes(task)
         suite = Suite.load(target)
-        request = suite.prepare(suite.cases["MG-D001"], self.root / "task-only")
+        request = suite.prepare(suite.cases["TEST-D001"], self.root / "task-only")
         self.assertEqual(request["instruction"], "")
         self.assertEqual(request["task"].encode(), task)
         self.assertEqual((self.root / "task-only/prompt.md").read_bytes(), task)
 
     def test_candidate_instruction_rejects_non_string_values(self):
         target = self.copy_suite()
-        p = target / "MG-D001/case.json"
+        p = target / "TEST-D001/case.json"
         case = read_json(p)
         for invalid in (None, False, 0, [], {}):
             with self.subTest(value=invalid):
@@ -158,7 +158,7 @@ class RunnerContractTests(unittest.TestCase):
 
     def test_path_traversal_is_rejected(self):
         target = self.copy_suite()
-        p = target / "MG-D001/case.json"
+        p = target / "TEST-D001/case.json"
         case = read_json(p)
         case["task"] = "../outside.md"
         (target.parent / "outside.md").write_text("not a question")
@@ -168,7 +168,7 @@ class RunnerContractTests(unittest.TestCase):
 
     def test_symlink_outside_suite_is_rejected(self):
         target = self.copy_suite()
-        p = target / "MG-D001/task.md"
+        p = target / "TEST-D001/task.md"
         p.unlink()
         outside = self.root / "outside.md"
         outside.write_text("outside")
@@ -178,10 +178,10 @@ class RunnerContractTests(unittest.TestCase):
 
     def test_cross_case_reference_cannot_be_solver_input(self):
         target = self.copy_suite()
-        p = target / "MG-D001/case.json"
+        p = target / "TEST-D001/case.json"
         case = read_json(p)
         case["solver_files"].append(
-            {"source": "MG-D002/reference.md", "target": "extra.md"}
+            {"source": "TEST-D002/reference.md", "target": "extra.md"}
         )
         write_json(p, case)
         with self.assertRaises(ValueError):
@@ -189,10 +189,10 @@ class RunnerContractTests(unittest.TestCase):
 
     def test_reviewer_only_lean_repair_cannot_be_solver_input(self):
         target = self.copy_suite()
-        p = target / "MG-F004/case.json"
+        p = target / "TEST-F004/case.json"
         case = read_json(p)
         case["solver_files"].append(
-            {"source": "MG-F004/reviewer/repair.lean", "target": "hint.lean"}
+            {"source": "TEST-F004/reviewer/repair.lean", "target": "hint.lean"}
         )
         write_json(p, case)
         with self.assertRaises(ValueError):
@@ -204,24 +204,24 @@ class RunnerContractTests(unittest.TestCase):
             run(
                 self.suite,
                 path,
-                ["MG-D001"],
+                ["TEST-D001"],
                 command="not-an-argv-array",
                 model="fixture",
             )
         self.assertFalse(path.exists())
 
     def test_tampering_with_response_invalidates_reviews(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         apply_reviews(path, self.reviewed(path))
-        (path / "MG-D001/response.md").write_text("changed")
+        (path / "TEST-D001/response.md").write_text("changed")
         with self.assertRaises(ValueError):
             report(path)
 
     def test_changed_request_invalidates_inspection_review_and_report(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         entries = self.reviewed(path)
         apply_reviews(path, entries)
-        request_path = path / "MG-D001/solver/request.json"
+        request_path = path / "TEST-D001/solver/request.json"
         request = read_json(request_path)
         request["task"] += "\nChanged after execution."
         write_json(request_path, request)
@@ -231,9 +231,9 @@ class RunnerContractTests(unittest.TestCase):
                 operation()
 
     def test_request_identity_is_checked_even_with_a_matching_record_hash(self):
-        path = self.replay(["MG-D001"])
-        request_path = path / "MG-D001/solver/request.json"
-        record_path = path / "MG-D001/record.json"
+        path = self.replay(["TEST-D001"])
+        request_path = path / "TEST-D001/solver/request.json"
+        record_path = path / "TEST-D001/record.json"
         original_request = read_json(request_path)
         record = read_json(record_path)
         for key, value in (("case_id", "another-case"), ("case_version", "another-version"),
@@ -248,8 +248,8 @@ class RunnerContractTests(unittest.TestCase):
                     inspect_run(path)
 
     def test_stored_candidate_message_hash_is_checked_in_run_and_record(self):
-        path = self.replay(["MG-D001"])
-        for target, nested in ((path / "run.json", True), (path / "MG-D001/record.json", False)):
+        path = self.replay(["TEST-D001"])
+        for target, nested in ((path / "run.json", True), (path / "TEST-D001/record.json", False)):
             data = read_json(target)
             descriptor = data["cases"][0] if nested else data
             original = descriptor["candidate_message_sha256"]
@@ -262,8 +262,8 @@ class RunnerContractTests(unittest.TestCase):
         inspect_run(path)
 
     def test_legacy_non_group_run_without_message_hashes_remains_reviewable(self):
-        path = self.replay(["MG-D001"])
-        for target, nested in ((path / "run.json", True), (path / "MG-D001/record.json", False)):
+        path = self.replay(["TEST-D001"])
+        for target, nested in ((path / "run.json", True), (path / "TEST-D001/record.json", False)):
             data = read_json(target)
             descriptor = data["cases"][0] if nested else data
             descriptor.pop("candidate_message_sha256")
@@ -274,7 +274,7 @@ class RunnerContractTests(unittest.TestCase):
         self.assertEqual(result["tracks"]["determinate"]["eligible_for_model_comparison"], 0)
 
     def test_old_import_without_archived_input_is_readable_but_unverified(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         apply_reviews(path, self.reviewed(path))
         meta_path = path / "run.json"
         meta = read_json(meta_path)
@@ -283,55 +283,55 @@ class RunnerContractTests(unittest.TestCase):
         meta["cases"][0].pop("candidate_message_sha256")
         meta["cases"][0]["case_approved"] = True
         write_json(meta_path, meta)
-        record_path = path / "MG-D001/record.json"
+        record_path = path / "TEST-D001/record.json"
         record = read_json(record_path)
         record.pop("candidate_message_sha256")
         write_json(record_path, record)
-        (path / "MG-D001/solver/request.json").unlink()
+        (path / "TEST-D001/solver/request.json").unlink()
         reviews = read_json(path / "reviews.json")
-        reviews["MG-D001"]["reviewer_kind"] = "human"
+        reviews["TEST-D001"]["reviewer_kind"] = "human"
         write_json(path / "reviews.json", reviews)
         _, records = inspect_run(path)
-        self.assertFalse(records["MG-D001"]["input_identity"]["verified"])
+        self.assertFalse(records["TEST-D001"]["input_identity"]["verified"])
         result, markdown = report(path)
-        self.assertEqual(result["input_identity"]["MG-D001"]["status"], "historical/unverifiable")
+        self.assertEqual(result["input_identity"]["TEST-D001"]["status"], "historical/unverifiable")
         self.assertIn("historical/unverifiable", markdown)
         self.assertEqual(result["tracks"]["determinate"]["eligible_for_model_comparison"], 0)
         self.assertEqual(result["tracks"]["determinate"]["strict_passes"], 0)
 
     def test_old_raw_task_import_is_not_promoted_to_verified_request(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         meta_path = path / "run.json"
         meta = read_json(meta_path)
         meta.pop("run_id")
         meta["origin"] = "isolated-cli-evidence-import"
         meta["cases"][0].pop("candidate_message_sha256")
         write_json(meta_path, meta)
-        record_path = path / "MG-D001/record.json"
+        record_path = path / "TEST-D001/record.json"
         record = read_json(record_path)
         record.pop("candidate_message_sha256")
-        request = read_json(path / "MG-D001/solver/request.json")
+        request = read_json(path / "TEST-D001/solver/request.json")
         record.update(request_format="raw-task-utf8", request_sha256=digest_bytes(request["task"].encode()))
         write_json(record_path, record)
         _, records = inspect_run(path)
-        self.assertFalse(records["MG-D001"]["input_identity"]["verified"])
-        self.assertEqual(records["MG-D001"]["input_identity"]["recorded_request_format"], "raw-task-utf8")
-        self.assertTrue(records["MG-D001"]["input_identity"]["raw_task_hash_matches"])
+        self.assertFalse(records["TEST-D001"]["input_identity"]["verified"])
+        self.assertEqual(records["TEST-D001"]["input_identity"]["recorded_request_format"], "raw-task-utf8")
+        self.assertTrue(records["TEST-D001"]["input_identity"]["raw_task_hash_matches"])
         with self.assertRaisesRegex(ValueError, "unverified"):
             apply_reviews(path, self.reviewed(path))
 
     def test_current_run_cannot_use_a_generic_legacy_marker_to_hide_missing_input(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         meta_path = path / "run.json"
         meta = read_json(meta_path)
         meta.update(origin="external-agent", legacy=True)
         meta["cases"][0].pop("candidate_message_sha256")
         write_json(meta_path, meta)
-        record_path = path / "MG-D001/record.json"
+        record_path = path / "TEST-D001/record.json"
         record = read_json(record_path)
         record.pop("candidate_message_sha256")
         write_json(record_path, record)
-        (path / "MG-D001/solver/request.json").unlink()
+        (path / "TEST-D001/solver/request.json").unlink()
         with self.assertRaisesRegex(ValueError, "input verification failed"):
             inspect_run(path)
 
@@ -344,23 +344,23 @@ class RunnerContractTests(unittest.TestCase):
         self.assertFalse((path / "reviews.json").exists())
 
     def test_pass_with_hidden_assumption_drift_is_rejected(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         entries = self.reviewed(path)
         entries[0]["assumption_fidelity"] = "drift"
         with self.assertRaises(ValueError):
             apply_reviews(path, entries)
 
     def test_duplicate_review_is_not_silently_overwritten(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         entries = self.reviewed(path)
         apply_reviews(path, entries)
         with self.assertRaises(ValueError):
             apply_reviews(path, entries)
 
     def test_run_directory_is_not_overwritten(self):
-        path = self.replay(["MG-D001"])
+        path = self.replay(["TEST-D001"])
         with self.assertRaises(FileExistsError):
-            run(self.suite, path, ["MG-D001"], replay=self.root / "responses.json")
+            run(self.suite, path, ["TEST-D001"], replay=self.root / "responses.json")
 
     def test_command_receives_only_request_and_preserves_unicode(self):
         cmd = [
@@ -369,12 +369,12 @@ class RunnerContractTests(unittest.TestCase):
             "import json,sys,os; r=json.load(sys.stdin); assert set(os.listdir('.'))=={'prompt.md','request.json','context.md'}; print(r['case_id']+'：已收到')",
         ]
         path = self.root / "command"
-        run(self.suite, path, ["MG-D001"], command=cmd, model="synthetic adapter")
+        run(self.suite, path, ["TEST-D001"], command=cmd, model="synthetic adapter")
         meta, records = inspect_run(path)
         self.assertEqual(meta["origin"], "command")
-        self.assertEqual(records["MG-D001"]["status"], "ok")
+        self.assertEqual(records["TEST-D001"]["status"], "ok")
         self.assertEqual(
-            (path / "MG-D001/response.md").read_text().strip(), "MG-D001：已收到"
+            (path / "TEST-D001/response.md").read_text().strip(), "TEST-D001：已收到"
         )
 
     def test_timeout_is_preserved_as_execution_failure(self):
@@ -382,13 +382,13 @@ class RunnerContractTests(unittest.TestCase):
         run(
             self.suite,
             path,
-            ["MG-D001"],
+            ["TEST-D001"],
             command=[sys.executable, "-c", "import time; time.sleep(5)"],
             model="synthetic adapter",
             timeout=0.05,
         )
         _, records = inspect_run(path)
-        self.assertEqual(records["MG-D001"]["status"], "timeout")
+        self.assertEqual(records["TEST-D001"]["status"], "timeout")
         entries = self.reviewed(path)
         with self.assertRaises(ValueError):
             apply_reviews(path, entries)
@@ -398,20 +398,85 @@ class RunnerContractTests(unittest.TestCase):
         run(
             self.suite,
             path,
-            ["MG-D001"],
+            ["TEST-D001"],
             command=["/nonexistent/math-gauge-test-adapter"],
             model="synthetic adapter",
         )
         _, records = inspect_run(path)
-        self.assertEqual(records["MG-D001"]["status"], "error")
+        self.assertEqual(records["TEST-D001"]["status"], "error")
         self.assertEqual(read_json(path / "run.json")["execution_failures"], 1)
 
     def test_catalog_fingerprint_changes_with_reference(self):
         target = self.copy_suite()
         before = Suite.load(target).sha256
-        with (target / "MG-D001/reference.md").open("a") as f:
+        with (target / "TEST-D001/reference.md").open("a") as f:
             f.write("\nreview amendment\n")
         self.assertNotEqual(before, Suite.load(target).sha256)
+
+    def case_local_suite(self):
+        target = self.copy_suite()
+        cid = "TEST-F004"
+        manifest = target / cid / "case.json"
+        case = read_json(manifest)
+        for key in ("task", "reference", "rubric"):
+            case[key] = Path(case[key]).relative_to(cid).as_posix()
+        for item in case["solver_files"]:
+            item["source"] = Path(item["source"]).relative_to(cid).as_posix()
+        for key in ("evaluator_files", "lean_checks"):
+            case[key] = [Path(name).relative_to(cid).as_posix() for name in case[key]]
+        case["path_base"] = "case"
+        write_json(manifest, case)
+        return target, manifest, case
+
+    def test_case_local_paths_normalize_without_changing_candidate_projection(self):
+        target, _, case = self.case_local_suite()
+        suite = Suite.load(target)
+        normalized = suite.cases[case["id"]]
+        original = self.suite.cases[case["id"]]
+        for key in ("task", "reference", "rubric", "solver_files", "evaluator_files", "lean_checks"):
+            self.assertEqual(normalized[key], original[key])
+        self.assertEqual(suite.request(normalized), self.suite.request(original))
+        self.assertNotEqual(suite.sha256, self.suite.sha256)
+
+    def test_case_local_paths_cannot_escape_to_neighbouring_case(self):
+        target, manifest, case = self.case_local_suite()
+        for key in ("task", "reference", "rubric", "group_contract"):
+            with self.subTest(field=key):
+                write_json(manifest, dict(case, **{key: "../TEST-D002/reference.md"}))
+                with self.assertRaises(ValueError):
+                    Suite.load(target)
+        for key in ("lean_checks", "evaluator_files"):
+            with self.subTest(field=key):
+                write_json(manifest, dict(case, **{key: ["../TEST-D002/reference.md"]}))
+                with self.assertRaises(ValueError):
+                    Suite.load(target)
+        write_json(manifest, dict(case, solver_files=[{
+            "source": "../TEST-D002/reference.md", "target": "visible.md"}]))
+        with self.assertRaises(ValueError):
+            Suite.load(target)
+
+    def test_case_local_symlink_cannot_reach_neighbouring_case(self):
+        target, _, case = self.case_local_suite()
+        path = target / case["id"] / case["task"]
+        path.unlink()
+        path.symlink_to(target / "TEST-D002/task.md")
+        with self.assertRaises(ValueError):
+            Suite.load(target)
+
+    def test_case_local_evaluator_file_cannot_become_a_visible_attachment(self):
+        target, manifest, case = self.case_local_suite()
+        case["solver_files"] = [{"source": "reviewer/repair.lean", "target": "hint.lean"}]
+        write_json(manifest, case)
+        with self.assertRaisesRegex(ValueError, "answer/rubric"):
+            Suite.load(target)
+
+    def test_unknown_path_base_is_rejected(self):
+        target, manifest, case = self.case_local_suite()
+        for value in ("repository", "", None, False, [], {}):
+            with self.subTest(path_base=value):
+                write_json(manifest, dict(case, path_base=value))
+                with self.assertRaisesRegex(ValueError, "path_base"):
+                    Suite.load(target)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,73 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF106",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "9a0dd9e024d5a64349ff5369ae53a6a90811706a6de3e7fc1cb4f6893144d0e1",
+    "contract.json": "d4bb29983b2e2a4bd1d37ec091c70cc3f9f2fbfd1341bdaccb0ea3844203e42e",
+    "input/Core.lean": "db71cf6eeafd33d715d74f43417f5c702a988f569cd220d7db4ec7d7b80667de",
+    "reference.md": "7fe203bb6fb4a969f7cd799b48338b23f7b299adbd94dd9e4be827109aeff5ff",
+    "rubric.json": "29747e192c67b5ed4ef7fe2a490853e8635d41c39785d76d620d1096ebea4d15",
+    "task.md": "5cc87a9906bf9b24af3a996efe21a682599f12fb7b1b47c522ee8caa40f29a68"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "0b2576d38d6b4c48a337364bcbc9339f42c59d0c165de2c210ad0ca8e16a1e86"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "ea104342fb1e080d9198f342ceb4ebd36dd4f8fa2a921783a9f69751ec013c5a"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "db71cf6eeafd33d715d74f43417f5c702a988f569cd220d7db4ec7d7b80667de",
+      "imports": [
+        "Mathlib.Algebra.Group.Pointwise.Finset.Basic",
+        "Mathlib.Algebra.Group.Subgroup.Basic",
+        "Mathlib.Data.Real.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "Bridge",
+      "source": "Bridge.lean",
+      "sha256": "8a65d2e15884b0ebc6ea364bdfc2c67d9a60707d58ee926b1e96453eec1738d1",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "639617e492a91f392d018e909bdde16d53caf863f92ea0d2ab81d395e1aa1525",
+      "imports": [
+        "Bridge",
+        "Mathlib.Combinatorics.Additive.RuzsaCovering"
+      ]
+    },
+    {
+      "module": "Answer",
+      "source": "Answer.lean",
+      "sha256": "e8e5596de4c26dba0551a19f51e806390211c750d530696cac8e45870c6d54b9",
+      "imports": [
+        "Reference",
+        "Mathlib.GroupTheory.QuotientGroup.Basic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "14b9c651d28a4b132bdf814f2798d7d191a2a7dc6c7ee32617df94e402dd4a88",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

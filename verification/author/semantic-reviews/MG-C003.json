@@ -1,0 +1,1841 @@
+{
+  "schema": "math-gauge.independent-semantic-review/v1",
+  "case_id": "MG-C003",
+  "reviewer": "author-lean-r11-r20",
+  "status": "pass",
+  "scope": "Independent read-only mathematical and semantic audit of all 92 frozen obligations, the complete Chapter 3 text and exercise reference, candidate task and permitted background, case/rubric/contract, every target mathematical source module and all added representation/construction bridges. The 370 SourceBridge entries were checked to be direct aliases only; their underlying mathematical declarations were read. The six background Lean files match candidate bytes, and unchanged Chapter 1/2 prose and relevant foundation declarations were also reviewed in C002. Compilation is separately hash-bound evidence, not the basis for semantic pass.",
+  "source_hashes": {
+    "candidate/ATTRIBUTION.md": "4f84e89f43df6c3f3c346efcbc39202f277772762ce638c7b342817ec9d145c7",
+    "candidate/LICENSE": "4d2ea5dcaf833d41947541479bda77bd84f918f351af7ea7fbe404d56296f0cf",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/gauge_space.lean": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284",
+    "candidate/background/formal_oet/vol_01/ch_01_foundations/operator_space.lean": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060",
+    "candidate/background/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa",
+    "candidate/background/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d",
+    "candidate/background/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465",
+    "candidate/dependencies.md": "3c447a70dcad863e1b9ad98e1c6f78f99f18ef12e70d3ebfcad725496c21d588",
+    "candidate/obligations.json": "3549d7c2b56d9f5bc9a1314033cb7b9acd6d7a2a1ff88d9091a0f5b5e97bd625",
+    "candidate/source/01-foundations.md": "e6c5fc230ffa4099166bb789f90264ac8bbc5e6e78467c7aec3ac072dbef1526",
+    "candidate/source/02-operator-bounds.md": "481e3e6ac6d021e7c56c6453831bf2e6e0b795b2e7e93dece4e61ef0488c86c3",
+    "candidate/source/03-operator-local-degeneracy.md": "bc455c908c80eceaf47f3d41aeebb9a54246b5cfd3d1e58e27d572f904d0fdda",
+    "candidate/task.md": "20c00cd6388ba9577efe1653f3bb5ae98708b322665a809d005b7d4f6c2a7741",
+    "case.json": "10c840e9c2bd638119350f3505bc07e66658e798e474e40784197b0cf854bc62",
+    "contract.json": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527",
+    "formal/COVERAGE.md": "9e5073e3346372d5a95a412757093d6dc9a3ecbe51b9146f4c66e33f2abb6415",
+    "formal/Main.lean": "99ff79a175ddd60ec3ea0d387c5abbe91424f959f3b4a5bff4f36d0c5cb1f9a7",
+    "formal/MathGauge/C003/Completeness.lean": "d9dccbb0db8bfde9c1538d18dce9ad661b6fb33d89fa5fab8fd493f3a5cacfbb",
+    "formal/MathGauge/C003/CoveringConstructions.lean": "88bddce52970343b1840fca6b0e1c5706e81847421062e2c6f89f16e4a6bd453",
+    "formal/MathGauge/C003/ExampleLegality.lean": "404004db7cdd65e3b6f7cd98c21b2d3b77970f8a24b41d1e3af028f59ddda879",
+    "formal/MathGauge/C003/SourceBridge.lean": "b7362e1d2094ebc75d8d3a76d9cdd22d659ad476dc3bf0321f5c4702cdace30a",
+    "formal/SOURCE-CLOSURE.json": "82709ee28b69e644cdc62ed7bb8ff6455324526546efbf60932650ea9dacd4fc",
+    "formal/alignment.json": "8ddf9f011a53e3f3c314c636713e8c99ca4c9077cc42382018f08b399628f653",
+    "formal/declarations.json": "b5e19ccc4c1018d7308fbf763049437da59a117e9aa0ec64a993df5b43b76781",
+    "formal/formal_oet/vol_01/ch_01_foundations/gauge_space.lean": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+    "formal/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284",
+    "formal/formal_oet/vol_01/ch_01_foundations/operator_space.lean": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060",
+    "formal/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa",
+    "formal/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d",
+    "formal/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/annihilation_matrix.lean": "163f38c0a9af7b7c61577f3d34f37f5bf059f8a1506b496f9f9cc8a01d42ae97",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/component_partition.lean": "a2fe5ed39fddb73786d877f0c8c073708de3e4e8045fdd95c1c2c9f7aa3dd983",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/component_transfer.lean": "9f5d8c71f0442eb3c628d8c3b2ce928d3dbffbc9e43f3f3848f73c63dfb82687",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/computational_fiber.lean": "1e348219a6574256c7c4a2daea6763fbc4f0c269ba3976b16698ba37f23ad9db",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/finite_counterexamples.lean": "a8c3e10fd73522a8e86fc6cda34a7a584e66017a4a708519bfbea92820e28547",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/image_factorization.lean": "5ad9a5e17820f709d42ec0647d4e37fe82da2c058320cc1400657ae797be3f84",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/mapping_entropy.lean": "d5c25649b8cdfb7355fafe3fb710967f0b148bb18ffd28dadd7bbc61d3f5a51e",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/pointwise_uniform_radius_example.lean": "3b38aef0115497a917d3d856d74f61a2f651cf832e79ae7e90e04cd63dd54512",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/pseudometric_composition.lean": "76b795d7fa5e7ab50f8e85c3a5066a74f086503b86fed06822d4ebdb01f9f4e6",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/threshold_classification.lean": "ca05a6092c761705df0970a93c9d9a35bb3a59f430bfb225ad47e2571b9a41da",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/threshold_examples.lean": "1a44d14d9aa210696159ce4d9dec49d23fd54388a51d7b3856ce73099f33d05c",
+    "formal/formal_oet/vol_01/ch_03_operator_local_degeneracy/zeroing_composition.lean": "8803ee1885a748dead57bc723087c69d5e833755fdab961c4e7928cf0a67bf04",
+    "formal/formal_oet/vol_01/exercise_solutions/distance_gap.lean": "2eedc2e2e6dfd18f57c9fd215bf06cb235c2829a613cee101037551c8dc15b39",
+    "formal/formal_oet/vol_01/exercise_solutions/foundation_examples.lean": "f960638207b280c1504332e52452465e83a37a94a662af3214a973857ab491e0",
+    "formal/formal_oet/vol_01/exercise_solutions/four_point_covering.lean": "785255be710032e79f546b05fe834d0e56df966261850798a880ca84c36a39c2",
+    "formal/formal_oet/vol_01/exercise_solutions/translation_entropy.lean": "23f60d5bd0ea94a05789f48fbc3bc23e66a76e0ffcb5c24e998999891eaca7a0",
+    "formal/manifest.json": "7acd4ffc0f46304e231d72ee0cce57b7452b9517ae1046fad43747187841a679",
+    "formal/verification-report.json": "11684f243a91653c52a2b644d11315283e7f2d7d4b69ac46974e406671e80e53",
+    "provenance.json": "cf8ba239241aa8b5f10752aa79dac394d6b1f2b80d1bd6885d1c16521856fa82",
+    "reference.md": "68f022dfc25dced3ac92053626485143eeaf7512432b8b0fd48a89cdee6e90c9",
+    "review.json": "7fa12b8dbd90c49bb7e10428e1e69ba70a7e501a982b7dbe4acff9f2f5175a72",
+    "rubric.json": "f4f34b7f622ee103a6ab882eb63b050cf031c27d1750404f72da9819e039ea73"
+  },
+  "items": [
+    {
+      "id": "CH03-D01",
+      "status": "pass",
+      "analysis": "The three predicates implement the stated priority, with Const quantified over all pairs in U, Id excluding Const, and Act the complement; the added partition theorem proves disjointness and exhaustion. Global use is specialization to dom.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ConstComponent"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.IdComponent"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ActComponent"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.component_partition_exact"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D02",
+      "status": "pass",
+      "analysis": "The actual Finset supremum equals the frozen set-indexed pseudometric. Nonempty finite subfamilies cover every allowed subfamily because I is finite. The fiber is exactly the subset of U with output distance zero to an arbitrary target, including targets outside the image.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.NonemptyFinset"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.comp_pseudo_metric"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ComputationalFiber"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.comp_pseudo_metric_eq_subfamily"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.comp_pseudo_metric_eq_zero_iff"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D03",
+      "status": "pass",
+      "analysis": "Actual subsets of X×X are defined and related to the pointwise inclusion predicates. The full-fiber bridge and a true Setoid on the actual image establish the two distinct relations without assuming separation.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.equality_pairs"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.zero_pairs"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.equality_pairs_subset_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.zero_pairs_subset_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.zero_pairs_fiber_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.EqPairSetLe"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ZeroDistPairSetLe"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ImageSeparating"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_image_setoid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ZeroImageQuotient"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_dist_fiber_le"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D04",
+      "status": "pass",
+      "analysis": "The supremum ranges only over 0<r and r≠top and the actual strict ball intersected with U. Its result is ENNReal, so an empty admissible family gives zero and an unbounded family can give top; singleton and metric representations are proved equal.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.OpenBall"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.FinitePositiveRadius"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.metric_annihilation_radius"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_radius"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_radius_eq_metric"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_radius_singleton_eq_metric"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D05",
+      "status": "pass",
+      "analysis": "The on-version infimum is indexed by the independent basepoint set A while each point radius still evaluates the same U. The same-domain abbreviation and actual matrix j i agree with the required output-row/input-column convention.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.metric_min_annihilation_radius_on"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.metric_min_annihilation_radius"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.min_annihilation_radius_on"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.min_annihilation_radius"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.AnnihilationMatrix"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.min_annihilation_radius_on_eq_metric"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.min_annihilation_radius_eq_metric"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D06",
+      "status": "pass",
+      "analysis": "ScaleFamily assumes monotonicity only for nonempty sets. The extension theorem starts with an arbitrary scale on nonempty-set subtypes and recovers it exactly; no diameter-only restriction is imposed. The readout uses strict input and non-strict radius thresholds.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ScaleFamily"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.input_diameter"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.diameter_scale_family"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_threshold_readout"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.scale_family_extension"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.scale_family_extension_on_nonempty"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D07",
+      "status": "pass",
+      "analysis": "The unchanged permitted background defines internal centers and strict balls. Its infimum is proved attained whenever a finite cover exists, equals top otherwise, and is zero on the empty set. Subfamily and component wrappers have equality bridges, and total boundedness ranges over all finite positive scales.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+          "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_attained"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+          "name": "formal_oet.vol_01.ch_01_foundations.log2_ereal"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+          "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.IsEpsilonNet"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.IsEpsilonNetComp"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.cov_num"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.cov_num_comp"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.IsTotallyBounded"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.cov_num_comp_eq_subfamily_covering_number"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.cov_num_comp_singleton_eq_cov_num"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-D08",
+      "status": "pass",
+      "analysis": "The EReal difference requires a nonempty domain and a proof that at least one cover is finite. The textbook wrapper separately retains dom and finite-positive precision conditions. No field admits top-minus-top as a valid textbook instance.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.EntropyDiffWellDefined"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.SubfamilyEntropyDiffWellDefined"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.subfamily_mapping_entropy_diff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy_diff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.textbook_subfamily_mapping_entropy_diff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.singleton_subfamily_entropy_diff_well_defined_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy_diff_eq_singleton_subfamily"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P01-01",
+      "status": "pass",
+      "analysis": "The proof supplies the zero bound for only the designated constant output row. It leaves all other rows unrestricted and uses the actual nonnegative finite sum.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_component_zero_lip_row_bound"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P01-02",
+      "status": "pass",
+      "analysis": "The co-Lip sum dominates each nonnegative summand. Only a component with an actual positive input-distance pair is forced to have coefficient zero; neither global separation nor a wholly zero matrix is assumed.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_component_colip_entry_eq_zero"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P01-03",
+      "status": "pass",
+      "analysis": "Two triangle inequalities transfer distances through pointwise zero displacement. This establishes equality of component distances, without replacing zero distance by equality of points.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.id_component_preserves_component_distance"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P02-01",
+      "status": "pass",
+      "analysis": "The four possible nonactive factor combinations are handled on U and the actual image of U. The resulting inclusion is one-way and respects the constant-priority definition.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.act_comp_inclusion_exact"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P02-02",
+      "status": "pass",
+      "analysis": "The recursive chain set evaluates each next factor on the actual tail image, and domain propagation uses absorption. List induction includes the empty identity chain and arbitrary length, rather than postulating the final inclusion.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.chain_act_components"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.act_comp_inclusion_chain"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P02-03",
+      "status": "pass",
+      "analysis": "The proof obtains pointwise zero displacement and also rules out constant output using preservation of the first image distances. Thus it proves Id under the stated priority, not merely zero displacement.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.id_comp_preservation_exact"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P03-01",
+      "status": "pass",
+      "analysis": "The three-point absorber model has a verified extended pseudometric, an actual swap and a legal two-point domain. Both factors are active on their correct domains, their composite is Id, and both claimed reverse inclusions are explicitly disproved.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.ThreePoint"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.swap_counter_operator"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.swap_counterexample_is_active_but_square_is_identity"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.swap_gauge_legal"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.swap_strict_reverse_failures"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P04-01",
+      "status": "pass",
+      "analysis": "The outer Const predicate is applied to the two actual inner images. No nonconstant or positive-diameter input assumption has been added.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_comp_outer_const_exact"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P04-02",
+      "status": "pass",
+      "analysis": "All seven points, both distance tables and both absorbing maps are defined. The finite pullback metrics obey the full axioms, including nonabsorption witnesses, and the concrete domain and distinguishing output pair prove the advertised failure.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.SevenPoint"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.TwoGauge"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.composition_counterexample_distances"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_component_right_nonclosure_counterexample"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.seven_point_gauge_legal"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P05-01",
+      "status": "pass",
+      "analysis": "The theorem zeroes only off-diagonal entries of the one relevant output row. The diagonal coefficient may be infinite, and the argument uses its product with zero rather than assuming that coefficient is finite.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_transfer",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_comp_maintaining_of_diagonal_row"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-01",
+      "status": "pass",
+      "analysis": "The two fiber inclusions follow from symmetry and triangle inequalities for the prescribed zero-related targets, for arbitrary U and arbitrary targets.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_eq_of_comp_dist_zero"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-02",
+      "status": "pass",
+      "analysis": "For every actual image target a preimage gives a fiber member. A separate theorem proves the union is exactly U, so nonemptiness is not inferred from a formal partition label.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_partition"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_fiber_nonempty"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-03",
+      "status": "pass",
+      "analysis": "A shared fiber member forces the target outputs to be zero-related and the fibers equal; otherwise they are disjoint. Together with the proved nonemptiness and union, this is the deduplicated partition required in the text.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_disjoint"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_fiber_nonempty"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-04",
+      "status": "pass",
+      "analysis": "Zero of the finite maximum is equivalent to zero in every member of J; both directions preserve membership in the original U.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_inter_law"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-05",
+      "status": "pass",
+      "analysis": "The inclusion reverses when the target index family grows. The proof checks every component required by the smaller subfamily.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_subset_of_index_subset"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-06",
+      "status": "pass",
+      "analysis": "Singleton evaluation is an equality of actual sets, and full-family membership implies each singleton constraint. No ambient-domain enlargement occurs.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.singleton_computational_fiber_eq"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.full_fiber_subset_singleton_fiber"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-07",
+      "status": "pass",
+      "analysis": "The target version works for arbitrary y, using Id's pointwise zero displacement and two triangle inequalities. It is stronger than only the image-target special case.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.id_component_singleton_fiber_eq_zero_class_target"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P06-08",
+      "status": "pass",
+      "analysis": "An output-zero-equivalent target yields all of U; a separated target yields the empty fiber. The actual-image case follows by taking the same output and self-distance zero, without a separating gauge assumption.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_component_singleton_fiber_eq_univ_for_equiv_target"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_component_singleton_fiber_eq_empty_for_separated_target"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P07-01",
+      "status": "pass",
+      "analysis": "The necessary implication is proved for a function whose source is the actual image subtype; equal representatives have equal transformed values. The relation-set bridge identifies precisely the stated pair-set inclusion.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_map_exists_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.equality_pairs_subset_iff"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P07-02",
+      "status": "pass",
+      "analysis": "Representative choice defines a concrete transform and the inclusion proves its formula independent of the choice. The image-subtype version and total extension are related, and U may be empty.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.extend_image_map"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_map_exists_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.point_transform_from_eq_pair_set"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.point_transform_from_eq_pair_set_spec"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P07-03",
+      "status": "pass",
+      "analysis": "Existence in both directions is equivalent to both inclusions and hence equality of the actual equality-pair sets. It is not replaced by an arbitrary equivalence of images.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_maps_both_directions_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.equality_pairs_eq_iff"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P07-04",
+      "status": "pass",
+      "analysis": "The estimate is quantified over all actual image points and extracted representatives. K is positive finite, L is finite but may be zero, and the factor is L/K in ENNReal even for infinite distances.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_map_lip_on_actual_image"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P08-01",
+      "status": "pass",
+      "analysis": "A genuine quotient of the actual image Setoid is used. Quot.lift constructs the prescribed map with its representative formula, and necessity follows from equality of quotient classes via Quotient.exact.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_image_setoid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_quotient_transform"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_quotient_transform_spec"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_quotient_transform_exists_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.zero_pairs_subset_iff"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P08-02",
+      "status": "pass",
+      "analysis": "The theorem proves existence of both prescribed quotient maps exactly when the zero-pair predicates agree, and the explicit pair-set equality bridge recovers the written formulation.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_quotient_transforms_both_directions_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_dist_pair_set_mutual_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.zero_pairs_eq_iff"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P08-03",
+      "status": "pass",
+      "analysis": "Separation is required only on each actual image. Equality and zero-distance relations are proved identical there before deriving equivalence of point and quotient criteria.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.image_separation_pairs_equal"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.eq_pair_set_le_iff_zero_dist_pair_set_le_of_images_separating"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mutual_eq_pair_iff_mutual_zero_dist_pair_of_images_separating"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P09-01",
+      "status": "pass",
+      "analysis": "Reflexivity and transitivity are proved on the same fixed U. No unjustified antisymmetry or pointwise equality of operators is asserted.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_dist_fiber_refl"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_dist_fiber_trans"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P09-02",
+      "status": "pass",
+      "analysis": "The shifted induction proves every subinterval a≤b≤m, including equal endpoints. This covers all requested strict subchains with their original step hypotheses.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_dist_fiber_subchain_monotone"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P09-03",
+      "status": "pass",
+      "analysis": "Failure of the reverse endpoint inclusion is proved from the strict intermediate step. The added theorem extracts an actual ordered pair in the final relation but outside the initial relation, rather than recording only a Boolean flag.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.fiber_chain_strict_witness"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.image_factorization",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_dist_fiber_chain_strict_of_strict_step"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P10-01",
+      "status": "pass",
+      "analysis": "Option ℝ realizes the absorber, the ordinary real metric is fully verified, and the exact punctured two-sided interval is nonempty and lies in the real step operator's domain.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.step_operator"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.sample_domain"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.example_valid"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P10-02",
+      "status": "pass",
+      "analysis": "The upper bound constructs an opposite-sign point for every radius larger than |y|, and the lower bound verifies the strict ball at |y|. The extra iff proves all finite positive admissible radii are exactly those at most |y|, including the endpoint.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.step_admissible_radius_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.pointwise_radius_eq"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.pointwise_radius_pos"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P10-03",
+      "status": "pass",
+      "analysis": "A positive point chosen at an arbitrarily small real distance bounds the actual infimum. This proves uniform radius zero on the same fixed domain while the earlier theorem proves every point radius positive.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.uniform_radius_eq_zero"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P11-01",
+      "status": "pass",
+      "analysis": "Const for every target component directly yields that the corresponding image-target fiber is exactly U for each y∈U.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_components_computational_fiber_eq_univ"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P11-02",
+      "status": "pass",
+      "analysis": "Every finite positive radius is proved admissible, and natural radii tending upward establish the actual supremum top. Infimum over all basepoints then gives top for every input component.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_radius_eq_top_of_total_fiber"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_components_min_annihilation_radius_eq_top"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.total_fiber_all_finite_radii_admissible"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P11-03",
+      "status": "pass",
+      "analysis": "Both same-component and distinct-component cases use explicit identity maps on legal two-point domains and fully verified metrics. Input distance top keeps every finite ball inside its fiber although the output distance is respectively top or one.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.identity_counter_domain"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.infinite_annihilation_radius_nonconstant_counterexample"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_counterexamples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.distinct_components_infinite_radius_nonconstant_counterexample"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.infinite_gauge_legal"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.separated_gauges_legal"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P12-01",
+      "status": "pass",
+      "analysis": "The Id fiber is identified with the original input zero-distance class, which is not assumed to be a singleton.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.id_component_singleton_fiber_eq_zero_class"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P12-02",
+      "status": "pass",
+      "analysis": "The supplied finite positive ball is proved admissible through the exact fiber identity, yielding radius at least r₀ and positivity without assuming the supremum is attained generally.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.id_component_annihilation_radius_ge_of_zero_class_ball"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P13-01",
+      "status": "pass",
+      "analysis": "The proof uses downward closure and radii strictly below the finite infimum to establish the pointwise equality. It covers zero and top values and does not require a maximizing admissible radius.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_radius_eq_min"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P13-02",
+      "status": "pass",
+      "analysis": "Both inequalities commute the infimum over the same U and the finite nonempty minimum. This is the same-domain formula of Proposition 3.10, not a conflation with the separately defined basepoint-set variant.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.min_annihilation_radius_eq_min"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P13-03",
+      "status": "pass",
+      "analysis": "The minimum formula yields the correct antitonicity in the target subfamily, with J and K both nonempty.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.min_annihilation_radius_antitone"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P14-01",
+      "status": "pass",
+      "analysis": "Membership in the actual computational fiber gives zero output distance with the requested orientation after symmetry; all original membership restrictions remain present.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_truncates_distance_of_mem"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P14-02",
+      "status": "pass",
+      "analysis": "Strict inequality below the actual supremum extracts a finite positive admissible radius with a larger bound. No conclusion at the equality boundary is smuggled into this theorem.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.fiber_truncation_of_lt_annihilation_radius"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_matrix",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.output_zero_of_lt_metric_annihilation_radius"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P14-03",
+      "status": "pass",
+      "analysis": "The composition statement explicitly uses the two actual inner outputs in the downstream evaluation set; the stronger helper can be specialized to all original domain assumptions.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.computational_fiber",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.composed_fiber_truncates_distance"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P15-01",
+      "status": "pass",
+      "analysis": "Only downstream preservation of the selected zero-distance relation on the actual inner image is assumed. All sufficiently small admissible radii are transported and the true uniform infimum bound is proved.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zeroing_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.front_zeroing_radius_propagates"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P15-02",
+      "status": "pass",
+      "analysis": "The original finite positive scalar Lip bound pulls back a downstream radius by division by L. The all-small-radii argument also handles a zero or infinite right side, without assuming finite annihilation radii.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zeroing_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.back_zeroing_pullback_radius"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P16-01",
+      "status": "pass",
+      "analysis": "Each coordinate has both true and false iff statements with complementary inequalities. Exhaustion over Bool×Bool and uniqueness of the actual readout establish the four disjoint alternatives.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_threshold_readout_exhaustive"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_input_bit_eq_true_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_input_bit_eq_false_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_zero_bit_eq_true_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_zero_bit_eq_false_iff"
+        },
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.threshold_readout_unique"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P16-02",
+      "status": "pass",
+      "analysis": "Increasing the input threshold preserves a true first coordinate for every channel, giving the stated increasing channel set.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_input_bit_monotone"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P16-03",
+      "status": "pass",
+      "analysis": "The implication goes from a true second coordinate at the larger threshold to true at the smaller threshold, giving the required decreasing channel set.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_zero_bit_antitone"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P17-01",
+      "status": "pass",
+      "analysis": "The proof uses the arbitrary ScaleFamily monotonicity on nonempty subsets; the threshold implication follows and is not limited to diameter scales.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.input_scale_mono_of_subset"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.input_scale_lt_of_subset_scale_family"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P17-02",
+      "status": "pass",
+      "analysis": "At each retained basepoint, a ball constraint on the larger evaluation domain restricts to the smaller domain, so every formerly admissible radius stays admissible.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.Completeness",
+          "name": "MathGauge.C003.pointwise_radius_domain_antitone"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P17-03",
+      "status": "pass",
+      "analysis": "The proof separately compares point radii and the infima over the two basepoint sets. Thus changing both the evaluation domain and basepoint range has the correct monotonicity.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.annihilation_localization_radius_mono"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_radius_mono_of_subset"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P17-04",
+      "status": "pass",
+      "analysis": "The exact Option-real identity example proves the actual diameters of {0} and {0,1}, their nonemptiness and valid-domain inclusion. It is not merely an unrelated artificial monotone scale.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.identity_domain_refinement_counterexample"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P18-01",
+      "status": "pass",
+      "analysis": "The uniform infimum is below each point radius, and strict distance below it implies the actual output-zero condition. Infinite uniform values are allowed.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_of_lt_zero_radius"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P18-02",
+      "status": "pass",
+      "analysis": "The contrapositive uses positive output distance to rule out strict input distance below the uniform radius; it gives the non-strict lower bound including equality and top.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_radius_le_of_output_pos"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P18-03",
+      "status": "pass",
+      "analysis": "From infimum below α a basepoint is selected, and nonadmissibility of α yields an actual separated pair. Taking min(output distance,1) produces a finite positive ε even when output distance is top.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.subthreshold_separation_witness"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P19-01",
+      "status": "pass",
+      "analysis": "For each x in A the actual strict τ-ball intersected with A is included in its image-target fiber, under τ at most the uniform radius.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_radius_fiber_inclusion"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P19-02",
+      "status": "pass",
+      "analysis": "Every finite internal input cover of every B⊆A is mapped to a genuine internal output cover with no larger cardinality. Taking infima includes empty B and the absence of a finite cover.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.zero_radius_cover_transport"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_zero_radius_cov_num_bound"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P19-03",
+      "status": "pass",
+      "analysis": "The actual cover-number inequality is passed through the proved monotonicity of the EReal logarithm. Infinite cover values are retained, and the original nonempty case is a specialization.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.operator_zero_radius_metric_entropy_bound"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P20-01",
+      "status": "pass",
+      "analysis": "For every finite positive τ the proof chooses an explicit positive a≤1 with 2a<τ. The same step model gives B⊆U, input cover number exactly one and output cover number exactly two at precision one half.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.every_scale_has_covering_counterexample"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.crossing_pair_subset"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.crossing_pair_image"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.crossing_pair_input_covering"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pointwise_uniform_radius_example.crossing_pair_output_covering"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P21-01",
+      "status": "pass",
+      "analysis": "The forward direction combines actual diameter and ordered thresholds with strict output annihilation. The reverse direction makes every finite radius admissible, proving infinite uniform radius rather than assuming it.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.joint_zeroing_iff"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_classification",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.zero_radius_eq_top_of_output_zero"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P21-02",
+      "status": "pass",
+      "analysis": "A real point of the nonempty image supplies a one-center cover, and the universal nonempty cover lower bound rules out zero centers at every finite positive precision.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.joint_zeroing_cov_num_eq_one"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P22-01",
+      "status": "pass",
+      "analysis": "For arbitrary nonempty target and input subfamilies the finite source and image give finite covers, while nonemptiness gives cover number at least one. The added theorem produces real representatives of both entropies and an actual well-definedness proof.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.finite_set_subfamily_mapping_entropy_diff_well_defined"
+        },
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.finite_subfamily_entropies_are_real"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P23-01",
+      "status": "pass",
+      "analysis": "The constant branch obtains output cover number one and entropy zero, then the exact entropy difference. Only the output side is forced finite, so infinite input entropy remains allowed.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition_mapping_entropy_textbook"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.const_component_image_cov_num_eq_one"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P23-02",
+      "status": "pass",
+      "analysis": "The proof constructs both the image of an input center set and chosen preimages of every output center set, keeping centers internal and controlling cardinality. This gives equality of covers and then entropies.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.cov_num_image_eq_of_component_distance_preserving"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.id_component_image_cov_num_eq"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition_mapping_entropy_textbook"
+        },
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.pushforward_internal_cover"
+        },
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.pullback_internal_cover"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P23-03",
+      "status": "pass",
+      "analysis": "The zero entropy-difference conclusion takes an explicit well-definedness argument. Equal infinite cover numbers alone supply no such argument, so top-minus-top is never used.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.component_partition_mapping_entropy_textbook"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P24-01",
+      "status": "pass",
+      "analysis": "The actual image finite set supplies the output cover. Positivity and finiteness of L justify the strict rescaling identity, and cardinality cannot increase.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.lip_cover_transport"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.lip_cov_num_bound_aux"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P24-02",
+      "status": "pass",
+      "analysis": "Total boundedness is applied at both ε and ε/L. The output is bounded by the latter input cover, so both entropies are real; the general finite-cover-to-real-entropy lemma completes that representation and the stated lower bound follows.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.lip_entropy_bound_of_scalar_lip"
+        },
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.finite_positive_covering_entropy_is_real"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P25-01",
+      "status": "pass",
+      "analysis": "The actual nonnegative co-Lip matrix sum bounds the selected summand. Chosen preimages of internal output centers form an internal input cover with cardinality no greater, proving the inverse-scale cover bound.",
+      "declarations": [
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.colip_cover_transport"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.colip_cov_num_bound_aux"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P25-02",
+      "status": "pass",
+      "analysis": "Only the two input covering numbers are shown finite. The output may still be infinite; input finiteness supplies the required well-defined difference and the EReal upper bound includes the minus-infinity case.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.mapping_entropy",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.colip_entropy_bound_exact"
+        },
+        {
+          "module": "MathGauge.C003.CoveringConstructions",
+          "name": "MathGauge.C003.finite_positive_covering_entropy_is_real"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P26-01",
+      "status": "pass",
+      "analysis": "The absolute-value readout metric is verified with its absorber, and the actual affine map on {0,1} has two distinct but zero-related outputs. Its first image-target fiber is all U and the component is Const.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.absolute_distance"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.inner_operator"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.absolute_distance_is_extended"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.sample_domain_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.constant_then_active"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.first_fiber_eq_sample_domain"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P26-02",
+      "status": "pass",
+      "analysis": "The same domain is valid for self-composition. Explicit output readings exclude both Const and Id, and the exact fiber is {0}, establishing the required Act classification.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.sample_domain_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.constant_then_active"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.self_composition_fiber_eq_singleton"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P26-03",
+      "status": "pass",
+      "analysis": "For an arbitrary pointwise constant map, self-composition is pointwise equal to its value at c. The nonabsorbed branch gives a valid constant-domain fiber; the absorbed branch explicitly proves the whole sample domain disjoint from the new domain.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.pointwise_constant_self_composition"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.pointwise_constant_stays_constant"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.pseudometric_composition.pointwise_constant_absorbed_domain"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P27-01",
+      "status": "pass",
+      "analysis": "A positive co-Lip entry times a positive input distance is positive even if the coefficient is top. The point-radius zero-output conclusion contradicts that, leaving precisely zero or distance at least the radius.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.distance_gap",
+          "name": "formal_oet.vol_01.exercise_solutions.distance_gap.distance_gap_of_positive_annihilation_radius_and_colip"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P27-02",
+      "status": "pass",
+      "analysis": "The uniform-radius statement compares the true infimum to each point radius and retains all pairs in U. Neither the coefficient nor the uniform radius is silently made finite.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.distance_gap",
+          "name": "formal_oet.vol_01.exercise_solutions.distance_gap.uniform_distance_gap_of_positive_annihilation_radius_and_colip"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P28-01",
+      "status": "pass",
+      "analysis": "The full translation, absorber metric and exact domain are defined. All four source fibers and the deduplicated three classes are computed for both maps as subsets of the original input domain.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.translation"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.sample_domain"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.example_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.identity_fibers"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.translation_fibers"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.exact_fiber_partitions"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P28-02",
+      "status": "pass",
+      "analysis": "The cover counts are proved from internal finite center sets and a label-class lower bound, not inferred from the number of zero-distance fibers. The exact counts two and one yield entropies one and zero and a well-defined difference one.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.input_covering"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.output_covering"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.entropy_values"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.entropy_diff_well_defined"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.translation_entropy",
+          "name": "formal_oet.vol_01.exercise_solutions.translation_entropy.translation_entropy_diff"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P29-01",
+      "status": "pass",
+      "analysis": "The fixed floor map has the required extended real metric and legal nonempty lifted interval. Actual diameter one half and constant outputs prove radius top and type (1,1).",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.real_distance_is_extended"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.lifted_domain_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_exact_values"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_nonempty"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_threshold_combinations"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P29-02",
+      "status": "pass",
+      "analysis": "On the exact crossing interval, arbitrarily close points left of 1 have a different floor value; the point radius at 1 and hence the uniform radius are zero. The actual diameter is one fifth, giving type (1,0).",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.real_distance_is_extended"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.lifted_domain_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_exact_values"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_nonempty"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_threshold_combinations"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P29-03",
+      "status": "pass",
+      "analysis": "The actual two-point domain has diameter two. Radius two is legal because the ball is strict; every radius above two fails. Its readout is (0,1).",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.real_distance_is_extended"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.lifted_domain_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_exact_values"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_nonempty"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_threshold_combinations"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P29-04",
+      "status": "pass",
+      "analysis": "The exact wide interval has diameter two and the same jump witness at 1 gives radius zero, producing (0,0) for the unchanged map and thresholds.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.real_distance_is_extended"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.lifted_domain_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_exact_values"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_domains_nonempty"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.four_threshold_combinations"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P29-05",
+      "status": "pass",
+      "analysis": "The pair {0,2} has uniform radius two but output distance two, explicitly refuting the stated implication for all nonempty real domains. No small-diameter premise is inserted.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.radius_threshold_not_total_zero_counterexample"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.uniform_radius_threshold_does_not_imply_total_zero"
+        },
+        {
+          "module": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples",
+          "name": "formal_oet.vol_01.ch_03_operator_local_degeneracy.threshold_examples.uniform_radius_pair"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P30-01",
+      "status": "pass",
+      "analysis": "The three cases prove the complete internal-cover formula and both strict-ball boundary values. The exterior center three halves covers at seven quarters but is separately proved inadmissible as an internal center; the actual metric and operator domains are verified.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.example_valid"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.covering_small"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.covering_middle"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.covering_large"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.covering_formula"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.exterior_center_comparison"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.four_point_operator_domains"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.four_point_table"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P30-02",
+      "status": "pass",
+      "analysis": "Both lookup maps have precisely the stated values and are absorbed outside the four-point set. Their actual images are exactly U, and all finite positive precisions have equal covers and well-defined zero entropy differences.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.images_equal"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.image_coverings"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.entropy_well_defined"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.entropy_differences"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.four_point_operator_domains"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.four_point_table"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P30-03",
+      "status": "pass",
+      "analysis": "All finite pairs establish bounds one and three, and the zero-one pair gives their respective necessary lower bounds for every proposed L, proving optimality.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.scalar_lip_bounds"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.scalar_lip_optimal"
+        },
+        {
+          "module": "MathGauge.C003.ExampleLegality",
+          "name": "MathGauge.C003.four_point_table"
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "CH03-P30-04",
+      "status": "pass",
+      "analysis": "The general transport theorem is actually instantiated. The input cover bounds are respectively two and four while both true image cover counts are two, so the loose estimate is not mistaken for equality.",
+      "declarations": [
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.transported_cover_bounds"
+        },
+        {
+          "module": "formal_oet.vol_01.exercise_solutions.four_point_covering",
+          "name": "formal_oet.vol_01.exercise_solutions.four_point_covering.numerical_comparison"
+        }
+      ],
+      "findings": []
+    }
+  ],
+  "findings": [],
+  "evidence_checks": {
+    "manifest_sha256": "7acd4ffc0f46304e231d72ee0cce57b7452b9517ae1046fad43747187841a679",
+    "all_frozen_input_hashes_match": true,
+    "all_module_hashes_match": true,
+    "backgrounds_byte_identical": true,
+    "fresh_compile_status": "passed",
+    "audited_declarations": 1224,
+    "axiom_union": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "metadata_observation": "The pre-existing top-level review/provenance and reference-design-notes retain their prior historical not-certified statements; this new author-formal independent receipt is separate evidence and does not assert human approval.",
+  "human_approval": "pending",
+  "candidate_model_execution": "not-run"
+}

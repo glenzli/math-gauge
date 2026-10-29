@@ -1,0 +1,376 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR002",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.Record"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.Record.eval_eq"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.Record.toBidual"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.restrict"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.toBidual_restrict"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.restrict_toBidual"
+        },
+        {
+          "module": "RecordBidual",
+          "name": "MathGauge.RecordBidual.recordEquiv"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.recordDistance_eq_norm"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.J"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.J_norm"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.J_injective"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_formula"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_bound"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_toBidual"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.canonical_naturality"
+        }
+      ],
+      "assumptions": [
+        "Real Banach E and all finite-dimensional subspaces of its actual continuous dual. Inclusion-compatible local linear values with one finite nonnegative uniform norm bound. T is any bounded linear endomorphism."
+      ],
+      "quantifiers": [
+        "All legal records, all finite-dimensional F, every continuous functional phi, every bounded T. No preselected subset of realizable records."
+      ],
+      "domains": [
+        "FinitePart E indexes every finite-dimensional submodule of Dual E. Record stores only the original local data, inclusion compatibility and finite bound; bidual functional is constructed from singleton tests."
+      ],
+      "conclusions": [
+        "Restriction and gluing are inverse bijections between all records and E double dual; the actual unit-ball record distance equals the norm of the difference of biduals. Actual canonical J is linear and isometric. The record transform has the T-prime-F formula and corresponds exactly to T double prime; J commutes with T."
+      ],
+      "representation": [
+        "J is a ContinuousLinearMap, so linearity is part of its constructed type, and J_norm is the actual norm equality. RecordDistance is the real supremum in the task, with nonemptiness and boundedness proved before using it. All general proofs in fact apply to normed E, which is stronger and does not change the Banach task."
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_represents"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_unique"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_given_bound"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_covariant"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.two_operator_stability"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.exact_stability"
+        }
+      ],
+      "assumptions": [
+        "E is reflexive: the actual canonical J is surjective. No invertibility or commutation of T,U. Each supplied C only bounds its particular original record."
+      ],
+      "quantifiers": [
+        "Every pair of legal records r,s and every pair of bounded endomorphisms T,U; each recovery realizes all original finite observations."
+      ],
+      "domains": [
+        "The recover vector is chosen in E from surjectivity of actual J, not from an assumed goal certificate. Represents quantifies over all finite-dimensional F and all their elements."
+      ],
+      "conclusions": [
+        "Every record has a unique original recovery, with the given norm bound. Transform recovery is T applied to original recovery; exact untransformed stability holds. The full two-operator estimate is proved with both the record error and the operator error term."
+      ],
+      "representation": [
+        "Reflexivity is expressed by its standard definition Function.Surjective J. The proof rewrites Tx-Uy as T(x-y)+(T-U)y; no changed-record bound is incorrectly fixed to C."
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.quotientMap"
+        },
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.exists_norming_annihilator"
+        },
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.record_distance_formula"
+        },
+        {
+          "module": "SubspaceRecovery",
+          "name": "MathGauge.RecordBidual.member_iff_annihilator"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.reflexiveRecover_represents"
+        }
+      ],
+      "assumptions": [
+        "S2 supplies an actual realization. Y is a real linear subspace; closedness is explicit exactly for the member iff assertion."
+      ],
+      "quantifiers": [
+        "Every closed Y, every record r, its recovered x and every continuous phi annihilating Y; supremum runs over every such phi of norm at most one."
+      ],
+      "domains": [
+        "annihilates Y phi is pointwise vanishing on every element of Y. annihilatorValues is the exact set of absolute record values on the annihilator unit ball. Distance is Metric.infDist in the given norm."
+      ],
+      "conclusions": [
+        "x belongs to Y iff the actual record bidual vanishes on Y annihilator. The exact distance equals the supremum of absolute record evaluations, with both inequalities and an attaining dual functional proved."
+      ],
+      "representation": [
+        "The quotient is the actual submodule quotient. Hahn-Banach constructs a norm-at-most-one norming functional and pulls it back. The distance formula remains valid without closedness, whereas member equivalence uses Y closed to identify zero distance with membership."
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.original_space_complete"
+        },
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.counterexample"
+        },
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.z_bound"
+        },
+        {
+          "module": "CompatibleRecords",
+          "name": "MathGauge.CompatibleRecords.z_coordinate"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0Record"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0Record_no_realization"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0Record_bidual_norm"
+        },
+        {
+          "module": "RecordInstantiation",
+          "name": "MathGauge.RecordInstantiation.c0_bidual_outside_original"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.realization_unique"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.exact_stability"
+        }
+      ],
+      "assumptions": [
+        "Only the common real Banach and legal record hypotheses; E is the actual complete c0 space C0(N,R)."
+      ],
+      "quantifiers": [
+        "A single explicit legal record family refutes the universal existence statement; the impossible original realization would have to match all finite subspaces."
+      ],
+      "domains": [
+        "The reference l1 identification is replaced by a valid direct construction on the actual continuous dual: extend the limit functional on convergent bounded sequences using Hahn-Banach, then apply it to dual evaluations of finite partial-one vectors."
+      ],
+      "conclusions": [
+        "The resulting family is compatible, has C=1, gives value one on every coordinate evaluation, and has no representative in c0. It is an actual Record E, and its bidual lies outside J(E). Uniqueness, stability and covariance for any realizable record remain proved separately."
+      ],
+      "representation": [
+        "No l1-duality fact is assumed. CompleteSpace c0 is inherited from its actual normed C0 realization. Coordinates of any hypothetical realizing vector are all one, contradicting the defining tendency to zero. This is a full alternative argument, not an assumed nonreflexivity witness."
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.weakStar_continuous_iff_realizable"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.realization_unique"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.realization_given_bound"
+        },
+        {
+          "module": "RecordRealization",
+          "name": "MathGauge.RecordBidual.exact_stability"
+        },
+        {
+          "module": "RecordTransform",
+          "name": "MathGauge.RecordBidual.transform_realization"
+        }
+      ],
+      "assumptions": [
+        "E is any real Banach space and r is one legal record. The topology on its actual dual is sigma(E dual,E), not the norm topology."
+      ],
+      "quantifiers": [
+        "For each individual record, weak-star continuity iff existence of one x in E realizing all finite observations. No universal reflexivity assumption."
+      ],
+      "domains": [
+        "WeakDual R E is mathlib actual weak-star dual topology, transported to the same continuous-dual linear functional through WeakDual.toStrongDual."
+      ],
+      "conclusions": [
+        "Both directions of the iff hold. The weak-star continuous functional factors through finite evaluation coordinates and is evaluation at some original x; evaluation maps are weak-star continuous. Unique recovery and its bounds, stability and covariance follow from S1."
+      ],
+      "representation": [
+        "The finite-coordinate representation theorem is the proved mathlib topDualPairing.dualEmbedding_surjective. It handles zero-dimensional coordinate images and constructs an original E vector; norm continuity alone is never substituted."
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finiteObservation"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finiteObservation_surjective"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finite_kernel_annihilator"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finiteMatching_quotient_bound"
+        },
+        {
+          "module": "FiniteMatching",
+          "name": "MathGauge.RecordBidual.finite_exact_matching"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.weight_sum"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.witness_norm"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.record_witness"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.witness_not_attained"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.zero_epsilon_fails"
+        },
+        {
+          "module": "SharpFiniteBoundary",
+          "name": "MathGauge.SharpFiniteBoundary.finite_does_not_global"
+        },
+        {
+          "module": "ReflexiveRecovery",
+          "name": "MathGauge.RecordBidual.weakStar_continuous_iff_realizable"
+        }
+      ],
+      "assumptions": [
+        "E is any real Banach, the same legal record has a supplied finite C>=0, F is any finite-dimensional subspace of the continuous dual, and epsilon>0 only for the positive norm-slack result."
+      ],
+      "quantifiers": [
+        "For every F and every positive epsilon there exists a possibly different original x giving exact lambda_F and norm at most C+epsilon. The C=1 c0 counterexample uses one fixed finite line F to rule out epsilon=0."
+      ],
+      "domains": [
+        "finiteObservation is exactly q_F x(phi)=phi(x). Its algebraic finite-dimensional target is canonically the continuous F dual; no finite observations or norm constraints are discarded. The quotient is E/ker(q_F), and its norm is the actual infimum of lift norms."
+      ],
+      "conclusions": [
+        "q_F is surjective. The continuous annihilator of its kernel is proved exactly F; Hahn-Banach gives the quotient norm <=C and a lift with <=C+epsilon. The geometric-weighted c0 functional has record value one and is strictly below one at every vector of norm <=1, so epsilon=0 fails. The same legal record matches every finite F with every positive slack yet has no global original realization."
+      ],
+      "representation": [
+        "No minimum-norm lift is assumed. Finite-dimensional algebraic duality is used only to prove surjectivity and the exact annihilator, then actual quotient norm estimates prove the bound. The counterexample weights (1/2)^n*(1/2) are strictly positive and sum to one; the scalar functional is a norm-convergent sum of actual coordinate CLMs. Its record value is computed by continuity of the constructed bidual."
+      ],
+      "dependencies": [
+        "S1",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ]
+}

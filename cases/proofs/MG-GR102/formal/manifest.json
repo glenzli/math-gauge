@@ -1,0 +1,75 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR102",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "1c22c3a5b09a669a087f7604626c032d7373fafbbb0d4a87241ffde7f5fb1966",
+    "contract.json": "8dedc66acdc1019a6b16eee5f894f8719cc1256253bb6333c5739703392143ea",
+    "reference.md": "d8a67b43cfdc106e261558104f2378c155352e70afb15e4411324b001586d81e",
+    "rubric.json": "30c79b7453bf93b1990bfbf9802a9daee44d9999f12f19ca09520e1e89eb0579",
+    "task.md": "ddfe0d8c6a0bdfa20b8e193ab69709bb88987807bef7a30962da183abc5ca517"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "f778eecee31340b388cec8342cfb61cdfa00e73c4f1a9276ff205bf1fdbc31b7"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "60da86d0e80402911959c301a5721334baf025eefc9a2df2682c6adf2942b1f4"
+  },
+  "modules": [
+    {
+      "module": "FiniteOrbitDecomposition",
+      "source": "FiniteOrbitDecomposition.lean",
+      "sha256": "c27b8fb595c0701d89eb42b96e25678739d51b8f84b10f599e77105fb84021a5",
+      "imports": [
+        "Mathlib.LinearAlgebra.Quotient.Basic",
+        "Mathlib.Dynamics.PeriodicPts.Lemmas",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "UniformOrbits",
+      "source": "UniformOrbits.lean",
+      "sha256": "199ca42e2d0b578d66ad4f191f1e5a9a5ef095122049d9f699ff0f8f747fffd0",
+      "imports": [
+        "FiniteOrbitDecomposition",
+        "Mathlib.FieldTheory.Minpoly.Field",
+        "Mathlib.LinearAlgebra.FiniteDimensional.Basic"
+      ]
+    },
+    {
+      "module": "JointProjections",
+      "source": "JointProjections.lean",
+      "sha256": "0c098e03d472dc8c8911f3d9a326e886a571990a06a12106e07bf32ad64fcc4d",
+      "imports": [
+        "FiniteOrbitDecomposition",
+        "Mathlib.LinearAlgebra.Projection",
+        "Mathlib.RingTheory.Idempotents"
+      ]
+    },
+    {
+      "module": "OrbitCounterexamples",
+      "source": "OrbitCounterexamples.lean",
+      "sha256": "267cdcd69bbc058ae56dfa03c5527a2ae234e8e57e1a4ffa6b2d421c34f6466e",
+      "imports": [
+        "UniformOrbits",
+        "Mathlib.LinearAlgebra.Finsupp.Defs",
+        "Mathlib.Data.ZMod.Basic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "e9b666ebb9750e5f089c98da921059e241632edb7bf900bf245b4714c72a9369",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

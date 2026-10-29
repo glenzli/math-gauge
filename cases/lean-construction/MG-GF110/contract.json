@@ -1,0 +1,269 @@
+{
+  "id": "MG-GF110",
+  "version": "0.1.1",
+  "parent_case_id": "MG-F110",
+  "title": "有限记录的可靠内近似与完整修复",
+  "track": "determinate",
+  "task_kind": "repair",
+  "stages": [
+    {
+      "id": "S1",
+      "title": "有限递降何时稳定",
+      "kind": "prove",
+      "depends_on": [],
+      "assumptions": [
+        "B 有限",
+        "g 任意",
+        "不要求任何 q、f 交换条件"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 T_(n+1)⊆T_n",
+        "证明出现一次相邻相等后全部后续相等",
+        "证明 T_|B|=T_(|B|+1) 及终层固定点刻画",
+        "涵盖 B 为空"
+      ],
+      "critical_errors": [
+        "把稳定步数当额外前提",
+        "只证明存在某个未界定的停止时刻"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S2",
+      "title": "精确实现的正确范围",
+      "kind": "prove",
+      "depends_on": [
+        "S1"
+      ],
+      "assumptions": [
+        "精确条件 E"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 K=q⁻¹(T)",
+        "分别给两方向证明",
+        "说明每次使用 E 时当前状态确在 A"
+      ],
+      "critical_errors": [
+        "不检查 E 只有在 A 内适用",
+        "把全部轨道可观测性当作全域交换"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S3",
+      "title": "原弱条件的精确恢复判断",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "assumptions": [
+        "仅给 W",
+        "删除 E"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断 K=q⁻¹(T)",
+        "给有限反例，明确 T、K 和 W 的检查",
+        "指出候选参数 E 不能由 W 推出"
+      ],
+      "critical_errors": [
+        "擅加进展或无停留条件",
+        "反例未验证全部弱条件"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S4",
+      "title": "保留可靠性和真实最大核",
+      "kind": "prove",
+      "depends_on": [
+        "S1",
+        "S3"
+      ],
+      "assumptions": [
+        "W 用于终层的可靠性",
+        "对 K 的最大性不需要 W"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 q⁻¹(T)⊆K",
+        "证明 K⊆A 且 f(K)⊆K",
+        "证明所有 S⊆A、f(S)⊆S 都含于 K"
+      ],
+      "critical_errors": [
+        "保留错误的反向包含",
+        "只证明 q⁻¹(T) 自身不变而声称其最大"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S5",
+      "title": "记录集合自身闭合",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "assumptions": [
+        "W",
+        "额外条件 g(B)⊆B",
+        "不要求 E"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明所有 T_n=B",
+        "证明 A 在 f 下前向不变",
+        "证明 K=A=q⁻¹(T)",
+        "展示或解释该附加条件不蕴含 E"
+      ],
+      "critical_errors": [
+        "为调用 S2 擅加 E",
+        "把 g(B)⊆B 扩大为 g 在全域恒等"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S6",
+      "title": "交付分层修复",
+      "kind": "formalize",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "assumptions": [
+        "不修改原弱条件为强条件",
+        "可保留正确的 E 条件定理，但须另给 W 下结论"
+      ],
+      "expected": "construction",
+      "required_evidence": [
+        "提交 RecordLayers、OrbitModel、Candidate、Extensions 完整源码",
+        "形式化 S3 的反例和 S4 三项最大性/可靠性",
+        "形式化 S5 的替代充分条件",
+        "保留并准确标注 S1、S2 已证范围",
+        "真实编译及 axiom 审计"
+      ],
+      "critical_errors": [
+        "只把 W 重命名为 E",
+        "将反例仅放文字而不形式化",
+        "把 S4 最大性写成错误终层最大性",
+        "只编译未变化层模块而声称修复验证"
+      ],
+      "points": 25,
+      "lean_required": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1",
+        "S2"
+      ],
+      "changed_assumptions": "将局部精确记录 E 改为停留或推进 W",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "用含 E 参数的反向覆盖证明冒充 W 下证明",
+      "correct_boundary": "实际安全轨迹可以永远停在将被抽象 g 删除的记录",
+      "mechanism": "contract mismatch under stuttering",
+      "target_claim": "仅弱条件 W 下总有 K=q⁻¹(T)。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "changed_assumptions": "在 W 上新增 g(B)⊆B，而不恢复 E",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "认为只有消除停留才能恢复等式",
+      "correct_boundary": "记录集合已闭合时抽象与真实系统都无需删除点",
+      "mechanism": "alternative sufficient condition",
+      "target_claim": "W 加 g(B)⊆B 足以得到 K=A=q⁻¹(T)，不需要 E。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "drafts/lean-alignment-20261029/MG-F110/task.md",
+    "drafts/lean-alignment-20261029/MG-F110/reference.md",
+    "drafts/lean-alignment-20261029/MG-F110/rubric.json",
+    "drafts/lean-alignment-20261029/MG-F110/case.json",
+    "drafts/lean-alignment-20261029/MG-F110/formal/RecordLayers.lean",
+    "drafts/lean-alignment-20261029/MG-F110/formal/OrbitModel.lean",
+    "drafts/lean-alignment-20261029/MG-F110/formal/Candidate.lean",
+    "results/failure-analysis-20261030/README.md",
+    "results/failure-analysis-20261030/lean-failures.json"
+  ],
+  "source_attachments": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F110/formal/RecordLayers.lean",
+      "target": "RecordLayers.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F110/formal/OrbitModel.lean",
+      "target": "OrbitModel.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F110/formal/Candidate.lean",
+      "target": "Candidate.lean"
+    }
+  ],
+  "source_sha256": {
+    "drafts/lean-alignment-20261029/MG-F110/task.md": "f8c7c41f0686add16302c2cb63298d4d5d7263036cdd5622b2481dd3b56da31c",
+    "drafts/lean-alignment-20261029/MG-F110/reference.md": "9814214c24f0b3a30fc137d9217533373672e3df3ae37179212da5460b6d4525",
+    "drafts/lean-alignment-20261029/MG-F110/rubric.json": "afd99990afbdb605bad796676375325437e973a82ec7c3837c534ca002ba0b56",
+    "drafts/lean-alignment-20261029/MG-F110/case.json": "59cc1e91e11869d77e554cf3b01d4a37bc1ae40bbfbcdbcb4c7432346485eba8",
+    "drafts/lean-alignment-20261029/MG-F110/formal/RecordLayers.lean": "325cb97e7b2bd3000070442db40cb1ad95c6927e362804afb86c00b4827dc538",
+    "drafts/lean-alignment-20261029/MG-F110/formal/OrbitModel.lean": "47a48a246e3c18cafe568b9a27d8f238237a48241ceba756519db52d5083a043",
+    "drafts/lean-alignment-20261029/MG-F110/formal/Candidate.lean": "e084d7950cc6a6b128fe8591862bbb2d98b15f438f4f1213be13967dbe109135",
+    "results/failure-analysis-20261030/README.md": "885d88d42832a30dde970a6cc9f9c4b8b41f4233d47ebf3465ecc792d328ae32",
+    "results/failure-analysis-20261030/lean-failures.json": "40b599cd566d198ec5933ffa5f6831421ee135bb17f1d37db967bf5a6eb0bdb4"
+  },
+  "environment": {
+    "lean": "4.29.1",
+    "lean_commit": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+    "mathlib_commit": "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+  },
+  "grading": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage passes its mathematical and semantic criteria; every Lean-required stage is present in the complete submitted source and compiles without sorry or added axioms. Partial points do not constitute group pass."
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending",
+    "formalization": {
+      "status": "pending-new-obligations",
+      "new_group_compilation_performed": false,
+      "old_fixture_compilation_is_not_new_group_evidence": true
+    }
+  },
+  "required_output_files": [
+    "RecordLayers.lean",
+    "OrbitModel.lean",
+    "Candidate.lean",
+    "Extensions.lean"
+  ],
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/lean-alignment-20261029",
+    "case_id": "MG-F110",
+    "version": "0.1.0",
+    "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+    "case_manifest_sha256": "59cc1e91e11869d77e554cf3b01d4a37bc1ae40bbfbcdbcb4c7432346485eba8"
+  }
+}

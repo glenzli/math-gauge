@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF103",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "7effd85dd37a80f6a2b25994d596546ebf0354e67c365461b033d41f43248609",
+    "contract.json": "c8ed42065834fecdc34092457897cdbf3afc013966da8e36524e98c2c0518cda",
+    "input/Candidate.lean": "10632a38bc1c917a691ec485d2c26771ebfc0a386958b3c5ee0f5b696cf42ede",
+    "input/Construction.lean": "4966cbff8240e56a327dab28584136b04a23904c48d7d79f2a83484345683f50",
+    "input/Core.lean": "a4d36cc2d7a952f018e5f32327d4a8babdbcf754d6a6e79c8bcd45a5420a57c3",
+    "reference.md": "cd6b5eab27e25fba2708a5e306f2175e6f3f87fae27809176b4fe5903aefe740",
+    "rubric.json": "d22dffd0c50b8d54ff590cfac6a10a63e6d926f7368babb2742720ef90d96425",
+    "task.md": "2edfaf51dd3465a80dac59678fec5e6ddb41839475d1fdd32e6c31c3301dcc10"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "9126a489c3a2830560287b9829ce317eafcf2b67a85d07d0a260676c71c25e85"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "2bf271b718c3f0d782545b2c6d284fdb2228835d33a4a127a11f69f63ae46266"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "a4d36cc2d7a952f018e5f32327d4a8babdbcf754d6a6e79c8bcd45a5420a57c3",
+      "imports": [
+        "Mathlib.Topology.Order"
+      ]
+    },
+    {
+      "module": "Construction",
+      "source": "Construction.lean",
+      "sha256": "4966cbff8240e56a327dab28584136b04a23904c48d7d79f2a83484345683f50",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "10632a38bc1c917a691ec485d2c26771ebfc0a386958b3c5ee0f5b696cf42ede",
+      "imports": [
+        "Construction"
+      ]
+    },
+    {
+      "module": "Extensions",
+      "source": "Extensions.lean",
+      "sha256": "9a572263d70f860fa478715044577fb3fcd48872720bdaa9fe7c715c2901ccba",
+      "imports": [
+        "Candidate",
+        "Mathlib.Topology.Separation.Basic",
+        "Mathlib.Tactic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "483bfb0459d4760968d83872a698450729280d3a95eb2d84b557a6077fc70732",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

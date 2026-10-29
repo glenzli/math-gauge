@@ -1,0 +1,54 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR018",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "4e2fcdd2a0d7aad60e17b78a29d24877c27d5d60f110c32210b77b46e353653f",
+    "contract.json": "78c240b95316852f302f52eaa03079f627fbb33351c36e7ae572cb84118c12c0",
+    "reference.md": "3d6b3cd679d1d9f4f7adf8f6b35d731f74365861956127a8e10d7f188a93c598",
+    "rubric.json": "2ccccabd12bac14254f6ff0fc447dc856b8dbf6755e0b5a567bed9b4d8f96934",
+    "task.md": "605eaea3498151f56829775c6bbf541ff0bf7d6c64f3767b6ff029d074238454"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "39cbd5e65c0b12c0ba756ab0c5d6ee94562251b2495c70138781fe127b323a48"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "7835699c33eb9537b758a48b8b22702e153f86f3fb9d42aa8590a0da5d154553"
+  },
+  "modules": [
+    {
+      "module": "FiniteObservations",
+      "source": "FiniteObservations.lean",
+      "sha256": "2e83c8a373ced40ee2a06d00b7c3746b50220910ac12d0f5ac99a72dc16c70e6",
+      "imports": [
+        "Mathlib.Order.Filter.Ultrafilter.Basic",
+        "Mathlib.Data.Fintype.EquivFin",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ProgressiveObservations",
+      "source": "ProgressiveObservations.lean",
+      "sha256": "c5b14c6526133d8992eabea4bc21ea625d5ddcaef7e2f2e326a24a5eeec776c3",
+      "imports": [
+        "FiniteObservations",
+        "Mathlib.Topology.Compactification.StoneCech"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "daf7805c9d6a8717f1c26195cf5e89a344e94fb45b09679cbd4625da5d549721",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

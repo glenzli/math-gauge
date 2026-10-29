@@ -1,0 +1,296 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GF109",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "RecordLayers",
+          "name": "MathGauge.F109.layers_decreasing"
+        },
+        {
+          "module": "RecordLayers",
+          "name": "MathGauge.F109.layers_stable_tail"
+        },
+        {
+          "module": "RecordLayers",
+          "name": "MathGauge.F109.layers_stabilize"
+        },
+        {
+          "module": "RecordLayers",
+          "name": "MathGauge.F109.terminal_mem"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F109.exact_realization"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.safe_subset"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.safe_maximal"
+        },
+        {
+          "module": "OrbitModel",
+          "name": "MathGauge.F109.safe_step"
+        }
+      ],
+      "assumptions": [
+        "精确记录条件",
+        "B 有限"
+      ],
+      "quantifiers": "任意 X,Y；B 为有限集、g 任意；精确记录仅在 qx∈B 时适用。",
+      "domains": "Finset 表示任意有限 B，DecidableEq 可经典选择，无 X/Y 有限或非空限制。",
+      "conclusions": [
+        "证明 T_n 在 |B| 步稳定且 T={y∈B:g(y)∈T}",
+        "证明 K=q⁻¹(T)",
+        "证明 K 为包含于 A 的最大 f 前向不变集"
+      ],
+      "representation": "Finset 表示任意有限 B，DecidableEq 可经典选择，无 X/Y 有限或非空限制。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.stuttering_counterexample"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.stuttering_counterexample_complete"
+        }
+      ],
+      "assumptions": [
+        "改为弱记录条件",
+        "仍无任何迟延上界或最终前进条件"
+      ],
+      "quantifiers": "Bool, B={false}, q=f=id,g=const true。",
+      "domains": "弱记录成立，K={false},T=∅，精确记录失败。",
+      "conclusions": [
+        "判断 K=q⁻¹(T) 是否仍成立",
+        "逐项验证弱条件、K 和 T 的有限反例",
+        "明确反例并未满足精确记录条件"
+      ],
+      "representation": "弱记录成立，K={false},T=∅，精确记录失败。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.terminal_sound_for_stuttering"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.safe_subset"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.safe_maximal"
+        },
+        {
+          "module": "OrbitModel",
+          "name": "MathGauge.F109.safe_step"
+        }
+      ],
+      "assumptions": [
+        "弱记录条件用于 q⁻¹(T) 的安全性",
+        "最大性结论只用 K 的定义"
+      ],
+      "quantifiers": "弱记录只用于终层可靠性；最大性量化任意 S⊆A，不使用记录条件。",
+      "domains": "Safe 是所有自然数迭代均在 A，不是一步安全。",
+      "conclusions": [
+        "证明 q⁻¹(T)⊆K",
+        "证明 K⊆A 且 f(K)⊆K",
+        "证明任意 S⊆A、f(S)⊆S 有 S⊆K",
+        "注明最大性不需要弱记录条件"
+      ],
+      "representation": "Safe 是所有自然数迭代均在 A，不是一步安全。",
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.orbit_eq_iterate"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.safe_orbit"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.DelayedProgress"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.safe_in_layers_delayed"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.exact_under_delayed_progress"
+        }
+      ],
+      "assumptions": [
+        "弱记录条件",
+        "另假设对每个 x∈K，存在 k≥1，使 q(f^k x)=g(qx)",
+        "k 可随 x 变化，无统一上界"
+      ],
+      "quantifiers": "∀x∈K∃k≥1，q(f^k x)=g(qx)；无共同 k 或延迟上界。",
+      "domains": "orbit_eq_iterate 连接递归轨道与通常迭代；逐层归纳同时量化所有安全点。",
+      "conclusions": [
+        "判断该条件是否恢复 K=q⁻¹(T)",
+        "证明安全核对任意正整数迭代封闭",
+        "通过逐层归纳证明 K 的记录属于每个 T_n",
+        "不引入统一迟延界或全域精确交换"
+      ],
+      "representation": "orbit_eq_iterate 连接递归轨道与通常迭代；逐层归纳同时量化所有安全点。",
+      "dependencies": [
+        "S1",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.closed_counterexample"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.exact_under_record_closed"
+        }
+      ],
+      "assumptions": [
+        "弱记录条件",
+        "已知 K=q⁻¹(T)",
+        "不假设 S4 的迟延实现条件"
+      ],
+      "quantifiers": "Bool 全集，q=f=id,g=not；等式成立但逐步精确记录失败。",
+      "domains": "安全核集合不确定记录动力学，不能逆推充分条件。",
+      "conclusions": [
+        "判断该相等是否必推出精确记录",
+        "给出 K 与 T 明确且等式成立的反例",
+        "验证精确记录在某点失败"
+      ],
+      "representation": "安全核集合不确定记录动力学，不能逆推充分条件。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F109.exact_record_unfold"
+        },
+        {
+          "module": "RecordLayers",
+          "name": "MathGauge.F109.terminal_mem"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F109.exact_realization"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F109.maximal_invariant"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.terminal_sound_for_stuttering"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.stuttering_counterexample"
+        },
+        {
+          "module": "Reference",
+          "name": "MathGauge.F109.safe_maximal"
+        }
+      ],
+      "assumptions": [
+        "以 S2 原弱条件下的待判命题为输入",
+        "附件的 Realizes 定义及实际定理参数全部展开"
+      ],
+      "quantifiers": "逐声明区分无条件有限稳定、精确记录下覆盖与弱记录下可靠性。",
+      "domains": "Realizes 为精确记录，故旧 Candidate 在弱条件下语义不对齐；S4 是另加条件而非原假设。",
+      "conclusions": [
+        "指出 Realizes 实为精确交换",
+        "分别检查稳定层、正反安全方向和最大性定理",
+        "给出弱条件下可保留结论与不可保留等式",
+        "不把新增迟延条件当成原始输入"
+      ],
+      "representation": "Realizes 为精确记录，故旧 Candidate 在弱条件下语义不对齐；S4 是另加条件而非原假设。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "attribution": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/Candidate.lean",
+      "source_sha256": "07b746ed68b7b41f61d199ab67ed1d8f99f9bc1b803847768bc55d34137e0b92",
+      "author_copy": "Candidate.lean",
+      "author_sha256": "07b746ed68b7b41f61d199ab67ed1d8f99f9bc1b803847768bc55d34137e0b92",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/OrbitModel.lean",
+      "source_sha256": "ec4d80b9458c6b40c26db71fcfc5d528625ad60b48ac0d4f8d147a698ab9e041",
+      "author_copy": "OrbitModel.lean",
+      "author_sha256": "ec4d80b9458c6b40c26db71fcfc5d528625ad60b48ac0d4f8d147a698ab9e041",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/RecordLayers.lean",
+      "source_sha256": "ce467e0e9ab8473c3c032cf4f2bbbdb2f9e6d78b69f9cb77cd372a229e4cc483",
+      "author_copy": "RecordLayers.lean",
+      "author_sha256": "ce467e0e9ab8473c3c032cf4f2bbbdb2f9e6d78b69f9cb77cd372a229e4cc483",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F109/formal/Reference.lean",
+      "source_sha256": "7ab814fc5bd9c1b48bba03bb79b586f50d2ab94df1a49c5293f67981586eada5",
+      "author_copy": "Reference.lean",
+      "author_sha256": "7ab814fc5bd9c1b48bba03bb79b586f50d2ab94df1a49c5293f67981586eada5",
+      "unchanged": true
+    }
+  ]
+}

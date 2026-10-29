@@ -4,19 +4,9 @@
 
 `scripts/isolated_cli/prepare.py` 是参数化的准备与本地审计工具，**不会启动答题或提交题面推理请求**。它生成精确输入、候选 argv、macOS 策略、探测清单和记录模板；另有显式调用的 AGY 非推理型号清单预检。新 helper 的测试只验证这些合同；不把测试成功写成某台机器已完成隔离或某个模型已运行。模型运行仍须由操作者按下面的门槛启动并保存原始证据。
 
-## 既有证据及其适用范围
-
-以下是真实历史运行，不是新 helper 生成的结果。可复用其中经验证的机制，路径、二进制和服务进程必须在每次运行时重新确定。
-
-| 历史运行 | 可核对的机制 |
-| --- | --- |
-| [Terra 独立运行](../results/recursive-operator-closure/terra61max-isolated-20261029/README.md)及 [run.py](../results/recursive-operator-closure/terra61max-isolated-20261029/runtime/run.py) | Codex CLI 0.165.0、无历史 `exec`、显式型号/effort、禁用上下文工具、外层 macOS 策略、真实打开探测及输入/答卷散列 |
-| [AGY 独立运行](../results/recursive-operator-closure/gemini38flash-high-isolated-20261029/README.md)及 [run_once.py](../results/recursive-operator-closure/gemini38flash-high-isolated-20261029/evidence/closedbook/runtime/run_once.py) | AGY 1.4.9、新数据区/会话、stream-json、实际进程策略查询、工具能力对照、全部尝试账本及凭据链接清理 |
-| [AGY 工具决定](../results/recursive-operator-closure/gemini38flash-high-isolated-20261029/tool-condition-decision.json)及 [正反能力对照](../results/recursive-operator-closure/gemini38flash-high-isolated-20261029/evidence/tool-canary-disabled/output/comparison-verdict.json) | `strict` 加 `read_url(*)` 拒绝仍曾允许 `search_web`；在诊断最终答案返回前决定排除该样本，随后用中性非数学提示验证有效白名单 |
-
 ## 1. 选定实际 CLI，冻结题面与计划
 
-使用调用者提供的二进制或一个明确的可执行文件名称检查身份。`inspect` 只执行 `--version`、`--help`，以及 Codex 的 `exec --help`，保存 stdout、stderr、argv 和文件散列；AGY 自动更新开关置为禁用。它不会升级工具，也不会检查付费推理。检查失败、二进制变化或缺少其余必需开关时停止。AGY 的 `--gemini_dir`、`--app_data_dir` 在历史 1.4.9 中虽未列于短帮助仍可用，帮助遗漏只记为未公开列出，必须另做实际非推理预检，不能据此断言不支持。不要删掉隔离开关再试。
+使用调用者提供的二进制或一个明确的可执行文件名称检查身份。`inspect` 只执行 `--version`、`--help`，以及 Codex 的 `exec --help`，保存 stdout、stderr、argv 和文件散列；AGY 自动更新开关置为禁用。它不会升级工具，也不会检查付费推理。检查失败、二进制变化或缺少其余必需开关时停止。AGY目录覆盖开关即使未列于短帮助，也必须按实际二进制进行非推理预检；帮助遗漏不能证明支持或不支持。不要删掉隔离开关再试。
 
 ```sh
 python3 scripts/isolated_cli/prepare.py inspect \
@@ -24,7 +14,7 @@ python3 scripts/isolated_cli/prepare.py inspect \
 # Codex 使用 --client codex，并显式指定准备参加本次运行的真实二进制。
 ```
 
-历史中 PATH 上的旧 Codex 曾不支持所需型号。身份检查不证明账户可用型号或最高 effort；在正式题面发送前，用该版本支持的非推理型号清单或可审查元数据确认它们并保存原始记录。缺失时记为未核实，不替换型号，不靠改模型完成预检。
+身份检查不证明账户可用型号或最高 effort；在正式题面发送前，用该版本支持的非推理型号清单或可审查元数据确认它们并保存原始记录。缺失时记为未核实，不替换型号，不靠改模型完成预检。
 
 复制 [config.example.json](../scripts/isolated_cli/config.example.json) 到题库外，替换全部占位路径。所有路径由调用者提供。`client` 为 `agy` 或 `codex`，`cli_identity` 指向刚保存的 `identity.json`，`run_dir` 必须不存在。准备只读取题面、CLI 二进制和非敏感配置；**不读取凭据内容**。
 
@@ -52,7 +42,7 @@ python3 scripts/isolated_cli/prepare.py inventory-agy --run-dir "$RUN_DIR"
 
 AGY 主 agent 文件放在 `work/.agents/agents/text-only.md`：正文为空，`tools: [finish]`、`mainAgent: true`、`subagent: false`。这是[官方 custom agents 文档](https://antigravity.google/docs/subagents/)所述工作区发现路径与工具白名单机制。`runtime/task-settings.json` 额外提供 strict/deny 防护模板；它**尚未自动激活**。操作者须按实际版本的配置机制应用到新状态或任务设置中，并从初始化元数据核实 strict 生效。不能把这个文件存在当成权限已应用。
 
-AGY 1.4.9 的历史证据表明：strict/read_url 拒绝不足以禁用搜索，`init.tools` 又是全局注册表，不能用它判定主 agent 的有效权限。正式数学运行前，在独立新状态中用同一中性非数学提示做正反能力对照：finish-only 不得完成搜索；仅为对照加入 search_web 后应能完成搜索。对照本身是模型请求，须单独获得运行授权并计数。平台内部 `manage_task` 可能保留，应如实列为内部记账；不能宣称所有工具调用为零。没有可靠的能力证明，就记录局限，不能声称闭卷条件已匹配。
+strict/read_url设置本身不能证明有效工具权限，`init.tools`全局注册表也不能代替实际权限对照。正式数学运行前，在独立新状态中用同一中性非数学提示做正反能力对照：finish-only 不得完成搜索；仅为对照加入 search_web 后应能完成搜索。对照本身是模型请求，须单独获得运行授权并计数。平台内部 `manage_task` 可能保留，应如实列为内部记账；不能宣称所有工具调用为零。没有可靠的能力证明，就记录局限，不能声称闭卷条件已匹配。
 
 AGY 如确需复用 OAuth，配置 `credential_links`，其 `source` 是调用者给出的现有文件位置，`target` 相对于新 `state/`。helper 只建立符号链接，拒绝覆盖已有文件：
 

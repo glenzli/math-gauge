@@ -1,0 +1,242 @@
+{
+  "id": "MG-GR102",
+  "parent_case_id": "MG-R102",
+  "version": "0.1.1",
+  "title": "有限轨道、规范投影与统一公式",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "有限模上的投影",
+      "kind": "construct",
+      "assumptions": [
+        "M底集有限",
+        "R任意含幺环",
+        "T为R线性"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "统一n,p,k的存在",
+        "幂等与核像及直和"
+      ],
+      "critical_errors": [
+        "对任意无限模取有限个轨道的公倍数"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "两个交换更新",
+      "kind": "construct",
+      "assumptions": [
+        "M底集有限",
+        "T,U为交换的R线性自映射",
+        "对自然性：目标系统同条件且a同时交织"
+      ],
+      "expected": "construction",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "四投影正交和为1",
+        "像的精确识别",
+        "交织映射相容"
+      ],
+      "critical_errors": [
+        "只证明T,U交换便不经证明声明任意选投影交换"
+      ],
+      "id": "S2",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "逐点有限轨道",
+      "kind": "decide",
+      "assumptions": [
+        "M任意左R模",
+        "每个x的T轨道集合有限，无统一界",
+        "自然性针对任意同环交织线性映射"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "逐点构造并由唯一性证明线性",
+        "全部核像/直和/限制自同构",
+        "任意交织映射自然性"
+      ],
+      "critical_errors": [
+        "将稳定像交等同于周期部分",
+        "使用统一幂次或除以周期"
+      ],
+      "id": "S3",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "一个多项式公式",
+      "kind": "decide",
+      "assumptions": [
+        "R=F₂",
+        "任意M和逐点有限轨道T",
+        "e_T是S3唯一投影"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S3"
+      ],
+      "required_evidence": [
+        "合法局部有限系统",
+        "排除全部有限次数多项式"
+      ],
+      "critical_errors": [
+        "只排除单个幂Tᵏ便排除所有多项式"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "有限维轨道张成",
+      "kind": "decide",
+      "assumptions": [
+        "E为Q向量空间",
+        "每个轨道的线性张成空间有限维",
+        "T线性"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S3"
+      ],
+      "required_evidence": [
+        "核验有限维张成",
+        "分别计算N、P并否定直和"
+      ],
+      "critical_errors": [
+        "把张成维数有限等同轨道集合有限"
+      ],
+      "id": "S5",
+      "points": 10,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "有限维判据与联合分解",
+      "kind": "synthesize",
+      "assumptions": [
+        "第一部分E有限维Q向量空间",
+        "第二部分M任意左R模，T,U交换且各自逐点有限轨道"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "最小多项式整除条件两个方向",
+        "不用统一多项式证明投影交换",
+        "四分解与自然性"
+      ],
+      "critical_errors": [
+        "声称所有非零谱值非零就周期",
+        "把某种证明需要统一幂次当结论必要条件"
+      ],
+      "id": "S6",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1"
+      ],
+      "changed_assumptions": "底集有限改为每条轨道集合有限",
+      "expected_truth": "true",
+      "mechanism": "统一界到逐点界",
+      "tempting_invalid_transfer": "仍使用全模统一n,p",
+      "correct_boundary": "分解用逐点存在和唯一性，不需统一幂次",
+      "target_claim": "逐点有限轨道下题定规范直和投影及全部自然性结论成立。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S3"
+      ],
+      "changed_assumptions": "规范投影要求由一个全局多项式表达",
+      "expected_truth": "false",
+      "mechanism": "存在与统一构造",
+      "tempting_invalid_transfer": "逐点幂表示拼成一个多项式",
+      "correct_boundary": "局部轨道投影自然存在但非全局多项式",
+      "target_claim": "逐点有限轨道的F₂线性系统的规范投影总是某个单一多项式p(T)。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S2",
+        "S4"
+      ],
+      "changed_assumptions": "两个交换算子各自仅逐点有限轨道",
+      "expected_truth": "true",
+      "mechanism": "替代证明与条件适用",
+      "tempting_invalid_transfer": "因无统一多项式而否定投影交换",
+      "correct_boundary": "自然性提供真正的交换证明",
+      "target_claim": "任意模上两个交换且各自逐点有限轨道的算子具有自然的N/P四项分解。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "drafts/true-goal-six-20261029/MG-R102/task.md",
+    "drafts/true-goal-six-20261029/MG-R102/reference.md",
+    "drafts/true-goal-six-20261029/MG-R102/rubric.json"
+  ],
+  "source_sha256": {
+    "drafts/true-goal-six-20261029/MG-R102/task.md": "f7413c2d2d0e2b808001bfdadbe597e26d0642ac66d723a574e725a80912718a",
+    "drafts/true-goal-six-20261029/MG-R102/reference.md": "78b15003108e64f5bedeaf2c43a9983e63105721aeba117135b56b706a1663ef",
+    "drafts/true-goal-six-20261029/MG-R102/rubric.json": "a1e1cb95b4f48d1570b86049658330419b3691aba9c73374f0a74437ecbcb26c"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。",
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/true-goal-six-20261029",
+    "case_id": "MG-R102",
+    "version": "0.1.0",
+    "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+    "case_manifest_sha256": "f3e1d7d9a1d738e396c4e18023b4e3aadcbe01ebe06a27e8ddafd6d6fed38a44"
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "schema": "math-gauge.progressive-contract/v1",
+  "id": "MG-GR019",
+  "parent_case_id": "MG-R019",
+  "version": "0.1.0",
+  "title": "超滤子代数、有限观测商与连通纤维",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "已知拓扑的有限观察商",
+      "kind": "construct",
+      "assumptions": [
+        "紧 Hausdorff X",
+        "所有开闭二值观察"
+      ],
+      "required_evidence": [
+        "实际像空间及因子连续",
+        "准分量等于分量的紧性证明"
+      ],
+      "critical_errors": [
+        "一般空间也令分量商自动 Hausdorff"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "construction",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "两个空间的共同观察",
+      "kind": "prove",
+      "assumptions": [
+        "两个紧 Hausdorff 空间",
+        "S1 的实际观察商"
+      ],
+      "required_evidence": [
+        "分量的积公式",
+        "连续双射到同胚"
+      ],
+      "critical_errors": [
+        "只比较集合不比较商拓扑"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "连通纤维的满射",
+      "kind": "prove",
+      "assumptions": [
+        "紧 Hausdorff",
+        "f 连续满射",
+        "所有纤维连通"
+      ],
+      "required_evidence": [
+        "利用闭映射分离像",
+        "分量双射及拓扑"
+      ],
+      "critical_errors": [
+        "只用逐点连通而忽略紧性闭像"
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "采用 ZFC。对集合 $X$，记 $U(X)$ 为它的全部超滤子构成的集合，$\\delta_x$ 为 $x$ 处的主超滤子。映射 $f:X\\to Y$ 的推前为\n\n$$U(f)(\\mathcal F)=\\{B\\subseteq Y:f^{-1}(B)\\in\\mathcal F\\}.$$\n\n对 $\\mathfrak W\\in U(U(X))$，定义\n\n$$m_X(\\mathfrak W)=\\{A\\subseteq X:\\{\\mathcal F\\in U(X):A\\in\\mathcal F\\}\\in\\mathfrak W\\}.$$\n\n给定集合 $X$ 和映射 $a:U(X)\\to X$，假设对每个 $x\\in X$ 及 $\\mathfrak W\\in U(U(X))$ 有\n\n$$a(\\delta_x)=x,\\qquad a(m_X(\\mathfrak W))=a(U(a)(\\mathfrak W)).$$",
+        "涉及第二组代数数据时，Y 是任意集合且 b:U(Y)→Y 满足与 a 相同的单位律和乘法律；有限集合 A 的 b_A:U(A)→A 选取超滤子内唯一单点集的点，有限值观测指满足 f∘a=b_A∘U(f) 的 f:X→A。"
+      ],
+      "required_evidence": [
+        "Starting only from the supplied set and two algebra equations, construct an actual topology and prove it is compact and Hausdorff.",
+        "Prove the exact ultrafilter convergence specification and uniqueness of the topology.",
+        "Construct the reverse operation from every compact Hausdorff topology and verify both algebra equations and both object round trips.",
+        "Prove that all algebra-compatible set maps are exactly all continuous maps for the constructed topologies, with the same identities and compositions.",
+        "Construct an actual profinite P and continuous surjection q from the reconstructed X such that every continuous map into every profinite target factors uniquely through q.",
+        "Identify the exact fibres of q and prove the necessary-and-sufficient injectivity criterion in terms of the original algebra operation and finite algebra observations; verify the full finite-observation kernel, not only one containment."
+      ],
+      "critical_errors": [
+        "Presuppose a topology on X or use continuity of the input a before constructing and validating its topology.",
+        "Package compactness, Hausdorffness or the desired convergence as an input certificate.",
+        "Define purported closed sets or quotient topology but omit the topology/separation or closure-law proof.",
+        "Use the algebra associativity equation on the wrong ultrafilter level.",
+        "Prove existence of a chosen limit but not uniqueness, or prove a weaker convergence implication than required.",
+        "Identify morphisms only in one direction or assume the map is continuous when proving the algebra-to-topology direction.",
+        "Assume an arbitrary quotient by connected components is Hausdorff without using the reconstructed compact Hausdorff hypotheses.",
+        "Identify only one direction between common finite-observation fibres and the proposed quotient fibres.",
+        "Prove factorization for finite targets only and claim the stated universal property for all profinite targets without an argument.",
+        "Silently assume that the reconstructed topology is totally disconnected or that its finite observations separate points."
+      ],
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "points": 25,
+      "expected": "true",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "代数侧的乘积构造",
+      "kind": "construct",
+      "assumptions": [
+        "两超滤子代数",
+        "实际坐标推前和乘法"
+      ],
+      "required_evidence": [
+        "乘法自然性的成员公式",
+        "代数律及拓扑唯一性",
+        "观察商"
+      ],
+      "critical_errors": [
+        "把 U(X×Y) 误认为 U(X)×U(Y)"
+      ],
+      "depends_on": [
+        "S2",
+        "S4"
+      ],
+      "points": 15,
+      "expected": "construction",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "观察商同构的逆向",
+      "kind": "decide",
+      "assumptions": [
+        "紧 Hausdorff",
+        "连续满射",
+        "诱导观察商同胚"
+      ],
+      "required_evidence": [
+        "完整纤维反例",
+        "正确识别两观察商"
+      ],
+      "critical_errors": [
+        "把充分条件连通纤维反用为必要条件"
+      ],
+      "depends_on": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "points": 15,
+      "expected": "false",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S3"
+      ],
+      "changed_assumptions": "不再预先提供拓扑，只给两个超滤子代数等式",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "在构造拓扑前先使用 a 连续或 X 紧 Hausdorff",
+      "correct_boundary": "须从代数重建并验证拓扑，再应用有限观察商",
+      "mechanism": "construction_vs_assumed_structure",
+      "scope": "stage",
+      "target_claim": "原两个超滤子代数等式足以恢复实际紧 Hausdorff 拓扑、全部相容映射及有限观察商的所有题定性质。"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S3",
+        "S4"
+      ],
+      "changed_assumptions": "将连通纤维推出观察商同构逆向使用",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把商层面的同构当成每条原纤维的拓扑信息",
+      "correct_boundary": "有限观察只区分连通分量",
+      "mechanism": "necessary_sufficient_reversal",
+      "scope": "stage",
+      "target_claim": "紧 Hausdorff 空间之间的连续满射若诱导有限观察商同构，则每条原映射纤维必连通。"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R019/task.md",
+    "cases/public/MG-R019/reference.md",
+    "cases/public/MG-R019/rubric.json",
+    "cases/public/MG-R019/case.json",
+    "cases/public/MG-R019/sources.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.4.0",
+    "parent_source_ids": [
+      "manes-compact1969",
+      "mathlib-ultrafilter-pinned",
+      "profinite-component-reflection"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  }
+}

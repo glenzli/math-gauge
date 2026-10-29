@@ -1,0 +1,107 @@
+{
+  "schema": "math-gauge.benchmark-validation/v1",
+  "recorded_at_utc": "2026-10-30T13:38:33.203747+00:00",
+  "baseline_commit": "6a48027baa33e06e913a554fb8bac9394a82b480",
+  "candidate_model_calls": 0,
+  "lean_recompiled": false,
+  "scope": "Current benchmark only, tested in independent source export without Git or retired directories",
+  "source_export": {
+    "path": "verification/source-export.json",
+    "sha256": "30255759b8574f6c3f249d8174679cb4fbafe97e84cf9785343b79d2092ac959",
+    "files": 1966,
+    "files_sha256": "4fb68d41ef69c111769194bf109e60912028f7fb06ba51e750dd5acb96a821f2",
+    "git_present": false,
+    "retired_directories_present": false
+  },
+  "unit_tests": {
+    "command": "python3 -m unittest discover -s tests",
+    "exit_code": 0,
+    "ran": 194,
+    "passed": 177,
+    "skipped": 17,
+    "seconds": 18.486,
+    "skip_reason": "Explicit optional live Lean compiler/environment tests; no compiler claim inferred from skips"
+  },
+  "benchmark_helper_tests": {
+    "command": "python3 scripts/benchmark/test_runtime.py",
+    "exit_code": 0,
+    "ran": 10,
+    "passed": 10,
+    "seconds": 0.195
+  },
+  "suite": {
+    "command": "python3 -m math_gauge validate",
+    "exit_code": 0,
+    "cases": 43,
+    "suite_sha256": "643fdbb579ebf22437136e92ca84ec602be6dad9ebc3e40f9d5517708f4ef371",
+    "human_approved": 0
+  },
+  "catalog": {
+    "command": "python3 scripts/catalog.py --check",
+    "exit_code": 0,
+    "sha256": "579fa3b6653cedf2c01ba862782a0408cc3df93dfaf09261819d47bc36719f02"
+  },
+  "protocol": {
+    "command": "python3 scripts/validate_protocol.py",
+    "exit_code": 0,
+    "receipt_sha256": "5352f882fa7a3e1d1dced3e25d691d32f89e24d18296bf2d32d738ff20c15daf",
+    "candidate_projections": 43,
+    "mandatory_obligations": 372,
+    "frozen_messages": 48,
+    "planned_slots_per_model": 177
+  },
+  "author_evidence": {
+    "command": "python3 scripts/formal/check_evidence.py",
+    "exit_code": 0,
+    "ledger_sha256": "f9c932eab7e70c8e5f42515e1586c885d9c90e640b1eb8d824cabd8601c61bdf",
+    "counts": {
+      "papers": 43,
+      "fully_formalized_papers": 42,
+      "items": 372,
+      "complete_items": 369,
+      "modules": 447,
+      "declarations_with_per_case_repetition": 11029
+    },
+    "reuse_basis": "All candidate/mathematical and Lean source bytes unchanged; original compiler and independent semantic review identities verified; GP003 partial retained"
+  },
+  "navigation": {
+    "status": "passed",
+    "current_navigation_documents": 29,
+    "local_links": 918,
+    "legacy_directories_present": false
+  },
+  "packaged_consumer": {
+    "path": "verification/packaging.json",
+    "sha256": "3db16bb4b4979ac183004ca693c00fae2928769477300b3ffb94ec15da18a1bb",
+    "wheel_sha256": "40130d93c6842066a767a18f2eeb1b1defdf845fd4c402979b72d934319deed6",
+    "installed_default_cases": 43,
+    "exact_candidate_exports": [
+      "MG-GR001",
+      "MG-GF101",
+      "MG-C002"
+    ],
+    "engine_and_audit_templates_available": true,
+    "installed_checker_import_and_pinned_ledger": true,
+    "network": false
+  },
+  "independent_engineering_review": {
+    "requested_model": "gpt-6.1-sol",
+    "requested_reasoning_effort": "max",
+    "open_findings": 0,
+    "resolved": [
+      {
+        "finding": "Protocol refresh could absorb changed mathematics",
+        "fix": "Read-only author evidence validation before any refresh write",
+        "regression": "Unselected task, reference and valid contract mutations rejected; no packet writes",
+        "independent_fix_review": "confirmed by benchmark_formal"
+      },
+      {
+        "finding": "Retained checked ledger digest was not enforced",
+        "fix": "Validate fixed migration digest before parsing baseline rows",
+        "regression": "Edited original baseline rejected before binding writes",
+        "independent_fix_review": "confirmed by benchmark_runtime"
+      }
+    ]
+  },
+  "git_diff_check": "passed"
+}

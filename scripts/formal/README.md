@@ -1,10 +1,61 @@
-# 参考 Lean 复核
+# 作者 Lean 与证据复核
 
-这里核验作者参考形式化，不评判候选答卷，也不代表人工审定。每题 `formal/manifest.json` 固定该题的 task、reference、rubric、COVERAGE 字节散列、显式模块顺序和 Lean 源码散列。`CurrentAudit.lean` 是共用模板生成的逐题审计入口；联合作者 Audit 和旧 R001 审计保留为历史证据。
+这里核验作者参考形式化，不运行候选模型，也不代表人工审定。唯一题目目录是 [`cases/suite.json`](../../cases/suite.json)，包含 43 份当前试卷。作者证据及独立语义审核见 [`verification/author/`](../../verification/author/README.md)。42 份试卷完整覆盖；GP003 的 S1、S2、S5 保留明确缺口，372 项义务中完成 369 项。编译通过、完整语义对应、独立 AI 审核和人工批准分别记录。
 
-需要 Python 3.10+、Lean **4.29.1**，以及一个已有的 Lake 依赖项目。该项目的 `lake-manifest.json` 必须包含 Mathlib 修订 **5e932f97dd25535344f80f9dd8da3aab83df0fe6**，对应依赖已有可用编译缓存，Mathlib 的实际 Git HEAD 相同且 tracked sources 无改动。验证器记录锁文件、实际修订、tracked diff 状态、Lean 二进制和直接依赖缓存散列。它不下载依赖、不重编 Mathlib，也不写入依赖项目。
+## 离线复核已保存的证据
 
-以上是兼容既有证据的默认 profile `lean-4.29.1`；旧 manifest 无需增加字段，旧 `CurrentAudit.lean` 模板及依赖收据格式保持不变。另有代码内固定白名单 profile `lean-4.36.0-rc1-tauceti`，用于明确依赖公开 TauCeti 的独立题目。该 profile 的 manifest 必须同时声明：
+普通源码导出或浅克隆只需 Python 3.10+，不需要 Git 历史、Lean 安装、临时构建目录或依赖缓存：
+
+```sh
+python3 scripts/formal/check_evidence.py
+```
+
+该命令不调用 Git、Lean 或模型，不写文件。它检查当前清单、原始编译报告、保存的编译及公理审计日志、实际声明清单、逐项对应表和独立语义审核的全部有效源码散列，并与当前证据账本比较。原始报告中的临时绝对路径只是当时执行的记录，不要求这些路径今天仍然存在。已保存的 olean 散列和依赖收据不等于重新检查当前机器上的编译器或缓存。
+
+每题 `formal/manifest.json` 使用 `math-gauge.formal-case/v2`，固定当前 `case.json`、task、reference、rubric、题组合同、全部候选附件、COVERAGE、逐项 alignment、显式有序模块和生成的 CurrentAudit。题目声明 `path_base: "case"`，其中的材料路径相对本题目录。旧 suite 相对路径仍用于小型兼容合同测试，不保留第二份历史题库。
+
+目录迁移只改变路径及指定的评审元数据；数学材料、候选附件、Lean 源码、COVERAGE 和 alignment 的字节不变。迁移没有重新编译：
+
+- `formal/checked-case.json` 和 `checked-manifest.json` 保留真实编译时的原始字节。
+- `verification-report.json`、日志和 `declarations.json` 保留原始字节及时间戳，报告仍绑定 checked manifest。
+- `formal/input-binding.json` 分别固定原始与当前 case/manifest 散列，记录基线提交和旧、新目录。校验只允许路径变更、case 所属 evaluator 引用重排，以及从原 alignment 推导的 `review.formalization` 状态；题号、版本、人工状态和其余元数据必须相同。
+- `verification/author/checked-ledger.json` 保留迁移前的账本，固定原始报告、manifest、声明清单及独立审核散列。当前 `ledger.json` 另行记录迁移后的路径和绑定，不改写旧编译身份。
+- `verification/layout.json` 是旧目录到当前目录的显式映射。独立审核中的旧 `case.json` 与 `formal/manifest.json` 散列解析到 checked copies，其他源码散列必须与实际当前字节一致。缺失映射或失效散列都失败。
+
+仅在有意建立或重建上述元数据迁移收据时使用：
+
+```sh
+python3 scripts/formal/check_evidence.py --bind-all --write
+```
+
+它先检查原始证据、数学字节和允许的元数据差异，再写绑定及当前账本；不能用来吸收数学、Lean 或旧编译报告的修改。后续源码变化需要新的真实编译与语义复核，不能通过重算旧报告散列宣称证据仍然有效。
+
+## 编写和冻结作者工程
+
+先写真实证明、`COVERAGE.md` 和逐项 `alignment.json`，再显式按依赖顺序列出模块：
+
+```sh
+python3 scripts/formal/prepare_author.py \
+  --case cases/proofs/MG-GR103 \
+  --module BlockFixedPoints --module TransferBoundaries
+```
+
+该命令只生成清单和审计源码，不编译，不自动发现模块，也不生成覆盖结论。每条 alignment 记录实际声明、假设、量词、定义域、结论、表示方式、依赖及未完成范围；它必须覆盖合同中的全部阶段或章节义务。`complete` 必须列出实际声明且没有已知缺口，未闭合部分使用 `partial` 或 `pending`。
+
+## 真实编译
+
+编译需要一个已有、固定依赖且带可用缓存的 Lake 项目。共用入口只将本题全新输出、固定包缓存和 Lean 标准库放入 `LEAN_PATH`。源码旁的旧 olean、兄弟题输出、环境中的 `LEAN_PATH` 和依赖项目自己的构建目录均被排除；输出目录必须尚不存在。
+
+默认 profile 为 `lean-4.29.1`：Lean **4.29.1**，Mathlib 修订 **5e932f97dd25535344f80f9dd8da3aab83df0fe6**。验证器检查锁文件、实际 Mathlib HEAD、tracked sources、编译器与直接依赖缓存身份；不下载依赖或重编 Mathlib。
+
+```sh
+python3 scripts/formal/verify.py \
+  --manifest cases/proofs/MG-GR001/formal/manifest.json \
+  --dependency-root /absolute/path/to/pinned-dependency-project \
+  --out /absolute/path/to/new-author-output
+```
+
+只有 MG-GP001 使用固定白名单 profile `lean-4.36.0-rc1-tauceti`：
 
 ```json
 {
@@ -15,62 +66,39 @@
 }
 ```
 
-新 profile 的依赖项目须有相同 `lean-toolchain`，锁定 `.lake/packages/TauCeti`、Mathlib 及其八个传递依赖；全部十包的名称和精确修订由验证器代码中的白名单固定，不能由 manifest 扩大。各包必须是独立 Git checkout，HEAD 精确相符且 tracked sources 无改动。包目录可链接到已有的固定 checkout；依赖项目自身的构建目录仍不可信。TauCeti 和 Mathlib 必须已有编译库；直接导入的缓存仍逐项检查并记录散列。
+该 profile 的 Lake 项目须使用相同 toolchain，锁定 TauCeti、Mathlib 及八个传递依赖。全部十包的名称和精确修订由 `verify.py` 固定；每包须有独立、干净且 HEAD 相符的 checkout，TauCeti 与 Mathlib 须已有编译库。清单不能扩充依赖政策；未知 profile、部分迁移或混用依赖均拒绝。使用 `--lean /absolute/path/to/lean` 可选择明确的编译器。
 
-新 profile 使用独立 `audit-4.36.lean.in`，生成方式为 `render_audit(ordered_modules, "lean-4.36.0-rc1-tauceti")`。它对所有审计根调用公开 `Lean.collectAxioms` 并取完整公理并集，保持相同的三公理白名单和私有声明覆盖。用共用 `verify.py --manifest … --dependency-root … --lean … --out …` 运行；一次调用只能选择同一 profile。新配置不改变默认题集或旧 profile，未知 profile、部分迁移及 profile/依赖混用均拒绝。
-
-默认公开二十题各用独立的新输出目录：
+`verify_suite.py` 从同一 `cases/suite.json` 读取全部试卷，再按 profile 选择编译子集。默认 profile 选择 42 份；TauCeti profile 选择 GP001 一份。报告明确列出全题库数量、选中数量及未选中的题目；单次通过不代表两个 profile 均已编译。
 
 ```sh
 python3 scripts/formal/verify_suite.py \
   --dependency-root /absolute/path/to/pinned-dependency-project \
-  --out /absolute/path/to/new-verification-output \
-  --jobs 2
+  --profile lean-4.29.1 --out /absolute/path/to/new-default-output --jobs 2
+python3 scripts/formal/verify_suite.py \
+  --dependency-root /absolute/path/to/pinned-tauceti-project \
+  --profile lean-4.36.0-rc1-tauceti \
+  --lean /absolute/path/to/lean-4.36.0-rc1 \
+  --out /absolute/path/to/new-tauceti-output
 ```
 
-默认使用 PATH 上的 Lean；也可显式传 `--lean /absolute/path/to/lean`。逐题入口支持同样的依赖与输出参数：
+## 证据边界与合同测试
 
-```sh
-python3 cases/public/MG-R001/formal/verify.py \
-  --dependency-root /absolute/path/to/pinned-dependency-project \
-  --out /absolute/path/to/new-r001-output
-```
+v2 审计显式模块内所有命名空间的全部本地声明，包括 private helpers、定义、实例、归纳类型和生成声明，并收集每个根的完整公理闭包；只允许 `propext`、`Classical.choice`、`Quot.sound`。对应表引用的声明必须存在于实际编译清单中。`declarations.json` 的数目是声明数，不是定理数。v1 保留为兼容验证合同，使用既有 MathGauge 命名空间审计模板，不对应另一份正式题库。
 
-共用入口也接受一个或多个显式 `--manifest`。`--out` 必须尚不存在，不能覆盖以前的日志或复用题目输出。每题源码复制到自己的 fresh sources 目录，olean 和日志另存；只把该题 olean、依赖包缓存和 Lean 标准库加入 LEAN_PATH。题目源码旁的旧 olean、兄弟题构建、环境里的 LEAN_PATH，以及依赖项目自身的构建库均不进入搜索路径。共享数学辅助模块须在每题 manifest 的闭包中明确出现并锁定相同散列。
-
-独立题集中的 `MG-P001` 等 `MG-P` 三位题号，以及 Lean 对齐题集的 `MG-F101` 等 `MG-F` 三位题号，也使用这个入口和相同的文件、公理审计合同；它们不自动加入默认二十题清单。现行全部 41 题的覆盖另见[习题账本](../../exercises/instructor-guide.md)。编译报告的 `passed` 只表示清单内模块通过核验。是否覆盖完整题面，仍须逐项核对 COVERAGE 与语义审查，不能将辅助模块通过改写为整题形式化完成。
-
-新增题组 `MG-GR/GP/GF` 和章节卷 `MG-C` 使用 `math-gauge.formal-case/v2`。除有序模块闭包之外，v2 绑定当前 `case.json`、题面、参考、评分标准、题组合同及全部候选附件；章节卷的 `candidate/task.md` 也按实际路径绑定。每个 `formal/alignment.json` 必须与合同的阶段或义务逐项对应，记录实际声明、假设、量词、定义域、结论、表示方式、依赖和未完成范围。`complete` 项必须列出声明且没有已知缺口；部分覆盖如实使用 `partial` 或 `pending`。
-
-先写真实证明、`COVERAGE.md` 和逐项对应表，再显式列出模块生成冻结清单：
-
-```sh
-python3 scripts/formal/prepare_author.py \
-  --case drafts/progressive-groups-20261030/MG-GR103 \
-  --module BlockFixedPoints --module TransferBoundaries
-```
-
-该命令只生成清单及审计源码，不编译也不生成覆盖结论。随后用上面的共用 `verify.py` 在新输出目录核验。v2 审计显式模块内的全部本地声明，包括非 `MathGauge` 命名空间和私有声明；对应表引用的声明必须实际出现在编译后的清单中。依赖包的公理仍由每个根的完整依赖闭包检查。原 v1 模板、历史源码与报告不改写。
-
-清单一致、声明存在和编译通过都不能自动证明题面等价。语义复核须检查每项的实际定理类型和定义展开，尤其是量词顺序、空域、严格/非严格边界、无穷值、代表元选择、反例满足的全部前提，以及前序题的加强条件是否被误带入。作者自述、独立 AI 审核与人工批准分别记录。
-
-v1 动态审计遍历实际载入的全部 `MathGauge` 常量；v2 遍历显式本地模块的所有命名空间。两者均包含恢复私有名称后的辅助声明、定义、实例、归纳类型、生成声明和定理，遍历全部根的完整公理依赖闭包，仅允许 `propext`、`Classical.choice`、`Quot.sound`。结果中的声明数不能称为定理数。`declarations.json` 分别记录每个声明的名称、原用户名称、模块和种类。
-
-新增43份试卷的[作者证据账本](../../results/author-lean-20261030/README.md)将固定输入、逐项语义审核和编译报告分别绑定。冻结参考或原作者合同中的“当时未生成 Lean”是历史状态；本轮增补状态以该账本和当前 `formal/` 为准，不能改写冻结参考制造事前已有证明的记录。
-
-每题 `report.json` 记录原始命令、源码/日志/olean 散列及公理审计；总报告记录逐题状态和 manifest 散列。坏散列、题目绑定变化、未证明占位符、缺失依赖、错误模块顺序、被替换的审计源码或额外公理都会失败。源码或依赖身份变化后，旧报告不能直接复用。
-
-必要工程合同测试：
+编译和声明存在都不证明题面等价。独立语义复核须检查实际定理类型和定义展开，包括量词顺序、空域、严格边界、无穷值、代表元选择、反例前提和额外条件。作者自述、独立 AI 审核与人工批准保持区分；作者参考的通过不能代替候选工程验收。
 
 ```sh
 python3 -m unittest discover -s tests -p test_formal_verifier.py
+```
+
+可选的真实内核合同测试使用小型临时 fixture，不重编全部作者模块：
+
+```sh
 MATH_GAUGE_TEST_DEPENDENCY_ROOT=/absolute/path/to/pinned-dependency-project \
   python3 -m unittest discover -s tests -p test_formal_verifier.py
-MATH_GAUGE_TEST_TAUCETI_ROOT=/absolute/path/to/pinned-tauceti-dependency-project \
+MATH_GAUGE_TEST_TAUCETI_ROOT=/absolute/path/to/pinned-tauceti-project \
   MATH_GAUGE_TEST_TAUCETI_LEAN=/absolute/path/to/lean-4.36.0-rc1 \
   python3 -m unittest discover -s tests -p test_formal_verifier.py
 ```
 
-后两条分别在对应 profile 下真实编译小样例，验证 private helpers 的覆盖、额外 axiom 的拒绝及外部 LEAN_PATH 的排除；4.36 另检查模块系统中未使用的 private axiom。缓存复用只限现有依赖；实际题目模块由当前固定源码重新编译。覆盖的数学范围与可选旁支边界由逐题 COVERAGE 和语义审核说明，不能由编译或声明总数替代。
-
-如果只改逐题 COVERAGE 的呈现，旧编译报告保留原字节。`rebind_coverage.py` 可在写入新 ledger 前重查原模块、CurrentAudit、三份冻结输入、编译器、依赖缓存、原编译产物和日志，只允许 manifest 的 `coverage.sha256` 改变。它保存旧 manifest/ledger，并生成 `evidence-reuse.json`；current-formal 同时指向原编译报告与该重绑定收据。任何 Lean 源码、审计或依赖变化都要求重新编译，不能使用该文档重绑定流程。
+这些测试检查 private helpers、额外 axiom 和外部 `LEAN_PATH` 的排除。普通离线测试另检查数学或源码变动、元数据越界、报告或审核篡改、缺失声明、局部 axiom、日志与审计清单不一致及合法迁移。没有源码变化时，目录整理复用已保存的真实证据。

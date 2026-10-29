@@ -1,0 +1,87 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR016",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "ebcd56020d81a85cabdda9835ae2696b2cd5d20bbd4aeb53132f5d4202db39d3",
+    "contract.json": "493a232381b0debd580c1c8aa6e8954bd42a221f277bf631bc06630126ea62de",
+    "reference.md": "9ce818a10f31011bd5f3e7273eff1efbc816e46c90eb87df2b0a9db2a58f3dd9",
+    "rubric.json": "bc9085e549ce2d84b30521c09d881ad764f54a549947065df73199ddb116a7f4",
+    "task.md": "18bc72dd9a110ec2c7b58fa90fb6c229a4b09465a2dea71cac924cdbd14583cf"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "b025aa0092017dcc0bd57cdf9e5ca4f1bb3a9f338028aac9a6a6c2fde896b61e"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "d9d0bdeb935e536c47bedc6f2beca864436c0e7d1024b622b7fa681e8bec3873"
+  },
+  "modules": [
+    {
+      "module": "LocalSplitting",
+      "source": "LocalSplitting.lean",
+      "sha256": "d097b5f9464ec38478093b67e495094733c6ded317192fca39ad56f8a39206c1",
+      "imports": [
+        "Mathlib.Data.ZMod.Basic",
+        "Mathlib.RingTheory.Localization.AtPrime.Basic",
+        "Mathlib.RingTheory.Localization.Module",
+        "Mathlib.RingTheory.Localization.BaseChange",
+        "Mathlib.RingTheory.Finiteness.Basic",
+        "Mathlib.Algebra.Module.LocalizedModule.Exact",
+        "Mathlib.LinearAlgebra.Basis.VectorSpace",
+        "Mathlib.LinearAlgebra.Quotient.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "SplittingClassification",
+      "source": "SplittingClassification.lean",
+      "sha256": "8a228c8624af57a3fc9a2dbd176ebb5b9195f03b05384418ddb7c7110df58ae8",
+      "imports": [
+        "LocalSplitting",
+        "Mathlib.RingTheory.LocalProperties.Projective",
+        "Mathlib.LinearAlgebra.Prod",
+        "Mathlib.RingTheory.Ideal.IdempotentFG"
+      ]
+    },
+    {
+      "module": "IdempotentSections",
+      "source": "IdempotentSections.lean",
+      "sha256": "051500458287d7de5cc39a637df6bcfc79c6acd2f5fc780a31d02ab5f5495417",
+      "imports": [
+        "SplittingClassification"
+      ]
+    },
+    {
+      "module": "PrincipalGluing",
+      "source": "PrincipalGluing.lean",
+      "sha256": "ce4581741f5ddf2a4cb5c3b9c594420369b355a58278c196b0a6e440fa555c45",
+      "imports": [
+        "IdempotentSections",
+        "Mathlib.Algebra.Module.LocalizedModule.Away"
+      ]
+    },
+    {
+      "module": "GluedSections",
+      "source": "GluedSections.lean",
+      "sha256": "2d857423f1e5280c4fb8a3df5cede64b05a7e191cbf015977037c687ae1f0ca6",
+      "imports": [
+        "PrincipalGluing"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "8e78525516091cf3e55c298dcc9f7390bf6e74391a724e10da0c08e8e39d4770",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

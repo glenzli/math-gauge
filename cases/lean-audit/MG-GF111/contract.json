@@ -1,0 +1,262 @@
+{
+  "id": "MG-GF111",
+  "version": "0.1.1",
+  "parent_case_id": "MG-F111",
+  "title": "扩展非负界、有限子域与统一常数",
+  "track": "determinate",
+  "task_kind": "audit",
+  "stages": [
+    {
+      "id": "S1",
+      "title": "正有限分母域",
+      "kind": "prove",
+      "depends_on": [],
+      "assumptions": [
+        "对所有 x，0<d(x)<∞",
+        "X 可为空",
+        "c 可为 0 或 ∞"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 Bound(c)↔r≤c",
+        "检查 c=0、c=∞ 及空 X",
+        "给出除法不等式所需非零有限条件"
+      ],
+      "critical_errors": [
+        "在 d=0 或∞ 时无条件使用除法等价",
+        "误把 c 限制成正有限"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S2",
+      "title": "加入零分母点",
+      "kind": "prove",
+      "depends_on": [
+        "S1"
+      ],
+      "assumptions": [
+        "允许 d(x)=0",
+        "仍排除 d(x)=∞",
+        "其余如总设定"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 Bound(c)↔Z∧r≤c",
+        "证明零分母分支与 c 无关",
+        "保留 c=∞"
+      ],
+      "critical_errors": [
+        "用 c=∞ 掩盖零分母处正 e",
+        "遗漏 ENNReal 的∞·0=0"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S3",
+      "title": "完整域与最小值取得",
+      "kind": "prove",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "assumptions": [
+        "d、e 任意 ENNReal 值",
+        "X 任意",
+        "不增加有限性或非空性"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 Bound(c)↔Z∧r≤c∧(c=0→H)",
+        "证明有限系数存在 iff Z∧r≠∞",
+        "证明有限最小值存在 iff Z∧r≠∞∧(r=0→H)，且值为 r"
+      ],
+      "critical_errors": [
+        "把正系数时∞分母分支的规则延伸到 c=0",
+        "把下确界为 r 等同 r 自动可行",
+        "只证明存在性而漏最小值分类"
+      ],
+      "points": 20,
+      "lean_required": false
+    },
+    {
+      "id": "S4",
+      "title": "每个有限子域可控",
+      "kind": "decide",
+      "depends_on": [
+        "S2",
+        "S3"
+      ],
+      "assumptions": [
+        "X 可无限",
+        "每个有限 F⊆X 都存在有限 c_F 使 ∀x∈F,e(x)≤c_F d(x)",
+        "c_F 无统一上界"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断全域是否必存在有限系数",
+        "给逐有限子域可行而全域不可行的反例",
+        "验证每个有限子域的有限界与全域 r=∞"
+      ],
+      "critical_errors": [
+        "把任意有限子域量词换成单个共同 c",
+        "只展示某一个局部常数不够大"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S5",
+      "title": "统一有界的有限子域证据",
+      "kind": "decide",
+      "depends_on": [
+        "S3",
+        "S4"
+      ],
+      "assumptions": [
+        "存在固定有限 C",
+        "每个有限 F⊆X 有某个 c_F≤C 满足 F 上全部不等式"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 Bound(C)",
+        "只使用单点子域与乘法单调性即可",
+        "处理 X 为空及 d=0、∞ 的边界"
+      ],
+      "critical_errors": [
+        "错误要求 c_F 必相同或最小",
+        "在∞分母边界使用非法除法"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S6",
+      "title": "完整分类代码审计",
+      "kind": "audit",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "assumptions": [
+        "以 S3 为原目标",
+        "含附件给定的边界例子"
+      ],
+      "expected": "aligned",
+      "required_evidence": [
+        "核对上确界仅在正有限分母子类型上取",
+        "核对所有 c 与有限/最小分类",
+        "核对 Unit 无限分母正分子例子的未取得最小值",
+        "说明 S4/S5 不由旧编译自动覆盖"
+      ],
+      "critical_errors": [
+        "把无限分母点加入通常 e/d 上确界而漏零系数条件",
+        "要求 X 有限或非空",
+        "把 finite_exists 与 least_exists 混同"
+      ],
+      "points": 20,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "把一个全域有限系数改为每个有限子域各自有系数，无统一上界",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "从所有有限子域可行直接交换 ∀F∃c_F 为 ∃c∀x",
+      "correct_boundary": "局部系数可无界，原 r 会变成∞",
+      "mechanism": "local-to-global and quantifier exchange",
+      "target_claim": "每个有限子域有各自有限可行系数，足以推出全域有一个有限可行系数。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S3",
+        "S4"
+      ],
+      "changed_assumptions": "给所有局部系数加入共同有限上界 C",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "以为需要相同局部系数或最优值取得",
+      "correct_boundary": "单点子域和乘法单调性直接证 C 全域可行",
+      "mechanism": "uniform bound restores globalization",
+      "target_claim": "若每个有限子域都有不超过共同有限 C 的可行系数，则 C 是全域可行系数。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "drafts/lean-alignment-20261029/MG-F111/task.md",
+    "drafts/lean-alignment-20261029/MG-F111/reference.md",
+    "drafts/lean-alignment-20261029/MG-F111/rubric.json",
+    "drafts/lean-alignment-20261029/MG-F111/case.json",
+    "drafts/lean-alignment-20261029/MG-F111/formal/ExtendedBounds.lean",
+    "drafts/lean-alignment-20261029/MG-F111/formal/CoefficientClassification.lean",
+    "drafts/lean-alignment-20261029/MG-F111/formal/BoundaryExample.lean",
+    "results/failure-analysis-20261030/README.md",
+    "results/failure-analysis-20261030/lean-failures.json"
+  ],
+  "source_attachments": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F111/formal/ExtendedBounds.lean",
+      "target": "ExtendedBounds.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F111/formal/CoefficientClassification.lean",
+      "target": "CoefficientClassification.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F111/formal/BoundaryExample.lean",
+      "target": "BoundaryExample.lean"
+    }
+  ],
+  "source_sha256": {
+    "drafts/lean-alignment-20261029/MG-F111/task.md": "945f70be878cb2d556d113e59e032629eb55b7a6328dbe20d9f269995c99baaf",
+    "drafts/lean-alignment-20261029/MG-F111/reference.md": "66edeedfdb8242b4028e5ea6efd791c677501b331b003bc2628b6ddfc7a63204",
+    "drafts/lean-alignment-20261029/MG-F111/rubric.json": "b1bdbda941c1914eccf111172109a054bc03971effaaa89c27bed103d1277810",
+    "drafts/lean-alignment-20261029/MG-F111/case.json": "9e47ebc9c44093d37715a6d93d026e9c7d209fbbbfbb97cdaa888c96b2466636",
+    "drafts/lean-alignment-20261029/MG-F111/formal/ExtendedBounds.lean": "aa989e8c1b64f5bae41e1268623019f1229eb124f76e57ab7faf5ea16fc4b40f",
+    "drafts/lean-alignment-20261029/MG-F111/formal/CoefficientClassification.lean": "a22d901273fc1b9e472d71786699b94e4f2398a16b43a1e20806a7de0dbc58e6",
+    "drafts/lean-alignment-20261029/MG-F111/formal/BoundaryExample.lean": "50b83782642172982537070bbafb5b8b829f0bb1ef0a0fabba5a3a133e8b76f0",
+    "results/failure-analysis-20261030/README.md": "885d88d42832a30dde970a6cc9f9c4b8b41f4233d47ebf3465ecc792d328ae32",
+    "results/failure-analysis-20261030/lean-failures.json": "40b599cd566d198ec5933ffa5f6831421ee135bb17f1d37db967bf5a6eb0bdb4"
+  },
+  "environment": {
+    "lean": "4.29.1",
+    "lean_commit": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+    "mathlib_commit": "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+  },
+  "grading": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage passes its mathematical and semantic criteria; every Lean-required stage is present in the complete submitted source and compiles without sorry or added axioms. Partial points do not constitute group pass."
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending",
+    "formalization": {
+      "status": "pending-new-obligations",
+      "new_group_compilation_performed": false,
+      "old_fixture_compilation_is_not_new_group_evidence": true
+    }
+  },
+  "required_output_files": [],
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/lean-alignment-20261029",
+    "case_id": "MG-F111",
+    "version": "0.1.0",
+    "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+    "case_manifest_sha256": "9e47ebc9c44093d37715a6d93d026e9c7d209fbbbfbb97cdaa888c96b2466636"
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "id": "MG-GF104",
+  "version": "0.1.0",
+  "parent_case_id": "MG-F104",
+  "title": "初始拓扑、子空间与分离性修复",
+  "track": "determinate",
+  "task_kind": "repair",
+  "stages": [
+    {
+      "id": "S1",
+      "title": "单个可分辨的离散观测",
+      "kind": "prove",
+      "depends_on": [],
+      "assumptions": [
+        "A 为单元素集",
+        "Y 带离散拓扑",
+        "f:X→Y 为单射",
+        "X 可为空"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明使 f 连续的最粗拓扑是 X 的离散拓扑",
+        "说明附件 assembled 在这个范围的值并检查是否满足此特殊目标"
+      ],
+      "critical_errors": [
+        "把单射条件默认为任意观测族均有",
+        "把最粗与 Lean 中最小元直接等同"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S2",
+      "title": "一般观测族的完整构造",
+      "kind": "construct",
+      "depends_on": [
+        "S1"
+      ],
+      "assumptions": [
+        "A 任意，含空指标族",
+        "X、Y_a 任意",
+        "目标拓扑任意，不假设离散或 T0"
+      ],
+      "expected": "construction",
+      "required_evidence": [
+        "构造唯一最粗 τ_f 并证明每个 f_a 连续",
+        "证明对任意 Z,s,g，Continuous g ↔ ∀a Continuous(f_a∘g)",
+        "解释 A 为空时的拓扑"
+      ],
+      "critical_errors": [
+        "保留 S1 的单射、离散或非空假设",
+        "只证明连续性或 iff 的一个方向",
+        "把可行拓扑的 sInf 当成自然语言的最粗"
+      ],
+      "points": 20,
+      "lean_required": false
+    },
+    {
+      "id": "S3",
+      "title": "限制定义域",
+      "kind": "prove",
+      "depends_on": [
+        "S2"
+      ],
+      "assumptions": [
+        "A、X、Y、f 同 S2",
+        "E⊆X 任意，含空集",
+        "E 取 τ_f 的子空间拓扑"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明子空间拓扑等于限制映射 f_a|E 的初始拓扑",
+        "明确包含映射 i:E→X 及所有合成",
+        "不假设 E 开、闭或非空"
+      ],
+      "critical_errors": [
+        "仅证明一个拓扑更细",
+        "给 E 添加开集或闭集假设"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S4",
+      "title": "联合可分辨观测",
+      "kind": "decide",
+      "depends_on": [
+        "S2",
+        "S3"
+      ],
+      "assumptions": [
+        "每个 Y_a 为 T0 空间",
+        "观测族联合单射：若 ∀a,f_a(x)=f_a(x′)，则 x=x′",
+        "A 仍允许为空"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "判断 (X,τ_f) 是否必为 T0",
+        "证明不同点能被一个开集区分",
+        "核查空指标族与空/单点 X"
+      ],
+      "critical_errors": [
+        "把联合单射错误改成每个 f_a 都单射",
+        "错误要求 A 有限或所有目标离散"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S5",
+      "title": "只保留目标的分离性",
+      "kind": "decide",
+      "depends_on": [
+        "S2",
+        "S4"
+      ],
+      "assumptions": [
+        "每个 Y_a 为 T0 空间",
+        "不再假设观测族联合单射",
+        "其余仍同 S2"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断 (X,τ_f) 是否必为 T0",
+        "给出完全明确的有限反例并计算 τ_f",
+        "解释 S4 哪条条件不再满足"
+      ],
+      "critical_errors": [
+        "沿用 S4 的联合单射但不核查",
+        "把连续到 T0 空间当成定义域 T0 的充分条件"
+      ],
+      "points": 10,
+      "lean_required": false
+    },
+    {
+      "id": "S6",
+      "title": "修复并交付完整 Lean",
+      "kind": "formalize",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "assumptions": [
+        "保持 S2 的完整范围",
+        "S3、S4、S5 各自只使用本阶段声明的条件",
+        "允许替换错误构造，但不得增加原目标假设"
+      ],
+      "expected": "construction",
+      "required_evidence": [
+        "提交修复后的 Core/Construction/Candidate 及新增所需完整源码",
+        "完整形式化 S2 的连续、最粗、唯一、映入 iff 四项",
+        "形式化 S3 子空间等式、S4 T0 结论及 S5 有限反例",
+        "给出 assembled 恒为离散及一般情形失效的形式化见证",
+        "逐声明映射数学义务并真实编译、审计公理"
+      ],
+      "critical_errors": [
+        "只改定义但漏掉依赖证明",
+        "将通用 iff 改成单向或限制有限指标",
+        "把一个编译报错直接称为数学反例",
+        "仅编译 S2 而宣称全部扩展覆盖"
+      ],
+      "points": 25,
+      "lean_required": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "任意目标改为 T0，并加入观测族联合单射，仍不限制指标基数",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "把 S1 的单个离散单射条件误当成此处的必要条件",
+      "correct_boundary": "T0 只需对每对不同点找到一个能区分它们的观测",
+      "mechanism": "joint separation and local-to-global",
+      "target_claim": "目标均 T0 且观测族联合单射，则初始拓扑为 T0，其任意子空间也为 T0。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S2",
+        "S4"
+      ],
+      "changed_assumptions": "删除联合单射而保留目标 T0",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "从目标 T0 与观测连续性直接继承定义域 T0",
+      "correct_boundary": "未被观测区分的点仍可在初始拓扑中不可分辨",
+      "mechanism": "loss of observation faithfulness",
+      "target_claim": "仅各目标 T0 而无联合单射，也足以使定义域的初始拓扑 T0。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "drafts/lean-alignment-20261029/MG-F104/task.md",
+    "drafts/lean-alignment-20261029/MG-F104/reference.md",
+    "drafts/lean-alignment-20261029/MG-F104/rubric.json",
+    "drafts/lean-alignment-20261029/MG-F104/case.json",
+    "drafts/lean-alignment-20261029/MG-F104/formal/Core.lean",
+    "drafts/lean-alignment-20261029/MG-F104/formal/Construction.lean",
+    "drafts/lean-alignment-20261029/MG-F104/formal/Candidate.lean",
+    "results/failure-analysis-20261030/README.md",
+    "results/failure-analysis-20261030/lean-failures.json",
+    "results/failure-analysis-20261030/f104-independent-review.md"
+  ],
+  "source_attachments": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Core.lean",
+      "target": "Core.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Construction.lean",
+      "target": "Construction.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F104/formal/Candidate.lean",
+      "target": "Candidate.lean"
+    }
+  ],
+  "source_sha256": {
+    "drafts/lean-alignment-20261029/MG-F104/task.md": "52f911c0cdbe74289e1342807f5adf848ea00c50b38efe2bf98b9480a8662e56",
+    "drafts/lean-alignment-20261029/MG-F104/reference.md": "cc37bede7c6f2fa93faab66f8953b72a5671cc26f0018f1ae7f20145f760fbae",
+    "drafts/lean-alignment-20261029/MG-F104/rubric.json": "1d77e8c25fc9ee994969cf95de67c628c79af5a0618b2144c8426acb2cd80caa",
+    "drafts/lean-alignment-20261029/MG-F104/case.json": "4c4db79732460c18767b54203bbdae4cc0de9c26dd36f096db21023e6b5ba7c1",
+    "drafts/lean-alignment-20261029/MG-F104/formal/Core.lean": "d59012829c811a3807727ecc79ddad2d42772564e4cf48f92271bf582f3bae45",
+    "drafts/lean-alignment-20261029/MG-F104/formal/Construction.lean": "67bbe2203a4c1f57fd67a2c4788ecaff0aaf01334de888bccfb89c2dbda32e58",
+    "drafts/lean-alignment-20261029/MG-F104/formal/Candidate.lean": "7b1279b41b9f312f5a6add9cad0b3be42beaf3285e07cbaa17ac75c4f86d4abd",
+    "results/failure-analysis-20261030/README.md": "885d88d42832a30dde970a6cc9f9c4b8b41f4233d47ebf3465ecc792d328ae32",
+    "results/failure-analysis-20261030/lean-failures.json": "40b599cd566d198ec5933ffa5f6831421ee135bb17f1d37db967bf5a6eb0bdb4",
+    "results/failure-analysis-20261030/f104-independent-review.md": "5bee656e1100c23b6ace2623339644fda4b83d4aadcfc1daf821ad0906a8453f"
+  },
+  "environment": {
+    "lean": "4.29.1",
+    "lean_commit": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+    "mathlib_commit": "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+  },
+  "grading": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage passes its mathematical and semantic criteria; every Lean-required stage is present in the complete submitted source and compiles without sorry or added axioms. Partial points do not constitute group pass."
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending",
+    "formalization": {
+      "status": "pending-new-obligations",
+      "new_group_compilation_performed": false,
+      "old_fixture_compilation_is_not_new_group_evidence": true
+    }
+  },
+  "required_output_files": [
+    "Core.lean",
+    "Construction.lean",
+    "Candidate.lean",
+    "Extensions.lean"
+  ]
+}

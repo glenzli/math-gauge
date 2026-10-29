@@ -1,0 +1,97 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR020",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "6965d2f2ee691509f0ae79dbf3dcb66f563b1c10545b83d5fd36c62dfb98e8d1",
+    "contract.json": "e9e27804a35fa89cb767a415aec120ec9bb93842efd6833edf63b26c174a6acd",
+    "reference.md": "2fe3bd252d32b57e16d7e2354e96ce9d4efcfbf2e778ed15b24fc5b61b9b15bc",
+    "rubric.json": "c636b65e197ec54e8ffe8e56ba3a0261eb8aac34ddc61936494620c659ffbb4a",
+    "task.md": "1ade99789e41fdd7afc45d8a3ca8409adfa2b0dafb2c4931922e9e59e83a7987"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "2011e203562b61ee5e95ec5cf750664e26b3754a06e50b799a24fda5f3e13b48"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "0798716400732d0ef8895ce1bac825ba05b6e6de1407ecad12a0b9eadaf49f60"
+  },
+  "modules": [
+    {
+      "module": "PadicOrthogonal",
+      "source": "PadicOrthogonal.lean",
+      "sha256": "eea3913056753abfb86298654909151161360093eb2c3efa93398c0a6470d1c5",
+      "imports": [
+        "Mathlib.NumberTheory.Padics.RingHoms",
+        "Mathlib.LinearAlgebra.Matrix.NonsingularInverse",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "MatrixAdic",
+      "source": "MatrixAdic.lean",
+      "sha256": "2626468e638e53f08c860f821609da9cae81519a108d6d043fb1392f363e0eb8",
+      "imports": [
+        "PadicOrthogonal",
+        "Mathlib.RingTheory.AdicCompletion.Basic"
+      ]
+    },
+    {
+      "module": "Normalization",
+      "source": "Normalization.lean",
+      "sha256": "ea6e757322c776a828e3546e66395913bf1456f110a0e154a3eb57dc91bc9472",
+      "imports": [
+        "MatrixAdic",
+        "Mathlib.Analysis.Matrix.Order",
+        "Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute"
+      ]
+    },
+    {
+      "module": "RealAndOdd",
+      "source": "RealAndOdd.lean",
+      "sha256": "2bfb9bd80b53920c8f2803ac69ed1e7ab9e8736a8021ea1125e26d90653fc286",
+      "imports": [
+        "Normalization"
+      ]
+    },
+    {
+      "module": "ParameterGroup",
+      "source": "ParameterGroup.lean",
+      "sha256": "70b4b5bf89fa3b91a270cf1c1669dec2996dc23bfc410e7337ee16c851360062",
+      "imports": [
+        "Normalization"
+      ]
+    },
+    {
+      "module": "DeepCongruence",
+      "source": "DeepCongruence.lean",
+      "sha256": "6f200b7838fdd32fc46aefd1532a6faf47eb4e94d0ea724fffaee27e83a2d367",
+      "imports": [
+        "RealAndOdd",
+        "ParameterGroup"
+      ]
+    },
+    {
+      "module": "PadicParameter",
+      "source": "PadicParameter.lean",
+      "sha256": "1b45e7589a41a247bbd86e7e169f279b218c25ec385b7d032fd17857fc6f6d11",
+      "imports": [
+        "DeepCongruence"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "09b7dcaf460b94ec823abb384bf3a414529460ff8203c75342f895586b16bd99",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

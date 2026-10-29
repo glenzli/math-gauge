@@ -1,0 +1,248 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GF103",
+  "case_version": "0.1.1",
+  "review_kind": "author-ai-semantic-review",
+  "human_review": "pending",
+  "candidate_model_run": "not-run",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_realizes"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_coarsest"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_inbound"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_unique"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.empty_family"
+        }
+      ],
+      "assumptions": [
+        "A、X、Y_a、t_a、f_a 任意"
+      ],
+      "quantifiers": "任意指标族、源、依赖目标族与拓扑；所有测试类型 Z、s、g。",
+      "domains": "Mathlib 顺序反向，iInf induced 对应自然语言最粗，空族为⊤不可分。",
+      "conclusions": [
+        "构造 τ_t 并证明最粗性、唯一性",
+        "证明对全部 Z,s,g 的映入 iff",
+        "计算空指标族"
+      ],
+      "representation": "Mathlib 顺序反向，iInf induced 对应自然语言最粗，空族为⊤不可分。",
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.refined_targets"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.refined_identity"
+        }
+      ],
+      "assumptions": [
+        "同一 X、A、Y、f",
+        "对每个 a，t_a 比 u_a 细，即 u_a 的每个开集在 t_a 也开"
+      ],
+      "quantifiers": "同一观测映射，∀i,t_i≤u_i（t更细）；所得τt≤τu。",
+      "domains": "连续id方向为τt→τu，未声称反方向自动成立。",
+      "conclusions": [
+        "证明 τ_t 比 τ_u 细",
+        "用 S1 核对连续恒等映射方向"
+      ],
+      "representation": "连续id方向为τt→τu，未声称反方向自动成立。",
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.targets_not_recoverable"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.top_bool_not_le_bot"
+        }
+      ],
+      "assumptions": [
+        "同一 X、A、Y、f",
+        "只知 τ_t=τ_u"
+      ],
+      "quantifiers": "X=Unit,A=Unit,Y=Bool,f恒true；目标为离散与不可分。",
+      "domains": "两初始拓扑相同而两个目标拓扑确实不同，不假定观测满射。",
+      "conclusions": [
+        "判断是否必有每个 t_a=u_a",
+        "给出源、目标、观测与两个目标拓扑的完整反例"
+      ],
+      "representation": "两初始拓扑相同而两个目标拓扑确实不同，不假定观测满射。",
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.continuous_from_unit"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.point_tests_insufficient"
+        }
+      ],
+      "assumptions": [
+        "σ 是 X 上使全部 f_a 连续的拓扑",
+        "只对单点测试空间 Z=Unit 及其所有 g:Z→X 检查映入 iff"
+      ],
+      "quantifiers": "X=Bool,A=Unit,Y=Unit,f常值；σ离散可行，∀单点源拓扑和全部g均通过iff。",
+      "domains": "正确初始拓扑为不可分，与σ不同；完整单点测试量词被证明。",
+      "conclusions": [
+        "判断这些检查是否足以推出 σ=τ_t",
+        "反例需满足 σ 可行及所有单点测试",
+        "展示 τ_t 与 σ 不同"
+      ],
+      "representation": "正确初始拓扑为不可分，与σ不同；完整单点测试量词被证明。",
+      "dependencies": [
+        "S1",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.identity_test_sufficient"
+        }
+      ],
+      "assumptions": [
+        "σ 可行",
+        "唯一额外测试是 id:(X,τ_t)→(X,σ) 连续"
+      ],
+      "quantifiers": "σ可行且指定id:(X,τ)→(X,σ)连续。",
+      "domains": "两向序包含推出相等，不能删可行性或反向使用id。",
+      "conclusions": [
+        "证明此单个测试加可行性足以推出 σ=τ_t",
+        "核对恒等映射方向",
+        "解释为何不与 S4 矛盾"
+      ],
+      "representation": "两向序包含推出相等，不能删可行性或反向使用id。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_realizes"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_coarsest"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_inbound"
+        },
+        {
+          "module": "Candidate",
+          "name": "MathGauge.F103.candidate_unique"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.empty_family"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.refined_identity"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.point_tests_insufficient"
+        },
+        {
+          "module": "Extensions",
+          "name": "MathGauge.F103.identity_test_sufficient"
+        }
+      ],
+      "assumptions": [
+        "以 S1 的全范围为原目标",
+        "审核源码真实的四项声明及依赖"
+      ],
+      "quantifiers": "原输入四项覆盖S1所有测试域和空族。",
+      "domains": "Candidate 完全对齐；S2–S5 为新增证明，原输入字节与作者版本均保留。",
+      "conclusions": [
+        "核对连续、最粗、唯一、任意映入 iff 四项",
+        "解释 iInf 与自然语言最粗相容的序方向",
+        "说明空族不破坏实现",
+        "区分本次新增 S2–S5 与原输入的覆盖范围"
+      ],
+      "representation": "Candidate 完全对齐；S2–S5 为新增证明，原输入字节与作者版本均保留。",
+      "dependencies": [
+        "S1",
+        "S2",
+        "S4",
+        "S5"
+      ],
+      "gaps": []
+    }
+  ],
+  "attribution": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F103/formal/Candidate.lean",
+      "source_sha256": "10632a38bc1c917a691ec485d2c26771ebfc0a386958b3c5ee0f5b696cf42ede",
+      "author_copy": "Candidate.lean",
+      "author_sha256": "10632a38bc1c917a691ec485d2c26771ebfc0a386958b3c5ee0f5b696cf42ede",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F103/formal/Construction.lean",
+      "source_sha256": "4966cbff8240e56a327dab28584136b04a23904c48d7d79f2a83484345683f50",
+      "author_copy": "Construction.lean",
+      "author_sha256": "4966cbff8240e56a327dab28584136b04a23904c48d7d79f2a83484345683f50",
+      "unchanged": true
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F103/formal/Core.lean",
+      "source_sha256": "a4d36cc2d7a952f018e5f32327d4a8babdbcf754d6a6e79c8bcd45a5420a57c3",
+      "author_copy": "Core.lean",
+      "author_sha256": "a4d36cc2d7a952f018e5f32327d4a8babdbcf754d6a6e79c8bcd45a5420a57c3",
+      "unchanged": true
+    }
+  ]
+}

@@ -216,17 +216,24 @@ def inspect_dependencies(dependency_root, lean_choice=None, profile=DEFAULT_PROF
         result.update(verification_profile=profile, tauceti_revision=config['tauceti_revision'])
     return result
 
+def author_input_base(case_root, case):
+    """Resolve the explicit path convention without guessing from file existence."""
+    convention = case.get('path_base', 'suite')
+    require(convention in {'suite', 'case'}, 'Invalid author case path_base')
+    return case_root if convention == 'case' else case_root.parent
+
 def author_frozen_inputs(case_root):
     """The current case is the authority for the complete new-paper projection."""
     case_root = Path(case_root).resolve()
     case_path = safe_relative(case_root, 'case.json')
     case = load(case_path)
     require(case.get('schema') == 'math-gauge.case/v1', 'Invalid author case schema')
+    base = author_input_base(case_root, case)
     names = {'case.json'}
     source_names = [case.get(k) for k in ('task', 'reference', 'rubric', 'group_contract')]
     source_names += [row.get('source') for row in case.get('solver_files', [])]
     for source in source_names:
-        path = safe_relative(case_root.parent, source)
+        path = safe_relative(base, source)
         require(path.is_relative_to(case_root), 'Author input must belong to the exact case')
         names.add(path.relative_to(case_root).as_posix())
     return case, {name: digest(safe_relative(case_root, name)) for name in sorted(names)}
@@ -240,7 +247,7 @@ def validate_author_alignment(root, manifest, case):
     require(alignment.get('schema') == 'math-gauge.author-alignment/v1', 'Invalid author alignment schema')
     require(alignment.get('case_id') == case['id'] and alignment.get('case_version') == case['version'],
             'Author alignment identity differs from the current case')
-    contract = load(safe_relative(root.parent.parent, case['group_contract']))
+    contract = load(safe_relative(author_input_base(root.parent, case), case['group_contract']))
     require(contract['id'] == case['id'] and contract['version'] == case['version'],
             'Author case and stage contract identities differ')
     stage_ids = {row['id'] for row in contract['stages']}

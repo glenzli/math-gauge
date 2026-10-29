@@ -1,0 +1,77 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF112",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "b8635eafa5ca5e370d6e7dcd5c733a75f538875b322c419e055557f7c9ce822f",
+    "contract.json": "7d7753d73f619125301836247eb9745372823e93af00b4cd5c3ea4de7257ce27",
+    "input/ExtendedData.lean": "f98f279532b4dbb2a621b0270621a8004cb6ef516af9b822dde11a9e188bbc7b",
+    "reference.md": "d6ea0e0c3d48f4f802c7ed6fa1f6f3f616610e1b22fce24fc3920e619a79b019",
+    "rubric.json": "687a9ad0591d204780fab01a024764df1d996d850c41c94e4ef13da95a391d7e",
+    "task.md": "a85c88843e3b4c4769ae32e82dda12fe20e5f6529ef58e2bcc31ed6a55a87ec3"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "ed6dc04362020029f4e5fe69fa8a78f9399887f9274e3e4ae8fd118ab97e0385"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "d78e8f09396e31bc02f674e6e9559d07feddbdeef464ca315a241450505218d1"
+  },
+  "modules": [
+    {
+      "module": "ExtendedData",
+      "source": "ExtendedData.lean",
+      "sha256": "f98f279532b4dbb2a621b0270621a8004cb6ef516af9b822dde11a9e188bbc7b",
+      "imports": [
+        "Mathlib.Data.ENNReal.Inv",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ExtendedBounds",
+      "source": "ExtendedBounds.lean",
+      "sha256": "7c54967ce2aa9aad266f724a89d3d63e6c9235e051c5fcbf4a6c92bb6f6d80c6",
+      "imports": [
+        "ExtendedData"
+      ]
+    },
+    {
+      "module": "CoefficientClassification",
+      "source": "CoefficientClassification.lean",
+      "sha256": "d533a49ed7efead220488dcabaa678470221d35d78ce89d7d9ec1badce749ec7",
+      "imports": [
+        "ExtendedBounds"
+      ]
+    },
+    {
+      "module": "BoundaryExample",
+      "source": "BoundaryExample.lean",
+      "sha256": "41dde12408ff73df13825ddecee03e6f8f29f44620106c6b8d5e677e237448d5",
+      "imports": [
+        "CoefficientClassification"
+      ]
+    },
+    {
+      "module": "Answer",
+      "source": "Answer.lean",
+      "sha256": "6ce4a83837920abe02e1e5846cbc79b4c62b60c07c0b0d5a49afb0a58436e72d",
+      "imports": [
+        "BoundaryExample"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "2ba0faad8d051583315a41ba2bdd950dcedce36f18f2e9f122c91b27419383fb",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

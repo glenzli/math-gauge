@@ -1,0 +1,55 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR106",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "8f6ddf43fb08c457e56491c373f18b005d357ae5ca7e6badf0da2170a1f0279b",
+    "contract.json": "6b79a37d0d99b5540c9ab6ad306ac0a0e4d5df39956923fd5da6d1e090c2e014",
+    "reference.md": "6804004b3a38457dea41605c6a5d7a4e80b6383537adf5b9388e409fda21a91f",
+    "rubric.json": "d80b1bff1c59672d285a6e40ca39217d090beddde8ce7e6e14f2b588290b678a",
+    "task.md": "5929d5e403c0d6bea61de82e3b7beba83b574835ba5eb9f926e154ac119f3f7c"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "22d3751fc6eb47253ca05609c660ae53e48c8bdd611d8e37cc0bbff3ccbad189"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "feeba4f52c02b87f885e037e2c4665c9bb06356b3f4a85458cad786b41235d7f"
+  },
+  "modules": [
+    {
+      "module": "DenseRecovery",
+      "source": "DenseRecovery.lean",
+      "sha256": "3823f10f35fcf3456a60b7c025c72e859d06aec37d072eee456083ecfb8ff7dc",
+      "imports": [
+        "Mathlib.Topology.MetricSpace.Completion",
+        "Mathlib.Topology.MetricSpace.UniformConvergence",
+        "Mathlib.Topology.UniformSpace.Ascoli",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "RecoveryBoundaries",
+      "source": "RecoveryBoundaries.lean",
+      "sha256": "9f0c17b0d14c83a8b2abc78a61849cb8d76c23a0264e3e6ed026e03266149946",
+      "imports": [
+        "DenseRecovery",
+        "Mathlib.Topology.MetricSpace.Contracting"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "ff508f51a2f403568f8f0a7a03b88fd156140384cbd0a42418fdf3ea8fca7d7d",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

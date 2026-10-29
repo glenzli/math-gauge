@@ -52,8 +52,8 @@ def code_identity():
 
 def catalog_suites(catalog_path):
     catalog = load(catalog_path)
-    if catalog.get("schema") != "math-gauge.exercise-catalog/v1":
-        raise ValueError("Unsupported exercise catalog")
+    if catalog.get("schema") != "math-gauge.case-catalog/v1":
+        raise ValueError("Unsupported case catalog")
     result = []
     seen = set()
     for row in catalog["suites"]:
@@ -68,8 +68,13 @@ def catalog_suites(catalog_path):
                 raise ValueError("Duplicate case across catalog suites")
             seen.add(case["id"])
         result.append((row, suite))
-    if len(seen) != 41:
-        raise ValueError("This comparison requires exactly 41 distinct cases")
+    entries = catalog.get("entries", [])
+    entry_ids = [entry["case_id"] for entry in entries]
+    categories = catalog.get("categories", [])
+    category_ids = [cid for category in categories for cid in category["case_ids"]]
+    if (not seen or len(entry_ids) != len(set(entry_ids)) or set(entry_ids) != seen
+            or len(category_ids) != len(set(category_ids)) or set(category_ids) != seen):
+        raise ValueError("Catalog entries and categories must cover every selected case exactly once")
     return catalog, result
 
 

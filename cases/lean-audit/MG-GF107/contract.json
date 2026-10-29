@@ -1,0 +1,261 @@
+{
+  "id": "MG-GF107",
+  "version": "0.1.1",
+  "parent_case_id": "MG-F107",
+  "title": "加权逆算子、支撑界与量词交换",
+  "track": "determinate",
+  "task_kind": "audit",
+  "stages": [
+    {
+      "id": "S1",
+      "title": "逆算子和精确加权恒等式",
+      "kind": "prove",
+      "depends_on": [],
+      "assumptions": [
+        "f、u 为任意实序列",
+        "r,n∈ℕ"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 TS=id、ST=id 和解的唯一性",
+        "证明 S 为线性映射",
+        "证明 w_n^r |(Sf)_n|=w_n^(r+1)|f_n|"
+      ],
+      "critical_errors": [
+        "把序列先限制为 Rapid 或有限支撑",
+        "把绝对值中的正权重错误省略理由"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S2",
+      "title": "原目标的一阶损失",
+      "kind": "prove",
+      "depends_on": [
+        "S1"
+      ],
+      "assumptions": [
+        "r∈ℕ、C∈ℝ 任意",
+        "Control(r+1,C,f)"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "保持完全相同 C 得 Control(r,C,Sf)",
+        "证明 Rapid(f) 推出 Rapid(Sf)",
+        "说明该结论不要求二阶输入控制"
+      ],
+      "critical_errors": [
+        "用 r+2 输入代替 r+1",
+        "只证明存在某个新常数而忽略固定 C"
+      ],
+      "points": 20,
+      "lean_required": false
+    },
+    {
+      "id": "S3",
+      "title": "共同支撑范围内的零阶损失",
+      "kind": "prove",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "assumptions": [
+        "M∈ℕ 固定",
+        "f_n=0 对所有 n>M",
+        "Control(r,C,f)",
+        "C≥0"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 Control(r,(M+1)C,Sf)",
+        "明确常数依赖 M 而不依赖 f 的具体值",
+        "处理 n>M 的零项"
+      ],
+      "critical_errors": [
+        "把 M 相关常数称为全体 Rapid 上统一常数",
+        "遗漏 C≥0 时乘法序方向"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S4",
+      "title": "全体快速衰减序列的统一零损失",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "assumptions": [
+        "只要求 Rapid(f) 和 Control(0,1,f)",
+        "不提供共同支撑端点",
+        "要求同一个 D 对所有这样的 f 有效"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断 ∃D≥0 ∀f 的统一界是否成立",
+        "构造任意高位置的单位尖峰并证明它 Rapid",
+        "证明任何给定 D 都被某个尖峰违反"
+      ],
+      "critical_errors": [
+        "把每个有限支撑序列的常数混同全体共同常数",
+        "只用一个固定尖峰而未反驳任意 D"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S5",
+      "title": "交换常数选择的量词",
+      "kind": "decide",
+      "depends_on": [
+        "S2",
+        "S4"
+      ],
+      "assumptions": [
+        "每个 f 分别满足 Rapid(f)",
+        "允许 D 依赖 f",
+        "只要求 Control(0,D,Sf)"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 ∀f Rapid(f)→∃D≥0 Control(0,D,Sf)",
+        "明确从 f 的哪阶控制取得 D",
+        "解释它与 S4 的量词差别"
+      ],
+      "critical_errors": [
+        "仍要求 D 独立于 f",
+        "以 S4 反例否定逐个存在常数"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S6",
+      "title": "缓冲阶数实现的审计",
+      "kind": "audit",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "assumptions": [
+        "以 S1、S2 为原目标",
+        "InputControl 的展开及 Result 字段以附件实际定义为准"
+      ],
+      "expected": "misaligned",
+      "required_evidence": [
+        "分别判定逆、唯一、线性、Rapid 和固定 C 一阶估计",
+        "给出 Control(1,1,f) 成立而 Control(2,1,f) 不成立的序列",
+        "说明缺口属于语义强条件而非原目标数学错误"
+      ],
+      "critical_errors": [
+        "用 Rapid 的任意阶存在常数替代指定 C",
+        "误判全部候选定理都错",
+        "把无统一零损失误当成一阶损失不可实现"
+      ],
+      "points": 20,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "删除共同支撑上界，保留每个序列 Rapid，要求全族同一个 D",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把每个 f 的有限常数继承成全族统一常数",
+      "correct_boundary": "单位尖峰位置无界导致输出零阶范数无界",
+      "mechanism": "uniformity over a family",
+      "target_claim": "存在 D≥0，对所有 Rapid(f) 且 Control(0,1,f) 的序列都有 Control(0,D,Sf)。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S2",
+        "S4"
+      ],
+      "changed_assumptions": "将 ∃D∀f 改为 ∀f∃D，允许常数依赖输入",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "把不存在统一界误读为不存在逐个控制",
+      "correct_boundary": "Rapid 的第 1 阶恰好提供每个 f 所需 D",
+      "mechanism": "quantifier order",
+      "target_claim": "对每个 Rapid(f)，都存在可依赖 f 的 D≥0 使 Control(0,D,Sf)。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "drafts/lean-alignment-20261029/MG-F107/task.md",
+    "drafts/lean-alignment-20261029/MG-F107/reference.md",
+    "drafts/lean-alignment-20261029/MG-F107/rubric.json",
+    "drafts/lean-alignment-20261029/MG-F107/case.json",
+    "drafts/lean-alignment-20261029/MG-F107/formal/Core.lean",
+    "drafts/lean-alignment-20261029/MG-F107/formal/Multiplier.lean",
+    "drafts/lean-alignment-20261029/MG-F107/formal/Candidate.lean",
+    "results/failure-analysis-20261030/README.md",
+    "results/failure-analysis-20261030/lean-failures.json"
+  ],
+  "source_attachments": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F107/formal/Core.lean",
+      "target": "Core.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F107/formal/Multiplier.lean",
+      "target": "Multiplier.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F107/formal/Candidate.lean",
+      "target": "Candidate.lean"
+    }
+  ],
+  "source_sha256": {
+    "drafts/lean-alignment-20261029/MG-F107/task.md": "49637774ca72561fbca7a13a226ca1f5d3edb3cb73c359f34beebebaa35a0a1c",
+    "drafts/lean-alignment-20261029/MG-F107/reference.md": "4f1dac9422429f732d85377f43bb2db966a83919aac641381aa6d7159f0745c9",
+    "drafts/lean-alignment-20261029/MG-F107/rubric.json": "3fa2505d05848c25fcba53221ebd018a36f6edd27cebf64266dfd0c505095383",
+    "drafts/lean-alignment-20261029/MG-F107/case.json": "858b696ec42cd52cd8c1aee8c4104f6c28ae50c983d99ab97b6e1fc44ad6da6b",
+    "drafts/lean-alignment-20261029/MG-F107/formal/Core.lean": "dfea64ecc2da70bf23f7c30669df87ca829a0c0d275324f89ac856421aa66939",
+    "drafts/lean-alignment-20261029/MG-F107/formal/Multiplier.lean": "37acff4b386d4793ddaa48d3d27a779d9c8a639c7b2deb95b045f68b63e0f72a",
+    "drafts/lean-alignment-20261029/MG-F107/formal/Candidate.lean": "7e7d7709475a59b58bc029e6e65164f1b88b2d19c6977e61c6aaee75476ef87a",
+    "results/failure-analysis-20261030/README.md": "885d88d42832a30dde970a6cc9f9c4b8b41f4233d47ebf3465ecc792d328ae32",
+    "results/failure-analysis-20261030/lean-failures.json": "40b599cd566d198ec5933ffa5f6831421ee135bb17f1d37db967bf5a6eb0bdb4"
+  },
+  "environment": {
+    "lean": "4.29.1",
+    "lean_commit": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+    "mathlib_commit": "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+  },
+  "grading": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage passes its mathematical and semantic criteria; every Lean-required stage is present in the complete submitted source and compiles without sorry or added axioms. Partial points do not constitute group pass."
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending",
+    "formalization": {
+      "status": "pending-new-obligations",
+      "new_group_compilation_performed": false,
+      "old_fixture_compilation_is_not_new_group_evidence": true
+    }
+  },
+  "required_output_files": [],
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/lean-alignment-20261029",
+    "case_id": "MG-F107",
+    "version": "0.1.0",
+    "suite_sha256": "f59c156edaf8684cd62a5505701bc039aaeac7d76dee9f535d20c34f946844b9",
+    "case_manifest_sha256": "858b696ec42cd52cd8c1aee8c4104f6c28ae50c983d99ab97b6e1fc44ad6da6b"
+  }
+}

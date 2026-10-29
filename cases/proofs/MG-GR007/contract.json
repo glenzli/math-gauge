@@ -1,0 +1,252 @@
+{
+  "id": "MG-GR007",
+  "parent_case_id": "MG-R007",
+  "version": "0.1.1",
+  "title": "等变分裂空间的稳定与自然性",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "分裂的仿射结构",
+      "kind": "prove",
+      "assumptions": [
+        "共同设定的逐行等变分裂；一般仿射结构无需有限维",
+        "稳定像分支另给每个W_n有限维",
+        "不要求过渡满射"
+      ],
+      "expected": "true",
+      "depends_on": [],
+      "required_evidence": [
+        "差分裂唯一经过iₙ并等变",
+        "有限维下降像稳定",
+        "稳定像间真实满射"
+      ],
+      "critical_errors": [
+        "有限维等同有限集合或紧空间",
+        "未证明稳定像间满射"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "完整有限维塔",
+      "kind": "construct",
+      "assumptions": [
+        "共同设定",
+        "Aₙ,Bₙ,C有限维",
+        "任意域特征",
+        "塔同构为各层和C上的等变同构且全部图交换"
+      ],
+      "expected": "construction",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "相容存在",
+        "极限直和及逆",
+        "解空间limHom_G分类",
+        "全部整塔同构运输"
+      ],
+      "critical_errors": [
+        "除以|G|",
+        "任取逐层分裂就认相容",
+        "自然选择与自然解空间混淆"
+      ],
+      "id": "S2",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "稳定后的参数",
+      "kind": "prove",
+      "assumptions": [
+        "共同设定",
+        "存在N且n≥N时Tₙ为双射",
+        "不要求任何层有限维"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "评价映射双向构造",
+        "仿射和方向空间",
+        "唯一性精确条件"
+      ],
+      "critical_errors": [
+        "将早期非满射排除",
+        "把Hom_G(C,A_N)=0强改为A_N=0"
+      ],
+      "id": "S3",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "分裂参数的有限性",
+      "kind": "decide",
+      "assumptions": [
+        "共同设定",
+        "每个Wₙ=Hom_G(C,Aₙ)有限维",
+        "Aₙ、Bₙ可无限维"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "真正使用Wₙ有限维",
+        "完整结论而非仅存在"
+      ],
+      "critical_errors": [
+        "误称B有限维是不可替代必要条件"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "无限参数塔",
+      "kind": "decide",
+      "assumptions": [
+        "指定平凡G和多项式模块塔",
+        "k为任意域",
+        "每行按题面映射"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S1",
+        "S4"
+      ],
+      "required_evidence": [
+        "全部结构和局部分裂",
+        "排除所有多项式参数族",
+        "有限前缀与无限区别"
+      ],
+      "critical_errors": [
+        "因每行自由分裂断言整体分裂"
+      ],
+      "id": "S5",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "解空间和首选解",
+      "kind": "synthesize",
+      "assumptions": [
+        "S2全部有限维条件",
+        "自然性量化全部交换图同构",
+        "具体唯一性在全部相容族中判断"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "自然首选反例",
+        "唯一性limW=0",
+        "四种结论明确区分"
+      ],
+      "critical_errors": [
+        "把自然双射解空间当自然选点",
+        "用W_N=0而未验证S3条件"
+      ],
+      "id": "S6",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "不要求Aₙ、Bₙ有限维，只要求实际分裂方向Wₙ有限维",
+      "expected_truth": "true",
+      "mechanism": "假设的实际作用",
+      "tempting_invalid_transfer": "无限维环境直接否定稳定像论证",
+      "correct_boundary": "稳定的是有限维仿射分裂空间",
+      "target_claim": "仅各实际分裂方向W_n有限维时，S2的全部相容分裂分类仍成立。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S4"
+      ],
+      "changed_assumptions": "实际分裂参数空间为无限维k[t]",
+      "expected_truth": "false",
+      "mechanism": "有限前缀到无限整体",
+      "tempting_invalid_transfer": "逐层和逐前缀可解等于整塔可解",
+      "correct_boundary": "次数支持约束阻止无限相容族",
+      "target_claim": "指定k[t]仿射分裂参数塔存在相容分裂族。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "自然运输升级为自然首选",
+      "expected_truth": "false",
+      "mechanism": "存在与规范性",
+      "tempting_invalid_transfer": "非空自然挠子总有自然零点",
+      "correct_boundary": "剪切自同构无固定分裂",
+      "target_claim": "有限维逐行分裂塔总可选择对全部整塔同构自然的首选相容分裂。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R007/task.md",
+    "cases/public/MG-R007/reference.md",
+    "cases/public/MG-R007/rubric.json"
+  ],
+  "source_sha256": {
+    "cases/public/MG-R007/task.md": "8fd7814c8b5c4ce93c2ee35c6556bd480cb11b296e74b699457571f29719f9da",
+    "cases/public/MG-R007/reference.md": "87c66808eb136a45f7fca3200d39e5cf00575d91943b71cf0bd4c2982f859661",
+    "cases/public/MG-R007/rubric.json": "49f12b86c8f86e3364d43a50b91ad098aa232ae569bc082426f1f0ef0973e934"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。",
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "cases/public",
+    "case_id": "MG-R007",
+    "version": "0.3.0",
+    "suite_sha256": "6ad8a8a7c80a7ba769b0677ef250bf9998d9601d190f271ce6b357fa91f5308d",
+    "case_manifest_sha256": "c693fb929f76a0159044e4ea9a856fb548c6173d6f714c90ffd8f54f0307d841"
+  }
+}

@@ -20,6 +20,8 @@ def snapshot_suite(suite, destination):
     for case in suite.cases.values():
         names.update(case[key] for key in ["task", "reference", "rubric"])
         names.update(case.get("evaluator_files", []))
+        if case.get("group_contract"):
+            names.add(case["group_contract"])
         names.update(case["lean_checks"])
         names.update(item["source"] for item in case["solver_files"])
     destination.mkdir(parents=True, exist_ok=False)
@@ -43,7 +45,7 @@ def prepare(root, catalog_path):
     catalog, suites = catalog_suites(catalog_path)
     if catalog.get("snapshot_status") != "final-catalog-snapshot":
         raise ValueError("Catalog owner has not finalized the source snapshot")
-    entries = {entry["case_id"]: entry for entry in catalog["case_entries"]}
+    entries = {entry["case_id"]: entry for entry in catalog["entries"]}
     runtime = root / "runtime"; runtime.mkdir(parents=True, exist_ok=True)
     frozen_catalog = runtime / "catalog.frozen.json"
     frozen_catalog.write_bytes(Path(catalog_path).read_bytes()); frozen_catalog.chmod(0o444)
@@ -64,7 +66,7 @@ def prepare(root, catalog_path):
                 open_probe(session); network_probe(session)
                 sessions[model] = str(session)
             entry = entries[case["id"]]
-            rows.append({"case_id": case["id"], "version": case["version"], "task_kind": entry["task_kind"], "family_id": entry["family_id"], "section": entry["section"], "author_lean_coverage": entry["author_lean_coverage"], "suite_root": str(frozen.root), "suite_sha256": frozen.sha256, "request_sha256": text_digest(json.dumps(request, ensure_ascii=False, sort_keys=True)), "candidate_message_sha256": text_digest(message), "candidate_message_bytes": len(message.encode("utf-8")), "attachment_names": [f["name"] for f in request["files"]], "sessions": sessions})
+            rows.append({"case_id": case["id"], "version": case["version"], "task_kind": entry["task_kind"], "family_id": entry["family_id"], "section": entry["category"], "author_lean_coverage": entry.get("author_lean_coverage", "not-assessed-in-catalog"), "suite_root": str(frozen.root), "suite_sha256": frozen.sha256, "request_sha256": text_digest(json.dumps(request, ensure_ascii=False, sort_keys=True)), "candidate_message_sha256": text_digest(message), "candidate_message_bytes": len(message.encode("utf-8")), "attachment_names": [f["name"] for f in request["files"]], "sessions": sessions})
     bindings = qualification["bindings"] + [{"path": str(root / "preflight/qualification.json"), "sha256": digest(root / "preflight/qualification.json")}]
     freeze = {"schema": "math-gauge.comparison-freeze/v1", "utc": now(), "catalog_path": str(frozen_catalog), "catalog_original_path": str(Path(catalog_path).resolve()), "catalog_sha256": digest(frozen_catalog), "runtime_root": str(root), "runner_sha256": runner_fingerprint(), "code_identity": code_identity(), "preflight_bindings": bindings, "suite_snapshots": snapshots, "cases": rows, "model_order": ["terra", "gemini"], "parallel_per_model": 2, "timeout_seconds": 2700, "automatic_retry": False, "mathematical_requests": 0}
     save(runtime / "snapshot-plan.json", freeze, exclusive=True)
@@ -87,7 +89,13 @@ def finalize(root):
         rubric = suite.root / case["rubric"]
         row["rubric_sha256"] = digest(rubric)
         row["audit_expected"] = load(rubric)["expected"] if row["task_kind"] == "audit" else None
-        if row["task_kind"] == "audit" and row["audit_expected"] not in {"aligned", "misaligned"}:
+        if case.get("group_contract"):
+            contract_path = suite.root / case["group_contract"]
+            row["group_contract_sha256"] = digest(contract_path)
+            row["audit_expected"] = None
+            row["stage_expected"] = {stage["id"]: stage["expected"]
+                                     for stage in load(contract_path)["stages"]}
+        if row["task_kind"] == "audit" and not case.get("group_contract") and row["audit_expected"] not in {"aligned", "misaligned"}:
             raise ValueError("Audit rubric lacks a binary expected verdict")
         if text_digest(candidate_message(request)) != row["candidate_message_sha256"] or text_digest(json.dumps(request, ensure_ascii=False, sort_keys=True)) != row["request_sha256"]:
             raise ValueError("Prepared candidate projection changed")
@@ -175,7 +183,8 @@ def run_queue(root, release):
                 save(runtime / "model-runs.json", model_run_index(root, results))
         if not stop.is_set():
             emit({"model": model, "status": "model-phase-completed"})
-    save(runtime / "queue-final.json", {"finished_utc": now(), "completed": len(results) == 82 and all(x["status"] == "completed" for x in results), "halt_new_starts": stop.is_set(), "results": results, "mathematical_scoring_performed": False})
+    expected_results = len(freeze["cases"]) * len(freeze["model_order"])
+    save(runtime / "queue-final.json", {"finished_utc": now(), "completed": len(results) == expected_results and all(x["status"] == "completed" for x in results), "halt_new_starts": stop.is_set(), "results": results, "mathematical_scoring_performed": False})
     save(runtime / "model-runs.json", model_run_index(root, results))
     return 1 if stop.is_set() else 0
 
@@ -201,7 +210,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["prepare", "finalize", "run"])
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
-    parser.add_argument("--catalog", type=Path, default=REPO / "exercises/catalog.json")
+    parser.add_argument("--catalog", type=Path, default=REPO / "cases/catalog.json")
     parser.add_argument("--release", type=Path)
     args = parser.parse_args()
     if args.action == "prepare":

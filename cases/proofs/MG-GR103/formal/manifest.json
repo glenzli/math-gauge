@@ -1,0 +1,53 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR103",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "589a872d64bfcf5e762471ace931b52e487c937ca3713c48deb862967d60e06a",
+    "contract.json": "14f0f2ea15def7bbf5d172d63f2f1de376926322a873a7a24f4f3d71bd39f638",
+    "reference.md": "29555ef588335a43e229d630d6428840605c95ce8673267ef70b79058451730b",
+    "rubric.json": "589f367490ffd2cb46eb1e9389a4b865c16d8df188e3f98df65c5a2c61037e3c",
+    "task.md": "7c8645c443de5ba37266654e184a5313213f6acdc4deb14b916771be21afd972"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "953cad87add3e6052f7d333a47f8feca2ebad735ec0de4229510d587cc995def"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "0daaafe3d2e7d5dfd97552c09a8921867347e2e7e692b3a7a58218c5b01c774b"
+  },
+  "modules": [
+    {
+      "module": "BlockFixedPoints",
+      "source": "BlockFixedPoints.lean",
+      "sha256": "9dc2acc3bdf6c091e6a496b317c53bb137d50d01196bc3cfee712219b4e2635b",
+      "imports": [
+        "Mathlib.Order.FixedPoints",
+        "Mathlib.Order.GaloisConnection.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "TransferBoundaries",
+      "source": "TransferBoundaries.lean",
+      "sha256": "6c23ad9db53d6244612e0e1b63aa68bc0b2381deddac77e7d6e0a62653b93eb2",
+      "imports": [
+        "BlockFixedPoints"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "6e9f1f9c5ab533a2b7e0162cf143ad8d302f7034818fdb8f0f1e1d59274b68b9",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

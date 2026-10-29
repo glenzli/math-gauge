@@ -23,8 +23,8 @@ class QuestionGroupContracts(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.suite_path = self.root / 'suite'
-        shutil.copytree(ROOT / 'archive/legacy-v0/public', self.suite_path)
-        self.cid = 'MG-D001'
+        shutil.copytree(ROOT / 'tests/fixtures/runner-suite', self.suite_path)
+        self.cid = 'TEST-D001'
         self.case_path = self.suite_path / self.cid / 'case.json'
         self.case = read_json(self.case_path)
         self.case['group_contract'] = self.cid + '/group.json'
@@ -379,6 +379,18 @@ class QuestionGroupContracts(unittest.TestCase):
         self.assertEqual(d['root_failures'], ['S2'])
         self.assertEqual(d['completed_weight'], 60)
         self.assertEqual(result['tracks']['determinate']['eligible_for_model_comparison'], 0)
+
+    def test_case_local_group_contract_keeps_frozen_review_binding(self):
+        self.case['path_base'] = 'case'
+        for key in ('task', 'reference', 'rubric', 'group_contract'):
+            self.case[key] = Path(self.case[key]).relative_to(self.cid).as_posix()
+        self.case['solver_files'] = []
+        self.replay()
+        e = self.passing()
+        contract_hash = digest_bytes(self.contract_path.read_bytes())
+        self.assertEqual(e['group_contract_sha256'], contract_hash)
+        apply_reviews(self.run_path, [e])
+        self.assertEqual(report(self.run_path)[0]['group_diagnostics'][self.cid]['stage_passes'], 5)
 
     def test_passed_stage_cannot_be_labeled_a_failure_source(self):
         self.replay(); e = self.passing(); e['decision'] = 'partial'

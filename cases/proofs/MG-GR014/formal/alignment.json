@@ -1,0 +1,402 @@
+{
+  "schema": "math-gauge.author-alignment/v1",
+  "case_id": "MG-GR014",
+  "case_version": "0.1.1",
+  "items": [
+    {
+      "id": "S1",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.coordinateParameters"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.coordinateParameters_apply"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.parameter_difference"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.coordinate_image"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.coordinateFiberParameters"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.observation_range"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.finiteRow"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.finiteRow_pairing"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.row_span"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solution_parameter_dimension"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.fiber_parameter_dimension"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.direction"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.directionEquiv"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.direction_mem"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.direction_rows"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.direction_coordinates"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.solution_is_translate"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.fiber_is_translate"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.direction_dimension"
+        },
+        {
+          "module": "AffineDimensions",
+          "name": "MathGauge.AffineDimensions.actual_solution_and_fiber_dimensions"
+        }
+      ],
+      "assumptions": [
+        "Arbitrary field; finite coordinate index I; any consistent rows and constants; every A⊂I"
+      ],
+      "quantifiers": [
+        "Every consistent point x0, every coordinate y and every nonempty fiber"
+      ],
+      "domains": [
+        "Input rows converted bijectively from I→k to I→₀k by finiteRow; actual assignments stay I→k",
+        "W is proved span of rows; U_A is proved coordinate span"
+      ],
+      "conclusions": [
+        "All solutions parametrized by (V/W)* and every nonempty fiber by (V/(W+U_A))*",
+        "Exact coordinate extension iff finite row relations agree",
+        "Dimensions |I|−dim W and |I|−dim(W+U_A)"
+      ],
+      "representation": [
+        "The actual direction subspaces live in the original full assignment vector space I→k.",
+        "directionEquiv is a genuine LinearEquiv from the relevant quotient dual to that original direction subspace.",
+        "solution_is_translate and fiber_is_translate prove exact iff membership in the original sets after subtracting an actual base point.",
+        "actual_solution_and_fiber_dimensions computes finrank of these original direction subspaces using the LinearEquiv, not a bare set bijection."
+      ],
+      "dependencies": [],
+      "gaps": []
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solution_count"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.fiber_count"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solutionImageProduct"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.observation_dimension"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.image_count"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.image_count_intersection"
+        }
+      ],
+      "assumptions": [
+        "Finite field, finite I, chosen actual solution"
+      ],
+      "quantifiers": [
+        "All realizable coordinates y and every actual fiber"
+      ],
+      "domains": [
+        "Nat.card k=q",
+        "Actual range of restrict, not an abstract surrogate"
+      ],
+      "conclusions": [
+        "Solution count q^(|I|−dim W)",
+        "Fiber count q^(|I|−dim(W+U_A))",
+        "Image count q^(dim(W+U_A)−dim W)=q^(|A|−dim(W∩U_A))"
+      ],
+      "representation": [
+        "Actual total solution set split into its image times the common fiber-parameter space by proved bijections",
+        "Rank identities and cardinalities include empty/zero-dimensional cases"
+      ],
+      "dependencies": [
+        "S1"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S3",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.global_solution"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solution_set_closed"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solution_set_compact"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solution_topology"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.solution_totally_disconnected"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.coordinate_image_closed"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.finite_joint_iff"
+        }
+      ],
+      "assumptions": [
+        "Finite discrete field; arbitrary I,J; finite-support rows; every finite subsystem solvable"
+      ],
+      "quantifiers": [
+        "Every A⊂I and y:A→k",
+        "All finite row sets F and finite coordinate sets G simultaneously"
+      ],
+      "domains": [
+        "Product topology on full assignments I→k",
+        "Subspace topology on actual coordinateSolutions"
+      ],
+      "conclusions": [
+        "Nonempty by algebraic extension; solution set compact and totally disconnected",
+        "Every actual coordinate image closed",
+        "Exact finite simultaneous realizability iff global extension"
+      ],
+      "representation": [
+        "Compactness is actual product compactness and closed equations",
+        "Finite realizability is proved by an explicit augmented Sum J A row system and the proved algebraic extension; this is an alternative complete proof to the reference FIP route, allowed by the case alternative-proof contract"
+      ],
+      "dependencies": [
+        "S1",
+        "S2"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S4",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.global_solution"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.coordinateEquiv"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.coordinateParameters"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.coordinateParameters_apply"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.parameter_difference"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.coordinate_image"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.coordinateFiberParameters"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.complete_classification"
+        }
+      ],
+      "assumptions": [
+        "Any field; arbitrary index universes; finite-support rows; finite solvability; Classical choice"
+      ],
+      "quantifiers": [
+        "All actual global solutions and arbitrary A,y",
+        "All nonempty fibers"
+      ],
+      "domains": [
+        "Full assignments I→k distinct from finite-support row space I→₀k",
+        "Algebraic duals, not continuous duals"
+      ],
+      "conclusions": [
+        "Construct global solution",
+        "Exact all-solution quotient dual parametrization",
+        "Necessary and sufficient coordinate image criterion",
+        "Every nonempty coordinate fiber fully parametrized"
+      ],
+      "representation": [
+        "Both parent author modules copied byte-identically",
+        "Actual coordinate assignments ↔ linear functionals proved by coordinateEquiv"
+      ],
+      "dependencies": [
+        "S1",
+        "S3"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S5",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.finite_support_counterexample"
+        },
+        {
+          "module": "LinearSystems",
+          "name": "MathGauge.LinearSystems.evaluate_single"
+        }
+      ],
+      "assumptions": [
+        "Any field; I=J=Nat; each equation x_i=1 has a finitely supported unit row"
+      ],
+      "quantifiers": [
+        "Every finite row subset",
+        "No global finitely supported assignment"
+      ],
+      "domains": [
+        "Finite assignments Nat→₀k distinguished from full Nat→k"
+      ],
+      "conclusions": [
+        "Finite family solved by indicator finitely supported sum",
+        "Global constant-one assignment cannot have finite support"
+      ],
+      "representation": [
+        "evaluate_single identifies literal coordinate equations with the finite-support row model",
+        "Contradiction explicitly picks an index outside the finite support"
+      ],
+      "dependencies": [
+        "S3",
+        "S4"
+      ],
+      "gaps": []
+    },
+    {
+      "id": "S6",
+      "status": "complete",
+      "declarations": [
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.continuous_evaluate"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.image_iff"
+        },
+        {
+          "module": "ProgressiveLinearSystems",
+          "name": "MathGauge.ProgressiveLinearSystems.coordinate_image_closed"
+        },
+        {
+          "module": "CoordinateFibers",
+          "name": "MathGauge.LinearSystems.coordinate_image"
+        }
+      ],
+      "assumptions": [
+        "Arbitrary discrete field, potentially infinite; all S4 hypotheses retained"
+      ],
+      "quantifiers": [
+        "Every A and its actual coordinate image"
+      ],
+      "domains": [
+        "Product topology on A→k",
+        "Finite-support z in every eliminated relation"
+      ],
+      "conclusions": [
+        "Coordinate image equals intersection of finite-coordinate closed equation fibers",
+        "Hence image is closed without compactness of k"
+      ],
+      "representation": [
+        "Uses necessary-and-sufficient algebraic elimination already proved in CoordinateFibers",
+        "Each evaluation is proved continuous as a finite sum"
+      ],
+      "dependencies": [
+        "S1",
+        "S3",
+        "S4"
+      ],
+      "gaps": []
+    }
+  ],
+  "source_hashes": {
+    "case.json": "3200a22d29cfd891a5030b685feabb364ce782a06fac940309fe7f0e50877c81",
+    "task.md": "dea93393ad89196a1b8980f25e795c92713bc0b155e2d78b609d0ea64d9a2e3f",
+    "reference.md": "fd7154006d160cbac4b482d98e631e60bc3d86686807b08a372652e889af9b15",
+    "rubric.json": "68b29c46f519dba3ced81868a3a5d901dc30a07f4028702845058793e7fd2deb",
+    "contract.json": "6ec6c601b860f4518149c654d78ee15f571cc0850d8f2d451b6fd759f02d9d1d"
+  },
+  "provenance": [
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R014/formal/LinearSystems.lean",
+      "sha256": "440c5a813ccecb769ad804f8a98b7894c6f54cebff164294b71b663b8600612f",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    },
+    {
+      "kind": "byte-identical-copy",
+      "source": "cases/public/MG-R014/formal/CoordinateFibers.lean",
+      "sha256": "89eff13c566ddc5e6ad0f9edf5e65122aab64c6078c927af466c37e94b345a44",
+      "source_commit": "6a6338f133ee312d8905ea9066f92dda14543e51"
+    }
+  ],
+  "human_review": "pending",
+  "candidate_model_execution": "not-run",
+  "semantic_revision": {
+    "reason": "Independent review requested the explicit affine dimension bridge; supplied in AffineDimensions.lean.",
+    "status": "resolved-pending-independent-recheck"
+  }
+}

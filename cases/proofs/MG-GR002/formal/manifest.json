@@ -1,0 +1,121 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR002",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "ca24a195d239b8cda0fa68a823c6bd9aa72eda0962ab9d791624b0678721e42f",
+    "contract.json": "8c2875d3e8ab39ba65f9914441af3c02aa85ae1e0258915d85bb11fc8b2f2dd2",
+    "reference.md": "6349cfc29883c26e03c9e853b4417dd58e4a40c8f40014cb05811a9d613bc5dd",
+    "rubric.json": "93da91bd5086f6fb4005c5d9e36e33c3a162ed6bd331d09a4c5ab0b3be107957",
+    "task.md": "919538d38d1904d79b25bf93437f5921d85962bcaad026af2735090da39b0f27"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "3fe819143b7aada672eed78f34f15bd7890eaf4fa375904ddf82c2b1ab75f952"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "b45731e069c1a3fcea5ad78d792c1abdac1977dd348dd895ba51e6f549afdd60"
+  },
+  "modules": [
+    {
+      "module": "CompatibleRecords",
+      "source": "CompatibleRecords.lean",
+      "sha256": "df7e23dfa8a20dd380ff4eaaa063095000d52bcc1349b3816b79edc9885d8ab2",
+      "imports": [
+        "Mathlib.Topology.ContinuousMap.ZeroAtInfty",
+        "Mathlib.Analysis.Normed.Lp.lpSpace",
+        "Mathlib.Analysis.Normed.Module.HahnBanach",
+        "Mathlib.Topology.Order.Compact",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "RecordBidual",
+      "source": "RecordBidual.lean",
+      "sha256": "8f992f3ce6f2eb3d1efd98443b19820b3d5cd92468464ba1f0a4aa8912d49a17",
+      "imports": [
+        "Mathlib.Analysis.Normed.Module.DoubleDual",
+        "Mathlib.LinearAlgebra.FiniteDimensional.Basic",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "RecordRealization",
+      "source": "RecordRealization.lean",
+      "sha256": "32c784fe4b81df92c8e91a052e0fdba20328a064549949b3ef368b536571b94a",
+      "imports": [
+        "RecordBidual"
+      ]
+    },
+    {
+      "module": "RecordTransform",
+      "source": "RecordTransform.lean",
+      "sha256": "08de6ed2113f07b82b28ecb1598cf50dd5efb8666c1dd5e147a1bbed5ee6024b",
+      "imports": [
+        "RecordRealization"
+      ]
+    },
+    {
+      "module": "RecordInstantiation",
+      "source": "RecordInstantiation.lean",
+      "sha256": "12da463daafd18947d13f5f7be14dac7a2fb0aa542a9222027ac0b052f359b08",
+      "imports": [
+        "RecordTransform",
+        "CompatibleRecords"
+      ]
+    },
+    {
+      "module": "ReflexiveRecovery",
+      "source": "ReflexiveRecovery.lean",
+      "sha256": "2eb4c58390204c573049173e5e78b3acb4e3c59c3b199717549853c944472f02",
+      "imports": [
+        "RecordTransform",
+        "Mathlib.Analysis.LocallyConvex.WeakDual"
+      ]
+    },
+    {
+      "module": "SubspaceRecovery",
+      "source": "SubspaceRecovery.lean",
+      "sha256": "3dfc63d3c7be4e37c699d110ae8580e7535ba41645be10dd435d33a9515d7f49",
+      "imports": [
+        "ReflexiveRecovery",
+        "Mathlib.Analysis.Normed.Group.Quotient",
+        "Mathlib.Analysis.Normed.Module.HahnBanach"
+      ]
+    },
+    {
+      "module": "FiniteMatching",
+      "source": "FiniteMatching.lean",
+      "sha256": "664b9f3874475815bfdb8cb78c11e42d30abb0c6376d077bf5ca3a6e8a1c9b7d",
+      "imports": [
+        "SubspaceRecovery",
+        "Mathlib.LinearAlgebra.Dual.Lemmas"
+      ]
+    },
+    {
+      "module": "SharpFiniteBoundary",
+      "source": "SharpFiniteBoundary.lean",
+      "sha256": "7a0f5443906499ac20012dac06fef8fe49b4c6ed459edd76b433901afdd9aaaa",
+      "imports": [
+        "FiniteMatching",
+        "RecordInstantiation",
+        "Mathlib.Analysis.SpecificLimits.Normed",
+        "Mathlib.Topology.Algebra.InfiniteSum.Module"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "95c25aa94f5a3e2b2b2c1e604877feef04933d8fa002c99670f9eaabb9d874a9",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

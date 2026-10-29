@@ -1,0 +1,184 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR003",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "42a1bae15ff7c3e6b26217be82e14817f6c87e989d123a76c25f8caced4c89a1",
+    "contract.json": "31ee35c97bb513e8eace44e254ffc8e757822bc2210744c684314706e67bffaa",
+    "reference.md": "ed9dfb75bc611409cbb5d7885aa9fb1472927dab2e7b96aa8f6e3d2fca898582",
+    "rubric.json": "66df4d7742de6c965855c8218ceaeee9b727827b8a62e31341848343500a7407",
+    "task.md": "983606a7dacab95b4d6a09563240707a8624ca06dbe54266155031a8c3377366"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "5e3acd9be43ca79f45344c284b2bcaedcd61fb7b0dc792a931cf4fe4d2ce8ecc"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "d6b3fe8ea71ac9596ec53a6003d841462e8ab4ad19bb413132923c8162c35a67"
+  },
+  "modules": [
+    {
+      "module": "BinomialSmoothing",
+      "source": "BinomialSmoothing.lean",
+      "sha256": "18dc0d5d759887fb8fcb7111833a221a6019cf1bc1e7635600c16d1f07de2572",
+      "imports": [
+        "Mathlib.Analysis.Normed.Operator.Banach",
+        "Mathlib.Analysis.SpecificLimits.Basic",
+        "Mathlib.Data.Nat.Choose.Central",
+        "Mathlib.Data.Nat.Choose.Sum",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ErgodicOperators",
+      "source": "ErgodicOperators.lean",
+      "sha256": "5ebf11cf138a51f2fa385eeedb4a70b84e2f740c251cca120dbd92871185af28",
+      "imports": [
+        "BinomialSmoothing",
+        "Mathlib.Algebra.Ring.GeomSum",
+        "Mathlib.Order.Filter.AtTopBot.Prod"
+      ]
+    },
+    {
+      "module": "ErgodicRecoveryCore",
+      "source": "ErgodicRecoveryCore.lean",
+      "sha256": "637dfada8798daad66335a4a839171b2684fc2042407f9bb6c227167f3dd5e54",
+      "imports": [
+        "ErgodicOperators",
+        "Mathlib.Analysis.Normed.Group.Quotient"
+      ]
+    },
+    {
+      "module": "ErgodicComparison",
+      "source": "ErgodicComparison.lean",
+      "sha256": "6736b65072c4561c9b4d678bc8c62330dd27a896bd3c4705b02acd6a344f5fed",
+      "imports": [
+        "ErgodicRecoveryCore"
+      ]
+    },
+    {
+      "module": "ErgodicRecoveryMap",
+      "source": "ErgodicRecoveryMap.lean",
+      "sha256": "c7cbf091f1581ea117e77fdcb3c4caf0848673cbeb9e1b357b4794d13f34142d",
+      "imports": [
+        "ErgodicComparison",
+        "Mathlib.Algebra.Module.Submodule.Equiv"
+      ]
+    },
+    {
+      "module": "ErgodicQuotient",
+      "source": "ErgodicQuotient.lean",
+      "sha256": "6fe593ad3fb21db34f5fab6439d37d044a3c562f9e51035a15a8c3b4ffae7abf",
+      "imports": [
+        "ErgodicRecoveryMap",
+        "Mathlib.Topology.MetricSpace.Antilipschitz"
+      ]
+    },
+    {
+      "module": "ErgodicConsequences",
+      "source": "ErgodicConsequences.lean",
+      "sha256": "2efa7fead8213b03380eb35fb1b9306123b45ce83826de2bc2842766eb51ea32",
+      "imports": [
+        "ErgodicQuotient"
+      ]
+    },
+    {
+      "module": "ErgodicCounterexample",
+      "source": "ErgodicCounterexample.lean",
+      "sha256": "0b3996bd2b495031a9ba8a04a9d660b054ed8aa68808314f54c665d2e8288a86",
+      "imports": [
+        "ErgodicQuotient",
+        "Mathlib.Analysis.Normed.Lp.lpSpace"
+      ]
+    },
+    {
+      "module": "ErgodicCoordinates",
+      "source": "ErgodicCoordinates.lean",
+      "sha256": "81cc37aa647c94d4a1dec0519d191e6b3ed9b9df56f39d76c14c03f3036c60a5",
+      "imports": [
+        "ErgodicCounterexample"
+      ]
+    },
+    {
+      "module": "OrthogonalComponents",
+      "source": "OrthogonalComponents.lean",
+      "sha256": "5f6ec539ff8cec500ff7af52ab97a920feffdc2e2749f6b641a6376984b05c7e",
+      "imports": [
+        "ErgodicConsequences",
+        "Mathlib.Analysis.InnerProductSpace.Adjoint",
+        "Mathlib.Analysis.CStarAlgebra.Basic"
+      ]
+    },
+    {
+      "module": "ProjectionDynamics",
+      "source": "ProjectionDynamics.lean",
+      "sha256": "304bfdd553d05590f294c5f40f596b3ea47cd41af9b0d1a8977d937ad10470f8",
+      "imports": [
+        "OrthogonalComponents"
+      ]
+    },
+    {
+      "module": "NoisyProjection",
+      "source": "NoisyProjection.lean",
+      "sha256": "67ad2c3d5d5b6ed784e21af26152cbe928d575c2d53085d0d046ede83b9a75b8",
+      "imports": [
+        "ProjectionDynamics"
+      ]
+    },
+    {
+      "module": "SharpNoise",
+      "source": "SharpNoise.lean",
+      "sha256": "48354a72e2764a2159434aea985044a4427a227e3380b32c99c31da772ddfcb1",
+      "imports": [
+        "NoisyProjection"
+      ]
+    },
+    {
+      "module": "DiagonalSlow",
+      "source": "DiagonalSlow.lean",
+      "sha256": "8e149890f9278155c43b44b83f7aa0c546631b2f4a066dbe1344289a64a5acf9",
+      "imports": [
+        "ErgodicConsequences",
+        "Mathlib.Analysis.InnerProductSpace.l2Space"
+      ]
+    },
+    {
+      "module": "FullRecovery",
+      "source": "FullRecovery.lean",
+      "sha256": "871ee8f42af8e52ef92541e0b6f240d1e682ebfec41051d227197b26fad036b7",
+      "imports": [
+        "ErgodicConsequences"
+      ]
+    },
+    {
+      "module": "UniformPowers",
+      "source": "UniformPowers.lean",
+      "sha256": "9a123d40845a7cdb351ef8f18058f4e187834345ae9586aee4771bccb71b8227",
+      "imports": [
+        "FullRecovery"
+      ]
+    },
+    {
+      "module": "AverageRates",
+      "source": "AverageRates.lean",
+      "sha256": "8abb6e06dfffb9575e46dfaaab16b6e067e87327f3e2333cebae8374814ceb7b",
+      "imports": [
+        "UniformPowers"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "2a14ebd2a8fa7cf08ac3b10eb904b60593099ee4ae1c3a4b79cbc9db90cf6e89",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

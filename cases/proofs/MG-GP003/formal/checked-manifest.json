@@ -1,0 +1,249 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GP003",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "b447069fe02c060b48b8c0225b6e1ad150edf8120a22875e70a3ecd6896c30c0",
+    "contract.json": "139229d2bb321a4f21c04e0badcad84d9c25e766114d57d65f9f374e800cd124",
+    "reference.md": "8b88d2e4b91d2aa409be4186854cab91ea698f80b182f33aebec689542434576",
+    "rubric.json": "9ebdf532ae15c6edea691f0c86eedbf661c5b5b8474cced5ba8e36ca8390c6b5",
+    "task.md": "fa81237b179de3caaa4b3c957a0701165162fde8f7a7a46309ccb66c72760ee6"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "20c2f325739805ba5a95bb9e753024c6c79f7642674e9124d2fbf0e916ccf5fb"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "1607acd4049e930a4c8797dffbca9256981af1f8ec4a189ef04e6738b7c4a257"
+  },
+  "modules": [
+    {
+      "module": "FinitePrimeLocalization",
+      "source": "FinitePrimeLocalization.lean",
+      "sha256": "ea8a86c1c8be5536b23db708d107d4c2d811474ba55145b4afdf2f57456606db",
+      "imports": [
+        "Mathlib.RingTheory.Localization.Ideal",
+        "Mathlib.RingTheory.Ideal.Operations",
+        "Mathlib.RingTheory.Spectrum.Prime.Topology",
+        "Mathlib.Topology.Sets.Opens",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "NeighborhoodRefinement",
+      "source": "NeighborhoodRefinement.lean",
+      "sha256": "0988194897503caebf8a89cfbba1476451d90ea88278d3ba428e01ff0070b9de",
+      "imports": [
+        "FinitePrimeLocalization"
+      ]
+    },
+    {
+      "module": "AffineScheme",
+      "source": "AffineScheme.lean",
+      "sha256": "1cefa69c9b1447ef90774eb036b0493fc0002b788a005e83323b8f3be28872f6",
+      "imports": [
+        "NeighborhoodRefinement",
+        "Mathlib.AlgebraicGeometry.Scheme"
+      ]
+    },
+    {
+      "module": "FilteredExactness",
+      "source": "FilteredExactness.lean",
+      "sha256": "02bb4e20e23e9782f180b2e10bfc6e4fc150d3082e75ac2308d23c431e2e59cd",
+      "imports": [
+        "Mathlib.Algebra.Colimit.DirectLimit",
+        "Mathlib.Algebra.Exact",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ComparisonDiagram",
+      "source": "ComparisonDiagram.lean",
+      "sha256": "1dc34f0a0ab4e581866fc1d3cc4403a180bc90d5dac5bdf06e7f505fefb5c9e4",
+      "imports": [
+        "Mathlib.Algebra.Exact",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "SheafificationStalk",
+      "source": "SheafificationStalk.lean",
+      "sha256": "6bebd89f8b459b3e82ffc789e3e0744bc17dd5b52b3b10534ef21e90e2fbc964",
+      "imports": [
+        "Mathlib.Topology.Sheaves.Sheafify",
+        "Mathlib.CategoryTheory.Sites.LeftExact",
+        "Mathlib.Algebra.Category.Grp.FilteredColimits",
+        "Mathlib.Algebra.Category.Grp.Colimits",
+        "Mathlib.Algebra.Category.Grp.Limits"
+      ]
+    },
+    {
+      "module": "NeighborhoodValues",
+      "source": "NeighborhoodValues.lean",
+      "sha256": "881d7cec0f315b9cfc5060a86664e683c0c1dab568f6dca027b3d1edd1c86d63",
+      "imports": [
+        "SheafificationStalk",
+        "Mathlib.Algebra.Category.Grp.AB",
+        "Mathlib.CategoryTheory.Limits.Final"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.OpenNeighborhoods",
+      "source": "MathGauge/GP003/OpenNeighborhoods.lean",
+      "sha256": "180bddbb07be2f8119c76a14562104bec6abfe38c3523f0f42f46a70bdffb276",
+      "imports": [
+        "NeighborhoodValues",
+        "Mathlib.CategoryTheory.Adjunction.Basic"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.DenseOpenFailure",
+      "source": "MathGauge/GP003/DenseOpenFailure.lean",
+      "sha256": "231780b1e1eb6be6f35fa8a42777969f985ad1d1831a317845f44e3ffd7a76dd",
+      "imports": [
+        "MathGauge.GP003.OpenNeighborhoods",
+        "Mathlib.AlgebraicGeometry.Morphisms.Smooth",
+        "Mathlib.AlgebraicGeometry.Properties",
+        "Mathlib.RingTheory.Polynomial.Basic"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.EventualExactness",
+      "source": "MathGauge/GP003/EventualExactness.lean",
+      "sha256": "8440a11e08204f18c21d7292eabc38e526243405efed5af482dc1fea0efdcbf5",
+      "imports": [
+        "FilteredExactness"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.TwoPointComparison",
+      "source": "MathGauge/GP003/TwoPointComparison.lean",
+      "sha256": "3019186fb68d060862b8aef8feab718d4bb165b032a918724f7361d54093517d",
+      "imports": [
+        "NeighborhoodRefinement",
+        "NeighborhoodValues",
+        "Mathlib.Topology.Sheaves.SheafCondition.UniqueGluing"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.FiniteGermDescent",
+      "source": "MathGauge/GP003/FiniteGermDescent.lean",
+      "sha256": "172eaad34f65c351a7b2de520e1be6dabca92e814db7d82bb5c6994bd4957557",
+      "imports": [
+        "MathGauge.GP003.TwoPointComparison",
+        "Mathlib.CategoryTheory.Filtered.Final",
+        "Mathlib.CategoryTheory.Limits.ConcreteCategory.Basic"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.FiniteNeighborhoodDescent",
+      "source": "MathGauge/GP003/FiniteNeighborhoodDescent.lean",
+      "sha256": "6830e96dd2a2c4526700f05fbc022fbf515ddc11367193c493c4e4195cd86ea3",
+      "imports": [
+        "MathGauge.GP003.FiniteGermDescent",
+        "NeighborhoodValues"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.LocalizationNeighborhoods",
+      "source": "MathGauge/GP003/LocalizationNeighborhoods.lean",
+      "sha256": "d8bb0afa6dfee7bb464f46ca4e3240613c9ed46a5dd64e384f2f49a54742c2eb",
+      "imports": [
+        "MathGauge.GP003.FiniteNeighborhoodDescent",
+        "FinitePrimeLocalization"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.PairLocalizationNeighborhoods",
+      "source": "MathGauge/GP003/PairLocalizationNeighborhoods.lean",
+      "sha256": "bdf3979f7efc4767ec1b70904b3b8e897f6f696ed4f4264041bdb9a5076037f1",
+      "imports": [
+        "MathGauge.GP003.LocalizationNeighborhoods"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.ActualSemilocalGeometry",
+      "source": "MathGauge/GP003/ActualSemilocalGeometry.lean",
+      "sha256": "accf7a62569271910bb7de8c3b2ef5870c2d22a652ba566dc74e904ec28b3310",
+      "imports": [
+        "MathGauge.GP003.PairLocalizationNeighborhoods",
+        "AffineScheme",
+        "Mathlib.RingTheory.Localization.LocalizationLocalization",
+        "Mathlib.AlgebraicGeometry.PullbackCarrier"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.SchemeNeighborhoodValues",
+      "source": "MathGauge/GP003/SchemeNeighborhoodValues.lean",
+      "sha256": "28544a61d0a4f825abbd620204829700bd9f66de205afcaac4034dfa7eef1965",
+      "imports": [
+        "MathGauge.GP003.ActualSemilocalGeometry"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.ActualSemilocalDescent",
+      "source": "MathGauge/GP003/ActualSemilocalDescent.lean",
+      "sha256": "8c9f35f332b24e5dbf07363d34d344b8df7e4b01ab636a48fca2f07e0870f9df",
+      "imports": [
+        "MathGauge.GP003.SchemeNeighborhoodValues"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.SchemeNeighborhoodMaps",
+      "source": "MathGauge/GP003/SchemeNeighborhoodMaps.lean",
+      "sha256": "b5f55a30a7cb6edcaf35f1d08472e3813521d63afc13e970cbbf7ee62a5bd370",
+      "imports": [
+        "MathGauge.GP003.ActualSemilocalDescent"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.ActualOpenComparison",
+      "source": "MathGauge/GP003/ActualOpenComparison.lean",
+      "sha256": "4ff03d7ac647473bf4450e5156d18491eaf1965049499b39cebfa5de81807a4d",
+      "imports": [
+        "MathGauge.GP003.SchemeNeighborhoodMaps"
+      ]
+    },
+    {
+      "module": "Main",
+      "source": "Main.lean",
+      "sha256": "70159fd85c43a867a822f6b60f3d49056bc8178df1abc029569685a34f61f2d2",
+      "imports": [
+        "FinitePrimeLocalization",
+        "NeighborhoodRefinement",
+        "AffineScheme",
+        "FilteredExactness",
+        "ComparisonDiagram",
+        "SheafificationStalk",
+        "NeighborhoodValues",
+        "MathGauge.GP003.OpenNeighborhoods",
+        "MathGauge.GP003.DenseOpenFailure",
+        "MathGauge.GP003.EventualExactness",
+        "MathGauge.GP003.TwoPointComparison",
+        "MathGauge.GP003.FiniteGermDescent",
+        "MathGauge.GP003.FiniteNeighborhoodDescent",
+        "MathGauge.GP003.LocalizationNeighborhoods",
+        "MathGauge.GP003.PairLocalizationNeighborhoods",
+        "MathGauge.GP003.ActualSemilocalGeometry",
+        "MathGauge.GP003.SchemeNeighborhoodValues",
+        "MathGauge.GP003.ActualSemilocalDescent",
+        "MathGauge.GP003.SchemeNeighborhoodMaps",
+        "MathGauge.GP003.ActualOpenComparison"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "f4527d2946fcc1a7961fc74707087ba459c248a65486d320a1a3a5bdb10a3ffe",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

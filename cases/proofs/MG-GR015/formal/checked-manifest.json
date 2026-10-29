@@ -1,0 +1,102 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR015",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "cdca5cc241f393ea63634dac38104c005a3a9d3630ee0385065b77040c4c986f",
+    "contract.json": "0298e7d3b8146740cfba6c759b1b6bcf62b6df090fbcb9f0c232be1c2144a6bc",
+    "reference.md": "e54d6183c0bf9731588c0e8e778a2de8e8131499c1d381e6f32d1bb92586b948",
+    "rubric.json": "d4835fd12aa6d91c5accc72a262299b6776788967c1cc926c440dcce84c55bdf",
+    "task.md": "a34711fd03d875d26e59196f7170199b84a44645f760a9b2fedc40144d24a6e0"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "e671b433220c07dcc903779f2d38301393f4ee65f3e1e26c35c728882c770c72"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "8f9b40859f92d139793928b6c764fa7804859277a7532bb2385bcef819054ae4"
+  },
+  "modules": [
+    {
+      "module": "CompletionFailure",
+      "source": "CompletionFailure.lean",
+      "sha256": "cc1eef35d12107611cbf0f1bdd4ca895ed0b48476d7bb03d43ffa85fc728e92f",
+      "imports": [
+        "Mathlib.Algebra.Polynomial.Coeff",
+        "Mathlib.Algebra.Polynomial.Module.Basic",
+        "Mathlib.LinearAlgebra.Finsupp.Defs",
+        "Mathlib.LinearAlgebra.Finsupp.VectorSpace",
+        "Mathlib.LinearAlgebra.Quotient.Basic",
+        "Mathlib.LinearAlgebra.Basis.Defs",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "CompletionStructure",
+      "source": "CompletionStructure.lean",
+      "sha256": "a5baec4d301424ce9e2bc34f7e658190ded919c5040d45609019e50aff5d8bae",
+      "imports": [
+        "CompletionFailure",
+        "Mathlib.RingTheory.AdicCompletion.Completeness"
+      ]
+    },
+    {
+      "module": "AdicBridge",
+      "source": "AdicBridge.lean",
+      "sha256": "1bf2c77ec7f90fbcf31774ae2f88e07d4427278578b3f7fa99ac426912f59a7b",
+      "imports": [
+        "CompletionStructure"
+      ]
+    },
+    {
+      "module": "RestrictedSeries",
+      "source": "RestrictedSeries.lean",
+      "sha256": "e5ee28e7600fe36da5d2e6047c61fb7aebc8aa5376a66800bbcc0d774d91d7a2",
+      "imports": [
+        "CompletionStructure",
+        "Mathlib.RingTheory.PowerSeries.Trunc",
+        "Mathlib.Algebra.Polynomial.Div"
+      ]
+    },
+    {
+      "module": "SplitCompletion",
+      "source": "SplitCompletion.lean",
+      "sha256": "22c6633e6c371552f2ca1a3ad6ce72de61839b847205a9045235c937e296051e",
+      "imports": [
+        "CompletionStructure"
+      ]
+    },
+    {
+      "module": "OriginalImage",
+      "source": "OriginalImage.lean",
+      "sha256": "36ae217e0d4b9a16543594ca43564086a44d9843bbd1630b02bc4792108b0b6d",
+      "imports": [
+        "RestrictedSeries"
+      ]
+    },
+    {
+      "module": "BoundedDiagonal",
+      "source": "BoundedDiagonal.lean",
+      "sha256": "658e3ff2d6d2530041abb9f68242a27f5898cc2714c503cca4bad23ac7e79816",
+      "imports": [
+        "RestrictedSeries",
+        "AdicBridge",
+        "Mathlib.RingTheory.PowerSeries.NoZeroDivisors"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "927725f6439bb7bc2e74941eda531b6551fafbcaee723044123ff0b02321b820",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

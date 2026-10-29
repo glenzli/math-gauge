@@ -1,0 +1,81 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF101",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "0a726e90ea1bad4027ee874d38023c9d10d6730290d8e61ce6f73caab9cb4006",
+    "contract.json": "e872779bdc5edb95ed856ed3fbc228868849a0fa3b6eb63bd93293a83e51287c",
+    "input/Candidate.lean": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879",
+    "input/Core.lean": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+    "input/Transfer.lean": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+    "reference.md": "d9656a67f29c26952d4349672473efb38c2cbd666b516153a2107aec0d752a89",
+    "rubric.json": "3f636f18bf0eaa3ed323861e344be4c96b8b26fe823b45649d1309ee3a4ecff6",
+    "task.md": "1b481889c955e7875c70580949ca101394b70c9fe4a6a94ebfc2238a11820760"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "89c234ca62359edcdb8036bb84e0cf16f8ad68593d879e7d761b568d6ce2e43f"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "3491393fa6b9b0c3896708d427bb273489109486e54ffd18d05232017bdd322e"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+      "imports": [
+        "Mathlib.RingTheory.Ideal.Quotient.Operations"
+      ]
+    },
+    {
+      "module": "Transfer",
+      "source": "Transfer.lean",
+      "sha256": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879",
+      "imports": [
+        "Transfer"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "be44257dc8620733ed98789d42ff13f43885fa09a773c6fc3f9530cbe1e5a339",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Extensions",
+      "source": "Extensions.lean",
+      "sha256": "dc36777d9f69f62b6e5138b1dc3a978ae31cb60a43c3a5a57bd707cb334b95a2",
+      "imports": [
+        "Reference",
+        "Candidate",
+        "Mathlib.RingTheory.Ideal.Quotient.PowTransition",
+        "Mathlib.Tactic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "96431a5a3af8e01c750cc5c57ab52a9a9e3e69fe4e91c45351ad7287227e9da8",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

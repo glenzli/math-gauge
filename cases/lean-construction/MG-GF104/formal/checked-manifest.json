@@ -1,0 +1,97 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF104",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "2f091b3fabdefc80a6567f6ee06c4bda4ecd12edf18aeb3f2295b55878df2418",
+    "contract.json": "391bd817e5fb50a63539df60961a9256971849511a222418137ea73416a0f6db",
+    "input/Candidate.lean": "7b1279b41b9f312f5a6add9cad0b3be42beaf3285e07cbaa17ac75c4f86d4abd",
+    "input/Construction.lean": "67bbe2203a4c1f57fd67a2c4788ecaff0aaf01334de888bccfb89c2dbda32e58",
+    "input/Core.lean": "d59012829c811a3807727ecc79ddad2d42772564e4cf48f92271bf582f3bae45",
+    "reference.md": "c36899fc22a7f17f802da85033a4361c0437ba037820cbbd5fd8f2a6e9bbb76e",
+    "rubric.json": "f2e1debbb43c445a274d39948900ecea0fe3cb9c1820f0644051e5585563dfab",
+    "task.md": "c3be3a56aa26e5f92c309a2aab5175d80596c55a7f93c7e2040f5216a024004f"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "ab5084bd241d9333798d0171ea41c29e9ae72aee213a3e297ed289d62f565a06"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "09a1dc91f9f5fdc52a7465136cba6c3e192ac85e27016d6ddc339ff06c9c3149"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "d59012829c811a3807727ecc79ddad2d42772564e4cf48f92271bf582f3bae45",
+      "imports": [
+        "Mathlib.Topology.Order"
+      ]
+    },
+    {
+      "module": "Construction",
+      "source": "Construction.lean",
+      "sha256": "16bc9c113fea00de5423ef91b6b51bfd0bee7a541f36196cd05d1674b50c08fd",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Candidate",
+      "source": "Candidate.lean",
+      "sha256": "5566b734b4eada0590b9176025561cceb76c689fa89c2cf0f00aa88e44251383",
+      "imports": [
+        "Construction"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "276e0820b5164de97dd6ceab5f8cba5046e2fbf361b2c0025bc8856582d69c1e",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Legacy",
+      "source": "Legacy.lean",
+      "sha256": "aeb4ad1cb167014293ff1bc32b349fcd9e2c7c82fc521f686c12353599e29136",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Boundary",
+      "source": "Boundary.lean",
+      "sha256": "c470665df0b44dd42a6a339646c7ea0f2ff7f0949a3cc7ca256eb7bf5d86e708",
+      "imports": [
+        "Legacy"
+      ]
+    },
+    {
+      "module": "Extensions",
+      "source": "Extensions.lean",
+      "sha256": "905970fc3798d7c4ec353f07a3e9e996a7b7e14555cce0bca9254eaab4c2df44",
+      "imports": [
+        "Candidate",
+        "Boundary",
+        "Mathlib.Topology.Separation.Basic",
+        "Mathlib.Tactic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "33474d5b9962ab9661428c516f095a80f2ed3b6a0f5f5a10b69254e6941aeb71",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

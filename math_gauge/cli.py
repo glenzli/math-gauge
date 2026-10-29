@@ -17,7 +17,7 @@ def parser():
     sub = p.add_subparsers(dest="action", required=True)
     for name in ("validate", "list", "prepare", "run", "check-lean"):
         c = sub.add_parser(name)
-        c.add_argument("--suite", default="cases/public")
+        c.add_argument("--suite", default="cases")
         if name in {"run", "check-lean"}:
             c.add_argument("--case", action="append", dest="ids")
         if name == "prepare":

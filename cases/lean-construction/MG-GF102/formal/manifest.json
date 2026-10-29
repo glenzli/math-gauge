@@ -1,0 +1,62 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GF102",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "5d56e2a9aca50cfdcd794faca258afbfe83270116c8b3e7db2c0e828925b1c94",
+    "contract.json": "0191aaa353629db724d811624833fce11a55b344038c615fe95e693ba97c239d",
+    "input/Core.lean": "868860a5c5fc4ea1a629f07147435d10e30b16c585682360dc24b35bb9fb6b7c",
+    "reference.md": "d0f1975cc059e05f9bdf0f8afebd01b6d5b3f0ad4128c1fadd092cf80c98f08a",
+    "rubric.json": "446ac3d82d242cf85e196b6b4584b7f8f37897356cd4cc99ca0586db38acc41b",
+    "task.md": "fde1c88fd60080caaefdd0b07aa7b595edf8b1d53ff6cf0ffc916dc5cc29e52c"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "13317a520833fd70243c58f47c9467321627ee2ad7c98a04c3dbbfc230488e1c"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "240155970f53e07160f6172173526298ec4371b87cc31eff1451d335322e5827"
+  },
+  "modules": [
+    {
+      "module": "Core",
+      "source": "Core.lean",
+      "sha256": "868860a5c5fc4ea1a629f07147435d10e30b16c585682360dc24b35bb9fb6b7c",
+      "imports": [
+        "Mathlib.RingTheory.Ideal.Quotient.Operations"
+      ]
+    },
+    {
+      "module": "Reference",
+      "source": "Reference.lean",
+      "sha256": "6f3fa413b744b0b0d5b1be16c4f6715517aec3652dab1fd8a25664ed3f3dcfc6",
+      "imports": [
+        "Core"
+      ]
+    },
+    {
+      "module": "Answer",
+      "source": "Answer.lean",
+      "sha256": "9120da04c933c6c2560cba29608cd71056e50f15a38e17f7921bc2fbf6ad9d28",
+      "imports": [
+        "Reference",
+        "Mathlib.Data.ZMod.QuotientRing",
+        "Mathlib.Tactic"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "cda55aa1fbe3d0957ed84546ebce166ba278c452db45b4546ca51c03e1d44153",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

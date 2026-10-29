@@ -1,0 +1,117 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR013",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "045ff7b5f7f5ebeb784e46014d469ccee8271687940760f6c8d0fb84bf94ca4a",
+    "contract.json": "07283dfe8c8556c4d7ebdb449bad842dc9f404cfa0f595809a0afd9e9072fb0f",
+    "reference.md": "51a80e3c997115cccc8fbc770e937fb598164fd2b6146220d119b924b5d27335",
+    "rubric.json": "b58239bb74fa66aba4c8eeb372c4b217aea8fbd8b39ecbe8b275e654274cbc2f",
+    "task.md": "cf7281c8a58613f3ebcb137712d3778daa086e4ac4ea0c66b9d3eee3df65d71f"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "f51d5d37e50dca91111a48741ec4834f100a1760eb4ca936512f428af0532911"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "2b7df48e9d984b2b118742d1def8a53487706d8a56a2d08f3dd159762429a3e7"
+  },
+  "modules": [
+    {
+      "module": "ShiftOperators",
+      "source": "ShiftOperators.lean",
+      "sha256": "c15d1a4aa56f6d4491f7c0237365a2cadd9f9db4e7b493fd691b14a5681c6437",
+      "imports": [
+        "Mathlib.Topology.ContinuousMap.ZeroAtInfty",
+        "Mathlib.Topology.Order.Compact",
+        "Mathlib.Analysis.Normed.Operator.NormedSpace",
+        "Mathlib.Algebra.Algebra.Spectrum.Basic",
+        "Mathlib.RingTheory.Nilpotent.Defs",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ShiftSpectrum",
+      "source": "ShiftSpectrum.lean",
+      "sha256": "6983c5455f124c2769a765b69764b7a605935d49a21efba1d2de42e8076eed94",
+      "imports": [
+        "ShiftOperators",
+        "Mathlib.Analysis.Normed.Operator.Banach",
+        "Mathlib.RingTheory.Nilpotent.Basic",
+        "Mathlib.LinearAlgebra.FiniteDimensional.Basic"
+      ]
+    },
+    {
+      "module": "PolynomialNorms",
+      "source": "PolynomialNorms.lean",
+      "sha256": "5a517c6862ee2c5b65fff75104028fdff954518abc58f01a136ec9302b1407e5",
+      "imports": [
+        "ShiftSpectrum"
+      ]
+    },
+    {
+      "module": "FiniteResolvent",
+      "source": "FiniteResolvent.lean",
+      "sha256": "d3857984ff93c5fce4cb908376307197bbea926ff7f2c5e330464baf807298a0",
+      "imports": [
+        "ShiftSpectrum"
+      ]
+    },
+    {
+      "module": "ShiftLimits",
+      "source": "ShiftLimits.lean",
+      "sha256": "3c0904055227d66f12de4483ab6b93dd9e5acb30bc1124b85dcec1636cb508fe",
+      "imports": [
+        "PolynomialNorms",
+        "FiniteResolvent",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real"
+      ]
+    },
+    {
+      "module": "StrongPolynomials",
+      "source": "StrongPolynomials.lean",
+      "sha256": "9185679a224c2e25b9a2023e4aa4a9b9b9e81a4233c2283feda49100765c7825",
+      "imports": [
+        "PolynomialNorms",
+        "Mathlib.Analysis.Normed.Module.FiniteDimension",
+        "Mathlib.Topology.Order.LiminfLimsup"
+      ]
+    },
+    {
+      "module": "UniformResolvents",
+      "source": "UniformResolvents.lean",
+      "sha256": "051ab8a0f729fe7fd5ed452aa1d12dd5c81ff0e1b89b9e2b8ed28f196c2d55bf",
+      "imports": [
+        "StrongPolynomials",
+        "Mathlib.Analysis.Complex.Spectrum",
+        "Mathlib.Topology.UniformSpace.UniformConvergence"
+      ]
+    },
+    {
+      "module": "FiniteSpectra",
+      "source": "FiniteSpectra.lean",
+      "sha256": "7abd16948db4de46b7b43071c51f27795a56b85a982b3b81ae074ef10b04a657",
+      "imports": [
+        "StrongPolynomials",
+        "Mathlib.Analysis.Complex.Polynomial.Basic",
+        "Mathlib.Analysis.Matrix.Normed",
+        "Mathlib.LinearAlgebra.Eigenspace.Charpoly",
+        "Mathlib.LinearAlgebra.Charpoly.ToMatrix"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "fc3be829734b1cd23f73f8d18c361f1c82bdb4917ddc04b6a7bd805de5a37af0",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

@@ -66,35 +66,35 @@ class CandidateArtifactTests(unittest.TestCase):
 
     def test_suite_preparation_preserves_real_attachment_crlf(self):
         target=self.root/'suite'
-        shutil.copytree(Path(__file__).resolve().parents[1]/'archive/legacy-v0/public',target)
-        suite=Suite.load(target);case=suite.cases['MG-F004']
+        shutil.copytree(Path(__file__).resolve().parents[1]/'tests/fixtures/runner-suite',target)
+        suite=Suite.load(target);case=suite.cases['TEST-F004']
         body=b'-- attachment\r\ntheorem answer : True := True.intro\r\n'
         (target/case['solver_files'][0]['source']).write_bytes(body)
         suite=Suite.load(target)
-        request=suite.prepare(suite.cases['MG-F004'],self.root/'solver')
+        request=suite.prepare(suite.cases['TEST-F004'],self.root/'solver')
         item=request['files'][0]
         self.assertEqual(item['content'].encode(),body)
         self.assertEqual((self.root/'solver'/item['name']).read_bytes(),body)
         self.assertIn(body,candidate_message(request).encode())
 
     def test_runner_freezes_message_and_default_family(self):
-        suite=Suite.load(Path(__file__).resolve().parents[1]/'archive/legacy-v0/public')
-        replay=self.root/'replay.json';write_json(replay,{'MG-D001':'fixture only'})
-        result=run(suite,self.root/'run',['MG-D001'],replay=replay)
+        suite=Suite.load(Path(__file__).resolve().parents[1]/'tests/fixtures/runner-suite')
+        replay=self.root/'replay.json';write_json(replay,{'TEST-D001':'fixture only'})
+        result=run(suite,self.root/'run',['TEST-D001'],replay=replay)
         item=result['cases'][0]
         self.assertEqual(item['task_kind'],'exploration')
-        self.assertEqual(item['family_id'],'MG-D001')
-        message=candidate_message(suite.request(suite.cases['MG-D001']))
+        self.assertEqual(item['family_id'],'TEST-D001')
+        message=candidate_message(suite.request(suite.cases['TEST-D001']))
         self.assertEqual(item['candidate_message_sha256'],digest_bytes(message.encode()))
         self.assertRegex(result['run_id'],r'^[0-9a-f]{32}$')
         self.assertEqual(json.loads((self.root/'run/run.json').read_text())['run_id'],result['run_id'])
 
     def test_runner_freezes_raw_adapter_stdout(self):
-        suite=Suite.load(Path(__file__).resolve().parents[1]/'archive/legacy-v0/public')
+        suite=Suite.load(Path(__file__).resolve().parents[1]/'tests/fixtures/runner-suite')
         body=b'\xe8\xaf\x81\xe6\x98\x8e\r\n```lean filename=Solution.lean\r\ntheorem answer : True := True.intro\r\n```\r\n'
         command=[sys.executable,'-c','import sys;sys.stdin.buffer.read();sys.stdout.buffer.write('+repr(body)+')']
-        run(suite,self.root/'run',['MG-D001'],command=command,model='synthetic-local-fixture')
-        self.assertEqual((self.root/'run/MG-D001/response.md').read_bytes(),body)
+        run(suite,self.root/'run',['TEST-D001'],command=command,model='synthetic-local-fixture')
+        self.assertEqual((self.root/'run/TEST-D001/response.md').read_bytes(),body)
 
     def test_extract_preserves_source_bytes_and_offsets(self):
         source = '-- 中文\r\ntheorem answer : True := by trivial\r\n'

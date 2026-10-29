@@ -1,0 +1,258 @@
+{
+  "id": "MG-GR104",
+  "parent_case_id": "MG-R104",
+  "version": "0.1.0",
+  "title": "幂等元提升、逆极限与环分解",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "单层提升",
+      "kind": "construct",
+      "assumptions": [
+        "R,S含幺交换环",
+        "q满射",
+        "ker q是逐元素幂零理想"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "实际多项式修正存在",
+        "无除以2",
+        "交换性下唯一性"
+      ],
+      "critical_errors": [
+        "把nil理想当nilpotent理想",
+        "选取全核统一指数"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "任意有向逆系",
+      "kind": "construct",
+      "assumptions": [
+        "共同的任意非空有向系统全部条件",
+        "J任意有限集含空",
+        "相容同态不要求单射或满射"
+      ],
+      "expected": "construction",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "指标无关增广",
+        "由唯一性得相容提升",
+        "正交性与和为1",
+        "商因子同构及自然性",
+        "空J/零环"
+      ],
+      "critical_errors": [
+        "假设极限增广满射",
+        "假设极限核nil",
+        "从逐元素提升省略正交与和"
+      ],
+      "id": "S2",
+      "points": 30,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "极限核",
+      "kind": "decide",
+      "assumptions": [
+        "k域",
+        "所列截断多项式塔",
+        "自然过渡和常数项增广"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "相容非幂零极限核元",
+        "每层nil核",
+        "解释S2仍适用"
+      ],
+      "critical_errors": [
+        "交换∀层∃指数与∃指数∀层"
+      ],
+      "id": "S3",
+      "points": 10,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "相容元素的满射性",
+      "kind": "prove",
+      "assumptions": [
+        "可数塔任意含幺环",
+        "过渡与增广均满射",
+        "增广相容",
+        "无交换或nil假设"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S2",
+        "S3"
+      ],
+      "required_evidence": [
+        "递归提升保留增广值",
+        "不需要nil或交换性",
+        "不误称环截面"
+      ],
+      "critical_errors": [
+        "从集合选取升级为环同态截面"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "逐层增广",
+      "kind": "decide",
+      "assumptions": [
+        "共同交换环逆系与逐元素nil核",
+        "I可数",
+        "只要求各p_n满射，不要求ρ_n满射"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S2",
+        "S4"
+      ],
+      "required_evidence": [
+        "过渡确为含幺环同态",
+        "nil核和所有增广满射",
+        "具体不可提升元素"
+      ],
+      "critical_errors": [
+        "将各p_n满射当ρ_n满射",
+        "直接引用S4而漏条件"
+      ],
+      "id": "S5",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "乘法结构与唯一性",
+      "kind": "synthesize",
+      "assumptions": [
+        "q任意含幺环满射",
+        "ker q平方为零",
+        "不要求R交换",
+        "与S1–S5结果作精确比较"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "非交换多个幂等提升",
+        "仍存在的多项式论证",
+        "正确区分各类蕴含"
+      ],
+      "critical_errors": [
+        "单元素多项式恒等式误以为需要全环交换",
+        "非交换中照抄幂等唯一性"
+      ],
+      "id": "S6",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "从每层元素有指数要求极限元素有共同指数",
+      "expected_truth": "false",
+      "mechanism": "量词交换",
+      "tempting_invalid_transfer": "∀i∃N_i变成∃N∀i",
+      "correct_boundary": "逐层提升不需要极限核nil",
+      "target_claim": "所给截断多项式塔的极限增广核中每个元素都幂零。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "无交换与nil，但有可数且全部过渡满射",
+      "expected_truth": "true",
+      "mechanism": "另一存在机制",
+      "tempting_invalid_transfer": "把幂等唯一性当任意提升唯一性",
+      "correct_boundary": "递归满射只给元素存在",
+      "target_claim": "可数塔全部过渡及增广满射时，极限增广满射，无需交换或nil条件。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S4"
+      ],
+      "changed_assumptions": "只保留各增广满射，不给过渡满射",
+      "expected_truth": "false",
+      "mechanism": "不同箭头性质",
+      "tempting_invalid_transfer": "p_i满射被携带成ρ满射",
+      "correct_boundary": "相容纤维可能空",
+      "target_claim": "共同交换环逆系的逐层满射nil增广必给极限增广满射。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S1"
+      ],
+      "changed_assumptions": "保留平方零核但不要求环交换",
+      "expected_truth": "false",
+      "mechanism": "乘法结构改变",
+      "tempting_invalid_transfer": "把a(1−b)仍当幂等",
+      "correct_boundary": "存在的单元素多项式有效，唯一性失败",
+      "target_claim": "非交换环的平方零核满射下，幂等元提升仍必唯一。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "drafts/true-goal-six-20261029/MG-R104/task.md",
+    "drafts/true-goal-six-20261029/MG-R104/reference.md",
+    "drafts/true-goal-six-20261029/MG-R104/rubric.json"
+  ],
+  "source_sha256": {
+    "drafts/true-goal-six-20261029/MG-R104/task.md": "a61c30cd381dc0d73c942cadfd81085ca4360bfde0a29988c85d1302a99867ea",
+    "drafts/true-goal-six-20261029/MG-R104/reference.md": "5b3e7b55615242859b35c0aa099ac4b63e238679c158434391412015b3e8e424",
+    "drafts/true-goal-six-20261029/MG-R104/rubric.json": "c38573b5178eef0a4ef18ddfaff82a48ccab131e0715db946f8e05772245512f"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。"
+}

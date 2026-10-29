@@ -6,27 +6,44 @@ from pathlib import Path
 import sys
 import verify
 
-def main():
+def indexed_manifests(suite_path):
+    """Use the canonical benchmark catalog; no second maintained case list."""
+    suite_path = Path(suite_path).resolve()
+    index = verify.load(suite_path)
+    verify.require(index.get('schema') == 'math-gauge.suite/v1', 'Invalid benchmark suite')
+    cases = [verify.safe_relative(suite_path.parent, name) for name in index['cases']]
+    verify.require(len(cases) == len(set(cases)) and bool(cases), 'Duplicate or empty benchmark suite')
+    return [verify.safe_relative(case.parent, 'formal/manifest.json') for case in cases]
+
+
+def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dependency-root',type=Path,required=True)
     parser.add_argument('--lean',type=Path)
     parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--jobs',type=int,choices=(1,2,3),default=2)
-    parser.add_argument('--suite',type=Path,default=Path(__file__).with_name('suite.json'))
-    args=parser.parse_args();out=args.out.resolve()
+    parser.add_argument('--suite',type=Path,default=Path(__file__).resolve().parents[2]/'cases/suite.json')
+    parser.add_argument('--profile',choices=verify.PROFILES,default=verify.DEFAULT_PROFILE,
+                        help='Compile only cases with this pinned dependency profile')
+    args=parser.parse_args(argv);out=args.out.resolve()
     if out.exists():parser.error('--out must not exist')
     out.mkdir(parents=True);started=verify.now()
     report={'schema':'math-gauge.formal-suite-verification/v1','started_utc':started,'status':'running','jobs':args.jobs,'cases':[]}
     verify.save(out/'report.json',report)
     try:
-        index=verify.load(args.suite);repo=Path(__file__).resolve().parents[2]
-        verify.require(index.get('schema')=='math-gauge.formal-suite/v1','Invalid formal suite')
-        verify.require(not index.get('pending_cases'),'Suite still has pending cases')
-        manifests=[verify.safe_relative(repo,row['manifest']) for row in index['cases']]
-        validated=[verify.validate_case(path) for path in manifests]
+        all_manifests=indexed_manifests(args.suite)
+        all_validated=[verify.validate_case(path) for path in all_manifests]
+        all_ids=[row[0]['case_id'] for row in all_validated]
+        verify.require(len(all_ids)==len(set(all_ids)),'Duplicate case id')
+        selected=[(path,row) for path,row in zip(all_manifests,all_validated)
+                  if verify.manifest_profile(row[0])==args.profile]
+        verify.require(bool(selected),'No cases use the selected verification profile')
+        manifests=[path for path,_ in selected];validated=[row for _,row in selected]
         ids=[row[0]['case_id'] for row in validated]
-        verify.require(len(ids)==len(set(ids)),'Duplicate case id')
-        dependency=verify.inspect_dependencies(args.dependency_root,args.lean)
+        report.update(verification_profile=args.profile,suite_case_count=len(all_ids),
+                      selected_case_count=len(ids),
+                      excluded_cases=[cid for cid in all_ids if cid not in ids])
+        dependency=verify.inspect_dependencies(args.dependency_root,args.lean,args.profile)
         report['dependency']=dependency
         report['manifest_sha256']={row[0]['case_id']:verify.digest(path) for row,path in zip(validated,manifests)}
         verify.save(out/'report.json',report)

@@ -1,0 +1,102 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GR105",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "f669593ba5d65461193674d09f9a8f379a0243309e707b6ed96bda8ac5f02fe2",
+    "contract.json": "681c38e4d7fd8f4630717502efa7f27da7828f624fc86f15d85b4c9d80b4e71c",
+    "reference.md": "4f3bd7a6405e8480309427343758ccc12792b4d33895a44ec943f75e6daee8bf",
+    "rubric.json": "bd8101efbe94a1049639bb906157334ff449437be5870204c381fb5a2e826def",
+    "task.md": "eff38b882bab7028c604e07448889f558c2f7f169647828d9259d2cef1031b99"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "caa7750c6d6745f8248ae27f55d9d3ce510f551b4a83525cbe7fcb30ef2d9426"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "3257b829685f7d38eb10d1178c4b71cd786a41b7fd3f3c4d65f35eeff1d3c1e7"
+  },
+  "modules": [
+    {
+      "module": "ObservationRecovery",
+      "source": "ObservationRecovery.lean",
+      "sha256": "d332401d9df0e69afa5f540a38b88cd0f07196da877b4ebd3dec8e6aa5a768cb",
+      "imports": [
+        "Mathlib.Analysis.InnerProductSpace.Projection.Basic",
+        "Mathlib.Analysis.Normed.Module.Completion",
+        "Mathlib.Analysis.Normed.Operator.Extend",
+        "Mathlib.LinearAlgebra.Quotient.Basic",
+        "Mathlib.Topology.MetricSpace.HausdorffDistance",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "ClosedRecoveryError",
+      "source": "ClosedRecoveryError.lean",
+      "sha256": "f25972f1e424303fefacf786dc156a1dddfda67ce3a9eed43a540c29dc9f5950",
+      "imports": [
+        "ObservationRecovery"
+      ]
+    },
+    {
+      "module": "FiniteProjections",
+      "source": "FiniteProjections.lean",
+      "sha256": "7aee5b085fdb04ba476dcb5da420a5955890c4fa20e3ad0cf0c6a5fe6a835e90",
+      "imports": [
+        "ObservationRecovery",
+        "Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional"
+      ]
+    },
+    {
+      "module": "HilbertCounterexample",
+      "source": "HilbertCounterexample.lean",
+      "sha256": "a061a69b7b61e79f0cb133646907911f9d1ce3301e0e7c99b8f53ab3dd86d239",
+      "imports": [
+        "ObservationRecovery",
+        "FiniteProjections",
+        "Mathlib.Analysis.InnerProductSpace.l2Space",
+        "Mathlib.Analysis.PSeries"
+      ]
+    },
+    {
+      "module": "TikhonovExistence",
+      "source": "TikhonovExistence.lean",
+      "sha256": "f22382e242524465627b0546b0111296fde68028018ff1f0d01b992cef780e54",
+      "imports": [
+        "ObservationRecovery",
+        "Mathlib.Analysis.InnerProductSpace.LaxMilgram",
+        "Mathlib.Analysis.InnerProductSpace.Adjoint"
+      ]
+    },
+    {
+      "module": "TikhonovLimits",
+      "source": "TikhonovLimits.lean",
+      "sha256": "e89d4ddb4d53c9ac1d7d2a83d3ad84cea9e65586e60dc6eeaeb4d74b679beb60",
+      "imports": [
+        "TikhonovExistence"
+      ]
+    },
+    {
+      "module": "ArbitraryCompletion",
+      "source": "ArbitraryCompletion.lean",
+      "sha256": "36ab212e9d3b82565aff9a5356a60344025a3855c88743609b2926d0740a6b88",
+      "imports": [
+        "ClosedRecoveryError"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "47b106b242fb9b8b6aaa02706b7e5f73a1c9c606b9be06b65c917bac69cca60f",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}

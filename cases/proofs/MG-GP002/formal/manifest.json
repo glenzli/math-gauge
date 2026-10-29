@@ -1,0 +1,282 @@
+{
+  "schema": "math-gauge.formal-case/v2",
+  "case_id": "MG-GP002",
+  "case_version": "0.1.1",
+  "lean_toolchain": "leanprover/lean4:v4.29.1",
+  "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
+  "frozen_inputs": {
+    "case.json": "c07dc510c0d6297c13ed32ba4d49323dabc5284c2946ff986d59b5a1c59afbbb",
+    "contract.json": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+    "reference.md": "d596100198c6476d2f27ee4329818a3aaf2a0f986fa38e345eed152b44809f87",
+    "rubric.json": "d6f22ac86200aae587a66a85ef3ffa90d0d14ded3a1445be6bf2cee8bd4baf89",
+    "task.md": "5113e80c4c33a3b99adebb4dd470a672dbcb4b2547280820d29291fdcadfc66e"
+  },
+  "coverage": {
+    "source": "COVERAGE.md",
+    "sha256": "a58375a34d74dcbdea9817f9d2fd2016d837154229fd86f8ec28a6b10f638604"
+  },
+  "alignment": {
+    "source": "alignment.json",
+    "sha256": "92b976ad9711f243d79a82a75668706eb5903d52b16be9c82452197145c2b97e"
+  },
+  "modules": [
+    {
+      "module": "MathGauge.PublicProof.Torus.Arithmetic",
+      "source": "MathGauge/PublicProof/Torus/Arithmetic.lean",
+      "sha256": "c2112fb9b350d4d078fa1be69efb96d8ee9c309501feb43f606f424eaf269d18",
+      "imports": [
+        "Mathlib.NumberTheory.Real.Irrational",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real",
+        "Mathlib.Tactic"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.ArithmeticSharp",
+      "source": "MathGauge/PublicProof/Torus/ArithmeticSharp.lean",
+      "sha256": "776057b356450e68f32502ba22b49378bf4bd5c950a6778cb57d4315fbd64765",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Arithmetic",
+        "Mathlib.NumberTheory.DiophantineApproximation.Basic",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Borrowed.DiophantineGraph",
+      "source": "MathGauge/PublicProof/Torus/Borrowed/DiophantineGraph.lean",
+      "sha256": "9882b2b38d97b3bf22825f204aa8451fc4d8b78b30eb2548517071943d8d3ad3",
+      "imports": [
+        "Mathlib.NumberTheory.Real.Irrational",
+        "Mathlib.Tactic.FieldSimp",
+        "Mathlib.Tactic.Linarith",
+        "Mathlib.Tactic.NormNum",
+        "Mathlib.Tactic.Positivity",
+        "Mathlib.Tactic.Ring"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Borrowed.TorusInverse",
+      "source": "MathGauge/PublicProof/Torus/Borrowed/TorusInverse.lean",
+      "sha256": "6e2ed51e263d4af8f9ae3fa7d5453f49baf2031c2afa864d4a737ef35bbb40c8",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Borrowed.DiophantineGraph",
+        "Mathlib.Analysis.Calculus.SmoothSeries",
+        "Mathlib.Analysis.SpecialFunctions.ExpDeriv",
+        "Mathlib.Analysis.Fourier.AddCircle",
+        "Mathlib.Analysis.Normed.Module.FiniteDimension",
+        "Mathlib.LinearAlgebra.Complex.FiniteDimensional",
+        "Mathlib.MeasureTheory.Integral.Prod",
+        "Mathlib.MeasureTheory.Integral.DominatedConvergence"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData",
+      "source": "MathGauge/PublicProof/Torus/Borrowed/SmoothFourierData.lean",
+      "sha256": "f9e8f7170f0b8966497ef4a93510092bb396435285829df854f5dad55871afa2",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Borrowed.TorusInverse",
+        "Mathlib.Analysis.Fourier.AddCircleMulti",
+        "Mathlib.Analysis.Calculus.FDeriv.Add",
+        "Mathlib.Analysis.Calculus.Deriv.Prod",
+        "Mathlib.Analysis.Normed.Group.Bounded",
+        "Mathlib.Analysis.PSeries",
+        "Mathlib.Analysis.Normed.Ring.InfiniteSum"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Functions",
+      "source": "MathGauge/PublicProof/Torus/Functions.lean",
+      "sha256": "435cbc66866842943fe1c034c135b6dddd684441eb7fe45035bc27f94fab273e",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Arithmetic",
+        "Mathlib.Analysis.Fourier.AddCircleMulti",
+        "Mathlib.Analysis.Calculus.ContDiff.Operations",
+        "Mathlib.Analysis.SpecialFunctions.Complex.Analytic"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.CubicBound",
+      "source": "MathGauge/PublicProof/Torus/CubicBound.lean",
+      "sha256": "5b9a8876c11ab2b28069bc7097d7f374fa048e6b2ee7eb25635d269066fb74c7",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData",
+        "Mathlib.Analysis.SpecialFunctions.Pow.Real"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.FourierBridge",
+      "source": "MathGauge/PublicProof/Torus/FourierBridge.lean",
+      "sha256": "266c6520a0302ba3922dfa3952b66f2efc5f5d79b73e9a50b6be50ed10ce8cc5",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Borrowed.SmoothFourierData"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.GeneralTransport",
+      "source": "MathGauge/PublicProof/Torus/GeneralTransport.lean",
+      "sha256": "2c6a9c563ada9a326520e35d6d7e0b98db5d5be65d036ff031a4588258789dec",
+      "imports": [
+        "MathGauge.PublicProof.Torus.FourierBridge",
+        "MathGauge.PublicProof.Torus.Arithmetic"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.GeneralInverse",
+      "source": "MathGauge/PublicProof/Torus/GeneralInverse.lean",
+      "sha256": "8be7b399586ca02324673343157448f9597878857e5eaf1ecf3224411151f675",
+      "imports": [
+        "MathGauge.PublicProof.Torus.GeneralTransport"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Weights",
+      "source": "MathGauge/PublicProof/Torus/Weights.lean",
+      "sha256": "312537bde8923e88a9c706a32c50114d1fc33f5002eaed17cdfb967f122de323",
+      "imports": [
+        "MathGauge.PublicProof.Torus.GeneralInverse",
+        "MathGauge.PublicProof.Torus.ArithmeticSharp"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Sobolev",
+      "source": "MathGauge/PublicProof/Torus/Sobolev.lean",
+      "sha256": "1a69d9b5b66ace516c73b27d3a67e1ba7b9a6b0ebbc99a62d7976dc4e169af5c",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Weights"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Necessity",
+      "source": "MathGauge/PublicProof/Torus/Necessity.lean",
+      "sha256": "50d969ad6e05c582637da4507e513d1d65ae1b80bf387be7996c77d12bd3a160",
+      "imports": [
+        "MathGauge.PublicProof.Torus.GeneralInverse",
+        "Mathlib.Topology.Algebra.InfiniteSum.Real"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Classification",
+      "source": "MathGauge/PublicProof/Torus/Classification.lean",
+      "sha256": "372b6c1c5fa8cdf0196ae291c5253d4c3f8960d68640500696a6a0d0fdafcd02",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Necessity",
+        "MathGauge.PublicProof.Torus.Sobolev"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.CNorm",
+      "source": "MathGauge/PublicProof/Torus/CNorm.lean",
+      "sha256": "5a63371d553d5b023c076859fca0d31c7330e31de290efbf2ecbf9322f56f301",
+      "imports": [
+        "MathGauge.PublicProof.Torus.CubicBound",
+        "MathGauge.PublicProof.Torus.GeneralTransport"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.Representation",
+      "source": "MathGauge/PublicProof/Torus/Representation.lean",
+      "sha256": "349763e6e758ba28dfe5142dc2f51cf56b0512cac137740708d9fd2511e873c7",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Functions",
+        "MathGauge.PublicProof.Torus.Sobolev",
+        "MathGauge.PublicProof.Torus.CNorm"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.NativeAnalysis",
+      "source": "MathGauge/PublicProof/Torus/NativeAnalysis.lean",
+      "sha256": "579e0189331748e50a893abc9a992ea125ebc764aef56f3f1ecde11d5ffbf3d8",
+      "imports": [
+        "MathGauge.PublicProof.Torus.Representation"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.NativeTheorems",
+      "source": "MathGauge/PublicProof/Torus/NativeTheorems.lean",
+      "sha256": "250010f2924cf1a149c0084f33a9c7446212dde7d4af92b733c3ff71af000e17",
+      "imports": [
+        "MathGauge.PublicProof.Torus.NativeAnalysis",
+        "MathGauge.PublicProof.Torus.Classification"
+      ]
+    },
+    {
+      "module": "MathGauge.PublicProof.Torus.FullTarget",
+      "source": "MathGauge/PublicProof/Torus/FullTarget.lean",
+      "sha256": "b4943111b9637007e8b140e5e7f507088bbc51cc6602c1cf482eb59674a8c42c",
+      "imports": [
+        "MathGauge.PublicProof.Torus.NativeTheorems"
+      ]
+    },
+    {
+      "module": "MathGauge.GP002.ArithmeticFailures",
+      "source": "MathGauge/GP002/ArithmeticFailures.lean",
+      "sha256": "868f69c778e46a5ea5080049db88e1ad5e338e747e159de7b50fbc008b98d35a",
+      "imports": [
+        "MathGauge.PublicProof.Torus.FullTarget",
+        "Mathlib.NumberTheory.Transcendental.Liouville.LiouvilleNumber",
+        "Mathlib.NumberTheory.Transcendental.Liouville.LiouvilleWith",
+        "Mathlib.NumberTheory.Transcendental.Liouville.Residual"
+      ]
+    },
+    {
+      "module": "MathGauge.GP002.ParameterBoundary",
+      "source": "MathGauge/GP002/ParameterBoundary.lean",
+      "sha256": "fc37bc473547c494293b6ffff3097843f5cc6c4fa19f0196ed8c8d6cff567084",
+      "imports": [
+        "MathGauge.GP002.ArithmeticFailures"
+      ]
+    },
+    {
+      "module": "MathGauge.GP002.FiniteBand",
+      "source": "MathGauge/GP002/FiniteBand.lean",
+      "sha256": "730da06220edd2ff642feb019fd9ae99e4e690ee5f0f2612391a119c5576abbc",
+      "imports": [
+        "MathGauge.GP002.ArithmeticFailures"
+      ]
+    },
+    {
+      "module": "MathGauge.GP002.FunctionModels",
+      "source": "MathGauge/GP002/FunctionModels.lean",
+      "sha256": "d2997fb270347349f680f578295d4cb5a8df3a01e06a6983f9430b9fe1734e37",
+      "imports": [
+        "MathGauge.GP002.FiniteBand"
+      ]
+    },
+    {
+      "module": "MathGauge.GP002.Quantitative",
+      "source": "MathGauge/GP002/Quantitative.lean",
+      "sha256": "fded7187f4aff86e729539c43e635e51bde085a48f5ff38ea24cebdc3a0be2fd",
+      "imports": [
+        "MathGauge.GP002.FunctionModels"
+      ]
+    },
+    {
+      "module": "MathGauge.GP002.DirectionDifference",
+      "source": "MathGauge/GP002/DirectionDifference.lean",
+      "sha256": "540e177bc5f5e375cbf71338da88d23d4aca2a9d0b2454cd77cf57986a28d57f",
+      "imports": [
+        "MathGauge.GP002.FunctionModels"
+      ]
+    },
+    {
+      "module": "Main",
+      "source": "Main.lean",
+      "sha256": "81ce1521cdf35ece8903424d5d7c02a5a21d8cc7a8074559dd44f615aa5b38d3",
+      "imports": [
+        "MathGauge.GP002.ParameterBoundary",
+        "MathGauge.GP002.Quantitative",
+        "MathGauge.GP002.DirectionDifference"
+      ]
+    }
+  ],
+  "audit": {
+    "module": "CurrentAudit",
+    "source": "CurrentAudit.lean",
+    "sha256": "8eb1a0c70c172cf60c01ec6400af37bf7518d720c80a9d0e9ebeceb01d4a8868",
+    "root_selection": "All constants from every explicitly listed local module, including private declarations",
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  }
+}
