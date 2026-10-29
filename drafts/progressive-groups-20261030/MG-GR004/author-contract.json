@@ -1,0 +1,214 @@
+{
+  "id": "MG-GR004",
+  "parent_case_id": "MG-R004",
+  "version": "0.1.0",
+  "title": "Hilbert复形的精确消元与近似消元",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "有限维消元",
+      "kind": "construct",
+      "assumptions": [
+        "有限长有界复Hilbert复形",
+        "每层有限维",
+        "全部约化记录Rⱼ=0"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "全部端点链收缩",
+        "实际谱下界及逆范数"
+      ],
+      "critical_errors": [
+        "有限长度直接当有限维而不使用本阶段假设"
+      ],
+      "id": "S1",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "微分的扰动",
+      "kind": "prove",
+      "assumptions": [
+        "有限长有界复Hilbert复形",
+        "每层λⱼ>0的能量下界",
+        "d′仍是复形",
+        "逐微分误差δ及ηⱼ<λⱼ"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "L的实际扰动界",
+        "逆差公式",
+        "新链收缩及s差范数"
+      ],
+      "critical_errors": [
+        "任意扰动自动保持复形关系",
+        "以仅零核替代正下界"
+      ],
+      "id": "S2",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "约化记录",
+      "kind": "decide",
+      "assumptions": [
+        "有限长有界复Hilbert复形",
+        "全部Rⱼ=0",
+        "各层不要求有限维、值域不要求闭"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "反例核验所有度数及端点R=0",
+        "否定收缩和有界右逆"
+      ],
+      "critical_errors": [
+        "约化无环去掉闭包",
+        "从零核推出谱隙"
+      ],
+      "id": "S3",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "正则化消元",
+      "kind": "prove",
+      "assumptions": [
+        "S3的约化无环条件",
+        "ε>0",
+        "G,s按题面定义"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S2",
+        "S3"
+      ],
+      "required_evidence": [
+        "逆存在和正则化收缩恒等式",
+        "强收敛完整证明",
+        "范数反例"
+      ],
+      "critical_errors": [
+        "强收敛当范数收敛",
+        "近似收缩当精确收缩"
+      ],
+      "id": "S4",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "完整边界",
+      "kind": "synthesize",
+      "assumptions": [
+        "共同复形条件",
+        "全部Rⱼ=0",
+        "所有闭性/收缩/右逆/范数极限均作为待比较性质"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "required_evidence": [
+        "四条件的所有方向",
+        "右逆与双侧逆的桥接",
+        "统一公式和控制"
+      ],
+      "critical_errors": [
+        "只证明充分性便称等价",
+        "把正则化逐点极限代替范数极限"
+      ],
+      "id": "S5",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S2",
+      "earlier_stage_ids": [
+        "S1"
+      ],
+      "changed_assumptions": "有限维改为任意Hilbert层但显式保持正能量下界",
+      "expected_truth": "true",
+      "mechanism": "真正依赖的假设",
+      "tempting_invalid_transfer": "误以为无限维无法求逆",
+      "correct_boundary": "自伴性加正下界保证满射有界逆",
+      "target_claim": "显式正能量下界及所给微分误差条件保证扰动后的有界Green算子与链收缩及指定界。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1",
+        "S2"
+      ],
+      "changed_assumptions": "仅保留约化无环，不给正下界或闭值域",
+      "expected_truth": "false",
+      "mechanism": "闭包与精确像",
+      "tempting_invalid_transfer": "把稠密像当像等于核",
+      "correct_boundary": "零核不蕴含稳定消元",
+      "target_claim": "约化无环的有限长Hilbert复形必有有界链收缩及全部L_j的有界右逆。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "以正则化近似替代精确消元后要求算子范数收敛",
+      "expected_truth": "false",
+      "mechanism": "点态到一致",
+      "tempting_invalid_transfer": "强收敛自动成为范数收敛",
+      "correct_boundary": "范数收敛等价于S5的闭值域条件",
+      "target_claim": "约化无环条件下ε(L_j+εI)⁻¹总在算子范数中趋于0。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R004/task.md",
+    "cases/public/MG-R004/reference.md",
+    "cases/public/MG-R004/rubric.json"
+  ],
+  "source_sha256": {
+    "cases/public/MG-R004/task.md": "ff03d4b674680281bde97e73b5316f01fc4837fa5c58625eb0dc54706ae2650a",
+    "cases/public/MG-R004/reference.md": "6277ce8d8c50683c24d97b37784c237adedd00f97e17dd07d326e446c965e0b3",
+    "cases/public/MG-R004/rubric.json": "4150650a577d363f4d76e3ec681836dd10ce8b38eb7b4c38b77901c59b6fd7b3"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。"
+}

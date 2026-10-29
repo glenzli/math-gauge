@@ -8,9 +8,11 @@ Math Gauge 是一套数学推理与 Lean 语义对齐习题及评测工具。它
 
 [习题总目录](exercises/README.md) · [完整模型比较](results/full-comparison-20261030/comparison.md) · [使用与复核](docs/usage.md) · [结果与版本](docs/results.md) · [贡献指南](CONTRIBUTING.md)
 
+下一轮已准备 **43份试卷的三次独立作答协议**，以及预选8题的两轮中性自查、支持与怀疑分支：[执行协议](protocol/reliability-execution.md) · [评分标准](protocol/reliability-scoring.md) · [八题及理由](protocol/reliability-20261030/selection.md)。每模型计划177个作答槽位，本轮只整理材料，**未运行模型**。新题面0.1.1已移除分值和判卷提示；评分留在评审材料中。
+
 ## 习题结构
 
-当前共 **41 题、7 章**：29 道数学论证题、6 道 Lean 对齐判定题、3 道 Lean 生成题和 3 道 Lean 修复题。七章按算子与动力系统、分析与恢复、代数与提升、拓扑与下降、有限覆盖、Fourier 正则性、几何证明机制编排；另有[任务类型索引](exercises/task-types.md)。
+已测的原版共 **41 题、7 章**：29 道数学论证题、6 道 Lean 对齐判定题、3 道 Lean 生成题和 3 道 Lean 修复题。七章按算子与动力系统、分析与恢复、代数与提升、拓扑与下降、有限覆盖、Fourier 正则性、几何证明机制编排；另有[任务类型索引](exercises/task-types.md)。原版及其成绩保持冻结，下一轮使用下述43份扩展试卷。
 
 | 题组 | 题号 | 数量 | 共享 runner 的题集路径 |
 | --- | --- | ---: | --- |
@@ -20,6 +22,8 @@ Math Gauge 是一套数学推理与 Lean 语义对齐习题及评测工具。它
 | [Lean 对齐任务](drafts/lean-alignment-20261029/README.md) | F101–F112 | 12 | `drafts/lean-alignment-20261029` |
 
 `drafts/` 保留原始路径，其中这些题组已纳入现行 41 题目录。默认 CLI 只选择公开二十题，**不会自动运行全部 41 题**。旧版本和退役题另列在[历史对应](exercises/history.md)，不重复计数。
+
+下一版采用[逐题扩展的递进题组](drafts/progressive-groups-20261030/README.md)：原41题分别扩为41组、246阶段，另设[两份整章 Lean 化考试](drafts/chapter-exams-20261030/README.md)。题组围绕同一对象持续改变假设、量词、定义域或结论方向，混合仍成立与失效的情形；每阶段都有完整参考与具体判准。第2/3章整章题分别明确34/92项义务及外部依赖。原0.1.0已完成独立AI数学及考试合同复核，当前0.1.1通过显式编辑等价记录衔接，原快照和审核保留；人工审核和新增目标Lean完整核验仍待完成。新版本尚无模型成绩。候选输入、逐阶段判卷、错误传播及编译门槛见[题组协议](protocol/question-groups.md)。
 
 每题具有题面、来源、完整参考论证或反例、具体评分标准和审核记录。参考解、来源、真假标签及作者 Lean 属于出题侧材料；候选只接收该题显式指定的题面和附件。
 
@@ -84,7 +88,9 @@ python3 exercises/refresh_catalog.py --check
 
 `results/` 保存明确选择的可复核答卷、审核与归档；`runs/` 和 `.dev-mesh/` 是本地工作材料，不随仓库提交。公开和私有题集使用同一个 runner；私有题、答案和完整输出另行保管，不复制 runner 实现。
 
-最近工程验收为 **107 项测试通过、5 项未改动的可选 Lean 4.36 测试跳过**，四题集及目录身份检查通过。首轮与补测均完成归档离线复算；详见[验收记录](results/full-comparison-20261030/validation/finalization/README.md)。
+递进题组版本的工程检查为 **132 项测试：117通过、15项可选环境测试跳过**；另行运行的一项真实隔离Lean检查通过，覆盖嵌套依赖、冻结背景、义务清单及实际声明审计。四个旧题集、两个新题集和旧目录身份检查通过；见[本版验证记录](drafts/progressive-groups-20261030/validation/README.md)。这些是工程检查，不能计为新模型答题通过率，也不证明新增作者Lean已完整覆盖。
+
+首轮与补测的归档离线复算及当时107项测试验收保持原记录，见[原测评验收](results/full-comparison-20261030/validation/finalization/README.md)。
 
 ## 来源与许可
 

@@ -1,0 +1,1974 @@
+{
+  "schema": "math-gauge.group-index/v1",
+  "groups": [
+    {
+      "id": "MG-GF101",
+      "parent": "MG-F101",
+      "title": "商环塔、幂零性与分离条件",
+      "stage_count": 6,
+      "task_kind": "audit",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "把每一层自动成立的层相关界改为额外给定的统一 N，并要求反推源理想",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "从所有商的零像直接反推出源理想为零",
+          "correct_boundary": "只能得到 I^N⊆⋂ I^(n+1)",
+          "mechanism": "quotient-to-source and uniform quantifiers",
+          "target_claim": "若存在固定 N 使所有 n 的 J_n^N=0，则 I 幂零。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "增加明确的 I-adic 分离条件，保留同一 N",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "未经分离条件套用 S4 的反例结论，或擅用 Noether 定理",
+          "correct_boundary": "给定交集为零恰好允许从所有商回到源理想",
+          "mechanism": "separation restores reflection",
+          "target_claim": "给定 ⋂_n I^(n+1)=0 时，对每个固定 N，(∀n,J_n^N=0)↔I^N=0。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF101/task.md",
+      "reference": "MG-GF101/reference.md"
+    },
+    {
+      "id": "MG-GF102",
+      "parent": "MG-F102",
+      "title": "商环塔的稳定、比较与自然性",
+      "stage_count": 6,
+      "task_kind": "generate",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "将平方零特殊情形改成任意理想，并用所有足够高层的指定 q_n 单射描述",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把过渡同构或抽象商环同构误当成 q_n 单射",
+          "correct_boundary": "指定 q_n 的核才精确恢复 I 的幂",
+          "mechanism": "specified maps versus abstract isomorphism",
+          "target_claim": "I 幂零当且仅当存在 N 使所有 n≥N 的指定 q_n 单射。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "只保留两个系统第零层的抽象同构，未给源同态或高阶数据",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "将单个商环的同构无依据延伸为整个塔的同构",
+          "correct_boundary": "第零层不确定理想的高阶幂或扩张",
+          "mechanism": "change of ambient objects and higher order data",
+          "target_claim": "R/I≅S/L 蕴含对所有 n，R/I^(n+1)≅S/L^(n+1)。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF102/task.md",
+      "reference": "MG-GF102/reference.md"
+    },
+    {
+      "id": "MG-GF103",
+      "parent": "MG-F103",
+      "title": "初始拓扑的比较与测试空间",
+      "stage_count": 6,
+      "task_kind": "audit",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "从给定目标拓扑的正向比较改为由初始拓扑相等反推目标拓扑相等",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把单调性当成反射相等或单射性",
+          "correct_boundary": "观测映射可以丢失目标的开集信息",
+          "mechanism": "forward versus reflected information",
+          "target_claim": "相同观测族的初始拓扑 τ_t=τ_u 蕴含每个目标拓扑 t_a=u_a。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "将任意拓扑测试空间缩小为单点空间",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把全部点映射测试当成完整连续性泛性质",
+          "correct_boundary": "单点空间不能检测 X 的开集族",
+          "mechanism": "quantifier domain restriction",
+          "target_claim": "可行 σ 通过全部单点测试空间的映入 iff 检查，足以推出 σ=τ_t。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "保留可行性，改为具有指定源拓扑及方向的恒等测试",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "因 S4 不足而误判任何单一测试都不足",
+          "correct_boundary": "可行性给一个包含，指定恒等连续性给另一个包含",
+          "mechanism": "test object and map direction",
+          "target_claim": "σ 可行且 id:(X,τ_t)→(X,σ) 连续，足以推出 σ=τ_t。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF103/task.md",
+      "reference": "MG-GF103/reference.md"
+    },
+    {
+      "id": "MG-GF104",
+      "parent": "MG-F104",
+      "title": "初始拓扑、子空间与分离性修复",
+      "stage_count": 6,
+      "task_kind": "repair",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "任意目标改为 T0，并加入观测族联合单射，仍不限制指标基数",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把 S1 的单个离散单射条件误当成此处的必要条件",
+          "correct_boundary": "T0 只需对每对不同点找到一个能区分它们的观测",
+          "mechanism": "joint separation and local-to-global",
+          "target_claim": "目标均 T0 且观测族联合单射，则初始拓扑为 T0，其任意子空间也为 T0。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "删除联合单射而保留目标 T0",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "从目标 T0 与观测连续性直接继承定义域 T0",
+          "correct_boundary": "未被观测区分的点仍可在初始拓扑中不可分辨",
+          "mechanism": "loss of observation faithfulness",
+          "target_claim": "仅各目标 T0 而无联合单射，也足以使定义域的初始拓扑 T0。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF104/task.md",
+      "reference": "MG-GF104/reference.md"
+    },
+    {
+      "id": "MG-GF105",
+      "parent": "MG-F105",
+      "title": "陪集切片、最小覆盖与空切片",
+      "stage_count": 6,
+      "task_kind": "audit",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "代表点允许从整个 A 取，改成只能从单一切片 B 取",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把切片用于差集控制的作用错当成跨陪集选代表的能力",
+          "correct_boundary": "切片只位于一个陪集，不能覆盖 A 的其他陪集",
+          "mechanism": "selection domain restriction",
+          "target_claim": "原切片覆盖定理中的代表集总可以加强为 F⊆B，同时保留覆盖及基数界。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "允许空切片，同时把商式界准确改成乘积界",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "沿用正分母除法或因原定理要求非空而否定修改后的结论",
+          "correct_boundary": "空切片时取 F=A，乘积界退化为 0≤K|A|",
+          "mechanism": "boundary with a changed conclusion",
+          "target_claim": "允许 B 为空时，总存在 F⊆A 覆盖且满足 |F||B|≤K|A|。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF105/task.md",
+      "reference": "MG-GF105/reference.md"
+    },
+    {
+      "id": "MG-GF106",
+      "parent": "MG-F106",
+      "title": "陪集覆盖、商群计数与子群改变",
+      "stage_count": 6,
+      "task_kind": "generate",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "对所有非空切片分别有界，要求合并成去掉密度因子的全局界",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把多条有各自分母的不等式合并时忽略重复的右端项",
+          "correct_boundary": "相加并不消去陪集数，反例用零子群检测",
+          "mechanism": "local estimates and aggregation",
+          "target_claim": "对 A 的全部非空 H 陪集切片应用覆盖估计后必有 c_H(A)≤K。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "将 H 放大为 L，并允许从已有代表集合重新取子集",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "直接沿用旧集合的基数界，或误以为不能从旧代表中得到新代表",
+          "correct_boundary": "旧代表覆盖每个新陪集，重新取一代表后再应用新的切片界",
+          "mechanism": "change of quotient and re-selection",
+          "target_claim": "H≤L 时，从任意 H 覆盖集 F_H 都能取子集 F_L 作 L 覆盖并满足 |F_L|≤K|A|/|B_L|。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF106/task.md",
+      "reference": "MG-GF106/reference.md"
+    },
+    {
+      "id": "MG-GF107",
+      "parent": "MG-F107",
+      "title": "加权逆算子、支撑界与量词交换",
+      "stage_count": 6,
+      "task_kind": "audit",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "删除共同支撑上界，保留每个序列 Rapid，要求全族同一个 D",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把每个 f 的有限常数继承成全族统一常数",
+          "correct_boundary": "单位尖峰位置无界导致输出零阶范数无界",
+          "mechanism": "uniformity over a family",
+          "target_claim": "存在 D≥0，对所有 Rapid(f) 且 Control(0,1,f) 的序列都有 Control(0,D,Sf)。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "将 ∃D∀f 改为 ∀f∃D，允许常数依赖输入",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把不存在统一界误读为不存在逐个控制",
+          "correct_boundary": "Rapid 的第 1 阶恰好提供每个 f 所需 D",
+          "mechanism": "quantifier order",
+          "target_claim": "对每个 Rapid(f)，都存在可依赖 f 的 D≥0 使 Control(0,D,Sf)。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF107/task.md",
+      "reference": "MG-GF107/reference.md"
+    },
+    {
+      "id": "MG-GF108",
+      "parent": "MG-F108",
+      "title": "加权逆算子的正性边界与接口修复",
+      "stage_count": 6,
+      "task_kind": "repair",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "将 v≥1 改为逐点 v>0，删除统一正下界",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把 control_down 所需条件误转移成精确乘法恒等式所需条件",
+          "correct_boundary": "目标的 S_v 估计只用逐点正性，不用阶数下降",
+          "mechanism": "sufficient versus actually used hypothesis",
+          "target_claim": "只要求逐点 v_n>0 时，互逆、S_v 线性、一阶同常数控制及 S_v 保持 Rapid_v 均仍成立。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "把逐点正改成非负且允许零点，仍要求全部序列上的双侧逆",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "将乘法估计延伸成可逆性而不检查分母非零",
+          "correct_boundary": "零点使 T_v 丢失该坐标且限制像",
+          "mechanism": "operator kernel and domain boundary",
+          "target_claim": "允许非负权重有零点时，S_v 仍是 T_v 在全部实序列上的双侧逆。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "回到原正权重并把控制常数固定为零",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "从一般零损失失败或零权重失败推断端点也失败",
+          "correct_boundary": "严格正权重与零上界强制输入为零",
+          "mechanism": "zero endpoint and restored assumptions",
+          "target_claim": "原严格正权重下 Control_w(r,0,f) 蕴含 Control_w(r,0,S_w f)。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF108/task.md",
+      "reference": "MG-GF108/reference.md"
+    },
+    {
+      "id": "MG-GF109",
+      "parent": "MG-F109",
+      "title": "有限记录、安全核与迟延前进",
+      "stage_count": 6,
+      "task_kind": "audit",
+      "turns": [
+        {
+          "stage_id": "S2",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "精确下一步记录改为允许停留或推进",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把每次停留都视为最终可以忽略的有限等待",
+          "correct_boundary": "允许永久停留会保留 g 已排除的真实安全点",
+          "mechanism": "stuttering versus exact dynamics",
+          "target_claim": "仅弱记录条件下仍有 K=q⁻¹(T)。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "加入安全轨道上逐点有限迟延实现，不要求统一迟延",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "错误要求每步精确交换或统一等待上界",
+          "correct_boundary": "安全轨道移位与逐层归纳足以恢复所有有限层",
+          "mechanism": "eventual progress without uniformity",
+          "target_claim": "弱记录条件加每个安全 x 在某个正时刻实现一次 g(qx)，足以得到 K=q⁻¹(T)。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "只给安全核集合相等，要求反推逐步精确记录",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把足以证明集合相等的动力学条件当成必要条件",
+          "correct_boundary": "相同安全核可来自不同的记录演化",
+          "mechanism": "sufficient versus necessary conditions",
+          "target_claim": "弱记录条件加 K=q⁻¹(T) 必然推出逐步精确记录条件。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF109/task.md",
+      "reference": "MG-GF109/reference.md"
+    },
+    {
+      "id": "MG-GF110",
+      "parent": "MG-F110",
+      "title": "有限记录的可靠内近似与完整修复",
+      "stage_count": 6,
+      "task_kind": "repair",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "将局部精确记录 E 改为停留或推进 W",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "用含 E 参数的反向覆盖证明冒充 W 下证明",
+          "correct_boundary": "实际安全轨迹可以永远停在将被抽象 g 删除的记录",
+          "mechanism": "contract mismatch under stuttering",
+          "target_claim": "仅弱条件 W 下总有 K=q⁻¹(T)。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "在 W 上新增 g(B)⊆B，而不恢复 E",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "认为只有消除停留才能恢复等式",
+          "correct_boundary": "记录集合已闭合时抽象与真实系统都无需删除点",
+          "mechanism": "alternative sufficient condition",
+          "target_claim": "W 加 g(B)⊆B 足以得到 K=A=q⁻¹(T)，不需要 E。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF110/task.md",
+      "reference": "MG-GF110/reference.md"
+    },
+    {
+      "id": "MG-GF111",
+      "parent": "MG-F111",
+      "title": "扩展非负界、有限子域与统一常数",
+      "stage_count": 6,
+      "task_kind": "audit",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "把一个全域有限系数改为每个有限子域各自有系数，无统一上界",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "从所有有限子域可行直接交换 ∀F∃c_F 为 ∃c∀x",
+          "correct_boundary": "局部系数可无界，原 r 会变成∞",
+          "mechanism": "local-to-global and quantifier exchange",
+          "target_claim": "每个有限子域有各自有限可行系数，足以推出全域有一个有限可行系数。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "给所有局部系数加入共同有限上界 C",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "以为需要相同局部系数或最优值取得",
+          "correct_boundary": "单点子域和乘法单调性直接证 C 全域可行",
+          "mechanism": "uniform bound restores globalization",
+          "target_claim": "若每个有限子域都有不超过共同有限 C 的可行系数，则 C 是全域可行系数。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF111/task.md",
+      "reference": "MG-GF111/reference.md"
+    },
+    {
+      "id": "MG-GF112",
+      "parent": "MG-F112",
+      "title": "扩展非负最优界的取得与系统组合",
+      "stage_count": 6,
+      "task_kind": "generate",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "把单系统改为不交并，并明确给两个分支各自的最小有限值",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "认为出现∞分母或零端点就使任何组合都不取得",
+          "correct_boundary": "两支已取得且有限时 max 同时可行且最小",
+          "mechanism": "composition of attained optima",
+          "target_claim": "两个系统分别有最小有限系数 a、b，则不交并的最小有限系数为 max(a,b)。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "只保留并系统取得最小值，要求反推出各支取得",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把 max 构造定理的前提反推为必要条件",
+          "correct_boundary": "另一个分支可提供严格正阈值并排除未取得端点",
+          "mechanism": "reflection of existence under composition",
+          "target_claim": "不交并有最小有限系数，必推出每个分支都有最小有限系数。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GF112/task.md",
+      "reference": "MG-GF112/reference.md"
+    },
+    {
+      "id": "MG-GR001",
+      "parent": "MG-R001",
+      "title": "递归系统的固定族、稳定分支与终止",
+      "stage_count": 7,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "只保留原始扩展伪度量和谱数据",
+          "expected_truth": "false",
+          "mechanism": "结构前提携带",
+          "tempting_invalid_transfer": "从谱收缩直接推出原空间固定点",
+          "correct_boundary": "还需实际完备、分离及有限距离控制",
+          "target_claim": "原始共同设定保证唯一非吸收固定族及所有初始族的有限常数几何逼近。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "输出完整分离但不要求有限直径，初始族任意",
+          "expected_truth": "false",
+          "mechanism": "函数空间与输出空间",
+          "tempting_invalid_transfer": "输出完整自动使函数族sup距离有限",
+          "correct_boundary": "不同无限距离分支可有不同固定族",
+          "target_claim": "指定完整但无界输出例中的非吸收固定族唯一且给定H按sup距离趋于F⁰。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S5"
+          ],
+          "changed_assumptions": "限制到给定有限残差的有限距离分支",
+          "expected_truth": "true",
+          "mechanism": "结论定义域",
+          "tempting_invalid_transfer": "上一反例否定任何固定点理论",
+          "correct_boundary": "实际不变完备分支上Banach有效",
+          "target_claim": "题给有限残差分支中存在唯一固定族且每个分支内H有指定有限几何误差界。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S7",
+          "earlier_stage_ids": [
+            "S2",
+            "S6"
+          ],
+          "changed_assumptions": "每条调用路径有限终止而深度不统一",
+          "expected_truth": "false",
+          "mechanism": "逐点量词到一致量词",
+          "tempting_invalid_transfer": "每输入最终精确就有全输入有限几何误差",
+          "correct_boundary": "深度和初值增长都需要统一控制",
+          "target_claim": "逐输入有限终止足以保证每个初始族从n≥1起都有统一有限常数几何误差界。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR001/task.md",
+      "reference": "MG-GR001/reference.md"
+    },
+    {
+      "id": "MG-GR002",
+      "parent": "MG-R002",
+      "title": "线性记录、有限观测与原空间恢复",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "不要求E自反，只给Banach完备",
+          "expected_truth": "false",
+          "mechanism": "完备性与双对偶成员",
+          "tempting_invalid_transfer": "规范双对偶嵌入当满射",
+          "correct_boundary": "原实现需要z∈J(E)",
+          "target_claim": "所有兼容有界记录都能在任意原Banach空间中唯一稳定恢复并与T相容。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "单条记录加弱星连续，不要求E自反",
+          "expected_truth": "true",
+          "mechanism": "单条与全体量词",
+          "tempting_invalid_transfer": "非自反空间没有任何恢复",
+          "correct_boundary": "弱星连续恰刻画J(E)",
+          "target_claim": "一份合法记录可在原E中实现当且仅当其z_λ对σ(E′,E)连续。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S1",
+            "S5"
+          ],
+          "changed_assumptions": "所有有限观测精确匹配并要求原界C取到",
+          "expected_truth": "false",
+          "mechanism": "下确界与取到",
+          "tempting_invalid_transfer": "C+ε存在自动可取ε=0",
+          "correct_boundary": "有限商范数下确界也可不取到",
+          "target_claim": "全部有限观测总能由范数不超过原C的向量精确匹配。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR002/task.md",
+      "reference": "MG-GR002/reference.md"
+    },
+    {
+      "id": "MG-GR003",
+      "parent": "MG-R003",
+      "title": "平均恢复、迭代误差与一致速度",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "正交投影改为任意交换幂有界Banach算子",
+          "expected_truth": "true",
+          "mechanism": "目标范围保持",
+          "tempting_invalid_transfer": "因失去Hilbert结构否定两过程比较",
+          "correct_boundary": "等价成立但限域可能是Z⊕Y真子空间",
+          "target_claim": "共同设定下两种过程逐输入范数收敛性等价，极限一致且具有题定限域稳定恢复。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S3"
+          ],
+          "changed_assumptions": "收敛性等价升级为所有输入收敛",
+          "expected_truth": "false",
+          "mechanism": "等价与存在",
+          "tempting_invalid_transfer": "A收敛 iff R收敛被当二者总收敛",
+          "correct_boundary": "须x∈Z⊕Y",
+          "target_claim": "共同设定下两种过程都在全部E上范数收敛。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "所有输入逐点收敛升级为算子范数收敛",
+          "expected_truth": "false",
+          "mechanism": "点态到一致",
+          "tempting_invalid_transfer": "每个向量的截断阶段当全单位球阶段",
+          "correct_boundary": "对角特征值逼近1阻止统一衰减",
+          "target_claim": "所列对角系统的逐点范数收敛提升为算子范数收敛。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S5"
+          ],
+          "changed_assumptions": "增加Y上某幂的严格压缩条件",
+          "expected_truth": "true",
+          "mechanism": "精确边界",
+          "tempting_invalid_transfer": "只因一般一致收敛失败便拒绝条件化恢复",
+          "correct_boundary": "某幂严格压缩恰刻画R统一收敛",
+          "target_claim": "全E恢复条件下，R^n按算子范数趋P当且仅当Y上某幂严格压缩。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR003/task.md",
+      "reference": "MG-GR003/reference.md"
+    },
+    {
+      "id": "MG-GR004",
+      "parent": "MG-R004",
+      "title": "Hilbert复形的精确消元与近似消元",
+      "stage_count": 5,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S2",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "有限维改为任意Hilbert层但显式保持正能量下界",
+          "expected_truth": "true",
+          "mechanism": "真正依赖的假设",
+          "tempting_invalid_transfer": "误以为无限维无法求逆",
+          "correct_boundary": "自伴性加正下界保证满射有界逆",
+          "target_claim": "显式正能量下界及所给微分误差条件保证扰动后的有界Green算子与链收缩及指定界。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "仅保留约化无环，不给正下界或闭值域",
+          "expected_truth": "false",
+          "mechanism": "闭包与精确像",
+          "tempting_invalid_transfer": "把稠密像当像等于核",
+          "correct_boundary": "零核不蕴含稳定消元",
+          "target_claim": "约化无环的有限长Hilbert复形必有有界链收缩及全部L_j的有界右逆。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "以正则化近似替代精确消元后要求算子范数收敛",
+          "expected_truth": "false",
+          "mechanism": "点态到一致",
+          "tempting_invalid_transfer": "强收敛自动成为范数收敛",
+          "correct_boundary": "范数收敛等价于S5的闭值域条件",
+          "target_claim": "约化无环条件下ε(L_j+εI)⁻¹总在算子范数中趋于0。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR004/task.md",
+      "reference": "MG-GR004/reference.md"
+    },
+    {
+      "id": "MG-GR005",
+      "parent": "MG-R005",
+      "title": "凸成本记录、紧性与闭上图恢复",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "不要求次水平紧或f闭，但目标改为最大闭凸下界",
+          "expected_truth": "true",
+          "mechanism": "存在目标的层级",
+          "tempting_invalid_transfer": "因原空间最优点可能缺失便否定闭上图构造",
+          "correct_boundary": "闭化构造与实际最优取到不同",
+          "target_claim": "一般题给非负凸成本的全部有限记录仍确定对完整扩展值竞争类最大的下半连续凸下界。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "保留有限维和闭凸，未给次水平紧性",
+          "expected_truth": "false",
+          "mechanism": "闭集像与紧集像",
+          "tempting_invalid_transfer": "连续线性投影保持一切闭凸集",
+          "correct_boundary": "投影可能非闭，闭化仍可重构",
+          "target_claim": "有限维空间上的下半连续凸成本的每个有限线性观测成本都下半连续。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GR005/task.md",
+      "reference": "MG-GR005/reference.md"
+    },
+    {
+      "id": "MG-GR006",
+      "parent": "MG-R006",
+      "title": "逆向塔的前缀、整体提升与选择",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "存在提升升级为对全部图表同构自然的首选提升",
+          "expected_truth": "false",
+          "mechanism": "存在与规范构造",
+          "tempting_invalid_transfer": "自然挠子自动有自然零点",
+          "correct_boundary": "剪切自同构使任何选点移动",
+          "target_claim": "所列分裂常值塔可以对所有记录选取对全部整塔同构自然的首选提升。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "核过渡不要求满射，只给有限C与满射βγ",
+          "expected_truth": "false",
+          "mechanism": "局部到整体与错误有限性",
+          "tempting_invalid_transfer": "前缀提升与有限记录推出无限纤维相容",
+          "correct_boundary": "障碍是cokerΔ_A",
+          "target_claim": "有限C和满射β、γ保证逆极限增广满射及短正合。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "改为核A有限，允许商和过渡一般",
+          "expected_truth": "true",
+          "mechanism": "有限性对象切换",
+          "tempting_invalid_transfer": "因过渡不满射否定逆极限非空",
+          "correct_boundary": "非空有限提升纤维与有限交性质足够",
+          "target_claim": "各A_n有限时，任意兼容记录均可整体提升，不要求过渡满射。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GR006/task.md",
+      "reference": "MG-GR006/reference.md"
+    },
+    {
+      "id": "MG-GR007",
+      "parent": "MG-R007",
+      "title": "等变分裂空间的稳定与自然性",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "不要求Aₙ、Bₙ有限维，只要求实际分裂方向Wₙ有限维",
+          "expected_truth": "true",
+          "mechanism": "假设的实际作用",
+          "tempting_invalid_transfer": "无限维环境直接否定稳定像论证",
+          "correct_boundary": "稳定的是有限维仿射分裂空间",
+          "target_claim": "仅各实际分裂方向W_n有限维时，S2的全部相容分裂分类仍成立。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "实际分裂参数空间为无限维k[t]",
+          "expected_truth": "false",
+          "mechanism": "有限前缀到无限整体",
+          "tempting_invalid_transfer": "逐层和逐前缀可解等于整塔可解",
+          "correct_boundary": "次数支持约束阻止无限相容族",
+          "target_claim": "指定k[t]仿射分裂参数塔存在相容分裂族。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "自然运输升级为自然首选",
+          "expected_truth": "false",
+          "mechanism": "存在与规范性",
+          "tempting_invalid_transfer": "非空自然挠子总有自然零点",
+          "correct_boundary": "剪切自同构无固定分裂",
+          "target_claim": "有限维逐行分裂塔总可选择对全部整塔同构自然的首选相容分裂。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR007/task.md",
+      "reference": "MG-GR007/reference.md"
+    },
+    {
+      "id": "MG-GR008",
+      "parent": "MG-R008",
+      "title": "塔记录的表示、有限层延拓与自然变换",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S3"
+          ],
+          "changed_assumptions": "以每层秩1替代余极限有限生成",
+          "expected_truth": "false",
+          "mechanism": "有限秩与有限生成",
+          "tempting_invalid_transfer": "把层秩有界当分母有界",
+          "correct_boundary": "零与非单位过渡决定实际余极限",
+          "target_claim": "所有阶段秩均为1足以保证F_P可表示。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3"
+          ],
+          "changed_assumptions": "稳定像间同构升级为每个当前层都有回缩",
+          "expected_truth": "false",
+          "mechanism": "存在层的量词",
+          "tempting_invalid_transfer": "足够后层回缩当任意层回缩",
+          "correct_boundary": "必须先后移到实现稳定像的层",
+          "target_claim": "题给稳定像及限制过渡同构条件保证每个当前层I_n都是P_n的直和项。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "有限极限推广到可数积",
+          "expected_truth": "false",
+          "mechanism": "有限到无限",
+          "tempting_invalid_transfer": "无限个代表可统一后移",
+          "correct_boundary": "序列分母没有统一有限界",
+          "target_claim": "乘二塔的有限极限保持可以推广到典范可数积比较满射。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR008/task.md",
+      "reference": "MG-GR008/reference.md"
+    },
+    {
+      "id": "MG-GR009",
+      "parent": "MG-R009",
+      "title": "群作用下降、稳定子与基底检验",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "Γ与作用不要求有限自由，改为一般层分类",
+          "expected_truth": "true",
+          "mechanism": "从特殊实现到判据",
+          "tempting_invalid_transfer": "继续假设Q是profinite空间",
+          "correct_boundary": "层商总存在，只有满足全测试稳定子条件的对象下降",
+          "target_claim": "任意共同设定均存在具有指定泛性质的层商及完整的判据分类与任意基底相容性。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "一般层只检查普通单点值",
+          "expected_truth": "false",
+          "mechanism": "测试对象量词",
+          "tempting_invalid_transfer": "单点纤维检测所有层截面",
+          "correct_boundary": "需所有profinite测试对象",
+          "target_claim": "单点测试对象上的稳定子作用平凡足以保证一般等变层可下降。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3"
+          ],
+          "changed_assumptions": "用任意局部满射层基底检测原对象",
+          "expected_truth": "true",
+          "mechanism": "有效局部到整体",
+          "tempting_invalid_transfer": "需要全局代表才可反映",
+          "correct_boundary": "局部提升和层分离性足够",
+          "target_claim": "沿任意局部满射层B→Q拉回后可实现，必反映原对象可实现。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S5"
+          ],
+          "changed_assumptions": "仅非空可表示基底而无局部满射",
+          "expected_truth": "false",
+          "mechanism": "覆盖与非空",
+          "tempting_invalid_transfer": "非空拉回可检测全部轨道",
+          "correct_boundary": "未覆盖轨道可携带非平凡稳定子作用",
+          "target_claim": "沿非空可表示层B→Q拉回后可实现，必反映原对象可实现。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GR009/task.md",
+      "reference": "MG-GR009/reference.md"
+    },
+    {
+      "id": "MG-GR010",
+      "parent": "MG-R010",
+      "title": "探针映射空间与连续性层级",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "输入由局部紧改为第一可数Hausdorff",
+          "expected_truth": "false",
+          "mechanism": "相近结构的区别",
+          "tempting_invalid_transfer": "紧生成替代局部紧来证普通评价",
+          "correct_boundary": "第一可数保证kX=X但普通紧开求值仍可失败",
+          "target_claim": "第一可数Hausdorff输入的普通紧开评价总连续。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "探针自然同构升级为原拓扑同胚",
+          "expected_truth": "false",
+          "mechanism": "等价的层级",
+          "tempting_invalid_transfer": "k化同胚当原拓扑同胚",
+          "correct_boundary": "一般只确定kX",
+          "target_claim": "连续f诱导探针自然同构，必为原拓扑同胚。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S5"
+          ],
+          "changed_assumptions": "再给X,Y第一可数",
+          "expected_truth": "true",
+          "mechanism": "补足实际检验条件",
+          "tempting_invalid_transfer": "由上一反例否定所有升级",
+          "correct_boundary": "第一可数使k化不变",
+          "target_claim": "第一可数Hausdorff的X,Y之间，连续f诱导探针同构即可推出普通同胚。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR010/task.md",
+      "reference": "MG-GR010/reference.md"
+    },
+    {
+      "id": "MG-GR101",
+      "parent": "MG-R101",
+      "title": "从同余记录到有限族的整体实现",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "不要求H=L，目标为完整障碍正合列",
+          "expected_truth": "true",
+          "mechanism": "条件变化后仍可构造",
+          "tempting_invalid_transfer": "继续把j当满射",
+          "correct_boundary": "j满射当且仅当O=0，但障碍列总成立",
+          "target_claim": "任意A,B,C均存在题定归一化的障碍短正合列，且零障碍恰当记录可实现。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "四份记录只知各三元子族可实现",
+          "expected_truth": "false",
+          "mechanism": "有限局部到整体",
+          "tempting_invalid_transfer": "所有三元障碍消失就有四元实现",
+          "correct_boundary": "每一新份须相对于完整已实现前缀检查",
+          "target_claim": "四份记录的每个三元子族可实现，必推出四份共同可实现。",
+          "scope": "stage"
+        }
+      ],
+      "task": "MG-GR101/task.md",
+      "reference": "MG-GR101/reference.md"
+    },
+    {
+      "id": "MG-GR102",
+      "parent": "MG-R102",
+      "title": "有限轨道、规范投影与统一公式",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "底集有限改为每条轨道集合有限",
+          "expected_truth": "true",
+          "mechanism": "统一界到逐点界",
+          "tempting_invalid_transfer": "仍使用全模统一n,p",
+          "correct_boundary": "分解用逐点存在和唯一性，不需统一幂次",
+          "target_claim": "逐点有限轨道下题定规范直和投影及全部自然性结论成立。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "规范投影要求由一个全局多项式表达",
+          "expected_truth": "false",
+          "mechanism": "存在与统一构造",
+          "tempting_invalid_transfer": "逐点幂表示拼成一个多项式",
+          "correct_boundary": "局部轨道投影自然存在但非全局多项式",
+          "target_claim": "逐点有限轨道的F₂线性系统的规范投影总是某个单一多项式p(T)。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "两个交换算子各自仅逐点有限轨道",
+          "expected_truth": "true",
+          "mechanism": "替代证明与条件适用",
+          "tempting_invalid_transfer": "因无统一多项式而否定投影交换",
+          "correct_boundary": "自然性提供真正的交换证明",
+          "target_claim": "任意模上两个交换且各自逐点有限轨道的算子具有自然的N/P四项分解。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR102/task.md",
+      "reference": "MG-GR102/reference.md"
+    },
+    {
+      "id": "MG-GR103",
+      "parent": "MG-R103",
+      "title": "参数最小不动点、消元与近似传递",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "一步交织等式换成一侧序不等式",
+          "expected_truth": "true",
+          "mechanism": "不等式方向和结论强度",
+          "tempting_invalid_transfer": "单边lax关系仍给相等",
+          "correct_boundary": "分别给αμT≤μU或μU≤αμT",
+          "target_claim": "所给单边交织分别推出αμT≤μU或μU≤αμT的对应有向比较。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "只给单调精确交织，无伴随",
+          "expected_truth": "false",
+          "mechanism": "结构条件丢失",
+          "tempting_invalid_transfer": "像是不动点便是最小点",
+          "correct_boundary": "只能普遍得到μU≤αμT",
+          "target_claim": "任意单调精确半共轭都满足αμT=μU。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "加入底元和ω链连续性但仍无伴随",
+          "expected_truth": "true",
+          "mechanism": "另一充分机制",
+          "tempting_invalid_transfer": "没有伴随就判传递不可能",
+          "correct_boundary": "可数迭代及α连续给精确传递",
+          "target_claim": "保持底元及递增ω上确界的精确交织在所给ω连续系统中保存最小不动点。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S5"
+          ],
+          "changed_assumptions": "T仅单调而不要求ω链连续",
+          "expected_truth": "false",
+          "mechanism": "可数到一般极限",
+          "tempting_invalid_transfer": "把ω阶段上确界当不动点",
+          "correct_boundary": "需实际证明Tx_ω≤x_ω",
+          "target_claim": "仅单调时，从底元可数次迭代的上确界必为最小不动点。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR103/task.md",
+      "reference": "MG-GR103/reference.md"
+    },
+    {
+      "id": "MG-GR104",
+      "parent": "MG-R104",
+      "title": "幂等元提升、逆极限与环分解",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "从每层元素有指数要求极限元素有共同指数",
+          "expected_truth": "false",
+          "mechanism": "量词交换",
+          "tempting_invalid_transfer": "∀i∃N_i变成∃N∀i",
+          "correct_boundary": "逐层提升不需要极限核nil",
+          "target_claim": "所给截断多项式塔的极限增广核中每个元素都幂零。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "无交换与nil，但有可数且全部过渡满射",
+          "expected_truth": "true",
+          "mechanism": "另一存在机制",
+          "tempting_invalid_transfer": "把幂等唯一性当任意提升唯一性",
+          "correct_boundary": "递归满射只给元素存在",
+          "target_claim": "可数塔全部过渡及增广满射时，极限增广满射，无需交换或nil条件。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "只保留各增广满射，不给过渡满射",
+          "expected_truth": "false",
+          "mechanism": "不同箭头性质",
+          "tempting_invalid_transfer": "p_i满射被携带成ρ满射",
+          "correct_boundary": "相容纤维可能空",
+          "target_claim": "共同交换环逆系的逐层满射nil增广必给极限增广满射。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S1"
+          ],
+          "changed_assumptions": "保留平方零核但不要求环交换",
+          "expected_truth": "false",
+          "mechanism": "乘法结构改变",
+          "tempting_invalid_transfer": "把a(1−b)仍当幂等",
+          "correct_boundary": "存在的单元素多项式有效，唯一性失败",
+          "target_claim": "非交换环的平方零核满射下，幂等元提升仍必唯一。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR104/task.md",
+      "reference": "MG-GR104/reference.md"
+    },
+    {
+      "id": "MG-GR105",
+      "parent": "MG-R105",
+      "title": "观测完成、噪声误差与原空间极小点",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "观测像不要求闭，改在完备化中求最优态",
+          "expected_truth": "true",
+          "mechanism": "值域切换与成立的转移",
+          "tempting_invalid_transfer": "将原极小点存在直接携带到E",
+          "correct_boundary": "完成态存在，原取到需P_Zy∈A(E)",
+          "target_claim": "一般观测像的完备化中存在所要求的唯一稳定最优完成态及原取到分类。",
+          "scope": "subclaim"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "E本身Hilbert且A单射稠密，未给像闭",
+          "expected_truth": "false",
+          "mechanism": "两种完备性",
+          "tempting_invalid_transfer": "把原范数完备当观测范数完备",
+          "correct_boundary": "原取到由像成员条件决定",
+          "target_claim": "有界单射稠密像的Hilbert算子对所有数据都在原空间取到残差下确界。",
+          "scope": "stage"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3"
+          ],
+          "changed_assumptions": "从各y的收敛要求算子范数收敛",
+          "expected_truth": "false",
+          "mechanism": "点态到一致",
+          "tempting_invalid_transfer": "把逐y所选n当统一n",
+          "correct_boundary": "有限维穷尽在无限维空间的投影差范数恒1",
+          "target_claim": "递增有限维子空间的稠密穷尽使相应正交投影在算子范数中收敛。",
+          "scope": "subclaim"
+        }
+      ],
+      "task": "MG-GR105/task.md",
+      "reference": "MG-GR105/reference.md"
+    },
+    {
+      "id": "MG-GP001",
+      "parent": "MG-P001",
+      "title": "局部单形、锥附着与整体同伦型",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "从特殊锥与射影平面模型回到原任意合法三元组",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "只以一个反例代替全分类与有限判据",
+          "correct_boundary": "全部悬挂类型和整数约化同调判据均需完成",
+          "mechanism": "example_to_classification",
+          "scope": "stage",
+          "target_claim": "在原三元组的全部条件下，全部可能同伦类型及给定局部数据的可缩充要判据均可按要求建立。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "去掉 B 的存在及其穿孔同伦条件",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "仍认为 link 一定非空",
+          "correct_boundary": "孤立顶点新增 S^0，不能默删端点",
+          "mechanism": "empty_boundary_case",
+          "scope": "subclaim",
+          "target_claim": "只假设穿孔空间非空可缩时，整个空间仍必同伦等价于某个非空有限复形的非约化悬挂。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "从 link 推出悬挂类型改问反向重建 link",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "将悬挂视为可消去的等价算子",
+          "correct_boundary": "悬挂丢失部分基本群信息",
+          "mechanism": "equivalence_not_cancellation",
+          "scope": "stage",
+          "target_claim": "两个非空有限复形的悬挂同伦等价，必推出原复形同伦等价。"
+        }
+      ],
+      "task": "MG-GP001/task.md",
+      "reference": "MG-GP001/reference.md"
+    },
+    {
+      "id": "MG-GP002",
+      "parent": "MG-P002",
+      "title": "Fourier 逆、截断误差与参数边界",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "固定频带/已给全频率下界改为任意无理方向的完整分类",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把所有非零乘子当作光滑满射充分条件",
+          "correct_boundary": "需有限阶小除数下界及端点判据；分类本身成立",
+          "mechanism": "finite_to_infinite_and_regularity",
+          "scope": "stage",
+          "target_claim": "固定无理方向的光滑可逆性、全部 Sobolev 损失及指定二次无理方向的端点和范数估计均能按所列条件完整刻画。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "固定 α 的估计改成邻域全部无理 α 共享常数",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "有限频带参数稳定推广到无限频率统一性",
+          "correct_boundary": "即固定共振频率也能在变化参数下破坏共同常数",
+          "mechanism": "parameter_uniformity",
+          "scope": "stage",
+          "target_claim": "存在含指定方向的邻域和一个有限阶数及有限常数，使邻域内所有无理方向共同满足题定 Sobolev 逆估计。"
+        }
+      ],
+      "task": "MG-GP002/task.md",
+      "reference": "MG-GP002/reference.md"
+    },
+    {
+      "id": "MG-GP003",
+      "parent": "MG-P003",
+      "title": "半局部邻域、下降与层化的依赖比较",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S3"
+          ],
+          "changed_assumptions": "包含 Σ 的开集改为仅稠密开",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把泛点邻域当成保留所有半局部点的邻域",
+          "correct_boundary": "稠密不保证含指定点",
+          "mechanism": "generic_to_semilocal",
+          "scope": "stage",
+          "target_claim": "任意稠密开集 W 的内部仍可选到包含指定有限点集 Σ 的余终邻域系。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "不预设 F 是层，仅保留同伦不变及转移；点集可非闭、域可有限",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把普通层拼接直接用于 F，或因稠密开反例否定主定理",
+          "correct_boundary": "需适用的几何输入与保点收缩，或准确匹配已知主定理",
+          "mechanism": "local_to_global_with_geometric_input",
+          "scope": "stage",
+          "target_claim": "对每个域和题定任意有限非空点集，原预层与其 Zariski 层化的半局部邻域余极限之典范映射都是同构。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S2",
+            "S5"
+          ],
+          "changed_assumptions": "从阶段正合推出极限正合改问逆向",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "将余极限结论回填每个有限阶段",
+          "correct_boundary": "逐类最终消失足以极限正合但不迫使某阶段正合",
+          "mechanism": "converse_and_eventual_quantifiers",
+          "scope": "subclaim",
+          "target_claim": "一列复形的滤过余极限正合，必推出所有充分后面的阶段复形正合。"
+        }
+      ],
+      "task": "MG-GP003/task.md",
+      "reference": "MG-GP003/reference.md"
+    },
+    {
+      "id": "MG-GR011",
+      "parent": "MG-R011",
+      "title": "凸投影的恢复、复合与变分方程",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "从有限仿射/线性结构改为任意族闭凸约束，保留统一有限可行界",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "认为原先正交恒等式不可用就无法强恢复，或偷保留线性",
+          "correct_boundary": "投影变分不等式仍足够；全有限子集网不能换成未经证明共尾的序列",
+          "mechanism": "affine_to_convex_and_net",
+          "scope": "stage",
+          "target_claim": "任意族闭凸约束在原统一有限可行界下，全部恢复、极小值、最优性及稳定性目标均成立。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "保留连续稳定恢复，改问仿射代数性质",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把非扩张与唯一投影当作线性/仿射",
+          "correct_boundary": "闭凸性不提供仿射子空间结构",
+          "mechanism": "structure_transfer",
+          "scope": "stage",
+          "target_claim": "S4 所得恢复投影 P 必为仿射映射。"
+        }
+      ],
+      "task": "MG-GR011/task.md",
+      "reference": "MG-GR011/reference.md"
+    },
+    {
+      "id": "MG-GR012",
+      "parent": "MG-R012",
+      "title": "凸势、对偶与有限记录逼近",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "正定降为半正定，仍问全域有限及唯一最大点",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把可逆梯度的公式照搬到奇异 Q",
+          "correct_boundary": "只在 b+im Q 有限，最大点是 ker Q 的陪集",
+          "mechanism": "degeneracy_and_quotient_uniqueness",
+          "scope": "subclaim",
+          "target_claim": "Q 仅半正定时，每个 y 的共轭函数值仍有限且最大化点唯一。"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "由全空间线性梯度图改为任意拓扑向量空间中的循环单调记录",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "以欧氏对偶或正定矩阵为必要条件",
+          "correct_boundary": "连续泛函与循环条件已足够构造最小势",
+          "mechanism": "minimal_structure",
+          "scope": "stage",
+          "target_claim": "原拓扑向量空间及循环单调记录条件足以构造题定规范化最小下半连续凸势，并证明全部支持与最小性结论。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S4"
+          ],
+          "changed_assumptions": "由记录包含改问完整次梯度图相等",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "唯一最小势自动恢复恰好原记录",
+          "correct_boundary": "稀疏 Γ 可严格包含于次梯度图",
+          "mechanism": "inclusion_to_equality",
+          "scope": "stage",
+          "target_claim": "S4 的规范化最小势之完整次梯度图必恰等于输入图 Γ。"
+        }
+      ],
+      "task": "MG-GR012/task.md",
+      "reference": "MG-GR012/reference.md"
+    },
+    {
+      "id": "MG-GR013",
+      "parent": "MG-R013",
+      "title": "多项式记录、预解与谱的连续比较",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "有限维共同空间改为任意 Banach；增加每个多项式最终精确范数记录但阈值可依赖多项式",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把固定 p 的信息统一到所有幂次数",
+          "correct_boundary": "必须保留逐多项式阈值，所列全部条件仍不足以恢复谱点",
+          "mechanism": "quantifier_exchange_and_spectral_topology",
+          "scope": "stage",
+          "target_claim": "原全部强收敛及逐多项式最终精确范数记录足以满足所要求的谱恢复目标。"
+        }
+      ],
+      "task": "MG-GR013/task.md",
+      "reference": "MG-GR013/reference.md"
+    },
+    {
+      "id": "MG-GR014",
+      "parent": "MG-R014",
+      "title": "线性关系、坐标纤维与无限赋值",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "有限域紧性改为任意域及任意指标；仍要求全部解与所有纤维分类",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "把紧性失效当作代数延拓失效",
+          "correct_boundary": "ZFC 中代数对偶延拓替代紧性",
+          "mechanism": "finite_field_to_arbitrary_field",
+          "scope": "stage",
+          "target_claim": "任意域上题定有限可解条件足以构造整体解并完整分类全解、所有坐标像及全部非空纤维。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "将全赋值空间限制为有限支持",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "有限行只看有限坐标所以所有解也有限支持",
+          "correct_boundary": "行的支持与未知赋值的支持是两件事",
+          "mechanism": "domain_change",
+          "scope": "stage",
+          "target_claim": "每个有限子系统有有限支撑解，必推出无限系统有有限支撑解。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "有限域改为任意离散域，保留坐标像闭性结论",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "只要紧性论证失效就认定结论失效",
+          "correct_boundary": "有限关系消元给独立闭性证明",
+          "mechanism": "proof_requirement_vs_theorem_requirement",
+          "scope": "stage",
+          "target_claim": "给任意域离散拓扑后，S4 全解集的每个坐标像在相应乘积空间中仍闭。"
+        }
+      ],
+      "task": "MG-GR014/task.md",
+      "reference": "MG-GR014/reference.md"
+    },
+    {
+      "id": "MG-GR015",
+      "parent": "MG-R015",
+      "title": "自由模的商记录、完成支持与提升",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "不提供分裂或一致有界对角指数，只保留原题可数自由呈示",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "逐层有原像就选成相容族",
+          "correct_boundary": "共同模 t 支持约束可能阻止相容原像",
+          "mechanism": "finite_level_to_inverse_limit",
+          "scope": "stage",
+          "target_claim": "原可数自由短正合列的 t 进完成满足所要求的完整恢复和提升目标。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "从完成中的提升切回原代数直和",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "每层有限代表属于同一个全局有限支持",
+          "correct_boundary": "有限支持可随层增长",
+          "mechanism": "codomain_and_support",
+          "scope": "stage",
+          "target_claim": "题定可数自由模到其 t 进完成的典范映射必为满射。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S2",
+            "S5"
+          ],
+          "changed_assumptions": "在已完成模上重新使用 t 进商系统",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "因原模不满射而认定再次完成还会加点",
+          "correct_boundary": "必须核对完成模的 t^n 商；此例完成是幂等的",
+          "mechanism": "completion_idempotence",
+          "scope": "stage",
+          "target_claim": "题定可数自由模完成后的模再作 t 进完成，典范映射仍为同构。"
+        }
+      ],
+      "task": "MG-GR015/task.md",
+      "reference": "MG-GR015/reference.md"
+    },
+    {
+      "id": "MG-GR016",
+      "parent": "MG-R016",
+      "title": "局部分裂、有限呈示与截面拼接",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "有限呈示商改为仅循环商，素点处分裂照旧",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "有限生成商足以应用有限呈示的局部投射准则",
+          "correct_boundary": "素点上的独立存在未提供有限开覆盖上的相容截面",
+          "mechanism": "local_to_global_and_finite_presentation",
+          "scope": "stage",
+          "target_claim": "原有限自由中项与循环商的短正合列若每个素点处分裂，必具有整体线性截面及题定完整分裂分类。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2"
+          ],
+          "changed_assumptions": "I 有限生成改为仅 I²=I",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "将有限行列式技巧无限化",
+          "correct_boundary": "无限生成幂等理想未必由一个幂等元生成",
+          "mechanism": "finite_to_infinite",
+          "scope": "stage",
+          "target_claim": "任意幂等理想 I²=I 的商映射 R→R/I 都有 R 线性截面。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "给出有限主开覆盖上已相容的截面，但不假定有限呈示",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "局部到整体曾失败所以这里也失败",
+          "correct_boundary": "相容的实际映射可逐元素下降；无需先扩张素点数据",
+          "mechanism": "existence_vs_compatible_data",
+          "scope": "stage",
+          "target_claim": "题定有限主开覆盖上的相容实际线性截面，在不要求商模有限呈示时仍唯一拼成整体截面。"
+        }
+      ],
+      "task": "MG-GR016/task.md",
+      "reference": "MG-GR016/reference.md"
+    },
+    {
+      "id": "MG-GR017",
+      "parent": "MG-R017",
+      "title": "连续提升的有限拼接与积",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "有限离散因子改为两个任意有提升性质的 profinite 因子",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把有限开闭拼接推广为无限参数下联合连续选择",
+          "correct_boundary": "因子上的单独提升不保证乘积提升",
+          "mechanism": "finite_to_infinite_and_joint_continuity",
+          "scope": "stage",
+          "target_claim": "两个任意具有题定提升性质的 profinite 空间之乘积仍具有该提升性质。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "源不再要求有提升性质，但 f 的像要求有限",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "因乘积反例而否定所有有限观测的提升",
+          "correct_boundary": "有限像给真正有限开闭分块",
+          "mechanism": "finite_observation_vs_full_property",
+          "scope": "stage",
+          "target_claim": "任意 profinite 源到题定 Hausdorff 目标的有限像连续映射均能沿给定连续满射提升。"
+        }
+      ],
+      "task": "MG-GR017/task.md",
+      "reference": "MG-GR017/reference.md"
+    },
+    {
+      "id": "MG-GR018",
+      "parent": "MG-R018",
+      "title": "有限观察、自然运算与非点值记录",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S3",
+          "earlier_stage_ids": [
+            "S1",
+            "S2"
+          ],
+          "changed_assumptions": "全部有限测试改为仅至多两值测试",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "二值特征函数存在就足以保证交闭性",
+          "correct_boundary": "还需要多值/乘积测试的自然性关系",
+          "mechanism": "observation_restriction",
+          "scope": "stage",
+          "target_claim": "在三元素底集上，仅对至多两元素测试对象保持题定自然性，全部记录仍都是点值记录。"
+        },
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "保持全部有限测试而允许任意底集",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "从有限底集点值结论推到无限底集",
+          "correct_boundary": "全部记录需超滤子分类，点值恰在有限底集穷尽",
+          "mechanism": "finite_to_infinite_classification",
+          "scope": "stage",
+          "target_claim": "全部有限测试足以完成原记录分类、函子与单子结构构造及点值穷尽范围的精确刻画。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "单位律保持但从有限底集改问所有底集的乘法单射",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "存在右逆当成双侧逆",
+          "correct_boundary": "非主超滤子给两个不同二阶原像",
+          "mechanism": "split_epimorphism_vs_isomorphism",
+          "scope": "subclaim",
+          "target_claim": "单子的乘法 μ_X 对任意底集 X 都是单射。"
+        }
+      ],
+      "task": "MG-GR018/task.md",
+      "reference": "MG-GR018/reference.md"
+    },
+    {
+      "id": "MG-GR019",
+      "parent": "MG-R019",
+      "title": "超滤子代数、有限观测商与连通纤维",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S3"
+          ],
+          "changed_assumptions": "不再预先提供拓扑，只给两个超滤子代数等式",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "在构造拓扑前先使用 a 连续或 X 紧 Hausdorff",
+          "correct_boundary": "须从代数重建并验证拓扑，再应用有限观察商",
+          "mechanism": "construction_vs_assumed_structure",
+          "scope": "stage",
+          "target_claim": "原两个超滤子代数等式足以恢复实际紧 Hausdorff 拓扑、全部相容映射及有限观察商的所有题定性质。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S3",
+            "S4"
+          ],
+          "changed_assumptions": "将连通纤维推出观察商同构逆向使用",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把商层面的同构当成每条原纤维的拓扑信息",
+          "correct_boundary": "有限观察只区分连通分量",
+          "mechanism": "necessary_sufficient_reversal",
+          "scope": "stage",
+          "target_claim": "紧 Hausdorff 空间之间的连续满射若诱导有限观察商同构，则每条原映射纤维必连通。"
+        }
+      ],
+      "task": "MG-GR019/task.md",
+      "reference": "MG-GR019/reference.md"
+    },
+    {
+      "id": "MG-GR020",
+      "parent": "MG-R020",
+      "title": "对称分解的归一化与算术边界",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "保留特征零完备 DVR，移除 2 为单位这一条件",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "实正平方根或非二剩余特征的级数照搬到全部 DVR",
+          "correct_boundary": "二进整环可有真正的正交交织障碍",
+          "mechanism": "coefficient_ring_and_denominators",
+          "scope": "stage",
+          "target_claim": "原全部特征零完备离散赋值环条件均足以构造同余于单位阵的正交交织并完成全部比较分类。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S2",
+            "S4"
+          ],
+          "changed_assumptions": "允许二进环，但给更深的模8同余",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "由模2反例否定任意同余深度的恢复",
+          "correct_boundary": "高阶小量可以吸收二项式系数分母",
+          "mechanism": "quantitative_hypothesis_change",
+          "scope": "stage",
+          "target_claim": "在 Z₂ 上若给定交织矩阵满足 V≡I mod 8，则仍存在模 2 同余于 I 的正交交织矩阵。"
+        }
+      ],
+      "task": "MG-GR020/task.md",
+      "reference": "MG-GR020/reference.md"
+    },
+    {
+      "id": "MG-GR106",
+      "parent": "MG-R106",
+      "title": "整族恢复、固定点与一致性的范围",
+      "stage_count": 6,
+      "task_kind": "written",
+      "turns": [
+        {
+          "stage_id": "S4",
+          "earlier_stage_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "changed_assumptions": "紧完整域上处处观测改为任意域稠密点上的 Cauchy 数据并到实际完备化",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "继续假定原域完整或紧，或任意滤子可枚举",
+          "correct_boundary": "统一 Lipschitz 界允许在完成域逐点恢复，紧集/移动输入须分别证明",
+          "mechanism": "domain_completion_and_filter",
+          "scope": "stage",
+          "target_claim": "原共同 Lipschitz 界、稠密观测及真滤子 Cauchy 条件足以完成实际完备化上的全部恢复、紧集一致及同步移动输入目标。"
+        },
+        {
+          "stage_id": "S5",
+          "earlier_stage_ids": [
+            "S1",
+            "S4"
+          ],
+          "changed_assumptions": "从各紧集一致改问整个完成域一致",
+          "expected_truth": "false",
+          "tempting_invalid_transfer": "把每点/每紧集滤子事件交换成全域事件",
+          "correct_boundary": "非紧域可有向无穷移动的尖峰",
+          "mechanism": "pointwise_to_uniform",
+          "scope": "stage",
+          "target_claim": "S4 的恢复结论总能加强为整个完成域上的一致收敛。"
+        },
+        {
+          "stage_id": "S6",
+          "earlier_stage_ids": [
+            "S4",
+            "S5"
+          ],
+          "changed_assumptions": "紧子集改为可能不闭的全有界子集",
+          "expected_truth": "true",
+          "tempting_invalid_transfer": "去掉闭性就否定一致收敛",
+          "correct_boundary": "有限网已足够，或使用完成域内紧闭包",
+          "mechanism": "unnecessary_restriction",
+          "scope": "stage",
+          "target_claim": "S4 的收敛在完成域的每个全有界子集上都一致，不要求该子集闭。"
+        }
+      ],
+      "task": "MG-GR106/task.md",
+      "reference": "MG-GR106/reference.md"
+    }
+  ],
+  "original_case_count": 41,
+  "integrated": 41,
+  "stages": 246,
+  "candidate_visible": false
+}

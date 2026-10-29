@@ -14,7 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__
-from .catalog import candidate_message, digest_bytes, read_json, relative_name, safe_file, write_json
+from .catalog import (candidate_message, digest_bytes, read_json, relative_name,
+                      safe_file, validate_alignment_manifest, validate_group_contract, write_json)
 
 
 def now():
@@ -118,6 +119,14 @@ def run(
                 and c["review"]["human"] == "approved",
             }
         )
+        if c.get("group_contract"):
+            contract = safe_file(suite.root, c["group_contract"]).read_bytes()
+            target = dest / c["id"] / "review-contract.json"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(contract)
+            metadata["cases"][-1]["group_contract"] = {
+                "path": str(target.relative_to(dest)), "sha256": digest_bytes(contract)
+            }
     write_json(dest / "run.json", metadata)
     failures = 0
     for c in selected:
@@ -146,6 +155,8 @@ def run(
                 "request_sha256": digest_bytes(
                     json.dumps(request, ensure_ascii=False, sort_keys=True).encode()
                 ),
+                **({"group_contract_sha256": next(x for x in metadata["cases"] if x["id"] == c["id"])["group_contract"]["sha256"]}
+                   if c.get("group_contract") else {}),
                 "candidate_message_sha256": digest_bytes(candidate_message(request).encode("utf-8")),
                 "response_sha256": digest_bytes(data),
                 "elapsed_seconds": round(time.monotonic() - started, 6),
@@ -315,6 +326,64 @@ def extract_candidate_lean(response):
     return files
 
 
+def extract_candidate_alignment(response):
+    """Read the one top-level named JSON fence, retaining its exact source span."""
+    lines = response.splitlines(keepends=True)
+    matches = []
+    i = offset = 0
+    while i < len(lines):
+        opening = re.fullmatch(r" {0,3}(`{3,}|~{3,})([^\r\n]*)\r?\n?", lines[i])
+        offset += len(lines[i].encode("utf-8")); i += 1
+        if not opening:
+            continue
+        fence, info = opening.groups()
+        selected = bool(re.fullmatch(r'json\s+filename=["\']?alignment\.json["\']?', info.strip(), re.I))
+        start = offset
+        while i < len(lines) and not re.fullmatch(
+            r" {0,3}" + re.escape(fence[0]) + "{" + str(len(fence)) + r",}\s*", lines[i]
+        ):
+            offset += len(lines[i].encode("utf-8")); i += 1
+        if i == len(lines):
+            if selected:
+                raise ValueError("Unclosed alignment.json code block")
+            break
+        if selected:
+            matches.append({"start_byte": start, "end_byte": offset})
+        offset += len(lines[i].encode("utf-8")); i += 1
+    if len(matches) != 1:
+        raise ValueError("Exactly one json filename=alignment.json block is required")
+    span = matches[0]
+    body = response.encode("utf-8")[span["start_byte"]:span["end_byte"]]
+
+    def unique_keys(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate key in alignment.json: " + key)
+            result[key] = value
+        return result
+
+    def invalid_constant(value):
+        raise ValueError("Non-JSON constant in alignment.json: " + value)
+
+    manifest = json.loads(body, object_pairs_hook=unique_keys, parse_constant=invalid_constant)
+    return manifest, dict(span, sha256=digest_bytes(body)), body
+
+
+def validate_alignment_audit(manifest, contract, receipt):
+    """Every claimed mapping must be present in this compilation's inventory."""
+    audited = {(d["module"], d["name"]) for d in receipt.get("audit", {}).get("declarations", [])}
+    stages = {s["id"]: s for s in contract["stages"]}
+    for item in manifest["items"]:
+        permitted = set(receipt.get("files_sha256", {}))
+        if stages[item["id"]].get("allow_background_declarations") is True:
+            permitted.update(receipt.get("input_files_sha256", {}))
+        for declaration in item["declarations"]:
+            file, name = declaration["file"], declaration["name"]
+            if file not in permitted or (file[:-5].replace("/", "."), name) not in audited:
+                raise ValueError(f"{item['id']}: alignment declaration was not audited in permitted source")
+
+
 def _candidate_engine():
     # Reuse pinned dependency/import inspection, without changing the author
     # verifier's namespace policy, manifest contract or default behavior.
@@ -442,6 +511,26 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
         else:
             extracted = extract_candidate_lean(response.decode("utf-8"))
         submitted = {item["name"]: item["content"] for item in extracted}
+        group_contract = None
+        if record.get('group_contract_sha256'):
+            contract_path = case_dir / 'review-contract.json'
+            if digest_bytes(contract_path.read_bytes()) != record['group_contract_sha256']:
+                return finish('infrastructure_error', 'Frozen group contract changed')
+            group_contract = validate_group_contract(read_json(contract_path))
+            if group_contract['id'] != request['case_id']:
+                return finish('infrastructure_error', 'Frozen group identity differs from request')
+            if group_contract.get('alignment_manifest_required'):
+                if group_contract['version'] != request['case_version']:
+                    return finish('infrastructure_error', 'Frozen group version differs from request')
+                alignment, span, body = extract_candidate_alignment(response.decode('utf-8'))
+                validate_alignment_manifest(alignment, group_contract)
+                (destination / 'alignment.json').write_bytes(body)
+                report.update(alignment_manifest=alignment, alignment_source_span=span,
+                              alignment_manifest_sha256=span['sha256'])
+            required_files = tuple(set(required_files) | set(group_contract.get('required_output_files', [])))
+            forbidden = set(submitted) & set(group_contract.get('immutable_input_files', []))
+            if forbidden:
+                return finish('format_error', 'Frozen background cannot be replaced: ' + ', '.join(sorted(forbidden)))
         absent = [name for name in required_files if _lean_filename(name) not in submitted]
         if absent:
             return finish("format_error", "Task-required files not delivered: " + ", ".join(absent))
@@ -469,6 +558,7 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
                     "response_sha256": response_hash, "request_sha256": request_hash,
                     "files_sha256": report["files_sha256"],
                     "input_files_sha256": report["input_files_sha256"],
+                    "alignment_manifest_sha256": report.get("alignment_manifest_sha256"),
                     "extraction_override_sha256": report.get('extraction_override_sha256'),
                     "ordered_sources": [{"name": name, "sha256": digest_bytes(text.encode()),
                                          "origin": "submitted" if name in submitted else "frozen-input"}
@@ -581,4 +671,10 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
                         "audit_template": digest_bytes(template_path.read_bytes())}
     if current_identity != identity:
         return finish("infrastructure_error", "Candidate verifier changed during execution")
+    if group_contract and group_contract.get('alignment_manifest_required'):
+        try:
+            validate_alignment_audit(report['alignment_manifest'], group_contract, report)
+        except ValueError as error:
+            return finish('format_error', str(error))
+        report['alignment_inventory_validated'] = True
     return finish("passed")

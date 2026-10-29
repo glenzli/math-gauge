@@ -1,0 +1,256 @@
+{
+  "id": "MG-GR003",
+  "parent_case_id": "MG-R003",
+  "version": "0.1.1",
+  "title": "平均恢复、迭代误差与一致速度",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "交换正交投影",
+      "kind": "prove",
+      "assumptions": [
+        "实Hilbert E",
+        "T,S交换正交投影",
+        "原平均与R定义"
+      ],
+      "expected": "true",
+      "depends_on": [],
+      "required_evidence": [
+        "四正交分量和精确系数",
+        "两种统一误差界"
+      ],
+      "critical_errors": [
+        "不交换投影也照用乘积投影"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "有噪声的递推",
+      "kind": "prove",
+      "assumptions": [
+        "S1全部条件",
+        "误差eₙ属于Y且统一界ε≥0",
+        "额外结论仅在eₙ→0时"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "记录不变",
+        "卷积几何误差",
+        "消失噪声极限和尖锐例"
+      ],
+      "critical_errors": [
+        "非零恒定误差也声称收敛到原投影",
+        "漏掉误差所属Y条件"
+      ],
+      "id": "S2",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "一般幂有界系统",
+      "kind": "decide",
+      "assumptions": [
+        "实Banach E",
+        "T,S有界交换且分别幂有界",
+        "原A_NM、R、Y、Q定义",
+        "不要求Hilbert、投影或反射性"
+      ],
+      "expected": "true",
+      "depends_on": [],
+      "required_evidence": [
+        "R^n实际行为而非仅Cesaro",
+        "共同收敛域Z⊕Y及极限",
+        "恢复的商记录定义域和稳定性"
+      ],
+      "critical_errors": [
+        "幂有界直接推出R迭代收敛",
+        "闭包换代数和",
+        "把正确限域投影当全E投影"
+      ],
+      "id": "S3",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "全部输入",
+      "kind": "decide",
+      "assumptions": [
+        "S3全部原条件",
+        "目标是所有x均收敛"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S3"
+      ],
+      "required_evidence": [
+        "合法交换幂有界例",
+        "两过程均不范数收敛",
+        "与限域分类一致"
+      ],
+      "critical_errors": [
+        "等价的收敛性误作普遍收敛"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "逐点速度",
+      "kind": "decide",
+      "assumptions": [
+        "题面指定对角Hilbert算子",
+        "S=I",
+        "同时比较逐点范数与算子范数"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S3"
+      ],
+      "required_evidence": [
+        "逐点收敛",
+        "算子范数恒1",
+        "排除其他范数极限"
+      ],
+      "critical_errors": [
+        "可恢复域等于E便有统一速度"
+      ],
+      "id": "S5",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "统一速度的条件",
+      "kind": "synthesize",
+      "assumptions": [
+        "S3全部条件",
+        "Z⊕Y=E",
+        "前半另有‖R|Y‖≤r<1",
+        "后半比较存在m的压缩条件"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S3",
+        "S5"
+      ],
+      "required_evidence": [
+        "两种过程实际速率",
+        "正确I−R分解",
+        "统一R收敛的充要性"
+      ],
+      "critical_errors": [
+        "不在Y上求逆I−R",
+        "对全部可恢复点自动给统一速率"
+      ],
+      "id": "S6",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1"
+      ],
+      "changed_assumptions": "正交投影改为任意交换幂有界Banach算子",
+      "expected_truth": "true",
+      "mechanism": "目标范围保持",
+      "tempting_invalid_transfer": "因失去Hilbert结构否定两过程比较",
+      "correct_boundary": "等价成立但限域可能是Z⊕Y真子空间",
+      "target_claim": "共同设定下两种过程逐输入范数收敛性等价，极限一致且具有题定限域稳定恢复。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S3"
+      ],
+      "changed_assumptions": "收敛性等价升级为所有输入收敛",
+      "expected_truth": "false",
+      "mechanism": "等价与存在",
+      "tempting_invalid_transfer": "A收敛 iff R收敛被当二者总收敛",
+      "correct_boundary": "须x∈Z⊕Y",
+      "target_claim": "共同设定下两种过程都在全部E上范数收敛。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S3",
+        "S4"
+      ],
+      "changed_assumptions": "所有输入逐点收敛升级为算子范数收敛",
+      "expected_truth": "false",
+      "mechanism": "点态到一致",
+      "tempting_invalid_transfer": "每个向量的截断阶段当全单位球阶段",
+      "correct_boundary": "对角特征值逼近1阻止统一衰减",
+      "target_claim": "所列对角系统的逐点范数收敛提升为算子范数收敛。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S5"
+      ],
+      "changed_assumptions": "增加Y上某幂的严格压缩条件",
+      "expected_truth": "true",
+      "mechanism": "精确边界",
+      "tempting_invalid_transfer": "只因一般一致收敛失败便拒绝条件化恢复",
+      "correct_boundary": "某幂严格压缩恰刻画R统一收敛",
+      "target_claim": "全E恢复条件下，R^n按算子范数趋P当且仅当Y上某幂严格压缩。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R003/task.md",
+    "cases/public/MG-R003/reference.md",
+    "cases/public/MG-R003/rubric.json"
+  ],
+  "source_sha256": {
+    "cases/public/MG-R003/task.md": "930ab2a419e333c96146a5413ad9eeb252488b74e1c4c36e39c2b82c4aa904ed",
+    "cases/public/MG-R003/reference.md": "c68352c003110d1499081c61995552f507c2a60f3f713e20aed1298a0b898e76",
+    "cases/public/MG-R003/rubric.json": "5969abcb8d1bbf9d0796aa3dadeb28dd0a285bc35d44c968a61d28dfb2e6e538"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。",
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "cases/public",
+    "case_id": "MG-R003",
+    "version": "0.3.0",
+    "suite_sha256": "6ad8a8a7c80a7ba769b0677ef250bf9998d9601d190f271ce6b357fa91f5308d",
+    "case_manifest_sha256": "ee02cb5db08e8ea0631e9467377305ef15a7e07432d47bbf3ad5fe949673ff54"
+  }
+}

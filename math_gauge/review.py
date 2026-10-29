@@ -2,8 +2,9 @@
 
 from pathlib import Path
 
-from .catalog import digest_bytes, read_json, write_json
-from .execution import now
+from .catalog import (digest_bytes, read_json, safe_file, validate_alignment_manifest,
+                      validate_group_contract, write_json)
+from .execution import extract_candidate_alignment, now, validate_alignment_audit
 
 
 def inspect_run(root):
@@ -22,12 +23,155 @@ def inspect_run(root):
         ):
             raise ValueError(f"{cid}: response changed after execution")
         records[cid] = record
+        descriptor = case.get("group_contract")
+        if descriptor or record.get("group_contract_sha256"):
+            if not descriptor or descriptor.get("sha256") != record.get("group_contract_sha256"):
+                raise ValueError(f"{cid}: frozen group contract binding changed")
+            _group_contract(root, case)
     return meta, records
+
+
+def _group_contract(root, case):
+    descriptor = case.get("group_contract")
+    if not descriptor:
+        return None
+    path = safe_file(root, descriptor["path"])
+    if digest_bytes(path.read_bytes()) != descriptor["sha256"]:
+        raise ValueError("Frozen group contract changed")
+    contract = validate_group_contract(read_json(path))
+    if contract.get("id") != case["id"]:
+        raise ValueError("Frozen group identity changed")
+    return contract
+
+
+def _stage_template(stage):
+    return {"stage_id": stage["id"], "decision": "unresolved",
+            "assumption_fidelity": "unknown", "proof_validity": "unknown",
+            "scope_accuracy": "unknown", "unnecessary_restriction": False,
+            "failure_category": "unresolved", "inherited_from": [],
+            "lean_status": "not_run" if stage["lean_required"] else "not_required",
+            "declarations": [],
+            "notes": ""}
+
+
+def _validate_group_review(root, case, record, entry):
+    contract = _group_contract(root, case)
+    if contract is None:
+        if entry.get("stages"):
+            raise ValueError("Stage judgments require a frozen group contract")
+        return None
+    if entry.get("group_contract_sha256") != case["group_contract"]["sha256"]:
+        raise ValueError("Review binds a different group contract")
+    rows = entry.get("stages")
+    expected = [s["id"] for s in contract["stages"]]
+    if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows) or [r.get("stage_id") for r in rows] != expected:
+        raise ValueError("Stage reviews must cover every frozen stage exactly once in order")
+    earlier = set()
+    lean_pass_needed = False
+    completed = 0
+    for stage, row in zip(contract["stages"], rows):
+        sid = stage["id"]
+        if (row.get("decision") not in {"pass", "fail", "partial", "unresolved"}
+                or row.get("assumption_fidelity") not in {"clean", "drift", "unknown"}
+                or row.get("proof_validity") not in {"valid", "invalid", "unknown"}
+                or row.get("scope_accuracy") not in {"correct", "incorrect", "unknown"}
+                or type(row.get("unnecessary_restriction")) is not bool):
+            raise ValueError(f"{sid}: invalid stage evidence axes")
+        if row.get("failure_category") not in {"none", "mathematical", "lean_compilation", "problem_defect", "response_format", "execution", "unresolved"}:
+            raise ValueError(f"{sid}: failure category required")
+        inherited = row.get("inherited_from")
+        if not isinstance(inherited, list) or not all(isinstance(x, str) for x in inherited) or len(inherited) != len(set(inherited)) or not set(inherited) <= earlier:
+            raise ValueError(f"{sid}: invalid inherited failure references")
+        if any(rows[expected.index(x)]["decision"] == "pass" for x in inherited):
+            raise ValueError(f"{sid}: cannot inherit a failure from a passed stage")
+        if not isinstance(row.get("notes"), str) or not row["notes"].strip():
+            raise ValueError(f"{sid}: specific mathematical review notes required")
+        allowed_lean = {"passed", "compile_error", "format_error", "infrastructure_error", "axiom_rejected", "not_run"} if stage["lean_required"] else {"not_required"}
+        if row.get("lean_status") not in allowed_lean:
+            raise ValueError(f"{sid}: invalid Lean assessment")
+        if row["decision"] == "pass":
+            if (row["assumption_fidelity"] != "clean" or row["proof_validity"] != "valid"
+                    or row["scope_accuracy"] != "correct" or row["unnecessary_restriction"]
+                    or row["failure_category"] != "none" or inherited
+                    or record["status"] != "ok"
+                    or (stage["lean_required"] and row["lean_status"] != "passed")):
+                raise ValueError(f"{sid}: stage pass contradicts its evidence")
+            completed += stage["points"]
+        elif row["failure_category"] == "none":
+            raise ValueError(f"{sid}: unresolved or failed stage needs an attribution")
+        lean_pass_needed |= stage["lean_required"] and row["lean_status"] == "passed"
+        lean_pass_needed |= bool(contract.get("alignment_manifest_required") and row["decision"] == "pass")
+        earlier.add(sid)
+    if entry["decision"] == "pass" and any(r["decision"] != "pass" for r in rows):
+        raise ValueError("Group pass requires every mandatory stage to pass")
+    if entry["decision"] == "pass" and (
+        entry.get("assumption_fidelity") != "clean" or entry.get("proof_validity") != "valid"
+        or entry.get("scope_accuracy") != "correct" or entry.get("unnecessary_restriction") is not False
+        or record["status"] != "ok"
+    ):
+        raise ValueError("Group pass contradicts overall evidence axes")
+    if all(r["decision"] == "pass" for r in rows) and entry["decision"] != "pass":
+        raise ValueError("All-stage pass must have a matching group decision")
+    if lean_pass_needed:
+        path = safe_file(root, entry.get("candidate_lean_report", ""))
+        receipt = read_json(path)
+        if (digest_bytes(path.read_bytes()) != entry.get("candidate_lean_report_sha256")
+                or receipt.get("schema") != "math-gauge.candidate-lean/v1"
+                or receipt.get("case_id") != case["id"]
+                or receipt.get("response_sha256") != record["response_sha256"]
+                or receipt.get("request_sha256") != record["request_sha256"]
+                or receipt.get("status") != "passed" or receipt.get("source_repaired") is not False):
+            raise ValueError("Stage Lean pass needs bound, unrepaired candidate compilation evidence")
+        audited = {(d["module"], d["name"]) for d in receipt.get("audit", {}).get("declarations", [])}
+        alignment_items = None
+        if contract.get("alignment_manifest_required"):
+            manifest, span, _ = extract_candidate_alignment(
+                safe_file(root, case['id'] + '/response.md').read_bytes().decode('utf-8'))
+            validate_alignment_manifest(manifest, contract)
+            if (receipt.get('alignment_manifest') != manifest
+                    or receipt.get('alignment_manifest_sha256') != span['sha256']
+                    or receipt.get('alignment_source_span') != span
+                    or receipt.get('alignment_inventory_validated') is not True):
+                raise ValueError("Lean evidence does not bind the candidate's alignment.json")
+            validate_alignment_audit(manifest, contract, receipt)
+            alignment_items = {x['id']: x for x in manifest['items']}
+        for stage, row in zip(contract["stages"], rows):
+            if alignment_items is not None and row["decision"] == "pass":
+                item = alignment_items[stage['id']]
+                if item['status'] != 'complete':
+                    raise ValueError(f"{stage['id']}: incomplete candidate obligation cannot pass")
+                declared = {(d['file'], d['name']) for d in item['declarations']}
+                reviewed = row.get('declarations')
+                if (not isinstance(reviewed, list) or not all(
+                    isinstance(d, dict) and set(d) == {'file', 'name'}
+                    and isinstance(d['file'], str) and isinstance(d['name'], str) for d in reviewed
+                ) or {(d['file'], d['name']) for d in reviewed} != declared):
+                    raise ValueError(f"{stage['id']}: reviewed declarations differ from candidate alignment")
+            if not stage["lean_required"] or row["lean_status"] != "passed":
+                continue
+            declarations = row.get("declarations")
+            if not isinstance(declarations, list) or not declarations:
+                raise ValueError(f"{stage['id']}: Lean assessment requires mapped declarations")
+            for declaration in declarations:
+                if not isinstance(declaration, dict) or set(declaration) != {"file", "name"}:
+                    raise ValueError("Mapped declaration requires file and name")
+                name = declaration["file"]
+                permitted_files = set(receipt.get("files_sha256", {}))
+                if stage.get("allow_background_declarations") is True:
+                    permitted_files.update(receipt.get("input_files_sha256", {}))
+                if (name not in permitted_files or not name.endswith(".lean")
+                        or (name[:-5].replace("/", "."), declaration["name"]) not in audited):
+                    raise ValueError("Stage declaration was not audited in submitted source")
+    return {"stage_count": len(rows), "stage_passes": sum(r["decision"] == "pass" for r in rows),
+            "completed_weight": completed, "total_weight": sum(s["points"] for s in contract["stages"]),
+            "root_failures": [r["stage_id"] for r in rows if r["decision"] in {"fail", "partial"} and not r["inherited_from"]],
+            "problem_defect_flags": [r["stage_id"] for r in rows if r["failure_category"] == "problem_defect"],
+            "stages": rows}
 
 
 def templates(root):
     meta, records = inspect_run(root)
-    return [
+    entries = [
         {
             "case_id": c["id"],
             "response_sha256": records[c["id"]]["response_sha256"],
@@ -43,6 +187,12 @@ def templates(root):
         }
         for c in meta["cases"]
     ]
+    for case, entry in zip(meta["cases"], entries):
+        contract = _group_contract(root, case)
+        if contract:
+            entry.update(group_contract_sha256=case["group_contract"]["sha256"],
+                         stages=[_stage_template(s) for s in contract["stages"]])
+    return entries
 
 
 def apply_reviews(root, entries):
@@ -96,6 +246,7 @@ def apply_reviews(root, entries):
             raise ValueError(
                 f"{cid}: pass contradicts the evidence axes or execution status"
             )
+        _validate_group_review(root, next(c for c in meta["cases"] if c["id"] == cid), records[cid], entry)
         updated[cid] = dict(entry, recorded_at=now())
     write_json(root / "reviews.json", updated)
     return updated
@@ -108,6 +259,7 @@ def report(root):
         read_json(root / "reviews.json") if (root / "reviews.json").exists() else {}
     )
     tracks = {}
+    group_diagnostics = {}
     for track in ("determinate", "alignment", "exploration"):
         cases = [c for c in meta["cases"] if c["track"] == track]
         reviewed = [(c, reviews[c["id"]]) for c in cases if c["id"] in reviews]
@@ -115,6 +267,9 @@ def report(root):
         for c, r in reviewed:
             if r["response_sha256"] != records[c["id"]]["response_sha256"]:
                 raise ValueError("Review binding changed")
+            diagnostic = _validate_group_review(root, c, records[c["id"]], r)
+            if diagnostic:
+                group_diagnostics[c["id"]] = diagnostic
         eligible = [
             (c, r)
             for c, r in reviewed
@@ -150,6 +305,7 @@ def report(root):
         "schema": "math-gauge.report/v1",
         "run": meta,
         "tracks": tracks,
+        "group_diagnostics": group_diagnostics,
         "automatically_establishes_mathematical_correctness": False,
         "notice": "Replay、AI/fixture 审核与未人工审定的题目不计为模型比较成绩；开放构造单独记录发现，不生成统一总分。",
     }
@@ -184,6 +340,12 @@ def report(root):
         lines.append(
             f"| {cid} | {records[cid]['status']} | {r.get('reviewer_kind', 'pending')} | {r.get('decision', 'pending')} |"
         )
+    if group_diagnostics:
+        lines += ["", "## 题组诊断", "", "以下是相关阶段的完成情况，不是独立样本通过率。", "",
+                  "| 题组 | 完成阶段 | 完成权重 | 独立错误根项 | 题目问题待复核 |",
+                  "|---|---:|---:|---|---|"]
+        for cid, d in group_diagnostics.items():
+            lines.append(f"| {cid} | {d['stage_passes']}/{d['stage_count']} | {d['completed_weight']}/{d['total_weight']} | {', '.join(d['root_failures']) or '—'} | {', '.join(d['problem_defect_flags']) or '—'} |")
     return result, "\n".join(lines) + "\n"
 
 
@@ -364,6 +526,9 @@ def compare_models(case_index, model_runs, *, execution_receipts, lean_reports=N
                 continue
             if review.get("response_sha256") != record["response_sha256"]:
                 raise ValueError(cid + ": mathematical review binding changed")
+            diagnostic = _validate_group_review(root, info, record, review)
+            if diagnostic:
+                row['stage_diagnostics'] = diagnostic
             if review.get("reviewer_kind") not in ("ai", "human"):
                 raise ValueError("Fixture reviews cannot enter a model comparison")
             decision = review.get("decision")

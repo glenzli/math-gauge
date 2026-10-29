@@ -1,0 +1,243 @@
+{
+  "id": "MG-GR008",
+  "parent_case_id": "MG-R008",
+  "version": "0.1.0",
+  "title": "塔记录的表示、有限层延拓与自然变换",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "实际记录与张量",
+      "kind": "construct",
+      "assumptions": [
+        "任意有限秩自由群可数逆塔",
+        "ZFC及给定宇宙",
+        "实际最终相等关系"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "记录运算良定",
+        "张量识别双向公式",
+        "无挠性不借结构映射单射"
+      ],
+      "critical_errors": [
+        "把滤过余极限直接视为子群并"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "有限图表和变换",
+      "kind": "prove",
+      "assumptions": [
+        "S1全部塔条件",
+        "任意有限图表",
+        "群值自然变换"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "有限积与等化子比较为同构",
+        "Nat=Hom(M_P,M_P′)正确方向",
+        "恒等复合"
+      ],
+      "critical_errors": [
+        "纯张量上的等式不利用分量加法",
+        "有限极限自动可表示"
+      ],
+      "id": "S2",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "完整表示分类",
+      "kind": "synthesize",
+      "assumptions": [
+        "任意题设有限秩自由可数塔",
+        "普通Ab_U表示对象",
+        "全部可数对象和箭头的小图表"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "M有限生成/有限自由充要判据",
+        "可数极限保持两个方向",
+        "表示对象唯一同构类",
+        "变换分类一致"
+      ],
+      "critical_errors": [
+        "只给一个不可表示例",
+        "无限族分别后移当共同层",
+        "把M⊗−写成Hom(M,−)"
+      ],
+      "id": "S3",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "秩一塔",
+      "kind": "decide",
+      "assumptions": [
+        "P_n=Z",
+        "ρ_n为任意整数乘法a_n",
+        "零、负数均允许"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S3"
+      ],
+      "required_evidence": [
+        "否定仅秩条件",
+        "零无限多和有限多全部分支",
+        "非单位无限多非有限生成"
+      ],
+      "critical_errors": [
+        "忽略零过渡",
+        "有限秩误作有限生成"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "稳定像中的延拓",
+      "kind": "decide",
+      "assumptions": [
+        "给定n₀后的稳定实际像I_n",
+        "限制过渡为同构",
+        "不预设I_n纯或可回缩"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "required_evidence": [
+        "固定层反例",
+        "正确后移层回缩",
+        "实际记录同构双射和自然性"
+      ],
+      "critical_errors": [
+        "对2Z⊂Z选不存在回缩",
+        "把足够后层换成任意当前层"
+      ],
+      "id": "S5",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "具体变换与无限积",
+      "kind": "synthesize",
+      "assumptions": [
+        "指定乘二秩一塔",
+        "自然变换分量群同态",
+        "比较映射为典范投影映射"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "required_evidence": [
+        "End环和Aut群完整计算",
+        "具体积元素无原像",
+        "有限与可数差异"
+      ],
+      "critical_errors": [
+        "将各坐标层号当共同有限层",
+        "自同构误作所有非零有理数"
+      ],
+      "id": "S6",
+      "points": 10,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S3"
+      ],
+      "changed_assumptions": "以每层秩1替代余极限有限生成",
+      "expected_truth": "false",
+      "mechanism": "有限秩与有限生成",
+      "tempting_invalid_transfer": "把层秩有界当分母有界",
+      "correct_boundary": "零与非单位过渡决定实际余极限",
+      "target_claim": "所有阶段秩均为1足以保证F_P可表示。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S3"
+      ],
+      "changed_assumptions": "稳定像间同构升级为每个当前层都有回缩",
+      "expected_truth": "false",
+      "mechanism": "存在层的量词",
+      "tempting_invalid_transfer": "足够后层回缩当任意层回缩",
+      "correct_boundary": "必须先后移到实现稳定像的层",
+      "target_claim": "题给稳定像及限制过渡同构条件保证每个当前层I_n都是P_n的直和项。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "有限极限推广到可数积",
+      "expected_truth": "false",
+      "mechanism": "有限到无限",
+      "tempting_invalid_transfer": "无限个代表可统一后移",
+      "correct_boundary": "序列分母没有统一有限界",
+      "target_claim": "乘二塔的有限极限保持可以推广到典范可数积比较满射。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R008/task.md",
+    "cases/public/MG-R008/reference.md",
+    "cases/public/MG-R008/rubric.json"
+  ],
+  "source_sha256": {
+    "cases/public/MG-R008/task.md": "8147620b629ddb512b50b067548b725948ea02b4e66731d2ba643f8e7300346f",
+    "cases/public/MG-R008/reference.md": "41bb83d47eb827da2d0bbbb10478869d7bf9d1eaabe17f7db6ed46dde3c23fc4",
+    "cases/public/MG-R008/rubric.json": "2508cd85f4f6f82319c62c8995424268da9e218b1c478e35463718bdf35ffe8b"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。"
+}

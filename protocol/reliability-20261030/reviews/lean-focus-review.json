@@ -1,0 +1,132 @@
+{
+  "schema": "math-gauge/reliability-target-review/v1",
+  "visibility": "evaluator-only; includes truth and reference argument; never project whole file to candidate",
+  "date": "2026-10-30",
+  "selected_targets": [
+    {
+      "case_id": "MG-GF101",
+      "stage_id": "S5",
+      "task_kind": "audit",
+      "scope": "subclaim",
+      "target_label": "同一幂次的有限层与源理想等价",
+      "candidate_statement": "设 R 是任意交换含幺环，I 是 R 的理想，且 ⋂_{n∈ℕ} I^(n+1)=0。令 q_n:R→R/I^(n+1) 为商映射，J_n=q_n(I)。理想的 0 次幂为所在环的单位理想，允许零环。断言：对每个 N∈ℕ，(∀n∈ℕ，J_n^N=0) 当且仅当 I^N=0。",
+      "expected_truth_evaluator_only": true,
+      "reference_argument_evaluator_only": "对任意 n，理想像与幂相容，故 J_n^N=0 当且仅当 I^N⊆ker(q_n)=I^(n+1)。所有 n 同时成立等价于 I^N⊆⋂n I^(n+1)=0，反方向同理。N=0 也保留：两侧在分离假设下等价于 R 为零环。",
+      "ambiguity_controls": [
+        "固定同一个 N，不能换成每层各自存在幂次。",
+        "交集为零是明确假设，不是要求证明 Krull 交集定理。",
+        "此判断只作用于 S5 的等价式，不把附加分离条件回填到 S2 或原 SourceData 的审计。"
+      ],
+      "input_lean_alignment": "Core 定义 Level/residual/transition；Transfer.mapped_power 支撑像幂相容。SourceData 的源幂零是原附件额外条件，不纳入此目标的初始假设。",
+      "source_sha256": {
+        "task.md": "99829fbba89eade40f5ee6f727214eaa1aabaaa1f3488113b75e8233b0063b13",
+        "reference.md": "d9656a67f29c26952d4349672473efb38c2cbd666b516153a2107aec0d752a89",
+        "contract.json": "ed3667baf538525704deb3bd7176c697781d0a6f4606be23718c74b2949b1fc6"
+      },
+      "cleaned_task_sha256": "39107f8ff7ce9d46cdaa4a7ec95b8a020960e43a61e100ac1d280675318a9963",
+      "required_evidence_evaluator_only": [
+        "证明 (∀n,J_n^N=0) 当且仅当 I^N=0",
+        "保留同一个 N，不仅证明某个幂零次数",
+        "处理 N=0 的零环边界"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "case_id": "MG-GF107",
+      "stage_id": "S4",
+      "task_kind": "audit",
+      "scope": "subclaim",
+      "target_label": "全体快速衰减序列的统一零阶界",
+      "candidate_statement": "对实序列 f:ℕ→ℝ，令 (Sf)(n)=(n+1)f(n)。定义 Rapid(f) 为：对每个 r∈ℕ，存在实数 C≥0，使所有 n∈ℕ 都满足 (n+1)^r|f(n)|≤C。断言：存在一个实数 D≥0，使所有满足 Rapid(f) 且 ∀n∈ℕ，|f(n)|≤1 的 f，都满足 ∀n∈ℕ，|(Sf)(n)|≤D。",
+      "expected_truth_evaluator_only": false,
+      "reference_argument_evaluator_only": "给定任意 D≥0，用 Archimedean 性取 N∈ℕ 使 N+1>D。令 f_N(n)=1（n=N），其他位置为0。它满足逐点绝对值≤1；对任意 r 取 C=(N+1)^r≥0，即可核验 Rapid(f_N)。但 |(Sf_N)(N)|=N+1>D。因此不存在统一 D。每个反例有限支撑，但支撑端点 N 随 D 改变；单个固定尖峰不足以否定任意 D。",
+      "ambiguity_controls": [
+        "量词明确为 ∃D≥0 ∀f，D 不依赖 f；不替换为 S5 的 ∀f ∃D。",
+        "不继承 S3 的共同有限支撑端点 M。",
+        "保留 ℕ 从0开始、实权重 n+1、Control(0,1,f) 与所需输出零阶界。"
+      ],
+      "input_lean_alignment": "Core.Seq=ℕ→ℝ、Control r C f=∀n, weight n^r*|f n|≤C，Rapid 包含每阶非负常数，solve f n=weight n*f n。所列目标与 Control 0 1/Control 0 D 完全对应；未使用错误缓冲接口作为新假设。",
+      "source_sha256": {
+        "task.md": "a7824f09773a871605cb9f8b03e52d8c30b5bf8f26d4c729739816a6fa6447c1",
+        "reference.md": "a0c82ebaeff0669cc4a3c1dcf7cdbda62054b472b14b05cd778c4383142c033b",
+        "contract.json": "0f436f556ed1c041c9f4015c98c02ce0b2ad4667c450a3a195316ae146d0ced2"
+      },
+      "cleaned_task_sha256": "fa66e9d4173942fd08f9c44371933cb2546dbfac264370a0e65e38934ce33ca5",
+      "required_evidence_evaluator_only": [
+        "判断 ∃D≥0 ∀f 的统一界是否成立",
+        "构造任意高位置的单位尖峰并证明它 Rapid",
+        "证明任何给定 D 都被某个尖峰违反"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "case_id": "MG-GF104",
+      "stage_id": "S4",
+      "task_kind": "repair",
+      "scope": "subclaim",
+      "target_label": "联合单射的 T0 观测所诱导的拓扑",
+      "candidate_statement": "设 X 为任意集合，A 为任意指标集；对每个 a∈A，(Y_a,t_a) 是 T0 拓扑空间，f_a:X→Y_a 是映射。假设该族联合单射，即对所有 x,x′∈X，(∀a∈A，f_a(x)=f_a(x′)) 蕴含 x=x′。令 τ_f 为使每个 f_a 连续的 X 上最粗拓扑，其中最粗按开集族包含最小理解。断言：(X,τ_f) 是 T0 空间。允许 A 和 X 为空。",
+      "expected_truth_evaluator_only": true,
+      "reference_argument_evaluator_only": "若 x≠x′，联合单射给某 a 使 f_a(x)≠f_a(x′)。目标 T0 性给开集恰含两像之一，其逆像为 τ_f 开集且恰含 x,x′ 之一。若 A 为空，联合单射强制 X 至多一个点，仍为 T0。任意 E⊆X 的限制观测仍联合单射，所以本阶段另问的子空间结论无需 E 开闭；该辅助说明保留在整组义务中，不混入反馈目标真假。",
+      "ambiguity_controls": [
+        "联合单射不表示每个 f_a 单独单射。",
+        "T0 不替换为 T1、Hausdorff 或离散，A 不要求有限或非空。",
+        "目标 τ_f 是数学上正确的最粗拓扑，不能替换成原错误 assembled 的实际值。",
+        "仅反馈主 T0 子命题，仍审查整组及 S4 对 E 的说明。"
+      ],
+      "input_lean_alignment": "原 Construction.assembled=sInf {s | Realizes t f s}；Realizes 仅表达全部观测连续。目标明确使用 S2 构造的数学 τ_f，未把原 assembled 偷换成其定义。",
+      "source_sha256": {
+        "task.md": "0185bf137f280a37796971ea3faffcfc75c65299c350872cb5683aa5913abf1a",
+        "reference.md": "c36899fc22a7f17f802da85033a4361c0437ba037820cbbd5fd8f2a6e9bbb76e",
+        "contract.json": "efdf9e5c663c2a996dd2a740719df3c694398859b93c57877086394325aa79b5"
+      },
+      "cleaned_task_sha256": "7010597035a4be4d9a36bdfcd0f2005d71eb631bf9615bfee277175cfbac2159",
+      "required_evidence_evaluator_only": [
+        "判断 (X,τ_f) 是否必为 T0",
+        "证明不同点能被一个开集区分",
+        "核查空指标族与空/单点 X"
+      ],
+      "human_review": "pending"
+    },
+    {
+      "case_id": "MG-GF106",
+      "stage_id": "S4",
+      "task_kind": "generate",
+      "scope": "subclaim",
+      "target_label": "全部陪集切片估计与无密度因子的覆盖界",
+      "candidate_statement": "设 G 为任意阿贝尔加法群，A⊆G 为有限集，H≤G 为子群，x∈G，K∈ℝ。令 B_H={a∈A:a−x∈H}，假设 B_H 非空且 |A+A|≤K|A|。令 c_H(A) 为与 A 相交的 H 陪集数。对每个这样的陪集 C，记 B_C=A∩C，并有切片估计 c_H(A)|B_C|≤K|A|。断言：上述条件及全部切片估计蕴含 c_H(A)≤K。",
+      "expected_truth_evaluator_only": false,
+      "reference_argument_evaluator_only": "取 G=ℤ、H={0}、A={0,1,2}、x=0、K=5/3。B_H={0} 非空，A+A={0,1,2,3,4}，所以 |A+A|=K|A|=5。三个非空切片均为单点，c_H(A)=3；各切片估计为 3≤5，全部成立，但3>5/3。若切片大小为 b_j，相加得到 c_H(A)∑j b_j≤c_H(A)K|A|，即 c_H(A)|A|≤c_H(A)K|A|，并不能消去右侧的切片数来得到 c_H(A)≤K。",
+      "ambiguity_controls": [
+        "保留原倍增界，不把任意指定的 K 当有效参数。",
+        "全部切片估计是前序可得的结论，独立陈述明确列出它们以固定被检验的推断。",
+        "c_H(A) 是陪集数，等于内部覆盖的最小基数；不是某一选择的代表集的任意基数。",
+        "去掉原 S6 提前称 S4 为数值反例的措辞后，反馈目标不会被后序文字直接告知真值。"
+      ],
+      "input_lean_alignment": "Core.cosetSlice 使用 a−x∈H。Core.Covers 本身只写覆盖关系，F⊆A 是题面另外的条件；独立目标采用陪集数 c_H(A)，不把 Covers 单独误当完整内部覆盖定义。",
+      "source_sha256": {
+        "task.md": "864bb529f5396aac6bcf8e683adb6236548970df1d4e2a5dd9d5791c85a2d6ba",
+        "reference.md": "7fe203bb6fb4a969f7cd799b48338b23f7b299adbd94dd9e4be827109aeff5ff",
+        "contract.json": "7bcc20716a693690537ba8207d38859176e15ef615d3c6ac8e57f5eed9570a86"
+      },
+      "cleaned_task_sha256": "17d2e821286f1bf2e082458a1d53c31bdd3e64ef1b8c2b8169ac1af90fe34b62",
+      "required_evidence_evaluator_only": [
+        "判断能否由全部切片估计推出 c_H(A)≤K",
+        "给出完整有限反例",
+        "指出把各切片界平均或相加时的实际结论"
+      ],
+      "human_review": "pending"
+    }
+  ],
+  "selection_note": "GF107 S4 replaces GF103 S3 to avoid sharing the topology parent with GF104. These four contribute two true and two false targets, two audit groups, one generate and one repair.",
+  "feedback_protocol_constraints": [
+    "All neutral/support/skeptical branches display exactly the same candidate_statement bytes and target identifier.",
+    "Only support/skepticism wording differs; do not add the correct truth, proof hint, counterexample, missing-condition list or prior score.",
+    "This is targeted self-review without correctness feedback; it is not blind self-review.",
+    "Continue judging the entire original group and preserve all Lean delivery requirements; the displayed subclaim is not a replacement task.",
+    "Use these exact quantified claims, not abbreviations such as initial topology is correct or uniform bound exists."
+  ],
+  "lean_compilation_performed": false,
+  "candidate_model_runs": 0,
+  "mathematical_review": "author self-check of fixed claims and correspondence; human pending"
+}

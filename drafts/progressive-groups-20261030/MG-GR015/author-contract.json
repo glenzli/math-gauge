@@ -1,0 +1,228 @@
+{
+  "schema": "math-gauge.progressive-contract/v1",
+  "id": "MG-GR015",
+  "parent_case_id": "MG-R015",
+  "version": "0.1.0",
+  "title": "自由模的商记录、完成支持与提升",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "分裂列的完成",
+      "kind": "prove",
+      "assumptions": [
+        "R=k[t]",
+        "实际短正合列及一个线性截面"
+      ],
+      "required_evidence": [
+        "完成分解逐层相容",
+        "全部提升及截面差"
+      ],
+      "critical_errors": [
+        "认为未给截面的列也自动分裂"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "true",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "可数自由模的完成模型",
+      "kind": "construct",
+      "assumptions": [
+        "可数自由 M",
+        "实际 t 进商完成"
+      ],
+      "required_evidence": [
+        "每层有限支持等价条件",
+        "两个方向及模运算"
+      ],
+      "critical_errors": [
+        "直和完成等同全积"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "construction",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "有界对角指数",
+      "kind": "prove",
+      "assumptions": [
+        "k 为任意域，R=k[t]；A=⊕_{i≥0}Rf_i，B=⊕_{i≥0}Re_i。",
+        "整数 M≥0，所有指数 ν_i∈N 满足 0≤ν_i≤M；ι(f_i)=t^{ν_i}e_i，C=coker ι。"
+      ],
+      "required_evidence": [
+        "除法后的受限支持",
+        "核像等式及满射"
+      ],
+      "critical_errors": [
+        "逐坐标整除就忽略共同支持条件"
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "设 $k$ 为域，$R=k[t]$。给定 $R$ 模的短正合列\n\n$$0\\longrightarrow A\\xrightarrow{\\iota}B\\xrightarrow{q}C\\longrightarrow0,$$\n\n其中 $A,B$ 均为可数生成的自由 $R$ 模。\n\n对任意 $R$ 模 $M$，定义其 $t$ 进完备化\n\n$$\\widehat M=\\varprojlim_{n\\ge0}M/t^nM,$$\n\n过渡映射为自然约化。原行映射在各层诱导商模映射，因而诱导 $\\widehat\\iota:\\widehat A\\to\\widehat B$ 和 $\\widehat q:\\widehat B\\to\\widehat C$。"
+      ],
+      "required_evidence": [
+        "Test the requested completed short exact sequence for the actual t-adic completion M ↦ lim M/t^n M.",
+        "A counterexample must retain a field k, R=k[t], countably generated free A and B, and a genuine short exact original sequence.",
+        "Verify the claimed failure on the maps induced by the original row, including compatibility of any completed witness."
+      ],
+      "critical_errors": [
+        "Apply completion exactness for finite modules solely because the coefficient ring is Noetherian.",
+        "Replace completion of an arbitrary countable free module by a tensor product with the completed ring without justification.",
+        "Place an infinite-support vector in the original algebraic direct sum.",
+        "Infer a coherent original preimage from independently chosen finite-level preimages.",
+        "Prove a failure for an arbitrary inverse system without connecting it to the powers t^n of a single actual module.",
+        "Drop freeness of A or B in a proposed counterexample."
+      ],
+      "depends_on": [
+        "S2",
+        "S3"
+      ],
+      "points": 25,
+      "expected": "false",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "原模与完成的值域",
+      "kind": "decide",
+      "assumptions": [
+        "可数无限秩自由模",
+        "典范完成映射"
+      ],
+      "required_evidence": [
+        "相容商代表",
+        "排除原模有限支持"
+      ],
+      "critical_errors": [
+        "将无限和放入原代数直和"
+      ],
+      "depends_on": [
+        "S2",
+        "S4"
+      ],
+      "points": 15,
+      "expected": "false",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "再次完成",
+      "kind": "decide",
+      "assumptions": [
+        "S2 的 M̂ 作为实际 R 模",
+        "按 t^nM̂ 再完成"
+      ],
+      "required_evidence": [
+        "核等于 t^nM̂",
+        "自然约化兼容"
+      ],
+      "critical_errors": [
+        "从名称含完成就不证明幂理想商身份"
+      ],
+      "depends_on": [
+        "S2",
+        "S3",
+        "S5"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S3"
+      ],
+      "changed_assumptions": "不提供分裂或一致有界对角指数，只保留原题可数自由呈示",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "逐层有原像就选成相容族",
+      "correct_boundary": "共同模 t 支持约束可能阻止相容原像",
+      "mechanism": "finite_level_to_inverse_limit",
+      "scope": "stage",
+      "target_claim": "原可数自由短正合列的 t 进完成满足所要求的完整恢复和提升目标。"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "从完成中的提升切回原代数直和",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "每层有限代表属于同一个全局有限支持",
+      "correct_boundary": "有限支持可随层增长",
+      "mechanism": "codomain_and_support",
+      "scope": "stage",
+      "target_claim": "题定可数自由模到其 t 进完成的典范映射必为满射。"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S2",
+        "S5"
+      ],
+      "changed_assumptions": "在已完成模上重新使用 t 进商系统",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "因原模不满射而认定再次完成还会加点",
+      "correct_boundary": "必须核对完成模的 t^n 商；此例完成是幂等的",
+      "mechanism": "completion_idempotence",
+      "scope": "stage",
+      "target_claim": "题定可数自由模完成后的模再作 t 进完成，典范映射仍为同构。"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R015/task.md",
+    "cases/public/MG-R015/reference.md",
+    "cases/public/MG-R015/rubric.json",
+    "results/failure-analysis-20261030/math-failures.md",
+    "cases/public/MG-R015/case.json",
+    "cases/public/MG-R015/sources.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.4.0",
+    "parent_source_ids": [
+      "completion-exactness"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  }
+}

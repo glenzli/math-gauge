@@ -1,0 +1,220 @@
+{
+  "id": "MG-GR005",
+  "parent_case_id": "MG-R005",
+  "version": "0.1.0",
+  "title": "凸成本记录、紧性与闭上图恢复",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "原始记录",
+      "kind": "prove",
+      "assumptions": [
+        "共同设定的非负真凸f",
+        "有限维F⊂K⊂E′"
+      ],
+      "expected": "true",
+      "depends_on": [],
+      "required_evidence": [
+        "全部扩展值情形",
+        "准确纤维分解公式",
+        "不借用取到性"
+      ],
+      "critical_errors": [
+        "把inf写成min而未证明"
+      ],
+      "id": "S1",
+      "points": 12,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "紧次水平集",
+      "kind": "prove",
+      "assumptions": [
+        "共同设定",
+        "f下半连续",
+        "每个有限c次水平集紧"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "紧性用于实际最优点",
+        "次水平集像的等式和闭性"
+      ],
+      "critical_errors": [
+        "无紧性地把连续像当闭集"
+      ],
+      "id": "S2",
+      "points": 16,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "兼容成本记录的实现",
+      "kind": "construct",
+      "assumptions": [
+        "S2全部条件",
+        "所有有限维F的记录y_F相容",
+        "统一有限c≥0且所有g_F(y_F)≤c"
+      ],
+      "expected": "construction",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "同一个紧集中的有限交性质",
+        "全记录实现",
+        "对偶分离给唯一性"
+      ],
+      "critical_errors": [
+        "每个F各有界但无统一c仍套同一紧集",
+        "有限观测成功直接取原空间极限"
+      ],
+      "id": "S3",
+      "points": 18,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "一般成本的恢复",
+      "kind": "decide",
+      "assumptions": [
+        "共同设定，不要求f下半连续或次水平集紧",
+        "全部竞争者h:E→[−∞,+∞]按实高度上图定义"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "有限闭记录构造G",
+        "对允许−∞的全部竞争者最大性",
+        "观测空间扩大关系"
+      ],
+      "critical_errors": [
+        "将proper-only定理套任意h",
+        "声称恢复原f而未查下半连续"
+      ],
+      "id": "S4",
+      "points": 24,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "闭成本的有限投影",
+      "kind": "decide",
+      "assumptions": [
+        "E=R²",
+        "f下半连续非负凸且至少一点有限",
+        "F任意有限维观测空间"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S2",
+        "S4"
+      ],
+      "required_evidence": [
+        "闭凸D核验",
+        "投影函数具体值与不连续点"
+      ],
+      "critical_errors": [
+        "闭凸集的线性像一律闭"
+      ],
+      "id": "S5",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "恢复与投影的精确关系",
+      "kind": "synthesize",
+      "assumptions": [
+        "共同设定",
+        "F⊂K有限维",
+        "bar按非负凸函数闭上图包定义"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "G=f充要性",
+        "两侧夹逼得闭化公式",
+        "不可省闭化的具体见证"
+      ],
+      "critical_errors": [
+        "将投影与闭化无条件交换",
+        "把局部不闭误作全局无法恢复"
+      ],
+      "id": "S6",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "不要求次水平紧或f闭，但目标改为最大闭凸下界",
+      "expected_truth": "true",
+      "mechanism": "存在目标的层级",
+      "tempting_invalid_transfer": "因原空间最优点可能缺失便否定闭上图构造",
+      "correct_boundary": "闭化构造与实际最优取到不同",
+      "target_claim": "一般题给非负凸成本的全部有限记录仍确定对完整扩展值竞争类最大的下半连续凸下界。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S2"
+      ],
+      "changed_assumptions": "保留有限维和闭凸，未给次水平紧性",
+      "expected_truth": "false",
+      "mechanism": "闭集像与紧集像",
+      "tempting_invalid_transfer": "连续线性投影保持一切闭凸集",
+      "correct_boundary": "投影可能非闭，闭化仍可重构",
+      "target_claim": "有限维空间上的下半连续凸成本的每个有限线性观测成本都下半连续。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R005/task.md",
+    "cases/public/MG-R005/reference.md",
+    "cases/public/MG-R005/rubric.json"
+  ],
+  "source_sha256": {
+    "cases/public/MG-R005/task.md": "5f4e433ca8be831d5355eb99fa061854f2bbf2bafa0aeaaafe99f063621c890e",
+    "cases/public/MG-R005/reference.md": "4e4d4cbe21425c832c998886fe095de715477ed284027d515a1e1e206a1272aa",
+    "cases/public/MG-R005/rubric.json": "5552e998f9b539f89758133031060f4dfb464a82e2bdeaa8b194015eb3e51af4"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。"
+}

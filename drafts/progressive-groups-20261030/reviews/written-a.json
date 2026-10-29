@@ -1,0 +1,840 @@
+{
+  "schema": "math-gauge/independent-mathematical-review/v1",
+  "reviewer": "oet_chapter_design independent review of written-a",
+  "date": "2026-10-30",
+  "scope": "Complete candidate task, reference argument/counterexamples and per-stage contract for all 15 groups; condition transfer, boundary cases and grading visibility. Source SHA-256 verification is provenance verification, not a fresh audit of every old parent reference.",
+  "status": "complete-no-unresolved-findings",
+  "groups_reviewed": 15,
+  "stages_reviewed": 90,
+  "human_approved": false,
+  "formalization": "not performed; no new Lean evidence claimed",
+  "model_runs": 0,
+  "author_self_check_sha256": "55bd6e701013d811e9ec6f6c4f542e44a054cd2a6076de9b568ca5af7114c8f7",
+  "groups": [
+    {
+      "id": "MG-GR001",
+      "version": "0.1.0",
+      "stage_count": 7,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7"
+      ],
+      "dependency_edges": 16,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "65cb396965cdfd156ec548a2d1490f2e8dacc0e849027dc61f87ae8de0cbe44f",
+        "reference.md": "12d08fb170ddbae854df13e5f4b029c1daefb33648597be3386eb4390850e5ec",
+        "contract.json": "214933c0599a1a357bb8a96f6108756de6c92c150cb92a0eca03b5bf16cad7c9"
+      },
+      "mathematical_review": [
+        "核对有限非负矩阵的正权重、实际展开的比较及有限直径下整个函数族空间的完备性。稳定扰动在有限向量误差上取 Neumann 极限，没有消去无穷大误差。",
+        "无固定点反例、完整但无界空间的全部固定族、有限残差分支的唯一性均成立。最小偏定义解对应真实终止路径；逐点终止与统一深度两个反例均保留全输入上确界的量词。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR001",
+          "stage": "S3",
+          "issue": "标量 d 与向量距离 η 的记号冲突",
+          "resolution": "候选显式使用并定义向量 d。"
+        },
+        {
+          "case": "MG-GR001",
+          "stage": "S5",
+          "issue": "判准要求完整固定族而题面仅问唯一性",
+          "resolution": "题面要求求出全部固定族；参考补逆向递推穷尽。"
+        },
+        {
+          "case": "MG-GR001",
+          "stage": "S7",
+          "issue": "统一终止深度比较未公开，且早期无穷误差未给具体例",
+          "resolution": "题面补问；参考补深度≤1、T²H=0 但首步上确界为∞的完整例。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R001/task.md",
+          "sha256": "779bf275a6184fb848a12f3d72089a21d4704513512e10323aa48d4ee462cecd",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R001/reference.md",
+          "sha256": "dd01173445122c9f91b22d07ff05dc49ae385d58edf1dece0e39927a59c41186",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R001/rubric.json",
+          "sha256": "0a2c6d6bf8f76a853d1e8ef18b079b89d310014472dc12587005e3c621125649",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR002",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 12,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "07d7d71f1464e7f9f16c6b6f4119e15347a3f779ca59f83649bb2ac66d3fe088",
+        "reference.md": "6349cfc29883c26e03c9e853b4417dd58e4a40c8f40014cb05811a9d613bc5dd",
+        "contract.json": "4d73306f974a09c04a606995f3839739eef3c245366c379bd0973ebcf8e68eb8"
+      },
+      "mathematical_review": [
+        "有限维兼容记录与 E″ 的等距识别、T″ 自然性、自反恢复和闭子空间距离的 Hahn–Banach 公式正确。",
+        "c₀ 的非可实现记录满足统一界。单条记录的弱星连续性恰刻画来自 E；有限维观测可在 C+ε 内精确匹配，而 ε=0 的非取到反例合法。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR002",
+          "stage": "S6",
+          "issue": "q_F 未在候选定义",
+          "resolution": "补 q_F:E→F* 及 q_Fx(φ)=φ(x)。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R002/task.md",
+          "sha256": "71ef332d811b63392929e7bb0d889fef75acde3fe1db4ad1545a5f8a7f4f040c",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R002/reference.md",
+          "sha256": "d2872f9be3c04d69b34a6a95f9511fc21c3d27bf04616fb4746394ca4ef73dbd",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R002/rubric.json",
+          "sha256": "f30438a9f1179019ce0a857438793a55f6186c26422e1d785412d2c8c1c3eb33",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR003",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 5,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "204172b5c15909fa715767b9f3fbd413f5add3a12578abc6ba3353248a2967d2",
+        "reference.md": "ed9dfb75bc611409cbb5d7885aa9fb1472927dab2e7b96aa8f6e3d2fca898582",
+        "contract.json": "87f7fe93f8232d27e5b335f082199bfda9d0a606cdd4b6460175831b097719ea"
+      },
+      "mathematical_review": [
+        "共同收敛域确为 Z⊕Y，未假设全部输入收敛。R 的二项系数总变差估计给出独立于 Cesàro 望远镜的平滑证明，商记录恢复的双边界与闭性成立。",
+        "交换正交投影的四个系数、噪声尖锐常数、ℓ¹ 右移非收敛和 ℓ² 对角强收敛非范数收敛均正确。最后 I−R 分解、两过程速率及某幂在 Y 上严格压缩的充要性正确。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R003/task.md",
+          "sha256": "930ab2a419e333c96146a5413ad9eeb252488b74e1c4c36e39c2b82c4aa904ed",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R003/reference.md",
+          "sha256": "c68352c003110d1499081c61995552f507c2a60f3f713e20aed1298a0b898e76",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R003/rubric.json",
+          "sha256": "5969abcb8d1bbf9d0796aa3dadeb28dd0a285bc35d44c968a61d28dfb2e6e538",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR004",
+      "version": "0.1.0",
+      "stage_count": 5,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "dependency_edges": 9,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "20302e219b66c7abd53e3f00a24ddd8377e80d853c2ac65d08ae467e7f80a7c7",
+        "reference.md": "e08e6c2d8d46c46965997e8743cd602eb9594a842f9af76cde4bcec798bb13d7",
+        "contract.json": "adee094c7d2ce7bb944fe277bd1cdbbedfae2b24352ccefbc13b17edf3ad901f"
+      },
+      "mathematical_review": [
+        "有限维无上同调复形的 Green 算子、链收缩及扰动误差估计正确；reduced acyclicity 不能替代闭值域。",
+        "对角反例区分强收敛与算子范数收敛。ε 正则化以及闭值域、收缩、右逆之间的等价保留正确空间。S4 turn 明确指范数收敛子命题。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR004",
+          "stage": "S4",
+          "issue": "整阶段真值与范数收敛子命题真值可能混淆",
+          "resolution": "turn 的 target_claim 指定算子范数收敛，scope=subclaim。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R004/task.md",
+          "sha256": "ff03d4b674680281bde97e73b5316f01fc4837fa5c58625eb0dc54706ae2650a",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R004/reference.md",
+          "sha256": "6277ce8d8c50683c24d97b37784c237adedd00f97e17dd07d326e446c965e0b3",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R004/rubric.json",
+          "sha256": "4150650a577d363f4d76e3ec681836dd10ce8b38eb7b4c38b77901c59b6fd7b3",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR005",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 9,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "36ca508d7d6cf84c0a3107518f7bfb874e81b1f0909481399d55f93156e0214b",
+        "reference.md": "18fbc7990926deeb6ad54c4379fa1067076271f0819ac807a33f9ec20fc13da4",
+        "contract.json": "442f96c6166a8edaba70d83c1bf42764f6dd2d27c55f4808994dfb7e08446b73"
+      },
+      "mathematical_review": [
+        "有限观测的纤维下确界凸性与单调性正确。紧次水平集给有限纤维取到及相容记录的紧性交集恢复，不偷换仅闭次水平集。",
+        "闭凸上图的分离论证包含垂直分离的处理；投影非闭反例合法。有限层约化之后仍需再取闭凸下包络。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R005/task.md",
+          "sha256": "5f4e433ca8be831d5355eb99fa061854f2bbf2bafa0aeaaafe99f063621c890e",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R005/reference.md",
+          "sha256": "4e4d4cbe21425c832c998886fe095de715477ed284027d515a1e1e206a1272aa",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R005/rubric.json",
+          "sha256": "5552e998f9b539f89758133031060f4dfb464a82e2bdeaa8b194015eb3e51af4",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR006",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 11,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "198e5c7a5366489c045ba5d08a08c532e655a669349e102616b82f03e844c306",
+        "reference.md": "25534d64af63642e9a838f0868329bddff433ea26c6c47fa3b64f2953c8d921f",
+        "contract.json": "d33771ea8d8edd39ce51d07ff7577803f95fcb18bf855588bfb6614a49dd52cd"
+      },
+      "mathematical_review": [
+        "有限前缀可解、核的 torsor、过渡核满射下递归校正及自然正合序列正确，未把可选提升说成规范提升。",
+        "有限商但整体提升失败的整数例、有限核的紧性替代机制、差分余核障碍及满射边界均逐项检查。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R006/task.md",
+          "sha256": "b26a92cfdbc9103f9c901759357d4b9a06eb93ca146c79f8b16149b96a35d1ca",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R006/reference.md",
+          "sha256": "a58e02cd7dc374dfc2cc372145606504003f25d963008c12d0fef6adb6bbe7a6",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R006/rubric.json",
+          "sha256": "fd7b36de7b8edbbcfc0ade50bebe25f4a76786d985cb40c50959775691e115d9",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR007",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 11,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "0237eaebb74c5c16d815ae962621790a14b04217f0e9eddfd1f005fb4c53b350",
+        "reference.md": "1ac4cd253ce9aec24f13d1b08f9924c56e51792d4bde09e867735ba405ca0c50",
+        "contract.json": "bdccead1955442c20bd612377004cee437bf78f96fee63a32bd414548da8081b"
+      },
+      "mathematical_review": [
+        "分裂空间的仿射 torsor 和有限维递降像稳定性正确；适用的有限维范围已写清。最终双射过渡条件不需要额外有限维。",
+        "多项式塔每个有限前缀可解但全塔无解，已在题面明确要求并证明。相容解唯一等价于极限平移空间为零，不等于存在自然首选解。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR007",
+          "stage": "S1/S3/S4",
+          "issue": "有限维条件的适用范围需精确",
+          "resolution": "参考及各阶段题面明确有限维范围，未继承到一般稳定双射条件。"
+        },
+        {
+          "case": "MG-GR007",
+          "stage": "S5",
+          "issue": "判准多要求有限前缀是否可解",
+          "resolution": "题面公开该项要求。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R007/task.md",
+          "sha256": "8fd7814c8b5c4ce93c2ee35c6556bd480cb11b296e74b699457571f29719f9da",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R007/reference.md",
+          "sha256": "87c66808eb136a45f7fca3200d39e5cf00575d91943b71cf0bd4c2982f859661",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R007/rubric.json",
+          "sha256": "49f12b86c8f86e3364d43a50b91ad098aa232ae569bc082426f1f0ef0973e934",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR008",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 12,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "24884bd000d47a8d9aaa0b3682cecf40949d283e17b1d58495926b02192de389",
+        "reference.md": "9f3c36a609132236e18f9c79847eaa0713eb7074b019172c5b0f6d4955ff273f",
+        "contract.json": "8ed48fdf52ddf7e997a384c84fd048545e9f44329f30e1db192d6dfd6c16f573"
+      },
+      "mathematical_review": [
+        "有限自由层记录与 M⊗− 的自然识别、有限极限保持及自然变换分类方向正确。可数积比较的满射强迫可数 M 有限生成，得到有限自由可表示判据。",
+        "秩一塔含无限零、有限零和完全无零分支。稳定像构造没有误称全部原层为直和项；×2 塔的端同态、单位及无限积失败例正确。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR008",
+          "stage": "S4",
+          "issue": "有限个零不包含无零的文字分支不明",
+          "resolution": "补无零时取 N=0。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R008/task.md",
+          "sha256": "8147620b629ddb512b50b067548b725948ea02b4e66731d2ba643f8e7300346f",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R008/reference.md",
+          "sha256": "41bb83d47eb827da2d0bbbb10478869d7bf9d1eaabe17f7db6ed46dde3c23fc4",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R008/rubric.json",
+          "sha256": "2508cd85f4f6f82319c62c8995424268da9e218b1c478e35463718bdf35ffe8b",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR009",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 11,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "274e8e8da088f477ed096bd1ae569fee85799ba156a91db9dd5592a290dd7052",
+        "reference.md": "ed6a569d9ed574c65d931262e24a053478f3b0d419be9d9620ee91f4602c92ee",
+        "contract.json": "f3fe6c86759430da65698044d8f4ee3328dc5abc585f9e0b9c994accd92830ae"
+      },
+      "mathematical_review": [
+        "有限自由群作用商及有限纤维分类正确。一般层的商通过局部轨道相等和层化构造，全测试对象稳定子判据给对象、全部态射和任意层基底的下降。",
+        "点不可见的 C(U,R)/R_disc 例现已完整证明 A(*)=0 及 Cantor 空间非零截面。局部满射基底可反映下降；仅非空基底反例合法。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR009",
+          "stage": "S4",
+          "issue": "A(*)=0 的参考计算缺失",
+          "resolution": "补 P 为层、局部提升沿覆盖成员的点拉回，以及平移传递的证明。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R009/task.md",
+          "sha256": "9281a387aa63823bc3ffb6a23d4c00a54fa5b473cf1aa58575544f44befd0958",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R009/reference.md",
+          "sha256": "041910443d36dd0457938acbc7102faca16d95290efc4ba84e8ba060c6dc4c9c",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R009/rubric.json",
+          "sha256": "1170933a34f33996ff05ede77f44c9572e34b8bc2c18a5a763f8d7fcba5cd527",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR010",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 13,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "f52cd4b09f3aeb1022b6852324769405f34779c4870bbd5638dc345d6268fca0",
+        "reference.md": "42887ebe3c8785025c338c7d34cd92e6e2cc286ccb4c412aa1314e7bcdeb785d",
+        "contract.json": "464461499c4a3a6ec1a1a164426df6f1b5735483e85fcb9793eb84f3d26b7012"
+      },
+      "mathematical_review": [
+        "profinite 探针对紧 Hausdorff 测试充分，且完整识别 k 化后的映射；函数空间的表示使用 k 紧开拓扑并逐探针核查评价。",
+        "第一可数性不能保证原始紧开评价连续的 Q 例、不可由探针区分的原拓扑例及 k 化同构判据正确。没有把 k 乘积擅换成任意普通乘积。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "cases/public/MG-R010/task.md",
+          "sha256": "3fad78784dcb0b49a4a828e6cd1fff1e668e479f86b0083a490e766156b4d503",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R010/reference.md",
+          "sha256": "a0b6e1199650683d49af6b3d8f6d39ccc78ac2c2e97a686cf165611e86efaa58",
+          "matches": true
+        },
+        {
+          "path": "cases/public/MG-R010/rubric.json",
+          "sha256": "116d472fd62c1989b0e8981cb8c4c29665985aa9ed906f47b36a665ea39714bd",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR101",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 8,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "f9f9d1e92f2c0c64de296d3c3c7342a1230fc89bf639effeffce391ceaf3730b",
+        "reference.md": "b4f1e7b90874de13265aa4bb09bf7cbd2573a1ad54d0a0fff27f359d26491b62",
+        "contract.json": "1be190a06b759c653e721d755b9f611c533b06b2a8625c820b901464cbe8e631"
+      },
+      "mathematical_review": [
+        "两个、三个及有限多个模同余的可解条件分别核对；三式障碍的选择独立性与短正合序列正确。",
+        "四个方程任意三个可解而整体不解的仿射例合法。逐阶段障碍只能在此前前缀已可解时定义；最终可解性不依赖重排，不把中间障碍对象声称不变。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R101/task.md",
+          "sha256": "232836a493368d62a0bdb8ce83900b094bfc69b8255d9c06493f3891755b83b1",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R101/reference.md",
+          "sha256": "295a236133dd01ce3e4f2d154fafef89a0a033964140cbf4898a77a3e3220505",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R101/rubric.json",
+          "sha256": "5c79e9207d50b4c320c6363deb4b0d4a514be96466d92a18d06f0bf5ec6da1b4",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR102",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 8,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "74e935ca44b946da01e47dc51e2c3c4421af1cfeb07e75d1927c16ae417bb38a",
+        "reference.md": "d8a67b43cfdc106e261558104f2378c155352e70afb15e4411324b001586d81e",
+        "contract.json": "bb70992726c794d8f2ab60d055b5b89c65fd3cd70e5de2a4b2edba3f55761266"
+      },
+      "mathematical_review": [
+        "有限轨道的幂等分解与交换双算子的四块分解正确。点态有限轨道足以得到线性且自然的 nilpotent/periodic 分解，但无统一指数或统一多项式。",
+        "局部幂零移位加固定向量排除全局多项式；Q 上倍乘区分有限维轨道包与有限轨道。最小多项式条件和交换投影结论正确。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R102/task.md",
+          "sha256": "f7413c2d2d0e2b808001bfdadbe597e26d0642ac66d723a574e725a80912718a",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R102/reference.md",
+          "sha256": "78b15003108e64f5bedeaf2c43a9983e63105721aeba117135b56b706a1663ef",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R102/rubric.json",
+          "sha256": "a1e1cb95b4f48d1570b86049658330419b3691aba9c73374f0a74437ecbcb26c",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR103",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 13,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "3c9aa2af1eece3f337ee14c0038e9cd350b3842276662352b5398cca1d074bf3",
+        "reference.md": "29555ef588335a43e229d630d6428840605c95ce8673267ef70b79058451730b",
+        "contract.json": "f08a922e95ace20d25bea972b279f647b9bfb33f095fa751eb73554ab959945e"
+      },
+      "mathematical_review": [
+        "参数 Tarski 最小解、Bekić 分块消元、左伴随精确半共轭传递及两个单向不等式方向正确。",
+        "仅单调精确半共轭不保等式，但保 μU≤αμT，且此额外要求已公开。保底和 ω 连续给另一充分机制；仅单调的可数逼近反例合法。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR103",
+          "stage": "S4",
+          "issue": "判准多要求存活的单向不等式",
+          "resolution": "题面公开有向比较及证明要求。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R103/task.md",
+          "sha256": "11a608e8da8fe5468eeda13cac5027447ccc1114cde1099a51fff6b1c16d0648",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R103/reference.md",
+          "sha256": "d6f9f7768adfa09cf98c60b1f74bdca28044e0a196f9744986461e52ae947f69",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R103/rubric.json",
+          "sha256": "f32b1aa6097b5cf8c8a4ba4c85b222b3e8ae4fd9b0c4073aee895bb877e5663e",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR104",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 12,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "a2a7f4cd9779148ed499f564ce200aa221d5da240c369f9d61b6049312637e60",
+        "reference.md": "5f16a27030b054c4aced0973cd7dcc1cdbdd0f5596da74a02ed5267102890c53",
+        "contract.json": "32662853f183c5af76adb2287d8515a9f723ca32d601462f8e6d7628ad171989"
+      },
+      "mathematical_review": [
+        "交换环幂等元的 nil 核唯一提升无需可逆 2 或统一幂零指数；多项式改正的缺陷平方恒等式正确。",
+        "极限中的核可非 nil；可数满射过渡才给一般提升。square-zero 多项式导数过渡的反例满足环同态；非交换上三角例仅破坏唯一性。"
+      ],
+      "resolved_findings": [],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R104/task.md",
+          "sha256": "a61c30cd381dc0d73c942cadfd81085ca4360bfde0a29988c85d1302a99867ea",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R104/reference.md",
+          "sha256": "5b3e7b55615242859b35c0aa099ac4b63e238679c158434391412015b3e8e424",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R104/rubric.json",
+          "sha256": "c38573b5178eef0a4ef18ddfaff82a48ccab131e0715db946f8e05772245512f",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    },
+    {
+      "id": "MG-GR105",
+      "version": "0.1.0",
+      "stage_count": 6,
+      "reviewed_stages": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6"
+      ],
+      "dependency_edges": 8,
+      "points": 100,
+      "status": "independent-ai-mathematical-review-complete",
+      "sha256": {
+        "task.md": "c7db2748b2f14ba43512f810e9715f04f167b1e678c621fc149aee98543822ab",
+        "reference.md": "4f3bd7a6405e8480309427343758ccc12792b4d33895a44ec943f75e6daee8bf",
+        "contract.json": "fc34928419e269d0e0004c82d9e4a91c04d4c86c762d3d2a7244a7abe53603be"
+      },
+      "mathematical_review": [
+        "观测半范数商的完备化与闭像对应、最优完成态、原问题取到条件及稳定误差正确。",
+        "完整输入不强迫闭像；有限维逼近强收敛而范数收敛恰需最终等于闭像，题面已明问判据。Tikhonov 观测收敛与原空间极小范数解取到的界限正确。"
+      ],
+      "resolved_findings": [
+        {
+          "case": "MG-GR105",
+          "stage": "S5",
+          "issue": "判准多要求算子范数收敛充要条件",
+          "resolution": "题面公开充要条件要求。"
+        }
+      ],
+      "unresolved_findings": [],
+      "source_hash_checks": [
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R105/task.md",
+          "sha256": "cab4dc7f1330529059ba1331ee5407f90c3e425b6499b792c1a28119cad946e7",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R105/reference.md",
+          "sha256": "dfd830a7171ef11b7962576900af2ff6c88a36fa5da4d3907f551c36fbceb4de",
+          "matches": true
+        },
+        {
+          "path": "drafts/true-goal-six-20261029/MG-R105/rubric.json",
+          "sha256": "3d692cd8d32a0150ea920d9805cf05bb6dbaebde7826130ce5b98c9c0cac3cdd",
+          "matches": true
+        }
+      ],
+      "structural_errors": []
+    }
+  ],
+  "resolved_findings": [
+    {
+      "case": "MG-GR001",
+      "stage": "S3",
+      "issue": "标量 d 与向量距离 η 的记号冲突",
+      "resolution": "候选显式使用并定义向量 d。"
+    },
+    {
+      "case": "MG-GR001",
+      "stage": "S5",
+      "issue": "判准要求完整固定族而题面仅问唯一性",
+      "resolution": "题面要求求出全部固定族；参考补逆向递推穷尽。"
+    },
+    {
+      "case": "MG-GR001",
+      "stage": "S7",
+      "issue": "统一终止深度比较未公开，且早期无穷误差未给具体例",
+      "resolution": "题面补问；参考补深度≤1、T²H=0 但首步上确界为∞的完整例。"
+    },
+    {
+      "case": "MG-GR002",
+      "stage": "S6",
+      "issue": "q_F 未在候选定义",
+      "resolution": "补 q_F:E→F* 及 q_Fx(φ)=φ(x)。"
+    },
+    {
+      "case": "MG-GR004",
+      "stage": "S4",
+      "issue": "整阶段真值与范数收敛子命题真值可能混淆",
+      "resolution": "turn 的 target_claim 指定算子范数收敛，scope=subclaim。"
+    },
+    {
+      "case": "MG-GR007",
+      "stage": "S1/S3/S4",
+      "issue": "有限维条件的适用范围需精确",
+      "resolution": "参考及各阶段题面明确有限维范围，未继承到一般稳定双射条件。"
+    },
+    {
+      "case": "MG-GR007",
+      "stage": "S5",
+      "issue": "判准多要求有限前缀是否可解",
+      "resolution": "题面公开该项要求。"
+    },
+    {
+      "case": "MG-GR008",
+      "stage": "S4",
+      "issue": "有限个零不包含无零的文字分支不明",
+      "resolution": "补无零时取 N=0。"
+    },
+    {
+      "case": "MG-GR009",
+      "stage": "S4",
+      "issue": "A(*)=0 的参考计算缺失",
+      "resolution": "补 P 为层、局部提升沿覆盖成员的点拉回，以及平移传递的证明。"
+    },
+    {
+      "case": "MG-GR103",
+      "stage": "S4",
+      "issue": "判准多要求存活的单向不等式",
+      "resolution": "题面公开有向比较及证明要求。"
+    },
+    {
+      "case": "MG-GR105",
+      "stage": "S5",
+      "issue": "判准多要求算子范数收敛充要条件",
+      "resolution": "题面公开充要条件要求。"
+    }
+  ],
+  "unresolved_findings": [],
+  "limitations": [
+    "Independent AI mathematical review does not constitute human approval.",
+    "No candidate model answer or pass-rate measurement was performed.",
+    "No new formalization or Lean compilation was performed for the written groups.",
+    "A valid alternative argument satisfying the stated mathematical obligation is accepted; route-specific descriptions are not additional hidden obligations.",
+    "The result is bound to the exact SHA-256 files listed; changed files require a scoped follow-up review."
+  ]
+}

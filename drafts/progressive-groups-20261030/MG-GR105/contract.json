@@ -1,0 +1,248 @@
+{
+  "id": "MG-GR105",
+  "parent_case_id": "MG-R105",
+  "version": "0.1.1",
+  "title": "观测完成、噪声误差与原空间极小点",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "闭像上的恢复",
+      "kind": "construct",
+      "assumptions": [
+        "E实向量空间，H实Hilbert，A线性",
+        "A(E)闭"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "观测范数而非未给定的原范数",
+        "最优商类及全部原解"
+      ],
+      "critical_errors": [
+        "由商类唯一推出原向量唯一"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "误差传递",
+      "kind": "prove",
+      "assumptions": [
+        "S1的闭像条件",
+        "δ,ε有限非负实数",
+        "平方残差次优条件如题"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "用平方Pythagoras得到ε",
+        "数据稳定项δ",
+        "尖锐例"
+      ],
+      "critical_errors": [
+        "把残差加ε误当状态误差加ε而不核对平方"
+      ],
+      "id": "S2",
+      "points": 12,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "一般观测像",
+      "kind": "construct",
+      "assumptions": [
+        "E仅实向量空间",
+        "H实Hilbert",
+        "A任意线性，像不要求闭",
+        "固定任一完备化Q̂及稠密嵌入ι"
+      ],
+      "expected": "construction",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "完成映射存在唯一且像=closure range",
+        "最优完成态全性质",
+        "原空间取到充要性及核陪集",
+        "完成态误差"
+      ],
+      "critical_errors": [
+        "把完成态拉回原E而未查像",
+        "无定义地使用A在E上的Hilbert伴随"
+      ],
+      "id": "S3",
+      "points": 25,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "完整的输入空间",
+      "kind": "decide",
+      "assumptions": [
+        "E,H实Hilbert",
+        "A有界单射、像稠密",
+        "对所有y的原空间取到目标"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S3"
+      ],
+      "required_evidence": [
+        "同时核验Hilbert、单射、稠密",
+        "具体y和不取到",
+        "区分原范数和观测范数"
+      ],
+      "critical_errors": [
+        "以E完备推出观测商完备"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "有限观测子空间的极限",
+      "kind": "decide",
+      "assumptions": [
+        "共同设定",
+        "Zₙ递增有限维且并稠密于Z",
+        "Pₙ、P_Z均为H上的正交投影"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S3"
+      ],
+      "required_evidence": [
+        "逐点收敛",
+        "范数反例及精确判据"
+      ],
+      "critical_errors": [
+        "把每个y的逼近阶段当统一阶段"
+      ],
+      "id": "S5",
+      "points": 13,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "正则化与取到边界",
+      "kind": "synthesize",
+      "assumptions": [
+        "E,H实Hilbert",
+        "A有界，故伴随合法",
+        "λ>0实数且λ趋0",
+        "Z=closure range A"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "正则化唯一公式",
+        "实际强极限Axλ",
+        "原取到与xλ范数收敛两个方向",
+        "最小范数代表"
+      ],
+      "critical_errors": [
+        "未给E Hilbert时写A*",
+        "从观测收敛直接推出原向量收敛",
+        "遗漏ker A自由度"
+      ],
+      "id": "S6",
+      "points": 20,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1",
+        "S2"
+      ],
+      "changed_assumptions": "观测像不要求闭，改在完备化中求最优态",
+      "expected_truth": "true",
+      "mechanism": "值域切换与成立的转移",
+      "tempting_invalid_transfer": "将原极小点存在直接携带到E",
+      "correct_boundary": "完成态存在，原取到需P_Zy∈A(E)",
+      "target_claim": "一般观测像的完备化中存在所要求的唯一稳定最优完成态及原取到分类。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S3"
+      ],
+      "changed_assumptions": "E本身Hilbert且A单射稠密，未给像闭",
+      "expected_truth": "false",
+      "mechanism": "两种完备性",
+      "tempting_invalid_transfer": "把原范数完备当观测范数完备",
+      "correct_boundary": "原取到由像成员条件决定",
+      "target_claim": "有界单射稠密像的Hilbert算子对所有数据都在原空间取到残差下确界。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S3"
+      ],
+      "changed_assumptions": "从各y的收敛要求算子范数收敛",
+      "expected_truth": "false",
+      "mechanism": "点态到一致",
+      "tempting_invalid_transfer": "把逐y所选n当统一n",
+      "correct_boundary": "有限维穷尽在无限维空间的投影差范数恒1",
+      "target_claim": "递增有限维子空间的稠密穷尽使相应正交投影在算子范数中收敛。",
+      "scope": "subclaim"
+    }
+  ],
+  "source_paths": [
+    "drafts/true-goal-six-20261029/MG-R105/task.md",
+    "drafts/true-goal-six-20261029/MG-R105/reference.md",
+    "drafts/true-goal-six-20261029/MG-R105/rubric.json"
+  ],
+  "source_sha256": {
+    "drafts/true-goal-six-20261029/MG-R105/task.md": "cab4dc7f1330529059ba1331ee5407f90c3e425b6499b792c1a28119cad946e7",
+    "drafts/true-goal-six-20261029/MG-R105/reference.md": "dfd830a7171ef11b7962576900af2ff6c88a36fa5da4d3907f551c36fbceb4de",
+    "drafts/true-goal-six-20261029/MG-R105/rubric.json": "3d692cd8d32a0150ea920d9805cf05bb6dbaebde7826130ce5b98c9c0cac3cdd"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。",
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "drafts/true-goal-six-20261029",
+    "case_id": "MG-R105",
+    "version": "0.1.0",
+    "suite_sha256": "fb720a5e194c50219c1bbfd44a38d17f484c8e5e387239059e2e6a8a2bbbc7fa",
+    "case_manifest_sha256": "335db885f9bc2b37b7e8568f474608d2678233a58a63c7087f54261505c01781"
+  }
+}

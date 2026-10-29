@@ -1,0 +1,203 @@
+{
+  "schema": "math-gauge.progressive-contract/v1",
+  "id": "MG-GR013",
+  "parent_case_id": "MG-R013",
+  "version": "0.1.0",
+  "title": "多项式记录、预解与谱的连续比较",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "共同有限维空间",
+      "kind": "prove",
+      "assumptions": [
+        "所有算子均为所在复赋范空间的有界复线性自算子，范数为算子范数。",
+        "dim E 有限且正",
+        "逐点强收敛"
+      ],
+      "required_evidence": [
+        "从有限基推出范数收敛",
+        "以根的连续性给整列选取"
+      ],
+      "critical_errors": [
+        "把无限维情形也用有限基"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "true",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "紧集上的预解",
+      "kind": "prove",
+      "assumptions": [
+        "所有算子均为所在复赋范空间的有界复线性自算子，范数为算子范数。",
+        "S1 条件",
+        "K 紧且避开 σ(A)"
+      ],
+      "required_evidence": [
+        "统一 Neumann 界",
+        "固定次数多项式差估计"
+      ],
+      "critical_errors": [
+        "把谱点处预解写成有界算子"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "共同 Banach 空间的多项式作用",
+      "kind": "prove",
+      "assumptions": [
+        "所有算子均为所在复赋范空间的有界复线性自算子，范数为算子范数。",
+        "任意复 Banach 空间",
+        "共同收缩界及强收敛"
+      ],
+      "required_evidence": [
+        "固定次数归纳",
+        "liminf 下界"
+      ],
+      "critical_errors": [
+        "无界次数与 n 极限交换"
+      ],
+      "depends_on": [
+        "S2"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "所有算子均为所在复赋范空间的有界复线性自算子，范数为算子范数。",
+        "设 $E\\ne\\{0\\}$ 是复 Banach 空间，$T,T_n\\in\\mathcal B(E)$，$n\\ge0$，满足\n\n$$\\|T\\|\\le1,\\qquad\\|T_n\\|\\le1,\\qquad T_nx\\longrightarrow Tx\\quad(x\\in E).$$\n\n每个 $T_n$ 的像空间有限维。对复多项式 $p(z)=\\sum_{k=0}^d a_kz^k$，采用\n\n$$p(A)=\\sum_{k=0}^d a_kA^k,\\qquad A^0=I_E.$$\n\n另已知，对每个这样的多项式都存在 $N_p$，使\n\n$$\\|p(T_n)\\|=\\|p(T)\\|\\qquad(n\\ge N_p).$$\n\n记 $\\sigma(A)=\\{\\lambda\\in\\mathbb C:\\lambda I_E-A\\text{ 没有有界双侧逆}\\}$。"
+      ],
+      "required_evidence": [
+        "Resolve the universal spectral recovery target with a valid proof or a complete legal counterexample.",
+        "A counterexample must verify one common nonzero complex Banach space, bounded finite-dimensional-range models, the specified contraction bounds and strong convergence.",
+        "Verify the extra condition for every complex polynomial, including its constant term: eventual exact operator-norm equality, rather than just convergence of powers or pointwise polynomial evaluations.",
+        "Identify a spectral point of the limiting operator that cannot be approached by model spectral points."
+      ],
+      "critical_errors": [
+        "Treat strong operator convergence as operator-norm convergence.",
+        "Ignore the eventual exact polynomial-norm condition, or check only a finite list of polynomials.",
+        "Compute p(T_n) only on a finite-dimensional range while omitting the constant-term action on the common space.",
+        "Interchange the model limit and unbounded polynomial degree or power limit without justification.",
+        "Infer convergence of spectra from convergence of polynomial operator norms or from a valid theorem whose normality or stronger topology is absent."
+      ],
+      "depends_on": [
+        "S3"
+      ],
+      "points": 25,
+      "expected": "false",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "截断移位的预解大小",
+      "kind": "prove",
+      "assumptions": [
+        "所有算子均为所在复赋范空间的有界复线性自算子，范数为算子范数。",
+        "指定共同 c_0 空间及实际截断算子"
+      ],
+      "required_evidence": [
+        "有限几何级数",
+        "单位向量取得下界"
+      ],
+      "critical_errors": [
+        "只计算有限像上的算子而忘记恒等项"
+      ],
+      "depends_on": [
+        "S4"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "两种极限顺序",
+      "kind": "synthesize",
+      "assumptions": [
+        "所有算子均为所在复赋范空间的有界复线性自算子，范数为算子范数。",
+        "S5 算子",
+        "m≥1"
+      ],
+      "required_evidence": [
+        "两内层极限逐项证明",
+        "量词次序说明"
+      ],
+      "critical_errors": [
+        "把迭代极限不同叫作定义矛盾"
+      ],
+      "depends_on": [
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "points": 15,
+      "expected": "classification",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "有限维共同空间改为任意 Banach；增加每个多项式最终精确范数记录但阈值可依赖多项式",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把固定 p 的信息统一到所有幂次数",
+      "correct_boundary": "必须保留逐多项式阈值，所列全部条件仍不足以恢复谱点",
+      "mechanism": "quantifier_exchange_and_spectral_topology",
+      "scope": "stage",
+      "target_claim": "原全部强收敛及逐多项式最终精确范数记录足以满足所要求的谱恢复目标。"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R013/task.md",
+    "cases/public/MG-R013/reference.md",
+    "cases/public/MG-R013/rubric.json",
+    "results/failure-analysis-20261030/math-failures.md",
+    "cases/public/MG-R013/case.json",
+    "cases/public/MG-R013/sources.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.4.0",
+    "parent_source_ids": [
+      "spectral-finite-sections"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  }
+}

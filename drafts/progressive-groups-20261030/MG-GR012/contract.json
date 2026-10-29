@@ -1,0 +1,232 @@
+{
+  "schema": "math-gauge.group-contract/v1",
+  "id": "MG-GR012",
+  "parent_case_id": "MG-R012",
+  "version": "0.1.1",
+  "title": "凸势、对偶与有限记录逼近",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "二次记录与循环兼容",
+      "kind": "prove",
+      "assumptions": [
+        "Q 对称正定",
+        "全空间梯度记录",
+        "基点规范化"
+      ],
+      "required_evidence": [
+        "支持差平方公式",
+        "循环及次梯度唯一",
+        "潜势唯一性"
+      ],
+      "critical_errors": [
+        "仅靠 Γ 单调就称循环单调"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "true",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "对偶问题的整体求解",
+      "kind": "construct",
+      "assumptions": [
+        "S1 的正定 Q",
+        "对偶取全 R^d"
+      ],
+      "required_evidence": [
+        "完整配方与最优点",
+        "等号和双向逆"
+      ],
+      "critical_errors": [
+        "忽略 b 的平移"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "construction",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "退化二次型",
+      "kind": "decide",
+      "assumptions": [
+        "Q 对称半正定而不要求正定"
+      ],
+      "required_evidence": [
+        "有限域与无穷域",
+        "全部最优点及值无关性"
+      ],
+      "critical_errors": [
+        "把商上的唯一性当原空间唯一"
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 15,
+      "expected": "false",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "设 $E$ 是实向量空间，其上给定一个使加法与标量乘法连续的拓扑。记 $E′$ 为所有连续实线性泛函 $E\\to\\mathbb R$ 组成的空间。给定非空集合 $\\Gamma\\subseteq E\\times E′$。假定 $\\Gamma$ 循环单调：对任意 $n\\ge0$ 及任意 $(x_0,y_0),\\ldots,(x_n,y_n)\\in\\Gamma$，令 $x_{n+1}=x_0$，有\n\n$$\\sum_{j=0}^{n}y_j(x_{j+1}-x_j)\\le0.$$\n\n固定一个记录 $(\\bar x,\\bar y)\\in\\Gamma$。对于函数 $f:E\\to\\mathbb R\\cup\\{+\\infty\\}$，定义\n\n$$\n\\partial f(x)=\\bigl\\{y\\in E′:\\ f(x)<+\\infty,\\quad\nf(z)\\ge f(x)+y(z-x)\\ \\text{对所有 }z\\in E\\bigr\\}.\n$$\n\n称 $f$ 为正规函数，是指它至少在一点取有限值。"
+      ],
+      "required_evidence": [
+        "Construct a proper lower semicontinuous convex potential on the exact stated real topological vector space, normalized at the supplied base record.",
+        "Prove each original graph record gives a finite base value and the full global subgradient support inequality.",
+        "Prove pointwise minimality in the entire stated admissible class and uniqueness as equality of extended-valued functions."
+      ],
+      "critical_errors": [
+        "Use Hilbert representation, local convexity, Hausdorff separation, norm topology, or completeness without justification when they are not supplied.",
+        "Construct an arbitrary convex potential but omit the required pointwise minimality.",
+        "Promote graph inclusion to equality with the full subdifferential without an additional argument.",
+        "Assume a supremum is attained, use undefined infinity subtraction, or assume the potential or its subgradient properties as a certificate."
+      ],
+      "depends_on": [
+        "S1",
+        "S3"
+      ],
+      "points": 25,
+      "expected": "true",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "势的图是否恰好等于输入",
+      "kind": "decide",
+      "assumptions": [
+        "S4 原始循环单调非空记录"
+      ],
+      "required_evidence": [
+        "合法规范化最小势",
+        "严格图包含见证"
+      ],
+      "critical_errors": [
+        "把势的最小性换成图的最大性"
+      ],
+      "depends_on": [
+        "S4"
+      ],
+      "points": 15,
+      "expected": "false",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "有限记录的恢复极限",
+      "kind": "prove",
+      "assumptions": [
+        "有限子记录含同一基点",
+        "后半另假设有限维且全势处处有限"
+      ],
+      "required_evidence": [
+        "有限路径覆盖全部记录",
+        "有限势连续的证明",
+        "有向 Dini 论证"
+      ],
+      "critical_errors": [
+        "不证明连续就把单调点态收敛升为紧上一致"
+      ],
+      "depends_on": [
+        "S4",
+        "S5"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1",
+        "S2"
+      ],
+      "changed_assumptions": "正定降为半正定，仍问全域有限及唯一最大点",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把可逆梯度的公式照搬到奇异 Q",
+      "correct_boundary": "只在 b+im Q 有限，最大点是 ker Q 的陪集",
+      "mechanism": "degeneracy_and_quotient_uniqueness",
+      "scope": "subclaim",
+      "target_claim": "Q 仅半正定时，每个 y 的共轭函数值仍有限且最大化点唯一。"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S3"
+      ],
+      "changed_assumptions": "由全空间线性梯度图改为任意拓扑向量空间中的循环单调记录",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "以欧氏对偶或正定矩阵为必要条件",
+      "correct_boundary": "连续泛函与循环条件已足够构造最小势",
+      "mechanism": "minimal_structure",
+      "scope": "stage",
+      "target_claim": "原拓扑向量空间及循环单调记录条件足以构造题定规范化最小下半连续凸势，并证明全部支持与最小性结论。"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S4"
+      ],
+      "changed_assumptions": "由记录包含改问完整次梯度图相等",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "唯一最小势自动恢复恰好原记录",
+      "correct_boundary": "稀疏 Γ 可严格包含于次梯度图",
+      "mechanism": "inclusion_to_equality",
+      "scope": "stage",
+      "target_claim": "S4 的规范化最小势之完整次梯度图必恰等于输入图 Γ。"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R012/task.md",
+    "cases/public/MG-R012/reference.md",
+    "cases/public/MG-R012/rubric.json",
+    "cases/public/MG-R012/case.json",
+    "cases/public/MG-R012/sources.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.4.0",
+    "parent_source_ids": [
+      "rockafellar-cyclic"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  },
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "cases/public",
+    "case_id": "MG-R012",
+    "version": "0.4.0",
+    "suite_sha256": "6ad8a8a7c80a7ba769b0677ef250bf9998d9601d190f271ce6b357fa91f5308d",
+    "case_manifest_sha256": "e2af68f6f22da85f3d42e891db092be985c7c98407e6dd92a296d536024e497c"
+  }
+}

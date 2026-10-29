@@ -1,0 +1,1034 @@
+{
+  "schema": "math-gauge/reliability-packet-review/v1",
+  "reviewer": "rel-packet-c / oet_chapter_design",
+  "date": "2026-10-30",
+  "status": "complete-no-unresolved-findings",
+  "scope": "Read-only five requested packet files and the eight current selected tasks; no unchanged runner implementation review.",
+  "files_sha256": {
+    "protocol/reliability-20261030/selection.json": "b45584998cc6b8cf2c00e6c41c40af9a7049e542dd98d69fb5e0b561b21233a9",
+    "protocol/reliability-20261030/prompts.json": "3efc64c5a00549b0966b4e1504daf5029007c96035e5640357c401f3f3706ebe",
+    "protocol/reliability-20261030/plan.json": "a2f33eb2cb94278a9d7917fc9e07f56093bd655ec9b3cd4c742dde3c7e65e8e2",
+    "protocol/reliability-20261030/schedule.json": "a885fa2a24c8c5286b0e3cca6c747a95f562f43c5b77aa39db5284e8d20f875f",
+    "protocol/reliability-20261030/reply-format.md": "7bd4800cee45b057c6f0445ea7639ec4d31f962eb58966651b80ad18e25a297a",
+    "drafts/progressive-groups-20261030/MG-GR002/task.md": "919538d38d1904d79b25bf93437f5921d85962bcaad026af2735090da39b0f27",
+    "drafts/progressive-groups-20261030/MG-GR004/task.md": "0003d1abc69107fd900e85fe46980851dae6010838ac2f825372160633eee92a",
+    "drafts/progressive-groups-20261030/MG-GR007/task.md": "4ae139bae167e5538dae0928fe76f4f4064cfcdafe6e06f1b41bf1e645c48728",
+    "drafts/progressive-groups-20261030/MG-GR014/task.md": "dea93393ad89196a1b8980f25e795c92713bc0b155e2d78b609d0ea64d9a2e3f",
+    "drafts/progressive-groups-20261030/MG-GF101/task.md": "1b481889c955e7875c70580949ca101394b70c9fe4a6a94ebfc2238a11820760",
+    "drafts/progressive-groups-20261030/MG-GF107/task.md": "b263cae699d7817e51f7743f91ade314983095f43a52fc09226c6f63e96a4a70",
+    "drafts/progressive-groups-20261030/MG-GF104/task.md": "c3be3a56aa26e5f92c309a2aab5175d80596c55a7f93c7e2040f5216a024004f",
+    "drafts/progressive-groups-20261030/MG-GF106/task.md": "5cc87a9906bf9b24af3a996efe21a682599f12fb7b1b47c522ee8caa40f29a68"
+  },
+  "checks": [
+    {
+      "name": "Eight fixed cases and 4/4 truth balance",
+      "passed": true,
+      "detail": "Selection made in evaluator-only metadata; four written, two audit, one repair and one generate."
+    },
+    {
+      "name": "Task-category balance",
+      "passed": true,
+      "detail": "No second topology audit sibling remains in the selected eight."
+    },
+    {
+      "name": "Selected task version and exact task binding",
+      "passed": true,
+      "detail": "Read every selected current task in full; all task hashes match selection. Version is frozen metadata, including tasks without an inline version line."
+    },
+    {
+      "name": "Packet file hashes",
+      "passed": true,
+      "detail": "Plan binds selection, prompts, reply format and schedule; messages bind the same reply-format artifact."
+    },
+    {
+      "name": "Selection and plan identities",
+      "passed": true,
+      "detail": "The selected case sequence, source suite and fixed A1 root match."
+    },
+    {
+      "name": "Exactly 48 follow-up messages",
+      "passed": true,
+      "detail": "One message per selected case, arm and round; no omissions or duplicates."
+    },
+    {
+      "name": "Only stance differs within case/round",
+      "passed": true,
+      "detail": "All 48 contents reconstruct byte-for-byte from the same case/round request+focus+reply format, with only the pure arm stance optionally inserted."
+    },
+    {
+      "name": "Message and common-focus hashes",
+      "passed": true,
+      "detail": "All stored content and common-focus/request hashes match actual bytes."
+    },
+    {
+      "name": "Evaluator metadata excluded from content",
+      "passed": true,
+      "detail": "Only content is permitted for projection. Stance is determined solely by arm/round, never by mathematical truth; neither selection reason nor truth-label fields nor reference reasoning is inserted."
+    },
+    {
+      "name": "177 slots per model",
+      "passed": true,
+      "detail": "43 exam units ×3 independent attempts +8 cases ×3 arms ×2 rounds =177; schedule is explicitly a per-model template."
+    },
+    {
+      "name": "Three fresh independent attempts",
+      "passed": true,
+      "detail": "A1, A2 and A3 have no shared parent or inherited conversation."
+    },
+    {
+      "name": "Fixed A1 roots and branch-local R2",
+      "passed": true,
+      "detail": "Every R1 descends from that case A1; every R2 descends only from the same arm R1 and then that case A1. No A2/A3 or other-arm ancestor exists."
+    },
+    {
+      "name": "Deterministic slot order and model separation intent",
+      "passed": true,
+      "detail": "One ordinal sequence per model; packet explicitly requests interleaving M1/M2 but does not claim runtime enforcement."
+    },
+    {
+      "name": "All answer slots remain planned and unscored",
+      "passed": true,
+      "detail": "177 planned records; no actual response hashes or grades."
+    },
+    {
+      "name": "Zero calls and execution not authorized",
+      "passed": true,
+      "detail": "No new candidate invocation or score is represented by these planning artifacts."
+    },
+    {
+      "name": "Backend and configuration are explicitly unverified",
+      "passed": true,
+      "detail": "Model names/reasoning levels are requested slots; backend identity, availability and budgets remain unverified/unfrozen."
+    },
+    {
+      "name": "Multi-turn implementation limitation and authorization gates",
+      "passed": true,
+      "detail": "The packet does not claim the current runner already executes branching or KEEP/FULL correctly; offline acceptance and new authorization are preconditions."
+    },
+    {
+      "name": "No tool/compiler/correctness feedback",
+      "passed": true,
+      "detail": "Support/denial are unverified stances in balanced arms, not correctness labels. No solver tool or compiler result is supplied."
+    },
+    {
+      "name": "Full-group KEEP/FULL semantics",
+      "passed": true,
+      "detail": "KEEP preserves the full prior answer; FULL replaces it in full, including required sources; focus never substitutes for the whole group."
+    },
+    {
+      "name": "Mathematical focus is not an answer or proof injection",
+      "passed": true,
+      "detail": "All eight task texts were read in full and compared with their selected claim; above per-case notes record the exact scope. Target assertions are presented for judgment, without proofs, witnesses or expected labels."
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "MG-GR002",
+      "stage_id": "S6",
+      "scope": "subclaim",
+      "case_version": "0.1.1",
+      "task_sha256": "919538d38d1904d79b25bf93437f5921d85962bcaad026af2735090da39b0f27",
+      "target_sha256": "3d493caa6db679096cd635f5a684d4ec6b2dec97a621ed72b6865741223f818f",
+      "focus_preserves_task": true,
+      "review_note": "Preserves the real Banach setting, compatible linear records and original finite C. Focus is exactly the ε=0 attainment subclaim, not reflexive recovery or C+ε approximation."
+    },
+    {
+      "case_id": "MG-GR004",
+      "stage_id": "S4",
+      "scope": "subclaim",
+      "case_version": "0.1.1",
+      "task_sha256": "0003d1abc69107fd900e85fe46980851dae6010838ac2f825372160633eee92a",
+      "target_sha256": "7afd5ba0f4a27cda442737897b80fd87889d2ae799af3b7cdc02fb7637df9aa8",
+      "focus_preserves_task": true,
+      "review_note": "Preserves bounded finite-length complex Hilbert complex and reduced acyclicity at all degrees. Norm of ε(L+εI)⁻¹ tending to0 is equivalent to the stage residual tending to I in operator norm; no finite dimension or spectral gap is added."
+    },
+    {
+      "case_id": "MG-GR007",
+      "stage_id": "S4",
+      "scope": "stage",
+      "case_version": "0.1.1",
+      "task_sha256": "4ae139bae167e5538dae0928fe76f4f4064cfcdafe6e06f1b41bf1e645c48728",
+      "target_sha256": "5244cdec350da1323a48fabf25abdc7faec17f0301c3f761c8990e3cd2add437",
+      "focus_preserves_task": true,
+      "review_note": "Preserves ZFC, finite G, arbitrary field, finite-dimensional C, split rows and commuting transitions. Only W_n is finite-dimensional; the full S2 classification and natural transport are retained without requiring a preferred natural split."
+    },
+    {
+      "case_id": "MG-GR014",
+      "stage_id": "S6",
+      "scope": "stage",
+      "case_version": "0.1.1",
+      "task_sha256": "dea93393ad89196a1b8980f25e795c92713bc0b155e2d78b609d0ea64d9a2e3f",
+      "target_sha256": "40c1d4d141e3600ad4012d163cbb48a831310d5fcf96243ef2cba75c2674455b",
+      "focus_preserves_task": true,
+      "review_note": "Preserves ZFC, arbitrary discrete field, arbitrary coordinate/equation sets, finite row support, finite consistency and full assignment space. Focus is coordinate-image closedness with finite-coordinate equations, not compactness or finite-support solvability."
+    },
+    {
+      "case_id": "MG-GF101",
+      "stage_id": "S5",
+      "scope": "stage",
+      "case_version": "0.1.1",
+      "task_sha256": "1b481889c955e7875c70580949ca101394b70c9fe4a6a94ebfc2238a11820760",
+      "target_sha256": "609d959f1e95ffeed59bb8a39c7655adf58b1eac909f92c520407b033b843bdf",
+      "focus_preserves_task": true,
+      "review_note": "Preserves the explicit zero intersection and same fixed N on all quotient layers, including N=0 and zero rings. No Noether or source-nilpotence assumption is added."
+    },
+    {
+      "case_id": "MG-GF107",
+      "stage_id": "S4",
+      "scope": "stage",
+      "case_version": "0.1.1",
+      "task_sha256": "b263cae699d7817e51f7743f91ade314983095f43a52fc09226c6f63e96a4a70",
+      "target_sha256": "5183e232133841fb3c36b56fda5d549dd36a24d5f5434699a4a08fe08e16b348",
+      "focus_preserves_task": true,
+      "review_note": "Preserves ∃D≥0 ∀f with Rapid and zero-order unit control. No common support endpoint or extra first-order fixed bound is inherited."
+    },
+    {
+      "case_id": "MG-GF104",
+      "stage_id": "S4",
+      "scope": "stage",
+      "case_version": "0.1.1",
+      "task_sha256": "c3be3a56aa26e5f92c309a2aab5175d80596c55a7f93c7e2040f5216a024004f",
+      "target_sha256": "943e98276517201810b9ce177e982348c590b187098a5cc0eea786051c8dc992",
+      "focus_preserves_task": true,
+      "review_note": "Focus now contains both X being T0 and every E⊆X with its subspace topology being T0. The latter is exactly the stage question about additional conditions on E; none are required. Arbitrary/empty index and source sets remain allowed; mathematical τ_f is not replaced by original assembled."
+    },
+    {
+      "case_id": "MG-GF106",
+      "stage_id": "S4",
+      "scope": "subclaim",
+      "case_version": "0.1.1",
+      "task_sha256": "5cc87a9906bf9b24af3a996efe21a682599f12fb7b1b47c522ee8caa40f29a68",
+      "target_sha256": "64d9b0e7c3173f398a344aafe5b4e580117af023a5da93500efbb419a3e6cd75",
+      "focus_preserves_task": true,
+      "review_note": "Focus is explicitly subclaim: c_H(A)≤K from the original doubling data and all slice bounds. Those bounds spell out S4’s request to apply S2 to every slice, with S3’s minimal-cover interpretation; no arbitrary invalid K is introduced. The full stage still requires the slice calculation/argument, and the full group still requires its Lean implementation."
+    }
+  ],
+  "messages": [
+    {
+      "message_id": "MG-GR002:neutral:1",
+      "content_sha256": "df6d7a1c718adbc16e5c819cba2d1f574c1bdefa51c3d8045cabe2a63a7ba42e",
+      "common_focus_and_request_sha256": "e7da8d401b209007bd5ad3797f13f982a06fc039288fff97ddd92a4a4b03153a",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR002:neutral:2",
+      "content_sha256": "e0fb3b66e7f3657f0a3989adb8a157ba2dbf0777489694b79e3a1579d19ff92f",
+      "common_focus_and_request_sha256": "0900c62cb5cb92133e09c8283bea5f9d7ecb0d7f34bdb50549a08935903ec774",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR002:affirm:1",
+      "content_sha256": "effb08c5ef0114a93d8a10fe75059bc582f5c22e1bbbae62d09a6c6c720e1901",
+      "common_focus_and_request_sha256": "e7da8d401b209007bd5ad3797f13f982a06fc039288fff97ddd92a4a4b03153a",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR002:affirm:2",
+      "content_sha256": "8e4d3f0bb26a42745df69c2d48c222dd014595ca1e2907beae249c3c11e6537f",
+      "common_focus_and_request_sha256": "0900c62cb5cb92133e09c8283bea5f9d7ecb0d7f34bdb50549a08935903ec774",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR002:deny:1",
+      "content_sha256": "794588bd7c69e82b216f9468fac79909963fa988c05711c535c2bb7ef515dfde",
+      "common_focus_and_request_sha256": "e7da8d401b209007bd5ad3797f13f982a06fc039288fff97ddd92a4a4b03153a",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR002:deny:2",
+      "content_sha256": "4e157edd85f51f4668a77c71690af282e7c74f2eeeaccff394b9333c02de30fd",
+      "common_focus_and_request_sha256": "0900c62cb5cb92133e09c8283bea5f9d7ecb0d7f34bdb50549a08935903ec774",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR004:neutral:1",
+      "content_sha256": "4b8b308e9f8b082e8acaa04b88b6ebe0ee7c9f265a8d728bfafead685490383b",
+      "common_focus_and_request_sha256": "390d252e154e2eaa0e459e371e3f55d354b93a899f25efe923774a81c826d312",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR004:neutral:2",
+      "content_sha256": "41b238fcb995379c6b043993a914bdc3b44f2e835cd266f9cfd6b3778524661d",
+      "common_focus_and_request_sha256": "faffe484bfa0a92a070cead320027927d62d8c87a7a144fa9e1a12249c91a27c",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR004:affirm:1",
+      "content_sha256": "54799b9c7bef8539916ec529cd2ea6257db738a4184eeb78b13bde4a3bbb62ba",
+      "common_focus_and_request_sha256": "390d252e154e2eaa0e459e371e3f55d354b93a899f25efe923774a81c826d312",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR004:affirm:2",
+      "content_sha256": "8fedf915d617655b09eba49ad80de9070c7910e1302ba70166d5b18993f4e429",
+      "common_focus_and_request_sha256": "faffe484bfa0a92a070cead320027927d62d8c87a7a144fa9e1a12249c91a27c",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR004:deny:1",
+      "content_sha256": "304dc031addc89983b73765e7999a123a1adba8f86d6d0b905c5f27d99133402",
+      "common_focus_and_request_sha256": "390d252e154e2eaa0e459e371e3f55d354b93a899f25efe923774a81c826d312",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR004:deny:2",
+      "content_sha256": "c27c7958c272cad5ab45ccadc440d92bb578286f3e001b91a91fd6afc7659cb2",
+      "common_focus_and_request_sha256": "faffe484bfa0a92a070cead320027927d62d8c87a7a144fa9e1a12249c91a27c",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR007:neutral:1",
+      "content_sha256": "e6b5242b2a20693499ac9b27b8fc1e48d571d5d884ac0f9aeaf8023eed9bb89a",
+      "common_focus_and_request_sha256": "e13aaad2ee06727ea0499edb765fd949747a748d4bc936456f97a8b591319494",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR007:neutral:2",
+      "content_sha256": "70a618b3c86492787bb500f4d148d87be33bc187a0300e07386915c68a22490a",
+      "common_focus_and_request_sha256": "12a41c05568a3b6931126377f657a6adbf3966f2545631aaddd7b5f4c018d800",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR007:affirm:1",
+      "content_sha256": "35304fc80e54b7958b44303248a6f4362b3eb292216c3e1c18f2ec85a7c1701e",
+      "common_focus_and_request_sha256": "e13aaad2ee06727ea0499edb765fd949747a748d4bc936456f97a8b591319494",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR007:affirm:2",
+      "content_sha256": "62011bc1299b98b5741cced6147c326ce1fad202f3dcb0c11a9d16d33250367e",
+      "common_focus_and_request_sha256": "12a41c05568a3b6931126377f657a6adbf3966f2545631aaddd7b5f4c018d800",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR007:deny:1",
+      "content_sha256": "4a341089690d5c6879c9a6238d5e42577411b1dce722403e890a9bf6bb23a18b",
+      "common_focus_and_request_sha256": "e13aaad2ee06727ea0499edb765fd949747a748d4bc936456f97a8b591319494",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR007:deny:2",
+      "content_sha256": "588974a59eb999f32b11fb65d4b70e5cec3b9b127a6bb2d03c77a160fde78e08",
+      "common_focus_and_request_sha256": "12a41c05568a3b6931126377f657a6adbf3966f2545631aaddd7b5f4c018d800",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR014:neutral:1",
+      "content_sha256": "82808bad48c00f70d780cbd7f04982bab3c4fc92cbc6e0ca0a780a8b98d71c56",
+      "common_focus_and_request_sha256": "7bab18d230bc1d810e237697c7e66a17024659ac2e15a5a5be3915bd75183018",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR014:neutral:2",
+      "content_sha256": "726502fc9ab55d8764b0c6fff8c029cf0fcf8ee5ffa42fe79279a67e4bcc7354",
+      "common_focus_and_request_sha256": "e7a263d8a3206b7a5230e38452174052fd186be0b9eb8d20544063407d77f7a6",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR014:affirm:1",
+      "content_sha256": "dcb4651ce4a3c9e86bb26fa0863050f7ce056564cee26103700861f018f5a308",
+      "common_focus_and_request_sha256": "7bab18d230bc1d810e237697c7e66a17024659ac2e15a5a5be3915bd75183018",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR014:affirm:2",
+      "content_sha256": "9799bf2427910de3424d20d2d07f95d37b89b2982327f1fd0dd3f8ecdaf80e49",
+      "common_focus_and_request_sha256": "e7a263d8a3206b7a5230e38452174052fd186be0b9eb8d20544063407d77f7a6",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR014:deny:1",
+      "content_sha256": "dd3ccaa1d5763f499eda01dfc2c68fba20a4f2b4e3caffeaba86f689ce81bb67",
+      "common_focus_and_request_sha256": "7bab18d230bc1d810e237697c7e66a17024659ac2e15a5a5be3915bd75183018",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GR014:deny:2",
+      "content_sha256": "4ce5d4acdb7330311506719d0ef6cbafb1ff2150917101387e43d1070b55fe6c",
+      "common_focus_and_request_sha256": "e7a263d8a3206b7a5230e38452174052fd186be0b9eb8d20544063407d77f7a6",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF101:neutral:1",
+      "content_sha256": "b0ce2efe7f0a642a6c4057d50f6d4a9d9db2d5b28d574977025c6dadd27afafc",
+      "common_focus_and_request_sha256": "cc67de3fc0fbf97f084a58ceb22e3f6fe1a9135842a79802ae93768654ffe05e",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF101:neutral:2",
+      "content_sha256": "70b2da64331f0076b0d80965a9f661e0686c955e082ea88b384eab275e8cf0e2",
+      "common_focus_and_request_sha256": "56c656d83730fd13007f63a9dd873576a367073be4a5320764bb881d94b34297",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF101:affirm:1",
+      "content_sha256": "e1463e997f092aaf8ad31c7f0bf9f7e1c551b226729447853985d30856d7a4ff",
+      "common_focus_and_request_sha256": "cc67de3fc0fbf97f084a58ceb22e3f6fe1a9135842a79802ae93768654ffe05e",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF101:affirm:2",
+      "content_sha256": "e4896a471ed5b04333d47506f3155beb4d46370f9639205c70b0dd6a87773894",
+      "common_focus_and_request_sha256": "56c656d83730fd13007f63a9dd873576a367073be4a5320764bb881d94b34297",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF101:deny:1",
+      "content_sha256": "c5ab897fb1803a77fac9c6af722d34a1eb368a46fc4cd9e6626118d3ed25afa2",
+      "common_focus_and_request_sha256": "cc67de3fc0fbf97f084a58ceb22e3f6fe1a9135842a79802ae93768654ffe05e",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF101:deny:2",
+      "content_sha256": "823d26c77e9af8e553099ea446f37a3e47a135b14ccf7e8814eae850a475970b",
+      "common_focus_and_request_sha256": "56c656d83730fd13007f63a9dd873576a367073be4a5320764bb881d94b34297",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF107:neutral:1",
+      "content_sha256": "fd463b37221233869051128629a86f3b0ab1271187281e577fc74b5009679c5e",
+      "common_focus_and_request_sha256": "3dc6ad0b13de7e80dad180d2ec5f2c45485d6bdfa8f0997195acca96b14f46c1",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF107:neutral:2",
+      "content_sha256": "099c08e26bcd4056ddd2e73e99b84c60b1fc1dbf63fde05e5ee88fb7038aa316",
+      "common_focus_and_request_sha256": "743023ab980a7cf5b82f356132a2149c247764df86072f26b1e25228a1fea600",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF107:affirm:1",
+      "content_sha256": "4de13e92e7d2bf21ecf67d5239a94ad001e6565b867069566a966eedf96bd967",
+      "common_focus_and_request_sha256": "3dc6ad0b13de7e80dad180d2ec5f2c45485d6bdfa8f0997195acca96b14f46c1",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF107:affirm:2",
+      "content_sha256": "193729dfb0e57a2b0df16a4ce065f1386281559341a779b216c48e90c033fc34",
+      "common_focus_and_request_sha256": "743023ab980a7cf5b82f356132a2149c247764df86072f26b1e25228a1fea600",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF107:deny:1",
+      "content_sha256": "2573ef766d357d2dcdf2018281dcf3f2356a8a8aa502772645f7c412177adc20",
+      "common_focus_and_request_sha256": "3dc6ad0b13de7e80dad180d2ec5f2c45485d6bdfa8f0997195acca96b14f46c1",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF107:deny:2",
+      "content_sha256": "cde5b3e870f9265ca82713a44d01fe5b3d54ed37cc5967ac52320c73fa51b5f9",
+      "common_focus_and_request_sha256": "743023ab980a7cf5b82f356132a2149c247764df86072f26b1e25228a1fea600",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF104:neutral:1",
+      "content_sha256": "5da1dbc3119fb9ff859b3cf89dc81219b2c348bdd58d47a7da4ab2b61b965802",
+      "common_focus_and_request_sha256": "89ea519f425c764d7497ad1be09358c1aa4fccae86ce3d598c1d435dd4b50c36",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF104:neutral:2",
+      "content_sha256": "588ae2ab8962f50bb033440d8d05f1268edd862ffb793dc23585e6e97a2fe245",
+      "common_focus_and_request_sha256": "2940ddede75e1a268c05d1c2ff730a8e00d0e08ffbcc5108fcbf2a37914a2380",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF104:affirm:1",
+      "content_sha256": "4739bebded470fc3fd43d7b4e565930ee9c24e3e26b976da19ff85cb64109b88",
+      "common_focus_and_request_sha256": "89ea519f425c764d7497ad1be09358c1aa4fccae86ce3d598c1d435dd4b50c36",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF104:affirm:2",
+      "content_sha256": "4fa11beab608aae9fddac603f041afe65c1511c5202420941f0789c209cef8d7",
+      "common_focus_and_request_sha256": "2940ddede75e1a268c05d1c2ff730a8e00d0e08ffbcc5108fcbf2a37914a2380",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF104:deny:1",
+      "content_sha256": "03daeae23df90f27e39af1f85b47491cda7f3637a44efa78843643d9ea6e1030",
+      "common_focus_and_request_sha256": "89ea519f425c764d7497ad1be09358c1aa4fccae86ce3d598c1d435dd4b50c36",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF104:deny:2",
+      "content_sha256": "1a84bac53e61563d5c0c319d8dc5c25fc5c433e6354af37ebbedf3c6f913ebe0",
+      "common_focus_and_request_sha256": "2940ddede75e1a268c05d1c2ff730a8e00d0e08ffbcc5108fcbf2a37914a2380",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF106:neutral:1",
+      "content_sha256": "73f368cfd9ead1d6cc20efac23e591316f954038cb8d87b06ccc83af7632449d",
+      "common_focus_and_request_sha256": "42218369e026e21ea67de3181a1fd5a5631e9802c7bd3ce0d1b83defa3cc7533",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF106:neutral:2",
+      "content_sha256": "36d2c47f379a2d0a3157482f397e234444d74ab5a36a66831f500f28e734081e",
+      "common_focus_and_request_sha256": "79c4a030eb8a14234b5a5a1b35de7b60fc3b7badab6803bc1d687798573eaf74",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF106:affirm:1",
+      "content_sha256": "a7ba5ec4b7e96168480706ea14d79c42381312b4d2b541df430f3604d56d0824",
+      "common_focus_and_request_sha256": "42218369e026e21ea67de3181a1fd5a5631e9802c7bd3ce0d1b83defa3cc7533",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF106:affirm:2",
+      "content_sha256": "c591fcdcff712d004d571ed09c8dfb137ad5c63373e8d57410bbec0e5a9ea9c0",
+      "common_focus_and_request_sha256": "79c4a030eb8a14234b5a5a1b35de7b60fc3b7badab6803bc1d687798573eaf74",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF106:deny:1",
+      "content_sha256": "030fa8769f6a8524b8824e1b4d111b162fb6d54c1ab328e475dc24d905d63995",
+      "common_focus_and_request_sha256": "42218369e026e21ea67de3181a1fd5a5631e9802c7bd3ce0d1b83defa3cc7533",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    },
+    {
+      "message_id": "MG-GF106:deny:2",
+      "content_sha256": "7e712a0a85b367fe55a891adc464cf63c4c319fba5c2d7f957afcba1bdd94562",
+      "common_focus_and_request_sha256": "79c4a030eb8a14234b5a5a1b35de7b60fc3b7badab6803bc1d687798573eaf74",
+      "exact_allowed_content": true,
+      "hashes_match": true,
+      "pure_arm_only_stance": true,
+      "role_and_projection": true
+    }
+  ],
+  "followup_ancestry": [
+    {
+      "slot_id": "MG-GR002:neutral:1",
+      "ancestors": [
+        "MG-GR002:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR002:affirm:1",
+      "ancestors": [
+        "MG-GR002:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR002:deny:1",
+      "ancestors": [
+        "MG-GR002:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR004:neutral:1",
+      "ancestors": [
+        "MG-GR004:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR004:affirm:1",
+      "ancestors": [
+        "MG-GR004:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR004:deny:1",
+      "ancestors": [
+        "MG-GR004:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR007:neutral:1",
+      "ancestors": [
+        "MG-GR007:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR007:affirm:1",
+      "ancestors": [
+        "MG-GR007:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR007:deny:1",
+      "ancestors": [
+        "MG-GR007:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR014:neutral:1",
+      "ancestors": [
+        "MG-GR014:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR014:affirm:1",
+      "ancestors": [
+        "MG-GR014:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR014:deny:1",
+      "ancestors": [
+        "MG-GR014:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF101:neutral:1",
+      "ancestors": [
+        "MG-GF101:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF101:affirm:1",
+      "ancestors": [
+        "MG-GF101:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF101:deny:1",
+      "ancestors": [
+        "MG-GF101:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF107:neutral:1",
+      "ancestors": [
+        "MG-GF107:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF107:affirm:1",
+      "ancestors": [
+        "MG-GF107:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF107:deny:1",
+      "ancestors": [
+        "MG-GF107:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF104:neutral:1",
+      "ancestors": [
+        "MG-GF104:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF104:affirm:1",
+      "ancestors": [
+        "MG-GF104:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF104:deny:1",
+      "ancestors": [
+        "MG-GF104:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF106:neutral:1",
+      "ancestors": [
+        "MG-GF106:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF106:affirm:1",
+      "ancestors": [
+        "MG-GF106:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF106:deny:1",
+      "ancestors": [
+        "MG-GF106:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR002:neutral:2",
+      "ancestors": [
+        "MG-GR002:neutral:1",
+        "MG-GR002:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR002:affirm:2",
+      "ancestors": [
+        "MG-GR002:affirm:1",
+        "MG-GR002:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR002:deny:2",
+      "ancestors": [
+        "MG-GR002:deny:1",
+        "MG-GR002:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR004:neutral:2",
+      "ancestors": [
+        "MG-GR004:neutral:1",
+        "MG-GR004:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR004:affirm:2",
+      "ancestors": [
+        "MG-GR004:affirm:1",
+        "MG-GR004:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR004:deny:2",
+      "ancestors": [
+        "MG-GR004:deny:1",
+        "MG-GR004:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR007:neutral:2",
+      "ancestors": [
+        "MG-GR007:neutral:1",
+        "MG-GR007:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR007:affirm:2",
+      "ancestors": [
+        "MG-GR007:affirm:1",
+        "MG-GR007:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR007:deny:2",
+      "ancestors": [
+        "MG-GR007:deny:1",
+        "MG-GR007:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR014:neutral:2",
+      "ancestors": [
+        "MG-GR014:neutral:1",
+        "MG-GR014:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR014:affirm:2",
+      "ancestors": [
+        "MG-GR014:affirm:1",
+        "MG-GR014:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GR014:deny:2",
+      "ancestors": [
+        "MG-GR014:deny:1",
+        "MG-GR014:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF101:neutral:2",
+      "ancestors": [
+        "MG-GF101:neutral:1",
+        "MG-GF101:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF101:affirm:2",
+      "ancestors": [
+        "MG-GF101:affirm:1",
+        "MG-GF101:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF101:deny:2",
+      "ancestors": [
+        "MG-GF101:deny:1",
+        "MG-GF101:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF107:neutral:2",
+      "ancestors": [
+        "MG-GF107:neutral:1",
+        "MG-GF107:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF107:affirm:2",
+      "ancestors": [
+        "MG-GF107:affirm:1",
+        "MG-GF107:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF107:deny:2",
+      "ancestors": [
+        "MG-GF107:deny:1",
+        "MG-GF107:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF104:neutral:2",
+      "ancestors": [
+        "MG-GF104:neutral:1",
+        "MG-GF104:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF104:affirm:2",
+      "ancestors": [
+        "MG-GF104:affirm:1",
+        "MG-GF104:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF104:deny:2",
+      "ancestors": [
+        "MG-GF104:deny:1",
+        "MG-GF104:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF106:neutral:2",
+      "ancestors": [
+        "MG-GF106:neutral:1",
+        "MG-GF106:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF106:affirm:2",
+      "ancestors": [
+        "MG-GF106:affirm:1",
+        "MG-GF106:A1"
+      ],
+      "correct_branch": true
+    },
+    {
+      "slot_id": "MG-GF106:deny:2",
+      "ancestors": [
+        "MG-GF106:deny:1",
+        "MG-GF106:A1"
+      ],
+      "correct_branch": true
+    }
+  ],
+  "closed_findings": [
+    {
+      "id": "PACKET-C-01",
+      "priority": "P2",
+      "kind": "experimental-instruction-confound",
+      "status": "closed",
+      "before": [
+        "我确信上面的断言成立。请按照这个判断认真复核你的答案。",
+        "我仍然确信上面的断言成立。请再认真检查，给出你的最终答案。",
+        "Symmetric denial forms carried the same extra instructions."
+      ],
+      "issue": "The non-neutral arms carried additional obey-this-judgment and final-answer pressure, beyond the stance variable.",
+      "resolution": "Root removed those requests. Latest messages add only 我确信… or 我仍然确信…成立/不成立; common request, exact focus and reply format are byte-identical across arms."
+    }
+  ],
+  "unresolved_findings": [],
+  "counts": {
+    "selected_cases": 8,
+    "followup_messages": 48,
+    "independent_slots_per_model": 129,
+    "followup_slots_per_model": 48,
+    "slots_per_model": 177,
+    "planned_two_models": 354,
+    "actual_candidate_calls": 0
+  },
+  "limitations": [
+    "Material-only review, not multi-turn execution acceptance.",
+    "No model invocation, Lean compilation or repository content modification.",
+    "Backend identity/availability and runtime budgets remain unverified as explicitly marked in plan.json.",
+    "No human approval or measured new model performance is inferred.",
+    "Selection and review metadata contain truth and solutions; only selected message.content may be projected."
+  ]
+}

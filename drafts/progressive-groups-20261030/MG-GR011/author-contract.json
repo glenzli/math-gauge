@@ -1,0 +1,212 @@
+{
+  "schema": "math-gauge.progressive-contract/v1",
+  "id": "MG-GR011",
+  "parent_case_id": "MG-R011",
+  "version": "0.1.0",
+  "title": "凸投影的恢复、复合与变分方程",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "仿射投影",
+      "kind": "prove",
+      "assumptions": [
+        "闭线性 L",
+        "K=p+L"
+      ],
+      "required_evidence": [
+        "实际投影及唯一性",
+        "线性的充要条件"
+      ],
+      "critical_errors": [
+        "任意凸投影都线性"
+      ],
+      "depends_on": [],
+      "points": 15,
+      "expected": "true",
+      "id": "S1",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "嵌套仿射约束",
+      "kind": "prove",
+      "assumptions": [
+        "闭仿射子空间嵌套且非空"
+      ],
+      "required_evidence": [
+        "两个复合方向",
+        "精确能量恒等式"
+      ],
+      "critical_errors": [
+        "未核验仿射方向就向凸集推广正交"
+      ],
+      "depends_on": [
+        "S1"
+      ],
+      "points": 15,
+      "expected": "true",
+      "id": "S2",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "交换投影的有限复合",
+      "kind": "prove",
+      "assumptions": [
+        "有限闭线性子空间",
+        "正向假设两两交换"
+      ],
+      "required_evidence": [
+        "像等于交空间",
+        "必要方向用自伴性",
+        "空族"
+      ],
+      "critical_errors": [
+        "把任意投影复合认作交投影"
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 10,
+      "expected": "true",
+      "id": "S3",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "整体对象与全部恢复目标",
+      "kind": "decide",
+      "assumptions": [
+        "设 $H$ 是实 Hilbert 空间，$I$ 是任意指标集。对每个 $i\\in I$ 给定闭凸集 $C_i\\subseteq H$。已知存在有限常数 $B\\ge0$，使对每个有限集 $F\\subseteq I$ 都有\n\n$$\n\\exists z_F\\in H:\\quad \\|z_F\\|\\le B,\\qquad z_F\\in C_i\\quad(i\\in F).\n$$\n\n记\n\n$$C_F=\\bigcap_{i\\in F}C_i,\\qquad C_\\varnothing=H,\\qquad C=\\bigcap_{i\\in I}C_i.$$\n\n对 $x\\in H$，令 $P_Fx$ 是 $\\|x-z\\|$ 在 $z\\in C_F$ 上的最小点。有限子集按包含关系排序。"
+      ],
+      "required_evidence": [
+        "Construct the unique global nearest point for every x and prove the whole intersection is nonempty under the exact uniform finite-feasibility hypothesis.",
+        "Prove norm convergence of the full finite-subset net, with no assumption of a countable cofinal constraint family.",
+        "Determine the global optimal value exactly from the finite optimal values and prove the stated nonexpansive estimate."
+      ],
+      "critical_errors": [
+        "Infer nonempty total intersection from finite feasibility alone while omitting the supplied uniform bound or an applicable compactness argument.",
+        "Replace the arbitrary finite-subset net by an unsupported enumeration or by an arbitrary sequence of finite subsets.",
+        "Claim only weak convergence, omit the global value identity, or assert linearity of a projection onto arbitrary convex sets.",
+        "Treat the global point, common intersection, or convergence as a supplied certificate."
+      ],
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "points": 30,
+      "expected": "true",
+      "id": "S4",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "恢复映射的代数性质",
+      "kind": "decide",
+      "assumptions": [
+        "S4 的闭凸原条件"
+      ],
+      "required_evidence": [
+        "核验统一有限可行界",
+        "明确违反仿射恒等式"
+      ],
+      "critical_errors": [
+        "删掉负半轴后才比较"
+      ],
+      "depends_on": [
+        "S1",
+        "S4"
+      ],
+      "points": 10,
+      "expected": "false",
+      "id": "S5",
+      "mandatory": true,
+      "lean_required": false
+    },
+    {
+      "title": "一个后续变分恢复",
+      "kind": "construct",
+      "assumptions": [
+        "S4 的 C",
+        "A 的强单调和 Lipschitz 条件",
+        "γ 明示范围"
+      ],
+      "required_evidence": [
+        "实际压缩迭代",
+        "变分式双向",
+        "唯一性及零空间"
+      ],
+      "critical_errors": [
+        "直接把投影线性用于估计"
+      ],
+      "depends_on": [
+        "S4",
+        "S5"
+      ],
+      "points": 20,
+      "expected": "construction",
+      "id": "S6",
+      "mandatory": true,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "从有限仿射/线性结构改为任意族闭凸约束，保留统一有限可行界",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "认为原先正交恒等式不可用就无法强恢复，或偷保留线性",
+      "correct_boundary": "投影变分不等式仍足够；全有限子集网不能换成未经证明共尾的序列",
+      "mechanism": "affine_to_convex_and_net",
+      "scope": "stage",
+      "target_claim": "任意族闭凸约束在原统一有限可行界下，全部恢复、极小值、最优性及稳定性目标均成立。"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S4"
+      ],
+      "changed_assumptions": "保留连续稳定恢复，改问仿射代数性质",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "把非扩张与唯一投影当作线性/仿射",
+      "correct_boundary": "闭凸性不提供仿射子空间结构",
+      "mechanism": "structure_transfer",
+      "scope": "stage",
+      "target_claim": "S4 所得恢复投影 P 必为仿射映射。"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R011/task.md",
+    "cases/public/MG-R011/reference.md",
+    "cases/public/MG-R011/rubric.json",
+    "cases/public/MG-R011/case.json",
+    "cases/public/MG-R011/sources.json"
+  ],
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage completed correctly with assumption fidelity; diagnostic points never compensate for a failed mandatory stage."
+  },
+  "candidate_lean_required": false,
+  "alternative_proofs": "Accept any valid complete short proof, equivalent classification or legal counterexample; no mandated proof route.",
+  "provenance": {
+    "visibility": "public",
+    "kind": "derived-progressive-group",
+    "parent_case_version": "0.4.0",
+    "parent_source_ids": [
+      "finite-convex-projection"
+    ],
+    "new_material": "AI-authored original proofs, constructions and condition changes around the supplied public parent problem; no inherited model score, human approval or Lean coverage."
+  }
+}

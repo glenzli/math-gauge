@@ -1,0 +1,209 @@
+{
+  "verified_at": "2026-10-30",
+  "timezone": "Asia/Singapore",
+  "scope": "Primary-source research only; no model calls, Lean execution, repository edits, or commits.",
+  "brokenarxiv": {
+    "original": {
+      "publication_date": "2026-03-13",
+      "collection": "02/2026",
+      "n": 31,
+      "source_kind": "synthetic perturbations of correct recent-paper claims",
+      "score_scale": [
+        0,
+        1,
+        2
+      ]
+    },
+    "updated": {
+      "publication_date": "2026-09-15",
+      "source_kind": "documented prior claims refuted by a main new paper result; arbitrary perturbations excluded",
+      "collections": [
+        {
+          "month": "08/2026",
+          "n": 56
+        },
+        {
+          "month": "09/2026",
+          "n": 53
+        }
+      ],
+      "score_scale": {
+        "0": "claims proof of false original",
+        "1": "silent repair",
+        "2": "acknowledged repair or incomplete proof without explicit false verdict",
+        "3": "explicit false verdict"
+      },
+      "correction": "cap at 1 for directly contradictory claimed repair",
+      "proof_quality_checked": false
+    },
+    "not_equivalent_to": [
+      "whole-paper error localization",
+      "proof repair benchmark",
+      "strict counterexample verification",
+      "mixed true-false capability evaluation"
+    ],
+    "gameability": "always saying false can still earn full behavior score; updated honest inability alone is 2/3"
+  },
+  "related_benchmarks": [
+    {
+      "name": "AutoformBench",
+      "official_page_date": "2026-10-13",
+      "tasks": 341,
+      "sources": 24,
+      "representative_task": "alg_geom_grothendieck_birkhoff",
+      "representative_target_count": 19,
+      "official_leaderboard_condition": "source-present",
+      "public_release_condition": "source-free",
+      "role": "multi-obligation construction of missing formal infrastructure; not every task is a full chapter",
+      "pdf_body_read": false
+    },
+    {
+      "name": "LeanReviewBench / MechAlign",
+      "version": "arXiv 2610.35269v1",
+      "submitted": "2026-10-26",
+      "tasks": 501,
+      "composition": {
+        "OpenAI Math": 201,
+        "FLT": 200,
+        "Kakeya": 100
+      },
+      "openai_projects": 173,
+      "role": "project semantic review using fixed claim-statement-context triples; not generation",
+      "gold_status": "provisional model labels; human adjudication and controlled comparisons pending"
+    }
+  ],
+  "sources": [
+    {
+      "id": "B1",
+      "url": "https://matharena.ai/brokenarxiv/",
+      "locators": [
+        "Introduction, lines 12-16",
+        "Construction Process, lines 20-25",
+        "Evaluation Methodology, lines 34-39"
+      ]
+    },
+    {
+      "id": "B2",
+      "url": "https://matharena.ai/arxiv_august/",
+      "locators": [
+        "BrokenArXiv adaptations/grading, lines 36-43",
+        "Problem Generation/Verification, lines 118-144",
+        "Judge, lines 151-168"
+      ]
+    },
+    {
+      "id": "B3",
+      "url": "https://matharena.ai/competitions",
+      "locators": [
+        "BrokenArXiv 02/2026, lines 46-52",
+        "BrokenArXiv 08/2026 and 09/2026, lines 99-116"
+      ]
+    },
+    {
+      "id": "A1",
+      "url": "https://ai.meta.com/research/publications/autoformbench-a-lean-formalization-benchmark-for-advanced-mathematics/",
+      "locators": [
+        "Abstract, lines 44-48"
+      ]
+    },
+    {
+      "id": "A2",
+      "url": "https://github.com/facebookresearch/autoformbench/blob/main/README.md",
+      "locators": [
+        "File lines 7-12",
+        "Leaderboard, file lines 28-30 and 44-48",
+        "Release / workspace, file lines 62-80",
+        "License, file lines 99-103"
+      ]
+    },
+    {
+      "id": "A3",
+      "url": "https://github.com/facebookresearch/autoformbench/blob/main/MANIFEST.csv#L8",
+      "locators": [
+        "CSV line 8 including header; alg_geom_grothendieck_birkhoff; target_count=19"
+      ]
+    },
+    {
+      "id": "A4",
+      "url": "https://github.com/facebookresearch/autoformbench/blob/main/harbor/README.md",
+      "locators": [
+        "Trust boundary and grading, file lines 105-121"
+      ]
+    },
+    {
+      "id": "A5",
+      "url": "https://github.com/facebookresearch/autoformbench/blob/main/workspaces/alg_geom_grothendieck_birkhoff/Submission.lean",
+      "locators": [
+        "DegreeDLocalization_add_mem",
+        "DegreeDLocalization",
+        "TwistingSections",
+        "SerreTwistConstruction"
+      ]
+    },
+    {
+      "id": "M1",
+      "url": "https://arxiv.org/html/2610.35269v1",
+      "locators": [
+        "Section 3.2, lines 104-108",
+        "Section 4.1, lines 121-122",
+        "Section 5, lines 170-183",
+        "Section 6, lines 187-188"
+      ]
+    }
+  ],
+  "design_recommendations": {
+    "status": "proposals, not observed model results",
+    "tracks": [
+      "chapter translation with external dependency closure",
+      "10-20 coherent proof obligations with real dependency joins",
+      "long-manuscript fault localization and repair with clean controls"
+    ],
+    "separate_tracks": [
+      "model chooses definitions and statements",
+      "fixed declarations with proofs missing",
+      "tool-enabled Lean",
+      "tool-free one-shot"
+    ],
+    "paired_conditions": [
+      "isolated obligation with gold prerequisite interface",
+      "complete dependent development",
+      "separate gold-prefix diagnostic rerun"
+    ],
+    "report": [
+      "whole-package success",
+      "per-obligation success",
+      "math validity",
+      "Lean compilation",
+      "semantic fidelity",
+      "axioms",
+      "earliest failure and independent causal roots",
+      "descendant propagation",
+      "assumption and quantifier drift",
+      "tool/environment errors"
+    ],
+    "never": [
+      "rewrite original scores with diagnostic repair",
+      "assume longer automatically means mathematically harder",
+      "treat Lean-derived prose as independent manuscript evidence",
+      "reuse benchmark labels as human-approved"
+    ]
+  },
+  "toy_length_calculation": {
+    "assumptions": "independent identically distributed step success; illustrative only, not a model fit",
+    "p_095_n10": 0.5987369392383787,
+    "p_095_n20": 0.3584859224085419,
+    "p_098_n20": 0.6676079717550942
+  },
+  "memory_context": {
+    "file": "MEMORY.md",
+    "lines": "48-61",
+    "used_for": "prior condition-fidelity conventions, rechecked against current evaluation protocol",
+    "rollout_id": "01a18293-030b-72d1-ab2b-b139191bbf33"
+  },
+  "limits": [
+    "No raw tasks copied.",
+    "No claimed reproduction of external results.",
+    "AutoformBench PDF body unavailable; official abstract and actual repository files used.",
+    "Live webpages and main branches are not frozen publication snapshots."
+  ]
+}

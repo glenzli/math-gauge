@@ -1,0 +1,250 @@
+{
+  "id": "MG-GF101",
+  "version": "0.1.0",
+  "parent_case_id": "MG-F101",
+  "title": "商环塔、幂零性与分离条件",
+  "track": "determinate",
+  "task_kind": "audit",
+  "stages": [
+    {
+      "id": "S1",
+      "title": "商映射下的幂零判据",
+      "kind": "prove",
+      "depends_on": [],
+      "assumptions": [
+        "R 为任意交换含幺环",
+        "A、B 为任意理想",
+        "r∈ℕ，允许 r=0"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 (q_B(A))^r=q_B(A^r)",
+        "证明 (q_B(A))^r=0 当且仅当 A^r⊆B，包含 r=0"
+      ],
+      "critical_errors": [
+        "无依据地把像的幂零反推为源理想幂零",
+        "遗漏零环或 r=0"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S2",
+      "title": "任意理想的有限层",
+      "kind": "prove",
+      "depends_on": [
+        "S1"
+      ],
+      "assumptions": [
+        "I 任意，无源理想幂零或有限生成假设",
+        "l≤m≤n 为自然数"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 J_n^(n+1)=0",
+        "证明 ρ_mn(J_n)=J_m",
+        "证明 ρ_lm∘ρ_mn=ρ_ln"
+      ],
+      "critical_errors": [
+        "额外假设 I 幂零、Noether 或真理想",
+        "仅证明某个未指定次数幂零而不证明 n+1 次"
+      ],
+      "points": 20,
+      "lean_required": false
+    },
+    {
+      "id": "S3",
+      "title": "过渡映射的核",
+      "kind": "prove",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "assumptions": [
+        "R、I 同上",
+        "m≤n"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 ρ_mn 满射",
+        "证明 ker ρ_mn=q_n(I^(m+1))",
+        "证明 ρ_mn 为同构当且仅当 I^(m+1)=I^(n+1)"
+      ],
+      "critical_errors": [
+        "把 J_n 幂零当成 ρ_mn 单射",
+        "忘记 I^(n+1)⊆I^(m+1) 后错误处理核的逆像"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S4",
+      "title": "统一有限层界",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "assumptions": [
+        "R、I 同上",
+        "存在固定 N∈ℕ 使对每个 n∈ℕ，J_n^N=0"
+      ],
+      "expected": "false",
+      "required_evidence": [
+        "判断该条件是否推出 I 幂零",
+        "给出所有 n 同时满足条件而 I 不幂零的反例",
+        "解释单层与源理想的逻辑差别"
+      ],
+      "critical_errors": [
+        "把 ∀n∃N_n 与 ∃N∀n 混同",
+        "反例未满足统一 N 条件"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S5",
+      "title": "分离条件下的统一次数",
+      "kind": "decide",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S4"
+      ],
+      "assumptions": [
+        "R、I 同上",
+        "⋂_{n∈ℕ} I^(n+1)=0",
+        "固定 N∈ℕ"
+      ],
+      "expected": "true",
+      "required_evidence": [
+        "证明 (∀n,J_n^N=0) 当且仅当 I^N=0",
+        "保留同一个 N，不仅证明某个幂零次数",
+        "处理 N=0 的零环边界"
+      ],
+      "critical_errors": [
+        "只证明逐层各自存在不同次数",
+        "擅用 Noether 性或 Krull 交集定理"
+      ],
+      "points": 15,
+      "lean_required": false
+    },
+    {
+      "id": "S6",
+      "title": "完整输入的语义审计",
+      "kind": "audit",
+      "depends_on": [
+        "S1",
+        "S2",
+        "S4",
+        "S5"
+      ],
+      "assumptions": [
+        "回到 S2 的任意 R、I 条件",
+        "只把附件中真实提供的字段和定理视为已有证明"
+      ],
+      "expected": "misaligned",
+      "required_evidence": [
+        "逐一核对 Candidate 三项与 S2 的全部条件及结论",
+        "指出 SourceData 的数学含义和调用义务",
+        "区分精确次数、存在某次数和真正的可编译性",
+        "给出无需 SourceData 的正确修复路线"
+      ],
+      "critical_errors": [
+        "把 SourceData 当作无条件可构造的证书",
+        "把源码可编译等同 S2 已证明",
+        "误判正确的像及复合两项"
+      ],
+      "points": 20,
+      "lean_required": false
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "把每一层自动成立的层相关界改为额外给定的统一 N，并要求反推源理想",
+      "expected_truth": "false",
+      "tempting_invalid_transfer": "从所有商的零像直接反推出源理想为零",
+      "correct_boundary": "只能得到 I^N⊆⋂ I^(n+1)",
+      "mechanism": "quotient-to-source and uniform quantifiers",
+      "target_claim": "若存在固定 N 使所有 n 的 J_n^N=0，则 I 幂零。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S1",
+        "S4"
+      ],
+      "changed_assumptions": "增加明确的 I-adic 分离条件，保留同一 N",
+      "expected_truth": "true",
+      "tempting_invalid_transfer": "未经分离条件套用 S4 的反例结论，或擅用 Noether 定理",
+      "correct_boundary": "给定交集为零恰好允许从所有商回到源理想",
+      "mechanism": "separation restores reflection",
+      "target_claim": "给定 ⋂_n I^(n+1)=0 时，对每个固定 N，(∀n,J_n^N=0)↔I^N=0。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "drafts/lean-alignment-20261029/MG-F101/task.md",
+    "drafts/lean-alignment-20261029/MG-F101/reference.md",
+    "drafts/lean-alignment-20261029/MG-F101/rubric.json",
+    "drafts/lean-alignment-20261029/MG-F101/case.json",
+    "drafts/lean-alignment-20261029/MG-F101/formal/Core.lean",
+    "drafts/lean-alignment-20261029/MG-F101/formal/Transfer.lean",
+    "drafts/lean-alignment-20261029/MG-F101/formal/Candidate.lean",
+    "results/failure-analysis-20261030/README.md",
+    "results/failure-analysis-20261030/lean-failures.json"
+  ],
+  "source_attachments": [
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Core.lean",
+      "target": "Core.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Transfer.lean",
+      "target": "Transfer.lean"
+    },
+    {
+      "source": "drafts/lean-alignment-20261029/MG-F101/formal/Candidate.lean",
+      "target": "Candidate.lean"
+    }
+  ],
+  "source_sha256": {
+    "drafts/lean-alignment-20261029/MG-F101/task.md": "c7fc4e0375bf49eb01591c7e59cf90f80a3913d2009115ac69260cd5a86422f1",
+    "drafts/lean-alignment-20261029/MG-F101/reference.md": "b08898c9b13ee4e2b66a72a573b541f6151d14d00a4338d0c8a23f1032dfb204",
+    "drafts/lean-alignment-20261029/MG-F101/rubric.json": "6ea35895b8228084263855db27eb66b46ad4e4baf30658178a42877d98188ca6",
+    "drafts/lean-alignment-20261029/MG-F101/case.json": "01f9fc2e8f11885a9bc7f01a5b481978467265ec28f0f5289268c0c8b2829e4d",
+    "drafts/lean-alignment-20261029/MG-F101/formal/Core.lean": "dba94888febbc86faee25d4e869752747dc3a9db6c7c0b745f1465bdd5b3f80f",
+    "drafts/lean-alignment-20261029/MG-F101/formal/Transfer.lean": "c1c1880fb72dc74253d94907446b770f617dfef6938c34bcd4265fb660df108c",
+    "drafts/lean-alignment-20261029/MG-F101/formal/Candidate.lean": "efa1678c8644e2235ec55b3e0f7547b3e6d94b86092ba4aa99f7c898a4b95879",
+    "results/failure-analysis-20261030/README.md": "885d88d42832a30dde970a6cc9f9c4b8b41f4233d47ebf3465ecc792d328ae32",
+    "results/failure-analysis-20261030/lean-failures.json": "40b599cd566d198ec5933ffa5f6831421ee135bb17f1d37db967bf5a6eb0bdb4"
+  },
+  "environment": {
+    "lean": "4.29.1",
+    "lean_commit": "f72c35b3f637c8c6571d353742168ab66cc22c00",
+    "mathlib_commit": "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+  },
+  "grading": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "group_pass": "Every stage passes its mathematical and semantic criteria; every Lean-required stage is present in the complete submitted source and compiles without sorry or added axioms. Partial points do not constitute group pass."
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending",
+    "formalization": {
+      "status": "pending-new-obligations",
+      "new_group_compilation_performed": false,
+      "old_fixture_compilation_is_not_new_group_evidence": true
+    }
+  },
+  "required_output_files": []
+}
