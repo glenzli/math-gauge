@@ -82,7 +82,7 @@ theorem localization_spectrum_image_iff (p : PrimeSpectrum R) :
     refine ⟨⟨Ideal.map (algebraMap R L) p.asIdeal,
       IsLocalization.isPrime_of_isPrime_disjoint (outside_primes sigma) L _ p.isPrime hd⟩, ?_⟩
     apply PrimeSpectrum.ext
-    exact IsLocalization.comap_map_of_isPrime_disjoint (outside_primes sigma) L p.isPrime hd
+    exact IsLocalization.under_map_of_isPrime_disjoint (outside_primes sigma) L p.isPrime hd
 
 /-- A maximal ideal of the localization contracts to one of the selected
 prime ideals. The selected ambient prime itself need not be maximal. -/
@@ -101,7 +101,7 @@ theorem localization_maximal_contracts_to_selected (q : Ideal L) (hq : q.IsMaxim
   have heq := hq.eq_of_le hprime.ne_top hmap
   refine ⟨p, hp, ?_⟩
   rw [heq]
-  exact IsLocalization.comap_map_of_isPrime_disjoint (outside_primes sigma) L p.isPrime hd
+  exact IsLocalization.under_map_of_isPrime_disjoint (outside_primes sigma) L p.isPrime hd
 
 /-- The actual closed-point set of the localized affine scheme is finite. -/
 theorem finite_localization_closed_points :
@@ -117,7 +117,7 @@ theorem finite_localization_closed_points :
   obtain ⟨p, hp, heq⟩ := localization_maximal_contracts_to_selected sigma hsigma L q.asIdeal
     ((PrimeSpectrum.isClosed_singleton_iff_isMaximal q).mp hq)
   have heq' : PrimeSpectrum.comap (algebraMap R L) q = p := PrimeSpectrum.ext heq
-  simpa only [heq'] using hp
+  simpa only [heq', Finset.mem_coe] using hp
 
 /-- Closed points are exactly the selected primes maximal under inclusion.
 This keeps the distinction between closedness in the localization and in R. -/
@@ -128,7 +128,9 @@ theorem maximal_map_selected_iff (p : PrimeSpectrum R) (hp : p ∈ sigma) :
     (disjoint_outside_primes_iff sigma hsigma _).mpr ⟨p, hp, le_rfl⟩
   have hprime := IsLocalization.isPrime_of_isPrime_disjoint
     (outside_primes sigma) L p.asIdeal p.isPrime hd
-  have hcontract := IsLocalization.comap_map_of_isPrime_disjoint
+  have hcontract :
+      Ideal.comap (algebraMap R L) (Ideal.map (algebraMap R L) p.asIdeal) = p.asIdeal :=
+    IsLocalization.under_map_of_isPrime_disjoint
     (outside_primes sigma) L p.isPrime hd
   constructor
   · intro hmax q hq hle
@@ -143,7 +145,7 @@ theorem maximal_map_selected_iff (p : PrimeSpectrum R) (hp : p ∈ sigma) :
         hcontract.symm
       _ = Ideal.comap (algebraMap R L) (Ideal.map (algebraMap R L) q.asIdeal) :=
         congrArg _ heq
-      _ = q.asIdeal := IsLocalization.comap_map_of_isPrime_disjoint
+      _ = q.asIdeal := IsLocalization.under_map_of_isPrime_disjoint
         (outside_primes sigma) L q.isPrime hdq
   · intro hmax
     obtain ⟨m, hm, hle⟩ := (Ideal.map (algebraMap R L) p.asIdeal).exists_le_maximal

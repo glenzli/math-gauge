@@ -23,3 +23,4 @@ import MathGauge.GP003.SchemeNeighborhoodValues
 import MathGauge.GP003.ActualSemilocalDescent
 import MathGauge.GP003.SchemeNeighborhoodMaps
 import MathGauge.GP003.ActualOpenComparison
+import MathGauge.GP003.S5Complete

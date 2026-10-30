@@ -38,7 +38,8 @@ class FixtureMixin:
         data={'schema':'math-gauge.formal-case/v1','case_id':'MG-TEST-Example','lean_toolchain':V.TOOLCHAIN,'mathlib_revision':V.MATHLIB_REV,'frozen_inputs':{name:V.digest(self.case/name) for name in ('task.md','reference.md','rubric.json')},'coverage':{'source':'COVERAGE.md','sha256':V.digest(self.root/'COVERAGE.md')},'modules':[{'module':'Example','source':p.name,'sha256':V.digest(p),'imports':V.source_imports(text)}],'audit':{'module':'CurrentAudit','source':audit.name,'sha256':V.digest(audit)}}
         if profile != V.DEFAULT_PROFILE:
             config=V.profile_config(profile)
-            data.update(verification_profile=profile,lean_toolchain=config['toolchain'],mathlib_revision=config['mathlib_revision'],tauceti_revision=config['tauceti_revision'])
+            data.update(verification_profile=profile,lean_toolchain=config['toolchain'],mathlib_revision=config['mathlib_revision'])
+            data.update({field: config[field] for field in V.PROFILE_REVISION_FIELDS if field in config})
         manifest=self.root/'manifest.json';manifest.write_text(json.dumps(data));return manifest,data
 class ManifestTests(FixtureMixin, unittest.TestCase):
     def author_fixture(self, cid='MG-GR001'):
@@ -769,4 +770,138 @@ class LiveTauCetiKernelTests(LiveKernelTests):
         self.assertTrue(any(d['user_name']=='MathGauge.Fixture.unused' for d in report['audit']['declarations']))
         self.assertTrue(any('unused' in name for name in report['audit']['summary']['unexpected_axioms']))
 
-if __name__=='__main__':unittest.main()
+
+class MotivicProfileTests(FixtureMixin, unittest.TestCase):
+    def test_manifest_binds_actual_transfer_revisions_and_rejects_partial_migration(self):
+        p, manifest = self.fixture(profile=V.MOTIVIC_PROFILE)
+        self.assertEqual(V.manifest_profile(V.validate_case(p)[0]), V.MOTIVIC_PROFILE)
+        self.assertEqual(manifest['motivic_revision'], 'a6805c4a87cdfd7717dd7a94039246a167f15380')
+        self.assertEqual(manifest['aglib_revision'], '2c34f185fa859e862661f939cd216b07bcccfb26')
+        for field in ('motivic_revision', 'aglib_revision', 'mathlib_revision', 'lean_toolchain'):
+            with self.subTest(field=field):
+                changed = dict(manifest)
+                changed.pop(field)
+                with self.assertRaises(V.VerificationError):
+                    V.manifest_profile(changed)
+        for profile in (V.DEFAULT_PROFILE, V.TAUCETI_PROFILE):
+            other = dict(manifest, verification_profile=profile,
+                         lean_toolchain=V.PROFILES[profile]['toolchain'],
+                         mathlib_revision=V.PROFILES[profile]['mathlib_revision'])
+            if profile == V.TAUCETI_PROFILE:
+                other['tauceti_revision'] = V.PROFILES[profile]['tauceti_revision']
+            with self.assertRaisesRegex(V.VerificationError, 'fixed verification profile'):
+                V.manifest_profile(other)
+
+    def test_exact_lockfile_bytes_reject_metadata_changes_even_with_identical_package_revisions(self):
+        dep = self.root / 'dependencies'
+        dep.mkdir()
+        fixed = ROOT / 'verification/environments/motivic-4.34.1/lake-manifest.json'
+        lock = dep / 'lake-manifest.json'
+        lock.write_bytes(fixed.read_bytes() + b'\n')
+        with self.assertRaisesRegex(V.VerificationError, 'lockfile bytes'):
+            V.inspect_dependencies(dep, profile=V.MOTIVIC_PROFILE)
+
+    def external_fixture(self, source='namespace Foreign\ndef value := 1\nend Foreign\n'):
+        package = self.root / 'dependencies/.lake/packages/Foreign'
+        build = package / '.lake/build/lib/lean'
+        build.mkdir(parents=True)
+        (build / 'Tiny.olean').write_bytes(b'fixture compiled bytes')
+        (build / 'Tiny.olean.private').write_bytes(b'fixture private bytes')
+        text = package / 'Tiny.lean'
+        text.write_text(source)
+        blob = hashlib.sha1(b'blob ' + str(len(text.read_bytes())).encode() + b'\0' + text.read_bytes()).hexdigest()
+        dependency = {'lean': str(self.root / 'toolchain/bin/lean'),
+                      'search_paths': [str(build)],
+                      'packages': [{'name': 'Foreign', 'revision': '1'*40, 'build_library': str(build)}]}
+        def invoke(argv, **kwargs):
+            if argv[-1] == 'HEAD' and 'rev-parse' in argv:
+                return '1'*40
+            if 'ls-tree' in argv:
+                return '100644 blob ' + blob + '\tTiny.lean'
+            raise AssertionError(argv)
+        return dependency, text, build, invoke
+
+    def test_transitive_external_source_must_match_its_fixed_git_blob(self):
+        dependency, source, _, invoke = self.external_fixture()
+        with patch.object(V, 'command', side_effect=invoke):
+            before = V.bind_external_source_closure({'Tiny'}, dependency)
+            self.assertEqual(before['module_count'], 1)
+            source.write_text(source.read_text().replace(':= 1', ':= 2'))
+            with self.assertRaisesRegex(V.VerificationError, 'fixed Git tree'):
+                V.bind_external_source_closure({'Tiny'}, dependency)
+
+    def test_compiled_module_cannot_supply_untracked_external_source(self):
+        dependency, _, _, invoke = self.external_fixture()
+        def untracked(argv, **kwargs):
+            return '' if 'ls-tree' in argv else invoke(argv, **kwargs)
+        with patch.object(V, 'command', side_effect=untracked):
+            with self.assertRaisesRegex(V.VerificationError, 'not tracked'):
+                V.bind_external_source_closure({'Tiny'}, dependency)
+
+    def test_missing_transitive_external_compiled_import_is_rejected(self):
+        dependency, _, _, invoke = self.external_fixture('import MissingForeign\nnamespace Foreign\ndef value := 1\nend Foreign\n')
+        with patch.object(V, 'command', side_effect=invoke):
+            with self.assertRaisesRegex(V.VerificationError, 'Missing compiled external import'):
+                V.bind_external_source_closure({'Tiny'}, dependency)
+
+    def test_private_compiled_part_changes_the_bound_closure(self):
+        dependency, _, build, invoke = self.external_fixture()
+        with patch.object(V, 'command', side_effect=invoke):
+            before = V.bind_external_source_closure({'Tiny'}, dependency)
+            (build / 'Tiny.olean.private').write_bytes(b'changed private compiled bytes')
+            after = V.bind_external_source_closure({'Tiny'}, dependency)
+            self.assertNotEqual(before['sha256'], after['sha256'])
+
+    def test_lean_434_public_meta_and_all_imports_bind_actual_modules(self):
+        self.assertEqual(V.source_imports('public meta import Lean.Elab.Command\nimport all Mathlib.RingTheory.Grassmannian\n'),
+                         ['Lean.Elab.Command', 'Mathlib.RingTheory.Grassmannian'])
+
+    def attestation_fixture(self):
+        row = {'module': 'Motivic.Actual', 'package': 'Motivic',
+               'revision': V.PROFILES[V.MOTIVIC_PROFILE]['motivic_revision'],
+               'sha256': 'a'*64, 'source_git_blob': 'b'*40, 'source_sha256': 'c'*64,
+               'imports': [], 'compiled_parts': {'.olean': 'a'*64}}
+        encoded = json.dumps([row], sort_keys=True, separators=(',', ':')).encode('utf-8')
+        return {'external_source_closure': {'module_count': 1, 'sha256': hashlib.sha256(encoded).hexdigest(),
+                                           'modules': [row]},
+                'direct_external_imports': [{'module': 'Motivic.Actual', 'sha256': 'a'*64}]}
+
+    def test_saved_motivic_report_requires_consistent_external_closure_attestation(self):
+        report = self.attestation_fixture()
+        E.check_external_source_closure(report, V.PROFILES[V.MOTIVIC_PROFILE])
+        for field, value, reason in [('module_count', 2, 'count'), ('sha256', '0'*64, 'digest')]:
+            with self.subTest(field=field):
+                changed = deepcopy(report)
+                changed['external_source_closure'][field] = value
+                with self.assertRaisesRegex(V.VerificationError, reason):
+                    E.check_external_source_closure(changed, V.PROFILES[V.MOTIVIC_PROFILE])
+        with self.assertRaisesRegex(V.VerificationError, 'missing external source closure'):
+            E.check_external_source_closure({}, V.PROFILES[V.MOTIVIC_PROFILE])
+
+    def test_saved_external_closure_cannot_omit_or_change_direct_import(self):
+        for direct, reason in [([{'module': 'Motivic.Hidden', 'sha256': 'a'*64}], 'omits'),
+                               ([{'module': 'Motivic.Actual', 'sha256': 'f'*64}], 'differs')]:
+            with self.subTest(reason=reason):
+                report = self.attestation_fixture()
+                report['direct_external_imports'] = direct
+                with self.assertRaisesRegex(V.VerificationError, reason):
+                    E.check_external_source_closure(report, V.PROFILES[V.MOTIVIC_PROFILE])
+
+    def test_motivic_saved_compiler_report_cannot_bind_without_closure_attestation(self):
+        path, manifest = self.fixture(profile=V.MOTIVIC_PROFILE)
+        config = V.PROFILES[V.MOTIVIC_PROFILE]
+        dependency = {'verification_profile': V.MOTIVIC_PROFILE, 'mathlib_revision': config['mathlib_revision'],
+                      'motivic_revision': config['motivic_revision'], 'aglib_revision': config['aglib_revision'],
+                      'lean_version': 'Lean (version 4.34.1, fixture)', 'ambient_lean_path_excluded': True,
+                      'dependency_project_build_excluded': True}
+        report = {'schema': 'math-gauge.formal-verification/v1', 'case_id': manifest['case_id'],
+                  'status': 'passed', 'manifest_sha256': V.digest(path), 'dependency': dependency,
+                  'frozen_inputs': manifest['frozen_inputs'], 'coverage': manifest['coverage'],
+                  'fresh_output': True, 'source_side_oleans_reused': False, 'sibling_case_outputs_used': False,
+                  'semantic_alignment_inferred': False, 'local_declaration_audit_scope': 'all-explicit-case-modules'}
+        V.save(self.root / 'verification-report.json', report)
+        with self.assertRaisesRegex(V.VerificationError, 'missing external source closure'):
+            E.check_compiler_report(self.root, manifest, manifest, None, manifest_name='manifest.json')
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,6 +1,8 @@
-# GP003 S5 独立形式化边界复核
+# GP003 S5 先前外部源码评估与来源凭证
 
-[评估结论](assessment.md)及[结构化记录](assessment.json)由非作者代理独立完成。它确认本次检查范围内尚缺真正的同时有限点转移几何；没有发现题目被证伪，也没有声称外部源码已在本仓库编译。
+当前 S5 已完成，见[作者覆盖](../../../cases/proofs/MG-GP003/formal/COVERAGE.md)和[当前独立语义审核](../semantic-reviews/MG-GP003.json)。本目录固定完成前的外部源码检查，不报告当前未完成项，也不替代新的正式编译证据。
+
+[评估结论](assessment.md)及[结构化记录](assessment.json)由非作者代理独立完成。它确认当时检查范围内尚缺真正的同时有限点转移几何；没有发现题目被证伪，也没有声称外部源码已在本仓库编译。
 
 `sources/` 保存本次实际读过的16份外部源码/说明，来自 `kangxyz/motivic` 固定提交 `a6805c4a87cdfd7717dd7a94039246a167f15380`。逐文件原始路径、永久链接、Git blob和SHA256见[来源记录](external-sources.json)。文件内容未改写，简称文件名只用于本地证据归档；不属于作者Lean编译模块。原版权与署名保留，适用[上游Apache-2.0许可证](LICENSE-Motivic)，不是仓库默认MIT许可。该提交根目录没有NOTICE文件。
 

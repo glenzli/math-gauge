@@ -169,7 +169,7 @@ theorem finite_germs_glue_of_singleton_block_gluing
       · exact (hcs y hy).trans (hb y hy)
     · have hse : s = ∅ := Finset.not_nonempty_iff_eq_empty.mp hs'
       subst s
-      obtain ⟨U, hxU, aU, haU⟩ := F.germ_exist x (a x)
+      obtain ⟨U, hxU, aU, haU⟩ := F.exists_germ_eq (a x)
       let W : SetNeighborhoods (↑(insert x (∅ : Finset X)) : Set X) :=
         ⟨U, by
           intro y hy

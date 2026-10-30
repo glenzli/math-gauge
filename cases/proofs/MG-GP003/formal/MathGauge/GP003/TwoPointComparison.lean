@@ -28,7 +28,7 @@ theorem local_representative_of_stalk_surjective
     ∃ U : Opens X, ∃ hx : x ∈ U, ∃ a : H.obj (op U),
       η.app (op U) a = G.map (homOfLE le_top : U ⟶ ⊤).op b := by
   obtain ⟨a, ha⟩ := hηx (G.germ ⊤ x (by trivial) b)
-  obtain ⟨U, hxU, aU, rfl⟩ := H.germ_exist x a
+  obtain ⟨U, hxU, aU, rfl⟩ := H.exists_germ_eq a
   rw [TopCat.Presheaf.stalkFunctor_map_germ_apply] at ha
   obtain ⟨W, hxW, iU, iT, he⟩ := G.germ_eq x hxU (show x ∈ (⊤ : Opens X) from trivial)
     (η.app (op U) aU) b ha

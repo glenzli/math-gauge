@@ -61,17 +61,19 @@ theorem ambientOpenValueIso_restriction
     (H : X.carrier.Presheaf AddCommGrpCat.{u}) (U : T.Opens) :
     schemeOpenRestriction f (ambientRestriction j H) U ≫ (ambientOpenValueIso f j H U).hom =
       (ambientNeighborhoodIso f j H).hom ≫ schemeOpenRestriction (f ≫ j) H U := by
-  simpa only [ambientOpenValueIso,schemeOpenRestriction,schemeOpenToAmbient,Category.assoc] using
-    ambientNeighborhoodIso_restriction f j (schemeOpenToAmbient f U) U.ι rfl H
+  convert ambientNeighborhoodIso_restriction f j (schemeOpenToAmbient f U) U.ι rfl H using 1 <;>
+    simp [ambientOpenValueIso,schemeOpenRestriction,schemeOpenValue,schemeOpenToAmbient,Category.assoc] <;>
+    congr 1 <;> simp only [Category.assoc]
 
 theorem ambientOpenValueIso_restrictionLE
     (H : X.carrier.Presheaf AddCommGrpCat.{u}) {U V : T.Opens} (hVU : V ≤ U) :
     schemeOpenRestrictionLE f (ambientRestriction j H) hVU ≫ (ambientOpenValueIso f j H V).hom =
       (ambientOpenValueIso f j H U).hom ≫ schemeOpenRestrictionLE (f ≫ j) H hVU := by
-  simpa only [ambientOpenValueIso,schemeOpenRestrictionLE,schemeOpenToAmbient,Category.assoc] using
-    ambientNeighborhoodIso_restriction (schemeOpenToAmbient f U) j
+  convert ambientNeighborhoodIso_restriction (schemeOpenToAmbient f U) j
       (schemeOpenToAmbient f V) (T.homOfLE hVU)
-      (by unfold schemeOpenToAmbient; rw [← Category.assoc,T.homOfLE_ι]) H
+      (by unfold schemeOpenToAmbient; rw [← Category.assoc,T.homOfLE_ι]) H using 1 <;>
+    simp [ambientOpenValueIso,schemeOpenRestrictionLE,schemeOpenValue,schemeOpenToAmbient,Category.assoc] <;>
+    congr 1 <;> simp only [Category.assoc]
 
 /-- Exactness is transported along the actual global, open and overlap
 isomorphisms. This does not assert exactness for an unshrunk cover. -/
@@ -144,7 +146,13 @@ theorem general_two_closed_comparison
     (ambientRestriction j H) (ambientRestrictionSheaf j G) (ambientRestrictionMap j η)
     ((ambientMap_injective_iff (semilocalToAmbient sigma) j η).mpr hglobalmono)
     (fun U => (ambientMap_injective_iff (schemeOpenToAmbient (semilocalToAmbient sigma) U) j η).mpr
-      (by simpa only [schemeOpenToAmbient,Category.assoc] using hmono U))
+      (by
+        have he : schemeOpenToAmbient (semilocalToAmbient sigma) U ≫ j =
+            schemeOpenToAmbient (semilocalToAmbient sigma ≫ j) U := by
+          unfold schemeOpenToAmbient
+          exact Category.assoc _ _ _
+        rw [he]
+        exact hmono U))
     ((ambientMap_surjective_iff (localToAmbient q) j η).mpr hqiso)
     ((ambientMap_surjective_iff (localToAmbient r) j η).mpr hriso)
     (by

@@ -12,7 +12,7 @@
 
 当前作者工程使用逐义务映射、真实编译、公理审计及非作者AI语义复核，见[证据账本](verification/author/README.md)。源码闭包、固定外部库、许可证和必要适配由各题SOURCE-CLOSURE.json、provenance.json或vendor/记录。固定依赖的声明名称不能代替原文对应证明。
 
-完整覆盖为42/43份、369/372项义务。MG-GP003的S1/S2/S5仍部分覆盖；[外部库复查](verification/author/gp003-frontier/README.md)仅供核对未闭合的几何端点，未编入作者工程、未成为候选附件，也未由本仓库传递公理审计认证。
+完整作者覆盖为43/43份、372/372项义务。MG-GP003现使用固定Motivic/Aglib实际转移接口，完成S1–S6；上游源码身份、实际导入闭包与公理审计随正式编译报告保存。依赖修订、复现方式、改编源归属及Apache-2.0完整许可证见[环境说明](verification/environments/motivic-4.34.1/README.md)与[第三方署名](verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md)。这些材料只供作者核验，不进入候选附件。先前[外部库复查](verification/author/gp003-frontier/README.md)保留其检查时点的来源边界，当前覆盖以新证明和审核收据为准。
 
 作者与审核者的AI协作不计候选考试。当前无候选模型答卷，所有human状态为pending。原材料中起草时点的未完成描述由当前证据接续，不改写冻结参考制造事前已经完成的记录。Astra Max的数学起草/独立审核与Sol 6.1 Max的工程整理按实际逐项记录区分，工程迁移不冒称新数学审核。
 

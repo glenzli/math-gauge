@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 from copy import deepcopy
 from datetime import datetime
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -195,6 +196,53 @@ def expected_binding(repo, layout, mapping, baseline_row):
     }
 
 
+def check_external_source_closure(report, config):
+    """Validate saved closure identity without requiring the original cache machine."""
+    closure = report.get('external_source_closure')
+    verify.require(isinstance(closure, dict), 'Motivic report is missing external source closure')
+    rows = closure.get('modules')
+    verify.require(isinstance(rows, list) and bool(rows) and all(isinstance(row, dict) for row in rows),
+                   'Invalid external source closure module rows')
+    names = [row.get('module') for row in rows]
+    verify.require(all(isinstance(name, str) and verify.MODULE_RE.fullmatch(name) for name in names)
+                   and names == sorted(set(names))
+                   and type(closure.get('module_count')) is int and closure['module_count'] == len(rows),
+                   'External source closure count or module identity differs')
+    encoded = json.dumps(rows, sort_keys=True, separators=(',', ':')).encode('utf-8')
+    verify.require(closure.get('sha256') == hashlib.sha256(encoded).hexdigest(),
+                   'External source closure digest differs from its module rows')
+    known = set(names)
+    direct = report.get('direct_external_imports')
+    verify.require(isinstance(direct, list) and bool(direct)
+                   and all(isinstance(row, dict) and row.get('module') in known for row in direct),
+                   'External source closure omits a direct compiled import')
+    for row in rows:
+        verify.require(isinstance(row.get('sha256'), str)
+                       and re.fullmatch(r'[0-9a-f]{64}', row['sha256']) is not None,
+                       'Invalid external compiled module digest')
+        if row.get('package') == 'lean-standard-library':
+            continue
+        verify.require(row.get('package') in config['packages']
+                       and row.get('revision') == config['packages'][row['package']],
+                       'External source closure package revision differs')
+        verify.require(isinstance(row.get('source_git_blob'), str)
+                       and re.fullmatch(r'[0-9a-f]{40}', row['source_git_blob']) is not None
+                       and isinstance(row.get('source_sha256'), str)
+                       and re.fullmatch(r'[0-9a-f]{64}', row['source_sha256']) is not None,
+                       'External source closure lacks fixed source identity')
+        imports = row.get('imports')
+        verify.require(isinstance(imports, list) and all(isinstance(name, str) and name in known for name in imports),
+                       'External source closure omits a transitive import')
+        parts = row.get('compiled_parts')
+        verify.require(isinstance(parts, dict) and parts.get('.olean') == row['sha256']
+                       and all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value)
+                               for value in parts.values()),
+                       'External compiled parts differ from the module identity')
+    by_name = {row['module']: row for row in rows}
+    verify.require(all(row.get('sha256') == by_name[row['module']]['sha256'] for row in direct),
+                   'Direct compiled import differs from the bound external closure')
+
+
 def check_compiler_report(formal, current, checked, baseline_row, *,
                           manifest_name='checked-manifest.json'):
     """Check saved compiler output; do not access old machines or caches."""
@@ -227,9 +275,13 @@ def check_compiler_report(formal, current, checked, baseline_row, *,
                    dependency.get('ambient_lean_path_excluded') is True and
                    dependency.get('dependency_project_build_excluded') is True,
                    'Original compiler dependency isolation differs')
-    if profile == verify.TAUCETI_PROFILE:
-        verify.require(dependency.get('tauceti_revision') == config['tauceti_revision'],
-                       'Original TauCeti revision differs')
+    for field in verify.PROFILE_REVISION_FIELDS:
+        if field in config:
+            verify.require(dependency.get(field) == config[field],
+                           'Original ' + verify.REVISION_LABELS[field] + ' revision differs')
+
+    if profile == verify.MOTIVIC_PROFILE:
+        check_external_source_closure(report, config)
 
     audit = report['audit']; summary = audit['summary']
     verify.require(summary.get('passed') is True and summary.get('unexpected_axioms') == []

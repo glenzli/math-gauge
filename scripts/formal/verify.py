@@ -23,9 +23,31 @@ TOOLCHAIN = 'leanprover/lean4:v4.29.1'
 MATHLIB_REV = '5e932f97dd25535344f80f9dd8da3aab83df0fe6'
 DEFAULT_PROFILE = 'lean-4.29.1'
 TAUCETI_PROFILE = 'lean-4.36.0-rc1-tauceti'
+MOTIVIC_PROFILE = 'lean-4.34.1-motivic'
+PROFILE_REVISION_FIELDS = ('tauceti_revision', 'motivic_revision', 'aglib_revision')
+REVISION_LABELS = {'tauceti_revision': 'TauCeti', 'motivic_revision': 'Motivic', 'aglib_revision': 'Aglib'}
 # These are trust profiles, not manifest-supplied package policies. Keep the
 # legacy profile and its audit bytes stable for existing compilation evidence.
 PROFILES = {
+    MOTIVIC_PROFILE: {'lean_version': '4.34.1',
+     'toolchain': 'leanprover/lean4:v4.34.1',
+     'mathlib_revision': 'd13f23b723b8a846827a245b89c10fc7d3f11612',
+     'motivic_revision': 'a6805c4a87cdfd7717dd7a94039246a167f15380',
+     'aglib_revision': '2c34f185fa859e862661f939cd216b07bcccfb26',
+     'audit_template': 'audit-4.34.lean.in',
+     'packages': {'mathlib': 'd13f23b723b8a846827a245b89c10fc7d3f11612',
+                  'plausible': '118aa17ee84656b8bd727fef7c458ee8c833385c',
+                  'LeanSearchClient': 'ddf04cf3949fa556442341e87d47f9f6e6074707',
+                  'importGraph': 'e928b72544873815af278d38681b31c0293588e3',
+                  'proofwidgets': '106ff4fafc74ef4ac99d81dbf3ab399118f497a5',
+                  'aesop': '355695d523e41d0554926416cba2a2b3544fbbc9',
+                  'Qq': '6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259',
+                  'batteries': 'f2effa3d803fda822b1f97b806c47cf2adfbcbc2',
+                  'Cli': 'e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204',
+                  'Aglib': '2c34f185fa859e862661f939cd216b07bcccfb26',
+                  'Motivic': 'a6805c4a87cdfd7717dd7a94039246a167f15380'},
+     'lockfile_sha256': '2f9cab228ffc375abbe1a4783c1e3908aef990b4c1e97626e8cf3f0476f31253',
+     'bind_external_source_closure': True},
     DEFAULT_PROFILE: {'lean_version': LEAN_VERSION, 'toolchain': TOOLCHAIN,
                       'mathlib_revision': MATHLIB_REV, 'audit_template': 'audit.lean.in'},
     TAUCETI_PROFILE: {
@@ -109,7 +131,7 @@ def clean_lean(text):
 
 def source_imports(text):
     imports = []
-    for match in re.finditer(r'^\s*(?:public\s+)?import\s+([^\n]+)', clean_lean(text), re.M):
+    for match in re.finditer(r'^\s*(?:(?:public|meta)\s+)*import\s+(?:all\s+)?([^\n]+)', clean_lean(text), re.M):
         for name in match.group(1).split():
             require(bool(MODULE_RE.fullmatch(name)), 'Unsupported import syntax: ' + name)
             require(not re.match(r'(?:OET|FormalOET|OperatorEvolutionTheory)(?:\.|$)', name), 'Project-bound import forbidden: ' + name)
@@ -125,10 +147,13 @@ def manifest_profile(manifest):
     config = profile_config(profile)
     require(manifest.get('lean_toolchain') == config['toolchain'], 'Manifest toolchain is not pinned for profile ' + profile)
     require(manifest.get('mathlib_revision') == config['mathlib_revision'], 'Manifest Mathlib revision is not pinned for profile ' + profile)
-    if 'tauceti_revision' in config:
-        require(manifest.get('tauceti_revision') == config['tauceti_revision'], 'Manifest TauCeti revision is not pinned for profile ' + profile)
-    else:
-        require('tauceti_revision' not in manifest, 'TauCeti revision requires its fixed verification profile')
+    for field in PROFILE_REVISION_FIELDS:
+        label = REVISION_LABELS[field]
+        if field in config:
+            require(manifest.get(field) == config[field],
+                    'Manifest ' + label + ' revision is not pinned for profile ' + profile)
+        else:
+            require(field not in manifest, label + ' revision requires its fixed verification profile')
     return profile
 
 def render_audit(modules, profile=DEFAULT_PROFILE, *, all_case_declarations=False):
@@ -156,6 +181,8 @@ def inspect_dependencies(dependency_root, lean_choice=None, profile=DEFAULT_PROF
     require(root.is_dir(), 'Dependency root does not exist')
     lock = root / 'lake-manifest.json'
     require(lock.is_file(), 'Dependency root has no lake-manifest.json')
+    if 'lockfile_sha256' in config:
+        require(digest(lock) == config['lockfile_sha256'], 'Dependency lockfile bytes differ from the fixed profile')
     data = load(lock)
     packages = data.get('packages', [])
     require(isinstance(packages, list) and all(isinstance(p, dict) for p in packages), 'Invalid dependency package list')
@@ -187,7 +214,8 @@ def inspect_dependencies(dependency_root, lean_choice=None, profile=DEFAULT_PROF
         package_root = root / package_dir / name
         build = package_root / '.lake/build/lib/lean'
         require(package_root.is_dir(), 'Missing dependency checkout: ' + name)
-        if name in ('mathlib', 'TauCeti'): require(build.is_dir(), 'Missing compiled dependency: ' + name)
+        if name in ('mathlib', 'TauCeti') or (profile == MOTIVIC_PROFILE and name in ('Motivic', 'Aglib')):
+            require(build.is_dir(), 'Missing compiled dependency: ' + name)
         if 'packages' in config:
             actual_root = Path(command(['git', '--no-optional-locks', '-C', package_root, 'rev-parse', '--show-toplevel'])).resolve()
             require(actual_root == package_root.resolve(), 'Dependency is not its own pinned checkout: ' + name)
@@ -213,7 +241,8 @@ def inspect_dependencies(dependency_root, lean_choice=None, profile=DEFAULT_PROF
             'dependency_project_build_excluded': True, 'ambient_lean_path_excluded': True}
     # Preserve the legacy receipt shape for coverage-only evidence rebinding.
     if profile != DEFAULT_PROFILE:
-        result.update(verification_profile=profile, tauceti_revision=config['tauceti_revision'])
+        result.update(verification_profile=profile)
+        result.update({field: config[field] for field in PROFILE_REVISION_FIELDS if field in config})
     return result
 
 def author_input_base(case_root, case):
@@ -349,6 +378,66 @@ def resolve_imports(imports, dependency):
         records.append({'module': name, 'olean': str(matches[0]), 'sha256': digest(matches[0])})
     return records
 
+def bind_external_source_closure(imports, dependency):
+    """Bind each reachable external source and all compiled module parts to fixed Git trees."""
+    roots = []
+    for package in dependency['packages']:
+        build = Path(package['build_library']).resolve()
+        source_root = build.parents[3]
+        head = command(['git', '--no-optional-locks', '-C', source_root, 'rev-parse', 'HEAD'])
+        require(head == package['revision'], 'External package changed during verification: ' + package['name'])
+        tree = {}
+        listing = command(['git', '--no-optional-locks', '-C', source_root,
+                           'ls-tree', '-r', 'HEAD'])
+        for line in listing.splitlines():
+            metadata, path = line.split('\t', 1)
+            mode, kind, blob = metadata.split()
+            if kind == 'blob' and path.endswith('.lean'):
+                tree[path] = (mode, blob)
+        roots.append((package, build, source_root, tree))
+    standard = Path(dependency['lean']).resolve().parent.parent / 'lib/lean'
+    todo = list(imports)
+    seen = set()
+    rows = []
+    while todo:
+        name = todo.pop()
+        if name in seen:
+            continue
+        seen.add(name)
+        require(bool(MODULE_RE.fullmatch(name)), 'Invalid external module: ' + name)
+        relative = Path(*name.split('.'))
+        found = resolve_imports([name], dependency)[0]
+        compiled = Path(found['olean']).resolve()
+        owners = [root for root in roots if compiled.is_relative_to(root[1])]
+        if not owners:
+            require(compiled.is_relative_to(standard), 'Unowned external module: ' + name)
+            rows.append(dict(found, package='lean-standard-library'))
+            continue
+        require(len(owners) == 1, 'Ambiguous external package: ' + name)
+        package, build, source_root, tree = owners[0]
+        source_name = relative.as_posix() + '.lean'
+        require(source_name in tree and tree[source_name][0] in ('100644', '100755'),
+                'External source is not tracked in its fixed tree: ' + name)
+        source = source_root / source_name
+        require(source.is_file() and not source.is_symlink(), 'Missing or linked external source: ' + name)
+        data = source.read_bytes()
+        blob = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+        require(blob == tree[source_name][1], 'External source differs from its fixed Git tree: ' + name)
+        direct_imports = source_imports(data.decode('utf-8'))
+        parts = {}
+        for suffix in ('.olean', '.olean.server', '.olean.private', '.ir', '.ir.sig'):
+            part = build / (relative.as_posix() + suffix)
+            if part.is_file():
+                parts[suffix] = digest(part)
+        rows.append(dict(found, package=package['name'], revision=package['revision'],
+                         source=str(source), source_git_blob=blob,
+                         source_sha256=hashlib.sha256(data).hexdigest(), imports=direct_imports,
+                         compiled_parts=parts))
+        todo.extend(direct_imports)
+    rows.sort(key=lambda row: row['module'])
+    encoded = json.dumps(rows, sort_keys=True, separators=(',', ':')).encode('utf-8')
+    return {'module_count': len(rows), 'sha256': hashlib.sha256(encoded).hexdigest(), 'modules': rows}
+
 def verify_case(manifest_path, dependency, output):
     manifest, original, sources, audit_source, imports = validate_case(manifest_path)
     profile = manifest_profile(manifest)
@@ -356,9 +445,10 @@ def verify_case(manifest_path, dependency, output):
             'Manifest and dependency verification profiles differ')
     require(dependency['mathlib_revision'] == profile_config(profile)['mathlib_revision'],
             'Dependency Mathlib revision differs from the manifest profile')
-    if profile == TAUCETI_PROFILE:
-        require(dependency.get('tauceti_revision') == profile_config(profile)['tauceti_revision'],
-                'Dependency TauCeti revision differs from the manifest profile')
+    for field in PROFILE_REVISION_FIELDS:
+        if field in profile_config(profile):
+            require(dependency.get(field) == profile_config(profile)[field],
+                    'Dependency ' + REVISION_LABELS[field] + ' revision differs from the manifest profile')
     cid = manifest['case_id']; output = Path(output) / cid
     output.mkdir(exist_ok=False)
     staged = output / 'sources'; build = output / 'oleans'; logs = output / 'logs'
@@ -375,6 +465,8 @@ def verify_case(manifest_path, dependency, output):
     save(output / 'report.json', report)
     try:
         report['direct_external_imports'] = resolve_imports(imports, dependency)
+        if profile_config(profile).get('bind_external_source_closure'):
+            report['external_source_closure'] = bind_external_source_closure(imports, dependency)
         for row in sources:
             dest = staged / row['source']; dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(row['path'], dest)
@@ -434,6 +526,9 @@ def verify_case(manifest_path, dependency, output):
             print(cid + ' ' + name + ': passed', flush=True)
         for row in sources:
             require(digest(row['path']) == row['sha256'], 'Source changed after compilation: ' + row['module'])
+        if profile_config(profile).get('bind_external_source_closure'):
+            require(bind_external_source_closure(imports, dependency) == report['external_source_closure'],
+                    'External source or compiled closure changed during verification')
         validate_case(manifest_path)
         require(digest(manifest_path) == report['manifest_sha256'], 'Manifest changed during verification')
         report['status'] = 'passed'

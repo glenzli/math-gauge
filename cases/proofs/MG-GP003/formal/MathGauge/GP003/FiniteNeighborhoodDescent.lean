@@ -86,7 +86,7 @@ theorem finite_germs_glue_neighborhood [Finite ι]
     ∃ (U : SetNeighborhoods (Set.range x)) (b : G.obj.obj (op U.1)),
       ∀ i, (TopCat.Presheaf.germ G.obj) U.1 (x i) (U.2 ⟨i,rfl⟩) b = a i := by
   classical
-  choose U hx s hs using fun i => (TopCat.Presheaf.germ_exist G.obj) (x i) (a i)
+  choose U hx s hs using fun i => (TopCat.Presheaf.exists_germ_eq G.obj) (a i)
   have hpair i j : ∃ (W : OpenNhds (x i)) (Z : OpenNhds (x j))
       (hWU : W.1 ≤ U i) (hZV : Z.1 ≤ U j),
       G.obj.map (homOfLE (inf_le_left.trans hWU) : W.1 ⊓ Z.1 ⟶ U i).op (s i) =

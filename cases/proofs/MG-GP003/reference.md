@@ -38,7 +38,7 @@
 
 判定：true。
 
-本题主目标成立。这是对一个已有几何定理的应用与证明依赖审核：以下完整展开从三个精确的已知输入到目标的论证，不重新证明这些输入背后的标准三元组几何。它不是从基础定义开始的全套动机理论证明。当前 Lean 已核验的普通层、邻域余极限与比较步骤，以及尚未完成的转移几何，逐项列于 [GAPS](formal/GAPS.md)。
+本题主目标成立。下面第 1–5 节给出基于三个精确已知输入的参考论证，保留其来源与适用条件。作者 Lean 另以同时有限点 moving 和实际转移构造完成目标，不再以未证几何性质为最终假设；这条直接路线列于第 6 节和 [COVERAGE](formal/COVERAGE.md)。两条路线都保留任意域、任意有限非空点集及原典范单位；不把引用的全部标准三元组理论宣称为本仓库自建。
 
 以下以 [Mazza–Voevodsky–Weibel 的作者版讲义](https://sites.math.rutgers.edu/~weibel/MVWnotes/prova-hyperlink.pdf)为几何输入。固定文件身份、页码与条件复核见 [SOURCE-RECHECK](formal/SOURCE-RECHECK.md)；母题原始材料按 [Git 恢复说明](../../../docs/repository-map.md) 留档，contract.json 中的历史 source_paths 是来源身份，不是当前候选附件。这里的底域是任意域；有限集中的点可以不是 $X$ 的闭点。
 
@@ -150,6 +150,20 @@ $$H(S_1)\oplus H(S_2)\longrightarrow G(S_1)\oplus G(S_2)$$
 $$F(S)\xrightarrow{\sim}F_{\mathrm{Zar}}(S).$$
 
 判准：Establish that the canonical map F(S) -> F_Zar(S), with both values defined by the specified neighborhood colimits, is an isomorphism for every field k and every finite nonempty point set in smooth quasi-projective X.；Justify each invoked geometric result with hypotheses that match the actual homotopy invariant presheaf with transfers and essentially smooth semilocal setting. Correct direct application of MVW Lemma 22.12 is sufficient.；When using a reconstruction proof, justify both injectivity and surjectivity and preserve the distinction between sections on the original covering opens, sections after shrinking, and the resulting semilocal colimits.。
+
+## 6. 已完成的作者 Lean 路线
+
+最终定理 `semilocal_zariski_unit_isIso` 直接证明题定 $\eta_S$ 为同构；`semilocal_small_zariski_unit_isIso` 同时给出普通小 Zariski 位点的同一单位结论。其实际 Cor/PST 和同伦不变性来自固定版本的 Motivic，依赖源与传递公理均受审计。
+
+先证明原 Nisnevich 单位核恰为 Zariski 局部零子群，由此得到真实转移分离商及 canonical $F_{\mathrm{Zar}}\to F_{\mathrm{Nis}}$ 的单射和单位相容。这里必须证明比较，不能直接将 Nis 层化当作题目的 Zariski 层化。
+
+在整仿射对象上，对任意非空仿射好开和任意有限非空点集，构造一个包含全部指定点的开邻域及实际有限对应 $\beta$，使限制经好开上的值分解，且同一个 $\beta$ 对所有 HI PST 成立。无限域使用一组共同参数、有限紧化和边界标架；有限域使用两个互素次数扩张，保留点集的完整原像，再以实际转移和 Bézout 恒等式下降。原对象不必几何整。零维单独处理；任意原点经闭特殊化辅助构造后，所得开集仍含全部原点。
+
+对核截面，在非空好开上使其为零，随后由共同因子得到保全点集的消失邻域。对层化截面，先在非空好开选原预层代表，用同一 $\beta$ 同时作用原 $F$ 和已证明 HI 的 $F_{\mathrm{Nis}}$；再用上述典范单射，把相等关系严格降回 $F_{\mathrm{Zar}}$。由此得到共同邻域上的提升，不对原 $F$ 另加分离或层假设。
+
+非整光滑仿射对象分成有限个实际 clopen 整分支；原预层截面通过 Cor 的有限余积拼接。最后在原 $X$ 的每个邻域内作含全部点的共同仿射细化，以真实余极限代表元准则证明双射，并用 big/small 层化的单位交换式接到字面 $\eta_S$。仿射开正是题面定义 $S$ 时选择的呈现数据。
+
+本路线不使用旧条件式有限归纳的 `SingletonBlockGluing`，也不需要另行完整形式化 G3 的更强二开正合结论。各辅助结论的生产者、最终假设及保留边界见 [alignment](formal/alignment.json) 和 [GAPS](formal/GAPS.md)。
 
 ## S6 极限正合与阶段正合
 

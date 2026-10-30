@@ -24,7 +24,8 @@ def prepare(case_root, modules, profile=verify.DEFAULT_PROFILE):
                 'alignment': {'source': 'alignment.json', 'sha256': verify.digest(verify.safe_relative(root, 'alignment.json'))},
                 'modules': rows}
     if profile != verify.DEFAULT_PROFILE:
-        manifest.update(verification_profile=profile, tauceti_revision=config['tauceti_revision'])
+        manifest.update(verification_profile=profile)
+        manifest.update({field: config[field] for field in verify.PROFILE_REVISION_FIELDS if field in config})
     verify.validate_author_alignment(root, manifest, case)
     audit = root / 'CurrentAudit.lean'
     audit.write_text(verify.render_audit(modules, profile, all_case_declarations=True))

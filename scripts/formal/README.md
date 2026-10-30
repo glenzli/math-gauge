@@ -1,6 +1,6 @@
 # 作者 Lean 与证据复核
 
-这里核验作者参考形式化，不运行候选模型，也不代表人工审定。唯一题目目录是 [`cases/suite.json`](../../cases/suite.json)，包含 43 份当前试卷。作者证据及独立语义审核见 [`verification/author/`](../../verification/author/README.md)。42 份试卷完整覆盖；GP003 的 S5 保留明确缺口，372 项义务中完成 371 项。编译通过、完整语义对应、独立 AI 审核和人工批准分别记录。
+这里核验作者参考形式化，不运行候选模型，也不代表人工审定。唯一题目目录是 [`cases/suite.json`](../../cases/suite.json)，包含 43 份当前试卷。作者证据及独立语义审核见 [`verification/author/`](../../verification/author/README.md)。43 份试卷、372 项义务完整覆盖；GP003 的 S5 已完成实际转移几何和原典范单位比较。编译通过、完整语义对应、独立 AI 审核和人工批准分别记录。
 
 ## 离线复核已保存的证据
 
@@ -67,7 +67,9 @@ python3 scripts/formal/verify.py \
 
 该 profile 的 Lake 项目须使用相同 toolchain，锁定 TauCeti、Mathlib 及八个传递依赖。全部十包的名称和精确修订由 `verify.py` 固定；每包须有独立、干净且 HEAD 相符的 checkout，TauCeti 与 Mathlib 须已有编译库。清单不能扩充依赖政策；未知 profile、部分迁移或混用依赖均拒绝。使用 `--lean /absolute/path/to/lean` 可选择明确的编译器。
 
-`verify_suite.py` 从同一 `cases/suite.json` 读取全部试卷，再按 profile 选择编译子集。默认 profile 选择 42 份；TauCeti profile 选择 GP001 一份。报告明确列出全题库数量、选中数量及未选中的题目；单次通过不代表两个 profile 均已编译。
+GP003 使用固定 profile `lean-4.34.1-motivic`：Lean **4.34.1**、Mathlib `d13f23b723b8a846827a245b89c10fc7d3f11612`、Motivic `a6805c4a87cdfd7717dd7a94039246a167f15380`、Aglib `2c34f185fa859e862661f939cd216b07bcccfb26`。十一包精确白名单及锁文件字节散列由验证器固定；所有实际可达外部源码均与固定 Git 树核对，同时绑定 olean/private/server/IR 产物，编译前后再次比对。现存缓存只是固定依赖输入，本题44模块仍须全新编译和完整声明公理审计。环境建立、来源及许可证见[复现说明](../../verification/environments/motivic-4.34.1/README.md)。
+
+`verify_suite.py` 从同一 `cases/suite.json` 读取全部试卷，再按 profile 选择编译子集。默认 profile 选择 41 份；TauCeti profile 选择 GP001 一份；Motivic profile 选择 GP003 一份。报告明确列出全题库数量、选中数量及未选中的题目；单次通过不代表三个 profile 均已编译。
 
 ```sh
 python3 scripts/formal/verify_suite.py \

@@ -1,8 +1,10 @@
 # MG-GP003 作者 Lean 与题面对齐
 
-冻结题面和合同 0.1.1；S1、S2、S3、S4、S6 完整，S5 部分完成。S1/S2 现已覆盖原来的任意环境概形，S1 的非开局部化说明也有真实反例。S5 的有限点归纳和典范单位装配已证明，但其转移几何输入尚未证明；不能据此宣布全题完成。候选模型未运行，human pending。
+冻结题面和合同 0.1.1；S1–S6 的作者 Lean 覆盖完整。S5 已由真实有限对应、任意域上的同时有限点 moving、实际普通 Zariski 层化和原 X 的邻域余极限，证明题面指定的典范单位同构。作者证明、独立 AI 语义审核、Lean 编译与人工批准分别记录；候选模型未运行，human pending，题目仍为 draft。
 
-固定 Lean 4.29.1 / Mathlib `5e932f97dd25535344f80f9dd8da3aab83df0fe6`。26 个显式本地模块按依赖顺序列于 [modules.json](modules.json) 和 [manifest.json](manifest.json)。真实 fresh 编译、所有本地声明（含私有）的传递公理审计见 [verification-report.json](verification-report.json)、[declarations.json](declarations.json) 和 logs/。仅允许 `propext`、`Classical.choice`、`Quot.sound`；没有引入外部动机库、额外公理或目标证书。
+本组使用固定 profile `lean-4.34.1-motivic`：Lean 4.34.1，Mathlib `d13f23b723b8a846827a245b89c10fc7d3f11612`，Motivic `a6805c4a87cdfd7717dd7a94039246a167f15380`，Aglib `2c34f185fa859e862661f939cd216b07bcccfb26`。44 个显式本地模块按依赖顺序列于 [modules.json](modules.json) 和 [manifest.json](manifest.json)。可复现环境、来源及许可证见 [环境说明](../../../../verification/environments/motivic-4.34.1/README.md)。其余题目的固定环境不变。
+
+真实 fresh 编译、所有本地声明（含私有）的传递公理审计见 [verification-report.json](verification-report.json)、[declarations.json](declarations.json) 和 logs/。仅允许 `propext`、`Classical.choice`、`Quot.sound`。实际外部导入闭包同时绑定源码和编译产物，编译前后核对；这不是把外部定理作为公理，也不是仅检查本地文件的表面导入。独立语义审核另见 [当前审核收据](../../../../verification/author/semantic-reviews/MG-GP003.json)。
 
 | 阶段 | 状态 | 实际数学范围 |
 | --- | --- | --- |
@@ -10,7 +12,7 @@
 | S2 | complete | 原 X 上的 H/G/η 的真实邻域延拓比较，只用题给单射、局部同构及保覆盖成功收缩。没有假定原覆盖正合或交叠满射。 |
 | S3 | complete | 含指定点集的开集产生真正 final 邻域子系统；任意反变阿贝尔群预层的典范余极限同构及代表元公式已证明。 |
 | S4 | complete | 实际光滑积分仿射 Spec k[t]、原点和稠密 D(t)；受限邻域范畴为空，故不 final。 |
-| S5 | partial | 实际有限点单位、单点同构及条件式有限点归纳、商后恢复原单位已证明；实际 HI PST 的分离化、同时有限点检测和成功收缩仍缺。 |
+| S5 | complete | 真实 HI PST 在任意域、原 X 任意有限非空点集的原典范 Zariski 单位同构；实际同时 moving、有限域 trace/Bezout、非整分支拼接及大/小位点单位比较均已证明。 |
 | S6 | complete | 每阶段不正合而极限正合的真实整数复形；逐同调类最终消失推出极限正合，不偷换为统一阶段。 |
 
 ## S1：原对象、全部箭头与非开反例
@@ -29,8 +31,14 @@
 
 `GeneralAmbientComparison` 将整个论证搬回原 X。`ambientMap_injective_iff`、`ambientMap_surjective_iff` 和 `ambientTwoOpen_exact_iff` 分别搬运原映射与成功收缩后的正合行；三处同构都来自实际开浸入。端点 `general_two_closed_comparison` 对原η成立，故可直接取题给层化单位；无需另假设图上某个任意同构就是该单位。局部只使用满射，比题给同构更弱。
 
-## S5：已完成装配与仍缺的几何
+## S5：核心转移几何到原典范单位
 
-`S5FiniteInduction` 在真实 stalk、overlap colimit 和 `neighborhood_value` 上证明有限插入归纳、映射自然性及字面层化单位的条件式同构。其 `SingletonBlockGluing` 是明示待证的二块拼接性质，不是原题假设，也没有被宣称已由 transfers/HI 推出。
+最终端点在 [S5Complete.lean](MathGauge/GP003/S5Complete.lean)：`semilocal_zariski_unit_isIso` 与 `semilocal_small_zariski_unit_isIso`。二者的假设只有任意域、题给实际 HI PST、光滑对象、有限非空点集及题面已选择的共同仿射开；结论分别是大位点和小位点普通 Zariski 层化的原单位在题定余极限上为同构。共同仿射开是 S 的呈现数据，不是用来绕过 S5 的新增假设；不另行宣称从 Lean 的 `IsQuasiProjective` 类型构造该开集。
 
-`finite_neighborhood_original_unit_of_quotient_comparison` 使用真实商候选态射、`sheafifyMap` 和 `toSheafify_naturality` 恢复原 F 的单位，不对原 F 偷加分离性。应用它仍需构造真正 Zariski 分离商并证明其有限点比较与几何拼接。这些缺口以及大/小位点比较见 [GAPS](GAPS.md)。本轮上游实际源码复查见 [upstream-recheck.json](transfers/upstream-recheck.json)；书面定理来源与假设复核见 [SOURCE-RECHECK](SOURCE-RECHECK.md)。外部论文结论没有被写成 Lean 公理。
+1. `S5ZariskiKernel` 证明实际 Nisnevich 单位核恰为 Zariski 局部零子群，实际转移保持该子群；将 Nis 单位像与字面商群对应，验证其 HI。`S5ZariskiComparison` 证明商前后普通 Zariski 层化同构，以及原 Zariski 层化到 Nis 层化的典范单射与单位等式。没有用 Nis 层化替换目标。
+2. `S5SimultaneousUniversal` 在无限域以一组共同参数、真实有限紧化和边界标架，构造保留全部指定点的 moving 对应及 A1 端点。`S5SimultaneousFinite` 在有限域选两个互素次数扩张，并保留指定点的完整原像；不要求原对象几何整。`S5FiniteScalarMovingDescent` 用真实有限可分扩张转移和整数 Bézout 等式降下，得到对所有 HI PST 都适用的同一个实际对应 β。
+3. `S5FiniteClosedPointReduction` 通过闭特殊化把构造用的点变为闭点，所得开集仍包含所有原点；`S5InfiniteAffineMoving`、`S5FiniteFieldMoving`、`S5AllFieldMoving` 处理零维、仿射坐标变换及任意域，最终证明 `integralAffineMoving_of_field`。辅助命题 `IntegralAffineMoving` 已被消去，不保留为最终输入。
+4. `S5IntegralComparison` 与 `S5TransferSectionLift` 用这个共同 β 同时作用于原 P 和已证明 HI 的 Nis 层化，得到核截面的共同消失和普通 Zariski 层化截面的共同提升。`S5DisjointAssembly`、`S5DisjointGeometry`、`S5AffineComparison` 通过实际有限个 clopen 整分支和 Cor 的有限余积处理非整对象；原 P 的拼接来自加性对应结构，不偷用层条件。
+5. `S5AmbientComparison` 在原 X 的任意给定邻域中细化到含全部点的仿射开，将几何输出化为原 X 的实际更小开。`S5SiteBridge` 证明真实 Zariski 拓扑、big/small 层化同构及单位相容，并用共同邻域代表元准则完成注入和满射。目标就是题面定义的所有开邻域余极限。
+
+这条完整路线不依赖旧 `S5FiniteInduction` 中尚未从几何独立推出的 `SingletonBlockGluing`，也不声称完整形式化了 MVW Lemma 22.10 的更强二开正合结论。旧条件式辅助定理仍明确保留条件，不充当完成证据。先前 G0–G4 的目标如何被实际证明取代及范围界限见 [GAPS](GAPS.md)；书面参考所引定理的来源复核见 [SOURCE-RECHECK](SOURCE-RECHECK.md)。

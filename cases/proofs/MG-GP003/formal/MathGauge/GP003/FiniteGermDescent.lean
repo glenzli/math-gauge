@@ -51,7 +51,9 @@ theorem leftOverlapMap_germ (F : X.Presheaf AddCommGrpCat.{u}) (x y : X)
   let p : PairNeighborhoods x y := (op U, op V)
   have h : colimit.ι (CategoryTheory.Prod.fst ((OpenNhds x)ᵒᵖ) ((OpenNhds y)ᵒᵖ) ⋙ ((OpenNhds.inclusion x).op ⋙ F)) p ≫
       colimit.pre ((OpenNhds.inclusion x).op ⋙ F) (CategoryTheory.Prod.fst ((OpenNhds x)ᵒᵖ) ((OpenNhds y)ᵒᵖ)) = F.germ U.1 x U.2 := by
-    simpa only [p, TopCat.Presheaf.germ] using
+    cases U
+    cases V
+    simpa only [p, TopCat.Presheaf.germ, CategoryTheory.Prod.fst, CategoryTheory.Prod.snd] using
       colimit.ι_pre ((OpenNhds.inclusion x).op ⋙ F) (CategoryTheory.Prod.fst ((OpenNhds x)ᵒᵖ) ((OpenNhds y)ᵒᵖ)) p
   rw [← h]
   simp only [leftOverlapMap, Category.assoc, IsIso.hom_inv_id_assoc]
@@ -65,7 +67,9 @@ theorem rightOverlapMap_germ (F : X.Presheaf AddCommGrpCat.{u}) (x y : X)
   let p : PairNeighborhoods x y := (op U, op V)
   have h : colimit.ι (CategoryTheory.Prod.snd ((OpenNhds x)ᵒᵖ) ((OpenNhds y)ᵒᵖ) ⋙ ((OpenNhds.inclusion y).op ⋙ F)) p ≫
       colimit.pre ((OpenNhds.inclusion y).op ⋙ F) (CategoryTheory.Prod.snd ((OpenNhds x)ᵒᵖ) ((OpenNhds y)ᵒᵖ)) = F.germ V.1 y V.2 := by
-    simpa only [p, TopCat.Presheaf.germ] using
+    cases U
+    cases V
+    simpa only [p, TopCat.Presheaf.germ, CategoryTheory.Prod.fst, CategoryTheory.Prod.snd] using
       colimit.ι_pre ((OpenNhds.inclusion y).op ⋙ F) (CategoryTheory.Prod.snd ((OpenNhds x)ᵒᵖ) ((OpenNhds y)ᵒᵖ)) p
   rw [← h]
   simp only [rightOverlapMap, Category.assoc, IsIso.hom_inv_id_assoc]
@@ -134,7 +138,7 @@ theorem finite_point_germs_glue [Finite ι]
       rightOverlapMap G.obj (x i) (x j) (a j)) :
     ∃! b : G.obj.obj (op ⊤), ∀ i, (TopCat.Presheaf.germ G.obj) ⊤ (x i) (by trivial) b = a i := by
   classical
-  choose U hx s hs using fun i => (TopCat.Presheaf.germ_exist G.obj) (x i) (a i)
+  choose U hx s hs using fun i => (TopCat.Presheaf.exists_germ_eq G.obj) (a i)
   have hpair i j : ∃ (W : OpenNhds (x i)) (Z : OpenNhds (x j))
       (hWU : W.1 ≤ U i) (hZV : Z.1 ≤ U j),
       G.obj.map (homOfLE (inf_le_left.trans hWU) : W.1 ⊓ Z.1 ⟶ U i).op (s i) =

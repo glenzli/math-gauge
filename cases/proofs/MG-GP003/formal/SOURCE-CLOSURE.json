@@ -7,44 +7,605 @@
     {
       "module": "FinitePrimeLocalization",
       "source": "FinitePrimeLocalization.lean",
-      "sha256": "ea8a86c1c8be5536b23db708d107d4c2d811474ba55145b4afdf2f57456606db",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/FinitePrimeLocalization.lean"
+      "sha256": "80a5ec66b78bc888a2f4002c96ae2321e3bc1acc587e9cc3488f15dbeb0b6c5b",
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/FinitePrimeLocalization.lean",
+      "imports": [
+        "Mathlib.RingTheory.Localization.Ideal",
+        "Mathlib.RingTheory.Ideal.Operations",
+        "Mathlib.RingTheory.Spectrum.Prime.Topology",
+        "Mathlib.Topology.Sets.Opens",
+        "Mathlib.Tactic"
+      ],
+      "adapted_from_sha256": "ea8a86c1c8be5536b23db708d107d4c2d811474ba55145b4afdf2f57456606db",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
     },
     {
       "module": "NeighborhoodRefinement",
       "source": "NeighborhoodRefinement.lean",
       "sha256": "0988194897503caebf8a89cfbba1476451d90ea88278d3ba428e01ff0070b9de",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/NeighborhoodRefinement.lean"
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/NeighborhoodRefinement.lean",
+      "imports": [
+        "FinitePrimeLocalization"
+      ]
     },
     {
       "module": "AffineScheme",
       "source": "AffineScheme.lean",
       "sha256": "1cefa69c9b1447ef90774eb036b0493fc0002b788a005e83323b8f3be28872f6",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/AffineScheme.lean"
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/AffineScheme.lean",
+      "imports": [
+        "NeighborhoodRefinement",
+        "Mathlib.AlgebraicGeometry.Scheme"
+      ]
     },
     {
       "module": "FilteredExactness",
       "source": "FilteredExactness.lean",
       "sha256": "02bb4e20e23e9782f180b2e10bfc6e4fc150d3082e75ac2308d23c431e2e59cd",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/FilteredExactness.lean"
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/FilteredExactness.lean",
+      "imports": [
+        "Mathlib.Algebra.Colimit.DirectLimit",
+        "Mathlib.Algebra.Exact",
+        "Mathlib.Tactic"
+      ]
     },
     {
       "module": "ComparisonDiagram",
       "source": "ComparisonDiagram.lean",
       "sha256": "1dc34f0a0ab4e581866fc1d3cc4403a180bc90d5dac5bdf06e7f505fefb5c9e4",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/ComparisonDiagram.lean"
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/ComparisonDiagram.lean",
+      "imports": [
+        "Mathlib.Algebra.Exact",
+        "Mathlib.Tactic"
+      ]
     },
     {
       "module": "SheafificationStalk",
       "source": "SheafificationStalk.lean",
       "sha256": "6bebd89f8b459b3e82ffc789e3e0744bc17dd5b52b3b10534ef21e90e2fbc964",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/SheafificationStalk.lean"
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/SheafificationStalk.lean",
+      "imports": [
+        "Mathlib.Topology.Sheaves.Sheafify",
+        "Mathlib.CategoryTheory.Sites.LeftExact",
+        "Mathlib.Algebra.Category.Grp.FilteredColimits",
+        "Mathlib.Algebra.Category.Grp.Colimits",
+        "Mathlib.Algebra.Category.Grp.Limits"
+      ]
     },
     {
       "module": "NeighborhoodValues",
       "source": "NeighborhoodValues.lean",
       "sha256": "881d7cec0f315b9cfc5060a86664e683c0c1dab568f6dca027b3d1edd1c86d63",
-      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/NeighborhoodValues.lean"
+      "origin": "drafts/public-proof-extractions-20261029/MG-P003/formal/NeighborhoodValues.lean",
+      "imports": [
+        "SheafificationStalk",
+        "Mathlib.Algebra.Category.Grp.AB",
+        "Mathlib.CategoryTheory.Limits.Final"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.OpenNeighborhoods",
+      "source": "MathGauge/GP003/OpenNeighborhoods.lean",
+      "sha256": "180bddbb07be2f8119c76a14562104bec6abfe38c3523f0f42f46a70bdffb276",
+      "imports": [
+        "NeighborhoodValues",
+        "Mathlib.CategoryTheory.Adjunction.Basic"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/OpenNeighborhoods.lean"
+    },
+    {
+      "module": "MathGauge.GP003.DenseOpenFailure",
+      "source": "MathGauge/GP003/DenseOpenFailure.lean",
+      "sha256": "231780b1e1eb6be6f35fa8a42777969f985ad1d1831a317845f44e3ffd7a76dd",
+      "imports": [
+        "MathGauge.GP003.OpenNeighborhoods",
+        "Mathlib.AlgebraicGeometry.Morphisms.Smooth",
+        "Mathlib.AlgebraicGeometry.Properties",
+        "Mathlib.RingTheory.Polynomial.Basic"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/DenseOpenFailure.lean"
+    },
+    {
+      "module": "MathGauge.GP003.EventualExactness",
+      "source": "MathGauge/GP003/EventualExactness.lean",
+      "sha256": "8440a11e08204f18c21d7292eabc38e526243405efed5af482dc1fea0efdcbf5",
+      "imports": [
+        "FilteredExactness"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/EventualExactness.lean"
+    },
+    {
+      "module": "MathGauge.GP003.TwoPointComparison",
+      "source": "MathGauge/GP003/TwoPointComparison.lean",
+      "sha256": "5ec740296d3c6167ce44b8239b1be0cd2a861e86a23501e4120395143234ea47",
+      "imports": [
+        "NeighborhoodRefinement",
+        "NeighborhoodValues",
+        "Mathlib.Topology.Sheaves.SheafCondition.UniqueGluing"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/TwoPointComparison.lean",
+      "adapted_from_sha256": "3019186fb68d060862b8aef8feab718d4bb165b032a918724f7361d54093517d",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.FiniteGermDescent",
+      "source": "MathGauge/GP003/FiniteGermDescent.lean",
+      "sha256": "7c4c251f0d2bbc21a70bdcac2d186fe798a7c3f800e257c915a57c6d02db7ee7",
+      "imports": [
+        "MathGauge.GP003.TwoPointComparison",
+        "Mathlib.CategoryTheory.Filtered.Final",
+        "Mathlib.CategoryTheory.Limits.ConcreteCategory.Basic"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/FiniteGermDescent.lean",
+      "adapted_from_sha256": "172eaad34f65c351a7b2de520e1be6dabca92e814db7d82bb5c6994bd4957557",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.FiniteNeighborhoodDescent",
+      "source": "MathGauge/GP003/FiniteNeighborhoodDescent.lean",
+      "sha256": "91106998d1610d6784de8c0a8f84c984a2eb609f2e3ec88122593fe46f6e779f",
+      "imports": [
+        "MathGauge.GP003.FiniteGermDescent",
+        "NeighborhoodValues"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/FiniteNeighborhoodDescent.lean",
+      "adapted_from_sha256": "6830e96dd2a2c4526700f05fbc022fbf515ddc11367193c493c4e4195cd86ea3",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.LocalizationNeighborhoods",
+      "source": "MathGauge/GP003/LocalizationNeighborhoods.lean",
+      "sha256": "d8bb0afa6dfee7bb464f46ca4e3240613c9ed46a5dd64e384f2f49a54742c2eb",
+      "imports": [
+        "MathGauge.GP003.FiniteNeighborhoodDescent",
+        "FinitePrimeLocalization"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/LocalizationNeighborhoods.lean"
+    },
+    {
+      "module": "MathGauge.GP003.PairLocalizationNeighborhoods",
+      "source": "MathGauge/GP003/PairLocalizationNeighborhoods.lean",
+      "sha256": "bdf3979f7efc4767ec1b70904b3b8e897f6f696ed4f4264041bdb9a5076037f1",
+      "imports": [
+        "MathGauge.GP003.LocalizationNeighborhoods"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/PairLocalizationNeighborhoods.lean"
+    },
+    {
+      "module": "MathGauge.GP003.ActualSemilocalGeometry",
+      "source": "MathGauge/GP003/ActualSemilocalGeometry.lean",
+      "sha256": "accf7a62569271910bb7de8c3b2ef5870c2d22a652ba566dc74e904ec28b3310",
+      "imports": [
+        "MathGauge.GP003.PairLocalizationNeighborhoods",
+        "AffineScheme",
+        "Mathlib.RingTheory.Localization.LocalizationLocalization",
+        "Mathlib.AlgebraicGeometry.PullbackCarrier"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/ActualSemilocalGeometry.lean"
+    },
+    {
+      "module": "MathGauge.GP003.SchemeNeighborhoodValues",
+      "source": "MathGauge/GP003/SchemeNeighborhoodValues.lean",
+      "sha256": "5a8cde837385f360c741078ca9330909598bad7e4f0c402d9485b58c88550413",
+      "imports": [
+        "MathGauge.GP003.ActualSemilocalGeometry"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/SchemeNeighborhoodValues.lean",
+      "adapted_from_sha256": "28544a61d0a4f825abbd620204829700bd9f66de205afcaac4034dfa7eef1965",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.ActualSemilocalDescent",
+      "source": "MathGauge/GP003/ActualSemilocalDescent.lean",
+      "sha256": "8c9f35f332b24e5dbf07363d34d344b8df7e4b01ab636a48fca2f07e0870f9df",
+      "imports": [
+        "MathGauge.GP003.SchemeNeighborhoodValues"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/ActualSemilocalDescent.lean"
+    },
+    {
+      "module": "MathGauge.GP003.SchemeNeighborhoodMaps",
+      "source": "MathGauge/GP003/SchemeNeighborhoodMaps.lean",
+      "sha256": "b5f55a30a7cb6edcaf35f1d08472e3813521d63afc13e970cbbf7ee62a5bd370",
+      "imports": [
+        "MathGauge.GP003.ActualSemilocalDescent"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/SchemeNeighborhoodMaps.lean"
+    },
+    {
+      "module": "MathGauge.GP003.ActualOpenComparison",
+      "source": "MathGauge/GP003/ActualOpenComparison.lean",
+      "sha256": "dc62681d856959e75eb6e0d4564c1e3a30360b529a2da8aad85f4373b692f71e",
+      "imports": [
+        "MathGauge.GP003.SchemeNeighborhoodMaps"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/ActualOpenComparison.lean",
+      "adapted_from_sha256": "4ff03d7ac647473bf4450e5156d18491eaf1965049499b39cebfa5de81807a4d",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.AffineRestriction",
+      "source": "MathGauge/GP003/AffineRestriction.lean",
+      "sha256": "4091348500d0205736d95f6a487a0720a952032503fbd19eeede87e6ffdd833a",
+      "imports": [
+        "MathGauge.GP003.ActualOpenComparison",
+        "Mathlib.Topology.Sheaves.Functors"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/AffineRestriction.lean"
+    },
+    {
+      "module": "MathGauge.GP003.GeneralAmbient",
+      "source": "MathGauge/GP003/GeneralAmbient.lean",
+      "sha256": "e116ecdb255947a93be01bb6c3d3bf1893d7cd18aa00d7bcb255aa4995cbe811",
+      "imports": [
+        "MathGauge.GP003.AffineRestriction"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/GeneralAmbient.lean"
+    },
+    {
+      "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+      "source": "MathGauge/GP003/GeneralAmbientNonOpen.lean",
+      "sha256": "e09bebe15032d44065b3af408b08a1a4616e39c4896212259ad6629f2d56183a",
+      "imports": [
+        "MathGauge.GP003.GeneralAmbient",
+        "Mathlib.Algebra.Polynomial.Roots",
+        "Mathlib.Algebra.Polynomial.Bivariate",
+        "Mathlib.RingTheory.Smooth.Basic",
+        "Mathlib.AlgebraicGeometry.Morphisms.Smooth",
+        "Mathlib.AlgebraicGeometry.Properties",
+        "Mathlib.RingTheory.Polynomial.Basic"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/GeneralAmbientNonOpen.lean"
+    },
+    {
+      "module": "MathGauge.GP003.GeneralAmbientComparison",
+      "source": "MathGauge/GP003/GeneralAmbientComparison.lean",
+      "sha256": "4f55874bfad7c734ac95172bba83276e242e65d727dc8ab3cf61548830bf025a",
+      "imports": [
+        "MathGauge.GP003.AffineRestriction"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/GeneralAmbientComparison.lean",
+      "adapted_from_sha256": "d0d7ed0208547c27a4f3d09cc88d533a66145f3399212755d3b0c1e667a44435",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.S5FiniteInduction",
+      "source": "MathGauge/GP003/S5FiniteInduction.lean",
+      "sha256": "ebc815fd724be718125a98e7edfe4f011f4d9bf3cffb0477e74f2fa68450ac38",
+      "imports": [
+        "MathGauge.GP003.FiniteNeighborhoodDescent"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/MathGauge/GP003/S5FiniteInduction.lean",
+      "adapted_from_sha256": "b5e599f2a430a93d7cf49190d4a8e56c38b112e0abeab403fb23c3d893176250",
+      "adaptation": "Lean4.34 API/elaboration compatibility with declaration statements preserved"
+    },
+    {
+      "module": "MathGauge.GP003.S5FiniteClosedPointReduction",
+      "source": "MathGauge/GP003/S5FiniteClosedPointReduction.lean",
+      "sha256": "c218d75b1dde2054fbee940c541b739e210cc8f02e218f66a2f9c74ee1a4299b",
+      "imports": [
+        "Mathlib.Topology.JacobsonSpace",
+        "Mathlib.Topology.Sets.Opens",
+        "Mathlib.Data.Finset.Image"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5SimultaneousUniversal",
+      "source": "MathGauge/GP003/S5SimultaneousUniversal.lean",
+      "sha256": "c462a26580cdf6a39a6940bbaf75b59920ca3fb9f0f7c5032e9a02ed68e0320d",
+      "imports": [
+        "Motivic.Cohomology.A1.LocalVanishing.Original.AffineLocalVanishing"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5SimultaneousFinite",
+      "source": "MathGauge/GP003/S5SimultaneousFinite.lean",
+      "sha256": "4f745ea29112635701d069fd7793c08d2c000b5faa53143b49d34e60319b0338",
+      "imports": [
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.BaseChange.FiniteScalarComparison",
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.Affine.ScalarCoordinates",
+        "Motivic.Aglib.AlgebraicGeometry.Morphisms.Etale.Neighborhood.AffineScalarClosedSquare",
+        "MathGauge.GP003.S5SimultaneousUniversal",
+        "Motivic.Aglib.AlgebraicGeometry.RelativeCurve.Presentation.Quadratic.ChosenOriginalEtalePresentation",
+        "Motivic.Aglib.AlgebraicGeometry.RelativeCurve.Presentation.Quadratic.LargePrimeCompactification",
+        "Motivic.Aglib.RingTheory.Kaehler.SmoothCotangentTrdeg"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5SiteBridge",
+      "source": "MathGauge/GP003/S5SiteBridge.lean",
+      "sha256": "4fa2c87f68de805ef7286136f104c4832605d3d1bf155317a1a1bb4f1abd35ff",
+      "imports": [
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.Noetherian",
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.Nisnevich.Topology",
+        "Mathlib.CategoryTheory.Sites.CoverLifting",
+        "Mathlib.CategoryTheory.Sites.LocallyBijective",
+        "Mathlib.CategoryTheory.Sites.LeftExact",
+        "Mathlib.Algebra.Category.Grp.FilteredColimits",
+        "Mathlib.Algebra.Category.Grp.Colimits",
+        "Mathlib.Algebra.Category.Grp.Limits"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5ZariskiKernel",
+      "source": "MathGauge/GP003/S5ZariskiKernel.lean",
+      "sha256": "03e2412bb3ea4608569cd4a4918658bb5f805fa1d341f810ac161589ab1cee22",
+      "imports": [
+        "Motivic.Cohomology.A1.Sheafification.DenseDetection",
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.Cohomology.GenericOpen",
+        "Mathlib.GroupTheory.QuotientGroup.Basic"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5ZariskiComparison",
+      "source": "MathGauge/GP003/S5ZariskiComparison.lean",
+      "sha256": "41d15ef78aaa31c9e6fde26c0d7a4a4c6f3ff4e1ff9e986786d37172c1a97197",
+      "imports": [
+        "MathGauge.GP003.S5ZariskiKernel",
+        "MathGauge.GP003.S5SiteBridge"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5TransferSectionLift",
+      "source": "MathGauge/GP003/S5TransferSectionLift.lean",
+      "sha256": "a128b5494d48a348cd1aacbacf87a40651f9dfd1678401c1c4034e46b3ba4d90",
+      "imports": [
+        "MathGauge.GP003.S5ZariskiComparison",
+        "Motivic.Cohomology.A1.Moving.OneSided",
+        "Motivic.Cohomology.A1.Sheafification.HomotopyInvariance"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5GenericRepresentative",
+      "source": "MathGauge/GP003/S5GenericRepresentative.lean",
+      "sha256": "de407579f9d84e389405dede645704cd620918aaee00b9da9d26551a43b42d39",
+      "imports": [
+        "MathGauge.GP003.S5TransferSectionLift"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5InfiniteAffineMoving",
+      "source": "MathGauge/GP003/S5InfiniteAffineMoving.lean",
+      "sha256": "5264db91f1431e0d3a3cdafb763f3eebeadc0ef8f3858c5c0ae4820bd61c1094",
+      "imports": [
+        "MathGauge.GP003.S5SimultaneousUniversal",
+        "MathGauge.GP003.S5FiniteClosedPointReduction",
+        "Motivic.Aglib.AlgebraicGeometry.IdealSheaf.Complement.AffineOpenComplementIdeal",
+        "Motivic.Cohomology.A1.Moving.ZeroDimensional",
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.Affine.Coordinates"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5IntegralComparison",
+      "source": "MathGauge/GP003/S5IntegralComparison.lean",
+      "sha256": "b097da3ed346f6802bbe8267c4f18df065a2a46ef41fed71a070f83690751807",
+      "imports": [
+        "MathGauge.GP003.S5GenericRepresentative",
+        "MathGauge.GP003.S5InfiniteAffineMoving"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5FiniteScalarMovingDescent",
+      "source": "MathGauge/GP003/S5FiniteScalarMovingDescent.lean",
+      "sha256": "d351fa42eb651f104b5e6468a425995bad7c8890323ca01aecd423967667b0f3",
+      "imports": [
+        "MathGauge.GP003.S5SiteBridge",
+        "Motivic.Cohomology.A1.Moving.OneSided",
+        "Motivic.Transfers.Presheaf.FiniteScalarComparison",
+        "Motivic.Transfers.Presheaf.FiniteScalarDescent",
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.BaseChange.FiniteScalarMarkedOpen"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5FiniteFieldMoving",
+      "source": "MathGauge/GP003/S5FiniteFieldMoving.lean",
+      "sha256": "344eceb87ab5490dcae7692d847775545e9bdff4fcbc62b2d0572ee2fd02c764",
+      "imports": [
+        "MathGauge.GP003.S5FiniteScalarMovingDescent",
+        "MathGauge.GP003.S5SimultaneousFinite"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5AllFieldMoving",
+      "source": "MathGauge/GP003/S5AllFieldMoving.lean",
+      "sha256": "8ac6b8bdcac9b474ab833a620a9e119fe9c63aac86dfd0ea32ef8229fffd768c",
+      "imports": [
+        "MathGauge.GP003.S5IntegralComparison",
+        "MathGauge.GP003.S5FiniteFieldMoving"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5DisjointAssembly",
+      "source": "MathGauge/GP003/S5DisjointAssembly.lean",
+      "sha256": "7a554b080ebb2013f17169d9d8d65c764ce95133f0524d4d6d5ac0441d429850",
+      "imports": [
+        "Motivic.AlgebraicGeometry.Correspondences.Coproducts.Finite",
+        "Motivic.Transfers.Presheaf.Basic"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5DisjointGeometry",
+      "source": "MathGauge/GP003/S5DisjointGeometry.lean",
+      "sha256": "1d7002631a558e7e8875da10d310333b0ed6df92d28d34f936fc8ae4b93613a0",
+      "imports": [
+        "MathGauge.GP003.S5DisjointAssembly",
+        "Motivic.Aglib.AlgebraicGeometry.Sites.Smooth.IntegralComponents"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5AffineComparison",
+      "source": "MathGauge/GP003/S5AffineComparison.lean",
+      "sha256": "e9001b9c3390e6a756df3359fdd0175b6efc325a0fb1300287c0af9001ef8210",
+      "imports": [
+        "MathGauge.GP003.S5IntegralComparison",
+        "MathGauge.GP003.S5DisjointGeometry"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5AmbientComparison",
+      "source": "MathGauge/GP003/S5AmbientComparison.lean",
+      "sha256": "3f90afcaa0ac07c56b223feb2e24ec8d15f8d7ee7fd249cf13b30a1d7d160721",
+      "imports": [
+        "MathGauge.GP003.S5SiteBridge",
+        "MathGauge.GP003.S5SimultaneousUniversal"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "MathGauge.GP003.S5Complete",
+      "source": "MathGauge/GP003/S5Complete.lean",
+      "sha256": "0fcc1ba604225976e796e684fe0bcd316fe6524869d92aa15750974a5f434a78",
+      "imports": [
+        "MathGauge.GP003.S5AffineComparison",
+        "MathGauge.GP003.S5AllFieldMoving",
+        "MathGauge.GP003.S5AmbientComparison"
+      ],
+      "origin": "Math Gauge author proof with native/adapted fixed Motivic interfaces",
+      "license": "Apache-2.0",
+      "upstream_repository": "https://github.com/kangxyz/motivic",
+      "upstream_commit": "a6805c4a87cdfd7717dd7a94039246a167f15380",
+      "attribution": "verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "module": "Main",
+      "source": "Main.lean",
+      "sha256": "444ccd9313041d08190861b599e610d312cf28fbe4735fa2235a411bc0d8c723",
+      "imports": [
+        "MathGauge.GP003.AffineRestriction",
+        "MathGauge.GP003.GeneralAmbient",
+        "MathGauge.GP003.GeneralAmbientNonOpen",
+        "MathGauge.GP003.GeneralAmbientComparison",
+        "MathGauge.GP003.S5FiniteInduction",
+        "FinitePrimeLocalization",
+        "NeighborhoodRefinement",
+        "AffineScheme",
+        "FilteredExactness",
+        "ComparisonDiagram",
+        "SheafificationStalk",
+        "NeighborhoodValues",
+        "MathGauge.GP003.OpenNeighborhoods",
+        "MathGauge.GP003.DenseOpenFailure",
+        "MathGauge.GP003.EventualExactness",
+        "MathGauge.GP003.TwoPointComparison",
+        "MathGauge.GP003.FiniteGermDescent",
+        "MathGauge.GP003.FiniteNeighborhoodDescent",
+        "MathGauge.GP003.LocalizationNeighborhoods",
+        "MathGauge.GP003.PairLocalizationNeighborhoods",
+        "MathGauge.GP003.ActualSemilocalGeometry",
+        "MathGauge.GP003.SchemeNeighborhoodValues",
+        "MathGauge.GP003.ActualSemilocalDescent",
+        "MathGauge.GP003.SchemeNeighborhoodMaps",
+        "MathGauge.GP003.ActualOpenComparison",
+        "MathGauge.GP003.S5Complete"
+      ],
+      "origin": "git:f5b479bedd4ec46f316aa8791b18993fee8c8272:cases/proofs/MG-GP003/formal/Main.lean",
+      "adapted_from_sha256": "bcd920ac8cbae015a5d7633b2d593e11ee004ad6f828a1bfd8f62d593be6940e",
+      "adaptation": "Author entrypoint adds imports for the complete S5 proof chain, including MathGauge.GP003.S5Complete, while retaining the original stage modules"
     }
-  ]
+  ],
+  "verification_profile": "lean-4.34.1-motivic",
+  "lean_toolchain": "leanprover/lean4:v4.34.1",
+  "fixed_dependencies": {
+    "mathlib": "d13f23b723b8a846827a245b89c10fc7d3f11612",
+    "plausible": "118aa17ee84656b8bd727fef7c458ee8c833385c",
+    "LeanSearchClient": "ddf04cf3949fa556442341e87d47f9f6e6074707",
+    "importGraph": "e928b72544873815af278d38681b31c0293588e3",
+    "proofwidgets": "106ff4fafc74ef4ac99d81dbf3ab399118f497a5",
+    "aesop": "355695d523e41d0554926416cba2a2b3544fbbc9",
+    "Qq": "6a489d9af5d0c47e5b259e2e8bcdfc1811b5a259",
+    "batteries": "f2effa3d803fda822b1f97b806c47cf2adfbcbc2",
+    "Cli": "e92c9f15fdfacc8536f31cfb3b7ad26c3c8cd204",
+    "Aglib": "2c34f185fa859e862661f939cd216b07bcccfb26",
+    "Motivic": "a6805c4a87cdfd7717dd7a94039246a167f15380"
+  },
+  "native_libraries_vendored": false,
+  "current_audit": {
+    "source": "CurrentAudit.lean",
+    "sha256": "c80c5727b35991b6763e46863082bb7412ef05d539592d27f0035ab9519550a8"
+  },
+  "source_identity_note": "The author source closure and fixed external source/compiled closure are independently bound; coverage and semantic review remain separate evidence."
 }

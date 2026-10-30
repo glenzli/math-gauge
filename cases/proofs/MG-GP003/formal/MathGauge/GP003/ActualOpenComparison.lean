@@ -72,7 +72,7 @@ theorem actual_local_representative
     have hpO : ambientPoint q ∈ O.1 :=
       ((factors_open_iff_range _ _).mp O.2) ⟨q,rfl⟩
     obtain ⟨a,ha⟩ := hstalk (G.germ O.1 (ambientPoint q) hpO b)
-    obtain ⟨V,hpV,aV,rfl⟩ := H.germ_exist (ambientPoint q) a
+    obtain ⟨V,hpV,aV,rfl⟩ := H.exists_germ_eq a
     rw [stalkFunctor_map_germ_apply] at ha
     obtain ⟨W,hpW,iWV,iWO,he⟩ := G.germ_eq (ambientPoint q) hpV hpO
       (η.app (op V) aV) b ha

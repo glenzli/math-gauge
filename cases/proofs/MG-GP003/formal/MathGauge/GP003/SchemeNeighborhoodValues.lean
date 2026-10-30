@@ -122,9 +122,17 @@ theorem actualLocalNeighborhood_iff {sigma : Finset (PrimeSpectrum R)}
     Set.range (localToAmbient q) ⊆ (U : Set (PrimeSpectrum R)) ↔
       ({PrimeSpectrum.comap (algebraMap R (semilocalRing sigma)) q} : Set (PrimeSpectrum R)) ⊆ U := by
   rw [localToAmbient_range]
-  simpa only [prime_localization_image] using
-    (prime_localization_neighborhood_iff
-      (PrimeSpectrum.comap (algebraMap R (semilocalRing sigma)) q) U).symm
+  constructor
+  · intro h p hp
+    rcases Set.mem_singleton_iff.mp hp with rfl
+    apply h
+    change (PrimeSpectrum.comap (algebraMap R (semilocalRing sigma)) q).asIdeal ≤
+      (PrimeSpectrum.comap (algebraMap R (semilocalRing sigma)) q).asIdeal
+    exact le_rfl
+  · intro h p hp
+    exact ((PrimeSpectrum.le_iff_specializes p
+      (PrimeSpectrum.comap (algebraMap R (semilocalRing sigma)) q)).mp hp).mem_open U.isOpen
+      (h (Set.mem_singleton _))
 
 def actualLocalPoint_mem {sigma : Finset (PrimeSpectrum R)}
     (q : PrimeSpectrum (semilocalRing sigma)) (U : SchemeNeighborhoods (localToAmbient q)) :
