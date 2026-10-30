@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from .catalog import Suite, read_json, write_json
+from .benchmarks import BenchmarkProfile, build_plan, read_plan, write_plan
 from .execution import check_lean, run
 from .review import apply_reviews, report, templates
 
@@ -48,6 +49,47 @@ def parser():
                 required=True,
                 help="New output directory for report.json and report.md",
             )
+    c = sub.add_parser("benchmark-plan", help="Freeze a complete evaluator-only benchmark plan; no model calls.")
+    c.add_argument("--suite", default="cases")
+    c.add_argument("--profile", default="protocol/benchmark-profile.json")
+    c.add_argument("--target", action="append", dest="targets")
+    c.add_argument("--runtime", help="Predeclared model, budget and adapter identity JSON.")
+    c.add_argument("--out", required=True)
+    c = sub.add_parser("benchmark-run", help="Explicitly execute one frozen plan projection.")
+    c.add_argument("--suite", default="cases")
+    c.add_argument("--plan", required=True)
+    c.add_argument("--out", required=True)
+    c.add_argument("--target", action="append", dest="targets")
+    c.add_argument("--reuse-run", action="append", dest="reuse_runs", default=[])
+    g = c.add_mutually_exclusive_group(required=True)
+    g.add_argument("--replay", help="Offline fixture responses; never model scores.")
+    g.add_argument("--command-json", help="Frozen adapter argv array; receives only candidate messages.")
+    c = sub.add_parser("benchmark-check", help="Read-only validation of a frozen plan or complete run evidence.")
+    g = c.add_mutually_exclusive_group(required=True)
+    g.add_argument("--plan")
+    g.add_argument("--run")
+    c.add_argument("--review-snapshot", type=int, help="Read a retained review version; default is the active snapshot.")
+    c = sub.add_parser("benchmark-check-lean", help="Explicitly verify the original candidate Lean for one frozen slot.")
+    c.add_argument("--run", required=True)
+    c.add_argument("--slot", required=True)
+    c.add_argument("--out", required=True)
+    c.add_argument("--dependency-root", required=True)
+    c.add_argument("--lean")
+    for name in ("benchmark-review-template", "benchmark-review", "benchmark-collect"):
+        c = sub.add_parser(name)
+        c.add_argument("--run", required=True)
+        if name == "benchmark-review":
+            c.add_argument("--input", required=True)
+            c.add_argument("--revise", action="store_true", help="Append a new review snapshot while retaining prior evidence.")
+            c.add_argument("--expected-review-snapshot", help="Expected current review snapshot SHA-256.")
+        else:
+            c.add_argument("--out", required=True)
+            if name == "benchmark-collect":
+                c.add_argument("--review-snapshot", type=int)
+    c = sub.add_parser("benchmark-report", help="Aggregate validated same-plan evidence with fixed denominators.")
+    c.add_argument("--run", action="append", dest="runs", required=True)
+    c.add_argument("--out", required=True)
+    c.add_argument("--review-snapshot", type=int, help="Use this retained version in each supplied run.")
     return p
 
 
@@ -119,6 +161,68 @@ def main(argv=None):
             out.mkdir(parents=True, exist_ok=False)
             write_json(out / "report.json", data)
             (out / "report.md").write_text(md, encoding="utf-8")
+            print(str(out / "report.md"))
+        elif args.action == "benchmark-plan":
+            suite = Suite.load(args.suite)
+            profile = BenchmarkProfile.load(args.profile, suite)
+            result = build_plan(profile, suite, args.targets,
+                                runtime=read_json(args.runtime) if args.runtime else None)
+            write_plan(args.out, result)
+            print(json.dumps({"plan": args.out, "plan_sha256": result["plan_sha256"],
+                              "planned": result["planned"], "candidate_calls": 0}))
+        elif args.action == "benchmark-run":
+            from .reliability import execute_reliability_run
+            command = json.loads(args.command_json) if args.command_json else None
+            if command is not None and (not isinstance(command, list) or not command
+                                        or not all(isinstance(x, str) for x in command)):
+                raise ValueError("--command-json must be a nonempty argv array")
+            result = execute_reliability_run(read_plan(args.plan), Suite.load(args.suite),
+                                             args.out, command=command, replay=args.replay,
+                                             targets=args.targets, reuse_runs=args.reuse_runs)
+            print(args.out)
+            return 1 if result.get("execution_failures", 0) else 0
+        elif args.action == "benchmark-check":
+            if args.plan:
+                result = read_plan(args.plan)
+                summary = {"plan_sha256": result["plan_sha256"], "planned": result["planned"],
+                           "runtime_frozen": result["runtime_frozen"], "candidate_calls": 0}
+            else:
+                from .reliability import inspect_reliability_run, reliability_score_inputs
+                meta, records = inspect_reliability_run(args.run)
+                collected = reliability_score_inputs(args.run, snapshot=args.review_snapshot)
+                summary = {"run": args.run, "plan_sha256": collected["plan"]["plan_sha256"],
+                           "validated_slots": len(records), "run_id": meta.get("run_id")}
+            print(json.dumps(summary))
+        elif args.action == "benchmark-check-lean":
+            from .reliability_review import verify_reliability_candidate_lean
+            result = verify_reliability_candidate_lean(
+                args.run, args.slot, args.out,
+                dependency_root=args.dependency_root, lean=args.lean)
+            print(json.dumps({"slot_id": args.slot, "status": result["status"], "out": args.out}))
+            return 0 if result["status"] == "passed" else 1
+        elif args.action in {"benchmark-review-template", "benchmark-review", "benchmark-collect"}:
+            from .reliability import (apply_reliability_reviews, reliability_review_templates,
+                                      reliability_score_inputs)
+            if args.action == "benchmark-review":
+                result = apply_reliability_reviews(args.run, read_json(args.input),
+                                                   revise=args.revise,
+                                                   expected_snapshot=args.expected_review_snapshot)
+                print(f"{len(result)} recorded benchmark reviews")
+            else:
+                if Path(args.out).exists():
+                    raise ValueError("Output already exists")
+                result = (reliability_review_templates(args.run)
+                          if args.action == "benchmark-review-template"
+                          else reliability_score_inputs(args.run, snapshot=args.review_snapshot))
+                write_json(args.out, result)
+                print(args.out)
+        elif args.action == "benchmark-report":
+            from .scoring import render_score, score_runs
+            data = score_runs(args.runs, snapshot=args.review_snapshot)
+            out = Path(args.out)
+            out.mkdir(parents=True, exist_ok=False)
+            write_json(out / "report.json", data)
+            (out / "report.md").write_text(render_score(data), encoding="utf-8")
             print(str(out / "report.md"))
         return 0
     except (

@@ -16,8 +16,14 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKET = "protocol/reliability"
 RUNNER_FILES = (
     "math_gauge/catalog.py", "math_gauge/execution.py", "math_gauge/review.py",
+    "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/reliability.py",
+    "math_gauge/reliability_review.py",
     "math_gauge/cli.py", "scripts/validate_protocol.py",
     "scripts/formal/check_evidence.py", "scripts/formal/verify.py",
+)
+ACCEPTANCE_TESTS = (
+    "test_benchmarks.py", "test_scoring.py", "test_reliability_execution.py",
+    "test_reliability_review.py",
 )
 SELECTED = (
     "MG-GR002", "MG-GR004", "MG-GR007", "MG-GR014",
@@ -82,8 +88,9 @@ def check_plan(plan: dict) -> None:
             and plan.get("actual_results") is None, "The packet remains unexecuted and unauthorized")
     require(plan.get("runtime_configuration_frozen") is False
             and plan.get("human_approved") is False, "Runtime and human review remain pending")
-    require(plan.get("runner_multi_turn_acceptance") == "not-implemented-or-validated-in-this-phase",
-            "Multi-turn implementation/acceptance cannot be inferred from material checks")
+    require(plan.get("runner_multi_turn_acceptance") in {
+        "not-implemented-or-validated-in-this-phase", "offline-fixture-acceptance-passed"},
+        "Multi-turn acceptance needs explicit, separately checked evidence")
     require(plan.get("exam_units") == 43 and plan.get("independent_attempts") == ["A1", "A2", "A3"]
             and plan.get("fresh_context_each_attempt") is True, "Invalid independent sample plan")
     require(plan.get("followup_cases") == list(SELECTED)
@@ -101,6 +108,73 @@ def check_plan(plan: dict) -> None:
             "Plan must cover exactly 43 current papers")
     require(len(plan.get("suites", [])) == 1 and plan["suites"][0]["path"] == "cases",
             "The plan uses only the canonical cases suite")
+
+
+def check_offline_acceptance(root: Path, plan: dict) -> dict:
+    """Bind a previously run offline acceptance; never infer model performance."""
+    if plan["runner_multi_turn_acceptance"] != "offline-fixture-acceptance-passed":
+        require(not plan.get("runner_acceptance"), "Unaccepted runner has an acceptance receipt")
+        return {"status": "not-implemented-or-validated-in-this-phase"}
+    binding = plan.get("runner_acceptance", {})
+    require(binding.get("path") == "verification/runner/offline-acceptance.json",
+            "Missing offline runner acceptance binding")
+    path = safe_file(root, binding["path"])
+    require(sha(path.read_bytes()) == binding.get("sha256"), "Offline acceptance receipt drift")
+    receipt = read(path)
+    require(receipt.get("schema") == "math-gauge.runner-offline-acceptance/v1"
+            and receipt.get("status") == "passed"
+            and receipt.get("real_candidate_model_calls") == 0
+            and receipt.get("formal_model_result") is False,
+            "Offline acceptance cannot claim actual candidate results")
+    bindings = receipt.get("input_sha256", {})
+    required = set(RUNNER_FILES) | {
+        "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
+        "protocol/reliability-execution.md", "protocol/reliability-scoring.md",
+        "tests/test_reliability_materials.py",
+        *("tests/" + name for name in ACCEPTANCE_TESTS),
+    }
+    require(required <= set(bindings),
+            "Offline acceptance omits implementation, scoring or test identities")
+    for name, expected in bindings.items():
+        require(sha(safe_file(root, name).read_bytes()) == expected,
+                f"Offline acceptance input drift: {name}; rerun affected acceptance before rebinding")
+    checks = receipt.get("checks", [])
+    expected_commands = [["python3", "-m", "unittest", "discover", "-s", "tests", "-p", name]
+                         for name in ACCEPTANCE_TESTS]
+    require(isinstance(checks, list) and len(checks) == len(expected_commands)
+            and all(isinstance(row, dict) for row in checks)
+            and [row.get("command") for row in checks] == expected_commands,
+            "Offline acceptance must execute each required focused test suite")
+    for row in checks:
+        require(type(row.get("exit_code")) is int and row["exit_code"] == 0
+                and type(row.get("tests")) is int and row["tests"] > 0,
+                "Offline acceptance needs successful test receipts")
+        log_name = row.get("log", "")
+        require(isinstance(log_name, str) and log_name.startswith("verification/runner/logs/"),
+                "Offline acceptance needs a saved test output log")
+        log = safe_file(root, log_name).read_bytes()
+        require(sha(log) == row.get("log_sha256"), "Offline acceptance test output drift")
+        output = log.decode("utf-8")
+        count = re.search(r"\bRan (\d+) tests? in ", output)
+        require(count is not None and int(count.group(1)) == row["tests"]
+                and re.search(r"^OK(?: \(skipped=\d+\))?$", output, flags=re.M) is not None
+                and not re.search(r"^FAILED\b", output, flags=re.M),
+                "Offline acceptance test output does not establish the recorded successful count")
+    return {"status": "offline-fixture-acceptance-passed", "receipt": binding,
+            "input_files_checked": len(bindings), "tests_rerun_by_material_check": False}
+
+
+def author_summary(root: Path) -> dict:
+    ledger = read(root / "verification/author/ledger.json")
+    counts = ledger["counts"]
+    partial = [row for row in ledger["cases"] if row["incomplete_items"]]
+    return {"path": "verification/author", "ledger_sha256": sha(
+        (root / "verification/author/ledger.json").read_bytes()),
+        "full_papers": counts["fully_formalized_papers"],
+        "mandatory_units_complete": counts["complete_items"],
+        "mandatory_units_total": counts["items"],
+        "partial_cases": [{"case_id": row["id"], "stage_ids": row["incomplete_items"]}
+                          for row in partial], "candidate_results": False}
 
 
 def check_messages(selection: dict, prompts: dict, reply_text: str) -> None:
@@ -237,6 +311,8 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
             raise ValueError("Author evidence must validate before protocol refresh: " + str(error)) from error
     suite = Suite.load(root / "cases")
     require(len(suite.cases) == 43, "The canonical suite must contain 43 full papers")
+    acceptance = check_offline_acceptance(root, plan)
+    current_author_summary = author_summary(root)
     expected_suite = {"path": "cases", "version": suite.metadata["version"],
                       "sha256": suite.sha256, "cases": len(suite.cases)}
     with tempfile.TemporaryDirectory(prefix="math-gauge-projection-") as temporary:
@@ -266,12 +342,14 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         plan["files_sha256"] = {name: sha((packet / name).read_bytes()) for name in plan["files_sha256"]}
         plan["protocol_files_sha256"] = protocol_hashes
         plan["runner_files_sha256"] = runner_hashes
+        plan["author_evidence"] = current_author_summary
         (packet / "plan.json").write_bytes(encoded(plan))
     require(plan["suites"] == [expected_suite] and selection["source_suite_sha256"] == suite.sha256,
             "Current suite identity drift; review before explicit engineering refresh")
     for planned in plan["cases"]:
         require(planned == actual[planned["case_id"]], f"{planned['case_id']}: planned material identity drift")
     require(plan.get("runner_files_sha256") == runner_hashes, "Current runner source identity drift")
+    require(plan.get("author_evidence") == current_author_summary, "Author coverage summary drift")
     require(plan["protocol_files_sha256"] == protocol_hashes, "Protocol file identity drift")
     for name, expected in plan["files_sha256"].items():
         require(sha((packet / name).read_bytes()) == expected, f"Packet identity drift: {name}")
@@ -282,7 +360,8 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
               "planned_slots_per_model": 177, "isolated_followup_history_edges": 48,
               "candidate_model_calls": 0, "lean_compilations": 0, "human_approved": False,
               "runner_files_sha256": runner_hashes,
-              "scope": "Current material contracts and identities only; no mathematical adjudication, multi-turn acceptance or model result."}
+              "runner_offline_acceptance": acceptance,
+              "scope": "Current material contracts and identities, including any separately bound offline acceptance; no rerun of acceptance tests, mathematical adjudication or model result."}
     if write_report or refresh:
         (packet / "validation.json").write_bytes(encoded(result))
     return result

@@ -640,7 +640,7 @@
     "FULL"
   ],
   "partial_replacements_allowed": false,
-  "runner_multi_turn_acceptance": "not-implemented-or-validated-in-this-phase",
+  "runner_multi_turn_acceptance": "offline-fixture-acceptance-passed",
   "execution_gates": [
     "explicit new user authorization",
     "verify backend identity and freeze model parameters, per-case budget tiers, timeout, total budget and retry waits",
@@ -655,8 +655,10 @@
     "schedule.json": "a885fa2a24c8c5286b0e3cca6c747a95f562f43c5b77aa39db5284e8d20f875f"
   },
   "protocol_files_sha256": {
-    "protocol/reliability-execution.md": "e531f997927388411ba4ec6f6dfa9f4055b03829a5d74526b21116e4e9f062fc",
-    "protocol/reliability-scoring.md": "958e83ebafb7971d1532d3767041ac083f3f1d50b09b09958c2187321db6e8a9"
+    "protocol/reliability-execution.md": "46030c6699b337a8040c4689e5a53b25e8f63c54fcecaed137e70454976ea416",
+    "protocol/reliability-scoring.md": "5baf99d6636551d941d279c105e41b25676eb1f767fd2c37f9d1763389ff7c62",
+    "protocol/benchmark-scoring.md": "eb7072d64f1212c7d5c9d8f0e01ac6df828348e863b885c247cd158cf3494ce5",
+    "protocol/benchmark-profile.json": "040387aa49f49acea0a24458059a63c70b9ed23758c123c77082757cca4ecc22"
   },
   "sample_unit": "one full paper; stages and obligations are dependent review units",
   "design_status": "fixed selection/messages/schedule; canonical path rebinding is engineering-only; no new independent mathematical review",
@@ -667,15 +669,11 @@
   },
   "author_evidence": {
     "path": "verification/author",
-    "full_papers": 42,
-    "mandatory_units_complete": 369,
+    "ledger_sha256": "4e58350720584669a508e82cabb5d64822f191e3c82219b3b626465eb234e81c",
+    "full_papers": 43,
+    "mandatory_units_complete": 372,
     "mandatory_units_total": 372,
-    "partial_case": "MG-GP003",
-    "partial_stage_ids": [
-      "S1",
-      "S2",
-      "S5"
-    ],
+    "partial_cases": [],
     "candidate_results": false
   },
   "design_bindings": {
@@ -686,11 +684,19 @@
   },
   "runner_files_sha256": {
     "math_gauge/catalog.py": "fc413136417416cf164e9bfd1d38b7e8a975b8b80073c18ce996e636ebaeaaf9",
-    "math_gauge/execution.py": "6faec8cbeb4e713fe3f70f86e570f78435838806ccd7cea1bf5158853865755e",
-    "math_gauge/review.py": "e4169a33637ef3cb853458f17c00f3ed06fbcf018a653eeccbc878344c52294f",
-    "math_gauge/cli.py": "377321d687daef337d512d6aab09992751a953fe2b29259ed3efb489688ddd4e",
-    "scripts/validate_protocol.py": "94324ad954af7792ffb407cf268c6ccd98fbfe7ac048f3f91546f24361c76715",
+    "math_gauge/execution.py": "7ebd2ff993c55ba1bea2d8269608753aee254e4b9e812cb7f9f2460ab38f9c87",
+    "math_gauge/review.py": "ad5257db9493b33ed2f3455cc9c77d9c0cf39246cf756d19fc73c3a0e83f2370",
+    "math_gauge/benchmarks.py": "3af96b68bfa19beb248f6956db26a8c0cc738d3a501aca6deecf9e0796c5c656",
+    "math_gauge/scoring.py": "baebcb523ea7ca807a6c6de7e39bf18bf36f4bee8bb2f5ea4d69dd0ac4fc01b2",
+    "math_gauge/reliability.py": "63b7ecf7e49321b0f2374fb0a3ed83ca0af1737b657cf86907a5a5958c8a64ac",
+    "math_gauge/reliability_review.py": "56f7fb79037e209ff12c0095f68f180a8ddc5b362bcb931f5ff3bea4ba6ad0e6",
+    "math_gauge/cli.py": "4c43602595fe8006d54ecd568a4499f492194172191f169a479dc3bd24b502a8",
+    "scripts/validate_protocol.py": "eb34219970f4723b1b90b6ab4eeda69d64944bd5c7ea40da70966a8637957174",
     "scripts/formal/check_evidence.py": "6944900014afaab017f2a2ebdc40f866582ac4448d32ee7a113ad1202fb4631b",
     "scripts/formal/verify.py": "78e051f3802c013d5a9534921723ce27fb4db01da9993803b9f535b3a2fb9231"
+  },
+  "runner_acceptance": {
+    "path": "verification/runner/offline-acceptance.json",
+    "sha256": "7f93a337a5cebad7e5978e1c55f950bc6d8ffd39dc31baf0ebc6f26182600a14"
   }
 }

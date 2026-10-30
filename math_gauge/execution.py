@@ -59,6 +59,27 @@ def invoke(command, request, cwd, timeout):
         return stdout, stderr, proc.returncode, "timeout"
 
 
+def invoke_conversation(command, request, cwd, timeout, *, retryable_exit_codes=(75,)):
+    """One transport attempt, preserving bytes and separating transient failures.
+
+    An adapter must use exit 75 for an otherwise unclassified temporary service
+    failure. Authentication, configuration and budget failures are permanent by
+    default. The caller decides whether a readable assistant body already locks
+    the slot; a failed process can still have delivered such a body.
+    """
+    try:
+        stdout, stderr, code, status = invoke(command, request, cwd, timeout)
+    except OSError as error:
+        return {"stdout": b"", "stderr": str(error).encode("utf-8"),
+                "exit_code": None, "status": "permanent_error", "usage": {}}
+    transient = status == "timeout" or code in retryable_exit_codes
+    return {"stdout": stdout, "stderr": stderr, "exit_code": code,
+            "status": "ok" if status == "ok" else (
+                "timeout" if status == "timeout" else
+                "transient_error" if transient else "permanent_error"),
+            "usage": {}}
+
+
 def run(
     suite, destination, ids=None, replay=None, command=None, model=None, timeout=120
 ):
@@ -459,12 +480,16 @@ def _missing_cached_source(module, dependency):
 
 
 def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
-                          timeout=120, required_files=(), extraction_override=None):
+                          timeout=120, required_files=(), extraction_override=None,
+                          source_bundle=None):
     """Freeze and compile a runner response in a fresh isolated workspace.
 
     No source repair, model invocation, grading, or author-reference imports.
     required_files may only encode filenames already required by the task.
     macOS sandbox-exec is mandatory; unsupported isolation fails closed.
+    source_bundle is used by the multi-turn owner to point directly at a verified
+    original response and frozen request, without manufacturing a single-run
+    response. Its binding is carried verbatim in the resulting receipt.
     """
     case_dir, destination = Path(case_dir).resolve(), Path(destination).resolve()
     if destination.exists() or destination.is_relative_to(case_dir):
@@ -490,9 +515,24 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
         return report
 
     try:
-        response = (case_dir / "response.md").read_bytes()
-        record = read_json(case_dir / "record.json")
-        request = read_json(case_dir / "solver/request.json")
+        if source_bundle is None:
+            response_path = case_dir / "response.md"
+            response = response_path.read_bytes()
+            record = read_json(case_dir / "record.json")
+            request = read_json(case_dir / "solver/request.json")
+            contract_path = case_dir / 'review-contract.json'
+        else:
+            if (not isinstance(source_bundle, dict) or set(source_bundle) != {
+                    "response_path", "request_path", "contract_path", "record", "binding"}
+                    or not isinstance(source_bundle["binding"], dict)):
+                raise ValueError("Unsupported original-material source bundle")
+            response_path = Path(source_bundle["response_path"])
+            response = response_path.read_bytes()
+            record = source_bundle["record"]
+            request = read_json(source_bundle["request_path"])
+            contract_path = Path(source_bundle["contract_path"])
+            report["reliability_binding"] = source_bundle["binding"]
+            report["source_response_path"] = str(response_path)
         report['case_id'] = request['case_id']
         if record.get('case_id', request['case_id']) != request['case_id']:
             return finish('infrastructure_error', 'Runner case identity differs from request')
@@ -513,7 +553,6 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
         submitted = {item["name"]: item["content"] for item in extracted}
         group_contract = None
         if record.get('group_contract_sha256'):
-            contract_path = case_dir / 'review-contract.json'
             if digest_bytes(contract_path.read_bytes()) != record['group_contract_sha256']:
                 return finish('infrastructure_error', 'Frozen group contract changed')
             group_contract = validate_group_contract(read_json(contract_path))
@@ -611,7 +650,7 @@ def verify_candidate_lean(case_dir, destination, *, dependency_root, lean=None,
             prefix = ["/usr/bin/sandbox-exec", "-f", str(policy_path)]
             positive = stage / "isolation-probe.txt"; positive.write_text("candidate-isolation-probe\n")
             probes = []
-            for path, allowed in [(positive, True), (case_dir / "response.md", False), (engine_path, False)]:
+            for path, allowed in [(positive, True), (response_path, False), (engine_path, False)]:
                 rc, out, err, timed = _candidate_process(prefix + ["/bin/cat", str(path)], stage, env, 10)
                 passed = (rc == 0 and out == "candidate-isolation-probe\n") if allowed else (
                     rc != 0 and any(x in err for x in ("Operation not permitted", "Permission denied")))

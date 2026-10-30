@@ -101,7 +101,31 @@ def _stage_template(stage):
             "notes": ""}
 
 
-def _validate_group_review(root, case, record, entry):
+def _validate_review_axes(entry, record):
+    """Shared content-review contract, independent of conversation transport."""
+    if (entry.get("reviewer_kind") not in {"human", "ai", "fixture"}
+            or not isinstance(entry.get("reviewer"), str) or not entry["reviewer"].strip()):
+        raise ValueError("Reviewer attribution required")
+    if (entry.get("decision") not in {"pass", "fail", "partial", "unresolved"}
+            or entry.get("assumption_fidelity") not in {"clean", "drift", "unknown"}
+            or entry.get("proof_validity") not in {"valid", "invalid", "unknown"}
+            or entry.get("scope_accuracy") not in {"correct", "incorrect", "unknown"}
+            or type(entry.get("unnecessary_restriction")) is not bool):
+        raise ValueError("Invalid review evidence axes")
+    if not isinstance(entry.get("notes"), str) or not entry["notes"].strip():
+        raise ValueError("Specific mathematical review notes required")
+    if not isinstance(entry.get("findings"), list) or not all(isinstance(f, str) for f in entry["findings"]):
+        raise ValueError("Findings must be a string array")
+    if entry["decision"] == "pass" and (
+        entry["assumption_fidelity"] != "clean" or entry["proof_validity"] != "valid"
+        or entry["scope_accuracy"] != "correct" or entry["unnecessary_restriction"]
+        or record["status"] != "ok"
+    ):
+        raise ValueError("Pass contradicts the evidence axes or execution status")
+
+
+def _validate_group_review(root, case, record, entry, *, response_text=None, lean_evidence=None,
+                           additional_obligations=False):
     contract = _group_contract(root, case)
     if contract is None:
         if entry.get("stages"):
@@ -157,12 +181,19 @@ def _validate_group_review(root, case, record, entry):
         or record["status"] != "ok"
     ):
         raise ValueError("Group pass contradicts overall evidence axes")
-    if all(r["decision"] == "pass" for r in rows) and entry["decision"] != "pass":
+    if all(r["decision"] == "pass" for r in rows) and entry["decision"] != "pass" and not additional_obligations:
         raise ValueError("All-stage pass must have a matching group decision")
     if lean_pass_needed:
-        path = safe_file(root, entry.get("candidate_lean_report", ""))
-        receipt = read_json(path)
-        if (digest_bytes(path.read_bytes()) != entry.get("candidate_lean_report_sha256")
+        if lean_evidence is None:
+            path = safe_file(root, entry.get("candidate_lean_report", ""))
+            receipt = read_json(path)
+            report_hash_matches = digest_bytes(path.read_bytes()) == entry.get("candidate_lean_report_sha256")
+        else:
+            # The reliability owner validates the full original-source artifact
+            # and its current material/parent binding before sharing this receipt.
+            receipt = lean_evidence
+            report_hash_matches = True
+        if (not report_hash_matches
                 or receipt.get("schema") != "math-gauge.candidate-lean/v1"
                 or receipt.get("case_id") != case["id"]
                 or receipt.get("response_sha256") != record["response_sha256"]
@@ -174,6 +205,7 @@ def _validate_group_review(root, case, record, entry):
         alignment_items = None
         if contract.get("alignment_manifest_required"):
             manifest, span, _ = extract_candidate_alignment(
+                response_text if response_text is not None else
                 safe_file(root, case['id'] + '/response.md').read_bytes().decode('utf-8'))
             validate_alignment_manifest(manifest, contract)
             if (receipt.get('alignment_manifest') != manifest
@@ -265,6 +297,7 @@ def apply_reviews(root, entries):
             )
         if not records[cid]["input_identity"]["verified"]:
             raise ValueError(f"{cid}: historical candidate input is unverified; archived reviews remain read-only")
+        _validate_review_axes(entry, records[cid])
         if (
             entry.get("reviewer_kind") not in {"human", "ai", "fixture"}
             or not entry.get("reviewer", "").strip()

@@ -50,6 +50,72 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     V.check_plan(plan)
 
+    def test_offline_acceptance_cannot_bless_changed_sources_or_candidate_results(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            names = set(V.RUNNER_FILES) | {
+                "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
+                "protocol/reliability-execution.md", "protocol/reliability-scoring.md",
+                "tests/test_reliability_materials.py",
+                *("tests/" + name for name in V.ACCEPTANCE_TESTS),
+            }
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(name.encode())
+            receipt = {"schema": "math-gauge.runner-offline-acceptance/v1", "status": "passed",
+                       "real_candidate_model_calls": 0, "formal_model_result": False,
+                       "input_sha256": {name: V.sha((root / name).read_bytes()) for name in names},
+                       "checks": []}
+            for name in V.ACCEPTANCE_TESTS:
+                log = root / ("verification/runner/logs/" + name + ".log")
+                log.parent.mkdir(parents=True, exist_ok=True)
+                log.write_bytes(b".\nRan 1 test in 0.001s\n\nOK\n")
+                receipt["checks"].append({
+                    "command": ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", name],
+                    "exit_code": 0, "tests": 1, "log": log.relative_to(root).as_posix(),
+                    "log_sha256": V.sha(log.read_bytes())})
+            path = root / "verification/runner/offline-acceptance.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(V.encoded(receipt))
+            plan = {"runner_multi_turn_acceptance": "offline-fixture-acceptance-passed",
+                    "runner_acceptance": {"path": path.relative_to(root).as_posix(),
+                                          "sha256": V.sha(path.read_bytes())}}
+            checked = V.check_offline_acceptance(root, plan)
+            self.assertFalse(checked["tests_rerun_by_material_check"])
+            omitted = receipt["input_sha256"].pop("tests/test_reliability_review.py")
+            path.write_bytes(V.encoded(receipt))
+            plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
+            with self.assertRaisesRegex(ValueError, "omits implementation, scoring or test"):
+                V.check_offline_acceptance(root, plan)
+            receipt["input_sha256"]["tests/test_reliability_review.py"] = omitted
+            path.write_bytes(V.encoded(receipt))
+            plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
+            log = root / receipt["checks"][0]["log"]
+            before_log = log.read_bytes()
+            log.write_bytes(b"Ran 1 test in 0.001s\n\nFAILED (failures=1)\n")
+            with self.assertRaisesRegex(ValueError, "test output drift"):
+                V.check_offline_acceptance(root, plan)
+            log.write_bytes(before_log)
+            source = root / "math_gauge/scoring.py"
+            source.write_bytes(b"changed after tests")
+            with self.assertRaisesRegex(ValueError, "Offline acceptance input drift"):
+                V.check_offline_acceptance(root, plan)
+            source.write_bytes(b"math_gauge/scoring.py")
+            receipt["real_candidate_model_calls"] = 1
+            path.write_bytes(V.encoded(receipt))
+            plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
+            with self.assertRaisesRegex(ValueError, "cannot claim actual candidate results"):
+                V.check_offline_acceptance(root, plan)
+
+    def test_author_summary_tracks_current_completed_lean_evidence(self):
+        ledger = V.read(ROOT / "verification/author/ledger.json")
+        summary = V.author_summary(ROOT)
+        self.assertEqual(summary["full_papers"], ledger["counts"]["fully_formalized_papers"])
+        self.assertEqual(summary["mandatory_units_complete"], ledger["counts"]["complete_items"])
+        self.assertEqual(summary["partial_cases"], [])
+        self.assertFalse(summary["candidate_results"])
+
     def test_refresh_rejects_changed_mathematics_before_writing_packet(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

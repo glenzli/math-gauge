@@ -15,4 +15,4 @@ python3 scripts/benchmark/run_comparison.py prepare --catalog cases/catalog.json
 
 目录分离不等于闭卷隔离。实际流程按[隔离协议](isolated-cli-runs.md)证明读取边界、进程身份与有效工具能力。候选源码在输出冻结后原样验收，不把编译反馈传回无反馈候选。归档按白名单排除状态、凭据和安装副本。
 
-这里是单轮工具，不是[可靠性计划](reliability/README.md)的177槽位调度器；多轮历史绑定与KEEP/FULL组合尚未实现验收。当前没有候选模型答卷、比较成绩或运行授权。
+这里是单轮工具；[可靠性计划](reliability/README.md)的177槽位调度、KEEP/FULL和七分项聚合由共享runner的 `benchmark-*` 入口提供，见[使用指南](../docs/usage.md)。当前没有候选模型答卷、比较成绩或运行授权。旧比较脚本不自动执行新协议，也不能把旧单答成绩当作三次独立作答或加权综合分。

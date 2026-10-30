@@ -12,6 +12,8 @@ cases/
   taxonomy.json                    九项考察重点与逐阶段分类依据
   catalog.json / by-focus.md        生成的机器目录与导航
 protocol/                          数学、交付、隔离及报告合同
+  benchmark-profile.json           评审侧分项、固定权重和题集身份
+  benchmark-scoring.md              归一化、综合分、缺测与独立运行标准
   reliability/                     未执行的可靠性计划、选择、消息与槽位
 math_gauge/                        全部公开与私有题集共享的runner
 scripts/
@@ -21,6 +23,7 @@ scripts/
   isolated_cli/                    CLI隔离准备、探测与收据
   benchmark/                       单轮比较的薄调度层
 verification/author/               当前作者编译与语义覆盖证据
+verification/runner/               当前评分/多轮软件的离线验收身份
 tests/                             合同、数学见证与工具测试
 docs/                              定位、方法、使用和验证状态
 ```
@@ -32,11 +35,15 @@ docs/                              定位、方法、使用和验证状态
 | `math_gauge/catalog.py` | suite/case/阶段合同、路径、附件、散列与候选投影 |
 | `math_gauge/execution.py` | 请求与原始响应、冻结合同、源码/清单提取、受限编译、公理审计 |
 | `math_gauge/review.py` | 响应绑定审核、逐阶段与交付门槛、报告和配对比较 |
+| `math_gauge/benchmarks.py` | 评审侧profile、完整主计划与独立分项投影 |
+| `math_gauge/reliability.py` | 独立轮/分支调度、原始历史、重试、KEEP/FULL材料与同计划证据复用 |
+| `math_gauge/reliability_review.py` | 多轮材料、当前说明、数学状态与候选Lean的审核绑定 |
+| `math_gauge/scoring.py` | 固定分母分项/加权聚合、未知区间、轨迹与配对诊断 |
 | `scripts/catalog.py` | 分类证据与当前材料身份，生成出题侧导航 |
 | `scripts/validate_protocol.py` | 固定计划、消息、候选白名单与未执行状态 |
 | `scripts/formal/check_evidence.py` | 当前作者证据与原始编译记录的身份复核 |
 
-公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。可靠性多轮编排尚未实现验收。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
+公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
 
 ## 历史保留与恢复
 

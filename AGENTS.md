@@ -10,7 +10,12 @@
   Do not "fix" such an input without updating the benchmark design and version.
 - Candidate-facing files are an explicit projection. References, rubrics and review records stay out of it.
 - All public and private suites use the same runner. Do not copy runner implementations into private data.
-- Execution lives in math_gauge/execution.py, case contracts in catalog.py, and judgments/reporting in review.py.
+- Execution and original-response evidence live in math_gauge/execution.py, case contracts in catalog.py,
+  and single-answer judgments/reporting in review.py. benchmarks.py owns evaluator-only profiles and
+  selected benchmark plans; scoring.py owns versioned cross-attempt aggregation; reliability.py owns
+  branch history and KEEP/FULL composition with separately bound follow-up reviews.
+- Benchmark scores use frozen profile weights and fixed denominators. Missing, execution-failed and
+  unresolved slots stay explicit; never renormalize a partial run into a full-benchmark score.
 - Run python3 -m unittest discover -s tests and python3 -m math_gauge validate for affected runner contracts.
   Compile only changed Lean fixtures or their dependent group; keep evidence tied to file hashes.
 - Do not commit or push unless the user authorizes that step. Keep .dev-mesh and runs local.
