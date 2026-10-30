@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """Verify retained author evidence offline, without Git, Lean or model calls.
 
-The original compiler report remains bound to checked-manifest.json. A separate
-input-binding.json records the narrowly allowed metadata relocation to the
-current manifest. Neither document upgrades semantic or human review status.
+Retained compiler reports bind checked-manifest.json through metadata-only
+relocation receipts. Explicitly recompiled cases instead bind the current
+manifest, fresh compiler output and a current independent semantic review.
+The checked ledger remains immutable provenance, not current proof evidence.
 """
 from __future__ import annotations
 
 import argparse
 from copy import deepcopy
+from datetime import datetime
 import json
 from pathlib import Path
 import re
@@ -193,14 +195,15 @@ def expected_binding(repo, layout, mapping, baseline_row):
     }
 
 
-def check_compiler_report(formal, current, checked, baseline_row):
+def check_compiler_report(formal, current, checked, baseline_row, *,
+                          manifest_name='checked-manifest.json'):
     """Check saved compiler output; do not access old machines or caches."""
     report = verify.load(verify.safe_relative(formal, 'verification-report.json'))
     verify.require(report.get('schema') == 'math-gauge.formal-verification/v1'
                    and report.get('case_id') == checked['case_id'] and report.get('status') == 'passed',
                    'Original compiler report did not pass for this case')
-    verify.require(report['manifest_sha256'] == verify.digest(formal / 'checked-manifest.json'),
-                   'Original compiler report is not bound to the checked manifest')
+    verify.require(report['manifest_sha256'] == verify.digest(formal / manifest_name),
+                   'Compiler report is not bound to the compiled manifest')
     for field in ('frozen_inputs', 'alignment', 'coverage'):
         verify.require(report.get(field) == checked.get(field),
                        'Original compiler report binding differs: ' + field)
@@ -211,9 +214,10 @@ def check_compiler_report(formal, current, checked, baseline_row):
     verify.require(report.get('semantic_alignment_inferred') is False and
                    report.get('local_declaration_audit_scope') == 'all-explicit-case-modules',
                    'Compiler report does not record the complete local declaration audit')
-    verify.require(report.get('started_utc') == baseline_row['compile_started_utc'] and
-                   report.get('finished_utc') == baseline_row['compile_finished_utc'],
-                   'Original compile timestamps changed')
+    if baseline_row is not None:
+        verify.require(report.get('started_utc') == baseline_row['compile_started_utc'] and
+                       report.get('finished_utc') == baseline_row['compile_finished_utc'],
+                       'Original compile timestamps changed')
     profile = verify.manifest_profile(checked)
     dependency = report['dependency']; config = verify.profile_config(profile)
     verify.require(dependency.get('verification_profile', verify.DEFAULT_PROFILE) == profile
@@ -257,6 +261,7 @@ def check_compiler_report(formal, current, checked, baseline_row):
             verify.require(actual_declarations == declarations and actual_summaries == [summary],
                            'Original audit log and reported inventory/summary differ')
     names = {(row['module'], row['name']) for row in declarations}
+    names.update((row['module'], row['user_name']) for row in declarations if 'user_name' in row)
     alignment = verify.load(formal / 'alignment.json')
     for item in alignment['items']:
         for declaration in item['declarations']:
@@ -337,9 +342,161 @@ def check_review(repo, layout, case_root, baseline_row):
             'stage_ids': ids}
 
 
-def check_case(repo, layout, mapping, baseline_row, *, write_binding=False):
+def evidence_time(value):
+    verify.require(isinstance(value, str), 'Evidence timestamp must be text')
+    result = datetime.fromisoformat(value)
+    verify.require(result.utcoffset() is not None, 'Evidence timestamp must include a timezone')
+    return result
+
+
+def check_recompiled_review(repo, case_root, manifest, alignment, report, review_name):
+    """Check current source identities; do not infer semantics from compilation."""
+    relative_name(review_name)
+    path = verify.safe_relative(repo, review_name)
+    review = verify.load(path)
+    verify.require(review.get('schema') == 'math-gauge.author-semantic-review/v1' and
+                   review.get('case_id') == manifest['case_id'] and
+                   review.get('case_version') == manifest['case_version'],
+                   'Current independent semantic review identity differs')
+    verify.require(review.get('reviewer_kind') == 'independent-ai' and
+                   all(isinstance(review.get(key), str) and review[key].strip()
+                       for key in ('reviewer', 'author')) and
+                   review['reviewer'] != review['author'] and
+                   review.get('human') == 'pending' and
+                   review.get('compile_is_semantic_proof') is False,
+                   'Current review must distinguish independent AI, author, compilation and pending human review')
+    verify.require(evidence_time(review.get('reviewed_at_utc')) >= evidence_time(report['finished_utc']),
+                   'Current semantic review predates its bound compiler report')
+    hashes = review.get('files')
+    required = set(manifest['frozen_inputs']) | {
+        'formal/manifest.json', 'formal/alignment.json', 'formal/COVERAGE.md',
+        'formal/verification-report.json', 'formal/declarations.json',
+        'formal/' + manifest['audit']['source'],
+    } | {'formal/' + row['source'] for row in manifest['modules']}
+    verify.require(isinstance(hashes, dict) and required <= set(hashes),
+                   'Current independent review must bind every input, module and compiler artifact')
+    for name, expected in hashes.items():
+        verify.require(verify.digest(verify.safe_relative(case_root, name)) == expected,
+                       'Current independent semantic review source hash is stale: ' + name)
+    items = review.get('items', [])
+    ids = [item['id'] for item in items]
+    verify.require(len(ids) == len(set(ids)) and set(ids) == {row['id'] for row in alignment['items']},
+                   'Current independent review must cover every obligation exactly once')
+    by_id = {item['id']: item for item in items}
+    for item in alignment['items']:
+        expected = 'passed' if item['status'] == 'complete' else 'partial'
+        verify.require(by_id[item['id']].get('status') == expected,
+                       'Current independent review and alignment coverage differ: ' + item['id'])
+        checks = by_id[item['id']].get('checks')
+        verify.require(isinstance(checks, list) and bool(checks) and
+                       all(isinstance(check, str) and check.strip() for check in checks),
+                       'Current independent review needs substantive per-obligation checks: ' + item['id'])
+    status = 'passed' if all(item['status'] == 'complete' for item in alignment['items']) else 'partial'
+    verify.require(review.get('status') == status,
+                   'Current independent review must retain every partial obligation')
+    return {'path': review_name, 'sha256': verify.digest(path), 'reviewer': review['reviewer'],
+            'status': status, 'bound_files_rechecked': len(hashes), 'stage_ids': ids}
+
+
+def check_recompiled_case(repo, layout, mapping, baseline_row, review_name, *, write_binding=False):
+    """A new compilation replaces current evidence, without rewriting its provenance."""
+    case_root = repo / mapping['current']; formal = case_root / 'formal'
+    checked = verify.load(verify.safe_relative(formal, 'checked-manifest.json'))
+    old_case = verify.load(verify.safe_relative(formal, 'checked-case.json'))
+    verify.require(verify.digest(formal / 'checked-manifest.json') == baseline_row['manifest_sha256'] and
+                   verify.digest(formal / 'checked-case.json') == checked['frozen_inputs']['case.json'],
+                   'Recompiled evidence must preserve the original checked identities')
+    current, _, *_ = verify.validate_case(formal / 'manifest.json')
+    case = verify.load(case_root / 'case.json'); alignment = verify.load(formal / 'alignment.json')
+    verify.require(checked['case_id'] == old_case['id'] == mapping['id'] == current['case_id'] and
+                   checked['case_version'] == old_case['version'] == current['case_version'] ==
+                   baseline_row['case_version'], 'Recompiled case identity or version changed')
+    allowed = check_metadata_relocation(case_root, old_case, case, alignment)
+    verify.require(case.get('review', {}).get('human') == 'pending',
+                   'Recompilation cannot grant human approval')
+    # Reference prose and author proofs may evolve. Candidate bytes, grading and
+    # the stage contract stay fixed: this is evidence maintenance, not a new case.
+    preserved = {case[key] for key in ('task', 'rubric', 'group_contract')}
+    preserved.update(row['source'] for row in case.get('solver_files', []))
+    preserved_hashes = {name: checked['frozen_inputs'][name] for name in sorted(preserved)}
+    verify.require(all(current['frozen_inputs'][name] == expected
+                       for name, expected in preserved_hashes.items()),
+                   'Recompiled author evidence cannot change candidate inputs, rubric or stage contract')
+    report, declarations, alignment = check_compiler_report(
+        formal, current, current, None, manifest_name='manifest.json')
+    verify.require(evidence_time(report['started_utc']) <= evidence_time(report['finished_utc']) and
+                   evidence_time(report['started_utc']) > evidence_time(baseline_row['compile_finished_utc']),
+                   'Recompiled evidence needs a new, ordered compilation interval')
+    complete = [item['id'] for item in alignment['items'] if item['status'] == 'complete']
+    incomplete = [{'id': item['id'], 'gaps': item['gaps']} for item in alignment['items']
+                  if item['status'] != 'complete']
+    verify.require(report.get('author_coverage') == {
+        'items': len(alignment['items']), 'claimed_complete': len(complete),
+        'declaration_inventory_verified': True, 'semantic_correctness_automatically_established': False,
+    } and report.get('mathematical_or_human_review') is None,
+        'Recompiled report must audit the current coverage without inferring semantic or human approval')
+    review = check_recompiled_review(repo, case_root, current, alignment, report, review_name)
+    binding = {
+        'schema': BINDING_SCHEMA, 'kind': 'recompiled-author-evidence',
+        'case_id': current['case_id'], 'case_version': current['case_version'],
+        'baseline_commit': layout['baseline_commit'],
+        'previous_case_path': mapping['previous'], 'current_case_path': mapping['current'],
+        'checked_case': {'path': 'checked-case.json', 'sha256': verify.digest(formal / 'checked-case.json')},
+        'checked_manifest': {'path': 'checked-manifest.json', 'sha256': verify.digest(formal / 'checked-manifest.json')},
+        'prior_evidence': {
+            'verification_report_sha256': baseline_row['verification_report_sha256'],
+            'declarations_sha256': baseline_row['declarations_sha256'],
+            'independent_semantic_review': baseline_row['independent_semantic_review'],
+        },
+        'current_case': {'path': '../case.json', 'sha256': verify.digest(case_root / 'case.json')},
+        'current_manifest': {'path': 'manifest.json', 'sha256': verify.digest(formal / 'manifest.json')},
+        'verification_report': {'path': 'verification-report.json', 'sha256': verify.digest(formal / 'verification-report.json')},
+        'declarations': {'path': 'declarations.json', 'sha256': verify.digest(formal / 'declarations.json')},
+        'independent_semantic_review': review,
+        'preserved_inputs': preserved_hashes, 'allowed_metadata_changes': allowed,
+    }
+    binding_path = formal / 'input-binding.json'
+    if write_binding:
+        verify.save(binding_path, binding)
+    else:
+        verify.require(verify.load(verify.safe_relative(formal, 'input-binding.json')) == binding,
+                       'Input binding differs from rechecked current compilation and review')
+    return {
+        'id': mapping['id'], 'case_version': current['case_version'],
+        'case_path': mapping['current'], 'formal_status': 'partial' if incomplete else 'complete',
+        'items': len(alignment['items']), 'complete_items': complete, 'incomplete_items': incomplete,
+        'modules': len(current['modules']), 'declarations': len(declarations),
+        'manifest_sha256': verify.digest(formal / 'manifest.json'),
+        'checked_manifest_sha256': verify.digest(formal / 'checked-manifest.json'),
+        'case_sha256': verify.digest(case_root / 'case.json'),
+        'checked_case_sha256': verify.digest(formal / 'checked-case.json'),
+        'input_binding_sha256': verify.digest(binding_path),
+        'alignment_sha256': verify.digest(formal / 'alignment.json'),
+        'verification_report_sha256': verify.digest(formal / 'verification-report.json'),
+        'declarations_sha256': verify.digest(formal / 'declarations.json'),
+        'compile_status': 'passed', 'compile_started_utc': report['started_utc'],
+        'compile_finished_utc': report['finished_utc'],
+        'verification_profile': verify.manifest_profile(current),
+        'metadata_relocation': 'original checked identities retained as provenance; current evidence recompiled',
+        'fresh_compilation_repeated': True,
+        'independent_semantic_review': review, 'human_review': 'pending',
+    }
+
+
+def check_case(repo, layout, mapping, baseline_row, *, write_binding=False, recompiled_review=None):
     repo = Path(repo).resolve()
     case_root = repo / mapping['current']; formal = case_root / 'formal'
+    if recompiled_review is not None:
+        return check_recompiled_case(repo, layout, mapping, baseline_row, recompiled_review,
+                                     write_binding=write_binding)
+    if (formal / 'input-binding.json').exists():
+        saved = verify.load(verify.safe_relative(formal, 'input-binding.json'))
+        if saved.get('kind') == 'recompiled-author-evidence':
+            return check_recompiled_case(repo, layout, mapping, baseline_row,
+                                         saved['independent_semantic_review']['path'],
+                                         write_binding=write_binding)
+        verify.require(saved.get('kind') == 'metadata-only-layout-migration',
+                       'Unknown author input binding kind')
     binding = expected_binding(repo, layout, mapping, baseline_row)
     current = verify.load(formal / 'manifest.json'); checked = verify.load(formal / 'checked-manifest.json')
     report, declarations, alignment = check_compiler_report(formal, current, checked, baseline_row)
@@ -404,8 +561,13 @@ def check_all(repo, *, write_bindings=False):
         'modules': sum(row['modules'] for row in rows),
         'declarations_with_per_case_repetition': sum(row['declarations'] for row in rows),
     }
-    verify.require(counts == baseline['counts'], 'Author evidence totals changed during metadata relocation')
-    return {
+    recompiled = [row['id'] for row in rows if row['fresh_compilation_repeated']]
+    if not recompiled:
+        verify.require(counts == baseline['counts'], 'Author evidence totals changed during metadata relocation')
+    else:
+        verify.require(all(counts[key] == baseline['counts'][key] for key in ('papers', 'items')),
+                       'Recompilation cannot change the paper or obligation inventory')
+    result = {
         'schema': 'math-gauge.author-evidence-ledger/v2', 'checked_at_utc': verify.now(),
         'baseline_commit': layout['baseline_commit'],
         'compiler_inputs_baseline_commit': baseline['baseline_commit'],
@@ -415,7 +577,7 @@ def check_all(repo, *, write_bindings=False):
                    'sha256': verify.digest(repo / 'verification/layout.json')},
         'scope': 'Current benchmark; original compilation, metadata relocation and independent semantic review are separate evidence',
         'candidate_model_calls': 0, 'human_approved': 0,
-        'fresh_compilation_repeated': False,
+        'fresh_compilation_repeated': bool(recompiled),
         'counts': counts,
         'checks': [
             'Current v2 manifests bind the complete case, contract, candidate inputs, alignment and coverage',
@@ -430,26 +592,52 @@ def check_all(repo, *, write_bindings=False):
         ],
         'cases': rows,
     }
+    if recompiled:
+        result['recompiled_cases'] = recompiled
+        result['checks'] = [
+            'Every current manifest binds the complete case, contract, candidate inputs, alignment and coverage',
+            'The checked ledger and checked manifests remain immutable provenance',
+            'Unchanged cases retain every metadata-only migration and original evidence check',
+            'Recompiled cases bind fresh isolated reports, complete declaration inventories and every compiler log to current source hashes',
+            'Only propext, Classical.choice and Quot.sound occur in the collected axiom closures; local axioms are rejected',
+            'Every mapped declaration exists in the compiled local-module inventory',
+            'Recompiled cases retain original candidate inputs, rubric and stage contract',
+            'Current independent AI reviews bind every current input, module, manifest and compiler artifact',
+            'Coverage follows the source-bound independent review; compilation and human approval remain distinct',
+        ]
+    return result
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--write', action='store_true', help='Rebuild the current ledger after all checks pass')
-    parser.add_argument('--bind-all', action='store_true', help='Create validated metadata-only input bindings; no compiler invocation')
+    parser.add_argument('--bind-all', action='store_true', help='Refresh validated input bindings; no compiler invocation')
+    parser.add_argument('--bind-recompiled', metavar='CASE_ID',
+                        help='Bind one already recompiled case and its current independent semantic review')
+    parser.add_argument('--semantic-review', metavar='REPOSITORY_PATH',
+                        help='Current source-bound independent review; required with --bind-recompiled')
     args = parser.parse_args(argv)
+    if bool(args.bind_recompiled) != bool(args.semantic_review):
+        parser.error('--bind-recompiled and --semantic-review are required together')
     try:
+        if args.bind_recompiled:
+            repo = args.root.resolve(); layout = load_layout(repo)
+            mappings = [row for row in layout['case_paths'] if row['id'] == args.bind_recompiled]
+            verify.require(len(mappings) == 1, 'Unknown recompiled case id')
+            check_case(repo, layout, mappings[0], original_row(repo, layout, args.bind_recompiled),
+                       write_binding=True, recompiled_review=args.semantic_review)
         result = check_all(args.root, write_bindings=args.bind_all)
         ledger = args.root / 'verification/author/ledger.json'
         if args.write:
             verify.save(ledger, result)
-        elif not args.bind_all:
+        elif not (args.bind_all or args.bind_recompiled):
             saved = verify.load(ledger)
             current = dict(result)
             saved.pop('checked_at_utc', None); current.pop('checked_at_utc', None)
             verify.require(saved == current, 'Saved ledger differs from rechecked evidence')
         print(json.dumps({'status': 'passed', 'counts': result['counts'], 'candidate_model_calls': 0,
-                          'fresh_compilation_repeated': False}))
+                          'fresh_compilation_repeated': result['fresh_compilation_repeated']}))
         return 0
     except (OSError, ValueError, KeyError, StopIteration, verify.VerificationError) as error:
         print(str(error), file=sys.stderr)

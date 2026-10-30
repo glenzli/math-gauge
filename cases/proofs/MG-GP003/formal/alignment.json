@@ -3,7 +3,7 @@
   "case_id": "MG-GP003",
   "case_version": "0.1.1",
   "review": {
-    "author_semantic_review": "partial with explicit gaps",
+    "author_semantic_review": "S1-S4 and S6 complete; S5 partial with explicit transfer-geometry gaps",
     "independent_review": "pending",
     "human": "pending",
     "candidate_model_execution": "not-run"
@@ -11,7 +11,7 @@
   "items": [
     {
       "id": "S1",
-      "status": "partial",
+      "status": "complete",
       "declarations": [
         {
           "module": "AffineScheme",
@@ -336,9 +336,85 @@
         {
           "module": "MathGauge.GP003.ActualSemilocalDescent",
           "name": "MathGauge.GP003.affine_semilocal_descent_exact"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientRestriction"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientRestrictionSheaf"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientNeighborhoodIso"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientNeighborhoodIso_representative"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientNeighborhoodIso_restriction"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.generalRestrictionFamily"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.generalOverlapDifference"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.general_semilocal_descent_exact"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.general_finitePoint_neighborhood_iff"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.generalFinitePointValueIso"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.generalFinitePointValueIso_representative"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbient",
+          "name": "MathGauge.GP003.generalFinitePointValueIso_map"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.local_image_not_open_of_prime_family"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.NonOpenExample.closedPoint_closed"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.NonOpenExample.closedPoint_local_image_not_open"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.NonOpenExample.closedPoint_local_not_open_immersion"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.NonOpenExample.affinePlane_affine"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.NonOpenExample.affinePlane_integral"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+          "name": "MathGauge.GP003.NonOpenExample.affinePlane_smooth"
         }
       ],
-      "assumptions": "已证明任意拓扑空间上真实阿贝尔群层的有限点邻域余极限下降，不再假设所选点检测整个环境空间的开覆盖。仿射几何端点取任意交换环 A、实际 S=Spec(Localization(outside_primes sigma))、有限实际点族 q 穷尽 S 的闭点、环境 Spec A 上的真实层；闭点穷尽由题给闭点枚举对应，未要求环境点闭、域完美或局部谱为开。",
+      "assumptions": "任意原概形 X、其仿射开呈现 j:Spec A→X、有限素点半局部化 S，有限实际点族穷尽 S 的闭点，以及原 X 上的阿贝尔群层 G。这里的仿射图是给定半局部化的呈现数据，不把原 X 假定为仿射；结论对所有这种呈现成立，不使用光滑性或拟射影性的额外推论。局部概形不假定为开，原环境点不要求闭。",
       "quantifiers": [
         "MathGauge.PublicProof.Semilocal.finite_point_scheme: {R : Type u_1} → [inst : CommRing R] → Finset (PrimeSpectrum R) → AlgebraicGeometry.Scheme",
         "MathGauge.PublicProof.Semilocal.finite_point_scheme_finite_closed: ∀ {R : Type u_1} [inst : CommRing R] (sigma : Finset (PrimeSpectrum R)), sigma.Nonempty → {x | IsClosed {x}}.Finite",
@@ -359,19 +435,19 @@
         "finite_neighborhood_descent_exact: 对任意 TopCat X、有限索引 ι、x:ι→X 及实际阿贝尔群层 G，实际 neighborhood_value G (range x) 到 stalk 乘积的典范同态单射，且其像恰为 pair-overlap difference 的核；不需要 x 覆盖环境 X。",
         "affine_semilocal_descent_exact: 对任意 CommRing A、sigma:Finset(PrimeSpectrum A)、q:ι→PrimeSpectrum(semilocalRing sigma)、Finite ι，以及 ∀z,IsClosed{z}→z∈range q 和真实环境层 G，actualRestrictionFamily q G.obj 单射，且 Function.Exact actualRestrictionFamily actualOverlapDifference。",
         "localRingAmbientEquiv 对任意实际 S 点 q 给 A_(q∩A) ≃ₐ[A] (M⁻¹A)_q，algebraMap 交换；localFiberTensorIso 给真实 Scheme.pullback ≅ Spec((M⁻¹A)_q ⊗_(M⁻¹A) (M⁻¹A)_r)，有实际投影公式。",
-        "SchemeNeighborhoods f 的索引是实际 T→U→X 开概形因子分解；factors_open_iff_range / schemeNeighborhood_lift_unique 证明其与像的开邻域索引等价，并给实际 colimit 同构与代表元公式。"
+        "SchemeNeighborhoods f 的索引是实际 T→U→X 开概形因子分解；factors_open_iff_range / schemeNeighborhood_lift_unique 证明其与像的开邻域索引等价，并给实际 colimit 同构与代表元公式。",
+        "general_semilocal_descent_exact: 对任意 Scheme X、开浸入 j:Spec R→X、有限点族 q 穷尽实际 S 的闭点和原 X 上的 Sheaf G，实际 generalRestrictionFamily 单射且与 generalOverlapDifference 正合。",
+        "NonOpenExample.closedPoint_local_image_not_open: ¬ IsOpen (Set.range (localToSemilocal NonOpenExample.closedPoint)); closedPoint_closed 证明该点在实际半局部化中闭。"
       ],
       "domains": "实际 Spec(Localization)、其真局部环 Spec、实际 Scheme.pullback 及 Spec tensor product；实际开概形因子分解范畴、真实 filtered Ab colimits、stalks、限制和两投影诱导同态。",
-      "conclusions": "给定仿射半局部化呈现时，题给真实 S、S_i、S_i×_S S_j 的开邻域呈现值及真正限制箭头满足等化子；全部对象和箭头比较已证明。完整原拟射影 X 的仿射呈现接口仍未证明，故阶段保持 partial。",
-      "representation": "不是把概形重命名为其像：先构造真实局部环和 scheme fiber product / tensor iso，再以开浸入唯一提升证明实际因子分解邻域与像邻域等价。用 prime-disjoint theorem 证明共同一般化邻域可由 U_i∩U_j 细化（包括空交），得 actualFiberValueIso。最后逐个代表元证明 actualRestrictionFamily_germ 和左右 fiberRestriction_overlap，搬运真实 finite_neighborhood_descent_exact。",
+      "conclusions": "原 X 上的邻域延拓 G(S) 是真实局部值及真实纤维积限制图的等化子；典范值与题面有限点邻域余极限及原η相容。另给出光滑仿射平面两个有理点处的实际半局部化，其一个闭点的局部概形到 S 不是开浸入。",
+      "representation": "原仿射证明经 ambientNeighborhoodIso 的代表元与映射交换逐项搬回原 X；实际 S_i、Scheme.pullback 和投影不变。有限点约定由 generalFinitePointValueIso 显式比较。非开反例用 ℚ[X][Y] 的两极大理想、真实有限素点局部化及无限线性素理想族；无限多根迫使多项式为零，排除实际局部谱像为开。",
       "dependencies": [],
-      "gaps": [
-        "任意光滑拟射影原 X 的有限点共同仿射邻域存在性及原 X 上层限制到该仿射图的完整典范呈现比较尚未形式化。当前仿射端点已闭合实际局部环、fiber product、open-factorization colimit 与全部限制箭头，不再将这些已完成子项列为缺口。"
-      ]
+      "gaps": []
     },
     {
       "id": "S2",
-      "status": "partial",
+      "status": "complete",
       "declarations": [
         {
           "module": "MathGauge.GP003.TwoPointComparison",
@@ -484,9 +560,45 @@
         {
           "module": "MathGauge.GP003.ActualOpenComparison",
           "name": "MathGauge.GP003.actual_affine_two_closed_comparison"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientRestrictionMap"
+        },
+        {
+          "module": "MathGauge.GP003.AffineRestriction",
+          "name": "MathGauge.GP003.ambientNeighborhoodIso_map"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.ambientMap_injective_iff"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.ambientMap_surjective_iff"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.ambientOpenValueIso"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.ambientOpenValueIso_restriction"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.ambientOpenValueIso_restrictionLE"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.ambientTwoOpen_exact_iff"
+        },
+        {
+          "module": "MathGauge.GP003.GeneralAmbientComparison",
+          "name": "MathGauge.GP003.general_two_closed_comparison"
         }
       ],
-      "assumptions": "给定真实仿射半局部化 S、两个不同实际闭点 q/r 穷尽闭点；H 是原环境谱上的真实预层，G 是原环境谱上的真实层，η 是原预层态射。实际 S 及所有所用实际开子概形的邻域延拓η单射，实际 S_q/S_r 的η满射（比题给同构弱）；仅题给分离二覆盖成功缩小后的 exact row。未假设延拓为层、未假设原未收缩覆盖正合或交叠比较满射。",
+      "assumptions": "原任意概形 X 的仿射半局部化呈现，两个不同实际闭点穷尽 S，原 X 上的 H、层 G 和原态射η；实际 S 及所用开子概形的η单射、两个局部谱的η满射、题给可保覆盖收缩后的正合行。局部满射比题给同构弱；未增加层化、延拓为层、交叠满射或原未收缩行正合假设。",
       "quantifiers": [
         "MathGauge.GP003.twoOpenRestriction: {X : TopCat} →\n  (H : TopCat.Presheaf AddCommGrpCat X) →\n    (U V : TopologicalSpace.Opens ↑X) → ↑(H.obj (Opposite.op ⊤)) →+ ↑(H.obj (Opposite.op U)) × ↑(H.obj (Opposite.op V))",
         "MathGauge.GP003.twoOpenDifference: {X : TopCat} →\n  (H : TopCat.Presheaf AddCommGrpCat X) →\n    (U V : TopologicalSpace.Opens ↑X) →\n      ↑(H.obj (Opposite.op U)) × ↑(H.obj (Opposite.op V)) →+ ↑(H.obj (Opposite.op (U ⊓ V)))",
@@ -495,17 +607,16 @@
         "MathGauge.GP003.comparison_two_closed_points: ∀ {X : TopCat} (x y : ↑X),\n  x ≠ y →\n    IsClosed {x} →\n      IsClosed {y} →\n        (∀ (W : TopologicalSpace.Opens ↑X), x ∈ W → y ∈ W → W = ⊤) →\n          ∀ (H : TopCat.Presheaf AddCommGrpCat X) (G : TopCat.Sheaf AddCommGrpCat X) (η : H ⟶ G.obj),\n            (∀ (W : TopologicalSpace.Opens ↑X),\n                Function.Injective ⇑(CategoryTheory.ConcreteCategory.hom (η.app (Opposite.op W)))) →\n              Function.Surjective\n                  ⇑(CategoryTheory.ConcreteCategory.hom ((TopCat.Presheaf.stalkFunctor AddCommGrpCat x).map η)) →\n                Function.Surjective\n                    ⇑(CategoryTheory.ConcreteCategory.hom ((TopCat.Presheaf.stalkFunctor AddCommGrpCat y).map η)) →\n                  (∀ (U₀ V : TopologicalSpace.Opens ↑X),\n                      MathGauge.PublicProof.Semilocal.Separates {x} {y} U₀ V →\n                        U₀ ⊔ V = ⊤ →\n                          ∃ U ≤ U₀,\n                            U ⊔ V = ⊤ ∧\n                              Function.Exact ⇑(MathGauge.GP003.twoOpenRestriction H U V)\n                                ⇑(MathGauge.GP003.twoOpenDifference H U V)) →\n                    Function.Bijective ⇑(CategoryTheory.ConcreteCategory.hom (η.app (Opposite.op ⊤)))",
         "actual_affine_two_closed_comparison: 任意 CommRing A、sigma、实际S的两个不同闭点q/r且∀z,IsClosed{z}→z=q∨z=r；对原环境的H、真实层G、η:H→G，假定schemeNeighborhoodMap在S与所有实际opens上单射、在真实localScheme q/r上满射，并对每个分离(q,r)二开覆盖存在仍覆盖的U≤U0使schemeTwoOpenRestriction / schemeTwoOpenDifference正合；则实际schemeNeighborhoodMap(semilocalToAmbient sigma)η双射。",
         "actual_local_representative: 任意q及上述原η，真实localScheme q的比较满射蕴含：对任意真实G(S)邻域类b，存在实际S开集U含q和真实H(U)邻域类a，η_U(a)=b|U。无需把b假定为原环境全空间截面。",
-        "actual_two_open_uniqueness: 对真实环境层G，两个实际S开集U/V覆盖S且同一对闭点穷尽，则G(S)两元素在G(U)、G(V)限制相等蕴含本身相等；由已证明实际局部谱下降推出，不以延拓层性质为假设。"
+        "actual_two_open_uniqueness: 对真实环境层G，两个实际S开集U/V覆盖S且同一对闭点穷尽，则G(S)两元素在G(U)、G(V)限制相等蕴含本身相等；由已证明实际局部谱下降推出，不以延拓层性质为假设。",
+        "general_two_closed_comparison: 任意原 Scheme X 与仿射开呈现、恰两个不同闭点、原H/G/η、题给单射/局部满射/成功收缩正合 ⇒ Function.Bijective (schemeNeighborhoodMap (semilocalToAmbient sigma ≫ j) η)。"
       ],
-      "domains": "原环境谱上的实际H/G/η；真实S、实际开子概形U与U∩V、实际局部谱S_i的开概形因子分解colimit及典范比较/限制映射。",
-      "conclusions": "actual_affine_two_closed_comparison 已在给定仿射半局部化呈现上证明原η的真实邻域延拓η_S双射。一般原光滑拟射影X到该仿射呈现的完整接口仍未形式化，因此整个S2保持partial。",
-      "representation": "schemeNeighborhoodMap是原η的实际whiskered colim.map；schemeOpenRestriction/LE来自实际开浸入及scheme.homOfLE。actualLocalValueIso_naturality连接真实局部值比较和ambient stalk map；actual_local_representative用原germ代表及真正共同缩小选lift。剔除另一实际闭点，调用题给成功缩小exact row，再由S1的实际两开限制唯一性推出全局双射。",
+      "domains": "原 X 的实际预层、层、η；真实 S、开子概形及交、局部谱的原 X 开因子分解余极限，原η的 colim.map 与实际限制。",
+      "conclusions": "general_two_closed_comparison 对原 X 和原η证明实际η_S双射，因此适用于题给的典范层化单位。原 X 可以非仿射，仿射限制只作给定半局部化的呈现；所有对象与箭头均有已证典范比较。",
+      "representation": "通过真实开浸入的 image/preimage 伴随构造环境变换；分别搬运原η的单射/满射和二开正合行。ambientTwoOpen_exact_iff 用三个实际同构及限制/差自然性，不预设任意未缩小覆盖正合。随后调用已证仿射比较并把原η的满射搬回原 X。",
       "dependencies": [
         "S1"
       ],
-      "gaps": [
-        "实际仿射S上的原H/G邻域延拓、原η、局部/开交限制与成功收缩比较现已闭合。尚缺任意原光滑拟射影X的共同仿射邻域存在，以及原X的预层/层/η限制到该仿射图的完整典范呈现比较；该普通接口与S5 transfer几何分开记录。"
-      ]
+      "gaps": []
     },
     {
       "id": "S3",
@@ -720,9 +831,61 @@
         {
           "module": "NeighborhoodValues",
           "name": "MathGauge.PublicProof.Semilocal.singleton_neighborhood_value_comparison_isIso"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.overlapValueMap"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.overlapValueMap_injective"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.leftOverlapMap_naturality"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.rightOverlapMap_naturality"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.neighborhoodGerm_naturality"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.neighborhoodGerm_ext"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.neighborhoodGerm_compatible"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.SingletonBlockGluing"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.finite_germs_glue_of_singleton_block_gluing"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.finite_neighborhood_comparison_of_singleton_block_gluing"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.finite_neighborhood_sheafification_of_singleton_block_gluing"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.neighborhood_value_map_comp"
+        },
+        {
+          "module": "MathGauge.GP003.S5FiniteInduction",
+          "name": "MathGauge.GP003.finite_neighborhood_original_unit_of_quotient_comparison"
         }
       ],
-      "assumptions": "当前一般环的有限素理想局部化及任意小位点预层引理保持原条件；未构造完整 frozen-pin Cor_k 或以隐含转移假设替代。",
+      "assumptions": "实际小 Zariski 位点、邻域余极限、stalk、原η及字面 sheafification unit。新增有限归纳是明确条件式辅助定理：分离化后的逐开单射与 SingletonBlockGluing 必须由实际转移几何证明；原 F 到分离商的有限点同构和层化同构也未被宣称无条件成立。",
       "quantifiers": [
         "MathGauge.PublicProof.Semilocal.outside_primes: {R : Type u_1} → [inst : CommRing R] → Finset (PrimeSpectrum R) → Submonoid R",
         "MathGauge.PublicProof.Semilocal.finite_prime_localization: {R : Type u_1} → [inst : CommRing R] → Finset (PrimeSpectrum R) → Type u_1",
@@ -738,11 +901,13 @@
         "MathGauge.PublicProof.Semilocal.neighborhood_value_map_injective: ∀ {X : TopCat} {F G : TopCat.Presheaf AddCommGrpCat X} (η : F ⟶ G) (s : Set ↑X),\n  (∀ (U : TopologicalSpace.Opens ↑X),\n      Function.Injective ⇑(CategoryTheory.ConcreteCategory.hom (η.app (Opposite.op U)))) →\n    Function.Injective\n      ⇑(CategoryTheory.ConcreteCategory.hom (MathGauge.PublicProof.Semilocal.neighborhood_value_map η s))",
         "MathGauge.PublicProof.Semilocal.finite_neighborhood_sheafification_comparison: {X : TopCat} →\n  (F : TopCat.Presheaf AddCommGrpCat X) →\n    (sigma : Finset ↑X) →\n      MathGauge.PublicProof.Semilocal.neighborhood_value F ↑sigma ⟶\n        MathGauge.PublicProof.Semilocal.neighborhood_value (CategoryTheory.sheafify (Opens.grothendieckTopology ↑X) F)\n          ↑sigma",
         "MathGauge.PublicProof.Semilocal.singleton_neighborhood_orderIso: {X : TopCat} → (x : ↑X) → MathGauge.PublicProof.Semilocal.SetNeighborhoods {x} ≃o TopologicalSpace.OpenNhds x",
-        "MathGauge.PublicProof.Semilocal.singleton_neighborhood_value_comparison_isIso: ∀ {X : TopCat} (F : TopCat.Presheaf AddCommGrpCat X) (x : ↑X),\n  CategoryTheory.IsIso\n    (MathGauge.PublicProof.Semilocal.neighborhood_value_map\n      (CategoryTheory.toSheafify (Opens.grothendieckTopology ↑X) F) {x})"
+        "MathGauge.PublicProof.Semilocal.singleton_neighborhood_value_comparison_isIso: ∀ {X : TopCat} (F : TopCat.Presheaf AddCommGrpCat X) (x : ↑X),\n  CategoryTheory.IsIso\n    (MathGauge.PublicProof.Semilocal.neighborhood_value_map\n      (CategoryTheory.toSheafify (Opens.grothendieckTopology ↑X) F) {x})",
+        "finite_neighborhood_sheafification_of_singleton_block_gluing: 任意小位点 F，逐开 sheafification unit 单射与明确的 SingletonBlockGluing F，加有限非空 s，推出实际 finite_neighborhood_sheafification_comparison F s 为 IsIso；两个输入尚未对实际 HI PST 的分离商证明。",
+        "finite_neighborhood_original_unit_of_quotient_comparison: 对实际 α:F→H，若上述 H 条件成立且 α 的有限点值及 sheafifyMap α 是同构，则由真正单位自然性恢复原 F 单位同构；几何输入仍为待证边界。"
       ],
       "domains": "实际 localization ring/scheme、非环境闭点、有限集合邻域 filtered colimit、ordinary Zariski sheafification unit；单点特例真正成立。",
-      "conclusions": "已定义完整 finite-neighborhood canonical comparison 并证明单点同构及逐邻域单射保持。任意 HI PST 的全部有限点同构仍未形式化。",
-      "representation": "七个母题模块按原字节冻结并 fresh 编译；源文 MVW 任意域范围复核记 SOURCE-RECHECK.md，但源文定理没有成为 Lean 假设。",
+      "conclusions": "已证明真实有限插入归纳、overlap 单射与自然性、字面层化单位的条件式有限点同构，以及通过真实 quotient map / sheafifyMap 自然性恢复原单位的装配。没有证明实际 HI PST 满足其几何输入，S5仍partial。",
+      "representation": "有限归纳在真实 neighborhood_value 与 stalk 上进行，不以抽象同名对象替代；商比较的自然交换由 toSheafify_naturality 推出。G1–G3 仍无生产这些输入的 Lean 证明，因此这些辅助定理不作为完整 S5 覆盖。",
       "dependencies": [
         "S1",
         "S2",
@@ -750,7 +915,7 @@
         "S6"
       ],
       "gaps": [
-        "G0 actual Cor/PST 与冻结依赖集成；G1 同时有限点泛点单射；G2 真 Zariski 分离商的 transfers/HI；G3 有限点成功缩小 exactness 含有限域；G4 共同仿射邻域、原X/大小位点比较及任意闭点数归纳。给定仿射呈现的真实S1下降与真实S2延拓比较已完成，不能替代这些transfer几何。精确类型与代码位置见 GAPS.md。"
+        "G0 实际 Cor/PST 依赖集成与公理闭包；G1 原 HI PST 同时有限点泛点检测；G2 真 Zariski 分离商的 transfers/HI 及其原有限点比较；G3 成功保有限点收缩和所需二块拼接，含有限域；实际大光滑位点到小 Zariski 位点的单位比较仍待证明。一般原X的呈现比较及小位点的条件式有限归纳已完成；不得把条件式输入当成原题已给条件。"
       ]
     },
     {

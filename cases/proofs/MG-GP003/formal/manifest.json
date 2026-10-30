@@ -5,19 +5,19 @@
   "lean_toolchain": "leanprover/lean4:v4.29.1",
   "mathlib_revision": "5e932f97dd25535344f80f9dd8da3aab83df0fe6",
   "frozen_inputs": {
-    "case.json": "8d23e979f11f513c2d7c99071b00590515c9c153aa4f8666b5fa1002158e9faa",
+    "case.json": "3e6f5f942545be0224cf5c39428c342ec2e31b76e74e7c0ae44d6c2f1fa24a5f",
     "contract.json": "139229d2bb321a4f21c04e0badcad84d9c25e766114d57d65f9f374e800cd124",
-    "reference.md": "8b88d2e4b91d2aa409be4186854cab91ea698f80b182f33aebec689542434576",
+    "reference.md": "175126f5190915be31c6a40eaafda3d2c30a4be2fb56c87823ccc152aaa9208a",
     "rubric.json": "9ebdf532ae15c6edea691f0c86eedbf661c5b5b8474cced5ba8e36ca8390c6b5",
     "task.md": "fa81237b179de3caaa4b3c957a0701165162fde8f7a7a46309ccb66c72760ee6"
   },
   "coverage": {
     "source": "COVERAGE.md",
-    "sha256": "20c2f325739805ba5a95bb9e753024c6c79f7642674e9124d2fbf0e916ccf5fb"
+    "sha256": "30f7dc055f074608632d8a344b6167af4f7805d7e0b5165cc353cdd662ed669f"
   },
   "alignment": {
     "source": "alignment.json",
-    "sha256": "1607acd4049e930a4c8797dffbca9256981af1f8ec4a189ef04e6738b7c4a257"
+    "sha256": "f889c8b9c5d2760bc52e58d9f3a4086eb43a80ca01ffdcb4dd360d320e3d2cd7"
   },
   "modules": [
     {
@@ -208,10 +208,62 @@
       ]
     },
     {
+      "module": "MathGauge.GP003.AffineRestriction",
+      "source": "MathGauge/GP003/AffineRestriction.lean",
+      "sha256": "4091348500d0205736d95f6a487a0720a952032503fbd19eeede87e6ffdd833a",
+      "imports": [
+        "MathGauge.GP003.ActualOpenComparison",
+        "Mathlib.Topology.Sheaves.Functors"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.GeneralAmbient",
+      "source": "MathGauge/GP003/GeneralAmbient.lean",
+      "sha256": "e116ecdb255947a93be01bb6c3d3bf1893d7cd18aa00d7bcb255aa4995cbe811",
+      "imports": [
+        "MathGauge.GP003.AffineRestriction"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.GeneralAmbientNonOpen",
+      "source": "MathGauge/GP003/GeneralAmbientNonOpen.lean",
+      "sha256": "e09bebe15032d44065b3af408b08a1a4616e39c4896212259ad6629f2d56183a",
+      "imports": [
+        "MathGauge.GP003.GeneralAmbient",
+        "Mathlib.Algebra.Polynomial.Roots",
+        "Mathlib.Algebra.Polynomial.Bivariate",
+        "Mathlib.RingTheory.Smooth.Basic",
+        "Mathlib.AlgebraicGeometry.Morphisms.Smooth",
+        "Mathlib.AlgebraicGeometry.Properties",
+        "Mathlib.RingTheory.Polynomial.Basic"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.GeneralAmbientComparison",
+      "source": "MathGauge/GP003/GeneralAmbientComparison.lean",
+      "sha256": "d0d7ed0208547c27a4f3d09cc88d533a66145f3399212755d3b0c1e667a44435",
+      "imports": [
+        "MathGauge.GP003.AffineRestriction"
+      ]
+    },
+    {
+      "module": "MathGauge.GP003.S5FiniteInduction",
+      "source": "MathGauge/GP003/S5FiniteInduction.lean",
+      "sha256": "b5e599f2a430a93d7cf49190d4a8e56c38b112e0abeab403fb23c3d893176250",
+      "imports": [
+        "MathGauge.GP003.FiniteNeighborhoodDescent"
+      ]
+    },
+    {
       "module": "Main",
       "source": "Main.lean",
-      "sha256": "70159fd85c43a867a822f6b60f3d49056bc8178df1abc029569685a34f61f2d2",
+      "sha256": "bcd920ac8cbae015a5d7633b2d593e11ee004ad6f828a1bfd8f62d593be6940e",
       "imports": [
+        "MathGauge.GP003.AffineRestriction",
+        "MathGauge.GP003.GeneralAmbient",
+        "MathGauge.GP003.GeneralAmbientNonOpen",
+        "MathGauge.GP003.GeneralAmbientComparison",
+        "MathGauge.GP003.S5FiniteInduction",
         "FinitePrimeLocalization",
         "NeighborhoodRefinement",
         "AffineScheme",
@@ -238,7 +290,7 @@
   "audit": {
     "module": "CurrentAudit",
     "source": "CurrentAudit.lean",
-    "sha256": "f4527d2946fcc1a7961fc74707087ba459c248a65486d320a1a3a5bdb10a3ffe",
+    "sha256": "c4243359e4b87766d0ff55ee29ee0669863696c89583eceeb49d84b532e99e55",
     "root_selection": "All constants from every explicitly listed local module, including private declarations",
     "allowed_axioms": [
       "Classical.choice",

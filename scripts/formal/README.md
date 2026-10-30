@@ -1,6 +1,6 @@
 # 作者 Lean 与证据复核
 
-这里核验作者参考形式化，不运行候选模型，也不代表人工审定。唯一题目目录是 [`cases/suite.json`](../../cases/suite.json)，包含 43 份当前试卷。作者证据及独立语义审核见 [`verification/author/`](../../verification/author/README.md)。42 份试卷完整覆盖；GP003 的 S1、S2、S5 保留明确缺口，372 项义务中完成 369 项。编译通过、完整语义对应、独立 AI 审核和人工批准分别记录。
+这里核验作者参考形式化，不运行候选模型，也不代表人工审定。唯一题目目录是 [`cases/suite.json`](../../cases/suite.json)，包含 43 份当前试卷。作者证据及独立语义审核见 [`verification/author/`](../../verification/author/README.md)。42 份试卷完整覆盖；GP003 的 S5 保留明确缺口，372 项义务中完成 371 项。编译通过、完整语义对应、独立 AI 审核和人工批准分别记录。
 
 ## 离线复核已保存的证据
 
@@ -14,21 +14,20 @@ python3 scripts/formal/check_evidence.py
 
 每题 `formal/manifest.json` 使用 `math-gauge.formal-case/v2`，固定当前 `case.json`、task、reference、rubric、题组合同、全部候选附件、COVERAGE、逐项 alignment、显式有序模块和生成的 CurrentAudit。题目声明 `path_base: "case"`，其中的材料路径相对本题目录。旧 suite 相对路径仍用于小型兼容合同测试，不保留第二份历史题库。
 
-目录迁移只改变路径及指定的评审元数据；数学材料、候选附件、Lean 源码、COVERAGE 和 alignment 的字节不变。迁移没有重新编译：
+42份未变题目沿用严格的元数据迁移绑定：数学材料、候选附件、Lean源码、COVERAGE、alignment和原始编译证据均保持原字节。`checked-case.json`、`checked-manifest.json`与`verification/author/checked-ledger.json`保留原身份，`input-binding.json`记录唯一允许的目录与派生元数据变化。此路径不允许把源码修改重绑到旧编译。
 
-- `formal/checked-case.json` 和 `checked-manifest.json` 保留真实编译时的原始字节。
-- `verification-report.json`、日志和 `declarations.json` 保留原始字节及时间戳，报告仍绑定 checked manifest。
-- `formal/input-binding.json` 分别固定原始与当前 case/manifest 散列，记录基线提交和旧、新目录。校验只允许路径变更、case 所属 evaluator 引用重排，以及从原 alignment 推导的 `review.formalization` 状态；题号、版本、人工状态和其余元数据必须相同。
-- `verification/author/checked-ledger.json` 保留迁移前的账本，固定原始报告、manifest、声明清单及独立审核散列。当前 `ledger.json` 另行记录迁移后的路径和绑定，不改写旧编译身份。
-- `verification/layout.json` 是旧目录到当前目录的显式映射。独立审核中的旧 `case.json` 与 `formal/manifest.json` 散列解析到 checked copies，其他源码散列必须与实际当前字节一致。缺失映射或失效散列都失败。
+GP003使用`recompiled-author-evidence`：真实新编译必须绑定当前清单、源码、日志、完整声明清单和基础公理闭包；当前独立语义审核须绑定这些文件、全部数学输入，逐项给出具体检查，并与完整/部分覆盖状态一致。作者、审核者、编译、人工状态和实际时间分别记录。题面、候选附件、评分和合同保持原散列；参考说明的编辑须由新证据重绑。
 
-仅在有意建立或重建上述元数据迁移收据时使用：
+修改证明后，先按下文冻结并真实编译，把实际输出的`report.json`、`declarations.json`和`logs/`保存到本题formal目录，再完成独立语义复核。只有这些工作都已完成，才运行：
 
 ```sh
-python3 scripts/formal/check_evidence.py --bind-all --write
+python3 scripts/formal/check_evidence.py \
+  --bind-recompiled MG-GP003 \
+  --semantic-review verification/author/semantic-reviews/MG-GP003.json --write
+python3 scripts/formal/check_evidence.py
 ```
 
-它先检查原始证据、数学字节和允许的元数据差异，再写绑定及当前账本；不能用来吸收数学、Lean 或旧编译报告的修改。后续源码变化需要新的真实编译与语义复核，不能通过重算旧报告散列宣称证据仍然有效。
+该命令只验证和绑定已有证据，不编译、不生成语义结论。旧的checked身份仅作来源记录，不冒充新证明；其余42题仍逐项验证原编译身份。无需新增历史快照目录或依赖Git历史才能离线检查。
 
 ## 编写和冻结作者工程
 

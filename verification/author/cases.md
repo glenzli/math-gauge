@@ -20,7 +20,7 @@
 | [MG-GF112](../../cases/lean-construction/MG-GF112/case.json) | 6/6 | [覆盖](../../cases/lean-construction/MG-GF112/formal/COVERAGE.md) · [映射](../../cases/lean-construction/MG-GF112/formal/alignment.json) | [通过](semantic-reviews/MG-GF112.json) |
 | [MG-GP001](../../cases/proofs/MG-GP001/case.json) | 6/6 | [覆盖](../../cases/proofs/MG-GP001/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GP001/formal/alignment.json) | [通过](semantic-reviews/MG-GP001.json) |
 | [MG-GP002](../../cases/proofs/MG-GP002/case.json) | 6/6 | [覆盖](../../cases/proofs/MG-GP002/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GP002/formal/alignment.json) | [通过](semantic-reviews/MG-GP002.json) |
-| [MG-GP003](../../cases/proofs/MG-GP003/case.json) | 3/6 | [覆盖](../../cases/proofs/MG-GP003/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GP003/formal/alignment.json) | [partial：S1/S2/S5](semantic-reviews/MG-GP003.json) |
+| [MG-GP003](../../cases/proofs/MG-GP003/case.json) | 5/6 | [覆盖](../../cases/proofs/MG-GP003/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GP003/formal/alignment.json) | [partial：S5](semantic-reviews/MG-GP003.json) |
 | [MG-GR001](../../cases/proofs/MG-GR001/case.json) | 7/7 | [覆盖](../../cases/proofs/MG-GR001/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GR001/formal/alignment.json) | [通过](semantic-reviews/MG-GR001.json) |
 | [MG-GR002](../../cases/proofs/MG-GR002/case.json) | 6/6 | [覆盖](../../cases/proofs/MG-GR002/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GR002/formal/alignment.json) | [通过](semantic-reviews/MG-GR002.json) |
 | [MG-GR003](../../cases/proofs/MG-GR003/case.json) | 6/6 | [覆盖](../../cases/proofs/MG-GR003/formal/COVERAGE.md) · [映射](../../cases/proofs/MG-GR003/formal/alignment.json) | [通过](semantic-reviews/MG-GR003.json) |

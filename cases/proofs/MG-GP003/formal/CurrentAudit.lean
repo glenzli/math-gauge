@@ -18,6 +18,11 @@ import MathGauge.GP003.SchemeNeighborhoodValues
 import MathGauge.GP003.ActualSemilocalDescent
 import MathGauge.GP003.SchemeNeighborhoodMaps
 import MathGauge.GP003.ActualOpenComparison
+import MathGauge.GP003.AffineRestriction
+import MathGauge.GP003.GeneralAmbient
+import MathGauge.GP003.GeneralAmbientNonOpen
+import MathGauge.GP003.GeneralAmbientComparison
+import MathGauge.GP003.S5FiniteInduction
 import Main
 import Lean.Util.CollectAxioms
 import Lean.PrivateName
@@ -30,7 +35,7 @@ including private declarations after recovering their user-facing namespace.
 The shared visited set traverses the complete union of their dependencies. -/
 run_cmd do
   let env ← getEnv
-  let expectedModules : Array String := #["FinitePrimeLocalization", "NeighborhoodRefinement", "AffineScheme", "FilteredExactness", "ComparisonDiagram", "SheafificationStalk", "NeighborhoodValues", "MathGauge.GP003.OpenNeighborhoods", "MathGauge.GP003.DenseOpenFailure", "MathGauge.GP003.EventualExactness", "MathGauge.GP003.TwoPointComparison", "MathGauge.GP003.FiniteGermDescent", "MathGauge.GP003.FiniteNeighborhoodDescent", "MathGauge.GP003.LocalizationNeighborhoods", "MathGauge.GP003.PairLocalizationNeighborhoods", "MathGauge.GP003.ActualSemilocalGeometry", "MathGauge.GP003.SchemeNeighborhoodValues", "MathGauge.GP003.ActualSemilocalDescent", "MathGauge.GP003.SchemeNeighborhoodMaps", "MathGauge.GP003.ActualOpenComparison", "Main"]
+  let expectedModules : Array String := #["FinitePrimeLocalization", "NeighborhoodRefinement", "AffineScheme", "FilteredExactness", "ComparisonDiagram", "SheafificationStalk", "NeighborhoodValues", "MathGauge.GP003.OpenNeighborhoods", "MathGauge.GP003.DenseOpenFailure", "MathGauge.GP003.EventualExactness", "MathGauge.GP003.TwoPointComparison", "MathGauge.GP003.FiniteGermDescent", "MathGauge.GP003.FiniteNeighborhoodDescent", "MathGauge.GP003.LocalizationNeighborhoods", "MathGauge.GP003.PairLocalizationNeighborhoods", "MathGauge.GP003.ActualSemilocalGeometry", "MathGauge.GP003.SchemeNeighborhoodValues", "MathGauge.GP003.ActualSemilocalDescent", "MathGauge.GP003.SchemeNeighborhoodMaps", "MathGauge.GP003.ActualOpenComparison", "MathGauge.GP003.AffineRestriction", "MathGauge.GP003.GeneralAmbient", "MathGauge.GP003.GeneralAmbientNonOpen", "MathGauge.GP003.GeneralAmbientComparison", "MathGauge.GP003.S5FiniteInduction", "Main"]
   let entries := env.constants.toList.filter fun entry =>
     let origin := match env.getModuleIdxFor? entry.1 with
       | some index => env.header.moduleNames[index]!.toString

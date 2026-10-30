@@ -1,107 +1,154 @@
 {
   "schema": "math-gauge.benchmark-validation/v1",
-  "recorded_at_utc": "2026-10-30T13:38:33.203747+00:00",
-  "baseline_commit": "6a48027baa33e06e913a554fb8bac9394a82b480",
+  "recorded_at_utc": "2026-10-30T15:01:06.774530+00:00",
+  "baseline_commit": "3e930b54ee4a5c89e43333d0da01c50d280e7541",
   "candidate_model_calls": 0,
-  "lean_recompiled": false,
-  "scope": "Current benchmark only, tested in independent source export without Git or retired directories",
+  "lean_recompiled": true,
+  "scope": "Current-only independent export; GP003 genuine new compilation and cross-reviewed S1/S2 completion, explicit S5 gap. Other 42 cases reuse unchanged source-bound evidence.",
   "source_export": {
     "path": "verification/source-export.json",
-    "sha256": "30255759b8574f6c3f249d8174679cb4fbafe97e84cf9785343b79d2092ac959",
-    "files": 1966,
-    "files_sha256": "4fb68d41ef69c111769194bf109e60912028f7fb06ba51e750dd5acb96a821f2",
+    "sha256": "5b272a28ba83075bd4bac105f538c48606e5ba916f225b966907f03746107383",
+    "files": 1978,
+    "files_sha256": "afa485ab38e01141872dc1370ba260ba9b1b0dd1310b520beb25dd46b572d0e3",
     "git_present": false,
     "retired_directories_present": false
   },
   "unit_tests": {
     "command": "python3 -m unittest discover -s tests",
     "exit_code": 0,
-    "ran": 194,
-    "passed": 177,
+    "ran": 200,
+    "passed": 183,
     "skipped": 17,
-    "seconds": 18.486,
-    "skip_reason": "Explicit optional live Lean compiler/environment tests; no compiler claim inferred from skips"
+    "seconds": 19.093,
+    "log_sha256": "36114d366a12dab33a8dd2ae433730ca16eaee72e9085f3427ca5e133499ba92",
+    "skip_reason": "Optional live compiler/environment fixtures; the actual GP003 fresh compilation is separately recorded below."
   },
   "benchmark_helper_tests": {
     "command": "python3 scripts/benchmark/test_runtime.py",
     "exit_code": 0,
     "ran": 10,
     "passed": 10,
-    "seconds": 0.195
+    "log_sha256": "87bab093e744a99058cb30b2041d6e35f97bab4834b4ae7513ac6099c7828ee2"
   },
   "suite": {
-    "command": "python3 -m math_gauge validate",
-    "exit_code": 0,
     "cases": 43,
-    "suite_sha256": "643fdbb579ebf22437136e92ca84ec602be6dad9ebc3e40f9d5517708f4ef371",
+    "suite_sha256": "d1df208c3ab7a3f97fe3de4a9da41a338706331e958193ec458fdcacd181b30d",
     "human_approved": 0
   },
   "catalog": {
-    "command": "python3 scripts/catalog.py --check",
-    "exit_code": 0,
-    "sha256": "579fa3b6653cedf2c01ba862782a0408cc3df93dfaf09261819d47bc36719f02"
+    "status": "passed",
+    "mode": "check",
+    "catalog": "cases/catalog.json",
+    "catalog_sha256": "a3f5554160366b4ec96c2c4e7f9456eac5e5a5eadc72c0db17a21de029ccb5fa",
+    "counts": {
+      "papers": 43,
+      "progressive_stages": 246,
+      "chapter_obligations": 126,
+      "source_human_approved": 0,
+      "model_calls_by_indexer": 0
+    },
+    "scope": {
+      "id": "current-benchmark",
+      "paper_count": 43,
+      "progressive_papers": 41,
+      "progressive_stages": 246,
+      "chapter_papers": 2,
+      "chapter_obligations": {
+        "MG-C002": 34,
+        "MG-C003": 92
+      },
+      "sample_unit": "one full paper"
+    },
+    "model_calls": 0
   },
   "protocol": {
-    "command": "python3 scripts/validate_protocol.py",
-    "exit_code": 0,
-    "receipt_sha256": "5352f882fa7a3e1d1dced3e25d691d32f89e24d18296bf2d32d738ff20c15daf",
+    "schema": "math-gauge.protocol-validation/v1",
+    "passed": true,
+    "suite_sha256": "d1df208c3ab7a3f97fe3de4a9da41a338706331e958193ec458fdcacd181b30d",
+    "plan_sha256": "5e1a40c41d5714ebdec6bc8680c8d4a9efb6cab2ecfb51f0529569947662cf36",
     "candidate_projections": 43,
-    "mandatory_obligations": 372,
-    "frozen_messages": 48,
-    "planned_slots_per_model": 177
+    "dependent_review_obligations": 372,
+    "selected_cases": 8,
+    "frozen_followup_messages": 48,
+    "planned_slots_per_model": 177,
+    "isolated_followup_history_edges": 48,
+    "candidate_model_calls": 0,
+    "lean_compilations": 0,
+    "human_approved": false,
+    "runner_files_sha256": {
+      "math_gauge/catalog.py": "fc413136417416cf164e9bfd1d38b7e8a975b8b80073c18ce996e636ebaeaaf9",
+      "math_gauge/execution.py": "6faec8cbeb4e713fe3f70f86e570f78435838806ccd7cea1bf5158853865755e",
+      "math_gauge/review.py": "e4169a33637ef3cb853458f17c00f3ed06fbcf018a653eeccbc878344c52294f",
+      "math_gauge/cli.py": "377321d687daef337d512d6aab09992751a953fe2b29259ed3efb489688ddd4e",
+      "scripts/validate_protocol.py": "94324ad954af7792ffb407cf268c6ccd98fbfe7ac048f3f91546f24361c76715",
+      "scripts/formal/check_evidence.py": "1c18d51b3985abb5298220e8721052323a43af13cd23e599d2468b64c0f47ad7",
+      "scripts/formal/verify.py": "802e5d48327cf8fcc23786f6a8ef6f82e1990f1f76936e1f5781e627919d134e"
+    },
+    "scope": "Current material contracts and identities only; no mathematical adjudication, multi-turn acceptance or model result."
   },
   "author_evidence": {
     "command": "python3 scripts/formal/check_evidence.py",
     "exit_code": 0,
-    "ledger_sha256": "f9c932eab7e70c8e5f42515e1586c885d9c90e640b1eb8d824cabd8601c61bdf",
+    "ledger_sha256": "688b1e8c6d8cf07653029b6453407835856b4bb6e0553f32fd1018588825058b",
     "counts": {
       "papers": 43,
       "fully_formalized_papers": 42,
       "items": 372,
-      "complete_items": 369,
-      "modules": 447,
-      "declarations_with_per_case_repetition": 11029
+      "complete_items": 371,
+      "modules": 452,
+      "declarations_with_per_case_repetition": 11147
     },
-    "reuse_basis": "All candidate/mathematical and Lean source bytes unchanged; original compiler and independent semantic review identities verified; GP003 partial retained"
+    "fresh_case": "MG-GP003",
+    "fresh_manifest_sha256": "59d618da252a7101e9697fab3881e888c3079b59134c182504a1b8e39550782e",
+    "fresh_report_sha256": "c584aab0c42f92542a2063e0266be1fb20b083cd51817d5bc1036c65736048a6",
+    "fresh_modules": 26,
+    "audit": {
+      "axiom_union": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "declaration_count": 496,
+      "passed": true,
+      "unexpected_axioms": []
+    },
+    "actual_started_utc": "2026-10-30T14:45:48.158938+00:00",
+    "actual_finished_utc": "2026-10-30T14:48:29.063642+00:00",
+    "other_case_reuse": "42 cases retain original source, compiler, axiom and independent-review hashes."
   },
   "navigation": {
-    "status": "passed",
-    "current_navigation_documents": 29,
-    "local_links": 918,
-    "legacy_directories_present": false
+    "documents": 27,
+    "local_links": 909,
+    "errors": []
   },
+  "independent_review": {
+    "new_math_sources": "Cross-reviewed with source-bound records; S1/S2 complete, S5 partial. No human approval inferred.",
+    "evidence_tooling": "Reviewed explicit new-compile branch, unchanged-candidate/grading guards, current report/log/all-declaration checks and source-bound independent review; six focused regression tests added.",
+    "record": "verification/author/semantic-reviews/MG-GP003.json",
+    "record_sha256": "e969af0dad2965ec587e433a3afd5495f6a5b8bf7a37fc2031f7812af40ebe4d"
+  },
+  "preserved_scope": {
+    "candidate_messages": 43,
+    "tasks_and_grading_unchanged": true,
+    "fixed_reliability_messages_unchanged": true,
+    "focus_classifications_unchanged": true,
+    "reference_editorial_paragraphs_changed": 3
+  },
+  "git_diff_check": "passed",
   "packaged_consumer": {
+    "status": "passed",
     "path": "verification/packaging.json",
-    "sha256": "3db16bb4b4979ac183004ca693c00fae2928769477300b3ffb94ec15da18a1bb",
-    "wheel_sha256": "40130d93c6842066a767a18f2eeb1b1defdf845fd4c402979b72d934319deed6",
+    "sha256": "ab42db4bca32773ee043c041c64b207defd5cfb39b5ca5139c1fc40d631c3a13",
+    "wheel_sha256": "52ee2a1fdbbe0181bb7658a0e86ac84564a70a10a201d65ae75107c5ae220cbd",
     "installed_default_cases": 43,
     "exact_candidate_exports": [
-      "MG-GR001",
-      "MG-GF101",
-      "MG-C002"
+      "MG-GP003",
+      "MG-GF101"
     ],
-    "engine_and_audit_templates_available": true,
-    "installed_checker_import_and_pinned_ledger": true,
-    "network": false
-  },
-  "independent_engineering_review": {
-    "requested_model": "gpt-6.1-sol",
-    "requested_reasoning_effort": "max",
-    "open_findings": 0,
-    "resolved": [
-      {
-        "finding": "Protocol refresh could absorb changed mathematics",
-        "fix": "Read-only author evidence validation before any refresh write",
-        "regression": "Unselected task, reference and valid contract mutations rejected; no packet writes",
-        "independent_fix_review": "confirmed by benchmark_formal"
-      },
-      {
-        "finding": "Retained checked ledger digest was not enforced",
-        "fix": "Validate fixed migration digest before parsing baseline rows",
-        "regression": "Edited original baseline rejected before binding writes",
-        "independent_fix_review": "confirmed by benchmark_runtime"
-      }
-    ]
-  },
-  "git_diff_check": "passed"
+    "installed_runtime_files_matched": 13,
+    "installed_checker_current_ledger": "passed including recompiled GP003",
+    "acceptance_commands_passed": 8,
+    "network_attempts": 0,
+    "model_requests": 0
+  }
 }

@@ -296,6 +296,152 @@ class RetainedEvidenceTests(FixtureMixin, unittest.TestCase):
         manifest['frozen_inputs'] = V.author_frozen_inputs(self.case)[1]
         V.save(self.root/'manifest.json', manifest)
 
+    def recompiled_fixture(self, *, partial=False):
+        """Synthetic new saved output, never evidence of an actual Lean run."""
+        (self.root/'Example.lean').write_text((self.root/'Example.lean').read_text() + '-- revised fixture\n')
+        extra = self.root/'Extra.lean'
+        extra.write_text('import Example\nnamespace MathGauge.Fixture\ndef other := 2\nend MathGauge.Fixture\n')
+        (self.root/'COVERAGE.md').write_text('Current synthetic fixture coverage.\n')
+        alignment = V.load(self.root/'alignment.json')
+        if partial:
+            alignment['items'][0].update(status='partial', gaps=['Synthetic semantic bridge remains open'])
+        V.save(self.root/'alignment.json', alignment)
+        current_case = V.load(self.case/'case.json')
+        current_case['review']['formalization'] = E.canonical_formalization(alignment)
+        V.save(self.case/'case.json', current_case)
+        manifest = V.load(self.root/'manifest.json')
+        manifest['modules'][0]['sha256'] = V.digest(self.root/'Example.lean')
+        manifest['modules'].append({'module': 'Extra', 'source': 'Extra.lean',
+                                    'sha256': V.digest(extra), 'imports': ['Example']})
+        manifest['frozen_inputs'] = V.author_frozen_inputs(self.case)[1]
+        manifest['coverage']['sha256'] = V.digest(self.root/'COVERAGE.md')
+        manifest['alignment']['sha256'] = V.digest(self.root/'alignment.json')
+        audit = self.root/'CurrentAudit.lean'
+        audit.write_text(V.render_audit(['Example', 'Extra'], all_case_declarations=True))
+        manifest['audit']['sha256'] = V.digest(audit)
+        V.save(self.root/'manifest.json', manifest)
+        declarations = V.load(self.root/'declarations.json')
+        declarations.append({'module': 'Extra', 'name': 'MathGauge.Fixture.other',
+                             'user_name': 'MathGauge.Fixture.other', 'kind': 'definition'})
+        report = V.load(self.root/'verification-report.json')
+        report['audit']['summary']['declaration_count'] = len(declarations)
+        (self.root/'logs/CurrentAudit.log').write_text(
+            ''.join('MATH_GAUGE_DECL ' + json.dumps(row) + '\n' for row in declarations) +
+            'MATH_GAUGE_AUDIT_SUMMARY ' + json.dumps(report['audit']['summary']) + '\n')
+        (self.root/'logs/Extra.log').write_text('')
+
+        def command(row):
+            name = row['module']; log = 'logs/' + name + '.log'
+            return {'module': name, 'source_sha256': row['sha256'], 'exit_code': 0,
+                    'log': log, 'log_sha256': V.digest(self.root/log)}
+
+        report.update(manifest_sha256=V.digest(self.root/'manifest.json'),
+                      started_utc='2000-01-02T00:00:00+00:00', finished_utc='2000-01-02T00:00:01+00:00',
+                      frozen_inputs=manifest['frozen_inputs'], alignment=manifest['alignment'],
+                      coverage=manifest['coverage'], modules=[command(row) for row in manifest['modules']],
+                      mathematical_or_human_review=None, author_coverage={
+                          'items': 1, 'claimed_complete': 0 if partial else 1,
+                          'declaration_inventory_verified': True,
+                          'semantic_correctness_automatically_established': False})
+        report['audit'].update(command=command(manifest['audit']), declarations=declarations)
+        V.save(self.root/'verification-report.json', report)
+        V.save(self.root/'declarations.json', declarations)
+        required = set(manifest['frozen_inputs']) | {
+            'formal/manifest.json', 'formal/alignment.json', 'formal/COVERAGE.md',
+            'formal/verification-report.json', 'formal/declarations.json', 'formal/CurrentAudit.lean',
+        } | {'formal/' + row['source'] for row in manifest['modules']}
+        review_name = 'verification/author/semantic-reviews/current-fixture.json'
+        review = {'schema': 'math-gauge.author-semantic-review/v1',
+                  'case_id': manifest['case_id'], 'case_version': manifest['case_version'],
+                  'author': 'fixture-proof-author', 'reviewer': 'fixture-independent-reviewer',
+                  'reviewer_kind': 'independent-ai', 'human': 'pending', 'compile_is_semantic_proof': False,
+                  'reviewed_at_utc': '2000-01-02T00:00:02+00:00',
+                  'status': 'partial' if partial else 'passed',
+                  'files': {name: V.digest(self.case/name) for name in sorted(required)},
+                  'items': [{'id': 'S1', 'status': 'partial' if partial else 'passed',
+                             'checks': ['Synthetic fixture confirms review-structure validation only.']}]}
+        V.save(self.repo/review_name, review)
+        return review_name
+
+    def bind_recompiled(self, review_name):
+        return self.check(write_binding=True, recompiled_review=review_name)
+
+    def test_recompiled_evidence_binds_current_outputs_and_keeps_original_provenance(self):
+        checked = (self.repo/'verification/author/checked-ledger.json').read_bytes()
+        old_manifest = (self.root/'checked-manifest.json').read_bytes()
+        review_name = self.recompiled_fixture()
+        with patch.object(V, 'command', side_effect=AssertionError('Offline checks cannot invoke tools')):
+            self.bind_recompiled(review_name)
+            row = self.check(); ledger = E.check_all(self.repo)
+        self.assertEqual((self.repo/'verification/author/checked-ledger.json').read_bytes(), checked)
+        self.assertEqual((self.root/'checked-manifest.json').read_bytes(), old_manifest)
+        self.assertEqual(row['compile_started_utc'], '2000-01-02T00:00:00+00:00')
+        self.assertTrue(row['fresh_compilation_repeated'])
+        self.assertEqual(ledger['recompiled_cases'], [self.mapping['id']])
+        self.assertEqual(ledger['counts']['modules'], 2)
+        self.assertEqual(ledger['counts']['declarations_with_per_case_repetition'], 2)
+        binding = V.load(self.root/'input-binding.json')
+        self.assertEqual(binding['kind'], 'recompiled-author-evidence')
+        self.assertEqual(binding['prior_evidence']['verification_report_sha256'],
+                         self.baseline['verification_report_sha256'])
+
+    def test_recompiled_binding_requires_a_current_compiler_report(self):
+        old_report = (self.root/'verification-report.json').read_bytes()
+        old_binding = (self.root/'input-binding.json').read_bytes()
+        review_name = self.recompiled_fixture()
+        (self.root/'verification-report.json').write_bytes(old_report)
+        with self.assertRaisesRegex(V.VerificationError, 'bound to the compiled manifest'):
+            self.bind_recompiled(review_name)
+        self.assertEqual((self.root/'input-binding.json').read_bytes(), old_binding)
+
+    def test_recompiled_binding_cannot_rehash_changed_candidate_or_grading_inputs(self):
+        review_name = self.recompiled_fixture()
+        original_manifest = (self.root/'manifest.json').read_bytes()
+        for name in ('task.md', 'input.lean', 'contract.json', 'rubric.json'):
+            with self.subTest(name=name):
+                path = self.case/name; original = path.read_bytes()
+                path.write_bytes(original + b'\n'); self.update_current_manifest()
+                with self.assertRaisesRegex(V.VerificationError, 'cannot change candidate inputs'):
+                    self.bind_recompiled(review_name)
+                path.write_bytes(original); (self.root/'manifest.json').write_bytes(original_manifest)
+
+    def test_recompiled_review_must_bind_every_current_source_and_artifact(self):
+        review_name = self.recompiled_fixture(); path = self.repo/review_name
+        original = V.load(path)
+        for name in ('formal/Extra.lean', 'formal/CurrentAudit.lean', 'formal/verification-report.json'):
+            with self.subTest(name=name):
+                review = deepcopy(original); del review['files'][name]; V.save(path, review)
+                with self.assertRaisesRegex(V.VerificationError, 'bind every input'):
+                    self.bind_recompiled(review_name)
+        review = deepcopy(original); review['files']['formal/Extra.lean'] = '0'*64; V.save(path, review)
+        with self.assertRaisesRegex(V.VerificationError, 'source hash is stale'):
+            self.bind_recompiled(review_name)
+
+    def test_recompiled_review_cannot_upgrade_partial_or_human_status(self):
+        review_name = self.recompiled_fixture(partial=True); path = self.repo/review_name
+        original = V.load(path)
+        for field, value in (('human', 'approved'), ('author', original['reviewer']),
+                             ('compile_is_semantic_proof', True), ('status', 'passed'),
+                             ('reviewed_at_utc', '2000-01-01T00:00:00+00:00')):
+            with self.subTest(field=field):
+                review = deepcopy(original); review[field] = value; V.save(path, review)
+                with self.assertRaises(V.VerificationError): self.bind_recompiled(review_name)
+        for field, value in (('status', 'passed'), ('checks', [])):
+            with self.subTest(stage_field=field):
+                review = deepcopy(original); review['items'][0][field] = value; V.save(path, review)
+                with self.assertRaises(V.VerificationError): self.bind_recompiled(review_name)
+        V.save(path, original); self.bind_recompiled(review_name)
+        row = self.check()
+        self.assertEqual(row['formal_status'], 'partial')
+        self.assertEqual(row['independent_semantic_review']['status'], 'partial')
+        self.assertEqual(row['human_review'], 'pending')
+
+    def test_recompiled_cli_writes_only_checked_current_evidence(self):
+        review_name = self.recompiled_fixture()
+        self.assertEqual(E.main(['--root', str(self.repo), '--bind-recompiled', self.mapping['id'],
+                                 '--semantic-review', review_name, '--write']), 0)
+        self.assertEqual(E.main(['--root', str(self.repo)]), 0)
+
     def test_metadata_reroute_uses_checked_inputs_and_preserves_original_compile_time(self):
         report = (self.root/'verification-report.json').read_bytes()
         with patch.object(V, 'command', side_effect=AssertionError('Offline checks cannot invoke tools')):

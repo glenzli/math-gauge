@@ -55,8 +55,9 @@ proved under the frozen pin. That library uses Lean 4.34.1 and different Mathlib
 and Aglib pins; its declarations are **not** imported or compiler-verified here.
 Its checked Nisnevich sheafification endpoint is different from S5.
 
-Readable fixed source locations are recorded in the parent's
-`drafts/public-proof-extractions-20261029/MG-P003/formal/external-library-review.json`.
+Readable fixed source locations are recorded in
+`verification/author/gp003-frontier/external-sources.json` (repository relative),
+with the new focused checks in `transfers/upstream-recheck.json`.
 In particular: `Motivic/AlgebraicGeometry/Correspondences/Basic.lean`,
 `Motivic/Transfers/Presheaf/Basic.lean`, and
 `Motivic/Cohomology/A1/Sheafification/DenseDetection.lean`.
@@ -117,47 +118,51 @@ The proof must supply the shrink, not assume the original row is exact. Finite
 fields and points not closed in the original X remain in scope. This geometry
 is not proved by the elementary neighborhood-refinement lemmas in this project.
 
-## G4: geometric and site comparisons, then induction
+## G4: original ambient, finite assembly and remaining site bridge
 
-Completed for a given actual affine semilocal presentation:
+Completed in this revision:
 
-* `ActualSemilocalGeometry.localRingAmbientEquiv` identifies A_(q∩A) and
-  (M⁻¹A)_q as A-algebras and proves compatibility with algebraMap.
-* `localFiberTensorIso` is the actual scheme pullback/tensor-product isomorphism,
-  with first projection formula; `localFiberToAmbient_range` proves the true
-  pullback image is the intersection of the two ambient local-spectrum images.
-* `SchemeNeighborhoodValues` indexes actual scheme factorizations T→U→X,
-  proves the unique-lift comparison with image neighborhoods, and supplies
-  canonical colimit isomorphisms for S, S_i and their actual fiber products.
-* `PairLocalizationNeighborhoods` proves genuine pair-neighborhood finality by
-  a prime-ideal argument, including empty intersections.
-* `ActualSemilocalDescent.affine_semilocal_descent_exact` proves the full
-  equalizer for those actual objects and actual restriction arrows. It takes
-  a finite family exhausting the actual closed points of S, just as the task
-  enumerates them. No open-localization assumption occurs. It does not need
-  to assume that the neighborhood extension has already been proved a sheaf.
+* `AffineRestriction` proves the actual image/preimage adjunction for an open
+  immersion into any ambient X, the canonical neighborhood colimit comparison,
+  and naturality for both original presheaf maps and actual scheme restrictions.
+* `GeneralAmbient.general_semilocal_descent_exact` is S1 for the original G on X,
+  with actual local schemes, actual fiber products and both actual arrows.
+  `generalFinitePointValueIso` identifies the values with the original-X finite
+  point convention, including nonclosed ambient points, naturally in the unit.
+* `GeneralAmbientNonOpen.NonOpenExample.closedPoint_local_not_open_immersion`
+  supplies the explicit S1 counterexample inside a two-point semilocalization
+  of the actual smooth affine plane over Q. It concerns the map to S itself,
+  not merely a non-open map to the original ambient affine plane.
+* `GeneralAmbientComparison.general_two_closed_comparison` transports S2's
+  original map, injections, local surjections and successful shrinking row
+  through these canonical comparisons. No target, extension-sheaf instance,
+  unchanged-cover exactness or overlap surjectivity is assumed.
+* `S5FiniteInduction` performs genuine finite insertion induction and recovers
+  the literal original sheafification unit by `toSheafify_naturality`. Its
+  `SingletonBlockGluing`, quotient finite-value isomorphism and quotient
+  sheafification isomorphism are explicit **conditional** inputs. The module
+  does not prove them for the task's original HI presheaf with transfers.
 
-Remaining full-scope obligations:
+An affine chart presents the given semilocalization; the S1/S2 theorems hold for
+all such presentations in arbitrary X and all commutative rings. A separate
+common-affine-existence theorem from a formal `IsQuasiProjective` predicate is
+not claimed. This no longer hides a missing restriction/value/map comparison.
 
-1. Give a common affine neighborhood of arbitrary finite sigma in smooth
-   quasi-projective X. `OpenNeighborhoods` already proves finality once the
-   containing open W is given, but existence and the complete restriction of
-   the original scheme's sheaf to that affine chart remain to be connected.
-2. The affine S2 extension bridge is now complete:
-   `SchemeNeighborhoodMaps` constructs the original unit's actual colimit map,
-   genuine open-scheme restrictions and naturality; `ActualOpenComparison`
-   constructs local lifts directly in those actual extension values.
-   `actual_affine_two_closed_comparison` proves the supplied two-closed-point
-   shrinking comparison without an assumed extension-sheaf instance. The
-   original general-X-to-affine presentation comparison in item 1 remains.
-3. Prove the big smooth-site/small Zariski-site sheafification comparison with
-   its canonical unit for the actual transfer presheaf restriction.
-4. Use the finite closed-point cover theorem, G1–G3, and the actual canonical
-   maps to complete induction on the number of closed points. The proven S2
-   two-point case is not a proof for arbitrary finite cardinality.
+Remaining for S5, in addition to G0–G3:
 
-S1 remains partial for item 1 despite the complete affine endpoint. S2 remains
-partial for the same original general-X presentation interface, despite its
-completed actual affine extension/unit bridge (item 2). S5 additionally retains
-G0–G3 and items 3–4. None of these are introduced as assumptions of a theorem
-claimed to solve the complete stage.
+1. Prove the comparison between the actual big smooth-site Zariski
+   sheafification and restriction to the small site, with its canonical unit.
+2. Instantiate the finite assembly with the genuine transfer-separated quotient:
+   derive its pointwise injections, actual `SingletonBlockGluing`, its finite
+   point comparison with F and its sheafification comparison from G1–G3.
+   Supplying these as inputs to the conditional helper is not completion.
+
+The current source recheck is `transfers/upstream-recheck.json`. It records
+actual signatures checked at the fixed upstream commit and focused searches;
+it makes no claim that no other proof exists. Per-point zero neighborhoods,
+Nisnevich unit images and sheaf hypotheses do not supply the missing original
+presheaf simultaneous finite-point theorem.
+
+S1 and S2 now have complete author coverage. S5 remains partial because of these
+actual transfer-geometry and site obligations. No target is introduced as an
+axiom, and no candidate model was run.

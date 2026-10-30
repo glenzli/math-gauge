@@ -1,6 +1,6 @@
 # 半局部邻域、下降与层化的依赖比较：逐阶段参考与判准
 
-本组 version 0.1.0；AI 作者自查完成，human pending。未调用候选模型，未为本组生成或编译 Lean。既有母题参考只作为本组完整数学论证的来源，不继承其模型成绩或形式化覆盖。每阶段均 mandatory；分值用于诊断，整组 pass 必须全部阶段实质完成。
+本组题面与合同 version 0.1.1；书面数学论证已作 AI 复核，human pending。作者 Lean 的真实编译与逐项语义覆盖另见 [COVERAGE](formal/COVERAGE.md) 和 [alignment](formal/alignment.json)，不等于候选作答或人工批准。本组未运行候选模型，不继承母题成绩。每阶段均 mandatory；分值用于诊断，整组 pass 必须全部阶段实质完成。
 
 ## S1 层的半局部拼接
 
@@ -38,9 +38,9 @@
 
 判定：true。
 
-本题主目标成立。这是对一个已有几何定理的应用与证明依赖审核：以下完整展开从三个精确的已知输入到目标的论证，不重新证明这些输入背后的标准三元组几何。它不是从基础定义开始的全套动机理论证明，也没有对应的 Lean 核验。
+本题主目标成立。这是对一个已有几何定理的应用与证明依赖审核：以下完整展开从三个精确的已知输入到目标的论证，不重新证明这些输入背后的标准三元组几何。它不是从基础定义开始的全套动机理论证明。当前 Lean 已核验的普通层、邻域余极限与比较步骤，以及尚未完成的转移几何，逐项列于 [GAPS](formal/GAPS.md)。
 
-以下以 [Mazza–Voevodsky–Weibel 的作者版讲义](https://sites.math.rutgers.edu/~weibel/MVWnotes/prova-hyperlink.pdf)为几何输入。固定文件身份、页码和历史对应见仓库 drafts/public-proof-extractions-20261029/MG-P003/source-notes.md 与同目录 source-evidence.json（本组 contract.json 的 source_paths 已列明）。这里的底域是任意域；有限集中的点可以不是 $X$ 的闭点。
+以下以 [Mazza–Voevodsky–Weibel 的作者版讲义](https://sites.math.rutgers.edu/~weibel/MVWnotes/prova-hyperlink.pdf)为几何输入。固定文件身份、页码与条件复核见 [SOURCE-RECHECK](formal/SOURCE-RECHECK.md)；母题原始材料按 [Git 恢复说明](../../../docs/repository-map.md) 留档，contract.json 中的历史 source_paths 是来源身份，不是当前候选附件。这里的底域是任意域；有限集中的点可以不是 $X$ 的闭点。
 
 
 
