@@ -7,7 +7,7 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
+from .catalog import (candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
 from .execution import now, runner_fingerprint
 
@@ -45,6 +45,25 @@ def _runtime_contract(runtime):
                  and runtime["adapter_identity"],
                  "Frozen runtime requires model_label, budget and adapter_identity")
     identity(runtime)
+
+
+def case_approval_sources(suite):
+    """Read approval status from its actual manifest, not an in-memory flag."""
+    result = {}
+    for name in suite.metadata["cases"]:
+        raw = safe_file(suite.root, name).read_bytes()
+        value = json.loads(raw)
+        cid = value["id"]
+        loaded = suite.cases[cid]
+        source = {"manifest": name, "manifest_sha256": digest_bytes(raw),
+                  "status": value["status"], "human_review": value["review"]["human"]}
+        _require(source["status"] == loaded["status"]
+                 and source["human_review"] == loaded["review"]["human"]
+                 and value["version"] == loaded["version"],
+                 "Case approval source changed after suite loading")
+        result[cid] = source
+    _require(set(result) == set(suite.cases), "Case approval source inventory changed")
+    return result
 
 
 @dataclass
@@ -254,6 +273,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
     components = {cid: row["id"] for row in profile.data["components"]
                   for cid in row["case_ids"]}
     tags, tag_identity = _focus_tags(profile)
+    approvals = case_approval_sources(suite)
     cases = []
     for cid, case in suite.cases.items():
         contract = validate_group_contract(read_json(safe_file(suite.root, case["group_contract"])))
@@ -264,6 +284,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
             "contract_kind": contract["kind"],
             "family_id": case.get("family_id", cid), "component": components[cid],
             "case_approved": case["status"] == "approved" and case["review"]["human"] == "approved",
+            "case_approval_source": approvals[cid],
             "request_sha256": digest_bytes(json.dumps(request, ensure_ascii=False, sort_keys=True).encode()),
             "candidate_message_sha256": digest_bytes(candidate_message(request).encode()),
             "group_contract": case["group_contract"],
@@ -337,6 +358,21 @@ def validate_plan(plan):
     membership = {cid: component["id"] for component in components
                   for cid in component["case_ids"]}
     for case in cases:
+        _require(type(case.get("case_approved")) is bool, "Frozen case approval must be explicit")
+        approval = case.get("case_approval_source")
+        if approval is not None:
+            _require(isinstance(approval, dict) and set(approval) == {
+                "manifest", "manifest_sha256", "status", "human_review"},
+                "Frozen case approval source is incomplete")
+            relative_name(approval["manifest"])
+            digest = approval["manifest_sha256"]
+            _require(isinstance(digest, str) and len(digest) == 64
+                     and all(c in "0123456789abcdef" for c in digest)
+                     and approval["status"] in {"draft", "approved", "retired"}
+                     and approval["human_review"] in {"pending", "approved", "rejected"}
+                     and case["case_approved"] == (approval["status"] == "approved"
+                                                   and approval["human_review"] == "approved"),
+                     "Frozen case approval contradicts its original source")
         stages = case.get("stages", [])
         _require(case.get("component") == membership[case["case_id"]]
                  and _category_matches(case["component"], case.get("task_kind"), case.get("contract_kind"))
@@ -368,6 +404,8 @@ def validate_plan(plan):
                  "independent": "fresh", "followup": "branch-history-only",
                  "external_correctness_feedback": False, "tools_allowed": []},
              "A frozen plan cannot contain execution results or changed context policy")
+    from .eligibility import validate_execution_requirements
+    validate_execution_requirements(plan)
     return plan
 
 

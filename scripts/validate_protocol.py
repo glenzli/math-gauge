@@ -18,12 +18,21 @@ RUNNER_FILES = (
     "math_gauge/catalog.py", "math_gauge/execution.py", "math_gauge/review.py",
     "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/reliability.py",
     "math_gauge/reliability_review.py",
+    "math_gauge/eligibility.py",
     "math_gauge/cli.py", "scripts/validate_protocol.py",
     "scripts/formal/check_evidence.py", "scripts/formal/verify.py",
+    "scripts/isolated_cli/prepare.py", "scripts/isolated_cli/probe.py",
 )
 ACCEPTANCE_TESTS = (
     "test_benchmarks.py", "test_scoring.py", "test_reliability_execution.py",
     "test_reliability_review.py",
+    "test_eligibility.py", "test_eligibility_acceptance.py", "test_isolated_cli.py",
+)
+ACCEPTANCE_STANDARDS = (
+    "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
+    "protocol/reliability-execution.md", "protocol/reliability-scoring.md",
+    "protocol/evaluation.md", "protocol/isolated-cli-runs.md",
+    "protocol/execution-evidence.md", "protocol/execution-evidence-format.md",
 )
 SELECTED = (
     "MG-GR002", "MG-GR004", "MG-GR007", "MG-GR014",
@@ -123,17 +132,18 @@ def check_offline_acceptance(root: Path, plan: dict) -> dict:
     receipt = read(path)
     require(receipt.get("schema") == "math-gauge.runner-offline-acceptance/v1"
             and receipt.get("status") == "passed"
-            and receipt.get("real_candidate_model_calls") == 0
+            and type(receipt.get("real_candidate_model_calls")) is int
+            and receipt["real_candidate_model_calls"] == 0
+            and type(receipt.get("lean_compilations")) is int
+            and receipt["lean_compilations"] == 0
             and receipt.get("formal_model_result") is False,
             "Offline acceptance cannot claim actual candidate results")
     bindings = receipt.get("input_sha256", {})
-    required = set(RUNNER_FILES) | {
-        "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
-        "protocol/reliability-execution.md", "protocol/reliability-scoring.md",
+    required = set(RUNNER_FILES) | set(ACCEPTANCE_STANDARDS) | {
         "tests/test_reliability_materials.py",
         *("tests/" + name for name in ACCEPTANCE_TESTS),
     }
-    require(required <= set(bindings),
+    require(isinstance(bindings, dict) and required <= set(bindings),
             "Offline acceptance omits implementation, scoring or test identities")
     for name, expected in bindings.items():
         require(sha(safe_file(root, name).read_bytes()) == expected,
@@ -147,7 +157,9 @@ def check_offline_acceptance(root: Path, plan: dict) -> dict:
             "Offline acceptance must execute each required focused test suite")
     for row in checks:
         require(type(row.get("exit_code")) is int and row["exit_code"] == 0
-                and type(row.get("tests")) is int and row["tests"] > 0,
+                and type(row.get("tests")) is int and row["tests"] > 0
+                and type(row.get("skipped")) is int
+                and 0 <= row["skipped"] < row["tests"],
                 "Offline acceptance needs successful test receipts")
         log_name = row.get("log", "")
         require(isinstance(log_name, str) and log_name.startswith("verification/runner/logs/"),
@@ -155,13 +167,19 @@ def check_offline_acceptance(root: Path, plan: dict) -> dict:
         log = safe_file(root, log_name).read_bytes()
         require(sha(log) == row.get("log_sha256"), "Offline acceptance test output drift")
         output = log.decode("utf-8")
-        count = re.search(r"\bRan (\d+) tests? in ", output)
-        require(count is not None and int(count.group(1)) == row["tests"]
-                and re.search(r"^OK(?: \(skipped=\d+\))?$", output, flags=re.M) is not None
+        counts = re.findall(r"^Ran (\d+) tests? in [^\n]+$", output, flags=re.M)
+        outcomes = re.findall(r"^OK(?: \(skipped=(\d+)\))?$", output, flags=re.M)
+        require(len(counts) == len(outcomes) == 1 and int(counts[0]) == row["tests"]
+                and int(outcomes[0] or 0) == row["skipped"]
                 and not re.search(r"^FAILED\b", output, flags=re.M),
                 "Offline acceptance test output does not establish the recorded successful count")
+    require(type(receipt.get("test_count")) is int
+            and receipt["test_count"] == sum(row["tests"] for row in checks),
+            "Offline acceptance aggregate test count differs from saved suite receipts")
     return {"status": "offline-fixture-acceptance-passed", "receipt": binding,
-            "input_files_checked": len(bindings), "tests_rerun_by_material_check": False}
+            "input_files_checked": len(bindings), "tests_rerun_by_material_check": False,
+            "real_candidate_model_calls": 0, "lean_compilations": 0,
+            "formal_model_result": False}
 
 
 def author_summary(root: Path) -> dict:
@@ -333,12 +351,13 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         require(item["source_turn"] in read(safe_file(suite.root, case["group_contract"]))["turns"],
                 f"{item['case_id']}: selected mathematical turn changed")
     runner_hashes = {name: sha(safe_file(root, name).read_bytes()) for name in RUNNER_FILES}
-    protocol_hashes = {name: sha(safe_file(root, name).read_bytes()) for name in plan["protocol_files_sha256"]}
+    protocol_hashes = {name: sha(safe_file(root, name).read_bytes()) for name in ACCEPTANCE_STANDARDS}
     if refresh:
         plan["suites"] = [expected_suite]
         plan["cases"] = [actual[item["case_id"]] for item in plan["cases"]]
         selection["source_suite_sha256"] = suite.sha256
-        (packet / "selection.json").write_bytes(encoded(selection))
+        if (packet / "selection.json").read_bytes() != encoded(selection):
+            (packet / "selection.json").write_bytes(encoded(selection))
         plan["files_sha256"] = {name: sha((packet / name).read_bytes()) for name in plan["files_sha256"]}
         plan["protocol_files_sha256"] = protocol_hashes
         plan["runner_files_sha256"] = runner_hashes

@@ -43,6 +43,39 @@ class BenchmarkPlanTests(unittest.TestCase):
                          {f"F{i:02}" for i in range(1, 10)})
         self.assertEqual(self.plan["candidate_calls"], 0)
         self.assertTrue(all(x["case_approved"] is False for x in self.plan["case_index"]))
+        for case in self.plan["case_index"]:
+            approval = case["case_approval_source"]
+            self.assertEqual(approval["status"], "draft")
+            self.assertEqual(approval["human_review"], "pending")
+            self.assertTrue((self.suite.root / approval["manifest"]).is_file())
+
+    def test_self_rehashed_approval_claim_is_rejected_against_actual_suite_before_execution(self):
+        from math_gauge.reliability import execute_reliability_run
+
+        plan = copy.deepcopy(self.plan)
+        row = plan["case_index"][0]
+        row["case_approved"] = True
+        with self.assertRaisesRegex(ValueError, "approval contradicts"):
+            changed = dict(plan, plan_sha256=identity({k: v for k, v in plan.items() if k != "plan_sha256"}))
+            validate_plan(changed)
+        row["case_approval_source"].update(status="approved", human_review="approved")
+        plan["plan_sha256"] = identity({k: v for k, v in plan.items() if k != "plan_sha256"})
+        validate_plan(plan)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "run"
+            with patch("subprocess.Popen", side_effect=AssertionError("approval failure must precede execution")):
+                with self.assertRaisesRegex(ValueError, "approval differs from its actual suite source"):
+                    execute_reliability_run(plan, self.suite, output, replay={})
+            self.assertFalse(output.exists())
+
+    def test_in_memory_status_change_is_not_an_approval_source(self):
+        suite = copy.copy(self.suite)
+        suite.cases = copy.deepcopy(self.suite.cases)
+        case = next(iter(suite.cases.values()))
+        case["status"] = "approved"
+        case["review"]["human"] = "approved"
+        with self.assertRaisesRegex(ValueError, "approval source changed"):
+            build_plan(self.profile, suite, runtime=RUNTIME)
 
     def test_targets_select_dependency_closures_without_changing_denominators(self):
         expected = {"proofs": 87, "lean-audit": 18, "lean-construction": 18,

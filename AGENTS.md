@@ -14,6 +14,9 @@
   and single-answer judgments/reporting in review.py. benchmarks.py owns evaluator-only profiles and
   selected benchmark plans; scoring.py owns versioned cross-attempt aggregation; reliability.py owns
   branch history and KEEP/FULL composition with separately bound follow-up reviews.
+- eligibility.py owns immutable execution-evidence imports, attributed execution-audit snapshots
+  and per-slot qualification. Source integrity, human provenance review and mathematical review
+  remain separate; request labels or fixture evidence cannot establish formal comparison eligibility.
 - Benchmark scores use frozen profile weights and fixed denominators. Missing, execution-failed and
   unresolved slots stay explicit; never renormalize a partial run into a full-benchmark score.
 - Run python3 -m unittest discover -s tests and python3 -m math_gauge validate for affected runner contracts.

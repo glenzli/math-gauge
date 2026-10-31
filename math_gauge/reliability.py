@@ -14,7 +14,7 @@ import time
 import uuid
 from pathlib import Path
 
-from .benchmarks import identity, select_slots, validate_plan
+from .benchmarks import case_approval_sources, identity, select_slots, validate_plan
 from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
                       validate_group_contract, write_json)
 from .execution import extract_candidate_lean, invoke_conversation, now, runner_fingerprint
@@ -106,8 +106,13 @@ def _bind_suite(plan, suite):
         raise ValueError("Reliability plan binds a different suite")
     if {r["case_id"] for r in plan["case_index"]} != set(suite.cases):
         raise ValueError("Reliability case inventory changed")
+    approvals = case_approval_sources(suite)
     for row in plan["case_index"]:
         case = suite.cases[row["case_id"]]
+        source = approvals[row["case_id"]]
+        if (row["case_approved"] != (source["status"] == "approved" and source["human_review"] == "approved")
+                or row.get("case_approval_source", source) != source):
+            raise ValueError("Reliability case approval differs from its actual suite source")
         request = suite.request(case)
         contract_raw = safe_file(suite.root, case["group_contract"]).read_bytes()
         contract = validate_group_contract(json.loads(contract_raw))
@@ -398,6 +403,14 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
     if dest.is_relative_to(suite.root):
         raise ValueError("Reliability output must be outside the question suite")
     dest.mkdir(parents=True, exist_ok=False)
+    # Freeze the original execution audits before any dependent invocation.
+    # Evidence-less legacy runs copy no audit and remain provisional.
+    reused_evidence = {reusable[s["slot_id"]][1]["evidence_id"]
+                       for s in selected if s["slot_id"] in reusable}
+    if reused_evidence:
+        from .eligibility import copy_execution_eligibility
+        for previous in reuse_runs or ():
+            copy_execution_eligibility(previous, dest, evidence_ids=reused_evidence)
     write_json(dest / "plan.json", plan)
     origin = "command" if command is not None else "replay" if replay is not None else "fixture"
     execution_contract = {"origin": origin, "command": command, "timeout_seconds": timeout,
@@ -463,6 +476,15 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
             target = dest / "inputs" / cid / (kind + extension)
             target.write_bytes(source)
             meta["inputs"][cid][kind] = {"path": str(target.relative_to(dest)), "sha256": digest_bytes(source)}
+        approval = case.get("case_approval_source")
+        if approval is not None:
+            raw = safe_file(suite.root, approval["manifest"]).read_bytes()
+            if digest_bytes(raw) != approval["manifest_sha256"]:
+                raise ValueError("Case approval source changed during preparation")
+            target = dest / "inputs" / cid / "case-manifest.json"
+            target.write_bytes(raw)
+            meta["inputs"][cid]["case_approval_source"] = {
+                "path": str(target.relative_to(dest)), "sha256": digest_bytes(raw)}
         requests[cid] = request
     write_json(dest / "run.json", meta)
     records, materials = {}, {}
@@ -661,7 +683,7 @@ def inspect_reliability_run(root):
     if meta.get("selected_slot_ids") != [s["slot_id"] for s in expected]:
         raise ValueError("Frozen execution projection changed")
     runtime = _runtime(plan)
-    requests = {}
+    requests, approvals = {}, {}
     for case in plan["case_index"]:
         cid = case["case_id"]
         binding = meta["inputs"][cid]
@@ -669,6 +691,21 @@ def inspect_reliability_run(root):
             descriptor = binding.get(kind, {})
             if digest_bytes(safe_file(root, descriptor.get("path", "")).read_bytes()) != descriptor.get("sha256"):
                 raise ValueError("Frozen evaluator reference or rubric changed")
+        approval = case.get("case_approval_source")
+        approvals[cid] = False
+        if approval is not None:
+            descriptor = binding.get("case_approval_source", {})
+            raw = safe_file(root, descriptor.get("path", "")).read_bytes()
+            value = json.loads(raw)
+            if (digest_bytes(raw) != descriptor.get("sha256")
+                    or digest_bytes(raw) != approval["manifest_sha256"]
+                    or value.get("id") != cid or value.get("version") != case["version"]
+                    or value.get("status") != approval["status"]
+                    or value.get("review", {}).get("human") != approval["human_review"]
+                    or case["case_approved"] != (value.get("status") == "approved"
+                                                 and value.get("review", {}).get("human") == "approved")):
+                raise ValueError("Frozen case approval source changed")
+            approvals[cid] = True
         request = read_json(safe_file(root, binding["request"]))
         if (_request_hash(request) != case["request_sha256"]
                 or digest_bytes(candidate_message(request).encode()) != case["candidate_message_sha256"]
@@ -751,7 +788,7 @@ def inspect_reliability_run(root):
                 raise ValueError("Reconstructed material bytes changed")
         records[sid] = dict(record, material=saved)
         materials[sid] = material
-    meta = dict(meta, plan=plan)
+    meta = dict(meta, plan=plan, case_approval_evidence_verified=approvals)
     if meta.get("completed_at") is not None:
         wanted_budget = set(meta.get("prior_budget_evidence", {})) | {
             r["evidence_id"] for r in records.values() if r["attempts"]}
@@ -774,6 +811,6 @@ def apply_reliability_reviews(root, entries, *, revise=False, expected_snapshot=
     return implementation(root, entries, revise=revise, expected_snapshot=expected_snapshot)
 
 
-def reliability_score_inputs(root, *, snapshot=None):
+def reliability_score_inputs(root, *, snapshot=None, audit_snapshot=None):
     from .reliability_review import reliability_score_inputs as implementation
-    return implementation(root, snapshot=snapshot)
+    return implementation(root, snapshot=snapshot, audit_snapshot=audit_snapshot)

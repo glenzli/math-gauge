@@ -1,14 +1,18 @@
 """Offline conversation/material contracts. No candidate service or Lean calls."""
 
 import copy
+from contextlib import redirect_stderr, redirect_stdout
+import io
 import json
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, candidate_message, read_json, write_json
+from math_gauge.cli import main
 from math_gauge.reliability import (compose_material, execute_reliability_run,
                                     inspect_reliability_run, _slot_path)
 
@@ -205,6 +209,26 @@ class ReliabilityExecutionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "material bytes"):
             inspect_reliability_run(root)
 
+    def test_case_approval_source_is_frozen_and_legacy_absence_stays_readable(self):
+        root, _ = self.execute()
+        meta, _ = inspect_reliability_run(root)
+        cid = next(iter(meta["inputs"]))
+        self.assertTrue(meta["case_approval_evidence_verified"][cid])
+        source = root / meta["inputs"][cid]["case_approval_source"]["path"]
+        value = read_json(source)
+        self.assertEqual(value["status"], "draft")
+        value["status"] = "approved"
+        write_json(source, value)
+        with self.assertRaisesRegex(ValueError, "case approval source changed"):
+            inspect_reliability_run(root)
+        legacy = self.plan(["neutral"])
+        for case in legacy["case_index"]:
+            case.pop("case_approval_source")
+        legacy["plan_sha256"] = identity({key: item for key, item in legacy.items() if key != "plan_sha256"})
+        old, _ = self.execute(legacy, name="legacy")
+        inspected, _ = inspect_reliability_run(old)
+        self.assertFalse(any(inspected["case_approval_evidence_verified"].values()))
+
     def test_same_plan_projection_reuses_exact_a1_without_new_calls(self):
         plan = self.plan()
         one, _ = self.execute(plan, name="one", targets=["neutral"])
@@ -218,6 +242,40 @@ class ReliabilityExecutionTests(unittest.TestCase):
             self.assertEqual(a_meta["slot_record_sha256"][sid], meta["slot_record_sha256"][sid])
             self.assertEqual((one / _slot_path(sid) / "record.json").read_bytes(),
                              (two / _slot_path(sid) / "record.json").read_bytes())
+
+    def test_reused_execution_audit_conflict_stops_before_dependent_invocations(self):
+        plan = self.plan()
+        one, _ = self.execute(plan, name="one", targets=["neutral"], adapter=lambda _: "fixture response")
+        seen = []
+        with patch("math_gauge.eligibility.copy_execution_eligibility",
+                   side_effect=ValueError("Conflicting original execution audits")) as copy_audit:
+            with self.assertRaisesRegex(ValueError, "Conflicting original execution audits"):
+                self.execute(plan, name="two", targets=["stance"], reuse_runs=[one],
+                             adapter=lambda request: seen.append(request) or "fixture response")
+        self.assertEqual(seen, [])
+        self.assertEqual(copy_audit.call_count, 1)
+        selected_originals = {record["evidence_id"] for sid, record in inspect_reliability_run(one)[1].items()
+                              if sid.endswith(":A1")}
+        self.assertEqual(copy_audit.call_args.kwargs["evidence_ids"], selected_originals)
+
+    def test_evidence_cli_exports_direct_submission_and_reports_missing_evidence_offline(self):
+        root, before = self.execute()
+        sid = before["selected_slot_ids"][0]
+        template = self.root / "submission.json"
+        checked = self.root / "evidence-check.json"
+        with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            self.assertEqual(main(["benchmark-evidence-template", "--run", str(root),
+                                   "--slot", sid, "--out", str(template)]), 0)
+            self.assertEqual(main(["benchmark-evidence-check", "--run", str(root),
+                                   "--out", str(checked)]), 1)
+        form = read_json(template)
+        self.assertEqual(form["slot_id"], sid)
+        self.assertEqual(form["schema"], "math-gauge.execution-eligibility-submission/v1")
+        self.assertEqual(form["audit"]["decision"], "unresolved")
+        self.assertIn("execution_evidence_missing", read_json(checked)["slots"][sid]["reasons"])
+        after, _ = inspect_reliability_run(root)
+        self.assertEqual(after["candidate_calls"], 0)
+        self.assertEqual(after["slot_record_sha256"], before["slot_record_sha256"])
 
     def test_distinct_generation_evidence_conflicts_even_for_identical_text(self):
         plan = self.plan()
@@ -245,6 +303,26 @@ class ReliabilityExecutionTests(unittest.TestCase):
         plan = self.plan(["neutral"], candidate_parameters={"expected_truth": True})
         with self.assertRaisesRegex(ValueError, "whitelisted"):
             self.execute(plan)
+
+    def test_supplied_invalid_execution_requirements_fail_before_transport(self):
+        valid = {"schema": "math-gauge.execution-requirements/v1", "allowed_tools": [],
+                 "internal_tools": ["finish"], "tool_control_tool": "search_web",
+                 "denied_categories": ["reference", "history", "prior_run", "memory", "global_config"],
+                 "read_exceptions": []}
+        base = self.plan(["neutral"], execution_requirements=valid)
+        for invalid in (None, [], {}, dict(valid, allowed_tools=["search_web"]),
+                        dict(valid, read_exceptions=[{"kind": "subpath", "path": "relative", "purpose": "invalid"}])):
+            with self.subTest(requirements=invalid):
+                with self.assertRaises(ValueError):
+                    self.plan(["neutral"], execution_requirements=invalid)
+                forged = copy.deepcopy(base)
+                forged["runtime"]["execution_requirements"] = invalid
+                forged["runtime_sha256"] = identity(forged["runtime"])
+                forged["plan_sha256"] = identity({key: value for key, value in forged.items() if key != "plan_sha256"})
+                with patch("math_gauge.reliability.invoke_conversation") as invoke:
+                    with self.assertRaises(ValueError):
+                        self.execute(forged, name="invalid", command=["must-not-launch"])
+                    invoke.assert_not_called()
 
     def test_rehashed_cross_branch_plan_is_still_rejected(self):
         plan = self.plan()

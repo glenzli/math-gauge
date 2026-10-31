@@ -570,10 +570,14 @@ def apply_reliability_reviews(root, entries, *, revise=False, expected_snapshot=
     return updated
 
 
-def reliability_score_inputs(root, *, snapshot=None):
+def reliability_score_inputs(root, *, snapshot=None, audit_snapshot=None):
     """Return only recomputed, fully bound score evidence for aggregation."""
+    from .eligibility import verify_execution_eligibility
+
     meta, records = inspect_reliability_run(root)
     reviews, snapshot_identity, _ = _load_review_snapshot(root, meta, records, snapshot)
+    execution_eligibility = verify_execution_eligibility(
+        root, meta=meta, records=records, audit_snapshot=audit_snapshot)
     rows = []
     for sid, record in records.items():
         entry = reviews.get(sid)
@@ -589,14 +593,14 @@ def reliability_score_inputs(root, *, snapshot=None):
                 raise ValueError("Saved reliability review evidence changed")
             result = _validate_entry(root, meta, records, entry)
         origin = record.get("origin", meta["origin"])
-        # Neither backend isolation nor a model identity can be independently
-        # established by an argv/JSON adapter declaration. Remain ineligible
-        # until a future explicit evidence verifier establishes those gates.
+        execution = execution_eligibility["slots"][sid]
         rows.append({"slot_id": sid, "case_id": record["case_id"],
                      "started": record["started"], "status": record["status"],
                      "selected": True, "reason": record.get("reason"),
                      "execution_status": record["status"],
                      "model_label": meta["model_label"], "origin": origin,
+                     "case_approval_evidence_verified": meta["case_approval_evidence_verified"][record["case_id"]],
+                     "case_approval_source": meta["inputs"][record["case_id"]].get("case_approval_source"),
                      "fixture_only": origin in {"fixture", "replay"},
                      "evidence_id": record["evidence_id"],
                      "slot_record_sha256": meta["slot_record_sha256"][sid],
@@ -609,14 +613,20 @@ def reliability_score_inputs(root, *, snapshot=None):
                      "reviewer_kind": entry.get("reviewer_kind") if entry else None,
                      "review_sha256": entry.get("review_sha256") if entry else None,
                      "focus_verdict": entry.get("focus_review", {}).get("verdict") if entry else None,
-                     "comparison_eligible": False, **result})
+                     "execution_eligibility": copy.deepcopy(execution),
+                     "execution_receipt_sha256": execution.get("receipt_sha256"),
+                     "execution_audit_sha256": execution.get("audit_sha256"),
+                     "comparison_eligible": execution["eligible"] is True, **result})
     return {"plan": meta["plan"], "model_label": meta["model_label"], "slots": rows,
+            "root": str(Path(root).resolve()),
             "run_id": meta["run_id"], "origin": meta["origin"],
             "review_snapshot": snapshot_identity,
+            "audit_snapshot": execution_eligibility.get("audit_snapshot"),
+            "execution_eligibility": {key: value for key, value in execution_eligibility.items()
+                                      if key != "slots"},
             "execution_contract_sha256": meta["execution_contract_sha256"],
             **{key: meta.get(key) for key in ("selected_slot_ids", "candidate_calls", "transport_attempts",
                  "budget_stop_reason", "unrun_slots", "budget_scope", "unseen_plan_fragments_accounted_for",
                  "prior_transport_attempts", "prior_known_total_tokens", "cumulative_transport_attempts",
                  "cumulative_known_total_tokens", "cumulative_total_tokens", "cumulative_token_usage_complete")},
-            "formal_eligibility": {"eligible": False,
-                                   "reasons": ["model_identity_unverified", "candidate_isolation_unverified"]}}
+            }

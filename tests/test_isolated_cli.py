@@ -255,9 +255,21 @@ class IsolatedCLIPreparationTests(unittest.TestCase):
     def test_denial_probe_requires_permission_error_and_exact_positive_hash(self):
         manifest = {"positive": str(self.prompt), "sha256": helper.sha256(self.prompt), "negative": [{"path": str(self.private / "reference"), "exists_before_run": True}]}
         with mock.patch("builtins.open", side_effect=PermissionError(1, "synthetic denied")):
-            self.assertTrue(probe.probe(manifest)["passed"])
+            result = probe.probe(manifest)
+            self.assertTrue(result["passed"])
+            self.assertEqual(result["checks"][0]["observed_sha256"], helper.sha256(self.prompt))
             manifest["sha256"] = "wrong"
-            self.assertFalse(probe.probe(manifest)["passed"])
+            result = probe.probe(manifest)
+            self.assertFalse(result["passed"])
+            self.assertEqual(result["checks"][0]["observed_sha256"], helper.sha256(self.prompt))
+
+    def test_positive_open_failure_retains_unknown_observed_hash(self):
+        manifest = {"positive": str(self.root / "missing-task.md"), "sha256": helper.sha256(self.prompt),
+                    "negative": [{"path": str(self.private / "reference"), "exists_before_run": True}]}
+        result = probe.probe(manifest)
+        self.assertFalse(result["passed"])
+        self.assertIsNone(result["checks"][0]["observed_sha256"])
+        self.assertEqual(result["checks"][0]["errno"], 2)
 
 
 if __name__ == "__main__":

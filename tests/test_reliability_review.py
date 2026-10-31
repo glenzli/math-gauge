@@ -75,6 +75,18 @@ class ReliabilityReviewTests(unittest.TestCase):
         self.assertFalse(row["comparison_eligible"])
         self.assertTrue(row["fixture_only"])
 
+    def test_legacy_runtime_labels_cannot_supply_missing_original_execution_audit(self):
+        before = read_json(self.run / "run.json")
+        labeled = dict(before, model_identity_verified=True, fresh_context_verified=True,
+                       candidate_tools_verified_disabled=True)
+        write_json(self.run / "run.json", labeled)
+        sid = self.cid + ":A1"
+        row = self.row(sid)
+        self.assertFalse(row["comparison_eligible"])
+        self.assertIsNone(row["execution_receipt_sha256"])
+        self.assertIn("execution_evidence_missing", row["execution_eligibility"]["reasons"])
+        self.assertEqual(row["slot_record_sha256"], before["slot_record_sha256"][sid])
+
     def test_candidate_incomplete_is_zero_without_becoming_mathematical_error(self):
         sid = self.cid + ":A1"
         entry = self.passing(sid)

@@ -12,7 +12,7 @@
 | 人工审定 | 全部pending，未由AI或编译替代 |
 | 候选结果 | 没有当前基准的候选答卷、轨迹或通过率 |
 | 可靠性与评分软件 | 固定八题、48条后续消息、177槽位/模型；多轮与七分项入口的离线验收见[运行器证据](../verification/runner/README.md)，真实候选调用0 |
-| 正式比较资格 | 新入口尚无独立后端/隔离实证接入，formal_score保持null；离线测试不构成正式模型成绩 |
+| 正式比较资格 | 已接入[运行证据与具名审核](../protocol/execution-evidence.md)的逐槽位校验；当前无真实运行、题目仍待人审，不产生formal_score；离线测试不构成正式模型成绩 |
 
 完整作者覆盖、独立语义审核、真实报告及缺口见[作者证据账本](../verification/author/README.md)。每题的formal/alignment.json与COVERAGE.md说明实际数学范围；模块数量不等于定理数量，也不等于独立样本数。
 

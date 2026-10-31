@@ -53,9 +53,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
     def test_offline_acceptance_cannot_bless_changed_sources_or_candidate_results(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            names = set(V.RUNNER_FILES) | {
-                "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
-                "protocol/reliability-execution.md", "protocol/reliability-scoring.md",
+            names = set(V.RUNNER_FILES) | set(V.ACCEPTANCE_STANDARDS) | {
                 "tests/test_reliability_materials.py",
                 *("tests/" + name for name in V.ACCEPTANCE_TESTS),
             }
@@ -65,6 +63,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                 path.write_bytes(name.encode())
             receipt = {"schema": "math-gauge.runner-offline-acceptance/v1", "status": "passed",
                        "real_candidate_model_calls": 0, "formal_model_result": False,
+                       "lean_compilations": 0, "test_count": len(V.ACCEPTANCE_TESTS),
                        "input_sha256": {name: V.sha((root / name).read_bytes()) for name in names},
                        "checks": []}
             for name in V.ACCEPTANCE_TESTS:
@@ -73,7 +72,8 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                 log.write_bytes(b".\nRan 1 test in 0.001s\n\nOK\n")
                 receipt["checks"].append({
                     "command": ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", name],
-                    "exit_code": 0, "tests": 1, "log": log.relative_to(root).as_posix(),
+                    "exit_code": 0, "tests": 1, "skipped": 0,
+                    "log": log.relative_to(root).as_posix(),
                     "log_sha256": V.sha(log.read_bytes())})
             path = root / "verification/runner/offline-acceptance.json"
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -83,12 +83,16 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                                           "sha256": V.sha(path.read_bytes())}}
             checked = V.check_offline_acceptance(root, plan)
             self.assertFalse(checked["tests_rerun_by_material_check"])
-            omitted = receipt["input_sha256"].pop("tests/test_reliability_review.py")
-            path.write_bytes(V.encoded(receipt))
-            plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
-            with self.assertRaisesRegex(ValueError, "omits implementation, scoring or test"):
-                V.check_offline_acceptance(root, plan)
-            receipt["input_sha256"]["tests/test_reliability_review.py"] = omitted
+            for name in ("math_gauge/eligibility.py", "tests/test_eligibility.py",
+                         "tests/test_eligibility_acceptance.py", "tests/test_reliability_review.py",
+                         "protocol/execution-evidence.md", "protocol/isolated-cli-runs.md"):
+                with self.subTest(omitted=name):
+                    omitted = receipt["input_sha256"].pop(name)
+                    path.write_bytes(V.encoded(receipt))
+                    plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
+                    with self.assertRaisesRegex(ValueError, "omits implementation, scoring or test"):
+                        V.check_offline_acceptance(root, plan)
+                    receipt["input_sha256"][name] = omitted
             path.write_bytes(V.encoded(receipt))
             plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
             log = root / receipt["checks"][0]["log"]
@@ -107,6 +111,64 @@ class ReliabilityMaterialsTests(unittest.TestCase):
             plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
             with self.assertRaisesRegex(ValueError, "cannot claim actual candidate results"):
                 V.check_offline_acceptance(root, plan)
+
+    def test_offline_receipt_counts_skips_commands_and_no_execution_claims_are_bound(self):
+        """These synthetic logs exercise the parser, never establish actual test execution."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            names = set(V.RUNNER_FILES) | set(V.ACCEPTANCE_STANDARDS) | {
+                "tests/test_reliability_materials.py",
+                *("tests/" + name for name in V.ACCEPTANCE_TESTS),
+            }
+            for name in names:
+                file = root / name
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_bytes(name.encode())
+            checks = []
+            for name in V.ACCEPTANCE_TESTS:
+                log = root / ("verification/runner/logs/" + name + ".log")
+                log.parent.mkdir(parents=True, exist_ok=True)
+                log.write_text("..s\nRan 3 tests in 0.001s\n\nOK (skipped=1)\n")
+                checks.append({
+                    "command": ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", name],
+                    "exit_code": 0, "tests": 3, "skipped": 1,
+                    "log": log.relative_to(root).as_posix(), "log_sha256": V.sha(log.read_bytes())})
+            receipt = {"schema": "math-gauge.runner-offline-acceptance/v1", "status": "passed",
+                       "real_candidate_model_calls": 0, "lean_compilations": 0,
+                       "formal_model_result": False, "test_count": 3 * len(checks),
+                       "input_sha256": {name: V.sha((root / name).read_bytes()) for name in names},
+                       "checks": checks}
+            path = root / "verification/runner/offline-acceptance.json"
+            plan = {"runner_multi_turn_acceptance": "offline-fixture-acceptance-passed",
+                    "runner_acceptance": {"path": path.relative_to(root).as_posix()}}
+
+            def check(value):
+                path.write_bytes(V.encoded(value))
+                plan["runner_acceptance"]["sha256"] = V.sha(path.read_bytes())
+                return V.check_offline_acceptance(root, plan)
+
+            self.assertFalse(check(receipt)["formal_model_result"])
+            for key, value in (("real_candidate_model_calls", False), ("real_candidate_model_calls", 1),
+                               ("lean_compilations", None), ("lean_compilations", 1),
+                               ("formal_model_result", True), ("test_count", 1), ("test_count", True)):
+                with self.subTest(key=key, value=value):
+                    changed = copy.deepcopy(receipt)
+                    changed[key] = value
+                    with self.assertRaises(ValueError):
+                        check(changed)
+            for key, value in (("tests", 1), ("skipped", 0), ("skipped", 3),
+                               ("skipped", True), ("exit_code", False),
+                               ("command", ["python3", "-c", "print('OK')"])):
+                with self.subTest(check_key=key, value=value):
+                    changed = copy.deepcopy(receipt)
+                    changed["checks"][0][key] = value
+                    with self.assertRaises(ValueError):
+                        check(changed)
+            log = root / checks[0]["log"]
+            log.write_text("Ran 3 tests in 0.001s\n\nOK (skipped=1)\nRan 3 tests in 0.001s\n\nOK (skipped=1)\n")
+            receipt["checks"][0]["log_sha256"] = V.sha(log.read_bytes())
+            with self.assertRaisesRegex(ValueError, "test output does not establish"):
+                check(receipt)
 
     def test_author_summary_tracks_current_completed_lean_evidence(self):
         ledger = V.read(ROOT / "verification/author/ledger.json")

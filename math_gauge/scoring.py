@@ -86,24 +86,75 @@ def _bound(value, *, lower):
     return integer / 10**10
 
 
-def _eligible(row, case):
-    return (bool(row) and row.get("comparison_eligible") is True
-            and row.get("reviewer_kind") == "human" and case["case_approved"]
-            and row.get("origin") not in {None, "replay", "fixture"}
-            and row.get("fixture_only") is not True and not row.get("problem_defect"))
+def _eligibility_reasons(row, case, *, current=True):
+    """Explain execution and content gates without turning labels into proof."""
+    if not row or row.get("selected") is False:
+        return ["slot_not_run", "execution_evidence_missing", "answer_review_missing"] + (
+            ["case_human_approval_missing"] if not case["case_approved"] else [])
+    reasons = []
+    if row.get("started") is False:
+        reasons.append("slot_not_started")
+    execution = row.get("execution_eligibility") or {}
+    if not row.get("execution_receipt_sha256"):
+        reasons.append("execution_evidence_missing")
+    elif not row.get("execution_audit_sha256"):
+        reasons.append("execution_audit_missing")
+    if execution.get("eligible") is not True or row.get("comparison_eligible") is not True:
+        reasons.extend(execution.get("reasons") or ["execution_eligibility_unverified"])
+    if row.get("origin") != "command" or row.get("fixture_only") is True:
+        reasons.append("fixture_or_replay_execution" if row.get("origin") in {"fixture", "replay"}
+                       or row.get("fixture_only") is True else "execution_origin_unverified")
+    if not case["case_approved"]:
+        reasons.append("case_human_approval_missing")
+    elif row.get("case_approval_evidence_verified") is not True:
+        reasons.append("case_approval_evidence_missing")
+    if not row.get("reviewer_kind"):
+        reasons.append("answer_review_missing")
+    elif row.get("reviewer_kind") != "human":
+        reasons.append("answer_human_review_missing")
+    if row.get("problem_defect"):
+        reasons.append("problem_defect_pending")
+    if current and row.get("historical_audit_selection") is True:
+        reasons.append("execution_audit_superseded")
+    return sorted(set(reasons))
+
+
+def _eligible(row, case, *, current=True):
+    return not _eligibility_reasons(row, case, current=current)
 
 
 def _metric(intervals, rows, cases, *, unit, weights=None):
     interval = _average(intervals, weights)
     exact = _percent(interval[2])
-    formal = (exact is not None and bool(rows)
-              and all(bool(row) and _eligible(row, cases[row["case_id"]]) for row in rows))
+    historical = any(row.get("historical_audit_selection") is True for row in rows)
+    selected_formal = (exact is not None and bool(rows) and all(
+        bool(row) and _eligible(row, cases[row["case_id"]], current=False) for row in rows))
+    formal = selected_formal and not historical
+    failures = [{"slot_id": row.get("slot_id"),
+                 "reasons": _eligibility_reasons(row, cases[row["case_id"]]) if row else
+                            ["slot_not_run", "execution_evidence_missing", "answer_review_missing"]}
+                for row in rows]
+    failures = [item for item in failures if item["reasons"]]
+    reasons = {reason for item in failures for reason in item["reasons"]}
+    if exact is None:
+        reasons.add("score_coverage_incomplete")
+        for row in rows:
+            for dimension in ("whole_strict", "whole_math", "focus_math"):
+                axis = row.get(dimension, {})
+                reasons.update(set(axis.get("reasons", [])) & PENDING_REASONS)
     return {
         "exact": exact, "provisional_exact": exact,
         "formal_exact": exact if formal else None,
         "formal_score": exact if formal else None,
+        "historical_formal_score": exact if historical and selected_formal else None,
         "lower": _bound(interval[0], lower=True), "upper": _bound(interval[1], lower=False),
         "complete": interval[2] is not None, "formal_comparison_eligible": formal,
+        "formal_eligibility": {"eligible": formal, "reasons": sorted(reasons),
+                               "selected_audit_eligible": selected_formal,
+                               "historical": historical,
+                               "reason_counts": dict(Counter(reason for item in failures
+                                                              for reason in item["reasons"])),
+                               "slot_failures": failures},
         "coverage": {"unit": unit, "planned": len(intervals),
                      "adjudicated": sum(x[2] is not None for x in intervals),
                      "unknown": sum(x[2] is None for x in intervals),
@@ -262,8 +313,13 @@ def score_inputs(inputs):
         raise ValueError("Model label differs from the frozen runtime")
     case_index = {x["case_id"]: x for x in plan["case_index"]}
     planned_slots = {x["slot_id"]: x for x in plan["slots"]}
+    audit_selections = inputs.get("execution_audit_snapshots", [{"audit_snapshot": inputs.get("audit_snapshot")}])
+    historical = any((item.get("audit_snapshot") or {}).get("historical") is True
+                     for item in audit_selections)
     rows = {}
     for row in inputs.get("slots", []):
+        if historical:
+            row = dict(row, historical_audit_selection=True)
         sid = row.get("slot_id")
         if sid not in planned_slots or sid in rows:
             raise ValueError("Unknown or repeated score slot")
@@ -278,7 +334,8 @@ def score_inputs(inputs):
         rows[sid] = row
 
     def row_for(sid):
-        return rows.get(sid, {})
+        return rows.get(sid, {"slot_id": sid, "case_id": planned_slots[sid]["case_id"],
+                              "started": False, "selected": False})
 
     def paper_completion(cid):
         paper_rows = [row_for(f"{cid}:{a}") for a in ATTEMPTS]
@@ -366,13 +423,17 @@ def score_inputs(inputs):
     fixture = bool(evidence_rows) and any(r.get("fixture_only") is True
                                           or r.get("origin") in {"fixture", "replay"}
                                           for r in evidence_rows)
+    formal_eligibility = dict(metrics["overall"]["formal_eligibility"], slot_failures=[
+        {"slot_id": sid, "reasons": reasons}
+        for sid, slot in planned_slots.items()
+        if (reasons := _eligibility_reasons(rows.get(sid), case_index[slot["case_id"]]))])
     report = {
         "schema": "math-gauge.benchmark-score/v1", "created_at": now(),
         "plan_id": plan["plan_id"], "plan_sha256": plan["plan_sha256"],
         "profile": {k: plan["profile"][k] for k in ("id", "version", "sha256")},
         "suite": plan["suite"], "runtime_sha256": plan["runtime_sha256"],
         "model_label": plan["model_label"], "planned": plan["planned"],
-        "result_kind": ("not_run" if not evidence_rows else "fixture" if fixture else
+        "result_kind": ("not_run" if not evidence_rows else "fixture" if fixture else "historical" if historical else
                         "formal" if metrics["overall"]["formal_comparison_eligible"] else "provisional"),
         "model_result": bool(evidence_rows) and not fixture,
         "metrics": metrics, "papers": paper_reports, "focus_slices": slices,
@@ -408,21 +469,28 @@ def score_inputs(inputs):
         "evidence": [{k: r.get(k) for k in (
             "slot_id", "case_id", "evidence_id", "slot_record_sha256", "response_sha256",
             "history_sha256", "material_sha256", "binding", "review_sha256", "reviewer_kind",
-            "origin", "fixture_only", "comparison_eligible", "strict_pass", "completion",
+            "case_approval_evidence_verified", "case_approval_source",
+            "origin", "fixture_only", "comparison_eligible", "execution_eligibility",
+            "execution_receipt_sha256", "execution_audit_sha256", "historical_audit_selection", "strict_pass", "completion",
             "whole_strict", "whole_math", "focus_math", "focus_verdict", "problem_defect", "group_diagnostic")}
             for r in evidence_rows],
         "execution_contract_sha256": inputs.get("execution_contract_sha256"),
+        "execution_eligibility": inputs.get("execution_eligibility"),
         "budget_accounting": {"sources": inputs.get("budget_sources", []),
                               "unseen_plan_fragments_accounted_for": False,
                               "scope": "Supplied runs and explicitly reused original evidence only"},
         "review_snapshots": inputs.get("review_snapshots", [inputs["review_snapshot"]]
                                       if inputs.get("review_snapshot") is not None else []),
-        "formal_eligibility": inputs.get("formal_eligibility"),
+        "execution_audit_snapshots": inputs.get("execution_audit_snapshots", [{
+            "root": inputs.get("root"), "run_id": inputs.get("run_id"), "audit_snapshot": inputs["audit_snapshot"]}]
+                                               if inputs.get("audit_snapshot") is not None else []),
+        "historical_audit_selection": historical,
+        "formal_eligibility": formal_eligibility,
         "source_runs": inputs.get("source_runs", []),
         "notice": "All scores use the frozen full-plan denominators. Exact values are provisional unless formal eligibility is explicit. Fixture/replay, AI review and draft papers do not produce formal model scores. Focus slices overlap and never enter totals.",
     }
     report["score_inputs_sha256"] = identity({k: report[k] for k in (
-        "plan_sha256", "execution_contract_sha256", "review_snapshots", "evidence",
+        "plan_sha256", "execution_contract_sha256", "execution_eligibility", "review_snapshots", "execution_audit_snapshots", "evidence",
         "execution_coverage", "source_runs")})
     return report
 
@@ -430,7 +498,7 @@ def score_inputs(inputs):
 def _evidence_signature(row):
     fields = ("slot_id", "case_id", "evidence_id", "slot_record_sha256", "response_sha256",
               "history_sha256", "material_sha256", "review_sha256", "reviewer_kind", "origin",
-              "fixture_only", "comparison_eligible", "strict_pass", "completion",
+              "fixture_only", "strict_pass", "completion",
               "whole_strict", "whole_math", "focus_math", "focus_verdict")
     return identity({k: row.get(k) for k in fields})
 
@@ -441,19 +509,83 @@ def _raw_evidence_signature(row):
         "history_sha256", "material_sha256", "origin", "fixture_only")})
 
 
-def score_runs(roots, *, snapshot=None):
+def _audit_signature(row):
+    """Run-local snapshot paths do not change an original execution audit."""
+    if not row.get("execution_receipt_sha256"):
+        return None
+    return identity({"receipt_sha256": row["execution_receipt_sha256"],
+                     "audit_sha256": row.get("execution_audit_sha256"),
+                     "qualification": {key: value for key, value in
+                         (row.get("execution_eligibility") or {}).items()
+                         if key not in {"receipt_path", "audit_snapshot", "eligible", "reasons"}}})
+
+
+def _compose_execution_qualification(plan, rows):
+    """Recompute only ancestry after union; preserve verified self judgments."""
+    for slot in plan["slots"]:
+        sid = slot["slot_id"]
+        if sid not in rows or not rows[sid].get("execution_receipt_sha256"):
+            continue
+        row = rows[sid]
+        execution = row.get("execution_eligibility") or {}
+        own = execution.get("integrity_eligible")
+        reasons = execution.get("integrity_reasons")
+        if type(own) is not bool or not isinstance(reasons, list) or own != (not reasons):
+            raise ValueError("Execution audit lacks its verified independent self qualification: " + sid)
+        reasons = list(reasons)
+        parent = slot.get("parent_slot")
+        ancestor_audits = []
+        if parent is not None:
+            previous = rows.get(parent, {})
+            previous_execution = previous.get("execution_eligibility") or {}
+            ancestor_audits = list(previous_execution.get("ancestor_audits", [])) + [{
+                "slot_id": parent, "evidence_id": previous.get("evidence_id"),
+                "receipt_sha256": previous.get("execution_receipt_sha256"),
+                "audit_sha256": previous.get("execution_audit_sha256"),
+                "eligible": previous_execution.get("eligible") is True}]
+            if (not previous.get("execution_receipt_sha256")
+                    or previous_execution.get("eligible") is not True):
+                reasons.append("ancestor_execution_ineligible")
+        qualified = dict(execution, eligible=own and not reasons, reasons=sorted(set(reasons)),
+                         ancestor_audits=ancestor_audits)
+        rows[sid] = dict(row, execution_eligibility=qualified, comparison_eligible=qualified["eligible"])
+
+
+def score_runs(roots, *, snapshot=None, audit_snapshot=None, audit_snapshots=None):
     """Collect through the authoritative review reader; never accept loose scores."""
     from .reliability import reliability_score_inputs
 
     roots = list(roots)
     if not roots:
         raise ValueError("At least one benchmark run is required")
+    if audit_snapshot is not None and audit_snapshots is not None:
+        raise ValueError("Choose one audit snapshot or an exact per-run audit snapshot map")
+    if audit_snapshot is not None and len(roots) != 1:
+        raise ValueError("A single audit snapshot selector requires exactly one run; use a per-run map")
+    if audit_snapshots is not None:
+        canonical = [str(Path(root).resolve()) for root in roots]
+        if (not isinstance(audit_snapshots, dict) or len(set(canonical)) != len(canonical)
+                or set(audit_snapshots) != set(canonical)
+                or any(not isinstance(key, str) or not Path(key).is_absolute()
+                       or str(Path(key).resolve()) != key for key in audit_snapshots)
+                or any(not isinstance(value, str) or len(value) != 64
+                       or any(c not in "0123456789abcdef" for c in value)
+                       for value in audit_snapshots.values())):
+            raise ValueError("Audit snapshot map must exactly match every unique resolved run root and SHA-256")
     merged, first, sources, events = {}, None, [], []
+    observed = {"observed_sessions": {}, "observed_states": {}, "observed_request_ids": {}}
     for root in roots:
-        inputs = (reliability_score_inputs(root) if snapshot is None
-                  else reliability_score_inputs(root, snapshot=snapshot))
+        selectors = {}
+        if snapshot is not None:
+            selectors["snapshot"] = snapshot
+        selected_audit = (audit_snapshots[str(Path(root).resolve())]
+                          if audit_snapshots is not None else audit_snapshot)
+        if selected_audit is not None:
+            selectors["audit_snapshot"] = selected_audit
+        inputs = reliability_score_inputs(root, **selectors)
         sources.append({"root": str(Path(root).resolve()),
                         "review_snapshot": inputs.get("review_snapshot"),
+                        "audit_snapshot": inputs.get("audit_snapshot"),
                         "run_id": inputs.get("run_id"),
                         "run_receipt": str(Path(root).resolve() / "run.json"),
                         "selected_slot_ids": inputs.get("selected_slot_ids", [r["slot_id"] for r in inputs.get("slots", [])]),
@@ -465,7 +597,7 @@ def score_runs(roots, *, snapshot=None):
                             "prior_transport_attempts", "prior_known_total_tokens",
                             "cumulative_transport_attempts", "cumulative_known_total_tokens",
                             "cumulative_total_tokens", "cumulative_token_usage_complete")},
-                        "formal_eligibility": inputs.get("formal_eligibility")})
+                        "execution_eligibility": inputs.get("execution_eligibility")})
         plan = validate_plan(inputs["plan"])
         if first is None:
             first = inputs
@@ -475,10 +607,18 @@ def score_runs(roots, *, snapshot=None):
             raise ValueError("Cannot merge different plan, profile, suite, runtime or model identities")
         for row in inputs.get("slots", []):
             sid = row["slot_id"]
+            execution = row.get("execution_eligibility") or {}
+            for key, index in observed.items():
+                for value in execution.get(key, []):
+                    eid = row.get("evidence_id")
+                    if value in index and index[value] != eid:
+                        raise ValueError("Merged independent executions reused candidate " + key + ": " + sid)
+                    index[value] = eid
             events.append({"slot_id": sid, "started": row.get("started", False),
                            "status": row.get("execution_status", row.get("status", "unknown")),
                            "reason": row.get("reason"), "evidence_id": row.get("evidence_id"),
                            "slot_record_sha256": row.get("slot_record_sha256"),
+                           "execution_eligibility": row.get("execution_eligibility"),
                            "reused_from": row.get("reused_from"), "run_id": inputs.get("run_id"),
                            "run_receipt": str(Path(root).resolve() / "run.json"),
                            "slot_record": str(Path(root).resolve() / "slots" / sid.replace(":", "/")) + "/record.json"})
@@ -494,18 +634,44 @@ def score_runs(roots, *, snapshot=None):
                 if (not evidence or evidence != previous_evidence
                         or _raw_evidence_signature(row) != _raw_evidence_signature(previous)):
                     raise ValueError("Repeated execution or conflicting review for frozen slot: " + sid)
+                audit = _audit_signature(row)
+                previous_audit = _audit_signature(previous)
+                if audit is not None and previous_audit is not None and audit != previous_audit:
+                    raise ValueError("Conflicting execution audit snapshots for frozen slot: " + sid)
                 reviewed = bool(row.get("review_sha256") or row.get("reviewer_kind"))
                 previous_reviewed = bool(previous.get("review_sha256") or previous.get("reviewer_kind"))
                 if reviewed and previous_reviewed and _evidence_signature(row) != _evidence_signature(previous):
                     raise ValueError("Conflicting adjudication snapshots for frozen slot: " + sid)
-                if reviewed and not previous_reviewed:
-                    merged[sid] = row
+                selected = dict(row if reviewed and not previous_reviewed else previous)
+                audit_source = row if audit is not None else previous
+                for key in ("execution_eligibility", "execution_receipt_sha256",
+                            "execution_audit_sha256", "comparison_eligible"):
+                    if key in audit_source:
+                        selected[key] = audit_source[key]
+                merged[sid] = selected
                 continue
             merged[sid] = row
+    _compose_execution_qualification(first["plan"], merged)
+    execution_eligibility = {
+        "schema": "math-gauge.execution-eligibility-composition/v1",
+        "eligible": bool(merged) and all((row.get("execution_eligibility") or {}).get("eligible") is True
+                                         for row in merged.values()),
+        "reasons": sorted({reason for row in merged.values()
+                           for reason in (row.get("execution_eligibility") or {}).get("reasons", [])}),
+        "verifier_sha256s": sorted({summary["verifier_sha256"] for source in sources
+                                   if (summary := source.get("execution_eligibility"))
+                                   and summary.get("verifier_sha256")}),
+        "sources": [{"root": source["root"], "run_id": source["run_id"],
+                     "verification": source["execution_eligibility"]} for source in sources],
+    }
     combined = dict(first, slots=list(merged.values()),
+                    execution_eligibility=execution_eligibility,
                     source_runs=sources, review_snapshots=[{
                         "root": s["root"], "run_id": s["run_id"], "review_snapshot": s["review_snapshot"]}
                         for s in sources], execution_events=events,
+                    execution_audit_snapshots=[{
+                        "root": s["root"], "run_id": s["run_id"], "audit_snapshot": s["audit_snapshot"]}
+                        for s in sources],
                     budget_sources=[{"root": s["root"], **s["budget_accounting"]} for s in sources])
     return score_inputs(combined)
 
@@ -524,14 +690,18 @@ def render_score(report):
              f"{len(coverage['not_selected_in_supplied_runs'])} slots were not selected in these runs.", "",
              "Formal comparison eligibility: " + ("eligible" if report["metrics"]["overall"]["formal_comparison_eligible"]
                  else "unavailable") + (" (" + ", ".join(reasons) + ")" if reasons else ""), "",
-             "| Component | Exact, provisional | Conservative interval | Formal score | Adjudicated / planned |",
-             "|---|---:|---:|---:|---:|"]
+             "| Component | Exact, provisional | Conservative interval | Formal score | Historical formal score | Adjudicated / planned | Formal gate failures |",
+             "|---|---:|---:|---:|---:|---:|---|"]
+    if report.get("historical_audit_selection"):
+        lines[4:4] = ["Historical execution-audit selection: retained judgments are reproduced; current formal comparison is unavailable. Selected and latest audit hashes remain in report.json.", ""]
     def display(value):
         return "pending" if value is None else f"{value:g}"
     for name in COMPONENTS + ("core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"):
         value = report["metrics"][name]
         coverage = value["coverage"]
-        lines.append(f"| {name} | {display(value['exact'])} | {display(value['lower'])}–{display(value['upper'])} | {display(value['formal_exact'])} | {coverage['adjudicated']} / {coverage['planned']} |")
+        blockers = ", ".join(value.get("formal_eligibility", {}).get("reasons", [])) or (
+            "none" if value["formal_comparison_eligible"] else "not recorded")
+        lines.append(f"| {name} | {display(value['exact'])} | {display(value['lower'])}–{display(value['upper'])} | {display(value['formal_exact'])} | {display(value.get('historical_formal_score'))} | {coverage['adjudicated']} / {coverage['planned']} | {blockers} |")
     reasons = report["execution_coverage"]["source_reason_counts"]
     if reasons:
         lines += ["", "Selected slots retained these execution reasons (source references remain in report.json):", ""]

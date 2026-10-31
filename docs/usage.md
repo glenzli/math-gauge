@@ -68,11 +68,21 @@ runtime的字段结构示例（替换示例身份和预算后才能用于实际�
   "candidate_parameters": {"model": "REPLACE_WITH_ACTUAL_MODEL"},
   "budget": {"timeout_seconds": 120, "output_tokens": 4096, "max_transport_attempts": 354},
   "retry": {"max_attempts": 2, "wait_seconds": 0, "retryable_exit_codes": [75]},
-  "fresh_context": true
+  "fresh_context": true,
+  "execution_requirements": {
+    "schema": "math-gauge.execution-requirements/v1",
+    "allowed_tools": [],
+    "internal_tools": [],
+    "denied_categories": ["reference", "history", "prior_run", "memory", "global_config"],
+    "read_exceptions": [],
+    "tool_control_tool": "REPLACE_WITH_ACTUAL_CONTROL_TOOL"
+  }
 }
 ```
 
 这里的120秒与4096输出token仅演示字段，不是对整章题的推荐预算。可用 `budget.case_parameters` 事前指定各题的 `max_output_tokens` 等生成参数；同题独立轮与对应复核轮保持一致。timeout限制适配器进程时间，output_tokens传为请求的max_output_tokens，实际后端是否遵守仍需验证；max_transport_attempts限制真正发出的传输尝试。可选max_total_tokens依赖适配器返回真实usage：达到阈值后停止新请求，单个在途请求可能超过阈值；若用量缺失则停止后续调度并明记无法核实，不能称为硬费用上限。
+
+`execution_requirements` 在生成计划前冻结运行证据要求。候选工具须与本版计划的空白名单一致；`internal_tools` 只能列明实际存在的 `finish` / `manage_task` 内部功能。`tool_control_tool` 是用于独立正反能力对照的实际工具名称，不是考试允许的工具。必要读取例外以 `{ "kind": "literal", "path": "/absolute/login-file", "purpose": "具体启动需要" }` 等条目冻结，不能临时放宽。没有冻结这些要求的旧计划可继续暂定分析，但不能仅靠事后填写审核取得正式资格。可选provider与型号/effort别名映射也只能事前冻结；请求模型来自 `candidate_parameters.model`，显示标签不作为身份依据。
 
 分片续跑时，runner将所有显式 `--reuse-run` 的原始证据按生成身份去重，连同本次用量累计检查预算；不限于这次作为父节点的八个A1。没有提供的独立分片无法被自动计入，报告明确标记该边界。因此要约束已知计划累计花费，应传入全部先前分片，不能把单次预算声称为跨所有未知运行的全局上限。
 
@@ -130,7 +140,39 @@ python3 -m math_gauge benchmark-report --run runs/core-part \
 
 报告中的暂定数值与正式资格分别显示。当前43卷仍待人工审定；AI审核和离线fixture只能产生其明确标注的诊断或测试数据，不能称为正式模型成绩。权重与分母的完整说明见[综合评分标准](../protocol/benchmark-scoring.md)。
 
-当前新入口尚未接入独立的后端身份与进程隔离实证验收，因此即使填了human审核，`formal_score`仍保守为空。完整数值可作为其证据标签下的暂定报告；不能把runtime中的声明当作正式榜单资格。实际执行的隔离实证沿用[隔离流程](../protocol/isolated-cli-runs.md)记录，后续接入验收需另经测试。
+## 运行证据与正式资格
+
+下列命令只处理已经存在的运行与原始证据，不调用模型。先按[隔离流程](../protocol/isolated-cli-runs.md)记录真实调用、返回信息、全部尝试和实际边界；再为一个槽位生成待填写表单：
+
+```sh
+python3 -m math_gauge benchmark-evidence-template --run runs/core-part \
+  --slot 'MG-GR002:A1' --out runs/gr002-a1-evidence.json
+# 具名审核者核对原始材料，填写来源、观察和审核后：
+python3 -m math_gauge benchmark-evidence-import --run runs/core-part \
+  --slot 'MG-GR002:A1' --input runs/gr002-a1-evidence.json
+python3 -m math_gauge benchmark-evidence-check --run runs/core-part \
+  --out runs/core-execution-check.json
+python3 -m math_gauge benchmark-report --run runs/core-part \
+  --out runs/core-report-with-execution-audit
+```
+
+指定 `--slot` 时导出可直接填后导入的单份表单；省略时导出全部表单集合。原始文件路径相对于表单所在目录，必须在该目录内；显式清单记录文件用途、来源、字节数与SHA-256。每项观察指向原始JSON/NDJSON中的具体位置，或原始响应字节。不能用模板、模型自述、请求回显或一个“通过”勾选代替材料。导入器复制清单内的原始文件，并在以后每次check/collect/report时重新核验。
+
+`benchmark-evidence-check` 检查所选槽位的运行资格，缺项时返回非零并保存具体原因；它不裁定数学正确性。`benchmark-check` 检查完整运行与审核绑定，并报告运行资格数量。报告中的各分项另检查题目原始人审来源、答卷human审核、覆盖和适用Lean要求。满足全部条件才输出 `formal_score`；有内容审核但缺运行证据时仍可得到明确标注的暂定分。当前基准尚无真实候选运行，题目仍待人审，不能从离线测试生成正式成绩。
+
+运行审核修订必须引用当前快照；包括将先前通过改为拒绝：
+
+```sh
+python3 -m math_gauge benchmark-evidence-import --run runs/core-part \
+  --slot 'MG-GR002:A1' --input runs/gr002-a1-evidence-revised.json \
+  --revise --expected-audit-snapshot CURRENT_AUDIT_SNAPSHOT_SHA256
+python3 -m math_gauge benchmark-report --run runs/core-part \
+  --audit-snapshot RETAINED_AUDIT_SHA256 --out runs/historical-audit-report
+```
+
+旧快照显式标为historical，保留其所支持的 `historical_formal_score`；当前比较用的 `formal_score` 不把已被新审核取代的结论当作有效资格。数学分数与原答卷不因运行审核修订而改变。合并多个分片默认分别使用各自当前快照；重现多个分片的历史报告时，用 `--audit-snapshots /absolute/path/to/audit-map.json`，其中JSON对象的键为本次所有run的完整真实路径，值为各自保留的快照SHA-256，不得漏项、多项或混用单个 `--audit-snapshot`。
+
+复用父答卷时连同原审核证据一起保存，源目录移除后仍可核对这份保留证据。合并时相同原始生成可以去重，不同已审快照发生冲突则停止；不同生成复用同一会话、状态或请求身份也不能通过独立性检查。可用的观察范围与人工来源责任见[运行证据标准](../protocol/execution-evidence.md)，实际适配器须保存的字段见[证据交换格式](../protocol/execution-evidence-format.md)。
 
 ## 作者与候选Lean
 

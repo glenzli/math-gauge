@@ -158,6 +158,47 @@ class BenchmarkScoringTests(unittest.TestCase):
             result = score_inputs(self.inputs(rows))
             self.assertIsNone(result["metrics"]["overall"]["formal_score"])
 
+    def test_bare_comparison_label_cannot_replace_verified_execution_evidence(self):
+        # A synthetic approved plan isolates the execution gate; real cases
+        # remain untouched and this test supplies no model result.
+        plan = copy.deepcopy(self.plan)
+        for case in plan["case_index"]:
+            case["case_approved"] = True
+            case["case_approval_source"].update(status="approved", human_review="approved")
+        plan["plan_sha256"] = identity({key: value for key, value in plan.items()
+                                       if key != "plan_sha256"})
+        rows = fixture_rows(plan)
+        for row in rows:
+            row.update(origin="command", fixture_only=False, reviewer_kind="human",
+                       comparison_eligible=True)
+        result = score_inputs(self.inputs(rows, plan))
+        self.assertEqual(result["metrics"]["overall"]["provisional_exact"], 100)
+        self.assertIsNone(result["metrics"]["overall"]["formal_score"])
+        for metric in result["metrics"].values():
+            self.assertIn("execution_evidence_missing", metric["formal_eligibility"]["reasons"])
+        self.assertIn("execution_evidence_missing", render_score(result))
+
+    def test_formal_gate_failures_are_specific_to_each_component(self):
+        rows = fixture_rows(self.plan)
+        result = score_inputs(self.inputs(rows[:3]))
+        gate = result["metrics"]["proofs"]["formal_eligibility"]
+        self.assertIn("case_human_approval_missing", gate["reasons"])
+        self.assertIn("answer_review_missing", gate["reasons"])
+        self.assertIn("score_coverage_incomplete", gate["reasons"])
+        self.assertTrue(all(item["slot_id"] for item in gate["slot_failures"]))
+
+    def test_collected_input_keeps_current_verifier_provenance_in_score_identity(self):
+        inputs = self.inputs(fixture_rows(self.plan)[:1])
+        inputs["execution_eligibility"] = {"verifier_sha256": "1" * 64, "eligible": False,
+                                            "reasons": ["execution_evidence_missing"]}
+        first = score_inputs(inputs)
+        self.assertEqual(first["execution_eligibility"], inputs["execution_eligibility"])
+        inputs["execution_eligibility"]["verifier_sha256"] = "2" * 64
+        second = score_inputs(inputs)
+        self.assertNotEqual(first["score_inputs_sha256"], second["score_inputs_sha256"])
+        self.assertEqual(first["model_label"], second["model_label"])
+        self.assertEqual(first["plan_sha256"], second["plan_sha256"])
+
     def test_diagnostics_do_not_confuse_review_resolution_with_completion_loss(self):
         rows = fixture_rows(self.plan)
         indexed = {r["slot_id"]: r for r in rows}
@@ -233,6 +274,109 @@ class BenchmarkScoringTests(unittest.TestCase):
         with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[first, incompatible]):
             with self.assertRaises(ValueError):
                 score_runs(["fixture-first", "fixture-other-runtime"])
+
+    def test_execution_audit_merge_is_independent_of_mathematical_review(self):
+        # Stub only the already-validated reader, to isolate merge behavior.
+        # A raw receipt or these synthetic labels cannot enter a real CLI report.
+        original = fixture_rows(self.plan)[0]
+        original["review_sha256"] = "review-one"
+        audited = copy.deepcopy(original)
+        audited.update(reviewer_kind=None, review_sha256=None,
+                       execution_receipt_sha256="receipt-one", execution_audit_sha256="audit-one",
+                       execution_eligibility={"eligible": False, "reasons": ["fixture_execution"],
+                                              "integrity_eligible": False, "integrity_reasons": ["fixture_execution"],
+                                              "receipt_sha256": "receipt-one", "audit_sha256": "audit-one"})
+        for order in ((original, audited), (audited, original)):
+            with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[
+                self.inputs([order[0]]), self.inputs([order[1]])]):
+                result = score_runs(["fixture-original", "fixture-audited"])
+            evidence = result["evidence"][0]
+            self.assertEqual(evidence["review_sha256"], "review-one")
+            self.assertEqual(evidence["execution_receipt_sha256"], "receipt-one")
+        conflict = copy.deepcopy(audited)
+        conflict["execution_receipt_sha256"] = "receipt-two"
+        conflict["execution_eligibility"]["receipt_sha256"] = "receipt-two"
+        with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[
+            self.inputs([audited]), self.inputs([conflict])]):
+            with self.assertRaisesRegex(ValueError, "Conflicting execution audit"):
+                score_runs(["fixture-audit-one", "fixture-audit-two"])
+
+    def test_identical_audit_can_be_reused_across_run_local_snapshot_paths(self):
+        one = fixture_rows(self.plan)[0]
+        one.update(execution_receipt_sha256="receipt-one", execution_audit_sha256="audit-one",
+                   execution_eligibility={"eligible": False, "reasons": ["fixture_execution"],
+                                          "integrity_eligible": False, "integrity_reasons": ["fixture_execution"],
+                                          "receipt_sha256": "receipt-one", "audit_sha256": "audit-one",
+                                          "receipt_path": "eligibility/receipts/one/receipt.json",
+                                          "audit_snapshot": {"sha256": "snapshot-one"}})
+        two = copy.deepcopy(one)
+        two["execution_eligibility"]["audit_snapshot"] = {"sha256": "snapshot-two"}
+        with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[
+            self.inputs([one]), self.inputs([two])]):
+            result = score_runs(["fixture-audit-one", "fixture-audit-two"])
+        self.assertEqual(len(result["evidence"]), 1)
+        self.assertEqual(len(result["execution_audit_snapshots"]), 2)
+
+    def test_per_run_audit_snapshot_map_is_exact_and_never_falls_back(self):
+        first = str((ROOT / "synthetic-first").resolve())
+        second = str((ROOT / "synthetic-second").resolve())
+        selectors = {first: "1" * 64, second: "2" * 64}
+        with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[
+            self.inputs([]), self.inputs([])]) as collect:
+            score_runs([first, second], audit_snapshots=selectors)
+        self.assertEqual(collect.call_args_list[0].kwargs, {"audit_snapshot": "1" * 64})
+        self.assertEqual(collect.call_args_list[1].kwargs, {"audit_snapshot": "2" * 64})
+        for invalid in ({first: "1" * 64}, {**selectors, str(ROOT): "3" * 64},
+                        {first: "not-a-hash", second: "2" * 64}):
+            with patch("math_gauge.reliability.reliability_score_inputs") as collect:
+                with self.assertRaisesRegex(ValueError, "exactly match"):
+                    score_runs([first, second], audit_snapshots=invalid)
+                collect.assert_not_called()
+        with self.assertRaisesRegex(ValueError, "exactly one run"):
+            score_runs([first, second], audit_snapshot="1" * 64)
+
+    def test_cross_run_independence_checks_original_identity_not_slot_count(self):
+        one, two = fixture_rows(self.plan)[:2]
+        for key in ("observed_sessions", "observed_states", "observed_request_ids"):
+            a, b = copy.deepcopy(one), copy.deepcopy(two)
+            for row in (a, b):
+                row["execution_eligibility"] = {key: ["shared-original-identity"]}
+            with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[
+                self.inputs([a]), self.inputs([b])]):
+                with self.assertRaisesRegex(ValueError, "Merged independent executions reused"):
+                    score_runs(["fixture-shard-one", "fixture-shard-two"])
+            with patch("math_gauge.reliability.reliability_score_inputs", side_effect=[
+                self.inputs([a]), self.inputs([copy.deepcopy(a)])]):
+                result = score_runs(["fixture-original", "fixture-reused"])
+            self.assertEqual(len(result["evidence"]), 1)
+
+    def test_historical_audit_keeps_selected_score_separate_from_current_comparison(self):
+        # Synthetic gate arithmetic only: no imported audit/model result is
+        # created, and the real suite's approval status remains unchanged.
+        plan = copy.deepcopy(self.plan)
+        for case in plan["case_index"]:
+            case["case_approved"] = True
+            case["case_approval_source"].update(status="approved", human_review="approved")
+        plan["plan_sha256"] = identity({key: value for key, value in plan.items()
+                                       if key != "plan_sha256"})
+        rows = fixture_rows(plan)
+        for row in rows:
+            row.update(origin="command", fixture_only=False, reviewer_kind="human",
+                       comparison_eligible=True, execution_receipt_sha256="receipt-one",
+                       execution_audit_sha256="audit-one", case_approval_evidence_verified=True,
+                       execution_eligibility={"eligible": True, "reasons": []})
+        inputs = self.inputs(rows, plan)
+        inputs["audit_snapshot"] = {"sha256": "1" * 64, "latest_sha256": "2" * 64, "historical": True}
+        result = score_inputs(inputs)
+        self.assertEqual(result["result_kind"], "historical")
+        for metric in result["metrics"].values():
+            self.assertIsNone(metric["formal_score"])
+            self.assertEqual(metric["historical_formal_score"], 100)
+            self.assertTrue(metric["formal_eligibility"]["selected_audit_eligible"])
+            self.assertIn("execution_audit_superseded", metric["formal_eligibility"]["reasons"])
+        self.assertIn("Historical execution-audit selection", render_score(result))
+        rows[0]["origin"] = "replay"
+        self.assertIsNone(score_inputs(inputs)["metrics"]["overall"]["historical_formal_score"])
 
     def test_unstarted_reasons_remain_visible_when_real_evidence_fills_one_placeholder(self):
         originals = fixture_rows(self.plan)

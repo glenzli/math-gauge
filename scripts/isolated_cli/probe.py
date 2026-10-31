@@ -23,11 +23,12 @@ def probe(manifest, pid=None, role=None):
         digest = None
         try:
             digest = hashlib.sha256(Path(positive).read_bytes()).hexdigest()
-            checks.append({"path": positive, "expected": "allowed", "passed": digest == expected})
+            checks.append({"path": positive, "expected": "allowed", "passed": digest == expected,
+                           "observed_sha256": digest})
         except OSError as error:
             checks.append({
                 "path": positive, "expected": "allowed", "passed": False,
-                "errno": error.errno,
+                "errno": error.errno, "observed_sha256": None,
             })
         for item in manifest["negative"]:
             check = {**item, "expected": "denied", "passed": False}
