@@ -31,8 +31,8 @@ class ReleaseArtifactsTests(unittest.TestCase):
         cls.workspace = tempfile.TemporaryDirectory(prefix="math-gauge-artifact-fixture-")
         cls.addClassCleanup(cls.workspace.cleanup)
         cls.shared = Path(cls.workspace.name).resolve()
-        cls.config = release.load_config()
-        cls.plan, cls.suite = release.release_plan()
+        cls.config = release.load_config(version="0.1.0")
+        cls.plan, cls.suite = release.release_plan(version="0.1.0")
         cls.dataset_root = cls.shared / "exported-dataset"
         with patch("math_gauge.execution.invoke_conversation", side_effect=AssertionError("No model calls")):
             cls.dataset = export_release_dataset(cls.plan, cls.suite, cls.dataset_root)
@@ -121,7 +121,7 @@ class ReleaseArtifactsTests(unittest.TestCase):
         original.write_bytes(release._json_bytes(self.plan))
         original_raw = original.read_bytes()
         original.unlink()
-        rebuilt, suite = release.release_plan()
+        rebuilt, suite = release.release_plan(version="0.1.0")
         recovered = self.root / "recovered-plan.json"
         recovered.write_bytes(release._json_bytes(rebuilt))
         self.assertEqual(recovered.read_bytes(), original_raw)

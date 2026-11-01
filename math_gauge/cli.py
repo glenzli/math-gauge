@@ -72,8 +72,8 @@ def parser():
     c.add_argument("--plan", help="Also bind the bundle to this evaluator-only plan.")
     c.add_argument("--suite", help="Also bind the bundle to this suite.")
     c = sub.add_parser("benchmark-import", help="Import existing external responses into shared review evidence; no model calls.")
-    c.add_argument("--bundle", required=True)
-    c.add_argument("--input", required=True, help="External submission JSON and its explicitly listed files.")
+    c.add_argument("--bundle", help="Legacy immutable bundle/run directory; omit for a portable answers ZIP.")
+    c.add_argument("--input", required=True, help="One portable answers ZIP, or legacy submission JSON with --bundle.")
     c.add_argument("--plan", required=True)
     c.add_argument("--suite", default="cases")
     c.add_argument("--out", required=True, help="New local run directory.")
@@ -234,17 +234,17 @@ def main(argv=None):
                               "preparation_only": result["preparation_only"],
                               "candidate_calls": 0}))
         elif args.action == "benchmark-export-check":
-            from .harness import DATASET_SCHEMA, RUN_SCHEMA, inspect_harness_bundle
+            from .harness import DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA, RUN_SCHEMA, inspect_harness_bundle
             result = inspect_harness_bundle(
                 args.bundle, plan=read_plan(args.plan) if args.plan else None,
                 suite=Suite.load(args.suite) if args.suite else None)
-            if result["schema"] in {DATASET_SCHEMA, RUN_SCHEMA}:
+            if result["schema"] in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA, RUN_SCHEMA}:
                 summary = {"bundle": args.bundle, "schema": result["schema"],
                            "dataset_sha256": result["dataset_sha256"],
                            "base_plan_sha256": result["base_plan_sha256"],
                            "planned": result["planned"], "candidate_calls": 0,
                            "runtime_frozen": result["schema"] == RUN_SCHEMA,
-                           "preparation_only": result["schema"] == DATASET_SCHEMA}
+                           "preparation_only": result["schema"] in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA}}
                 if result["schema"] == RUN_SCHEMA:
                     summary["run_sha256"] = result["run_sha256"]
                     summary["runtime_sha256"] = result["runtime_sha256"]
@@ -259,9 +259,10 @@ def main(argv=None):
                               "preparation_only": result["preparation_only"],
                               "candidate_calls": 0}))
         elif args.action == "benchmark-import":
-            from .harness_import import import_harness_submission
-            result = import_harness_submission(
-                args.bundle, args.input, read_plan(args.plan), Suite.load(args.suite), args.out)
+            from .harness_import import import_answer_archive, import_harness_submission
+            suite = Suite.load(args.suite)
+            result = (import_harness_submission(args.bundle, args.input, read_plan(args.plan), suite, args.out)
+                      if args.bundle else import_answer_archive(args.input, read_json(args.plan), suite, args.out))
             print(json.dumps({"run": args.out, "plan_sha256": result["plan_sha256"],
                               "candidate_calls": 0}))
         elif args.action == "benchmark-run":

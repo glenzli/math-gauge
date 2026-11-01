@@ -1,6 +1,6 @@
 # 使用与复核
 
-本页是仓库内的评审与维护操作指南。只希望下载题包并接入外部平台时，使用[下载运行指南](../protocol/release-distribution.md)：命名 ZIP 自带独立控制器，不需要仓库、安装 Math Gauge 或 Codex。
+本页是仓库内的评审与维护操作指南。只希望接入外部平台并交回答卷时，使用[任务包唯一 README](release-consumer-README-v0.2.0.md)：当前0.2.0仅在本地准备，执行端不需要仓库、Math Gauge 安装或 Codex。
 
 以下命令在仓库根目录执行。共享runner需要Python 3.10+，无第三方运行依赖。所有输出目录使用新路径；Lean核验与实际模型调用另需对应环境。
 
@@ -110,98 +110,35 @@ python3 -m math_gauge benchmark-run --plan runs/frozen-plan.json \
 
 每个执行目录保持独立，不覆盖先前结果。相同原始证据重复作为依赖可去重；同名槽位被独立生成两次属于冲突，不能挑较好的一份汇总。分别生成的不同局部计划不能事后拼成全套。只希望做局部研究时，可直接生成该子计划并明确报告范围。
 
-## 外部 harness：独立题包与提交
+## 外部 harness：统一接收返回包
 
-外部模式与上面的共享命令适配器复用同一计划、消息、审核和评分，不依赖 Codex。只需在评审侧准备题包；独立执行端只需要 Python 3.10+ 和所选平台的调用能力，无需本仓库或安装 Math Gauge。完整格式、控制器接口与结果模板见[外部 harness 协议](../protocol/external-harness.md)。
+外部运行端的完整准备、取题、记录和打包流程只维护在[任务包 README](release-consumer-README-v0.2.0.md)。当前0.2.0任务包包含全部43题及约定附件，根目录仅一份指南；可选工具 `tools/benchmark.py` 自动保存原始尝试、构造精确分支历史并打包 `answers.zip`。它不调用候选模型，也不需要执行端取得完整评审计划、手写散列或提交JSON。
 
-已发布的候选数据集优先使用[下载运行指南](../protocol/release-distribution.md)：原题包不选模型，每次用独立控制器冻结 runtime 与目标到新目录；提交使用绑定数据集/运行/runtime的v2合同。其runtime白名单比仓库运行配置窄，不接受上面示例中的 `execution_requirements`。以下是维护者从仓库直接冻结导出的v1交换流程，继续保留并共用导入实现。
-
-一次命令同时冻结计划并导出题包，不调用模型：
+评审端保留可信的完整主计划和原题集。以下以本地0.2.0构建目录和已收到的返回包为例，一条命令完成完整性核验与导入：
 
 ```sh
-python3 -m math_gauge benchmark-export --target all \
-  --runtime /absolute/path/to/runtime.json --out runs/external-bundle
-python3 -m math_gauge benchmark-export-check --bundle runs/external-bundle \
-  --plan runs/external-bundle.evaluator/plan.json
+python3 -m math_gauge benchmark-import --input answers.zip \
+  --plan runs/releases/v0.2.0/evaluator-plan.json --out runs/external-imported
 ```
 
-省略 `--runtime` 时仍可导出供检查和离线验收的材料，但标记为 `preparation_only`，不能据此开始真实候选运行。已有冻结计划可原样导出或选择其分项，不能同时替换 runtime/profile：
+导入只读取数据，不执行下载包中的工具，不调用模型或编译Lean。包内含冻结运行、原始尝试及每个选定槽位的完成、失败、跳过或待执行状态。导入器核验可信计划、题集、请求历史、原始文件与顺序，接入同一多轮证据和审核入口。输出目录必须是新路径；未知平台字段保持未知，缺测继续按完整计划的固定分母报告。
+
+接下来生成 `benchmark-review-template` 并完成实际数学、交付及适用的候选Lean审核，再使用下一节的审核、收集与报告入口。来源另记为 `external_import`，不会把导入伪装成runner现场调用。fixture/replay保留各自标签，外部声明或审核勾选不能单独取得正式比较资格。新的真实外部环境需要验证其来源和隔离合同；当前43题的人审状态也不因导入改变。
+
+### 维护接口与历史交换
+
+仓库直接导出的旧交换接口继续保留，使用同一候选投影、数学和审核合同。已有完整计划可原样导出，不临时替换runtime/profile：
 
 ```sh
 python3 -m math_gauge benchmark-export --plan runs/frozen-plan.json \
-  --target lean-audit --out runs/external-audit
+  --target lean-audit --out runs/external-legacy
+python3 -m math_gauge benchmark-export-check --bundle runs/external-legacy \
+  --plan runs/external-legacy.evaluator/plan.json
 ```
 
-`--suite` 和 `--profile` 可在创建计划时指定自定义题集与配置；既有计划的分母和身份保持不变。默认完整评审计划写入独立的 `runs/external-bundle.evaluator/plan.json`；`--evaluator-out /absolute/path/to/evaluator-directory` 可改用另一处新目录。它不能位于交付题包内。只把 `external-bundle/` 交给外部平台，评审目录和本仓库都不交付。
+未冻结runtime的导出只用于准备与离线检查。v1直接交换及历史v0.1.0发布运行的v2提交仍可使用 `benchmark-import --bundle BUNDLE --input SUBMISSION_JSON --plan PLAN --out NEW_RUN`；旧字段与绑定规则见[外部交换合同](../protocol/external-harness.md)，历史发布操作见[v0.1.0包内指南](release-consumer-README.md)。普通0.2.0运行不需要走手写JSON或祖先答案映射流程。
 
-题包中 solver 内容是各题完整题面、instruction、白名单附件及合成后的 `candidate-message.md`；controller 另有脱敏槽位、父子关系、冻结调用条件和提交模板。控制器不能把调度元数据变成模型提示。完整题面与附件共同组成实际提示，不能只读 `task.md` 而忽略文件。每个槽位可用独立助手生成精确 JSON 请求，例如在交付主机上：
-
-```sh
-python3 /delivery/external-bundle/controller.py check --bundle /delivery/external-bundle
-python3 /delivery/external-bundle/controller.py request --bundle /delivery/external-bundle \
-  --slot 'MG-GF101:A1' --out /delivery/requests/gf101-a1.json
-```
-
-后续轮用 `--answers /absolute/path/to/ancestor-answers.json` 提供本槽位所需祖先的原始答卷，JSON 对象的键为祖先槽位 ID，值为原样响应文本。助手只构造该分支完整角色历史，拒绝不相关或跨分支历史。把生成请求的完整 `messages` 与允许的冻结生成参数交给实际平台，保留实际请求、原始响应、失败、重试、用量和返回的后端信息。三个初答须使用全新独立上下文；中性、支持、怀疑各从同一 A1 展开两轮，不共享其他分支内容，也不加入评分、正确性或编译反馈。
-
-当前为无工具轨道。检索、代码执行或 Lean 工具的实验须另外冻结版本、工具与预算，并单独报告。隔离控制及原始运行证据仍须按[运行证据标准](../protocol/execution-evidence.md)核实。
-
-外部控制器依据题包内的 `submission-template.json` 写一份新的提交 JSON，按清单中的冻结顺序列出已执行槽位、精确请求和每次尝试；响应与其他原始文件用相对提交文件的路径、字节数及 SHA-256 引用。不得改写原答卷或把失败当作未发生；未执行槽位保持明确缺测。回收目录与题包保持分开。
-
-以下例子仅用已构造的请求生成一份离线交换样例，实际模型调用为零。它展示完整提交字段和散列算法；实际试验须保留真实原始字节，使用 `origin="external"`、`fixture_only=false` 和真实的调用总数。先在交付主机的新目录写样例：
-
-```python
-import hashlib
-import json
-from pathlib import Path
-
-bundle = Path("/delivery/external-bundle")
-returned = Path("/delivery/results/offline-example")
-returned.mkdir(parents=True, exist_ok=False)
-request = json.loads(Path("/delivery/requests/gf101-a1.json").read_text(encoding="utf-8"))
-manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-submission = json.loads((bundle / "submission-template.json").read_text(encoding="utf-8"))
-
-def file_record(name, raw):
-    (returned / name).write_bytes(raw)
-    return {"path": name, "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
-
-request_bytes = json.dumps(request, ensure_ascii=False, sort_keys=True,
-                          separators=(",", ":"), allow_nan=False).encode("utf-8")
-submission.update(
-    bundle_sha256=manifest["bundle_sha256"], origin="fixture", fixture_only=True,
-    declared_external_calls=0,
-    slots=[{
-        "slot_id": "MG-GF101:A1", "projected_request": request,
-        "attempts": [{
-            "number": 1, "status": "ok", "exit_code": 0,
-            "response": file_record("answer.txt", b"Offline fixture; no model answer.\r\n"),
-            "stderr": file_record("stderr.txt", b""), "usage": {},
-            "projected_request_sha256": hashlib.sha256(request_bytes).hexdigest(),
-        }],
-    }],
-)
-(returned / "submission.json").write_text(
-    json.dumps(submission, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-```
-
-将回收目录原样带回评审端，再导入其 `submission.json`。下面路径可指向上述离线样例或实际外部提交；标签随原提交保留：
-
-```sh
-python3 -m math_gauge benchmark-import --bundle runs/external-bundle \
-  --input /absolute/path/to/results/submission.json \
-  --plan runs/external-bundle.evaluator/plan.json --out runs/external-imported
-python3 -m math_gauge benchmark-check --run runs/external-imported
-python3 -m math_gauge benchmark-review-template --run runs/external-imported \
-  --out runs/external-review.json
-# 逐项完成实际审核后：
-python3 -m math_gauge benchmark-review --run runs/external-imported \
-  --input runs/external-review.json
-python3 -m math_gauge benchmark-report --run runs/external-imported \
-  --out runs/external-report
-```
-
-导出、check、导入与审核模板命令均不调用模型。导入把原始提交绑定到共享多轮证据，不单独确认外部来源真实、人工审核完成或正式比较资格。`fixture` / `replay` 提交保持测试标签，缺测保持固定分母。本版通用 `external_import` 用于暂定分析；正式来源合同目前绑定本地调用与隔离材料，外部声明或审核勾选不能替代这条证据链，不能据此取得 `formal_score`。真实答卷的数学裁决与适用候选 Lean 核验仍需完成，新的外部环境另行验证来源和隔离合同。公开开发题集的参考与历史不因独立导出而变成秘密，报告须说明已知暴露与访问条件。
+独立数据集、控制材料与完整评审材料分别保存。操作者工具不是候选解题工具，候选仅收到完整消息及允许的本分支历史。整章题约定的含证明原文和语义审计源码保留为合法输入；公开参考与Git历史仍可见，不把本开发集说成隐藏留出集。
 
 ## 多轮审核与汇总
 

@@ -31,8 +31,11 @@ _MANIFEST_KEYS = {
     "slots", "cases", "prompts", "execution", "files_sha256",
 }
 DATASET_SCHEMA = "math-gauge.release-dataset/v1"
+SIMPLE_DATASET_SCHEMA = "math-gauge.release-dataset/v2"
 RUN_SCHEMA = "math-gauge.harness-run/v2"
 RELEASE_CONTROLLER = "math-gauge.release-controller/v1"
+SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
+RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
 _RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters",
                     "repeat", "neutral", "stance", "core", "all")
@@ -40,6 +43,7 @@ _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha
                  "base_plan_sha256", "suite", "runner_sha256", "protocol_version", "planned",
                  "exported_slots", "selected_slot_ids", "slots", "cases", "prompts",
                  "target_slot_ids", "files_sha256"}
+_SIMPLE_DATASET_KEYS = _DATASET_KEYS | {"release_provenance"}
 _RUN_KEYS = {"schema", "controller_version", "run_sha256", "run_id", "created_at",
              "dataset_sha256", "base_plan_sha256", "runtime", "runtime_sha256",
              "runtime_frozen", "preparation_only", "targets", "selected_slot_ids",
@@ -183,6 +187,19 @@ def _h_message(request):
     return candidate_message(request)
 
 
+def _h_case_request(root, case):
+    """Read either historical expanded inputs or the compact candidate projection."""
+    if "request_path" in case:
+        return _r_json(_h_file(root, case["request_path"]).read_bytes())
+    return {"schema": "math-gauge.request/v1", "case_id": case["case_id"],
+            "case_version": case["case_version"], "track": case["track"],
+            "instruction": case["instruction"],
+            "task": _h_file(root, case["task_path"]).read_bytes().decode("utf-8"),
+            "files": [{"name": item["name"],
+                       "content": _h_file(root, item["path"]).read_bytes().decode("utf-8")}
+                      for item in case["files"]]}
+
+
 def _inspect_bundle_contents(root):
     """Check a relocated bundle without reading any repository or evaluator files.
 
@@ -243,33 +260,37 @@ def _h_projection(root, value, expected_files):
                and isinstance(value["slots"], list) and value["slots"]
                and isinstance(value["prompts"], list), "Missing bundle projection")
     case_ids = []
+    simple = value["schema"] == SIMPLE_DATASET_SCHEMA
     for case in value["cases"]:
-        _h_object(case, {"case_id", "case_version", "request_sha256", "candidate_message_sha256",
-                         "request_path", "candidate_message_path", "task_path", "instruction_path",
-                         "files"}, "case projection")
+        fields = {"case_id", "case_version", "request_sha256", "candidate_message_sha256", "task_path", "files"}
+        _h_object(case, fields | ({"instruction", "track"} if simple else {
+            "request_path", "candidate_message_path", "instruction_path"}), "case projection")
         cid = case["case_id"]
         _h_require(isinstance(cid, str) and re.fullmatch(r"[A-Za-z0-9_-]+", cid)
                    and cid not in case_ids and isinstance(case["case_version"], str)
                    and case["case_version"], "Invalid projected case identity")
         case_ids.append(cid)
         base = "cases/" + cid + "/"
-        for key, suffix in (("request_path", "request.json"),
-                            ("candidate_message_path", "candidate-message.md"),
-                            ("task_path", "task.md"), ("instruction_path", "instruction.txt")):
+        paths = (("task_path", "task.md"),) if simple else (
+            ("request_path", "request.json"), ("candidate_message_path", "candidate-message.md"),
+            ("task_path", "task.md"), ("instruction_path", "instruction.txt"))
+        for key, suffix in paths:
             _h_require(case[key] == base + suffix, "Case projection path changed")
             expected_files.add(case[key])
-        request = json.loads(_h_file(root, case["request_path"]).read_bytes())
+        request = _h_case_request(root, case)
         message = _h_message(request)
         _h_require(request["case_id"] == cid and request["case_version"] == case["case_version"]
                    and _h_hash(case["request_sha256"])
                    and _h_digest(json.dumps(request, ensure_ascii=False, sort_keys=True).encode("utf-8"))
                    == case["request_sha256"], "Frozen candidate request changed")
         _h_require(_h_hash(case["candidate_message_sha256"])
-                   and _h_file(root, case["candidate_message_path"]).read_bytes() == message.encode("utf-8")
                    and _h_digest(message.encode("utf-8")) == case["candidate_message_sha256"]
-                   and _h_file(root, case["task_path"]).read_bytes() == request["task"].encode("utf-8")
-                   and _h_file(root, case["instruction_path"]).read_bytes() == request["instruction"].encode("utf-8"),
+                   and _h_file(root, case["task_path"]).read_bytes() == request["task"].encode("utf-8"),
                    "Candidate message, task or instruction changed")
+        if not simple:
+            _h_require(_h_file(root, case["candidate_message_path"]).read_bytes() == message.encode("utf-8")
+                       and _h_file(root, case["instruction_path"]).read_bytes() == request["instruction"].encode("utf-8"),
+                       "Candidate message, task or instruction changed")
         _h_require(isinstance(case["files"], list) and len(case["files"]) == len(request["files"]),
                    "Candidate attachment inventory changed")
         for descriptor, attachment in zip(case["files"], request["files"]):
@@ -387,7 +408,7 @@ def _h_build_request(root, bundle, slot_id, answers=None):
                    "Ancestor answer must be readable UTF-8")
         raw_answers[sid] = content
     case = next(c for c in bundle["cases"] if c["case_id"] == slot["case_id"])
-    initial = _h_file(root, case["candidate_message_path"]).read_bytes().decode("utf-8")
+    initial = _h_message(_h_case_request(root, case))
     execution = bundle["execution"]
     messages = []
     if execution["system_prompt"] is not None:
@@ -441,13 +462,13 @@ def _controller_main():
 def _controller_source():
     functions = (_h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root,
                  _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
-                 _h_message, _h_projection, _inspect_bundle_contents,
+                 _r_json, _h_message, _h_case_request, _h_projection, _inspect_bundle_contents,
                  inspect_bundle, _h_build_request, build_request,
                  _controller_main)
     header = ('"""Portable Math Gauge controller. Python 3.10+, standard library only.\n'
               'This program never calls a model. Keep it outside candidate workspaces.\n"""\n\n'
               'import hashlib\nimport json\nimport math\nimport re\nfrom pathlib import Path, PurePosixPath\n\n')
-    constants = f"BUNDLE_SCHEMA = {BUNDLE_SCHEMA!r}\nCONTROLLER_VERSION = {CONTROLLER_VERSION!r}\n"
+    constants = f"BUNDLE_SCHEMA = {BUNDLE_SCHEMA!r}\nCONTROLLER_VERSION = {CONTROLLER_VERSION!r}\nSIMPLE_DATASET_SCHEMA = {SIMPLE_DATASET_SCHEMA!r}\n"
     constants += f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\n\n"
     return (header + constants + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _controller_main()\n').encode("utf-8")
@@ -687,7 +708,7 @@ def export_harness_bundle(plan, suite, destination, *, evaluator_destination=Non
 def inspect_harness_bundle(root, *, plan=None, suite=None):
     """Check a portable bundle, optionally binding it to evaluator source evidence."""
     schema = _r_json(_h_file(_h_root(root), "manifest.json").read_bytes()).get("schema")
-    if schema == DATASET_SCHEMA:
+    if schema in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA}:
         return inspect_release_dataset(root, plan=plan, suite=suite)
     if schema == RUN_SCHEMA:
         manifest = inspect_release_run(root)
@@ -742,7 +763,8 @@ def candidate_request_from_bundle(root, slot_id, answers=None):
     manifest = inspect_harness_bundle(root)
     if manifest["schema"] == RUN_SCHEMA:
         return release_candidate_request(root, slot_id, answers)
-    _h_require(manifest["schema"] != DATASET_SCHEMA, "Freeze a runtime before constructing release requests")
+    _h_require(manifest["schema"] not in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA},
+               "Freeze a runtime before constructing release requests")
     return build_request(root, slot_id, answers)
 
 
@@ -812,8 +834,10 @@ def _inspect_release_dataset_contents(root):
     try:
         root = _h_root(root)
         value = _r_json(_h_file(root, "manifest.json").read_bytes())
-        _h_object(value, _DATASET_KEYS, "release dataset manifest")
-        _h_require(value["schema"] == DATASET_SCHEMA and value["controller_version"] == RELEASE_CONTROLLER,
+        simple = value.get("schema") == SIMPLE_DATASET_SCHEMA
+        _h_object(value, _SIMPLE_DATASET_KEYS if simple else _DATASET_KEYS, "release dataset manifest")
+        _h_require((value["schema"], value["controller_version"]) in {
+                       (DATASET_SCHEMA, RELEASE_CONTROLLER), (SIMPLE_DATASET_SCHEMA, SIMPLE_CONTROLLER)},
                    "Unsupported release dataset")
         _h_require(_h_hash(value["dataset_sha256"]) and value["dataset_sha256"] == _h_identity(
             {k: v for k, v in value.items() if k != "dataset_sha256"}), "Frozen release dataset changed")
@@ -828,7 +852,14 @@ def _inspect_release_dataset_contents(root):
         view = dict(value, execution={"parameters": {}, "case_parameters": {}, "budget": {},
                     "retry": {"max_attempts": 2, "wait_seconds": 0, "retryable_exit_codes": [75]},
                     "system_prompt": None, "model_label": None, "context_policy": _RELEASE_CONTEXT})
-        _h_projection(root, view, {"CONTROLLER.md", "controller.py", "runtime-template.json"})
+        if simple:
+            _h_require(value["release_version"] == value["suite"]["version"],
+                       "Dataset and release versions must match")
+            _h_require(value["release_provenance"] is None or isinstance(value["release_provenance"], dict),
+                       "Release provenance must be a JSON object or null")
+        files = ({"README.md", "tools/benchmark.py", "LICENSE", "THIRD_PARTY_NOTICES.md"} if simple
+                 else {"CONTROLLER.md", "controller.py", "runtime-template.json"})
+        _h_projection(root, view, files)
         _h_require(value["exported_slots"] == value["planned"]["all_slots"]
                    == value["planned"]["selected_slots"], "A generic release must retain the full denominator")
         selections = value["target_slot_ids"]
@@ -856,8 +887,9 @@ def _inspect_release_dataset_contents(root):
             wanted.update(slots[sid]["case_id"] + ":A1" for sid in list(wanted))
             _h_require(selections[target] == [sid for sid in all_ids if sid in wanted],
                        "Release branch target inventory changed")
-        _r_execution(_r_json(_h_file(root, "runtime-template.json").read_bytes()),
-                     [c["case_id"] for c in value["cases"]])
+        if not simple:
+            _r_execution(_r_json(_h_file(root, "runtime-template.json").read_bytes()),
+                         [c["case_id"] for c in value["cases"]])
         return value
     except (KeyError, TypeError, AttributeError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError("Malformed release dataset") from error
@@ -874,7 +906,7 @@ def inspect_release_dataset(root, *, plan=None, suite=None):
         _h_require(value["suite"] == {"id": fresh.metadata["id"], "version": fresh.metadata["version"],
                                       "sha256": fresh.sha256}, "Release suite changed")
         for row in value["cases"]:
-            _h_require(_r_json(_h_file(root, row["request_path"]).read_bytes())
+            _h_require(_h_case_request(root, row)
                        == fresh.request(fresh.cases[row["case_id"]]), "Release candidate projection changed")
     return value
 
@@ -908,7 +940,7 @@ def _r_bind_dataset(value, root, plan, suite=None):
     if suite is not None:
         fresh = _source_suite(plan, suite)
         for row in value["cases"]:
-            _h_require(_r_json(_h_file(root, row["request_path"]).read_bytes())
+            _h_require(_h_case_request(root, row)
                        == fresh.request(fresh.cases[row["case_id"]]), "Release candidate projection changed")
 
 
@@ -925,7 +957,8 @@ def inspect_release_run(root):
         root = _h_root(root)
         value = _r_json(_h_file(root, "manifest.json").read_bytes())
         _h_object(value, _RUN_KEYS, "release run manifest")
-        _h_require(value["schema"] == RUN_SCHEMA and value["controller_version"] == RELEASE_CONTROLLER,
+        _h_require(value["schema"] == RUN_SCHEMA and value["controller_version"] in {
+                       RELEASE_CONTROLLER, SIMPLE_CONTROLLER},
                    "Unsupported frozen release run")
         _h_require(_h_hash(value["run_sha256"]) and value["run_sha256"] == _h_identity(
             {k: v for k, v in value.items() if k != "run_sha256"}), "Frozen release run changed")
@@ -936,7 +969,8 @@ def inspect_release_run(root):
                    "Frozen run time must include a timezone")
         dataset = _inspect_release_dataset_contents(root / "dataset")
         _h_require(value["dataset_sha256"] == dataset["dataset_sha256"]
-                   and value["base_plan_sha256"] == dataset["base_plan_sha256"],
+                   and value["base_plan_sha256"] == dataset["base_plan_sha256"]
+                   and value["controller_version"] == dataset["controller_version"],
                    "Frozen run binds a different release")
         _h_require(value["runtime_frozen"] is True and value["preparation_only"] is False
                    and value["runtime_sha256"] == _h_identity(value["runtime"]),
@@ -950,15 +984,24 @@ def inspect_release_run(root):
         _h_require(value["execution"] == execution
                    and value["planned"] == dict(dataset["planned"], selected_slots=len(ids)),
                    "Frozen runtime execution or denominator changed")
-        _h_object(value["files_sha256"], {"controller.py", "submission-template.json"}, "run file inventory")
+        simple = dataset["schema"] == SIMPLE_DATASET_SCHEMA
+        controller = "tools/benchmark.py" if simple else "controller.py"
+        _h_object(value["files_sha256"], {controller} if simple else {controller, "submission-template.json"},
+                  "run file inventory")
         for name, digest in value["files_sha256"].items():
             _h_require(_h_hash(digest) and _h_digest(_h_file(root, name).read_bytes()) == digest,
                        "Frozen run file changed: " + name)
-        _h_require(_h_file(root, "controller.py").read_bytes() == _h_file(root / "dataset", "controller.py").read_bytes(),
+        _h_require(_h_file(root, controller).read_bytes() == _h_file(root / "dataset", controller).read_bytes(),
                    "Frozen run controller differs from release")
-        _h_require(_r_json(_h_file(root, "submission-template.json").read_bytes()) == _r_template(value, bound=False),
-                   "Frozen run submission template changed")
-        _h_require({p.name for p in root.iterdir()} == {"manifest.json", "controller.py", "submission-template.json", "dataset"}
+        if not simple:
+            _h_require(_r_json(_h_file(root, "submission-template.json").read_bytes()) == _r_template(value, bound=False),
+                       "Frozen run submission template changed")
+        elif (root / "tools").is_dir():
+            _h_require({p.name for p in (root / "tools").iterdir()} == {"benchmark.py"},
+                       "Unlisted file in frozen run tools")
+        roots = {"manifest.json", "tools", "dataset"} if simple else {
+            "manifest.json", "controller.py", "submission-template.json", "dataset"}
+        _h_require({p.name for p in root.iterdir()} == roots
                    and all(not p.is_symlink() for p in root.iterdir()), "Unlisted file in frozen run workspace")
         return value
     except (KeyError, TypeError, AttributeError, UnicodeError, json.JSONDecodeError) as error:
@@ -976,26 +1019,31 @@ def freeze_release_runtime(dataset_root, runtime, destination, *, targets=None):
     dest = _h_path(destination)
     _h_require(not dest.exists() and not dest.is_relative_to(root) and not root.is_relative_to(dest),
                "Run output must be a new directory separate from the immutable dataset")
-    manifest = {"schema": RUN_SCHEMA, "controller_version": RELEASE_CONTROLLER,
+    manifest = {"schema": RUN_SCHEMA, "controller_version": dataset["controller_version"],
                 "run_id": uuid.uuid4().hex, "created_at": datetime.now(timezone.utc).isoformat(),
                 "dataset_sha256": dataset["dataset_sha256"], "base_plan_sha256": dataset["base_plan_sha256"],
                 "runtime": copy.deepcopy(runtime), "runtime_sha256": _h_identity(runtime),
                 "runtime_frozen": True, "preparation_only": False, "targets": targets,
                 "selected_slot_ids": ids, "planned": dict(dataset["planned"], selected_slots=len(ids)),
                 "execution": execution}
-    controller = _h_file(root, "controller.py").read_bytes()
+    simple = dataset["schema"] == SIMPLE_DATASET_SCHEMA
+    controller_path = "tools/benchmark.py" if simple else "controller.py"
+    controller = _h_file(root, controller_path).read_bytes()
     template = (json.dumps(_r_template(dict(manifest, run_sha256=None), bound=False),
                            ensure_ascii=False, indent=2) + "\n").encode("utf-8")
-    manifest["files_sha256"] = {"controller.py": _h_digest(controller),
-                                "submission-template.json": _h_digest(template)}
+    manifest["files_sha256"] = {controller_path: _h_digest(controller)}
+    if not simple:
+        manifest["files_sha256"]["submission-template.json"] = _h_digest(template)
     manifest["run_sha256"] = _h_identity(manifest)
     created = False
     try:
         dest.mkdir(parents=True, exist_ok=False)
         created = True
         shutil.copytree(root, dest / "dataset", symlinks=True)
-        (dest / "controller.py").write_bytes(controller)
-        (dest / "submission-template.json").write_bytes(template)
+        (dest / controller_path).parent.mkdir(parents=True, exist_ok=True)
+        (dest / controller_path).write_bytes(controller)
+        if not simple:
+            (dest / "submission-template.json").write_bytes(template)
         _r_write(dest / "manifest.json", manifest)
         inspect_release_run(dest)
         return manifest
@@ -1090,7 +1138,7 @@ def _release_controller_main():
 def _release_controller_source():
     functions = (_h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
                  _h_root, _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
-                 _h_message, _h_projection, _h_build_request, _execution_projection,
+                 _h_message, _h_case_request, _h_projection, _h_build_request, _execution_projection,
                  _r_json, _r_write, _r_execution, _r_targets, _inspect_release_dataset_contents,
                  _r_template, inspect_release_run, freeze_release_runtime, release_candidate_request,
                  release_submission_template, _release_controller_main)
@@ -1098,9 +1146,11 @@ def _release_controller_source():
               'Controller-side only. This program never calls a candidate model.\n"""\n\n'
               'import copy\nimport hashlib\nimport json\nimport math\nimport re\nimport shutil\nimport uuid\n'
               'from datetime import datetime, timezone\nfrom pathlib import Path, PurePosixPath\n\n')
-    constants = {"DATASET_SCHEMA": DATASET_SCHEMA, "RUN_SCHEMA": RUN_SCHEMA,
+    constants = {"DATASET_SCHEMA": DATASET_SCHEMA, "SIMPLE_DATASET_SCHEMA": SIMPLE_DATASET_SCHEMA,
+                 "SIMPLE_CONTROLLER": SIMPLE_CONTROLLER, "RUN_SCHEMA": RUN_SCHEMA,
                  "RELEASE_CONTROLLER": RELEASE_CONTROLLER, "RELEASE_SUBMISSION": RELEASE_SUBMISSION,
                  "PARAMETER_NAMES": PARAMETER_NAMES, "_DATASET_KEYS": tuple(sorted(_DATASET_KEYS)),
+                 "_SIMPLE_DATASET_KEYS": tuple(sorted(_SIMPLE_DATASET_KEYS)),
                  "_RUN_KEYS": tuple(sorted(_RUN_KEYS)), "_RELEASE_TARGETS": _RELEASE_TARGETS,
                  "_RELEASE_CONTEXT": _RELEASE_CONTEXT}
     return (header + "\n".join(k + " = " + repr(v) for k, v in constants.items()) + "\n\n"
@@ -1206,6 +1256,105 @@ def export_release_dataset(plan, suite, destination, *, evaluator_destination=No
         write_json(dest / "manifest.json", manifest)
         write_json(evaluator / "plan.json", plan)
         write_json(evaluator / "receipt.json", {"schema": "math-gauge.release-export-receipt/v1",
+            "operator_only": True, "dataset_sha256": manifest["dataset_sha256"],
+            "base_plan_sha256": plan["plan_sha256"], "candidate_calls": 0,
+            "manifest_file_sha256": digest_bytes((dest / "manifest.json").read_bytes()),
+            "plan_file_sha256": digest_bytes((evaluator / "plan.json").read_bytes())})
+        inspect_release_dataset(dest, plan=plan, suite=suite)
+    except BaseException:
+        for root in reversed(created):
+            shutil.rmtree(root)
+        raise
+    return manifest
+
+
+def _simple_controller_source():
+    """Build the portable helper from these same canonical owners."""
+    from .harness_answers import portable_answer_source
+    source = _release_controller_source().decode("utf-8")
+    source = source.rsplit('\n\n\nif __name__ == "__main__":', 1)[0]
+    return (source + "\n\n" + portable_answer_source()
+            + '\n\n\nif __name__ == "__main__":\n    _simple_controller_main()\n').encode("utf-8")
+
+
+def validate_release_anchor(value):
+    """Read trusted evaluator data; a hash in a returned ZIP cannot replace this anchor."""
+    _h_object(value, {"schema", "base_plan", "expected_dataset_sha256", "release_version", "suite"},
+              "release evaluator anchor")
+    _h_require(value["schema"] == RELEASE_ANCHOR and _h_hash(value["expected_dataset_sha256"]),
+               "Portable answers require a trusted release evaluator anchor")
+    plan = value["base_plan"]
+    validate_plan(plan)
+    _h_require(not plan["runtime_frozen"] and plan["targets"] == ["all"]
+               and value["suite"] == plan["suite"] and value["release_version"] == plan["suite"]["version"],
+               "Release evaluator anchor version, suite or base plan changed")
+    return plan
+
+
+def make_release_anchor(plan, dataset):
+    value = {"schema": RELEASE_ANCHOR, "base_plan": copy.deepcopy(plan),
+             "expected_dataset_sha256": dataset["dataset_sha256"],
+             "release_version": dataset["release_version"], "suite": copy.deepcopy(dataset["suite"])}
+    validate_release_anchor(value)
+    _h_require(dataset["schema"] == SIMPLE_DATASET_SCHEMA and dataset["base_plan_sha256"] == plan["plan_sha256"],
+               "Dataset does not bind this release evaluator anchor")
+    return value
+
+
+def export_simple_release_dataset(plan, suite, destination, *, evaluator_destination=None,
+                                  release_version, readme, extra_files, release_provenance=None):
+    """Export one guide and one copy of each candidate input, with the shared controller."""
+    suite = _source_suite(plan, suite)
+    from .execution import runner_fingerprint
+    _h_require(plan["runner_sha256"] == runner_fingerprint(), "Runner changed after release anchor freezing")
+    _h_require(not plan["runtime_frozen"] and plan["targets"] == ["all"],
+               "Release dataset requires a full preparation-only base plan")
+    _h_require(release_version == suite.metadata["version"], "Dataset and release versions must match")
+    _h_require(isinstance(readme, bytes) and readme.decode("utf-8").strip(), "A complete UTF-8 README is required")
+    _h_require(isinstance(extra_files, dict) and set(extra_files) == {"LICENSE", "THIRD_PARTY_NOTICES.md"}
+               and all(isinstance(raw, bytes) and raw for raw in extra_files.values()),
+               "The simple release requires its license and third-party notices")
+    _h_require(release_provenance is None or isinstance(release_provenance, dict),
+               "Release provenance must be an object or null")
+    _h_identity(release_provenance)
+    dest = _new_destination(destination)
+    evaluator = _new_destination(str(destination) + ".evaluator" if evaluator_destination is None else evaluator_destination)
+    _h_require(not dest.is_relative_to(evaluator) and not evaluator.is_relative_to(dest)
+               and not dest.is_relative_to(suite.root) and not suite.root.is_relative_to(dest)
+               and not evaluator.is_relative_to(suite.root) and not suite.root.is_relative_to(evaluator),
+               "Release, evaluator and suite directories must be separate")
+    projection, expanded = _projection(plan, suite, ["all"])
+    contents = {"README.md": readme, "tools/benchmark.py": _simple_controller_source(), **extra_files}
+    cases = []
+    for row in projection["cases"]:
+        request = suite.request(suite.cases[row["case_id"]])
+        case = {key: copy.deepcopy(row[key]) for key in (
+            "case_id", "case_version", "request_sha256", "candidate_message_sha256", "task_path", "files")}
+        case.update(track=request["track"], instruction=request["instruction"])
+        cases.append(case)
+        for name in [case["task_path"], *(item["path"] for item in case["files"])]:
+            contents[name] = expanded[name]
+    keys = ("suite", "runner_sha256", "protocol_version", "planned", "exported_slots",
+            "selected_slot_ids", "slots", "prompts")
+    manifest = {key: projection[key] for key in keys}
+    manifest.update(schema=SIMPLE_DATASET_SCHEMA, controller_version=SIMPLE_CONTROLLER,
+                    release_version=release_version, release_provenance=copy.deepcopy(release_provenance),
+                    base_plan_sha256=plan["plan_sha256"], cases=cases,
+                    target_slot_ids={t: [s["slot_id"] for s in select_slots(plan, [t])] for t in _RELEASE_TARGETS},
+                    files_sha256={name: digest_bytes(raw) for name, raw in sorted(contents.items())})
+    manifest["dataset_sha256"] = identity(manifest)
+    created = []
+    try:
+        for root in (dest, evaluator):
+            root.mkdir(parents=True, exist_ok=False)
+            created.append(root)
+        for name, raw in contents.items():
+            target = dest / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
+        write_json(dest / "manifest.json", manifest)
+        write_json(evaluator / "plan.json", make_release_anchor(plan, manifest))
+        write_json(evaluator / "receipt.json", {"schema": "math-gauge.release-export-receipt/v2",
             "operator_only": True, "dataset_sha256": manifest["dataset_sha256"],
             "base_plan_sha256": plan["plan_sha256"], "candidate_calls": 0,
             "manifest_file_sha256": digest_bytes((dest / "manifest.json").read_bytes()),

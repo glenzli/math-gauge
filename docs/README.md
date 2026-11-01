@@ -4,14 +4,15 @@ Math Gauge 当前唯一题集是43份完整试卷的公开开发题集；参考�
 
 | 目的 | 入口 |
 | --- | --- |
-| 直接下载候选 ZIP，在任意平台冻结模型与预算后运行 | [下载运行指南](../protocol/release-distribution.md) · [压缩包内操作说明](release-consumer-README.md) |
+| 在任意外部 harness 运行任务并交回答卷 | [v0.2.0 包内唯一操作说明](release-consumer-README-v0.2.0.md)；当前仅本地准备 |
+| 构建、检查任务包，或查阅历史分发 | [分发合同](../protocol/release-distribution.md) · [v0.1.0 历史发布说明](release-notes-v0.1.0.md) |
 | 了解测量目标、样本单位和结论边界 | [项目定位](project-positioning.md) |
 | 阅读当前试卷及完整出题材料 | [试卷目录](../cases/README.md) · [按考察重点选卷](../cases/by-focus.md) |
 | 理解输入、数学审核、Lean与报告 | [评测方法](evaluation-methods.md) · [基础协议](../protocol/evaluation.md) |
 | 查看七个分项、加权总分、缺测规则和独立运行范围 | [综合评分标准](../protocol/benchmark-scoring.md) · [默认权重](../protocol/benchmark-profile.json) |
 | 核验模型返回信息、隔离来源与正式比较资格 | [运行证据标准](../protocol/execution-evidence.md) · [隔离流程](../protocol/isolated-cli-runs.md) |
 | 导出候选材料、接入共享runner | [使用指南](usage.md) |
-| 在任意平台独立运行、交换外部提交与复用评分 | [外部 harness 协议](../protocol/external-harness.md) · [使用指南](usage.md) |
+| 维护交换接口、统一导入返回包并复用评分 | [外部 harness 合同](../protocol/external-harness.md) · [使用指南](usage.md) |
 | 检查当前编译、语义覆盖与人审状态 | [验证状态](verification.md) · [作者证据账本](../verification/author/README.md) |
 | 查看重复作答与立场分支的固定设计 | [可靠性材料包](../protocol/reliability/README.md) |
 | 维护题目、工具与来源 | [仓库地图](repository-map.md) · [贡献指南](../CONTRIBUTING.md) · [来源说明](../SOURCES.md) |

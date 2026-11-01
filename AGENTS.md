@@ -22,13 +22,15 @@
 - eligibility.py owns immutable execution-evidence imports, attributed execution-audit snapshots
   and per-slot qualification. Source integrity, human provenance review and mathematical review
   remain separate; request labels or fixture evidence cannot establish formal comparison eligibility.
-- harness.py owns standalone solver/controller exports and read-only bundle checks; harness_import.py
-  owns external-submission ingestion into the same reliability evidence and review contracts.
+- harness.py owns standalone solver/controller exports and read-only bundle checks; harness_answers.py
+  owns raw response collection and single return archives; harness_import.py owns external-submission
+  and archive ingestion into the same reliability evidence and review contracts.
   CLI only composes these interfaces. Export, check and import do not invoke candidate models.
 - Candidate release datasets stay immutable and runtime-free. harness.py freezes each chosen model,
   budget and selected target into a new run workspace; harness_import.py binds v2 submissions to that
   unchanged dataset and a trusted evaluator anchor. scripts/release.py owns named ZIP/checksum assets
-  and reproducible evaluator-plan recovery. Keep release version and suite version separate; GitHub
+  and reproducible evaluator-plan recovery. New task releases use the suite version as the release
+  version; the published v0.1.0 release retains its historical convention. GitHub
   automatic source archives contain public evaluator materials and are not solver deliveries.
 - Operator guides, runtime declarations, release metadata and schedules stay outside candidate
   messages. Runtime hashes, UUIDs, dates and source declarations do not authenticate a backend or

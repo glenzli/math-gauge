@@ -6,12 +6,16 @@ local process execution, provider identity, isolation or human approval.
 """
 
 import copy
+import io
 import json
 import math
 import os
 import re
+import stat
 import tempfile
+import unicodedata
 import uuid
+import zipfile
 from datetime import datetime
 from pathlib import Path
 
@@ -34,6 +38,9 @@ SOURCE_ORIGINS = {"external", "fixture", "replay"}
 LIMITS = ("External source declarations are not authenticated. This importer makes zero "
           "candidate calls and does not establish provider identity, process isolation, "
           "complete external call accounting or formal comparison eligibility.")
+MAX_ANSWERS_FILES = 8192
+MAX_ANSWERS_FILE_BYTES = 64 * 1024 * 1024
+MAX_ANSWERS_TOTAL_BYTES = 512 * 1024 * 1024
 
 
 def _require(condition, message):
@@ -248,7 +255,8 @@ def _execution_contract(runtime, parameters, submitted):
             "fixture_only": submitted["fixture_only"]}
 
 
-def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=None, plan=None):
+def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=None, plan=None, archive_raw=None,
+              evaluator_anchor=None):
     from .harness import RUN_SCHEMA, inspect_release_dataset
     base = dest / "external-import"
     base.mkdir()
@@ -281,6 +289,13 @@ def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=Non
                        base_plan_file_sha256=digest_bytes((base / "evaluator-base-plan.json").read_bytes()))
     else:
         receipt.update(bundle_sha256=manifest["bundle_sha256"], plan_sha256=manifest["plan_sha256"])
+    if archive_raw is not None:
+        (base / "answers.zip").write_bytes(archive_raw)
+        receipt["answers_archive"] = {"path": "external-import/answers.zip", "bytes": len(archive_raw),
+                                      "sha256": digest_bytes(archive_raw)}
+        _require(evaluator_anchor is not None, "Answers ZIP import lacks its trusted evaluator anchor")
+        write_json(base / "evaluator-anchor.json", evaluator_anchor)
+        receipt["evaluator_anchor_sha256"] = digest_bytes((base / "evaluator-anchor.json").read_bytes())
     write_json(base / "receipt.json", receipt)
     return {"receipt_path": "external-import/receipt.json",
             "receipt_sha256": digest_bytes((base / "receipt.json").read_bytes())}
@@ -400,7 +415,8 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
     return meta
 
 
-def import_harness_submission(bundle_root, submission_path, plan, suite, destination):
+def import_harness_submission(bundle_root, submission_path, plan, suite, destination, *, _archive_raw=None,
+                               _evaluator_anchor=None):
     """Validate and atomically publish an immutable, provisional imported run."""
     from .harness import (RUN_SCHEMA, inspect_harness_bundle, inspect_release_run,
                           reconstruct_release_plan)
@@ -438,7 +454,7 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
         try:
             meta = _ingest(plan, suite, staging, manifest, value, index, sources)
             meta["external_import"] = _snapshot(bundle_root, source_raw, sources, staging, manifest,
-                                                  base_plan=base_plan, plan=plan)
+                base_plan=base_plan, plan=plan, archive_raw=_archive_raw, evaluator_anchor=_evaluator_anchor)
             meta["execution_manifest_sha256"] = _execution_manifest_hash(meta)
             write_json(staging / "run.json", meta)
             inspect_reliability_run(staging)
@@ -455,6 +471,113 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
             raise ValueError("Malformed harness submission structure") from error
 
 
+def _answers_archive_contents(path):
+    """Read a bounded, canonical file inventory; never execute or extract ZIP entries."""
+    source_path = Path(path).absolute()
+    source = _file(_root(source_path.parent), source_path.name)
+    _require(source.stat().st_size <= MAX_ANSWERS_TOTAL_BYTES, "Answers ZIP exceeds the archive size limit")
+    raw = source.read_bytes()
+    contents, folded, prefixes, total = {}, set(), {}, 0
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            infos = archive.infolist()
+            _require(0 < len(infos) <= MAX_ANSWERS_FILES, "Answers ZIP has an invalid file count")
+            for info in infos:
+                name = info.filename
+                relative = relative_name(name)
+                _require(info.orig_filename == name and "\0" not in name and ":" not in name
+                         and all(part == part.rstrip(" .") and part for part in relative.parts),
+                         "Unsafe answers ZIP path")
+                for count, part in enumerate(relative.parts, 1):
+                    _require(part.split(".", 1)[0].upper() not in {
+                        "CON", "PRN", "AUX", "NUL", *("COM" + str(i) for i in range(1, 10)),
+                        *("LPT" + str(i) for i in range(1, 10))}, "Reserved answers ZIP path")
+                    prefix = "/".join(relative.parts[:count])
+                    folded_prefix = unicodedata.normalize("NFC", prefix).casefold()
+                    _require(folded_prefix not in prefixes or prefixes[folded_prefix] == prefix,
+                             "Case or Unicode aliased answers ZIP directories")
+                    prefixes[folded_prefix] = prefix
+                alias = unicodedata.normalize("NFC", name).casefold()
+                _require(name not in contents and alias not in folded, "Duplicate or aliased answers ZIP path")
+                folded.add(alias)
+                mode = info.external_attr >> 16
+                _require(not info.is_dir() and stat.S_IFMT(mode) in {0, stat.S_IFREG}
+                         and not info.flag_bits & 1, "Answers ZIP may contain only unencrypted regular files")
+                _require(0 <= info.file_size <= MAX_ANSWERS_FILE_BYTES,
+                         "Answers ZIP entry exceeds the file size limit")
+                total += info.file_size
+                _require(total <= MAX_ANSWERS_TOTAL_BYTES, "Answers ZIP exceeds the expanded size limit")
+                with archive.open(info) as stream:
+                    data = stream.read(MAX_ANSWERS_FILE_BYTES + 1)
+                _require(len(data) == info.file_size, "Answers ZIP entry size changed")
+                contents[name] = data
+        _require(all(str(parent) not in contents for name in contents for parent in Path(name).parents
+                     if str(parent) != "."), "Answers ZIP file/directory paths collide")
+        _require("answers.json" in contents, "Answers ZIP lacks its inventory manifest")
+        manifest = _json(contents["answers.json"])
+        _require(isinstance(manifest, dict), "Answers ZIP manifest must be an object")
+        keys = {"schema", "release_version", "suite", "dataset_sha256", "run_sha256", "base_plan_sha256",
+                "slot_states", "budget", "files"}
+        _require(set(manifest) == keys and manifest["schema"] == "math-gauge.answers-archive/v1",
+                 "Unsupported answers ZIP manifest")
+        inventory = manifest["files"]
+        _require(isinstance(inventory, dict) and set(inventory) == set(contents) - {"answers.json"}
+                 and all(name.startswith(("run/", "submission/")) for name in inventory),
+                 "Answers ZIP inventory has missing or unlisted files")
+        for name, descriptor in inventory.items():
+            _require(isinstance(descriptor, dict) and set(descriptor) == {"bytes", "sha256"}
+                     and type(descriptor["bytes"]) is int and descriptor["bytes"] == len(contents[name])
+                     and descriptor["sha256"] == digest_bytes(contents[name]), "Answers ZIP file hash or size changed")
+        return raw, contents, manifest
+    except (zipfile.BadZipFile, RuntimeError, EOFError, NotImplementedError) as error:
+        raise ValueError("Malformed answers ZIP") from error
+
+
+def import_answer_archive(archive_path, evaluator_anchor, suite, destination):
+    """Import one portable answer ZIP with installed validators and a trusted base plan."""
+    from .harness import (SIMPLE_DATASET_SCHEMA, inspect_release_dataset, inspect_release_run,
+                          validate_release_anchor)
+    from .harness_answers import _a_inspect, _a_submission
+
+    plan = validate_release_anchor(evaluator_anchor)
+    archive_raw, contents, envelope = _answers_archive_contents(archive_path)
+    _require(envelope["dataset_sha256"] == evaluator_anchor["expected_dataset_sha256"],
+             "Answers ZIP differs from the trusted dataset identity")
+    dest = _root(destination)
+    _require(not dest.exists(), "Harness import output already exists")
+    _require(not dest.is_relative_to(suite.root), "Import output must be outside its suite")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".math-gauge-answers-", dir=dest.parent) as temp:
+        unpacked = Path(temp)
+        # Entries were checked as data and are written under a newly created real
+        # directory. No downloaded helper is imported, evaluated or launched.
+        for name, raw in contents.items():
+            target = unpacked / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
+        run_root, responses = unpacked / "run", unpacked / "submission"
+        manifest = inspect_release_run(run_root)
+        dataset = inspect_release_dataset(run_root / "dataset", plan=plan, suite=suite)
+        _require(dataset["schema"] == SIMPLE_DATASET_SCHEMA,
+                 "Answers ZIP requires the versioned simple release layout")
+        _require(envelope["release_version"] == dataset["release_version"] == suite.metadata["version"]
+                 and envelope["suite"] == dataset["suite"]
+                 and envelope["dataset_sha256"] == manifest["dataset_sha256"]
+                 and envelope["run_sha256"] == manifest["run_sha256"]
+                 and envelope["base_plan_sha256"] == plan["plan_sha256"],
+                 "Answers ZIP binds a different version, dataset or trusted evaluator plan")
+        state = _a_inspect(run_root, responses, allow_submission=True)
+        submitted = _json(_file(responses, "submission.json").read_bytes())
+        _require(isinstance(submitted, dict), "Answers ZIP submission must be an object")
+        expected = _a_submission(state, origin=submitted.get("origin"),
+                                 declared_external_calls=submitted.get("declared_external_calls"))
+        _require(submitted == expected and envelope["slot_states"] == state["states"]
+                 and envelope["budget"] == state["budget"],
+                 "Answers ZIP collection, missingness or submission changed")
+        return import_harness_submission(run_root, responses / "submission.json", plan, suite, destination,
+                                         _archive_raw=archive_raw, _evaluator_anchor=evaluator_anchor)
+
+
 def inspect_import_sources(root, meta, records):
     """Recheck retained external evidence; shared reliability inspection calls this."""
     from .harness import inspect_harness_bundle, inspect_release_run, reconstruct_release_plan
@@ -467,6 +590,19 @@ def inspect_import_sources(root, meta, records):
     _require(digest_bytes(receipt_raw) == descriptor.get("receipt_sha256"), "External import receipt changed")
     receipt = _json(receipt_raw)
     _require(receipt.get("schema") in {RECEIPT, RELEASE_RECEIPT}, "Unsupported external import receipt")
+    if "answers_archive" in receipt:
+        archive = receipt["answers_archive"]
+        _require(isinstance(archive, dict) and archive.get("path") == "external-import/answers.zip",
+                 "Retained answers ZIP descriptor changed")
+        raw = _file(root, archive["path"]).read_bytes()
+        _require(type(archive.get("bytes")) is int and len(raw) == archive["bytes"]
+                 and digest_bytes(raw) == archive.get("sha256"), "Original answers ZIP changed")
+        from .harness import validate_release_anchor
+        anchor_raw = _file(root, "external-import/evaluator-anchor.json").read_bytes()
+        _require(digest_bytes(anchor_raw) == receipt.get("evaluator_anchor_sha256"),
+                 "Retained trusted evaluator anchor changed")
+        anchor = _json(anchor_raw)
+        validate_release_anchor(anchor)
     source_raw = _file(root, "external-import/submission.json").read_bytes()
     _require(digest_bytes(source_raw) == receipt.get("source_submission_sha256"), "Original external submission changed")
     source = _json(source_raw)
@@ -481,6 +617,10 @@ def inspect_import_sources(root, meta, records):
                  and manifest["run_sha256"] == receipt.get("run_sha256")
                  and manifest["dataset_sha256"] == receipt.get("dataset_sha256")
                  and meta["plan"]["plan_sha256"] == receipt.get("plan_sha256"), "Imported release binding changed")
+        if "answers_archive" in receipt:
+            _require(anchor["base_plan"] == base_plan
+                     and anchor["expected_dataset_sha256"] == manifest["dataset_sha256"],
+                     "Retained answers ZIP binds a different trusted evaluator dataset")
     else:
         manifest = inspect_harness_bundle(bundle, plan=meta["plan"])
         _require(manifest["bundle_sha256"] == receipt.get("bundle_sha256")

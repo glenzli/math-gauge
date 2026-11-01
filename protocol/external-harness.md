@@ -1,136 +1,66 @@
-# 外部 harness 交换协议
+# 外部 harness 交换合同
 
-本协议规定题目导出、外部独立执行和原始答卷导入。外部 harness 可以使用自己的模型接入和会话管理，不需要 Codex 调度。导出、检查和导入本身不调用候选模型，也不执行候选提交的程序。
+外部 harness 使用自己的模型接入和隔离环境，与仓库内运行共享同一题目、消息、数学、审核和评分合同。当前是43份公开开发试卷，全部仍待人工审定，没有真实候选结果；公开参考和Git历史保留透明复核，不把它们描述为隐藏留出集。
 
-当前 `cases/` 是 **43 份公开开发试卷**。题目、参考论证与作者证据已公开，用于接入、回归和可复现实验；不得声称这些题或答案从未公开。公开开发集与将来未公开的保留集共用案例合同、runner 和评分实现，分开报告。
+普通交付流程以0.2.0任务包根目录的单个README为准，源文件为[任务运行与返回说明](../docs/release-consumer-README-v0.2.0.md)。本页记录实现边界、机械字段与兼容合同，不另设一套操作者流程。当前0.2.0只在本地准备；[历史v0.1.0发布](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0)及其[旧操作说明](../docs/release-consumer-README.md)保持不变。
 
-直接使用已发布数据时，从 [v0.1.0 Release](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0) 下载命名候选 ZIP 与 SHA256SUMS，按[下载运行指南](release-distribution.md)校验、解压并冻结本次模型和预算。无需 clone、安装 runner 或使用 Codex。GitHub 自动生成的 Source code 压缩包含公开评审材料，不是候选交付物。发布版本0.1.0与题集版本0.2.0分别记录。
-
-下载包的不可变数据集与每次 runtime 分开：`math-gauge.release-dataset/v1` 保留候选内容与脱敏完整调度，`math-gauge.harness-run/v2` 在新目录绑定所选runtime与执行范围。运行散列、UUID与本地时间只描述材料身份和声明，不认证第三方执行。下文原有 `benchmark-export` 仍支持从仓库直接冻结并导出；两条路径使用同一数学、消息、提交和审核合同。
-
-## 三种材料与访问者
+## 材料与访问者
 
 | 材料 | 内容 | 访问者 |
 | --- | --- | --- |
-| 候选输入 | 原始题面、可选统一指令、显式附件，以及本轮允许的对话历史 | 当前作答模型 |
-| harness 控制材料 | 选中槽位、依赖、预算、固定后续消息、提交格式和完整性记录 | 外部调度端 |
-| 评审材料 | 完整主计划、参考答案、逐项判准、预期真假、选择理由、作者证明和审核记录 | 评审端 |
+| 候选输入 | 完整题面、可选统一指令、显式白名单附件，以及本轮允许的历史 | 当前作答模型 |
+| 控制材料 | 选定槽位及顺序、依赖、固定后续消息、冻结调用条件和原始尝试 | harness操作者 |
+| 评审材料 | 完整主计划/profile、参考、rubric、预期真假、选择理由、审批及作者证据 | 评审端 |
 
-控制材料不是新增题面。不能把完整调度说明、清单、分类、实验机制或评审材料放进作答上下文。完整 `benchmark-plan` 含评审信息，不能作为外部执行包直接发送。
+候选消息沿用共享 `candidate_message(request)`，题面及附件全文都必须传递；题号、分类、来源和调度元数据不能扩展成提示。清单、README、工具和原始提交只供控制端使用。仅生成白名单目录不等于实际进程隔离；文件、网络、工具与跨题历史仍须按[隔离合同](isolated-cli-runs.md)核实。
 
-发布仓库是公开开发集的编写与复核环境，包含候选材料和评审材料；它不是候选工作目录。导出时依据显式白名单生成新包。评审侧文件另存于包外，不能为了方便把仓库或导出包的父目录整体交给作答进程。目录分开只说明材料边界，实际文件、网络、工具和历史隔离仍须由执行环境保证。
+整章题约定的含证明原文、跨章Lean定义，以及故意语义失配的审计源码都是合法输入，不能以隐藏答案为由删除或修复。作者完成的本题Lean和评审材料不进入任务包。公开与未来私有题集复用同一实现，不在私有数据中复制runner。
 
-整章题允许提供含证明的原文及跨章 Lean 定义，这是题目约定的输入。Lean 审计题中故意失配的源码也属于输入。不得以隐藏答案为由删除这些材料；作者完成的本题 Lean 不属于候选输入。
+## 不可变数据与运行
 
-## 发布数据集与每次运行
+0.2.0命名ZIP采用扁平根目录：单个README、`cases/<case-id>/task.md`、约定附件、`tools/benchmark.py`、机器清单和许可；不复制request、candidate-message或第二份控制指南。发布版本与suite版本一致，schema和工具实现版本仍独立管理。具体打包和源码身份合同见[任务分发合同](release-distribution.md)。
 
-命名 ZIP 的 `payload/` 不预选模型和预算。先执行 `controller.py check`，再用 `freeze --runtime ... --out NEW_RUN` 创建根目录含控制器、运行清单与提交模板、子目录含原样 `dataset/` 的新运行。只有冻结后的运行可构造真实候选请求，原题包不改写。执行端只需下载包和 Python 标准库。
+不可变数据集不选模型和预算。准备命令在新目录复制原样数据，绑定runtime和事前选定目标；候选参数必须含明确请求模型，预算包含正的超时和输出上限，`fresh_context`必须为true。运行清单的 `selected_slot_ids` 是实际执行顺序，`execution` 是允许传递的冻结参数；更换条件必须新建运行。
 
-发布路径使用 `math-gauge.harness-submission/v2`，提交绑定 `dataset_sha256`、`run_sha256` 和 `runtime_sha256`。`controller.py template` 从运行目录生成已填绑定的独立文件；不能改写被清单哈希绑定的原模板。完整评审计划在评审端从对应标签及 `releases/v0.1.0/config.json` 恢复，导入器再结合原样 runtime 重建评审计划，不伪造旧版 `plan_sha256`。该恢复锚点与完整计划不进入候选 ZIP。
+当前任务包使用 `math-gauge.release-dataset/v2`，历史数据集v1继续兼容；运行与提交沿用 `math-gauge.harness-run/v2` 和 `math-gauge.harness-submission/v2`。发布数据集绑定基础评审计划；运行绑定 `dataset_sha256`、`run_sha256`、`runtime_sha256`。包外 `evaluator-plan.json` 保存完整基础计划和期望的精确数据集身份，导入先核对此身份，再结合运行runtime重建相同计划；自洽重哈希的陌生题包也须拒绝。执行端无须取得该文件，也无权手写评审字段。
 
-runtime 使用发布控制器的显式白名单，不能原样套用带额外运行证据字段的仓库配置；格式及全部命令见[下载运行指南](release-distribution.md)。公开与未来私有数据复用相同实现。
+原始记录由 `math_gauge/harness_answers.py` 管理，移位后可运行的标准库工具由 `harness.py` 导出。工具构造精确请求并将该请求文件登记为不可变记录；答卷记录必须引用该请求。它不代发平台请求，登记本身不证明实际送达内容、后端或隔离真实。
 
-## 从仓库直接导出（v1交换）
+## 独立上下文、历史与失败
 
-在仓库根目录准备完整开发集：
+每题A1/A2/A3分别使用全新上下文。预选八题的neutral/affirm/deny分支从同一锁定A1独立展开，各两轮；第一轮只包含原题、该A1和本分支固定消息，第二轮再接本分支R1。工具只从已保存的原始父答卷取历史，拒绝其他初答、其他分支和缺少可读祖先的续答。不得加入正确性或编译反馈。
 
-```sh
-python3 -m math_gauge benchmark-export --target all --out runs/external-dev
-```
+KEEP继承紧邻父节点的完整交付，当前轮说明另审；FULL重新交付全题答案及约定源码，不使用部分修改摘要。当前是无候选工具轨道，检索、代码执行、Lean交互编译或额外agent须另外冻结条件和版本，不能混报；操作者的传输、保存和调度工具不是候选解题工具。
 
-交给外部调度端的目录为 `runs/external-dev/`；完整评审计划默认写到独立的 `runs/external-dev.evaluator/plan.json`。可以通过 `--evaluator-out` 指定另一个独立目录。两个输出目录必须是新路径，不允许互相包含；不覆盖已有导出。
+所有实际尝试按原顺序保存：完整请求、原始响应、标准错误、实际状态及已知的用量和附属平台记录。usage只含非负数值字段，累计预算使用已知的total_tokens；原始平台JSON对象及嵌套字段保存在metadata。字段未知时保持未知，不用请求回显作为后端身份核验，不把导入或保存时间写成生成时间。Lean代码保留在原始答卷，提取源码、真实编译和语义审核分别绑定，导入不修复源码。
 
-准备阶段尚未指定真实模型与预算时，包明确标为未冻结运行配置。真实执行前应先准备配置文件，再生成新包：
+仅没有可读答卷的暂时传输失败或超时可在冻结上限内重试；第一份可读答卷立即锁定。数学错误、拒答、交付不全和有文本的超时不能换答。失败不删除，显式skip保留未执行原因；缺少可读父节点的后续槽位保留阻塞。请求必须按选定顺序执行，不能通过乱序重排改变累计预算；停在中途也保留所有未执行槽位。
 
-```sh
-python3 -m math_gauge benchmark-export --target lean-construction \
-  --runtime /absolute/path/to/runtime.json --out runs/external-lean
-```
+## 单个返回包与统一导入
 
-配置采用[使用指南](../docs/usage.md)中的 runtime 合同，不在生成包后临时改模型、预算或工具条件。导出时不会试调模型或检查凭据。也可以用 `--plan /absolute/path/to/plan.json` 导出已有冻结计划的选定分项；同计划的分片沿用完整分母。
+打包工具从原始记录生成 `answers.zip`，机械字段和散列由实现填写。外部真实调用必须显式声明origin及实际调用总数；默认fixture、真实调用数0，replay保留复放标签。打包不改变原始答卷或补齐缺测。
 
-每份候选消息包含题面及附件全文，与共享 `candidate_message(request)` 一致。旧的单题 `prepare` 仍可使用，但其 `prompt.md` 不展开附件；不要把旧单题文件与完整消息混淆。
-
-包内布局如下。评审目录与交付包是同级的独立目录；`cases/` 内的传输元数据同样不能扩展为解题提示。
+返回ZIP根目录为：
 
 ```text
-external-dev/
-  CONTROLLER.md
-  controller.py
-  manifest.json
-  submission-template.json
-  cases/<case-id>/
-    request.json
-    task.md
-    instruction.txt
-    candidate-message.md
-    files/<declared-attachment-path>
-external-dev.evaluator/
-  plan.json
-  receipt.json
+answers.json                   绑定、文件清单及所有选定槽位状态
+run/                           原样冻结运行及不可变数据集
+submission/submission.json     绑定该运行的v2提交
+submission/<raw-files>         原始响应、错误、用量和附属记录
 ```
 
-## 不依赖仓库的控制端
+评审入口 `benchmark-import --input answers.zip --plan TRUSTED_PLAN --out NEW_RUN` 统一进行安全读取、材料核验和共享运行导入；无需另传bundle或执行ZIP内程序。归档入口拒绝绝对路径、路径越界、重复/非普通成员及不受清单绑定的内容，按可信本地suite和计划核对数据、runtime、历史、原始字节、父节点、顺序、重试与预算。失败不能留下可被当作完成结果的输出运行。
 
-导出包自带执行说明、机器清单、提交模板和仅依赖 Python 标准库的 `controller.py`。把整个包移动到另一台机器后，控制工具仍能检查文件并构造本轮请求，不需要 `math_gauge` 包、原仓库或评审答案。具体命令见包内执行说明和 `controller.py --help`。
+`harness_import.py`拥有归档读取及共享外部导入；CLI只分派参数。归档内容不能替换可信评审计划或本地runner实现。原始提交和来源标签保存在可复查快照，之后check/review/collect/report继续验证同一绑定。
 
-请求构造工具不连接任何模型，也不接受外部命令让它代执行。harness 负责将构造出的 `messages` 和冻结生成参数交给实际后端，并保存真实请求、返回文本及调用记录。作答模型不应获得控制工具或调度说明作为额外上下文。
+导入仅证明材料可接入；它不调用模型、不编译Lean、不裁定数学和外部来源。下一步使用共享 `benchmark-review-template`、实际审核、`benchmark-review`、`benchmark-collect` 和 `benchmark-report`。数学/交付审核、候选Lean原样核验、人审和来源核验彼此独立，不能用作者编译或AI审核替代。
 
-哈希用于发现材料变更并绑定输入、历史与答卷；拥有一组自洽哈希不等于证明后端身份、调用真实性或隔离成立。对外传包时，应通过独立可信渠道保留导出身份，导入时再与评审侧计划和实际题集核对。
+通用外部来源保留 `external_import`，不会伪装成runner现场调用或把导入重标为一次真实模型生成。现有[正式运行证据](execution-evidence.md)绑定本地调用及隔离材料；新外部环境须验证对应来源合同，不能仅凭声明、散列、UUID、时间或勾选取得资格。未核实时保留原因及暂定分析标签，`formal_score`保持相应空值。
 
-## 执行顺序与上下文
+报告继续采用冻结权重和完整固定分母，逐项保留未运行、失败、未决及覆盖，不能把提交子集重新归一化为总体成绩。fixture只描述软件验收，不能报告模型能力。报告同时说明公开开发集身份、模型请求、可核实来源、工具预算、数学和Lean审核、人审及正式资格。
 
-所有题有 `A1`、`A2`、`A3` 三次独立作答。每次必须使用新的上下文，不包含同题其他答案、先前审核、跨题记忆或自定义解题提示。不能在一个长会话里让模型连答三次来代替独立运行。
+## 历史格式兼容
 
-固定八题的自查从同一份锁定 `A1` 分别展开 `neutral`、`affirm`、`deny` 三条分支，每条两轮。第一轮只使用题目、该 `A1` 和本分支的固定提示；第二轮再接上本分支第一轮的原始回答及第二轮提示。不得混入另一个分支的回答、其他独立轮或真实正确性反馈。支持或怀疑的提示是冻结实验输入，不是评审结论。
+仓库内 `benchmark-export` 的v1目录交换和历史v0.1.0发布的v2运行交换继续复用同一导入与审核实现。v1包包含controller、模板及展开后的候选请求，完整计划另存独立evaluator目录；v1提交绑定 `bundle_sha256`、`plan_sha256`、`runtime_sha256`。历史发布v2则将不可变payload和runtime运行分开，绑定数据集/运行/runtime，评审端从原发布配置恢复基础计划。
 
-复核保持既有 `KEEP` / `FULL` 合同：`KEEP` 维持紧邻父节点的完整答卷，说明仅供本轮审核；`FULL` 是重新交付覆盖全题的答案和所需文件。不能跳过错误格式的父节点直接继承 `A1`，也不能用修改摘要替代完整交付。见[复核交付格式](reliability/reply-format.md)。
-
-当前版本是禁用候选工具的文本作答条件。使用 Lean 交互编译、联网检索或额外 agent 的实验需要另行冻结、命名并报告，不能把改变后的条件登记成当前轨道。harness 本身进行传输、文件保存和调度不属于候选获得解题工具。
-
-## 原始答卷与失败记录
-
-提交必须保留实际执行顺序、每次尝试、原始响应字节、错误信息、可观察的用量和时间、实际消息及生成配置。未知值保持未知，不用导入时间代替生成时间，不把请求的型号名当作后端身份的独立核验。
-
-本版按冻结槽位顺序执行。提交的 `slots` 可以省略未执行节点，但已提交节点必须保持计划中的相对顺序；导入器不把乱序记录默默重排后计算预算。分阶段运行可持续收集同一包的答卷，最终按原计划汇集成一次提交。重复导入同一次生成不会自动建立原始证据复用关系，不能靠复制同一 `A1` 到多个独立运行来冒充多次作答或无冲突分片。
-
-遵守已有重试合同：只有没有可读答卷的传输暂时失败或超时，才允许在冻结上限内重试；第一份可读答卷立即锁定。拒答、数学错误、交付不完整以及超时前已经返回的可读文本，都不能成为换一份更好答案的理由。
-
-没有执行、执行失败和缺失答卷必须显式保留。导入不会补跑模型、补写证明、修复源码或删除失败槽位。部分提交继续使用完整计划的固定分母，不能把提交子集的平均数改称全基准成绩。
-
-所需 Lean 文件继续以题面约定的命名代码块交付。额外交回的文件必须绑定原始答卷，不能悄悄替换其中的代码。原始输出、提取源码、编译结果和语义审核分别保存；导入成功不表示 Lean 编译成功，更不表示题意对齐。
-
-从仓库直接导出的交换 JSON 使用 `math-gauge.harness-submission/v1`，绑定 `bundle_sha256`、`plan_sha256` 与 `runtime_sha256`。复制包内模板到新的结果目录后，从 `manifest.json` 填入 `bundle_sha256`；不可修改被哈希绑定的原模板。发布数据集另使用上述 v2运行绑定，两个版本均进入同一导入与审核实现。`origin` 为 `external`、`fixture` 或 `replay`，并显式填写 `fixture_only` 和 `declared_external_calls`。离线模板默认 `fixture_only: true`、真实调用数为 0。
-
-每个已执行槽位提交 `slot_id`、完整 `projected_request` 和有序 `attempts`；每次尝试包含序号、状态、请求散列、响应与标准错误文件的路径/字节数/SHA-256，以及实际可知的用量。响应为空时也保存显式的空文件。时间、退出状态及附属原始材料按实际提供。完整可执行的提交构造示例见[使用指南](../docs/usage.md)，包内说明是交付端的独立格式入口。
-
-## 导入与审核
-
-评审端保留原始导出包、外部提交及对应主计划，运行：
-
-```sh
-python3 -m math_gauge benchmark-export-check --bundle runs/external-dev \
-  --plan runs/external-dev.evaluator/plan.json
-python3 -m math_gauge benchmark-import --bundle runs/external-dev \
-  --input /absolute/path/to/submission.json \
-  --plan runs/external-dev.evaluator/plan.json --out runs/imported-dev
-python3 -m math_gauge benchmark-check --run runs/imported-dev
-python3 -m math_gauge benchmark-review-template --run runs/imported-dev \
-  --out runs/imported-dev-review.json
-```
-
-最后一条只生成待填写的审核模板。完成真实数学与交付审核后，再沿用 `benchmark-review`、`benchmark-collect` 和 `benchmark-report`。候选 Lean 核验仍使用现有入口，不能用作者编译记录代替。
-
-导入保存可独立复查的原始提交快照，并验证包、计划、题集、请求历史、响应和父节点绑定。未知题号、重复槽位、分支交叉、正文或附件篡改、路径越界及锁定后重试应被拒绝。输出目录必须是新目录；失败导入不能留下可误当作完成结果的运行。
-
-外部答卷的来源单独记为 `external_import`，不会伪装成 runner 现场调用，也不会把导入重标成一次真实候选调用。离线合成提交须显式标记为 fixture，测试不能成为模型成绩。
-
-本版通用外部导入支持原始材料核验、数学审核和暂定分项分析。现有[正式运行证据审定](execution-evidence.md)绑定了本地调用及隔离探测合同，通用外部提交不会仅凭声明取得正式资格；缺少可审定来源时保留未核实原因，`formal_score` 保持空值。接入一种新的真实运行环境，需要为该环境验证来源与隔离证据，而不是放宽数学标准或制造本地进程记录。
-
-对外报告采用共享 `benchmark-report` 输出，并说明：题集与主计划/导出包身份、公开开发集或保留集身份、请求的模型与可核实的运行来源、冻结工具和预算、各分项计划数与实测覆盖、缺失及失败数、数学与 Lean 审核状态、暂定成绩与正式资格。缺测方向显示空值或固定分母区间；fixture 仅报告软件验收，不报告模型能力。不要把准备包、调用声明或未填审核模板当作完成评测。
-
-## 开发集与未来保留集
-
-本次不删除当前公开参考解、不重写 Git 历史，也不把现有题标成秘密测试题。公开解答便于独立复核，替代正确证明仍可获认可。后续保留集须使用未公开题目与独立评审材料，冻结版本并支持具名复核；仅隐藏公开论文题的本地参考解不保证题目未被见过。
-
-评分维度、总体权重和执行规则可以公开，具体题目的预期真假与关键错误定位仍不得进入候选输入。对未来私有题集也只调用同一导出器、导入器和评分实现，不维护另一套 runner。
+旧JSON提交仍通过 `benchmark-import --bundle BUNDLE --input SUBMISSION_JSON --plan PLAN --out NEW_RUN` 导入。旧手写提交、模板和祖先答案映射是兼容接口，不再是普通任务交付的操作要求。历史细节见[v0.1.0原指南](../docs/release-consumer-README.md)，仓库直接导出见[维护操作](../docs/usage.md)。

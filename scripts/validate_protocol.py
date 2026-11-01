@@ -19,7 +19,7 @@ RUNNER_FILES = (
     "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/reliability.py",
     "math_gauge/reliability_review.py",
     "math_gauge/eligibility.py",
-    "math_gauge/harness.py", "math_gauge/harness_import.py",
+    "math_gauge/harness.py", "math_gauge/harness_answers.py", "math_gauge/harness_import.py",
     "math_gauge/cli.py", "scripts/validate_protocol.py",
     "scripts/release.py",
     "scripts/formal/check_evidence.py", "scripts/formal/verify.py",
@@ -31,6 +31,7 @@ ACCEPTANCE_TESTS = (
     "test_eligibility.py", "test_eligibility_acceptance.py", "test_isolated_cli.py",
     "test_harness_export.py", "test_harness_import.py", "test_harness_cli.py",
     "test_release_runtime.py", "test_release_artifacts.py",
+    "test_simple_harness.py", "test_simple_release_artifacts.py",
 )
 ACCEPTANCE_STANDARDS = (
     "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
@@ -41,6 +42,8 @@ ACCEPTANCE_STANDARDS = (
     "protocol/release-distribution.md",
     "releases/v0.1.0/config.json", "releases/v0.1.0/THIRD_PARTY_NOTICES.md",
     "docs/release-consumer-README.md", "docs/release-notes-v0.1.0.md", "LICENSE",
+    "releases/v0.2.0/config.json", "releases/v0.2.0/THIRD_PARTY_NOTICES.md",
+    "docs/release-consumer-README-v0.2.0.md",
 )
 SELECTED = (
     "MG-GR002", "MG-GR004", "MG-GR007", "MG-GR014",

@@ -4,28 +4,24 @@
 
 Math Gauge 是数学推理与 Lean 语义对齐基准。它检查模型能否在实际给定的结构下完成证明、反例、构造、分类或形式化，保持假设、量词、定义域与结论强度，并留下可复核的原始答卷与审核证据。
 
-[下载与运行](protocol/release-distribution.md) · [试卷目录](cases/README.md) · [按考察重点选卷](cases/by-focus.md) · [评分结构](protocol/benchmark-scoring.md) · [评测协议](protocol/evaluation.md) · [外部 harness](protocol/external-harness.md) · [使用指南](docs/usage.md) · [验证状态](docs/verification.md) · [文档导航](docs/README.md)
+[题包运行说明](docs/release-consumer-README-v0.2.0.md) · [试卷目录](cases/README.md) · [按考察重点选卷](cases/by-focus.md) · [评分结构](protocol/benchmark-scoring.md) · [评测协议](protocol/evaluation.md) · [维护操作](docs/usage.md) · [验证状态](docs/verification.md) · [文档导航](docs/README.md)
 
-## 下载候选题包
+## 独立任务包
 
-v0.1.0 提供可独立下载的候选题包与运行工具，使用以下固定资产名称和下载地址。
+当前本地交付版本为 **0.2.0，与题集版本一致**。`math-gauge-v0.2.0.zip` 包含全部43份任务及其约定附件、一个根目录 README，以及可选用的控制工具。解压后即可在任意外部 harness 使用，需要 Python 3.10+；不需要 clone 仓库、安装 Math Gauge、第三方 Python 包或 Codex。
 
-直接下载 [math-gauge-tasks-v0.1.0.zip](https://github.com/glenzli/math-gauge/releases/download/v0.1.0/math-gauge-tasks-v0.1.0.zip) 与 [SHA256SUMS](https://github.com/glenzli/math-gauge/releases/download/v0.1.0/SHA256SUMS)，核对校验和后解压。使用命名 ZIP；GitHub 自动生成的 **Source code** 压缩包包含公开参考答案，不是候选交付物。无需 clone 仓库、安装 Math Gauge 或使用 Codex。
+**0.2.0 目前只在本地准备，尚未发布到远端。** 发布包的唯一操作入口是[包内 README 的源文件](docs/release-consumer-README-v0.2.0.md)：选择模型、预算与任务范围，取得完整模型消息，保存每次原始答卷，然后一条命令打包 `answers.zip`。工具自动生成机械字段，操作者无需填写散列或完整提交 JSON。评审端使用同一条导入命令核验返回包，再进行来源、数学及适用的 Lean 审核。
 
-在解压后的 `math-gauge-tasks-v0.1.0/` 中，先检查不可变题包，再用所选模型与预算创建一个新的运行目录：
+维护者可在仓库根目录构建本地预览包：
 
 ```sh
-python3 payload/controller.py check --bundle payload
-python3 payload/controller.py freeze --bundle payload \
-  --runtime /absolute/path/to/runtime.json --target all --out /absolute/path/to/new-run
-python3 /absolute/path/to/new-run/controller.py request \
-  --bundle /absolute/path/to/new-run --slot 'MG-GR002:A1' \
-  --out /absolute/path/to/requests/gr002-a1.json
+python3 scripts/release.py build --version 0.2.0 --local-preview \
+  --out runs/releases/v0.2.0
 ```
 
-这些命令仅核验、冻结配置和构造请求，不调用模型。外部 harness 将请求中的完整 `messages` 和冻结参数交给实际模型，保存全部原始答卷，再交回同一审核流程。初答使用全新上下文，自查分支只读取各自历史。完整的下载、runtime、后续请求、提交与回收步骤见[下载运行指南](protocol/release-distribution.md)，压缩包内也有独立操作说明。
+构建、检查、准备请求、记录与导入均不调用模型。控制工具只供 harness 操作者使用，不是候选模型的解题工具。模型只接收本题完整消息、约定附件和允许的本分支历史。参考、评分、完整评审计划及作者证据留在包外。
 
-**发布版本 v0.1.0 与题集版本 0.2.0 分别记录。** 本次是软件与数据交付物的首次发布，保持43卷、177槽计划和现有数学条件；全部试卷仍为 draft / human pending，没有候选模型结果。
+历史 [v0.1.0 Release](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0) 及其[发布说明](docs/release-notes-v0.1.0.md)保持不变；它采用旧版本约定和目录。GitHub 自动生成的 **Source code** 压缩包包含公开参考答案，不能代替命名任务包。包结构和维护约束见[分发合同](protocol/release-distribution.md)。
 
 ## 当前基准
 
@@ -67,19 +63,11 @@ python3 scripts/validate_protocol.py
 
 每次输出目录须是新的。`validate` 检查合同与身份，`prepare` 导出候选材料；两者均不调用模型。实际消息由 `candidate_message(request)` 构造，完整传递题面及白名单附件。参考、评分、来源、真假、审核和作者证明留在评审侧；实际运行隔离另按[协议](protocol/isolated-cli-runs.md)核验。
 
-## 外部 harness
+## 外部 harness 与评审
 
-不依赖 Codex。共享命令适配器可以在本机调度；外部模式则导出可独立交付的题包，由任意平台在隔离环境中执行，再导回同一套审核与评分流程：
+外部平台按包内 README 完成准备、取题、记录和打包，交回一个 `answers.zip`；执行端无需取得完整评审计划。评审端用 `benchmark-import --input answers.zip --plan ... --out ...` 统一检查并导入，继续使用共享的审核与报告入口。维护接口与历史交换格式见[外部 harness 合同](protocol/external-harness.md)和[维护操作](docs/usage.md)。
 
-```sh
-python3 -m math_gauge benchmark-export --target all --out runs/external-bundle
-python3 -m math_gauge benchmark-export-check --bundle runs/external-bundle \
-  --plan runs/external-bundle.evaluator/plan.json
-```
-
-以上没有冻结 runtime，只准备材料，不授权或发起模型调用。添加 `--runtime /absolute/path/to/runtime.json` 可在一次导出中冻结运行配置；已有主计划可用 `--plan` 原样导出。完整主计划保存在独立评审目录，不能随 solver/controller 题包交付。题包内的独立 Python 控制器提供完整消息、附件与本分支历史，不需要本仓库或安装 Math Gauge。
-
-当前版本为无工具轨道：三次独立作答使用全新上下文，三种两轮自查分支分别隔离，候选不接收正确性或编译反馈。允许检索、代码执行或 Lean 工具的对照实验须另行冻结版本与条件。提交格式、导入及结果模板见[外部 harness 协议](protocol/external-harness.md)与[使用指南](docs/usage.md)。导入成功只证明材料可接入，正式比较仍需独立核验运行来源、数学审核和适用的 Lean 门槛。
+当前版本为无工具轨道：三次独立作答使用全新上下文，三种两轮自查分支分别隔离，候选不接收正确性或编译反馈。允许检索、代码执行或 Lean 工具的实验须另行冻结版本与条件。导入成功只证明材料可接入，正式比较仍需独立核验运行来源、数学审核和适用的 Lean 门槛。
 
 题材来自公开 OET、公开数学资料与独立构造。来源、版本、署名与许可见 [SOURCES.md](SOURCES.md)。公开题可能进入训练数据，本项目不声称它们对模型必然未见。历史版本与实验由 Git 保存，恢复入口见[仓库地图](docs/repository-map.md)。
 
