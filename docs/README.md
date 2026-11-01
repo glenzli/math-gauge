@@ -4,6 +4,7 @@ Math Gauge 当前唯一题集是43份完整试卷的公开开发题集；参考�
 
 | 目的 | 入口 |
 | --- | --- |
+| 直接下载候选 ZIP，在任意平台冻结模型与预算后运行 | [下载运行指南](../protocol/release-distribution.md) · [压缩包内操作说明](release-consumer-README.md) |
 | 了解测量目标、样本单位和结论边界 | [项目定位](project-positioning.md) |
 | 阅读当前试卷及完整出题材料 | [试卷目录](../cases/README.md) · [按考察重点选卷](../cases/by-focus.md) |
 | 理解输入、数学审核、Lean与报告 | [评测方法](evaluation-methods.md) · [基础协议](../protocol/evaluation.md) |

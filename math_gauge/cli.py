@@ -234,10 +234,22 @@ def main(argv=None):
                               "preparation_only": result["preparation_only"],
                               "candidate_calls": 0}))
         elif args.action == "benchmark-export-check":
-            from .harness import inspect_harness_bundle
+            from .harness import DATASET_SCHEMA, RUN_SCHEMA, inspect_harness_bundle
             result = inspect_harness_bundle(
                 args.bundle, plan=read_plan(args.plan) if args.plan else None,
                 suite=Suite.load(args.suite) if args.suite else None)
+            if result["schema"] in {DATASET_SCHEMA, RUN_SCHEMA}:
+                summary = {"bundle": args.bundle, "schema": result["schema"],
+                           "dataset_sha256": result["dataset_sha256"],
+                           "base_plan_sha256": result["base_plan_sha256"],
+                           "planned": result["planned"], "candidate_calls": 0,
+                           "runtime_frozen": result["schema"] == RUN_SCHEMA,
+                           "preparation_only": result["schema"] == DATASET_SCHEMA}
+                if result["schema"] == RUN_SCHEMA:
+                    summary["run_sha256"] = result["run_sha256"]
+                    summary["runtime_sha256"] = result["runtime_sha256"]
+                print(json.dumps(summary))
+                return 0
             print(json.dumps({"bundle": args.bundle,
                               "bundle_sha256": result["bundle_sha256"],
                               "plan_sha256": result["plan_sha256"],

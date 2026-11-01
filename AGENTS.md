@@ -25,6 +25,14 @@
 - harness.py owns standalone solver/controller exports and read-only bundle checks; harness_import.py
   owns external-submission ingestion into the same reliability evidence and review contracts.
   CLI only composes these interfaces. Export, check and import do not invoke candidate models.
+- Candidate release datasets stay immutable and runtime-free. harness.py freezes each chosen model,
+  budget and selected target into a new run workspace; harness_import.py binds v2 submissions to that
+  unchanged dataset and a trusted evaluator anchor. scripts/release.py owns named ZIP/checksum assets
+  and reproducible evaluator-plan recovery. Keep release version and suite version separate; GitHub
+  automatic source archives contain public evaluator materials and are not solver deliveries.
+- Operator guides, runtime declarations, release metadata and schedules stay outside candidate
+  messages. Runtime hashes, UUIDs, dates and source declarations do not authenticate a backend or
+  third-party execution chronology. Generic external imports retain their current provisional status.
 - Benchmark scores use frozen profile weights and fixed denominators. Missing, execution-failed and
   unresolved slots stay explicit; never renormalize a partial run into a full-benchmark score.
 - Run python3 -m unittest discover -s tests and python3 -m math_gauge validate for affected runner contracts.

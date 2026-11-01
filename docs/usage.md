@@ -1,6 +1,8 @@
 # 使用与复核
 
-在仓库根目录执行。共享runner需要Python 3.10+，无第三方运行依赖。所有输出目录使用新路径；Lean核验与实际模型调用另需对应环境。
+本页是仓库内的评审与维护操作指南。只希望下载题包并接入外部平台时，使用[下载运行指南](../protocol/release-distribution.md)：命名 ZIP 自带独立控制器，不需要仓库、安装 Math Gauge 或 Codex。
+
+以下命令在仓库根目录执行。共享runner需要Python 3.10+，无第三方运行依赖。所有输出目录使用新路径；Lean核验与实际模型调用另需对应环境。
 
 ## 当前题集与候选材料
 
@@ -111,6 +113,8 @@ python3 -m math_gauge benchmark-run --plan runs/frozen-plan.json \
 ## 外部 harness：独立题包与提交
 
 外部模式与上面的共享命令适配器复用同一计划、消息、审核和评分，不依赖 Codex。只需在评审侧准备题包；独立执行端只需要 Python 3.10+ 和所选平台的调用能力，无需本仓库或安装 Math Gauge。完整格式、控制器接口与结果模板见[外部 harness 协议](../protocol/external-harness.md)。
+
+已发布的候选数据集优先使用[下载运行指南](../protocol/release-distribution.md)：原题包不选模型，每次用独立控制器冻结 runtime 与目标到新目录；提交使用绑定数据集/运行/runtime的v2合同。其runtime白名单比仓库运行配置窄，不接受上面示例中的 `execution_requirements`。以下是维护者从仓库直接冻结导出的v1交换流程，继续保留并共用导入实现。
 
 一次命令同时冻结计划并导出题包，不调用模型：
 

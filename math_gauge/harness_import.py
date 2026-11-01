@@ -28,6 +28,7 @@ from .reliability import (
 
 SUBMISSION = "math-gauge.harness-submission/v1"
 RECEIPT = "math-gauge.harness-import/v1"
+RELEASE_RECEIPT = "math-gauge.harness-import/v2"
 ORIGIN = "external_import"
 SOURCE_ORIGINS = {"external", "fixture", "replay"}
 LIMITS = ("External source declarations are not authenticated. This importer makes zero "
@@ -89,12 +90,22 @@ class _SourceFiles:
 
 
 def _submission(value, manifest, plan, sources):
-    _require(isinstance(value, dict) and value.get("schema") == SUBMISSION,
+    from .harness import RELEASE_SUBMISSION, RUN_SCHEMA
+    release = manifest.get("schema") == RUN_SCHEMA
+    _require(isinstance(value, dict) and value.get("schema") == (RELEASE_SUBMISSION if release else SUBMISSION),
              "Unsupported harness submission")
-    _require(value.get("bundle_sha256") == manifest["bundle_sha256"]
-             and value.get("plan_sha256") == plan["plan_sha256"]
-             and value.get("runtime_sha256") == plan["runtime_sha256"],
-             "Harness submission binds a different bundle, plan or runtime")
+    if release:
+        _require(value.get("run_sha256") == manifest["run_sha256"]
+                 and value.get("dataset_sha256") == manifest["dataset_sha256"]
+                 and value.get("runtime_sha256") == plan["runtime_sha256"],
+                 "Harness submission binds a different release, run or runtime")
+        _require(not {"bundle_sha256", "plan_sha256"} & set(value),
+                 "A v2 external declaration cannot invent a v1 plan binding")
+    else:
+        _require(value.get("bundle_sha256") == manifest["bundle_sha256"]
+                 and value.get("plan_sha256") == plan["plan_sha256"]
+                 and value.get("runtime_sha256") == plan["runtime_sha256"],
+                 "Harness submission binds a different bundle, plan or runtime")
     _require(isinstance(value.get("origin"), str) and value["origin"] in SOURCE_ORIGINS
              and type(value.get("fixture_only")) is bool,
              "Submission needs explicit external/fixture/replay origin and fixture_only")
@@ -237,7 +248,8 @@ def _execution_contract(runtime, parameters, submitted):
             "fixture_only": submitted["fixture_only"]}
 
 
-def _snapshot(bundle_root, source_raw, sources, dest, manifest):
+def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=None, plan=None):
+    from .harness import RUN_SCHEMA, inspect_release_dataset
     base = dest / "external-import"
     base.mkdir()
     (base / "submission.json").write_bytes(source_raw)
@@ -247,7 +259,11 @@ def _snapshot(bundle_root, source_raw, sources, dest, manifest):
         path.write_bytes(raw)
     bundle = base / "bundle"
     bundle.mkdir()
+    release = manifest.get("schema") == RUN_SCHEMA
     names = ["manifest.json", *manifest["files_sha256"]]
+    if release:
+        dataset = inspect_release_dataset(bundle_root / "dataset")
+        names.extend(["dataset/manifest.json", *("dataset/" + name for name in dataset["files_sha256"])])
     bundle_files = {}
     for name in names:
         raw = _file(bundle_root, name).read_bytes()
@@ -255,10 +271,16 @@ def _snapshot(bundle_root, source_raw, sources, dest, manifest):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(raw)
         bundle_files[name] = {"bytes": len(raw), "sha256": digest_bytes(raw)}
-    receipt = {"schema": RECEIPT, "source_submission_sha256": digest_bytes(source_raw),
+    receipt = {"schema": RELEASE_RECEIPT if release else RECEIPT, "source_submission_sha256": digest_bytes(source_raw),
                "source_files": list(sources.descriptors.values()), "bundle_files": bundle_files,
-               "bundle_sha256": manifest["bundle_sha256"], "plan_sha256": manifest["plan_sha256"],
                "limits": LIMITS}
+    if release:
+        write_json(base / "evaluator-base-plan.json", base_plan)
+        receipt.update(run_sha256=manifest["run_sha256"], dataset_sha256=manifest["dataset_sha256"],
+                       base_plan_sha256=base_plan["plan_sha256"], plan_sha256=plan["plan_sha256"],
+                       base_plan_file_sha256=digest_bytes((base / "evaluator-base-plan.json").read_bytes()))
+    else:
+        receipt.update(bundle_sha256=manifest["bundle_sha256"], plan_sha256=manifest["plan_sha256"])
     write_json(base / "receipt.json", receipt)
     return {"receipt_path": "external-import/receipt.json",
             "receipt_sha256": digest_bytes((base / "receipt.json").read_bytes())}
@@ -380,17 +402,25 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
 
 def import_harness_submission(bundle_root, submission_path, plan, suite, destination):
     """Validate and atomically publish an immutable, provisional imported run."""
-    from .harness import inspect_harness_bundle
+    from .harness import (RUN_SCHEMA, inspect_harness_bundle, inspect_release_run,
+                          reconstruct_release_plan)
     from .reliability import inspect_reliability_run
 
+    bundle_root = _root(bundle_root)
+    schema = _json(_file(bundle_root, "manifest.json").read_bytes()).get("schema")
+    base_plan = None
+    if schema == RUN_SCHEMA:
+        base_plan = plan
+        manifest = inspect_release_run(bundle_root)
+        plan = reconstruct_release_plan(bundle_root, base_plan, suite=suite)
+    else:
+        manifest = inspect_harness_bundle(bundle_root, plan=plan, suite=suite)
     validate_plan(plan)
     _require(plan["runner_sha256"] == runner_fingerprint(),
              "Runner source changed after the benchmark plan was frozen")
     _bind_suite(plan, suite)
     _validate_schedule(plan)
     _validate_runtime(plan)
-    bundle_root = _root(bundle_root)
-    manifest = inspect_harness_bundle(bundle_root, plan=plan, suite=suite)
     source_path = Path(submission_path).absolute()
     source_root = _root(source_path.parent)
     source_raw = _file(source_root, source_path.name).read_bytes()
@@ -407,7 +437,8 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
         staging.mkdir()
         try:
             meta = _ingest(plan, suite, staging, manifest, value, index, sources)
-            meta["external_import"] = _snapshot(bundle_root, source_raw, sources, staging, manifest)
+            meta["external_import"] = _snapshot(bundle_root, source_raw, sources, staging, manifest,
+                                                  base_plan=base_plan, plan=plan)
             meta["execution_manifest_sha256"] = _execution_manifest_hash(meta)
             write_json(staging / "run.json", meta)
             inspect_reliability_run(staging)
@@ -426,7 +457,7 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
 
 def inspect_import_sources(root, meta, records):
     """Recheck retained external evidence; shared reliability inspection calls this."""
-    from .harness import inspect_harness_bundle
+    from .harness import inspect_harness_bundle, inspect_release_run, reconstruct_release_plan
 
     root = _root(root)
     descriptor = meta.get("external_import")
@@ -435,14 +466,25 @@ def inspect_import_sources(root, meta, records):
     receipt_raw = _file(root, descriptor["receipt_path"]).read_bytes()
     _require(digest_bytes(receipt_raw) == descriptor.get("receipt_sha256"), "External import receipt changed")
     receipt = _json(receipt_raw)
-    _require(receipt.get("schema") == RECEIPT, "Unsupported external import receipt")
+    _require(receipt.get("schema") in {RECEIPT, RELEASE_RECEIPT}, "Unsupported external import receipt")
     source_raw = _file(root, "external-import/submission.json").read_bytes()
     _require(digest_bytes(source_raw) == receipt.get("source_submission_sha256"), "Original external submission changed")
     source = _json(source_raw)
     bundle = root / "external-import/bundle"
-    manifest = inspect_harness_bundle(bundle, plan=meta["plan"])
-    _require(manifest["bundle_sha256"] == receipt.get("bundle_sha256")
-             and manifest["plan_sha256"] == receipt.get("plan_sha256"), "Imported bundle binding changed")
+    if receipt["schema"] == RELEASE_RECEIPT:
+        base_raw = _file(root, "external-import/evaluator-base-plan.json").read_bytes()
+        _require(digest_bytes(base_raw) == receipt.get("base_plan_file_sha256"), "Retained release base plan changed")
+        base_plan = _json(base_raw)
+        manifest = inspect_release_run(bundle)
+        reconstructed = reconstruct_release_plan(bundle, base_plan)
+        _require(reconstructed == meta["plan"] and base_plan["plan_sha256"] == receipt.get("base_plan_sha256")
+                 and manifest["run_sha256"] == receipt.get("run_sha256")
+                 and manifest["dataset_sha256"] == receipt.get("dataset_sha256")
+                 and meta["plan"]["plan_sha256"] == receipt.get("plan_sha256"), "Imported release binding changed")
+    else:
+        manifest = inspect_harness_bundle(bundle, plan=meta["plan"])
+        _require(manifest["bundle_sha256"] == receipt.get("bundle_sha256")
+                 and manifest["plan_sha256"] == receipt.get("plan_sha256"), "Imported bundle binding changed")
     for name, expected in receipt["bundle_files"].items():
         raw = _file(bundle, name).read_bytes()
         _require(len(raw) == expected["bytes"] and digest_bytes(raw) == expected["sha256"], "Retained bundle bytes changed")

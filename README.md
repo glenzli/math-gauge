@@ -4,7 +4,28 @@
 
 Math Gauge 是数学推理与 Lean 语义对齐基准。它检查模型能否在实际给定的结构下完成证明、反例、构造、分类或形式化，保持假设、量词、定义域与结论强度，并留下可复核的原始答卷与审核证据。
 
-[试卷目录](cases/README.md) · [按考察重点选卷](cases/by-focus.md) · [评分结构](protocol/benchmark-scoring.md) · [评测协议](protocol/evaluation.md) · [外部 harness](protocol/external-harness.md) · [使用指南](docs/usage.md) · [验证状态](docs/verification.md) · [文档导航](docs/README.md)
+[下载与运行](protocol/release-distribution.md) · [试卷目录](cases/README.md) · [按考察重点选卷](cases/by-focus.md) · [评分结构](protocol/benchmark-scoring.md) · [评测协议](protocol/evaluation.md) · [外部 harness](protocol/external-harness.md) · [使用指南](docs/usage.md) · [验证状态](docs/verification.md) · [文档导航](docs/README.md)
+
+## 下载候选题包
+
+v0.1.0 提供可独立下载的候选题包与运行工具，使用以下固定资产名称和下载地址。
+
+直接下载 [math-gauge-tasks-v0.1.0.zip](https://github.com/glenzli/math-gauge/releases/download/v0.1.0/math-gauge-tasks-v0.1.0.zip) 与 [SHA256SUMS](https://github.com/glenzli/math-gauge/releases/download/v0.1.0/SHA256SUMS)，核对校验和后解压。使用命名 ZIP；GitHub 自动生成的 **Source code** 压缩包包含公开参考答案，不是候选交付物。无需 clone 仓库、安装 Math Gauge 或使用 Codex。
+
+在解压后的 `math-gauge-tasks-v0.1.0/` 中，先检查不可变题包，再用所选模型与预算创建一个新的运行目录：
+
+```sh
+python3 payload/controller.py check --bundle payload
+python3 payload/controller.py freeze --bundle payload \
+  --runtime /absolute/path/to/runtime.json --target all --out /absolute/path/to/new-run
+python3 /absolute/path/to/new-run/controller.py request \
+  --bundle /absolute/path/to/new-run --slot 'MG-GR002:A1' \
+  --out /absolute/path/to/requests/gr002-a1.json
+```
+
+这些命令仅核验、冻结配置和构造请求，不调用模型。外部 harness 将请求中的完整 `messages` 和冻结参数交给实际模型，保存全部原始答卷，再交回同一审核流程。初答使用全新上下文，自查分支只读取各自历史。完整的下载、runtime、后续请求、提交与回收步骤见[下载运行指南](protocol/release-distribution.md)，压缩包内也有独立操作说明。
+
+**发布版本 v0.1.0 与题集版本 0.2.0 分别记录。** 本次是软件与数据交付物的首次发布，保持43卷、177槽计划和现有数学条件；全部试卷仍为 draft / human pending，没有候选模型结果。
 
 ## 当前基准
 

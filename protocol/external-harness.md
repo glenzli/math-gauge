@@ -4,6 +4,10 @@
 
 当前 `cases/` 是 **43 份公开开发试卷**。题目、参考论证与作者证据已公开，用于接入、回归和可复现实验；不得声称这些题或答案从未公开。公开开发集与将来未公开的保留集共用案例合同、runner 和评分实现，分开报告。
 
+直接使用已发布数据时，从 [v0.1.0 Release](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0) 下载命名候选 ZIP 与 SHA256SUMS，按[下载运行指南](release-distribution.md)校验、解压并冻结本次模型和预算。无需 clone、安装 runner 或使用 Codex。GitHub 自动生成的 Source code 压缩包含公开评审材料，不是候选交付物。发布版本0.1.0与题集版本0.2.0分别记录。
+
+下载包的不可变数据集与每次 runtime 分开：`math-gauge.release-dataset/v1` 保留候选内容与脱敏完整调度，`math-gauge.harness-run/v2` 在新目录绑定所选runtime与执行范围。运行散列、UUID与本地时间只描述材料身份和声明，不认证第三方执行。下文原有 `benchmark-export` 仍支持从仓库直接冻结并导出；两条路径使用同一数学、消息、提交和审核合同。
+
 ## 三种材料与访问者
 
 | 材料 | 内容 | 访问者 |
@@ -18,7 +22,15 @@
 
 整章题允许提供含证明的原文及跨章 Lean 定义，这是题目约定的输入。Lean 审计题中故意失配的源码也属于输入。不得以隐藏答案为由删除这些材料；作者完成的本题 Lean 不属于候选输入。
 
-## 一条命令导出
+## 发布数据集与每次运行
+
+命名 ZIP 的 `payload/` 不预选模型和预算。先执行 `controller.py check`，再用 `freeze --runtime ... --out NEW_RUN` 创建根目录含控制器、运行清单与提交模板、子目录含原样 `dataset/` 的新运行。只有冻结后的运行可构造真实候选请求，原题包不改写。执行端只需下载包和 Python 标准库。
+
+发布路径使用 `math-gauge.harness-submission/v2`，提交绑定 `dataset_sha256`、`run_sha256` 和 `runtime_sha256`。`controller.py template` 从运行目录生成已填绑定的独立文件；不能改写被清单哈希绑定的原模板。完整评审计划在评审端从对应标签及 `releases/v0.1.0/config.json` 恢复，导入器再结合原样 runtime 重建评审计划，不伪造旧版 `plan_sha256`。该恢复锚点与完整计划不进入候选 ZIP。
+
+runtime 使用发布控制器的显式白名单，不能原样套用带额外运行证据字段的仓库配置；格式及全部命令见[下载运行指南](release-distribution.md)。公开与未来私有数据复用相同实现。
+
+## 从仓库直接导出（v1交换）
 
 在仓库根目录准备完整开发集：
 
@@ -88,7 +100,7 @@ external-dev.evaluator/
 
 所需 Lean 文件继续以题面约定的命名代码块交付。额外交回的文件必须绑定原始答卷，不能悄悄替换其中的代码。原始输出、提取源码、编译结果和语义审核分别保存；导入成功不表示 Lean 编译成功，更不表示题意对齐。
 
-提交 JSON 使用 `math-gauge.harness-submission/v1`，绑定 `bundle_sha256`、`plan_sha256` 与 `runtime_sha256`。复制包内模板到新的结果目录后，从 `manifest.json` 填入 `bundle_sha256`；不可修改被哈希绑定的原模板。`origin` 为 `external`、`fixture` 或 `replay`，并显式填写 `fixture_only` 和 `declared_external_calls`。离线模板默认 `fixture_only: true`、真实调用数为 0。
+从仓库直接导出的交换 JSON 使用 `math-gauge.harness-submission/v1`，绑定 `bundle_sha256`、`plan_sha256` 与 `runtime_sha256`。复制包内模板到新的结果目录后，从 `manifest.json` 填入 `bundle_sha256`；不可修改被哈希绑定的原模板。发布数据集另使用上述 v2运行绑定，两个版本均进入同一导入与审核实现。`origin` 为 `external`、`fixture` 或 `replay`，并显式填写 `fixture_only` 和 `declared_external_calls`。离线模板默认 `fixture_only: true`、真实调用数为 0。
 
 每个已执行槽位提交 `slot_id`、完整 `projected_request` 和有序 `attempts`；每次尝试包含序号、状态、请求散列、响应与标准错误文件的路径/字节数/SHA-256，以及实际可知的用量。响应为空时也保存显式的空文件。时间、退出状态及附属原始材料按实际提供。完整可执行的提交构造示例见[使用指南](../docs/usage.md)，包内说明是交付端的独立格式入口。
 

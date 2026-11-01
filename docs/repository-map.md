@@ -16,11 +16,13 @@ protocol/                          数学、交付、隔离及报告合同
   benchmark-scoring.md              归一化、综合分、缺测与独立运行标准
   execution-evidence.md             原始运行证据、具名审核与正式比较资格
   external-harness.md               独立题包、控制器、外部提交与导入合同
+  release-distribution.md           命名候选ZIP、不可变数据集与运行冻结流程
   reliability/                     未执行的可靠性计划、选择、消息与槽位
 math_gauge/                        全部公开与私有题集共享的runner
 scripts/
   catalog.py                       当前目录与分类的源绑定及生成
   validate_protocol.py             当前计划、候选边界与固定消息检查
+  release.py                       候选发布构建、只读资产核验与评审计划恢复
   formal/                          作者Lean验证、证据复查与元数据迁移校验
   isolated_cli/                    CLI隔离准备、探测与收据
   benchmark/                       单轮比较的薄调度层
@@ -28,6 +30,9 @@ verification/author/               当前作者编译与语义覆盖证据
 verification/runner/               当前评分/多轮软件的离线验收身份
 tests/                             合同、数学见证与工具测试
 docs/                              定位、方法、使用和验证状态
+  release-consumer-README.md        复制到候选ZIP的独立操作者说明
+  release-notes-v0.1.0.md           v0.1.0正式发布说明来源
+releases/v0.1.0/config.json          可从标签恢复的评审计划身份锚点（不入候选ZIP）
 ```
 
 每题 `case.json` 使用 `path_base="case"`，文件路径相对其所在题目目录；suite按分类列出所有case.json。题面是唯一候选任务，完整白名单由solver_files决定。参考、rubric、contract、来源、审核、作者Lean与分类均在评审侧。
@@ -41,14 +46,15 @@ docs/                              定位、方法、使用和验证状态
 | `math_gauge/reliability.py` | 独立轮/分支调度、原始历史、重试、KEEP/FULL材料与同计划证据复用 |
 | `math_gauge/reliability_review.py` | 多轮材料、当前说明、数学状态与候选Lean的审核绑定 |
 | `math_gauge/eligibility.py` | 原始运行证据导入、运行审核快照、逐槽位资格与继承来源 |
-| `math_gauge/harness.py` | solver/controller 白名单导出、独立消息构造器和只读题包核验 |
-| `math_gauge/harness_import.py` | 外部提交与原始文件导入，绑定共享多轮证据和审核入口 |
+| `math_gauge/harness.py` | solver/controller 白名单导出、不可变发布数据集、独立runtime冻结与精确消息构造、只读题包/运行核验 |
+| `math_gauge/harness_import.py` | v1/v2外部提交与原始文件导入，依据可信发布锚点重建评审计划，绑定共享多轮证据和审核入口 |
 | `math_gauge/scoring.py` | 固定分母分项/加权聚合、未知区间、轨迹与配对诊断 |
 | `scripts/catalog.py` | 分类证据与当前材料身份，生成出题侧导航 |
 | `scripts/validate_protocol.py` | 固定计划、消息、候选白名单与未执行状态 |
+| `scripts/release.py` | 命名候选ZIP与校验和的可复现构建、安全只读检查及对应标签的评审计划恢复；不调用模型 |
 | `scripts/formal/check_evidence.py` | 当前作者证据与原始编译记录的身份复核 |
 
-公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。外部题包仅携带 solver 内容、控制器与提交模板，完整主计划保存在独立 evaluator 目录；执行端无需本仓库、Codex 或 Math Gauge 安装。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
+公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。外部题包仅携带 solver 内容、控制器与提交模板，完整主计划保存在独立 evaluator 目录；执行端无需本仓库、Codex 或 Math Gauge 安装。命名发布ZIP是候选交付物，GitHub自动Source code压缩包仍含公开参考；发布配置只保存可复现锚点，不是秘密答案隔离或后端认证。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
 
 ## 历史保留与恢复
 
