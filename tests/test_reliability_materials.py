@@ -86,6 +86,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
             for name in ("math_gauge/eligibility.py", "tests/test_eligibility.py",
                          "tests/test_eligibility_acceptance.py", "tests/test_reliability_review.py",
                          "math_gauge/harness.py", "math_gauge/harness_answers.py", "math_gauge/harness_import.py",
+                         "math_gauge/execution_policy.py", "tests/test_execution_policy.py",
                          "tests/test_harness_export.py", "tests/test_harness_import.py",
                          "tests/test_harness_cli.py", "protocol/external-harness.md",
                          "scripts/release.py", "tests/test_release_runtime.py",
@@ -94,7 +95,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                          "releases/v0.1.0/config.json", "releases/v0.1.0/THIRD_PARTY_NOTICES.md",
                          "docs/release-consumer-README.md", "docs/release-notes-v0.1.0.md", "LICENSE",
                          "releases/v0.2.0/config.json", "releases/v0.2.0/THIRD_PARTY_NOTICES.md",
-                         "docs/release-consumer-README-v0.2.0.md",
+                         "docs/release-consumer-README-v0.2.0.md", "docs/usage.md",
                          "protocol/execution-evidence.md", "protocol/isolated-cli-runs.md"):
                 with self.subTest(omitted=name):
                     omitted = receipt["input_sha256"].pop(name)

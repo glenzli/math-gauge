@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .benchmarks import ATTEMPTS, COMPONENTS, identity, validate_plan
 from .execution import now
+from .execution_policy import execution_condition
 
 UNKNOWN = (Fraction(0), Fraction(1), None)
 PENDING_REASONS = {"review_pending", "problem_defect_pending", "problem_defect",
@@ -434,6 +435,7 @@ def score_inputs(inputs):
         "profile": {k: plan["profile"][k] for k in ("id", "version", "sha256")},
         "suite": plan["suite"], "runtime_sha256": plan["runtime_sha256"],
         "model_label": plan["model_label"], "planned": plan["planned"],
+        "execution_condition": execution_condition(plan["context_policy"]),
         "result_kind": ("not_run" if not evidence_rows else "fixture" if fixture else "historical" if historical else
                         "formal" if metrics["overall"]["formal_comparison_eligible"] else "provisional"),
         "model_result": bool(evidence_rows) and not fixture,
@@ -699,6 +701,9 @@ def render_score(report):
              "|---|---:|---:|---:|---:|---:|---|"]
     if report.get("historical_audit_selection"):
         lines[4:4] = ["Historical execution-audit selection: retained judgments are reproduced; current formal comparison is unavailable. Selected and latest audit hashes remain in report.json.", ""]
+    if report.get("execution_condition"):
+        condition = report["execution_condition"]
+        lines[4:4] = [f"Execution condition: {condition['label']} ({condition['track']}).", ""]
     def display(value):
         return "pending" if value is None else f"{value:g}"
     for name in COMPONENTS + ("core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"):

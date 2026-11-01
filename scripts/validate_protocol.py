@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PACKET = "protocol/reliability"
 RUNNER_FILES = (
-    "math_gauge/catalog.py", "math_gauge/execution.py", "math_gauge/review.py",
+    "math_gauge/catalog.py", "math_gauge/execution.py", "math_gauge/execution_policy.py", "math_gauge/review.py",
     "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/reliability.py",
     "math_gauge/reliability_review.py",
     "math_gauge/eligibility.py",
@@ -26,7 +26,7 @@ RUNNER_FILES = (
     "scripts/isolated_cli/prepare.py", "scripts/isolated_cli/probe.py",
 )
 ACCEPTANCE_TESTS = (
-    "test_benchmarks.py", "test_scoring.py", "test_reliability_execution.py",
+    "test_benchmarks.py", "test_execution_policy.py", "test_scoring.py", "test_reliability_execution.py",
     "test_reliability_review.py",
     "test_eligibility.py", "test_eligibility_acceptance.py", "test_isolated_cli.py",
     "test_harness_export.py", "test_harness_import.py", "test_harness_cli.py",
@@ -43,7 +43,7 @@ ACCEPTANCE_STANDARDS = (
     "releases/v0.1.0/config.json", "releases/v0.1.0/THIRD_PARTY_NOTICES.md",
     "docs/release-consumer-README.md", "docs/release-notes-v0.1.0.md", "LICENSE",
     "releases/v0.2.0/config.json", "releases/v0.2.0/THIRD_PARTY_NOTICES.md",
-    "docs/release-consumer-README-v0.2.0.md",
+    "docs/release-consumer-README-v0.2.0.md", "docs/usage.md",
 )
 SELECTED = (
     "MG-GR002", "MG-GR004", "MG-GR007", "MG-GR014",

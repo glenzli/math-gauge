@@ -19,6 +19,7 @@ from pathlib import Path, PurePosixPath
 
 from .benchmarks import identity, select_slots, validate_plan
 from .catalog import Suite, candidate_message, digest_bytes, relative_name, write_json
+from .execution_policy import LOCAL_TOOLS_TRACK, LOCAL_TOOL_IDS, execution_context, validate_context_policy
 
 BUNDLE_SCHEMA = "math-gauge.harness-bundle/v1"
 CONTROLLER_VERSION = "math-gauge.portable-controller/v1"
@@ -48,8 +49,7 @@ _RUN_KEYS = {"schema", "controller_version", "run_sha256", "run_id", "created_at
              "dataset_sha256", "base_plan_sha256", "runtime", "runtime_sha256",
              "runtime_frozen", "preparation_only", "targets", "selected_slot_ids",
              "planned", "execution", "files_sha256"}
-_RELEASE_CONTEXT = {"independent": "fresh", "followup": "branch-history-only",
-                    "external_correctness_feedback": False, "tools_allowed": []}
+_RELEASE_CONTEXT = execution_context()
 
 
 def _h_require(condition, message):
@@ -166,10 +166,7 @@ def _h_execution(value, case_ids):
                "System prompt must be frozen text")
     _h_require(value["model_label"] is None or isinstance(value["model_label"], str),
                "Model label must be text")
-    _h_require(value["context_policy"] == {
-        "independent": "fresh", "followup": "branch-history-only",
-        "external_correctness_feedback": False, "tools_allowed": []},
-        "Unexpected candidate context policy")
+    validate_context_policy(value["context_policy"])
 
 
 def _h_message(request):
@@ -460,7 +457,8 @@ def _controller_main():
 
 
 def _controller_source():
-    functions = (_h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root,
+    functions = (execution_context, validate_context_policy,
+                 _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root,
                  _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
                  _r_json, _h_message, _h_case_request, _h_projection, _inspect_bundle_contents,
                  inspect_bundle, _h_build_request, build_request,
@@ -469,6 +467,7 @@ def _controller_source():
               'This program never calls a model. Keep it outside candidate workspaces.\n"""\n\n'
               'import hashlib\nimport json\nimport math\nimport re\nfrom pathlib import Path, PurePosixPath\n\n')
     constants = f"BUNDLE_SCHEMA = {BUNDLE_SCHEMA!r}\nCONTROLLER_VERSION = {CONTROLLER_VERSION!r}\nSIMPLE_DATASET_SCHEMA = {SIMPLE_DATASET_SCHEMA!r}\n"
+    constants += f"LOCAL_TOOLS_TRACK = {LOCAL_TOOLS_TRACK!r}\nLOCAL_TOOL_IDS = {LOCAL_TOOL_IDS!r}\n"
     constants += f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\n\n"
     return (header + constants + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _controller_main()\n').encode("utf-8")
@@ -793,7 +792,7 @@ def _r_execution(runtime, case_ids):
     """Freeze only explicitly supported runtime conditions, without transport."""
     _h_require(isinstance(runtime, dict) and set(runtime) <= {
         "model_label", "adapter_identity", "budget", "candidate_parameters", "fresh_context",
-        "system_prompt", "retry"}, "Unsupported fields in release runtime")
+        "system_prompt", "retry", "execution_track"}, "Unsupported fields in release runtime")
     _h_require(isinstance(runtime.get("model_label"), str) and runtime["model_label"].strip()
                and isinstance(runtime.get("adapter_identity"), (str, dict))
                and runtime["adapter_identity"] and runtime.get("fresh_context") is True,
@@ -820,7 +819,7 @@ def _r_execution(runtime, case_ids):
                "Unsupported fields in release retry policy")
     projection = _execution_projection({"runtime": runtime,
         "case_index": [{"case_id": cid} for cid in case_ids],
-        "context_policy": _RELEASE_CONTEXT}, set(case_ids))
+        "context_policy": execution_context(runtime)}, set(case_ids))
     return projection
 
 
@@ -1074,7 +1073,8 @@ def reconstruct_release_plan(root, base_plan, *, suite=None):
     result.update(plan_id=manifest["run_id"], created_at=manifest["created_at"],
                   runtime=copy.deepcopy(manifest["runtime"]), runtime_frozen=True,
                   runtime_sha256=manifest["runtime_sha256"], model_label=manifest["runtime"]["model_label"],
-                  targets=list(manifest["targets"]), planned=copy.deepcopy(manifest["planned"]))
+                  targets=list(manifest["targets"]), planned=copy.deepcopy(manifest["planned"]),
+                  context_policy=copy.deepcopy(manifest["execution"]["context_policy"]))
     selected = set(manifest["selected_slot_ids"])
     for slot in result["slots"]:
         slot["selected"] = slot["slot_id"] in selected
@@ -1140,7 +1140,8 @@ def _release_controller_main():
 
 
 def _release_controller_source():
-    functions = (_h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
+    functions = (execution_context, validate_context_policy,
+                 _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
                  _h_root, _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
                  _h_message, _h_case_request, _h_projection, _h_build_request, _execution_projection,
                  _r_json, _r_write, _r_execution, _r_targets, _inspect_release_dataset_contents,
@@ -1156,7 +1157,8 @@ def _release_controller_source():
                  "PARAMETER_NAMES": PARAMETER_NAMES, "_DATASET_KEYS": tuple(sorted(_DATASET_KEYS)),
                  "_SIMPLE_DATASET_KEYS": tuple(sorted(_SIMPLE_DATASET_KEYS)),
                  "_RUN_KEYS": tuple(sorted(_RUN_KEYS)), "_RELEASE_TARGETS": _RELEASE_TARGETS,
-                 "_RELEASE_CONTEXT": _RELEASE_CONTEXT}
+                 "_RELEASE_CONTEXT": _RELEASE_CONTEXT, "LOCAL_TOOLS_TRACK": LOCAL_TOOLS_TRACK,
+                 "LOCAL_TOOL_IDS": LOCAL_TOOL_IDS}
     return (header + "\n".join(k + " = " + repr(v) for k, v in constants.items()) + "\n\n"
             + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _release_controller_main()\n').encode("utf-8")

@@ -1,0 +1,46 @@
+"""Versioned execution conditions, separate from mathematical task requirements.
+
+Omitting the opt-in preserves the historical no-tool context exactly. A tool
+permission never adds a requirement to use it or changes a supplied Lean task.
+This pure owner is embedded in portable controllers from the same source.
+"""
+
+NO_TOOLS_TRACK = "math-gauge.no-tools/v1"
+LOCAL_TOOLS_TRACK = "math-gauge.local-tools-no-search/v1"
+LOCAL_TOOL_IDS = ("exec_command", "write_stdin", "apply_patch")
+
+
+def execution_context(runtime=None):
+    if runtime is not None and not isinstance(runtime, dict):
+        raise ValueError("Execution runtime must be an object")
+    runtime = {} if runtime is None else runtime
+    explicit = "execution_track" in runtime
+    track = runtime.get("execution_track")
+    if explicit and track != LOCAL_TOOLS_TRACK:
+        raise ValueError("Unknown execution track")
+    context = {"independent": "fresh", "followup": "branch-history-only",
+               "external_correctness_feedback": False, "tools_allowed": []}
+    if explicit:
+        context.update(execution_track=LOCAL_TOOLS_TRACK, tools_allowed=list(LOCAL_TOOL_IDS),
+                       tool_network_access=False, search_allowed=False,
+                       local_tool_feedback_allowed=True)
+    return context
+
+
+def validate_context_policy(context):
+    if not isinstance(context, dict):
+        raise ValueError("Execution context policy must be an object")
+    runtime = {"execution_track": context["execution_track"]} if "execution_track" in context else None
+    expected = execution_context(runtime)
+    if set(context) != set(expected) or any(
+            type(context[key]) is not type(value) or context[key] != value for key, value in expected.items()):
+        raise ValueError("Unexpected candidate context policy")
+    return context
+
+
+def execution_condition(context):
+    validate_context_policy(context)
+    if "execution_track" not in context:
+        return {"track": NO_TOOLS_TRACK, "label": "No candidate tools"}
+    return {"track": LOCAL_TOOLS_TRACK,
+            "label": "Local tools permitted; search and tool networking disabled; original task requirements unchanged"}

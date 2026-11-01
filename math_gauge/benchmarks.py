@@ -10,6 +10,7 @@ from pathlib import Path
 from .catalog import (candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
 from .execution import now, runner_fingerprint
+from .execution_policy import execution_context, validate_context_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
 TARGETS = COMPONENTS + ("repeat", "neutral", "stance", "core", "all")
@@ -308,8 +309,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
         "runtime": copy.deepcopy(runtime), "runtime_frozen": runtime is not None,
         "runtime_sha256": identity(runtime),
         "model_label": runtime.get("model_label") if runtime is not None else None,
-        "context_policy": {"independent": "fresh", "followup": "branch-history-only",
-                           "external_correctness_feedback": False, "tools_allowed": []},
+        "context_policy": execution_context(runtime),
         "case_index": cases, "slots": slots,
         "reliability": {k: v for k, v in packet.items() if k != "schedule"},
         "source_files_sha256": tag_identity,
@@ -399,10 +399,9 @@ def validate_plan(plan):
         "neutral_slots": 2 * selected_cases, "stance_slots": 4 * selected_cases,
         "all_slots": len(slots), "selected_slots": len(want)},
         "Frozen plan denominators changed")
+    validate_context_policy(plan.get("context_policy"))
     _require(plan.get("candidate_calls") == 0
-             and plan.get("context_policy") == {
-                 "independent": "fresh", "followup": "branch-history-only",
-                 "external_correctness_feedback": False, "tools_allowed": []},
+             and plan.get("context_policy") == execution_context(runtime),
              "A frozen plan cannot contain execution results or changed context policy")
     from .eligibility import validate_execution_requirements
     validate_execution_requirements(plan)
