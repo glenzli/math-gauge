@@ -156,6 +156,63 @@ class SimpleHarnessTests(unittest.TestCase):
         self.assertEqual((self.output / records[sid]["response_path"]).read_bytes(), "Synthetic 原始答卷\r\n".encode())
         self.assertEqual(len(meta["unrun_slots"]), 5)
 
+    def test_omitted_output_cap_roundtrips_through_portable_helper_without_inventing_a_limit(self):
+        runtime = copy.deepcopy(RUNTIME)
+        runtime["budget"].pop("output_tokens")
+        runtime["adapter_identity"]["output_limit"] = "platform-default; maximum unknown"
+        runtime["candidate_parameters"]["reasoning_effort"] = "max"
+        runtime_path = self.root / "platform-default-runtime.json"
+        write_json(runtime_path, runtime)
+        helper = self.dataset / "tools/benchmark.py"
+
+        def portable(*arguments):
+            result = subprocess.run([sys.executable, "-I", "-S", "-B", str(helper), *map(str, arguments)],
+                                    cwd=self.root, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return json.loads(result.stdout)
+
+        portable("prepare", "--runtime", runtime_path, "--target", "chapters", "--out", self.run)
+        frozen = inspect_release_run(self.run)
+        self.assertEqual(frozen["runtime"], runtime)
+        self.assertNotIn("output_tokens", frozen["execution"]["budget"])
+        self.assertNotIn("max_output_tokens", frozen["execution"]["parameters"])
+        sid = frozen["selected_slot_ids"][0]
+        request = self.root / "platform-default-request.json"
+        portable("request", "--run", self.run, "--responses", self.responses, "--slot", sid, "--out", request)
+        projected = read_json(request)
+        self.assertEqual(projected["parameters"], runtime["candidate_parameters"])
+        raw = "Synthetic fixture with unknown platform output limit。\r\n".encode()
+        response = self.root / "platform-default-response.md"
+        response.write_bytes(raw)
+        portable("record", "--run", self.run, "--responses", self.responses, "--slot", sid,
+                 "--request", request, "--response", response, "--status", "ok")
+        portable("pack", "--run", self.run, "--responses", self.responses, "--out", self.archive)
+        meta = import_answer_archive(self.archive, self.anchor, self.suite, self.output)
+        checked, records = inspect_reliability_run(self.output)
+        self.assertEqual(checked["plan"]["runtime"], runtime)
+        self.assertNotIn("output_tokens", checked["execution_contract"]["budget"])
+        self.assertNotIn("max_output_tokens", checked["execution_contract"]["parameters"])
+        self.assertEqual((self.output / records[sid]["response_path"]).read_bytes(), raw)
+        self.assertEqual(meta["candidate_calls"], 0)
+        self.assertTrue(meta["fixture_only"])
+
+    def test_provided_output_cap_remains_exact_and_malformed_caps_are_rejected(self):
+        frozen = self.freeze()
+        self.assertEqual(frozen["execution"]["budget"]["output_tokens"], 1234)
+        self.assertEqual(frozen["execution"]["parameters"]["max_output_tokens"], 1234)
+        for number, cap in enumerate((None, 0, -1, True, 1234.0, "1234")):
+            with self.subTest(cap=cap):
+                runtime = copy.deepcopy(RUNTIME)
+                runtime["budget"]["output_tokens"] = cap
+                destination = self.root / f"malformed-cap-{number}"
+                with self.assertRaisesRegex(ValueError, "positive integer"):
+                    freeze_release_runtime(self.dataset, runtime, destination)
+                self.assertFalse(destination.exists())
+        runtime = copy.deepcopy(RUNTIME)
+        runtime["candidate_parameters"]["max_output_tokens"] = 1235
+        with self.assertRaisesRegex(ValueError, "contradict"):
+            freeze_release_runtime(self.dataset, runtime, self.root / "contradictory-cap")
+
     def test_complete_small_target_retains_retry_failure_usage_and_fixed_denominators(self):
         run = self.freeze()
         for number, sid in enumerate(run["selected_slot_ids"]):

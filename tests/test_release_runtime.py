@@ -217,7 +217,7 @@ class ReleaseRuntimeTests(unittest.TestCase):
 
     def test_unknown_tools_missing_budget_and_contradictory_parameters_are_rejected(self):
         mutations = [dict(RUNTIME, tools_allowed=["lean"]), dict(RUNTIME, tool_policy={"network": True}),
-                     dict(RUNTIME, fresh_context=False), dict(RUNTIME, budget={"timeout_seconds": 2}),
+                     dict(RUNTIME, fresh_context=False), dict(RUNTIME, budget={}),
                      dict(RUNTIME, budget={**RUNTIME["budget"], "tools": []}),
                      dict(RUNTIME, candidate_parameters={"max_output_tokens": 999}),
                      dict(RUNTIME, candidate_parameters={"model": ""}),

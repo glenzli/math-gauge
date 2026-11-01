@@ -42,7 +42,11 @@ python3 tools/benchmark.py check
 }
 ```
 
-以上字段必填。预算数字仅演示格式，尤其不是整章任务的推荐预算；执行前按实际平台能力确定。允许的其他生成参数可放入 `candidate_parameters`，输出上限由 `budget.output_tokens` 冻结。可选预算为 `max_transport_attempts`、`max_total_tokens`，以及按题号指定的 `case_parameters`。总 token 限额依赖真实返回用量，不能当成硬费用上限。
+`model_label`、`adapter_identity`、`candidate_parameters.model`、正的 `budget.timeout_seconds` 和 `fresh_context: true` 必填。预算数字仅演示格式，尤其不是整章任务的推荐预算。示例中的 `budget.output_tokens: 16000` 只适用于实际传输支持且会执行该输出上限的情况；执行前须核实。
+
+仅当实际传输没有受支持的输出上限时，才可省略 `budget.output_tokens`。省略表示使用平台默认输出策略，实际限制未知；必须在 `adapter_identity` 及运行前冻结的操作者说明中明确记录。不得发送会被忽略的上限字段，也不能仅凭配置声称上限已生效。允许的其他生成参数可放入 `candidate_parameters`，可选预算包括 `max_transport_attempts`、`max_total_tokens` 和按题号指定的 `case_parameters`。
+
+`max_total_tokens` 只根据真实返回的 `total_tokens` 在达到阈值后停止新请求；用量缺失时停止后续调度并记录无法核实。单个在途请求仍可能超过阈值，因此它不是硬费用上限。
 
 ```sh
 python3 tools/benchmark.py prepare --runtime ../runtime.json \

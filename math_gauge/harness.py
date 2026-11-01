@@ -808,9 +808,13 @@ def _r_execution(runtime, case_ids):
         "timeout_seconds", "output_tokens", "max_transport_attempts", "max_total_tokens", "case_parameters"},
         "Unsupported fields in release budget")
     _h_require(type(budget.get("timeout_seconds")) in (int, float)
-               and math.isfinite(budget["timeout_seconds"]) and budget["timeout_seconds"] > 0
-               and type(budget.get("output_tokens")) is int and budget["output_tokens"] > 0,
-               "Freeze a positive timeout and output token budget before execution")
+               and math.isfinite(budget["timeout_seconds"]) and budget["timeout_seconds"] > 0,
+               "Freeze a positive timeout before execution")
+    # Omission leaves the transport's output limit unspecified. The adapter
+    # declaration records that condition; it must not claim an unsupported cap.
+    if "output_tokens" in budget:
+        _h_require(type(budget["output_tokens"]) is int and budget["output_tokens"] > 0,
+                   "An explicit output token budget must be a positive integer")
     _h_require("retry" not in runtime or isinstance(runtime["retry"], dict)
                and set(runtime["retry"]) <= {"max_attempts", "wait_seconds", "retryable_exit_codes"},
                "Unsupported fields in release retry policy")

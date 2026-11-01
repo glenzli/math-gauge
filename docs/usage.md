@@ -82,7 +82,9 @@ runtime的字段结构示例（替换示例身份和预算后才能用于实际�
 }
 ```
 
-这里的120秒与4096输出token仅演示字段，不是对整章题的推荐预算。可用 `budget.case_parameters` 事前指定各题的 `max_output_tokens` 等生成参数；同题独立轮与对应复核轮保持一致。timeout限制适配器进程时间，output_tokens传为请求的max_output_tokens，实际后端是否遵守仍需验证；max_transport_attempts限制真正发出的传输尝试。可选max_total_tokens依赖适配器返回真实usage：达到阈值后停止新请求，单个在途请求可能超过阈值；若用量缺失则停止后续调度并明记无法核实，不能称为硬费用上限。
+这里的120秒与4096输出token仅演示字段，不是对整章题的推荐预算。正的 `budget.timeout_seconds` 必填，限制适配器进程时间。示例的 `output_tokens` 传为请求的 `max_output_tokens`，仅适用于实际传输支持且会执行该上限的情况；执行前须核实。可用 `budget.case_parameters` 事前指定各题受支持的生成参数，同题独立轮与对应复核轮保持一致。
+
+仅当实际传输没有受支持的输出上限时，才可省略 `budget.output_tokens`；省略表示平台默认输出策略及未知实际限制，必须在 `adapter_identity` 及操作者冻结说明中明确记录。不得发送会被忽略的上限字段，也不能仅凭配置声称上限已生效。`max_transport_attempts` 限制真正发出的传输尝试；可选 `max_total_tokens` 依据实际返回的 `total_tokens` 在达到阈值后停止新请求，单个在途请求可能超过阈值。若用量缺失则停止后续调度并明记无法核实，不能称为硬费用上限。
 
 `execution_requirements` 在生成计划前冻结运行证据要求。候选工具须与本版计划的空白名单一致；`internal_tools` 只能列明实际存在的 `finish` / `manage_task` 内部功能。`tool_control_tool` 是用于独立正反能力对照的实际工具名称，不是考试允许的工具。必要读取例外以 `{ "kind": "literal", "path": "/absolute/login-file", "purpose": "具体启动需要" }` 等条目冻结，不能临时放宽。没有冻结这些要求的旧计划可继续暂定分析，但不能仅靠事后填写审核取得正式资格。可选provider与型号/effort别名映射也只能事前冻结；请求模型来自 `candidate_parameters.model`，显示标签不作为身份依据。
 
