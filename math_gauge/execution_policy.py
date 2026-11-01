@@ -5,9 +5,14 @@ permission never adds a requirement to use it or changes a supplied Lean task.
 This pure owner is embedded in portable controllers from the same source.
 """
 
+import hashlib
+
 NO_TOOLS_TRACK = "math-gauge.no-tools/v1"
 LOCAL_TOOLS_TRACK = "math-gauge.local-tools-no-search/v1"
 LOCAL_TOOL_IDS = ("exec_command", "write_stdin", "apply_patch")
+FOLLOWUP_PROMPT_PROJECTION = "math-gauge.followup-permission-projection/v1"
+SOURCE_FOLLOWUP_PERMISSION = "本轮不能调用工具或查询外部资料。"
+LOCAL_FOLLOWUP_PERMISSION = "本轮不得访问网络或进行联网检索。"
 
 
 def execution_context(runtime=None):
@@ -23,7 +28,8 @@ def execution_context(runtime=None):
     if explicit:
         context.update(execution_track=LOCAL_TOOLS_TRACK, tools_allowed=list(LOCAL_TOOL_IDS),
                        tool_network_access=False, search_allowed=False,
-                       local_tool_feedback_allowed=True)
+                       local_tool_feedback_allowed=True,
+                       followup_prompt_projection=FOLLOWUP_PROMPT_PROJECTION)
     return context
 
 
@@ -43,4 +49,30 @@ def execution_condition(context):
     if "execution_track" not in context:
         return {"track": NO_TOOLS_TRACK, "label": "No candidate tools"}
     return {"track": LOCAL_TOOLS_TRACK,
-            "label": "Local tools permitted; search and tool networking disabled; original task requirements unchanged"}
+            "label": "Local tools permitted; search and tool networking disabled; original task requirements unchanged",
+            "followup_prompt_projection": FOLLOWUP_PROMPT_PROJECTION}
+
+
+def project_followup_prompt(source, context):
+    """Derive only the declared permission suffix; never mutate frozen source rows."""
+    validate_context_policy(context)
+    if not isinstance(source, dict) or not isinstance(source.get("content"), str):
+        raise ValueError("Followup prompt source must contain text")
+    content = source["content"]
+    source_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
+    if source.get("content_sha256") != source_hash:
+        raise ValueError("Followup prompt source hash changed")
+    result = dict(source)
+    if "followup_prompt_projection" not in context:
+        return result
+    if {"source_content_sha256", "projection_version"} & set(source):
+        raise ValueError("Followup prompt source is already projected")
+    suffix = SOURCE_FOLLOWUP_PERMISSION + "\n"
+    if content.count(SOURCE_FOLLOWUP_PERMISSION) != 1 or not content.endswith(suffix):
+        raise ValueError("Unrecognized followup prompt permission suffix")
+    projected = content[:-len(suffix)] + LOCAL_FOLLOWUP_PERMISSION + "\n"
+    result.update(content=projected,
+                  content_sha256=hashlib.sha256(projected.encode("utf-8")).hexdigest(),
+                  source_content_sha256=source_hash,
+                  projection_version=FOLLOWUP_PROMPT_PROJECTION)
+    return result

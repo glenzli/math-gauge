@@ -19,7 +19,11 @@ from pathlib import Path, PurePosixPath
 
 from .benchmarks import identity, select_slots, validate_plan
 from .catalog import Suite, candidate_message, digest_bytes, relative_name, write_json
-from .execution_policy import LOCAL_TOOLS_TRACK, LOCAL_TOOL_IDS, execution_context, validate_context_policy
+from .execution_policy import (
+    FOLLOWUP_PROMPT_PROJECTION, LOCAL_FOLLOWUP_PERMISSION, LOCAL_TOOLS_TRACK,
+    LOCAL_TOOL_IDS, SOURCE_FOLLOWUP_PERMISSION, execution_context,
+    project_followup_prompt, validate_context_policy,
+)
 
 BUNDLE_SCHEMA = "math-gauge.harness-bundle/v1"
 CONTROLLER_VERSION = "math-gauge.portable-controller/v1"
@@ -411,7 +415,8 @@ def _h_build_request(root, bundle, slot_id, answers=None):
     if execution["system_prompt"] is not None:
         messages.append({"role": "system", "content": execution["system_prompt"]})
     messages.append({"role": "user", "content": initial})
-    prompts = {p["message_id"]: p["content"] for p in bundle["prompts"]}
+    prompts = {p["message_id"]: project_followup_prompt(p, execution["context_policy"])["content"]
+               for p in bundle["prompts"]}
     for sid in ancestors:
         if slots[sid]["kind"] == "followup":
             messages.append({"role": "user", "content": prompts[sid]})
@@ -457,7 +462,7 @@ def _controller_main():
 
 
 def _controller_source():
-    functions = (execution_context, validate_context_policy,
+    functions = (execution_context, validate_context_policy, project_followup_prompt,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root,
                  _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
                  _r_json, _h_message, _h_case_request, _h_projection, _inspect_bundle_contents,
@@ -468,6 +473,9 @@ def _controller_source():
               'import hashlib\nimport json\nimport math\nimport re\nfrom pathlib import Path, PurePosixPath\n\n')
     constants = f"BUNDLE_SCHEMA = {BUNDLE_SCHEMA!r}\nCONTROLLER_VERSION = {CONTROLLER_VERSION!r}\nSIMPLE_DATASET_SCHEMA = {SIMPLE_DATASET_SCHEMA!r}\n"
     constants += f"LOCAL_TOOLS_TRACK = {LOCAL_TOOLS_TRACK!r}\nLOCAL_TOOL_IDS = {LOCAL_TOOL_IDS!r}\n"
+    constants += (f"FOLLOWUP_PROMPT_PROJECTION = {FOLLOWUP_PROMPT_PROJECTION!r}\n"
+                  f"SOURCE_FOLLOWUP_PERMISSION = {SOURCE_FOLLOWUP_PERMISSION!r}\n"
+                  f"LOCAL_FOLLOWUP_PERMISSION = {LOCAL_FOLLOWUP_PERMISSION!r}\n")
     constants += f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\n\n"
     return (header + constants + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _controller_main()\n').encode("utf-8")
@@ -1140,7 +1148,7 @@ def _release_controller_main():
 
 
 def _release_controller_source():
-    functions = (execution_context, validate_context_policy,
+    functions = (execution_context, validate_context_policy, project_followup_prompt,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
                  _h_root, _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
                  _h_message, _h_case_request, _h_projection, _h_build_request, _execution_projection,
@@ -1158,7 +1166,9 @@ def _release_controller_source():
                  "_SIMPLE_DATASET_KEYS": tuple(sorted(_SIMPLE_DATASET_KEYS)),
                  "_RUN_KEYS": tuple(sorted(_RUN_KEYS)), "_RELEASE_TARGETS": _RELEASE_TARGETS,
                  "_RELEASE_CONTEXT": _RELEASE_CONTEXT, "LOCAL_TOOLS_TRACK": LOCAL_TOOLS_TRACK,
-                 "LOCAL_TOOL_IDS": LOCAL_TOOL_IDS}
+                 "LOCAL_TOOL_IDS": LOCAL_TOOL_IDS, "FOLLOWUP_PROMPT_PROJECTION": FOLLOWUP_PROMPT_PROJECTION,
+                 "SOURCE_FOLLOWUP_PERMISSION": SOURCE_FOLLOWUP_PERMISSION,
+                 "LOCAL_FOLLOWUP_PERMISSION": LOCAL_FOLLOWUP_PERMISSION}
     return (header + "\n".join(k + " = " + repr(v) for k, v in constants.items()) + "\n\n"
             + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _release_controller_main()\n').encode("utf-8")

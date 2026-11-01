@@ -18,6 +18,7 @@ from .benchmarks import case_approval_sources, identity, select_slots, validate_
 from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
                       validate_group_contract, write_json)
 from .execution import extract_candidate_lean, invoke_conversation, now, runner_fingerprint
+from .execution_policy import project_followup_prompt
 
 PARSER_VERSION = "math-gauge.keep-full/v1"
 PARAMETERS = {"model", "reasoning_effort", "temperature", "top_p", "seed",
@@ -97,7 +98,8 @@ def _validate_schedule(plan):
                     or digest_bytes(message["content"].encode()) != message.get("content_sha256")):
                 raise ValueError("Followup crosses its frozen branch or prompt identity")
         earlier.add(sid)
-    return messages
+    return {sid: project_followup_prompt(message, plan["context_policy"])
+            for sid, message in messages.items()}
 
 
 def _bind_suite(plan, suite):
@@ -324,6 +326,14 @@ def _budget_totals(evidence):
             "token_usage_complete": all(v["token_usage_complete"] for v in evidence.values())}
 
 
+def _slot_prompt_binding(prompt):
+    result = {"prompt_sha256": prompt["content_sha256"] if prompt else None}
+    if prompt and "projection_version" in prompt:
+        result.update(source_prompt_sha256=prompt["source_content_sha256"],
+                      prompt_projection_version=prompt["projection_version"])
+    return result
+
+
 def _new_slot_record(slot, prompts, origin, run_id):
     sid = slot["slot_id"]
     return {"schema": "math-gauge.reliability-slot/v1", "slot_id": sid,
@@ -332,7 +342,7 @@ def _new_slot_record(slot, prompts, origin, run_id):
             "locked_attempt": None, "response_path": None, "response_sha256": None,
             "history_sha256": None, "projected_request_sha256": None,
             "material_sha256": None, "parent_slot": slot.get("parent_slot"),
-            "prompt_sha256": prompts[sid]["content_sha256"] if sid in prompts else None,
+            **_slot_prompt_binding(prompts.get(sid)),
             "origin": origin, "evidence_origin_run_id": run_id,
             "evidence_id": identity({"run_id": run_id, "slot_id": sid})}
 
@@ -754,6 +764,11 @@ def inspect_reliability_run(root):
             raise ValueError("Foreign generation evidence lacks a frozen reuse manifest")
         elif record.get("origin") != meta["origin"]:
             raise ValueError("Original generation kind changed")
+        prompt_binding = _slot_prompt_binding(prompts.get(sid))
+        prompt_fields = {"prompt_sha256", "source_prompt_sha256", "prompt_projection_version"}
+        if (set(record) & prompt_fields != set(prompt_binding)
+                or any(record[key] != value for key, value in prompt_binding.items())):
+            raise ValueError("Frozen source/effective followup prompt binding changed")
         messages = _messages_for(slot, requests, prompts, records, root, runtime)
         if record["history_sha256"] is not None:
             history = read_json(folder / "history.json")
