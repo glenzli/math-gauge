@@ -55,6 +55,28 @@ def parser():
     c.add_argument("--target", action="append", dest="targets")
     c.add_argument("--runtime", help="Predeclared model, budget and adapter identity JSON.")
     c.add_argument("--out", required=True)
+    c = sub.add_parser(
+        "benchmark-export",
+        help="Export a standalone external harness bundle and separate evaluator plan; no model calls.",
+    )
+    c.add_argument("--suite", default="cases")
+    c.add_argument("--profile", help="Profile for a new plan; defaults to protocol/benchmark-profile.json.")
+    c.add_argument("--target", action="append", dest="targets")
+    g = c.add_mutually_exclusive_group()
+    g.add_argument("--plan", help="Existing evaluator-only frozen plan.")
+    g.add_argument("--runtime", help="Predeclared runtime JSON for a new plan; omitted means preparation only.")
+    c.add_argument("--out", required=True, help="New standalone bundle directory.")
+    c.add_argument("--evaluator-out", help="Separate new evaluator directory; defaults to <out>.evaluator.")
+    c = sub.add_parser("benchmark-export-check", help="Read-only validation of an external harness bundle.")
+    c.add_argument("--bundle", required=True)
+    c.add_argument("--plan", help="Also bind the bundle to this evaluator-only plan.")
+    c.add_argument("--suite", help="Also bind the bundle to this suite.")
+    c = sub.add_parser("benchmark-import", help="Import existing external responses into shared review evidence; no model calls.")
+    c.add_argument("--bundle", required=True)
+    c.add_argument("--input", required=True, help="External submission JSON and its explicitly listed files.")
+    c.add_argument("--plan", required=True)
+    c.add_argument("--suite", default="cases")
+    c.add_argument("--out", required=True, help="New local run directory.")
     c = sub.add_parser("benchmark-run", help="Explicitly execute one frozen plan projection.")
     c.add_argument("--suite", default="cases")
     c.add_argument("--plan", required=True)
@@ -189,6 +211,47 @@ def main(argv=None):
             write_plan(args.out, result)
             print(json.dumps({"plan": args.out, "plan_sha256": result["plan_sha256"],
                               "planned": result["planned"], "candidate_calls": 0}))
+        elif args.action == "benchmark-export":
+            from .harness import export_harness_bundle
+            if args.plan and args.profile:
+                raise ValueError("--profile cannot change an existing --plan")
+            suite = Suite.load(args.suite)
+            plan = (read_plan(args.plan) if args.plan else build_plan(
+                BenchmarkProfile.load(args.profile or "protocol/benchmark-profile.json", suite),
+                suite, args.targets,
+                runtime=read_json(args.runtime) if args.runtime else None))
+            result = export_harness_bundle(
+                plan, suite, args.out, evaluator_destination=args.evaluator_out,
+                targets=args.targets)
+            evaluator_root = Path(args.evaluator_out) if args.evaluator_out else Path(str(args.out) + ".evaluator")
+            print(json.dumps({"bundle": args.out,
+                              "evaluator_plan": str(evaluator_root / "plan.json"),
+                              "bundle_sha256": result["bundle_sha256"],
+                              "plan_sha256": result["plan_sha256"],
+                              "planned": result["planned"],
+                              "exported_slots": result["exported_slots"],
+                              "runtime_frozen": result["runtime_frozen"],
+                              "preparation_only": result["preparation_only"],
+                              "candidate_calls": 0}))
+        elif args.action == "benchmark-export-check":
+            from .harness import inspect_harness_bundle
+            result = inspect_harness_bundle(
+                args.bundle, plan=read_plan(args.plan) if args.plan else None,
+                suite=Suite.load(args.suite) if args.suite else None)
+            print(json.dumps({"bundle": args.bundle,
+                              "bundle_sha256": result["bundle_sha256"],
+                              "plan_sha256": result["plan_sha256"],
+                              "planned": result["planned"],
+                              "exported_slots": result["exported_slots"],
+                              "runtime_frozen": result["runtime_frozen"],
+                              "preparation_only": result["preparation_only"],
+                              "candidate_calls": 0}))
+        elif args.action == "benchmark-import":
+            from .harness_import import import_harness_submission
+            result = import_harness_submission(
+                args.bundle, args.input, read_plan(args.plan), Suite.load(args.suite), args.out)
+            print(json.dumps({"run": args.out, "plan_sha256": result["plan_sha256"],
+                              "candidate_calls": 0}))
         elif args.action == "benchmark-run":
             from .reliability import execute_reliability_run
             command = json.loads(args.command_json) if args.command_json else None

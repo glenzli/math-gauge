@@ -1,6 +1,6 @@
 # 仓库地图
 
-当前仓库维护一套43份完整试卷的基准、一套共享runner、共同协议及当前作者验证证据。
+当前仓库维护一套43份完整试卷的公开开发题集、一套共享runner、共同协议及当前作者验证证据。参考与历史继续公开，出题侧材料不因此成为候选输入。
 
 ```text
 cases/
@@ -15,6 +15,7 @@ protocol/                          数学、交付、隔离及报告合同
   benchmark-profile.json           评审侧分项、固定权重和题集身份
   benchmark-scoring.md              归一化、综合分、缺测与独立运行标准
   execution-evidence.md             原始运行证据、具名审核与正式比较资格
+  external-harness.md               独立题包、控制器、外部提交与导入合同
   reliability/                     未执行的可靠性计划、选择、消息与槽位
 math_gauge/                        全部公开与私有题集共享的runner
 scripts/
@@ -40,12 +41,14 @@ docs/                              定位、方法、使用和验证状态
 | `math_gauge/reliability.py` | 独立轮/分支调度、原始历史、重试、KEEP/FULL材料与同计划证据复用 |
 | `math_gauge/reliability_review.py` | 多轮材料、当前说明、数学状态与候选Lean的审核绑定 |
 | `math_gauge/eligibility.py` | 原始运行证据导入、运行审核快照、逐槽位资格与继承来源 |
+| `math_gauge/harness.py` | solver/controller 白名单导出、独立消息构造器和只读题包核验 |
+| `math_gauge/harness_import.py` | 外部提交与原始文件导入，绑定共享多轮证据和审核入口 |
 | `math_gauge/scoring.py` | 固定分母分项/加权聚合、未知区间、轨迹与配对诊断 |
 | `scripts/catalog.py` | 分类证据与当前材料身份，生成出题侧导航 |
 | `scripts/validate_protocol.py` | 固定计划、消息、候选白名单与未执行状态 |
 | `scripts/formal/check_evidence.py` | 当前作者证据与原始编译记录的身份复核 |
 
-公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
+公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。外部题包仅携带 solver 内容、控制器与提交模板，完整主计划保存在独立 evaluator 目录；执行端无需本仓库、Codex 或 Math Gauge 安装。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
 
 ## 历史保留与恢复
 

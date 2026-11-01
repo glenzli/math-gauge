@@ -601,7 +601,9 @@ def reliability_score_inputs(root, *, snapshot=None, audit_snapshot=None):
                      "model_label": meta["model_label"], "origin": origin,
                      "case_approval_evidence_verified": meta["case_approval_evidence_verified"][record["case_id"]],
                      "case_approval_source": meta["inputs"][record["case_id"]].get("case_approval_source"),
-                     "fixture_only": origin in {"fixture", "replay"},
+                     "fixture_only": origin in {"fixture", "replay"}
+                                     or record.get("fixture_only", meta.get("fixture_only")) is True,
+                     "source_origin": record.get("source_origin", meta.get("source_origin")),
                      "evidence_id": record["evidence_id"],
                      "slot_record_sha256": meta["slot_record_sha256"][sid],
                      "reused_from": meta.get("reused_from", {}).get(sid),
@@ -625,7 +627,8 @@ def reliability_score_inputs(root, *, snapshot=None, audit_snapshot=None):
             "execution_eligibility": {key: value for key, value in execution_eligibility.items()
                                       if key != "slots"},
             "execution_contract_sha256": meta["execution_contract_sha256"],
-            **{key: meta.get(key) for key in ("selected_slot_ids", "candidate_calls", "transport_attempts",
+            **{key: meta.get(key) for key in ("selected_slot_ids", "candidate_calls", "external_candidate_calls_declared",
+                 "source_origin", "fixture_only", "import_limits", "transport_attempts",
                  "budget_stop_reason", "unrun_slots", "budget_scope", "unseen_plan_fragments_accounted_for",
                  "prior_transport_attempts", "prior_known_total_tokens", "cumulative_transport_attempts",
                  "cumulative_known_total_tokens", "cumulative_total_tokens", "cumulative_token_usage_complete")},

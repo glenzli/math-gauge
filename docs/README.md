@@ -1,6 +1,6 @@
 # 文档导航
 
-Math Gauge 当前唯一基准为43份完整试卷。根据目的选择入口：
+Math Gauge 当前唯一题集是43份完整试卷的公开开发题集；参考答案为透明复核而公开，仍不属于 solver 输入。根据目的选择入口：
 
 | 目的 | 入口 |
 | --- | --- |
@@ -10,6 +10,7 @@ Math Gauge 当前唯一基准为43份完整试卷。根据目的选择入口：
 | 查看七个分项、加权总分、缺测规则和独立运行范围 | [综合评分标准](../protocol/benchmark-scoring.md) · [默认权重](../protocol/benchmark-profile.json) |
 | 核验模型返回信息、隔离来源与正式比较资格 | [运行证据标准](../protocol/execution-evidence.md) · [隔离流程](../protocol/isolated-cli-runs.md) |
 | 导出候选材料、接入共享runner | [使用指南](usage.md) |
+| 在任意平台独立运行、交换外部提交与复用评分 | [外部 harness 协议](../protocol/external-harness.md) · [使用指南](usage.md) |
 | 检查当前编译、语义覆盖与人审状态 | [验证状态](verification.md) · [作者证据账本](../verification/author/README.md) |
 | 查看重复作答与立场分支的固定设计 | [可靠性材料包](../protocol/reliability/README.md) |
 | 维护题目、工具与来源 | [仓库地图](repository-map.md) · [贡献指南](../CONTRIBUTING.md) · [来源说明](../SOURCES.md) |

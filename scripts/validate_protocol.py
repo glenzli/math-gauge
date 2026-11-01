@@ -19,6 +19,7 @@ RUNNER_FILES = (
     "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/reliability.py",
     "math_gauge/reliability_review.py",
     "math_gauge/eligibility.py",
+    "math_gauge/harness.py", "math_gauge/harness_import.py",
     "math_gauge/cli.py", "scripts/validate_protocol.py",
     "scripts/formal/check_evidence.py", "scripts/formal/verify.py",
     "scripts/isolated_cli/prepare.py", "scripts/isolated_cli/probe.py",
@@ -27,12 +28,14 @@ ACCEPTANCE_TESTS = (
     "test_benchmarks.py", "test_scoring.py", "test_reliability_execution.py",
     "test_reliability_review.py",
     "test_eligibility.py", "test_eligibility_acceptance.py", "test_isolated_cli.py",
+    "test_harness_export.py", "test_harness_import.py", "test_harness_cli.py",
 )
 ACCEPTANCE_STANDARDS = (
     "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",
     "protocol/reliability-execution.md", "protocol/reliability-scoring.md",
     "protocol/evaluation.md", "protocol/isolated-cli-runs.md",
     "protocol/execution-evidence.md", "protocol/execution-evidence-format.md",
+    "protocol/external-harness.md",
 )
 SELECTED = (
     "MG-GR002", "MG-GR004", "MG-GR007", "MG-GR014",

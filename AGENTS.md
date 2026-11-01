@@ -9,6 +9,11 @@
 - A supplied Lean file can be intentionally semantically mismatched while compiling successfully.
   Do not "fix" such an input without updating the benchmark design and version.
 - Candidate-facing files are an explicit projection. References, rubrics and review records stay out of it.
+- The current 43-paper suite is a public development suite. Public references and Git history remain
+  available for transparency; do not describe them as a hidden holdout or include them in solver packets.
+- External harness bundles separate solver content, controller scheduling and evaluator data. Keep the
+  full plan/profile, expected truth, rubrics, approval and author evidence outside the exported bundle.
+  Preserve complete candidate messages and attachments, fresh independent contexts and isolated branches.
 - All public and private suites use the same runner. Do not copy runner implementations into private data.
 - Execution and original-response evidence live in math_gauge/execution.py, case contracts in catalog.py,
   and single-answer judgments/reporting in review.py. benchmarks.py owns evaluator-only profiles and
@@ -17,6 +22,9 @@
 - eligibility.py owns immutable execution-evidence imports, attributed execution-audit snapshots
   and per-slot qualification. Source integrity, human provenance review and mathematical review
   remain separate; request labels or fixture evidence cannot establish formal comparison eligibility.
+- harness.py owns standalone solver/controller exports and read-only bundle checks; harness_import.py
+  owns external-submission ingestion into the same reliability evidence and review contracts.
+  CLI only composes these interfaces. Export, check and import do not invoke candidate models.
 - Benchmark scores use frozen profile weights and fixed denominators. Missing, execution-failed and
   unresolved slots stay explicit; never renormalize a partial run into a full-benchmark score.
 - Run python3 -m unittest discover -s tests and python3 -m math_gauge validate for affected runner contracts.

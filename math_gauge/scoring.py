@@ -103,7 +103,8 @@ def _eligibility_reasons(row, case, *, current=True):
         reasons.extend(execution.get("reasons") or ["execution_eligibility_unverified"])
     if row.get("origin") != "command" or row.get("fixture_only") is True:
         reasons.append("fixture_or_replay_execution" if row.get("origin") in {"fixture", "replay"}
-                       or row.get("fixture_only") is True else "execution_origin_unverified")
+                       or row.get("fixture_only") is True else "external_origin_unverified"
+                       if row.get("origin") == "external_import" else "execution_origin_unverified")
     if not case["case_approved"]:
         reasons.append("case_human_approval_missing")
     elif row.get("case_approval_evidence_verified") is not True:
@@ -470,7 +471,7 @@ def score_inputs(inputs):
             "slot_id", "case_id", "evidence_id", "slot_record_sha256", "response_sha256",
             "history_sha256", "material_sha256", "binding", "review_sha256", "reviewer_kind",
             "case_approval_evidence_verified", "case_approval_source",
-            "origin", "fixture_only", "comparison_eligible", "execution_eligibility",
+            "origin", "source_origin", "fixture_only", "comparison_eligible", "execution_eligibility",
             "execution_receipt_sha256", "execution_audit_sha256", "historical_audit_selection", "strict_pass", "completion",
             "whole_strict", "whole_math", "focus_math", "focus_verdict", "problem_defect", "group_diagnostic")}
             for r in evidence_rows],
@@ -590,6 +591,10 @@ def score_runs(roots, *, snapshot=None, audit_snapshot=None, audit_snapshots=Non
                         "run_receipt": str(Path(root).resolve() / "run.json"),
                         "selected_slot_ids": inputs.get("selected_slot_ids", [r["slot_id"] for r in inputs.get("slots", [])]),
                         "candidate_calls": inputs.get("candidate_calls"),
+                        "external_candidate_calls_declared": inputs.get("external_candidate_calls_declared"),
+                        "source_origin": inputs.get("source_origin"),
+                        "fixture_only": inputs.get("fixture_only"),
+                        "import_limits": inputs.get("import_limits"),
                         "transport_attempts": inputs.get("transport_attempts"),
                         "budget_stop_reason": inputs.get("budget_stop_reason"),
                         "budget_accounting": {k: inputs.get(k) for k in (

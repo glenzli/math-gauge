@@ -540,6 +540,8 @@ def _validate(root, meta, records, record, submission, sources):
     reasons = []
     if record.get("origin", meta["origin"]) != "command":
         reasons.append("execution_origin_not_command")
+        if record.get("origin", meta["origin"]) == "external_import":
+            reasons.append("external_origin_unverified")
     if not record.get("started") or record.get("response_sha256") is None:
         reasons.append("execution_without_original_response")
     requirements = _requirements(meta)
@@ -1035,6 +1037,8 @@ def verify_execution_eligibility(root, meta=None, records=None, *, audit_snapsho
         if record.get("origin", meta["origin"]) != "command":
             row["eligible"] = False
             row["reasons"] = sorted(set(row["reasons"] + ["execution_origin_not_command"]))
+            if record.get("origin", meta["origin"]) == "external_import":
+                row["reasons"] = sorted(set(row["reasons"] + ["external_origin_unverified"]))
         parent = record.get("parent_slot")
         if parent is not None and (parent not in result or not result[parent]["eligible"]):
             row["eligible"] = False

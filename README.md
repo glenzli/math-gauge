@@ -4,11 +4,11 @@
 
 Math Gauge 是数学推理与 Lean 语义对齐基准。它检查模型能否在实际给定的结构下完成证明、反例、构造、分类或形式化，保持假设、量词、定义域与结论强度，并留下可复核的原始答卷与审核证据。
 
-[试卷目录](cases/README.md) · [按考察重点选卷](cases/by-focus.md) · [评分结构](protocol/benchmark-scoring.md) · [评测协议](protocol/evaluation.md) · [使用指南](docs/usage.md) · [验证状态](docs/verification.md) · [文档导航](docs/README.md)
+[试卷目录](cases/README.md) · [按考察重点选卷](cases/by-focus.md) · [评分结构](protocol/benchmark-scoring.md) · [评测协议](protocol/evaluation.md) · [外部 harness](protocol/external-harness.md) · [使用指南](docs/usage.md) · [验证状态](docs/verification.md) · [文档导航](docs/README.md)
 
 ## 当前基准
 
-唯一默认题集是 `cases/suite.json`，共 **43 份完整试卷**：
+唯一默认题集是 `cases/suite.json`，是含 **43 份完整试卷的公开开发题集（public development suite）**：
 
 | 类别 | 数量 | 内容 |
 | --- | ---: | --- |
@@ -19,7 +19,7 @@ Math Gauge 是数学推理与 Lean 语义对齐基准。它检查模型能否在
 
 一个完整题组或一章是一份相关样本。41 份递进题组含 246 阶段，两章分别含 34/92 项义务，合计 372 项审核义务；**样本数为43，不能记为372**。整章题提供含证明的原文，测量该条件下的形式化能力。
 
-题面、完整参考、逐项判准、来源和 AI 审核材料已经准备。全部题目仍为 **draft / human pending**；`draft` 是待人工审定的生命周期状态。作者 Lean 证据覆盖 43/43 份完整目标、372/372 项义务，470 个模块已有真实编译记录；MG-GP003 的 S5 已完成任意域上的核心转移几何与原典范单位比较。见[作者证据账本](verification/author/README.md)。作者证明、AI 复核、编译和人工批准分别记录。
+题面、完整参考、逐项判准、来源和 AI 审核材料已经准备。参考答案继续公开，便于透明复核；它们是评审侧出题材料，不属于 solver 题包。现有公开内容与 Git 历史均保留，因此本题集不宣称是未公开留出集。全部题目仍为 **draft / human pending**；`draft` 是待人工审定的生命周期状态。作者 Lean 证据覆盖 43/43 份完整目标、372/372 项义务，470 个模块已有真实编译记录；MG-GP003 的 S5 已完成任意域上的核心转移几何与原典范单位比较。见[作者证据账本](verification/author/README.md)。作者证明、AI 复核、编译和人工批准分别记录。
 
 当前基准没有候选模型答卷或通过率。[可靠性计划](protocol/reliability/README.md)对43份试卷各安排三次独立作答，在预选八题上从同一 A1 开中性、支持与怀疑三个分支，各自查两轮，共177槽位/模型。共享runner提供分项计划、多轮历史、KEEP/FULL材料重建、运行证据审核和评分入口；软件离线验收见[运行器证据](verification/runner/README.md)，实际模型调用为0。[正式比较资格](protocol/execution-evidence.md)由逐答卷的原始运行证据、具名审核及数学/Lean门槛共同决定；当前尚无真实运行与人工批准，不产生正式分数。
 
@@ -45,6 +45,20 @@ python3 scripts/validate_protocol.py
 ```
 
 每次输出目录须是新的。`validate` 检查合同与身份，`prepare` 导出候选材料；两者均不调用模型。实际消息由 `candidate_message(request)` 构造，完整传递题面及白名单附件。参考、评分、来源、真假、审核和作者证明留在评审侧；实际运行隔离另按[协议](protocol/isolated-cli-runs.md)核验。
+
+## 外部 harness
+
+不依赖 Codex。共享命令适配器可以在本机调度；外部模式则导出可独立交付的题包，由任意平台在隔离环境中执行，再导回同一套审核与评分流程：
+
+```sh
+python3 -m math_gauge benchmark-export --target all --out runs/external-bundle
+python3 -m math_gauge benchmark-export-check --bundle runs/external-bundle \
+  --plan runs/external-bundle.evaluator/plan.json
+```
+
+以上没有冻结 runtime，只准备材料，不授权或发起模型调用。添加 `--runtime /absolute/path/to/runtime.json` 可在一次导出中冻结运行配置；已有主计划可用 `--plan` 原样导出。完整主计划保存在独立评审目录，不能随 solver/controller 题包交付。题包内的独立 Python 控制器提供完整消息、附件与本分支历史，不需要本仓库或安装 Math Gauge。
+
+当前版本为无工具轨道：三次独立作答使用全新上下文，三种两轮自查分支分别隔离，候选不接收正确性或编译反馈。允许检索、代码执行或 Lean 工具的对照实验须另行冻结版本与条件。提交格式、导入及结果模板见[外部 harness 协议](protocol/external-harness.md)与[使用指南](docs/usage.md)。导入成功只证明材料可接入，正式比较仍需独立核验运行来源、数学审核和适用的 Lean 门槛。
 
 题材来自公开 OET、公开数学资料与独立构造。来源、版本、署名与许可见 [SOURCES.md](SOURCES.md)。公开题可能进入训练数据，本项目不声称它们对模型必然未见。历史版本与实验由 Git 保存，恢复入口见[仓库地图](docs/repository-map.md)。
 

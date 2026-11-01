@@ -324,6 +324,63 @@ def _budget_totals(evidence):
             "token_usage_complete": all(v["token_usage_complete"] for v in evidence.values())}
 
 
+def _new_slot_record(slot, prompts, origin, run_id):
+    sid = slot["slot_id"]
+    return {"schema": "math-gauge.reliability-slot/v1", "slot_id": sid,
+            "case_id": slot["case_id"], "started": False,
+            "status": "not_run", "reason": None, "attempts": [],
+            "locked_attempt": None, "response_path": None, "response_sha256": None,
+            "history_sha256": None, "projected_request_sha256": None,
+            "material_sha256": None, "parent_slot": slot.get("parent_slot"),
+            "prompt_sha256": prompts[sid]["content_sha256"] if sid in prompts else None,
+            "origin": origin, "evidence_origin_run_id": run_id,
+            "evidence_id": identity({"run_id": run_id, "slot_id": sid})}
+
+
+def _execution_manifest_hash(meta):
+    fields = ("plan_sha256", "execution_targets", "selected_slot_ids", "reused_from",
+              "command", "timeout_seconds", "origin", "context_transport", "prior_budget_evidence", "budget_scope")
+    value = {k: meta[k] for k in fields}
+    if "external_import" in meta:
+        value["external_import"] = meta["external_import"]
+    return identity(value)
+
+
+def _freeze_inputs(plan, suite, dest):
+    """Freeze the shared candidate and evaluator inputs for any run producer."""
+    requests, bindings = {}, {}
+    for case in plan["case_index"]:
+        cid = case["case_id"]
+        request = suite.prepare(suite.cases[cid], dest / "inputs" / cid / "solver")
+        if _request_hash(request) != case["request_sha256"]:
+            raise ValueError("Candidate preparation changed the frozen request")
+        prompt_path = dest / "inputs" / cid / "solver" / "prompt.md"
+        prompt = (request["instruction"] + "\n\n" if request["instruction"] else "") + request["task"]
+        if prompt_path.read_bytes() != prompt.encode("utf-8"):
+            raise ValueError("Candidate preparation changed the original task bytes")
+        contract_path = dest / "inputs" / cid / "review-contract.json"
+        contract_path.write_bytes(safe_file(suite.root, case["group_contract"]).read_bytes())
+        bindings[cid] = {"request": f"inputs/{cid}/solver/request.json",
+                               "contract": f"inputs/{cid}/review-contract.json"}
+        for kind in ("reference", "rubric"):
+            source = safe_file(suite.root, suite.cases[cid][kind]).read_bytes()
+            extension = ".md" if kind == "reference" else ".json"
+            target = dest / "inputs" / cid / (kind + extension)
+            target.write_bytes(source)
+            bindings[cid][kind] = {"path": str(target.relative_to(dest)), "sha256": digest_bytes(source)}
+        approval = case.get("case_approval_source")
+        if approval is not None:
+            raw = safe_file(suite.root, approval["manifest"]).read_bytes()
+            if digest_bytes(raw) != approval["manifest_sha256"]:
+                raise ValueError("Case approval source changed during preparation")
+            target = dest / "inputs" / cid / "case-manifest.json"
+            target.write_bytes(raw)
+            bindings[cid]["case_approval_source"] = {
+                "path": str(target.relative_to(dest)), "sha256": digest_bytes(raw)}
+        requests[cid] = request
+    return requests, bindings
+
+
 def execute_reliability_run(plan, suite, destination, command=None, replay=None, *,
                             timeout=None, adapter=None, targets=None, reuse_runs=None):
     """Execute one pre-frozen projection, retaining every attempted transport.
@@ -454,38 +511,8 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
                        "evidence_id": reusable[s["slot_id"]][1]["evidence_id"],
                        "slot_record_sha256": reusable[s["slot_id"]][2]["slot_record_sha256"][s["slot_id"]]}
         for s in selected if s["slot_id"] in reusable}
-    meta["execution_manifest_sha256"] = identity({k: meta[k] for k in (
-        "plan_sha256", "execution_targets", "selected_slot_ids", "reused_from",
-        "command", "timeout_seconds", "origin", "context_transport", "prior_budget_evidence", "budget_scope")})
-    requests = {}
-    for case in plan["case_index"]:
-        cid = case["case_id"]
-        request = suite.prepare(suite.cases[cid], dest / "inputs" / cid / "solver")
-        if _request_hash(request) != case["request_sha256"]:
-            raise ValueError("Candidate preparation changed the frozen request")
-        prompt_path = dest / "inputs" / cid / "solver" / "prompt.md"
-        if prompt_path.read_bytes() != request["task"].encode("utf-8"):
-            raise ValueError("Candidate preparation changed the original task bytes")
-        contract_path = dest / "inputs" / cid / "review-contract.json"
-        contract_path.write_bytes(safe_file(suite.root, case["group_contract"]).read_bytes())
-        meta["inputs"][cid] = {"request": f"inputs/{cid}/solver/request.json",
-                               "contract": f"inputs/{cid}/review-contract.json"}
-        for kind in ("reference", "rubric"):
-            source = safe_file(suite.root, suite.cases[cid][kind]).read_bytes()
-            extension = ".md" if kind == "reference" else ".json"
-            target = dest / "inputs" / cid / (kind + extension)
-            target.write_bytes(source)
-            meta["inputs"][cid][kind] = {"path": str(target.relative_to(dest)), "sha256": digest_bytes(source)}
-        approval = case.get("case_approval_source")
-        if approval is not None:
-            raw = safe_file(suite.root, approval["manifest"]).read_bytes()
-            if digest_bytes(raw) != approval["manifest_sha256"]:
-                raise ValueError("Case approval source changed during preparation")
-            target = dest / "inputs" / cid / "case-manifest.json"
-            target.write_bytes(raw)
-            meta["inputs"][cid]["case_approval_source"] = {
-                "path": str(target.relative_to(dest)), "sha256": digest_bytes(raw)}
-        requests[cid] = request
+    meta["execution_manifest_sha256"] = _execution_manifest_hash(meta)
+    requests, meta["inputs"] = _freeze_inputs(plan, suite, dest)
     write_json(dest / "run.json", meta)
     records, materials = {}, {}
     stopped = ((maximum is not None and prior_usage["transport_attempts"] >= maximum)
@@ -510,16 +537,7 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
             write_json(dest / "run.json", meta)
             continue
         folder.mkdir(parents=True)
-        record = {"schema": "math-gauge.reliability-slot/v1", "slot_id": sid,
-                  "case_id": slot["case_id"], "started": False,
-                  "status": "not_run", "reason": None, "attempts": [],
-                  "locked_attempt": None, "response_path": None, "response_sha256": None,
-                  "history_sha256": None, "projected_request_sha256": None,
-                  "material_sha256": None, "parent_slot": slot.get("parent_slot"),
-                  "prompt_sha256": prompts[sid]["content_sha256"] if sid in prompts else None}
-        record["origin"] = origin
-        record["evidence_origin_run_id"] = meta["run_id"]
-        record["evidence_id"] = identity({"run_id": meta["run_id"], "slot_id": sid})
+        record = _new_slot_record(slot, prompts, origin, meta["run_id"])
         messages = _messages_for(slot, requests, prompts, records, dest, runtime)
         if stopped:
             record["reason"] = "budget_exhausted"
@@ -659,9 +677,7 @@ def inspect_reliability_run(root):
             or plan["runner_sha256"] != meta.get("runner_sha256")
             or meta.get("parser_version") != PARSER_VERSION):
         raise ValueError("Frozen reliability plan or parser identity changed")
-    manifest_hash = identity({k: meta[k] for k in (
-        "plan_sha256", "execution_targets", "selected_slot_ids", "reused_from",
-        "command", "timeout_seconds", "origin", "context_transport", "prior_budget_evidence", "budget_scope")})
+    manifest_hash = _execution_manifest_hash(meta)
     if manifest_hash != meta.get("execution_manifest_sha256"):
         raise ValueError("Frozen execution manifest changed")
     if identity(meta.get("execution_contract")) != meta.get("execution_contract_sha256"):
@@ -797,6 +813,9 @@ def inspect_reliability_run(root):
         local = [r for sid, r in records.items() if sid not in meta.get("reused_from", {})]
         if sum(len(r["attempts"]) for r in local) != meta.get("transport_attempts"):
             raise ValueError("Current-run transport accounting changed")
+    if meta.get("origin") == "external_import" or "external_import" in meta:
+        from .harness_import import inspect_import_sources
+        inspect_import_sources(root, meta, records)
     return meta, records
 
 
