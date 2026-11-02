@@ -367,6 +367,59 @@ class RetainedEvidenceTests(FixtureMixin, unittest.TestCase):
     def bind_recompiled(self, review_name):
         return self.check(write_binding=True, recompiled_review=review_name)
 
+    def test_default_and_reserve_partition_preserves_original_author_bank(self):
+        suite_path = self.repo / 'cases/suite.json'
+        original = V.load(suite_path)
+        V.save(self.repo / 'cases/reserve-suite.json', original)
+        V.save(suite_path, dict(original, cases=[]))
+        checked = (self.repo / 'verification/author/checked-ledger.json').read_bytes()
+        with patch.object(V, 'command', side_effect=AssertionError('Read-only evidence check cannot compile')):
+            result = E.check_all(self.repo)
+        self.assertEqual(result['counts']['papers'], 1)
+        self.assertEqual((self.repo / 'verification/author/checked-ledger.json').read_bytes(), checked)
+        V.save(suite_path, original)
+        with self.assertRaisesRegex(V.VerificationError, 'unique and disjoint'):
+            E.check_all(self.repo)
+        V.save(suite_path, dict(original, cases=[]))
+        V.save(self.repo / 'cases/reserve-suite.json', dict(original, cases=[]))
+        with self.assertRaisesRegex(V.VerificationError, 'original evidence layout disagree'):
+            E.check_all(self.repo)
+
+    def test_reserve_directory_move_preserves_frozen_evidence_and_rejects_ambiguity(self):
+        before = self.check()
+        frozen = {path.relative_to(self.case): path.read_bytes()
+                  for path in self.case.rglob('*') if path.is_file()}
+        checked = (self.repo / 'verification/author/checked-ledger.json').read_bytes()
+        previous = self.mapping['current']
+        current = 'cases/reserve/proofs/' + self.mapping['id']
+        target = self.repo / current
+        target.parent.mkdir(parents=True)
+        self.case.rename(target)
+        self.case = target; self.root = target / 'formal'
+        V.save(self.repo / E.RESERVE_RELOCATIONS, {
+            'schema': 'math-gauge.reserve-relocations/v1',
+            'case_paths': [{'id': self.mapping['id'], 'previous': previous, 'current': current}],
+        })
+        V.save(self.repo / 'cases/suite.json', {'schema': 'math-gauge.suite/v1', 'cases': []})
+        V.save(self.repo / 'cases/reserve-suite.json', {
+            'schema': 'math-gauge.suite/v1', 'cases': [current.removeprefix('cases/') + '/case.json'],
+        })
+        with patch.object(V, 'command', side_effect=AssertionError('A directory move cannot compile')):
+            self.assertEqual(self.check(), before)
+            self.assertEqual(E.check_all(self.repo)['counts']['papers'], 1)
+        self.assertEqual(frozen, {path.relative_to(self.case): path.read_bytes()
+                                  for path in self.case.rglob('*') if path.is_file()})
+        self.assertEqual((self.repo / 'verification/author/checked-ledger.json').read_bytes(), checked)
+        self.assertEqual(E.relocated_case_path(self.repo, previous + '-other/task.md'),
+                         previous + '-other/task.md')
+        (self.repo / previous).mkdir()
+        with self.assertRaisesRegex(V.VerificationError, 'duplicate directory'):
+            E.check_all(self.repo)
+        (self.repo / previous).rmdir()
+        (self.repo / E.RESERVE_RELOCATIONS).unlink()
+        with self.assertRaisesRegex(V.VerificationError, 'explicit relocation map disagree'):
+            E.check_all(self.repo)
+
     def test_recompiled_evidence_binds_current_outputs_and_keeps_original_provenance(self):
         checked = (self.repo/'verification/author/checked-ledger.json').read_bytes()
         old_manifest = (self.root/'checked-manifest.json').read_bytes()

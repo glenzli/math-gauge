@@ -6,6 +6,8 @@ from fractions import Fraction
 from unittest.mock import patch
 from pathlib import Path
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
 from math_gauge.catalog import Suite
 from math_gauge.scoring import render_score, score_inputs, score_runs
@@ -41,8 +43,8 @@ def fixture_rows(plan, completions=None):
 class BenchmarkScoringTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = legacy_suite()
+        cls.profile = legacy_profile(cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
     def inputs(self, rows, plan=None):
@@ -421,6 +423,45 @@ class BenchmarkScoringTests(unittest.TestCase):
         overall = result["metrics"]["overall"]
         self.assertLessEqual(Fraction(str(overall["lower"])), exact_overall)
         self.assertGreaterEqual(Fraction(str(overall["upper"])), exact_overall)
+
+
+class CompactBenchmarkScoringTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        suite = Suite.load(ROOT / "cases")
+        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite),
+                              suite, runtime=RUNTIME)
+
+    def score(self, rows):
+        return score_inputs({"plan": self.plan, "model_label": RUNTIME["model_label"], "slots": rows})
+
+    def test_extra_attempts_never_reweight_a1_core_or_focus_slices(self):
+        rows = fixture_rows(self.plan)
+        original = self.score(rows)
+        for row in rows:
+            if row["slot_id"].endswith((":A2", ":A3")):
+                row.update(strict_pass=False, completion={"lower": 0, "upper": 0, "exact": 0})
+        changed = self.score(rows)
+        self.assertEqual(changed["metrics"]["core"]["exact"], 100)
+        self.assertEqual(changed["metrics"]["repeat"]["exact"], 0)
+        for component in ("proofs", "lean-audit", "lean-construction", "chapters"):
+            self.assertEqual(changed["metrics"][component], original["metrics"][component])
+        self.assertEqual(changed["focus_slices"], original["focus_slices"])
+        self.assertEqual(changed["metrics"]["repeat"]["coverage"]["planned"], 6)
+        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 44)
+        self.assertEqual(changed["papers"]["MG-C002"]["planned_attempts"], 1)
+        self.assertIsNone(changed["papers"]["MG-C002"]["three_of_three"])
+        self.assertEqual(changed["papers"]["MG-GR002"]["planned_attempts"], 3)
+
+    def test_missing_attempts_keep_each_new_fixed_denominator(self):
+        rows = [r for r in fixture_rows(self.plan) if r["slot_id"].endswith(":A1")]
+        result = self.score(rows)
+        self.assertEqual(result["metrics"]["core"]["exact"], 100)
+        self.assertIsNone(result["metrics"]["repeat"]["exact"])
+        self.assertEqual(result["metrics"]["repeat"]["coverage"]["planned"], 6)
+        self.assertEqual(result["metrics"]["neutral"]["coverage"]["planned"], 12)
+        self.assertEqual(result["metrics"]["stance"]["coverage"]["planned"], 24)
+        self.assertIsNone(result["metrics"]["overall"]["exact"])
 
 
 if __name__ == "__main__":

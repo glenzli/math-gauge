@@ -1,14 +1,14 @@
 {
-  "schema": "math-gauge.benchmark-profile/v1",
+  "schema": "math-gauge.benchmark-profile/v2",
   "id": "math-gauge-composite",
-  "version": "0.1.0",
-  "standard_version": "0.2.0",
+  "version": "0.2.0",
+  "standard_version": "0.3.0",
   "operator_only": true,
   "path_base": "repository",
   "suite": {
     "id": "math-gauge-benchmark",
-    "version": "0.2.0",
-    "sha256": "441497a658972186e2e48966041d2ed52bb822bb8533ee3bfbc695a9e14f4c91"
+    "version": "0.3.0",
+    "sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1"
   },
   "components": [
     {
@@ -18,19 +18,12 @@
         "MG-GP001",
         "MG-GP002",
         "MG-GP003",
-        "MG-GR001",
         "MG-GR002",
-        "MG-GR003",
-        "MG-GR004",
         "MG-GR005",
-        "MG-GR006",
-        "MG-GR007",
         "MG-GR008",
         "MG-GR009",
         "MG-GR010",
-        "MG-GR011",
         "MG-GR012",
-        "MG-GR013",
         "MG-GR014",
         "MG-GR015",
         "MG-GR016",
@@ -38,12 +31,8 @@
         "MG-GR018",
         "MG-GR019",
         "MG-GR020",
-        "MG-GR101",
-        "MG-GR102",
         "MG-GR103",
-        "MG-GR104",
-        "MG-GR105",
-        "MG-GR106"
+        "MG-GR104"
       ],
       "weight": 25
     },
@@ -83,11 +72,6 @@
       "weight": 25
     }
   ],
-  "attempts": [
-    "A1",
-    "A2",
-    "A3"
-  ],
   "overall_weights": {
     "core": 70,
     "repeat": 10,
@@ -98,10 +82,138 @@
     "selection": "protocol/reliability/selection.json",
     "prompts": "protocol/reliability/prompts.json",
     "schedule": "protocol/reliability/schedule.json",
-    "protocol_version": "0.1.0"
+    "protocol_version": "0.2.0"
   },
-  "score_unit": "0-100; normalized within each full paper before averaging attempts and papers",
+  "score_unit": "0-100; core uses each full paper A1 only; repeat uses the frozen six-paper panel with A1/A2/A3; no best-of selection",
   "missing_policy": "fixed-denominator intervals; exact null unless the metric is mathematically determined (a confirmed failure can determine three-attempt strict repeat as zero); always retain coverage; never renormalize missing components",
   "formal_eligibility": "Human-approved cases and human reviews plus verified non-fixture execution, input identity and applicable Lean gates; provisional values do not establish formal eligibility.",
-  "weight_rationale": "Four delivery types have equal importance despite unequal paper counts. Overall allocates 70% to task completion and 10% each to repeated strict completion, neutral self-check correctness and stance-conditioned correctness. These are declared value choices, not empirical estimates of difficulty or statistical independence."
+  "weight_rationale": "Four delivery types have equal importance despite unequal paper counts. Overall allocates 70% to task completion and 10% each to repeated strict completion, neutral self-check correctness and stance-conditioned correctness. These are declared value choices, not empirical estimates of difficulty or statistical independence.",
+  "attempt_schedule": {
+    "MG-C002": [
+      "A1"
+    ],
+    "MG-C003": [
+      "A1"
+    ],
+    "MG-GF101": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "MG-GF103": [
+      "A1"
+    ],
+    "MG-GF105": [
+      "A1"
+    ],
+    "MG-GF107": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "MG-GF109": [
+      "A1"
+    ],
+    "MG-GF111": [
+      "A1"
+    ],
+    "MG-GF102": [
+      "A1"
+    ],
+    "MG-GF104": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "MG-GF106": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "MG-GF108": [
+      "A1"
+    ],
+    "MG-GF110": [
+      "A1"
+    ],
+    "MG-GF112": [
+      "A1"
+    ],
+    "MG-GP001": [
+      "A1"
+    ],
+    "MG-GP002": [
+      "A1"
+    ],
+    "MG-GP003": [
+      "A1"
+    ],
+    "MG-GR002": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "MG-GR005": [
+      "A1"
+    ],
+    "MG-GR008": [
+      "A1"
+    ],
+    "MG-GR009": [
+      "A1"
+    ],
+    "MG-GR010": [
+      "A1"
+    ],
+    "MG-GR012": [
+      "A1"
+    ],
+    "MG-GR014": [
+      "A1",
+      "A2",
+      "A3"
+    ],
+    "MG-GR015": [
+      "A1"
+    ],
+    "MG-GR016": [
+      "A1"
+    ],
+    "MG-GR017": [
+      "A1"
+    ],
+    "MG-GR018": [
+      "A1"
+    ],
+    "MG-GR019": [
+      "A1"
+    ],
+    "MG-GR020": [
+      "A1"
+    ],
+    "MG-GR103": [
+      "A1"
+    ],
+    "MG-GR104": [
+      "A1"
+    ]
+  },
+  "score_policy": {
+    "core_attempt_labels": [
+      "A1"
+    ],
+    "repeat_case_ids": [
+      "MG-GR002",
+      "MG-GR014",
+      "MG-GF101",
+      "MG-GF107",
+      "MG-GF104",
+      "MG-GF106"
+    ],
+    "repeat_attempt_labels": [
+      "A1",
+      "A2",
+      "A3"
+    ]
+  }
 }

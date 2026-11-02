@@ -1,10 +1,13 @@
 # 文档导航
 
-Math Gauge 当前唯一题集是43份完整试卷的公开开发题集；参考答案为透明复核而公开，仍不属于 solver 输入。根据目的选择入口：
+Math Gauge 默认题集含32份完整试卷，另11份保留为显式后备；两者同属43卷公开开发题库。参考答案为透明复核而公开，仍不属于 solver 输入。根据目的选择入口：
 
 | 目的 | 入口 |
 | --- | --- |
-| 在任意外部 harness 运行任务并交回答卷 | [v0.2.0 包内唯一操作说明](release-consumer-README-v0.2.0.md)；当前仅本地准备 |
+| 在任意外部 harness 运行任务并交回答卷 | [v0.3.0 包内操作说明源文件](release-consumer-README-v0.3.0.md)；中性任务包与题集均为0.3.0 |
+| 理解默认32题/80次与后备11题的取舍 | [0.3.0选卷依据](selection-v0.3.0.md) |
+| 区分旧177槽成绩与32题方案重算 | [Terra暂定结果与限制](terra-pilot-2026-11-02.md) · [重算数据](results/terra-2026-11-02-v0.3.0-posthoc.json) |
+| 单独选择备选题 | [备选目录](../cases/reserve/README.md) · [显式清单](../cases/reserve-suite.json) |
 | 构建、检查任务包，或查阅历史分发 | [分发合同](../protocol/release-distribution.md) · [v0.1.0 历史发布说明](release-notes-v0.1.0.md) |
 | 了解测量目标、样本单位和结论边界 | [项目定位](project-positioning.md) |
 | 阅读当前试卷及完整出题材料 | [试卷目录](../cases/README.md) · [按考察重点选卷](../cases/by-focus.md) |

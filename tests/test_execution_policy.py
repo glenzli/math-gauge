@@ -10,6 +10,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots, validate_plan
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
 from math_gauge.execution_policy import (
@@ -36,8 +38,8 @@ LEGACY_CONTEXT = {"independent": "fresh", "followup": "branch-history-only",
 class ExecutionPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = legacy_suite()
+        cls.profile = legacy_profile(cls.suite)
         cls.base_plan = build_plan(cls.profile, cls.suite, ["all"])
         cls.shared_temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.shared_temp.cleanup)

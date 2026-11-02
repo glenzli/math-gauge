@@ -1,33 +1,26 @@
 # 当前试卷
 
-唯一题集为 `cases/suite.json`，是含43份完整试卷的公开开发题集（public development suite）。每组或每章是一份相关样本；246阶段与126项章节义务合计372项审核义务，不能记作372道独立题。
+默认题集 `cases/suite.json` 含32份完整试卷、306项相关审核义务，按下方四类交付整理。另11份备选卷、66项义务独立存放在 [`reserve/`](reserve/README.md)，由 `cases/reserve-suite.json` 显式选择。两者不重叠，合为原43卷/372项公开开发题库；数学材料原样保留。每组或每章是一份相关样本，义务数不能当作独立试题数。
 
-材料已具数学参考、逐项判准、来源及AI审核记录；全部为 **draft / human pending**。`draft` 是待人工审定的生命周期状态。当前没有候选模型答卷或通过率。
+材料已具数学参考、逐项判准、来源及AI审核记录；全部为 **draft / human pending**。旧43卷/177槽Terra试跑已有[暂定结果](../docs/terra-pilot-2026-11-02.md)；新版32卷/80槽尚未运行。详见[选卷说明](../docs/selection-v0.3.0.md)。
 
 题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。
 
 [按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)
 
-## 书面证明、反例与构造 · 29份
+## 书面证明、反例与构造 · 18份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) | written | 6阶段 | [合同](proofs/MG-GP001/contract.json) · [参考](proofs/MG-GP001/reference.md) · [评分](proofs/MG-GP001/rubric.json) · [题包复核](proofs/MG-GP001/review.json) · [作者Lean](proofs/MG-GP001/formal/COVERAGE.md) |
 | [MG-GP002 · Fourier 逆、截断误差与参数边界](proofs/MG-GP002/task.md) | written | 6阶段 | [合同](proofs/MG-GP002/contract.json) · [参考](proofs/MG-GP002/reference.md) · [评分](proofs/MG-GP002/rubric.json) · [题包复核](proofs/MG-GP002/review.json) · [作者Lean](proofs/MG-GP002/formal/COVERAGE.md) |
 | [MG-GP003 · 半局部邻域、下降与层化的依赖比较](proofs/MG-GP003/task.md) | written | 6阶段 | [合同](proofs/MG-GP003/contract.json) · [参考](proofs/MG-GP003/reference.md) · [评分](proofs/MG-GP003/rubric.json) · [题包复核](proofs/MG-GP003/review.json) · [作者Lean](proofs/MG-GP003/formal/COVERAGE.md) |
-| [MG-GR001 · 递归系统的固定族、稳定分支与终止](proofs/MG-GR001/task.md) | written | 7阶段 | [合同](proofs/MG-GR001/contract.json) · [参考](proofs/MG-GR001/reference.md) · [评分](proofs/MG-GR001/rubric.json) · [题包复核](proofs/MG-GR001/review.json) · [作者Lean](proofs/MG-GR001/formal/COVERAGE.md) |
 | [MG-GR002 · 线性记录、有限观测与原空间恢复](proofs/MG-GR002/task.md) | written | 6阶段 | [合同](proofs/MG-GR002/contract.json) · [参考](proofs/MG-GR002/reference.md) · [评分](proofs/MG-GR002/rubric.json) · [题包复核](proofs/MG-GR002/review.json) · [作者Lean](proofs/MG-GR002/formal/COVERAGE.md) |
-| [MG-GR003 · 平均恢复、迭代误差与一致速度](proofs/MG-GR003/task.md) | written | 6阶段 | [合同](proofs/MG-GR003/contract.json) · [参考](proofs/MG-GR003/reference.md) · [评分](proofs/MG-GR003/rubric.json) · [题包复核](proofs/MG-GR003/review.json) · [作者Lean](proofs/MG-GR003/formal/COVERAGE.md) |
-| [MG-GR004 · Hilbert复形的精确消元与近似消元](proofs/MG-GR004/task.md) | written | 5阶段 | [合同](proofs/MG-GR004/contract.json) · [参考](proofs/MG-GR004/reference.md) · [评分](proofs/MG-GR004/rubric.json) · [题包复核](proofs/MG-GR004/review.json) · [作者Lean](proofs/MG-GR004/formal/COVERAGE.md) |
 | [MG-GR005 · 凸成本记录、紧性与闭上图恢复](proofs/MG-GR005/task.md) | written | 6阶段 | [合同](proofs/MG-GR005/contract.json) · [参考](proofs/MG-GR005/reference.md) · [评分](proofs/MG-GR005/rubric.json) · [题包复核](proofs/MG-GR005/review.json) · [作者Lean](proofs/MG-GR005/formal/COVERAGE.md) |
-| [MG-GR006 · 逆向塔的前缀、整体提升与选择](proofs/MG-GR006/task.md) | written | 6阶段 | [合同](proofs/MG-GR006/contract.json) · [参考](proofs/MG-GR006/reference.md) · [评分](proofs/MG-GR006/rubric.json) · [题包复核](proofs/MG-GR006/review.json) · [作者Lean](proofs/MG-GR006/formal/COVERAGE.md) |
-| [MG-GR007 · 等变分裂空间的稳定与自然性](proofs/MG-GR007/task.md) | written | 6阶段 | [合同](proofs/MG-GR007/contract.json) · [参考](proofs/MG-GR007/reference.md) · [评分](proofs/MG-GR007/rubric.json) · [题包复核](proofs/MG-GR007/review.json) · [作者Lean](proofs/MG-GR007/formal/COVERAGE.md) |
 | [MG-GR008 · 塔记录的表示、有限层延拓与自然变换](proofs/MG-GR008/task.md) | written | 6阶段 | [合同](proofs/MG-GR008/contract.json) · [参考](proofs/MG-GR008/reference.md) · [评分](proofs/MG-GR008/rubric.json) · [题包复核](proofs/MG-GR008/review.json) · [作者Lean](proofs/MG-GR008/formal/COVERAGE.md) |
 | [MG-GR009 · 群作用下降、稳定子与基底检验](proofs/MG-GR009/task.md) | written | 6阶段 | [合同](proofs/MG-GR009/contract.json) · [参考](proofs/MG-GR009/reference.md) · [评分](proofs/MG-GR009/rubric.json) · [题包复核](proofs/MG-GR009/review.json) · [作者Lean](proofs/MG-GR009/formal/COVERAGE.md) |
 | [MG-GR010 · 探针映射空间与连续性层级](proofs/MG-GR010/task.md) | written | 6阶段 | [合同](proofs/MG-GR010/contract.json) · [参考](proofs/MG-GR010/reference.md) · [评分](proofs/MG-GR010/rubric.json) · [题包复核](proofs/MG-GR010/review.json) · [作者Lean](proofs/MG-GR010/formal/COVERAGE.md) |
-| [MG-GR011 · 凸投影的恢复、复合与变分方程](proofs/MG-GR011/task.md) | written | 6阶段 | [合同](proofs/MG-GR011/contract.json) · [参考](proofs/MG-GR011/reference.md) · [评分](proofs/MG-GR011/rubric.json) · [题包复核](proofs/MG-GR011/review.json) · [作者Lean](proofs/MG-GR011/formal/COVERAGE.md) |
 | [MG-GR012 · 凸势、对偶与有限记录逼近](proofs/MG-GR012/task.md) | written | 6阶段 | [合同](proofs/MG-GR012/contract.json) · [参考](proofs/MG-GR012/reference.md) · [评分](proofs/MG-GR012/rubric.json) · [题包复核](proofs/MG-GR012/review.json) · [作者Lean](proofs/MG-GR012/formal/COVERAGE.md) |
-| [MG-GR013 · 多项式记录、预解与谱的连续比较](proofs/MG-GR013/task.md) | written | 6阶段 | [合同](proofs/MG-GR013/contract.json) · [参考](proofs/MG-GR013/reference.md) · [评分](proofs/MG-GR013/rubric.json) · [题包复核](proofs/MG-GR013/review.json) · [作者Lean](proofs/MG-GR013/formal/COVERAGE.md) |
 | [MG-GR014 · 线性关系、坐标纤维与无限赋值](proofs/MG-GR014/task.md) | written | 6阶段 | [合同](proofs/MG-GR014/contract.json) · [参考](proofs/MG-GR014/reference.md) · [评分](proofs/MG-GR014/rubric.json) · [题包复核](proofs/MG-GR014/review.json) · [作者Lean](proofs/MG-GR014/formal/COVERAGE.md) |
 | [MG-GR015 · 自由模的商记录、完成支持与提升](proofs/MG-GR015/task.md) | written | 6阶段 | [合同](proofs/MG-GR015/contract.json) · [参考](proofs/MG-GR015/reference.md) · [评分](proofs/MG-GR015/rubric.json) · [题包复核](proofs/MG-GR015/review.json) · [作者Lean](proofs/MG-GR015/formal/COVERAGE.md) |
 | [MG-GR016 · 局部分裂、有限呈示与截面拼接](proofs/MG-GR016/task.md) | written | 6阶段 | [合同](proofs/MG-GR016/contract.json) · [参考](proofs/MG-GR016/reference.md) · [评分](proofs/MG-GR016/rubric.json) · [题包复核](proofs/MG-GR016/review.json) · [作者Lean](proofs/MG-GR016/formal/COVERAGE.md) |
@@ -35,12 +28,8 @@
 | [MG-GR018 · 有限观察、自然运算与非点值记录](proofs/MG-GR018/task.md) | written | 6阶段 | [合同](proofs/MG-GR018/contract.json) · [参考](proofs/MG-GR018/reference.md) · [评分](proofs/MG-GR018/rubric.json) · [题包复核](proofs/MG-GR018/review.json) · [作者Lean](proofs/MG-GR018/formal/COVERAGE.md) |
 | [MG-GR019 · 超滤子代数、有限观测商与连通纤维](proofs/MG-GR019/task.md) | written | 6阶段 | [合同](proofs/MG-GR019/contract.json) · [参考](proofs/MG-GR019/reference.md) · [评分](proofs/MG-GR019/rubric.json) · [题包复核](proofs/MG-GR019/review.json) · [作者Lean](proofs/MG-GR019/formal/COVERAGE.md) |
 | [MG-GR020 · 对称分解的归一化与算术边界](proofs/MG-GR020/task.md) | written | 6阶段 | [合同](proofs/MG-GR020/contract.json) · [参考](proofs/MG-GR020/reference.md) · [评分](proofs/MG-GR020/rubric.json) · [题包复核](proofs/MG-GR020/review.json) · [作者Lean](proofs/MG-GR020/formal/COVERAGE.md) |
-| [MG-GR101 · 从同余记录到有限族的整体实现](proofs/MG-GR101/task.md) | written | 6阶段 | [合同](proofs/MG-GR101/contract.json) · [参考](proofs/MG-GR101/reference.md) · [评分](proofs/MG-GR101/rubric.json) · [题包复核](proofs/MG-GR101/review.json) · [作者Lean](proofs/MG-GR101/formal/COVERAGE.md) |
-| [MG-GR102 · 有限轨道、规范投影与统一公式](proofs/MG-GR102/task.md) | written | 6阶段 | [合同](proofs/MG-GR102/contract.json) · [参考](proofs/MG-GR102/reference.md) · [评分](proofs/MG-GR102/rubric.json) · [题包复核](proofs/MG-GR102/review.json) · [作者Lean](proofs/MG-GR102/formal/COVERAGE.md) |
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) | written | 6阶段 | [合同](proofs/MG-GR103/contract.json) · [参考](proofs/MG-GR103/reference.md) · [评分](proofs/MG-GR103/rubric.json) · [题包复核](proofs/MG-GR103/review.json) · [作者Lean](proofs/MG-GR103/formal/COVERAGE.md) |
 | [MG-GR104 · 幂等元提升、逆极限与环分解](proofs/MG-GR104/task.md) | written | 6阶段 | [合同](proofs/MG-GR104/contract.json) · [参考](proofs/MG-GR104/reference.md) · [评分](proofs/MG-GR104/rubric.json) · [题包复核](proofs/MG-GR104/review.json) · [作者Lean](proofs/MG-GR104/formal/COVERAGE.md) |
-| [MG-GR105 · 观测完成、噪声误差与原空间极小点](proofs/MG-GR105/task.md) | written | 6阶段 | [合同](proofs/MG-GR105/contract.json) · [参考](proofs/MG-GR105/reference.md) · [评分](proofs/MG-GR105/rubric.json) · [题包复核](proofs/MG-GR105/review.json) · [作者Lean](proofs/MG-GR105/formal/COVERAGE.md) |
-| [MG-GR106 · 整族恢复、固定点与一致性的范围](proofs/MG-GR106/task.md) | written | 6阶段 | [合同](proofs/MG-GR106/contract.json) · [参考](proofs/MG-GR106/reference.md) · [评分](proofs/MG-GR106/rubric.json) · [题包复核](proofs/MG-GR106/review.json) · [作者Lean](proofs/MG-GR106/formal/COVERAGE.md) |
 
 ## Lean 语义审计 · 6份
 
@@ -70,5 +59,9 @@
 | --- | --- | ---: | --- |
 | [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) | generate | 34义务 | [合同](chapters/MG-C002/contract.json) · [参考](chapters/MG-C002/reference.md) · [评分](chapters/MG-C002/rubric.json) · [题包复核](chapters/MG-C002/review.json) · [作者Lean](chapters/MG-C002/formal/COVERAGE.md) |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) | generate | 92义务 | [合同](chapters/MG-C003/contract.json) · [参考](chapters/MG-C003/reference.md) · [评分](chapters/MG-C003/rubric.json) · [题包复核](chapters/MG-C003/review.json) · [作者Lean](chapters/MG-C003/formal/COVERAGE.md) |
+
+## 备选卷 · 11份
+
+[备选目录、主题分类与完整材料](reserve/README.md)集中列出全部11份书面卷。备选身份是选卷安排，`proofs` 是交付类型；备选卷不进入默认32题题包或80槽计划。显式调用与保留理由见备选目录。
 
 所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。

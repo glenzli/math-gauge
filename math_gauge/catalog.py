@@ -227,11 +227,19 @@ class Suite:
     metadata: dict
     cases: dict
     sha256: str
+    manifest_name: str = "suite.json"
+
+    @property
+    def manifest_path(self):
+        return self.root / self.manifest_name
 
     @classmethod
     def load(cls, root):
-        root = Path(root).resolve()
-        meta = read_json(root / "suite.json")
+        source = Path(root).resolve()
+        manifest = source if source.is_file() else source / "suite.json"
+        root = manifest.parent
+        manifest_name = manifest.name
+        meta = read_json(manifest)
         if meta.get("schema") != "math-gauge.suite/v1":
             raise ValueError("Unsupported suite schema")
         if meta.get("visibility") not in {"public", "private"}:
@@ -240,7 +248,7 @@ class Suite:
             raise ValueError("Suite must contain cases")
         sources = read_json(root / "sources.json")
         cases = {}
-        names = ["suite.json", "sources.json"]
+        names = [manifest_name, "sources.json"]
         for manifest in meta["cases"]:
             case = read_json(safe_file(root, manifest))
             cid = case.get("id", "")
@@ -369,7 +377,7 @@ class Suite:
                 for f in c["solver_files"]
             ):
                 raise ValueError(f"{c['id']}: cross-case evaluator material in input")
-        return cls(root, meta, cases, fingerprint(root, names))
+        return cls(root, meta, cases, fingerprint(root, names), manifest_name)
 
     def select(self, ids=None):
         selected = list(ids or self.cases)

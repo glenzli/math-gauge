@@ -1,17 +1,17 @@
 {
   "schema": "math-gauge.reliability-selection/v1",
-  "protocol_version": "0.1.0",
+  "protocol_version": "0.2.0",
   "visibility": "evaluator-only; never send this object to candidates",
-  "selection_basis": "Fixed mathematical mechanisms and task coverage before any new-version candidate response; no selection by observed success/failure.",
-  "source_suite_sha256": "441497a658972186e2e48966041d2ed52bb822bb8533ee3bfbc695a9e14f4c91",
+  "selection_basis": "Reduced public development-suite design frozen before v0.3.0 execution, following the v0.2.0 pilot context; not a pre-pilot selection or hidden holdout.",
+  "source_suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
   "root_attempt": "A1",
-  "case_count": 8,
+  "case_count": 6,
   "truth_counts": {
-    "false": 4,
-    "true": 4
+    "false": 3,
+    "true": 3
   },
   "category_counts": {
-    "written": 4,
+    "written": 2,
     "audit": 2,
     "repair": 1,
     "generate": 1
@@ -49,77 +49,6 @@
         "correct_boundary": "有限商范数下确界也可不取到",
         "target_claim": "全部有限观测总能由范数不超过原C的向量精确匹配。",
         "scope": "subclaim"
-      },
-      "whole_group_required": true,
-      "human_approved": false
-    },
-    {
-      "case_id": "MG-GR004",
-      "case_version": "0.1.1",
-      "title": "Hilbert复形的精确消元与近似消元",
-      "family_id": "MG-R004",
-      "task_kind": "written",
-      "selection_category": "written",
-      "stage_id": "S4",
-      "scope": "subclaim",
-      "source_turn_scope": "subclaim",
-      "expected_truth": "false",
-      "target_claim": "给定有限长复 Hilbert 复形 0→H₀→⋯→Hᵣ→0，r≥1，各 d_j:H_j→H_{j+1} 为有界复线性映射且 d_{j+1}d_j=0；约定 H_{−1}=H_{r+1}=0、d_{−1}=d_r=0。假设对所有 0≤j≤r 都有 ker d_j=closure(ran d_{j−1})。令 L_j=d_{j−1}d_{j−1}*+d_j*d_j。对 ε>0 使用有界逆 (L_j+εI)⁻¹。判定是否对每个 j 都有 ‖ε(L_j+εI)⁻¹‖→0，极限为 ε↓0，范数为算子范数。",
-      "selection_reason": "强收敛与算子范数收敛；正确子结果保留",
-      "task": "cases/proofs/MG-GR004/task.md",
-      "reference": "cases/proofs/MG-GR004/reference.md",
-      "contract": "cases/proofs/MG-GR004/contract.json",
-      "task_sha256": "0003d1abc69107fd900e85fe46980851dae6010838ac2f825372160633eee92a",
-      "reference_sha256": "e08e6c2d8d46c46965997e8743cd602eb9594a842f9af76cde4bcec798bb13d7",
-      "contract_sha256": "fd48d7bd2c5849ddf6dc0709d84942d4b01c3dc0db2c3f215898d9fcb2a9f4f3",
-      "source_turn": {
-        "stage_id": "S4",
-        "earlier_stage_ids": [
-          "S2",
-          "S3"
-        ],
-        "changed_assumptions": "以正则化近似替代精确消元后要求算子范数收敛",
-        "expected_truth": "false",
-        "mechanism": "点态到一致",
-        "tempting_invalid_transfer": "强收敛自动成为范数收敛",
-        "correct_boundary": "范数收敛等价于S5的闭值域条件",
-        "target_claim": "约化无环条件下ε(L_j+εI)⁻¹总在算子范数中趋于0。",
-        "scope": "subclaim"
-      },
-      "whole_group_required": true,
-      "human_approved": false
-    },
-    {
-      "case_id": "MG-GR007",
-      "case_version": "0.1.1",
-      "title": "等变分裂空间的稳定与自然性",
-      "family_id": "MG-R007",
-      "task_kind": "written",
-      "selection_category": "written",
-      "stage_id": "S4",
-      "scope": "stage",
-      "source_turn_scope": "stage",
-      "expected_truth": "true",
-      "target_claim": "采用ZFC。G为有限群，k为任意域，C为有限维k线性G表示。对n≥1给定G表示短正合列0→Aₙ→ⁱⁿBₙ→ᑫⁿC→0，每行已有G等变线性分裂。给定等变线性过渡αₙ:Aₙ₊₁→Aₙ、βₙ:Bₙ₊₁→Bₙ，满足βₙiₙ₊₁=iₙαₙ、qₙβₙ=qₙ₊₁。记Wₙ=Hom_G(C,Aₙ)，假设每个Wₙ有限维，允许Aₙ、Bₙ无限维；极限取实际相容序列，q∞取共同C值。断言：S2要求的相容等变分裂、保持包含与投影的B∞≅A∞⊕C、全部相容分裂和此类直和同构的分类，以及任意整塔交换图同构下的运输，仍全部成立。",
-      "selection_reason": "放宽环境维数仍成立；自然运输与自然首选",
-      "task": "cases/proofs/MG-GR007/task.md",
-      "reference": "cases/proofs/MG-GR007/reference.md",
-      "contract": "cases/proofs/MG-GR007/contract.json",
-      "task_sha256": "4ae139bae167e5538dae0928fe76f4f4064cfcdafe6e06f1b41bf1e645c48728",
-      "reference_sha256": "1ac4cd253ce9aec24f13d1b08f9924c56e51792d4bde09e867735ba405ca0c50",
-      "contract_sha256": "02d2be78c329c7f4453d10d98760095f02a16c3d3c0cb86810ca6b4cb1de2092",
-      "source_turn": {
-        "stage_id": "S4",
-        "earlier_stage_ids": [
-          "S2"
-        ],
-        "changed_assumptions": "不要求Aₙ、Bₙ有限维，只要求实际分裂方向Wₙ有限维",
-        "expected_truth": "true",
-        "mechanism": "假设的实际作用",
-        "tempting_invalid_transfer": "无限维环境直接否定稳定像论证",
-        "correct_boundary": "稳定的是有限维仿射分裂空间",
-        "target_claim": "仅各实际分裂方向W_n有限维时，S2的全部相容分裂分类仍成立。",
-        "scope": "stage"
       },
       "whole_group_required": true,
       "human_approved": false

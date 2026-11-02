@@ -37,7 +37,7 @@ def config_for(root, model):
         exceptions = [{"path": str(home / ".gemini/antigravity-cli/bin"), "kind": "subpath", "purpose": "CLI installation only"}, {"path": str(home / ".gemini/antigravity-cli/installation_id"), "kind": "literal", "purpose": "Non-history installation identity"}]
         links = [{"source": str(home / ".gemini" / relative), "target": relative} for relative in ["antigravity-cli/antigravity-oauth-token", "jetski-standalone-oauth-token"]]
     negative = [
-        ("reference", REPO / "cases/proofs/MG-GR001/reference.md"),
+        ("reference", REPO / "cases/reserve/proofs/MG-GR001/reference.md"),
         ("history", sessions[0]),
         ("prior_run", root / "preflight/prior-output-probe.txt"),
         ("memory", home / ".codex/memories/memory_summary.md"),

@@ -14,6 +14,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
 from math_gauge.eligibility import (AUDIT_CHECKS, AUDIT_SOURCE_KINDS, REQUIREMENTS, copy_execution_eligibility,
@@ -32,8 +34,8 @@ def frozen_requirements():
 
 def synthetic_run(destination, *, replay=False, result=None, requirements=None, targets=None, reuse_runs=None):
     """Patch the transport seam so command-origin testing performs zero calls."""
-    suite = Suite.load(ROOT / "cases")
-    profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite)
+    suite = legacy_suite()
+    profile = legacy_profile(suite)
     plan = build_plan(profile, suite, ["neutral"], runtime={
         "model_label": "SYNTHETIC OFFLINE SOFTWARE TEST", "adapter_identity": "synthetic-never-executed",
         "candidate_parameters": {"model": "synthetic-model", "reasoning_effort": "max"},

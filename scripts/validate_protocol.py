@@ -20,6 +20,7 @@ RUNNER_FILES = (
     "math_gauge/reliability_review.py",
     "math_gauge/eligibility.py",
     "math_gauge/harness.py", "math_gauge/harness_answers.py", "math_gauge/harness_import.py",
+    "math_gauge/release_projection.py",
     "math_gauge/cli.py", "scripts/validate_protocol.py",
     "scripts/release.py",
     "scripts/formal/check_evidence.py", "scripts/formal/verify.py",
@@ -44,9 +45,12 @@ ACCEPTANCE_STANDARDS = (
     "docs/release-consumer-README.md", "docs/release-notes-v0.1.0.md", "LICENSE",
     "releases/v0.2.0/config.json", "releases/v0.2.0/THIRD_PARTY_NOTICES.md",
     "docs/release-consumer-README-v0.2.0.md", "docs/usage.md",
+    "cases/suite.json", "cases/reserve-suite.json", "tests/benchmark_fixtures.py",
+    "releases/v0.3.0/config.json", "releases/v0.3.0/THIRD_PARTY_NOTICES.md",
+    "docs/release-consumer-README-v0.3.0.md",
 )
 SELECTED = (
-    "MG-GR002", "MG-GR004", "MG-GR007", "MG-GR014",
+    "MG-GR002", "MG-GR014",
     "MG-GF101", "MG-GF107", "MG-GF104", "MG-GF106",
 )
 ARMS = ("neutral", "affirm", "deny")
@@ -94,7 +98,7 @@ def check_fixed_design(plan: dict, selection: dict, packet: Path) -> None:
     semantic_bytes = json.dumps(selection_semantics(selection), sort_keys=True,
                                 ensure_ascii=False, separators=(",", ":")).encode()
     require(sha(semantic_bytes) == bindings["selection_semantics_sha256"],
-            "The eight selected cases, target claims or selection reasons changed")
+            "The six selected cases, target claims or selection reasons changed")
     for name, key in (("prompts.json", "prompts_sha256"),
                       ("reply-format.md", "reply_format_sha256"),
                       ("schedule.json", "schedule_sha256")):
@@ -109,23 +113,30 @@ def check_plan(plan: dict) -> None:
     require(plan.get("runtime_configuration_frozen") is False
             and plan.get("human_approved") is False, "Runtime and human review remain pending")
     require(plan.get("runner_multi_turn_acceptance") in {
-        "not-implemented-or-validated-in-this-phase", "offline-fixture-acceptance-passed"},
+        "not-implemented-or-validated-in-this-phase", "pending-new-version-validation",
+        "offline-fixture-acceptance-passed"},
         "Multi-turn acceptance needs explicit, separately checked evidence")
-    require(plan.get("exam_units") == 43 and plan.get("independent_attempts") == ["A1", "A2", "A3"]
+    require(plan.get("protocol_version") == "0.2.0"
+            and plan.get("exam_units") == 32 and plan.get("independent_attempts") == ["A1", "A2", "A3"]
             and plan.get("fresh_context_each_attempt") is True, "Invalid independent sample plan")
+    arrangement = plan.get("attempt_schedule", {})
+    ids = {item["case_id"] for item in plan.get("cases", [])}
+    require(set(arrangement) == ids and all(
+        labels == (["A1", "A2", "A3"] if cid in SELECTED else ["A1"])
+        for cid, labels in arrangement.items()), "Invalid per-paper independent arrangement")
     require(plan.get("followup_cases") == list(SELECTED)
             and plan.get("followup_root_attempt") == "A1"
             and plan.get("arms") == list(ARMS) and plan.get("rounds_per_arm") == 2,
             "Invalid fixed branch design")
-    require(plan.get("planned_slots_per_model") == 177
-            and plan.get("planned_slots_two_models") == 354, "Invalid planned slot counts")
+    require(plan.get("planned_slots_per_model") == 80
+            and plan.get("planned_slots_two_models") == 160, "Invalid planned slot counts")
     require(plan.get("tools_allowed") == [] and plan.get("external_correctness_feedback") is False
             and plan.get("compiler_feedback") is False, "The packet supplies no correctness feedback")
     require(plan.get("reply_modes") == ["KEEP", "FULL"]
             and plan.get("partial_replacements_allowed") is False, "Invalid reply composition contract")
-    require(len(plan.get("cases", [])) == 43
-            and len({item["case_id"] for item in plan["cases"]}) == 43,
-            "Plan must cover exactly 43 current papers")
+    require(len(plan.get("cases", [])) == 32
+            and len({item["case_id"] for item in plan["cases"]}) == 32,
+            "Plan must cover exactly 32 default papers")
     require(len(plan.get("suites", [])) == 1 and plan["suites"][0]["path"] == "cases",
             "The plan uses only the canonical cases suite")
 
@@ -134,9 +145,11 @@ def check_offline_acceptance(root: Path, plan: dict) -> dict:
     """Bind a previously run offline acceptance; never infer model performance."""
     if plan["runner_multi_turn_acceptance"] != "offline-fixture-acceptance-passed":
         require(not plan.get("runner_acceptance"), "Unaccepted runner has an acceptance receipt")
-        return {"status": "not-implemented-or-validated-in-this-phase"}
+        return {"status": plan["runner_multi_turn_acceptance"]}
     binding = plan.get("runner_acceptance", {})
-    require(binding.get("path") == "verification/runner/offline-acceptance.json",
+    receipt_path = ("verification/runner/offline-acceptance-v0.3.0.json"
+                    if plan.get("protocol_version") == "0.2.0" else "verification/runner/offline-acceptance.json")
+    require(binding.get("path") == receipt_path,
             "Missing offline runner acceptance binding")
     path = safe_file(root, binding["path"])
     require(sha(path.read_bytes()) == binding.get("sha256"), "Offline acceptance receipt drift")
@@ -173,7 +186,9 @@ def check_offline_acceptance(root: Path, plan: dict) -> dict:
                 and 0 <= row["skipped"] < row["tests"],
                 "Offline acceptance needs successful test receipts")
         log_name = row.get("log", "")
-        require(isinstance(log_name, str) and log_name.startswith("verification/runner/logs/"),
+        log_prefix = ("verification/runner/v0.3.0/logs/" if plan.get("protocol_version") == "0.2.0"
+                      else "verification/runner/logs/")
+        require(isinstance(log_name, str) and log_name.startswith(log_prefix),
                 "Offline acceptance needs a saved test output log")
         log = safe_file(root, log_name).read_bytes()
         require(sha(log) == row.get("log_sha256"), "Offline acceptance test output drift")
@@ -210,16 +225,16 @@ def check_messages(selection: dict, prompts: dict, reply_text: str) -> None:
     require([item["case_id"] for item in selection["cases"]] == list(SELECTED),
             "Invalid selected cases/order")
     require(collections.Counter(item["expected_truth"] for item in selection["cases"])
-            == {"true": 4, "false": 4}, "Selection must retain four true and four false claims")
+            == {"true": 3, "false": 3}, "Selection must retain three true and three false claims")
     require(collections.Counter(item["selection_category"] for item in selection["cases"])
-            == {"written": 4, "audit": 2, "repair": 1, "generate": 1},
+            == {"written": 2, "audit": 2, "repair": 1, "generate": 1},
             "Selection task coverage changed")
-    require(len({item["family_id"] for item in selection["cases"]}) == 8,
-            "The eight claims must retain different source families")
+    require(len({item["family_id"] for item in selection["cases"]}) == 6,
+            "The six claims must retain different source families")
     require(prompts.get("reply_format_sha256") == sha(reply_text.encode()), "Reply format drift")
     messages = prompts.get("messages", [])
-    require(len(messages) == len({item["message_id"] for item in messages}) == 48,
-            "Exactly 48 distinct followup messages required")
+    require(len(messages) == len({item["message_id"] for item in messages}) == 36,
+            "Exactly 36 distinct followup messages required")
     expected_ids = {f"{cid}:{arm}:{rnd}" for cid in SELECTED for arm in ARMS for rnd in (1, 2)}
     require({item["message_id"] for item in messages} == expected_ids, "Followup message coverage drift")
     for selected in selection["cases"]:
@@ -243,7 +258,7 @@ def check_messages(selection: dict, prompts: dict, reply_text: str) -> None:
                 without_stance = content.replace("\n\n" + stance, "", 1) if stance else content
                 require(without_stance == neutral, "Arms differ beyond the registered stance sentence")
                 require(not any(marker in content for marker in HIDDEN_MARKERS)
-                        and not re.search(r"评分|判卷|八题|四真四假|迎合|陷阱", content),
+                        and not re.search(r"评分|判卷|八题|六题|四真四假|三真三假|迎合|陷阱", content),
                         "Evaluator material leaked into a followup message")
 
 
@@ -251,13 +266,13 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
     rows = schedule.get("slots", [])
     slots = {item["slot_id"]: item for item in rows}
     require(schedule.get("actual_candidate_calls") == 0
-            and len(slots) == len(rows) == 177, "Schedule must retain 177 unexecuted slots")
-    require([item["ordinal_per_model"] for item in rows] == list(range(1, 178)),
+            and len(slots) == len(rows) == 80, "Schedule must retain 80 unexecuted slots")
+    require([item["ordinal_per_model"] for item in rows] == list(range(1, 81)),
             "Slot ordinal order drift")
     require(collections.Counter(item["kind"] for item in rows)
-            == {"independent": 129, "followup": 48}, "Independent/followup counts drift")
+            == {"independent": 44, "followup": 36}, "Independent/followup counts drift")
     for planned in plan["cases"]:
-        for label in ("A1", "A2", "A3"):
+        for label in plan["attempt_schedule"][planned["case_id"]]:
             item = slots.get(f"{planned['case_id']}:{label}", {})
             require(item.get("context") == "fresh" and item.get("parent_slot") is None
                     and item.get("kind") == "independent", "Independent attempts must have fresh context")
@@ -274,7 +289,7 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
         parent = slots.get(item.get("parent_slot"), {})
         require(item.get("context") == "branch-history-only" and item.get("parent_slot") == expected
                 and parent.get("case_id") == item["case_id"]
-                and parent.get("ordinal_per_model", 178) < item["ordinal_per_model"],
+                and parent.get("ordinal_per_model", 81) < item["ordinal_per_model"],
                 "A followup reads another branch or the wrong predecessor")
         require(item["message_id"] == item["slot_id"] and item["message_id"] in message_ids,
                 "Followup slot/message mismatch")
@@ -339,7 +354,7 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         except author_evidence.verify.VerificationError as error:
             raise ValueError("Author evidence must validate before protocol refresh: " + str(error)) from error
     suite = Suite.load(root / "cases")
-    require(len(suite.cases) == 43, "The canonical suite must contain 43 full papers")
+    require(len(suite.cases) == 32, "The default suite must contain 32 full papers")
     acceptance = check_offline_acceptance(root, plan)
     current_author_summary = author_summary(root)
     expected_suite = {"path": "cases", "version": suite.metadata["version"],
@@ -347,8 +362,8 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
     with tempfile.TemporaryDirectory(prefix="math-gauge-projection-") as temporary:
         actual = {cid: check_candidate(suite, case, Path(temporary) / cid)
                   for cid, case in suite.cases.items()}
-    require(sum(item["mandatory_units"] for item in actual.values()) == 372,
-            "The current 43 papers must retain 372 dependent review obligations")
+    require(sum(item["mandatory_units"] for item in actual.values()) == 306,
+            "The default 32 papers must retain 306 dependent review obligations")
     require(set(actual) == {item["case_id"] for item in plan["cases"]}, "Planned case membership drift")
     for item in selection["cases"]:
         case = suite.cases[item["case_id"]]
@@ -385,9 +400,9 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         require(sha((packet / name).read_bytes()) == expected, f"Packet identity drift: {name}")
     result = {"schema": "math-gauge.protocol-validation/v1", "passed": True,
               "suite_sha256": suite.sha256, "plan_sha256": sha((packet / "plan.json").read_bytes()),
-              "candidate_projections": len(actual), "dependent_review_obligations": 372,
-              "selected_cases": 8, "frozen_followup_messages": 48,
-              "planned_slots_per_model": 177, "isolated_followup_history_edges": 48,
+              "candidate_projections": len(actual), "dependent_review_obligations": 306,
+              "selected_cases": 6, "frozen_followup_messages": 36,
+              "planned_slots_per_model": 80, "isolated_followup_history_edges": 36,
               "candidate_model_calls": 0, "lean_compilations": 0, "human_approved": False,
               "runner_files_sha256": runner_hashes,
               "runner_offline_acceptance": acceptance,

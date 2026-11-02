@@ -29,6 +29,7 @@ REQUIRED_EVALUATOR_FILES = {
     'formal/manifest.json', 'formal/input-binding.json',
 }
 HASH_FIELDS = ('files', 'source_hashes', 'artifacts', 'reviewed_sha256')
+RESERVE_RELOCATIONS = 'cases/reserve/relocations.json'
 
 
 def relative_name(name):
@@ -36,6 +37,39 @@ def relative_name(name):
     path = Path(name)
     verify.require(not path.is_absolute() and '..' not in path.parts and
                    path.as_posix() == name, 'Unsafe evidence path: ' + name)
+    return name
+
+
+def reserve_relocations(repo):
+    """Read the explicit reserve moves without changing retained evidence names."""
+    path = Path(repo) / RESERVE_RELOCATIONS
+    if not path.is_file():
+        return []
+    data = verify.load(verify.safe_relative(repo, RESERVE_RELOCATIONS))
+    verify.require(data.get('schema') == 'math-gauge.reserve-relocations/v1',
+                   'Invalid reserve relocation map')
+    rows = data.get('case_paths')
+    verify.require(isinstance(rows, list) and bool(rows), 'Reserve relocation map is empty')
+    for row in rows:
+        verify.require(isinstance(row, dict) and set(row) == {'id', 'previous', 'current'},
+                       'Invalid reserve relocation row')
+        cid = row['id']
+        verify.require(isinstance(cid, str) and bool(re.fullmatch(r'[A-Za-z0-9_-]+', cid)),
+                       'Invalid reserve relocation case id')
+        verify.require(row['previous'] == 'cases/proofs/' + cid and
+                       row['current'] == 'cases/reserve/proofs/' + cid,
+                       'Reserve relocation must preserve the exact proof-paper directory')
+    verify.require(len({row['id'] for row in rows}) == len(rows),
+                   'Duplicate reserve relocation case')
+    return rows
+
+
+def relocated_case_path(repo, name):
+    """Resolve only a listed case directory, never a missing-path fallback."""
+    relative_name(name)
+    for row in reserve_relocations(repo):
+        if name == row['previous'] or name.startswith(row['previous'] + '/'):
+            return row['current'] + name[len(row['previous']):]
     return name
 
 
@@ -150,7 +184,7 @@ def original_row(repo, layout, cid):
 
 def expected_binding(repo, layout, mapping, baseline_row):
     """Construct a receipt only after checking the two immutable snapshots."""
-    case_root = repo / mapping['current']; formal = case_root / 'formal'
+    case_root = repo / relocated_case_path(repo, mapping['current']); formal = case_root / 'formal'
     checked_path = verify.safe_relative(formal, 'checked-manifest.json')
     checked_case_path = verify.safe_relative(formal, 'checked-case.json')
     manifest_path = verify.safe_relative(formal, 'manifest.json')
@@ -327,7 +361,7 @@ def reviewed_target(repo, layout, case_root, name):
     repo = Path(repo).resolve(); case_root = Path(case_root).resolve()
     relative_name(name)
     if name.startswith(('drafts/', 'cases/', 'results/', 'verification/')):
-        target = verify.safe_relative(repo, translate_path(name, layout))
+        target = verify.safe_relative(repo, relocated_case_path(repo, translate_path(name, layout)))
     else:
         target = verify.safe_relative(case_root, name)
     if target == case_root / 'case.json':
@@ -452,7 +486,7 @@ def check_recompiled_review(repo, case_root, manifest, alignment, report, review
 
 def check_recompiled_case(repo, layout, mapping, baseline_row, review_name, *, write_binding=False):
     """A new compilation replaces current evidence, without rewriting its provenance."""
-    case_root = repo / mapping['current']; formal = case_root / 'formal'
+    case_root = repo / relocated_case_path(repo, mapping['current']); formal = case_root / 'formal'
     checked = verify.load(verify.safe_relative(formal, 'checked-manifest.json'))
     old_case = verify.load(verify.safe_relative(formal, 'checked-case.json'))
     verify.require(verify.digest(formal / 'checked-manifest.json') == baseline_row['manifest_sha256'] and
@@ -537,7 +571,7 @@ def check_recompiled_case(repo, layout, mapping, baseline_row, review_name, *, w
 
 def check_case(repo, layout, mapping, baseline_row, *, write_binding=False, recompiled_review=None):
     repo = Path(repo).resolve()
-    case_root = repo / mapping['current']; formal = case_root / 'formal'
+    case_root = repo / relocated_case_path(repo, mapping['current']); formal = case_root / 'formal'
     if recompiled_review is not None:
         return check_recompiled_case(repo, layout, mapping, baseline_row, recompiled_review,
                                      write_binding=write_binding)
@@ -594,12 +628,30 @@ def check_all(repo, *, write_bindings=False):
     repo = Path(repo).resolve(); layout = load_layout(repo)
     checked_path = verify.safe_relative(repo, 'verification/author/checked-ledger.json')
     baseline = checked_ledger(repo, layout)
-    suite = verify.load(verify.safe_relative(repo, 'cases/suite.json'))
-    verify.require(suite.get('schema') == 'math-gauge.suite/v1', 'Invalid canonical benchmark suite')
-    suite_paths = {'cases/' + name for name in suite['cases']}
-    verify.require(suite_paths == {row['current'] + '/case.json' for row in layout['case_paths']}
-                   and len(suite['cases']) == len(layout['case_paths']),
-                   'Canonical suite and evidence layout disagree')
+    manifests = ['cases/suite.json']
+    if (repo / 'cases/reserve-suite.json').is_file():
+        manifests.append('cases/reserve-suite.json')
+    suite_paths = set()
+    for manifest in manifests:
+        suite = verify.load(verify.safe_relative(repo, manifest))
+        verify.require(suite.get('schema') == 'math-gauge.suite/v1', 'Invalid canonical benchmark suite')
+        paths = {'cases/' + name for name in suite['cases']}
+        verify.require(len(paths) == len(suite['cases']) and not suite_paths & paths,
+                       'Default and reserve suite memberships must be unique and disjoint')
+        suite_paths.update(paths)
+    relocations = reserve_relocations(repo)
+    original_paths = {row['current']: row['id'] for row in layout['case_paths']}
+    for row in relocations:
+        verify.require(original_paths.get(row['previous']) == row['id'] and
+                       not (repo / row['previous']).exists(),
+                       'Reserve relocation must name an original case without a duplicate directory')
+    verify.require({row['current'] + '/case.json' for row in relocations} ==
+                   {name for name in suite_paths if name.startswith('cases/reserve/')},
+                   'Reserve suite and explicit relocation map disagree')
+    verify.require(suite_paths == {relocated_case_path(repo, row['current']) + '/case.json'
+                                   for row in layout['case_paths']}
+                   and len(suite_paths) == len(layout['case_paths']),
+                   'Default plus reserve suites and original evidence layout disagree')
     verify.require({row['id'] for row in baseline['cases']} ==
                    {row['id'] for row in layout['case_paths']} and
                    len(baseline['cases']) == len(layout['case_paths']),

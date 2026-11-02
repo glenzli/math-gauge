@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
 from math_gauge.harness import candidate_request_from_bundle, export_harness_bundle
@@ -23,8 +25,8 @@ CID = "MG-GR002"
 class HarnessImportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = legacy_suite()
+        cls.profile = legacy_profile(cls.suite)
 
     def setUp(self):
         temp = tempfile.TemporaryDirectory()

@@ -18,7 +18,7 @@ def parser():
     sub = p.add_subparsers(dest="action", required=True)
     for name in ("validate", "list", "prepare", "run", "check-lean"):
         c = sub.add_parser(name)
-        c.add_argument("--suite", default="cases")
+        c.add_argument("--suite", default="cases", help="Suite directory or explicit suite manifest JSON.")
         if name in {"run", "check-lean"}:
             c.add_argument("--case", action="append", dest="ids")
         if name == "prepare":

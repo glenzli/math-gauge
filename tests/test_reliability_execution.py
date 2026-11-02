@@ -10,6 +10,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, candidate_message, read_json, write_json
 from math_gauge.cli import main
@@ -22,8 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class ReliabilityExecutionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = legacy_suite()
+        cls.profile = legacy_profile(cls.suite)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

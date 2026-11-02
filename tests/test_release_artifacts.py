@@ -12,6 +12,8 @@ from unittest.mock import patch
 import warnings
 import zipfile
 
+from benchmark_fixtures import legacy_release_plan, legacy_root
+
 from math_gauge.benchmarks import identity
 from math_gauge.catalog import digest_bytes, read_json, write_json
 from math_gauge.harness import export_release_dataset, inspect_release_run
@@ -32,11 +34,11 @@ class ReleaseArtifactsTests(unittest.TestCase):
         cls.addClassCleanup(cls.workspace.cleanup)
         cls.shared = Path(cls.workspace.name).resolve()
         cls.config = release.load_config(version="0.1.0")
-        cls.plan, cls.suite = release.release_plan(version="0.1.0")
+        cls.plan, cls.suite = legacy_release_plan(version="0.1.0")
         cls.dataset_root = cls.shared / "exported-dataset"
         with patch("math_gauge.execution.invoke_conversation", side_effect=AssertionError("No model calls")):
             cls.dataset = export_release_dataset(cls.plan, cls.suite, cls.dataset_root)
-        cls.bindings = release._input_bindings(ROOT, cls.dataset_root, cls.dataset, cls.suite)
+        cls.bindings = release._input_bindings(legacy_root(), cls.dataset_root, cls.dataset, cls.suite)
         cls.wrappers = {
             "README.md": (ROOT / cls.config["readme"]).read_bytes(),
             "LICENSE": (ROOT / "LICENSE").read_bytes(),
@@ -109,7 +111,7 @@ class ReleaseArtifactsTests(unittest.TestCase):
             self.assertEqual(source.read("math-gauge-tasks-v0.1.0/LICENSE"), (ROOT / "LICENSE").read_bytes())
             for binding in self.bindings:
                 self.assertEqual(source.read("math-gauge-tasks-v0.1.0/" + binding["path"]),
-                                 (ROOT / binding["source"]).read_bytes())
+                                 (legacy_root() / binding["source"]).read_bytes())
         self.assertEqual(len(self.bindings), 94)  # 43 complete tasks and all 51 declared attachments.
         self.assertNotIn("profile", self.dataset)
         self.assertNotIn("runtime", self.dataset)
@@ -121,7 +123,7 @@ class ReleaseArtifactsTests(unittest.TestCase):
         original.write_bytes(release._json_bytes(self.plan))
         original_raw = original.read_bytes()
         original.unlink()
-        rebuilt, suite = release.release_plan(version="0.1.0")
+        rebuilt, suite = legacy_release_plan(version="0.1.0")
         recovered = self.root / "recovered-plan.json"
         recovered.write_bytes(release._json_bytes(rebuilt))
         self.assertEqual(recovered.read_bytes(), original_raw)

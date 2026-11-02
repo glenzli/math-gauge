@@ -21,15 +21,17 @@ def execution_context(runtime=None):
     runtime = {} if runtime is None else runtime
     explicit = "execution_track" in runtime
     track = runtime.get("execution_track")
-    if explicit and track != LOCAL_TOOLS_TRACK:
+    if explicit and track not in {LOCAL_TOOLS_TRACK, "benchmark.local-tools-no-search/v1"}:
         raise ValueError("Unknown execution track")
     context = {"independent": "fresh", "followup": "branch-history-only",
                "external_correctness_feedback": False, "tools_allowed": []}
     if explicit:
-        context.update(execution_track=LOCAL_TOOLS_TRACK, tools_allowed=list(LOCAL_TOOL_IDS),
+        projection = ("benchmark.followup-permission-projection/v1"
+                      if track.startswith("benchmark.") else FOLLOWUP_PROMPT_PROJECTION)
+        context.update(execution_track=track, tools_allowed=list(LOCAL_TOOL_IDS),
                        tool_network_access=False, search_allowed=False,
                        local_tool_feedback_allowed=True,
-                       followup_prompt_projection=FOLLOWUP_PROMPT_PROJECTION)
+                       followup_prompt_projection=projection)
     return context
 
 
@@ -48,9 +50,9 @@ def execution_condition(context):
     validate_context_policy(context)
     if "execution_track" not in context:
         return {"track": NO_TOOLS_TRACK, "label": "No candidate tools"}
-    return {"track": LOCAL_TOOLS_TRACK,
+    return {"track": context["execution_track"],
             "label": "Local tools permitted; search and tool networking disabled; original task requirements unchanged",
-            "followup_prompt_projection": FOLLOWUP_PROMPT_PROJECTION}
+            "followup_prompt_projection": context["followup_prompt_projection"]}
 
 
 def project_followup_prompt(source, context):
@@ -74,5 +76,5 @@ def project_followup_prompt(source, context):
     result.update(content=projected,
                   content_sha256=hashlib.sha256(projected.encode("utf-8")).hexdigest(),
                   source_content_sha256=source_hash,
-                  projection_version=FOLLOWUP_PROMPT_PROJECTION)
+                  projection_version=context["followup_prompt_projection"])
     return result

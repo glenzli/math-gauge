@@ -29,6 +29,10 @@ class FocusCatalogTests(unittest.TestCase):
     def test_exact_paper_units_and_independent_review_statuses(self):
         catalog, _ = focus_catalog.build()
         self.assertEqual(catalog["counts"]["papers"], 43)
+        self.assertEqual(catalog["counts"]["default_papers"], 32)
+        self.assertEqual(catalog["counts"]["reserve_papers"], 11)
+        self.assertEqual(catalog["counts"]["default_obligations"], 306)
+        self.assertEqual(catalog["counts"]["reserve_obligations"], 66)
         self.assertEqual(catalog["scope"]["progressive_papers"], 41)
         self.assertEqual(catalog["counts"]["progressive_stages"], 246)
         self.assertEqual(
@@ -131,7 +135,9 @@ class FocusCatalogTests(unittest.TestCase):
         catalog, _ = focus_catalog.build()
         self.assertNotIn("protected_legacy_files", self.taxonomy)
         self.assertNotIn("protected_legacy_files", catalog)
-        self.assertEqual([row["root"] for row in catalog["suites"]], ["cases"])
+        self.assertEqual([row["root"] for row in catalog["suites"]], ["cases", "cases"])
+        self.assertEqual([row["membership"] for row in catalog["suites"]], ["default", "reserve"])
+        self.assertEqual([row["paper_count"] for row in catalog["suites"]], [32, 11])
 
     def test_refresh_writes_only_current_derived_outputs(self):
         catalog, document = focus_catalog.build()
@@ -155,10 +161,14 @@ class FocusCatalogTests(unittest.TestCase):
         ids = [cid for item in catalog["categories"] for cid in item["case_ids"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(set(ids), {item["case_id"] for item in catalog["entries"]})
-        self.assertEqual(set(catalog["suites"][0]["cases"]), set(ids))
+        default, reserve = (set(row["cases"]) for row in catalog["suites"])
+        self.assertFalse(default & reserve)
+        self.assertEqual(default | reserve, set(ids))
         for item in catalog["entries"]:
+            self.assertEqual(item["membership"], "default" if item["case_id"] in default else "reserve")
+            prefix = "reserve/" if item["membership"] == "reserve" else ""
             self.assertEqual(item["paths"]["case"],
-                             f"cases/{item['category']}/{item['case_id']}/case.json")
+                             f"cases/{prefix}{item['category']}/{item['case_id']}/case.json")
             self.assertIn(item["task_kind"], {"written", "audit", "repair", "generate"})
 
     def test_check_rejects_stale_derived_text(self):

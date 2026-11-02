@@ -11,6 +11,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, validate_plan
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
 from math_gauge.harness import (candidate_request_from_bundle, export_harness_bundle,
@@ -22,8 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class HarnessExportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = legacy_suite()
+        cls.profile = legacy_profile(cls.suite)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -345,6 +347,68 @@ class HarnessExportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Runner source changed"):
                 self.export(plan, name="stale")
         self.assertFalse((self.root / "stale").exists())
+
+
+class CompactHarnessTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from math_gauge.harness import export_simple_release_dataset, make_release_anchor
+        cls.suite = Suite.load(ROOT / "cases")
+        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite), cls.suite)
+        cls.temporary = tempfile.TemporaryDirectory(prefix="math-gauge-compact-harness-")
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.root = Path(cls.temporary.name).resolve()
+        cls.dataset = cls.root / "dataset"
+        cls.manifest = export_simple_release_dataset(cls.plan, cls.suite, cls.dataset,
+            release_version="0.3.0", readme=b"# Synthetic compact consumer fixture\n",
+            extra_files={"LICENSE": b"Synthetic fixture\n", "THIRD_PARTY_NOTICES.md": b"Synthetic fixture\n"})
+        cls.anchor_path = cls.root / "trusted-anchor.json"
+        write_json(cls.anchor_path, make_release_anchor(cls.plan, cls.manifest))
+
+    def test_portable_default_export_excludes_reserve_and_keeps_separate_targets(self):
+        from math_gauge.harness import COMPACT_CONTROLLER, inspect_release_dataset
+        self.assertEqual((len(self.manifest["cases"]), self.manifest["exported_slots"]), (32, 80))
+        self.assertEqual(self.manifest["controller_version"], COMPACT_CONTROLLER)
+        self.assertEqual(len(self.manifest["target_slot_ids"]["core"]), 32)
+        self.assertEqual(len(self.manifest["target_slot_ids"]["repeat"]), 18)
+        reserve = Suite.load(ROOT / "cases/reserve-suite.json")
+        self.assertFalse(set(reserve.cases) & {c["case_id"] for c in self.manifest["cases"]})
+        self.assertFalse(any((self.dataset / "cases" / cid).exists() for cid in reserve.cases))
+        self.assertEqual(inspect_release_dataset(self.dataset, plan=self.plan, suite=self.suite), self.manifest)
+        result = subprocess.run([sys.executable, "-I", "-S", str(self.dataset / "tools/benchmark.py"), "check"],
+                                cwd=self.root, capture_output=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr.decode())
+        self.assertEqual(json.loads(result.stdout)["planned"]["all_slots"], 80)
+
+    def test_compact_chapter_fixture_returns_through_the_shared_importer(self):
+        from math_gauge.harness import freeze_release_runtime
+        from math_gauge.harness_answers import (issue_answer_request, pack_answer_archive,
+                                               record_answer_attempt, skip_answer_slot)
+        from math_gauge.harness_import import import_answer_archive
+        from math_gauge.reliability import inspect_reliability_run
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            run, answers = root / "run", root / "answers"
+            runtime = {"model_label": "synthetic-compact-fixture", "adapter_identity": {"kind": "fixture"},
+                       "candidate_parameters": {"model": "offline-fixture"},
+                       "budget": {"timeout_seconds": 2, "output_tokens": 1000}, "fresh_context": True}
+            frozen = freeze_release_runtime(self.dataset, runtime, run, targets=["chapters"])
+            self.assertEqual(frozen["selected_slot_ids"], ["MG-C002:A1", "MG-C003:A1"])
+            request, raw, usage = root / "request.json", root / "raw.md", root / "usage.json"
+            issue_answer_request(run, answers, "MG-C002:A1", request)
+            raw.write_bytes(b"Synthetic incomplete chapter fixture; no mathematical result.\r\n")
+            write_json(usage, {"total_tokens": 1})
+            record_answer_attempt(run, answers, "MG-C002:A1", request, raw, status="ok", usage_path=usage)
+            skip_answer_slot(run, answers, "MG-C003:A1", "Synthetic missing chapter fixture")
+            archive = root / "answers.zip"
+            pack_answer_archive(run, answers, archive)
+            imported = root / "imported"
+            import_answer_archive(archive, read_json(self.anchor_path), self.suite, imported)
+            meta, records = inspect_reliability_run(imported)
+            self.assertEqual(meta["plan"]["planned"]["all_slots"], 80)
+            self.assertTrue(meta["fixture_only"])
+            self.assertEqual(set(records), {"MG-C002:A1", "MG-C003:A1"})
+            self.assertEqual(records["MG-C002:A1"]["response_sha256"], digest_bytes(raw.read_bytes()))
 
 
 if __name__ == "__main__":

@@ -23,6 +23,8 @@ from .benchmarks import identity, select_slots, validate_plan
 from .catalog import digest_bytes, relative_name, write_json
 from .eligibility import _file, _root
 from .execution import extract_candidate_lean, now, runner_fingerprint
+from .harness_answers import _a_recovery_policy, _a_recovery_allows
+from .harness import _h_is_neutral, _h_schema_matches
 from .reliability import (
     PARSER_VERSION, PARAMETERS, _bind_suite, _budget_descriptor, _budget_totals,
     _execution_manifest_hash, _freeze_inputs, _messages_for, _new_slot_record,
@@ -98,8 +100,11 @@ class _SourceFiles:
 
 def _submission(value, manifest, plan, sources):
     from .harness import RELEASE_SUBMISSION, RUN_SCHEMA
-    release = manifest.get("schema") == RUN_SCHEMA
-    _require(isinstance(value, dict) and value.get("schema") == (RELEASE_SUBMISSION if release else SUBMISSION),
+    release = _h_schema_matches(manifest.get("schema"), RUN_SCHEMA)
+    expected = RELEASE_SUBMISSION if release else SUBMISSION
+    if _h_is_neutral(manifest):
+        expected = expected.replace("math-gauge.", "benchmark.")
+    _require(isinstance(value, dict) and value.get("schema") == expected,
              "Unsupported harness submission")
     if release:
         _require(value.get("run_sha256") == manifest["run_sha256"]
@@ -171,7 +176,7 @@ def _timing(row):
     return result
 
 
-def _attempt(row, number, projected_hash, prefix, sources):
+def _attempt(row, number, projected_hash, prefix, sources, *, normalized_hash=None):
     _require(isinstance(row, dict) and type(row.get("number")) is int and row["number"] == number,
              "Submitted attempt ordering changed")
     _require(row.get("projected_request_sha256") == projected_hash,
@@ -218,6 +223,10 @@ def _attempt(row, number, projected_hash, prefix, sources):
                "stderr_sha256": digest_bytes(stderr), "readable_text": _readable(raw) is not None,
                "projected_request_sha256": projected_hash,
                "external_source": copy.deepcopy(row), "generated_files": generated_files}
+    if normalized_hash is not None:
+        attempt.update(projected_request_sha256=normalized_hash,
+                       source_projected_request_sha256=projected_hash,
+                       request_normalization="neutral-transport-schema/v1")
     return attempt, raw, stderr
 
 
@@ -256,7 +265,7 @@ def _execution_contract(runtime, parameters, submitted):
 
 
 def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=None, plan=None, archive_raw=None,
-              evaluator_anchor=None):
+              evaluator_anchor=None, recovery_policy=None):
     from .harness import RUN_SCHEMA, inspect_release_dataset
     base = dest / "external-import"
     base.mkdir()
@@ -267,7 +276,7 @@ def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=Non
         path.write_bytes(raw)
     bundle = base / "bundle"
     bundle.mkdir()
-    release = manifest.get("schema") == RUN_SCHEMA
+    release = _h_schema_matches(manifest.get("schema"), RUN_SCHEMA)
     names = ["manifest.json", *manifest["files_sha256"]]
     if release:
         dataset = inspect_release_dataset(bundle_root / "dataset")
@@ -282,6 +291,8 @@ def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=Non
     receipt = {"schema": RELEASE_RECEIPT if release else RECEIPT, "source_submission_sha256": digest_bytes(source_raw),
                "source_files": list(sources.descriptors.values()), "bundle_files": bundle_files,
                "limits": LIMITS}
+    if recovery_policy is not None:
+        receipt["local_transport_recovery"] = recovery_policy
     if release:
         write_json(base / "evaluator-base-plan.json", base_plan)
         receipt.update(run_sha256=manifest["run_sha256"], dataset_sha256=manifest["dataset_sha256"],
@@ -301,7 +312,7 @@ def _snapshot(bundle_root, source_raw, sources, dest, manifest, *, base_plan=Non
             "receipt_sha256": digest_bytes((base / "receipt.json").read_bytes())}
 
 
-def _ingest(plan, suite, dest, manifest, submitted, index, sources):
+def _ingest(plan, suite, dest, manifest, submitted, index, sources, recovery_policy=None):
     runtime, parameters = _validate_runtime(plan)
     prompts = _validate_schedule(plan)
     targets = manifest["targets"]
@@ -329,6 +340,8 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
             "prior_transport_attempts": 0, "prior_known_total_tokens": 0,
             "inputs": inputs, "slot_record_sha256": {}, "reused_from": {}, "status": "imported",
             "external_origin_verified": False, "import_limits": LIMITS}
+    if recovery_policy is not None:
+        meta["local_transport_recovery"] = recovery_policy
     write_json(dest / "plan.json", plan)
     meta["plan_file_sha256"] = digest_bytes((dest / "plan.json").read_bytes())
     records, materials = {}, {}
@@ -354,7 +367,8 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
             _require(messages is not None, "Submitted followup has no readable original branch parent")
             projected = {"schema": "math-gauge.conversation/v1", "messages": messages,
                          "parameters": dict(parameters, **budget.get("case_parameters", {}).get(slot["case_id"], {}))}
-            _require(row["projected_request"] == projected,
+            wire_projected = dict(projected, schema="benchmark.conversation/v1") if _h_is_neutral(manifest) else projected
+            _require(row["projected_request"] == wire_projected,
                      "Submitted visible history, branch or generation parameters changed")
             history = [{"role": x["role"], "content": x["content"],
                         "content_sha256": digest_bytes(x["content"].encode())} for x in messages]
@@ -368,7 +382,8 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
                     _require(record["attempts"][0]["status"] in {"transient_error", "timeout"},
                              "Submission retried a permanent transport failure")
                 prefix = _slot_path(sid) + f"/attempts/{number}"
-                attempt, raw, stderr = _attempt(external, number, identity(projected), prefix, sources)
+                attempt, raw, stderr = _attempt(external, number, identity(wire_projected), prefix, sources,
+                    normalized_hash=identity(projected) if _h_is_neutral(manifest) else None)
                 attempt_dir = dest / prefix
                 attempt_dir.mkdir(parents=True)
                 (attempt_dir / "response.md").write_bytes(raw)
@@ -379,7 +394,7 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
                 meta["known_total_tokens"] += attempt["usage"].get("total_tokens", 0)
                 if "total_tokens" not in attempt["usage"]:
                     meta["token_usage_complete"] = False
-                    if limit is not None:
+                    if limit is not None and not _a_recovery_allows(recovery_policy, sid, external):
                         stopped = True
                         meta["budget_stop_reason"] = "usage_unavailable_for_total_token_budget"
                 if maximum is not None and meta["transport_attempts"] >= maximum:
@@ -416,7 +431,7 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources):
 
 
 def import_harness_submission(bundle_root, submission_path, plan, suite, destination, *, _archive_raw=None,
-                               _evaluator_anchor=None):
+                               _evaluator_anchor=None, recovery_policy=None):
     """Validate and atomically publish an immutable, provisional imported run."""
     from .harness import (RUN_SCHEMA, inspect_harness_bundle, inspect_release_run,
                           reconstruct_release_plan)
@@ -425,14 +440,18 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
     bundle_root = _root(bundle_root)
     schema = _json(_file(bundle_root, "manifest.json").read_bytes()).get("schema")
     base_plan = None
-    if schema == RUN_SCHEMA:
+    if _h_schema_matches(schema, RUN_SCHEMA):
         base_plan = plan
         manifest = inspect_release_run(bundle_root)
         plan = reconstruct_release_plan(bundle_root, base_plan, suite=suite)
     else:
         manifest = inspect_harness_bundle(bundle_root, plan=plan, suite=suite)
     validate_plan(plan)
-    _require(plan["runner_sha256"] == runner_fingerprint(),
+    recovery_policy = _a_recovery_policy(manifest.get("run_sha256"), recovery_policy)
+    installed_runner = runner_fingerprint()
+    _require(plan["runner_sha256"] == installed_runner or (recovery_policy is not None
+             and recovery_policy["frozen_runner_sha256"] == plan["runner_sha256"]
+             and recovery_policy["installed_runner_sha256"] == installed_runner),
              "Runner source changed after the benchmark plan was frozen")
     _bind_suite(plan, suite)
     _validate_schedule(plan)
@@ -452,9 +471,10 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
         staging = Path(temp) / "run"
         staging.mkdir()
         try:
-            meta = _ingest(plan, suite, staging, manifest, value, index, sources)
+            meta = _ingest(plan, suite, staging, manifest, value, index, sources, recovery_policy)
             meta["external_import"] = _snapshot(bundle_root, source_raw, sources, staging, manifest,
-                base_plan=base_plan, plan=plan, archive_raw=_archive_raw, evaluator_anchor=_evaluator_anchor)
+                base_plan=base_plan, plan=plan, archive_raw=_archive_raw, evaluator_anchor=_evaluator_anchor,
+                recovery_policy=recovery_policy)
             meta["execution_manifest_sha256"] = _execution_manifest_hash(meta)
             write_json(staging / "run.json", meta)
             inspect_reliability_run(staging)
@@ -518,7 +538,7 @@ def _answers_archive_contents(path):
         _require(isinstance(manifest, dict), "Answers ZIP manifest must be an object")
         keys = {"schema", "release_version", "suite", "dataset_sha256", "run_sha256", "base_plan_sha256",
                 "slot_states", "budget", "files"}
-        _require(set(manifest) == keys and manifest["schema"] == "math-gauge.answers-archive/v1",
+        _require(set(manifest) == keys and _h_schema_matches(manifest["schema"], "math-gauge.answers-archive/v1"),
                  "Unsupported answers ZIP manifest")
         inventory = manifest["files"]
         _require(isinstance(inventory, dict) and set(inventory) == set(contents) - {"answers.json"}
@@ -533,7 +553,7 @@ def _answers_archive_contents(path):
         raise ValueError("Malformed answers ZIP") from error
 
 
-def import_answer_archive(archive_path, evaluator_anchor, suite, destination):
+def import_answer_archive(archive_path, evaluator_anchor, suite, destination, *, recovery_policy=None):
     """Import one portable answer ZIP with installed validators and a trusted base plan."""
     from .harness import (SIMPLE_DATASET_SCHEMA, inspect_release_dataset, inspect_release_run,
                           validate_release_anchor)
@@ -558,7 +578,7 @@ def import_answer_archive(archive_path, evaluator_anchor, suite, destination):
         run_root, responses = unpacked / "run", unpacked / "submission"
         manifest = inspect_release_run(run_root)
         dataset = inspect_release_dataset(run_root / "dataset", plan=plan, suite=suite)
-        _require(dataset["schema"] == SIMPLE_DATASET_SCHEMA,
+        _require(_h_schema_matches(dataset["schema"], SIMPLE_DATASET_SCHEMA),
                  "Answers ZIP requires the versioned simple release layout")
         _require(envelope["release_version"] == dataset["release_version"] == suite.metadata["version"]
                  and envelope["suite"] == dataset["suite"]
@@ -566,7 +586,8 @@ def import_answer_archive(archive_path, evaluator_anchor, suite, destination):
                  and envelope["run_sha256"] == manifest["run_sha256"]
                  and envelope["base_plan_sha256"] == plan["plan_sha256"],
                  "Answers ZIP binds a different version, dataset or trusted evaluator plan")
-        state = _a_inspect(run_root, responses, allow_submission=True)
+        recovery_policy = _a_recovery_policy(manifest["run_sha256"], recovery_policy)
+        state = _a_inspect(run_root, responses, allow_submission=True, recovery_policy=recovery_policy)
         submitted = _json(_file(responses, "submission.json").read_bytes())
         _require(isinstance(submitted, dict), "Answers ZIP submission must be an object")
         expected = _a_submission(state, origin=submitted.get("origin"),
@@ -575,7 +596,8 @@ def import_answer_archive(archive_path, evaluator_anchor, suite, destination):
                  and envelope["budget"] == state["budget"],
                  "Answers ZIP collection, missingness or submission changed")
         return import_harness_submission(run_root, responses / "submission.json", plan, suite, destination,
-                                         _archive_raw=archive_raw, _evaluator_anchor=evaluator_anchor)
+                                         _archive_raw=archive_raw, _evaluator_anchor=evaluator_anchor,
+                                         recovery_policy=recovery_policy)
 
 
 def inspect_import_sources(root, meta, records):
@@ -631,6 +653,9 @@ def inspect_import_sources(root, meta, records):
     sources = _SourceFiles(root / "external-import/files")
     index = _submission(source, manifest, meta["plan"], sources)
     runtime, parameters = _validate_runtime(meta["plan"])
+    recovery_policy = _a_recovery_policy(manifest.get("run_sha256"), receipt.get("local_transport_recovery"))
+    _require(meta.get("local_transport_recovery") == recovery_policy,
+             "Retained local transport recovery policy changed")
     _require(meta["origin"] == ORIGIN and meta.get("command") is None and meta.get("candidate_calls") == 0
              and meta.get("external_candidate_calls_declared") == source["declared_external_calls"]
              and meta.get("source_origin") == source["origin"] and meta.get("fixture_only") is source["fixture_only"]
@@ -647,11 +672,14 @@ def inspect_import_sources(root, meta, records):
         _require(bool(row) == record["started"], "Imported started/missing slot state changed")
         if row is None:
             continue
-        _require(identity(row["projected_request"]) == record["projected_request_sha256"]
+        normalized = dict(row["projected_request"], schema="math-gauge.conversation/v1")
+        source_hash = identity(row["projected_request"])
+        _require(identity(normalized) == record["projected_request_sha256"]
                  and len(row["attempts"]) == len(record["attempts"]), "Imported request or attempt inventory changed")
         for number, external in enumerate(row["attempts"], 1):
             prefix = _slot_path(sid) + f"/attempts/{number}"
-            attempt, raw, stderr = _attempt(external, number, record["projected_request_sha256"], prefix, sources)
+            attempt, raw, stderr = _attempt(external, number, source_hash, prefix, sources,
+                normalized_hash=record["projected_request_sha256"] if _h_is_neutral(manifest) else None)
             _require(attempt == record["attempts"][number - 1]
                      and _file(root, attempt["response_path"]).read_bytes() == raw
                      and _file(root, prefix + "/stderr.txt").read_bytes() == stderr,

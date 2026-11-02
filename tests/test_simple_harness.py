@@ -13,6 +13,8 @@ import unittest
 from unittest.mock import patch
 import zipfile
 
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
 from math_gauge.cli import main
@@ -36,8 +38,8 @@ RUNTIME = {"model_label": "synthetic-simple-fixture", "adapter_identity": {"kind
 class SimpleHarnessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite),
+        cls.suite = legacy_suite()
+        cls.plan = build_plan(legacy_profile(cls.suite),
                               cls.suite, ["all"])
         cls.shared_temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.shared_temp.cleanup)
@@ -63,13 +65,14 @@ class SimpleHarnessTests(unittest.TestCase):
     def freeze(self, targets=("chapters",), runtime=None):
         return freeze_release_runtime(self.dataset, runtime or RUNTIME, self.run, targets=list(targets))
 
-    def issue(self, sid):
+    def issue(self, sid, **kwargs):
         self.request_number += 1
         out = self.root / f"request-{self.request_number}.json"
-        value = issue_answer_request(self.run, self.responses, sid, out)
+        value = issue_answer_request(self.run, self.responses, sid, out, **kwargs)
         return out, value
 
-    def record(self, sid, request, raw=b"Synthetic answer\r\n", *, status="ok", usage=None, metadata=None):
+    def record(self, sid, request, raw=b"Synthetic answer\r\n", *, status="ok", usage=None, metadata=None,
+               recovery_policy=None):
         response = self.root / "current-response.bin"
         response.write_bytes(raw)
         usage_path = self.root / "current-usage.json" if usage is not None else None
@@ -79,7 +82,8 @@ class SimpleHarnessTests(unittest.TestCase):
         if metadata_path:
             write_json(metadata_path, metadata)
         return record_answer_attempt(self.run, self.responses, sid, request, response, status=status,
-                                     usage_path=usage_path, metadata_path=metadata_path)
+                                     usage_path=usage_path, metadata_path=metadata_path,
+                                     recovery_policy=recovery_policy)
 
     def packed(self, **kwargs):
         return pack_answer_archive(self.run, self.responses, self.archive, **kwargs)
@@ -144,7 +148,7 @@ class SimpleHarnessTests(unittest.TestCase):
                 patch("math_gauge.execution.invoke_conversation", side_effect=AssertionError("Candidate called")), \
                 contextlib.redirect_stdout(io.StringIO()) as output:
             result = main(["benchmark-import", "--input", str(self.archive), "--plan", str(plan_path),
-                           "--suite", str(ROOT / "cases"), "--out", str(self.output)])
+                           "--suite", str(legacy_suite().root), "--out", str(self.output)])
         self.assertEqual(result, 0, output.getvalue())
         self.assertEqual((self.output / "external-import/answers.zip").read_bytes(), self.archive.read_bytes())
         meta, records = inspect_reliability_run(self.output)
@@ -306,6 +310,70 @@ class SimpleHarnessTests(unittest.TestCase):
         self.assertEqual(meta["external_candidate_calls_declared"], 0)
         self.assertFalse(meta["external_origin_verified"])
         self.assertFalse(meta["token_usage_complete"])
+
+    def test_explicit_network_recovery_preserves_unknown_and_roundtrips_retry(self):
+        runtime = copy.deepcopy(RUNTIME)
+        runtime["budget"].update(max_total_tokens=100, max_transport_attempts=10)
+        run = self.freeze(runtime=runtime)
+        first, second = run["selected_slot_ids"][:2]
+        request, original = self.issue(first)
+        original_metadata = {"status": "permanent_error", "error": "Synthetic network interruption",
+                             "reclassification": "transient_error; original classification retained"}
+        self.record(first, request, b"", status="transient_error", usage={}, metadata=original_metadata)
+        metadata = self.responses / "slots" / first.replace(":", "/") / "attempts/1/metadata.json"
+        policy = {"schema": "math-gauge.local-transport-recovery/v1", "run_sha256": run["run_sha256"],
+                  "unknown_usage": "retain-unknown-use-known-lower-bound",
+                  "frozen_runner_sha256": self.plan["runner_sha256"], "installed_runner_sha256": "b" * 64,
+                  "attempts": [{"slot_id": first, "number": 1, "response_sha256": digest_bytes(b""),
+                                "metadata_sha256": digest_bytes(metadata.read_bytes())}]}
+        self.assertTrue(inspect_answer_collection(self.run, self.responses)["budget"]["stopped"])
+        wrong = copy.deepcopy(policy)
+        wrong["attempts"][0]["metadata_sha256"] = "a" * 64
+        self.assertTrue(inspect_answer_collection(self.run, self.responses,
+                                                recovery_policy=wrong)["budget"]["stopped"])
+        state = inspect_answer_collection(self.run, self.responses, recovery_policy=policy)
+        self.assertFalse(state["budget"]["stopped"])
+        self.assertIsNone(state["budget"]["total_tokens"])
+        retry, projected = self.issue(first, recovery_policy=policy)
+        self.assertEqual(projected, original)
+        self.record(first, retry, b"Synthetic successful retry\r\n", usage={"total_tokens": 7}, recovery_policy=policy)
+        request, _ = self.issue(second, recovery_policy=policy)
+        self.record(second, request, usage={"total_tokens": 5}, recovery_policy=policy)
+        self.packed(recovery_policy=policy)
+        with self.assertRaisesRegex(ValueError, "budget stopped"):
+            import_answer_archive(self.archive, self.anchor, self.suite, self.output)
+        with patch("math_gauge.harness_import.runner_fingerprint", return_value="c" * 64):
+            with self.assertRaisesRegex(ValueError, "Runner source changed"):
+                import_answer_archive(self.archive, self.anchor, self.suite, self.output, recovery_policy=policy)
+        with patch("math_gauge.harness_import.runner_fingerprint", return_value="b" * 64):
+            meta = import_answer_archive(self.archive, self.anchor, self.suite, self.output, recovery_policy=policy)
+        checked, records = inspect_reliability_run(self.output)
+        self.assertFalse(meta["token_usage_complete"])
+        self.assertIsNone(meta["total_tokens"])
+        self.assertEqual(meta["known_total_tokens"], 12)
+        self.assertEqual(meta["local_transport_recovery"], policy)
+        self.assertEqual(records[first]["locked_attempt"], 2)
+        self.assertEqual(records[first]["attempts"][0]["usage"], {})
+        self.assertEqual(checked["plan"]["planned"]["all_slots"], 177)
+        self.assertEqual(json.loads(metadata.read_bytes()), original_metadata)
+
+    def test_explicit_network_recovery_does_not_waive_transport_limit(self):
+        runtime = copy.deepcopy(RUNTIME)
+        runtime["budget"].update(max_total_tokens=100, max_transport_attempts=1)
+        run = self.freeze(runtime=runtime)
+        first = run["selected_slot_ids"][0]
+        request, _ = self.issue(first)
+        self.record(first, request, b"", status="transient_error", usage={}, metadata={"fixture": True})
+        metadata = self.responses / "slots" / first.replace(":", "/") / "attempts/1/metadata.json"
+        policy = {"schema": "math-gauge.local-transport-recovery/v1", "run_sha256": run["run_sha256"],
+                  "unknown_usage": "retain-unknown-use-known-lower-bound",
+                  "frozen_runner_sha256": self.plan["runner_sha256"], "installed_runner_sha256": self.plan["runner_sha256"],
+                  "attempts": [{"slot_id": first, "number": 1, "response_sha256": digest_bytes(b""),
+                                "metadata_sha256": digest_bytes(metadata.read_bytes())}]}
+        state = inspect_answer_collection(self.run, self.responses, recovery_policy=policy)
+        self.assertEqual(state["budget"]["stop_reason"], "cumulative_budget_exhausted")
+        with self.assertRaisesRegex(ValueError, "budget"):
+            self.issue(first, recovery_policy=policy)
 
     def test_archive_rejects_unknown_paths_aliases_symlinks_and_oversized_files(self):
         self.freeze()

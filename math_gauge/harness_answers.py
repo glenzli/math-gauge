@@ -20,6 +20,7 @@ from .harness import (
     _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root, _h_file, _h_build_request,
     _r_json, _r_write, _inspect_release_dataset_contents, inspect_release_run,
     freeze_release_runtime, release_candidate_request, release_submission_template,
+    _h_is_neutral, _h_neutral_root, _neutral_runtime, _NEUTRAL_WIRE_ACTIVE,
 )
 from .reliability import _bytes, _readable, _slot_path, _transport_result
 
@@ -124,7 +125,41 @@ def _a_timing(metadata):
     return result
 
 
-def _a_budget(run, rows):
+def _a_recovery_policy(run_sha256, policy):
+    """Accept only an explicit caller-supplied operational amendment, never archive authority."""
+    if policy is None:
+        return None
+    _h_require(isinstance(policy, dict) and policy.get("schema") == "math-gauge.local-transport-recovery/v1"
+               and policy.get("run_sha256") == run_sha256
+               and policy.get("unknown_usage") == "retain-unknown-use-known-lower-bound"
+               and _h_hash(policy.get("frozen_runner_sha256"))
+               and _h_hash(policy.get("installed_runner_sha256")), "Invalid explicit transport recovery policy")
+    entries = policy.get("attempts")
+    _h_require(isinstance(entries, list) and bool(entries), "Transport recovery needs exact failed attempts")
+    seen = set()
+    for entry in entries:
+        _h_require(isinstance(entry, dict) and isinstance(entry.get("slot_id"), str)
+                   and entry.get("number") == 1 and _h_hash(entry.get("metadata_sha256"))
+                   and entry.get("response_sha256") == _h_digest(b""),
+                   "Transport recovery is limited to bound unreadable first attempts")
+        key = (entry["slot_id"], entry["number"])
+        _h_require(key not in seen, "Duplicate transport recovery attempt")
+        seen.add(key)
+    _h_identity(policy)
+    return policy
+
+
+def _a_recovery_allows(policy, slot_id, attempt):
+    if policy is None or "total_tokens" in attempt.get("usage", {}):
+        return False
+    response, metadata = attempt.get("response", {}), attempt.get("metadata_source") or {}
+    return any(entry["slot_id"] == slot_id and entry["number"] == attempt["number"]
+               and attempt["status"] in {"transient_error", "timeout"}
+               and response.get("bytes") == 0 and response.get("sha256") == entry["response_sha256"]
+               and metadata.get("sha256") == entry["metadata_sha256"] for entry in policy["attempts"])
+
+
+def _a_budget(run, rows, recovery_policy=None):
     budget = run["execution"]["budget"]
     maximum, limit = budget.get("max_transport_attempts"), budget.get("max_total_tokens")
     attempts, known, complete = 0, 0, True
@@ -138,7 +173,7 @@ def _a_budget(run, rows):
             known += usage.get("total_tokens", 0)
             if "total_tokens" not in usage:
                 complete = False
-                if limit is not None:
+                if limit is not None and not _a_recovery_allows(recovery_policy, row["slot_id"], attempt):
                     stopped, reason = True, "usage_unavailable_for_total_token_budget"
             if maximum is not None and attempts >= maximum:
                 stopped, reason = True, reason or "cumulative_budget_exhausted"
@@ -146,14 +181,21 @@ def _a_budget(run, rows):
                 stopped, reason = True, reason or "total_token_budget_exhausted"
             if attempt["status"] == "budget_exhausted" and not attempt["readable"]:
                 stopped, reason = True, reason or "adapter_budget_exhausted"
-    return {"transport_attempts": attempts, "known_total_tokens": known,
+    result = {"transport_attempts": attempts, "known_total_tokens": known,
             "token_usage_complete": complete, "total_tokens": known if complete else None,
             "stopped": stopped, "stop_reason": reason}
+    if recovery_policy is not None:
+        result["local_transport_recovery_sha256"] = _h_identity(recovery_policy)
+    return result
 
 
-def _a_inspect(run_root, responses, *, allow_submission=False):
+def _a_inspect(run_root, responses, *, allow_submission=False, recovery_policy=None):
     """Recheck every immutable issue/attempt and derive explicit frozen slot states."""
+    if _h_neutral_root(run_root):
+        return _neutral_runtime()._a_inspect(run_root, responses, allow_submission=allow_submission,
+                                           recovery_policy=recovery_policy)
     run_root, run, root = _a_roots(run_root, responses)
+    recovery_policy = _a_recovery_policy(run["run_sha256"], recovery_policy)
     dataset = _inspect_release_dataset_contents(run_root / "dataset")
     slots = {s["slot_id"]: s for s in dataset["slots"]}
     selected = set(run["selected_slot_ids"])
@@ -278,21 +320,24 @@ def _a_inspect(run_root, responses, *, allow_submission=False):
         _h_require((path.is_file() and (name in expected or (allow_submission and name == "submission.json")))
                    or (path.is_dir() and name in expected_dirs), "Unlisted collected file or directory: " + name)
     return {"run": run, "dataset": dataset, "root": root, "rows": rows, "locked": locked, "states": states,
-            "files": sorted(expected), "budget": _a_budget(run, rows)}
+            "files": sorted(expected), "budget": _a_budget(run, rows, recovery_policy)}
 
 
-def inspect_answer_collection(run_root, responses):
-    result = _a_inspect(run_root, responses)
+def inspect_answer_collection(run_root, responses, *, recovery_policy=None):
+    result = _a_inspect(run_root, responses, recovery_policy=recovery_policy)
     return {"run_sha256": result["run"]["run_sha256"], "slots": result["states"], "budget": result["budget"]}
 
 
-def issue_answer_request(run_root, responses, slot_id, output):
+def issue_answer_request(run_root, responses, slot_id, output, *, recovery_policy=None):
+    if _h_neutral_root(run_root):
+        return _neutral_runtime().issue_answer_request(run_root, responses, slot_id, output,
+                                                     recovery_policy=recovery_policy)
     run_root, run, root = _a_roots(run_root, responses, create=True)
     out = _h_path(output)
     _h_require(not out.exists() and not out.is_relative_to(run_root) and not out.is_relative_to(root),
                "Request output must be a new file outside the immutable run and collected responses")
     with _a_lock(root):
-        state = _a_inspect(run_root, root)
+        state = _a_inspect(run_root, root, recovery_policy=recovery_policy)
         next_slot = next((s for s in state["states"] if s["state"] in {
             "pending", "awaiting_response", "retryable"}), None)
         _h_require(next_slot is not None and next_slot["slot_id"] == slot_id,
@@ -323,7 +368,12 @@ def issue_answer_request(run_root, responses, slot_id, output):
 
 
 def record_answer_attempt(run_root, responses, slot_id, request_path, response_path, *, status,
-                          stderr_path=None, usage_path=None, metadata_path=None, exit_code=None):
+                          stderr_path=None, usage_path=None, metadata_path=None, exit_code=None, recovery_policy=None):
+    if _h_neutral_root(run_root):
+        return _neutral_runtime().record_answer_attempt(
+            run_root, responses, slot_id, request_path, response_path, status=status,
+            stderr_path=stderr_path, usage_path=usage_path, metadata_path=metadata_path,
+            exit_code=exit_code, recovery_policy=recovery_policy)
     run_root, run, root = _a_roots(run_root, responses)
     request_raw = _h_path(request_path).read_bytes()
     response = _h_path(response_path).read_bytes()
@@ -337,7 +387,7 @@ def record_answer_attempt(run_root, responses, slot_id, request_path, response_p
                                 "usage": usage, "exit_code": exit_code})
     _h_require(exit_code is None or type(exit_code) is int, "Observed exit code must be integral or unknown")
     with _a_lock(root):
-        state = _a_inspect(run_root, root)
+        state = _a_inspect(run_root, root, recovery_policy=recovery_policy)
         _h_require(slot_id in state["rows"], "Unknown selected slot")
         row = state["rows"][slot_id]
         _h_require(len(row["requests"]) == len(row["attempts"]) + 1,
@@ -361,15 +411,18 @@ def record_answer_attempt(run_root, responses, slot_id, request_path, response_p
         if metadata_raw is not None:
             files["metadata.json"] = metadata_raw
         _a_publish(root / prefix, files)
-        checked = _a_inspect(run_root, root)
+        checked = _a_inspect(run_root, root, recovery_policy=recovery_policy)
         return next(s for s in checked["states"] if s["slot_id"] == slot_id)
 
 
-def skip_answer_slot(run_root, responses, slot_id, reason):
+def skip_answer_slot(run_root, responses, slot_id, reason, *, recovery_policy=None):
+    if _h_neutral_root(run_root):
+        return _neutral_runtime().skip_answer_slot(run_root, responses, slot_id, reason,
+                                                 recovery_policy=recovery_policy)
     run_root, run, root = _a_roots(run_root, responses, create=True)
     _h_require(isinstance(reason, str) and reason.strip(), "Record a concrete missingness reason")
     with _a_lock(root):
-        state = _a_inspect(run_root, root)
+        state = _a_inspect(run_root, root, recovery_policy=recovery_policy)
         next_slot = next((s for s in state["states"] if s["state"] in {
             "pending", "awaiting_response", "retryable"}), None)
         _h_require(next_slot is not None and next_slot["slot_id"] == slot_id,
@@ -379,10 +432,12 @@ def skip_answer_slot(run_root, responses, slot_id, reason):
         folder.mkdir(parents=True, exist_ok=True)
         _r_write(folder / "skip.json", {"schema": _SKIP_SCHEMA, "slot_id": slot_id, "reason": reason,
                                         "recorded_at": datetime.now(timezone.utc).isoformat()})
-        return next(s for s in _a_inspect(run_root, root)["states"] if s["slot_id"] == slot_id)
+        return next(s for s in _a_inspect(run_root, root, recovery_policy=recovery_policy)["states"] if s["slot_id"] == slot_id)
 
 
 def _a_submission(state, *, origin, declared_external_calls):
+    if not _NEUTRAL_WIRE_ACTIVE and _h_is_neutral(state["run"]):
+        return _neutral_runtime()._a_submission(state, origin=origin, declared_external_calls=declared_external_calls)
     _h_require(origin in {"fixture", "replay", "external"}, "Declare fixture, replay or external origin")
     _h_require(type(declared_external_calls) is int and declared_external_calls >= 0,
                "Explicitly declare the known external call count; it cannot be inferred from attempt records")
@@ -401,7 +456,12 @@ def _a_submission(state, *, origin, declared_external_calls):
     return result
 
 
-def pack_answer_archive(run_root, responses, destination, *, origin="fixture", declared_external_calls=None):
+def pack_answer_archive(run_root, responses, destination, *, origin="fixture", declared_external_calls=None,
+                        recovery_policy=None):
+    if _h_neutral_root(run_root):
+        return _neutral_runtime().pack_answer_archive(
+            run_root, responses, destination, origin=origin,
+            declared_external_calls=declared_external_calls, recovery_policy=recovery_policy)
     run_root, run, root = _a_roots(run_root, responses, create=True)
     _h_require(origin != "external" or declared_external_calls is not None,
                "External origin requires an explicitly observed declared-external-calls count")
@@ -410,7 +470,7 @@ def pack_answer_archive(run_root, responses, destination, *, origin="fixture", d
     _h_require(not dest.exists() and not dest.is_relative_to(run_root) and not dest.is_relative_to(root),
                "Answers ZIP must be a new file outside the immutable run and responses")
     with _a_lock(root):
-        state = _a_inspect(run_root, root)
+        state = _a_inspect(run_root, root, recovery_policy=recovery_policy)
         submission = _a_submission(state, origin=origin, declared_external_calls=calls)
         dataset = _inspect_release_dataset_contents(run_root / "dataset")
         contents = {"submission/" + name: _h_file(root, name).read_bytes() for name in state["files"]}
@@ -513,7 +573,8 @@ def _simple_controller_main():
 
 def portable_answer_source():
     functions = (_bytes, _readable, _slot_path, _transport_result, _a_json_bytes, _a_descriptor,
-                 _a_read, _a_roots, _a_lock, _a_publish, _a_timing, _a_budget, _a_inspect,
+                 _a_read, _a_roots, _a_lock, _a_publish, _a_timing, _a_recovery_policy,
+                 _a_recovery_allows, _a_budget, _a_inspect,
                  inspect_answer_collection, issue_answer_request, record_answer_attempt,
                  skip_answer_slot, _a_submission, pack_answer_archive, _simple_controller_main)
     header = "import os\nimport tempfile\nimport zipfile\nfrom contextlib import contextmanager\nidentity = _h_identity\n"

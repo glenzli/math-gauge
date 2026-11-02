@@ -4,7 +4,8 @@ from collections import Counter
 from fractions import Fraction
 from pathlib import Path
 
-from .benchmarks import ATTEMPTS, COMPONENTS, identity, validate_plan
+from .benchmarks import (ATTEMPTS, COMPONENTS, identity, independent_attempts,
+                         scoring_policy, validate_plan)
 from .execution import now
 from .execution_policy import execution_condition
 
@@ -314,6 +315,8 @@ def score_inputs(inputs):
     if inputs.get("model_label") != plan["model_label"]:
         raise ValueError("Model label differs from the frozen runtime")
     case_index = {x["case_id"]: x for x in plan["case_index"]}
+    attempts = independent_attempts(plan["profile"]["data"], case_index)
+    policy = scoring_policy(plan["profile"]["data"], case_index)
     planned_slots = {x["slot_id"]: x for x in plan["slots"]}
     audit_selections = inputs.get("execution_audit_snapshots", [{"audit_snapshot": inputs.get("audit_snapshot")}])
     historical = any((item.get("audit_snapshot") or {}).get("historical") is True
@@ -340,12 +343,13 @@ def score_inputs(inputs):
                               "started": False, "selected": False})
 
     def paper_completion(cid):
-        paper_rows = [row_for(f"{cid}:{a}") for a in ATTEMPTS]
+        paper_rows = [row_for(f"{cid}:{a}") for a in policy["core_attempt_labels"]]
         values = [_interval(row.get("completion")) for row in paper_rows]
         return _average(values), paper_rows
 
     def repeat_interval(cid):
-        values = [_boolean(row_for(f"{cid}:{a}").get("strict_pass")) for a in ATTEMPTS]
+        values = [_boolean(row_for(f"{cid}:{a}").get("strict_pass"))
+                  for a in policy["repeat_attempt_labels"]]
         if any(x[2] == 0 for x in values):
             return _boolean(False)
         if all(x[2] == 1 for x in values):
@@ -355,39 +359,48 @@ def score_inputs(inputs):
     metrics, metric_intervals = {}, {}
     paper_reports = {}
     all_initial_rows = []
+    all_core_rows = []
     for component in plan["profile"]["data"]["components"]:
         intervals, component_rows = [], []
         for cid in component["case_ids"]:
             interval, paper_rows = paper_completion(cid)
+            attempt_rows = [row_for(f"{cid}:{a}") for a in attempts[cid]]
             intervals.append(interval)
             component_rows.extend(paper_rows)
             paper_reports[cid] = {
                 "component": component["id"], "family_id": case_index[cid]["family_id"],
                 "completion": _metric([_interval(r.get("completion")) for r in paper_rows],
                                       paper_rows, case_index, unit="independent attempt"),
-                "three_of_three": _percent(repeat_interval(cid)[2]),
-                "strict_passes": sum(r.get("strict_pass") is True for r in paper_rows),
-                "executed_attempts": sum(bool(r) and r.get("started") is not False for r in paper_rows),
-                "adjudicated_attempts": sum(r.get("strict_pass") is not None for r in paper_rows),
-                "planned_attempts": len(ATTEMPTS),
+                "three_of_three": (_percent(repeat_interval(cid)[2])
+                                    if cid in policy["repeat_case_ids"] else None),
+                "strict_passes": sum(r.get("strict_pass") is True for r in attempt_rows),
+                "executed_attempts": sum(bool(r) and r.get("started") is not False for r in attempt_rows),
+                "adjudicated_attempts": sum(r.get("strict_pass") is not None for r in attempt_rows),
+                "planned_attempts": len(attempts[cid]),
                 "stage_weight_total": case_index[cid]["total_weight"],
             }
+            all_initial_rows.extend(attempt_rows)
         metrics[component["id"]] = _metric(intervals, component_rows, case_index,
-                                            unit="full paper averaged over A1/A2/A3")
+            unit=("full paper A1" if policy["core_attempt_labels"] == ["A1"]
+                  else "full paper averaged over A1/A2/A3"))
         metric_intervals[component["id"]] = _average(intervals)
-        all_initial_rows.extend(component_rows)
+        all_core_rows.extend(component_rows)
     component_weights = [x["weight"] for x in plan["profile"]["data"]["components"]]
     metrics["core"] = _metric([metric_intervals[k] for k in COMPONENTS],
-                              all_initial_rows, case_index, unit="core component",
+                              all_core_rows, case_index, unit="core component",
                               weights=component_weights)
     metric_intervals["core"] = _average([metric_intervals[k] for k in COMPONENTS], component_weights)
-    repeats = [repeat_interval(cid) for cid in case_index]
+    repeats = [repeat_interval(cid) for cid in policy["repeat_case_ids"]]
+    repeat_rows = [row_for(f"{cid}:{a}") for cid in policy["repeat_case_ids"]
+                   for a in policy["repeat_attempt_labels"]]
+    if plan["profile"]["data"]["schema"] == "math-gauge.benchmark-profile/v1":
+        repeat_rows = all_initial_rows
     metrics["repeat"] = _metric(repeats,
-                                all_initial_rows, case_index, unit="full paper, three strict passes")
+                                repeat_rows, case_index, unit="full paper, three strict passes")
     metric_intervals["repeat"] = _average(repeats)
     metrics["strict_pass_rate"] = _metric([
         _boolean(row_for(f"{cid}:{a}").get("strict_pass"))
-        for cid in case_index for a in ATTEMPTS], all_initial_rows, case_index,
+        for cid in case_index for a in attempts[cid]], all_initial_rows, case_index,
         unit="independent strict-pass slot")
     followup_rows = []
     for target, arms in (("neutral", ("neutral",)), ("stance", ("affirm", "deny"))):

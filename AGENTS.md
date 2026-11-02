@@ -9,7 +9,11 @@
 - A supplied Lean file can be intentionally semantically mismatched while compiling successfully.
   Do not "fix" such an input without updating the benchmark design and version.
 - Candidate-facing files are an explicit projection. References, rubrics and review records stay out of it.
-- The current 43-paper suite is a public development suite. Public references and Git history remain
+- The current default suite has 32 papers; the explicit reserve suite has 11. They partition the
+  43-paper public development bank; reserve sources live in cases/reserve/proofs,
+  with byte-preserving path relocations recorded in cases/reserve/relocations.json. The default 80-slot profile uses A1 for core and an
+  extra-repeat/followup panel of 6; old 177-slot results retain their original profile and denominator.
+  Public references and Git history remain
   available for transparency; do not describe them as a hidden holdout or include them in solver packets.
 - External harness bundles separate solver content, controller scheduling and evaluator data. Keep the
   full plan/profile, expected truth, rubrics, approval and author evidence outside the exported bundle.
@@ -32,6 +36,9 @@
   and reproducible evaluator-plan recovery. New task releases use the suite version as the release
   version; the published v0.1.0 release retains its historical convention. GitHub
   automatic source archives contain public evaluator materials and are not solver deliveries.
+- Neutral release inputs use the versioned projection in release_projection.py; source cases,
+  original responses and legacy releases remain unchanged. Export/import must reconstruct the same
+  projected bytes from trusted sources; complete repository provenance stays evaluator-side.
 - Operator guides, runtime declarations, release metadata and schedules stay outside candidate
   messages. Runtime hashes, UUIDs, dates and source declarations do not authenticate a backend or
   third-party execution chronology. Generic external imports retain their current provisional status.

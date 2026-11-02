@@ -40,6 +40,7 @@ SIMPLE_DATASET_SCHEMA = "math-gauge.release-dataset/v2"
 RUN_SCHEMA = "math-gauge.harness-run/v2"
 RELEASE_CONTROLLER = "math-gauge.release-controller/v1"
 SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
+COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
 _RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters",
@@ -54,6 +55,39 @@ _RUN_KEYS = {"schema", "controller_version", "run_sha256", "run_id", "created_at
              "runtime_frozen", "preparation_only", "targets", "selected_slot_ids",
              "planned", "execution", "files_sha256"}
 _RELEASE_CONTEXT = execution_context()
+_NEUTRAL_WIRE_ACTIVE = False
+_NEUTRAL_RUNTIME = None
+
+
+def _h_is_neutral(value):
+    return isinstance(value, dict) and str(value.get("schema", "")).startswith("benchmark.")
+
+
+def _h_schema_matches(value, schema):
+    return value in {schema, schema.replace("math-gauge.", "benchmark.")}
+
+
+def _h_neutral_root(root):
+    return not _NEUTRAL_WIRE_ACTIVE and _h_is_neutral(
+        _r_json(_h_file(_h_root(root), "manifest.json").read_bytes()))
+
+
+def _neutral_controller_source():
+    """Generate the neutral wire variant from our own shared implementation."""
+    source = _simple_controller_source().decode("utf-8")
+    return source.replace("_NEUTRAL_WIRE_ACTIVE = False", "_NEUTRAL_WIRE_ACTIVE = True").replace(
+        "math-gauge", "benchmark").replace("Math Gauge", "Benchmark").encode("utf-8")
+
+
+def _neutral_runtime():
+    """Load trusted local generated code, never code read from an imported bundle."""
+    global _NEUTRAL_RUNTIME
+    if _NEUTRAL_RUNTIME is None:
+        import types
+        module = types.ModuleType("_trusted_neutral_release_runtime")
+        exec(compile(_neutral_controller_source(), "<trusted-neutral-release-runtime>", "exec"), module.__dict__)
+        _NEUTRAL_RUNTIME = module
+    return _NEUTRAL_RUNTIME
 
 
 def _h_require(condition, message):
@@ -177,7 +211,7 @@ def _h_message(request):
     """Validate the projection, then use the canonical shared message builder."""
     _h_object(request, {"schema", "case_id", "case_version", "track", "instruction",
                         "task", "files"}, "case request")
-    _h_require(request["schema"] == "math-gauge.request/v1"
+    _h_require(_h_schema_matches(request["schema"], "math-gauge.request/v1")
                and request["track"] in {"determinate", "alignment", "exploration"}
                and all(isinstance(request[k], str) for k in
                        ("case_id", "case_version", "task", "instruction"))
@@ -192,7 +226,8 @@ def _h_case_request(root, case):
     """Read either historical expanded inputs or the compact candidate projection."""
     if "request_path" in case:
         return _r_json(_h_file(root, case["request_path"]).read_bytes())
-    return {"schema": "math-gauge.request/v1", "case_id": case["case_id"],
+    neutral = _h_is_neutral(_r_json(_h_file(root, "manifest.json").read_bytes()))
+    return {"schema": "benchmark.request/v1" if neutral else "math-gauge.request/v1", "case_id": case["case_id"],
             "case_version": case["case_version"], "track": case["track"],
             "instruction": case["instruction"],
             "task": _h_file(root, case["task_path"]).read_bytes().decode("utf-8"),
@@ -251,8 +286,13 @@ def _h_projection(root, value, expected_files):
     _h_object(value["planned"], {"papers", "independent_slots", "neutral_slots", "stance_slots",
                                 "all_slots", "selected_slots"}, "fixed denominator")
     planned = value["planned"]
+    compact = value["protocol_version"] == "0.2.0"
     _h_require(all(type(x) is int and x >= 0 for x in planned.values())
-               and planned["papers"] > 0 and planned["independent_slots"] == 3 * planned["papers"]
+               and planned["papers"] > 0
+               and (planned["independent_slots"] == planned["papers"] + planned["neutral_slots"]
+                    and planned["neutral_slots"] % 2 == 0
+                    and planned["stance_slots"] == 2 * planned["neutral_slots"] if compact
+                    else planned["independent_slots"] == 3 * planned["papers"])
                and planned["all_slots"] == planned["independent_slots"] + planned["neutral_slots"]
                                                + planned["stance_slots"]
                and planned["selected_slots"] <= planned["all_slots"],
@@ -463,6 +503,7 @@ def _controller_main():
 
 def _controller_source():
     functions = (execution_context, validate_context_policy, project_followup_prompt,
+                 _h_is_neutral, _h_schema_matches,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root,
                  _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
                  _r_json, _h_message, _h_case_request, _h_projection, _inspect_bundle_contents,
@@ -598,7 +639,7 @@ def _execution_projection(plan, case_ids):
 
 def _source_suite(plan, suite):
     validate_plan(plan)
-    fresh = Suite.load(suite.root)
+    fresh = Suite.load(suite.manifest_path)
     _h_require(fresh.sha256 == suite.sha256 and plan["suite"] == {
         "id": fresh.metadata["id"], "version": fresh.metadata["version"], "sha256": fresh.sha256},
         "Frozen plan or loaded suite differs from its current source")
@@ -609,6 +650,7 @@ def _source_suite(plan, suite):
 
 
 def _projection(plan, suite, targets):
+    from .reliability import _candidate_request_for_plan
     selected = select_slots(plan, targets)
     selected_ids = {s["slot_id"] for s in selected}
     wanted_cases = {s["case_id"] for s in selected}
@@ -617,7 +659,7 @@ def _projection(plan, suite, targets):
     for cid in suite.cases:
         if cid not in wanted_cases:
             continue
-        request = suite.request(suite.cases[cid])
+        request = _candidate_request_for_plan(plan, suite, suite.cases[cid])
         base = "cases/" + cid + "/"
         message = candidate_message(request).encode("utf-8")
         row = {"case_id": cid, "case_version": request["case_version"],
@@ -715,9 +757,9 @@ def export_harness_bundle(plan, suite, destination, *, evaluator_destination=Non
 def inspect_harness_bundle(root, *, plan=None, suite=None):
     """Check a portable bundle, optionally binding it to evaluator source evidence."""
     schema = _r_json(_h_file(_h_root(root), "manifest.json").read_bytes()).get("schema")
-    if schema in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA}:
+    if _h_schema_matches(schema, SIMPLE_DATASET_SCHEMA) or schema == DATASET_SCHEMA:
         return inspect_release_dataset(root, plan=plan, suite=suite)
-    if schema == RUN_SCHEMA:
+    if _h_schema_matches(schema, RUN_SCHEMA):
         manifest = inspect_release_run(root)
         if plan is not None:
             reconstruct_release_plan(root, plan, suite=suite)
@@ -755,7 +797,7 @@ def inspect_harness_bundle(root, *, plan=None, suite=None):
                        and case["candidate_message_sha256"] == expected["candidate_message_sha256"],
                        "Harness candidate input differs from the frozen plan")
     if suite is not None:
-        suite = _source_suite(plan, suite) if plan is not None else Suite.load(suite.root)
+        suite = _source_suite(plan, suite) if plan is not None else Suite.load(suite.manifest_path)
         _h_require(manifest["suite"] == {"id": suite.metadata["id"], "version": suite.metadata["version"],
                                         "sha256": suite.sha256}, "Harness bundle binds a different suite")
         for case in manifest["cases"]:
@@ -768,9 +810,10 @@ def inspect_harness_bundle(root, *, plan=None, suite=None):
 def candidate_request_from_bundle(root, slot_id, answers=None):
     """Shared external-harness request builder; exact raw ancestor answers only."""
     manifest = inspect_harness_bundle(root)
-    if manifest["schema"] == RUN_SCHEMA:
+    if _h_schema_matches(manifest["schema"], RUN_SCHEMA):
         return release_candidate_request(root, slot_id, answers)
-    _h_require(manifest["schema"] not in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA},
+    _h_require(not (_h_schema_matches(manifest["schema"], SIMPLE_DATASET_SCHEMA)
+                   or manifest["schema"] == DATASET_SCHEMA),
                "Freeze a runtime before constructing release requests")
     return build_request(root, slot_id, answers)
 
@@ -845,10 +888,13 @@ def _inspect_release_dataset_contents(root):
     try:
         root = _h_root(root)
         value = _r_json(_h_file(root, "manifest.json").read_bytes())
+        if not _NEUTRAL_WIRE_ACTIVE and _h_is_neutral(value):
+            return _neutral_runtime()._inspect_release_dataset_contents(root)
         simple = value.get("schema") == SIMPLE_DATASET_SCHEMA
         _h_object(value, _SIMPLE_DATASET_KEYS if simple else _DATASET_KEYS, "release dataset manifest")
         _h_require((value["schema"], value["controller_version"]) in {
-                       (DATASET_SCHEMA, RELEASE_CONTROLLER), (SIMPLE_DATASET_SCHEMA, SIMPLE_CONTROLLER)},
+                       (DATASET_SCHEMA, RELEASE_CONTROLLER), (SIMPLE_DATASET_SCHEMA, SIMPLE_CONTROLLER),
+                       (SIMPLE_DATASET_SCHEMA, COMPACT_CONTROLLER)},
                    "Unsupported release dataset")
         _h_require(_h_hash(value["dataset_sha256"]) and value["dataset_sha256"] == _h_identity(
             {k: v for k, v in value.items() if k != "dataset_sha256"}), "Frozen release dataset changed")
@@ -883,15 +929,32 @@ def _inspect_release_dataset_contents(root):
             _h_require(all(slots[sid]["parent_slot"] is None or slots[sid]["parent_slot"] in ids for sid in ids),
                        "Release target lacks its dependency closure")
         independent = [sid for sid, s in slots.items() if s["kind"] == "independent"]
-        _h_require(selections["all"] == all_ids and selections["core"] == selections["repeat"] == independent,
-                   "Release independent target inventory changed")
+        compact = value["protocol_version"] == "0.2.0"
+        if compact:
+            core = [sid for sid in independent if slots[sid]["attempt_label"] == "A1"]
+            repeated = {slots[sid]["case_id"] for sid in independent
+                        if slots[sid]["attempt_label"] != "A1"}
+            repeat = [sid for sid in independent if slots[sid]["case_id"] in repeated]
+            _h_require(len(core) == value["planned"]["papers"] == len(value["cases"])
+                       and len(independent) == value["planned"]["independent_slots"]
+                       and selections["all"] == all_ids and selections["core"] == core
+                       and selections["repeat"] == repeat
+                       and repeated == {s["case_id"] for s in slots.values() if s["kind"] == "followup"},
+                       "Release compact attempt inventory changed")
+            _h_require(all(all(cid + ":" + label in repeat for label in ("A1", "A2", "A3"))
+                           for cid in repeated), "Release repeat panel lacks three independent attempts")
+        else:
+            core = independent
+            _h_require(selections["all"] == all_ids and selections["core"] == selections["repeat"] == independent,
+                       "Release independent target inventory changed")
         partition = [sid for component in _RELEASE_TARGETS[:4] for sid in selections[component]]
-        _h_require(len(partition) == len(set(partition)) and set(partition) == set(independent),
+        _h_require(len(partition) == len(set(partition)) and set(partition) == set(core),
                    "Release component targets must partition independent slots")
         for component in _RELEASE_TARGETS[:4]:
             for sid in selections[component]:
                 cid = slots[sid]["case_id"]
-                _h_require(all(cid + ":" + label in selections[component] for label in ("A1", "A2", "A3")),
+                _h_require(all(cid + ":" + label in selections[component]
+                               for label in (("A1",) if compact else ("A1", "A2", "A3"))),
                            "Release component omitted an independent repeat")
         for target, arms in (("neutral", {"neutral"}), ("stance", {"affirm", "deny"})):
             wanted = {sid for sid, s in slots.items() if s["kind"] == "followup" and s["arm"] in arms}
@@ -913,12 +976,17 @@ def inspect_release_dataset(root, *, plan=None, suite=None):
     if plan is not None:
         _r_bind_dataset(value, root, plan, suite)
     elif suite is not None:
-        fresh = Suite.load(suite.root)
-        _h_require(value["suite"] == {"id": fresh.metadata["id"], "version": fresh.metadata["version"],
+        fresh = Suite.load(suite.manifest_path)
+        _h_require(value["suite"] == {"id": "benchmark" if _h_is_neutral(value) else fresh.metadata["id"], "version": fresh.metadata["version"],
                                       "sha256": fresh.sha256}, "Release suite changed")
         for row in value["cases"]:
-            _h_require(_h_case_request(root, row)
-                       == fresh.request(fresh.cases[row["case_id"]]), "Release candidate projection changed")
+            from .reliability import _candidate_request_for_plan
+            request = _candidate_request_for_plan(
+                {"candidate_projection": value["release_provenance"]["candidate_projection"]}
+                if _h_is_neutral(value) else {}, fresh, fresh.cases[row["case_id"]])
+            if _h_is_neutral(value):
+                request["schema"] = "benchmark.request/v1"
+            _h_require(_h_case_request(root, row) == request, "Release candidate projection changed")
     return value
 
 
@@ -927,8 +995,13 @@ def _r_bind_dataset(value, root, plan, suite=None):
     _h_require(not plan["runtime_frozen"] and plan["targets"] == ["all"]
                and plan["planned"]["selected_slots"] == plan["planned"]["all_slots"],
                "Release anchor must be a complete preparation-only plan")
+    neutral = _h_is_neutral(value)
+    expected_suite = dict(plan["suite"], id="benchmark") if neutral else plan["suite"]
+    if neutral:
+        _h_require(value["release_provenance"]["candidate_projection"] == plan.get("candidate_projection"),
+                   "Release candidate projection differs from its evaluator plan")
     _h_require(value["base_plan_sha256"] == plan["plan_sha256"]
-               and value["suite"] == plan["suite"] and value["runner_sha256"] == plan["runner_sha256"]
+               and value["suite"] == expected_suite and value["runner_sha256"] == plan["runner_sha256"]
                and value["planned"] == plan["planned"]
                and value["protocol_version"] == plan["reliability"]["protocol_version"],
                "Release binds a different trusted base plan")
@@ -944,18 +1017,25 @@ def _r_bind_dataset(value, root, plan, suite=None):
     _h_require([r["case_id"] for r in value["cases"]] == [r["case_id"] for r in plan["case_index"]],
                "Release candidate inventory changed")
     for row, expected in zip(value["cases"], plan["case_index"]):
+        request = _h_case_request(root, row)
+        request["schema"] = "math-gauge.request/v1"
         _h_require(row["case_version"] == expected["version"]
-                   and row["request_sha256"] == expected["request_sha256"]
+                   and _h_digest(json.dumps(request, ensure_ascii=False, sort_keys=True).encode("utf-8")) == expected["request_sha256"]
                    and row["candidate_message_sha256"] == expected["candidate_message_sha256"],
                    "Release input differs from the trusted base plan")
     if suite is not None:
         fresh = _source_suite(plan, suite)
+        from .reliability import _candidate_request_for_plan
         for row in value["cases"]:
-            _h_require(_h_case_request(root, row)
-                       == fresh.request(fresh.cases[row["case_id"]]), "Release candidate projection changed")
+            request = _h_case_request(root, row)
+            request["schema"] = "math-gauge.request/v1"
+            _h_require(request == _candidate_request_for_plan(plan, fresh, fresh.cases[row["case_id"]]),
+                       "Release candidate projection changed")
 
 
 def _r_template(manifest, *, bound):
+    if not _NEUTRAL_WIRE_ACTIVE and _h_is_neutral(manifest):
+        return _neutral_runtime()._r_template(manifest, bound=bound)
     return {"schema": RELEASE_SUBMISSION, "dataset_sha256": manifest["dataset_sha256"],
             "run_sha256": manifest["run_sha256"] if bound else None,
             "runtime_sha256": manifest["runtime_sha256"], "origin": "fixture", "fixture_only": True,
@@ -967,9 +1047,11 @@ def inspect_release_run(root):
     try:
         root = _h_root(root)
         value = _r_json(_h_file(root, "manifest.json").read_bytes())
+        if not _NEUTRAL_WIRE_ACTIVE and _h_is_neutral(value):
+            return _neutral_runtime().inspect_release_run(root)
         _h_object(value, _RUN_KEYS, "release run manifest")
         _h_require(value["schema"] == RUN_SCHEMA and value["controller_version"] in {
-                       RELEASE_CONTROLLER, SIMPLE_CONTROLLER},
+                       RELEASE_CONTROLLER, SIMPLE_CONTROLLER, COMPACT_CONTROLLER},
                    "Unsupported frozen release run")
         _h_require(_h_hash(value["run_sha256"]) and value["run_sha256"] == _h_identity(
             {k: v for k, v in value.items() if k != "run_sha256"}), "Frozen release run changed")
@@ -1021,6 +1103,8 @@ def inspect_release_run(root):
 
 def freeze_release_runtime(dataset_root, runtime, destination, *, targets=None):
     """Create one new independent run workspace; never modify the download."""
+    if _h_neutral_root(dataset_root):
+        return _neutral_runtime().freeze_release_runtime(dataset_root, runtime, destination, targets=targets)
     root = _h_root(dataset_root)
     dataset = _inspect_release_dataset_contents(root)
     execution = _r_execution(runtime, [c["case_id"] for c in dataset["cases"]])
@@ -1065,6 +1149,8 @@ def freeze_release_runtime(dataset_root, runtime, destination, *, targets=None):
 
 
 def release_candidate_request(root, slot_id, answers=None):
+    if _h_neutral_root(root):
+        return _neutral_runtime().release_candidate_request(root, slot_id, answers)
     manifest = inspect_release_run(root)
     dataset_root = _h_root(root) / "dataset"
     dataset = _inspect_release_dataset_contents(dataset_root)
@@ -1149,6 +1235,7 @@ def _release_controller_main():
 
 def _release_controller_source():
     functions = (execution_context, validate_context_policy, project_followup_prompt,
+                 _h_is_neutral, _h_schema_matches, _h_neutral_root,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
                  _h_root, _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
                  _h_message, _h_case_request, _h_projection, _h_build_request, _execution_projection,
@@ -1160,7 +1247,8 @@ def _release_controller_source():
               'import copy\nimport hashlib\nimport json\nimport math\nimport re\nimport shutil\nimport uuid\n'
               'from datetime import datetime, timezone\nfrom pathlib import Path, PurePosixPath\n\n')
     constants = {"DATASET_SCHEMA": DATASET_SCHEMA, "SIMPLE_DATASET_SCHEMA": SIMPLE_DATASET_SCHEMA,
-                 "SIMPLE_CONTROLLER": SIMPLE_CONTROLLER, "RUN_SCHEMA": RUN_SCHEMA,
+                 "SIMPLE_CONTROLLER": SIMPLE_CONTROLLER, "COMPACT_CONTROLLER": COMPACT_CONTROLLER,
+                 "RUN_SCHEMA": RUN_SCHEMA,
                  "RELEASE_CONTROLLER": RELEASE_CONTROLLER, "RELEASE_SUBMISSION": RELEASE_SUBMISSION,
                  "PARAMETER_NAMES": PARAMETER_NAMES, "_DATASET_KEYS": tuple(sorted(_DATASET_KEYS)),
                  "_SIMPLE_DATASET_KEYS": tuple(sorted(_SIMPLE_DATASET_KEYS)),
@@ -1169,6 +1257,7 @@ def _release_controller_source():
                  "LOCAL_TOOL_IDS": LOCAL_TOOL_IDS, "FOLLOWUP_PROMPT_PROJECTION": FOLLOWUP_PROMPT_PROJECTION,
                  "SOURCE_FOLLOWUP_PERMISSION": SOURCE_FOLLOWUP_PERMISSION,
                  "LOCAL_FOLLOWUP_PERMISSION": LOCAL_FOLLOWUP_PERMISSION}
+    constants["_NEUTRAL_WIRE_ACTIVE"] = False
     return (header + "\n".join(k + " = " + repr(v) for k, v in constants.items()) + "\n\n"
             + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _release_controller_main()\n').encode("utf-8")
@@ -1295,7 +1384,8 @@ def _simple_controller_source():
 
 def validate_release_anchor(value):
     """Read trusted evaluator data; a hash in a returned ZIP cannot replace this anchor."""
-    _h_object(value, {"schema", "base_plan", "expected_dataset_sha256", "release_version", "suite"},
+    keys = {"schema", "base_plan", "expected_dataset_sha256", "release_version", "suite"}
+    _h_object(value, keys | ({"release_provenance"} if "release_provenance" in value else set()),
               "release evaluator anchor")
     _h_require(value["schema"] == RELEASE_ANCHOR and _h_hash(value["expected_dataset_sha256"]),
                "Portable answers require a trusted release evaluator anchor")
@@ -1307,12 +1397,15 @@ def validate_release_anchor(value):
     return plan
 
 
-def make_release_anchor(plan, dataset):
+def make_release_anchor(plan, dataset, *, release_provenance=None):
     value = {"schema": RELEASE_ANCHOR, "base_plan": copy.deepcopy(plan),
              "expected_dataset_sha256": dataset["dataset_sha256"],
-             "release_version": dataset["release_version"], "suite": copy.deepcopy(dataset["suite"])}
+             "release_version": dataset["release_version"], "suite": copy.deepcopy(plan["suite"])}
+    if release_provenance is not None:
+        value["release_provenance"] = copy.deepcopy(release_provenance)
     validate_release_anchor(value)
-    _h_require(dataset["schema"] == SIMPLE_DATASET_SCHEMA and dataset["base_plan_sha256"] == plan["plan_sha256"],
+    _h_require(_h_schema_matches(dataset["schema"], SIMPLE_DATASET_SCHEMA)
+               and dataset["base_plan_sha256"] == plan["plan_sha256"],
                "Dataset does not bind this release evaluator anchor")
     return value
 
@@ -1340,24 +1433,37 @@ def export_simple_release_dataset(plan, suite, destination, *, evaluator_destina
                and not evaluator.is_relative_to(suite.root) and not suite.root.is_relative_to(evaluator),
                "Release, evaluator and suite directories must be separate")
     projection, expanded = _projection(plan, suite, ["all"])
-    contents = {"README.md": readme, "tools/benchmark.py": _simple_controller_source(), **extra_files}
+    neutral = "candidate_projection" in plan
+    contents = {"README.md": readme, "tools/benchmark.py": (
+        _neutral_controller_source() if neutral else _simple_controller_source()), **extra_files}
     cases = []
     for row in projection["cases"]:
-        request = suite.request(suite.cases[row["case_id"]])
+        from .reliability import _candidate_request_for_plan
+        request = _candidate_request_for_plan(plan, suite, suite.cases[row["case_id"]])
         case = {key: copy.deepcopy(row[key]) for key in (
             "case_id", "case_version", "request_sha256", "candidate_message_sha256", "task_path", "files")}
         case.update(track=request["track"], instruction=request["instruction"])
+        if neutral:
+            request["schema"] = "benchmark.request/v1"
+            case["request_sha256"] = _h_digest(json.dumps(
+                request, ensure_ascii=False, sort_keys=True).encode("utf-8"))
         cases.append(case)
         for name in [case["task_path"], *(item["path"] for item in case["files"])]:
             contents[name] = expanded[name]
     keys = ("suite", "runner_sha256", "protocol_version", "planned", "exported_slots",
             "selected_slot_ids", "slots", "prompts")
     manifest = {key: projection[key] for key in keys}
-    manifest.update(schema=SIMPLE_DATASET_SCHEMA, controller_version=SIMPLE_CONTROLLER,
+    manifest.update(schema=SIMPLE_DATASET_SCHEMA,
+                    controller_version=(COMPACT_CONTROLLER if manifest["protocol_version"] == "0.2.0"
+                                        else SIMPLE_CONTROLLER),
                     release_version=release_version, release_provenance=copy.deepcopy(release_provenance),
                     base_plan_sha256=plan["plan_sha256"], cases=cases,
                     target_slot_ids={t: [s["slot_id"] for s in select_slots(plan, [t])] for t in _RELEASE_TARGETS},
                     files_sha256={name: digest_bytes(raw) for name, raw in sorted(contents.items())})
+    if neutral:
+        manifest["schema"] = manifest["schema"].replace("math-gauge.", "benchmark.")
+        manifest["controller_version"] = manifest["controller_version"].replace("math-gauge.", "benchmark.")
+        manifest["suite"] = dict(manifest["suite"], id="benchmark")
     manifest["dataset_sha256"] = identity(manifest)
     created = []
     try:

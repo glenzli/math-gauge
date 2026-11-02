@@ -30,11 +30,11 @@ class ReliabilityMaterialsTests(unittest.TestCase):
         before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths}
         report = V.validate_materials()
         self.assertTrue(report["passed"])
-        self.assertEqual(report["candidate_projections"], 43)
-        self.assertEqual(report["dependent_review_obligations"], 372)
-        self.assertEqual(report["frozen_followup_messages"], 48)
-        self.assertEqual(report["planned_slots_per_model"], 177)
-        self.assertEqual(report["isolated_followup_history_edges"], 48)
+        self.assertEqual(report["candidate_projections"], 32)
+        self.assertEqual(report["dependent_review_obligations"], 306)
+        self.assertEqual(report["frozen_followup_messages"], 36)
+        self.assertEqual(report["planned_slots_per_model"], 80)
+        self.assertEqual(report["isolated_followup_history_edges"], 36)
         self.assertEqual(report["candidate_model_calls"], 0)
         self.assertEqual(report["lean_compilations"], 0)
         self.assertFalse(report["human_approved"])
@@ -197,10 +197,10 @@ class ReliabilityMaterialsTests(unittest.TestCase):
             packet = root/V.PACKET
             shutil.copytree(PACKET, packet)
             before = {p.name: p.read_bytes() for p in packet.glob('*.*')}
-            # GR001 is not one of the eight selected self-check targets.
+            # GR001 is not one of the six selected self-check targets.
             for name in ('task.md', 'reference.md', 'contract.json'):
                 with self.subTest(name=name):
-                    path = root/'cases/proofs/MG-GR001'/name
+                    path = root/'cases/reserve/proofs/MG-GR001'/name
                     original = path.read_bytes()
                     if name == 'contract.json':
                         changed = json.loads(original)

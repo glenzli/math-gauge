@@ -14,7 +14,8 @@ import time
 import uuid
 from pathlib import Path
 
-from .benchmarks import case_approval_sources, identity, select_slots, validate_plan
+from .benchmarks import (case_approval_sources, identity, independent_attempts,
+                         select_slots, validate_plan)
 from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
                       validate_group_contract, write_json)
 from .execution import extract_candidate_lean, invoke_conversation, now, runner_fingerprint
@@ -66,14 +67,16 @@ def _validate_schedule(plan):
     rows = plan["slots"]
     case_ids = [x["case_id"] for x in plan["case_index"]]
     focus_ids = [x["case_id"] for x in plan["reliability"]["selection"]["cases"]]
-    expected = {f"{cid}:A{i}" for cid in case_ids for i in (1, 2, 3)}
+    attempts = independent_attempts(plan["profile"]["data"], case_ids)
+    independent = {f"{cid}:{label}" for cid in case_ids for label in attempts[cid]}
+    expected = set(independent)
     expected |= {f"{cid}:{arm}:{rnd}" for cid in focus_ids
                  for arm in ("neutral", "affirm", "deny") for rnd in (1, 2)}
     if len(rows) != len(expected) or {r["slot_id"] for r in rows} != expected:
         raise ValueError("Reliability plan must retain its complete fixed denominator")
     prompts = plan["reliability"]["prompts"]["messages"]
     messages = {p["message_id"]: p for p in prompts}
-    wanted_messages = expected - {f"{cid}:A{i}" for cid in case_ids for i in (1, 2, 3)}
+    wanted_messages = expected - independent
     if len(messages) != len(prompts) or set(messages) != wanted_messages:
         raise ValueError("Frozen followup prompt coverage changed")
     earlier = set()
@@ -115,7 +118,7 @@ def _bind_suite(plan, suite):
         if (row["case_approved"] != (source["status"] == "approved" and source["human_review"] == "approved")
                 or row.get("case_approval_source", source) != source):
             raise ValueError("Reliability case approval differs from its actual suite source")
-        request = suite.request(case)
+        request = _candidate_request_for_plan(plan, suite, case)
         contract_raw = safe_file(suite.root, case["group_contract"]).read_bytes()
         contract = validate_group_contract(json.loads(contract_raw))
         stages = [{"stage_id": s["id"], "points": s["points"], "lean_required": s["lean_required"]}
@@ -125,6 +128,17 @@ def _bind_suite(plan, suite):
                 or digest_bytes(contract_raw) != row["group_contract_sha256"]
                 or stages != row["stages"] or sum(s["points"] for s in stages) != row["total_weight"]):
             raise ValueError("Reliability case input, contract or stage weight changed")
+
+
+def _candidate_request_for_plan(plan, suite, case):
+    """Apply only a declared release projection; canonical suite files stay intact."""
+    request = suite.request(case)
+    if "candidate_projection" in plan:
+        from .release_projection import CANDIDATE_PROJECTION, project_candidate_request
+        if plan["candidate_projection"] != CANDIDATE_PROJECTION:
+            raise ValueError("Unknown candidate release projection")
+        request = project_candidate_request(request)
+    return request
 
 
 def _parameters(runtime):
@@ -362,6 +376,14 @@ def _freeze_inputs(plan, suite, dest):
     for case in plan["case_index"]:
         cid = case["case_id"]
         request = suite.prepare(suite.cases[cid], dest / "inputs" / cid / "solver")
+        if "candidate_projection" in plan:
+            request = _candidate_request_for_plan(plan, suite, suite.cases[cid])
+            solver = dest / "inputs" / cid / "solver"
+            write_json(solver / "request.json", request)
+            prompt = (request["instruction"] + "\n\n" if request["instruction"] else "") + request["task"]
+            (solver / "prompt.md").write_bytes(prompt.encode("utf-8"))
+            for item in request["files"]:
+                (solver / item["name"]).write_bytes(item["content"].encode("utf-8"))
         if _request_hash(request) != case["request_sha256"]:
             raise ValueError("Candidate preparation changed the frozen request")
         prompt_path = dest / "inputs" / cid / "solver" / "prompt.md"

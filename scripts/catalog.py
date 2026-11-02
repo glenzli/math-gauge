@@ -22,7 +22,8 @@ DOCUMENT = "cases/by-focus.md"
 INDEX = "cases/README.md"
 OUTPUTS = (CATALOG, DOCUMENT, INDEX)
 FOCUS_IDS = tuple(f"F{n:02}" for n in range(1, 10))
-SUITE_ROOTS = ("cases",)
+SUITES = (("default", "cases/suite.json"), ("reserve", "cases/reserve-suite.json"))
+SUITE_ROOTS = tuple(manifest for _, manifest in SUITES)
 CATEGORIES = (
     ("proofs", "书面证明、反例与构造", 29),
     ("lean-audit", "Lean 语义审计", 6),
@@ -145,46 +146,52 @@ def validate_assignment(assignment: dict, source: dict) -> None:
 
 def load_sources(root: Path, taxonomy: dict) -> tuple[list, dict]:
     declared = taxonomy.get("source_suites", [])
-    require([item.get("root") for item in declared] == list(SUITE_ROOTS),
-            "The catalog must use the single canonical cases suite")
-    suite = Suite.load(root / "cases")
-    summary = {"root": "cases", "id": suite.metadata["id"],
-               "version": suite.metadata["version"], "suite_sha256": suite.sha256,
-               "paper_count": len(suite.cases)}
-    require(declared == [summary], "cases: suite drift; review before rebinding")
+    suites = [(membership, manifest, Suite.load(root / manifest))
+              for membership, manifest in SUITES]
+    summaries = [{"root": "cases", "manifest": manifest, "membership": membership,
+                  "id": suite.metadata["id"], "version": suite.metadata["version"],
+                  "suite_sha256": suite.sha256, "paper_count": len(suite.cases)}
+                 for membership, manifest, suite in suites]
+    require(declared == summaries, "cases: suite drift; review before rebinding")
+    require(not (set(suites[0][2].cases) & set(suites[1][2].cases)),
+            "Default and reserve suites must not overlap")
     sources = {}
-    for manifest in suite.metadata["cases"]:
-        case_path = f"cases/{manifest}"
-        raw = json.loads(local_file(root, case_path).read_text())
-        cid = raw["id"]
-        case = suite.cases[cid]  # Shared runner resolves case-relative manifests.
-        category = Path(manifest).parts[0]
-        require(category in {item[0] for item in CATEGORIES}, f"{cid}: unknown category")
-        require(raw.get("path_base") == "case", f"{cid}: case-relative paths required")
-        paths = {"case": case_path, "task": f"cases/{case['task']}",
-                 "contract": f"cases/{case['group_contract']}"}
-        contract = json.loads(local_file(root, paths["contract"]).read_text())
-        source = {"case": case, "contract": contract, "paths": paths,
-                  "category": category, "suite_root": "cases", "suite_sha256": suite.sha256,
-                  "source_bindings": {name: digest(local_file(root, name)) for name in paths.values()},
-                  "headings": stage_headings(local_file(root, paths["task"]))}
-        if contract["kind"] == "chapter_formalization":
-            source["obligations_path"] = str(Path(case_path).parent / "candidate/obligations.json")
-            path = local_file(root, source["obligations_path"])
-            obligations = json.loads(path.read_text())
-            public_ids = [item["id"] for item in obligations["obligations"]]
-            contract_ids = [item["id"] for item in contract["stages"]]
-            require(obligations["case_id"] == cid and obligations["version"] == case["version"]
-                    and len(public_ids) == len(set(public_ids)) and set(public_ids) == set(contract_ids),
-                    f"{cid}: public obligation coverage drift")
-            source["source_bindings"][source["obligations_path"]] = digest(path)
-        inputs = {paths["task"]} | {f"cases/{item['source']}" for item in case["solver_files"]}
-        require(not inputs & FOCUS_FILES, f"{cid}: focus data entered candidate inputs")
-        request = suite.request(case)
-        encoded = json.dumps(request, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
-        source["candidate_projection_sha256"] = hashlib.sha256(encoded).hexdigest()
-        sources[cid] = source
-    return [summary], sources
+    for membership, suite_manifest, suite in suites:
+        for manifest in suite.metadata["cases"]:
+            case_path = f"cases/{manifest}"
+            raw = json.loads(local_file(root, case_path).read_text())
+            cid = raw["id"]
+            case = suite.cases[cid]  # Shared runner resolves case-relative manifests.
+            category = Path(manifest).parent.parent.name
+            require(category in {item[0] for item in CATEGORIES}, f"{cid}: unknown category")
+            expected_path = (Path("reserve") if membership == "reserve" else Path()) / category / cid / "case.json"
+            require(Path(manifest) == expected_path, f"{cid}: suite membership and directory differ")
+            require(raw.get("path_base") == "case", f"{cid}: case-relative paths required")
+            paths = {"case": case_path, "task": f"cases/{case['task']}",
+                     "contract": f"cases/{case['group_contract']}"}
+            contract = json.loads(local_file(root, paths["contract"]).read_text())
+            source = {"case": case, "contract": contract, "paths": paths,
+                      "category": category, "suite_root": "cases", "suite_sha256": suite.sha256,
+                      "membership": membership, "suite_manifest": suite_manifest,
+                      "source_bindings": {name: digest(local_file(root, name)) for name in paths.values()},
+                      "headings": stage_headings(local_file(root, paths["task"]))}
+            if contract["kind"] == "chapter_formalization":
+                source["obligations_path"] = str(Path(case_path).parent / "candidate/obligations.json")
+                path = local_file(root, source["obligations_path"])
+                obligations = json.loads(path.read_text())
+                public_ids = [item["id"] for item in obligations["obligations"]]
+                contract_ids = [item["id"] for item in contract["stages"]]
+                require(obligations["case_id"] == cid and obligations["version"] == case["version"]
+                        and len(public_ids) == len(set(public_ids)) and set(public_ids) == set(contract_ids),
+                        f"{cid}: public obligation coverage drift")
+                source["source_bindings"][source["obligations_path"]] = digest(path)
+            inputs = {paths["task"]} | {f"cases/{item['source']}" for item in case["solver_files"]}
+            require(not inputs & FOCUS_FILES, f"{cid}: focus data entered candidate inputs")
+            request = suite.request(case)
+            encoded = json.dumps(request, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
+            source["candidate_projection_sha256"] = hashlib.sha256(encoded).hexdigest()
+            sources[cid] = source
+    return summaries, sources
 
 
 def render_document(catalog: dict, taxonomy: dict) -> str:
@@ -194,7 +201,7 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
     lines = [
         "# 按考察重点选卷",
         "",
-        "本目录覆盖当前43份试卷：41份递进题组含246阶段，另2份整章试卷各含34/92项义务。每份完整试卷是一个样本，阶段与义务不能当作独立试题。",
+        "本目录覆盖完整43卷题库，逐卷标明默认32卷与后备11卷。默认集含180递进阶段及126章节义务，共306项；后备集含66阶段。每份完整试卷是一个样本，阶段与义务不能当作独立试题。",
         "",
         "分类是AI审查建议；源题全部仍为 **draft / human pending**。本目录不产生模型调用、数学裁定或新增判卷要求，也不证明作者或候选Lean覆盖。完整要求以唯一题面和合同为准。",
         "",
@@ -224,7 +231,7 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
                 for tag in entry["focus"]
                 if tag["focus_id"] == fid and tag["role"] == role
             ]
-            lines += ["", f"### {label} · {len(selected)}卷", "", "| 试卷 | 版本与规模 | 实际阶段或义务证据 |", "| --- | --- | --- |"]
+            lines += ["", f"### {label} · {len(selected)}卷（完整题库）", "", "| 试卷 | 成员 | 版本与规模 | 实际阶段或义务证据 |", "| --- | --- | --- | --- |"]
             for entry, tag in selected:
                 unit = "义务" if entry["kind"] == "chapter_formalization" else "阶段"
                 evidence = "；".join(
@@ -234,7 +241,7 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
                 title = link(f"{entry['case_id']} · {entry['title']}", entry["paths"]["task"])
                 contract = link("合同", entry["paths"]["contract"])
                 lines.append(
-                    f"| {title} · {contract} | {entry['version']} · "
+                    f"| {title} · {contract} | {'默认' if entry['membership'] == 'default' else '后备'} | {entry['version']} · "
                     f"{entry['stage_count']}{unit} | {evidence} |"
                 )
     lines += [
@@ -249,25 +256,28 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
 
 def render_index(catalog: dict) -> str:
     lines = ["# 当前试卷", "",
-             "唯一题集为 `cases/suite.json`，是含43份完整试卷的公开开发题集（public development suite）。每组或每章是一份相关样本；246阶段与126项章节义务合计372项审核义务，不能记作372道独立题。", "",
-             "材料已具数学参考、逐项判准、来源及AI审核记录；全部为 **draft / human pending**。`draft` 是待人工审定的生命周期状态。当前没有候选模型答卷或通过率。", "",
+             "默认题集 `cases/suite.json` 含32份完整试卷、306项相关审核义务，按下方四类交付整理。另11份备选卷、66项义务独立存放在 [`reserve/`](reserve/README.md)，由 `cases/reserve-suite.json` 显式选择。两者不重叠，合为原43卷/372项公开开发题库；数学材料原样保留。每组或每章是一份相关样本，义务数不能当作独立试题数。", "",
+             "材料已具数学参考、逐项判准、来源及AI审核记录；全部为 **draft / human pending**。旧43卷/177槽Terra试跑已有[暂定结果](../docs/terra-pilot-2026-11-02.md)；新版32卷/80槽尚未运行。详见[选卷说明](../docs/selection-v0.3.0.md)。", "",
              "题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。", "",
              "[按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)"]
     for category in catalog["categories"]:
-        lines += ["", f"## {category['label']} · {category['count']}份", "",
+        lines += ["", f"## {category['label']} · {category['default_count']}份", "",
                   "| 试卷 | 任务 | 必答规模 | 完整材料 |", "| --- | --- | ---: | --- |"]
         for entry in catalog["entries"]:
-            if entry["category"] != category["id"]:
+            if entry["category"] != category["id"] or entry["membership"] != "default":
                 continue
             paths = entry["paths"]
             task = os.path.relpath(paths["task"], "cases")
             folder = os.path.relpath(str(Path(paths["case"]).parent), "cases")
             unit = "义务" if entry["kind"] == "chapter_formalization" else "阶段"
-            lines.append(f"| [{entry['case_id']} · {entry['title']}]({task}) | {entry['task_kind']} | "
+            lines.append(f"| [{entry['case_id']} · {entry['title']}]({task}) | "
+                         f"{entry['task_kind']} | "
                          f"{entry['stage_count']}{unit} | [合同]({folder}/contract.json) · "
                          f"[参考]({folder}/reference.md) · [评分]({folder}/rubric.json) · "
                          f"[题包复核]({folder}/review.json) · [作者Lean]({folder}/formal/COVERAGE.md) |")
-    lines += ["", "所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。", ""]
+    lines += ["", "## 备选卷 · 11份", "",
+              "[备选目录、主题分类与完整材料](reserve/README.md)集中列出全部11份书面卷。备选身份是选卷安排，`proofs` 是交付类型；备选卷不进入默认32题题包或80槽计划。显式调用与保留理由见备选目录。", "",
+              "所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。", ""]
     return "\n".join(lines)
 
 
@@ -308,6 +318,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
             "stage_count": len(contract["stages"]),
             "stage_ids": [stage["id"] for stage in contract["stages"]],
             "suite_root": source["suite_root"], "suite_sha256": source["suite_sha256"],
+            "suite_manifest": source["suite_manifest"], "membership": source["membership"],
             "paths": source["paths"], "original_sha256": source["source_bindings"],
             "candidate_projection_sha256": source["candidate_projection_sha256"],
             "status": case["status"], "source_review": case["review"],
@@ -317,7 +328,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     progressive = [entry for entry in entries if entry["kind"] == "progressive"]
     chapters = [entry for entry in entries if entry["kind"] == "chapter_formalization"]
     scope = {
-        "id": "current-benchmark", "paper_count": len(entries),
+        "id": "complete-case-bank", "paper_count": len(entries),
         "progressive_papers": len(progressive),
         "progressive_stages": sum(entry["stage_count"] for entry in progressive),
         "chapter_papers": len(chapters),
@@ -336,14 +347,20 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         "taxonomy": TAXONOMY, "taxonomy_sha256": hashlib.sha256(raw).hexdigest(),
         "scope": scope,
         "counts": {
-            "papers": len(entries), "progressive_stages": scope["progressive_stages"],
+            "papers": len(entries), "default_papers": 32, "reserve_papers": 11,
+            "default_obligations": sum(e["stage_count"] for e in entries if e["membership"] == "default"),
+            "reserve_obligations": sum(e["stage_count"] for e in entries if e["membership"] == "reserve"),
+            "progressive_stages": scope["progressive_stages"],
             "chapter_obligations": sum(scope["chapter_obligations"].values()),
             "source_human_approved": sum(entry["source_review"]["human"] == "approved" for entry in entries),
             "model_calls_by_indexer": 0,
         },
-        "suites": [dict(item, cases=sorted(sources)) for item in suites],
+        "suites": [dict(item, cases=sorted(cid for cid, source in sources.items()
+                                         if source["membership"] == item["membership"])) for item in suites],
         "categories": [{"id": cid, "label": label, "suite": "cases",
                         "count": sum(entry["category"] == cid for entry in entries),
+                        "default_count": sum(entry["category"] == cid and entry["membership"] == "default" for entry in entries),
+                        "reserve_count": sum(entry["category"] == cid and entry["membership"] == "reserve" for entry in entries),
                         "case_ids": [entry["case_id"] for entry in entries if entry["category"] == cid]}
                        for cid, label, expected in CATEGORIES],
         "focus_counts": {fid: {"primary_papers": primary[fid], "all_tagged_papers": tagged[fid]} for fid in FOCUS_IDS},
@@ -358,6 +375,10 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     }
     require([item["count"] for item in catalog["categories"]] == [item[2] for item in CATEGORIES],
             "Category counts drift")
+    require([item["paper_count"] for item in suites] == [32, 11]
+            and catalog["counts"]["default_obligations"] == 306
+            and catalog["counts"]["reserve_obligations"] == 66,
+            "Default/reserve membership counts drift")
     document = render_document(catalog, taxonomy)
     generated = {(root / name).resolve() for name in OUTPUTS}
     for target in re.findall(r"\]\(([^)]+)\)", document):

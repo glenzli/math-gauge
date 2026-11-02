@@ -21,7 +21,7 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 LEGACY_VERSION = "0.1.0"
 ARCHIVE_SCHEMA = "math-gauge.release-archive/v1"
 PROVENANCE_SCHEMA = "math-gauge.release-provenance/v2"
@@ -110,10 +110,11 @@ def load_config(root=ROOT, version=VERSION):
     _require(set(config) == {"schema", "release_version", "suite_version", "repository",
                             "case_count", "slot_count", "plan_id", "created_at",
                             "readme", "third_party_notices"}
-             and config["schema"] in {"math-gauge.release-config/v1", "math-gauge.release-config/v2"}
+             and config["schema"] in {"math-gauge.release-config/v1", "math-gauge.release-config/v2",
+                                      "math-gauge.release-config/v3"}
              and config["release_version"] == version,
              "Unsupported release configuration")
-    if config["schema"] == "math-gauge.release-config/v2":
+    if config["schema"] != "math-gauge.release-config/v1":
         _require(config["release_version"] == config["suite_version"],
                  "Release version must equal the suite version")
     _require(type(config["case_count"]) is int and config["case_count"] > 0
@@ -139,6 +140,14 @@ def release_plan(root=ROOT, version=VERSION):
              and len(suite.cases) == config["case_count"], "Release suite changed")
     profile = BenchmarkProfile.load(root / "protocol/benchmark-profile.json", suite)
     plan = build_plan(profile, suite, ["all"])
+    if config["schema"] == "math-gauge.release-config/v3":
+        from math_gauge.catalog import candidate_message
+        from math_gauge.release_projection import CANDIDATE_PROJECTION, project_candidate_request
+        plan["candidate_projection"] = CANDIDATE_PROJECTION
+        for row in plan["case_index"]:
+            request = project_candidate_request(suite.request(suite.cases[row["case_id"]]))
+            row["request_sha256"] = _digest(json.dumps(request, ensure_ascii=False, sort_keys=True).encode("utf-8"))
+            row["candidate_message_sha256"] = _digest(candidate_message(request).encode("utf-8"))
     # These identify release preparation, never an actual candidate execution.
     plan["plan_id"] = config["plan_id"]
     plan["created_at"] = config["created_at"]
@@ -388,7 +397,7 @@ def _build_legacy_release(destination, *, source_commit, root=ROOT, version=LEGA
         raise
 
 
-def _simple_input_bindings(root, suite):
+def _simple_input_bindings(root, suite, *, projection=None):
     bindings = []
     for cid, case in suite.cases.items():
         pairs = [(case["task"], f"cases/{cid}/task.md")]
@@ -396,8 +405,14 @@ def _simple_input_bindings(root, suite):
                   for item in case["solver_files"]]
         for name, target in pairs:
             path = _file(suite.root, name)
-            bindings.append({"source": path.relative_to(root).as_posix(),
-                             "path": target, "sha256": _digest(path.read_bytes())})
+            binding = {"source": path.relative_to(root).as_posix(),
+                       "path": target, "sha256": _digest(path.read_bytes())}
+            if projection is not None:
+                from math_gauge.release_projection import CANDIDATE_PROJECTION, project_candidate_text
+                _require(projection == CANDIDATE_PROJECTION, "Unknown release candidate projection")
+                binding["projected_sha256"] = _digest(project_candidate_text(
+                    Path(target).name, path.read_bytes().decode("utf-8")).encode("utf-8"))
+            bindings.append(binding)
     return sorted(bindings, key=lambda binding: (binding["path"], binding["source"]))
 
 
@@ -429,8 +444,44 @@ def _preview_source(root, config):
     return {"repository": repository, "parent_commit": parent}
 
 
+def _public_provenance(provenance, plan):
+    """Keep source paths, repository and source revision on the evaluator side."""
+    if "candidate_projection" not in plan:
+        return provenance
+    source = provenance["source"]
+    return {"schema": "benchmark.release-provenance/v1", "kind": provenance["kind"],
+            "candidate_projection": plan["candidate_projection"],
+            "source_sha256": source["source_sha256"],
+            "source_revision_sha256": _digest(source.get("commit", source.get("parent_commit")).encode("ascii")),
+            "input_bindings": [{"path": b["path"], "sha256": b["projected_sha256"]}
+                               for b in provenance["input_bindings"]]}
+
+
 def _check_simple_provenance(manifest, files, config, source_commit=None):
     provenance = manifest.get("release_provenance")
+    if config["schema"] == "math-gauge.release-config/v3":
+        from math_gauge.release_projection import CANDIDATE_PROJECTION
+        _require(isinstance(provenance, dict) and set(provenance) == {
+            "schema", "kind", "candidate_projection", "source_sha256", "source_revision_sha256", "input_bindings"}
+            and provenance["schema"] == "benchmark.release-provenance/v1"
+            and provenance["candidate_projection"] == CANDIDATE_PROJECTION
+            and provenance["kind"] in {"local_preview", "clean_source"},
+            "Missing or unsupported neutral release provenance")
+        _require(all(isinstance(provenance[k], str) and re.fullmatch(r"[0-9a-f]{64}", provenance[k])
+                     for k in ("source_sha256", "source_revision_sha256")), "Invalid opaque source identity")
+        if source_commit is not None:
+            _require(provenance["kind"] == "clean_source", "Local preview has a parent commit, not an exact source commit")
+            _require(provenance["source_revision_sha256"] == _digest(source_commit.encode("ascii")),
+                     "Release source commit differs from the expected commit")
+        expected = {case["task_path"] for case in manifest["cases"]}
+        expected.update(item["path"] for case in manifest["cases"] for item in case["files"])
+        bindings = provenance["input_bindings"]
+        _require(isinstance(bindings, list) and len(bindings) == len(expected)
+                 and all(isinstance(b, dict) and set(b) == {"path", "sha256"} for b in bindings)
+                 and {b["path"] for b in bindings} == expected
+                 and all(b["sha256"] == _digest(files[b["path"]]) for b in bindings),
+                 "Incomplete original projected input hash bindings")
+        return provenance
     _require(isinstance(provenance, dict)
              and set(provenance) == {"schema", "kind", "source", "input_bindings", "source_files_sha256"}
              and provenance["schema"] == PROVENANCE_SCHEMA
@@ -485,7 +536,9 @@ def _check_simple_provenance(manifest, files, config, source_commit=None):
 
 
 def _check_simple_contents(manifest, files, config, source_commit=None):
-    _require(manifest.get("schema") == "math-gauge.release-dataset/v2"
+    expected_schema = ("benchmark.release-dataset/v2" if config["schema"] == "math-gauge.release-config/v3"
+                       else "math-gauge.release-dataset/v2")
+    _require(manifest.get("schema") == expected_schema
              and manifest.get("release_version") == config["release_version"]
              == config["suite_version"] == manifest.get("suite", {}).get("version"),
              "Release version must equal the suite version")
@@ -500,6 +553,12 @@ def _check_simple_contents(manifest, files, config, source_commit=None):
     for name, digest in manifest["files_sha256"].items():
         _relative(name)
         _require(_digest(files[name]) == digest, "Release content changed: " + name)
+    if config["schema"] == "math-gauge.release-config/v3":
+        for name, raw in files.items():
+            surface = name.encode("utf-8").lower() + b"\n" + raw.lower()
+            _require(not any(marker in surface for marker in (
+                b"math-gauge", b"math_gauge", b"mathgauge", b"math gauge", b"github.com")),
+                "Neutral release contains a source identity marker: " + name)
     _check_simple_provenance(manifest, files, config, source_commit)
 
 
@@ -514,7 +573,7 @@ def package_simple_dataset(dataset_root, archive, *, config, plan=None, suite=No
     _check_simple_contents(manifest, files, config)
     archive = _real_path(archive)
     _require(not archive.exists(), "Release archives cannot be overwritten")
-    prefix = f"math-gauge-v{config['release_version']}/"
+    prefix = ("benchmark" if config["schema"] == "math-gauge.release-config/v3" else "math-gauge") + f"-v{config['release_version']}/"
     with zipfile.ZipFile(archive, "x", compression=zipfile.ZIP_STORED) as output:
         for name, raw in sorted(files.items()):
             _relative(name)
@@ -539,17 +598,19 @@ def check_release_archive(archive, *, checksums=None, version=None, source_commi
         roots = {_relative(member.filename).parts[0] for member in source.infolist()}
     _require(len(roots) == 1, "Unexpected release archive root")
     top = next(iter(roots))
-    matched = re.fullmatch(r"math-gauge-(tasks-)?v(\d+\.\d+\.\d+)", top)
+    matched = re.fullmatch(r"(math-gauge-tasks|math-gauge|benchmark)-v(\d+\.\d+\.\d+)", top)
     _require(matched is not None, "Unexpected release archive root")
     detected_version = matched.group(2)
     _require(version is None or version == detected_version,
              "Release archive version differs from the expected version")
     version = detected_version
     config = load_config(version=version)
-    if matched.group(1):
+    if matched.group(1) == "math-gauge-tasks":
         _require(config["schema"] == "math-gauge.release-config/v1", "Unexpected legacy archive version")
         return _check_legacy_release_archive(archive, version=version, source_commit=source_commit)
-    _require(config["schema"] == "math-gauge.release-config/v2", "Unexpected simple archive version")
+    _require(config["schema"] in {"math-gauge.release-config/v2", "math-gauge.release-config/v3"}
+             and (matched.group(1) == "benchmark") == (config["schema"] == "math-gauge.release-config/v3"),
+             "Unexpected simple archive version")
     files = _archive_files(archive, top + "/")
     _require("manifest.json" in files, "Missing release dataset manifest")
     try:
@@ -580,7 +641,7 @@ def build_release(destination, *, source_commit=None, local_preview=False, root=
              "Local previews use actual source hashes; do not supply a source commit")
     source = _preview_source(root, config) if local_preview else source_identity(root, source_commit, config)
     plan, suite = release_plan(root, version)
-    bindings = _simple_input_bindings(root, suite)
+    bindings = _simple_input_bindings(root, suite, projection=plan.get("candidate_projection"))
     hashes = _release_source_files(root, config, bindings)
     source["source_sha256"] = _source_digest(hashes, plan["suite"], plan["plan_sha256"])
     provenance = {"schema": PROVENANCE_SCHEMA,
@@ -598,17 +659,19 @@ def build_release(destination, *, source_commit=None, local_preview=False, root=
                 readme=_file(root, config["readme"]).read_bytes(),
                 extra_files={"LICENSE": _file(root, "LICENSE").read_bytes(),
                              "THIRD_PARTY_NOTICES.md": _file(root, config["third_party_notices"]).read_bytes()},
-                release_provenance=provenance)
-            archive = destination / f"math-gauge-v{version}.zip"
+                release_provenance=_public_provenance(provenance, plan))
+            prefix = "benchmark" if config["schema"] == "math-gauge.release-config/v3" else "math-gauge"
+            archive = destination / f"{prefix}-v{version}.zip"
             manifest = package_simple_dataset(dataset_root, archive, config=config, plan=plan, suite=suite)
         checksum = destination / "SHA256SUMS"
         checksum.write_bytes(f"{_digest(archive.read_bytes())}  {archive.name}\n".encode("ascii"))
         evaluator_plan = destination / "evaluator-plan.json"
-        evaluator_plan.write_bytes(_json_bytes(make_release_anchor(plan, dataset)))
+        evaluator_plan.write_bytes(_json_bytes(make_release_anchor(plan, dataset,
+            release_provenance=provenance if "candidate_projection" in plan else None)))
         check_release_archive(archive, checksums=checksum, version=version,
                               source_commit=None if local_preview else source_commit)
         final_plan, final_suite = release_plan(root, version)
-        final_bindings = _simple_input_bindings(root, final_suite)
+        final_bindings = _simple_input_bindings(root, final_suite, projection=final_plan.get("candidate_projection"))
         _require(config == load_config(root, version) and final_plan == plan
                  and final_bindings == bindings
                  and _release_source_files(root, config, final_bindings) == hashes,

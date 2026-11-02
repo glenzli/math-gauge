@@ -8,6 +8,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from benchmark_fixtures import legacy_suite, legacy_root
+
 from math_gauge.benchmarks import identity, read_plan
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
 from math_gauge.cli import main
@@ -47,8 +49,8 @@ class HarnessCliTests(unittest.TestCase):
         return output
 
     def export(self, *, frozen=True, extra=None):
-        arguments = ["benchmark-export", "--suite", str(ROOT / "cases"),
-                     "--profile", str(ROOT / "protocol/benchmark-profile.json"),
+        arguments = ["benchmark-export", "--suite", str(legacy_suite().root),
+                     "--profile", str(legacy_root() / "protocol/benchmark-profile.json"),
                      "--target", "lean-audit", "--out", str(self.bundle)]
         if frozen:
             runtime = self.root / "runtime.json"
@@ -82,7 +84,7 @@ class HarnessCliTests(unittest.TestCase):
 
     def import_arguments(self, submission, output):
         return ["benchmark-import", "--bundle", str(self.bundle), "--input", str(submission),
-                "--plan", str(self.evaluator / "plan.json"), "--suite", str(ROOT / "cases"),
+                "--plan", str(self.evaluator / "plan.json"), "--suite", str(legacy_suite().root),
                 "--out", str(output)]
 
     def test_one_command_preparation_and_read_only_check_do_not_need_runtime(self):
@@ -96,7 +98,7 @@ class HarnessCliTests(unittest.TestCase):
         paths = [p for root in (self.bundle, self.evaluator) for p in root.rglob("*") if p.is_file()]
         before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in paths}
         for extra in ([], ["--plan", str(self.evaluator / "plan.json"),
-                           "--suite", str(ROOT / "cases")]):
+                           "--suite", str(legacy_suite().root)]):
             checked = json.loads(self.succeed(["benchmark-export-check", "--bundle", str(self.bundle), *extra]))
             self.assertEqual(checked["bundle_sha256"], summary["bundle_sha256"])
             self.assertTrue(checked["preparation_only"])
@@ -106,14 +108,14 @@ class HarnessCliTests(unittest.TestCase):
         runtime_path = self.root / "runtime.json"
         write_json(runtime_path, RUNTIME)
         plan_path = self.root / "full-plan.json"
-        self.succeed(["benchmark-plan", "--suite", str(ROOT / "cases"),
-                      "--profile", str(ROOT / "protocol/benchmark-profile.json"),
+        self.succeed(["benchmark-plan", "--suite", str(legacy_suite().root),
+                      "--profile", str(legacy_root() / "protocol/benchmark-profile.json"),
                       "--target", "all", "--runtime", str(runtime_path), "--out", str(plan_path)])
         before = plan_path.read_bytes()
         second_bundle = self.root / "second-bundle"
         second_evaluator = self.root / "operator-only"
         output = json.loads(self.succeed([
-            "benchmark-export", "--plan", str(plan_path), "--suite", str(ROOT / "cases"),
+            "benchmark-export", "--plan", str(plan_path), "--suite", str(legacy_suite().root),
             "--target", "lean-audit", "--out", str(second_bundle),
             "--evaluator-out", str(second_evaluator)]))
         self.assertEqual(output["plan_sha256"], read_plan(plan_path)["plan_sha256"])
@@ -124,7 +126,7 @@ class HarnessCliTests(unittest.TestCase):
         self.assertEqual(read_plan(second_evaluator / "plan.json")["plan_sha256"], output["plan_sha256"])
         invalid = self.root / "invalid"
         result, _, errors = self.invoke([
-            "benchmark-export", "--plan", str(plan_path), "--profile", str(ROOT / "protocol/benchmark-profile.json"),
+            "benchmark-export", "--plan", str(plan_path), "--profile", str(legacy_root() / "protocol/benchmark-profile.json"),
             "--out", str(invalid)])
         self.assertEqual(result, 2)
         self.assertIn("--profile", errors)
@@ -175,7 +177,7 @@ class HarnessCliTests(unittest.TestCase):
         self.assertFalse(result["model_result"])
         self.assertIsNone(result["metrics"]["overall"]["exact"])
         self.assertIsNone(result["metrics"]["overall"]["formal_score"])
-        self.assertEqual(Suite.load(ROOT / "cases").sha256,
+        self.assertEqual(legacy_suite().sha256,
                          read_plan(self.evaluator / "plan.json")["suite"]["sha256"])
 
     def test_tampered_external_source_is_rejected_without_publishing_a_run(self):
