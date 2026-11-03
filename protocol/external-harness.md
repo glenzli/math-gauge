@@ -26,7 +26,7 @@ controller 可以由另一个 Codex 操作，但不能把已阅读全包、指�
 
 允许的生成参数仅为 `model`、`reasoning_effort`、`temperature`、`top_p`、`seed`、`max_output_tokens`、`max_completion_tokens`。它们是交换字段白名单，不是对所有 provider 的支持声明；`budget.output_tokens` 被投影为 `max_output_tokens`。外部适配器如需使用平台原生字段，必须在执行前冻结明确的语义映射，保存规范请求与实际发送请求，核实值和预算约束一致；不支持的设置不能静默忽略或通过解题提示代替。工具能力映射同样不能扩大权限。必需条件无法表示或执行时，保留不兼容状态。凭据不进入runtime或交付包。
 
-新版中性控制器标记 `benchmark.release-controller/v3`，按显式slots区分core的32个A1和repeat的18槽，使用 `benchmark.release-dataset/v2`、`benchmark.harness-run/v2` 和 `benchmark.harness-submission/v2`。数据集绑定显式投影后的基础评审计划；运行绑定 `dataset_sha256`、`run_sha256`、`runtime_sha256`。包内provenance只留不透明来源承诺、投影版本和候选路径/散列。包外 `evaluator-plan.json` 保存完整基础计划、原始/投影输入映射、完整源码身份和期望的精确数据集身份，导入先核对此身份，再结合运行runtime重建相同计划；自洽重哈希的陌生题包也须拒绝。执行端无须取得该文件，也无权手写评审字段。
+新版中性控制器标记 `benchmark.release-controller/v3`，按显式slots区分当前core的30个A1和repeat的12槽；0.3协议为两次独立、各分支一次自查，公开all为54槽，使用 `benchmark.release-dataset/v2`、`benchmark.harness-run/v2` 和 `benchmark.harness-submission/v2`。数据集绑定显式投影后的基础评审计划；运行绑定 `dataset_sha256`、`run_sha256`、`runtime_sha256`。包内provenance只留不透明来源承诺、投影版本和候选路径/散列。包外 `evaluator-plan.json` 保存完整基础计划、原始/投影输入映射、完整源码身份和期望的精确数据集身份，导入先核对此身份，再结合运行runtime重建相同计划；自洽重哈希的陌生题包也须拒绝。执行端无须取得该文件，也无权手写评审字段。
 
 中性工具由同一共享portable实现确定性生成，仅改变协议命名空间和工具自有品牌文字。安装侧需要同一中性校验时，从受信本地源码生成并载入其实现，绝不执行下载或返回ZIP中的helper。评审端从原始suite按已声明投影重建候选请求及消息散列。导入保留实际中性请求、完整messages、原始答卷和返回ZIP；内部共享记录仅将传输schema规范化，尝试另标 `request_normalization` 与 `source_projected_request_sha256`，实际请求仍保留在`external_source`及原始快照。不得把内部规范化副本冒称为平台实际发送内容，不逆写候选答卷的命名空间。
 
@@ -34,11 +34,11 @@ controller 可以由另一个 Codex 操作，但不能把已阅读全包、指�
 
 ## 独立上下文、历史与失败
 
-每个计划内初答使用全新上下文与独立工作区：32题做A1，预选六题另做A2/A3。同六题的neutral/affirm/deny分支从同一锁定A1独立展开，各两轮；第一轮只包含原题、该A1和本分支固定消息，第二轮再接本分支原始R1及第二轮提示。工具只从已保存的原始父答卷取历史，拒绝其他初答、其他分支和缺少可读祖先的续答；不使用摘要、改写或KEEP合成正文替换原始历史。前次工具日志保留为执行证据，不另行注入后续消息。可逐轮新建solver并重放精确消息；专属会话续用必须证明没有额外历史。不得加入评审者的正确性或编译反馈，独立轮和分支不共享工具状态或文件。
+每个计划内初答使用全新上下文与独立工作区：30题做A1，预选六题另做A2。同六题的neutral/affirm/deny分支从同一锁定A1独立展开，各一轮；只包含原题、该A1和本分支固定R1消息。历史0.1/0.2协议的A3/R2仍按原始计划保留与解析，不进入当前54槽。工具只从已保存的原始父答卷取历史，拒绝其他初答、其他分支和缺少可读祖先的续答；不使用摘要、改写或KEEP合成正文替换原始历史。前次工具日志保留为执行证据，不另行注入后续消息。可逐轮新建solver并重放精确消息；专属会话续用必须证明没有额外历史。不得加入评审者的正确性或编译反馈，独立轮和分支不共享工具状态或文件。
 
-KEEP继承紧邻父节点的完整交付，当前轮说明另审；FULL重新交付全题答案及约定源码，不使用部分修改摘要。runtime省略 `execution_track` 时，默认无候选工具上下文精确保留。中性包显式选择 `benchmark.local-tools-no-search/v1` 时，只开放 `exec_command`、`write_stdin`、`apply_patch`，`tool_network_access=false`、`search_allowed=false`、`local_tool_feedback_allowed=true`，且仍为 `external_correctness_feedback=false`。禁止联网检索/外部搜索及工具联网，允许本地题面和预置公共依赖中的内容/API查找；本地工具输出（含本地编译反馈）可见，评审反馈不可见。该声明不增加使用工具或Lean的提示、义务或最低用量，原题Lean要求不变，题目与本版80槽历史安排不变。两种执行条件分别标记，不混合成绩。操作者的传输、保存和调度工具不是候选解题工具；实际工具联网、文件边界和固定依赖另须核实。仓库内和历史包保留原 `math-gauge.*` 轨道标识，不改写既有运行。
+KEEP继承紧邻父节点的完整交付，当前轮说明另审；FULL重新交付全题答案及约定源码，不使用部分修改摘要。runtime省略 `execution_track` 时，默认无候选工具上下文精确保留。中性包显式选择 `benchmark.local-tools-no-search/v1` 时，只开放 `exec_command`、`write_stdin`、`apply_patch`，`tool_network_access=false`、`search_allowed=false`、`local_tool_feedback_allowed=true`，且仍为 `external_correctness_feedback=false`。禁止联网检索/外部搜索及工具联网，允许本地题面和预置公共依赖中的内容/API查找；本地工具输出（含本地编译反馈）可见，评审反馈不可见。该声明不增加使用工具或Lean的提示、义务或最低用量，原题Lean要求不变，题目与各自冻结的历史安排不变；当前0.3协议安排54槽。两种执行条件分别标记，不混合成绩。操作者的传输、保存和调度工具不是候选解题工具；实际工具联网、文件边界和固定依赖另须核实。仓库内和历史包保留原 `math-gauge.*` 轨道标识，不改写既有运行。
 
-本地工具条件须由harness封存A1结束的候选文件快照，并从同一快照为三条分支分别克隆独立工作区；R2只继承本分支R1后的快照。controller日志、配置及凭据不进入候选快照。A2/A3从各自干净初始状态开始，不能继承A1文件。只读公共依赖可共用，候选可写缓存、持久进程、shell会话和生成文件不可跨独立轮/分支共享。没有可读答卷的允许重试也须保留工具日志及失败快照，重试从该槽位调用前的相同快照开始。包内工具不实现进程/文件快照隔离。默认无工具条件不通过工作文件额外传递历史。
+本地工具条件须由harness封存A1结束的候选文件快照，并从同一快照为三条分支分别克隆独立工作区；历史双轮R2只继承本分支R1后的快照，当前不安排R2。controller日志、配置及凭据不进入候选快照。每个额外独立初答从各自干净初始状态开始，不能继承A1文件。只读公共依赖可共用，候选可写缓存、持久进程、shell会话和生成文件不可跨独立轮/分支共享。没有可读答卷的允许重试也须保留工具日志及失败快照，重试从该槽位调用前的相同快照开始。包内工具不实现进程/文件快照隔离。默认无工具条件不通过工作文件额外传递历史。
 
 禁止候选外部搜索同时涵盖搜索工具、浏览器、MCP/插件及shell等通路，不能只关闭一种工具。候选本地工具不能联网安装依赖或访问外部服务；controller向候选平台发送请求所需的服务网络另行限制。网络策略和可读文件边界必须按实际进程与工具核实，不能把“工作目录独立”或一条禁止指令当作deny-read/隔离证据。
 

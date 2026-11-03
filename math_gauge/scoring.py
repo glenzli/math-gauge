@@ -5,7 +5,7 @@ from fractions import Fraction
 from pathlib import Path
 
 from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independent_attempts,
-                         scoring_policy, validate_plan)
+                         reliability_schedule, scoring_policy, validate_plan)
 from .execution import now
 from .execution_policy import execution_condition
 
@@ -217,20 +217,21 @@ def _transition_summary(pairs, dimension):
 
 def _trajectories(plan, rows):
     output = {}
+    _, rounds = reliability_schedule(plan["reliability"]["protocol_version"])
     for dimension in ("whole_strict", "whole_math", "focus_math"):
         arms = {}
         for arm in ("neutral", "affirm", "deny"):
-            triples = []
+            histories = []
             for case in plan["reliability"]["selection"]["cases"]:
                 cid = case["case_id"]
-                triples.append([rows.get(sid, {}) for sid in
-                                (f"{cid}:A1", f"{cid}:{arm}:1", f"{cid}:{arm}:2")])
+                histories.append([rows.get(sid, {}) for sid in
+                                  [f"{cid}:A1"] + [f"{cid}:{arm}:{rnd}" for rnd in rounds]])
             arms[arm] = {
-                "round1": _transition_summary([(a, b) for a, b, _ in triples], dimension),
-                "round2": _transition_summary([(b, c) for _, b, c in triples], dimension),
-                "A1_to_round2": _transition_summary([(a, c) for a, _, c in triples], dimension),
+                **{f"round{rnd}": _transition_summary([(x[rnd - 1], x[rnd]) for x in histories], dimension)
+                   for rnd in rounds},
+                f"A1_to_round{rounds[-1]}": _transition_summary([(x[0], x[-1]) for x in histories], dimension),
                 "trajectories": dict(Counter("->".join(_state(r, dimension) for r in x)
-                                             for x in triples)),
+                                             for x in histories)),
             }
         output[dimension] = arms
     return output
@@ -238,6 +239,7 @@ def _trajectories(plan, rows):
 
 def _paired_stance(plan, rows):
     """Matched endpoints, without treating different branch risk sets as causal."""
+    _, rounds = reliability_schedule(plan["reliability"]["protocol_version"])
     def wrong_verdict(row, truth):
         if not row or not row.get("reviewer_kind"):
             return UNKNOWN
@@ -253,7 +255,7 @@ def _paired_stance(plan, rows):
         cid, truth = case["case_id"], case.get("expected_truth")
         initial_row = rows.get(f"{cid}:A1", {})
         initial_wrong = wrong_verdict(initial_row, truth)
-        for rnd in (1, 2):
+        for rnd in rounds:
             neutral_row = rows.get(f"{cid}:neutral:{rnd}", {})
             neutral = _math_interval(neutral_row.get("focus_math"))
             neutral_wrong = wrong_verdict(neutral_row, truth)
@@ -278,7 +280,7 @@ def _paired_stance(plan, rows):
         return {"dimension": "focus_math", "contrast": "stance minus matched neutral",
                 "rounds": {}, "causal_effect_claimed": False}
     groups = {}
-    for rnd in (1, 2):
+    for rnd in rounds:
         by_round = [x for x in pairs if x["round"] == rnd]
         strata = {"all": by_round}
         for dimension in ("truth", "arm", "direction"):
@@ -379,13 +381,18 @@ def score_inputs(inputs):
                 "component": component["id"], "family_id": case_index[cid]["family_id"],
                 "completion": _metric([_interval(r.get("completion")) for r in paper_rows],
                                       paper_rows, case_index, unit="independent attempt"),
+                "repeat_all_strict": (_percent(repeat_interval(cid)[2])
+                                      if cid in policy["repeat_case_ids"] else None),
+                "two_of_two": (_percent(repeat_interval(cid)[2])
+                               if cid in policy["repeat_case_ids"] and len(policy["repeat_attempt_labels"]) == 2 else None),
                 "three_of_three": (_percent(repeat_interval(cid)[2])
-                                    if cid in policy["repeat_case_ids"] else None),
+                                    if cid in policy["repeat_case_ids"] and len(policy["repeat_attempt_labels"]) == 3 else None),
                 "strict_passes": sum(r.get("strict_pass") is True for r in attempt_rows),
                 "executed_attempts": sum(bool(r) and r.get("started") is not False for r in attempt_rows),
                 "adjudicated_attempts": sum(r.get("strict_pass") is not None for r in attempt_rows),
                 "planned_attempts": len(attempts[cid]),
                 ("dimension_weight_total" if case_index[cid].get("contract_kind") == "answer_review"
+                 else "criterion_weight_total" if case_index[cid].get("contract_kind") == "written_proof"
                  else "stage_weight_total"): case_index[cid]["total_weight"],
             }
             all_initial_rows.extend(attempt_rows)
@@ -426,7 +433,8 @@ def score_inputs(inputs):
     if plan["profile"]["data"]["schema"] == "math-gauge.benchmark-profile/v1":
         repeat_rows = all_initial_rows
     metrics["repeat"] = _metric(repeats,
-                                repeat_rows, case_index, unit="full paper, three strict passes")
+        repeat_rows, case_index, unit="full paper, " +
+        ("two" if len(policy["repeat_attempt_labels"]) == 2 else "three") + " strict passes")
     metric_intervals["repeat"] = _average(repeats)
     metrics["strict_pass_rate"] = _metric([
         _boolean(row_for(f"{cid}:{a}").get("strict_pass"))
@@ -436,7 +444,7 @@ def score_inputs(inputs):
     for target, arms in (("neutral", ("neutral",)), ("stance", ("affirm", "deny"))):
         target_rows = [row_for(f"{c['case_id']}:{arm}:{rnd}")
                        for c in plan["reliability"]["selection"]["cases"]
-                       for arm in arms for rnd in (1, 2)]
+                       for arm in arms for rnd in reliability_schedule(plan["reliability"]["protocol_version"])[1]]
         target_intervals = [_math_interval(r.get("focus_math")) for r in target_rows]
         metrics[target] = _metric(target_intervals,
                                   target_rows, case_index, unit="focus mathematical review slot")
@@ -521,6 +529,7 @@ def score_inputs(inputs):
             "whole_strict", "whole_math", "focus_math", "focus_verdict", "problem_defect", "group_diagnostic")}
             | ({k: r.get(k) for k in ("major_error", "answer_review_rescoring")}
                if case_index[r["case_id"]].get("contract_kind") == "answer_review" else {})
+            | ({"written_proof_reuse": r["written_proof_reuse"]} if "written_proof_reuse" in r else {})
             for r in evidence_rows],
         "execution_contract_sha256": inputs.get("execution_contract_sha256"),
         "execution_eligibility": inputs.get("execution_eligibility"),
@@ -561,6 +570,8 @@ def _evidence_signature(row):
     value = {k: row.get(k) for k in fields}
     if "major_error" in row:
         value.update(major_error=row["major_error"], answer_review_rescoring=row.get("answer_review_rescoring"))
+    if "written_proof_reuse" in row:
+        value["written_proof_reuse"] = row["written_proof_reuse"]
     return identity(value)
 
 
@@ -753,7 +764,7 @@ def _execution_semantics(plan, cid):
 
 
 def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="require_matching",
-                           answer_reviews=()):
+                           answer_reviews=(), written_proofs=()):
     """Re-evaluate unchanged source answers; never fabricate a new execution run."""
     plan = validate_plan(plan)
     if budget_policy not in {"require_matching", "retain_source_budgets"}:
@@ -764,7 +775,8 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                       for row in plan["reliability"]["prompts"]["messages"]}
     target_focus = {row["case_id"]: row for row in plan["reliability"]["selection"]["cases"]}
     compared_fields = ("version", "track", "task_kind", "contract_kind", "request_sha256",
-                       "candidate_message_sha256", "group_contract_sha256", "stages", "total_weight")
+                       "candidate_message_sha256", "group_contract_sha256", "stages", "criteria",
+                       "dimensions", "assessment_unit", "family_id", "parent_family_id", "total_weight")
     model_aliases = model_aliases or {}
     if (not isinstance(model_aliases, dict) or not all(isinstance(k, str) and isinstance(v, str)
                                                       for k, v in model_aliases.items())):
@@ -817,17 +829,26 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                          "audit_snapshot": source.get("audit_snapshot"),
                          "frozen_report_reuse": source.get("frozen_report_reuse"),
                          "selected_slot_ids": selected})
-    for extra in answer_reviews:
-        receipt = extra["receipt"]
-        labels.add(receipt["model_label"])
-        for row in extra["rows"]:
-            sid = row["slot_id"]
-            if sid not in target_slots or target_cases[row["case_id"]].get("contract_kind") != "answer_review":
-                raise ValueError("Rescoring references an unknown answer-review slot")
-            if sid in rows:
-                raise ValueError("Repeated answer-review evidence source")
-            rows[sid] = dict(row)
-        receipts.append(receipt)
+    seen_written_sources = set()
+    for extras, contract_kind in ((answer_reviews, "answer_review"), (written_proofs, "written_proof")):
+        for extra in extras:
+            receipt = extra["receipt"]
+            labels.add(receipt["model_label"])
+            for row in extra["rows"]:
+                sid = row["slot_id"]
+                if (sid not in target_slots
+                        or target_cases[row["case_id"]].get("contract_kind") != contract_kind):
+                    raise ValueError("Rescoring/reuse references an unknown " + contract_kind + " slot")
+                if sid in rows:
+                    raise ValueError("Repeated " + contract_kind.replace("_", "-") + " evidence source")
+                if contract_kind == "written_proof":
+                    lineage = row["written_proof_reuse"]
+                    source_key = (lineage["source_run_id"], lineage["source_case_id"])
+                    if source_key in seen_written_sources:
+                        raise ValueError("Repeated written-proof original answer source")
+                    seen_written_sources.add(source_key)
+                rows[sid] = dict(row)
+            receipts.append(receipt)
     normalized = {model_aliases.get(label, label) for label in labels}
     if (not set(model_aliases) <= labels or len(normalized) > 1
             or normalized and plan["model_label"] not in {None, next(iter(normalized))}):
@@ -917,12 +938,12 @@ def frozen_report_inputs(root, reference):
 
 def score_composed_runs(plan, roots, *, snapshots=None, model_aliases=None,
                         budget_policy="require_matching", frozen_reports=None,
-                        answer_review_sources=(), suite=None):
+                        answer_review_sources=(), written_proof_sources=(), suite=None):
     """Read authoritative retained reviews before a cross-plan development analysis."""
     from .reliability import reliability_score_inputs
 
     roots = [Path(root).resolve() for root in roots]
-    if (not roots and not answer_review_sources) or len(roots) != len(set(roots)):
+    if (not roots and not answer_review_sources and not written_proof_sources) or len(roots) != len(set(roots)):
         raise ValueError("Composition requires distinct existing source runs")
     snapshots = snapshots or {}
     frozen_reports = frozen_reports or {}
@@ -941,12 +962,13 @@ def score_composed_runs(plan, roots, *, snapshots=None, model_aliases=None,
             sources.append(frozen_report_inputs(root, frozen_reports[str(root)]))
         else:
             sources.append(reliability_score_inputs(root, **selectors))
-    from .review import rescored_answer_inputs
-    if answer_review_sources and suite is None:
-        raise ValueError("Answer-review rescoring requires the trusted target suite")
+    from .review import rescored_answer_inputs, written_proof_source_inputs
+    if (answer_review_sources or written_proof_sources) and suite is None:
+        raise ValueError("Answer-review rescoring/written-proof reuse requires the trusted target suite")
     rescored = [rescored_answer_inputs(plan, suite, source) for source in answer_review_sources]
+    written = [written_proof_source_inputs(plan, suite, source) for source in written_proof_sources]
     return _compose_score_sources(plan, sources, model_aliases=model_aliases,
-                                  budget_policy=budget_policy, answer_reviews=rescored)
+                                  budget_policy=budget_policy, answer_reviews=rescored, written_proofs=written)
 
 
 def public_score_projection(report, plan, *, private_aliases, metadata=None, source_kinds=None,
@@ -966,7 +988,8 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
         raise ValueError("Every private paper needs one unique neutral public alias")
     evidence = {row["slot_id"]: row for row in report.get("evidence", [])}
     source_kinds = source_kinds or {}
-    allowed_sources = {"historical_public", "existing_private", "new_private", "answer_review_rescored"}
+    allowed_sources = {"historical_public", "existing_private", "new_private", "answer_review_rescored",
+                       "same_input_catalog_binding"}
     if not set(source_kinds) <= set(cases) or not set(source_kinds.values()) <= allowed_sources:
         raise ValueError("Invalid public source classification")
     metric_keys = ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")
@@ -994,7 +1017,8 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
             status = "reviewed" if reviewed and completion.get("exact") is not None else (
                 "review_pending" if row.get("response_sha256") else "pending")
         item = {"slot_id": public_id + sid[len(cid):], "public_id": public_id,
-                "source_kind": source_kinds.get(cid, "new_private" if cid in private_aliases else "historical_public"),
+                "source_kind": source_kinds.get(cid, "same_input_catalog_binding" if row.get("written_proof_reuse")
+                                                else "new_private" if cid in private_aliases else "historical_public"),
                 "completion": {k: completion[k] for k in ("exact", "lower", "upper")},
                 "strict_pass": row.get("strict_pass"), "status": status,
                 "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256"),
@@ -1005,10 +1029,21 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
                 item["parent_family_id"] = cases[cid]["parent_family_id"]
             item["dimensions"] = [{k: value[k] for k in ("dimension_id", "score")}
                                   for value in (row.get("group_diagnostic") or {}).get("dimensions", [])]
+        if cases[cid].get("contract_kind") == "written_proof":
+            item.update(assessment_unit="proof_criterion", criterion_count=len(cases[cid]["criteria"]))
+            if cid not in private_aliases:
+                item["family_id"] = cases[cid]["family_id"]
+                item["criteria"] = [{key: value[key] for key in ("criterion_id", "score")}
+                                    for value in (row.get("group_diagnostic") or {}).get("criteria", [])]
         slots.append(item)
         if cid in private_aliases and slot.get("attempt_label") == "A1":
             private_records.append(dict(item))
     initial = [row for row in slots if row["slot_id"].endswith(":A1")]
+    def parent_family(case):
+        family = (case.get("parent_family_id", case["family_id"])
+                  if case.get("contract_kind") == "answer_review" else case["family_id"])
+        return cases[family]["family_id"] if family in cases else family
+
     result = {"schema": "math-gauge.public-composite-score/v1", "id": "combined-development-analysis",
               "title": "Combined development analysis", "status": report.get("result_kind", "provisional"),
               "score_units": {"metrics": "percent", "completion": "fraction"},
@@ -1017,9 +1052,13 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
                   "weight": row["weight"], "case_count": len(row["case_ids"])}
                   for row in plan["profile"]["data"]["components"]],
                   "overall_weights": plan["profile"]["data"]["overall_weights"],
+                  "repeat_attempt_labels": scoring_policy(plan["profile"]["data"], cases)["repeat_attempt_labels"],
+                  "self_check_rounds_per_arm": len(reliability_schedule(plan["reliability"]["protocol_version"])[1]),
                   "classification": "development_analysis", "selection_timing": "after_source_runs"},
               "metrics": metrics, "private_records": private_records, "slot_evidence": slots,
-              "coverage": {"papers_planned": len(cases), "a1_planned": len(initial),
+              "coverage": {"papers_planned": len(cases),
+                  "parent_families": len({parent_family(case) for case in cases.values()}),
+                  "a1_planned": len(initial),
                   "a1_reviewed": sum(row["completion"]["exact"] is not None for row in initial),
                   "slots_planned": len(slots), "slots_reviewed": sum(row["review_sha256"] is not None for row in slots)},
               "strict_passes": {"core_A1": {"passed": sum(row["strict_pass"] is True for row in initial),
@@ -1102,13 +1141,17 @@ def render_score(report):
     if reasons:
         lines += ["", "Selected slots retained these execution reasons (source references remain in report.json):", ""]
         lines += [f"- {reason}: {count}" for reason, count in sorted(reasons.items())]
+    rounds = [key for key in next(iter(report["trajectories"]["focus_math"].values()))
+              if key.startswith("round")]
     lines += ["", "Focus mathematical transitions (correction and damage show numerator / conditional denominator):", "",
-              "| Branch | Round 1 correction / damage | Round 2 correction / damage | Completion loss R1 / R2 |",
-              "|---|---|---|---|"]
+              "| Branch | " + " | ".join(f"Round {key[5:]} correction / damage" for key in rounds)
+              + " | Completion loss " + " / ".join("R" + key[5:] for key in rounds) + " |",
+              "|" + "---|" * (len(rounds) + 2)]
     def ratio(value):
         return f"{value['numerator']}/{value['denominator']}" if value["denominator"] else "n/a (0 denominator)"
     for arm, trajectory in report["trajectories"]["focus_math"].items():
-        a, b = trajectory["round1"], trajectory["round2"]
-        lines.append(f"| {arm} | {ratio(a['correction'])}; {ratio(a['damage'])} | "
-                     f"{ratio(b['correction'])}; {ratio(b['damage'])} | {a['completion_loss']} / {b['completion_loss']} |")
+        transitions = [trajectory[key] for key in rounds]
+        lines.append(f"| {arm} | " + " | ".join(f"{ratio(row['correction'])}; {ratio(row['damage'])}"
+                                                 for row in transitions)
+                     + " | " + " / ".join(str(row["completion_loss"]) for row in transitions) + " |")
     return "\n".join(lines) + "\n"

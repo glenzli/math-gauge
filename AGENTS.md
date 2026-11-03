@@ -9,13 +9,27 @@
 - A supplied Lean file can be intentionally semantically mismatched while compiling successfully.
   Do not "fix" such an input without updating the benchmark design and version.
 - Candidate-facing files are an explicit projection. References, rubrics and review records stay out of it.
-- The v0.4.0 default suite has 36 related tasks: the original 32 mathematical papers
-  plus 4 complete-answer review tasks. The explicit reserve suite retains 11 mathematical papers.
-  The 43-paper mathematical bank remains intact; the 4 review tasks are correlated with their
-  parent papers and historical source execution, not 4 independent new mathematical families.
-  Default full coverage is 84 records; adding the 3 private exploration tasks yields 39 initial
-  answers and 87 records. Repeat/self-check evaluation still selects only 6 public mathematical papers.
-  Old 80/83/177-record evidence keeps its original configuration and denominator.
+- The local v0.5.0 default suite has 30 related tasks: 14 written proofs, 5 Lean audits,
+  5 Lean constructions, 2 chapters and 4 answer reviews, spanning 21 mathematical families.
+  The explicit reserve suite has 20 tasks: 18 written papers, 1 Lean audit and 1 Lean repair.
+  Eleven physical reserve directories remain unchanged; 9 manifest references retain the
+  original paths of 7 proofs plus the GF109/GF110 Lean pair. The bank retains the original
+  43 mathematical papers plus 3 same-family strengthened variants, for 46 mathematical
+  papers and 4 reviews (50 tasks).
+  Original author Lean evidence covers only 43 papers, 372 obligations and 470 compiled modules;
+  the 3 new written papers' 15 criteria have no author Lean evidence and remain human pending.
+  Default historical mathematical stages/chapter obligations total 252; keep these separate
+  from the 15 new written-proof criteria. Reviews are correlated with their parent papers.
+  Default full coverage is 54 records; adding 3 private exploration tasks yields 33 initial
+  answers, 24 families and 57 records. Version0.3 repeat/self-check selects 6 public papers,
+  uses A1/A2 (two independent answers), and one follow-up per neutral/affirm/deny arm.
+  Old version0.2 A3/R2 records remain archived but are excluded from the new default;
+  recompute from existing A1/A2/R1 without making new model calls. In both versions,
+  the 4 review parents remain selected. Read current machine profiles for counts and weights.
+  Selection/recomputation is post-observation: compatible old answers are reused and the 3
+  strengthened tasks have new native initial answers. Do not call this a synchronous new exam.
+  Historical 80/83/84/87/177-record evidence keeps its original version and denominator;
+  equal record counts do not identify the same experiment. Published v0.4.0 assets stay immutable.
 - Answer review uses dedicated review dimensions (core judgment 60, evidence and impact 30,
   supplementary completeness 10), never mathematical stages or candidate Lean obligations.
   Aggregate within parent_family_id before averaging review families. Report major-error rate

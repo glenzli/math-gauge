@@ -33,6 +33,15 @@ def _require(condition, message):
         raise ValueError(message)
 
 
+def reliability_schedule(protocol_version):
+    """Versioned independent labels and follow-up rounds, including frozen legacy plans."""
+    if protocol_version == "0.3.0":
+        return ("A1", "A2"), (1,)
+    if protocol_version in {"0.1.0", "0.2.0"}:
+        return ("A1", "A2", "A3"), (1, 2)
+    raise ValueError("Unsupported reliability protocol version")
+
+
 def _weights(value, names, *, allow_zero=False, fractional=False):
     _require(isinstance(value, dict) and set(value) == set(names),
              "Weights must name every frozen component exactly once")
@@ -79,16 +88,17 @@ def _runtime_contract(runtime):
 def independent_attempts(data, case_ids):
     """Read a frozen arrangement; historical profiles retain all three attempts."""
     ids = list(case_ids)
+    repeated_labels, _ = reliability_schedule(data.get("reliability", {}).get("protocol_version"))
     if data.get("schema") == "math-gauge.benchmark-profile/v1":
-        _require(data.get("attempts") == list(ATTEMPTS),
+        _require(repeated_labels == ATTEMPTS and data.get("attempts") == list(ATTEMPTS),
                  "Three fixed independent attempts are required")
         return {cid: list(ATTEMPTS) for cid in ids}
     _require(data.get("schema") in {"math-gauge.benchmark-profile/v2", "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
              "Unsupported benchmark attempt arrangement")
     attempts = data.get("attempt_schedule")
     _require(isinstance(attempts, dict) and set(attempts) == set(ids)
-             and all(value in (["A1"], list(ATTEMPTS)) for value in attempts.values()),
-             "Every paper needs an explicit A1 or A1/A2/A3 arrangement")
+             and all(value in (["A1"], list(repeated_labels)) for value in attempts.values()),
+             "Every paper needs A1 or the protocol's complete independent arrangement")
     return copy.deepcopy(attempts)
 
 
@@ -96,6 +106,7 @@ def scoring_policy(data, case_ids):
     """Bind metric membership to the profile, never to observed successful answers."""
     ids = list(case_ids)
     attempts = independent_attempts(data, ids)
+    repeated_labels, _ = reliability_schedule(data["reliability"]["protocol_version"])
     if data["schema"] == "math-gauge.benchmark-profile/v1":
         return {"core_attempt_labels": list(ATTEMPTS), "repeat_case_ids": ids,
                 "repeat_attempt_labels": list(ATTEMPTS)}
@@ -103,14 +114,14 @@ def scoring_policy(data, case_ids):
     _require(isinstance(policy, dict) and set(policy) == {
         "core_attempt_labels", "repeat_case_ids", "repeat_attempt_labels"}
         and policy["core_attempt_labels"] == ["A1"]
-        and policy["repeat_attempt_labels"] == list(ATTEMPTS),
-        "Compact scoring requires A1 core and three-attempt repetition")
+        and policy["repeat_attempt_labels"] == list(repeated_labels),
+        "Compact scoring requires A1 core and the protocol's independent repetition")
     repeated = policy["repeat_case_ids"]
     _require(isinstance(repeated, list) and (repeated or data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"})
              and all(isinstance(cid, str) for cid in repeated)
              and len(repeated) == len(set(repeated))
-             and set(repeated) == {cid for cid in ids if attempts[cid] == list(ATTEMPTS)},
-             "Repeat membership must match the frozen three-attempt papers")
+             and set(repeated) == {cid for cid in ids if attempts[cid] == list(repeated_labels)},
+             "Repeat membership must match the frozen repeated papers")
     return copy.deepcopy(policy)
 
 
@@ -226,6 +237,8 @@ def _category_matches(component, task_kind, contract_kind):
         return contract_kind == "research_exploration" and task_kind in {"written", "exploration"}
     if component == "chapters":
         return contract_kind == "chapter_formalization" and task_kind == "generate"
+    if contract_kind == "written_proof":
+        return component == "proofs" and task_kind == "written"
     if contract_kind != "progressive":
         return False
     return (component == "proofs" and task_kind == "written"
@@ -234,6 +247,9 @@ def _category_matches(component, task_kind, contract_kind):
 
 
 def _schedule(packet, case_ids, suite_sha256, attempts=None):
+    labels, rounds = reliability_schedule(packet.get("protocol_version"))
+    _require(all(packet[key].get("protocol_version") == packet["protocol_version"]
+                 for key in ("selection", "prompts")), "Reliability protocol versions differ")
     selection = packet["selection"].get("cases", [])
     selected_ids = [row.get("case_id") for row in selection]
     _require(len(selected_ids) == len(set(selected_ids))
@@ -250,17 +266,17 @@ def _schedule(packet, case_ids, suite_sha256, attempts=None):
     _require(isinstance(rows, list) and all(isinstance(x, dict) for x in rows),
              "A complete frozen reliability schedule is required")
     indexed = {x.get("slot_id"): x for x in rows}
-    attempts = attempts or {cid: ATTEMPTS for cid in case_ids}
+    attempts = attempts or {cid: labels for cid in case_ids}
     expected = {f"{cid}:{attempt}" for cid in case_ids for attempt in attempts[cid]}
     expected |= {f"{cid}:{arm}:{rnd}" for cid in selected_ids
-                 for arm in ARMS for rnd in (1, 2)}
+                 for arm in ARMS for rnd in rounds}
     _require(len(indexed) == len(rows) and set(indexed) == expected,
              "Schedule must retain all independent and followup slots")
     message_rows = packet["prompts"].get("messages", [])
     messages = {x.get("message_id"): x for x in message_rows}
     _require(len(messages) == len(message_rows)
              and set(messages) == {f"{cid}:{arm}:{rnd}" for cid in selected_ids
-                                  for arm in ARMS for rnd in (1, 2)},
+                                  for arm in ARMS for rnd in rounds},
              "Frozen followup messages do not match the schedule")
     earlier = set()
     for row in rows:
@@ -269,7 +285,7 @@ def _schedule(packet, case_ids, suite_sha256, attempts=None):
                  and row.get("response_sha256") is None and row.get("grade") is None,
                  "A frozen schedule cannot contain candidate results")
         if row.get("kind") == "independent":
-            _require(cid in case_ids and row.get("attempt_label") in ATTEMPTS
+            _require(cid in case_ids and row.get("attempt_label") in labels
                      and sid == f"{cid}:{row['attempt_label']}"
                      and row.get("context") == "fresh" and row.get("parent_slot") is None,
                      "Independent slots must retain fresh, unrelated contexts")
@@ -277,7 +293,7 @@ def _schedule(packet, case_ids, suite_sha256, attempts=None):
             arm, rnd = row.get("arm"), row.get("round")
             parent = f"{cid}:A1" if rnd == 1 else f"{cid}:{arm}:1"
             _require(row.get("kind") == "followup" and cid in selected_ids
-                     and arm in ARMS and rnd in (1, 2)
+                     and arm in ARMS and rnd in rounds
                      and sid == f"{cid}:{arm}:{rnd}"
                      and row.get("context") == "branch-history-only"
                      and row.get("parent_slot") == parent and parent in earlier
@@ -392,6 +408,8 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
         })
         if contract["kind"] in {"research_exploration", "answer_review"}:
             cases[-1]["assessment_unit"] = "review_dimension"
+        if contract["kind"] == "written_proof":
+            cases[-1]["assessment_unit"] = "proof_criterion"
         if contract["kind"] == "answer_review":
             cases[-1]["parent_family_id"] = contract["parent_family_id"]
             _require(attempts[cid] == ["A1"], "Answer-review papers use A1 only")
@@ -418,8 +436,8 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
         "reliability": {k: v for k, v in packet.items() if k != "schedule"},
         "source_files_sha256": tag_identity,
         "planned": {"papers": len(cases), "independent_slots": sum(map(len, attempts.values())),
-                    "neutral_slots": 2 * len(packet["selection"]["cases"]),
-                    "stance_slots": 4 * len(packet["selection"]["cases"]),
+                    "neutral_slots": len(reliability_schedule(packet["protocol_version"])[1]) * len(packet["selection"]["cases"]),
+                    "stance_slots": 2 * len(reliability_schedule(packet["protocol_version"])[1]) * len(packet["selection"]["cases"]),
                     "all_slots": len(slots), "selected_slots": len(want)},
         "candidate_calls": 0,
     }
@@ -482,8 +500,17 @@ def validate_plan(plan):
                                                    and approval["human_review"] == "approved"),
                      "Frozen case approval contradicts its original source")
         answer_review = case.get("contract_kind") == "answer_review"
-        stages = case.get("dimensions" if answer_review else "stages", [])
-        unit_key = "dimension_id" if answer_review else "stage_id"
+        written_proof = case.get("contract_kind") == "written_proof"
+        stages = case.get("criteria" if written_proof else "dimensions" if answer_review else "stages", [])
+        unit_key = "criterion_id" if written_proof else "dimension_id" if answer_review else "stage_id"
+        if written_proof:
+            _require("stages" not in case and "dimensions" not in case
+                     and case.get("assessment_unit") == "proof_criterion"
+                     and case.get("track") == "determinate"
+                     and all("lean_required" not in row for row in stages)
+                     and case["case_id"] not in {row["case_id"] for row in
+                         plan["reliability"]["selection"]["cases"]},
+                     "Invalid written-proof plan unit")
         if answer_review:
             _require("stages" not in case and case.get("assessment_unit") == "review_dimension"
                      and isinstance(case.get("parent_family_id"), str) and case["parent_family_id"]
@@ -492,11 +519,13 @@ def validate_plan(plan):
                  and _category_matches(case["component"], case.get("task_kind"), case.get("contract_kind"))
                  and stages and len({s.get(unit_key) for s in stages}) == len(stages)
                  and all(type(s.get("points")) is int and s["points"] > 0
-                         and (answer_review or type(s.get("lean_required")) is bool) for s in stages)
+                         and (answer_review or written_proof or type(s.get("lean_required")) is bool) for s in stages)
                  and case.get("total_weight") == sum(s["points"] for s in stages),
                  "Frozen paper weights changed")
     slots = plan.get("slots", [])
     packet = dict(plan.get("reliability", {}), schedule={"slots": slots})
+    _require(packet.get("protocol_version") == data.get("reliability", {}).get("protocol_version"),
+             "Reliability profile and plan protocol versions differ")
     _schedule(packet, case_ids, plan["suite"]["sha256"], attempts)
     if data["id"] == "math-gauge-composite" and data["version"] == "0.1.0":
         _require(len(packet["selection"]["cases"]) == 8
@@ -509,9 +538,10 @@ def validate_plan(plan):
                      and x["selected"] == (x["slot_id"] in want) for x in slots),
              "Frozen execution projection changed")
     selected_cases = len(packet["selection"]["cases"])
+    round_count = len(reliability_schedule(packet["protocol_version"])[1])
     _require(plan.get("planned") == {
         "papers": len(cases), "independent_slots": sum(map(len, attempts.values())),
-        "neutral_slots": 2 * selected_cases, "stance_slots": 4 * selected_cases,
+        "neutral_slots": round_count * selected_cases, "stance_slots": 2 * round_count * selected_cases,
         "all_slots": len(slots), "selected_slots": len(want)},
         "Frozen plan denominators changed")
     validate_context_policy(plan.get("context_policy"))

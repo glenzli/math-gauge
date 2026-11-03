@@ -10,6 +10,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from benchmark_fixtures import compact_release_root
+
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("reliability_material_checks", ROOT / "scripts/validate_protocol.py")
 V = importlib.util.module_from_spec(SPEC)
@@ -30,11 +32,13 @@ class ReliabilityMaterialsTests(unittest.TestCase):
         before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths}
         report = V.validate_materials()
         self.assertTrue(report["passed"])
-        self.assertEqual(report["candidate_projections"], 36)
-        self.assertEqual(report["dependent_review_obligations"], 306)
-        self.assertEqual(report["frozen_followup_messages"], 36)
-        self.assertEqual(report["planned_slots_per_model"], 84)
-        self.assertEqual(report["isolated_followup_history_edges"], 36)
+        self.assertEqual(report["candidate_projections"], len(self.plan["cases"]))
+        self.assertEqual(report["dependent_review_obligations"], sum(row["mandatory_units"] for row in self.plan["cases"]))
+        self.assertEqual(report["proof_criteria"], sum(row.get("proof_criteria", 0) for row in self.plan["cases"]))
+        self.assertEqual(report["frozen_followup_messages"], len(self.prompts["messages"]))
+        self.assertEqual(report["planned_slots_per_model"], len(self.schedule["slots"]))
+        self.assertEqual(report["isolated_followup_history_edges"],
+                         sum(row["kind"] == "followup" for row in self.schedule["slots"]))
         self.assertEqual(report["candidate_model_calls"], 0)
         self.assertEqual(report["lean_compilations"], 0)
         self.assertFalse(report["human_approved"])
@@ -49,6 +53,26 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                 plan[key] = value
                 with self.assertRaises(ValueError):
                     V.check_plan(plan)
+
+    def test_current_and_legacy_packet_versions_keep_their_own_round_counts(self):
+        V.check_plan(self.plan)
+        self.assertEqual(self.plan["independent_attempts"], ["A1", "A2"])
+        self.assertEqual(self.plan["rounds_per_arm"], 1)
+        legacy_packet = compact_release_root() / V.PACKET
+        legacy_selection = V.read(legacy_packet / "selection.json")
+        legacy_prompts = V.read(legacy_packet / "prompts.json")
+        V.check_messages(legacy_selection, legacy_prompts, self.reply)
+        self.assertEqual(len(legacy_prompts["messages"]), 36)
+        for key, value in (("independent_attempts", ["A1", "A2", "A3"]),
+                           ("rounds_per_arm", 2)):
+            changed = copy.deepcopy(self.plan)
+            changed[key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                V.check_plan(changed)
+        changed = copy.deepcopy(legacy_prompts)
+        changed["protocol_version"] = "0.3.0"
+        with self.assertRaisesRegex(ValueError, "protocol versions differ"):
+            V.check_messages(legacy_selection, changed, self.reply)
 
     def test_offline_acceptance_cannot_bless_changed_sources_or_candidate_results(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -83,6 +107,25 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                                           "sha256": V.sha(path.read_bytes())}}
             checked = V.check_offline_acceptance(root, plan)
             self.assertFalse(checked["tests_rerun_by_material_check"])
+            original_receipt = path.read_bytes()
+            for protocol, suffix in (("0.1.0", None), ("0.2.0", "0.3.0"), ("0.3.0", "0.5.0")):
+                versioned = copy.deepcopy(receipt)
+                prefix = f"verification/runner/v{suffix}/logs/" if suffix else "verification/runner/logs/"
+                for row in versioned["checks"]:
+                    original_log = root / row["log"]
+                    row["log"] = prefix + original_log.name
+                    log = root / row["log"]
+                    log.parent.mkdir(parents=True, exist_ok=True)
+                    log.write_bytes(original_log.read_bytes())
+                name = (f"verification/runner/offline-acceptance-v{suffix}.json" if suffix
+                        else "verification/runner/offline-acceptance.json")
+                versioned_path = root / name
+                versioned_path.write_bytes(V.encoded(versioned))
+                versioned_plan = {**plan, "protocol_version": protocol,
+                    "runner_acceptance": {"path": name, "sha256": V.sha(versioned_path.read_bytes())}}
+                with self.subTest(protocol=protocol):
+                    self.assertFalse(V.check_offline_acceptance(root, versioned_plan)["formal_model_result"])
+                    self.assertEqual(path.read_bytes(), original_receipt)
             for name in ("math_gauge/eligibility.py", "tests/test_eligibility.py",
                          "tests/test_eligibility_acceptance.py", "tests/test_reliability_review.py",
                          "math_gauge/harness.py", "math_gauge/harness_answers.py", "math_gauge/harness_import.py",
@@ -266,7 +309,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
             with self.subTest(parent=parent):
                 schedule = copy.deepcopy(self.schedule)
                 slot = next(item for item in schedule["slots"]
-                            if item["slot_id"] == "MG-GR002:neutral:2")
+                            if item["slot_id"] == "MG-GR002:neutral:1")
                 slot["parent_slot"] = parent
                 with self.assertRaisesRegex(ValueError, "another branch or the wrong predecessor"):
                     V.check_schedule(self.plan, schedule, self.prompts)

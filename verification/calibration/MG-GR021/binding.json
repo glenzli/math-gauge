@@ -1,0 +1,235 @@
+{
+  "schema": "math-gauge.same-input-calibration-binding/v1",
+  "case_id": "MG-GR021",
+  "version": "0.1.0",
+  "family_id": "MG-R020",
+  "candidate_message_sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+  "reference_sha256": "b5de32d25059d2cbdfcbe90ffc7f3af86e366f5e90f5bc3435fd555b83291a1c",
+  "original_rubric_sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+  "new_candidate_calls": 0,
+  "original_case_id_retained": "Q05",
+  "mapping_purpose": "Reuse original same-input initial answers under the newly cataloged case; never claim a new execution or change original identities.",
+  "selection_after_observation": true,
+  "models": [
+    {
+      "model": "terra",
+      "original_native_case_id": "Q05",
+      "original_paper_version": "0.4.0",
+      "current_catalog_case_id": "MG-GR021",
+      "current_case_version": "0.1.0",
+      "original_execution_relabelled": false,
+      "source_native_freeze_sha256": "927520cd62b77d7d83eabd33165673ccbbf1acbd1511fc4c1d62fa9080cf3e93",
+      "candidate_message_sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+      "response_file": "terra-response.md",
+      "response_sha256": "96688fb5daae6c19910c7d8d1878adf5a3c727c4646c76cfe8963afd1b23ab7f",
+      "original_review_file": "terra-original-review.json",
+      "original_review_sha256": "fd638afb468acae3eef3a0e6d013e28626fa85653c5895d41f7ef2a0438aae55",
+      "original_diagnostic_score": 100,
+      "criteria": [
+        {
+          "id": "feasibility_counts_liftability",
+          "score": 30,
+          "max_score": 30,
+          "checks": [
+            {
+              "id": "original_input_and_feasibility",
+              "score": 10,
+              "max_score": 10,
+              "notes": "明确以原A_i跨块条目除2模2求kappa_i，三个域的可行性均为全部kappa_i=0。通过P_i迭代和列基B、Gram G_i证明原目标等价，未把A_i当作投影。det G_i模8的推导以及5模8在两分歧域的非平方必要性有效；零迹对称边修正、4整除的消元与平方根给出基域充分构造。"
+            },
+            {
+              "id": "closed_total_counts",
+              "score": 10,
+              "max_score": 10,
+              "notes": "C2、C>=3与所有实际R闭式全部正确，包含空集、rank1块、r=1。两个O/2环均按双数环处理。单块Jacobian提升为有效替代计数路线，n=1时完全图关联秩为0亦覆盖。"
+            },
+            {
+              "id": "actual_image_test",
+              "score": 10,
+              "max_score": 10,
+              "notes": "列范数多一位判据及其代表无关性正确。化去真正基域解T后变成块内正交问题；下三角参数固定时，g_ij对上三角、f_i对对角的Jacobian模2为单位阵，故在完整2进环上Newton/Hensel真正提升并保持原类。eta=1虽在充分判据中冗余，但不改变必要充分性。"
+            }
+          ]
+        },
+        {
+          "id": "fixed_classes_and_orbits",
+          "score": 25,
+          "max_score": 25,
+          "checks": [
+            {
+              "id": "exact_fixed_class_description",
+              "score": 15,
+              "max_score": 15,
+              "notes": "固定商环写成a+2^(M-1)theta b，固定C的附加矩阵块内对称，实际R为交替。单独准确给出Q2(i),M=2时o_j(U0)=sum_k D_kj的耦合，明确基域系数部分可能非基域实际截断；具体反例也覆盖。"
+            },
+            {
+              "id": "closed_fixed_and_orbit_counts",
+              "score": 10,
+              "max_score": 10,
+              "notes": "所有固定点、轨道数与参考严格等价。M=2时sigma在全部C和R上恒等，故例外耦合的固定数可直接由总数得到；不存在缺失这一层计数证明的问题。"
+            }
+          ]
+        },
+        {
+          "id": "reduction_maps_and_fixed_lifts",
+          "score": 15,
+          "max_score": 15,
+          "checks": [
+            {
+              "id": "all_images_and_fibers",
+              "score": 10,
+              "max_score": 10,
+              "notes": "四类约化映射的像、非空纤维全部正确；固定点约化像是嵌入基域R而非整个目标固定集。纤维均匀性由基域真正解T给出的群陪集和约化同态保证，而非一般集合中只凭基数比例。源层至少3，覆盖目标M=2。"
+            },
+            {
+              "id": "fixed_lifts_and_towers",
+              "score": 5,
+              "max_score": 5,
+              "notes": "固定真解就是基域真解，且固定下一层的像已恰为基域R；由此正确刻画固定真正提升和无限相容固定塔。"
+            }
+          ]
+        },
+        {
+          "id": "optimal_quantitative_descent",
+          "score": 20,
+          "max_score": 20,
+          "checks": [
+            {
+              "id": "best_universal_and_pointwise_precision",
+              "score": 10,
+              "max_score": 10,
+              "notes": "Q>0时通用最大N=M-1，Q=0时N=M且所有扩域实际解本已在基域。给定U=a+theta b保持M的充要条件b被2^M整除，完全正确。M=2另用所有解模2为I处理，未误用只对M>=2定义的截断判据于M-1=1。"
+            },
+            {
+              "id": "actual_sharpness_examples_and_exact_boundary",
+              "score": 10,
+              "max_score": 10,
+              "notes": "实际统一反例取pi=1+i或sqrt2，再解x+x^2=-2^(2M-3)lambda的偶根。导数1+2x模2为1，根在2O唯一存在，a=1+2x和b=2^(M-1)pi给正交块。M=2仍合法，证明近似固定、非基域和最优性；18组精确求根核对通过。"
+            }
+          ]
+        },
+        {
+          "id": "assertion_reliability",
+          "score": 10,
+          "max_score": 10,
+          "notes": "未发现独立错误的附带断言；不可行输入、有限假阳性和不固定的实际截断等补充例子也有效。"
+        }
+      ],
+      "core_completion": true,
+      "strict_pass": true,
+      "native_submissions": 1,
+      "human_review": "pending"
+    },
+    {
+      "model": "gemini",
+      "original_native_case_id": "Q05",
+      "original_paper_version": "0.4.0",
+      "current_catalog_case_id": "MG-GR021",
+      "current_case_version": "0.1.0",
+      "original_execution_relabelled": false,
+      "source_native_freeze_sha256": "21b50c551e2e138d62e7bd2f097834399a2cfe07028433dd39eee0129ec402d1",
+      "candidate_message_sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+      "response_file": "gemini-response.md",
+      "response_sha256": "a40c0808f193a04c7072fb6b5cc523dc05636f22176529ff0bd072a3ce72fb53",
+      "original_review_file": "gemini-original-review.json",
+      "original_review_sha256": "4b8ddb14a95851890062433522648fec2cc487ab62eeaf8f6d05e3cdd825aacb",
+      "original_diagnostic_score": 65.0,
+      "criteria": [
+        {
+          "id": "feasibility_counts_liftability",
+          "score": 20,
+          "max_score": 30,
+          "checks": [
+            {
+              "id": "original_input_and_feasibility",
+              "score": 10,
+              "max_score": 10,
+              "notes": "正确提取原输入mod4的delta不变量、谱投影目标和Gram模8形式，并给出三个域的正确可行性判准。接受其在Ck=I mod4的限定形式下援引整二次型分类，不将错误计数反推为本判准错误。"
+            },
+            {
+              "id": "closed_total_counts",
+              "score": 5,
+              "max_score": 10,
+              "notes": "所有实际R和M>=3的C公式正确；第112行的扩域C2少2^r因子。最小r=d=1时写2，定义直接枚举为4。计数主要列公式，未补足奇异模2群的完整计数论证，给半分。"
+            },
+            {
+              "id": "actual_image_test",
+              "score": 5,
+              "max_score": 10,
+              "notes": "列范数多一位充要判据本身正确，并证明与提升代表无关；未证明其充分性所需的实际整正交/分块提升，故半分。"
+            }
+          ]
+        },
+        {
+          "id": "fixed_classes_and_orbits",
+          "score": 12.5,
+          "max_score": 25,
+          "checks": [
+            {
+              "id": "exact_fixed_class_description",
+              "score": 7.5,
+              "max_score": 15,
+              "notes": "固定C的具体类及大部分实际R结构正确；但第156-167行把Q2(i),M=2也写成基域实际类加交替尾项，遗漏范数耦合。其第341-349行自己的合法实际反例已否定此前通式，给半分。"
+            },
+            {
+              "id": "closed_fixed_and_orbit_counts",
+              "score": 5,
+              "max_score": 10,
+              "notes": "实际R固定数和轨道式正确；固定C在M>=3少2^d、M=2少2^r，C轨道式随之错误且未给M=2轨道闭式，给半分。r=d=1,M=3实际固定8个、轨道8个，答卷写固定4个、轨道6个。"
+            }
+          ]
+        },
+        {
+          "id": "reduction_maps_and_fixed_lifts",
+          "score": 7.5,
+          "max_score": 15,
+          "checks": [
+            {
+              "id": "all_images_and_fibers",
+              "score": 5,
+              "max_score": 10,
+              "notes": "实际R与固定R的约化像、纤维正确，C的M=2一步也有正确内容。但第221行把C_(M+1)到C_M在M>=3宣称满射；u=5 mod8的标量反例否定。固定C只给像的包含，纤维又少2^d；基域映射未完整单列，给半分。"
+            },
+            {
+              "id": "fixed_lifts_and_towers",
+              "score": 2.5,
+              "max_score": 5,
+              "notes": "固定R的真正固定提升和相容塔刻画正确；未覆盖原题同样要求的固定C类，后者还需基域实际可提升性而非只消去虚部，给半分。"
+            }
+          ]
+        },
+        {
+          "id": "optimal_quantitative_descent",
+          "score": 20,
+          "max_score": 20,
+          "checks": [
+            {
+              "id": "best_universal_and_pointwise_precision",
+              "score": 10,
+              "max_score": 10,
+              "notes": "Nmax、给定U保持M的充要条件和rank1精确下降均正确。一般下界可直接由其正确的M>=3固定类结构和M=2两解均模2为I得到；B=0的特殊实际类确会下降，未因更广的M=2通式错误自动扣这一正确子结论。"
+            },
+            {
+              "id": "actual_sharpness_examples_and_exact_boundary",
+              "score": 10,
+              "max_score": 10,
+              "notes": "M>=3的显式c,s旋转及两个M=2根式实例都是真正正交反例，18组精确核对通过。正确处理rank1实际符号群。Cayley标签中的反号不使其独立给出的显式旋转失效，保留全部必答构造信用。"
+            }
+          ]
+        },
+        {
+          "id": "assertion_reliability",
+          "score": 5,
+          "max_score": 10,
+          "notes": "只处理第312-316行独立、局部的Cayley矩阵恒等式反号。显式旋转本身有效，未重复扣其必答反例；错误计数、M=2分类和约化满射性已记各对应目标，不再在本项处罚。"
+        }
+      ],
+      "core_completion": false,
+      "strict_pass": false,
+      "native_submissions": 1,
+      "human_review": "pending"
+    }
+  ],
+  "human_review": "pending",
+  "formal_comparison_eligible": false
+}

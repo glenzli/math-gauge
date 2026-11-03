@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root, legacy_sources
 
 from math_gauge.benchmarks import (BenchmarkProfile, build_plan, identity,
                                     read_plan, select_slots, validate_plan, write_plan)
@@ -50,6 +50,14 @@ class BenchmarkPlanTests(unittest.TestCase):
             self.assertEqual(approval["status"], "draft")
             self.assertEqual(approval["human_review"], "pending")
             self.assertTrue((self.suite.root / approval["manifest"]).is_file())
+
+    def test_historical_source_graph_ignores_unrelated_current_registry_additions(self):
+        registry = read_json(ROOT / "cases/sources.json")
+        registry["synthetic-future-case-source"] = {"kind": "fixture", "sources": []}
+        cited = {source for case in self.suite.cases.values() for source in case["sources"]}
+        self.assertEqual(legacy_sources(registry, cited),
+                         read_json(self.suite.root / "sources.json"))
+        self.assertEqual(self.suite.sha256, self.profile.data["suite"]["sha256"])
 
     def test_self_rehashed_approval_claim_is_rejected_against_actual_suite_before_execution(self):
         from math_gauge.reliability import execute_reliability_run
@@ -282,15 +290,15 @@ class CompactBenchmarkPlanTests(unittest.TestCase):
         cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
-    def test_default_36_has_84_slots_and_separate_fixed_targets(self):
-        self.assertEqual([len(c["case_ids"]) for c in self.profile.data["components"]], [18, 6, 6, 2, 4])
-        self.assertEqual(self.plan["planned"], {"papers": 36, "independent_slots": 48,
-            "neutral_slots": 12, "stance_slots": 24, "all_slots": 84, "selected_slots": 84})
-        for target, size in {"proofs": 18, "lean-audit": 6, "lean-construction": 6,
-                "chapters": 2, "answer-review": 4, "core": 36, "repeat": 18, "neutral": 18, "stance": 30, "all": 84}.items():
+    def test_default_30_has_54_slots_and_separate_fixed_targets(self):
+        self.assertEqual([len(c["case_ids"]) for c in self.profile.data["components"]], [14, 5, 5, 2, 4])
+        self.assertEqual(self.plan["planned"], {"papers": 30, "independent_slots": 36,
+            "neutral_slots": 6, "stance_slots": 12, "all_slots": 54, "selected_slots": 54})
+        for target, size in {"proofs": 14, "lean-audit": 5, "lean-construction": 5,
+                "chapters": 2, "answer-review": 4, "core": 30, "repeat": 12, "neutral": 12, "stance": 18, "all": 54}.items():
             self.assertEqual(len(select_slots(self.plan, [target])), size, target)
-        self.assertEqual(len(select_slots(self.plan, ["neutral", "stance"])), 42)
-        self.assertEqual(len(select_slots(self.plan, ["core", "repeat"])), 48)
+        self.assertEqual(len(select_slots(self.plan, ["neutral", "stance"])), 24)
+        self.assertEqual(len(select_slots(self.plan, ["core", "repeat"])), 36)
         self.assertTrue(all(s["attempt_label"] == "A1" for s in select_slots(self.plan, ["core"])))
         self.assertEqual({s["slot_id"] for s in select_slots(self.plan, ["chapters"])},
                          {"MG-C002:A1", "MG-C003:A1"})
@@ -299,13 +307,22 @@ class CompactBenchmarkPlanTests(unittest.TestCase):
         reserve = Suite.load(ROOT / "cases/reserve-suite.json")
         self.assertEqual(reserve.root, self.suite.root)
         self.assertEqual(reserve.manifest_name, "reserve-suite.json")
-        self.assertEqual(len(reserve.cases), 11)
+        self.assertEqual(len(reserve.cases), 20)
         self.assertFalse(set(reserve.cases) & set(self.suite.cases))
         historical = legacy_suite()
-        self.assertEqual((set(reserve.cases) | set(self.suite.cases)) - {f"MG-AR{i:03d}" for i in range(1,5)}, set(historical.cases))
+        strengthened = {"MG-GR021": "MG-GR020", "MG-GR022": "MG-GR015", "MG-GR023": "MG-GR018"}
+        self.assertEqual((set(reserve.cases) | set(self.suite.cases))
+                         - {f"MG-AR{i:03d}" for i in range(1, 5)} - set(strengthened),
+                         set(historical.cases))
         for source in (self.suite, reserve):
             for cid, case in source.cases.items():
                 if cid.startswith("MG-AR"):
+                    continue
+                if cid in strengthened:
+                    # Stronger deliveries share their historical mathematical
+                    # family; their new criteria are not independent families.
+                    parent = historical.cases[strengthened[cid]]
+                    self.assertEqual(case["family_id"], parent["family_id"])
                     continue
                 self.assertEqual(candidate_message(source.request(case)),
                                  candidate_message(historical.request(historical.cases[cid])))

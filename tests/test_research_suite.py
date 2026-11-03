@@ -1,4 +1,4 @@
-"""Candidate projection and identity contracts for 36 defaults and 11 reserves."""
+"""Candidate projection and identity contracts for 30 defaults and 20 reserves."""
 
 import json
 import shutil
@@ -40,29 +40,37 @@ class BenchmarkSuiteTests(unittest.TestCase):
     def test_default_and_reserve_partition_the_complete_case_bank(self):
         self.assertEqual(parser().parse_args(["validate"]).suite, "cases")
         expected = {
-            "proofs": {*(f"MG-GR{i:03d}" for i in (2, 5, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19, 20, 103, 104)),
+            "proofs": {*(f"MG-GR{i:03d}" for i in (2, 5, 8, 9, 10, 14, 21, 22, 23, 103, 104)),
                        *(f"MG-GP{i:03d}" for i in range(1, 4))},
-            "lean-audit": {f"MG-GF{i}" for i in range(101, 113, 2)},
-            "lean-construction": {f"MG-GF{i}" for i in range(102, 113, 2)},
+            "lean-audit": {f"MG-GF{i}" for i in (101, 103, 105, 107, 111)},
+            "lean-construction": {f"MG-GF{i}" for i in (102, 104, 106, 108, 112)},
             "chapters": {"MG-C002", "MG-C003"},
             "answer-review": {f"MG-AR{i:03d}" for i in range(1, 5)},
         }
         self.assertEqual(set(self.suite.cases), set.union(*expected.values()))
         self.assertEqual(Counter(Path(c["task"]).parts[0] for c in self.suite.cases.values()),
-                         {"proofs": 18, "lean-audit": 6, "lean-construction": 6, "chapters": 2,
+                         {"proofs": 14, "lean-audit": 5, "lean-construction": 5, "chapters": 2,
                           "answer-review": 4})
         reserve = Suite.load(ROOT / "cases/reserve-suite.json")
         self.assertEqual(reserve.root, self.suite.root)
         self.assertEqual(reserve.manifest_name, "reserve-suite.json")
-        self.assertEqual(set(reserve.cases), {f"MG-GR{i:03d}" for i in (1, 3, 4, 6, 7, 11, 13, 101, 102, 105, 106)})
+        physical_reserve = {f"MG-GR{i:03d}" for i in (1, 3, 4, 6, 7, 11, 13, 101, 102, 105, 106)}
+        referenced_proofs = {f"MG-GR{i:03d}" for i in (12, 15, 16, 17, 18, 19, 20)}
+        referenced_lean = {"MG-GF109": "lean-audit", "MG-GF110": "lean-construction"}
+        self.assertEqual(set(reserve.cases), physical_reserve | referenced_proofs | set(referenced_lean))
         self.assertFalse(set(reserve.cases) & set(self.suite.cases))
-        self.assertEqual(len(reserve.cases) + len(self.suite.cases), 47)
+        self.assertEqual(len(reserve.cases) + len(self.suite.cases), 50)
         self.assertEqual({path.parent.name for path in (ROOT / "cases/proofs").glob("*/case.json")},
-                         expected["proofs"])
+                         expected["proofs"] | referenced_proofs)
         self.assertEqual({path.parent.name for path in (ROOT / "cases/reserve/proofs").glob("*/case.json")},
-                         set(reserve.cases))
-        self.assertTrue(all(Path(case["task"]).parts[:3] == ("reserve", "proofs", cid)
-                            for cid, case in reserve.cases.items()))
+                         physical_reserve)
+        for cid, case in reserve.cases.items():
+            with self.subTest(reserve=cid):
+                expected_prefix = (("reserve", "proofs", cid) if cid in physical_reserve
+                                   else (referenced_lean.get(cid, "proofs"), cid))
+                self.assertEqual(Path(case["task"]).parts[:len(expected_prefix)], expected_prefix)
+        bank_ids = set(reserve.cases) | set(self.suite.cases)
+        self.assertEqual(bank_ids, {read_json(path)["id"] for path in (ROOT / "cases").rglob("case.json")})
         for category, ids in expected.items():
             for cid in ids:
                 with self.subTest(case=cid):
@@ -73,6 +81,19 @@ class BenchmarkSuiteTests(unittest.TestCase):
                     self.assertEqual(case["review"]["human"], "pending")
                     self.assertEqual(case["candidate_instruction"], "")
                     self.assertTrue(case["group_contract"])
+
+    def test_strengthened_written_criteria_keep_their_parent_families(self):
+        parents = {"MG-GR021": "MG-R020", "MG-GR022": "MG-R015", "MG-GR023": "MG-R018"}
+        contracts = []
+        for cid, parent in parents.items():
+            case = self.suite.cases[cid]
+            self.assertEqual(case["family_id"], parent)
+            contract = read_json(self.suite.root / case["group_contract"])
+            self.assertEqual(contract["kind"], "written_proof")
+            contracts.append(contract)
+        # Fifteen criteria belong to three related deliveries, not fifteen new
+        # papers or independent mathematical families.
+        self.assertEqual(sum(len(contract["criteria"]) for contract in contracts), 15)
 
     def test_every_workspace_is_the_exact_explicit_candidate_projection(self):
         for case in [*self.suite.cases.values(), *Suite.load(ROOT / "cases/reserve-suite.json").cases.values()]:

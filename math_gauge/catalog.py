@@ -118,6 +118,8 @@ def validate_group_contract(contract):
         return validate_research_contract(contract)
     if isinstance(contract, dict) and contract.get("kind") == "answer_review":
         return validate_answer_review_contract(contract)
+    if isinstance(contract, dict) and contract.get("kind") == "written_proof":
+        return validate_written_proof_contract(contract)
     if not isinstance(contract, dict) or contract.get("schema") != "math-gauge.group-contract/v1":
         raise ValueError("Unsupported group contract")
     if contract.get("kind") not in {"progressive", "chapter_formalization"}:
@@ -228,8 +230,41 @@ def validate_answer_review_contract(contract):
     return contract
 
 
+def validate_written_proof_contract(contract):
+    """Score final mathematical deliverables without prescribing a proof route."""
+    if (contract.get("schema") != "math-gauge.group-contract/v2"
+            or contract.get("assessment_unit") != "proof_criterion"
+            or any(key in contract for key in (
+                "stages", "turns", "all_stages_mandatory", "dimensions",
+                "alignment_manifest_required", "required_output_files", "lean_required"))
+            or not all(isinstance(contract.get(key), str) and contract[key].strip()
+                       for key in ("id", "version"))):
+        raise ValueError("Unsupported written-proof criterion contract")
+    criteria = contract.get("criteria")
+    if not isinstance(criteria, list) or not criteria:
+        raise ValueError("Written proof requires evaluator criteria")
+    seen = set()
+    for row in criteria:
+        if (not isinstance(row, dict) or not isinstance(row.get("id"), str)
+                or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", row["id"])
+                or row["id"] in seen or type(row.get("points")) is not int
+                or row["points"] <= 0 or not isinstance(row.get("title"), str)
+                or not row["title"].strip()
+                or any(key in row for key in ("depends_on", "lean_required"))):
+            raise ValueError("Invalid written-proof criterion")
+        for key in ("required_evidence", "critical_errors"):
+            if (not isinstance(row.get(key), list) or not row[key]
+                    or not all(isinstance(value, str) and value.strip() for value in row[key])):
+                raise ValueError("Written-proof criterion requires specific " + key)
+        seen.add(row["id"])
+    return contract
+
+
 def assessment_weights(contract):
     """The plan projection preserves the actual kind of assessment unit."""
+    if contract["kind"] == "written_proof":
+        return {"criteria": [{"criterion_id": row["id"], "points": row["points"]}
+                             for row in contract["criteria"]]}
     if contract["kind"] == "answer_review":
         return {"dimensions": [{"dimension_id": row["id"], "points": row["points"]}
                                for row in contract["dimensions"]]}
@@ -242,6 +277,8 @@ def assessment_units(contract):
     """Plan weights share an interface; their mathematical meaning stays explicit."""
     if contract.get("kind") in {"research_exploration", "answer_review"}:
         return [dict(row, lean_required=False) for row in contract["dimensions"]]
+    if contract.get("kind") == "written_proof":
+        return contract["criteria"]
     return contract["stages"]
 
 
@@ -473,6 +510,10 @@ class Suite:
                     or case.get("task_kind") != "answer_review"
                     or case.get("parent_family_id") != contract["parent_family_id"]):
                     raise ValueError(f"{cid}: answer-review case/contract identity mismatch")
+                if contract["kind"] == "written_proof" and (
+                    contract["version"] != case["version"] or case.get("task_kind") != "written"
+                    or case["track"] != "determinate" or case["lean_checks"]):
+                    raise ValueError(f"{cid}: written-proof case/contract identity or delivery mismatch")
                 if contract.get("alignment_manifest_required") and contract["version"] != case["version"]:
                     raise ValueError(f"{cid}: alignment contract version mismatch")
             protected = {

@@ -13,6 +13,8 @@ from unittest.mock import patch
 import warnings
 import zipfile
 
+from benchmark_fixtures import compact_release_root
+
 from math_gauge.catalog import candidate_message, digest_bytes, read_json, write_json
 from math_gauge.harness import (export_simple_release_dataset, inspect_release_dataset, inspect_release_run,
                                 make_release_anchor)
@@ -36,12 +38,32 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         cls.workspace = tempfile.TemporaryDirectory(prefix="math-gauge-simple-release-fixture-")
         cls.addClassCleanup(cls.workspace.cleanup)
         cls.shared = Path(cls.workspace.name).resolve()
+        cls.source_root = compact_release_root()
+        original_load_config, original_git = release.load_config, release._git
+
+        def fixture_config(root=cls.source_root, version="0.4.0"):
+            return original_load_config(root, version)
+
+        def fixture_git(root, *arguments):
+            if Path(root).resolve() != cls.source_root:
+                return original_git(root, *arguments)
+            # Read Git metadata through a temporary work-tree view. No index,
+            # worktree registration, commit or repository content is changed.
+            result = subprocess.run(["git", "-C", str(ROOT),
+                "--work-tree=" + str(cls.source_root), *arguments],
+                check=True, capture_output=True)
+            return result.stdout.decode("utf-8").strip()
+
+        for name, replacement in (("load_config", fixture_config), ("_git", fixture_git)):
+            replacement_patch = patch.object(release, name, replacement)
+            replacement_patch.start()
+            cls.addClassCleanup(replacement_patch.stop)
         cls.config = release.load_config()
-        cls.plan, cls.suite = release.release_plan()
-        cls.bindings = release._simple_input_bindings(ROOT, cls.suite,
+        cls.plan, cls.suite = release.release_plan(root=cls.source_root, version="0.4.0")
+        cls.bindings = release._simple_input_bindings(cls.source_root, cls.suite,
                                                      projection=cls.plan.get("candidate_projection"))
-        hashes = release._release_source_files(ROOT, cls.config, cls.bindings)
-        source = release._preview_source(ROOT, cls.config)
+        hashes = release._release_source_files(cls.source_root, cls.config, cls.bindings)
+        source = release._preview_source(cls.source_root, cls.config)
         source["source_sha256"] = release._source_digest(hashes, cls.plan["suite"], cls.plan["plan_sha256"])
         cls.provenance = {"schema": release.PROVENANCE_SCHEMA, "kind": "local_preview", "source": source,
                           "input_bindings": cls.bindings, "source_files_sha256": hashes}
@@ -49,9 +71,9 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         with patch("math_gauge.execution.invoke_conversation", side_effect=AssertionError("No model calls")):
             cls.dataset = export_simple_release_dataset(
                 cls.plan, cls.suite, cls.dataset_root, release_version="0.4.0",
-                readme=(ROOT / cls.config["readme"]).read_bytes(),
-                extra_files={"LICENSE": (ROOT / "LICENSE").read_bytes(),
-                             "THIRD_PARTY_NOTICES.md": (ROOT / cls.config["third_party_notices"]).read_bytes()},
+                readme=(cls.source_root / cls.config["readme"]).read_bytes(),
+                extra_files={"LICENSE": (cls.source_root / "LICENSE").read_bytes(),
+                             "THIRD_PARTY_NOTICES.md": (cls.source_root / cls.config["third_party_notices"]).read_bytes()},
                 release_provenance=release._public_provenance(cls.provenance, cls.plan))
 
     def setUp(self):
@@ -115,7 +137,7 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
             for binding in self.bindings:
                 self.assertEqual(original.read(PREFIX + binding["path"]),
                                  project_candidate_text(Path(binding["path"]).name,
-                                     (ROOT / binding["source"]).read_text()).encode("utf-8"))
+                                     (self.source_root / binding["source"]).read_text()).encode("utf-8"))
             for name in names:
                 raw = original.read(name).lower()
                 self.assertNotIn(b"math-gauge", raw, name)
@@ -125,6 +147,13 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         self.assertNotIn("expected_truth", json.dumps(self.dataset))
         self.assertNotIn("profile", self.dataset)
         self.assertNotIn("runtime", self.dataset)
+
+    def test_historical_fixture_keeps_current_suite_release_guard(self):
+        self.assertNotEqual(self.suite.root, ROOT / "cases")
+        self.assertEqual(self.suite.metadata["version"], "0.4.0")
+        self.assertEqual(len(self.suite.cases), 36)
+        with self.assertRaisesRegex(ValueError, "Release suite changed"):
+            release.release_plan(root=ROOT, version="0.4.0")
 
     def test_traversal_windows_aliases_symlinks_duplicates_and_unlisted_members(self):
         for name in ("../escape.txt", "cases/../../escape.txt", "C:/escape.txt", "CON.txt", "CON .txt", "COM¹", "trailing. ",
@@ -174,7 +203,8 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
                 source_commit=self.provenance["source"]["parent_commit"])
         with self.assertRaisesRegex(ValueError, "actual source hashes"):
             release.build_release(self.root / "invalid", local_preview=True,
-                                  source_commit=self.provenance["source"]["parent_commit"])
+                                  source_commit=self.provenance["source"]["parent_commit"],
+                                  root=self.source_root, version="0.4.0")
         self.assertFalse((self.root / "invalid").exists())
 
     def test_new_config_rejects_release_and_dataset_version_divergence(self):
@@ -187,8 +217,10 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
             release.load_config(root)
 
     def test_local_preview_build_repeats_bytes_and_keeps_evaluator_plan_outside(self):
-        first = release.build_release(self.root / "preview-one", local_preview=True)
-        second = release.build_release(self.root / "preview-two", local_preview=True)
+        first = release.build_release(self.root / "preview-one", local_preview=True,
+                                      root=self.source_root, version="0.4.0")
+        second = release.build_release(self.root / "preview-two", local_preview=True,
+                                       root=self.source_root, version="0.4.0")
         self.assertEqual(Path(first["archive"]).read_bytes(), Path(second["archive"]).read_bytes())
         self.assertEqual(first["source"], second["source"])
         self.assertEqual(first["provenance_kind"], "local_preview")
@@ -196,7 +228,8 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         original_plan = Path(first["evaluator_plan"]).read_bytes()
         Path(first["evaluator_plan"]).unlink()
         recovered_path = self.root / "recovered-evaluator-plan.json"
-        release.recover_evaluator_plan(recovered_path, local_preview=True)
+        release.recover_evaluator_plan(recovered_path, local_preview=True,
+                                      root=self.source_root, version="0.4.0")
         self.assertEqual(recovered_path.read_bytes(), original_plan)
         recovered = read_json(recovered_path)
         self.assertEqual(recovered["schema"], "math-gauge.release-anchor/v1")
@@ -221,7 +254,7 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
 
         with patch.object(release, "_release_source_files", side_effect=changed_snapshot):
             with self.assertRaisesRegex(ValueError, "Source changed while building"):
-                release.build_release(output, local_preview=True)
+                release.build_release(output, local_preview=True, root=self.source_root, version="0.4.0")
         self.assertFalse(output.exists())
 
     def test_extracted_helper_records_raw_attempts_packs_one_fixture_archive_and_imports(self):
@@ -292,13 +325,15 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         write_json(wrong_plan_path, dict(anchor, expected_dataset_sha256="0" * 64))
         rejected = self.root / "wrong-dataset-import"
         command = subprocess.run([sys.executable, "-m", "math_gauge", "benchmark-import", "--input", str(answer_archive),
-                                  "--plan", str(wrong_plan_path), "--out", str(rejected)],
+                                  "--plan", str(wrong_plan_path), "--suite", str(self.suite.root),
+                                  "--out", str(rejected)],
                                  cwd=ROOT, capture_output=True, check=False)
         self.assertNotEqual(command.returncode, 0)
         self.assertFalse(rejected.exists())
         imported = self.root / "imported-fixture"
         command = subprocess.run([sys.executable, "-m", "math_gauge", "benchmark-import", "--input", str(answer_archive),
-                                  "--plan", str(plan_path), "--out", str(imported)],
+                                  "--plan", str(plan_path), "--suite", str(self.suite.root),
+                                  "--out", str(imported)],
                                  cwd=ROOT, capture_output=True, check=False)
         self.assertEqual(command.returncode, 0, command.stderr.decode())
         metadata, records = inspect_reliability_run(imported)

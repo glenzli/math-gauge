@@ -360,19 +360,19 @@ class CompactHarnessTests(unittest.TestCase):
         cls.root = Path(cls.temporary.name).resolve()
         cls.dataset = cls.root / "dataset"
         cls.manifest = export_simple_release_dataset(cls.plan, cls.suite, cls.dataset,
-            release_version="0.4.0", readme=b"# Synthetic compact consumer fixture\n",
+            release_version=cls.suite.metadata["version"], readme=b"# Synthetic compact consumer fixture\n",
             extra_files={"LICENSE": b"Synthetic fixture\n", "THIRD_PARTY_NOTICES.md": b"Synthetic fixture\n"})
         cls.anchor_path = cls.root / "trusted-anchor.json"
         write_json(cls.anchor_path, make_release_anchor(cls.plan, cls.manifest))
 
     def test_portable_default_export_excludes_reserve_and_keeps_separate_targets(self):
         from math_gauge.harness import COMPACT_CONTROLLER, inspect_release_dataset
-        self.assertEqual((len(self.manifest["cases"]), self.manifest["exported_slots"]), (36, 84))
+        self.assertEqual((len(self.manifest["cases"]), self.manifest["exported_slots"]), (30, 54))
         self.assertEqual(self.manifest["controller_version"], COMPACT_CONTROLLER)
-        self.assertEqual(len(self.manifest["target_slot_ids"]["core"]), 36)
+        self.assertEqual(len(self.manifest["target_slot_ids"]["core"]), 30)
         self.assertEqual(self.manifest["target_slot_ids"]["answer-review"],
                          [f"MG-AR{i:03d}:A1" for i in range(1, 5)])
-        self.assertEqual(len(self.manifest["target_slot_ids"]["repeat"]), 18)
+        self.assertEqual(len(self.manifest["target_slot_ids"]["repeat"]), 12)
         reserve = Suite.load(ROOT / "cases/reserve-suite.json")
         self.assertFalse(set(reserve.cases) & {c["case_id"] for c in self.manifest["cases"]})
         self.assertFalse(any((self.dataset / "cases" / cid).exists() for cid in reserve.cases))
@@ -380,7 +380,7 @@ class CompactHarnessTests(unittest.TestCase):
         result = subprocess.run([sys.executable, "-I", "-S", str(self.dataset / "tools/benchmark.py"), "check"],
                                 cwd=self.root, capture_output=True, check=False)
         self.assertEqual(result.returncode, 0, result.stderr.decode())
-        self.assertEqual(json.loads(result.stdout)["planned"]["all_slots"], 84)
+        self.assertEqual(json.loads(result.stdout)["planned"]["all_slots"], 54)
 
     def test_compact_chapter_fixture_returns_through_the_shared_importer(self):
         from math_gauge.harness import freeze_release_runtime
@@ -407,7 +407,7 @@ class CompactHarnessTests(unittest.TestCase):
             imported = root / "imported"
             import_answer_archive(archive, read_json(self.anchor_path), self.suite, imported)
             meta, records = inspect_reliability_run(imported)
-            self.assertEqual(meta["plan"]["planned"]["all_slots"], 84)
+            self.assertEqual(meta["plan"]["planned"]["all_slots"], 54)
             self.assertTrue(meta["fixture_only"])
             self.assertEqual(set(records), {"MG-C002:A1", "MG-C003:A1"})
             self.assertEqual(records["MG-C002:A1"]["response_sha256"], digest_bytes(raw.read_bytes()))

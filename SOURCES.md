@@ -1,6 +1,6 @@
 # 来源与作者说明
 
-当前43份试卷的来源登记在 [cases/sources.json](cases/sources.json)，每题另有provenance.json及相关来源闭包。公开题只使用明确公开的材料与独立构造；私有材料使用相同runner并留在对应私有范围。公开来源不保证模型训练未见。
+当前46份数学卷与4份相关AR、共50条任务的来源登记在 [cases/sources.json](cases/sources.json)，每题另有provenance.json及相关来源闭包。公开题只使用明确公开的材料与独立构造；私有材料使用相同runner并留在对应私有范围。公开来源不保证模型训练未见。
 
 ## 数学材料
 
@@ -12,12 +12,12 @@
 
 当前作者工程使用逐义务映射、真实编译、公理审计及非作者AI语义复核，见[证据账本](verification/author/README.md)。源码闭包、固定外部库、许可证和必要适配由各题SOURCE-CLOSURE.json、provenance.json或vendor/记录。固定依赖的声明名称不能代替原文对应证明。
 
-完整作者覆盖为43/43份、372/372项义务。MG-GP003现使用固定Motivic/Aglib实际转移接口，完成S1–S6；上游源码身份、实际导入闭包与公理审计随正式编译报告保存。依赖修订、复现方式、改编源归属及Apache-2.0完整许可证见[环境说明](verification/environments/motivic-4.34.1/README.md)与[第三方署名](verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md)。这些材料只供作者核验，不进入候选附件。先前[外部库复查](verification/author/gp003-frontier/README.md)保留其检查时点的来源边界，当前覆盖以新证明和审核收据为准。
+完整作者Lean覆盖仍仅原43/43份、372/372项义务及470个已编译模块。新增GR021–023为3份同族书面加强稿，15项证明判准没有作者Lean证据、人审pending；其参考证明、有限验算与AI复核不能替代形式化或人工批准。MG-GP003现使用固定Motivic/Aglib实际转移接口，完成S1–S6；上游源码身份、实际导入闭包与公理审计随正式编译报告保存。依赖修订、复现方式、改编源归属及Apache-2.0完整许可证见[环境说明](verification/environments/motivic-4.34.1/README.md)与[第三方署名](verification/environments/motivic-4.34.1/THIRD_PARTY_NOTICES.md)。这些材料只供作者核验，不进入候选附件。先前[外部库复查](verification/author/gp003-frontier/README.md)保留其检查时点的来源边界，当前覆盖以新证明和审核收据为准。
 
-作者与审核者的AI协作不计候选考试。当前无候选模型答卷，所有human状态为pending。原材料中起草时点的未完成描述由当前证据接续，不改写冻结参考制造事前已经完成的记录。Astra Max的数学起草/独立审核与Sol 6.1 Max的工程整理按实际逐项记录区分，工程迁移不冒称新数学审核。
+作者与审核者的AI协作不计候选考试。已有历史候选答卷与新三稿原生初答，现行聚合复用相容旧答并加入既有矩阵答和两题新实考；选题重算在观察结果之后，不是全套同步新考试。原答与旧审核保留，所有human状态仍为pending。原材料中起草时点的未完成描述由当前证据接续，不改写冻结参考制造事前已经完成的记录。Astra Max的数学起草/独立审核与Sol 6.1 Max的工程整理按实际逐项记录区分，工程迁移不冒称新数学审核。
 
 ## 许可与历史
 
 本仓库代码采用[MIT](LICENSE)。复用的OET、Lean背景、第三方库与外部原文保留各自许可和署名，不因仓库MIT而统一改许可。来源链接只是核对依据，不表示许可复制整篇内容。
 
-历史来源、设计审核和实验由Git基线 `6a48027baa33e06e913a554fb8bac9394a82b480` 保留，恢复见[仓库地图](docs/repository-map.md)。这些旧记录不构成当前基准的候选结果。
+历史来源、设计审核和实验由Git基线 `6a48027baa33e06e913a554fb8bac9394a82b480` 保留，恢复见[仓库地图](docs/repository-map.md)。这些历史记录只按其真实身份使用；显式相容复用不新增执行，选题和合并规则见[本地0.5.0说明](docs/selection-v0.5.0.md)。已发布0.4.0资产和原操作指南保持不可变。

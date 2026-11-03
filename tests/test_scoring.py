@@ -448,10 +448,14 @@ class CompactBenchmarkScoringTests(unittest.TestCase):
             self.assertEqual(changed["metrics"][component], original["metrics"][component])
         self.assertEqual(changed["focus_slices"], original["focus_slices"])
         self.assertEqual(changed["metrics"]["repeat"]["coverage"]["planned"], 6)
-        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 48)
+        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 36)
         self.assertEqual(changed["papers"]["MG-C002"]["planned_attempts"], 1)
-        self.assertIsNone(changed["papers"]["MG-C002"]["three_of_three"])
-        self.assertEqual(changed["papers"]["MG-GR002"]["planned_attempts"], 3)
+        self.assertIsNone(changed["papers"]["MG-C002"]["repeat_all_strict"])
+        self.assertIsNone(changed["papers"]["MG-C002"]["two_of_two"])
+        self.assertEqual(changed["papers"]["MG-GR002"]["planned_attempts"], 2)
+        self.assertEqual(changed["papers"]["MG-GR002"]["repeat_all_strict"], 0)
+        self.assertEqual(changed["papers"]["MG-GR002"]["two_of_two"], 0)
+        self.assertIsNone(changed["papers"]["MG-GR002"]["three_of_three"])
 
     def test_missing_attempts_keep_each_new_fixed_denominator(self):
         rows = [r for r in fixture_rows(self.plan) if r["slot_id"].endswith(":A1")]
@@ -459,8 +463,8 @@ class CompactBenchmarkScoringTests(unittest.TestCase):
         self.assertEqual(result["metrics"]["core"]["exact"], 100)
         self.assertIsNone(result["metrics"]["repeat"]["exact"])
         self.assertEqual(result["metrics"]["repeat"]["coverage"]["planned"], 6)
-        self.assertEqual(result["metrics"]["neutral"]["coverage"]["planned"], 12)
-        self.assertEqual(result["metrics"]["stance"]["coverage"]["planned"], 24)
+        self.assertEqual(result["metrics"]["neutral"]["coverage"]["planned"], 6)
+        self.assertEqual(result["metrics"]["stance"]["coverage"]["planned"], 12)
         self.assertIsNone(result["metrics"]["overall"]["exact"])
 
 

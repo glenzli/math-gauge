@@ -624,21 +624,138 @@ def check_case(repo, layout, mapping, baseline_row, *, write_binding=False, reco
     }
 
 
+def assessment_inventory(repo, paths, *, retained_case_ids=()):
+    """Locate new assessment materials without inheriting a parent's Lean proof.
+
+    This checks provenance and explicit review status, not mathematical truth or
+    reference completeness. The original author ledger retains its own complete
+    inventory and all its compilation/semantic checks.
+    """
+    written, reviews, seen = [], [], set(retained_case_ids)
+    if not paths:
+        return {}
+    sources_path = verify.safe_relative(repo, 'cases/sources.json')
+    sources = verify.load(sources_path)
+    verify.require(isinstance(sources, dict), 'Sources registry must be an object')
+    inherited_keys = {'inherited_parent_evidence', 'inherited_coverage',
+                      'inherited_parent_lean_evidence', 'parent_lean_evidence_inherited',
+                      'author_lean_coverage_inherited', 'inherited_formal_coverage'}
+    for manifest in sorted(paths):
+        case_path = verify.safe_relative(repo, manifest)
+        case, base = verify.load(case_path), case_path.parent
+        verify.require(isinstance(case, dict), 'Additional case must be an object')
+        cid = case.get('id')
+        verify.require(isinstance(cid, str) and cid and cid not in seen and base.name == cid,
+                       'Additional assessment IDs must be distinct')
+        seen.add(cid)
+        verify.require(case.get('schema') == 'math-gauge.case/v1' and case.get('path_base') == 'case'
+                       and case.get('lean_checks') == [],
+                       'Additional assessments require case-relative materials without candidate Lean checks')
+        paths_by_role = {'case': manifest}
+        for key in ('task', 'reference', 'rubric', 'group_contract'):
+            path = verify.safe_relative(base, case.get(key))
+            verify.require(bool(path.read_bytes().strip()), 'Empty additional assessment material: ' + str(path))
+            paths_by_role[key] = path.relative_to(repo).as_posix()
+        for key in ('provenance', 'review'):
+            matches = [name for name in case.get('evaluator_files', []) if Path(name).name == key + '.json']
+            verify.require(len(matches) == 1, 'Additional assessment needs a locatable ' + key + ' record')
+            path = verify.safe_relative(base, matches[0])
+            paths_by_role[key] = path.relative_to(repo).as_posix()
+        contract = verify.load(repo / paths_by_role['group_contract'])
+        verify.require(isinstance(contract, dict), 'Additional assessment contract must be an object')
+        kind = contract.get('kind')
+        verify.require(kind in {'written_proof', 'answer_review'} and contract.get('id') == cid
+                       and contract.get('version') == case.get('version'),
+                       'Additional mathematical papers need their own author evidence; unsupported assessment kind or identity')
+        metadata = case.get('review', {})
+        verify.require(isinstance(metadata, dict), 'Additional assessment review status must be an object')
+        formal = metadata.get('formalization', {})
+        provenance = verify.load(repo / paths_by_role['provenance'])
+        review = verify.load(repo / paths_by_role['review'])
+        verify.require(isinstance(provenance, dict) and isinstance(review, dict)
+                       and isinstance(review.get('formalization', {}), dict),
+                       'Additional provenance and review records must be objects')
+        verify.require(isinstance(metadata.get('mathematical'), str) and metadata['mathematical'].strip()
+                       and metadata.get('human') in {'pending', 'approved', 'rejected'}
+                       and review.get('human') == metadata['human']
+                       and isinstance(review.get('mathematical'), str) and review['mathematical'].strip()
+                       and isinstance(formal, dict) and any(formal.get(key) is False for key in inherited_keys),
+                       'Additional assessment needs separate mathematical, human and non-inherited formal review status')
+        verify.require(not any(record.get(key) is not False for record in
+                              (formal, provenance, review, review.get('formalization', {}))
+                              for key in inherited_keys if key in record),
+                       'Additional assessment cannot inherit parent author Lean coverage')
+        source_ids = case.get('sources')
+        verify.require(isinstance(source_ids, list) and source_ids
+                       and all(isinstance(key, str) and key in sources for key in source_ids)
+                       and isinstance(provenance, dict) and provenance,
+                       'Additional assessment needs registered provenance')
+        row = {'id': cid, 'case_version': case['version'], 'case_path': str(Path(manifest).parent),
+               'kind': kind, 'family_id': case.get('family_id', contract.get('parent_family_id', cid)),
+               'formal_status': 'not-performed' if kind == 'written_proof' else 'not-applicable',
+               'inherited_author_coverage': False, 'mathematical_review': metadata['mathematical'],
+               'human_review': metadata['human'], 'sources': source_ids,
+               'paths': paths_by_role,
+               'sha256': {key: verify.digest(repo / name) for key, name in paths_by_role.items()},
+               'sources_registry_sha256': verify.digest(sources_path)}
+        if kind == 'written_proof':
+            verify.require(case.get('task_kind') == 'written' and case.get('track') == 'determinate'
+                           and contract.get('assessment_unit') == 'proof_criterion'
+                           and formal.get('status') in {'not-performed', 'not-attempted', 'not-formalized',
+                                                        'not-authored-not-compiled'}
+                           and isinstance(contract.get('criteria'), list) and contract['criteria']
+                           and not any(key in contract for key in ('stages', 'turns', 'alignment_manifest_required')),
+                           'Written-proof criteria are unformalized assessments, not inherited Lean obligations')
+            row['proof_criteria'] = len(contract['criteria'])
+            written.append(row)
+        else:
+            verify.require(case.get('task_kind') == 'answer_review'
+                           and formal.get('status') == 'not-required-for-written-review'
+                           and contract.get('assessment_unit') == 'review_dimension'
+                           and isinstance(contract.get('dimensions'), list) and contract['dimensions'],
+                           'Answer-review dimensions are not author Lean obligations')
+            row['review_dimensions'] = len(contract['dimensions'])
+            reviews.append(row)
+    return {'written_proofs': {'papers': len(written),
+                              'proof_criteria': sum(row['proof_criteria'] for row in written),
+                              'formalized_papers': 0, 'inherited_author_coverage': False, 'cases': written},
+            'answer_reviews': {'tasks': len(reviews),
+                               'review_dimensions': sum(row['review_dimensions'] for row in reviews),
+                               'formal_status': 'not-applicable', 'cases': reviews}}
+
+
+def catalog_case_paths(repo):
+    """Membership is explicit; moving a case between manifests need not move it."""
+    manifests = ['cases/suite.json']
+    if (repo / 'cases/reserve-suite.json').is_file():
+        manifests.append('cases/reserve-suite.json')
+    paths = set()
+    for manifest in manifests:
+        suite = verify.load(verify.safe_relative(repo, manifest))
+        verify.require(suite.get('schema') == 'math-gauge.suite/v1'
+                       and isinstance(suite.get('cases'), list), 'Invalid canonical benchmark suite')
+        selected = {'cases/' + relative_name(name) for name in suite['cases']}
+        verify.require(len(selected) == len(suite['cases']) and not paths & selected,
+                       'Default and reserve suite memberships must be unique and disjoint')
+        paths.update(selected)
+    return paths
+
+
+def catalog_assessment_inventory(repo):
+    """Current extra assessments, separate from the immutable author bank."""
+    repo = Path(repo).resolve()
+    layout, paths = load_layout(repo), catalog_case_paths(repo)
+    originals = {relocated_case_path(repo, row['current']) + '/case.json' for row in layout['case_paths']}
+    verify.require(originals <= paths, 'Default plus reserve suites and original evidence layout disagree')
+    return assessment_inventory(repo, paths - originals,
+                                retained_case_ids=[row['id'] for row in layout['case_paths']])
+
+
 def check_all(repo, *, write_bindings=False):
     repo = Path(repo).resolve(); layout = load_layout(repo)
     checked_path = verify.safe_relative(repo, 'verification/author/checked-ledger.json')
     baseline = checked_ledger(repo, layout)
-    manifests = ['cases/suite.json']
-    if (repo / 'cases/reserve-suite.json').is_file():
-        manifests.append('cases/reserve-suite.json')
-    suite_paths = set()
-    for manifest in manifests:
-        suite = verify.load(verify.safe_relative(repo, manifest))
-        verify.require(suite.get('schema') == 'math-gauge.suite/v1', 'Invalid canonical benchmark suite')
-        paths = {'cases/' + name for name in suite['cases']}
-        verify.require(len(paths) == len(suite['cases']) and not suite_paths & paths,
-                       'Default and reserve suite memberships must be unique and disjoint')
-        suite_paths.update(paths)
+    suite_paths = catalog_case_paths(repo)
     relocations = reserve_relocations(repo)
     original_paths = {row['current']: row['id'] for row in layout['case_paths']}
     for row in relocations:
@@ -648,10 +765,12 @@ def check_all(repo, *, write_bindings=False):
     verify.require({row['current'] + '/case.json' for row in relocations} ==
                    {name for name in suite_paths if name.startswith('cases/reserve/')},
                    'Reserve suite and explicit relocation map disagree')
-    verify.require(suite_paths == {relocated_case_path(repo, row['current']) + '/case.json'
-                                   for row in layout['case_paths']}
-                   and len(suite_paths) == len(layout['case_paths']),
+    original_case_paths = {relocated_case_path(repo, row['current']) + '/case.json'
+                           for row in layout['case_paths']}
+    verify.require(original_case_paths <= suite_paths,
                    'Default plus reserve suites and original evidence layout disagree')
+    extra_assessments = assessment_inventory(repo, suite_paths - original_case_paths,
+                                           retained_case_ids=[row['id'] for row in layout['case_paths']])
     verify.require({row['id'] for row in baseline['cases']} ==
                    {row['id'] for row in layout['case_paths']} and
                    len(baseline['cases']) == len(layout['case_paths']),
@@ -679,10 +798,11 @@ def check_all(repo, *, write_bindings=False):
                            'sha256': verify.digest(checked_path)},
         'layout': {'path': 'verification/layout.json',
                    'sha256': verify.digest(repo / 'verification/layout.json')},
-        'scope': 'Current benchmark; original compilation, metadata relocation and independent semantic review are separate evidence',
+        'scope': 'Original author-evidence bank; additional written proofs and answer reviews are listed separately without inherited Lean coverage',
         'candidate_model_calls': 0, 'human_approved': 0,
         'fresh_compilation_repeated': bool(recompiled),
         'counts': counts,
+        **extra_assessments,
         'checks': [
             'Current v2 manifests bind the complete case, contract, candidate inputs, alignment and coverage',
             'Retained checked manifests and checked case metadata preserve original compiler inputs',

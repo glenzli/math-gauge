@@ -4,7 +4,7 @@ import json
 from fractions import Fraction
 from pathlib import Path
 
-from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
+from .catalog import (candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_alignment_manifest, validate_group_contract, write_json)
 from .execution import extract_candidate_alignment, now, validate_alignment_audit
 
@@ -105,6 +105,65 @@ def _stage_template(stage):
 def _dimension_templates(contract):
     return [{"dimension_id": row["id"], "score": None, "notes": ""}
             for row in contract["dimensions"]]
+
+
+def _criterion_templates(contract):
+    return [{"criterion_id": row["id"], "score": None, "notes": ""}
+            for row in contract["criteria"]]
+
+
+def _written_proof_math_axis(entry, *, resolved):
+    """Use the attributed judgment, never a criterion percentage, for the axis."""
+    invalid = (entry["assumption_fidelity"] == "drift" or entry["proof_validity"] == "invalid"
+               or entry["scope_accuracy"] == "incorrect" or entry["unnecessary_restriction"])
+    if not resolved or entry["decision"] == "unresolved":
+        return {"state": "U", "adjudicated": False, "reasons": ["review_pending"]}
+    if invalid or entry["decision"] == "fail":
+        return {"state": "I", "adjudicated": True, "reasons": ["mathematical_error"]}
+    if entry["decision"] == "pass":
+        return {"state": "C", "adjudicated": True, "reasons": []}
+    return {"state": "U", "adjudicated": True, "reasons": ["candidate_incomplete"]}
+
+
+def _validate_written_proof_review(contract, entry, record):
+    """Weighted evaluator credit is separate from an overall completion judgment."""
+    rows = entry.get("criteria")
+    if (any(key in entry for key in ("stages", "dimensions")) or not isinstance(rows, list)
+            or not all(isinstance(row, dict) for row in rows)
+            or [row.get("criterion_id") for row in rows] != [row["id"] for row in contract["criteria"]]):
+        raise ValueError("Written-proof reviews require the frozen criteria in order without stage judgments")
+    lower, upper = Fraction(), Fraction()
+    total = sum(row["points"] for row in contract["criteria"])
+    for criterion, row in zip(contract["criteria"], rows):
+        score = row.get("score")
+        if not isinstance(row.get("notes"), str) or not row["notes"].strip():
+            raise ValueError("Written-proof criteria require specific notes")
+        if score is None:
+            upper += criterion["points"]
+            continue
+        if type(score) not in (int, float):
+            raise ValueError("Written-proof scores must be finite bounded numbers or null")
+        try:
+            value = Fraction(str(score))
+        except (ValueError, ZeroDivisionError) as error:
+            raise ValueError("Written-proof scores must be finite bounded numbers") from error
+        if not 0 <= value <= criterion["points"]:
+            raise ValueError("Written-proof criterion score is outside its bound")
+        lower += value
+        upper += value
+    full = lower == upper == total
+    strict = (full and entry["decision"] == "pass" and record["status"] == "ok"
+              and entry["assumption_fidelity"] == "clean" and entry["proof_validity"] == "valid"
+              and entry["scope_accuracy"] == "correct" and not entry["unnecessary_restriction"])
+    if entry["decision"] == "pass" and not strict:
+        raise ValueError("Written-proof strict pass requires full resolved credit and valid overall evidence")
+    return {"assessment_unit": "proof_criterion", "kind": "written_proof",
+            "criterion_count": len(rows), "completed_weight": float(lower),
+            "upper_weight": float(upper), "total_weight": total,
+            "completion": {"lower": float(lower / total), "upper": float(upper / total),
+                           "exact": float(lower / total) if lower == upper else None},
+            "strict_pass": strict if lower == upper or upper < total else None,
+            "criteria": rows}
 
 
 def _validate_research_review(contract, entry, record):
@@ -218,6 +277,8 @@ def _validate_group_review(root, case, record, entry, *, response_text=None, lea
         return _validate_research_review(contract, entry, record)
     if contract["kind"] == "answer_review":
         return _validate_answer_review(contract, entry, record)
+    if contract["kind"] == "written_proof":
+        return _validate_written_proof_review(contract, entry, record)
     rows = entry.get("stages")
     expected = [s["id"] for s in contract["stages"]]
     if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows) or [r.get("stage_id") for r in rows] != expected:
@@ -360,6 +421,8 @@ def templates(root):
                 entry["dimensions"] = _dimension_templates(contract)
                 if contract["kind"] == "answer_review":
                     entry.update(major_error=None, major_error_notes="")
+            elif contract["kind"] == "written_proof":
+                entry["criteria"] = _criterion_templates(contract)
             else:
                 entry["stages"] = [_stage_template(s) for s in contract["stages"]]
     return entries
@@ -522,10 +585,13 @@ def report(root):
         lines += [f"- {cid}: {identity['reason']}（{identity['recorded_request_format']}）"
                   for cid, identity in unverified]
     if group_diagnostics:
-        lines += ["", "## 题组诊断", "", "以下是相关阶段的完成情况，不是独立样本通过率。", "",
-                  "| 题组 | 完成阶段 | 完成权重 | 独立错误根项 | 题目问题待复核 |",
+        lines += ["", "## 题组诊断", "", "以下是各任务的评审单元与完成权重，不是独立样本通过率。", "",
+                  "| 题组 | 评审单元 | 完成权重 | 独立错误根项 | 题目问题待复核 |",
                   "|---|---:|---:|---|---|"]
         for cid, d in group_diagnostics.items():
+            if d.get("assessment_unit") == "proof_criterion":
+                lines.append(f"| {cid} | {d['criterion_count']} proof criteria | {d['completed_weight']}–{d['upper_weight']}/{d['total_weight']} | — | — |")
+                continue
             if d.get("assessment_unit") == "review_dimension":
                 lines.append(f"| {cid} | {d['dimension_count']} review dimensions | {d['completed_weight']}–{d['upper_weight']}/{d['total_weight']} | — | — |")
                 continue
@@ -987,5 +1053,139 @@ def rescored_answer_inputs(plan, suite, source):
             "sha256": meta["suite_sha256"]}, "budget": {"timeout_seconds": meta["timeout_seconds"]},
         "selected_slot_ids": [row["slot_id"] for row in rows],
         "answer_review_rescoring": {"post_observation_rescoring": True, "new_candidate_calls": 0,
+            "reviews_path": str(reviews_path), "reviews_sha256": digest_bytes(reviews_path.read_bytes()),
+            "notes": source["notes"]}}}
+
+
+def written_proof_source_inputs(plan, suite, source):
+    """Map unchanged ordinary answers to a newly cataloged written-proof paper.
+
+    Each explicit case binding names its original diagnostic rubric. This is an
+    evaluator-only reuse projection; source IDs, records and execution evidence
+    stay unchanged and never acquire formal comparison eligibility.
+    """
+    from .benchmarks import identity
+
+    if (not isinstance(source, dict) or source.get("post_observation_catalog_binding") is not True
+            or not isinstance(source.get("notes"), str) or not source["notes"].strip()):
+        raise ValueError("Written-proof reuse requires explicit post-observation catalog attribution")
+    bindings = source.get("case_bindings")
+    fields = {"target_case_id", "source_case_id", "original_rubric_path", "original_rubric_sha256"}
+    if (not isinstance(bindings, list) or not bindings
+            or not all(isinstance(row, dict) and set(row) == fields
+                       and all(isinstance(row[key], str) and row[key].strip() for key in fields)
+                       for row in bindings)
+            or len({row["target_case_id"] for row in bindings}) != len(bindings)
+            or len({row["source_case_id"] for row in bindings}) != len(bindings)):
+        raise ValueError("Written-proof reuse requires distinct explicit source/target case bindings")
+    mapped = {row["target_case_id"]: row for row in bindings}
+    root, reviews_path = Path(source["run"]).resolve(), Path(source["reviews"]).resolve()
+    meta, records = inspect_run(root)
+    entries = read_json(reviews_path)
+    if (not isinstance(entries, list) or not all(isinstance(row, dict) for row in entries)
+            or len(entries) != len(mapped) or {row.get("case_id") for row in entries} != set(mapped)):
+        raise ValueError("Written-proof reviews must cover the explicit mapped target IDs exactly once")
+    targets = {case["case_id"]: case for case in plan["case_index"]}
+    source_cases = {case["id"]: case for case in meta["cases"]}
+    rows = []
+    for entry in entries:
+        cid = entry["case_id"]
+        binding = mapped[cid]
+        original_id = binding["source_case_id"]
+        target = targets.get(cid)
+        if (target is None or target.get("contract_kind") != "written_proof"
+                or cid not in suite.cases or original_id not in records
+                or entry.get("source_case_id") != original_id):
+            raise ValueError("Unknown or unmapped written-proof source/target case")
+        record = records[original_id]
+        if (record["status"] != "ok" or not record["input_identity"]["verified"]
+                or not safe_file(root, original_id + "/response.md").read_bytes().strip()):
+            raise ValueError("Written-proof reuse requires an executed ok original complete response and verified input")
+        case = suite.cases[cid]
+        contract_bytes = suite.case_file(case, case["group_contract"]).read_bytes()
+        contract_hash = digest_bytes(contract_bytes)
+        contract = validate_group_contract(json.loads(contract_bytes))
+        original_rubric = Path(binding["original_rubric_path"]).resolve()
+        original_bytes = original_rubric.read_bytes()
+        original_hash = digest_bytes(original_bytes)
+        frozen_name = contract.get("original_frozen_rubric")
+        if not isinstance(frozen_name, str) or not frozen_name:
+            raise ValueError("Written-proof reuse needs the trusted target's frozen original rubric")
+        frozen_path = str(Path(case["group_contract"]).parent / relative_name(frozen_name))
+        trusted_original = suite.case_file(case, frozen_path).read_bytes()
+        diagnostic_rubric = json.loads(original_bytes)
+        containers = [diagnostic_rubric[key] for key in ("criteria", "dimensions", "categories")
+                      if key in diagnostic_rubric]
+        if (len(containers) != 1 or not isinstance(containers[0], list)
+                or not all(isinstance(row, dict) for row in containers[0])):
+            raise ValueError("Written-proof reuse requires one unambiguous frozen diagnostic rubric container")
+        if (original_hash != binding["original_rubric_sha256"]
+                or original_hash != entry.get("original_rubric_sha256")
+                or original_hash != contract.get("original_frozen_rubric_sha256")
+                or trusted_original != original_bytes
+                or [(row.get("id"), row.get("points")) for row in containers[0]]
+                    != [(row["id"], row["points"]) for row in contract["criteria"]]):
+            raise ValueError("Written-proof reuse changed the frozen diagnostic rubric or criterion weights")
+        request = read_json(safe_file(root, original_id + "/solver/request.json"))
+        message_hash = digest_bytes(candidate_message(request).encode())
+        if (message_hash != target["candidate_message_sha256"]
+                or message_hash != digest_bytes(candidate_message(suite.request(case)).encode())
+                or contract_hash != target["group_contract_sha256"]
+                or entry.get("group_contract_sha256") != contract_hash
+                or entry.get("response_sha256") != record["response_sha256"]
+                or entry.get("rubric_sha256") != digest_bytes(suite.case_file(case, case["rubric"]).read_bytes())
+                or entry.get("reference_sha256") != digest_bytes(suite.case_file(case, case["reference"]).read_bytes())):
+            raise ValueError("Written-proof reuse changed the original answer, candidate message or target contract")
+        for descriptor in record.get("native_evidence", {}).values():
+            if isinstance(descriptor, dict) and "path" in descriptor and "sha256" in descriptor:
+                if digest_bytes(Path(descriptor["path"]).read_bytes()) != descriptor["sha256"]:
+                    raise ValueError("Original native evidence changed during written-proof reuse")
+        _validate_review_axes(entry, record)
+        diagnostic = _validate_written_proof_review(contract, entry, record)
+        lineage = {"post_observation_catalog_binding": True, "notes": source["notes"],
+                   "source_case_id": original_id, "target_case_id": cid, "target_slot_id": cid + ":A1",
+                   "source_case_version": source_cases[original_id].get("version"),
+                   "target_case_version": case["version"], "source_run_id": meta["run_id"],
+                   "source_root": str(root), "source_run_sha256": digest_bytes((root / "run.json").read_bytes()),
+                   "source_record_sha256": digest_bytes((root / original_id / "record.json").read_bytes()),
+                   "original_request_sha256": record["request_sha256"],
+                   "candidate_message_sha256": message_hash, "response_sha256": record["response_sha256"],
+                   "original_rubric_path": str(original_rubric), "original_rubric_sha256": original_hash,
+                   "original_native_evidence": record.get("native_evidence", {}),
+                   "original_reviews_sha256": digest_bytes((root / "reviews.json").read_bytes())
+                        if (root / "reviews.json").is_file() else None,
+                   "new_reviews_path": str(reviews_path), "new_reviews_sha256": digest_bytes(reviews_path.read_bytes()),
+                   "new_review_sha256": identity(entry), "target_group_contract_sha256": contract_hash,
+                   "new_candidate_calls": 0, "execution_relabelled": False}
+        resolved = diagnostic["completion"]["exact"] is not None
+        strict = {"state": "C" if diagnostic["strict_pass"] else "U", "adjudicated": resolved,
+                  "reasons": [] if diagnostic["strict_pass"] else
+                      ["candidate_incomplete" if resolved else "review_pending"]}
+        fixture = meta.get("origin") in {"fixture", "replay"}
+        rows.append({"slot_id": cid + ":A1", "case_id": cid, "started": True, "selected": True,
+                     "status": "responded", "execution_status": record["status"],
+                     "model_label": meta["model_label"], "origin": "replay" if fixture else "external_import",
+                     "source_origin": meta["origin"], "fixture_only": fixture,
+                     "evidence_id": identity({"run_id": meta["run_id"], "case_id": original_id,
+                                               "response_sha256": record["response_sha256"]}),
+                     "slot_record_sha256": lineage["source_record_sha256"],
+                     "response_sha256": record["response_sha256"], "history_sha256": None,
+                     "material_sha256": record["response_sha256"], "binding": lineage,
+                     "review_sha256": identity(entry), "reviewer_kind": entry["reviewer_kind"],
+                     "strict_pass": diagnostic["strict_pass"], "completion": diagnostic["completion"],
+                     "whole_math": _written_proof_math_axis(entry, resolved=True), "whole_strict": strict,
+                     "focus_math": {"state": "U", "adjudicated": False, "reasons": ["not_selected"]},
+                     "group_diagnostic": diagnostic, "problem_defect": False,
+                     "case_approval_evidence_verified": False, "comparison_eligible": False,
+                     "execution_eligibility": {"eligible": False,
+                         "reasons": ["post_observation_catalog_binding", "external_origin_unverified"]},
+                     "written_proof_reuse": lineage})
+    return {"rows": rows, "receipt": {"run_id": meta["run_id"], "root": str(root),
+        "model_label": meta["model_label"], "plan_sha256": None, "runtime_sha256": None,
+        "suite": {"id": meta["suite_id"], "version": meta["suite_version"], "sha256": meta["suite_sha256"]},
+        "budget": {"timeout_seconds": meta["timeout_seconds"]},
+        "selected_slot_ids": [row["slot_id"] for row in rows],
+        "written_proof_reuse": {"post_observation_catalog_binding": True, "new_candidate_calls": 0,
+            "execution_relabelled": False, "case_bindings": bindings,
             "reviews_path": str(reviews_path), "reviews_sha256": digest_bytes(reviews_path.read_bytes()),
             "notes": source["notes"]}}}

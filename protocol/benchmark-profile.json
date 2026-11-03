@@ -1,14 +1,14 @@
 {
   "schema": "math-gauge.benchmark-profile/v4",
   "id": "math-gauge-composite",
-  "version": "0.4.0",
-  "standard_version": "0.4.0",
+  "version": "0.5.0",
+  "standard_version": "0.5.0",
   "operator_only": true,
   "path_base": "repository",
   "suite": {
     "id": "math-gauge-benchmark",
-    "version": "0.4.0",
-    "sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6"
+    "version": "0.5.0",
+    "sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1"
   },
   "components": [
     {
@@ -23,16 +23,12 @@
         "MG-GR008",
         "MG-GR009",
         "MG-GR010",
-        "MG-GR012",
         "MG-GR014",
-        "MG-GR015",
-        "MG-GR016",
-        "MG-GR017",
-        "MG-GR018",
-        "MG-GR019",
-        "MG-GR020",
         "MG-GR103",
-        "MG-GR104"
+        "MG-GR104",
+        "MG-GR021",
+        "MG-GR022",
+        "MG-GR023"
       ],
       "weight": 22.5
     },
@@ -44,7 +40,6 @@
         "MG-GF103",
         "MG-GF105",
         "MG-GF107",
-        "MG-GF109",
         "MG-GF111"
       ],
       "weight": 22.5
@@ -57,7 +52,6 @@
         "MG-GF104",
         "MG-GF106",
         "MG-GF108",
-        "MG-GF110",
         "MG-GF112"
       ],
       "weight": 22.5
@@ -93,12 +87,12 @@
     "selection": "protocol/reliability/selection.json",
     "prompts": "protocol/reliability/prompts.json",
     "schedule": "protocol/reliability/schedule.json",
-    "protocol_version": "0.2.0"
+    "protocol_version": "0.3.0"
   },
   "score_unit": "0-100; A1 core, answer-review continuous dimension score averaged within parent family then across families; strict and major-error rate separate",
   "missing_policy": "fixed-denominator intervals; exact null unless the metric is mathematically determined (a confirmed failure can determine three-attempt strict repeat as zero); always retain coverage; never renormalize missing components",
   "formal_eligibility": "Human-approved cases and human reviews plus verified non-fixture execution, input identity and applicable Lean gates; provisional values do not establish formal eligibility.",
-  "weight_rationale": "v0.4.0 post-observation development standard: old four public core components each22.5%, answer-review10%; overall75/5/10/10. Historical profiles/results remain version-bound.",
+  "weight_rationale": "v0.5.0 local compact selection retains v0.4.0 capability22.5/22.5/22.5/22.5/10 and overall75/5/10/10. Same-family replacements do not create independent families. Selection is post-observation, not a new synchronized exam.",
   "attempt_schedule": {
     "MG-C002": [
       "A1"
@@ -108,8 +102,7 @@
     ],
     "MG-GF101": [
       "A1",
-      "A2",
-      "A3"
+      "A2"
     ],
     "MG-GF103": [
       "A1"
@@ -119,11 +112,7 @@
     ],
     "MG-GF107": [
       "A1",
-      "A2",
-      "A3"
-    ],
-    "MG-GF109": [
-      "A1"
+      "A2"
     ],
     "MG-GF111": [
       "A1"
@@ -133,18 +122,13 @@
     ],
     "MG-GF104": [
       "A1",
-      "A2",
-      "A3"
+      "A2"
     ],
     "MG-GF106": [
       "A1",
-      "A2",
-      "A3"
+      "A2"
     ],
     "MG-GF108": [
-      "A1"
-    ],
-    "MG-GF110": [
       "A1"
     ],
     "MG-GF112": [
@@ -161,8 +145,7 @@
     ],
     "MG-GR002": [
       "A1",
-      "A2",
-      "A3"
+      "A2"
     ],
     "MG-GR005": [
       "A1"
@@ -176,36 +159,23 @@
     "MG-GR010": [
       "A1"
     ],
-    "MG-GR012": [
-      "A1"
-    ],
     "MG-GR014": [
       "A1",
-      "A2",
-      "A3"
-    ],
-    "MG-GR015": [
-      "A1"
-    ],
-    "MG-GR016": [
-      "A1"
-    ],
-    "MG-GR017": [
-      "A1"
-    ],
-    "MG-GR018": [
-      "A1"
-    ],
-    "MG-GR019": [
-      "A1"
-    ],
-    "MG-GR020": [
-      "A1"
+      "A2"
     ],
     "MG-GR103": [
       "A1"
     ],
     "MG-GR104": [
+      "A1"
+    ],
+    "MG-GR021": [
+      "A1"
+    ],
+    "MG-GR022": [
+      "A1"
+    ],
+    "MG-GR023": [
       "A1"
     ],
     "MG-AR001": [
@@ -235,8 +205,9 @@
     ],
     "repeat_attempt_labels": [
       "A1",
-      "A2",
-      "A3"
+      "A2"
     ]
-  }
+  },
+  "selection_timing": "after_all_results; final30-task scope requested by user after new calibration",
+  "repeat_self_check_revision": "Post-observation user-approved cost reduction: two independent answers, one followup in each neutral/affirm/deny branch. Capability uses onlyA1; original A3/R2 evidence retained outside this default."
 }

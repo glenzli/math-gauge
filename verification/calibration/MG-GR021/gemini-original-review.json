@@ -1,0 +1,131 @@
+{
+  "schema": "math-gauge.draft-answer-adjudication/v1",
+  "model": "gemini-3.8-flash-high",
+  "reasoning_effort": "high",
+  "case_id": "Q05",
+  "paper_version": "0.4.0",
+  "response_path": "/private/tmp/math-gauge-matrix-v4-gemini-20261104-01a1a43a/gemini/sessions/Q05-A1/1/output/response.md",
+  "response_sha256": "a40c0808f193a04c7072fb6b5cc523dc05636f22176529ff0bd072a3ce72fb53",
+  "execution_receipt": "/private/tmp/math-gauge-matrix-v4-gemini-20261104-01a1a43a/completed/gemini-Q05.json",
+  "reviewer": "root author AI",
+  "reviewer_kind": "ai",
+  "blind": false,
+  "human_review": "pending",
+  "reviewed_at": "2026-11-04T06:02:07.614971+00:00",
+  "decision": "partial",
+  "core_completion": false,
+  "strict_pass": false,
+  "strict_completion": false,
+  "diagnostic_score": 65.0,
+  "max_score": 100,
+  "assumption_fidelity": "clean",
+  "proof_validity": "invalid",
+  "scope_accuracy": "incorrect",
+  "unnecessary_restriction": false,
+  "major_mathematical_error_found": true,
+  "mathematical_errors_found": [
+    "第112行扩域C2总数错误，少2^r。合法标量输入r=d=n1=1,A1=1在两个扩域的模4候选解均有4个，答卷公式只有2个。",
+    "第156-167行的实际固定类通式漏掉Q2(i),M=2的范数耦合。其自己最后给出的s=2(1+i),c=sqrt(1-8i)是真解，模4为[[1,2+2i],[2+2i,1]]；常系数部分[[1,2],[2,1]]的列范数为5 mod8，根本不在R_(F,2)。这不是评分偏好，而是原答内部的直接反例。",
+    "第181-194行固定C及其轨道计数错误。r=d=1,M=3时直接枚举得到C有8个、全部固定、8条轨道，答卷却给固定4个、6条轨道。",
+    "第221行C_(K,M+1)到C_(K,M)在M>=3满射为假。r=d=1,M=3的u=5 mod8满足u^2=1 mod8，但任意模16提升平方均为9 mod16，不能延长。",
+    "第224-226行固定C约化像未精确确定，纤维少2^d。标量例C3^sigma到C2^sigma的像为{1,3}，每个纤维有4个，答卷给2个。第230-239行又只处理固定R的无限提升，漏掉固定C部分。",
+    "第118-129行只核对提升判据的代表无关性，未提供从满足多一位范数到真正无限精度解的充分性证明。",
+    "第312-316行Cayley矩阵恒等式有局部反号；直接给出的c,s旋转仍有效。这一项单独按附带断言处理，没有将其最优性反例判错。"
+  ],
+  "non_material_notes": [
+    "可行性不变量、实际R计数、最优下降精度、rank1边界与两个域的实际最优性反例都有正确内容；不能将本卷概括为全错。",
+    "不因采用不同路线扣分；精度最优性构造按其有效显式c,s公式完整计分。"
+  ],
+  "criteria": [
+    {
+      "id": "feasibility_counts_liftability",
+      "score": 20,
+      "max_score": 30,
+      "checks": [
+        {
+          "id": "original_input_and_feasibility",
+          "score": 10,
+          "max_score": 10,
+          "notes": "正确提取原输入mod4的delta不变量、谱投影目标和Gram模8形式，并给出三个域的正确可行性判准。接受其在Ck=I mod4的限定形式下援引整二次型分类，不将错误计数反推为本判准错误。"
+        },
+        {
+          "id": "closed_total_counts",
+          "score": 5,
+          "max_score": 10,
+          "notes": "所有实际R和M>=3的C公式正确；第112行的扩域C2少2^r因子。最小r=d=1时写2，定义直接枚举为4。计数主要列公式，未补足奇异模2群的完整计数论证，给半分。"
+        },
+        {
+          "id": "actual_image_test",
+          "score": 5,
+          "max_score": 10,
+          "notes": "列范数多一位充要判据本身正确，并证明与提升代表无关；未证明其充分性所需的实际整正交/分块提升，故半分。"
+        }
+      ]
+    },
+    {
+      "id": "fixed_classes_and_orbits",
+      "score": 12.5,
+      "max_score": 25,
+      "checks": [
+        {
+          "id": "exact_fixed_class_description",
+          "score": 7.5,
+          "max_score": 15,
+          "notes": "固定C的具体类及大部分实际R结构正确；但第156-167行把Q2(i),M=2也写成基域实际类加交替尾项，遗漏范数耦合。其第341-349行自己的合法实际反例已否定此前通式，给半分。"
+        },
+        {
+          "id": "closed_fixed_and_orbit_counts",
+          "score": 5,
+          "max_score": 10,
+          "notes": "实际R固定数和轨道式正确；固定C在M>=3少2^d、M=2少2^r，C轨道式随之错误且未给M=2轨道闭式，给半分。r=d=1,M=3实际固定8个、轨道8个，答卷写固定4个、轨道6个。"
+        }
+      ]
+    },
+    {
+      "id": "reduction_maps_and_fixed_lifts",
+      "score": 7.5,
+      "max_score": 15,
+      "checks": [
+        {
+          "id": "all_images_and_fibers",
+          "score": 5,
+          "max_score": 10,
+          "notes": "实际R与固定R的约化像、纤维正确，C的M=2一步也有正确内容。但第221行把C_(M+1)到C_M在M>=3宣称满射；u=5 mod8的标量反例否定。固定C只给像的包含，纤维又少2^d；基域映射未完整单列，给半分。"
+        },
+        {
+          "id": "fixed_lifts_and_towers",
+          "score": 2.5,
+          "max_score": 5,
+          "notes": "固定R的真正固定提升和相容塔刻画正确；未覆盖原题同样要求的固定C类，后者还需基域实际可提升性而非只消去虚部，给半分。"
+        }
+      ]
+    },
+    {
+      "id": "optimal_quantitative_descent",
+      "score": 20,
+      "max_score": 20,
+      "checks": [
+        {
+          "id": "best_universal_and_pointwise_precision",
+          "score": 10,
+          "max_score": 10,
+          "notes": "Nmax、给定U保持M的充要条件和rank1精确下降均正确。一般下界可直接由其正确的M>=3固定类结构和M=2两解均模2为I得到；B=0的特殊实际类确会下降，未因更广的M=2通式错误自动扣这一正确子结论。"
+        },
+        {
+          "id": "actual_sharpness_examples_and_exact_boundary",
+          "score": 10,
+          "max_score": 10,
+          "notes": "M>=3的显式c,s旋转及两个M=2根式实例都是真正正交反例，18组精确核对通过。正确处理rank1实际符号群。Cayley标签中的反号不使其独立给出的显式旋转失效，保留全部必答构造信用。"
+        }
+      ]
+    },
+    {
+      "id": "assertion_reliability",
+      "score": 5,
+      "max_score": 10,
+      "notes": "只处理第312-316行独立、局部的Cayley矩阵恒等式反号。显式旋转本身有效，未重复扣其必答反例；错误计数、M=2分类和约化满射性已记各对应目标，不再在本项处罚。"
+    }
+  ],
+  "lean_status": "not_required",
+  "notes": "同一冻结去提示题，Gemini单次初答未完成核心目标，65/100。主要问题是错误的有限计数、漏掉Q2(i)模4固定类耦合、错误宣称较高层有限约化满射；多个断言被最小合法标量例或它自己正确的二维反例直接否定。可行性与最佳下降精度等正确内容保留信用。没有发现其提出能推翻题面或参考解的有效异议。与Terra100/100构成本题单次诊断差异，非一般模型排名；作者非盲AI审核，人审待办。"
+}

@@ -7,6 +7,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from collections import Counter
 from pathlib import Path
 from unittest.mock import patch
 
@@ -28,13 +29,19 @@ class FocusCatalogTests(unittest.TestCase):
 
     def test_exact_paper_units_and_independent_review_statuses(self):
         catalog, _ = focus_catalog.build()
-        self.assertEqual(catalog["counts"]["papers"], 47)
-        self.assertEqual(catalog["counts"]["default_papers"], 36)
-        self.assertEqual(catalog["counts"]["reserve_papers"], 11)
-        self.assertEqual(catalog["counts"]["default_obligations"], 306)
-        self.assertEqual(catalog["counts"]["reserve_obligations"], 66)
-        self.assertEqual(catalog["scope"]["progressive_papers"], 41)
-        self.assertEqual(catalog["counts"]["progressive_stages"], 246)
+        entries = catalog["entries"]
+        self.assertEqual(catalog["counts"]["papers"], len(entries))
+        for membership in ("default", "reserve"):
+            selected = [row for row in entries if row["membership"] == membership]
+            self.assertEqual(catalog["counts"][membership + "_papers"], len(selected))
+            self.assertEqual(catalog["counts"][membership + "_obligations"], sum(row["stage_count"] for row in selected))
+        progressive = [row for row in entries if row["kind"] == "progressive"]
+        self.assertEqual(catalog["scope"]["progressive_papers"], len(progressive))
+        self.assertEqual(catalog["counts"]["progressive_stages"], sum(row["stage_count"] for row in progressive))
+        written = [row for row in entries if row["kind"] == "written_proof"]
+        if written:
+            self.assertEqual(catalog["counts"]["proof_criteria"], sum(row["proof_criterion_count"] for row in written))
+            self.assertTrue(all(row["stage_count"] == 0 for row in written))
         self.assertEqual(
             catalog["scope"]["chapter_obligations"], {"MG-C002": 34, "MG-C003": 92}
         )
@@ -58,8 +65,19 @@ class FocusCatalogTests(unittest.TestCase):
                     )
                 else:
                     taxonomy["paper_assignments"].pop()
-                with self.assertRaisesRegex(ValueError, "exactly 43 mathematical papers and 4 answer reviews"):
+                with self.assertRaisesRegex(ValueError, "every selected mathematical paper and answer review exactly once"):
                     focus_catalog.build(taxonomy_data=taxonomy)
+
+    def test_optional_membership_retains_original_source_identity(self):
+        catalog, _ = focus_catalog.build()
+        entries = {row["case_id"]: row for row in catalog["entries"]}
+        for cid in ("MG-GR012", "MG-GR015", "MG-GR020"):
+            with self.subTest(case_id=cid):
+                row = entries[cid]
+                self.assertEqual(row["membership"], "reserve")
+                self.assertEqual(row["paths"]["case"], f"cases/proofs/{cid}/case.json")
+                self.assertEqual(row["original_sha256"][row["paths"]["task"]],
+                                 hashlib.sha256((ROOT / row["paths"]["task"]).read_bytes()).hexdigest())
 
     def test_rejects_duplicate_primary_or_focus_tag(self):
         for field, value, message in (
@@ -140,7 +158,8 @@ class FocusCatalogTests(unittest.TestCase):
         self.assertNotIn("protected_legacy_files", catalog)
         self.assertEqual([row["root"] for row in catalog["suites"]], ["cases", "cases"])
         self.assertEqual([row["membership"] for row in catalog["suites"]], ["default", "reserve"])
-        self.assertEqual([row["paper_count"] for row in catalog["suites"]], [36, 11])
+        self.assertEqual([row["paper_count"] for row in catalog["suites"]],
+                         [catalog["counts"][key + "_papers"] for key in ("default", "reserve")])
 
     def test_refresh_writes_only_current_derived_outputs(self):
         catalog, document = focus_catalog.build()
@@ -158,9 +177,11 @@ class FocusCatalogTests(unittest.TestCase):
         catalog, _ = focus_catalog.build()
         self.assertEqual(catalog["schema"], "math-gauge.case-catalog/v1")
         self.assertEqual(catalog["snapshot_status"], "final-catalog-snapshot")
+        expected = Counter(Path(manifest).parent.parent.name
+                           for _, name in focus_catalog.SUITES
+                           for manifest in focus_catalog.Suite.load(ROOT / name).metadata["cases"])
         self.assertEqual([(item["id"], item["count"]) for item in catalog["categories"]],
-                         [("proofs", 29), ("lean-audit", 6),
-                          ("lean-construction", 6), ("chapters", 2), ("answer-review", 4)])
+                         [(category, expected[category]) for category, _ in focus_catalog.CATEGORIES])
         ids = [cid for item in catalog["categories"] for cid in item["case_ids"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(set(ids), {item["case_id"] for item in catalog["entries"]})
@@ -169,9 +190,11 @@ class FocusCatalogTests(unittest.TestCase):
         self.assertEqual(default | reserve, set(ids))
         for item in catalog["entries"]:
             self.assertEqual(item["membership"], "default" if item["case_id"] in default else "reserve")
-            prefix = "reserve/" if item["membership"] == "reserve" else ""
-            self.assertEqual(item["paths"]["case"],
-                             f"cases/{prefix}{item['category']}/{item['case_id']}/case.json")
+            canonical = f"{item['category']}/{item['case_id']}/case.json"
+            allowed = {f"cases/{canonical}"}
+            if item["membership"] == "reserve":
+                allowed.add(f"cases/reserve/{canonical}")
+            self.assertIn(item["paths"]["case"], allowed)
             self.assertIn(item["task_kind"], {"written", "audit", "repair", "generate", "answer_review"})
 
     def test_check_rejects_stale_derived_text(self):

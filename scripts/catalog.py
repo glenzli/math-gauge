@@ -25,11 +25,11 @@ FOCUS_IDS = tuple(f"F{n:02}" for n in range(1, 10))
 SUITES = (("default", "cases/suite.json"), ("reserve", "cases/reserve-suite.json"))
 SUITE_ROOTS = tuple(manifest for _, manifest in SUITES)
 CATEGORIES = (
-    ("proofs", "书面证明、反例与构造", 29),
-    ("lean-audit", "Lean 语义审计", 6),
-    ("lean-construction", "Lean 生成与修复", 6),
-    ("chapters", "整章形式化", 2),
-    ("answer-review", "真实答卷审阅", 4),
+    ("proofs", "书面证明、反例与构造"),
+    ("lean-audit", "Lean 语义审计"),
+    ("lean-construction", "Lean 生成与修复"),
+    ("chapters", "整章形式化"),
+    ("answer-review", "真实答卷审阅"),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
 sys.dont_write_bytecode = True
@@ -73,6 +73,20 @@ def stage_headings(task: Path) -> dict:
     return found
 
 
+def task_goals(task: Path) -> dict:
+    return {f"goal{match[1]}": number
+            for number, line in enumerate(task.read_text().splitlines(), 1)
+            if (match := re.match(r"^(\d+)\.\s", line))}
+
+
+def assessment_label(entry: dict) -> tuple[int, str]:
+    if entry["kind"] == "written_proof":
+        return entry["proof_criterion_count"], "评审判准"
+    if entry["kind"] == "answer_review":
+        return entry["review_dimension_count"], "审阅维度"
+    return entry["stage_count"], "义务" if entry["kind"] == "chapter_formalization" else "阶段"
+
+
 def validate_assignment(assignment: dict, source: dict) -> None:
     cid = source["case"]["id"]
     case, contract = source["case"], source["contract"]
@@ -99,14 +113,17 @@ def validate_assignment(assignment: dict, source: dict) -> None:
     require(len(ids) == len(set(ids)), f"{cid}: duplicate focus tag")
     require(all(fid in FOCUS_IDS for fid in ids), f"{cid}: unknown focus tag")
     is_review = contract["kind"] == "answer_review"
-    units = contract["dimensions"] if is_review else contract["stages"]
+    is_written = contract["kind"] == "written_proof"
+    unit_key = "criterion_id" if is_written else "dimension_id" if is_review else "stage_id"
+    collection = "criteria" if is_written else "dimensions" if is_review else "stages"
+    units = contract[collection]
     stages = {stage["id"]: (i, stage) for i, stage in enumerate(units)}
     for tag in tags:
         evidence = tag.get("evidence", [])
         require(isinstance(evidence, list) and evidence, f"{cid}: tag lacks evidence")
         seen = set()
         for item in evidence:
-            sid = item.get("dimension_id" if is_review else "stage_id")
+            sid = item.get(unit_key)
             require(sid in stages and sid not in seen, f"{cid}: invalid evidence ID {sid}")
             seen.add(sid)
             number, stage = stages[sid]
@@ -121,12 +138,20 @@ def validate_assignment(assignment: dict, source: dict) -> None:
                 f"{cid}/{sid}: a brief evidence note is required",
             )
             require(
-                item.get("contract_pointer") == f"/{'dimensions' if is_review else 'stages'}/{number}/required_evidence",
+                item.get("contract_pointer") == f"/{collection}/{number}/required_evidence",
                 f"{cid}/{sid}: incorrect contract pointer",
             )
             locator = item.get("task_locator", {})
             require(locator.get("path") == source["paths"]["task"], f"{cid}: task drift")
-            if is_review:
+            if is_written:
+                applies_to = locator.get("applies_to")
+                goals = source.get("goals", {})
+                require(
+                    applies_to == "whole-paper" and locator.get("line") == 1
+                    or applies_to in goals and locator.get("line") == goals[applies_to],
+                    f"{cid}/{sid}: written-proof final-goal locator drift",
+                )
+            elif is_review:
                 require(
                     locator.get("applies_to") == "whole-answer-review" and locator.get("line") == 1,
                     f"{cid}/{sid}: answer-review locator drift",
@@ -172,8 +197,11 @@ def load_sources(root: Path, taxonomy: dict) -> tuple[list, dict]:
             case = suite.cases[cid]  # Shared runner resolves case-relative manifests.
             category = Path(manifest).parent.parent.name
             require(category in {item[0] for item in CATEGORIES}, f"{cid}: unknown category")
-            expected_path = (Path("reserve") if membership == "reserve" else Path()) / category / cid / "case.json"
-            require(Path(manifest) == expected_path, f"{cid}: suite membership and directory differ")
+            canonical_path = Path(category) / cid / "case.json"
+            allowed_paths = {canonical_path}
+            if membership == "reserve":
+                allowed_paths.add(Path("reserve") / canonical_path)
+            require(Path(manifest) in allowed_paths, f"{cid}: suite membership and directory differ")
             require(raw.get("path_base") == "case", f"{cid}: case-relative paths required")
             paths = {"case": case_path, "task": f"cases/{case['task']}",
                      "contract": f"cases/{case['group_contract']}"}
@@ -182,7 +210,8 @@ def load_sources(root: Path, taxonomy: dict) -> tuple[list, dict]:
                       "category": category, "suite_root": "cases", "suite_sha256": suite.sha256,
                       "membership": membership, "suite_manifest": suite_manifest,
                       "source_bindings": {name: digest(local_file(root, name)) for name in paths.values()},
-                      "headings": stage_headings(local_file(root, paths["task"]))}
+                      "headings": stage_headings(local_file(root, paths["task"])),
+                      "goals": task_goals(local_file(root, paths["task"]))}
             if contract["kind"] == "chapter_formalization":
                 source["obligations_path"] = str(Path(case_path).parent / "candidate/obligations.json")
                 path = local_file(root, source["obligations_path"])
@@ -206,14 +235,15 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
     def link(label: str, target: str) -> str:
         return f"[{label}]({os.path.relpath(target, 'cases')})"
 
+    counts = catalog["counts"]
     lines = [
         "# 按考察重点选卷",
         "",
-        "本目录覆盖默认36份任务与后备11份，共47条相关记录：原43份数学卷与4份真实答卷审阅。审阅关联既有母题，不增加独立数学家族；默认36份任务仍关联32个母题家族。原数学默认集含180递进阶段与126章节义务，共306项，后备含66阶段。阶段、义务及审阅维度均不能当作独立试题。",
+        f"本目录覆盖默认{counts['default_papers']}份任务与后备{counts['reserve_papers']}份，共{counts['papers']}条相关记录：{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅。默认任务关联{counts['default_parent_families']}个母题家族。数学默认集含{counts['default_obligations']}项阶段或章节义务，后备含{counts['reserve_obligations']}项。另有{counts.get('proof_criteria', 0)}项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。",
         "",
         "分类是AI审查建议；源题全部仍为 **draft / human pending**。本目录不产生模型调用、数学裁定或新增判卷要求，也不证明作者或候选Lean覆盖。完整要求以唯一题面和合同为准。",
         "",
-        "每份任务恰有1个主重点和2–4个次重点。主重点构成互斥阅读索引；多标签层可以重叠，数量不能相加。数学任务的证据指向实际阶段/义务，审阅任务指向审阅维度，不能据此给审阅者增加重新解题或Lean交付义务。这些标签没有另行冻结子分数，不重复加权。",
+        "每份任务恰有1个主重点和2–4个次重点。主重点构成互斥阅读索引；多标签层可以重叠，数量不能相加。数学任务的证据指向实际阶段、义务或最终目标的评审判准，审阅任务指向审阅维度，不能据此增加证明路线或Lean交付义务。这些标签没有另行冻结子分数，不重复加权。",
         "",
         "中性自查、支持/怀疑立场和重复轮次属于执行维度，见[可靠性执行协议](../protocol/reliability-execution.md)。数学主题和任务类型是其他交叉索引。",
         "",
@@ -239,19 +269,18 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
                 for tag in entry["focus"]
                 if tag["focus_id"] == fid and tag["role"] == role
             ]
-            lines += ["", f"### {label} · {len(selected)}份（完整题库）", "", "| 任务 | 成员 | 版本与规模 | 实际阶段、义务或审阅维度证据 |", "| --- | --- | --- | --- |"]
+            lines += ["", f"### {label} · {len(selected)}份（完整题库）", "", "| 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |", "| --- | --- | --- | --- |"]
             for entry, tag in selected:
-                is_review = entry["kind"] == "answer_review"
-                unit = "审阅维度" if is_review else "义务" if entry["kind"] == "chapter_formalization" else "阶段"
+                count, unit = assessment_label(entry)
                 evidence = "；".join(
-                    f"**{item.get('dimension_id', item.get('stage_id'))}**：{item['note'].rstrip('。')}"
+                    f"**{item.get('criterion_id', item.get('dimension_id', item.get('stage_id')))}**：{item['note'].rstrip('。')}"
                     for item in tag["evidence"]
                 ) + "。"
                 title = link(f"{entry['case_id']} · {entry['title']}", entry["paths"]["task"])
                 contract = link("合同", entry["paths"]["contract"])
                 lines.append(
                     f"| {title} · {contract} | {'默认' if entry['membership'] == 'default' else '后备'} | {entry['version']} · "
-                    f"{entry['review_dimension_count'] if is_review else entry['stage_count']}{unit} | {evidence} |"
+                    f"{count}{unit} | {evidence} |"
                 )
     lines += [
         "",
@@ -264,8 +293,10 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
 
 
 def render_index(catalog: dict) -> str:
+    counts = catalog["counts"]
+    suite_version = next(item["version"] for item in catalog["suites"] if item["membership"] == "default")
     lines = ["# 当前试卷", "",
-             "0.4.0默认题集 `cases/suite.json` 含36份相关任务：原32份数学卷与4份真实答卷审阅，关联32个母题家族。另11份后备数学卷由 `cases/reserve-suite.json` 显式选择。原43份数学卷共372项相关义务，新增审阅不制造4个独立数学家族，也不把审阅维度计入数学阶段或义务。", "",
+             f"{suite_version}默认题集 `cases/suite.json` 含{counts['default_papers']}份相关任务，关联{counts['default_parent_families']}个母题家族。另{counts['reserve_papers']}份后备数学卷由 `cases/reserve-suite.json` 显式选择。完整题库含{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅，共{counts['default_obligations'] + counts['reserve_obligations']}项阶段或章节义务，另有{counts.get('proof_criteria', 0)}项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。", "",
              "材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review-pilot.md)与[当前结果](../docs/benchmark-comparison-2026-11-03.md)。已发布资产保持原样。", "",
              "题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。", "",
              "[按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)"]
@@ -278,17 +309,16 @@ def render_index(catalog: dict) -> str:
             paths = entry["paths"]
             task = os.path.relpath(paths["task"], "cases")
             folder = os.path.relpath(str(Path(paths["case"]).parent), "cases")
-            is_review = entry["kind"] == "answer_review"
-            unit = "审阅维度" if is_review else "义务" if entry["kind"] == "chapter_formalization" else "阶段"
+            count, unit = assessment_label(entry)
             contract_link = os.path.relpath(paths["contract"], "cases")
-            extra = "" if is_review else f" · [作者Lean]({folder}/formal/COVERAGE.md)"
+            extra = "" if entry["kind"] in {"answer_review", "written_proof"} else f" · [作者Lean]({folder}/formal/COVERAGE.md)"
             lines.append(f"| [{entry['case_id']} · {entry['title']}]({task}) | "
                          f"{entry['task_kind']} | "
-                         f"{entry['review_dimension_count'] if is_review else entry['stage_count']}{unit} | [合同]({contract_link}) · "
+                         f"{count}{unit} | [合同]({contract_link}) · "
                          f"[参考]({folder}/reference.md) · [评分]({folder}/rubric.json) · "
                          f"[题包复核]({folder}/review.json){extra} |")
-    lines += ["", "## 备选卷 · 11份", "",
-              "[备选目录、主题分类与完整材料](reserve/README.md)集中列出11份书面卷，不进入默认36份任务或84份记录的公开计划。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。", "",
+    lines += ["", f"## 备选卷 · {counts['reserve_papers']}份", "",
+              f"[备选目录、主题分类与完整材料](reserve/README.md)集中列出{counts['reserve_papers']}份书面卷，由显式清单选择。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。", "",
               "所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。", ""]
     return "\n".join(lines)
 
@@ -315,7 +345,8 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     suites, sources = load_sources(root, taxonomy)
     assignments = taxonomy.get("paper_assignments", [])
     ids = [item.get("case_id") for item in assignments]
-    require(len(ids) == len(set(ids)) == 47 and set(ids) == set(sources), "Assignments must cover exactly 43 mathematical papers and 4 answer reviews once")
+    require(len(ids) == len(set(ids)) == len(sources) and set(ids) == set(sources),
+            "Assignments must cover every selected mathematical paper and answer review exactly once")
     entries = []
     for assignment in sorted(assignments, key=lambda item: item["case_id"]):
         cid = assignment["case_id"]
@@ -334,6 +365,9 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
             "stage_ids": [stage["id"] for stage in contract.get("stages", [])],
             "review_dimension_count": len(contract.get("dimensions", [])),
             "review_dimension_ids": [item["id"] for item in contract.get("dimensions", [])],
+            **({"proof_criterion_count": len(contract["criteria"]),
+                "proof_criterion_ids": [item["id"] for item in contract["criteria"]]}
+               if contract["kind"] == "written_proof" else {}),
             "suite_root": source["suite_root"], "suite_sha256": source["suite_sha256"],
             "suite_manifest": source["suite_manifest"], "membership": source["membership"],
             "paths": source["paths"], "original_sha256": source["source_bindings"],
@@ -345,6 +379,12 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     progressive = [entry for entry in entries if entry["kind"] == "progressive"]
     chapters = [entry for entry in entries if entry["kind"] == "chapter_formalization"]
     answer_reviews = [entry for entry in entries if entry["kind"] == "answer_review"]
+    written_proofs = [entry for entry in entries if entry["kind"] == "written_proof"]
+    by_id = {entry["case_id"]: entry for entry in entries}
+    def parent_family(entry):
+        family = entry["parent_family_id"] if entry["kind"] == "answer_review" else entry["family_id"]
+        return by_id[family]["family_id"] if family in by_id else family
+
     scope = {
         "id": "complete-case-bank", "paper_count": len(entries),
         "progressive_papers": len(progressive),
@@ -355,6 +395,9 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         "answer_review_dimensions": sum(entry["review_dimension_count"] for entry in answer_reviews),
         "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
     }
+    if written_proofs:
+        scope.update(written_proof_papers=len(written_proofs),
+                     proof_criteria=sum(entry["proof_criterion_count"] for entry in written_proofs))
     require(taxonomy.get("scope") == scope, "Declared mathematical/review task scope/counts drift")
     primary = Counter(entry["focus"][0]["focus_id"] for entry in entries)
     tagged = Counter(tag["focus_id"] for entry in entries for tag in entry["focus"])
@@ -368,9 +411,15 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         "taxonomy": TAXONOMY, "taxonomy_sha256": hashlib.sha256(raw).hexdigest(),
         "scope": scope,
         "counts": {
-            "papers": len(entries), "default_papers": 36, "reserve_papers": 11,
-            "mathematical_papers": 43, "answer_review_tasks": 4,
-            "default_parent_families": 32,
+            "papers": len(entries),
+            "default_papers": sum(entry["membership"] == "default" for entry in entries),
+            "reserve_papers": sum(entry["membership"] == "reserve" for entry in entries),
+            "mathematical_papers": len(entries) - len(answer_reviews),
+            "answer_review_tasks": len(answer_reviews),
+            "default_parent_families": len({parent_family(entry) for entry in entries
+                                            if entry["membership"] == "default"}),
+            **({"written_proof_papers": len(written_proofs), "proof_criteria": scope["proof_criteria"]}
+               if written_proofs else {}),
             "default_obligations": sum(e["stage_count"] for e in entries if e["membership"] == "default"),
             "reserve_obligations": sum(e["stage_count"] for e in entries if e["membership"] == "reserve"),
             "progressive_stages": scope["progressive_stages"],
@@ -385,7 +434,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
                         "default_count": sum(entry["category"] == cid and entry["membership"] == "default" for entry in entries),
                         "reserve_count": sum(entry["category"] == cid and entry["membership"] == "reserve" for entry in entries),
                         "case_ids": [entry["case_id"] for entry in entries if entry["category"] == cid]}
-                       for cid, label, expected in CATEGORIES],
+                       for cid, label in CATEGORIES],
         "focus_counts": {fid: {"primary_papers": primary[fid], "all_tagged_papers": tagged[fid]} for fid in FOCUS_IDS},
         "entries": entries,
         "excluded_execution_axes": taxonomy["excluded_execution_axes"],
@@ -396,12 +445,10 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
             "No model result, author Lean coverage or experimental discrimination is inferred by this index.",
         ],
     }
-    require([item["count"] for item in catalog["categories"]] == [item[2] for item in CATEGORIES],
-            "Category counts drift")
-    require([item["paper_count"] for item in suites] == [36, 11]
-            and catalog["counts"]["default_obligations"] == 306
-            and catalog["counts"]["reserve_obligations"] == 66,
-            "Default/reserve membership counts drift")
+    require(sum(item["count"] for item in catalog["categories"]) == len(entries)
+            and all(item["paper_count"] == sum(entry["membership"] == item["membership"]
+                                              for entry in entries) for item in suites),
+            "Category or suite membership counts drift")
     document = render_document(catalog, taxonomy)
     generated = {(root / name).resolve() for name in OUTPUTS}
     for target in re.findall(r"\]\(([^)]+)\)", document):

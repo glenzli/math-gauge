@@ -4,63 +4,49 @@
 
 Math Gauge 是数学推理、Lean 语义对齐与真实答卷审阅基准。它检查模型能否在实际给定的结构下完成证明、反例、构造、分类或形式化，保持假设、量词、定义域与结论强度，并留下可复核的原始答卷与审核证据。
 
-[Benchmark 对比图](docs/results/comparison-2026-11-03/index.html) · [Gemini 综合结果](docs/gemini-combined-2026-11-03.md) · [Terra 结果页](docs/results/terra-2026-11-03/index.html) · [获取v0.4.0](https://github.com/glenzli/math-gauge/releases/tag/v0.4.0) · [题包说明](docs/release-consumer-README-v0.4.0.md) · [试卷目录](cases/README.md) · [真实答卷审阅](cases/answer-review/README.md) · [当前组成与审阅说明](docs/answer-review-pilot.md) · [评分结构](protocol/benchmark-scoring.md) · [维护操作](docs/usage.md) · [文档导航](docs/README.md)
+[Benchmark 对比图](docs/results/comparison-2026-11-03/index.html) · [Gemini 综合结果](docs/gemini-combined-2026-11-03.md) · [Terra 结果页](docs/results/terra-2026-11-03/index.html) · [已发布v0.4.0](https://github.com/glenzli/math-gauge/releases/tag/v0.4.0) · [本地0.5预览指南](docs/release-consumer-README-v0.5.0.md) · [本地选题依据](docs/selection-v0.5.0.md) · [试卷目录](cases/README.md) · [真实答卷审阅](cases/answer-review/README.md) · [当前组成与审阅说明](docs/answer-review-pilot.md) · [评分结构](protocol/benchmark-scoring.md) · [维护操作](docs/usage.md) · [文档导航](docs/README.md)
 
 ## 独立任务包
 
-当前题集与任务包版本为 **0.4.0**，默认含36份任务：原32份数学卷与4份真实答卷审阅。已发布0.3.0及历史资产保持原样。当前命名任务包为[benchmark-v0.4.0.zip](https://github.com/glenzli/math-gauge/releases/download/v0.4.0/benchmark-v0.4.0.zip)，含候选任务与约定附件、一个简明README及可选控制工具；备选11题不进入默认包。解压后可接入外部 harness，需要 Python 3.10+；不需要 clone 仓库、安装 Math Gauge、第三方 Python 包或 Codex。
+当前源码为 **本地0.5.0预览**，尚未发布。默认30份任务：14份书面、5份Lean审计、5份Lean生成/修复、2章与4份真实答卷审阅；20份备选由显式清单另选。[本地任务包指南](docs/release-consumer-README-v0.5.0.md)说明30份任务/54份计划记录的操作边界，不表示已经存在0.5.0发布资产。
 
-只把命名 ZIP 交给执行 harness，不必把仓库或 Release 网页作为上下文。包内不放本项目名称、仓库地址、成绩、评审参考答案或出题说明；待审答卷属于审阅任务的题目材料，审阅参考与判准留在包外。必要的原作品署名与许可保留。操作入口是[包内 README 的源文件](docs/release-consumer-README-v0.4.0.md)：冻结模型、预算与范围，取得完整消息，保存原始答卷，再打包 `answers.zip`。公开数学内容仍可能被识别，中性包装不等于隐藏题库。
+已发布的 [v0.4.0](https://github.com/glenzli/math-gauge/releases/tag/v0.4.0)、[命名任务包](https://github.com/glenzli/math-gauge/releases/download/v0.4.0/benchmark-v0.4.0.zip)和[原操作指南](docs/release-consumer-README-v0.4.0.md)保持原字节；它们继续绑定旧36任务/84记录配置。当前源码不能冒充该已发布版本。后续发布须从确切的干净源提交构建，构建、提交、推送和发布分别留证。
 
-维护者完成本地版本核验后，可从干净的指定提交构建任务包；构建不等于远端发布：
+执行端只取得候选题面和白名单附件、一个操作README及可选控制工具；不需要clone仓库、安装Math Gauge或Codex。参考、评分、来源、完整评审计划、作者证据与选题理由留在评审侧；必要署名与许可保留。待审原答属于审阅题明确提供的题目材料，审阅参考仍不进入solver输入。公开数学内容可能被识别，中性包装不等于隐藏题库。
 
-```sh
-python3 scripts/release.py build --version 0.4.0 \
-  --out runs/releases/v0.4.0
-```
-
-构建、检查、准备请求、记录与导入均不调用模型。控制工具只供 harness 操作者使用，不是候选模型的解题工具。模型只接收本题完整消息、约定附件和允许的本分支历史。参考、评分、完整评审计划及作者证据留在包外。
-
-历史 [v0.1.0 Release](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0) 及其[发布说明](docs/release-notes-v0.1.0.md)保持不变；它采用旧版本约定和目录。GitHub 自动生成的 **Source code** 压缩包包含公开参考答案，不能代替命名任务包。包结构和维护约束见[分发合同](protocol/release-distribution.md)。
+准备、检查、导出、记录与导入均不调用模型。模型只接收本题完整消息、白名单附件和允许的本分支历史；控制工具不作为解题提示。GitHub自动生成的Source code压缩包包含公开评审材料，不能替代命名候选包。分发边界见[分发合同](protocol/release-distribution.md)，历史[v0.1.0发布说明](docs/release-notes-v0.1.0.md)保留原约定。
 
 ## 当前基准
 
-默认题集 `cases/suite.json` 是含 **36份相关任务的公开开发基准（public development suite）**：
+默认题集 `cases/suite.json` 为本地0.5.0的 **30份相关任务、21个数学家族**，属于公开开发基准（public development suite）：
 
 | 类别 | 数量 | 内容 |
 | --- | ---: | --- |
-| `cases/proofs/` | 18 | 书面证明、反例、构造与分类 |
-| `cases/lean-audit/` | 6 | 已给 Lean 源码的语义审计 |
-| `cases/lean-construction/` | 6 | Lean 生成与修复 |
+| `cases/proofs/` | 14 | 书面证明、反例、构造与分类 |
+| `cases/lean-audit/` | 5 | 已给 Lean 源码的语义审计 |
+| `cases/lean-construction/` | 5 | Lean 生成与修复 |
 | `cases/chapters/` | 2 | OET 卷 I 第 2/3 章的完整形式化 |
 | `cases/answer-review/` | 4 | 审阅完整原题与真实原答，判断正确性、完整性及缺陷影响 |
 
-原32份数学卷仍含30个递进题组、180阶段和两章34/92项义务，共306项；义务不是独立试题。4份审阅任务关联既有4份母题并共享历史来源，不能当作4个独立新增数学家族；同母题先聚合。另11份数学卷/66阶段放在[cases/reserve/](cases/reserve/README.md)，由显式清单选用。原43份数学卷与新增4份审阅共47条相关任务记录，原始题目、Lean、原答与参考保留。整章题提供含证明原文，审阅题提供真实原答，结果按各自条件解释。
+当前默认含26份数学交付和4份相关审阅。旧数学成员有126个递进阶段及两章34/92项义务，共252项；新GR021–023的15项书面证明判准另列，不当作新增独立阶段、Lean义务或数学家族。五对Lean审计/构造交付共享家族，4份审阅与母题相关，同母题审阅先聚合。
+
+[20份备选](cases/reserve/README.md)由 `cases/reserve-suite.json` 明确指定：原11个物理备选目录保持原样，另外9份分别引用7个proofs、1个Lean审计、1个Lean修复的原路径。原43份数学卷完整保留，加3份同族加强稿为46份数学卷；连同4份审阅共50条任务记录。[选题说明](docs/selection-v0.5.0.md)列出取舍及未被新题涵盖的旧义务。整章提供含证明原文，审阅题提供真实原答，结果按各自条件解释。
 
 这五类按**交付方式**划分：书面题须给论证或反例；审计题须判断源码是否证明了题面原命题；生成/修复题须交完整源码与逐项对应；整章题须覆盖整章定义、命题及习题义务；审阅题只审阅给定答卷，不要求重新完成母题或提交新Lean。此外，[按考察重点选卷](cases/by-focus.md)列出九个交叉标签：假设与作用域、量词与常数、定义域与提升、结论强度、存在与取到、构造与自然性、证明依赖、Lean语义、完整工程交付。标签附有具体阶段依据，不能重复计为九套独立题或再次加权。
 
-题面、完整参考、逐项判准、来源和 AI 审核材料已经准备。参考答案继续公开，便于透明复核；它们是评审侧出题材料，不属于 solver 题包。现有公开内容与 Git 历史均保留，因此本题集不宣称是未公开留出集。全部题目仍为 **draft / human pending**；`draft` 是待人工审定的生命周期状态。原43份数学卷的作者 Lean 证据覆盖43/43份完整目标、372/372 项义务，470 个模块已有真实编译记录；MG-GP003 的 S5 已完成任意域上的核心转移几何与原典范单位比较。见[作者证据账本](verification/author/README.md)。作者证明、AI 复核、编译和人工批准分别记录。
+题面、完整参考、逐项判准、来源和 AI 审核材料已经准备。参考答案继续公开，便于透明复核；它们是评审侧出题材料，不属于 solver 题包。现有公开内容与 Git 历史均保留，因此本题集不宣称是未公开留出集。全部题目仍为 **draft / human pending**；`draft` 是待人工审定的生命周期状态。作者 Lean 证据仍只覆盖原43份完整目标、372项义务和470个已真实编译模块；新3份书面题及其15项判准没有作者Lean证据，不继承母题覆盖。MG-GP003 的 S5 已完成任意域上的核心转移几何与原典范单位比较。见[作者证据账本](verification/author/README.md)。作者证明、AI 复核、编译和人工批准分别记录。
 
 ## 最新综合结果
 
-[当前Benchmark对比页](docs/results/comparison-2026-11-03/index.html)展示六个能力方向、作答稳定性与自查、真实答卷审阅主分与重大误判、两章完整交付。[文字表](docs/benchmark-comparison-2026-11-03.md) · [PNG](docs/results/comparison-2026-11-03/comparison.png) · [SVG](docs/results/comparison-2026-11-03/comparison.svg)
+当前只保留一个结果入口，路径中的2026-11-03继续使用：[Benchmark对比页](docs/results/comparison-2026-11-03/index.html) · [文字表](docs/benchmark-comparison-2026-11-03.md) · [Terra机器结果](docs/results/terra-2026-11-03/result.json) · [Gemini机器结果](docs/results/gemini-2026-11-03/result.json)。本地0.5.0聚合读取这些路径的冻结机器结果；图表与文字按同一版本刷新。精确分数以机器结果的版本、覆盖和审核快照为准，这里不沿用旧版本总分表。
 
-[![Math Gauge当前对比](docs/results/comparison-2026-11-03/comparison.png)](docs/results/comparison-2026-11-03/index.html)
+当前公开计划30份任务/21个家族/54份记录；加入3份私有探索为33份任务/24个家族/57份记录。每模型复用相容原记录、原审核与原数学分，加入3份同输入映射的原生初答：既有矩阵答及两题新实考。后两题本轮共4次原生调用，合并计分本身0调用；选题与合并发生在观察结果之后，不是全任务同步重新考试。原答、旧审核和已发布0.4.0资产不改写，AI审核与人审待办分别记录。
 
-| 模型 | 综合分 | 能力分 | 审阅主分 | 重大误判 |
-| --- | ---: | ---: | ---: | ---: |
-| Terra 6.1 Max | **94.62** | **92.83** | 98.75 | 0/4 |
-| Gemini 3.8 Flash High | **72.37** | **65.94** | 69.38 | 1/4 |
-
-当前合并范围39份任务、35个母题家族、87份记录；公开默认范围36份任务、32个家族、84份记录。AR纳入、60/30/10判准与8份既有原答重评发生在观察结果后，是方法变更与重算，不是新考试。AI审核 / 人审待办，0.4.0题库与任务包版本一致，原答、旧审核与已发布资产保留。
-
-[审阅专图](docs/results/comparison-2026-11-03/answer-review.png)单列4份任务、重大误判0/4与1/4；严格通过仅辅助，不用未满分全清零。稳定性与自查只选6份数学题，中性100分不代表全部交付通过。整章另列34/34与0/34、20/92与0/92；义务不是独立题数，后续答卷不替代首次。
-
-[Terra报告](docs/terra-combined-2026-11-03.md) · [Gemini报告](docs/gemini-combined-2026-11-03.md) · [审阅评分](protocol/answer-review-scoring.md) · [组合合同](protocol/composite-development-report.md)
+[Terra报告](docs/terra-combined-2026-11-03.md) · [Gemini报告](docs/gemini-combined-2026-11-03.md) · [审阅专图](docs/results/comparison-2026-11-03/answer-review.png) · [审阅评分](protocol/answer-review-scoring.md)。四份审阅的母题和六题重复/自查面板成员不变；严格通过仅辅助，整章义务不是独立题数，后续答卷不替代首次。
 
 ## 分项与总分
 
-公开基准36份任务关联32个母题家族，有五个能力方向；综合开发报告加入3份私有研究探索后为39份任务、35个母题家族、六方向。每份任务只取首次独立答卷，按其冻结合同归一化；同母题的审阅先聚合。**综合分 = 75%能力分 + 5%重复作答稳定性 + 10%无反馈自查 + 10%立场干扰下的自查。**
+本地0.5.0公开基准30份任务关联21个数学家族，有五个能力方向；加入3份私有研究探索后为33份任务、24个家族、六方向。每份任务只取首次独立答卷，按其冻结合同归一化；同母题的审阅先聚合。**综合分 = 75%能力分 + 5%重复作答稳定性 + 10%无反馈自查 + 10%立场干扰下的自查。**
 
 | 能力方向 | 公开版权重 | 合并探索后权重 |
 | --- | ---: | ---: |
@@ -71,9 +57,9 @@ python3 scripts/release.py build --version 0.4.0 \
 | 研究探索 | — | 13.5% |
 | 真实答卷审阅 | 10% | 10% |
 
-审阅每题100分由核心判断60、依据与影响30、补充完整性10构成；重大误判率单列，严格通过仅作辅助诊断。AR纳入、判准及权重是在观察结果后调整，8份既有审阅答卷统一重评，属于方法变更与重算，不是新考试。原始执行、答卷与旧审核保留，已发布版本不改。
+审阅每题100分由核心判断60、依据与影响30、补充完整性10构成；重大误判率单列，严格通过仅作辅助诊断。AR纳入、判准及权重是在观察结果后调整，8份既有审阅答卷统一重评，属于方法变更与重算，不是新的AR考试。当前整体另包含三份新题的原生初答；原始执行、答卷与旧审核保留，已发布版本不改。
 
-作答稳定性与自查从公开数学任务中固定选择6题。公开全计划84份记录，合并探索后87份：36或39份首次答卷、12份额外独立答卷、12份无反馈自查、24份立场自查。重复检查三次严格全对，自查看重点数学正确性；额外答卷不重复进入能力分。审阅和探索目前不在重复/自查范围内，缺测保留固定分母与区间。
+作答稳定性与自查仍固定选择6题，当前0.3多轮合同使用A1/A2两次独立作答，neutral、支持与怀疑三个分支各一次后续。公开全计划54份记录，合并探索后57份：30或33份A1、6份额外A2、6份无反馈自查、12份立场自查。重复检查两次严格完成，自查看重点数学正确性；能力仍仅取A1。旧A3/R2保留但退出新版默认，按既有A1/A2/R1重算，不重新调用模型。审阅与探索不进入该面板，缺测保留固定分母与区间。
 
 [综合评分标准](protocol/benchmark-scoring.md) · [审阅评分合同](protocol/answer-review-scoring.md) · [组合报告合同](protocol/composite-development-report.md)。九项考察重点仅作交叉诊断，不能重复计入总分。
 
@@ -109,7 +95,7 @@ python3 scripts/validate_protocol.py
 
 另一个 Codex 可以担任控制器，使用其环境真正支持的候选模型；读过全包的控制器不能兼作答题者，也不能把自己的聊天、记忆或控制材料继承给solver。不支持所选模型派发或所需隔离时，应保留未执行状态。包内指南给出相同流程的启动说明，不依赖本聊天或某个GPT型号。
 
-默认无工具条件保持原样；也可事前显式选择[本地工具、禁止外部搜索的条件](docs/release-consumer-README-v0.4.0.md)，允许本地工具反馈，禁止联网检索/外部搜索及工具联网。它只声明权限，不增加使用工具或Lean的提示、义务或最低用量，原题交付要求不变。独立初答与各分支继续隔离，不接收评审反馈；不同条件分别报告。导入成功只证明材料可接入，正式比较仍需独立核验运行来源、数学审核和适用的 Lean 门槛。
+默认无工具条件保持原样；也可事前显式选择[本地工具、禁止外部搜索的条件](docs/release-consumer-README-v0.5.0.md)，允许本地工具反馈，禁止联网检索/外部搜索及工具联网。它只声明权限，不增加使用工具或Lean的提示、义务或最低用量，原题交付要求不变。独立初答与各分支继续隔离，不接收评审反馈；不同条件分别报告。导入成功只证明材料可接入，正式比较仍需独立核验运行来源、数学审核和适用的 Lean 门槛。
 
 题材来自公开 OET、公开数学资料与独立构造。来源、版本、署名与许可见 [SOURCES.md](SOURCES.md)。公开题可能进入训练数据，本项目不声称它们对模型必然未见。历史版本与实验由 Git 保存，恢复入口见[仓库地图](docs/repository-map.md)。
 

@@ -17,7 +17,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
-from .benchmarks import identity, profile_targets, select_slots, validate_plan
+from .benchmarks import identity, profile_targets, reliability_schedule, select_slots, validate_plan
 from .catalog import Suite, candidate_message, digest_bytes, relative_name, write_json
 from .execution_policy import (
     FOLLOWUP_PROMPT_PROJECTION, LOCAL_FOLLOWUP_PERMISSION, LOCAL_TOOLS_TRACK,
@@ -286,13 +286,15 @@ def _h_projection(root, value, expected_files):
     _h_object(value["planned"], {"papers", "independent_slots", "neutral_slots", "stance_slots",
                                 "all_slots", "selected_slots"}, "fixed denominator")
     planned = value["planned"]
-    compact = (value["protocol_version"] == "0.2.0"
+    labels, rounds = reliability_schedule(value["protocol_version"])
+    compact = (value["protocol_version"] in {"0.2.0", "0.3.0"}
                or value["controller_version"] == COMPACT_CONTROLLER
                or planned["independent_slots"] != 3 * planned["papers"])
     _h_require(all(type(x) is int and x >= 0 for x in planned.values())
                and planned["papers"] > 0
-               and (planned["independent_slots"] == planned["papers"] + planned["neutral_slots"]
-                    and planned["neutral_slots"] % 2 == 0
+               and (planned["independent_slots"] == planned["papers"]
+                    + (len(labels) - 1) * (planned["neutral_slots"] // len(rounds))
+                    and planned["neutral_slots"] % len(rounds) == 0
                     and planned["stance_slots"] == 2 * planned["neutral_slots"] if compact
                     else planned["independent_slots"] == 3 * planned["papers"])
                and planned["all_slots"] == planned["independent_slots"] + planned["neutral_slots"]
@@ -357,7 +359,7 @@ def _h_projection(root, value, expected_files):
                    and type(slot["ordinal_per_model"]) is int and slot["ordinal_per_model"] > 0,
                    "Invalid projected slot identity")
         if independent:
-            _h_require(slot["attempt_label"] in {"A1", "A2", "A3"}
+            _h_require(slot["attempt_label"] in labels
                        and sid == cid + ":" + slot["attempt_label"] and slot["context"] == "fresh"
                        and slot["parent_slot"] is None and slot["message_id"] is None,
                        "Independent slots require fresh, unrelated contexts")
@@ -365,7 +367,7 @@ def _h_projection(root, value, expected_files):
             arm, rnd = slot["arm"], slot["round"]
             parent = cid + ":A1" if rnd == 1 else cid + ":" + str(arm) + ":1"
             _h_require(slot["kind"] == "followup" and arm in {"neutral", "affirm", "deny"}
-                       and type(rnd) is int and rnd in (1, 2) and sid == f"{cid}:{arm}:{rnd}"
+                       and type(rnd) is int and rnd in rounds and sid == f"{cid}:{arm}:{rnd}"
                        and slot["context"] == "branch-history-only" and slot["parent_slot"] == parent
                        and parent in earlier and slot["message_id"] == sid,
                        "Followup dependency crosses its frozen branch")
@@ -504,7 +506,7 @@ def _controller_main():
 
 
 def _controller_source():
-    functions = (execution_context, validate_context_policy, project_followup_prompt,
+    functions = (reliability_schedule, execution_context, validate_context_policy, project_followup_prompt,
                  _h_is_neutral, _h_schema_matches,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root,
                  _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
@@ -561,9 +563,10 @@ must remain unchanged. The helper rejects missing and unrelated answers. Use
 The result is `{schema: math-gauge.conversation/v1, messages, parameters}`.
 Send only its messages and parameters to your chosen model in a fresh session.
 The helper does not execute that call or authenticate the provider. Follow the
-frozen slot order, budget, retry, context and tool rules in manifest.json. A1,
-A2 and A3 are independent. Every branch starts from the same raw A1, and R2
-contains only that branch's raw R1. Do not replace history with composed material.
+frozen slot order, budget, retry, context and tool rules in manifest.json. Every
+scheduled A label requires an independent context. Every branch starts from the
+same raw A1. If a second round is scheduled, it contains only that branch's raw R1.
+Do not replace history with composed material.
 Retain missing, failed and blocked slots, every transport attempt, and every
 readable original response; never select a better answer or silently rerun it.
 Only retry a declared transient failure when no readable response was delivered,
@@ -934,7 +937,8 @@ def _inspect_release_dataset_contents(root):
             _h_require(all(slots[sid]["parent_slot"] is None or slots[sid]["parent_slot"] in ids for sid in ids),
                        "Release target lacks its dependency closure")
         independent = [sid for sid, s in slots.items() if s["kind"] == "independent"]
-        compact = value["controller_version"] == COMPACT_CONTROLLER
+        compact = (value["controller_version"] == COMPACT_CONTROLLER
+                   or value["protocol_version"] in {"0.2.0", "0.3.0"})
         if compact:
             core = [sid for sid in independent if slots[sid]["attempt_label"] == "A1"]
             repeated = {slots[sid]["case_id"] for sid in independent
@@ -946,8 +950,9 @@ def _inspect_release_dataset_contents(root):
                        and selections["repeat"] == repeat
                        and repeated == {s["case_id"] for s in slots.values() if s["kind"] == "followup"},
                        "Release compact attempt inventory changed")
-            _h_require(all(all(cid + ":" + label in repeat for label in ("A1", "A2", "A3"))
-                           for cid in repeated), "Release repeat panel lacks three independent attempts")
+            labels, _ = reliability_schedule(value["protocol_version"])
+            _h_require(all(all(cid + ":" + label in repeat for label in labels)
+                           for cid in repeated), "Release repeat panel lacks its protocol's independent attempts")
         else:
             core = independent
             _h_require(selections["all"] == all_ids and selections["core"] == selections["repeat"] == independent,
@@ -1240,7 +1245,7 @@ def _release_controller_main():
 
 
 def _release_controller_source():
-    functions = (execution_context, validate_context_policy, project_followup_prompt,
+    functions = (reliability_schedule, execution_context, validate_context_policy, project_followup_prompt,
                  _h_is_neutral, _h_schema_matches, _h_neutral_root,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
                  _h_root, _h_file, _h_parameters, _h_execution, relative_name, candidate_message,
@@ -1288,12 +1293,12 @@ outside candidate workspaces; send only the constructed messages and parameters.
    chapters, repeat, neutral, stance, core and all are supported. Followup targets
    include their A1 parents. Full denominators remain fixed even for partial runs.
 3. Use NEW_RUN/controller.py request --bundle /path/to/NEW_RUN --slot CASE:A1
-   --out /path/to/new-request.json. A1/A2/A3 each require a fresh independent model
+   --out /path/to/new-request.json. Each scheduled A label requires a fresh independent model
    context. Only the exact messages and parameters are model input. No tools,
    retrieval, compilation or correctness feedback are allowed in this version.
 4. For round 1 pass --answers /path/to/answers.json containing exactly CASE:A1's
-   raw response string. Round 2 additionally requires only its own CASE:ARM:1 raw
-   response. neutral, affirm and deny are isolated branches of the same locked A1.
+   raw response string. If round 2 is scheduled, it additionally requires only its
+   own CASE:ARM:1 raw response. neutral, affirm and deny are isolated branches of the same locked A1.
    Preserve raw whitespace, FULL/KEEP lines and source blocks. Never use a composed
    answer as history. The helper rejects absent and unrelated ancestors.
 5. Run `python3 NEW_RUN/controller.py template --bundle /path/to/NEW_RUN

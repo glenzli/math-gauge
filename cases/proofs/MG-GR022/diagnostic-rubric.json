@@ -1,0 +1,191 @@
+{
+  "schema": "math-gauge.local-draft-rubric/v1",
+  "draft_id": "MG-GR015-COMPLETION-UPGRADE-LOCAL",
+  "version": "0.1.0",
+  "total_points": 100,
+  "scoring_mode": "Each granular check receives exactly full, half, or zero of its listed points.",
+  "alternative_proofs": "Accept every valid proof, including a shorter proof or a different equivalent coordinate model. No minimum word count, named theorem count, or prescribed proof route.",
+  "strict_completion": "All explicitly requested mathematical obligations must be valid under the stated assumptions. Diagnostic points do not turn a partial answer into strict completion.",
+  "double_penalty_policy": "Core errors are assessed only in their corresponding core checks. R1 concerns only independent supplementary assertions outside all required targets and is never used to deduct again for a core error. Track a reused root cause in notes rather than alleging independent errors.",
+  "dimensions": [
+    {
+      "id": "A",
+      "title": "完成坐标模型",
+      "points": 25,
+      "checks": [
+        {
+          "id": "A1",
+          "points": 8,
+          "candidate_target": "1",
+          "full": "构造 X 的衰减支持条件，证明自由模相容记录与坐标族双向互逆，保持模运算。",
+          "half": "正确给出受限序列模型并论证一个方向，但另一个方向或模作用仍有实质缺口。",
+          "zero": "把完成当全积、S 的代数直接和，或未给正确模型。"
+        },
+        {
+          "id": "A2",
+          "points": 10,
+          "candidate_target": "1",
+          "full": "先得到 C 的逐坐标商，再构造 Y 的余数阶数衰减模型并双向证明，包括 nu=0。",
+          "half": "得到正确 Y 及有意义的记录构造，但支持等价或逆构造缺一项。",
+          "zero": "模型错误、只处理特殊指数，或无模型论证。"
+        },
+        {
+          "id": "A3",
+          "points": 3,
+          "candidate_target": "1",
+          "full": "写出实际 D 与逐坐标约化，验证与原映射和各层约化兼容，S 作用正确。",
+          "half": "映射公式正确且至少验证一项兼容，但与原诱导映射的完整绑定欠缺。",
+          "zero": "另选不相容映射、公式错误，或只有名称。"
+        },
+        {
+          "id": "A4",
+          "points": 4,
+          "candidate_target": "3",
+          "full": "证明 Y/t^mY 为对应有限支持 min(m,nu) 商，核为实际 t^mY，且 eta_Y 为典范同构。",
+          "half": "正确算出有限商或典范幂等性并有实质证明，尚未同时验证实际核和兼容。",
+          "zero": "只因名称为完成就断言幂等，或没有正确有限商。"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "title": "像、闭包与正合性",
+      "points": 25,
+      "checks": [
+        {
+          "id": "B1",
+          "points": 7,
+          "candidate_target": "1",
+          "full": "证明 D 单射，给出 H 为核以及像中除法后仍须衰减的条件；明确所有环境。",
+          "half": "核与像条件基本正确且有证明，但单射或某一方向仍缺。",
+          "zero": "把逐坐标整除等同完成像，或核像模型错误。"
+        },
+        {
+          "id": "B2",
+          "points": 5,
+          "candidate_target": "1,2",
+          "full": "构造每个 Y 元素在 X 中的提升并写出全部纤维 r(c)+H，证明 p 满射。",
+          "half": "满射构造有效，或全部纤维描述正确且有实质证明，但未完成另一项。",
+          "zero": "只给逐层独立原像、没有相容提升，或在无界时把 H 换成 D(X)。"
+        },
+        {
+          "id": "B3",
+          "points": 5,
+          "candidate_target": "1",
+          "full": "在 X 的实际 t 进拓扑证明闭包 D(X)=H：包含于闭核，并由有限截断给出稠密性。",
+          "half": "正确证明一个闭包包含，或给有效稠密性论证但未绑定实际拓扑。",
+          "zero": "称像总闭、把积拓扑当自身 t 进拓扑，或无正确闭包结论。"
+        },
+        {
+          "id": "B4",
+          "points": 8,
+          "candidate_target": "1",
+          "full": "证明完成短正合 iff 指数列有共同有限上界；无界方向对任意无界列选递增下标高指数子列并构造合法缺陷。",
+          "half": "一个方向普遍有效，或两方向结论正确但无界方向只覆盖趋于无穷的特殊列。",
+          "zero": "只有一个特例而未作分类，或把无界当成整列趋于无穷并据此声称全称完成。"
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "title": "商模挠性与分裂",
+      "points": 25,
+      "checks": [
+        {
+          "id": "C1",
+          "points": 5,
+          "candidate_target": "2",
+          "full": "给出 E=H/D(X) 及 Z/X 的明确等价坐标模型，验证 D:Z→H、X 的对应与 E=0 的充要条件。",
+          "half": "正确给出非平凡的 E 坐标模型并证明主要对应，但 quotient 或 E=0 分类仍缺一项。",
+          "zero": "仅重命名 E=ker p、模型不正确，或无明确坐标表示。"
+        },
+        {
+          "id": "C2",
+          "points": 10,
+          "candidate_target": "2",
+          "full": "证明 j 单射且像是有限支持商类，并证明 Q 的全部 t 幂挠元恰为 j(C)，包括从 t^r b=Da 消去尾部的逆向。",
+          "half": "正确证明 j 的身份及一个挠元包含，或给出逆向的实质有限异常支持论证但未收口。",
+          "zero": "只检验有限支持元素是挠元却声称完成分类，或混同 Q 与 Y 的挠元。"
+        },
+        {
+          "id": "C3",
+          "points": 3,
+          "candidate_target": "2",
+          "full": "证明 E 是无挠 S 模：统一 t 幂不改变衰减，并处理一般非零标量的单位因子。",
+          "half": "正确证明 E 无 t 幂挠元，但未解释一般非零 S 标量。",
+          "zero": "声称 E 有非零挠元、挠性结论错误或未论证。"
+        },
+        {
+          "id": "C4",
+          "points": 7,
+          "candidate_target": "2",
+          "full": "证明 p 有 S 线性右逆 iff 指数列有共同上界；无界时构造 Y 的无限支持 t 挠元，并用 Q 挠元分类排除右逆。",
+          "half": "完整证明一个方向，或构造有效无限支持挠元且给出实质障碍但未完成所有依赖。",
+          "zero": "把集合选取的提升称为线性截面，或只有无证明的分裂断言。"
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "title": "拓扑与完成",
+      "points": 15,
+      "checks": [
+        {
+          "id": "D1",
+          "points": 5,
+          "candidate_target": "3",
+          "full": "由实际 p 证明每个 Q/t^mQ→Y/t^mY 同构并验证过渡兼容；得到实际 Qhat→Yhat 同构及 eta_Q 对应 p。",
+          "half": "有限商或完成比较至少一项有正确实质证明，但缺兼容或典范映射绑定。",
+          "zero": "从抽象同构替代典范映射，或认为有限商同构自动使 p 单射。"
+        },
+        {
+          "id": "D2",
+          "points": 3,
+          "candidate_target": "3",
+          "full": "证明交 t^mQ=E，指出 eta_Q 核为 E、总满射及成为同构的精确条件。",
+          "half": "正确证明交集的一个包含，或交集正确且有实质证明但未确定典范映射。",
+          "zero": "误称 Q 总分离、把交集删为零，或只有无依据等式。"
+        },
+        {
+          "id": "D3",
+          "points": 5,
+          "candidate_target": "3",
+          "full": "证明 E 自身分离且 eta_E 为实际同构；例如证明 Z、X 在一致拓扑中完备且 X 闭，识别实际幂理想滤子，再调整相容代表构造商极限。",
+          "half": "分离性或典范满射性之一有完整证明，另一项仍有实质缺口；不得只说商完备。",
+          "zero": "从 E 在 Q 中的拓扑推出自身不分离，或把一般商完备当无条件事实且无有效适用论证。"
+        },
+        {
+          "id": "D4",
+          "points": 2,
+          "candidate_target": "3",
+          "full": "识别 E∩t^mQ=E，故继承拓扑平凡；自身拓扑与它相同 iff E=0 iff 指数有共同上界。",
+          "half": "两个滤子区分正确且有实质比较，但精确相同条件未收口。",
+          "zero": "混同 t^mE 与 E∩t^mQ，或拓扑比较结论错误。"
+        }
+      ]
+    },
+    {
+      "id": "R",
+      "title": "独立补充断言可靠性",
+      "points": 10,
+      "checks": [
+        {
+          "id": "R1",
+          "points": 10,
+          "candidate_target": "supplementary-only",
+          "full": "核心目标之外没有独立补充数学断言，或全部此类断言正确且在声明的条件下有充分依据。",
+          "half": "存在仅影响补充内容的局部可修复错误、过强措辞或小缺口，但没有重大错误补充结论。",
+          "zero": "存在独立补充的重大错误定理、伪反例或未经证明而明确宣称的实质更强结论。"
+        }
+      ]
+    }
+  ],
+  "reliability_note": "No supplementary assertion is required. An answer with none receives all 10 R1 points even when its core answer is incomplete. Never move a required target into R1 or deduct there for its error.",
+  "review_status": {
+    "mathematical": "author-self-audit-complete",
+    "independent_ai_review": "not-performed",
+    "human": "pending",
+    "formalization": "not-attempted",
+    "candidate_calibration": "not-run-for-this-version"
+  }
+}

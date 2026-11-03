@@ -15,7 +15,7 @@ import uuid
 from pathlib import Path
 
 from .benchmarks import (case_approval_sources, identity, independent_attempts,
-                         select_slots, validate_plan)
+                         reliability_schedule, select_slots, validate_plan)
 from .catalog import (assessment_units, assessment_weights, candidate_message, digest_bytes, read_json, safe_file,
                       validate_group_contract, write_json)
 from .execution import extract_candidate_lean, invoke_conversation, now, runner_fingerprint
@@ -68,10 +68,11 @@ def _validate_schedule(plan):
     case_ids = [x["case_id"] for x in plan["case_index"]]
     focus_ids = [x["case_id"] for x in plan["reliability"]["selection"]["cases"]]
     attempts = independent_attempts(plan["profile"]["data"], case_ids)
+    _, rounds = reliability_schedule(plan["reliability"]["protocol_version"])
     independent = {f"{cid}:{label}" for cid in case_ids for label in attempts[cid]}
     expected = set(independent)
     expected |= {f"{cid}:{arm}:{rnd}" for cid in focus_ids
-                 for arm in ("neutral", "affirm", "deny") for rnd in (1, 2)}
+                 for arm in ("neutral", "affirm", "deny") for rnd in rounds}
     if len(rows) != len(expected) or {r["slot_id"] for r in rows} != expected:
         raise ValueError("Reliability plan must retain its complete fixed denominator")
     prompts = plan["reliability"]["prompts"]["messages"]

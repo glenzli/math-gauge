@@ -1,0 +1,43 @@
+{
+  "schema": "math-gauge.design-rubric/v1",
+  "version": "0.4.0",
+  "human_review": "pending",
+  "unit": "One MG-R020-related diagnostic mathematical paper; not a new independent family or official suite revision.",
+  "total_points": 100,
+  "core_completion": "All three candidate-visible targets correctly established for both quadratic fields, the base field, all positive block ranks and every M>=2.",
+  "strict_pass": "Core completion plus full independent-assertion reliability credit.",
+  "proof_route_policy": "Equivalent explicit invariants, valid shorter arguments and applicable standard theorems accepted. No author method, length or intermediate lemma is required.",
+  "criteria": [
+    {"id":"feasibility_counts_liftability","points":30,"checks":[
+      {"id":"original_input_and_feasibility","points":10,"required":"Explicit finite mod4 input invariant and correct necessary/sufficient feasibility in all three fields, derived for the original possibly non-idempotent matrices."},
+      {"id":"closed_total_counts","points":10,"required":"All exact finite and actual counts, including M=2, empty cases and all positive block ranks; distinguish O/2O from a residue field."},
+      {"id":"actual_image_test","points":10,"required":"Computable necessary/sufficient membership of a finite class in the image of genuine solutions, with an actual integral lifting argument."}
+    ]},
+    {"id":"fixed_classes_and_orbits","points":25,"checks":[
+      {"id":"exact_fixed_class_description","points":15,"required":"Explicit fixed C and R classes and relation to base classes for both fields at every precision; include the Q2(i),M=2 coupling without wrongly requiring its constant coefficient part to be an actual base truncation."},
+      {"id":"closed_fixed_and_orbit_counts","points":10,"required":"Correct closed fixed-point and orbit counts for both sets, including all M=2, D=0 and infeasible cases."}
+    ]},
+    {"id":"reduction_maps_and_fixed_lifts","points":15,"checks":[
+      {"id":"all_images_and_fibers","points":10,"required":"All four reductions (C,R and their fixed subsets), with precise images and every nonempty fiber size, including source M+1=3 and target M=2."},
+      {"id":"fixed_lifts_and_towers","points":5,"required":"Which fixed classes lift to fixed genuine solutions and which appear in a compatible infinite fixed tower; do not assume finite fixedness produces a fixed actual lift."}
+    ]},
+    {"id":"optimal_quantitative_descent","points":20,"checks":[
+      {"id":"best_universal_and_pointwise_precision","points":10,"required":"Sharp largest N in the stated range for all block structures, plus necessary/sufficient condition for preserving M for the given actual U."},
+      {"id":"actual_sharpness_examples_and_exact_boundary","points":10,"required":"Actual solutions giving uniform-in-M optimality counterexamples in each field, with valid M=2 behavior; characterize precisely the block structures with exact descent."}
+    ]},
+    {"id":"assertion_reliability","points":10,"credit":{"10":"No independent false supplementary assertion found.","5":"Localized false supplementary assertion while mandatory proofs remain independently valid.","0":"Independent unsupported global existence, scope, counting or descent claim beyond faults charged to mandatory targets."},"non_double_counting":"Charge mandatory defects to their mathematical targets only. This item measures independent supplementary claims; record inherited effects without a duplicate penalty."}
+  ],
+  "partial_credit":"Per check: full for complete correct evidence, half for correct but incomplete evidence, zero for absent or invalid evidence. Reliability uses the explicit 10/5/0 rule. Reviewer uncertainty remains unresolved.",
+  "critical_errors":[
+    "Identify O_K/2O_K with F2 or F4.",
+    "Count finite congruence solutions as actual truncations.",
+    "Assert fixed actual truncations all come from the base field.",
+    "Miss the norm coupling in Q2(i) at M=2, even though aggregate counts remain correct.",
+    "Assume taking fixed points commutes with one-step lifting in these ramified extensions.",
+    "Use a nonintegral or undefined Cayley witness at M=2.",
+    "Claim a universal precision loss even when every block has rank1."
+  ],
+  "candidate_projection":["task.md"],
+  "scoring_scope":"New diagnostic draft rubric frozen before submission; historical original answers, old reviews and benchmark weights remain unchanged.",
+  "model_runs":[]
+}

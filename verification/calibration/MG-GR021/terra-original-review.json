@@ -1,0 +1,121 @@
+{
+  "schema": "math-gauge.draft-answer-adjudication/v1",
+  "model": "gpt-6.1-terra",
+  "reasoning_effort": "max",
+  "case_id": "Q05",
+  "paper_version": "0.4.0",
+  "response_path": "/private/tmp/math-gauge-matrix-v4-terra-20261104-01a1a43a/terra/sessions/Q05-A1/1/output/response.md",
+  "response_sha256": "96688fb5daae6c19910c7d8d1878adf5a3c727c4646c76cfe8963afd1b23ab7f",
+  "execution_receipt": "/private/tmp/math-gauge-matrix-v4-terra-20261104-01a1a43a/completed/terra-Q05.json",
+  "reviewer": "root author AI",
+  "reviewer_kind": "ai",
+  "blind": false,
+  "human_review": "pending",
+  "reviewed_at": "2026-11-04T05:28:53.290600+00:00",
+  "decision": "pass",
+  "core_completion": true,
+  "strict_pass": true,
+  "strict_completion": true,
+  "diagnostic_score": 100,
+  "max_score": 100,
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "mathematical_errors_found": [],
+  "non_material_notes": [
+    "采用有效的Gram修正与Jacobian/Hensel参数化替代路线，完整接受；多一位判据中另列eta=1是冗余条件，不是数学错误。"
+  ],
+  "criteria": [
+    {
+      "id": "feasibility_counts_liftability",
+      "score": 30,
+      "max_score": 30,
+      "checks": [
+        {
+          "id": "original_input_and_feasibility",
+          "score": 10,
+          "max_score": 10,
+          "notes": "明确以原A_i跨块条目除2模2求kappa_i，三个域的可行性均为全部kappa_i=0。通过P_i迭代和列基B、Gram G_i证明原目标等价，未把A_i当作投影。det G_i模8的推导以及5模8在两分歧域的非平方必要性有效；零迹对称边修正、4整除的消元与平方根给出基域充分构造。"
+        },
+        {
+          "id": "closed_total_counts",
+          "score": 10,
+          "max_score": 10,
+          "notes": "C2、C>=3与所有实际R闭式全部正确，包含空集、rank1块、r=1。两个O/2环均按双数环处理。单块Jacobian提升为有效替代计数路线，n=1时完全图关联秩为0亦覆盖。"
+        },
+        {
+          "id": "actual_image_test",
+          "score": 10,
+          "max_score": 10,
+          "notes": "列范数多一位判据及其代表无关性正确。化去真正基域解T后变成块内正交问题；下三角参数固定时，g_ij对上三角、f_i对对角的Jacobian模2为单位阵，故在完整2进环上Newton/Hensel真正提升并保持原类。eta=1虽在充分判据中冗余，但不改变必要充分性。"
+        }
+      ]
+    },
+    {
+      "id": "fixed_classes_and_orbits",
+      "score": 25,
+      "max_score": 25,
+      "checks": [
+        {
+          "id": "exact_fixed_class_description",
+          "score": 15,
+          "max_score": 15,
+          "notes": "固定商环写成a+2^(M-1)theta b，固定C的附加矩阵块内对称，实际R为交替。单独准确给出Q2(i),M=2时o_j(U0)=sum_k D_kj的耦合，明确基域系数部分可能非基域实际截断；具体反例也覆盖。"
+        },
+        {
+          "id": "closed_fixed_and_orbit_counts",
+          "score": 10,
+          "max_score": 10,
+          "notes": "所有固定点、轨道数与参考严格等价。M=2时sigma在全部C和R上恒等，故例外耦合的固定数可直接由总数得到；不存在缺失这一层计数证明的问题。"
+        }
+      ]
+    },
+    {
+      "id": "reduction_maps_and_fixed_lifts",
+      "score": 15,
+      "max_score": 15,
+      "checks": [
+        {
+          "id": "all_images_and_fibers",
+          "score": 10,
+          "max_score": 10,
+          "notes": "四类约化映射的像、非空纤维全部正确；固定点约化像是嵌入基域R而非整个目标固定集。纤维均匀性由基域真正解T给出的群陪集和约化同态保证，而非一般集合中只凭基数比例。源层至少3，覆盖目标M=2。"
+        },
+        {
+          "id": "fixed_lifts_and_towers",
+          "score": 5,
+          "max_score": 5,
+          "notes": "固定真解就是基域真解，且固定下一层的像已恰为基域R；由此正确刻画固定真正提升和无限相容固定塔。"
+        }
+      ]
+    },
+    {
+      "id": "optimal_quantitative_descent",
+      "score": 20,
+      "max_score": 20,
+      "checks": [
+        {
+          "id": "best_universal_and_pointwise_precision",
+          "score": 10,
+          "max_score": 10,
+          "notes": "Q>0时通用最大N=M-1，Q=0时N=M且所有扩域实际解本已在基域。给定U=a+theta b保持M的充要条件b被2^M整除，完全正确。M=2另用所有解模2为I处理，未误用只对M>=2定义的截断判据于M-1=1。"
+        },
+        {
+          "id": "actual_sharpness_examples_and_exact_boundary",
+          "score": 10,
+          "max_score": 10,
+          "notes": "实际统一反例取pi=1+i或sqrt2，再解x+x^2=-2^(2M-3)lambda的偶根。导数1+2x模2为1，根在2O唯一存在，a=1+2x和b=2^(M-1)pi给正交块。M=2仍合法，证明近似固定、非基域和最优性；18组精确求根核对通过。"
+        }
+      ]
+    },
+    {
+      "id": "assertion_reliability",
+      "score": 10,
+      "max_score": 10,
+      "notes": "未发现独立错误的附带断言；不可行输入、有限假阳性和不固定的实际截断等补充例子也有效。"
+    }
+  ],
+  "lean_status": "not_required",
+  "notes": "三个必答目标全部完成，100/100，未发现数学错误。去掉解法提示后，Terra仍独立找到了两域的双数环结构、有限与实际截断差别、Q2(i)模4固定类的耦合、固定约化映射的非满射，以及所有精度上一位下降损失的实际最优反例，并保留全rank1时精确下降的边界。作者给出的十环节路线不是必经路径，Terra的Gram和Hensel证明有效。这一轮再次没有考住Terra；结果仅限本题单次初答，为同作者非盲AI审核、人审待办，不是一般模型排名或正式主榜分数。"
+}

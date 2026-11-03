@@ -1,0 +1,120 @@
+{
+  "schema": "math-gauge.local-author-checks/v1",
+  "draft_id": "MG-GR015-COMPLETION-UPGRADE-LOCAL",
+  "version": "0.1.0",
+  "generated_utc": "2026-11-04T06:35:19.044565+00:00",
+  "status": "passed",
+  "input_sha256": {
+    "task.md": "4ec64f08864117acbab6dac4ef444e086bffb59e8cfe603784554c18aa2736fe",
+    "reference.md": "078c48f2fcefbda7160583e37a01072155ac3dc275c7c95b51798827e34149b1",
+    "rubric.json": "f7be12b53747cef5f5bada0a67ac97354b9a07b7fe03e186441a135a36de230d",
+    "draft.json": "8bc79abd05868180a4808b9dbbaf0f8dc9d913450599226bb50ea849710f21d8",
+    "design.md": "b09e42fceaf1decc19b669f8833bf93e647843282768958a4a655309ac3d869b",
+    "self-review.md": "db5921d1e1cc3483117169d7a5f816267f960515281c05118ac7961be5bc55e9",
+    "sources.json": "e960e4f4023c976c831b839bb78a7a58e6730c898034be0f0cd07fa96a1a4fe4",
+    "author_checks.py": "43be79c93ea5dfee51cc1bed95051be06504b69c5b4bd3301facbecf71143424"
+  },
+  "checks": [
+    {
+      "id": "finite-level-diagonal-exactness",
+      "passed": true,
+      "field": "F2",
+      "exhaustive_parameters": {
+        "rank": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "coordinate_exponents": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "levels": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "matrix_instances": 1700,
+      "maximum_middle_dimension": 20,
+      "noninjective_finite_level_diagonals": 1680,
+      "identities": [
+        "qD=0",
+        "rank(q)=sum(min(m,nu_i))",
+        "im(D)=ker(q)"
+      ],
+      "limitation": "Every instance has finite rank. This does not prove middle exactness after taking the countable inverse limit, nor does finite-level noninjectivity refute completed injectivity."
+    },
+    {
+      "id": "oscillating-exponent-prefix-identities",
+      "passed": true,
+      "sequence": "nu_(2j)=j, nu_(2j-1)=0",
+      "prefixes": 40,
+      "level_and_tail_instances": 1220,
+      "identities": [
+        "D of the even-coordinate unit prefix has valuation j on coordinate 2j",
+        "its modulo-t^m support is exactly 2j with j<m",
+        "raw preimage modulo-t support grows with every prefix",
+        "the tail image has minimum valuation cutoff+1 while its raw preimage tail has minimum valuation 0",
+        "the residue t^(j-1) mod t^j is nonzero and killed by t",
+        "the torsion-prefix modulo-t^m support is exactly 2j with j<=m"
+      ],
+      "sample_with_40_nonzero_even_coordinates": {
+        "image_support_mod_t4": [
+          2,
+          4,
+          6
+        ],
+        "torsion_support_mod_t4": [
+          2,
+          4,
+          6,
+          8
+        ],
+        "raw_preimage_support_mod_t": 40
+      },
+      "limitation": "Exact polynomial prefix identities illustrate the arbitrary-unbounded-sequence and support traps. Infinitude, closure, non-splitting and completeness still require the universal reference proof."
+    },
+    {
+      "id": "image-ambient-space-distinction",
+      "passed": true,
+      "exponents": [
+        1,
+        1
+      ],
+      "level": 3,
+      "middle_dimension": 6,
+      "image_dimension": 4,
+      "kernel_of_quotient_dimension": 4,
+      "meaning": "An image can be proper in the middle module while equal to the quotient-map kernel. The reference specifies H as the ambient submodule in the unboundedness criterion."
+    },
+    {
+      "id": "candidate-projection-and-author-metadata",
+      "passed": true,
+      "candidate_files": [
+        "task.md"
+      ],
+      "global_targets": 3,
+      "rubric_points": [
+        25,
+        25,
+        25,
+        15,
+        10
+      ],
+      "rubric_checks": 17,
+      "source_files_unchanged": 35,
+      "syntax_check": "author_checks.py parsed successfully; no bytecode artifact written",
+      "limitation": "Token checks support the manual hint audit; they are not a proof of semantic prompt isolation or mathematical correctness."
+    }
+  ],
+  "evidence_scope": "Exact finite algebra and local artifact contracts only. Universal mathematical proof is reference.md; this is not Lean, candidate-model evidence, independent mathematical review, or human approval.",
+  "candidate_calls": 0,
+  "lean_compilations": 0,
+  "human_review": "pending"
+}

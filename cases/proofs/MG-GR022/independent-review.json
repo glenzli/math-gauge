@@ -1,0 +1,153 @@
+{
+  "schema": "math-gauge.local-draft-peer-review/v1",
+  "review_id": "completion-defect-upgrade-v1-records-peer-20261104",
+  "reviewed_utc": "2026-11-04T06:41:52Z",
+  "draft_id": "MG-GR015-COMPLETION-UPGRADE-LOCAL",
+  "draft_version": "0.1.0",
+  "draft_directory": "runs/design-drafts/20261104/completion-defect-upgrade-v1",
+  "parent_family_id": "MG-R015",
+  "reviewer": {
+    "kind": "ai",
+    "task": "/root/records_upgrade",
+    "owner": "records-upgrade",
+    "run_id": "records-crossreview-completion-20261104-01a1a43a",
+    "requested_model": "GPT-6.1 Sol Max",
+    "backend_identity_independently_attested": false,
+    "independence": "Different author from completion-upgrade. This reviewer authored the separate records-action draft and did not author or edit the nine completion-defect source files."
+  },
+  "decision": "pass",
+  "mathematical_review": "independent-ai-peer-review-complete-no-open-findings",
+  "human_review": "pending",
+  "findings": [],
+  "required_fixes": [],
+  "summary": "The task is well posed and the reference supplies valid complete arguments for every stated target over an arbitrary field and every sequence of finite nonnegative exponents. No mathematical defect or required revision was found. In particular, unboundedness is not replaced by convergence to infinity; E is intrinsically separated and complete while its topology inherited from Q is indiscrete; all t-power torsion in Q is exactly the canonical finite-support C, and no S-linear section exists for any unbounded exponent sequence.",
+  "reviewed_files_sha256": {
+    "task.md": "4ec64f08864117acbab6dac4ef444e086bffb59e8cfe603784554c18aa2736fe",
+    "reference.md": "078c48f2fcefbda7160583e37a01072155ac3dc275c7c95b51798827e34149b1",
+    "rubric.json": "f7be12b53747cef5f5bada0a67ac97354b9a07b7fe03e186441a135a36de230d",
+    "draft.json": "8bc79abd05868180a4808b9dbbaf0f8dc9d913450599226bb50ea849710f21d8",
+    "design.md": "b09e42fceaf1decc19b669f8833bf93e647843282768958a4a655309ac3d869b",
+    "self-review.md": "db5921d1e1cc3483117169d7a5f816267f960515281c05118ac7961be5bc55e9",
+    "sources.json": "e960e4f4023c976c831b839bb78a7a58e6730c898034be0f0cd07fa96a1a4fe4",
+    "author_checks.py": "43be79c93ea5dfee51cc1bed95051be06504b69c5b4bd3301facbecf71143424",
+    "author-checks.json": "e2587adcc06160fee26128275b87a76639b18dc2ce2e52b31dce0814ddcd9c96"
+  },
+  "proof_checks": [
+    {
+      "id": "P01-assumptions-and-zero-exponents",
+      "status": "passed",
+      "locations": ["task.md definitions and targets 1-3", "reference.md sections 1-4 and 10"],
+      "independent_check": "All exponents are finite nonnegative integers. No proof requires monotonicity, strict positivity, a finite field or convergence of the whole sequence to infinity. A zero exponent contributes an identity coordinate to D and the zero quotient to C and Y. The all-zero sequence gives D=1 and C=Y=Q=E=0, consistent with all classifications."
+    },
+    {
+      "id": "P02-free-completion-records",
+      "status": "passed",
+      "locations": ["reference.md section 1"],
+      "independent_check": "At each m, A/t^mA and B/t^mB have finite-support coordinates in k[t]/(t^m). Compatible records give one power series per coordinate; finite support at every m is exactly v(x_n) tending to infinity. Conversely truncating such a coordinate family gives compatible finite-support records. Uniform division by a fixed t^m preserves the decay condition, so X intersect t^m P equals t^mX and the actual adic topology is identified."
+    },
+    {
+      "id": "P03-quotient-completion-and-actual-finite-quotients",
+      "status": "passed",
+      "locations": ["reference.md section 2, equations 2-4"],
+      "independent_check": "The diagonal presentation yields C as the direct sum of R/(t^nu_n). Taking actual t^m quotients gives min(m,nu_n) coordinate lengths. Coordinate stabilization and finite support at every m give Y with truncated orders tending to infinity. In the reduction kernel, every nonzero standard representative is divisible by t^m; division lowers the order by a fixed m and preserves decay. Coordinates of length at most m are zero and can be assigned zero quotients. Hence the kernel is exactly t^mY, proving the canonical completeness and separation of Y."
+    },
+    {
+      "id": "P04-actual-induced-maps-image-kernel-and-fibres",
+      "status": "passed",
+      "locations": ["reference.md section 3, equations 5-8"],
+      "independent_check": "D is coordinatewise multiplication by t^nu_n and is injective by cancellation in S. The quotient map rho has kernel H consisting of coordinatewise divisible decaying families. Membership in D(X) additionally requires the divided family to decay. Choosing each residue's unique polynomial representative preserves its order and gives one lift in X of every Y element. All lifts are this lift plus H, not plus the smaller D(X). The representative choice is not asserted to be S-linear."
+    },
+    {
+      "id": "P05-boundedness-versus-unboundedness",
+      "status": "passed",
+      "locations": ["reference.md section 4, equation 9"],
+      "independent_check": "If all exponents are at most M, dividing h in H increases each fixed low-order observation threshold by at most M and therefore produces an element of X. If the sequence is unbounded, every tail is unbounded because a finite prefix has finite maximum. Thus one can choose strictly increasing n_j with nu_(n_j) at least j. Units on these coordinates do not decay, while their diagonal images do. This proves D(X) is a proper submodule of H for every unbounded sequence, including an infinite zero subsequence. The ambient module is explicitly H; the reference correctly avoids claiming properness in all of X is equivalent to unboundedness."
+    },
+    {
+      "id": "P06-defect-coordinate-quotient",
+      "status": "passed",
+      "locations": ["reference.md section 4, equations 10-11"],
+      "independent_check": "For Z consisting of families with v(z_n)+nu_n tending to infinity, coordinatewise multiplication is an S-linear bijection Z to H and restricts to the original D on X. Therefore H/D(X) is genuinely isomorphic to Z/X. This identifies E and proves E vanishes exactly in the bounded case; it is not just a restatement of E=ker p."
+    },
+    {
+      "id": "P07-image-closure-in-the-correct-topology",
+      "status": "passed",
+      "locations": ["reference.md section 5, equation 12"],
+      "independent_check": "Each divisibility condition defining H is closed under a coordinate projection from the uniform adic topology of X. Truncating any h in H to a finite prefix belongs to D(X), since its coordinatewise division has finite support. The decay condition on h makes these prefixes converge in the actual t-adic topology. Thus closure(D(X))=H and H is contained in D(X)+t^mX for every m. No product-topology substitute is used."
+    },
+    {
+      "id": "P08-canonical-C-and-all-Q-torsion",
+      "status": "passed",
+      "locations": ["reference.md section 6, equation 16"],
+      "independent_check": "A finite-support polynomial representative lying in D(X) is coordinatewise divisible already in R and has a finite-support polynomial quotient; this proves j injective. Its image is exactly finite-support quotient classes and each such class is killed by a fixed t-power. Conversely, t^r b=Da with a in X has only finitely many coordinates with v(a_n)<r. Dividing a by t^r outside this finite exceptional set gives d in X and b-Dd has finite support. Hence every t-power torsion class in Q belongs to j(C). The image C has its natural S action through its finite-length coordinates."
+    },
+    {
+      "id": "P09-defect-torsion-freeness",
+      "status": "passed",
+      "locations": ["reference.md section 8, first paragraph"],
+      "independent_check": "If t^r z belongs to X, shifting all orders by the same r shows z belongs to X. Thus Z/X has no nonzero t-power torsion. Every nonzero element of k[[t]] is t^r times a unit, and units act invertibly, proving full S-torsion-freeness, not merely absence of a particular t-annihilator."
+    },
+    {
+      "id": "P10-no-section-for-every-unbounded-sequence",
+      "status": "passed",
+      "locations": ["reference.md section 7, equation 17"],
+      "independent_check": "On the same increasing high-exponent subsequence, the residues t^(nu_(n_j)-1) have orders at least j-1, hence define a Y element with infinite support, nonzero at every selected coordinate and killed by t. An S-linear section would send it to a t-annihilated element of Q, which by P08 lies in j(C); its image under p has finite support. This is a contradiction. In the bounded case p has zero kernel and is surjective, so its inverse is an S-linear right inverse. This proves the exact all-unbounded nonsplitting assertion without assuming the whole sequence tends to infinity."
+    },
+    {
+      "id": "P11-finite-comparison-quotients-and-canonical-completions",
+      "status": "passed",
+      "locations": ["reference.md section 5, equations 13-14"],
+      "independent_check": "P07 gives equality of the two submodules D(X)+t^mX and H+t^mX. The rho-induced quotient X/(H+t^mX) is Y/t^mY because rho is surjective. Therefore the map on each Q quotient is the actual p-induced isomorphism, compatible with reductions. Its limit Phi identifies Qhat with Y and satisfies Phi eta_Q=p. The actual completed map has target Yhat and is eta_Y composed with Phi, as the reference explicitly states."
+    },
+    {
+      "id": "P12-nonseparated-Q-and-its-canonical-map",
+      "status": "passed",
+      "locations": ["reference.md section 5, equation 15"],
+      "independent_check": "P07 puts E inside every t^mQ. Conversely an element in every t^mQ maps into every t^mY, whose intersection is zero by P03. Thus the intersection is exactly E. Together with P11 and surjectivity of p, eta_Q is surjective, has kernel E and is an isomorphism exactly for bounded exponents. Finite quotient agreement is never used to erase this kernel."
+    },
+    {
+      "id": "P13-intrinsic-adic-topology-on-Z-and-X",
+      "status": "passed",
+      "locations": ["reference.md section 8, equation 18"],
+      "independent_check": "The uniform topology on P=product S is separated and complete: a uniform Cauchy sequence has coordinatewise limits with the same simultaneous residue stabilization. X is closed because a uniform limit mod t^m inherits the finite low-order support of one approximating element. The coordinate formula extends D to a continuous map P to P since all exponents are nonnegative, so Z=D inverse image of X is closed. Division by a fixed t^m proves t^mZ=Z intersect t^mP, and likewise for X. These are exactly their intrinsic adic filtrations."
+    },
+    {
+      "id": "P14-defect-intrinsic-separation-and-completeness",
+      "status": "passed",
+      "locations": ["reference.md section 9, equation 19 and following representative construction"],
+      "independent_check": "Intrinsic finite quotients are Z/(X+t^mZ). If a class vanishes at every level, representatives from X converge uniformly to it, so closedness of X gives separation. For a compatible inverse-limit record, at stage m+1 subtract an element of X from an arbitrary representative so its difference from the chosen m representative lies in t^mZ. The resulting representatives are Cauchy in complete Z; closedness of t^mZ ensures the limit represents each original class. This proves surjectivity and the actual canonical isomorphism eta_E. No unrestricted quotient-completeness theorem is assumed."
+    },
+    {
+      "id": "P15-inherited-versus-intrinsic-defect-topology",
+      "status": "passed",
+      "locations": ["reference.md section 9, final paragraph"],
+      "independent_check": "Since E lies in every t^mQ, its subspace zero-neighborhoods E intersect t^mQ are all E. Thus the inherited topology is indiscrete. Its own t^mE topology is separated by P14 and agrees with the inherited topology exactly if E=0, equivalently the exponent sequence has a common finite upper bound. There is no contradiction between intrinsic completeness and an indiscrete inherited topology."
+    },
+    {
+      "id": "P16-task-rubric-and-evidence-boundaries",
+      "status": "passed",
+      "locations": ["all nine draft files"],
+      "independent_check": "The candidate projection is exactly task.md, containing definitions and three explicit final targets without boundedness, coordinate-model or topology answers. The 100-point rubric has the declared 25/25/25/15/10 categories, full/half/zero criteria, alternative-proof acceptance and supplementary-only reliability scoring. All requested conclusions have matching reference arguments and grading checks. AI authorship, local draft status, human pending, no candidate calls and no inherited Lean/model results are explicit. The finite author calculations are not represented as universal proofs."
+    }
+  ],
+  "artifact_validation": {
+    "complete_draft_files_read": 9,
+    "author_report_input_bindings_checked": 8,
+    "author_report_input_bindings_match": true,
+    "current_provenance_file_hashes_checked": 35,
+    "current_provenance_file_hashes_match": true,
+    "rubric_total_checked": 100,
+    "author_script_executed": false,
+    "author_report_rewritten": false,
+    "source_draft_files_modified": 0,
+    "own_records_draft_files_modified": 0,
+    "candidate_models_called": 0,
+    "lean_compilations": 0
+  },
+  "limitations": [
+    "This is an independent AI mathematical peer audit, not human approval or a Lean formalization.",
+    "No candidate model was run and no benchmark capability score is assigned by this review.",
+    "The pass applies only to the nine exact file hashes listed above. A later revision requires a new review binding.",
+    "The author's existing pending-review metadata was not edited; this separate receipt supplies the new peer-review evidence."
+  ]
+}

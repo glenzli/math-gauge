@@ -67,7 +67,7 @@ class ReleaseProjectionTests(unittest.TestCase):
             self.assertIsNone(re.search(r"math[ _-]*gauge|https?://github\.com/",
                                         candidate_message(projected), re.IGNORECASE))
             self.assertEqual(project_candidate_request(projected), projected)
-        self.assertEqual(changed, {"lean": 30, "ledger": 2, "attribution": 2})
+        self.assertEqual(changed, {"lean": 24, "ledger": 2, "attribution": 2})
 
     def test_chapter_licenses_and_original_authorship_stay_exact(self):
         for cid in ("MG-C002", "MG-C003"):

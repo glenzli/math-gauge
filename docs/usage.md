@@ -1,6 +1,6 @@
 # 使用与复核
 
-本页是仓库内的评审与维护操作指南。只希望接入外部平台并交回答卷时，使用[任务包唯一 README](release-consumer-README-v0.4.0.md)：0.4.0与题集同版，命名任务包为 `benchmark-v0.4.0.zip`；旧包保持不变。执行端不需要仓库、Math Gauge 安装或 Codex。
+本页是仓库内的评审与维护操作指南。当前源码为本地0.5.0预览，尚未发布；外部操作流程见[本地任务包指南](release-consumer-README-v0.5.0.md)，对应30份公开任务/54份记录。已发布0.4.0的命名任务包与[原指南](release-consumer-README-v0.4.0.md)保持旧身份，不能用当前源码改写。执行端不需要仓库、Math Gauge安装或Codex。
 
 以下命令在仓库根目录执行。共享runner需要Python 3.10+，无第三方运行依赖。所有输出目录使用新路径；Lean核验与实际模型调用另需对应环境。
 
@@ -14,7 +14,9 @@ python3 -m math_gauge prepare --case MG-GF101 --out runs/gf101
 python3 -m math_gauge prepare --case MG-C002 --out runs/chapter02
 ```
 
-默认题集为 `cases`（`cases/suite.json`），含36份相关公开任务（32份数学卷与4份真实答卷审阅）；`--suite cases/reserve-suite.json` 显式选择后备11题。后备11份与默认数学成员不重叠，保留原43份数学卷。4份审阅与母题相关；当前8份审阅原答按新版判准重评，并与已有数学答卷合并重算，明确属于观察结果后的方法更新，不是新考试。旧执行与已发布资产保留。参考答案继续公开以供透明复核，但属于 evaluator 出题材料，不能交给 solver。`validate` 检查合同、来源和身份，`prepare` 只导出材料；二者不调用模型。题目路径、分类和版本见[目录](../cases/README.md)。
+默认题集为 `cases`（`cases/suite.json`），含30份相关公开任务/21个数学家族：14份书面、5份Lean审计、5份Lean生成/修复、2章、4份AR。`--suite cases/reserve-suite.json` 显式选择20份备选，其中7份仍引用原proofs路径，GF109/GF110引用原Lean目录，11份物理reserve目录不动。原43数学卷加3份同族加强稿为46数学卷，与4份AR共50条任务；全部原材料与旧答保留。
+
+本地0.5.0为观察后的选题重算，采用既有矩阵原生答与两题新实考初答，其他相容答卷复用；它不是全套同步新考试。4份AR及其母题、六题重复/自查面板成员不变，原8份AR重评保留此前方法变更身份。参考公开只供透明复核，不能交给solver。`validate` 检查合同、来源与身份，`prepare` 只导出候选task与显式白名单；二者不调用模型。当前成员及覆盖损失见[选题说明](selection-v0.5.0.md)和[目录](../cases/README.md)。
 
 导出目录只有prompt.md、request.json及显式附件。适配器应使用共享消息构造器，完整发送白名单文本：
 
@@ -44,7 +46,7 @@ python3 -m math_gauge report --run runs/model-gr002 --out runs/report-gr002
 
 审核模板不是完成评分。reviewer、reviewer_kind、decision和各数学轴必须按实际证据填写，并绑定答卷散列。私有题通过同一 `--suite /absolute/path/to/private-suite` 运行，私有位置不复制runner。
 
-[单轮比较工具](../protocol/full-comparison-run.md)是共享runner之上的薄调度层；[隔离流程](../protocol/isolated-cli-runs.md)核验真实文件、进程与工具边界。单轮run不自动执行完整84份记录的方案。以下benchmark入口共享同一套案例合同、原始证据和审核规则。
+[单轮比较工具](../protocol/full-comparison-run.md)是共享runner之上的薄调度层；[隔离流程](../protocol/isolated-cli-runs.md)核验真实文件、进程与工具边界。单轮run不自动执行完整54份记录的方案。以下benchmark入口共享同一套案例合同、原始证据和审核规则。
 
 ## 能力分项与完整计划
 
@@ -57,7 +59,7 @@ python3 -m math_gauge benchmark-check --plan runs/full-plan.json
 python3 -m math_gauge benchmark-plan --target lean-audit --out runs/audit-plan.json
 ```
 
-可选目标为 `proofs`、`lean-audit`、`lean-construction`、`chapters`、`answer-review`、`repeat`、`neutral`、`stance`、`core`、`all`；可重复传入 `--target`。默认配置为 [benchmark-profile.json](../protocol/benchmark-profile.json)。公开完整计划84份记录，能力只取36份首次答卷；固定选取6题另有12份额外独立答卷、12份无反馈自查及24份立场自查。审阅占能力分10%，按60/30/10审阅维度评分，同母题先聚合；重大误判率另列。中性目标单跑需18槽，立场目标30槽；两者合跑42槽，因为共享同六个A1。这些是计划调用数，不含传输重试。
+可选目标为 `proofs`、`lean-audit`、`lean-construction`、`chapters`、`answer-review`、`repeat`、`neutral`、`stance`、`core`、`all`；可重复传入 `--target`。默认配置为 [benchmark-profile.json](../protocol/benchmark-profile.json)。公开完整计划54份记录，能力只取30份A1；按0.3多轮合同固定选取6题另有6份A2、6份无反馈R1及12份立场R1。审阅占能力分10%，按60/30/10审阅维度评分，同母题先聚合；重大误判率另列。repeat目标需12槽，中性目标需12槽，立场目标18槽；neutral与stance合跑24槽，因为共享同六个A1。这些是计划调用数，不含传输重试。旧0.2 A3/R2保留原记录，但退出本地0.5默认；当前减少轮次的重算不重新调用模型。
 
 `benchmark-plan` 保存评审侧范围、权重、阶段合同、消息和顺序。未提供真实runtime时是未冻结的准备材料，只可检查或离线fixture验收，不能发起真实候选调用。将已核实的模型配置、适配器、预算和隔离条件写入runtime，再用 `--runtime /absolute/path/to/runtime.json` 生成用于执行的新计划。运行前应查明每个参数的实际后端含义；请求的型号标签不等于独立身份核验。
 
@@ -110,24 +112,24 @@ python3 -m math_gauge benchmark-run --plan runs/frozen-plan.json \
   --command-json '["python3", "/absolute/path/to/conversation-adapter.py"]'
 ```
 
-第二次原样复用第一份记录中同一计划的六个A1，不重新生成或选择起点。适配器须按冻结角色历史传递候选消息并保证上下文隔离，不能把评审元数据扩展成提示。普通单轮适配器若只读task、不传完整messages，不能直接充当多轮适配器。独立初答之间、三个分支之间互不可见，也不共享工具状态或文件；后续轮不接收评审评分或评审端编译反馈，本地工具反馈按所选条件处理。
+第二次原样复用第一份记录中同一计划的六个A1，不重新生成或选择起点。适配器须按冻结角色历史传递候选消息并保证上下文隔离，不能把评审元数据扩展成提示。普通单轮适配器若只读task、不传完整messages，不能直接充当多轮适配器。A1与A2独立初答之间、三个一次后续分支之间互不可见，也不共享工具状态或文件；后续轮不接收评审评分或评审端编译反馈，本地工具反馈按所选条件处理。
 
 每个执行目录保持独立，不覆盖先前结果。相同原始证据重复作为依赖可去重；同名槽位被独立生成两次属于冲突，不能挑较好的一份汇总。分别生成的不同局部计划不能事后拼成全套。只希望做局部研究时，可直接生成该子计划并明确报告范围。
 
 ## 外部 harness：统一接收返回包
 
-外部运行端的完整准备、取题、记录和打包流程只维护在[任务包 README](release-consumer-README-v0.4.0.md)。按新配置本地构建的0.4.0中性任务包包含36份任务及约定附件，后备11题不进入默认包，根目录仅一份指南；可选工具 `tools/benchmark.py` 自动保存原始尝试、构造精确分支历史并打包 `answers.zip`。它不调用候选模型，也不需要执行端取得完整评审计划、手写散列或提交JSON。
+外部运行端的准备、取题、记录和打包流程见[本地0.5.0任务包预览指南](release-consumer-README-v0.5.0.md)。当前候选导出范围为30份任务及约定附件，20份备选不进入默认包；这是本地预览，不表示已经发布0.5.0资产，根目录仅一份指南；可选工具 `tools/benchmark.py` 自动保存原始尝试、构造精确分支历史并打包 `answers.zip`。它不调用候选模型，也不需要执行端取得完整评审计划、手写散列或提交JSON。
 
-评审端保留可信的完整主计划和原题集。以下示例在取得0.4.0本地构建输出及返回包后使用，一条命令完成完整性核验与导入：
+评审端保留可信的完整主计划和原题集。以下示例在取得本地0.5.0候选导出、对应可信评审计划及返回包后使用，一条命令完成完整性核验与导入：
 
 ```sh
 python3 -m math_gauge benchmark-import --input answers.zip \
-  --plan runs/releases/v0.4.0/evaluator-plan.json --out runs/external-imported
+  --plan /absolute/path/to/trusted-evaluator-plan.json --out runs/external-imported
 ```
 
 导入只读取数据，不执行下载包中的工具，不调用模型或编译Lean。包内含冻结运行、原始尝试及每个选定槽位的完成、失败、跳过或待执行状态。导入器核验可信计划、题集、请求历史、原始文件与顺序，接入同一多轮证据和审核入口。输出目录必须是新路径；未知平台字段保持未知，缺测继续按完整计划的固定分母报告。
 
-接下来生成 `benchmark-review-template` 并完成实际数学、交付及适用的候选Lean审核，再使用下一节的审核、收集与报告入口。来源另记为 `external_import`，不会把导入伪装成runner现场调用。fixture/replay保留各自标签，外部声明或审核勾选不能单独取得正式比较资格。新的真实外部环境需要验证其来源和隔离合同；完整题库43题的人审状态也不因导入改变。
+接下来生成 `benchmark-review-template` 并完成实际数学、交付及适用的候选Lean审核，再使用下一节的审核、收集与报告入口。来源另记为 `external_import`，不会把导入伪装成runner现场调用。fixture/replay保留各自标签，外部声明或审核勾选不能单独取得正式比较资格。新的真实外部环境需要验证其来源和隔离合同；当前50条任务的人审状态也不因导入改变。
 
 ### 维护接口与历史交换
 
@@ -140,7 +142,7 @@ python3 -m math_gauge benchmark-export-check --bundle runs/external-legacy \
   --plan runs/external-legacy.evaluator/plan.json
 ```
 
-未冻结runtime的导出只用于准备与离线检查。v1直接交换及历史v0.1.0发布运行的v2提交仍可使用 `benchmark-import --bundle BUNDLE --input SUBMISSION_JSON --plan PLAN --out NEW_RUN`；旧字段与绑定规则见[外部交换合同](../protocol/external-harness.md)，历史发布操作见[v0.1.0包内指南](release-consumer-README.md)。普通0.3.0运行不需要走手写JSON或祖先答案映射流程。
+未冻结runtime的导出只用于准备与离线检查。v1直接交换及历史v0.1.0发布运行的v2提交仍可使用 `benchmark-import --bundle BUNDLE --input SUBMISSION_JSON --plan PLAN --out NEW_RUN`；旧字段与绑定规则见[外部交换合同](../protocol/external-harness.md)，历史发布操作见[v0.1.0包内指南](release-consumer-README.md)。按当前任务包指南运行不需要手写提交JSON或祖先答案映射。
 
 独立数据集、控制材料与完整评审材料分别保存。操作者工具不是候选解题工具，候选仅收到完整消息及允许的本分支历史。整章题约定的含证明原文和语义审计源码保留为合法输入；公开参考与Git历史仍可见，不把本开发集说成隐藏留出集。
 
@@ -174,7 +176,7 @@ python3 -m math_gauge benchmark-report --run runs/core-part \
 
 `benchmark-collect --run DIR --out FILE` 导出已经过绑定核验的评分输入。报告入口自行读取并核验原始run与审核，不能通过手写几个总分绕过证据门槛。生成 `report.json` 和 `report.md`，包括当前能力分项、能力分、综合分、AR重大误判、辅助严格完成、覆盖、未知区间与轨迹诊断。缺失立场分片时综合精确值仍为null；不会把core+neutral重新缩成100%。
 
-报告中的暂定数值与正式资格分别显示。默认36份任务及后备11份数学卷仍待人工审定；AI审核和离线fixture只能产生其明确标注的诊断或测试数据，不能称为正式模型成绩。权重与分母的完整说明见[综合评分标准](../protocol/benchmark-scoring.md)。
+报告中的暂定数值与正式资格分别显示。默认30份任务及备选20份数学卷仍待人工审定；AI审核和离线fixture只能产生其明确标注的诊断或测试数据，不能称为正式模型成绩。权重与分母的完整说明见[综合评分标准](../protocol/benchmark-scoring.md)。
 
 ## 运行证据与正式资格
 
@@ -218,7 +220,7 @@ python3 -m math_gauge benchmark-report --run runs/core-part \
 python3 scripts/formal/check_evidence.py
 ```
 
-该检查复核已保存的编译、源码、公理与语义覆盖绑定，不调用模型、不重编未变源码。需要重编时，按[固定工具链说明](../scripts/formal/README.md)使用受影响题目的manifest和新的输出目录；不混用Lean/Mathlib/TauCeti配置。
+该检查复核原43卷/372义务/470模块已有的编译、源码、公理与语义覆盖绑定；新增3份书面题/15项判准与4份AR独列，不继承作者Lean覆盖。它不调用模型、不重编未变源码。需要重编时，按[固定工具链说明](../scripts/formal/README.md)使用受影响题目的manifest和新的输出目录；不混用Lean/Mathlib/TauCeti配置。
 
 候选源码由 `math_gauge.execution.verify_candidate_lean` 从冻结答卷提取，在明确的固定依赖和受限环境中原样核验。它不补import、不改定理、不修proof。候选生成/修复与整章严格通过还需逐义务语义审核；章节清单和冻结背景合同见[候选Lean协议](../protocol/candidate-lean.md)。
 

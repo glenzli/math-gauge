@@ -1,7 +1,7 @@
 """Content review of verified multi-turn materials, independent of execution.
 
-Scores are derived from validated stage judgments, never imported numeric
-scores. Compilation evidence remains attached to its original source response;
+Scores derive from validated stage judgments or contract-bound criterion credit.
+Compilation evidence remains attached to its original source response;
 KEEP can reuse unchanged source evidence but always needs a new content review.
 """
 
@@ -17,8 +17,9 @@ from .execution import (_candidate_engine, _candidate_imports, _candidate_source
                         _override_extraction, extract_candidate_lean, now,
                         verify_candidate_lean)
 from .reliability import PARSER_VERSION, _raw, _slot_path, inspect_reliability_run
-from .review import (_validate_answer_review, _dimension_templates, _stage_template, _validate_group_review,
-                     _validate_review_axes, _validate_research_review)
+from .review import (_validate_answer_review, _criterion_templates, _dimension_templates,
+                     _stage_template, _validate_group_review, _validate_review_axes,
+                     _validate_research_review, _validate_written_proof_review, _written_proof_math_axis)
 
 UNKNOWN_REASONS = {"review_pending", "problem_defect_pending", "infrastructure_error",
                    "execution_error", "not_run", "parent_without_readable_response"}
@@ -70,6 +71,9 @@ def reliability_review_templates(root):
             entry["dimensions"] = _dimension_templates(contract)
             if contract["kind"] == "answer_review":
                 entry.update(major_error=None, major_error_notes="")
+        elif contract["kind"] == "written_proof":
+            del entry["stages"]
+            entry["criteria"] = _criterion_templates(contract)
         else:
             for stage in contract["stages"]:
                 entry["stages"].append(dict(_stage_template(stage), math_review=_math_template()))
@@ -335,26 +339,28 @@ def _validate_entry(root, meta, records, entry):
     cid = record["case_id"]
     case = next(c for c in meta["plan"]["case_index"] if c["case_id"] == cid)
     contract = read_json(safe_file(root, meta["inputs"][cid]["contract"]))
-    if contract["kind"] in {"research_exploration", "answer_review"}:
+    if contract["kind"] in {"research_exploration", "answer_review", "written_proof"}:
         if record["material"]["mode"] not in {None, "INITIAL", "FULL"}:
-            raise ValueError("Research dimension reviews require independent complete answers")
+            raise ValueError("Scored criteria/dimension reviews require independent complete answers")
         if entry.get("group_contract_sha256") != case["group_contract_sha256"]:
-            raise ValueError("Research review binds a different contract")
-        validator = _validate_answer_review if contract["kind"] == "answer_review" else _validate_research_review
+            raise ValueError("Scored criteria/dimension review binds a different contract")
+        validator = {"answer_review": _validate_answer_review,
+                     "research_exploration": _validate_research_review,
+                     "written_proof": _validate_written_proof_review}[contract["kind"]]
         diagnostic = validator(contract, entry, {"status": status})
         format_review = entry.get("format_review")
         if (not isinstance(format_review, dict) or format_review.get("decision") not in {"valid", "invalid", "pending"}
                 or not isinstance(format_review.get("notes"), str) or not format_review["notes"].strip()):
-            raise ValueError("Research response format needs attributed review notes")
+            raise ValueError("Scored criteria/dimension response format needs attributed review notes")
         resolved = record["material"]["status"] == "resolved" and raw is not None
         if format_review["decision"] == "valid" and not resolved:
-            raise ValueError("Unresolved research material cannot receive a valid format decision")
+            raise ValueError("Unresolved material cannot receive a valid format decision")
         completion = diagnostic["completion"] if resolved else {"lower": 0, "upper": 1, "exact": None}
         strict = diagnostic["strict_pass"] if resolved and format_review["decision"] == "valid" else None
         if format_review["decision"] == "invalid":
             strict = False
         if entry["decision"] == "pass" and strict is not True:
-            raise ValueError("Research strict pass contradicts its current format or material evidence")
+            raise ValueError("Scored criteria/dimension strict pass contradicts its current format or material evidence")
         adjudicated = completion["exact"] is not None
         axis = {"state": "C" if strict is True else "I" if adjudicated else "U",
                 "adjudicated": adjudicated,
@@ -366,6 +372,8 @@ def _validate_entry(root, meta, records, entry):
             math_axis = {"state": "C" if valid and adjudicated else "I" if adjudicated else "U",
                          "adjudicated": adjudicated,
                          "reasons": [] if valid and adjudicated else ["mathematical_error" if adjudicated else "review_pending"]}
+        elif contract["kind"] == "written_proof":
+            math_axis = _written_proof_math_axis(entry, resolved=resolved)
         return {"strict_pass": strict, "completion": completion,
                 "whole_strict": dict(axis), "whole_math": math_axis,
                 "focus_math": {"state": "U", "adjudicated": False, "reasons": ["not_selected"]},
