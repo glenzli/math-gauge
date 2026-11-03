@@ -2,7 +2,7 @@
 
 综合分 **72.08/100**，能力分 **65.56/100**。固定计划覆盖 **35 份 A1、83 槽**，83 槽均已接入 AI 审核。A1 严格通过 **21/35**，全部材料严格通过 **62/83**。
 
-[机器结果](results/gemini-2026-11-03/result.json) · [Terra 综合报告](terra-combined-2026-11-03.md) · [组合评分合同](../protocol/composite-development-report.md)
+[Benchmark 对比图](results/comparison-2026-11-03/index.html) · [机器结果](results/gemini-2026-11-03/result.json) · [Terra 综合报告](terra-combined-2026-11-03.md) · [组合评分合同](../protocol/composite-development-report.md)
 
 请求 Gemini 3.8 Flash High / high，报告日期为 2026-11-03。结果为 **provisional / human pending**，不具正式模型比较资格。评分直接来自共享 runner 的冻结结果，本公开报告仅投影与展示，不重新判题或计算另一套分数。
 

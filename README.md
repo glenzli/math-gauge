@@ -4,7 +4,7 @@
 
 Math Gauge 是数学推理与 Lean 语义对齐基准。它检查模型能否在实际给定的结构下完成证明、反例、构造、分类或形式化，保持假设、量词、定义域与结论强度，并留下可复核的原始答卷与审核证据。
 
-[Gemini 综合结果](docs/gemini-combined-2026-11-03.md) · [Terra 结果页](docs/results/terra-2026-11-03/index.html) · [题包运行说明](docs/release-consumer-README-v0.3.0.md) · [试卷目录](cases/README.md) · [选卷依据](docs/selection-v0.3.0.md) · [评分结构](protocol/benchmark-scoring.md) · [维护操作](docs/usage.md) · [文档导航](docs/README.md)
+[Benchmark 对比图](docs/results/comparison-2026-11-03/index.html) · [Gemini 综合结果](docs/gemini-combined-2026-11-03.md) · [Terra 结果页](docs/results/terra-2026-11-03/index.html) · [题包运行说明](docs/release-consumer-README-v0.3.0.md) · [试卷目录](cases/README.md) · [选卷依据](docs/selection-v0.3.0.md) · [评分结构](protocol/benchmark-scoring.md) · [维护操作](docs/usage.md) · [文档导航](docs/README.md)
 
 ## 独立任务包
 
@@ -42,15 +42,18 @@ python3 scripts/release.py build --version 0.3.0 \
 
 ## 最新综合结果
 
-新增 [Gemini 3.8 Flash 综合评测](docs/gemini-combined-2026-11-03.md)使用相同组合 profile v0.2.0，覆盖35份 A1、83槽：综合分 **72.08**、能力分 **65.56**，A1 严格通过 **21/35**，全部材料严格通过 **62/83**。83槽均经 AI 审核，仍待人审；[公开机器结果](docs/results/gemini-2026-11-03/result.json)仅含脱敏投影。可靠性仅代表公开六题面板，中性自查100分不等于全部材料严格通过。
+最新 [Benchmark 对比页](docs/results/comparison-2026-11-03/index.html)按五个能力方向、三项可靠性和两章完整交付展示 Terra 与 Gemini 的开发结果。[文字表](docs/benchmark-comparison-2026-11-03.md) · [分享 PNG](docs/results/comparison-2026-11-03/comparison.png) · [SVG](docs/results/comparison-2026-11-03/comparison.svg)。
 
-[Terra 6.1 · 首次综合评测](docs/terra-combined-2026-11-03.md)覆盖35份 A1、83槽，采用组合 profile v0.2.0：书面推理、Lean审计、Lean生成修复、整章形式化、研究探索的能力权重为25/20/20/20/15；综合权重为能力75%、三次全对5%、中性自查10%、立场自查10%。权重是在已知 Terra 旧结果后作出的方法调整。它复用历史独立答卷并接入两份新答卷，采用 AI 评审；可靠性只覆盖公开六题面板。
+[![Math Gauge · Terra 与 Gemini Benchmark 对比](docs/results/comparison-2026-11-03/comparison.png)](docs/results/comparison-2026-11-03/index.html)
 
-| 综合分 | 能力分 | A1 严格通过 | 全部材料严格通过 | 审核覆盖 |
-| ---: | ---: | ---: | ---: | ---: |
-| **94.13** | **92.17** | 34/35 | 82/83 | 83/83槽 |
+| 模型 | 综合分 | 能力分 | A1 严格通过 | 全部材料严格通过 | 审核覆盖 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Terra 6.1 Max | **94.13** | **92.17** | 34/35 | 82/83 | 83/83槽 |
+| Gemini 3.8 Flash High | **72.08** | **65.56** | 21/35 | 62/83 | 83/83槽 |
 
-[独立结果页](docs/results/terra-2026-11-03/index.html)、[机器结果](docs/results/terra-2026-11-03/result.json)与[组合报告合同](protocol/composite-development-report.md)提供分项和方法。主要未完成项是 C003 A1 的整章交付，仅完整满足20/92项义务；后续答卷不替代 A1。题目及答卷仍待人审，本结果不具正式模型比较资格。
+两边采用相同组合 profile v0.2.0，覆盖35份 A1、83槽；五方向能力权重25/20/20/20/15，综合权重75/5/10/10。权重在知晓 Terra 旧结果后调整，Gemini 随后使用同配置。Terra 复用历史独立答卷并接入两份新探索，执行批次与预算分别保留。可靠性仅代表公开六题面板，中性100分不等于全部材料严格通过。题目与答卷均经 AI 评审、人审待办，不具正式模型比较资格。
+
+[Terra 完整报告](docs/terra-combined-2026-11-03.md) · [Gemini 完整报告](docs/gemini-combined-2026-11-03.md) · [Terra 机器结果](docs/results/terra-2026-11-03/result.json) · [Gemini 公开投影](docs/results/gemini-2026-11-03/result.json) · [组合评分合同](protocol/composite-development-report.md)。整章完成另列：C002 为34/34与0/34，C003为20/92与0/92；义务不是独立题数，后续答卷不替代A1。
 
 ## 分项与总分
 
