@@ -16,7 +16,7 @@ from pathlib import Path
 
 from .benchmarks import (case_approval_sources, identity, independent_attempts,
                          select_slots, validate_plan)
-from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
+from .catalog import (assessment_units, candidate_message, digest_bytes, read_json, safe_file,
                       validate_group_contract, write_json)
 from .execution import extract_candidate_lean, invoke_conversation, now, runner_fingerprint
 from .execution_policy import project_followup_prompt
@@ -119,10 +119,12 @@ def _bind_suite(plan, suite):
                 or row.get("case_approval_source", source) != source):
             raise ValueError("Reliability case approval differs from its actual suite source")
         request = _candidate_request_for_plan(plan, suite, case)
-        contract_raw = safe_file(suite.root, case["group_contract"]).read_bytes()
+        if suite.members and row.get("source_suite") != suite.source_binding(case):
+            raise ValueError("Reliability case source suite identity changed")
+        contract_raw = suite.case_file(case, case["group_contract"]).read_bytes()
         contract = validate_group_contract(json.loads(contract_raw))
         stages = [{"stage_id": s["id"], "points": s["points"], "lean_required": s["lean_required"]}
-                  for s in contract["stages"]]
+                  for s in assessment_units(contract)]
         if (case["version"] != row["version"] or _request_hash(request) != row["request_sha256"]
                 or digest_bytes(candidate_message(request).encode()) != row["candidate_message_sha256"]
                 or digest_bytes(contract_raw) != row["group_contract_sha256"]
@@ -391,18 +393,18 @@ def _freeze_inputs(plan, suite, dest):
         if prompt_path.read_bytes() != prompt.encode("utf-8"):
             raise ValueError("Candidate preparation changed the original task bytes")
         contract_path = dest / "inputs" / cid / "review-contract.json"
-        contract_path.write_bytes(safe_file(suite.root, case["group_contract"]).read_bytes())
+        contract_path.write_bytes(suite.case_file(cid, case["group_contract"]).read_bytes())
         bindings[cid] = {"request": f"inputs/{cid}/solver/request.json",
                                "contract": f"inputs/{cid}/review-contract.json"}
         for kind in ("reference", "rubric"):
-            source = safe_file(suite.root, suite.cases[cid][kind]).read_bytes()
+            source = suite.case_file(cid, suite.cases[cid][kind]).read_bytes()
             extension = ".md" if kind == "reference" else ".json"
             target = dest / "inputs" / cid / (kind + extension)
             target.write_bytes(source)
             bindings[cid][kind] = {"path": str(target.relative_to(dest)), "sha256": digest_bytes(source)}
         approval = case.get("case_approval_source")
         if approval is not None:
-            raw = safe_file(suite.root, approval["manifest"]).read_bytes()
+            raw = suite.case_file(cid, approval["manifest"]).read_bytes()
             if digest_bytes(raw) != approval["manifest_sha256"]:
                 raise ValueError("Case approval source changed during preparation")
             target = dest / "inputs" / cid / "case-manifest.json"
@@ -489,7 +491,7 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
             or (token_limit is not None and (type(token_limit) not in (int, float) or token_limit < 0))):
         raise ValueError("Invalid total execution budget")
     dest = Path(destination).resolve()
-    if dest.is_relative_to(suite.root):
+    if suite.overlaps(dest):
         raise ValueError("Reliability output must be outside the question suite")
     dest.mkdir(parents=True, exist_ok=False)
     # Freeze the original execution audits before any dependent invocation.

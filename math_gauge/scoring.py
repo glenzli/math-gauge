@@ -4,7 +4,7 @@ from collections import Counter
 from fractions import Fraction
 from pathlib import Path
 
-from .benchmarks import (ATTEMPTS, COMPONENTS, identity, independent_attempts,
+from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independent_attempts,
                          scoring_policy, validate_plan)
 from .execution import now
 from .execution_policy import execution_condition
@@ -68,7 +68,10 @@ def _math_interval(axis):
 def _average(intervals, weights=None):
     if not intervals:
         return UNKNOWN
-    weights = weights or [1] * len(intervals)
+    weights = [1] * len(intervals) if weights is None else weights
+    if any(weight == 0 for weight in weights):
+        included = [(interval, weight) for interval, weight in zip(intervals, weights) if weight]
+        return _average([x[0] for x in included], [x[1] for x in included])
     total = sum(weights)
     lower = sum((x[0] * w for x, w in zip(intervals, weights)), Fraction()) / total
     upper = sum((x[1] * w for x, w in zip(intervals, weights)), Fraction()) / total
@@ -271,6 +274,9 @@ def _paired_stance(plan, rows):
                               if stance_wrong[2] is not None and neutral_wrong[2] is not None else None,
                               "initial_wrong": initial_wrong[2], "endpoint_wrong": stance_wrong[2],
                               "initial_math_C": _state(initial_row, "focus_math") == "C"})
+    if not pairs:
+        return {"dimension": "focus_math", "contrast": "stance minus matched neutral",
+                "rounds": {}, "causal_effect_claimed": False}
     groups = {}
     for rnd in (1, 2):
         by_round = [x for x in pairs if x["round"] == rnd]
@@ -386,10 +392,11 @@ def score_inputs(inputs):
         metric_intervals[component["id"]] = _average(intervals)
         all_core_rows.extend(component_rows)
     component_weights = [x["weight"] for x in plan["profile"]["data"]["components"]]
-    metrics["core"] = _metric([metric_intervals[k] for k in COMPONENTS],
+    components = component_ids(plan["profile"]["data"])
+    metrics["core"] = _metric([metric_intervals[k] for k in components],
                               all_core_rows, case_index, unit="core component",
                               weights=component_weights)
-    metric_intervals["core"] = _average([metric_intervals[k] for k in COMPONENTS], component_weights)
+    metric_intervals["core"] = _average([metric_intervals[k] for k in components], component_weights)
     repeats = [repeat_interval(cid) for cid in policy["repeat_case_ids"]]
     repeat_rows = [row_for(f"{cid}:{a}") for cid in policy["repeat_case_ids"]
                    for a in policy["repeat_attempt_labels"]]
@@ -696,6 +703,308 @@ def score_runs(roots, *, snapshot=None, audit_snapshot=None, audit_snapshots=Non
     return score_inputs(combined)
 
 
+def _execution_semantics(plan, cid):
+    runtime = plan.get("runtime") or {}
+    budget = runtime.get("budget", {})
+    parameters = dict(runtime.get("candidate_parameters", {}))
+    if "output_tokens" in budget:
+        parameters["max_output_tokens"] = budget["output_tokens"]
+    parameters.update(budget.get("case_parameters", {}).get(cid, {}))
+    return {"context_policy": plan["context_policy"], "system_prompt": runtime.get("system_prompt"),
+            "parameters": parameters, "timeout_seconds": budget.get("timeout_seconds", 120)}
+
+
+def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="require_matching"):
+    """Re-evaluate unchanged source answers; never fabricate a new execution run."""
+    plan = validate_plan(plan)
+    if budget_policy not in {"require_matching", "retain_source_budgets"}:
+        raise ValueError("Unknown composition budget policy")
+    target_cases = {case["case_id"]: case for case in plan["case_index"]}
+    target_slots = {slot["slot_id"]: slot for slot in plan["slots"]}
+    target_prompts = {row["message_id"]: row["content_sha256"]
+                      for row in plan["reliability"]["prompts"]["messages"]}
+    target_focus = {row["case_id"]: row for row in plan["reliability"]["selection"]["cases"]}
+    compared_fields = ("version", "track", "task_kind", "contract_kind", "request_sha256",
+                       "candidate_message_sha256", "group_contract_sha256", "stages", "total_weight")
+    model_aliases = model_aliases or {}
+    if (not isinstance(model_aliases, dict) or not all(isinstance(k, str) and isinstance(v, str)
+                                                      for k, v in model_aliases.items())):
+        raise ValueError("Model label aliases must be an explicit evaluator declaration")
+    rows, receipts, labels = {}, [], set()
+    for source in sources:
+        original = validate_plan(source["plan"])
+        if source.get("model_label") != original.get("model_label"):
+            raise ValueError("Source model label differs from its frozen plan")
+        labels.add(source.get("model_label"))
+        source_cases = {case["case_id"]: case for case in original["case_index"]}
+        source_slots = {slot["slot_id"]: slot for slot in original["slots"]}
+        source_prompts = {row["message_id"]: row["content_sha256"]
+                          for row in original["reliability"]["prompts"]["messages"]}
+        source_focus = {row["case_id"]: row for row in original["reliability"]["selection"]["cases"]}
+        selected = []
+        for row in source.get("slots", []):
+            sid, cid = row["slot_id"], row["case_id"]
+            if sid not in target_slots:
+                continue
+            before, after = source_cases[cid], target_cases[cid]
+            if any(before.get(k) != after.get(k) for k in compared_fields):
+                raise ValueError("Composition changed source candidate input or review contract: " + sid)
+            old_slot, new_slot = source_slots[sid], target_slots[sid]
+            keys = ("case_id", "kind", "context", "parent_slot", "message_id", "attempt_label", "arm", "round")
+            if any(old_slot.get(k) != new_slot.get(k) for k in keys):
+                raise ValueError("Composition changed source branch or attempt identity: " + sid)
+            if (new_slot["kind"] == "followup"
+                    and source_prompts.get(old_slot["message_id"]) != target_prompts.get(new_slot["message_id"])):
+                raise ValueError("Composition changed the original followup prompt: " + sid)
+            if new_slot["kind"] == "followup" and any(
+                source_focus.get(cid, {}).get(key) != target_focus.get(cid, {}).get(key)
+                for key in ("stage_id", "expected_truth", "scope", "target_claim")):
+                raise ValueError("Composition changed the independently reviewed followup target: " + sid)
+            old_conditions, new_conditions = _execution_semantics(original, cid), _execution_semantics(plan, cid)
+            if any(old_conditions[k] != new_conditions[k] for k in ("context_policy", "system_prompt", "parameters")):
+                raise ValueError("Composition changed the execution condition, system prompt or model generation parameters: " + sid)
+            if old_conditions["timeout_seconds"] != new_conditions["timeout_seconds"] and budget_policy == "require_matching":
+                raise ValueError("Composition changed the source time budget; explicitly retain its budget stratum: " + sid)
+            if sid in rows and _evidence_signature(rows[sid]) != _evidence_signature(row):
+                raise ValueError("Conflicting source evidence for composed slot: " + sid)
+            rows[sid] = dict(row)
+            selected.append(sid)
+        receipts.append({"run_id": source.get("run_id"), "root": source.get("root"),
+                         "plan_sha256": original["plan_sha256"],
+                         "suite": original["suite"], "runtime_sha256": original["runtime_sha256"],
+                         "model_label": source.get("model_label"),
+                         "budget": (original.get("runtime") or {}).get("budget", {}),
+                         "review_snapshot": source.get("review_snapshot"),
+                         "audit_snapshot": source.get("audit_snapshot"),
+                         "frozen_report_reuse": source.get("frozen_report_reuse"),
+                         "selected_slot_ids": selected})
+    normalized = {model_aliases.get(label, label) for label in labels}
+    if (not set(model_aliases) <= labels or len(normalized) > 1
+            or normalized and plan["model_label"] not in {None, next(iter(normalized))}):
+        raise ValueError("Composition cannot silently combine different model labels")
+    for row in rows.values():
+        original = dict(row.get("execution_eligibility") or {})
+        row["execution_eligibility"] = dict(original, eligible=False,
+            reasons=sorted(set(original.get("reasons", [])) | {"posthoc_cross_plan_composition"}))
+        row["comparison_eligible"] = False
+    report = score_inputs({"plan": plan, "model_label": plan["model_label"],
+                           "slots": list(rows.values()), "source_runs": receipts})
+    report["result_kind"] = "posthoc_composition"
+    report["composition"] = {"schema": "math-gauge.score-composition/v1",
+                             "new_candidate_calls": 0, "independent_run": False,
+                             "source_runs": receipts, "source_model_labels": list(labels),
+                             "declared_model_label_aliases": model_aliases,
+                             "budget_policy": budget_policy,
+                             "budget_conditions_shared": len({identity(r["budget"]) for r in receipts}) <= 1,
+                             "runtime_identity_shared": len({r["runtime_sha256"] for r in receipts}) <= 1,
+                             "notice": "Original responses and reviews are reused under a new evaluator plan. This is not a new independent benchmark execution or a formal comparison score."}
+    return report
+
+
+def frozen_report_inputs(root, reference):
+    """Retain a trusted old score/engine identity without current Lean revalidation.
+
+    This deliberately narrower path is only for posthoc composition. The caller
+    supplies trusted report and review-snapshot hashes; the run, response,
+    history, material and saved review bindings are checked again. It does not
+    claim that the current mathematical or Lean verifier reproduced that review.
+    """
+    from .catalog import digest_bytes, read_json, safe_file
+    from .reliability import inspect_reliability_run
+
+    if (not isinstance(reference, dict) or set(reference) != {"path", "sha256", "review_snapshot_sha256"}
+            or not all(isinstance(reference[key], str) and len(reference[key]) == 64
+                       and all(c in "0123456789abcdef" for c in reference[key])
+                       for key in ("sha256", "review_snapshot_sha256"))):
+        raise ValueError("Frozen score reuse needs a trusted report and review-snapshot SHA-256")
+    root = Path(root).resolve()
+    raw = Path(reference["path"]).read_bytes()
+    if digest_bytes(raw) != reference["sha256"]:
+        raise ValueError("Frozen score report changed")
+    report = read_json(reference["path"])
+    meta, records = inspect_reliability_run(root)
+    plan = meta["plan"]
+    if (report.get("schema") != "math-gauge.benchmark-score/v1"
+            or any(report.get(key) != plan.get(key) for key in (
+                "plan_sha256", "plan_id", "suite", "runtime_sha256", "model_label"))):
+        raise ValueError("Frozen score report binds a different original plan or runtime")
+    index = read_json(safe_file(root, "reliability-reviews.json"))
+    descriptors = [row for row in index.get("snapshots", [])
+                   if row.get("snapshot_sha256") == reference["review_snapshot_sha256"]]
+    if len(descriptors) != 1:
+        raise ValueError("Frozen score review snapshot is not retained in its original run")
+    descriptor = descriptors[0]
+    path = safe_file(root, descriptor["path"])
+    snapshot = read_json(path)
+    if (digest_bytes(path.read_bytes()) != descriptor["file_sha256"]
+            or snapshot.get("snapshot_sha256") != reference["review_snapshot_sha256"]
+            or snapshot["snapshot_sha256"] != identity({k: v for k, v in snapshot.items() if k != "snapshot_sha256"})
+            or snapshot.get("plan_sha256") != plan["plan_sha256"] or snapshot.get("run_id") != meta["run_id"]):
+        raise ValueError("Frozen score review snapshot changed")
+    rows, seen = [], set()
+    for row in report.get("evidence", []):
+        sid = row.get("slot_id")
+        if sid not in records or sid in seen:
+            raise ValueError("Frozen score contains unknown or repeated evidence")
+        record = records[sid]
+        review = snapshot["reviews"].get(sid)
+        if (not isinstance(review, dict) or row.get("slot_record_sha256") != meta["slot_record_sha256"][sid]
+                or any(row.get(key) != record.get(key) for key in (
+                    "case_id", "evidence_id", "response_sha256", "history_sha256", "material_sha256"))
+                or row.get("review_sha256") != review.get("review_sha256")
+                or review["review_sha256"] != identity({k: v for k, v in review.items() if k != "review_sha256"})
+                or row.get("binding") != review.get("binding")):
+            raise ValueError("Frozen score answer/history/review binding changed: " + sid)
+        seen.add(sid)
+        rows.append(dict(row, started=record["started"], selected=True))
+    return {"plan": plan, "model_label": plan["model_label"], "root": str(root),
+            "run_id": meta["run_id"], "slots": rows, "review_snapshot": descriptor,
+            "frozen_report_reuse": {"report_sha256": reference["sha256"],
+                "review_snapshot_sha256": reference["review_snapshot_sha256"],
+                "current_engine_reverification_claimed": False, "execution_audit_reverified": False,
+                "lean_recompiled": False}}
+
+
+def score_composed_runs(plan, roots, *, snapshots=None, model_aliases=None,
+                        budget_policy="require_matching", frozen_reports=None):
+    """Read authoritative retained reviews before a cross-plan development analysis."""
+    from .reliability import reliability_score_inputs
+
+    roots = [Path(root).resolve() for root in roots]
+    if not roots or len(roots) != len(set(roots)):
+        raise ValueError("Composition requires distinct existing source runs")
+    snapshots = snapshots or {}
+    frozen_reports = frozen_reports or {}
+    if not set(snapshots) <= {str(root) for root in roots}:
+        raise ValueError("Composition snapshot selection names an unknown source run")
+    if not set(frozen_reports) <= {str(root) for root in roots}:
+        raise ValueError("Frozen score reference names an unknown source run")
+    sources = []
+    for root in roots:
+        selectors = snapshots.get(str(root), {})
+        if not isinstance(selectors, dict) or set(selectors) - {"snapshot", "audit_snapshot"}:
+            raise ValueError("Invalid source review/audit snapshot selector")
+        if str(root) in frozen_reports:
+            if selectors:
+                raise ValueError("Frozen score reuse already binds its original review/audit selection")
+            sources.append(frozen_report_inputs(root, frozen_reports[str(root)]))
+        else:
+            sources.append(reliability_score_inputs(root, **selectors))
+    return _compose_score_sources(plan, sources, model_aliases=model_aliases, budget_policy=budget_policy)
+
+
+def public_score_projection(report, plan, *, private_aliases, metadata=None, source_kinds=None,
+                            public_subset=None, public_subset_sha256=None):
+    """Explicit score-only publication boundary; never serialize evaluator case data."""
+    import re
+
+    plan = validate_plan(plan)
+    if report.get("plan_sha256") != plan["plan_sha256"]:
+        raise ValueError("Public score projection binds a different plan")
+    cases = {case["case_id"]: case for case in plan["case_index"]}
+    if (not isinstance(private_aliases, dict) or not set(private_aliases) <= set(cases)
+            or len(set(private_aliases.values())) != len(private_aliases)
+            or any(not re.fullmatch(r"Private-[0-9]{2,}", value) for value in private_aliases.values())
+            or any(case.get("source_visibility") == "private" and cid not in private_aliases
+                   for cid, case in cases.items())):
+        raise ValueError("Every private paper needs one unique neutral public alias")
+    evidence = {row["slot_id"]: row for row in report.get("evidence", [])}
+    source_kinds = source_kinds or {}
+    allowed_sources = {"historical_public", "existing_private", "new_private"}
+    if not set(source_kinds) <= set(cases) or not set(source_kinds.values()) <= allowed_sources:
+        raise ValueError("Invalid public source classification")
+    metric_keys = ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")
+    titles = {"proofs": "Written mathematics", "lean-audit": "Lean semantic audit",
+              "lean-construction": "Lean construction", "chapters": "Chapter formalization",
+              "exploration": "Research exploration"}
+    metrics = {name: {key: value[key] for key in metric_keys if key in value}
+               for name, value in report["metrics"].items() if name in titles or name in {
+                   "core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"}}
+    slots, private_records = [], []
+    for slot in plan["slots"]:
+        cid, sid = slot["case_id"], slot["slot_id"]
+        row = evidence.get(sid, {})
+        public_id = private_aliases.get(cid, cid)
+        completion = row.get("completion") or {"lower": 0, "upper": 1, "exact": None}
+        reviewed = bool(row.get("review_sha256"))
+        reasons = {reason for key in ("whole_math", "whole_strict", "focus_math")
+                   for reason in (row.get(key) or {}).get("reasons", [])}
+        if reasons & {"execution_error", "execution_failure", "infrastructure_error"}:
+            status = "execution_failed"
+        elif reviewed and completion.get("exact") is None or reasons & {"material_unresolved", "problem_defect_pending"}:
+            status = "unresolved"
+        else:
+            status = "reviewed" if reviewed and completion.get("exact") is not None else (
+                "review_pending" if row.get("response_sha256") else "pending")
+        item = {"slot_id": public_id + sid[len(cid):], "public_id": public_id,
+                "source_kind": source_kinds.get(cid, "new_private" if cid in private_aliases else "historical_public"),
+                "completion": {k: completion[k] for k in ("exact", "lower", "upper")},
+                "strict_pass": row.get("strict_pass"), "status": status,
+                "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256"),
+                "human_status": "reviewed" if row.get("reviewer_kind") == "human" else "pending"}
+        slots.append(item)
+        if cid in private_aliases and slot.get("attempt_label") == "A1":
+            private_records.append(dict(item))
+    initial = [row for row in slots if row["slot_id"].endswith(":A1")]
+    result = {"schema": "math-gauge.public-composite-score/v1", "id": "combined-development-analysis",
+              "title": "Combined development analysis", "status": report.get("result_kind", "provisional"),
+              "score_units": {"metrics": "percent", "completion": "fraction"},
+              "plan_sha256": plan["plan_sha256"],
+              "profile": {"components": [{"id": row["id"], "title": titles[row["id"]],
+                  "weight": row["weight"], "case_count": len(row["case_ids"])}
+                  for row in plan["profile"]["data"]["components"]],
+                  "overall_weights": plan["profile"]["data"]["overall_weights"],
+                  "classification": "development_analysis", "selection_timing": "after_source_runs"},
+              "metrics": metrics, "private_records": private_records, "slot_evidence": slots,
+              "coverage": {"papers_planned": len(cases), "a1_planned": len(initial),
+                  "a1_reviewed": sum(row["completion"]["exact"] is not None for row in initial),
+                  "slots_planned": len(slots), "slots_reviewed": sum(row["review_sha256"] is not None for row in slots)},
+              "strict_passes": {"core_A1": {"passed": sum(row["strict_pass"] is True for row in initial),
+                  "total": len(initial), "adjudicated": sum(row["strict_pass"] is not None for row in initial)}},
+              "evidence_status": {"human_approval": "pending", "formal_comparison_eligible": False,
+                  "backend_identity_independently_verified": False,
+                  "composition_new_candidate_calls": 0 if report.get("composition") else None,
+                  "new_private_a1_planned": sum(row["source_kind"] == "new_private" for row in initial),
+                  "new_private_answers_present": sum(row["source_kind"] == "new_private" and
+                                                       row["response_sha256"] is not None for row in initial)}}
+    if public_subset is not None:
+        if public_subset.get("schema") != "math-gauge.posthoc-summary/v1":
+            raise ValueError("Unsupported frozen public subset summary")
+        source = public_subset.get("source", {})
+        subset_metrics = {}
+        for name, row in public_subset.get("metrics", {}).items():
+            if name in titles or name in {"core", "repeat", "neutral", "stance", "overall"}:
+                value = row.get("value")
+                if type(value) not in (int, float) or not 0 <= value <= 100:
+                    raise ValueError("Invalid frozen public subset percentage")
+                subset_metrics[name] = {"exact": value, "lower": value, "upper": value}
+        result["public_subset"] = {"metrics": subset_metrics,
+            "strict_passes": {name: {k: row[k] for k in ("passed", "total")}
+                              for name, row in public_subset.get("strict_passes", {}).items()
+                              if name in {"core_A1", "independent_attempts", "all_selected_slots"}},
+            "source": {k: source[k] for k in ("run_id", "plan_sha256", "report_sha256", "review_snapshot_sha256") if k in source}}
+        if public_subset_sha256 is not None:
+            if not isinstance(public_subset_sha256, str) or not re.fullmatch(r"[a-f0-9]{64}", public_subset_sha256):
+                raise ValueError("Invalid frozen public subset file hash")
+            result["public_subset"]["summary_sha256"] = public_subset_sha256
+    if metadata:
+        allowed = {"id", "title", "date", "requested_model", "requested_reasoning_effort"}
+        if not set(metadata) <= allowed:
+            raise ValueError("Unexpected public score metadata")
+        result.update(metadata)
+    if report.get("composition"):
+        composition = report["composition"]
+        result["composition"] = {"independent_run": False, "new_candidate_calls": 0,
+            "budget_policy": composition["budget_policy"],
+            "budget_conditions_shared": composition["budget_conditions_shared"],
+            "source_timeout_seconds": sorted({source["budget"].get("timeout_seconds", 120)
+                                               for source in composition["source_runs"]}),
+            "same_context_and_generation_conditions_checked": True,
+            "frozen_source_reports": [source["frozen_report_reuse"] for source in composition["source_runs"]
+                                      if source.get("frozen_report_reuse") is not None]}
+    return result
+
+
 def render_score(report):
     coverage = report["execution_coverage"]
     eligibility = report.get("formal_eligibility") or {}
@@ -719,7 +1028,8 @@ def render_score(report):
         lines[4:4] = [f"Execution condition: {condition['label']} ({condition['track']}).", ""]
     def display(value):
         return "pending" if value is None else f"{value:g}"
-    for name in COMPONENTS + ("core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"):
+    components = tuple(name for name in report["metrics"] if name in COMPONENTS + ("exploration",))
+    for name in components + ("core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"):
         value = report["metrics"][name]
         coverage = value["coverage"]
         blockers = ", ".join(value.get("formal_eligibility", {}).get("reasons", [])) or (

@@ -17,7 +17,8 @@ from .execution import (_candidate_engine, _candidate_imports, _candidate_source
                         _override_extraction, extract_candidate_lean, now,
                         verify_candidate_lean)
 from .reliability import PARSER_VERSION, _raw, _slot_path, inspect_reliability_run
-from .review import _stage_template, _validate_group_review, _validate_review_axes
+from .review import (_dimension_templates, _stage_template, _validate_group_review,
+                     _validate_review_axes, _validate_research_review)
 
 UNKNOWN_REASONS = {"review_pending", "problem_defect_pending", "infrastructure_error",
                    "execution_error", "not_run", "parent_without_readable_response"}
@@ -64,8 +65,12 @@ def reliability_review_templates(root):
                  "scope_accuracy": "unknown", "unnecessary_restriction": False,
                  "notes": "", "findings": [], "group_contract_sha256": case["group_contract_sha256"],
                  "stages": [], "format_review": {"decision": "pending", "notes": ""}}
-        for stage in contract["stages"]:
-            entry["stages"].append(dict(_stage_template(stage), math_review=_math_template()))
+        if contract["kind"] == "research_exploration":
+            del entry["stages"]
+            entry["dimensions"] = _dimension_templates(contract)
+        else:
+            for stage in contract["stages"]:
+                entry["stages"].append(dict(_stage_template(stage), math_review=_math_template()))
         if cid in focus:
             entry["focus_review"] = dict(_math_template(), stage_id=focus[cid]["stage_id"], verdict="undetermined")
         if record["material"]["mode"] == "KEEP":
@@ -328,6 +333,33 @@ def _validate_entry(root, meta, records, entry):
     cid = record["case_id"]
     case = next(c for c in meta["plan"]["case_index"] if c["case_id"] == cid)
     contract = read_json(safe_file(root, meta["inputs"][cid]["contract"]))
+    if contract["kind"] == "research_exploration":
+        if record["material"]["mode"] not in {None, "INITIAL", "FULL"}:
+            raise ValueError("Research dimension reviews require independent complete answers")
+        if entry.get("group_contract_sha256") != case["group_contract_sha256"]:
+            raise ValueError("Research review binds a different contract")
+        diagnostic = _validate_research_review(contract, entry, {"status": status})
+        format_review = entry.get("format_review")
+        if (not isinstance(format_review, dict) or format_review.get("decision") not in {"valid", "invalid", "pending"}
+                or not isinstance(format_review.get("notes"), str) or not format_review["notes"].strip()):
+            raise ValueError("Research response format needs attributed review notes")
+        resolved = record["material"]["status"] == "resolved" and raw is not None
+        if format_review["decision"] == "valid" and not resolved:
+            raise ValueError("Unresolved research material cannot receive a valid format decision")
+        completion = diagnostic["completion"] if resolved else {"lower": 0, "upper": 1, "exact": None}
+        strict = diagnostic["strict_pass"] if resolved and format_review["decision"] == "valid" else None
+        if format_review["decision"] == "invalid":
+            strict = False
+        if entry["decision"] == "pass" and strict is not True:
+            raise ValueError("Research strict pass contradicts its current format or material evidence")
+        adjudicated = completion["exact"] is not None
+        axis = {"state": "C" if strict is True else "I" if adjudicated else "U",
+                "adjudicated": adjudicated,
+                "reasons": [] if strict is True else ["candidate_incomplete" if adjudicated else "review_pending"]}
+        return {"strict_pass": strict, "completion": completion,
+                "whole_strict": dict(axis), "whole_math": dict(axis),
+                "focus_math": {"state": "U", "adjudicated": False, "reasons": ["not_selected"]},
+                "problem_defect": False, "group_diagnostic": diagnostic, "lean_evidence_verified": False}
     descriptor = {"id": cid, "group_contract": {"path": meta["inputs"][cid]["contract"],
                                                 "sha256": case["group_contract_sha256"]}}
     source_record = record

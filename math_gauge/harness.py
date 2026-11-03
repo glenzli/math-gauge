@@ -17,7 +17,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
-from .benchmarks import identity, select_slots, validate_plan
+from .benchmarks import identity, profile_targets, select_slots, validate_plan
 from .catalog import Suite, candidate_message, digest_bytes, relative_name, write_json
 from .execution_policy import (
     FOLLOWUP_PROMPT_PROJECTION, LOCAL_FOLLOWUP_PERMISSION, LOCAL_TOOLS_TRACK,
@@ -43,7 +43,7 @@ SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
 COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
-_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters",
+_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "exploration",
                     "repeat", "neutral", "stance", "core", "all")
 _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha256",
                  "base_plan_sha256", "suite", "runner_sha256", "protocol_version", "planned",
@@ -266,7 +266,7 @@ def _inspect_bundle_contents(root):
                "Preparation-only status changed")
     _h_require(isinstance(value["targets"], list) and value["targets"]
                and len(value["targets"]) == len(set(value["targets"]))
-               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters",
+               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "exploration",
                                              "repeat", "neutral", "stance", "core", "all"},
                "Invalid export target projection")
     _h_projection(root, value, {"CONTROLLER.md", "controller.py", "submission-template.json"})
@@ -286,7 +286,9 @@ def _h_projection(root, value, expected_files):
     _h_object(value["planned"], {"papers", "independent_slots", "neutral_slots", "stance_slots",
                                 "all_slots", "selected_slots"}, "fixed denominator")
     planned = value["planned"]
-    compact = value["protocol_version"] == "0.2.0"
+    compact = (value["protocol_version"] == "0.2.0"
+               or value["controller_version"] == COMPACT_CONTROLLER
+               or planned["independent_slots"] != 3 * planned["papers"])
     _h_require(all(type(x) is int and x >= 0 for x in planned.values())
                and planned["papers"] > 0
                and (planned["independent_slots"] == planned["papers"] + planned["neutral_slots"]
@@ -517,7 +519,7 @@ def _controller_source():
     constants += (f"FOLLOWUP_PROMPT_PROJECTION = {FOLLOWUP_PROMPT_PROJECTION!r}\n"
                   f"SOURCE_FOLLOWUP_PERMISSION = {SOURCE_FOLLOWUP_PERMISSION!r}\n"
                   f"LOCAL_FOLLOWUP_PERMISSION = {LOCAL_FOLLOWUP_PERMISSION!r}\n")
-    constants += f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\n\n"
+    constants += f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\nCOMPACT_CONTROLLER = {COMPACT_CONTROLLER!r}\n\n"
     return (header + constants + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _controller_main()\n').encode("utf-8")
 
@@ -639,7 +641,7 @@ def _execution_projection(plan, case_ids):
 
 def _source_suite(plan, suite):
     validate_plan(plan)
-    fresh = Suite.load(suite.manifest_path)
+    fresh = suite.reload()
     _h_require(fresh.sha256 == suite.sha256 and plan["suite"] == {
         "id": fresh.metadata["id"], "version": fresh.metadata["version"], "sha256": fresh.sha256},
         "Frozen plan or loaded suite differs from its current source")
@@ -715,8 +717,8 @@ def export_harness_bundle(plan, suite, destination, *, evaluator_destination=Non
     dest = _new_destination(destination)
     evaluator = _new_destination(str(destination) + ".evaluator" if evaluator_destination is None
                                  else evaluator_destination)
-    _h_require(not dest.is_relative_to(suite.root) and not suite.root.is_relative_to(dest)
-               and not evaluator.is_relative_to(suite.root) and not suite.root.is_relative_to(evaluator),
+    _h_require(not suite.overlaps(dest, bidirectional=True)
+               and not suite.overlaps(evaluator, bidirectional=True),
                "Harness outputs must not overlap the question suite")
     _h_require(not dest.is_relative_to(evaluator) and not evaluator.is_relative_to(dest),
                "Evaluator directory must be separate from the controller bundle")
@@ -797,7 +799,7 @@ def inspect_harness_bundle(root, *, plan=None, suite=None):
                        and case["candidate_message_sha256"] == expected["candidate_message_sha256"],
                        "Harness candidate input differs from the frozen plan")
     if suite is not None:
-        suite = _source_suite(plan, suite) if plan is not None else Suite.load(suite.manifest_path)
+        suite = _source_suite(plan, suite) if plan is not None else suite.reload()
         _h_require(manifest["suite"] == {"id": suite.metadata["id"], "version": suite.metadata["version"],
                                         "sha256": suite.sha256}, "Harness bundle binds a different suite")
         for case in manifest["cases"]:
@@ -877,7 +879,7 @@ def _r_execution(runtime, case_ids):
 def _r_targets(dataset, targets):
     targets = list(["all"] if targets is None else targets)
     _h_require(targets and len(targets) == len(set(targets))
-               and all(isinstance(t, str) and t in _RELEASE_TARGETS for t in targets),
+               and all(isinstance(t, str) and t in dataset["target_slot_ids"] for t in targets),
                "Unknown or repeated release target")
     wanted = {sid for target in targets for sid in dataset["target_slot_ids"][target]}
     return targets, [sid for sid in dataset["selected_slot_ids"] if sid in wanted]
@@ -920,16 +922,19 @@ def _inspect_release_dataset_contents(root):
         _h_require(value["exported_slots"] == value["planned"]["all_slots"]
                    == value["planned"]["selected_slots"], "A generic release must retain the full denominator")
         selections = value["target_slot_ids"]
-        _h_object(selections, _RELEASE_TARGETS, "release target map")
+        _h_require(isinstance(selections, dict) and set(selections) <= set(_RELEASE_TARGETS)
+                   and {"repeat", "neutral", "stance", "core", "all"} <= set(selections)
+                   and bool(set(selections) - {"repeat", "neutral", "stance", "core", "all"}),
+                   "Invalid release target map")
         all_ids = value["selected_slot_ids"]
         slots = {s["slot_id"]: s for s in value["slots"]}
         for target, ids in selections.items():
-            _h_require(isinstance(ids, list) and ids and len(ids) == len(set(ids))
+            _h_require(isinstance(ids, list) and (ids or target in {"repeat", "neutral", "stance"}) and len(ids) == len(set(ids))
                        and ids == [sid for sid in all_ids if sid in ids], "Invalid release target order")
             _h_require(all(slots[sid]["parent_slot"] is None or slots[sid]["parent_slot"] in ids for sid in ids),
                        "Release target lacks its dependency closure")
         independent = [sid for sid, s in slots.items() if s["kind"] == "independent"]
-        compact = value["protocol_version"] == "0.2.0"
+        compact = value["controller_version"] == COMPACT_CONTROLLER
         if compact:
             core = [sid for sid in independent if slots[sid]["attempt_label"] == "A1"]
             repeated = {slots[sid]["case_id"] for sid in independent
@@ -947,10 +952,11 @@ def _inspect_release_dataset_contents(root):
             core = independent
             _h_require(selections["all"] == all_ids and selections["core"] == selections["repeat"] == independent,
                        "Release independent target inventory changed")
-        partition = [sid for component in _RELEASE_TARGETS[:4] for sid in selections[component]]
+        component_targets = [t for t in selections if t not in {"repeat", "neutral", "stance", "core", "all"}]
+        partition = [sid for component in component_targets for sid in selections[component]]
         _h_require(len(partition) == len(set(partition)) and set(partition) == set(core),
                    "Release component targets must partition independent slots")
-        for component in _RELEASE_TARGETS[:4]:
+        for component in component_targets:
             for sid in selections[component]:
                 cid = slots[sid]["case_id"]
                 _h_require(all(cid + ":" + label in selections[component]
@@ -976,7 +982,7 @@ def inspect_release_dataset(root, *, plan=None, suite=None):
     if plan is not None:
         _r_bind_dataset(value, root, plan, suite)
     elif suite is not None:
-        fresh = Suite.load(suite.manifest_path)
+        fresh = suite.reload()
         _h_require(value["suite"] == {"id": "benchmark" if _h_is_neutral(value) else fresh.metadata["id"], "version": fresh.metadata["version"],
                                       "sha256": fresh.sha256}, "Release suite changed")
         for row in value["cases"]:
@@ -1009,7 +1015,7 @@ def _r_bind_dataset(value, root, plan, suite=None):
             "attempt_label", "arm", "round"}
     _h_require(value["slots"] == [{k: v for k, v in s.items() if k in keys} for s in select_slots(plan)]
                and value["target_slot_ids"] == {t: [s["slot_id"] for s in select_slots(plan, [t])]
-                                                  for t in _RELEASE_TARGETS},
+                                                  for t in profile_targets(plan["profile"]["data"])},
                "Release scheduling differs from the trusted base plan")
     prompts = [{k: p[k] for k in ("message_id", "content", "content_sha256")}
                for p in plan["reliability"]["prompts"]["messages"]]
@@ -1332,8 +1338,8 @@ def export_release_dataset(plan, suite, destination, *, evaluator_destination=No
     dest = _new_destination(destination)
     evaluator = _new_destination(str(destination) + ".evaluator" if evaluator_destination is None else evaluator_destination)
     _h_require(not dest.is_relative_to(evaluator) and not evaluator.is_relative_to(dest)
-               and not dest.is_relative_to(suite.root) and not suite.root.is_relative_to(dest)
-               and not evaluator.is_relative_to(suite.root) and not suite.root.is_relative_to(evaluator),
+               and not suite.overlaps(dest, bidirectional=True)
+               and not suite.overlaps(evaluator, bidirectional=True),
                "Release, evaluator and suite directories must be separate")
     projection, contents = _projection(plan, suite, ["all"])
     keys = ("suite", "runner_sha256", "protocol_version", "planned", "exported_slots",
@@ -1341,7 +1347,7 @@ def export_release_dataset(plan, suite, destination, *, evaluator_destination=No
     manifest = {k: projection[k] for k in keys}
     manifest.update(schema=DATASET_SCHEMA, controller_version=RELEASE_CONTROLLER, release_version=release_version,
                     base_plan_sha256=plan["plan_sha256"],
-                    target_slot_ids={t: [s["slot_id"] for s in select_slots(plan, [t])] for t in _RELEASE_TARGETS})
+                    target_slot_ids={t: [s["slot_id"] for s in select_slots(plan, [t])] for t in profile_targets(plan["profile"]["data"])})
     template = {"model_label": "replace-with-requested-model", "adapter_identity": {"kind": "external-harness",
                 "provider": "replace-with-actual-backend"}, "candidate_parameters": {"model": "replace-with-model-id"},
                 "budget": {"timeout_seconds": 120, "output_tokens": 16000}, "fresh_context": True}
@@ -1429,8 +1435,8 @@ def export_simple_release_dataset(plan, suite, destination, *, evaluator_destina
     dest = _new_destination(destination)
     evaluator = _new_destination(str(destination) + ".evaluator" if evaluator_destination is None else evaluator_destination)
     _h_require(not dest.is_relative_to(evaluator) and not evaluator.is_relative_to(dest)
-               and not dest.is_relative_to(suite.root) and not suite.root.is_relative_to(dest)
-               and not evaluator.is_relative_to(suite.root) and not suite.root.is_relative_to(evaluator),
+               and not suite.overlaps(dest, bidirectional=True)
+               and not suite.overlaps(evaluator, bidirectional=True),
                "Release, evaluator and suite directories must be separate")
     projection, expanded = _projection(plan, suite, ["all"])
     neutral = "candidate_projection" in plan
@@ -1454,11 +1460,11 @@ def export_simple_release_dataset(plan, suite, destination, *, evaluator_destina
             "selected_slot_ids", "slots", "prompts")
     manifest = {key: projection[key] for key in keys}
     manifest.update(schema=SIMPLE_DATASET_SCHEMA,
-                    controller_version=(COMPACT_CONTROLLER if manifest["protocol_version"] == "0.2.0"
+                    controller_version=(COMPACT_CONTROLLER if plan["profile"]["data"]["schema"] != "math-gauge.benchmark-profile/v1"
                                         else SIMPLE_CONTROLLER),
                     release_version=release_version, release_provenance=copy.deepcopy(release_provenance),
                     base_plan_sha256=plan["plan_sha256"], cases=cases,
-                    target_slot_ids={t: [s["slot_id"] for s in select_slots(plan, [t])] for t in _RELEASE_TARGETS},
+                    target_slot_ids={t: [s["slot_id"] for s in select_slots(plan, [t])] for t in profile_targets(plan["profile"]["data"])},
                     files_sha256={name: digest_bytes(raw) for name, raw in sorted(contents.items())})
     if neutral:
         manifest["schema"] = manifest["schema"].replace("math-gauge.", "benchmark.")

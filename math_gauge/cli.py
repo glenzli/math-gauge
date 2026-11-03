@@ -10,15 +10,26 @@ from .execution import check_lean, run
 from .review import apply_reviews, report, templates
 
 
+class _SuiteSources(argparse.Action):
+    def __call__(self, parser, namespace, value, option_string=None):
+        prior = getattr(namespace, self.dest, None)
+        setattr(namespace, self.dest, [*(prior if isinstance(prior, list) else []), value])
+
+
 def parser():
     p = argparse.ArgumentParser(
         prog="math-gauge",
         description="Weak-structure mathematical evaluation, public or private question suite.",
     )
     sub = p.add_subparsers(dest="action", required=True)
+    c = sub.add_parser("suite-compose", help="Freeze evaluator-only identities of independently stored suites.")
+    c.add_argument("--suite", action="append", required=True)
+    c.add_argument("--id", required=True)
+    c.add_argument("--version", required=True)
+    c.add_argument("--out", required=True)
     for name in ("validate", "list", "prepare", "run", "check-lean"):
         c = sub.add_parser(name)
-        c.add_argument("--suite", default="cases", help="Suite directory or explicit suite manifest JSON.")
+        c.add_argument("--suite", action=_SuiteSources, default="cases", help="Suite directory or manifest; repeat to compose independently rooted suites. Default: cases.")
         if name in {"run", "check-lean"}:
             c.add_argument("--case", action="append", dest="ids")
         if name == "prepare":
@@ -50,7 +61,7 @@ def parser():
                 help="New output directory for report.json and report.md",
             )
     c = sub.add_parser("benchmark-plan", help="Freeze a complete evaluator-only benchmark plan; no model calls.")
-    c.add_argument("--suite", default="cases")
+    c.add_argument("--suite", action=_SuiteSources, default="cases")
     c.add_argument("--profile", default="protocol/benchmark-profile.json")
     c.add_argument("--target", action="append", dest="targets")
     c.add_argument("--runtime", help="Predeclared model, budget and adapter identity JSON.")
@@ -59,7 +70,7 @@ def parser():
         "benchmark-export",
         help="Export a standalone external harness bundle and separate evaluator plan; no model calls.",
     )
-    c.add_argument("--suite", default="cases")
+    c.add_argument("--suite", action=_SuiteSources, default="cases")
     c.add_argument("--profile", help="Profile for a new plan; defaults to protocol/benchmark-profile.json.")
     c.add_argument("--target", action="append", dest="targets")
     g = c.add_mutually_exclusive_group()
@@ -70,15 +81,15 @@ def parser():
     c = sub.add_parser("benchmark-export-check", help="Read-only validation of an external harness bundle.")
     c.add_argument("--bundle", required=True)
     c.add_argument("--plan", help="Also bind the bundle to this evaluator-only plan.")
-    c.add_argument("--suite", help="Also bind the bundle to this suite.")
+    c.add_argument("--suite", action=_SuiteSources, help="Bind to this suite; repeat for a composition.")
     c = sub.add_parser("benchmark-import", help="Import existing external responses into shared review evidence; no model calls.")
     c.add_argument("--bundle", help="Legacy immutable bundle/run directory; omit for a portable answers ZIP.")
     c.add_argument("--input", required=True, help="One portable answers ZIP, or legacy submission JSON with --bundle.")
     c.add_argument("--plan", required=True)
-    c.add_argument("--suite", default="cases")
+    c.add_argument("--suite", action=_SuiteSources, default="cases")
     c.add_argument("--out", required=True, help="New local run directory.")
     c = sub.add_parser("benchmark-run", help="Explicitly execute one frozen plan projection.")
-    c.add_argument("--suite", default="cases")
+    c.add_argument("--suite", action=_SuiteSources, default="cases")
     c.add_argument("--plan", required=True)
     c.add_argument("--out", required=True)
     c.add_argument("--target", action="append", dest="targets")
@@ -127,6 +138,10 @@ def parser():
     c = sub.add_parser("benchmark-report", help="Aggregate validated same-plan evidence with fixed denominators.")
     c.add_argument("--run", action="append", dest="runs", required=True)
     c.add_argument("--out", required=True)
+    c.add_argument("--composition-plan", help="Explicit evaluator plan for a posthoc cross-plan development analysis; does not execute candidates.")
+    c.add_argument("--model-aliases", help="Explicit source-label to target-label declarations for composition; does not verify backend identity.")
+    c.add_argument("--composition-budget-policy", choices=("require_matching", "retain_source_budgets"), default="require_matching")
+    c.add_argument("--frozen-source-reports", help="Explicit per-run trusted report and review-snapshot SHA-256 references for historical composition.")
     c.add_argument("--review-snapshot", type=int, help="Use this retained version in each supplied run.")
     g = c.add_mutually_exclusive_group()
     g.add_argument("--audit-snapshot", help="Retained audit SHA-256; requires exactly one --run.")
@@ -138,8 +153,21 @@ def main(argv=None):
     args = parser().parse_args(argv)
     try:
         if args.action in {"validate", "list", "prepare", "run", "check-lean"}:
-            suite = Suite.load(args.suite)
-        if args.action == "validate":
+            suite = Suite.load(args.suite or ["cases"])
+        if args.action == "suite-compose":
+            import os
+            suite = Suite.combine([Suite.load(path) for path in args.suite], suite_id=args.id, version=args.version)
+            out = Path(args.out).resolve()
+            out.parent.mkdir(parents=True, exist_ok=True)
+            value = {"schema": "math-gauge.suite-composition/v1", "id": args.id, "version": args.version,
+                     "suites": [{"path": os.path.relpath(member.manifest_path, out.parent),
+                                 "id": member.metadata["id"], "version": member.metadata["version"],
+                                 "sha256": member.sha256} for member in suite.members]}
+            with out.open("x", encoding="utf-8") as stream:
+                json.dump(value, stream, ensure_ascii=False, indent=2)
+                stream.write("\n")
+            print(json.dumps({"composition": str(out), "cases": len(suite.cases), "suite_sha256": suite.sha256}))
+        elif args.action == "validate":
             print(
                 json.dumps(
                     {
@@ -204,7 +232,7 @@ def main(argv=None):
             (out / "report.md").write_text(md, encoding="utf-8")
             print(str(out / "report.md"))
         elif args.action == "benchmark-plan":
-            suite = Suite.load(args.suite)
+            suite = Suite.load(args.suite or ["cases"])
             profile = BenchmarkProfile.load(args.profile, suite)
             result = build_plan(profile, suite, args.targets,
                                 runtime=read_json(args.runtime) if args.runtime else None)
@@ -215,7 +243,7 @@ def main(argv=None):
             from .harness import export_harness_bundle
             if args.plan and args.profile:
                 raise ValueError("--profile cannot change an existing --plan")
-            suite = Suite.load(args.suite)
+            suite = Suite.load(args.suite or ["cases"])
             plan = (read_plan(args.plan) if args.plan else build_plan(
                 BenchmarkProfile.load(args.profile or "protocol/benchmark-profile.json", suite),
                 suite, args.targets,
@@ -237,7 +265,7 @@ def main(argv=None):
             from .harness import DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA, RUN_SCHEMA, inspect_harness_bundle
             result = inspect_harness_bundle(
                 args.bundle, plan=read_plan(args.plan) if args.plan else None,
-                suite=Suite.load(args.suite) if args.suite else None)
+                suite=Suite.load(args.suite or ["cases"]) if args.suite else None)
             if result["schema"] in {DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA, RUN_SCHEMA}:
                 summary = {"bundle": args.bundle, "schema": result["schema"],
                            "dataset_sha256": result["dataset_sha256"],
@@ -260,7 +288,7 @@ def main(argv=None):
                               "candidate_calls": 0}))
         elif args.action == "benchmark-import":
             from .harness_import import import_answer_archive, import_harness_submission
-            suite = Suite.load(args.suite)
+            suite = Suite.load(args.suite or ["cases"])
             result = (import_harness_submission(args.bundle, args.input, read_plan(args.plan), suite, args.out)
                       if args.bundle else import_answer_archive(args.input, read_json(args.plan), suite, args.out))
             print(json.dumps({"run": args.out, "plan_sha256": result["plan_sha256"],
@@ -271,7 +299,7 @@ def main(argv=None):
             if command is not None and (not isinstance(command, list) or not command
                                         or not all(isinstance(x, str) for x in command)):
                 raise ValueError("--command-json must be a nonempty argv array")
-            result = execute_reliability_run(read_plan(args.plan), Suite.load(args.suite),
+            result = execute_reliability_run(read_plan(args.plan), Suite.load(args.suite or ["cases"]),
                                              args.out, command=command, replay=args.replay,
                                              targets=args.targets, reuse_runs=args.reuse_runs)
             print(args.out)
@@ -344,9 +372,25 @@ def main(argv=None):
                 if args.action == "benchmark-evidence-check":
                     return 0 if result["slots"] and all(item["eligible"] for item in result["slots"].values()) else 1
         elif args.action == "benchmark-report":
-            from .scoring import render_score, score_runs
-            data = score_runs(args.runs, snapshot=args.review_snapshot, audit_snapshot=args.audit_snapshot,
-                              audit_snapshots=read_json(args.audit_snapshots) if args.audit_snapshots else None)
+            from .scoring import render_score, score_composed_runs, score_runs
+            if args.composition_plan:
+                if args.audit_snapshot and len(args.runs) != 1:
+                    raise ValueError("A single audit snapshot requires one source run")
+                audits = read_json(args.audit_snapshots) if args.audit_snapshots else {}
+                snapshots = {str(Path(root).resolve()): {
+                    **({"snapshot": args.review_snapshot} if args.review_snapshot is not None else {}),
+                    **({"audit_snapshot": audits.get(str(Path(root).resolve()), args.audit_snapshot)}
+                       if audits.get(str(Path(root).resolve()), args.audit_snapshot) is not None else {})}
+                    for root in args.runs}
+                data = score_composed_runs(read_plan(args.composition_plan), args.runs, snapshots=snapshots,
+                                          model_aliases=read_json(args.model_aliases) if args.model_aliases else None,
+                                          budget_policy=args.composition_budget_policy,
+                                          frozen_reports=read_json(args.frozen_source_reports) if args.frozen_source_reports else None)
+            else:
+                if args.model_aliases or args.frozen_source_reports:
+                    raise ValueError("Model aliases and frozen score references require an explicit composition plan")
+                data = score_runs(args.runs, snapshot=args.review_snapshot, audit_snapshot=args.audit_snapshot,
+                                  audit_snapshots=read_json(args.audit_snapshots) if args.audit_snapshots else None)
             out = Path(args.out)
             out.mkdir(parents=True, exist_ok=False)
             write_json(out / "report.json", data)

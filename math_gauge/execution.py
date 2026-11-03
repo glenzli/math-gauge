@@ -107,7 +107,7 @@ def run(
                 "Replay requires a string response for every selected case"
             )
     dest = Path(destination).resolve()
-    if dest.is_relative_to(suite.root):
+    if suite.overlaps(dest):
         raise ValueError("Run directory must be outside the question suite")
     dest.mkdir(parents=True, exist_ok=False)
     metadata = {
@@ -141,7 +141,7 @@ def run(
             }
         )
         if c.get("group_contract"):
-            contract = safe_file(suite.root, c["group_contract"]).read_bytes()
+            contract = suite.case_file(c, c["group_contract"]).read_bytes()
             target = dest / c["id"] / "review-contract.json"
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(contract)
@@ -191,6 +191,16 @@ def run(
 
 
 def check_lean(suite, ids=None, timeout=60):
+    if suite.members:
+        selected = {case["id"] for case in suite.select(ids)}
+        results = [check_lean(member, [cid for cid in member.cases if cid in selected], timeout)
+                   for member in suite.members if selected.intersection(member.cases)]
+        return {"schema": "math-gauge.lean-check/v1", "created_at": now(),
+                "suite_sha256": suite.sha256, "source_suites": [r["suite_sha256"] for r in results],
+                "lean_version": [r["lean_version"] for r in results],
+                "checks": [c for r in results for c in r["checks"]],
+                "all_compiled": bool(results) and all(r["all_compiled"] for r in results),
+                "semantic_alignment_inferred": False}
     expected = suite.metadata["lean_toolchain"].split(":v")[-1]
     version = subprocess.run(
         ["lean", "--version"],
@@ -206,7 +216,7 @@ def check_lean(suite, ids=None, timeout=60):
     checks = []
     for case in suite.select(ids):
         for name in case["lean_checks"]:
-            p = safe_file(suite.root, name)
+            p = suite.case_file(case, name)
             result = subprocess.run(
                 ["lean", str(p)],
                 cwd=suite.root,

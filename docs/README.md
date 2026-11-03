@@ -4,9 +4,9 @@ Math Gauge 默认题集含32份完整试卷，另11份保留为显式后备；�
 
 | 目的 | 入口 |
 | --- | --- |
+| 阅读 Terra 6.1 首次综合评测，35题/83槽、组合profile v0.2.0 | [独立结果页](results/terra-2026-11-03/index.html) · [文字报告](terra-combined-2026-11-03.md) · [机器结果](results/terra-2026-11-03/result.json) · [组合合同](../protocol/composite-development-report.md) |
 | 在任意外部 harness 运行任务并交回答卷 | [v0.3.0 包内操作说明源文件](release-consumer-README-v0.3.0.md)；中性任务包与题集均为0.3.0 |
 | 理解默认32题/80次与后备11题的取舍 | [0.3.0选卷依据](selection-v0.3.0.md) |
-| 区分旧177槽成绩与32题方案重算 | [Terra暂定结果与限制](terra-pilot-2026-11-02.md) · [重算数据](results/terra-2026-11-02-v0.3.0-posthoc.json) |
 | 单独选择备选题 | [备选目录](../cases/reserve/README.md) · [显式清单](../cases/reserve-suite.json) |
 | 构建、检查任务包，或查阅历史分发 | [分发合同](../protocol/release-distribution.md) · [v0.1.0 历史发布说明](release-notes-v0.1.0.md) |
 | 了解测量目标、样本单位和结论边界 | [项目定位](project-positioning.md) |

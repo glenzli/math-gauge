@@ -459,6 +459,23 @@ def _public_provenance(provenance, plan):
 
 def _check_simple_provenance(manifest, files, config, source_commit=None):
     provenance = manifest.get("release_provenance")
+    if config["schema"] == "math-gauge.external-release-config/v1":
+        _require(source_commit is None, "Local datasets do not claim an exact clean source commit")
+        _require(isinstance(provenance, dict) and set(provenance) == {
+            "schema", "kind", "source_sha256", "source_revision_sha256", "input_bindings"}
+            and provenance["schema"] == "math-gauge.local-dataset-provenance/v1"
+            and provenance["kind"] == "local_dataset", "Invalid local dataset provenance")
+        _require(all(isinstance(provenance[k], str) and re.fullmatch(r"[0-9a-f]{64}", provenance[k])
+                     for k in ("source_sha256", "source_revision_sha256")), "Invalid local source identity")
+        expected = {case["task_path"] for case in manifest["cases"]}
+        expected.update(item["path"] for case in manifest["cases"] for item in case["files"])
+        bindings = provenance["input_bindings"]
+        _require(isinstance(bindings, list) and len(bindings) == len(expected)
+                 and all(isinstance(b, dict) and set(b) == {"path", "sha256"} for b in bindings)
+                 and {b["path"] for b in bindings} == expected
+                 and all(b["sha256"] == _digest(files[b["path"]]) for b in bindings),
+                 "Local dataset input bindings changed")
+        return provenance
     if config["schema"] == "math-gauge.release-config/v3":
         from math_gauge.release_projection import CANDIDATE_PROJECTION
         _require(isinstance(provenance, dict) and set(provenance) == {
@@ -573,7 +590,8 @@ def package_simple_dataset(dataset_root, archive, *, config, plan=None, suite=No
     _check_simple_contents(manifest, files, config)
     archive = _real_path(archive)
     _require(not archive.exists(), "Release archives cannot be overwritten")
-    prefix = ("benchmark" if config["schema"] == "math-gauge.release-config/v3" else "math-gauge") + f"-v{config['release_version']}/"
+    prefix = ("benchmark" if config["schema"] in {"math-gauge.release-config/v3", "math-gauge.external-release-config/v1"}
+              else "math-gauge") + f"-v{config['release_version']}/"
     with zipfile.ZipFile(archive, "x", compression=zipfile.ZIP_STORED) as output:
         for name, raw in sorted(files.items()):
             _relative(name)
@@ -585,7 +603,7 @@ def package_simple_dataset(dataset_root, archive, *, config, plan=None, suite=No
     return manifest
 
 
-def check_release_archive(archive, *, checksums=None, version=None, source_commit=None):
+def check_release_archive(archive, *, checksums=None, version=None, source_commit=None, external=False):
     """Check v1 and flat v2 ZIPs using trusted code before writing any member."""
     from math_gauge.harness import inspect_release_dataset
 
@@ -604,12 +622,22 @@ def check_release_archive(archive, *, checksums=None, version=None, source_commi
     _require(version is None or version == detected_version,
              "Release archive version differs from the expected version")
     version = detected_version
-    config = load_config(version=version)
+    if external:
+        _require(matched.group(1) == "benchmark" and source_commit is None,
+                 "Local dataset checks cannot assert a clean source release")
+        files = _archive_files(archive, top + "/")
+        _require("manifest.json" in files, "Missing release dataset manifest")
+        metadata = _read_json(files["manifest.json"])
+        config = {"schema": "math-gauge.external-release-config/v1", "release_version": version,
+                  "suite_version": version, "case_count": len(metadata.get("cases", [])),
+                  "slot_count": metadata.get("exported_slots")}
+    else:
+        config = load_config(version=version)
     if matched.group(1) == "math-gauge-tasks":
         _require(config["schema"] == "math-gauge.release-config/v1", "Unexpected legacy archive version")
         return _check_legacy_release_archive(archive, version=version, source_commit=source_commit)
-    _require(config["schema"] in {"math-gauge.release-config/v2", "math-gauge.release-config/v3"}
-             and (matched.group(1) == "benchmark") == (config["schema"] == "math-gauge.release-config/v3"),
+    _require(config["schema"] in {"math-gauge.release-config/v2", "math-gauge.release-config/v3", "math-gauge.external-release-config/v1"}
+             and (matched.group(1) == "benchmark") == (config["schema"] in {"math-gauge.release-config/v3", "math-gauge.external-release-config/v1"}),
              "Unexpected simple archive version")
     files = _archive_files(archive, top + "/")
     _require("manifest.json" in files, "Missing release dataset manifest")
@@ -689,6 +717,172 @@ def build_release(destination, *, source_commit=None, local_preview=False, root=
         raise
 
 
+def _external_readme(version, plan):
+    first = plan["slots"][0]["slot_id"]
+    targets = ", ".join(plan["profile"]["data"]["components"][i]["id"]
+                        for i in range(len(plan["profile"]["data"]["components"])))
+    return f"""# Benchmark {version}
+
+This package contains {plan['planned']['papers']} complete tasks and {plan['planned']['all_slots']} planned answer slots.
+Python 3.10+ is sufficient; no installation or third-party packages are required.
+The optional controller tool prepares and records requests. It never calls a model.
+
+README.md, manifest.json, tools and runtime settings are controller-only.
+The candidate receives only the complete generated messages, their explicit attachments,
+frozen generation parameters and permitted history from its own branch.
+Do not give the candidate this directory, evaluation material, other answers,
+controller memory or project instructions.
+
+Create runtime.json outside this package with the actual model_label,
+adapter_identity, candidate_parameters.model, budget.timeout_seconds and
+fresh_context=true. Supply output_tokens only when the transport enforces it;
+preserve unknown usage and unsupported limits as unknown. Freeze the mapping
+to the provider's real settings before executing. The default condition allows
+no candidate tools or external retrieval. A separately declared local-tools
+condition still forbids external search and tool network access.
+
+```sh
+python3 tools/benchmark.py check
+python3 tools/benchmark.py prepare --runtime ../runtime.json --target all --out ../new-run
+python3 tools/benchmark.py request --run ../new-run --responses ../new-answers --slot '{first}' --out ../request.json
+```
+
+Read selected_slot_ids in the new run manifest. Independent candidate calls
+may run in parallel with isolated contexts and workspaces. Serialize controller
+writes to shared output and retain the manifest order for shared request/record
+operations. A followup waits for its own branch's recorded predecessor and
+receives only its exact branch history generated by the controller. The harness
+must implement file, process, memory, tool and network isolation. If the actual
+model or isolation cannot be supplied, retain an unexecuted slot and explain why.
+Targets include all, core, repeat, neutral, stance and {targets}; some optional
+targets may have no slots in this dataset. Never substitute another model.
+
+Send the whole generated messages array and frozen parameters without adding
+solver hints. Save the complete original answer bytes, all request/response
+events, tool feedback, failures, timeouts and known usage. Do not repair answers.
+
+```sh
+python3 tools/benchmark.py record --run ../new-run --responses ../new-answers --slot '{first}' --request ../request.json --response ../raw-answer.md --status ok
+python3 tools/benchmark.py pack --run ../new-run --responses ../new-answers --out ../answers.zip --origin external --declared-external-calls N
+```
+
+Replace N with every actual call, including retries and failed calls. Offline
+fixtures retain the default fixture origin and zero external calls. A first
+readable answer locks its slot regardless of correctness. Only an unreadable
+temporary failure may be retried under the frozen retry limits, preserving each
+attempt. Use skip only for calls that never happened. Record usage and metadata
+with the tool's --usage and --metadata options; preserve original external logs.
+For followups, obey the supplied KEEP/FULL format and never synthesize history.
+All outputs use new paths outside the immutable dataset. Return answers.zip and
+preserve the original dataset plus all local execution evidence.
+
+Hashes bind files; they do not authenticate a backend, execution chronology,
+isolation, mathematical correctness or human approval. Import and mathematical
+review are separate evaluator operations. This is a local dataset snapshot and
+does not claim a clean committed release.
+""".encode("utf-8")
+
+
+def _local_repository_snapshot(path):
+    """Observe dirty or unborn repositories without requiring or changing Git state."""
+    def read(*args):
+        result = subprocess.run(["git", "-C", str(path), *args], capture_output=True)
+        return result.stdout if result.returncode == 0 else None
+    head = read("rev-parse", "--verify", "HEAD")
+    status = read("status", "--porcelain=v1", "--untracked-files=all")
+    return {"root": str(path), "head": head.decode().strip() if head else None,
+            "dirty": bool(status) if status is not None else None,
+            "status_sha256": _digest(status) if status is not None else None}
+
+
+def build_external_release(destination, *, suite_paths, profile_path, version=None,
+                           readme_path=None, license_path=None, notices_path=None):
+    """Package independently stored public/private data using the installed shared runner.
+
+    Dirty and unborn source repositories are permitted. Full source identities,
+    evaluator contracts and the profile remain in the evaluator anchor, not ZIP.
+    Candidate tasks and attachment bytes are copied exactly, without rewriting.
+    """
+    from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, validate_plan
+    from math_gauge.catalog import Suite
+    from math_gauge.execution import runner_fingerprint
+    from math_gauge.harness import export_simple_release_dataset, make_release_anchor
+
+    suite = Suite.load(suite_paths)
+    profile = BenchmarkProfile.load(profile_path, suite)
+    version = version or suite.metadata["version"]
+    _require(re.fullmatch(r"\d+\.\d+\.\d+", version) is not None
+             and version == suite.metadata["version"], "Release version must equal the suite version")
+    plan = build_plan(profile, suite)
+    stable = {"suite": plan["suite"], "profile_sha256": profile.sha256,
+              "runner_sha256": plan["runner_sha256"],
+              "reliability_files_sha256": plan["reliability"]["files_sha256"]}
+    plan.update(plan_id=identity(stable)[:32], created_at="local-dataset-snapshot")
+    plan["plan_sha256"] = identity({k: v for k, v in plan.items() if k != "plan_sha256"})
+    validate_plan(plan)
+    wrappers = {"README.md": Path(readme_path).read_bytes() if readme_path else _external_readme(version, plan),
+                "LICENSE": Path(license_path).read_bytes() if license_path else
+                    b"This dataset grants no additional permissions. Consult its owner for applicable terms.\n",
+                "THIRD_PARTY_NOTICES.md": Path(notices_path).read_bytes() if notices_path else
+                    b"Source attribution and applicable permissions must be retained with the supplied materials.\n"}
+    bindings = []
+    for cid, case in suite.cases.items():
+        pairs = [(case["task"], f"cases/{cid}/task.md"), *(
+            (row["source"], f"cases/{cid}/files/{row['target']}") for row in case["solver_files"])]
+        for name, target in pairs:
+            raw = suite.case_file(cid, name).read_bytes()
+            bindings.append({"case_id": cid, "source_suite": suite.source_binding(cid),
+                             "source": name, "path": target, "sha256": _digest(raw)})
+    consumed = dict(stable, input_bindings=bindings,
+                    wrappers_sha256={k: _digest(v) for k, v in wrappers.items()})
+    source_sha256 = identity(consumed)
+    repositories = [_local_repository_snapshot(member.root)
+                    for member in suite.members or (suite,)]
+    provenance = {"schema": "math-gauge.external-release-provenance/v1", "kind": "local_dataset",
+                  "source_sha256": source_sha256, "source_revision_sha256": identity(repositories),
+                  "source_suites": [{"manifest": str(member.manifest_path),
+                                     **suite.source_binding(next(iter(member.cases)))}
+                                    for member in suite.members or (suite,)],
+                  "repositories": repositories, "consumed": consumed}
+    public_provenance = {k: provenance[k] for k in ("kind", "source_sha256", "source_revision_sha256")}
+    public_provenance.update(schema="math-gauge.local-dataset-provenance/v1",
+        input_bindings=[{k: row[k] for k in ("path", "sha256")} for row in bindings])
+    config = {"schema": "math-gauge.external-release-config/v1", "release_version": version,
+              "suite_version": version, "case_count": len(suite.cases), "slot_count": plan["planned"]["all_slots"]}
+    destination = _real_path(destination)
+    _require(not destination.exists() and not suite.overlaps(destination, bidirectional=True),
+             "Release output must be a new directory outside every source suite")
+    destination.mkdir(parents=True)
+    try:
+        with tempfile.TemporaryDirectory(prefix="math-gauge-external-release-") as temporary:
+            dataset_root = _real_path(temporary) / "dataset"
+            dataset = export_simple_release_dataset(plan, suite, dataset_root, release_version=version,
+                readme=wrappers["README.md"], extra_files={k: wrappers[k] for k in ("LICENSE", "THIRD_PARTY_NOTICES.md")},
+                release_provenance=public_provenance)
+            archive = destination / f"benchmark-v{version}.zip"
+            package_simple_dataset(dataset_root, archive, config=config, plan=plan, suite=suite)
+        checksums = destination / "SHA256SUMS"
+        checksums.write_bytes(f"{_digest(archive.read_bytes())}  {archive.name}\n".encode("ascii"))
+        evaluator_plan = destination / "evaluator-plan.json"
+        evaluator_plan.write_bytes(_json_bytes(make_release_anchor(plan, dataset, release_provenance=provenance)))
+        check_release_archive(archive, checksums=checksums, version=version, external=True)
+        _require(suite.reload().sha256 == suite.sha256
+                 and _digest(Path(profile_path).read_bytes()) == profile.sha256
+                 and profile.packet()["files_sha256"] == stable["reliability_files_sha256"]
+                 and runner_fingerprint() == stable["runner_sha256"],
+                 "Source changed while building local dataset assets")
+        for key, path in (("README.md", readme_path), ("LICENSE", license_path), ("THIRD_PARTY_NOTICES.md", notices_path)):
+            _require(path is None or Path(path).read_bytes() == wrappers[key], "Release wrapper changed while building")
+        return {"archive": str(archive), "sha256": _digest(archive.read_bytes()),
+                "checksums": str(checksums), "evaluator_plan": str(evaluator_plan),
+                "release_version": version, "suite_version": suite.metadata["version"],
+                "dataset_sha256": dataset["dataset_sha256"], "source_sha256": source_sha256,
+                "provenance_kind": "local_dataset", "candidate_calls": 0}
+    except BaseException:
+        shutil.rmtree(destination)
+        raise
+
+
 def recover_evaluator_plan(destination, *, source_commit=None, local_preview=False, root=ROOT, version=VERSION):
     """Recover the exact external anchor by rebuilding the same source-mode dataset."""
     destination = _real_path(destination)
@@ -722,12 +916,18 @@ def main(argv=None):
     build_source = build.add_mutually_exclusive_group(required=True)
     build_source.add_argument("--source-commit")
     build_source.add_argument("--local-preview", action="store_true")
-    build.add_argument("--version", default=VERSION)
+    build.add_argument("--version")
+    build.add_argument("--suite", action="append", help="External suite directory or composition manifest; repeat to compose.")
+    build.add_argument("--profile", help="Evaluator-only profile for an external dataset.")
+    build.add_argument("--readme", help="Optional controller guide for an external dataset.")
+    build.add_argument("--license", dest="license_path", help="Dataset distribution terms, when supplied by its owner.")
+    build.add_argument("--third-party-notices", dest="notices_path")
     check = sub.add_parser("check", help="Validate checksums, safe ZIP inventory and dataset")
     check.add_argument("--archive", required=True)
     check.add_argument("--checksums", required=True)
     check.add_argument("--source-commit")
     check.add_argument("--version", help="Require this version; otherwise detect the archive version")
+    check.add_argument("--external", action="store_true", help="Check a local external dataset, without asserting a named public release.")
     evaluator = sub.add_parser("evaluator-plan", help="Recover the operator-only release anchor")
     evaluator.add_argument("--out", required=True)
     evaluator_source = evaluator.add_mutually_exclusive_group(required=True)
@@ -737,17 +937,26 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == "build":
-            result = build_release(args.out, source_commit=args.source_commit,
-                                   local_preview=args.local_preview, version=args.version)
+            if args.suite:
+                _require(args.local_preview and args.profile,
+                         "External datasets require --local-preview and --profile; no commit is required")
+                result = build_external_release(args.out, suite_paths=args.suite, profile_path=args.profile,
+                    version=args.version, readme_path=args.readme, license_path=args.license_path,
+                    notices_path=args.notices_path)
+            else:
+                _require(not any((args.profile, args.readme, args.license_path, args.notices_path)),
+                         "External dataset options require --suite")
+                result = build_release(args.out, source_commit=args.source_commit,
+                                       local_preview=args.local_preview, version=args.version or VERSION)
         elif args.command == "check":
             value = check_release_archive(args.archive, checksums=args.checksums,
-                                          version=args.version, source_commit=args.source_commit)
+                                          version=args.version, source_commit=args.source_commit, external=args.external)
             result = {"release_version": value["release_version"],
                       "dataset_sha256": value["dataset_sha256"], "candidate_calls": 0}
             if value["schema"] == ARCHIVE_SCHEMA:
                 result.update(source=value["source"], cases=value["case_count"], slots=value["slot_count"])
             else:
-                result.update(source=value["release_provenance"]["source"],
+                result.update(source=value["release_provenance"].get("source"),
                               provenance_kind=value["release_provenance"]["kind"],
                               cases=len(value["cases"]), slots=value["exported_slots"])
         else:

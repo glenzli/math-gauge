@@ -464,7 +464,7 @@ def import_harness_submission(bundle_root, submission_path, plan, suite, destina
     index = _submission(value, manifest, plan, sources)
     dest = _root(destination)
     _require(not dest.exists(), "Harness import output already exists")
-    _require(not dest.is_relative_to(suite.root) and not dest.is_relative_to(bundle_root),
+    _require(not suite.overlaps(dest) and not dest.is_relative_to(bundle_root),
              "Import output must be outside its suite and candidate bundle")
     dest.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".math-gauge-import-", dir=dest.parent) as temp:
@@ -565,7 +565,7 @@ def import_answer_archive(archive_path, evaluator_anchor, suite, destination, *,
              "Answers ZIP differs from the trusted dataset identity")
     dest = _root(destination)
     _require(not dest.exists(), "Harness import output already exists")
-    _require(not dest.is_relative_to(suite.root), "Import output must be outside its suite")
+    _require(not suite.overlaps(dest), "Import output must be outside its suite")
     dest.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".math-gauge-answers-", dir=dest.parent) as temp:
         unpacked = Path(temp)

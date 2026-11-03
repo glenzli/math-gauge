@@ -114,6 +114,8 @@ def case_paths(root, manifest, case):
 
 def validate_group_contract(contract):
     """Validate evaluator-only stage contracts, never supply their truth labels."""
+    if isinstance(contract, dict) and contract.get("kind") == "research_exploration":
+        return validate_research_contract(contract)
     if not isinstance(contract, dict) or contract.get("schema") != "math-gauge.group-contract/v1":
         raise ValueError("Unsupported group contract")
     if contract.get("kind") not in {"progressive", "chapter_formalization"}:
@@ -183,6 +185,40 @@ def validate_group_contract(contract):
     return contract
 
 
+def validate_research_contract(contract):
+    """Open work is assessed by credit dimensions, not invented candidate stages."""
+    if (contract.get("schema") != "math-gauge.group-contract/v2"
+            or contract.get("assessment_unit") != "review_dimension"
+            or any(key in contract for key in ("stages", "turns", "all_stages_mandatory"))
+            or not all(isinstance(contract.get(k), str) and contract[k].strip()
+                       for k in ("id", "version"))):
+        raise ValueError("Unsupported research dimension contract")
+    dimensions = contract.get("dimensions")
+    if not isinstance(dimensions, list) or not dimensions:
+        raise ValueError("Research contract requires review dimensions")
+    seen = set()
+    for row in dimensions:
+        if (not isinstance(row, dict) or not isinstance(row.get("id"), str)
+                or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", row["id"])
+                or row["id"] in seen or type(row.get("points")) is not int
+                or row["points"] <= 0 or not isinstance(row.get("title"), str)
+                or not row["title"].strip()):
+            raise ValueError("Invalid research review dimension")
+        for key in ("required_evidence", "critical_errors"):
+            if (not isinstance(row.get(key), list) or not row[key]
+                    or not all(isinstance(x, str) and x.strip() for x in row[key])):
+                raise ValueError("Research dimension requires specific " + key)
+        seen.add(row["id"])
+    return contract
+
+
+def assessment_units(contract):
+    """Plan weights share an interface; their mathematical meaning stays explicit."""
+    if contract.get("kind") == "research_exploration":
+        return [dict(row, lean_required=False) for row in contract["dimensions"]]
+    return contract["stages"]
+
+
 def validate_alignment_manifest(manifest, contract):
     """Validate candidate coverage without prescribing its proof route."""
     if (not isinstance(manifest, dict) or manifest.get("case_id") != contract["id"]
@@ -228,18 +264,114 @@ class Suite:
     cases: dict
     sha256: str
     manifest_name: str = "suite.json"
+    members: tuple = ()
+    composition_path: Path = None
+    case_manifests: dict = None
 
     @property
     def manifest_path(self):
-        return self.root / self.manifest_name
+        return self.composition_path or self.root / self.manifest_name
+
+    @property
+    def roots(self):
+        return tuple(s.root for s in self.members) if self.members else (self.root,)
+
+    def overlaps(self, path, *, bidirectional=False):
+        path = Path(path).resolve()
+        return any(path.is_relative_to(root) or bidirectional and root.is_relative_to(path)
+                   for root in self.roots)
+
+    def source_suite(self, case):
+        cid = case if isinstance(case, str) else case["id"]
+        if self.members and cid not in self.cases:
+            raise ValueError("Unknown case in source lookup")
+        return next(s for s in self.members if cid in s.cases) if self.members else self
+
+    def case_file(self, case, name):
+        return safe_file(self.source_suite(case).root, name)
+
+    def case_manifest(self, case):
+        cid = case if isinstance(case, str) else case["id"]
+        source = self.source_suite(cid)
+        return source.case_manifests[cid]
+
+    def source_binding(self, case):
+        source = self.source_suite(case)
+        return {"id": source.metadata["id"], "version": source.metadata["version"],
+                "sha256": source.sha256}
+
+    def reload(self):
+        if self.composition_path:
+            return self.load(self.composition_path)
+        if self.members:
+            return self.combine([s.reload() for s in self.members],
+                                suite_id=self.metadata["id"], version=self.metadata["version"])
+        return self.load(self.manifest_path)
+
+    @classmethod
+    def combine(cls, suites, *, suite_id="math-gauge-combined", version="1", composition_path=None):
+        members = tuple(s for suite in suites for s in (suite.members or (suite,)))
+        if len(members) < 2:
+            if (len(members) == 1 and composition_path is None
+                    and suite_id == "math-gauge-combined" and version == "1"):
+                return members[0]
+            if not members:
+                raise ValueError("Composition requires at least one suite")
+        cases, bindings, identities = {}, [], set()
+        for suite in members:
+            sid = suite.metadata["id"]
+            if sid in identities:
+                raise ValueError(f"Duplicate source suite identity: {sid}")
+            identities.add(sid)
+            for cid, case in suite.cases.items():
+                if cid in cases:
+                    raise ValueError(f"Duplicate case across suites: {cid}")
+                cases[cid] = case
+            bindings.append({"id": sid, "version": suite.metadata["version"], "sha256": suite.sha256})
+        protected = {suite.case_file(case, name).resolve() for suite in members
+                     for case in suite.cases.values()
+                     for name in [case["reference"], case["rubric"], *case.get("evaluator_files", [])]
+                     + ([case["group_contract"]] if case.get("group_contract") else [])}
+        for suite in members:
+            for case in suite.cases.values():
+                if any(suite.case_file(case, name).resolve() in protected
+                       for name in [case["task"], *(x["source"] for x in case["solver_files"])]):
+                    raise ValueError(f"{case['id']}: cross-suite evaluator material in input")
+        meta = {"schema": "math-gauge.suite-composition/v1", "id": suite_id,
+                "version": version, "visibility": "private" if any(
+                    s.metadata["visibility"] == "private" for s in members) else "public",
+                "suites": bindings, "cases": list(cases)}
+        raw = json.dumps(meta, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+        return cls(members[0].root, meta, cases, digest_bytes(raw), members=members,
+                   composition_path=composition_path)
 
     @classmethod
     def load(cls, root):
+        if isinstance(root, (list, tuple)):
+            if not root:
+                raise ValueError("At least one suite is required")
+            return cls.load(root[0]) if len(root) == 1 else cls.combine([cls.load(p) for p in root])
         source = Path(root).resolve()
         manifest = source if source.is_file() else source / "suite.json"
         root = manifest.parent
         manifest_name = manifest.name
         meta = read_json(manifest)
+        if meta.get("schema") == "math-gauge.suite-composition/v1":
+            if (not all(isinstance(meta.get(k), str) and meta[k].strip() for k in ("id", "version"))
+                    or not isinstance(meta.get("suites"), list) or not meta["suites"]):
+                raise ValueError("Invalid suite composition")
+            members = []
+            for row in meta["suites"]:
+                if (not isinstance(row, dict) or set(row) != {"path", "id", "version", "sha256"}
+                        or not isinstance(row["path"], str) or not row["path"]):
+                    raise ValueError("Composition members require path and frozen suite identity")
+                member = cls.load(manifest.parent / row["path"])
+                if row != {"id": member.metadata["id"], "version": member.metadata["version"],
+                           "sha256": member.sha256, "path": row["path"]}:
+                    raise ValueError("Composition member binds a different suite identity")
+                members.append(member)
+            return cls.combine(members, suite_id=meta["id"], version=meta["version"],
+                               composition_path=manifest)
         if meta.get("schema") != "math-gauge.suite/v1":
             raise ValueError("Unsupported suite schema")
         if meta.get("visibility") not in {"public", "private"}:
@@ -247,7 +379,7 @@ class Suite:
         if not isinstance(meta.get("cases"), list) or not meta["cases"]:
             raise ValueError("Suite must contain cases")
         sources = read_json(root / "sources.json")
-        cases = {}
+        cases, case_manifests = {}, {}
         names = [manifest_name, "sources.json"]
         for manifest in meta["cases"]:
             case = read_json(safe_file(root, manifest))
@@ -362,6 +494,7 @@ class Suite:
                 raise ValueError(f"{cid}: incomplete rubric")
             names.extend(paths)
             cases[cid] = case
+            case_manifests[cid] = manifest
         # No other case's reference/rubric may be smuggled in as an attachment.
         all_hidden = {
             safe_file(root, p).resolve()
@@ -377,7 +510,8 @@ class Suite:
                 for f in c["solver_files"]
             ):
                 raise ValueError(f"{c['id']}: cross-case evaluator material in input")
-        return cls(root, meta, cases, fingerprint(root, names), manifest_name)
+        return cls(root, meta, cases, fingerprint(root, names), manifest_name,
+                   case_manifests=case_manifests)
 
     def select(self, ids=None):
         selected = list(ids or self.cases)
@@ -396,11 +530,11 @@ class Suite:
             "instruction": case.get(
                 "candidate_instruction", LEGACY_CANDIDATE_INSTRUCTION
             ),
-            "task": safe_file(self.root, case["task"]).read_bytes().decode("utf-8"),
+            "task": self.case_file(case, case["task"]).read_bytes().decode("utf-8"),
             "files": [
                 {
                     "name": x["target"],
-                    "content": safe_file(self.root, x["source"]).read_bytes().decode("utf-8"),
+                    "content": self.case_file(case, x["source"]).read_bytes().decode("utf-8"),
                 }
                 for x in case["solver_files"]
             ],
@@ -408,7 +542,7 @@ class Suite:
 
     def prepare(self, case, destination):
         dest = Path(destination)
-        if dest.resolve().is_relative_to(self.root):
+        if self.overlaps(dest):
             raise ValueError("Solver workspace must be outside the question suite")
         dest.mkdir(parents=True, exist_ok=False)
         request = self.request(case)

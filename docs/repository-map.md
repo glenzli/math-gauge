@@ -19,6 +19,7 @@ cases/
 protocol/                          数学、交付、隔离及报告合同
   benchmark-profile.json           评审侧分项、固定权重和题集身份
   benchmark-scoring.md              归一化、综合分、缺测与独立运行标准
+  composite-development-report.md  历史公开答卷与私有探索的组合、五方向权重和公开边界
   execution-evidence.md             原始运行证据、具名审核与正式比较资格
   external-harness.md               独立题包、控制器、外部提交与导入合同
   release-distribution.md           同题集版本的命名任务ZIP与本地构建合同
@@ -28,6 +29,7 @@ scripts/
   catalog.py                       当前目录与分类的源绑定及生成
   validate_protocol.py             当前计划、候选边界与固定消息检查
   release.py                       候选发布构建、只读资产核验与评审计划恢复
+  render_benchmark_report.py       将已评分的公开JSON渲染为离线HTML及文字报告，不计算成绩
   formal/                          作者Lean验证、证据复查与元数据迁移校验
   isolated_cli/                    CLI隔离准备、探测与收据
   benchmark/                       单轮比较的薄调度层
@@ -39,7 +41,9 @@ docs/                              定位、方法、使用和验证状态
   release-consumer-README-v0.2.0.md  旧43题任务包指南（保留）
   selection-v0.3.0.md               32默认/11后备及80槽的开发取舍
   terra-pilot-2026-11-02.md          旧177槽试跑与32题方案事后分析
+  terra-combined-2026-11-03.md      Terra6.1首次综合评测，35份A1/83槽，区分历史复用与新增作答
   results/                         已审结果的紧凑指标与响应身份，不放原卷
+    terra-2026-11-03/              本轮公开机器结果与可直接打开的独立HTML页
   release-consumer-README.md        v0.1.0历史包内指南来源（保留原样）
   release-notes-v0.1.0.md           v0.1.0正式发布说明来源
 releases/v0.1.0/config.json          可从标签恢复的评审计划身份锚点（不入候选ZIP）
@@ -66,6 +70,7 @@ protocol/history/v0.2.0/            原43题/177槽suite、profile与可靠性�
 | `scripts/catalog.py` | 分类证据与当前材料身份，生成出题侧导航 |
 | `scripts/validate_protocol.py` | 固定计划、消息、候选白名单与未执行状态 |
 | `scripts/release.py` | 命名候选ZIP与校验和的可复现构建、安全只读检查及对应标签的评审计划恢复；不调用模型 |
+| `scripts/render_benchmark_report.py` | 将共享评分模块生成的公开投影渲染为HTML和Markdown；不计算分数，不读取私有原卷 |
 | `scripts/formal/check_evidence.py` | 当前作者证据与原始编译记录的身份复核 |
 
 公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。当前默认任务包以中性名称交付32份候选任务、约定附件、一个README、可选控制工具、清单及许可；确定性的标识符投影不改数学内容，原始来源、完整主计划与投影对应记录保存在包外；执行端无需本仓库、Codex 或 Math Gauge 安装，也无需取得评审计划。命名发布ZIP是候选交付物，GitHub自动Source code压缩包仍含公开参考。新Release与题集同版；历史v0.1.0保留旧约定，发布配置和散列不是秘密答案隔离或后端认证。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。

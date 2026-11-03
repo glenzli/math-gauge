@@ -7,16 +7,18 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-from .catalog import (candidate_message, digest_bytes, read_json, relative_name, safe_file,
+from .catalog import (assessment_units, candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
-TARGETS = COMPONENTS + ("repeat", "neutral", "stance", "core", "all")
+EXTENDED_COMPONENTS = COMPONENTS + ("exploration",)
+TARGETS = EXTENDED_COMPONENTS + ("repeat", "neutral", "stance", "core", "all")
 ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
-PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2"}
+PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
+                   "math-gauge.benchmark-profile/v3"}
 COMPACT_PANEL = ("MG-GR002", "MG-GR014", "MG-GF101", "MG-GF107", "MG-GF104", "MG-GF106")
 
 
@@ -31,12 +33,29 @@ def _require(condition, message):
         raise ValueError(message)
 
 
-def _weights(value, names):
+def _weights(value, names, *, allow_zero=False):
     _require(isinstance(value, dict) and set(value) == set(names),
              "Weights must name every frozen component exactly once")
-    _require(all(type(x) is int and x > 0 for x in value.values())
+    _require(all(type(x) is int and (x >= 0 if allow_zero else x > 0) for x in value.values())
              and sum(value.values()) == 100,
              "Weights must be positive integral percentages summing to 100")
+
+
+def component_ids(data):
+    rows = data.get("components")
+    _require(isinstance(rows, list) and rows and all(isinstance(x, dict) for x in rows),
+             "Profile requires explicit ordered components")
+    ids = [row.get("id") for row in rows]
+    if data.get("schema") == "math-gauge.benchmark-profile/v3":
+        _require(ids == [cid for cid in EXTENDED_COMPONENTS if cid in ids],
+                 "Invalid or repeated v3 core components")
+    else:
+        _require(ids == list(COMPONENTS), "Profile must retain the four ordered core components")
+    return tuple(ids)
+
+
+def profile_targets(data):
+    return component_ids(data) + ("repeat", "neutral", "stance", "core", "all")
 
 
 def _runtime_contract(runtime):
@@ -57,7 +76,7 @@ def independent_attempts(data, case_ids):
         _require(data.get("attempts") == list(ATTEMPTS),
                  "Three fixed independent attempts are required")
         return {cid: list(ATTEMPTS) for cid in ids}
-    _require(data.get("schema") == "math-gauge.benchmark-profile/v2",
+    _require(data.get("schema") in {"math-gauge.benchmark-profile/v2", "math-gauge.benchmark-profile/v3"},
              "Unsupported benchmark attempt arrangement")
     attempts = data.get("attempt_schedule")
     _require(isinstance(attempts, dict) and set(attempts) == set(ids)
@@ -80,7 +99,7 @@ def scoring_policy(data, case_ids):
         and policy["repeat_attempt_labels"] == list(ATTEMPTS),
         "Compact scoring requires A1 core and three-attempt repetition")
     repeated = policy["repeat_case_ids"]
-    _require(isinstance(repeated, list) and repeated
+    _require(isinstance(repeated, list) and (repeated or data["schema"] == "math-gauge.benchmark-profile/v3")
              and all(isinstance(cid, str) for cid in repeated)
              and len(repeated) == len(set(repeated))
              and set(repeated) == {cid for cid in ids if attempts[cid] == list(ATTEMPTS)},
@@ -104,11 +123,11 @@ def _compact_panel(data, packet, case_ids, policy):
 def case_approval_sources(suite):
     """Read approval status from its actual manifest, not an in-memory flag."""
     result = {}
-    for name in suite.metadata["cases"]:
-        raw = safe_file(suite.root, name).read_bytes()
+    for cid, loaded in suite.cases.items():
+        name = suite.case_manifest(cid)
+        raw = suite.case_file(cid, name).read_bytes()
         value = json.loads(raw)
-        cid = value["id"]
-        loaded = suite.cases[cid]
+        _require(value["id"] == cid, "Case approval source identity changed")
         source = {"manifest": name, "manifest_sha256": digest_bytes(raw),
                   "status": value["status"], "human_review": value["review"]["human"]}
         _require(source["status"] == loaded["status"]
@@ -132,7 +151,9 @@ class BenchmarkProfile:
         path = Path(path).resolve()
         raw = path.read_bytes()
         data = json.loads(raw)
-        root = Path(repository_root or suite.root.parent).resolve()
+        default_root = (path.parent.parent if data.get("schema") == "math-gauge.benchmark-profile/v3"
+                        and path.parent.name == "protocol" else suite.root.parent)
+        root = Path(repository_root or default_root).resolve()
         _require(isinstance(data, dict) and data.get("schema") in PROFILE_SCHEMAS
                  and data.get("operator_only") is True
                  and data.get("path_base") == "repository",
@@ -146,10 +167,8 @@ class BenchmarkProfile:
                             "sha256": suite.sha256},
                  "Profile binds a different suite identity")
         rows = data.get("components")
-        _require(isinstance(rows, list) and all(isinstance(x, dict) for x in rows)
-                 and [x.get("id") for x in rows] == list(COMPONENTS),
-                 "Profile must retain the four ordered core components")
-        _weights({x["id"]: x.get("weight") for x in rows}, COMPONENTS)
+        components = component_ids(data)
+        _weights({x["id"]: x.get("weight") for x in rows}, components)
         members = []
         for row in rows:
             ids = row.get("case_ids")
@@ -161,14 +180,15 @@ class BenchmarkProfile:
                 _require(cid in suite.cases, "Unknown paper in core component")
                 case = suite.cases[cid]
                 _require(bool(case.get("group_contract")), "Benchmark scoring requires a stage contract")
-                contract = read_json(safe_file(suite.root, case["group_contract"]))
+                contract = read_json(suite.case_file(case, case["group_contract"]))
                 _require(_category_matches(row["id"], case.get("task_kind"), contract.get("kind")),
                          "Core category differs from the paper's actual task and contract")
         _require(len(members) == len(set(members))
                  and set(members) == set(suite.cases),
                  "Core components must partition the complete suite without overlap")
         scoring_policy(data, suite.cases)
-        _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"))
+        _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
+                 allow_zero=data["schema"] == "math-gauge.benchmark-profile/v3")
         reliability = data.get("reliability")
         _require(isinstance(reliability, dict), "Reliability material bindings required")
         for key in ("selection", "prompts", "schedule", "protocol_version"):
@@ -191,6 +211,8 @@ class BenchmarkProfile:
 
 
 def _category_matches(component, task_kind, contract_kind):
+    if component == "exploration":
+        return contract_kind == "research_exploration" and task_kind in {"written", "exploration"}
     if component == "chapters":
         return contract_kind == "chapter_formalization" and task_kind == "generate"
     if contract_kind != "progressive":
@@ -203,7 +225,7 @@ def _category_matches(component, task_kind, contract_kind):
 def _schedule(packet, case_ids, suite_sha256, attempts=None):
     selection = packet["selection"].get("cases", [])
     selected_ids = [row.get("case_id") for row in selection]
-    _require(selected_ids and len(selected_ids) == len(set(selected_ids))
+    _require(len(selected_ids) == len(set(selected_ids))
              and set(selected_ids) <= set(case_ids), "Invalid reliability selection")
     _require(packet["selection"].get("source_suite_sha256") == suite_sha256,
              "Reliability selection binds a different source suite")
@@ -304,6 +326,8 @@ def select_slots(plan, targets=None):
     validate_plan(plan)
     selected = {x["slot_id"] for x in plan["slots"] if x["selected"]}
     if targets is not None:
+        _require(set(targets) <= set(profile_targets(plan["profile"]["data"])),
+                 "Unknown benchmark target for the frozen profile")
         components = {x["case_id"]: x["component"] for x in plan["case_index"]}
         want = _target_slot_ids(plan["slots"], components, list(targets),
                                 scoring_policy(plan["profile"]["data"], components))
@@ -315,7 +339,7 @@ def select_slots(plan, targets=None):
 def build_plan(profile, suite, targets=None, *, runtime=None):
     """Freeze the full denominator; targets choose only an execution projection."""
     targets = list(["all"] if targets is None else targets)
-    _require(targets and len(targets) == len(set(targets)) and set(targets) <= set(TARGETS),
+    _require(targets and len(targets) == len(set(targets)) and set(targets) <= set(profile_targets(profile.data)),
              "Unknown or repeated benchmark target")
     _require(profile.data["suite"]["sha256"] == suite.sha256,
              "Suite changed before plan freezing")
@@ -338,7 +362,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
     approvals = case_approval_sources(suite)
     cases = []
     for cid, case in suite.cases.items():
-        contract = validate_group_contract(read_json(safe_file(suite.root, case["group_contract"])))
+        contract = validate_group_contract(read_json(suite.case_file(case, case["group_contract"])))
         request = suite.request(case)
         cases.append({
             "case_id": cid, "version": case["version"], "track": case["track"],
@@ -350,12 +374,18 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
             "request_sha256": digest_bytes(json.dumps(request, ensure_ascii=False, sort_keys=True).encode()),
             "candidate_message_sha256": digest_bytes(candidate_message(request).encode()),
             "group_contract": case["group_contract"],
-            "group_contract_sha256": digest_bytes(safe_file(suite.root, case["group_contract"]).read_bytes()),
+            "group_contract_sha256": digest_bytes(suite.case_file(case, case["group_contract"]).read_bytes()),
             "stages": [{"stage_id": s["id"], "points": s["points"],
-                        "lean_required": s["lean_required"]} for s in contract["stages"]],
-            "total_weight": sum(s["points"] for s in contract["stages"]),
+                        "lean_required": s["lean_required"]} for s in assessment_units(contract)],
+            "total_weight": sum(s["points"] for s in assessment_units(contract)),
             "focus_tags": tags.get(cid, []),
         })
+        if contract["kind"] == "research_exploration":
+            cases[-1]["assessment_unit"] = "review_dimension"
+        if suite.members:
+            cases[-1]["source_suite"] = suite.source_binding(case)
+        if suite.source_suite(case).metadata["visibility"] == "private":
+            cases[-1]["source_visibility"] = "private"
     want = _target_slot_ids(slots, components, targets, policy)
     for slot in slots:
         slot["selected"] = slot["slot_id"] in want
@@ -406,9 +436,10 @@ def validate_plan(plan):
              and profile.get("version") == data.get("version")
              and plan.get("suite") == data.get("suite"), "Frozen profile identity changed")
     components = data.get("components", [])
-    _require([x.get("id") for x in components] == list(COMPONENTS), "Frozen profile structure changed")
-    _weights({x["id"]: x.get("weight") for x in components}, COMPONENTS)
-    _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"))
+    ids = component_ids(data)
+    _weights({x["id"]: x.get("weight") for x in components}, ids)
+    _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
+             allow_zero=data["schema"] == "math-gauge.benchmark-profile/v3")
     cases = plan.get("case_index", [])
     case_ids = [x.get("case_id") for x in cases]
     members = [cid for component in components for cid in component.get("case_ids", [])]

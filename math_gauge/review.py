@@ -101,6 +101,43 @@ def _stage_template(stage):
             "notes": ""}
 
 
+def _dimension_templates(contract):
+    return [{"dimension_id": row["id"], "score": None, "notes": ""}
+            for row in contract["dimensions"]]
+
+
+def _validate_research_review(contract, entry, record):
+    rows = entry.get("dimensions")
+    dimensions = contract["dimensions"]
+    if (entry.get("stages") or not isinstance(rows, list)
+            or not all(isinstance(row, dict) for row in rows)
+            or [row.get("dimension_id") for row in rows] != [row["id"] for row in dimensions]):
+        raise ValueError("Research reviews must cover the frozen dimensions in order, without stage judgments")
+    lower, upper, total = 0, 0, sum(row["points"] for row in dimensions)
+    for dimension, row in zip(dimensions, rows):
+        score = row.get("score")
+        if (score is not None and (type(score) is not int or not 0 <= score <= dimension["points"])
+                or not isinstance(row.get("notes"), str) or not row["notes"].strip()):
+            raise ValueError("Research dimension requires bounded integral credit and specific notes")
+        lower += score or 0
+        upper += dimension["points"] if score is None else score
+    complete = lower == total
+    strict = complete and (entry["assumption_fidelity"] == "clean"
+                           and entry["proof_validity"] == "valid"
+                           and entry["scope_accuracy"] == "correct"
+                           and not entry["unnecessary_restriction"] and record["status"] == "ok")
+    if entry["decision"] == "pass" and not strict:
+        raise ValueError("Research strict pass requires full dimension credit and valid overall evidence")
+    if strict and entry["decision"] != "pass":
+        raise ValueError("Full valid dimension credit requires a matching strict decision")
+    return {"assessment_unit": "review_dimension", "dimension_count": len(rows),
+            "completed_weight": lower, "upper_weight": upper, "total_weight": total,
+            "completion": {"lower": lower / total, "upper": upper / total,
+                           "exact": lower / total if lower == upper else None},
+            "strict_pass": strict if lower == upper else (False if upper < total else None),
+            "dimensions": rows}
+
+
 def _validate_review_axes(entry, record):
     """Shared content-review contract, independent of conversation transport."""
     if (entry.get("reviewer_kind") not in {"human", "ai", "fixture"}
@@ -133,6 +170,8 @@ def _validate_group_review(root, case, record, entry, *, response_text=None, lea
         return None
     if entry.get("group_contract_sha256") != case["group_contract"]["sha256"]:
         raise ValueError("Review binds a different group contract")
+    if contract["kind"] == "research_exploration":
+        return _validate_research_review(contract, entry, record)
     rows = entry.get("stages")
     expected = [s["id"] for s in contract["stages"]]
     if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows) or [r.get("stage_id") for r in rows] != expected:
@@ -270,8 +309,11 @@ def templates(root):
     for case, entry in zip(meta["cases"], entries):
         contract = _group_contract(root, case)
         if contract:
-            entry.update(group_contract_sha256=case["group_contract"]["sha256"],
-                         stages=[_stage_template(s) for s in contract["stages"]])
+            entry["group_contract_sha256"] = case["group_contract"]["sha256"]
+            if contract["kind"] == "research_exploration":
+                entry["dimensions"] = _dimension_templates(contract)
+            else:
+                entry["stages"] = [_stage_template(s) for s in contract["stages"]]
     return entries
 
 
@@ -436,6 +478,9 @@ def report(root):
                   "| 题组 | 完成阶段 | 完成权重 | 独立错误根项 | 题目问题待复核 |",
                   "|---|---:|---:|---|---|"]
         for cid, d in group_diagnostics.items():
+            if d.get("assessment_unit") == "review_dimension":
+                lines.append(f"| {cid} | {d['dimension_count']} review dimensions | {d['completed_weight']}–{d['upper_weight']}/{d['total_weight']} | — | — |")
+                continue
             lines.append(f"| {cid} | {d['stage_passes']}/{d['stage_count']} | {d['completed_weight']}/{d['total_weight']} | {', '.join(d['root_failures']) or '—'} | {', '.join(d['problem_defect_flags']) or '—'} |")
     return result, "\n".join(lines) + "\n"
 
