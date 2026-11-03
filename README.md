@@ -4,7 +4,7 @@
 
 Math Gauge 是数学推理与 Lean 语义对齐基准。它检查模型能否在实际给定的结构下完成证明、反例、构造、分类或形式化，保持假设、量词、定义域与结论强度，并留下可复核的原始答卷与审核证据。
 
-[综合结果页](docs/results/terra-2026-11-03/index.html) · [题包运行说明](docs/release-consumer-README-v0.3.0.md) · [试卷目录](cases/README.md) · [选卷依据](docs/selection-v0.3.0.md) · [评分结构](protocol/benchmark-scoring.md) · [维护操作](docs/usage.md) · [文档导航](docs/README.md)
+[Gemini 综合结果](docs/gemini-combined-2026-11-03.md) · [Terra 结果页](docs/results/terra-2026-11-03/index.html) · [题包运行说明](docs/release-consumer-README-v0.3.0.md) · [试卷目录](cases/README.md) · [选卷依据](docs/selection-v0.3.0.md) · [评分结构](protocol/benchmark-scoring.md) · [维护操作](docs/usage.md) · [文档导航](docs/README.md)
 
 ## 独立任务包
 
@@ -42,7 +42,9 @@ python3 scripts/release.py build --version 0.3.0 \
 
 ## 最新综合结果
 
-最新 [Terra 6.1 · 首次综合评测](docs/terra-combined-2026-11-03.md)覆盖35份 A1、83槽，采用组合 profile v0.2.0：书面推理、Lean审计、Lean生成修复、整章形式化、研究探索的能力权重为25/20/20/20/15；综合权重为能力75%、三次全对5%、中性自查10%、立场自查10%。权重是在已知全部结果后作出的方法调整。它复用历史独立答卷并接入两份新答卷，采用 AI 评审；可靠性只覆盖公开六题面板。
+新增 [Gemini 3.8 Flash 综合评测](docs/gemini-combined-2026-11-03.md)使用相同组合 profile v0.2.0，覆盖35份 A1、83槽：综合分 **72.08**、能力分 **65.56**，A1 严格通过 **21/35**，全部材料严格通过 **62/83**。83槽均经 AI 审核，仍待人审；[公开机器结果](docs/results/gemini-2026-11-03/result.json)仅含脱敏投影。可靠性仅代表公开六题面板，中性自查100分不等于全部材料严格通过。
+
+[Terra 6.1 · 首次综合评测](docs/terra-combined-2026-11-03.md)覆盖35份 A1、83槽，采用组合 profile v0.2.0：书面推理、Lean审计、Lean生成修复、整章形式化、研究探索的能力权重为25/20/20/20/15；综合权重为能力75%、三次全对5%、中性自查10%、立场自查10%。权重是在已知 Terra 旧结果后作出的方法调整。它复用历史独立答卷并接入两份新答卷，采用 AI 评审；可靠性只覆盖公开六题面板。
 
 | 综合分 | 能力分 | A1 严格通过 | 全部材料严格通过 | 审核覆盖 |
 | ---: | ---: | ---: | ---: | ---: |

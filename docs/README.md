@@ -4,6 +4,7 @@ Math Gauge 默认题集含32份完整试卷，另11份保留为显式后备；�
 
 | 目的 | 入口 |
 | --- | --- |
+| 阅读 Gemini 3.8 Flash 综合评测，35题/83槽、组合profile v0.2.0 | [文字报告](gemini-combined-2026-11-03.md) · [公开机器结果](results/gemini-2026-11-03/result.json) |
 | 阅读 Terra 6.1 首次综合评测，35题/83槽、组合profile v0.2.0 | [独立结果页](results/terra-2026-11-03/index.html) · [文字报告](terra-combined-2026-11-03.md) · [机器结果](results/terra-2026-11-03/result.json) · [组合合同](../protocol/composite-development-report.md) |
 | 在任意外部 harness 运行任务并交回答卷 | [v0.3.0 包内操作说明源文件](release-consumer-README-v0.3.0.md)；中性任务包与题集均为0.3.0 |
 | 理解默认32题/80次与后备11题的取舍 | [0.3.0选卷依据](selection-v0.3.0.md) |
