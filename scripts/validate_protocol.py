@@ -27,7 +27,7 @@ RUNNER_FILES = (
     "scripts/isolated_cli/prepare.py", "scripts/isolated_cli/probe.py",
 )
 ACCEPTANCE_TESTS = (
-    "test_benchmarks.py", "test_execution_policy.py", "test_scoring.py", "test_reliability_execution.py",
+    "test_answer_review.py", "test_benchmarks.py", "test_execution_policy.py", "test_scoring.py", "test_reliability_execution.py",
     "test_reliability_review.py",
     "test_eligibility.py", "test_eligibility_acceptance.py", "test_isolated_cli.py",
     "test_harness_export.py", "test_harness_import.py", "test_harness_cli.py",
@@ -48,6 +48,8 @@ ACCEPTANCE_STANDARDS = (
     "cases/suite.json", "cases/reserve-suite.json", "tests/benchmark_fixtures.py",
     "releases/v0.3.0/config.json", "releases/v0.3.0/THIRD_PARTY_NOTICES.md",
     "docs/release-consumer-README-v0.3.0.md",
+    "protocol/answer-review-scoring.md", "releases/v0.4.0/config.json",
+    "releases/v0.4.0/THIRD_PARTY_NOTICES.md", "docs/release-consumer-README-v0.4.0.md",
 )
 SELECTED = (
     "MG-GR002", "MG-GR014",
@@ -117,7 +119,7 @@ def check_plan(plan: dict) -> None:
         "offline-fixture-acceptance-passed"},
         "Multi-turn acceptance needs explicit, separately checked evidence")
     require(plan.get("protocol_version") == "0.2.0"
-            and plan.get("exam_units") == 32 and plan.get("independent_attempts") == ["A1", "A2", "A3"]
+            and plan.get("exam_units") == 36 and plan.get("independent_attempts") == ["A1", "A2", "A3"]
             and plan.get("fresh_context_each_attempt") is True, "Invalid independent sample plan")
     arrangement = plan.get("attempt_schedule", {})
     ids = {item["case_id"] for item in plan.get("cases", [])}
@@ -128,15 +130,15 @@ def check_plan(plan: dict) -> None:
             and plan.get("followup_root_attempt") == "A1"
             and plan.get("arms") == list(ARMS) and plan.get("rounds_per_arm") == 2,
             "Invalid fixed branch design")
-    require(plan.get("planned_slots_per_model") == 80
-            and plan.get("planned_slots_two_models") == 160, "Invalid planned slot counts")
+    require(plan.get("planned_slots_per_model") == 84
+            and plan.get("planned_slots_two_models") == 168, "Invalid planned slot counts")
     require(plan.get("tools_allowed") == [] and plan.get("external_correctness_feedback") is False
             and plan.get("compiler_feedback") is False, "The packet supplies no correctness feedback")
     require(plan.get("reply_modes") == ["KEEP", "FULL"]
             and plan.get("partial_replacements_allowed") is False, "Invalid reply composition contract")
-    require(len(plan.get("cases", [])) == 32
-            and len({item["case_id"] for item in plan["cases"]}) == 32,
-            "Plan must cover exactly 32 default papers")
+    require(len(plan.get("cases", [])) == 36
+            and len({item["case_id"] for item in plan["cases"]}) == 36,
+            "Plan must cover exactly 36 default papers")
     require(len(plan.get("suites", [])) == 1 and plan["suites"][0]["path"] == "cases",
             "The plan uses only the canonical cases suite")
 
@@ -266,11 +268,11 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
     rows = schedule.get("slots", [])
     slots = {item["slot_id"]: item for item in rows}
     require(schedule.get("actual_candidate_calls") == 0
-            and len(slots) == len(rows) == 80, "Schedule must retain 80 unexecuted slots")
-    require([item["ordinal_per_model"] for item in rows] == list(range(1, 81)),
+            and len(slots) == len(rows) == 84, "Schedule must retain 84 unexecuted slots")
+    require([item["ordinal_per_model"] for item in rows] == list(range(1, 85)),
             "Slot ordinal order drift")
     require(collections.Counter(item["kind"] for item in rows)
-            == {"independent": 44, "followup": 36}, "Independent/followup counts drift")
+            == {"independent": 48, "followup": 36}, "Independent/followup counts drift")
     for planned in plan["cases"]:
         for label in plan["attempt_schedule"][planned["case_id"]]:
             item = slots.get(f"{planned['case_id']}:{label}", {})
@@ -289,7 +291,7 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
         parent = slots.get(item.get("parent_slot"), {})
         require(item.get("context") == "branch-history-only" and item.get("parent_slot") == expected
                 and parent.get("case_id") == item["case_id"]
-                and parent.get("ordinal_per_model", 81) < item["ordinal_per_model"],
+                and parent.get("ordinal_per_model", 85) < item["ordinal_per_model"],
                 "A followup reads another branch or the wrong predecessor")
         require(item["message_id"] == item["slot_id"] and item["message_id"] in message_ids,
                 "Followup slot/message mismatch")
@@ -330,7 +332,10 @@ def check_candidate(suite: Suite, case: dict, destination: Path) -> dict:
                 == [item["id"] for item in contract["stages"]], f"{cid}: obligation projection drift")
     return {"case_id": cid, "case_version": case["version"], "suite": "cases",
             "suite_sha256": suite.sha256, "task_kind": case["task_kind"],
-            "family_id": case["family_id"], "mandatory_units": len(contract["stages"]),
+            "family_id": case.get("family_id", cid),
+            "mandatory_units": len(contract.get("stages", [])),
+            **({"assessment_unit": "review_dimension", "review_dimensions": len(contract["dimensions"]),
+                "parent_family_id": contract["parent_family_id"]} if contract["kind"] == "answer_review" else {}),
             "selected_for_followup": cid in SELECTED,
             "candidate_message_sha256": sha(wire.encode()), "task_sha256": sha(task),
             "contract_sha256": sha(contract_path.read_bytes())}
@@ -354,7 +359,7 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         except author_evidence.verify.VerificationError as error:
             raise ValueError("Author evidence must validate before protocol refresh: " + str(error)) from error
     suite = Suite.load(root / "cases")
-    require(len(suite.cases) == 32, "The default suite must contain 32 full papers")
+    require(len(suite.cases) == 36, "The default suite must contain 36 full papers")
     acceptance = check_offline_acceptance(root, plan)
     current_author_summary = author_summary(root)
     expected_suite = {"path": "cases", "version": suite.metadata["version"],
@@ -363,7 +368,7 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
         actual = {cid: check_candidate(suite, case, Path(temporary) / cid)
                   for cid, case in suite.cases.items()}
     require(sum(item["mandatory_units"] for item in actual.values()) == 306,
-            "The default 32 papers must retain 306 dependent review obligations")
+            "The 32 mathematical papers retain 306 obligations; answer-review dimensions are separate")
     require(set(actual) == {item["case_id"] for item in plan["cases"]}, "Planned case membership drift")
     for item in selection["cases"]:
         case = suite.cases[item["case_id"]]
@@ -401,8 +406,9 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
     result = {"schema": "math-gauge.protocol-validation/v1", "passed": True,
               "suite_sha256": suite.sha256, "plan_sha256": sha((packet / "plan.json").read_bytes()),
               "candidate_projections": len(actual), "dependent_review_obligations": 306,
+              "answer_review_dimensions": sum(item.get("review_dimensions", 0) for item in actual.values()),
               "selected_cases": 6, "frozen_followup_messages": 36,
-              "planned_slots_per_model": 80, "isolated_followup_history_edges": 36,
+              "planned_slots_per_model": 84, "isolated_followup_history_edges": 36,
               "candidate_model_calls": 0, "lean_compilations": 0, "human_approved": False,
               "runner_files_sha256": runner_hashes,
               "runner_offline_acceptance": acceptance,

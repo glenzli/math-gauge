@@ -116,6 +116,8 @@ def validate_group_contract(contract):
     """Validate evaluator-only stage contracts, never supply their truth labels."""
     if isinstance(contract, dict) and contract.get("kind") == "research_exploration":
         return validate_research_contract(contract)
+    if isinstance(contract, dict) and contract.get("kind") == "answer_review":
+        return validate_answer_review_contract(contract)
     if not isinstance(contract, dict) or contract.get("schema") != "math-gauge.group-contract/v1":
         raise ValueError("Unsupported group contract")
     if contract.get("kind") not in {"progressive", "chapter_formalization"}:
@@ -185,17 +187,17 @@ def validate_group_contract(contract):
     return contract
 
 
-def validate_research_contract(contract):
-    """Open work is assessed by credit dimensions, not invented candidate stages."""
+def _validate_dimension_contract(contract):
+    """Validate evaluator dimensions without turning them into candidate stages."""
     if (contract.get("schema") != "math-gauge.group-contract/v2"
             or contract.get("assessment_unit") != "review_dimension"
             or any(key in contract for key in ("stages", "turns", "all_stages_mandatory"))
             or not all(isinstance(contract.get(k), str) and contract[k].strip()
                        for k in ("id", "version"))):
-        raise ValueError("Unsupported research dimension contract")
+        raise ValueError("Unsupported review dimension contract")
     dimensions = contract.get("dimensions")
     if not isinstance(dimensions, list) or not dimensions:
-        raise ValueError("Research contract requires review dimensions")
+        raise ValueError("Dimension contract requires review dimensions")
     seen = set()
     for row in dimensions:
         if (not isinstance(row, dict) or not isinstance(row.get("id"), str)
@@ -203,18 +205,42 @@ def validate_research_contract(contract):
                 or row["id"] in seen or type(row.get("points")) is not int
                 or row["points"] <= 0 or not isinstance(row.get("title"), str)
                 or not row["title"].strip()):
-            raise ValueError("Invalid research review dimension")
+            raise ValueError("Invalid review dimension")
         for key in ("required_evidence", "critical_errors"):
             if (not isinstance(row.get(key), list) or not row[key]
                     or not all(isinstance(x, str) and x.strip() for x in row[key])):
-                raise ValueError("Research dimension requires specific " + key)
+                raise ValueError("Review dimension requires specific " + key)
         seen.add(row["id"])
     return contract
 
 
+def validate_research_contract(contract):
+    return _validate_dimension_contract(contract)
+
+
+def validate_answer_review_contract(contract):
+    _validate_dimension_contract(contract)
+    if (not isinstance(contract.get("parent_family_id"), str)
+            or not contract["parent_family_id"].strip()
+            or [(row["id"], row["points"]) for row in contract["dimensions"]] != [
+                ("core_judgment", 60), ("evidence_scope", 30), ("completeness", 10)]):
+        raise ValueError("Answer review requires a parent family and the frozen 60/30/10 dimensions")
+    return contract
+
+
+def assessment_weights(contract):
+    """The plan projection preserves the actual kind of assessment unit."""
+    if contract["kind"] == "answer_review":
+        return {"dimensions": [{"dimension_id": row["id"], "points": row["points"]}
+                               for row in contract["dimensions"]]}
+    return {"stages": [{"stage_id": row["id"], "points": row["points"],
+                        "lean_required": row["lean_required"]}
+                       for row in assessment_units(contract)]}
+
+
 def assessment_units(contract):
     """Plan weights share an interface; their mathematical meaning stays explicit."""
-    if contract.get("kind") == "research_exploration":
+    if contract.get("kind") in {"research_exploration", "answer_review"}:
         return [dict(row, lean_required=False) for row in contract["dimensions"]]
     return contract["stages"]
 
@@ -442,6 +468,11 @@ class Suite:
                 contract = validate_group_contract(read_json(safe_file(root, case["group_contract"])))
                 if contract.get("id") != cid:
                     raise ValueError(f"{cid}: group contract identity mismatch")
+                if contract["kind"] == "answer_review" and (
+                    contract["version"] != case["version"]
+                    or case.get("task_kind") != "answer_review"
+                    or case.get("parent_family_id") != contract["parent_family_id"]):
+                    raise ValueError(f"{cid}: answer-review case/contract identity mismatch")
                 if contract.get("alignment_manifest_required") and contract["version"] != case["version"]:
                     raise ValueError(f"{cid}: alignment contract version mismatch")
             protected = {

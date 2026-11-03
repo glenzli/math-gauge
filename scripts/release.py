@@ -21,7 +21,7 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 LEGACY_VERSION = "0.1.0"
 ARCHIVE_SCHEMA = "math-gauge.release-archive/v1"
 PROVENANCE_SCHEMA = "math-gauge.release-provenance/v2"

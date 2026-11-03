@@ -1,14 +1,14 @@
 {
   "schema": "math-gauge.public-comparison-display/v1",
   "date": "2026-11-03",
-  "status": "AI-reviewed provisional development comparison; human pending",
+  "status": "post_observation_composition_v0.4.0",
   "sources": {
     "terra": {
-      "sha256": "a5d45b5067819ef0e5e405e77a9863972faa95ae21f5b6edd75b418795ce596d",
+      "sha256": "842677dd4458d837183028fa95f02f790185eb623a44a5825331bc046e476d0b",
       "public_result": "../terra-2026-11-03/result.json"
     },
     "gemini": {
-      "sha256": "551aed0119892b0a0e3ddef9880ccabcbdad39fa0d40a7b49e5fd63de95cedf7",
+      "sha256": "2786e4c99bfb21d0b6713a92e39cdf1cd8c5a4f903ef5b1aa2882532f6af0048",
       "public_result": "../gemini-2026-11-03/result.json"
     }
   },
@@ -22,28 +22,64 @@
         "lean-construction": 100.0,
         "chapters": 60.8695652174,
         "exploration": 100.0,
+        "answer_review_major_error_rate": 0.0,
+        "answer_review_strict_pass_rate": 75.0,
+        "answer-review": 98.75,
+        "core": 92.8315217391,
         "repeat": 100.0,
         "neutral": 100.0,
         "stance": 100.0,
-        "core": 92.1739130435,
-        "overall": 94.1304347826
+        "overall": 94.6236413043
       },
       "strict_passes": {
         "core_A1": {
-          "passed": 34,
-          "total": 35,
-          "adjudicated": 35
+          "passed": 37,
+          "total": 39,
+          "adjudicated": 39
         },
         "all_selected_slots": {
-          "passed": 82,
-          "total": 83,
-          "adjudicated": 83
+          "passed": 85,
+          "total": 87,
+          "adjudicated": 87
         }
       },
       "private_completion": {
         "Private-01": 1.0,
         "Private-02": 1.0,
         "Private-03": 1.0
+      },
+      "answer_review": {
+        "assessment_version": "0.2.0",
+        "scoring_version": "0.4.0",
+        "post_observation_rescoring": true,
+        "dimensions": [
+          {
+            "id": "core_judgment",
+            "points": 60
+          },
+          {
+            "id": "evidence_scope",
+            "points": 30
+          },
+          {
+            "id": "completeness",
+            "points": 10
+          }
+        ],
+        "aggregation_unit": "parent_family_id",
+        "family_count": 4,
+        "major_error_rate": {
+          "exact": 0.0,
+          "numerator": 0,
+          "denominator": 4,
+          "unknown": 0
+        },
+        "strict_passes": {
+          "passed": 3,
+          "total": 4,
+          "adjudicated": 4
+        },
+        "auxiliary_metrics_have_no_extra_weight": true
       }
     },
     "gemini": {
@@ -55,63 +91,104 @@
         "lean-construction": 98.3333333333,
         "chapters": 0.0,
         "exploration": 34.1666666667,
+        "answer_review_major_error_rate": 25.0,
+        "answer_review_strict_pass_rate": 25.0,
+        "answer-review": 69.375,
+        "core": 65.9375,
         "repeat": 83.3333333333,
         "neutral": 100.0,
         "stance": 87.5,
-        "core": 65.5555555556,
-        "overall": 72.0833333333
+        "overall": 72.3697916667
       },
       "strict_passes": {
         "core_A1": {
-          "passed": 21,
-          "total": 35,
-          "adjudicated": 35
+          "passed": 22,
+          "total": 39,
+          "adjudicated": 39
         },
         "all_selected_slots": {
-          "passed": 62,
-          "total": 83,
-          "adjudicated": 83
+          "passed": 63,
+          "total": 87,
+          "adjudicated": 87
         }
       },
       "private_completion": {
         "Private-01": 0.275,
         "Private-02": 0.5,
         "Private-03": 0.25
+      },
+      "answer_review": {
+        "assessment_version": "0.2.0",
+        "scoring_version": "0.4.0",
+        "post_observation_rescoring": true,
+        "dimensions": [
+          {
+            "id": "core_judgment",
+            "points": 60
+          },
+          {
+            "id": "evidence_scope",
+            "points": 30
+          },
+          {
+            "id": "completeness",
+            "points": 10
+          }
+        ],
+        "aggregation_unit": "parent_family_id",
+        "family_count": 4,
+        "major_error_rate": {
+          "exact": 25.0,
+          "numerator": 1,
+          "denominator": 4,
+          "unknown": 0
+        },
+        "strict_passes": {
+          "passed": 1,
+          "total": 4,
+          "adjudicated": 4
+        },
+        "auxiliary_metrics_have_no_extra_weight": true
       }
     }
   },
   "profile": {
-    "version": "0.2.0",
     "components": [
       {
         "id": "proofs",
         "title": "Written mathematics",
-        "weight": 25,
+        "weight": 22.5,
         "case_count": 18
       },
       {
         "id": "lean-audit",
         "title": "Lean semantic audit",
-        "weight": 20,
+        "weight": 18,
         "case_count": 6
       },
       {
         "id": "lean-construction",
         "title": "Lean construction",
-        "weight": 20,
+        "weight": 18,
         "case_count": 6
       },
       {
         "id": "chapters",
         "title": "Chapter formalization",
-        "weight": 20,
+        "weight": 18,
         "case_count": 2
       },
       {
         "id": "exploration",
         "title": "Research exploration",
-        "weight": 15,
+        "weight": 13.5,
         "case_count": 3
+      },
+      {
+        "id": "answer-review",
+        "title": "Mathematical answer review",
+        "weight": 10,
+        "case_count": 4
       }
     ],
     "overall_weights": {
@@ -119,7 +196,14 @@
       "repeat": 5,
       "neutral": 10,
       "stance": 10
-    }
+    },
+    "classification": "development_analysis",
+    "selection_timing": "after_all_results",
+    "id": "math-gauge-six-direction-development",
+    "version": "0.4.0",
+    "standard_version": "0.4.0",
+    "sha256": "8c1bf98c4b732df9939f36f85ed3f24bcd2d05cd403c59c5abdc432cb5c8784f",
+    "composition_plan_created_after_sources": true
   },
   "chapter_completion": {
     "MG-C002": {
@@ -134,10 +218,19 @@
     }
   },
   "coverage": {
-    "a1_papers": 35,
-    "public_papers": 32,
-    "private_papers": 3,
-    "all_slots": 83,
-    "reliability_panel_papers": 6
+    "papers_per_model": 39,
+    "slots_per_model": 87,
+    "models": 2,
+    "all_slots_reviewed": true,
+    "default_public_papers": 36,
+    "default_public_slots": 84
+  },
+  "methodology_revision": {
+    "version": "0.4.0",
+    "post_observation": true,
+    "original_AR_responses_reused": 4,
+    "new_candidate_calls": 0,
+    "lean_recompilations": 0,
+    "notice": "审阅方向、60/30/10评分合同及权重在观察既有答卷后调整，原8答仅重评；旧pilot评分保留为历史，不是重新考试。原35题逐卷结果保持不变。"
   }
 }

@@ -9,12 +9,24 @@
 - A supplied Lean file can be intentionally semantically mismatched while compiling successfully.
   Do not "fix" such an input without updating the benchmark design and version.
 - Candidate-facing files are an explicit projection. References, rubrics and review records stay out of it.
-- The current default suite has 32 papers; the explicit reserve suite has 11. They partition the
-  43-paper public development bank; reserve sources live in cases/reserve/proofs,
-  with byte-preserving path relocations recorded in cases/reserve/relocations.json. The default 80-slot profile uses A1 for core and an
-  extra-repeat/followup panel of 6; old 177-slot results retain their original profile and denominator.
-  Public references and Git history remain
-  available for transparency; do not describe them as a hidden holdout or include them in solver packets.
+- The v0.4.0 default suite has 36 related tasks: the original 32 mathematical papers
+  plus 4 complete-answer review tasks. The explicit reserve suite retains 11 mathematical papers.
+  The 43-paper mathematical bank remains intact; the 4 review tasks are correlated with their
+  parent papers and historical source execution, not 4 independent new mathematical families.
+  Default full coverage is 84 records; adding the 3 private exploration tasks yields 39 initial
+  answers and 87 records. Repeat/self-check evaluation still selects only 6 public mathematical papers.
+  Old 80/83/177-record evidence keeps its original configuration and denominator.
+- Answer review uses dedicated review dimensions (core judgment 60, evidence and impact 30,
+  supplementary completeness 10), never mathematical stages or candidate Lean obligations.
+  Aggregate within parent_family_id before averaging review families. Report major-error rate
+  separately; strict pass is auxiliary. AR inclusion and regrading of the 8 existing answers are
+  post-observation method changes, not a new exam. Preserve original answers and old reviews.
+- Public and combined overall weights are 75/5/10/10. AR has 10% of capability; the public
+  original four directions each have 22.5%, and the combined original five have
+  22.5/18/18/18/13.5%. Read current machine profiles rather than reimplementing scoring in displays.
+- Public references and Git history remain available for transparency; do not describe them as
+  a hidden holdout or include them in solver packets. Published release assets stay immutable;
+  Publish each release from its exact clean source commit and keep existing release assets immutable.
 - External harness bundles separate solver content, controller scheduling and evaluator data. Keep the
   full plan/profile, expected truth, rubrics, approval and author evidence outside the exported bundle.
   Preserve complete candidate messages and attachments, fresh independent contexts and isolated branches.

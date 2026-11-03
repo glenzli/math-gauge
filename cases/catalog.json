@@ -1,17 +1,17 @@
 {
   "schema": "math-gauge.case-catalog/v1",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "catalog_status": "ai-classification-suggestions; source-human-review-separate",
   "snapshot_status": "final-catalog-snapshot",
   "operator_only": true,
   "path_base": "repository root",
-  "sample_unit": "one full paper",
+  "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
   "candidate_input_policy": "Operator-only classification. Never attach these files to candidates; preserve the shared runner exact task and solver_files projection.",
   "taxonomy": "cases/taxonomy.json",
-  "taxonomy_sha256": "26979398d123421f25af55c15bd58c1fab56f67a9f8d2c44896201835946a910",
+  "taxonomy_sha256": "05ebbe787cdedc799c1f9bd7fc697adfa96408c55ddd1e3e5ea322a039fe9140",
   "scope": {
     "id": "complete-case-bank",
-    "paper_count": 43,
+    "paper_count": 47,
     "progressive_papers": 41,
     "progressive_stages": 246,
     "chapter_papers": 2,
@@ -19,12 +19,17 @@
       "MG-C002": 34,
       "MG-C003": 92
     },
-    "sample_unit": "one full paper"
+    "answer_review_tasks": 4,
+    "answer_review_dimensions": 12,
+    "sample_unit": "one full mathematical paper or complete answer review; parent-correlated"
   },
   "counts": {
-    "papers": 43,
-    "default_papers": 32,
+    "papers": 47,
+    "default_papers": 36,
     "reserve_papers": 11,
+    "mathematical_papers": 43,
+    "answer_review_tasks": 4,
+    "default_parent_families": 32,
     "default_obligations": 306,
     "reserve_obligations": 66,
     "progressive_stages": 246,
@@ -38,10 +43,14 @@
       "manifest": "cases/suite.json",
       "membership": "default",
       "id": "math-gauge-benchmark",
-      "version": "0.3.0",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
-      "paper_count": 32,
+      "version": "0.4.0",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
+      "paper_count": 36,
       "cases": [
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004",
         "MG-C002",
         "MG-C003",
         "MG-GF101",
@@ -182,36 +191,50 @@
         "MG-C002",
         "MG-C003"
       ]
+    },
+    {
+      "id": "answer-review",
+      "label": "真实答卷审阅",
+      "suite": "cases",
+      "count": 4,
+      "default_count": 4,
+      "reserve_count": 0,
+      "case_ids": [
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004"
+      ]
     }
   ],
   "focus_counts": {
     "F01": {
-      "primary_papers": 2,
-      "all_tagged_papers": 36
+      "primary_papers": 3,
+      "all_tagged_papers": 39
     },
     "F02": {
       "primary_papers": 4,
       "all_tagged_papers": 19
     },
     "F03": {
-      "primary_papers": 7,
-      "all_tagged_papers": 25
+      "primary_papers": 8,
+      "all_tagged_papers": 27
     },
     "F04": {
       "primary_papers": 4,
-      "all_tagged_papers": 25
+      "all_tagged_papers": 26
     },
     "F05": {
       "primary_papers": 2,
       "all_tagged_papers": 12
     },
     "F06": {
-      "primary_papers": 8,
-      "all_tagged_papers": 22
+      "primary_papers": 9,
+      "all_tagged_papers": 24
     },
     "F07": {
-      "primary_papers": 2,
-      "all_tagged_papers": 15
+      "primary_papers": 3,
+      "all_tagged_papers": 19
     },
     "F08": {
       "primary_papers": 6,
@@ -224,6 +247,394 @@
   },
   "entries": [
     {
+      "case_id": "MG-AR001",
+      "version": "0.2.0",
+      "title": "真实答卷审阅 001：幂等元提升、逆极限与环分解",
+      "family_id": "MG-GR104",
+      "kind": "answer_review",
+      "category": "answer-review",
+      "task_kind": "answer_review",
+      "sample_unit": "one-complete-answer-review; parent-correlated",
+      "parent_family_id": "MG-GR104",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 3,
+      "review_dimension_ids": [
+        "core_judgment",
+        "evidence_scope",
+        "completeness"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/answer-review/MG-AR001/case.json",
+        "task": "cases/answer-review/MG-AR001/task.md",
+        "contract": "cases/answer-review/MG-AR001/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/answer-review/MG-AR001/case.json": "664cbf9a727b366459e849585abd78e81195af57b0ddb4305a9eb9921663972b",
+        "cases/answer-review/MG-AR001/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR001/group-contract.json": "4ccdc7089c7369593ddfac73ac4c37f65ddf2587690ce5a72828d766fa9e21df"
+      },
+      "candidate_projection_sha256": "656eb259c669c9f4b3c08f54466f43f25ec8b4ed24ad472517ae0c193e3125e0",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "author-ai-review-complete",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-written-review",
+          "inherited_parent_lean_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "审阅逐元素幂等提升、层间唯一性组装和自然分解；允许实际有效的替代构造。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR001/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "核对nil条件的逐元素作用与交换性，不额外要求全核统一指数或2可逆。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR001/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "区分层间唯一性、极限核与元素提升的依赖，不把参考中的额外非交换存在证明加入原任务。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR001/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "MG-AR002",
+      "version": "0.2.0",
+      "title": "真实答卷审阅 002：线性关系、坐标纤维与无限赋值",
+      "family_id": "MG-GR014",
+      "kind": "answer_review",
+      "category": "answer-review",
+      "task_kind": "answer_review",
+      "sample_unit": "one-complete-answer-review; parent-correlated",
+      "parent_family_id": "MG-GR014",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 3,
+      "review_dimension_ids": [
+        "core_judgment",
+        "evidence_scope",
+        "completeness"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/answer-review/MG-AR002/case.json",
+        "task": "cases/answer-review/MG-AR002/task.md",
+        "contract": "cases/answer-review/MG-AR002/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/answer-review/MG-AR002/case.json": "519e02673000843f7f643106f025e772a952826f7dece06e021155f090975477",
+        "cases/answer-review/MG-AR002/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR002/group-contract.json": "fbe7f2f4b28b35f044cb6b3ae005d68c66e6e48dd17823a0f2852670887c6471"
+      },
+      "candidate_projection_sha256": "622c20c413cd851787cb5ecde123a2c18e4f1aa34cfde0287b624530adcec420",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "author-ai-review-complete",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-written-review",
+          "inherited_parent_lean_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F07",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "定位附加第三条路线的缺口，同时保留正文与两条独立有效的闭性证明。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR002/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "核查非齐次解集是仿射对象而非线性子空间，以合法例子并限定修复范围。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR002/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "completeness",
+              "note": "保留有限域通常紧性与任意域代数延拓的不同适用范围。",
+              "contract_pointer": "/dimensions/2/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR002/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "MG-AR003",
+      "version": "0.2.0",
+      "title": "真实答卷审阅 003：探针映射空间与连续性层级",
+      "family_id": "MG-GR010",
+      "kind": "answer_review",
+      "category": "answer-review",
+      "task_kind": "answer_review",
+      "sample_unit": "one-complete-answer-review; parent-correlated",
+      "parent_family_id": "MG-GR010",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 3,
+      "review_dimension_ids": [
+        "core_judgment",
+        "evidence_scope",
+        "completeness"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/answer-review/MG-AR003/case.json",
+        "task": "cases/answer-review/MG-AR003/task.md",
+        "contract": "cases/answer-review/MG-AR003/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/answer-review/MG-AR003/case.json": "f14a66a0a99a23858d225cba40878744e7de38db363db6c22a2541cba31a1f24",
+        "cases/answer-review/MG-AR003/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR003/group-contract.json": "826a01e25228de8de09f74e2cf9523381d18095d6c5dce0d111e073f8374b2e6"
+      },
+      "candidate_projection_sha256": "e0db9cb733160d76be38be91b3926e8e7ee356580a467eae7bf81e08f5de102d",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "author-ai-review-complete",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-written-review",
+          "inherited_parent_lean_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "核对固定源与目标的映射集识别，不能擅自将目标细化而保持原源不变。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR003/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "区分固定目标的错误识别与关于所有目标的有效充要结论，限制反例实际反驳范围。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR003/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "区分普通指数律的引用条件错位与后文独立有效CGHaus路线，不把前者传播为全部结论假。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR003/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "MG-AR004",
+      "version": "0.2.0",
+      "title": "真实答卷审阅 004：半局部邻域、下降与层化的依赖比较",
+      "family_id": "MG-GP003",
+      "kind": "answer_review",
+      "category": "answer-review",
+      "task_kind": "answer_review",
+      "sample_unit": "one-complete-answer-review; parent-correlated",
+      "parent_family_id": "MG-GP003",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 3,
+      "review_dimension_ids": [
+        "core_judgment",
+        "evidence_scope",
+        "completeness"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/answer-review/MG-AR004/case.json",
+        "task": "cases/answer-review/MG-AR004/task.md",
+        "contract": "cases/answer-review/MG-AR004/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/answer-review/MG-AR004/case.json": "07d4fac0e3be28895f3c9f8f00bc4700278ebb301dc93d357396f53c78733a56",
+        "cases/answer-review/MG-AR004/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR004/group-contract.json": "f644b57696ecd102fc6e92d720457055a8f07056326032d8890db242ff383b45"
+      },
+      "candidate_projection_sha256": "10194107369a759a892a30558c9358c5954ded01ade9587d668f2c65fc1203b7",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "author-ai-review-complete",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-written-review",
+          "inherited_parent_lean_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F01",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "区分半局部输入与任意光滑积分对象上的错误全局加强，不借已知主结论追认错误证明。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR004/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "核对任意指定点集与半局部概形实际闭点的区别，不能直接按原点集归纳。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR004/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "追踪错误全局单射在比较图中的真实用途，同时保留其他独立有效阶段。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR004/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
       "case_id": "MG-C002",
       "version": "0.1.1",
       "title": "OET卷1第2章整章形式化",
@@ -232,6 +643,7 @@
       "category": "chapters",
       "task_kind": "generate",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-C002",
       "stage_count": 34,
       "stage_ids": [
         "CH02-D01",
@@ -269,8 +681,10 @@
         "CH02-P25",
         "CH02-P18"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -528,6 +942,7 @@
       "category": "chapters",
       "task_kind": "generate",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-C003",
       "stage_count": 92,
       "stage_ids": [
         "CH03-D01",
@@ -623,8 +1038,10 @@
         "CH03-P30-03",
         "CH03-P30-04"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -882,6 +1299,7 @@
       "category": "lean-audit",
       "task_kind": "audit",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF101",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -891,8 +1309,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1007,6 +1427,7 @@
       "category": "lean-construction",
       "task_kind": "generate",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF102",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1016,8 +1437,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1138,6 +1561,7 @@
       "category": "lean-audit",
       "task_kind": "audit",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF103",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1147,8 +1571,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1279,6 +1705,7 @@
       "category": "lean-construction",
       "task_kind": "repair",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF104",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1288,8 +1715,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1410,6 +1839,7 @@
       "category": "lean-audit",
       "task_kind": "audit",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF105",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1419,8 +1849,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1551,6 +1983,7 @@
       "category": "lean-construction",
       "task_kind": "generate",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF106",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1560,8 +1993,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1688,6 +2123,7 @@
       "category": "lean-audit",
       "task_kind": "audit",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF107",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1697,8 +2133,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1829,6 +2267,7 @@
       "category": "lean-construction",
       "task_kind": "repair",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF108",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1838,8 +2277,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1970,6 +2411,7 @@
       "category": "lean-audit",
       "task_kind": "audit",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF109",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -1979,8 +2421,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -2137,6 +2581,7 @@
       "category": "lean-construction",
       "task_kind": "repair",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF110",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -2146,8 +2591,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -2268,6 +2715,7 @@
       "category": "lean-audit",
       "task_kind": "audit",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF111",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -2277,8 +2725,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -2409,6 +2859,7 @@
       "category": "lean-construction",
       "task_kind": "generate",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GF112",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -2418,8 +2869,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -2556,6 +3009,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GP001",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -2565,8 +3019,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -2713,6 +3169,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GP002",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -2722,8 +3179,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -2864,6 +3323,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GP003",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -2873,8 +3333,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3005,6 +3467,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR001",
       "stage_count": 7,
       "stage_ids": [
         "S1",
@@ -3015,6 +3478,8 @@
         "S6",
         "S7"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -3163,6 +3628,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR002",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -3172,8 +3638,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3314,6 +3782,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR003",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -3323,6 +3792,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -3439,6 +3910,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR004",
       "stage_count": 5,
       "stage_ids": [
         "S1",
@@ -3447,6 +3919,8 @@
         "S4",
         "S5"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -3553,6 +4027,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR005",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -3562,8 +4037,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3704,6 +4181,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR006",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -3713,6 +4191,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -3855,6 +4335,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR007",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -3864,6 +4345,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -3986,6 +4469,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR008",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -3995,8 +4479,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4137,6 +4623,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR009",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4146,8 +4633,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4288,6 +4777,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR010",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4297,8 +4787,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4429,6 +4921,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR011",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4438,6 +4931,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -4580,6 +5075,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR012",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4589,8 +5085,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4727,6 +5225,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR013",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4736,6 +5235,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -4868,6 +5369,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR014",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4877,8 +5379,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4983,6 +5487,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR015",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -4992,8 +5497,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5144,6 +5651,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR016",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5153,8 +5661,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5279,6 +5789,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR017",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5288,8 +5799,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5410,6 +5923,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR018",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5419,8 +5933,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5541,6 +6057,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR019",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5550,8 +6067,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5678,6 +6197,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR020",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5687,8 +6207,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5819,6 +6341,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR101",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5828,6 +6351,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -5960,6 +6485,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR102",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -5969,6 +6495,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -6091,6 +6619,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR103",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -6100,8 +6629,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -6242,6 +6773,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR104",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -6251,8 +6783,10 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -6393,6 +6927,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR105",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -6402,6 +6937,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",
@@ -6534,6 +7071,7 @@
       "category": "proofs",
       "task_kind": "written",
       "sample_unit": "one-full-paper",
+      "parent_family_id": "MG-GR106",
       "stage_count": 6,
       "stage_ids": [
         "S1",
@@ -6543,6 +7081,8 @@
         "S5",
         "S6"
       ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
       "suite_root": "cases",
       "suite_sha256": "4914fca6ff8f95818c60305749d6cb7da292c52604d7028c82051ad8e3529bcf",
       "suite_manifest": "cases/reserve-suite.json",

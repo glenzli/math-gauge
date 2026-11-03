@@ -7,18 +7,18 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-from .catalog import (assessment_units, candidate_message, digest_bytes, read_json, relative_name, safe_file,
+from .catalog import (assessment_units, assessment_weights, candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
-EXTENDED_COMPONENTS = COMPONENTS + ("exploration",)
+EXTENDED_COMPONENTS = COMPONENTS + ("exploration", "answer-review")
 TARGETS = EXTENDED_COMPONENTS + ("repeat", "neutral", "stance", "core", "all")
 ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
 PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
-                   "math-gauge.benchmark-profile/v3"}
+                   "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"}
 COMPACT_PANEL = ("MG-GR002", "MG-GR014", "MG-GF101", "MG-GF107", "MG-GF104", "MG-GF106")
 
 
@@ -33,12 +33,18 @@ def _require(condition, message):
         raise ValueError(message)
 
 
-def _weights(value, names, *, allow_zero=False):
+def _weights(value, names, *, allow_zero=False, fractional=False):
     _require(isinstance(value, dict) and set(value) == set(names),
              "Weights must name every frozen component exactly once")
-    _require(all(type(x) is int and (x >= 0 if allow_zero else x > 0) for x in value.values())
-             and sum(value.values()) == 100,
-             "Weights must be positive integral percentages summing to 100")
+    from fractions import Fraction
+    try:
+        numbers = [Fraction(str(x)) for x in value.values()
+                   if type(x) in ((int, float) if fractional else (int,))]
+    except (ValueError, ZeroDivisionError):
+        numbers = []
+    _require(len(numbers) == len(value) and all(x >= 0 if allow_zero else x > 0 for x in numbers)
+             and sum(numbers) == 100,
+             "Weights must be finite positive percentages summing to 100")
 
 
 def component_ids(data):
@@ -46,8 +52,9 @@ def component_ids(data):
     _require(isinstance(rows, list) and rows and all(isinstance(x, dict) for x in rows),
              "Profile requires explicit ordered components")
     ids = [row.get("id") for row in rows]
-    if data.get("schema") == "math-gauge.benchmark-profile/v3":
-        _require(ids == [cid for cid in EXTENDED_COMPONENTS if cid in ids],
+    if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"}:
+        allowed = EXTENDED_COMPONENTS if data["schema"].endswith("/v4") else EXTENDED_COMPONENTS[:-1]
+        _require(ids == [cid for cid in allowed if cid in ids],
                  "Invalid or repeated v3 core components")
     else:
         _require(ids == list(COMPONENTS), "Profile must retain the four ordered core components")
@@ -76,7 +83,7 @@ def independent_attempts(data, case_ids):
         _require(data.get("attempts") == list(ATTEMPTS),
                  "Three fixed independent attempts are required")
         return {cid: list(ATTEMPTS) for cid in ids}
-    _require(data.get("schema") in {"math-gauge.benchmark-profile/v2", "math-gauge.benchmark-profile/v3"},
+    _require(data.get("schema") in {"math-gauge.benchmark-profile/v2", "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
              "Unsupported benchmark attempt arrangement")
     attempts = data.get("attempt_schedule")
     _require(isinstance(attempts, dict) and set(attempts) == set(ids)
@@ -99,7 +106,7 @@ def scoring_policy(data, case_ids):
         and policy["repeat_attempt_labels"] == list(ATTEMPTS),
         "Compact scoring requires A1 core and three-attempt repetition")
     repeated = policy["repeat_case_ids"]
-    _require(isinstance(repeated, list) and (repeated or data["schema"] == "math-gauge.benchmark-profile/v3")
+    _require(isinstance(repeated, list) and (repeated or data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"})
              and all(isinstance(cid, str) for cid in repeated)
              and len(repeated) == len(set(repeated))
              and set(repeated) == {cid for cid in ids if attempts[cid] == list(ATTEMPTS)},
@@ -151,7 +158,7 @@ class BenchmarkProfile:
         path = Path(path).resolve()
         raw = path.read_bytes()
         data = json.loads(raw)
-        default_root = (path.parent.parent if data.get("schema") == "math-gauge.benchmark-profile/v3"
+        default_root = (path.parent.parent if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"}
                         and path.parent.name == "protocol" else suite.root.parent)
         root = Path(repository_root or default_root).resolve()
         _require(isinstance(data, dict) and data.get("schema") in PROFILE_SCHEMAS
@@ -168,7 +175,8 @@ class BenchmarkProfile:
                  "Profile binds a different suite identity")
         rows = data.get("components")
         components = component_ids(data)
-        _weights({x["id"]: x.get("weight") for x in rows}, components)
+        _weights({x["id"]: x.get("weight") for x in rows}, components,
+                 fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
         members = []
         for row in rows:
             ids = row.get("case_ids")
@@ -188,7 +196,8 @@ class BenchmarkProfile:
                  "Core components must partition the complete suite without overlap")
         scoring_policy(data, suite.cases)
         _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
-                 allow_zero=data["schema"] == "math-gauge.benchmark-profile/v3")
+                 allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
+                 fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
         reliability = data.get("reliability")
         _require(isinstance(reliability, dict), "Reliability material bindings required")
         for key in ("selection", "prompts", "schedule", "protocol_version"):
@@ -211,6 +220,8 @@ class BenchmarkProfile:
 
 
 def _category_matches(component, task_kind, contract_kind):
+    if component == "answer-review":
+        return contract_kind == "answer_review" and task_kind == "answer_review"
     if component == "exploration":
         return contract_kind == "research_exploration" and task_kind in {"written", "exploration"}
     if component == "chapters":
@@ -375,13 +386,15 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
             "candidate_message_sha256": digest_bytes(candidate_message(request).encode()),
             "group_contract": case["group_contract"],
             "group_contract_sha256": digest_bytes(suite.case_file(case, case["group_contract"]).read_bytes()),
-            "stages": [{"stage_id": s["id"], "points": s["points"],
-                        "lean_required": s["lean_required"]} for s in assessment_units(contract)],
+            **assessment_weights(contract),
             "total_weight": sum(s["points"] for s in assessment_units(contract)),
             "focus_tags": tags.get(cid, []),
         })
-        if contract["kind"] == "research_exploration":
+        if contract["kind"] in {"research_exploration", "answer_review"}:
             cases[-1]["assessment_unit"] = "review_dimension"
+        if contract["kind"] == "answer_review":
+            cases[-1]["parent_family_id"] = contract["parent_family_id"]
+            _require(attempts[cid] == ["A1"], "Answer-review papers use A1 only")
         if suite.members:
             cases[-1]["source_suite"] = suite.source_binding(case)
         if suite.source_suite(case).metadata["visibility"] == "private":
@@ -437,9 +450,11 @@ def validate_plan(plan):
              and plan.get("suite") == data.get("suite"), "Frozen profile identity changed")
     components = data.get("components", [])
     ids = component_ids(data)
-    _weights({x["id"]: x.get("weight") for x in components}, ids)
+    _weights({x["id"]: x.get("weight") for x in components}, ids,
+             fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
     _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
-             allow_zero=data["schema"] == "math-gauge.benchmark-profile/v3")
+             allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
+                 fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
     cases = plan.get("case_index", [])
     case_ids = [x.get("case_id") for x in cases]
     members = [cid for component in components for cid in component.get("case_ids", [])]
@@ -466,12 +481,18 @@ def validate_plan(plan):
                      and case["case_approved"] == (approval["status"] == "approved"
                                                    and approval["human_review"] == "approved"),
                      "Frozen case approval contradicts its original source")
-        stages = case.get("stages", [])
+        answer_review = case.get("contract_kind") == "answer_review"
+        stages = case.get("dimensions" if answer_review else "stages", [])
+        unit_key = "dimension_id" if answer_review else "stage_id"
+        if answer_review:
+            _require("stages" not in case and case.get("assessment_unit") == "review_dimension"
+                     and isinstance(case.get("parent_family_id"), str) and case["parent_family_id"]
+                     and attempts[case["case_id"]] == ["A1"], "Invalid answer-review plan unit")
         _require(case.get("component") == membership[case["case_id"]]
                  and _category_matches(case["component"], case.get("task_kind"), case.get("contract_kind"))
-                 and stages and len({s.get("stage_id") for s in stages}) == len(stages)
+                 and stages and len({s.get(unit_key) for s in stages}) == len(stages)
                  and all(type(s.get("points")) is int and s["points"] > 0
-                         and type(s.get("lean_required")) is bool for s in stages)
+                         and (answer_review or type(s.get("lean_required")) is bool) for s in stages)
                  and case.get("total_weight") == sum(s["points"] for s in stages),
                  "Frozen paper weights changed")
     slots = plan.get("slots", [])

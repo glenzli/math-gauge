@@ -28,8 +28,8 @@ class FocusCatalogTests(unittest.TestCase):
 
     def test_exact_paper_units_and_independent_review_statuses(self):
         catalog, _ = focus_catalog.build()
-        self.assertEqual(catalog["counts"]["papers"], 43)
-        self.assertEqual(catalog["counts"]["default_papers"], 32)
+        self.assertEqual(catalog["counts"]["papers"], 47)
+        self.assertEqual(catalog["counts"]["default_papers"], 36)
         self.assertEqual(catalog["counts"]["reserve_papers"], 11)
         self.assertEqual(catalog["counts"]["default_obligations"], 306)
         self.assertEqual(catalog["counts"]["reserve_obligations"], 66)
@@ -41,7 +41,8 @@ class FocusCatalogTests(unittest.TestCase):
         self.assertEqual(catalog["counts"]["source_human_approved"], 0)
         self.assertEqual(catalog["counts"]["model_calls_by_indexer"], 0)
         self.assertTrue(all(
-            entry["sample_unit"] == "one-full-paper"
+            entry["sample_unit"] == ("one-complete-answer-review; parent-correlated"
+                                      if entry["kind"] == "answer_review" else "one-full-paper")
             and entry["classification_review"]["human"] == "pending"
             and entry["source_review"]["human"] == "pending"
             for entry in catalog["entries"]
@@ -57,7 +58,7 @@ class FocusCatalogTests(unittest.TestCase):
                     )
                 else:
                     taxonomy["paper_assignments"].pop()
-                with self.assertRaisesRegex(ValueError, "exactly the 43"):
+                with self.assertRaisesRegex(ValueError, "exactly 43 mathematical papers and 4 answer reviews"):
                     focus_catalog.build(taxonomy_data=taxonomy)
 
     def test_rejects_duplicate_primary_or_focus_tag(self):
@@ -67,6 +68,8 @@ class FocusCatalogTests(unittest.TestCase):
         ):
             with self.subTest(field=field):
                 taxonomy = self.changed_taxonomy()
+                if field == "focus_id":
+                    value = taxonomy["paper_assignments"][0]["focus"][0]["focus_id"]
                 taxonomy["paper_assignments"][0]["focus"][1][field] = value
                 with self.assertRaisesRegex(ValueError, message):
                     focus_catalog.build(taxonomy_data=taxonomy)
@@ -137,7 +140,7 @@ class FocusCatalogTests(unittest.TestCase):
         self.assertNotIn("protected_legacy_files", catalog)
         self.assertEqual([row["root"] for row in catalog["suites"]], ["cases", "cases"])
         self.assertEqual([row["membership"] for row in catalog["suites"]], ["default", "reserve"])
-        self.assertEqual([row["paper_count"] for row in catalog["suites"]], [32, 11])
+        self.assertEqual([row["paper_count"] for row in catalog["suites"]], [36, 11])
 
     def test_refresh_writes_only_current_derived_outputs(self):
         catalog, document = focus_catalog.build()
@@ -157,7 +160,7 @@ class FocusCatalogTests(unittest.TestCase):
         self.assertEqual(catalog["snapshot_status"], "final-catalog-snapshot")
         self.assertEqual([(item["id"], item["count"]) for item in catalog["categories"]],
                          [("proofs", 29), ("lean-audit", 6),
-                          ("lean-construction", 6), ("chapters", 2)])
+                          ("lean-construction", 6), ("chapters", 2), ("answer-review", 4)])
         ids = [cid for item in catalog["categories"] for cid in item["case_ids"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(set(ids), {item["case_id"] for item in catalog["entries"]})
@@ -169,7 +172,7 @@ class FocusCatalogTests(unittest.TestCase):
             prefix = "reserve/" if item["membership"] == "reserve" else ""
             self.assertEqual(item["paths"]["case"],
                              f"cases/{prefix}{item['category']}/{item['case_id']}/case.json")
-            self.assertIn(item["task_kind"], {"written", "audit", "repair", "generate"})
+            self.assertIn(item["task_kind"], {"written", "audit", "repair", "generate", "answer_review"})
 
     def test_check_rejects_stale_derived_text(self):
         catalog, document = focus_catalog.build()

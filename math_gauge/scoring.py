@@ -68,7 +68,7 @@ def _math_interval(axis):
 def _average(intervals, weights=None):
     if not intervals:
         return UNKNOWN
-    weights = [1] * len(intervals) if weights is None else weights
+    weights = [Fraction(1)] * len(intervals) if weights is None else [Fraction(str(w)) for w in weights]
     if any(weight == 0 for weight in weights):
         included = [(interval, weight) for interval, weight in zip(intervals, weights) if weight]
         return _average([x[0] for x in included], [x[1] for x in included])
@@ -342,6 +342,8 @@ def score_inputs(inputs):
             if row.get("problem_defect") and interval[2] is not None:
                 raise ValueError("Pending problem defects must retain unknown completion weight")
         _boolean(row.get("strict_pass"))
+        if case_index[cid].get("contract_kind") == "answer_review":
+            _boolean(row.get("major_error"))
         rows[sid] = row
 
     def row_for(sid):
@@ -383,11 +385,32 @@ def score_inputs(inputs):
                 "executed_attempts": sum(bool(r) and r.get("started") is not False for r in attempt_rows),
                 "adjudicated_attempts": sum(r.get("strict_pass") is not None for r in attempt_rows),
                 "planned_attempts": len(attempts[cid]),
-                "stage_weight_total": case_index[cid]["total_weight"],
+                ("dimension_weight_total" if case_index[cid].get("contract_kind") == "answer_review"
+                 else "stage_weight_total"): case_index[cid]["total_weight"],
             }
             all_initial_rows.extend(attempt_rows)
+        if component["id"] == "answer-review":
+            families = {}
+            for cid, interval in zip(component["case_ids"], intervals):
+                family = case_index[cid]["parent_family_id"]
+                families.setdefault(family, []).append((cid, interval))
+                paper_reports[cid]["parent_family_id"] = family
+            intervals = [_average([item[1] for item in items]) for items in families.values()]
+            major = [_average([_boolean(row_for(f"{cid}:A1").get("major_error"))
+                               for cid, _ in items]) for items in families.values()]
+            strict = [_average([_boolean(row_for(f"{cid}:A1").get("strict_pass"))
+                                for cid, _ in items]) for items in families.values()]
+            metrics["answer_review_major_error_rate"] = _metric(major, component_rows, case_index,
+                unit="answer-review parent family")
+            metrics["answer_review_strict_pass_rate"] = _metric(strict, component_rows, case_index,
+                unit="answer-review parent family")
+            answer_review_families = {family: {"case_ids": [cid for cid, _ in items],
+                "variant_count": len(items), "completion": {"lower": _percent(value[0]),
+                    "upper": _percent(value[1]), "exact": _percent(value[2])}}
+                for (family, items), value in zip(families.items(), intervals)}
         metrics[component["id"]] = _metric(intervals, component_rows, case_index,
-            unit=("full paper A1" if policy["core_attempt_labels"] == ["A1"]
+            unit=("answer-review parent family" if component["id"] == "answer-review" else
+                  "full paper A1" if policy["core_attempt_labels"] == ["A1"]
                   else "full paper averaged over A1/A2/A3"))
         metric_intervals[component["id"]] = _average(intervals)
         all_core_rows.extend(component_rows)
@@ -496,6 +519,8 @@ def score_inputs(inputs):
             "origin", "source_origin", "fixture_only", "comparison_eligible", "execution_eligibility",
             "execution_receipt_sha256", "execution_audit_sha256", "historical_audit_selection", "strict_pass", "completion",
             "whole_strict", "whole_math", "focus_math", "focus_verdict", "problem_defect", "group_diagnostic")}
+            | ({k: r.get(k) for k in ("major_error", "answer_review_rescoring")}
+               if case_index[r["case_id"]].get("contract_kind") == "answer_review" else {})
             for r in evidence_rows],
         "execution_contract_sha256": inputs.get("execution_contract_sha256"),
         "execution_eligibility": inputs.get("execution_eligibility"),
@@ -512,6 +537,16 @@ def score_inputs(inputs):
         "source_runs": inputs.get("source_runs", []),
         "notice": "All scores use the frozen full-plan denominators. Exact values are provisional unless formal eligibility is explicit. Fixture/replay, AI review and draft papers do not produce formal model scores. Focus slices overlap and never enter totals.",
     }
+    if "answer-review" in metrics:
+        report["answer_review"] = {"assessment_unit": "review_dimension",
+            "aggregation_unit": "parent_family_id", "families": answer_review_families,
+            "major_error_rate": metrics["answer_review_major_error_rate"],
+            "strict_pass_rate": metrics["answer_review_strict_pass_rate"],
+            "raw_counts": {"papers": sum(c.get("contract_kind") == "answer_review" for c in case_index.values()),
+                "major_error_adjudicated": sum(type(r.get("major_error")) is bool for r in evidence_rows
+                    if case_index[r["case_id"]].get("contract_kind") == "answer_review"),
+                "major_errors": sum(r.get("major_error") is True for r in evidence_rows
+                    if case_index[r["case_id"]].get("contract_kind") == "answer_review")}}
     report["score_inputs_sha256"] = identity({k: report[k] for k in (
         "plan_sha256", "execution_contract_sha256", "execution_eligibility", "review_snapshots", "execution_audit_snapshots", "evidence",
         "execution_coverage", "source_runs")})
@@ -523,7 +558,10 @@ def _evidence_signature(row):
               "history_sha256", "material_sha256", "review_sha256", "reviewer_kind", "origin",
               "fixture_only", "strict_pass", "completion",
               "whole_strict", "whole_math", "focus_math", "focus_verdict")
-    return identity({k: row.get(k) for k in fields})
+    value = {k: row.get(k) for k in fields}
+    if "major_error" in row:
+        value.update(major_error=row["major_error"], answer_review_rescoring=row.get("answer_review_rescoring"))
+    return identity(value)
 
 
 def _raw_evidence_signature(row):
@@ -714,7 +752,8 @@ def _execution_semantics(plan, cid):
             "parameters": parameters, "timeout_seconds": budget.get("timeout_seconds", 120)}
 
 
-def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="require_matching"):
+def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="require_matching",
+                           answer_reviews=()):
     """Re-evaluate unchanged source answers; never fabricate a new execution run."""
     plan = validate_plan(plan)
     if budget_policy not in {"require_matching", "retain_source_budgets"}:
@@ -778,6 +817,17 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                          "audit_snapshot": source.get("audit_snapshot"),
                          "frozen_report_reuse": source.get("frozen_report_reuse"),
                          "selected_slot_ids": selected})
+    for extra in answer_reviews:
+        receipt = extra["receipt"]
+        labels.add(receipt["model_label"])
+        for row in extra["rows"]:
+            sid = row["slot_id"]
+            if sid not in target_slots or target_cases[row["case_id"]].get("contract_kind") != "answer_review":
+                raise ValueError("Rescoring references an unknown answer-review slot")
+            if sid in rows:
+                raise ValueError("Repeated answer-review evidence source")
+            rows[sid] = dict(row)
+        receipts.append(receipt)
     normalized = {model_aliases.get(label, label) for label in labels}
     if (not set(model_aliases) <= labels or len(normalized) > 1
             or normalized and plan["model_label"] not in {None, next(iter(normalized))}):
@@ -866,12 +916,13 @@ def frozen_report_inputs(root, reference):
 
 
 def score_composed_runs(plan, roots, *, snapshots=None, model_aliases=None,
-                        budget_policy="require_matching", frozen_reports=None):
+                        budget_policy="require_matching", frozen_reports=None,
+                        answer_review_sources=(), suite=None):
     """Read authoritative retained reviews before a cross-plan development analysis."""
     from .reliability import reliability_score_inputs
 
     roots = [Path(root).resolve() for root in roots]
-    if not roots or len(roots) != len(set(roots)):
+    if (not roots and not answer_review_sources) or len(roots) != len(set(roots)):
         raise ValueError("Composition requires distinct existing source runs")
     snapshots = snapshots or {}
     frozen_reports = frozen_reports or {}
@@ -890,7 +941,12 @@ def score_composed_runs(plan, roots, *, snapshots=None, model_aliases=None,
             sources.append(frozen_report_inputs(root, frozen_reports[str(root)]))
         else:
             sources.append(reliability_score_inputs(root, **selectors))
-    return _compose_score_sources(plan, sources, model_aliases=model_aliases, budget_policy=budget_policy)
+    from .review import rescored_answer_inputs
+    if answer_review_sources and suite is None:
+        raise ValueError("Answer-review rescoring requires the trusted target suite")
+    rescored = [rescored_answer_inputs(plan, suite, source) for source in answer_review_sources]
+    return _compose_score_sources(plan, sources, model_aliases=model_aliases,
+                                  budget_policy=budget_policy, answer_reviews=rescored)
 
 
 def public_score_projection(report, plan, *, private_aliases, metadata=None, source_kinds=None,
@@ -910,16 +966,17 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
         raise ValueError("Every private paper needs one unique neutral public alias")
     evidence = {row["slot_id"]: row for row in report.get("evidence", [])}
     source_kinds = source_kinds or {}
-    allowed_sources = {"historical_public", "existing_private", "new_private"}
+    allowed_sources = {"historical_public", "existing_private", "new_private", "answer_review_rescored"}
     if not set(source_kinds) <= set(cases) or not set(source_kinds.values()) <= allowed_sources:
         raise ValueError("Invalid public source classification")
     metric_keys = ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")
     titles = {"proofs": "Written mathematics", "lean-audit": "Lean semantic audit",
               "lean-construction": "Lean construction", "chapters": "Chapter formalization",
-              "exploration": "Research exploration"}
+              "exploration": "Research exploration", "answer-review": "Mathematical answer review"}
     metrics = {name: {key: value[key] for key in metric_keys if key in value}
                for name, value in report["metrics"].items() if name in titles or name in {
-                   "core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"}}
+                   "core", "repeat", "neutral", "stance", "overall", "strict_pass_rate",
+                   "answer_review_major_error_rate", "answer_review_strict_pass_rate"}}
     slots, private_records = [], []
     for slot in plan["slots"]:
         cid, sid = slot["case_id"], slot["slot_id"]
@@ -942,6 +999,12 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
                 "strict_pass": row.get("strict_pass"), "status": status,
                 "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256"),
                 "human_status": "reviewed" if row.get("reviewer_kind") == "human" else "pending"}
+        if cases[cid].get("contract_kind") == "answer_review":
+            item["major_error"] = row.get("major_error")
+            if cid not in private_aliases:
+                item["parent_family_id"] = cases[cid]["parent_family_id"]
+            item["dimensions"] = [{k: value[k] for k in ("dimension_id", "score")}
+                                  for value in (row.get("group_diagnostic") or {}).get("dimensions", [])]
         slots.append(item)
         if cid in private_aliases and slot.get("attempt_label") == "A1":
             private_records.append(dict(item))

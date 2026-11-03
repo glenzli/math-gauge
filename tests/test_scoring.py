@@ -22,8 +22,8 @@ def axis(state="C", reasons=None, adjudicated=True):
 
 
 def fixture_rows(plan, completions=None):
-    completions = completions or {k: 1 for k in
-                                  ("proofs", "lean-audit", "lean-construction", "chapters")}
+    completions = completions or {component["id"]: 1
+                                  for component in plan["profile"]["data"]["components"]}
     cases = {x["case_id"]: x for x in plan["case_index"]}
     rows = []
     for slot in plan["slots"]:
@@ -444,11 +444,11 @@ class CompactBenchmarkScoringTests(unittest.TestCase):
         changed = self.score(rows)
         self.assertEqual(changed["metrics"]["core"]["exact"], 100)
         self.assertEqual(changed["metrics"]["repeat"]["exact"], 0)
-        for component in ("proofs", "lean-audit", "lean-construction", "chapters"):
+        for component in ("proofs", "lean-audit", "lean-construction", "chapters", "answer-review"):
             self.assertEqual(changed["metrics"][component], original["metrics"][component])
         self.assertEqual(changed["focus_slices"], original["focus_slices"])
         self.assertEqual(changed["metrics"]["repeat"]["coverage"]["planned"], 6)
-        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 44)
+        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 48)
         self.assertEqual(changed["papers"]["MG-C002"]["planned_attempts"], 1)
         self.assertIsNone(changed["papers"]["MG-C002"]["three_of_three"])
         self.assertEqual(changed["papers"]["MG-GR002"]["planned_attempts"], 3)

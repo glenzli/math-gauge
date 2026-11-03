@@ -1,7 +1,7 @@
 {
   "schema": "math-gauge.focus-taxonomy/v1",
-  "version": "0.3.0",
-  "title": "默认32卷与后备11卷完整题库考察重点",
+  "version": "0.4.0",
+  "title": "默认36份任务与后备11份的考察重点；保留母题相关性",
   "operator_only": true,
   "definitions": [
     {
@@ -64,7 +64,7 @@
     "secondary_min": 2,
     "secondary_max": 4,
     "evidence_required_for_every_tag": true,
-    "evidence_ids": "actual contract stage IDs; chapter papers use actual CH02/CH03 obligation IDs",
+    "evidence_ids": "Actual mathematical stage/obligation IDs; answer-review evidence uses actual dimension IDs, never mathematical stages",
     "proof_dependencies": "descriptive evidence only; valid alternative proof routes remain accepted",
     "no_truth_or_rubric_changes": true
   },
@@ -86,9 +86,9 @@
       "manifest": "cases/suite.json",
       "membership": "default",
       "id": "math-gauge-benchmark",
-      "version": "0.3.0",
-      "suite_sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1",
-      "paper_count": 32
+      "version": "0.4.0",
+      "suite_sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6",
+      "paper_count": 36
     },
     {
       "root": "cases",
@@ -101,6 +101,258 @@
     }
   ],
   "paper_assignments": [
+    {
+      "case_id": "MG-AR001",
+      "version": "0.2.0",
+      "source_bindings": {
+        "cases/answer-review/MG-AR001/case.json": "664cbf9a727b366459e849585abd78e81195af57b0ddb4305a9eb9921663972b",
+        "cases/answer-review/MG-AR001/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR001/group-contract.json": "4ccdc7089c7369593ddfac73ac4c37f65ddf2587690ce5a72828d766fa9e21df"
+      },
+      "focus": [
+        {
+          "focus_id": "F06",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "审阅逐元素幂等提升、层间唯一性组装和自然分解；允许实际有效的替代构造。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR001/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "核对nil条件的逐元素作用与交换性，不额外要求全核统一指数或2可逆。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR001/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "区分层间唯一性、极限核与元素提升的依赖，不把参考中的额外非交换存在证明加入原任务。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR001/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "MG-AR002",
+      "version": "0.2.0",
+      "source_bindings": {
+        "cases/answer-review/MG-AR002/case.json": "519e02673000843f7f643106f025e772a952826f7dece06e021155f090975477",
+        "cases/answer-review/MG-AR002/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR002/group-contract.json": "fbe7f2f4b28b35f044cb6b3ae005d68c66e6e48dd17823a0f2852670887c6471"
+      },
+      "focus": [
+        {
+          "focus_id": "F07",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "定位附加第三条路线的缺口，同时保留正文与两条独立有效的闭性证明。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR002/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F06",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "核查非齐次解集是仿射对象而非线性子空间，以合法例子并限定修复范围。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR002/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "completeness",
+              "note": "保留有限域通常紧性与任意域代数延拓的不同适用范围。",
+              "contract_pointer": "/dimensions/2/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR002/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "MG-AR003",
+      "version": "0.2.0",
+      "source_bindings": {
+        "cases/answer-review/MG-AR003/case.json": "f14a66a0a99a23858d225cba40878744e7de38db363db6c22a2541cba31a1f24",
+        "cases/answer-review/MG-AR003/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR003/group-contract.json": "826a01e25228de8de09f74e2cf9523381d18095d6c5dce0d111e073f8374b2e6"
+      },
+      "focus": [
+        {
+          "focus_id": "F03",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "核对固定源与目标的映射集识别，不能擅自将目标细化而保持原源不变。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR003/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F04",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "区分固定目标的错误识别与关于所有目标的有效充要结论，限制反例实际反驳范围。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR003/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "区分普通指数律的引用条件错位与后文独立有效CGHaus路线，不把前者传播为全部结论假。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR003/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "MG-AR004",
+      "version": "0.2.0",
+      "source_bindings": {
+        "cases/answer-review/MG-AR004/case.json": "07d4fac0e3be28895f3c9f8f00bc4700278ebb301dc93d357396f53c78733a56",
+        "cases/answer-review/MG-AR004/task.md": "aef0f0c92c2bde5961d4815e355391d6a944af03969778b76fc50ec16947eb9e",
+        "cases/answer-review/MG-AR004/group-contract.json": "f644b57696ecd102fc6e92d720457055a8f07056326032d8890db242ff383b45"
+      },
+      "focus": [
+        {
+          "focus_id": "F01",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "区分半局部输入与任意光滑积分对象上的错误全局加强，不借已知主结论追认错误证明。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR004/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "core_judgment",
+              "note": "核对任意指定点集与半局部概形实际闭点的区别，不能直接按原点集归纳。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR004/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F07",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence_scope",
+              "note": "追踪错误全局单射在比较图中的真实用途，同时保留其他独立有效阶段。",
+              "contract_pointer": "/dimensions/1/required_evidence",
+              "task_locator": {
+                "path": "cases/answer-review/MG-AR004/task.md",
+                "line": 1,
+                "applies_to": "whole-answer-review"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-current-answer-review-contract",
+        "human": "pending"
+      }
+    },
     {
       "case_id": "MG-C002",
       "version": "0.1.1",
@@ -4895,7 +5147,7 @@
   ],
   "scope": {
     "id": "complete-case-bank",
-    "paper_count": 43,
+    "paper_count": 47,
     "progressive_papers": 41,
     "progressive_stages": 246,
     "chapter_papers": 2,
@@ -4903,7 +5155,9 @@
       "MG-C002": 34,
       "MG-C003": 92
     },
-    "sample_unit": "one full paper"
+    "answer_review_tasks": 4,
+    "answer_review_dimensions": 12,
+    "sample_unit": "one full mathematical paper or complete answer review; parent-correlated"
   },
   "candidate_input_policy": "Operator-only classification. Never attach these files to candidates; preserve the shared runner exact task and solver_files projection."
 }

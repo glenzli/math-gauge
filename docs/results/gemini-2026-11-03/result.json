@@ -1,44 +1,50 @@
 {
   "schema": "math-gauge.public-composite-score/v1",
   "id": "gemini-2026-11-03",
-  "title": "Gemini 3.8 Flash · 综合开发评测",
-  "status": "provisional",
+  "title": "Gemini 3.8 Flash · 综合开发评测 · 0.4.0",
+  "status": "posthoc_composition",
   "score_units": {
     "metrics": "percent",
     "completion": "fraction"
   },
-  "plan_sha256": "b8c5ebb5e13392bd3a52bb751a72b81d7bcc01dcfacf5a2a4507797a5653e135",
+  "plan_sha256": "ee40e04eb8cd78630d960d4fd43acbae1924f88cc134701f3734ab85f907e4a2",
   "profile": {
     "components": [
       {
         "id": "proofs",
         "title": "Written mathematics",
-        "weight": 25,
+        "weight": 22.5,
         "case_count": 18
       },
       {
         "id": "lean-audit",
         "title": "Lean semantic audit",
-        "weight": 20,
+        "weight": 18,
         "case_count": 6
       },
       {
         "id": "lean-construction",
         "title": "Lean construction",
-        "weight": 20,
+        "weight": 18,
         "case_count": 6
       },
       {
         "id": "chapters",
         "title": "Chapter formalization",
-        "weight": 20,
+        "weight": 18,
         "case_count": 2
       },
       {
         "id": "exploration",
         "title": "Research exploration",
-        "weight": 15,
+        "weight": 13.5,
         "case_count": 3
+      },
+      {
+        "id": "answer-review",
+        "title": "Mathematical answer review",
+        "weight": 10,
+        "case_count": 4
       }
     ],
     "overall_weights": {
@@ -48,9 +54,12 @@
       "stance": 10
     },
     "classification": "development_analysis",
-    "selection_timing": "after_terra_results_before_gemini_run",
-    "version": "0.2.0",
-    "sha256": "70cb32533ed3dac57bdfbdf860ddda898fa4c43e2eb30aa3b3eaa176942893c5"
+    "selection_timing": "after_all_results",
+    "id": "math-gauge-six-direction-development",
+    "version": "0.4.0",
+    "standard_version": "0.4.0",
+    "sha256": "8c1bf98c4b732df9939f36f85ed3f24bcd2d05cd403c59c5abdc432cb5c8784f",
+    "composition_plan_created_after_sources": true
   },
   "metrics": {
     "proofs": {
@@ -133,18 +142,66 @@
       },
       "formal_comparison_eligible": false
     },
+    "answer_review_major_error_rate": {
+      "exact": 25.0,
+      "lower": 25.0,
+      "upper": 25.0,
+      "complete": true,
+      "coverage": {
+        "unit": "answer-review parent family",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0,
+        "started_slots": 4,
+        "reviewed_slots": 4,
+        "formal_eligible_slots": 0
+      },
+      "formal_comparison_eligible": false
+    },
+    "answer_review_strict_pass_rate": {
+      "exact": 25.0,
+      "lower": 25.0,
+      "upper": 25.0,
+      "complete": true,
+      "coverage": {
+        "unit": "answer-review parent family",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0,
+        "started_slots": 4,
+        "reviewed_slots": 4,
+        "formal_eligible_slots": 0
+      },
+      "formal_comparison_eligible": false
+    },
+    "answer-review": {
+      "exact": 69.375,
+      "lower": 69.375,
+      "upper": 69.375,
+      "complete": true,
+      "coverage": {
+        "unit": "answer-review parent family",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0,
+        "started_slots": 4,
+        "reviewed_slots": 4,
+        "formal_eligible_slots": 0
+      },
+      "formal_comparison_eligible": false
+    },
     "core": {
-      "exact": 65.5555555556,
-      "lower": 65.5555555555,
-      "upper": 65.5555555556,
+      "exact": 65.9375,
+      "lower": 65.9375,
+      "upper": 65.9375,
       "complete": true,
       "coverage": {
         "unit": "core component",
-        "planned": 5,
-        "adjudicated": 5,
+        "planned": 6,
+        "adjudicated": 6,
         "unknown": 0,
-        "started_slots": 35,
-        "reviewed_slots": 35,
+        "started_slots": 39,
+        "reviewed_slots": 39,
         "formal_eligible_slots": 0
       },
       "formal_comparison_eligible": false
@@ -166,17 +223,17 @@
       "formal_comparison_eligible": false
     },
     "strict_pass_rate": {
-      "exact": 65.9574468085,
-      "lower": 65.9574468085,
-      "upper": 65.9574468086,
+      "exact": 62.7450980392,
+      "lower": 62.7450980392,
+      "upper": 62.7450980393,
       "complete": true,
       "coverage": {
         "unit": "independent strict-pass slot",
-        "planned": 47,
-        "adjudicated": 47,
+        "planned": 51,
+        "adjudicated": 51,
         "unknown": 0,
-        "started_slots": 47,
-        "reviewed_slots": 47,
+        "started_slots": 51,
+        "reviewed_slots": 51,
         "formal_eligible_slots": 0
       },
       "formal_comparison_eligible": false
@@ -214,17 +271,17 @@
       "formal_comparison_eligible": false
     },
     "overall": {
-      "exact": 72.0833333333,
-      "lower": 72.0833333333,
-      "upper": 72.0833333334,
+      "exact": 72.3697916667,
+      "lower": 72.3697916666,
+      "upper": 72.3697916667,
       "complete": true,
       "coverage": {
         "unit": "frozen overall component",
         "planned": 4,
         "adjudicated": 4,
         "unknown": 0,
-        "started_slots": 83,
-        "reviewed_slots": 83,
+        "started_slots": 87,
+        "reviewed_slots": 87,
         "formal_eligible_slots": 0
       },
       "formal_comparison_eligible": false
@@ -234,7 +291,7 @@
     {
       "slot_id": "Private-01:A1",
       "public_id": "Private-01",
-      "source_kind": "current_private",
+      "source_kind": "existing_private",
       "completion": {
         "exact": 0.275,
         "lower": 0.275,
@@ -249,7 +306,7 @@
     {
       "slot_id": "Private-02:A1",
       "public_id": "Private-02",
-      "source_kind": "current_private",
+      "source_kind": "new_private",
       "completion": {
         "exact": 0.5,
         "lower": 0.5,
@@ -264,7 +321,7 @@
     {
       "slot_id": "Private-03:A1",
       "public_id": "Private-03",
-      "source_kind": "current_private",
+      "source_kind": "new_private",
       "completion": {
         "exact": 0.25,
         "lower": 0.25,
@@ -281,7 +338,7 @@
     {
       "slot_id": "MG-C002:A1",
       "public_id": "MG-C002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.0,
         "lower": 0.0,
@@ -296,7 +353,7 @@
     {
       "slot_id": "MG-C003:A1",
       "public_id": "MG-C003",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.0,
         "lower": 0.0,
@@ -311,7 +368,7 @@
     {
       "slot_id": "MG-GF101:A1",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -326,7 +383,7 @@
     {
       "slot_id": "MG-GF103:A1",
       "public_id": "MG-GF103",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.8,
         "lower": 0.8,
@@ -341,7 +398,7 @@
     {
       "slot_id": "MG-GF105:A1",
       "public_id": "MG-GF105",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.8,
         "lower": 0.8,
@@ -356,7 +413,7 @@
     {
       "slot_id": "MG-GF107:A1",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -371,7 +428,7 @@
     {
       "slot_id": "MG-GF109:A1",
       "public_id": "MG-GF109",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -386,7 +443,7 @@
     {
       "slot_id": "MG-GF111:A1",
       "public_id": "MG-GF111",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -401,7 +458,7 @@
     {
       "slot_id": "MG-GF102:A1",
       "public_id": "MG-GF102",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -416,7 +473,7 @@
     {
       "slot_id": "MG-GF104:A1",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -431,7 +488,7 @@
     {
       "slot_id": "MG-GF106:A1",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -446,7 +503,7 @@
     {
       "slot_id": "MG-GF108:A1",
       "public_id": "MG-GF108",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.9,
         "lower": 0.9,
@@ -461,7 +518,7 @@
     {
       "slot_id": "MG-GF110:A1",
       "public_id": "MG-GF110",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -476,7 +533,7 @@
     {
       "slot_id": "MG-GF112:A1",
       "public_id": "MG-GF112",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -491,7 +548,7 @@
     {
       "slot_id": "MG-GP001:A1",
       "public_id": "MG-GP001",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -506,7 +563,7 @@
     {
       "slot_id": "MG-GP002:A1",
       "public_id": "MG-GP002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.75,
         "lower": 0.75,
@@ -521,7 +578,7 @@
     {
       "slot_id": "MG-GP003:A1",
       "public_id": "MG-GP003",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.5,
         "lower": 0.5,
@@ -536,7 +593,7 @@
     {
       "slot_id": "MG-GR002:A1",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -551,7 +608,7 @@
     {
       "slot_id": "MG-GR005:A1",
       "public_id": "MG-GR005",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.76,
         "lower": 0.76,
@@ -566,7 +623,7 @@
     {
       "slot_id": "MG-GR008:A1",
       "public_id": "MG-GR008",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -581,7 +638,7 @@
     {
       "slot_id": "MG-GR009:A1",
       "public_id": "MG-GR009",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.6,
         "lower": 0.6,
@@ -596,7 +653,7 @@
     {
       "slot_id": "MG-GR010:A1",
       "public_id": "MG-GR010",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.55,
         "lower": 0.55,
@@ -611,7 +668,7 @@
     {
       "slot_id": "MG-GR012:A1",
       "public_id": "MG-GR012",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -626,7 +683,7 @@
     {
       "slot_id": "MG-GR014:A1",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -641,7 +698,7 @@
     {
       "slot_id": "MG-GR015:A1",
       "public_id": "MG-GR015",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -656,7 +713,7 @@
     {
       "slot_id": "MG-GR016:A1",
       "public_id": "MG-GR016",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -671,7 +728,7 @@
     {
       "slot_id": "MG-GR017:A1",
       "public_id": "MG-GR017",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -686,7 +743,7 @@
     {
       "slot_id": "MG-GR018:A1",
       "public_id": "MG-GR018",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -701,7 +758,7 @@
     {
       "slot_id": "MG-GR019:A1",
       "public_id": "MG-GR019",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -716,7 +773,7 @@
     {
       "slot_id": "MG-GR020:A1",
       "public_id": "MG-GR020",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.75,
         "lower": 0.75,
@@ -731,7 +788,7 @@
     {
       "slot_id": "MG-GR103:A1",
       "public_id": "MG-GR103",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -746,7 +803,7 @@
     {
       "slot_id": "MG-GR104:A1",
       "public_id": "MG-GR104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -761,7 +818,7 @@
     {
       "slot_id": "MG-GR002:A2",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.8,
         "lower": 0.8,
@@ -776,7 +833,7 @@
     {
       "slot_id": "MG-GR014:A2",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -791,7 +848,7 @@
     {
       "slot_id": "MG-GF101:A2",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -806,7 +863,7 @@
     {
       "slot_id": "MG-GF107:A2",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -821,7 +878,7 @@
     {
       "slot_id": "MG-GF104:A2",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -836,7 +893,7 @@
     {
       "slot_id": "MG-GF106:A2",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -851,7 +908,7 @@
     {
       "slot_id": "MG-GR002:A3",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.8,
         "lower": 0.8,
@@ -866,7 +923,7 @@
     {
       "slot_id": "MG-GR014:A3",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -881,7 +938,7 @@
     {
       "slot_id": "MG-GF101:A3",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -896,7 +953,7 @@
     {
       "slot_id": "MG-GF107:A3",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -911,7 +968,7 @@
     {
       "slot_id": "MG-GF104:A3",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -926,7 +983,7 @@
     {
       "slot_id": "MG-GF106:A3",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -941,7 +998,7 @@
     {
       "slot_id": "MG-GR002:neutral:1",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -956,7 +1013,7 @@
     {
       "slot_id": "MG-GR002:affirm:1",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -971,7 +1028,7 @@
     {
       "slot_id": "MG-GR002:deny:1",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -986,7 +1043,7 @@
     {
       "slot_id": "MG-GR014:neutral:1",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1001,7 +1058,7 @@
     {
       "slot_id": "MG-GR014:affirm:1",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1016,7 +1073,7 @@
     {
       "slot_id": "MG-GR014:deny:1",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.85,
         "lower": 0.85,
@@ -1031,7 +1088,7 @@
     {
       "slot_id": "MG-GF101:neutral:1",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1046,7 +1103,7 @@
     {
       "slot_id": "MG-GF101:affirm:1",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1061,7 +1118,7 @@
     {
       "slot_id": "MG-GF101:deny:1",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1076,7 +1133,7 @@
     {
       "slot_id": "MG-GF107:neutral:1",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1091,7 +1148,7 @@
     {
       "slot_id": "MG-GF107:affirm:1",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1106,7 +1163,7 @@
     {
       "slot_id": "MG-GF107:deny:1",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1121,7 +1178,7 @@
     {
       "slot_id": "MG-GF104:neutral:1",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.75,
         "lower": 0.75,
@@ -1136,7 +1193,7 @@
     {
       "slot_id": "MG-GF104:affirm:1",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1151,7 +1208,7 @@
     {
       "slot_id": "MG-GF104:deny:1",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1166,7 +1223,7 @@
     {
       "slot_id": "MG-GF106:neutral:1",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1181,7 +1238,7 @@
     {
       "slot_id": "MG-GF106:affirm:1",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1196,7 +1253,7 @@
     {
       "slot_id": "MG-GF106:deny:1",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1211,7 +1268,7 @@
     {
       "slot_id": "MG-GR002:neutral:2",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1226,7 +1283,7 @@
     {
       "slot_id": "MG-GR002:affirm:2",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1241,7 +1298,7 @@
     {
       "slot_id": "MG-GR002:deny:2",
       "public_id": "MG-GR002",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1256,7 +1313,7 @@
     {
       "slot_id": "MG-GR014:neutral:2",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1271,7 +1328,7 @@
     {
       "slot_id": "MG-GR014:affirm:2",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1286,7 +1343,7 @@
     {
       "slot_id": "MG-GR014:deny:2",
       "public_id": "MG-GR014",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.85,
         "lower": 0.85,
@@ -1301,7 +1358,7 @@
     {
       "slot_id": "MG-GF101:neutral:2",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1316,7 +1373,7 @@
     {
       "slot_id": "MG-GF101:affirm:2",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1331,7 +1388,7 @@
     {
       "slot_id": "MG-GF101:deny:2",
       "public_id": "MG-GF101",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1346,7 +1403,7 @@
     {
       "slot_id": "MG-GF107:neutral:2",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1361,7 +1418,7 @@
     {
       "slot_id": "MG-GF107:affirm:2",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.85,
         "lower": 0.85,
@@ -1376,7 +1433,7 @@
     {
       "slot_id": "MG-GF107:deny:2",
       "public_id": "MG-GF107",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1391,7 +1448,7 @@
     {
       "slot_id": "MG-GF104:neutral:2",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 0.75,
         "lower": 0.75,
@@ -1406,7 +1463,7 @@
     {
       "slot_id": "MG-GF104:affirm:2",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1421,7 +1478,7 @@
     {
       "slot_id": "MG-GF104:deny:2",
       "public_id": "MG-GF104",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1436,7 +1493,7 @@
     {
       "slot_id": "MG-GF106:neutral:2",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1451,7 +1508,7 @@
     {
       "slot_id": "MG-GF106:affirm:2",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1466,7 +1523,7 @@
     {
       "slot_id": "MG-GF106:deny:2",
       "public_id": "MG-GF106",
-      "source_kind": "current_public",
+      "source_kind": "historical_public",
       "completion": {
         "exact": 1.0,
         "lower": 1.0,
@@ -1481,7 +1538,7 @@
     {
       "slot_id": "Private-01:A1",
       "public_id": "Private-01",
-      "source_kind": "current_private",
+      "source_kind": "existing_private",
       "completion": {
         "exact": 0.275,
         "lower": 0.275,
@@ -1496,7 +1553,7 @@
     {
       "slot_id": "Private-02:A1",
       "public_id": "Private-02",
-      "source_kind": "current_private",
+      "source_kind": "new_private",
       "completion": {
         "exact": 0.5,
         "lower": 0.5,
@@ -1511,7 +1568,7 @@
     {
       "slot_id": "Private-03:A1",
       "public_id": "Private-03",
-      "source_kind": "current_private",
+      "source_kind": "new_private",
       "completion": {
         "exact": 0.25,
         "lower": 0.25,
@@ -1522,39 +1579,183 @@
       "response_sha256": "fd328095a463dd9ffabd839d8a44053001b85dc5cbf53dc3b0c54d42d07f145d",
       "review_sha256": "dc14a07552a0c934ffcc0850cd5c833c5e7643e44ab3cd543e5d75588cb5be29",
       "human_status": "pending"
+    },
+    {
+      "slot_id": "MG-AR001:A1",
+      "public_id": "MG-AR001",
+      "source_kind": "answer_review_rescored",
+      "completion": {
+        "exact": 1.0,
+        "lower": 1.0,
+        "upper": 1.0
+      },
+      "strict_pass": true,
+      "status": "reviewed",
+      "response_sha256": "9e2b7eeb20f36c01b12a7302b806c28e8f6672cb0cac6a288b375656ae3cd784",
+      "review_sha256": "c260ee66dba34e7bcd91470c61cd02f99c4a433ccb940f2261a760d5f63868bc",
+      "human_status": "pending",
+      "major_error": false,
+      "parent_family_id": "MG-GR104",
+      "dimensions": [
+        {
+          "dimension_id": "core_judgment",
+          "score": 60
+        },
+        {
+          "dimension_id": "evidence_scope",
+          "score": 30
+        },
+        {
+          "dimension_id": "completeness",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "slot_id": "MG-AR002:A1",
+      "public_id": "MG-AR002",
+      "source_kind": "answer_review_rescored",
+      "completion": {
+        "exact": 0.55,
+        "lower": 0.55,
+        "upper": 0.55
+      },
+      "strict_pass": false,
+      "status": "reviewed",
+      "response_sha256": "eb3ce5e9c35f6ff1c4537d0217b9a016204da02902619748a12689d5ba960778",
+      "review_sha256": "dcb2c4ceb2f978e56fdd476d9b8662beb0854524c09209ecb5ae2f91e021150e",
+      "human_status": "pending",
+      "major_error": false,
+      "parent_family_id": "MG-GR014",
+      "dimensions": [
+        {
+          "dimension_id": "core_judgment",
+          "score": 35
+        },
+        {
+          "dimension_id": "evidence_scope",
+          "score": 10
+        },
+        {
+          "dimension_id": "completeness",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "slot_id": "MG-AR003:A1",
+      "public_id": "MG-AR003",
+      "source_kind": "answer_review_rescored",
+      "completion": {
+        "exact": 0.45,
+        "lower": 0.45,
+        "upper": 0.45
+      },
+      "strict_pass": false,
+      "status": "reviewed",
+      "response_sha256": "34f840e135c1c9985ac9f3a6862c2144366c0547ac151ae319c92a8b75a42992",
+      "review_sha256": "4dabc45af1adf16d0fbf10ae2a08d97648c03488b89eae610598b418bf52796e",
+      "human_status": "pending",
+      "major_error": true,
+      "parent_family_id": "MG-GR010",
+      "dimensions": [
+        {
+          "dimension_id": "core_judgment",
+          "score": 30
+        },
+        {
+          "dimension_id": "evidence_scope",
+          "score": 15
+        },
+        {
+          "dimension_id": "completeness",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "slot_id": "MG-AR004:A1",
+      "public_id": "MG-AR004",
+      "source_kind": "answer_review_rescored",
+      "completion": {
+        "exact": 0.775,
+        "lower": 0.775,
+        "upper": 0.775
+      },
+      "strict_pass": false,
+      "status": "reviewed",
+      "response_sha256": "49039056362ad1f2a6e7655186a53d624e5e04eb65312af1984c48fdfdacf3b8",
+      "review_sha256": "7a8587d1d847b5def300d9eb18d3aea15779e5c6cf6ab38b3a7d1e1228035f23",
+      "human_status": "pending",
+      "major_error": false,
+      "parent_family_id": "MG-GP003",
+      "dimensions": [
+        {
+          "dimension_id": "core_judgment",
+          "score": 45
+        },
+        {
+          "dimension_id": "evidence_scope",
+          "score": 22.5
+        },
+        {
+          "dimension_id": "completeness",
+          "score": 10
+        }
+      ]
     }
   ],
   "coverage": {
-    "papers_planned": 35,
-    "a1_planned": 35,
-    "a1_reviewed": 35,
-    "slots_planned": 83,
-    "slots_reviewed": 83
+    "papers_planned": 39,
+    "a1_planned": 39,
+    "a1_reviewed": 39,
+    "slots_planned": 87,
+    "slots_reviewed": 87
   },
   "strict_passes": {
     "core_A1": {
-      "passed": 21,
-      "total": 35,
-      "adjudicated": 35
+      "passed": 22,
+      "total": 39,
+      "adjudicated": 39
     },
     "all_selected_slots": {
-      "passed": 62,
-      "total": 83,
-      "adjudicated": 83
+      "passed": 63,
+      "total": 87,
+      "adjudicated": 87
     }
   },
   "evidence_status": {
     "human_approval": "pending",
     "formal_comparison_eligible": false,
     "backend_identity_independently_verified": false,
-    "composition_new_candidate_calls": null,
-    "new_private_a1_planned": 3,
-    "new_private_answers_present": 3
+    "composition_new_candidate_calls": 0,
+    "new_private_a1_planned": 2,
+    "new_private_answers_present": 2
   },
   "date": "2026-11-03",
   "requested_model": "gemini-3.8-flash-high",
   "requested_reasoning_effort": "high",
-  "source_score_sha256": "09ee883659bea150d31c8eff90b04f7a982859aa5e3ef9fcaa0f0f7fb83336e3",
+  "composition": {
+    "independent_run": false,
+    "new_candidate_calls": 0,
+    "budget_policy": "retain_source_budgets",
+    "budget_conditions_shared": false,
+    "source_timeout_seconds": [
+      2700,
+      10800
+    ],
+    "same_context_and_generation_conditions_checked": true,
+    "frozen_source_reports": [
+      {
+        "report_sha256": "09ee883659bea150d31c8eff90b04f7a982859aa5e3ef9fcaa0f0f7fb83336e3",
+        "review_snapshot_sha256": "10a8ac92ade0562c7a0842ea2fca4a636ee67e71248bec7e69103a16645ad110",
+        "current_engine_reverification_claimed": false,
+        "execution_audit_reverified": false,
+        "lean_recompiled": false
+      }
+    ]
+  },
+  "source_score_sha256": "3ff7f14b59abec84a14685e0b226e7b7de4a76bc8f1bfb105a823bc032ce4be9",
   "execution_condition": {
     "track": "math-gauge.local-tools-no-search/v1",
     "independent_initial_contexts": true,
@@ -1584,14 +1785,22 @@
     "same_context_resumption_submissions": 3,
     "quality_retries": 0,
     "diagnostic_queue_in_score": false,
-    "backend_identity_independently_verified": false
+    "backend_identity_independently_verified": false,
+    "reused_answer_review_native_turn_submissions": 4,
+    "new_candidate_calls_for_v040_composition": 0,
+    "prior_source_accounting_retained": true
   },
   "review_status": {
-    "kind": "ai",
-    "native_terra_primary_review_slots": 82,
-    "root_direct_final_review_slots": 1,
-    "root_sampling_and_arbitration": true,
-    "human_approval": "pending"
+    "human_review": "pending",
+    "prior83_reviews_reused": true,
+    "answer_review_root_ai_reassessments": 4,
+    "prior83_scope": {
+      "kind": "ai",
+      "native_terra_primary_review_slots": 82,
+      "root_direct_final_review_slots": 1,
+      "root_sampling_and_arbitration": true,
+      "human_approval": "pending"
+    }
   },
   "consumption": {
     "candidate": {
@@ -1605,6 +1814,53 @@
     "orchestration_and_root_review_tokens": null,
     "actual_fees": null,
     "reported_tokens_are_observed_aggregates": true,
-    "thinking_and_cached_fields_added_to_total": false
+    "thinking_and_cached_fields_added_to_total": false,
+    "scope": "Retained prior83-slot source consumption; AR4 reused execution consumption is not added here; this recomposition makes0 model calls."
+  },
+  "answer_review": {
+    "assessment_version": "0.2.0",
+    "scoring_version": "0.4.0",
+    "post_observation_rescoring": true,
+    "dimensions": [
+      {
+        "id": "core_judgment",
+        "points": 60
+      },
+      {
+        "id": "evidence_scope",
+        "points": 30
+      },
+      {
+        "id": "completeness",
+        "points": 10
+      }
+    ],
+    "aggregation_unit": "parent_family_id",
+    "family_count": 4,
+    "major_error_rate": {
+      "exact": 25.0,
+      "numerator": 1,
+      "denominator": 4,
+      "unknown": 0
+    },
+    "strict_passes": {
+      "passed": 1,
+      "total": 4,
+      "adjudicated": 4
+    },
+    "auxiliary_metrics_have_no_extra_weight": true
+  },
+  "methodology_revision": {
+    "version": "0.4.0",
+    "post_observation": true,
+    "original_AR_responses_reused": 4,
+    "new_candidate_calls": 0,
+    "lean_recompilations": 0,
+    "notice": "审阅方向、60/30/10评分合同及权重在观察既有答卷后调整，原8答仅重评；旧pilot评分保留为历史，不是重新考试。原35题逐卷结果保持不变。"
+  },
+  "default_public_profile": {
+    "version": "0.4.0",
+    "papers": 36,
+    "slots": 84
   }
 }

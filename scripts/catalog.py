@@ -29,6 +29,7 @@ CATEGORIES = (
     ("lean-audit", "Lean 语义审计", 6),
     ("lean-construction", "Lean 生成与修复", 6),
     ("chapters", "整章形式化", 2),
+    ("answer-review", "真实答卷审阅", 4),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
 sys.dont_write_bytecode = True
@@ -97,13 +98,15 @@ def validate_assignment(assignment: dict, source: dict) -> None:
     ids = [tag.get("focus_id") for tag in tags]
     require(len(ids) == len(set(ids)), f"{cid}: duplicate focus tag")
     require(all(fid in FOCUS_IDS for fid in ids), f"{cid}: unknown focus tag")
-    stages = {stage["id"]: (i, stage) for i, stage in enumerate(contract["stages"])}
+    is_review = contract["kind"] == "answer_review"
+    units = contract["dimensions"] if is_review else contract["stages"]
+    stages = {stage["id"]: (i, stage) for i, stage in enumerate(units)}
     for tag in tags:
         evidence = tag.get("evidence", [])
         require(isinstance(evidence, list) and evidence, f"{cid}: tag lacks evidence")
         seen = set()
         for item in evidence:
-            sid = item.get("stage_id")
+            sid = item.get("dimension_id" if is_review else "stage_id")
             require(sid in stages and sid not in seen, f"{cid}: invalid evidence ID {sid}")
             seen.add(sid)
             number, stage = stages[sid]
@@ -118,12 +121,17 @@ def validate_assignment(assignment: dict, source: dict) -> None:
                 f"{cid}/{sid}: a brief evidence note is required",
             )
             require(
-                item.get("contract_pointer") == f"/stages/{number}/required_evidence",
+                item.get("contract_pointer") == f"/{'dimensions' if is_review else 'stages'}/{number}/required_evidence",
                 f"{cid}/{sid}: incorrect contract pointer",
             )
             locator = item.get("task_locator", {})
             require(locator.get("path") == source["paths"]["task"], f"{cid}: task drift")
-            if contract["kind"] == "progressive":
+            if is_review:
+                require(
+                    locator.get("applies_to") == "whole-answer-review" and locator.get("line") == 1,
+                    f"{cid}/{sid}: answer-review locator drift",
+                )
+            elif contract["kind"] == "progressive":
                 require(
                     sid in source["headings"]
                     and {key: locator.get(key) for key in ("line", "heading")}
@@ -201,17 +209,17 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
     lines = [
         "# 按考察重点选卷",
         "",
-        "本目录覆盖完整43卷题库，逐卷标明默认32卷与后备11卷。默认集含180递进阶段及126章节义务，共306项；后备集含66阶段。每份完整试卷是一个样本，阶段与义务不能当作独立试题。",
+        "本目录覆盖默认36份任务与后备11份，共47条相关记录：原43份数学卷与4份真实答卷审阅。审阅关联既有母题，不增加独立数学家族；默认36份任务仍关联32个母题家族。原数学默认集含180递进阶段与126章节义务，共306项，后备含66阶段。阶段、义务及审阅维度均不能当作独立试题。",
         "",
         "分类是AI审查建议；源题全部仍为 **draft / human pending**。本目录不产生模型调用、数学裁定或新增判卷要求，也不证明作者或候选Lean覆盖。完整要求以唯一题面和合同为准。",
         "",
-        "每卷恰有1个主重点和2–4个次重点。主重点构成互斥阅读索引；多标签层可以重叠，卷数不能相加。按重点统计仍以完整试卷为分母，保留未运行、未决和环境失败。",
+        "每份任务恰有1个主重点和2–4个次重点。主重点构成互斥阅读索引；多标签层可以重叠，数量不能相加。数学任务的证据指向实际阶段/义务，审阅任务指向审阅维度，不能据此给审阅者增加重新解题或Lean交付义务。这些标签没有另行冻结子分数，不重复加权。",
         "",
         "中性自查、支持/怀疑立场和重复轮次属于执行维度，见[可靠性执行协议](../protocol/reliability-execution.md)。数学主题和任务类型是其他交叉索引。",
         "",
         "本页仅供出题侧，不能附入候选输入；候选材料继续由共享runner按每题显式投影生成。",
         "",
-        "| 考察重点 | 主重点卷数 | 含该标签卷数 |",
+        "| 考察重点 | 主重点任务数 | 含该标签任务数 |",
         "| --- | ---: | ---: |",
     ]
     for definition in taxonomy["definitions"]:
@@ -231,18 +239,19 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
                 for tag in entry["focus"]
                 if tag["focus_id"] == fid and tag["role"] == role
             ]
-            lines += ["", f"### {label} · {len(selected)}卷（完整题库）", "", "| 试卷 | 成员 | 版本与规模 | 实际阶段或义务证据 |", "| --- | --- | --- | --- |"]
+            lines += ["", f"### {label} · {len(selected)}份（完整题库）", "", "| 任务 | 成员 | 版本与规模 | 实际阶段、义务或审阅维度证据 |", "| --- | --- | --- | --- |"]
             for entry, tag in selected:
-                unit = "义务" if entry["kind"] == "chapter_formalization" else "阶段"
+                is_review = entry["kind"] == "answer_review"
+                unit = "审阅维度" if is_review else "义务" if entry["kind"] == "chapter_formalization" else "阶段"
                 evidence = "；".join(
-                    f"**{item['stage_id']}**：{item['note'].rstrip('。')}"
+                    f"**{item.get('dimension_id', item.get('stage_id'))}**：{item['note'].rstrip('。')}"
                     for item in tag["evidence"]
                 ) + "。"
                 title = link(f"{entry['case_id']} · {entry['title']}", entry["paths"]["task"])
                 contract = link("合同", entry["paths"]["contract"])
                 lines.append(
                     f"| {title} · {contract} | {'默认' if entry['membership'] == 'default' else '后备'} | {entry['version']} · "
-                    f"{entry['stage_count']}{unit} | {evidence} |"
+                    f"{entry['review_dimension_count'] if is_review else entry['stage_count']}{unit} | {evidence} |"
                 )
     lines += [
         "",
@@ -256,8 +265,8 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
 
 def render_index(catalog: dict) -> str:
     lines = ["# 当前试卷", "",
-             "默认题集 `cases/suite.json` 含32份完整试卷、306项相关审核义务，按下方四类交付整理。另11份备选卷、66项义务独立存放在 [`reserve/`](reserve/README.md)，由 `cases/reserve-suite.json` 显式选择。两者不重叠，合为原43卷/372项公开开发题库；数学材料原样保留。每组或每章是一份相关样本，义务数不能当作独立试题数。", "",
-             "材料已具数学参考、逐项判准、来源及AI审核记录；全部为 **draft / human pending**。旧43卷/177槽Terra试跑已有[暂定结果](../docs/terra-pilot-2026-11-02.md)；新版32卷/80槽尚未运行。详见[选卷说明](../docs/selection-v0.3.0.md)。", "",
+             "0.4.0默认题集 `cases/suite.json` 含36份相关任务：原32份数学卷与4份真实答卷审阅，关联32个母题家族。另11份后备数学卷由 `cases/reserve-suite.json` 显式选择。原43份数学卷共372项相关义务，新增审阅不制造4个独立数学家族，也不把审阅维度计入数学阶段或义务。", "",
+             "材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review-pilot.md)与[当前结果](../docs/benchmark-comparison-2026-11-03.md)。已发布资产保持原样。", "",
              "题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。", "",
              "[按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)"]
     for category in catalog["categories"]:
@@ -269,14 +278,17 @@ def render_index(catalog: dict) -> str:
             paths = entry["paths"]
             task = os.path.relpath(paths["task"], "cases")
             folder = os.path.relpath(str(Path(paths["case"]).parent), "cases")
-            unit = "义务" if entry["kind"] == "chapter_formalization" else "阶段"
+            is_review = entry["kind"] == "answer_review"
+            unit = "审阅维度" if is_review else "义务" if entry["kind"] == "chapter_formalization" else "阶段"
+            contract_link = os.path.relpath(paths["contract"], "cases")
+            extra = "" if is_review else f" · [作者Lean]({folder}/formal/COVERAGE.md)"
             lines.append(f"| [{entry['case_id']} · {entry['title']}]({task}) | "
                          f"{entry['task_kind']} | "
-                         f"{entry['stage_count']}{unit} | [合同]({folder}/contract.json) · "
+                         f"{entry['review_dimension_count'] if is_review else entry['stage_count']}{unit} | [合同]({contract_link}) · "
                          f"[参考]({folder}/reference.md) · [评分]({folder}/rubric.json) · "
-                         f"[题包复核]({folder}/review.json) · [作者Lean]({folder}/formal/COVERAGE.md) |")
+                         f"[题包复核]({folder}/review.json){extra} |")
     lines += ["", "## 备选卷 · 11份", "",
-              "[备选目录、主题分类与完整材料](reserve/README.md)集中列出全部11份书面卷。备选身份是选卷安排，`proofs` 是交付类型；备选卷不进入默认32题题包或80槽计划。显式调用与保留理由见备选目录。", "",
+              "[备选目录、主题分类与完整材料](reserve/README.md)集中列出11份书面卷，不进入默认36份任务或84份记录的公开计划。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。", "",
               "所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。", ""]
     return "\n".join(lines)
 
@@ -303,7 +315,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     suites, sources = load_sources(root, taxonomy)
     assignments = taxonomy.get("paper_assignments", [])
     ids = [item.get("case_id") for item in assignments]
-    require(len(ids) == len(set(ids)) == 43 and set(ids) == set(sources), "Assignments must cover exactly the 43 current papers once")
+    require(len(ids) == len(set(ids)) == 47 and set(ids) == set(sources), "Assignments must cover exactly 43 mathematical papers and 4 answer reviews once")
     entries = []
     for assignment in sorted(assignments, key=lambda item: item["case_id"]):
         cid = assignment["case_id"]
@@ -312,11 +324,16 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         case, contract = source["case"], source["contract"]
         entries.append({
             "case_id": cid, "version": case["version"], "title": case["title"],
-            "family_id": case["family_id"], "kind": contract["kind"],
+            "family_id": case.get("family_id") or contract.get("parent_family_id") or cid,
+            "kind": contract["kind"],
             "category": source["category"],
-            "task_kind": case["task_kind"], "sample_unit": "one-full-paper",
-            "stage_count": len(contract["stages"]),
-            "stage_ids": [stage["id"] for stage in contract["stages"]],
+            "task_kind": case["task_kind"],
+            "sample_unit": "one-complete-answer-review; parent-correlated" if contract["kind"] == "answer_review" else "one-full-paper",
+            "parent_family_id": contract.get("parent_family_id", cid),
+            "stage_count": len(contract.get("stages", [])),
+            "stage_ids": [stage["id"] for stage in contract.get("stages", [])],
+            "review_dimension_count": len(contract.get("dimensions", [])),
+            "review_dimension_ids": [item["id"] for item in contract.get("dimensions", [])],
             "suite_root": source["suite_root"], "suite_sha256": source["suite_sha256"],
             "suite_manifest": source["suite_manifest"], "membership": source["membership"],
             "paths": source["paths"], "original_sha256": source["source_bindings"],
@@ -327,27 +344,33 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         })
     progressive = [entry for entry in entries if entry["kind"] == "progressive"]
     chapters = [entry for entry in entries if entry["kind"] == "chapter_formalization"]
+    answer_reviews = [entry for entry in entries if entry["kind"] == "answer_review"]
     scope = {
         "id": "complete-case-bank", "paper_count": len(entries),
         "progressive_papers": len(progressive),
         "progressive_stages": sum(entry["stage_count"] for entry in progressive),
         "chapter_papers": len(chapters),
         "chapter_obligations": {entry["case_id"]: entry["stage_count"] for entry in chapters},
-        "sample_unit": "one full paper",
+        "answer_review_tasks": len(answer_reviews),
+        "answer_review_dimensions": sum(entry["review_dimension_count"] for entry in answer_reviews),
+        "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
     }
-    require(taxonomy.get("scope") == scope, "Declared 43-paper scope/counts drift")
+    require(taxonomy.get("scope") == scope, "Declared mathematical/review task scope/counts drift")
     primary = Counter(entry["focus"][0]["focus_id"] for entry in entries)
     tagged = Counter(tag["focus_id"] for entry in entries for tag in entry["focus"])
     catalog = {
         "schema": "math-gauge.case-catalog/v1", "version": taxonomy["version"],
         "catalog_status": "ai-classification-suggestions; source-human-review-separate",
         "snapshot_status": "final-catalog-snapshot",
-        "operator_only": True, "path_base": "repository root", "sample_unit": "one full paper",
+        "operator_only": True, "path_base": "repository root",
+        "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
         "candidate_input_policy": taxonomy["candidate_input_policy"],
         "taxonomy": TAXONOMY, "taxonomy_sha256": hashlib.sha256(raw).hexdigest(),
         "scope": scope,
         "counts": {
-            "papers": len(entries), "default_papers": 32, "reserve_papers": 11,
+            "papers": len(entries), "default_papers": 36, "reserve_papers": 11,
+            "mathematical_papers": 43, "answer_review_tasks": 4,
+            "default_parent_families": 32,
             "default_obligations": sum(e["stage_count"] for e in entries if e["membership"] == "default"),
             "reserve_obligations": sum(e["stage_count"] for e in entries if e["membership"] == "reserve"),
             "progressive_stages": scope["progressive_stages"],
@@ -375,7 +398,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     }
     require([item["count"] for item in catalog["categories"]] == [item[2] for item in CATEGORIES],
             "Category counts drift")
-    require([item["paper_count"] for item in suites] == [32, 11]
+    require([item["paper_count"] for item in suites] == [36, 11]
             and catalog["counts"]["default_obligations"] == 306
             and catalog["counts"]["reserve_obligations"] == 66,
             "Default/reserve membership counts drift")

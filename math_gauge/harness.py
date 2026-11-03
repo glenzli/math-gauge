@@ -43,7 +43,7 @@ SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
 COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
-_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "exploration",
+_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "exploration", "answer-review",
                     "repeat", "neutral", "stance", "core", "all")
 _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha256",
                  "base_plan_sha256", "suite", "runner_sha256", "protocol_version", "planned",
@@ -266,7 +266,7 @@ def _inspect_bundle_contents(root):
                "Preparation-only status changed")
     _h_require(isinstance(value["targets"], list) and value["targets"]
                and len(value["targets"]) == len(set(value["targets"]))
-               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "exploration",
+               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "exploration", "answer-review",
                                              "repeat", "neutral", "stance", "core", "all"},
                "Invalid export target projection")
     _h_projection(root, value, {"CONTROLLER.md", "controller.py", "submission-template.json"})

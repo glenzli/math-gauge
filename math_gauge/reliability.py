@@ -16,7 +16,7 @@ from pathlib import Path
 
 from .benchmarks import (case_approval_sources, identity, independent_attempts,
                          select_slots, validate_plan)
-from .catalog import (assessment_units, candidate_message, digest_bytes, read_json, safe_file,
+from .catalog import (assessment_units, assessment_weights, candidate_message, digest_bytes, read_json, safe_file,
                       validate_group_contract, write_json)
 from .execution import extract_candidate_lean, invoke_conversation, now, runner_fingerprint
 from .execution_policy import project_followup_prompt
@@ -123,12 +123,13 @@ def _bind_suite(plan, suite):
             raise ValueError("Reliability case source suite identity changed")
         contract_raw = suite.case_file(case, case["group_contract"]).read_bytes()
         contract = validate_group_contract(json.loads(contract_raw))
-        stages = [{"stage_id": s["id"], "points": s["points"], "lean_required": s["lean_required"]}
-                  for s in assessment_units(contract)]
+        weights = assessment_weights(contract)
+        units = assessment_units(contract)
         if (case["version"] != row["version"] or _request_hash(request) != row["request_sha256"]
                 or digest_bytes(candidate_message(request).encode()) != row["candidate_message_sha256"]
                 or digest_bytes(contract_raw) != row["group_contract_sha256"]
-                or stages != row["stages"] or sum(s["points"] for s in stages) != row["total_weight"]):
+                or any(row.get(key) != value for key, value in weights.items())
+                or sum(s["points"] for s in units) != row["total_weight"]):
             raise ValueError("Reliability case input, contract or stage weight changed")
 
 

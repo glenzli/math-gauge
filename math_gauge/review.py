@@ -1,6 +1,7 @@
 """Review ownership: bind opinions to exact responses and keep fixture/AI/human evidence distinct."""
 
 import json
+from fractions import Fraction
 from pathlib import Path
 
 from .catalog import (candidate_message, digest_bytes, read_json, safe_file,
@@ -138,6 +139,49 @@ def _validate_research_review(contract, entry, record):
             "dimensions": rows}
 
 
+def _validate_answer_review(contract, entry, record):
+    """Continuous mathematical credit and major-error evidence are independent."""
+    rows = entry.get("dimensions")
+    if (entry.get("stages") or not isinstance(rows, list)
+            or not all(isinstance(row, dict) for row in rows)
+            or [row.get("dimension_id") for row in rows] != [row["id"] for row in contract["dimensions"]]):
+        raise ValueError("Answer reviews require the frozen dimensions without stage judgments")
+    lower, upper = Fraction(), Fraction()
+    for dimension, row in zip(contract["dimensions"], rows):
+        score = row.get("score")
+        if not isinstance(row.get("notes"), str) or not row["notes"].strip():
+            raise ValueError("Answer-review dimensions require specific notes")
+        if score is None:
+            upper += dimension["points"]
+            continue
+        if type(score) not in (int, float):
+            raise ValueError("Answer-review scores must be finite bounded numbers or null")
+        try:
+            value = Fraction(str(score))
+        except (ValueError, ZeroDivisionError) as error:
+            raise ValueError("Answer-review scores must be finite bounded numbers") from error
+        if not 0 <= value <= dimension["points"]:
+            raise ValueError("Answer-review dimension score is outside its bound")
+        lower += value
+        upper += value
+    if ("major_error" not in entry or entry["major_error"] is not None
+            and type(entry["major_error"]) is not bool
+            or not isinstance(entry.get("major_error_notes"), str)
+            or not entry["major_error_notes"].strip()):
+        raise ValueError("Answer review requires a separate major-error judgment and notes")
+    exact = float(lower / 100) if lower == upper else None
+    if entry["decision"] == "pass" and exact != 1:
+        raise ValueError("Strict answer-review pass requires full resolved dimension credit")
+    strict = (entry["decision"] == "pass" and record["status"] == "ok")
+    return {"assessment_unit": "review_dimension", "kind": "answer_review",
+            "parent_family_id": contract["parent_family_id"], "dimension_count": len(rows),
+            "completed_weight": float(lower), "upper_weight": float(upper), "total_weight": 100,
+            "completion": {"lower": float(lower / 100), "upper": float(upper / 100), "exact": exact},
+            "strict_pass": strict if exact is not None else None,
+            "major_error": entry["major_error"], "major_error_notes": entry["major_error_notes"],
+            "dimensions": rows}
+
+
 def _validate_review_axes(entry, record):
     """Shared content-review contract, independent of conversation transport."""
     if (entry.get("reviewer_kind") not in {"human", "ai", "fixture"}
@@ -172,6 +216,8 @@ def _validate_group_review(root, case, record, entry, *, response_text=None, lea
         raise ValueError("Review binds a different group contract")
     if contract["kind"] == "research_exploration":
         return _validate_research_review(contract, entry, record)
+    if contract["kind"] == "answer_review":
+        return _validate_answer_review(contract, entry, record)
     rows = entry.get("stages")
     expected = [s["id"] for s in contract["stages"]]
     if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows) or [r.get("stage_id") for r in rows] != expected:
@@ -310,8 +356,10 @@ def templates(root):
         contract = _group_contract(root, case)
         if contract:
             entry["group_contract_sha256"] = case["group_contract"]["sha256"]
-            if contract["kind"] == "research_exploration":
+            if contract["kind"] in {"research_exploration", "answer_review"}:
                 entry["dimensions"] = _dimension_templates(contract)
+                if contract["kind"] == "answer_review":
+                    entry.update(major_error=None, major_error_notes="")
             else:
                 entry["stages"] = [_stage_template(s) for s in contract["stages"]]
     return entries
@@ -838,3 +886,106 @@ def compare_models(case_index, model_runs, *, execution_receipts, lean_reports=N
         },
         "notice": "Single attempts on frozen cases; AI review is provisional. Task families are related variants, not independent samples. Missing or invalid executions do not yield a complete-suite pass rate.",
     }
+
+
+def rescored_answer_inputs(plan, suite, source):
+    """Bind a new attributed rubric to an existing ordinary native answer run.
+
+    This is a read-only assessment projection, never a new execution run. The
+    original transport metadata may have an older case version; the complete
+    candidate message must nevertheless be identical to the trusted target.
+    """
+    from .benchmarks import identity
+    if (not isinstance(source, dict) or source.get("post_observation_rescoring") is not True
+            or not isinstance(source.get("notes"), str) or not source["notes"].strip()):
+        raise ValueError("Answer rescoring requires explicit post-observation attribution")
+    root = Path(source["run"]).resolve()
+    meta, records = inspect_run(root)
+    reviews_path = Path(source["reviews"]).resolve()
+    entries = read_json(reviews_path)
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("Answer rescoring requires an attributed review array")
+    targets = {case["case_id"]: case for case in plan["case_index"]}
+    rows, seen = [], set()
+    for entry in entries:
+        cid = entry.get("case_id")
+        if cid in seen or cid not in records or cid not in targets:
+            raise ValueError("Unknown or duplicate answer-review source")
+        seen.add(cid)
+        if records[cid]["status"] != "ok" or not safe_file(root, cid + "/response.md").read_bytes().strip():
+            raise ValueError("Answer rescoring requires an executed ok original complete response")
+        target = targets[cid]
+        if target.get("contract_kind") != "answer_review":
+            raise ValueError("Only answer-review assessments may use this rescoring path")
+        case = suite.cases[cid]
+        contract_bytes = suite.case_file(case, case["group_contract"]).read_bytes()
+        contract_hash = digest_bytes(contract_bytes)
+        contract = validate_group_contract(json.loads(contract_bytes))
+        request = read_json(safe_file(root, cid + "/solver/request.json"))
+        message_hash = digest_bytes(candidate_message(request).encode())
+        if (message_hash != target["candidate_message_sha256"]
+                or message_hash != digest_bytes(candidate_message(suite.request(case)).encode())
+                or contract_hash != target["group_contract_sha256"]
+                or entry.get("group_contract_sha256", entry.get("contract_sha256")) != contract_hash
+                or entry.get("response_sha256") != records[cid]["response_sha256"]
+                or entry.get("rubric_sha256") != digest_bytes(suite.case_file(case, case["rubric"]).read_bytes())
+                or entry.get("reference_sha256") != digest_bytes(suite.case_file(case, case["reference"]).read_bytes())):
+            raise ValueError("Rescoring changed the original answer, candidate message or target contract")
+        record = records[cid]
+        # Retain and verify the original native evidence, when supplied by the
+        # ordinary evidence importer. No backend authentication is inferred.
+        for descriptor in record.get("native_evidence", {}).values():
+            if isinstance(descriptor, dict) and "path" in descriptor and "sha256" in descriptor:
+                if digest_bytes(Path(descriptor["path"]).read_bytes()) != descriptor["sha256"]:
+                    raise ValueError("Original native evidence changed during rescoring")
+        _validate_review_axes(entry, record)
+        diagnostic = _validate_answer_review(contract, entry, record)
+        lineage = {"post_observation_rescoring": True, "notes": source["notes"],
+                   "source_run_id": meta["run_id"], "source_root": str(root),
+                   "source_run_sha256": digest_bytes((root / "run.json").read_bytes()),
+                   "source_record_sha256": digest_bytes((root / cid / "record.json").read_bytes()),
+                   "original_request_sha256": record["request_sha256"],
+                   "candidate_message_sha256": message_hash,
+                   "response_sha256": record["response_sha256"],
+                   "original_reviews_sha256": digest_bytes((root / "reviews.json").read_bytes())
+                        if (root / "reviews.json").is_file() else None,
+                   "new_reviews_path": str(reviews_path),
+                   "new_reviews_sha256": digest_bytes(reviews_path.read_bytes()),
+                   "new_review_sha256": identity(entry), "target_case_version": case["version"],
+                   "target_group_contract_sha256": contract_hash, "new_candidate_calls": 0}
+        valid = (entry["assumption_fidelity"] == "clean" and entry["proof_validity"] == "valid"
+                 and entry["scope_accuracy"] == "correct" and not entry["unnecessary_restriction"])
+        resolved = diagnostic["completion"]["exact"] is not None
+        axis = {"state": "C" if valid else "I" if resolved else "U",
+                "adjudicated": resolved, "reasons": [] if valid and resolved else
+                    ["mathematical_error" if resolved else "review_pending"]}
+        strict = {"state": "C" if diagnostic["strict_pass"] else "U",
+                  "adjudicated": resolved, "reasons": [] if diagnostic["strict_pass"] else
+                    ["candidate_incomplete" if resolved else "review_pending"]}
+        fixture = meta.get("origin") in {"fixture", "replay"}
+        rows.append({"slot_id": cid + ":A1", "case_id": cid, "started": record["status"] == "ok",
+                     "selected": True, "status": "responded", "execution_status": record["status"],
+                     "model_label": meta["model_label"], "origin": "replay" if fixture else "external_import",
+                     "source_origin": meta["origin"], "fixture_only": fixture,
+                     "evidence_id": identity({"run_id": meta["run_id"], "case_id": cid,
+                                               "response_sha256": record["response_sha256"]}),
+                     "slot_record_sha256": lineage["source_record_sha256"],
+                     "response_sha256": record["response_sha256"], "history_sha256": None,
+                     "material_sha256": record["response_sha256"], "binding": lineage,
+                     "review_sha256": identity(entry), "reviewer_kind": entry["reviewer_kind"],
+                     "strict_pass": diagnostic["strict_pass"], "completion": diagnostic["completion"],
+                     "whole_math": axis, "whole_strict": strict,
+                     "focus_math": {"state": "U", "adjudicated": False, "reasons": ["not_selected"]},
+                     "major_error": diagnostic["major_error"], "group_diagnostic": diagnostic,
+                     "problem_defect": False, "case_approval_evidence_verified": False,
+                     "comparison_eligible": False, "execution_eligibility": {"eligible": False,
+                         "reasons": ["post_observation_rescoring", "external_origin_unverified"]},
+                     "answer_review_rescoring": lineage})
+    return {"rows": rows, "receipt": {"run_id": meta["run_id"], "root": str(root),
+        "model_label": meta["model_label"], "plan_sha256": None,
+        "runtime_sha256": None, "suite": {"id": meta["suite_id"], "version": meta["suite_version"],
+            "sha256": meta["suite_sha256"]}, "budget": {"timeout_seconds": meta["timeout_seconds"]},
+        "selected_slot_ids": [row["slot_id"] for row in rows],
+        "answer_review_rescoring": {"post_observation_rescoring": True, "new_candidate_calls": 0,
+            "reviews_path": str(reviews_path), "reviews_sha256": digest_bytes(reviews_path.read_bytes()),
+            "notes": source["notes"]}}}

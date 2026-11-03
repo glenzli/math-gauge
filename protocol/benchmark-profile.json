@@ -1,14 +1,14 @@
 {
-  "schema": "math-gauge.benchmark-profile/v2",
+  "schema": "math-gauge.benchmark-profile/v4",
   "id": "math-gauge-composite",
-  "version": "0.2.0",
-  "standard_version": "0.3.0",
+  "version": "0.4.0",
+  "standard_version": "0.4.0",
   "operator_only": true,
   "path_base": "repository",
   "suite": {
     "id": "math-gauge-benchmark",
-    "version": "0.3.0",
-    "sha256": "ad91dd894a37aeae8f192cc9b519d2760180e46e0336577bcb44b347d31c7bf1"
+    "version": "0.4.0",
+    "sha256": "4368ea38f231b9607c67440d121835f2e71f21767bd05a817511777106ef17a6"
   },
   "components": [
     {
@@ -34,7 +34,7 @@
         "MG-GR103",
         "MG-GR104"
       ],
-      "weight": 25
+      "weight": 22.5
     },
     {
       "id": "lean-audit",
@@ -47,7 +47,7 @@
         "MG-GF109",
         "MG-GF111"
       ],
-      "weight": 25
+      "weight": 22.5
     },
     {
       "id": "lean-construction",
@@ -60,7 +60,7 @@
         "MG-GF110",
         "MG-GF112"
       ],
-      "weight": 25
+      "weight": 22.5
     },
     {
       "id": "chapters",
@@ -69,12 +69,23 @@
         "MG-C002",
         "MG-C003"
       ],
-      "weight": 25
+      "weight": 22.5
+    },
+    {
+      "id": "answer-review",
+      "title": "真实答卷审阅",
+      "case_ids": [
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004"
+      ],
+      "weight": 10
     }
   ],
   "overall_weights": {
-    "core": 70,
-    "repeat": 10,
+    "core": 75,
+    "repeat": 5,
     "neutral": 10,
     "stance": 10
   },
@@ -84,10 +95,10 @@
     "schedule": "protocol/reliability/schedule.json",
     "protocol_version": "0.2.0"
   },
-  "score_unit": "0-100; core uses each full paper A1 only; repeat uses the frozen six-paper panel with A1/A2/A3; no best-of selection",
+  "score_unit": "0-100; A1 core, answer-review continuous dimension score averaged within parent family then across families; strict and major-error rate separate",
   "missing_policy": "fixed-denominator intervals; exact null unless the metric is mathematically determined (a confirmed failure can determine three-attempt strict repeat as zero); always retain coverage; never renormalize missing components",
   "formal_eligibility": "Human-approved cases and human reviews plus verified non-fixture execution, input identity and applicable Lean gates; provisional values do not establish formal eligibility.",
-  "weight_rationale": "Four delivery types have equal importance despite unequal paper counts. Overall allocates 70% to task completion and 10% each to repeated strict completion, neutral self-check correctness and stance-conditioned correctness. These are declared value choices, not empirical estimates of difficulty or statistical independence.",
+  "weight_rationale": "v0.4.0 post-observation development standard: old four public core components each22.5%, answer-review10%; overall75/5/10/10. Historical profiles/results remain version-bound.",
   "attempt_schedule": {
     "MG-C002": [
       "A1"
@@ -195,6 +206,18 @@
       "A1"
     ],
     "MG-GR104": [
+      "A1"
+    ],
+    "MG-AR001": [
+      "A1"
+    ],
+    "MG-AR002": [
+      "A1"
+    ],
+    "MG-AR003": [
+      "A1"
+    ],
+    "MG-AR004": [
       "A1"
     ]
   },

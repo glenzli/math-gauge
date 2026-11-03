@@ -282,15 +282,15 @@ class CompactBenchmarkPlanTests(unittest.TestCase):
         cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
-    def test_default_32_has_80_slots_and_separate_fixed_targets(self):
-        self.assertEqual([len(c["case_ids"]) for c in self.profile.data["components"]], [18, 6, 6, 2])
-        self.assertEqual(self.plan["planned"], {"papers": 32, "independent_slots": 44,
-            "neutral_slots": 12, "stance_slots": 24, "all_slots": 80, "selected_slots": 80})
+    def test_default_36_has_84_slots_and_separate_fixed_targets(self):
+        self.assertEqual([len(c["case_ids"]) for c in self.profile.data["components"]], [18, 6, 6, 2, 4])
+        self.assertEqual(self.plan["planned"], {"papers": 36, "independent_slots": 48,
+            "neutral_slots": 12, "stance_slots": 24, "all_slots": 84, "selected_slots": 84})
         for target, size in {"proofs": 18, "lean-audit": 6, "lean-construction": 6,
-                "chapters": 2, "core": 32, "repeat": 18, "neutral": 18, "stance": 30, "all": 80}.items():
+                "chapters": 2, "answer-review": 4, "core": 36, "repeat": 18, "neutral": 18, "stance": 30, "all": 84}.items():
             self.assertEqual(len(select_slots(self.plan, [target])), size, target)
         self.assertEqual(len(select_slots(self.plan, ["neutral", "stance"])), 42)
-        self.assertEqual(len(select_slots(self.plan, ["core", "repeat"])), 44)
+        self.assertEqual(len(select_slots(self.plan, ["core", "repeat"])), 48)
         self.assertTrue(all(s["attempt_label"] == "A1" for s in select_slots(self.plan, ["core"])))
         self.assertEqual({s["slot_id"] for s in select_slots(self.plan, ["chapters"])},
                          {"MG-C002:A1", "MG-C003:A1"})
@@ -302,9 +302,11 @@ class CompactBenchmarkPlanTests(unittest.TestCase):
         self.assertEqual(len(reserve.cases), 11)
         self.assertFalse(set(reserve.cases) & set(self.suite.cases))
         historical = legacy_suite()
-        self.assertEqual(set(reserve.cases) | set(self.suite.cases), set(historical.cases))
+        self.assertEqual((set(reserve.cases) | set(self.suite.cases)) - {f"MG-AR{i:03d}" for i in range(1,5)}, set(historical.cases))
         for source in (self.suite, reserve):
             for cid, case in source.cases.items():
+                if cid.startswith("MG-AR"):
+                    continue
                 self.assertEqual(candidate_message(source.request(case)),
                                  candidate_message(historical.request(historical.cases[cid])))
         with tempfile.TemporaryDirectory() as directory:

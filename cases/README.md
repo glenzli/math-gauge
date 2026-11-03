@@ -1,8 +1,8 @@
 # 当前试卷
 
-默认题集 `cases/suite.json` 含32份完整试卷、306项相关审核义务，按下方四类交付整理。另11份备选卷、66项义务独立存放在 [`reserve/`](reserve/README.md)，由 `cases/reserve-suite.json` 显式选择。两者不重叠，合为原43卷/372项公开开发题库；数学材料原样保留。每组或每章是一份相关样本，义务数不能当作独立试题数。
+0.4.0默认题集 `cases/suite.json` 含36份相关任务：原32份数学卷与4份真实答卷审阅，关联32个母题家族。另11份后备数学卷由 `cases/reserve-suite.json` 显式选择。原43份数学卷共372项相关义务，新增审阅不制造4个独立数学家族，也不把审阅维度计入数学阶段或义务。
 
-材料已具数学参考、逐项判准、来源及AI审核记录；全部为 **draft / human pending**。旧43卷/177槽Terra试跑已有[暂定结果](../docs/terra-pilot-2026-11-02.md)；新版32卷/80槽尚未运行。详见[选卷说明](../docs/selection-v0.3.0.md)。
+材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review-pilot.md)与[当前结果](../docs/benchmark-comparison-2026-11-03.md)。已发布资产保持原样。
 
 题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。
 
@@ -60,8 +60,17 @@
 | [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) | generate | 34义务 | [合同](chapters/MG-C002/contract.json) · [参考](chapters/MG-C002/reference.md) · [评分](chapters/MG-C002/rubric.json) · [题包复核](chapters/MG-C002/review.json) · [作者Lean](chapters/MG-C002/formal/COVERAGE.md) |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) | generate | 92义务 | [合同](chapters/MG-C003/contract.json) · [参考](chapters/MG-C003/reference.md) · [评分](chapters/MG-C003/rubric.json) · [题包复核](chapters/MG-C003/review.json) · [作者Lean](chapters/MG-C003/formal/COVERAGE.md) |
 
+## 真实答卷审阅 · 4份
+
+| 试卷 | 任务 | 必答规模 | 完整材料 |
+| --- | --- | ---: | --- |
+| [MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解](answer-review/MG-AR001/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR001/group-contract.json) · [参考](answer-review/MG-AR001/reference.md) · [评分](answer-review/MG-AR001/rubric.json) · [题包复核](answer-review/MG-AR001/review.json) |
+| [MG-AR002 · 真实答卷审阅 002：线性关系、坐标纤维与无限赋值](answer-review/MG-AR002/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR002/group-contract.json) · [参考](answer-review/MG-AR002/reference.md) · [评分](answer-review/MG-AR002/rubric.json) · [题包复核](answer-review/MG-AR002/review.json) |
+| [MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级](answer-review/MG-AR003/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR003/group-contract.json) · [参考](answer-review/MG-AR003/reference.md) · [评分](answer-review/MG-AR003/rubric.json) · [题包复核](answer-review/MG-AR003/review.json) |
+| [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR004/group-contract.json) · [参考](answer-review/MG-AR004/reference.md) · [评分](answer-review/MG-AR004/rubric.json) · [题包复核](answer-review/MG-AR004/review.json) |
+
 ## 备选卷 · 11份
 
-[备选目录、主题分类与完整材料](reserve/README.md)集中列出全部11份书面卷。备选身份是选卷安排，`proofs` 是交付类型；备选卷不进入默认32题题包或80槽计划。显式调用与保留理由见备选目录。
+[备选目录、主题分类与完整材料](reserve/README.md)集中列出11份书面卷，不进入默认36份任务或84份记录的公开计划。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。
 
 所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。

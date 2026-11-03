@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("math_gauge_simple_release", ROOT / "scripts/release.py")
 release = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(release)
-PREFIX = "benchmark-v0.3.0/"
+PREFIX = "benchmark-v0.4.0/"
 
 
 class SimpleReleaseArtifactsTests(unittest.TestCase):
@@ -48,7 +48,7 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         cls.dataset_root = cls.shared / "dataset"
         with patch("math_gauge.execution.invoke_conversation", side_effect=AssertionError("No model calls")):
             cls.dataset = export_simple_release_dataset(
-                cls.plan, cls.suite, cls.dataset_root, release_version="0.3.0",
+                cls.plan, cls.suite, cls.dataset_root, release_version="0.4.0",
                 readme=(ROOT / cls.config["readme"]).read_bytes(),
                 extra_files={"LICENSE": (ROOT / "LICENSE").read_bytes(),
                              "THIRD_PARTY_NOTICES.md": (ROOT / cls.config["third_party_notices"]).read_bytes()},
@@ -58,7 +58,7 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         self.workspace = tempfile.TemporaryDirectory(prefix="math-gauge-simple-download-")
         self.addCleanup(self.workspace.cleanup)
         self.root = Path(self.workspace.name).resolve()
-        self.archive = self.root / "benchmark-v0.3.0.zip"
+        self.archive = self.root / "benchmark-v0.4.0.zip"
         release.package_simple_dataset(self.dataset_root, self.archive, config=self.config,
                                        plan=self.plan, suite=self.suite)
         self.checksums = self.root / "SHA256SUMS"
@@ -99,10 +99,11 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         self.assertEqual(second.read_bytes(), self.archive.read_bytes())
         checked = release.check_release_archive(self.archive, checksums=self.checksums)
         self.assertEqual(checked["release_version"], checked["suite"]["version"])
-        self.assertEqual((len(checked["cases"]), checked["exported_slots"]), (32, 80))
+        self.assertEqual((len(checked["cases"]), checked["exported_slots"]), (36, 84))
         self.assertEqual(checked["release_provenance"]["kind"], "local_preview")
         self.assertNotIn("source", checked["release_provenance"])
-        self.assertEqual(len(self.bindings), 83)
+        self.assertEqual(len(self.bindings), sum(1 + len(case["solver_files"])
+                                              for case in self.suite.cases.values()))
         with zipfile.ZipFile(self.archive) as original:
             names = set(original.namelist())
             expected = {PREFIX + name for name in {"manifest.json", *self.dataset["files_sha256"]}}
@@ -151,7 +152,7 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expected version"):
             release.check_release_archive(self.archive, version="0.1.0")
         with self.assertRaisesRegex(ValueError, "version must equal"):
-            release.check_release_archive(self.changed_manifest(lambda value: value.update(release_version="0.4.0")))
+            release.check_release_archive(self.changed_manifest(lambda value: value.update(release_version="0.5.0")))
         with self.assertRaises(ValueError):
             release.check_release_archive(self.changed_manifest(lambda value: value.pop("suite")))
         with self.assertRaisesRegex(ValueError, "provenance"):
@@ -178,7 +179,7 @@ class SimpleReleaseArtifactsTests(unittest.TestCase):
 
     def test_new_config_rejects_release_and_dataset_version_divergence(self):
         root = self.root / "source-fixture"
-        config_path = root / "releases/v0.3.0/config.json"
+        config_path = root / "releases/v0.4.0/config.json"
         config_path.parent.mkdir(parents=True)
         config = dict(self.config, suite_version="0.1.0")
         config_path.write_bytes(release._json_bytes(config))

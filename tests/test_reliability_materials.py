@@ -30,10 +30,10 @@ class ReliabilityMaterialsTests(unittest.TestCase):
         before = {path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths}
         report = V.validate_materials()
         self.assertTrue(report["passed"])
-        self.assertEqual(report["candidate_projections"], 32)
+        self.assertEqual(report["candidate_projections"], 36)
         self.assertEqual(report["dependent_review_obligations"], 306)
         self.assertEqual(report["frozen_followup_messages"], 36)
-        self.assertEqual(report["planned_slots_per_model"], 80)
+        self.assertEqual(report["planned_slots_per_model"], 84)
         self.assertEqual(report["isolated_followup_history_edges"], 36)
         self.assertEqual(report["candidate_model_calls"], 0)
         self.assertEqual(report["lean_compilations"], 0)

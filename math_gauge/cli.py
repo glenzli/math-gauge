@@ -136,12 +136,15 @@ def parser():
             c.add_argument("--audit-snapshot", help="Read a retained audit SHA-256; default verifies the current snapshot.")
             c.add_argument("--out", help="New JSON output file; default prints the verified evidence.")
     c = sub.add_parser("benchmark-report", help="Aggregate validated same-plan evidence with fixed denominators.")
-    c.add_argument("--run", action="append", dest="runs", required=True)
+    c.add_argument("--run", action="append", dest="runs", default=[],
+                   help="Existing reliability source run; repeat as needed. Answer-review-only composition may omit this.")
     c.add_argument("--out", required=True)
     c.add_argument("--composition-plan", help="Explicit evaluator plan for a posthoc cross-plan development analysis; does not execute candidates.")
     c.add_argument("--model-aliases", help="Explicit source-label to target-label declarations for composition; does not verify backend identity.")
     c.add_argument("--composition-budget-policy", choices=("require_matching", "retain_source_budgets"), default="require_matching")
     c.add_argument("--frozen-source-reports", help="Explicit per-run trusted report and review-snapshot SHA-256 references for historical composition.")
+    c.add_argument("--answer-review-sources", help="JSON array binding existing ordinary native answer runs to attributed post-observation dimension reviews.")
+    c.add_argument("--suite", action=_SuiteSources, default="cases", help="Trusted target suite for answer-review rescoring; repeat to compose suites.")
     c.add_argument("--review-snapshot", type=int, help="Use this retained version in each supplied run.")
     g = c.add_mutually_exclusive_group()
     g.add_argument("--audit-snapshot", help="Retained audit SHA-256; requires exactly one --run.")
@@ -385,9 +388,11 @@ def main(argv=None):
                 data = score_composed_runs(read_plan(args.composition_plan), args.runs, snapshots=snapshots,
                                           model_aliases=read_json(args.model_aliases) if args.model_aliases else None,
                                           budget_policy=args.composition_budget_policy,
-                                          frozen_reports=read_json(args.frozen_source_reports) if args.frozen_source_reports else None)
+                                          frozen_reports=read_json(args.frozen_source_reports) if args.frozen_source_reports else None,
+                                          answer_review_sources=read_json(args.answer_review_sources) if args.answer_review_sources else (),
+                                          suite=Suite.load(args.suite) if args.answer_review_sources else None)
             else:
-                if args.model_aliases or args.frozen_source_reports:
+                if args.model_aliases or args.frozen_source_reports or args.answer_review_sources:
                     raise ValueError("Model aliases and frozen score references require an explicit composition plan")
                 data = score_runs(args.runs, snapshot=args.review_snapshot, audit_snapshot=args.audit_snapshot,
                                   audit_snapshots=read_json(args.audit_snapshots) if args.audit_snapshots else None)

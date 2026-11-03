@@ -1,15 +1,15 @@
 # 任务包分发合同
 
-当前任务包为 **0.3.0，与 `cases/suite.json` 的题集版本一致**。新任务发布沿用题集版本；内部提交格式或工具实现可以有各自版本。0.3.0采用版本化中性候选投影和`benchmark-v0.3.0.zip`命名。原0.2.0本地资产保持原样。已发布的[v0.1.0](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0)保持原样，其软件/题集分开编号和旧目录只作为历史约定，见[历史发布说明](../docs/release-notes-v0.1.0.md)与[历史包内指南](../docs/release-consumer-README.md)。
+当前任务包为 **0.4.0，与 `cases/suite.json` 的题集版本一致**。新任务发布沿用题集版本；内部提交格式或工具实现可以有各自版本。0.4.0采用版本化中性候选投影和`benchmark-v0.4.0.zip`命名。0.3.0及更早版本资产保持原样。已发布的[v0.1.0](https://github.com/glenzli/math-gauge/releases/tag/v0.1.0)保持原样，其软件/题集分开编号和旧目录只作为历史约定，见[历史发布说明](../docs/release-notes-v0.1.0.md)与[历史包内指南](../docs/release-consumer-README.md)。
 
-交付端只需阅读包根目录的一份 README，其当前源文件为[0.3.0运行与返回说明](../docs/release-consumer-README-v0.3.0.md)。完整操作集中在那里，不再另发 CONTROLLER 指南或要求操作者填提交模板。外部运行端不需要仓库、完整评审计划、Math Gauge 安装或 Codex。
+交付端只需阅读包根目录的一份 README，其当前源文件为[0.4.0运行与返回说明](../docs/release-consumer-README-v0.4.0.md)。完整操作集中在那里，不再另发 CONTROLLER 指南或要求操作者填提交模板。外部运行端不需要仓库、完整评审计划、Math Gauge 安装或 Codex。
 
 ## 交付边界
 
-命名资产 `benchmark-v0.3.0.zip` 解压为一个同名根目录：
+命名资产 `benchmark-v0.4.0.zip` 解压为一个同名根目录：
 
 ```text
-benchmark-v0.3.0/
+benchmark-v0.4.0/
   README.md
   cases/<case-id>/task.md
   cases/<case-id>/files/<declared-attachment-path>
@@ -23,7 +23,7 @@ benchmark-v0.3.0/
 
 清单及工具属于控制端，不能作为提示交给模型。包内README短说明只给执行流程、作答格式和必要约束，不载入设计论说、成绩、仓库URL或项目品牌。协议schema、工具自有文字及suite显示ID使用中性命名；完整源码provenance与source路径只保存在评审sidecar。许可和第三方作品归属保留。参考、rubric、真假、选择理由、审批、作者证明、完整profile和评审计划均不入ZIP；GitHub自动Source code压缩包含这些公开材料，不是候选交付物。保留题号及公开数学内容仍可能被检索溯源，中性投影不构成匿名或未见题保证。
 
-默认32题均为公开开发题，另11道备选不入默认包；全部仍为draft / human pending。尚未在本版冻结后独立运行，旧177槽试跑及其事后重算另报，结果不进入任务包。独立题包不使已公开题目成为隐藏留出集。
+默认36份任务含32份数学任务与4份真实答卷审阅，关联32个母题家族；另11份后备不进入默认包，3份私有探索也不进入任何公开ZIP。题目与答卷仍待人审。当前AR纳入与8份原答重评是观察结果后的方法变更，不是新考试；分数与评审记录不进入任务包。待审答卷属于审阅题的合法题目材料，评审参考答案与判准留在包外。独立题包不使已公开题目成为隐藏留出集。
 
 下载数据集不预选模型、预算或任务范围。操作者用工具在新目录冻结选择，按固定顺序取得完整消息、保存所有原始尝试，再打包一个 `answers.zip`。请求历史只来自允许的父节点；未知平台字段保持未知。记录与打包工具自动生成身份及文件字段，不要求操作者手写散列或完整提交JSON。普通返回包由同一 `benchmark-import --input answers.zip --plan ... --out ...` 统一核验并接入共享运行记录，来源、数学、候选Lean和人工审核仍分别完成。
 
@@ -43,14 +43,14 @@ benchmark-v0.3.0/
 
 ## 本地构建与核验
 
-在仓库根目录执行，输出路径必须是新的：
+从已提交并推送的干净源码构建，`FULL_COMMIT_SHA`填写当前完整提交号，输出路径必须是新的：
 
 ```sh
-python3 scripts/release.py build --version 0.3.0 --local-preview \
-  --out runs/releases/v0.3.0
+python3 scripts/release.py build --version 0.4.0 --source-commit FULL_COMMIT_SHA \
+  --out runs/releases/v0.4.0
 ```
 
-落盘输出为命名ZIP、`SHA256SUMS` 和包外的 `evaluator-plan.json`，不另生成第四个文件。包内 `release_provenance`只保存不透明源码承诺、投影版本及候选路径/散列；完整仓库/提交身份、源码散列及源文件到投影的映射留在评审sidecar和构建回执。单独检查包不能从不透明承诺恢复或认证原始源码。该评审文件同时保存完整基础计划和期望的精确数据集身份；ZIP导入必须与它匹配，不能只接受提交方自洽重算的清单。完整计划由评审端保留，不发给候选或要求外部运行端取得。`releases/v0.3.0/config.json`的v3发行合同指定中性投影；任务版本与Release版本不一致时拒绝构建。历史v0.1.0与0.2.0资产继续只读检查；复现其构建应使用对应源码版本，不用当前32题替换旧包。
+落盘输出为命名ZIP、`SHA256SUMS` 和包外的 `evaluator-plan.json`，不另生成第四个文件。包内 `release_provenance`只保存不透明源码承诺、投影版本及候选路径/散列；完整仓库/提交身份、源码散列及源文件到投影的映射留在评审sidecar和构建回执。单独检查包不能从不透明承诺恢复或认证原始源码。该评审文件同时保存完整基础计划和期望的精确数据集身份；ZIP导入必须与它匹配，不能只接受提交方自洽重算的清单。完整计划由评审端保留，不发给候选或要求外部运行端取得。`releases/v0.4.0/config.json`的v3发行合同指定中性投影；任务版本与Release版本不一致时拒绝构建。历史v0.1.0与0.2.0资产继续只读检查；复现其构建应使用对应源码版本，不用当前36份任务替换旧包。
 
 工具从同一共享实现生成中性wire版本；已安装的检查/导入器只载入自身可信源码生成的中性实现，不执行ZIP中的工具。评审端从原suite重建声明的候选投影，并核对请求/消息散列。原中性请求、完整messages、答卷、平台证据及返回ZIP均保留；共享记录若将传输schema规范化，明确记录转换及原请求散列，不把内部副本当作实际发送内容，也不逆写答卷命名空间。
 

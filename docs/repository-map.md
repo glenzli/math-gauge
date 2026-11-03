@@ -1,10 +1,10 @@
 # 仓库地图
 
-当前仓库维护默认32卷与显式后备11卷组成的43卷公开开发题库、一套共享runner、共同协议及当前作者验证证据。参考与历史继续公开，出题侧材料不因此成为候选输入。
+当前0.4.0维护默认36份任务（原32份数学卷与4份真实答卷审阅）、显式后备11份数学卷、一套共享runner与共同协议。原43份数学卷和新增审阅共47条相关记录，默认仍关联32个母题家族；合并3份私有探索后为39份任务/35个家族。参考与历史继续公开，出题侧材料不因此成为候选输入。
 
 ```text
 cases/
-  suite.json                      默认32卷清单
+  suite.json                      默认36份任务清单（32数学+4审阅）
   reserve-suite.json                显式后备11卷；两集同根且不重叠
   sources.json                     共同来源登记
   proofs/                          18份默认书面论证
@@ -14,22 +14,26 @@ cases/
   lean-audit/                      6份Lean语义审计
   lean-construction/               6份Lean生成/修复
   chapters/                        2份整章形式化
+  answer-review/                   4份完整真实答卷审阅；与母题相关
+  answer-review-suite.json         可单独选择同一4份审阅，不复制runner
   taxonomy.json                    九项考察重点与逐阶段分类依据
   catalog.json / by-focus.md        生成的机器目录与导航
 protocol/                          数学、交付、隔离及报告合同
   benchmark-profile.json           评审侧分项、固定权重和题集身份
   benchmark-scoring.md              归一化、综合分、缺测与独立运行标准
-  composite-development-report.md  历史公开答卷与私有探索的组合、五方向权重和公开边界
+  composite-development-report.md  历史公开答卷与私有探索的组合、六方向权重、观察后重评和公开边界
+  answer-review-scoring.md          60/30/10维度、母题聚合与重大误判
   execution-evidence.md             原始运行证据、具名审核与正式比较资格
   external-harness.md               独立题包、控制器、外部提交与导入合同
   release-distribution.md           同题集版本的命名任务ZIP与本地构建合同
-  reliability/                     新版六题面板、80槽计划与固定消息
+  reliability/                     选定6题的稳定性/自查；公开84份计划记录与固定消息
 math_gauge/                        全部公开与私有题集共享的runner
 scripts/
   catalog.py                       当前目录与分类的源绑定及生成
   validate_protocol.py             当前计划、候选边界与固定消息检查
   release.py                       候选发布构建、只读资产核验与评审计划恢复
-  render_benchmark_report.py       将已评分的公开JSON渲染为离线HTML及文字报告，不计算成绩
+  render_benchmark_report.py       公开JSON渲染为单模型离线HTML与文字，不计分
+  render_benchmark_comparison.py   读取结果投影渲染对比SVG/PNG与离线页，不写结果JSON
   formal/                          作者Lean验证、证据复查与元数据迁移校验
   isolated_cli/                    CLI隔离准备、探测与收据
   benchmark/                       单轮比较的薄调度层
@@ -37,17 +41,21 @@ verification/author/               当前作者编译与语义覆盖证据
 verification/runner/               当前评分/多轮软件的离线验收身份
 tests/                             合同、数学见证与工具测试
 docs/                              定位、方法、使用和验证状态
-  release-consumer-README-v0.3.0.md  默认32题任务ZIP中唯一README的来源
+  release-consumer-README-v0.4.0.md  36份任务ZIP的操作指南
+  release-consumer-README-v0.3.0.md  已发布32题指南，保持原样
   release-consumer-README-v0.2.0.md  旧43题任务包指南（保留）
   selection-v0.3.0.md               32默认/11后备及80槽的开发取舍
   terra-pilot-2026-11-02.md          旧177槽试跑与32题方案事后分析
-  terra-combined-2026-11-03.md      Terra6.1首次综合评测，35份A1/83槽，区分历史复用与新增作答
+  terra-combined-2026-11-03.md      Terra当前39份首次答卷/87份记录，明示AR后验重评
   results/                         已审结果的紧凑指标与响应身份，不放原卷
-    terra-2026-11-03/              本轮公开机器结果与可直接打开的独立HTML页
+    terra-2026-11-03/              当前Terra公开投影与离线页
+    gemini-2026-11-03/             当前Gemini公开投影与离线页
+    comparison-2026-11-03/         六能力、AR主分/重大误判、整章与自查对比图
   release-consumer-README.md        v0.1.0历史包内指南来源（保留原样）
   release-notes-v0.1.0.md           v0.1.0正式发布说明来源
 releases/v0.1.0/config.json          可从标签恢复的评审计划身份锚点（不入候选ZIP）
-releases/v0.3.0/                    新默认包的本地配置与第三方许可
+releases/v0.4.0/                    当前任务包配置与许可
+releases/v0.3.0/                    已发布版本配置与第三方许可，保持原样
 protocol/history/v0.2.0/            原43题/177槽suite、profile与可靠性配置
 ```
 
@@ -70,10 +78,11 @@ protocol/history/v0.2.0/            原43题/177槽suite、profile与可靠性�
 | `scripts/catalog.py` | 分类证据与当前材料身份，生成出题侧导航 |
 | `scripts/validate_protocol.py` | 固定计划、消息、候选白名单与未执行状态 |
 | `scripts/release.py` | 命名候选ZIP与校验和的可复现构建、安全只读检查及对应标签的评审计划恢复；不调用模型 |
-| `scripts/render_benchmark_report.py` | 将共享评分模块生成的公开投影渲染为HTML和Markdown；不计算分数，不读取私有原卷 |
+| `scripts/render_benchmark_report.py` | 将共享评分公开投影渲染为单模型HTML和Markdown；不计分、不读取私有原卷 |
+| `scripts/render_benchmark_comparison.py` | 读取公开指标渲染六方向、稳定性/自查、AR误判与整章图表；不写结果JSON、不重新评分 |
 | `scripts/formal/check_evidence.py` | 当前作者证据与原始编译记录的身份复核 |
 
-公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。当前默认任务包以中性名称交付32份候选任务、约定附件、一个README、可选控制工具、清单及许可；确定性的标识符投影不改数学内容，原始来源、完整主计划与投影对应记录保存在包外；执行端无需本仓库、Codex 或 Math Gauge 安装，也无需取得评审计划。命名发布ZIP是候选交付物，GitHub自动Source code压缩包仍含公开参考。新Release与题集同版；历史v0.1.0保留旧约定，发布配置和散列不是秘密答案隔离或后端认证。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
+公开与私有材料使用同一runner，不在私有数据内复制执行或评分实现。新分项与多轮入口继续共享案例合同、候选投影和原始源码核验；CLI只做参数分派。当前本地默认任务包以中性名称交付36份候选任务、约定附件、一个README、可选控制工具、清单及许可；确定性的标识符投影不改数学内容，原始来源、完整主计划与投影对应记录保存在包外；执行端无需本仓库、Codex 或 Math Gauge 安装，也无需取得评审计划。命名发布ZIP是候选交付物，GitHub自动Source code压缩包仍含公开参考。新Release与题集同版；历史v0.1.0保留旧约定，发布配置和散列不是秘密答案隔离或后端认证。`runs/`、`.dev-mesh/`、缓存与凭据只保留本地。
 
 ## 历史保留与恢复
 
@@ -85,6 +94,6 @@ git ls-tree -r --name-only 6a48027baa33e06e913a554fb8bac9394a82b480
 git show 6a48027baa33e06e913a554fb8bac9394a82b480:PATH_AT_BASE > /absolute/path/to/restored-file
 ```
 
-历史引用中的Git提交与提交内路径是来源记录，不是当前运行依赖。恢复到题库外的新位置；旧成绩绑定旧材料；允许明确标注的事后重算，但不能冒充新版32卷/80槽的独立运行。
+历史引用中的Git提交与提交内路径是来源记录，不是当前运行依赖。恢复到题库外的新位置；旧成绩绑定旧材料；允许明确标注的事后重算，但不能冒充0.4.0的一次新考试；当前AR纳入与8份原答重评明确为观察后的方法变更。
 
 [贡献指南](../CONTRIBUTING.md) · [使用指南](usage.md)

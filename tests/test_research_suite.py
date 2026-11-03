@@ -1,4 +1,4 @@
-"""Candidate projection and identity contracts for 32 defaults and 11 reserves."""
+"""Candidate projection and identity contracts for 36 defaults and 11 reserves."""
 
 import json
 import shutil
@@ -45,16 +45,18 @@ class BenchmarkSuiteTests(unittest.TestCase):
             "lean-audit": {f"MG-GF{i}" for i in range(101, 113, 2)},
             "lean-construction": {f"MG-GF{i}" for i in range(102, 113, 2)},
             "chapters": {"MG-C002", "MG-C003"},
+            "answer-review": {f"MG-AR{i:03d}" for i in range(1, 5)},
         }
         self.assertEqual(set(self.suite.cases), set.union(*expected.values()))
         self.assertEqual(Counter(Path(c["task"]).parts[0] for c in self.suite.cases.values()),
-                         {"proofs": 18, "lean-audit": 6, "lean-construction": 6, "chapters": 2})
+                         {"proofs": 18, "lean-audit": 6, "lean-construction": 6, "chapters": 2,
+                          "answer-review": 4})
         reserve = Suite.load(ROOT / "cases/reserve-suite.json")
         self.assertEqual(reserve.root, self.suite.root)
         self.assertEqual(reserve.manifest_name, "reserve-suite.json")
         self.assertEqual(set(reserve.cases), {f"MG-GR{i:03d}" for i in (1, 3, 4, 6, 7, 11, 13, 101, 102, 105, 106)})
         self.assertFalse(set(reserve.cases) & set(self.suite.cases))
-        self.assertEqual(len(reserve.cases) + len(self.suite.cases), 43)
+        self.assertEqual(len(reserve.cases) + len(self.suite.cases), 47)
         self.assertEqual({path.parent.name for path in (ROOT / "cases/proofs").glob("*/case.json")},
                          expected["proofs"])
         self.assertEqual({path.parent.name for path in (ROOT / "cases/reserve/proofs").glob("*/case.json")},
