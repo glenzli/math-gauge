@@ -12,9 +12,9 @@ import re
 from pathlib import Path
 
 from .benchmarks import identity
-from .catalog import digest_bytes, read_json, safe_file, write_json
+from .catalog import digest_bytes, read_json, safe_file, write_json, validate_alignment_manifest
 from .execution import (_candidate_engine, _candidate_imports, _candidate_sources,
-                        _override_extraction, extract_candidate_lean, now,
+                        _override_extraction, extract_candidate_lean, extract_candidate_alignment, now,
                         verify_candidate_lean)
 from .reliability import PARSER_VERSION, _raw, _slot_path, inspect_reliability_run, terminal_transport_ok
 from .review import (_validate_answer_review, _criterion_templates, _dimension_templates,
@@ -234,6 +234,18 @@ def _verify_lean_artifact(path, receipt, expected, raw, request, contract):
     if (receipt.get("engine_identity") != engine_identity
             or receipt.get("engine_sha256") != digest_bytes(json.dumps(engine_identity, sort_keys=True).encode())):
         raise ValueError("Candidate Lean engine or audit identity changed")
+    from .lean_frontend import validate_frontend_adapter
+    validate_frontend_adapter(directory, receipt)
+    if contract.get("alignment_manifest_required"):
+        canonical, span, body = extract_candidate_alignment(raw.decode("utf-8"))
+        validate_alignment_manifest(canonical, contract)
+        if (receipt.get("alignment_manifest") != canonical
+                or receipt.get("alignment_source_span") != span
+                or receipt.get("alignment_manifest_sha256") != span["sha256"]):
+            raise ValueError("Candidate Lean alignment projection differs from the frozen original JSON body")
+        alignment_file = directory / "alignment.json"
+        if alignment_file.exists() and alignment_file.read_bytes() != body:
+            raise ValueError("Candidate Lean frozen alignment.json bytes changed")
     sources, _ = _candidate_sources(submitted, inputs, lambda text: _candidate_imports(text, engine["clean_lean"]))
     ordered = [{"name": name, "sha256": digest_bytes(text.encode()),
                 "origin": "submitted" if name in submitted else "frozen-input"} for name, text in sources]

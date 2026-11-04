@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import copy
 import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -300,6 +301,10 @@ def validate_alignment_manifest(manifest, contract):
     if (not isinstance(manifest, dict) or manifest.get("case_id") != contract["id"]
             or manifest.get("version") != contract["version"]):
         raise ValueError("alignment.json case_id/version differs from the frozen contract")
+    original = manifest
+    manifest = copy.deepcopy(manifest)
+    decoded_sha256 = digest_bytes(json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode())
+    projections = []
     items = manifest.get("items")
     expected = {s["id"] for s in contract["stages"]}
     if (not isinstance(items, list) or not all(isinstance(x, dict) for x in items)
@@ -324,7 +329,15 @@ def validate_alignment_manifest(manifest, contract):
         if not isinstance(declarations, list) or (item["status"] == "complete" and not declarations):
             raise ValueError(f"{sid}: complete alignment requires declarations")
         seen = set()
-        for declaration in declarations:
+        for index, declaration in enumerate(declarations):
+            if isinstance(declaration, str):
+                if declaration.count(".lean/") != 1:
+                    raise ValueError(f"{sid}: declaration string requires one unambiguous file.lean/name boundary")
+                prefix, name = declaration.split(".lean/", 1)
+                projected = {"file": prefix + ".lean", "name": name}
+                projections.append({"item_id": sid, "index": index, "source": declaration,
+                                    "canonical": projected})
+                declarations[index] = declaration = projected
             if not isinstance(declaration, dict) or set(declaration) != {"file", "name"}:
                 raise ValueError(f"{sid}: alignment declaration requires file and name")
             file, name = declaration["file"], declaration["name"]
@@ -334,7 +347,18 @@ def validate_alignment_manifest(manifest, contract):
             if (file, name) in seen:
                 raise ValueError(f"{sid}: duplicate alignment declaration")
             seen.add((file, name))
-    return manifest
+    if projections:
+        key = "_math_gauge_declaration_projection"
+        # Candidate extension fields remain content, never trusted parser evidence.
+        while key in manifest:
+            key += "_"
+        manifest[key] = {"schema": "math-gauge.alignment-declaration-projection/v1",
+                         "source_decoded_sha256": decoded_sha256,
+                         "catalog_sha256": digest_bytes(Path(__file__).read_bytes()),
+                         "declarations": projections}
+        original.clear()
+        original.update(manifest)
+    return original
 
 
 @dataclass

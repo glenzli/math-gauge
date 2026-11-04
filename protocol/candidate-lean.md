@@ -65,3 +65,17 @@ case_dir 是单题运行目录，输出目录必须全新且在其外部。调�
 收据状态为 passed、format_error、compile_error、infrastructure_error 或 axiom_rejected。候选源码编译超时为 compile_error 且 reason=timeout；生成的审计器自身失败或超时为 infrastructure_error，实际禁用公理则为 axiom_rejected。收据含 response_sha256、request_sha256、files_sha256、input_files_sha256、artifact_sha256/manifest_sha256、engine_sha256、原始命令、日志及公理清单。passed 只表示原样源码通过当前工程核验。
 
 严格生成/修复通过还需要独立语义审核确认所有题面义务，且审核绑定相同 response、artifact 和编译收据身份。基础设施错误待修环境后原样复验，不计模型数学失败。源码修订属于另一个答卷或明确的后续贡献，不回填原结果。无代码或诚实未完成应如实记录为交付未完成，不能利用空清单产生成功状态。
+
+## 具名Lake前端适配证据
+
+Lean4.29.1的Lake配置需要官方工具链插件注册DSL elaborator。若plain lean只在lakefile的package/script处报未实现，保留原失败；不得修改候选源码、运行其script、把失败直接算作数学零分，或静默改成普通engine成功。具名lean4.29.1-macos-arm64-lake-plugin/v1适配器只在原strict compiler policy内加入固定官方libLake_shared.dylib，复用原SHA匹配的成功模块，仅编原lakefile及完整新audit。
+
+新收据保留三项base engine身份，另用frontend_adapter显式绑定规范适配器源码SHA、固定Lean/插件SHA、原失败report/log、复用模块、实际argv/环境、完整新diagnostic及audit。共享审核先核这些新增身份，再走原完整原答/请求/合同/源closure、日志/olean、公理、隔离与依赖检查。旧成功收据不改，旧失败收据也不覆盖；适配不执行模型，不增加候选预算，不推断语义或人审通过。
+
+## file/name声明数组的显式投影
+
+题面允许declarations的file/name数组；目录验证器也接受可无歧义分解的file.lean/完整声明名字符串。只拆唯一.lean/边界，file和name必须实际给出且仍过原路径、唯一性和编译声明审计；不补文件或名称，不改候选源码。legacy对象数组保持恒等。
+
+原答、alignment.json原JSON body、UTF8 span及其SHA保持原字节。仅在字符串转换时，评审canonical manifest另附alignment-declaration-projection/v1、原decoded语义SHA、原字符串/规范对象及catalog SHA，明确不同于raw decoded对象。候选自带同名字段不作解析器证据、不覆盖，改选空闲元数据键。共享artifact复核始终从冻结原答重新提取及投影后比较，并核原body/span；旧format_error保留，新兼容核验另存。
+
+普通verify_candidate_lean仍不自动启用Lake适配。公开lake_frontend_adapter.py只生成严格隔离diagnostic；本轮由独立materialize_frontend_receipt.py在新评审工作副本生成具名派生report，保留原失败与真实argv/日志/olean，再经共享validator完整核验。该操作不重新运行模型或源码script，不冒充普通旧入口成功；base_engine_files_unchanged仅说明三项base engine文件未改，适配身份另列。

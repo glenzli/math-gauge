@@ -86,6 +86,7 @@ class QuestionGroupContracts(unittest.TestCase):
         """Synthetic bookkeeping evidence only; excluded from model comparisons."""
         record = read_json(self.run_path/self.cid/'record.json')
         manifest, span, _ = extract_candidate_alignment(response)
+        validate_alignment_manifest(manifest, self.contract)
         receipt = {'schema': 'math-gauge.candidate-lean/v1', 'case_id': self.cid,
                    'response_sha256': record['response_sha256'], 'request_sha256': record['request_sha256'],
                    'group_contract_sha256': record['group_contract_sha256'],
@@ -140,6 +141,44 @@ class QuestionGroupContracts(unittest.TestCase):
             broken=copy.deepcopy(manifest);broken['items'][0]['representation']=representation
             with self.subTest(representation=representation),self.assertRaisesRegex(ValueError,'representation'):
                 validate_alignment_manifest(broken,self.contract)
+
+    def test_file_name_strings_project_without_changing_original_json_or_span(self):
+        manifest=self.alignment()
+        for item in manifest['items']:item['declarations']=['Main.lean/groupAnswer']
+        original=copy.deepcopy(manifest)
+        response=self.alignment_response(original).replace('\n','\r\n')
+        parsed,span,body=extract_candidate_alignment(response)
+        validate_alignment_manifest(parsed,self.contract)
+        self.assertEqual(original,manifest)
+        self.assertEqual(parsed['items'][0]['declarations'],[{'file':'Main.lean','name':'groupAnswer'}])
+        key='_math_gauge_declaration_projection'
+        self.assertEqual(parsed[key]['source_decoded_sha256'],digest_bytes(json.dumps(original,ensure_ascii=False,sort_keys=True).encode()))
+        self.assertEqual(response.encode()[span['start_byte']:span['end_byte']],body)
+        self.assertEqual(digest_bytes(body),span['sha256'])
+        self.replay(response);entry,receipt,path=self.alignment_receipt_fixture(response)
+        self.assertEqual(receipt['alignment_manifest'],parsed)
+        apply_reviews(self.run_path,[entry])
+        self.assertEqual(report(self.run_path)[0]['group_diagnostics'][self.cid]['stage_passes'],5)
+
+    def test_declaration_projection_rejects_missing_ambiguous_and_escaping_fields(self):
+        manifest=self.alignment()
+        for value in ['Main/groupAnswer','Main.lean/','../Main.lean/groupAnswer','/Main.lean/groupAnswer',
+                      'One.lean/Two.lean/groupAnswer',{'file':'Main.lean'},42]:
+            broken=copy.deepcopy(manifest);broken['items'][0]['declarations']=[value]
+            with self.subTest(value=value),self.assertRaises(ValueError):validate_alignment_manifest(broken,self.contract)
+            self.assertEqual(broken['items'][0]['declarations'],[value])
+        same=copy.deepcopy(manifest);validate_alignment_manifest(same,self.contract)
+        self.assertEqual(same,manifest)
+
+    def test_candidate_projection_metadata_is_not_trusted_or_overwritten(self):
+        manifest=self.alignment();key='_math_gauge_declaration_projection'
+        manifest[key]={'candidate_extension':'Original content, not evaluator authority.'}
+        original=copy.deepcopy(manifest);validate_alignment_manifest(manifest,self.contract)
+        self.assertEqual(manifest,original)
+        manifest['items'][0]['declarations']=['Main.lean/groupAnswer']
+        source=copy.deepcopy(manifest);validate_alignment_manifest(manifest,self.contract)
+        self.assertEqual(manifest[key],source[key]);self.assertIn(key+'_',manifest)
+        self.assertEqual(manifest[key+'_']['source_decoded_sha256'],digest_bytes(json.dumps(source,ensure_ascii=False,sort_keys=True).encode()))
 
     def test_alignment_extraction_is_exact_and_ignores_nested_fences(self):
         manifest = self.alignment()

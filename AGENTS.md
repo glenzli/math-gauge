@@ -48,6 +48,7 @@
   and single-answer judgments/reporting in review.py. benchmarks.py owns evaluator-only profiles and
   selected benchmark plans; scoring.py owns versioned cross-attempt aggregation; reliability.py owns
   branch history and KEEP/FULL composition with separately bound follow-up reviews.
+- lean_frontend.py validates named trusted frontend identity; ordinary execution remains in execution.py.
 - eligibility.py owns immutable execution-evidence imports, attributed execution-audit snapshots
   and per-slot qualification. Source integrity, human provenance review and mathematical review
   remain separate; request labels or fixture evidence cannot establish formal comparison eligibility.
