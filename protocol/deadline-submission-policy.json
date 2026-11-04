@@ -1,0 +1,50 @@
+{
+  "schema": "math-gauge.deadline-submission-policy/v0.1.0",
+  "policy_id": "first-terminal-or-deadline-stop-then-seal",
+  "submission_kind": "forced-workspace/v0.1.0",
+  "human_review": "pending",
+  "future_run_scope": {
+    "case_ids": ["LCH01", "LCH02", "HCH02", "MG-C003"],
+    "requires_pre_run_freeze": true,
+    "written_or_audit_engineering_obligations_added": false
+  },
+  "current_retrospective_scope": {
+    "case_ids": ["MG-C003"],
+    "models": ["terra", "gemini"],
+    "source": "each model's first actually archived official A1 project snapshot",
+    "post_observation_delivery_amendment": true,
+    "exact_deadline_snapshot_claim_without_evidence": false
+  },
+  "seal": {
+    "trigger": "earlier of first native terminal and frozen absolute UTC deadline",
+    "order": ["stop candidate writes and owned writer processes", "verify stability", "seal complete permitted inventory and bytes", "collect and evaluate"],
+    "preserve_trigger_stop_and_collection_times": true,
+    "also_on_supervisor_error": true,
+    "main_entrypoint": "Main.lean",
+    "required_mapping": "alignment.json",
+    "target_source_selection": "entrypoint plus actual local transitive import closure",
+    "unused_exploration_files": "archive separately, do not select a better entrypoint",
+    "compile_caches_as_source": false,
+    "candidate_scripts_executed_by_evaluator": false,
+    "missing_required_delivery": "delivery_failure; not proof that every mathematical claim is false"
+  },
+  "assessment_axes": ["delivery completeness", "unchanged source compilation and allowed axioms", "per-obligation semantic alignment"],
+  "current_gemini_extension": {
+    "maximum_native_submissions": 1,
+    "native_broker_and_outer_seconds": 5400,
+    "startup_seconds": 120,
+    "fresh_A1": false,
+    "own_project_and_allowed_visible_history_only": true,
+    "evaluator_feedback": false,
+    "second_deadline": "stop then seal; failure if still no effective delivery; no automatic further retries"
+  },
+  "preservation": {
+    "original_responses_status_gates_reviews": "immutable",
+    "first_A1_replaced_by_later_work": false,
+    "workspace_projection_impersonates_native_response": false,
+    "automatic_standard_42_45_result_or_import_rewrite": false,
+    "current_reporting": "separate named diagnostic track; any future overall composition requires its own frozen profile and source policy",
+    "mathematical_obligations_changed": false,
+    "formal_comparison_eligible": false
+  }
+}
