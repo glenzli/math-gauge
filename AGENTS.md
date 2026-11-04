@@ -70,6 +70,9 @@
   third-party execution chronology. Generic external imports retain their current provisional status.
 - Benchmark scores use frozen profile weights and fixed denominators. Missing, execution-failed and
   unresolved slots stay explicit; never renormalize a partial run into a full-benchmark score.
+- Native generation completion and CLI cleanup are distinct. Follow protocol/native-terminal-evidence.md
+  for a named, source-bound admission correction; preserve old status/gates, do not infer success from
+  DONE alone, do not add calls or promote AI evidence into formal qualification.
 - Run python3 -m unittest discover -s tests and python3 -m math_gauge validate for affected runner contracts.
   Compile only changed Lean fixtures or their dependent group; keep evidence tied to file hashes.
 - Do not commit or push unless the user authorizes that step. Keep .dev-mesh and runs local.
