@@ -6,6 +6,8 @@ Math Gauge 检查数学推理、Lean 语义对应、完整工程交付与真实�
 
 当前为 **本地0.6.0草稿 / human pending**，尚未发布。默认清单、权重和计划分别以 [suite](cases/suite.json)、[profile](protocol/benchmark-profile.json) 和共享计划器为准。既有[0.5配置](protocol/history/v0.5.0/README.md)、[旧机器结果](docs/results/comparison-2026-11-03/index.html)与已发布[v0.4.0](https://github.com/glenzli/math-gauge/releases/tag/v0.4.0)保持各自身份，不能当作0.6完整成绩。
 
+[本轮0.6开发结果](docs/benchmark-comparison-v0.6.0.md)与[离线对比页](docs/results/comparison-v0.6.0/index.html)分开列出标准首答、首份工程封卷、三轮对齐研究和额外补时。标准42槽已闭合；原92项空答保留未决及固定分母区间，补时不覆盖首答。全部结论为AI审核、人审待定。
+
 ## 当前默认范围
 
 | 方向 | 默认任务 | 公开能力权重 | 合并3份私有探索后 |

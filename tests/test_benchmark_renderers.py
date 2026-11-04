@@ -65,7 +65,7 @@ def synthetic_report(model="terra"):
 
 class BenchmarkRendererTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
+        self.temp = tempfile.TemporaryDirectory(prefix="math-gauge-offline-fixture-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
 
@@ -265,6 +265,114 @@ class BenchmarkRendererTests(unittest.TestCase):
         self.assertIn("0.5.0", updated)
         self.assertIn("46份任务", updated)
         self.assertIn("comparison-2026-11-03", updated)
+
+
+    def test_new_public_layout_links_skip_readme_and_preserve_legacy_assets(self):
+        # Offline fixtures only: no model, Lean or scoring invocation.
+        records = [synthetic_report(), synthetic_report("gemini")]
+        for record in records:
+            record["profile"].update(version="0.6.0", standard_version="0.6.0",
+                                     repeat_attempt_labels=["A1", "A2"],
+                                     self_check_rounds_per_arm=1,
+                                     reliability_population="written-only")
+            definitions = (("proofs", 14, 14, 22.5), ("lean-audit", 4, 2, 22.5),
+                           ("lean-formalization", 4, 2, 45), ("answer-review", 4, 4, 10))
+            record["profile"]["components"] = [
+                {"id": key, "case_count": cases, "family_count": families,
+                 "aggregation": "parent_family" if key == "answer-review" else "family", "weight": weight}
+                for key, cases, families, weight in definitions]
+            record["metrics"] = {key: {"exact": None, "coverage": {"planned": families}}
+                                 for key, _, families, _ in definitions}
+            record["metrics"].update({key: {"exact": None, "coverage": {"planned": count}}
+                                      for key, count in (("repeat", 4), ("neutral", 4), ("stance", 8))})
+            record["metrics"].update(core={"exact": None}, overall={"exact": None})
+            record["coverage"].update(a1_planned=26, parent_families=18,
+                                      slots_planned=42, slots_reviewed=0)
+            record["strict_passes"] = {"core_A1": {"passed": None, "total": 26}}
+            record["private_records"] = []
+            record["formalization_scope"] = {cid: {"obligations": total}
+                for cid, total in (("LCH01", 8), ("LCH02", 20), ("HCH02", 40), ("MG-C003", 92))}
+            record["slot_evidence"] = [
+                {"slot_id": cid + ":A1", "public_id": cid, "completion": {"exact": None},
+                 "strict_pass": None, "status": "missing", "human_status": "pending"}
+                for cid in record["formalization_scope"]]
+            record["slot_evidence"].append({"slot_id": "OFFLINE-AR:A1", "public_id": "OFFLINE-AR",
+                "completion": {"exact": None}, "major_error": None, "strict_pass": None,
+                "status": "missing", "human_status": "pending", "dimensions": []})
+        paths = []
+        for name, record in zip(("terra", "gemini"), records):
+            path = self.root / f"docs/results/{name}-v0.6.0/result.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(record), encoding="utf-8")
+            paths.append(path)
+        old = self.root / "docs/results/comparison-2026-11-03/index.html"
+        old.parent.mkdir(parents=True)
+        old.write_text("OFFLINE FIXTURE: preserved old asset")
+        readme = self.root / "README.md"
+        readme.write_text("OFFLINE FIXTURE: README has no legacy sections")
+        preserved = {path: path.read_bytes() for path in [old, readme, *paths]}
+        out = self.root / "docs/results/comparison-v0.6.0"
+        markdown = self.root / "docs/comparison-rendered-v0.6.0.md"
+        published_markdown = self.root / "docs/benchmark-comparison-v0.6.0.md"
+        published_markdown.write_text("OFFLINE FIXTURE: preserve reviewed Chinese explanation")
+        preserved[published_markdown] = published_markdown.read_bytes()
+        reports = [self.root / f"docs/{name}-v0.6.0.md" for name in ("terra", "gemini")]
+        environment = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+        subprocess.run([sys.executable, str(ROOT / "scripts/render_benchmark_comparison.py"),
+            "--terra", str(paths[0]), "--gemini", str(paths[1]), "--out", str(out),
+            "--markdown", str(markdown), "--markdown-link", str(published_markdown),
+            "--readme", str(readme), "--skip-readme",
+            "--terra-report", str(reports[0]), "--gemini-report", str(reports[1])],
+            check=True, capture_output=True, text=True, env=environment)
+        for source, target in zip(paths, reports):
+            subprocess.run([sys.executable, str(ROOT / "scripts/render_benchmark_report.py"),
+                "--input", str(source), "--html", str(source.with_name("index.html")),
+                "--markdown", str(target), "--comparison", str(out / "index.html")],
+                check=True, capture_output=True, text=True, env=environment)
+        for path, original in preserved.items():
+            self.assertEqual(path.read_bytes(), original)
+        import re
+        outputs = [out / "index.html", markdown, *reports,
+                   *(path.with_name("index.html") for path in paths)]
+        for path in outputs:
+            content = path.read_text()
+            links = re.findall(r'(?:href|src)="([^"]+)"|\]\(([^)]+)\)', content)
+            self.assertTrue(links)
+            self.assertFalse(any("2026-11-03" in (html_link or md_link)
+                                 for html_link, md_link in links))
+            self.assertIn("待完成", content)
+            self.assertIn("待判", content)
+            self.assertNotIn("Private-Synthetic", content)
+        html = (out / "index.html").read_text()
+        self.assertIn("../../benchmark-comparison-v0.6.0.md", html)
+        self.assertIn("4个能力方向", html)
+        self.assertIn("4份任务 / 2个家族", html)
+        self.assertNotIn("六方向能力", html)
+        self.assertNotIn("34/92项", html)
+        chart = (out / "chapters.svg").read_text()
+        for cid, total in (("LCH01", 8), ("LCH02", 20), ("HCH02", 40), ("C003", 92)):
+            self.assertIn(cid, chart)
+            self.assertIn(f"{total}项本章义务", chart)
+        self.assertNotIn("0/92", chart)
+        for filename in ("comparison.svg", "chapters.svg", "answer-review.svg"):
+            ET.fromstring((out / filename).read_text())
+
+    def test_current_formalization_scope_is_required_and_all_directions_render(self):
+        records = [synthetic_report(), synthetic_report("gemini")]
+        for record in records:
+            record["profile"]["components"].append({"id": "lean-formalization", "weight": 0,
+                "case_count": 4, "aggregation": "family", "family_count": 2})
+            record["metrics"]["lean-formalization"] = {"exact": None, "coverage": {"planned": 2}}
+        with self.assertRaisesRegex(ValueError, "requires explicit formalization_scope"):
+            comparison.presentation(*self.write_pair(*records))
+        for record in records:
+            record["formalization_scope"] = {"MG-C003": {"obligations": 92}}
+        data = comparison.presentation(*self.write_pair(*records))
+        chart = comparison.main_svg(data)
+        self.assertIn("7个能力方向", chart)
+        self.assertIn("大Lean形式化", chart)
+        self.assertIn("真实答卷审阅", chart)
+        ET.fromstring(chart)
 
 
 if __name__ == "__main__":
