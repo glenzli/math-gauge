@@ -515,14 +515,20 @@ class AlignmentResultsSiteTests(unittest.TestCase):
 
 
 class EngineeringResultsSiteTests(unittest.TestCase):
+    version = "0.2.0"
+    rebalanced = False
+    schema = "math-gauge.portable-results/v4"
+    expected = ((93.4861010467, 94.1464271337, 37.6296296296),
+                (70.9441284938, 66.8878920807, -20))
+
     @classmethod
     def setUpClass(cls):
-        cls.data = site.load_data(SOURCE_ROOT)
+        cls.data = site.load_data(SOURCE_ROOT, use_rebalanced_source=cls.rebalanced)
 
     def copy_sources(self, root):
         paths = {row["path"] for row in self.data["sources"]}
-        paths.add("protocol/lean-alignment/engineering-scoring-v0.2.0.json")
-        paths.update(f"docs/results/engineering-v0.2.0/{model}-review.json"
+        paths.add(f"protocol/lean-alignment/engineering-scoring-v{self.version}.json")
+        paths.update(f"docs/results/engineering-v{self.version}/{model}-review.json"
                      for model, _ in site.MODELS)
         for relative in paths:
             target = root / relative
@@ -530,11 +536,9 @@ class EngineeringResultsSiteTests(unittest.TestCase):
             target.write_bytes((SOURCE_ROOT / relative).read_bytes())
 
     def test_unified_engineering_counts_and_penalized_scores(self):
-        self.assertEqual(self.data["schema"], "math-gauge.portable-results/v4")
+        self.assertEqual(self.data["schema"], self.schema)
         self.assertEqual(self.data["view"], "engineering-alignment")
-        expected = ((93.4861010467, 94.1464271337, 37.6296296296),
-                    (70.9441284938, 66.8878920807, -20))
-        for model, (public, combined, lean) in zip(self.data["models"], expected):
+        for model, (public, combined, lean) in zip(self.data["models"], self.expected):
             for scope, total in (("public", public), ("combined", combined)):
                 result = model[scope]
                 self.assertEqual(result["metrics"]["overall"]["exact"], total)
@@ -549,8 +553,8 @@ class EngineeringResultsSiteTests(unittest.TestCase):
 
     def test_clean_page_explains_correct_pass_counts_and_family_average(self):
         rendered = site.render_html(self.data)
-        for text in ("93.49</strong>", "94.15</strong>", "70.94</strong>", "66.89</strong>",
-                     "正确且完整通过", "74/92", "84/92", "65.00", "80.43", "两个家族等权平均",
+        totals = tuple(f"{value:.2f}</strong>" for public, combined, _ in self.expected for value in (public, combined))
+        for text in totals + ("正确且完整通过", "74/92", "84/92", "65.00", "80.43", "两个家族等权平均",
                      "首答总时长上限180分钟", "每轮额外扣20分", "部分等价测试继承"):
             self.assertIn(text, rendered)
         for text in ("加时", "extra opportunity", "ERROR", "fresh A1", "正式模型比较资格", "原答审核"):
@@ -562,7 +566,7 @@ class EngineeringResultsSiteTests(unittest.TestCase):
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 self.copy_sources(root)
-                path = root / "docs/results/engineering-v0.2.0/gemini-public.json"
+                path = root / f"docs/results/engineering-v{self.version}/gemini-public.json"
                 value = json.loads(path.read_text())
                 if mutation == "missing":
                     path.unlink()
@@ -577,7 +581,7 @@ class EngineeringResultsSiteTests(unittest.TestCase):
                 if mutation != "missing":
                     path.write_text(json.dumps(value))
                 with self.assertRaises((ValueError, FileNotFoundError)):
-                    site.load_data(root)
+                    site.load_data(root, use_rebalanced_source=self.rebalanced)
 
     def test_current_projection_omits_private_and_raw_details(self):
         marker = "PRIVATE-ENGINEERING-SENTINEL"
@@ -586,13 +590,13 @@ class EngineeringResultsSiteTests(unittest.TestCase):
             self.copy_sources(root)
             for model, _ in site.MODELS:
                 for scope in ("public", "combined"):
-                    path = root / f"docs/results/engineering-v0.2.0/{model}-{scope}.json"
+                    path = root / f"docs/results/engineering-v{self.version}/{model}-{scope}.json"
                     value = json.loads(path.read_text())
                     value.update(raw_answer=marker, private_records=[marker], full_plan=marker,
                                  local_path="/private/" + marker)
                     value["alignment_selfcheck"]["rounds"][0]["raw_text"] = marker
                     path.write_text(json.dumps(value))
-            data = site.load_data(root)
+            data = site.load_data(root, use_rebalanced_source=self.rebalanced)
             self.assertNotIn(marker, json.dumps(data))
             self.assertNotIn(marker, site.render_html(data))
             self.assertNotIn("CH03-D01", json.dumps(data))
@@ -602,11 +606,12 @@ class EngineeringResultsSiteTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             first, second = Path(tmp) / "nested path" / "results", Path(tmp) / "elsewhere"
             result = subprocess.run([sys.executable, str(ROOT / "scripts/render_results_site.py"),
-                                     "--source-root", str(ROOT), "--out-dir", str(first)],
+                                     "--source-root", str(ROOT), "--out-dir", str(first)]
+                                    + ([] if self.rebalanced else ["--engineering-v02"]),
                                     cwd=tmp, capture_output=True, text=True, check=False,
                                     env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
             self.assertEqual(result.returncode, 0, result.stderr)
-            site.build_site(SOURCE_ROOT, second)
+            site.build_site(SOURCE_ROOT, second, use_rebalanced_source=self.rebalanced)
             for name in ("index.html", "data.json"):
                 self.assertEqual((first / name).read_bytes(), (second / name).read_bytes())
             self.assertEqual(json.loads((first / "data.json").read_text()), self.data)
@@ -622,6 +627,42 @@ class EngineeringResultsSiteTests(unittest.TestCase):
                     self.assertTrue((first / url.path).is_file())
                 if url.fragment and not url.scheme:
                     self.assertIn(unquote(url.fragment), parser.ids)
+
+
+class RebalancedResultsSiteTests(EngineeringResultsSiteTests):
+    version = "0.3.0"
+    rebalanced = True
+    schema = "math-gauge.portable-results/v5"
+    expected = ((91.6211151369, 91.9635064412, 37.6296296296),
+                (67.4419021739, 62.8430434783, -20))
+
+    def test_new_weights_and_labels_are_bound_to_policy(self):
+        for model in self.data["models"]:
+            self.assertEqual(model["public"]["profile"]["overall_weights"],
+                             {"core": 70, "repeat": 5, "neutral": 15, "stance": 10})
+            self.assertEqual(model["public"]["neutral_group_weights"], {"written": 1, "lean_alignment": 2})
+        rendered = site.render_html(self.data)
+        for text in ("能力70%", "Lean对齐自查 · 10%", "书面中性自查 · 5%", "能力分占总分70%", "公开 40%", "合并 35%"):
+            self.assertIn(text, rendered)
+        for text in ("能力75%", "Lean对齐自查 · 5%", "能力分占总分75%"):
+            self.assertNotIn(text, rendered)
+
+    def test_rebalanced_projection_rejects_unrelated_profile_and_metric_changes(self):
+        for mutation in ("profile", "metric", "prior-binding"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.copy_sources(root)
+                path = root / "docs/results/engineering-v0.3.0/gemini-public.json"
+                data = json.loads(path.read_text())
+                if mutation == "profile":
+                    data["profile"]["components"][0]["family_count"] = 999
+                elif mutation == "metric":
+                    data["metrics"]["proofs"].update(exact=99, lower=99, upper=99)
+                else:
+                    data["weight_change"]["previous_score_sha256"] = "0" * 64
+                path.write_text(json.dumps(data))
+                with self.assertRaises(ValueError):
+                    site.load_data(root)
 
 
 if __name__ == "__main__":

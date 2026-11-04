@@ -443,7 +443,15 @@ def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=
                   else "full paper averaged over A1/A2/A3"))
         metric_intervals[component["id"]] = _average(intervals)
         all_core_rows.extend(component_rows)
-    component_weights = [x["weight"] for x in plan["profile"]["data"]["components"]]
+    alignment_policy = _alignment_policy(neutral_alignment[1]) if neutral_alignment is not None else None
+    weight_override = None
+    if alignment_policy is not None and alignment_policy["version"] == "0.3.0":
+        scope = "combined" if "exploration" in component_ids(plan["profile"]["data"]) else "public"
+        weight_override = alignment_policy["capability_component_weights"][scope]
+        if set(weight_override) != set(component_ids(plan["profile"]["data"])):
+            raise ValueError("Rebalanced weights differ from the frozen capability axes")
+    component_weights = [(weight_override[x["id"]] if weight_override is not None else x["weight"])
+                         for x in plan["profile"]["data"]["components"]]
     components = component_ids(plan["profile"]["data"])
     metrics["core"] = _metric([metric_intervals[k] for k in components],
                               all_core_rows, case_index, unit="core component",
@@ -476,8 +484,11 @@ def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=
     if neutral_alignment is not None:
         alignment, alignment_policy = neutral_alignment
         alignment_policy = _alignment_policy(alignment_policy)
+        expected_plan_weights = ({"core": 75, "repeat": 5, "neutral": 10, "stance": 10}
+                                 if alignment_policy["version"] == "0.3.0"
+                                 else alignment_policy["overall_weights"])
         if (not written_reliability or len(plan["reliability"]["selection"]["cases"]) != 4
-                or plan["profile"]["data"]["overall_weights"] != alignment_policy["overall_weights"]):
+                or plan["profile"]["data"]["overall_weights"] != expected_plan_weights):
             raise ValueError("Alignment aggregation requires the frozen four-written neutral panel")
         metrics["neutral_written"] = metrics["neutral"]
         metrics["lean_alignment_selfcheck"] = _alignment_metric(
@@ -488,14 +499,17 @@ def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=
         metrics["neutral"] = _alignment_metric(metric_intervals["neutral"],
             unit="written neutral group and Lean alignment group", planned=2,
             adjudicated=int(metrics["neutral_written"]["complete"]) + int(alignment[2] is not None))
-    overall_weights = plan["profile"]["data"]["overall_weights"]
+    overall_weights = (alignment_policy["overall_weights"] if weight_override is not None
+                       else plan["profile"]["data"]["overall_weights"])
     metrics["overall"] = _metric([metric_intervals[k] for k in overall_weights],
                                  all_initial_rows + followup_rows, case_index,
                                  unit="frozen overall component",
                                  weights=list(overall_weights.values()))
     if neutral_alignment is not None:
         _alignment_provisional(metrics["overall"])
-        if alignment_policy["version"] == "0.2.0":
+        if weight_override is not None:
+            _alignment_provisional(metrics["core"])
+        if alignment_policy["version"] in {"0.2.0", "0.3.0"}:
             overall_interval = tuple(None if value is None else max(Fraction(0), value) for value in
                 _average([metric_intervals[k] for k in overall_weights], list(overall_weights.values())))
             metrics["overall"].update(exact=_percent(overall_interval[2]),
@@ -1257,7 +1271,7 @@ def _alignment_hash(value):
 def _alignment_policy(policy):
     if (not isinstance(policy, dict)
             or policy.get("schema") != "math-gauge.alignment-selfcheck-policy/v1"
-            or policy.get("version") not in {"0.1.0", "0.2.0"} or policy.get("case_id") != "MG-C003"
+            or policy.get("version") not in {"0.1.0", "0.2.0", "0.3.0"} or policy.get("case_id") != "MG-C003"
             or policy.get("case_version") != "0.1.1"
             or type(policy.get("rounds")) is not int or policy["rounds"] != 3
             or type(policy.get("obligation_weight")) is not int or policy["obligation_weight"] != 1):
@@ -1277,15 +1291,31 @@ def _alignment_policy(policy):
             or {k: _alignment_fraction(v, 100) for k, v in diagnosis.items()}
             != {"global": 10, "localization": 20}
             or {k: _alignment_fraction(v, 100) for k, v in overall.items()}
-            != {"core": 75, "repeat": 5, "neutral": 10, "stance": 10}
+            != ({"core": 70, "repeat": 5, "neutral": 15, "stance": 10}
+                if policy["version"] == "0.3.0"
+                else {"core": 75, "repeat": 5, "neutral": 10, "stance": 10})
             or any(_alignment_fraction(v, 10**9) <= 0 for v in neutral.values())):
         raise ValueError("Alignment policy changed its frozen 70/30 or overall weights")
     if "case_contract_sha256" in policy:
         _alignment_hash(policy["case_contract_sha256"])
-    if policy["version"] == "0.2.0" and (
+    if policy["version"] in {"0.2.0", "0.3.0"} and (
             _alignment_fraction(policy.get("false_complete_penalty_points"), 100) != 20
             or policy.get("allow_negative_selfcheck") is not True):
         raise ValueError("Engineering self-check policy requires the frozen additional 20-point penalty")
+    if policy["version"] == "0.3.0":
+        expected = {
+            "public": {"proofs": 40, "lean-audit": 20, "lean-formalization": 30, "answer-review": 10},
+            "combined": {"proofs": 35, "lean-audit": 15, "lean-formalization": 25,
+                         "exploration": 15, "answer-review": 10}}
+        weights = policy.get("capability_component_weights")
+        if (not isinstance(weights, dict) or set(weights) != set(expected)
+                or any(not isinstance(weights[scope], dict) or set(weights[scope]) != set(axes)
+                       for scope, axes in expected.items())
+                or {scope: {k: _alignment_fraction(v, 100) for k, v in axes.items()}
+                    for scope, axes in weights.items()} != expected
+                or {k: _alignment_fraction(v, 100) for k, v in neutral.items()}
+                != {"written": 1, "lean_alignment": 2}):
+            raise ValueError("Rebalanced policy changed its versioned capability or neutral weights")
     return policy
 
 
@@ -1354,7 +1384,7 @@ def _alignment_trajectory(review, policy):
         raise ValueError("Unsupported alignment review identity, version or evidence status")
     _alignment_hash(review.get("policy_sha256"))
     ids, kind = set(policy["obligation_ids"]), review["primary_source_kind"]
-    penalized = policy["version"] == "0.2.0"
+    penalized = policy["version"] in {"0.2.0", "0.3.0"}
     if penalized and kind != "sealed_workspace":
         raise ValueError("Engineering self-check selects the sealed workspace primary source")
     unknown_score = (Fraction(-1, 5), Fraction(1), None) if penalized else UNKNOWN
@@ -1986,7 +2016,7 @@ def alignment_augmented_score(sources, *, expected_sha256):
                 or set(passed) & set(incomplete) or set(passed) | set(incomplete) != ids
                 or legacy and (len(passed) != 74 or _interval(original.get("completion")) != UNKNOWN
                                or original.get("strict_pass") is not None)
-                or engineering and (policy["version"] != "0.2.0"
+                or engineering and (policy["version"] not in {"0.2.0", "0.3.0"}
                     or selected.get("scoring_view_version") != "c003-sealed-engineering/v1"
                     or selected.get("model_label") != plan["model_label"]
                     or substitution.get("original_response_sha256") != original.get("response_sha256"))):
@@ -2000,22 +2030,34 @@ def alignment_augmented_score(sources, *, expected_sha256):
     derived = _score_inputs(inputs, mathematical_substitutions=substitutions,
                             neutral_alignment=(interval, policy))
     metrics = copy.deepcopy(selected["metrics"])
-    changed = ("neutral", "overall", "neutral_written", "lean_alignment_selfcheck")
+    changed = (("core",) if policy["version"] == "0.3.0" else ()) + (
+        "neutral", "overall", "neutral_written", "lean_alignment_selfcheck")
     for name in changed:
         metrics[name] = {field: copy.deepcopy(derived["metrics"][name][field])
                         for field in ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")}
+    profile = copy.deepcopy(summary["profile"])
+    if policy["version"] == "0.3.0":
+        for component in profile["components"]:
+            component["weight"] = policy["capability_component_weights"][scope][component["id"]]
+        profile["overall_weights"] = copy.deepcopy(policy["overall_weights"])
     return {"schema": "math-gauge.alignment-augmented-score/v1", "scope": scope,
         "id": f"alignment-selfcheck-{scope}/{policy['version']}",
         "model_label": plan["model_label"], "status": "post_observation_ai_review_human_pending",
         "score_units": {"metrics": "percent", "completion": "fraction"},
         "scoring_owner": "math_gauge.scoring", "scoring_view_version": f"alignment-selfcheck/{policy['version']}",
         "scoring_implementation_sha256": digest_bytes(Path(__file__).read_bytes()),
-        "profile": copy.deepcopy(summary["profile"]), "metrics": metrics,
+        "profile": profile, "metrics": metrics,
         "coverage": copy.deepcopy(summary["coverage"]),
         "policy": {"schema": policy["schema"], "version": policy["version"],
             "sha256": expected_sha256["policy"],
             "neutral_group_weights": copy.deepcopy(policy["neutral_group_weights"]),
-            "overall_weights": copy.deepcopy(policy["overall_weights"])},
+            "overall_weights": copy.deepcopy(policy["overall_weights"]),
+            **({"capability_component_weights": copy.deepcopy(policy["capability_component_weights"])}
+               if policy["version"] == "0.3.0" else {})},
+        **({"aggregation_profile_binding": {
+            "original_profile_sha256": plan["profile"]["sha256"],
+            "weight_policy_sha256": expected_sha256["policy"]}}
+           if policy["version"] == "0.3.0" else {}),
         "source_bindings": {name + "_sha256": expected_sha256[name] for name in sorted(sources)},
         "baseline_score": {"schema": selected["schema"], "id": selected.get("id"),
             "sha256": expected_sha256.get("source_qualified_score", expected_sha256["original_summary"]),
@@ -2024,7 +2066,7 @@ def alignment_augmented_score(sources, *, expected_sha256):
             "metrics": copy.deepcopy(summary["metrics"]), "standard_evidence_rewritten": False},
         "alignment_selfcheck": trajectory,
         **({"lean_formalization_breakdown": _lean_formalization_breakdown(plan, inputs, baseline, substitutions)}
-           if policy["version"] == "0.2.0" else {}),
+           if policy["version"] in {"0.2.0", "0.3.0"} else {}),
         "alignment_study_coverage": {"planned_rounds": 3,
             "records_present": sum(row.get("snapshot") is not None for row in review["rounds"]),
             "adjudicated_rounds": trajectory["metric"]["coverage"]["adjudicated"],
@@ -2037,7 +2079,10 @@ def alignment_augmented_score(sources, *, expected_sha256):
             "standard_composition": copy.deepcopy(summary.get("composition"))},
         "formal_comparison_eligible": False, "human_review": "pending", "new_candidate_calls": 0,
         "notice": "The four written neutral families retain their internal average. Three Lean rounds form one alignment family. "
-                  "The versioned policy combines the two neutral groups inside the unchanged 75/5/10/10 total. "
+                  + ("The versioned policy supplies the aggregation weights; frozen execution plans remain unchanged. "
+                     if policy["version"] == "0.3.0" else
+                     "The versioned policy combines the two neutral groups inside the unchanged 75/5/10/10 total. ")
+                  +
                   "Original execution, 42/45-slot coverage and A1 evidence remain stored; this view adds no candidate calls or formal qualification."}
 
 

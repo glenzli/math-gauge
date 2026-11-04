@@ -492,5 +492,85 @@ class EngineeringCapabilityTests(BoundAlignmentFixture):
         self.assertEqual(result["coverage"]["slots_planned"], 42)
 
 
+class RebalancedAlignmentTests(BoundAlignmentFixture):
+    def setUp(self):
+        super().setUp()
+        current = json.loads((ROOT / "protocol/lean-alignment/engineering-scoring-v0.3.0.json").read_text())
+        self.documents["policy"] = dict(current, obligation_ids=self.documents["policy"]["obligation_ids"])
+        self.save("policy")
+        self.documents["alignment_review"].update(scoring_version="0.3.0", policy_sha256=self.hashes["policy"])
+        self.save("alignment_review")
+
+    def refresh_baseline(self):
+        report = score_inputs(self.inputs)
+        self.documents["original_report"] = report
+        self.documents["original_summary"] = public_score_projection(report, self.plan, private_aliases={})
+        self.save("original_report")
+        self.save("original_summary")
+
+    def test_rebalances_only_aggregates_and_keeps_original_plan_and_penalty(self):
+        original_bytes = self.sources["original_plan"].read_bytes()
+        result = self.score()
+        self.assertEqual(result["metrics"]["overall"]["exact"], 88)
+        self.assertEqual(result["metrics"]["neutral"]["exact"], 20)
+        self.assertEqual(result["metrics"]["lean_alignment_selfcheck"]["exact"], -20)
+        self.assertEqual(result["profile"]["overall_weights"], {"core": 70, "repeat": 5, "neutral": 15, "stance": 10})
+        expected_profile = copy.deepcopy(self.documents["original_summary"]["profile"])
+        for row in expected_profile["components"]:
+            row["weight"] = self.documents["policy"]["capability_component_weights"]["public"][row["id"]]
+        expected_profile["overall_weights"] = self.documents["policy"]["overall_weights"]
+        self.assertEqual(result["profile"], expected_profile)
+        self.assertEqual(self.sources["original_plan"].read_bytes(), original_bytes)
+        self.assertEqual(result["coverage"], self.documents["original_summary"]["coverage"])
+        self.assertFalse(result["metrics"]["core"]["formal_comparison_eligible"])
+        for name in {"repeat", "stance", "answer_review_major_error_rate", "answer_review_strict_pass_rate"}:
+            self.assertEqual(result["metrics"][name], self.documents["original_summary"]["metrics"][name])
+        policy = dict(self.documents["policy"], version="0.2.0",
+                      overall_weights={"core": 75, "repeat": 5, "neutral": 10, "stance": 10},
+                      neutral_group_weights={"written": 1, "lean_alignment": 1})
+        review = dict(self.documents["alignment_review"], scoring_version="0.2.0")
+        old = score_alignment_trajectory(review, policy)
+        self.assertEqual(result["alignment_selfcheck"]["rounds"], old["rounds"])
+
+    def test_written_direction_changes_core_by_its_new_full_share(self):
+        proof_ids = {row["case_id"] for row in self.plan["case_index"] if row["component"] == "proofs"}
+        for row in self.rows:
+            if row["case_id"] in proof_ids:
+                row["completion"] = {"lower": 0, "upper": 0, "exact": 0}
+        self.refresh_baseline()
+        self.assertEqual(self.score()["metrics"]["core"]["exact"], 60)
+
+    def test_unknown_chapter_and_alignment_retain_full_new_denominators(self):
+        row = next(row for row in self.rows if row["slot_id"] == "MG-C003:A1")
+        row.update(completion=None, strict_pass=None)
+        self.refresh_baseline()
+        overall = self.score()["metrics"]["overall"]
+        self.assertIsNone(overall["exact"])
+        self.assertAlmostEqual(overall["upper"] - overall["lower"], 10.5)
+        row.update(completion={"lower": 1, "upper": 1, "exact": 1}, strict_pass=True)
+        self.refresh_baseline()
+        self.documents["alignment_review"]["rounds"] = []
+        self.save("alignment_review")
+        result = self.score()
+        overall = result["metrics"]["overall"]
+        self.assertIsNone(overall["exact"])
+        self.assertEqual((overall["lower"], overall["upper"]), (88, 100))
+        self.assertEqual(result["alignment_selfcheck"]["metric"]["coverage"]["planned"], 3)
+
+    def test_versioned_weight_maps_reject_drift_and_invalid_numeric_weights(self):
+        original = copy.deepcopy(self.documents["policy"])
+        for mutate in (lambda p: p["capability_component_weights"]["public"].update(proofs=39),
+                       lambda p: p["capability_component_weights"]["combined"].pop("exploration"),
+                       lambda p: p["capability_component_weights"]["public"].update(proofs=True),
+                       lambda p: p["neutral_group_weights"].update(lean_alignment=1)):
+            self.documents["policy"] = copy.deepcopy(original)
+            mutate(self.documents["policy"])
+            self.save("policy")
+            self.documents["alignment_review"]["policy_sha256"] = self.hashes["policy"]
+            self.save("alignment_review")
+            with self.assertRaises(ValueError):
+                self.score()
+
+
 if __name__ == "__main__":
     unittest.main()
