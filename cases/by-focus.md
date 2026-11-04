@@ -1,6 +1,6 @@
 # 按考察重点选卷
 
-本目录覆盖默认30份任务与后备20份，共50条相关记录：46份数学卷与4份真实答卷审阅。默认任务关联21个母题家族。数学默认集含252项阶段或章节义务，后备含120项。另有15项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。
+本目录覆盖默认26份任务与后备31份，共57条相关记录：53份数学卷与4份真实答卷审阅。默认任务关联18个母题家族。数学默认集含226项阶段或章节义务，后备含214项。另有15项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。
 
 分类是AI审查建议；源题全部仍为 **draft / human pending**。本目录不产生模型调用、数学裁定或新增判卷要求，也不证明作者或候选Lean覆盖。完整要求以唯一题面和合同为准。
 
@@ -12,15 +12,15 @@
 
 | 考察重点 | 主重点任务数 | 含该标签任务数 |
 | --- | ---: | ---: |
-| F01 假设及作用域 | 3 | 41 |
+| F01 假设及作用域 | 3 | 45 |
 | F02 量词与常数一致性 | 4 | 22 |
-| F03 定义域、局部整体与提升 | 9 | 30 |
+| F03 定义域、局部整体与提升 | 9 | 37 |
 | F04 结论强度与收敛 | 5 | 29 |
 | F05 存在、取到与极限 | 2 | 12 |
 | F06 构造、分类与自然性 | 10 | 27 |
 | F07 证明链与依赖管理 | 3 | 20 |
-| F08 Lean语义对齐 | 6 | 14 |
-| F09 完整Lean工程交付 | 8 | 8 |
+| F08 Lean语义对齐 | 10 | 21 |
+| F09 完整Lean工程交付 | 11 | 11 |
 
 ## F01 假设及作用域
 
@@ -36,20 +36,24 @@
 | [MG-GR001 · 递归系统的固定族、稳定分支与终止](reserve/proofs/MG-GR001/task.md) · [合同](reserve/proofs/MG-GR001/contract.json) | 后备 | 0.1.2 · 7阶段 | **S2**：加入完备度量及有限直径后构造固定族；**S4**：回到共同的扩展伪度量结构，重新判定整体目标。 |
 | [MG-GR020 · 对称分解的归一化与算术边界](proofs/MG-GR020/task.md) · [合同](proofs/MG-GR020/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：完备DVR构造阶段明确给2为单位；**S4**：原结构仅给特征零DVR，须重新核查分母和Hensel条件。 |
 
-### 次重点 · 38份（完整题库）
+### 次重点 · 42份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
+| [AHR01 · 节点域加细的语义审计](lean-audit/AHR01/task.md) · [合同](lean-audit/AHR01/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **evidence**：对差异或对齐结论给出保持原始条件的证据。 |
+| [AHR02 · 路径保证域的语义审计](lean-audit/AHR02/task.md) · [合同](lean-audit/AHR02/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **evidence**：对差异或对齐结论给出保持原始条件的证据。 |
+| [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) · [合同](lean-audit/AHR03/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **evidence**：对差异或对齐结论给出保持原始条件的证据。 |
+| [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) · [合同](lean-audit/AHR04/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **evidence**：对差异或对齐结论给出保持原始条件的证据。 |
 | [MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解](answer-review/MG-AR001/task.md) · [合同](answer-review/MG-AR001/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **core_judgment**：核对nil条件的逐元素作用与交换性，不额外要求全核统一指数或2可逆。 |
 | [MG-AR002 · 真实答卷审阅 002：线性关系、坐标纤维与无限赋值](answer-review/MG-AR002/task.md) · [合同](answer-review/MG-AR002/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **completeness**：保留有限域通常紧性与任意域代数延拓的不同适用范围。 |
-| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 默认 | 0.1.1 · 34义务 | **CH02-D02**：co-Lip证书自带非空受限域条件；**CH02-D04**：空乘积和正长度乘积范围不同；**CH02-P21**：规范非分离时结论只到族零距，不自动增加分离性。 |
-| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) · [合同](lean-audit/MG-GF101/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：原有限层目标允许任意理想；**S6**：审计源码所给源幂零数据是否属于原条件。 |
-| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：删除S1平方零条件，通用定理须覆盖任意R和I。 |
-| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：原构造保持任意指标、任意空间和空指标族范围。 |
-| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：不能携带S1单射离散条件；**S5**：删除联合单射后重新判定T0。 |
-| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：非空切片支持分母除法；**S5**：空切片阶段改成乘积界，不能直接复用商式界。 |
-| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：零阶估计仅在共同支撑端点M的范围给出，常数须记录对M的依赖。 |
-| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：把v≥1改为逐点v>0，核对每条证明的实际用法；**S4**：再允许零权重时重新检查逆问题。 |
+| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 后备 | 0.1.1 · 34义务 | **CH02-D02**：co-Lip证书自带非空受限域条件；**CH02-D04**：空乘积和正长度乘积范围不同；**CH02-P21**：规范非分离时结论只到族零距，不自动增加分离性。 |
+| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) · [合同](lean-audit/MG-GF101/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：原有限层目标允许任意理想；**S6**：审计源码所给源幂零数据是否属于原条件。 |
+| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：删除S1平方零条件，通用定理须覆盖任意R和I。 |
+| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 后备 | 0.1.1 · 6阶段 | **S1**：原构造保持任意指标、任意空间和空指标族范围。 |
+| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：不能携带S1单射离散条件；**S5**：删除联合单射后重新判定T0。 |
+| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：非空切片支持分母除法；**S5**：空切片阶段改成乘积界，不能直接复用商式界。 |
+| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：零阶估计仅在共同支撑端点M的范围给出，常数须记录对M的依赖。 |
+| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：把v≥1改为逐点v>0，核对每条证明的实际用法；**S4**：再允许零权重时重新检查逆问题。 |
 | [MG-GF109 · 有限记录、安全核与迟延前进](lean-audit/MG-GF109/task.md) · [合同](lean-audit/MG-GF109/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：弱记录允许停留而不给最终前进；**S4**：迟延实现是额外条件，不能回填为原输入。 |
 | [MG-GF110 · 有限记录的可靠内近似与完整修复](lean-construction/MG-GF110/task.md) · [合同](lean-construction/MG-GF110/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：E只在A中给出，迭代调用需检查局部适用范围；**S3**：返回W后删除E，重新判定精确恢复。 |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：商同伦使用非空可缩子复形条件；**S5**：删除B后需重新处理空link和孤立顶点。 |
@@ -99,12 +103,12 @@
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) · [合同](chapters/MG-C003/contract.json) | 默认 | 0.1.1 · 92义务 | **CH03-P10-02**：逐基点计算合法半径及正点态半径；**CH03-P10-03**：在同一固定域上再取基点下确界；**CH03-P20-01**：对任意输入尺度在同一阶跃例中选择二点，保留量词顺序。 |
-| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) · [合同](lean-audit/MG-GF101/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：统一N覆盖所有层；**S5**：分离条件下保持同一个N，不改成逐层存在指数。 |
-| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：所有单点映射与任意测试空间的全称量词分开；**S5**：指定方向的一个恒等测试与S4的点测试不同。 |
-| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：一阶控制保留完全同一个C；**S4**：全体序列统一D；**S5**：改成每条序列各自存在D。 |
-| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：一阶估计须保留固定C；**S5**：C=0端点另查，不能推广为任意正常数估计。 |
+| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) · [合同](lean-audit/MG-GF101/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：统一N覆盖所有层；**S5**：分离条件下保持同一个N，不改成逐层存在指数。 |
+| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：所有单点映射与任意测试空间的全称量词分开；**S5**：指定方向的一个恒等测试与S4的点测试不同。 |
+| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：一阶控制保留完全同一个C；**S4**：全体序列统一D；**S5**：改成每条序列各自存在D。 |
+| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 后备 | 0.1.1 · 6阶段 | **S1**：一阶估计须保留固定C；**S5**：C=0端点另查，不能推广为任意正常数估计。 |
 | [MG-GF109 · 有限记录、安全核与迟延前进](lean-audit/MG-GF109/task.md) · [合同](lean-audit/MG-GF109/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：每个安全x的迟延可依赖x，不要求统一上界。 |
-| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：各有限子域可有不同且无统一上界的c_F；**S5**：改给固定有限C，检查C本身的全域可行性。 |
+| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：各有限子域可有不同且无统一上界的c_F；**S5**：改给固定有限C，检查C本身的全域可行性。 |
 | [MG-GP003 · 半局部邻域、下降与层化的依赖比较](proofs/MG-GP003/task.md) · [合同](proofs/MG-GP003/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：逐同调类在某后阶段消失与统一尾部阶段正合的量词分开。 |
 | [MG-GR001 · 递归系统的固定族、稳定分支与终止](reserve/proofs/MG-GR001/task.md) · [合同](reserve/proofs/MG-GR001/contract.json) | 后备 | 0.1.2 · 7阶段 | **S7**：分别检查逐输入有限终止和统一终止深度能支持的误差范围。 |
 | [MG-GR003 · 平均恢复、迭代误差与一致速度](reserve/proofs/MG-GR003/task.md) · [合同](reserve/proofs/MG-GR003/contract.json) | 后备 | 0.1.1 · 6阶段 | **S5**：检查逐向量的逼近阶段能否统一到整个单位球。 |
@@ -137,15 +141,22 @@
 | [MG-GR017 · 连续提升的有限拼接与积](proofs/MG-GR017/task.md) · [合同](proofs/MG-GR017/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：有限离散因子的乘积通过有限开闭拼接处理；**S4**：改为两个任意具有全提升性质的profinite因子。 |
 | [MG-GR021 · 同时分块与二次扩张上的下降](proofs/MG-GR021/task.md) · [合同](proofs/MG-GR021/contract.json) | 默认 | 0.1.0 · 5评审判准 | **feasibility_counts_liftability**：区分有限同余类与真正整数解的截断，给可计算的可提升充要判据。 |
 
-### 次重点 · 21份（完整题库）
+### 次重点 · 28份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
+| [AHR01 · 节点域加细的语义审计](lean-audit/AHR01/task.md) · [合同](lean-audit/AHR01/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：区分完整数学定义域、实际可达域或可评估路径域。 |
+| [AHR02 · 路径保证域的语义审计](lean-audit/AHR02/task.md) · [合同](lean-audit/AHR02/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：区分完整数学定义域、实际可达域或可评估路径域。 |
+| [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) · [合同](lean-audit/AHR03/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：区分完整数学定义域、实际可达域或可评估路径域。 |
+| [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) · [合同](lean-audit/AHR04/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：区分完整数学定义域、实际可达域或可评估路径域。 |
+| [HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐](lean-formalization/HCH02/candidate/task.md) · [合同](lean-formalization/HCH02/contract.json) | 默认 | 0.1.0 · 40义务 | **HC02-D01**：保留合法评估域和全域/受限域的区别。 |
+| [LCH01 · 通道接口节群](lean-formalization/LCH01/candidate/task.md) · [合同](lean-formalization/LCH01/contract.json) | 默认 | 0.1.0 · 8义务 | **CH02-D01**：保留合法评估域和全域/受限域的区别。 |
+| [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) · [合同](lean-formalization/LCH02/contract.json) | 默认 | 0.1.0 · 20义务 | **CH02-D01**：保留合法评估域和全域/受限域的区别。 |
 | [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) · [合同](answer-review/MG-AR004/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **core_judgment**：核对任意指定点集与半局部概形实际闭点的区别，不能直接按原点集归纳。 |
-| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 默认 | 0.1.1 · 34义务 | **CH02-D05**：表示实际中间像域，而非任意选一个下游域；**CH02-P04**：两步Lip复合须使用精确中间像域；**CH02-P08**：co-Lip复合还须保留非空性。 |
+| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 后备 | 0.1.1 · 34义务 | **CH02-D05**：表示实际中间像域，而非任意选一个下游域；**CH02-P04**：两步Lip复合须使用精确中间像域；**CH02-P08**：co-Lip复合还须保留非空性。 |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) · [合同](chapters/MG-C003/contract.json) | 默认 | 0.1.1 · 92义务 | **CH03-D05**：统一半径在A上取inf但在U评估；**CH03-P15-02**：复合下界使用下游实际像域上的半径；**CH03-P17-03**：同时缩小评估域和取inf基点集须分别追踪。 |
-| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：任意E的子空间拓扑须与受限观测的初始拓扑相等。 |
-| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：仅正有限分母域可直接使用通常除法等价；**S3**：回到含零和无穷分母的完整域，需额外边界分支。 |
+| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：任意E的子空间拓扑须与受限观测的初始拓扑相等。 |
+| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 后备 | 0.1.1 · 6阶段 | **S1**：仅正有限分母域可直接使用通常除法等价；**S3**：回到含零和无穷分母的完整域，需额外边界分支。 |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：判据须仅使用含v单形及其面关联的局部数据，并连接整体同伦型。 |
 | [MG-GP003 · 半局部邻域、下降与层化的依赖比较](proofs/MG-GP003/task.md) · [合同](proofs/MG-GP003/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：包含指定点的邻域系需证明实际余终；**S4**：稠密开与保留全部半局部点不能混同。 |
 | [MG-GR001 · 递归系统的固定族、稳定分支与终止](reserve/proofs/MG-GR001/task.md) · [合同](reserve/proofs/MG-GR001/contract.json) | 后备 | 0.1.2 · 7阶段 | **S6**：把唯一性限定在给定有限残差的有限距离分支，并检查能否跨分支。 |
@@ -185,13 +196,13 @@
 | --- | --- | --- | --- |
 | [MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级](answer-review/MG-AR003/task.md) · [合同](answer-review/MG-AR003/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **evidence_scope**：区分固定目标的错误识别与关于所有目标的有效充要结论，限制反例实际反驳范围。 |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) · [合同](chapters/MG-C003/contract.json) | 默认 | 0.1.1 · 92义务 | **CH03-P08-03**：商值判据回到点值判据需核验两实际像集分离；**CH03-P23-03**：熵差为零仅在差值良定的范围使用；**CH03-P29-05**：删除直径条件后对整体零化的加强另作反例义务。 |
-| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：核对拓扑粗细与连续恒等映射方向；**S3**：初始拓扑相等与目标拓扑相等分开判定。 |
-| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：将F⊆A加强为F⊆B须另判；**S3**：定量上界与最小覆盖数的精确等式分开。 |
-| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：对所有切片估计后是否能去掉密度因子须完整判定。 |
-| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：r+1到r目标与r+2输入接口的强度差异须给具体见证。 |
+| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 后备 | 0.1.1 · 6阶段 | **S2**：核对拓扑粗细与连续恒等映射方向；**S3**：初始拓扑相等与目标拓扑相等分开判定。 |
+| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：将F⊆A加强为F⊆B须另判；**S3**：定量上界与最小覆盖数的精确等式分开。 |
+| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：对所有切片估计后是否能去掉密度因子须完整判定。 |
+| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：r+1到r目标与r+2输入接口的强度差异须给具体见证。 |
 | [MG-GF109 · 有限记录、安全核与迟延前进](lean-audit/MG-GF109/task.md) · [合同](lean-audit/MG-GF109/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：可靠内近似、精确安全核相等和真实最大性分别证明；**S5**：相等能否反推精确记录另判。 |
 | [MG-GF110 · 有限记录的可靠内近似与完整修复](lean-construction/MG-GF110/task.md) · [合同](lean-construction/MG-GF110/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：可靠包含与终层最大性、真实K最大性不能混同。 |
-| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 默认 | 0.1.1 · 6阶段 | **S5**：并系统最小值反推各支最小值是对S4的独立逆向判定。 |
+| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 后备 | 0.1.1 · 6阶段 | **S5**：并系统最小值反推各支最小值是对S4的独立逆向判定。 |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：有理同调和整数扭结信息分开；**S6**：悬挂等价能否逆向消去需另给完整论证。 |
 | [MG-GP002 · Fourier 逆、截断误差与参数边界](proofs/MG-GP002/task.md) · [合同](proofs/MG-GP002/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：有限频带形式逆须升级为真正光滑解及截断误差；**S4**：给定C^(m+4)到C^m结论不能由更弱输入范数要求代替。 |
 | [MG-GR001 · 递归系统的固定族、稳定分支与终止](reserve/proofs/MG-GR001/task.md) · [合同](reserve/proofs/MG-GR001/contract.json) | 后备 | 0.1.2 · 7阶段 | **S5**：同时计算指定展开的点态行为和全输入sup误差。 |
@@ -225,8 +236,8 @@
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
-| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：分别分类有限系数存在、有限最小值存在及其值。 |
-| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：最优系数与某点实际达到比值上确界分开；**S3**：可行有限系数存在与最小值取得另算。 |
+| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：分别分类有限系数存在、有限最小值存在及其值。 |
+| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 后备 | 0.1.1 · 6阶段 | **S1**：最优系数与某点实际达到比值上确界分开；**S3**：可行有限系数存在与最小值取得另算。 |
 | [MG-GP002 · Fourier 逆、截断误差与参数边界](proofs/MG-GP002/task.md) · [合同](proofs/MG-GP002/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：最小允许损失和端点是否取到须分别证明。 |
 | [MG-GR002 · 线性记录、有限观测与原空间恢复](proofs/MG-GR002/task.md) · [合同](proofs/MG-GR002/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：证明C+ε的有限观测精确匹配，并另判定ε=0是否可取。 |
 | [MG-GR004 · Hilbert复形的精确消元与近似消元](reserve/proofs/MG-GR004/task.md) · [合同](reserve/proofs/MG-GR004/contract.json) | 后备 | 0.1.1 · 5阶段 | **S5**：同时比较有界收缩、有界右逆、闭值域及正则化范数极限的存在。 |
@@ -262,10 +273,10 @@
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
 | [MG-AR002 · 真实答卷审阅 002：线性关系、坐标纤维与无限赋值](answer-review/MG-AR002/task.md) · [合同](answer-review/MG-AR002/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **evidence_scope**：核查非齐次解集是仿射对象而非线性子空间，以合法例子并限定修复范围。 |
-| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：指定q_n的单射性不能换成抽象环同构；**S5**：构造指定同态的全部层自然性而非预设同构。 |
-| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：构造精确最小覆盖数并证明上下两个方向。 |
-| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：用指定商映射的像描述覆盖与精确最小覆盖数。 |
-| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：定义两个分支的不交并并证明Bound拆分及全部最小性。 |
+| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：指定q_n的单射性不能换成抽象环同构；**S5**：构造指定同态的全部层自然性而非预设同构。 |
+| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：构造精确最小覆盖数并证明上下两个方向。 |
+| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：用指定商映射的像描述覆盖与精确最小覆盖数。 |
+| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 后备 | 0.1.1 · 6阶段 | **S4**：定义两个分支的不交并并证明Bound拆分及全部最小性。 |
 | [MG-GP002 · Fourier 逆、截断误差与参数边界](proofs/MG-GP002/task.md) · [合同](proofs/MG-GP002/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：完整分类可逆方向和全部非负Sobolev损失。 |
 | [MG-GR002 · 线性记录、有限观测与原空间恢复](proofs/MG-GR002/task.md) · [合同](proofs/MG-GR002/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：给出记录载体与T″作用的双向构造；**S3**：由记录完整描述闭子空间成员及距离的对偶公式。 |
 | [MG-GR006 · 逆向塔的前缀、整体提升与选择](reserve/proofs/MG-GR006/task.md) · [合同](reserve/proofs/MG-GR006/contract.json) | 后备 | 0.1.1 · 6阶段 | **S3**：区分自然提升空间与对全部整塔同构自然的首选提升；**S6**：构造选择无关且自然的完整障碍及全部提升。 |
@@ -300,8 +311,8 @@
 | [MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解](answer-review/MG-AR001/task.md) · [合同](answer-review/MG-AR001/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **evidence_scope**：区分层间唯一性、极限核与元素提升的依赖，不把参考中的额外非交换存在证明加入原任务。 |
 | [MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级](answer-review/MG-AR003/task.md) · [合同](answer-review/MG-AR003/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **core_judgment**：区分普通指数律的引用条件错位与后文独立有效CGHaus路线，不把前者传播为全部结论假。 |
 | [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) · [合同](answer-review/MG-AR004/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **evidence_scope**：追踪错误全局单射在比较图中的真实用途，同时保留其他独立有效阶段。 |
-| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 默认 | 0.1.1 · 34义务 | **CH02-P09**：从逐步证书通过合法的有限链构造复合证书；**CH02-P10**：co-Lip链的实际域递推与连乘次序要一致；**CH02-P13**：零值路径判据与正值判据的依赖须对应真实有限路径表示。 |
-| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 默认 | 0.1.1 · 6阶段 | **S5**：放大子群后需从给定F_H重新选代表，不能直接继承更强基数界。 |
+| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 后备 | 0.1.1 · 34义务 | **CH02-P09**：从逐步证书通过合法的有限链构造复合证书；**CH02-P10**：co-Lip链的实际域递推与连乘次序要一致；**CH02-P13**：零值路径判据与正值判据的依赖须对应真实有限路径表示。 |
+| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 后备 | 0.1.1 · 6阶段 | **S5**：放大子群后需从给定F_H重新选代表，不能直接继承更强基数界。 |
 | [MG-GF109 · 有限记录、安全核与迟延前进](lean-audit/MG-GF109/task.md) · [合同](lean-audit/MG-GF109/contract.json) | 后备 | 0.1.1 · 6阶段 | **S1**：每次使用局部精确条件前要保证当前轨道仍在A；**S4**：迟延迭代后仍安全须先证，才可复用记录归纳。 |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：使用S1/S2的商和拼接结论前，须验证闭子复形、cofibration或实际替代条件。 |
 | [MG-GR001 · 递归系统的固定族、稳定分支与终止](reserve/proofs/MG-GR001/task.md) · [合同](reserve/proofs/MG-GR001/contract.json) | 后备 | 0.1.2 · 7阶段 | **S3**：稳定估计只在同图、同输入分割与同b的系统之间复用展开比较；**S6**：重新证明分支完备和不变，才可复用压缩固定点论证。 |
@@ -321,29 +332,36 @@
 
 书面审计不自动附加候选Lean源码义务；不以旧编译覆盖新阶段。
 
-### 主重点 · 6份（完整题库）
+### 主重点 · 10份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
-| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) · [合同](lean-audit/MG-GF101/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：逐项展开SourceData与Candidate，核对原S2覆盖、次数及真实假设。 |
-| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：核对源码四项声明、Lean拓扑序方向及完整映入范围。 |
-| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：逐步核对切片、差集、覆盖和除法接口的语义。 |
-| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：完整展开InputControl与Result，分别审计原逆和一阶固定常数估计。 |
+| [AHR01 · 节点域加细的语义审计](lean-audit/AHR01/task.md) · [合同](lean-audit/AHR01/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：逐项核对原文与实现的范围、前提及结论。 |
+| [AHR02 · 路径保证域的语义审计](lean-audit/AHR02/task.md) · [合同](lean-audit/AHR02/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：逐项核对原文与实现的范围、前提及结论。 |
+| [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) · [合同](lean-audit/AHR03/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：逐项核对原文与实现的范围、前提及结论。 |
+| [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) · [合同](lean-audit/AHR04/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **judgment**：逐项核对原文与实现的范围、前提及结论。 |
+| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) · [合同](lean-audit/MG-GF101/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：逐项展开SourceData与Candidate，核对原S2覆盖、次数及真实假设。 |
+| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) · [合同](lean-audit/MG-GF103/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：核对源码四项声明、Lean拓扑序方向及完整映入范围。 |
+| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) · [合同](lean-audit/MG-GF105/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：逐步核对切片、差集、覆盖和除法接口的语义。 |
+| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) · [合同](lean-audit/MG-GF107/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：完整展开InputControl与Result，分别审计原逆和一阶固定常数估计。 |
 | [MG-GF109 · 有限记录、安全核与迟延前进](lean-audit/MG-GF109/task.md) · [合同](lean-audit/MG-GF109/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：展开Realizes和真实定理参数，逐层核对有限层、安全两方向及最大性。 |
-| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：审计正有限分母子类型、全部系数分类、有限/最小分类及边界例。 |
+| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) · [合同](lean-audit/MG-GF111/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：审计正有限分母子类型、全部系数分类、有限/最小分类及边界例。 |
 
-### 次重点 · 8份（完整题库）
+### 次重点 · 11份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
-| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 默认 | 0.1.1 · 34义务 | **CH02-D01**：定义与证书表示须证明同原文等价，不能只提供更弱可编译声明；**CH02-D03**：Lean矩阵条目须对应原文输出行、输入列约定。 |
+| [HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐](lean-formalization/HCH02/candidate/task.md) · [合同](lean-formalization/HCH02/contract.json) | 默认 | 0.1.0 · 40义务 | **HC02-D01**：表示须与原文定义、量词和作用域对应。 |
+| [LCH01 · 通道接口节群](lean-formalization/LCH01/candidate/task.md) · [合同](lean-formalization/LCH01/contract.json) | 默认 | 0.1.0 · 8义务 | **CH02-D01**：表示须与原文定义、量词和作用域对应。 |
+| [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) · [合同](lean-formalization/LCH02/contract.json) | 默认 | 0.1.0 · 20义务 | **CH02-D01**：表示须与原文定义、量词和作用域对应。 |
+| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 后备 | 0.1.1 · 34义务 | **CH02-D01**：定义与证书表示须证明同原文等价，不能只提供更弱可编译声明；**CH02-D03**：Lean矩阵条目须对应原文输出行、输入列约定。 |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) · [合同](chapters/MG-C003/contract.json) | 默认 | 0.1.1 · 92义务 | **CH03-D03**：Lean表示须区分点相等、全族零距、实际像和商关系；**CH03-D07**：允许直接复用冻结内部覆盖定义，仍须给真实声明映射及原文对应。 |
-| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：完整实现须保留各阶段自己的数学范围及全部原相容性目标。 |
-| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：须说明原assembled的一般行为、实际修改和每个声明对应。 |
-| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：允许等价表示，但须证明其与原覆盖和基数条件的对应。 |
-| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：修复后的原主接口只接受一阶Control，不能改名后保留r+2。 |
+| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：完整实现须保留各阶段自己的数学范围及全部原相容性目标。 |
+| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：须说明原assembled的一般行为、实际修改和每个声明对应。 |
+| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：允许等价表示，但须证明其与原覆盖和基数条件的对应。 |
+| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：修复后的原主接口只接受一阶Control，不能改名后保留r+2。 |
 | [MG-GF110 · 有限记录的可靠内近似与完整修复](lean-construction/MG-GF110/task.md) · [合同](lean-construction/MG-GF110/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：不能将W重命名为E，或只编译未变化的有限层来声称完整修复。 |
-| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：保留原ENNReal运算及三种分类，不能仅交声明类型。 |
+| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：保留原ENNReal运算及三种分类，不能仅交声明类型。 |
 
 ## F09 完整Lean工程交付
 
@@ -351,18 +369,21 @@
 
 一个阶段或背景编译不能替代完整交付；源代码交付是本主题的必要任务事实。
 
-### 主重点 · 8份（完整题库）
+### 主重点 · 11份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
-| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 默认 | 0.1.1 · 34义务 | **CH02-D01**：整章task要求所有34项定义、表示及证明在一个完整项目中统一编译，并交Main.lean和逐ID清单。 |
+| [HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐](lean-formalization/HCH02/candidate/task.md) · [合同](lean-formalization/HCH02/contract.json) | 默认 | 0.1.0 · 40义务 | **HC02-D01**：本题列出的全部义务须在完整Lean工程中统一交付。 |
+| [LCH01 · 通道接口节群](lean-formalization/LCH01/candidate/task.md) · [合同](lean-formalization/LCH01/contract.json) | 默认 | 0.1.0 · 8义务 | **CH02-D01**：本题列出的全部义务须在完整Lean工程中统一交付。 |
+| [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) · [合同](lean-formalization/LCH02/contract.json) | 默认 | 0.1.0 · 20义务 | **CH02-D01**：本题列出的全部义务须在完整Lean工程中统一交付。 |
+| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) · [合同](chapters/MG-C002/contract.json) | 后备 | 0.1.1 · 34义务 | **CH02-D01**：整章task要求所有34项定义、表示及证明在一个完整项目中统一编译，并交Main.lean和逐ID清单。 |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) · [合同](chapters/MG-C003/contract.json) | 默认 | 0.1.1 · 92义务 | **CH03-D01**：整章task要求所有92项定义、表示及证明共同编译，并交Main.lean及逐义务alignment.json。 |
-| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：Answer.lean须共同形式化S1–S5及反例，附阶段声明表并实际编译、公理审计。 |
-| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：四个必交文件共同修复一般构造并覆盖子空间、T0及完整反例。 |
-| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：Answer.lean须完整形式化S1–S5，包含具体有限反例、选择和计数证明。 |
-| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：原接口和Extensions须共同编译，完整实现扩展权重判断及反例。 |
+| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) · [合同](lean-construction/MG-GF102/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：Answer.lean须共同形式化S1–S5及反例，附阶段声明表并实际编译、公理审计。 |
+| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) · [合同](lean-construction/MG-GF104/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：四个必交文件共同修复一般构造并覆盖子空间、T0及完整反例。 |
+| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) · [合同](lean-construction/MG-GF106/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：Answer.lean须完整形式化S1–S5，包含具体有限反例、选择和计数证明。 |
+| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) · [合同](lean-construction/MG-GF108/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：原接口和Extensions须共同编译，完整实现扩展权重判断及反例。 |
 | [MG-GF110 · 有限记录的可靠内近似与完整修复](lean-construction/MG-GF110/task.md) · [合同](lean-construction/MG-GF110/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：完整交付四模块并形式化弱条件反例、可靠性、真实最大核及替代充分条件。 |
-| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 默认 | 0.1.1 · 6阶段 | **S6**：Answer.lean需共同实现全部分类、两个具体反例、不交并定理及逐阶段声明表。 |
+| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) · [合同](lean-construction/MG-GF112/contract.json) | 后备 | 0.1.1 · 6阶段 | **S6**：Answer.lean需共同实现全部分类、两个具体反例、不交并定理及逐阶段声明表。 |
 
 ### 次重点 · 0份（完整题库）
 

@@ -33,6 +33,12 @@
 
 合同中的预期标签不表示已发生的模型结果。六份audit无需新增候选Lean；输入可编译性与语义失配分别审核。两份整章另依group contract要求Main.lean、完整alignment.json及冻结背景，不能同名覆盖。纯文字研究题不因本入口而增加 Lean 义务。
 
+## 对齐说明的兼容表示
+
+既有题面要求representation说明对象、参数、量词和结论的对应，未限定必须是JSON字符串。当前解析器同时接受非空string，或恰含objects/parameters/quantifiers/conclusion四key且各值为非空string的对象；不接受缺项、额外key、空白或非文本值。两种形式保持原答原字节并绑定manifest和审核hash，不能据结构化写法推断语义通过。
+
+这是观察到真实答卷后按原题面修正的解析器兼容性处理，不修改题面、原答或已发布版本。原解析器的拒绝收据保留为工具限制证据；用新engine在新输出目录原样复验，分别记录编译、公理和语义结论，不把旧format_error当候选数学失败。
+
 ## 编译入口与隔离
 
 ```python

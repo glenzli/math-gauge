@@ -118,6 +118,8 @@ def validate_group_contract(contract):
         return validate_research_contract(contract)
     if isinstance(contract, dict) and contract.get("kind") == "answer_review":
         return validate_answer_review_contract(contract)
+    if isinstance(contract, dict) and contract.get("kind") == "semantic_audit":
+        return validate_semantic_audit_contract(contract)
     if isinstance(contract, dict) and contract.get("kind") == "written_proof":
         return validate_written_proof_contract(contract)
     if not isinstance(contract, dict) or contract.get("schema") != "math-gauge.group-contract/v1":
@@ -230,6 +232,17 @@ def validate_answer_review_contract(contract):
     return contract
 
 
+def validate_semantic_audit_contract(contract):
+    """Audit evidence has review dimensions, never fabricated mathematical stages."""
+    _validate_dimension_contract(contract)
+    if (contract.get("expected") not in {"aligned", "misaligned"}
+            or [(row["id"], row["points"]) for row in contract["dimensions"]] != [
+                ("judgment", 35), ("valid_parts", 20), ("evidence", 30), ("repair_scope", 15)]
+            or contract.get("candidate_lean_required") is not False):
+        raise ValueError("Semantic audit requires the frozen 35/20/30/15 dimensions without candidate Lean")
+    return contract
+
+
 def validate_written_proof_contract(contract):
     """Score final mathematical deliverables without prescribing a proof route."""
     if (contract.get("schema") != "math-gauge.group-contract/v2"
@@ -265,7 +278,7 @@ def assessment_weights(contract):
     if contract["kind"] == "written_proof":
         return {"criteria": [{"criterion_id": row["id"], "points": row["points"]}
                              for row in contract["criteria"]]}
-    if contract["kind"] == "answer_review":
+    if contract["kind"] in {"answer_review", "semantic_audit"}:
         return {"dimensions": [{"dimension_id": row["id"], "points": row["points"]}
                                for row in contract["dimensions"]]}
     return {"stages": [{"stage_id": row["id"], "points": row["points"],
@@ -275,7 +288,7 @@ def assessment_weights(contract):
 
 def assessment_units(contract):
     """Plan weights share an interface; their mathematical meaning stays explicit."""
-    if contract.get("kind") in {"research_exploration", "answer_review"}:
+    if contract.get("kind") in {"research_exploration", "answer_review", "semantic_audit"}:
         return [dict(row, lean_required=False) for row in contract["dimensions"]]
     if contract.get("kind") == "written_proof":
         return contract["criteria"]
@@ -297,8 +310,12 @@ def validate_alignment_manifest(manifest, contract):
         sid = item["id"]
         if item.get("status") not in {"complete", "incomplete"}:
             raise ValueError(f"{sid}: invalid alignment completion status")
-        if not isinstance(item.get("representation"), str) or not item["representation"].strip():
-            raise ValueError(f"{sid}: alignment representation is required")
+        representation = item.get("representation")
+        if not (isinstance(representation, str) and representation.strip()
+                or isinstance(representation, dict)
+                and set(representation) == {"objects", "parameters", "quantifiers", "conclusion"}
+                and all(isinstance(value, str) and value.strip() for value in representation.values())):
+            raise ValueError(f"{sid}: alignment representation requires a nonempty string or four nonempty mapping fields")
         deps = item.get("dependencies")
         if (not isinstance(deps, list) or not all(isinstance(x, str) for x in deps)
                 or len(set(deps)) != len(deps) or not set(deps) <= expected):
@@ -514,6 +531,10 @@ class Suite:
                     contract["version"] != case["version"] or case.get("task_kind") != "written"
                     or case["track"] != "determinate" or case["lean_checks"]):
                     raise ValueError(f"{cid}: written-proof case/contract identity or delivery mismatch")
+                if contract["kind"] == "semantic_audit" and (
+                    contract["version"] != case["version"] or case.get("task_kind") != "audit"
+                    or case["track"] != "alignment" or case["lean_checks"]):
+                    raise ValueError(f"{cid}: semantic-audit identity or delivery mismatch")
                 if contract.get("alignment_manifest_required") and contract["version"] != case["version"]:
                     raise ValueError(f"{cid}: alignment contract version mismatch")
             protected = {
@@ -552,6 +573,8 @@ class Suite:
             for p in paths:
                 safe_file(root, p)
             rubric = read_json(safe_file(root, case["rubric"]))
+            if case.get("group_contract") and contract["kind"] == "semantic_audit" and contract["expected"] != rubric.get("expected"):
+                raise ValueError(f"{cid}: semantic-audit rubric and contract disagree")
             allowed = {
                 "determinate": {"true", "false", "mixed"},
                 "alignment": {"aligned", "misaligned"},

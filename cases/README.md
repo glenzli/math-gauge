@@ -1,6 +1,6 @@
 # 当前试卷
 
-0.5.0默认题集 `cases/suite.json` 含30份相关任务，关联21个母题家族。另20份后备数学卷由 `cases/reserve-suite.json` 显式选择。完整题库含46份数学卷与4份真实答卷审阅，共372项阶段或章节义务，另有15项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
+0.6.0默认题集 `cases/suite.json` 含26份相关任务，关联18个母题家族。另31份后备数学卷由 `cases/reserve-suite.json` 显式选择。完整题库含53份数学卷与4份真实答卷审阅，共440项阶段或章节义务，另有15项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
 
 材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review-pilot.md)与[当前结果](../docs/benchmark-comparison-2026-11-03.md)。已发布资产保持原样。
 
@@ -27,32 +27,33 @@
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) | written | 6阶段 | [合同](proofs/MG-GR103/contract.json) · [参考](proofs/MG-GR103/reference.md) · [评分](proofs/MG-GR103/rubric.json) · [题包复核](proofs/MG-GR103/review.json) · [作者Lean](proofs/MG-GR103/formal/COVERAGE.md) |
 | [MG-GR104 · 幂等元提升、逆极限与环分解](proofs/MG-GR104/task.md) | written | 6阶段 | [合同](proofs/MG-GR104/contract.json) · [参考](proofs/MG-GR104/reference.md) · [评分](proofs/MG-GR104/rubric.json) · [题包复核](proofs/MG-GR104/review.json) · [作者Lean](proofs/MG-GR104/formal/COVERAGE.md) |
 
-## Lean 语义审计 · 5份
+## Lean 语义审计 · 4份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
-| [MG-GF101 · 商环塔、幂零性与分离条件](lean-audit/MG-GF101/task.md) | audit | 6阶段 | [合同](lean-audit/MG-GF101/contract.json) · [参考](lean-audit/MG-GF101/reference.md) · [评分](lean-audit/MG-GF101/rubric.json) · [题包复核](lean-audit/MG-GF101/review.json) · [作者Lean](lean-audit/MG-GF101/formal/COVERAGE.md) |
-| [MG-GF103 · 初始拓扑的比较与测试空间](lean-audit/MG-GF103/task.md) | audit | 6阶段 | [合同](lean-audit/MG-GF103/contract.json) · [参考](lean-audit/MG-GF103/reference.md) · [评分](lean-audit/MG-GF103/rubric.json) · [题包复核](lean-audit/MG-GF103/review.json) · [作者Lean](lean-audit/MG-GF103/formal/COVERAGE.md) |
-| [MG-GF105 · 陪集切片、最小覆盖与空切片](lean-audit/MG-GF105/task.md) | audit | 6阶段 | [合同](lean-audit/MG-GF105/contract.json) · [参考](lean-audit/MG-GF105/reference.md) · [评分](lean-audit/MG-GF105/rubric.json) · [题包复核](lean-audit/MG-GF105/review.json) · [作者Lean](lean-audit/MG-GF105/formal/COVERAGE.md) |
-| [MG-GF107 · 加权逆算子、支撑界与量词交换](lean-audit/MG-GF107/task.md) | audit | 6阶段 | [合同](lean-audit/MG-GF107/contract.json) · [参考](lean-audit/MG-GF107/reference.md) · [评分](lean-audit/MG-GF107/rubric.json) · [题包复核](lean-audit/MG-GF107/review.json) · [作者Lean](lean-audit/MG-GF107/formal/COVERAGE.md) |
-| [MG-GF111 · 扩展非负界、有限子域与统一常数](lean-audit/MG-GF111/task.md) | audit | 6阶段 | [合同](lean-audit/MG-GF111/contract.json) · [参考](lean-audit/MG-GF111/reference.md) · [评分](lean-audit/MG-GF111/rubric.json) · [题包复核](lean-audit/MG-GF111/review.json) · [作者Lean](lean-audit/MG-GF111/formal/COVERAGE.md) |
+| [AHR01 · 节点域加细的语义审计](lean-audit/AHR01/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR01/group-contract.json) · [参考](lean-audit/AHR01/reference.md) · [评分](lean-audit/AHR01/rubric.json) · [题包复核](lean-audit/AHR01/review.json) · [作者Lean](lean-audit/AHR01/formal/COVERAGE.md) |
+| [AHR02 · 路径保证域的语义审计](lean-audit/AHR02/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR02/group-contract.json) · [参考](lean-audit/AHR02/reference.md) · [评分](lean-audit/AHR02/rubric.json) · [题包复核](lean-audit/AHR02/review.json) · [作者Lean](lean-audit/AHR02/formal/COVERAGE.md) |
+| [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR03/group-contract.json) · [参考](lean-audit/AHR03/reference.md) · [评分](lean-audit/AHR03/rubric.json) · [题包复核](lean-audit/AHR03/review.json) · [作者Lean](lean-audit/AHR03/formal/COVERAGE.md) |
+| [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR04/group-contract.json) · [参考](lean-audit/AHR04/reference.md) · [评分](lean-audit/AHR04/rubric.json) · [题包复核](lean-audit/AHR04/review.json) · [作者Lean](lean-audit/AHR04/formal/COVERAGE.md) |
 
-## Lean 生成与修复 · 5份
-
-| 试卷 | 任务 | 必答规模 | 完整材料 |
-| --- | --- | ---: | --- |
-| [MG-GF102 · 商环塔的稳定、比较与自然性](lean-construction/MG-GF102/task.md) | generate | 6阶段 | [合同](lean-construction/MG-GF102/contract.json) · [参考](lean-construction/MG-GF102/reference.md) · [评分](lean-construction/MG-GF102/rubric.json) · [题包复核](lean-construction/MG-GF102/review.json) · [作者Lean](lean-construction/MG-GF102/formal/COVERAGE.md) |
-| [MG-GF104 · 初始拓扑、子空间与分离性修复](lean-construction/MG-GF104/task.md) | repair | 6阶段 | [合同](lean-construction/MG-GF104/contract.json) · [参考](lean-construction/MG-GF104/reference.md) · [评分](lean-construction/MG-GF104/rubric.json) · [题包复核](lean-construction/MG-GF104/review.json) · [作者Lean](lean-construction/MG-GF104/formal/COVERAGE.md) |
-| [MG-GF106 · 陪集覆盖、商群计数与子群改变](lean-construction/MG-GF106/task.md) | generate | 6阶段 | [合同](lean-construction/MG-GF106/contract.json) · [参考](lean-construction/MG-GF106/reference.md) · [评分](lean-construction/MG-GF106/rubric.json) · [题包复核](lean-construction/MG-GF106/review.json) · [作者Lean](lean-construction/MG-GF106/formal/COVERAGE.md) |
-| [MG-GF108 · 加权逆算子的正性边界与接口修复](lean-construction/MG-GF108/task.md) | repair | 6阶段 | [合同](lean-construction/MG-GF108/contract.json) · [参考](lean-construction/MG-GF108/reference.md) · [评分](lean-construction/MG-GF108/rubric.json) · [题包复核](lean-construction/MG-GF108/review.json) · [作者Lean](lean-construction/MG-GF108/formal/COVERAGE.md) |
-| [MG-GF112 · 扩展非负最优界的取得与系统组合](lean-construction/MG-GF112/task.md) | generate | 6阶段 | [合同](lean-construction/MG-GF112/contract.json) · [参考](lean-construction/MG-GF112/reference.md) · [评分](lean-construction/MG-GF112/rubric.json) · [题包复核](lean-construction/MG-GF112/review.json) · [作者Lean](lean-construction/MG-GF112/formal/COVERAGE.md) |
-
-## 整章形式化 · 2份
+## Lean 生成与修复 · 0份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
-| [MG-C002 · OET卷1第2章整章形式化](chapters/MG-C002/candidate/task.md) | generate | 34义务 | [合同](chapters/MG-C002/contract.json) · [参考](chapters/MG-C002/reference.md) · [评分](chapters/MG-C002/rubric.json) · [题包复核](chapters/MG-C002/review.json) · [作者Lean](chapters/MG-C002/formal/COVERAGE.md) |
+
+## 整章形式化 · 1份
+
+| 试卷 | 任务 | 必答规模 | 完整材料 |
+| --- | --- | ---: | --- |
 | [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) | generate | 92义务 | [合同](chapters/MG-C003/contract.json) · [参考](chapters/MG-C003/reference.md) · [评分](chapters/MG-C003/rubric.json) · [题包复核](chapters/MG-C003/review.json) · [作者Lean](chapters/MG-C003/formal/COVERAGE.md) |
+
+## 大Lean形式化梯度 · 3份
+
+| 试卷 | 任务 | 必答规模 | 完整材料 |
+| --- | --- | ---: | --- |
+| [HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐](lean-formalization/HCH02/candidate/task.md) | generate | 40义务 | [合同](lean-formalization/HCH02/contract.json) · [参考](lean-formalization/HCH02/reference.md) · [评分](lean-formalization/HCH02/rubric.json) · [题包复核](lean-formalization/HCH02/review.json) · [作者Lean](lean-formalization/HCH02/formal/COVERAGE.md) |
+| [LCH01 · 通道接口节群](lean-formalization/LCH01/candidate/task.md) | generate | 8义务 | [合同](lean-formalization/LCH01/contract.json) · [参考](lean-formalization/LCH01/reference.md) · [评分](lean-formalization/LCH01/rubric.json) · [题包复核](lean-formalization/LCH01/review.json) · [作者Lean](lean-formalization/LCH01/formal/COVERAGE.md) |
+| [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) | generate | 20义务 | [合同](lean-formalization/LCH02/contract.json) · [参考](lean-formalization/LCH02/reference.md) · [评分](lean-formalization/LCH02/rubric.json) · [题包复核](lean-formalization/LCH02/review.json) · [作者Lean](lean-formalization/LCH02/formal/COVERAGE.md) |
 
 ## 真实答卷审阅 · 4份
 
@@ -63,8 +64,8 @@
 | [MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级](answer-review/MG-AR003/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR003/group-contract.json) · [参考](answer-review/MG-AR003/reference.md) · [评分](answer-review/MG-AR003/rubric.json) · [题包复核](answer-review/MG-AR003/review.json) |
 | [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR004/group-contract.json) · [参考](answer-review/MG-AR004/reference.md) · [评分](answer-review/MG-AR004/rubric.json) · [题包复核](answer-review/MG-AR004/review.json) |
 
-## 备选卷 · 20份
+## 备选卷 · 31份
 
-[备选目录、主题分类与完整材料](reserve/README.md)集中列出20份书面卷，由显式清单选择。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。
+[备选目录、主题分类与完整材料](reserve/README.md)集中列出31份书面卷，由显式清单选择。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。
 
 所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。

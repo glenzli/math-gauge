@@ -15,6 +15,40 @@ SOURCE_FOLLOWUP_PERMISSION = "本轮不能调用工具或查询外部资料。"
 LOCAL_FOLLOWUP_PERMISSION = "本轮不得访问网络或进行联网检索。"
 
 
+def validate_case_execution_policy(data, case_components):
+    """Only v5 opts into a declared mixed-condition development composition."""
+    policy = data.get("case_execution_policy")
+    if policy is None:
+        return None
+    if (data.get("schema") != "math-gauge.benchmark-profile/v5"
+            or not isinstance(policy, dict)
+            or policy.get("schema") != "math-gauge.case-execution-policy/v1"
+            or policy.get("post_observation") is not True
+            or policy.get("require_terminal_ok") is not True):
+        raise ValueError("Mixed execution conditions require the explicit v5 development policy")
+    fresh = {cid for cid, component in case_components.items()
+             if component in {"lean-audit", "lean-formalization"}}
+    retained = set(case_components) - fresh
+    tracks = policy.get("case_tracks", {})
+    if (not isinstance(tracks, dict) or set(tracks) != set(case_components)
+            or any(track not in {NO_TOOLS_TRACK, LOCAL_TOOLS_TRACK} for track in tracks.values())
+            or any(tracks[cid] != LOCAL_TOOLS_TRACK for cid in fresh)
+            or set(policy.get("new_execution_case_ids", [])) != fresh
+            or set(policy.get("retain_source_runtime_case_ids", [])) != retained
+            or type(policy.get("new_turn_timeout_seconds")) is not int
+            or policy["new_turn_timeout_seconds"] <= 0):
+        raise ValueError("Case execution conditions must partition the fixed components without drift")
+    return policy
+
+
+def declared_case_context(data, cid, fallback):
+    policy = data.get("case_execution_policy")
+    if policy is None:
+        return fallback
+    track = policy["case_tracks"][cid]
+    return execution_context({"execution_track": track}) if track == LOCAL_TOOLS_TRACK else execution_context()
+
+
 def execution_context(runtime=None):
     if runtime is not None and not isinstance(runtime, dict):
         raise ValueError("Execution runtime must be an object")

@@ -139,3 +139,33 @@ def compact_release_root():
     (root / "scripts").mkdir()
     shutil.copy2(ROOT / "scripts/release.py", root / "scripts/release.py")
     return root
+
+
+@functools.lru_cache(maxsize=1)
+def v05_root():
+    """Read the exact archived v0.5 profile over its unchanged original cases."""
+    temporary = tempfile.TemporaryDirectory(prefix="math-gauge-v050-config-fixture-")
+    atexit.register(temporary.cleanup)
+    root = Path(temporary.name).resolve()
+    history = ROOT / "protocol/history/v0.5.0"
+    cases = root / "cases"
+    cases.mkdir()
+    for name in ("suite.json", "reserve-suite.json", "sources.json", "taxonomy.json", "catalog.json"):
+        shutil.copy2(history / name, cases / name)
+    for name in ("suite.json", "reserve-suite.json"):
+        for manifest in read_json(history / name)["cases"]:
+            directory = Path(manifest).parent
+            shutil.copytree(ROOT / "cases" / directory, cases / directory)
+    protocol = root / "protocol"
+    protocol.mkdir()
+    shutil.copy2(history / "benchmark-profile.json", protocol / "benchmark-profile.json")
+    shutil.copytree(history / "reliability", protocol / "reliability")
+    return root
+
+
+def v05_suite():
+    return Suite.load(v05_root() / "cases")
+
+
+def v05_profile(suite=None):
+    return BenchmarkProfile.load(v05_root() / "protocol/benchmark-profile.json", suite or v05_suite())

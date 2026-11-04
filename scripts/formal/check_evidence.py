@@ -631,7 +631,7 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
     reference completeness. The original author ledger retains its own complete
     inventory and all its compilation/semantic checks.
     """
-    written, reviews, seen = [], [], set(retained_case_ids)
+    written, reviews, audits, formalizations, seen = [], [], [], [], set(retained_case_ids)
     if not paths:
         return {}
     sources_path = verify.safe_relative(repo, 'cases/sources.json')
@@ -657,14 +657,16 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
             verify.require(bool(path.read_bytes().strip()), 'Empty additional assessment material: ' + str(path))
             paths_by_role[key] = path.relative_to(repo).as_posix()
         for key in ('provenance', 'review'):
-            matches = [name for name in case.get('evaluator_files', []) if Path(name).name == key + '.json']
+            preferred = 'integration-review.json' if key == 'review' and any(
+                Path(name).name == 'integration-review.json' for name in case.get('evaluator_files', [])) else key + '.json'
+            matches = [name for name in case.get('evaluator_files', []) if Path(name).name == preferred]
             verify.require(len(matches) == 1, 'Additional assessment needs a locatable ' + key + ' record')
             path = verify.safe_relative(base, matches[0])
             paths_by_role[key] = path.relative_to(repo).as_posix()
         contract = verify.load(repo / paths_by_role['group_contract'])
         verify.require(isinstance(contract, dict), 'Additional assessment contract must be an object')
         kind = contract.get('kind')
-        verify.require(kind in {'written_proof', 'answer_review'} and contract.get('id') == cid
+        verify.require(kind in {'written_proof', 'answer_review', 'semantic_audit', 'chapter_formalization'} and contract.get('id') == cid
                        and contract.get('version') == case.get('version'),
                        'Additional mathematical papers need their own author evidence; unsupported assessment kind or identity')
         metadata = case.get('review', {})
@@ -708,7 +710,7 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
                            'Written-proof criteria are unformalized assessments, not inherited Lean obligations')
             row['proof_criteria'] = len(contract['criteria'])
             written.append(row)
-        else:
+        elif kind == 'answer_review':
             verify.require(case.get('task_kind') == 'answer_review'
                            and formal.get('status') == 'not-required-for-written-review'
                            and contract.get('assessment_unit') == 'review_dimension'
@@ -716,12 +718,34 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
                            'Answer-review dimensions are not author Lean obligations')
             row['review_dimensions'] = len(contract['dimensions'])
             reviews.append(row)
+        elif kind == 'semantic_audit':
+            from math_gauge.catalog import validate_semantic_audit_contract
+            validate_semantic_audit_contract(contract)
+            verify.require(case.get('task_kind') == 'audit' and case.get('track') == 'alignment'
+                           and formal.get('status') == 'not-required-for-semantic-audit',
+                           'Semantic audit dimensions are not author Lean obligations')
+            row.update(review_dimensions=len(contract['dimensions']), formal_status='not-required')
+            audits.append(row)
+        else:
+            from math_gauge.catalog import validate_group_contract
+            validate_group_contract(contract)
+            verify.require(case.get('task_kind') == 'generate' and case.get('track') == 'determinate'
+                           and formal.get('status') == 'not-authored-for-this-case',
+                           'New formalization scopes require separate candidate or author evidence')
+            row.update(obligations=len(contract['stages']), formal_status='not-authored-for-this-case')
+            formalizations.append(row)
     return {'written_proofs': {'papers': len(written),
                               'proof_criteria': sum(row['proof_criteria'] for row in written),
                               'formalized_papers': 0, 'inherited_author_coverage': False, 'cases': written},
             'answer_reviews': {'tasks': len(reviews),
                                'review_dimensions': sum(row['review_dimensions'] for row in reviews),
-                               'formal_status': 'not-applicable', 'cases': reviews}}
+                               'formal_status': 'not-applicable', 'cases': reviews},
+            **({'semantic_audits': {'tasks': len(audits),
+                 'review_dimensions': sum(row['review_dimensions'] for row in audits),
+                 'inherited_author_coverage': False, 'cases': audits}} if audits else {}),
+            **({'formalization_tasks': {'tasks': len(formalizations),
+                 'obligations': sum(row['obligations'] for row in formalizations),
+                 'inherited_author_coverage': False, 'cases': formalizations}} if formalizations else {})}
 
 
 def catalog_case_paths(repo):

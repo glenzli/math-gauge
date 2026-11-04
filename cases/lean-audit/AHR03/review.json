@@ -1,0 +1,148 @@
+{
+  "schema": "math-gauge.historical-audit-ai-review/v1",
+  "case_id": "AHR03",
+  "version": "0.1.0",
+  "reviewer": "Sol6.1 max child /root/oet_audit_history",
+  "reviewer_kind": "ai",
+  "review_role": "Independent review of historical source and mathematical correspondence, followed by case authoring; no fabricated second independent case reviewer.",
+  "decision": "aligned-for-declared-scope",
+  "mathematical": "source-first AI review complete; no open in-scope findings",
+  "human": "pending",
+  "independent_case_peer_review": "not separately performed by another reviewer; integration/root may review this completed case",
+  "candidate_models_called": false,
+  "new_candidate_results": 0,
+  "empirical_discrimination_qualification": "not established",
+  "compilation": {
+    "status": "passed",
+    "exact_historical_local_modules": 27,
+    "public_dependencies_only": true,
+    "build_evidence_sha256": "d6018e59a5fb75e8050e35c30c827c4eb4884ec256e3fa54dd0c05ee97394db8"
+  },
+  "axiom_audit": {
+    "status": "passed",
+    "declarations": 10,
+    "allowed_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "evidence_sha256": "f9ba7abb5c048268a510fe4689743ee70e4f4127e841bc287f061eb44c2b6726"
+  },
+  "scope_checks": [
+    {
+      "id": "partition_and_local_operators",
+      "decision": "pass",
+      "files": [
+        "domain_refinement_construction.lean:12",
+        "domain_refinement_construction.lean:31"
+      ],
+      "evidence": "NodePartitionData accepts exactly the finite nonempty partition/local operator data; local_op_eq_restrict derives full operator equality from the exact domain and local values."
+    },
+    {
+      "id": "all_retained_edges",
+      "decision": "pass",
+      "files": [
+        "network_refinement.lean:118",
+        "network_refinement.lean:122",
+        "network_refinement.lean:300"
+      ],
+      "evidence": "NodeDomainRefinement adds edge_domain_eq for all retained v,w on full node_image and node_dom, not actual-input images. Its four projection cases give unchanged edges, incoming/outgoing restrictions and split self-loops."
+    },
+    {
+      "id": "entry_data",
+      "decision": "pass",
+      "files": [
+        "network_refinement.lean:283"
+      ],
+      "evidence": "entry_domain_eq derives exact intersections from entry projection, label injectivity and disjoint local domains. No final entry equality is imported as a certificate assumption."
+    },
+    {
+      "id": "actual_legal_construction",
+      "decision": "pass",
+      "files": [
+        "domain_refinement_construction.lean:208",
+        "domain_refinement_construction.lean:235"
+      ],
+      "evidence": "choice_next_mem, coloured_terminal and path length proofs construct a valid finite presentation from P; network is its actual reachable-label prune. Original self-loops and repeated occurrences are treated at their current inputs."
+    },
+    {
+      "id": "retained_node_set",
+      "decision": "pass",
+      "files": [
+        "domain_refinement_construction.lean:296",
+        "domain_refinement_construction.lean:310"
+      ],
+      "evidence": "old_label_reached preserves every unaffected original node; piece_label_reached_iff precisely identifies the surviving partition pieces from actual original occurrences."
+    },
+    {
+      "id": "construction_full_edge_formula",
+      "decision": "pass",
+      "files": [
+        "domain_refinement_construction.lean:346"
+      ],
+      "evidence": "network_edge_domain_eq proves the complete intersection formula directly from the actual routing/prune definitions. There is no actual-source-output restriction in its statement."
+    },
+    {
+      "id": "realization_bridge",
+      "decision": "pass",
+      "files": [
+        "domain_refinement_construction.lean:449",
+        "domain_refinement_construction.lean:496"
+      ],
+      "evidence": "network_refinement inhabits the exact NodeDomainRefinement for the actually constructed P.network with every field, then allowed_network_refinement selects the node-domain branch. P itself contains none of these final facts."
+    },
+    {
+      "id": "extensional_proof",
+      "decision": "pass",
+      "files": [
+        "network_refinement.lean:453",
+        "domain_refinement_construction.lean:258"
+      ],
+      "evidence": "Path/evaluation projection prove the generic relation result; network_extensional_eq proves the actual constructed global operators equal, using absorbing output on both sides outside U."
+    },
+    {
+      "id": "weak_helper_boundary",
+      "decision": "pass",
+      "files": [
+        "network_refinement.lean:68"
+      ],
+      "evidence": "OperationalNodeDomainRefinement is explicitly auxiliary and weaker; it has no independent claim to encode the full textbook relation. Its weaker actual-route field does not invalidate the stricter target or actual construction."
+    },
+    {
+      "id": "scope_and_projection",
+      "decision": "pass",
+      "files": [
+        "task.md",
+        "case.json"
+      ],
+      "evidence": "Task bytes exactly reuse AHR01; algebraic refinement and other chapter results are excluded. All supplied original source remains intact; no answer label or expected correctness is added to solver material."
+    }
+  ],
+  "remaining_boundaries": [
+    "No conclusion about the algebraic-refinement branch or other chapter/full-book targets.",
+    "No exact-public-publication claim for this intermediate Git snapshot.",
+    "No human approval or new candidate model result."
+  ],
+  "frozen_artifacts": [
+    {
+      "path": "task.md",
+      "sha256": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6"
+    },
+    {
+      "path": "reference.md",
+      "sha256": "52c13ed322d591fca9321f11d5f013096801559082ee39076c9ae23cb553e118"
+    },
+    {
+      "path": "rubric.json",
+      "sha256": "9f5bdba6529aa953322bad6b46c29bcc99f8df11a487983c8dd7275cbe72b2d7"
+    },
+    {
+      "path": "contract.json",
+      "sha256": "aed666c586338e680799e310d98626425bcf7d015dab1a99e49ac5375c13cd7f"
+    },
+    {
+      "path": "source-identities.json",
+      "sha256": "f00ad5215410af51240dd516c09e693d0552eaef71b4a0331d033cf0afac13e7"
+    }
+  ]
+}

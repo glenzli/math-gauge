@@ -198,6 +198,12 @@ def _validate_research_review(contract, entry, record):
             "dimensions": rows}
 
 
+def _validate_semantic_audit_review(contract, entry, record):
+    result = _validate_research_review(contract, entry, record)
+    result["kind"] = "semantic_audit"
+    return result
+
+
 def _validate_answer_review(contract, entry, record):
     """Continuous mathematical credit and major-error evidence are independent."""
     rows = entry.get("dimensions")
@@ -275,6 +281,8 @@ def _validate_group_review(root, case, record, entry, *, response_text=None, lea
         raise ValueError("Review binds a different group contract")
     if contract["kind"] == "research_exploration":
         return _validate_research_review(contract, entry, record)
+    if contract["kind"] == "semantic_audit":
+        return _validate_semantic_audit_review(contract, entry, record)
     if contract["kind"] == "answer_review":
         return _validate_answer_review(contract, entry, record)
     if contract["kind"] == "written_proof":
@@ -417,7 +425,7 @@ def templates(root):
         contract = _group_contract(root, case)
         if contract:
             entry["group_contract_sha256"] = case["group_contract"]["sha256"]
-            if contract["kind"] in {"research_exploration", "answer_review"}:
+            if contract["kind"] in {"research_exploration", "answer_review", "semantic_audit"}:
                 entry["dimensions"] = _dimension_templates(contract)
                 if contract["kind"] == "answer_review":
                     entry.update(major_error=None, major_error_notes="")
@@ -954,6 +962,22 @@ def compare_models(case_index, model_runs, *, execution_receipts, lean_reports=N
     }
 
 
+def _ordinary_runtime_evidence(plan, root, meta, rows):
+    if not plan["profile"]["data"].get("case_execution_policy"):
+        return {}
+    from .execution_policy import execution_context
+    context = execution_context({"execution_track": meta["execution_track"]}) if "execution_track" in meta else None
+    return {"source_runtime_evidence": {
+        "context_policy": context, "source_run_json_sha256": digest_bytes((root / "run.json").read_bytes()),
+        "outer_timeout_seconds": meta.get("timeout_seconds"),
+        "native_timeout_seconds": None,
+        "system_prompt_observation": "not-normalized-in-ordinary-run; original native references retained",
+        "parameter_observation": "not-normalized-in-ordinary-run; original native references retained",
+        "native_evidence_by_slot": {row["slot_id"]: (row.get("written_proof_reuse") or
+            row.get("answer_review_rescoring") or {}).get("original_native_evidence") for row in rows},
+        "limitation": "Outer timeout is not proof of the provider or broker inner allowance. Missing exported fields remain unknown."}}
+
+
 def rescored_answer_inputs(plan, suite, source):
     """Bind a new attributed rubric to an existing ordinary native answer run.
 
@@ -1013,6 +1037,8 @@ def rescored_answer_inputs(plan, suite, source):
                    "original_request_sha256": record["request_sha256"],
                    "candidate_message_sha256": message_hash,
                    "response_sha256": record["response_sha256"],
+                   **({"original_native_evidence": record.get("native_evidence", {})}
+                      if plan["profile"]["data"].get("case_execution_policy") else {}),
                    "original_reviews_sha256": digest_bytes((root / "reviews.json").read_bytes())
                         if (root / "reviews.json").is_file() else None,
                    "new_reviews_path": str(reviews_path),
@@ -1052,6 +1078,7 @@ def rescored_answer_inputs(plan, suite, source):
         "runtime_sha256": None, "suite": {"id": meta["suite_id"], "version": meta["suite_version"],
             "sha256": meta["suite_sha256"]}, "budget": {"timeout_seconds": meta["timeout_seconds"]},
         "selected_slot_ids": [row["slot_id"] for row in rows],
+        **_ordinary_runtime_evidence(plan, root, meta, rows),
         "answer_review_rescoring": {"post_observation_rescoring": True, "new_candidate_calls": 0,
             "reviews_path": str(reviews_path), "reviews_sha256": digest_bytes(reviews_path.read_bytes()),
             "notes": source["notes"]}}}
@@ -1185,6 +1212,7 @@ def written_proof_source_inputs(plan, suite, source):
         "suite": {"id": meta["suite_id"], "version": meta["suite_version"], "sha256": meta["suite_sha256"]},
         "budget": {"timeout_seconds": meta["timeout_seconds"]},
         "selected_slot_ids": [row["slot_id"] for row in rows],
+        **_ordinary_runtime_evidence(plan, root, meta, rows),
         "written_proof_reuse": {"post_observation_catalog_binding": True, "new_candidate_calls": 0,
             "execution_relabelled": False, "case_bindings": bindings,
             "reviews_path": str(reviews_path), "reviews_sha256": digest_bytes(reviews_path.read_bytes()),

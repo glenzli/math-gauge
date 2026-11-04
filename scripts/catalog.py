@@ -29,6 +29,7 @@ CATEGORIES = (
     ("lean-audit", "Lean 语义审计"),
     ("lean-construction", "Lean 生成与修复"),
     ("chapters", "整章形式化"),
+    ("lean-formalization", "大Lean形式化梯度"),
     ("answer-review", "真实答卷审阅"),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
@@ -82,7 +83,7 @@ def task_goals(task: Path) -> dict:
 def assessment_label(entry: dict) -> tuple[int, str]:
     if entry["kind"] == "written_proof":
         return entry["proof_criterion_count"], "评审判准"
-    if entry["kind"] == "answer_review":
+    if entry["kind"] in {"answer_review", "semantic_audit"}:
         return entry["review_dimension_count"], "审阅维度"
     return entry["stage_count"], "义务" if entry["kind"] == "chapter_formalization" else "阶段"
 
@@ -112,7 +113,7 @@ def validate_assignment(assignment: dict, source: dict) -> None:
     ids = [tag.get("focus_id") for tag in tags]
     require(len(ids) == len(set(ids)), f"{cid}: duplicate focus tag")
     require(all(fid in FOCUS_IDS for fid in ids), f"{cid}: unknown focus tag")
-    is_review = contract["kind"] == "answer_review"
+    is_review = contract["kind"] in {"answer_review", "semantic_audit"}
     is_written = contract["kind"] == "written_proof"
     unit_key = "criterion_id" if is_written else "dimension_id" if is_review else "stage_id"
     collection = "criteria" if is_written else "dimensions" if is_review else "stages"
@@ -153,7 +154,7 @@ def validate_assignment(assignment: dict, source: dict) -> None:
                 )
             elif is_review:
                 require(
-                    locator.get("applies_to") == "whole-answer-review" and locator.get("line") == 1,
+                    locator.get("applies_to") == ("whole-semantic-audit" if contract["kind"] == "semantic_audit" else "whole-answer-review") and locator.get("line") == 1,
                     f"{cid}/{sid}: answer-review locator drift",
                 )
             elif contract["kind"] == "progressive":
@@ -379,6 +380,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     progressive = [entry for entry in entries if entry["kind"] == "progressive"]
     chapters = [entry for entry in entries if entry["kind"] == "chapter_formalization"]
     answer_reviews = [entry for entry in entries if entry["kind"] == "answer_review"]
+    semantic_audits = [entry for entry in entries if entry["kind"] == "semantic_audit"]
     written_proofs = [entry for entry in entries if entry["kind"] == "written_proof"]
     by_id = {entry["case_id"]: entry for entry in entries}
     def parent_family(entry):
@@ -393,6 +395,8 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         "chapter_obligations": {entry["case_id"]: entry["stage_count"] for entry in chapters},
         "answer_review_tasks": len(answer_reviews),
         "answer_review_dimensions": sum(entry["review_dimension_count"] for entry in answer_reviews),
+        **({"semantic_audit_tasks": len(semantic_audits),
+            "semantic_audit_dimensions": sum(entry["review_dimension_count"] for entry in semantic_audits)} if semantic_audits else {}),
         "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
     }
     if written_proofs:
@@ -416,6 +420,8 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
             "reserve_papers": sum(entry["membership"] == "reserve" for entry in entries),
             "mathematical_papers": len(entries) - len(answer_reviews),
             "answer_review_tasks": len(answer_reviews),
+            **({"semantic_audit_tasks": len(semantic_audits),
+                "semantic_audit_dimensions": scope["semantic_audit_dimensions"]} if semantic_audits else {}),
             "default_parent_families": len({parent_family(entry) for entry in entries
                                             if entry["membership"] == "default"}),
             **({"written_proof_papers": len(written_proofs), "proof_criteria": scope["proof_criteria"]}

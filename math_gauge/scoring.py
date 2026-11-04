@@ -8,6 +8,7 @@ from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independ
                          reliability_schedule, scoring_policy, validate_plan)
 from .execution import now
 from .execution_policy import execution_condition
+from .execution_policy import declared_case_context, validate_context_policy
 
 UNKNOWN = (Fraction(0), Fraction(1), None)
 PENDING_REASONS = {"review_pending", "problem_defect_pending", "problem_defect",
@@ -325,6 +326,7 @@ def score_inputs(inputs):
     case_index = {x["case_id"]: x for x in plan["case_index"]}
     attempts = independent_attempts(plan["profile"]["data"], case_index)
     policy = scoring_policy(plan["profile"]["data"], case_index)
+    written_reliability = plan["profile"]["data"].get("reliability_population") == "written-only"
     planned_slots = {x["slot_id"]: x for x in plan["slots"]}
     audit_selections = inputs.get("execution_audit_snapshots", [{"audit_snapshot": inputs.get("audit_snapshot")}])
     historical = any((item.get("audit_snapshot") or {}).get("historical") is True
@@ -368,6 +370,7 @@ def score_inputs(inputs):
 
     metrics, metric_intervals = {}, {}
     paper_reports = {}
+    component_families = {}
     all_initial_rows = []
     all_core_rows = []
     for component in plan["profile"]["data"]["components"]:
@@ -391,7 +394,7 @@ def score_inputs(inputs):
                 "executed_attempts": sum(bool(r) and r.get("started") is not False for r in attempt_rows),
                 "adjudicated_attempts": sum(r.get("strict_pass") is not None for r in attempt_rows),
                 "planned_attempts": len(attempts[cid]),
-                ("dimension_weight_total" if case_index[cid].get("contract_kind") == "answer_review"
+                ("dimension_weight_total" if case_index[cid].get("contract_kind") in {"answer_review", "semantic_audit"}
                  else "criterion_weight_total" if case_index[cid].get("contract_kind") == "written_proof"
                  else "stage_weight_total"): case_index[cid]["total_weight"],
             }
@@ -415,8 +418,19 @@ def score_inputs(inputs):
                 "variant_count": len(items), "completion": {"lower": _percent(value[0]),
                     "upper": _percent(value[1]), "exact": _percent(value[2])}}
                 for (family, items), value in zip(families.items(), intervals)}
+        elif component.get("aggregation") == "family":
+            families = {}
+            for cid, interval in zip(component["case_ids"], intervals):
+                families.setdefault(case_index[cid]["family_id"], []).append((cid, interval))
+            intervals = [_average([item[1] for item in items]) for items in families.values()]
+            component_families[component["id"]] = {family: {
+                "case_ids": [cid for cid, _ in items], "variant_count": len(items),
+                "completion": {"lower": _percent(value[0]), "upper": _percent(value[1]),
+                               "exact": _percent(value[2])}}
+                for (family, items), value in zip(families.items(), intervals)}
         metrics[component["id"]] = _metric(intervals, component_rows, case_index,
             unit=("answer-review parent family" if component["id"] == "answer-review" else
+                  "mathematical family, variants averaged first" if component.get("aggregation") == "family" else
                   "full paper A1" if policy["core_attempt_labels"] == ["A1"]
                   else "full paper averaged over A1/A2/A3"))
         metric_intervals[component["id"]] = _average(intervals)
@@ -433,7 +447,7 @@ def score_inputs(inputs):
     if plan["profile"]["data"]["schema"] == "math-gauge.benchmark-profile/v1":
         repeat_rows = all_initial_rows
     metrics["repeat"] = _metric(repeats,
-        repeat_rows, case_index, unit="full paper, " +
+        repeat_rows, case_index, unit=("written paper, " if written_reliability else "full paper, ") +
         ("two" if len(policy["repeat_attempt_labels"]) == 2 else "three") + " strict passes")
     metric_intervals["repeat"] = _average(repeats)
     metrics["strict_pass_rate"] = _metric([
@@ -447,7 +461,8 @@ def score_inputs(inputs):
                        for arm in arms for rnd in reliability_schedule(plan["reliability"]["protocol_version"])[1]]
         target_intervals = [_math_interval(r.get("focus_math")) for r in target_rows]
         metrics[target] = _metric(target_intervals,
-                                  target_rows, case_index, unit="focus mathematical review slot")
+                                  target_rows, case_index, unit=("written focus mathematical review slot"
+                                      if written_reliability else "focus mathematical review slot"))
         metric_intervals[target] = _average(target_intervals)
         followup_rows.extend(target_rows)
     overall_weights = plan["profile"]["data"]["overall_weights"]
@@ -480,17 +495,24 @@ def score_inputs(inputs):
         {"slot_id": sid, "reasons": reasons}
         for sid, slot in planned_slots.items()
         if (reasons := _eligibility_reasons(rows.get(sid), case_index[slot["case_id"]]))])
+    condition = execution_condition(plan["context_policy"])
+    if plan["profile"]["data"].get("case_execution_policy"):
+        condition = {"track": "math-gauge.mixed-development/v1",
+                     "label": "Post-observation mixed-condition development; source conditions retained",
+                     "case_tracks": plan["profile"]["data"]["case_execution_policy"]["case_tracks"]}
     report = {
         "schema": "math-gauge.benchmark-score/v1", "created_at": now(),
         "plan_id": plan["plan_id"], "plan_sha256": plan["plan_sha256"],
         "profile": {k: plan["profile"][k] for k in ("id", "version", "sha256")},
         "suite": plan["suite"], "runtime_sha256": plan["runtime_sha256"],
         "model_label": plan["model_label"], "planned": plan["planned"],
-        "execution_condition": execution_condition(plan["context_policy"]),
+        "execution_condition": condition,
         "result_kind": ("not_run" if not evidence_rows else "fixture" if fixture else "historical" if historical else
                         "formal" if metrics["overall"]["formal_comparison_eligible"] else "provisional"),
         "model_result": bool(evidence_rows) and not fixture,
         "metrics": metrics, "papers": paper_reports, "focus_slices": slices,
+        **({"component_families": component_families,
+            "aggregation_version": "family-first/v1"} if component_families else {}),
         "trajectories": _trajectories(plan, rows),
         "paired_stance": _paired_stance(plan, rows),
         "execution_coverage": {
@@ -782,6 +804,10 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                                                       for k, v in model_aliases.items())):
         raise ValueError("Model label aliases must be an explicit evaluator declaration")
     rows, receipts, labels = {}, [], set()
+    strata_policy = plan["profile"]["data"].get("case_execution_policy")
+    case_strata = {}
+    from .benchmarks import _supplement_cases
+    fresh_cases = _supplement_cases(plan["profile"]["data"], target_cases)
     for source in sources:
         original = validate_plan(source["plan"])
         if source.get("model_label") != original.get("model_label"):
@@ -792,10 +818,16 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
         source_prompts = {row["message_id"]: row["content_sha256"]
                           for row in original["reliability"]["prompts"]["messages"]}
         source_focus = {row["case_id"]: row for row in original["reliability"]["selection"]["cases"]}
-        selected = []
+        selected, superseded = [], []
         for row in source.get("slots", []):
             sid, cid = row["slot_id"], row["case_id"]
             if sid not in target_slots:
+                continue
+            if (cid in fresh_cases and original["profile"]["data"].get("standard_version")
+                    != plan["profile"]["data"]["standard_version"]):
+                superseded.append({"slot_id": sid, "evidence_id": row.get("evidence_id"),
+                    "slot_record_sha256": row.get("slot_record_sha256"),
+                    "reason": "older-standard evidence retained; fresh supplement required"})
                 continue
             before, after = source_cases[cid], target_cases[cid]
             if any(before.get(k) != after.get(k) for k in compared_fields):
@@ -809,12 +841,34 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                 raise ValueError("Composition changed the original followup prompt: " + sid)
             if new_slot["kind"] == "followup" and any(
                 source_focus.get(cid, {}).get(key) != target_focus.get(cid, {}).get(key)
-                for key in ("stage_id", "expected_truth", "scope", "target_claim")):
+                for key in ("stage_id", "focus_id", "expected_truth", "scope", "target_claim")):
                 raise ValueError("Composition changed the independently reviewed followup target: " + sid)
+            if strata_policy is not None and row.get("started") is False:
+                if sid not in rows:
+                    rows[sid] = dict(row)
+                selected.append(sid)
+                continue
+            if strata_policy is not None and sid in rows and rows[sid].get("started") is False:
+                del rows[sid]
             old_conditions, new_conditions = _execution_semantics(original, cid), _execution_semantics(plan, cid)
-            if any(old_conditions[k] != new_conditions[k] for k in ("context_policy", "system_prompt", "parameters")):
+            if strata_policy is not None:
+                validate_context_policy(old_conditions["context_policy"])
+                expected_context = declared_case_context(plan["profile"]["data"], cid, plan["context_policy"])
+                if old_conditions["context_policy"] != expected_context:
+                    raise ValueError("Source execution condition differs from the frozen case stratum: " + sid)
+                signature = identity(old_conditions)
+                if cid in case_strata and case_strata[cid]["conditions_sha256"] != signature:
+                    raise ValueError("Execution conditions drift within one case or its branches: " + sid)
+                case_strata.setdefault(cid, {"conditions_sha256": signature, "conditions": old_conditions,
+                                             "slot_ids": []})["slot_ids"].append(sid)
+                if cid in strata_policy["new_execution_case_ids"] and (
+                        old_conditions["timeout_seconds"] != strata_policy["new_turn_timeout_seconds"]
+                        or any(old_conditions[key] != new_conditions[key] for key in ("system_prompt", "parameters"))):
+                    raise ValueError("New-case execution differs from the frozen native budget or parameters: " + sid)
+            elif any(old_conditions[k] != new_conditions[k] for k in ("context_policy", "system_prompt", "parameters")):
                 raise ValueError("Composition changed the execution condition, system prompt or model generation parameters: " + sid)
-            if old_conditions["timeout_seconds"] != new_conditions["timeout_seconds"] and budget_policy == "require_matching":
+            if (old_conditions["timeout_seconds"] != new_conditions["timeout_seconds"]
+                    and budget_policy == "require_matching"):
                 raise ValueError("Composition changed the source time budget; explicitly retain its budget stratum: " + sid)
             if sid in rows and _evidence_signature(rows[sid]) != _evidence_signature(row):
                 raise ValueError("Conflicting source evidence for composed slot: " + sid)
@@ -828,6 +882,11 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                          "review_snapshot": source.get("review_snapshot"),
                          "audit_snapshot": source.get("audit_snapshot"),
                          "frozen_report_reuse": source.get("frozen_report_reuse"),
+                         **({"superseded_source_slots": superseded} if fresh_cases else {}),
+                         **({"unstarted_source_slots": [{"slot_id": row["slot_id"],
+                             "status": row.get("execution_status", row.get("status")), "reason": row.get("reason")}
+                             for row in source.get("slots", []) if row.get("started") is False]}
+                            if strata_policy is not None else {}),
                          "selected_slot_ids": selected})
     seen_written_sources = set()
     for extras, contract_kind in ((answer_reviews, "answer_review"), (written_proofs, "written_proof")):
@@ -847,6 +906,16 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                     if source_key in seen_written_sources:
                         raise ValueError("Repeated written-proof original answer source")
                     seen_written_sources.add(source_key)
+                if strata_policy is not None:
+                    runtime_evidence = receipt.get("source_runtime_evidence", {})
+                    context = runtime_evidence.get("context_policy")
+                    if context is None or context != declared_case_context(
+                            plan["profile"]["data"], row["case_id"], plan["context_policy"]):
+                        raise ValueError("Ordinary source does not establish the frozen case execution condition")
+                    validate_context_policy(context)
+                    case_strata[row["case_id"]] = {"conditions_sha256": identity(runtime_evidence),
+                        "conditions": runtime_evidence, "slot_ids": [sid],
+                        "runtime_observation": "ordinary source fields retain explicit unknowns"}
                 rows[sid] = dict(row)
             receipts.append(receipt)
     normalized = {model_aliases.get(label, label) for label in labels}
@@ -869,6 +938,11 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                              "budget_conditions_shared": len({identity(r["budget"]) for r in receipts}) <= 1,
                              "runtime_identity_shared": len({r["runtime_sha256"] for r in receipts}) <= 1,
                              "notice": "Original responses and reviews are reused under a new evaluator plan. This is not a new independent benchmark execution or a formal comparison score."}
+    if strata_policy is not None:
+        report["composition"].update(method="post-observation mixed-condition development",
+                                     case_execution_strata=case_strata,
+                                     case_execution_policy=strata_policy,
+                                     formal_comparison_eligible=False)
     return report
 
 
@@ -995,7 +1069,10 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
     metric_keys = ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")
     titles = {"proofs": "Written mathematics", "lean-audit": "Lean semantic audit",
               "lean-construction": "Lean construction", "chapters": "Chapter formalization",
+              "lean-formalization": "Large Lean formalization",
               "exploration": "Research exploration", "answer-review": "Mathematical answer review"}
+    titles.update({row["id"]: row.get("title", titles.get(row["id"], row["id"]))
+                   for row in plan["profile"]["data"]["components"]})
     metrics = {name: {key: value[key] for key in metric_keys if key in value}
                for name, value in report["metrics"].items() if name in titles or name in {
                    "core", "repeat", "neutral", "stance", "overall", "strict_pass_rate",
@@ -1048,14 +1125,25 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
               "title": "Combined development analysis", "status": report.get("result_kind", "provisional"),
               "score_units": {"metrics": "percent", "completion": "fraction"},
               "plan_sha256": plan["plan_sha256"],
-              "profile": {"components": [{"id": row["id"], "title": titles[row["id"]],
-                  "weight": row["weight"], "case_count": len(row["case_ids"])}
+              "profile": {"version": plan["profile"]["data"]["version"],
+                  "standard_version": plan["profile"]["data"].get("standard_version", plan["profile"]["data"]["version"]),
+                  "components": [{"id": row["id"], "title": titles[row["id"]],
+                  "weight": row["weight"], "case_count": len(row["case_ids"]),
+                  **({"aggregation": row["aggregation"], "family_count": len({
+                      cases[cid].get("parent_family_id", cases[cid]["family_id"])
+                      if row["aggregation"] == "parent_family" else cases[cid]["family_id"]
+                      for cid in row["case_ids"]})} if "aggregation" in row else {})}
                   for row in plan["profile"]["data"]["components"]],
                   "overall_weights": plan["profile"]["data"]["overall_weights"],
                   "repeat_attempt_labels": scoring_policy(plan["profile"]["data"], cases)["repeat_attempt_labels"],
                   "self_check_rounds_per_arm": len(reliability_schedule(plan["reliability"]["protocol_version"])[1]),
+                  **({"reliability_population": plan["profile"]["data"]["reliability_population"]}
+                     if "reliability_population" in plan["profile"]["data"] else {}),
                   "classification": "development_analysis", "selection_timing": "after_source_runs"},
               "metrics": metrics, "private_records": private_records, "slot_evidence": slots,
+              "formalization_scope": {cid: {"obligations": len(case.get("stages", [])),
+                  "family_id": case["family_id"]} for cid, case in cases.items()
+                  if case["component"] in {"chapters", "lean-formalization"} and cid not in private_aliases},
               "coverage": {"papers_planned": len(cases),
                   "parent_families": len({parent_family(case) for case in cases.values()}),
                   "a1_planned": len(initial),
@@ -1130,7 +1218,7 @@ def render_score(report):
         lines[4:4] = [f"Execution condition: {condition['label']} ({condition['track']}).", ""]
     def display(value):
         return "pending" if value is None else f"{value:g}"
-    components = tuple(name for name in report["metrics"] if name in COMPONENTS + ("exploration",))
+    components = tuple(dict.fromkeys(row["component"] for row in report.get("papers", {}).values()))
     for name in components + ("core", "repeat", "neutral", "stance", "overall", "strict_pass_rate"):
         value = report["metrics"][name]
         coverage = value["coverage"]

@@ -43,7 +43,7 @@ class FocusCatalogTests(unittest.TestCase):
             self.assertEqual(catalog["counts"]["proof_criteria"], sum(row["proof_criterion_count"] for row in written))
             self.assertTrue(all(row["stage_count"] == 0 for row in written))
         self.assertEqual(
-            catalog["scope"]["chapter_obligations"], {"MG-C002": 34, "MG-C003": 92}
+            catalog["scope"]["chapter_obligations"], {"MG-C002": 34, "MG-C003": 92, "LCH01": 8, "LCH02": 20, "HCH02": 40}
         )
         self.assertEqual(catalog["counts"]["source_human_approved"], 0)
         self.assertEqual(catalog["counts"]["model_calls_by_indexer"], 0)

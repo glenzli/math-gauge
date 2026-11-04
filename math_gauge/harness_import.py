@@ -357,10 +357,13 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources, recovery_pol
         record["fixture_only"] = submitted["fixture_only"]
         record["source_origin"] = submitted["origin"]
         row = index.get(sid)
-        messages = _messages_for(slot, requests, prompts, records, dest, runtime)
+        messages = _messages_for(slot, requests, prompts, records, dest, runtime,
+            require_terminal_ok=plan["profile"]["data"].get("case_execution_policy", {}).get("require_terminal_ok", False))
         if row is None:
             if messages is None:
-                record.update(status="blocked", reason="parent_without_readable_response")
+                record.update(status="blocked", reason=("parent_without_successful_terminal_delivery"
+                    if plan["profile"]["data"].get("case_execution_policy", {}).get("require_terminal_ok")
+                    else "parent_without_readable_response"))
             else:
                 record["reason"] = "budget_exhausted" if stopped else "submission_missing"
         else:

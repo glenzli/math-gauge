@@ -102,7 +102,9 @@ def _validate_schedule(plan):
                     or digest_bytes(message["content"].encode()) != message.get("content_sha256")):
                 raise ValueError("Followup crosses its frozen branch or prompt identity")
         earlier.add(sid)
-    return {sid: project_followup_prompt(message, plan["context_policy"])
+    from .execution_policy import declared_case_context
+    return {sid: project_followup_prompt(message, declared_case_context(
+                plan["profile"]["data"], message["case_id"], plan["context_policy"]))
             for sid, message in messages.items()}
 
 
@@ -164,7 +166,14 @@ def _runtime(plan):
     return copy.deepcopy(plan.get("runtime") or {"budget": {}})
 
 
-def _messages_for(slot, requests, prompts, records, root, runtime):
+def terminal_transport_ok(record):
+    """Readable raw evidence and a successful terminal transport are separate."""
+    number = record.get("locked_attempt")
+    attempts = record.get("attempts", [])
+    return type(number) is int and 1 <= number <= len(attempts) and attempts[number - 1].get("status") == "ok"
+
+
+def _messages_for(slot, requests, prompts, records, root, runtime, *, require_terminal_ok=False):
     messages = []
     if runtime.get("system_prompt") is not None:
         if not isinstance(runtime["system_prompt"], str):
@@ -173,12 +182,16 @@ def _messages_for(slot, requests, prompts, records, root, runtime):
     messages.append({"role": "user", "content": candidate_message(requests[slot["case_id"]])})
     if slot["kind"] == "followup":
         cid = slot["case_id"]
+        if require_terminal_ok and not terminal_transport_ok(records[f"{cid}:A1"]):
+            return None
         a1 = _raw(root, records[f"{cid}:A1"])
         if a1 is None or _readable(a1) is None:
             return None
         messages.append({"role": "assistant", "content": a1.decode("utf-8")})
         if slot["round"] == 2:
             predecessor = f"{cid}:{slot['arm']}:1"
+            if require_terminal_ok and not terminal_transport_ok(records[predecessor]):
+                return None
             first = _raw(root, records[predecessor])
             if first is None or _readable(first) is None:
                 return None
@@ -432,6 +445,15 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
     prompts = _validate_schedule(plan)
     _bind_suite(plan, suite)
     selected = select_slots(plan, targets)
+    if command is not None and plan["profile"]["data"].get("case_execution_policy"):
+        from .execution_policy import declared_case_context
+        policy = plan["profile"]["data"]["case_execution_policy"]
+        if any(declared_case_context(plan["profile"]["data"], slot["case_id"], plan["context_policy"])
+               != plan["context_policy"] for slot in selected):
+            raise ValueError("Execute mixed-condition v5 plans through separate matching condition projections")
+        if (any(slot["case_id"] in policy["new_execution_case_ids"] for slot in selected)
+                and (plan.get("runtime") or {}).get("budget", {}).get("timeout_seconds") != policy["new_turn_timeout_seconds"]):
+            raise ValueError("New Lean execution requires the frozen turn timeout")
     reusable = {}
     prior_evidence = {}
     for previous in reuse_runs or ():
@@ -574,11 +596,14 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
             continue
         folder.mkdir(parents=True)
         record = _new_slot_record(slot, prompts, origin, meta["run_id"])
-        messages = _messages_for(slot, requests, prompts, records, dest, runtime)
+        messages = _messages_for(slot, requests, prompts, records, dest, runtime,
+            require_terminal_ok=plan["profile"]["data"].get("case_execution_policy", {}).get("require_terminal_ok", False))
         if stopped:
             record["reason"] = "budget_exhausted"
         elif messages is None:
-            record.update(status="blocked", reason="parent_without_readable_response")
+            record.update(status="blocked", reason=("parent_without_successful_terminal_delivery"
+                if plan["profile"]["data"].get("case_execution_policy", {}).get("require_terminal_ok")
+                else "parent_without_readable_response"))
         else:
             projected = {"schema": "math-gauge.conversation/v1", "messages": messages,
                          "parameters": parameters}
@@ -795,7 +820,8 @@ def inspect_reliability_run(root):
         if (set(record) & prompt_fields != set(prompt_binding)
                 or any(record[key] != value for key, value in prompt_binding.items())):
             raise ValueError("Frozen source/effective followup prompt binding changed")
-        messages = _messages_for(slot, requests, prompts, records, root, runtime)
+        messages = _messages_for(slot, requests, prompts, records, root, runtime,
+            require_terminal_ok=plan["profile"]["data"].get("case_execution_policy", {}).get("require_terminal_ok", False))
         if record["history_sha256"] is not None:
             history = read_json(folder / "history.json")
             wanted = [{"role": m["role"], "content_sha256": digest_bytes(m["content"].encode()),

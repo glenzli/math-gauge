@@ -110,6 +110,23 @@ def check_fixed_design(plan: dict, selection: dict, packet: Path) -> None:
 
 
 def check_plan(plan: dict) -> None:
+    if plan.get("schema") == "math-gauge.reliability-material-plan/v2":
+        require(plan.get("protocol_version") == "0.4.0" and plan.get("suite_version") == "0.6.0"
+                and plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
+                and plan.get("human_approved") is False and plan.get("actual_results") is None
+                and plan.get("runtime_configuration_frozen", False) is False,
+                "Local v0.6 material plan cannot authorize execution or invent results")
+        ids = [row["case_id"] for row in plan.get("cases", [])]
+        selected = plan.get("repeat_case_ids", [])
+        count = plan.get("panel_size", 6)
+        require(ids and len(ids) == len(set(ids)) and len(selected) == count
+                and len(set(selected)) == count and set(selected) <= set(ids)
+                and plan.get("independent_attempts") == ["A1", "A2"]
+                and plan.get("rounds_per_arm") == 1
+                and plan.get("attempt_schedule") == {cid: ["A1", "A2"] if cid in selected else ["A1"] for cid in ids}
+                and plan.get("planned_slots_per_model") == len(ids) + 4 * len(selected),
+                "Local v0.6 material arrangement changed")
+        return
     require(plan.get("schema") == "math-gauge.reliability-plan/v1", "Invalid plan schema")
     require(plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
             and plan.get("actual_results") is None, "The packet remains unexecuted and unauthorized")
@@ -245,20 +262,30 @@ def author_summary(root: Path) -> dict:
 def check_messages(selection: dict, prompts: dict, reply_text: str) -> None:
     _, rounds = reliability_schedule(selection.get("protocol_version"))
     require(prompts.get("protocol_version") == selection["protocol_version"], "Reliability protocol versions differ")
-    require([item["case_id"] for item in selection["cases"]] == list(SELECTED),
-            "Invalid selected cases/order")
-    require(collections.Counter(item["expected_truth"] for item in selection["cases"])
-            == {"true": 3, "false": 3}, "Selection must retain three true and three false claims")
-    require(collections.Counter(item["selection_category"] for item in selection["cases"])
-            == {"written": 2, "audit": 2, "repair": 1, "generate": 1},
-            "Selection task coverage changed")
-    require(len({item["family_id"] for item in selection["cases"]}) == 6,
-            "The six claims must retain different source families")
+    selected_ids = [item["case_id"] for item in selection["cases"]]
+    panel_size = selection.get("case_count", len(SELECTED))
+    if selection["protocol_version"] == "0.4.0":
+        require(len(selected_ids) == len(set(selected_ids)) == panel_size,
+                "Version0.4 requires the declared distinct selected cases")
+        require(dict(collections.Counter(item["expected_truth"] for item in selection["cases"]))
+                == selection["truth_counts"], "Selection truth counts differ from its claims")
+        expected_categories = ({"written": panel_size} if selection.get("population") == "written-only"
+                               else {"written": 2, "audit": 2, "large-formalization": 2})
+        require(collections.Counter(item["selection_category"] for item in selection["cases"])
+                == expected_categories, "Selection task coverage changed")
+    else:
+        require(selected_ids == list(SELECTED), "Invalid selected cases/order")
+        require(collections.Counter(item["expected_truth"] for item in selection["cases"])
+                == {"true": 3, "false": 3}, "Selection must retain three true and three false claims")
+        require(collections.Counter(item["selection_category"] for item in selection["cases"])
+                == {"written": 2, "audit": 2, "repair": 1, "generate": 1}, "Selection task coverage changed")
+    require(len({item["family_id"] for item in selection["cases"]}) == panel_size,
+            "The selected claims must retain different source families")
     require(prompts.get("reply_format_sha256") == sha(reply_text.encode()), "Reply format drift")
     messages = prompts.get("messages", [])
-    require(len(messages) == len({item["message_id"] for item in messages}) == len(SELECTED) * len(ARMS) * len(rounds),
+    require(len(messages) == len({item["message_id"] for item in messages}) == panel_size * len(ARMS) * len(rounds),
             "A distinct followup message is required for every selected branch and round")
-    expected_ids = {f"{cid}:{arm}:{rnd}" for cid in SELECTED for arm in ARMS for rnd in rounds}
+    expected_ids = {f"{cid}:{arm}:{rnd}" for cid in selected_ids for arm in ARMS for rnd in rounds}
     require({item["message_id"] for item in messages} == expected_ids, "Followup message coverage drift")
     for selected in selection["cases"]:
         for rnd in rounds:
@@ -293,7 +320,8 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
     slots = {item["slot_id"]: item for item in rows}
     total = plan["planned_slots_per_model"]
     independent = sum(len(labels) for labels in plan["attempt_schedule"].values())
-    followup = len(SELECTED) * len(ARMS) * len(rounds)
+    selected = plan.get("repeat_case_ids", SELECTED)
+    followup = len(selected) * len(ARMS) * len(rounds)
     require(schedule.get("actual_candidate_calls") == 0
             and len(slots) == len(rows) == total, "Schedule must retain the complete unexecuted slot plan")
     require([item["ordinal_per_model"] for item in rows] == list(range(1, total + 1)),
@@ -311,7 +339,7 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
                 and item.get("grade") is None, "A planned slot contains an invented result")
         if item["kind"] != "followup":
             continue
-        require(item.get("case_id") in SELECTED and item.get("arm") in ARMS
+        require(item.get("case_id") in selected and item.get("arm") in ARMS
                 and item.get("round") in rounds, "Invalid followup slot")
         expected = (f"{item['case_id']}:A1" if item["round"] == 1
                     else f"{item['case_id']}:{item['arm']}:1")
@@ -324,7 +352,7 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
                 "Followup slot/message mismatch")
 
 
-def check_candidate(suite: Suite, case: dict, destination: Path) -> dict:
+def check_candidate(suite: Suite, case: dict, destination: Path, *, selected_ids=SELECTED) -> dict:
     cid = case["id"]
     task = safe_file(suite.root, case["task"]).read_bytes()
     require(not SCORE_LEAKAGE.search(task.decode()), f"{cid}: task scoring leakage")
@@ -365,9 +393,69 @@ def check_candidate(suite: Suite, case: dict, destination: Path) -> dict:
                 "parent_family_id": contract["parent_family_id"]} if contract["kind"] == "answer_review" else {}),
             **({"assessment_unit": "proof_criterion", "proof_criteria": len(contract["criteria"])}
                if contract["kind"] == "written_proof" else {}),
-            "selected_for_followup": cid in SELECTED,
+            **({"assessment_unit": "review_dimension", "semantic_audit_dimensions": len(contract["dimensions"])}
+               if contract["kind"] == "semantic_audit" else {}),
+            "selected_for_followup": cid in selected_ids,
             "candidate_message_sha256": sha(wire.encode()), "task_sha256": sha(task),
             "contract_sha256": sha(contract_path.read_bytes())}
+
+
+def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=False, write_report=False):
+    """Validate the versioned local draft without inheriting older acceptance."""
+    from math_gauge.benchmarks import BenchmarkProfile, build_plan
+    packet = root / PACKET
+    check_plan(plan)
+    check_fixed_design(plan, selection, packet)
+    check_messages(selection, prompts, (packet / "reply-format.md").read_text())
+    check_schedule(plan, schedule, prompts)
+    if refresh:
+        try:
+            author_evidence.check_all(root)
+        except author_evidence.verify.VerificationError as error:
+            raise ValueError("Author evidence must validate before protocol refresh: " + str(error)) from error
+    suite = Suite.load(root / "cases")
+    profile = BenchmarkProfile.load(root / plan["profile"], suite)
+    frozen = build_plan(profile, suite)
+    require(profile.data["score_policy"]["repeat_case_ids"] == plan["repeat_case_ids"]
+            == [row["case_id"] for row in selection["cases"]], "Profile and packet selections differ")
+    with tempfile.TemporaryDirectory(prefix="math-gauge-v06-projection-") as temporary:
+        actual = {cid: check_candidate(suite, case, Path(temporary) / cid,
+                                      selected_ids=plan["repeat_case_ids"])
+                  for cid, case in suite.cases.items()}
+    require(plan["cases"] == [actual[cid] for cid in suite.cases], "Planned material identity drift")
+    for item in selection["cases"]:
+        case = suite.cases[item["case_id"]]
+        for key, case_key in (("task", "task"), ("reference", "reference"), ("contract", "group_contract")):
+            name = "cases/" + case[case_key]
+            require(item[key] == name and item[key + "_sha256"] == sha(safe_file(root, name).read_bytes()),
+                    "Selected source identity drift")
+        contract = read(suite.case_file(case, case["group_contract"]))
+        if item.get("scope") == "whole_audit":
+            require(contract["kind"] == "semantic_audit" and item["focus_id"] == "alignment_scope"
+                    and (item["expected_truth"] == "true") == (contract["expected"] == "aligned"),
+                    "Audit focus differs from its independently reviewed contract")
+        else:
+            require(item["stage_id"] in {row["id"] for row in contract["stages"]},
+                    "Selected mathematical focus does not name a delivered obligation")
+    require(frozen["planned"]["all_slots"] == plan["planned_slots_per_model"], "Shared-plan denominator drift")
+    result = {"schema": "math-gauge.protocol-validation/v2", "passed": True,
+              "suite_sha256": suite.sha256, "profile_sha256": profile.sha256,
+              "plan_sha256": sha((packet / "plan.json").read_bytes()),
+              "candidate_projections": len(actual),
+              "dependent_review_obligations": sum(row["mandatory_units"] for row in actual.values()),
+              "proof_criteria": sum(row.get("proof_criteria", 0) for row in actual.values()),
+              "semantic_audit_dimensions": sum(row.get("semantic_audit_dimensions", 0) for row in actual.values()),
+              "answer_review_dimensions": sum(row.get("review_dimensions", 0) for row in actual.values()),
+              "frozen_followup_messages": len(prompts["messages"]),
+              "planned_slots_per_model": len(frozen["slots"]),
+              "isolated_followup_history_edges": sum(row["kind"] == "followup" for row in frozen["slots"]),
+              "candidate_model_calls": 0, "lean_compilations": 0, "human_approved": False,
+              "runner_offline_acceptance": {"status": "new-version-focused-tests-separately-recorded",
+                                             "formal_model_result": False},
+              "scope": "Local0.6 material and projection checks; no mathematical adjudication or candidate result import."}
+    if write_report or refresh:
+        (packet / "validation.json").write_bytes(encoded(result))
+    return result
 
 
 def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
@@ -376,6 +464,9 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
     packet = root / PACKET
     plan, selection = read(packet / "plan.json"), read(packet / "selection.json")
     prompts, schedule = read(packet / "prompts.json"), read(packet / "schedule.json")
+    if plan.get("schema") == "math-gauge.reliability-material-plan/v2":
+        return validate_v06_materials(root, plan, selection, prompts, schedule,
+                                      refresh=refresh, write_report=write_report)
     require(plan.get("protocol_version") == selection.get("protocol_version"), "Reliability protocol versions differ")
     check_plan(plan)
     check_fixed_design(plan, selection, packet)

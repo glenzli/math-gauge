@@ -115,6 +115,32 @@ class QuestionGroupContracts(unittest.TestCase):
         manifest['items'].reverse()  # No compulsory reference proof order.
         validate_alignment_manifest(manifest, self.contract)
 
+    def test_structured_representation_preserves_original_mapping_and_review_binding(self):
+        manifest=self.alignment()
+        mapping={'objects':'Original object correspondence.', 'parameters':'Original parameter correspondence.',
+                 'quantifiers':'Original quantified domains.', 'conclusion':'Original conclusion correspondence.'}
+        for item in manifest['items']:item['representation']=copy.deepcopy(mapping)
+        validate_alignment_manifest(manifest,self.contract)
+        response=self.alignment_response(manifest);self.replay(response)
+        parsed,span,raw=extract_candidate_alignment(response)
+        self.assertEqual(parsed['items'][0]['representation'],mapping)
+        self.assertEqual(response.encode()[span['start_byte']:span['end_byte']],raw)
+        entry,receipt,path=self.alignment_receipt_fixture(response)
+        self.assertEqual(receipt['alignment_manifest'],manifest)
+        apply_reviews(self.run_path,[entry])
+        self.assertEqual(report(self.run_path)[0]['group_diagnostics'][self.cid]['stage_passes'],5)
+
+    def test_structured_representation_rejects_missing_extra_blank_and_nontext_fields(self):
+        manifest=self.alignment()
+        good={'objects':'Object.', 'parameters':'Parameter.', 'quantifiers':'For every.', 'conclusion':'Conclusion.'}
+        invalid=[None,[],{},'', '  ',{k:v for k,v in good.items() if k!='quantifiers'},
+                 dict(good,proof='Unrequested extra key.'),dict(good,objects=' '),
+                 dict(good,parameters=None),dict(good,quantifiers=['For every.']),dict(good,conclusion=1)]
+        for representation in invalid:
+            broken=copy.deepcopy(manifest);broken['items'][0]['representation']=representation
+            with self.subTest(representation=representation),self.assertRaisesRegex(ValueError,'representation'):
+                validate_alignment_manifest(broken,self.contract)
+
     def test_alignment_extraction_is_exact_and_ignores_nested_fences(self):
         manifest = self.alignment()
         body = json.dumps(manifest, ensure_ascii=False) + '\n'

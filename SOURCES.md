@@ -21,3 +21,7 @@
 本仓库代码采用[MIT](LICENSE)。复用的OET、Lean背景、第三方库与外部原文保留各自许可和署名，不因仓库MIT而统一改许可。来源链接只是核对依据，不表示许可复制整篇内容。
 
 历史来源、设计审核和实验由Git基线 `6a48027baa33e06e913a554fb8bac9394a82b480` 保留，恢复见[仓库地图](docs/repository-map.md)。这些历史记录只按其真实身份使用；显式相容复用不新增执行，选题和合并规则见[本地0.5.0说明](docs/selection-v0.5.0.md)。已发布0.4.0资产和原操作指南保持不可变。
+
+## 本地0.6历史材料
+
+AHR01–04及HCH02保留精确历史commit、源blob、正文、许可和作者署名；中间版本公开状态未核实。public-development是本地选题计划，不是来源公开证明或hidden holdout。新增范围及审计不继承原43卷作者Lean账本。逐文件身份在case的evaluator-only provenance、source handoff与integration review中。

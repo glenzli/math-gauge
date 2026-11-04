@@ -43,7 +43,7 @@ SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
 COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
-_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "exploration", "answer-review",
+_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review",
                     "repeat", "neutral", "stance", "core", "all")
 _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha256",
                  "base_plan_sha256", "suite", "runner_sha256", "protocol_version", "planned",
@@ -266,7 +266,7 @@ def _inspect_bundle_contents(root):
                "Preparation-only status changed")
     _h_require(isinstance(value["targets"], list) and value["targets"]
                and len(value["targets"]) == len(set(value["targets"]))
-               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "exploration", "answer-review",
+               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review",
                                              "repeat", "neutral", "stance", "core", "all"},
                "Invalid export target projection")
     _h_projection(root, value, {"CONTROLLER.md", "controller.py", "submission-template.json"})
@@ -287,7 +287,7 @@ def _h_projection(root, value, expected_files):
                                 "all_slots", "selected_slots"}, "fixed denominator")
     planned = value["planned"]
     labels, rounds = reliability_schedule(value["protocol_version"])
-    compact = (value["protocol_version"] in {"0.2.0", "0.3.0"}
+    compact = (value["protocol_version"] in {"0.2.0", "0.3.0", "0.4.0"}
                or value["controller_version"] == COMPACT_CONTROLLER
                or planned["independent_slots"] != 3 * planned["papers"])
     _h_require(all(type(x) is int and x >= 0 for x in planned.values())
@@ -659,6 +659,15 @@ def _projection(plan, suite, targets):
     selected = select_slots(plan, targets)
     selected_ids = {s["slot_id"] for s in selected}
     wanted_cases = {s["case_id"] for s in selected}
+    if plan["profile"]["data"].get("case_execution_policy"):
+        from .execution_policy import declared_case_context
+        policy = plan["profile"]["data"]["case_execution_policy"]
+        _h_require(all(declared_case_context(plan["profile"]["data"], cid, plan["context_policy"])
+                       == plan["context_policy"] for cid in wanted_cases),
+                   "Export v5 mixed conditions as separate matching condition target groups")
+        _h_require(not plan["runtime_frozen"] or not set(wanted_cases).intersection(policy["new_execution_case_ids"])
+                   or plan["runtime"]["budget"].get("timeout_seconds") == policy["new_turn_timeout_seconds"],
+                   "New Lean export requires the frozen turn timeout")
     cases, contents = [], {}
     case_index = {c["case_id"]: c for c in plan["case_index"]}
     for cid in suite.cases:
@@ -938,7 +947,7 @@ def _inspect_release_dataset_contents(root):
                        "Release target lacks its dependency closure")
         independent = [sid for sid, s in slots.items() if s["kind"] == "independent"]
         compact = (value["controller_version"] == COMPACT_CONTROLLER
-                   or value["protocol_version"] in {"0.2.0", "0.3.0"})
+                   or value["protocol_version"] in {"0.2.0", "0.3.0", "0.4.0"})
         if compact:
             core = [sid for sid in independent if slots[sid]["attempt_label"] == "A1"]
             repeated = {slots[sid]["case_id"] for sid in independent
@@ -1290,7 +1299,7 @@ outside candidate workspaces; send only the constructed messages and parameters.
    before execution: `python3 controller.py freeze --bundle /path/to/dataset
    --runtime /path/to/runtime.json --target all --out /path/to/NEW_RUN`.
    Targets may be repeated; default all. proofs, lean-audit, lean-construction,
-   chapters, repeat, neutral, stance, core and all are supported. Followup targets
+   chapters, lean-formalization, repeat, neutral, stance, core and all are supported. Followup targets
    include their A1 parents. Full denominators remain fixed even for partial runs.
 3. Use NEW_RUN/controller.py request --bundle /path/to/NEW_RUN --slot CASE:A1
    --out /path/to/new-request.json. Each scheduled A label requires a fresh independent model

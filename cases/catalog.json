@@ -1,6 +1,6 @@
 {
   "schema": "math-gauge.case-catalog/v1",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "catalog_status": "ai-classification-suggestions; source-human-review-separate",
   "snapshot_status": "final-catalog-snapshot",
   "operator_only": true,
@@ -8,36 +8,43 @@
   "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
   "candidate_input_policy": "Operator-only classification. Never attach these files to candidates; preserve the shared runner exact task and solver_files projection.",
   "taxonomy": "cases/taxonomy.json",
-  "taxonomy_sha256": "618b0c63ca7a4d790e19cadf90234bae17e3d24c0adcd53fc54598c68becd644",
+  "taxonomy_sha256": "fbc438fff236d1d96af92090ac6e1e03e17f072b1477c7a53bfc9bf63cef8f61",
   "scope": {
     "id": "complete-case-bank",
-    "paper_count": 50,
+    "paper_count": 57,
     "progressive_papers": 41,
     "progressive_stages": 246,
-    "chapter_papers": 2,
+    "chapter_papers": 5,
     "chapter_obligations": {
+      "HCH02": 40,
+      "LCH01": 8,
+      "LCH02": 20,
       "MG-C002": 34,
       "MG-C003": 92
     },
     "answer_review_tasks": 4,
     "answer_review_dimensions": 12,
+    "semantic_audit_tasks": 4,
+    "semantic_audit_dimensions": 16,
     "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
     "written_proof_papers": 3,
     "proof_criteria": 15
   },
   "counts": {
-    "papers": 50,
-    "default_papers": 30,
-    "reserve_papers": 20,
-    "mathematical_papers": 46,
+    "papers": 57,
+    "default_papers": 26,
+    "reserve_papers": 31,
+    "mathematical_papers": 53,
     "answer_review_tasks": 4,
-    "default_parent_families": 21,
+    "semantic_audit_tasks": 4,
+    "semantic_audit_dimensions": 16,
+    "default_parent_families": 18,
     "written_proof_papers": 3,
     "proof_criteria": 15,
-    "default_obligations": 252,
-    "reserve_obligations": 120,
+    "default_obligations": 226,
+    "reserve_obligations": 214,
     "progressive_stages": 246,
-    "chapter_obligations": 126,
+    "chapter_obligations": 194,
     "source_human_approved": 0,
     "model_calls_by_indexer": 0
   },
@@ -47,26 +54,22 @@
       "manifest": "cases/suite.json",
       "membership": "default",
       "id": "math-gauge-benchmark",
-      "version": "0.5.0",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "paper_count": 30,
+      "version": "0.6.0",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "paper_count": 26,
       "cases": [
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04",
+        "HCH02",
+        "LCH01",
+        "LCH02",
         "MG-AR001",
         "MG-AR002",
         "MG-AR003",
         "MG-AR004",
-        "MG-C002",
         "MG-C003",
-        "MG-GF101",
-        "MG-GF102",
-        "MG-GF103",
-        "MG-GF104",
-        "MG-GF105",
-        "MG-GF106",
-        "MG-GF107",
-        "MG-GF108",
-        "MG-GF111",
-        "MG-GF112",
         "MG-GP001",
         "MG-GP002",
         "MG-GP003",
@@ -88,12 +91,23 @@
       "manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "id": "math-gauge-reserve",
-      "version": "0.5.0",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
-      "paper_count": 20,
+      "version": "0.6.0",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "paper_count": 31,
       "cases": [
+        "MG-C002",
+        "MG-GF101",
+        "MG-GF102",
+        "MG-GF103",
+        "MG-GF104",
+        "MG-GF105",
+        "MG-GF106",
+        "MG-GF107",
+        "MG-GF108",
         "MG-GF109",
         "MG-GF110",
+        "MG-GF111",
+        "MG-GF112",
         "MG-GR001",
         "MG-GR003",
         "MG-GR004",
@@ -162,10 +176,14 @@
       "id": "lean-audit",
       "label": "Lean 语义审计",
       "suite": "cases",
-      "count": 6,
-      "default_count": 5,
-      "reserve_count": 1,
+      "count": 10,
+      "default_count": 4,
+      "reserve_count": 6,
       "case_ids": [
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04",
         "MG-GF101",
         "MG-GF103",
         "MG-GF105",
@@ -179,8 +197,8 @@
       "label": "Lean 生成与修复",
       "suite": "cases",
       "count": 6,
-      "default_count": 5,
-      "reserve_count": 1,
+      "default_count": 0,
+      "reserve_count": 6,
       "case_ids": [
         "MG-GF102",
         "MG-GF104",
@@ -195,11 +213,24 @@
       "label": "整章形式化",
       "suite": "cases",
       "count": 2,
-      "default_count": 2,
-      "reserve_count": 0,
+      "default_count": 1,
+      "reserve_count": 1,
       "case_ids": [
         "MG-C002",
         "MG-C003"
+      ]
+    },
+    {
+      "id": "lean-formalization",
+      "label": "大Lean形式化梯度",
+      "suite": "cases",
+      "count": 3,
+      "default_count": 3,
+      "reserve_count": 0,
+      "case_ids": [
+        "HCH02",
+        "LCH01",
+        "LCH02"
       ]
     },
     {
@@ -220,7 +251,7 @@
   "focus_counts": {
     "F01": {
       "primary_papers": 3,
-      "all_tagged_papers": 41
+      "all_tagged_papers": 45
     },
     "F02": {
       "primary_papers": 4,
@@ -228,7 +259,7 @@
     },
     "F03": {
       "primary_papers": 9,
-      "all_tagged_papers": 30
+      "all_tagged_papers": 37
     },
     "F04": {
       "primary_papers": 5,
@@ -247,15 +278,805 @@
       "all_tagged_papers": 20
     },
     "F08": {
-      "primary_papers": 6,
-      "all_tagged_papers": 14
+      "primary_papers": 10,
+      "all_tagged_papers": 21
     },
     "F09": {
-      "primary_papers": 8,
-      "all_tagged_papers": 8
+      "primary_papers": 11,
+      "all_tagged_papers": 11
     }
   },
   "entries": [
+    {
+      "case_id": "AHR01",
+      "version": "0.1.0",
+      "title": "节点域加细的语义审计",
+      "family_id": "oet-node-domain-refinement",
+      "kind": "semantic_audit",
+      "category": "lean-audit",
+      "task_kind": "audit",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "AHR01",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 4,
+      "review_dimension_ids": [
+        "judgment",
+        "valid_parts",
+        "evidence",
+        "repair_scope"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-audit/AHR01/case.json",
+        "task": "cases/lean-audit/AHR01/task.md",
+        "contract": "cases/lean-audit/AHR01/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-audit/AHR01/case.json": "33147ddaa0ac6afe43629e8d8adbc7e01f3d11d39e4c36073e9c70247d6d3b83",
+        "cases/lean-audit/AHR01/task.md": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6",
+        "cases/lean-audit/AHR01/group-contract.json": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+      },
+      "candidate_projection_sha256": "fdea0eb61c4e46026e988df4ac0860fca05f604fd17c44e2565341838a4262a1",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "AI historical-source and counterexample review; no human approval",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-semantic-audit",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "逐项核对原文与实现的范围、前提及结论。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR01/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "区分完整数学定义域、实际可达域或可评估路径域。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR01/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence",
+              "note": "对差异或对齐结论给出保持原始条件的证据。",
+              "contract_pointer": "/dimensions/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR01/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "AHR02",
+      "version": "0.1.0",
+      "title": "路径保证域的语义审计",
+      "family_id": "oet-path-guarantee-domains",
+      "kind": "semantic_audit",
+      "category": "lean-audit",
+      "task_kind": "audit",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "AHR02",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 4,
+      "review_dimension_ids": [
+        "judgment",
+        "valid_parts",
+        "evidence",
+        "repair_scope"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-audit/AHR02/case.json",
+        "task": "cases/lean-audit/AHR02/task.md",
+        "contract": "cases/lean-audit/AHR02/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-audit/AHR02/case.json": "532ab464fb0f98ba9da7cb88f7d607bdb9fd51763c9834fa98f715a298b5e523",
+        "cases/lean-audit/AHR02/task.md": "b45fa43bcb2516783d12a6767a8955c26cb4730fc3dbd68c6d7df4e6d2132464",
+        "cases/lean-audit/AHR02/group-contract.json": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9"
+      },
+      "candidate_projection_sha256": "ce3aad2218910bcd196a13b7d7ef34c9f0fff2f46164382de729d904951957c4",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "AI historical-source and counterexample review; no human approval",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-semantic-audit",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "逐项核对原文与实现的范围、前提及结论。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR02/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "区分完整数学定义域、实际可达域或可评估路径域。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR02/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence",
+              "note": "对差异或对齐结论给出保持原始条件的证据。",
+              "contract_pointer": "/dimensions/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR02/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "AHR03",
+      "version": "0.1.0",
+      "title": "节点域加细的语义审计",
+      "family_id": "oet-node-domain-refinement",
+      "kind": "semantic_audit",
+      "category": "lean-audit",
+      "task_kind": "audit",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "AHR03",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 4,
+      "review_dimension_ids": [
+        "judgment",
+        "valid_parts",
+        "evidence",
+        "repair_scope"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-audit/AHR03/case.json",
+        "task": "cases/lean-audit/AHR03/task.md",
+        "contract": "cases/lean-audit/AHR03/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-audit/AHR03/case.json": "dabbf34aa63e450122fa4ac1b939b127b705352902ceb2422c6a46b62d2ababd",
+        "cases/lean-audit/AHR03/task.md": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6",
+        "cases/lean-audit/AHR03/group-contract.json": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac"
+      },
+      "candidate_projection_sha256": "98acefd407fc13fbbe3fa33332686a79a4d59e606bc9741921204c1889f1a66c",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "independent source-first AI review complete for the declared node-domain scope; no open findings",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-semantic-audit",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "逐项核对原文与实现的范围、前提及结论。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR03/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "区分完整数学定义域、实际可达域或可评估路径域。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR03/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence",
+              "note": "对差异或对齐结论给出保持原始条件的证据。",
+              "contract_pointer": "/dimensions/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR03/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "AHR04",
+      "version": "0.1.0",
+      "title": "路径保证域的语义审计",
+      "family_id": "oet-path-guarantee-domains",
+      "kind": "semantic_audit",
+      "category": "lean-audit",
+      "task_kind": "audit",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "AHR04",
+      "stage_count": 0,
+      "stage_ids": [],
+      "review_dimension_count": 4,
+      "review_dimension_ids": [
+        "judgment",
+        "valid_parts",
+        "evidence",
+        "repair_scope"
+      ],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-audit/AHR04/case.json",
+        "task": "cases/lean-audit/AHR04/task.md",
+        "contract": "cases/lean-audit/AHR04/group-contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-audit/AHR04/case.json": "3ef089972344211b58deef8fab5cd26527e41308cae61ba7a70700e2baa45e79",
+        "cases/lean-audit/AHR04/task.md": "b45fa43bcb2516783d12a6767a8955c26cb4730fc3dbd68c6d7df4e6d2132464",
+        "cases/lean-audit/AHR04/group-contract.json": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0"
+      },
+      "candidate_projection_sha256": "c94b5c08b6051c6c56c016270644db767e7a6ff5a941de896a0656b50039d470",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "independent-ai-mathematical-review-complete; no candidate trial",
+        "human": "pending",
+        "formalization": {
+          "status": "not-required-for-semantic-audit",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F08",
+          "role": "primary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "逐项核对原文与实现的范围、前提及结论。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR04/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "judgment",
+              "note": "区分完整数学定义域、实际可达域或可评估路径域。",
+              "contract_pointer": "/dimensions/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR04/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        },
+        {
+          "focus_id": "F01",
+          "role": "secondary",
+          "evidence": [
+            {
+              "dimension_id": "evidence",
+              "note": "对差异或对齐结论给出保持原始条件的证据。",
+              "contract_pointer": "/dimensions/2/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-audit/AHR04/task.md",
+                "line": 1,
+                "applies_to": "whole-semantic-audit"
+              }
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "HCH02",
+      "version": "0.1.0",
+      "title": "历史完整算子界章节的Lean形式化与多轮对齐",
+      "family_id": "oet-volume1-chapter02",
+      "kind": "chapter_formalization",
+      "category": "lean-formalization",
+      "task_kind": "generate",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "HCH02",
+      "stage_count": 40,
+      "stage_ids": [
+        "HC02-D01",
+        "HC02-D02",
+        "HC02-D03",
+        "HC02-D04",
+        "HC02-D05",
+        "HC02-D06",
+        "HC02-D07",
+        "HC02-D08",
+        "HC02-P01",
+        "HC02-P02",
+        "HC02-P03",
+        "HC02-P04",
+        "HC02-P05",
+        "HC02-P06",
+        "HC02-P07",
+        "HC02-P08",
+        "HC02-P09",
+        "HC02-P10",
+        "HC02-P11",
+        "HC02-P12",
+        "HC02-P13",
+        "HC02-P14",
+        "HC02-P15",
+        "HC02-P16",
+        "HC02-P17",
+        "HC02-P18",
+        "HC02-P19",
+        "HC02-P20",
+        "HC02-P21",
+        "HC02-P22",
+        "HC02-P23",
+        "HC02-P24",
+        "HC02-P25",
+        "HC02-P26",
+        "HC02-P27",
+        "HC02-P28",
+        "HC02-P29",
+        "HC02-P30",
+        "HC02-P31",
+        "HC02-P32"
+      ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-formalization/HCH02/case.json",
+        "task": "cases/lean-formalization/HCH02/candidate/task.md",
+        "contract": "cases/lean-formalization/HCH02/contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-formalization/HCH02/case.json": "662e45069fa5b36d531f297fd5c212950a9ceeba343dfc757d137ab2f792bffc",
+        "cases/lean-formalization/HCH02/candidate/task.md": "67b2923371be293c2697363000f8acad025e239cd17497e3762d941bd033d59d",
+        "cases/lean-formalization/HCH02/contract.json": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+        "cases/lean-formalization/HCH02/candidate/obligations.json": "72e555da3b2a73c6a4baea1a1c0ee53fd0d96cd375b673bfcb138d4add3f1367"
+      },
+      "candidate_projection_sha256": "9ce4980d54c5c9dd54d3a0fa6c012edfa685e6441d585d8169e0b7ca2e88eecd",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "root-and-independent-ai-pre-execution-reviewed; human pending",
+        "human": "pending",
+        "formalization": {
+          "status": "not-authored-for-this-case",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "HC02-D01",
+              "note": "本题列出的全部义务须在完整Lean工程中统一交付。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/HCH02/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/HCH02/candidate/obligations.json",
+                "id": "HC02-D01"
+              },
+              "source_anchor": "h-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "HC02-D01",
+              "note": "表示须与原文定义、量词和作用域对应。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/HCH02/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/HCH02/candidate/obligations.json",
+                "id": "HC02-D01"
+              },
+              "source_anchor": "h-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "HC02-D01",
+              "note": "保留合法评估域和全域/受限域的区别。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/HCH02/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/HCH02/candidate/obligations.json",
+                "id": "HC02-D01"
+              },
+              "source_anchor": "h-af85899693cc8750"
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "LCH01",
+      "version": "0.1.0",
+      "title": "通道接口节群",
+      "family_id": "oet-volume1-chapter02",
+      "kind": "chapter_formalization",
+      "category": "lean-formalization",
+      "task_kind": "generate",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "LCH01",
+      "stage_count": 8,
+      "stage_ids": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D07",
+        "CH02-P19",
+        "CH02-P20",
+        "CH02-P21",
+        "CH02-P25"
+      ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-formalization/LCH01/case.json",
+        "task": "cases/lean-formalization/LCH01/candidate/task.md",
+        "contract": "cases/lean-formalization/LCH01/contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-formalization/LCH01/case.json": "5355d950f7e3b40f2bc2d224158e8ff790675d3d4f365eddc5c9e86b1b016b8a",
+        "cases/lean-formalization/LCH01/candidate/task.md": "0fed38a0b03927abdaff45eda71275277eb1626ce1ed27f007751dcacc4f2fdb",
+        "cases/lean-formalization/LCH01/contract.json": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+        "cases/lean-formalization/LCH01/candidate/obligations.json": "b368804b70d84a4aff088c7a23733adc41b381fc37b0f505b227b02d081c97b8"
+      },
+      "candidate_projection_sha256": "afc63445e5c90bea7361c2aa09cfd0f39c0ade34761c9d081219aad829e8bb8e",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "new scope draft; parent evidence retains its original identity",
+        "human": "pending",
+        "formalization": {
+          "status": "not-authored-for-this-case",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "本题列出的全部义务须在完整Lean工程中统一交付。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/LCH01/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/LCH01/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "表示须与原文定义、量词和作用域对应。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/LCH01/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/LCH01/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "保留合法评估域和全域/受限域的区别。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/LCH01/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/LCH01/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
+    {
+      "case_id": "LCH02",
+      "version": "0.1.0",
+      "title": "有限复合与路径节群",
+      "family_id": "oet-volume1-chapter02",
+      "kind": "chapter_formalization",
+      "category": "lean-formalization",
+      "task_kind": "generate",
+      "sample_unit": "one-full-paper",
+      "parent_family_id": "LCH02",
+      "stage_count": 20,
+      "stage_ids": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-D06",
+        "CH02-P01",
+        "CH02-P02",
+        "CH02-P04",
+        "CH02-P05",
+        "CH02-P07",
+        "CH02-P08",
+        "CH02-P11",
+        "CH02-P12",
+        "CH02-P14",
+        "CH02-P03",
+        "CH02-P06",
+        "CH02-P09",
+        "CH02-P10",
+        "CH02-P13"
+      ],
+      "review_dimension_count": 0,
+      "review_dimension_ids": [],
+      "suite_root": "cases",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
+      "suite_manifest": "cases/suite.json",
+      "membership": "default",
+      "paths": {
+        "case": "cases/lean-formalization/LCH02/case.json",
+        "task": "cases/lean-formalization/LCH02/candidate/task.md",
+        "contract": "cases/lean-formalization/LCH02/contract.json"
+      },
+      "original_sha256": {
+        "cases/lean-formalization/LCH02/case.json": "4dd0b4e01130192a2370c334947ed4fc1b0f06c0b0767293eea34913189e59b0",
+        "cases/lean-formalization/LCH02/candidate/task.md": "b4beaac5591ef270567867f5004280d3796031ab3d6379845ad76df742148c8c",
+        "cases/lean-formalization/LCH02/contract.json": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d",
+        "cases/lean-formalization/LCH02/candidate/obligations.json": "356c587a33effef681ed2ea69769400c5272abf36fa9274750e463901a40fb44"
+      },
+      "candidate_projection_sha256": "2780c79aa91d8ec6724c725af4ba7d72da2926128f108319a9e37d76d8e72178",
+      "status": "draft",
+      "source_review": {
+        "mathematical": "new scope draft; parent evidence retains its original identity",
+        "human": "pending",
+        "formalization": {
+          "status": "not-authored-for-this-case",
+          "inherited_parent_evidence": false
+        }
+      },
+      "focus": [
+        {
+          "focus_id": "F09",
+          "role": "primary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "本题列出的全部义务须在完整Lean工程中统一交付。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/LCH02/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/LCH02/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F08",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "表示须与原文定义、量词和作用域对应。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/LCH02/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/LCH02/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        },
+        {
+          "focus_id": "F03",
+          "role": "secondary",
+          "evidence": [
+            {
+              "stage_id": "CH02-D01",
+              "note": "保留合法评估域和全域/受限域的区别。",
+              "contract_pointer": "/stages/0/required_evidence",
+              "task_locator": {
+                "path": "cases/lean-formalization/LCH02/candidate/task.md",
+                "line": 3,
+                "applies_to": "whole-paper-delivery"
+              },
+              "obligations_locator": {
+                "path": "cases/lean-formalization/LCH02/candidate/obligations.json",
+                "id": "CH02-D01"
+              },
+              "source_anchor": "oet-af85899693cc8750"
+            }
+          ]
+        }
+      ],
+      "classification_review": {
+        "status": "ai-classified-from-reviewed-case-scope; independent source review separate",
+        "human": "pending"
+      }
+    },
     {
       "case_id": "MG-AR001",
       "version": "0.2.0",
@@ -275,7 +1096,7 @@
         "completeness"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -372,7 +1193,7 @@
         "completeness"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -469,7 +1290,7 @@
         "completeness"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -566,7 +1387,7 @@
         "completeness"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -694,9 +1515,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/chapters/MG-C002/case.json",
         "task": "cases/chapters/MG-C002/candidate/task.md",
@@ -1051,7 +1872,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -1322,9 +2143,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-audit/MG-GF101/case.json",
         "task": "cases/lean-audit/MG-GF101/task.md",
@@ -1450,9 +2271,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-construction/MG-GF102/case.json",
         "task": "cases/lean-construction/MG-GF102/task.md",
@@ -1584,9 +2405,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-audit/MG-GF103/case.json",
         "task": "cases/lean-audit/MG-GF103/task.md",
@@ -1728,9 +2549,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-construction/MG-GF104/case.json",
         "task": "cases/lean-construction/MG-GF104/task.md",
@@ -1862,9 +2683,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-audit/MG-GF105/case.json",
         "task": "cases/lean-audit/MG-GF105/task.md",
@@ -2006,9 +2827,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-construction/MG-GF106/case.json",
         "task": "cases/lean-construction/MG-GF106/task.md",
@@ -2146,9 +2967,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-audit/MG-GF107/case.json",
         "task": "cases/lean-audit/MG-GF107/task.md",
@@ -2290,9 +3111,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-construction/MG-GF108/case.json",
         "task": "cases/lean-construction/MG-GF108/task.md",
@@ -2434,7 +3255,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -2604,7 +3425,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -2738,9 +3559,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-audit/MG-GF111/case.json",
         "task": "cases/lean-audit/MG-GF111/task.md",
@@ -2882,9 +3703,9 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
-      "suite_manifest": "cases/suite.json",
-      "membership": "default",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
+      "suite_manifest": "cases/reserve-suite.json",
+      "membership": "reserve",
       "paths": {
         "case": "cases/lean-construction/MG-GF112/case.json",
         "task": "cases/lean-construction/MG-GF112/task.md",
@@ -3032,7 +3853,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3192,7 +4013,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3346,7 +4167,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3491,7 +4312,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -3651,7 +4472,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -3805,7 +4626,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -3932,7 +4753,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -4050,7 +4871,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4204,7 +5025,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -4358,7 +5179,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -4492,7 +5313,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4646,7 +5467,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4800,7 +5621,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -4944,7 +5765,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -5098,7 +5919,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -5248,7 +6069,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -5392,7 +6213,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -5510,7 +6331,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -5674,7 +6495,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -5812,7 +6633,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -5946,7 +6767,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -6080,7 +6901,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -6220,7 +7041,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -6365,7 +7186,7 @@
         "assertion_reliability"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -6504,7 +7325,7 @@
         "R"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -6642,7 +7463,7 @@
         "independent_assertion_reliability"
       ],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -6779,7 +7600,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -6923,7 +7744,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -7057,7 +7878,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -7211,7 +8032,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "59ed028ab986468842492f7ca3a8a5ddc4b1d55275f9a21536d33caebc47afb1",
+      "suite_sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0",
       "suite_manifest": "cases/suite.json",
       "membership": "default",
       "paths": {
@@ -7365,7 +8186,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {
@@ -7509,7 +8330,7 @@
       "review_dimension_count": 0,
       "review_dimension_ids": [],
       "suite_root": "cases",
-      "suite_sha256": "bc9e51ce84923adffa126aa7bb68563047485df42ed3f07225d9b5d44ce96655",
+      "suite_sha256": "57826b856777bfd23736478ba59d0c86c314e8c48f0feab7b403961c6b40f691",
       "suite_manifest": "cases/reserve-suite.json",
       "membership": "reserve",
       "paths": {

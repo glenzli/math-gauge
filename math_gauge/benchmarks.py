@@ -2,6 +2,7 @@
 
 import copy
 import json
+import re
 import uuid
 from collections import Counter
 from dataclasses import dataclass
@@ -10,15 +11,17 @@ from pathlib import Path
 from .catalog import (assessment_units, assessment_weights, candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
 from .execution import now, runner_fingerprint
-from .execution_policy import execution_context, validate_context_policy
+from .execution_policy import execution_context, validate_context_policy, validate_case_execution_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
 EXTENDED_COMPONENTS = COMPONENTS + ("exploration", "answer-review")
-TARGETS = EXTENDED_COMPONENTS + ("repeat", "neutral", "stance", "core", "all")
+FORMALIZATION_COMPONENTS = ("proofs", "lean-audit", "lean-formalization", "exploration", "answer-review")
+TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("repeat", "neutral", "stance", "core", "all")
 ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
 PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
-                   "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"}
+                   "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4",
+                   "math-gauge.benchmark-profile/v5"}
 COMPACT_PANEL = ("MG-GR002", "MG-GR014", "MG-GF101", "MG-GF107", "MG-GF104", "MG-GF106")
 
 
@@ -35,7 +38,7 @@ def _require(condition, message):
 
 def reliability_schedule(protocol_version):
     """Versioned independent labels and follow-up rounds, including frozen legacy plans."""
-    if protocol_version == "0.3.0":
+    if protocol_version in {"0.3.0", "0.4.0"}:
         return ("A1", "A2"), (1,)
     if protocol_version in {"0.1.0", "0.2.0"}:
         return ("A1", "A2", "A3"), (1, 2)
@@ -61,17 +64,27 @@ def component_ids(data):
     _require(isinstance(rows, list) and rows and all(isinstance(x, dict) for x in rows),
              "Profile requires explicit ordered components")
     ids = [row.get("id") for row in rows]
-    if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"}:
-        allowed = EXTENDED_COMPONENTS if data["schema"].endswith("/v4") else EXTENDED_COMPONENTS[:-1]
+    if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"}:
+        allowed = (FORMALIZATION_COMPONENTS if data["schema"].endswith("/v5") else
+                   EXTENDED_COMPONENTS if data["schema"].endswith("/v4") else EXTENDED_COMPONENTS[:-1])
         _require(ids == [cid for cid in allowed if cid in ids],
                  "Invalid or repeated v3 core components")
+        if data["schema"].endswith("/v5"):
+            _require(all(row.get("aggregation") == ("parent_family" if row["id"] == "answer-review" else "family")
+                         for row in rows), "v5 components require explicit family aggregation")
     else:
         _require(ids == list(COMPONENTS), "Profile must retain the four ordered core components")
     return tuple(ids)
 
 
 def profile_targets(data):
-    return component_ids(data) + ("repeat", "neutral", "stance", "core", "all")
+    groups = data.get("execution_groups", {})
+    _require(isinstance(groups, dict) and (not groups or data.get("schema") == "math-gauge.benchmark-profile/v5")
+             and all(isinstance(name, str) and re.fullmatch(r"[a-z][a-z0-9-]+", name)
+                     and name not in TARGETS and isinstance(slots, list) and slots
+                     and len(slots) == len(set(slots)) and all(isinstance(sid, str) for sid in slots)
+                     for name, slots in groups.items()), "Invalid versioned execution group")
+    return component_ids(data) + ("repeat", "neutral", "stance", "core", "all") + tuple(groups)
 
 
 def _runtime_contract(runtime):
@@ -93,7 +106,7 @@ def independent_attempts(data, case_ids):
         _require(repeated_labels == ATTEMPTS and data.get("attempts") == list(ATTEMPTS),
                  "Three fixed independent attempts are required")
         return {cid: list(ATTEMPTS) for cid in ids}
-    _require(data.get("schema") in {"math-gauge.benchmark-profile/v2", "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
+    _require(data.get("schema") in {"math-gauge.benchmark-profile/v2", "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"},
              "Unsupported benchmark attempt arrangement")
     attempts = data.get("attempt_schedule")
     _require(isinstance(attempts, dict) and set(attempts) == set(ids)
@@ -117,12 +130,31 @@ def scoring_policy(data, case_ids):
         and policy["repeat_attempt_labels"] == list(repeated_labels),
         "Compact scoring requires A1 core and the protocol's independent repetition")
     repeated = policy["repeat_case_ids"]
-    _require(isinstance(repeated, list) and (repeated or data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"})
+    _require(isinstance(repeated, list) and (repeated or data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
              and all(isinstance(cid, str) for cid in repeated)
              and len(repeated) == len(set(repeated))
              and set(repeated) == {cid for cid in ids if attempts[cid] == list(repeated_labels)},
              "Repeat membership must match the frozen repeated papers")
     return copy.deepcopy(policy)
+
+
+def _supplement_cases(data, case_ids):
+    policy = data.get("supplement_policy")
+    if policy is None:
+        return set()
+    fresh = policy.get("mandatory_fresh_case_ids", [])
+    _require(data.get("schema") == "math-gauge.benchmark-profile/v5"
+             and policy.get("schema") == "math-gauge.v06-supplement-selection/v1"
+             and isinstance(data.get("standard_version"), str)
+             and isinstance(fresh, list) and fresh and len(fresh) == len(set(fresh))
+             and set(fresh) <= set(case_ids), "Invalid versioned fresh supplement policy")
+    attempts = independent_attempts(data, case_ids)
+    _, rounds = reliability_schedule(data["reliability"]["protocol_version"])
+    repeat = set(scoring_policy(data, case_ids)["repeat_case_ids"])
+    count = sum(len(attempts[cid]) for cid in fresh) + 3 * len(rounds) * len(set(fresh) & repeat)
+    _require(policy.get("standard_new_slots_per_model") == count,
+             "Fresh supplement slot count differs from the frozen schedule")
+    return set(fresh)
 
 
 def _compact_panel(data, packet, case_ids, policy):
@@ -136,6 +168,21 @@ def _compact_panel(data, packet, case_ids, policy):
              and Counter(x["selection_category"] for x in selected)
              == {"written": 2, "audit": 2, "repair": 1, "generate": 1},
              "The compact profile retains 32 papers and its balanced six-paper panel")
+
+
+def _declared_reliability_population(data, selection, cases):
+    if data.get("reliability_population") != "written-only":
+        return
+    spec = data.get("reliability_panel", {})
+    rows = selection.get("cases", [])
+    _require(data.get("schema") == "math-gauge.benchmark-profile/v5"
+             and spec == {"id": "written-four/v1", "case_count": 4,
+                          "truth_counts": {"true": 2, "false": 2}, "distinct_families": 4}
+             and len(rows) == spec["case_count"]
+             and Counter(row["expected_truth"] for row in rows) == spec["truth_counts"]
+             and len({cases[row["case_id"]]["family_id"] for row in rows}) == spec["distinct_families"]
+             and all(cases[row["case_id"]]["task_kind"] == "written" for row in rows),
+             "The written-only reliability population differs from its frozen four-paper contract")
 
 
 def case_approval_sources(suite):
@@ -169,7 +216,7 @@ class BenchmarkProfile:
         path = Path(path).resolve()
         raw = path.read_bytes()
         data = json.loads(raw)
-        default_root = (path.parent.parent if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"}
+        default_root = (path.parent.parent if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"}
                         and path.parent.name == "protocol" else suite.root.parent)
         root = Path(repository_root or default_root).resolve()
         _require(isinstance(data, dict) and data.get("schema") in PROFILE_SCHEMAS
@@ -187,7 +234,7 @@ class BenchmarkProfile:
         rows = data.get("components")
         components = component_ids(data)
         _weights({x["id"]: x.get("weight") for x in rows}, components,
-                 fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
+                 fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
         members = []
         for row in rows:
             ids = row.get("case_ids")
@@ -205,10 +252,18 @@ class BenchmarkProfile:
         _require(len(members) == len(set(members))
                  and set(members) == set(suite.cases),
                  "Core components must partition the complete suite without overlap")
+        policy = validate_case_execution_policy(data, {cid: row["id"] for row in rows for cid in row["case_ids"]})
+        if policy is not None:
+            binding = policy.get("budget_policy_binding", {})
+            _require(isinstance(binding.get("path"), str)
+                     and digest_bytes(safe_file(root, binding["path"]).read_bytes()) == binding.get("sha256"),
+                     "Large Lean budget policy identity changed")
+        profile_targets(data)
         scoring_policy(data, suite.cases)
+        _supplement_cases(data, suite.cases)
         _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
-                 allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
-                 fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
+                 allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"},
+                 fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
         reliability = data.get("reliability")
         _require(isinstance(reliability, dict), "Reliability material bindings required")
         for key in ("selection", "prompts", "schedule", "protocol_version"):
@@ -231,6 +286,10 @@ class BenchmarkProfile:
 
 
 def _category_matches(component, task_kind, contract_kind):
+    if component == "lean-formalization":
+        return contract_kind == "chapter_formalization" and task_kind == "generate"
+    if contract_kind == "semantic_audit":
+        return component == "lean-audit" and task_kind == "audit"
     if component == "answer-review":
         return contract_kind == "answer_review" and task_kind == "answer_review"
     if component == "exploration":
@@ -322,9 +381,10 @@ def _focus_tags(profile):
     return result, {"cases/taxonomy.json": digest_bytes(path.read_bytes())}
 
 
-def _target_slot_ids(slots, components, targets, policy=None):
+def _target_slot_ids(slots, components, targets, policy=None, groups=None):
+    groups = groups or {}
     _require(targets and len(targets) == len(set(targets))
-             and set(targets) <= set(TARGETS), "Unknown or repeated benchmark target")
+             and set(targets) <= set(TARGETS) | set(groups), "Unknown or repeated benchmark target")
     want = set()
     policy = policy or {"core_attempt_labels": ATTEMPTS,
                         "repeat_case_ids": list(components), "repeat_attempt_labels": ATTEMPTS}
@@ -340,6 +400,9 @@ def _target_slot_ids(slots, components, targets, policy=None):
                     or slot["arm"] in {"affirm", "deny"} and "stance" in targets)):
             want.add(slot["slot_id"])
     indexed = {slot["slot_id"]: slot for slot in slots}
+    _require(all(set(ids) <= set(indexed) for ids in groups.values()), "Execution group names unknown slots")
+    for target in targets:
+        want.update(groups.get(target, []))
     for sid in list(want):
         parent = indexed[sid].get("parent_slot")
         while parent:
@@ -357,7 +420,8 @@ def select_slots(plan, targets=None):
                  "Unknown benchmark target for the frozen profile")
         components = {x["case_id"]: x["component"] for x in plan["case_index"]}
         want = _target_slot_ids(plan["slots"], components, list(targets),
-                                scoring_policy(plan["profile"]["data"], components))
+                                scoring_policy(plan["profile"]["data"], components),
+                                plan["profile"]["data"].get("execution_groups"))
         _require(want <= selected, "Execution targets exceed the frozen plan projection")
         selected = want
     return [copy.deepcopy(x) for x in plan["slots"] if x["slot_id"] in selected]
@@ -383,6 +447,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
                  and Counter(x["expected_truth"] for x in packet["selection"]["cases"])
                  == {"true": 4, "false": 4}, "The canonical profile retains eight four-true/four-false focuses")
     _compact_panel(profile.data, packet, suite.cases, policy)
+    _declared_reliability_population(profile.data, packet["selection"], suite.cases)
     components = {cid: row["id"] for row in profile.data["components"]
                   for cid in row["case_ids"]}
     tags, tag_identity = _focus_tags(profile)
@@ -406,7 +471,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
             "total_weight": sum(s["points"] for s in assessment_units(contract)),
             "focus_tags": tags.get(cid, []),
         })
-        if contract["kind"] in {"research_exploration", "answer_review"}:
+        if contract["kind"] in {"research_exploration", "answer_review", "semantic_audit"}:
             cases[-1]["assessment_unit"] = "review_dimension"
         if contract["kind"] == "written_proof":
             cases[-1]["assessment_unit"] = "proof_criterion"
@@ -417,7 +482,7 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
             cases[-1]["source_suite"] = suite.source_binding(case)
         if suite.source_suite(case).metadata["visibility"] == "private":
             cases[-1]["source_visibility"] = "private"
-    want = _target_slot_ids(slots, components, targets, policy)
+    want = _target_slot_ids(slots, components, targets, policy, profile.data.get("execution_groups"))
     for slot in slots:
         slot["selected"] = slot["slot_id"] in want
     plan = {
@@ -469,10 +534,10 @@ def validate_plan(plan):
     components = data.get("components", [])
     ids = component_ids(data)
     _weights({x["id"]: x.get("weight") for x in components}, ids,
-             fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
+             fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
     _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
-             allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4"},
-                 fractional=data["schema"] == "math-gauge.benchmark-profile/v4")
+             allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"},
+                 fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
     cases = plan.get("case_index", [])
     case_ids = [x.get("case_id") for x in cases]
     members = [cid for component in components for cid in component.get("case_ids", [])]
@@ -481,8 +546,10 @@ def validate_plan(plan):
              "Frozen core partition changed")
     membership = {cid: component["id"] for component in components
                   for cid in component["case_ids"]}
+    validate_case_execution_policy(data, membership)
     attempts = independent_attempts(data, case_ids)
     policy = scoring_policy(data, case_ids)
+    _supplement_cases(data, case_ids)
     for case in cases:
         _require(type(case.get("case_approved")) is bool, "Frozen case approval must be explicit")
         approval = case.get("case_approval_source")
@@ -500,9 +567,11 @@ def validate_plan(plan):
                                                    and approval["human_review"] == "approved"),
                      "Frozen case approval contradicts its original source")
         answer_review = case.get("contract_kind") == "answer_review"
+        semantic_audit = case.get("contract_kind") == "semantic_audit"
+        dimension_review = answer_review or semantic_audit
         written_proof = case.get("contract_kind") == "written_proof"
-        stages = case.get("criteria" if written_proof else "dimensions" if answer_review else "stages", [])
-        unit_key = "criterion_id" if written_proof else "dimension_id" if answer_review else "stage_id"
+        stages = case.get("criteria" if written_proof else "dimensions" if dimension_review else "stages", [])
+        unit_key = "criterion_id" if written_proof else "dimension_id" if dimension_review else "stage_id"
         if written_proof:
             _require("stages" not in case and "dimensions" not in case
                      and case.get("assessment_unit") == "proof_criterion"
@@ -515,11 +584,15 @@ def validate_plan(plan):
             _require("stages" not in case and case.get("assessment_unit") == "review_dimension"
                      and isinstance(case.get("parent_family_id"), str) and case["parent_family_id"]
                      and attempts[case["case_id"]] == ["A1"], "Invalid answer-review plan unit")
+        if semantic_audit:
+            _require("stages" not in case and "criteria" not in case
+                     and case.get("assessment_unit") == "review_dimension"
+                     and case.get("track") == "alignment", "Invalid semantic-audit plan unit")
         _require(case.get("component") == membership[case["case_id"]]
                  and _category_matches(case["component"], case.get("task_kind"), case.get("contract_kind"))
                  and stages and len({s.get(unit_key) for s in stages}) == len(stages)
                  and all(type(s.get("points")) is int and s["points"] > 0
-                         and (answer_review or written_proof or type(s.get("lean_required")) is bool) for s in stages)
+                         and (dimension_review or written_proof or type(s.get("lean_required")) is bool) for s in stages)
                  and case.get("total_weight") == sum(s["points"] for s in stages),
                  "Frozen paper weights changed")
     slots = plan.get("slots", [])
@@ -532,7 +605,9 @@ def validate_plan(plan):
                  and Counter(x["expected_truth"] for x in packet["selection"]["cases"])
                  == {"true": 4, "false": 4}, "Canonical focus balance changed")
     _compact_panel(data, packet, case_ids, policy)
-    want = _target_slot_ids(slots, membership, plan.get("targets", []), policy)
+    _declared_reliability_population(data, packet["selection"], {case["case_id"]: case for case in cases})
+    _require(set(plan.get("targets", [])) <= set(profile_targets(data)), "Unknown frozen execution target")
+    want = _target_slot_ids(slots, membership, plan.get("targets", []), policy, data.get("execution_groups"))
     _require(len({x.get("slot_id") for x in slots}) == len(slots)
              and all(type(x.get("selected")) is bool
                      and x["selected"] == (x["slot_id"] in want) for x in slots),

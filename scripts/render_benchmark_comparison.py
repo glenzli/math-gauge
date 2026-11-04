@@ -56,8 +56,13 @@ def presentation(terra_path, gemini_path):
             "ar_records": result_view(report)["ar_records"],
             "private_completion": {row["public_id"]: value(row["completion"]) for row in report.get("private_records", [])}}
     chapters = {}
-    # These are the unchanged chapter obligation denominators, not model scores.
-    for public_id, total in (("MG-C002", 34), ("MG-C003", 92)):
+    # Legacy results lack scope metadata; retain their versioned historical fallback.
+    scope = source.get("formalization_scope")
+    totals = ({cid: row["obligations"] for cid,row in scope.items()} if scope is not None
+              else {"MG-C002": 34, "MG-C003": 92})
+    if reports["gemini"].get("formalization_scope") != scope:
+        raise ValueError("Frozen formalization scopes differ")
+    for public_id, total in totals.items():
         row = {"total": total}
         for key, _, _ in MODELS:
             record = next((r for r in reports[key]["slot_evidence"] if r["slot_id"] == public_id + ":A1"), None)
@@ -67,7 +72,7 @@ def presentation(terra_path, gemini_path):
                 raise ValueError("Frozen chapter fraction is not an obligation count")
         chapters[public_id] = row
     return {"sources": sources, "models": models, "profile": source["profile"], "chapter_completion": chapters,
-            "version": version_label(source), "components": components,
+            "version": version_label(source), "components": components, "reliability": view["reliability"],
             "component_counts": {key: planned_count(source, key) for key, _, _ in components},
             "reliability_counts": {key: reliability_description(source, key) for key, _, _ in RELIABILITY},
             "reliability_planned": {key: planned_count(source, key) for key, _, _ in RELIABILITY},
@@ -127,7 +132,7 @@ def main_svg(data):
         pair(p,y,{model:data["models"][model]["metrics"][key] for model,_,_ in MODELS})
     p += [text(56,1001,"02  作答稳定性与自查表现",27,weight=700),text(56,1032,"使用冻结计划的固定数学选题；自查看重点数学正确性、结论与论据，不等于整卷交付。",17,"#61727e")]
     axis(p,1079,1346)
-    for y,(key,title,_) in zip((1117,1205,1293),RELIABILITY):
+    for y,(key,title,_) in zip((1117,1205,1293),data.get("reliability",RELIABILITY)):
         note = data["reliability_counts"][key]
         if key in ("neutral", "stance"):
             note = f'{data["reliability_planned"][key]}份后续'
@@ -141,13 +146,14 @@ def main_svg(data):
 
 
 def chapters_svg(data):
-    p=svg_start(620,"Math Gauge · 两章完整交付","一章是一份相关任务，34和92项义务不是独立题数。",data)
-    p += [text(56,43,"MATH GAUGE  /  FIRST-ANSWER DELIVERY",15,"#6b7c88",650),text(56,96,"两章的完整交付",38,weight=700),text(56,134,"按冻结交付门槛计完成；一章是一份相关任务，义务不是独立题数。",20,"#61727e")]
+    height=354+133*len(data["chapter_completion"])
+    p=svg_start(height,"Math Gauge · 形式化交付","每份任务按冻结合同归一化，义务不是独立题数。",data)
+    p += [text(56,43,"MATH GAUGE  /  FIRST-ANSWER DELIVERY",15,"#6b7c88",650),text(56,96,"形式化任务的完整交付",38,weight=700),text(56,134,"按冻结交付门槛计完成；一章是一份相关任务，义务不是独立题数。",20,"#61727e")]
     legend(p,178);axis(p,237,464)
-    for y,(public_id,row) in zip((284,417),data["chapter_completion"].items()):
+    for y,(public_id,row) in zip((284+133*i for i in range(len(data["chapter_completion"]))),data["chapter_completion"].items()):
         p += [text(56,y-3,public_id.removeprefix("MG-"),28,weight=650),text(56,y+27,f'{row["total"]}项本章义务 · 首次答卷',18,"#61727e")]
         pair(p,y,{key:None if row[key] is None else row[key]/row["total"]*100 for key,_,_ in MODELS},{key:"待完成" if row[key] is None else f'{row[key]}/{row["total"]}' for key,_,_ in MODELS})
-    p += [text(56,521,"尺度：0–100% · 条末为完整满足 / 本章义务。后续答卷不替代首次答卷。",19,"#61727e"),text(56,557,"工程失败与数学错误分别记录，未完成义务不能全部解释为数学错误。",19,"#61727e"),text(56,592,"AI审核 / 待人审 · 静态诊断、编译与内核公理审计分别记录。",17,"#61727e"),"</svg>"]
+    p += [text(56,height-99,"尺度：0–100% · 条末为完整满足 / 本章义务。后续答卷不替代首次答卷。",19,"#61727e"),text(56,height-63,"工程失败与数学错误分别记录，未完成义务不能全部解释为数学错误。",19,"#61727e"),text(56,height-28,"AI审核 / 待人审 · 静态诊断、编译与内核公理审计分别记录。",17,"#61727e"),"</svg>"]
     return "\n".join(p)
 
 

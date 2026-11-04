@@ -1,15 +1,18 @@
+> 当前本地0.6默认26任务/18家族/42槽、reserve31；合并探索29任务/21家族/45槽。四written测标准重复和三臂，92项Lean对齐专项单列。新版见[0.6指南](release-consumer-README-v0.6.0.md)与[选题说明](selection-v0.6.0.md)。下方0.5结果入口保留历史身份，尚无完整0.6成绩。
+
 # 文档导航
 
-Math Gauge 当前源码为本地0.5.0预览：默认30任务/21数学家族，另20份备选；合并3份私有探索后33任务/24家族。公开完整计划54记录，合并57记录；原43数学卷与3份同族加强稿共46数学卷，加4份相关AR为50条任务。旧答复用、新原生初答与观察后选题重算分别留证；参考公开仍不代表solver可读。已发布0.4.0资产和原指南不改。根据目的选择入口：
+Math Gauge 当前源码为本地0.6.0草稿，尚未发布。默认清单与固定分母读机器profile；当前0.5结果仅供历史阅读，不能当作0.6完整考试。根据目的选择入口：
 
 | 目的 | 入口 |
 | --- | --- |
+| 准备本地0.6的26任务/42标准记录、8Lean新A1与四written自查 | [当前指南](release-consumer-README-v0.6.0.md) · [选题依据](selection-v0.6.0.md) |
 | 对比 Terra / Gemini 的六方向能力、作答稳定性与自查、AR重大误判及整章交付 | [离线对比页](results/comparison-2026-11-03/index.html) · [文字表](benchmark-comparison-2026-11-03.md) · [PNG](results/comparison-2026-11-03/comparison.png) · [SVG](results/comparison-2026-11-03/comparison.svg) |
-| 阅读 Gemini 3.8 Flash 当前综合重算，33份首次答卷/57份记录 | [文字报告](gemini-combined-2026-11-03.md) · [公开机器结果](results/gemini-2026-11-03/result.json) |
-| 阅读 Terra 6.1 当前综合重算，33份首次答卷/57份记录 | [独立结果页](results/terra-2026-11-03/index.html) · [文字报告](terra-combined-2026-11-03.md) · [机器结果](results/terra-2026-11-03/result.json) · [组合合同](../protocol/composite-development-report.md) |
-| 查看本地0.5.0任务包预览 | [30任务/54记录操作指南](release-consumer-README-v0.5.0.md)；尚未发布，不表示已有下载资产 |
+| 阅读 Gemini 3.8 Flash 旧0.5综合重算，33份首次答卷/57份记录 | [文字报告](gemini-combined-2026-11-03.md) · [公开机器结果](results/gemini-2026-11-03/result.json) |
+| 阅读 Terra 6.1 旧0.5综合重算，33份首次答卷/57份记录 | [独立结果页](results/terra-2026-11-03/index.html) · [文字报告](terra-combined-2026-11-03.md) · [机器结果](results/terra-2026-11-03/result.json) · [组合合同](../protocol/composite-development-report.md) |
+| 查看旧本地0.5.0任务包预览 | [30任务/54记录操作指南](release-consumer-README-v0.5.0.md)；尚未发布，不表示已有下载资产 |
 | 运行已发布0.4.0任务包 | [v0.4.0原操作指南](release-consumer-README-v0.4.0.md)；保持原36任务/84记录身份 |
-| 理解当前30任务与20备选的取舍、家族计数与覆盖损失 | [0.5.0选题依据](selection-v0.5.0.md)；[0.3.0历史取舍](selection-v0.3.0.md)保留 |
+| 理解旧0.5的30任务/20备选取舍 | [0.5.0选题依据](selection-v0.5.0.md)；[0.3.0历史取舍](selection-v0.3.0.md)保留 |
 | 单独选择备选题 | [备选目录](../cases/reserve/README.md) · [显式清单](../cases/reserve-suite.json) |
 | 了解保留在当前默认集的真实答卷审阅、60/30/10判准与同母题聚合 | [审阅题组](../cases/answer-review/README.md) · [正式说明](answer-review-pilot.md) · [评分合同](../protocol/answer-review-scoring.md) · [显式清单](../cases/answer-review-suite.json) |
 | 构建、检查任务包，或查阅历史分发 | [分发合同](../protocol/release-distribution.md) · [v0.1.0 历史发布说明](release-notes-v0.1.0.md) |

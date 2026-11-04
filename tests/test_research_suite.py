@@ -1,4 +1,4 @@
-"""Candidate projection and identity contracts for 30 defaults and 20 reserves."""
+"""Candidate projection and identity contracts for 26 defaults and 31 reserves."""
 
 import json
 import shutil
@@ -42,14 +42,14 @@ class BenchmarkSuiteTests(unittest.TestCase):
         expected = {
             "proofs": {*(f"MG-GR{i:03d}" for i in (2, 5, 8, 9, 10, 14, 21, 22, 23, 103, 104)),
                        *(f"MG-GP{i:03d}" for i in range(1, 4))},
-            "lean-audit": {f"MG-GF{i}" for i in (101, 103, 105, 107, 111)},
-            "lean-construction": {f"MG-GF{i}" for i in (102, 104, 106, 108, 112)},
-            "chapters": {"MG-C002", "MG-C003"},
+            "lean-audit": {f"AHR{i:02d}" for i in range(1, 5)},
+            "lean-formalization": {"LCH01", "LCH02", "HCH02"},
+            "chapters": {"MG-C003"},
             "answer-review": {f"MG-AR{i:03d}" for i in range(1, 5)},
         }
         self.assertEqual(set(self.suite.cases), set.union(*expected.values()))
         self.assertEqual(Counter(Path(c["task"]).parts[0] for c in self.suite.cases.values()),
-                         {"proofs": 14, "lean-audit": 5, "lean-construction": 5, "chapters": 2,
+                         {"proofs": 14, "lean-audit": 4, "lean-formalization": 3, "chapters": 1,
                           "answer-review": 4})
         reserve = Suite.load(ROOT / "cases/reserve-suite.json")
         self.assertEqual(reserve.root, self.suite.root)
@@ -57,9 +57,9 @@ class BenchmarkSuiteTests(unittest.TestCase):
         physical_reserve = {f"MG-GR{i:03d}" for i in (1, 3, 4, 6, 7, 11, 13, 101, 102, 105, 106)}
         referenced_proofs = {f"MG-GR{i:03d}" for i in (12, 15, 16, 17, 18, 19, 20)}
         referenced_lean = {"MG-GF109": "lean-audit", "MG-GF110": "lean-construction"}
-        self.assertEqual(set(reserve.cases), physical_reserve | referenced_proofs | set(referenced_lean))
+        self.assertEqual(set(reserve.cases), physical_reserve | referenced_proofs | set(referenced_lean) | {"MG-C002"} | {f"MG-GF{i}" for i in (101,102,103,104,105,106,107,108,111,112)})
         self.assertFalse(set(reserve.cases) & set(self.suite.cases))
-        self.assertEqual(len(reserve.cases) + len(self.suite.cases), 50)
+        self.assertEqual(len(reserve.cases) + len(self.suite.cases), 57)
         self.assertEqual({path.parent.name for path in (ROOT / "cases/proofs").glob("*/case.json")},
                          expected["proofs"] | referenced_proofs)
         self.assertEqual({path.parent.name for path in (ROOT / "cases/reserve/proofs").glob("*/case.json")},
@@ -67,7 +67,7 @@ class BenchmarkSuiteTests(unittest.TestCase):
         for cid, case in reserve.cases.items():
             with self.subTest(reserve=cid):
                 expected_prefix = (("reserve", "proofs", cid) if cid in physical_reserve
-                                   else (referenced_lean.get(cid, "proofs"), cid))
+                                   else (("chapters" if cid=="MG-C002" else "lean-audit" if cid in {f"MG-GF{i}" for i in (101,103,105,107,111)} else "lean-construction" if cid in {f"MG-GF{i}" for i in (102,104,106,108,112)} else referenced_lean.get(cid, "proofs")), cid))
                 self.assertEqual(Path(case["task"]).parts[:len(expected_prefix)], expected_prefix)
         bank_ids = set(reserve.cases) | set(self.suite.cases)
         self.assertEqual(bank_ids, {read_json(path)["id"] for path in (ROOT / "cases").rglob("case.json")})

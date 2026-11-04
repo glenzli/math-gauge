@@ -1,3 +1,4 @@
+from benchmark_fixtures import v05_root, v05_suite, v05_profile
 """Portable candidate/controller boundaries; offline fixtures only."""
 
 import copy
@@ -353,8 +354,8 @@ class CompactHarnessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         from math_gauge.harness import export_simple_release_dataset, make_release_anchor
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite), cls.suite)
+        cls.suite = v05_suite()
+        cls.plan = build_plan(v05_profile(cls.suite), cls.suite)
         cls.temporary = tempfile.TemporaryDirectory(prefix="math-gauge-compact-harness-")
         cls.addClassCleanup(cls.temporary.cleanup)
         cls.root = Path(cls.temporary.name).resolve()
@@ -373,7 +374,7 @@ class CompactHarnessTests(unittest.TestCase):
         self.assertEqual(self.manifest["target_slot_ids"]["answer-review"],
                          [f"MG-AR{i:03d}:A1" for i in range(1, 5)])
         self.assertEqual(len(self.manifest["target_slot_ids"]["repeat"]), 12)
-        reserve = Suite.load(ROOT / "cases/reserve-suite.json")
+        reserve = Suite.load(v05_root() / "cases/reserve-suite.json")
         self.assertFalse(set(reserve.cases) & {c["case_id"] for c in self.manifest["cases"]})
         self.assertFalse(any((self.dataset / "cases" / cid).exists() for cid in reserve.cases))
         self.assertEqual(inspect_release_dataset(self.dataset, plan=self.plan, suite=self.suite), self.manifest)

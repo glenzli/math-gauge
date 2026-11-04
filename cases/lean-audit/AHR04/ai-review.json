@@ -1,0 +1,120 @@
+{
+  "schema": "math-gauge.ai-source-semantic-review/v1",
+  "case_id": "AHR04",
+  "version": "0.1.0",
+  "reviewer": "independent child /root/oet_chapter_ladder",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "expected_alignment": "aligned",
+  "scope": [
+    "Component: union over reachable q with j in path_evaluable_components of the component guarantee domain is a subset of x in U with proxy-target component error <= finite tau_j.",
+    "Joint: union over one reachable q with J subset path_evaluable_components of the joint guarantee domain is a subset of x in U with all j in nonempty J satisfying component error <= finite tau_j."
+  ],
+  "source_commit": "11b7ec1fc726c561853d0c9e6206da77c6a8ce92",
+  "human_review": "pending",
+  "public_provenance_review": "pending",
+  "candidate_models_called": 0,
+  "empirical_difficulty_or_discrimination": "not established",
+  "critical_findings": [],
+  "checks": [
+    {
+      "id": "source_identity",
+      "decision": "pass",
+      "evidence": "43 complete Lean files and complete chapter at exact 11b7 commit; source.md identical to paired AHR02; only target module and one imported comment differ.",
+      "limitations": "Local Git identity verified; publication/holdout status not established."
+    },
+    {
+      "id": "path_scope",
+      "decision": "pass",
+      "evidence": "path_guarantee_domains.lean:530-532 and 563-565 condition hLq respectively on j membership and J subset; 606-609 uses their disjunction only to package both results."
+    },
+    {
+      "id": "target_scope",
+      "decision": "pass",
+      "evidence": "structural_priors.lean:25-28 and lip_matrix.lean:21-24 retain actual target Lip and its domain. All-q path-domain subset Vstar follows original U subset Vstar and FiniteOperatorNetwork.path_domain_subset_source."
+    },
+    {
+      "id": "definitions",
+      "decision": "pass",
+      "evidence": "path_sampling.lean:27-64,136-142; empirical_residuals.lean:116-120,143-154,206-209; guarantee_domains.lean:24-42; exact same-anchor infimum and actual residual supremum."
+    },
+    {
+      "id": "local_derivation",
+      "decision": "pass",
+      "evidence": "structural_priors.lean:60-120 derives bound from triangle/Lip/residual; path_guarantee_domains.lean:54-84 instantiates actual path data, not a conclusion-shaped new assumption."
+    },
+    {
+      "id": "proxy_bridge",
+      "decision": "pass",
+      "evidence": "path_sampling.lean:220-231 uses actual FiniteOperatorNetwork local path-chain equality and N.represents; target wrappers use this equality on hxq.1."
+    },
+    {
+      "id": "component_union",
+      "decision": "pass",
+      "evidence": "path_guarantee_domains.lean:520-545 extracts q/hj/hxq, calls hLq q hj and the actual proxy guarantee bound; preserves x in N.U and error <=tau."
+    },
+    {
+      "id": "joint_union",
+      "decision": "pass",
+      "evidence": "path_guarantee_domains.lean:553-582 uses one q and hJ for all j; no forall/exists interchange."
+    },
+    {
+      "id": "text_boundaries",
+      "decision": "pass",
+      "evidence": "path_guarantee_domains.lean:590-637 retains global evaluability, finite thresholds, nonempty J, and both original conclusions. Generic helpers with weaker assumptions are valid extensions, not missing original scope."
+    },
+    {
+      "id": "empty_infinite_cases",
+      "decision": "pass",
+      "evidence": "Eligibility excludes empty path anchors; existential unions are empty when no q qualifies; ENNReal proof uses addition, finite sums and iInf and never division. No separation, finite coefficient, attained anchor, or full-U conclusion introduced."
+    },
+    {
+      "id": "candidate_projection",
+      "decision": "pass",
+      "evidence": "Shared Suite.load/request/candidate_message passed. Exactly 46 whitelisted attachments; no evaluator files; task identical to AHR02; empty generic instruction; no S-leading subquestions."
+    },
+    {
+      "id": "engineering",
+      "decision": "pass",
+      "evidence": "Four affected modules freshly compiled, 39 modules reused only with identical entire local transitive closures. Five target/key local theorem axiom audits passed with standard three axioms only.",
+      "limitations": "Compilation not a semantic proof, no new candidate model run."
+    },
+    {
+      "id": "portable_build_evidence",
+      "decision": "pass",
+      "evidence": "Baseline source-bound build receipt, fresh logs, axiom audit log and exact historical toolchain/lock files copied evaluator-side under evidence/. All 9 fixed public package revisions verified against that lock."
+    }
+  ],
+  "reference_sha256": "3f592e205cbcd9789d35c918cbcf736e35396bf5cf72da6c48bdf34e6ef59d4c",
+  "rubric_sha256": "288be0a196e4396214facffc4f7354f68ae554cdfe9f9140f07f1de3577b4a70",
+  "contract_sha256": "c1de02e37befb3b2af4dd46c7a6db2557a949f1c277bd5b362ebe534faf9dab2",
+  "build_evidence_sha256": "b4f8e8dadcc1a55f51e85bdb35d3d0542fc2d791a5f057556ffe0a0df929ba8a",
+  "allowed_alternative_routes": [
+    "Any valid source-faithful explanation or proof of the two inclusions.",
+    "Use separate component/joint declarations without combined text wrapper.",
+    "Derive inclusions directly from supplied local upper bounds and actual proxy bridge."
+  ],
+  "not_required": [
+    "other chapter propositions",
+    "positive-deviation lower certificates",
+    "target-network identification",
+    "path/global guarantee-domain size comparisons",
+    "candidate source generation/repair",
+    "recognizing source revision or AHR02 history"
+  ],
+  "status_limits": [
+    "AI reviewed draft only; not human approved.",
+    "No source-history or later-revision status treated as a semantic gold label.",
+    "Four criteria are not four independent papers/families.",
+    "Existing default results, old drafts and frozen runs unchanged."
+  ],
+  "candidate_projection": {
+    "request_sha256": "783b84f0c15ea7ceb14c03bd0a84efb6a252714b0ae58b168a68cebb369c523d",
+    "candidate_message_sha256": "d577d056fda0b49af647120a3bdeeac0d22bbddbc78ffdccd1a164d0cafca0c2",
+    "candidate_message_bytes": 801732,
+    "attachment_count": 46,
+    "lean_attachment_count": 43,
+    "task_sha256": "b45fa43bcb2516783d12a6767a8955c26cb4730fc3dbd68c6d7df4e6d2132464",
+    "candidate_calls": 0
+  }
+}

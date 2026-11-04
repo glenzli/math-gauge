@@ -1,3 +1,4 @@
+from benchmark_fixtures import v05_root, v05_suite, v05_profile
 """Synthetic arithmetic and provenance checks; these are never model results."""
 
 import copy
@@ -428,8 +429,8 @@ class BenchmarkScoringTests(unittest.TestCase):
 class CompactBenchmarkScoringTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        suite = Suite.load(ROOT / "cases")
-        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite),
+        suite = v05_suite()
+        cls.plan = build_plan(v05_profile(suite),
                               suite, runtime=RUNTIME)
 
     def score(self, rows):

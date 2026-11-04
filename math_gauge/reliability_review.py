@@ -16,10 +16,11 @@ from .catalog import digest_bytes, read_json, safe_file, write_json
 from .execution import (_candidate_engine, _candidate_imports, _candidate_sources,
                         _override_extraction, extract_candidate_lean, now,
                         verify_candidate_lean)
-from .reliability import PARSER_VERSION, _raw, _slot_path, inspect_reliability_run
+from .reliability import PARSER_VERSION, _raw, _slot_path, inspect_reliability_run, terminal_transport_ok
 from .review import (_validate_answer_review, _criterion_templates, _dimension_templates,
                      _stage_template, _validate_group_review, _validate_review_axes,
-                     _validate_research_review, _validate_written_proof_review, _written_proof_math_axis)
+                     _validate_research_review, _validate_semantic_audit_review,
+                     _validate_written_proof_review, _written_proof_math_axis)
 
 UNKNOWN_REASONS = {"review_pending", "problem_defect_pending", "infrastructure_error",
                    "execution_error", "not_run", "parent_without_readable_response"}
@@ -66,7 +67,7 @@ def reliability_review_templates(root):
                  "scope_accuracy": "unknown", "unnecessary_restriction": False,
                  "notes": "", "findings": [], "group_contract_sha256": case["group_contract_sha256"],
                  "stages": [], "format_review": {"decision": "pending", "notes": ""}}
-        if contract["kind"] in {"research_exploration", "answer_review"}:
+        if contract["kind"] in {"research_exploration", "answer_review", "semantic_audit"}:
             del entry["stages"]
             entry["dimensions"] = _dimension_templates(contract)
             if contract["kind"] == "answer_review":
@@ -78,10 +79,13 @@ def reliability_review_templates(root):
             for stage in contract["stages"]:
                 entry["stages"].append(dict(_stage_template(stage), math_review=_math_template()))
         if cid in focus:
-            entry["focus_review"] = dict(_math_template(), stage_id=focus[cid]["stage_id"], verdict="undetermined")
+            key = "focus_id" if "focus_id" in focus[cid] else "stage_id"
+            entry["focus_review"] = dict(_math_template(), **{key: focus[cid][key]}, verdict="undetermined")
         if record["material"]["mode"] == "KEEP":
+            key = "affected_dimensions" if contract["kind"] == "semantic_audit" else "affected_stages"
+            units = contract.get("dimensions", []) if contract["kind"] == "semantic_audit" else contract.get("stages", [])
             entry["keep_rationale_review"] = dict(_math_template(), affects_focus=True,
-                                                   affected_stages=[s["id"] for s in contract["stages"]])
+                                                  **{key: [s["id"] for s in units]})
         result.append(entry)
     return result
 
@@ -336,15 +340,29 @@ def _validate_entry(root, meta, records, entry):
     raw = _raw(root, record)
     status = "ok" if raw is not None else "error"
     _validate_review_axes(entry, {"status": status})
+    if (meta["plan"]["profile"]["data"].get("case_execution_policy", {}).get("require_terminal_ok")
+            and not terminal_transport_ok(record)):
+        units = entry.get("dimensions", entry.get("criteria", entry.get("stages", [])))
+        if (entry.get("decision") != "unresolved"
+                or any(row.get("score") is not None or row.get("decision", "unresolved") != "unresolved" for row in units)):
+            raise ValueError("No successful terminal delivery: mathematical credit must remain unresolved")
+        axis = {"state": "E", "adjudicated": False, "reasons": ["execution_error"]}
+        return {"strict_pass": None, "completion": {"lower": 0, "upper": 1, "exact": None},
+                "whole_strict": dict(axis), "whole_math": dict(axis), "focus_math": dict(axis),
+                "problem_defect": False, "lean_evidence_verified": False,
+                "group_diagnostic": {"delivery_status": "no_successful_terminal_delivery",
+                                     "completion": {"lower": 0, "upper": 1, "exact": None}, "strict_pass": None}}
     cid = record["case_id"]
     case = next(c for c in meta["plan"]["case_index"] if c["case_id"] == cid)
     contract = read_json(safe_file(root, meta["inputs"][cid]["contract"]))
-    if contract["kind"] in {"research_exploration", "answer_review", "written_proof"}:
-        if record["material"]["mode"] not in {None, "INITIAL", "FULL"}:
+    if contract["kind"] in {"research_exploration", "answer_review", "semantic_audit", "written_proof"}:
+        allowed_modes = {None, "INITIAL", "FULL", "KEEP"} if contract["kind"] == "semantic_audit" else {None, "INITIAL", "FULL"}
+        if record["material"]["mode"] not in allowed_modes:
             raise ValueError("Scored criteria/dimension reviews require independent complete answers")
         if entry.get("group_contract_sha256") != case["group_contract_sha256"]:
             raise ValueError("Scored criteria/dimension review binds a different contract")
         validator = {"answer_review": _validate_answer_review,
+                     "semantic_audit": _validate_semantic_audit_review,
                      "research_exploration": _validate_research_review,
                      "written_proof": _validate_written_proof_review}[contract["kind"]]
         diagnostic = validator(contract, entry, {"status": status})
@@ -374,9 +392,41 @@ def _validate_entry(root, meta, records, entry):
                          "reasons": [] if valid and adjudicated else ["mathematical_error" if adjudicated else "review_pending"]}
         elif contract["kind"] == "written_proof":
             math_axis = _written_proof_math_axis(entry, resolved=resolved)
+        focus_axis = {"state": "U", "adjudicated": False, "reasons": ["not_selected"]}
+        focus_rows = {r["case_id"]: r for r in meta["plan"]["reliability"]["selection"]["cases"]}
+        if contract["kind"] == "semantic_audit":
+            if cid in focus_rows:
+                focus = entry.get("focus_review")
+                focus_axis = _math_axis(focus)
+                if (focus.get("focus_id") != focus_rows[cid]["focus_id"]
+                        or focus.get("verdict") not in {"true", "false", "undetermined"}
+                        or focus_axis["state"] == "C" and focus["verdict"] != focus_rows[cid]["expected_truth"]):
+                    raise ValueError("Semantic-audit focus differs from the frozen alignment assertion")
+                if strict is True and focus_axis["state"] == "I":
+                    raise ValueError("A completed audit cannot have an incorrect required focus assertion")
+            elif "focus_review" in entry:
+                raise ValueError("Unselected audit has no frozen focus target")
+            if record["material"]["mode"] == "KEEP":
+                rationale = entry.get("keep_rationale_review", {})
+                rationale_axis = _math_axis(rationale)
+                if (type(rationale.get("affects_focus")) is not bool
+                        or not isinstance(rationale.get("affected_dimensions"), list)
+                        or not set(rationale["affected_dimensions"]) <= {r["id"] for r in contract["dimensions"]}):
+                    raise ValueError("Audit KEEP requires separately bound rationale dimensions")
+                math_axis = _combined_math([math_axis, rationale_axis])
+                axis = _combined_math([axis, rationale_axis])
+                if rationale.get("affects_focus") and cid in focus_rows:
+                    focus_axis = _combined_math([focus_axis, rationale_axis])
+                if rationale_axis["state"] == "I":
+                    strict = False
+                elif not rationale_axis["adjudicated"] and strict is not False:
+                    strict = None
+                if entry["decision"] == "pass" and strict is not True:
+                    raise ValueError("Audit strict pass contradicts the current KEEP rationale")
         return {"strict_pass": strict, "completion": completion,
                 "whole_strict": dict(axis), "whole_math": math_axis,
-                "focus_math": {"state": "U", "adjudicated": False, "reasons": ["not_selected"]},
+                "focus_math": focus_axis,
+                **({"focus_verdict": entry["focus_review"]["verdict"]} if cid in focus_rows and contract["kind"] == "semantic_audit" else {}),
                 "problem_defect": False, "group_diagnostic": diagnostic, "lean_evidence_verified": False,
                 **({"major_error": diagnostic["major_error"]} if contract["kind"] == "answer_review" else {})}
     descriptor = {"id": cid, "group_contract": {"path": meta["inputs"][cid]["contract"],

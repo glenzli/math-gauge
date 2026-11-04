@@ -1,3 +1,4 @@
+from benchmark_fixtures import v05_root, v05_suite, v05_profile
 """Offline evaluator profile and full-denominator plan contract tests."""
 
 import contextlib
@@ -286,8 +287,8 @@ class BenchmarkPlanTests(unittest.TestCase):
 class CompactBenchmarkPlanTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = v05_suite()
+        cls.profile = v05_profile(cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
     def test_default_30_has_54_slots_and_separate_fixed_targets(self):
@@ -304,7 +305,7 @@ class CompactBenchmarkPlanTests(unittest.TestCase):
                          {"MG-C002:A1", "MG-C003:A1"})
 
     def test_reserve_is_explicit_disjoint_and_uses_the_same_candidate_projection(self):
-        reserve = Suite.load(ROOT / "cases/reserve-suite.json")
+        reserve = Suite.load(v05_root() / "cases/reserve-suite.json")
         self.assertEqual(reserve.root, self.suite.root)
         self.assertEqual(reserve.manifest_name, "reserve-suite.json")
         self.assertEqual(len(reserve.cases), 20)

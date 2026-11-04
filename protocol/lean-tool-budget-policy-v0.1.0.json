@@ -1,0 +1,34 @@
+{
+  "schema": "math-gauge.large-lean-operator-budget/v1",
+  "version": "0.1.0",
+  "status": "local-operator-policy",
+  "purpose": "Allow substantial Lean construction and compilation time for new half-chapter and full-chapter tasks.",
+  "default_timeout_seconds_per_turn": 5400,
+  "applies_to": {
+    "task_scope": ["large Lean construction", "half-chapter formalization", "full-chapter formalization"],
+    "current_chapter_case_ids": ["MG-C002", "MG-C003"],
+    "draft_ladder_case_ids": ["LCH01", "LCH02", "HCH02", "LCH04"]
+  },
+  "timing": {
+    "clock": "UTC wall time from actual native submission",
+    "compile_and_tool_wait_count_toward_limit": true,
+    "report_compile_and_tool_wait_separately_when_observable": true,
+    "initial_and_followup_use_same_default": true
+  },
+  "application": {
+    "operator_must_select_and_freeze_explicit_budget": true,
+    "native_and_outer_watchdog_must_match": true,
+    "generic_cli_timeout_is_not_automatically_changed": true,
+    "harness_template_is_not_automatically_changed": true,
+    "mixed_suite_requires_separate_compatible_runtimes": true,
+    "case_parameters_do_not_support_timeout_overrides": true
+  },
+  "preservation": {
+    "existing_frozen_runtimes_and_attempts_unchanged": true,
+    "published_release_assets_unchanged": true,
+    "old_results_not_relabelled_as_5400_seconds": true,
+    "mid_run_extension_requires_attributed_amendment": true,
+    "continuation_is_not_a_clean_independent_answer": true
+  },
+  "other_task_budgets": "Use their separately frozen budgets; this policy does not extend written proofs or semantic audits automatically."
+}

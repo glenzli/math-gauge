@@ -1,0 +1,294 @@
+{
+  "schema": "math-gauge.benchmark-profile/v5",
+  "id": "math-gauge-composite",
+  "version": "0.6.0",
+  "standard_version": "0.6.0",
+  "operator_only": true,
+  "path_base": "repository",
+  "suite": {
+    "id": "math-gauge-benchmark",
+    "version": "0.6.0",
+    "sha256": "e80ee724179a4e0f4f58869da6999a083d9bd8df4b6423c068e72b631bffd4e0"
+  },
+  "components": [
+    {
+      "id": "proofs",
+      "title": "书面论证",
+      "case_ids": [
+        "MG-GP001",
+        "MG-GP002",
+        "MG-GP003",
+        "MG-GR002",
+        "MG-GR005",
+        "MG-GR008",
+        "MG-GR009",
+        "MG-GR010",
+        "MG-GR014",
+        "MG-GR103",
+        "MG-GR104",
+        "MG-GR021",
+        "MG-GR022",
+        "MG-GR023"
+      ],
+      "weight": 22.5,
+      "aggregation": "family"
+    },
+    {
+      "id": "lean-audit",
+      "title": "历史Lean语义审计",
+      "case_ids": [
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04"
+      ],
+      "weight": 22.5,
+      "aggregation": "family"
+    },
+    {
+      "id": "lean-formalization",
+      "title": "大Lean形式化",
+      "case_ids": [
+        "LCH01",
+        "LCH02",
+        "HCH02",
+        "MG-C003"
+      ],
+      "weight": 45,
+      "aggregation": "family"
+    },
+    {
+      "id": "answer-review",
+      "title": "真实答卷审阅",
+      "case_ids": [
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004"
+      ],
+      "weight": 10,
+      "aggregation": "parent_family"
+    }
+  ],
+  "overall_weights": {
+    "core": 75,
+    "repeat": 5,
+    "neutral": 10,
+    "stance": 10
+  },
+  "reliability": {
+    "selection": "protocol/reliability/selection.json",
+    "prompts": "protocol/reliability/prompts.json",
+    "schedule": "protocol/reliability/schedule.json",
+    "protocol_version": "0.4.0"
+  },
+  "score_unit": "0-100; A1 core, answer-review continuous dimension score averaged within parent family then across families; strict and major-error rate separate",
+  "missing_policy": "fixed-denominator intervals; exact null unless the metric is mathematically determined (a confirmed failure can determine three-attempt strict repeat as zero); always retain coverage; never renormalize missing components",
+  "formal_eligibility": "Human-approved cases and human reviews plus verified non-fixture execution, input identity and applicable Lean gates; provisional values do not establish formal eligibility.",
+  "weight_rationale": "v0.5.0 local compact selection retains v0.4.0 capability22.5/22.5/22.5/22.5/10 and overall75/5/10/10. Same-family replacements do not create independent families. Selection is post-observation, not a new synchronized exam.",
+  "attempt_schedule": {
+    "MG-C003": [
+      "A1",
+      "A2"
+    ],
+    "MG-GP001": [
+      "A1"
+    ],
+    "MG-GP002": [
+      "A1"
+    ],
+    "MG-GP003": [
+      "A1"
+    ],
+    "MG-GR002": [
+      "A1",
+      "A2"
+    ],
+    "MG-GR005": [
+      "A1"
+    ],
+    "MG-GR008": [
+      "A1"
+    ],
+    "MG-GR009": [
+      "A1"
+    ],
+    "MG-GR010": [
+      "A1"
+    ],
+    "MG-GR014": [
+      "A1",
+      "A2"
+    ],
+    "MG-GR103": [
+      "A1"
+    ],
+    "MG-GR104": [
+      "A1"
+    ],
+    "MG-GR021": [
+      "A1"
+    ],
+    "MG-GR022": [
+      "A1"
+    ],
+    "MG-GR023": [
+      "A1"
+    ],
+    "MG-AR001": [
+      "A1"
+    ],
+    "MG-AR002": [
+      "A1"
+    ],
+    "MG-AR003": [
+      "A1"
+    ],
+    "MG-AR004": [
+      "A1"
+    ],
+    "AHR01": [
+      "A1",
+      "A2"
+    ],
+    "AHR02": [
+      "A1"
+    ],
+    "AHR03": [
+      "A1"
+    ],
+    "AHR04": [
+      "A1",
+      "A2"
+    ],
+    "LCH01": [
+      "A1"
+    ],
+    "LCH02": [
+      "A1"
+    ],
+    "HCH02": [
+      "A1",
+      "A2"
+    ]
+  },
+  "score_policy": {
+    "core_attempt_labels": [
+      "A1"
+    ],
+    "repeat_case_ids": [
+      "MG-GR002",
+      "MG-GR014",
+      "AHR01",
+      "AHR04",
+      "HCH02",
+      "MG-C003"
+    ],
+    "repeat_attempt_labels": [
+      "A1",
+      "A2"
+    ]
+  },
+  "selection_timing": "after_all_results; final30-task scope requested by user after new calibration",
+  "repeat_self_check_revision": "Post-observation user-approved cost reduction: two independent answers, one followup in each neutral/affirm/deny branch. Capability uses onlyA1; original A3/R2 evidence retained outside this default.",
+  "scope_note": "Local draft 26. New six-paper panel selected post-observation; old v0.5/v0.3 panel remains archived. No synchronous new exam or hidden holdout claim.",
+  "aggregation_version": "family-first/v1",
+  "case_execution_policy": {
+    "schema": "math-gauge.case-execution-policy/v1",
+    "post_observation": true,
+    "case_tracks": {
+      "MG-C003": "math-gauge.local-tools-no-search/v1",
+      "MG-GP001": "math-gauge.local-tools-no-search/v1",
+      "MG-GP002": "math-gauge.local-tools-no-search/v1",
+      "MG-GP003": "math-gauge.local-tools-no-search/v1",
+      "MG-GR002": "math-gauge.local-tools-no-search/v1",
+      "MG-GR005": "math-gauge.local-tools-no-search/v1",
+      "MG-GR008": "math-gauge.local-tools-no-search/v1",
+      "MG-GR009": "math-gauge.local-tools-no-search/v1",
+      "MG-GR010": "math-gauge.local-tools-no-search/v1",
+      "MG-GR014": "math-gauge.local-tools-no-search/v1",
+      "MG-GR103": "math-gauge.local-tools-no-search/v1",
+      "MG-GR104": "math-gauge.local-tools-no-search/v1",
+      "MG-GR021": "math-gauge.local-tools-no-search/v1",
+      "MG-GR022": "math-gauge.local-tools-no-search/v1",
+      "MG-GR023": "math-gauge.local-tools-no-search/v1",
+      "MG-AR001": "math-gauge.local-tools-no-search/v1",
+      "MG-AR002": "math-gauge.local-tools-no-search/v1",
+      "MG-AR003": "math-gauge.local-tools-no-search/v1",
+      "MG-AR004": "math-gauge.local-tools-no-search/v1",
+      "AHR01": "math-gauge.local-tools-no-search/v1",
+      "AHR02": "math-gauge.local-tools-no-search/v1",
+      "AHR03": "math-gauge.local-tools-no-search/v1",
+      "AHR04": "math-gauge.local-tools-no-search/v1",
+      "LCH01": "math-gauge.local-tools-no-search/v1",
+      "LCH02": "math-gauge.local-tools-no-search/v1",
+      "HCH02": "math-gauge.local-tools-no-search/v1"
+    },
+    "new_execution_case_ids": [
+      "AHR01",
+      "AHR02",
+      "AHR03",
+      "AHR04",
+      "LCH01",
+      "LCH02",
+      "HCH02",
+      "MG-C003"
+    ],
+    "retain_source_runtime_case_ids": [
+      "MG-GP001",
+      "MG-GP002",
+      "MG-GP003",
+      "MG-GR002",
+      "MG-GR005",
+      "MG-GR008",
+      "MG-GR009",
+      "MG-GR010",
+      "MG-GR014",
+      "MG-GR103",
+      "MG-GR104",
+      "MG-GR021",
+      "MG-GR022",
+      "MG-GR023",
+      "MG-AR001",
+      "MG-AR002",
+      "MG-AR003",
+      "MG-AR004"
+    ],
+    "new_turn_timeout_seconds": 5400,
+    "budget_policy_binding": {
+      "path": "protocol/lean-tool-budget-policy-v0.1.0.json",
+      "sha256": "c4e8eeb1e8d3d46b5f008b758c2545d3b3b372bc5a26c9474fdf39f4bb95f275"
+    },
+    "notice": "Actual retained public, private, strengthened-written and answer-review sources declare local-tools-no-search. Retain source-specific original systems, parameters and budgets; new eight Lean A1 and four new panel branches use5400s. Same-case condition drift is prohibited. This is post-observation development composition, not a unified synchronous exam.",
+    "require_terminal_ok": true
+  },
+  "execution_groups": {
+    "lean-supplement": [
+      "MG-C003:A1",
+      "AHR01:A1",
+      "AHR02:A1",
+      "AHR03:A1",
+      "AHR04:A1",
+      "LCH01:A1",
+      "LCH02:A1",
+      "HCH02:A1",
+      "AHR01:A2",
+      "AHR04:A2",
+      "HCH02:A2",
+      "MG-C003:A2",
+      "AHR01:neutral:1",
+      "AHR01:affirm:1",
+      "AHR01:deny:1",
+      "AHR04:neutral:1",
+      "AHR04:affirm:1",
+      "AHR04:deny:1",
+      "HCH02:neutral:1",
+      "HCH02:affirm:1",
+      "HCH02:deny:1",
+      "MG-C003:neutral:1",
+      "MG-C003:affirm:1",
+      "MG-C003:deny:1"
+    ]
+  },
+  "design_status": "panel-pending-user-clarification; not cleared for dependent submissions"
+}

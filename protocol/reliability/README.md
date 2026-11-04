@@ -1,20 +1,20 @@
-# 作答稳定性与一次自查材料
+# 书面重复与三臂自查材料
 
-当前本地0.5.0采用可靠性协议0.3.0：公开30题、54份记录；合并3份私有探索后33题、57份记录。六题面板与重点断言不变，每题共A1/A2两次独立作答；neutral、affirm、deny各从A1独立自查一次。现有A1/A2和R1已足够重算，本次协议调整不产生新模型调用。原A3、R2及已发布0.4.0/旧177计划继续绑定原配置保留。
+当前本地0.6.0草稿采用可靠性协议0.4.0，尚未发布、human pending。成员、候选重点及顺序由[selection.json](selection.json)、[prompts.json](prompts.json)、[schedule.json](schedule.json)冻结；[profile](../benchmark-profile.json)拥有权重与固定分母。机器计划为26份A1、四written额外A2及各自neutral/affirm/deny一次，共42记录；合并3份探索为45。Lean8、AR与探索仅取能力A1。
+
+四written是GR002、GR014、GP001、GP002，四家族、2真2假。原两重点与消息字节保留；新两重点经独立数学peer核对完整前提、目标与边界。选择为观察后设计，不按答卷成绩挑选；六题混合及六题书面提案在执行前撤回，保留在[未执行提案](../history/v0.6-unexecuted-proposals)。
 
 | 文件 | 用途 |
 | --- | --- |
-| [plan.json](plan.json) | 30份任务候选身份、显式安排及执行门槛 |
-| [selection.json](selection.json) | 同一6题、3真3假，全部数学目标与来源 |
-| [prompts.json](prompts.json) | 18条R1消息，仅投放所选content |
+| [plan.json](plan.json) | 当前任务、执行门槛及未执行材料身份 |
+| [selection.json](selection.json) | 评审侧完整重点与来源，不导给候选 |
+| [prompts.json](prompts.json) | 每臂实际候选消息，仅导出所选content |
 | [reply-format.md](reply-format.md) | 原字节KEEP/FULL规则 |
-| [schedule.json](schedule.json) | 每模型54份未执行计划记录 |
-| [validation.json](validation.json) | 当前材料、源码和分母的校验身份 |
+| [schedule.json](schedule.json) | 每模型固定记录槽与父关系 |
+| [validation.json](validation.json) | 当前材料身份检查，不是模型结果 |
 
-公开能力只用30份A1；六题另有6份A2、6份无偏自查及12份立场自查。自查每支只读题目、A1和自己的R1请求，分支互不可见，A2不进入分支。能力75%、两次均严格完成的重复稳定性5%、中性自查10%、立场自查10%不变；不能把稳定地答错算作稳定正确，也不以最好的一次替代A1。审阅、探索与整章目前只取A1，不把未安排轮次算缺测。
+三分支分别只见自己的原A1及对应请求，互不可见，不能读A2、评分或编译审核反馈。新v5要求成功transport终态才派生后续；readable ERROR原文留存但不能当作可接续交卷。KEEP保留完整主体，同时独立审核当前理由与重点判断；FULL完整替换本分支主体。
 
-这是按用户成本与测量目的调整的观察后开发方案；不是声称已经运行了整套新考试。题包空模板的candidate_calls=0不否定已保存的真实原答。共享runner处理调度、历史、KEEP/FULL、审核与固定分母；20份备选经同一入口显式选择，保留原目录和证据。
+MG-C003的92项Lean对齐由[单独研究协议](../lean-alignment/study.json)承接正式A1，再固定三轮中性跟进，不入上述分母或权重、不替代A1。原0.5的六题混合面板及54/57记录在[历史配置](../history/v0.5.0/README.md)保留。
 
-`python3 scripts/validate_protocol.py`核验30份候选投影、252项原递进/整章义务、15项新书面判准、12项AR维度、6个重点与18条R1消息、54份槽位。工程刷新只能在已明确审核版本变化后重绑身份，不能授权运行、虚构成绩或静默改变数学目标。旧软件验收收据仍只证明其原身份；实际执行前需冻结当前配置和适用的隔离证据。
-
-[当前选题及覆盖损失](../../docs/selection-v0.5.0.md) · [执行协议](../reliability-execution.md) · [评分标准](../reliability-scoring.md) · [使用指南](../../docs/usage.md)
+[当前选题](../../docs/selection-v0.6.0.md) · [执行协议](../reliability-execution.md) · [评分标准](../reliability-scoring.md) · [导入指南](../../docs/release-consumer-README-v0.6.0.md)

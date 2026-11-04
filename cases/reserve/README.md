@@ -1,3 +1,5 @@
+> 当前0.6显式reserve为31份；新增移入旧默认的五审计、五生成/修复及C002，全部保留原目录。以下原20份导航不删除；完整清单见[reserve-suite.json](../reserve-suite.json)，新范围见[0.6说明](../../docs/selection-v0.6.0.md)。
+
 # 备选试卷
 
 本地0.5.0的显式备选清单含20份任务：18份原书面卷、1份Lean审计和1份Lean修复。原11份/66阶段仍保存在本目录；另外9份由 `cases/reserve-suite.json` 引用7个原proofs路径及GF109/GF110的原Lean目录，不移动或重写旧材料。备选仅在显式选择该manifest时运行，不进入默认30任务/54记录计划。

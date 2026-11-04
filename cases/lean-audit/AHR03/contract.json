@@ -1,0 +1,61 @@
+{
+  "schema": "math-gauge.semantic-audit-contract/v1",
+  "id": "AHR03",
+  "version": "0.1.0",
+  "kind": "semantic_audit",
+  "assessment_unit": "audit_dimension",
+  "track": "alignment",
+  "task_kind": "audit",
+  "family_id": "oet-node-domain-refinement",
+  "parent_family_id": "oet-node-domain-refinement",
+  "expected": "aligned",
+  "source_commit": "0cf686ba848e19137821ee9a56c9c04ee146746e",
+  "scope": {
+    "included": [
+      "正文h-eddd1f2d0a9d3528中节点域加细的定义，包括合法分划、局域算子、入口片、全部保留边域、自环和不可达子节点删除。",
+      "正文h-012f4ba72aeb3f20的节点域加细分支及实际构造对应。"
+    ],
+    "excluded": [
+      "代数加细分支的完整审核。",
+      "其他章节结论、不可约代表的存在唯一性、全书/当前OET语义正确性。",
+      "新增或修复Lean源码交付。"
+    ]
+  },
+  "criteria": [
+    {
+      "id": "judgment",
+      "points": 35,
+      "target": "在明确限定的节点域加细定义及其外延等价范围内给出准确判断，区分精确关系与更弱的操作性辅助关系；不得把编译或后继版本身份当语义证明。"
+    },
+    {
+      "id": "valid_parts",
+      "points": 20,
+      "target": "说明完整边域、入口/局域算子、保留节点以及实际构造到精确关系的桥，并准确承认轨迹、外延等价的已有证明。"
+    },
+    {
+      "id": "evidence",
+      "points": 30,
+      "target": "以真实定义、声明类型及证明依赖给出可复核依据；至少覆盖完整保留边域与实际构造桥，接受有效替代组织，无须复刻参考逐条列表。"
+    },
+    {
+      "id": "repair_scope",
+      "points": 15,
+      "target": "准确说明所审范围是否需要修复，保留辅助关系与整章其他目标的边界；不得为正确实现杜撰缺陷或要求题外证明、新Lean及冗余包装。"
+    }
+  ],
+  "total_points": 100,
+  "strict_completion": "准确的范围判断及全部实质依据；维度是同一审计答卷的诊断项，不是数学S阶段或独立任务。",
+  "candidate_lean_required": false,
+  "candidate_subquestions": false,
+  "new_model_results": 0,
+  "human_review": "pending",
+  "runtime_compatibility": "Evaluator-only authoring contract, included in case evaluator_files. Current ordinary alignment runner consumes rubric; group_contract omitted to avoid misrepresenting audit dimensions as mathematical progressive/chapter stages. Integration may separately add a supported versioned semantic_audit group contract without changing candidate bytes.",
+  "allowed_alternative_reasoning": "不强迫参考顺序、证明长度或具名包装；从完整边公式作四类代入、直接检查构造或其他严谨等价核对均可。",
+  "evidence_separation": [
+    "原样输入编译",
+    "AI数学/语义审阅",
+    "候选回答",
+    "人工批准",
+    "运行来源与正式比较资格"
+  ]
+}
