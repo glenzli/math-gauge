@@ -198,7 +198,7 @@ class ResultsSiteTests(unittest.TestCase):
 class WorkspaceResultsSiteTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data = site.load_data(SOURCE_ROOT)
+        cls.data = site.load_data(SOURCE_ROOT, use_alignment_source=False)
         cls.original = site.load_data(SOURCE_ROOT, use_workspace_source=False)
 
     def copy_sources(self, root):
@@ -253,7 +253,7 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
             self.copy_sources(root)
             self.qualified_path(root).unlink()
             with self.assertRaises(FileNotFoundError):
-                site.load_data(root)
+                site.load_data(root, use_alignment_source=False)
             self.assertEqual(site.load_data(root, use_workspace_source=False)["view"],
                              "original-standard")
 
@@ -266,7 +266,7 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
             snapshot["source_bindings"]["original_summary_sha256"] = "0" * 64
             path.write_text(json.dumps(snapshot))
             with self.assertRaisesRegex(ValueError, "original summary hash"):
-                site.load_data(root)
+                site.load_data(root, use_alignment_source=False)
 
     def test_unrelated_metric_profile_coverage_and_original_rewrites_are_rejected(self):
         for field in ("unrelated", "profile", "coverage", "original", "native"):
@@ -287,7 +287,7 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
                     snapshot["mathematical_substitution"]["native_result_status"] = "SUCCESS"
                 path.write_text(json.dumps(snapshot))
                 with self.assertRaises(ValueError):
-                    site.load_data(root)
+                    site.load_data(root, use_alignment_source=False)
 
     def test_qualified_projection_discards_private_extras_local_paths_and_raw_output(self):
         marker = "PRIVATE-WORKSPACE-SENTINEL-DO-NOT-EXPORT"
@@ -306,7 +306,7 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
                 snapshot["original_score"]["raw_answer"] = marker
                 snapshot["metrics"]["core"]["raw_output"] = marker
                 path.write_text(json.dumps(snapshot))
-            projected = site.load_data(root)
+            projected = site.load_data(root, use_alignment_source=False)
             self.assertNotIn(marker, json.dumps(projected))
             self.assertNotIn(marker, site.render_html(projected))
             self.assertEqual(len(projected["sources"]), 6)
@@ -322,7 +322,7 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
                 for key, value in expected.items():
                     snapshot["metrics"][key].update(exact=value, lower=value, upper=value)
                 path.write_text(json.dumps(snapshot))
-            projected = site.load_data(root)
+            projected = site.load_data(root, use_alignment_source=False)
             for scope in ("public", "combined"):
                 for key, value in expected.items():
                     self.assertEqual(projected["models"][1][scope]["metrics"][key]["exact"], value)
@@ -330,8 +330,8 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
     def test_current_bundle_is_deterministic_portable_and_names_both_sources(self):
         with tempfile.TemporaryDirectory() as tmp:
             first, second = Path(tmp) / "deep path" / "results", Path(tmp) / "elsewhere"
-            site.build_site(SOURCE_ROOT, first)
-            site.build_site(SOURCE_ROOT, second)
+            site.build_site(SOURCE_ROOT, first, use_alignment_source=False)
+            site.build_site(SOURCE_ROOT, second, use_alignment_source=False)
             for filename in ("index.html", "data.json"):
                 self.assertEqual((first / filename).read_bytes(), (second / filename).read_bytes())
             rendered = (first / "index.html").read_text()
@@ -360,16 +360,268 @@ class WorkspaceResultsSiteTests(unittest.TestCase):
                 if url.fragment and not url.scheme:
                     self.assertIn(unquote(url.fragment), parser.ids)
 
-    def test_default_cli_uses_the_source_qualified_view(self):
+    def test_workspace_only_cli_uses_the_source_qualified_view(self):
         with tempfile.TemporaryDirectory() as tmp:
             result = subprocess.run(
                 [sys.executable, str(ROOT / "scripts/render_results_site.py"),
-                 "--source-root", str(SOURCE_ROOT), "--out-dir", str(Path(tmp) / "site")],
+                 "--source-root", str(SOURCE_ROOT), "--out-dir", str(Path(tmp) / "site"), "--workspace-only"],
                 cwd=tmp, check=False, capture_output=True, text=True,
                 env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(json.loads((Path(tmp) / "site/data.json").read_text()), self.data)
+
+
+class AlignmentResultsSiteTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.data = site.load_data(SOURCE_ROOT, use_engineering_source=False)
+        cls.baseline = site.load_data(SOURCE_ROOT, use_alignment_source=False)
+
+    def copy_sources(self, root):
+        paths = {row["path"] for row in self.data["sources"]}
+        paths.add("protocol/lean-alignment/scoring-v0.1.0.json")
+        paths.update(f"docs/results/alignment-v0.1.0/{model}-review.json"
+                     for model, _ in site.MODELS)
+        for relative in paths:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((SOURCE_ROOT / relative).read_bytes())
+
+    def test_new_scores_keep_original_capability_and_three_rounds_one_case(self):
+        self.assertEqual(self.data["schema"], "math-gauge.portable-results/v3")
+        self.assertEqual(self.data["view"], "alignment-selfcheck")
+        expected = ((82.6342415785, 85.3489154916, 26.027222875),
+                    (71.9441284938, 67.8878920807, 0))
+        for model, baseline, (public, combined, lean) in zip(
+                self.data["models"], self.baseline["models"], expected):
+            for scope, total in (("public", public), ("combined", combined)):
+                current, old = model[scope], baseline[scope]
+                self.assertEqual(current["metrics"]["overall"]["exact"], total)
+                self.assertEqual(current["metrics"]["lean_alignment_selfcheck"]["exact"], lean)
+                self.assertEqual(current["alignment_policy"]["lean_overall_weight_percent"], 5)
+                self.assertEqual(current["coverage"], old["coverage"])
+                self.assertEqual(current["prior_alignment_score"]["metrics"], old["metrics"])
+                for key in set(old["metrics"]) - {"neutral", "overall"}:
+                    self.assertEqual(current["metrics"][key], old["metrics"][key])
+                self.assertEqual(current["metrics"]["neutral_written"], old["metrics"]["neutral"])
+                self.assertEqual(len(current["alignment_selfcheck"]["rounds"]), 3)
+                self.assertFalse(current["formal_comparison_eligible"])
+        terra, gemini = self.data["models"]
+        self.assertEqual([r["score"]["exact"] for r in terra["public"]["alignment_selfcheck"]["rounds"]],
+                         [0.972972973, 22, 55.1086956522])
+        self.assertEqual(gemini["public"]["alignment_selfcheck"]["major_false_complete_events"]["count"], 3)
+        self.assertEqual(terra["public"]["alignment_selfcheck"]["rounds"][2]["restored"], 13)
+        self.assertEqual(terra["public"]["alignment_selfcheck"]["rounds"][2]["first_new"], 20)
+
+    def test_missing_alignment_snapshot_does_not_silently_fall_back(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.copy_sources(root)
+            (root / "docs/results/alignment-v0.1.0/terra-public.json").unlink()
+            with self.assertRaises(FileNotFoundError):
+                site.load_data(root, use_engineering_source=False)
+            self.assertEqual(site.load_data(root, use_alignment_source=False)["view"], "workspace-mathematics")
+
+    def test_extra_time_asterisk_is_bound_to_c003_and_affected_scores(self):
+        terra, gemini = self.data["models"]
+        self.assertEqual(terra["chapter_capability_source"],
+                         {"public_case_id": "MG-C003", "complete": 18, "total": 92,
+                          "extra_time_source": False})
+        self.assertEqual(gemini["chapter_capability_source"],
+                         {"public_case_id": "MG-C003", "complete": 74, "total": 92,
+                          "extra_time_source": True})
+        rendered = site.render_html(self.data)
+        self.assertIn('74/92<sup><a href="#extension-note"', rendered)
+        self.assertIn('id="extension-note"', rendered)
+        self.assertEqual(rendered.count('href="#extension-note"'), 4)
+        self.assertIn("额外一次90分钟续作", rendered)
+        self.assertIn("约46分钟后收卷", rendered)
+        self.assertIn("后续三轮每轮180分钟", rendered)
+        original = site.render_html(site.load_data(SOURCE_ROOT, use_workspace_source=False))
+        self.assertNotIn('href="#extension-note"', original)
+        self.assertIn("未决（原ERROR）", original)
+
+    def test_alignment_hash_weights_and_unrelated_changes_are_rejected(self):
+        for mutation in ("binding", "weight", "capability", "coverage", "review-file"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.copy_sources(root)
+                path = root / "docs/results/alignment-v0.1.0/terra-public.json"
+                doc = json.loads(path.read_text())
+                if mutation == "binding":
+                    doc["source_bindings"]["original_summary_sha256"] = "0" * 64
+                elif mutation == "weight":
+                    doc["policy"]["neutral_group_weights"]["lean_alignment"] = 4
+                elif mutation == "capability":
+                    doc["metrics"]["core"]["exact"] = 0
+                elif mutation == "coverage":
+                    doc["coverage"]["slots_planned"] = 45
+                else:
+                    (root / "docs/results/alignment-v0.1.0/terra-review.json").write_text("{}\n")
+                path.write_text(json.dumps(doc))
+                with self.assertRaises(ValueError):
+                    site.load_data(root, use_engineering_source=False)
+
+    def test_new_projection_discards_private_extras_and_raw_answers(self):
+        marker = "PRIVATE-ALIGNMENT-SENTINEL-DO-NOT-EXPORT"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.copy_sources(root)
+            for model, _ in site.MODELS:
+                for scope in ("public", "combined"):
+                    path = root / f"docs/results/alignment-v0.1.0/{model}-{scope}.json"
+                    doc = json.loads(path.read_text())
+                    doc.update(full_plan=marker, raw_answer=marker, private_records=[marker],
+                               local_path="/private/" + marker)
+                    doc["alignment_selfcheck"]["rounds"][0]["original_response"] = marker
+                    doc["metrics"]["lean_alignment_selfcheck"]["private_note"] = marker
+                    path.write_text(json.dumps(doc))
+            data = site.load_data(root, use_engineering_source=False)
+            self.assertNotIn(marker, json.dumps(data))
+            self.assertNotIn(marker, site.render_html(data))
+            self.assertNotIn("CH03-D01", json.dumps(data))
+            self.assertNotIn(str(SOURCE_ROOT), json.dumps(data))
+
+    def test_mixed_source_cli_and_portable_bundle_use_alignment_view(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, second = Path(tmp) / "deep path" / "results", Path(tmp) / "elsewhere"
+            result = subprocess.run(
+                [sys.executable, str(ROOT / "scripts/render_results_site.py"),
+                 "--source-root", str(SOURCE_ROOT), "--out-dir", str(first), "--mixed-source"],
+                cwd=tmp, check=False, capture_output=True, text=True,
+                env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+            self.assertEqual(result.returncode, 0, result.stderr)
+            site.build_site(SOURCE_ROOT, second, use_engineering_source=False)
+            for filename in ("index.html", "data.json"):
+                self.assertEqual((first / filename).read_bytes(), (second / filename).read_bytes())
+            self.assertEqual(json.loads((first / "data.json").read_text()), self.data)
+            rendered = (first / "index.html").read_text()
+            for needle in ("82.63</strong>", "85.35</strong>", "71.94</strong>", "67.89</strong>",
+                           "Lean 对齐自查 · 占总分 5%", "三轮明细", "加入 Lean 自查前的成绩（保留）"):
+                self.assertIn(needle, rendered)
+            parser = Links()
+            parser.feed(rendered)
+            self.assertNotIn("script", parser.tags)
+            for tag, target in parser.links:
+                url = urlsplit(target)
+                if url.scheme:
+                    self.assertEqual((tag, url.scheme), ("a", "https"))
+                elif url.path:
+                    self.assertEqual(url.path, "data.json")
+                    self.assertTrue((first / url.path).is_file())
+                if url.fragment and not url.scheme:
+                    self.assertIn(unquote(url.fragment), parser.ids)
+
+
+class EngineeringResultsSiteTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.data = site.load_data(SOURCE_ROOT)
+
+    def copy_sources(self, root):
+        paths = {row["path"] for row in self.data["sources"]}
+        paths.add("protocol/lean-alignment/engineering-scoring-v0.2.0.json")
+        paths.update(f"docs/results/engineering-v0.2.0/{model}-review.json"
+                     for model, _ in site.MODELS)
+        for relative in paths:
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((SOURCE_ROOT / relative).read_bytes())
+
+    def test_unified_engineering_counts_and_penalized_scores(self):
+        self.assertEqual(self.data["schema"], "math-gauge.portable-results/v4")
+        self.assertEqual(self.data["view"], "engineering-alignment")
+        expected = ((93.4861010467, 94.1464271337, 37.6296296296),
+                    (70.9441284938, 66.8878920807, -20))
+        for model, (public, combined, lean) in zip(self.data["models"], expected):
+            for scope, total in (("public", public), ("combined", combined)):
+                result = model[scope]
+                self.assertEqual(result["metrics"]["overall"]["exact"], total)
+                self.assertEqual(result["metrics"]["lean_alignment_selfcheck"]["exact"], lean)
+                self.assertFalse(result["formal_comparison_eligible"])
+                rows = {r["case_id"]: r for r in result["lean_formalization_breakdown"]["cases"]}
+                self.assertEqual((rows["MG-C003"]["complete_count"], rows["MG-C003"]["total"]), (74, 92))
+        terra, gemini = self.data["models"]
+        self.assertEqual([r["complete"] for r in terra["public"]["alignment_selfcheck"]["rounds"]], [74, 84, 84])
+        self.assertEqual([r["complete"] for r in gemini["public"]["alignment_selfcheck"]["rounds"]], [74, 74, 74])
+        self.assertEqual([r["penalty_points"] for r in gemini["public"]["alignment_selfcheck"]["rounds"]], [20, 20, 20])
+
+    def test_clean_page_explains_correct_pass_counts_and_family_average(self):
+        rendered = site.render_html(self.data)
+        for text in ("93.49</strong>", "94.15</strong>", "70.94</strong>", "66.89</strong>",
+                     "正确且完整通过", "74/92", "84/92", "65.00", "80.43", "两个家族等权平均",
+                     "首答总时长上限180分钟", "每轮额外扣20分", "部分等价测试继承"):
+            self.assertIn(text, rendered)
+        for text in ("加时", "extra opportunity", "ERROR", "fresh A1", "正式模型比较资格", "原答审核"):
+            self.assertNotIn(text, rendered)
+        self.assertNotIn('href="#extension-note"', rendered)
+
+    def test_current_bound_sources_fail_closed(self):
+        for mutation in ("missing", "wrong-policy", "wrong-review", "wrong-case-count", "negative-overflow"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.copy_sources(root)
+                path = root / "docs/results/engineering-v0.2.0/gemini-public.json"
+                value = json.loads(path.read_text())
+                if mutation == "missing":
+                    path.unlink()
+                elif mutation == "wrong-policy":
+                    value["policy"]["version"] = "0.1.0"
+                elif mutation == "wrong-review":
+                    value["source_bindings"]["alignment_review_sha256"] = "0" * 64
+                elif mutation == "wrong-case-count":
+                    value["lean_formalization_breakdown"]["cases"][0]["complete_count"] = 999
+                else:
+                    value["metrics"]["lean_alignment_selfcheck"].update(exact=-21, lower=-21, upper=-21)
+                if mutation != "missing":
+                    path.write_text(json.dumps(value))
+                with self.assertRaises((ValueError, FileNotFoundError)):
+                    site.load_data(root)
+
+    def test_current_projection_omits_private_and_raw_details(self):
+        marker = "PRIVATE-ENGINEERING-SENTINEL"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.copy_sources(root)
+            for model, _ in site.MODELS:
+                for scope in ("public", "combined"):
+                    path = root / f"docs/results/engineering-v0.2.0/{model}-{scope}.json"
+                    value = json.loads(path.read_text())
+                    value.update(raw_answer=marker, private_records=[marker], full_plan=marker,
+                                 local_path="/private/" + marker)
+                    value["alignment_selfcheck"]["rounds"][0]["raw_text"] = marker
+                    path.write_text(json.dumps(value))
+            data = site.load_data(root)
+            self.assertNotIn(marker, json.dumps(data))
+            self.assertNotIn(marker, site.render_html(data))
+            self.assertNotIn("CH03-D01", json.dumps(data))
+            self.assertNotIn(str(SOURCE_ROOT), json.dumps(data))
+
+    def test_current_cli_is_deterministic_and_portable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, second = Path(tmp) / "nested path" / "results", Path(tmp) / "elsewhere"
+            result = subprocess.run([sys.executable, str(ROOT / "scripts/render_results_site.py"),
+                                     "--source-root", str(ROOT), "--out-dir", str(first)],
+                                    cwd=tmp, capture_output=True, text=True, check=False,
+                                    env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+            self.assertEqual(result.returncode, 0, result.stderr)
+            site.build_site(SOURCE_ROOT, second)
+            for name in ("index.html", "data.json"):
+                self.assertEqual((first / name).read_bytes(), (second / name).read_bytes())
+            self.assertEqual(json.loads((first / "data.json").read_text()), self.data)
+            parser = Links()
+            parser.feed((first / "index.html").read_text())
+            self.assertNotIn("script", parser.tags)
+            for tag, target in parser.links:
+                url = urlsplit(target)
+                if url.scheme:
+                    self.assertEqual((tag, url.scheme), ("a", "https"))
+                elif url.path:
+                    self.assertEqual(url.path, "data.json")
+                    self.assertTrue((first / url.path).is_file())
+                if url.fragment and not url.scheme:
+                    self.assertIn(unquote(url.fragment), parser.ids)
 
 
 if __name__ == "__main__":

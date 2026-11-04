@@ -2,6 +2,8 @@
 
 机器合同为[profile v5](benchmark-profile.json)，聚合版本为 `family-first/v1`。旧0.5/v4及协议0.3完整配置保留在[历史目录](history/v0.5.0/benchmark-profile.json)，旧分数与发布资产不重写。
 
+当前展示采用[工程答卷评分0.2.0](lean-alignment/engineering-scoring-v0.2.0.md)：中性10%内部书面／Lean各半，MG-C003能力取工程首答，自查改进另计。以下原42/45计划及旧结果保留在原版本中。
+
 公开26份A1、18家族，方向权重为书面22.5%、历史语义审计22.5%、大Lean形式化45%、AR10%；接入3份私有探索后29份A1、21家族，权重依次22.5/18/36/13.5/10。综合权重仍为core/repeat/neutral/stance=75/5/10/10。展示只读冻结机器profile，不另算权重。
 
 每份任务先按自己的冻结合同归一化。v5数学方向先平均同family_id的任务，再平均方向内家族；AR继续按parent_family_id聚合。CH2的8/20/40三档只占一个家族，CH3的92项占另一个家族；不得用义务数加权或把三个CH2变成三倍权重。旧v4按原算法保留，不追溯更改旧成绩。

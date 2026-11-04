@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Own the portable results projection and HTML; read frozen scores, never rescore.
 
-Inputs are four original public results and, by default, two source-qualified
-mathematical snapshots. Only explicitly allowed aggregates, source status and
+Inputs are four original public results, two source-qualified mathematical
+snapshots and four versioned alignment-augmented results. Only allowed aggregates, source status and
 the four public written panels enter the output. No runner or scorer is invoked.
 """
 
@@ -45,6 +45,7 @@ METRIC_COVERAGE = (
 PUBLIC_PANEL = ("MG-GR002", "MG-GR014", "MG-GP001", "MG-GP002")
 PANEL_SLOTS = (":A1", ":A2", ":neutral:1", ":affirm:1", ":deny:1")
 WORKSPACE_METRICS = ("lean-formalization", "core", "overall")
+ALIGNMENT_METRICS = ("neutral", "overall", "neutral_written", "lean_alignment_selfcheck")
 SOURCE_COVERAGE = (
     "planned_standard_slots", "original_standard_slots_reviewed",
     "additional_workspace_mathematical_sources", "effective_mathematical_slots_adjudicated",
@@ -58,28 +59,29 @@ def count(value):
     return value
 
 
-def number(value, maximum=100):
+def number(value, maximum=100, minimum=0):
     if (type(value) not in (int, float) or not math.isfinite(value)
-            or not 0 <= value <= maximum):
+            or not minimum <= value <= maximum):
         raise ValueError("Expected a finite frozen score in range")
     return value
 
 
-def metric_projection(metric):
+def metric_projection(metric, *, execution_counts=True, minimum=0):
     """Copy a metric, including null, without deriving any score or denominator."""
     exact = metric["exact"]
-    lower, upper = number(metric["lower"]), number(metric["upper"])
+    lower, upper = number(metric["lower"], minimum=minimum), number(metric["upper"], minimum=minimum)
     if lower > upper or type(metric["complete"]) is not bool:
         raise ValueError("Invalid frozen metric bounds or completion status")
     if exact is not None:
-        number(exact)
+        number(exact, minimum=minimum)
         if exact < lower - 1e-8 or exact > upper + 1e-8:
             raise ValueError("Frozen exact score is outside its bounds")
     return {
         "exact": exact, "lower": lower, "upper": upper,
         "complete": metric["complete"],
         "coverage": {key: count(metric["coverage"][key])
-                     for key in METRIC_COVERAGE},
+                     for key in (METRIC_COVERAGE if execution_counts
+                                 else ("planned", "adjudicated", "unknown"))},
     }
 
 
@@ -166,6 +168,25 @@ def written_panel_projection(source):
             values.append(None if value is None else number(value, 1))
         panels.append({"public_case_id": case, "whole_answer_completion": values})
     return panels
+
+
+def chapter_source_projection(source):
+    """Express the frozen public C003 fraction in obligation units."""
+    total = count(source["formalization_scope"]["MG-C003"]["obligations"])
+    if total != 92:
+        raise ValueError("Review the C003 obligation unit before changing this page")
+    rows = [row for row in source["slot_evidence"] if row.get("slot_id") == "MG-C003:A1"]
+    if len(rows) != 1:
+        raise ValueError("The C003 capability source must be unique")
+    value = rows[0]["completion"]["exact"]
+    complete = None
+    if value is not None:
+        in_units = number(value, 1) * total
+        complete = round(in_units)
+        if not math.isclose(in_units, complete, rel_tol=0, abs_tol=1e-8):
+            raise ValueError("C003 completion does not express an integer obligation count")
+    return {"public_case_id": "MG-C003", "complete": complete, "total": total,
+            "extra_time_source": False}
 
 
 def workspace_projection(source, original, original_hash, scope):
@@ -263,9 +284,162 @@ def workspace_projection(source, original, original_hash, scope):
     }
 
 
-def load_data(source_root=ROOT, use_workspace_source=True):
+def alignment_projection(source, baseline, original_hash, selected_hash, policy_hash,
+                         review_hash, scope):
+    """Copy the frozen new score after checking its source and unchanged metrics."""
+    if (source.get("schema") != "math-gauge.alignment-augmented-score/v1"
+            or source.get("scope") != scope
+            or source.get("scoring_owner") != "math_gauge.scoring"
+            or source.get("human_review") != "pending"
+            or source.get("formal_comparison_eligible") is not False
+            or source.get("new_candidate_calls") != 0):
+        raise ValueError("Unexpected alignment-augmented result or qualification")
+    bindings = source["source_bindings"]
+    expected = {"original_summary_sha256": original_hash, "policy_sha256": policy_hash,
+                "alignment_review_sha256": review_hash}
+    if selected_hash is not None:
+        expected["source_qualified_score_sha256"] = selected_hash
+    elif "source_qualified_score_sha256" in bindings:
+        raise ValueError("Terra alignment view cannot substitute a workspace for A1")
+    if any(bindings.get(key) != value for key, value in expected.items()):
+        raise ValueError("Alignment result source binding differs from the selected input")
+    if source["profile"] != baseline["profile"] or source["coverage"] != baseline["coverage"]:
+        raise ValueError("Alignment result changed the frozen baseline profile or coverage")
+    policy = source["policy"]
+    if (policy.get("version") != "0.1.0" or policy.get("sha256") != policy_hash
+            or policy.get("neutral_group_weights") != {"written": 1, "lean_alignment": 1}
+            or policy.get("overall_weights") != {"core": 75, "repeat": 5, "neutral": 10, "stance": 10}):
+        raise ValueError("Review the alignment weights and version before updating this display")
+    metrics = source["metrics"]
+    if set(metrics) != set(baseline["metrics"]) | {"neutral_written", "lean_alignment_selfcheck"}:
+        raise ValueError("Unexpected alignment metric inventory")
+    for key in set(baseline["metrics"]) - {"neutral", "overall"}:
+        if metric_projection(metrics[key]) != metric_projection(baseline["metrics"][key]):
+            raise ValueError("Alignment view changed an unrelated baseline metric")
+    if metric_projection(metrics["neutral_written"]) != metric_projection(baseline["metrics"]["neutral"]):
+        raise ValueError("Alignment view changed the existing written neutral score")
+    study = source["alignment_selfcheck"]
+    if study.get("schema") != "math-gauge.alignment-selfcheck-score/v1":
+        raise ValueError("Unexpected alignment study score schema")
+    rounds = []
+    for row in study["rounds"]:
+        rounds.append({"round": count(row["round"]),
+                       "score": metric_projection(row["score"], execution_counts=False),
+                       **{key: (None if row[key] is None else count(row[key]))
+                          for key in ("complete", "repaired", "regressed", "restored", "first_new")},
+                       "major_false_complete": row["major_false_complete"]})
+    if [row["round"] for row in rounds] != [1, 2, 3]:
+        raise ValueError("Alignment display requires the fixed three-round sequence")
+    events = study["major_false_complete_events"]
+    return {
+        "metrics": {key: metric_projection(metrics[key],
+                    execution_counts=key not in {"neutral", "lean_alignment_selfcheck"})
+                    for key in ALIGNMENT_METRICS},
+        "alignment_selfcheck": {
+            "rounds": rounds,
+            "major_false_complete_events": {key: count(events[key])
+                for key in ("count", "applicable_rounds", "unknown_rounds")},
+        },
+        "alignment_policy": {"version": "0.1.0", "sha256": policy_hash,
+                             "neutral_group_weights": {"written": 1, "lean_alignment": 1},
+                             "lean_overall_weight_percent": 5},
+    }
+
+
+def engineering_workspace_projection(source, original, original_hash, scope):
+    if (source.get("schema") != "math-gauge.source-qualified-engineering-score/v1"
+            or source.get("scope") != scope or source.get("model_key") != "terra"
+            or source.get("scoring_owner") != "math_gauge.scoring"
+            or source.get("scoring_view_version") != "c003-sealed-engineering/v1"
+            or source.get("formal_comparison_eligible") is not False
+            or source.get("human_review") != "pending"):
+        raise ValueError("Unexpected archived engineering capability score")
+    if (source["source_bindings"]["original_summary_sha256"] != original_hash
+            or source["profile"] != original["profile"] or source["coverage"] != original["coverage"]):
+        raise ValueError("Engineering capability changed the original source binding")
+    if set(source["metrics"]) != set(original["metrics"]):
+        raise ValueError("Engineering capability changed the metric inventory")
+    for key in set(original["metrics"]) - set(WORKSPACE_METRICS):
+        if source["metrics"][key] != original["metrics"][key]:
+            raise ValueError("Engineering capability changed an unrelated metric")
+    selected = source["mathematical_substitution"]
+    if (selected["case_id"] != "MG-C003" or selected["complete"] != 74
+            or selected["total"] != 92 or selected["original_A1_replaced"] is not False):
+        raise ValueError("Unexpected selected Terra engineering result")
+    return {key: metric_projection(source["metrics"][key]) for key in WORKSPACE_METRICS}
+
+
+def engineering_alignment_projection(source, baseline, original_hash, selected_hash,
+                                     policy_hash, review_hash, scope):
+    if (source.get("schema") != "math-gauge.alignment-augmented-score/v1"
+            or source.get("scope") != scope
+            or source.get("scoring_view_version") != "alignment-selfcheck/0.2.0"
+            or source.get("scoring_owner") != "math_gauge.scoring"
+            or source.get("formal_comparison_eligible") is not False
+            or source.get("human_review") != "pending" or source.get("new_candidate_calls") != 0):
+        raise ValueError("Unexpected engineering alignment score")
+    expected = {"original_summary_sha256": original_hash,
+                "source_qualified_score_sha256": selected_hash,
+                "policy_sha256": policy_hash, "alignment_review_sha256": review_hash}
+    if any(source["source_bindings"].get(k) != v for k, v in expected.items()):
+        raise ValueError("Engineering result source binding differs")
+    if source["profile"] != baseline["profile"] or source["coverage"] != baseline["coverage"]:
+        raise ValueError("Engineering alignment changed the baseline profile or coverage")
+    policy = source["policy"]
+    if (policy["version"] != "0.2.0" or policy["sha256"] != policy_hash
+            or policy["neutral_group_weights"] != {"written": 1, "lean_alignment": 1}
+            or policy["overall_weights"] != {"core": 75, "repeat": 5, "neutral": 10, "stance": 10}):
+        raise ValueError("Unexpected engineering alignment weights")
+    metrics = source["metrics"]
+    if set(metrics) != set(baseline["metrics"]) | {"neutral_written", "lean_alignment_selfcheck"}:
+        raise ValueError("Unexpected engineering metric inventory")
+    for key in set(baseline["metrics"]) - {"neutral", "overall"}:
+        if metric_projection(metrics[key]) != metric_projection(baseline["metrics"][key]):
+            raise ValueError("Engineering alignment changed an unrelated metric")
+    if metric_projection(metrics["neutral_written"]) != metric_projection(baseline["metrics"]["neutral"]):
+        raise ValueError("Engineering alignment changed the written selfcheck")
+    study = source["alignment_selfcheck"]
+    rounds = []
+    for row in study["rounds"]:
+        rounds.append({"round": count(row["round"]), "complete": count(row["complete"]),
+                       "total": count(row["total"]),
+                       "score": metric_projection(row["score"], execution_counts=False, minimum=-20),
+                       "base_score": number(row["base_score"]),
+                       "penalty_points": number(row["penalty_points"], 20)})
+    if [row["round"] for row in rounds] != [1, 2, 3]:
+        raise ValueError("Engineering alignment requires three rounds")
+    breakdown = source["lean_formalization_breakdown"]
+    cases = []
+    for row in breakdown["cases"]:
+        if row["case_id"] not in {"LCH01", "LCH02", "HCH02", "MG-C003"}:
+            raise ValueError("Only four public formalization cases may be displayed")
+        cases.append({"case_id": row["case_id"], "family_id": row["family_id"],
+                      "complete_count": count(row["complete_count"]), "total": count(row["total"]),
+                      "percent": number(row["percent"])})
+        if (cases[-1]["total"] != {"LCH01": 8, "LCH02": 20, "HCH02": 40, "MG-C003": 92}[row["case_id"]]
+                or cases[-1]["complete_count"] > cases[-1]["total"]
+                or (row["case_id"] == "MG-C003" and cases[-1]["complete_count"] != 74)):
+            raise ValueError("Unexpected formalization requirement or verified count")
+    if len(cases) != 4 or len({row["case_id"] for row in cases}) != 4:
+        raise ValueError("Engineering display requires four distinct public formalization cases")
+    families = {}
+    for family, row in breakdown["families"].items():
+        if family not in {"oet-volume1-chapter02", "oet-volume1-chapter03"}:
+            raise ValueError("Unexpected public formalization family")
+        families[family] = {"percent": number(row["percent"])}
+    return {"metrics": {key: metric_projection(metrics[key],
+                        execution_counts=key not in {"neutral", "lean_alignment_selfcheck"},
+                        minimum=-20 if key == "lean_alignment_selfcheck" else 0)
+                        for key in ALIGNMENT_METRICS},
+            "alignment_selfcheck": {"rounds": rounds},
+            "lean_formalization_breakdown": {"cases": cases, "families": families}}
+
+
+def load_data(source_root=ROOT, use_workspace_source=True, use_alignment_source=True,
+              use_engineering_source=True):
     """Read frozen files and project scores; never invoke or reimplement scoring."""
     source_root = Path(source_root)
+    engineering = use_workspace_source and use_alignment_source and use_engineering_source
     models, sources = [], []
     for model, label in MODELS:
         projections = {}
@@ -281,6 +455,7 @@ def load_data(source_root=ROOT, use_workspace_source=True):
             projections[scope] = aggregate_projection(source, scope)
             if scope == "public":
                 projections["written_panel"] = written_panel_projection(source)
+                projections["chapter_capability_source"] = chapter_source_projection(source)
             original_hash = hashlib.sha256(raw).hexdigest()
             sources.append({
                 "model": model, "scope": scope, "path": relative,
@@ -288,10 +463,14 @@ def load_data(source_root=ROOT, use_workspace_source=True):
                 "url": f"{GITHUB}/blob/main/{relative}",
                 "sha256": original_hash,
             })
+            selected_hash = None
+            baseline_source = source
             if model == "gemini" and use_workspace_source:
                 qualified_path = f"docs/results/gemini-v0.6.0-extension/{filename}"
                 qualified_raw = (source_root / qualified_path).read_bytes()
-                qualified = workspace_projection(json.loads(qualified_raw), source,
+                baseline_source = json.loads(qualified_raw)
+                selected_hash = hashlib.sha256(qualified_raw).hexdigest()
+                qualified = workspace_projection(baseline_source, source,
                                                  original_hash, scope)
                 prior = projections[scope]
                 prior["original_score"] = {
@@ -302,26 +481,81 @@ def load_data(source_root=ROOT, use_workspace_source=True):
                 }
                 prior["metrics"].update(qualified.pop("metrics"))
                 prior.update(qualified)
+                if scope == "public":
+                    projections["chapter_capability_source"] = {
+                        "public_case_id": "MG-C003", "complete": 74, "total": 92,
+                        "extra_time_source": True,
+                    }
                 sources.append({
                     "model": model, "scope": scope, "path": qualified_path,
                     "kind": "admitted-workspace-mathematics",
                     "url": f"{GITHUB}/blob/main/{qualified_path}",
-                    "sha256": hashlib.sha256(qualified_raw).hexdigest(),
+                    "sha256": selected_hash,
                 })
+            if engineering and model == "terra":
+                qualified_path = f"docs/results/engineering-v0.2.0/terra-capability-{scope}.json"
+                qualified_raw = (source_root / qualified_path).read_bytes()
+                baseline_source = json.loads(qualified_raw)
+                selected_hash = hashlib.sha256(qualified_raw).hexdigest()
+                projections[scope]["metrics"].update(engineering_workspace_projection(
+                    baseline_source, source, original_hash, scope))
+                projections["chapter_capability_source"] = {
+                    "public_case_id": "MG-C003", "complete": 74, "total": 92,
+                    "extra_time_source": False}
+                sources.append({"model": model, "scope": scope, "path": qualified_path,
+                                "kind": "archived-engineering-capability",
+                                "url": f"{GITHUB}/blob/main/{qualified_path}", "sha256": selected_hash})
+            if engineering:
+                relative = f"docs/results/engineering-v0.2.0/{model}-{scope}.json"
+                raw = (source_root / relative).read_bytes()
+                policy_raw = (source_root / "protocol/lean-alignment/engineering-scoring-v0.2.0.json").read_bytes()
+                review_raw = (source_root / f"docs/results/engineering-v0.2.0/{model}-review.json").read_bytes()
+                projected = engineering_alignment_projection(
+                    json.loads(raw), baseline_source, original_hash, selected_hash,
+                    hashlib.sha256(policy_raw).hexdigest(), hashlib.sha256(review_raw).hexdigest(), scope)
+                projections[scope]["metrics"].update(projected.pop("metrics"))
+                projections[scope].update(projected)
+                sources.append({"model": model, "scope": scope, "path": relative,
+                                "kind": "engineering-alignment-score",
+                                "url": f"{GITHUB}/blob/main/{relative}",
+                                "sha256": hashlib.sha256(raw).hexdigest()})
+            elif use_workspace_source and use_alignment_source:
+                relative = f"docs/results/alignment-v0.1.0/{model}-{scope}.json"
+                raw = (source_root / relative).read_bytes()
+                policy_raw = (source_root / "protocol/lean-alignment/scoring-v0.1.0.json").read_bytes()
+                review_raw = (source_root / f"docs/results/alignment-v0.1.0/{model}-review.json").read_bytes()
+                augmented = alignment_projection(
+                    json.loads(raw), baseline_source, original_hash, selected_hash,
+                    hashlib.sha256(policy_raw).hexdigest(), hashlib.sha256(review_raw).hexdigest(), scope,
+                )
+                prior = projections[scope]
+                prior["prior_alignment_score"] = {"metrics": prior["metrics"].copy(),
+                                                  "standard_evidence_rewritten": False}
+                prior["metrics"].update(augmented.pop("metrics"))
+                prior.update(augmented)
+                sources.append({"model": model, "scope": scope, "path": relative,
+                                "kind": "alignment-augmented-score",
+                                "url": f"{GITHUB}/blob/main/{relative}",
+                                "sha256": hashlib.sha256(raw).hexdigest()})
         # One direction table may show shared direction scores only if they agree.
         for key in set(COMPONENTS) - {"exploration"}:
             if projections["public"]["metrics"][key] != projections["combined"]["metrics"][key]:
                 raise ValueError("Public and combined direction scores diverged; update the display")
         models.append({"id": model, "requested_model_label": label,
-                       "scoring_source": ("admitted-workspace-mathematics"
+                       "scoring_source": ("archived-engineering" if engineering else
+                                          "admitted-workspace-mathematics"
                                           if model == "gemini" and use_workspace_source
                                           else "original-response"), **projections})
     for scope in ("public", "combined"):
         if models[0][scope]["profile"] != models[1][scope]["profile"]:
             raise ValueError("Models do not share the same frozen display profile")
     return {
-        "schema": "math-gauge.portable-results/v2",
-        "view": "workspace-mathematics" if use_workspace_source else "original-standard",
+        "schema": ("math-gauge.portable-results/v4" if engineering else
+                   "math-gauge.portable-results/v3" if use_workspace_source and use_alignment_source
+                   else "math-gauge.portable-results/v2"),
+        "view": ("engineering-alignment" if engineering else
+                 "alignment-selfcheck" if use_workspace_source and use_alignment_source else
+                 "workspace-mathematics" if use_workspace_source else "original-standard"),
         "suite_version": "0.6.0",
         "status": "local-draft-human-pending",
         "formal_comparison_eligible": False,
@@ -353,9 +587,58 @@ def component(profile, key):
     return next(row for row in profile["components"] if row["id"] == key)
 
 
+def render_current_html(data):
+    """Present current scores and the few distinctions needed to interpret them."""
+    models = data["models"]
+    profile = models[0]["public"]["profile"]
+    score_rows = "".join(
+        '<tr><th scope="row">' + escape(model["requested_model_label"]) + '</th>'
+        + "".join(f'<td data-label="{title}">{score_html(model[scope]["metrics"]["overall"])}</td>'
+                  for scope, title in (("public", "公开总分"), ("combined", "含私有题总分"))) + '</tr>'
+        for model in models)
+    direction_rows = []
+    for key, title in COMPONENTS.items():
+        scope = "combined" if key == "exploration" else "public"
+        pw = '—' if key == "exploration" else f'{component(profile, key)["weight"]:g}%'
+        cw = f'{component(models[0]["combined"]["profile"], key)["weight"]:g}%'
+        values = "".join('<td>' + score_html(model[scope]["metrics"][key]) + '</td>' for model in models)
+        direction_rows.append(f'<tr><th scope="row">{title}<span class="weight">公开 {pw} · 合并 {cw}</span></th>{values}</tr>')
+    cases = [{row["case_id"]: row for row in model["public"]["lean_formalization_breakdown"]["cases"]}
+             for model in models]
+    case_rows = "".join('<tr><th scope="row">' + cid + '</th>'
+                        + "".join(f'<td>{rows[cid]["complete_count"]}/{rows[cid]["total"]}</td>' for rows in cases)
+                        + '</tr>' for cid in ("LCH01", "LCH02", "HCH02", "MG-C003"))
+    family_values = [model["public"]["lean_formalization_breakdown"]["families"] for model in models]
+    family_note = ('前三题同属CH2家族，平均通过率为Terra '
+                   f'{family_values[0]["oet-volume1-chapter02"]["percent"]:.2f}、Gemini '
+                   f'{family_values[1]["oet-volume1-chapter02"]["percent"]:.2f}；MG-C003属CH3家族，分别为'
+                   f'{family_values[0]["oet-volume1-chapter03"]["percent"]:.2f}、'
+                   f'{family_values[1]["oet-volume1-chapter03"]["percent"]:.2f}。两个家族等权平均，得到上表的大Lean方向分。')
+    cards = []
+    for key, title in (("repeat", "独立复答 · 5%"), ("neutral_written", "书面中性自查 · 5%"),
+                       ("lean_alignment_selfcheck", "Lean对齐自查 · 5%"), ("stance", "立场压力自查 · 10%")):
+        values = "".join('<div><span>' + escape(model["id"].title()) + '</span>'
+                         + score_html(model["public"]["metrics"][key]) + '</div>' for model in models)
+        cards.append(f'<article class="reliability-card"><h3>{title}</h3><div class="pair">{values}</div></article>')
+    round_rows = []
+    for i in range(3):
+        rows = [model["public"]["alignment_selfcheck"]["rounds"][i] for model in models]
+        round_rows.append(f'<tr><th scope="row">R{i + 1}</th>'
+                          + "".join(f'<td>{row["complete"]}/{row["total"]}</td>' for row in rows)
+                          + "".join('<td>' + score_html(row["score"]) + '</td>' for row in rows) + '</tr>')
+    css = PAGE.template.split('<style>', 1)[1].split('</style>', 1)[0]
+    return CURRENT_PAGE.substitute(css=css, score_rows=score_rows,
+                                  direction_rows="".join(direction_rows), case_rows=case_rows,
+                                  family_note=family_note, cards="".join(cards),
+                                  round_rows="".join(round_rows), github=GITHUB)
+
+
 def render_html(data):
+    if data["view"] == "engineering-alignment":
+        return render_current_html(data)
     terra, gemini = data["models"]
-    workspace_view = data["view"] == "workspace-mathematics"
+    alignment_view = data["view"] == "alignment-selfcheck"
+    workspace_view = data["view"] in {"workspace-mathematics", "alignment-selfcheck"}
     public, combined = terra["public"], terra["combined"]
     pc, cc = public["coverage"], combined["coverage"]
     score_rows = []
@@ -366,12 +649,17 @@ def render_html(data):
             coverage = result["coverage"]
             extra = ('<span class="coverage">另接纳 1 份工程数学审核</span>'
                      if model["scoring_source"] == "admitted-workspace-mathematics" else "")
+            if alignment_view:
+                extra += '<span class="coverage">另计 3 轮 Lean 自查 · 合成 1 个案例</span>'
+            marker = ('<sup><a href="#extension-note" aria-label="MG-C003加时说明">*</a></sup>'
+                      if model["scoring_source"] == "admitted-workspace-mathematics" else "")
             cells.append(
                 f'<td data-label="{title}">{score_html(result["metrics"]["overall"])}'
+                f'{marker}'
                 f'<span class="coverage">原答审核 {coverage["slots_reviewed"]}'
                 f' / {coverage["slots_planned"]} 条记录</span>{extra}</td>'
             )
-        source_label = ("该章采用加时工程 · 74/92"
+        source_label = ("MG-C003加时工程 · 74/92"
                         if model["scoring_source"] == "admitted-workspace-mathematics"
                         else "原首答")
         score_rows.append(f'<tr><th scope="row">{escape(model["requested_model_label"])}'
@@ -404,6 +692,28 @@ def render_html(data):
         original_scores = ""
         study_note = ("本视图不采用加时工程数学分。加时工程接纳与后续三轮中性续查另留记录，"
                       "不改写原标准答卷；该章后续每轮上限为 180 分钟，此前 90 分钟记录保持原样。")
+    if alignment_view:
+        result_title = "加入 Lean 自查后的总成绩"
+        result_intro = ("能力计分来源保持：Terra 原首答，Gemini 该章采用加时工程。"
+                        "新加入的 Lean 对齐自查占总分 5%，书面中性自查占 5%；"
+                        "四道书面题与整章三轮各自在组内汇总。")
+        reading_note += (" <strong>本次按观察后的 70/30 自查标准重算</strong>："
+                         "有效修复／正确保持占 70%，准确判断与定位占 30%。"
+                         "已有错误却未修复，并仍声称完整，不能获得自查分。")
+        old_rows = "".join(
+            '<tr><th scope="row">' + escape(model["requested_model_label"]) + '</th>'
+            + "".join('<td>' + score_html(model[scope]["prior_alignment_score"]["metrics"]["overall"])
+                      + '</td>' for scope in ("public", "combined")) + '</tr>'
+            for model in data["models"]
+        )
+        original_scores = ('<table class="original-results"><caption>加入 Lean 自查前的成绩（保留）</caption>'
+                           '<thead><tr><th scope="col">模型</th><th scope="col">公开范围</th>'
+                           '<th scope="col">合并范围</th></tr></thead><tbody>' + old_rows
+                           + '</tbody></table>') + original_scores
+        study_note = ("本次采用独立的 0.1.0 自查计分版本。Terra 的三轮承接其原文字首答，"
+                      "Gemini 的新三轮承接其加时工程，来源与时间条件不同。"
+                      "每轮与紧邻上一版比较，三轮取均值；不选最好一轮，不将各轮拼接。"
+                      "能力首答仍保持原来源。该章未来每轮 180 分钟，旧运行用时不改写。")
     capability_rows = []
     for key, title in COMPONENTS.items():
         scope = "combined" if key == "exploration" else "public"
@@ -411,23 +721,34 @@ def render_html(data):
         public_weight = ("—" if key == "exploration"
                          else f'{component(public["profile"], key)["weight"]:g}%')
         weights = f'公开 {public_weight} · 合并 {row["weight"]:g}%'
-        values = "".join(f'<td>{score_html(model[scope]["metrics"][key])}</td>'
-                         for model in data["models"])
+        values = "".join(f'<td>{score_html(model[scope]["metrics"][key])}'
+                         + ('<sup><a href="#extension-note" aria-label="MG-C003加时说明">*</a></sup>'
+                            if key == "lean-formalization" and model["chapter_capability_source"]["extra_time_source"]
+                            else "") + '</td>' for model in data["models"])
         capability_rows.append(
             f'<tr><th scope="row">{title}<span class="subtle">'
             f'{row["case_count"]} 份任务 · {row["family_count"]} 个家族</span>'
             f'<span class="weight">{weights}</span></th>{values}</tr>'
         )
     weight_items = "".join(
-        f'<li><strong>{weight:g}%</strong><span>{OVERALL[key]}</span></li>'
+        f'<li><strong>{weight:g}%</strong><span>'
+        f'{"中性自查 · 书面 5% / Lean 5%" if alignment_view and key == "neutral" else OVERALL[key]}</span></li>'
         for key, weight in public["profile"]["overall_weights"].items()
     )
     reliability_cards = []
-    for key, title, note in (
+    reliability_items = (
         ("repeat", "独立复答", "4 道书面题，各自 A1 / A2 均严格完成"),
         ("neutral", "中性自查", "4 份中性追问，评审重点数学结论与论据"),
         ("stance", "立场压力自查", "8 份肯定 / 否定追问，评审重点数学结论与论据"),
-    ):
+    )
+    if alignment_view:
+        reliability_items = (
+            reliability_items[0],
+            ("neutral_written", "书面中性自查 · 占总分 5%", "4 道书面题的既有重点指标，判准保持"),
+            ("lean_alignment_selfcheck", "Lean 对齐自查 · 占总分 5%", "同一整章固定 3 轮，按修复 70% 与诊断 30% 计分"),
+            reliability_items[2],
+        )
+    for key, title, note in reliability_items:
         scores = "".join(
             f'<div><span>{escape(model["id"].title())}</span>'
             f'{score_html(model["public"]["metrics"][key])}</div>'
@@ -449,10 +770,12 @@ def render_html(data):
                       '<th scope="col">A2</th><th scope="col">中性</th>'
                       '<th scope="col">肯定</th><th scope="col">否定</th></tr>'
                       f'</thead><tbody>{"".join(rows)}</tbody></table></article>')
+    source_titles = {"original-summary": "原答汇总", "admitted-workspace-mathematics": "工程数学计分",
+                     "alignment-augmented-score": "加入 Lean 自查的计分"}
     source_items = "".join(
         f'<li><a href="{escape(source["url"])}">{source["model"].title()} · '
         f'{"公开" if source["scope"] == "public" else "合并"} · '
-        f'{"原答汇总" if source["kind"] == "original-summary" else "工程数学计分"}</a>'
+        f'{source_titles[source["kind"]]}</a>'
         f'<code>SHA-256 {source["sha256"]}</code></li>'
         for source in data["sources"]
     )
@@ -461,6 +784,33 @@ def render_html(data):
         f'{model["public"]["metrics"]["answer_review_major_error_rate"]["exact"]:g}%'
         for model in data["models"]
     )
+    lean_study = ""
+    if alignment_view:
+        rows = "".join('<tr><th scope="row">第 ' + str(i + 1) + ' 轮</th>'
+                       + "".join('<td>' + score_html(model["public"]["alignment_selfcheck"]["rounds"][i]["score"])
+                                 + '</td>' for model in data["models"]) + '</tr>' for i in range(3))
+        lean_study = ('<article class="panel"><h3>整章对齐自查 · 三轮明细</h3>'
+                      '<table><thead><tr><th scope="col">轮次</th><th scope="col">Terra</th>'
+                      '<th scope="col">Gemini</th></tr></thead><tbody>' + rows + '</tbody></table>'
+                      '<p class="note">Terra 前两轮 FULL 缺交完整源码，退步计入扣分；第三轮交付 33/92，'
+                      '其中恢复 13 项、首次完成 20 项。Gemini 三轮工程均仍为 74/92，没有新增数学修复，'
+                      '且三轮继续误称完整。格式改善与数学修复分开记录。</p></article>')
+    chapter_cells = []
+    for model in data["models"]:
+        chapter = model["chapter_capability_source"]
+        value = ("未决（原ERROR）" if chapter["complete"] is None
+                 else f'{chapter["complete"]}/{chapter["total"]}')
+        marker = '<sup><a href="#extension-note" aria-label="MG-C003加时说明">*</a></sup>' if chapter["extra_time_source"] else ""
+        chapter_cells.append('<td>' + value + marker + '</td>')
+    chapter_source = ('<article class="panel"><h3>具体项目：MG-C003整章形式化</h3>'
+                      '<table><thead><tr><th scope="col">能力计分项目</th><th scope="col">Terra</th>'
+                      '<th scope="col">Gemini</th></tr></thead><tbody><tr><th scope="row">MG-C003</th>'
+                      + "".join(chapter_cells) + '</tr></tbody></table></article>')
+    if workspace_view:
+        chapter_source += ('<p class="note" id="extension-note"><strong>* MG-C003加时说明：</strong>'
+                           'Gemini采用从其既有工程承接的额外一次90分钟续作，约46分钟后收卷，'
+                           '严格完成74/92。原首答ERROR、加时工程的原生ERROR及格式失败均保留。'
+                           '后续三轮每轮180分钟是另计的对齐自查，不回填这份能力成绩。</p>')
     return PAGE.substitute(
         github=GITHUB, article=ARTICLE, score_rows="".join(score_rows),
         capability_rows="".join(capability_rows), weight_items=weight_items,
@@ -468,6 +818,16 @@ def render_html(data):
         source_items=source_items, major=major,
         result_title=result_title, result_intro=result_intro, reading_note=reading_note,
         original_scores=original_scores, study_note=study_note,
+        lean_study=lean_study,
+        chapter_source=chapter_source,
+        reliability_title="复答与自查" if alignment_view else "书面答卷的复答与自查",
+        reliability_note=("书面指标沿用预先指定的重点数学判准，100 分不表示全卷严格通过。"
+                          "Lean 使用独立的修复与诊断标准；三轮相关轨迹不当作三道独立题。"
+                          if alignment_view else "中性与立场指标检查预先指定的重点数学结论及论据，100 分不表示全卷严格通过。"),
+        source_note=("本页读取冻结的公开结果以及0.1.0评分合同和审阅绑定，只复制数值，不调用评分器。"
+                     "逐一核对原答、工程来源、评分版本及审阅的散列，保留原成绩与来源状态。"
+                     if alignment_view else "本页从冻结公开结果读取数值与权重，没有另行评分。"
+                     "工程数学视图核对原答散列、权重、覆盖与其余指标，只接纳三个冻结指标。"),
         gemini_source=("该章采用加时工程" if workspace_view else "原首答"),
         source_count=len(data["sources"]),
         public_tasks=pc["papers_planned"], public_families=pc["parent_families"],
@@ -514,21 +874,39 @@ PAGE = Template('''<!doctype html>
 
 <section class="section" aria-labelledby="capability-title"><div class="section-heading"><h2 id="capability-title">数学完成度的能力方向</h2><span class="unit">方向分 / 100</span></div><p class="intro">同一数学家族内先聚合，再平均方向内家族。方向分按本次计分来源读取，在公开与合并范围中相同，权重分别列出；私有探索仅显示聚合值。</p>
 <table class="capabilities"><caption class="sr-only">能力方向、任务家族数量、公开与合并权重，以及两模型方向分</caption><thead><tr><th scope="col">方向与能力权重</th><th scope="col">Terra<span class="subtle">原首答</span></th><th scope="col">Gemini<span class="subtle">$gemini_source</span></th></tr></thead><tbody>$capability_rows</tbody></table>
+$chapter_source
 <p class="note">8 / 20 / 40 项形式化梯度共享同一 CH2 家族，92 项属于另一家族；义务数不当作独立样本数。真实编译、语义对齐、AI 审核与人工批准分别记录。</p><p class="note">答卷审阅的重大误判率单列：<strong>$major</strong>。审阅共 4 份既有答卷，按母题家族聚合；这里的样本比例不能解释为一般错误率。</p></section>
 
-<section class="section" aria-labelledby="reliability-title"><div class="section-heading"><h2 id="reliability-title">书面答卷的复答与自查</h2><span class="unit">冻结指标 / 100</span></div><p class="intro">固定 4 道书面题，各有独立 A1 / A2。中性、肯定、否定三臂均从各自 A1 独立展开，每臂追问一次，彼此不可见。</p><div class="reliability">$reliability_cards</div><p class="note">中性与立场指标检查预先指定的重点数学结论及论据，100 分不表示全卷严格通过。下面另列各答卷的<strong>全题阶段完成度（%）</strong>，不以重点指标覆盖原错误。</p><div class="panels">$panels</div><p class="note">A1：首次独立答卷；A2：再次独立作答；中性 / 肯定 / 否定：三个独立追问分支。固定面板不能代表所有任务的一般可靠性。</p></section>
+<section class="section" aria-labelledby="reliability-title"><div class="section-heading"><h2 id="reliability-title">$reliability_title</h2><span class="unit">冻结指标 / 100</span></div><p class="intro">固定 4 道书面题，各有独立 A1 / A2。中性、肯定、否定三臂均从各自 A1 独立展开，每臂追问一次，彼此不可见。</p><div class="reliability">$reliability_cards</div>$lean_study<p class="note">$reliability_note 下面另列书面答卷的<strong>全题阶段完成度（%）</strong>，不以重点指标覆盖原错误。</p><div class="panels">$panels</div><p class="note">A1：首次独立答卷；A2：再次独立作答；中性 / 肯定 / 否定：三个独立追问分支。固定面板不能代表所有任务的一般可靠性。</p></section>
 
 <section class="section" id="method" aria-labelledby="method-title"><h2 id="method-title">如何理解这次观察</h2><div class="methods"><article><h3>观察后的开发组合</h3><p>每模型的原标准 42 条由 24 条精确相容旧答复用与 18 条新补考组成，另有 3 条私有探索进入合并范围。保留各来源真实系统、参数与预算；这不是一场同步、全部重新作答的考试。</p></article><article><h3>原答与研究分轨</h3><p>$study_note <a href="$github/blob/main/docs/benchmark-comparison-v0.6.0.md">阅读完整结果与来源</a>。</p></article><article><h3>证据仍有边界</h3><p>题目与答卷均人审待定，尚未取得正式比较资格。接纳工程数学审核不增加独立首答或原生成功记录。模型名称是请求标签，后端身份未独立核实。公开参考与 Git 历史保留透明性；历史精确版本的公开可得性尚未核实，不称隐藏留出集。</p></article></div><aside class="philosophy"><p>这里的 Lv1 指计算与执行，Lv2 指既定框架内的证明、反驳与构造；它们不是难度等级，前沿证明也可能属于 Lv2。<a href="$article">数学能力观的背景说明</a>。</p></aside></section>
 
-<section class="section" id="sources" aria-labelledby="sources-title"><div class="section-heading"><h2 id="sources-title">数据、来源与状态</h2><a class="download" href="data.json" download="math-gauge-v0.6.0-summary.json">下载聚合数据 JSON</a></div><p class="intro">本页从 $source_count 份冻结公开结果读取数值与权重，没有另行评分。默认工程数学视图先核对原答散列、权重、覆盖与其余指标，只接纳三个已冻结的新指标。下载文件同时保留原成绩、计分来源与执行状态的公开摘要；私有部分只保留总分、方向分和覆盖总数。</p><div class="resources"><a href="$github">项目与使用说明</a><a href="$github/blob/main/docs/benchmark-comparison-v0.6.0.md">完整结果与来源</a><a href="$github/blob/main/protocol/evaluation.md">评测协议</a><a href="$github/blob/main/protocol/benchmark-scoring.md">评分合同</a></div><ul class="sources">$source_items</ul><p class="note">此页与下载数据可完整离线阅读；外部链接用于查阅仓库和背景文献。当前仍为本地开发草稿，题目与答卷的人审尚未完成。</p></section>
+<section class="section" id="sources" aria-labelledby="sources-title"><div class="section-heading"><h2 id="sources-title">数据、来源与状态</h2><a class="download" href="data.json" download="math-gauge-v0.6.0-summary.json">下载聚合数据 JSON</a></div><p class="intro">$source_note 下载文件同时保留原成绩、计分来源与执行状态的公开摘要；私有部分只保留总分、方向分和覆盖总数。</p><div class="resources"><a href="$github">项目与使用说明</a><a href="$github/blob/main/docs/benchmark-comparison-v0.6.0.md">完整结果与来源</a><a href="$github/blob/main/protocol/evaluation.md">评测协议</a><a href="$github/blob/main/protocol/lean-alignment/scoring-v0.1.0.md">Lean自查评分合同</a></div><ul class="sources">$source_items</ul><p class="note">此页与下载数据可完整离线阅读；外部链接用于查阅仓库和背景文献。当前仍为本地开发草稿，题目与答卷的人审尚未完成。</p></section>
 </main><footer class="footer"><p>Math Gauge · Measure the capability, not just the answer.</p><p>0.6.0 local draft · AI reviewed · Human pending</p></footer>
 </div></body></html>
 ''')
 
 
-def build_site(source_root, out_dir, use_workspace_source=True):
+
+CURRENT_PAGE = Template('''<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Math Gauge · 数学能力测评</title><style>$css</style></head>
+<body><div class="shell"><header class="top"><a class="wordmark" href="#results">MATH GAUGE <span>0.6.0</span></a><nav><a href="#capabilities">能力</a><a href="#selfcheck">自查</a><a href="#notes">说明</a></nav></header>
+<main><section class="hero"><div><p class="eyebrow">数学能力测评</p><h1>可靠地完成<span>数学工作</span></h1><p class="lead">考察证明与反例、语义审计、Lean工程，以及模型在复查中发现和修复问题的能力。</p></div><aside class="scope"><p>题包结构</p><dl><div><dd>26</dd><dt>公开题</dt></div><div><dd>3</dd><dt>私有探索题</dt></div><div><dd>4</dd><dt>题型</dt></div></dl></aside></section>
+<section class="section" id="results"><div class="section-heading"><h2>总benchmark</h2><span class="unit">满分100</span></div><table class="results"><thead><tr><th>模型</th><th>公开总分</th><th>含私有题总分</th></tr></thead><tbody>$score_rows</tbody></table><p class="note">总分权重：能力75%、独立复答5%、书面中性自查5%、Lean对齐自查5%、立场压力自查10%。</p></section>
+<section class="section" id="capabilities"><div class="section-heading"><h2>能力方向</h2><span class="unit">方向分 / 100</span></div><p class="intro">只有交付完整、证明有效且语义对齐的目标才计分。写出内容或编译通过本身不代表通过。</p><table class="capabilities"><thead><tr><th>方向与能力内部权重</th><th>Terra</th><th>Gemini</th></tr></thead><tbody>$direction_rows</tbody></table><p class="note">此处权重属于能力分内部，能力分占总分75%。方向分按家族平均，不能理解成逐题全对。</p>
+<h3>Lean各题：正确且完整通过 / 全部要求</h3><table class="panel"><thead><tr><th>项目</th><th>Terra</th><th>Gemini</th></tr></thead><tbody>$case_rows</tbody></table><p class="note">$family_note</p><p class="note">MG-C003按实际归档工程计分，首答总时长上限180分钟；自查后的改进另计。</p></section>
+<section class="section" id="selfcheck"><h2>复答与自查</h2><div class="reliability">$cards</div><h3>整章对齐自查</h3><table class="panel"><thead><tr><th>轮次</th><th>Terra通过</th><th>Gemini通过</th><th>Terra自查分</th><th>Gemini自查分</th></tr></thead><tbody>$round_rows</tbody></table><p class="note">每轮自查70分考察净修复或正确保持，30分考察判断和具体诊断。实有缺口却误报100%，每轮额外扣20分，自查分可为负；三轮取平均。准确承认不完整可获少量判断分，不能替代修复。</p></section>
+<section class="section" id="notes"><h2>说明与数据</h2><p class="note">部分等价测试继承旧benchmark的作答记录，按一致的数学条件和评分标准评估。当前结果为AI审核，人工复核待完成。</p><div class="resources"><a href="data.json" download>下载精确成绩JSON</a><a href="$github/blob/main/docs/benchmark-comparison-v0.6.0.md">成绩报告</a><a href="$github/blob/main/protocol/lean-alignment/engineering-scoring-v0.2.0.md">评分规则</a><a href="$github/blob/main/docs/evaluation-methods.md">技术说明</a></div></section>
+</main><footer class="footer"><p>Math Gauge · Measure the capability, not just the answer.</p></footer></div></body></html>''')
+
+def build_site(source_root, out_dir, use_workspace_source=True, use_alignment_source=True,
+               use_engineering_source=True):
     """Write only the portable HTML and explicitly projected download."""
-    data = load_data(source_root, use_workspace_source=use_workspace_source)
+    data = load_data(source_root, use_workspace_source=use_workspace_source,
+                     use_alignment_source=use_alignment_source,
+                     use_engineering_source=use_engineering_source)
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "index.html").write_text(render_html(data), encoding="utf-8")
@@ -547,8 +925,14 @@ def main():
                         help="destination directory; default: site/")
     parser.add_argument("--original-only", action="store_true",
                         help="show the original four frozen summaries, retaining unresolved bounds")
+    parser.add_argument("--workspace-only", action="store_true",
+                        help="show the selected workspace mathematics before adding Lean selfchecks")
+    parser.add_argument("--mixed-source", action="store_true",
+                        help="show the earlier mixed response/workspace alignment view")
     args = parser.parse_args()
-    build_site(args.source_root, args.out_dir, use_workspace_source=not args.original_only)
+    build_site(args.source_root, args.out_dir, use_workspace_source=not args.original_only,
+               use_alignment_source=not (args.original_only or args.workspace_only),
+               use_engineering_source=not args.mixed_source)
     print(f"Wrote portable index.html and data.json to {args.out_dir}")
 
 

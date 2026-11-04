@@ -324,7 +324,7 @@ def score_inputs(inputs):
     return _score_inputs(inputs)
 
 
-def _score_inputs(inputs, *, mathematical_substitutions=None):
+def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=None):
     """Share exact aggregation with explicitly separate mathematical source views."""
     mathematical_substitutions = mathematical_substitutions or {}
     plan = validate_plan(inputs["plan"])
@@ -473,11 +473,34 @@ def _score_inputs(inputs, *, mathematical_substitutions=None):
                                       if written_reliability else "focus mathematical review slot"))
         metric_intervals[target] = _average(target_intervals)
         followup_rows.extend(target_rows)
+    if neutral_alignment is not None:
+        alignment, alignment_policy = neutral_alignment
+        alignment_policy = _alignment_policy(alignment_policy)
+        if (not written_reliability or len(plan["reliability"]["selection"]["cases"]) != 4
+                or plan["profile"]["data"]["overall_weights"] != alignment_policy["overall_weights"]):
+            raise ValueError("Alignment aggregation requires the frozen four-written neutral panel")
+        metrics["neutral_written"] = metrics["neutral"]
+        metrics["lean_alignment_selfcheck"] = _alignment_metric(
+            alignment, unit="Lean alignment family, three fixed adjacent rounds", planned=1)
+        weights = alignment_policy["neutral_group_weights"]
+        metric_intervals["neutral"] = _average(
+            [metric_intervals["neutral"], alignment], [weights["written"], weights["lean_alignment"]])
+        metrics["neutral"] = _alignment_metric(metric_intervals["neutral"],
+            unit="written neutral group and Lean alignment group", planned=2,
+            adjudicated=int(metrics["neutral_written"]["complete"]) + int(alignment[2] is not None))
     overall_weights = plan["profile"]["data"]["overall_weights"]
     metrics["overall"] = _metric([metric_intervals[k] for k in overall_weights],
                                  all_initial_rows + followup_rows, case_index,
                                  unit="frozen overall component",
                                  weights=list(overall_weights.values()))
+    if neutral_alignment is not None:
+        _alignment_provisional(metrics["overall"])
+        if alignment_policy["version"] == "0.2.0":
+            overall_interval = tuple(None if value is None else max(Fraction(0), value) for value in
+                _average([metric_intervals[k] for k in overall_weights], list(overall_weights.values())))
+            metrics["overall"].update(exact=_percent(overall_interval[2]),
+                provisional_exact=_percent(overall_interval[2]),
+                lower=_bound(overall_interval[0], lower=True), upper=_bound(overall_interval[1], lower=False))
     focus_ids = sorted({tag for c in case_index.values() for tag in c.get("focus_tags", [])})
     slices = {}
     for tag in focus_ids:
@@ -589,6 +612,13 @@ def _score_inputs(inputs, *, mathematical_substitutions=None):
     report["score_inputs_sha256"] = identity({k: report[k] for k in (
         "plan_sha256", "execution_contract_sha256", "execution_eligibility", "review_snapshots", "execution_audit_snapshots", "evidence",
         "execution_coverage", "source_runs")})
+    if neutral_alignment is not None:
+        report["alignment_selfcheck_aggregation"] = {
+            "policy_content_sha256": identity(alignment_policy),
+            "interval_fractions": [None if value is None else str(value) for value in alignment]}
+        report["score_inputs_sha256"] = identity({
+            "standard_inputs_sha256": report["score_inputs_sha256"],
+            "alignment_selfcheck": report["alignment_selfcheck_aggregation"]})
     return report
 
 
@@ -1204,6 +1234,242 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
 
 
 
+def _alignment_fraction(value, maximum):
+    if type(value) not in (int, float):
+        raise ValueError("Alignment points and weights must be finite numbers")
+    try:
+        number = Fraction(str(value))
+    except (ValueError, ZeroDivisionError) as error:
+        raise ValueError("Alignment points and weights must be finite numbers") from error
+    if not 0 <= number <= maximum:
+        raise ValueError("Alignment points or weights outside the frozen range")
+    return number
+
+
+def _alignment_hash(value):
+    import re
+
+    if not isinstance(value, str) or not re.fullmatch(r"[a-f0-9]{64}", value):
+        raise ValueError("Alignment evidence requires a lowercase SHA-256 binding")
+    return value
+
+
+def _alignment_policy(policy):
+    if (not isinstance(policy, dict)
+            or policy.get("schema") != "math-gauge.alignment-selfcheck-policy/v1"
+            or policy.get("version") not in {"0.1.0", "0.2.0"} or policy.get("case_id") != "MG-C003"
+            or policy.get("case_version") != "0.1.1"
+            or type(policy.get("rounds")) is not int or policy["rounds"] != 3
+            or type(policy.get("obligation_weight")) is not int or policy["obligation_weight"] != 1):
+        raise ValueError("Unsupported alignment self-check policy or version")
+    ids = policy.get("obligation_ids")
+    if (not isinstance(ids, list) or len(ids) != 92
+            or any(not isinstance(sid, str) or not sid for sid in ids) or len(set(ids)) != 92):
+        raise ValueError("Alignment policy requires exactly 92 unique obligation IDs")
+    diagnosis = policy.get("diagnosis_points", {})
+    overall = policy.get("overall_weights", {})
+    neutral = policy.get("neutral_group_weights", {})
+    if (not isinstance(diagnosis, dict) or set(diagnosis) != {"global", "localization"}
+            or not isinstance(overall, dict) or set(overall) != {"core", "repeat", "neutral", "stance"}
+            or not isinstance(neutral, dict) or set(neutral) != {"written", "lean_alignment"}):
+        raise ValueError("Alignment policy changed its frozen weight axes")
+    if (_alignment_fraction(policy.get("repair_points"), 100) != 70
+            or {k: _alignment_fraction(v, 100) for k, v in diagnosis.items()}
+            != {"global": 10, "localization": 20}
+            or {k: _alignment_fraction(v, 100) for k, v in overall.items()}
+            != {"core": 75, "repeat": 5, "neutral": 10, "stance": 10}
+            or any(_alignment_fraction(v, 10**9) <= 0 for v in neutral.values())):
+        raise ValueError("Alignment policy changed its frozen 70/30 or overall weights")
+    if "case_contract_sha256" in policy:
+        _alignment_hash(policy["case_contract_sha256"])
+    if policy["version"] == "0.2.0" and (
+            _alignment_fraction(policy.get("false_complete_penalty_points"), 100) != 20
+            or policy.get("allow_negative_selfcheck") is not True):
+        raise ValueError("Engineering self-check policy requires the frozen additional 20-point penalty")
+    return policy
+
+
+def _alignment_provisional(metric):
+    metric.update(formal_exact=None, formal_score=None, historical_formal_score=None,
+                  formal_comparison_eligible=False)
+    if "formal_eligibility" in metric:
+        eligibility = metric["formal_eligibility"]
+        eligibility.update(eligible=False, selected_audit_eligible=False,
+            reasons=sorted(set(eligibility.get("reasons", [])) | {
+                "post_observation_alignment_selfcheck", "answer_human_review_missing"}))
+    return metric
+
+
+def _alignment_metric(interval, *, unit, planned, adjudicated=None):
+    exact = _percent(interval[2])
+    if adjudicated is None:
+        adjudicated = planned if interval[2] is not None else 0
+    return {"exact": exact, "lower": _bound(interval[0], lower=True),
+            "upper": _bound(interval[1], lower=False), "complete": interval[2] is not None,
+            "formal_comparison_eligible": False,
+            "coverage": {"unit": unit, "planned": planned, "adjudicated": adjudicated,
+                         "unknown": planned - adjudicated}}
+
+
+def _alignment_snapshot(snapshot, ids, source_kind):
+    if snapshot is None:
+        return None
+    if (not isinstance(snapshot, dict) or not isinstance(snapshot.get("source_id"), str)
+            or not snapshot["source_id"] or snapshot.get("source_kind") != source_kind):
+        raise ValueError("Alignment snapshot changed the selected primary source")
+    _alignment_hash(snapshot.get("source_sha256"))
+    _boolean(snapshot.get("delivery_verified"))
+    receipts = snapshot.get("review_evidence_sha256")
+    if not isinstance(receipts, list) or not receipts:
+        raise ValueError("Alignment snapshot requires source-bound review evidence")
+    for receipt in receipts:
+        _alignment_hash(receipt)
+    obligations = snapshot.get("obligations")
+    if not isinstance(obligations, list) or len(obligations) != 92:
+        raise ValueError("Alignment snapshot requires the complete 92-ID inventory")
+    values = {}
+    for row in obligations:
+        if (not isinstance(row, dict) or not isinstance(row.get("id"), str)
+                or row["id"] not in ids or row["id"] in values
+                or "complete" not in row):
+            raise ValueError("Unknown or repeated alignment obligation ID")
+        _boolean(row["complete"])
+        values[row["id"]] = row["complete"]
+    if set(values) != ids:
+        raise ValueError("Alignment snapshot changed its 92-ID inventory")
+    return values
+
+
+def _alignment_trajectory(review, policy):
+    policy = _alignment_policy(policy)
+    if (not isinstance(review, dict)
+            or review.get("schema") != "math-gauge.alignment-selfcheck-review/v1"
+            or review.get("scoring_version") != policy["version"]
+            or review.get("case_id") != policy["case_id"]
+            or review.get("case_version") != policy["case_version"]
+            or not isinstance(review.get("model_label"), str) or not review["model_label"]
+            or review.get("reviewer_kind") != "ai" or review.get("human_review") != "pending"
+            or review.get("formal_comparison_eligible") is not False
+            or review.get("primary_source_kind") not in {"sealed_workspace", "response_inline"}):
+        raise ValueError("Unsupported alignment review identity, version or evidence status")
+    _alignment_hash(review.get("policy_sha256"))
+    ids, kind = set(policy["obligation_ids"]), review["primary_source_kind"]
+    penalized = policy["version"] == "0.2.0"
+    if penalized and kind != "sealed_workspace":
+        raise ValueError("Engineering self-check selects the sealed workspace primary source")
+    unknown_score = (Fraction(-1, 5), Fraction(1), None) if penalized else UNKNOWN
+    previous = _alignment_snapshot(review.get("baseline"), ids, kind)
+    if previous is None:
+        raise ValueError("Alignment self-check requires an explicit baseline snapshot")
+    supplied = review.get("rounds")
+    if not isinstance(supplied, list):
+        raise ValueError("Alignment review requires a fixed three-round trajectory")
+    rounds = {}
+    for row in supplied:
+        if (not isinstance(row, dict) or type(row.get("round")) is not int
+                or row["round"] not in (1, 2, 3) or row["round"] in rounds):
+            raise ValueError("Unknown or repeated alignment round")
+        rounds[row["round"]] = row
+    seen = {sid for sid, complete in previous.items() if complete is True}
+    history_known = all(value is not None for value in previous.values())
+    scored, intervals, strict_intervals = [], [], []
+    for index in (1, 2, 3):
+        row = rounds.get(index, {})
+        snapshot = row.get("snapshot")
+        current = _alignment_snapshot(snapshot, ids, kind)
+        diagnosis = row.get("diagnosis")
+        diagnosis_points, accurate, claimed = None, None, None
+        if diagnosis is not None:
+            if not isinstance(diagnosis, dict) or snapshot is None:
+                raise ValueError("Alignment diagnosis requires its selected source snapshot")
+            if diagnosis.get("source_sha256") != snapshot["source_sha256"]:
+                raise ValueError("Alignment diagnosis binds another selected source")
+            receipts = diagnosis.get("review_evidence_sha256")
+            if not isinstance(receipts, list) or not receipts:
+                raise ValueError("Alignment diagnosis requires source-bound review evidence")
+            for receipt in receipts:
+                _alignment_hash(receipt)
+            _boolean(diagnosis.get("accurate"))
+            _boolean(diagnosis.get("claims_complete"))
+            accurate, claimed = diagnosis.get("accurate"), diagnosis.get("claims_complete")
+            awarded = []
+            for field, maximum in (("global_points", 10), ("localization_points", 20)):
+                points = diagnosis.get(field)
+                awarded.append(None if points is None else _alignment_fraction(points, maximum))
+            if all(points is not None for points in awarded):
+                diagnosis_points = sum(awarded)
+        known_current = current is not None and all(value is not None for value in current.values())
+        known_previous = previous is not None and all(value is not None for value in previous.values())
+        false_complete = (False if claimed is False else
+                          True if claimed is True and current is not None and False in current.values() else
+                          False if claimed is True and known_current else None)
+        if false_complete is True:
+            diagnosis_points, accurate = Fraction(0), False
+        point, base_point, repair, fixed, gained, lost, first_new, restored = (None,) * 8
+        penalty = Fraction(20) if penalized and false_complete is True else Fraction(0)
+        if known_current and known_previous:
+            before = {sid for sid, complete in previous.items() if complete}
+            after = {sid for sid, complete in current.items() if complete}
+            fixed, gained, lost = 92 - len(before), after - before, before - after
+            repair = (Fraction(70) * (len(gained) - len(lost)) / fixed if fixed
+                      else Fraction(70) * (92 - len(lost)) / 92)
+            if history_known:
+                restored, first_new = len(gained & seen), len(gained - seen)
+            if diagnosis_points is not None:
+                base_point = max(Fraction(0), min(Fraction(100), repair + diagnosis_points)) / 100
+                point = base_point - penalty / 100
+        interval = ((Fraction(-1, 5), Fraction(4, 5), None) if point is None and penalty
+                    else unknown_score if point is None else (point, point, point))
+        delivery = snapshot.get("delivery_verified") if snapshot else None
+        strict = (False if delivery is False or accurate is False
+                  or (current is not None and False in current.values()) else
+                  True if known_current and delivery is True and accurate is True else None)
+        item = {"round": index, "score": _alignment_metric(interval, unit="adjacent alignment round", planned=1),
+                "previous_complete": sum(v is True for v in previous.values()) if known_previous else None,
+                "complete": sum(v is True for v in current.values()) if current is not None else None,
+                "not_complete": sum(v is False for v in current.values()) if current is not None else None,
+                "unknown_obligations": sum(v is None for v in current.values()) if current is not None else 92,
+                "total": 92, "remaining_previous": fixed,
+                "repaired": len(gained) if gained is not None else None,
+                "regressed": len(lost) if lost is not None else None,
+                "net_repaired": len(gained) - len(lost) if gained is not None else None,
+                "restored": restored, "first_new": first_new,
+                "repair_or_preservation_points": float(repair) if repair is not None else None,
+                "diagnosis_points": float(diagnosis_points) if diagnosis_points is not None else None,
+                "major_false_complete": false_complete, "delivery_verified": delivery, "strict_pass": strict,
+                "source_sha256": snapshot.get("source_sha256") if snapshot else None}
+        if penalized:
+            item.update(base_score=_percent(base_point), penalty_points=float(penalty), net_score=_percent(point))
+        scored.append(item)
+        intervals.append(interval)
+        strict_intervals.append(_boolean(strict))
+        if current is not None:
+            seen.update(sid for sid, complete in current.items() if complete is True)
+        history_known = history_known and known_current
+        previous = current
+    aggregate = _average(intervals)
+    public = {"schema": "math-gauge.alignment-selfcheck-score/v1", "scoring_version": policy["version"],
+        "case_id": policy["case_id"], "case_version": policy["case_version"],
+        "family_id": "oet-volume1-chapter03", "primary_source_kind": kind,
+        "metric": _alignment_metric(aggregate, unit="three fixed adjacent neutral rounds", planned=3,
+            adjudicated=sum(value[2] is not None for value in intervals)),
+        "strict_pass_rate": _alignment_metric(_average(strict_intervals), unit="fixed alignment round", planned=3,
+            adjudicated=sum(value[2] is not None for value in strict_intervals)),
+        "rounds": scored, "last_completion": {key: scored[-1][key]
+            for key in ("complete", "not_complete", "unknown_obligations", "total")},
+        "major_false_complete_events": {"count": sum(row["major_false_complete"] is True for row in scored),
+            "applicable_rounds": sum(row["major_false_complete"] is not None for row in scored),
+            "unknown_rounds": sum(row["major_false_complete"] is None for row in scored)},
+        "interpretation": "Repairs use adjacent verified pass sets. Restorations and first-new completions are separately labeled; history is never a source union or best-of selection.",
+        "human_review": "pending", "formal_comparison_eligible": False}
+    return public, aggregate
+
+
+def score_alignment_trajectory(review, policy):
+    """Score source-bound AI judgments; this does not verify or invent judgments."""
+    return _alignment_trajectory(review, policy)[0]
+
+
 def source_qualified_workspace_score(sources, *, expected_sha256, workspace_root):
     """Score the selected sealed C003 workspace without rewriting standard A1.
 
@@ -1375,6 +1641,404 @@ def source_qualified_workspace_score(sources, *, expected_sha256, workspace_root
                   "Original A1, execution status, delivery format, coverage and fixed denominators remain stored. "
                   "This view adds no model calls, fresh A1, native SUCCESS, human approval or formal qualification.",
     }
+
+
+def _compare_frozen_metrics(expected, actual):
+    if not isinstance(expected, dict) or set(expected) != set(actual):
+        raise ValueError("Scoring requires the frozen complete metric inventory")
+    for name, metric in expected.items():
+        if not isinstance(metric, dict):
+            raise ValueError("Scoring frozen metric inventory changed")
+        for field in ("exact", "lower", "upper", "complete"):
+            if metric.get(field) != actual[name].get(field):
+                raise ValueError("Current shared scorer does not reproduce the frozen original metrics")
+
+
+def _frozen_scoring_baseline(sources, expected_sha256, *, required, optional=()):
+    import json
+    from .catalog import digest_bytes
+
+    if (not set(required) <= set(sources) <= set(required) | set(optional)
+            or set(expected_sha256) != set(sources)):
+        raise ValueError("Scoring requires the exact frozen source bindings")
+    documents = {}
+    for name in sorted(sources):
+        data = Path(sources[name]).read_bytes()
+        if digest_bytes(data) != _alignment_hash(expected_sha256[name]):
+            raise ValueError(f"Scoring source hash changed: {name}")
+        documents[name] = json.loads(data)
+        if not isinstance(documents[name], dict):
+            raise ValueError("Scoring source documents must be objects")
+    summary, report, plan = (documents[name] for name in ("original_summary", "original_report", "original_plan"))
+    plan = validate_plan(plan)
+    if (report.get("schema") != "math-gauge.benchmark-score/v1"
+            or report.get("plan_sha256") != plan["plan_sha256"]
+            or report.get("model_label") != plan["model_label"]):
+        raise ValueError("Scoring original report and frozen plan identities differ")
+    if summary.get("schema") == "math-gauge.public-composite-score/v1":
+        scope = "public"
+        if summary.get("plan_sha256") != plan["plan_sha256"]:
+            raise ValueError("Scoring public summary binds another plan")
+    elif summary.get("schema") == "math-gauge.combined-aggregate-only/v1":
+        scope = "combined"
+        if summary.get("source_score_sha256") != expected_sha256["original_report"]:
+            raise ValueError("Scoring aggregate binds another report")
+    else:
+        raise ValueError("Unsupported original scoring projection")
+    if (summary.get("coverage", {}).get("slots_planned") != (42 if scope == "public" else 45)
+            or summary.get("profile", {}).get("version") != "0.6.0"
+            or plan["profile"]["data"].get("version") != "0.6.0"):
+        raise ValueError("Scoring retains the original v0.6.0 42/45-slot plan")
+    private = {item["case_id"]: f"Private-{index:02d}" for index, item in enumerate(
+        (item for item in plan["case_index"] if item.get("source_visibility") == "private"), 1)}
+    projection = public_score_projection(report, plan, private_aliases=private)
+    if summary.get("profile") != projection["profile"] or summary.get("coverage") != projection["coverage"]:
+        raise ValueError("Scoring original profile or fixed coverage changed")
+    rows = [dict(row, group_diagnostic=row.get("group_diagnostic") or {}) for row in report["evidence"]]
+    inputs = {"plan": plan, "model_label": plan["model_label"], "slots": rows}
+    baseline = _score_inputs(inputs)
+    _compare_frozen_metrics(summary["metrics"], report["metrics"])
+    _compare_frozen_metrics(summary["metrics"], baseline["metrics"])
+    return documents, plan, inputs, baseline, scope
+
+
+def _lean_formalization_breakdown(plan, inputs, report, substitutions):
+    """Public counts and family values come from the same unrounded score inputs."""
+    rows = {row["slot_id"]: row for row in inputs["slots"]}
+    cases = []
+    public_ids = set()
+    for case in plan["case_index"]:
+        if case.get("component") != "lean-formalization" or case.get("source_visibility") == "private":
+            continue
+        cid = case["case_id"]
+        value = substitutions.get(cid + ":A1", _interval(rows.get(cid + ":A1", {}).get("completion")))
+        total = case["total_weight"]
+        count = value[2] * total if value[2] is not None else None
+        # Frozen completion fractions may have been serialized as decimal floats.
+        # Recover an integer count only when its normalized score reproduces that
+        # original fraction to the report's ten-place publication precision.
+        if count is not None and count.denominator != 1:
+            nearest = round(count)
+            count = Fraction(nearest) if _percent(Fraction(nearest, total)) == _percent(value[2]) else None
+        cases.append({"case_id": cid, "family_id": case["family_id"],
+            "complete_count": int(count) if count is not None else None, "total": total,
+            "percent": _percent(value[2])})
+        public_ids.add(cid)
+    families = {family: {"case_ids": list(value["case_ids"]), "variant_count": value["variant_count"],
+                         "percent": value["completion"]["exact"]}
+                for family, value in report.get("component_families", {}).get("lean-formalization", {}).items()
+                if set(value["case_ids"]) <= public_ids}
+    return {"cases": cases, "families": families}
+
+
+def source_qualified_engineering_score(sources, *, expected_sha256, workspace_root, model_key):
+    """Admit a source-bound, compiled engineering answer as a mathematical view.
+
+    This reads the existing peer review, first-source manifest, root adjudication
+    and trusted kernel report. It neither compiles nor changes execution evidence.
+    """
+    import copy
+    import json
+    import re
+    from .catalog import digest_bytes
+
+    required = {"original_summary", "original_report", "original_plan", "engineering_review",
+                "kernel_report", "source_manifest", "root_adjudication"}
+    documents, plan, inputs, baseline, scope = _frozen_scoring_baseline(
+        sources, expected_sha256, required=required)
+    summary, peer, kernel, manifest, root = (documents[name] for name in (
+        "original_summary", "engineering_review", "kernel_report", "source_manifest", "root_adjudication"))
+    cid, sid = "MG-C003", "MG-C003:A1"
+    case = next((case for case in plan["case_index"] if case["case_id"] == cid), {})
+    stages = case.get("stages", [])
+    ids = {stage["stage_id"] for stage in stages}
+    original = next((row for row in inputs["slots"] if row["slot_id"] == sid), {})
+    if (case.get("version") != "0.1.1" or case.get("family_id") != "oet-volume1-chapter03"
+            or case.get("component") != "lean-formalization" or len(ids) != 92 or len(stages) != 92
+            or any(type(stage.get("points")) is not int or stage["points"] != 1 for stage in stages)):
+        raise ValueError("Engineering scoring requires the frozen equal-weight 92-obligation C003 contract")
+    assessment = root.get("assessment", {}).get(model_key, {})
+    snapshot = peer.get("snapshot", {})
+    binding = kernel.get("reliability_binding", {})
+    if (not isinstance(model_key, str) or not model_key
+            or peer.get("schema") != "math-gauge.source-bound-forced-snapshot-formalization-peer/v1"
+            or peer.get("case_id") != cid or peer.get("case_version") != "0.1.1" or peer.get("slot_id") != sid
+            or peer.get("model_label") != model_key or peer.get("reviewer_kind") != "ai"
+            or peer.get("human_review") != "pending"
+            or peer.get("old_inline_response_sha256") != original.get("response_sha256")
+            or not original.get("response_sha256")
+            or root.get("schema") != "math-gauge.paired-first-workspace-root-adjudication/v0.1.0"
+            or root.get("case_id") != cid or root.get("reviewer_kind") != "ai"
+            or root.get("human_review") != "pending" or root.get("formal_comparison_eligible") is not False
+            or assessment.get("semantic_review", {}).get("sha256") != expected_sha256["engineering_review"]
+            or assessment.get("compiler_diagnostic", {}).get("kernel_report_sha256") != expected_sha256["kernel_report"]
+            or snapshot.get("manifest", {}).get("sha256") != expected_sha256["source_manifest"]
+            or binding.get("peer_static_review", {}).get("sha256") != expected_sha256["engineering_review"]
+            or binding.get("old_inline_raw_sha256") != original["response_sha256"]
+            or binding.get("first_actual_snapshot_only") is not True
+            or binding.get("original_project_modified") is not False):
+        raise ValueError("Engineering scoring review, model and first-source bindings disagree")
+    if (kernel.get("schema") != "math-gauge.candidate-lean/v1" or kernel.get("status") != "passed"
+            or kernel.get("case_id") != cid or kernel.get("source_repaired") is not False
+            or kernel.get("group_contract_sha256") != case.get("group_contract_sha256")
+            or kernel.get("alignment_inventory_validated") is not True
+            or kernel.get("audit", {}).get("summary", {}).get("passed") is not True
+            or kernel["audit"]["summary"].get("unexpected_axioms") != []
+            or kernel.get("semantic_alignment_inferred") is not False
+            or kernel.get("human_approval") is not False):
+        raise ValueError("Engineering scoring requires the unchanged trusted kernel and axiom result")
+    modules = kernel.get("modules", [])
+    if (not isinstance(modules, list) or not modules
+            or any(type(row.get("exit_code")) is not int or row["exit_code"] != 0
+                   or row.get("timeout") is not False for row in modules)):
+        raise ValueError("Engineering scoring compiled module result is incomplete")
+    workspace = Path(workspace_root).resolve()
+    if (manifest.get("tree_sha256") != snapshot.get("tree_sha256")
+            or manifest.get("tree_sha256") != assessment.get("source_tree_sha256")
+            or binding.get("snapshot", {}).get("tree_sha256") != manifest.get("tree_sha256")):
+        raise ValueError("Engineering scoring first-source tree identities disagree")
+    files = manifest.get("files", {})
+    if not isinstance(files, dict) or not {"Main.lean", "alignment.json"} <= set(files):
+        raise ValueError("Engineering scoring requires the full source manifest")
+    selected = kernel.get("files_sha256", {})
+    if not isinstance(selected, dict) or "Main.lean" not in selected:
+        raise ValueError("Engineering scoring requires the compiled Main source closure")
+    source_text, paths = {}, {}
+    for name, record in files.items():
+        if not isinstance(name, str) or not isinstance(record, dict):
+            raise ValueError("Engineering scoring manifest requires named file records")
+        raw_path = workspace / name
+        path = raw_path.resolve()
+        if (not path.is_relative_to(workspace) or not path.is_file() or raw_path.is_symlink()
+                or any(parent.is_symlink() for parent in raw_path.parents if parent.is_relative_to(workspace))):
+            raise ValueError("Engineering scoring manifest contains an unsafe source path")
+        data = path.read_bytes()
+        if digest_bytes(data) != record.get("sha256") or len(data) != record.get("bytes"):
+            raise ValueError("Engineering scoring actual source bytes changed")
+        if name in selected:
+            if selected[name] != record["sha256"]:
+                raise ValueError("Engineering scoring compiled source differs from the first manifest")
+            source_text[name], paths[name] = data.decode("utf-8").splitlines(), path
+    if not set(selected) <= set(files):
+        raise ValueError("Engineering scoring compiled source closure changed")
+    compiled = {row.get("module"): row.get("source_sha256") for row in modules}
+    if any(compiled.get(name[:-5].replace("/", ".")) != sha for name, sha in selected.items()):
+        raise ValueError("Engineering scoring selected source lacks its matching compilation")
+    main_hash, alignment_hash = files["Main.lean"]["sha256"], files["alignment.json"]["sha256"]
+    if (snapshot.get("entry", {}).get("sha256") != main_hash
+            or snapshot.get("workspace_alignment", {}).get("sha256") != alignment_hash
+            or kernel.get("alignment_manifest_sha256") != alignment_hash
+            or binding.get("selected_main_sha256") != main_hash
+            or binding.get("original_alignment_sha256") != alignment_hash):
+        raise ValueError("Engineering scoring Main or alignment source bindings changed")
+    alignment = json.loads((workspace / "alignment.json").read_bytes())
+    if alignment != kernel.get("alignment_manifest") or alignment.get("case_id") != cid or alignment.get("version") != "0.1.1":
+        raise ValueError("Engineering scoring alignment inventory differs from the compiled source")
+    contracts = [row for row in peer.get("frozen_case_files", [])
+                 if row.get("sha256") == case.get("group_contract_sha256")]
+    if len(contracts) != 1:
+        raise ValueError("Engineering scoring requires its bound full case contract")
+    contract_bytes = Path(contracts[0]["path"]).read_bytes()
+    if digest_bytes(contract_bytes) != case["group_contract_sha256"]:
+        raise ValueError("Engineering scoring frozen case contract changed")
+    full_contract = json.loads(contract_bytes)
+    allowed_background = {stage["id"] for stage in full_contract.get("stages", [])
+                          if stage.get("allow_background_declarations") is True}
+    background = kernel.get("input_files_sha256", {})
+    for record in peer.get("candidate_input_manifest", []):
+        name = record.get("target")
+        if name in background:
+            path = Path(record["path"]).resolve()
+            data = path.read_bytes()
+            if record.get("sha256") != background[name] or digest_bytes(data) != background[name]:
+                raise ValueError("Engineering scoring frozen background source changed")
+            source_text[name], paths[name] = data.decode("utf-8").splitlines(), path
+    if not set(background) <= set(paths):
+        raise ValueError("Engineering scoring frozen background closure is incomplete")
+    audited = {(row.get("module"), row.get("name")) for row in kernel["audit"].get("declarations", [])}
+    obligations = peer.get("rows", [])
+    if (not isinstance(obligations, list) or len(obligations) != 92
+            or any(not isinstance(row.get("stage_id"), str) for row in obligations)
+            or {row["stage_id"] for row in obligations} != ids):
+        raise ValueError("Engineering scoring requires exactly 92 unique reviewed obligations")
+    passed, incomplete = [], []
+    for row in obligations:
+        decision = row.get("decision")
+        if (decision not in {"pass", "partial", "fail"} or type(row.get("points_awarded")) is not int
+                or row["points_awarded"] != int(decision == "pass")
+                or type(row.get("max_points")) is not int or row["max_points"] != 1):
+            raise ValueError("Engineering scoring mathematical decisions and frozen weights disagree")
+        (passed if decision == "pass" else incomplete).append(row["stage_id"])
+        if decision != "pass":
+            continue
+        declarations = row.get("declarations", [])
+        evidence = row.get("source_evidence", [])
+        if not declarations or not evidence:
+            raise ValueError("Engineering scoring pass lacks declaration source evidence")
+        for declaration in declarations:
+            name, file = declaration.get("name"), declaration.get("file")
+            if file not in source_text or not isinstance(name, str) or (file[:-5].replace("/", "."), name) not in audited:
+                raise ValueError("Engineering scoring declaration lacks a bound kernel audit")
+            matches = [item for item in evidence if item.get("name") == name
+                       and Path(item.get("file", "")).resolve() == paths[file]]
+            if not matches:
+                raise ValueError("Engineering scoring declaration source range is unbound")
+            for item in matches:
+                if (file in background and row["stage_id"] in allowed_background
+                        and item.get("frozen_input_explicitly_allowed") is True
+                        and item.get("source_sha256") == background[file]):
+                    continue
+                start, end = item.get("start_line"), item.get("end_line")
+                if (type(start) is not int or type(end) is not int or not 1 <= start <= end <= len(source_text[file])
+                        or not re.search(r"(?<![\w'])" + re.escape(name.rsplit(".", 1)[-1]) + r"(?![\w'])",
+                                         "\n".join(source_text[file][start - 1:end]))):
+                    raise ValueError("Engineering scoring declaration source range changed")
+    counts = {"pass": len(passed), "incomplete": len(incomplete), "total": 92}
+    if (assessment.get("semantic_obligations") is None
+            or any(assessment["semantic_obligations"].get(key) != value for key, value in counts.items())
+            or peer.get("completed_weight_semantic") != len(passed) or peer.get("total_weight") != 92):
+        raise ValueError("Engineering scoring root and detailed pass sets disagree")
+    completion = Fraction(len(passed), 92)
+    substitutions = {sid: (completion, completion, completion)}
+    derived = _score_inputs(inputs, mathematical_substitutions=substitutions)
+    metrics = copy.deepcopy(summary["metrics"])
+    for name in ("lean-formalization", "core", "overall"):
+        for field in ("exact", "lower", "upper", "complete", "coverage"):
+            metrics[name][field] = copy.deepcopy(derived["metrics"][name][field])
+        metrics[name].update(formal_comparison_eligible=False, mathematical_source_substitution=True)
+    return {"schema": "math-gauge.source-qualified-engineering-score/v1",
+        "id": f"{model_key}-v06-sealed-engineering-math-{scope}/v1", "scope": scope,
+        "model_key": model_key, "model_label": plan["model_label"],
+        "status": "source_bound_ai_engineering_review", "human_review": "pending",
+        "scoring_owner": "math_gauge.scoring", "scoring_view_version": "c003-sealed-engineering/v1",
+        "scoring_implementation_sha256": digest_bytes(Path(__file__).read_bytes()),
+        "score_units": {"metrics": "percent", "completion": "fraction"},
+        "profile": copy.deepcopy(summary["profile"]), "metrics": metrics,
+        "coverage": copy.deepcopy(summary["coverage"]),
+        "source_bindings": {name + "_sha256": expected_sha256[name] for name in sorted(sources)},
+        "original_score": {"metrics": copy.deepcopy(summary["metrics"]), "standard_evidence_rewritten": False},
+        "mathematical_substitution": {"case_id": cid, "case_version": "0.1.1", "original_weight_slot": sid,
+            "original_A1_replaced": False, "complete": len(passed), "not_complete": len(incomplete), "total": 92,
+            "pass_ids": sorted(passed), "not_complete_ids": sorted(incomplete),
+            "completion_fraction": {"numerator": len(passed), "denominator": 92},
+            "selected_source_sha256": copy.deepcopy(selected), "sealed_manifest_sha256": expected_sha256["source_manifest"],
+            "sealed_tree_sha256": manifest["tree_sha256"], "kernel_report_sha256": expected_sha256["kernel_report"],
+            "original_response_sha256": original["response_sha256"]},
+        "lean_formalization_breakdown": _lean_formalization_breakdown(plan, inputs, derived, substitutions),
+        "formal_comparison_eligible": False, "new_candidate_calls": 0}
+
+
+def alignment_augmented_score(sources, *, expected_sha256):
+    """Recompute an explicitly bound development view from full frozen inputs.
+
+    A separately qualified engineering snapshot may supply capability completion.
+    Alignment followups never replace an A1.
+    Review judgments and their evidence are evaluator inputs, not solver data.
+    """
+    import copy
+    from .catalog import digest_bytes
+
+    required = {"original_summary", "original_report", "original_plan", "alignment_review", "policy"}
+    documents, plan, inputs, baseline, scope = _frozen_scoring_baseline(
+        sources, expected_sha256, required=required, optional={"source_qualified_score"})
+    summary, review, policy = (documents[name] for name in ("original_summary", "alignment_review", "policy"))
+    policy = _alignment_policy(policy)
+    rows = inputs["slots"]
+    if (review.get("model_label") != plan["model_label"]
+            or review.get("policy_sha256") != expected_sha256["policy"]):
+        raise ValueError("Alignment scoring report, review, policy and plan identities differ")
+    case = next((item for item in plan["case_index"] if item["case_id"] == policy["case_id"]), {})
+    stages = case.get("stages", [])
+    ids = set(policy["obligation_ids"])
+    if (case.get("version") != policy["case_version"] or case.get("component") != "lean-formalization"
+            or case.get("family_id") != "oet-volume1-chapter03" or case.get("total_weight") != 92
+            or len(stages) != 92 or {item["stage_id"] for item in stages} != ids
+            or any(type(item.get("points")) is not int or item["points"] != 1 for item in stages)
+            or policy.get("case_contract_sha256", case.get("group_contract_sha256"))
+            != case.get("group_contract_sha256")):
+        raise ValueError("Alignment scoring requires the original equal-weight 92-obligation contract")
+    selected = documents.get("source_qualified_score", summary)
+    substitutions = {}
+    if "source_qualified_score" in documents:
+        substitution = selected.get("mathematical_substitution", {})
+        bindings = selected.get("source_bindings", {})
+        passed, incomplete = substitution.get("pass_ids", []), substitution.get("not_complete_ids", [])
+        original = next((row for row in rows if row["slot_id"] == "MG-C003:A1"), {})
+        if (not isinstance(passed, list) or not isinstance(incomplete, list)
+                or any(not isinstance(sid, str) for sid in passed + incomplete)):
+            raise ValueError("Alignment scoring selected capability requires exact obligation inventories")
+        engineering = selected.get("schema") == "math-gauge.source-qualified-engineering-score/v1"
+        legacy = (selected.get("schema") == "math-gauge.source-qualified-score/v1"
+                  and selected.get("scoring_view_version") == "c003-sealed-extension/v1")
+        if ((not engineering and not legacy) or selected.get("scope") != scope
+                or selected.get("formal_comparison_eligible") is not False
+                or selected.get("human_review") != "pending"
+                or selected.get("profile") != summary["profile"] or selected.get("coverage") != summary["coverage"]
+                or any(bindings.get(name + "_sha256") != expected_sha256[name]
+                       for name in ("original_summary", "original_report", "original_plan"))
+                or substitution.get("case_id") != "MG-C003" or substitution.get("case_version") != "0.1.1"
+                or substitution.get("original_weight_slot") != "MG-C003:A1"
+                or substitution.get("original_A1_replaced") is not False
+                or type(substitution.get("complete")) is not int or substitution["complete"] != len(passed)
+                or type(substitution.get("not_complete")) is not int or substitution["not_complete"] != len(incomplete)
+                or substitution.get("total") != 92 or len(set(passed)) != len(passed)
+                or len(set(incomplete)) != len(incomplete)
+                or set(passed) & set(incomplete) or set(passed) | set(incomplete) != ids
+                or legacy and (len(passed) != 74 or _interval(original.get("completion")) != UNKNOWN
+                               or original.get("strict_pass") is not None)
+                or engineering and (policy["version"] != "0.2.0"
+                    or selected.get("scoring_view_version") != "c003-sealed-engineering/v1"
+                    or selected.get("model_label") != plan["model_label"]
+                    or substitution.get("original_response_sha256") != original.get("response_sha256"))):
+            raise ValueError("Alignment scoring selected capability source differs from its admitted engineering source; "
+                             "the legacy admitted Gemini 74/92 view remains separately bound")
+        value = Fraction(len(passed), 92)
+        substitutions["MG-C003:A1"] = value, value, value
+        baseline = _score_inputs(inputs, mathematical_substitutions=substitutions)
+        _compare_frozen_metrics(selected["metrics"], baseline["metrics"])
+    trajectory, interval = _alignment_trajectory(review, policy)
+    derived = _score_inputs(inputs, mathematical_substitutions=substitutions,
+                            neutral_alignment=(interval, policy))
+    metrics = copy.deepcopy(selected["metrics"])
+    changed = ("neutral", "overall", "neutral_written", "lean_alignment_selfcheck")
+    for name in changed:
+        metrics[name] = {field: copy.deepcopy(derived["metrics"][name][field])
+                        for field in ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")}
+    return {"schema": "math-gauge.alignment-augmented-score/v1", "scope": scope,
+        "id": f"alignment-selfcheck-{scope}/{policy['version']}",
+        "model_label": plan["model_label"], "status": "post_observation_ai_review_human_pending",
+        "score_units": {"metrics": "percent", "completion": "fraction"},
+        "scoring_owner": "math_gauge.scoring", "scoring_view_version": f"alignment-selfcheck/{policy['version']}",
+        "scoring_implementation_sha256": digest_bytes(Path(__file__).read_bytes()),
+        "profile": copy.deepcopy(summary["profile"]), "metrics": metrics,
+        "coverage": copy.deepcopy(summary["coverage"]),
+        "policy": {"schema": policy["schema"], "version": policy["version"],
+            "sha256": expected_sha256["policy"],
+            "neutral_group_weights": copy.deepcopy(policy["neutral_group_weights"]),
+            "overall_weights": copy.deepcopy(policy["overall_weights"])},
+        "source_bindings": {name + "_sha256": expected_sha256[name] for name in sorted(sources)},
+        "baseline_score": {"schema": selected["schema"], "id": selected.get("id"),
+            "sha256": expected_sha256.get("source_qualified_score", expected_sha256["original_summary"]),
+            "metrics": copy.deepcopy(selected["metrics"])},
+        "original_score": {"sha256": expected_sha256["original_summary"],
+            "metrics": copy.deepcopy(summary["metrics"]), "standard_evidence_rewritten": False},
+        "alignment_selfcheck": trajectory,
+        **({"lean_formalization_breakdown": _lean_formalization_breakdown(plan, inputs, baseline, substitutions)}
+           if policy["version"] == "0.2.0" else {}),
+        "alignment_study_coverage": {"planned_rounds": 3,
+            "records_present": sum(row.get("snapshot") is not None for row in review["rounds"]),
+            "adjudicated_rounds": trajectory["metric"]["coverage"]["adjudicated"],
+            "mathematical_families": 1, "standard_slots_added": 0, "fresh_A1_slots_added": 0,
+            "formal_eligible_slots_added": 0},
+        "capability_source": ("selected_sealed_engineering" if substitutions and engineering else
+                              "selected_sealed_extension_74_of_92" if substitutions else "original_A1"),
+        "source_conditions": {"classification": "post-observation mixed-condition development",
+            "standard_budgets_and_parameters_rewritten": False,
+            "standard_composition": copy.deepcopy(summary.get("composition"))},
+        "formal_comparison_eligible": False, "human_review": "pending", "new_candidate_calls": 0,
+        "notice": "The four written neutral families retain their internal average. Three Lean rounds form one alignment family. "
+                  "The versioned policy combines the two neutral groups inside the unchanged 75/5/10/10 total. "
+                  "Original execution, 42/45-slot coverage and A1 evidence remain stored; this view adds no candidate calls or formal qualification."}
 
 
 def render_score(report):

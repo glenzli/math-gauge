@@ -2,6 +2,8 @@
 
 当前为本地草稿 / human pending，尚未发布。默认26份任务、18家族，完整公开计划42槽；合并3份私有探索为29份任务、21家族、45槽。完整机器合同见[profile](benchmark-profile.json)与[评分标准](benchmark-scoring.md)，逐案例来源见[0.6选题说明](../docs/selection-v0.6.0.md)。
 
+当前展示采用[工程答卷与自查计分0.2.0](lean-alignment/engineering-scoring-v0.2.0.md)：MG-C003统一采用工程首答；三轮自查按70/30及误报扣分，占总分5%，与书面中性自查5%构成中性10%。本文下述原42/45计划保留，工程与自查成绩另行绑定。
+
 后续具名变更：用户选择以Gemini已封存加时工程的74/92数学完成度另建计分视图，原标准成绩与执行状态不改；详见[结果与来源](../docs/benchmark-comparison-v0.6.0.md)。MG-C003未来每轮上限统一180分钟，使用独立的[未来profile](benchmark-profile-c003-180.json)及[预算说明](c003-180-budget.md)；本文下方5400秒均保留其原冻结运行身份，不重新标记旧用时。其他Lean任务的预算保持不变。
 
 ## 任务与样本
