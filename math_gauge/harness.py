@@ -21,7 +21,7 @@ from .benchmarks import identity, profile_targets, reliability_schedule, select_
 from .catalog import Suite, candidate_message, digest_bytes, relative_name, write_json
 from .execution_policy import (
     FOLLOWUP_PROMPT_PROJECTION, LOCAL_FOLLOWUP_PERMISSION, LOCAL_TOOLS_TRACK,
-    LOCAL_TOOL_IDS, SOURCE_FOLLOWUP_PERMISSION, execution_context,
+    LOCAL_TOOL_IDS, SOURCE_FOLLOWUP_PERMISSION, declared_case_timeout_seconds, execution_context,
     project_followup_prompt, validate_context_policy,
 )
 
@@ -44,7 +44,7 @@ COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
 _RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review",
-                    "repeat", "neutral", "stance", "core", "all")
+                    "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90")
 _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha256",
                  "base_plan_sha256", "suite", "runner_sha256", "protocol_version", "planned",
                  "exported_slots", "selected_slot_ids", "slots", "cases", "prompts",
@@ -267,7 +267,7 @@ def _inspect_bundle_contents(root):
     _h_require(isinstance(value["targets"], list) and value["targets"]
                and len(value["targets"]) == len(set(value["targets"]))
                and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review",
-                                             "repeat", "neutral", "stance", "core", "all"},
+                                             "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90"},
                "Invalid export target projection")
     _h_projection(root, value, {"CONTROLLER.md", "controller.py", "submission-template.json"})
     template = json.loads(_h_file(root, "submission-template.json").read_bytes())
@@ -617,6 +617,12 @@ def _execution_projection(plan, case_ids):
     parameters = _h_parameters(runtime.get("candidate_parameters", {}))
     raw_budget = runtime.get("budget", {})
     _h_require(isinstance(raw_budget, dict), "Frozen budget must be an object")
+    data = plan.get("profile", {}).get("data", {})
+    if (plan.get("runtime_frozen") and data.get("case_execution_policy", {}).get("schema")
+            == "math-gauge.case-execution-policy/v2"):
+        _h_require(all(required is None or raw_budget.get("timeout_seconds") == required
+                       for required in (declared_case_timeout_seconds(data, cid) for cid in case_ids)),
+                   "New Lean export requires the frozen turn timeout")
     budget = {k: raw_budget[k] for k in ("timeout_seconds", "output_tokens",
               "max_transport_attempts", "max_total_tokens") if k in raw_budget}
     if "output_tokens" in budget:
@@ -660,13 +666,14 @@ def _projection(plan, suite, targets):
     selected_ids = {s["slot_id"] for s in selected}
     wanted_cases = {s["case_id"] for s in selected}
     if plan["profile"]["data"].get("case_execution_policy"):
-        from .execution_policy import declared_case_context
-        policy = plan["profile"]["data"]["case_execution_policy"]
+        from .execution_policy import declared_case_context, declared_case_timeout_seconds
         _h_require(all(declared_case_context(plan["profile"]["data"], cid, plan["context_policy"])
                        == plan["context_policy"] for cid in wanted_cases),
                    "Export v5 mixed conditions as separate matching condition target groups")
-        _h_require(not plan["runtime_frozen"] or not set(wanted_cases).intersection(policy["new_execution_case_ids"])
-                   or plan["runtime"]["budget"].get("timeout_seconds") == policy["new_turn_timeout_seconds"],
+        frozen_timeout = (plan.get("runtime") or {}).get("budget", {}).get("timeout_seconds")
+        _h_require(not plan["runtime_frozen"] or all(
+            required is None or frozen_timeout == required for required in (
+                declared_case_timeout_seconds(plan["profile"]["data"], cid) for cid in wanted_cases)),
                    "New Lean export requires the frozen turn timeout")
     cases, contents = [], {}
     case_index = {c["case_id"]: c for c in plan["case_index"]}
@@ -1255,6 +1262,7 @@ def _release_controller_main():
 
 def _release_controller_source():
     functions = (reliability_schedule, execution_context, validate_context_policy, project_followup_prompt,
+                 declared_case_timeout_seconds,
                  _h_is_neutral, _h_schema_matches, _h_neutral_root,
                  _h_require, _h_digest, _h_identity, _h_hash, _h_object, _h_relative, _h_path,
                  _h_root, _h_file, _h_parameters, _h_execution, relative_name, candidate_message,

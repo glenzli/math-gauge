@@ -22,7 +22,8 @@ def validate_case_execution_policy(data, case_components):
         return None
     if (data.get("schema") != "math-gauge.benchmark-profile/v5"
             or not isinstance(policy, dict)
-            or policy.get("schema") != "math-gauge.case-execution-policy/v1"
+            or policy.get("schema") not in {"math-gauge.case-execution-policy/v1",
+                                            "math-gauge.case-execution-policy/v2"}
             or policy.get("post_observation") is not True
             or policy.get("require_terminal_ok") is not True):
         raise ValueError("Mixed execution conditions require the explicit v5 development policy")
@@ -38,7 +39,33 @@ def validate_case_execution_policy(data, case_components):
             or type(policy.get("new_turn_timeout_seconds")) is not int
             or policy["new_turn_timeout_seconds"] <= 0):
         raise ValueError("Case execution conditions must partition the fixed components without drift")
+    overrides = policy.get("new_case_turn_timeout_seconds", {})
+    if policy["schema"] == "math-gauge.case-execution-policy/v1":
+        if "new_case_turn_timeout_seconds" in policy:
+            raise ValueError("Per-case turn budgets require the explicit v2 execution policy")
+    elif (policy["new_turn_timeout_seconds"] != 5400
+          or not isinstance(overrides, dict)
+          or set(overrides) != {"MG-C003"}
+          or type(overrides["MG-C003"]) is not int
+          or overrides["MG-C003"] != 10800
+          or "MG-C003" not in fresh):
+        raise ValueError("The v2 future budget changes only MG-C003 to 10800 seconds")
     return policy
+
+
+def declared_case_timeout_seconds(data, cid):
+    """Required new-turn budget; retained source conditions have no override.
+
+    Read only the selected profile, never a process-global current policy. A
+    frozen v1 profile therefore keeps its original 5400-second C003 budget.
+    Native and broker limits must be set and evidenced by the actual adapter;
+    this selector also supplies the outer runner/export compatibility check.
+    """
+    policy = data.get("case_execution_policy")
+    if policy is None or cid not in policy["new_execution_case_ids"]:
+        return None
+    return policy.get("new_case_turn_timeout_seconds", {}).get(
+        cid, policy["new_turn_timeout_seconds"])
 
 
 def declared_case_context(data, cid, fallback):

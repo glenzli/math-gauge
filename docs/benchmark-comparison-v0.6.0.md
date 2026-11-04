@@ -1,8 +1,23 @@
 # Math Gauge 0.6.0结果与来源（开发草稿）
 
-[README设计理念](../README.md) · [评测方法与技术细节](evaluation-methods.md) · [可独立部署的静态结果页](../site/index.html) · [完整离线诊断页](results/comparison-v0.6.0/index.html)
+[README设计理念](../README.md) · [评测方法与技术细节](evaluation-methods.md) · [可独立部署的静态结果页](../site/index.html) · [原标准离线诊断页](results/comparison-v0.6.0/index.html)
 
 本文件是独立的成绩与来源报告；静态页只展示冻结结果的公开投影，不重算分数。网站分类与部署位置尚未决定。
+
+## 当前展示：采用 Gemini 加时工程计分
+
+用户在本轮审核结束后选定：Gemini 的 MG-C003 以已封存加时工程严格完成的 74/92 项计入数学完成分。此为具名、版本化的工程来源接纳视图；其余任务、家族聚合及权重不变，Terra 仍使用原首答。原答、原生 ERROR、格式失败、原 gate 和原标准成绩均保留，不把续作改称 fresh A1 或同时间条件的新考。
+
+| 当前计分来源 | 公开范围 | 合并三份私有探索 |
+|---|---:|---:|
+| Terra：原标准首答 | 86.33288 | 89.04755 |
+| Gemini：仅 MG-C003 采用加时工程 74/92 | 76.94413 | 72.88789 |
+
+表中为舍入显示值。公开原标准仍审核 41/42 条，合并为 44/45；新视图另接纳一份工程的数学完成度，使计分来源覆盖达到 42/45，新增 fresh A1、原生 SUCCESS 和正式资格记录均为零。机器结果见[公开范围工程计分](results/gemini-v0.6.0-extension/result.json)与[合并范围工程计分](results/gemini-v0.6.0-extension/combined-aggregate.json)。
+
+MG-C003 后续初答、中性追问及操作续作的每轮上限统一为 10800 秒（180 分钟），原 5400 秒运行不改写。Gemini 加时工程后的三轮中性续查另建[研究记录](results/gemini-v0.6.0-extension/alignment-study.json)，第一轮已实际提交；原本因空 ERROR A1 阻断的三轮历史保持未运行。新轮次不会取最好版本替代本节计分来源。未来运行入口见[180 分钟配置](../protocol/c003-180-budget.md)。
+
+## 原标准答卷轨：保留未决区间
 
 规则原文：[到时封卷](https://github.com/glenzli/math-gauge/blob/c9f7cf18d4360193e7c5d29c3d700e39904a2189/protocol/deadline-submission.md)、[原生终态与客户端收尾](https://github.com/glenzli/math-gauge/blob/c9f7cf18d4360193e7c5d29c3d700e39904a2189/protocol/native-terminal-evidence.md)。
 

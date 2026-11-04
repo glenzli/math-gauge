@@ -446,13 +446,14 @@ def execute_reliability_run(plan, suite, destination, command=None, replay=None,
     _bind_suite(plan, suite)
     selected = select_slots(plan, targets)
     if command is not None and plan["profile"]["data"].get("case_execution_policy"):
-        from .execution_policy import declared_case_context
-        policy = plan["profile"]["data"]["case_execution_policy"]
+        from .execution_policy import declared_case_context, declared_case_timeout_seconds
         if any(declared_case_context(plan["profile"]["data"], slot["case_id"], plan["context_policy"])
                != plan["context_policy"] for slot in selected):
             raise ValueError("Execute mixed-condition v5 plans through separate matching condition projections")
-        if (any(slot["case_id"] in policy["new_execution_case_ids"] for slot in selected)
-                and (plan.get("runtime") or {}).get("budget", {}).get("timeout_seconds") != policy["new_turn_timeout_seconds"]):
+        frozen_timeout = (plan.get("runtime") or {}).get("budget", {}).get("timeout_seconds")
+        if any(required is not None and frozen_timeout != required for required in (
+                declared_case_timeout_seconds(plan["profile"]["data"], slot["case_id"])
+                for slot in selected)):
             raise ValueError("New Lean execution requires the frozen turn timeout")
     reusable = {}
     prior_evidence = {}

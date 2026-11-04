@@ -2,6 +2,23 @@
 
 本地草稿 / human pending，尚无0.6发布资产。默认26任务、18家族、42标准记录，另31份reserve；合并3私有探索为29任务、21家族、45记录。旧0.5结果、原答与发布资产保持原身份。
 
+## 后续 C003：统一 180 分钟
+
+未来 MG-C003 初答、每次中性跟进及操作续作，每轮上限均为10800秒；模型原生、broker和外层墙钟须实际设置并分别留证。准备新的C003计划时使用独立profile与目标：
+
+```sh
+python3 -m math_gauge benchmark-plan --profile protocol/benchmark-profile-c003-180.json --target c003-180 --runtime /ABS/c003-180-runtime.json --out /NEW/c003-180-plan.json
+python3 -m math_gauge benchmark-export --plan /NEW/c003-180-plan.json --out /NEW/c003-180-bundle
+```
+
+其余七份新Lean使用同一未来profile的`lean-90`目标及5400秒的独立runtime，不能以一个全局预算混跑。实际适配器与[预算v0.2.0](../protocol/lean-tool-budget-policy-v0.2.0.json)必须一致，详见[180分钟配置](../protocol/c003-180-budget.md)。已完成的Terra交卷复用，原90分钟运行不重标预算。
+
+当前展示另按用户选定来源，将Gemini加时实际工程严格完成的74/92项计入数学完成分，原首答及执行状态不覆盖。新的三轮中性续查承接该工程，以180分钟上限分别归档；它们属于新工程承接研究，不补写旧阻断轮次、不回填原标准分。来源和分数见[结果报告](benchmark-comparison-v0.6.0.md)。
+
+## 原标准采集：保留历史配置
+
+以下描述本轮已冻结的原标准采集方式，其中5400秒是原实际预算；未来C003按上节独立配置执行。
+
 稳定的8份Lean新A1已经有独立initial-acquisition profile，与最终四written面板分离。先冻结具体模型/参数/系统/预算，再准备，不调用模型：
 
 ```sh

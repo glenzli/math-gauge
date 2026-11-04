@@ -8,7 +8,8 @@ from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independ
                          reliability_schedule, scoring_policy, validate_plan)
 from .execution import now
 from .execution_policy import execution_condition
-from .execution_policy import declared_case_context, validate_context_policy
+from .execution_policy import (declared_case_context, declared_case_timeout_seconds,
+                               validate_context_policy)
 
 UNKNOWN = (Fraction(0), Fraction(1), None)
 PENDING_REASONS = {"review_pending", "problem_defect_pending", "problem_defect",
@@ -320,6 +321,12 @@ def _paired_stance(plan, rows):
 
 def score_inputs(inputs):
     """Aggregate validated rows; fixtures retain their explicit evidence label."""
+    return _score_inputs(inputs)
+
+
+def _score_inputs(inputs, *, mathematical_substitutions=None):
+    """Share exact aggregation with explicitly separate mathematical source views."""
+    mathematical_substitutions = mathematical_substitutions or {}
     plan = validate_plan(inputs["plan"])
     if inputs.get("model_label") != plan["model_label"]:
         raise ValueError("Model label differs from the frozen runtime")
@@ -356,7 +363,8 @@ def score_inputs(inputs):
 
     def paper_completion(cid):
         paper_rows = [row_for(f"{cid}:{a}") for a in policy["core_attempt_labels"]]
-        values = [_interval(row.get("completion")) for row in paper_rows]
+        values = [mathematical_substitutions.get(row["slot_id"], _interval(row.get("completion")))
+                  for row in paper_rows]
         return _average(values), paper_rows
 
     def repeat_interval(cid):
@@ -862,7 +870,7 @@ def _compose_score_sources(plan, sources, *, model_aliases=None, budget_policy="
                 case_strata.setdefault(cid, {"conditions_sha256": signature, "conditions": old_conditions,
                                              "slot_ids": []})["slot_ids"].append(sid)
                 if cid in strata_policy["new_execution_case_ids"] and (
-                        old_conditions["timeout_seconds"] != strata_policy["new_turn_timeout_seconds"]
+                        old_conditions["timeout_seconds"] != declared_case_timeout_seconds(plan["profile"]["data"], cid)
                         or any(old_conditions[key] != new_conditions[key] for key in ("system_prompt", "parameters"))):
                     raise ValueError("New-case execution differs from the frozen native budget or parameters: " + sid)
             elif any(old_conditions[k] != new_conditions[k] for k in ("context_policy", "system_prompt", "parameters")):
@@ -1193,6 +1201,180 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
             "frozen_source_reports": [source["frozen_report_reuse"] for source in composition["source_runs"]
                                       if source.get("frozen_report_reuse") is not None]}
     return result
+
+
+
+def source_qualified_workspace_score(sources, *, expected_sha256, workspace_root):
+    """Score the selected sealed C003 workspace without rewriting standard A1.
+
+    Callers supply trusted hashes for the original projection, evaluator report,
+    plan, detailed diagnostic and root AI adjudication. These bindings establish
+    which local evidence is selected, not provider authentication or human review.
+    Only completion-weighted metrics are returned from the shared scorer's
+    in-memory substitution; its transient report and A1 rows are never published.
+    """
+    import copy
+    import json
+    from .catalog import digest_bytes
+
+    names = {"original_summary", "original_report", "original_plan", "diagnostic", "root_adjudication"}
+    if set(sources) != names or set(expected_sha256) != names:
+        raise ValueError("Workspace scoring requires exactly the five frozen source bindings")
+    documents = {}
+    for name in sorted(names):
+        data = Path(sources[name]).read_bytes()
+        if digest_bytes(data) != expected_sha256[name]:
+            raise ValueError(f"Workspace scoring source hash changed: {name}")
+        documents[name] = json.loads(data)
+    summary, report, plan, diagnostic, root = (documents[name] for name in
+        ("original_summary", "original_report", "original_plan", "diagnostic", "root_adjudication"))
+    plan = validate_plan(plan)
+    if (report.get("schema") != "math-gauge.benchmark-score/v1"
+            or report.get("plan_sha256") != plan["plan_sha256"]
+            or report.get("model_label") != plan["model_label"]):
+        raise ValueError("Workspace scoring original report and frozen plan differ")
+    schema = summary.get("schema")
+    if schema == "math-gauge.public-composite-score/v1":
+        scope = "public"
+        if summary.get("plan_sha256") != plan["plan_sha256"]:
+            raise ValueError("Workspace scoring original public projection binds another plan")
+    elif schema == "math-gauge.combined-aggregate-only/v1":
+        scope = "combined"
+        if summary.get("source_score_sha256") != expected_sha256["original_report"]:
+            raise ValueError("Workspace scoring original aggregate binds another report")
+    else:
+        raise ValueError("Unsupported original workspace scoring projection")
+    if (summary.get("coverage", {}).get("slots_planned") != (42 if scope == "public" else 45)
+            or summary.get("profile", {}).get("version") != "0.6.0"
+            or plan["profile"]["data"].get("version") != "0.6.0"):
+        raise ValueError("Workspace scoring retains the original v0.6.0 42/45-slot plan")
+    private = {case["case_id"]: f"Private-{index:02d}" for index, case in enumerate(
+        (case for case in plan["case_index"] if case.get("source_visibility") == "private"), 1)}
+    projection = public_score_projection(report, plan, private_aliases=private)
+    if summary.get("profile") != projection["profile"] or summary.get("coverage") != projection["coverage"]:
+        raise ValueError("Workspace scoring original profile or fixed coverage changed")
+    # Saved reports serialize absent group diagnostics as null. Reconstruct only
+    # the scorer's empty-container default; preserve the stored evidence bytes.
+    rows = [dict(row, group_diagnostic=row.get("group_diagnostic") or {}) for row in report["evidence"]]
+    inputs = {"plan": plan, "model_label": plan["model_label"], "slots": rows}
+    baseline = _score_inputs(inputs)
+    for name, metric in summary["metrics"].items():
+        for field in ("exact", "lower", "upper", "complete"):
+            if (metric.get(field) != report["metrics"].get(name, {}).get(field)
+                    or metric.get(field) != baseline["metrics"].get(name, {}).get(field)):
+                raise ValueError("Current shared scorer does not reproduce the frozen original metrics")
+
+    cid, version, sid = "MG-C003", "0.1.1", "MG-C003:A1"
+    case = next((case for case in plan["case_index"] if case["case_id"] == cid), {})
+    stages = case.get("stages", [])
+    ids = {stage["stage_id"] for stage in stages}
+    if (case.get("version") != version or case.get("component") != "lean-formalization"
+            or case.get("family_id") != "oet-volume1-chapter03" or case.get("total_weight") != 92
+            or len(stages) != 92 or len(ids) != 92 or any(stage.get("points") != 1 for stage in stages)):
+        raise ValueError("Workspace scoring requires the original equal-weight 92-obligation C003 contract")
+    original = next((row for row in rows if row["slot_id"] == sid), {})
+    if _interval(original.get("completion")) != UNKNOWN or original.get("strict_pass") is not None:
+        raise ValueError("Workspace scoring only substitutes the original unresolved C003 mathematical contribution")
+    if (diagnostic.get("schema") != "math-gauge.closed-chapter-diagnostic-summary/v1"
+            or diagnostic.get("case_id") != cid or diagnostic.get("case_version") != version
+            or diagnostic.get("root_adjudication_sha256") != expected_sha256["root_adjudication"]
+            or root.get("schema") != "math-gauge.root-G92-closed-semantic-adjudication/v1"
+            or root.get("case_id") != cid or root.get("reviewer_kind") != "ai"
+            or root.get("human_review") != "pending" or root.get("formal_comparison_eligible") is not False
+            or root.get("not_standard_A1") is not True or root.get("not_standard_42_45") is not True):
+        raise ValueError("Workspace scoring requires the source-bound root AI adjudication")
+    extension = diagnostic["gemini_one_operational_extension"]
+    semantic = extension["strict_semantic_completion"]
+    obligations = diagnostic.get("per_obligation", [])
+    decisions = {row["id"]: row["decision"] for row in obligations}
+    passed = sorted(key for key, decision in decisions.items() if decision == "pass")
+    incomplete = sorted(key for key, decision in decisions.items() if decision == "partial")
+    if (len(obligations) != 92 or set(decisions) != ids or len(decisions) != 92
+            or len(passed) + len(incomplete) != 92 or semantic.get("total") != 92
+            or semantic.get("complete") != len(passed) or semantic.get("not_complete") != len(incomplete)
+            or root.get("total") != 92
+            or root.get("semantic_counts") != {"pass": len(passed), "partial": len(incomplete)}
+            or not set(root.get("root_accepted_changed_items", [])) <= set(incomplete)
+            or root.get("strict_peer_sha256") != semantic.get("strict_reconciliation_sha256")):
+        raise ValueError("Workspace scoring 92-ID pass set and root adjudication disagree")
+    if (extension.get("native_result_status") != "ERROR" or root.get("native_result_status") != "ERROR"
+            or extension.get("original_owner_status") != "ok" or root.get("original_owner_status") != "ok"
+            or extension.get("original_owner_gate_accepted") is not True
+            or extension.get("delivery_format", {}).get("status") != "format_error"
+            or root.get("strict_delivery_format_status") != "format_error"
+            or extension.get("source_kernel_only", {}).get("status") != "passed"
+            or root.get("source_kernel_only_status") != "passed"
+            or root.get("kernel_report_sha256") != extension["source_kernel_only"].get("kernel_report_sha256")
+            or root.get("forced_manifest_sha256") != extension.get("sealed_manifest_sha256")):
+        raise ValueError("Workspace scoring must retain the original execution, format and kernel statuses")
+    selected = extension.get("selected_source_sha256", {})
+    workspace_root = Path(workspace_root).resolve()
+    if "Main.lean" not in selected:
+        raise ValueError("Workspace scoring requires the sealed actual Main source closure")
+    for name, sha256 in selected.items():
+        path = (workspace_root / name).resolve()
+        if not path.is_relative_to(workspace_root) or digest_bytes(path.read_bytes()) != sha256:
+            raise ValueError("Workspace scoring selected source bytes changed")
+    for obligation in obligations:
+        for declaration in obligation.get("declarations", []):
+            if selected.get(declaration["file"]) != declaration.get("file_sha256"):
+                raise ValueError("Workspace scoring declaration source binding differs from the sealed selection")
+
+    completion = Fraction(len(passed), 92)
+    derived = _score_inputs(inputs, mathematical_substitutions={sid: (completion, completion, completion)})
+    metrics = copy.deepcopy(summary["metrics"])
+    changed_metrics = ("lean-formalization", "core", "overall")
+    for name in changed_metrics:
+        for field in ("exact", "provisional_exact", "lower", "upper", "complete", "coverage"):
+            metrics[name][field] = copy.deepcopy(derived["metrics"][name][field])
+        metrics[name].update(formal_exact=None, formal_score=None, formal_comparison_eligible=False,
+                             mathematical_source_substitution=True)
+    coverage = copy.deepcopy(summary["coverage"])
+    return {
+        "schema": "math-gauge.source-qualified-score/v1",
+        "id": f"gemini-v06-sealed-extension-math-{scope}/v1", "scope": scope,
+        "title": "Gemini 加时工程计分", "status": "post_observation_mathematical_workspace_substitution",
+        "score_units": {"metrics": "percent", "completion": "fraction"},
+        "scoring_owner": "math_gauge.scoring", "scoring_view_version": "c003-sealed-extension/v1",
+        "scoring_implementation_sha256": digest_bytes(Path(__file__).read_bytes()),
+        "profile": copy.deepcopy(summary["profile"]), "metrics": metrics, "coverage": coverage,
+        "formal_comparison_eligible": False, "human_review": "pending", "new_candidate_calls": 0,
+        "candidate_call_accounting": {"scoring_recompute": 0,
+            "selected_extension_original_submissions": extension["actual_native_submissions"],
+            "further_submissions_by_this_view": 0},
+        "source_bindings": {name + "_sha256": expected_sha256[name] for name in sorted(names)},
+        "original_score": {"status": summary["status"], "metrics": copy.deepcopy(summary["metrics"]),
+                           "coverage": copy.deepcopy(coverage), "standard_evidence_rewritten": False},
+        "mathematical_source_coverage": {
+            "planned_standard_slots": coverage["slots_planned"],
+            "original_standard_slots_reviewed": coverage["slots_reviewed"],
+            "additional_workspace_mathematical_sources": 1,
+            "effective_mathematical_slots_adjudicated": coverage["slots_reviewed"] + 1,
+            "fresh_A1_slots_added": 0, "successful_native_deliveries_added": 0,
+            "formal_eligible_slots_added": 0},
+        "mathematical_substitution": {
+            "case_id": cid, "case_version": version, "original_weight_slot": sid,
+            "complete": len(passed), "not_complete": len(incomplete), "total": 92,
+            "completion_fraction": {"numerator": len(passed), "denominator": 92},
+            "pass_ids": passed, "not_complete_ids": incomplete,
+            "changed_metrics": list(changed_metrics), "original_A1_replaced": False,
+            "fresh_A1": False, "equal_time_comparison": False,
+            "review_evidence": "root-frozen detailed AI adjudication projection; peer review not independently reproduced",
+            "selected_source_sha256": copy.deepcopy(selected),
+            "sealed_manifest_sha256": extension["sealed_manifest_sha256"],
+            "sealed_tree_sha256": extension["sealed_tree_sha256"],
+            "root_adjudication_sha256": expected_sha256["root_adjudication"],
+            "native_result_status": extension["native_result_status"],
+            "native_error_class": extension["native_error_class"],
+            "original_owner_status": extension["original_owner_status"],
+            "original_owner_gate_accepted": extension["original_owner_gate_accepted"],
+            "delivery_format": copy.deepcopy(extension["delivery_format"]),
+            "source_kernel_only_status": extension["source_kernel_only"]["status"],
+            "backend_identity_or_third_party_timing_independently_authenticated": False},
+        "notice": "Post-observation mathematical scoring uses the selected sealed extension workspace. "
+                  "Original A1, execution status, delivery format, coverage and fixed denominators remain stored. "
+                  "This view adds no model calls, fresh A1, native SUCCESS, human approval or formal qualification.",
+    }
 
 
 def render_score(report):
