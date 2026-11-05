@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
@@ -22,8 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class ReliabilityReviewTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -142,7 +142,7 @@ class ReliabilityReviewTests(unittest.TestCase):
         self.assertTrue(self.row(second["slot_id"])["strict_pass"])
 
     def test_whole_lean_failure_preserves_focus_mathematics(self):
-        sid = "MG-GF106:A1"
+        sid = "LCH01:A1"
         entry = self.passing(sid)
         entry["decision"] = "partial"
         for row in entry["stages"]:
@@ -157,14 +157,14 @@ class ReliabilityReviewTests(unittest.TestCase):
         self.assertIn("lean_failure", row["whole_strict"]["reasons"])
 
     def test_no_source_receipt_cannot_claim_lean_pass(self):
-        entry = self.passing("MG-GF106:A1")
+        entry = self.passing("LCH01:A1")
         for row in entry["stages"]:
             row.update(lean_status="passed", declarations=[{"file": "Solution.lean", "name": "proof"}])
         with self.assertRaisesRegex(ValueError, "actual original-source"):
             apply_reliability_reviews(self.run, [entry])
 
     def test_minimal_self_hashed_lean_receipt_is_not_compilation_evidence(self):
-        entry = self.passing("MG-GF106:A1")
+        entry = self.passing("LCH01:A1")
         meta, records = inspect_reliability_run(self.run)
         record = records[entry["slot_id"]]
         case = next(c for c in self.plan["case_index"] if c["case_id"] == record["case_id"])
@@ -224,13 +224,13 @@ class ReliabilityReviewTests(unittest.TestCase):
         self.assertEqual(row["focus_math"]["reasons"], ["review_pending"])
 
     def test_verifier_uses_original_response_not_reconstructed_single_run(self):
-        sid = "MG-GF106:neutral:1"
+        sid = "LCH01:neutral:1"
         before = {p: p.read_bytes() for p in self.run.rglob("response.md")}
         result = verify_reliability_candidate_lean(self.run, sid, self.root / "compile-fixture",
                                                     dependency_root=self.root / "absent")
         self.assertEqual(result["status"], "format_error")
         self.assertEqual(result["reliability_binding"]["slot_id"], sid)
-        self.assertEqual(result["reliability_binding"]["body_origin"]["slot_id"], "MG-GF106:A1")
+        self.assertEqual(result["reliability_binding"]["body_origin"]["slot_id"], "LCH01:A1")
         self.assertEqual(before, {p: p.read_bytes() for p in self.run.rglob("response.md")})
 
     def test_focus_in_pending_defective_stage_stays_unknown(self):
@@ -308,7 +308,7 @@ class ReliabilityReviewTests(unittest.TestCase):
             apply_reliability_reviews(other, [failed])
 
     def test_stage_scope_focus_cannot_claim_an_incomplete_whole_stage(self):
-        sid = "MG-GR007:neutral:1"
+        sid = "MG-GR014:neutral:1"
         entry = self.passing(sid)
         entry["decision"] = "partial"
         target = entry["focus_review"]["stage_id"]
@@ -334,14 +334,14 @@ class ReliabilityReviewTests(unittest.TestCase):
 
     def test_unchanged_keep_reuses_only_the_bound_original_source_identity(self):
         meta, records = inspect_reliability_run(self.run)
-        sid = "MG-GF106:neutral:1"
-        source = records["MG-GF106:A1"]
+        sid = "LCH01:neutral:1"
+        source = records["LCH01:A1"]
         record = records[sid]
         path = self.run / "binding-fixture.json"
         write_json(path, {"reliability_binding": review_binding(meta, source)})
         entry = {"candidate_lean_report": path.name,
                  "candidate_lean_report_sha256": digest_bytes(path.read_bytes())}
-        contract = read_json(self.run / meta["inputs"]["MG-GF106"]["contract"])
+        contract = read_json(self.run / meta["inputs"]["LCH01"]["contract"])
         # Isolate source reuse from the artifact verifier. This stub is never
         # applied as a review or reported as a compilation/model result.
         with patch("math_gauge.reliability_review._verify_lean_artifact", return_value={"binding-fixture": True}) as gate:
@@ -355,24 +355,30 @@ class ReliabilityReviewTests(unittest.TestCase):
             _lean_evidence(self.run, meta, records, record, entry, contract)
 
     def test_real_extraction_artifact_rejects_saved_source_and_engine_tampering(self):
-        source = "```lean filename=Answer.lean\r\ntheorem syntheticProof : True := True.intro\r\n```\r\n"
+        import json
+        contract = read_json(self.suite.case_file("LCH01", self.suite.cases["LCH01"]["group_contract"]))
+        alignment = {"case_id": "LCH01", "version": contract["version"], "items": [
+            {"id": row["id"], "status": "incomplete", "representation": "Synthetic source extraction fixture only.",
+             "dependencies": [], "declarations": []} for row in contract["stages"]]}
+        source = "```lean filename=Main.lean\r\ntheorem syntheticProof : True := True.intro\r\n```\r\n"
+        source += "```json filename=alignment.json\n" + json.dumps(alignment) + "\n```\n"
         replies = {s["slot_id"]: source if s["kind"] == "independent" else "KEEP\r\ncurrent rationale\r\n"
                    for s in select_slots(self.plan)}
         root = self.root / "source-run"
         execute_reliability_run(self.plan, self.suite, root, replay=replies)
         output = self.root / "source-artifact"
-        report = verify_reliability_candidate_lean(root, "MG-GF106:neutral:1", output,
+        report = verify_reliability_candidate_lean(root, "LCH01:neutral:1", output,
                                                     dependency_root=self.root / "absent")
         self.assertEqual(report["status"], "infrastructure_error")
         meta, records = inspect_reliability_run(root)
-        bundle = _source_bundle(root, meta, records, records["MG-GF106:neutral:1"])
+        bundle = _source_bundle(root, meta, records, records["LCH01:neutral:1"])
         raw = bundle["response_path"].read_bytes()
         request = read_json(bundle["request_path"])
         contract = read_json(bundle["contract_path"])
         # Negative fixture: altering a status/hash label never suffices to
         # promote the failed real extraction/manifest into a valid artifact.
         forged = dict(report, status="passed")
-        saved = output / "submitted/Answer.lean"
+        saved = output / "submitted/Main.lean"
         saved.write_bytes(saved.read_bytes() + b"-- repaired\n")
         with self.assertRaisesRegex(ValueError, "source bytes changed"):
             _verify_lean_artifact(output / "report.json", forged, bundle["record"], raw, request, contract)

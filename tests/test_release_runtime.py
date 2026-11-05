@@ -16,7 +16,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
@@ -44,8 +44,8 @@ RUNTIME = {"model_label": "offline-release-fixture", "adapter_identity": {"kind"
 class ReleaseRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
         cls.base_plan = build_plan(cls.profile, cls.suite, ["all"])
         cls.shared_temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.shared_temp.cleanup)
@@ -116,9 +116,9 @@ class ReleaseRuntimeTests(unittest.TestCase):
         other = self.root / "second-dataset"
         manifest = export_release_dataset(self.base_plan, self.suite, other)
         self.assertEqual(manifest, self.dataset_manifest)
-        self.assertEqual(manifest["planned"]["all_slots"], 177)
-        self.assertEqual(len(manifest["cases"]), 43)
-        self.assertEqual(manifest["exported_slots"], 177)
+        self.assertEqual(manifest["planned"]["all_slots"], 90)
+        self.assertEqual(len(manifest["cases"]), 26)
+        self.assertEqual(manifest["exported_slots"], 90)
         self.assertEqual(manifest["base_plan_sha256"], self.base_plan["plan_sha256"])
         self.assertNotIn("runtime", manifest)
         self.assertNotIn("profile", manifest)
@@ -142,8 +142,8 @@ class ReleaseRuntimeTests(unittest.TestCase):
         self.assertNotIn("from .", code)
         self.assertNotIn("import math_gauge", code)
         self.assertNotIn("expected_truth", code)
-        chapter = next(c for c in manifest["cases"] if c["case_id"] == "MG-C002")
-        original = self.suite.request(self.suite.cases["MG-C002"])
+        chapter = next(c for c in manifest["cases"] if c["case_id"] == "LCH02")
+        original = self.suite.request(self.suite.cases["LCH02"])
         self.assertEqual((self.dataset / chapter["candidate_message_path"]).read_bytes(),
                          candidate_message(original).encode("utf-8"))
         self.assertTrue(any("**证明**" in f["content"] for f in original["files"]))
@@ -178,17 +178,17 @@ class ReleaseRuntimeTests(unittest.TestCase):
         templated = self.controller(self.run, "template", "--out", str(template_path))
         self.assertEqual(templated.returncode, 0, templated.stderr)
         self.assertEqual(read_json(template_path), release_submission_template(self.run))
-        self.assertEqual(inspect_release_run(self.run)["planned"]["all_slots"], 177)
+        self.assertEqual(inspect_release_run(self.run)["planned"]["all_slots"], 90)
 
     def test_freeze_creates_independent_immutable_runs_and_keeps_dependency_closure(self):
         before = {p.relative_to(self.dataset).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
                   for p in self.dataset.rglob("*") if p.is_file()}
         one = self.freeze(targets=["neutral"])
-        two = self.freeze(targets=["lean-construction"], output=self.root / "second-run")
+        two = self.freeze(targets=["lean-formalization"], output=self.root / "second-run")
         self.assertNotEqual(one["run_id"], two["run_id"])
         self.assertNotEqual(one["run_sha256"], two["run_sha256"])
         self.assertEqual(one["planned"]["selected_slots"], 24)
-        self.assertEqual(two["planned"]["selected_slots"], 18)
+        self.assertEqual(two["planned"]["selected_slots"], 4)
         self.assertEqual(one["planned"]["all_slots"], two["planned"]["all_slots"])
         self.assertIn(CID + ":A1", one["selected_slot_ids"])
         self.assertNotIn(CID + ":A2", one["selected_slot_ids"])
@@ -231,11 +231,11 @@ class ReleaseRuntimeTests(unittest.TestCase):
 
     def test_case_output_overrides_remain_frozen_for_repeats_and_branch_rounds(self):
         runtime = copy.deepcopy(RUNTIME)
-        runtime["budget"]["case_parameters"] = {"MG-C002": {"max_output_tokens": 40000},
+        runtime["budget"]["case_parameters"] = {"LCH02": {"max_output_tokens": 40000},
                                                    CID: {"max_output_tokens": 2000}}
         self.freeze(runtime=runtime)
         for label in ("A1", "A2", "A3"):
-            chapter = release_candidate_request(self.run, "MG-C002:" + label)
+            chapter = release_candidate_request(self.run, "LCH02:" + label)
             self.assertEqual(chapter["parameters"]["max_output_tokens"], 40000)
             selected = release_candidate_request(self.run, CID + ":" + label)
             self.assertEqual(selected["parameters"]["max_output_tokens"], 2000)
@@ -286,11 +286,11 @@ class ReleaseRuntimeTests(unittest.TestCase):
         report = score_runs([self.output])
         self.assertEqual(report["result_kind"], "fixture")
         self.assertFalse(report["model_result"])
-        self.assertEqual(report["execution_coverage"]["full_plan_slots"], 177)
+        self.assertEqual(report["execution_coverage"]["full_plan_slots"], 90)
         self.assertEqual(report["execution_coverage"]["unique_started_slots"], 3)
         self.assertIsNone(report["metrics"]["overall"]["exact"])
         self.assertIsNone(report["metrics"]["overall"]["formal_score"])
-        self.assertIn("177", render_score(report))
+        self.assertIn("90", render_score(report))
         row = next(r for r in reliability_score_inputs(self.output)["slots"] if r["started"])
         self.assertIn("external_origin_unverified", row["execution_eligibility"]["reasons"])
 
@@ -365,10 +365,10 @@ class ReleaseRuntimeTests(unittest.TestCase):
         for bundle in (self.dataset, self.run):
             output, errors = io.StringIO(), io.StringIO()
             with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
-                status = main(["benchmark-export-check", "--bundle", str(bundle), "--suite", str(legacy_suite().root),
+                status = main(["benchmark-export-check", "--bundle", str(bundle), "--suite", str(fixture_suite().root),
                                "--plan", str(Path(str(self.shared) + ".evaluator") / "plan.json")])
             self.assertEqual(status, 0, errors.getvalue())
             result = json.loads(output.getvalue())
             self.assertEqual(result["dataset_sha256"], self.dataset_manifest["dataset_sha256"])
-            self.assertEqual(result["planned"]["all_slots"], 177)
+            self.assertEqual(result["planned"]["all_slots"], 90)
 

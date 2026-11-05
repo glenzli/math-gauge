@@ -1,0 +1,57 @@
+{
+  "schema": "math-gauge.large-lean-operator-budget/v1",
+  "version": "0.2.0",
+  "status": "local-operator-policy",
+  "purpose": "For future runs, allow 180 minutes per MG-C003 initial, neutral followup or operational resume round; retain the separately frozen historical budgets.",
+  "default_timeout_seconds_per_turn": 5400,
+  "applies_to": {
+    "task_scope": [
+      "large Lean construction",
+      "half-chapter formalization",
+      "full-chapter formalization"
+    ],
+    "current_chapter_case_ids": [
+      "MG-C002",
+      "MG-C003"
+    ],
+    "draft_ladder_case_ids": [
+      "LCH01",
+      "LCH02",
+      "HCH02",
+      "LCH04"
+    ]
+  },
+  "timing": {
+    "clock": "UTC wall time from actual native submission",
+    "compile_and_tool_wait_count_toward_limit": true,
+    "report_compile_and_tool_wait_separately_when_observable": true,
+    "initial_and_followup_use_same_default": true
+  },
+  "application": {
+    "operator_must_select_and_freeze_explicit_budget": true,
+    "native_and_outer_watchdog_must_match": true,
+    "generic_cli_timeout_is_not_automatically_changed": true,
+    "harness_template_is_not_automatically_changed": true,
+    "mixed_suite_requires_separate_compatible_runtimes": true,
+    "case_parameters_do_not_support_timeout_overrides": true,
+    "new_c003_plan_profile": "protocol/benchmark-profile.json",
+    "new_c003_plan_target": "c003-180",
+    "new_c003_native_broker_outer_seconds": 10800,
+    "same_c003_cap_for_initial_neutral_and_operational_resume": true
+  },
+  "preservation": {
+    "existing_frozen_runtimes_and_attempts_unchanged": true,
+    "published_release_assets_unchanged": true,
+    "old_results_not_relabelled_as_5400_seconds": true,
+    "mid_run_extension_requires_attributed_amendment": true,
+    "continuation_is_not_a_clean_independent_answer": true,
+    "existing_5400_second_c003_attempts_and_scores_unchanged": true,
+    "terra_existing_answer_does_not_require_retest": true,
+    "new_budget_does_not_relabel_old_execution": true
+  },
+  "other_task_budgets": "Other new Lean tasks retain 5400 seconds; retained written, answer-review and private exploration sources keep their own frozen budgets. Generic CLI and harness-template defaults remain unchanged.",
+  "case_timeout_seconds_per_turn": {
+    "MG-C003": 10800
+  },
+  "supersedes_for_future_runs_only": "protocol/lean-tool-budget-policy-v0.1.0.json"
+}

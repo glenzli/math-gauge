@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 import zipfile
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
@@ -38,14 +38,14 @@ RUNTIME = {"model_label": "synthetic-simple-fixture", "adapter_identity": {"kind
 class SimpleHarnessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.plan = build_plan(legacy_profile(cls.suite),
+        cls.suite = fixture_suite()
+        cls.plan = build_plan(fixture_profile(cls.suite),
                               cls.suite, ["all"])
         cls.shared_temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.shared_temp.cleanup)
         cls.shared = Path(cls.shared_temp.name).resolve() / "dataset"
         cls.manifest = export_simple_release_dataset(cls.plan, cls.suite, cls.shared,
-            release_version="0.2.0", readme=b"# Standalone fixture guide\n",
+            release_version="0.6.0", readme=b"# Standalone fixture guide\n",
             extra_files={"LICENSE": (ROOT / "LICENSE").read_bytes(),
                          "THIRD_PARTY_NOTICES.md": b"Synthetic fixture notice\n"})
         cls.anchor = make_release_anchor(cls.plan, cls.manifest)
@@ -62,7 +62,7 @@ class SimpleHarnessTests(unittest.TestCase):
         self.output = self.root / "imported"
         self.request_number = 0
 
-    def freeze(self, targets=("chapters",), runtime=None):
+    def freeze(self, targets=("lean-formalization",), runtime=None):
         return freeze_release_runtime(self.dataset, runtime or RUNTIME, self.run, targets=list(targets))
 
     def issue(self, sid, **kwargs):
@@ -100,8 +100,8 @@ class SimpleHarnessTests(unittest.TestCase):
     def test_compact_projection_has_one_guide_and_exact_complete_canonical_inputs(self):
         self.assertEqual(self.manifest["schema"], SIMPLE_DATASET_SCHEMA)
         self.assertEqual(self.manifest["release_version"], self.manifest["suite"]["version"])
-        self.assertEqual(self.manifest["planned"]["all_slots"], 177)
-        self.assertEqual(len(self.manifest["cases"]), 43)
+        self.assertEqual(self.manifest["planned"]["all_slots"], 90)
+        self.assertEqual(len(self.manifest["cases"]), 26)
         self.assertEqual({p.name for p in self.dataset.iterdir()},
                          {"README.md", "manifest.json", "cases", "tools", "LICENSE", "THIRD_PARTY_NOTICES.md"})
         self.assertFalse(any(p.name in {"request.json", "candidate-message.md", "instruction.txt", "CONTROLLER.md",
@@ -128,7 +128,7 @@ class SimpleHarnessTests(unittest.TestCase):
         runtime = self.root / "runtime.json"
         write_json(runtime, RUNTIME)
         command = [sys.executable, "-I", str(helper)]
-        for arguments in (["check"], ["prepare", "--runtime", str(runtime), "--target", "chapters", "--out", str(self.run)]):
+        for arguments in (["check"], ["prepare", "--runtime", str(runtime), "--target", "lean-formalization", "--out", str(self.run)]):
             result = subprocess.run(command + arguments, cwd=self.root, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
         shutil.rmtree(self.dataset)
@@ -148,7 +148,7 @@ class SimpleHarnessTests(unittest.TestCase):
                 patch("math_gauge.execution.invoke_conversation", side_effect=AssertionError("Candidate called")), \
                 contextlib.redirect_stdout(io.StringIO()) as output:
             result = main(["benchmark-import", "--input", str(self.archive), "--plan", str(plan_path),
-                           "--suite", str(legacy_suite().root), "--out", str(self.output)])
+                           "--suite", str(fixture_suite().root), "--out", str(self.output)])
         self.assertEqual(result, 0, output.getvalue())
         self.assertEqual((self.output / "external-import/answers.zip").read_bytes(), self.archive.read_bytes())
         meta, records = inspect_reliability_run(self.output)
@@ -158,7 +158,7 @@ class SimpleHarnessTests(unittest.TestCase):
         self.assertEqual(meta["external_candidate_calls_declared"], 0)
         self.assertEqual(records[sid]["status"], "responded")
         self.assertEqual((self.output / records[sid]["response_path"]).read_bytes(), "Synthetic 原始答卷\r\n".encode())
-        self.assertEqual(len(meta["unrun_slots"]), 5)
+        self.assertEqual(len(meta["unrun_slots"]), 3)
 
     def test_omitted_output_cap_roundtrips_through_portable_helper_without_inventing_a_limit(self):
         runtime = copy.deepcopy(RUNTIME)
@@ -175,7 +175,7 @@ class SimpleHarnessTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             return json.loads(result.stdout)
 
-        portable("prepare", "--runtime", runtime_path, "--target", "chapters", "--out", self.run)
+        portable("prepare", "--runtime", runtime_path, "--target", "lean-formalization", "--out", self.run)
         frozen = inspect_release_run(self.run)
         self.assertEqual(frozen["runtime"], runtime)
         self.assertNotIn("output_tokens", frozen["execution"]["budget"])
@@ -229,14 +229,14 @@ class SimpleHarnessTests(unittest.TestCase):
             self.record(sid, request, f"Synthetic independent {number}\r\n".encode(), usage={"total_tokens": 3})
         state = inspect_answer_collection(self.run, self.responses)
         self.assertEqual({s["state"] for s in state["slots"]}, {"responded"})
-        self.assertEqual(state["budget"]["transport_attempts"], 7)
+        self.assertEqual(state["budget"]["transport_attempts"], 5)
         self.assertIsNone(state["budget"]["total_tokens"])
         self.packed()
         meta = import_answer_archive(self.archive, self.anchor, self.suite, self.output)
         checked, records = inspect_reliability_run(self.output)
         self.assertEqual(meta["unrun_slots"], [])
-        self.assertEqual(checked["plan"]["planned"]["all_slots"], 177)
-        self.assertEqual(len(records), 6)
+        self.assertEqual(checked["plan"]["planned"]["all_slots"], 90)
+        self.assertEqual(len(records), 4)
         first = records[run["selected_slot_ids"][0]]
         self.assertEqual([a["status"] for a in first["attempts"]], ["transient_error", "ok"])
         self.assertEqual((self.output / first["attempts"][0]["response_path"]).read_bytes(), b"\xff\r\n")
@@ -354,7 +354,7 @@ class SimpleHarnessTests(unittest.TestCase):
         self.assertEqual(meta["local_transport_recovery"], policy)
         self.assertEqual(records[first]["locked_attempt"], 2)
         self.assertEqual(records[first]["attempts"][0]["usage"], {})
-        self.assertEqual(checked["plan"]["planned"]["all_slots"], 177)
+        self.assertEqual(checked["plan"]["planned"]["all_slots"], 90)
         self.assertEqual(json.loads(metadata.read_bytes()), original_metadata)
 
     def test_explicit_network_recovery_does_not_waive_transport_limit(self):

@@ -1,0 +1,232 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipBoundOn"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.HasRestrictedLip"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.HasLip"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.hasLip_iff"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet_dom"
+        }
+      ],
+      "representation": "形式化全域与子集受限Lipschitz矩阵谓词及其证书族。LipBoundOn表示在点集U上的逐点放缩不等式∀ x y ∈ U, ∀ j ∈ I, d_j(ϕ(x), ϕ(y)) ≤ ∑ i, L_{i→j} d_i(x, y)；HasRestrictedLip封装约束条件U ⊆ dom(ϕ)与放缩不等式；restrictedLipSet定义证书族ℒ(ϕ)|_U；HasLip与lipSet通过U = dom(ϕ)特化给出全域Lip矩阵谓词与全域证书族ℒ(ϕ)；引理hasLip_iff与restrictedLipSet_dom刻画其等价表示。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipBoundOn"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.HasRestrictedCoLip"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.HasCoLip"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipSet"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet_nonempty"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet_subset_dom"
+        }
+      ],
+      "representation": "形式化包含显式非空条件的受限co-Lipschitz矩阵谓词及证书族。CoLipBoundOn表示下界放缩不等式∀ x y ∈ U, ∀ j ∈ I, ∑ i, K_{i→j} d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))；HasRestrictedCoLip严格满足定义要求，包含U.Nonempty、U ⊆ dom(ϕ)以及CoLipBoundOn；restrictedCoLipSet定义证书族𝒦(ϕ)|_U；HasCoLip与coLipSet给出全域特化；并提供提取非空性与定义域包含的投影引理。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.MatrixBound"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matrix_entry"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matrix_mul"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_entry"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_apply"
+        }
+      ],
+      "representation": "形式化输入/输出矩阵指标约定与扩展非负矩阵乘法。遵循OET约定以输出分量j为行指标、输入分量i为列指标，即(M)_{ji} = M_{i→j}，由matrix_entry M i j = M j i显式表示；matrix_mul定义代数矩阵乘法M₂ * M₁；matrix_mul_entry与matrix_mul_apply证明乘积条目与复合求和公式(M₂ · M₁)_{i→j} = ∑_k (M₂)_{k→j} (M₁)_{i→k}完全一致。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.ComponentChannel"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.SingleRowSparse"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.IsDiagonal"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.isDiagonal_singleRowSparse"
+        }
+      ],
+      "representation": "形式化分量通道、单输入通道（单行稀疏）与对角矩阵特例。ComponentChannel定义为有序对I × I，表示从输入分量d_i到输出分量d_j；SingleRowSparse M i j表述在输出分量j的行中除输入分量i外其余条目均为零（∀ k ≠ i, (M)_{jk} = 0）；IsDiagonal表述所有非对角条目为零（∀ j k, k ≠ j → (M)_{jk} = 0）；引理isDiagonal_singleRowSparse证明对角矩阵在每一行均满足对应同分量通道的单行稀疏性。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.sum_eq_single_of_singleRowSparse"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_bound_of_singleRowSparse"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_bound_of_singleRowSparse"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_bound_of_isDiagonal"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_bound_of_isDiagonal"
+        }
+      ],
+      "representation": "形式化单一输入项行化简及对角特例。sum_eq_single_of_singleRowSparse证明在单行稀疏条件下矩阵向量求和折叠为单一输入通道项∑_k L_{k→j} d_k(x, y) = L_{i→j} d_i(x, y)；lip_bound_of_singleRowSparse与restricted_lip_bound_of_singleRowSparse证明Lip不等式化简为d_j(ϕ(x), ϕ(y)) ≤ L_{i→j} d_i(x, y)；lip_bound_of_isDiagonal与restricted_lip_bound_of_isDiagonal给出对角特例化简d_j(ϕ(x), ϕ(y)) ≤ L_{j→j} d_j(x, y)。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D07"
+      ]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.single_term_le_sum"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pos_coLip_channel_preserves_pos_dist"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_bound_channel_preserves_pos_dist"
+        }
+      ],
+      "representation": "形式化命题2.8(i)：正co-Lip通道保持正距离。pos_coLip_channel_preserves_pos_dist证明若K ∈ 𝒦(ϕ)|_U且K_{i→j} > 0，则对任意x, y ∈ U，d_i(x, y) > 0蕴含d_j(ϕ(x), ϕ(y)) > 0；借助single_term_le_sum将求和下界放缩至单个通道项，并由ENNReal乘积的正性推出结论；同时提供直接基于CoLipBoundOn的形式colip_bound_channel_preserves_pos_dist。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.all_diagonal_pos_coLip_reflects_gaugeZeroRelated"
+        }
+      ],
+      "representation": "形式化命题2.8(ii)：全对角正co-Lip反射族零距。若K ∈ 𝒦(ϕ)|_U且对所有j ∈ I有K_{j→j} > 0，则对任意x, y ∈ U，GaugeZeroRelated d (ϕ(x)) (ϕ(y))蕴含GaugeZeroRelated d x y；严格遵循原文和不加强说明，结论为全分量零距离关系GaugeZeroRelated d x y而非点相等x = y。",
+      "dependencies": [
+        "CH02-P20",
+        "CH02-D02",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_lower_bound"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_upper_bound"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_scalar_two_sided_bound"
+        }
+      ],
+      "representation": "形式化习题2.2：对角输入项的标量双侧界。设L ∈ ℒ(ϕ)|_U，K ∈ 𝒦(ϕ)|_U，且第j行满足单行对角稀疏条件SingleRowSparse L j j（即L_{k→j} = 0, ∀ k ≠ j）。exercise_2_2_scalar_two_sided_bound证明对任意x, y ∈ U有标量双侧界K_{j→j} d_j(x, y) ≤ d_j(ϕ(x), ϕ(y)) ≤ L_{j→j} d_j(x, y)；分别给出下界exercise_2_2_lower_bound与上界exercise_2_2_upper_bound的分步形式。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D07",
+        "CH02-P19"
+      ]
+    }
+  ]
+}

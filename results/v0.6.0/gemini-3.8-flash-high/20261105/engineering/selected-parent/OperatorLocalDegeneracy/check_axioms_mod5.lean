@@ -1,0 +1,19 @@
+import OperatorLocalDegeneracy.CoveringEntropy
+
+#print axioms OperatorLocalDegeneracy.prop_3_15_i
+#print axioms OperatorLocalDegeneracy.prop_3_15_ii
+#print axioms OperatorLocalDegeneracy.prop_3_15_iii
+#print axioms OperatorLocalDegeneracy.prop_3_16_i
+#print axioms OperatorLocalDegeneracy.prop_3_16_ii_a
+#print axioms OperatorLocalDegeneracy.prop_3_16_ii_b
+#print axioms OperatorLocalDegeneracy.prop_3_16_counterexample
+#print axioms OperatorLocalDegeneracy.cor_3_17_i
+#print axioms OperatorLocalDegeneracy.cor_3_17_ii
+#print axioms OperatorLocalDegeneracy.remark_entropy_diff_well_defined
+#print axioms OperatorLocalDegeneracy.prop_3_18_i
+#print axioms OperatorLocalDegeneracy.prop_3_18_ii_a
+#print axioms OperatorLocalDegeneracy.prop_3_18_ii_b
+#print axioms OperatorLocalDegeneracy.prop_3_19_i
+#print axioms OperatorLocalDegeneracy.prop_3_19_ii
+#print axioms OperatorLocalDegeneracy.prop_3_20_i
+#print axioms OperatorLocalDegeneracy.prop_3_20_ii

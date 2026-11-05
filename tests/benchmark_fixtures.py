@@ -1,28 +1,19 @@
-"""Historical configuration fixtures over unchanged public case bytes, never model data."""
-
+"""Current-source contract fixtures; never historical exams or model evidence."""
 import atexit
+import copy
 import functools
-import hashlib
 from pathlib import Path
 import shutil
 import tempfile
 
-from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
+from math_gauge.benchmarks import BenchmarkProfile, build_plan
 from math_gauge.catalog import Suite, read_json, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
-HISTORY = ROOT / "protocol/history/v0.2.0"
-
-# These original credit records were part of the frozen registry even though
-# no case cites them directly. Preserve them while excluding later additions.
-LEGACY_CREDITS = {"openai-torus-formal-reuse", "vilin-topology-formal-reuse",
-                  "tauceti-topology-formal-reuse"}
 
 
-def legacy_sources(registry, case_sources):
-    """Project the original source graph without importing unrelated new cases."""
-    pending = [*case_sources, *LEGACY_CREDITS]
-    selected = set()
+def fixture_sources(registry, case_sources):
+    pending, selected = list(case_sources), set()
     while pending:
         name = pending.pop()
         if name in selected:
@@ -32,140 +23,131 @@ def legacy_sources(registry, case_sources):
         pending.extend(source.get("sources", []))
         if isinstance(source.get("parent"), str):
             pending.append(source["parent"])
-    # Preserve the original registry order and bytes under write_json.
-    return {name: source for name, source in registry.items() if name in selected}
+    return {name: row for name, row in registry.items() if name in selected}
 
 
-@functools.lru_cache(maxsize=1)
-def legacy_root():
-    temporary = tempfile.TemporaryDirectory(prefix="math-gauge-legacy-config-fixture-")
+@functools.lru_cache(maxsize=2)
+def _fixture_root(chain):
+    temporary = tempfile.TemporaryDirectory(prefix="math-gauge-current-contract-")
     atexit.register(temporary.cleanup)
     root = Path(temporary.name).resolve()
-    cases = root / "cases"
-    cases.mkdir()
-    shutil.copy2(HISTORY / "suite.json", cases / "suite.json")
-    shutil.copy2(HISTORY / "taxonomy.json", cases / "taxonomy.json")
-    relocations = read_json(ROOT / "cases/reserve/relocations.json")["case_paths"]
-
-    def current_source(name):
-        recorded = "cases/" + name
-        for row in relocations:
-            if recorded == row["previous"] or recorded.startswith(row["previous"] + "/"):
-                return ROOT / (row["current"] + recorded[len(row["previous"]):])
-        return ROOT / recorded
-
-    names, case_sources = set(), set()
-    for manifest in read_json(HISTORY / "suite.json")["cases"]:
-        # Restore the exact historical logical names; only physical storage moved.
-        # The source manifests remain case-relative and byte-identical.
-        raw = read_json(current_source(manifest))
-        case_sources.update(raw["sources"])
-        prefix = Path(manifest).parent
-        case = dict(raw)
-        if raw.get("path_base") == "case":
-            for key in ("task", "reference", "rubric", "group_contract"):
-                if case.get(key):
-                    case[key] = str(prefix / case[key])
-            case["solver_files"] = [dict(item, source=str(prefix / item["source"]))
-                                    for item in case["solver_files"]]
-            for key in ("evaluator_files", "lean_checks"):
-                case[key] = [str(prefix / name) for name in case.get(key, [])]
-        names.update([manifest, case["task"], case["reference"], case["rubric"],
-                      *case.get("evaluator_files", []), *case["lean_checks"]])
-        if case.get("group_contract"):
-            names.add(case["group_contract"])
-        names.update(item["source"] for item in case["solver_files"])
+    suite = Suite.load(ROOT / "cases")
+    names = {"suite.json", "sources.json", "taxonomy.json"}
+    for cid, case in suite.cases.items():
+        names.add(suite.case_manifest(cid))
+        for key in ["task", "reference", "rubric", "group_contract"]:
+            names.add(str(suite.case_file(case, case[key]).relative_to(suite.root)))
+        for name in case.get("evaluator_files", []) + case.get("lean_checks", []):
+            names.add(str(suite.case_file(case, name).relative_to(suite.root)))
+        for item in case["solver_files"]:
+            names.add(str(suite.case_file(case, item["source"]).relative_to(suite.root)))
     for name in names:
-        target = cases / name
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(current_source(name), target)
-    write_json(cases / "sources.json",
-               legacy_sources(read_json(ROOT / "cases/sources.json"), case_sources))
-    protocol = root / "protocol"
-    protocol.mkdir()
-    shutil.copy2(HISTORY / "benchmark-profile.json", protocol / "benchmark-profile.json")
-    shutil.copytree(HISTORY / "reliability", protocol / "reliability")
+        dest = root / "cases" / name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(suite.root / name, dest)
+    registry = read_json(root / "cases/sources.json")
+    write_json(root / "cases/sources.json", fixture_sources(registry, {n for c in suite.cases.values() for n in c["sources"]}))
+    suite = Suite.load(root / "cases")
+    shutil.copytree(ROOT / "protocol/reliability", root / "protocol/reliability")
+    data = read_json(ROOT / "protocol/benchmark-profile.json")
+    data["id"] = "synthetic-current-contract"
+    # Low-level transport/arithmetic fixtures deliberately have no real native
+    # budget, fresh-supplement or separate study admission. They are not exams.
+    for key in ["case_execution_policy", "supplement_policy", "alignment_policy", "alignment_policy_binding", "execution_groups"]:
+        data.pop(key, None)
+    data["suite"]["sha256"] = Suite.load(root / "cases").sha256
+    packet = root / "protocol/reliability"
+    selection = read_json(packet / "selection.json")
+    selection["source_suite_sha256"] = suite.sha256
+    if chain:
+        # Exercise multi-hop transports with current task bytes. This is a
+        # synthetic software fixture, not a retained historical benchmark.
+        data["reliability"]["protocol_version"] = "0.2.0"
+        data.pop("reliability_population", None)
+        data.pop("reliability_panel", None)
+        data["score_policy"]["repeat_attempt_labels"] = ["A1", "A2", "A3"]
+        for cid in ["LCH01", "LCH02", "HCH02", "MG-GR005"]:
+            case = suite.cases[cid]
+            contract = read_json(suite.case_file(case, case["group_contract"]))
+            stage = contract["stages"][0]
+            selection["cases"].append({"case_id": cid, "case_version": case["version"],
+                "family_id": case["family_id"], "task_kind": case["task_kind"],
+                "selection_category": "generate" if case["task_kind"] == "generate" else "audit",
+                "stage_id": stage["id"], "scope": "stage", "source_turn_scope": "stage",
+                "expected_truth": "true", "target_claim": "Synthetic contract focus, not a mathematical judgment.",
+                "whole_group_required": True, "human_approved": False})
+        selected = [row["case_id"] for row in selection["cases"]]
+        data["attempt_schedule"] = {cid: ["A1", "A2", "A3"] if cid in selected else ["A1"] for cid in suite.cases}
+        data["score_policy"]["repeat_case_ids"] = selected
+        selection["case_count"] = len(selection["cases"])
+        from collections import Counter
+        selection["truth_counts"] = dict(Counter(r["expected_truth"] for r in selection["cases"]))
+        selection["protocol_version"] = "0.2.0"
+        messages, slots = [], []
+        for cid in suite.cases:
+            for label in data["attempt_schedule"][cid]:
+                slots.append({"slot_id": cid + ":" + label, "case_id": cid, "kind": "independent",
+                    "attempt_label": label, "context": "fresh", "parent_slot": None, "message_id": None,
+                    "status": "planned", "response_sha256": None, "grade": None})
+        from math_gauge.catalog import digest_bytes
+        for row in selection["cases"]:
+            for arm in ["neutral", "affirm", "deny"]:
+                for rnd in [1, 2]:
+                    sid = f"{row['case_id']}:{arm}:{rnd}"
+                    content = f"Synthetic transport instruction {arm}, round {rnd}. Return KEEP or FULL.\n本轮不能调用工具或查询外部资料。\n"
+                    messages.append({"message_id": sid, "case_id": row["case_id"], "arm": arm, "round": rnd,
+                        "role": "user", "content": content, "content_sha256": digest_bytes(content.encode())})
+                    slots.append({"slot_id": sid, "case_id": row["case_id"], "kind": "followup",
+                        "arm": arm, "round": rnd, "context": "branch-history-only", "parent_slot":
+                        row["case_id"] + (":A1" if rnd == 1 else f":{arm}:1"), "message_id": sid,
+                        "status": "planned", "response_sha256": None, "grade": None})
+        for ordinal, slot in enumerate(slots, 1):
+            slot["ordinal_per_model"] = ordinal
+        write_json(packet / "prompts.json", {"protocol_version": "0.2.0", "messages": messages})
+        write_json(packet / "schedule.json", {"protocol_version": "0.2.0", "slots": slots})
+    write_json(packet / "selection.json", selection)
+    write_json(root / "protocol/benchmark-profile.json", data)
     return root
 
 
-def legacy_suite():
-    return Suite.load(legacy_root() / "cases")
+
+def fixture_root():
+    return _fixture_root(True)
 
 
-def legacy_profile(suite=None):
-    return BenchmarkProfile.load(legacy_root() / "protocol/benchmark-profile.json", suite or legacy_suite())
+def fixture_suite():
+    return Suite.load(fixture_root() / "cases")
 
 
-def legacy_release_plan(version="0.1.0"):
-    suite = legacy_suite()
-    plan = build_plan(legacy_profile(suite), suite)
-    config = read_json(ROOT / f"releases/v{version}/config.json")
-    plan.update(plan_id=config["plan_id"], created_at=config["created_at"])
-    plan["plan_sha256"] = identity({key: value for key, value in plan.items() if key != "plan_sha256"})
-    return plan, suite
+def fixture_profile(suite=None):
+    return BenchmarkProfile.load(fixture_root() / "protocol/benchmark-profile.json", suite or fixture_suite())
 
 
-@functools.lru_cache(maxsize=1)
-def compact_release_root():
-    """Keep published v0.4 content isolated while exercising the current runner."""
-    snapshot = read_json(ROOT / "tests/fixtures/compact-v0.4.0-source.json")
-    temporary = tempfile.TemporaryDirectory(prefix="math-gauge-v040-source-fixture-")
-    atexit.register(temporary.cleanup)
-    root = Path(temporary.name).resolve()
-    for name, item in snapshot["files"].items():
-        raw = item["content"].encode("utf-8")
-        if hashlib.sha256(raw).hexdigest() != item["sha256"]:
-            raise ValueError("Historical release fixture bytes changed: " + name)
-        target = root / name
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(raw)
-    for manifest in read_json(root / "cases/suite.json")["cases"]:
-        directory = Path(manifest).parent
-        shutil.copytree(ROOT / "cases" / directory, root / "cases" / directory)
-    shutil.copy2(legacy_root() / "cases/sources.json", root / "cases/sources.json")
-    for name, expected in snapshot["unchanged_asset_sha256"].items():
-        source = ROOT / name
-        if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
-            raise ValueError("Published release asset changed: " + name)
-        target = root / name
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
-    # The fixture is a local preview of historical inputs with today's software,
-    # never a claim to reproduce the published release's clean source commit.
-    for source in (ROOT / "math_gauge").glob("*.py"):
-        target = root / "math_gauge" / source.name
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
-    (root / "scripts").mkdir()
-    shutil.copy2(ROOT / "scripts/release.py", root / "scripts/release.py")
-    return root
+def source_root():
+    return _fixture_root(False)
 
 
-@functools.lru_cache(maxsize=1)
-def v05_root():
-    """Read the exact archived v0.5 profile over its unchanged original cases."""
-    temporary = tempfile.TemporaryDirectory(prefix="math-gauge-v050-config-fixture-")
-    atexit.register(temporary.cleanup)
-    root = Path(temporary.name).resolve()
-    history = ROOT / "protocol/history/v0.5.0"
-    cases = root / "cases"
-    cases.mkdir()
-    for name in ("suite.json", "reserve-suite.json", "sources.json", "taxonomy.json", "catalog.json"):
-        shutil.copy2(history / name, cases / name)
-    for name in ("suite.json", "reserve-suite.json"):
-        for manifest in read_json(history / name)["cases"]:
-            directory = Path(manifest).parent
-            shutil.copytree(ROOT / "cases" / directory, cases / directory)
-    protocol = root / "protocol"
-    protocol.mkdir()
-    shutil.copy2(history / "benchmark-profile.json", protocol / "benchmark-profile.json")
-    shutil.copytree(history / "reliability", protocol / "reliability")
-    return root
+def source_suite():
+    return Suite.load(source_root() / "cases")
 
 
-def v05_suite():
-    return Suite.load(v05_root() / "cases")
+def source_profile(suite=None):
+    return BenchmarkProfile.load(source_root() / "protocol/benchmark-profile.json", suite or source_suite())
 
 
-def v05_profile(suite=None):
-    return BenchmarkProfile.load(v05_root() / "protocol/benchmark-profile.json", suite or v05_suite())
+def fixture_release_plan(version="0.6.0"):
+    suite = source_suite()
+    return build_plan(source_profile(suite), suite), suite
+
+
+def arithmetic_source_plan(runtime):
+    """A synthetic weighting seam for the generic source substitution API."""
+    root = source_root()
+    suite = source_suite()
+    data = copy.deepcopy(source_profile(suite).data)
+    for row, weight in zip(data["components"], [22.5, 22.5, 45, 10]):
+        row["weight"] = weight
+    data["overall_weights"] = {"core": 75, "repeat": 5, "neutral": 10, "stance": 10}
+    path = root / "protocol/synthetic-arithmetic.json"
+    write_json(path, data)
+    return build_plan(BenchmarkProfile.load(path, suite), suite, runtime=runtime)

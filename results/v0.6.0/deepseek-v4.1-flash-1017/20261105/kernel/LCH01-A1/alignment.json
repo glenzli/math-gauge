@@ -1,0 +1,151 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.LipBoundOn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.IsLipMatrixOn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.IsLipMatrix"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.lipMatricesOn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.lipMatrices"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.IsLipMatrixOn.subset_dom"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.IsLipMatrixOn.bound"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.mem_lipMatricesOn_iff"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.mem_lipMatrices_iff"}
+      ],
+      "representation": {
+        "objects": "X 上的算子 ϕ : Operator X bot，指标集 I 上的矩阵 L : I → I → ENNReal，以及受限域 U : Set X；目标空间即冻结模块中的 Operator 与 ENNReal。",
+        "parameters": "[Fintype I] [Nonempty I]、分量伪度量族 d : I → X → X → ENNReal、ϕ、U、L。矩阵条目 L i j 表示原文 L_{i→j}。",
+        "quantifiers": "LipBoundOn 为 ∀ x ∈ U, ∀ y ∈ U, ∀ j, d j (ϕ x) (ϕ y) ≤ ∑ i, L i j * d i x y；IsLipMatrixOn 另外显式保留原文的 U ⊆ dom ϕ；全域名 U=dom ϕ 由 IsLipMatrix 表示。",
+        "conclusion": "得到受限合法 Lip 矩阵谓词 IsLipMatrixOn 及其证书族 lipMatricesOn，以及全域名谓词 IsLipMatrix 和证书族 lipMatrices；成员关系与谓词严格等价。"
+      },
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.CoLipBoundOn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.IsCoLipMatrixOn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.coLipMatricesOn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.IsCoLipMatrix"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.coLipMatrices"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.IsCoLipMatrixOn.nonempty"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.IsCoLipMatrixOn.subset_dom"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.IsCoLipMatrixOn.bound"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.mem_coLipMatricesOn_iff"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.mem_coLipMatrices_iff"}
+      ],
+      "representation": {
+        "objects": "算子 ϕ : Operator X bot、矩阵 K : I → I → ENNReal 与受限域 U : Set X；K i j 对应 K_{i→j}。",
+        "parameters": "[Fintype I] [Nonempty I]、d、ϕ、U、K。原文要求 U 非空且 U ⊆ dom ϕ，这两项均在谓词中显式保留。",
+        "quantifiers": "CoLipBoundOn 为 ∀ x ∈ U, ∀ y ∈ U, ∀ j, ∑ i, K i j * d i x y ≤ d j (ϕ x) (ϕ y)；IsCoLipMatrixOn 为 U.Nonempty ∧ U ⊆ dom ϕ ∧ CoLipBoundOn。",
+        "conclusion": "得到含非空条件的受限合法 co-Lip 谓词 IsCoLipMatrixOn 及其证书族 coLipMatricesOn；全域名使用 dom ϕ，并因非空条件在 dom ϕ 为空时证书族为空。"
+      },
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.GaugeMatrix"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.matrixEntry"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.outputRow"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.inputColumn"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.matrixMul"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.matrixMul_apply"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.matrixEntry_matrixMul"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.matrixEntry_apply"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.outputRow_apply"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.inputColumn_apply"}
+      ],
+      "representation": {
+        "objects": "指标集 I 上的扩展非负矩阵 GaugeMatrix I := I → I → ENNReal。约定第一个指标 i 是输入分量、第二个指标 j 是输出分量；因此 L i j 是原文的 L_{i→j}，位于输出行 j、输入列 i。",
+        "parameters": "I 为有限指标集；matrixMul 需要 [Fintype I]；条目取值 ENNReal，包含 +∞。",
+        "quantifiers": "矩阵乘法定义为 matrixMul M₂ M₁ i j = ∑ k, M₂ k j * M₁ i k；其复合参数顺序与原文 M₂ · M₁ 的前后顺序一致。",
+        "conclusion": "matrixMul_apply 与 matrixEntry_matrixMul 给出矩阵乘积的指标公式；outputRow/inputColumn 固定原文的行列含义；没有偷偷采用相反的矩阵指标约定。"
+      },
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.ComponentChannel"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.channelInput"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.channelOutput"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.SingleInputRow"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.SingleInputChannel"},
+        {"file": "OperatorBounds/Defs.lean", "name": "formal_oet.ch_02_operator_bounds.IsDiagonalMatrix"},
+        {"file": "OperatorBounds/Basic.lean", "name": "formal_oet.ch_02_operator_bounds.diagonal_row_vanishes"}
+      ],
+      "representation": {
+        "objects": "分量通道用有序对 ComponentChannel I := I × I 表示，(i,j) 的输入分量为 channelInput，输出分量为 channelOutput；矩阵 L 的同一行与对角支撑性质分别由 SingleInputRow/SingleInputChannel 与 IsDiagonalMatrix 表示。",
+        "parameters": "L : GaugeMatrix I；输入输出指标 i j : I；指标集仍为有限非空 I。",
+        "quantifiers": "SingleInputRow L i j 定义为 ∀ k, k ≠ i → L k j = 0，即第 j 行除可能出现的 L_{i→j} 外全部为零；IsDiagonalMatrix L 定义为 ∀ i j, i ≠ j → L i j = 0。",
+        "conclusion": "刻画原文的分量通道、单输入通道行稀疏性与对角特例；diagonal_row_vanishes 把对角矩阵的每个同分量通道化为相应的 SingleInputRow。"
+      },
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Theorems.lean", "name": "formal_oet.ch_02_operator_bounds.lip_single_input_row"},
+        {"file": "OperatorBounds/Theorems.lean", "name": "formal_oet.ch_02_operator_bounds.lip_diagonal_same_component"}
+      ],
+      "representation": {
+        "objects": "受限合法 Lip 矩阵 L、算子 ϕ : Operator X bot、受限域 U 与点 x,y : X。",
+        "parameters": "[Fintype I] [Nonempty I]、d、ϕ、U、L，以及输出指标 j 与唯一输入指标 i。",
+        "quantifiers": "前提为 hL : IsLipMatrixOn d ϕ U L（含 U ⊆ dom ϕ 及逐点 Lip 不等式）、hrow : ∀ k, k ≠ i → L k j = 0、x ∈ U、y ∈ U。结论为 d j (ϕ x) (ϕ y) ≤ L i j * d i x y。对角特例接受 IsDiagonalMatrix L，并对每个 j 得到 d j (ϕ x) (ϕ y) ≤ L j j * d j x y。",
+        "conclusion": "证明在单一输入项行中整行求和化为唯一标量项，并单独给出对角线同分量通道的化简约化，完全对应 §2.2 的例外情形。"
+      },
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Theorems.lean", "name": "formal_oet.ch_02_operator_bounds.coLip_pos_preserves_pos"}
+      ],
+      "representation": {
+        "objects": "合法受限 co-Lip 矩阵 K、算子 ϕ、受限域 U 与点 x,y : X。",
+        "parameters": "[Fintype I] [Nonempty I]、d、ϕ、U、K、输入指标 i、输出指标 j。",
+        "quantifiers": "前提为 hK : IsCoLipMatrixOn d ϕ U K（显含 U 非空、U ⊆ dom ϕ 与逐点 co-Lip 下界）、0 < K i j、x ∈ U、y ∈ U、0 < d i x y。",
+        "conclusion": "得到 0 < d j (ϕ x) (ϕ y)，即正 co-Lip 通道 i→j 保持严格正距离；证明用非负有限和的单项下界与 co-Lip 不等式。"
+      },
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Theorems.lean", "name": "formal_oet.ch_02_operator_bounds.coLip_diagonal_reflects_zero_related"}
+      ],
+      "representation": {
+        "objects": "合法受限 co-Lip 矩阵 K、算子 ϕ、受限域 U 与点 x,y : X；族零距关系使用冻结模块的 GaugeZeroRelated。",
+        "parameters": "[Fintype I] [Nonempty I]、d、ϕ、U、K；对角正性前提 ∀ j, 0 < K j j。",
+        "quantifiers": "前提为 hK : IsCoLipMatrixOn d ϕ U K、hdiag : ∀ j, 0 < K j j、x ∈ U、y ∈ U，以及 GaugeZeroRelated d (ϕ.func x) (ϕ.func y)。结论是 GaugeZeroRelated d x y。",
+        "conclusion": "对每个 j，由 P20 的严格正性保持与输出零距矛盾，推出 d j x y = 0；最终只断言 x∼_G y，未加强为 x = y。这正是原文“不预设族分离性”的强度。"
+      },
+      "dependencies": ["CH02-D02", "CH02-P20"]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {"file": "OperatorBounds/Theorems.lean", "name": "formal_oet.ch_02_operator_bounds.scalar_two_sided_bound"}
+      ],
+      "representation": {
+        "objects": "同一算子 ϕ 的合法 Lip 矩阵 L 与合法受限 co-Lip 矩阵 K，受限域 U，点 x,y : X，以及输出指标 j。",
+        "parameters": "[Fintype I] [Nonempty I]、d、ϕ、U、L、K、j；行稀疏前提 SingleInputRow L j j 即 ∀ k, k ≠ j → L k j = 0。",
+        "quantifiers": "前提为 hL : IsLipMatrixOn d ϕ U L、hK : IsCoLipMatrixOn d ϕ U K、hrow : SingleInputRow L j j、x ∈ U、y ∈ U。结论为合取 K j j * d j x y ≤ d j (ϕ x) (ϕ y) ∧ d j (ϕ x) (ϕ y) ≤ L j j * d j x y。",
+        "conclusion": "下界由 co-Lip 的单项项 K_{j→j} d_j 小于等于全行和得到；上界调用 P19 的单输入项行化简；因此精确给出习题 2.2 的标量双侧界。"
+      },
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D07", "CH02-P19"]
+    }
+  ]
+}

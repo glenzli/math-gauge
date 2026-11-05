@@ -44,7 +44,8 @@ COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
 _RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review",
-                    "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90")
+                    "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90",
+                    "written-new-panel", "written-refresh")
 _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha256",
                  "base_plan_sha256", "suite", "runner_sha256", "protocol_version", "planned",
                  "exported_slots", "selected_slot_ids", "slots", "cases", "prompts",
@@ -267,7 +268,8 @@ def _inspect_bundle_contents(root):
     _h_require(isinstance(value["targets"], list) and value["targets"]
                and len(value["targets"]) == len(set(value["targets"]))
                and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review",
-                                             "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90"},
+                                             "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90",
+                                             "written-new-panel", "written-refresh"},
                "Invalid export target projection")
     _h_projection(root, value, {"CONTROLLER.md", "controller.py", "submission-template.json"})
     template = json.loads(_h_file(root, "submission-template.json").read_bytes())
@@ -667,7 +669,7 @@ def _projection(plan, suite, targets):
     wanted_cases = {s["case_id"] for s in selected}
     if plan["profile"]["data"].get("case_execution_policy"):
         from .execution_policy import declared_case_context, declared_case_timeout_seconds
-        _h_require(all(declared_case_context(plan["profile"]["data"], cid, plan["context_policy"])
+        _h_require(not plan["runtime_frozen"] or all(declared_case_context(plan["profile"]["data"], cid, plan["context_policy"])
                        == plan["context_policy"] for cid in wanted_cases),
                    "Export v5 mixed conditions as separate matching condition target groups")
         frozen_timeout = (plan.get("runtime") or {}).get("budget", {}).get("timeout_seconds")
@@ -973,7 +975,8 @@ def _inspect_release_dataset_contents(root):
             core = independent
             _h_require(selections["all"] == all_ids and selections["core"] == selections["repeat"] == independent,
                        "Release independent target inventory changed")
-        component_targets = [t for t in selections if t not in {"repeat", "neutral", "stance", "core", "all"}]
+        component_targets = [t for t in selections if t in {"proofs", "lean-audit",
+            "lean-construction", "chapters", "lean-formalization", "exploration", "answer-review"}]
         partition = [sid for component in component_targets for sid in selections[component]]
         _h_require(len(partition) == len(set(partition)) and set(partition) == set(core),
                    "Release component targets must partition independent slots")

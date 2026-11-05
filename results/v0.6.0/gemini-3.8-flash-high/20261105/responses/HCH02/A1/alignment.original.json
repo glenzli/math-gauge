@@ -1,0 +1,726 @@
+{
+  "case_id": "HCH02",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "HC02-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipMatrix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipMatrixDom"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipCertFamily"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipCertFamilyDom"
+        }
+      ],
+      "representation": "定义算子关于规范结构的全域及限制在 U ⊆ dom(ϕ) 上的 Lipschitz 界矩阵谓词，以及由每个分量证书组成的证书族。",
+      "dependencies": [
+        "HC02-D03"
+      ]
+    },
+    {
+      "id": "HC02-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipMatrix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipCertFamily"
+        }
+      ],
+      "representation": "定义非空评估子集 U ⊆ dom(ϕ) 上算子的 co-Lipschitz（下界）矩阵谓词及由分量下界证书组成的证书族。",
+      "dependencies": [
+        "HC02-D03"
+      ]
+    },
+    {
+      "id": "HC02-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.BoundMatrix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matrixEntry"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mul"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_assoc"
+        }
+      ],
+      "representation": "采用输入指标优先的存储方式 BoundMatrix I := I → I → ENNReal，matrixEntry 对应第 j 行第 i 列，mul 为矩阵乘法复合并证明乘法结合律。",
+      "dependencies": []
+    },
+    {
+      "id": "HC02-D04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.idMatrix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chainMatrix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.idMatrix_mul"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mul_idMatrix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chainMatrix_nil"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chainMatrix_singleton"
+        }
+      ],
+      "representation": "定义单位界矩阵 idMatrix 以及列表矩阵乘积 chainMatrix，证明空列表退化为单位矩阵及单元素退化。",
+      "dependencies": [
+        "HC02-D03"
+      ]
+    },
+    {
+      "id": "HC02-D05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.evalChain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.intermediateSets"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.chain_image_eq"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.LipStepChain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipStepChain"
+        }
+      ],
+      "representation": "表示有限算子链及其在评估子集 U1 下各步实际像集 intermediateSets，并用逐步归纳的结构仅保存每步的算子与矩阵界，避免存储复合界为字段。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D02",
+        "HC02-D03",
+        "HC02-D04"
+      ]
+    },
+    {
+      "id": "HC02-D06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.fullPath"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeightSum"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.PathAllPositive"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.PathHasZero"
+        }
+      ],
+      "representation": "将长度为 n 的链中从 i 到 j 的指标路径形式化为中间序列 fullPath，定义路径权重的乘积与求和，以及全正（PathAllPositive）和含零（PathHasZero）谓词。",
+      "dependencies": [
+        "HC02-D03",
+        "HC02-D04"
+      ]
+    },
+    {
+      "id": "HC02-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.RowSparse"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRowDecoupled"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.ColSparse"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.IsColDecoupled"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.IsDiagonal"
+        }
+      ],
+      "representation": "定义分量通道稀疏性：任意单行稀疏 RowSparse、单行完全解耦 IsRowDecoupled、单列稀疏 ColSparse、单列完全解耦 IsColDecoupled 以及对角矩阵 IsDiagonal。",
+      "dependencies": [
+        "HC02-D03"
+      ]
+    },
+    {
+      "id": "HC02-D08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.S_channel"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.single_channel_lip"
+        }
+      ],
+      "representation": "定义单通道 (i, j) 在 U 上的可行标量集合 S_channel 以及该集合在扩展非负实数中的下确界 single_channel_lip。",
+      "dependencies": []
+    },
+    {
+      "id": "HC02-P01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix_unique_index"
+        }
+      ],
+      "representation": "证明当规范族仅有单指标时，矩阵界退化为单分量标量界形式。",
+      "dependencies": [
+        "HC02-D01"
+      ]
+    },
+    {
+      "id": "HC02-P02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix_restrict"
+        }
+      ],
+      "representation": "证明全域 Lip 矩阵界可以直接限制在任意子集 U ⊆ dom(ϕ) 上。",
+      "dependencies": [
+        "HC02-D01"
+      ]
+    },
+    {
+      "id": "HC02-P03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix_monotone"
+        }
+      ],
+      "representation": "证明若 U ⊆ V ⊆ dom(ϕ)，则 V 上的 Lip 矩阵证书在 U 上依然成立，即证书族单调扩大。",
+      "dependencies": [
+        "HC02-D01"
+      ]
+    },
+    {
+      "id": "HC02-P04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.entry_sInf_antitone"
+        }
+      ],
+      "representation": "证明当定义域缩小 U ⊆ V 时，可行标量集单调增大，其逐条目下确界非增。",
+      "dependencies": [
+        "HC02-D08",
+        "HC02-P03"
+      ]
+    },
+    {
+      "id": "HC02-P05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.comp"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_matrix_comp"
+        }
+      ],
+      "representation": "证明两个算子复合后在源域上的 Lip 矩阵界由两个矩阵的乘积给出。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D03"
+      ]
+    },
+    {
+      "id": "HC02-P06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_entry_zero_of_dist_zero"
+        }
+      ],
+      "representation": "证明若在非空 U 上存在两点像距离为 0 且原距离在某分量 i 上非零有限，则该列条目必定为 0。",
+      "dependencies": [
+        "HC02-D02"
+      ]
+    },
+    {
+      "id": "HC02-P07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_matrix_comp"
+        }
+      ],
+      "representation": "证明两个算子复合后在非空源域上的 co-Lip 矩阵界由两个下界矩阵的乘积给出。",
+      "dependencies": [
+        "HC02-D02",
+        "HC02-D03"
+      ]
+    },
+    {
+      "id": "HC02-P08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.dist_perturbation_forward"
+        }
+      ],
+      "representation": "证明两个算子点对像距的上扰动三角不等式：d_j(ϕ(x), ϕ(y)) ≤ d_j(ψ(x), ψ(y)) + d_j(ϕ(x), ψ(x)) + d_j(ϕ(y), ψ(y))。",
+      "dependencies": []
+    },
+    {
+      "id": "HC02-P09",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.dist_perturbation_backward"
+        }
+      ],
+      "representation": "证明两个算子点对像距的下扰动三角不等式：d_j(ψ(x), ψ(y)) ≤ d_j(ϕ(x), ϕ(y)) + d_j(ϕ(x), ψ(x)) + d_j(ϕ(y), ψ(y))。",
+      "dependencies": []
+    },
+    {
+      "id": "HC02-P10",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_perturbation_bridge"
+        }
+      ],
+      "representation": "证明算子间点对距离界可作为 Lip 矩阵上界的不等式桥梁。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-P08"
+      ]
+    },
+    {
+      "id": "HC02-P11",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_perturbation_bridge"
+        }
+      ],
+      "representation": "证明算子间点对距离界可作为 co-Lip 矩阵下界的不等式桥梁。",
+      "dependencies": [
+        "HC02-D02",
+        "HC02-P09"
+      ]
+    },
+    {
+      "id": "HC02-P12",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_chain_bound"
+        }
+      ],
+      "representation": "证明长度为 n 的算子链由 chainMatrix 给出其总 Lip 矩阵界，归纳由两步复合建立。",
+      "dependencies": [
+        "HC02-D04",
+        "HC02-D05",
+        "HC02-P05"
+      ]
+    },
+    {
+      "id": "HC02-P13",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_chain_bound"
+        }
+      ],
+      "representation": "证明长度为 n 的算子链由 chainMatrix 给出其总 co-Lip 矩阵界，归纳由两步复合建立。",
+      "dependencies": [
+        "HC02-D04",
+        "HC02-D05",
+        "HC02-P07"
+      ]
+    },
+    {
+      "id": "HC02-P14",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.id_operator"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.id_lip_matrix"
+        }
+      ],
+      "representation": "证明零步算子（恒等映射）以单位矩阵 idMatrix 作为全域 Lip 矩阵证书。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D04"
+      ]
+    },
+    {
+      "id": "HC02-P15",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.id_colip_matrix"
+        }
+      ],
+      "representation": "证明零步算子（恒等映射）以单位矩阵 idMatrix 作为任意非空子集上的 co-Lip 矩阵证书。",
+      "dependencies": [
+        "HC02-D02",
+        "HC02-D04"
+      ]
+    },
+    {
+      "id": "HC02-P16",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_chainMatrix_zero_iff"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_one_zero_iff"
+        }
+      ],
+      "representation": "证明 Lip 乘积矩阵条目为 0 当且仅当所有连接路径均含有点权为 0 的边，并对长度 1 给出条目等价。",
+      "dependencies": [
+        "HC02-D04",
+        "HC02-D06"
+      ]
+    },
+    {
+      "id": "HC02-P17",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_chainMatrix_pos_iff"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_one_pos_iff"
+        }
+      ],
+      "representation": "证明 co-Lip 乘积矩阵条目严格大于 0 当且仅当存在一条全正权重的连接路径，并对长度 1 给出条目等价。",
+      "dependencies": [
+        "HC02-D04",
+        "HC02-D06"
+      ]
+    },
+    {
+      "id": "HC02-P18",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.s_channel_empty_of_dist_zero_lt"
+        }
+      ],
+      "representation": "证明若在某对点上输入伪度量为 0 而输出伪度量严格大于 0，则该单通道可行标量集为空。",
+      "dependencies": [
+        "HC02-D08"
+      ]
+    },
+    {
+      "id": "HC02-P19",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.single_channel_lip_attained_of_pos_finite"
+        }
+      ],
+      "representation": "证明当单通道下确界为正有限实数时，下确界本身属于可行标量集合（下确界可达）。",
+      "dependencies": [
+        "HC02-D08",
+        "HC02-P21"
+      ]
+    },
+    {
+      "id": "HC02-P20",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.s_channel_upward_closed"
+        }
+      ],
+      "representation": "证明单通道可行标量集合 S_channel 在大于等于方向上向上封闭。",
+      "dependencies": [
+        "HC02-D08"
+      ]
+    },
+    {
+      "id": "HC02-P21",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_s_channel_of_gt_sInf"
+        }
+      ],
+      "representation": "证明任何严格大于下确界的标量都属于可行标量集合。",
+      "dependencies": [
+        "HC02-D08"
+      ]
+    },
+    {
+      "id": "HC02-P22",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_s_channel_of_sInf_zero"
+        }
+      ],
+      "representation": "证明当单通道下确界为 0 时，所有正有限实数均属于可行标量集合。",
+      "dependencies": [
+        "HC02-D08",
+        "HC02-P21"
+      ]
+    },
+    {
+      "id": "HC02-P23",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.X_ce"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.bot_ce"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.d_ce"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.d_ce_pseudo"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.phi_ce"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.U_ce"
+        },
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.counterexample_sInf_zero_not_attained"
+        }
+      ],
+      "representation": "构造三点离散伪度量空间与恒等算子的具体反例，证明下确界为 0 但 0 并不属于可行集，即 0 处不一定可达。",
+      "dependencies": [
+        "HC02-D08"
+      ]
+    },
+    {
+      "id": "HC02-P24",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.single_channel_lip_lt_top_iff"
+        }
+      ],
+      "representation": "证明单通道下确界小于正无穷当且仅当存在有限可行常数。",
+      "dependencies": [
+        "HC02-D08"
+      ]
+    },
+    {
+      "id": "HC02-P25",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.sum_erase_of_zero_coeff"
+        }
+      ],
+      "representation": "证明当求和式中某系数为 0 时，该项可从有限求和中移除而不改变总和。",
+      "dependencies": []
+    },
+    {
+      "id": "HC02-P26",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.row_sparse_lip_bound"
+        }
+      ],
+      "representation": "证明单行稀疏使得对应输出分量只依赖于唯一非零输入位置的伪度量。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D07",
+        "HC02-P25"
+      ]
+    },
+    {
+      "id": "HC02-P27",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.col_sparse_zero_entry"
+        }
+      ],
+      "representation": "证明单列稀疏之外的非支撑位置条目均为 0。",
+      "dependencies": [
+        "HC02-D07"
+      ]
+    },
+    {
+      "id": "HC02-P28",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.diagonal_lip_bound"
+        }
+      ],
+      "representation": "证明对角 Lip 矩阵使每个输出分量仅由相同输入分量通过标量界约束。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D07",
+        "HC02-P26"
+      ]
+    },
+    {
+      "id": "HC02-P29",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.two_sided_scalar_bound_of_row_sparse"
+        }
+      ],
+      "representation": "证明只需 Lip 矩阵单行稀疏，即可与单通道 co-Lip 条目形成双侧标量不等式。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D02",
+        "HC02-D07",
+        "HC02-P26"
+      ]
+    },
+    {
+      "id": "HC02-P30",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.componentwise_two_sided_bounds"
+        }
+      ],
+      "representation": "证明对角矩阵条件下的逐分量双侧标量界以及系数有限时的不等式分支。",
+      "dependencies": [
+        "HC02-D01",
+        "HC02-D02",
+        "HC02-D07",
+        "HC02-P28"
+      ]
+    },
+    {
+      "id": "HC02-P31",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_channel_preserves_distinguishability"
+        }
+      ],
+      "representation": "证明正的单通道 co-Lip 条目保持点对在该通道上的可分辨性（正像距）。",
+      "dependencies": [
+        "HC02-D02"
+      ]
+    },
+    {
+      "id": "HC02-P32",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "formal_oet.vol_01.ch_02_operator_bounds.colip_diagonal_reflects_gauge_zero"
+        }
+      ],
+      "representation": "证明具有正对角线的 co-Lip 矩阵能将输出的族零距反射回输入的族零距。",
+      "dependencies": [
+        "HC02-D02",
+        "HC02-D07"
+      ]
+    }
+  ]
+}

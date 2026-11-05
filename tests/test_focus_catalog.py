@@ -43,7 +43,7 @@ class FocusCatalogTests(unittest.TestCase):
             self.assertEqual(catalog["counts"]["proof_criteria"], sum(row["proof_criterion_count"] for row in written))
             self.assertTrue(all(row["stage_count"] == 0 for row in written))
         self.assertEqual(
-            catalog["scope"]["chapter_obligations"], {"MG-C002": 34, "MG-C003": 92, "LCH01": 8, "LCH02": 20, "HCH02": 40}
+            catalog["scope"]["chapter_obligations"], {"LCH02": 34, "MG-C003": 92, "LCH01": 8, "LCH02": 20, "HCH02": 40}
         )
         self.assertEqual(catalog["counts"]["source_human_approved"], 0)
         self.assertEqual(catalog["counts"]["model_calls_by_indexer"], 0)
@@ -68,16 +68,15 @@ class FocusCatalogTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "every selected mathematical paper and answer review exactly once"):
                     focus_catalog.build(taxonomy_data=taxonomy)
 
-    def test_optional_membership_retains_original_source_identity(self):
+    def test_current_membership_retains_original_source_identity(self):
         catalog, _ = focus_catalog.build()
+        self.assertEqual(catalog["counts"]["reserve_papers"], 0)
         entries = {row["case_id"]: row for row in catalog["entries"]}
-        for cid in ("MG-GR012", "MG-GR015", "MG-GR020"):
-            with self.subTest(case_id=cid):
-                row = entries[cid]
-                self.assertEqual(row["membership"], "reserve")
-                self.assertEqual(row["paths"]["case"], f"cases/proofs/{cid}/case.json")
-                self.assertEqual(row["original_sha256"][row["paths"]["task"]],
-                                 hashlib.sha256((ROOT / row["paths"]["task"]).read_bytes()).hexdigest())
+        for cid in ["MG-GR002", "MG-GR021", "MG-C003"]:
+            row = entries[cid]
+            self.assertEqual(row["membership"], "default")
+            self.assertEqual(row["original_sha256"][row["paths"]["task"]],
+                hashlib.sha256((ROOT / row["paths"]["task"]).read_bytes()).hexdigest())
 
     def test_rejects_duplicate_primary_or_focus_tag(self):
         for field, value, message in (
@@ -99,7 +98,7 @@ class FocusCatalogTests(unittest.TestCase):
             focus_catalog.build(taxonomy_data=taxonomy)
 
     def test_rejects_nonexistent_stage_or_obligation(self):
-        for cid, invalid in (("MG-GR001", "S99"), ("MG-C003", "CH03-P99-99")):
+        for cid, invalid in (("MG-GR002", "S99"), ("MG-C003", "CH03-P99-99")):
             with self.subTest(cid=cid):
                 taxonomy = self.changed_taxonomy()
                 assignment = next(item for item in taxonomy["paper_assignments"]
@@ -123,7 +122,7 @@ class FocusCatalogTests(unittest.TestCase):
     def test_rejects_stale_task_locator(self):
         taxonomy = self.changed_taxonomy()
         assignment = next(item for item in taxonomy["paper_assignments"]
-                          if item["case_id"] == "MG-GR001")
+                          if item["case_id"] == "MG-GR002")
         assignment["focus"][0]["evidence"][0]["task_locator"]["line"] += 1
         with self.assertRaisesRegex(ValueError, "task heading locator drift"):
             focus_catalog.build(taxonomy_data=taxonomy)
@@ -133,7 +132,7 @@ class FocusCatalogTests(unittest.TestCase):
             with self.subTest(human_change=human_change):
                 taxonomy = self.changed_taxonomy()
                 assignment = next(item for item in taxonomy["paper_assignments"]
-                                  if item["case_id"] == "MG-GR003")
+                                  if item["case_id"] == "MG-GR005")
                 if human_change:
                     assignment["classification_review"]["human"] = "approved"
                     message = "human review must stay pending"
@@ -156,10 +155,10 @@ class FocusCatalogTests(unittest.TestCase):
         catalog, _ = focus_catalog.build()
         self.assertNotIn("protected_legacy_files", self.taxonomy)
         self.assertNotIn("protected_legacy_files", catalog)
-        self.assertEqual([row["root"] for row in catalog["suites"]], ["cases", "cases"])
-        self.assertEqual([row["membership"] for row in catalog["suites"]], ["default", "reserve"])
+        self.assertEqual([row["root"] for row in catalog["suites"]], ["cases"])
+        self.assertEqual([row["membership"] for row in catalog["suites"]], ["default"])
         self.assertEqual([row["paper_count"] for row in catalog["suites"]],
-                         [catalog["counts"][key + "_papers"] for key in ("default", "reserve")])
+                         [catalog["counts"][key + "_papers"] for key in ("default",)])
 
     def test_refresh_writes_only_current_derived_outputs(self):
         catalog, document = focus_catalog.build()
@@ -185,9 +184,8 @@ class FocusCatalogTests(unittest.TestCase):
         ids = [cid for item in catalog["categories"] for cid in item["case_ids"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(set(ids), {item["case_id"] for item in catalog["entries"]})
-        default, reserve = (set(row["cases"]) for row in catalog["suites"])
-        self.assertFalse(default & reserve)
-        self.assertEqual(default | reserve, set(ids))
+        default = set(catalog["suites"][0]["cases"])
+        self.assertEqual(default, set(ids))
         for item in catalog["entries"]:
             self.assertEqual(item["membership"], "default" if item["case_id"] in default else "reserve")
             canonical = f"{item['category']}/{item['case_id']}/case.json"

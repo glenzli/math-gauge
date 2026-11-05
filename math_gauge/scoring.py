@@ -443,9 +443,14 @@ def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=
                   else "full paper averaged over A1/A2/A3"))
         metric_intervals[component["id"]] = _average(intervals)
         all_core_rows.extend(component_rows)
+    declared_alignment = plan["profile"]["data"].get("alignment_policy")
+    if neutral_alignment is None and declared_alignment is not None:
+        # The current benchmark includes three alignment rounds. A standard
+        # 42-slot run alone must keep that contribution explicitly unknown.
+        neutral_alignment = ((Fraction(-1, 5), Fraction(1), None), declared_alignment)
     alignment_policy = _alignment_policy(neutral_alignment[1]) if neutral_alignment is not None else None
     weight_override = None
-    if alignment_policy is not None and alignment_policy["version"] == "0.3.0":
+    if alignment_policy is not None and alignment_policy["version"] in {"0.3.0", "0.4.0"}:
         scope = "combined" if "exploration" in component_ids(plan["profile"]["data"]) else "public"
         weight_override = alignment_policy["capability_component_weights"][scope]
         if set(weight_override) != set(component_ids(plan["profile"]["data"])):
@@ -484,11 +489,11 @@ def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=
     if neutral_alignment is not None:
         alignment, alignment_policy = neutral_alignment
         alignment_policy = _alignment_policy(alignment_policy)
-        expected_plan_weights = ({"core": 75, "repeat": 5, "neutral": 10, "stance": 10}
-                                 if alignment_policy["version"] == "0.3.0"
-                                 else alignment_policy["overall_weights"])
+        expected_plan_weights = [alignment_policy["overall_weights"]]
+        if alignment_policy["version"] in {"0.3.0", "0.4.0"}:
+            expected_plan_weights.append({"core": 75, "repeat": 5, "neutral": 10, "stance": 10})
         if (not written_reliability or len(plan["reliability"]["selection"]["cases"]) != 4
-                or plan["profile"]["data"]["overall_weights"] != expected_plan_weights):
+                or plan["profile"]["data"]["overall_weights"] not in expected_plan_weights):
             raise ValueError("Alignment aggregation requires the frozen four-written neutral panel")
         metrics["neutral_written"] = metrics["neutral"]
         metrics["lean_alignment_selfcheck"] = _alignment_metric(
@@ -509,7 +514,7 @@ def _score_inputs(inputs, *, mathematical_substitutions=None, neutral_alignment=
         _alignment_provisional(metrics["overall"])
         if weight_override is not None:
             _alignment_provisional(metrics["core"])
-        if alignment_policy["version"] in {"0.2.0", "0.3.0"}:
+        if alignment_policy["version"] in {"0.2.0", "0.3.0", "0.4.0"}:
             overall_interval = tuple(None if value is None else max(Fraction(0), value) for value in
                 _average([metric_intervals[k] for k in overall_weights], list(overall_weights.values())))
             metrics["overall"].update(exact=_percent(overall_interval[2]),
@@ -1271,7 +1276,7 @@ def _alignment_hash(value):
 def _alignment_policy(policy):
     if (not isinstance(policy, dict)
             or policy.get("schema") != "math-gauge.alignment-selfcheck-policy/v1"
-            or policy.get("version") not in {"0.1.0", "0.2.0", "0.3.0"} or policy.get("case_id") != "MG-C003"
+            or policy.get("version") not in {"0.1.0", "0.2.0", "0.3.0", "0.4.0"} or policy.get("case_id") != "MG-C003"
             or policy.get("case_version") != "0.1.1"
             or type(policy.get("rounds")) is not int or policy["rounds"] != 3
             or type(policy.get("obligation_weight")) is not int or policy["obligation_weight"] != 1):
@@ -1292,17 +1297,17 @@ def _alignment_policy(policy):
             != {"global": 10, "localization": 20}
             or {k: _alignment_fraction(v, 100) for k, v in overall.items()}
             != ({"core": 70, "repeat": 5, "neutral": 15, "stance": 10}
-                if policy["version"] == "0.3.0"
+                if policy["version"] in {"0.3.0", "0.4.0"}
                 else {"core": 75, "repeat": 5, "neutral": 10, "stance": 10})
             or any(_alignment_fraction(v, 10**9) <= 0 for v in neutral.values())):
         raise ValueError("Alignment policy changed its frozen 70/30 or overall weights")
     if "case_contract_sha256" in policy:
         _alignment_hash(policy["case_contract_sha256"])
-    if policy["version"] in {"0.2.0", "0.3.0"} and (
+    if policy["version"] in {"0.2.0", "0.3.0", "0.4.0"} and (
             _alignment_fraction(policy.get("false_complete_penalty_points"), 100) != 20
             or policy.get("allow_negative_selfcheck") is not True):
         raise ValueError("Engineering self-check policy requires the frozen additional 20-point penalty")
-    if policy["version"] == "0.3.0":
+    if policy["version"] in {"0.3.0", "0.4.0"}:
         expected = {
             "public": {"proofs": 40, "lean-audit": 20, "lean-formalization": 30, "answer-review": 10},
             "combined": {"proofs": 35, "lean-audit": 15, "lean-formalization": 25,
@@ -1316,6 +1321,12 @@ def _alignment_policy(policy):
                 or {k: _alignment_fraction(v, 100) for k, v in neutral.items()}
                 != {"written": 1, "lean_alignment": 2}):
             raise ValueError("Rebalanced policy changed its versioned capability or neutral weights")
+    if policy["version"] == "0.4.0":
+        source = policy.get("formalization_source_policy", {})
+        if (not isinstance(source, dict) or source.get("version") != "sealed-engineering/1"
+                or source.get("case_ids") != ["LCH01", "LCH02", "HCH02", "MG-C003"]
+                or source.get("primary_source") != "selected answer-phase sealed engineering project"):
+            raise ValueError("Current method requires the unified four-case engineering source policy")
     return policy
 
 
@@ -1384,7 +1395,7 @@ def _alignment_trajectory(review, policy):
         raise ValueError("Unsupported alignment review identity, version or evidence status")
     _alignment_hash(review.get("policy_sha256"))
     ids, kind = set(policy["obligation_ids"]), review["primary_source_kind"]
-    penalized = policy["version"] in {"0.2.0", "0.3.0"}
+    penalized = policy["version"] in {"0.2.0", "0.3.0", "0.4.0"}
     if penalized and kind != "sealed_workspace":
         raise ValueError("Engineering self-check selects the sealed workspace primary source")
     unknown_score = (Fraction(-1, 5), Fraction(1), None) if penalized else UNKNOWN
@@ -1973,6 +1984,8 @@ def alignment_augmented_score(sources, *, expected_sha256):
         sources, expected_sha256, required=required, optional={"source_qualified_score"})
     summary, review, policy = (documents[name] for name in ("original_summary", "alignment_review", "policy"))
     policy = _alignment_policy(policy)
+    if policy["version"] == "0.4.0":
+        raise ValueError("Method0.4.0 requires score_record_inputs with all four sealed engineering reviews")
     rows = inputs["slots"]
     if (review.get("model_label") != plan["model_label"]
             or review.get("policy_sha256") != expected_sha256["policy"]):
@@ -2016,7 +2029,7 @@ def alignment_augmented_score(sources, *, expected_sha256):
                 or set(passed) & set(incomplete) or set(passed) | set(incomplete) != ids
                 or legacy and (len(passed) != 74 or _interval(original.get("completion")) != UNKNOWN
                                or original.get("strict_pass") is not None)
-                or engineering and (policy["version"] not in {"0.2.0", "0.3.0"}
+                or engineering and (policy["version"] not in {"0.2.0", "0.3.0", "0.4.0"}
                     or selected.get("scoring_view_version") != "c003-sealed-engineering/v1"
                     or selected.get("model_label") != plan["model_label"]
                     or substitution.get("original_response_sha256") != original.get("response_sha256"))):
@@ -2030,13 +2043,13 @@ def alignment_augmented_score(sources, *, expected_sha256):
     derived = _score_inputs(inputs, mathematical_substitutions=substitutions,
                             neutral_alignment=(interval, policy))
     metrics = copy.deepcopy(selected["metrics"])
-    changed = (("core",) if policy["version"] == "0.3.0" else ()) + (
+    changed = (("core",) if policy["version"] in {"0.3.0", "0.4.0"} else ()) + (
         "neutral", "overall", "neutral_written", "lean_alignment_selfcheck")
     for name in changed:
         metrics[name] = {field: copy.deepcopy(derived["metrics"][name][field])
                         for field in ("exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible")}
     profile = copy.deepcopy(summary["profile"])
-    if policy["version"] == "0.3.0":
+    if policy["version"] in {"0.3.0", "0.4.0"}:
         for component in profile["components"]:
             component["weight"] = policy["capability_component_weights"][scope][component["id"]]
         profile["overall_weights"] = copy.deepcopy(policy["overall_weights"])
@@ -2053,11 +2066,11 @@ def alignment_augmented_score(sources, *, expected_sha256):
             "neutral_group_weights": copy.deepcopy(policy["neutral_group_weights"]),
             "overall_weights": copy.deepcopy(policy["overall_weights"]),
             **({"capability_component_weights": copy.deepcopy(policy["capability_component_weights"])}
-               if policy["version"] == "0.3.0" else {})},
+               if policy["version"] in {"0.3.0", "0.4.0"} else {})},
         **({"aggregation_profile_binding": {
             "original_profile_sha256": plan["profile"]["sha256"],
             "weight_policy_sha256": expected_sha256["policy"]}}
-           if policy["version"] == "0.3.0" else {}),
+           if policy["version"] in {"0.3.0", "0.4.0"} else {}),
         "source_bindings": {name + "_sha256": expected_sha256[name] for name in sorted(sources)},
         "baseline_score": {"schema": selected["schema"], "id": selected.get("id"),
             "sha256": expected_sha256.get("source_qualified_score", expected_sha256["original_summary"]),
@@ -2066,7 +2079,7 @@ def alignment_augmented_score(sources, *, expected_sha256):
             "metrics": copy.deepcopy(summary["metrics"]), "standard_evidence_rewritten": False},
         "alignment_selfcheck": trajectory,
         **({"lean_formalization_breakdown": _lean_formalization_breakdown(plan, inputs, baseline, substitutions)}
-           if policy["version"] in {"0.2.0", "0.3.0"} else {}),
+           if policy["version"] in {"0.2.0", "0.3.0", "0.4.0"} else {}),
         "alignment_study_coverage": {"planned_rounds": 3,
             "records_present": sum(row.get("snapshot") is not None for row in review["rounds"]),
             "adjudicated_rounds": trajectory["metric"]["coverage"]["adjudicated"],
@@ -2080,10 +2093,103 @@ def alignment_augmented_score(sources, *, expected_sha256):
         "formal_comparison_eligible": False, "human_review": "pending", "new_candidate_calls": 0,
         "notice": "The four written neutral families retain their internal average. Three Lean rounds form one alignment family. "
                   + ("The versioned policy supplies the aggregation weights; frozen execution plans remain unchanged. "
-                     if policy["version"] == "0.3.0" else
+                     if policy["version"] in {"0.3.0", "0.4.0"} else
                      "The versioned policy combines the two neutral groups inside the unchanged 75/5/10/10 total. ")
                   +
                   "Original execution, 42/45-slot coverage and A1 evidence remain stored; this view adds no candidate calls or formal qualification."}
+
+
+def formalization_substitutions(inputs, review):
+    """Aggregate all four source-bound engineering judgments, retaining unknowns.
+
+    The record validator binds actual files and compiler evidence. This pure
+    boundary checks mathematical inventories and original response identities;
+    a candidate's self-reported table never supplies the completion judgments.
+    """
+    required = {"LCH01": 8, "LCH02": 20, "HCH02": 40, "MG-C003": 92}
+    if (not isinstance(review, dict)
+            or review.get("schema") != "math-gauge.formalization-engineering-review/v1"
+            or review.get("model_label") != inputs.get("model_label")
+            or review.get("reviewer_kind") != "ai" or review.get("human_review") != "pending"
+            or review.get("formal_comparison_eligible") is not False):
+        raise ValueError("Unsupported sealed formalization review identity")
+    cases = review.get("cases")
+    if (not isinstance(cases, list) or len(cases) != 4
+            or {row.get("case_id") for row in cases} != set(required)):
+        raise ValueError("Engineering review must cover all four formalization cases")
+    plan = validate_plan(inputs["plan"])
+    index = {case["case_id"]: case for case in plan["case_index"]}
+    rows = {row["slot_id"]: row for row in inputs.get("slots", [])}
+    substitutions = {}
+    for case in cases:
+        cid, total = case["case_id"], required[case["case_id"]]
+        frozen, sid = index.get(cid, {}), cid + ":A1"
+        targets = {stage["stage_id"] for stage in frozen.get("stages", [])}
+        items = case.get("obligations")
+        if (frozen.get("component") != "lean-formalization" or frozen.get("total_weight") != total
+                or len(targets) != total or case.get("case_version") != frozen.get("version")
+                or case.get("slot_id") != sid or case.get("source_kind") != "sealed_workspace"
+                or case.get("original_response_sha256") != rows.get(sid, {}).get("response_sha256")
+                or not isinstance(items, list) or len(items) != total
+                or {item.get("id") for item in items} != targets):
+            raise ValueError("Engineering review differs from the frozen case, response or obligations")
+        sources = case.get("compiled_sources", {})
+        if not isinstance(sources, dict) or not sources:
+            raise ValueError("Engineering review needs exact compiled source hashes")
+        for name, value in sources.items():
+            if not isinstance(name, str) or not name.endswith(".lean"):
+                raise ValueError("Engineering source must name a Lean file")
+            _alignment_hash(value)
+        values = []
+        for item in items:
+            complete = item.get("complete")
+            values.append(_boolean(complete))
+            if complete is True and (case.get("kernel_status") != "passed"
+                                     or not isinstance(item.get("declarations"), list)
+                                     or not item["declarations"]):
+                raise ValueError("A completed obligation needs verified declarations and kernel evidence")
+        substitutions[sid] = _average(values)
+    return substitutions
+
+
+def score_record_inputs(inputs, review, policy, *, formalization_review=None):
+    """Aggregate current archived judgments without keeping superseded score views.
+
+    The immutable execution plan and original slot judgments retain their source
+    identities. The separately selected engineering baseline and followups are
+    explicit AI review inputs, never silently substituted into the raw answers.
+    """
+    inputs = dict(inputs, slots=[dict(row, group_diagnostic=row.get("group_diagnostic") or {})
+                                 for row in inputs.get("slots", [])])
+    policy = _alignment_policy(policy)
+    if policy["version"] not in {"0.3.0", "0.4.0"} or review.get("scoring_version") != policy["version"]:
+        raise ValueError("Current result records require their selected scoring policy")
+    if review.get("model_label") != inputs.get("model_label"):
+        raise ValueError("Record review and execution model identities differ")
+    baseline = review.get("baseline", {})
+    ids = set(policy["obligation_ids"])
+    _alignment_snapshot(baseline, ids, review.get("primary_source_kind"))
+    if baseline.get("source_kind") != "sealed_workspace":
+        raise ValueError("Current engineering baseline must identify its sealed source")
+    baseline_value = _average([_boolean(item["complete"]) for item in baseline["obligations"]])
+    substitutions = {"MG-C003:A1": baseline_value}
+    if policy["version"] == "0.4.0":
+        substitutions = formalization_substitutions(inputs, formalization_review)
+        chapter = next(case for case in formalization_review["cases"] if case["case_id"] == "MG-C003")
+        if (substitutions["MG-C003:A1"] != baseline_value
+                or {item["id"]: item["complete"] for item in chapter["obligations"]}
+                != {item["id"]: item["complete"] for item in baseline["obligations"]}
+                or chapter.get("source_sha256") != baseline.get("source_sha256")):
+            raise ValueError("C003 engineering source differs from the alignment-study parent")
+    elif formalization_review is not None:
+        raise ValueError("The prior scoring method does not select four engineering sources")
+    steps, interval = _alignment_trajectory(review, policy)
+    result = _score_inputs(inputs, mathematical_substitutions=substitutions,
+                           neutral_alignment=(interval, policy))
+    return {"metrics": result["metrics"], "alignment_selfcheck": steps,
+            "lean_formalization_breakdown": _lean_formalization_breakdown(
+                inputs["plan"], inputs, result, substitutions),
+            "formal_comparison_eligible": False, "human_review": "pending"}
 
 
 def render_score(report):

@@ -1,4 +1,4 @@
-from benchmark_fixtures import v05_root, v05_suite, v05_profile
+from benchmark_fixtures import source_root, source_suite, source_profile
 """Portable candidate/controller boundaries; offline fixtures only."""
 
 import copy
@@ -12,7 +12,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, validate_plan
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
@@ -25,8 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class HarnessExportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -64,8 +64,8 @@ class HarnessExportTests(unittest.TestCase):
             root, manifest = self.export(plan)
             checked = inspect_harness_bundle(root, plan=plan, suite=self.suite)
         self.assertEqual(checked, manifest)
-        self.assertEqual(manifest["exported_slots"], 177)
-        self.assertEqual(len(manifest["cases"]), 43)
+        self.assertEqual(manifest["exported_slots"], 90)
+        self.assertEqual(len(manifest["cases"]), 26)
         self.assertEqual(len(manifest["prompts"]), 48)
         self.assertEqual(manifest["planned"], plan["planned"])
         self.assertFalse(manifest["preparation_only"])
@@ -88,8 +88,8 @@ class HarnessExportTests(unittest.TestCase):
         root, manifest = self.export(plan, targets=["neutral"])
         self.assertEqual(manifest["targets"], ["neutral"])
         self.assertEqual(manifest["exported_slots"], 24)
-        self.assertEqual(manifest["planned"]["all_slots"], 177)
-        self.assertEqual(manifest["planned"]["selected_slots"], 177)
+        self.assertEqual(manifest["planned"]["all_slots"], 90)
+        self.assertEqual(manifest["planned"]["selected_slots"], 90)
         self.assertEqual(len(manifest["cases"]), 8)
         self.assertEqual(len(manifest["prompts"]), 16)
         earlier = set()
@@ -109,17 +109,17 @@ class HarnessExportTests(unittest.TestCase):
 
     def test_chapter_attachment_bytes_and_intentionally_supplied_lean_are_unchanged(self):
         root, manifest = self.export()
-        for cid in ("MG-C002", "MG-GF101"):
+        for cid in ("LCH02", "AHR01"):
             source = self.suite.request(self.suite.cases[cid])
             case = next(c for c in manifest["cases"] if c["case_id"] == cid)
             self.assertEqual((root / case["candidate_message_path"]).read_bytes(),
                              candidate_message(source).encode("utf-8"))
             for attachment, descriptor in zip(source["files"], case["files"]):
                 self.assertEqual((root / descriptor["path"]).read_bytes(), attachment["content"].encode("utf-8"))
-        chapter = self.suite.request(self.suite.cases["MG-C002"])
+        chapter = self.suite.request(self.suite.cases["LCH02"])
         source_chapter = next(x for x in chapter["files"] if x["name"] == "source/02-operator-bounds.md")
         self.assertIn("**证明**", source_chapter["content"])
-        request = candidate_request_from_bundle(root, "MG-C002:A1")
+        request = candidate_request_from_bundle(root, "LCH02:A1")
         self.assertIn(source_chapter["content"], request["messages"][-1]["content"])
         self.assertEqual(len(chapter["files"]), 8)
 
@@ -154,17 +154,17 @@ class HarnessExportTests(unittest.TestCase):
 
     def test_preparation_without_runtime_is_explicit_and_never_a_trial(self):
         plan = self.plan(preparation=True)
-        root, manifest = self.export(plan, targets=["chapters"])
+        root, manifest = self.export(plan, targets=["lean-formalization"])
         self.assertTrue(manifest["preparation_only"])
         self.assertFalse(manifest["runtime_frozen"])
         self.assertEqual(manifest["execution"]["parameters"], {})
         self.assertEqual(manifest["execution"]["budget"], {})
-        self.assertEqual(candidate_request_from_bundle(root, "MG-C002:A1")["parameters"], {})
+        self.assertEqual(candidate_request_from_bundle(root, "LCH02:A1")["parameters"], {})
         self.assertEqual(read_json(Path(str(root) + ".evaluator") / "receipt.json")["candidate_calls"], 0)
 
     def test_helper_and_library_build_exact_branch_history_and_case_parameters(self):
         plan = self.plan(budget={"timeout_seconds": 3, "output_tokens": 1234,
-                                "case_parameters": {"MG-GF101": {"max_output_tokens": 4321, "seed": 9}}})
+                                "case_parameters": {"MG-GP001": {"max_output_tokens": 4321, "seed": 9}}})
         root, manifest = self.export(plan, targets=["neutral"])
         cid = manifest["slots"][0]["case_id"]
         a1, first, second = f"{cid}:A1", f"{cid}:neutral:1", f"{cid}:neutral:2"
@@ -192,7 +192,7 @@ class HarnessExportTests(unittest.TestCase):
             candidate_request_from_bundle(root, first, {a1: b"\xff"})
 
     def test_controller_renderer_uses_canonical_message_with_unusual_attachments(self):
-        root, _ = self.export(targets=["chapters"])
+        root, _ = self.export(targets=["lean-formalization"])
         spec = importlib.util.spec_from_file_location("portable_fixture", root / "controller.py")
         module = importlib.util.module_from_spec(spec)
         # Importing a main helper normally creates a cache file. Disable that
@@ -209,24 +209,24 @@ class HarnessExportTests(unittest.TestCase):
 
     def test_relocation_works_without_repository_or_evaluator_sidecar(self):
         plan = self.plan()
-        root, manifest = self.export(plan, targets=["chapters"])
+        root, manifest = self.export(plan, targets=["lean-formalization"])
         moved = self.root / "remote-host" / "packet"
         moved.parent.mkdir()
         shutil.move(root, moved)
         shutil.rmtree(Path(str(root) + ".evaluator"))
         with patch("math_gauge.harness.Suite.load", side_effect=AssertionError("No source repository")):
             self.assertEqual(inspect_harness_bundle(moved, plan=plan), manifest)
-            request = candidate_request_from_bundle(moved, "MG-C002:A1")
+            request = candidate_request_from_bundle(moved, "LCH02:A1")
         process = self.controller(moved, "check", "--bundle", str(moved))
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(json.loads(process.stdout)["bundle_sha256"], manifest["bundle_sha256"])
-        process = self.controller(moved, "request", "--bundle", str(moved), "--slot", "MG-C002:A1")
+        process = self.controller(moved, "request", "--bundle", str(moved), "--slot", "LCH02:A1")
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(json.loads(process.stdout), request)
         self.assertNotIn(str(ROOT).encode(), (moved / "controller.py").read_bytes())
 
     def test_manifest_file_and_candidate_bytes_tampering_are_detected(self):
-        root, manifest = self.export(targets=["chapters"])
+        root, manifest = self.export(targets=["lean-formalization"])
         original = copy.deepcopy(manifest)
         manifest["preparation_only"] = True
         write_json(root / "manifest.json", manifest)
@@ -271,7 +271,7 @@ class HarnessExportTests(unittest.TestCase):
             inspect_harness_bundle(root, plan=plan)
 
     def test_unlisted_files_empty_directories_and_symlinks_are_rejected(self):
-        root, manifest = self.export(targets=["chapters"])
+        root, manifest = self.export(targets=["lean-formalization"])
         extra = root / "private-review.json"
         extra.write_text("secret", encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "Unlisted"):
@@ -313,11 +313,11 @@ class HarnessExportTests(unittest.TestCase):
     def test_safe_macos_system_aliases_and_arbitrary_root_symlinks(self):
         with tempfile.TemporaryDirectory(dir="/tmp") as temporary:
             destination = Path(temporary) / "bundle"
-            manifest = export_harness_bundle(self.plan(["chapters"]), self.suite, destination)
+            manifest = export_harness_bundle(self.plan(["lean-formalization"]), self.suite, destination)
             self.assertEqual(inspect_harness_bundle(destination)["bundle_sha256"], manifest["bundle_sha256"])
             process = self.controller(destination, "check", "--bundle", str(destination))
             self.assertEqual(process.returncode, 0, process.stderr)
-        root, _ = self.export(targets=["chapters"])
+        root, _ = self.export(targets=["lean-formalization"])
         link = self.root / "root-link"
         link.symlink_to(root, target_is_directory=True)
         with self.assertRaisesRegex(ValueError, "symlink"):
@@ -328,21 +328,21 @@ class HarnessExportTests(unittest.TestCase):
             inspect_harness_bundle(nested / root.name)
 
     def test_traversal_manifest_and_request_output_inside_bundle_are_rejected(self):
-        root, manifest = self.export(targets=["chapters"])
+        root, manifest = self.export(targets=["lean-formalization"])
         original = copy.deepcopy(manifest)
         manifest["cases"][0]["files"][0]["path"] = "../outside"
         self.rehash(root, manifest)
         with self.assertRaisesRegex(ValueError, "target changed"):
             inspect_harness_bundle(root)
         self.rehash(root, original)
-        process = self.controller(root, "request", "--slot", "MG-C002:A1", "--out", str(root / "generated.json"))
+        process = self.controller(root, "request", "--slot", "LCH02:A1", "--out", str(root / "generated.json"))
         self.assertNotEqual(process.returncode, 0)
         self.assertFalse((root / "generated.json").exists())
         inspect_harness_bundle(root)
 
     def test_new_export_rejects_runner_drift_but_old_bundle_is_inspectable(self):
         plan = self.plan()
-        root, manifest = self.export(plan, targets=["chapters"])
+        root, manifest = self.export(plan, targets=["lean-formalization"])
         with patch("math_gauge.execution.runner_fingerprint", return_value="0" * 64):
             self.assertEqual(inspect_harness_bundle(root, plan=plan), manifest)
             with self.assertRaisesRegex(ValueError, "Runner source changed"):
@@ -354,8 +354,8 @@ class CompactHarnessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         from math_gauge.harness import export_simple_release_dataset, make_release_anchor
-        cls.suite = v05_suite()
-        cls.plan = build_plan(v05_profile(cls.suite), cls.suite)
+        cls.suite = source_suite()
+        cls.plan = build_plan(source_profile(cls.suite), cls.suite)
         cls.temporary = tempfile.TemporaryDirectory(prefix="math-gauge-compact-harness-")
         cls.addClassCleanup(cls.temporary.cleanup)
         cls.root = Path(cls.temporary.name).resolve()
@@ -368,50 +368,48 @@ class CompactHarnessTests(unittest.TestCase):
 
     def test_portable_default_export_excludes_reserve_and_keeps_separate_targets(self):
         from math_gauge.harness import COMPACT_CONTROLLER, inspect_release_dataset
-        self.assertEqual((len(self.manifest["cases"]), self.manifest["exported_slots"]), (30, 54))
+        self.assertEqual((len(self.manifest["cases"]), self.manifest["exported_slots"]), (26, 42))
         self.assertEqual(self.manifest["controller_version"], COMPACT_CONTROLLER)
-        self.assertEqual(len(self.manifest["target_slot_ids"]["core"]), 30)
+        self.assertEqual(len(self.manifest["target_slot_ids"]["core"]), 26)
         self.assertEqual(self.manifest["target_slot_ids"]["answer-review"],
                          [f"MG-AR{i:03d}:A1" for i in range(1, 5)])
-        self.assertEqual(len(self.manifest["target_slot_ids"]["repeat"]), 12)
-        reserve = Suite.load(v05_root() / "cases/reserve-suite.json")
-        self.assertFalse(set(reserve.cases) & {c["case_id"] for c in self.manifest["cases"]})
-        self.assertFalse(any((self.dataset / "cases" / cid).exists() for cid in reserve.cases))
+        self.assertEqual(len(self.manifest["target_slot_ids"]["repeat"]), 8)
+        self.assertFalse((source_root() / "cases/reserve-suite.json").exists())
         self.assertEqual(inspect_release_dataset(self.dataset, plan=self.plan, suite=self.suite), self.manifest)
         result = subprocess.run([sys.executable, "-I", "-S", str(self.dataset / "tools/benchmark.py"), "check"],
                                 cwd=self.root, capture_output=True, check=False)
         self.assertEqual(result.returncode, 0, result.stderr.decode())
-        self.assertEqual(json.loads(result.stdout)["planned"]["all_slots"], 54)
+        self.assertEqual(json.loads(result.stdout)["planned"]["all_slots"], 42)
 
     def test_compact_chapter_fixture_returns_through_the_shared_importer(self):
         from math_gauge.harness import freeze_release_runtime
-        from math_gauge.harness_answers import (issue_answer_request, pack_answer_archive,
-                                               record_answer_attempt, skip_answer_slot)
+        from math_gauge.harness_answers import issue_answer_request, pack_answer_archive, record_answer_attempt, skip_answer_slot
         from math_gauge.harness_import import import_answer_archive
         from math_gauge.reliability import inspect_reliability_run
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             run, answers = root / "run", root / "answers"
             runtime = {"model_label": "synthetic-compact-fixture", "adapter_identity": {"kind": "fixture"},
-                       "candidate_parameters": {"model": "offline-fixture"},
-                       "budget": {"timeout_seconds": 2, "output_tokens": 1000}, "fresh_context": True}
-            frozen = freeze_release_runtime(self.dataset, runtime, run, targets=["chapters"])
-            self.assertEqual(frozen["selected_slot_ids"], ["MG-C002:A1", "MG-C003:A1"])
+                "candidate_parameters": {"model": "offline-fixture"}, "budget": {"timeout_seconds": 2, "output_tokens": 1000}, "fresh_context": True}
+            frozen = freeze_release_runtime(self.dataset, runtime, run, targets=["lean-formalization"])
+            selected = frozen["selected_slot_ids"]
+            self.assertEqual(selected, ["MG-C003:A1", "LCH01:A1", "LCH02:A1", "HCH02:A1"])
             request, raw, usage = root / "request.json", root / "raw.md", root / "usage.json"
-            issue_answer_request(run, answers, "MG-C002:A1", request)
+            issue_answer_request(run, answers, selected[0], request)
             raw.write_bytes(b"Synthetic incomplete chapter fixture; no mathematical result.\r\n")
             write_json(usage, {"total_tokens": 1})
-            record_answer_attempt(run, answers, "MG-C002:A1", request, raw, status="ok", usage_path=usage)
-            skip_answer_slot(run, answers, "MG-C003:A1", "Synthetic missing chapter fixture")
+            record_answer_attempt(run, answers, selected[0], request, raw, status="ok", usage_path=usage)
+            for sid in selected[1:]:
+                skip_answer_slot(run, answers, sid, "Synthetic missing task")
             archive = root / "answers.zip"
             pack_answer_archive(run, answers, archive)
             imported = root / "imported"
             import_answer_archive(archive, read_json(self.anchor_path), self.suite, imported)
             meta, records = inspect_reliability_run(imported)
-            self.assertEqual(meta["plan"]["planned"]["all_slots"], 54)
+            self.assertEqual(meta["plan"]["planned"]["all_slots"], 42)
             self.assertTrue(meta["fixture_only"])
-            self.assertEqual(set(records), {"MG-C002:A1", "MG-C003:A1"})
-            self.assertEqual(records["MG-C002:A1"]["response_sha256"], digest_bytes(raw.read_bytes()))
+            self.assertEqual(set(records), set(selected))
+            self.assertEqual(records[selected[0]]["response_sha256"], digest_bytes(raw.read_bytes()))
 
 
 if __name__ == "__main__":

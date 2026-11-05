@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots, validate_plan
 from math_gauge.catalog import Suite, candidate_message, digest_bytes, read_json, write_json
@@ -38,14 +38,14 @@ LEGACY_CONTEXT = {"independent": "fresh", "followup": "branch-history-only",
 class ExecutionPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
         cls.base_plan = build_plan(cls.profile, cls.suite, ["all"])
         cls.shared_temp = tempfile.TemporaryDirectory()
         cls.addClassCleanup(cls.shared_temp.cleanup)
         cls.shared = Path(cls.shared_temp.name).resolve() / "dataset"
         cls.dataset = export_simple_release_dataset(cls.base_plan, cls.suite, cls.shared,
-            release_version="0.2.0", readme=b"# Synthetic policy consumer guide\n",
+            release_version="0.6.0", readme=b"# Synthetic policy consumer guide\n",
             extra_files={"LICENSE": (ROOT / "LICENSE").read_bytes(),
                          "THIRD_PARTY_NOTICES.md": b"Synthetic fixture only\n"})
         cls.anchor = make_release_anchor(cls.base_plan, cls.dataset)
@@ -166,10 +166,10 @@ class ExecutionPolicyTests(unittest.TestCase):
         write_json(runtime_path, runtime)
         helper = self.download / "tools/benchmark.py"
         if portable:
-            self.portable(helper, "prepare", "--runtime", runtime_path, "--target", "lean-construction", "--out", run)
+            self.portable(helper, "prepare", "--runtime", runtime_path, "--target", "lean-formalization", "--out", run)
             manifest = inspect_release_run(run)
         else:
-            manifest = freeze_release_runtime(self.download, runtime, run, targets=["lean-construction"])
+            manifest = freeze_release_runtime(self.download, runtime, run, targets=["lean-formalization"])
         sid = manifest["selected_slot_ids"][0]
         request, response = self.root / (name + "-request.json"), self.root / (name + "-response.md")
         raw = "Synthetic response; no tool use is required。\r\n".encode()
@@ -201,7 +201,7 @@ class ExecutionPolicyTests(unittest.TestCase):
         self.assertEqual(reconstructed["context_policy"], expected_context)
         self.assertEqual(checked["plan"], reconstructed)
         self.assertEqual(reconstructed["case_index"], self.base_plan["case_index"])
-        self.assertEqual(reconstructed["planned"]["all_slots"], 177)
+        self.assertEqual(reconstructed["planned"]["all_slots"], 90)
         cid = sid.split(":")[0]
         self.assertEqual(request, {"schema": "math-gauge.conversation/v1",
             "messages": [{"role": "user", "content": candidate_message(self.suite.request(self.suite.cases[cid]))}],
@@ -218,7 +218,7 @@ class ExecutionPolicyTests(unittest.TestCase):
         runtime = dict(RUNTIME, execution_track=LOCAL_TOOLS_TRACK)
         plan = build_plan(self.profile, self.suite, runtime=runtime)
         bundle = self.root / "generic-bundle"
-        manifest = export_harness_bundle(plan, self.suite, bundle, targets=["chapters"])
+        manifest = export_harness_bundle(plan, self.suite, bundle, targets=["lean-formalization"])
         inspect_harness_bundle(bundle, plan=plan, suite=self.suite)
         sid = manifest["selected_slot_ids"][0]
         request = self.portable(bundle / "controller.py", "request", "--bundle", bundle, "--slot", sid)
@@ -314,7 +314,7 @@ class ExecutionPolicyTests(unittest.TestCase):
                     self.assertEqual(imported_records[sid][key], shared_records[sid][key])
                 self.assertEqual(imported_records[sid]["material"]["status"], "resolved")
         self.assertEqual(meta["candidate_calls"], 0)
-        self.assertEqual(meta["plan"]["planned"]["all_slots"], 177)
+        self.assertEqual(meta["plan"]["planned"]["all_slots"], 90)
         self.assertEqual(self.base_plan["reliability"]["prompts"]["messages"], list(source_snapshot.values()))
         self.assertEqual(before, {p.relative_to(self.download).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
                                   for p in self.download.rglob("*") if p.is_file()})

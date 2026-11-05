@@ -1,0 +1,60 @@
+{
+  "schema": "math-gauge.Terra-engineering-input-isolation-preflight/v1",
+  "policy": {
+    "path": "/private/tmp/math-gauge-alignment-rescore-20261105/terra-engineering-kernel/input-isolation-preflight/compiler.sb",
+    "bytes": 2226,
+    "sha256": "7f213adc7582151b6ad627fe48a62a876321eb1a01287b1af848a7307420d90c"
+  },
+  "probes": [
+    {
+      "label": "positive-source-read",
+      "path": "/private/tmp/math-gauge-alignment-rescore-20261105/terra-engineering-kernel/input-isolation-preflight/sources/canary.txt",
+      "expected": "allowed",
+      "passed": true,
+      "exit_code": 0,
+      "stderr": "",
+      "timeout": false
+    },
+    {
+      "label": "original-selected-Main-denied",
+      "path": "/private/tmp/math-gauge-v06-c003-neutral-study-20261104-01a1a43a/terra/terra/jobs/MG-C003-neutral-2/actual-project/Main.lean",
+      "expected": "denied",
+      "passed": true,
+      "exit_code": 1,
+      "stderr": "cat: /private/tmp/math-gauge-v06-c003-neutral-study-20261104-01a1a43a/terra/terra/jobs/MG-C003-neutral-2/actual-project/Main.lean: Operation not permitted\n",
+      "timeout": false
+    },
+    {
+      "label": "original-selected-alignment-denied",
+      "path": "/private/tmp/math-gauge-v06-c003-neutral-study-20261104-01a1a43a/terra/terra/jobs/MG-C003-neutral-2/actual-project/alignment.json",
+      "expected": "denied",
+      "passed": true,
+      "exit_code": 1,
+      "stderr": "cat: /private/tmp/math-gauge-v06-c003-neutral-study-20261104-01a1a43a/terra/terra/jobs/MG-C003-neutral-2/actual-project/alignment.json: Operation not permitted\n",
+      "timeout": false
+    },
+    {
+      "label": "evaluator-engine-denied",
+      "path": "/private/tmp/math-gauge-v06-frontend-repair-20261105-01a1a43a/scripts/formal/verify.py",
+      "expected": "denied",
+      "passed": true,
+      "exit_code": 1,
+      "stderr": "cat: /private/tmp/math-gauge-v06-frontend-repair-20261105-01a1a43a/scripts/formal/verify.py: Operation not permitted\n",
+      "timeout": false
+    },
+    {
+      "label": "author-reference-denied",
+      "path": "/private/tmp/math-gauge-v06-frontend-repair-20261105-01a1a43a/cases/chapters/MG-C003/reference.md",
+      "expected": "denied",
+      "passed": true,
+      "exit_code": 1,
+      "stderr": "cat: /private/tmp/math-gauge-v06-frontend-repair-20261105-01a1a43a/cases/chapters/MG-C003/reference.md: Operation not permitted\n",
+      "timeout": false
+    }
+  ],
+  "passed": true,
+  "candidate_code_executed": false,
+  "network": "denied by unchanged shared policy",
+  "process_fork": "denied by unchanged shared policy",
+  "same_policy_generator_as_shared_verifier": true
+}

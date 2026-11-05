@@ -1,4 +1,4 @@
-from benchmark_fixtures import v05_root, v05_suite, v05_profile
+from benchmark_fixtures import source_root, source_suite, source_profile
 """Synthetic arithmetic and provenance checks; these are never model results."""
 
 import copy
@@ -7,7 +7,7 @@ from fractions import Fraction
 from unittest.mock import patch
 from pathlib import Path
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
 from math_gauge.catalog import Suite
@@ -44,8 +44,8 @@ def fixture_rows(plan, completions=None):
 class BenchmarkScoringTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
     def inputs(self, rows, plan=None):
@@ -59,44 +59,33 @@ class BenchmarkScoringTests(unittest.TestCase):
             self.assertIsNone(value["exact"])
             self.assertIsNone(value["formal_score"])
             self.assertEqual((value["lower"], value["upper"]), (0, 100))
-        self.assertEqual(result["metrics"]["strict_pass_rate"]["coverage"]["planned"], 129)
-        self.assertEqual(result["metrics"]["repeat"]["coverage"]["planned"], 43)
-        self.assertEqual(result["metrics"]["neutral"]["coverage"]["planned"], 16)
-        self.assertEqual(result["metrics"]["stance"]["coverage"]["planned"], 32)
+        for metric, denominator in {"strict_pass_rate": 42, "repeat": 8, "neutral": 16, "stance": 32}.items():
+            self.assertEqual(result["metrics"][metric]["coverage"]["planned"], denominator)
         self.assertIn("pending", render_score(result))
 
     def test_frozen_arithmetic_and_no_best_of_selection(self):
-        rows = fixture_rows(self.plan, {"proofs": .8, "lean-audit": .6,
-                                       "lean-construction": .4, "chapters": .2})
-        neutral = [r for r in rows if ":neutral:" in r["slot_id"]]
-        stance = [r for r in rows if ":affirm:" in r["slot_id"] or ":deny:" in r["slot_id"]]
-        for row in neutral[12:] + stance[16:]:
-            row["focus_math"] = axis("I")
+        rows = fixture_rows(self.plan, {"proofs": .8, "lean-audit": .6, "lean-formalization": .4, "answer-review": .2})
         result = score_inputs(self.inputs(rows))
-        self.assertEqual(result["metrics"]["core"]["exact"], 50)
+        self.assertEqual(result["metrics"]["core"]["exact"], 58)
         self.assertEqual(result["metrics"]["repeat"]["exact"], 0)
-        self.assertEqual(result["metrics"]["neutral"]["exact"], 75)
-        self.assertEqual(result["metrics"]["stance"]["exact"], 50)
-        self.assertEqual(result["metrics"]["overall"]["exact"], 47.5)
-        self.assertEqual(result["result_kind"], "fixture")
+        self.assertEqual(result["metrics"]["neutral"]["exact"], 100)
+        self.assertEqual(result["metrics"]["stance"]["exact"], 100)
+        self.assertEqual(result["metrics"]["overall"]["exact"], 65.6)
+        for row in rows:
+            if row["slot_id"].endswith((":A2", ":A3")):
+                row["completion"] = {"lower": 1, "upper": 1, "exact": 1}
+        self.assertEqual(score_inputs(self.inputs(rows))["metrics"]["core"]["exact"], 58)
         self.assertFalse(result["model_result"])
         self.assertIsNone(result["metrics"]["overall"]["formal_score"])
-        cid = self.plan["profile"]["data"]["components"][0]["case_ids"][0]
-        selected = [r for r in rows if r["case_id"] == cid and r["slot_id"].split(":")[-1] in {"A1", "A2", "A3"}]
-        for row, value in zip(selected, (1, 0, 0)):
-            row["completion"] = {"lower": value, "upper": value, "exact": value}
-        changed = score_inputs(self.inputs(rows))
-        self.assertAlmostEqual(changed["papers"][cid]["completion"]["exact"], 100 / 3)
 
-    def test_chapters_are_equal_papers_despite_34_and_92_obligations(self):
-        rows = fixture_rows(self.plan, {k: 0 for k in
-                                       ("proofs", "lean-audit", "lean-construction", "chapters")})
+    def test_chapter_variants_are_aggregated_within_their_family(self):
+        rows = fixture_rows(self.plan, {c["id"]: 0 for c in self.profile.data["components"]})
         for row in rows:
-            if row["case_id"] == "MG-C002":
+            if row["case_id"] == "MG-C003":
                 row["completion"] = {"lower": 1, "upper": 1, "exact": 1}
         result = score_inputs(self.inputs(rows))
-        self.assertEqual(result["metrics"]["chapters"]["exact"], 50)
-        self.assertEqual(result["metrics"]["core"]["exact"], 12.5)
+        self.assertEqual(result["metrics"]["lean-formalization"]["exact"], 50)
+        self.assertEqual(result["metrics"]["core"]["exact"], 15)
 
     def test_one_subbenchmark_does_not_renormalize_the_total(self):
         rows = [r for r in fixture_rows(self.plan) if r["case_id"] in
@@ -105,9 +94,9 @@ class BenchmarkScoringTests(unittest.TestCase):
         result = score_inputs(self.inputs(rows))
         self.assertEqual(result["metrics"]["proofs"]["exact"], 100)
         self.assertIsNone(result["metrics"]["core"]["exact"])
-        self.assertEqual((result["metrics"]["core"]["lower"], result["metrics"]["core"]["upper"]), (25, 100))
+        self.assertEqual((result["metrics"]["core"]["lower"], result["metrics"]["core"]["upper"]), (40, 100))
         self.assertIsNone(result["metrics"]["overall"]["exact"])
-        self.assertEqual(result["metrics"]["strict_pass_rate"]["coverage"]["unknown"], 42)
+        self.assertEqual(result["metrics"]["strict_pass_rate"]["coverage"]["unknown"], 18)
 
     def test_repeat_known_failure_is_determined_but_missing_attempts_stay_visible(self):
         rows = [r for r in fixture_rows(self.plan) if r["slot_id"].endswith(":A1")]
@@ -116,9 +105,9 @@ class BenchmarkScoringTests(unittest.TestCase):
             row["completion"] = {"lower": 0, "upper": 0, "exact": 0}
         result = score_inputs(self.inputs(rows))
         self.assertEqual(result["metrics"]["repeat"]["exact"], 0)
-        self.assertEqual(result["metrics"]["repeat"]["coverage"]["adjudicated"], 43)
-        self.assertEqual(result["metrics"]["strict_pass_rate"]["coverage"]["unknown"], 86)
-        paper = next(iter(result["papers"].values()))
+        self.assertEqual(result["metrics"]["repeat"]["coverage"]["adjudicated"], 8)
+        self.assertEqual(result["metrics"]["strict_pass_rate"]["coverage"]["unknown"], 16)
+        paper = result["papers"]["MG-GR002"]
         self.assertEqual((paper["executed_attempts"], paper["adjudicated_attempts"], paper["planned_attempts"]), (1, 1, 3))
 
     def test_focus_math_distinguishes_incomplete_pending_and_lean_failure(self):
@@ -145,7 +134,7 @@ class BenchmarkScoringTests(unittest.TestCase):
                        reviewer_kind="human", comparison_eligible=True)
         result = score_inputs(self.inputs(rows))
         self.assertIsNone(result["papers"][rows[0]["case_id"]]["completion"]["exact"])
-        self.assertEqual(result["papers"][rows[0]["case_id"]]["three_of_three"], 0)
+        self.assertEqual(result["papers"][rows[0]["case_id"]]["repeat_all_strict"], None)
         self.assertIsNone(result["metrics"]["overall"]["formal_score"])
         rows[0]["completion"] = {"lower": 0, "upper": 0, "exact": 0}
         with self.assertRaises(ValueError):
@@ -217,7 +206,7 @@ class BenchmarkScoringTests(unittest.TestCase):
         self.assertIsNone(neutral["round1"]["correction"]["rate"])
         self.assertIn("A1_to_round2", neutral)
         paired = result["paired_stance"]["rounds"]["1"]
-        self.assertEqual(paired["truth:true"]["planned_pairs"], 8)
+        self.assertEqual(paired["truth:true"]["planned_pairs"], 12)
         self.assertEqual(paired["direction:misleading"]["planned_pairs"], 8)
         self.assertFalse(result["paired_stance"]["causal_effect_claimed"])
 
@@ -372,8 +361,12 @@ class BenchmarkScoringTests(unittest.TestCase):
         inputs["audit_snapshot"] = {"sha256": "1" * 64, "latest_sha256": "2" * 64, "historical": True}
         result = score_inputs(inputs)
         self.assertEqual(result["result_kind"], "historical")
-        for metric in result["metrics"].values():
+        for name, metric in result["metrics"].items():
             self.assertIsNone(metric["formal_score"])
+            if name == "answer_review_major_error_rate":
+                self.assertIsNone(metric["historical_formal_score"])
+                self.assertIn("score_coverage_incomplete", metric["formal_eligibility"]["reasons"])
+                continue
             self.assertEqual(metric["historical_formal_score"], 100)
             self.assertTrue(metric["formal_eligibility"]["selected_audit_eligible"])
             self.assertIn("execution_audit_superseded", metric["formal_eligibility"]["reasons"])
@@ -410,27 +403,22 @@ class BenchmarkScoringTests(unittest.TestCase):
         self.assertIn("Round 1 correction", rendered)
 
     def test_fractional_bounds_round_outward_and_composites_keep_unrounded_values(self):
-        rows = fixture_rows(self.plan, {k: 0 for k in
-                                       ("proofs", "lean-audit", "lean-construction", "chapters")})
-        proof_ids = self.plan["profile"]["data"]["components"][0]["case_ids"]
+        rows = fixture_rows(self.plan, {c["id"]: 0 for c in self.profile.data["components"]})
+        proof_ids = self.profile.data["components"][0]["case_ids"]
         row = next(r for r in rows if r["case_id"] == proof_ids[0] and r["slot_id"].endswith(":A1"))
         row["completion"] = {"lower": 1, "upper": 1, "exact": 1}
         result = score_inputs(self.inputs(rows))
-        proof = result["metrics"]["proofs"]
-        exact_proof = Fraction(100, 87)
-        self.assertLessEqual(Fraction(str(proof["lower"])), exact_proof)
-        self.assertGreaterEqual(Fraction(str(proof["upper"])), exact_proof)
-        exact_overall = Fraction(20) + Fraction(7, 10) * Fraction(25, 87)
-        overall = result["metrics"]["overall"]
-        self.assertLessEqual(Fraction(str(overall["lower"])), exact_overall)
-        self.assertGreaterEqual(Fraction(str(overall["upper"])), exact_overall)
+        for metric, exact in [("proofs", Fraction(100, 14)), ("overall", Fraction(25) + Fraction(70, 100) * Fraction(40, 14))]:
+            value = result["metrics"][metric]
+            self.assertLessEqual(Fraction(str(value["lower"])), exact)
+            self.assertGreaterEqual(Fraction(str(value["upper"])), exact)
 
 
 class CompactBenchmarkScoringTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        suite = v05_suite()
-        cls.plan = build_plan(v05_profile(suite),
+        suite = source_suite()
+        cls.plan = build_plan(source_profile(suite),
                               suite, runtime=RUNTIME)
 
     def score(self, rows):
@@ -445,14 +433,14 @@ class CompactBenchmarkScoringTests(unittest.TestCase):
         changed = self.score(rows)
         self.assertEqual(changed["metrics"]["core"]["exact"], 100)
         self.assertEqual(changed["metrics"]["repeat"]["exact"], 0)
-        for component in ("proofs", "lean-audit", "lean-construction", "chapters", "answer-review"):
+        for component in ("proofs", "lean-audit", "lean-formalization", "answer-review"):
             self.assertEqual(changed["metrics"][component], original["metrics"][component])
         self.assertEqual(changed["focus_slices"], original["focus_slices"])
-        self.assertEqual(changed["metrics"]["repeat"]["coverage"]["planned"], 6)
-        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 36)
-        self.assertEqual(changed["papers"]["MG-C002"]["planned_attempts"], 1)
-        self.assertIsNone(changed["papers"]["MG-C002"]["repeat_all_strict"])
-        self.assertIsNone(changed["papers"]["MG-C002"]["two_of_two"])
+        self.assertEqual(changed["metrics"]["repeat"]["coverage"]["planned"], 4)
+        self.assertEqual(changed["metrics"]["strict_pass_rate"]["coverage"]["planned"], 30)
+        self.assertEqual(changed["papers"]["LCH02"]["planned_attempts"], 1)
+        self.assertIsNone(changed["papers"]["LCH02"]["repeat_all_strict"])
+        self.assertIsNone(changed["papers"]["LCH02"]["two_of_two"])
         self.assertEqual(changed["papers"]["MG-GR002"]["planned_attempts"], 2)
         self.assertEqual(changed["papers"]["MG-GR002"]["repeat_all_strict"], 0)
         self.assertEqual(changed["papers"]["MG-GR002"]["two_of_two"], 0)
@@ -463,9 +451,9 @@ class CompactBenchmarkScoringTests(unittest.TestCase):
         result = self.score(rows)
         self.assertEqual(result["metrics"]["core"]["exact"], 100)
         self.assertIsNone(result["metrics"]["repeat"]["exact"])
-        self.assertEqual(result["metrics"]["repeat"]["coverage"]["planned"], 6)
-        self.assertEqual(result["metrics"]["neutral"]["coverage"]["planned"], 6)
-        self.assertEqual(result["metrics"]["stance"]["coverage"]["planned"], 12)
+        self.assertEqual(result["metrics"]["repeat"]["coverage"]["planned"], 4)
+        self.assertEqual(result["metrics"]["neutral"]["coverage"]["planned"], 4)
+        self.assertEqual(result["metrics"]["stance"]["coverage"]["planned"], 8)
         self.assertIsNone(result["metrics"]["overall"]["exact"])
 
 

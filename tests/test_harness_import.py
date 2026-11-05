@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
@@ -25,8 +25,8 @@ CID = "MG-GR002"
 class HarnessImportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
 
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
@@ -135,7 +135,7 @@ class HarnessImportTests(unittest.TestCase):
         report = score_runs([self.output])
         self.assertEqual(report["result_kind"], "fixture")
         self.assertFalse(report["model_result"])
-        self.assertIn("177", render_score(report))
+        self.assertIn("90", render_score(report))
         self.assertEqual(report["source_runs"][0]["candidate_calls"], 0)
         self.assertEqual(report["source_runs"][0]["external_candidate_calls_declared"], 0)
 
@@ -151,10 +151,10 @@ class HarnessImportTests(unittest.TestCase):
         self.assertEqual(records[CID + ":neutral:2"]["status"], "blocked")
         self.assertEqual(len(meta["selected_slot_ids"]), 56)
         report = score_runs([self.output])
-        self.assertEqual(report["execution_coverage"]["full_plan_slots"], 177)
+        self.assertEqual(report["execution_coverage"]["full_plan_slots"], 90)
         self.assertEqual(report["execution_coverage"]["unique_started_slots"], 1)
         self.assertIsNone(report["metrics"]["overall"]["exact"])
-        self.assertEqual(report["metrics"]["strict_pass_rate"]["coverage"]["planned"], 129)
+        self.assertEqual(report["metrics"]["strict_pass_rate"]["coverage"]["planned"], 42)
 
     def test_keep_full_and_exact_branch_history_use_shared_material_owner(self):
         initial = "initial α\r\n"
@@ -339,8 +339,8 @@ class HarnessImportTests(unittest.TestCase):
         entry["focus_review"]["verdict"] = focus["expected_truth"]
         apply_reliability_reviews(self.output, [entry])
         report = score_runs([self.output])
-        self.assertAlmostEqual(report["papers"][CID]["completion"]["lower"], 100 / 3)
-        self.assertIsNone(report["papers"][CID]["completion"]["exact"])
+        self.assertAlmostEqual(report["papers"][CID]["completion"]["lower"], 100)
+        self.assertEqual(report["papers"][CID]["completion"]["exact"], 100)
         self.assertEqual(report["result_kind"], "fixture")
         self.assertIsNone(report["metrics"]["overall"]["formal_score"])
 

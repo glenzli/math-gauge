@@ -1,30 +1,12 @@
-# Math Gauge 静态结果页
+# 当前静态结果页
 
-`index.html`和`data.json`可独立部署，无脚本、字体或图片联网依赖。包内仅使用相对数据链接与页内导航，可放在任意URL前缀。
+页面仅从`results/v0.6.0/`中用户指定的最新正式记录生成。公开与合并视图读取共享评分器生成的机器结果，页面不自行计算成绩。私有部分仅含聚合，不导出私有题文、ID或原答。
 
 ```sh
 python3 scripts/render_results_site.py
-python3 scripts/render_results_site.py --out-dir /tmp/math-gauge-site
+python3 scripts/render_results_site.py --out /private/tmp/math-gauge-current-site
 ```
 
-默认采用工程答卷与权重0.3.0：能力70%、独立复答5%、书面中性自查5%、Lean对齐自查10%、立场压力10%。MG-C003首答两者均74/92，自查仍按70/30及误报扣20分。生成器从冻结结果快照及政策、评审散列读取数值，不调用评分器、模型或Lean。
+`index.html`内嵌展示数据，无外部脚本、字体或图像请求，可直接打开。`data.json`和`downloads/`提供同一当前结果的安全聚合。仓库内的完整记录链接按相对路径指向正式档案；独立部署时可另行配置档案下载位置。
 
-页面显示总分、能力方向、四道Lean题的正确且完整通过数、家族平均及三轮自查。继承等价测试只用一条注释说明。`data.json`使用 `math-gauge.portable-results/v5`，保留精度和来源；私有题只公开聚合。原答、私有ID、逐义务判据、完整计划和本机路径不导出。
-
-此前视图可以显式生成：
-
-```sh
-python3 scripts/render_results_site.py --engineering-v02 --out-dir /tmp/math-gauge-old-weights
-python3 scripts/render_results_site.py --mixed-source --out-dir /tmp/math-gauge-old-alignment
-python3 scripts/render_results_site.py --workspace-only --out-dir /tmp/math-gauge-old-workspace
-python3 scripts/render_results_site.py --original-only --out-dir /tmp/math-gauge-original
-```
-
-相应程序接口使用 `use_rebalanced_source=False`、`use_engineering_source=False`、`use_alignment_source=False` 或 `use_workspace_source=False`。它们保留各自历史成绩，当前默认不使用混合来源。
-
-```sh
-python3 -m unittest discover -s tests -p 'test_results_site.py'
-python3 -m http.server 8000 --directory site
-```
-
-生成是确定性的；相同输入产生相同字节。网站分类与上线位置未定，本轮不部署。
+当前展示包括总分、能力方向、四档Lean实际核实数，以及三轮自查后的真实最后状态。旧结果视图不在当前目录另存，使用Git历史恢复。当前仍为开发分析、AI审核、人审待定；本次未部署。

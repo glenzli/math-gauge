@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, select_slots
 from math_gauge.catalog import Suite, candidate_message, read_json, write_json
@@ -24,8 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class ReliabilityExecutionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -51,7 +51,7 @@ class ReliabilityExecutionTests(unittest.TestCase):
         meta = execute_reliability_run(plan, self.suite, destination, **kwargs)
         return destination, meta
 
-    def test_all_177_messages_are_projected_and_branch_isolated(self):
+    def test_all_90_messages_are_projected_and_branch_isolated(self):
         seen = []
         def adapter(request):
             seen.append(copy.deepcopy(request))
@@ -59,12 +59,12 @@ class ReliabilityExecutionTests(unittest.TestCase):
         plan = self.plan()
         root, meta = self.execute(plan, adapter=adapter)
         _, records = inspect_reliability_run(root)
-        self.assertEqual(len(seen), 177)
-        self.assertEqual(len(records), 177)
+        self.assertEqual(len(seen), 90)
+        self.assertEqual(len(records), 90)
         self.assertEqual(meta["candidate_calls"], 0)
         self.assertFalse(meta["fresh_context_verified"])
         self.assertTrue(meta["fresh_context_declared"])
-        self.assertEqual(sum(len(p["messages"]) == 1 for p in seen), 129)
+        self.assertEqual(sum(len(p["messages"]) == 1 for p in seen), 42)
         slot_index = {s["slot_id"]: s for s in plan["slots"]}
         for slot, projected in zip(plan["slots"], seen):
             self.assertEqual(set(projected), {"schema", "messages", "parameters"})

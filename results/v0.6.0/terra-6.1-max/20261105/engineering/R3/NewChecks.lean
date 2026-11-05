@@ -1,0 +1,16 @@
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+#check lt_sSup_iff
+#check lt_iInf_iff
+#check iInf_lt_iff
+#check sSup_le
+#check le_sSup
+#check ENNReal.exists_pos_lt
+#check exists_between
+#check ENNReal.lt_top_iff_ne_top
+#check EReal.coe_ne_top
+#check Set.SSubset.exists_of_ssubset
+#check Quotient.lift
+#check Quotient.exact
+#check Quotient.sound
+#check Nat.le_induction
+#check ENNReal.exists_lt_top

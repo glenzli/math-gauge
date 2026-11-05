@@ -1,0 +1,16 @@
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+#check EReal.sub_le_sub
+#check ENNReal.div_pos
+#check ENNReal.div_pos_iff
+#check ENNReal.div_ne_top
+#check ENNReal.div_lt_top
+#check ENNReal.div_eq_top_iff
+#check ENNReal.inv_ne_zero
+#check ENNReal.inv_ne_top
+#check ENNReal.mul_ne_top
+#check ENNReal.div_ne_zero
+#check div_eq_mul_inv
+#check ENNReal.div_pos'
+#check ENNReal.toReal_pos
+#check ENNReal.zero_lt_one
+#check EReal.sub_le_sub

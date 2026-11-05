@@ -1,4 +1,4 @@
-from benchmark_fixtures import v05_root, v05_suite, v05_profile
+from benchmark_fixtures import source_root, source_suite, source_profile
 """Offline evaluator profile and full-denominator plan contract tests."""
 
 import contextlib
@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root, legacy_sources
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root, fixture_sources
 
 from math_gauge.benchmarks import (BenchmarkProfile, build_plan, identity,
                                     read_plan, select_slots, validate_plan, write_plan)
@@ -25,8 +25,8 @@ RUNTIME = {"model_label": "offline-fixture", "budget": {"timeout_seconds": 120},
 class BenchmarkPlanTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = legacy_suite()
-        cls.profile = legacy_profile(cls.suite)
+        cls.suite = fixture_suite()
+        cls.profile = fixture_profile(cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
     def changed_profile(self, change):
@@ -38,25 +38,21 @@ class BenchmarkPlanTests(unittest.TestCase):
             return BenchmarkProfile.load(path, self.suite, repository_root=self.profile.root)
 
     def test_default_partition_and_full_frozen_plan(self):
-        self.assertEqual([len(x["case_ids"]) for x in self.profile.data["components"]], [29, 6, 6, 2])
-        self.assertEqual(self.plan["planned"], {
-            "papers": 43, "independent_slots": 129, "neutral_slots": 16,
-            "stance_slots": 32, "all_slots": 177, "selected_slots": 177})
-        self.assertEqual({tag for c in self.plan["case_index"] for tag in c["focus_tags"]},
-                         {f"F{i:02}" for i in range(1, 10)})
+        self.assertEqual([len(x["case_ids"]) for x in self.profile.data["components"]], [14, 4, 4, 4])
+        self.assertEqual(self.plan["planned"], {"papers": 26, "independent_slots": 42, "neutral_slots": 16,
+            "stance_slots": 32, "all_slots": 90, "selected_slots": 90})
         self.assertEqual(self.plan["candidate_calls"], 0)
-        self.assertTrue(all(x["case_approved"] is False for x in self.plan["case_index"]))
         for case in self.plan["case_index"]:
+            self.assertFalse(case["case_approved"])
             approval = case["case_approval_source"]
-            self.assertEqual(approval["status"], "draft")
-            self.assertEqual(approval["human_review"], "pending")
+            self.assertEqual((approval["status"], approval["human_review"]), ("draft", "pending"))
             self.assertTrue((self.suite.root / approval["manifest"]).is_file())
 
     def test_historical_source_graph_ignores_unrelated_current_registry_additions(self):
         registry = read_json(ROOT / "cases/sources.json")
         registry["synthetic-future-case-source"] = {"kind": "fixture", "sources": []}
         cited = {source for case in self.suite.cases.values() for source in case["sources"]}
-        self.assertEqual(legacy_sources(registry, cited),
+        self.assertEqual(fixture_sources(registry, cited),
                          read_json(self.suite.root / "sources.json"))
         self.assertEqual(self.suite.sha256, self.profile.data["suite"]["sha256"])
 
@@ -89,19 +85,17 @@ class BenchmarkPlanTests(unittest.TestCase):
             build_plan(self.profile, suite, runtime=RUNTIME)
 
     def test_targets_select_dependency_closures_without_changing_denominators(self):
-        expected = {"proofs": 87, "lean-audit": 18, "lean-construction": 18,
-                    "chapters": 6, "repeat": 129, "core": 129,
-                    "neutral": 24, "stance": 40, "all": 177}
+        expected = {"proofs": 14, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4,
+                    "repeat": 24, "core": 26, "neutral": 24, "stance": 40, "all": 90}
         for target, count in expected.items():
             with self.subTest(target=target):
                 slots = select_slots(self.plan, [target])
                 self.assertEqual(len(slots), count)
-                selected = {x["slot_id"] for x in slots}
-                self.assertTrue(all(x["parent_slot"] in selected
-                                    for x in slots if x["parent_slot"]))
+                ids = {row["slot_id"] for row in slots}
+                self.assertTrue(all(row["parent_slot"] in ids for row in slots if row["parent_slot"]))
         self.assertEqual(len(select_slots(self.plan, ["neutral", "stance"])), 56)
         partial = build_plan(self.profile, self.suite, ["neutral"])
-        self.assertEqual(len(partial["slots"]), 177)
+        self.assertEqual(len(partial["slots"]), 90)
         self.assertEqual(partial["planned"]["selected_slots"], 24)
         with self.assertRaises(ValueError):
             select_slots(partial, ["all"])
@@ -130,7 +124,7 @@ class BenchmarkPlanTests(unittest.TestCase):
             lambda d: d["components"][1]["case_ids"].append(d["components"][0]["case_ids"][0]),
             lambda d: d["components"][0]["case_ids"].pop(),
             lambda d: d.update(operator_only=False),
-            lambda d: d.update(attempts=["A1"]),
+            lambda d: d["attempt_schedule"].pop("MG-GR002"),
         ]
         for mutate in mutations:
             with self.subTest(mutate=mutate), self.assertRaises(ValueError):
@@ -214,7 +208,7 @@ class BenchmarkPlanTests(unittest.TestCase):
                     if s["kind"] == "independent" else "KEEP\nSynthetic incomplete audit rationale.")
                     for s in slots})
                 run_path = root / target
-                arguments = ["benchmark-run", "--plan", str(plan_path), "--suite", str(legacy_suite().root),
+                arguments = ["benchmark-run", "--plan", str(plan_path), "--suite", str(fixture_suite().root),
                              "--target", target, "--out", str(run_path), "--replay", str(replay)]
                 if previous:
                     arguments += ["--reuse-run", str(previous[0])]
@@ -281,64 +275,39 @@ class BenchmarkPlanTests(unittest.TestCase):
             reused = read_json(previous[1] / "run.json")
             self.assertEqual(len(reused["reused_from"]), 8)
             self.assertEqual(reused["candidate_calls"], 0)
-            self.assertEqual(legacy_suite().sha256, self.suite.sha256)
+            self.assertEqual(fixture_suite().sha256, self.suite.sha256)
 
 
 class CompactBenchmarkPlanTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = v05_suite()
-        cls.profile = v05_profile(cls.suite)
+        cls.suite = source_suite()
+        cls.profile = source_profile(cls.suite)
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
 
-    def test_default_30_has_54_slots_and_separate_fixed_targets(self):
-        self.assertEqual([len(c["case_ids"]) for c in self.profile.data["components"]], [14, 5, 5, 2, 4])
-        self.assertEqual(self.plan["planned"], {"papers": 30, "independent_slots": 36,
-            "neutral_slots": 6, "stance_slots": 12, "all_slots": 54, "selected_slots": 54})
-        for target, size in {"proofs": 14, "lean-audit": 5, "lean-construction": 5,
-                "chapters": 2, "answer-review": 4, "core": 30, "repeat": 12, "neutral": 12, "stance": 18, "all": 54}.items():
+    def test_current_26_has_42_slots_and_separate_fixed_targets(self):
+        self.assertEqual([len(c["case_ids"]) for c in self.profile.data["components"]], [14, 4, 4, 4])
+        self.assertEqual(self.plan["planned"], {"papers": 26, "independent_slots": 30,
+            "neutral_slots": 4, "stance_slots": 8, "all_slots": 42, "selected_slots": 42})
+        for target, size in {"proofs": 14, "lean-audit": 4, "lean-formalization": 4,
+            "answer-review": 4, "core": 26, "repeat": 8, "neutral": 8, "stance": 12, "all": 42}.items():
             self.assertEqual(len(select_slots(self.plan, [target])), size, target)
-        self.assertEqual(len(select_slots(self.plan, ["neutral", "stance"])), 24)
-        self.assertEqual(len(select_slots(self.plan, ["core", "repeat"])), 36)
-        self.assertTrue(all(s["attempt_label"] == "A1" for s in select_slots(self.plan, ["core"])))
-        self.assertEqual({s["slot_id"] for s in select_slots(self.plan, ["chapters"])},
-                         {"MG-C002:A1", "MG-C003:A1"})
+        self.assertEqual(len(select_slots(self.plan, ["neutral", "stance"])), 16)
+        self.assertEqual(len(select_slots(self.plan, ["core", "repeat"])), 30)
+        self.assertTrue(all(row["attempt_label"] == "A1" for row in select_slots(self.plan, ["core"])))
 
-    def test_reserve_is_explicit_disjoint_and_uses_the_same_candidate_projection(self):
-        reserve = Suite.load(v05_root() / "cases/reserve-suite.json")
-        self.assertEqual(reserve.root, self.suite.root)
-        self.assertEqual(reserve.manifest_name, "reserve-suite.json")
-        self.assertEqual(len(reserve.cases), 20)
-        self.assertFalse(set(reserve.cases) & set(self.suite.cases))
-        historical = legacy_suite()
-        strengthened = {"MG-GR021": "MG-GR020", "MG-GR022": "MG-GR015", "MG-GR023": "MG-GR018"}
-        self.assertEqual((set(reserve.cases) | set(self.suite.cases))
-                         - {f"MG-AR{i:03d}" for i in range(1, 5)} - set(strengthened),
-                         set(historical.cases))
-        for source in (self.suite, reserve):
-            for cid, case in source.cases.items():
-                if cid.startswith("MG-AR"):
-                    continue
-                if cid in strengthened:
-                    # Stronger deliveries share their historical mathematical
-                    # family; their new criteria are not independent families.
-                    parent = historical.cases[strengthened[cid]]
-                    self.assertEqual(case["family_id"], parent["family_id"])
-                    continue
-                self.assertEqual(candidate_message(source.request(case)),
-                                 candidate_message(historical.request(historical.cases[cid])))
-        with tempfile.TemporaryDirectory() as directory:
-            out = Path(directory) / "reserve-task"
-            with contextlib.redirect_stdout(io.StringIO()):
-                self.assertEqual(main(["prepare", "--suite", str(reserve.manifest_path),
-                    "--case", "MG-GR001", "--out", str(out)]), 0)
-            self.assertEqual(read_json(out / "request.json")["case_id"], "MG-GR001")
+    def test_only_selected_current_tasks_are_materialized(self):
+        self.assertFalse((ROOT / "cases/reserve-suite.json").exists())
+        self.assertEqual(set(self.suite.cases), set(fixture_suite().cases))
+        for cid, case in self.suite.cases.items():
+            self.assertEqual(candidate_message(self.suite.request(case)),
+                             candidate_message(fixture_suite().request(fixture_suite().cases[cid])))
         with self.assertRaisesRegex(ValueError, "Unknown selected case"):
-            self.suite.select(["MG-GR001"])
+            self.suite.select(["retired-case"])
 
     def test_attempt_or_score_membership_cannot_be_self_rehashed_into_a_different_plan(self):
         for mutate in (
-            lambda d: d["attempt_schedule"].update({"MG-C002": ["A1", "A2", "A3"]}),
+            lambda d: d["attempt_schedule"].update({"LCH02": ["A1", "A2", "A3"]}),
             lambda d: d["attempt_schedule"].update({"MG-GR002": ["A2", "A3"]}),
             lambda d: d["score_policy"].update(core_attempt_labels=["A1", "A2", "A3"]),
             lambda d: d["score_policy"]["repeat_case_ids"].pop(),

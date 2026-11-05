@@ -1,0 +1,1151 @@
+{
+  "schema": "math-gauge.original-engineering-semantic-review/v1",
+  "created_at": "2026-11-05T11:56:57.318035+00:00",
+  "benchmark_version": "0.6.0",
+  "case_id": "LCH02",
+  "case_version": "0.1.0",
+  "model": "terra-6.1-max",
+  "slot_id": "LCH02:A1",
+  "reviewer": "Codex independent small-formalization original-engineering audit",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "human_approved": false,
+  "comparison_eligible": false,
+  "source_kind": "original-sealed-engineering",
+  "source_selection": "User-authorized original standard A1 sealed engineering; no response/source stitching or best-of selection.",
+  "source": {
+    "model": "terra-6.1-max",
+    "model_key": "terra",
+    "case_id": "LCH02",
+    "slot": "A1",
+    "source_kind": "original-sealed-engineering",
+    "original_root": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/jobs/LCH02-A1/actual-project",
+    "retained_source_root": "/private/tmp/math-gauge-engineering-reaudit-20261105/small-cases/terra-LCH02/sealed-source",
+    "native_result": {
+      "path": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/jobs/LCH02-A1/result.json",
+      "bytes": 1915,
+      "sha256": "9f6fa734227dd2a48f8b638cc9fcef692c24d7845c9c61b52475ada6f4e8151f"
+    },
+    "original_manifest": {
+      "path": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/jobs/LCH02-A1/actual-project-manifest.json",
+      "bytes": 1857,
+      "sha256": "86098003192a7770a6d8920ff2486ac50fa96d9f99f36ac40c7ab513a8910d72"
+    },
+    "tree_sha256": "92503cdc5abc30775c50cdfcb377c134f27a00c0c6c1895e00808a17e00b1778",
+    "manifest_files_verified": 10,
+    "manifest_extra_files": [],
+    "answer": {
+      "path": "/Users/g4i/lab/math-gauge/results/v0.6.0/terra-6.1-max/20261105/responses/LCH02/A1/answer.md",
+      "bytes": 34256,
+      "sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692"
+    },
+    "native_response_sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692",
+    "response_hash_binding_verified": true,
+    "native_terminal_status": "ok",
+    "native_delivery_gate": {
+      "path": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/collected/LCH02-A1/delivery-gate.json",
+      "bytes": 1490,
+      "sha256": "7f83a44d90aa91f11e8c5977e4bc3945be090bc436ef74310fe144260a7aa035"
+    },
+    "terminal_budget": {
+      "per_turn_seconds": 5400,
+      "startup_seconds": 120,
+      "accepted": true,
+      "startup_within_budget": true,
+      "turn_within_budget": true,
+      "mathematical_quality_used": false,
+      "reserved_at": "2026-11-04T15:30:27.491992+00:00",
+      "submitted_at": "2026-11-04T15:30:28.996633+00:00",
+      "completed_at": "2026-11-04T15:44:21.574699+00:00",
+      "completion_source": "native-owner-finished_at",
+      "startup_elapsed_seconds": 1.504641056060791,
+      "turn_elapsed_seconds": 832.5780658721924,
+      "startup_enforcement_observed": false,
+      "native_submission_timestamp_consistent": true,
+      "status": "within-budget"
+    },
+    "closed_archive_crosscheck": null,
+    "candidate_source_hashes": {
+      "Bounds.lean": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+      "Main.lean": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0"
+    },
+    "all_sealed_lean_hashes": {
+      "Axioms.lean": "b08d0ec14909ecc194df352363652b550f4d90be600b97e3da3fa8fb82595ae4",
+      "Bounds.lean": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+      "Check.lean": "f0f5505c637934be47390d002dfc86195f22ddad1c7fcd18ff84059e2d5776b4",
+      "Main.lean": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0"
+    },
+    "reply_comparison": [
+      {
+        "file": "Bounds.lean",
+        "actual_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+        "reply_sha256": "a1c6dca3cdde8ebb62fab984d2481ff799dd0edfa7d6466282e8f3087c273414",
+        "actual_bytes": 18420,
+        "reply_bytes": 18419,
+        "byte_equal": false,
+        "extraction": {
+          "response_sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692",
+          "start_byte": 163,
+          "end_byte": 18582
+        },
+        "difference": "--- original-reply/Bounds.lean\n+++ original-sealed-engineering/Bounds.lean\n@@ -23,7 +23,7 @@\n /-- Row j, column i is the coefficient for the channel i → j. -/\n def LipOn (d : Gauge I X) (φ : Operator X bot) (U : Set X)\n     (L : BoundMatrix I) : Prop :=\n-  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,\n+  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j, \n     d j (φ.func x) (φ.func y) ≤ ∑ i, L j i * d i x y\n \n def Lip (d : Gauge I X) (φ : Operator X bot) (L : BoundMatrix I) : Prop :=\n",
+        "whitespace_only_difference": true
+      },
+      {
+        "file": "Main.lean",
+        "actual_sha256": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0",
+        "reply_sha256": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0",
+        "actual_bytes": 14,
+        "reply_bytes": 14,
+        "byte_equal": true,
+        "extraction": {
+          "response_sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692",
+          "start_byte": 18614,
+          "end_byte": 18628
+        },
+        "whitespace_only_difference": false
+      }
+    ],
+    "alignment_comparison": {
+      "actual_sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4",
+      "reply_sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4",
+      "bytes_equal": true,
+      "json_equal": true,
+      "source_span": {
+        "start_byte": 18665,
+        "end_byte": 34253,
+        "sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4"
+      }
+    },
+    "import_closure": {
+      "entry": "Main.lean",
+      "review_audit_additional_roots": [],
+      "ordered_local_closure": [
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+        "Bounds.lean",
+        "Main.lean"
+      ],
+      "direct_external_imports": [
+        "Mathlib",
+        "Mathlib.Data.ENNReal.Basic",
+        "Mathlib.Tactic"
+      ],
+      "frozen_predecessor_sources": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+      },
+      "author_target_implementation_used": false,
+      "sealed_lean_outside_closure": [
+        "Axioms.lean",
+        "Check.lean"
+      ],
+      "outside_closure_note": "Terra LCH02 Check.lean and Axioms.lean contain only imports and #check/#print directives; no declarations or target proofs are supplied there."
+    },
+    "kernel_original_report": {
+      "path": "/private/tmp/math-gauge-v06-evaluator-20261104-01a1a43a/terra/LCH02-A1/report.json",
+      "bytes": 59714,
+      "sha256": "c1a25e8a041e65a662e7c17bbb4a1dce5a3d5a0b0753948f73658e6935e99e2b"
+    },
+    "source_files_changed_vs_original_kernel": [
+      "Bounds.lean"
+    ],
+    "human_review": "pending",
+    "comparison_eligible": false
+  },
+  "kernel_report": {
+    "path": "/private/tmp/math-gauge-engineering-reaudit-20261105/small-cases/terra-LCH02/kernel-report.json",
+    "sha256": "9754aa4ee8e013b61e13babdb218bfe2d1b05cef72e81d1b814f4198f3e09b27",
+    "bytes": 39539
+  },
+  "kernel_raw_evidence": {
+    "original_report": {
+      "path": "/private/tmp/math-gauge-v06-evaluator-20261104-01a1a43a/terra/LCH02-A1/report.json",
+      "bytes": 59714,
+      "sha256": "c1a25e8a041e65a662e7c17bbb4a1dce5a3d5a0b0753948f73658e6935e99e2b"
+    },
+    "retained_copy": {
+      "path": "/private/tmp/math-gauge-engineering-reaudit-20261105/small-cases/terra-LCH02/reused-kernel-evidence/report.json",
+      "sha256": "c1a25e8a041e65a662e7c17bbb4a1dce5a3d5a0b0753948f73658e6935e99e2b",
+      "bytes": 59714
+    },
+    "new_compilation_logs": "/private/tmp/math-gauge-engineering-reaudit-20261105/small-cases/terra-LCH02/compile-logs"
+  },
+  "candidate_mapping_format_valid": true,
+  "mapping_defects": [],
+  "format_does_not_determine_semantic_count": true,
+  "model_self_assessment": {
+    "formalization_obligations": {
+      "source": "model original alignment.json",
+      "claimed_complete": 20,
+      "total": 20,
+      "original_alignment_sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4"
+    },
+    "reviewer_did_not_replace_model_claim": true
+  },
+  "verified_count": 20,
+  "total_count": 20,
+  "passed_ids": [
+    "CH02-D01",
+    "CH02-D02",
+    "CH02-D03",
+    "CH02-D04",
+    "CH02-D05",
+    "CH02-D06",
+    "CH02-P01",
+    "CH02-P02",
+    "CH02-P04",
+    "CH02-P05",
+    "CH02-P07",
+    "CH02-P08",
+    "CH02-P11",
+    "CH02-P12",
+    "CH02-P14",
+    "CH02-P03",
+    "CH02-P06",
+    "CH02-P09",
+    "CH02-P10",
+    "CH02-P13"
+  ],
+  "incomplete_ids": [],
+  "unknown_ids": [],
+  "all_verified_complete": true,
+  "stages": [
+    {
+      "id": "CH02-D01",
+      "stage_id": "CH02-D01",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.Gauge",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 20
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.LipOn",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 24
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.Lip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 29
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lipFamilyOn",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 32
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lipFamily",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 35
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.Gauge"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.LipOn"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.Lip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lipFamilyOn"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lipFamily"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "LipOn contains U⊆dom(φ) and the complete finite ENNReal matrix upper bound. Lip is exactly its domain specialization; lipFamilyOn/lipFamily are genuine sets. Generalizing d to arbitrary ENNReal-valued families and permitting empty I makes no extra restriction on the original finite nonempty gauge setting.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-D02",
+      "stage_id": "CH02-D02",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.CoLipOn",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 39
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.coLipFamilyOn",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 44
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.coLipFamily",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 47
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.CoLipOn"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.coLipFamilyOn"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.coLipFamily"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "CoLipOn explicitly retains nonempty U, domain legality, and every-point/every-output lower inequality. Its restricted/global families have the correct membership condition, including the empty-global-domain boundary. Infinite entries are allowed.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-D03",
+      "stage_id": "CH02-D03",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.BoundMatrix",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 21
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_entry",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 50
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.BoundMatrix"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_entry"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "BoundMatrix is an actual ENNReal Matrix. The matrix_product_entry theorem has row j/output and column i/input and the correct Σk A j k*B k i multiplication. DecidableEq I is computationally available classically and introduces no mathematical condition.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-D04",
+      "stage_id": "CH02-D04",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainMatrix",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 176
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainMatrix_reverse_prod",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 190
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_one_step",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 446
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainMatrix"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainMatrix_reverse_prod"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_one_step"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "chainMatrix on a chronological matrix list is 1 on [], and chainMatrix(M::tail)=chainMatrix(tail)*M. chainMatrix_reverse_prod proves the representation equals the reversed standard list product; the single-step value is also proved. This binds empty and nonempty products with the correct order.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-D05",
+      "stage_id": "CH02-D05",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainOperator",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 172
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainOperator_frozen",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 180
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.actualDomain",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 212
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.actualDomain_subset_step_dom",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 289
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainOperator"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.chainOperator_frozen"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.actualDomain"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.actualDomain_subset_step_dom"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "actualDomain recursively takes each exact whole-set image, with index 0 equal to the original U. chainOperator_frozen proves the chronological chain equals the frozen OperatorChain on the reverse list. Crucially initial_subset_dom uses preservation of bot, and actualDomain_subset_step_dom proves legality of every actual intermediate input from U⊆dom(full composite), for every existing list position.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-D06",
+      "stage_id": "CH02-D06",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.PathEndsAt",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 356
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.IsIndexPath",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 369
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.PathAllPositive",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 360
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.PathHasZero",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 365
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 372
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_positive",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 449
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_zero",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 452
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.PathEndsAt"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.IsIndexPath"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.PathAllPositive"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.PathHasZero"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_positive"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_zero"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "The direct finite-sequence representation stores the successive nodes [k₁,…,kₙ₋₁,j], while the starting i is a parameter. IsIndexPath enforces the exact length and final endpoint; positive/zero predicates inspect the actual edge coefficients. The path_one and edge specializations prove the n=1 empty-intermediate boundary.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P01",
+      "stage_id": "CH02-P01",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.singleton_lip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 53
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.singleton_lip"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "singleton_lip proves a two-way reduction for a Unique index type using the entire finite sum. Unique exactly represents the original one-element index set; all output indices are proved equal to default, and the global domain is unchanged.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P02",
+      "stage_id": "CH02-P02",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lip_antitone",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 64
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lip_antitone"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "lip_antitone retains U⊆V⊆dom(φ) and restricts the entire defining point-pair inequality. Its conclusion is inclusion of the complete certificate families; U is allowed empty as in the original Lip statement.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P04",
+      "stage_id": "CH02-P04",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_apply_assoc",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 99
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.compose_domains",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 110
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lip_compose",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 121
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_apply_assoc"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.compose_domains"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lip_compose"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "compose_domains proves legality of both U and the exact φ₁-image from the full composite domain. lip_compose applies the second-step bound precisely on that image and distributes/reorders finite ENNReal sums to obtain L₂*L₁. It neither assumes the desired composite certificate nor reverses multiplication.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P05",
+      "stage_id": "CH02-P05",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_antitone",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 74
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_antitone"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "colip_antitone uses explicit nonempty U and U⊆V⊆dom(φ); it carries nonemptiness, legal domain, and every-point lower inequality to the restricted certificate family. No empty-domain lower certificate is admitted.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P07",
+      "stage_id": "CH02-P07",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_forced_zero",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 85
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_forced_zero"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "The selected matrix term lies below the nonnegative row sum and zero output distance. Its product is therefore zero; ENNReal has no zero divisors, and strictly positive input distance eliminates the distance-zero branch. This includes infinite distances and coefficients without division.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P08",
+      "stage_id": "CH02-P08",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.compose_domains",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 110
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_compose",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 137
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.compose_domains"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_compose"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "colip_compose uses the same exact middle image and correct K₂*K₁ order, distributes the finite lower sum, and inherits U.Nonempty from the first actual certificate. The resulting predicate explicitly includes full composite-domain legality.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P11",
+      "stage_id": "CH02-P11",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.identity_matrix_apply",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 153
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.identity_lip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 157
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.zero_step_lip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 199
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.identity_matrix_apply"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.identity_lip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.zero_step_lip"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "identity_matrix_apply proves the complete finite unit-matrix sum equals the input component distance. identity_lip and zero_step_lip turn this into the genuine unit Lip certificate on any legal U, including the original nonempty case.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P12",
+      "stage_id": "CH02-P12",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.identity_colip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 164
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.zero_step_colip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 205
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.identity_colip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.zero_step_colip"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "identity_colip and zero_step_colip use the same proved unit-sum identity with explicit U.Nonempty and U⊆dom(id). Thus the zero-step lower certificate retains every original domain and nonempty condition.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P14",
+      "stage_id": "CH02-P14",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.mul_positive_iff",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 381
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_positive_iff",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 402
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_one_step",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 446
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_positive",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 449
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.mul_positive_iff"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_positive_iff"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_one_step"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_positive"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "matrix_product_positive_iff inducts over the actual reverse chronological matrix product and finite sum positivity. Its forward and reverse constructions produce every required next-node list with exact length and endpoint. All positive lengths, in particular n=1, are included, and infinity remains allowed.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P03",
+      "stage_id": "CH02-P03",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lip_global_restrict",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 70
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.lip_global_restrict"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "lip_global_restrict specializes the proved family antitonicity to V=dom(φ), preserving arbitrary U⊆dom(φ). This completes the explicit global-to-restricted subclaim.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P06",
+      "stage_id": "CH02-P06",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_global_restrict",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 80
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.colip_global_restrict"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "colip_global_restrict takes V=dom(φ), retaining both nonempty U and the original domain inclusion. This proves the full global-to-restricted co-Lip subclaim.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P09",
+      "stage_id": "CH02-P09",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.StepLip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 217
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.stepLip_iff_indexed",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 225
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.finite_lip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 306
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.StepLip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.stepLip_iff_indexed"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.finite_lip"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "StepLip consists only of genuine single-step certificates at successive exact images. stepLip_iff_indexed proves this recursion equivalent to the positionwise actualDomain premise. finite_lip constructs the composite bound by list induction, including empty-list identity, and hence all positive lengths. No final bound is a stored premise.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P10",
+      "stage_id": "CH02-P10",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.StepCoLip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 221
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.stepCoLip_iff_indexed",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 250
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.finite_colip_aux",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 323
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.finite_colip",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 342
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.StepCoLip"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.stepCoLip_iff_indexed"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.finite_colip_aux"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.finite_colip"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "StepCoLip likewise stores only stepwise certificates. Its indexed equivalence and finite_colip_aux construct the whole co-Lip bound; finite_colip derives nonempty U from the first certificate for a nonempty list. Actual domains, chronological operator order, and reverse matrix order are preserved.",
+      "inherited_from": []
+    },
+    {
+      "id": "CH02-P13",
+      "stage_id": "CH02-P13",
+      "decision": "pass",
+      "verified_complete": true,
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "failure_category": "none",
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_zero_iff_not_positive",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 384
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_zero_iff",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 429
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_one_step",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 446
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_zero",
+          "source_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+          "line": 452
+        }
+      ],
+      "candidate_claim_status": "complete",
+      "candidate_mapping_raw": [
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_zero_iff_not_positive"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_zero_iff"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.matrix_product_one_step"
+        },
+        {
+          "file": "Bounds.lean",
+          "name": "LCH02.path_one_zero"
+        }
+      ],
+      "evaluator_mapping_origin": "candidate explicit references; strings split only where needed",
+      "notes": "matrix_product_zero_iff quantifies over every length-matching endpoint-correct path. It derives zero iff no positive path using the independently proved positivity criterion and the recursive equivalence between not-all-positive and having a zero edge. The direct single-step theorems cover n=1; no path is prefiltered by positivity.",
+      "inherited_from": []
+    }
+  ],
+  "root_failures": [],
+  "count_changed_from_current_record": false,
+  "limitations": [
+    "AI semantic judgment remains human pending. Kernel success proves these encoded statements, not semantic alignment by itself.",
+    "Existing full original answer, original alignment and sealed engineering remain distinct byte-bound artifacts."
+  ]
+}

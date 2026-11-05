@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import compact_release_root
+from benchmark_fixtures import source_root
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("reliability_material_checks", ROOT / "scripts/validate_protocol.py")
@@ -54,25 +54,20 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     V.check_plan(plan)
 
-    def test_current_and_legacy_packet_versions_keep_their_own_round_counts(self):
+    def test_current_packet_rejects_other_attempt_and_round_counts(self):
         V.check_plan(self.plan)
         self.assertEqual(self.plan["independent_attempts"], ["A1", "A2"])
         self.assertEqual(self.plan["rounds_per_arm"], 1)
-        legacy_packet = compact_release_root() / V.PACKET
-        legacy_selection = V.read(legacy_packet / "selection.json")
-        legacy_prompts = V.read(legacy_packet / "prompts.json")
-        V.check_messages(legacy_selection, legacy_prompts, self.reply)
-        self.assertEqual(len(legacy_prompts["messages"]), 36)
-        for key, value in (("independent_attempts", ["A1", "A2", "A3"]),
-                           ("rounds_per_arm", 2)):
+        self.assertEqual(len(self.prompts["messages"]), 12)
+        for key, value in [("independent_attempts", ["A1", "A2", "A3"]), ("rounds_per_arm", 2)]:
             changed = copy.deepcopy(self.plan)
             changed[key] = value
             with self.subTest(key=key), self.assertRaises(ValueError):
                 V.check_plan(changed)
-        changed = copy.deepcopy(legacy_prompts)
-        changed["protocol_version"] = "0.3.0"
+        changed = copy.deepcopy(self.prompts)
+        changed["protocol_version"] = "unknown"
         with self.assertRaisesRegex(ValueError, "protocol versions differ"):
-            V.check_messages(legacy_selection, changed, self.reply)
+            V.check_messages(self.selection, changed, self.reply)
 
     def test_offline_acceptance_cannot_bless_changed_sources_or_candidate_results(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -138,7 +133,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                          "releases/v0.1.0/config.json", "releases/v0.1.0/THIRD_PARTY_NOTICES.md",
                          "docs/release-consumer-README.md", "docs/release-notes-v0.1.0.md", "LICENSE",
                          "releases/v0.2.0/config.json", "releases/v0.2.0/THIRD_PARTY_NOTICES.md",
-                         "docs/release-consumer-README-v0.2.0.md", "docs/usage.md",
+                         "docs/release-consumer-README-v0.2.0.md", "docs/running.md",
                          "protocol/execution-evidence.md", "protocol/isolated-cli-runs.md"):
                 with self.subTest(omitted=name):
                     omitted = receipt["input_sha256"].pop(name)
@@ -243,7 +238,7 @@ class ReliabilityMaterialsTests(unittest.TestCase):
             # GR001 is not one of the six selected self-check targets.
             for name in ('task.md', 'reference.md', 'contract.json'):
                 with self.subTest(name=name):
-                    path = root/'cases/reserve/proofs/MG-GR001'/name
+                    path = root/'cases/proofs/MG-GR002'/name
                     original = path.read_bytes()
                     if name == 'contract.json':
                         changed = json.loads(original)

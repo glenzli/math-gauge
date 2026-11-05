@@ -1,0 +1,263 @@
+{
+  "case_id": "LCH02",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.IsRestrictedLip",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.IsLip",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.lipSet"
+      ],
+      "representation": "对应正文 §2.1 受限与全域 Lipschitz 矩阵界定义。IsRestrictedLip bot d ϕ U L 定义为 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, d j (ϕ(x), ϕ(y)) ≤ ∑ i : I, entry L i j * d i x y；restrictedLipSet 为其证书集 ℒ(ϕ)|_U；IsLip 与 lipSet 为 U = dom(ϕ) 时的特化。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.IsRestrictedCoLip",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.IsCoLip",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.globalCoLipSet"
+      ],
+      "representation": "对应正文 §2.1 含非空条件的受限 co-Lipschitz 矩阵界定义。IsRestrictedCoLip bot d ϕ U K 要求 U.Nonempty 并且 ∀ x y ∈ U, ∀ j, ∑ i, entry K i j * d i x y ≤ d j (ϕ(x), ϕ(y))；restrictedCoLipSet 为其证书族 𝒦(ϕ)|_U；IsCoLip 与 globalCoLipSet 为 U = dom(ϕ) 时的特化。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.entry",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.entry_mul"
+      ],
+      "representation": "对应正文 §2.1 输入/输出矩阵指标约定与乘法：以输出分量为行指标、输入分量为列指标，entry M i j 定义为 M j i，表示 M_{i → j}；entry_mul 证明代数矩阵乘积条目与 (A · B)_{i → j} = ∑_k A_{k → j} B_{i → k} 的严格等价。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D04",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.mat_id",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.matrixProd",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.matrixChainProd"
+      ],
+      "representation": "对应正文 §2.1 与注 oet-11006ddd8c43bfec：mat_id 为单位矩阵 I；matrixProd 定义列表矩阵有序乘积（空列表乘积为 I）；matrixChainProd 定义有限族 M^(n) ⋯ M^(1) 的有序链乘积。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D05",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.operatorChainProd",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.ValidLipChain",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.ValidCoLipChain"
+      ],
+      "representation": "对应推论 2.5 实际中间像域 U_{m+1} = ϕ_m(U_m) 与链表示 c_k = ϕ_k ∘ ⋯ ∘ ϕ_1 的对应。ValidLipChain 与 ValidCoLipChain 以归纳谓词形式精确刻画各步在实际中间像域上选取证书的有限链结构。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D06",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.IndexPath",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.IsAllPositivePath",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.HasZeroStep"
+      ],
+      "representation": "对应命题 2.6 有限指标路径结构。IndexPath I n i j 为节点映射 node : Fin (n + 1) → I 满足起止端点 node 0 = i 与 node (Fin.last n) = j；IsAllPositivePath 为沿线所有单步条目严格正；HasZeroStep 为存在单步条目等于 0。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P01",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_singleton",
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.lip_singleton"
+      ],
+      "representation": "对应注 oet-c4369c63c86cbacf 单分量情形下的标量 Lip 界退化：当指标集 I 退化为单点 {i} 时，受限/全域 Lip 矩阵条件充要等价于单个标量不等式 d_i(ϕ(x), ϕ(y)) ≤ L_{i → i} * d_i(x, y)。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P02",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_antitone"
+      ],
+      "representation": "对应引理 2.1 受限 Lip 矩阵族的单调性：若 U ⊆ V ⊆ dom(ϕ)，则 ℒ(ϕ)|_V ⊆ ℒ(ϕ)|_U。",
+      "dependencies": [
+        "CH02-D01"
+      ]
+    },
+    {
+      "id": "CH02-P04",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.lip_comp_two"
+      ],
+      "representation": "对应命题 2.2 两步 Lip 复合律：若 L^(1) ∈ ℒ(ϕ_1)|_{U_1} 且 L^(2) ∈ ℒ(ϕ_2)|_{ϕ_1(U_1)}，则代数矩阵乘积 L^(2) · L^(1) ∈ ℒ(ϕ_2 ∘ ϕ_1)|_{U_1}。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P05",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.restricted_co_lip_antitone"
+      ],
+      "representation": "对应引理 2.3 受限 co-Lip 矩阵族的单调性：若 ∅ ≠ U ⊆ V ⊆ dom(ϕ)，则 𝒦(ϕ)|_V ⊆ 𝒦(ϕ)|_U。",
+      "dependencies": [
+        "CH02-D02"
+      ]
+    },
+    {
+      "id": "CH02-P07",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.co_lip_entry_eq_zero_of_dist_zero"
+      ],
+      "representation": "对应注 oet-88784dcbfff0ea66 co-Lip 条目为零的充分条件：若存在 x, y ∈ dom(ϕ) 使 d_j(ϕ(x), ϕ(y)) = 0 且 d_i(x, y) > 0，则任意全域 co-Lip 矩阵 K 均满足 K_{i → j} = 0。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P08",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.co_lip_comp_two"
+      ],
+      "representation": "对应命题 2.4 两步 co-Lip 复合律：若 K^(1) ∈ 𝒦(ϕ_1)|_{U_1} 且 K^(2) ∈ 𝒦(ϕ_2)|_{ϕ_1(U_1)}，则 K^(2) · K^(1) ∈ 𝒦(ϕ_2 ∘ ϕ_1)|_{U_1}；包含非空性从 U_1 继承到 ϕ_1(U_1)。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P11",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.identity_is_restricted_lip"
+      ],
+      "representation": "对应注 oet-11006ddd8c43bfec 零步复合单位矩阵证书（Lip）：对任意 U ⊆ dom(id)，单位矩阵 I ∈ ℒ(id)|_U。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D04"
+      ]
+    },
+    {
+      "id": "CH02-P12",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.identity_is_restricted_co_lip"
+      ],
+      "representation": "对应注 oet-11006ddd8c43bfec 零步复合单位矩阵证书（co-Lip）：对任意非空 U ⊆ dom(id)，单位矩阵 I ∈ 𝒦(id)|_U。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D04"
+      ]
+    },
+    {
+      "id": "CH02-P14",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.pos_criterion"
+      ],
+      "representation": "对应命题 2.6(ii) 有限矩阵乘积正值判据：对任意 n ≥ 1，[M^(n) ⋯ M^(1)]_{i → j} > 0 当且仅当存在一条指标路径 p 使得所有单步条目严格为正；包含 n = 1。",
+      "dependencies": [
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D06"
+      ]
+    },
+    {
+      "id": "CH02-P03",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.lip_subset_restricted"
+      ],
+      "representation": "对应引理 2.1 全域 Lip 证书可限制特例：若 U ⊆ dom(ϕ)，则 ℒ(ϕ) ⊆ ℒ(ϕ)|_U。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-P02"
+      ]
+    },
+    {
+      "id": "CH02-P06",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.co_lip_subset_restricted"
+      ],
+      "representation": "对应引理 2.3 全域 co-Lip 证书可限制特例：对任意非空子集 U ⊆ dom(ϕ)，有 𝒦(ϕ)|_{dom(ϕ)} ⊆ 𝒦(ϕ)|_U。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-P05"
+      ]
+    },
+    {
+      "id": "CH02-P09",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.valid_lip_chain_prod"
+      ],
+      "representation": "对应推论 2.5(i) 任意正长度链的 Lip 连乘界：从逐步证书归纳构造链证书，全复合算子链具有矩阵连乘证书 L^(k) ⋯ L^(1) ∈ ℒ(c_k)|_{U_1}。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-P04"
+      ]
+    },
+    {
+      "id": "CH02-P10",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.valid_co_lip_chain_prod"
+      ],
+      "representation": "对应推论 2.5(ii) 任意正长度链的 co-Lip 连乘界：从逐步证书归纳构造链证书，全复合算子链具有矩阵连乘证书 K^(k) ⋯ K^(1) ∈ 𝒦(c_k)|_{U_1}。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-P08"
+      ]
+    },
+    {
+      "id": "CH02-P13",
+      "status": "complete",
+      "declarations": [
+        "OperatorBounds.lean/formal_oet.vol_01.ch_02_operator_bounds.zero_criterion"
+      ],
+      "representation": "对应命题 2.6(i) 有限矩阵乘积零值判据：对任意 n ≥ 1，[M^(n) ⋯ M^(1)]_{i → j} = 0 当且仅当对任意指标路径 p，存在层级 m 使得单步条目为 0；包含 n = 1。",
+      "dependencies": [
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D06",
+        "CH02-P14"
+      ]
+    }
+  ]
+}

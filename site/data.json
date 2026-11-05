@@ -1,67 +1,19 @@
 {
-  "schema": "math-gauge.portable-results/v5",
-  "view": "engineering-alignment",
-  "suite_version": "0.6.0",
-  "weight_policy_version": "0.3.0",
-  "status": "local-draft-human-pending",
+  "schema": "math-gauge.current-results-display/v1",
+  "benchmark_version": "0.6.0",
+  "human_review": "pending",
   "formal_comparison_eligible": false,
-  "backend_identity_independently_verified": false,
-  "score_units": {
-    "metrics": "percent",
-    "whole_answer_completion": "fraction"
-  },
   "models": [
     {
-      "id": "terra",
-      "requested_model_label": "Terra 6.1 Max",
-      "scoring_source": "archived-engineering",
+      "id": "terra-6.1-max",
+      "label": "Terra 6.1 Max",
       "public": {
-        "profile": {
-          "version": "0.6.0",
-          "standard_version": "0.6.0",
-          "components": [
-            {
-              "id": "proofs",
-              "weight": 40,
-              "case_count": 14,
-              "family_count": 14,
-              "aggregation": "family"
-            },
-            {
-              "id": "lean-audit",
-              "weight": 20,
-              "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
-            },
-            {
-              "id": "lean-formalization",
-              "weight": 30,
-              "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
-            },
-            {
-              "id": "answer-review",
-              "weight": 10,
-              "case_count": 4,
-              "family_count": 4,
-              "aggregation": "parent_family"
-            }
-          ],
-          "overall_weights": {
-            "core": 70,
-            "repeat": 5,
-            "neutral": 15,
-            "stance": 10
-          },
-          "repeat_attempt_labels": [
-            "A1",
-            "A2"
-          ],
-          "self_check_rounds_per_arm": 1,
-          "reliability_population": "written-only"
-        },
+        "schema": "math-gauge.current-result/v1",
+        "benchmark_version": "0.6.0",
+        "model": "terra-6.1-max",
+        "scope": "public",
+        "status": "post_observation_ai_review_human_pending",
+        "source_score_sha256": "a4582e0321a6c2e47361d15bf322fe949e2bd23d6a17cd7313f30b22bd0755af",
         "metrics": {
           "proofs": {
             "exact": 100.0,
@@ -69,12 +21,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 14,
               "adjudicated": 14,
               "unknown": 0,
               "started_slots": 14,
-              "reviewed_slots": 14
-            }
+              "reviewed_slots": 14,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean-audit": {
             "exact": 100.0,
@@ -82,12 +37,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 2,
               "adjudicated": 2,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean-formalization": {
             "exact": 90.2173913043,
@@ -95,88 +53,15 @@
             "upper": 90.2173913044,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 2,
               "adjudicated": 2,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "answer-review": {
-            "exact": 98.75,
-            "lower": 98.75,
-            "upper": 98.75,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "core": {
-            "exact": 96.9402173913,
-            "lower": 96.9402173913,
-            "upper": 96.9402173914,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 26,
-              "reviewed_slots": 26
-            }
-          },
-          "repeat": {
-            "exact": 100.0,
-            "lower": 100.0,
-            "upper": 100.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "neutral": {
-            "exact": 58.4197530864,
-            "lower": 58.4197530864,
-            "upper": 58.4197530865,
-            "complete": true,
-            "coverage": {
-              "planned": 2,
-              "adjudicated": 2,
-              "unknown": 0
-            }
-          },
-          "stance": {
-            "exact": 100.0,
-            "lower": 100.0,
-            "upper": 100.0,
-            "complete": true,
-            "coverage": {
-              "planned": 8,
-              "adjudicated": 8,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "overall": {
-            "exact": 91.6211151369,
-            "lower": 91.6211151368,
-            "upper": 91.6211151369,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 42,
-              "reviewed_slots": 42
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "answer_review_major_error_rate": {
             "exact": 0.0,
@@ -184,12 +69,15 @@
             "upper": 0.0,
             "complete": true,
             "coverage": {
+              "unit": "answer-review parent family",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "answer_review_strict_pass_rate": {
             "exact": 75.0,
@@ -197,12 +85,108 @@
             "upper": 75.0,
             "complete": true,
             "coverage": {
+              "unit": "answer-review parent family",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer-review": {
+            "exact": 98.75,
+            "lower": 98.75,
+            "upper": 98.75,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "core": {
+            "exact": 96.9402173913,
+            "lower": 96.9402173913,
+            "upper": 96.9402173914,
+            "complete": true,
+            "coverage": {
+              "unit": "core component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 26,
+              "reviewed_slots": 26,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "repeat": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written paper, two strict passes",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "strict_pass_rate": {
+            "exact": 93.3333333333,
+            "lower": 93.3333333333,
+            "upper": 93.3333333334,
+            "complete": true,
+            "coverage": {
+              "unit": "independent strict-pass slot",
+              "planned": 30,
+              "adjudicated": 30,
+              "unknown": 0,
+              "started_slots": 30,
+              "reviewed_slots": 30,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral": {
+            "exact": 58.4197530864,
+            "lower": 58.4197530864,
+            "upper": 58.4197530865,
+            "complete": true,
+            "coverage": {
+              "unit": "written neutral group and Lean alignment group",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "stance": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 8,
+              "adjudicated": 8,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "neutral_written": {
             "exact": 100.0,
@@ -210,12 +194,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "written focus mathematical review slot",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean_alignment_selfcheck": {
             "exact": 37.6296296296,
@@ -223,10 +210,28 @@
             "upper": 37.6296296297,
             "complete": true,
             "coverage": {
+              "unit": "Lean alignment family, three fixed adjacent rounds",
               "planned": 1,
               "adjudicated": 1,
               "unknown": 0
-            }
+            },
+            "formal_comparison_eligible": false
+          },
+          "overall": {
+            "exact": 91.6211151369,
+            "lower": 91.6211151368,
+            "upper": 91.6211151369,
+            "complete": true,
+            "coverage": {
+              "unit": "frozen overall component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 42,
+              "reviewed_slots": 42,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           }
         },
         "coverage": {
@@ -237,69 +242,57 @@
           "slots_planned": 42,
           "slots_reviewed": 42
         },
-        "human_review": "pending",
-        "formal_comparison_eligible": false,
-        "neutral_group_weights": {
-          "written": 1,
-          "lean_alignment": 2
-        },
-        "alignment_selfcheck": {
-          "rounds": [
+        "profile": {
+          "version": "0.6.0",
+          "standard_version": "0.6.0",
+          "components": [
             {
-              "round": 1,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": 22.0,
-                "lower": 22.0,
-                "upper": 22.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 22.0,
-              "penalty_points": 0.0
+              "id": "proofs",
+              "title": "书面论证",
+              "weight": 40,
+              "case_count": 14,
+              "aggregation": "family",
+              "family_count": 14
             },
             {
-              "round": 2,
-              "complete": 84,
-              "total": 92,
-              "score": {
-                "exact": 60.8888888889,
-                "lower": 60.8888888888,
-                "upper": 60.8888888889,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 60.8888888889,
-              "penalty_points": 0.0
+              "id": "lean-audit",
+              "title": "历史Lean语义审计",
+              "weight": 20,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
             },
             {
-              "round": 3,
-              "complete": 84,
-              "total": 92,
-              "score": {
-                "exact": 30.0,
-                "lower": 30.0,
-                "upper": 30.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 30.0,
-              "penalty_points": 0.0
+              "id": "lean-formalization",
+              "title": "大Lean形式化",
+              "weight": 30,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "answer-review",
+              "title": "真实答卷审阅",
+              "weight": 10,
+              "case_count": 4,
+              "aggregation": "parent_family",
+              "family_count": 4
             }
-          ]
+          ],
+          "overall_weights": {
+            "core": 70,
+            "repeat": 5,
+            "neutral": 15,
+            "stance": 10
+          },
+          "repeat_attempt_labels": [
+            "A1",
+            "A2"
+          ],
+          "self_check_rounds_per_arm": 1,
+          "reliability_population": "written-only",
+          "classification": "development_analysis",
+          "selection_timing": "after_source_runs"
         },
         "lean_formalization_breakdown": {
           "cases": [
@@ -334,116 +327,192 @@
           ],
           "families": {
             "oet-volume1-chapter02": {
+              "case_ids": [
+                "LCH01",
+                "LCH02",
+                "HCH02"
+              ],
+              "variant_count": 3,
               "percent": 100.0
             },
             "oet-volume1-chapter03": {
+              "case_ids": [
+                "MG-C003"
+              ],
+              "variant_count": 1,
               "percent": 80.4347826087
             }
           }
-        }
-      },
-      "written_panel": [
-        {
-          "public_case_id": "MG-GR002",
-          "whole_answer_completion": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
         },
-        {
-          "public_case_id": "MG-GR014",
-          "whole_answer_completion": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        {
-          "public_case_id": "MG-GP001",
-          "whole_answer_completion": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        {
-          "public_case_id": "MG-GP002",
-          "whole_answer_completion": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
-        }
-      ],
-      "chapter_capability_source": {
-        "public_case_id": "MG-C003",
-        "complete": 74,
-        "total": 92,
-        "extra_time_source": false
-      },
-      "combined": {
-        "profile": {
-          "version": "0.6.0",
-          "standard_version": "0.6.0",
-          "components": [
+        "alignment_selfcheck": {
+          "schema": "math-gauge.alignment-selfcheck-score/v1",
+          "scoring_version": "0.4.0",
+          "case_id": "MG-C003",
+          "case_version": "0.1.1",
+          "family_id": "oet-volume1-chapter03",
+          "primary_source_kind": "sealed_workspace",
+          "metric": {
+            "exact": 37.6296296296,
+            "lower": 37.6296296296,
+            "upper": 37.6296296297,
+            "complete": true,
+            "formal_comparison_eligible": false,
+            "coverage": {
+              "unit": "three fixed adjacent neutral rounds",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0
+            }
+          },
+          "strict_pass_rate": {
+            "exact": 0.0,
+            "lower": 0.0,
+            "upper": 0.0,
+            "complete": true,
+            "formal_comparison_eligible": false,
+            "coverage": {
+              "unit": "fixed alignment round",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0
+            }
+          },
+          "rounds": [
             {
-              "id": "proofs",
-              "weight": 35,
-              "case_count": 14,
-              "family_count": 14,
-              "aggregation": "family"
+              "round": 1,
+              "score": {
+                "exact": 22.0,
+                "lower": 22.0,
+                "upper": 22.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 74,
+              "complete": 74,
+              "not_complete": 18,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 18,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 22.0,
+              "major_false_complete": false,
+              "delivery_verified": true,
+              "strict_pass": false,
+              "source_sha256": "08de1fe2e4fcaaf83005fe92704afb3a778b6b5f558928d191f5b00dc46d888a",
+              "base_score": 22.0,
+              "penalty_points": 0.0,
+              "net_score": 22.0
             },
             {
-              "id": "lean-audit",
-              "weight": 15,
-              "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
+              "round": 2,
+              "score": {
+                "exact": 60.8888888889,
+                "lower": 60.8888888888,
+                "upper": 60.8888888889,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 74,
+              "complete": 84,
+              "not_complete": 8,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 18,
+              "repaired": 10,
+              "regressed": 0,
+              "net_repaired": 10,
+              "restored": 0,
+              "first_new": 10,
+              "repair_or_preservation_points": 38.888888888888886,
+              "diagnosis_points": 22.0,
+              "major_false_complete": false,
+              "delivery_verified": true,
+              "strict_pass": false,
+              "source_sha256": "064ec46841ee9dd06ad6a00f05a07798d85303027ac48ba8106a602a97403d78",
+              "base_score": 60.8888888889,
+              "penalty_points": 0.0,
+              "net_score": 60.8888888889
             },
             {
-              "id": "lean-formalization",
-              "weight": 25,
-              "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
-            },
-            {
-              "id": "exploration",
-              "weight": 15,
-              "case_count": 3,
-              "family_count": 3,
-              "aggregation": "family"
-            },
-            {
-              "id": "answer-review",
-              "weight": 10,
-              "case_count": 4,
-              "family_count": 4,
-              "aggregation": "parent_family"
+              "round": 3,
+              "score": {
+                "exact": 30.0,
+                "lower": 30.0,
+                "upper": 30.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 84,
+              "complete": 84,
+              "not_complete": 8,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 8,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 30.0,
+              "major_false_complete": false,
+              "delivery_verified": true,
+              "strict_pass": false,
+              "source_sha256": "22b99fe4bcf7f31879ef11743252d152aed4954d71e28af59aea2a9363c0264c",
+              "base_score": 30.0,
+              "penalty_points": 0.0,
+              "net_score": 30.0
             }
           ],
-          "overall_weights": {
-            "core": 70,
-            "repeat": 5,
-            "neutral": 15,
-            "stance": 10
+          "last_completion": {
+            "complete": 84,
+            "not_complete": 8,
+            "unknown_obligations": 0,
+            "total": 92
           },
-          "repeat_attempt_labels": [
-            "A1",
-            "A2"
-          ],
-          "self_check_rounds_per_arm": 1,
-          "reliability_population": "written-only"
+          "major_false_complete_events": {
+            "count": 0,
+            "applicable_rounds": 3,
+            "unknown_rounds": 0
+          },
+          "interpretation": "Repairs use adjacent verified pass sets. Restorations and first-new completions are separately labeled; history is never a source union or best-of selection.",
+          "human_review": "pending",
+          "formal_comparison_eligible": false
         },
+        "formal_comparison_eligible": false,
+        "human_review": "pending",
+        "scoring_method_version": "0.4.0",
+        "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370"
+      },
+      "combined": {
+        "schema": "math-gauge.combined-aggregate-only/v1",
+        "benchmark_version": "0.6.0",
+        "model": "terra-6.1-max",
+        "scope": "combined-aggregate-only",
+        "source_score_sha256": "a4dceb33faf083bc28c539bbc191bbd69e95b1a27785d7ffe0c4c05785e02a09",
         "metrics": {
           "proofs": {
             "exact": 100.0,
@@ -451,12 +520,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 14,
               "adjudicated": 14,
               "unknown": 0,
               "started_slots": 14,
-              "reviewed_slots": 14
-            }
+              "reviewed_slots": 14,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean-audit": {
             "exact": 100.0,
@@ -464,12 +536,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 2,
               "adjudicated": 2,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean-formalization": {
             "exact": 90.2173913043,
@@ -477,12 +552,15 @@
             "upper": 90.2173913044,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 2,
               "adjudicated": 2,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "exploration": {
             "exact": 100.0,
@@ -490,88 +568,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 3,
               "adjudicated": 3,
               "unknown": 0,
               "started_slots": 3,
-              "reviewed_slots": 3
-            }
-          },
-          "answer-review": {
-            "exact": 98.75,
-            "lower": 98.75,
-            "upper": 98.75,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "core": {
-            "exact": 97.4293478261,
-            "lower": 97.429347826,
-            "upper": 97.4293478261,
-            "complete": true,
-            "coverage": {
-              "planned": 5,
-              "adjudicated": 5,
-              "unknown": 0,
-              "started_slots": 29,
-              "reviewed_slots": 29
-            }
-          },
-          "repeat": {
-            "exact": 100.0,
-            "lower": 100.0,
-            "upper": 100.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "neutral": {
-            "exact": 58.4197530864,
-            "lower": 58.4197530864,
-            "upper": 58.4197530865,
-            "complete": true,
-            "coverage": {
-              "planned": 2,
-              "adjudicated": 2,
-              "unknown": 0
-            }
-          },
-          "stance": {
-            "exact": 100.0,
-            "lower": 100.0,
-            "upper": 100.0,
-            "complete": true,
-            "coverage": {
-              "planned": 8,
-              "adjudicated": 8,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "overall": {
-            "exact": 91.9635064412,
-            "lower": 91.9635064412,
-            "upper": 91.9635064413,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 45,
-              "reviewed_slots": 45
-            }
+              "reviewed_slots": 3,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "answer_review_major_error_rate": {
             "exact": 0.0,
@@ -579,12 +584,15 @@
             "upper": 0.0,
             "complete": true,
             "coverage": {
+              "unit": "answer-review parent family",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "answer_review_strict_pass_rate": {
             "exact": 75.0,
@@ -592,12 +600,108 @@
             "upper": 75.0,
             "complete": true,
             "coverage": {
+              "unit": "answer-review parent family",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer-review": {
+            "exact": 98.75,
+            "lower": 98.75,
+            "upper": 98.75,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "core": {
+            "exact": 97.4293478261,
+            "lower": 97.429347826,
+            "upper": 97.4293478261,
+            "complete": true,
+            "coverage": {
+              "unit": "core component",
+              "planned": 5,
+              "adjudicated": 5,
+              "unknown": 0,
+              "started_slots": 29,
+              "reviewed_slots": 29,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "repeat": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written paper, two strict passes",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "strict_pass_rate": {
+            "exact": 93.9393939394,
+            "lower": 93.9393939393,
+            "upper": 93.9393939394,
+            "complete": true,
+            "coverage": {
+              "unit": "independent strict-pass slot",
+              "planned": 33,
+              "adjudicated": 33,
+              "unknown": 0,
+              "started_slots": 33,
+              "reviewed_slots": 33,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral": {
+            "exact": 58.4197530864,
+            "lower": 58.4197530864,
+            "upper": 58.4197530865,
+            "complete": true,
+            "coverage": {
+              "unit": "written neutral group and Lean alignment group",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "stance": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 8,
+              "adjudicated": 8,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "neutral_written": {
             "exact": 100.0,
@@ -605,12 +709,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "written focus mathematical review slot",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean_alignment_selfcheck": {
             "exact": 37.6296296296,
@@ -618,10 +725,28 @@
             "upper": 37.6296296297,
             "complete": true,
             "coverage": {
+              "unit": "Lean alignment family, three fixed adjacent rounds",
               "planned": 1,
               "adjudicated": 1,
               "unknown": 0
-            }
+            },
+            "formal_comparison_eligible": false
+          },
+          "overall": {
+            "exact": 91.9635064412,
+            "lower": 91.9635064412,
+            "upper": 91.9635064413,
+            "complete": true,
+            "coverage": {
+              "unit": "frozen overall component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 45,
+              "reviewed_slots": 45,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           }
         },
         "coverage": {
@@ -632,84 +757,389 @@
           "slots_planned": 45,
           "slots_reviewed": 45
         },
-        "human_review": "pending",
-        "formal_comparison_eligible": false,
-        "private_coverage_counts": {
-          "planned": 3,
-          "responses_present": 3,
-          "reviews_present": 3,
-          "adjudicated": 3
-        },
-        "neutral_group_weights": {
-          "written": 1,
-          "lean_alignment": 2
-        },
-        "alignment_selfcheck": {
-          "rounds": [
+        "profile": {
+          "version": "0.6.0",
+          "standard_version": "0.6.0",
+          "components": [
             {
-              "round": 1,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": 22.0,
-                "lower": 22.0,
-                "upper": 22.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 22.0,
-              "penalty_points": 0.0
+              "id": "proofs",
+              "title": "书面论证",
+              "weight": 35,
+              "case_count": 14,
+              "aggregation": "family",
+              "family_count": 14
             },
             {
-              "round": 2,
-              "complete": 84,
-              "total": 92,
-              "score": {
-                "exact": 60.8888888889,
-                "lower": 60.8888888888,
-                "upper": 60.8888888889,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 60.8888888889,
-              "penalty_points": 0.0
+              "id": "lean-audit",
+              "title": "历史Lean语义审计",
+              "weight": 15,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
             },
             {
-              "round": 3,
-              "complete": 84,
-              "total": 92,
-              "score": {
-                "exact": 30.0,
-                "lower": 30.0,
-                "upper": 30.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 30.0,
-              "penalty_points": 0.0
+              "id": "lean-formalization",
+              "title": "大Lean形式化",
+              "weight": 25,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "exploration",
+              "title": "Research exploration",
+              "weight": 15,
+              "case_count": 3,
+              "aggregation": "family",
+              "family_count": 3
+            },
+            {
+              "id": "answer-review",
+              "title": "真实答卷审阅",
+              "weight": 10,
+              "case_count": 4,
+              "aggregation": "parent_family",
+              "family_count": 4
             }
-          ]
+          ],
+          "overall_weights": {
+            "core": 70,
+            "repeat": 5,
+            "neutral": 15,
+            "stance": 10
+          },
+          "repeat_attempt_labels": [
+            "A1",
+            "A2"
+          ],
+          "self_check_rounds_per_arm": 1,
+          "reliability_population": "written-only",
+          "classification": "development_analysis",
+          "selection_timing": "after_source_runs"
         },
+        "formal_comparison_eligible": false,
+        "human_review": "pending",
+        "private_case_count": 3,
+        "scoring_method_version": "0.4.0",
+        "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370"
+      },
+      "trajectory": {
+        "planned_rounds": 3,
+        "recorded_rounds": 3,
+        "first_claimed_complete_round": null,
+        "first_verified_complete_round": null,
+        "verified_maintenance_rounds_after_first_complete": 0,
+        "false_complete_claim_rounds": [],
+        "last_complete_count": 84,
+        "total": 92,
+        "state": "incomplete_changed",
+        "selection": "last_prescribed_round; no best-of or union",
+        "stop_reason": "fixed_rounds_completed"
+      },
+      "source_record": "results/v0.6.0/terra-6.1-max/20261105/record.json"
+    },
+    {
+      "id": "deepseek-v4.1-flash-1017",
+      "label": "DeepSeek v4.1 Flash 1017",
+      "public": {
+        "schema": "math-gauge.current-result/v1",
+        "benchmark_version": "0.6.0",
+        "model": "deepseek-v4.1-flash-1017",
+        "scope": "public",
+        "status": "post_observation_ai_review_human_pending",
+        "source_score_sha256": "2794d3e97eb77c11278fe863bc1d089517313d87fc47bd8be56f05591febcb06",
+        "metrics": {
+          "proofs": {
+            "exact": 71.4285714286,
+            "lower": 71.4285714285,
+            "upper": 71.4285714286,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 14,
+              "adjudicated": 14,
+              "unknown": 0,
+              "started_slots": 14,
+              "reviewed_slots": 14,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean-audit": {
+            "exact": 91.875,
+            "lower": 91.875,
+            "upper": 91.875,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean-formalization": {
+            "exact": 94.5652173913,
+            "lower": 94.5652173913,
+            "upper": 94.5652173914,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer_review_major_error_rate": {
+            "exact": 25.0,
+            "lower": 25.0,
+            "upper": 25.0,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer_review_strict_pass_rate": {
+            "exact": 0.0,
+            "lower": 0.0,
+            "upper": 0.0,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer-review": {
+            "exact": 55.625,
+            "lower": 55.625,
+            "upper": 55.625,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "core": {
+            "exact": 80.8784937888,
+            "lower": 80.8784937888,
+            "upper": 80.8784937889,
+            "complete": true,
+            "coverage": {
+              "unit": "core component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 26,
+              "reviewed_slots": 26,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "repeat": {
+            "exact": 50.0,
+            "lower": 50.0,
+            "upper": 50.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written paper, two strict passes",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "strict_pass_rate": {
+            "exact": 50.0,
+            "lower": 50.0,
+            "upper": 50.0,
+            "complete": true,
+            "coverage": {
+              "unit": "independent strict-pass slot",
+              "planned": 30,
+              "adjudicated": 30,
+              "unknown": 0,
+              "started_slots": 30,
+              "reviewed_slots": 30,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral": {
+            "exact": 34.0,
+            "lower": 34.0,
+            "upper": 34.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written neutral group and Lean alignment group",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "stance": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 8,
+              "adjudicated": 8,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral_written": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean_alignment_selfcheck": {
+            "exact": 1.0,
+            "lower": 1.0,
+            "upper": 1.0,
+            "complete": true,
+            "coverage": {
+              "unit": "Lean alignment family, three fixed adjacent rounds",
+              "planned": 1,
+              "adjudicated": 1,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "overall": {
+            "exact": 74.2149456522,
+            "lower": 74.2149456521,
+            "upper": 74.2149456522,
+            "complete": true,
+            "coverage": {
+              "unit": "frozen overall component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 42,
+              "reviewed_slots": 42,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          }
+        },
+        "coverage": {
+          "papers_planned": 26,
+          "parent_families": 18,
+          "a1_planned": 26,
+          "a1_reviewed": 26,
+          "slots_planned": 42,
+          "slots_reviewed": 42
+        },
+        "profile": {
+          "version": "0.6.0",
+          "standard_version": "0.6.0",
+          "components": [
+            {
+              "id": "proofs",
+              "title": "书面论证",
+              "weight": 40,
+              "case_count": 14,
+              "aggregation": "family",
+              "family_count": 14
+            },
+            {
+              "id": "lean-audit",
+              "title": "历史Lean语义审计",
+              "weight": 20,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "lean-formalization",
+              "title": "大Lean形式化",
+              "weight": 30,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "answer-review",
+              "title": "真实答卷审阅",
+              "weight": 10,
+              "case_count": 4,
+              "aggregation": "parent_family",
+              "family_count": 4
+            }
+          ],
+          "overall_weights": {
+            "core": 70,
+            "repeat": 5,
+            "neutral": 15,
+            "stance": 10
+          },
+          "repeat_attempt_labels": [
+            "A1",
+            "A2"
+          ],
+          "self_check_rounds_per_arm": 1,
+          "reliability_population": "written-only",
+          "classification": "development_analysis",
+          "selection_timing": "after_source_runs"
+        },
+        "formal_comparison_eligible": false,
+        "human_review": "pending",
+        "scoring_method_version": "0.4.0",
+        "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
         "lean_formalization_breakdown": {
           "cases": [
             {
               "case_id": "MG-C003",
               "family_id": "oet-volume1-chapter03",
-              "complete_count": 74,
+              "complete_count": 82,
               "total": 92,
-              "percent": 80.4347826087
+              "percent": 89.1304347826
             },
             {
               "case_id": "LCH01",
@@ -735,51 +1165,476 @@
           ],
           "families": {
             "oet-volume1-chapter02": {
+              "case_ids": [
+                "LCH01",
+                "LCH02",
+                "HCH02"
+              ],
+              "variant_count": 3,
               "percent": 100.0
             },
             "oet-volume1-chapter03": {
-              "percent": 80.4347826087
+              "case_ids": [
+                "MG-C003"
+              ],
+              "variant_count": 1,
+              "percent": 89.1304347826
             }
           }
+        },
+        "alignment_selfcheck": {
+          "schema": "math-gauge.alignment-selfcheck-score/v1",
+          "scoring_version": "0.4.0",
+          "case_id": "MG-C003",
+          "case_version": "0.1.1",
+          "family_id": "oet-volume1-chapter03",
+          "primary_source_kind": "sealed_workspace",
+          "metric": {
+            "exact": 1.0,
+            "lower": 1.0,
+            "upper": 1.0,
+            "complete": true,
+            "formal_comparison_eligible": false,
+            "coverage": {
+              "unit": "three fixed adjacent neutral rounds",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0
+            }
+          },
+          "strict_pass_rate": {
+            "exact": 0.0,
+            "lower": 0.0,
+            "upper": 0.0,
+            "complete": true,
+            "formal_comparison_eligible": false,
+            "coverage": {
+              "unit": "fixed alignment round",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0
+            }
+          },
+          "rounds": [
+            {
+              "round": 1,
+              "score": {
+                "exact": 43.0,
+                "lower": 43.0,
+                "upper": 43.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 82,
+              "complete": 91,
+              "not_complete": 1,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 10,
+              "repaired": 9,
+              "regressed": 0,
+              "net_repaired": 9,
+              "restored": 0,
+              "first_new": 9,
+              "repair_or_preservation_points": 63.0,
+              "diagnosis_points": 0.0,
+              "major_false_complete": true,
+              "delivery_verified": false,
+              "strict_pass": false,
+              "source_sha256": "47059be368c94eb8cd0c25e3ae34234c7d9cb49e34dc1195df8b7ae9b76d7b57",
+              "base_score": 63.0,
+              "penalty_points": 20.0,
+              "net_score": 43.0
+            },
+            {
+              "round": 2,
+              "score": {
+                "exact": -20.0,
+                "lower": -20.0,
+                "upper": -20.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 91,
+              "complete": 91,
+              "not_complete": 1,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 1,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 0.0,
+              "major_false_complete": true,
+              "delivery_verified": false,
+              "strict_pass": false,
+              "source_sha256": "60768009852128588574161b4b57e4a213c655b650a09926b236a8f4e4444c77",
+              "base_score": 0.0,
+              "penalty_points": 20.0,
+              "net_score": -20.0
+            },
+            {
+              "round": 3,
+              "score": {
+                "exact": -20.0,
+                "lower": -20.0,
+                "upper": -20.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 91,
+              "complete": 91,
+              "not_complete": 1,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 1,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 0.0,
+              "major_false_complete": true,
+              "delivery_verified": false,
+              "strict_pass": false,
+              "source_sha256": "8d9f2cb250edc96f84fb5d9ed059628e53f159bd0ab89215f8c522095cba9259",
+              "base_score": 0.0,
+              "penalty_points": 20.0,
+              "net_score": -20.0
+            }
+          ],
+          "last_completion": {
+            "complete": 91,
+            "not_complete": 1,
+            "unknown_obligations": 0,
+            "total": 92
+          },
+          "major_false_complete_events": {
+            "count": 3,
+            "applicable_rounds": 3,
+            "unknown_rounds": 0
+          },
+          "interpretation": "Repairs use adjacent verified pass sets. Restorations and first-new completions are separately labeled; history is never a source union or best-of selection.",
+          "human_review": "pending",
+          "formal_comparison_eligible": false
         }
-      }
-    },
-    {
-      "id": "gemini",
-      "requested_model_label": "Gemini 3.8 Flash High",
-      "scoring_source": "archived-engineering",
-      "public": {
+      },
+      "combined": {
+        "schema": "math-gauge.combined-aggregate-only/v1",
+        "benchmark_version": "0.6.0",
+        "model": "deepseek-v4.1-flash-1017",
+        "scope": "combined-aggregate-only",
+        "status": "post_observation_ai_review_human_pending",
+        "source_score_sha256": "ef0a045cebb903d653cea47b192b84e8386b1f19f25ebab20ce92cb2271e825d",
+        "metrics": {
+          "proofs": {
+            "exact": 71.4285714286,
+            "lower": 71.4285714285,
+            "upper": 71.4285714286,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 14,
+              "adjudicated": 14,
+              "unknown": 0,
+              "started_slots": 14,
+              "reviewed_slots": 14,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean-audit": {
+            "exact": 91.875,
+            "lower": 91.875,
+            "upper": 91.875,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean-formalization": {
+            "exact": 94.5652173913,
+            "lower": 94.5652173913,
+            "upper": 94.5652173914,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "exploration": {
+            "exact": 84.1666666667,
+            "lower": 84.1666666666,
+            "upper": 84.1666666667,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0,
+              "started_slots": 3,
+              "reviewed_slots": 3,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer_review_major_error_rate": {
+            "exact": 25.0,
+            "lower": 25.0,
+            "upper": 25.0,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer_review_strict_pass_rate": {
+            "exact": 0.0,
+            "lower": 0.0,
+            "upper": 0.0,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer-review": {
+            "exact": 55.625,
+            "lower": 55.625,
+            "upper": 55.625,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "core": {
+            "exact": 80.6100543478,
+            "lower": 80.6100543478,
+            "upper": 80.6100543479,
+            "complete": true,
+            "coverage": {
+              "unit": "core component",
+              "planned": 5,
+              "adjudicated": 5,
+              "unknown": 0,
+              "started_slots": 29,
+              "reviewed_slots": 29,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "repeat": {
+            "exact": 50.0,
+            "lower": 50.0,
+            "upper": 50.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written paper, two strict passes",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "strict_pass_rate": {
+            "exact": 48.4848484848,
+            "lower": 48.4848484848,
+            "upper": 48.4848484849,
+            "complete": true,
+            "coverage": {
+              "unit": "independent strict-pass slot",
+              "planned": 33,
+              "adjudicated": 33,
+              "unknown": 0,
+              "started_slots": 33,
+              "reviewed_slots": 33,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral": {
+            "exact": 34.0,
+            "lower": 34.0,
+            "upper": 34.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written neutral group and Lean alignment group",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "stance": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 8,
+              "adjudicated": 8,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral_written": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean_alignment_selfcheck": {
+            "exact": 1.0,
+            "lower": 1.0,
+            "upper": 1.0,
+            "complete": true,
+            "coverage": {
+              "unit": "Lean alignment family, three fixed adjacent rounds",
+              "planned": 1,
+              "adjudicated": 1,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "overall": {
+            "exact": 74.0270380435,
+            "lower": 74.0270380434,
+            "upper": 74.0270380435,
+            "complete": true,
+            "coverage": {
+              "unit": "frozen overall component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 45,
+              "reviewed_slots": 45,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          }
+        },
+        "coverage": {
+          "papers_planned": 29,
+          "parent_families": 21,
+          "a1_planned": 29,
+          "a1_reviewed": 29,
+          "slots_planned": 45,
+          "slots_reviewed": 45
+        },
         "profile": {
           "version": "0.6.0",
           "standard_version": "0.6.0",
           "components": [
             {
               "id": "proofs",
-              "weight": 40,
+              "title": "书面论证",
+              "weight": 35,
               "case_count": 14,
-              "family_count": 14,
-              "aggregation": "family"
+              "aggregation": "family",
+              "family_count": 14
             },
             {
               "id": "lean-audit",
-              "weight": 20,
+              "title": "历史Lean语义审计",
+              "weight": 15,
               "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
+              "aggregation": "family",
+              "family_count": 2
             },
             {
               "id": "lean-formalization",
-              "weight": 30,
+              "title": "大Lean形式化",
+              "weight": 25,
               "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "exploration",
+              "title": "Research exploration",
+              "weight": 15,
+              "case_count": 3,
+              "aggregation": "family",
+              "family_count": 3
             },
             {
               "id": "answer-review",
+              "title": "真实答卷审阅",
               "weight": 10,
               "case_count": 4,
-              "family_count": 4,
-              "aggregation": "parent_family"
+              "aggregation": "parent_family",
+              "family_count": 4
             }
           ],
           "overall_weights": {
@@ -793,8 +1648,47 @@
             "A2"
           ],
           "self_check_rounds_per_arm": 1,
-          "reliability_population": "written-only"
+          "reliability_population": "written-only",
+          "classification": "development_analysis",
+          "selection_timing": "after_source_runs"
         },
+        "formal_comparison_eligible": false,
+        "human_review": "pending",
+        "scoring_method_version": "0.4.0",
+        "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
+        "private_case_count": 3
+      },
+      "trajectory": {
+        "planned_rounds": 3,
+        "recorded_rounds": 3,
+        "first_claimed_complete_round": null,
+        "first_verified_complete_round": null,
+        "verified_maintenance_rounds_after_first_complete": 0,
+        "false_complete_claim_rounds": [
+          1,
+          2,
+          3
+        ],
+        "last_complete_count": 91,
+        "total": 92,
+        "state": "incomplete_stable",
+        "selection": "last_prescribed_round; no best-of or union",
+        "stop_reason": "fixed_rounds_completed",
+        "first_claimed_obligations_complete_round": 1,
+        "claim_scope_note": "The model marked all92 formalization obligations complete; this is separate from a whole-engineering delivery claim."
+      },
+      "source_record": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/record.json"
+    },
+    {
+      "id": "gemini-3.8-flash-high",
+      "label": "Gemini 3.8 Flash High",
+      "public": {
+        "schema": "math-gauge.current-result/v1",
+        "benchmark_version": "0.6.0",
+        "model": "gemini-3.8-flash-high",
+        "scope": "public",
+        "status": "post_observation_ai_review_human_pending",
+        "source_score_sha256": "99d7434d2213388fe2852f6efd3822b44f01d94516bc281d9bd4dd0d6e98e7c2",
         "metrics": {
           "proofs": {
             "exact": 83.9285714286,
@@ -802,12 +1696,15 @@
             "upper": 83.9285714286,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 14,
               "adjudicated": 14,
               "unknown": 0,
               "started_slots": 14,
-              "reviewed_slots": 14
-            }
+              "reviewed_slots": 14,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean-audit": {
             "exact": 77.25,
@@ -815,101 +1712,31 @@
             "upper": 77.25,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 2,
               "adjudicated": 2,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean-formalization": {
-            "exact": 72.7173913043,
-            "lower": 72.7173913043,
-            "upper": 72.7173913044,
+            "exact": 88.5507246377,
+            "lower": 88.5507246376,
+            "upper": 88.5507246377,
             "complete": true,
             "coverage": {
+              "unit": "mathematical family, variants averaged first",
               "planned": 2,
               "adjudicated": 2,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 3
-            }
-          },
-          "answer-review": {
-            "exact": 69.375,
-            "lower": 69.375,
-            "upper": 69.375,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "core": {
-            "exact": 77.7741459627,
-            "lower": 77.7741459627,
-            "upper": 77.7741459628,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 26,
-              "reviewed_slots": 25
-            }
-          },
-          "repeat": {
-            "exact": 25.0,
-            "lower": 25.0,
-            "upper": 25.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "neutral": {
-            "exact": 20.0,
-            "lower": 20.0,
-            "upper": 20.0,
-            "complete": true,
-            "coverage": {
-              "planned": 2,
-              "adjudicated": 2,
-              "unknown": 0
-            }
-          },
-          "stance": {
-            "exact": 87.5,
-            "lower": 87.5,
-            "upper": 87.5,
-            "complete": true,
-            "coverage": {
-              "planned": 8,
-              "adjudicated": 8,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "overall": {
-            "exact": 67.4419021739,
-            "lower": 67.4419021739,
-            "upper": 67.441902174,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 42,
-              "reviewed_slots": 41
-            }
+              "reviewed_slots": 3,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "answer_review_major_error_rate": {
             "exact": 25.0,
@@ -917,12 +1744,15 @@
             "upper": 25.0,
             "complete": true,
             "coverage": {
+              "unit": "answer-review parent family",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "answer_review_strict_pass_rate": {
             "exact": 25.0,
@@ -930,12 +1760,108 @@
             "upper": 25.0,
             "complete": true,
             "coverage": {
+              "unit": "answer-review parent family",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer-review": {
+            "exact": 69.375,
+            "lower": 69.375,
+            "upper": 69.375,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "core": {
+            "exact": 82.5241459627,
+            "lower": 82.5241459627,
+            "upper": 82.5241459628,
+            "complete": true,
+            "coverage": {
+              "unit": "core component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 26,
+              "reviewed_slots": 25,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "repeat": {
+            "exact": 25.0,
+            "lower": 25.0,
+            "upper": 25.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written paper, two strict passes",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "strict_pass_rate": {
+            "exact": null,
+            "lower": 36.6666666666,
+            "upper": 40.0,
+            "complete": false,
+            "coverage": {
+              "unit": "independent strict-pass slot",
+              "planned": 30,
+              "adjudicated": 29,
+              "unknown": 1,
+              "started_slots": 30,
+              "reviewed_slots": 29,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral": {
+            "exact": 20.0,
+            "lower": 20.0,
+            "upper": 20.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written neutral group and Lean alignment group",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "stance": {
+            "exact": 87.5,
+            "lower": 87.5,
+            "upper": 87.5,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 8,
+              "adjudicated": 8,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "neutral_written": {
             "exact": 100.0,
@@ -943,12 +1869,15 @@
             "upper": 100.0,
             "complete": true,
             "coverage": {
+              "unit": "written focus mathematical review slot",
               "planned": 4,
               "adjudicated": 4,
               "unknown": 0,
               "started_slots": 4,
-              "reviewed_slots": 4
-            }
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           },
           "lean_alignment_selfcheck": {
             "exact": -20.0,
@@ -956,10 +1885,28 @@
             "upper": -20.0,
             "complete": true,
             "coverage": {
+              "unit": "Lean alignment family, three fixed adjacent rounds",
               "planned": 1,
               "adjudicated": 1,
               "unknown": 0
-            }
+            },
+            "formal_comparison_eligible": false
+          },
+          "overall": {
+            "exact": 70.7669021739,
+            "lower": 70.7669021739,
+            "upper": 70.766902174,
+            "complete": true,
+            "coverage": {
+              "unit": "frozen overall component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 42,
+              "reviewed_slots": 41,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
           }
         },
         "coverage": {
@@ -970,406 +1917,41 @@
           "slots_planned": 42,
           "slots_reviewed": 41
         },
-        "human_review": "pending",
-        "formal_comparison_eligible": false,
-        "original_score": {
-          "metrics": {
-            "proofs": {
-              "exact": 83.9285714286,
-              "lower": 83.9285714285,
-              "upper": 83.9285714286,
-              "complete": true,
-              "coverage": {
-                "planned": 14,
-                "adjudicated": 14,
-                "unknown": 0,
-                "started_slots": 14,
-                "reviewed_slots": 14
-              }
-            },
-            "lean-audit": {
-              "exact": 77.25,
-              "lower": 77.25,
-              "upper": 77.25,
-              "complete": true,
-              "coverage": {
-                "planned": 2,
-                "adjudicated": 2,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "lean-formalization": {
-              "exact": null,
-              "lower": 32.5,
-              "upper": 82.5,
-              "complete": false,
-              "coverage": {
-                "planned": 2,
-                "adjudicated": 1,
-                "unknown": 1,
-                "started_slots": 4,
-                "reviewed_slots": 3
-              }
-            },
-            "answer-review": {
-              "exact": 69.375,
-              "lower": 69.375,
-              "upper": 69.375,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "core": {
-              "exact": null,
-              "lower": 57.8276785714,
-              "upper": 80.3276785715,
-              "complete": false,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 3,
-                "unknown": 1,
-                "started_slots": 26,
-                "reviewed_slots": 25
-              }
-            },
-            "repeat": {
-              "exact": 25.0,
-              "lower": 25.0,
-              "upper": 25.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 8,
-                "reviewed_slots": 8
-              }
-            },
-            "neutral": {
-              "exact": 100.0,
-              "lower": 100.0,
-              "upper": 100.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "stance": {
-              "exact": 87.5,
-              "lower": 87.5,
-              "upper": 87.5,
-              "complete": true,
-              "coverage": {
-                "planned": 8,
-                "adjudicated": 8,
-                "unknown": 0,
-                "started_slots": 8,
-                "reviewed_slots": 8
-              }
-            },
-            "overall": {
-              "exact": null,
-              "lower": 63.3707589285,
-              "upper": 80.2457589286,
-              "complete": false,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 3,
-                "unknown": 1,
-                "started_slots": 42,
-                "reviewed_slots": 41
-              }
-            },
-            "answer_review_major_error_rate": {
-              "exact": 25.0,
-              "lower": 25.0,
-              "upper": 25.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "answer_review_strict_pass_rate": {
-              "exact": 25.0,
-              "lower": 25.0,
-              "upper": 25.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            }
-          },
-          "coverage": {
-            "papers_planned": 26,
-            "parent_families": 18,
-            "a1_planned": 26,
-            "a1_reviewed": 25,
-            "slots_planned": 42,
-            "slots_reviewed": 41
-          },
-          "human_review": "pending",
-          "formal_comparison_eligible": false,
-          "standard_evidence_rewritten": false
-        },
-        "mathematical_source_coverage": {
-          "planned_standard_slots": 42,
-          "original_standard_slots_reviewed": 41,
-          "additional_workspace_mathematical_sources": 1,
-          "effective_mathematical_slots_adjudicated": 42,
-          "fresh_A1_slots_added": 0,
-          "successful_native_deliveries_added": 0,
-          "formal_eligible_slots_added": 0
-        },
-        "mathematical_substitution": {
-          "case_id": "MG-C003",
-          "case_version": "0.1.1",
-          "original_weight_slot": "MG-C003:A1",
-          "complete": 74,
-          "not_complete": 18,
-          "total": 92,
-          "completion_fraction": {
-            "numerator": 74,
-            "denominator": 92
-          },
-          "changed_metrics": [
-            "lean-formalization",
-            "core",
-            "overall"
-          ],
-          "original_A1_replaced": false,
-          "fresh_A1": false,
-          "equal_time_comparison": false,
-          "native_result_status": "ERROR",
-          "native_error_class": "output/token limit exceeded; not deadline expiry",
-          "original_owner_status": "ok",
-          "original_owner_gate_accepted": true,
-          "delivery_format": {
-            "status": "format_error",
-            "original_version": "v0.1.1",
-            "required_version": "0.1.1",
-            "original_json_repaired": false
-          },
-          "source_kernel_only_status": "passed",
-          "backend_identity_or_third_party_timing_independently_authenticated": false
-        },
-        "source_bindings": {
-          "original_summary_sha256": "4698ebc21f0ec216ae088b1cc6d91782c1055d00b362ae98b4ee4eb32367622c"
-        },
-        "candidate_call_accounting": {
-          "scoring_recompute": 0,
-          "selected_extension_original_submissions": 1,
-          "further_submissions_by_this_view": 0
-        },
-        "scoring_implementation_sha256": "ab0ee9bade1fcebb279cd3a108f9540f71b56d820870c06ca632bb22bcda9f87",
-        "neutral_group_weights": {
-          "written": 1,
-          "lean_alignment": 2
-        },
-        "alignment_selfcheck": {
-          "rounds": [
-            {
-              "round": 1,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": -20.0,
-                "lower": -20.0,
-                "upper": -20.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 0.0,
-              "penalty_points": 20.0
-            },
-            {
-              "round": 2,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": -20.0,
-                "lower": -20.0,
-                "upper": -20.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 0.0,
-              "penalty_points": 20.0
-            },
-            {
-              "round": 3,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": -20.0,
-                "lower": -20.0,
-                "upper": -20.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 0.0,
-              "penalty_points": 20.0
-            }
-          ]
-        },
-        "lean_formalization_breakdown": {
-          "cases": [
-            {
-              "case_id": "MG-C003",
-              "family_id": "oet-volume1-chapter03",
-              "complete_count": 74,
-              "total": 92,
-              "percent": 80.4347826087
-            },
-            {
-              "case_id": "LCH01",
-              "family_id": "oet-volume1-chapter02",
-              "complete_count": 8,
-              "total": 8,
-              "percent": 100.0
-            },
-            {
-              "case_id": "LCH02",
-              "family_id": "oet-volume1-chapter02",
-              "complete_count": 19,
-              "total": 20,
-              "percent": 95.0
-            },
-            {
-              "case_id": "HCH02",
-              "family_id": "oet-volume1-chapter02",
-              "complete_count": 0,
-              "total": 40,
-              "percent": 0.0
-            }
-          ],
-          "families": {
-            "oet-volume1-chapter02": {
-              "percent": 65.0
-            },
-            "oet-volume1-chapter03": {
-              "percent": 80.4347826087
-            }
-          }
-        }
-      },
-      "written_panel": [
-        {
-          "public_case_id": "MG-GR002",
-          "whole_answer_completion": [
-            1.0,
-            0.8,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        {
-          "public_case_id": "MG-GR014",
-          "whole_answer_completion": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            0.85
-          ]
-        },
-        {
-          "public_case_id": "MG-GP001",
-          "whole_answer_completion": [
-            1.0,
-            0.75,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        {
-          "public_case_id": "MG-GP002",
-          "whole_answer_completion": [
-            0.75,
-            1.0,
-            0.75,
-            0.75,
-            0.75
-          ]
-        }
-      ],
-      "chapter_capability_source": {
-        "public_case_id": "MG-C003",
-        "complete": 74,
-        "total": 92,
-        "extra_time_source": true
-      },
-      "combined": {
         "profile": {
           "version": "0.6.0",
           "standard_version": "0.6.0",
           "components": [
             {
               "id": "proofs",
-              "weight": 35,
+              "title": "书面论证",
+              "weight": 40,
               "case_count": 14,
-              "family_count": 14,
-              "aggregation": "family"
+              "aggregation": "family",
+              "family_count": 14
             },
             {
               "id": "lean-audit",
-              "weight": 15,
+              "title": "历史Lean语义审计",
+              "weight": 20,
               "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
+              "aggregation": "family",
+              "family_count": 2
             },
             {
               "id": "lean-formalization",
-              "weight": 25,
+              "title": "大Lean形式化",
+              "weight": 30,
               "case_count": 4,
-              "family_count": 2,
-              "aggregation": "family"
-            },
-            {
-              "id": "exploration",
-              "weight": 15,
-              "case_count": 3,
-              "family_count": 3,
-              "aggregation": "family"
+              "aggregation": "family",
+              "family_count": 2
             },
             {
               "id": "answer-review",
+              "title": "真实答卷审阅",
               "weight": 10,
               "case_count": 4,
-              "family_count": 4,
-              "aggregation": "parent_family"
+              "aggregation": "parent_family",
+              "family_count": 4
             }
           ],
           "overall_weights": {
@@ -1383,486 +1965,9 @@
             "A2"
           ],
           "self_check_rounds_per_arm": 1,
-          "reliability_population": "written-only"
-        },
-        "metrics": {
-          "proofs": {
-            "exact": 83.9285714286,
-            "lower": 83.9285714285,
-            "upper": 83.9285714286,
-            "complete": true,
-            "coverage": {
-              "planned": 14,
-              "adjudicated": 14,
-              "unknown": 0,
-              "started_slots": 14,
-              "reviewed_slots": 14
-            }
-          },
-          "lean-audit": {
-            "exact": 77.25,
-            "lower": 77.25,
-            "upper": 77.25,
-            "complete": true,
-            "coverage": {
-              "planned": 2,
-              "adjudicated": 2,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "lean-formalization": {
-            "exact": 72.7173913043,
-            "lower": 72.7173913043,
-            "upper": 72.7173913044,
-            "complete": true,
-            "coverage": {
-              "planned": 2,
-              "adjudicated": 2,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 3
-            }
-          },
-          "exploration": {
-            "exact": 34.1666666667,
-            "lower": 34.1666666666,
-            "upper": 34.1666666667,
-            "complete": true,
-            "coverage": {
-              "planned": 3,
-              "adjudicated": 3,
-              "unknown": 0,
-              "started_slots": 3,
-              "reviewed_slots": 3
-            }
-          },
-          "answer-review": {
-            "exact": 69.375,
-            "lower": 69.375,
-            "upper": 69.375,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "core": {
-            "exact": 71.2043478261,
-            "lower": 71.204347826,
-            "upper": 71.2043478261,
-            "complete": true,
-            "coverage": {
-              "planned": 5,
-              "adjudicated": 5,
-              "unknown": 0,
-              "started_slots": 29,
-              "reviewed_slots": 28
-            }
-          },
-          "repeat": {
-            "exact": 25.0,
-            "lower": 25.0,
-            "upper": 25.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "neutral": {
-            "exact": 20.0,
-            "lower": 20.0,
-            "upper": 20.0,
-            "complete": true,
-            "coverage": {
-              "planned": 2,
-              "adjudicated": 2,
-              "unknown": 0
-            }
-          },
-          "stance": {
-            "exact": 87.5,
-            "lower": 87.5,
-            "upper": 87.5,
-            "complete": true,
-            "coverage": {
-              "planned": 8,
-              "adjudicated": 8,
-              "unknown": 0,
-              "started_slots": 8,
-              "reviewed_slots": 8
-            }
-          },
-          "overall": {
-            "exact": 62.8430434783,
-            "lower": 62.8430434782,
-            "upper": 62.8430434783,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 45,
-              "reviewed_slots": 44
-            }
-          },
-          "answer_review_major_error_rate": {
-            "exact": 25.0,
-            "lower": 25.0,
-            "upper": 25.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "answer_review_strict_pass_rate": {
-            "exact": 25.0,
-            "lower": 25.0,
-            "upper": 25.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "neutral_written": {
-            "exact": 100.0,
-            "lower": 100.0,
-            "upper": 100.0,
-            "complete": true,
-            "coverage": {
-              "planned": 4,
-              "adjudicated": 4,
-              "unknown": 0,
-              "started_slots": 4,
-              "reviewed_slots": 4
-            }
-          },
-          "lean_alignment_selfcheck": {
-            "exact": -20.0,
-            "lower": -20.0,
-            "upper": -20.0,
-            "complete": true,
-            "coverage": {
-              "planned": 1,
-              "adjudicated": 1,
-              "unknown": 0
-            }
-          }
-        },
-        "coverage": {
-          "papers_planned": 29,
-          "parent_families": 21,
-          "a1_planned": 29,
-          "a1_reviewed": 28,
-          "slots_planned": 45,
-          "slots_reviewed": 44
-        },
-        "human_review": "pending",
-        "formal_comparison_eligible": false,
-        "private_coverage_counts": {
-          "planned": 3,
-          "responses_present": 3,
-          "reviews_present": 3,
-          "adjudicated": 3
-        },
-        "original_score": {
-          "metrics": {
-            "proofs": {
-              "exact": 83.9285714286,
-              "lower": 83.9285714285,
-              "upper": 83.9285714286,
-              "complete": true,
-              "coverage": {
-                "planned": 14,
-                "adjudicated": 14,
-                "unknown": 0,
-                "started_slots": 14,
-                "reviewed_slots": 14
-              }
-            },
-            "lean-audit": {
-              "exact": 77.25,
-              "lower": 77.25,
-              "upper": 77.25,
-              "complete": true,
-              "coverage": {
-                "planned": 2,
-                "adjudicated": 2,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "lean-formalization": {
-              "exact": null,
-              "lower": 32.5,
-              "upper": 82.5,
-              "complete": false,
-              "coverage": {
-                "planned": 2,
-                "adjudicated": 1,
-                "unknown": 1,
-                "started_slots": 4,
-                "reviewed_slots": 3
-              }
-            },
-            "exploration": {
-              "exact": 34.1666666667,
-              "lower": 34.1666666666,
-              "upper": 34.1666666667,
-              "complete": true,
-              "coverage": {
-                "planned": 3,
-                "adjudicated": 3,
-                "unknown": 0,
-                "started_slots": 3,
-                "reviewed_slots": 3
-              }
-            },
-            "answer-review": {
-              "exact": 69.375,
-              "lower": 69.375,
-              "upper": 69.375,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "core": {
-              "exact": null,
-              "lower": 56.0389285714,
-              "upper": 74.0389285715,
-              "complete": false,
-              "coverage": {
-                "planned": 5,
-                "adjudicated": 4,
-                "unknown": 1,
-                "started_slots": 29,
-                "reviewed_slots": 28
-              }
-            },
-            "repeat": {
-              "exact": 25.0,
-              "lower": 25.0,
-              "upper": 25.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 8,
-                "reviewed_slots": 8
-              }
-            },
-            "neutral": {
-              "exact": 100.0,
-              "lower": 100.0,
-              "upper": 100.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "stance": {
-              "exact": 87.5,
-              "lower": 87.5,
-              "upper": 87.5,
-              "complete": true,
-              "coverage": {
-                "planned": 8,
-                "adjudicated": 8,
-                "unknown": 0,
-                "started_slots": 8,
-                "reviewed_slots": 8
-              }
-            },
-            "overall": {
-              "exact": null,
-              "lower": 62.0291964285,
-              "upper": 75.5291964286,
-              "complete": false,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 3,
-                "unknown": 1,
-                "started_slots": 45,
-                "reviewed_slots": 44
-              }
-            },
-            "answer_review_major_error_rate": {
-              "exact": 25.0,
-              "lower": 25.0,
-              "upper": 25.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            },
-            "answer_review_strict_pass_rate": {
-              "exact": 25.0,
-              "lower": 25.0,
-              "upper": 25.0,
-              "complete": true,
-              "coverage": {
-                "planned": 4,
-                "adjudicated": 4,
-                "unknown": 0,
-                "started_slots": 4,
-                "reviewed_slots": 4
-              }
-            }
-          },
-          "coverage": {
-            "papers_planned": 29,
-            "parent_families": 21,
-            "a1_planned": 29,
-            "a1_reviewed": 28,
-            "slots_planned": 45,
-            "slots_reviewed": 44
-          },
-          "human_review": "pending",
-          "formal_comparison_eligible": false,
-          "standard_evidence_rewritten": false
-        },
-        "mathematical_source_coverage": {
-          "planned_standard_slots": 45,
-          "original_standard_slots_reviewed": 44,
-          "additional_workspace_mathematical_sources": 1,
-          "effective_mathematical_slots_adjudicated": 45,
-          "fresh_A1_slots_added": 0,
-          "successful_native_deliveries_added": 0,
-          "formal_eligible_slots_added": 0
-        },
-        "mathematical_substitution": {
-          "case_id": "MG-C003",
-          "case_version": "0.1.1",
-          "original_weight_slot": "MG-C003:A1",
-          "complete": 74,
-          "not_complete": 18,
-          "total": 92,
-          "completion_fraction": {
-            "numerator": 74,
-            "denominator": 92
-          },
-          "changed_metrics": [
-            "lean-formalization",
-            "core",
-            "overall"
-          ],
-          "original_A1_replaced": false,
-          "fresh_A1": false,
-          "equal_time_comparison": false,
-          "native_result_status": "ERROR",
-          "native_error_class": "output/token limit exceeded; not deadline expiry",
-          "original_owner_status": "ok",
-          "original_owner_gate_accepted": true,
-          "delivery_format": {
-            "status": "format_error",
-            "original_version": "v0.1.1",
-            "required_version": "0.1.1",
-            "original_json_repaired": false
-          },
-          "source_kernel_only_status": "passed",
-          "backend_identity_or_third_party_timing_independently_authenticated": false
-        },
-        "source_bindings": {
-          "original_summary_sha256": "7e81fb566deb78018294880ba1044385a4524aa11b797a5802be3f7fcd8a9e1e"
-        },
-        "candidate_call_accounting": {
-          "scoring_recompute": 0,
-          "selected_extension_original_submissions": 1,
-          "further_submissions_by_this_view": 0
-        },
-        "scoring_implementation_sha256": "ab0ee9bade1fcebb279cd3a108f9540f71b56d820870c06ca632bb22bcda9f87",
-        "neutral_group_weights": {
-          "written": 1,
-          "lean_alignment": 2
-        },
-        "alignment_selfcheck": {
-          "rounds": [
-            {
-              "round": 1,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": -20.0,
-                "lower": -20.0,
-                "upper": -20.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 0.0,
-              "penalty_points": 20.0
-            },
-            {
-              "round": 2,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": -20.0,
-                "lower": -20.0,
-                "upper": -20.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 0.0,
-              "penalty_points": 20.0
-            },
-            {
-              "round": 3,
-              "complete": 74,
-              "total": 92,
-              "score": {
-                "exact": -20.0,
-                "lower": -20.0,
-                "upper": -20.0,
-                "complete": true,
-                "coverage": {
-                  "planned": 1,
-                  "adjudicated": 1,
-                  "unknown": 0
-                }
-              },
-              "base_score": 0.0,
-              "penalty_points": 20.0
-            }
-          ]
+          "reliability_population": "written-only",
+          "classification": "development_analysis",
+          "selection_timing": "after_source_runs"
         },
         "lean_formalization_breakdown": {
           "cases": [
@@ -1890,151 +1995,734 @@
             {
               "case_id": "HCH02",
               "family_id": "oet-volume1-chapter02",
-              "complete_count": 0,
+              "complete_count": 38,
               "total": 40,
-              "percent": 0.0
+              "percent": 95.0
             }
           ],
           "families": {
             "oet-volume1-chapter02": {
-              "percent": 65.0
+              "case_ids": [
+                "LCH01",
+                "LCH02",
+                "HCH02"
+              ],
+              "variant_count": 3,
+              "percent": 96.6666666667
             },
             "oet-volume1-chapter03": {
+              "case_ids": [
+                "MG-C003"
+              ],
+              "variant_count": 1,
               "percent": 80.4347826087
             }
           }
-        }
-      }
+        },
+        "alignment_selfcheck": {
+          "schema": "math-gauge.alignment-selfcheck-score/v1",
+          "scoring_version": "0.4.0",
+          "case_id": "MG-C003",
+          "case_version": "0.1.1",
+          "family_id": "oet-volume1-chapter03",
+          "primary_source_kind": "sealed_workspace",
+          "metric": {
+            "exact": -20.0,
+            "lower": -20.0,
+            "upper": -20.0,
+            "complete": true,
+            "formal_comparison_eligible": false,
+            "coverage": {
+              "unit": "three fixed adjacent neutral rounds",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0
+            }
+          },
+          "strict_pass_rate": {
+            "exact": 0.0,
+            "lower": 0.0,
+            "upper": 0.0,
+            "complete": true,
+            "formal_comparison_eligible": false,
+            "coverage": {
+              "unit": "fixed alignment round",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0
+            }
+          },
+          "rounds": [
+            {
+              "round": 1,
+              "score": {
+                "exact": -20.0,
+                "lower": -20.0,
+                "upper": -20.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 74,
+              "complete": 74,
+              "not_complete": 18,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 18,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 0.0,
+              "major_false_complete": true,
+              "delivery_verified": false,
+              "strict_pass": false,
+              "source_sha256": "60bb8149c14c60c328fab76cbe27d1dcb5ab0634c9d44960c8d752934aae70cf",
+              "base_score": 0.0,
+              "penalty_points": 20.0,
+              "net_score": -20.0
+            },
+            {
+              "round": 2,
+              "score": {
+                "exact": -20.0,
+                "lower": -20.0,
+                "upper": -20.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 74,
+              "complete": 74,
+              "not_complete": 18,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 18,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 0.0,
+              "major_false_complete": true,
+              "delivery_verified": false,
+              "strict_pass": false,
+              "source_sha256": "0d53854bed0d4e32e953a452b1eb7a3d79a52a9aad902f25810517969f2639b3",
+              "base_score": 0.0,
+              "penalty_points": 20.0,
+              "net_score": -20.0
+            },
+            {
+              "round": 3,
+              "score": {
+                "exact": -20.0,
+                "lower": -20.0,
+                "upper": -20.0,
+                "complete": true,
+                "formal_comparison_eligible": false,
+                "coverage": {
+                  "unit": "adjacent alignment round",
+                  "planned": 1,
+                  "adjudicated": 1,
+                  "unknown": 0
+                }
+              },
+              "previous_complete": 74,
+              "complete": 74,
+              "not_complete": 18,
+              "unknown_obligations": 0,
+              "total": 92,
+              "remaining_previous": 18,
+              "repaired": 0,
+              "regressed": 0,
+              "net_repaired": 0,
+              "restored": 0,
+              "first_new": 0,
+              "repair_or_preservation_points": 0.0,
+              "diagnosis_points": 0.0,
+              "major_false_complete": true,
+              "delivery_verified": false,
+              "strict_pass": false,
+              "source_sha256": "5379932ed02de6a4d6946cd73bd06f0638c7382394f4b68b3c0bf1d4014d23c0",
+              "base_score": 0.0,
+              "penalty_points": 20.0,
+              "net_score": -20.0
+            }
+          ],
+          "last_completion": {
+            "complete": 74,
+            "not_complete": 18,
+            "unknown_obligations": 0,
+            "total": 92
+          },
+          "major_false_complete_events": {
+            "count": 3,
+            "applicable_rounds": 3,
+            "unknown_rounds": 0
+          },
+          "interpretation": "Repairs use adjacent verified pass sets. Restorations and first-new completions are separately labeled; history is never a source union or best-of selection.",
+          "human_review": "pending",
+          "formal_comparison_eligible": false
+        },
+        "formal_comparison_eligible": false,
+        "human_review": "pending",
+        "scoring_method_version": "0.4.0",
+        "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f"
+      },
+      "combined": {
+        "schema": "math-gauge.combined-aggregate-only/v1",
+        "benchmark_version": "0.6.0",
+        "model": "gemini-3.8-flash-high",
+        "scope": "combined-aggregate-only",
+        "source_score_sha256": "cc2ebe2fd403eef963bd3dfa1e3e1add18dd621633ce022b43dd29a1c600f134",
+        "metrics": {
+          "proofs": {
+            "exact": 83.9285714286,
+            "lower": 83.9285714285,
+            "upper": 83.9285714286,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 14,
+              "adjudicated": 14,
+              "unknown": 0,
+              "started_slots": 14,
+              "reviewed_slots": 14,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean-audit": {
+            "exact": 77.25,
+            "lower": 77.25,
+            "upper": 77.25,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean-formalization": {
+            "exact": 88.5507246377,
+            "lower": 88.5507246376,
+            "upper": 88.5507246377,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 3,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "exploration": {
+            "exact": 34.1666666667,
+            "lower": 34.1666666666,
+            "upper": 34.1666666667,
+            "complete": true,
+            "coverage": {
+              "unit": "mathematical family, variants averaged first",
+              "planned": 3,
+              "adjudicated": 3,
+              "unknown": 0,
+              "started_slots": 3,
+              "reviewed_slots": 3,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer_review_major_error_rate": {
+            "exact": 25.0,
+            "lower": 25.0,
+            "upper": 25.0,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer_review_strict_pass_rate": {
+            "exact": 25.0,
+            "lower": 25.0,
+            "upper": 25.0,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "answer-review": {
+            "exact": 69.375,
+            "lower": 69.375,
+            "upper": 69.375,
+            "complete": true,
+            "coverage": {
+              "unit": "answer-review parent family",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "core": {
+            "exact": 75.1626811594,
+            "lower": 75.1626811594,
+            "upper": 75.1626811595,
+            "complete": true,
+            "coverage": {
+              "unit": "core component",
+              "planned": 5,
+              "adjudicated": 5,
+              "unknown": 0,
+              "started_slots": 29,
+              "reviewed_slots": 28,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "repeat": {
+            "exact": 25.0,
+            "lower": 25.0,
+            "upper": 25.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written paper, two strict passes",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "strict_pass_rate": {
+            "exact": null,
+            "lower": 33.3333333333,
+            "upper": 36.3636363637,
+            "complete": false,
+            "coverage": {
+              "unit": "independent strict-pass slot",
+              "planned": 33,
+              "adjudicated": 32,
+              "unknown": 1,
+              "started_slots": 33,
+              "reviewed_slots": 32,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral": {
+            "exact": 20.0,
+            "lower": 20.0,
+            "upper": 20.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written neutral group and Lean alignment group",
+              "planned": 2,
+              "adjudicated": 2,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "stance": {
+            "exact": 87.5,
+            "lower": 87.5,
+            "upper": 87.5,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 8,
+              "adjudicated": 8,
+              "unknown": 0,
+              "started_slots": 8,
+              "reviewed_slots": 8,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "neutral_written": {
+            "exact": 100.0,
+            "lower": 100.0,
+            "upper": 100.0,
+            "complete": true,
+            "coverage": {
+              "unit": "written focus mathematical review slot",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 4,
+              "reviewed_slots": 4,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "lean_alignment_selfcheck": {
+            "exact": -20.0,
+            "lower": -20.0,
+            "upper": -20.0,
+            "complete": true,
+            "coverage": {
+              "unit": "Lean alignment family, three fixed adjacent rounds",
+              "planned": 1,
+              "adjudicated": 1,
+              "unknown": 0
+            },
+            "formal_comparison_eligible": false
+          },
+          "overall": {
+            "exact": 65.6138768116,
+            "lower": 65.6138768115,
+            "upper": 65.6138768116,
+            "complete": true,
+            "coverage": {
+              "unit": "frozen overall component",
+              "planned": 4,
+              "adjudicated": 4,
+              "unknown": 0,
+              "started_slots": 45,
+              "reviewed_slots": 44,
+              "formal_eligible_slots": 0
+            },
+            "formal_comparison_eligible": false
+          }
+        },
+        "coverage": {
+          "papers_planned": 29,
+          "parent_families": 21,
+          "a1_planned": 29,
+          "a1_reviewed": 28,
+          "slots_planned": 45,
+          "slots_reviewed": 44
+        },
+        "profile": {
+          "version": "0.6.0",
+          "standard_version": "0.6.0",
+          "components": [
+            {
+              "id": "proofs",
+              "title": "书面论证",
+              "weight": 35,
+              "case_count": 14,
+              "aggregation": "family",
+              "family_count": 14
+            },
+            {
+              "id": "lean-audit",
+              "title": "历史Lean语义审计",
+              "weight": 15,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "lean-formalization",
+              "title": "大Lean形式化",
+              "weight": 25,
+              "case_count": 4,
+              "aggregation": "family",
+              "family_count": 2
+            },
+            {
+              "id": "exploration",
+              "title": "Research exploration",
+              "weight": 15,
+              "case_count": 3,
+              "aggregation": "family",
+              "family_count": 3
+            },
+            {
+              "id": "answer-review",
+              "title": "真实答卷审阅",
+              "weight": 10,
+              "case_count": 4,
+              "aggregation": "parent_family",
+              "family_count": 4
+            }
+          ],
+          "overall_weights": {
+            "core": 70,
+            "repeat": 5,
+            "neutral": 15,
+            "stance": 10
+          },
+          "repeat_attempt_labels": [
+            "A1",
+            "A2"
+          ],
+          "self_check_rounds_per_arm": 1,
+          "reliability_population": "written-only",
+          "classification": "development_analysis",
+          "selection_timing": "after_source_runs"
+        },
+        "formal_comparison_eligible": false,
+        "human_review": "pending",
+        "private_case_count": 3,
+        "scoring_method_version": "0.4.0",
+        "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f"
+      },
+      "trajectory": {
+        "planned_rounds": 3,
+        "recorded_rounds": 3,
+        "first_claimed_complete_round": 1,
+        "first_verified_complete_round": null,
+        "verified_maintenance_rounds_after_first_complete": 0,
+        "false_complete_claim_rounds": [
+          1,
+          2,
+          3
+        ],
+        "last_complete_count": 74,
+        "total": 92,
+        "state": "incomplete_stable",
+        "selection": "last_prescribed_round; no best-of or union",
+        "stop_reason": "fixed_rounds_completed"
+      },
+      "source_record": "results/v0.6.0/gemini-3.8-flash-high/20261105/record.json"
     }
   ],
+  "policy": {
+    "schema": "math-gauge.alignment-selfcheck-policy/v1",
+    "id": "mg-c003-engineering-selfcheck",
+    "version": "0.4.0",
+    "status": "current-local-method",
+    "case_id": "MG-C003",
+    "case_version": "0.1.1",
+    "rounds": 3,
+    "obligation_ids": [
+      "CH03-D01",
+      "CH03-D02",
+      "CH03-D03",
+      "CH03-D04",
+      "CH03-D05",
+      "CH03-D06",
+      "CH03-D07",
+      "CH03-D08",
+      "CH03-P01-01",
+      "CH03-P01-02",
+      "CH03-P01-03",
+      "CH03-P02-01",
+      "CH03-P02-02",
+      "CH03-P02-03",
+      "CH03-P03-01",
+      "CH03-P04-01",
+      "CH03-P04-02",
+      "CH03-P05-01",
+      "CH03-P06-01",
+      "CH03-P06-02",
+      "CH03-P06-03",
+      "CH03-P06-04",
+      "CH03-P06-05",
+      "CH03-P06-06",
+      "CH03-P06-07",
+      "CH03-P06-08",
+      "CH03-P07-01",
+      "CH03-P07-02",
+      "CH03-P07-03",
+      "CH03-P07-04",
+      "CH03-P08-01",
+      "CH03-P08-02",
+      "CH03-P08-03",
+      "CH03-P09-01",
+      "CH03-P09-02",
+      "CH03-P09-03",
+      "CH03-P10-01",
+      "CH03-P10-02",
+      "CH03-P10-03",
+      "CH03-P11-01",
+      "CH03-P11-02",
+      "CH03-P11-03",
+      "CH03-P12-01",
+      "CH03-P12-02",
+      "CH03-P13-01",
+      "CH03-P13-02",
+      "CH03-P13-03",
+      "CH03-P14-01",
+      "CH03-P14-02",
+      "CH03-P14-03",
+      "CH03-P15-01",
+      "CH03-P15-02",
+      "CH03-P16-01",
+      "CH03-P16-02",
+      "CH03-P16-03",
+      "CH03-P17-01",
+      "CH03-P17-02",
+      "CH03-P17-03",
+      "CH03-P17-04",
+      "CH03-P18-01",
+      "CH03-P18-02",
+      "CH03-P18-03",
+      "CH03-P19-01",
+      "CH03-P19-02",
+      "CH03-P19-03",
+      "CH03-P20-01",
+      "CH03-P21-01",
+      "CH03-P21-02",
+      "CH03-P22-01",
+      "CH03-P23-01",
+      "CH03-P23-02",
+      "CH03-P23-03",
+      "CH03-P24-01",
+      "CH03-P24-02",
+      "CH03-P25-01",
+      "CH03-P25-02",
+      "CH03-P26-01",
+      "CH03-P26-02",
+      "CH03-P26-03",
+      "CH03-P27-01",
+      "CH03-P27-02",
+      "CH03-P28-01",
+      "CH03-P28-02",
+      "CH03-P29-01",
+      "CH03-P29-02",
+      "CH03-P29-03",
+      "CH03-P29-04",
+      "CH03-P29-05",
+      "CH03-P30-01",
+      "CH03-P30-02",
+      "CH03-P30-03",
+      "CH03-P30-04"
+    ],
+    "obligation_weight": 1,
+    "repair_points": 70,
+    "diagnosis_points": {
+      "global": 10,
+      "localization": 20
+    },
+    "neutral_group_weights": {
+      "written": 1,
+      "lean_alignment": 2
+    },
+    "overall_weights": {
+      "core": 70,
+      "repeat": 5,
+      "neutral": 15,
+      "stance": 10
+    },
+    "case_contract_sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527",
+    "trajectory_comparison": "immediately previous actual delivered source, starting from each study own selected parent",
+    "restoration_policy": "F includes verified restoration after a previous FULL omission; report restored versus first-ever completed separately and retain prior regression penalties; unchanged old proofs do not count as a new repair. No union of answers.",
+    "missing_rounds": "fixed denominator three; unknown is not mathematical zero and never renormalized",
+    "false_complete_claim": "diagnosis zero plus explicit major false-completeness event; verified repair contribution retained",
+    "delivery_and_math": "complete means verified submitted mathematical obligation, not the truth value of the original theorem; failed source delivery and false mathematical claims remain separate",
+    "primary_sources": {
+      "terra": "first archived engineering project and each followup archived engineering project",
+      "gemini": "final archived project within the shared 180-minute first-answer budget and each followup archived engineering project"
+    },
+    "formal_comparison_eligible": false,
+    "human_review": "pending",
+    "new_candidate_calls": 0,
+    "false_complete_penalty_points": 20,
+    "allow_negative_selfcheck": true,
+    "phase_timeout_seconds": 10800,
+    "continuations_share_phase_deadline": true,
+    "complete_definition": "Actually submitted and independently reviewed complete and correct mathematical obligation, including its semantic correspondence.",
+    "overall_floor": 0,
+    "presentation_note": "Some equivalent tests inherit existing benchmark responses; full source details are kept separately.",
+    "capability_component_weights": {
+      "public": {
+        "proofs": 40,
+        "lean-audit": 20,
+        "lean-formalization": 30,
+        "answer-review": 10
+      },
+      "combined": {
+        "proofs": 35,
+        "lean-audit": 15,
+        "lean-formalization": 25,
+        "exploration": 15,
+        "answer-review": 10
+      }
+    },
+    "supersedes_policy_sha256": "f82b01a1ecc3a4e391c5daf9097840b24e5390186ebc5f04a4cfa5143260a9d5",
+    "change_scope": "Unified sealed-engineering source review for all four formalization tasks in both models; capability weights and alignment selfcheck points/penalties unchanged.",
+    "formalization_source_policy": {
+      "version": "sealed-engineering/1",
+      "case_ids": [
+        "LCH01",
+        "LCH02",
+        "HCH02",
+        "MG-C003"
+      ],
+      "primary_source": "selected answer-phase sealed engineering project",
+      "original_response": "retained verbatim for self-assessment and delivery comparison",
+      "semantic_completion": "independently reviewed obligations in the unchanged submitted source; no proof repairs, best-of or cross-round union",
+      "mapping_defects": "reported separately; evaluator correspondence is explicitly labeled and never substituted for a model claim"
+    }
+  },
   "sources": [
     {
-      "model": "terra",
-      "scope": "public",
-      "path": "docs/results/terra-v0.6.0/result.json",
-      "kind": "original-summary",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/terra-v0.6.0/result.json",
-      "sha256": "12dbee2a2dc77a5ccba10587c4b7b03bcd5d8058955881ddf4d59cd2f7bb047c"
+      "path": "results/v0.6.0/terra-6.1-max/20261105/result.json",
+      "sha256": "5c4ecf8f91b5d6f5b9f6184348f8fc351161c843b866c387e511be8fd82e2439"
     },
     {
-      "model": "terra",
-      "scope": "public",
-      "path": "docs/results/engineering-v0.2.0/terra-capability-public.json",
-      "kind": "archived-engineering-capability",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.2.0/terra-capability-public.json",
-      "sha256": "834a22b01f4aa88d6ec23fe412916a51b10b03c3d78320907703fa0d56197326"
+      "path": "results/v0.6.0/terra-6.1-max/20261105/combined-aggregate.json",
+      "sha256": "1d5c9e9ebf34ce7ddf59cec1f66e9a9887d88643b320530134145ee01b77247b"
     },
     {
-      "model": "terra",
-      "scope": "public",
-      "path": "docs/results/engineering-v0.2.0/terra-public.json",
-      "kind": "previous-engineering-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.2.0/terra-public.json",
-      "sha256": "8e4c1fe074f23578d30f12760493ccc6bf42debcd85e5043573de46dea4e12e7"
+      "path": "results/v0.6.0/terra-6.1-max/20261105/record.json",
+      "sha256": "7175f825d7c06a9e5ea5a68424f103cefaef29acc96c5d4916e14b5c599ca99d"
     },
     {
-      "model": "terra",
-      "scope": "public",
-      "path": "docs/results/engineering-v0.3.0/terra-public.json",
-      "kind": "engineering-alignment-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.3.0/terra-public.json",
-      "sha256": "a7d42f59254e127b7f89c6d36dac40c106d4b96b38613992a11a36393f1f0f73"
+      "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/result.json",
+      "sha256": "dab25f49162e825b5e9e67c8e016b265bfd53df2df066d39adc5dd39a774771f"
     },
     {
-      "model": "terra",
-      "scope": "combined",
-      "path": "docs/results/terra-v0.6.0/combined-aggregate.json",
-      "kind": "original-summary",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/terra-v0.6.0/combined-aggregate.json",
-      "sha256": "355ceae079499f38914aa2f46afff93a50bc117d5e30d5340f7333fbfb9f2346"
+      "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/combined-aggregate.json",
+      "sha256": "195dac9a244c8eff5b16991640ae3d053ce3175de754738eed2de30e1553ef8d"
     },
     {
-      "model": "terra",
-      "scope": "combined",
-      "path": "docs/results/engineering-v0.2.0/terra-capability-combined.json",
-      "kind": "archived-engineering-capability",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.2.0/terra-capability-combined.json",
-      "sha256": "8586edce42fc51e1717032ce44be3da0b843f2faf231e8e10ba6f4536997aff7"
+      "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/record.json",
+      "sha256": "b4aaf45fcebb48871f90a5570b89f2f29f3a04a9867e62846baa6910bc89e872"
     },
     {
-      "model": "terra",
-      "scope": "combined",
-      "path": "docs/results/engineering-v0.2.0/terra-combined.json",
-      "kind": "previous-engineering-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.2.0/terra-combined.json",
-      "sha256": "e2f5413ab270bfdbd0269cd0361f2dbe6d2ffb3dd4386763bc3b3d8898a51fd7"
+      "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/result.json",
+      "sha256": "11756b0c5ca0dad26635e1f4057172164ef40716d433c3023fe7d316147b32fe"
     },
     {
-      "model": "terra",
-      "scope": "combined",
-      "path": "docs/results/engineering-v0.3.0/terra-combined.json",
-      "kind": "engineering-alignment-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.3.0/terra-combined.json",
-      "sha256": "8cb822c04662fb5b3edf4ac40be9b0422307520af08c2ae403f63f1d604bf0ce"
+      "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/combined-aggregate.json",
+      "sha256": "a647cf10651a80cba198a7d7f8231a601dacc504e0a223b35812a23ec426d7ad"
     },
     {
-      "model": "gemini",
-      "scope": "public",
-      "path": "docs/results/gemini-v0.6.0/result.json",
-      "kind": "original-summary",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/gemini-v0.6.0/result.json",
-      "sha256": "4698ebc21f0ec216ae088b1cc6d91782c1055d00b362ae98b4ee4eb32367622c"
-    },
-    {
-      "model": "gemini",
-      "scope": "public",
-      "path": "docs/results/gemini-v0.6.0-extension/result.json",
-      "kind": "admitted-workspace-mathematics",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/gemini-v0.6.0-extension/result.json",
-      "sha256": "2c8f285de8ecc119909d881ecd9bf958ce9d7fea9bbf3df8e8a3c32034ac146a"
-    },
-    {
-      "model": "gemini",
-      "scope": "public",
-      "path": "docs/results/engineering-v0.2.0/gemini-public.json",
-      "kind": "previous-engineering-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.2.0/gemini-public.json",
-      "sha256": "e8fe0da84e563e33541b1faaaa7f68b5c7b81100140404f4834ed097598ddd65"
-    },
-    {
-      "model": "gemini",
-      "scope": "public",
-      "path": "docs/results/engineering-v0.3.0/gemini-public.json",
-      "kind": "engineering-alignment-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.3.0/gemini-public.json",
-      "sha256": "f13ac83d253c0c065b248a2a46ad63ef0ee07afe501014e99f255fb6e616252e"
-    },
-    {
-      "model": "gemini",
-      "scope": "combined",
-      "path": "docs/results/gemini-v0.6.0/combined-aggregate.json",
-      "kind": "original-summary",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/gemini-v0.6.0/combined-aggregate.json",
-      "sha256": "7e81fb566deb78018294880ba1044385a4524aa11b797a5802be3f7fcd8a9e1e"
-    },
-    {
-      "model": "gemini",
-      "scope": "combined",
-      "path": "docs/results/gemini-v0.6.0-extension/combined-aggregate.json",
-      "kind": "admitted-workspace-mathematics",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/gemini-v0.6.0-extension/combined-aggregate.json",
-      "sha256": "4d7a9fe8f190da012bfe292d90c3108d3e195aedaf8fa5f817ad6cb4b6526e33"
-    },
-    {
-      "model": "gemini",
-      "scope": "combined",
-      "path": "docs/results/engineering-v0.2.0/gemini-combined.json",
-      "kind": "previous-engineering-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.2.0/gemini-combined.json",
-      "sha256": "2033846cd8349f74c6e70710b62a3d1d9f99f4de7232c40b13b473597ef9b2a5"
-    },
-    {
-      "model": "gemini",
-      "scope": "combined",
-      "path": "docs/results/engineering-v0.3.0/gemini-combined.json",
-      "kind": "engineering-alignment-score",
-      "url": "https://github.com/glenzli/math-gauge/blob/main/docs/results/engineering-v0.3.0/gemini-combined.json",
-      "sha256": "0c3c2ae9c7465a5ac01f4294a573fc19d0212f008ed837d14982b9c121dfaede"
+      "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/record.json",
+      "sha256": "96131474691110a309cfb99677d9afc20414787cc53832ba907a7403f8cf4ec5"
     }
   ]
 }

@@ -14,7 +14,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_profile, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_profile, fixture_root
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
@@ -135,8 +135,8 @@ class EligibilityAcceptanceTests(unittest.TestCase):
             with self.subTest(field=field):
                 requirements = frozen_requirements()
                 requirements[field] = ["search_web"]
-                suite = legacy_suite()
-                profile = legacy_profile(suite)
+                suite = fixture_suite()
+                profile = fixture_profile(suite)
                 runtime = dict(self.meta["plan"]["runtime"], execution_requirements=requirements)
                 with self.assertRaises(ValueError):
                     build_plan(profile, suite, runtime=runtime)
@@ -179,7 +179,7 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         destination = self.root / "reused"
         with patch("math_gauge.reliability.invoke_conversation", side_effect=AssertionError(
                 "reused slots must not generate another answer")):
-            execute_reliability_run(self.meta["plan"], legacy_suite(), destination,
+            execute_reliability_run(self.meta["plan"], fixture_suite(), destination,
                                     command=self.meta["command"], reuse_runs=[self.run])
         _, reused = inspect_reliability_run(destination)
         copied = verify_execution_eligibility(destination)["slots"][self.sid]
@@ -203,7 +203,7 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         destination = self.root / "independent-copy"
         with patch("math_gauge.reliability.invoke_conversation", side_effect=AssertionError(
                 "exact dependency reuse must not make another request")):
-            execute_reliability_run(self.meta["plan"], legacy_suite(), destination,
+            execute_reliability_run(self.meta["plan"], fixture_suite(), destination,
                                     command=self.meta["command"], reuse_runs=[self.run])
         shutil.rmtree(self.run)
         shutil.rmtree(source.parent)
@@ -215,8 +215,8 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         self.assertIn(self.records[self.sid]["evidence_id"], {x["evidence_id"] for x in report["evidence"]})
 
     def test_cross_shard_session_state_and_request_reuse_is_rejected_for_distinct_generations(self):
-        suite = legacy_suite()
-        profile = legacy_profile(suite)
+        suite = fixture_suite()
+        profile = fixture_profile(suite)
         plan = build_plan(profile, suite, runtime=self.meta["plan"]["runtime"])
 
         def transport(command, projected, workspace, timeout, **kwargs):
@@ -264,8 +264,8 @@ class EligibilityAcceptanceTests(unittest.TestCase):
                     score_runs([first, second])
 
     def test_merge_can_resolve_missing_ancestor_audit_from_same_original_generation(self):
-        suite = legacy_suite()
-        profile = legacy_profile(suite)
+        suite = fixture_suite()
+        profile = fixture_profile(suite)
         plan = build_plan(profile, suite, runtime=self.meta["plan"]["runtime"])
         parent_run, child_run = self.root / "parent-shard", self.root / "child-shard"
 
@@ -321,7 +321,7 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         with patch("math_gauge.reliability.invoke_conversation", side_effect=AssertionError(
                 "invalid paper approval must be rejected before candidate transport")):
             with self.assertRaisesRegex(ValueError, "approval|approved|review"):
-                execute_reliability_run(plan, legacy_suite(), self.root / "upgraded",
+                execute_reliability_run(plan, fixture_suite(), self.root / "upgraded",
                                         command=self.meta["command"])
 
     def test_temporary_approved_manifest_and_parsed_audits_unlock_only_complete_proof_component(self):
@@ -329,8 +329,8 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         repository = self.root / "SYNTHETIC-APPROVAL-FIXTURE"
         cases_root = repository / "cases"
         cid = "MG-GR002"
-        ids = {cid, "MG-GF101", "MG-GF102", "MG-C002"}
-        metadata = read_json(legacy_root() / "cases/suite.json")
+        ids = {cid, "AHR01", "MG-AR001", "LCH02"}
+        metadata = read_json(fixture_root() / "cases/suite.json")
         metadata.update(id="SYNTHETIC-SOFTWARE-TEST-ONLY", title="Temporary software approval fixture",
                         cases=[name for name in metadata["cases"] if Path(name).parent.name in ids])
         for name in metadata["cases"]:
@@ -346,7 +346,7 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         suite = Suite.load(cases_root)
         packet = repository / "protocol/reliability"
         for name in ("selection", "prompts", "schedule"):
-            value = read_json(legacy_root() / "protocol/reliability" / (name + ".json"))
+            value = read_json(fixture_root() / "protocol/reliability" / (name + ".json"))
             if name == "selection":
                 value["cases"] = [x for x in value["cases"] if x["case_id"] == cid]
                 value.update(source_suite_sha256=suite.sha256, case_count=1,
@@ -361,15 +361,17 @@ class EligibilityAcceptanceTests(unittest.TestCase):
                 value.update(planned_slots_per_model=18, planned_independent_slots_per_model=12,
                              planned_followup_slots_per_model=6)
             write_json(packet / (name + ".json"), value)
-        profile_data = read_json(legacy_root() / "protocol/benchmark-profile.json")
+        profile_data = read_json(fixture_root() / "protocol/benchmark-profile.json")
         profile_data.update(id="SYNTHETIC-SOFTWARE-TEST-PROFILE", suite={
             "id": suite.metadata["id"], "version": suite.metadata["version"], "sha256": suite.sha256})
         for component in profile_data["components"]:
             component["case_ids"] = [x for x in component["case_ids"] if x in ids]
+        profile_data["attempt_schedule"] = {k:v for k,v in profile_data["attempt_schedule"].items() if k in ids}
+        profile_data["score_policy"]["repeat_case_ids"] = [k for k in profile_data["score_policy"]["repeat_case_ids"] if k in ids]
         profile_path = repository / "protocol/benchmark-profile.json"
         write_json(profile_path, profile_data)
         profile = BenchmarkProfile.load(profile_path, suite, repository_root=repository)
-        plan = build_plan(profile, suite, ["proofs"], runtime=self.meta["plan"]["runtime"])
+        plan = build_plan(profile, suite, ["core", "repeat"], runtime=self.meta["plan"]["runtime"])
         run = self.root / "approved-component-run"
         with patch("math_gauge.reliability.invoke_conversation", return_value={
                 "stdout": "SYNTHETIC UNASSESSED BODY", "stderr": b"", "exit_code": 0,
@@ -387,7 +389,7 @@ class EligibilityAcceptanceTests(unittest.TestCase):
                         scope_accuracy="correct", unnecessary_restriction=False, reasons=[],
                         notes="SYNTHETIC HUMAN-SHAPED SOFTWARE TEST; not an actual mathematical judgment.")
 
-        entries = reliability_review_templates(run)
+        entries = [entry for entry in reliability_review_templates(run) if entry["case_id"] == cid]
         for entry in entries:
             entry.update(reviewer="SYNTHETIC HUMAN-SHAPED SOFTWARE TEST", reviewer_kind="human")
             pass_axis(entry)
@@ -402,8 +404,8 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         positive = score_runs([run])
         self.assertEqual(positive["metrics"]["proofs"]["formal_score"], 100)
         self.assertIsNone(positive["metrics"]["overall"]["formal_score"])
-        self.assertEqual(positive["metrics"]["proofs"]["coverage"]["formal_eligible_slots"], 3)
-        self.assertTrue(all(x["case_approval_evidence_verified"] for x in reliability_score_inputs(run)["slots"]))
+        self.assertEqual(positive["metrics"]["proofs"]["coverage"]["formal_eligible_slots"], 1)
+        self.assertTrue(all(x["case_approval_evidence_verified"] for x in reliability_score_inputs(run)["slots"] if x["case_id"] == cid))
         snapshot = verify_execution_eligibility(run)["audit_snapshot"]["sha256"]
         withdrawn = read_json(source_paths[0])
         withdrawn["audit"]["decision"] = "reject"
@@ -413,7 +415,7 @@ class EligibilityAcceptanceTests(unittest.TestCase):
         historical = score_runs([run], audit_snapshot=snapshot)
         self.assertIsNone(historical["metrics"]["proofs"]["formal_score"])
         self.assertEqual(historical["metrics"]["proofs"]["historical_formal_score"], 100)
-        public = legacy_suite()
+        public = fixture_suite()
         self.assertTrue(all(x["status"] == "draft" and x["review"]["human"] == "pending"
                             for x in public.cases.values()))
 

@@ -87,6 +87,6 @@ other_activity保留相关检查、启动、对照和数学请求的id、kind、
 
 audit包含reviewer、reviewer_kind、reviewed_at、decision和checks。decision为accept/reject/unresolved。每项check包含decision（verified/rejected/unresolved）、rationale及sources引用。必须逐项审核：external_authenticity、provider_metadata_origin、process_attribution、attempt_completeness、no_answer_selection、context_completeness、tool_control_validity、read_exception_review。
 
-通过的来源审核须为human、有实际身份与时间，并有每项相关来源依据。例如后端来源审核引用metadata/response，进程归属引用isolation/invocation，工具能力引用tool-control/events/isolation，读取例外引用policy/isolation。无关文件引用不能代替这些材料。该标签是具名审定记录，不是程序自动认证审核者身份。尚未核实的项目保留unresolved；发现不符时记reject/rejected，不为让导入通过而改写原始材料。导入、修订、历史读取与汇总命令见[使用指南](../docs/usage.md)。
+通过的来源审核须为human、有实际身份与时间，并有每项相关来源依据。例如后端来源审核引用metadata/response，进程归属引用isolation/invocation，工具能力引用tool-control/events/isolation，读取例外引用policy/isolation。无关文件引用不能代替这些材料。该标签是具名审定记录，不是程序自动认证审核者身份。尚未核实的项目保留unresolved；发现不符时记reject/rejected，不为让导入通过而改写原始材料。导入、修订、历史读取与汇总命令见[使用指南](../docs/running.md)。
 
 明确的具名reject修订可以归档实际型号、工具等不符合要求的原始观察，并保存 `observation_errors` 诊断，撤销先前资格。文件字节、路径、来源引用、原始绑定和尝试清单仍须有效；reject不能掩盖材料篡改或错误引用。先前收据保留在历史快照中。

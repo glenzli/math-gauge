@@ -13,6 +13,7 @@ from math_gauge.scoring import (_score_inputs, alignment_augmented_score,
                                 public_score_projection, score_alignment_trajectory, score_inputs,
                                 source_qualified_engineering_score)
 from test_scoring import fixture_rows
+from benchmark_fixtures import arithmetic_source_plan
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = {"model_label": "offline-alignment-fixture", "budget": {"timeout_seconds": 5400},
@@ -216,9 +217,7 @@ class AlignmentTrajectoryTests(unittest.TestCase):
 class BoundAlignmentFixture(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        suite = Suite.load(ROOT / "cases")
-        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite),
-                              suite, runtime=RUNTIME)
+        cls.plan = arithmetic_source_plan(RUNTIME)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -389,7 +388,7 @@ class EngineeringCapabilityTests(BoundAlignmentFixture):
             "snapshot": {"manifest": {"sha256": self.hashes["source_manifest"]}, "tree_sha256": tree_hash,
                 "entry": {"sha256": files["Main.lean"]["sha256"]},
                 "workspace_alignment": {"sha256": files["alignment.json"]["sha256"]}},
-            "frozen_case_files": [{"path": str(ROOT / "cases/chapters/MG-C003/contract.json"),
+            "frozen_case_files": [{"path": str(ROOT / "cases/lean-formalization/MG-C003/contract.json"),
                                    "sha256": case["group_contract_sha256"]}],
             "candidate_input_manifest": [], "completed_weight_semantic": 74, "total_weight": 92,
             "rows": [{"stage_id": sid, "decision": "pass" if index < 74 else "partial",
@@ -495,8 +494,9 @@ class EngineeringCapabilityTests(BoundAlignmentFixture):
 class RebalancedAlignmentTests(BoundAlignmentFixture):
     def setUp(self):
         super().setUp()
-        current = json.loads((ROOT / "protocol/lean-alignment/engineering-scoring-v0.3.0.json").read_text())
-        self.documents["policy"] = dict(current, obligation_ids=self.documents["policy"]["obligation_ids"])
+        current = json.loads((ROOT / "protocol/scoring-policy.json").read_text())
+        self.documents["policy"] = dict(current, version="0.3.0",
+                                         obligation_ids=self.documents["policy"]["obligation_ids"])
         self.save("policy")
         self.documents["alignment_review"].update(scoring_version="0.3.0", policy_sha256=self.hashes["policy"])
         self.save("alignment_review")
@@ -507,6 +507,14 @@ class RebalancedAlignmentTests(BoundAlignmentFixture):
         self.documents["original_summary"] = public_score_projection(report, self.plan, private_aliases={})
         self.save("original_report")
         self.save("original_summary")
+
+    def test_current_method_cannot_use_the_c003_only_aggregation_adapter(self):
+        self.documents["policy"]["version"] = "0.4.0"
+        self.save("policy")
+        self.documents["alignment_review"].update(scoring_version="0.4.0", policy_sha256=self.hashes["policy"])
+        self.save("alignment_review")
+        with self.assertRaisesRegex(ValueError, "all four sealed engineering reviews"):
+            self.score()
 
     def test_rebalances_only_aggregates_and_keeps_original_plan_and_penalty(self):
         original_bytes = self.sources["original_plan"].read_bytes()

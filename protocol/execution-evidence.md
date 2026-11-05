@@ -41,4 +41,4 @@
 
 当前0.6采用新补考与相容旧答复用的观察后开发组合，不是一次同步fresh新考；旧177槽等公开开发试跑保留在自身版本与审核快照下。所有题目仍待人工审定。实际运行需先冻结配置、预算和隔离方式，再按已有授权范围执行；已发现的运行工具故障与数学结论分别记录。
 
-CLI隔离的原始材料准备与实际探测见[隔离流程](isolated-cli-runs.md)；适配器字段与来源引用见[证据交换格式](execution-evidence-format.md)；证据导入与报告命令见[使用指南](../docs/usage.md)；评分公式见[综合评分标准](benchmark-scoring.md)。
+CLI隔离的原始材料准备与实际探测见[隔离流程](isolated-cli-runs.md)；适配器字段与来源引用见[证据交换格式](execution-evidence-format.md)；证据导入与报告命令见[使用指南](../docs/running.md)；评分公式见[综合评分标准](benchmark-scoring.md)。

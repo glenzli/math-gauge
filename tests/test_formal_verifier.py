@@ -85,7 +85,7 @@ class ManifestTests(FixtureMixin, unittest.TestCase):
         manifest['alignment']['sha256']=V.digest(self.root/'alignment.json');V.save(path,manifest)
         with self.assertRaisesRegex(V.VerificationError,'no known gaps'):V.validate_case(path)
     def test_chapter_task_path_and_obligation_input_are_bound(self):
-        path,manifest,_=self.author_fixture('MG-C002')
+        path,manifest,_=self.author_fixture('MG-C099')
         (self.case/'candidate').mkdir()
         (self.case/'task.md').rename(self.case/'candidate/task.md')
         case=V.load(self.case/'case.json');case['task']='case/candidate/task.md';V.save(self.case/'case.json',case)
@@ -162,7 +162,7 @@ class ManifestTests(FixtureMixin, unittest.TestCase):
                 with self.assertRaisesRegex(V.VerificationError,reason):V.validate_case(p)
         p,d=self.fixture(profile=V.TAUCETI_PROFILE);del d['tauceti_revision'];p.write_text(json.dumps(d))
         with self.assertRaisesRegex(V.VerificationError,'TauCeti'):V.validate_case(p)
-    def test_legacy_profile_cannot_gain_tauceti_by_manifest_field(self):
+    def test_fixture_profile_cannot_gain_tauceti_by_manifest_field(self):
         p,d=self.fixture();d['tauceti_revision']=V.PROFILES[V.TAUCETI_PROFILE]['tauceti_revision'];p.write_text(json.dumps(d))
         with self.assertRaisesRegex(V.VerificationError,'fixed verification profile'):V.validate_case(p)
     def test_case_cannot_use_another_profiles_dependency_receipt(self):

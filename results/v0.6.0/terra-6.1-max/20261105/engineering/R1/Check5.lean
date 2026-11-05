@@ -1,0 +1,17 @@
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+#check Real.logb_le_logb
+#check Real.logb_le_logb_of_base_lt_one
+#check ENNReal.toReal_mono
+#check ENNReal.toReal_one
+#check EReal.coe_le_coe_iff
+#check EReal.coe_sub
+#check EReal.coe_eq_zero_iff
+#check Set.Finite.mem_toFinset
+#check Set.Finite.toFinset_card
+#check Set.Nonempty.image
+#check iInf_le_of_le
+#check ENNReal.ofReal_lt_top
+#check EReal.coe_ne_top
+#check EReal.coe_ne_bot
+#check EReal.coe_zero
+#check EReal.coe_le_coe_iff

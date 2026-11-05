@@ -1,0 +1,15 @@
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+#check iInf_lt_iff
+#check lt_top_iff_ne_top
+#check ENNReal.min_lt_top
+#check min_pos
+#check min_le_left
+#check Classical.not_forall
+#check EReal.coe_sub
+#check ENNReal.toReal_mono
+#check Real.logb_le_logb
+#check Real.strictMonoOn_logb
+#check Real.logb_le_logb_of_base_gt_one
+#check ENNReal.toReal_pos
+#check ENNReal.toReal_mono
+#check EReal.coe_le_coe_iff

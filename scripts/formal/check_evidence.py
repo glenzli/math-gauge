@@ -17,6 +17,9 @@ from pathlib import Path
 import re
 import sys
 
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 try:
     from . import verify
 except ImportError:  # Direct script invocation.
@@ -86,7 +89,7 @@ def load_layout(repo):
         relative_name(row['previous']); relative_name(row['current'])
         verify.require(Path(row['previous']).name == Path(row['current']).name == row['id'],
                        'Layout paths must preserve case identity')
-        verify.require(bool(re.fullmatch(r'cases/(?:proofs|lean-audit|lean-construction|chapters)/' +
+        verify.require(bool(re.fullmatch(r'cases/(?:proofs|lean-audit|lean-construction|chapters|lean-formalization)/' +
                                        re.escape(row['id']), row['current'])),
                        'Unexpected canonical case path')
     for field in ('previous', 'current'):

@@ -1,0 +1,140 @@
+{
+  "model": "terra-6.1-max",
+  "model_key": "terra",
+  "case_id": "LCH02",
+  "slot": "A1",
+  "source_kind": "original-sealed-engineering",
+  "original_root": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/jobs/LCH02-A1/actual-project",
+  "retained_source_root": "/private/tmp/math-gauge-engineering-reaudit-20261105/small-cases/terra-LCH02/sealed-source",
+  "native_result": {
+    "path": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/jobs/LCH02-A1/result.json",
+    "bytes": 1915,
+    "sha256": "9f6fa734227dd2a48f8b638cc9fcef692c24d7845c9c61b52475ada6f4e8151f"
+  },
+  "original_manifest": {
+    "path": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/jobs/LCH02-A1/actual-project-manifest.json",
+    "bytes": 1857,
+    "sha256": "86098003192a7770a6d8920ff2486ac50fa96d9f99f36ac40c7ab513a8910d72"
+  },
+  "tree_sha256": "92503cdc5abc30775c50cdfcb377c134f27a00c0c6c1895e00808a17e00b1778",
+  "manifest_files_verified": 10,
+  "manifest_extra_files": [],
+  "answer": {
+    "path": "/Users/g4i/lab/math-gauge/results/v0.6.0/terra-6.1-max/20261105/responses/LCH02/A1/answer.md",
+    "bytes": 34256,
+    "sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692"
+  },
+  "native_response_sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692",
+  "response_hash_binding_verified": true,
+  "native_terminal_status": "ok",
+  "native_delivery_gate": {
+    "path": "/private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/terra/collected/LCH02-A1/delivery-gate.json",
+    "bytes": 1490,
+    "sha256": "7f83a44d90aa91f11e8c5977e4bc3945be090bc436ef74310fe144260a7aa035"
+  },
+  "terminal_budget": {
+    "per_turn_seconds": 5400,
+    "startup_seconds": 120,
+    "accepted": true,
+    "startup_within_budget": true,
+    "turn_within_budget": true,
+    "mathematical_quality_used": false,
+    "reserved_at": "2026-11-04T15:30:27.491992+00:00",
+    "submitted_at": "2026-11-04T15:30:28.996633+00:00",
+    "completed_at": "2026-11-04T15:44:21.574699+00:00",
+    "completion_source": "native-owner-finished_at",
+    "startup_elapsed_seconds": 1.504641056060791,
+    "turn_elapsed_seconds": 832.5780658721924,
+    "startup_enforcement_observed": false,
+    "native_submission_timestamp_consistent": true,
+    "status": "within-budget"
+  },
+  "closed_archive_crosscheck": null,
+  "candidate_source_hashes": {
+    "Bounds.lean": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+    "Main.lean": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0"
+  },
+  "all_sealed_lean_hashes": {
+    "Axioms.lean": "b08d0ec14909ecc194df352363652b550f4d90be600b97e3da3fa8fb82595ae4",
+    "Bounds.lean": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+    "Check.lean": "f0f5505c637934be47390d002dfc86195f22ddad1c7fcd18ff84059e2d5776b4",
+    "Main.lean": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0"
+  },
+  "reply_comparison": [
+    {
+      "file": "Bounds.lean",
+      "actual_sha256": "0889db041713dc707fde9349c0e0a3fd5bb6a7edd421759fe1758754678d2fe4",
+      "reply_sha256": "a1c6dca3cdde8ebb62fab984d2481ff799dd0edfa7d6466282e8f3087c273414",
+      "actual_bytes": 18420,
+      "reply_bytes": 18419,
+      "byte_equal": false,
+      "extraction": {
+        "response_sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692",
+        "start_byte": 163,
+        "end_byte": 18582
+      },
+      "difference": "--- original-reply/Bounds.lean\n+++ original-sealed-engineering/Bounds.lean\n@@ -23,7 +23,7 @@\n /-- Row j, column i is the coefficient for the channel i → j. -/\n def LipOn (d : Gauge I X) (φ : Operator X bot) (U : Set X)\n     (L : BoundMatrix I) : Prop :=\n-  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,\n+  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j, \n     d j (φ.func x) (φ.func y) ≤ ∑ i, L j i * d i x y\n \n def Lip (d : Gauge I X) (φ : Operator X bot) (L : BoundMatrix I) : Prop :=\n",
+      "whitespace_only_difference": true
+    },
+    {
+      "file": "Main.lean",
+      "actual_sha256": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0",
+      "reply_sha256": "492c9b93f61303914a2c9f6623cfe47acb29081edec48aa253cf729e043265d0",
+      "actual_bytes": 14,
+      "reply_bytes": 14,
+      "byte_equal": true,
+      "extraction": {
+        "response_sha256": "6a96c7390cad0f24dadabf67f3ad0e9736f26c21a139aa4f3d2956e937049692",
+        "start_byte": 18614,
+        "end_byte": 18628
+      },
+      "whitespace_only_difference": false
+    }
+  ],
+  "alignment_comparison": {
+    "actual_sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4",
+    "reply_sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4",
+    "bytes_equal": true,
+    "json_equal": true,
+    "source_span": {
+      "start_byte": 18665,
+      "end_byte": 34253,
+      "sha256": "49dca371252d6413481317fce89b516faf3cb02b1149698a972d2c35deda33a4"
+    }
+  },
+  "import_closure": {
+    "entry": "Main.lean",
+    "review_audit_additional_roots": [],
+    "ordered_local_closure": [
+      "formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+      "formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+      "Bounds.lean",
+      "Main.lean"
+    ],
+    "direct_external_imports": [
+      "Mathlib",
+      "Mathlib.Data.ENNReal.Basic",
+      "Mathlib.Tactic"
+    ],
+    "frozen_predecessor_sources": {
+      "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c",
+      "formal_oet/vol_01/ch_01_foundations/operator_space.lean": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+    },
+    "author_target_implementation_used": false,
+    "sealed_lean_outside_closure": [
+      "Axioms.lean",
+      "Check.lean"
+    ],
+    "outside_closure_note": "Terra LCH02 Check.lean and Axioms.lean contain only imports and #check/#print directives; no declarations or target proofs are supplied there."
+  },
+  "kernel_original_report": {
+    "path": "/private/tmp/math-gauge-v06-evaluator-20261104-01a1a43a/terra/LCH02-A1/report.json",
+    "bytes": 59714,
+    "sha256": "c1a25e8a041e65a662e7c17bbb4a1dce5a3d5a0b0753948f73658e6935e99e2b"
+  },
+  "source_files_changed_vs_original_kernel": [
+    "Bounds.lean"
+  ],
+  "human_review": "pending",
+  "comparison_eligible": false
+}

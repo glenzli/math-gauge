@@ -1,0 +1,10 @@
+import OperatorLocalDegeneracy.ThresholdClassification
+
+#print axioms OperatorLocalDegeneracy.lemma_3_13_exhaustive
+#print axioms OperatorLocalDegeneracy.lemma_3_13_exclusive
+#print axioms OperatorLocalDegeneracy.lemma_3_13_i
+#print axioms OperatorLocalDegeneracy.lemma_3_13_ii
+#print axioms OperatorLocalDegeneracy.prop_3_14_i
+#print axioms OperatorLocalDegeneracy.prop_3_14_ii_a
+#print axioms OperatorLocalDegeneracy.prop_3_14_ii_b
+#print axioms OperatorLocalDegeneracy.prop_3_17_counterexample

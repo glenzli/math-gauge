@@ -1,0 +1,23 @@
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+#check iSup_eq_zero
+#check iSup_le_iff
+#check sSup_le
+#check le_sSup
+#check lt_sSup_iff
+#check ENNReal.sSup_eq_top
+#check ENNReal.iSup_coe_nat
+#check ENNReal.natCast_iSup
+#check ENNReal.iSup_natCast
+#check ENNReal.exists_nat_gt
+#check ENNReal.exists_nnreal_between
+#check iInf_le_of_le
+#check le_iInf
+#check iInf_lt_iff
+#check ENNReal.lt_top_iff_ne_top
+#check Set.SurjOn
+#check EReal.sub
+#check EReal.top_sub_coe
+#check Finset.card_image_le
+#check ENNReal.iSup_natCast
+#print axioms formal_oet.vol_01.ch_01_foundations.subfamily_pseudometric_is_extended

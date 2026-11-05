@@ -1,8 +1,8 @@
 # 当前试卷
 
-0.6.0默认题集 `cases/suite.json` 含26份相关任务，关联18个母题家族。另31份后备数学卷由 `cases/reserve-suite.json` 显式选择。完整题库含53份数学卷与4份真实答卷审阅，共440项阶段或章节义务，另有15项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
+0.6.0默认题集 `cases/suite.json` 含26份相关任务，关联18个母题家族。完整题库含22份数学卷与4份真实答卷审阅，共226项阶段或章节义务，另有15项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
 
-材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review-pilot.md)与[当前结果](../docs/benchmark-comparison-2026-11-03.md)。已发布资产保持原样。
+材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review.md)与[当前结果](../docs/results.md)。已发布资产保持原样。
 
 题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。
 
@@ -31,29 +31,19 @@
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
-| [AHR01 · 节点域加细的语义审计](lean-audit/AHR01/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR01/group-contract.json) · [参考](lean-audit/AHR01/reference.md) · [评分](lean-audit/AHR01/rubric.json) · [题包复核](lean-audit/AHR01/review.json) · [作者Lean](lean-audit/AHR01/formal/COVERAGE.md) |
-| [AHR02 · 路径保证域的语义审计](lean-audit/AHR02/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR02/group-contract.json) · [参考](lean-audit/AHR02/reference.md) · [评分](lean-audit/AHR02/rubric.json) · [题包复核](lean-audit/AHR02/review.json) · [作者Lean](lean-audit/AHR02/formal/COVERAGE.md) |
-| [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR03/group-contract.json) · [参考](lean-audit/AHR03/reference.md) · [评分](lean-audit/AHR03/rubric.json) · [题包复核](lean-audit/AHR03/review.json) · [作者Lean](lean-audit/AHR03/formal/COVERAGE.md) |
-| [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR04/group-contract.json) · [参考](lean-audit/AHR04/reference.md) · [评分](lean-audit/AHR04/rubric.json) · [题包复核](lean-audit/AHR04/review.json) · [作者Lean](lean-audit/AHR04/formal/COVERAGE.md) |
+| [AHR01 · 节点域加细的语义审计](lean-audit/AHR01/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR01/group-contract.json) · [参考](lean-audit/AHR01/reference.md) · [评分](lean-audit/AHR01/rubric.json) · [题包复核](lean-audit/AHR01/integration-review.json) |
+| [AHR02 · 路径保证域的语义审计](lean-audit/AHR02/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR02/group-contract.json) · [参考](lean-audit/AHR02/reference.md) · [评分](lean-audit/AHR02/rubric.json) · [题包复核](lean-audit/AHR02/integration-review.json) |
+| [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR03/group-contract.json) · [参考](lean-audit/AHR03/reference.md) · [评分](lean-audit/AHR03/rubric.json) · [题包复核](lean-audit/AHR03/review.json) |
+| [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR04/group-contract.json) · [参考](lean-audit/AHR04/reference.md) · [评分](lean-audit/AHR04/rubric.json) · [题包复核](lean-audit/AHR04/integration-review.json) |
 
-## Lean 生成与修复 · 0份
-
-| 试卷 | 任务 | 必答规模 | 完整材料 |
-| --- | --- | ---: | --- |
-
-## 整章形式化 · 1份
+## 大Lean形式化梯度 · 4份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
-| [MG-C003 · OET卷1第3章整章形式化](chapters/MG-C003/candidate/task.md) | generate | 92义务 | [合同](chapters/MG-C003/contract.json) · [参考](chapters/MG-C003/reference.md) · [评分](chapters/MG-C003/rubric.json) · [题包复核](chapters/MG-C003/review.json) · [作者Lean](chapters/MG-C003/formal/COVERAGE.md) |
-
-## 大Lean形式化梯度 · 3份
-
-| 试卷 | 任务 | 必答规模 | 完整材料 |
-| --- | --- | ---: | --- |
-| [HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐](lean-formalization/HCH02/candidate/task.md) | generate | 40义务 | [合同](lean-formalization/HCH02/contract.json) · [参考](lean-formalization/HCH02/reference.md) · [评分](lean-formalization/HCH02/rubric.json) · [题包复核](lean-formalization/HCH02/review.json) · [作者Lean](lean-formalization/HCH02/formal/COVERAGE.md) |
-| [LCH01 · 通道接口节群](lean-formalization/LCH01/candidate/task.md) | generate | 8义务 | [合同](lean-formalization/LCH01/contract.json) · [参考](lean-formalization/LCH01/reference.md) · [评分](lean-formalization/LCH01/rubric.json) · [题包复核](lean-formalization/LCH01/review.json) · [作者Lean](lean-formalization/LCH01/formal/COVERAGE.md) |
-| [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) | generate | 20义务 | [合同](lean-formalization/LCH02/contract.json) · [参考](lean-formalization/LCH02/reference.md) · [评分](lean-formalization/LCH02/rubric.json) · [题包复核](lean-formalization/LCH02/review.json) · [作者Lean](lean-formalization/LCH02/formal/COVERAGE.md) |
+| [HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐](lean-formalization/HCH02/candidate/task.md) | generate | 40义务 | [合同](lean-formalization/HCH02/contract.json) · [参考](lean-formalization/HCH02/reference.md) · [评分](lean-formalization/HCH02/rubric.json) · [题包复核](lean-formalization/HCH02/integration-review.json) |
+| [LCH01 · 通道接口节群](lean-formalization/LCH01/candidate/task.md) | generate | 8义务 | [合同](lean-formalization/LCH01/contract.json) · [参考](lean-formalization/LCH01/reference.md) · [评分](lean-formalization/LCH01/rubric.json) · [题包复核](lean-formalization/LCH01/integration-review.json) |
+| [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) | generate | 20义务 | [合同](lean-formalization/LCH02/contract.json) · [参考](lean-formalization/LCH02/reference.md) · [评分](lean-formalization/LCH02/rubric.json) · [题包复核](lean-formalization/LCH02/integration-review.json) |
+| [MG-C003 · OET卷1第3章整章形式化](lean-formalization/MG-C003/candidate/task.md) | generate | 92义务 | [合同](lean-formalization/MG-C003/contract.json) · [参考](lean-formalization/MG-C003/reference.md) · [评分](lean-formalization/MG-C003/rubric.json) · [题包复核](lean-formalization/MG-C003/review.json) · [作者Lean](lean-formalization/MG-C003/formal/COVERAGE.md) |
 
 ## 真实答卷审阅 · 4份
 
@@ -64,8 +54,6 @@
 | [MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级](answer-review/MG-AR003/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR003/group-contract.json) · [参考](answer-review/MG-AR003/reference.md) · [评分](answer-review/MG-AR003/rubric.json) · [题包复核](answer-review/MG-AR003/review.json) |
 | [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR004/group-contract.json) · [参考](answer-review/MG-AR004/reference.md) · [评分](answer-review/MG-AR004/rubric.json) · [题包复核](answer-review/MG-AR004/review.json) |
 
-## 备选卷 · 31份
+旧题和备选题通过Git历史恢复。审阅可用独立清单answer-review-suite.json选择。
 
-[备选目录、主题分类与完整材料](reserve/README.md)集中列出31份书面卷，由显式清单选择。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。
-
-所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。
+所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check`只读核验。

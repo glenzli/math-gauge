@@ -29,7 +29,7 @@ class C003BudgetTests(unittest.TestCase):
     def setUpClass(cls):
         cls.suite = Suite.load(ROOT / "cases")
         cls.old = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
-        cls.future = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile-c003-180.json", cls.suite)
+        cls.future = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
         cls.components = {cid: row["id"] for row in cls.future.data["components"] for cid in row["case_ids"]}
 
     def runtime(self, seconds):
@@ -37,23 +37,14 @@ class C003BudgetTests(unittest.TestCase):
         runtime["budget"]["timeout_seconds"] = seconds
         return runtime
 
-    def test_profile_projection_preserves_mathematics_and_historical_budgets(self):
-        binding = self.future.data["future_budget_variant"]["source_profile"]
-        self.assertEqual(binding, {"path": "protocol/benchmark-profile.json", "sha256": self.old.sha256})
-        self.assertEqual(digest_bytes(self.old.path.read_bytes()), self.old.sha256)
-        for key in ("suite", "components", "overall_weights", "attempt_schedule", "score_policy",
-                    "reliability", "supplement_policy"):
-            self.assertEqual(self.future.data[key], self.old.data[key], key)
+    def test_current_profile_freezes_each_lean_budget(self):
+        self.assertEqual(digest_bytes(self.future.path.read_bytes()), self.future.sha256)
         for cid in self.suite.cases:
-            old = declared_case_timeout_seconds(self.old.data, cid)
-            future = declared_case_timeout_seconds(self.future.data, cid)
-            self.assertEqual(future, 10800 if cid == "MG-C003" else old, cid)
-        self.assertEqual(declared_case_timeout_seconds(self.old.data, "MG-C003"), 5400)
-        self.assertIsNone(declared_case_timeout_seconds(self.future.data, "MG-GP001"))
-        old_plan = build_plan(self.old, self.suite)
-        new_plan = build_plan(self.future, self.suite)
-        for key in ("case_index", "slots", "planned", "reliability"):
-            self.assertEqual(new_plan[key], old_plan[key], key)
+            seconds = declared_case_timeout_seconds(self.future.data, cid)
+            self.assertEqual(seconds, 10800 if cid == "MG-C003" else 5400 if cid in
+                {"AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"} else None, cid)
+        self.assertNotIn("future_budget_variant", self.future.data)
+        self.assertEqual(self.future.data["standard_version"], "0.6.0")
 
     def test_only_the_versioned_c003_override_is_accepted(self):
         validate_case_execution_policy(self.future.data, self.components)

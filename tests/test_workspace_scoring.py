@@ -12,6 +12,7 @@ from math_gauge.catalog import Suite, digest_bytes
 from math_gauge.scoring import (public_score_projection, score_inputs,
                                 source_qualified_workspace_score)
 from test_scoring import fixture_rows
+from benchmark_fixtures import arithmetic_source_plan
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = {"model_label": "offline-workspace-fixture", "budget": {"timeout_seconds": 5400},
@@ -22,9 +23,7 @@ RUNTIME = {"model_label": "offline-workspace-fixture", "budget": {"timeout_secon
 class WorkspaceScoringTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        suite = Suite.load(ROOT / "cases")
-        cls.plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite),
-                              suite, runtime=RUNTIME)
+        cls.plan = arithmetic_source_plan(RUNTIME)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

@@ -1,0 +1,12 @@
+import OperatorLocalDegeneracy.ComponentPartition
+
+#print axioms OperatorLocalDegeneracy.prop_3_1_i
+#print axioms OperatorLocalDegeneracy.prop_3_1_ii
+#print axioms OperatorLocalDegeneracy.prop_3_1_iii
+#print axioms OperatorLocalDegeneracy.prop_3_2_i
+#print axioms OperatorLocalDegeneracy.prop_3_2_ii
+#print axioms OperatorLocalDegeneracy.prop_3_2_iii
+#print axioms OperatorLocalDegeneracy.remark_3_2_counterexample
+#print axioms OperatorLocalDegeneracy.prop_3_3_i
+#print axioms OperatorLocalDegeneracy.prop_3_3_ii_counterexample
+#print axioms OperatorLocalDegeneracy.cor_3_4

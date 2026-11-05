@@ -1,0 +1,151 @@
+{
+  "schema": "math-gauge.bounded-peer-semantic-check/v1",
+  "reviewer": "independent-ai-terra-hch02-auditor",
+  "reviewer_kind": "ai",
+  "generated_at": "2026-11-05T11:57:24.113632+00:00",
+  "case_id": "HCH02",
+  "model": "gemini-3.8-flash-high",
+  "slot_id": "HCH02:A1",
+  "source_kind": "original-sealed-engineering",
+  "source_repaired": false,
+  "new_candidate_calls": 0,
+  "compilation_rerun": false,
+  "scope": "Bounded independent source check of D05/P12/P13/P16/P17 only; other35 obligations are not independently re-reviewed here.",
+  "primary_review": {
+    "path": "/private/tmp/math-gauge-engineering-reaudit-20261105/gemini-hch02/review.json",
+    "bytes": 216210,
+    "sha256": "01d60fb92f14dd1cbeea1caa5057a898fa42215a8213b7bf9c0dfd010c4d9ca8"
+  },
+  "source": {
+    "path": "/private/tmp/math-gauge-engineering-reaudit-20261105/gemini-hch02/sources/Main.lean",
+    "bytes": 47073,
+    "sha256": "11538288a8b765720faf8ee490dc591d1fbae98555896a0cd92a3864be618204"
+  },
+  "original_sealed_source": {
+    "path": "/private/tmp/math-gauge-v06-closed-archives-20261105-01a1a43a/gemini-eight-a1/snapshot/gemini/jobs/HCH02-A1/actual-project/Main.lean",
+    "bytes": 47073,
+    "sha256": "11538288a8b765720faf8ee490dc591d1fbae98555896a0cd92a3864be618204"
+  },
+  "source_bytes_match_sealed": true,
+  "original_mapping_preserved": true,
+  "reply_source_not_used": true,
+  "items": [
+    {
+      "id": "HC02-D05",
+      "decision": "pass",
+      "agrees_with_primary_review": true,
+      "source_lines": [
+        478,
+        571
+      ],
+      "declarations": [
+        "formal_oet.vol_01.ch_02_operator_bounds.evalChain",
+        "formal_oet.vol_01.ch_02_operator_bounds.intermediateSets",
+        "formal_oet.vol_01.ch_02_operator_bounds.chain_image_eq",
+        "formal_oet.vol_01.ch_02_operator_bounds.dom_sub_of_comp_sub",
+        "formal_oet.vol_01.ch_02_operator_bounds.intermediateSets_length",
+        "formal_oet.vol_01.ch_02_operator_bounds.each_step_dom",
+        "formal_oet.vol_01.ch_02_operator_bounds.LipStepChain",
+        "formal_oet.vol_01.ch_02_operator_bounds.CoLipStepChain"
+      ],
+      "reason": "evalChain applies the list head first and the tail later; intermediateSets uses precisely the image of the current input. chain_image_eq proves the last successive image is the full composite image. each_step_dom derives all indexed actual input-domain inclusions from U⊆dom(total). LipStepChain.cons/CoLipStepChain.cons are actual constructors accepting only the head local certificate and a tail on its actual image, with the chosen operator/matrix lists in their result indices. No final composite bound is a field. This direct inductive representation is constructible from original finite step data and does not need a redundant same-name wrapper to be accepted.",
+      "boundary": "CoLipStepChain.nil requires nonempty terminal input for the zero-step base. In any nonempty original co-Lip chain, the last input is nonempty by its head certificate, so its image is nonempty by Set.Nonempty.image. This is available background and is not an extra mathematical assumption."
+    },
+    {
+      "id": "HC02-P12",
+      "decision": "pass",
+      "agrees_with_primary_review": true,
+      "source_lines": [
+        580,
+        592
+      ],
+      "declarations": [
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_chain_bound"
+      ],
+      "reason": "The theorem genuinely inducts on the direct step-data chain. Its conclusion is LipMatrix d (evalChain bot ϕs) U1 (chainMatrix Ls), with the selected chronological product. The tail actual-domain premise is derived by dom_sub_of_comp_sub and the tail bound by induction, then lip_matrix_comp composes them. It covers arbitrary finite length, including the stronger zero-step boundary. The chain assumption encodes original local hypotheses rather than the desired conclusion."
+    },
+    {
+      "id": "HC02-P13",
+      "decision": "pass",
+      "agrees_with_primary_review": true,
+      "source_lines": [
+        594,
+        606
+      ],
+      "declarations": [
+        "formal_oet.vol_01.ch_02_operator_bounds.colip_chain_bound"
+      ],
+      "reason": "The separate induction proves the actual selected co-Lip chainMatrix lower certificate on the full composite. Its base uses the explicit nonempty unit certificate; each cons uses only the real head lower certificate and the inductively proved tail lower certificate on the actual image. The local CoLipMatrix predicates include nonemptiness. No upper-bound replacement or final-bound certificate is used."
+    },
+    {
+      "id": "HC02-P16",
+      "decision": "incomplete",
+      "agrees_with_primary_review": true,
+      "source_lines": [
+        646,
+        687
+      ],
+      "declarations": [
+        "formal_oet.vol_01.ch_02_operator_bounds.pathWeightSum",
+        "formal_oet.vol_01.ch_02_operator_bounds.chainMatrix_one_eq_weightSum",
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_chainMatrix_zero_iff",
+        "formal_oet.vol_01.ch_02_operator_bounds.lip_one_zero_iff"
+      ],
+      "reason": "Despite its name, lip_chainMatrix_zero_iff has pathWeightSum Ls n i j=0 as its actual left side. It proves the finite path-sum zero criterion, not the selected chainMatrix product criterion. n is an independent parameter, with no n=Ls.length bridge. The only delivered correspondence is chainMatrix_one_eq_weightSum for [M],n=1, and the actual one-step product theorem is valid. Entire-source occurrence inspection found no arbitrary positive-length product/path-sum equality or equivalent direct product zero proof.",
+      "valid_partial_content": [
+        "all-path finite-sum/finite-product zero criterion",
+        "n=1 actual matrix product criterion"
+      ],
+      "missing": "For every nonempty matrix list Ms, connect chainMatrix Ms i j to pathWeightSum Ms Ms.length i j, or directly prove the required zero iff for chainMatrix."
+    },
+    {
+      "id": "HC02-P17",
+      "decision": "incomplete",
+      "agrees_with_primary_review": true,
+      "source_lines": [
+        696,
+        725
+      ],
+      "declarations": [
+        "formal_oet.vol_01.ch_02_operator_bounds.colip_chainMatrix_pos_iff",
+        "formal_oet.vol_01.ch_02_operator_bounds.colip_one_pos_iff"
+      ],
+      "reason": "The actual positivity theorem likewise refers to independently defined pathWeightSum, not chainMatrix. Its finite sum/product positivity proof and the n=1 actual product theorem are valid. It shares the absent arbitrary-length product/path-sum correspondence, so the requested actual co-Lip product positivity iff remains unproved. This is a semantic coverage gap, not a compilation failure or a false intended theorem.",
+      "valid_partial_content": [
+        "existence of an all-positive path iff finite path sum positive",
+        "n=1 actual matrix product criterion"
+      ],
+      "missing": "The same arbitrary-n actual product/path representation bridge, or an equivalent direct proof for chainMatrix."
+    }
+  ],
+  "summary": {
+    "checked_ids": [
+      "HC02-D05",
+      "HC02-P12",
+      "HC02-P13",
+      "HC02-P16",
+      "HC02-P17"
+    ],
+    "passed_within_scope": [
+      "HC02-D05",
+      "HC02-P12",
+      "HC02-P13"
+    ],
+    "incomplete_within_scope": [
+      "HC02-P16",
+      "HC02-P17"
+    ],
+    "unknown_within_scope": [],
+    "additional_missing_targets_among_checked_interfaces": [],
+    "primary_proposed_total": 38,
+    "total_denominator": 40,
+    "primary_proposed_incomplete_ids": [
+      "HC02-P16",
+      "HC02-P17"
+    ],
+    "agrees_with_primary_proposed_total_within_scope": true
+  },
+  "human_approval": false,
+  "human_review": "pending",
+  "formal_comparison_eligibility_inferred": false
+}

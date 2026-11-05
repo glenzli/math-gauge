@@ -22,13 +22,11 @@ DOCUMENT = "cases/by-focus.md"
 INDEX = "cases/README.md"
 OUTPUTS = (CATALOG, DOCUMENT, INDEX)
 FOCUS_IDS = tuple(f"F{n:02}" for n in range(1, 10))
-SUITES = (("default", "cases/suite.json"), ("reserve", "cases/reserve-suite.json"))
+SUITES = (("default", "cases/suite.json"),)
 SUITE_ROOTS = tuple(manifest for _, manifest in SUITES)
 CATEGORIES = (
     ("proofs", "书面证明、反例与构造"),
     ("lean-audit", "Lean 语义审计"),
-    ("lean-construction", "Lean 生成与修复"),
-    ("chapters", "整章形式化"),
     ("lean-formalization", "大Lean形式化梯度"),
     ("answer-review", "真实答卷审阅"),
 )
@@ -187,8 +185,6 @@ def load_sources(root: Path, taxonomy: dict) -> tuple[list, dict]:
                   "suite_sha256": suite.sha256, "paper_count": len(suite.cases)}
                  for membership, manifest, suite in suites]
     require(declared == summaries, "cases: suite drift; review before rebinding")
-    require(not (set(suites[0][2].cases) & set(suites[1][2].cases)),
-            "Default and reserve suites must not overlap")
     sources = {}
     for membership, suite_manifest, suite in suites:
         for manifest in suite.metadata["cases"]:
@@ -240,7 +236,7 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
     lines = [
         "# 按考察重点选卷",
         "",
-        f"本目录覆盖默认{counts['default_papers']}份任务与后备{counts['reserve_papers']}份，共{counts['papers']}条相关记录：{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅。默认任务关联{counts['default_parent_families']}个母题家族。数学默认集含{counts['default_obligations']}项阶段或章节义务，后备含{counts['reserve_obligations']}项。另有{counts.get('proof_criteria', 0)}项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。",
+        f"本目录覆盖当前{counts['papers']}份相关任务：{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅。默认任务关联{counts['default_parent_families']}个母题家族。当前数学任务含{counts['default_obligations']}项阶段或章节义务。另有{counts.get('proof_criteria', 0)}项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。",
         "",
         "分类是AI审查建议；源题全部仍为 **draft / human pending**。本目录不产生模型调用、数学裁定或新增判卷要求，也不证明作者或候选Lean覆盖。完整要求以唯一题面和合同为准。",
         "",
@@ -297,8 +293,8 @@ def render_index(catalog: dict) -> str:
     counts = catalog["counts"]
     suite_version = next(item["version"] for item in catalog["suites"] if item["membership"] == "default")
     lines = ["# 当前试卷", "",
-             f"{suite_version}默认题集 `cases/suite.json` 含{counts['default_papers']}份相关任务，关联{counts['default_parent_families']}个母题家族。另{counts['reserve_papers']}份后备数学卷由 `cases/reserve-suite.json` 显式选择。完整题库含{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅，共{counts['default_obligations'] + counts['reserve_obligations']}项阶段或章节义务，另有{counts.get('proof_criteria', 0)}项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。", "",
-             "材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review-pilot.md)与[当前结果](../docs/benchmark-comparison-2026-11-03.md)。已发布资产保持原样。", "",
+             f"{suite_version}默认题集 `cases/suite.json` 含{counts['default_papers']}份相关任务，关联{counts['default_parent_families']}个母题家族。完整题库含{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅，共{counts['default_obligations'] + counts['reserve_obligations']}项阶段或章节义务，另有{counts.get('proof_criteria', 0)}项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。", "",
+             "材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review.md)与[当前结果](../docs/results.md)。已发布资产保持原样。", "",
              "题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。", "",
              "[按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)"]
     for category in catalog["categories"]:
@@ -312,15 +308,16 @@ def render_index(catalog: dict) -> str:
             folder = os.path.relpath(str(Path(paths["case"]).parent), "cases")
             count, unit = assessment_label(entry)
             contract_link = os.path.relpath(paths["contract"], "cases")
-            extra = "" if entry["kind"] in {"answer_review", "written_proof"} else f" · [作者Lean]({folder}/formal/COVERAGE.md)"
+            extra = (f" · [作者Lean]({folder}/formal/COVERAGE.md)"
+                     if entry["source_review"].get("formalization", {}).get("evidence") else "")
+            review_name = "review.json" if (ROOT / paths["case"]).parent.joinpath("review.json").is_file() else "integration-review.json"
             lines.append(f"| [{entry['case_id']} · {entry['title']}]({task}) | "
                          f"{entry['task_kind']} | "
                          f"{count}{unit} | [合同]({contract_link}) · "
                          f"[参考]({folder}/reference.md) · [评分]({folder}/rubric.json) · "
-                         f"[题包复核]({folder}/review.json){extra} |")
-    lines += ["", f"## 备选卷 · {counts['reserve_papers']}份", "",
-              f"[备选目录、主题分类与完整材料](reserve/README.md)集中列出{counts['reserve_papers']}份书面卷，由显式清单选择。审阅另可用[独立清单](answer-review-suite.json)选择，样本相关性与评分见[审阅说明](../docs/answer-review-pilot.md)。", "",
-              "所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check` 只读核验。", ""]
+                         f"[题包复核]({folder}/{review_name}){extra} |")
+    lines += ["", "旧题和备选题通过Git历史恢复。审阅可用独立清单answer-review-suite.json选择。",
+              "", "所有路径和候选输入散列由 `python3 scripts/catalog.py` 从当前合同生成；`--check`只读核验。", ""]
     return "\n".join(lines)
 
 

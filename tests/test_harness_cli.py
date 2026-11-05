@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from benchmark_fixtures import legacy_suite, legacy_root
+from benchmark_fixtures import fixture_suite, fixture_root
 
 from math_gauge.benchmarks import identity, read_plan
 from math_gauge.catalog import Suite, digest_bytes, read_json, write_json
@@ -49,8 +49,8 @@ class HarnessCliTests(unittest.TestCase):
         return output
 
     def export(self, *, frozen=True, extra=None):
-        arguments = ["benchmark-export", "--suite", str(legacy_suite().root),
-                     "--profile", str(legacy_root() / "protocol/benchmark-profile.json"),
+        arguments = ["benchmark-export", "--suite", str(fixture_suite().root),
+                     "--profile", str(fixture_root() / "protocol/benchmark-profile.json"),
                      "--target", "lean-audit", "--out", str(self.bundle)]
         if frozen:
             runtime = self.root / "runtime.json"
@@ -63,7 +63,7 @@ class HarnessCliTests(unittest.TestCase):
         source = self.root / "submission"
         source.mkdir()
         manifest = read_json(self.bundle / "manifest.json")
-        request = candidate_request_from_bundle(self.bundle, "MG-GF101:A1")
+        request = candidate_request_from_bundle(self.bundle, "AHR01:A1")
 
         def original_file(name, raw):
             (source / name).write_bytes(raw)
@@ -72,7 +72,7 @@ class HarnessCliTests(unittest.TestCase):
         data = read_json(self.bundle / "submission-template.json")
         data.update(bundle_sha256=manifest["bundle_sha256"], origin="fixture", fixture_only=True,
                     declared_external_calls=0, slots=[{
-                        "slot_id": "MG-GF101:A1", "projected_request": request,
+                        "slot_id": "AHR01:A1", "projected_request": request,
                         "attempts": [{"number": 1, "status": "ok", "exit_code": 0,
                                       "response": original_file("answer.txt", answer),
                                       "stderr": original_file("stderr.txt", b""),
@@ -84,7 +84,7 @@ class HarnessCliTests(unittest.TestCase):
 
     def import_arguments(self, submission, output):
         return ["benchmark-import", "--bundle", str(self.bundle), "--input", str(submission),
-                "--plan", str(self.evaluator / "plan.json"), "--suite", str(legacy_suite().root),
+                "--plan", str(self.evaluator / "plan.json"), "--suite", str(fixture_suite().root),
                 "--out", str(output)]
 
     def test_one_command_preparation_and_read_only_check_do_not_need_runtime(self):
@@ -94,11 +94,11 @@ class HarnessCliTests(unittest.TestCase):
         self.assertEqual(summary["candidate_calls"], 0)
         self.assertEqual(summary["evaluator_plan"], str(self.evaluator / "plan.json"))
         self.assertFalse((self.bundle / "plan.json").exists())
-        self.assertEqual(read_plan(self.evaluator / "plan.json")["planned"]["all_slots"], 177)
+        self.assertEqual(read_plan(self.evaluator / "plan.json")["planned"]["all_slots"], 90)
         paths = [p for root in (self.bundle, self.evaluator) for p in root.rglob("*") if p.is_file()]
         before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in paths}
         for extra in ([], ["--plan", str(self.evaluator / "plan.json"),
-                           "--suite", str(legacy_suite().root)]):
+                           "--suite", str(fixture_suite().root)]):
             checked = json.loads(self.succeed(["benchmark-export-check", "--bundle", str(self.bundle), *extra]))
             self.assertEqual(checked["bundle_sha256"], summary["bundle_sha256"])
             self.assertTrue(checked["preparation_only"])
@@ -108,25 +108,25 @@ class HarnessCliTests(unittest.TestCase):
         runtime_path = self.root / "runtime.json"
         write_json(runtime_path, RUNTIME)
         plan_path = self.root / "full-plan.json"
-        self.succeed(["benchmark-plan", "--suite", str(legacy_suite().root),
-                      "--profile", str(legacy_root() / "protocol/benchmark-profile.json"),
+        self.succeed(["benchmark-plan", "--suite", str(fixture_suite().root),
+                      "--profile", str(fixture_root() / "protocol/benchmark-profile.json"),
                       "--target", "all", "--runtime", str(runtime_path), "--out", str(plan_path)])
         before = plan_path.read_bytes()
         second_bundle = self.root / "second-bundle"
         second_evaluator = self.root / "operator-only"
         output = json.loads(self.succeed([
-            "benchmark-export", "--plan", str(plan_path), "--suite", str(legacy_suite().root),
+            "benchmark-export", "--plan", str(plan_path), "--suite", str(fixture_suite().root),
             "--target", "lean-audit", "--out", str(second_bundle),
             "--evaluator-out", str(second_evaluator)]))
         self.assertEqual(output["plan_sha256"], read_plan(plan_path)["plan_sha256"])
-        self.assertEqual(output["planned"]["all_slots"], 177)
-        self.assertEqual(output["planned"]["selected_slots"], 177)
-        self.assertEqual(output["exported_slots"], 18)
+        self.assertEqual(output["planned"]["all_slots"], 90)
+        self.assertEqual(output["planned"]["selected_slots"], 90)
+        self.assertEqual(output["exported_slots"], 4)
         self.assertEqual(plan_path.read_bytes(), before)
         self.assertEqual(read_plan(second_evaluator / "plan.json")["plan_sha256"], output["plan_sha256"])
         invalid = self.root / "invalid"
         result, _, errors = self.invoke([
-            "benchmark-export", "--plan", str(plan_path), "--profile", str(legacy_root() / "protocol/benchmark-profile.json"),
+            "benchmark-export", "--plan", str(plan_path), "--profile", str(fixture_root() / "protocol/benchmark-profile.json"),
             "--out", str(invalid)])
         self.assertEqual(result, 2)
         self.assertIn("--profile", errors)
@@ -149,17 +149,19 @@ class HarnessCliTests(unittest.TestCase):
         self.assertEqual(meta["candidate_calls"], 0)
         self.assertEqual(meta["external_candidate_calls_declared"], 0)
         self.assertTrue(meta["fixture_only"])
-        self.assertEqual(len(meta["unrun_slots"]), 17)
+        self.assertEqual(len(meta["unrun_slots"]), 3)
         self.succeed(["benchmark-check", "--run", str(run)])
         template = self.root / "review.json"
         self.succeed(["benchmark-review-template", "--run", str(run), "--out", str(template)])
-        reviews = [entry for entry in read_json(template) if entry["slot_id"] == "MG-GF101:A1"]
+        reviews = [entry for entry in read_json(template) if entry["slot_id"] == "AHR01:A1"]
         self.assertTrue(reviews)
         for entry in reviews:
             entry.update(reviewer="Offline harness CLI fixture", reviewer_kind="fixture", decision="partial",
                          notes="Synthetic fixture bytes; no model mathematics was assessed.")
             entry["format_review"].update(decision="valid", notes="Offline material transport fixture.")
-            for stage in entry["stages"]:
+            for dim in entry.get("dimensions", []):
+                dim.update(score=0, notes="Synthetic incomplete review dimension; no model mathematics assessed.")
+            for stage in entry.get("stages", []):
                 stage.update(decision="partial", failure_category="mathematical", notes="Synthetic incomplete stage.")
                 stage["math_review"].update(decision="partial", reasons=["candidate_incomplete"],
                                             notes="Fixture does not supply a mathematical argument.")
@@ -177,7 +179,7 @@ class HarnessCliTests(unittest.TestCase):
         self.assertFalse(result["model_result"])
         self.assertIsNone(result["metrics"]["overall"]["exact"])
         self.assertIsNone(result["metrics"]["overall"]["formal_score"])
-        self.assertEqual(legacy_suite().sha256,
+        self.assertEqual(fixture_suite().sha256,
                          read_plan(self.evaluator / "plan.json")["suite"]["sha256"])
 
     def test_tampered_external_source_is_rejected_without_publishing_a_run(self):

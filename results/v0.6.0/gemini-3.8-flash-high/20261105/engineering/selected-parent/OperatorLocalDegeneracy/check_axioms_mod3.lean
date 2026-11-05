@@ -1,0 +1,19 @@
+import OperatorLocalDegeneracy.NullificationRadius
+
+#print axioms OperatorLocalDegeneracy.prop_3_10_01
+#print axioms OperatorLocalDegeneracy.prop_3_10_02
+#print axioms OperatorLocalDegeneracy.prop_3_10_03
+#print axioms OperatorLocalDegeneracy.prop_3_8_i_a
+#print axioms OperatorLocalDegeneracy.prop_3_8_i_b_ptwise
+#print axioms OperatorLocalDegeneracy.prop_3_8_i_b_uniform
+#print axioms OperatorLocalDegeneracy.prop_3_8_ii_counterexample
+#print axioms OperatorLocalDegeneracy.prop_3_9_i
+#print axioms OperatorLocalDegeneracy.prop_3_9_ii
+#print axioms OperatorLocalDegeneracy.prop_3_10_ptwise_min
+#print axioms OperatorLocalDegeneracy.prop_3_10_uniform_min
+#print axioms OperatorLocalDegeneracy.prop_3_10_antimono
+#print axioms OperatorLocalDegeneracy.prop_3_11_fiber_zero
+#print axioms OperatorLocalDegeneracy.prop_3_11_lt_sSup
+#print axioms OperatorLocalDegeneracy.prop_3_11_compose_inst
+#print axioms OperatorLocalDegeneracy.prop_3_12_i
+#print axioms OperatorLocalDegeneracy.prop_3_12_ii

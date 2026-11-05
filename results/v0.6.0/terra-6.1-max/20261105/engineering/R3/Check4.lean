@@ -1,0 +1,10 @@
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+#check le_of_forall_lt
+#check le_of_forall_lt'
+#check exists_eq_ciInf_of_finite
+#check Finset.min'_image
+#check iInf_comm
+#check ENNReal.lt_top_iff_ne_top
+#check Option.some_ne_none
+#check Option.none_ne_some
+#check lt_min

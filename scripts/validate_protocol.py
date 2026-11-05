@@ -44,7 +44,7 @@ ACCEPTANCE_STANDARDS = (
     "releases/v0.1.0/config.json", "releases/v0.1.0/THIRD_PARTY_NOTICES.md",
     "docs/release-consumer-README.md", "docs/release-notes-v0.1.0.md", "LICENSE",
     "releases/v0.2.0/config.json", "releases/v0.2.0/THIRD_PARTY_NOTICES.md",
-    "docs/release-consumer-README-v0.2.0.md", "docs/usage.md",
+    "docs/release-consumer-README-v0.2.0.md", "docs/running.md",
     "cases/suite.json", "cases/reserve-suite.json", "tests/benchmark_fixtures.py",
     "releases/v0.3.0/config.json", "releases/v0.3.0/THIRD_PARTY_NOTICES.md",
     "docs/release-consumer-README-v0.3.0.md",
@@ -414,6 +414,14 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
         except author_evidence.verify.VerificationError as error:
             raise ValueError("Author evidence must validate before protocol refresh: " + str(error)) from error
     suite = Suite.load(root / "cases")
+    if refresh:
+        profile_path = root / plan["profile"]
+        profile_data = read(profile_path)
+        profile_data["suite"] = {"id": suite.metadata["id"], "version": suite.metadata["version"], "sha256": suite.sha256}
+        profile_path.write_bytes(encoded(profile_data))
+        selection["source_suite_sha256"] = suite.sha256
+        (packet / "selection.json").write_bytes(encoded(selection))
+        plan["suites"] = [{"path": "cases", "version": suite.metadata["version"], "sha256": suite.sha256, "cases": len(suite.cases)}]
     profile = BenchmarkProfile.load(root / plan["profile"], suite)
     frozen = build_plan(profile, suite)
     require(profile.data["score_policy"]["repeat_case_ids"] == plan["repeat_case_ids"]
@@ -422,6 +430,9 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
         actual = {cid: check_candidate(suite, case, Path(temporary) / cid,
                                       selected_ids=plan["repeat_case_ids"])
                   for cid, case in suite.cases.items()}
+    if refresh:
+        plan["cases"] = [actual[cid] for cid in suite.cases]
+        (packet / "plan.json").write_bytes(encoded(plan))
     require(plan["cases"] == [actual[cid] for cid in suite.cases], "Planned material identity drift")
     for item in selection["cases"]:
         case = suite.cases[item["case_id"]]

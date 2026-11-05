@@ -109,7 +109,7 @@ class BenchmarkRendererTests(unittest.TestCase):
             self.assertIn("选定7题", content)
             self.assertIn("矩阵任务及两份加强题含新原生初答", content)
             self.assertIn("尚无作者Lean证据", content)
-            self.assertIn("已发布v0.4.0资产保持不可变", content)
+            self.assertIn("既有发布资产保持不可变", content)
             self.assertNotIn("0.4.0综合重算", content)
             self.assertNotIn("0.4.0题库与任务包版本一致", content)
 
