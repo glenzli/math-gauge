@@ -164,5 +164,39 @@ class AuthorEvidenceScopeTests(unittest.TestCase):
         self.assertEqual(before, (self.repo / "verification/author/ledger.json").read_bytes())
 
 
+class CurrentAuthorSelectionTests(unittest.TestCase):
+    def test_selected_six_reuse_the_immutable_twelve_case_ledger(self):
+        path = ROOT / "verification/author/checked-ledger.json"
+        original = path.read_bytes()
+        baseline = formal.V.load(path)
+        before = copy.deepcopy(baseline)
+        layout = formal.V.load(ROOT / "verification/layout.json")
+        counts = formal.E.selected_baseline_counts(ROOT, layout, baseline)
+        self.assertEqual((len(baseline["cases"]), counts["papers"], counts["items"], counts["modules"]),
+                         (12, 6, 122, 160))
+        self.assertEqual(counts["fully_formalized_papers"], 6)
+        self.assertEqual(counts["complete_items"], 122)
+        self.assertEqual(baseline, before)
+        self.assertEqual(path.read_bytes(), original)
+
+    def test_author_selection_rejects_source_drift_and_unknown_retained_ids(self):
+        baseline = formal.V.load(ROOT / "verification/author/checked-ledger.json")
+        original = formal.V.load(ROOT / "verification/layout.json")
+        for mutation in ("source_hash", "source_count", "unknown_case", "implicit_subset"):
+            layout = copy.deepcopy(original)
+            selection = layout["migration"]["current_selection"]
+            if mutation == "source_hash":
+                selection["source_checked_ledger_sha256"] = "0" * 64
+            elif mutation == "source_count":
+                selection["source_checked_case_count"] += 1
+            elif mutation == "unknown_case":
+                layout["case_paths"][0]["id"] = "SYN-UNKNOWN-AUTHOR"
+                selection["retained_case_ids"][0] = "SYN-UNKNOWN-AUTHOR"
+            else:
+                layout["migration"].pop("current_selection")
+            with self.subTest(mutation=mutation), self.assertRaises(formal.V.VerificationError):
+                formal.E.selected_baseline_counts(ROOT, layout, baseline)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -49,7 +49,7 @@ class BenchmarkPlanTests(unittest.TestCase):
             self.assertTrue((self.suite.root / approval["manifest"]).is_file())
 
     def test_historical_source_graph_ignores_unrelated_current_registry_additions(self):
-        registry = read_json(ROOT / "cases/sources.json")
+        registry = read_json(self.suite.root / "sources.json")
         registry["synthetic-future-case-source"] = {"kind": "fixture", "sources": []}
         cited = {source for case in self.suite.cases.values() for source in case["sources"]}
         self.assertEqual(fixture_sources(registry, cited),

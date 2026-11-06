@@ -335,14 +335,14 @@ class EligibilityAcceptanceTests(unittest.TestCase):
                         cases=[name for name in metadata["cases"] if Path(name).parent.name in ids])
         for name in metadata["cases"]:
             directory = Path(name).parent
-            shutil.copytree(ROOT / "cases" / directory, cases_root / directory)
+            shutil.copytree(fixture_root() / "cases" / directory, cases_root / directory)
             if directory.name == cid:
                 case = read_json(cases_root / name)
                 case.update(status="approved", test_fixture_only=True)
                 case["review"]["human"] = "approved"
                 write_json(cases_root / name, case)
         write_json(cases_root / "suite.json", metadata)
-        shutil.copy2(ROOT / "cases/sources.json", cases_root / "sources.json")
+        shutil.copy2(fixture_root() / "cases/sources.json", cases_root / "sources.json")
         suite = Suite.load(cases_root)
         packet = repository / "protocol/reliability"
         for name in ("selection", "prompts", "schedule"):

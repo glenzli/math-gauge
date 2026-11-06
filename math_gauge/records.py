@@ -15,8 +15,8 @@ ASSESSMENTS = {"complete", "incomplete", "uncertain", "not_stated", "not_request
 
 def project_metrics(metrics):
     """Publish numeric aggregates and anonymous coverage, never slot diagnostics."""
-    fields = ("exact", "lower", "upper", "complete", "coverage")
-    return {name: {**{key: copy.deepcopy(value[key]) for key in fields},
+    fields = ("exact", "lower", "upper", "complete", "coverage", "confirmed")
+    return {name: {**{key: copy.deepcopy(value[key]) for key in fields if key in value},
                    "formal_comparison_eligible": False} for name, value in metrics.items()}
 
 
@@ -158,10 +158,81 @@ def project_assessment_score(score):
               "retry_policy_sha256", "retry_admission_sha256")
     result = {key: copy.deepcopy(score[key]) for key in fields if key in score}
     result.update(schema="math-gauge.assessment-score-aggregate/v1", scope="combined-aggregate-only",
-                  private_case_count=3, metrics=project_metrics(score["metrics"]),
+                  private_case_count=score.get("coverage", {}).get("private_tasks", 3), metrics=project_metrics(score["metrics"]),
                   contributions=project_metrics(score["contributions"]), human_review="pending",
                   formal_comparison_eligible=False, new_candidate_calls=0)
     return result
+
+
+def load_theorem_extension_inputs(root, record, *, policy=None):
+    """Bind adopted A1 judgments to original final text and native evidence."""
+    if record.get("theorem_extension_inputs") is None:
+        return None
+    from .theorem_extension import validate_inputs
+    data = json.loads(evidence_bytes(root, record["theorem_extension_inputs"]))
+    selected_policy = data.get("policy") if policy is None else policy
+    if data.get("policy") != selected_policy:
+        raise ValueError("Research answers bind a different selected scoring contract")
+    validate_inputs(data, selected_policy)
+    cases = {case["case_id"]: case for case in data["case_index"]}
+    for row in data["slots"]:
+        if row["status"] == "not_run":
+            continue
+        if row["status"] == "delivery_failed":
+            execution = json.loads(evidence_bytes(root, row["execution"]))
+            if execution.get("status") == "completed":
+                raise ValueError("A completed research delivery cannot be relabeled as missing")
+            continue
+        raw = evidence_bytes(root, row["response"])
+        task = evidence_bytes(root, row["original_input"])
+        review = json.loads(evidence_bytes(root, row["review"]))
+        execution = json.loads(evidence_bytes(root, row["execution"]))
+        if (review.get("stage") != "A1" or review.get("B") != row["baseline_B"]
+                or review.get("R") != row["research_R"]
+                or review.get("answer_sha256") != hashlib.sha256(raw).hexdigest()
+                or row.get("invited_answer_used") is not False
+                or execution.get("kind") != "math" or execution.get("status") != "completed"
+                or execution.get("exit_code") != 0 or execution.get("request_count") != 1
+                or execution.get("tool_events") != [] or execution.get("tool_mismatch") is not None):
+            raise ValueError("Research score differs from its original A1 review or execution")
+        if (hashlib.sha256(task).hexdigest() != cases[row["case_id"]]["task_sha256"]
+                or row.get("source_prompt_sha256") != cases[row["case_id"]]["task_sha256"]):
+            raise ValueError("Research answer was submitted for a different original task")
+        declaration = row.get("self_assessment", {})
+        if declaration.get("origin") == "original_excerpt":
+            start, end = declaration.get("utf8_start"), declaration.get("utf8_end")
+            if (type(start) is not int or type(end) is not int or not 0 <= start < end <= len(raw)
+                    or raw[start:end].decode("utf-8") != declaration.get("excerpt")):
+                raise ValueError("Research self-assessment excerpt differs from the original response")
+        for item in row.get("artifacts", []):
+            evidence_bytes(root, item)
+    return data
+
+
+def validate_public_theorem_extension(root, record):
+    """Check public A1 evidence without publishing companion case identities."""
+    if record.get("theorem_extension_evidence") is None:
+        return None
+    from .theorem_extension import PUBLIC_CASE_IDS
+    data = json.loads(evidence_bytes(root, record["theorem_extension_evidence"]))
+    if (data.get("schema") != "math-gauge.theorem-extension-public-evidence/v1"
+            or data.get("attempt_labels") != ["A1"] or data.get("research_invitation_included") is not False
+            or data.get("public_cases") != 2 or data.get("private_cases") != 3
+            or data.get("formal_comparison_eligible") is not False):
+        raise ValueError("Invalid public theorem-extension evidence projection")
+    rows = data.get("records", [])
+    if len({r["case_id"] for r in rows}) != len(rows):
+        raise ValueError("Repeated public research answer")
+    for row in rows:
+        if row.get("case_id") not in PUBLIC_CASE_IDS or row.get("attempt_label") != "A1":
+            raise ValueError("Private case or invited answer entered public research records")
+        raw = evidence_bytes(root, row["response"])
+        review = json.loads(evidence_bytes(root, row["review"]))
+        if (review.get("stage") != "A1" or review.get("B") != row.get("baseline_B")
+                or review.get("R") != row.get("research_R")
+                or review.get("answer_sha256") != hashlib.sha256(raw).hexdigest()):
+            raise ValueError("Public research review is not bound to the original answer")
+    return data
 
 
 def load_assessment_results(root, record, *, mode="partial", public_root=None):
@@ -177,7 +248,7 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     evidence_root = Path(public_root).resolve() if external else root
     assessment_raw = evidence_bytes(evidence_root, record["assessment_policy"])
     strict_raw = evidence_bytes(evidence_root, record["strict_scoring_policy"])
-    validate_assessment_policy(json.loads(assessment_raw))
+    assessment = validate_assessment_policy(json.loads(assessment_raw))
     validate_strict_assessment_policy(json.loads(strict_raw))
     sources = record.get("strict_results" if mode == "strict" else "assessment_results", {})
     if set(sources) != {"single_attempt", "nonlogical_retry_3"}:
@@ -189,7 +260,7 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
         if (score.get("schema") != ("math-gauge.assessment-score/v1" if external else
                                     "math-gauge.assessment-score-aggregate/v1")
                 or score.get("benchmark_version") != record["benchmark_version"]
-                or score.get("scoring_method_version") != "0.5.0"
+                or score.get("scoring_method_version") != assessment["version"]
                 or score.get("strict_method_version") != "0.2.0"
                 or score.get("score_mode") != mode or score.get("primary_metric") != "earned"
                 or score.get("attempt_condition") != condition
@@ -208,6 +279,9 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             expected = {"scoring_inputs_sha256": root / filename,
                         "source_math_policy_sha256": root / "scoring-policy.json",
                         "alignment_review_sha256": alignment}
+            if record.get("theorem_extension_inputs") is not None:
+                research = load_theorem_extension_inputs(root, record, policy=assessment.get("theorem_extension"))
+                expected["theorem_extension_inputs_sha256"] = root / record["theorem_extension_inputs"]["path"]
             if any(bindings.get(key) != hashlib.sha256(path.read_bytes()).hexdigest()
                    for key, path in expected.items()):
                 raise ValueError("Current score binds different source judgments")
@@ -435,6 +509,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
             raise ValueError("Invalid reviewed obligation counts")
     for item in record.get("evidence", []):
         evidence_bytes(root, item)
+    load_theorem_extension_inputs(root, record)
+    validate_public_theorem_extension(root, record)
     if record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:

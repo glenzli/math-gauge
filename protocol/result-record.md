@@ -29,7 +29,7 @@
 
 逐轮记录父节点、原始答复、KEEP/FULL、继承主体、工程快照、入口与实际 import 闭包、对齐表、封卷原因和时刻。四道形式化题统一以选定初答阶段的封卷归档工程评分；回复内源码与工程分别留存，二者有差异时不拼接或择优。
 
-`reviews/formalization.json`逐题绑定原响应散列、冻结题目合同、封卷清单、源码、允许的前置材料、编译及公理审计和逐项语义判断。通过项须指向审计中真实存在的声明；评审者对应与模型原对齐表分别标记。原数学审核绑定该审核文件和来源政策0.4.0，当前分类聚合另绑定0.5.0，原始逐槽评审保留，工程复核另列。私有合并记录可用`formalization_evidence_location: public_archive`显式引用同模型同记录号的公开工程审核，核验时必须由调用者提供公开根目录，不允许档案路径自行跨仓库读取。
+`reviews/formalization.json`逐题绑定原响应散列、冻结题目合同、封卷清单、源码、允许的前置材料、编译及公理审计和逐项语义判断。通过项须指向审计中真实存在的声明；评审者对应与模型原对齐表分别标记。原数学审核绑定该审核文件和来源政策0.4.0，当前分类聚合另绑定0.6.0，原始逐槽评审保留，工程复核另列。私有合并记录可用`formalization_evidence_location: public_archive`显式引用同模型同记录号的公开工程审核，核验时必须由调用者提供公开根目录，不允许档案路径自行跨仓库读取。
 
 每轮审核分别报告：执行终态、交付完整性、原字节编译及公理检查、数学完成度、语义对应、自评准确性、修复与回退。审核结论绑定具体字节并注明 AI/human/fixture；AI 审核、编译证据和人工批准分别记录。未审核不填为错误或通过。
 
@@ -57,12 +57,20 @@
 
 ## 当前分类、分项与Strict结果
 
-默认26公开／29合并A1，另三轮Lean自查；旧输入中的A2和书面分支只保留为来源，不占当前分。公私统一书面35／Lean35／研究30，研究0题，当前可测70分。两个模式均以metrics.earned表示已获分／100；metrics.overall.exact=null，完整总分以未知30分区间报告。建设中与模型失败分别标识，不发布独立公有总分。
+默认22公开／28合并A1，另三轮Lean自查；旧输入中的A2和书面分支只保留为来源，不占当前分。公私统一书面35／Lean35／研究30；命题拓展公2／私3已建，当前已建80分，背景核查和研究稿完善20分待建。两个模式以metrics.earned.confirmed表示已核实贡献／100；有未测题时earned.exact为null，metrics.overall.exact仍为null。完整区间保留未测项的可能得分与扣分及待建20分。建设中、未测与模型失败分别标识，不发布独立公有总分。
 
-`record.json`以`assessment_policy`绑定当前聚合0.5.0，`strict_scoring_policy`绑定Strict0.2.0；`assessment_results`与`strict_results`均包含single_attempt／nonlogical_retry_3两个安全文件描述符。来源`scoring-policy.json`保持0.4.0以核验旧数学审核，不改旧审核散列。新报告分别绑定原计分输入、原数学政策、对齐审核、工程审核和两个当前政策；公开投影另绑定私有完整报告散列。
+`record.json`以`assessment_policy`绑定当前聚合0.6.0，`strict_scoring_policy`绑定Strict0.2.0；`assessment_results`与`strict_results`均包含single_attempt／nonlogical_retry_3两个安全文件描述符。来源`scoring-policy.json`保持0.4.0以核验旧数学审核，不改旧审核散列。新报告分别绑定原计分输入、原数学政策、对齐审核、工程审核和两个当前政策；公开投影另绑定私有完整报告散列。
 
 公开档案保存combined-aggregate.json、retry-combined-aggregate.json、strict-combined-aggregate.json、strict-retry-combined-aggregate.json；私有保存result.json、retry-result.json、strict-result.json、strict-retry-result.json。旧公有独立result.json不再作为当前结果留存。完整报告包含逐题A1与来源、家族聚合、三轮自查及Strict整轨迹判定；公开只保留合并聚合、安全覆盖、公开工程摘要和源散列，不含私有题号、原答或逐题判断。
 
 Strict对单题及整段Lean自查分别二值计分，全部实质要求满足才通过，没有百分数门槛。三轮自查独占10分，不能以最终完成自动抵消前面误报和回退；后续工程不回填初答。原始自报、逐项审核和执行资格保持独立，不以新聚合覆盖旧事实。
 
 重建使用公有共享评分器与scripts/score_current_records.py；公私四视图需独立验证相同来源、两种条件、固定分母及精确公有投影。页面仅读取contributions与metrics，不能自行重配权重。当前人审pending、正式比较资格false，方法变化不构成新候选调用或新人工批准。
+
+## 命题拓展原答与独立探索
+
+当前正式流程只有无提示A1，不因是否提出额外成果而触发研究邀请。私有record通过theorem_extension_inputs绑定固定五题、原题B、研究R、基础扣分规则及A1原答／复核／原生执行证据；公有record的theorem_extension_evidence只保存两道公有题的原答与来源，私有明细不外投。来源旧scoring-inputs、模型原文与0.4.0审核不改写。
+
+分项研究比例为(R−D)/3，B0/B1/B2的D分别2/1/0；Strict要求B2且R3。R=0不能自行推定原题做错；已知无最终交付为交付失败0，B不判，不加数学错误扣分。未测保持未知。metrics.earned.confirmed只合计已核实贡献，未测不记0为失败，完整总分区间仍保留可能得分／扣分及待建权重。
+
+先前额外A2在私库studies下单列非计分研究清单，引用原输入、原答和父答卷的精确散列；不得混入正式slots、重跑选择或Strict评审。Terra源环境的15次无答卷路由失败完整保留，修复批次首答复用不认证全程一次成功。

@@ -66,6 +66,6 @@ P_1=\sum_{j=0}^{N-1}t^j+t^NP_{N+1}.
 
 接受有证据的整体肯定，并允许以上编辑建议。不能因证明与参考不同、没有为整个核选择统一指数、S5 的过渡不满射，或没有补做未要求的非交换存在证明而判错。也不能仅凭过去的通过标签肯定答卷。
 
-母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GR104/reference.md](../../proofs/MG-GR104/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
+母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GR104/reference.md](https://github.com/glenzli/math-gauge/blob/292c26709785836c27a847cdf113fda4f34f5af7/cases/proofs/MG-GR104/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
 
 评分与当前执行状态以 [rubric.json](rubric.json)、[group-contract.json](group-contract.json) 及 [review.json](review.json) 为准；统一标准见[答卷审阅评分](../../../protocol/answer-review-scoring.md)。

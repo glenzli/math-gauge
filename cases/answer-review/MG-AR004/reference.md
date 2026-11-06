@@ -63,6 +63,6 @@ S1 的错误附加说明不抹去等化子证明。S5 的错误分离性却被�
 
 至少区分原定理真假与所交证明有效性，定位全局单射/分离性错误并给合法反例，说明错误在比较图中的实际用途，同时正确保留其他阶段。局部化反例及点集归纳边界是另外的重要发现。对引文有疑问应报告准确条件或待核验项，不能仅凭编号看起来陌生就断言定理不存在。
 
-母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GP003/reference.md](../../proofs/MG-GP003/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
+母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GP003/reference.md](https://github.com/glenzli/math-gauge/blob/292c26709785836c27a847cdf113fda4f34f5af7/cases/proofs/MG-GP003/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
 
 评分与当前执行状态以 [rubric.json](rubric.json)、[group-contract.json](group-contract.json) 及 [review.json](review.json) 为准；统一标准见[答卷审阅评分](../../../protocol/answer-review-scoring.md)。

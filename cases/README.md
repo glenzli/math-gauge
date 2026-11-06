@@ -1,6 +1,6 @@
 # 当前试卷
 
-0.6.0默认题集 `cases/suite.json` 含26份相关任务，关联18个母题家族。完整题库含22份数学卷与4份真实答卷审阅，共226项阶段或章节义务，另有15项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
+0.6.0默认题集 `cases/suite.json` 含22份相关任务，关联18个母题家族。完整题库含18份数学卷与4份真实答卷审阅，共190项阶段或章节义务，另有21项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
 
 材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review.md)与[当前结果](../docs/results.md)。已发布资产保持原样。
 
@@ -12,36 +12,30 @@
 
 | 大类 | 子类 | 权重 | 公有题 | 私有题 | 状态 |
 |---|---|---:|---:|---:|---|
-| 书面证明（35%） | 书面论证 | 25% | 14 | 3 | 当前计分 |
+| 书面证明（35%） | 书面论证 | 25% | 8 | 3 | 当前计分 |
 | 书面证明（35%） | 论证审阅 | 10% | 4 | 0 | 当前计分 |
 | Lean（35%） | 语义审计 | 10% | 4 | 0 | 当前计分 |
 | Lean（35%） | 形式化 | 15% | 4 | 0 | 当前计分 |
 | Lean（35%） | 对齐自查 | 10% | 复用1题/3轮 | 0 | 当前计分 |
 | 数学研究（30%） | 背景核查 | 10% | 0 | 0 | 建设中 |
 | 数学研究（30%） | 研究稿完善 | 10% | 0 | 0 | 建设中 |
-| 数学研究（30%） | 命题拓展 | 10% | 0 | 0 | 建设中 |
+| 数学研究（30%） | 命题拓展 | 10% | 2 | 3 | 当前计分 |
 
-当前26道公有与3道私有题合并评测，已建权重70/100；研究30分预留，不重新归一化，也不计为模型答错。私有三题并入书面论证，仅公布数量与聚合。自查复用整章题，不另增题目或独立家族。
+当前22道公有与6道私有题合并评测，已建权重80/100；其余20分预留，不重新归一化，也不计为模型答错。原私有探索三题并入书面论证；命题拓展另含公有2题、私有3题，仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。
 
 
-## 书面论证 · 14份
+## 书面论证 · 8份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) | written | 6阶段 | [合同](proofs/MG-GP001/contract.json) · [参考](proofs/MG-GP001/reference.md) · [评分](proofs/MG-GP001/rubric.json) · [题包复核](proofs/MG-GP001/review.json) · [作者Lean](proofs/MG-GP001/formal/COVERAGE.md) |
 | [MG-GP002 · Fourier 逆、截断误差与参数边界](proofs/MG-GP002/task.md) | written | 6阶段 | [合同](proofs/MG-GP002/contract.json) · [参考](proofs/MG-GP002/reference.md) · [评分](proofs/MG-GP002/rubric.json) · [题包复核](proofs/MG-GP002/review.json) · [作者Lean](proofs/MG-GP002/formal/COVERAGE.md) |
-| [MG-GP003 · 半局部邻域、下降与层化的依赖比较](proofs/MG-GP003/task.md) | written | 6阶段 | [合同](proofs/MG-GP003/contract.json) · [参考](proofs/MG-GP003/reference.md) · [评分](proofs/MG-GP003/rubric.json) · [题包复核](proofs/MG-GP003/review.json) · [作者Lean](proofs/MG-GP003/formal/COVERAGE.md) |
-| [MG-GR002 · 线性记录、有限观测与原空间恢复](proofs/MG-GR002/task.md) | written | 6阶段 | [合同](proofs/MG-GR002/contract.json) · [参考](proofs/MG-GR002/reference.md) · [评分](proofs/MG-GR002/rubric.json) · [题包复核](proofs/MG-GR002/review.json) · [作者Lean](proofs/MG-GR002/formal/COVERAGE.md) |
 | [MG-GR005 · 凸成本记录、紧性与闭上图恢复](proofs/MG-GR005/task.md) | written | 6阶段 | [合同](proofs/MG-GR005/contract.json) · [参考](proofs/MG-GR005/reference.md) · [评分](proofs/MG-GR005/rubric.json) · [题包复核](proofs/MG-GR005/review.json) · [作者Lean](proofs/MG-GR005/formal/COVERAGE.md) |
-| [MG-GR008 · 塔记录的表示、有限层延拓与自然变换](proofs/MG-GR008/task.md) | written | 6阶段 | [合同](proofs/MG-GR008/contract.json) · [参考](proofs/MG-GR008/reference.md) · [评分](proofs/MG-GR008/rubric.json) · [题包复核](proofs/MG-GR008/review.json) · [作者Lean](proofs/MG-GR008/formal/COVERAGE.md) |
 | [MG-GR009 · 群作用下降、稳定子与基底检验](proofs/MG-GR009/task.md) | written | 6阶段 | [合同](proofs/MG-GR009/contract.json) · [参考](proofs/MG-GR009/reference.md) · [评分](proofs/MG-GR009/rubric.json) · [题包复核](proofs/MG-GR009/review.json) · [作者Lean](proofs/MG-GR009/formal/COVERAGE.md) |
-| [MG-GR010 · 探针映射空间与连续性层级](proofs/MG-GR010/task.md) | written | 6阶段 | [合同](proofs/MG-GR010/contract.json) · [参考](proofs/MG-GR010/reference.md) · [评分](proofs/MG-GR010/rubric.json) · [题包复核](proofs/MG-GR010/review.json) · [作者Lean](proofs/MG-GR010/formal/COVERAGE.md) |
-| [MG-GR014 · 线性关系、坐标纤维与无限赋值](proofs/MG-GR014/task.md) | written | 6阶段 | [合同](proofs/MG-GR014/contract.json) · [参考](proofs/MG-GR014/reference.md) · [评分](proofs/MG-GR014/rubric.json) · [题包复核](proofs/MG-GR014/review.json) · [作者Lean](proofs/MG-GR014/formal/COVERAGE.md) |
 | [MG-GR021 · 同时分块与二次扩张上的下降](proofs/MG-GR021/task.md) | written | 5评审判准 | [合同](proofs/MG-GR021/contract.json) · [参考](proofs/MG-GR021/reference.md) · [评分](proofs/MG-GR021/rubric.json) · [题包复核](proofs/MG-GR021/review.json) |
 | [MG-GR022 · 对角呈示的完成与商拓扑](proofs/MG-GR022/task.md) | written | 5评审判准 | [合同](proofs/MG-GR022/contract.json) · [参考](proofs/MG-GR022/reference.md) · [评分](proofs/MG-GR022/rubric.json) · [题包复核](proofs/MG-GR022/review.json) |
 | [MG-GR023 · 有限测试记录与群作用](proofs/MG-GR023/task.md) | written | 5评审判准 | [合同](proofs/MG-GR023/contract.json) · [参考](proofs/MG-GR023/reference.md) · [评分](proofs/MG-GR023/rubric.json) · [题包复核](proofs/MG-GR023/review.json) |
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) | written | 6阶段 | [合同](proofs/MG-GR103/contract.json) · [参考](proofs/MG-GR103/reference.md) · [评分](proofs/MG-GR103/rubric.json) · [题包复核](proofs/MG-GR103/review.json) · [作者Lean](proofs/MG-GR103/formal/COVERAGE.md) |
-| [MG-GR104 · 幂等元提升、逆极限与环分解](proofs/MG-GR104/task.md) | written | 6阶段 | [合同](proofs/MG-GR104/contract.json) · [参考](proofs/MG-GR104/reference.md) · [评分](proofs/MG-GR104/rubric.json) · [题包复核](proofs/MG-GR104/review.json) · [作者Lean](proofs/MG-GR104/formal/COVERAGE.md) |
 
 ## 语义审计 · 4份
 
@@ -69,6 +63,13 @@
 | [MG-AR002 · 真实答卷审阅 002：线性关系、坐标纤维与无限赋值](answer-review/MG-AR002/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR002/group-contract.json) · [参考](answer-review/MG-AR002/reference.md) · [评分](answer-review/MG-AR002/rubric.json) · [题包复核](answer-review/MG-AR002/review.json) |
 | [MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级](answer-review/MG-AR003/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR003/group-contract.json) · [参考](answer-review/MG-AR003/reference.md) · [评分](answer-review/MG-AR003/rubric.json) · [题包复核](answer-review/MG-AR003/review.json) |
 | [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) | answer_review | 3审阅维度 | [合同](answer-review/MG-AR004/group-contract.json) · [参考](answer-review/MG-AR004/reference.md) · [评分](answer-review/MG-AR004/rubric.json) · [题包复核](answer-review/MG-AR004/review.json) |
+
+## 命题拓展 · 2份
+
+| 试卷 | 任务 | 必答规模 | 完整材料 |
+| --- | --- | ---: | --- |
+| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) | written | 3评审判准 | [合同](theorem-extension/MG-TX001/contract.json) · [参考](theorem-extension/MG-TX001/reference.md) · [评分](theorem-extension/MG-TX001/rubric.json) · [题包复核](theorem-extension/MG-TX001/review.json) |
+| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) | written | 3评审判准 | [合同](theorem-extension/MG-TX002/contract.json) · [参考](theorem-extension/MG-TX002/reference.md) · [评分](theorem-extension/MG-TX002/rubric.json) · [题包复核](theorem-extension/MG-TX002/review.json) |
 
 旧题和备选题通过Git历史恢复。审阅可用独立清单answer-review-suite.json选择。
 

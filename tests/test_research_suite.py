@@ -1,4 +1,4 @@
-"""Candidate projection and identity contracts for 26 defaults and 31 reserves."""
+"""Candidate projection and identity contracts for current public tasks."""
 
 import json
 import shutil
@@ -20,7 +20,7 @@ class BenchmarkSuiteTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.suite = Suite.load(ROOT / "cases")
 
-    def case_snapshot(self, cid="MG-GR002"):
+    def case_snapshot(self, cid="MG-GR005"):
         """A single current case suffices to test evaluator-only identity edits."""
         case = self.suite.cases[cid]
         manifest = next(name for name in self.suite.metadata["cases"]
@@ -39,11 +39,13 @@ class BenchmarkSuiteTests(unittest.TestCase):
 
     def test_current_suite_is_the_complete_materialized_case_bank(self):
         self.assertEqual(parser().parse_args(["validate"]).suite, "cases")
-        self.assertEqual(len(self.suite.cases), 26)
+        edition = read_json(ROOT / "benchmark.json")
+        self.assertEqual(len(self.suite.cases), edition["public"]["tasks"])
         self.assertFalse((ROOT / "cases/reserve-suite.json").exists())
         self.assertEqual(set(self.suite.cases), {read_json(path)["id"] for path in (ROOT / "cases").rglob("case.json")})
         self.assertEqual(Counter(Path(c["task"]).parts[0] for c in self.suite.cases.values()),
-            {"proofs": 14, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4})
+            {"proofs": 8, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4,
+             "theorem-extension": 2})
         for case in self.suite.cases.values():
             self.assertEqual(case["status"], "draft")
             self.assertEqual(case["review"]["human"], "pending")
@@ -85,7 +87,7 @@ class BenchmarkSuiteTests(unittest.TestCase):
 
     def test_evaluator_edits_change_suite_identity_without_changing_candidate_input(self):
         baseline, manifest = self.case_snapshot()
-        case = baseline.cases["MG-GR002"]
+        case = baseline.cases["MG-GR005"]
         before = baseline.request(case)
         marker = "EVALUATOR_ONLY_SENTINEL_708210"
         reference = baseline.root / case["reference"]
@@ -109,14 +111,14 @@ class BenchmarkSuiteTests(unittest.TestCase):
 
     def test_case_version_and_task_edits_cannot_reuse_input_identity(self):
         baseline, manifest = self.case_snapshot()
-        before = baseline.request(baseline.cases["MG-GR002"])
+        before = baseline.request(baseline.cases["MG-GR005"])
         metadata = read_json(baseline.root / manifest)
         metadata["version"] += ".synthetic-test"
         write_json(baseline.root / manifest, metadata)
-        task_path = baseline.root / baseline.cases["MG-GR002"]["task"]
+        task_path = baseline.root / baseline.cases["MG-GR005"]["task"]
         task_path.write_bytes(task_path.read_bytes() + b"\nSynthetic test change.\n")
         changed = Suite.load(baseline.root)
-        after = changed.request(changed.cases["MG-GR002"])
+        after = changed.request(changed.cases["MG-GR005"])
         self.assertNotEqual(before["case_version"], after["case_version"])
         self.assertNotEqual(before["task"], after["task"])
         self.assertNotEqual(baseline.sha256, changed.sha256)

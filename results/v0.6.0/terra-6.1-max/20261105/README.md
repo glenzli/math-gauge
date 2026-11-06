@@ -2,16 +2,29 @@
 
 | 留档身份 | 记录 |
 |---|---|
-| Benchmark | 0.6.0（公私统一） |
+| Benchmark | 0.6.0（公私统一，本地草稿） |
 | 模型请求版本 | gpt-6.1-terra/max native local-tools 0.6 supplement |
 | Harness | Math Gauge shared runner with native/external source adapters |
-| 当前计分 | 分类聚合0.5.0／Strict0.2.0；原数学审核0.4.0 |
-| 跑法简记 | 来源相容初答A1＋C003固定三轮；本地工具／禁止外部检索，逐来源真实预算见record.json，后稿不回填初答 |
+| 当前计分 | 聚合0.6.0／Strict0.2.0／命题拓展0.1.0；原数学审核0.4.0 |
+| 跑法简记 | 各题无提示A1；C003另固定三轮自查。研究题从不发研究邀请，具体来源预算与工具条件按record.json保留 |
 
-benchmark0.6.0，harness及实际运行条件见record.json；本次只重分类和重算，没有新模型调用。聚合0.5.0，Strict0.2.0，数学审核来源0.4.0。书面35／Lean35／研究30，当前已建70分，研究30待建；主值为已获分／100，完整总分未知。
+当前22公有＋6私有、28首答，已建80分，另20分待建。不单列公有总分，也不重新归一化；下表是已确认贡献，未知与潜在扣分保留于完整区间。AI审核、人审待定，正式比较资格false。
 
-本档案保存公有完整原答、模型自报、工程、原审核与安全合并聚合。原始输入与审核保持来源身份，旧42／45槽中当前只取26／29个A1，另三轮Lean自查独立10分；其他原分支不再占分。
+| 条件 | 分项 | Strict | 分项完整区间 | Strict完整区间 |
+|---|---:|---:|---:|---:|
+| 原单次 | 66.84 | 52.00 | 66.84–86.84 | 52.00–72.00 |
+| 允许非逻辑重跑 | 66.84 | 52.00 | 66.84–86.84 | 52.00–72.00 |
 
-combined-aggregate.json／retry-combined-aggregate.json／strict-combined-aggregate.json／strict-retry-combined-aggregate.json为两模式×两条件的合并投影，不发布独立公有分数。 assessment-policy.json及Strict政策显式绑定当前分类口径；私有记录可经显式public-root引用同档案公有政策。原scoring-policy.json保留0.4.0以核验数学审核，不改写旧policy散列。
+首答已评28/28。新增五题的原题均正确，研究分项4.67／10、Strict2／10。
 
-没有新增非逻辑重跑，允许重跑视图沿用同一原答来源，不表示另外运行。 AI审核、人审pending、正式比较资格false。完整成绩和权重见公有docs/results.md及protocol/benchmark-scoring.md。
+原始scoring-inputs、原答、模型实际自报、0.4.0数学审核与封卷工程保持原字节；新研究组件以独立A1来源绑定接入，不改旧冻结计划中的路径或计分输入。本次整理没有新增模型调用或Lean编译。
+
+分项研究比例(R−D)/3，B0/B1/B2的D分别2/1/0，单题允许负分；Strict要求B2/R3。研究邀请只存在于私库独立非计分探索，不能回填任何模式或运行条件。
+
+研究来源曾有15次路由连接失败、零答卷；当前采用修复环境批次A1，是明确的来源选择，不认证全程首次即成功。完整诊断与所有原始事件保留，后端身份仍未独立认证。
+
+本档案保留公有原答及四种合并安全投影；私有题号、原题和逐题判断不公开。
+
+[记录与来源](record.json) · [合并分项](combined-aggregate.json) · [合并Strict](strict-combined-aggregate.json) · [完整说明](../../../../docs/results.md)
+
+[MG-TX001首轮原答](theorem-extension/MG-TX001/A1/answer.md) · [MG-TX002首轮原答](theorem-extension/MG-TX002/A1/answer.md)

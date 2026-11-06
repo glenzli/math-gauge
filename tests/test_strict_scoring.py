@@ -28,12 +28,12 @@ class StrictScoringTests(unittest.TestCase):
     def test_binary_tasks_precede_family_aggregation_and_private_missing_is_unknown(self):
         r = self.score()
         self.assertAlmostEqual(r['metrics']['lean-formalization']['exact'], 100/6)
-        self.assertEqual(r['whole_task_counts'], {'planned':29, 'passed':9, 'failed':17, 'unknown':3})
+        self.assertEqual(r['whole_task_counts'], {'planned':28, 'passed':5, 'failed':15, 'unknown':8})
         self.assertIsNone(r['metrics']['earned']['exact'])
-        self.assertAlmostEqual(r['metrics']['earned']['upper']-r['metrics']['earned']['lower'],25*3/17)
-        self.assertAlmostEqual(r['metrics']['overall']['upper']-r['metrics']['earned']['upper'],30)
+        self.assertAlmostEqual(r['metrics']['earned']['upper']-r['metrics']['earned']['lower'],25*3/11+10)
+        self.assertAlmostEqual(r['metrics']['overall']['upper']-r['metrics']['earned']['upper'],20)
         self.assertIsNone(r['metrics']['overall']['exact'])
-        self.assertEqual(r['capacity'], {'active':70,'under_construction':30,'total':100})
+        self.assertEqual(r['capacity'], {'active':80,'under_construction':20,'total':100})
         self.assertFalse(r['strict_alignment_selfcheck']['strict_pass'])
         self.assertEqual(r['contributions']['lean-selfcheck']['exact'],0)
 
@@ -53,11 +53,11 @@ class StrictScoringTests(unittest.TestCase):
         changed=copy.deepcopy(self.engineering)
         next(r for r in changed['cases'] if r['case_id']=='LCH01')['obligations'][0]['complete']=None
         r=self.score(engineering=changed)
-        self.assertAlmostEqual(r['metrics']['earned']['upper']-r['metrics']['earned']['lower'],25*3/17+15/2/3)
-        changed=copy.deepcopy(self.inputs);changed['slots']=[r for r in changed['slots'] if r['slot_id']!='MG-GR002:A1']
+        self.assertAlmostEqual(r['metrics']['earned']['upper']-r['metrics']['earned']['lower'],25*3/11+15/2/3+10)
+        changed=copy.deepcopy(self.inputs);changed['slots']=[r for r in changed['slots'] if r['slot_id']!='MG-GP001:A1']
         r=self.score(inputs=changed)
-        self.assertAlmostEqual(r['metrics']['earned']['upper']-r['metrics']['earned']['lower'],25*4/17)
-        self.assertEqual(r['whole_task_counts']['planned'],29)
+        self.assertAlmostEqual(r['metrics']['earned']['upper']-r['metrics']['earned']['lower'],25*4/11+10)
+        self.assertEqual(r['whole_task_counts']['planned'],28)
 
     def test_a2_and_written_followups_do_not_change_current_scores(self):
         changed=copy.deepcopy(self.inputs);changed['slots']=[r for r in changed['slots'] if r['slot_id'].endswith(':A1')]

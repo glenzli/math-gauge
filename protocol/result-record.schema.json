@@ -3,56 +3,258 @@
   "$id": "math-gauge.result-record/v1",
   "title": "Math Gauge formal result record",
   "type": "object",
-  "required": ["schema", "benchmark_version", "record_id", "model", "harness", "scope", "retention", "records", "evidence", "human_review", "formal_comparison_eligible", "candidate_calls_by_migration"],
+  "required": [
+    "schema",
+    "benchmark_version",
+    "record_id",
+    "model",
+    "harness",
+    "scope",
+    "retention",
+    "records",
+    "evidence",
+    "human_review",
+    "formal_comparison_eligible",
+    "candidate_calls_by_migration"
+  ],
   "properties": {
-    "schema": {"const": "math-gauge.result-record/v1"},
-    "benchmark_version": {"type": "string"},
-    "record_id": {"type": "string", "minLength": 1},
-    "model": {"type": "object"},
-    "harness": {"type": "object"},
-    "scope": {"enum": ["public", "public-with-private-aggregate", "private-evaluator"]},
-    "retention": {"type": "object", "required": ["user_requested"], "properties": {"user_requested": {"const": true}}},
-    "records": {"type": "array", "items": {"$ref": "#/$defs/round"}},
-    "evidence": {"type": "array", "items": {"$ref": "#/$defs/file"}},
-    "human_review": {"type": "string"},
-    "formal_comparison_eligible": {"type": "boolean"},
-    "candidate_calls_by_migration": {"type": "integer", "minimum": 0},
-    "retry_admission": {"$ref": "#/$defs/file"},
-    "retry_admission_location": {"enum": ["local", "public_archive"]},
-    "retry_scoring_inputs": {"$ref": "#/$defs/file"},
-    "retry_result": {"$ref": "#/$defs/file"},
-    "retry_combined_aggregate": {"$ref": "#/$defs/file"},
-    "strict_scoring_policy": {"$ref": "#/$defs/file"},
-    "assessment_policy": {"$ref": "#/$defs/file"},
-    "assessment_results": {"type": "object", "required": ["single_attempt", "nonlogical_retry_3"],
-      "additionalProperties": false, "properties": {
-        "single_attempt": {"$ref": "#/$defs/file"},
-        "nonlogical_retry_3": {"$ref": "#/$defs/file"}
-      }},
-    "strict_results": {"type": "object", "required": ["single_attempt", "nonlogical_retry_3"],
-      "additionalProperties": false, "properties": {
-        "single_attempt": {"$ref": "#/$defs/file"},
-        "nonlogical_retry_3": {"$ref": "#/$defs/file"}
-      }}
+    "schema": {
+      "const": "math-gauge.result-record/v1"
+    },
+    "benchmark_version": {
+      "type": "string"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "object"
+    },
+    "harness": {
+      "type": "object"
+    },
+    "scope": {
+      "enum": [
+        "public",
+        "public-with-private-aggregate",
+        "private-evaluator"
+      ]
+    },
+    "retention": {
+      "type": "object",
+      "required": [
+        "user_requested"
+      ],
+      "properties": {
+        "user_requested": {
+          "const": true
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/round"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/file"
+      }
+    },
+    "human_review": {
+      "type": "string"
+    },
+    "formal_comparison_eligible": {
+      "type": "boolean"
+    },
+    "candidate_calls_by_migration": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "retry_admission": {
+      "$ref": "#/$defs/file"
+    },
+    "retry_admission_location": {
+      "enum": [
+        "local",
+        "public_archive"
+      ]
+    },
+    "retry_scoring_inputs": {
+      "$ref": "#/$defs/file"
+    },
+    "retry_result": {
+      "$ref": "#/$defs/file"
+    },
+    "retry_combined_aggregate": {
+      "$ref": "#/$defs/file"
+    },
+    "strict_scoring_policy": {
+      "$ref": "#/$defs/file"
+    },
+    "assessment_policy": {
+      "$ref": "#/$defs/file"
+    },
+    "assessment_results": {
+      "type": "object",
+      "required": [
+        "single_attempt",
+        "nonlogical_retry_3"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "single_attempt": {
+          "$ref": "#/$defs/file"
+        },
+        "nonlogical_retry_3": {
+          "$ref": "#/$defs/file"
+        }
+      }
+    },
+    "strict_results": {
+      "type": "object",
+      "required": [
+        "single_attempt",
+        "nonlogical_retry_3"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "single_attempt": {
+          "$ref": "#/$defs/file"
+        },
+        "nonlogical_retry_3": {
+          "$ref": "#/$defs/file"
+        }
+      }
+    },
+    "theorem_extension_inputs": {
+      "$ref": "#/$defs/file"
+    },
+    "theorem_extension_evidence": {
+      "$ref": "#/$defs/file"
+    }
   },
   "$defs": {
-    "file": {"type": "object", "required": ["path", "bytes", "sha256"], "properties": {
-      "path": {"type": "string", "minLength": 1}, "bytes": {"type": "integer", "minimum": 0},
-      "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-    }},
-    "self_assessment": {"type": "object", "required": ["value", "scope", "origin", "evidence"], "properties": {
-      "value": {"enum": ["complete", "incomplete", "uncertain", "not_stated", "not_requested", "unresolved"]},
-      "scope": {"type": "string"},
-      "origin": {"enum": ["model_structured", "extracted_from_original", "not_available"]},
-      "evidence": {"type": "array"}, "reason": {"type": "string"}
-    }},
-    "round": {"type": "object", "required": ["id", "case_id", "kind", "parent_id", "response", "self_assessment", "evaluation", "artifacts"], "properties": {
-      "id": {"type": "string", "minLength": 1}, "case_id": {"type": "string"},
-      "kind": {"type": "string"}, "parent_id": {"type": ["string", "null"]},
-      "response": {"oneOf": [{"$ref": "#/$defs/file"}, {"type": "null"}]},
-      "missing_response_reason": {"type": ["string", "null"]},
-      "self_assessment": {"$ref": "#/$defs/self_assessment"},
-      "evaluation": {"type": "object"}, "artifacts": {"type": "array", "items": {"$ref": "#/$defs/file"}}
-    }}
+    "file": {
+      "type": "object",
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "self_assessment": {
+      "type": "object",
+      "required": [
+        "value",
+        "scope",
+        "origin",
+        "evidence"
+      ],
+      "properties": {
+        "value": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "uncertain",
+            "not_stated",
+            "not_requested",
+            "unresolved"
+          ]
+        },
+        "scope": {
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "model_structured",
+            "extracted_from_original",
+            "not_available"
+          ]
+        },
+        "evidence": {
+          "type": "array"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "round": {
+      "type": "object",
+      "required": [
+        "id",
+        "case_id",
+        "kind",
+        "parent_id",
+        "response",
+        "self_assessment",
+        "evaluation",
+        "artifacts"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "response": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/file"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "missing_response_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "self_assessment": {
+          "$ref": "#/$defs/self_assessment"
+        },
+        "evaluation": {
+          "type": "object"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/file"
+          }
+        }
+      }
+    }
   }
 }

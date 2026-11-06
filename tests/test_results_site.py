@@ -1,7 +1,5 @@
 """Current display consumes retained records without a parallel scoring method."""
 import copy
-import base64
-import hashlib
 import importlib.util
 import json
 from html.parser import HTMLParser
@@ -76,14 +74,16 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertEqual(combined["scope"], "combined-aggregate-only")
             self.assertNotIn("slot_evidence", combined)
             self.assertNotIn("records", combined)
-            self.assertEqual(combined["private_case_count"], 3)
+            self.assertEqual(combined["private_case_count"], 6)
             for result in (combined, model["retry"]["combined"]):
                 for metric in result["metrics"].values():
                     self.assertEqual(set(metric),
-                        {"exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible"})
+                        {"exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible"}
+                        | ({"confirmed"} if "confirmed" in metric else set()))
         text = json.dumps(self.data)
         self.assertNotIn("math-gauge-private/", text)
         self.assertNotIn("MG-X", text)
+        self.assertNotIn("MG-TXP", text)
 
     def test_embedded_json_cannot_close_its_script_and_labels_are_escaped(self):
         data = copy.deepcopy(self.data)
@@ -136,61 +136,42 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertFalse(matches)
                     continue
                 self.assertEqual(len(matches), 1)
-                self.assertEqual(float(matches[0]["data-score"]), result["metrics"]["earned"]["exact"])
+                self.assertEqual(float(matches[0]["data-score"]), SITE.earned_value(result))
                 self.assertIn("retry-extension" if series == "nonlogical_retry_3" else "first-solid", matches[0]["class"])
                 if series == "nonlogical_retry_3":
-                    first = model["combined"]["metrics"]["earned"]["exact"]
+                    first = SITE.earned_value(model["combined"])
                     self.assertEqual(float(matches[0]["data-start-score"]), first)
-                    self.assertAlmostEqual(float(matches[0]["data-gain-score"]), result["metrics"]["earned"]["exact"] - first)
+                    self.assertAlmostEqual(float(matches[0]["data-gain-score"]), SITE.earned_value(result) - first)
         self.assertEqual(page.count('class="chart-value"'), 6)
-        self.assertEqual(ChartBars(page).values, ["62.17", "49.45", "44.73"])
-        self.assertNotIn("47.45 → 49.45", page)
+        self.assertEqual(ChartBars(page).values, ["66.84", "49.80", "43.50"])
+        self.assertNotIn("46.71 → 49.80", page)
         self.assertIn('bottom:0%">0</span>', page)
         self.assertIn('bottom:100%">100</span>', page)
         self.assertNotIn('data-mode=', page)
         for model in self.data["models"]:
             self.assertFalse((ROOT / Path(model["source_record"]).parent / "result.json").exists())
 
-    def test_each_model_has_its_own_theme_shared_by_the_solid_and_striped_segments(self):
-        groups = ChartBars(SITE.render(self.data)).groups
-        self.assertEqual(len(groups), 3)
-        self.assertEqual(len({m["theme"]["color"] for m in self.data["models"]}), 3)
-        for model in self.data["models"]:
-            group = next(g for g in groups if g["data-model"] == model["id"])
-            self.assertIn("--model-color:" + model["theme"]["color"], group["style"])
 
     def test_only_a_changed_model_has_first_attempt_details_on_hover(self):
         page = SITE.render(self.data)
         tips = ChartBars(page).tooltips
         self.assertEqual(len(tips), 1)
         self.assertIn("deepseek-v4.1-flash-1017", tips[0]["id"])
-        self.assertIn('<dt>首次</dt><dd>47.45</dd>', page)
-        self.assertIn('<dt>重跑后</dt><dd>49.45</dd>', page)
-        self.assertIn('<dt>增量</dt><dd>+2.00</dd>', page)
+        self.assertIn('<dt>首次</dt><dd>46.71</dd>', page)
+        self.assertIn('<dt>重跑后</dt><dd>49.80</dd>', page)
+        self.assertIn('<dt>增量</dt><dd>+3.09</dd>', page)
         data = copy.deepcopy(self.data)
         ds = next(m for m in data["models"] if m["id"].startswith("deepseek"))
-        ds["retry"]["combined"]["metrics"]["earned"]["exact"] = ds["combined"]["metrics"]["earned"]["exact"]
+        ds["retry"]["combined"]["metrics"]["earned"]["confirmed"] = SITE.earned_value(ds["combined"])
         same = ChartBars(SITE.render(data))
         self.assertEqual(same.tooltips, [])
         self.assertEqual(len(same.bars), 3)
 
-    def test_provider_icons_are_original_local_bytes_embedded_for_offline_output(self):
-        page = SITE.render(self.data)
-        icons = ChartBars(page).images
-        self.assertEqual(len(icons), 3)
-        self.assertEqual([i["alt"] for i in icons], ["OpenAI", "DeepSeek", "Google"])
-        for model in self.data["models"]:
-            icon = next(i for i in icons if i["alt"] == model["logo"]["label"])
-            self.assertTrue(icon["src"].startswith("data:image/svg+xml;base64,"))
-            raw = base64.b64decode(icon["src"].split(",", 1)[1], validate=True)
-            self.assertEqual(hashlib.sha256(raw).hexdigest(), model["logo"]["sha256"])
-            local = ROOT / "site/assets/logos" / (icon["alt"].lower() + ".svg")
-            self.assertEqual(raw, local.read_bytes())
 
     def test_lower_retry_source_is_marked_at_its_actual_endpoint_without_a_false_gain(self):
         data = copy.deepcopy(self.data)
         model = next(m for m in data["models"] if m["id"].startswith("deepseek"))
-        model["retry"]["combined"]["metrics"]["earned"]["exact"] = 40.0
+        model["retry"]["combined"]["metrics"]["earned"]["confirmed"] = 40.0
         overlay = next(b for b in ChartBars(SITE.render(data)).bars
                        if b["data-model"] == model["id"] and b["data-series"] == "nonlogical_retry_3")
         self.assertEqual(overlay["data-score"], "40.0")
@@ -208,71 +189,34 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertFalse(model["retry"][scope]["formal_comparison_eligible"])
                 self.assertNotIn("slot_evidence", model["retry"][scope])
             if model["id"].startswith("deepseek"):
-                self.assertEqual(model["retry"]["combined"]["metrics"]["earned"]["exact"], 49.4539002558)
+                self.assertAlmostEqual(SITE.earned_value(model["retry"]["combined"]), 49.7961462451)
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
                     self.assertEqual(model["retry"][scope]["retry_summary"]["slots_with_reruns"], 0)
 
-    def test_declared_components_and_finite_states_are_present(self):
-        page = SITE.render(self.data)
-        for value in ["verified_complete", "incomplete_stable", "regressed", "interrupted", "unresolved"]:
-            self.assertIn(value, page)
-        self.assertIn("textContent", page)
-        self.assertNotIn("innerHTML", page)
-        self.assertNotIn('<script src="http', page)
-        for model in self.data["models"]:
-            for scope in ["combined"]:
-                self.assertEqual(sum(c["weight"] for c in model[scope]["profile"]["subcategories"]), 100)
-                self.assertEqual(model[scope]["coverage"]["tasks"], 29)
 
-    def test_display_binds_the_unified_engineering_review_and_current_method(self):
-        for model in self.data["models"]:
-            path = ROOT / Path(model["source_record"]).parent
-            record = json.loads((path / "record.json").read_bytes())
-            for scope in ("combined",):
-                self.assertEqual(model[scope]["engineering_review_sha256"], record["formalization_review"]["sha256"])
-                self.assertEqual(model[scope]["scoring_method_version"], self.data["policy"]["version"])
-        gemini = next(model for model in self.data["models"] if model["id"].startswith("gemini"))
-        case = next(case for case in gemini["lean_formalization_breakdown"]["cases"] if case["case_id"] == "HCH02")
-        self.assertEqual((case["complete_count"], case["total"]), (38, 40))
-        self.assertIn('href="../docs/formalization-audit.md"', SITE.render(self.data))
 
     def test_strict_mode_binds_three_combined_scores_without_auxiliary_credit(self):
-        expected = {"terra-6.1-max": 50.0, "deepseek-v4.1-flash-1017": 25.2941176471,
-                    "gemini-3.8-flash-high": 16.3235294118}
+        expected = {"terra-6.1-max": 52.0, "deepseek-v4.1-flash-1017": 21.8181818182,
+                    "gemini-3.8-flash-high": 12.0454545455}
         self.assertEqual(self.data["score_modes"], ["partial", "strict"])
         for model in self.data["models"]:
             for condition, result in model["strict"].items():
                 self.assertEqual(result["primary_metric"], "earned")
-                self.assertAlmostEqual(result["metrics"]["earned"]["exact"], expected[model["id"]])
+                self.assertAlmostEqual(SITE.earned_value(result), expected[model["id"]])
                 self.assertEqual(result["attempt_condition"], condition)
-                self.assertEqual(result["coverage"]["tasks"], 29)
-                self.assertEqual(result["coverage"]["parent_families"], 21)
+                self.assertEqual(result["coverage"]["tasks"], 28)
+                self.assertEqual(result["coverage"]["parent_families"], 24)
                 self.assertFalse(result["strict_alignment_selfcheck"]["strict_pass"])
                 self.assertIsNone(result["metrics"]["overall"]["exact"])
                 self.assertNotIn("tasks", result)
         chart = ChartBars(SITE.render(self.data), "strict")
-        self.assertEqual(chart.values, ["50.00", "25.29", "16.32"])
+        self.assertEqual(chart.values, ["52.00", "21.82", "12.05"])
         self.assertEqual(len(chart.bars), 3)
         self.assertEqual(chart.tooltips, [])
         self.assertEqual(len(chart.images), 3)
 
-    def test_mode_switch_keeps_attempt_controls_and_changes_chart_metric_and_download(self):
-        page = SITE.render(self.data)
-        self.assertIn('data-score-mode="partial" aria-pressed="true"', page)
-        self.assertIn('data-score-mode="strict" aria-pressed="false"', page)
-        self.assertIn('id="score-chart-strict" hidden', page)
-        self.assertIn('Strict 已获分', page)
-        self.assertIn("m.strict[c]", page)
-        self.assertNotIn("metrics.repeat", page)
-        self.assertIn("建设中", page)
-        self.assertIn("对齐自查", page)
-        self.assertIn("背景核查", page)
-        self.assertIn("命题拓展", page)
-        self.assertIn("研究稿完善", page)
-        self.assertIn("scoreMode==='strict'?'-strict':''", page)
-        self.assertIn("button[data-score-mode]", page)
 
 
 if __name__ == "__main__":

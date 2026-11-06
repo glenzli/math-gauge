@@ -29,6 +29,7 @@ CATEGORIES = (
     ("lean-audit", "语义审计"),
     ("lean-formalization", "形式化"),
     ("answer-review", "论证审阅"),
+    ("theorem-extension", "命题拓展"),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
 sys.dont_write_bytecode = True
@@ -291,6 +292,10 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
 
 def render_index(catalog: dict) -> str:
     counts = catalog["counts"]
+    leaves = [child for group in catalog["categories"] for child in group["children"]]
+    public_tasks = sum(c["public_tasks"] for c in leaves if c["aggregation"] != "trajectory")
+    private_tasks = sum(c["private_tasks"] for c in leaves if c["aggregation"] != "trajectory")
+    active = sum(c["weight"] for c in leaves if c["status"] == "active")
     suite_version = next(item["version"] for item in catalog["suites"] if item["membership"] == "default")
     lines = ["# 当前试卷", "",
              f"{suite_version}默认题集 `cases/suite.json` 含{counts['default_papers']}份相关任务，关联{counts['default_parent_families']}个母题家族。完整题库含{counts['mathematical_papers']}份数学卷与{counts['answer_review_tasks']}份真实答卷审阅，共{counts['default_obligations'] + counts['reserve_obligations']}项阶段或章节义务，另有{counts.get('proof_criteria', 0)}项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。", "",
@@ -305,7 +310,7 @@ def render_index(catalog: dict) -> str:
             state = "建设中" if child["status"] == "under_construction" else "当前计分"
             lines.append(f"| {group['title']}（{group['weight']}%） | {child['title']} | {child['weight']}% | "
                          f"{count} | {child['private_tasks']} | {state} |")
-    lines += ["", "当前26道公有与3道私有题合并评测，已建权重70/100；研究30分预留，不重新归一化，也不计为模型答错。私有三题并入书面论证，仅公布数量与聚合。自查复用整章题，不另增题目或独立家族。", ""]
+    lines += ["", f"当前{public_tasks}道公有与{private_tasks}道私有题合并评测，已建权重{active}/100；其余{100-active}分预留，不重新归一化，也不计为模型答错。原私有探索三题并入书面论证；命题拓展另含公有2题、私有3题，仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。", ""]
     for category in catalog["source_categories"]:
         lines += ["", f"## {category['label']} · {category['default_count']}份", "",
                   "| 试卷 | 任务 | 必答规模 | 完整材料 |", "| --- | --- | ---: | --- |"]
@@ -355,6 +360,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     require(len(ids) == len(set(ids)) == len(sources) and set(ids) == set(sources),
             "Assignments must cover every selected mathematical paper and answer review exactly once")
     entries = []
+    aliases = taxonomy.get('canonical_parent_families', {})
     for assignment in sorted(assignments, key=lambda item: item["case_id"]):
         cid = assignment["case_id"]
         source = sources[cid]
@@ -362,12 +368,13 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         case, contract = source["case"], source["contract"]
         entries.append({
             "case_id": cid, "version": case["version"], "title": case["title"],
-            "family_id": case.get("family_id") or contract.get("parent_family_id") or cid,
+            "family_id": aliases.get(contract.get("parent_family_id"), contract.get("parent_family_id"))
+                if contract["kind"] == "answer_review" else case.get("family_id") or cid,
             "kind": contract["kind"],
             "category": source["category"],
             "task_kind": case["task_kind"],
             "sample_unit": "one-complete-answer-review; parent-correlated" if contract["kind"] == "answer_review" else "one-full-paper",
-            "parent_family_id": contract.get("parent_family_id", cid),
+            "parent_family_id": aliases.get(contract.get("parent_family_id"), contract.get("parent_family_id", cid)),
             "stage_count": len(contract.get("stages", [])),
             "stage_ids": [stage["id"] for stage in contract.get("stages", [])],
             "review_dimension_count": len(contract.get("dimensions", [])),
@@ -460,6 +467,8 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
     from math_gauge.benchmarks import validate_assessment_policy
     assessment_path = root / "protocol/scoring-policy.json"
     assessment = validate_assessment_policy(json.loads(assessment_path.read_bytes()))
+    require(aliases == assessment.get('case_selection', {}).get('canonical_parent_families', {}),
+            'Catalog and assessment parent-family aliases disagree')
     children = {item["id"]: item for item in assessment["subcategories"]}
     mapping = {source: child["id"] for child in children.values() for source in child["source_components"]}
     group_for = {child: group["id"] for group in assessment["groups"] for child in group["children"]}

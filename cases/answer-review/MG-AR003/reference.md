@@ -58,6 +58,6 @@ C(kZ,kC_{co}(kX,kY))\cong C(kZ\times_k kX,kY).
 
 主错误应有精确位置与反例或等价证明；引用错位、遗漏和局部过强用语应分清，不统一称为原定理为假。可以提出其他有证据的真实问题；不能把参考的证明路线当成唯一可接受路线，或把所有后继阶段无条件判为受污染。
 
-母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GR010/reference.md](../../proofs/MG-GR010/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
+母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GR010/reference.md](https://github.com/glenzli/math-gauge/blob/292c26709785836c27a847cdf113fda4f34f5af7/cases/proofs/MG-GR010/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
 
 评分与当前执行状态以 [rubric.json](rubric.json)、[group-contract.json](group-contract.json) 及 [review.json](review.json) 为准；统一标准见[答卷审阅评分](../../../protocol/answer-review-scoring.md)。

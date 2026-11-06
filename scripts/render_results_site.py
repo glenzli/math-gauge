@@ -54,7 +54,10 @@ def build_data(source_root=ROOT):
             "source_record": str((folder / "record.json").relative_to(root)),
             "retry": {"combined": partial["nonlogical_retry_3"],
                       "note": ("GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
-                               if record.get("retry_admission") else "无新增重跑，沿用原答；不据此认证全部历史底层调用均一次完成。")}})
+                               if record.get("retry_admission") else
+                               "研究源试答曾有15次路由连接失败且无答卷；当前采用修复环境批次的A1。本次整理未重跑，不认证整个历史首次即成功。"
+                               if model == "terra-6.1-max" else
+                               "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。")}})
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
                  *(item["path"] for item in record["assessment_results"].values()),
                  *(item["path"] for item in record["strict_results"].values())]
@@ -65,12 +68,17 @@ def build_data(source_root=ROOT):
             sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
         sources.append({"path": str(icon_path.relative_to(root)), "sha256": hashlib.sha256(icon_bytes).hexdigest()})
     return {"schema": "math-gauge.current-results-display/v4", "benchmark_version": "0.6.0",
-            "scoring_method_version": "0.5.0", "strict_method_version": "0.2.0",
+            "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
             "human_review": "pending", "formal_comparison_eligible": False,
             "models": models, "policy": policy, "strict_policy": strict_policy, "sources": sources,
-            "capacity": {"total": 100, "active": 70, "under_construction": 30},
+            "capacity": copy.deepcopy(models[0]["combined"]["capacity"]),
             "publication_scope": "combined", "score_modes": ["partial", "strict"],
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
+
+
+def earned_value(result):
+    value = result["metrics"]["earned"]
+    return value.get("confirmed", value["exact"])
 
 
 def overlaid_bars(models, score_mode="partial"):
@@ -84,7 +92,7 @@ def overlaid_bars(models, score_mode="partial"):
                                ("nonlogical_retry_3", model["retry"]["combined"])):
             if score_mode == "strict":
                 result = model["strict"][series]
-            value = result["metrics"]["earned"]["exact"]
+            value = earned_value(result)
             text = "未决" if value is None else f"{value:.2f}"
             height = 0 if value is None else max(0, min(100, value))
             raw_value = "" if value is None else str(value)
@@ -134,9 +142,10 @@ def overlaid_bars(models, score_mode="partial"):
     ticks = "".join(f'<span style="bottom:{value}%">{value}</span>' for value in range(0, 101, 20))
     grid = "".join(f'<i class="chart-gridline" aria-hidden="true" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
     chart_name = "Strict 已获分" if score_mode == "strict" else "分项已获分"
+    capacity = models[0]["combined"]["capacity"]["active"]
     return (f'<div class="chart-frame" role="group" aria-label="公开＋私有{chart_name}，纵轴0至100">'
             f'<div class="chart-axis" aria-hidden="true">{ticks}</div><div class="chart-plot">'
-            f'{grid}<i class="chart-capacity" style="bottom:70%"><span>当前可测上限 70</span></i><div class="chart-groups">' + "".join(groups) + '</div></div></div>'
+            f'{grid}<i class="chart-capacity" style="bottom:{capacity}%"><span>当前可测上限 {capacity}</span></i><div class="chart-groups">' + "".join(groups) + '</div></div></div>'
             '<div class="chart-labels" aria-hidden="true">' + "".join(labels) + '</div>')
 
 
@@ -147,17 +156,22 @@ def render(data):
     for index, model in enumerate(data["models"], 1):
         label = html.escape(model["label"])
         source = html.escape("../" + model["source_record"].replace("record.json", "README.md"), quote=True)
-        single = model["combined"]["metrics"]["earned"]["exact"]
-        retry = model["retry"]["combined"]["metrics"]["earned"]["exact"]
+        single = earned_value(model["combined"])
+        retry = earned_value(model["retry"]["combined"])
         display = lambda value: "—" if value is None else f"{value:.2f}"
         rows.append(f'<tr><td class="rank">{index}</td><td class="model-name">{label}</td>'
                     f'<td class="numeric score-cell single-score"><span class="score-number">{display(single)}</span></td>'
                     f'<td class="numeric score-cell retry-score"><span class="score-number">{display(retry)}</span></td>'
                     f'<td class="numeric">—</td><td class="numeric"><a href="{source}">查看 ↗</a></td></tr>')
     values = {"DATA": payload, "ROWS": "".join(rows), "CHART": overlaid_bars(data["models"]),
-              "STRICT_CHART": overlaid_bars(data["models"], "strict")}
+              "STRICT_CHART": overlaid_bars(data["models"], "strict"),
+              "TASKS": str(data["policy"]["scope"]["tasks"]),
+              "PUBLIC": str(data["policy"]["scope"]["public_tasks"]),
+              "PRIVATE": str(data["policy"]["scope"]["private_tasks"]),
+              "FAMILIES": str(data["policy"]["scope"]["parent_families"]),
+              "CAPACITY": str(data["capacity"]["active"])}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
-    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART)@@", lambda match: values[match[1]], template)
+    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|TASKS|PUBLIC|PRIVATE|FAMILIES|CAPACITY)@@", lambda match: values[match[1]], template)
 
 
 def write_site(destination, *, source_root=ROOT):

@@ -7,7 +7,7 @@
   "suite": {
     "id": "math-gauge-benchmark",
     "version": "0.6.0",
-    "sha256": "20f8c92d454a23b74314879eda7077e50b2e794d5ffdeb8a404283a70dc3838a"
+    "sha256": "5b210937a718bbc8bbbf30b6804022de80f65f6a626f5c3be743a8ef1941c851"
   },
   "components": [
     {
@@ -16,15 +16,9 @@
       "case_ids": [
         "MG-GP001",
         "MG-GP002",
-        "MG-GP003",
-        "MG-GR002",
         "MG-GR005",
-        "MG-GR008",
         "MG-GR009",
-        "MG-GR010",
-        "MG-GR014",
         "MG-GR103",
-        "MG-GR104",
         "MG-GR021",
         "MG-GR022",
         "MG-GR023"
@@ -67,6 +61,16 @@
       ],
       "weight": 10,
       "aggregation": "parent_family"
+    },
+    {
+      "id": "theorem-extension",
+      "title": "命题拓展",
+      "case_ids": [
+        "MG-TX001",
+        "MG-TX002"
+      ],
+      "weight": 10,
+      "aggregation": "family"
     }
   ],
   "case_execution_policy": {
@@ -76,15 +80,9 @@
       "MG-C003": "math-gauge.local-tools-no-search/v1",
       "MG-GP001": "math-gauge.local-tools-no-search/v1",
       "MG-GP002": "math-gauge.local-tools-no-search/v1",
-      "MG-GP003": "math-gauge.local-tools-no-search/v1",
-      "MG-GR002": "math-gauge.local-tools-no-search/v1",
       "MG-GR005": "math-gauge.local-tools-no-search/v1",
-      "MG-GR008": "math-gauge.local-tools-no-search/v1",
       "MG-GR009": "math-gauge.local-tools-no-search/v1",
-      "MG-GR010": "math-gauge.local-tools-no-search/v1",
-      "MG-GR014": "math-gauge.local-tools-no-search/v1",
       "MG-GR103": "math-gauge.local-tools-no-search/v1",
-      "MG-GR104": "math-gauge.local-tools-no-search/v1",
       "MG-GR021": "math-gauge.local-tools-no-search/v1",
       "MG-GR022": "math-gauge.local-tools-no-search/v1",
       "MG-GR023": "math-gauge.local-tools-no-search/v1",
@@ -98,7 +96,9 @@
       "AHR04": "math-gauge.local-tools-no-search/v1",
       "LCH01": "math-gauge.local-tools-no-search/v1",
       "LCH02": "math-gauge.local-tools-no-search/v1",
-      "HCH02": "math-gauge.local-tools-no-search/v1"
+      "HCH02": "math-gauge.local-tools-no-search/v1",
+      "MG-TX001": "math-gauge.no-tools/v1",
+      "MG-TX002": "math-gauge.no-tools/v1"
     },
     "new_execution_case_ids": [
       "AHR01",
@@ -113,22 +113,18 @@
     "retain_source_runtime_case_ids": [
       "MG-GP001",
       "MG-GP002",
-      "MG-GP003",
-      "MG-GR002",
       "MG-GR005",
-      "MG-GR008",
       "MG-GR009",
-      "MG-GR010",
-      "MG-GR014",
       "MG-GR103",
-      "MG-GR104",
       "MG-GR021",
       "MG-GR022",
       "MG-GR023",
       "MG-AR001",
       "MG-AR002",
       "MG-AR003",
-      "MG-AR004"
+      "MG-AR004",
+      "MG-TX001",
+      "MG-TX002"
     ],
     "new_turn_timeout_seconds": 5400,
     "budget_policy_binding": {
@@ -150,31 +146,13 @@
     "MG-GP002": [
       "A1"
     ],
-    "MG-GP003": [
-      "A1"
-    ],
-    "MG-GR002": [
-      "A1"
-    ],
     "MG-GR005": [
-      "A1"
-    ],
-    "MG-GR008": [
       "A1"
     ],
     "MG-GR009": [
       "A1"
     ],
-    "MG-GR010": [
-      "A1"
-    ],
-    "MG-GR014": [
-      "A1"
-    ],
     "MG-GR103": [
-      "A1"
-    ],
-    "MG-GR104": [
       "A1"
     ],
     "MG-GR021": [
@@ -221,6 +199,12 @@
     ],
     "MG-AR004": [
       "A1"
+    ],
+    "MG-TX001": [
+      "A1"
+    ],
+    "MG-TX002": [
+      "A1"
     ]
   },
   "score_policy": {
@@ -238,7 +222,7 @@
   },
   "assessment_policy": {
     "schema": "math-gauge.assessment-policy/v1",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "benchmark_version": "0.6.0",
     "status": "post-observation-local-draft-human-pending",
     "operator_only": true,
@@ -288,9 +272,9 @@
           "proofs",
           "exploration"
         ],
-        "public_tasks": 14,
+        "public_tasks": 8,
         "private_tasks": 3,
-        "families": 17,
+        "families": 11,
         "aggregation": "family",
         "status": "active"
       },
@@ -373,12 +357,14 @@
         "id": "theorem-extension",
         "title": "命题拓展",
         "weight": 10,
-        "source_components": [],
-        "public_tasks": 0,
-        "private_tasks": 0,
-        "families": 0,
+        "source_components": [
+          "theorem-extension"
+        ],
+        "public_tasks": 2,
+        "private_tasks": 3,
+        "families": 5,
         "aggregation": "family",
-        "status": "under_construction"
+        "status": "active"
       }
     ],
     "source_review_method_version": "0.4.0",
@@ -415,17 +401,130 @@
     "unknown_policy": "Fixed case/family/round denominators with explicit bounds.",
     "overall_floor": 0,
     "scope": {
-      "public_tasks": 26,
-      "private_tasks": 3,
-      "tasks": 29,
-      "parent_families": 21,
-      "initial_slots": 29,
-      "public_initial_slots": 26,
+      "public_tasks": 22,
+      "private_tasks": 6,
+      "tasks": 28,
+      "parent_families": 24,
+      "initial_slots": 28,
+      "public_initial_slots": 22,
       "alignment_rounds": 3,
       "trajectory_assessment_units": 1
     },
     "human_review": "pending",
-    "formal_comparison_eligible": false
+    "formal_comparison_eligible": false,
+    "case_selection": {
+      "schema": "math-gauge.case-selection/v1",
+      "version": "0.1.0",
+      "public_case_ids": [
+        "MG-C003",
+        "MG-GP001",
+        "MG-GP002",
+        "MG-GR005",
+        "MG-GR009",
+        "MG-GR103",
+        "MG-GR021",
+        "MG-GR022",
+        "MG-GR023",
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004",
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04",
+        "LCH01",
+        "LCH02",
+        "HCH02"
+      ],
+      "retired_public_case_ids": [
+        "MG-GP003",
+        "MG-GR002",
+        "MG-GR008",
+        "MG-GR010",
+        "MG-GR014",
+        "MG-GR104"
+      ],
+      "source_public_case_ids": [
+        "MG-C003",
+        "MG-GP001",
+        "MG-GP002",
+        "MG-GP003",
+        "MG-GR002",
+        "MG-GR005",
+        "MG-GR008",
+        "MG-GR009",
+        "MG-GR010",
+        "MG-GR014",
+        "MG-GR103",
+        "MG-GR104",
+        "MG-GR021",
+        "MG-GR022",
+        "MG-GR023",
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004",
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04",
+        "LCH01",
+        "LCH02",
+        "HCH02"
+      ],
+      "canonical_parent_families": {
+        "MG-GR104": "MG-R104",
+        "MG-GR014": "MG-R014",
+        "MG-GR010": "MG-R010",
+        "MG-GP003": "MG-P003"
+      },
+      "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7"
+    },
+    "theorem_extension": {
+      "schema": "math-gauge.theorem-extension-policy/v1",
+      "version": "0.1.0",
+      "benchmark_version": "0.6.0",
+      "initial_attempt_labels": [
+        "A1"
+      ],
+      "research_invitation": false,
+      "followups_replace_initial": false,
+      "research_level_maximum": 3,
+      "partial_points": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "strict_requirements": {
+        "baseline_B": 2,
+        "research_R": 3
+      },
+      "public_case_ids": [
+        "MG-TX001",
+        "MG-TX002"
+      ],
+      "private_cases": 3,
+      "families": 5,
+      "component_weight": 10,
+      "family_aggregation": "equal",
+      "baseline_points_added_to_research": false,
+      "baseline_penalty_points": {
+        "0": 2,
+        "1": 1,
+        "2": 0
+      },
+      "per_case_floor": null,
+      "absent_extension_is_baseline_failure": false,
+      "post_observation": true,
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.",
+      "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.",
+      "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.",
+      "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension."
+    }
   },
   "strict_policy": {
     "schema": "math-gauge.strict-scoring-policy/v2",
@@ -474,5 +573,5 @@
       "MG-GR023:A1"
     ]
   },
-  "scope_note": "Current A1 only:26 public/29 combined; one separately scored three-round Lean trajectory. Research30 remains under construction; combined scores only."
+  "scope_note": "Current A1 only:20 public/23 combined; one separately scored three-round Lean trajectory. Research30 remains under construction; combined scores only."
 }

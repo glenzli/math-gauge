@@ -6,6 +6,8 @@ from pathlib import Path
 
 from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independent_attempts,
                          reliability_schedule, scoring_policy, validate_assessment_policy, validate_plan)
+from .case_selection import assessment_family, selected_assessment_cases
+from .theorem_extension import selected_cases as selected_current_cases, validate_inputs as validate_extension_inputs
 from .execution import now
 from .execution_policy import execution_condition
 from .execution_policy import (declared_case_context, declared_case_timeout_seconds,
@@ -2253,7 +2255,7 @@ def validate_strict_assessment_policy(policy):
 
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
                             mathematical_substitutions=None, alignment_summary=None,
-                            strict_trajectory=None):
+                            strict_trajectory=None, theorem_extension_inputs=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
@@ -2262,7 +2264,9 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
     plan = validate_plan(inputs["plan"])
     if inputs.get("model_label") != plan["model_label"]:
         raise ValueError("Assessment model differs from its frozen source")
-    index = {case["case_id"]: case for case in plan["case_index"]}
+    source_index = {case["case_id"]: case for case in plan["case_index"]}
+    selection = policy.get("case_selection")
+    index = selected_current_cases(source_index, selection)
     planned = {row["slot_id"]: row for row in plan["slots"]}
     rows = {}
     for row in inputs.get("slots", []):
@@ -2270,6 +2274,42 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         if sid in rows or sid not in planned or row.get("case_id") != planned[sid]["case_id"]:
             raise ValueError("Assessment inputs repeat or invent a source slot")
         rows[sid] = row
+    research_levels = {}
+    if theorem_extension_inputs is not None:
+        if policy["version"] != "0.6.0":
+            raise ValueError("Research evidence cannot alter the pre-research scoring method")
+        extra = validate_extension_inputs(theorem_extension_inputs, policy["theorem_extension"])
+        if extra.get("model_label") != inputs["model_label"]:
+            raise ValueError("Theorem-extension evidence belongs to a different model")
+        for case in extra["case_index"]:
+            cid = case["case_id"]
+            if cid in index and index[cid]["component"] != "theorem-extension":
+                raise ValueError("Research evidence cannot replace an existing mathematical task")
+            if (cid in index and index[cid].get("group_contract_sha256") is not None
+                    and index[cid]["group_contract_sha256"] != case.get("contract_sha256")):
+                raise ValueError("Research evidence binds a different frozen mathematical contract")
+            index[cid] = case
+        for row in extra["slots"]:
+            sid = row["slot_id"]
+            if (sid in rows and rows[sid].get("response_sha256") !=
+                    (None if row["response"] is None else row["response"]["sha256"])):
+                raise ValueError("Research evidence must not replace an existing frozen answer")
+            if sid in rows and rows[sid].get("strict_pass") is not None and row["status"] == "not_run":
+                raise ValueError("Research evidence cannot hide an existing adjudicated source answer")
+            level, baseline = row["research_R"], row["baseline_B"]
+            deduction = (0 if row["status"] == "delivery_failed" else None if baseline is None else
+                         policy["theorem_extension"]["baseline_penalty_points"][str(baseline)])
+            # Keep the ordinary source completion in [0,1]. The separately
+            # audited baseline deduction is applied below in exact arithmetic.
+            value = None if level is None else Fraction(level, 3)
+            rows[sid] = {"completion": {"lower": 0 if value is None else float(value),
+                "upper": 1 if value is None else float(value), "exact": None if value is None else float(value)},
+                "strict_pass": None if value is None else baseline == 2 and level == 3,
+                "response_sha256": None if row["response"] is None else row["response"]["sha256"],
+                "review_sha256": None if row["review"] is None else row["review"]["sha256"]}
+            research_levels[sid] = {"baseline_B": baseline, "research_R": level,
+                "baseline_penalty_points": deduction, "research_maximum_points": 3,
+                "baseline_is_research_credit": False, "answer_attempt": "A1"}
     substitutions = mathematical_substitutions or {}
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
@@ -2280,28 +2320,39 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             raise ValueError("A source task has no current assessment category")
         sid, row = cid + ":A1", rows.get(cid + ":A1", {})
         value = substitutions.get(sid, _interval(row.get("completion")))
+        if sid in research_levels:
+            research = research_levels[sid]
+            value = ((Fraction(-2, 3), Fraction(1), None) if research["research_R"] is None else
+                     (Fraction(research["research_R"] - research["baseline_penalty_points"], 3),) * 3)
         if sid in substitutions:
             passed = True if value[0] == 1 else False if value[1] < 1 else None
             source = "selected_sealed_engineering"
         else:
             passed = row.get("strict_pass")
+            if case["component"] == "theorem-extension" and sid not in research_levels:
+                # Generic proof completion alone does not adjudicate the
+                # separately required original-task baseline and research tier.
+                value, passed = (Fraction(-2, 3), Fraction(1), None), None
             _boolean(passed)
             if passed is True and value != (1, 1, 1):
                 raise ValueError("Strict pass contradicts the source-bound completed task")
             source = "source_bound_original_review"
         interval = _boolean(passed) if mode == "strict" else value
-        family = case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"]
+        family = (assessment_family(case, source_index, selection) if selection is not None else
+                  case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"])
         families[child["id"]].setdefault(family, []).append(interval)
         tasks.append({"case_id": cid, "slot_id": sid, "subcategory": child["id"], "family_id": family,
                       "strict_pass": passed, "judgment_source": source,
                       "completion": {"lower": float(value[0]), "upper": float(value[1]),
                                      "exact": None if value[2] is None else float(value[2])},
-                      "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256")})
-    metrics, intervals, contributions = {}, {}, {}
+                      "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256"),
+                      **({"research": research_levels[sid]} if sid in research_levels else {})})
+    metrics, intervals, contributions, confirmed = {}, {}, {}, {}
     for child in policy["subcategories"]:
         ident, count = child["id"], child["families"]
         if child["status"] == "under_construction":
             value, adjudicated = UNKNOWN, 0
+            confirmed[ident] = Fraction(0)
         elif child["aggregation"] == "trajectory":
             if mode == "strict":
                 value = _boolean((strict_trajectory or {}).get("strict_pass"))
@@ -2312,18 +2363,26 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 value = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
                               for k in ("lower", "upper", "exact"))
             adjudicated = int(value[2] is not None)
+            confirmed[ident] = value[2] if value[2] is not None else Fraction(0)
         else:
             values = [_average(items) for items in families[ident].values()]
             if len(values) > count:
                 raise ValueError("Assessment source exceeds the frozen family denominator")
-            values += [UNKNOWN] * (count - len(values))
+            missing = ((Fraction(-2, 3), Fraction(1), None)
+                       if ident == "theorem-extension" and mode == "partial" else UNKNOWN)
+            values += [missing] * (count - len(values))
             value, adjudicated = _average(values), sum(item[2] is not None for item in values)
+            confirmed[ident] = sum((_average([(v[2] or Fraction(0),) * 3 for v in items])[2]
+                for items in families[ident].values()), Fraction(0)) / count
         intervals[ident] = value
         metrics[ident] = _assessment_metric(value, unit=child["aggregation"], planned=count,
                                            adjudicated=adjudicated)
         contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
         contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
                                                  planned=count, adjudicated=adjudicated)
+        if policy["version"] == "0.6.0":
+            metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
+            contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
     for group in policy["groups"]:
         children = [child for child in policy["subcategories"] if child["id"] in group["children"]]
         value = _average([intervals[c["id"]] for c in children], [c["weight"] for c in children])
@@ -2332,21 +2391,30 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
         contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+        if policy["version"] == "0.6.0":
+            known = sum((confirmed[c["id"]] * c["weight"] for c in children), Fraction(0))
+            contributions[group["id"]]["confirmed"] = float(known)
+            metrics[group["id"]]["confirmed"] = float(known * 100 / group["weight"])
     active = [child for child in policy["subcategories"] if child["status"] == "active"]
     def total(children):
         values = [intervals[c["id"]] for c in children]
-        # Divide by the full 100 points even when only 70 points are built.
+        # Divide by the full 100 points even when some categories are unbuilt.
         return tuple(None if any(v[i] is None for v in values) else max(Fraction(0),
                      sum((v[i] * Fraction(c["weight"], 100) for v, c in zip(values, children)), Fraction()))
                      for i in range(3))
     for key, children in (("earned", active), ("overall", policy["subcategories"])):
         metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+    if policy["version"] == "0.6.0":
+        metrics["earned"]["confirmed"] = float(max(Fraction(0),
+            sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
     missing_tasks = max(0, policy["scope"]["tasks"] - len(tasks))
     return {"schema": "math-gauge.assessment-score/v1", "benchmark_version": policy["benchmark_version"],
         "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
         "score_mode": mode, "primary_metric": "earned", "model_label": inputs["model_label"],
         "policy_sha256": identity(policy), "strict_policy_sha256": identity(strict_policy),
+        **({"case_selection": selection, "case_selection_sha256": identity(selection)}
+           if selection is not None else {}),
         "plan_sha256": plan["plan_sha256"], "metrics": metrics, "contributions": contributions,
         "profile": {"groups": policy["groups"], "subcategories": policy["subcategories"]},
         "capacity": {"total": 100, "active": sum(c["weight"] for c in active),
@@ -2363,13 +2431,13 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
 
 
 def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
-                                   assessment_policy, strict_policy, mode="partial"):
+                                   assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
     result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
         mathematical_substitutions=substitutions, alignment_summary=source["alignment_selfcheck"],
-        strict_trajectory=trajectory)
+        strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs)
     result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
     return result
 

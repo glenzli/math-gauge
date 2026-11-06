@@ -112,15 +112,16 @@ def check_fixed_design(plan: dict, selection: dict, packet: Path) -> None:
 def check_plan(plan: dict) -> None:
     if plan.get("schema") == "math-gauge.reliability-material-plan/v3":
         ids = [row["case_id"] for row in plan.get("cases", [])]
+        public_count = read(ROOT / "benchmark.json")["public"]["tasks"]
         require(plan.get("protocol_version") == "0.5.0" and plan.get("suite_version") == "0.6.0"
-                and len(ids) == 26 and len(set(ids)) == 26
+                and len(ids) == public_count and len(set(ids)) == public_count
                 and plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
                 and plan.get("human_approved") is False and plan.get("actual_results") is None
                 and plan.get("runtime_configuration_frozen") is False
                 and plan.get("repeat_case_ids") == [] and plan.get("independent_attempts") == ["A1"]
-                and plan.get("rounds_per_arm") == 0 and plan.get("planned_slots_per_model") == 26
+                and plan.get("rounds_per_arm") == 0 and plan.get("planned_slots_per_model") == public_count
                 and plan.get("attempt_schedule") == {cid: ["A1"] for cid in ids},
-                "Current material plan requires26 A1 slots and no authorized execution")
+                "Current material plan requires every selected public A1 slot and no authorized execution")
         return
     if plan.get("schema") == "math-gauge.reliability-material-plan/v2":
         require(plan.get("protocol_version") == "0.4.0" and plan.get("suite_version") == "0.6.0"

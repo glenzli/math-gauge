@@ -48,6 +48,6 @@ S5 的 x₁=1、x_{j−1}=x_j 系统每个有限子系统有截断的全一解�
 
 至少给出一条有效闭性依据，定位仿射/线性边界并以合法例子或等价论证说明，再准确限定影响。仅报“正确”、仅报“错误”、只复述权威名称，或将原题结论改判为假，均不足。
 
-母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GR014/reference.md](../../proofs/MG-GR014/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
+母题完整参考另以原字节保存在评审侧 [evaluator/original-reference.md](evaluator/original-reference.md)，其原路径为 [cases/proofs/MG-GR014/reference.md](https://github.com/glenzli/math-gauge/blob/292c26709785836c27a847cdf113fda4f34f5af7/cases/proofs/MG-GR014/reference.md)；原文中的相对链接与历史状态均按该原目录和当时版本解释，不代表本审阅题当前状态。
 
 评分与当前执行状态以 [rubric.json](rubric.json)、[group-contract.json](group-contract.json) 及 [review.json](review.json) 为准；统一标准见[答卷审阅评分](../../../protocol/answer-review-scoring.md)。

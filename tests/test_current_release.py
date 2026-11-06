@@ -2,6 +2,8 @@
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -17,19 +19,16 @@ SPEC.loader.exec_module(RELEASE)
 
 
 class CurrentReleaseTests(unittest.TestCase):
-    def test_current_release_and_public_private_edition_share_the_suite_version(self):
-        config = RELEASE.load_config()
-        edition = json.loads((ROOT / "benchmark.json").read_bytes())
-        self.assertEqual(RELEASE.VERSION, edition["version"])
-        self.assertEqual(config["release_version"], config["suite_version"])
-        self.assertEqual((config["case_count"], config["slot_count"]), (26, 26))
-        self.assertEqual(edition["private"]["tasks"], 3)
-        self.assertNotIn("private_version", edition)
 
     def test_execution_groups_do_not_duplicate_component_denominators(self):
         suite = Suite.load(ROOT / "cases")
         plan = build_plan(BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", suite), suite)
         config = RELEASE.load_config()
+        edition = json.loads((ROOT / "benchmark.json").read_bytes())
+        self.assertEqual(RELEASE.VERSION, edition["version"])
+        self.assertEqual(config["release_version"], config["suite_version"])
+        self.assertEqual((config["case_count"], config["slot_count"]),
+                         (len(suite.cases), plan["planned"]["all_slots"]))
         with tempfile.TemporaryDirectory() as directory:
             dest = Path(directory).resolve() / "dataset"
             with patch("subprocess.Popen", side_effect=AssertionError("No candidate or Lean call")):
@@ -39,16 +38,22 @@ class CurrentReleaseTests(unittest.TestCase):
                         "THIRD_PARTY_NOTICES.md": (ROOT / config["third_party_notices"]).read_bytes()})
                 self.assertEqual(inspect_release_dataset(dest, plan=plan, suite=suite), manifest)
             sizes = {name: len(ids) for name, ids in manifest["target_slot_ids"].items()}
-            self.assertEqual({k: sizes[k] for k in ["proofs", "lean-audit", "lean-formalization", "answer-review"]},
-                             {"proofs": 14, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4})
+            self.assertEqual({k: sizes[k] for k in ["proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension"]},
+                             {"proofs": 8, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4, "theorem-extension": 2})
             self.assertEqual({k: sizes[k] for k in ["c003-180", "lean-90", "written-new-panel", "written-refresh"]},
                              {"c003-180": 1, "lean-90": 7, "written-new-panel": 2, "written-refresh": 3})
-            self.assertEqual(manifest["planned"]["all_slots"], 26)
+            self.assertEqual(manifest["planned"]["all_slots"], 22)
             guide = (dest / "README.md").read_text()
             for phrase in ["self-assessment", "UTF-8", "KEEP/FULL", "last prescribed delivery", "fixed denominators"]:
                 self.assertIn(phrase, guide)
             self.assertFalse(any(p.name in {"reference.md", "rubric.json", "record.json", "scoring-policy.json"}
                                  for p in dest.rglob("*")))
+            # The embedded stdlib controller must admit the new component,
+            # independently of the installed evaluator's target registry.
+            checked = subprocess.run([sys.executable, "-I", "-S", "-B",
+                str(dest / "tools/benchmark.py"), "check"], cwd=directory,
+                capture_output=True, check=False)
+            self.assertEqual(checked.returncode, 0, checked.stderr)
 
 
 if __name__ == "__main__":

@@ -10,13 +10,15 @@ from pathlib import Path
 
 from .catalog import (assessment_units, assessment_weights, candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
+from .case_selection import assessment_family, selected_assessment_cases, validate_case_selection
+from .theorem_extension import selected_cases as selected_current_cases, validate_policy as validate_extension_policy
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy, validate_case_execution_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
 EXTENDED_COMPONENTS = COMPONENTS + ("exploration", "answer-review")
 FORMALIZATION_COMPONENTS = ("proofs", "lean-audit", "lean-formalization", "exploration", "answer-review")
-TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("repeat", "neutral", "stance", "core", "all")
+TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("theorem-extension", "repeat", "neutral", "stance", "core", "all")
 ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
 PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
@@ -34,16 +36,26 @@ def identity(value):
 def validate_assessment_policy(policy):
     """Validate the current hierarchy, including unbuilt reserved categories."""
     if (not isinstance(policy, dict) or policy.get("schema") != "math-gauge.assessment-policy/v1"
-            or policy.get("version") != "0.5.0" or policy.get("benchmark_version") != "0.6.0"
+            or policy.get("version") not in {"0.5.0", "0.6.0"} or policy.get("benchmark_version") != "0.6.0"
             or policy.get("publication_scope") != "combined" or policy.get("primary_metric") != "earned"
             or policy.get("initial_attempt_labels") != ["A1"]
             or policy.get("score_modes") != ["partial", "strict"]
             or policy.get("overall_floor") != 0):
         raise ValueError("Unsupported current mathematical assessment policy")
-    expected = {"written-argument": (25, 14, 3, 17), "argument-review": (10, 4, 0, 4),
+    selection = policy.get("case_selection")
+    if selection is not None:
+        validate_case_selection(selection)
+    extension = policy.get("version") == "0.6.0"
+    if extension:
+        validate_extension_policy(policy.get("theorem_extension"))
+        if selection is None:
+            raise ValueError("The research assessment retains the selected twenty-task source baseline")
+    expected = {"written-argument": (25, 8, 3, 11) if selection is not None else (25, 14, 3, 17),
+                "argument-review": (10, 4, 0, 4),
                 "lean-audit": (10, 4, 0, 2), "lean-formalization": (15, 4, 0, 2),
                 "lean-selfcheck": (10, 1, 0, 1), "background-check": (10, 0, 0, 0),
-                "manuscript-completion": (10, 0, 0, 0), "theorem-extension": (10, 0, 0, 0)}
+                "manuscript-completion": (10, 0, 0, 0),
+                "theorem-extension": (10, 2, 3, 5) if extension else (10, 0, 0, 0)}
     rows = policy.get("subcategories", [])
     if ([row.get("id") for row in rows] != list(expected)
             or any(tuple(row.get(k) for k in ("weight", "public_tasks", "private_tasks", "families"))
@@ -54,10 +66,14 @@ def validate_assessment_policy(policy):
     groups = policy.get("groups", [])
     source_contract = [(["proofs", "exploration"], "family"), (["answer-review"], "parent_family"),
                        (["lean-audit"], "family"), (["lean-formalization"], "family"),
-                       ([], "trajectory"), ([], "family"), ([], "family"), ([], "family")]
+                       ([], "trajectory"), ([], "family"), ([], "family"),
+                       (["theorem-extension"] if extension else [], "family")]
+    public_count, total_count, family_count = (20, 23, 19) if selection is not None else (26, 29, 21)
+    if extension:
+        public_count, total_count, family_count = 22, 28, 24
     if ([(row.get("source_components"), row.get("aggregation")) for row in rows] != source_contract
-            or policy.get("scope") != {"public_tasks": 26, "private_tasks": 3, "tasks": 29,
-                "parent_families": 21, "initial_slots": 29, "public_initial_slots": 26,
+            or policy.get("scope") != {"public_tasks": public_count, "private_tasks": 6 if extension else 3, "tasks": total_count,
+                "parent_families": family_count, "initial_slots": total_count, "public_initial_slots": public_count,
                 "alignment_rounds": 3, "trajectory_assessment_units": 1}):
         raise ValueError("Current assessment changed source categories or fixed denominators")
     if ([(g.get("id"), g.get("weight"), g.get("children")) for g in groups] != [
@@ -114,7 +130,7 @@ def component_ids(data):
              "Profile requires explicit ordered components")
     ids = [row.get("id") for row in rows]
     if data.get("schema") == "math-gauge.benchmark-profile/v6":
-        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review")
+        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension")
         _require(ids == [cid for cid in allowed if cid in ids]
                  and all(row.get("aggregation") == ("parent_family" if row["id"] == "answer-review" else "family")
                          for row in rows), "Invalid current task categories or family aggregation")
@@ -136,6 +152,8 @@ def _validate_profile_weights(data):
     if data.get("schema") == "math-gauge.benchmark-profile/v6":
         policy = validate_assessment_policy(data.get("assessment_policy"))
         expected = {"proofs": 25, "lean-audit": 10, "lean-formalization": 15, "answer-review": 10}
+        if policy["version"] == "0.6.0":
+            expected["theorem-extension"] = 10
         _require({row["id"]: row.get("weight") for row in data["components"]} == expected
                  and "overall_weights" not in data
                  and data.get("source_only_counts") is True,
@@ -334,6 +352,11 @@ class BenchmarkProfile:
         _require(len(members) == len(set(members))
                  and set(members) == set(suite.cases),
                  "Core components must partition the complete suite without overlap")
+        if data["schema"].endswith("/v6"):
+            membership = {cid: row["id"] for row in rows for cid in row["case_ids"]}
+            selected_current_cases({cid: dict(case, component=membership[cid])
+                for cid, case in suite.cases.items()}, data["assessment_policy"].get("case_selection"),
+                current_plan=True)
         policy = validate_case_execution_policy(data, {cid: row["id"] for row in rows for cid in row["case_ids"]})
         if policy is not None:
             binding = policy.get("budget_policy_binding", {})
@@ -378,7 +401,7 @@ def _category_matches(component, task_kind, contract_kind, *, current=False):
     if component == "chapters":
         return contract_kind == "chapter_formalization" and task_kind == "generate"
     if contract_kind == "written_proof":
-        return component == "proofs" and task_kind == "written"
+        return component in {"proofs", "theorem-extension"} and task_kind == "written"
     if contract_kind != "progressive":
         return False
     return (component == "proofs" and task_kind == "written"
@@ -558,6 +581,9 @@ def build_plan(profile, suite, targets=None, *, runtime=None):
             cases[-1]["assessment_unit"] = "proof_criterion"
         if contract["kind"] == "answer_review":
             cases[-1]["parent_family_id"] = contract["parent_family_id"]
+            selection = profile.data.get("assessment_policy", {}).get("case_selection")
+            if selection is not None:
+                cases[-1]["parent_family_id"] = assessment_family(cases[-1], suite.cases, selection)
             _require(attempts[cid] == ["A1"], "Answer-review papers use A1 only")
         if suite.members:
             cases[-1]["source_suite"] = suite.source_binding(case)
@@ -674,6 +700,9 @@ def validate_plan(plan):
                  and case.get("total_weight") == sum(s["points"] for s in stages),
                  "Frozen paper weights changed")
     slots = plan.get("slots", [])
+    if data["schema"].endswith("/v6"):
+        selected_current_cases({case["case_id"]: case for case in cases},
+            data["assessment_policy"].get("case_selection"), current_plan=True)
     packet = dict(plan.get("reliability", {}), schedule={"slots": slots})
     _require(packet.get("protocol_version") == data.get("reliability", {}).get("protocol_version"),
              "Reliability profile and plan protocol versions differ")

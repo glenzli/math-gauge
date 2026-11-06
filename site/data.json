@@ -1,7 +1,7 @@
 {
   "schema": "math-gauge.current-results-display/v4",
   "benchmark_version": "0.6.0",
-  "scoring_method_version": "0.5.0",
+  "scoring_method_version": "0.6.0",
   "strict_method_version": "0.2.0",
   "human_review": "pending",
   "formal_comparison_eligible": false,
@@ -21,32 +21,32 @@
       },
       "combined": {
         "benchmark_version": "0.6.0",
-        "scoring_method_version": "0.5.0",
+        "scoring_method_version": "0.6.0",
         "strict_method_version": "0.2.0",
         "score_mode": "partial",
         "primary_metric": "earned",
         "model_label": "gpt-6.1-terra/max native local-tools 0.6 supplement",
         "capacity": {
           "total": 100,
-          "active": 70,
-          "under_construction": 30
+          "active": 80,
+          "under_construction": 20
         },
         "coverage": {
-          "public_tasks": 26,
-          "private_tasks": 3,
-          "tasks": 29,
-          "parent_families": 21,
-          "initial_slots": 29,
-          "public_initial_slots": 26,
+          "public_tasks": 22,
+          "private_tasks": 6,
+          "tasks": 28,
+          "parent_families": 24,
+          "initial_slots": 28,
+          "public_initial_slots": 22,
           "alignment_rounds": 3,
           "trajectory_assessment_units": 1,
-          "source_initial_tasks": 29,
-          "source_initial_judgments": 29
+          "source_initial_tasks": 28,
+          "source_initial_judgments": 28
         },
         "whole_task_counts": {
-          "planned": 29,
-          "passed": 27,
-          "failed": 2,
+          "planned": 28,
+          "passed": 22,
+          "failed": 6,
           "unknown": 0
         },
         "profile": {
@@ -90,9 +90,9 @@
                 "proofs",
                 "exploration"
               ],
-              "public_tasks": 14,
+              "public_tasks": 8,
               "private_tasks": 3,
-              "families": 17,
+              "families": 11,
               "aggregation": "family",
               "status": "active"
             },
@@ -175,12 +175,14 @@
               "id": "theorem-extension",
               "title": "命题拓展",
               "weight": 10,
-              "source_components": [],
-              "public_tasks": 0,
-              "private_tasks": 0,
-              "families": 0,
+              "source_components": [
+                "theorem-extension"
+              ],
+              "public_tasks": 2,
+              "private_tasks": 3,
+              "families": 5,
               "aggregation": "family",
-              "status": "under_construction"
+              "status": "active"
             }
           ]
         },
@@ -433,15 +435,16 @@
           "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
           "alignment_review_sha256": "36393b65bcf0902f6822776d17394b57a8787cb5db836f9390d6675a7534503a",
           "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
-          "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+          "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
           "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-          "private_report_sha256": "892ac484feca9f5df3ba47cd2c27a6eebba3fb1a026cc1abd233ce847119c60c"
+          "theorem_extension_inputs_sha256": "936ca9786b025960e9fbb3283a55ef28ee1844bd8c98a809cdde26a68e681e93",
+          "private_report_sha256": "1f431dd7cdb91964bc4676544957e5ca2664eaaa2fabc61e1ba9a997fe147fb6"
         },
         "source_math_policy_version": "0.4.0",
         "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
         "schema": "math-gauge.assessment-score-aggregate/v1",
         "scope": "combined-aggregate-only",
-        "private_case_count": 3,
+        "private_case_count": 6,
         "metrics": {
           "written-argument": {
             "exact": 100.0,
@@ -450,10 +453,11 @@
             "complete": true,
             "coverage": {
               "unit": "family",
-              "planned": 17,
-              "adjudicated": 17,
+              "planned": 11,
+              "adjudicated": 11,
               "unknown": 0
             },
+            "confirmed": 100.0,
             "formal_comparison_eligible": false
           },
           "argument-review": {
@@ -467,6 +471,7 @@
               "adjudicated": 4,
               "unknown": 0
             },
+            "confirmed": 98.75,
             "formal_comparison_eligible": false
           },
           "lean-audit": {
@@ -480,6 +485,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 100.0,
             "formal_comparison_eligible": false
           },
           "lean-formalization": {
@@ -493,6 +499,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 90.21739130434783,
             "formal_comparison_eligible": false
           },
           "lean-selfcheck": {
@@ -506,6 +513,7 @@
               "adjudicated": 1,
               "unknown": 0
             },
+            "confirmed": 37.6296296296,
             "formal_comparison_eligible": false
           },
           "background-check": {
@@ -519,6 +527,7 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "manuscript-completion": {
@@ -532,19 +541,21 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "theorem-extension": {
-            "exact": null,
-            "lower": 0.0,
-            "upper": 100.0,
-            "complete": false,
+            "exact": 46.6666666667,
+            "lower": 46.6666666666,
+            "upper": 46.6666666667,
+            "complete": true,
             "coverage": {
               "unit": "family",
-              "planned": 0,
-              "adjudicated": 0,
+              "planned": 5,
+              "adjudicated": 5,
               "unknown": 0
             },
+            "confirmed": 46.666666666666664,
             "formal_comparison_eligible": false
           },
           "written": {
@@ -558,6 +569,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 99.64285714285714,
             "formal_comparison_eligible": false
           },
           "lean": {
@@ -571,44 +583,47 @@
               "adjudicated": 3,
               "unknown": 0
             },
+            "confirmed": 77.98734759603478,
             "formal_comparison_eligible": false
           },
           "research": {
             "exact": null,
-            "lower": 0.0,
-            "upper": 100.0,
+            "lower": 15.5555555555,
+            "upper": 82.2222222223,
             "complete": false,
             "coverage": {
               "unit": "fixed subcategory",
               "planned": 3,
-              "adjudicated": 0,
-              "unknown": 3
+              "adjudicated": 1,
+              "unknown": 2
             },
+            "confirmed": 15.555555555555555,
             "formal_comparison_eligible": false
           },
           "earned": {
-            "exact": 62.1705716586,
-            "lower": 62.1705716586,
-            "upper": 62.1705716587,
+            "exact": 66.8372383253,
+            "lower": 66.8372383252,
+            "upper": 66.8372383253,
             "complete": true,
             "coverage": {
               "unit": "fixed 100-point benchmark",
-              "planned": 5,
-              "adjudicated": 5,
+              "planned": 6,
+              "adjudicated": 6,
               "unknown": 0
             },
+            "confirmed": 66.83723832527885,
             "formal_comparison_eligible": false
           },
           "overall": {
             "exact": null,
-            "lower": 62.1705716586,
-            "upper": 92.1705716587,
+            "lower": 66.8372383252,
+            "upper": 86.8372383253,
             "complete": false,
             "coverage": {
               "unit": "fixed 100-point benchmark",
               "planned": 8,
-              "adjudicated": 5,
-              "unknown": 3
+              "adjudicated": 6,
+              "unknown": 2
             },
             "formal_comparison_eligible": false
           }
@@ -621,10 +636,11 @@
             "complete": true,
             "coverage": {
               "unit": "points in full benchmark",
-              "planned": 17,
-              "adjudicated": 17,
+              "planned": 11,
+              "adjudicated": 11,
               "unknown": 0
             },
+            "confirmed": 25.0,
             "formal_comparison_eligible": false
           },
           "argument-review": {
@@ -638,6 +654,7 @@
               "adjudicated": 4,
               "unknown": 0
             },
+            "confirmed": 9.875,
             "formal_comparison_eligible": false
           },
           "lean-audit": {
@@ -651,6 +668,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 10.0,
             "formal_comparison_eligible": false
           },
           "lean-formalization": {
@@ -664,6 +682,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 13.532608695652174,
             "formal_comparison_eligible": false
           },
           "lean-selfcheck": {
@@ -677,6 +696,7 @@
               "adjudicated": 1,
               "unknown": 0
             },
+            "confirmed": 3.76296296296,
             "formal_comparison_eligible": false
           },
           "background-check": {
@@ -690,6 +710,7 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "manuscript-completion": {
@@ -703,19 +724,21 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "theorem-extension": {
-            "exact": null,
-            "lower": 0.0,
-            "upper": 10.0,
-            "complete": false,
+            "exact": 4.6666666667,
+            "lower": 4.6666666666,
+            "upper": 4.6666666667,
+            "complete": true,
             "coverage": {
               "unit": "points in full benchmark",
-              "planned": 0,
-              "adjudicated": 0,
+              "planned": 5,
+              "adjudicated": 5,
               "unknown": 0
             },
+            "confirmed": 4.666666666666667,
             "formal_comparison_eligible": false
           },
           "written": {
@@ -729,6 +752,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 34.875,
             "formal_comparison_eligible": false
           },
           "lean": {
@@ -742,19 +766,21 @@
               "adjudicated": 3,
               "unknown": 0
             },
+            "confirmed": 27.295571658612175,
             "formal_comparison_eligible": false
           },
           "research": {
             "exact": null,
-            "lower": 0.0,
-            "upper": 30.0,
+            "lower": 4.6666666666,
+            "upper": 24.6666666667,
             "complete": false,
             "coverage": {
               "unit": "points in full benchmark",
               "planned": 3,
-              "adjudicated": 0,
-              "unknown": 3
+              "adjudicated": 1,
+              "unknown": 2
             },
+            "confirmed": 4.666666666666667,
             "formal_comparison_eligible": false
           }
         },
@@ -765,32 +791,32 @@
       "strict": {
         "single_attempt": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "strict",
           "primary_metric": "earned",
           "model_label": "gpt-6.1-terra/max native local-tools 0.6 supplement",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 28
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 27,
-            "failed": 2,
+            "planned": 28,
+            "passed": 22,
+            "failed": 6,
             "unknown": 0
           },
           "profile": {
@@ -834,9 +860,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -919,12 +945,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -1177,15 +1205,16 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "36393b65bcf0902f6822776d17394b57a8787cb5db836f9390d6675a7534503a",
             "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "395d505de8d5d0ea835d7486461a9b795c4f370a3819c93280177d91e3f993f0"
+            "theorem_extension_inputs_sha256": "936ca9786b025960e9fbb3283a55ef28ee1844bd8c98a809cdde26a68e681e93",
+            "private_report_sha256": "ce2c495f70810f3d9452f57b43e3b6af69f315b8dc3244edc3388fbb4a35d99d"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
               "exact": 100.0,
@@ -1194,10 +1223,11 @@
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 100.0,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -1211,6 +1241,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 75.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -1224,6 +1255,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 100.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -1237,6 +1269,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 50.0,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -1250,6 +1283,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -1263,6 +1297,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -1276,19 +1311,21 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
-              "exact": null,
-              "lower": 0.0,
-              "upper": 100.0,
-              "complete": false,
+              "exact": 20.0,
+              "lower": 20.0,
+              "upper": 20.0,
+              "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
-                "adjudicated": 0,
+                "planned": 5,
+                "adjudicated": 5,
                 "unknown": 0
               },
+              "confirmed": 20.0,
               "formal_comparison_eligible": false
             },
             "written": {
@@ -1302,6 +1339,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 92.85714285714286,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -1315,44 +1353,47 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 50.0,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
-              "upper": 100.0,
+              "lower": 6.6666666666,
+              "upper": 73.3333333334,
               "complete": false,
               "coverage": {
                 "unit": "fixed subcategory",
                 "planned": 3,
-                "adjudicated": 0,
-                "unknown": 3
+                "adjudicated": 1,
+                "unknown": 2
               },
+              "confirmed": 6.666666666666667,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 50.0,
-              "lower": 50.0,
-              "upper": 50.0,
+              "exact": 52.0,
+              "lower": 52.0,
+              "upper": 52.0,
               "complete": true,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
-                "adjudicated": 5,
+                "planned": 6,
+                "adjudicated": 6,
                 "unknown": 0
               },
+              "confirmed": 52.0,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 50.0,
-              "upper": 80.0,
+              "lower": 52.0,
+              "upper": 72.0,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
                 "planned": 8,
-                "adjudicated": 5,
-                "unknown": 3
+                "adjudicated": 6,
+                "unknown": 2
               },
               "formal_comparison_eligible": false
             }
@@ -1365,10 +1406,11 @@
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -1382,6 +1424,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -1395,6 +1438,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 10.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -1408,6 +1452,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -1421,6 +1466,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -1434,6 +1480,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -1447,19 +1494,21 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
-              "exact": null,
-              "lower": 0.0,
-              "upper": 10.0,
-              "complete": false,
+              "exact": 2.0,
+              "lower": 2.0,
+              "upper": 2.0,
+              "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
-                "adjudicated": 0,
+                "planned": 5,
+                "adjudicated": 5,
                 "unknown": 0
               },
+              "confirmed": 2.0,
               "formal_comparison_eligible": false
             },
             "written": {
@@ -1473,6 +1522,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 32.5,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -1486,19 +1536,21 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 17.5,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
-              "upper": 30.0,
+              "lower": 2.0,
+              "upper": 22.0,
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
                 "planned": 3,
-                "adjudicated": 0,
-                "unknown": 3
+                "adjudicated": 1,
+                "unknown": 2
               },
+              "confirmed": 2.0,
               "formal_comparison_eligible": false
             }
           },
@@ -1508,32 +1560,32 @@
         },
         "nonlogical_retry_3": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "strict",
           "primary_metric": "earned",
           "model_label": "gpt-6.1-terra/max native local-tools 0.6 supplement",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 28
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 27,
-            "failed": 2,
+            "planned": 28,
+            "passed": 22,
+            "failed": 6,
             "unknown": 0
           },
           "profile": {
@@ -1577,9 +1629,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -1662,12 +1714,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -1920,15 +1974,16 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "36393b65bcf0902f6822776d17394b57a8787cb5db836f9390d6675a7534503a",
             "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "598d15d8c872adce54f0701df56d2f9799b34df6c1ffeea0426ee636beac62a8"
+            "theorem_extension_inputs_sha256": "936ca9786b025960e9fbb3283a55ef28ee1844bd8c98a809cdde26a68e681e93",
+            "private_report_sha256": "923952c0fbd7c62eb8fb95f00539332afc5102176c4e609c46de4b4327d13fd1"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
               "exact": 100.0,
@@ -1937,10 +1992,11 @@
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 100.0,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -1954,6 +2010,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 75.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -1967,6 +2024,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 100.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -1980,6 +2038,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 50.0,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -1993,6 +2052,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -2006,6 +2066,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -2019,19 +2080,21 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
-              "exact": null,
-              "lower": 0.0,
-              "upper": 100.0,
-              "complete": false,
+              "exact": 20.0,
+              "lower": 20.0,
+              "upper": 20.0,
+              "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
-                "adjudicated": 0,
+                "planned": 5,
+                "adjudicated": 5,
                 "unknown": 0
               },
+              "confirmed": 20.0,
               "formal_comparison_eligible": false
             },
             "written": {
@@ -2045,6 +2108,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 92.85714285714286,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -2058,44 +2122,47 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 50.0,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
-              "upper": 100.0,
+              "lower": 6.6666666666,
+              "upper": 73.3333333334,
               "complete": false,
               "coverage": {
                 "unit": "fixed subcategory",
                 "planned": 3,
-                "adjudicated": 0,
-                "unknown": 3
+                "adjudicated": 1,
+                "unknown": 2
               },
+              "confirmed": 6.666666666666667,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 50.0,
-              "lower": 50.0,
-              "upper": 50.0,
+              "exact": 52.0,
+              "lower": 52.0,
+              "upper": 52.0,
               "complete": true,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
-                "adjudicated": 5,
+                "planned": 6,
+                "adjudicated": 6,
                 "unknown": 0
               },
+              "confirmed": 52.0,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 50.0,
-              "upper": 80.0,
+              "lower": 52.0,
+              "upper": 72.0,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
                 "planned": 8,
-                "adjudicated": 5,
-                "unknown": 3
+                "adjudicated": 6,
+                "unknown": 2
               },
               "formal_comparison_eligible": false
             }
@@ -2108,10 +2175,11 @@
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -2125,6 +2193,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -2138,6 +2207,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 10.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -2151,6 +2221,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -2164,6 +2235,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -2177,6 +2249,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -2190,19 +2263,21 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
-              "exact": null,
-              "lower": 0.0,
-              "upper": 10.0,
-              "complete": false,
+              "exact": 2.0,
+              "lower": 2.0,
+              "upper": 2.0,
+              "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
-                "adjudicated": 0,
+                "planned": 5,
+                "adjudicated": 5,
                 "unknown": 0
               },
+              "confirmed": 2.0,
               "formal_comparison_eligible": false
             },
             "written": {
@@ -2216,6 +2291,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 32.5,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -2229,19 +2305,21 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 17.5,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
-              "upper": 30.0,
+              "lower": 2.0,
+              "upper": 22.0,
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
                 "planned": 3,
-                "adjudicated": 0,
-                "unknown": 3
+                "adjudicated": 1,
+                "unknown": 2
               },
+              "confirmed": 2.0,
               "formal_comparison_eligible": false
             }
           },
@@ -2475,32 +2553,32 @@
       "retry": {
         "combined": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "partial",
           "primary_metric": "earned",
           "model_label": "gpt-6.1-terra/max native local-tools 0.6 supplement",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 28
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 27,
-            "failed": 2,
+            "planned": 28,
+            "passed": 22,
+            "failed": 6,
             "unknown": 0
           },
           "profile": {
@@ -2544,9 +2622,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -2629,12 +2707,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -2887,15 +2967,16 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "36393b65bcf0902f6822776d17394b57a8787cb5db836f9390d6675a7534503a",
             "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "5f9615dde813f904a7cf657971f89c8770f327c061a7b001c008fd28a6667dd4"
+            "theorem_extension_inputs_sha256": "936ca9786b025960e9fbb3283a55ef28ee1844bd8c98a809cdde26a68e681e93",
+            "private_report_sha256": "ccd9be2aee6924f87fd84e31f67fe2efd196d4729f7a952b32788e6664d7596a"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
               "exact": 100.0,
@@ -2904,10 +2985,11 @@
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 100.0,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -2921,6 +3003,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 98.75,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -2934,6 +3017,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 100.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -2947,6 +3031,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 90.21739130434783,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -2960,6 +3045,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 37.6296296296,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -2973,6 +3059,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -2986,19 +3073,21 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
-              "exact": null,
-              "lower": 0.0,
-              "upper": 100.0,
-              "complete": false,
+              "exact": 46.6666666667,
+              "lower": 46.6666666666,
+              "upper": 46.6666666667,
+              "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
-                "adjudicated": 0,
+                "planned": 5,
+                "adjudicated": 5,
                 "unknown": 0
               },
+              "confirmed": 46.666666666666664,
               "formal_comparison_eligible": false
             },
             "written": {
@@ -3012,6 +3101,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 99.64285714285714,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -3025,44 +3115,47 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 77.98734759603478,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
-              "upper": 100.0,
+              "lower": 15.5555555555,
+              "upper": 82.2222222223,
               "complete": false,
               "coverage": {
                 "unit": "fixed subcategory",
                 "planned": 3,
-                "adjudicated": 0,
-                "unknown": 3
+                "adjudicated": 1,
+                "unknown": 2
               },
+              "confirmed": 15.555555555555555,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 62.1705716586,
-              "lower": 62.1705716586,
-              "upper": 62.1705716587,
+              "exact": 66.8372383253,
+              "lower": 66.8372383252,
+              "upper": 66.8372383253,
               "complete": true,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
-                "adjudicated": 5,
+                "planned": 6,
+                "adjudicated": 6,
                 "unknown": 0
               },
+              "confirmed": 66.83723832527885,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 62.1705716586,
-              "upper": 92.1705716587,
+              "lower": 66.8372383252,
+              "upper": 86.8372383253,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
                 "planned": 8,
-                "adjudicated": 5,
-                "unknown": 3
+                "adjudicated": 6,
+                "unknown": 2
               },
               "formal_comparison_eligible": false
             }
@@ -3075,10 +3168,11 @@
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -3092,6 +3186,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 9.875,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -3105,6 +3200,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 10.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -3118,6 +3214,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 13.532608695652174,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -3131,6 +3228,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 3.76296296296,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -3144,6 +3242,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -3157,19 +3256,21 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
-              "exact": null,
-              "lower": 0.0,
-              "upper": 10.0,
-              "complete": false,
+              "exact": 4.6666666667,
+              "lower": 4.6666666666,
+              "upper": 4.6666666667,
+              "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
-                "adjudicated": 0,
+                "planned": 5,
+                "adjudicated": 5,
                 "unknown": 0
               },
+              "confirmed": 4.666666666666667,
               "formal_comparison_eligible": false
             },
             "written": {
@@ -3183,6 +3284,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 34.875,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -3196,19 +3298,21 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 27.295571658612175,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
-              "upper": 30.0,
+              "lower": 4.6666666666,
+              "upper": 24.6666666667,
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
                 "planned": 3,
-                "adjudicated": 0,
-                "unknown": 3
+                "adjudicated": 1,
+                "unknown": 2
               },
+              "confirmed": 4.666666666666667,
               "formal_comparison_eligible": false
             }
           },
@@ -3216,7 +3320,7 @@
           "formal_comparison_eligible": false,
           "new_candidate_calls": 0
         },
-        "note": "无新增重跑，沿用原答；不据此认证全部历史底层调用均一次完成。"
+        "note": "研究源试答曾有15次路由连接失败且无答卷；当前采用修复环境批次的A1。本次整理未重跑，不认证整个历史首次即成功。"
       }
     },
     {
@@ -3234,33 +3338,33 @@
       },
       "combined": {
         "benchmark_version": "0.6.0",
-        "scoring_method_version": "0.5.0",
+        "scoring_method_version": "0.6.0",
         "strict_method_version": "0.2.0",
         "score_mode": "partial",
         "primary_metric": "earned",
         "model_label": "deepseek-v4.1-flash-1017 / codex (external integrated answers)",
         "capacity": {
           "total": 100,
-          "active": 70,
-          "under_construction": 30
+          "active": 80,
+          "under_construction": 20
         },
         "coverage": {
-          "public_tasks": 26,
-          "private_tasks": 3,
-          "tasks": 29,
-          "parent_families": 21,
-          "initial_slots": 29,
-          "public_initial_slots": 26,
+          "public_tasks": 22,
+          "private_tasks": 6,
+          "tasks": 28,
+          "parent_families": 24,
+          "initial_slots": 28,
+          "public_initial_slots": 22,
           "alignment_rounds": 3,
           "trajectory_assessment_units": 1,
-          "source_initial_tasks": 29,
-          "source_initial_judgments": 29
+          "source_initial_tasks": 28,
+          "source_initial_judgments": 23
         },
         "whole_task_counts": {
-          "planned": 29,
-          "passed": 13,
-          "failed": 16,
-          "unknown": 0
+          "planned": 28,
+          "passed": 9,
+          "failed": 14,
+          "unknown": 5
         },
         "profile": {
           "groups": [
@@ -3303,9 +3407,9 @@
                 "proofs",
                 "exploration"
               ],
-              "public_tasks": 14,
+              "public_tasks": 8,
               "private_tasks": 3,
-              "families": 17,
+              "families": 11,
               "aggregation": "family",
               "status": "active"
             },
@@ -3388,12 +3492,14 @@
               "id": "theorem-extension",
               "title": "命题拓展",
               "weight": 10,
-              "source_components": [],
-              "public_tasks": 0,
-              "private_tasks": 0,
-              "families": 0,
+              "source_components": [
+                "theorem-extension"
+              ],
+              "public_tasks": 2,
+              "private_tasks": 3,
+              "families": 5,
               "aggregation": "family",
-              "status": "under_construction"
+              "status": "active"
             }
           ]
         },
@@ -3646,27 +3752,29 @@
           "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
           "alignment_review_sha256": "55cff2be974e42414c8aec2fa348b49b0f9405789af8ec4720a17cb2da98deae",
           "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
-          "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+          "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
           "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-          "private_report_sha256": "1135e0cff8f0dd0aedf56a30d0658ed89a9346e27fc73e6762ea9489271bc341"
+          "theorem_extension_inputs_sha256": "0883383549a6a0722231f9f16db97d599a7f808eb50f6dd6e9a20cdb7276b3fa",
+          "private_report_sha256": "13bbd8663a6b2c2b9133f3110438b266d1ff9e4f2427ac529f933744d9921932"
         },
         "source_math_policy_version": "0.4.0",
         "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
         "schema": "math-gauge.assessment-score-aggregate/v1",
         "scope": "combined-aggregate-only",
-        "private_case_count": 3,
+        "private_case_count": 6,
         "metrics": {
           "written-argument": {
-            "exact": 73.6764705882,
-            "lower": 73.6764705882,
-            "upper": 73.6764705883,
+            "exact": 70.6818181818,
+            "lower": 70.6818181818,
+            "upper": 70.6818181819,
             "complete": true,
             "coverage": {
               "unit": "family",
-              "planned": 17,
-              "adjudicated": 17,
+              "planned": 11,
+              "adjudicated": 11,
               "unknown": 0
             },
+            "confirmed": 70.68181818181819,
             "formal_comparison_eligible": false
           },
           "argument-review": {
@@ -3680,6 +3788,7 @@
               "adjudicated": 4,
               "unknown": 0
             },
+            "confirmed": 55.625,
             "formal_comparison_eligible": false
           },
           "lean-audit": {
@@ -3693,6 +3802,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 91.875,
             "formal_comparison_eligible": false
           },
           "lean-formalization": {
@@ -3706,6 +3816,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 94.56521739130434,
             "formal_comparison_eligible": false
           },
           "lean-selfcheck": {
@@ -3719,6 +3830,7 @@
               "adjudicated": 1,
               "unknown": 0
             },
+            "confirmed": 1.0,
             "formal_comparison_eligible": false
           },
           "background-check": {
@@ -3732,6 +3844,7 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "manuscript-completion": {
@@ -3745,25 +3858,27 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "theorem-extension": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -66.6666666667,
             "upper": 100.0,
             "complete": false,
             "coverage": {
               "unit": "family",
-              "planned": 0,
+              "planned": 5,
               "adjudicated": 0,
-              "unknown": 0
+              "unknown": 5
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "written": {
-            "exact": 68.518907563,
-            "lower": 68.518907563,
-            "upper": 68.5189075631,
+            "exact": 66.3798701299,
+            "lower": 66.3798701298,
+            "upper": 66.3798701299,
             "complete": true,
             "coverage": {
               "unit": "fixed subcategory",
@@ -3771,6 +3886,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 66.37987012987013,
             "formal_comparison_eligible": false
           },
           "lean": {
@@ -3784,11 +3900,12 @@
               "adjudicated": 3,
               "unknown": 0
             },
+            "confirmed": 67.0636645962733,
             "formal_comparison_eligible": false
           },
           "research": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -22.2222222223,
             "upper": 100.0,
             "complete": false,
             "coverage": {
@@ -3797,25 +3914,27 @@
               "adjudicated": 0,
               "unknown": 3
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "earned": {
-            "exact": 47.4539002558,
-            "lower": 47.4539002557,
-            "upper": 47.4539002558,
-            "complete": true,
+            "exact": null,
+            "lower": 40.0385704874,
+            "upper": 56.7052371542,
+            "complete": false,
             "coverage": {
               "unit": "fixed 100-point benchmark",
-              "planned": 5,
+              "planned": 6,
               "adjudicated": 5,
-              "unknown": 0
+              "unknown": 1
             },
+            "confirmed": 46.7052371541502,
             "formal_comparison_eligible": false
           },
           "overall": {
             "exact": null,
-            "lower": 47.4539002557,
-            "upper": 77.4539002558,
+            "lower": 40.0385704874,
+            "upper": 76.7052371542,
             "complete": false,
             "coverage": {
               "unit": "fixed 100-point benchmark",
@@ -3828,16 +3947,17 @@
         },
         "contributions": {
           "written-argument": {
-            "exact": 18.4191176471,
-            "lower": 18.419117647,
-            "upper": 18.4191176471,
+            "exact": 17.6704545455,
+            "lower": 17.6704545454,
+            "upper": 17.6704545455,
             "complete": true,
             "coverage": {
               "unit": "points in full benchmark",
-              "planned": 17,
-              "adjudicated": 17,
+              "planned": 11,
+              "adjudicated": 11,
               "unknown": 0
             },
+            "confirmed": 17.670454545454547,
             "formal_comparison_eligible": false
           },
           "argument-review": {
@@ -3851,6 +3971,7 @@
               "adjudicated": 4,
               "unknown": 0
             },
+            "confirmed": 5.5625,
             "formal_comparison_eligible": false
           },
           "lean-audit": {
@@ -3864,6 +3985,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 9.1875,
             "formal_comparison_eligible": false
           },
           "lean-formalization": {
@@ -3877,6 +3999,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 14.184782608695652,
             "formal_comparison_eligible": false
           },
           "lean-selfcheck": {
@@ -3890,6 +4013,7 @@
               "adjudicated": 1,
               "unknown": 0
             },
+            "confirmed": 0.1,
             "formal_comparison_eligible": false
           },
           "background-check": {
@@ -3903,6 +4027,7 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "manuscript-completion": {
@@ -3916,25 +4041,27 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "theorem-extension": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -6.6666666667,
             "upper": 10.0,
             "complete": false,
             "coverage": {
               "unit": "points in full benchmark",
-              "planned": 0,
+              "planned": 5,
               "adjudicated": 0,
-              "unknown": 0
+              "unknown": 5
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "written": {
-            "exact": 23.9816176471,
-            "lower": 23.981617647,
-            "upper": 23.9816176471,
+            "exact": 23.2329545455,
+            "lower": 23.2329545454,
+            "upper": 23.2329545455,
             "complete": true,
             "coverage": {
               "unit": "points in full benchmark",
@@ -3942,6 +4069,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 23.232954545454547,
             "formal_comparison_eligible": false
           },
           "lean": {
@@ -3955,11 +4083,12 @@
               "adjudicated": 3,
               "unknown": 0
             },
+            "confirmed": 23.472282608695654,
             "formal_comparison_eligible": false
           },
           "research": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -6.6666666667,
             "upper": 30.0,
             "complete": false,
             "coverage": {
@@ -3968,6 +4097,7 @@
               "adjudicated": 0,
               "unknown": 3
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           }
         },
@@ -3978,33 +4108,33 @@
       "strict": {
         "single_attempt": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "strict",
           "primary_metric": "earned",
           "model_label": "deepseek-v4.1-flash-1017 / codex (external integrated answers)",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 23
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 13,
-            "failed": 16,
-            "unknown": 0
+            "planned": 28,
+            "passed": 9,
+            "failed": 14,
+            "unknown": 5
           },
           "profile": {
             "groups": [
@@ -4047,9 +4177,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -4132,12 +4262,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -4390,27 +4522,29 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "55cff2be974e42414c8aec2fa348b49b0f9405789af8ec4720a17cb2da98deae",
             "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "64c51b9f73aff4da998b73552ab07904f2694972c3d5b9a178db0c929f6bb98b"
+            "theorem_extension_inputs_sha256": "0883383549a6a0722231f9f16db97d599a7f808eb50f6dd6e9a20cdb7276b3fa",
+            "private_report_sha256": "4b9768532ead5e58b80c894e20cc1658e0547add0dea5f00e0ca48e0bc289f81"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
-              "exact": 41.1764705882,
-              "lower": 41.1764705882,
-              "upper": 41.1764705883,
+              "exact": 27.2727272727,
+              "lower": 27.2727272727,
+              "upper": 27.2727272728,
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 27.272727272727273,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -4424,6 +4558,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -4437,6 +4572,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 75.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -4450,6 +4586,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 50.0,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -4463,6 +4600,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -4476,6 +4614,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -4489,6 +4628,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -4498,16 +4638,17 @@
               "complete": false,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 29.4117647059,
-              "lower": 29.4117647058,
-              "upper": 29.4117647059,
+              "exact": 19.4805194805,
+              "lower": 19.4805194805,
+              "upper": 19.4805194806,
               "complete": true,
               "coverage": {
                 "unit": "fixed subcategory",
@@ -4515,6 +4656,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 19.48051948051948,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -4528,6 +4670,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 42.857142857142854,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -4541,25 +4684,27 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 25.2941176471,
-              "lower": 25.294117647,
-              "upper": 25.2941176471,
-              "complete": true,
+              "exact": null,
+              "lower": 21.8181818181,
+              "upper": 31.8181818182,
+              "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
+                "planned": 6,
                 "adjudicated": 5,
-                "unknown": 0
+                "unknown": 1
               },
+              "confirmed": 21.818181818181817,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 25.294117647,
-              "upper": 55.2941176471,
+              "lower": 21.8181818181,
+              "upper": 51.8181818182,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
@@ -4572,16 +4717,17 @@
           },
           "contributions": {
             "written-argument": {
-              "exact": 10.2941176471,
-              "lower": 10.294117647,
-              "upper": 10.2941176471,
+              "exact": 6.8181818182,
+              "lower": 6.8181818181,
+              "upper": 6.8181818182,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 6.818181818181818,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -4595,6 +4741,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -4608,6 +4755,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -4621,6 +4769,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -4634,6 +4783,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -4647,6 +4797,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -4660,6 +4811,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -4669,16 +4821,17 @@
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 10.2941176471,
-              "lower": 10.294117647,
-              "upper": 10.2941176471,
+              "exact": 6.8181818182,
+              "lower": 6.8181818181,
+              "upper": 6.8181818182,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
@@ -4686,6 +4839,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 6.818181818181818,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -4699,6 +4853,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 15.0,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -4712,6 +4867,7 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             }
           },
@@ -4721,33 +4877,33 @@
         },
         "nonlogical_retry_3": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "strict",
           "primary_metric": "earned",
           "model_label": "deepseek-v4.1-flash-1017 / codex (external integrated answers)",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 23
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 13,
-            "failed": 16,
-            "unknown": 0
+            "planned": 28,
+            "passed": 9,
+            "failed": 14,
+            "unknown": 5
           },
           "profile": {
             "groups": [
@@ -4790,9 +4946,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -4875,12 +5031,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -5139,9 +5297,10 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "55cff2be974e42414c8aec2fa348b49b0f9405789af8ec4720a17cb2da98deae",
             "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "107472c82227d98ab6310f6ce241aefa532171d939ebc4d6dbf411c056bd9f02"
+            "theorem_extension_inputs_sha256": "0883383549a6a0722231f9f16db97d599a7f808eb50f6dd6e9a20cdb7276b3fa",
+            "private_report_sha256": "669b7fd306ca326c942c769f6fc603daa747852102571ea1d173dc90d9781e85"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
@@ -5149,19 +5308,20 @@
           "retry_admission_sha256": "07829b46f46af4ac27afbb90c596c7c98bcafd8181c6d71e6828cbb53a8e2599",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
-              "exact": 41.1764705882,
-              "lower": 41.1764705882,
-              "upper": 41.1764705883,
+              "exact": 27.2727272727,
+              "lower": 27.2727272727,
+              "upper": 27.2727272728,
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 27.272727272727273,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -5175,6 +5335,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -5188,6 +5349,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 75.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -5201,6 +5363,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 50.0,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -5214,6 +5377,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -5227,6 +5391,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -5240,6 +5405,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -5249,16 +5415,17 @@
               "complete": false,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 29.4117647059,
-              "lower": 29.4117647058,
-              "upper": 29.4117647059,
+              "exact": 19.4805194805,
+              "lower": 19.4805194805,
+              "upper": 19.4805194806,
               "complete": true,
               "coverage": {
                 "unit": "fixed subcategory",
@@ -5266,6 +5433,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 19.48051948051948,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -5279,6 +5447,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 42.857142857142854,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -5292,25 +5461,27 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 25.2941176471,
-              "lower": 25.294117647,
-              "upper": 25.2941176471,
-              "complete": true,
+              "exact": null,
+              "lower": 21.8181818181,
+              "upper": 31.8181818182,
+              "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
+                "planned": 6,
                 "adjudicated": 5,
-                "unknown": 0
+                "unknown": 1
               },
+              "confirmed": 21.818181818181817,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 25.294117647,
-              "upper": 55.2941176471,
+              "lower": 21.8181818181,
+              "upper": 51.8181818182,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
@@ -5323,16 +5494,17 @@
           },
           "contributions": {
             "written-argument": {
-              "exact": 10.2941176471,
-              "lower": 10.294117647,
-              "upper": 10.2941176471,
+              "exact": 6.8181818182,
+              "lower": 6.8181818181,
+              "upper": 6.8181818182,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 6.818181818181818,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -5346,6 +5518,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -5359,6 +5532,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -5372,6 +5546,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.5,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -5385,6 +5560,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -5398,6 +5574,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -5411,6 +5588,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -5420,16 +5598,17 @@
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 10.2941176471,
-              "lower": 10.294117647,
-              "upper": 10.2941176471,
+              "exact": 6.8181818182,
+              "lower": 6.8181818181,
+              "upper": 6.8181818182,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
@@ -5437,6 +5616,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 6.818181818181818,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -5450,6 +5630,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 15.0,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -5463,6 +5644,7 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             }
           },
@@ -5702,33 +5884,33 @@
       "retry": {
         "combined": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "partial",
           "primary_metric": "earned",
           "model_label": "deepseek-v4.1-flash-1017 / codex (external integrated answers)",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 23
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 13,
-            "failed": 16,
-            "unknown": 0
+            "planned": 28,
+            "passed": 9,
+            "failed": 14,
+            "unknown": 5
           },
           "profile": {
             "groups": [
@@ -5771,9 +5953,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -5856,12 +6038,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -6120,9 +6304,10 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "55cff2be974e42414c8aec2fa348b49b0f9405789af8ec4720a17cb2da98deae",
             "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "0f67232e4ebece2c42d6eedcc4ccf0baf0468a6f7d4514c02916a0b72c63035a"
+            "theorem_extension_inputs_sha256": "0883383549a6a0722231f9f16db97d599a7f808eb50f6dd6e9a20cdb7276b3fa",
+            "private_report_sha256": "854814f2ba3386a29d84ba46d157ed88b75fbd00c694ebe4215f2ace275f64e3"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "948b2ab50d38eaab8b152618901165c414d0169293b8c3af2d017e5d47771e47",
@@ -6130,19 +6315,20 @@
           "retry_admission_sha256": "07829b46f46af4ac27afbb90c596c7c98bcafd8181c6d71e6828cbb53a8e2599",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
-              "exact": 81.6764705882,
-              "lower": 81.6764705882,
-              "upper": 81.6764705883,
+              "exact": 83.0454545455,
+              "lower": 83.0454545454,
+              "upper": 83.0454545455,
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 83.04545454545455,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -6156,6 +6342,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 55.625,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -6169,6 +6356,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 91.875,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -6182,6 +6370,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 94.56521739130434,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -6195,6 +6384,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 1.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -6208,6 +6398,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -6221,25 +6412,27 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -66.6666666667,
               "upper": 100.0,
               "complete": false,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 74.2331932773,
-              "lower": 74.2331932773,
-              "upper": 74.2331932774,
+              "exact": 75.211038961,
+              "lower": 75.211038961,
+              "upper": 75.2110389611,
               "complete": true,
               "coverage": {
                 "unit": "fixed subcategory",
@@ -6247,6 +6440,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 75.21103896103897,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -6260,11 +6454,12 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 67.0636645962733,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -22.2222222223,
               "upper": 100.0,
               "complete": false,
               "coverage": {
@@ -6273,25 +6468,27 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 49.4539002558,
-              "lower": 49.4539002557,
-              "upper": 49.4539002558,
-              "complete": true,
+              "exact": null,
+              "lower": 43.1294795783,
+              "upper": 59.7961462451,
+              "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
+                "planned": 6,
                 "adjudicated": 5,
-                "unknown": 0
+                "unknown": 1
               },
+              "confirmed": 49.79614624505929,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 49.4539002557,
-              "upper": 79.4539002558,
+              "lower": 43.1294795783,
+              "upper": 79.7961462451,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
@@ -6304,16 +6501,17 @@
           },
           "contributions": {
             "written-argument": {
-              "exact": 20.4191176471,
-              "lower": 20.419117647,
-              "upper": 20.4191176471,
+              "exact": 20.7613636364,
+              "lower": 20.7613636363,
+              "upper": 20.7613636364,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 20.761363636363637,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -6327,6 +6525,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 5.5625,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -6340,6 +6539,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 9.1875,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -6353,6 +6553,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 14.184782608695652,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -6366,6 +6567,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.1,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -6379,6 +6581,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -6392,25 +6595,27 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -6.6666666667,
               "upper": 10.0,
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 25.9816176471,
-              "lower": 25.981617647,
-              "upper": 25.9816176471,
+              "exact": 26.3238636364,
+              "lower": 26.3238636363,
+              "upper": 26.3238636364,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
@@ -6418,6 +6623,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 26.323863636363637,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -6431,11 +6637,12 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 23.472282608695654,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -6.6666666667,
               "upper": 30.0,
               "complete": false,
               "coverage": {
@@ -6444,6 +6651,7 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             }
           },
@@ -6469,33 +6677,33 @@
       },
       "combined": {
         "benchmark_version": "0.6.0",
-        "scoring_method_version": "0.5.0",
+        "scoring_method_version": "0.6.0",
         "strict_method_version": "0.2.0",
         "score_mode": "partial",
         "primary_metric": "earned",
         "model_label": "gemini-3.8-flash-high/high native local-tools 0.6 supplement",
         "capacity": {
           "total": 100,
-          "active": 70,
-          "under_construction": 30
+          "active": 80,
+          "under_construction": 20
         },
         "coverage": {
-          "public_tasks": 26,
-          "private_tasks": 3,
-          "tasks": 29,
-          "parent_families": 21,
-          "initial_slots": 29,
-          "public_initial_slots": 26,
+          "public_tasks": 22,
+          "private_tasks": 6,
+          "tasks": 28,
+          "parent_families": 24,
+          "initial_slots": 28,
+          "public_initial_slots": 22,
           "alignment_rounds": 3,
           "trajectory_assessment_units": 1,
-          "source_initial_tasks": 29,
-          "source_initial_judgments": 29
+          "source_initial_tasks": 28,
+          "source_initial_judgments": 23
         },
         "whole_task_counts": {
-          "planned": 29,
-          "passed": 9,
-          "failed": 20,
-          "unknown": 0
+          "planned": 28,
+          "passed": 5,
+          "failed": 18,
+          "unknown": 5
         },
         "profile": {
           "groups": [
@@ -6538,9 +6746,9 @@
                 "proofs",
                 "exploration"
               ],
-              "public_tasks": 14,
+              "public_tasks": 8,
               "private_tasks": 3,
-              "families": 17,
+              "families": 11,
               "aggregation": "family",
               "status": "active"
             },
@@ -6623,12 +6831,14 @@
               "id": "theorem-extension",
               "title": "命题拓展",
               "weight": 10,
-              "source_components": [],
-              "public_tasks": 0,
-              "private_tasks": 0,
-              "families": 0,
+              "source_components": [
+                "theorem-extension"
+              ],
+              "public_tasks": 2,
+              "private_tasks": 3,
+              "families": 5,
               "aggregation": "family",
-              "status": "under_construction"
+              "status": "active"
             }
           ]
         },
@@ -6881,27 +7091,29 @@
           "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
           "alignment_review_sha256": "66d0ae605c0dd2cef13eced1ca0388f77329899d714a0f7465eb3f597a565cc4",
           "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
-          "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+          "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
           "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-          "private_report_sha256": "b6fc3871e329f5afcc116b45846aa486a8c086aed92ea84f5288c022ba0c2f59"
+          "theorem_extension_inputs_sha256": "477dc230fce4626f8794aad2fb5ae3bf7a597fa8ffeeacaeb1e2241b087ef527",
+          "private_report_sha256": "6c1de73ac69d50d6b389a64728eeaa445e41c4e62392bd3ed681078d1fea9b4d"
         },
         "source_math_policy_version": "0.4.0",
         "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
         "schema": "math-gauge.assessment-score-aggregate/v1",
         "scope": "combined-aggregate-only",
-        "private_case_count": 3,
+        "private_case_count": 6,
         "metrics": {
           "written-argument": {
-            "exact": 75.1470588235,
-            "lower": 75.1470588235,
-            "upper": 75.1470588236,
+            "exact": 70.2272727273,
+            "lower": 70.2272727272,
+            "upper": 70.2272727273,
             "complete": true,
             "coverage": {
               "unit": "family",
-              "planned": 17,
-              "adjudicated": 17,
+              "planned": 11,
+              "adjudicated": 11,
               "unknown": 0
             },
+            "confirmed": 70.22727272727273,
             "formal_comparison_eligible": false
           },
           "argument-review": {
@@ -6915,6 +7127,7 @@
               "adjudicated": 4,
               "unknown": 0
             },
+            "confirmed": 69.375,
             "formal_comparison_eligible": false
           },
           "lean-audit": {
@@ -6928,6 +7141,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 77.25,
             "formal_comparison_eligible": false
           },
           "lean-formalization": {
@@ -6941,6 +7155,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 88.55072463768116,
             "formal_comparison_eligible": false
           },
           "lean-selfcheck": {
@@ -6954,6 +7169,7 @@
               "adjudicated": 1,
               "unknown": 0
             },
+            "confirmed": -20.0,
             "formal_comparison_eligible": false
           },
           "background-check": {
@@ -6967,6 +7183,7 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "manuscript-completion": {
@@ -6980,25 +7197,27 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "theorem-extension": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -66.6666666667,
             "upper": 100.0,
             "complete": false,
             "coverage": {
               "unit": "family",
-              "planned": 0,
+              "planned": 5,
               "adjudicated": 0,
-              "unknown": 0
+              "unknown": 5
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "written": {
-            "exact": 73.4978991597,
-            "lower": 73.4978991596,
-            "upper": 73.4978991597,
+            "exact": 69.9837662338,
+            "lower": 69.9837662337,
+            "upper": 69.9837662338,
             "complete": true,
             "coverage": {
               "unit": "fixed subcategory",
@@ -7006,6 +7225,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 69.98376623376623,
             "formal_comparison_eligible": false
           },
           "lean": {
@@ -7019,11 +7239,12 @@
               "adjudicated": 3,
               "unknown": 0
             },
+            "confirmed": 54.307453416149066,
             "formal_comparison_eligible": false
           },
           "research": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -22.2222222223,
             "upper": 100.0,
             "complete": false,
             "coverage": {
@@ -7032,25 +7253,27 @@
               "adjudicated": 0,
               "unknown": 3
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "earned": {
-            "exact": 44.7318734015,
-            "lower": 44.7318734015,
-            "upper": 44.7318734016,
-            "complete": true,
+            "exact": null,
+            "lower": 36.8352602108,
+            "upper": 53.5019268775,
+            "complete": false,
             "coverage": {
               "unit": "fixed 100-point benchmark",
-              "planned": 5,
+              "planned": 6,
               "adjudicated": 5,
-              "unknown": 0
+              "unknown": 1
             },
+            "confirmed": 43.50192687747035,
             "formal_comparison_eligible": false
           },
           "overall": {
             "exact": null,
-            "lower": 44.7318734015,
-            "upper": 74.7318734016,
+            "lower": 36.8352602108,
+            "upper": 73.5019268775,
             "complete": false,
             "coverage": {
               "unit": "fixed 100-point benchmark",
@@ -7063,16 +7286,17 @@
         },
         "contributions": {
           "written-argument": {
-            "exact": 18.7867647059,
-            "lower": 18.7867647058,
-            "upper": 18.7867647059,
+            "exact": 17.5568181818,
+            "lower": 17.5568181818,
+            "upper": 17.5568181819,
             "complete": true,
             "coverage": {
               "unit": "points in full benchmark",
-              "planned": 17,
-              "adjudicated": 17,
+              "planned": 11,
+              "adjudicated": 11,
               "unknown": 0
             },
+            "confirmed": 17.556818181818183,
             "formal_comparison_eligible": false
           },
           "argument-review": {
@@ -7086,6 +7310,7 @@
               "adjudicated": 4,
               "unknown": 0
             },
+            "confirmed": 6.9375,
             "formal_comparison_eligible": false
           },
           "lean-audit": {
@@ -7099,6 +7324,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 7.725,
             "formal_comparison_eligible": false
           },
           "lean-formalization": {
@@ -7112,6 +7338,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 13.282608695652174,
             "formal_comparison_eligible": false
           },
           "lean-selfcheck": {
@@ -7125,6 +7352,7 @@
               "adjudicated": 1,
               "unknown": 0
             },
+            "confirmed": -2.0,
             "formal_comparison_eligible": false
           },
           "background-check": {
@@ -7138,6 +7366,7 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "manuscript-completion": {
@@ -7151,25 +7380,27 @@
               "adjudicated": 0,
               "unknown": 0
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "theorem-extension": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -6.6666666667,
             "upper": 10.0,
             "complete": false,
             "coverage": {
               "unit": "points in full benchmark",
-              "planned": 0,
+              "planned": 5,
               "adjudicated": 0,
-              "unknown": 0
+              "unknown": 5
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           },
           "written": {
-            "exact": 25.7242647059,
-            "lower": 25.7242647058,
-            "upper": 25.7242647059,
+            "exact": 24.4943181818,
+            "lower": 24.4943181818,
+            "upper": 24.4943181819,
             "complete": true,
             "coverage": {
               "unit": "points in full benchmark",
@@ -7177,6 +7408,7 @@
               "adjudicated": 2,
               "unknown": 0
             },
+            "confirmed": 24.494318181818183,
             "formal_comparison_eligible": false
           },
           "lean": {
@@ -7190,11 +7422,12 @@
               "adjudicated": 3,
               "unknown": 0
             },
+            "confirmed": 19.007608695652173,
             "formal_comparison_eligible": false
           },
           "research": {
             "exact": null,
-            "lower": 0.0,
+            "lower": -6.6666666667,
             "upper": 30.0,
             "complete": false,
             "coverage": {
@@ -7203,6 +7436,7 @@
               "adjudicated": 0,
               "unknown": 3
             },
+            "confirmed": 0.0,
             "formal_comparison_eligible": false
           }
         },
@@ -7213,33 +7447,33 @@
       "strict": {
         "single_attempt": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "strict",
           "primary_metric": "earned",
           "model_label": "gemini-3.8-flash-high/high native local-tools 0.6 supplement",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 23
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 9,
-            "failed": 20,
-            "unknown": 0
+            "planned": 28,
+            "passed": 5,
+            "failed": 18,
+            "unknown": 5
           },
           "profile": {
             "groups": [
@@ -7282,9 +7516,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -7367,12 +7601,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -7625,27 +7861,29 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "66d0ae605c0dd2cef13eced1ca0388f77329899d714a0f7465eb3f597a565cc4",
             "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "61a153357fc619330818bbdc4bcb33d93de1431529326d4e8bd072ef3be56a22"
+            "theorem_extension_inputs_sha256": "477dc230fce4626f8794aad2fb5ae3bf7a597fa8ffeeacaeb1e2241b087ef527",
+            "private_report_sha256": "3d1fb6730f1b7da47a50723e4f209fd673ad3a7970e4f8c722aeb8d14e4ba8a4"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
-              "exact": 35.2941176471,
-              "lower": 35.294117647,
-              "upper": 35.2941176471,
+              "exact": 18.1818181818,
+              "lower": 18.1818181818,
+              "upper": 18.1818181819,
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 18.181818181818183,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -7659,6 +7897,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -7672,6 +7911,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -7685,6 +7925,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 16.666666666666668,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -7698,6 +7939,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -7711,6 +7953,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -7724,6 +7967,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -7733,16 +7977,17 @@
               "complete": false,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 32.3529411765,
-              "lower": 32.3529411764,
-              "upper": 32.3529411765,
+              "exact": 20.1298701299,
+              "lower": 20.1298701298,
+              "upper": 20.1298701299,
               "complete": true,
               "coverage": {
                 "unit": "fixed subcategory",
@@ -7750,6 +7995,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 20.12987012987013,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -7763,6 +8009,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 14.285714285714286,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -7776,25 +8023,27 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 16.3235294118,
-              "lower": 16.3235294117,
-              "upper": 16.3235294118,
-              "complete": true,
+              "exact": null,
+              "lower": 12.0454545454,
+              "upper": 22.0454545455,
+              "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
+                "planned": 6,
                 "adjudicated": 5,
-                "unknown": 0
+                "unknown": 1
               },
+              "confirmed": 12.045454545454545,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 16.3235294117,
-              "upper": 46.3235294118,
+              "lower": 12.0454545454,
+              "upper": 42.0454545455,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
@@ -7807,16 +8056,17 @@
           },
           "contributions": {
             "written-argument": {
-              "exact": 8.8235294118,
-              "lower": 8.8235294117,
-              "upper": 8.8235294118,
+              "exact": 4.5454545455,
+              "lower": 4.5454545454,
+              "upper": 4.5454545455,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 4.545454545454546,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -7830,6 +8080,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 2.5,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -7843,6 +8094,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 2.5,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -7856,6 +8108,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 2.5,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -7869,6 +8122,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -7882,6 +8136,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -7895,6 +8150,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -7904,16 +8160,17 @@
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 11.3235294118,
-              "lower": 11.3235294117,
-              "upper": 11.3235294118,
+              "exact": 7.0454545455,
+              "lower": 7.0454545454,
+              "upper": 7.0454545455,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
@@ -7921,6 +8178,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.045454545454546,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -7934,6 +8192,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 5.0,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -7947,6 +8206,7 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             }
           },
@@ -7956,33 +8216,33 @@
         },
         "nonlogical_retry_3": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "strict",
           "primary_metric": "earned",
           "model_label": "gemini-3.8-flash-high/high native local-tools 0.6 supplement",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 23
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 9,
-            "failed": 20,
-            "unknown": 0
+            "planned": 28,
+            "passed": 5,
+            "failed": 18,
+            "unknown": 5
           },
           "profile": {
             "groups": [
@@ -8025,9 +8285,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -8110,12 +8370,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -8368,27 +8630,29 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "66d0ae605c0dd2cef13eced1ca0388f77329899d714a0f7465eb3f597a565cc4",
             "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "eb41f578983234c2472028c5c1a28b30dd3e868dd4e2d12558dbb19c8f07e078"
+            "theorem_extension_inputs_sha256": "477dc230fce4626f8794aad2fb5ae3bf7a597fa8ffeeacaeb1e2241b087ef527",
+            "private_report_sha256": "09ac52b944c42e041a569557b8fb5278c44aba7080925316365f239925485178"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
-              "exact": 35.2941176471,
-              "lower": 35.294117647,
-              "upper": 35.2941176471,
+              "exact": 18.1818181818,
+              "lower": 18.1818181818,
+              "upper": 18.1818181819,
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 18.181818181818183,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -8402,6 +8666,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -8415,6 +8680,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 25.0,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -8428,6 +8694,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 16.666666666666668,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -8441,6 +8708,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -8454,6 +8722,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -8467,6 +8736,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -8476,16 +8746,17 @@
               "complete": false,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 32.3529411765,
-              "lower": 32.3529411764,
-              "upper": 32.3529411765,
+              "exact": 20.1298701299,
+              "lower": 20.1298701298,
+              "upper": 20.1298701299,
               "complete": true,
               "coverage": {
                 "unit": "fixed subcategory",
@@ -8493,6 +8764,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 20.12987012987013,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -8506,6 +8778,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 14.285714285714286,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -8519,25 +8792,27 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 16.3235294118,
-              "lower": 16.3235294117,
-              "upper": 16.3235294118,
-              "complete": true,
+              "exact": null,
+              "lower": 12.0454545454,
+              "upper": 22.0454545455,
+              "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
+                "planned": 6,
                 "adjudicated": 5,
-                "unknown": 0
+                "unknown": 1
               },
+              "confirmed": 12.045454545454545,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 16.3235294117,
-              "upper": 46.3235294118,
+              "lower": 12.0454545454,
+              "upper": 42.0454545455,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
@@ -8550,16 +8825,17 @@
           },
           "contributions": {
             "written-argument": {
-              "exact": 8.8235294118,
-              "lower": 8.8235294117,
-              "upper": 8.8235294118,
+              "exact": 4.5454545455,
+              "lower": 4.5454545454,
+              "upper": 4.5454545455,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 4.545454545454546,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -8573,6 +8849,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 2.5,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -8586,6 +8863,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 2.5,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -8599,6 +8877,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 2.5,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -8612,6 +8891,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -8625,6 +8905,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -8638,6 +8919,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
@@ -8647,16 +8929,17 @@
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 11.3235294118,
-              "lower": 11.3235294117,
-              "upper": 11.3235294118,
+              "exact": 7.0454545455,
+              "lower": 7.0454545454,
+              "upper": 7.0454545455,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
@@ -8664,6 +8947,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.045454545454546,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -8677,6 +8961,7 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 5.0,
               "formal_comparison_eligible": false
             },
             "research": {
@@ -8690,6 +8975,7 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             }
           },
@@ -8927,33 +9213,33 @@
       "retry": {
         "combined": {
           "benchmark_version": "0.6.0",
-          "scoring_method_version": "0.5.0",
+          "scoring_method_version": "0.6.0",
           "strict_method_version": "0.2.0",
           "score_mode": "partial",
           "primary_metric": "earned",
           "model_label": "gemini-3.8-flash-high/high native local-tools 0.6 supplement",
           "capacity": {
             "total": 100,
-            "active": 70,
-            "under_construction": 30
+            "active": 80,
+            "under_construction": 20
           },
           "coverage": {
-            "public_tasks": 26,
-            "private_tasks": 3,
-            "tasks": 29,
-            "parent_families": 21,
-            "initial_slots": 29,
-            "public_initial_slots": 26,
+            "public_tasks": 22,
+            "private_tasks": 6,
+            "tasks": 28,
+            "parent_families": 24,
+            "initial_slots": 28,
+            "public_initial_slots": 22,
             "alignment_rounds": 3,
             "trajectory_assessment_units": 1,
-            "source_initial_tasks": 29,
-            "source_initial_judgments": 29
+            "source_initial_tasks": 28,
+            "source_initial_judgments": 23
           },
           "whole_task_counts": {
-            "planned": 29,
-            "passed": 9,
-            "failed": 20,
-            "unknown": 0
+            "planned": 28,
+            "passed": 5,
+            "failed": 18,
+            "unknown": 5
           },
           "profile": {
             "groups": [
@@ -8996,9 +9282,9 @@
                   "proofs",
                   "exploration"
                 ],
-                "public_tasks": 14,
+                "public_tasks": 8,
                 "private_tasks": 3,
-                "families": 17,
+                "families": 11,
                 "aggregation": "family",
                 "status": "active"
               },
@@ -9081,12 +9367,14 @@
                 "id": "theorem-extension",
                 "title": "命题拓展",
                 "weight": 10,
-                "source_components": [],
-                "public_tasks": 0,
-                "private_tasks": 0,
-                "families": 0,
+                "source_components": [
+                  "theorem-extension"
+                ],
+                "public_tasks": 2,
+                "private_tasks": 3,
+                "families": 5,
                 "aggregation": "family",
-                "status": "under_construction"
+                "status": "active"
               }
             ]
           },
@@ -9339,27 +9627,29 @@
             "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
             "alignment_review_sha256": "66d0ae605c0dd2cef13eced1ca0388f77329899d714a0f7465eb3f597a565cc4",
             "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
-            "assessment_policy_sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a",
+            "assessment_policy_sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
             "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-            "private_report_sha256": "d09f10274e7dafce20ebf28960d16c7bc3bd2be7034309fd31a64cef78eb103c"
+            "theorem_extension_inputs_sha256": "477dc230fce4626f8794aad2fb5ae3bf7a597fa8ffeeacaeb1e2241b087ef527",
+            "private_report_sha256": "1d552b626fbfca3fd1cfdc8db019c9f04b421748db57eb7c67ca9e2fd016dce3"
           },
           "source_math_policy_version": "0.4.0",
           "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
           "schema": "math-gauge.assessment-score-aggregate/v1",
           "scope": "combined-aggregate-only",
-          "private_case_count": 3,
+          "private_case_count": 6,
           "metrics": {
             "written-argument": {
-              "exact": 75.1470588235,
-              "lower": 75.1470588235,
-              "upper": 75.1470588236,
+              "exact": 70.2272727273,
+              "lower": 70.2272727272,
+              "upper": 70.2272727273,
               "complete": true,
               "coverage": {
                 "unit": "family",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 70.22727272727273,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -9373,6 +9663,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 69.375,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -9386,6 +9677,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 77.25,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -9399,6 +9691,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 88.55072463768116,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -9412,6 +9705,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": -20.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -9425,6 +9719,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -9438,25 +9733,27 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -66.6666666667,
               "upper": 100.0,
               "complete": false,
               "coverage": {
                 "unit": "family",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 73.4978991597,
-              "lower": 73.4978991596,
-              "upper": 73.4978991597,
+              "exact": 69.9837662338,
+              "lower": 69.9837662337,
+              "upper": 69.9837662338,
               "complete": true,
               "coverage": {
                 "unit": "fixed subcategory",
@@ -9464,6 +9761,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 69.98376623376623,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -9477,11 +9775,12 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 54.307453416149066,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -22.2222222223,
               "upper": 100.0,
               "complete": false,
               "coverage": {
@@ -9490,25 +9789,27 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "earned": {
-              "exact": 44.7318734015,
-              "lower": 44.7318734015,
-              "upper": 44.7318734016,
-              "complete": true,
+              "exact": null,
+              "lower": 36.8352602108,
+              "upper": 53.5019268775,
+              "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
-                "planned": 5,
+                "planned": 6,
                 "adjudicated": 5,
-                "unknown": 0
+                "unknown": 1
               },
+              "confirmed": 43.50192687747035,
               "formal_comparison_eligible": false
             },
             "overall": {
               "exact": null,
-              "lower": 44.7318734015,
-              "upper": 74.7318734016,
+              "lower": 36.8352602108,
+              "upper": 73.5019268775,
               "complete": false,
               "coverage": {
                 "unit": "fixed 100-point benchmark",
@@ -9521,16 +9822,17 @@
           },
           "contributions": {
             "written-argument": {
-              "exact": 18.7867647059,
-              "lower": 18.7867647058,
-              "upper": 18.7867647059,
+              "exact": 17.5568181818,
+              "lower": 17.5568181818,
+              "upper": 17.5568181819,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 17,
-                "adjudicated": 17,
+                "planned": 11,
+                "adjudicated": 11,
                 "unknown": 0
               },
+              "confirmed": 17.556818181818183,
               "formal_comparison_eligible": false
             },
             "argument-review": {
@@ -9544,6 +9846,7 @@
                 "adjudicated": 4,
                 "unknown": 0
               },
+              "confirmed": 6.9375,
               "formal_comparison_eligible": false
             },
             "lean-audit": {
@@ -9557,6 +9860,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 7.725,
               "formal_comparison_eligible": false
             },
             "lean-formalization": {
@@ -9570,6 +9874,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 13.282608695652174,
               "formal_comparison_eligible": false
             },
             "lean-selfcheck": {
@@ -9583,6 +9888,7 @@
                 "adjudicated": 1,
                 "unknown": 0
               },
+              "confirmed": -2.0,
               "formal_comparison_eligible": false
             },
             "background-check": {
@@ -9596,6 +9902,7 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "manuscript-completion": {
@@ -9609,25 +9916,27 @@
                 "adjudicated": 0,
                 "unknown": 0
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "theorem-extension": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -6.6666666667,
               "upper": 10.0,
               "complete": false,
               "coverage": {
                 "unit": "points in full benchmark",
-                "planned": 0,
+                "planned": 5,
                 "adjudicated": 0,
-                "unknown": 0
+                "unknown": 5
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             },
             "written": {
-              "exact": 25.7242647059,
-              "lower": 25.7242647058,
-              "upper": 25.7242647059,
+              "exact": 24.4943181818,
+              "lower": 24.4943181818,
+              "upper": 24.4943181819,
               "complete": true,
               "coverage": {
                 "unit": "points in full benchmark",
@@ -9635,6 +9944,7 @@
                 "adjudicated": 2,
                 "unknown": 0
               },
+              "confirmed": 24.494318181818183,
               "formal_comparison_eligible": false
             },
             "lean": {
@@ -9648,11 +9958,12 @@
                 "adjudicated": 3,
                 "unknown": 0
               },
+              "confirmed": 19.007608695652173,
               "formal_comparison_eligible": false
             },
             "research": {
               "exact": null,
-              "lower": 0.0,
+              "lower": -6.6666666667,
               "upper": 30.0,
               "complete": false,
               "coverage": {
@@ -9661,6 +9972,7 @@
                 "adjudicated": 0,
                 "unknown": 3
               },
+              "confirmed": 0.0,
               "formal_comparison_eligible": false
             }
           },
@@ -9668,13 +9980,13 @@
           "formal_comparison_eligible": false,
           "new_candidate_calls": 0
         },
-        "note": "无新增重跑，沿用原答；不据此认证全部历史底层调用均一次完成。"
+        "note": "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。"
       }
     }
   ],
   "policy": {
     "schema": "math-gauge.assessment-policy/v1",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "benchmark_version": "0.6.0",
     "status": "post-observation-local-draft-human-pending",
     "operator_only": true,
@@ -9724,9 +10036,9 @@
           "proofs",
           "exploration"
         ],
-        "public_tasks": 14,
+        "public_tasks": 8,
         "private_tasks": 3,
-        "families": 17,
+        "families": 11,
         "aggregation": "family",
         "status": "active"
       },
@@ -9809,12 +10121,14 @@
         "id": "theorem-extension",
         "title": "命题拓展",
         "weight": 10,
-        "source_components": [],
-        "public_tasks": 0,
-        "private_tasks": 0,
-        "families": 0,
+        "source_components": [
+          "theorem-extension"
+        ],
+        "public_tasks": 2,
+        "private_tasks": 3,
+        "families": 5,
         "aggregation": "family",
-        "status": "under_construction"
+        "status": "active"
       }
     ],
     "source_review_method_version": "0.4.0",
@@ -9851,17 +10165,130 @@
     "unknown_policy": "Fixed case/family/round denominators with explicit bounds.",
     "overall_floor": 0,
     "scope": {
-      "public_tasks": 26,
-      "private_tasks": 3,
-      "tasks": 29,
-      "parent_families": 21,
-      "initial_slots": 29,
-      "public_initial_slots": 26,
+      "public_tasks": 22,
+      "private_tasks": 6,
+      "tasks": 28,
+      "parent_families": 24,
+      "initial_slots": 28,
+      "public_initial_slots": 22,
       "alignment_rounds": 3,
       "trajectory_assessment_units": 1
     },
     "human_review": "pending",
-    "formal_comparison_eligible": false
+    "formal_comparison_eligible": false,
+    "case_selection": {
+      "schema": "math-gauge.case-selection/v1",
+      "version": "0.1.0",
+      "public_case_ids": [
+        "MG-C003",
+        "MG-GP001",
+        "MG-GP002",
+        "MG-GR005",
+        "MG-GR009",
+        "MG-GR103",
+        "MG-GR021",
+        "MG-GR022",
+        "MG-GR023",
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004",
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04",
+        "LCH01",
+        "LCH02",
+        "HCH02"
+      ],
+      "retired_public_case_ids": [
+        "MG-GP003",
+        "MG-GR002",
+        "MG-GR008",
+        "MG-GR010",
+        "MG-GR014",
+        "MG-GR104"
+      ],
+      "source_public_case_ids": [
+        "MG-C003",
+        "MG-GP001",
+        "MG-GP002",
+        "MG-GP003",
+        "MG-GR002",
+        "MG-GR005",
+        "MG-GR008",
+        "MG-GR009",
+        "MG-GR010",
+        "MG-GR014",
+        "MG-GR103",
+        "MG-GR104",
+        "MG-GR021",
+        "MG-GR022",
+        "MG-GR023",
+        "MG-AR001",
+        "MG-AR002",
+        "MG-AR003",
+        "MG-AR004",
+        "AHR01",
+        "AHR02",
+        "AHR03",
+        "AHR04",
+        "LCH01",
+        "LCH02",
+        "HCH02"
+      ],
+      "canonical_parent_families": {
+        "MG-GR104": "MG-R104",
+        "MG-GR014": "MG-R014",
+        "MG-GR010": "MG-R010",
+        "MG-GP003": "MG-P003"
+      },
+      "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7"
+    },
+    "theorem_extension": {
+      "schema": "math-gauge.theorem-extension-policy/v1",
+      "version": "0.1.0",
+      "benchmark_version": "0.6.0",
+      "initial_attempt_labels": [
+        "A1"
+      ],
+      "research_invitation": false,
+      "followups_replace_initial": false,
+      "research_level_maximum": 3,
+      "partial_points": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "strict_requirements": {
+        "baseline_B": 2,
+        "research_R": 3
+      },
+      "public_case_ids": [
+        "MG-TX001",
+        "MG-TX002"
+      ],
+      "private_cases": 3,
+      "families": 5,
+      "component_weight": 10,
+      "family_aggregation": "equal",
+      "baseline_points_added_to_research": false,
+      "baseline_penalty_points": {
+        "0": 2,
+        "1": 1,
+        "2": 0
+      },
+      "per_case_floor": null,
+      "absent_extension_is_baseline_failure": false,
+      "post_observation": true,
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.",
+      "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.",
+      "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.",
+      "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension."
+    }
   },
   "strict_policy": {
     "schema": "math-gauge.strict-scoring-policy/v2",
@@ -9890,11 +10317,11 @@
   "sources": [
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/record.json",
-      "sha256": "caa901a73a1c1432c72abdfa4f194ca8f224a0e7452517ada578a9ed94760232"
+      "sha256": "f5cf9a3c0a59f459ca9bf8c86ce8db91005e10282dc8cabbf379f6d23bdb1a65"
     },
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/assessment-policy.json",
-      "sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a"
+      "sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936"
     },
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/strict-scoring-policy.json",
@@ -9902,19 +10329,19 @@
     },
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/combined-aggregate.json",
-      "sha256": "7036a6e588aee8dbb5b758d744d6e8da0e51fd67c10aa30e5a4be913b9274aab"
+      "sha256": "2eb64316fcf4b7e549c4216a1557a82da5f0910d976933f07e4e87bdda4ee516"
     },
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/retry-combined-aggregate.json",
-      "sha256": "cfde214092a0d772d6b9377529da1bf7438494ef717c56baa4d8f25f2ca4a6f7"
+      "sha256": "33c6f3263fdab1acd61da1190f8b972705b1ad633b8d7b2155bc0dec919b3d97"
     },
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/strict-combined-aggregate.json",
-      "sha256": "25d04d09094784ea47ef192edacd117253504add460768ecea5d08145b100012"
+      "sha256": "77f0ef7d02fc610aa424b89810090db8ff2c00760d4d008e917867da7694752c"
     },
     {
       "path": "results/v0.6.0/terra-6.1-max/20261105/strict-retry-combined-aggregate.json",
-      "sha256": "4bc0f4b2ae06b601161eb6735abe0b533af69cd9b0a3410c21d3be6c970bfdc5"
+      "sha256": "73365e9bfbaa328d6769f0197bc8d524c1fbf04b67e265d9b5dd586570050aeb"
     },
     {
       "path": "site/assets/logos/openai.svg",
@@ -9922,11 +10349,11 @@
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/record.json",
-      "sha256": "295d97de881e249d2f4c432dc090d7c2f4a87bed8d6b231f4403c804378076c5"
+      "sha256": "b7bbb830486b6bc773c13190a52b6ae00a1103cc8b5f50b42b0336fdaa4751ff"
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/assessment-policy.json",
-      "sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a"
+      "sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936"
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/strict-scoring-policy.json",
@@ -9934,19 +10361,19 @@
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/combined-aggregate.json",
-      "sha256": "6acf513d71660482cb03d377022fbb524bababe57b7051e79cb79f90b19c2b6c"
+      "sha256": "9de44c2df8a01be64032aa71600aae654e7a3f59100ca6c377913b8db779bb10"
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/retry-combined-aggregate.json",
-      "sha256": "d2e1b4de06db68774cef4eb2601e01260dacb8208ac583126375ef18b5031803"
+      "sha256": "769e8a3871e96cb143066527f4a2fd9585f4405251b2b48348a31d6ea6a3964a"
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/strict-combined-aggregate.json",
-      "sha256": "d757a177029f686416539b79d6a22308c759eb2d2a9a5e42a5a691c6c9d2d02a"
+      "sha256": "96d292ab572fe12e7e739357f86cd563e227d5cde4bdc195c806d4e41b093bd4"
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/strict-retry-combined-aggregate.json",
-      "sha256": "5143e282c76d191e8d1cebb858eb1924d24e8001a5c7d9fea914f04f7f111833"
+      "sha256": "80d67388a09d6bad2dbaac8d8259394905f3cc4ce7e47c29acf94c5bd8f9c4c1"
     },
     {
       "path": "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/retry-admission.json",
@@ -9966,11 +10393,11 @@
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/record.json",
-      "sha256": "f2a92744dc7185aea0c24b9b9990b201650d02df873d20fb21c49763f714e903"
+      "sha256": "7a8dc7048da7b7d9db1a00af42fc5263dc3a1e19f6927d3ada597a41e886fcb5"
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/assessment-policy.json",
-      "sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a"
+      "sha256": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936"
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/strict-scoring-policy.json",
@@ -9978,19 +10405,19 @@
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/combined-aggregate.json",
-      "sha256": "ed89ea843ac877247a7b294c8ea82c08965b746a6abc14efba2d7e64deeaf261"
+      "sha256": "de478ee3229af0ee556819cfca581d6c824712902ad913cbd4c44bddbe109536"
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/retry-combined-aggregate.json",
-      "sha256": "8e0d5e94dc42195fce6cef22236460d0484bd20dfc9cc734056e602a718816f0"
+      "sha256": "040a0edbef40d083d8143675a72ce03236fbb3ef04373ed1403d108944ff0901"
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/strict-combined-aggregate.json",
-      "sha256": "bfe5e6083c8cc8aa141a177fb83be0f054fa0913ea1a02d75ee397f75369201d"
+      "sha256": "79ea6b7f66a94605e8f8d27f1387d47eb248fe8c56e99240b23873147c89fe9f"
     },
     {
       "path": "results/v0.6.0/gemini-3.8-flash-high/20261105/strict-retry-combined-aggregate.json",
-      "sha256": "e3636885e532be696f21c2f87073bc559eae8039cb779bb115b47d2269d83b90"
+      "sha256": "e7682ea022c8dc4b278a7b33df344ea2e7fdafbd8a054bf68a5815d53fb3fb24"
     },
     {
       "path": "site/assets/logos/google.svg",
@@ -9999,8 +10426,8 @@
   ],
   "capacity": {
     "total": 100,
-    "active": 70,
-    "under_construction": 30
+    "active": 80,
+    "under_construction": 20
   },
   "publication_scope": "combined",
   "score_modes": [

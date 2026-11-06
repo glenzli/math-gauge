@@ -12,6 +12,60 @@ from math_gauge.catalog import Suite, read_json, write_json
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def retired_transport_fixtures(root, source):
+    """Fill retired transport slots with explicit synthetic tasks in temporary storage.
+
+    The frozen plan still tests the old 26-paper transport arrangement. These
+    stand-ins carry its stage weights, never its missing mathematical content,
+    old request hashes, model evidence or author implementation.
+    """
+    metadata = read_json(root / "cases/suite.json")
+    manifests = {read_json(root / "cases" / name)["id"]: name for name in metadata["cases"]}
+    registry = read_json(root / "cases/sources.json")
+    source_id = "synthetic-retired-transport-fixture"
+    focus = {row["case_id"]: row for row in source["reliability"]["selection"]["cases"]}
+    for original in source["case_index"]:
+        cid = original["case_id"]
+        if cid in manifests:
+            continue
+        directory = root / "cases/proofs" / cid
+        directory.mkdir(parents=True)
+        stages = [{"id": row["stage_id"], "title": "Synthetic transport stage",
+            "kind": "decide", "expected": "true", "assumptions": ["Synthetic fixture only"],
+            "required_evidence": ["Synthetic transport evidence"],
+            "critical_errors": ["Synthetic fixture failure"], "depends_on": [],
+            "points": row["points"], "lean_required": False, "mandatory": True}
+            for row in original["stages"]]
+        turn = {"stage_id": stages[1]["id"], "earlier_stage_ids": [stages[0]["id"]],
+            "expected_truth": "true", "scope": "stage", "mechanism": "Synthetic transition",
+            "changed_assumptions": "Synthetic stage change", "tempting_invalid_transfer": "Synthetic only",
+            "correct_boundary": "Synthetic transport contract"}
+        if cid in focus:
+            turn = copy.deepcopy(focus[cid]["source_turn"])
+            if turn.get("scope", "stage") == "stage":
+                next(row for row in stages if row["id"] == turn["stage_id"])["expected"] = turn["expected_truth"]
+        contract = {"schema": "math-gauge.group-contract/v1", "id": cid,
+            "version": original["version"], "kind": "progressive", "stages": stages, "turns": [turn]}
+        case = {"schema": "math-gauge.case/v1", "id": cid, "version": original["version"],
+            "title": "Synthetic retired transport stand-in", "language": "en", "track": "determinate",
+            "task_kind": "written", "visibility": "public", "status": "draft", "path_base": "case",
+            "family_id": original["family_id"], "sources": [source_id],
+            "review": {"human": "pending", "mathematical": "synthetic-fixture-only"},
+            "task": "task.md", "reference": "reference.md", "rubric": "rubric.json",
+            "group_contract": "contract.json", "candidate_instruction": "", "solver_files": [], "lean_checks": []}
+        (directory / "task.md").write_text("Synthetic retired transport task; no original mathematical content.\n")
+        (directory / "reference.md").write_text("Synthetic transport reference, not mathematical or model evidence.\n")
+        write_json(directory / "case.json", case)
+        write_json(directory / "contract.json", contract)
+        write_json(directory / "rubric.json", {"schema": "math-gauge.rubric/v1", "expected": "mixed",
+            "required_evidence": ["Synthetic fixture evidence"], "critical_errors": ["Synthetic failure"]})
+        manifests[cid] = f"proofs/{cid}/case.json"
+        registry[source_id] = {"title": "Synthetic retired transport fixtures", "kind": "fixture"}
+    metadata["cases"] = [manifests[row["case_id"]] for row in source["case_index"]]
+    write_json(root / "cases/suite.json", metadata)
+    write_json(root / "cases/sources.json", registry)
+
+
 def fixture_sources(registry, case_sources):
     pending, selected = list(case_sources), set()
     while pending:
@@ -45,12 +99,14 @@ def _fixture_root(chain):
         dest = root / "cases" / name
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(suite.root / name, dest)
+    source = read_json(ROOT / "results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json")["plan"]
+    retired_transport_fixtures(root, source)
     registry = read_json(root / "cases/sources.json")
+    suite = Suite.load(root / "cases")
     write_json(root / "cases/sources.json", fixture_sources(registry, {n for c in suite.cases.values() for n in c["sources"]}))
     suite = Suite.load(root / "cases")
     # Frozen v5 exercises legacy A2/branch transports independently of the
     # current A1-only profile. Rebinding is synthetic, never a new exam.
-    source = read_json(ROOT / "results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json")["plan"]
     packet = root / "protocol/reliability"
     packet.mkdir(parents=True)
     write_json(packet / "selection.json", source["reliability"]["selection"])
@@ -157,7 +213,14 @@ def legacy_budget_profile():
         component["weight"] = weight
     data["overall_weights"] = {"core": 70, "repeat": 5, "neutral": 15, "stance": 10}
     current = read_json(ROOT / "protocol/benchmark-profile.json")
-    data["case_execution_policy"] = current["case_execution_policy"]
+    data["case_execution_policy"] = copy.deepcopy(current["case_execution_policy"])
+    source_ids = set(source_suite().cases)
+    data["case_execution_policy"]["case_tracks"] = {
+        cid: track for cid, track in data["case_execution_policy"]["case_tracks"].items()
+        if cid in source_ids}
+    for cid, track in retained["case_execution_policy"]["case_tracks"].items():
+        data["case_execution_policy"]["case_tracks"].setdefault(cid, track)
+    data["case_execution_policy"]["retain_source_runtime_case_ids"] = retained["case_execution_policy"]["retain_source_runtime_case_ids"]
     data["execution_groups"] = current["execution_groups"] | {
         "written-new-panel": [f"{cid}:{label}" for cid in ("MG-GP001", "MG-GP002")
             for label in ("A1", "A2", "neutral:1", "affirm:1", "deny:1")]}

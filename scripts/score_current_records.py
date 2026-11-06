@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import descriptor, load_retry_inputs, project_assessment_score, validate_record
+from math_gauge.records import descriptor, load_retry_inputs, load_theorem_extension_inputs, project_assessment_score, validate_record
 from math_gauge.scoring import score_assessment_record_inputs
 
 
@@ -36,6 +36,7 @@ def retain(private_root, *, public_root=ROOT):
         validate_record(public, validate_scores=False)
         validate_record(private, formalization_root=public, validate_scores=False)
         record, private_record = load(public / "record.json"), load(private / "record.json")
+        research = load_theorem_extension_inputs(private, private_record, policy=assessment.get("theorem_extension"))
         original = load(private / "scoring-inputs.json")
         retry = load_retry_inputs(private, private_record, public_root=public, validate_results=False)
         old_retry = load(public / "retry-combined-aggregate.json") if (public / "retry-combined-aggregate.json").exists() else {}
@@ -61,7 +62,8 @@ def retain(private_root, *, public_root=ROOT):
             totals[model][condition] = {}
             for mode in ("partial", "strict"):
                 score = score_assessment_record_inputs(inputs, review, source_policy,
-                    formalization_review=engineering, assessment_policy=assessment, strict_policy=strict, mode=mode)
+                    formalization_review=engineering, assessment_policy=assessment, strict_policy=strict, mode=mode,
+                    theorem_extension_inputs=research)
                 score.update(attempt_condition=condition, retry_summary=retry_summary,
                     scope="combined-evaluator", source_math_policy_version=source_policy["version"],
                     engineering_review_sha256=digest(public / "reviews/formalization.json"),
@@ -72,6 +74,8 @@ def retain(private_root, *, public_root=ROOT):
                         "engineering_review_sha256": digest(public / "reviews/formalization.json"),
                         "assessment_policy_sha256": digest(public / "assessment-policy.json"),
                         "strict_policy_sha256": digest(public / "strict-scoring-policy.json")})
+                if research is not None:
+                    score["source_bindings"]["theorem_extension_inputs_sha256"] = digest(private / private_record["theorem_extension_inputs"]["path"])
                 if uses_retry:
                     admission = load(public / record["retry_admission"]["path"])
                     score.update(retry_policy_sha256=admission["policy"]["sha256"],
@@ -88,7 +92,7 @@ def retain(private_root, *, public_root=ROOT):
                 key = "strict_results" if mode == "strict" else "assessment_results"
                 record[key][condition] = descriptor(public, public / public_name)
                 private_record[key][condition] = descriptor(private, private / private_name)
-                totals[model][condition][mode] = score["metrics"]["earned"]["exact"]
+                totals[model][condition][mode] = score["metrics"]["earned"].get("confirmed", score["metrics"]["earned"]["exact"])
         # Public-only score views are retired; original questions, answers,
         # engineering judgments and frozen execution inputs are untouched.
         for filename in ("result.json", "retry-result.json"):
@@ -105,8 +109,9 @@ def retain(private_root, *, public_root=ROOT):
                 else item for item in target["evidence"]
                 if not (folder == public and item["path"] in {"result.json", "retry-result.json"})]
             write(folder / "record.json", target)
-    return {"benchmark_version": "0.6.0", "scoring_version": "0.5.0", "strict_version": "0.2.0",
-            "capacity": {"active": 70, "under_construction": 30, "total": 100}, "totals": totals,
+    active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
+    return {"benchmark_version": "0.6.0", "scoring_version": assessment["version"], "strict_version": strict["version"],
+            "capacity": {"active": active, "under_construction": 100-active, "total": 100}, "totals": totals,
             "candidate_calls": 0, "sealed_engineering_compilations": 0}
 
 

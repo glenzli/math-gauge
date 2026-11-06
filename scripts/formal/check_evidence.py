@@ -185,6 +185,34 @@ def original_row(repo, layout, cid):
     return matches[0]
 
 
+def selected_baseline_counts(repo, layout, baseline):
+    """Select retained author provenance without rewriting the checked ledger."""
+    ids = [row['id'] for row in layout['case_paths']]
+    source_ids = [row['id'] for row in baseline['cases']]
+    selection = layout.get('migration', {}).get('current_selection', {})
+    if 'retained_case_ids' not in selection:
+        verify.require(set(source_ids) == set(ids) and len(source_ids) == len(ids),
+                       'Layout must preserve every originally checked paper')
+        return baseline['counts']
+    verify.require(selection['retained_case_ids'] == ids
+                   and selection.get('retained_case_count') == len(ids)
+                   and selection.get('source_checked_case_count') == len(source_ids)
+                   and selection.get('source_checked_ledger_sha256') == verify.digest(
+                       repo / 'verification/author/checked-ledger.json')
+                   and bool(re.fullmatch(r'[0-9a-f]{40}', selection.get('source_commit', '')))
+                   and len(set(source_ids)) == len(source_ids) and set(ids) <= set(source_ids),
+                   'Retained author selection must bind an explicit subset of checked provenance')
+    rows = [row for row in baseline['cases'] if row['id'] in ids]
+    return {
+        'papers': len(rows),
+        'fully_formalized_papers': sum(row['formal_status'] == 'complete' for row in rows),
+        'items': sum(row['items'] for row in rows),
+        'complete_items': sum(len(row['complete_items']) for row in rows),
+        'modules': sum(row['modules'] for row in rows),
+        'declarations_with_per_case_repetition': sum(row['declarations'] for row in rows),
+    }
+
+
 def expected_binding(repo, layout, mapping, baseline_row):
     """Construct a receipt only after checking the two immutable snapshots."""
     case_root = repo / relocated_case_path(repo, mapping['current']); formal = case_root / 'formal'
@@ -798,10 +826,7 @@ def check_all(repo, *, write_bindings=False):
                    'Default plus reserve suites and original evidence layout disagree')
     extra_assessments = assessment_inventory(repo, suite_paths - original_case_paths,
                                            retained_case_ids=[row['id'] for row in layout['case_paths']])
-    verify.require({row['id'] for row in baseline['cases']} ==
-                   {row['id'] for row in layout['case_paths']} and
-                   len(baseline['cases']) == len(layout['case_paths']),
-                   'Layout must preserve every originally checked paper')
+    baseline_counts = selected_baseline_counts(repo, layout, baseline)
     rows = [check_case(repo, layout, mapping, original_row(repo, layout, mapping['id']),
                        write_binding=write_bindings) for mapping in layout['case_paths']]
     counts = {
@@ -813,9 +838,9 @@ def check_all(repo, *, write_bindings=False):
     }
     recompiled = [row['id'] for row in rows if row['fresh_compilation_repeated']]
     if not recompiled:
-        verify.require(counts == baseline['counts'], 'Author evidence totals changed during metadata relocation')
+        verify.require(counts == baseline_counts, 'Author evidence totals changed during metadata relocation')
     else:
-        verify.require(all(counts[key] == baseline['counts'][key] for key in ('papers', 'items')),
+        verify.require(all(counts[key] == baseline_counts[key] for key in ('papers', 'items')),
                        'Recompilation cannot change the paper or obligation inventory')
     result = {
         'schema': 'math-gauge.author-evidence-ledger/v2', 'checked_at_utc': verify.now(),

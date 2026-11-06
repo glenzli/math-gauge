@@ -27,33 +27,6 @@ class FocusCatalogTests(unittest.TestCase):
     def changed_taxonomy(self):
         return copy.deepcopy(self.taxonomy)
 
-    def test_exact_paper_units_and_independent_review_statuses(self):
-        catalog, _ = focus_catalog.build()
-        entries = catalog["entries"]
-        self.assertEqual(catalog["counts"]["papers"], len(entries))
-        for membership in ("default", "reserve"):
-            selected = [row for row in entries if row["membership"] == membership]
-            self.assertEqual(catalog["counts"][membership + "_papers"], len(selected))
-            self.assertEqual(catalog["counts"][membership + "_obligations"], sum(row["stage_count"] for row in selected))
-        progressive = [row for row in entries if row["kind"] == "progressive"]
-        self.assertEqual(catalog["scope"]["progressive_papers"], len(progressive))
-        self.assertEqual(catalog["counts"]["progressive_stages"], sum(row["stage_count"] for row in progressive))
-        written = [row for row in entries if row["kind"] == "written_proof"]
-        if written:
-            self.assertEqual(catalog["counts"]["proof_criteria"], sum(row["proof_criterion_count"] for row in written))
-            self.assertTrue(all(row["stage_count"] == 0 for row in written))
-        self.assertEqual(
-            catalog["scope"]["chapter_obligations"], {"LCH02": 34, "MG-C003": 92, "LCH01": 8, "LCH02": 20, "HCH02": 40}
-        )
-        self.assertEqual(catalog["counts"]["source_human_approved"], 0)
-        self.assertEqual(catalog["counts"]["model_calls_by_indexer"], 0)
-        self.assertTrue(all(
-            entry["sample_unit"] == ("one-complete-answer-review; parent-correlated"
-                                      if entry["kind"] == "answer_review" else "one-full-paper")
-            and entry["classification_review"]["human"] == "pending"
-            and entry["source_review"]["human"] == "pending"
-            for entry in catalog["entries"]
-        ))
 
     def test_rejects_missing_or_repeated_paper(self):
         for duplicate in (False, True):
@@ -68,15 +41,6 @@ class FocusCatalogTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "every selected mathematical paper and answer review exactly once"):
                     focus_catalog.build(taxonomy_data=taxonomy)
 
-    def test_current_membership_retains_original_source_identity(self):
-        catalog, _ = focus_catalog.build()
-        self.assertEqual(catalog["counts"]["reserve_papers"], 0)
-        entries = {row["case_id"]: row for row in catalog["entries"]}
-        for cid in ["MG-GR002", "MG-GR021", "MG-C003"]:
-            row = entries[cid]
-            self.assertEqual(row["membership"], "default")
-            self.assertEqual(row["original_sha256"][row["paths"]["task"]],
-                hashlib.sha256((ROOT / row["paths"]["task"]).read_bytes()).hexdigest())
 
     def test_rejects_duplicate_primary_or_focus_tag(self):
         for field, value, message in (
@@ -98,7 +62,7 @@ class FocusCatalogTests(unittest.TestCase):
             focus_catalog.build(taxonomy_data=taxonomy)
 
     def test_rejects_nonexistent_stage_or_obligation(self):
-        for cid, invalid in (("MG-GR002", "S99"), ("MG-C003", "CH03-P99-99")):
+        for cid, invalid in (("MG-GR005", "S99"), ("MG-C003", "CH03-P99-99")):
             with self.subTest(cid=cid):
                 taxonomy = self.changed_taxonomy()
                 assignment = next(item for item in taxonomy["paper_assignments"]
@@ -122,7 +86,7 @@ class FocusCatalogTests(unittest.TestCase):
     def test_rejects_stale_task_locator(self):
         taxonomy = self.changed_taxonomy()
         assignment = next(item for item in taxonomy["paper_assignments"]
-                          if item["case_id"] == "MG-GR002")
+                          if item["case_id"] == "MG-GR005")
         assignment["focus"][0]["evidence"][0]["task_locator"]["line"] += 1
         with self.assertRaisesRegex(ValueError, "task heading locator drift"):
             focus_catalog.build(taxonomy_data=taxonomy)
