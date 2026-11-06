@@ -63,7 +63,7 @@ class C003BudgetTests(unittest.TestCase):
     def test_new_target_export_is_portable_and_keeps_operator_policy_outside_candidates(self):
         plan = build_plan(self.future, self.suite, ["c003-180"], runtime=RUNTIME)
         self.assertEqual([s["slot_id"] for s in select_slots(plan)], ["MG-C003:A1"])
-        self.assertEqual(plan["planned"]["all_slots"], 42)
+        self.assertEqual(plan["planned"]["all_slots"], 26)
         with tempfile.TemporaryDirectory() as directory:
             bundle = Path(directory) / "bundle"
             with patch("math_gauge.reliability.invoke_conversation", side_effect=AssertionError("no model calls")):

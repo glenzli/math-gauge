@@ -20,7 +20,7 @@ def validate_case_execution_policy(data, case_components):
     policy = data.get("case_execution_policy")
     if policy is None:
         return None
-    if (data.get("schema") != "math-gauge.benchmark-profile/v5"
+    if (data.get("schema") not in {"math-gauge.benchmark-profile/v5", "math-gauge.benchmark-profile/v6"}
             or not isinstance(policy, dict)
             or policy.get("schema") not in {"math-gauge.case-execution-policy/v1",
                                             "math-gauge.case-execution-policy/v2"}

@@ -11,7 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from math_gauge.records import descriptor, validate_formalization_review, validate_record
+from math_gauge.records import descriptor, project_metrics, validate_formalization_review, validate_record
 from math_gauge.scoring import score_record_inputs
 
 MODELS = ("terra-6.1-max", "gemini-3.8-flash-high")
@@ -100,16 +100,14 @@ def refresh_descriptors(root, value):
             refresh_descriptors(root, item)
 
 
-def project_metrics(metrics):
-    """Private inputs are never copied to public files; publish aggregates only."""
-    fields = ("exact", "lower", "upper", "complete", "coverage")
-    return {name: {**{key: copy.deepcopy(value[key]) for key in fields},
-                   "formal_comparison_eligible": False} for name, value in metrics.items()}
-
-
 def regrade(root=ROOT, *, private_root, review_plan=None):
     root, private_root = Path(root).resolve(), Path(private_root).resolve()
-    policy_path = root / "protocol/scoring-policy.json"
+    current = load(root / "protocol/scoring-policy.json").get("version") == "0.5.0"
+    if current and review_plan is None:
+        from scripts.score_current_records import retain
+        return retain(private_root, public_root=root)
+    policy_path = (root / "results/v0.6.0/terra-6.1-max/20261105/scoring-policy.json"
+                   if current else root / "protocol/scoring-policy.json")
     policy_raw = policy_path.read_bytes()
     policy, policy_hash = json.loads(policy_raw), digest(policy_raw)
     if policy["version"] != "0.4.0":
@@ -129,26 +127,27 @@ def regrade(root=ROOT, *, private_root, review_plan=None):
         write(folder / "reviews/alignment.json", review)
         (folder / "scoring-policy.json").write_bytes(policy_raw)
         totals[model] = {}
-        for scope, source, filename in (
-                ("public", inputs, "result.json"),
-                ("combined", load(private_root / "results/v0.6.0" / model / "20261105/scoring-inputs.json"),
-                 "combined-aggregate.json")):
-            scored = score_record_inputs(source, review, policy, formalization_review=formalization)
-            path = folder / filename
-            result = load(path)
-            result["metrics"] = project_metrics(scored["metrics"])
-            for component in result["profile"]["components"]:
-                component["weight"] = policy["capability_component_weights"][scope][component["id"]]
-            result["profile"]["overall_weights"] = copy.deepcopy(policy["overall_weights"])
-            result["scoring_method_version"] = policy["version"]
-            result["source_score_sha256"] = digest(json.dumps(scored, sort_keys=True, ensure_ascii=False).encode())
-            result["engineering_review_sha256"] = digest((folder / "reviews/formalization.json").read_bytes())
-            result["formal_comparison_eligible"] = False
-            if scope == "public":
-                result["lean_formalization_breakdown"] = scored["lean_formalization_breakdown"]
-                result["alignment_selfcheck"] = scored["alignment_selfcheck"]
-            write(path, result)
-            totals[model][scope] = scored["metrics"]["overall"]["exact"]
+        if not current:
+            for scope, source, filename in (
+                    ("public", inputs, "result.json"),
+                    ("combined", load(private_root / "results/v0.6.0" / model / "20261105/scoring-inputs.json"),
+                     "combined-aggregate.json")):
+                scored = score_record_inputs(source, review, policy, formalization_review=formalization)
+                path = folder / filename
+                result = load(path)
+                result["metrics"] = project_metrics(scored["metrics"])
+                for component in result["profile"]["components"]:
+                    component["weight"] = policy["capability_component_weights"][scope][component["id"]]
+                result["profile"]["overall_weights"] = copy.deepcopy(policy["overall_weights"])
+                result["scoring_method_version"] = policy["version"]
+                result["source_score_sha256"] = digest(json.dumps(scored, sort_keys=True, ensure_ascii=False).encode())
+                result["engineering_review_sha256"] = digest((folder / "reviews/formalization.json").read_bytes())
+                result["formal_comparison_eligible"] = False
+                if scope == "public":
+                    result["lean_formalization_breakdown"] = scored["lean_formalization_breakdown"]
+                    result["alignment_selfcheck"] = scored["alignment_selfcheck"]
+                write(path, result)
+                totals[model][scope] = scored["metrics"]["overall"]["exact"]
         record = load(folder / "record.json")
         record["formalization_review"] = descriptor(folder, folder / "reviews/formalization.json")
         record["scoring_policy"] = {"method_version": policy["version"],
@@ -166,7 +165,10 @@ def regrade(root=ROOT, *, private_root, review_plan=None):
                     "review": record["formalization_review"]}
         refresh_descriptors(folder, record)
         write(folder / "record.json", record)
-        validate_record(folder)
+        validate_record(folder, validate_scores=not current)
+    if current:
+        from scripts.score_current_records import retain
+        return retain(private_root, public_root=root)
     return totals
 
 

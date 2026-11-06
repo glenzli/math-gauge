@@ -1,15 +1,11 @@
-# 当前固定结果
+# 当前固定结果档案
 
-统一benchmark版本 **0.6.0**。下列三模型的最新结果由用户于2026-11-05指定固定留档；此前不同权重、来源视图与旧成绩使用Git历史恢复。
+当前为benchmark **0.6.0本地开发草稿**；分类聚合方法 **0.5.0**、Strict **0.2.0**、非逻辑重跑接纳 **0.1.0**。均为观察已有答卷后的方法调整，AI审核、人审待定，正式比较资格为false，尚未发布。
 
-| 模型 | 公开总分 | 含私有聚合 | 正式记录 |
-| --- | ---: | ---: | --- |
-| Terra 6.1 Max | 91.6211151369 | 91.9635064412 | [档案](v0.6.0/terra-6.1-max/20261105/README.md) · [机器记录](v0.6.0/terra-6.1-max/20261105/record.json) |
-| DeepSeek v4.1 Flash 1017 | 74.2149456522 | 74.0270380435 | [档案](v0.6.0/deepseek-v4.1-flash-1017/20261105/README.md) · [机器记录](v0.6.0/deepseek-v4.1-flash-1017/20261105/record.json) |
-| Gemini 3.8 Flash High | 70.7669021739 | 65.6138768116 | [档案](v0.6.0/gemini-3.8-flash-high/20261105/README.md) · [机器记录](v0.6.0/gemini-3.8-flash-high/20261105/record.json) |
+只保存用户选定的Terra 6.1 Max、DeepSeek v4.1 Flash 1017、Gemini 3.8 Flash High当前记录，均位于v0.6.0/<model>/20261105。完整返回、自我判定、原工程、逐轮审核与冻结来源输入保留；日常runs不入Git，旧成绩和旧题通过Git历史恢复。
 
-档案保存完整原答、模型自评、逐轮工程、AI审核、计分输入和有限轨迹。评分方法0.4.0对四道形式化题统一使用选定初答阶段的封卷归档工程，按实际证明的正确性与语义对齐计分，详见[工程审核](../docs/formalization-audit.md)。部分等价测项继承旧benchmark记录。
+当前四个合并视图为combined-aggregate.json、retry-combined-aggregate.json、strict-combined-aggregate.json和strict-retry-combined-aggregate.json，分别对应分项／Strict及首次／允许非逻辑重跑。不再提供独立公有分数。私有原题、原答和完整逐题报告在同版私有仓库。
 
-公开部分42个标准槽加三轮相关对齐研究；私有3份A1原答及完整合并输入保存在配套私有仓库同版本/模型/记录号下。本目录仅公开私有聚合。所有结果为观察后的开发组合、AI审核、人审待定，正式比较资格false。
+当前主值为已获分／100，可测上限70，研究30待建，完整总分未知。分类聚合政策assessment-policy.json为0.5.0，Strict为0.2.0；scoring-policy.json仍是原数学审核0.4.0。输入中的42槽为原始来源，当前仅取26公开／29合并A1加3轮Lean自查，不改原答与原审核。
 
-`python3 scripts/records.py check`核验字节绑定并用共享评分器复算当前成绩，不调用模型或编译Lean。规则见[正式记录合同](../protocol/result-record.md)和[评分政策](../protocol/benchmark-scoring.md)。DeepSeek运行条件按用户确认的原0.3约束复用，具体采样、数值预算和原生回执仍记未知；GR021/GR023因预算耗尽没有交付，已按0分与严格不通过计入固定分母。
+[成绩与贡献](../docs/results.md) · [结果页](../site/index.html) · [留档合同](../protocol/result-record.md)

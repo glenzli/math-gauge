@@ -21,7 +21,7 @@ ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
 PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
                    "math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4",
-                   "math-gauge.benchmark-profile/v5"}
+                   "math-gauge.benchmark-profile/v5", "math-gauge.benchmark-profile/v6"}
 COMPACT_PANEL = ("MG-GR002", "MG-GR014", "MG-GF101", "MG-GF107", "MG-GF104", "MG-GF106")
 
 
@@ -31,6 +31,53 @@ def identity(value):
                                    separators=(",", ":"), allow_nan=False).encode())
 
 
+def validate_assessment_policy(policy):
+    """Validate the current hierarchy, including unbuilt reserved categories."""
+    if (not isinstance(policy, dict) or policy.get("schema") != "math-gauge.assessment-policy/v1"
+            or policy.get("version") != "0.5.0" or policy.get("benchmark_version") != "0.6.0"
+            or policy.get("publication_scope") != "combined" or policy.get("primary_metric") != "earned"
+            or policy.get("initial_attempt_labels") != ["A1"]
+            or policy.get("score_modes") != ["partial", "strict"]
+            or policy.get("overall_floor") != 0):
+        raise ValueError("Unsupported current mathematical assessment policy")
+    expected = {"written-argument": (25, 14, 3, 17), "argument-review": (10, 4, 0, 4),
+                "lean-audit": (10, 4, 0, 2), "lean-formalization": (15, 4, 0, 2),
+                "lean-selfcheck": (10, 1, 0, 1), "background-check": (10, 0, 0, 0),
+                "manuscript-completion": (10, 0, 0, 0), "theorem-extension": (10, 0, 0, 0)}
+    rows = policy.get("subcategories", [])
+    if ([row.get("id") for row in rows] != list(expected)
+            or any(tuple(row.get(k) for k in ("weight", "public_tasks", "private_tasks", "families"))
+                   != expected[row["id"]] for row in rows)
+            or any(row.get("status") != ("under_construction" if row["families"] == 0 else "active")
+                   for row in rows)):
+        raise ValueError("Current assessment subcategories, counts or reserved weights changed")
+    groups = policy.get("groups", [])
+    source_contract = [(["proofs", "exploration"], "family"), (["answer-review"], "parent_family"),
+                       (["lean-audit"], "family"), (["lean-formalization"], "family"),
+                       ([], "trajectory"), ([], "family"), ([], "family"), ([], "family")]
+    if ([(row.get("source_components"), row.get("aggregation")) for row in rows] != source_contract
+            or policy.get("scope") != {"public_tasks": 26, "private_tasks": 3, "tasks": 29,
+                "parent_families": 21, "initial_slots": 29, "public_initial_slots": 26,
+                "alignment_rounds": 3, "trajectory_assessment_units": 1}):
+        raise ValueError("Current assessment changed source categories or fixed denominators")
+    if ([(g.get("id"), g.get("weight"), g.get("children")) for g in groups] != [
+            ("written", 35, ["written-argument", "argument-review"]),
+            ("lean", 35, ["lean-audit", "lean-formalization", "lean-selfcheck"]),
+            ("research", 30, ["background-check", "manuscript-completion", "theorem-extension"])]) :
+        raise ValueError("Current assessment requires the frozen 35/35/30 hierarchy")
+    if (policy.get("alignment_study") != {"case_id": "MG-C003", "rounds": 3,
+            "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20},
+            "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average",
+            "no_best_of_or_source_union": True}
+            or policy.get("strict_trajectory") != {"final_all_obligations_verified": True,
+                "every_round_delivered": True, "every_diagnosis_accurate": True,
+                "no_false_complete_claim": True, "no_regression": True,
+                "initial_failure_does_not_fail_trajectory": True, "followups_replace_initial": False}):
+        raise ValueError("Current assessment changed the admitted three-round selfcheck contract")
+    identity(policy)
+    return policy
+
+
 def _require(condition, message):
     if not condition:
         raise ValueError(message)
@@ -38,6 +85,8 @@ def _require(condition, message):
 
 def reliability_schedule(protocol_version):
     """Versioned independent labels and follow-up rounds, including frozen legacy plans."""
+    if protocol_version == "0.5.0":
+        return ("A1",), ()
     if protocol_version in {"0.3.0", "0.4.0"}:
         return ("A1", "A2"), (1,)
     if protocol_version in {"0.1.0", "0.2.0"}:
@@ -64,6 +113,12 @@ def component_ids(data):
     _require(isinstance(rows, list) and rows and all(isinstance(x, dict) for x in rows),
              "Profile requires explicit ordered components")
     ids = [row.get("id") for row in rows]
+    if data.get("schema") == "math-gauge.benchmark-profile/v6":
+        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review")
+        _require(ids == [cid for cid in allowed if cid in ids]
+                 and all(row.get("aggregation") == ("parent_family" if row["id"] == "answer-review" else "family")
+                         for row in rows), "Invalid current task categories or family aggregation")
+        return tuple(ids)
     if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"}:
         allowed = (FORMALIZATION_COMPONENTS if data["schema"].endswith("/v5") else
                    EXTENDED_COMPONENTS if data["schema"].endswith("/v4") else EXTENDED_COMPONENTS[:-1])
@@ -77,14 +132,32 @@ def component_ids(data):
     return tuple(ids)
 
 
+def _validate_profile_weights(data):
+    if data.get("schema") == "math-gauge.benchmark-profile/v6":
+        policy = validate_assessment_policy(data.get("assessment_policy"))
+        expected = {"proofs": 25, "lean-audit": 10, "lean-formalization": 15, "answer-review": 10}
+        _require({row["id"]: row.get("weight") for row in data["components"]} == expected
+                 and "overall_weights" not in data
+                 and data.get("source_only_counts") is True,
+                 "Current task weights must retain research30 and selfcheck10 outside A1 tasks")
+        return
+    _weights({x["id"]: x.get("weight") for x in data["components"]}, component_ids(data),
+             fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
+    _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
+             allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"},
+             fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
+
+
 def profile_targets(data):
     groups = data.get("execution_groups", {})
-    _require(isinstance(groups, dict) and (not groups or data.get("schema") == "math-gauge.benchmark-profile/v5")
+    _require(isinstance(groups, dict) and (not groups or data.get("schema") in {
+        "math-gauge.benchmark-profile/v5", "math-gauge.benchmark-profile/v6"})
              and all(isinstance(name, str) and re.fullmatch(r"[a-z][a-z0-9-]+", name)
                      and name not in TARGETS and isinstance(slots, list) and slots
                      and len(slots) == len(set(slots)) and all(isinstance(sid, str) for sid in slots)
                      for name, slots in groups.items()), "Invalid versioned execution group")
-    return component_ids(data) + ("repeat", "neutral", "stance", "core", "all") + tuple(groups)
+    return component_ids(data) + (("core", "all") if data.get("schema") == "math-gauge.benchmark-profile/v6"
+                                 else ("repeat", "neutral", "stance", "core", "all")) + tuple(groups)
 
 
 def _runtime_contract(runtime):
@@ -101,6 +174,11 @@ def _runtime_contract(runtime):
 def independent_attempts(data, case_ids):
     """Read a frozen arrangement; historical profiles retain all three attempts."""
     ids = list(case_ids)
+    if data.get("schema") == "math-gauge.benchmark-profile/v6":
+        _require(data.get("reliability", {}).get("protocol_version") == "0.5.0"
+                 and data.get("attempt_schedule") == {cid: ["A1"] for cid in ids},
+                 "Current mathematical assessment uses one fresh A1 per task")
+        return {cid: ["A1"] for cid in ids}
     repeated_labels, _ = reliability_schedule(data.get("reliability", {}).get("protocol_version"))
     if data.get("schema") == "math-gauge.benchmark-profile/v1":
         _require(repeated_labels == ATTEMPTS and data.get("attempts") == list(ATTEMPTS),
@@ -119,6 +197,10 @@ def scoring_policy(data, case_ids):
     """Bind metric membership to the profile, never to observed successful answers."""
     ids = list(case_ids)
     attempts = independent_attempts(data, ids)
+    if data.get("schema") == "math-gauge.benchmark-profile/v6":
+        expected = {"core_attempt_labels": ["A1"], "repeat_case_ids": [], "repeat_attempt_labels": []}
+        _require(data.get("score_policy") == expected, "Current assessment has no default repeat or stance panel")
+        return copy.deepcopy(expected)
     repeated_labels, _ = reliability_schedule(data["reliability"]["protocol_version"])
     if data["schema"] == "math-gauge.benchmark-profile/v1":
         return {"core_attempt_labels": list(ATTEMPTS), "repeat_case_ids": ids,
@@ -216,7 +298,7 @@ class BenchmarkProfile:
         path = Path(path).resolve()
         raw = path.read_bytes()
         data = json.loads(raw)
-        default_root = (path.parent.parent if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"}
+        default_root = (path.parent.parent if data.get("schema") in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5", "math-gauge.benchmark-profile/v6"}
                         and path.parent.name == "protocol" else suite.root.parent)
         root = Path(repository_root or default_root).resolve()
         _require(isinstance(data, dict) and data.get("schema") in PROFILE_SCHEMAS
@@ -233,8 +315,7 @@ class BenchmarkProfile:
                  "Profile binds a different suite identity")
         rows = data.get("components")
         components = component_ids(data)
-        _weights({x["id"]: x.get("weight") for x in rows}, components,
-                 fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
+        _validate_profile_weights(data)
         members = []
         for row in rows:
             ids = row.get("case_ids")
@@ -247,7 +328,8 @@ class BenchmarkProfile:
                 case = suite.cases[cid]
                 _require(bool(case.get("group_contract")), "Benchmark scoring requires a stage contract")
                 contract = read_json(suite.case_file(case, case["group_contract"]))
-                _require(_category_matches(row["id"], case.get("task_kind"), contract.get("kind")),
+                _require(_category_matches(row["id"], case.get("task_kind"), contract.get("kind"),
+                                           current=data["schema"].endswith("/v6")),
                          "Core category differs from the paper's actual task and contract")
         _require(len(members) == len(set(members))
                  and set(members) == set(suite.cases),
@@ -261,9 +343,6 @@ class BenchmarkProfile:
         profile_targets(data)
         scoring_policy(data, suite.cases)
         _supplement_cases(data, suite.cases)
-        _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
-                 allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"},
-                 fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
         reliability = data.get("reliability")
         _require(isinstance(reliability, dict), "Reliability material bindings required")
         for key in ("selection", "prompts", "schedule", "protocol_version"):
@@ -285,7 +364,9 @@ class BenchmarkProfile:
         return result
 
 
-def _category_matches(component, task_kind, contract_kind):
+def _category_matches(component, task_kind, contract_kind, *, current=False):
+    if current and component == "proofs" and contract_kind == "research_exploration":
+        return task_kind in {"written", "exploration"}
     if component == "lean-formalization":
         return contract_kind == "chapter_formalization" and task_kind == "generate"
     if contract_kind == "semantic_audit":
@@ -533,11 +614,7 @@ def validate_plan(plan):
              and plan.get("suite") == data.get("suite"), "Frozen profile identity changed")
     components = data.get("components", [])
     ids = component_ids(data)
-    _weights({x["id"]: x.get("weight") for x in components}, ids,
-             fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
-    _weights(data.get("overall_weights"), ("core", "repeat", "neutral", "stance"),
-             allow_zero=data["schema"] in {"math-gauge.benchmark-profile/v3", "math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"},
-                 fractional=data["schema"] in {"math-gauge.benchmark-profile/v4", "math-gauge.benchmark-profile/v5"})
+    _validate_profile_weights(data)
     cases = plan.get("case_index", [])
     case_ids = [x.get("case_id") for x in cases]
     members = [cid for component in components for cid in component.get("case_ids", [])]
@@ -589,7 +666,8 @@ def validate_plan(plan):
                      and case.get("assessment_unit") == "review_dimension"
                      and case.get("track") == "alignment", "Invalid semantic-audit plan unit")
         _require(case.get("component") == membership[case["case_id"]]
-                 and _category_matches(case["component"], case.get("task_kind"), case.get("contract_kind"))
+                 and _category_matches(case["component"], case.get("task_kind"), case.get("contract_kind"),
+                                       current=data["schema"].endswith("/v6"))
                  and stages and len({s.get(unit_key) for s in stages}) == len(stages)
                  and all(type(s.get("points")) is int and s["points"] > 0
                          and (dimension_review or written_proof or type(s.get("lean_required")) is bool) for s in stages)

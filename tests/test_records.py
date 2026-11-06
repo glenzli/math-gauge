@@ -1,6 +1,7 @@
 """Final-record integrity and finite-state contracts; no models or grading."""
 
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -8,8 +9,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from math_gauge.records import (SCHEMA, descriptor, evidence_bytes, trajectory,
-                                validate_record, validate_self_assessment)
+from math_gauge.records import (SCHEMA, apply_retry_selection, descriptor, evidence_bytes,
+                                load_retry_inputs, project_metrics, trajectory, validate_record, validate_self_assessment)
 from math_gauge.scoring import score_record_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -138,6 +139,103 @@ class RecordIntegrityTests(unittest.TestCase):
             validate_self_assessment(self.root, assessment)
 
 
+class RetryAdmissionTests(unittest.TestCase):
+    def test_public_aggregate_excludes_internal_slot_and_execution_diagnostics(self):
+        raw = {"overall": {"exact": 50, "lower": 50, "upper": 50, "complete": True,
+                           "coverage": {"planned": 3, "adjudicated": 3},
+                           "formal_comparison_eligible": False,
+                           "formal_eligibility": {"slot_failures": [{"slot_id": "PRIVATE-FIXTURE:A1"}]}}}
+        result = project_metrics(raw)
+        self.assertEqual(result["overall"]["exact"], 50)
+        self.assertEqual(result["overall"]["coverage"], {"planned": 3, "adjudicated": 3})
+        self.assertNotIn("PRIVATE-FIXTURE", json.dumps(result))
+        self.assertEqual(set(result["overall"]),
+                         {"exact", "lower", "upper", "complete", "coverage", "formal_comparison_eligible"})
+
+    def setUp(self):
+        self.policy = json.loads((ROOT / "protocol/nonlogical-retry-policy.json").read_bytes())
+        self.baseline = {"plan": {"fixed": "SYNTHETIC SOFTWARE FIXTURE"}, "slots": [
+            {"slot_id": "FIXTURE:A1", "case_id": "FIXTURE", "completion": {"exact": 0},
+             "strict_pass": False, "response_sha256": None},
+            {"slot_id": "UNRELATED:A1", "case_id": "UNRELATED", "completion": {"exact": 1}}]}
+        self.rows = [{"id": "FIXTURE:A1", "case_id": "FIXTURE", "kind": "independent",
+                      "parent_id": None, "response": None},
+                     {"id": "FIXTURE:attempt:2", "case_id": "FIXTURE", "kind": "nonlogical_retry",
+                      "parent_id": "FIXTURE:A1", "response": {"sha256": "1" * 64},
+                      "evaluation": {"completion": {"exact": .5, "lower": .5, "upper": .5},
+                                     "strict_pass": False, "whole_math": {"state": "I"},
+                                     "focus_math": {"state": "U"}, "focus_verdict": None,
+                                     "group_diagnostic": {}, "review_sha256": "2" * 64}}]
+        self.slot = {"slot_id": "FIXTURE:A1", "conditions_evidence": "operator_declared_unverified_details",
+                     "selected_record_id": "FIXTURE:attempt:2", "attempts": [
+                         {"attempt": 1, "record_id": "FIXTURE:A1", "outcome": "no_final_delivery",
+                          "failure_reason": "max_output_tokens", "final_answer_bytes": 0},
+                         {"attempt": 2, "record_id": "FIXTURE:attempt:2", "outcome": "completed_delivery",
+                          "failure_reason": None, "final_answer_bytes": 100}]}
+        self.ledger = {"schema": "math-gauge.retry-attempts/v1", "formal_comparison_eligible": False,
+                       "human_review": "pending", "slots": [self.slot]}
+
+    def project(self):
+        return apply_retry_selection(self.baseline, self.ledger, self.rows, self.policy)
+
+    def test_first_normal_but_wrong_delivery_is_selected_without_mutating_the_original(self):
+        before = copy.deepcopy(self.baseline)
+        result = self.project()
+        self.assertEqual(self.baseline, before)
+        self.assertEqual(result["plan"], before["plan"])
+        self.assertEqual(result["slots"][1], before["slots"][1])
+        self.assertEqual(result["slots"][0]["completion"]["exact"], .5)
+        self.assertFalse(result["slots"][0]["strict_pass"])
+        self.assertEqual(result["slots"][0]["retry_selection"]["attempt"], 2)
+
+    def test_cannot_retry_a_delivered_mathematically_wrong_answer_or_pick_best(self):
+        third = copy.deepcopy(self.rows[1])
+        third.update(id="FIXTURE:attempt:3", parent_id=third["id"])
+        self.rows.append(third)
+        self.slot["attempts"].append(dict(self.slot["attempts"][1], attempt=3, record_id=third["id"]))
+        self.slot["selected_record_id"] = third["id"]
+        with self.assertRaisesRegex(ValueError, "Cannot retry a completed answer"):
+            self.project()
+
+    def test_cap_contiguous_attempts_and_deterministic_selection_are_enforced(self):
+        for mutation in ["cap", "gap", "select_failure", "other_slot", "conditions"]:
+            slot = copy.deepcopy(self.slot)
+            if mutation == "cap":
+                slot["attempts"] *= 2
+            elif mutation == "gap":
+                slot["attempts"][1]["attempt"] = 3
+            elif mutation == "select_failure":
+                slot["selected_record_id"] = "FIXTURE:A1"
+            elif mutation == "other_slot":
+                slot["slot_id"] = "INVENTED:A1"
+            else:
+                slot["conditions_evidence"] = "changed_budget"
+            self.ledger["slots"] = [slot]
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.project()
+
+    def test_no_response_does_not_make_any_failure_retryable(self):
+        for reason in ["mathematical_error", "low_score", "unknown"]:
+            self.slot["attempts"][0]["failure_reason"] = reason
+            with self.subTest(reason=reason), self.assertRaisesRegex(ValueError, "eligible failure"):
+                self.project()
+
+    def test_exhausted_cap_preserves_failure_and_the_fixed_denominator(self):
+        for i in (2, 3):
+            rid = f"FIXTURE:attempt:{i}"
+            if i == 2:
+                self.rows[1]["response"] = None
+            else:
+                self.rows.append(dict(self.rows[1], id=rid, parent_id="FIXTURE:attempt:2"))
+            item = dict(self.slot["attempts"][0], attempt=i, record_id=rid)
+            if i == 2:
+                self.slot["attempts"][1] = item
+            else:
+                self.slot["attempts"].append(item)
+        self.slot["selected_record_id"] = None
+        self.assertEqual(self.project(), self.baseline)
+
+
 class FiniteTrajectoryTests(unittest.TestCase):
     def rows(self, counts, claims=None):
         return [{"evaluation": {"complete_count": count, "total": 2,
@@ -175,6 +273,21 @@ class FiniteTrajectoryTests(unittest.TestCase):
 
 
 class CurrentArchiveTests(unittest.TestCase):
+    def test_retry_condition_reproduces_both_reviewed_answers_with_the_original_plan(self):
+        root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261105"
+        load = lambda name: json.loads((root / name).read_bytes())
+        inputs = load_retry_inputs(root, load("record.json"))
+        self.assertEqual(inputs["plan"], load("scoring-inputs.json")["plan"])
+        selected = {r["case_id"]: r for r in inputs["slots"] if r["case_id"] in {"MG-GR021", "MG-GR023"}}
+        self.assertEqual(selected["MG-GR021"]["completion"]["exact"], .475)
+        self.assertEqual(selected["MG-GR023"]["completion"]["exact"], .885)
+        self.assertEqual({r["slot_id"] for r in inputs["slots"]},
+                         {r["slot_id"] for r in load("scoring-inputs.json")["slots"]})
+        result = score_record_inputs(inputs, load("reviews/alignment.json"), load("scoring-policy.json"),
+                                     formalization_review=load("reviews/formalization.json"))
+        self.assertFalse((root / "retry-result.json").exists())
+        self.assertEqual(result["metrics"]["overall"]["exact"], 76.9349456522)
+
     def test_selected_archives_reproduce_the_existing_public_scores(self):
         expected = {"terra-6.1-max": 91.6211151369, "gemini-3.8-flash-high": 70.7669021739,
                     "deepseek-v4.1-flash-1017": 74.2149456522}
@@ -185,7 +298,8 @@ class CurrentArchiveTests(unittest.TestCase):
             result = score_record_inputs(load("scoring-inputs.json"), load("reviews/alignment.json"),
                 load("scoring-policy.json"), formalization_review=load("reviews/formalization.json"))
             self.assertEqual(result["metrics"]["overall"]["exact"], score)
-            self.assertEqual(load("result.json")["metrics"]["overall"]["exact"], score)
+            self.assertFalse((root / "result.json").exists())
+            self.assertIsNone(load("combined-aggregate.json")["metrics"]["overall"]["exact"])
             self.assertEqual(load("record.json")["candidate_calls_by_migration"], 0)
             rows = {r["id"]: r for r in load("record.json")["records"]}
             for cid, count in [("LCH01", 8), ("LCH02", 20), ("HCH02", 40)]:
@@ -207,39 +321,40 @@ class CurrentArchiveTests(unittest.TestCase):
 class SharedAggregateCheckTests(unittest.TestCase):
     def test_private_recompute_rejects_a_different_public_total_or_source(self):
         spec = importlib.util.spec_from_file_location("record_cli_fixture", ROOT / "scripts/records.py")
-        cli = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(cli)
+        cli = importlib.util.module_from_spec(spec); spec.loader.exec_module(cli)
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory).resolve()
-            private, public = root / "private", root / "public"
-            relative = Path("results/v0.6.0/SOFTWARE-FIXTURE/fixture")
-            folder, source = private / relative, public / relative
-            folder.mkdir(parents=True)
-            (source / "reviews").mkdir(parents=True)
-            result = {"metrics": {"overall": {"exact": 50, "lower": 50, "upper": 50}},
-                      "engineering_review_sha256": "1" * 64, "scoring_method_version": "0.4.0",
-                      "source_score_sha256": "2" * 64}
-            files = {"record.json": {"formalization_evidence_location": "public_archive"},
-                     "scoring-inputs.json": {}, "alignment-review.json": {}, "scoring-policy.json": {},
-                     "result.json": result}
-            for name, data in files.items():
-                (folder / name).write_text(json.dumps(data))
-            (source / "reviews/formalization.json").write_text("{}")
-            aggregate = source / "combined-aggregate.json"
-            aggregate.write_text(json.dumps(result))
-            with patch.object(cli, "validate_record", return_value={"passed": True}) as validator, \
-                    patch.object(cli, "score_record_inputs", return_value={"metrics": result["metrics"]}):
-                self.assertTrue(cli.check(private, public_root=public)["passed"])
-                validator.assert_called_with(folder, formalization_root=source)
-                for mutation in ("total", "source"):
-                    changed = copy.deepcopy(result)
-                    if mutation == "total":
-                        changed["metrics"]["overall"]["exact"] = 51
-                    else:
-                        changed["engineering_review_sha256"] = "3" * 64
-                    aggregate.write_text(json.dumps(changed))
-                    with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, "Public combined aggregate"):
-                        cli.check(private, public_root=public)
+            root=Path(directory).resolve(); private,public=root/"private",root/"public"
+            relative=Path("results/v0.6.0/SOFTWARE-FIXTURE/fixture")
+            folder,source=private/relative,public/relative
+            folder.mkdir(parents=True);(source/"reviews").mkdir(parents=True)
+            result=json.loads((ROOT/"results/v0.6.0/terra-6.1-max/20261105/combined-aggregate.json").read_bytes())
+            record={"formalization_evidence_location":"public_archive"}
+            for group in ("assessment_results","strict_results"):
+                record[group]={c:{"path":group+"-"+c+".json"} for c in ("single_attempt","nonlogical_retry_3")}
+                for item in record[group].values():
+                    raw=json.dumps(result).encode();(folder/item["path"]).write_bytes(raw)
+                    aggregate=cli.project_assessment_score(result)
+                    aggregate["source_bindings"]["private_report_sha256"]=hashlib.sha256(raw).hexdigest()
+                    (source/item["path"]).write_text(json.dumps(aggregate))
+            for path in (folder/"record.json",source/"record.json"):path.write_text(json.dumps(record))
+            for path in [folder/"scoring-inputs.json",folder/"alignment-review.json",folder/"scoring-policy.json",
+                         source/"assessment-policy.json",source/"strict-scoring-policy.json",source/"reviews/formalization.json"]:
+                path.write_text("{}")
+            with patch.object(cli,"validate_record",return_value={"passed":True}) as validator, \
+                 patch.object(cli,"load_assessment_results",return_value={c:result for c in record["assessment_results"]}), \
+                 patch.object(cli,"load_retry_inputs",return_value=None), \
+                 patch.object(cli,"score_assessment_record_inputs",return_value={"metrics":result["metrics"]}):
+                self.assertTrue(cli.check(private,public_root=public)["passed"])
+                validator.assert_called_with(folder,formalization_root=source)
+                path=source/record["assessment_results"]["single_attempt"]["path"]
+                original=json.loads(path.read_bytes())
+                for mutation in ("total","source"):
+                    changed=copy.deepcopy(original)
+                    if mutation=="total":changed["metrics"]["earned"]["exact"]=0
+                    else:changed["source_bindings"]["private_report_sha256"]="3"*64
+                    path.write_text(json.dumps(changed))
+                    with self.subTest(mutation=mutation),self.assertRaisesRegex(ValueError,"Public current aggregate"):
+                        cli.check(private,public_root=public)
 
 
 if __name__ == "__main__":

@@ -494,7 +494,7 @@ class EngineeringCapabilityTests(BoundAlignmentFixture):
 class RebalancedAlignmentTests(BoundAlignmentFixture):
     def setUp(self):
         super().setUp()
-        current = json.loads((ROOT / "protocol/scoring-policy.json").read_text())
+        current = json.loads((ROOT / "results/v0.6.0/terra-6.1-max/20261105/scoring-policy.json").read_text())
         self.documents["policy"] = dict(current, version="0.3.0",
                                          obligation_ids=self.documents["policy"]["obligation_ids"])
         self.save("policy")

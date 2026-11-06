@@ -179,9 +179,9 @@ class FocusCatalogTests(unittest.TestCase):
         expected = Counter(Path(manifest).parent.parent.name
                            for _, name in focus_catalog.SUITES
                            for manifest in focus_catalog.Suite.load(ROOT / name).metadata["cases"])
-        self.assertEqual([(item["id"], item["count"]) for item in catalog["categories"]],
+        self.assertEqual([(item["id"], item["count"]) for item in catalog["source_categories"]],
                          [(category, expected[category]) for category, _ in focus_catalog.CATEGORIES])
-        ids = [cid for item in catalog["categories"] for cid in item["case_ids"]]
+        ids = [cid for item in catalog["source_categories"] for cid in item["case_ids"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(set(ids), {item["case_id"] for item in catalog["entries"]})
         default = set(catalog["suites"][0]["cases"])

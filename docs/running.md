@@ -1,48 +1,12 @@
-# 运行与返回
+# 运行与交付指南
 
-当前benchmark为0.6.0本地草稿，公开26题、42条标准记录；合并私有3题为29题、45条标准记录。题目与正式比较仍待人工批准。
+当前benchmark0.6.0，聚合方法0.5.0／Strict0.2.0，均为本地未发布草稿。默认公开26个独立A1；公私完整29个A1，加C003独立计10分的固定三轮对齐自查。研究30分待建。旧A2、书面自查和立场分支不再默认安排。
 
-所有准备、导出、检查和导入均不调用模型。实际模型接入由外部harness或已授权适配器完成；请求标签不认证后端。
+1. 阅读[评测协议](../protocol/evaluation.md)、[评分规则](../protocol/benchmark-scoring.md)和每题完整材料。先冻结题面、模型／harness、系统提示、参数、工具网络与各层预算。候选包只包含明确投影的题面和允许附件，不能带参考、判准、主计划或运行指南。
+2. 每题A1使用独立上下文与工程。依当前执行分组冻结预算：Lean七题5400秒，C003及其每轮自查10800秒，普通新书面和审阅2700秒。保留本地工具原反馈；禁止外部检索。复用原答保留原条件及未知项，不能标作新调用。
+3. 保存完整UTF-8最终答复、原自评、所有代码块及附件、可获得的原生事件和工具反馈。Lean要求完整工程、入口／import闭包及原alignment.json。原生终态或截止后停止写入封卷；生成完成、CLI退出与交付完整分别记录。
+4. C003从自己封卷初答接续固定3轮，使用[冻结提示](../protocol/lean-alignment/neutral-prompt.txt)，不因自称100%提前停止。只见自己历史和工程，不给参考、外部评审或其他模型答案。每轮保留源码与自报，最后规定轮次是最终交付，不挑最好一轮、不取并集。
+5. 超预算无最终答复记交付失败，原单次为0。仅非逻辑无交付故障可按[接纳规则](../protocol/nonlogical-retries.md)含初次最多3次，首次正常交付即停止。初次与重跑两组并行保存；数学错误不重试，不额外扩展自查轮次。
+6. 按[记录合同](../protocol/result-record.md)提交完整包。自报完整与评审核实分开；事后抽取绑定原文，缺字段如实标缺，不重新问模型后冒充原返回。日常运行在被忽略的runs，只有用户指定固定留档才移入results。
 
-## 检查当前材料
-
-```sh
-python3 -m math_gauge validate
-python3 scripts/catalog.py --check
-python3 scripts/validate_protocol.py
-python3 scripts/records.py check
-```
-
-## 冻结运行并导出
-
-先在临时工作区保存实际runtime：模型/适配器、系统提示、支持的参数、工具条件与预算。当前新采集允许本地工具，禁止工具联网与外部检索；完整字段及证据边界见[执行证据](../protocol/execution-evidence.md)和[外部harness](../protocol/external-harness.md)。
-
-同一题的各轮条件必须一致。预算分开配置：书面及新AR每轮2700秒，其余七项新Lean每轮5400秒，C003初答及其后续每轮10800秒。原生、broker与外层分别设置并留证，工具与编译等待计入。
-
-例如使用5400秒runtime准备七项Lean：
-
-```sh
-python3 -m math_gauge benchmark-plan --target lean-90 --runtime /ABS/lean90-runtime.json --out runs/new-lean90-plan.json
-python3 -m math_gauge benchmark-export --plan runs/new-lean90-plan.json --out runs/new-lean90-bundle
-python3 -m math_gauge benchmark-export-check --bundle runs/new-lean90-bundle --plan runs/new-lean90-plan.json
-```
-
-C003改用`--target c003-180`与独立10800秒runtime。GP001/GP002新五槽用`written-new-panel`；三道加强书面用`written-refresh`；AR用`answer-review`。完整重复面板可选`repeat`、`neutral`、`stance`。目标选择执行范围，完整分母仍由同一当前profile保存。
-
-候选只接收工具构造的完整messages、显式附件和本分支历史。A1/A2独立，三臂各从同一A1展开；C003三轮专项连续承接自己的上一轮。操作者的说明、全计划、评分、参考、其他答案和全局记忆不交候选。
-
-## 保存与返回
-
-按[正式结果记录合同](../protocol/result-record.md)保存完整原答、自评原话、KEEP/FULL、源码、对齐表、封卷工程及可获得的执行资料。执行成功、可读答复、编译成功、数学通过和人工批准分别记录；无成功父终态的依赖轮按冻结规则阻断。
-
-外部v1目录包使用其共享controller与submission模板返回，评审端按同一冻结plan和bundle导入：
-
-```sh
-python3 -m math_gauge benchmark-import --bundle /ABS/bundle --input /ABS/submission.json --plan /ABS/frozen-plan.json --suite cases --out runs/new-import
-```
-
-原始交换包与正式结果档案是不同层次。正式档案按用户明确选定后生成，保留原始来源与未知项；不把整理者抽取的自评伪称为候选新增声明。旧DeepSeek答卷的补全指令见[原答恢复说明](deepseek-result-recovery.md)。
-
-## 固定留档
-
-用户选定留档时，保存到`results/v0.6.0/<model>/<record-id>/`；检查命令为`python3 scripts/records.py check`。未选定的运行、试验与调试日志使用临时`runs/`，不自动永久保留。公私共用版本和runner，私有原始材料在私有仓库，公开只保留聚合。
+检查当前材料：`python3 scripts/validate_protocol.py`；验证题库：`python3 -m math_gauge validate`。公私共用公有runner，不复制到私有仓库。对外release必须来自精确干净源提交，保持已发布资产不可变；本次没有发布。

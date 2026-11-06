@@ -101,7 +101,7 @@ def check_fixed_design(plan: dict, selection: dict, packet: Path) -> None:
     semantic_bytes = json.dumps(selection_semantics(selection), sort_keys=True,
                                 ensure_ascii=False, separators=(",", ":")).encode()
     require(sha(semantic_bytes) == bindings["selection_semantics_sha256"],
-            "The six selected cases, target claims or selection reasons changed")
+            "Selected cases, target claims or selection reasons changed")
     for name, key in (("prompts.json", "prompts_sha256"),
                       ("reply-format.md", "reply_format_sha256"),
                       ("schedule.json", "schedule_sha256")):
@@ -110,6 +110,18 @@ def check_fixed_design(plan: dict, selection: dict, packet: Path) -> None:
 
 
 def check_plan(plan: dict) -> None:
+    if plan.get("schema") == "math-gauge.reliability-material-plan/v3":
+        ids = [row["case_id"] for row in plan.get("cases", [])]
+        require(plan.get("protocol_version") == "0.5.0" and plan.get("suite_version") == "0.6.0"
+                and len(ids) == 26 and len(set(ids)) == 26
+                and plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
+                and plan.get("human_approved") is False and plan.get("actual_results") is None
+                and plan.get("runtime_configuration_frozen") is False
+                and plan.get("repeat_case_ids") == [] and plan.get("independent_attempts") == ["A1"]
+                and plan.get("rounds_per_arm") == 0 and plan.get("planned_slots_per_model") == 26
+                and plan.get("attempt_schedule") == {cid: ["A1"] for cid in ids},
+                "Current material plan requires26 A1 slots and no authorized execution")
+        return
     if plan.get("schema") == "math-gauge.reliability-material-plan/v2":
         require(plan.get("protocol_version") == "0.4.0" and plan.get("suite_version") == "0.6.0"
                 and plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
@@ -327,7 +339,8 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
     require([item["ordinal_per_model"] for item in rows] == list(range(1, total + 1)),
             "Slot ordinal order drift")
     require(collections.Counter(item["kind"] for item in rows)
-            == {"independent": independent, "followup": followup}, "Independent/followup counts drift")
+            == collections.Counter({"independent": independent, "followup": followup}),
+            "Independent/followup counts drift")
     for planned in plan["cases"]:
         for label in plan["attempt_schedule"][planned["case_id"]]:
             item = slots.get(f"{planned['case_id']}:{label}", {})
@@ -405,9 +418,17 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
     from math_gauge.benchmarks import BenchmarkProfile, build_plan
     packet = root / PACKET
     check_plan(plan)
+    current = plan.get("schema") == "math-gauge.reliability-material-plan/v3"
     check_fixed_design(plan, selection, packet)
-    check_messages(selection, prompts, (packet / "reply-format.md").read_text())
-    check_schedule(plan, schedule, prompts)
+    if current:
+        require(all(x.get("protocol_version") == "0.5.0" for x in (selection, prompts, schedule))
+                and selection.get("cases") == [] and selection.get("case_count") == 0
+                and selection.get("truth_counts") == {} and prompts.get("messages") == [],
+                "Current plan must not carry retired written/stance panels")
+        check_schedule(plan, schedule, prompts)
+    else:
+        check_messages(selection, prompts, (packet / "reply-format.md").read_text())
+        check_schedule(plan, schedule, prompts)
     if refresh:
         try:
             author_evidence.check_all(root)
@@ -424,6 +445,18 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
         plan["suites"] = [{"path": "cases", "version": suite.metadata["version"], "sha256": suite.sha256, "cases": len(suite.cases)}]
     profile = BenchmarkProfile.load(root / plan["profile"], suite)
     frozen = build_plan(profile, suite)
+    if current:
+        require(profile.data["schema"] == "math-gauge.benchmark-profile/v6"
+                and selection.get("source_suite_sha256") == suite.sha256
+                and schedule.get("slots") == [{k: v for k, v in row.items() if k != "selected"}
+                                              for row in frozen["slots"]],
+                "Current schedule or suite identity differs from the shared frozen plan")
+        study = read(root / "protocol/lean-alignment/study.json")
+        require(study.get("fixed_followup_rounds") == [1, 2, 3]
+                and study.get("overall_weight_percent") == 10
+                and study.get("standard_slot_inclusion") is False
+                and sha(safe_file(root, study["neutral_prompt"]["path"]).read_bytes()) == study["neutral_prompt"]["sha256"],
+                "Separate scored three-round Lean study changed")
     require(profile.data["score_policy"]["repeat_case_ids"] == plan["repeat_case_ids"]
             == [row["case_id"] for row in selection["cases"]], "Profile and packet selections differ")
     with tempfile.TemporaryDirectory(prefix="math-gauge-v06-projection-") as temporary:
@@ -475,7 +508,7 @@ def validate_materials(repo_root: Path = ROOT, *, refresh: bool = False,
     packet = root / PACKET
     plan, selection = read(packet / "plan.json"), read(packet / "selection.json")
     prompts, schedule = read(packet / "prompts.json"), read(packet / "schedule.json")
-    if plan.get("schema") == "math-gauge.reliability-material-plan/v2":
+    if plan.get("schema") in {"math-gauge.reliability-material-plan/v2", "math-gauge.reliability-material-plan/v3"}:
         return validate_v06_materials(root, plan, selection, prompts, schedule,
                                       refresh=refresh, write_report=write_report)
     require(plan.get("protocol_version") == selection.get("protocol_version"), "Reliability protocol versions differ")

@@ -1,12 +1,7 @@
-# 当前静态结果页
+# 当前结果页
 
-页面仅从`results/v0.6.0/`中用户指定的最新正式记录生成。公开与合并视图读取共享评分器生成的机器结果，页面不自行计算成绩。私有部分仅含聚合，不导出私有题文、ID或原答。
+静态index.html／data.json由scripts/render_results_site.py生成，直接读取固定档案四种合并结果；评分逻辑在共享runner，页面不另计分。离线可打开index.html，亦可用本地静态服务器预览。
 
-```sh
-python3 scripts/render_results_site.py
-python3 scripts/render_results_site.py --out /private/tmp/math-gauge-current-site
-```
+三大类书面35／Lean35／研究30，八子类列出公私数量和贡献。研究三项0题建设中，当前主值为已获分／100、可测上限70，完整总分未定。分项／Strict及首次／允许非逻辑重跑可切换，Lean三轮自查独立10分。柱图每家独立主题色与本地图标，实心首次、条纹仅显示重跑实际增量，数值取较高者，只有有差异的模型展示悬停说明。
 
-`index.html`内嵌展示数据，无外部脚本、字体或图像请求，可直接打开。`data.json`和`downloads/`提供同一当前结果的安全聚合。仓库内的完整记录链接按相对路径指向正式档案；独立部署时可另行配置档案下载位置。
-
-当前展示包括总分、能力方向、四档Lean实际核实数，以及三轮自查后的真实最后状态。旧结果视图不在当前目录另存，使用Git历史恢复。当前仍为开发分析、AI审核、人审待定；本次未部署。
+生成：python3 scripts/render_results_site.py；生成一致性由test_results_site.py核对。downloads仅含三家×两模式×两条件的12个合并投影，不含独立公有总分或私有逐题资料。图标来源与许可见assets/providers。当前benchmark0.6.0／聚合0.5.0／Strict0.2.0，人审待定，尚未发布。

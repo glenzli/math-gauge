@@ -1,15 +1,17 @@
-# DeepSeek v4.1 Flash1017 · 20261105
+# DeepSeek v4.1 Flash 1017 · 当前固定档案
 
-benchmark0.6.0，评分方法0.4.0，harness Codex。用户于2026-11-05指定与Terra/Gemini一并固定留档。
+| 留档身份 | 记录 |
+|---|---|
+| Benchmark | 0.6.0（公私统一） |
+| 模型请求版本 | deepseek-v4.1-flash-1017 / codex (external integrated answers) |
+| Harness | Codex |
+| 当前计分 | 分类聚合0.5.0／Strict0.2.0；原数学审核0.4.0 |
+| 跑法简记 | 来源相容初答A1＋C003固定三轮；本地工具／禁止外部检索，逐来源真实预算见record.json，后稿不回填初答 |
 
-公开总分74.2149456522；含私有题总分74.0270380435。AI审核，人工待定，正式比较资格false。
+benchmark0.6.0，harness及实际运行条件见record.json；本次只重分类和重算，没有新模型调用。聚合0.5.0，Strict0.2.0，数学审核来源0.4.0。书面35／Lean35／研究30，当前已建70分，研究30待建；主值为已获分／100，完整总分未知。
 
-42个公开标准槽位及3轮C003对齐自查；3份私有探索原答和评审保存在配套私仓，本目录仅含合并统计。
-GR021/GR023由用户确认规定输出预算耗尽而无可评阅答案：本次交付失败、0分、严格不通过，分母保留；命题真伪未判。
+本档案保存公有完整原答、模型自报、工程、原审核与安全合并聚合。原始输入与审核保持来源身份，旧42／45槽中当前只取26／29个A1，另三轮Lean自查独立10分；其他原分支不再占分。
 
-四道形式化初答依次8/8、20/20、40/40、82/92；C003三轮均91/92且误报92/92，固定三轮自查净分1.0。模型原表、回复源码和实际工程分别留存；评审者对应明确标注。工程未修补，原封卷时序无法独立认证。
+combined-aggregate.json／retry-combined-aggregate.json／strict-combined-aggregate.json／strict-retry-combined-aggregate.json为两模式×两条件的合并投影，不发布独立公有分数。 assessment-policy.json及Strict政策显式绑定当前分类口径；私有记录可经显式public-root引用同档案公有政策。原scoring-policy.json保留0.4.0以核验数学审核，不改写旧policy散列。
 
-`record.json`包含原答、自报、评审和有限轨迹；`responses/`保留原文本与附件，`engineering/`绑定实际Main导入闭包，`kernel/`保存原字节编译及公理审计，`reviews/`保存逐项依据，`execution/`保留原材料清单与操作者声明。
-原采样参数、数值预算和原生运行回执未知；相容旧答按用户确认的同样0.3约束复用。评分用plan为事后重建的固定分母，不声称是原执行计划。本次整理不新增模型调用。
-
-从项目根目录运行`python3 scripts/records.py check`可验证字节与共享评分器复算结果，无需模型或Lean调用。
+DeepSeek两题有非逻辑重跑，含初次分别3／2次，取首次正常交付，原失败保留；运行细节声明不等于独立认证。 AI审核、人审pending、正式比较资格false。完整成绩和权重见公有docs/results.md及protocol/benchmark-scoring.md。

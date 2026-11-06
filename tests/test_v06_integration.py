@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from benchmark_fixtures import source_profile, source_suite
+from benchmark_fixtures import source_profile, source_suite, legacy_budget_profile
 from math_gauge.benchmarks import BenchmarkProfile, build_plan, identity, validate_plan, select_slots
 from math_gauge.catalog import Suite, read_json, write_json
 from math_gauge.execution_policy import execution_context
@@ -26,8 +26,8 @@ RUNTIME = {"model_label": "v06-offline-fixture", "adapter_identity": {"kind": "f
 class V06IntegrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.suite = Suite.load(ROOT / "cases")
-        cls.profile = BenchmarkProfile.load(ROOT / "protocol/benchmark-profile.json", cls.suite)
+        cls.suite = source_suite()
+        cls.profile = legacy_budget_profile()
         cls.plan = build_plan(cls.profile, cls.suite, runtime=RUNTIME)
         cls.old_suite = source_suite()
         cls.old_profile = source_profile(cls.old_suite)
@@ -123,7 +123,7 @@ class V06IntegrationTests(unittest.TestCase):
             {"plan": long_plan, "model_label": RUNTIME["model_label"], "slots": long_rows},
             {"plan": written_plan, "model_label": RUNTIME["model_label"], "slots": written_rows}],
             budget_policy="retain_source_budgets")
-        self.assertIsNone(result["metrics"]["overall"]["exact"])
+        self.assertEqual(result["metrics"]["overall"]["exact"],100)
         self.assertIsNone(result["metrics"]["overall"]["formal_exact"])
         self.assertEqual(result["composition"]["method"], "post-observation mixed-condition development")
         self.assertEqual(result["composition"]["case_execution_strata"]["MG-GR002"]["conditions"]["timeout_seconds"], 2700)

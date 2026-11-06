@@ -1,12 +1,12 @@
 # Benchmark 0.6.0 operator guide
 
-This is the current draft dataset: 26 public tasks, 42 standard answer slots. Public and private scopes share benchmark version 0.6.0. This local preparation does not constitute a published release or an execution.
+This is the current draft dataset: 26 public tasks, 26 independent A1 slots. Public and private scopes share benchmark version 0.6.0. This local preparation does not constitute a published release or an execution.
 
 Only each issued role message and its explicit attachments go to the solver. This README, manifest, controller, runtime declarations and recording instructions are operator material. References, rubrics, expected truth and review information are outside this dataset.
 
-Freeze each model, system prompt, actual supported parameters, tool/network conditions and budget in a new run workspace. Use independent contexts for A1/A2 and each case's own A1 history for each followup arm. Do not mix histories. The controller's target groups select execution; they do not change benchmark denominators.
+Freeze each model, system prompt, actual supported parameters, tool/network conditions and budget in a new run workspace. Use an independent context for each A1. The separate fixed-three-round C003 study retains only its own history. Written repeats and stance arms are retired from the current default plan. Do not mix histories. The controller's target groups select execution; they do not change benchmark denominators.
 
-C003 initial construction uses 10800 seconds; the other seven new Lean tasks use 5400 seconds. Written and answer-review runs use their declared conditions (the current supplement uses 2700 seconds). Select compatible groups with separate runtimes. The separate three-round C003 alignment study is not automatically created by the standard42-slot dataset.
+C003 initial construction uses 10800 seconds; the other seven new Lean tasks use 5400 seconds. Written and answer-review runs use their declared conditions (the current supplement uses 2700 seconds). Select compatible groups with separate runtimes. The separate three-round C003 alignment study is not automatically created by the standard26-slot dataset.
 
 ## Record the complete return
 
@@ -27,3 +27,5 @@ Preserve every prescribed round, including failure, missing and unresolved state
 Keep model statements, delivery/compilation evidence, mathematical review and human approval separate. No missing field is invented; missing slots remain in fixed denominators. Separate public/private raw returns. A combined public display may contain only private aggregates.
 
 A formal record follows result-record/v1 (the repository record contract) and results/v0.6.0/<model>/<record-id>/: record.json, raw responses, attachments, per-answer reviews, frozen scoring inputs/policy, current result and trajectory. Mark source versions and conditions when reusing compatible earlier answers. Until a user explicitly selects fixed retention, workspaces and logs are temporary. This guide authorizes no model calls, grading, publication or submission by itself.
+
+The current assessment uses written35 / Lean35 / research30, including a separately scored10-point three-round Lean selfcheck. Research is under construction (zero cases), so built capacity is70 and the primary result is earned points in the full100-point frame; the complete total is unknown, never rescaled from70. Partial and Strict use the same weights, with Strict judging each task and the full selfcheck trajectory as binary units. This operator explanation must not be inserted into candidate messages.

@@ -26,6 +26,15 @@ class ReliabilityMaterialsTests(unittest.TestCase):
         self.prompts = V.read(PACKET / "prompts.json")
         self.schedule = V.read(PACKET / "schedule.json")
         self.reply = (PACKET / "reply-format.md").read_text()
+        source=V.read(ROOT/'results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json')['plan']
+        self.legacy_selection=source['reliability']['selection']
+        self.legacy_prompts=source['reliability']['prompts']
+        self.legacy_reply='本轮作答格式：'+self.legacy_prompts['messages'][0]['content'].split('本轮作答格式：',1)[1]
+        self.legacy_schedule={'protocol_version':'0.4.0','actual_candidate_calls':0,
+            'slots':[{k:v for k,v in row.items() if k!='selected'} for row in source['slots']]}
+        self.legacy_plan=dict(self.plan,protocol_version='0.4.0',planned_slots_per_model=42,
+            attempt_schedule=source['profile']['data']['attempt_schedule'],
+            repeat_case_ids=source['profile']['data']['score_policy']['repeat_case_ids'])
 
     def test_all_current_materials_and_candidates_validate_without_changing_repository(self):
         paths = list(PACKET.glob("*.*"))
@@ -56,9 +65,9 @@ class ReliabilityMaterialsTests(unittest.TestCase):
 
     def test_current_packet_rejects_other_attempt_and_round_counts(self):
         V.check_plan(self.plan)
-        self.assertEqual(self.plan["independent_attempts"], ["A1", "A2"])
-        self.assertEqual(self.plan["rounds_per_arm"], 1)
-        self.assertEqual(len(self.prompts["messages"]), 12)
+        self.assertEqual(self.plan["independent_attempts"], ["A1"])
+        self.assertEqual(self.plan["rounds_per_arm"], 0)
+        self.assertEqual(len(self.prompts["messages"]), 0)
         for key, value in [("independent_attempts", ["A1", "A2", "A3"]), ("rounds_per_arm", 2)]:
             changed = copy.deepcopy(self.plan)
             changed[key] = value
@@ -252,12 +261,11 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                     path.write_bytes(original)
 
     def test_selection_claim_reason_and_membership_are_immutable_design(self):
-        for key in ("target_claim", "selection_reason", "case_id", "expected_truth"):
-            with self.subTest(key=key):
-                selected = copy.deepcopy(self.selection)
-                selected["cases"][0][key] += " changed"
-                with self.assertRaisesRegex(ValueError, "target claims or selection reasons"):
-                    V.check_fixed_design(self.plan, selected, PACKET)
+        self.assertEqual(self.selection['cases'],[])
+        selected=copy.deepcopy(self.selection)
+        selected['cases'].append({'case_id':'SYNTHETIC-RETIRED-TARGET','target_claim':'invented new panel'})
+        with self.assertRaisesRegex(ValueError,'target claims or selection reasons'):
+            V.check_fixed_design(self.plan,selected,PACKET)
 
     def test_engineering_identity_rebinding_leaves_selection_semantics_unchanged(self):
         selection = copy.deepcopy(self.selection)
@@ -281,15 +289,15 @@ class ReliabilityMaterialsTests(unittest.TestCase):
                     V.check_fixed_design(self.plan, self.selection, packet)
 
     def test_message_arms_can_only_change_the_registered_stance(self):
-        prompts = copy.deepcopy(self.prompts)
+        prompts = copy.deepcopy(self.legacy_prompts)
         message = next(item for item in prompts["messages"] if item["arm"] == "affirm")
         message["content"] += "Assume compactness.\n"
         message["content_sha256"] = V.sha(message["content"].encode())
         with self.assertRaisesRegex(ValueError, "beyond the registered stance"):
-            V.check_messages(self.selection, prompts, self.reply)
+            V.check_messages(self.legacy_selection, prompts, self.legacy_reply)
 
     def test_evaluator_text_in_followup_is_rejected(self):
-        prompts = copy.deepcopy(self.prompts)
+        prompts = copy.deepcopy(self.legacy_prompts)
         first = prompts["messages"][0]
         same_round = [item for item in prompts["messages"]
                       if item["case_id"] == first["case_id"] and item["round"] == first["round"]]
@@ -297,17 +305,17 @@ class ReliabilityMaterialsTests(unittest.TestCase):
             message["content"] += "expected_truth=true\n"
             message["content_sha256"] = V.sha(message["content"].encode())
         with self.assertRaisesRegex(ValueError, "Evaluator material leaked"):
-            V.check_messages(self.selection, prompts, self.reply)
+            V.check_messages(self.legacy_selection, prompts, self.legacy_reply)
 
     def test_followup_cannot_read_other_branch_or_independent_attempt(self):
         for parent in ("MG-GR002:A2", "MG-GR002:affirm:1"):
             with self.subTest(parent=parent):
-                schedule = copy.deepcopy(self.schedule)
+                schedule = copy.deepcopy(self.legacy_schedule)
                 slot = next(item for item in schedule["slots"]
                             if item["slot_id"] == "MG-GR002:neutral:1")
                 slot["parent_slot"] = parent
                 with self.assertRaisesRegex(ValueError, "another branch or the wrong predecessor"):
-                    V.check_schedule(self.plan, schedule, self.prompts)
+                    V.check_schedule(self.legacy_plan, schedule, self.legacy_prompts)
 
     def test_planned_slots_cannot_contain_response_or_grade(self):
         schedule = copy.deepcopy(self.schedule)

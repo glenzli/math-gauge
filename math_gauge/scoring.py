@@ -5,7 +5,7 @@ from fractions import Fraction
 from pathlib import Path
 
 from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independent_attempts,
-                         reliability_schedule, scoring_policy, validate_plan)
+                         reliability_schedule, scoring_policy, validate_assessment_policy, validate_plan)
 from .execution import now
 from .execution_policy import execution_condition
 from .execution_policy import (declared_case_context, declared_case_timeout_seconds,
@@ -321,6 +321,9 @@ def _paired_stance(plan, rows):
 
 def score_inputs(inputs):
     """Aggregate validated rows; fixtures retain their explicit evidence label."""
+    data = inputs.get("plan", {}).get("profile", {}).get("data", {})
+    if data.get("schema") == "math-gauge.benchmark-profile/v6":
+        return score_assessment_inputs(inputs, data["assessment_policy"], data["strict_policy"])
     return _score_inputs(inputs)
 
 
@@ -1110,6 +1113,9 @@ def public_score_projection(report, plan, *, private_aliases, metadata=None, sou
     plan = validate_plan(plan)
     if report.get("plan_sha256") != plan["plan_sha256"]:
         raise ValueError("Public score projection binds a different plan")
+    if report.get("schema") == "math-gauge.assessment-score/v1":
+        from .records import project_assessment_score
+        return project_assessment_score(report)
     cases = {case["case_id"]: case for case in plan["case_index"]}
     if (not isinstance(private_aliases, dict) or not set(private_aliases) <= set(cases)
             or len(set(private_aliases.values())) != len(private_aliases)
@@ -2192,7 +2198,206 @@ def score_record_inputs(inputs, review, policy, *, formalization_review=None):
             "formal_comparison_eligible": False, "human_review": "pending"}
 
 
+
+def _assessment_metric(interval, *, unit, planned, adjudicated):
+    """Percent/point bounds, including signed selfcheck credit, without admission promotion."""
+    return {"exact": _percent(interval[2]), "lower": _bound(interval[0], lower=True),
+            "upper": _bound(interval[1], lower=False), "complete": interval[2] is not None,
+            "coverage": {"unit": unit, "planned": planned, "adjudicated": adjudicated,
+                         "unknown": planned - adjudicated}, "formal_comparison_eligible": False}
+
+
+def _all_requirements(values):
+    if any(value is False for value in values):
+        return False
+    return True if all(value is True for value in values) else None
+
+
+def strict_alignment_trajectory(review, source_policy):
+    """Judge a whole repair trajectory, not the average of three round passes."""
+    summary, _ = _alignment_trajectory(review, source_policy)
+    supplied = {row["round"]: row for row in review["rounds"]}
+    gates = []
+    for row in summary["rounds"]:
+        diagnosis = supplied.get(row["round"], {}).get("diagnosis") or {}
+        no_false = None if row["major_false_complete"] is None else not row["major_false_complete"]
+        no_regression = None if row["regressed"] is None else row["regressed"] == 0
+        accurate = diagnosis.get("accurate")
+        if accurate is True:
+            accurate = (diagnosis.get("global_points") == 10 and diagnosis.get("localization_points") == 20)
+        gates.append({"round": row["round"], "delivery_verified": row["delivery_verified"],
+                      "diagnosis_accurate": accurate, "no_false_complete": no_false,
+                      "no_regression": no_regression})
+    last = summary["last_completion"]
+    final = False if last["not_complete"] else True if last["unknown_obligations"] == 0 else None
+    passed = _all_requirements([final, *(g[k] for g in gates for k in
+                               ("delivery_verified", "diagnosis_accurate", "no_false_complete", "no_regression"))])
+    return {"strict_pass": passed, "final_all_verified": final, "rounds": gates,
+            "assessment_units": 1, "initial_answer_replaced": False}
+
+
+def validate_strict_assessment_policy(policy):
+    required = {"schema": "math-gauge.strict-scoring-policy/v2", "version": "0.2.0",
+        "benchmark_version": "0.6.0", "score_mode": "strict", "primary_metric": "earned",
+        "initial_attempt_labels": ["A1"], "task_credit": "all_required_objectives_correct_or_zero",
+        "numeric_pass_threshold": None, "include_alignment_trajectory": True,
+        "trajectory_credit": "all_required_three_round_trajectory_conditions_or_zero",
+        "family_aggregation": "same_as_partial", "component_weights": "same_as_partial",
+        "construction_policy": "fixed_reserved_weight_unknown_full_score", "followups_replace_A1": False,
+        "attempt_conditions": ["single_attempt", "nonlogical_retry_3"],
+        "human_review": "pending", "formal_comparison_eligible": False}
+    if not isinstance(policy, dict) or any(policy.get(k) != v for k, v in required.items()):
+        raise ValueError("Unsupported strict task-and-trajectory scoring policy")
+    return policy
+
+
+def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
+                            mathematical_substitutions=None, alignment_summary=None,
+                            strict_trajectory=None):
+    """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
+    policy = validate_assessment_policy(assessment_policy)
+    validate_strict_assessment_policy(strict_policy)
+    if mode not in {"partial", "strict"}:
+        raise ValueError("Unknown assessment score mode")
+    plan = validate_plan(inputs["plan"])
+    if inputs.get("model_label") != plan["model_label"]:
+        raise ValueError("Assessment model differs from its frozen source")
+    index = {case["case_id"]: case for case in plan["case_index"]}
+    planned = {row["slot_id"]: row for row in plan["slots"]}
+    rows = {}
+    for row in inputs.get("slots", []):
+        sid = row.get("slot_id")
+        if sid in rows or sid not in planned or row.get("case_id") != planned[sid]["case_id"]:
+            raise ValueError("Assessment inputs repeat or invent a source slot")
+        rows[sid] = row
+    substitutions = mathematical_substitutions or {}
+    by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
+    families = {child["id"]: {} for child in policy["subcategories"]}
+    tasks = []
+    for cid, case in index.items():
+        child = by_source.get(case["component"])
+        if child is None:
+            raise ValueError("A source task has no current assessment category")
+        sid, row = cid + ":A1", rows.get(cid + ":A1", {})
+        value = substitutions.get(sid, _interval(row.get("completion")))
+        if sid in substitutions:
+            passed = True if value[0] == 1 else False if value[1] < 1 else None
+            source = "selected_sealed_engineering"
+        else:
+            passed = row.get("strict_pass")
+            _boolean(passed)
+            if passed is True and value != (1, 1, 1):
+                raise ValueError("Strict pass contradicts the source-bound completed task")
+            source = "source_bound_original_review"
+        interval = _boolean(passed) if mode == "strict" else value
+        family = case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"]
+        families[child["id"]].setdefault(family, []).append(interval)
+        tasks.append({"case_id": cid, "slot_id": sid, "subcategory": child["id"], "family_id": family,
+                      "strict_pass": passed, "judgment_source": source,
+                      "completion": {"lower": float(value[0]), "upper": float(value[1]),
+                                     "exact": None if value[2] is None else float(value[2])},
+                      "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256")})
+    metrics, intervals, contributions = {}, {}, {}
+    for child in policy["subcategories"]:
+        ident, count = child["id"], child["families"]
+        if child["status"] == "under_construction":
+            value, adjudicated = UNKNOWN, 0
+        elif child["aggregation"] == "trajectory":
+            if mode == "strict":
+                value = _boolean((strict_trajectory or {}).get("strict_pass"))
+            elif alignment_summary is None:
+                value = Fraction(-1, 5), Fraction(1), None
+            else:
+                metric = alignment_summary["metric"]
+                value = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
+                              for k in ("lower", "upper", "exact"))
+            adjudicated = int(value[2] is not None)
+        else:
+            values = [_average(items) for items in families[ident].values()]
+            if len(values) > count:
+                raise ValueError("Assessment source exceeds the frozen family denominator")
+            values += [UNKNOWN] * (count - len(values))
+            value, adjudicated = _average(values), sum(item[2] is not None for item in values)
+        intervals[ident] = value
+        metrics[ident] = _assessment_metric(value, unit=child["aggregation"], planned=count,
+                                           adjudicated=adjudicated)
+        contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
+        contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
+                                                 planned=count, adjudicated=adjudicated)
+    for group in policy["groups"]:
+        children = [child for child in policy["subcategories"] if child["id"] in group["children"]]
+        value = _average([intervals[c["id"]] for c in children], [c["weight"] for c in children])
+        metrics[group["id"]] = _assessment_metric(value, unit="fixed subcategory",
+            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+        contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
+        contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
+            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+    active = [child for child in policy["subcategories"] if child["status"] == "active"]
+    def total(children):
+        values = [intervals[c["id"]] for c in children]
+        # Divide by the full 100 points even when only 70 points are built.
+        return tuple(None if any(v[i] is None for v in values) else max(Fraction(0),
+                     sum((v[i] * Fraction(c["weight"], 100) for v, c in zip(values, children)), Fraction()))
+                     for i in range(3))
+    for key, children in (("earned", active), ("overall", policy["subcategories"])):
+        metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
+            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+    missing_tasks = max(0, policy["scope"]["tasks"] - len(tasks))
+    return {"schema": "math-gauge.assessment-score/v1", "benchmark_version": policy["benchmark_version"],
+        "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
+        "score_mode": mode, "primary_metric": "earned", "model_label": inputs["model_label"],
+        "policy_sha256": identity(policy), "strict_policy_sha256": identity(strict_policy),
+        "plan_sha256": plan["plan_sha256"], "metrics": metrics, "contributions": contributions,
+        "profile": {"groups": policy["groups"], "subcategories": policy["subcategories"]},
+        "capacity": {"total": 100, "active": sum(c["weight"] for c in active),
+                     "under_construction": sum(c["weight"] for c in policy["subcategories"] if c not in active)},
+        "coverage": dict(policy["scope"], source_initial_tasks=len(tasks),
+                         source_initial_judgments=sum(t["strict_pass"] is not None for t in tasks)),
+        "whole_task_counts": {"planned": policy["scope"]["tasks"],
+            "passed": sum(t["strict_pass"] is True for t in tasks),
+            "failed": sum(t["strict_pass"] is False for t in tasks),
+            "unknown": sum(t["strict_pass"] is None for t in tasks) + missing_tasks},
+        "tasks": tasks, "alignment_selfcheck": alignment_summary,
+        "strict_alignment_selfcheck": strict_trajectory, "initial_answers_replaced": False,
+        "human_review": "pending", "formal_comparison_eligible": False, "new_candidate_calls": 0}
+
+
+def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
+                                   assessment_policy, strict_policy, mode="partial"):
+    source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
+    substitutions = formalization_substitutions(inputs, formalization_review)
+    trajectory = strict_alignment_trajectory(review, source_policy)
+    result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
+        mathematical_substitutions=substitutions, alignment_summary=source["alignment_selfcheck"],
+        strict_trajectory=trajectory)
+    result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
+    return result
+
+
+def score_strict_record_inputs(inputs, review, source_policy, *, formalization_review,
+                               strict_policy, assessment_policy):
+    return score_assessment_record_inputs(inputs, review, source_policy,
+        formalization_review=formalization_review, assessment_policy=assessment_policy,
+        strict_policy=strict_policy, mode="strict")
+
+
 def render_score(report):
+    if report.get("schema") == "math-gauge.assessment-score/v1":
+        earned, overall = report["metrics"]["earned"], report["metrics"]["overall"]
+        lines = ["# Math Gauge · 当前数学评测", "",
+                 f"模式：{report['score_mode']}；已建{report['capacity']['active']}/100，研究30分建设中。",
+                 f"已获分：{earned['exact'] if earned['exact'] is not None else '未决'}/100；"
+                 f"完整总分区间：{overall['lower']}–{overall['upper']}，完整总分尚未确定。", "",
+                 "| 大类 | 子类 | 权重 | 公有题 | 私有题 | 分项成绩 |", "|---|---|---:|---:|---:|---:|"]
+        for group in report["profile"]["groups"]:
+            for child in report["profile"]["subcategories"]:
+                if child["id"] not in group["children"]:
+                    continue
+                metric = report["metrics"][child["id"]]
+                value = '建设中' if child['status'] == 'under_construction' else metric['exact']
+                lines.append(f"| {group['title']} | {child['title']} | {child['weight']}% | "
+                             f"{child['public_tasks']} | {child['private_tasks']} | {value} |")
+        return "\n".join(lines) + "\n"
     coverage = report["execution_coverage"]
     eligibility = report.get("formal_eligibility") or {}
     reasons = eligibility.get("reasons", [])

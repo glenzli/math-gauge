@@ -16,7 +16,24 @@
     "evidence": {"type": "array", "items": {"$ref": "#/$defs/file"}},
     "human_review": {"type": "string"},
     "formal_comparison_eligible": {"type": "boolean"},
-    "candidate_calls_by_migration": {"type": "integer", "minimum": 0}
+    "candidate_calls_by_migration": {"type": "integer", "minimum": 0},
+    "retry_admission": {"$ref": "#/$defs/file"},
+    "retry_admission_location": {"enum": ["local", "public_archive"]},
+    "retry_scoring_inputs": {"$ref": "#/$defs/file"},
+    "retry_result": {"$ref": "#/$defs/file"},
+    "retry_combined_aggregate": {"$ref": "#/$defs/file"},
+    "strict_scoring_policy": {"$ref": "#/$defs/file"},
+    "assessment_policy": {"$ref": "#/$defs/file"},
+    "assessment_results": {"type": "object", "required": ["single_attempt", "nonlogical_retry_3"],
+      "additionalProperties": false, "properties": {
+        "single_attempt": {"$ref": "#/$defs/file"},
+        "nonlogical_retry_3": {"$ref": "#/$defs/file"}
+      }},
+    "strict_results": {"type": "object", "required": ["single_attempt", "nonlogical_retry_3"],
+      "additionalProperties": false, "properties": {
+        "single_attempt": {"$ref": "#/$defs/file"},
+        "nonlogical_retry_3": {"$ref": "#/$defs/file"}
+      }}
   },
   "$defs": {
     "file": {"type": "object", "required": ["path", "bytes", "sha256"], "properties": {

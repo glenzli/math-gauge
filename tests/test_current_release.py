@@ -22,7 +22,7 @@ class CurrentReleaseTests(unittest.TestCase):
         edition = json.loads((ROOT / "benchmark.json").read_bytes())
         self.assertEqual(RELEASE.VERSION, edition["version"])
         self.assertEqual(config["release_version"], config["suite_version"])
-        self.assertEqual((config["case_count"], config["slot_count"]), (26, 42))
+        self.assertEqual((config["case_count"], config["slot_count"]), (26, 26))
         self.assertEqual(edition["private"]["tasks"], 3)
         self.assertNotIn("private_version", edition)
 
@@ -42,8 +42,8 @@ class CurrentReleaseTests(unittest.TestCase):
             self.assertEqual({k: sizes[k] for k in ["proofs", "lean-audit", "lean-formalization", "answer-review"]},
                              {"proofs": 14, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4})
             self.assertEqual({k: sizes[k] for k in ["c003-180", "lean-90", "written-new-panel", "written-refresh"]},
-                             {"c003-180": 1, "lean-90": 7, "written-new-panel": 10, "written-refresh": 3})
-            self.assertEqual(manifest["planned"]["all_slots"], 42)
+                             {"c003-180": 1, "lean-90": 7, "written-new-panel": 2, "written-refresh": 3})
+            self.assertEqual(manifest["planned"]["all_slots"], 26)
             guide = (dest / "README.md").read_text()
             for phrase in ["self-assessment", "UTF-8", "KEEP/FULL", "last prescribed delivery", "fixed denominators"]:
                 self.assertIn(phrase, guide)

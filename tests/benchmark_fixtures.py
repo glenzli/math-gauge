@@ -1,4 +1,4 @@
-"""Current-source contract fixtures; never historical exams or model evidence."""
+"""Legacy transport fixtures over retained task bytes; never model evidence."""
 import atexit
 import copy
 import functools
@@ -48,8 +48,21 @@ def _fixture_root(chain):
     registry = read_json(root / "cases/sources.json")
     write_json(root / "cases/sources.json", fixture_sources(registry, {n for c in suite.cases.values() for n in c["sources"]}))
     suite = Suite.load(root / "cases")
-    shutil.copytree(ROOT / "protocol/reliability", root / "protocol/reliability")
-    data = read_json(ROOT / "protocol/benchmark-profile.json")
+    # Frozen v5 exercises legacy A2/branch transports independently of the
+    # current A1-only profile. Rebinding is synthetic, never a new exam.
+    source = read_json(ROOT / "results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json")["plan"]
+    packet = root / "protocol/reliability"
+    packet.mkdir(parents=True)
+    write_json(packet / "selection.json", source["reliability"]["selection"])
+    write_json(packet / "prompts.json", source["reliability"]["prompts"])
+    slots = [{k: v for k, v in row.items() if k != "selected"} for row in source["slots"]]
+    write_json(packet / "schedule.json", {"protocol_version": "0.4.0", "slots": slots})
+    data = copy.deepcopy(source["profile"]["data"])
+    # Freeze the legacy arithmetic seam explicitly; source archives carry
+    # several historical profiles, while these tests expect this one contract.
+    for component, weight in zip(data["components"], [40, 20, 30, 10]):
+        component["weight"] = weight
+    data["overall_weights"] = {"core": 70, "repeat": 5, "neutral": 15, "stance": 10}
     data["id"] = "synthetic-current-contract"
     # Low-level transport/arithmetic fixtures deliberately have no real native
     # budget, fresh-supplement or separate study admission. They are not exams.
@@ -133,6 +146,28 @@ def source_suite():
 
 def source_profile(suite=None):
     return BenchmarkProfile.load(source_root() / "protocol/benchmark-profile.json", suite or source_suite())
+
+
+def legacy_budget_profile():
+    """Legacy panel arithmetic with current budget fixtures; no real execution."""
+    data = copy.deepcopy(source_profile().data)
+    retained = read_json(ROOT / "results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json")["plan"]["profile"]["data"]
+    data["supplement_policy"] = retained["supplement_policy"]
+    for component, weight in zip(data["components"], [40, 20, 30, 10]):
+        component["weight"] = weight
+    data["overall_weights"] = {"core": 70, "repeat": 5, "neutral": 15, "stance": 10}
+    current = read_json(ROOT / "protocol/benchmark-profile.json")
+    data["case_execution_policy"] = current["case_execution_policy"]
+    data["execution_groups"] = current["execution_groups"] | {
+        "written-new-panel": [f"{cid}:{label}" for cid in ("MG-GP001", "MG-GP002")
+            for label in ("A1", "A2", "neutral:1", "affirm:1", "deny:1")]}
+    for name in ("lean-tool-budget-policy-v0.1.0.json", "lean-tool-budget-policy-v0.2.0.json", "lean-tool-budget-policy.json"):
+        source = ROOT / "protocol" / name
+        if source.exists():
+            shutil.copy2(source, source_root() / "protocol" / name)
+    path = source_root() / "protocol/legacy-budget-profile.json"
+    write_json(path, data)
+    return BenchmarkProfile.load(path, source_suite())
 
 
 def fixture_release_plan(version="0.6.0"):

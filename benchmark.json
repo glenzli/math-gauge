@@ -6,7 +6,7 @@
     "suite": "cases/suite.json",
     "suite_sha256": "20f8c92d454a23b74314879eda7077e50b2e794d5ffdeb8a404283a70dc3838a",
     "tasks": 26,
-    "standard_slots": 42
+    "standard_slots": 26
   },
   "private": {
     "suite_sha256": "dbb0e3566eb0b6202df834426ebcc29dd60351041f30117dcc89c6fdeee9d6f5",
@@ -16,26 +16,26 @@
   },
   "combined": {
     "tasks": 29,
-    "standard_slots": 45
+    "standard_slots": 29
   },
   "extra_alignment_rounds": 3,
   "profile": {
     "path": "protocol/benchmark-profile.json",
-    "sha256": "0fa2ab87c930cb072b3c6ae5d4813490ca1f1c516bbb095c589cd0870b7c3ff5"
+    "sha256": "f9133b2246a8487f61d982e190b8d6873a059532d3f3e6c2905763de2f6db43e"
   },
   "scoring_policy": {
     "path": "protocol/scoring-policy.json",
-    "version": "0.4.0",
-    "sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6"
+    "version": "0.5.0",
+    "sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a"
   },
   "result_record_contract": {
     "path": "protocol/result-record.md",
     "schema": "math-gauge.result-record/v1",
-    "sha256": "2aa62d58775ecf0a1ec94da8d4a08122047aac474be6ebe06e134f22bc000bb0"
+    "sha256": "766d866aea73ba37b27227084892f71674fded4773aaed99752a428946104fdc"
   },
   "result_record_schema": {
     "path": "protocol/result-record.schema.json",
-    "sha256": "015c1465be2c2a5ecdeeabb9d153cce925a1b2167429cd6ce258274938f9e645"
+    "sha256": "f2bc3d9706f87f80518fc7ca55b528c5eb56d604b45f17e9fbe0a73fda2f39a7"
   },
   "retention": "Only user-selected fixed records; current worktree contains no superseded tasks, reserves or result views. History is in Git.",
   "candidate_calls_by_cleanup": 0,
@@ -44,5 +44,34 @@
     "terra-6.1-max",
     "deepseek-v4.1-flash-1017",
     "gemini-3.8-flash-high"
-  ]
+  ],
+  "nonlogical_retry_policy": {
+    "path": "protocol/nonlogical-retry-policy.json",
+    "version": "0.1.0",
+    "sha256": "6821d532ec4880cd82b02e417c889d81437297f67b48d86aa0443a2440ef9319"
+  },
+  "score_conditions": [
+    "single_attempt",
+    "nonlogical_retry_3"
+  ],
+  "strict_scoring_policy": {
+    "path": "protocol/strict-scoring-policy.json",
+    "version": "0.2.0",
+    "sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1"
+  },
+  "score_modes": [
+    "partial",
+    "strict"
+  ],
+  "score_capacity": {
+    "total": 100,
+    "active": 70,
+    "under_construction": 30
+  },
+  "primary_metric": "earned",
+  "assessment_structure": {
+    "written": 35,
+    "lean": 35,
+    "research": 30
+  }
 }

@@ -39,7 +39,8 @@
   "retention": {
     "user_requested": true,
     "kind": "current-fixed-snapshot",
-    "selection": "User requested joint summary with Gemini/Terra and commit/push on2026-11-05"
+    "selection": "User requested joint summary with Gemini/Terra and commit/push on2026-11-05",
+    "supplement": "User selected GR021/GR023 reruns on2026-11-06 and requested both score conditions; no commit/push."
   },
   "migration": {
     "source": "supplied integrated answer/code package plus unchanged compatible original answers",
@@ -6452,6 +6453,555 @@
         "response_sha256": "0da7ed5ee7d32d2543fdab88443c3683167a9bb14d7ccacaf2ffb5c4c90e8129",
         "origin": "user-provided original response; original execution receipts unavailable"
       }
+    },
+    {
+      "id": "MG-GR021:A1:attempt:2",
+      "case_id": "MG-GR021",
+      "kind": "nonlogical_retry",
+      "parent_id": "MG-GR021:A1",
+      "parent_binding": "Retry attempt chain only; no previous answer or evaluator feedback authorized as candidate context.",
+      "expected_candidate_message_sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+      "actual_request_bytes_available": false,
+      "evaluation": {
+        "completion": {
+          "lower": 0.0,
+          "upper": 0.0,
+          "exact": 0.0
+        },
+        "strict_pass": false,
+        "whole_math": {
+          "state": "U",
+          "adjudicated": false,
+          "reasons": [
+            "candidate_incomplete"
+          ]
+        },
+        "focus_math": {
+          "state": "U",
+          "adjudicated": false,
+          "reasons": [
+            "not_applicable_or_unadjudicated"
+          ]
+        },
+        "focus_verdict": null,
+        "group_diagnostic": {
+          "completed_weight": 0,
+          "total_weight": 100,
+          "all_units_unadjudicated": true,
+          "delivery_credit": 0,
+          "failure_classification": "operator-confirmed budget exhaustion without delivery"
+        },
+        "review_sha256": "6ef1aab9a01317bf51b958b6d21af934afe124265090645b56f0337913a519c8",
+        "delivery_credit": 0,
+        "missing_reason": "operator-confirmed maximum output exhaustion without scorable answer",
+        "mathematical_truth": "unknown",
+        "reviewer_kind": "ai",
+        "human_review": "pending"
+      },
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "response": null,
+      "response_state": "no_output_reported",
+      "missing_response_reason": "Package declares a second max_output_tokens failure with0 final bytes; original native events were not supplied.",
+      "execution": {
+        "state": "incomplete",
+        "origin": "operator_package_declaration",
+        "evidence": {
+          "path": "execution/reruns-20261106/00-结果说明.md",
+          "bytes": 1268,
+          "sha256": "06dd842988bfd76c30daf41bab192c8a7a5718a1f347e2cd1f0be7c69384e006"
+        },
+        "native_terminal_status_verified": false,
+        "output_tokens_declared": 131072,
+        "final_answer_bytes_declared": 0,
+        "runtime_conditions_independently_verified": false
+      },
+      "fixed_denominator_inclusion": true,
+      "self_assessment": {
+        "value": "unresolved",
+        "scope": "full_task",
+        "origin": "not_available",
+        "reason": "No final response was delivered according to the source package.",
+        "evidence": []
+      },
+      "artifacts": [],
+      "attempt": 2,
+      "planned_slot_id": "MG-GR021:A1"
+    },
+    {
+      "id": "MG-GR021:A1:attempt:3",
+      "case_id": "MG-GR021",
+      "kind": "nonlogical_retry",
+      "parent_id": "MG-GR021:A1:attempt:2",
+      "parent_binding": "Retry attempt chain only; no previous answer or evaluator feedback authorized as candidate context.",
+      "expected_candidate_message_sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+      "actual_request_bytes_available": false,
+      "evaluation": {
+        "completion": {
+          "lower": 0.475,
+          "upper": 0.475,
+          "exact": 0.475
+        },
+        "strict_pass": false,
+        "whole_math": {
+          "state": "I",
+          "adjudicated": true,
+          "reasons": [
+            "substantive_proof_defects"
+          ]
+        },
+        "focus_math": {
+          "state": "U",
+          "adjudicated": false,
+          "reasons": [
+            "not_applicable_or_unadjudicated"
+          ]
+        },
+        "focus_verdict": null,
+        "group_diagnostic": {
+          "completed_weight": 47.5,
+          "total_weight": 100,
+          "criteria": [
+            {
+              "id": "feasibility_counts_liftability",
+              "maximum": 30,
+              "points": 15.0,
+              "checks": [
+                {
+                  "id": "original_input_and_feasibility",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§1.1, lines64–108：给出正确的mod4奇偶不变量与三域相同的可行性结论，但把生成代数的内在商A4/2A4等同于其矩阵模2像，且仅定义mod4的Q_i后直接使用mod8行列式和Z2子格，未给出实际投影提升。r=1,d=2,A=diag(1,3)时A4/2A4有4元素而非F2。保留正确不变量的半分。"
+                },
+                {
+                  "id": "closed_total_counts",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§0引理C、§1.2–1.3：空集判准、基域有限C计数及二次域M=2的C计数正确。其余全称计数不正确：单块n=1,M=4时K的C实际8而非16；n=3,M=2时F的实际像16而非8；n=2,M=2时K实际像8而非16。只给正确分支半分。"
+                },
+                {
+                  "id": "actual_image_test",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§1.4 lines194–244：基域的一步对角障碍和紧致性必要充分描述有正确内容；无限逐层存在性不是所要求的有限可计算判准，二次域也未给出实际整提升。缺少gamma_j=((u^Tu-I)_jj/2^M) mod2O_L全零的有限判准及充分性证明。"
+                }
+              ]
+            },
+            {
+              "id": "fixed_classes_and_orbits",
+              "maximum": 25,
+              "points": 12.5,
+              "checks": [
+                {
+                  "id": "exact_fixed_class_description",
+                  "maximum": 15,
+                  "credit": "half",
+                  "points": 7.5,
+                  "reason": "§2.1–2.2 lines254–336：C固定类V+2^(M-1)theta B、B分块对称的描述正确；R固定类未具体分类，遗漏B交错及Q2(i),M=2时gamma(V)=deg(B)的耦合，不能用错误的R计数替代。"
+                },
+                {
+                  "id": "closed_fixed_and_orbit_counts",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§2.1–2.2 lines290–369：C固定数由正确基域C计数乘2^S得到，Burnside公式及M=2的C全固定正确；R固定数和轨道数及K总数不正确，单块n=2,M=2已给R固定数16而实际8。"
+                }
+              ]
+            },
+            {
+              "id": "reduction_maps_and_fixed_lifts",
+              "maximum": 15,
+              "points": 10.0,
+              "checks": [
+                {
+                  "id": "all_images_and_fibers",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§2.3 lines373–468：R约化满射且纤维q^D、C非空纤维q^(D+d)及固定纤维4^D/4^(D+d)有正确内容；多个像的基数继承错误总数，固定R像的基域实际像计数也错误，未完整给出所有有限像。"
+                },
+                {
+                  "id": "fixed_lifts_and_towers",
+                  "maximum": 5,
+                  "credit": "full",
+                  "points": 5,
+                  "reason": "§2.4 lines471–513：实际sigma固定解正是基域解；固定有限类能有实际固定提升或无限相容固定塔，当且仅当高位theta系数为零且常数部属于实际基域像。紧致性与塔的必要性说明有效。"
+                }
+              ]
+            },
+            {
+              "id": "optimal_quantitative_descent",
+              "maximum": 20,
+              "points": 10.0,
+              "checks": [
+                {
+                  "id": "best_universal_and_pointwise_precision",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§3.1、3.3–3.4 lines520–548,618–675：全秩1时精确下降及给定U的M精度条件正确；一般M-1下界证明使用R_F,M=C_F,M这一错误等式（n=1,M=3已有2对4的反例），所以统一精度证明不完整。"
+                },
+                {
+                  "id": "actual_sharpness_examples_and_exact_boundary",
+                  "maximum": 10,
+                  "credit": "half",
+                  "points": 5.0,
+                  "reason": "§3.2–3.3 lines551–642：Cayley构造在M>=3给出有效锐性方向，秩1精确边界正确；Q2(i),M=2时I-iJ奇异，det(I-iJ)=1+i^2=0，所写实际矩阵未定义，不能证明所有M>=2的统一最优性。"
+                }
+              ]
+            },
+            {
+              "id": "assertion_reliability",
+              "maximum": 10,
+              "points": 0,
+              "checks": [
+                {
+                  "id": "independent_assertion_reliability",
+                  "maximum": 10,
+                  "credit": "zero",
+                  "points": 0,
+                  "reason": "§1.1 lines115–123断言非空S_L总是无限紧集。所有块秩1且A_i=E_i时S_L恰为2^r个符号矩阵，是有限集。此断言关于实际解集S本身，独立于已在必做项扣分的有限截断计数/下降错误，不重复收费。"
+                }
+              ]
+            }
+          ]
+        },
+        "review_sha256": "cb4de0928129a0328fc9aa0491b20688a4b013099ead50fde104c5752a10c600",
+        "delivery_credit": 1,
+        "mathematical_truth": "Original classification may be true; submitted proof is not complete.",
+        "reviewer_kind": "ai",
+        "human_review": "pending"
+      },
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "response": {
+        "path": "responses/MG-GR021/A1/attempts/3/answer.md",
+        "bytes": 17457,
+        "sha256": "e4ecc3f9e2a3d6373899a21b7dbc9896302ae708e3362f2c216b886fbd2d9599"
+      },
+      "response_state": "delivered",
+      "missing_response_reason": null,
+      "execution": {
+        "state": "completed",
+        "origin": "operator_package_declaration",
+        "evidence": {
+          "path": "execution/reruns-20261106/00-结果说明.md",
+          "bytes": 1268,
+          "sha256": "06dd842988bfd76c30daf41bab192c8a7a5718a1f347e2cd1f0be7c69384e006"
+        },
+        "native_terminal_status_verified": false,
+        "output_tokens_declared": null,
+        "final_answer_bytes_declared": 17457,
+        "runtime_conditions_independently_verified": false
+      },
+      "fixed_denominator_inclusion": true,
+      "self_assessment": {
+        "value": "complete",
+        "scope": "conclusion_summary",
+        "origin": "extracted_from_original",
+        "note": "This is the model claim that its conclusions are complete; not an explicit100percent or verified proof-completion claim.",
+        "evidence": [
+          {
+            "source": {
+              "path": "responses/MG-GR021/A1/attempts/3/answer.md",
+              "bytes": 17457,
+              "sha256": "e4ecc3f9e2a3d6373899a21b7dbc9896302ae708e3362f2c216b886fbd2d9599"
+            },
+            "start_byte": 0,
+            "end_byte": 27,
+            "quote": "下面给出完整结论。"
+          }
+        ]
+      },
+      "artifacts": [
+        {
+          "path": "responses/MG-GR021/A1/attempts/3/code/countK.c",
+          "bytes": 776,
+          "sha256": "ef35ff0ff8ca26dc132bfbc5f7b9a29bfbbf20a8aecf083b557c53078e2a216f"
+        },
+        {
+          "path": "responses/MG-GR021/A1/attempts/3/code/countK.cpp",
+          "bytes": 1599,
+          "sha256": "424dc6f353d112aabd9e7b08642a372869c6607a1f1276174c04baa81d96fb12"
+        },
+        {
+          "path": "responses/MG-GR021/A1/attempts/3/code/countK.py",
+          "bytes": 1122,
+          "sha256": "f786c6078cffd9dee872f308bbdbe836f68513c9577e6657ab01cc02ec258fe4"
+        },
+        {
+          "path": "responses/MG-GR021/A1/attempts/3/code/countKproj.c",
+          "bytes": 1110,
+          "sha256": "069674ad1ebc3da625897eeea24953bb8c6c286ed9b508c218e67ec3e5c453ca"
+        }
+      ],
+      "attempt": 3,
+      "planned_slot_id": "MG-GR021:A1",
+      "source": {
+        "response_sha256": "e4ecc3f9e2a3d6373899a21b7dbc9896302ae708e3362f2c216b886fbd2d9599",
+        "origin": "supplied_rerun_package"
+      },
+      "review": {
+        "path": "reviews/MG-GR021-attempt-3.json",
+        "bytes": 6120,
+        "sha256": "cb4de0928129a0328fc9aa0491b20688a4b013099ead50fde104c5752a10c600"
+      }
+    },
+    {
+      "id": "MG-GR023:A1:attempt:2",
+      "case_id": "MG-GR023",
+      "kind": "nonlogical_retry",
+      "parent_id": "MG-GR023:A1",
+      "parent_binding": "Retry attempt chain only; no previous answer or evaluator feedback authorized as candidate context.",
+      "expected_candidate_message_sha256": "6e3338789577744ef8f6279c1096237c6360cada17fb80f425856f499c809555",
+      "actual_request_bytes_available": false,
+      "evaluation": {
+        "completion": {
+          "lower": 0.885,
+          "upper": 0.885,
+          "exact": 0.885
+        },
+        "strict_pass": false,
+        "whole_math": {
+          "state": "I",
+          "adjudicated": true,
+          "reasons": [
+            "substantive_proof_defects"
+          ]
+        },
+        "focus_math": {
+          "state": "U",
+          "adjudicated": false,
+          "reasons": [
+            "not_applicable_or_unadjudicated"
+          ]
+        },
+        "focus_verdict": null,
+        "group_diagnostic": {
+          "completed_weight": 88.5,
+          "total_weight": 100,
+          "criteria": [
+            {
+              "id": "truncation",
+              "maximum": 30,
+              "points": 23.0,
+              "checks": [
+                {
+                  "id": "T0",
+                  "maximum": 4,
+                  "credit": "full",
+                  "points": 4,
+                  "reason": "§1.1 lines24–88：空X的n=0障碍、非空首层与常值测试正确。"
+                },
+                {
+                  "id": "T1",
+                  "maximum": 6,
+                  "credit": "full",
+                  "points": 6,
+                  "reason": "§1.1 lines89–127：二值记录等于每个非平凡互补对的独立取向，逆构造及允许映射的自然性正确。后文错误的有限计数归T4，不重复扣本项。"
+                },
+                {
+                  "id": "T2",
+                  "maximum": 8,
+                  "credit": "half",
+                  "points": 4.0,
+                  "reason": "§1.1 lines128–198：正确推出三块分划恰一块被选择，也正确给出超滤子到全部观察的逆构造；line166把{B,A\\B,X\\B}当分划，但后两项重叠。例如X={0,1,2},A={0,1},B={1,2}，交为{0}。因此所写交封闭证明有缺口，不能由评审者替换为另一分划后给满分。"
+                },
+                {
+                  "id": "T3",
+                  "maximum": 4,
+                  "credit": "full",
+                  "points": 4,
+                  "reason": "§1.2–1.3 lines209–318：各限制类型的像、至多单点纤维、首层/空集及任意h的推前相容公式正确；不因T2的局部阈值缺口自动清零独立映射论证。"
+                },
+                {
+                  "id": "T4",
+                  "maximum": 6,
+                  "credit": "half",
+                  "points": 3.0,
+                  "reason": "§1.4 lines322–429给出正确的G×C2互补轨道运输、2^N计数及固定限制；但§1.1 lines200–205又断言有限n点集|R2|=2^(n-1)，这在平凡G的同一必做计数范围内错误：n=3时实际8而非4。此矛盾只扣本项，E1不再扣。"
+                },
+                {
+                  "id": "T5",
+                  "maximum": 2,
+                  "credit": "full",
+                  "points": 2,
+                  "reason": "§1.4(c) lines431–467：有限作用的首层、二值点取向与高层延拓范围正确，随后全空间判准给出相应一般形式。"
+                }
+              ]
+            },
+            {
+              "id": "invariant_classification",
+              "maximum": 30,
+              "points": 30,
+              "checks": [
+                {
+                  "id": "A1",
+                  "maximum": 4,
+                  "credit": "full",
+                  "points": 4,
+                  "reason": "§2.1 lines472–523：有限观察纤维等于成员关系clopen，二值观察生成Stone拓扑，给出题定观察拓扑的双向识别。"
+                },
+                {
+                  "id": "A2",
+                  "maximum": 8,
+                  "credit": "full",
+                  "points": 8,
+                  "reason": "§2.2引理2.1 lines529–573：在每个非单点置换轨道选无三个连续同色的二染色，偶/无限交替、奇环用一次相邻同色；A△gA与A△g²A覆盖非固定部分。超滤子不可能同时避开该覆盖，故包含Fix(g)。这是一条有效替代证明。"
+                },
+                {
+                  "id": "A3",
+                  "maximum": 4,
+                  "credit": "full",
+                  "points": 4,
+                  "reason": "§2.2定理2.2 lines575–594：在Fix(g)上成员关系相同推出逆向；有限交为有限生成子群的固定集。"
+                },
+                {
+                  "id": "A4",
+                  "maximum": 8,
+                  "credit": "full",
+                  "points": 8,
+                  "reason": "§2.1–2.2 lines472–628：具体空间是beta X中包含全部X^H(H有限生成)的超滤子的闭子空间，具有前述成员clopen拓扑，并由滤子扩张作逆向构造；无真滤子时为空。这是明确的等价拓扑构造，题目不强制写作者的布尔商路线。"
+                },
+                {
+                  "id": "A5",
+                  "maximum": 6,
+                  "credit": "full",
+                  "points": 6,
+                  "reason": "§2.2推论2.3 lines596–628：全部有限生成H固定集的有限交性质及超滤子扩张完整，包含空底集边界。"
+                }
+              ]
+            },
+            {
+              "id": "universal_group_action",
+              "maximum": 15,
+              "points": 15,
+              "checks": [
+                {
+                  "id": "U1",
+                  "maximum": 7,
+                  "credit": "full",
+                  "points": 7,
+                  "reason": "§2.3 lines630–703：实际固定点的闭包为含X^G的超滤子；不存在有限检测子群时用固定集与X\\X^G的有限交性质构造反例，充分必要均成立。"
+                },
+                {
+                  "id": "U2",
+                  "maximum": 5,
+                  "credit": "full",
+                  "points": 5,
+                  "reason": "§2.4 lines705–763：有限生成群取生成集；非有限生成群使用所有有限生成真子群的G/H不交并，局部固定而无全局固定，构造合法。"
+                },
+                {
+                  "id": "U3",
+                  "maximum": 3,
+                  "credit": "full",
+                  "points": 3,
+                  "reason": "§2.5 lines765–837：FSym(omega)作用于无序二元集；完整固定空间为包含所有“避开有限S的二元集”F_S的超滤子。可数性、无全局固定、滤子扩张与诱导拓扑均给出，接受此替代例子。"
+                }
+              ]
+            },
+            {
+              "id": "product_boundary",
+              "maximum": 15,
+              "points": 10.5,
+              "checks": [
+                {
+                  "id": "P1",
+                  "maximum": 6,
+                  "credit": "full",
+                  "points": 6,
+                  "reason": "§3.1–3.2 lines853–989：投影给连续性；柱集耦合紧空间内，每个有限生成H可在各X_i^H上选择耦合，固定子空间具有有限交性质，得到任意指标族不变耦合。空因子/空右侧/空指标均处理。"
+                },
+                {
+                  "id": "P2",
+                  "maximum": 3,
+                  "credit": "full",
+                  "points": 3,
+                  "reason": "§3.3及命题3.3 lines1013–1038,1084–1108：有限边缘强制固定主点、切片决定另一边缘，结合P1满射证明任意作用下双射，含空边界。"
+                },
+                {
+                  "id": "P3",
+                  "maximum": 3,
+                  "credit": "half",
+                  "points": 1.5,
+                  "reason": "§3.3 lines1043–1078：有限因子方向正确，两无限时的非对角柱集扩张有实质内容；却任取p0,q0并由两指标集都无限推出存在公共n，错误。可令p0含偶数、q0含奇数，则对角线与相应柱集不交。未建立所选边缘的对角提升，锐性反例不完整。"
+                },
+                {
+                  "id": "P4",
+                  "maximum": 3,
+                  "credit": "zero",
+                  "points": 0,
+                  "reason": "§3.4命题3.4 lines1110–1193：无实际固定点的作用与自由不变边缘有效，但关键双耦合反例未成立。已定义完整超滤子V_H=U_F tensor U_F后又称可加入Delta；自由性使每个对角截面为单点，所以Delta补集已属于V_H，不能加入Delta。没有得到所声称的两份耦合，不能由评审者改成矩形滤子或另造对角推前补证。"
+                }
+              ]
+            },
+            {
+              "id": "independent_assertion_reliability",
+              "maximum": 10,
+              "points": 10,
+              "checks": [
+                {
+                  "id": "E1",
+                  "maximum": 10,
+                  "credit": "full",
+                  "points": 10,
+                  "reason": "未发现必做缺陷之外另一个应独立扣分的额外实质断言；有限R2错误计数归T4，T2/P3/P4各归自己的目标，不再扣可靠性分。"
+                }
+              ]
+            }
+          ]
+        },
+        "review_sha256": "e0d22b58b144507c13b108633219211d13216ef244ade5bbe52396acd9b73a88",
+        "delivery_credit": 1,
+        "mathematical_truth": "Original classification may be true; submitted proof is not complete.",
+        "reviewer_kind": "ai",
+        "human_review": "pending"
+      },
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "response": {
+        "path": "responses/MG-GR023/A1/attempts/2/answer.md",
+        "bytes": 31944,
+        "sha256": "f814620aae438033cb3a8a4d8ec6aed2cea680dfec049ff171da96d05be37050"
+      },
+      "response_state": "delivered",
+      "missing_response_reason": null,
+      "execution": {
+        "state": "completed",
+        "origin": "operator_package_declaration",
+        "evidence": {
+          "path": "execution/reruns-20261106/00-结果说明.md",
+          "bytes": 1268,
+          "sha256": "06dd842988bfd76c30daf41bab192c8a7a5718a1f347e2cd1f0be7c69384e006"
+        },
+        "native_terminal_status_verified": false,
+        "output_tokens_declared": null,
+        "final_answer_bytes_declared": 31944,
+        "runtime_conditions_independently_verified": false
+      },
+      "fixed_denominator_inclusion": true,
+      "self_assessment": {
+        "value": "not_stated",
+        "scope": "explicit_full_task_completion_or_percentage",
+        "origin": "not_available",
+        "reason": "The answer contains proposed conclusions but no explicit numerical100percent or separate full-task completion status. Preserve the original without inferring one.",
+        "evidence": []
+      },
+      "artifacts": [],
+      "attempt": 2,
+      "planned_slot_id": "MG-GR023:A1",
+      "source": {
+        "response_sha256": "f814620aae438033cb3a8a4d8ec6aed2cea680dfec049ff171da96d05be37050",
+        "origin": "supplied_rerun_package"
+      },
+      "review": {
+        "path": "reviews/MG-GR023-attempt-2.json",
+        "bytes": 8619,
+        "sha256": "e0d22b58b144507c13b108633219211d13216ef244ade5bbe52396acd9b73a88"
+      }
     }
   ],
   "trajectory": {
@@ -6481,8 +7031,8 @@
     },
     {
       "path": "combined-aggregate.json",
-      "bytes": 8228,
-      "sha256": "195dac9a244c8eff5b16991640ae3d053ce3175de754738eed2de30e1553ef8d"
+      "bytes": 18987,
+      "sha256": "6acf513d71660482cb03d377022fbb524bababe57b7051e79cb79f90b19c2b6c"
     },
     {
       "path": "engineering/HCH02/Main.lean",
@@ -7135,11 +7685,6 @@
       "sha256": "40fa714315cd97605ab85f30a726660651bd8cf1e05f8b6e51e87ad09e11aabd"
     },
     {
-      "path": "result.json",
-      "bytes": 13124,
-      "sha256": "dab25f49162e825b5e9e67c8e016b265bfd53df2df066d39adc5dd39a774771f"
-    },
-    {
       "path": "reviews/AHR01.json",
       "bytes": 795,
       "sha256": "0b142cb72632855165a1c0b91407be15dd9b67cd685c64ab95b3ef1958dc1a50"
@@ -7333,11 +7878,27 @@
       "path": "verification/operator-zero-credit.json",
       "bytes": 406,
       "sha256": "99a4adaf720b9398f8e7c703e73b37d3c8241a3153cbb819a82473d5cf8b161f"
+    },
+    {
+      "path": "reviews/MG-GR021-attempt-3.json",
+      "bytes": 6120,
+      "sha256": "cb4de0928129a0328fc9aa0491b20688a4b013099ead50fde104c5752a10c600"
+    },
+    {
+      "path": "reviews/MG-GR023-attempt-2.json",
+      "bytes": 8619,
+      "sha256": "e0d22b58b144507c13b108633219211d13216ef244ade5bbe52396acd9b73a88"
+    },
+    {
+      "path": "execution/reruns-20261106/00-结果说明.md",
+      "bytes": 1268,
+      "sha256": "06dd842988bfd76c30daf41bab192c8a7a5718a1f347e2cd1f0be7c69384e006"
     }
   ],
   "collection_limits": [
     "Exact runtime settings, original role-message histories, original native events, numeric max_token limit and original seal chronology were not supplied.",
-    "The lake files point to another host local mathlib directory; actual mathlib commit remains unobserved."
+    "The lake files point to another host local mathlib directory; actual mathlib commit remains unobserved.",
+    "Rerun package declares131072 output tokens on three failures; original native events and detailed identical-condition evidence are still absent. See retry-attempts.json."
   ],
   "formalization_review": {
     "path": "reviews/formalization.json",
@@ -7350,6 +7911,56 @@
       "path": "scoring-policy.json",
       "bytes": 5195,
       "sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6"
+    }
+  },
+  "retry_admission": {
+    "path": "retry-admission.json",
+    "bytes": 364,
+    "sha256": "07829b46f46af4ac27afbb90c596c7c98bcafd8181c6d71e6828cbb53a8e2599"
+  },
+  "retry_scoring_inputs": {
+    "path": "retry-scoring-inputs.json",
+    "bytes": 283560,
+    "sha256": "10c1ed91de8be61cb8e7cf34425648c0c652eeb21c9b12b123e5329c8f6bae82"
+  },
+  "last_updated": "2026-11-06",
+  "retry_combined_aggregate": {
+    "path": "retry-combined-aggregate.json",
+    "bytes": 19376,
+    "sha256": "d2e1b4de06db68774cef4eb2601e01260dacb8208ac583126375ef18b5031803"
+  },
+  "strict_scoring_policy": {
+    "path": "strict-scoring-policy.json",
+    "bytes": 756,
+    "sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1"
+  },
+  "strict_results": {
+    "single_attempt": {
+      "path": "strict-combined-aggregate.json",
+      "bytes": 18869,
+      "sha256": "d757a177029f686416539b79d6a22308c759eb2d2a9a5e42a5a691c6c9d2d02a"
+    },
+    "nonlogical_retry_3": {
+      "path": "strict-retry-combined-aggregate.json",
+      "bytes": 19256,
+      "sha256": "5143e282c76d191e8d1cebb858eb1924d24e8001a5c7d9fea914f04f7f111833"
+    }
+  },
+  "assessment_policy": {
+    "path": "assessment-policy.json",
+    "bytes": 4572,
+    "sha256": "3a3115d66c82648f7d0f233fdaa8f362a33f5a0e97f9496bf04b3f7bf8bc018a"
+  },
+  "assessment_results": {
+    "single_attempt": {
+      "path": "combined-aggregate.json",
+      "bytes": 18987,
+      "sha256": "6acf513d71660482cb03d377022fbb524bababe57b7051e79cb79f90b19c2b6c"
+    },
+    "nonlogical_retry_3": {
+      "path": "retry-combined-aggregate.json",
+      "bytes": 19376,
+      "sha256": "d2e1b4de06db68774cef4eb2601e01260dacb8208ac583126375ef18b5031803"
     }
   }
 }

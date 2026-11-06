@@ -25,10 +25,10 @@ FOCUS_IDS = tuple(f"F{n:02}" for n in range(1, 10))
 SUITES = (("default", "cases/suite.json"),)
 SUITE_ROOTS = tuple(manifest for _, manifest in SUITES)
 CATEGORIES = (
-    ("proofs", "书面证明、反例与构造"),
-    ("lean-audit", "Lean 语义审计"),
-    ("lean-formalization", "大Lean形式化梯度"),
-    ("answer-review", "真实答卷审阅"),
+    ("proofs", "书面论证"),
+    ("lean-audit", "语义审计"),
+    ("lean-formalization", "形式化"),
+    ("answer-review", "论证审阅"),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
 sys.dont_write_bytecode = True
@@ -242,7 +242,7 @@ def render_document(catalog: dict, taxonomy: dict) -> str:
         "",
         "每份任务恰有1个主重点和2–4个次重点。主重点构成互斥阅读索引；多标签层可以重叠，数量不能相加。数学任务的证据指向实际阶段、义务或最终目标的评审判准，审阅任务指向审阅维度，不能据此增加证明路线或Lean交付义务。这些标签没有另行冻结子分数，不重复加权。",
         "",
-        "中性自查、支持/怀疑立场和重复轮次属于执行维度，见[可靠性执行协议](../protocol/reliability-execution.md)。数学主题和任务类型是其他交叉索引。",
+        "主计分采用书面证明35%、Lean35%、数学研究30%的大类/子类结构。Lean对齐自查单独占10%，复用一题三轮，不新增数学家族；书面中性、立场压力与独立复答不再进入默认计分。下列F01..F09仅为交叉能力标签，见[评分规则](../protocol/benchmark-scoring.md)。",
         "",
         "本页仅供出题侧，不能附入候选输入；候选材料继续由共享runner按每题显式投影生成。",
         "",
@@ -297,7 +297,16 @@ def render_index(catalog: dict) -> str:
              "材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review.md)与[当前结果](../docs/results.md)。已发布资产保持原样。", "",
              "题面与附件由共享runner按 `case.json` 显式投影；本目录、分类、参考、评分和审核记录均为出题侧材料。参考与既有历史继续公开以供透明复核，不进入 solver 题包，也不构成未公开留出集。", "",
              "[按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)"]
-    for category in catalog["categories"]:
+    lines += ["", "## 大类与子类", "", "| 大类 | 子类 | 权重 | 公有题 | 私有题 | 状态 |",
+              "|---|---|---:|---:|---:|---|"]
+    for group in catalog["categories"]:
+        for child in group["children"]:
+            count = "复用1题/3轮" if child["aggregation"] == "trajectory" else str(child["public_tasks"])
+            state = "建设中" if child["status"] == "under_construction" else "当前计分"
+            lines.append(f"| {group['title']}（{group['weight']}%） | {child['title']} | {child['weight']}% | "
+                         f"{count} | {child['private_tasks']} | {state} |")
+    lines += ["", "当前26道公有与3道私有题合并评测，已建权重70/100；研究30分预留，不重新归一化，也不计为模型答错。私有三题并入书面论证，仅公布数量与聚合。自查复用整章题，不另增题目或独立家族。", ""]
+    for category in catalog["source_categories"]:
         lines += ["", f"## {category['label']} · {category['default_count']}份", "",
                   "| 试卷 | 任务 | 必答规模 | 完整材料 |", "| --- | --- | ---: | --- |"]
         for entry in catalog["entries"]:
@@ -432,7 +441,7 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
         },
         "suites": [dict(item, cases=sorted(cid for cid, source in sources.items()
                                          if source["membership"] == item["membership"])) for item in suites],
-        "categories": [{"id": cid, "label": label, "suite": "cases",
+        "source_categories": [{"id": cid, "label": label, "suite": "cases",
                         "count": sum(entry["category"] == cid for entry in entries),
                         "default_count": sum(entry["category"] == cid and entry["membership"] == "default" for entry in entries),
                         "reserve_count": sum(entry["category"] == cid and entry["membership"] == "reserve" for entry in entries),
@@ -448,7 +457,21 @@ def build(root: Path = ROOT, *, taxonomy_data: dict | None = None) -> tuple[dict
             "No model result, author Lean coverage or experimental discrimination is inferred by this index.",
         ],
     }
-    require(sum(item["count"] for item in catalog["categories"]) == len(entries)
+    from math_gauge.benchmarks import validate_assessment_policy
+    assessment_path = root / "protocol/scoring-policy.json"
+    assessment = validate_assessment_policy(json.loads(assessment_path.read_bytes()))
+    children = {item["id"]: item for item in assessment["subcategories"]}
+    mapping = {source: child["id"] for child in children.values() for source in child["source_components"]}
+    group_for = {child: group["id"] for group in assessment["groups"] for child in group["children"]}
+    for entry in entries:
+        entry["assessment_category"] = mapping[entry["category"]]
+        entry["assessment_group"] = group_for[entry["assessment_category"]]
+    catalog["assessment_policy"] = {"path": "protocol/scoring-policy.json", "version": assessment["version"],
+                                    "sha256": digest(assessment_path)}
+    catalog["categories"] = [dict(group, children=[dict(children[c], case_ids=[entry["case_id"] for entry in entries
+        if entry["assessment_category"] == c] if children[c]["aggregation"] != "trajectory" else ["MG-C003"])
+        for c in group["children"]]) for group in assessment["groups"]]
+    require(sum(item["count"] for item in catalog["source_categories"]) == len(entries)
             and all(item["paper_count"] == sum(entry["membership"] == item["membership"]
                                               for entry in entries) for item in suites),
             "Category or suite membership counts drift")

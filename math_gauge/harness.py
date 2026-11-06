@@ -292,13 +292,19 @@ def _h_projection(root, value, expected_files):
     compact = (value["protocol_version"] in {"0.2.0", "0.3.0", "0.4.0"}
                or value["controller_version"] == COMPACT_CONTROLLER
                or planned["independent_slots"] != 3 * planned["papers"])
+    if not rounds:
+        valid_arrangement = (labels == ("A1",) and planned["independent_slots"] == planned["papers"]
+                             and planned["neutral_slots"] == planned["stance_slots"] == 0)
+    elif compact:
+        valid_arrangement = (planned["independent_slots"] == planned["papers"]
+            + (len(labels) - 1) * (planned["neutral_slots"] // len(rounds))
+            and planned["neutral_slots"] % len(rounds) == 0
+            and planned["stance_slots"] == 2 * planned["neutral_slots"])
+    else:
+        valid_arrangement = planned["independent_slots"] == 3 * planned["papers"]
     _h_require(all(type(x) is int and x >= 0 for x in planned.values())
                and planned["papers"] > 0
-               and (planned["independent_slots"] == planned["papers"]
-                    + (len(labels) - 1) * (planned["neutral_slots"] // len(rounds))
-                    and planned["neutral_slots"] % len(rounds) == 0
-                    and planned["stance_slots"] == 2 * planned["neutral_slots"] if compact
-                    else planned["independent_slots"] == 3 * planned["papers"])
+               and valid_arrangement
                and planned["all_slots"] == planned["independent_slots"] + planned["neutral_slots"]
                                                + planned["stance_slots"]
                and planned["selected_slots"] <= planned["all_slots"],
@@ -943,8 +949,11 @@ def _inspect_release_dataset_contents(root):
         _h_require(value["exported_slots"] == value["planned"]["all_slots"]
                    == value["planned"]["selected_slots"], "A generic release must retain the full denominator")
         selections = value["target_slot_ids"]
+        current = value["protocol_version"] == "0.5.0"
+        required_targets = {"core", "all"} if current else {"repeat", "neutral", "stance", "core", "all"}
         _h_require(isinstance(selections, dict) and set(selections) <= set(_RELEASE_TARGETS)
-                   and {"repeat", "neutral", "stance", "core", "all"} <= set(selections)
+                   and required_targets <= set(selections)
+                   and (not current or not {"repeat", "neutral", "stance"} & set(selections))
                    and bool(set(selections) - {"repeat", "neutral", "stance", "core", "all"}),
                    "Invalid release target map")
         all_ids = value["selected_slot_ids"]
@@ -957,7 +966,13 @@ def _inspect_release_dataset_contents(root):
         independent = [sid for sid, s in slots.items() if s["kind"] == "independent"]
         compact = (value["controller_version"] == COMPACT_CONTROLLER
                    or value["protocol_version"] in {"0.2.0", "0.3.0", "0.4.0"})
-        if compact:
+        if current:
+            core = independent
+            _h_require(len(core) == value["planned"]["papers"] == len(value["cases"])
+                       and core == all_ids == selections["all"] == selections["core"]
+                       and all(slots[sid]["attempt_label"] == "A1" for sid in core),
+                       "Current release requires one independent A1 per task")
+        elif compact:
             core = [sid for sid in independent if slots[sid]["attempt_label"] == "A1"]
             repeated = {slots[sid]["case_id"] for sid in independent
                         if slots[sid]["attempt_label"] != "A1"}
@@ -984,12 +999,12 @@ def _inspect_release_dataset_contents(root):
             for sid in selections[component]:
                 cid = slots[sid]["case_id"]
                 _h_require(all(cid + ":" + label in selections[component]
-                               for label in (("A1",) if compact else ("A1", "A2", "A3"))),
+                               for label in (("A1",) if compact or current else ("A1", "A2", "A3"))),
                            "Release component omitted an independent repeat")
         for target, arms in (("neutral", {"neutral"}), ("stance", {"affirm", "deny"})):
             wanted = {sid for sid, s in slots.items() if s["kind"] == "followup" and s["arm"] in arms}
             wanted.update(slots[sid]["case_id"] + ":A1" for sid in list(wanted))
-            _h_require(selections[target] == [sid for sid in all_ids if sid in wanted],
+            _h_require(selections.get(target, []) == [sid for sid in all_ids if sid in wanted],
                        "Release branch target inventory changed")
         if not simple:
             _r_execution(_r_json(_h_file(root, "runtime-template.json").read_bytes()),

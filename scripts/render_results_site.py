@@ -1,20 +1,35 @@
 #!/usr/bin/env python3
 """Render the current, source-bound user-selected result records only."""
 import argparse
+import base64
+import copy
 import hashlib
 import html
 import json
+import re
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import validate_record
+from math_gauge.records import load_assessment_results, validate_record
+
+MODEL_THEMES = {
+    "terra-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
+    "deepseek-v4.1-flash-1017": {"color": "#4b6ed8", "ink": "#3655b2", "tint": "#f1f4fd"},
+    "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+}
+MODEL_PROVIDERS = {
+    "terra-6.1-max": ("OpenAI", "openai.svg"),
+    "deepseek-v4.1-flash-1017": ("DeepSeek", "deepseek.svg"),
+    "gemini-3.8-flash-high": ("Google", "google.svg"),
+}
 
 
 def build_data(source_root=ROOT):
     root = Path(source_root).resolve()
     policy = json.loads((root / "protocol/scoring-policy.json").read_bytes())
+    strict_policy = json.loads((root / "protocol/strict-scoring-policy.json").read_bytes())
     models, sources = [], []
     for model, label in (("terra-6.1-max", "Terra 6.1 Max"),
                          ("deepseek-v4.1-flash-1017", "DeepSeek v4.1 Flash 1017"),
@@ -22,61 +37,127 @@ def build_data(source_root=ROOT):
         folder = root / "results/v0.6.0" / model / "20261105"
         validate_record(folder)
         record = json.loads((folder / "record.json").read_bytes())
-        public = json.loads((folder / "result.json").read_bytes())
-        combined = json.loads((folder / "combined-aggregate.json").read_bytes())
-        if (public.get("benchmark_version") != "0.6.0"
-                or combined.get("benchmark_version") != "0.6.0"
-                or public.get("human_review") != "pending"
-                or combined.get("formal_comparison_eligible") is not False):
-            raise ValueError("Current display identity or review status changed")
-        models.append({"id": model, "label": label, "public": public,
-                       "combined": combined, "trajectory": record["trajectory"],
-                       "source_record": str((folder / "record.json").relative_to(root))})
-        for name in ["result.json", "combined-aggregate.json", "record.json"]:
+        partial = load_assessment_results(folder, record)
+        strict = load_assessment_results(folder, record, mode="strict")
+        if partial is None or strict is None:
+            raise ValueError("Current display requires both classified assessment modes")
+        combined = partial["single_attempt"]
+        provider, filename = MODEL_PROVIDERS[model]
+        icon_path = root / "site/assets/logos" / filename
+        icon_bytes = icon_path.read_bytes()
+        models.append({"id": model, "label": label, "theme": dict(MODEL_THEMES[model]),
+            "logo": {"label": provider, "data_url": "data:image/svg+xml;base64," + base64.b64encode(icon_bytes).decode("ascii"),
+                     "sha256": hashlib.sha256(icon_bytes).hexdigest()},
+            "combined": combined, "strict": strict, "trajectory": record["trajectory"],
+            "lean_formalization_breakdown": combined["lean_formalization_breakdown"],
+            "alignment_selfcheck": combined["alignment_selfcheck"],
+            "source_record": str((folder / "record.json").relative_to(root)),
+            "retry": {"combined": partial["nonlogical_retry_3"],
+                      "note": ("GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
+                               if record.get("retry_admission") else "无新增重跑，沿用原答；不据此认证全部历史底层调用均一次完成。")}})
+        names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
+                 *(item["path"] for item in record["assessment_results"].values()),
+                 *(item["path"] for item in record["strict_results"].values())]
+        if record.get("retry_admission"):
+            names += ["retry-admission.json", "retry-attempts.json", "nonlogical-retry-policy.json"]
+        for name in names:
             path = folder / name
-            sources.append({"path": str(path.relative_to(root)),
-                            "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
-    return {"schema": "math-gauge.current-results-display/v1", "benchmark_version": "0.6.0",
+            sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+        sources.append({"path": str(icon_path.relative_to(root)), "sha256": hashlib.sha256(icon_bytes).hexdigest()})
+    return {"schema": "math-gauge.current-results-display/v4", "benchmark_version": "0.6.0",
+            "scoring_method_version": "0.5.0", "strict_method_version": "0.2.0",
             "human_review": "pending", "formal_comparison_eligible": False,
-            "models": models, "policy": policy, "sources": sources}
+            "models": models, "policy": policy, "strict_policy": strict_policy, "sources": sources,
+            "capacity": {"total": 100, "active": 70, "under_construction": 30},
+            "publication_scope": "combined", "score_modes": ["partial", "strict"],
+            "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
+
+
+def overlaid_bars(models, score_mode="partial"):
+    """Top the first-attempt bar with the actual retry gain; never select best-of."""
+    groups, labels = [], []
+    for model in models:
+        name = html.escape(model["label"])
+        bars, values, descriptions_for_model = [], [], []
+        has_retry = model["retry"]["combined"].get("retry_summary", {}).get("slots_with_reruns", 0) > 0
+        for series, result in (("single_attempt", model["combined"]),
+                               ("nonlogical_retry_3", model["retry"]["combined"])):
+            if score_mode == "strict":
+                result = model["strict"][series]
+            value = result["metrics"]["earned"]["exact"]
+            text = "未决" if value is None else f"{value:.2f}"
+            height = 0 if value is None else max(0, min(100, value))
+            raw_value = "" if value is None else str(value)
+            values.append(value)
+            descriptions_for_model.append(text)
+            if series == "single_attempt":
+                bars.append(f'<div class="score-bar first-solid" aria-hidden="true" data-score-mode="{score_mode}" data-model="{html.escape(model["id"], quote=True)}" '
+                            f'data-series="{series}" data-score="{raw_value}" style="height:{height:.8f}%" '
+                            f'></div>')
+        has_gain = has_retry and all(v is not None for v in values) and values[1] > values[0]
+        if has_retry and all(v is not None for v in values) and values[0] != values[1]:
+            first, retry = (max(0, min(100, value)) for value in values)
+            if has_gain:
+                kind, bottom, height = "retry-extension", first, retry - first
+            else:
+                # A zero-height endpoint preserves an equal/lower source total without inventing a gain.
+                kind, bottom, height = "retry-end", retry, 0
+            bars.append(f'<div class="score-bar {kind}" aria-hidden="true" data-score-mode="{score_mode}" data-model="{html.escape(model["id"], quote=True)}" '
+                        f'data-series="nonlogical_retry_3" data-score="{values[1]}" '
+                        f'data-start-score="{values[0]}" data-gain-score="{values[1] - values[0]}" '
+                        f'style="bottom:{bottom:.8f}%;height:{height:.8f}%"></div>')
+        theme = model["theme"]
+        color, ink = html.escape(theme["color"], quote=True), html.escape(theme["ink"], quote=True)
+        position = max([max(0, min(100, v)) for v in values if v is not None], default=0)
+        headline = max((v for v in values if v is not None), default=None)
+        text = "未决" if headline is None else f"{headline:.2f}"
+        value_label = f'<span class="chart-value" aria-hidden="true" data-score-mode="{score_mode}" style="bottom:calc({position:.8f}% + 9px)">{text}</span>'
+        changed = has_retry and all(v is not None for v in values) and values[0] != values[1]
+        tooltip, focus = "", ""
+        if changed:
+            tooltip_id = "score-detail-" + score_mode + "-" + html.escape(model["id"], quote=True)
+            focus = f' tabindex="0" aria-describedby="{tooltip_id}"'
+            tooltip = (f'<div class="score-tooltip" role="tooltip" data-score-mode="{score_mode}" id="{tooltip_id}" '
+                       f'style="bottom:calc({position:.8f}% + 30px)"><strong>{name}</strong>'
+                       f'<dl><div><dt>首次</dt><dd>{descriptions_for_model[0]}</dd></div>'
+                       f'<div><dt>重跑后</dt><dd>{descriptions_for_model[1]}</dd></div>'
+                       f'<div><dt>增量</dt><dd>{values[1] - values[0]:+.2f}</dd></div></dl></div>')
+        spoken = html.escape(model["label"] + "。首次" + descriptions_for_model[0]
+                             + "，允许重跑后" + descriptions_for_model[1], quote=True)
+        groups.append(f'<div class="bar-group{" has-extension" if has_gain else ""}" role="group" data-score-mode="{score_mode}" aria-label="{spoken}" '
+                      f'data-model="{html.escape(model["id"], quote=True)}"{focus} '
+                      f'style="--model-color:{color};--model-ink:{ink}">' + "".join(bars) + value_label + tooltip + '</div>')
+        logo = model["logo"]
+        labels.append(f'<div class="chart-model" style="--model-color:{color};--model-ink:{ink}">'
+                      f'<img class="provider-logo" data-score-mode="{score_mode}" src="{html.escape(logo["data_url"], quote=True)}" '
+                      f'alt="{html.escape(logo["label"], quote=True)}" width="24" height="24">{name}</div>')
+    ticks = "".join(f'<span style="bottom:{value}%">{value}</span>' for value in range(0, 101, 20))
+    grid = "".join(f'<i class="chart-gridline" aria-hidden="true" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
+    chart_name = "Strict 已获分" if score_mode == "strict" else "分项已获分"
+    return (f'<div class="chart-frame" role="group" aria-label="公开＋私有{chart_name}，纵轴0至100">'
+            f'<div class="chart-axis" aria-hidden="true">{ticks}</div><div class="chart-plot">'
+            f'{grid}<i class="chart-capacity" style="bottom:70%"><span>当前可测上限 70</span></i><div class="chart-groups">' + "".join(groups) + '</div></div></div>'
+            '<div class="chart-labels" aria-hidden="true">' + "".join(labels) + '</div>')
 
 
 def render(data):
-    # JSON embedded as data only; no remote resources or score calculation.
+    # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
-    cards = "".join(f'<article class="card"><div class="eyebrow">{html.escape(m["label"])}</div>'
-                    f'<div class="score" id="score-{m["id"]}"></div><p id="scope-{m["id"]}"></p>'
-                    f'<a href="../{html.escape(m["source_record"])}">查看完整记录 ↗</a></article>'
-                    for m in data["models"])
-    return '''<!doctype html>
-<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Math Gauge · 当前结果</title>
-<style>
-:root{color-scheme:light;font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#193247;background:#f4f7f7}*{box-sizing:border-box}body{margin:0;line-height:1.65}main{max-width:1080px;margin:auto;padding:52px 24px 64px}.eyebrow{font-size:13px;letter-spacing:.06em;color:#55717c}h1{font-size:clamp(38px,7vw,68px);line-height:1.05;letter-spacing:-.055em;margin:14px 0 22px}h2{font-size:22px;letter-spacing:-.02em;margin:0 0 16px}p{color:#526773;max-width:760px}a{color:#087c83;text-decoration:none}a:hover{text-decoration:underline}.badge{display:inline-block;background:#e0eeec;color:#276562;border-radius:100px;padding:5px 12px;font-size:12px}.bar{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 20px}button{border:1px solid #c9d9db;background:#fff;color:#24404b;border-radius:100px;padding:10px 20px;font:inherit;cursor:pointer}button[aria-pressed=true]{background:#193b4a;color:#fff;border-color:#193b4a}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card,section{background:#fff;border:1px solid #dce6e6;border-radius:20px;padding:26px}.score{font-size:64px;font-weight:650;letter-spacing:-.05em;font-variant-numeric:tabular-nums}.card p{margin:0 0 18px;font-size:14px}section{margin-top:24px}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;white-space:nowrap;text-align:left;font-size:14px}th,td{padding:12px 14px;border-bottom:1px solid #e5ecec}th{color:#637a83;font-weight:500}th:first-child,td:first-child{padding-left:0}.note{font-size:13px;color:#6a7f87}footer{margin-top:24px;font-size:13px;color:#6a7f87}@media(max-width:640px){main{padding:30px 16px}.cards{grid-template-columns:1fr}.card,section{padding:20px}.score{font-size:56px}}
-</style><main><div class="eyebrow">MATH GAUGE / BENCHMARK 0.6.0</div>
-<h1>数学工作，<br>能否可靠完成。</h1>
-<p>当前固定留档覆盖书面论证、Lean语义审计、完整形式化与答卷审阅，并保留模型自我判断、实际修复和最后交付。</p>
-<span class="badge">开发分析 · AI审核 · 人审待定</span>
-<div class="bar"><button data-mode="public" aria-pressed="true">公开部分</button><button data-mode="combined" aria-pressed="false">含私有探索</button></div>
-<div class="cards">''' + cards + '''</div>
-<section><h2>能力方向</h2><p class="note" id="coverage"></p><div class="scroll"><table id="capabilities"></table></div></section>
-<section><h2>四档 Lean：核实通过数</h2><div class="scroll"><table id="lean"></table></div><p class="note">四题统一按归档工程核验正确性与语义对齐。8/20/40项先在CH2家族内平均，再与92项CH3家族等权平均。<a href="../docs/formalization-audit.md">查看工程审核 ↗</a></p></section>
-<section><h2>三轮自查后的实际状态</h2><div class="scroll"><table id="trajectory"></table></div><p class="note">自称完成、审核完成与稳定保持分别记录。固定采用最后规定轮次，保留未完成、误报和原始执行差异。</p></section>
-<section><h2>计分与来源</h2><p id="weights" class="note"></p><p class="note">公私共用版本与共享评分器，采用评分方法0.4.0。部分等价测项继承旧benchmark记录。公开只提供私有聚合。</p><div id="downloads"></div></section>
-<footer>三模型的原始档案、完整性证据与评分规则保存在项目中。DeepSeek两道输出预算耗尽且没有交付的题按0分计入固定分母。本次整理没有新增候选调用。</footer>
-<script type="application/json" id="data">''' + payload + '''</script>
-<script>
-const d=JSON.parse(document.getElementById('data').textContent);let mode='public';
-const el=id=>document.getElementById(id),f=v=>v==null?'未决':v.toFixed(2),titles={'proofs':'书面论证','lean-audit':'历史语义审计','lean-formalization':'大Lean形式化','answer-review':'答卷审阅','exploration':'私有探索'};
-function table(id,headers,rows){const t=el(id);t.replaceChildren();const h=t.createTHead().insertRow();headers.forEach(s=>{const c=document.createElement('th');c.textContent=s;h.append(c)});const b=t.createTBody();rows.forEach(row=>{const r=b.insertRow();row.forEach(s=>{const c=r.insertCell();c.textContent=s})})}
-function update(){d.models.forEach(m=>{const r=m[mode];el('score-'+m.id).textContent=f(r.metrics.overall.exact);el('scope-'+m.id).textContent=mode==='public'?'公开总分 / 100':'含私有探索总分 / 100'});const first=d.models[0][mode],c=first.coverage;el('coverage').textContent=`${c.papers_planned}份任务 · ${c.parent_families}个数学家族 · ${c.slots_planned}条标准记录`;
-table('capabilities',['方向','能力内部权重',...d.models.map(m=>m.label)],first.profile.components.map(x=>[titles[x.id]||x.id,x.weight+'%',...d.models.map(m=>f(m[mode].metrics[x.id]?.exact))]));
-const states={verified_complete:'核实全部完成',incomplete_stable:'仍不完整，完成数未变',incomplete_changed:'仍不完整，有实际进展',regressed:'发生回退，仍不完整',interrupted:'轮次未完成',unresolved:'审核未决'};const ids=['LCH01','LCH02','HCH02','MG-C003'];table('lean',['任务',...d.models.map(m=>m.label)],ids.map(id=>[id,...d.models.map(m=>{const x=m.public.lean_formalization_breakdown.cases.find(x=>x.case_id===id);return `${x.complete_count}/${x.total}`} )]));
-table('trajectory',['记录',...d.models.map(m=>m.label)],[['最后一轮核实通过',...d.models.map(m=>`${m.trajectory.last_complete_count}/${m.trajectory.total}`)],['首次核实全部完成',...d.models.map(m=>m.trajectory.first_verified_complete_round==null?'尚未达到':'第'+m.trajectory.first_verified_complete_round+'轮')],['核实误报完整',...d.models.map(m=>m.trajectory.false_complete_claim_rounds.length+'轮')],['最后状态',...d.models.map(m=>states[m.trajectory.state]||'审核未决')]]);
-const w=d.policy.overall_weights;el('weights').textContent=`能力${w.core}% · 独立复答${w.repeat}% · 中性自查${w.neutral}%（书面与Lean为1:2）· 立场压力${w.stance}%`;
-el('downloads').replaceChildren(...d.models.map(m=>{const a=document.createElement('a');a.href='downloads/'+m.id+'-'+mode+'.json';a.textContent=m.label+' 机器结果 ↓';a.style.marginRight='20px';return a}));document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)))}
-document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;update()});update();
-</script></main></html>'''
+    rows = []
+    for index, model in enumerate(data["models"], 1):
+        label = html.escape(model["label"])
+        source = html.escape("../" + model["source_record"].replace("record.json", "README.md"), quote=True)
+        single = model["combined"]["metrics"]["earned"]["exact"]
+        retry = model["retry"]["combined"]["metrics"]["earned"]["exact"]
+        display = lambda value: "—" if value is None else f"{value:.2f}"
+        rows.append(f'<tr><td class="rank">{index}</td><td class="model-name">{label}</td>'
+                    f'<td class="numeric score-cell single-score"><span class="score-number">{display(single)}</span></td>'
+                    f'<td class="numeric score-cell retry-score"><span class="score-number">{display(retry)}</span></td>'
+                    f'<td class="numeric">—</td><td class="numeric"><a href="{source}">查看 ↗</a></td></tr>')
+    values = {"DATA": payload, "ROWS": "".join(rows), "CHART": overlaid_bars(data["models"]),
+              "STRICT_CHART": overlaid_bars(data["models"], "strict")}
+    template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
+    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART)@@", lambda match: values[match[1]], template)
 
 
 def write_site(destination, *, source_root=ROOT):
@@ -87,9 +168,19 @@ def write_site(destination, *, source_root=ROOT):
     (dest / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
     (dest / "downloads").mkdir(exist_ok=True)
     for model in data["models"]:
-        for scope in ["public", "combined"]:
+        for scope in ["combined"]:
             (dest / "downloads" / (model["id"] + "-" + scope + ".json")).write_text(
                 json.dumps(model[scope], ensure_ascii=False, indent=2) + "\n")
+            (dest / "downloads" / (model["id"] + "-" + scope + "-retry.json")).write_text(
+                json.dumps(model["retry"][scope], ensure_ascii=False, indent=2) + "\n")
+            for condition, suffix in (("single_attempt", ""), ("nonlogical_retry_3", "-retry")):
+                (dest / "downloads" / (model["id"] + "-combined-strict" + suffix + ".json")).write_text(
+                    json.dumps(model["strict"][condition], ensure_ascii=False, indent=2) + "\n")
+        # Retire only this renderer's known public-only exports; preserve unrelated files.
+        for suffix in ("-public.json", "-public-retry.json"):
+            path = dest / "downloads" / (model["id"] + suffix)
+            if path.is_file():
+                path.unlink()
     return data
 
 

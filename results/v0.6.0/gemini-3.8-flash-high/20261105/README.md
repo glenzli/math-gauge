@@ -1,7 +1,17 @@
-# gemini-3.8-flash-high · benchmark 0.6.0
+# Gemini 3.8 Flash High · 当前固定档案
 
-用户于2026-11-05选定固定留档。公开总分 **70.7669021739**，含私有聚合 **65.6138768116**。当前为AI审核，人工复核待完成。
+| 留档身份 | 记录 |
+|---|---|
+| Benchmark | 0.6.0（公私统一） |
+| 模型请求版本 | gemini-3.8-flash-high/high native local-tools 0.6 supplement |
+| Harness | Math Gauge shared runner with native/external source adapters |
+| 当前计分 | 分类聚合0.5.0／Strict0.2.0；原数学审核0.4.0 |
+| 跑法简记 | 来源相容初答A1＋C003固定三轮；本地工具／禁止外部检索，逐来源真实预算见record.json，后稿不回填初答 |
 
-评分方法0.4.0统一采用四题归档工程：LCH01 8/8、LCH02 19/20、HCH02 38/40、MG-C003 74/92。权重及连续三轮对齐自查判断保持不变。
+benchmark0.6.0，harness及实际运行条件见record.json；本次只重分类和重算，没有新模型调用。聚合0.5.0，Strict0.2.0，数学审核来源0.4.0。书面35／Lean35／研究30，当前已建70分，研究30待建；主值为已获分／100，完整总分未知。
 
-[record.json](record.json)连接完整原答、自评原文、逐轮工程、审核与有限轨迹；[四题工程审核](reviews/formalization.json)绑定所用源码、冻结题目和编译证据。[result.json](result.json)为公开成绩，[combined-aggregate.json](combined-aggregate.json)仅含私有聚合。scoring-inputs.json保留原执行计划及原逐槽判断，工程复核单独记录；部分等价测项继承旧benchmark记录。完整方法见[评分规则](../../../../protocol/benchmark-scoring.md)。
+本档案保存公有完整原答、模型自报、工程、原审核与安全合并聚合。原始输入与审核保持来源身份，旧42／45槽中当前只取26／29个A1，另三轮Lean自查独立10分；其他原分支不再占分。
+
+combined-aggregate.json／retry-combined-aggregate.json／strict-combined-aggregate.json／strict-retry-combined-aggregate.json为两模式×两条件的合并投影，不发布独立公有分数。 assessment-policy.json及Strict政策显式绑定当前分类口径；私有记录可经显式public-root引用同档案公有政策。原scoring-policy.json保留0.4.0以核验数学审核，不改写旧policy散列。
+
+没有新增非逻辑重跑，允许重跑视图沿用同一原答来源，不表示另外运行。 AI审核、人审pending、正式比较资格false。完整成绩和权重见公有docs/results.md及protocol/benchmark-scoring.md。

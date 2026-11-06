@@ -1,31 +1,21 @@
 {
-  "schema": "math-gauge.composition-policy/v1",
-  "version": "0.6.0",
+  "schema": "math-gauge.composition-policy/v2",
+  "version": "0.5.0",
+  "benchmark_version": "0.6.0",
   "operator_only": true,
   "status": "local-draft-human-pending",
-  "public_component_weights": {
-    "proofs": 40,
-    "lean-audit": 20,
-    "lean-formalization": 30,
-    "answer-review": 10
+  "assessment_policy": "protocol/scoring-policy.json",
+  "strict_policy": "protocol/strict-scoring-policy.json",
+  "publication_scope": "combined",
+  "default_initial_attempts": [
+    "A1"
+  ],
+  "source_policy": "Preserve exact candidate inputs, contracts, original reviews and actual source conditions. Same-case drift prohibited; post-observation development only. Retired A2/written/stance records are provenance, not current default metrics.",
+  "composition": "Merge public14 and private3 written argument families before averaging. Aggregate variants within family and reviews within parent family. Separate scored3-round C003 trajectory; no A1 backfill.",
+  "capacity": {
+    "active": 70,
+    "under_construction": 30,
+    "total": 100
   },
-  "combined_component_weights": {
-    "proofs": 35,
-    "lean-audit": 15,
-    "lean-formalization": 25,
-    "exploration": 15,
-    "answer-review": 10
-  },
-  "overall_weights": {
-    "core": 70,
-    "repeat": 5,
-    "neutral": 15,
-    "stance": 10
-  },
-  "aggregation_version": "family-first/v1",
-  "source_policy": "Exact candidate inputs/contracts/branches/prompts; preserve each real source runtime and explicit unknowns. Same-case conditions remain identical. Post-observation development, no formal comparison eligibility.",
-  "neutral_group_weights": {
-    "written": 1,
-    "lean_alignment": 2
-  }
+  "formal_comparison_eligible": false
 }

@@ -8,7 +8,23 @@
 
 [按考察重点选卷](by-focus.md) · [机器目录](catalog.json) · [分类定义与逐项依据](taxonomy.json) · [来源](../SOURCES.md) · [验证状态](../docs/verification.md)
 
-## 书面证明、反例与构造 · 14份
+## 大类与子类
+
+| 大类 | 子类 | 权重 | 公有题 | 私有题 | 状态 |
+|---|---|---:|---:|---:|---|
+| 书面证明（35%） | 书面论证 | 25% | 14 | 3 | 当前计分 |
+| 书面证明（35%） | 论证审阅 | 10% | 4 | 0 | 当前计分 |
+| Lean（35%） | 语义审计 | 10% | 4 | 0 | 当前计分 |
+| Lean（35%） | 形式化 | 15% | 4 | 0 | 当前计分 |
+| Lean（35%） | 对齐自查 | 10% | 复用1题/3轮 | 0 | 当前计分 |
+| 数学研究（30%） | 背景核查 | 10% | 0 | 0 | 建设中 |
+| 数学研究（30%） | 研究稿完善 | 10% | 0 | 0 | 建设中 |
+| 数学研究（30%） | 命题拓展 | 10% | 0 | 0 | 建设中 |
+
+当前26道公有与3道私有题合并评测，已建权重70/100；研究30分预留，不重新归一化，也不计为模型答错。私有三题并入书面论证，仅公布数量与聚合。自查复用整章题，不另增题目或独立家族。
+
+
+## 书面论证 · 14份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
@@ -27,7 +43,7 @@
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) | written | 6阶段 | [合同](proofs/MG-GR103/contract.json) · [参考](proofs/MG-GR103/reference.md) · [评分](proofs/MG-GR103/rubric.json) · [题包复核](proofs/MG-GR103/review.json) · [作者Lean](proofs/MG-GR103/formal/COVERAGE.md) |
 | [MG-GR104 · 幂等元提升、逆极限与环分解](proofs/MG-GR104/task.md) | written | 6阶段 | [合同](proofs/MG-GR104/contract.json) · [参考](proofs/MG-GR104/reference.md) · [评分](proofs/MG-GR104/rubric.json) · [题包复核](proofs/MG-GR104/review.json) · [作者Lean](proofs/MG-GR104/formal/COVERAGE.md) |
 
-## Lean 语义审计 · 4份
+## 语义审计 · 4份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
@@ -36,7 +52,7 @@
 | [AHR03 · 节点域加细的语义审计](lean-audit/AHR03/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR03/group-contract.json) · [参考](lean-audit/AHR03/reference.md) · [评分](lean-audit/AHR03/rubric.json) · [题包复核](lean-audit/AHR03/review.json) |
 | [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) | audit | 4审阅维度 | [合同](lean-audit/AHR04/group-contract.json) · [参考](lean-audit/AHR04/reference.md) · [评分](lean-audit/AHR04/rubric.json) · [题包复核](lean-audit/AHR04/integration-review.json) |
 
-## 大Lean形式化梯度 · 4份
+## 形式化 · 4份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
@@ -45,7 +61,7 @@
 | [LCH02 · 有限复合与路径节群](lean-formalization/LCH02/candidate/task.md) | generate | 20义务 | [合同](lean-formalization/LCH02/contract.json) · [参考](lean-formalization/LCH02/reference.md) · [评分](lean-formalization/LCH02/rubric.json) · [题包复核](lean-formalization/LCH02/integration-review.json) |
 | [MG-C003 · OET卷1第3章整章形式化](lean-formalization/MG-C003/candidate/task.md) | generate | 92义务 | [合同](lean-formalization/MG-C003/contract.json) · [参考](lean-formalization/MG-C003/reference.md) · [评分](lean-formalization/MG-C003/rubric.json) · [题包复核](lean-formalization/MG-C003/review.json) · [作者Lean](lean-formalization/MG-C003/formal/COVERAGE.md) |
 
-## 真实答卷审阅 · 4份
+## 论证审阅 · 4份
 
 | 试卷 | 任务 | 必答规模 | 完整材料 |
 | --- | --- | ---: | --- |
