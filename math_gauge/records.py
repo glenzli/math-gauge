@@ -570,6 +570,69 @@ def validate_public_written_additions(root, record):
     return data
 
 
+PUBLIC_TASK_FIELDS = ("case_id", "completion", "strict_pass", "response_sha256", "review_sha256")
+
+
+def public_assessment_case_ids(policy):
+    """Current public membership, without exposing the private case inventory."""
+    selection = policy["case_selection"]
+    return sorted(set(selection["public_case_ids"])
+        | set(selection.get("public_replacement_case_ids", []))
+        | set(policy["theorem_extension"]["public_case_ids"])
+        | set(policy["background_check"]["public_case_ids"]))
+
+
+def project_public_task_view(score, public_ids, source_report_sha256):
+    """Copy public task judgments from the shared scorer; never recompute points."""
+    rows = [r for r in score["tasks"] if r["case_id"] in set(public_ids)]
+    if len(rows) != len(public_ids) or {r["case_id"] for r in rows} != set(public_ids):
+        raise ValueError("Public task projection differs from current selected membership")
+    return {"source_report_sha256": source_report_sha256,
+            "tasks": [{k: copy.deepcopy(r[k]) for k in PUBLIC_TASK_FIELDS}
+                      for r in sorted(rows, key=lambda r: r["case_id"])]}
+
+
+def load_public_task_scores(root, record, *, policy=None):
+    """Bind public per-task views to the same canonical reports as combined totals."""
+    items = [r for r in record.get("evidence", []) if r.get("path") == "public-task-scores.json"]
+    if not items:
+        return None
+    if len(items) != 1:
+        raise ValueError("Duplicate public task projection")
+    data = json.loads(evidence_bytes(root, items[0]))
+    policy = policy or json.loads(evidence_bytes(root, record["assessment_policy"]))
+    public_ids = public_assessment_case_ids(policy)
+    if (set(data) != {"schema", "benchmark_version", "model_label", "public_case_ids", "views",
+                      "human_review", "formal_comparison_eligible"}
+            or data["schema"] != "math-gauge.public-task-scores/v1"
+            or data["benchmark_version"] != "0.6.0"
+            or data["model_label"] != record["model"]["requested_label"]
+            or data["public_case_ids"] != public_ids
+            or data["human_review"] != "pending" or data["formal_comparison_eligible"] is not False
+            or set(data["views"]) != {"capability", "partial", "strict"}):
+        raise ValueError("Invalid public task projection identity or privacy boundary")
+    groups = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}
+    for mode, conditions in data["views"].items():
+        if set(conditions) != {"single_attempt", "nonlogical_retry_3"}:
+            raise ValueError("Public task projection changed the two retained conditions")
+        for condition, view in conditions.items():
+            aggregate = json.loads(evidence_bytes(root, record[groups[mode]][condition]))
+            if (set(view) != {"source_report_sha256", "tasks"}
+                    or view["source_report_sha256"] != aggregate["source_bindings"]["private_report_sha256"]
+                    or [r.get("case_id") for r in view["tasks"]] != public_ids):
+                raise ValueError("Public task view differs from the canonical combined source")
+            for row in view["tasks"]:
+                if (set(row) != set(PUBLIC_TASK_FIELDS)
+                        or (row["strict_pass"] is not None and type(row["strict_pass"]) is not bool)
+                        or set(row["completion"]) != {"lower", "upper", "exact"}
+                        or any(v is not None and (type(v) not in (int, float) or not -1 <= v <= 1)
+                               for v in row["completion"].values())
+                        or any(v is not None and not re.fullmatch(r"[0-9a-f]{64}", v)
+                               for v in (row["response_sha256"], row["review_sha256"]))):
+                    raise ValueError("Public task view contains unsupported fields or judgments")
+    return data
+
+
 def load_claim_review(root, record, condition, *, public_root=None):
     """Verify an appended claim audit without altering any source adjudication."""
     from .claim_penalties import validate_review
@@ -980,6 +1043,7 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
     validate_public_written_additions(root, record)
     load_written_replacement_inputs(root, record)
     validate_public_written_replacements(root, record)
+    load_public_task_scores(root, record)
     if record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:

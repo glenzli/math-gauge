@@ -9,7 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_claim_review, project_assessment_score,
-                                validate_record)
+                                validate_record, load_public_task_scores, project_public_task_view)
 from math_gauge.scoring import score_assessment_record_inputs
 
 
@@ -47,6 +47,7 @@ def check(root=ROOT, *, public_root=None):
             replacement = load_written_replacement_inputs(folder,record,policy=assessment.get("written_argument_replacements"))
             engineering = load(public / "reviews/formalization.json")
             public_record = load(public / "record.json")
+            public_tasks = load_public_task_scores(public, public_record)
             for mode, conditions in views.items():
                 for condition, score in conditions.items():
                     selected = retry if condition == "nonlogical_retry_3" and retry is not None else inputs
@@ -67,6 +68,11 @@ def check(root=ROOT, *, public_root=None):
                         (folder / record[group][condition]["path"]).read_bytes()).hexdigest()
                     if aggregate != projected:
                         raise ValueError("Public current aggregate differs from the private shared-scorer result")
+                    if public_tasks is not None:
+                        task_view = project_public_task_view(score, public_tasks["public_case_ids"],
+                            projected["source_bindings"]["private_report_sha256"])
+                        if public_tasks["views"][mode][condition] != task_view:
+                            raise ValueError("Public task judgments differ from the private shared-scorer result")
         status["earned"] = {mode: {condition: score["metrics"]["earned"]["exact"]
             for condition, score in conditions.items()} for mode, conditions in views.items()}
         status["capacity"] = next(iter(views["partial"].values()))["capacity"]

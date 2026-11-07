@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import descriptor, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_claim_review, project_assessment_score, validate_record
+from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record
 from math_gauge.scoring import score_assessment_record_inputs
 
 
@@ -143,6 +143,7 @@ def retain(private_root, *, public_root=ROOT):
                 else item for item in target["evidence"]
                 if not (folder == public and item["path"] in {"result.json", "retry-result.json"})]
             write(folder / "record.json", target)
+    export_public_tasks(private_root, public_root=public_root)
     active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
     return {"benchmark_version": "0.6.0", "scoring_version": assessment["version"], "strict_version": strict["version"],
             "capability_version": capability["version"], "default_score_mode": "partial",
@@ -150,11 +151,45 @@ def retain(private_root, *, public_root=ROOT):
             "candidate_calls": 0, "sealed_engineering_compilations": 0}
 
 
+def export_public_tasks(private_root, *, public_root=ROOT):
+    """Publish only selected public task judgments from the retained six reports."""
+    public_root, private_root = Path(public_root), Path(private_root)
+    published = []
+    for model in load(public_root / "benchmark.json")["selected_result_models"]:
+        relative = Path("results/v0.6.0") / model / "20261105"
+        public, private = public_root / relative, private_root / relative
+        record, source_record = load(public / "record.json"), load(private / "record.json")
+        policy = json.loads(evidence_bytes(public, record["assessment_policy"]))
+        ids = public_assessment_case_ids(policy)
+        data = {"schema": "math-gauge.public-task-scores/v1", "benchmark_version": "0.6.0",
+                "model_label": record["model"]["requested_label"], "public_case_ids": ids,
+                "human_review": "pending", "formal_comparison_eligible": False, "views": {}}
+        for mode, key in (("capability", "capability_results"), ("partial", "assessment_results"), ("strict", "strict_results")):
+            data["views"][mode] = {}
+            for condition, item in source_record[key].items():
+                raw = evidence_bytes(private, item)
+                score = json.loads(raw)
+                aggregate = json.loads(evidence_bytes(public, record[key][condition]))
+                source_hash = hashlib.sha256(raw).hexdigest()
+                if (aggregate["source_bindings"]["private_report_sha256"] != source_hash
+                        or score["score_mode"] != mode or score["attempt_condition"] != condition):
+                    raise ValueError("Public task projection needs matching retained reports")
+                data["views"][mode][condition] = project_public_task_view(score, ids, source_hash)
+        target = public / "public-task-scores.json"
+        write(target, data)
+        record["evidence"] = [r for r in record["evidence"] if r["path"] != target.name] + [descriptor(public, target)]
+        write(public / "record.json", record)
+        published.append({"model": model, "public_tasks": len(ids)})
+    return {"published": published, "candidate_calls": 0, "scores_recomputed": False}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--private-root", type=Path, required=True)
+    parser.add_argument("--project-public-tasks-only", action="store_true", help="Project retained public task judgments without rescoring or changing private records.")
     args = parser.parse_args()
-    print(json.dumps(retain(args.private_root), ensure_ascii=False))
+    result = export_public_tasks(args.private_root) if args.project_public_tasks_only else retain(args.private_root)
+    print(json.dumps(result, ensure_ascii=False))
 
 
 if __name__ == "__main__":

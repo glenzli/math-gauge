@@ -13,6 +13,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.records import load_assessment_results, validate_record
+from scripts.results_details import build_detail_pages
 
 MODEL_THEMES = {
     "terra-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
@@ -75,6 +76,7 @@ def build_data(source_root=ROOT):
                                if research_source.get("excluded_pure_system_failures") else
                                "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。")}})
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
+                 "public-task-scores.json",
                  record["capability_scoring_policy"]["path"], record["score_mode_catalog"]["path"],
                  record["claim_review"]["path"], record["claim_penalty_policy"]["path"],
                  *(item["path"] for item in record["capability_results"].values()),
@@ -191,7 +193,7 @@ def render(data):
     rows = []
     for index, model in enumerate(data["models"], 1):
         label = html.escape(model["label"])
-        source = html.escape("../" + model["source_record"].replace("record.json", "README.md"), quote=True)
+        source = html.escape("models/" + model["id"] + "/index.html?score=partial&condition=single_attempt", quote=True)
         single = earned_value(model["combined"])
         retry = earned_value(model["retry"]["combined"])
         display = lambda value: "—" if value is None else f"{value:.2f}"
@@ -200,7 +202,7 @@ def render(data):
                     f'<div class="model-detail">已评 {progress["adjudicated"]}/{progress["planned"]}</div></td>'
                     f'<td class="numeric score-cell single-score"><span class="score-number">{display(single)}</span></td>'
                     f'<td class="numeric score-cell retry-score"><span class="score-number">{display(retry)}</span></td>'
-                    f'<td class="numeric">—</td><td class="numeric"><a href="{source}">查看 ↗</a></td></tr>')
+                    f'<td class="numeric">—</td><td class="numeric"><a href="{source}">详细评测 →</a></td></tr>')
     values = {"DATA": payload, "ROWS": "".join(rows), "CHART": overlaid_bars(data["models"], "partial", mode_names["partial"]),
               "STRICT_CHART": overlaid_bars(data["models"], "strict", mode_names["strict"]),
               "CAPABILITY_CHART": overlaid_bars(data["models"], "capability", mode_names["capability"]),
@@ -229,21 +231,36 @@ def render(data):
 def write_site(destination, *, source_root=ROOT):
     dest = Path(destination)
     data = build_data(source_root)
-    dest.mkdir(parents=True, exist_ok=True)
-    (dest / "index.html").write_text(render(data), encoding="utf-8")
-    (dest / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
-    (dest / "downloads").mkdir(exist_ok=True)
+    # Resolve all evidence before changing navigation or writing any page.
+    files = build_detail_pages(data, source_root)
+    files["index.html"] = render(data)
+    files["data.json"] = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    for name in ("results.css", "results-core.js", "home-results.js", "model-results.js", "case-results.js", "method-results.js"):
+        files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     for model in data["models"]:
         for scope in ["combined"]:
-            (dest / "downloads" / (model["id"] + "-" + scope + ".json")).write_text(
-                json.dumps(model[scope], ensure_ascii=False, indent=2) + "\n")
-            (dest / "downloads" / (model["id"] + "-" + scope + "-retry.json")).write_text(
-                json.dumps(model["retry"][scope], ensure_ascii=False, indent=2) + "\n")
+            files["downloads/"+model["id"]+"-"+scope+".json"] = json.dumps(model[scope], ensure_ascii=False, indent=2)+"\n"
+            files["downloads/"+model["id"]+"-"+scope+"-retry.json"] = json.dumps(model["retry"][scope], ensure_ascii=False, indent=2)+"\n"
             for condition, suffix in (("single_attempt", ""), ("nonlogical_retry_3", "-retry")):
-                (dest / "downloads" / (model["id"] + "-combined-strict" + suffix + ".json")).write_text(
-                    json.dumps(model["strict"][condition], ensure_ascii=False, indent=2) + "\n")
-                (dest / "downloads" / (model["id"] + "-combined-capability" + suffix + ".json")).write_text(
-                    json.dumps(model["capability"][condition], ensure_ascii=False, indent=2) + "\n")
+                files["downloads/"+model["id"]+"-combined-strict"+suffix+".json"] = json.dumps(model["strict"][condition], ensure_ascii=False, indent=2)+"\n"
+                files["downloads/"+model["id"]+"-combined-capability"+suffix+".json"] = json.dumps(model["capability"][condition], ensure_ascii=False, indent=2)+"\n"
+    manifest = dest/"generated-pages.json"
+    previous = json.loads(manifest.read_text()) if manifest.exists() else []
+    for path in set(previous)|set(files):
+        part = Path(path)
+        if part.is_absolute() or ".." in part.parts or not (dest/part).resolve().is_relative_to(dest.resolve()):
+            raise ValueError("Generated page path escapes site directory")
+    for path in set(previous)-set(files):
+        target = dest/path
+        if target.is_file():
+            target.unlink()
+    # Homepage last: all detail destinations exist before links become visible.
+    for path in [p for p in sorted(files) if p != "index.html"]+["index.html"]:
+        target = dest/path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(files[path], encoding="utf-8")
+    manifest.write_text(json.dumps(sorted(files),indent=2)+"\n")
+    for model in data["models"]:
         # Retire only this renderer's known public-only exports; preserve unrelated files.
         for suffix in ("-public.json", "-public-retry.json"):
             path = dest / "downloads" / (model["id"] + suffix)

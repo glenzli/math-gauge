@@ -1,0 +1,1413 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCH01 · 通道接口节群 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/gemini-3.8-flash-high/index.html">Gemini 3.8 Flash High</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>LCH01 · 通道接口节群</h1><p class="subtitle">Gemini 3.8 Flash High · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后开发分析，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 Strict" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">Strict</span></button></div></div><div class="control-group"><span class="control-name">运行条件</span><div class="segmented condition-control" role="group" aria-label="运行条件"><button data-condition="single_attempt" aria-pressed="true">原单次</button><button data-condition="nonlogical_retry_3" aria-pressed="false">允许重跑 ≤3次</button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；Strict 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>通道接口节群 · LCH01</h1>
+<p>将附件中 obligations.json 指定的全部8项义务完整形式化为一个Lean项目。本题是明确的选段任务；完整章节文件只为提供原文和上下文，清单之外的内容不计为交付义务。原文含证明；前置文字只作背景。</p>
+<p>使用Lean4.29.1和mathlib5e932f97dd25535344f80f9dd8da3aab83df0fe6。formal_oet/附件是冻结前置模块，可直接导入，不得修改或同名覆盖。只允许这些模块、标准库与固定mathlib，不得读取目标作者实现、评审或下载其他依赖。</p>
+<p>保留原文结构、前提、量词、定义域和结论强度。允许等价表示、合并声明、辅助引理和有效替代证明，但须给出表示对应；不得把目标藏入字段、证书或前提。</p>
+<p>交付完整源码，每个文件用独立的命名代码块，例如 <code>lean filename=Main.lean</code>。Main.lean必须导入所有目标模块，辅助文件也须全文交付。不得使用sorry、admit、新增公理或跳过内核检查设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 交付对象：case_id=&quot;LCH01&quot;、version=&quot;0.1.0&quot;、items。items必须恰好覆盖清单全部8项，每项含id、status（complete/incomplete）、declarations（file/name数组）、representation（对象/参数/量词/结论的对应说明）、dependencies（实际使用的义务ID数组）。complete须列真实声明且全部子目标均完成；未完成项不能删除。工作区路径或链接不能代替文件内容。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/LCH01/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Checked the retained source judgment and available candidate answer/artifacts. Only specific established false or unsupported commitments are appended; missing work alone receives no additional finding.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> LipBoundOn给完整点对/输出分量求和界，HasRestrictedLip另合入U⊆dom φ，restrictedLipSet为真实集合；HasLip取完整dom，hasLip_iff及restrictedLipSet_dom证明对应。允许空U与ENNReal系数，无坐标inf最小矩阵误断。</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> HasRestrictedCoLip明确含U.Nonempty、合法域及完整下界，族为真实Set，且投影引理明确提取非空与域包含；无空域coLip或条目必须有限的限制。</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matrix_entry M i j=M j i明确输入列/输出行；matrix_mul实际使用标准M₂*M₁，matrix_mul_entry给原通道顺序有限求和，方向正确且系数ENNReal。</p>
+<h3>CH02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> ComponentChannel=I×I；SingleRowSparse固定任意输出j且仅指定输入i可非零，允许i≠j；IsDiagonal及其行特化成立。此选段D07不要求完整历史单列/解耦目标，未加隐藏义务。</p>
+<h3>CH02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> sum_eq_single_of_singleRowSparse在任意i→j将全部其他项以0*d=0删去，restricted_lip_bound给合法证书的单标量界；diagonal两个版本为同分量特例，未把一般命题限于对角。</p>
+<h3>CH02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 正coLip条目乘正输入距的ENNReal乘积为正，再用单项≤非负有限和≤输出距；实际证书版本与更广CoLipBoundOn版均交付，输入距或系数∞均合法。</p>
+<h3>CH02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 所有对角K正时，若输入某分量非零则P20迫使输出该分量正，矛盾于冻结GaugeZeroRelated；结论仅为族零距，无族分离/点相等要求。</p>
+<h3>CH02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> exercise_2_2_scalar_two_sided_bound对合法L/K只假设L在第j行同分量稀疏；下界由Kjj*dj≤总和得，K不要求稀疏、有限或正；上界P19。因此原标量双侧界完整，包含0∞规则。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（8项）</summary><div class="prose"><h3>CH02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The full and restricted Lip predicates quantify every point pair and every output component, use ENNReal coefficients, and define genuine sets of certificates. Restriction legality U⊆dom(φ) is part of the predicate; the global-domain specialization is proved or definitionally exact. No prescribed extremal matrix is introduced.</p>
+<h3>CH02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Restricted co-Lip contains U.Nonempty, U⊆dom(φ), and the full lower matrix inequality. The certificate family is exactly its set of satisfying matrices. Zero and infinite coefficients remain admitted; no separation or finiteness premise is added.</p>
+<h3>CH02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Rows are outputs and columns are inputs: the i→j coefficient is M j i. The candidate proves the standard matrix multiplication entry Σk M₂ j k*M₁ k i, with the later matrix on the left. This is the original indexing convention, with no transpose ambiguity.</p>
+<h3>CH02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> A channel is the ordered pair (input,output). Row sparsity asserts every coefficient outside the selected input column is zero; the diagonal case specializes this for every output. These are explicit definitions on actual matrices rather than certificate fields holding conclusions.</p>
+<h3>CH02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The proof reduces the complete finite sum to its selected single term using zero coefficients, and then applies the original Lip bound. The diagonal specialization is supplied for every component. ENNReal multiplication preserves 0*∞=0, so no coefficient or distance is required finite.</p>
+<h3>CH02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The selected nonnegative channel term is bounded by the whole finite row sum and then by the co-Lip output distance. ENNReal product positivity is proved/applied from strict positivity of both factors, including infinite values. Points remain in the supplied U.</p>
+<h3>CH02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> All positive diagonal entries are used one component at a time to contradict a positive input distance when the corresponding output distance is zero. The conclusion is GaugeZeroRelated, never point equality; no separation axiom is smuggled in.</p>
+<h3>CH02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The two-sided scalar inequality uses only sparsity of the Lip row. The co-Lip lower bound follows by taking its diagonal term below the whole sum, so K is not required diagonal, positive, or finite. All quantified points and both inequalities match Exercise 2.2.</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>I have started compiling <code>OperatorBounds.lean</code> and <code>Main.lean</code> in the background and will continue once the compilation completes.
+I am checking the axioms of all declarations and will proceed once the check finishes.
+I am verifying the clean build of <code>OperatorBounds.lean</code> and <code>Main.lean</code>.
+{}
+本项目已将 <code>obligations.json</code> 中指定的全部 8 项交付义务完整形式化为一个 Lean 4 项目，环境基于 Lean 4.29.1 与 Mathlib <code>5e932f97dd25535344f80f9dd8da3aab83df0fe6</code>。项目直接导入冻结模块 [<code>formal_oet/vol_01/ch_01_foundations/gauge_space.lean</code>](file:///private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/gemini/sessions/LCH01-A1/1/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean) 与 [<code>formal_oet/vol_01/ch_01_foundations/operator_space.lean</code>](file:///private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/gemini/sessions/LCH01-A1/1/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean)，未使用 <code>sorry</code>、<code>admit</code> 或新增公理，仅依赖标准逻辑公理（<code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>）。</p>
+<h3>源码交付</h3>
+<pre><code class="language-lean">import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Tactic
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+namespace formal_oet.vol_01.ch_02_operator_bounds
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped Classical
+
+set_option linter.style.longLine false
+set_option linter.style.emptyLine false
+
+/-!
+# LCH01 · 通道接口节群 (Channel Interface Section Group)
+
+本模块形式化 OET 第一卷第 2 章关于算子界（Operator Bounds）的核心接口与通道性质，
+涵盖 `obligations.json` 中指定的全部 8 项交付义务：
+- CH02-D01: 全域/受限 Lip 矩阵谓词与证书族
+- CH02-D02: 含非空条件的受限 co-Lip 矩阵及证书族
+- CH02-D03: 输入/输出矩阵指标约定与乘法
+- CH02-D07: 单输入通道、单行稀疏与对角特例
+- CH02-P19: 单一输入项行化简；包含对角特例
+- CH02-P20: 正 co-Lip 通道保持正距离
+- CH02-P21: 全对角正 co-Lip 反射族零距；不加强为点相等
+- CH02-P25: 习题 2.2：标量双侧界
+-/
+
+/-! ### 1. 矩阵指标约定与乘法 (CH02-D03) -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负矩阵类型别名。
+约定：行指标为输出分量 j，列指标为输入分量 i，即 (M)_{ji} = M_{i → j}。
+-/
+def MatrixBound (I : Type) : Type := Matrix I I ENNReal
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+矩阵条目访问：`matrix_entry M i j` 给出通道 i → j 对应的矩阵条目 M_{i → j} = (M)_{ji}。
+-/
+def matrix_entry {I : Type} (M : Matrix I I ENNReal) (i j : I) : ENNReal :=
+  M j i
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负矩阵乘法：(M₂ · M₁)_{i → j} = ∑_{k ∈ I} (M₂)_{k → j} (M₁)_{i → k}。
+在行列约定下即为标准矩阵乘法 M₂ * M₁。
+-/
+noncomputable def matrix_mul {I : Type} [Fintype I] (M₂ M₁ : Matrix I I ENNReal) : Matrix I I ENNReal :=
+  M₂ * M₁
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+矩阵乘法条目公式：验证条目定义与代数乘法的一致性。
+-/
+theorem matrix_mul_entry {I : Type} [Fintype I] (M₂ M₁ : Matrix I I ENNReal) (i j : I) :
+    matrix_entry (matrix_mul M₂ M₁) i j = ∑ k : I, matrix_entry M₂ k j * matrix_entry M₁ i k := by
+  dsimp [matrix_entry, matrix_mul]
+  exact Matrix.mul_apply
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+矩阵乘法在标准矩阵索引下的展开式。
+-/
+theorem matrix_mul_apply {I : Type} [Fintype I] (M₂ M₁ : Matrix I I ENNReal) (j i : I) :
+    (matrix_mul M₂ M₁) j i = ∑ k : I, M₂ j k * M₁ k i := by
+  dsimp [matrix_mul]
+  exact Matrix.mul_apply
+
+/-! ### 2. 全域/受限 Lip 矩阵谓词与证书族 (CH02-D01) -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+子集受限 Lip 放缩不等式：
+对所有 x, y ∈ U 及所有输出分量 j ∈ I，
+d_j(ϕ(x), ϕ(y)) ≤ ∑_{i ∈ I} L_{i → j} d_i(x, y)。
+-/
+def LipBoundOn {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : Matrix I I ENNReal) : Prop :=
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L j i * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+受限 Lip 矩阵谓词：包含子集约束 U ⊆ dom(ϕ) 及受限放缩不等式。
+-/
+def HasRestrictedLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : Matrix I I ENNReal) : Prop :=
+  U ⊆ dom ϕ ∧ LipBoundOn d ϕ U L
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+受限 Lip 证书族 ℒ(ϕ)|_U。
+-/
+def restrictedLipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (Matrix I I ENNReal) :=
+  { L | HasRestrictedLip d ϕ U L }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+全域 Lip 矩阵谓词：在全定义域 dom(ϕ) 上的受限 Lip 矩阵。
+-/
+def HasLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : Matrix I I ENNReal) : Prop :=
+  HasRestrictedLip d ϕ (dom ϕ) L
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+全域 Lip 证书族 ℒ(ϕ)。
+-/
+def lipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (Matrix I I ENNReal) :=
+  { L | HasLip d ϕ L }
+
+/-- 全域 Lip 条件的显式逐点充要条件。 -/
+theorem hasLip_iff {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : Matrix I I ENNReal) :
+    HasLip d ϕ L ↔ ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L j i * d i x y := by
+  dsimp [HasLip, HasRestrictedLip, LipBoundOn]
+  simp
+
+/-- 全域证书族等于全定义域上的受限证书族。 -/
+theorem restrictedLipSet_dom {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    restrictedLipSet d ϕ (dom ϕ) = lipSet d ϕ :=
+  rfl
+
+/-! ### 3. 含非空条件的受限 co-Lip 矩阵及证书族 (CH02-D02) -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+子集受限 co-Lip 放缩不等式：
+对所有 x, y ∈ U 及所有输出分量 j ∈ I，
+∑_{i ∈ I} K_{i → j} d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))。
+-/
+def CoLipBoundOn {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : Matrix I I ENNReal) : Prop :=
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, K j i * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+含非空条件的受限 co-Lip 矩阵谓词：
+明确包含非空条件 U.Nonempty，以及 U ⊆ dom(ϕ) 与下界放缩不等式。
+-/
+def HasRestrictedCoLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : Matrix I I ENNReal) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧ CoLipBoundOn d ϕ U K
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+受限 co-Lip 证书族 𝒦(ϕ)|_U。
+遵循原文约定：“凡出现 𝒦(ϕ)|_U，均包含这里的非空性条件 U ≠ ∅”。
+-/
+def restrictedCoLipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (Matrix I I ENNReal) :=
+  { K | HasRestrictedCoLip d ϕ U K }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+全域 co-Lip 矩阵谓词：在全定义域 dom(ϕ) 上评估（包含非空条件）。
+-/
+def HasCoLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (K : Matrix I I ENNReal) : Prop :=
+  HasRestrictedCoLip d ϕ (dom ϕ) K
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+全域 co-Lip 证书族 𝒦(ϕ)|_{dom(ϕ)}。
+-/
+def coLipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (Matrix I I ENNReal) :=
+  { K | HasCoLip d ϕ K }
+
+/-- 受限 co-Lip 证书必有非空评估域。 -/
+theorem restrictedCoLipSet_nonempty {X I : Type} [Fintype I] {bot : X}
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) : U.Nonempty :=
+  hK.1
+
+/-- 受限 co-Lip 证书之评估域必包含于定义域。 -/
+theorem restrictedCoLipSet_subset_dom {X I : Type} [Fintype I] {bot : X}
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) : U ⊆ dom ϕ :=
+  hK.2.1
+
+/-! ### 4. 单输入通道、单行稀疏与对角特例 (CH02-D07) -/
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+分量通道：有序对 (i, j) 表示从输入分量 d_i 到输出分量 d_j 的通道。
+-/
+def ComponentChannel (I : Type) : Type := I × I
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+单输入通道 / 单行稀疏条件：
+输出分量 j 的第 j 行中，除输入分量 i 外的所有条目均为零。
+即：对所有 k ≠ i，(M)_{jk} = M_{k → j} = 0。
+-/
+def SingleRowSparse {I : Type} (M : Matrix I I ENNReal) (i j : I) : Prop :=
+  ∀ k : I, k ≠ i → M j k = 0
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+对角矩阵特例：所有非对角条目均为零。
+即：对所有输出分量 j 与输入分量 k（k ≠ j），(M)_{jk} = 0。
+-/
+def IsDiagonal {I : Type} (M : Matrix I I ENNReal) : Prop :=
+  ∀ j k : I, k ≠ j → M j k = 0
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+对角矩阵对每个分量 j 均在同分量通道 (j, j) 处满足单行稀疏条件。
+-/
+theorem isDiagonal_singleRowSparse {I : Type} (M : Matrix I I ENNReal) (h : IsDiagonal M) (j : I) :
+    SingleRowSparse M j j :=
+  h j
+
+/-! ### 5. 单一输入项行化简；包含对角特例 (CH02-P19) -/
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+单行稀疏性下的求和项折叠：
+若第 j 行除输入分量 i 外均为零，则对任意点对 x, y，求和项化简为单一输入分量项：
+∑_{k ∈ I} L_{k → j} d_k(x, y) = L_{i → j} d_i(x, y)。
+-/
+theorem sum_eq_single_of_singleRowSparse {X I : Type} [Fintype I]
+    (d : I → X → X → ENNReal) (x y : X) (L : Matrix I I ENNReal) {i j : I}
+    (h_sparse : SingleRowSparse L i j) :
+    ∑ k : I, L j k * d k x y = L j i * d i x y := by
+  apply Finset.sum_eq_single i
+  · intro k _ hk
+    rw [h_sparse k hk, zero_mul]
+  · intro hi
+    exact False.elim (hi (Finset.mem_univ i))
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+单一输入项行化简（基于 LipBoundOn）：
+若 L 为受限 Lip 矩阵且满足单行稀疏条件 SingleRowSparse L i j，
+则对任意 x, y ∈ U，d_j(ϕ(x), ϕ(y)) ≤ L_{i → j} d_i(x, y)。
+-/
+theorem lip_bound_of_singleRowSparse {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : LipBoundOn d ϕ U L) {i j : I} (h_sparse : SingleRowSparse L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j i * d i x y := by
+  have h_le := hL x hx y hy j
+  have h_sum := sum_eq_single_of_singleRowSparse d x y L h_sparse
+  rwa [h_sum] at h_le
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+单一输入项行化简（基于证书族 ℒ(ϕ)|_U）：
+L ∈ restrictedLipSet d ϕ U 时的同形特化。
+-/
+theorem restricted_lip_bound_of_singleRowSparse {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : L ∈ restrictedLipSet d ϕ U) {i j : I} (h_sparse : SingleRowSparse L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j i * d i x y :=
+  lip_bound_of_singleRowSparse d ϕ hL.2 h_sparse hx hy
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+对角特例行化简：
+若 L 为对角矩阵，则对任意输出分量 j 与 x, y ∈ U，
+d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} d_j(x, y)。
+-/
+theorem lip_bound_of_isDiagonal {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : LipBoundOn d ϕ U L) (h_diag : IsDiagonal L) (j : I)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  lip_bound_of_singleRowSparse d ϕ hL (isDiagonal_singleRowSparse L h_diag j) hx hy
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+对角特例行化简（基于证书族 ℒ(ϕ)|_U）。
+-/
+theorem restricted_lip_bound_of_isDiagonal {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : L ∈ restrictedLipSet d ϕ U) (h_diag : IsDiagonal L) (j : I)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  restricted_lip_bound_of_singleRowSparse d ϕ hL (isDiagonal_singleRowSparse L h_diag j) hx hy
+
+/-! ### 6. 正 co-Lip 通道保持正距离 (CH02-P20) -/
+
+/-- 非负有限和的单项下界辅助引理。 -/
+theorem single_term_le_sum {I : Type} [Fintype I] (f : I → ENNReal) (i : I) :
+    f i ≤ ∑ k : I, f k :=
+  Finset.single_le_sum (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P20)
+命题 2.8(i)（正 co-Lip 通道保持可分辨性）：
+设 K ∈ 𝒦(ϕ)|_U。若 K_{i → j} &gt; 0，则对任意 x, y ∈ U，
+d_i(x, y) &gt; 0 ⟹ d_j(ϕ(x), ϕ(y)) &gt; 0。
+-/
+theorem pos_coLip_channel_preserves_pos_dist {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) {i j : I} (hK_pos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hdist : 0 &lt; d i x y) :
+    0 &lt; d j (ϕ.func x) (ϕ.func y) := by
+  have h_bound : ∑ k : I, K j k * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK.2.2 x hx y hy j
+  have h_term : K j i * d i x y ≤ ∑ k : I, K j k * d k x y :=
+    single_term_le_sum (fun k =&gt; K j k * d k x y) i
+  have h_pos : 0 &lt; K j i * d i x y :=
+    ENNReal.mul_pos hK_pos.ne' hdist.ne'
+  exact lt_of_lt_of_le (lt_of_lt_of_le h_pos h_term) h_bound
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P20)
+正 co-Lip 通道保持可分辨性（基于 CoLipBoundOn 的直接表述）。
+-/
+theorem colip_bound_channel_preserves_pos_dist {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {K : Matrix I I ENNReal}
+    (hK : CoLipBoundOn d ϕ U K) {i j : I} (hK_pos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hdist : 0 &lt; d i x y) :
+    0 &lt; d j (ϕ.func x) (ϕ.func y) := by
+  have h_bound : ∑ k : I, K j k * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK x hx y hy j
+  have h_term : K j i * d i x y ≤ ∑ k : I, K j k * d k x y :=
+    single_term_le_sum (fun k =&gt; K j k * d k x y) i
+  have h_pos : 0 &lt; K j i * d i x y :=
+    ENNReal.mul_pos hK_pos.ne' hdist.ne'
+  exact lt_of_lt_of_le (lt_of_lt_of_le h_pos h_term) h_bound
+
+/-! ### 7. 全对角正 co-Lip 反射族零距 (CH02-P21) -/
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P21)
+命题 2.8(ii)（全对角正 co-Lip 反射族零距关系）：
+设 K ∈ 𝒦(ϕ)|_U。若对所有 j ∈ I 均有 K_{j → j} &gt; 0，则 ϕ 反射族零距关系：
+对任意 x, y ∈ U，ϕ(x) ~_𝒢 ϕ(y) ⟹ x ~_𝒢 y。
+注：严格遵循原文与义务要求，“不加强为点相等 x = y”。
+-/
+theorem all_diagonal_pos_coLip_reflects_gaugeZeroRelated {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) (hK_diag : ∀ j : I, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (h_zero : GaugeZeroRelated d (ϕ.func x) (ϕ.func y)) :
+    GaugeZeroRelated d x y := by
+  intro j
+  by_contra h_ne
+  have h_pos : 0 &lt; d j x y := pos_iff_ne_zero.mpr h_ne
+  have h_out_pos : 0 &lt; d j (ϕ.func x) (ϕ.func y) :=
+    pos_coLip_channel_preserves_pos_dist d ϕ hK (hK_diag j) hx hy h_pos
+  have h_out_zero : d j (ϕ.func x) (ϕ.func y) = 0 := h_zero j
+  rw [h_out_zero] at h_out_pos
+  exact lt_irrefl 0 h_out_pos
+
+/-! ### 8. 习题 2.2：标量双侧界 (CH02-P25) -/
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+习题 2.2 下界部分：
+若 K ∈ 𝒦(ϕ)|_U，则对任意 x, y ∈ U 与输出分量 j，
+K_{j → j} · d_j(x, y) ≤ d_j(ϕ(x), ϕ(y))。
+-/
+theorem exercise_2_2_lower_bound {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (j : I) (K : Matrix I I ENNReal) (hK : K ∈ restrictedCoLipSet d ϕ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+  have h_colip := hK.2.2 x hx y hy j
+  have h_single := single_term_le_sum (fun k =&gt; K j k * d k x y) j
+  exact le_trans h_single h_colip
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+习题 2.2 上界部分：
+若 L ∈ ℒ(ϕ)|_U 且输出分量 j 满足单行对角稀疏条件 L_{k → j} = 0 (∀ k ≠ j)，
+则对任意 x, y ∈ U，
+d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} · d_j(x, y)。
+-/
+theorem exercise_2_2_upper_bound {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (j : I) (L : Matrix I I ENNReal) (hL : L ∈ restrictedLipSet d ϕ U)
+    (hL_diag : SingleRowSparse L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  restricted_lip_bound_of_singleRowSparse d ϕ hL hL_diag hx hy
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+习题 2.2 完整标量双侧界：
+设 ϕ ∈ 𝒳_op，U ⊆ dom(ϕ)，j ∈ I。给定 L ∈ ℒ(ϕ)|_U 与 K ∈ 𝒦(ϕ)|_U。
+若 ϕ 在 U 上关于输出分量 d_j 满足只保留对角输入项的 Lip 上界：
+  L_{k → j} = 0 (∀ k ≠ j)，
+则对任意 x, y ∈ U 有标量双侧不等式：
+  K_{j → j} · d_j(x, y) ≤ d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} · d_j(x, y)。
+-/
+theorem exercise_2_2_scalar_two_sided_bound {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (j : I) (L K : Matrix I I ENNReal)
+    (hL : L ∈ restrictedLipSet d ϕ U) (hK : K ∈ restrictedCoLipSet d ϕ U)
+    (hL_diag : SingleRowSparse L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  ⟨exercise_2_2_lower_bound d ϕ j K hK hx hy,
+   exercise_2_2_upper_bound d ϕ j L hL hL_diag hx hy⟩
+
+end formal_oet.vol_01.ch_02_operator_bounds
+</code></pre>
+<pre><code class="language-lean">import OperatorBounds
+
+def main : IO Unit :=
+  IO.println &quot;LCH01: Operator bounds formalized and verified successfully.&quot;
+</code></pre>
+<h3>对齐信息交付</h3>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH01&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipBoundOn&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasRestrictedLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.hasLip_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet_dom&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化全域与子集受限Lipschitz矩阵谓词及其证书族。LipBoundOn表示在点集U上的逐点放缩不等式∀ x y ∈ U, ∀ j ∈ I, d_j(ϕ(x), ϕ(y)) ≤ ∑ i, L_{i→j} d_i(x, y)；HasRestrictedLip封装约束条件U ⊆ dom(ϕ)与放缩不等式；restrictedLipSet定义证书族ℒ(ϕ)|_U；HasLip与lipSet通过U = dom(ϕ)特化给出全域Lip矩阵谓词与全域证书族ℒ(ϕ)；引理hasLip_iff与restrictedLipSet_dom刻画其等价表示。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipBoundOn&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasRestrictedCoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasCoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet_nonempty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet_subset_dom&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化包含显式非空条件的受限co-Lipschitz矩阵谓词及证书族。CoLipBoundOn表示下界放缩不等式∀ x y ∈ U, ∀ j ∈ I, ∑ i, K_{i→j} d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))；HasRestrictedCoLip严格满足定义要求，包含U.Nonempty、U ⊆ dom(ϕ)以及CoLipBoundOn；restrictedCoLipSet定义证书族𝒦(ϕ)|_U；HasCoLip与coLipSet给出全域特化；并提供提取非空性与定义域包含的投影引理。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.MatrixBound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_entry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_mul&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_entry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_apply&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化输入/输出矩阵指标约定与扩展非负矩阵乘法。遵循OET约定以输出分量j为行指标、输入分量i为列指标，即(M)_{ji} = M_{i→j}，由matrix_entry M i j = M j i显式表示；matrix_mul定义代数矩阵乘法M₂ * M₁；matrix_mul_entry与matrix_mul_apply证明乘积条目与复合求和公式(M₂ · M₁)_{i→j} = ∑_k (M₂)_{k→j} (M₁)_{i→k}完全一致。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.ComponentChannel&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.SingleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.IsDiagonal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.isDiagonal_singleRowSparse&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化分量通道、单输入通道（单行稀疏）与对角矩阵特例。ComponentChannel定义为有序对I × I，表示从输入分量d_i到输出分量d_j；SingleRowSparse M i j表述在输出分量j的行中除输入分量i外其余条目均为零（∀ k ≠ i, (M)_{jk} = 0）；IsDiagonal表述所有非对角条目为零（∀ j k, k ≠ j → (M)_{jk} = 0）；引理isDiagonal_singleRowSparse证明对角矩阵在每一行均满足对应同分量通道的单行稀疏性。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.sum_eq_single_of_singleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_bound_of_singleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_bound_of_singleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_bound_of_isDiagonal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_bound_of_isDiagonal&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化单一输入项行化简及对角特例。sum_eq_single_of_singleRowSparse证明在单行稀疏条件下矩阵向量求和折叠为单一输入通道项∑_k L_{k→j} d_k(x, y) = L_{i→j} d_i(x, y)；lip_bound_of_singleRowSparse与restricted_lip_bound_of_singleRowSparse证明Lip不等式化简为d_j(ϕ(x), ϕ(y)) ≤ L_{i→j} d_i(x, y)；lip_bound_of_isDiagonal与restricted_lip_bound_of_isDiagonal给出对角特例化简d_j(ϕ(x), ϕ(y)) ≤ L_{j→j} d_j(x, y)。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D07&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.single_term_le_sum&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pos_coLip_channel_preserves_pos_dist&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.colip_bound_channel_preserves_pos_dist&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化命题2.8(i)：正co-Lip通道保持正距离。pos_coLip_channel_preserves_pos_dist证明若K ∈ 𝒦(ϕ)|_U且K_{i→j} &gt; 0，则对任意x, y ∈ U，d_i(x, y) &gt; 0蕴含d_j(ϕ(x), ϕ(y)) &gt; 0；借助single_term_le_sum将求和下界放缩至单个通道项，并由ENNReal乘积的正性推出结论；同时提供直接基于CoLipBoundOn的形式colip_bound_channel_preserves_pos_dist。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.all_diagonal_pos_coLip_reflects_gaugeZeroRelated&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化命题2.8(ii)：全对角正co-Lip反射族零距。若K ∈ 𝒦(ϕ)|_U且对所有j ∈ I有K_{j→j} &gt; 0，则对任意x, y ∈ U，GaugeZeroRelated d (ϕ(x)) (ϕ(y))蕴含GaugeZeroRelated d x y；严格遵循原文和不加强说明，结论为全分量零距离关系GaugeZeroRelated d x y而非点相等x = y。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-P20&quot;,
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_lower_bound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_upper_bound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_scalar_two_sided_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化习题2.2：对角输入项的标量双侧界。设L ∈ ℒ(ϕ)|_U，K ∈ 𝒦(ϕ)|_U，且第j行满足单行对角稀疏条件SingleRowSparse L j j（即L_{k→j} = 0, ∀ k ≠ j）。exercise_2_2_scalar_two_sided_bound证明对任意x, y ∈ U有标量双侧界K_{j→j} d_j(x, y) ≤ d_j(ϕ(x), ϕ(y)) ≤ L_{j→j} d_j(x, y)；分别给出下界exercise_2_2_lower_bound与上界exercise_2_2_upper_bound的分步形式。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D07&quot;,
+        &quot;CH02-P19&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH01:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/reviews/slots/LCH01-A1.json">review · LCH01-A1.json</a><span class="hash">SHA256 c3c039f70e2a1287fa9329a20531f69ba7dfc80fbb0fd3bcad677d43f1ccc740</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/stderr.txt">attachment · stderr.txt</a><span class="hash">SHA256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/alignment.original.json">attachment · alignment.original.json</a><span class="hash">SHA256 b15ab466b91b38abbf4094f4832adbf9339c44af0b824bf17217833fad2f03c6</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json">review · scoring-inputs.json</a><span class="hash">SHA256 9dd4ce0784879108bee0eb785a7197660268600117d98ed0be50f2a94b56d183</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/record.json">正式记录 record.json</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Checked the retained source judgment and available candidate answer/artifacts. Only specific established false or unsupported commitments are appended; missing work alone receives no additional finding.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> LipBoundOn给完整点对/输出分量求和界，HasRestrictedLip另合入U⊆dom φ，restrictedLipSet为真实集合；HasLip取完整dom，hasLip_iff及restrictedLipSet_dom证明对应。允许空U与ENNReal系数，无坐标inf最小矩阵误断。</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> HasRestrictedCoLip明确含U.Nonempty、合法域及完整下界，族为真实Set，且投影引理明确提取非空与域包含；无空域coLip或条目必须有限的限制。</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matrix_entry M i j=M j i明确输入列/输出行；matrix_mul实际使用标准M₂*M₁，matrix_mul_entry给原通道顺序有限求和，方向正确且系数ENNReal。</p>
+<h3>CH02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> ComponentChannel=I×I；SingleRowSparse固定任意输出j且仅指定输入i可非零，允许i≠j；IsDiagonal及其行特化成立。此选段D07不要求完整历史单列/解耦目标，未加隐藏义务。</p>
+<h3>CH02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> sum_eq_single_of_singleRowSparse在任意i→j将全部其他项以0*d=0删去，restricted_lip_bound给合法证书的单标量界；diagonal两个版本为同分量特例，未把一般命题限于对角。</p>
+<h3>CH02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 正coLip条目乘正输入距的ENNReal乘积为正，再用单项≤非负有限和≤输出距；实际证书版本与更广CoLipBoundOn版均交付，输入距或系数∞均合法。</p>
+<h3>CH02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 所有对角K正时，若输入某分量非零则P20迫使输出该分量正，矛盾于冻结GaugeZeroRelated；结论仅为族零距，无族分离/点相等要求。</p>
+<h3>CH02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> exercise_2_2_scalar_two_sided_bound对合法L/K只假设L在第j行同分量稀疏；下界由Kjj*dj≤总和得，K不要求稀疏、有限或正；上界P19。因此原标量双侧界完整，包含0∞规则。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（8项）</summary><div class="prose"><h3>CH02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The full and restricted Lip predicates quantify every point pair and every output component, use ENNReal coefficients, and define genuine sets of certificates. Restriction legality U⊆dom(φ) is part of the predicate; the global-domain specialization is proved or definitionally exact. No prescribed extremal matrix is introduced.</p>
+<h3>CH02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Restricted co-Lip contains U.Nonempty, U⊆dom(φ), and the full lower matrix inequality. The certificate family is exactly its set of satisfying matrices. Zero and infinite coefficients remain admitted; no separation or finiteness premise is added.</p>
+<h3>CH02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Rows are outputs and columns are inputs: the i→j coefficient is M j i. The candidate proves the standard matrix multiplication entry Σk M₂ j k*M₁ k i, with the later matrix on the left. This is the original indexing convention, with no transpose ambiguity.</p>
+<h3>CH02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> A channel is the ordered pair (input,output). Row sparsity asserts every coefficient outside the selected input column is zero; the diagonal case specializes this for every output. These are explicit definitions on actual matrices rather than certificate fields holding conclusions.</p>
+<h3>CH02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The proof reduces the complete finite sum to its selected single term using zero coefficients, and then applies the original Lip bound. The diagonal specialization is supplied for every component. ENNReal multiplication preserves 0*∞=0, so no coefficient or distance is required finite.</p>
+<h3>CH02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The selected nonnegative channel term is bounded by the whole finite row sum and then by the co-Lip output distance. ENNReal product positivity is proved/applied from strict positivity of both factors, including infinite values. Points remain in the supplied U.</p>
+<h3>CH02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> All positive diagonal entries are used one component at a time to contradict a positive input distance when the corresponding output distance is zero. The conclusion is GaugeZeroRelated, never point equality; no separation axiom is smuggled in.</p>
+<h3>CH02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The two-sided scalar inequality uses only sparsity of the Lip row. The co-Lip lower bound follows by taking its diagonal term below the whole sum, so K is not required diagonal, positive, or finite. All quantified points and both inequalities match Exercise 2.2.</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>I have started compiling <code>OperatorBounds.lean</code> and <code>Main.lean</code> in the background and will continue once the compilation completes.
+I am checking the axioms of all declarations and will proceed once the check finishes.
+I am verifying the clean build of <code>OperatorBounds.lean</code> and <code>Main.lean</code>.
+{}
+本项目已将 <code>obligations.json</code> 中指定的全部 8 项交付义务完整形式化为一个 Lean 4 项目，环境基于 Lean 4.29.1 与 Mathlib <code>5e932f97dd25535344f80f9dd8da3aab83df0fe6</code>。项目直接导入冻结模块 [<code>formal_oet/vol_01/ch_01_foundations/gauge_space.lean</code>](file:///private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/gemini/sessions/LCH01-A1/1/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean) 与 [<code>formal_oet/vol_01/ch_01_foundations/operator_space.lean</code>](file:///private/tmp/math-gauge-v06-native-supplement-20261104-01a1a43a/gemini/sessions/LCH01-A1/1/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean)，未使用 <code>sorry</code>、<code>admit</code> 或新增公理，仅依赖标准逻辑公理（<code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>）。</p>
+<h3>源码交付</h3>
+<pre><code class="language-lean">import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Tactic
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+namespace formal_oet.vol_01.ch_02_operator_bounds
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped Classical
+
+set_option linter.style.longLine false
+set_option linter.style.emptyLine false
+
+/-!
+# LCH01 · 通道接口节群 (Channel Interface Section Group)
+
+本模块形式化 OET 第一卷第 2 章关于算子界（Operator Bounds）的核心接口与通道性质，
+涵盖 `obligations.json` 中指定的全部 8 项交付义务：
+- CH02-D01: 全域/受限 Lip 矩阵谓词与证书族
+- CH02-D02: 含非空条件的受限 co-Lip 矩阵及证书族
+- CH02-D03: 输入/输出矩阵指标约定与乘法
+- CH02-D07: 单输入通道、单行稀疏与对角特例
+- CH02-P19: 单一输入项行化简；包含对角特例
+- CH02-P20: 正 co-Lip 通道保持正距离
+- CH02-P21: 全对角正 co-Lip 反射族零距；不加强为点相等
+- CH02-P25: 习题 2.2：标量双侧界
+-/
+
+/-! ### 1. 矩阵指标约定与乘法 (CH02-D03) -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负矩阵类型别名。
+约定：行指标为输出分量 j，列指标为输入分量 i，即 (M)_{ji} = M_{i → j}。
+-/
+def MatrixBound (I : Type) : Type := Matrix I I ENNReal
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+矩阵条目访问：`matrix_entry M i j` 给出通道 i → j 对应的矩阵条目 M_{i → j} = (M)_{ji}。
+-/
+def matrix_entry {I : Type} (M : Matrix I I ENNReal) (i j : I) : ENNReal :=
+  M j i
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负矩阵乘法：(M₂ · M₁)_{i → j} = ∑_{k ∈ I} (M₂)_{k → j} (M₁)_{i → k}。
+在行列约定下即为标准矩阵乘法 M₂ * M₁。
+-/
+noncomputable def matrix_mul {I : Type} [Fintype I] (M₂ M₁ : Matrix I I ENNReal) : Matrix I I ENNReal :=
+  M₂ * M₁
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+矩阵乘法条目公式：验证条目定义与代数乘法的一致性。
+-/
+theorem matrix_mul_entry {I : Type} [Fintype I] (M₂ M₁ : Matrix I I ENNReal) (i j : I) :
+    matrix_entry (matrix_mul M₂ M₁) i j = ∑ k : I, matrix_entry M₂ k j * matrix_entry M₁ i k := by
+  dsimp [matrix_entry, matrix_mul]
+  exact Matrix.mul_apply
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+矩阵乘法在标准矩阵索引下的展开式。
+-/
+theorem matrix_mul_apply {I : Type} [Fintype I] (M₂ M₁ : Matrix I I ENNReal) (j i : I) :
+    (matrix_mul M₂ M₁) j i = ∑ k : I, M₂ j k * M₁ k i := by
+  dsimp [matrix_mul]
+  exact Matrix.mul_apply
+
+/-! ### 2. 全域/受限 Lip 矩阵谓词与证书族 (CH02-D01) -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+子集受限 Lip 放缩不等式：
+对所有 x, y ∈ U 及所有输出分量 j ∈ I，
+d_j(ϕ(x), ϕ(y)) ≤ ∑_{i ∈ I} L_{i → j} d_i(x, y)。
+-/
+def LipBoundOn {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : Matrix I I ENNReal) : Prop :=
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L j i * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+受限 Lip 矩阵谓词：包含子集约束 U ⊆ dom(ϕ) 及受限放缩不等式。
+-/
+def HasRestrictedLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : Matrix I I ENNReal) : Prop :=
+  U ⊆ dom ϕ ∧ LipBoundOn d ϕ U L
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+受限 Lip 证书族 ℒ(ϕ)|_U。
+-/
+def restrictedLipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (Matrix I I ENNReal) :=
+  { L | HasRestrictedLip d ϕ U L }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+全域 Lip 矩阵谓词：在全定义域 dom(ϕ) 上的受限 Lip 矩阵。
+-/
+def HasLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : Matrix I I ENNReal) : Prop :=
+  HasRestrictedLip d ϕ (dom ϕ) L
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+全域 Lip 证书族 ℒ(ϕ)。
+-/
+def lipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (Matrix I I ENNReal) :=
+  { L | HasLip d ϕ L }
+
+/-- 全域 Lip 条件的显式逐点充要条件。 -/
+theorem hasLip_iff {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : Matrix I I ENNReal) :
+    HasLip d ϕ L ↔ ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L j i * d i x y := by
+  dsimp [HasLip, HasRestrictedLip, LipBoundOn]
+  simp
+
+/-- 全域证书族等于全定义域上的受限证书族。 -/
+theorem restrictedLipSet_dom {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    restrictedLipSet d ϕ (dom ϕ) = lipSet d ϕ :=
+  rfl
+
+/-! ### 3. 含非空条件的受限 co-Lip 矩阵及证书族 (CH02-D02) -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+子集受限 co-Lip 放缩不等式：
+对所有 x, y ∈ U 及所有输出分量 j ∈ I，
+∑_{i ∈ I} K_{i → j} d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))。
+-/
+def CoLipBoundOn {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : Matrix I I ENNReal) : Prop :=
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, K j i * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+含非空条件的受限 co-Lip 矩阵谓词：
+明确包含非空条件 U.Nonempty，以及 U ⊆ dom(ϕ) 与下界放缩不等式。
+-/
+def HasRestrictedCoLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : Matrix I I ENNReal) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧ CoLipBoundOn d ϕ U K
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+受限 co-Lip 证书族 𝒦(ϕ)|_U。
+遵循原文约定：“凡出现 𝒦(ϕ)|_U，均包含这里的非空性条件 U ≠ ∅”。
+-/
+def restrictedCoLipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (Matrix I I ENNReal) :=
+  { K | HasRestrictedCoLip d ϕ U K }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+全域 co-Lip 矩阵谓词：在全定义域 dom(ϕ) 上评估（包含非空条件）。
+-/
+def HasCoLip {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (K : Matrix I I ENNReal) : Prop :=
+  HasRestrictedCoLip d ϕ (dom ϕ) K
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+全域 co-Lip 证书族 𝒦(ϕ)|_{dom(ϕ)}。
+-/
+def coLipSet {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (Matrix I I ENNReal) :=
+  { K | HasCoLip d ϕ K }
+
+/-- 受限 co-Lip 证书必有非空评估域。 -/
+theorem restrictedCoLipSet_nonempty {X I : Type} [Fintype I] {bot : X}
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) : U.Nonempty :=
+  hK.1
+
+/-- 受限 co-Lip 证书之评估域必包含于定义域。 -/
+theorem restrictedCoLipSet_subset_dom {X I : Type} [Fintype I] {bot : X}
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) : U ⊆ dom ϕ :=
+  hK.2.1
+
+/-! ### 4. 单输入通道、单行稀疏与对角特例 (CH02-D07) -/
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+分量通道：有序对 (i, j) 表示从输入分量 d_i 到输出分量 d_j 的通道。
+-/
+def ComponentChannel (I : Type) : Type := I × I
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+单输入通道 / 单行稀疏条件：
+输出分量 j 的第 j 行中，除输入分量 i 外的所有条目均为零。
+即：对所有 k ≠ i，(M)_{jk} = M_{k → j} = 0。
+-/
+def SingleRowSparse {I : Type} (M : Matrix I I ENNReal) (i j : I) : Prop :=
+  ∀ k : I, k ≠ i → M j k = 0
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+对角矩阵特例：所有非对角条目均为零。
+即：对所有输出分量 j 与输入分量 k（k ≠ j），(M)_{jk} = 0。
+-/
+def IsDiagonal {I : Type} (M : Matrix I I ENNReal) : Prop :=
+  ∀ j k : I, k ≠ j → M j k = 0
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+对角矩阵对每个分量 j 均在同分量通道 (j, j) 处满足单行稀疏条件。
+-/
+theorem isDiagonal_singleRowSparse {I : Type} (M : Matrix I I ENNReal) (h : IsDiagonal M) (j : I) :
+    SingleRowSparse M j j :=
+  h j
+
+/-! ### 5. 单一输入项行化简；包含对角特例 (CH02-P19) -/
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+单行稀疏性下的求和项折叠：
+若第 j 行除输入分量 i 外均为零，则对任意点对 x, y，求和项化简为单一输入分量项：
+∑_{k ∈ I} L_{k → j} d_k(x, y) = L_{i → j} d_i(x, y)。
+-/
+theorem sum_eq_single_of_singleRowSparse {X I : Type} [Fintype I]
+    (d : I → X → X → ENNReal) (x y : X) (L : Matrix I I ENNReal) {i j : I}
+    (h_sparse : SingleRowSparse L i j) :
+    ∑ k : I, L j k * d k x y = L j i * d i x y := by
+  apply Finset.sum_eq_single i
+  · intro k _ hk
+    rw [h_sparse k hk, zero_mul]
+  · intro hi
+    exact False.elim (hi (Finset.mem_univ i))
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+单一输入项行化简（基于 LipBoundOn）：
+若 L 为受限 Lip 矩阵且满足单行稀疏条件 SingleRowSparse L i j，
+则对任意 x, y ∈ U，d_j(ϕ(x), ϕ(y)) ≤ L_{i → j} d_i(x, y)。
+-/
+theorem lip_bound_of_singleRowSparse {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : LipBoundOn d ϕ U L) {i j : I} (h_sparse : SingleRowSparse L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j i * d i x y := by
+  have h_le := hL x hx y hy j
+  have h_sum := sum_eq_single_of_singleRowSparse d x y L h_sparse
+  rwa [h_sum] at h_le
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+单一输入项行化简（基于证书族 ℒ(ϕ)|_U）：
+L ∈ restrictedLipSet d ϕ U 时的同形特化。
+-/
+theorem restricted_lip_bound_of_singleRowSparse {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : L ∈ restrictedLipSet d ϕ U) {i j : I} (h_sparse : SingleRowSparse L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j i * d i x y :=
+  lip_bound_of_singleRowSparse d ϕ hL.2 h_sparse hx hy
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+对角特例行化简：
+若 L 为对角矩阵，则对任意输出分量 j 与 x, y ∈ U，
+d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} d_j(x, y)。
+-/
+theorem lip_bound_of_isDiagonal {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : LipBoundOn d ϕ U L) (h_diag : IsDiagonal L) (j : I)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  lip_bound_of_singleRowSparse d ϕ hL (isDiagonal_singleRowSparse L h_diag j) hx hy
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+对角特例行化简（基于证书族 ℒ(ϕ)|_U）。
+-/
+theorem restricted_lip_bound_of_isDiagonal {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {L : Matrix I I ENNReal}
+    (hL : L ∈ restrictedLipSet d ϕ U) (h_diag : IsDiagonal L) (j : I)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  restricted_lip_bound_of_singleRowSparse d ϕ hL (isDiagonal_singleRowSparse L h_diag j) hx hy
+
+/-! ### 6. 正 co-Lip 通道保持正距离 (CH02-P20) -/
+
+/-- 非负有限和的单项下界辅助引理。 -/
+theorem single_term_le_sum {I : Type} [Fintype I] (f : I → ENNReal) (i : I) :
+    f i ≤ ∑ k : I, f k :=
+  Finset.single_le_sum (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P20)
+命题 2.8(i)（正 co-Lip 通道保持可分辨性）：
+设 K ∈ 𝒦(ϕ)|_U。若 K_{i → j} &gt; 0，则对任意 x, y ∈ U，
+d_i(x, y) &gt; 0 ⟹ d_j(ϕ(x), ϕ(y)) &gt; 0。
+-/
+theorem pos_coLip_channel_preserves_pos_dist {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) {i j : I} (hK_pos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hdist : 0 &lt; d i x y) :
+    0 &lt; d j (ϕ.func x) (ϕ.func y) := by
+  have h_bound : ∑ k : I, K j k * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK.2.2 x hx y hy j
+  have h_term : K j i * d i x y ≤ ∑ k : I, K j k * d k x y :=
+    single_term_le_sum (fun k =&gt; K j k * d k x y) i
+  have h_pos : 0 &lt; K j i * d i x y :=
+    ENNReal.mul_pos hK_pos.ne' hdist.ne'
+  exact lt_of_lt_of_le (lt_of_lt_of_le h_pos h_term) h_bound
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P20)
+正 co-Lip 通道保持可分辨性（基于 CoLipBoundOn 的直接表述）。
+-/
+theorem colip_bound_channel_preserves_pos_dist {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {K : Matrix I I ENNReal}
+    (hK : CoLipBoundOn d ϕ U K) {i j : I} (hK_pos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hdist : 0 &lt; d i x y) :
+    0 &lt; d j (ϕ.func x) (ϕ.func y) := by
+  have h_bound : ∑ k : I, K j k * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK x hx y hy j
+  have h_term : K j i * d i x y ≤ ∑ k : I, K j k * d k x y :=
+    single_term_le_sum (fun k =&gt; K j k * d k x y) i
+  have h_pos : 0 &lt; K j i * d i x y :=
+    ENNReal.mul_pos hK_pos.ne' hdist.ne'
+  exact lt_of_lt_of_le (lt_of_lt_of_le h_pos h_term) h_bound
+
+/-! ### 7. 全对角正 co-Lip 反射族零距 (CH02-P21) -/
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P21)
+命题 2.8(ii)（全对角正 co-Lip 反射族零距关系）：
+设 K ∈ 𝒦(ϕ)|_U。若对所有 j ∈ I 均有 K_{j → j} &gt; 0，则 ϕ 反射族零距关系：
+对任意 x, y ∈ U，ϕ(x) ~_𝒢 ϕ(y) ⟹ x ~_𝒢 y。
+注：严格遵循原文与义务要求，“不加强为点相等 x = y”。
+-/
+theorem all_diagonal_pos_coLip_reflects_gaugeZeroRelated {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X} {K : Matrix I I ENNReal}
+    (hK : K ∈ restrictedCoLipSet d ϕ U) (hK_diag : ∀ j : I, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (h_zero : GaugeZeroRelated d (ϕ.func x) (ϕ.func y)) :
+    GaugeZeroRelated d x y := by
+  intro j
+  by_contra h_ne
+  have h_pos : 0 &lt; d j x y := pos_iff_ne_zero.mpr h_ne
+  have h_out_pos : 0 &lt; d j (ϕ.func x) (ϕ.func y) :=
+    pos_coLip_channel_preserves_pos_dist d ϕ hK (hK_diag j) hx hy h_pos
+  have h_out_zero : d j (ϕ.func x) (ϕ.func y) = 0 := h_zero j
+  rw [h_out_zero] at h_out_pos
+  exact lt_irrefl 0 h_out_pos
+
+/-! ### 8. 习题 2.2：标量双侧界 (CH02-P25) -/
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+习题 2.2 下界部分：
+若 K ∈ 𝒦(ϕ)|_U，则对任意 x, y ∈ U 与输出分量 j，
+K_{j → j} · d_j(x, y) ≤ d_j(ϕ(x), ϕ(y))。
+-/
+theorem exercise_2_2_lower_bound {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (j : I) (K : Matrix I I ENNReal) (hK : K ∈ restrictedCoLipSet d ϕ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+  have h_colip := hK.2.2 x hx y hy j
+  have h_single := single_term_le_sum (fun k =&gt; K j k * d k x y) j
+  exact le_trans h_single h_colip
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+习题 2.2 上界部分：
+若 L ∈ ℒ(ϕ)|_U 且输出分量 j 满足单行对角稀疏条件 L_{k → j} = 0 (∀ k ≠ j)，
+则对任意 x, y ∈ U，
+d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} · d_j(x, y)。
+-/
+theorem exercise_2_2_upper_bound {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (j : I) (L : Matrix I I ENNReal) (hL : L ∈ restrictedLipSet d ϕ U)
+    (hL_diag : SingleRowSparse L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  restricted_lip_bound_of_singleRowSparse d ϕ hL hL_diag hx hy
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+习题 2.2 完整标量双侧界：
+设 ϕ ∈ 𝒳_op，U ⊆ dom(ϕ)，j ∈ I。给定 L ∈ ℒ(ϕ)|_U 与 K ∈ 𝒦(ϕ)|_U。
+若 ϕ 在 U 上关于输出分量 d_j 满足只保留对角输入项的 Lip 上界：
+  L_{k → j} = 0 (∀ k ≠ j)，
+则对任意 x, y ∈ U 有标量双侧不等式：
+  K_{j → j} · d_j(x, y) ≤ d_j(ϕ(x), ϕ(y)) ≤ L_{j → j} · d_j(x, y)。
+-/
+theorem exercise_2_2_scalar_two_sided_bound {X I : Type} [Fintype I] {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (j : I) (L K : Matrix I I ENNReal)
+    (hL : L ∈ restrictedLipSet d ϕ U) (hK : K ∈ restrictedCoLipSet d ϕ U)
+    (hL_diag : SingleRowSparse L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+    d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+  ⟨exercise_2_2_lower_bound d ϕ j K hK hx hy,
+   exercise_2_2_upper_bound d ϕ j L hL hL_diag hx hy⟩
+
+end formal_oet.vol_01.ch_02_operator_bounds
+</code></pre>
+<pre><code class="language-lean">import OperatorBounds
+
+def main : IO Unit :=
+  IO.println &quot;LCH01: Operator bounds formalized and verified successfully.&quot;
+</code></pre>
+<h3>对齐信息交付</h3>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH01&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.LipBoundOn&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasRestrictedLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.hasLip_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet_dom&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化全域与子集受限Lipschitz矩阵谓词及其证书族。LipBoundOn表示在点集U上的逐点放缩不等式∀ x y ∈ U, ∀ j ∈ I, d_j(ϕ(x), ϕ(y)) ≤ ∑ i, L_{i→j} d_i(x, y)；HasRestrictedLip封装约束条件U ⊆ dom(ϕ)与放缩不等式；restrictedLipSet定义证书族ℒ(ϕ)|_U；HasLip与lipSet通过U = dom(ϕ)特化给出全域Lip矩阵谓词与全域证书族ℒ(ϕ)；引理hasLip_iff与restrictedLipSet_dom刻画其等价表示。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.CoLipBoundOn&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasRestrictedCoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.HasCoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.coLipSet&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet_nonempty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLipSet_subset_dom&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化包含显式非空条件的受限co-Lipschitz矩阵谓词及证书族。CoLipBoundOn表示下界放缩不等式∀ x y ∈ U, ∀ j ∈ I, ∑ i, K_{i→j} d_i(x, y) ≤ d_j(ϕ(x), ϕ(y))；HasRestrictedCoLip严格满足定义要求，包含U.Nonempty、U ⊆ dom(ϕ)以及CoLipBoundOn；restrictedCoLipSet定义证书族𝒦(ϕ)|_U；HasCoLip与coLipSet给出全域特化；并提供提取非空性与定义域包含的投影引理。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.MatrixBound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_entry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_mul&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_entry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.matrix_mul_apply&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化输入/输出矩阵指标约定与扩展非负矩阵乘法。遵循OET约定以输出分量j为行指标、输入分量i为列指标，即(M)_{ji} = M_{i→j}，由matrix_entry M i j = M j i显式表示；matrix_mul定义代数矩阵乘法M₂ * M₁；matrix_mul_entry与matrix_mul_apply证明乘积条目与复合求和公式(M₂ · M₁)_{i→j} = ∑_k (M₂)_{k→j} (M₁)_{i→k}完全一致。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.ComponentChannel&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.SingleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.IsDiagonal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.isDiagonal_singleRowSparse&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化分量通道、单输入通道（单行稀疏）与对角矩阵特例。ComponentChannel定义为有序对I × I，表示从输入分量d_i到输出分量d_j；SingleRowSparse M i j表述在输出分量j的行中除输入分量i外其余条目均为零（∀ k ≠ i, (M)_{jk} = 0）；IsDiagonal表述所有非对角条目为零（∀ j k, k ≠ j → (M)_{jk} = 0）；引理isDiagonal_singleRowSparse证明对角矩阵在每一行均满足对应同分量通道的单行稀疏性。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.sum_eq_single_of_singleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_bound_of_singleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_bound_of_singleRowSparse&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.lip_bound_of_isDiagonal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.restricted_lip_bound_of_isDiagonal&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化单一输入项行化简及对角特例。sum_eq_single_of_singleRowSparse证明在单行稀疏条件下矩阵向量求和折叠为单一输入通道项∑_k L_{k→j} d_k(x, y) = L_{i→j} d_i(x, y)；lip_bound_of_singleRowSparse与restricted_lip_bound_of_singleRowSparse证明Lip不等式化简为d_j(ϕ(x), ϕ(y)) ≤ L_{i→j} d_i(x, y)；lip_bound_of_isDiagonal与restricted_lip_bound_of_isDiagonal给出对角特例化简d_j(ϕ(x), ϕ(y)) ≤ L_{j→j} d_j(x, y)。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D07&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.single_term_le_sum&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.pos_coLip_channel_preserves_pos_dist&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.colip_bound_channel_preserves_pos_dist&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化命题2.8(i)：正co-Lip通道保持正距离。pos_coLip_channel_preserves_pos_dist证明若K ∈ 𝒦(ϕ)|_U且K_{i→j} &gt; 0，则对任意x, y ∈ U，d_i(x, y) &gt; 0蕴含d_j(ϕ(x), ϕ(y)) &gt; 0；借助single_term_le_sum将求和下界放缩至单个通道项，并由ENNReal乘积的正性推出结论；同时提供直接基于CoLipBoundOn的形式colip_bound_channel_preserves_pos_dist。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.all_diagonal_pos_coLip_reflects_gaugeZeroRelated&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化命题2.8(ii)：全对角正co-Lip反射族零距。若K ∈ 𝒦(ϕ)|_U且对所有j ∈ I有K_{j→j} &gt; 0，则对任意x, y ∈ U，GaugeZeroRelated d (ϕ(x)) (ϕ(y))蕴含GaugeZeroRelated d x y；严格遵循原文和不加强说明，结论为全分量零距离关系GaugeZeroRelated d x y而非点相等x = y。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-P20&quot;,
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_lower_bound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_upper_bound&quot;
+        },
+        {
+          &quot;file&quot;: &quot;OperatorBounds.lean&quot;,
+          &quot;name&quot;: &quot;formal_oet.vol_01.ch_02_operator_bounds.exercise_2_2_scalar_two_sided_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;形式化习题2.2：对角输入项的标量双侧界。设L ∈ ℒ(ϕ)|_U，K ∈ 𝒦(ϕ)|_U，且第j行满足单行对角稀疏条件SingleRowSparse L j j（即L_{k→j} = 0, ∀ k ≠ j）。exercise_2_2_scalar_two_sided_bound证明对任意x, y ∈ U有标量双侧界K_{j→j} d_j(x, y) ≤ d_j(ϕ(x), ϕ(y)) ≤ L_{j→j} d_j(x, y)；分别给出下界exercise_2_2_lower_bound与上界exercise_2_2_upper_bound的分步形式。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D07&quot;,
+        &quot;CH02-P19&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH01:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/reviews/slots/LCH01-A1.json">review · LCH01-A1.json</a><span class="hash">SHA256 c3c039f70e2a1287fa9329a20531f69ba7dfc80fbb0fd3bcad677d43f1ccc740</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/stderr.txt">attachment · stderr.txt</a><span class="hash">SHA256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/responses/LCH01/A1/alignment.original.json">attachment · alignment.original.json</a><span class="hash">SHA256 b15ab466b91b38abbf4094f4832adbf9339c44af0b824bf17217833fad2f03c6</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/scoring-inputs.json">review · scoring-inputs.json</a><span class="hash">SHA256 9dd4ce0784879108bee0eb785a7197660268600117d98ed0be50f2a94b56d183</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f</span></li><li><a href="../../../../results/v0.6.0/gemini-3.8-flash-high/20261105/record.json">正式记录 record.json</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v5", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "研究稿完善", "weight": 10, "source_components": [], "public_tasks": 0, "private_tasks": 0, "families": 0, "aggregation": "family", "status": "under_construction"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 24, "private_tasks": 10, "tasks": 34, "parent_families": 30, "initial_slots": 34, "public_initial_slots": 24, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}}, "capacity": {"total": 100, "active": 90, "under_construction": 10}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "gemini-3.8-flash-high", "label": "Gemini 3.8 Flash High"}, "case": {"id": "LCH01", "title": "通道接口节群", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec", "review_sha256": "d5cde33fadec7a8be4c8822c81436750a31b00cf3341aba5c2a3a6afa871be9d"}, "nonlogical_retry_3": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec", "review_sha256": "d5cde33fadec7a8be4c8822c81436750a31b00cf3341aba5c2a3a6afa871be9d"}}, "partial": {"single_attempt": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec", "review_sha256": "d5cde33fadec7a8be4c8822c81436750a31b00cf3341aba5c2a3a6afa871be9d"}, "nonlogical_retry_3": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec", "review_sha256": "d5cde33fadec7a8be4c8822c81436750a31b00cf3341aba5c2a3a6afa871be9d"}}, "strict": {"single_attempt": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec", "review_sha256": "d5cde33fadec7a8be4c8822c81436750a31b00cf3341aba5c2a3a6afa871be9d"}, "nonlogical_retry_3": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3491dced4878fbb07f1f14c99b10d8b270f2d33057ff25eac3bf1d17d0b965ec", "review_sha256": "d5cde33fadec7a8be4c8822c81436750a31b00cf3341aba5c2a3a6afa871be9d"}}}}}</script><script src="../../../assets/results-core.js"></script><script src="../../../assets/case-results.js"></script></body></html>

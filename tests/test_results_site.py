@@ -114,11 +114,18 @@ class CurrentSiteTests(unittest.TestCase):
             before = {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()}
             SITE.write_site(root)
             self.assertEqual(before, {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()})
-            self.assertEqual(len(before), 20)
-            self.assertEqual(set(before), {"index.html", "data.json", *(
+            downloads = {
                 "downloads/" + model["id"] + "-" + scope + suffix + ".json"
                 for model in self.data["models"] for scope in ["combined"]
-                for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"])})
+                for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"]}
+            self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
+            owned = json.loads(before['generated-pages.json'])
+            self.assertEqual(set(before), set(owned)|{'generated-pages.json'})
+            self.assertIn('method.html',owned)
+            for model in self.data['models']:
+                self.assertIn('models/'+model['id']+'/index.html',owned)
+                self.assertIn('models/'+model['id']+'/cases/MG-PS001.html',owned)
+            self.assertFalse(any('MG-GR103' in path for path in owned))
 
     def test_retired_public_only_downloads_are_removed_without_deleting_unrelated_files(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -198,7 +205,6 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data["attempt_conditions"], ["single_attempt", "nonlogical_retry_3"])
         page = SITE.render(self.data)
         self.assertIn('data-condition="nonlogical_retry_3"', page)
-        self.assertIn("const mode='combined'", page)
         for model in self.data["models"]:
             for scope in ["combined"]:
                 self.assertEqual(model[scope]["coverage"], model["retry"][scope]["coverage"])
@@ -248,9 +254,6 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertEqual(current["capacity"], reliable["capacity"])
                 self.assertEqual(current["coverage"], reliable["coverage"])
     def test_claim_audit_uses_shared_aggregate_summaries_without_private_findings(self):
-        page=SITE.render(self.data)
-        self.assertTrue('id="claim-penalties"' in page)
-        self.assertTrue('可靠数学能力该题最高0分' in page)
         for model in self.data['models']:
             result=model['combined'];summary=result['claim_penalties']
             self.assertEqual(summary['status'],'source_bound_review_applied')

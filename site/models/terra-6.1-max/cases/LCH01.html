@@ -1,0 +1,943 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCH01 · 通道接口节群 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/terra-6.1-max/index.html">Terra 6.1 Max</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>LCH01 · 通道接口节群</h1><p class="subtitle">Terra 6.1 Max · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后开发分析，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 Strict" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">Strict</span></button></div></div><div class="control-group"><span class="control-name">运行条件</span><div class="segmented condition-control" role="group" aria-label="运行条件"><button data-condition="single_attempt" aria-pressed="true">原单次</button><button data-condition="nonlogical_retry_3" aria-pressed="false">允许重跑 ≤3次</button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；Strict 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>通道接口节群 · LCH01</h1>
+<p>将附件中 obligations.json 指定的全部8项义务完整形式化为一个Lean项目。本题是明确的选段任务；完整章节文件只为提供原文和上下文，清单之外的内容不计为交付义务。原文含证明；前置文字只作背景。</p>
+<p>使用Lean4.29.1和mathlib5e932f97dd25535344f80f9dd8da3aab83df0fe6。formal_oet/附件是冻结前置模块，可直接导入，不得修改或同名覆盖。只允许这些模块、标准库与固定mathlib，不得读取目标作者实现、评审或下载其他依赖。</p>
+<p>保留原文结构、前提、量词、定义域和结论强度。允许等价表示、合并声明、辅助引理和有效替代证明，但须给出表示对应；不得把目标藏入字段、证书或前提。</p>
+<p>交付完整源码，每个文件用独立的命名代码块，例如 <code>lean filename=Main.lean</code>。Main.lean必须导入所有目标模块，辅助文件也须全文交付。不得使用sorry、admit、新增公理或跳过内核检查设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 交付对象：case_id=&quot;LCH01&quot;、version=&quot;0.1.0&quot;、items。items必须恰好覆盖清单全部8项，每项含id、status（complete/incomplete）、declarations（file/name数组）、representation（对象/参数/量词/结论的对应说明）、dependencies（实际使用的义务ID数组）。complete须列真实声明且全部子目标均完成；未完成项不能删除。工作区路径或链接不能代替文件内容。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/LCH01/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Checked the retained source judgment and available candidate answer/artifacts. Only specific established false or unsupported commitments are appended; missing work alone receives no additional finding.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 全域量化dom φ，受限谓词保留U⊆dom φ且对全部点对/输出分量给求和界；证书族为真实Set。lipMatrix_iff_restricted_domain给两表示等价。任意d的代数推广覆盖原扩展伪度量族，未将空U错误排除。</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 合法受限coLip明确包含U.Nonempty、U⊆dom φ及所有点对完整非负和下界。允许0和∞条目，不把可空Lip域混入coLip。</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> ChannelMatrix直接采用普通Matrix输出行/输入列；channelCoefficient M (i,j)=M j i。channelProduct_entry证明较晚矩阵在左的实际乘积条目等于Σk M₂jk M₁ki，没有未桥接换结构。</p>
+<h3>CH02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 输入/输出有序对、任意交叉i→j单输入行与对角特例均明确定义；zero_channel_term/zero_channel_lip证明零条目可从该上界和删除，含0∞。所选D07不要求未选历史版本的列稀疏/完整解耦接口。</p>
+<h3>CH02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> singleInputRow_sum先证明全有限和精确等于唯一项，再从合法Lip界推出标量上界；i无需等于j，对角版本同时覆盖所有j。Textbook特化显式保留有限非空指标与扩展伪度量背景。</p>
+<h3>CH02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> channel_term_le_sum给任意项≤全和；正Kji与正输入距的ENNReal乘积严格正，再由coLip下界得正输出，允许任一因子∞，不增有限性。</p>
+<h3>CH02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逐j用正对角coLip反证输出族零距而输入非零；仅得GaugeZeroRelated，不假设分离性或升为x=y。非空和合法域由coLip谓词保留。</p>
+<h3>CH02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> L、K均为同一U上的真实证书；只假设L输出j行的非对角项0。K下界从对角单项≤全和得到，K无需对角或稀疏。Textbook版本保留原背景。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（8项）</summary><div class="prose"><h3>CH02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The full and restricted Lip predicates quantify every point pair and every output component, use ENNReal coefficients, and define genuine sets of certificates. Restriction legality U⊆dom(φ) is part of the predicate; the global-domain specialization is proved or definitionally exact. No prescribed extremal matrix is introduced.</p>
+<h3>CH02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Restricted co-Lip contains U.Nonempty, U⊆dom(φ), and the full lower matrix inequality. The certificate family is exactly its set of satisfying matrices. Zero and infinite coefficients remain admitted; no separation or finiteness premise is added.</p>
+<h3>CH02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Rows are outputs and columns are inputs: the i→j coefficient is M j i. The candidate proves the standard matrix multiplication entry Σk M₂ j k*M₁ k i, with the later matrix on the left. This is the original indexing convention, with no transpose ambiguity.</p>
+<h3>CH02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> A channel is the ordered pair (input,output). Row sparsity asserts every coefficient outside the selected input column is zero; the diagonal case specializes this for every output. These are explicit definitions on actual matrices rather than certificate fields holding conclusions.</p>
+<h3>CH02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The proof reduces the complete finite sum to its selected single term using zero coefficients, and then applies the original Lip bound. The diagonal specialization is supplied for every component. ENNReal multiplication preserves 0*∞=0, so no coefficient or distance is required finite.</p>
+<h3>CH02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The selected nonnegative channel term is bounded by the whole finite row sum and then by the co-Lip output distance. ENNReal product positivity is proved/applied from strict positivity of both factors, including infinite values. Points remain in the supplied U.</p>
+<h3>CH02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> All positive diagonal entries are used one component at a time to contradict a positive input distance when the corresponding output distance is zero. The conclusion is GaugeZeroRelated, never point equality; no separation axiom is smuggled in.</p>
+<h3>CH02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The two-sided scalar inequality uses only sparsity of the Lip row. The co-Lip lower bound follows by taking its diagonal term below the whole sum, so K is not required diagonal, positive, or finite. All quantified points and both inequalities match Exercise 2.2.</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>已完成清单中的 8 项义务。源码在指定环境中编译通过；公理检查仅显示 <code>propext</code>、<code>Classical.choice</code> 和 <code>Quot.sound</code>。构建时，<code>LEAN_PATH</code> 须包含冻结的 <code>formal_oet</code> 模块及指定版本的预置 mathlib。</p>
+<p>理论来源：Zhe Li（Glen Li / glenzli），ORCID https://orcid.org/0009-0006-6536-3453，<em>The Operator Evolution Theory</em>，https://glenzli.com/books/oet/，许可协议 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。以下是对所选内容的 Lean 改写。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.Matrix.Mul
+
+/-!
+Lean reformulation of selected material from Zhe Li (also known as Glen Li /
+glenzli), ORCID https://orcid.org/0009-0006-6536-3453, *The Operator Evolution
+Theory*, Volume I, Chapter 2, https://glenzli.com/books/oet/ . Licensed under
+CC BY 4.0, https://creativecommons.org/licenses/by/4.0/ .
+-/
+
+open scoped BigOperators
+open formal_oet.vol_01.ch_01_foundations
+
+namespace LCH01
+
+variable {X I : Type} {bot : X} [Fintype I]
+
+/-- Matrices use output components as rows and input components as columns. -/
+abbrev ChannelMatrix (I : Type) := Matrix I I ENNReal
+
+/-- A component channel is an ordered pair (input, output). -/
+abbrev ComponentChannel (I : Type) := I × I
+
+/-- The coefficient of a channel `(i,j)` is the matrix entry at row `j`, column `i`. -/
+def channelCoefficient (M : ChannelMatrix I) (c : ComponentChannel I) : ENNReal :=
+  M c.2 c.1
+
+omit [Fintype I] in
+@[simp] theorem channelCoefficient_pair (M : ChannelMatrix I) (i j : I) :
+    channelCoefficient M (i, j) = M j i := rfl
+
+/-- The composition product has the later matrix on the left. -/
+noncomputable def channelProduct (M₂ M₁ : ChannelMatrix I) : ChannelMatrix I := M₂ * M₁
+
+theorem channelProduct_entry (M₂ M₁ : ChannelMatrix I) (i j : I) :
+    channelCoefficient (channelProduct M₂ M₁) (i, j) =
+      ∑ k : I, channelCoefficient M₂ (k, j) * channelCoefficient M₁ (i, k) := by
+  exact Matrix.mul_apply
+
+/-- An unrestricted Lip matrix has the defining inequality on the whole domain. -/
+def IsLipMatrix (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (L : ChannelMatrix I) : Prop :=
+  ∀ x ∈ dom φ, ∀ y ∈ dom φ, ∀ j : I,
+    d j (φ.func x) (φ.func y) ≤ ∑ i : I, L j i * d i x y
+
+/-- Restricted Lip certificates require the restriction to lie in the domain. -/
+def IsRestrictedLipMatrix (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I) : Prop :=
+  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (φ.func x) (φ.func y) ≤ ∑ i : I, L j i * d i x y
+
+def lipMatrices (d : I → X → X → ENNReal) (φ : Operator X bot) :
+    Set (ChannelMatrix I) :=
+  { L | IsLipMatrix d φ L }
+
+def restrictedLipMatrices (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) : Set (ChannelMatrix I) :=
+  { L | IsRestrictedLipMatrix d φ U L }
+
+theorem lipMatrix_iff_restricted_domain (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (L : ChannelMatrix I) :
+    IsLipMatrix d φ L ↔ IsRestrictedLipMatrix d φ (dom φ) L := by
+  constructor
+  · intro h
+    exact ⟨Set.Subset.rfl, h⟩
+  · intro h
+    exact h.2
+
+/-- Restricted co-Lip certificates additionally require a nonempty restriction. -/
+def IsRestrictedCoLipMatrix (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (K : ChannelMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, K j i * d i x y ≤ d j (φ.func x) (φ.func y)
+
+def restrictedCoLipMatrices (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) : Set (ChannelMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d φ U K }
+
+/-- Only the coefficient on channel `(i,j)` may be nonzero in output row `j`. -/
+def IsSingleInputRow (L : ChannelMatrix I) (i j : I) : Prop :=
+  ∀ k : I, k ≠ i → L j k = 0
+
+/-- Each output row of a diagonal matrix is supported on its diagonal input. -/
+def IsDiagonal (L : ChannelMatrix I) : Prop :=
+  ∀ j : I, IsSingleInputRow L j j
+
+omit [Fintype I] in
+theorem zero_channel_term (L : ChannelMatrix I) (i j : I)
+    (d : I → X → X → ENNReal) (x y : X)
+    (hzero : channelCoefficient L (i, j) = 0) :
+    L j i * d i x y = 0 := by
+  simpa using congrArg (fun a : ENNReal =&gt; a * d i x y) hzero
+
+open scoped Classical in
+/-- A zero channel can be omitted from the corresponding Lip row bound. -/
+theorem zero_channel_lip (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I) (i j : I)
+    (hL : IsRestrictedLipMatrix d φ U L)
+    (hzero : channelCoefficient L (i, j) = 0)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤
+      ∑ k ∈ Finset.univ.erase i, L j k * d k x y := by
+  calc
+    d j (φ.func x) (φ.func y) ≤ ∑ k : I, L j k * d k x y :=
+      hL.2 x hx y hy j
+    _ = ∑ k ∈ Finset.univ.erase i, L j k * d k x y := by
+      symm
+      exact Finset.sum_erase Finset.univ (zero_channel_term L i j d x y hzero)
+
+/-- Exact simplification of a single-input row, including infinite values. -/
+theorem singleInputRow_sum (d : I → X → X → ENNReal)
+    (L : ChannelMatrix I) (i j : I) (hrow : IsSingleInputRow L i j) (x y : X) :
+    (∑ k : I, L j k * d k x y) = L j i * d i x y := by
+  classical
+  apply Finset.sum_eq_single i
+  · intro k _ hki
+    rw [hrow k hki, zero_mul]
+  · intro hi
+    exact False.elim (hi (Finset.mem_univ i))
+
+/-- A single-input row gives the stated scalar Lip bound on that channel. -/
+theorem singleInputRow_lip (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I) (i j : I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hrow : IsSingleInputRow L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤ L j i * d i x y := by
+  calc
+    d j (φ.func x) (φ.func y) ≤ ∑ k : I, L j k * d k x y :=
+      hL.2 x hx y hy j
+    _ = L j i * d i x y := singleInputRow_sum d L i j hrow x y
+
+/-- The diagonal case holds simultaneously for every component. -/
+theorem diagonal_lip (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hdiag : IsDiagonal L)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  singleInputRow_lip d φ U L j j hL (hdiag j) hx hy
+
+/-- A single nonnegative channel term is bounded by the full output-row sum. -/
+theorem channel_term_le_sum (d : I → X → X → ENNReal)
+    (K : ChannelMatrix I) (i j : I) (x y : X) :
+    K j i * d i x y ≤ ∑ k : I, K j k * d k x y := by
+  classical
+  exact Finset.single_le_sum (f := fun k : I =&gt; K j k * d k x y)
+    (fun k _ =&gt; zero_le (K j k * d k x y)) (Finset.mem_univ i)
+
+/-- Positive co-Lip channels preserve positive input-component distance. -/
+theorem positive_coLip_channel (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (U : Set X) (K : ChannelMatrix I) (i j : I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hpos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hd : 0 &lt; d i x y) :
+    0 &lt; d j (φ.func x) (φ.func y) := by
+  have hprod : 0 &lt; K j i * d i x y :=
+    ENNReal.mul_pos (ne_of_gt hpos) (ne_of_gt hd)
+  exact lt_of_lt_of_le hprod
+    (le_trans (channel_term_le_sum d K i j x y) (hK.2.2 x hx y hy j))
+
+/-- Strictly positive diagonal co-Lip entries reflect family-zero distance. -/
+theorem positive_diagonal_coLip_reflects_zero
+    (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (K : ChannelMatrix I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hdiag : ∀ j : I, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hout : GaugeZeroRelated d (φ.func x) (φ.func y)) :
+    GaugeZeroRelated d x y := by
+  intro j
+  by_contra hne
+  have hpos : 0 &lt; d j x y := pos_iff_ne_zero.mpr hne
+  have houtpos := positive_coLip_channel d φ U K j j hK (hdiag j) hx hy hpos
+  exact (ne_of_gt houtpos) (hout j)
+
+/-- Exercise 2.2: the diagonal channel gives a scalar two-sided estimate. -/
+theorem scalar_two_sided_bounds (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (U : Set X) (L K : ChannelMatrix I) (j : I)
+    (hL : IsRestrictedLipMatrix d φ U L)
+    (hK : IsRestrictedCoLipMatrix d φ U K)
+    (hrow : IsSingleInputRow L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y := by
+  constructor
+  · exact le_trans (channel_term_le_sum d K j j x y) (hK.2.2 x hx y hy j)
+  · exact singleInputRow_lip d φ U L j j hL hrow hx hy
+
+/-!
+The preceding algebraic results do not need the pseudometric axioms or a
+nonempty index set. The following specializations explicitly retain the
+ambient extended-gauge-space assumptions of the source.
+-/
+namespace Textbook
+
+/-- The single-row Lip display in the finite nonempty gauge setting. -/
+theorem singleInputRow [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (L : ChannelMatrix I) (i j : I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hrow : IsSingleInputRow L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤ (∑ k : I, L j k * d k x y) ∧
+      (∑ k : I, L j k * d k x y) = L j i * d i x y :=
+  ⟨hL.2 x hx y hy j, singleInputRow_sum d L i j hrow x y⟩
+
+/-- For a diagonal Lip matrix the single-row bound holds in each component. -/
+theorem diagonal [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (L : ChannelMatrix I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hdiag : IsDiagonal L)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  diagonal_lip d φ U L hL hdiag hx hy j
+
+theorem positiveChannel [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (K : ChannelMatrix I) (i j : I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hpos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hdist : 0 &lt; d i x y) :
+    0 &lt; d j (φ.func x) (φ.func y) :=
+  positive_coLip_channel d φ U K i j hK hpos hx hy hdist
+
+theorem reflectsFamilyZero [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (K : ChannelMatrix I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hdiag : ∀ j : I, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hout : GaugeZeroRelated d (φ.func x) (φ.func y)) :
+    GaugeZeroRelated d x y :=
+  positive_diagonal_coLip_reflects_zero d φ U K hK hdiag hx hy hout
+
+theorem scalarTwoSided [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (L K : ChannelMatrix I) (j : I)
+    (hL : IsRestrictedLipMatrix d φ U L)
+    (hK : IsRestrictedCoLipMatrix d φ U K)
+    (hrow : IsSingleInputRow L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  scalar_two_sided_bounds d φ U L K j hL hK hrow hx hy
+
+end Textbook
+
+end LCH01
+</code></pre>
+<pre><code class="language-lean">import ChannelBounds
+</code></pre>
+<pre><code class="language-lean">import ChannelBounds
+#print axioms LCH01.channelCoefficient_pair
+#print axioms LCH01.channelProduct_entry
+#print axioms LCH01.lipMatrix_iff_restricted_domain
+#print axioms LCH01.zero_channel_term
+#print axioms LCH01.zero_channel_lip
+#print axioms LCH01.singleInputRow_sum
+#print axioms LCH01.singleInputRow_lip
+#print axioms LCH01.diagonal_lip
+#print axioms LCH01.channel_term_le_sum
+#print axioms LCH01.positive_coLip_channel
+#print axioms LCH01.positive_diagonal_coLip_reflects_zero
+#print axioms LCH01.scalar_two_sided_bounds
+#print axioms LCH01.Textbook.singleInputRow
+#print axioms LCH01.Textbook.diagonal
+#print axioms LCH01.Textbook.positiveChannel
+#print axioms LCH01.Textbook.reflectsFamilyZero
+#print axioms LCH01.Textbook.scalarTwoSided
+</code></pre>
+<pre><code class="language-text">leanprover/lean4:v4.29.1
+</code></pre>
+<pre><code class="language-sh">#!/bin/sh
+# LEAN_PATH must contain the frozen formal_oet modules and the preinstalled
+# mathlib build and its dependencies.
+set -eu
+export LEAN_PATH=&quot;.:${LEAN_PATH:-}&quot;
+lean -o ChannelBounds.olean ChannelBounds.lean
+lean -o Main.olean Main.lean
+lean AxiomAudit.lean
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH01&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsLipMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsRestrictedLipMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.lipMatrices&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.restrictedLipMatrices&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.lipMatrix_iff_restricted_domain&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;X、bot、Operator 和 dom 使用冻结基础模块；d i 是第 i 个 ENNReal 值分量，矩阵 L 使用 ChannelMatrix。&quot;,
+        &quot;parameters&quot;: &quot;I 带 Fintype；U 为 X 的集合。定义对任意 d 均成立，因而适用于正文的有限非空指标集及扩展伪度量族。&quot;,
+        &quot;quantifiers&quot;: &quot;全域谓词量化所有 x,y ∈ dom φ 和 j ∈ I；受限谓词包含 U ⊆ dom φ，并量化所有 x,y ∈ U 和 j ∈ I。&quot;,
+        &quot;conclusion&quot;: &quot;两种谓词分别给出 d j (φ x) (φ y) ≤ ∑ i, L j i * d i x y；两个集合恰为满足对应谓词的矩阵族。全域谓词等价于取 U = dom φ 的受限谓词。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsRestrictedCoLipMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.restrictedCoLipMatrices&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;K 是 ENNReal 值通道矩阵，φ 是保持 bot 的冻结 Operator，d 是分量距离族。&quot;,
+        &quot;parameters&quot;: &quot;U 为 X 的子集，谓词显式要求 U.Nonempty 和 U ⊆ dom φ；I 带 Fintype。&quot;,
+        &quot;quantifiers&quot;: &quot;对所有 x,y ∈ U 和所有输出分量 j 取有限输入指标和。&quot;,
+        &quot;conclusion&quot;: &quot;合法性恰为 ∑ i, K j i * d i x y ≤ d j (φ x) (φ y)，restrictedCoLipMatrices 恰为这些 K 的集合；允许零与无穷条目。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.ChannelMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.ComponentChannel&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelCoefficient&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelCoefficient_pair&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelProduct&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelProduct_entry&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;ChannelMatrix I 是 Matrix I I ENNReal，行是输出、列是输入；ComponentChannel I 是输入在前、输出在后的有序对。&quot;,
+        &quot;parameters&quot;: &quot;channelCoefficient M (i,j) 定义为 M j i；channelProduct M₂ M₁ 使用标准矩阵乘积，较晚作用的矩阵在左。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意有限指标类型 I、矩阵 M₂、M₁ 和 i,j，求和遍历所有中间指标 k。&quot;,
+        &quot;conclusion&quot;: &quot;乘积的 i→j 条目恰为 ∑ k, M₂ j k * M₁ k i；系数和运算均在 ENNReal 中，包含 0 * ∞ = 0。&quot;
+      },
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.ComponentChannel&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelCoefficient&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsSingleInputRow&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsDiagonal&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.zero_channel_term&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.zero_channel_lip&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;通道 (i,j) 表示输入分量 i 到输出分量 j；其系数是 L j i。IsSingleInputRow L i j 描述只可能保留输入 i 的输出行 j；IsDiagonal 要求每个输出行 j 只可能保留输入 j。&quot;,
+        &quot;parameters&quot;: &quot;零通道结论针对任意受限 Lip 证书 L、合法限制域 U、通道 i→j 和 x,y ∈ U。&quot;,
+        &quot;quantifiers&quot;: &quot;单行稀疏对每个 k ≠ i 要求 L j k = 0；对角条件对每个 j 给出相应单行条件。&quot;,
+        &quot;conclusion&quot;: &quot;零系数对应的乘积项为零，且 zero_channel_lip 证明可从该行上界的有限和中删除此项；单行和对角的具体界由 CH02-P19 给出。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.singleInputRow_sum&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.singleInputRow_lip&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.diagonal_lip&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.singleInputRow&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.diagonal&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;φ、U、L、i、j 与正文相同，hL 为受限 Lip 合法性，hrow 是除 i 外第 j 行系数为零。&quot;,
+        &quot;parameters&quot;: &quot;Textbook 版本显式要求 I 有限非空且每个 d i 是冻结模块的 ExtendedPseudoMetric；较一般的代数引理对任意 ENNReal 值 d 成立。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意 x,y ∈ U 和任意选定通道 i→j；对角版本对每个 j 同时适用。&quot;,
+        &quot;conclusion&quot;: &quot;先给出完整有限和恰等于 L j i * d i x y，再给出 d j (φ x) (φ y) ≤ 该项；对角版本取 i=j。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-D07&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channel_term_le_sum&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.positive_coLip_channel&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.positiveChannel&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;K 为 U 上合法受限 co-Lip 矩阵，i→j 通道系数 K j i 是严格正的 ENNReal。&quot;,
+        &quot;parameters&quot;: &quot;U 的非空及 U ⊆ dom φ 包含在合法性中；Textbook 版本另保留有限非空指标族和扩展伪度量族背景。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意这样的 K、i、j 以及任意 x,y ∈ U。&quot;,
+        &quot;conclusion&quot;: &quot;d i x y &gt; 0 蕴含 d j (φ x) (φ y) &gt; 0；证明使用该通道项不超过完整非负行和，允许系数或距离为 ∞。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.positive_diagonal_coLip_reflects_zero&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.reflectsFamilyZero&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;GaugeZeroRelated 使用冻结模块定义的所有分量距离为零关系；K 为 U 上受限 co-Lip 矩阵。&quot;,
+        &quot;parameters&quot;: &quot;要求所有 j 的对角条目 K j j &gt; 0，U 的非空性和定义域包含在 co-Lip 合法性中；Textbook 版本保留完整规范空间背景。&quot;,
+        &quot;quantifiers&quot;: &quot;对所有 x,y ∈ U，从 φ x 与 φ y 在每个 j 上零距推出 x 与 y 在每个 j 上零距。&quot;,
+        &quot;conclusion&quot;: &quot;只断言 GaugeZeroRelated d (φ x) (φ y) → GaugeZeroRelated d x y；未假设族分离，也未加强为 x = y。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-P20&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.scalar_two_sided_bounds&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.scalarTwoSided&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;L 与 K 分别是 φ 在同一 U 上的合法受限 Lip 与 co-Lip 矩阵；j 是输出分量。&quot;,
+        &quot;parameters&quot;: &quot;IsSingleInputRow L j j 表示 L k→j = 0 对所有 k ≠ j；非空及定义域要求由两种合法性谓词保留，Textbook 版本保留规范空间背景。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意满足前提的 φ、U、L、K、j 和所有 x,y ∈ U。&quot;,
+        &quot;conclusion&quot;: &quot;同时证明 K j j * d j x y ≤ d j (φ x) (φ y) 以及 d j (φ x) (φ y) ≤ L j j * d j x y；K 的其他行条目不要求为零。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-D07&quot;, &quot;CH02-P19&quot;, &quot;CH02-P20&quot;]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH01:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/slots/LCH01-A1.json">review · LCH01-A1.json</a><span class="hash">SHA256 3822c987d9ae732a790bbeac4dc76799dbf1bd20ef365eef01432432238316ac</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/stderr.txt">attachment · stderr.txt</a><span class="hash">SHA256 35d8aa60042ac23a5788a3fc3f19e4446679c2d78c4010e4dbd6105d4cb33fc3</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/alignment.original.json">attachment · alignment.original.json</a><span class="hash">SHA256 fd817074de47be0d3e2b51174bb1a91d24d9b998f9880e8f1c8bec9641c397f8</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/scoring-inputs.json">review · scoring-inputs.json</a><span class="hash">SHA256 4d426e52b04280c592a93c595961aaf9a9aabab4a8b0ba79bfb75fd69ef0107a</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/record.json">正式记录 record.json</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Checked the retained source judgment and available candidate answer/artifacts. Only specific established false or unsupported commitments are appended; missing work alone receives no additional finding.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 全域量化dom φ，受限谓词保留U⊆dom φ且对全部点对/输出分量给求和界；证书族为真实Set。lipMatrix_iff_restricted_domain给两表示等价。任意d的代数推广覆盖原扩展伪度量族，未将空U错误排除。</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 合法受限coLip明确包含U.Nonempty、U⊆dom φ及所有点对完整非负和下界。允许0和∞条目，不把可空Lip域混入coLip。</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> ChannelMatrix直接采用普通Matrix输出行/输入列；channelCoefficient M (i,j)=M j i。channelProduct_entry证明较晚矩阵在左的实际乘积条目等于Σk M₂jk M₁ki，没有未桥接换结构。</p>
+<h3>CH02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 输入/输出有序对、任意交叉i→j单输入行与对角特例均明确定义；zero_channel_term/zero_channel_lip证明零条目可从该上界和删除，含0∞。所选D07不要求未选历史版本的列稀疏/完整解耦接口。</p>
+<h3>CH02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> singleInputRow_sum先证明全有限和精确等于唯一项，再从合法Lip界推出标量上界；i无需等于j，对角版本同时覆盖所有j。Textbook特化显式保留有限非空指标与扩展伪度量背景。</p>
+<h3>CH02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> channel_term_le_sum给任意项≤全和；正Kji与正输入距的ENNReal乘积严格正，再由coLip下界得正输出，允许任一因子∞，不增有限性。</p>
+<h3>CH02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逐j用正对角coLip反证输出族零距而输入非零；仅得GaugeZeroRelated，不假设分离性或升为x=y。非空和合法域由coLip谓词保留。</p>
+<h3>CH02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> L、K均为同一U上的真实证书；只假设L输出j行的非对角项0。K下界从对角单项≤全和得到，K无需对角或稀疏。Textbook版本保留原背景。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（8项）</summary><div class="prose"><h3>CH02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The full and restricted Lip predicates quantify every point pair and every output component, use ENNReal coefficients, and define genuine sets of certificates. Restriction legality U⊆dom(φ) is part of the predicate; the global-domain specialization is proved or definitionally exact. No prescribed extremal matrix is introduced.</p>
+<h3>CH02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Restricted co-Lip contains U.Nonempty, U⊆dom(φ), and the full lower matrix inequality. The certificate family is exactly its set of satisfying matrices. Zero and infinite coefficients remain admitted; no separation or finiteness premise is added.</p>
+<h3>CH02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Rows are outputs and columns are inputs: the i→j coefficient is M j i. The candidate proves the standard matrix multiplication entry Σk M₂ j k*M₁ k i, with the later matrix on the left. This is the original indexing convention, with no transpose ambiguity.</p>
+<h3>CH02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> A channel is the ordered pair (input,output). Row sparsity asserts every coefficient outside the selected input column is zero; the diagonal case specializes this for every output. These are explicit definitions on actual matrices rather than certificate fields holding conclusions.</p>
+<h3>CH02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The proof reduces the complete finite sum to its selected single term using zero coefficients, and then applies the original Lip bound. The diagonal specialization is supplied for every component. ENNReal multiplication preserves 0*∞=0, so no coefficient or distance is required finite.</p>
+<h3>CH02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The selected nonnegative channel term is bounded by the whole finite row sum and then by the co-Lip output distance. ENNReal product positivity is proved/applied from strict positivity of both factors, including infinite values. Points remain in the supplied U.</p>
+<h3>CH02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> All positive diagonal entries are used one component at a time to contradict a positive input distance when the corresponding output distance is zero. The conclusion is GaugeZeroRelated, never point equality; no separation axiom is smuggled in.</p>
+<h3>CH02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> The two-sided scalar inequality uses only sparsity of the Lip row. The co-Lip lower bound follows by taking its diagonal term below the whole sum, so K is not required diagonal, positive, or finite. All quantified points and both inequalities match Exercise 2.2.</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>已完成清单中的 8 项义务。源码在指定环境中编译通过；公理检查仅显示 <code>propext</code>、<code>Classical.choice</code> 和 <code>Quot.sound</code>。构建时，<code>LEAN_PATH</code> 须包含冻结的 <code>formal_oet</code> 模块及指定版本的预置 mathlib。</p>
+<p>理论来源：Zhe Li（Glen Li / glenzli），ORCID https://orcid.org/0009-0006-6536-3453，<em>The Operator Evolution Theory</em>，https://glenzli.com/books/oet/，许可协议 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。以下是对所选内容的 Lean 改写。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.Matrix.Mul
+
+/-!
+Lean reformulation of selected material from Zhe Li (also known as Glen Li /
+glenzli), ORCID https://orcid.org/0009-0006-6536-3453, *The Operator Evolution
+Theory*, Volume I, Chapter 2, https://glenzli.com/books/oet/ . Licensed under
+CC BY 4.0, https://creativecommons.org/licenses/by/4.0/ .
+-/
+
+open scoped BigOperators
+open formal_oet.vol_01.ch_01_foundations
+
+namespace LCH01
+
+variable {X I : Type} {bot : X} [Fintype I]
+
+/-- Matrices use output components as rows and input components as columns. -/
+abbrev ChannelMatrix (I : Type) := Matrix I I ENNReal
+
+/-- A component channel is an ordered pair (input, output). -/
+abbrev ComponentChannel (I : Type) := I × I
+
+/-- The coefficient of a channel `(i,j)` is the matrix entry at row `j`, column `i`. -/
+def channelCoefficient (M : ChannelMatrix I) (c : ComponentChannel I) : ENNReal :=
+  M c.2 c.1
+
+omit [Fintype I] in
+@[simp] theorem channelCoefficient_pair (M : ChannelMatrix I) (i j : I) :
+    channelCoefficient M (i, j) = M j i := rfl
+
+/-- The composition product has the later matrix on the left. -/
+noncomputable def channelProduct (M₂ M₁ : ChannelMatrix I) : ChannelMatrix I := M₂ * M₁
+
+theorem channelProduct_entry (M₂ M₁ : ChannelMatrix I) (i j : I) :
+    channelCoefficient (channelProduct M₂ M₁) (i, j) =
+      ∑ k : I, channelCoefficient M₂ (k, j) * channelCoefficient M₁ (i, k) := by
+  exact Matrix.mul_apply
+
+/-- An unrestricted Lip matrix has the defining inequality on the whole domain. -/
+def IsLipMatrix (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (L : ChannelMatrix I) : Prop :=
+  ∀ x ∈ dom φ, ∀ y ∈ dom φ, ∀ j : I,
+    d j (φ.func x) (φ.func y) ≤ ∑ i : I, L j i * d i x y
+
+/-- Restricted Lip certificates require the restriction to lie in the domain. -/
+def IsRestrictedLipMatrix (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I) : Prop :=
+  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (φ.func x) (φ.func y) ≤ ∑ i : I, L j i * d i x y
+
+def lipMatrices (d : I → X → X → ENNReal) (φ : Operator X bot) :
+    Set (ChannelMatrix I) :=
+  { L | IsLipMatrix d φ L }
+
+def restrictedLipMatrices (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) : Set (ChannelMatrix I) :=
+  { L | IsRestrictedLipMatrix d φ U L }
+
+theorem lipMatrix_iff_restricted_domain (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (L : ChannelMatrix I) :
+    IsLipMatrix d φ L ↔ IsRestrictedLipMatrix d φ (dom φ) L := by
+  constructor
+  · intro h
+    exact ⟨Set.Subset.rfl, h⟩
+  · intro h
+    exact h.2
+
+/-- Restricted co-Lip certificates additionally require a nonempty restriction. -/
+def IsRestrictedCoLipMatrix (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (K : ChannelMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, K j i * d i x y ≤ d j (φ.func x) (φ.func y)
+
+def restrictedCoLipMatrices (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) : Set (ChannelMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d φ U K }
+
+/-- Only the coefficient on channel `(i,j)` may be nonzero in output row `j`. -/
+def IsSingleInputRow (L : ChannelMatrix I) (i j : I) : Prop :=
+  ∀ k : I, k ≠ i → L j k = 0
+
+/-- Each output row of a diagonal matrix is supported on its diagonal input. -/
+def IsDiagonal (L : ChannelMatrix I) : Prop :=
+  ∀ j : I, IsSingleInputRow L j j
+
+omit [Fintype I] in
+theorem zero_channel_term (L : ChannelMatrix I) (i j : I)
+    (d : I → X → X → ENNReal) (x y : X)
+    (hzero : channelCoefficient L (i, j) = 0) :
+    L j i * d i x y = 0 := by
+  simpa using congrArg (fun a : ENNReal =&gt; a * d i x y) hzero
+
+open scoped Classical in
+/-- A zero channel can be omitted from the corresponding Lip row bound. -/
+theorem zero_channel_lip (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I) (i j : I)
+    (hL : IsRestrictedLipMatrix d φ U L)
+    (hzero : channelCoefficient L (i, j) = 0)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤
+      ∑ k ∈ Finset.univ.erase i, L j k * d k x y := by
+  calc
+    d j (φ.func x) (φ.func y) ≤ ∑ k : I, L j k * d k x y :=
+      hL.2 x hx y hy j
+    _ = ∑ k ∈ Finset.univ.erase i, L j k * d k x y := by
+      symm
+      exact Finset.sum_erase Finset.univ (zero_channel_term L i j d x y hzero)
+
+/-- Exact simplification of a single-input row, including infinite values. -/
+theorem singleInputRow_sum (d : I → X → X → ENNReal)
+    (L : ChannelMatrix I) (i j : I) (hrow : IsSingleInputRow L i j) (x y : X) :
+    (∑ k : I, L j k * d k x y) = L j i * d i x y := by
+  classical
+  apply Finset.sum_eq_single i
+  · intro k _ hki
+    rw [hrow k hki, zero_mul]
+  · intro hi
+    exact False.elim (hi (Finset.mem_univ i))
+
+/-- A single-input row gives the stated scalar Lip bound on that channel. -/
+theorem singleInputRow_lip (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I) (i j : I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hrow : IsSingleInputRow L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤ L j i * d i x y := by
+  calc
+    d j (φ.func x) (φ.func y) ≤ ∑ k : I, L j k * d k x y :=
+      hL.2 x hx y hy j
+    _ = L j i * d i x y := singleInputRow_sum d L i j hrow x y
+
+/-- The diagonal case holds simultaneously for every component. -/
+theorem diagonal_lip (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (L : ChannelMatrix I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hdiag : IsDiagonal L)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  singleInputRow_lip d φ U L j j hL (hdiag j) hx hy
+
+/-- A single nonnegative channel term is bounded by the full output-row sum. -/
+theorem channel_term_le_sum (d : I → X → X → ENNReal)
+    (K : ChannelMatrix I) (i j : I) (x y : X) :
+    K j i * d i x y ≤ ∑ k : I, K j k * d k x y := by
+  classical
+  exact Finset.single_le_sum (f := fun k : I =&gt; K j k * d k x y)
+    (fun k _ =&gt; zero_le (K j k * d k x y)) (Finset.mem_univ i)
+
+/-- Positive co-Lip channels preserve positive input-component distance. -/
+theorem positive_coLip_channel (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (U : Set X) (K : ChannelMatrix I) (i j : I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hpos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hd : 0 &lt; d i x y) :
+    0 &lt; d j (φ.func x) (φ.func y) := by
+  have hprod : 0 &lt; K j i * d i x y :=
+    ENNReal.mul_pos (ne_of_gt hpos) (ne_of_gt hd)
+  exact lt_of_lt_of_le hprod
+    (le_trans (channel_term_le_sum d K i j x y) (hK.2.2 x hx y hy j))
+
+/-- Strictly positive diagonal co-Lip entries reflect family-zero distance. -/
+theorem positive_diagonal_coLip_reflects_zero
+    (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (K : ChannelMatrix I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hdiag : ∀ j : I, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hout : GaugeZeroRelated d (φ.func x) (φ.func y)) :
+    GaugeZeroRelated d x y := by
+  intro j
+  by_contra hne
+  have hpos : 0 &lt; d j x y := pos_iff_ne_zero.mpr hne
+  have houtpos := positive_coLip_channel d φ U K j j hK (hdiag j) hx hy hpos
+  exact (ne_of_gt houtpos) (hout j)
+
+/-- Exercise 2.2: the diagonal channel gives a scalar two-sided estimate. -/
+theorem scalar_two_sided_bounds (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (U : Set X) (L K : ChannelMatrix I) (j : I)
+    (hL : IsRestrictedLipMatrix d φ U L)
+    (hK : IsRestrictedCoLipMatrix d φ U K)
+    (hrow : IsSingleInputRow L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y := by
+  constructor
+  · exact le_trans (channel_term_le_sum d K j j x y) (hK.2.2 x hx y hy j)
+  · exact singleInputRow_lip d φ U L j j hL hrow hx hy
+
+/-!
+The preceding algebraic results do not need the pseudometric axioms or a
+nonempty index set. The following specializations explicitly retain the
+ambient extended-gauge-space assumptions of the source.
+-/
+namespace Textbook
+
+/-- The single-row Lip display in the finite nonempty gauge setting. -/
+theorem singleInputRow [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (L : ChannelMatrix I) (i j : I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hrow : IsSingleInputRow L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤ (∑ k : I, L j k * d k x y) ∧
+      (∑ k : I, L j k * d k x y) = L j i * d i x y :=
+  ⟨hL.2 x hx y hy j, singleInputRow_sum d L i j hrow x y⟩
+
+/-- For a diagonal Lip matrix the single-row bound holds in each component. -/
+theorem diagonal [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (L : ChannelMatrix I)
+    (hL : IsRestrictedLipMatrix d φ U L) (hdiag : IsDiagonal L)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  diagonal_lip d φ U L hL hdiag hx hy j
+
+theorem positiveChannel [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (K : ChannelMatrix I) (i j : I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hpos : 0 &lt; K j i)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hdist : 0 &lt; d i x y) :
+    0 &lt; d j (φ.func x) (φ.func y) :=
+  positive_coLip_channel d φ U K i j hK hpos hx hy hdist
+
+theorem reflectsFamilyZero [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (K : ChannelMatrix I)
+    (hK : IsRestrictedCoLipMatrix d φ U K) (hdiag : ∀ j : I, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hout : GaugeZeroRelated d (φ.func x) (φ.func y)) :
+    GaugeZeroRelated d x y :=
+  positive_diagonal_coLip_reflects_zero d φ U K hK hdiag hx hy hout
+
+theorem scalarTwoSided [Nonempty I] (d : I → X → X → ENNReal)
+    (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) (L K : ChannelMatrix I) (j : I)
+    (hL : IsRestrictedLipMatrix d φ U L)
+    (hK : IsRestrictedCoLipMatrix d φ U K)
+    (hrow : IsSingleInputRow L j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  scalar_two_sided_bounds d φ U L K j hL hK hrow hx hy
+
+end Textbook
+
+end LCH01
+</code></pre>
+<pre><code class="language-lean">import ChannelBounds
+</code></pre>
+<pre><code class="language-lean">import ChannelBounds
+#print axioms LCH01.channelCoefficient_pair
+#print axioms LCH01.channelProduct_entry
+#print axioms LCH01.lipMatrix_iff_restricted_domain
+#print axioms LCH01.zero_channel_term
+#print axioms LCH01.zero_channel_lip
+#print axioms LCH01.singleInputRow_sum
+#print axioms LCH01.singleInputRow_lip
+#print axioms LCH01.diagonal_lip
+#print axioms LCH01.channel_term_le_sum
+#print axioms LCH01.positive_coLip_channel
+#print axioms LCH01.positive_diagonal_coLip_reflects_zero
+#print axioms LCH01.scalar_two_sided_bounds
+#print axioms LCH01.Textbook.singleInputRow
+#print axioms LCH01.Textbook.diagonal
+#print axioms LCH01.Textbook.positiveChannel
+#print axioms LCH01.Textbook.reflectsFamilyZero
+#print axioms LCH01.Textbook.scalarTwoSided
+</code></pre>
+<pre><code class="language-text">leanprover/lean4:v4.29.1
+</code></pre>
+<pre><code class="language-sh">#!/bin/sh
+# LEAN_PATH must contain the frozen formal_oet modules and the preinstalled
+# mathlib build and its dependencies.
+set -eu
+export LEAN_PATH=&quot;.:${LEAN_PATH:-}&quot;
+lean -o ChannelBounds.olean ChannelBounds.lean
+lean -o Main.olean Main.lean
+lean AxiomAudit.lean
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH01&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsLipMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsRestrictedLipMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.lipMatrices&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.restrictedLipMatrices&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.lipMatrix_iff_restricted_domain&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;X、bot、Operator 和 dom 使用冻结基础模块；d i 是第 i 个 ENNReal 值分量，矩阵 L 使用 ChannelMatrix。&quot;,
+        &quot;parameters&quot;: &quot;I 带 Fintype；U 为 X 的集合。定义对任意 d 均成立，因而适用于正文的有限非空指标集及扩展伪度量族。&quot;,
+        &quot;quantifiers&quot;: &quot;全域谓词量化所有 x,y ∈ dom φ 和 j ∈ I；受限谓词包含 U ⊆ dom φ，并量化所有 x,y ∈ U 和 j ∈ I。&quot;,
+        &quot;conclusion&quot;: &quot;两种谓词分别给出 d j (φ x) (φ y) ≤ ∑ i, L j i * d i x y；两个集合恰为满足对应谓词的矩阵族。全域谓词等价于取 U = dom φ 的受限谓词。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsRestrictedCoLipMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.restrictedCoLipMatrices&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;K 是 ENNReal 值通道矩阵，φ 是保持 bot 的冻结 Operator，d 是分量距离族。&quot;,
+        &quot;parameters&quot;: &quot;U 为 X 的子集，谓词显式要求 U.Nonempty 和 U ⊆ dom φ；I 带 Fintype。&quot;,
+        &quot;quantifiers&quot;: &quot;对所有 x,y ∈ U 和所有输出分量 j 取有限输入指标和。&quot;,
+        &quot;conclusion&quot;: &quot;合法性恰为 ∑ i, K j i * d i x y ≤ d j (φ x) (φ y)，restrictedCoLipMatrices 恰为这些 K 的集合；允许零与无穷条目。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.ChannelMatrix&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.ComponentChannel&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelCoefficient&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelCoefficient_pair&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelProduct&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelProduct_entry&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;ChannelMatrix I 是 Matrix I I ENNReal，行是输出、列是输入；ComponentChannel I 是输入在前、输出在后的有序对。&quot;,
+        &quot;parameters&quot;: &quot;channelCoefficient M (i,j) 定义为 M j i；channelProduct M₂ M₁ 使用标准矩阵乘积，较晚作用的矩阵在左。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意有限指标类型 I、矩阵 M₂、M₁ 和 i,j，求和遍历所有中间指标 k。&quot;,
+        &quot;conclusion&quot;: &quot;乘积的 i→j 条目恰为 ∑ k, M₂ j k * M₁ k i；系数和运算均在 ENNReal 中，包含 0 * ∞ = 0。&quot;
+      },
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.ComponentChannel&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channelCoefficient&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsSingleInputRow&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.IsDiagonal&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.zero_channel_term&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.zero_channel_lip&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;通道 (i,j) 表示输入分量 i 到输出分量 j；其系数是 L j i。IsSingleInputRow L i j 描述只可能保留输入 i 的输出行 j；IsDiagonal 要求每个输出行 j 只可能保留输入 j。&quot;,
+        &quot;parameters&quot;: &quot;零通道结论针对任意受限 Lip 证书 L、合法限制域 U、通道 i→j 和 x,y ∈ U。&quot;,
+        &quot;quantifiers&quot;: &quot;单行稀疏对每个 k ≠ i 要求 L j k = 0；对角条件对每个 j 给出相应单行条件。&quot;,
+        &quot;conclusion&quot;: &quot;零系数对应的乘积项为零，且 zero_channel_lip 证明可从该行上界的有限和中删除此项；单行和对角的具体界由 CH02-P19 给出。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.singleInputRow_sum&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.singleInputRow_lip&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.diagonal_lip&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.singleInputRow&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.diagonal&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;φ、U、L、i、j 与正文相同，hL 为受限 Lip 合法性，hrow 是除 i 外第 j 行系数为零。&quot;,
+        &quot;parameters&quot;: &quot;Textbook 版本显式要求 I 有限非空且每个 d i 是冻结模块的 ExtendedPseudoMetric；较一般的代数引理对任意 ENNReal 值 d 成立。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意 x,y ∈ U 和任意选定通道 i→j；对角版本对每个 j 同时适用。&quot;,
+        &quot;conclusion&quot;: &quot;先给出完整有限和恰等于 L j i * d i x y，再给出 d j (φ x) (φ y) ≤ 该项；对角版本取 i=j。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-D07&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.channel_term_le_sum&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.positive_coLip_channel&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.positiveChannel&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;K 为 U 上合法受限 co-Lip 矩阵，i→j 通道系数 K j i 是严格正的 ENNReal。&quot;,
+        &quot;parameters&quot;: &quot;U 的非空及 U ⊆ dom φ 包含在合法性中；Textbook 版本另保留有限非空指标族和扩展伪度量族背景。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意这样的 K、i、j 以及任意 x,y ∈ U。&quot;,
+        &quot;conclusion&quot;: &quot;d i x y &gt; 0 蕴含 d j (φ x) (φ y) &gt; 0；证明使用该通道项不超过完整非负行和，允许系数或距离为 ∞。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.positive_diagonal_coLip_reflects_zero&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.reflectsFamilyZero&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;GaugeZeroRelated 使用冻结模块定义的所有分量距离为零关系；K 为 U 上受限 co-Lip 矩阵。&quot;,
+        &quot;parameters&quot;: &quot;要求所有 j 的对角条目 K j j &gt; 0，U 的非空性和定义域包含在 co-Lip 合法性中；Textbook 版本保留完整规范空间背景。&quot;,
+        &quot;quantifiers&quot;: &quot;对所有 x,y ∈ U，从 φ x 与 φ y 在每个 j 上零距推出 x 与 y 在每个 j 上零距。&quot;,
+        &quot;conclusion&quot;: &quot;只断言 GaugeZeroRelated d (φ x) (φ y) → GaugeZeroRelated d x y；未假设族分离，也未加强为 x = y。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-P20&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.scalar_two_sided_bounds&quot;},
+        {&quot;file&quot;: &quot;ChannelBounds.lean&quot;, &quot;name&quot;: &quot;LCH01.Textbook.scalarTwoSided&quot;}
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;L 与 K 分别是 φ 在同一 U 上的合法受限 Lip 与 co-Lip 矩阵；j 是输出分量。&quot;,
+        &quot;parameters&quot;: &quot;IsSingleInputRow L j j 表示 L k→j = 0 对所有 k ≠ j；非空及定义域要求由两种合法性谓词保留，Textbook 版本保留规范空间背景。&quot;,
+        &quot;quantifiers&quot;: &quot;对任意满足前提的 φ、U、L、K、j 和所有 x,y ∈ U。&quot;,
+        &quot;conclusion&quot;: &quot;同时证明 K j j * d j x y ≤ d j (φ x) (φ y) 以及 d j (φ x) (φ y) ≤ L j j * d j x y；K 的其他行条目不要求为零。&quot;
+      },
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-D07&quot;, &quot;CH02-P19&quot;, &quot;CH02-P20&quot;]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH01:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/slots/LCH01-A1.json">review · LCH01-A1.json</a><span class="hash">SHA256 3822c987d9ae732a790bbeac4dc76799dbf1bd20ef365eef01432432238316ac</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/stderr.txt">attachment · stderr.txt</a><span class="hash">SHA256 35d8aa60042ac23a5788a3fc3f19e4446679c2d78c4010e4dbd6105d4cb33fc3</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/LCH01/A1/alignment.original.json">attachment · alignment.original.json</a><span class="hash">SHA256 fd817074de47be0d3e2b51174bb1a91d24d9b998f9880e8f1c8bec9641c397f8</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/scoring-inputs.json">review · scoring-inputs.json</a><span class="hash">SHA256 4d426e52b04280c592a93c595961aaf9a9aabab4a8b0ba79bfb75fd69ef0107a</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/record.json">正式记录 record.json</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v5", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "研究稿完善", "weight": 10, "source_components": [], "public_tasks": 0, "private_tasks": 0, "families": 0, "aggregation": "family", "status": "under_construction"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 24, "private_tasks": 10, "tasks": 34, "parent_families": 30, "initial_slots": 34, "public_initial_slots": 24, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}}, "capacity": {"total": 100, "active": 90, "under_construction": 10}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "terra-6.1-max", "label": "Terra 6.1 Max"}, "case": {"id": "LCH01", "title": "通道接口节群", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b", "review_sha256": "9b80a1f3bded881cd46ae05ee62b7947cb9d061462e3c6e3a206fcbc9eea7a0b"}, "nonlogical_retry_3": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b", "review_sha256": "9b80a1f3bded881cd46ae05ee62b7947cb9d061462e3c6e3a206fcbc9eea7a0b"}}, "partial": {"single_attempt": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b", "review_sha256": "9b80a1f3bded881cd46ae05ee62b7947cb9d061462e3c6e3a206fcbc9eea7a0b"}, "nonlogical_retry_3": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b", "review_sha256": "9b80a1f3bded881cd46ae05ee62b7947cb9d061462e3c6e3a206fcbc9eea7a0b"}}, "strict": {"single_attempt": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b", "review_sha256": "9b80a1f3bded881cd46ae05ee62b7947cb9d061462e3c6e3a206fcbc9eea7a0b"}, "nonlogical_retry_3": {"case_id": "LCH01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "dcd504e9a37a09846e7654ff441b515353bc02f9718ca90d76a335479d7e3d4b", "review_sha256": "9b80a1f3bded881cd46ae05ee62b7947cb9d061462e3c6e3a206fcbc9eea7a0b"}}}}}</script><script src="../../../assets/results-core.js"></script><script src="../../../assets/case-results.js"></script></body></html>

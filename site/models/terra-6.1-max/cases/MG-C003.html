@@ -1,0 +1,2042 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MG-C003 · OET卷1第3章整章形式化 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/terra-6.1-max/index.html">Terra 6.1 Max</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>MG-C003 · OET卷1第3章整章形式化</h1><p class="subtitle">Terra 6.1 Max · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后开发分析，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 Strict" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">Strict</span></button></div></div><div class="control-group"><span class="control-name">运行条件</span><div class="segmented condition-control" role="group" aria-label="运行条件"><button data-condition="single_attempt" aria-pressed="true">原单次</button><button data-condition="nonlogical_retry_3" aria-pressed="false">允许重跑 ≤3次</button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；Strict 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>卷1第3章整章 Lean 化 · MG-C003 v0.1.1</h1>
+<p>将附件第3章数学内容完整形式化为一个 Lean 项目。原文含证明，属于含证明的 autoformalization 题。<code>obligations.json</code> 明确本题必须交付的全部 92 项定义、表示及证明义务；各项的原文位置与分项是范围依据。本题交付范围以义务清单为准。不得遗漏章末习题中的构造合法性、分支或边界。</p>
+<p>使用 Lean 4.29.1（编译器提交 f72c35b3f637c8c6571d353742168ab66cc22c00）及 mathlib 提交 5e932f97dd25535344f80f9dd8da3aab83df0fe6。附件 <code>formal_oet/</code> 是冻结的外部依赖模块，可直接导入，不可修改或同名覆盖。前置章节文字只作背景，不要求重证其全部内容。只允许提供的外部模块、Lean 标准库及固定 mathlib；不得导入本章/后续章作者实现、习题答案、评审文件或额外下载依赖。</p>
+<p>逐项遵循冻结原文给出的全部前提、量词和结论；不得把目标结论放入证书字段、假设或实例。允许等价表示、合并声明、辅助引理、有效短证明及替代路线，但必须给出表示对应的证明。声明名、证明长度和分解顺序可自行安排。</p>
+<p>提交完整源代码。每个文件用独立命名代码块，例如 <code>lean filename=Main.lean</code>；<code>Main.lean</code> 必须导入本答卷所有目标模块，辅助文件也需完整提交。文件名可含安全的相对模块目录。须提交文件全文。不得使用 sorry、admit、新增公理、待证目标作为字段、跳过内核检查的设施；逻辑公理仅允许 propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 代码块提交 JSON 对象：<code>case_id</code>、<code>version</code>、<code>items</code>。<code>items</code> 必须恰好覆盖 obligations.json 的每个 ID，一项格式为 <code>{&quot;id&quot;:&quot;…&quot;,&quot;status&quot;:&quot;complete|incomplete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;命名空间.声明名&quot;}],&quot;representation&quot;:&quot;对象/参数/量词/结论与原文的对应说明&quot;,&quot;dependencies&quot;:[&quot;实际引用的义务ID&quot;]}</code>。同一声明可实现多项，一项也可由多个声明共同实现。依赖列表记录实际使用而非规定证明路径；未完成项明确写 incomplete，不能删项。主声明及其使用的关键结构公理和辅助证明均须符合上述公理限制。每项 representation 须非空；complete 项须列出至少一个实际声明，文件名为所交源码或本义务明确允许的冻结背景文件，声明须真实存在于相应文件编译得到的模块中。ID 不得重复，dependencies 只能列清单中的 ID；可自行安排证明顺序与路线。incomplete 项可以列出已完成的部分声明；complete 表示该项的全部定义、表示及证明义务已完成。</p>
+<p>每项均须完成义务清单规定的 Lean 定义、表示对应及证明。交付的完整项目须在上述固定环境中统一编译，所有声明及其依赖须符合公理限制。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/MG-C003/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Original A1 explicitly says the92-obligation project is incomplete. Retained sealed engineering source74/92 is authoritative for work credit. Honest incompleteness is not an added error commitment.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH03-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 常值优先、恒等排除常值、有效补集与三者互斥穷尽均实际定义并证明；参数U可取原合法受限域或dom f。更广总定义不扩大原合法使用范围。</p>
+<h3>CH03-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 复用给定subfamily_pseudometric，严格零距、U成员与任意目标均保留；subfamily_zero_iff、fiber_components与非空J的fiber_intersection给真实表示桥。</p>
+<h3>CH03-D03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点值关系、零距关系、像商和纤维预序尚未在本文件交付。</p>
+<h3>CH03-D04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点态零化半径及其球包含对应尚未交付。</p>
+<h3>CH03-D05</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径与零化矩阵尚未交付。</p>
+<h3>CH03-D06</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。输入尺度与阈值分类尚未交付。</p>
+<h3>CH03-D07</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 内部覆盖数等基础接口来自准许背景，但本条明确要求的完整章内表示/边界对应未映射，不能因import自动通过。</p>
+<h3>CH03-D08</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。映射熵差及其良定域尚未交付。</p>
+<h3>CH03-P01-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 命题只要求该输出行零和上界，并不声称一定存在其他输出行组成的完整Lip矩阵。const_zero_row准确给该行不等式且0∞=0。</p>
+<h3>CH03-P01-02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 取任意正输入距离见证，调用冻结合法coLip的条目零结论；任意K包括∞条目，U非空/域条件包含在合法性中。</p>
+<h3>CH03-P01-03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 三角不等式双向证明零距端点可替换，从恒等分量的逐点零距得所有点对距离相等；没有把零距当点相等。</p>
+<h3>CH03-P02-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逆否按外侧常值/恒等、内侧常值/恒等分类，外侧实际域为f(U)。用保距排除错误恒等分支，未加Lipschitz或分离假设。</p>
+<h3>CH03-P02-02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> seqOp表示施行列表的逆序乘积；seqActive递归真实像域。active_seq对任意列表归纳，空链由identity_not_active处理，不是仅两步薄包装。</p>
+<h3>CH03-P02-03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逐点零距传递，另用外侧保距及内侧非常值排除复合常值分支；完整保持常值优先规定。</p>
+<h3>CH03-P03-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两点换位反例的合法结构和完整计算尚未交付。</p>
+<h3>CH03-P04-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 外侧在内侧完整实际像域f(U)常值，代入像成员直接得复合常值；不混成内侧常值无条件保持。</p>
+<h3>CH03-P04-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。七点双分量反例尚未交付。</p>
+<h3>CH03-P05-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 使用冻结指定输出行的单输入Lip界在f(U)上估计，Ljj可∞而输入零距故乘积0，不加有限条目条件。</p>
+<h3>CH03-P06-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 对子族任意目标零距，逐分量三角与对称性给双向纤维相等，允许目标不在实际像集。</p>
+<h3>CH03-P06-02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 像目标用其原像作非空见证；每个x∈U选f(x)覆盖，反向由fiber中的U成员。包括U空的合法推广。</p>
+<h3>CH03-P06-03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意两个目标纤维若不交直接成立，有交点则证明目标子族零距并调用目标零距不变性；结合已交像目标非空与覆盖得到去重分划。</p>
+<h3>CH03-P06-04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> fiber_intersection明确hJ:J.Nonempty以从交成员恢复U成员；未错误省略空子族边界。</p>
+<h3>CH03-P06-05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> J⊆K时从更大子族的所有分量零距限制到J，纤维缩小方向正确。</p>
+<h3>CH03-P06-06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 单子族复合伪度量由冻结singleton定理对应单分量；全子族向每单分量的包含由反单调性得到。</p>
+<h3>CH03-P06-07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意目标y时，f(x)与x零距使两者到y的距离相同，得到完整输入零距类公式；非仅实际像目标特例。</p>
+<h3>CH03-P06-08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 像目标y0=f(z)时常值给全U成员；若d(y,y0)&gt;0，三角/对称与常值使任何纤维成员导致d(y,y0)=0矛盾。</p>
+<h3>CH03-P07-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点值因子化必要性尚未交付。</p>
+<h3>CH03-P07-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。像点代表元构造及空域分支尚未交付。</p>
+<h3>CH03-P07-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。双向点值变换判据尚未交付。</p>
+<h3>CH03-P07-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。实际像域上的 LB/KA 界尚未交付。</p>
+<h3>CH03-P08-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。单向零距商映射构造及判据尚未交付。</p>
+<h3>CH03-P08-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。双向商映射判据尚未交付。</p>
+<h3>CH03-P08-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。实际像集分离时的两类判据对应尚未交付。</p>
+<h3>CH03-P09-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。纤维预序自反性与传递性尚未交付。</p>
+<h3>CH03-P09-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。有限链任意两层的包含尚未交付。</p>
+<h3>CH03-P09-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。链中真包含到端点真包含的差集见证尚未交付。</p>
+<h3>CH03-P10-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。实线阶跃反例的合法结构尚未交付。</p>
+<h3>CH03-P10-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阶跃反例的点态合法半径计算尚未交付。</p>
+<h3>CH03-P10-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阶跃反例统一半径为零的证明尚未交付。</p>
+<h3>CH03-P11-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 给定J中的每个分量常值，可逐分量应用常值纤维结果并用子族零距等价组装像目标纤维=U。相关核心语义已有；原manifest本条incomplete且未列声明，交付合同不得pass。</p>
+<h3>CH03-P11-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。常值子族的点态及统一半径为无穷尚未交付。</p>
+<h3>CH03-P11-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两种通道情形的无穷输入距离反例尚未交付。</p>
+<h3>CH03-P12-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 已交更强的恒等分量保距和任意目标纤维公式可直接对像目标f(y)作改写，得到本项输入零距类。无需新具名wrapper；但本轮本条明确incomplete且无映射，按冻结合同只记partial。</p>
+<h3>CH03-P12-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。恒等分量的点态半径下界尚未交付。</p>
+<h3>CH03-P13-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。有限子族点态半径最小值公式尚未交付。</p>
+<h3>CH03-P13-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径最小值公式及下确界交换尚未交付。</p>
+<h3>CH03-P13-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径关于输出子族的反单调性尚未交付。</p>
+<h3>CH03-P14-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 成员条件展开为反向输出零距，再用给定伪度量对称性即目标零距。语义直接可推出且不需要新命名包装；本轮未映射、status incomplete，不能pass。</p>
+<h3>CH03-P14-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。从点态半径严格上确界提取合法半径尚未交付。</p>
+<h3>CH03-P14-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 在已给域成员前提下以f(x)、f(x′)代入前一纤维零距判据并展开复合，直接可派生；原manifest未交付其对应，保留partial。</p>
+<h3>CH03-P15-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。零距保持下的复合统一半径下界尚未交付。</p>
+<h3>CH03-P15-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。Lip 拉回的复合统一半径下界及边界尚未交付。</p>
+<h3>CH03-P16-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。四种阈值组合的互斥穷尽尚未交付。</p>
+<h3>CH03-P16-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。输入尺度阈值增大时的单调性尚未交付。</p>
+<h3>CH03-P16-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。零化阈值增大时的反单调性尚未交付。</p>
+<h3>CH03-P17-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。域缩小时尺度及阈值单调性尚未交付。</p>
+<h3>CH03-P17-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。缩小评估域时的点态半径单调性尚未交付。</p>
+<h3>CH03-P17-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。缩小域时的统一半径单调性尚未交付。</p>
+<h3>CH03-P17-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。直径尺度的二点单点反例尚未交付。</p>
+<h3>CH03-P18-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。低于统一半径的零化判据尚未交付。</p>
+<h3>CH03-P18-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。输出正分离时的输入距离下界尚未交付。</p>
+<h3>CH03-P18-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。对每个规定 α 的有限正分离见证尚未交付。</p>
+<h3>CH03-P19-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阈值球到纤维的包含尚未交付。</p>
+<h3>CH03-P19-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。含空集及无有限覆盖情形的覆盖数约束尚未交付。</p>
+<h3>CH03-P19-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。覆盖数约束对应的熵不等式尚未交付。</p>
+<h3>CH03-P20-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阶跃反例上任意输入尺度的二点覆盖构造尚未交付。</p>
+<h3>CH03-P21-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。小直径条件下整体零化的双向判据尚未交付。</p>
+<h3>CH03-P21-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。整体零化时输出覆盖数为一尚未交付。</p>
+<h3>CH03-P22-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。有限非空集上的覆盖、有限熵和熵差良定性尚未交付。</p>
+<h3>CH03-P23-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。常值分量输出覆盖数、熵和熵差尚未交付。</p>
+<h3>CH03-P23-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。恒等分量的双向内部覆盖数比较尚未交付。</p>
+<h3>CH03-P23-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。恒等分量在良定条件下熵差为零尚未交付。</p>
+<h3>CH03-P24-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。单通道 Lip 输入覆盖推到输出覆盖尚未交付。</p>
+<h3>CH03-P24-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。全有界条件下的熵差下界尚未交付。</p>
+<h3>CH03-P25-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。正有限 co-Lip 条目的覆盖数下界尚未交付。</p>
+<h3>CH03-P25-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。允许输出熵无穷的熵差上界尚未交付。</p>
+<h3>CH03-P26-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.1 的结构合法性、一次纤维与类型尚未交付。</p>
+<h3>CH03-P26-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.1 的自复合纤维与类型尚未交付。</p>
+<h3>CH03-P26-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点值常算子的自复合及吸收元分支尚未交付。</p>
+<h3>CH03-P27-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。正 co-Lip 与点态半径给出的距离间隙尚未交付。</p>
+<h3>CH03-P27-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径给出的距离二择尚未交付。</p>
+<h3>CH03-P28-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.3 的两种纤维分划及结构尚未交付。</p>
+<h3>CH03-P28-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.3 的覆盖数上下界和熵差尚未交付。</p>
+<h3>CH03-P29-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第一个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第二个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第三个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第四个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-05</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 无直径条件时的合法反例尚未交付。</p>
+<h3>CH03-P30-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。四点集全部精度与端点的内部覆盖数尚未交付。</p>
+<h3>CH03-P30-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两个像集及全部精度的覆盖数和熵差尚未交付。</p>
+<h3>CH03-P30-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两个最优标量 Lip 常数及必要下界尚未交付。</p>
+<h3>CH03-P30-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。精度 7/4 时一般覆盖界和真实值的比较尚未交付。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（92项）</summary><div class="prose"><h3>CH03-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z0为全部受限像点对常值零距，z1明确排除z0后要求像点与输入零距，z2为两者并补集；z3证明穷尽与三对互斥。总定义只在原合法U/全域dom特化使用，不把族零距改为点相等。</p>
+<h3>CH03-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> fiber以真实受限U和子族sup伪度量严格为0定义，componentFiber为单分量零距；z10/z11/z12证明全部分量及非空交集对应。任意目标（包括空纤维）保留，定义还允许空子族的保守扩展。</p>
+<h3>CH03-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> pointRelation用点值相等，zeroRelation用GaugeZeroRelated，均有两个点在同一U的guard；imageType是真正f(U)，z27从冻结零距等价性证明Setoid，imageQuotient是真Quotient；z20证明关系/纤维对应，fiberPreorder为零距关系包含，不默认分离。</p>
+<h3>CH03-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z33只容许0&lt;r&lt;∞，使用din x y&lt;r的严格开球且只在U评估；zeroRadius取可行半径集sSup，z34/z35给球与纤维等价，z36空族给0，结果允许∞。基点/域合法范围沿原文外置使用。</p>
+<h3>CH03-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> uniformRadius对y∈A取iInf，内部zeroRadius始终在独立U评估；zeroMatrix取A=U的输入i/输出j统一半径，按原文显示矩阵位置(j,i)解释。原非空A⊆U和合法U仅限定使用域，不将总函数延拓宣称新增原数学域。</p>
+<h3>CH03-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> ScaleFamily将非空子集单调性作为原定义的尺度条件，diameterScale用z52实际证明直径单调；thresholdType为Bool²，z53给四组合与严格尺度&lt;、非严格半径≥的准确iff。允许任意阈值的函数级推广可特化原两个有限正常数，不只取直径。</p>
+<h3>CH03-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 复用题目明确允许的冻结InternalEpsilonNet/covering_number/metric_entropy等接口，有限中心都在被覆盖集合内，空集合0和无有限网∞的语义不改。z57/z62实际证明全有界与每个有限正ε存在内部有限网等价，z89/z90补有限集合的正有限覆盖。</p>
+<h3>CH03-D08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z58显式要求非空U、U⊆dom f、两非空子族、有限正ε及至少一端覆盖数有限。z59的参数必须携带此合法性证明；z60/z61证明有限实差及正负∞分支，不允许以∞−∞替代原未定义差，也不把ε带入纤维定义。</p>
+<h3>CH03-P01-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> const_zero_row从常值分量直接给零行右端的完整单输出上界；0乘任何输入距含∞为0。不错误声称其他输出行或某极值全矩阵必存在。</p>
+<h3>CH03-P01-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z4以合法全coLip矩阵、零输出分量及实际正输入点对调用冻结单项零引理，条目强迫为0，输入/系数∞均未排除。</p>
+<h3>CH03-P01-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z5由扩展伪度量对称/三角性证明零距替换点保持距离，z6用恒等分量每点零距得到完整像点对=原点对距离，两个方向为等式。</p>
+<h3>CH03-P02-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> active_comp对同一i按两步常值/恒等分量全部分支反证，外侧域精确f(U)；得到复合有效包含两步实际域有效之并，不要求输出族分离。</p>
+<h3>CH03-P02-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> seqOp按施行顺序递归、z8对应反转列表乘积；seqActive逐步在真实集合像上累加有效分量。active_seq对任意列表归纳，z9明确零步identity非有效基例，实际域递推与全部有限长度覆盖。</p>
+<h3>CH03-P02-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> identity_comp保留每点像/输入零距，并由内侧原非恒常与外侧保距反证复合常值，故同时排除常值优先分支。</p>
+<h3>CH03-P03-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> SwapExample为Option Bool+吸收元none的两非吸收点离散1距离，metric完整证明扩展伪度量，swap保持bot、U非空、image U=U及square=id/domain合法均证。z99/z100完整计算两步有效、各步非恒等、复合恒等且非有效，两个逆向包含同时失败。</p>
+<h3>CH03-P04-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> outer_const直接把原U中点对像放入真实f(U)应用外侧常值，复合对应分量常值。</p>
+<h3>CH03-P04-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P05-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z7只假设指定输出j行其他输入全0，调用合法Lip单行化简并以内侧j常值清零；条目允许∞，0∞正确，不要求全矩阵对角。</p>
+<h3>CH03-P06-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z15对任意目标y/z的子族零距，用各分量三角和对称性证明纤维集合相等，没有目标必须属于像集的额外条件。</p>
+<h3>CH03-P06-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z16以每个真实像目标选原像证明该纤维非空；任意x∈U落到目标f(x)纤维，而所有纤维都含U条件，故并恰U。</p>
+<h3>CH03-P06-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z17由交点与两条零距三角推出目标间零距，再z15得集合相等，否则不交；结合z16非空和覆盖，去重集合族确构成分划。不要求额外命名partition包装。</p>
+<h3>CH03-P06-04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z11给逐分量逻辑对应，z12在J非空时证明fiber恰所有componentFiber交。对有限非空J特化即原目标，未把空交误作受限U。</p>
+<h3>CH03-P06-05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> fiber_antitone用J⊆K逐个限制子族零距，方向是扩大子族使纤维缩小。</p>
+<h3>CH03-P06-06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z13单分量sup退化为componentFiber，z14全族纤维通过反单调性包含于任意单分量纤维，两个子目标均给出。</p>
+<h3>CH03-P06-07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z18对任意目标y，用零距替换保持距离得到componentFiber等于受限输入零距类；目标不必像点。</p>
+<h3>CH03-P06-08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z19实际选像目标原像，常值使该纤维为U；任意目标与其正距时由三角性得到矛盾，纤维空。</p>
+<h3>CH03-P07-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z25必要方向由实际像子类型上T的规定公式，经Subtype.ext把相同f像点送到相同g像点，得到pointRelation包含。</p>
+<h3>CH03-P07-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z25充分方向在真实imageType f U上Classical.choose原像，再用关系包含证明T(fx)=gx并良定；U空时像子类型为空，构造仍成立，没有暗加非空前提。</p>
+<h3>CH03-P07-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z26把双向T存在分别等价到点值关系包含，再用反对称性得到关系相等的iff。</p>
+<h3>CH03-P07-04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z83对任意a,b∈真实f(U)选原像，规定T公式、正有限KA逆除法与g的LB上界推出LB/KA标量界；KA正有限条件显式，LB可∞的加强涵盖原有限LB。</p>
+<h3>CH03-P08-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z29实际构造Quotient.lift，利用原零距关系包含证明对代表元无关，并验证规定imageClass公式；必要方向由Quotient.sound/exact，未把商等价性作为未证实例。</p>
+<h3>CH03-P08-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z30由单向商因子化iff和集合反对称得到双向商映射存在iff零距关系相等，保留非分离族。</p>
+<h3>CH03-P08-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z31仅假设分离在f(U)上，得pointRelation=zeroRelation；z32再要求g(U)各自分离，转回单向及双向点值判据，不擅增全空间分离。</p>
+<h3>CH03-P09-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z21/z22在同一公共U上以关系包含给自反和传递，未混合不同评估域。</p>
+<h3>CH03-P09-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z23对任意a≤b做Nat.le_induction传递相邻包含；原有限链可特化到相关有限区间，不限两步。</p>
+<h3>CH03-P09-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z24在r+1≤m的链中，从严格一步关系包含实际取差集点p，经两侧单调传递得到端点严格包含及p∈末端且不在首端的见证。</p>
+<h3>CH03-P10-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P10-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P10-03</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P11-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z48当输出子族J全部常值时，对y∈U实际像目标f(y)逐分量零距，fiber恰U，包含任意输入分量选择无关性。</p>
+<h3>CH03-P11-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z46以任意大的有限正自然半径作合法证书得点态sup=∞；z47对基点inf仍∞，z49将子族常值的输出零距实际构造后给两结论，未直接把∞当合法有限半径。</p>
+<h3>CH03-P11-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> SwapExample.twoGauge的false输入为全异点∞距离，true输出为两点距1，两个扩展伪度量均证明；identity、U非空/合法，z106只用有限球为单点给统一radius∞，z107同时i=j与i≠j且输出非恒常。合法替代无穷输入反例完整。</p>
+<h3>CH03-P12-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z50在y∈U和恒等分量下，用完整保距等式把像目标f(y)纤维变为输入零距类，保留受限U。</p>
+<h3>CH03-P12-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z51保留0&lt;r&lt;∞与实际输入球只含零距的前提，以保距等式使r为合法半径，得r≤zeroRadius；r&gt;0已在给定hr中，不需要另一个命名合取包装。</p>
+<h3>CH03-P13-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z76证明子族点态radius为各分量iInf，逆向通过两个严格中间半径构造联合合法证书，含0/∞边界；z79有限非空子族上以有限inf取得最小值及最小性，完整给原min公式。</p>
+<h3>CH03-P13-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z77实际交换基点与子族iInf得统一radius公式，z78有限非空索引上给取得者和所有分量最小性，非只说交换可行。</p>
+<h3>CH03-P13-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z74由J⊆K把K全部输出零距限制到J，逐点/统一sup-inf方向得到输出子族反单调。</p>
+<h3>CH03-P14-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z40直接从componentFiber成员的输出零距和对称性得指定方向零距，合法点域的原前提可特化。</p>
+<h3>CH03-P14-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z38从严格小于sSup实际取合法有限正r，z39用该半径和输入对称性推出输出零距；不把sup本身默认可行，0/∞均处理。</p>
+<h3>CH03-P14-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z41显式保留两像点均在U₂及实际下游fiber成员，调用z40代入真实g∘f像点，未替换中间域。</p>
+<h3>CH03-P15-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z75用下游在实际f(U)保持dmid零距的条件，把每个上游合法r转成复合合法r，再取sup/inf得统一下界，未把目标作为字段。</p>
+<h3>CH03-P15-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z80在精确f(U)的下游统一半径/L下界，通过任意严格低于该商的有限正s构造复合合法半径，ENNReal.mul_lt_of_lt_div处理0和∞。更广任意L的有效结论涵盖原有限正L，不做非法消去。</p>
+<h3>CH03-P16-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> threshold_four实际穷尽Bool²四值，z53将各值与互补不等式逐一iff；Bool对不同构造的互斥为原表示的直接性质，未要求新增互斥包装。</p>
+<h3>CH03-P16-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z54对任意单调尺度σ与τσ≤τσ′，由严格上界传递得第一判断为1的通道集合不减；没有仅用diameter特例。</p>
+<h3>CH03-P16-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z55从τN≤τN′和τN′≤r得τN≤r，正是第二判断为1通道集的反向包含，阈值方向正确。</p>
+<h3>CH03-P17-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z56直接使用ScaleFamily原非空集单调条件得B⊆A尺度不增及严格阈值推论；diameterScale已独立证明满足定义。</p>
+<h3>CH03-P17-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z42固定同一任意基点，缩小评估域使每个合法半径继续合法，sup不减；原基点属于B的情形被涵盖。</p>
+<h3>CH03-P17-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z43同时缩小评估域与基点inf集合，逐基点结合z42及iInf边界证明统一半径不减。</p>
+<h3>CH03-P17-04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 用已证明合法的两非吸收点距离1空间、全二点U和单点B，计算直径1/0且B非空、B⊆U、id域合法、阈值1/2。z103还给到实线{0,1}的精确距离对应；这是源二点/单点的合法有限等距实现，无需额外构造全实线算子才能反驳一般尺度反向命题。</p>
+<h3>CH03-P18-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z44由uniformRadius≤各基点radius和严格输入距，调用z39推出输出零距，保留原双点属于A。</p>
+<h3>CH03-P18-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z45反证严格小于uniform时输出零，与给定正输出矛盾，得统一半径≤输入距；∞情形不减法。</p>
+<h3>CH03-P18-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z81对每个0&lt;α&lt;∞且uniform&lt;α，实际选基点radius&lt;α和坏球点，ε=min(正输出距,1)给有限正ε并≤输出距，输出∞也合法，量词完整。</p>
+<h3>CH03-P19-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z67在τ≤uniformRadius下，将每中心严格τ球∩A点通过z44送到对应fiber；τ有限正的原范围被更广引理涵盖。</p>
+<h3>CH03-P19-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z63实际将内部有限中心S映到f(S)，验证仍在真实输出集合且card不增，再对covering iInf比较；z68以统一零距半径实现每小球输出ε覆盖。B空及无有限输入网的∞分支均由同一inf表示处理。</p>
+<h3>CH03-P19-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z86证明至少1的ENNReal log2扩展单调，显式分有限/∞；z88以B非空、其像非空调用z87，把P19覆盖不等式转为熵不等式，无需输出有限。</p>
+<h3>CH03-P20-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P21-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z69在diam(A)&lt;τσ≤τN且τN≤uniform时，用真实所有点对距离≤diam推出整体输出零距；反向整体零距经z47给uniform=∞，不删去直径/阈值条件。</p>
+<h3>CH03-P21-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z70由上述等价条件和A非空，z65实际构造一内部输出中心并结合非空覆盖≥1，得任意原有限正ε的覆盖数恰1。</p>
+<h3>CH03-P22-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z89/z90对非空有限U构造U自身为内部网，证明覆盖正且有限；有限像同理。z91给有限实熵，z92同时构造两端有限实熵和完整z58合法熵差条件，两非空子族/合法域/有限正ε均保留。</p>
+<h3>CH03-P23-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z93用常值给输出cover=1、entropy=0，并在合法熵差参数下差等于输入entropy；输入entropy可∞，没有擅加输入有限。合法性可由实际有限输出覆盖直接构造，不需未证假设∞−∞。</p>
+<h3>CH03-P23-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z63推内部中心，z64在真实输出内部中心上选原像pullback并证明card不增；z66在恒等分量保距下双向应用得到覆盖数及熵相等，非点值相等也成立。</p>
+<h3>CH03-P23-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z94仅在z58合法熵差时利用两覆盖相等，从至少一端有限推出输入有限；转实数差得到0，未把∞−∞定义为0。</p>
+<h3>CH03-P24-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z82与z63用有限正L下ENNReal严格除法，把ε/L内部网推到ε输出网并控制center-card；泛型引理更广，不限制空输入/无有限网。</p>
+<h3>CH03-P24-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z95输入全有界保证ε和ε/L输入覆盖有限，再经Lip推输出有限；实际构造z58与两端有限实熵，并由EReal差单调得原下界。所有ε/L有限正的侧条件显式证明。</p>
+<h3>CH03-P25-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_cover从正有限Kij与单项≤总和≤输出距推出严格ε/K输入距，z64实际选内部输出中心原像、card不增，得输入覆盖≤输出覆盖。</p>
+<h3>CH03-P25-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z96全有界只用于两个输入尺度的有限熵，z58由输入有限构造；不要求输出有限，原差可为−∞。EReal.sub_le_sub通过反向覆盖熵不等式给原上界，保留输出∞合法分支。</p>
+<h3>CH03-P26-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P26-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P26-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z84对任意f在U点值常v，证明f²仍点值常f(v)，并逐点证明在f²域iff f(v)≠bot；若f(v)=bot则U∩domf²空，否则U整体合法。z85给零距结论，涵盖原同一实数值情形及再次吸收边界。</p>
+<h3>CH03-P27-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z71对正coLip Kij仅要求正、不要求有限；点态严格低于radius先由z39输出零，再冻结positive_colip_entry_reflects_zero强迫输入零，排除(0,rN)所有实际输入距。</p>
+<h3>CH03-P27-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z72对任意点对直接作uniform≤d或其否定分支，否定时用pointwise半径≥uniform和z71得输入零。原统一半径正的零或≥二择完整，更广非正统一值也无矛盾。</p>
+<h3>CH03-P28-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P28-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-03</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-04</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-05</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-03</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-04</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>未能完成整章的 92 项义务，因此不能将本答卷标为完整项目。已完成的工作包括分量分划、计算纤维、像值及商值因子化、零化半径和部分覆盖数估计；尚未完成的部分包括七点反例、阶跃函数反例，以及第 3.1、3.3–3.5 题中的若干具体构造与计算。</p>
+<p>这些内容源自 Zhe Li（Glen Li）的 <em>The Operator Evolution Theory</em>, Volume I，CC BY 4.0，https://glenzli.com/books/oet/ 。</p>
+<p>以下给出一个可独立编译的较小部分项目；它不代表上文全部已探索工作的完整交付。其余义务均在清单中明确标为 <code>incomplete</code>。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+
+/-!
+Partial formalization of Chapter 3 of Zhe Li, The Operator Evolution Theory,
+Volume I, v1.0.0, https://glenzli.com/books/oet/, CC BY 4.0.
+-/
+
+namespace Chapter3
+
+open Set
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+variable {X I : Type} {bot : X}
+
+def constComponents (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) : Set I :=
+  {i | ∀ x ∈ U, ∀ y ∈ U, d i (f.func x) (f.func y) = 0}
+
+def identityComponents (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) : Set I :=
+  {i | i ∉ constComponents d f U ∧ ∀ x ∈ U, d i (f.func x) x = 0}
+
+def activeComponents (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) : Set I :=
+  (constComponents d f U ∪ identityComponents d f U)ᶜ
+
+theorem components_partition (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I) :
+    (i ∈ constComponents d f U ∨ i ∈ identityComponents d f U ∨
+      i ∈ activeComponents d f U) ∧
+    ¬ (i ∈ constComponents d f U ∧ i ∈ identityComponents d f U) ∧
+    ¬ (i ∈ constComponents d f U ∧ i ∈ activeComponents d f U) ∧
+    ¬ (i ∈ identityComponents d f U ∧ i ∈ activeComponents d f U) := by
+  classical
+  simp only [identityComponents, activeComponents, mem_setOf_eq, mem_compl_iff,
+    mem_union]
+  tauto
+
+theorem const_zero_row [Fintype I] (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I)
+    (hi : i ∈ constComponents d f U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (f.func x) (f.func y) ≤
+      ∑ k : I, (0 : ENNReal) * d k x y := by
+  intro x hx y hy
+  simp [hi x hx y hy]
+
+theorem const_colip_zero [Fintype I] (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i k : I) (K : I → I → ENNReal)
+    (hi : i ∈ constComponents d f U) (hK : IsCoLipMatrix d f U K)
+    (x y : X) (hx : x ∈ U) (hy : y ∈ U) (hpos : 0 &lt; d k x y) : K k i = 0 :=
+  colip_entry_eq_zero_of_output_zero_input_pos d f U K k i x y hK hx hy
+    (hi x hx y hy) hpos
+
+theorem dist_eq_of_zero_endpoints (d : X → X → ENNReal)
+    (hs : ∀ x y, d x y = d y x)
+    (ht : ∀ x y z, d x z ≤ d x y + d y z)
+    {a b c e : X} (hab : d a b = 0) (hce : d c e = 0) :
+    d a c = d b e := by
+  have hba : d b a = 0 := by rw [hs b a, hab]
+  have hec : d e c = 0 := by rw [hs e c, hce]
+  apply le_antisymm
+  · calc
+      d a c ≤ d a b + d b c := ht a b c
+      _ ≤ d a b + (d b e + d e c) := add_le_add le_rfl (ht b e c)
+      _ = d b e := by simp [hab, hec]
+  · calc
+      d b e ≤ d b a + d a e := ht b a e
+      _ ≤ d b a + (d a c + d c e) := add_le_add le_rfl (ht a c e)
+      _ = d a c := by simp [hba, hce]
+
+theorem identity_preserves_distance (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hi : i ∈ identityComponents d f U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (f.func x) (f.func y) = d i x y := by
+  intro x hx y hy
+  exact dist_eq_of_zero_endpoints (d i) hd.symm hd.triangle (hi.2 x hx) (hi.2 y hy)
+
+theorem outer_const (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (i : I)
+    (h : i ∈ constComponents d g (f.func '' U)) :
+    i ∈ constComponents d (g * f) U := by
+  intro x hx y hy
+  exact h (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+
+theorem inner_const_of_single_row [Fintype I] (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (j : I) (L : I → I → ENNReal)
+    (hc : j ∈ constComponents d f U)
+    (hL : IsLipMatrix d g (f.func '' U) L)
+    (hrow : ∀ k, k ≠ j → L k j = 0) :
+    j ∈ constComponents d (g * f) U := by
+  intro x hx y hy
+  apply le_antisymm _ (zero_le _)
+  have h := lip_bound_of_single_input_row d g (f.func '' U) L j j hL hrow
+      (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+  simpa [hc x hx y hy] using h
+
+theorem identity_comp (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hf : i ∈ identityComponents d f U)
+    (hg : i ∈ identityComponents d g (f.func '' U)) :
+    i ∈ identityComponents d (g * f) U := by
+  constructor
+  · intro hc
+    apply hf.1
+    intro x hx y hy
+    have heq := identity_preserves_distance d g (f.func '' U) i hd hg
+      (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+    exact heq.symm.trans (hc x hx y hy)
+  · intro x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i ((g * f).func x) x ≤
+          d i (g.func (f.func x)) (f.func x) + d i (f.func x) x :=
+        hd.triangle _ _ _
+      _ = 0 := by rw [hg.2 _ ⟨x, hx, rfl⟩, hf.2 x hx, add_zero]
+
+theorem active_comp (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i)) :
+    i ∈ activeComponents d (g * f) U →
+      i ∈ activeComponents d f U ∨
+        i ∈ activeComponents d g (f.func '' U) := by
+  classical
+  intro hc
+  by_contra h
+  have hf : i ∈ constComponents d f U ∨ i ∈ identityComponents d f U := by
+    have h1 := (not_or.mp h).1
+    simp only [activeComponents, mem_compl_iff, mem_union] at h1
+    tauto
+  have hg : i ∈ constComponents d g (f.func '' U) ∨
+      i ∈ identityComponents d g (f.func '' U) := by
+    have h2 := (not_or.mp h).2
+    simp only [activeComponents, mem_compl_iff, mem_union] at h2
+    tauto
+  have hnot : i ∉ constComponents d (g * f) U ∧
+      i ∉ identityComponents d (g * f) U := by
+    simpa [activeComponents] using hc
+  rcases hg with hg | hg
+  · exact hnot.1 (outer_const d f g U i hg)
+  · rcases hf with hf | hf
+    · apply hnot.1
+      intro x hx y hy
+      have heq := identity_preserves_distance d g (f.func '' U) i hd hg
+        (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+      exact heq.trans (hf x hx y hy)
+    · exact hnot.2 (identity_comp d f g U i hd hf hg)
+
+def seqOp : List (Operator X bot) → Operator X bot
+  | [] =&gt; 1
+  | f :: fs =&gt; seqOp fs * f
+
+def seqActive (d : I → X → X → ENNReal) :
+    List (Operator X bot) → Set X → Set I
+  | [], _ =&gt; ∅
+  | f :: fs, U =&gt; activeComponents d f U ∪ seqActive d fs (f.func '' U)
+
+theorem seqOp_eq_reverse_prod (fs : List (Operator X bot)) :
+    seqOp fs = fs.reverse.prod := by
+  induction fs with
+  | nil =&gt; rfl
+  | cons f fs ih =&gt; simp [seqOp, ih, List.prod_append]
+
+theorem identity_not_active (d : I → X → X → ENNReal)
+    (U : Set X) (i : I) (hself : ∀ x, d i x x = 0) :
+    i ∉ activeComponents d (1 : Operator X bot) U := by
+  classical
+  simp only [activeComponents, mem_compl_iff, mem_union, not_not]
+  by_cases hc : i ∈ constComponents d (1 : Operator X bot) U
+  · exact Or.inl hc
+  · right
+    exact ⟨hc, fun x _ =&gt; hself x⟩
+
+theorem active_seq (d : I → X → X → ENNReal)
+    (fs : List (Operator X bot)) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i)) :
+    i ∈ activeComponents d (seqOp fs) U → i ∈ seqActive d fs U := by
+  induction fs generalizing U with
+  | nil =&gt;
+      intro h
+      exact (identity_not_active d U i hd.dist_self h).elim
+  | cons f fs ih =&gt;
+      intro h
+      rcases active_comp d f (seqOp fs) U i hd h with h | h
+      · exact Or.inl h
+      · exact Or.inr (ih (f.func '' U) h)
+
+def fiber (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y : X) (U : Set X) : Set X :=
+  {x | x ∈ U ∧ subfamily_pseudometric d J (f.func x) y = 0}
+
+def componentFiber (d : I → X → X → ENNReal) (f : Operator X bot)
+    (j : I) (y : X) (U : Set X) : Set X :=
+  {x | x ∈ U ∧ d j (f.func x) y = 0}
+
+theorem subfamily_zero_iff (d : I → X → X → ENNReal)
+    (J : Set I) (x y : X) :
+    subfamily_pseudometric d J x y = 0 ↔ ∀ j ∈ J, d j x y = 0 := by
+  constructor
+  · intro h j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j x y ≤ subfamily_pseudometric d J x y :=
+        le_iSup (fun k : {k // k ∈ J} =&gt; d k.1 x y) ⟨j, hj⟩
+      _ = 0 := h
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    apply iSup_le
+    intro j
+    exact le_of_eq (h j.1 j.2)
+
+theorem fiber_components (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y : X) (U : Set X) :
+    fiber d f J y U =
+      {x | x ∈ U ∧ ∀ j ∈ J, x ∈ componentFiber d f j y U} := by
+  ext x
+  simp only [fiber, componentFiber, mem_setOf_eq, subfamily_zero_iff]
+  constructor
+  · rintro ⟨hx, h⟩
+    exact ⟨hx, fun j hj =&gt; ⟨hx, h j hj⟩⟩
+  · rintro ⟨hx, h⟩
+    exact ⟨hx, fun j hj =&gt; (h j hj).2⟩
+
+theorem fiber_intersection (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y : X) (U : Set X) (hJ : J.Nonempty) :
+    fiber d f J y U = ⋂ j ∈ J, componentFiber d f j y U := by
+  rw [fiber_components]
+  ext x
+  simp only [mem_setOf_eq, mem_iInter]
+  constructor
+  · exact And.right
+  · intro h
+    obtain ⟨j, hj⟩ := hJ
+    exact ⟨(h j hj).1, h⟩
+
+theorem fiber_antitone (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J K : Set I) (y : X) (U : Set X) (hJK : J ⊆ K) :
+    fiber d f K y U ⊆ fiber d f J y U := by
+  intro x hx
+  exact ⟨hx.1, (subfamily_zero_iff d J _ _).2
+    (fun j hj =&gt; (subfamily_zero_iff d K _ _).1 hx.2 j (hJK hj))⟩
+
+theorem fiber_singleton (d : I → X → X → ENNReal) (f : Operator X bot)
+    (j : I) (y : X) (U : Set X) :
+    fiber d f {j} y U = componentFiber d f j y U := by
+  ext x
+  simp [fiber, componentFiber, subfamily_pseudometric_singleton]
+
+theorem fiber_all_subset (d : I → X → X → ENNReal) (f : Operator X bot)
+    (j : I) (y : X) (U : Set X) :
+    fiber d f univ y U ⊆ componentFiber d f j y U := by
+  rw [← fiber_singleton]
+  exact fiber_antitone d f _ _ _ _ (subset_univ _)
+
+theorem fiber_target_zero (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y z : X) (U : Set X)
+    (hd : ∀ j, ExtendedPseudoMetric X bot (d j))
+    (hyz : subfamily_pseudometric d J y z = 0) :
+    fiber d f J y U = fiber d f J z U := by
+  ext x
+  simp only [fiber, mem_setOf_eq, subfamily_zero_iff]
+  constructor &lt;;&gt; intro h &lt;;&gt; refine ⟨h.1, ?_⟩ &lt;;&gt; intro j hj
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (f.func x) z ≤ d j (f.func x) y + d j y z := (hd j).triangle _ _ _
+      _ = 0 := by
+        rw [h.2 j hj, (subfamily_zero_iff d J y z).1 hyz j hj, add_zero]
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (f.func x) y ≤ d j (f.func x) z + d j z y := (hd j).triangle _ _ _
+      _ = 0 := by
+        rw [h.2 j hj, (hd j).symm z y,
+          (subfamily_zero_iff d J y z).1 hyz j hj, add_zero]
+
+theorem fiber_image_cover (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (U : Set X) (hd : ∀ j, ExtendedPseudoMetric X bot (d j)) :
+    (∀ y ∈ f.func '' U, (fiber d f J y U).Nonempty) ∧
+    (⋃ y ∈ f.func '' U, fiber d f J y U) = U := by
+  constructor
+  · rintro y ⟨x, hx, rfl⟩
+    exact ⟨x, hx, (subfamily_zero_iff d J _ _).2
+      (fun j _ =&gt; (hd j).dist_self _)⟩
+  · ext x
+    constructor
+    · intro hx
+      obtain ⟨y, _, hxy⟩ := Set.mem_iUnion₂.mp hx
+      exact hxy.1
+    · intro hx
+      apply Set.mem_iUnion₂.mpr
+      exact ⟨f.func x, ⟨x, hx, rfl⟩, hx,
+        (subfamily_zero_iff d J _ _).2 (fun j _ =&gt; (hd j).dist_self _)⟩
+
+theorem fiber_equal_or_disjoint (d : I → X → X → ENNReal)
+    (f : Operator X bot) (J : Set I) (U : Set X) (y z : X)
+    (hd : ∀ j, ExtendedPseudoMetric X bot (d j)) :
+    fiber d f J y U = fiber d f J z U ∨
+      Disjoint (fiber d f J y U) (fiber d f J z U) := by
+  classical
+  by_cases h : Disjoint (fiber d f J y U) (fiber d f J z U)
+  · exact Or.inr h
+  · left
+    have hex : ∃ x, x ∈ fiber d f J y U ∧ x ∈ fiber d f J z U :=
+      Set.not_disjoint_iff.mp h
+    obtain ⟨x, hx, hx'⟩ := hex
+    apply fiber_target_zero d f J y z U hd
+    apply (subfamily_zero_iff d J y z).2
+    intro j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j y z ≤ d j y (f.func x) + d j (f.func x) z := (hd j).triangle _ _ _
+      _ = 0 := by
+        rw [(hd j).symm y (f.func x),
+          (subfamily_zero_iff d J _ _).1 hx.2 j hj,
+          (subfamily_zero_iff d J _ _).1 hx'.2 j hj, add_zero]
+
+theorem identity_component_fiber (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I) (y : X)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hi : i ∈ identityComponents d f U) :
+    componentFiber d f i y U = {x | x ∈ U ∧ d i x y = 0} := by
+  ext x
+  simp only [componentFiber, mem_setOf_eq]
+  constructor &lt;;&gt; intro h &lt;;&gt; refine ⟨h.1, ?_⟩
+  · have hdist := dist_eq_of_zero_endpoints (d i) hd.symm hd.triangle
+      (hi.2 x h.1) (hd.dist_self y)
+    exact hdist.symm.trans h.2
+  · have hdist := dist_eq_of_zero_endpoints (d i) hd.symm hd.triangle
+      (hi.2 x h.1) (hd.dist_self y)
+    exact hdist.trans h.2
+
+theorem constant_component_fiber (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I) (y₀ y : X)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hc : i ∈ constComponents d f U) (hy₀ : y₀ ∈ f.func '' U) :
+    componentFiber d f i y₀ U = U ∧
+      (0 &lt; d i y y₀ → componentFiber d f i y U = ∅) := by
+  obtain ⟨z, hz, rfl⟩ := hy₀
+  constructor
+  · ext x
+    simp only [componentFiber, mem_setOf_eq]
+    constructor
+    · exact And.left
+    · intro hx
+      exact ⟨hx, hc x hx z hz⟩
+  · intro hpos
+    ext x
+    simp only [Set.mem_empty_iff_false, iff_false]
+    intro hx
+    have hzero : d i y (f.func z) = 0 := by
+      apply le_antisymm _ (zero_le _)
+      calc
+        d i y (f.func z) ≤ d i y (f.func x) + d i (f.func x) (f.func z) :=
+          hd.triangle _ _ _
+        _ = 0 := by
+          rw [hd.symm y (f.func x), hx.2, hc x hx.1 z hz, add_zero]
+    exact (ne_of_gt hpos) hzero
+
+end Chapter3
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;MG-C003&quot;,
+  &quot;version&quot;: &quot;0.1.1&quot;,
+  &quot;items&quot;: [
+    {&quot;id&quot;:&quot;CH03-D01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.constComponents&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identityComponents&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.activeComponents&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.components_partition&quot;}],&quot;representation&quot;:&quot;U 上常值、非恒常逐点零距与剩余分量；证明常值优先的互斥穷尽。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.componentFiber&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.subfamily_zero_iff&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_intersection&quot;}],&quot;representation&quot;:&quot;以冻结子族复合伪度量的零距离和 U 成员定义纤维，证明与分量条件及交集的对应。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点值关系、零距关系、像商和纤维预序尚未在本文件交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点态零化半径及其球包含对应尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D05&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径与零化矩阵尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D06&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;输入尺度与阈值分类尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D07&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;尚未交付覆盖数、熵和全有界接口的全部对应证明。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D08&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;映射熵差及其良定域尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P01-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.const_zero_row&quot;}],&quot;representation&quot;:&quot;常值输出在任意 x,y∈U 为零，零行有限和也为零。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P01-02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.const_colip_zero&quot;}],&quot;representation&quot;:&quot;输出零距和正输入距离迫使合法 co-Lip 条目为零。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P01-03&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identity_preserves_distance&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.dist_eq_of_zero_endpoints&quot;}],&quot;representation&quot;:&quot;每个端点与其像零距，三角不等式双向给出距离相等。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P02-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.active_comp&quot;}],&quot;representation&quot;:&quot;g*f 表示先 f 后 g；第二步限制域是实际像 f(U)。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-P01-03&quot;,&quot;CH03-P02-03&quot;,&quot;CH03-P04-01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P02-02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.seqOp&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.seqActive&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.seqOp_eq_reverse_prod&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.active_seq&quot;}],&quot;representation&quot;:&quot;列表按输入先后递归，每步使用实际像域；证明任意长度及空链。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-P02-01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P02-03&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identity_comp&quot;}],&quot;representation&quot;:&quot;逐点零距传递且保距排除复合落入常值优先分支。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-P01-03&quot;]},
+    {&quot;id&quot;:&quot;CH03-P03-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两点换位反例的合法结构和完整计算尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P04-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.outer_const&quot;}],&quot;representation&quot;:&quot;外侧在内侧实际像域上常值，故复合在 U 上常值。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P04-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;七点双分量反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P05-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.inner_const_of_single_row&quot;}],&quot;representation&quot;:&quot;实际像域上的指定单行 Lip 界传递内侧常值，系数可为无穷。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_target_zero&quot;}],&quot;representation&quot;:&quot;任意目标子族零距时纤维相等。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_image_cover&quot;}],&quot;representation&quot;:&quot;每个像目标纤维非空，所有像目标纤维覆盖 U。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-03&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_equal_or_disjoint&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_image_cover&quot;}],&quot;representation&quot;:&quot;纤维相等或不交，并结合非空性与覆盖得到去重分划。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;,&quot;CH03-P06-01&quot;,&quot;CH03-P06-02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-04&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_intersection&quot;}],&quot;representation&quot;:&quot;非空子族纤维等于其单分量纤维的交集。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-05&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_antitone&quot;}],&quot;representation&quot;:&quot;J⊆K 时 K 纤维包含于 J 纤维。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-06&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_singleton&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_all_subset&quot;}],&quot;representation&quot;:&quot;单元素子族恢复该分量，全指标纤维包含每个单分量纤维。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;,&quot;CH03-P06-05&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-07&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identity_component_fiber&quot;}],&quot;representation&quot;:&quot;恒等分量下任意目标的输出纤维等于 U 内输入零距类。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-08&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.constant_component_fiber&quot;}],&quot;representation&quot;:&quot;常值分量的像目标纤维为 U，正距离目标纤维为空。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P07-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点值因子化必要性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P07-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;像点代表元构造及空域分支尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P07-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;双向点值变换判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P07-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;实际像域上的 LB/KA 界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P08-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;单向零距商映射构造及判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P08-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;双向商映射判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P08-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;实际像集分离时的两类判据对应尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P09-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;纤维预序自反性与传递性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P09-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;有限链任意两层的包含尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P09-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;链中真包含到端点真包含的差集见证尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P10-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;实线阶跃反例的合法结构尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P10-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阶跃反例的点态合法半径计算尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P10-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阶跃反例统一半径为零的证明尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P11-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;常值子族的像目标纤维结论尚未完整交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P11-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;常值子族的点态及统一半径为无穷尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P11-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两种通道情形的无穷输入距离反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P12-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量的像目标纤维公式尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P12-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量的点态半径下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P13-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;有限子族点态半径最小值公式尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P13-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径最小值公式及下确界交换尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P13-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径关于输出子族的反单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P14-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;纤维成员推出输出零距的专门声明尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P14-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;从点态半径严格上确界提取合法半径尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P14-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;纤维判据的复合输入实例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P15-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;零距保持下的复合统一半径下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P15-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;Lip 拉回的复合统一半径下界及边界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P16-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;四种阈值组合的互斥穷尽尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P16-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;输入尺度阈值增大时的单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P16-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;零化阈值增大时的反单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;域缩小时尺度及阈值单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;缩小评估域时的点态半径单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;缩小域时的统一半径单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;直径尺度的二点单点反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P18-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;低于统一半径的零化判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P18-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;输出正分离时的输入距离下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P18-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;对每个规定 α 的有限正分离见证尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P19-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阈值球到纤维的包含尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P19-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;含空集及无有限覆盖情形的覆盖数约束尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P19-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;覆盖数约束对应的熵不等式尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P20-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阶跃反例上任意输入尺度的二点覆盖构造尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P21-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;小直径条件下整体零化的双向判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P21-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;整体零化时输出覆盖数为一尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P22-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;有限非空集上的覆盖、有限熵和熵差良定性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P23-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;常值分量输出覆盖数、熵和熵差尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P23-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量的双向内部覆盖数比较尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P23-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量在良定条件下熵差为零尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P24-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;单通道 Lip 输入覆盖推到输出覆盖尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P24-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;全有界条件下的熵差下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P25-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;正有限 co-Lip 条目的覆盖数下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P25-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;允许输出熵无穷的熵差上界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P26-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.1 的结构合法性、一次纤维与类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P26-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.1 的自复合纤维与类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P26-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点值常算子的自复合及吸收元分支尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P27-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;正 co-Lip 与点态半径给出的距离间隙尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P27-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径给出的距离二择尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P28-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.3 的两种纤维分划及结构尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P28-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.3 的覆盖数上下界和熵差尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第一个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第二个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第三个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第四个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-05&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 无直径条件时的合法反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;四点集全部精度与端点的内部覆盖数尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两个像集及全部精度的覆盖数和熵差尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两个最优标量 Lip 常数及必要下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;精度 7/4 时一般覆盖界和真实值的比较尚未交付。&quot;,&quot;dependencies&quot;:[]}
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-C003:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/slots/MG-C003-A1.json">review · MG-C003-A1.json</a><span class="hash">SHA256 ba2f4bf4e3833c6b746c7a629f7a580f57d700af583b046ba2812c70b46a1bec</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/stderr.txt">attachment · stderr.txt</a><span class="hash">SHA256 ded8f083523a9f50e99276f348c9cabfa5765dee515eca3ad266bf2dbb39c000</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Audit.lean">attachment · Audit.lean</a><span class="hash">SHA256 e1e605ea2a21a9c47e6087a9e5a296b09b2a988e86e68329eec202e41b41c2f8</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Audit.log">attachment · Audit.log</a><span class="hash">SHA256 a8d392fe74019e9abc950cff2daf56ac951390a03defc56f3232f17f088970c5</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check.lean">attachment · Check.lean</a><span class="hash">SHA256 0e4795458cc71a259eb627a580c4a375a1eb10a9fe02243a3ac137156a59f408</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check2.lean">attachment · Check2.lean</a><span class="hash">SHA256 987342880fcfb74777191e2b5adfc2e1f6c93b8f8cbd7e19a8bf0d239a5dbd54</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check3.lean">attachment · Check3.lean</a><span class="hash">SHA256 1187f792185f80e4e09c5477250bb6f626918c7088149d10915f83d6d5ea36de</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check4.lean">attachment · Check4.lean</a><span class="hash">SHA256 a7a6457cdbab9c9ffd514fd415daa0073788ad64efc4c9c2aa9abba127a515bf</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check5.lean">attachment · Check5.lean</a><span class="hash">SHA256 21b572812cebb3b2831a8030588cb3af60ad60c0fe48b693f6abb8381cc18b8e</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check6.lean">attachment · Check6.lean</a><span class="hash">SHA256 a0f3b8904c1969a7da5436b442f99d2bc40eee4387524549ca63c7a129d1b847</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check7.lean">attachment · Check7.lean</a><span class="hash">SHA256 2265b33be89e9e06b8de5130a4dea4c0807a9ea0cb79955be9e12eab80812c46</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Main.lean">attachment · Main.lean</a><span class="hash">SHA256 b563a826d24cbbbf1fef1e00994fe117bb09b4f9b72dea35534e36514d6c9bb4</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/MainReadable.lean">attachment · MainReadable.lean</a><span class="hash">SHA256 dfce8abfb30604815b35fc4a03c162b949906f95f0ac492709f8b17bcc6d0978</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/alignment.json">attachment · alignment.json</a><span class="hash">SHA256 39aa5fcbf2968f4c5e641597d68cf646b8b8f94b470ddfd375f61794cbd2075e</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/alignmentReadable.json">attachment · alignmentReadable.json</a><span class="hash">SHA256 74702c9c04903b599b3dc98d883b50de6ddc4a05ef4ff958b6ba519896e4621f</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/compact.py">attachment · compact.py</a><span class="hash">SHA256 8d0c0e122dc9e451b50321ccbb36e24a18ca070e1ad4af443be675349742b316</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/make_alignment.py">attachment · make_alignment.py</a><span class="hash">SHA256 651bc8dd4b527d3da4670f331cc3901c73609aea08aa707c807a1e42207840e3</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/alignment.original.json">attachment · alignment.original.json</a><span class="hash">SHA256 f95bd769ab40438efccdaef46da50169fb3b546571284ed1c09520f9d72687f2</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/scoring-inputs.json">review · scoring-inputs.json</a><span class="hash">SHA256 4d426e52b04280c592a93c595961aaf9a9aabab4a8b0ba79bfb75fd69ef0107a</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/record.json">正式记录 record.json</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Original A1 explicitly says the92-obligation project is incomplete. Retained sealed engineering source74/92 is authoritative for work credit. Honest incompleteness is not an added error commitment.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH03-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 常值优先、恒等排除常值、有效补集与三者互斥穷尽均实际定义并证明；参数U可取原合法受限域或dom f。更广总定义不扩大原合法使用范围。</p>
+<h3>CH03-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 复用给定subfamily_pseudometric，严格零距、U成员与任意目标均保留；subfamily_zero_iff、fiber_components与非空J的fiber_intersection给真实表示桥。</p>
+<h3>CH03-D03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点值关系、零距关系、像商和纤维预序尚未在本文件交付。</p>
+<h3>CH03-D04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点态零化半径及其球包含对应尚未交付。</p>
+<h3>CH03-D05</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径与零化矩阵尚未交付。</p>
+<h3>CH03-D06</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。输入尺度与阈值分类尚未交付。</p>
+<h3>CH03-D07</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 内部覆盖数等基础接口来自准许背景，但本条明确要求的完整章内表示/边界对应未映射，不能因import自动通过。</p>
+<h3>CH03-D08</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。映射熵差及其良定域尚未交付。</p>
+<h3>CH03-P01-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 命题只要求该输出行零和上界，并不声称一定存在其他输出行组成的完整Lip矩阵。const_zero_row准确给该行不等式且0∞=0。</p>
+<h3>CH03-P01-02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 取任意正输入距离见证，调用冻结合法coLip的条目零结论；任意K包括∞条目，U非空/域条件包含在合法性中。</p>
+<h3>CH03-P01-03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 三角不等式双向证明零距端点可替换，从恒等分量的逐点零距得所有点对距离相等；没有把零距当点相等。</p>
+<h3>CH03-P02-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逆否按外侧常值/恒等、内侧常值/恒等分类，外侧实际域为f(U)。用保距排除错误恒等分支，未加Lipschitz或分离假设。</p>
+<h3>CH03-P02-02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> seqOp表示施行列表的逆序乘积；seqActive递归真实像域。active_seq对任意列表归纳，空链由identity_not_active处理，不是仅两步薄包装。</p>
+<h3>CH03-P02-03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逐点零距传递，另用外侧保距及内侧非常值排除复合常值分支；完整保持常值优先规定。</p>
+<h3>CH03-P03-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两点换位反例的合法结构和完整计算尚未交付。</p>
+<h3>CH03-P04-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 外侧在内侧完整实际像域f(U)常值，代入像成员直接得复合常值；不混成内侧常值无条件保持。</p>
+<h3>CH03-P04-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。七点双分量反例尚未交付。</p>
+<h3>CH03-P05-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 使用冻结指定输出行的单输入Lip界在f(U)上估计，Ljj可∞而输入零距故乘积0，不加有限条目条件。</p>
+<h3>CH03-P06-01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 对子族任意目标零距，逐分量三角与对称性给双向纤维相等，允许目标不在实际像集。</p>
+<h3>CH03-P06-02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 像目标用其原像作非空见证；每个x∈U选f(x)覆盖，反向由fiber中的U成员。包括U空的合法推广。</p>
+<h3>CH03-P06-03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意两个目标纤维若不交直接成立，有交点则证明目标子族零距并调用目标零距不变性；结合已交像目标非空与覆盖得到去重分划。</p>
+<h3>CH03-P06-04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> fiber_intersection明确hJ:J.Nonempty以从交成员恢复U成员；未错误省略空子族边界。</p>
+<h3>CH03-P06-05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> J⊆K时从更大子族的所有分量零距限制到J，纤维缩小方向正确。</p>
+<h3>CH03-P06-06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 单子族复合伪度量由冻结singleton定理对应单分量；全子族向每单分量的包含由反单调性得到。</p>
+<h3>CH03-P06-07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意目标y时，f(x)与x零距使两者到y的距离相同，得到完整输入零距类公式；非仅实际像目标特例。</p>
+<h3>CH03-P06-08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 像目标y0=f(z)时常值给全U成员；若d(y,y0)&gt;0，三角/对称与常值使任何纤维成员导致d(y,y0)=0矛盾。</p>
+<h3>CH03-P07-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点值因子化必要性尚未交付。</p>
+<h3>CH03-P07-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。像点代表元构造及空域分支尚未交付。</p>
+<h3>CH03-P07-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。双向点值变换判据尚未交付。</p>
+<h3>CH03-P07-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。实际像域上的 LB/KA 界尚未交付。</p>
+<h3>CH03-P08-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。单向零距商映射构造及判据尚未交付。</p>
+<h3>CH03-P08-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。双向商映射判据尚未交付。</p>
+<h3>CH03-P08-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。实际像集分离时的两类判据对应尚未交付。</p>
+<h3>CH03-P09-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。纤维预序自反性与传递性尚未交付。</p>
+<h3>CH03-P09-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。有限链任意两层的包含尚未交付。</p>
+<h3>CH03-P09-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。链中真包含到端点真包含的差集见证尚未交付。</p>
+<h3>CH03-P10-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。实线阶跃反例的合法结构尚未交付。</p>
+<h3>CH03-P10-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阶跃反例的点态合法半径计算尚未交付。</p>
+<h3>CH03-P10-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阶跃反例统一半径为零的证明尚未交付。</p>
+<h3>CH03-P11-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 给定J中的每个分量常值，可逐分量应用常值纤维结果并用子族零距等价组装像目标纤维=U。相关核心语义已有；原manifest本条incomplete且未列声明，交付合同不得pass。</p>
+<h3>CH03-P11-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。常值子族的点态及统一半径为无穷尚未交付。</p>
+<h3>CH03-P11-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两种通道情形的无穷输入距离反例尚未交付。</p>
+<h3>CH03-P12-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 已交更强的恒等分量保距和任意目标纤维公式可直接对像目标f(y)作改写，得到本项输入零距类。无需新具名wrapper；但本轮本条明确incomplete且无映射，按冻结合同只记partial。</p>
+<h3>CH03-P12-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。恒等分量的点态半径下界尚未交付。</p>
+<h3>CH03-P13-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。有限子族点态半径最小值公式尚未交付。</p>
+<h3>CH03-P13-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径最小值公式及下确界交换尚未交付。</p>
+<h3>CH03-P13-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径关于输出子族的反单调性尚未交付。</p>
+<h3>CH03-P14-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 成员条件展开为反向输出零距，再用给定伪度量对称性即目标零距。语义直接可推出且不需要新命名包装；本轮未映射、status incomplete，不能pass。</p>
+<h3>CH03-P14-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。从点态半径严格上确界提取合法半径尚未交付。</p>
+<h3>CH03-P14-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 在已给域成员前提下以f(x)、f(x′)代入前一纤维零距判据并展开复合，直接可派生；原manifest未交付其对应，保留partial。</p>
+<h3>CH03-P15-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。零距保持下的复合统一半径下界尚未交付。</p>
+<h3>CH03-P15-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。Lip 拉回的复合统一半径下界及边界尚未交付。</p>
+<h3>CH03-P16-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。四种阈值组合的互斥穷尽尚未交付。</p>
+<h3>CH03-P16-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。输入尺度阈值增大时的单调性尚未交付。</p>
+<h3>CH03-P16-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。零化阈值增大时的反单调性尚未交付。</p>
+<h3>CH03-P17-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。域缩小时尺度及阈值单调性尚未交付。</p>
+<h3>CH03-P17-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。缩小评估域时的点态半径单调性尚未交付。</p>
+<h3>CH03-P17-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。缩小域时的统一半径单调性尚未交付。</p>
+<h3>CH03-P17-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。直径尺度的二点单点反例尚未交付。</p>
+<h3>CH03-P18-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。低于统一半径的零化判据尚未交付。</p>
+<h3>CH03-P18-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。输出正分离时的输入距离下界尚未交付。</p>
+<h3>CH03-P18-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。对每个规定 α 的有限正分离见证尚未交付。</p>
+<h3>CH03-P19-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阈值球到纤维的包含尚未交付。</p>
+<h3>CH03-P19-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。含空集及无有限覆盖情形的覆盖数约束尚未交付。</p>
+<h3>CH03-P19-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。覆盖数约束对应的熵不等式尚未交付。</p>
+<h3>CH03-P20-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。阶跃反例上任意输入尺度的二点覆盖构造尚未交付。</p>
+<h3>CH03-P21-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。小直径条件下整体零化的双向判据尚未交付。</p>
+<h3>CH03-P21-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。整体零化时输出覆盖数为一尚未交付。</p>
+<h3>CH03-P22-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。有限非空集上的覆盖、有限熵和熵差良定性尚未交付。</p>
+<h3>CH03-P23-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。常值分量输出覆盖数、熵和熵差尚未交付。</p>
+<h3>CH03-P23-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。恒等分量的双向内部覆盖数比较尚未交付。</p>
+<h3>CH03-P23-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。恒等分量在良定条件下熵差为零尚未交付。</p>
+<h3>CH03-P24-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。单通道 Lip 输入覆盖推到输出覆盖尚未交付。</p>
+<h3>CH03-P24-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。全有界条件下的熵差下界尚未交付。</p>
+<h3>CH03-P25-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。正有限 co-Lip 条目的覆盖数下界尚未交付。</p>
+<h3>CH03-P25-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。允许输出熵无穷的熵差上界尚未交付。</p>
+<h3>CH03-P26-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.1 的结构合法性、一次纤维与类型尚未交付。</p>
+<h3>CH03-P26-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.1 的自复合纤维与类型尚未交付。</p>
+<h3>CH03-P26-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。点值常算子的自复合及吸收元分支尚未交付。</p>
+<h3>CH03-P27-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。正 co-Lip 与点态半径给出的距离间隙尚未交付。</p>
+<h3>CH03-P27-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。统一半径给出的距离二择尚未交付。</p>
+<h3>CH03-P28-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.3 的两种纤维分划及结构尚未交付。</p>
+<h3>CH03-P28-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.3 的覆盖数上下界和熵差尚未交付。</p>
+<h3>CH03-P29-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第一个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第二个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第三个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 第四个域的直径、半径和类型尚未交付。</p>
+<h3>CH03-P29-05</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。习题 3.4 无直径条件时的合法反例尚未交付。</p>
+<h3>CH03-P30-01</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。四点集全部精度与端点的内部覆盖数尚未交付。</p>
+<h3>CH03-P30-02</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两个像集及全部精度的覆盖数和熵差尚未交付。</p>
+<h3>CH03-P30-03</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。两个最优标量 Lip 常数及必要下界尚未交付。</p>
+<h3>CH03-P30-04</h3>
+<p><strong>判定：</strong> partial</p>
+<p><strong>审核说明：</strong> 原答明确incomplete，所交Main没有该目标所需完整定义/构造/结论及映射；这是未交付，不是该数学命题被证明为假。精度 7/4 时一般覆盖界和真实值的比较尚未交付。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（92项）</summary><div class="prose"><h3>CH03-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z0为全部受限像点对常值零距，z1明确排除z0后要求像点与输入零距，z2为两者并补集；z3证明穷尽与三对互斥。总定义只在原合法U/全域dom特化使用，不把族零距改为点相等。</p>
+<h3>CH03-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> fiber以真实受限U和子族sup伪度量严格为0定义，componentFiber为单分量零距；z10/z11/z12证明全部分量及非空交集对应。任意目标（包括空纤维）保留，定义还允许空子族的保守扩展。</p>
+<h3>CH03-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> pointRelation用点值相等，zeroRelation用GaugeZeroRelated，均有两个点在同一U的guard；imageType是真正f(U)，z27从冻结零距等价性证明Setoid，imageQuotient是真Quotient；z20证明关系/纤维对应，fiberPreorder为零距关系包含，不默认分离。</p>
+<h3>CH03-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z33只容许0&lt;r&lt;∞，使用din x y&lt;r的严格开球且只在U评估；zeroRadius取可行半径集sSup，z34/z35给球与纤维等价，z36空族给0，结果允许∞。基点/域合法范围沿原文外置使用。</p>
+<h3>CH03-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> uniformRadius对y∈A取iInf，内部zeroRadius始终在独立U评估；zeroMatrix取A=U的输入i/输出j统一半径，按原文显示矩阵位置(j,i)解释。原非空A⊆U和合法U仅限定使用域，不将总函数延拓宣称新增原数学域。</p>
+<h3>CH03-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> ScaleFamily将非空子集单调性作为原定义的尺度条件，diameterScale用z52实际证明直径单调；thresholdType为Bool²，z53给四组合与严格尺度&lt;、非严格半径≥的准确iff。允许任意阈值的函数级推广可特化原两个有限正常数，不只取直径。</p>
+<h3>CH03-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 复用题目明确允许的冻结InternalEpsilonNet/covering_number/metric_entropy等接口，有限中心都在被覆盖集合内，空集合0和无有限网∞的语义不改。z57/z62实际证明全有界与每个有限正ε存在内部有限网等价，z89/z90补有限集合的正有限覆盖。</p>
+<h3>CH03-D08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z58显式要求非空U、U⊆dom f、两非空子族、有限正ε及至少一端覆盖数有限。z59的参数必须携带此合法性证明；z60/z61证明有限实差及正负∞分支，不允许以∞−∞替代原未定义差，也不把ε带入纤维定义。</p>
+<h3>CH03-P01-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> const_zero_row从常值分量直接给零行右端的完整单输出上界；0乘任何输入距含∞为0。不错误声称其他输出行或某极值全矩阵必存在。</p>
+<h3>CH03-P01-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z4以合法全coLip矩阵、零输出分量及实际正输入点对调用冻结单项零引理，条目强迫为0，输入/系数∞均未排除。</p>
+<h3>CH03-P01-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z5由扩展伪度量对称/三角性证明零距替换点保持距离，z6用恒等分量每点零距得到完整像点对=原点对距离，两个方向为等式。</p>
+<h3>CH03-P02-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> active_comp对同一i按两步常值/恒等分量全部分支反证，外侧域精确f(U)；得到复合有效包含两步实际域有效之并，不要求输出族分离。</p>
+<h3>CH03-P02-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> seqOp按施行顺序递归、z8对应反转列表乘积；seqActive逐步在真实集合像上累加有效分量。active_seq对任意列表归纳，z9明确零步identity非有效基例，实际域递推与全部有限长度覆盖。</p>
+<h3>CH03-P02-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> identity_comp保留每点像/输入零距，并由内侧原非恒常与外侧保距反证复合常值，故同时排除常值优先分支。</p>
+<h3>CH03-P03-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> SwapExample为Option Bool+吸收元none的两非吸收点离散1距离，metric完整证明扩展伪度量，swap保持bot、U非空、image U=U及square=id/domain合法均证。z99/z100完整计算两步有效、各步非恒等、复合恒等且非有效，两个逆向包含同时失败。</p>
+<h3>CH03-P04-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> outer_const直接把原U中点对像放入真实f(U)应用外侧常值，复合对应分量常值。</p>
+<h3>CH03-P04-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P05-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z7只假设指定输出j行其他输入全0，调用合法Lip单行化简并以内侧j常值清零；条目允许∞，0∞正确，不要求全矩阵对角。</p>
+<h3>CH03-P06-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z15对任意目标y/z的子族零距，用各分量三角和对称性证明纤维集合相等，没有目标必须属于像集的额外条件。</p>
+<h3>CH03-P06-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z16以每个真实像目标选原像证明该纤维非空；任意x∈U落到目标f(x)纤维，而所有纤维都含U条件，故并恰U。</p>
+<h3>CH03-P06-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z17由交点与两条零距三角推出目标间零距，再z15得集合相等，否则不交；结合z16非空和覆盖，去重集合族确构成分划。不要求额外命名partition包装。</p>
+<h3>CH03-P06-04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z11给逐分量逻辑对应，z12在J非空时证明fiber恰所有componentFiber交。对有限非空J特化即原目标，未把空交误作受限U。</p>
+<h3>CH03-P06-05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> fiber_antitone用J⊆K逐个限制子族零距，方向是扩大子族使纤维缩小。</p>
+<h3>CH03-P06-06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z13单分量sup退化为componentFiber，z14全族纤维通过反单调性包含于任意单分量纤维，两个子目标均给出。</p>
+<h3>CH03-P06-07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z18对任意目标y，用零距替换保持距离得到componentFiber等于受限输入零距类；目标不必像点。</p>
+<h3>CH03-P06-08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z19实际选像目标原像，常值使该纤维为U；任意目标与其正距时由三角性得到矛盾，纤维空。</p>
+<h3>CH03-P07-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z25必要方向由实际像子类型上T的规定公式，经Subtype.ext把相同f像点送到相同g像点，得到pointRelation包含。</p>
+<h3>CH03-P07-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z25充分方向在真实imageType f U上Classical.choose原像，再用关系包含证明T(fx)=gx并良定；U空时像子类型为空，构造仍成立，没有暗加非空前提。</p>
+<h3>CH03-P07-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z26把双向T存在分别等价到点值关系包含，再用反对称性得到关系相等的iff。</p>
+<h3>CH03-P07-04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z83对任意a,b∈真实f(U)选原像，规定T公式、正有限KA逆除法与g的LB上界推出LB/KA标量界；KA正有限条件显式，LB可∞的加强涵盖原有限LB。</p>
+<h3>CH03-P08-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z29实际构造Quotient.lift，利用原零距关系包含证明对代表元无关，并验证规定imageClass公式；必要方向由Quotient.sound/exact，未把商等价性作为未证实例。</p>
+<h3>CH03-P08-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z30由单向商因子化iff和集合反对称得到双向商映射存在iff零距关系相等，保留非分离族。</p>
+<h3>CH03-P08-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z31仅假设分离在f(U)上，得pointRelation=zeroRelation；z32再要求g(U)各自分离，转回单向及双向点值判据，不擅增全空间分离。</p>
+<h3>CH03-P09-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z21/z22在同一公共U上以关系包含给自反和传递，未混合不同评估域。</p>
+<h3>CH03-P09-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z23对任意a≤b做Nat.le_induction传递相邻包含；原有限链可特化到相关有限区间，不限两步。</p>
+<h3>CH03-P09-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z24在r+1≤m的链中，从严格一步关系包含实际取差集点p，经两侧单调传递得到端点严格包含及p∈末端且不在首端的见证。</p>
+<h3>CH03-P10-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P10-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P10-03</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P11-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z48当输出子族J全部常值时，对y∈U实际像目标f(y)逐分量零距，fiber恰U，包含任意输入分量选择无关性。</p>
+<h3>CH03-P11-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z46以任意大的有限正自然半径作合法证书得点态sup=∞；z47对基点inf仍∞，z49将子族常值的输出零距实际构造后给两结论，未直接把∞当合法有限半径。</p>
+<h3>CH03-P11-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> SwapExample.twoGauge的false输入为全异点∞距离，true输出为两点距1，两个扩展伪度量均证明；identity、U非空/合法，z106只用有限球为单点给统一radius∞，z107同时i=j与i≠j且输出非恒常。合法替代无穷输入反例完整。</p>
+<h3>CH03-P12-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z50在y∈U和恒等分量下，用完整保距等式把像目标f(y)纤维变为输入零距类，保留受限U。</p>
+<h3>CH03-P12-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z51保留0&lt;r&lt;∞与实际输入球只含零距的前提，以保距等式使r为合法半径，得r≤zeroRadius；r&gt;0已在给定hr中，不需要另一个命名合取包装。</p>
+<h3>CH03-P13-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z76证明子族点态radius为各分量iInf，逆向通过两个严格中间半径构造联合合法证书，含0/∞边界；z79有限非空子族上以有限inf取得最小值及最小性，完整给原min公式。</p>
+<h3>CH03-P13-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z77实际交换基点与子族iInf得统一radius公式，z78有限非空索引上给取得者和所有分量最小性，非只说交换可行。</p>
+<h3>CH03-P13-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z74由J⊆K把K全部输出零距限制到J，逐点/统一sup-inf方向得到输出子族反单调。</p>
+<h3>CH03-P14-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z40直接从componentFiber成员的输出零距和对称性得指定方向零距，合法点域的原前提可特化。</p>
+<h3>CH03-P14-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z38从严格小于sSup实际取合法有限正r，z39用该半径和输入对称性推出输出零距；不把sup本身默认可行，0/∞均处理。</p>
+<h3>CH03-P14-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z41显式保留两像点均在U₂及实际下游fiber成员，调用z40代入真实g∘f像点，未替换中间域。</p>
+<h3>CH03-P15-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z75用下游在实际f(U)保持dmid零距的条件，把每个上游合法r转成复合合法r，再取sup/inf得统一下界，未把目标作为字段。</p>
+<h3>CH03-P15-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z80在精确f(U)的下游统一半径/L下界，通过任意严格低于该商的有限正s构造复合合法半径，ENNReal.mul_lt_of_lt_div处理0和∞。更广任意L的有效结论涵盖原有限正L，不做非法消去。</p>
+<h3>CH03-P16-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> threshold_four实际穷尽Bool²四值，z53将各值与互补不等式逐一iff；Bool对不同构造的互斥为原表示的直接性质，未要求新增互斥包装。</p>
+<h3>CH03-P16-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z54对任意单调尺度σ与τσ≤τσ′，由严格上界传递得第一判断为1的通道集合不减；没有仅用diameter特例。</p>
+<h3>CH03-P16-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z55从τN≤τN′和τN′≤r得τN≤r，正是第二判断为1通道集的反向包含，阈值方向正确。</p>
+<h3>CH03-P17-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z56直接使用ScaleFamily原非空集单调条件得B⊆A尺度不增及严格阈值推论；diameterScale已独立证明满足定义。</p>
+<h3>CH03-P17-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z42固定同一任意基点，缩小评估域使每个合法半径继续合法，sup不减；原基点属于B的情形被涵盖。</p>
+<h3>CH03-P17-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z43同时缩小评估域与基点inf集合，逐基点结合z42及iInf边界证明统一半径不减。</p>
+<h3>CH03-P17-04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 用已证明合法的两非吸收点距离1空间、全二点U和单点B，计算直径1/0且B非空、B⊆U、id域合法、阈值1/2。z103还给到实线{0,1}的精确距离对应；这是源二点/单点的合法有限等距实现，无需额外构造全实线算子才能反驳一般尺度反向命题。</p>
+<h3>CH03-P18-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z44由uniformRadius≤各基点radius和严格输入距，调用z39推出输出零距，保留原双点属于A。</p>
+<h3>CH03-P18-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z45反证严格小于uniform时输出零，与给定正输出矛盾，得统一半径≤输入距；∞情形不减法。</p>
+<h3>CH03-P18-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z81对每个0&lt;α&lt;∞且uniform&lt;α，实际选基点radius&lt;α和坏球点，ε=min(正输出距,1)给有限正ε并≤输出距，输出∞也合法，量词完整。</p>
+<h3>CH03-P19-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z67在τ≤uniformRadius下，将每中心严格τ球∩A点通过z44送到对应fiber；τ有限正的原范围被更广引理涵盖。</p>
+<h3>CH03-P19-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z63实际将内部有限中心S映到f(S)，验证仍在真实输出集合且card不增，再对covering iInf比较；z68以统一零距半径实现每小球输出ε覆盖。B空及无有限输入网的∞分支均由同一inf表示处理。</p>
+<h3>CH03-P19-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z86证明至少1的ENNReal log2扩展单调，显式分有限/∞；z88以B非空、其像非空调用z87，把P19覆盖不等式转为熵不等式，无需输出有限。</p>
+<h3>CH03-P20-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P21-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z69在diam(A)&lt;τσ≤τN且τN≤uniform时，用真实所有点对距离≤diam推出整体输出零距；反向整体零距经z47给uniform=∞，不删去直径/阈值条件。</p>
+<h3>CH03-P21-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z70由上述等价条件和A非空，z65实际构造一内部输出中心并结合非空覆盖≥1，得任意原有限正ε的覆盖数恰1。</p>
+<h3>CH03-P22-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z89/z90对非空有限U构造U自身为内部网，证明覆盖正且有限；有限像同理。z91给有限实熵，z92同时构造两端有限实熵和完整z58合法熵差条件，两非空子族/合法域/有限正ε均保留。</p>
+<h3>CH03-P23-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z93用常值给输出cover=1、entropy=0，并在合法熵差参数下差等于输入entropy；输入entropy可∞，没有擅加输入有限。合法性可由实际有限输出覆盖直接构造，不需未证假设∞−∞。</p>
+<h3>CH03-P23-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z63推内部中心，z64在真实输出内部中心上选原像pullback并证明card不增；z66在恒等分量保距下双向应用得到覆盖数及熵相等，非点值相等也成立。</p>
+<h3>CH03-P23-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z94仅在z58合法熵差时利用两覆盖相等，从至少一端有限推出输入有限；转实数差得到0，未把∞−∞定义为0。</p>
+<h3>CH03-P24-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z82与z63用有限正L下ENNReal严格除法，把ε/L内部网推到ε输出网并控制center-card；泛型引理更广，不限制空输入/无有限网。</p>
+<h3>CH03-P24-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z95输入全有界保证ε和ε/L输入覆盖有限，再经Lip推输出有限；实际构造z58与两端有限实熵，并由EReal差单调得原下界。所有ε/L有限正的侧条件显式证明。</p>
+<h3>CH03-P25-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_cover从正有限Kij与单项≤总和≤输出距推出严格ε/K输入距，z64实际选内部输出中心原像、card不增，得输入覆盖≤输出覆盖。</p>
+<h3>CH03-P25-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z96全有界只用于两个输入尺度的有限熵，z58由输入有限构造；不要求输出有限，原差可为−∞。EReal.sub_le_sub通过反向覆盖熵不等式给原上界，保留输出∞合法分支。</p>
+<h3>CH03-P26-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P26-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P26-03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z84对任意f在U点值常v，证明f²仍点值常f(v)，并逐点证明在f²域iff f(v)≠bot；若f(v)=bot则U∩domf²空，否则U整体合法。z85给零距结论，涵盖原同一实数值情形及再次吸收边界。</p>
+<h3>CH03-P27-01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z71对正coLip Kij仅要求正、不要求有限；点态严格低于radius先由z39输出零，再冻结positive_colip_entry_reflects_zero强迫输入零，排除(0,rN)所有实际输入距。</p>
+<h3>CH03-P27-02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> z72对任意点对直接作uniform≤d或其否定分支，否定时用pointwise半径≥uniform和z71得输入零。原统一半径正的零或≥二择完整，更广非正统一值也无矛盾。</p>
+<h3>CH03-P28-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P28-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-03</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-04</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P29-05</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-01</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-02</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-03</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+<h3>CH03-P30-04</h3>
+<p><strong>已核实完成：</strong> false</p>
+<p><strong>审核说明：</strong> 候选workspace alignment明确标incomplete且没有声明映射；Main入口未交本项要求的具体构造/计算/全量证明。通用纤维、半径、覆盖引理只是可复用基础，不代替本项独立目标；诚实未完成，未判原命题为假。</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>未能完成整章的 92 项义务，因此不能将本答卷标为完整项目。已完成的工作包括分量分划、计算纤维、像值及商值因子化、零化半径和部分覆盖数估计；尚未完成的部分包括七点反例、阶跃函数反例，以及第 3.1、3.3–3.5 题中的若干具体构造与计算。</p>
+<p>这些内容源自 Zhe Li（Glen Li）的 <em>The Operator Evolution Theory</em>, Volume I，CC BY 4.0，https://glenzli.com/books/oet/ 。</p>
+<p>以下给出一个可独立编译的较小部分项目；它不代表上文全部已探索工作的完整交付。其余义务均在清单中明确标为 <code>incomplete</code>。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+
+/-!
+Partial formalization of Chapter 3 of Zhe Li, The Operator Evolution Theory,
+Volume I, v1.0.0, https://glenzli.com/books/oet/, CC BY 4.0.
+-/
+
+namespace Chapter3
+
+open Set
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+variable {X I : Type} {bot : X}
+
+def constComponents (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) : Set I :=
+  {i | ∀ x ∈ U, ∀ y ∈ U, d i (f.func x) (f.func y) = 0}
+
+def identityComponents (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) : Set I :=
+  {i | i ∉ constComponents d f U ∧ ∀ x ∈ U, d i (f.func x) x = 0}
+
+def activeComponents (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) : Set I :=
+  (constComponents d f U ∪ identityComponents d f U)ᶜ
+
+theorem components_partition (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I) :
+    (i ∈ constComponents d f U ∨ i ∈ identityComponents d f U ∨
+      i ∈ activeComponents d f U) ∧
+    ¬ (i ∈ constComponents d f U ∧ i ∈ identityComponents d f U) ∧
+    ¬ (i ∈ constComponents d f U ∧ i ∈ activeComponents d f U) ∧
+    ¬ (i ∈ identityComponents d f U ∧ i ∈ activeComponents d f U) := by
+  classical
+  simp only [identityComponents, activeComponents, mem_setOf_eq, mem_compl_iff,
+    mem_union]
+  tauto
+
+theorem const_zero_row [Fintype I] (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I)
+    (hi : i ∈ constComponents d f U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (f.func x) (f.func y) ≤
+      ∑ k : I, (0 : ENNReal) * d k x y := by
+  intro x hx y hy
+  simp [hi x hx y hy]
+
+theorem const_colip_zero [Fintype I] (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i k : I) (K : I → I → ENNReal)
+    (hi : i ∈ constComponents d f U) (hK : IsCoLipMatrix d f U K)
+    (x y : X) (hx : x ∈ U) (hy : y ∈ U) (hpos : 0 &lt; d k x y) : K k i = 0 :=
+  colip_entry_eq_zero_of_output_zero_input_pos d f U K k i x y hK hx hy
+    (hi x hx y hy) hpos
+
+theorem dist_eq_of_zero_endpoints (d : X → X → ENNReal)
+    (hs : ∀ x y, d x y = d y x)
+    (ht : ∀ x y z, d x z ≤ d x y + d y z)
+    {a b c e : X} (hab : d a b = 0) (hce : d c e = 0) :
+    d a c = d b e := by
+  have hba : d b a = 0 := by rw [hs b a, hab]
+  have hec : d e c = 0 := by rw [hs e c, hce]
+  apply le_antisymm
+  · calc
+      d a c ≤ d a b + d b c := ht a b c
+      _ ≤ d a b + (d b e + d e c) := add_le_add le_rfl (ht b e c)
+      _ = d b e := by simp [hab, hec]
+  · calc
+      d b e ≤ d b a + d a e := ht b a e
+      _ ≤ d b a + (d a c + d c e) := add_le_add le_rfl (ht a c e)
+      _ = d a c := by simp [hba, hce]
+
+theorem identity_preserves_distance (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hi : i ∈ identityComponents d f U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (f.func x) (f.func y) = d i x y := by
+  intro x hx y hy
+  exact dist_eq_of_zero_endpoints (d i) hd.symm hd.triangle (hi.2 x hx) (hi.2 y hy)
+
+theorem outer_const (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (i : I)
+    (h : i ∈ constComponents d g (f.func '' U)) :
+    i ∈ constComponents d (g * f) U := by
+  intro x hx y hy
+  exact h (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+
+theorem inner_const_of_single_row [Fintype I] (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (j : I) (L : I → I → ENNReal)
+    (hc : j ∈ constComponents d f U)
+    (hL : IsLipMatrix d g (f.func '' U) L)
+    (hrow : ∀ k, k ≠ j → L k j = 0) :
+    j ∈ constComponents d (g * f) U := by
+  intro x hx y hy
+  apply le_antisymm _ (zero_le _)
+  have h := lip_bound_of_single_input_row d g (f.func '' U) L j j hL hrow
+      (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+  simpa [hc x hx y hy] using h
+
+theorem identity_comp (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hf : i ∈ identityComponents d f U)
+    (hg : i ∈ identityComponents d g (f.func '' U)) :
+    i ∈ identityComponents d (g * f) U := by
+  constructor
+  · intro hc
+    apply hf.1
+    intro x hx y hy
+    have heq := identity_preserves_distance d g (f.func '' U) i hd hg
+      (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+    exact heq.symm.trans (hc x hx y hy)
+  · intro x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i ((g * f).func x) x ≤
+          d i (g.func (f.func x)) (f.func x) + d i (f.func x) x :=
+        hd.triangle _ _ _
+      _ = 0 := by rw [hg.2 _ ⟨x, hx, rfl⟩, hf.2 x hx, add_zero]
+
+theorem active_comp (d : I → X → X → ENNReal)
+    (f g : Operator X bot) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i)) :
+    i ∈ activeComponents d (g * f) U →
+      i ∈ activeComponents d f U ∨
+        i ∈ activeComponents d g (f.func '' U) := by
+  classical
+  intro hc
+  by_contra h
+  have hf : i ∈ constComponents d f U ∨ i ∈ identityComponents d f U := by
+    have h1 := (not_or.mp h).1
+    simp only [activeComponents, mem_compl_iff, mem_union] at h1
+    tauto
+  have hg : i ∈ constComponents d g (f.func '' U) ∨
+      i ∈ identityComponents d g (f.func '' U) := by
+    have h2 := (not_or.mp h).2
+    simp only [activeComponents, mem_compl_iff, mem_union] at h2
+    tauto
+  have hnot : i ∉ constComponents d (g * f) U ∧
+      i ∉ identityComponents d (g * f) U := by
+    simpa [activeComponents] using hc
+  rcases hg with hg | hg
+  · exact hnot.1 (outer_const d f g U i hg)
+  · rcases hf with hf | hf
+    · apply hnot.1
+      intro x hx y hy
+      have heq := identity_preserves_distance d g (f.func '' U) i hd hg
+        (f.func x) ⟨x, hx, rfl⟩ (f.func y) ⟨y, hy, rfl⟩
+      exact heq.trans (hf x hx y hy)
+    · exact hnot.2 (identity_comp d f g U i hd hf hg)
+
+def seqOp : List (Operator X bot) → Operator X bot
+  | [] =&gt; 1
+  | f :: fs =&gt; seqOp fs * f
+
+def seqActive (d : I → X → X → ENNReal) :
+    List (Operator X bot) → Set X → Set I
+  | [], _ =&gt; ∅
+  | f :: fs, U =&gt; activeComponents d f U ∪ seqActive d fs (f.func '' U)
+
+theorem seqOp_eq_reverse_prod (fs : List (Operator X bot)) :
+    seqOp fs = fs.reverse.prod := by
+  induction fs with
+  | nil =&gt; rfl
+  | cons f fs ih =&gt; simp [seqOp, ih, List.prod_append]
+
+theorem identity_not_active (d : I → X → X → ENNReal)
+    (U : Set X) (i : I) (hself : ∀ x, d i x x = 0) :
+    i ∉ activeComponents d (1 : Operator X bot) U := by
+  classical
+  simp only [activeComponents, mem_compl_iff, mem_union, not_not]
+  by_cases hc : i ∈ constComponents d (1 : Operator X bot) U
+  · exact Or.inl hc
+  · right
+    exact ⟨hc, fun x _ =&gt; hself x⟩
+
+theorem active_seq (d : I → X → X → ENNReal)
+    (fs : List (Operator X bot)) (U : Set X) (i : I)
+    (hd : ExtendedPseudoMetric X bot (d i)) :
+    i ∈ activeComponents d (seqOp fs) U → i ∈ seqActive d fs U := by
+  induction fs generalizing U with
+  | nil =&gt;
+      intro h
+      exact (identity_not_active d U i hd.dist_self h).elim
+  | cons f fs ih =&gt;
+      intro h
+      rcases active_comp d f (seqOp fs) U i hd h with h | h
+      · exact Or.inl h
+      · exact Or.inr (ih (f.func '' U) h)
+
+def fiber (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y : X) (U : Set X) : Set X :=
+  {x | x ∈ U ∧ subfamily_pseudometric d J (f.func x) y = 0}
+
+def componentFiber (d : I → X → X → ENNReal) (f : Operator X bot)
+    (j : I) (y : X) (U : Set X) : Set X :=
+  {x | x ∈ U ∧ d j (f.func x) y = 0}
+
+theorem subfamily_zero_iff (d : I → X → X → ENNReal)
+    (J : Set I) (x y : X) :
+    subfamily_pseudometric d J x y = 0 ↔ ∀ j ∈ J, d j x y = 0 := by
+  constructor
+  · intro h j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j x y ≤ subfamily_pseudometric d J x y :=
+        le_iSup (fun k : {k // k ∈ J} =&gt; d k.1 x y) ⟨j, hj⟩
+      _ = 0 := h
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    apply iSup_le
+    intro j
+    exact le_of_eq (h j.1 j.2)
+
+theorem fiber_components (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y : X) (U : Set X) :
+    fiber d f J y U =
+      {x | x ∈ U ∧ ∀ j ∈ J, x ∈ componentFiber d f j y U} := by
+  ext x
+  simp only [fiber, componentFiber, mem_setOf_eq, subfamily_zero_iff]
+  constructor
+  · rintro ⟨hx, h⟩
+    exact ⟨hx, fun j hj =&gt; ⟨hx, h j hj⟩⟩
+  · rintro ⟨hx, h⟩
+    exact ⟨hx, fun j hj =&gt; (h j hj).2⟩
+
+theorem fiber_intersection (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y : X) (U : Set X) (hJ : J.Nonempty) :
+    fiber d f J y U = ⋂ j ∈ J, componentFiber d f j y U := by
+  rw [fiber_components]
+  ext x
+  simp only [mem_setOf_eq, mem_iInter]
+  constructor
+  · exact And.right
+  · intro h
+    obtain ⟨j, hj⟩ := hJ
+    exact ⟨(h j hj).1, h⟩
+
+theorem fiber_antitone (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J K : Set I) (y : X) (U : Set X) (hJK : J ⊆ K) :
+    fiber d f K y U ⊆ fiber d f J y U := by
+  intro x hx
+  exact ⟨hx.1, (subfamily_zero_iff d J _ _).2
+    (fun j hj =&gt; (subfamily_zero_iff d K _ _).1 hx.2 j (hJK hj))⟩
+
+theorem fiber_singleton (d : I → X → X → ENNReal) (f : Operator X bot)
+    (j : I) (y : X) (U : Set X) :
+    fiber d f {j} y U = componentFiber d f j y U := by
+  ext x
+  simp [fiber, componentFiber, subfamily_pseudometric_singleton]
+
+theorem fiber_all_subset (d : I → X → X → ENNReal) (f : Operator X bot)
+    (j : I) (y : X) (U : Set X) :
+    fiber d f univ y U ⊆ componentFiber d f j y U := by
+  rw [← fiber_singleton]
+  exact fiber_antitone d f _ _ _ _ (subset_univ _)
+
+theorem fiber_target_zero (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (y z : X) (U : Set X)
+    (hd : ∀ j, ExtendedPseudoMetric X bot (d j))
+    (hyz : subfamily_pseudometric d J y z = 0) :
+    fiber d f J y U = fiber d f J z U := by
+  ext x
+  simp only [fiber, mem_setOf_eq, subfamily_zero_iff]
+  constructor &lt;;&gt; intro h &lt;;&gt; refine ⟨h.1, ?_⟩ &lt;;&gt; intro j hj
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (f.func x) z ≤ d j (f.func x) y + d j y z := (hd j).triangle _ _ _
+      _ = 0 := by
+        rw [h.2 j hj, (subfamily_zero_iff d J y z).1 hyz j hj, add_zero]
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (f.func x) y ≤ d j (f.func x) z + d j z y := (hd j).triangle _ _ _
+      _ = 0 := by
+        rw [h.2 j hj, (hd j).symm z y,
+          (subfamily_zero_iff d J y z).1 hyz j hj, add_zero]
+
+theorem fiber_image_cover (d : I → X → X → ENNReal) (f : Operator X bot)
+    (J : Set I) (U : Set X) (hd : ∀ j, ExtendedPseudoMetric X bot (d j)) :
+    (∀ y ∈ f.func '' U, (fiber d f J y U).Nonempty) ∧
+    (⋃ y ∈ f.func '' U, fiber d f J y U) = U := by
+  constructor
+  · rintro y ⟨x, hx, rfl⟩
+    exact ⟨x, hx, (subfamily_zero_iff d J _ _).2
+      (fun j _ =&gt; (hd j).dist_self _)⟩
+  · ext x
+    constructor
+    · intro hx
+      obtain ⟨y, _, hxy⟩ := Set.mem_iUnion₂.mp hx
+      exact hxy.1
+    · intro hx
+      apply Set.mem_iUnion₂.mpr
+      exact ⟨f.func x, ⟨x, hx, rfl⟩, hx,
+        (subfamily_zero_iff d J _ _).2 (fun j _ =&gt; (hd j).dist_self _)⟩
+
+theorem fiber_equal_or_disjoint (d : I → X → X → ENNReal)
+    (f : Operator X bot) (J : Set I) (U : Set X) (y z : X)
+    (hd : ∀ j, ExtendedPseudoMetric X bot (d j)) :
+    fiber d f J y U = fiber d f J z U ∨
+      Disjoint (fiber d f J y U) (fiber d f J z U) := by
+  classical
+  by_cases h : Disjoint (fiber d f J y U) (fiber d f J z U)
+  · exact Or.inr h
+  · left
+    have hex : ∃ x, x ∈ fiber d f J y U ∧ x ∈ fiber d f J z U :=
+      Set.not_disjoint_iff.mp h
+    obtain ⟨x, hx, hx'⟩ := hex
+    apply fiber_target_zero d f J y z U hd
+    apply (subfamily_zero_iff d J y z).2
+    intro j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j y z ≤ d j y (f.func x) + d j (f.func x) z := (hd j).triangle _ _ _
+      _ = 0 := by
+        rw [(hd j).symm y (f.func x),
+          (subfamily_zero_iff d J _ _).1 hx.2 j hj,
+          (subfamily_zero_iff d J _ _).1 hx'.2 j hj, add_zero]
+
+theorem identity_component_fiber (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I) (y : X)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hi : i ∈ identityComponents d f U) :
+    componentFiber d f i y U = {x | x ∈ U ∧ d i x y = 0} := by
+  ext x
+  simp only [componentFiber, mem_setOf_eq]
+  constructor &lt;;&gt; intro h &lt;;&gt; refine ⟨h.1, ?_⟩
+  · have hdist := dist_eq_of_zero_endpoints (d i) hd.symm hd.triangle
+      (hi.2 x h.1) (hd.dist_self y)
+    exact hdist.symm.trans h.2
+  · have hdist := dist_eq_of_zero_endpoints (d i) hd.symm hd.triangle
+      (hi.2 x h.1) (hd.dist_self y)
+    exact hdist.trans h.2
+
+theorem constant_component_fiber (d : I → X → X → ENNReal)
+    (f : Operator X bot) (U : Set X) (i : I) (y₀ y : X)
+    (hd : ExtendedPseudoMetric X bot (d i))
+    (hc : i ∈ constComponents d f U) (hy₀ : y₀ ∈ f.func '' U) :
+    componentFiber d f i y₀ U = U ∧
+      (0 &lt; d i y y₀ → componentFiber d f i y U = ∅) := by
+  obtain ⟨z, hz, rfl⟩ := hy₀
+  constructor
+  · ext x
+    simp only [componentFiber, mem_setOf_eq]
+    constructor
+    · exact And.left
+    · intro hx
+      exact ⟨hx, hc x hx z hz⟩
+  · intro hpos
+    ext x
+    simp only [Set.mem_empty_iff_false, iff_false]
+    intro hx
+    have hzero : d i y (f.func z) = 0 := by
+      apply le_antisymm _ (zero_le _)
+      calc
+        d i y (f.func z) ≤ d i y (f.func x) + d i (f.func x) (f.func z) :=
+          hd.triangle _ _ _
+        _ = 0 := by
+          rw [hd.symm y (f.func x), hx.2, hc x hx.1 z hz, add_zero]
+    exact (ne_of_gt hpos) hzero
+
+end Chapter3
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;MG-C003&quot;,
+  &quot;version&quot;: &quot;0.1.1&quot;,
+  &quot;items&quot;: [
+    {&quot;id&quot;:&quot;CH03-D01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.constComponents&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identityComponents&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.activeComponents&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.components_partition&quot;}],&quot;representation&quot;:&quot;U 上常值、非恒常逐点零距与剩余分量；证明常值优先的互斥穷尽。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.componentFiber&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.subfamily_zero_iff&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_intersection&quot;}],&quot;representation&quot;:&quot;以冻结子族复合伪度量的零距离和 U 成员定义纤维，证明与分量条件及交集的对应。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点值关系、零距关系、像商和纤维预序尚未在本文件交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点态零化半径及其球包含对应尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D05&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径与零化矩阵尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D06&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;输入尺度与阈值分类尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D07&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;尚未交付覆盖数、熵和全有界接口的全部对应证明。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-D08&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;映射熵差及其良定域尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P01-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.const_zero_row&quot;}],&quot;representation&quot;:&quot;常值输出在任意 x,y∈U 为零，零行有限和也为零。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P01-02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.const_colip_zero&quot;}],&quot;representation&quot;:&quot;输出零距和正输入距离迫使合法 co-Lip 条目为零。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P01-03&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identity_preserves_distance&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.dist_eq_of_zero_endpoints&quot;}],&quot;representation&quot;:&quot;每个端点与其像零距，三角不等式双向给出距离相等。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P02-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.active_comp&quot;}],&quot;representation&quot;:&quot;g*f 表示先 f 后 g；第二步限制域是实际像 f(U)。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-P01-03&quot;,&quot;CH03-P02-03&quot;,&quot;CH03-P04-01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P02-02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.seqOp&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.seqActive&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.seqOp_eq_reverse_prod&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.active_seq&quot;}],&quot;representation&quot;:&quot;列表按输入先后递归，每步使用实际像域；证明任意长度及空链。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-P02-01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P02-03&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identity_comp&quot;}],&quot;representation&quot;:&quot;逐点零距传递且保距排除复合落入常值优先分支。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-P01-03&quot;]},
+    {&quot;id&quot;:&quot;CH03-P03-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两点换位反例的合法结构和完整计算尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P04-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.outer_const&quot;}],&quot;representation&quot;:&quot;外侧在内侧实际像域上常值，故复合在 U 上常值。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P04-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;七点双分量反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P05-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.inner_const_of_single_row&quot;}],&quot;representation&quot;:&quot;实际像域上的指定单行 Lip 界传递内侧常值，系数可为无穷。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-01&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_target_zero&quot;}],&quot;representation&quot;:&quot;任意目标子族零距时纤维相等。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-02&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_image_cover&quot;}],&quot;representation&quot;:&quot;每个像目标纤维非空，所有像目标纤维覆盖 U。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-03&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_equal_or_disjoint&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_image_cover&quot;}],&quot;representation&quot;:&quot;纤维相等或不交，并结合非空性与覆盖得到去重分划。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;,&quot;CH03-P06-01&quot;,&quot;CH03-P06-02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-04&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_intersection&quot;}],&quot;representation&quot;:&quot;非空子族纤维等于其单分量纤维的交集。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-05&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_antitone&quot;}],&quot;representation&quot;:&quot;J⊆K 时 K 纤维包含于 J 纤维。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-06&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_singleton&quot;},{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.fiber_all_subset&quot;}],&quot;representation&quot;:&quot;单元素子族恢复该分量，全指标纤维包含每个单分量纤维。&quot;,&quot;dependencies&quot;:[&quot;CH03-D02&quot;,&quot;CH03-P06-05&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-07&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.identity_component_fiber&quot;}],&quot;representation&quot;:&quot;恒等分量下任意目标的输出纤维等于 U 内输入零距类。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P06-08&quot;,&quot;status&quot;:&quot;complete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;Chapter3.constant_component_fiber&quot;}],&quot;representation&quot;:&quot;常值分量的像目标纤维为 U，正距离目标纤维为空。&quot;,&quot;dependencies&quot;:[&quot;CH03-D01&quot;,&quot;CH03-D02&quot;]},
+    {&quot;id&quot;:&quot;CH03-P07-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点值因子化必要性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P07-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;像点代表元构造及空域分支尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P07-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;双向点值变换判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P07-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;实际像域上的 LB/KA 界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P08-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;单向零距商映射构造及判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P08-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;双向商映射判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P08-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;实际像集分离时的两类判据对应尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P09-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;纤维预序自反性与传递性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P09-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;有限链任意两层的包含尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P09-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;链中真包含到端点真包含的差集见证尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P10-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;实线阶跃反例的合法结构尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P10-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阶跃反例的点态合法半径计算尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P10-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阶跃反例统一半径为零的证明尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P11-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;常值子族的像目标纤维结论尚未完整交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P11-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;常值子族的点态及统一半径为无穷尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P11-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两种通道情形的无穷输入距离反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P12-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量的像目标纤维公式尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P12-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量的点态半径下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P13-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;有限子族点态半径最小值公式尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P13-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径最小值公式及下确界交换尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P13-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径关于输出子族的反单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P14-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;纤维成员推出输出零距的专门声明尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P14-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;从点态半径严格上确界提取合法半径尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P14-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;纤维判据的复合输入实例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P15-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;零距保持下的复合统一半径下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P15-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;Lip 拉回的复合统一半径下界及边界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P16-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;四种阈值组合的互斥穷尽尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P16-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;输入尺度阈值增大时的单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P16-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;零化阈值增大时的反单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;域缩小时尺度及阈值单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;缩小评估域时的点态半径单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;缩小域时的统一半径单调性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P17-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;直径尺度的二点单点反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P18-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;低于统一半径的零化判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P18-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;输出正分离时的输入距离下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P18-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;对每个规定 α 的有限正分离见证尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P19-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阈值球到纤维的包含尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P19-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;含空集及无有限覆盖情形的覆盖数约束尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P19-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;覆盖数约束对应的熵不等式尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P20-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;阶跃反例上任意输入尺度的二点覆盖构造尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P21-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;小直径条件下整体零化的双向判据尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P21-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;整体零化时输出覆盖数为一尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P22-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;有限非空集上的覆盖、有限熵和熵差良定性尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P23-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;常值分量输出覆盖数、熵和熵差尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P23-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量的双向内部覆盖数比较尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P23-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;恒等分量在良定条件下熵差为零尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P24-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;单通道 Lip 输入覆盖推到输出覆盖尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P24-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;全有界条件下的熵差下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P25-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;正有限 co-Lip 条目的覆盖数下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P25-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;允许输出熵无穷的熵差上界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P26-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.1 的结构合法性、一次纤维与类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P26-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.1 的自复合纤维与类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P26-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;点值常算子的自复合及吸收元分支尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P27-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;正 co-Lip 与点态半径给出的距离间隙尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P27-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;统一半径给出的距离二择尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P28-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.3 的两种纤维分划及结构尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P28-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.3 的覆盖数上下界和熵差尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第一个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第二个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第三个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 第四个域的直径、半径和类型尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P29-05&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;习题 3.4 无直径条件时的合法反例尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-01&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;四点集全部精度与端点的内部覆盖数尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-02&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两个像集及全部精度的覆盖数和熵差尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-03&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;两个最优标量 Lip 常数及必要下界尚未交付。&quot;,&quot;dependencies&quot;:[]},
+    {&quot;id&quot;:&quot;CH03-P30-04&quot;,&quot;status&quot;:&quot;incomplete&quot;,&quot;declarations&quot;:[],&quot;representation&quot;:&quot;精度 7/4 时一般覆盖界和真实值的比较尚未交付。&quot;,&quot;dependencies&quot;:[]}
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-C003:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/slots/MG-C003-A1.json">review · MG-C003-A1.json</a><span class="hash">SHA256 ba2f4bf4e3833c6b746c7a629f7a580f57d700af583b046ba2812c70b46a1bec</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/stderr.txt">attachment · stderr.txt</a><span class="hash">SHA256 ded8f083523a9f50e99276f348c9cabfa5765dee515eca3ad266bf2dbb39c000</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Audit.lean">attachment · Audit.lean</a><span class="hash">SHA256 e1e605ea2a21a9c47e6087a9e5a296b09b2a988e86e68329eec202e41b41c2f8</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Audit.log">attachment · Audit.log</a><span class="hash">SHA256 a8d392fe74019e9abc950cff2daf56ac951390a03defc56f3232f17f088970c5</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check.lean">attachment · Check.lean</a><span class="hash">SHA256 0e4795458cc71a259eb627a580c4a375a1eb10a9fe02243a3ac137156a59f408</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check2.lean">attachment · Check2.lean</a><span class="hash">SHA256 987342880fcfb74777191e2b5adfc2e1f6c93b8f8cbd7e19a8bf0d239a5dbd54</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check3.lean">attachment · Check3.lean</a><span class="hash">SHA256 1187f792185f80e4e09c5477250bb6f626918c7088149d10915f83d6d5ea36de</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check4.lean">attachment · Check4.lean</a><span class="hash">SHA256 a7a6457cdbab9c9ffd514fd415daa0073788ad64efc4c9c2aa9abba127a515bf</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check5.lean">attachment · Check5.lean</a><span class="hash">SHA256 21b572812cebb3b2831a8030588cb3af60ad60c0fe48b693f6abb8381cc18b8e</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check6.lean">attachment · Check6.lean</a><span class="hash">SHA256 a0f3b8904c1969a7da5436b442f99d2bc40eee4387524549ca63c7a129d1b847</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Check7.lean">attachment · Check7.lean</a><span class="hash">SHA256 2265b33be89e9e06b8de5130a4dea4c0807a9ea0cb79955be9e12eab80812c46</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/Main.lean">attachment · Main.lean</a><span class="hash">SHA256 b563a826d24cbbbf1fef1e00994fe117bb09b4f9b72dea35534e36514d6c9bb4</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/MainReadable.lean">attachment · MainReadable.lean</a><span class="hash">SHA256 dfce8abfb30604815b35fc4a03c162b949906f95f0ac492709f8b17bcc6d0978</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/alignment.json">attachment · alignment.json</a><span class="hash">SHA256 39aa5fcbf2968f4c5e641597d68cf646b8b8f94b470ddfd375f61794cbd2075e</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/alignmentReadable.json">attachment · alignmentReadable.json</a><span class="hash">SHA256 74702c9c04903b599b3dc98d883b50de6ddc4a05ef4ff958b6ba519896e4621f</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/compact.py">attachment · compact.py</a><span class="hash">SHA256 8d0c0e122dc9e451b50321ccbb36e24a18ca070e1ad4af443be675349742b316</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/engineering/A1/make_alignment.py">attachment · make_alignment.py</a><span class="hash">SHA256 651bc8dd4b527d3da4670f331cc3901c73609aea08aa707c807a1e42207840e3</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/responses/MG-C003/A1/alignment.original.json">attachment · alignment.original.json</a><span class="hash">SHA256 f95bd769ab40438efccdaef46da50169fb3b546571284ed1c09520f9d72687f2</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/scoring-inputs.json">review · scoring-inputs.json</a><span class="hash">SHA256 4d426e52b04280c592a93c595961aaf9a9aabab4a8b0ba79bfb75fd69ef0107a</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 986eeb14ca0aa6dd61952cf0e8041273c9ba9a47fe5887582b71db01d091f370</span></li><li><a href="../../../../results/v0.6.0/terra-6.1-max/20261105/record.json">正式记录 record.json</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v5", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "研究稿完善", "weight": 10, "source_components": [], "public_tasks": 0, "private_tasks": 0, "families": 0, "aggregation": "family", "status": "under_construction"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 24, "private_tasks": 10, "tasks": 34, "parent_families": 30, "initial_slots": 34, "public_initial_slots": 24, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}}, "capacity": {"total": 100, "active": 90, "under_construction": 10}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "terra-6.1-max", "label": "Terra 6.1 Max"}, "case": {"id": "MG-C003", "title": "OET卷1第3章整章形式化", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "MG-C003", "completion": {"lower": 0.8043478260869565, "upper": 0.8043478260869565, "exact": 0.8043478260869565}, "strict_pass": false, "response_sha256": "06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1", "review_sha256": "65fbdbdba18af7f0168902d5c8a48fdfc00ca13a9ea04240fd4d4cb89b77c12d"}, "nonlogical_retry_3": {"case_id": "MG-C003", "completion": {"lower": 0.8043478260869565, "upper": 0.8043478260869565, "exact": 0.8043478260869565}, "strict_pass": false, "response_sha256": "06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1", "review_sha256": "65fbdbdba18af7f0168902d5c8a48fdfc00ca13a9ea04240fd4d4cb89b77c12d"}}, "partial": {"single_attempt": {"case_id": "MG-C003", "completion": {"lower": 0.8043478260869565, "upper": 0.8043478260869565, "exact": 0.8043478260869565}, "strict_pass": false, "response_sha256": "06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1", "review_sha256": "65fbdbdba18af7f0168902d5c8a48fdfc00ca13a9ea04240fd4d4cb89b77c12d"}, "nonlogical_retry_3": {"case_id": "MG-C003", "completion": {"lower": 0.8043478260869565, "upper": 0.8043478260869565, "exact": 0.8043478260869565}, "strict_pass": false, "response_sha256": "06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1", "review_sha256": "65fbdbdba18af7f0168902d5c8a48fdfc00ca13a9ea04240fd4d4cb89b77c12d"}}, "strict": {"single_attempt": {"case_id": "MG-C003", "completion": {"lower": 0.8043478260869565, "upper": 0.8043478260869565, "exact": 0.8043478260869565}, "strict_pass": false, "response_sha256": "06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1", "review_sha256": "65fbdbdba18af7f0168902d5c8a48fdfc00ca13a9ea04240fd4d4cb89b77c12d"}, "nonlogical_retry_3": {"case_id": "MG-C003", "completion": {"lower": 0.8043478260869565, "upper": 0.8043478260869565, "exact": 0.8043478260869565}, "strict_pass": false, "response_sha256": "06e4e0b83194c24ea99b9998b127cd293aa375121e451ccefeb33fe510428cf1", "review_sha256": "65fbdbdba18af7f0168902d5c8a48fdfc00ca13a9ea04240fd4d4cb89b77c12d"}}}}}</script><script src="../../../assets/results-core.js"></script><script src="../../../assets/case-results.js"></script></body></html>
