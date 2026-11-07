@@ -186,12 +186,13 @@ class CurrentSiteTests(unittest.TestCase):
     def test_lower_retry_source_is_marked_at_its_actual_endpoint_without_a_false_gain(self):
         data = copy.deepcopy(self.data)
         model = next(m for m in data["models"] if m["id"].startswith("deepseek"))
-        model["retry"]["combined"]["metrics"]["earned"]["confirmed"] = 40.0
+        lower = SITE.earned_value(model['combined']) - 1
+        model["retry"]["combined"]["metrics"]["earned"]["confirmed"] = lower
         overlay = next(b for b in ChartBars(SITE.render(data)).bars
                        if b["data-model"] == model["id"] and b["data-series"] == "nonlogical_retry_3")
-        self.assertEqual(overlay["data-score"], "40.0")
+        self.assertEqual(float(overlay["data-score"]), lower)
         self.assertIn("retry-end", overlay["class"])
-        self.assertIn("bottom:40.00000000%;height:0.00000000%", overlay["style"])
+        self.assertIn(f"bottom:{lower:.8f}%;height:0.00000000%", overlay["style"])
 
     def test_attempt_condition_reuses_other_models_honestly(self):
         self.assertEqual(self.data["attempt_conditions"], ["single_attempt", "nonlogical_retry_3"])

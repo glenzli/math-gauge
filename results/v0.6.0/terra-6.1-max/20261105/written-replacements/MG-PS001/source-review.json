@@ -1,0 +1,152 @@
+{
+  "schema": "math-gauge.private-pilot-ai-review/v1",
+  "case_id": "MG-PS001",
+  "case_version": "density-20261107-v1",
+  "reviewer_kind": "AI",
+  "human_review": "pending",
+  "answer_path": "answers/terra/MG-PS001/A1/answer.md",
+  "answer_sha256": "a2cfaffa320003e839cb76c1deaae5f8ca595e3f34ceba35d10d0b81576f2b80",
+  "rubric_path": "source/rubric.json",
+  "rubric_sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+  "reference_sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+  "task_sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+  "frozen_plan_sha256": "140af14c08ad4dcc63e958fed8a753d9edb8e07e1df5f681e51a303be32887ca",
+  "criteria": [
+    {
+      "id": "K1",
+      "max_points": 5,
+      "points": 5,
+      "reason": "Correct finite seminorm and quotient; direct correct use suffices under frozen K1. No completeness assumed.",
+      "evidence": [
+        {
+          "start": 837,
+          "end": 901,
+          "quote": "这是 \\(E\\) 上的半范数，且 \\(\\bar d([x],[y])=p(x-y)\\)。"
+        }
+      ]
+    },
+    {
+      "id": "K2",
+      "max_points": 20,
+      "points": 20,
+      "reason": "Full finite-limsup criterion. For every infinite-limsup f, the explicitly sparse index blocks give zero source density and sampled limsup at least1/2; arbitrary source prefixes are bounded.",
+      "evidence": [
+        {
+          "start": 1890,
+          "end": 1932,
+          "quote": "\\frac{\\sum_{s<t}n_s}{n_t}\\longrightarrow0."
+        },
+        {
+          "start": 2825,
+          "end": 2991,
+          "quote": "若 \\(B_f=\\infty\\)，取 \\(\\varepsilon=1\\)。由 (4)，\\(p(\\mathbf1_{D_1})=0\\)，但由 (5)，\\(p(P_f\\mathbf1_{D_1})\\ge1/2\\)。因此 \\(P_f\\) 不保持等价关系。"
+        }
+      ]
+    },
+    {
+      "id": "K3",
+      "max_points": 20,
+      "points": 20,
+      "reason": "Correct general limsup upper bound and universal sharpness via arbitrarily small epsilon, without requiring f(n)/n to converge. The same sparse blocks are a valid dual use, not a second assumption.",
+      "evidence": [
+        {
+          "start": 1589,
+          "end": 1609,
+          "quote": "p(P_fx)\\le B_f p(x)."
+        },
+        {
+          "start": 3155,
+          "end": 3244,
+          "quote": "令 \\(\\varepsilon\\downarrow0\\)，得到 \\(C\\ge B_f\\)。结合 (2)，即得 \\(L_1=B_f\\)。"
+        }
+      ]
+    },
+    {
+      "id": "K4",
+      "max_points": 15,
+      "points": 15,
+      "reason": "Zero padding proves surjectivity; omitted-image indicator proves noninjectivity for B>1; finite Lipschitz implies continuity. B=1 isometry is supported by the already proved density-one image and bounded input: missing-coordinate averages vanish. The phrase combining (2) repeats one inequality direction, a local reference slip, not a false load-bearing assertion or a new construction supplied by the reviewer. Accept the routine density-one comparison; note it explicitly below.",
+      "evidence": [
+        {
+          "start": 3355,
+          "end": 3432,
+          "quote": "则 \\(x\\in E\\) 且 \\(P_fx=y\\)，所以所有允许的 \\(T_f\\) 都是满射。"
+        },
+        {
+          "start": 3555,
+          "end": 3629,
+          "quote": "但 \\(P_f\\mathbf1_{\\mathbb N\\setminus A}=0\\)，故 \\(T_f\\) 不是单射。"
+        },
+        {
+          "start": 3772,
+          "end": 3938,
+          "quote": "再结合 (2)，得到 \\(p(P_fx)=p(x)\\)。因此 \\(T_f\\) 是等距映射，特别是单射。由 (1) 也可见，\\(B_f=1\\) 等价于 \\(A\\) 的自然密度为 \\(1\\)。"
+        }
+      ]
+    },
+    {
+      "id": "K5",
+      "max_points": 15,
+      "points": 15,
+      "reason": "Actual iterated sampling, exact norms, explicit Fekete argument, and full necessary range proved in a normed quotient without a Banach spectral theorem.",
+      "evidence": [
+        {
+          "start": 3940,
+          "end": 3989,
+          "quote": "对于迭代，\\(T_f^k=T_{f^{\\circ k}}\\)，因此"
+        },
+        {
+          "start": 4503,
+          "end": 4526,
+          "quote": "1\\le R_f\\le L_1<\\infty."
+        }
+      ]
+    },
+    {
+      "id": "K6",
+      "max_points": 25,
+      "points": 25,
+      "reason": "Valid alternative max-envelope construction for every real1<=b<=a. It is strictly increasing, has first norm a, handles b=1 by additive growth, and handles b>1 with at most K exceptional steps in the unique relevant threshold interval. K is independent of k; superlacunarity excludes visiting a second interval for each fixed k. Hence the kth-root limit is b. Accept a=b=1 and a=b>1, as the formula itself covers them.",
+      "evidence": [
+        {
+          "start": 4614,
+          "end": 4660,
+          "quote": "q_t=2^{2^t},\\qquad c_t=\\lfloor(a-1)q_t\\rfloor,"
+        }
+      ]
+    }
+  ],
+  "score": 100,
+  "total_points": 100,
+  "percentage_display_score": 100.0,
+  "percentage_conversion": "Original earned points / frozen original scale *100; no changed obligations.",
+  "strict_pass": true,
+  "strict_reason": "All substantive obligations established, including arbitrary-f necessity, universal sharpness and every allowed ordered pair. The K4 local reference slip is explicitly recorded and is not a substantive gap under the frozen rubric.",
+  "local_notes": [
+    {
+      "reason": "The displayed inequality and (2) have the same direction, so the connective alone does not establish equality. However (1), f(n)/n->1 and boundedness already imply the missing-coordinate mean tends to0 and equality follows by an ordinary density-one comparison. Classified as an isolated proof-reference slip under the frozen harmless-local-slip rule; no changed assumption, uniform construction or missing parameter region is repaired.",
+      "strict_blocking": false,
+      "evidence": {
+        "start": 3772,
+        "end": 3938,
+        "quote": "再结合 (2)，得到 \\(p(P_fx)=p(x)\\)。因此 \\(T_f\\) 是等距映射，特别是单射。由 (1) 也可见，\\(B_f=1\\) 等价于 \\(A\\) 的自然密度为 \\(1\\)。"
+      }
+    }
+  ],
+  "self_assessment": {
+    "source": "extracted_from_original",
+    "status": "complete",
+    "scope": "whole_task",
+    "claimed_percentage": null,
+    "evidence": {
+      "start": 7009,
+      "end": 7035,
+      "quote": "连同 (8) 完成证明。"
+    }
+  },
+  "reliability_findings": [],
+  "active_benchmark_member": false,
+  "official_MC_RMC_Strict_aggregation_applied": false,
+  "formal_comparison_eligible": false,
+  "mathematical_retry": false
+}

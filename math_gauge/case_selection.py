@@ -17,12 +17,15 @@ def validate_case_selection(selection):
     """Validate the component revision without changing source plans or reviews."""
     if (not isinstance(selection, dict)
             or selection.get("schema") != "math-gauge.case-selection/v1"
-            or selection.get("version") not in {"0.1.0", "0.2.0"}
+            or selection.get("version") not in {"0.1.0", "0.2.0", "0.3.0"}
             or not isinstance(selection.get("source_revision"), str)
             or not re.fullmatch(r"[0-9a-f]{40}", selection["source_revision"])):
         raise ValueError("Unsupported assessment case selection")
+    replaced = selection["version"] == "0.3.0"
+    if replaced and selection.get("public_replacement_case_ids") != ["MG-PS001"]:
+        raise ValueError("Assessment case selection needs its source-bound replacement")
     inventories = {}
-    for key, count in (("public_case_ids", 20), ("retired_public_case_ids", 6),
+    for key, count in (("public_case_ids", 19 if replaced else 20), ("retired_public_case_ids", 7 if replaced else 6),
                        ("source_public_case_ids", 26)):
         ids = selection.get(key)
         if (not isinstance(ids, list) or len(ids) != count
@@ -32,7 +35,8 @@ def validate_case_selection(selection):
         inventories[key] = set(ids)
     kept, retired, source = (inventories[key] for key in (
         "public_case_ids", "retired_public_case_ids", "source_public_case_ids"))
-    if (retired != RETIRED_PUBLIC_CASE_IDS or kept & retired or kept | retired != source
+    expected_retired = RETIRED_PUBLIC_CASE_IDS | ({"MG-GR103"} if replaced else set())
+    if (retired != expected_retired or kept & retired or kept | retired != source
             or selection.get("canonical_parent_families") != CANONICAL_PARENT_FAMILIES):
         raise ValueError("Assessment case selection contradicts its frozen partition or parent families")
     return selection
@@ -59,17 +63,18 @@ def selected_assessment_cases(cases, selection, *, current_plan=False):
     public = {cid for cid, case in cases.items() if case["component"] != "exploration"}
     private = {cid for cid, case in cases.items() if case["component"] == "exploration"}
     if (not kept <= public or not public <= source or private & source
-            or len(private) > (4 if selection["version"] == "0.2.0" else 3)
+            or len(private) > (4 if selection["version"] in {"0.2.0", "0.3.0"} else 3)
             or (current_plan and public != kept)):
         raise ValueError("Assessment case selection differs from the source task inventory")
     if any(cases[cid]["component"] != "proofs" for cid in public - kept):
         raise ValueError("Assessment case selection may retire only public written arguments")
     selected = {cid: case for cid, case in cases.items() if cid in kept or cid in private}
+    public_proofs = 7 if selection["version"] == "0.3.0" else 8
     if Counter(case["component"] for cid, case in selected.items() if cid in public) != {
-            "proofs": 8, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4}:
+            "proofs": public_proofs, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4}:
         raise ValueError("Assessment case selection changed the fixed category populations")
     if (len({selected[cid]["family_id"] for cid in kept
-             if selected[cid]["component"] == "proofs"}) != 8
+             if selected[cid]["component"] == "proofs"}) != public_proofs
             or len({selected[cid]["family_id"] for cid in private}) != len(private)):
         raise ValueError("Assessment case selection changed the argument family denominator")
     parents = selection["canonical_parent_families"]
@@ -84,8 +89,11 @@ def selected_assessment_cases(cases, selection, *, current_plan=False):
 
 def selected_current_cases(cases, selection, *, current_plan=False):
     """Preserve research additions outside the immutable legacy selection."""
+    replacements = set((selection or {}).get("public_replacement_case_ids", []))
+    if current_plan and not replacements <= set(cases):
+        raise ValueError("Current assessment plan is missing its written replacement")
     extra = {cid: c for cid, c in cases.items()
-             if c['component'] in {'theorem-extension', 'background-check'}}
+             if c['component'] in {'theorem-extension', 'background-check'} or cid in replacements}
     base = {cid: c for cid, c in cases.items() if cid not in extra}
     normalized = {cid: dict(c, component='exploration')
                   if c['component']=='proofs' and c.get('source_visibility', c.get('visibility'))=='private'

@@ -1,6 +1,6 @@
 # 当前试卷
 
-0.6.0默认题集 `cases/suite.json` 含24份相关任务，关联20个母题家族。完整题库含20份数学卷与4份真实答卷审阅，共190项阶段或章节义务，另有27项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
+0.6.0默认题集 `cases/suite.json` 含24份相关任务，关联20个母题家族。完整题库含20份数学卷与4份真实答卷审阅，共184项阶段或章节义务，另有33项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
 
 材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review.md)与[当前结果](../docs/results.md)。已发布资产保持原样。
 
@@ -35,7 +35,7 @@
 | [MG-GR021 · 同时分块与二次扩张上的下降](proofs/MG-GR021/task.md) | written | 5评审判准 | [合同](proofs/MG-GR021/contract.json) · [参考](proofs/MG-GR021/reference.md) · [评分](proofs/MG-GR021/rubric.json) · [题包复核](proofs/MG-GR021/review.json) |
 | [MG-GR022 · 对角呈示的完成与商拓扑](proofs/MG-GR022/task.md) | written | 5评审判准 | [合同](proofs/MG-GR022/contract.json) · [参考](proofs/MG-GR022/reference.md) · [评分](proofs/MG-GR022/rubric.json) · [题包复核](proofs/MG-GR022/review.json) |
 | [MG-GR023 · 有限测试记录与群作用](proofs/MG-GR023/task.md) | written | 5评审判准 | [合同](proofs/MG-GR023/contract.json) · [参考](proofs/MG-GR023/reference.md) · [评分](proofs/MG-GR023/rubric.json) · [题包复核](proofs/MG-GR023/review.json) |
-| [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) | written | 6阶段 | [合同](proofs/MG-GR103/contract.json) · [参考](proofs/MG-GR103/reference.md) · [评分](proofs/MG-GR103/rubric.json) · [题包复核](proofs/MG-GR103/review.json) · [作者Lean](proofs/MG-GR103/formal/COVERAGE.md) |
+| [MG-PS001 · 密度零商上的取样算子及其迭代](proofs/MG-PS001/task.md) | written | 6评审判准 | [合同](proofs/MG-PS001/contract.json) · [参考](proofs/MG-PS001/reference.md) · [评分](proofs/MG-PS001/rubric.json) · [题包复核](proofs/MG-PS001/review.json) |
 
 ## 语义审计 · 4份
 

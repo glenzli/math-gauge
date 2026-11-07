@@ -6,6 +6,7 @@ import unittest
 from math_gauge.scoring import (score_record_inputs, score_strict_record_inputs,
     score_assessment_record_inputs, strict_alignment_trajectory)
 from test_alignment_scoring import alignment_policy, alignment_review
+from test_case_selection import before_public_replacement
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -18,7 +19,8 @@ class StrictScoringTests(unittest.TestCase):
         cls.inputs, cls.review, cls.policy, cls.engineering = [load(n) for n in
             ('scoring-inputs.json', 'reviews/alignment.json', 'scoring-policy.json', 'reviews/formalization.json')]
         cls.strict_policy = json.loads((ROOT / 'protocol/strict-scoring-policy.json').read_bytes())
-        cls.assessment_policy = json.loads((ROOT / 'protocol/scoring-policy.json').read_bytes())
+        cls.assessment_policy = before_public_replacement(
+            json.loads((ROOT / 'protocol/scoring-policy.json').read_bytes()))
 
     def score(self, *, inputs=None, engineering=None, policy=None):
         return score_strict_record_inputs(self.inputs if inputs is None else inputs, self.review, self.policy,

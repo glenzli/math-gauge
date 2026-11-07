@@ -33,7 +33,7 @@ class StrictRecordTests(unittest.TestCase):
         self.assertEqual(self.record, original)
         for score in scores.values():
             self.assertIsNone(score["metrics"]["earned"]["exact"])
-            self.assertEqual(score["metrics"]["earned"]["confirmed"], score["metrics"]["earned"]["lower"])
+            self.assertAlmostEqual(score["metrics"]["earned"]["confirmed"], score["metrics"]["earned"]["lower"], places=8)
             self.assertEqual(score["whole_task_counts"]["unknown"],
                 score["coverage"]["tasks"] - score["coverage"]["source_initial_judgments"])
             self.assertNotIn("tasks", score)

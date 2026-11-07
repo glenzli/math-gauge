@@ -11,3 +11,5 @@ record.json绑定六份结果、capability-scoring-policy.json、score-modes.jso
 三种分数共用相同答卷、题池、家族聚合和权重：书面35、Lean35、数学研究30。当前公24／私10共34题、30个数学家族，另固定三轮Lean自查。已建90／100，研究稿完善10分待建；所有分数均为已确认贡献／100，不重新归一化。
 
 [当前总报告](../docs/results.md) · [结果页](../site/index.html) · [留档合同](../protocol/result-record.md)
+
+PS001现替换公开GR103。各记录的written_replacement_evidence绑定新题A1；完整原生证据在私库written-replacement-inputs中。Gemini仅保留原评94，Terra新A1为100，DS未知；旧GR103原始材料是历史来源，不再计入当前分数。当前承诺审核另存带ps001后缀的具名文件，旧审核不覆盖。

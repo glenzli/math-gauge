@@ -441,6 +441,121 @@ def load_written_argument_inputs(root, record, *, policy=None):
     return data
 
 
+def load_written_replacement_inputs(root, record, *, policy=None):
+    """Bind selected public replacement math and native evidence without editing legacy inputs."""
+    if record.get("written_replacement_inputs") is None:
+        return None
+    from .written_replacements import validate_inputs
+    data = json.loads(evidence_bytes(root, record["written_replacement_inputs"]))
+    validate_inputs(data, data["policy"] if policy is None else policy)
+    case = data["case_index"][0]
+    task = evidence_bytes(root, case["original_task"])
+    contract_raw = evidence_bytes(root, case["contract"])
+    contract = json.loads(contract_raw)
+    rubric = json.loads(evidence_bytes(root, case["source_rubric"]))
+    reference = evidence_bytes(root, case["reference"])
+    weights = [{"criterion_id": c["id"], "points": c["points"]} for c in contract["criteria"]]
+    if (hashlib.sha256(task).hexdigest() != case["task_sha256"]
+            or hashlib.sha256(contract_raw).hexdigest() != case["contract_sha256"]
+            or contract.get("id") != case["case_id"] or contract.get("kind") != "written_proof"
+            or weights != case["criteria"]
+            or weights != [{"criterion_id": c["id"], "points": c["points"]} for c in rubric["criteria"]]
+            or rubric.get("scale") != case["total_weight"]):
+        raise ValueError("Written replacement changed its original task or criterion weights")
+    row = data["slots"][0]
+    if row["status"] == "not_run":
+        return data
+    execution = json.loads(evidence_bytes(root, row["execution"]))
+    if row["status"] == "delivery_failed":
+        if execution.get("status") == "completed":
+            raise ValueError("A completed replacement cannot become missing delivery")
+        return data
+    raw = evidence_bytes(root, row["response"])
+    source = json.loads(evidence_bytes(root, row["source_review"]))
+    review = json.loads(evidence_bytes(root, row["review"]))
+    frozen = json.loads(evidence_bytes(root, row["original_test_plan"]))
+    candidate = evidence_bytes(root, row["candidate_input"])
+    control_raw = evidence_bytes(root, row["original_capability_control"])
+    control = json.loads(control_raw)
+    checks = json.loads(evidence_bytes(root, row["actual_path_checks"]))
+    adapter = json.loads(evidence_bytes(root, row["native_capability_control"]))
+    if (review.get("schema") != "math-gauge.written-replacement-review/v1"
+            or review.get("case_id") != case["case_id"] or review.get("stage") != "A1"
+            or review.get("points") != row["points"] or review.get("complete") != row["complete"]
+            or review.get("answer_sha256") != row["response"]["sha256"]
+            or review.get("source_review_sha256") != row["source_review"]["sha256"]
+            or source.get("answer_sha256") != row["response"]["sha256"]
+            or source.get("rubric_sha256") != case["source_rubric"]["sha256"]
+            or source.get("score") != row["points"] or source.get("strict_pass") != row["complete"]
+            or source.get("total_points") != case["total_weight"]
+            or frozen.get("statement_sha256") != case["task_sha256"]
+            or frozen.get("rubric_sha256") != case["source_rubric"]["sha256"]
+            or frozen.get("reference_sha256") != hashlib.sha256(reference).hexdigest()
+            or frozen.get("input_sha256") != row["candidate_input"]["sha256"]
+            or candidate != frozen["prefix_verbatim"].encode() + task
+            or execution.get("kind") != "math" or execution.get("status") != "completed"
+            or execution.get("request_count") != 1 or execution.get("exit_code") != 0
+            or execution.get("tool_mismatch") is not None
+            or execution.get("artifact_hashes", {}).get("output/response.md") != row["response"]["sha256"]
+            or execution.get("artifact_hashes", {}).get("input/task.md") != row["candidate_input"]["sha256"]
+            or control.get("passed") is not True or control.get("mathematical_calls") != 0
+            or control.get("source_bytes_read") != 0
+            or control.get("work_file_roundtrip") is not True or control.get("tool_network_denied") is not True
+            or control.get("plan_sha256") != row["original_test_plan"]["sha256"]
+            or checks.get("all_target_checks_passed") is not True
+            or checks.get("target_count") != control.get("target_count")
+            or len(checks.get("checks", [])) != control.get("target_count")
+            or any(c.get("passed") is not True or c.get("open_allowed") is not False
+                   for c in checks.get("checks", []))
+            or adapter.get("source_control_sha256") != hashlib.sha256(control_raw).hexdigest()):
+        raise ValueError("Written replacement lost its original answer, review or local-tool evidence")
+    criteria = source.get("criteria", [])
+    if (len(criteria) != len(weights)
+            or [{"criterion_id": c["id"], "points": c["max_points"]} for c in criteria] != weights
+            or any(type(c.get("points")) is not int or not 0 <= c["points"] <= c["max_points"] for c in criteria)
+            or sum(c["points"] for c in criteria) != row["points"]):
+        raise ValueError("Written replacement credit differs from frozen criteria")
+    for criterion in criteria:
+        for quote in criterion.get("evidence", []):
+            if raw[quote["start"]:quote["end"]] != quote["quote"].encode():
+                raise ValueError("Written replacement review quotes different answer bytes")
+    _validate_research_tool_evidence(root, row, execution, data["policy"])
+    for item in row.get("artifacts", []):
+        evidence_bytes(root, item)
+    return data
+
+
+def validate_public_written_replacements(root, record):
+    """Only public task/answer/review bytes and an opaque private native-source hash are exposed."""
+    item = record.get("written_replacement_evidence")
+    if item is None:
+        return None
+    data = json.loads(evidence_bytes(root, item))
+    if (set(data) != {"schema", "public_case_ids", "source_inputs_sha256", "human_review", "formal_comparison_eligible", "slots"}
+            or data.get("schema") != "math-gauge.written-replacements-public-evidence/v1"
+            or data.get("public_case_ids") != ["MG-PS001"]
+            or data.get("human_review") != "pending" or data.get("formal_comparison_eligible") is not False
+            or not re.fullmatch(r"[0-9a-f]{64}", data.get("source_inputs_sha256", ""))
+            or len(data.get("slots", [])) != 1):
+        raise ValueError("Invalid public replacement evidence projection")
+    row = data["slots"][0]
+    if (set(row) != {"case_id", "attempt_label", "status", "response", "source_review", "points", "complete"}
+            or row.get("case_id") != "MG-PS001" or row.get("attempt_label") != "A1"):
+        raise ValueError("Public replacement evidence changed its selected task")
+    if row.get("status") == "not_run":
+        if any(row.get(k) is not None for k in ("response", "source_review", "points", "complete")):
+            raise ValueError("Public unrun replacement must remain unknown")
+    elif row.get("status") == "response_received":
+        raw = evidence_bytes(root, row["response"])
+        review = json.loads(evidence_bytes(root, row["source_review"]))
+        if (review.get("answer_sha256") != hashlib.sha256(raw).hexdigest()
+                or review.get("score") != row.get("points") or review.get("strict_pass") != row.get("complete")):
+            raise ValueError("Public replacement score lost its original answer")
+    elif row.get("status") != "delivery_failed":
+        raise ValueError("Unknown public replacement status")
+    return data
+
+
 def validate_public_written_additions(root, record):
     """Public records expose only the additional private population and opaque hash."""
     if record.get("written_argument_evidence") is None:
@@ -475,6 +590,7 @@ def load_claim_review(root, record, condition, *, public_root=None):
     rows = validate_review(data)
     assessment = json.loads(evidence_bytes(public, record["assessment_policy"]))
     public_ids = set(assessment["case_selection"]["public_case_ids"])
+    public_ids.update(assessment["case_selection"].get("public_replacement_case_ids", []))
     public_ids.update(assessment["theorem_extension"]["public_case_ids"])
     public_ids.update(assessment["background_check"]["public_case_ids"])
     if (not external and set(rows) != public_ids
@@ -545,6 +661,10 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
         key = "written_argument_inputs" if external else "written_argument_evidence"
         if record.get(key) is None:
             raise ValueError("Current written additions require their retained source evidence")
+    if assessment.get("written_argument_replacements") is not None:
+        key = "written_replacement_inputs" if external else "written_replacement_evidence"
+        if record.get(key) is None:
+            raise ValueError("Current written replacement requires source-bound evidence")
     validate_strict_assessment_policy(json.loads(strict_raw))
     claim_raw = None
     if assessment["version"] == "0.8.0":
@@ -614,6 +734,9 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if record.get("written_argument_inputs") is not None:
                 load_written_argument_inputs(root, record, policy=assessment.get("written_argument_additions"))
                 expected["written_argument_inputs_sha256"] = root / record["written_argument_inputs"]["path"]
+            if record.get("written_replacement_inputs") is not None:
+                load_written_replacement_inputs(root, record, policy=assessment.get("written_argument_replacements"))
+                expected["written_replacement_inputs_sha256"] = root / record["written_replacement_inputs"]["path"]
             if any(bindings.get(key) != hashlib.sha256(path.read_bytes()).hexdigest()
                    for key, path in expected.items()):
                 raise ValueError("Current score binds different source judgments")
@@ -624,6 +747,10 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if (written is not None and bindings.get("written_argument_inputs_sha256")
                     != written["source_inputs_sha256"]):
                 raise ValueError("Public written aggregate binds a different private input source")
+            replacement = validate_public_written_replacements(root, record)
+            if (replacement is not None and bindings.get("written_replacement_inputs_sha256")
+                    != replacement["source_inputs_sha256"]):
+                raise ValueError("Public written replacement binds a different source input")
         scores[condition] = score
     return scores
 
@@ -851,6 +978,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
     validate_public_background_check(root, record)
     load_written_argument_inputs(root, record)
     validate_public_written_additions(root, record)
+    load_written_replacement_inputs(root, record)
+    validate_public_written_replacements(root, record)
     if record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:

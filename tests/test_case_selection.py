@@ -12,6 +12,19 @@ from math_gauge.scoring import score_assessment_inputs
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def before_public_replacement(policy):
+    """Retain the earlier component contract for tests of historical answers."""
+    policy = copy.deepcopy(policy)
+    policy.pop('written_argument_replacements', None)
+    selector = policy.get('case_selection', {})
+    if selector.get('version') == '0.3.0':
+        selector['version'] = '0.2.0'
+        selector['public_case_ids'].append('MG-GR103')
+        selector['retired_public_case_ids'].remove('MG-GR103')
+        selector.pop('public_replacement_case_ids')
+    return policy
+
+
 def selection_for(plan):
     public = [row["case_id"] for row in plan["case_index"] if row["component"] != "exploration"]
     return {"schema": "math-gauge.case-selection/v1", "version": "0.1.0",
@@ -32,6 +45,7 @@ def assessment_policy(plan, *, selected=True):
     policy.pop("theorem_extension", None)
     policy.pop("background_check", None)
     policy.pop("written_argument_additions", None)
+    policy.pop("written_argument_replacements", None)
     background=next(row for row in policy["subcategories"] if row["id"]=="background-check")
     background.update(source_components=[],public_tasks=0,private_tasks=0,families=0,status="under_construction")
     research = next(row for row in policy["subcategories"] if row["id"] == "theorem-extension")

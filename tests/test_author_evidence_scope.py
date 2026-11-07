@@ -165,17 +165,21 @@ class AuthorEvidenceScopeTests(unittest.TestCase):
 
 
 class CurrentAuthorSelectionTests(unittest.TestCase):
-    def test_selected_six_reuse_the_immutable_twelve_case_ledger(self):
+    def test_current_subset_reuses_the_immutable_twelve_case_ledger(self):
         path = ROOT / "verification/author/checked-ledger.json"
         original = path.read_bytes()
         baseline = formal.V.load(path)
         before = copy.deepcopy(baseline)
         layout = formal.V.load(ROOT / "verification/layout.json")
         counts = formal.E.selected_baseline_counts(ROOT, layout, baseline)
-        self.assertEqual((len(baseline["cases"]), counts["papers"], counts["items"], counts["modules"]),
-                         (12, 6, 122, 160))
-        self.assertEqual(counts["fully_formalized_papers"], 6)
-        self.assertEqual(counts["complete_items"], 122)
+        retained = {row['id'] for row in layout['case_paths']}
+        source = [row for row in baseline['cases'] if row['id'] in retained]
+        self.assertNotIn('MG-GR103', retained)
+        self.assertNotIn('MG-PS001', retained)  # New proof does not inherit retired Lean evidence.
+        self.assertEqual(counts['papers'], len(source))
+        self.assertEqual(counts['items'], sum(row['items'] for row in source))
+        self.assertEqual(counts['modules'], sum(row['modules'] for row in source))
+        self.assertEqual(counts['complete_items'], sum(len(row['complete_items']) for row in source))
         self.assertEqual(baseline, before)
         self.assertEqual(path.read_bytes(), original)
 

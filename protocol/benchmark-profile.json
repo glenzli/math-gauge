@@ -7,7 +7,7 @@
   "suite": {
     "id": "math-gauge-benchmark",
     "version": "0.6.0",
-    "sha256": "7c88cf834e7818fedcd0f7ad714f8a4f0156588733591ac7c38028d013991e43"
+    "sha256": "b459421a93e2b01952667fa50df96e920e29eff5fc3e026e31d373704819c7c1"
   },
   "components": [
     {
@@ -18,7 +18,7 @@
         "MG-GP002",
         "MG-GR005",
         "MG-GR009",
-        "MG-GR103",
+        "MG-PS001",
         "MG-GR021",
         "MG-GR022",
         "MG-GR023"
@@ -92,7 +92,7 @@
       "MG-GP002": "math-gauge.local-tools-no-search/v1",
       "MG-GR005": "math-gauge.local-tools-no-search/v1",
       "MG-GR009": "math-gauge.local-tools-no-search/v1",
-      "MG-GR103": "math-gauge.local-tools-no-search/v1",
+      "MG-PS001": "math-gauge.local-tools-no-search/v1",
       "MG-GR021": "math-gauge.local-tools-no-search/v1",
       "MG-GR022": "math-gauge.local-tools-no-search/v1",
       "MG-GR023": "math-gauge.local-tools-no-search/v1",
@@ -127,7 +127,6 @@
       "MG-GP002",
       "MG-GR005",
       "MG-GR009",
-      "MG-GR103",
       "MG-GR021",
       "MG-GR022",
       "MG-GR023",
@@ -138,14 +137,15 @@
       "MG-TX001",
       "MG-TX002",
       "MG-BC001",
-      "MG-BC002"
+      "MG-BC002",
+      "MG-PS001"
     ],
     "new_turn_timeout_seconds": 5400,
     "budget_policy_binding": {
       "path": "protocol/lean-tool-budget-policy.json",
       "sha256": "5299d49fa70670a32fd3cfbd6e80a499aad3d5a546f8bd2012019162b45faa14"
     },
-    "notice": "Future explicit budget variant: MG-C003 uses10800s per round, other seven new Lean cases use5400s. Freeze native/broker/outer limits separately and keep them matching. Execute C003 through c003-180 and the other Lean cases through lean-90 using separate runtimes. Retained source conditions and historical results remain unchanged; operational resumes do not become fresh A1.",
+    "notice": "Future explicit budget variant: MG-C003 uses10800s per round, other seven new Lean cases use5400s. Freeze native/broker/outer limits separately and keep them matching. Execute C003 through c003-180 and the other Lean cases through lean-90 using separate runtimes. Retained source conditions and historical results remain unchanged; operational resumes do not become fresh A1. PS001 is a new local-tools/no-network written A1 with an outer2700s budget; retain per-model native/broker/output limits in source evidence.",
     "require_terminal_ok": true,
     "new_case_turn_timeout_seconds": {
       "MG-C003": 10800
@@ -166,7 +166,7 @@
     "MG-GR009": [
       "A1"
     ],
-    "MG-GR103": [
+    "MG-PS001": [
       "A1"
     ],
     "MG-GR021": [
@@ -437,14 +437,13 @@
     "formal_comparison_eligible": false,
     "case_selection": {
       "schema": "math-gauge.case-selection/v1",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "public_case_ids": [
         "MG-C003",
         "MG-GP001",
         "MG-GP002",
         "MG-GR005",
         "MG-GR009",
-        "MG-GR103",
         "MG-GR021",
         "MG-GR022",
         "MG-GR023",
@@ -466,7 +465,8 @@
         "MG-GR008",
         "MG-GR010",
         "MG-GR014",
-        "MG-GR104"
+        "MG-GR104",
+        "MG-GR103"
       ],
       "source_public_case_ids": [
         "MG-C003",
@@ -502,7 +502,10 @@
         "MG-GR010": "MG-R010",
         "MG-GP003": "MG-P003"
       },
-      "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7"
+      "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7",
+      "public_replacement_case_ids": [
+        "MG-PS001"
+      ]
     },
     "theorem_extension": {
       "schema": "math-gauge.theorem-extension-policy/v1",
@@ -616,6 +619,30 @@
       "human_review": "pending",
       "formal_comparison_eligible": false,
       "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."
+    },
+    "written_argument_replacements": {
+      "schema": "math-gauge.written-replacements-policy/v1",
+      "version": "0.1.0",
+      "benchmark_version": "0.6.0",
+      "initial_attempt_labels": [
+        "A1"
+      ],
+      "category": "written-argument",
+      "family_aggregation": "equal",
+      "local_tools_allowed": true,
+      "search_allowed": false,
+      "tool_network_access": false,
+      "followups_replace_initial": false,
+      "post_observation": true,
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "replacements": [
+        {
+          "retired_case_id": "MG-GR103",
+          "case_id": "MG-PS001",
+          "family_id": "density-sampling-quotient"
+        }
+      ]
     }
   },
   "strict_policy": {

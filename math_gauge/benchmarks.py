@@ -15,6 +15,7 @@ from .theorem_extension import validate_policy as validate_extension_policy
 from .case_selection import selected_current_cases
 from .background_check import validate_policy as validate_background_policy
 from .written_additions import validate_policy as validate_written_additions_policy
+from .written_replacements import validate_policy as validate_written_replacements_policy
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy, validate_case_execution_policy
 
@@ -67,11 +68,18 @@ def validate_assessment_policy(policy):
     extra_written = 0
     if additions is not None:
         validate_written_additions_policy(additions)
-        if policy["version"] != "0.8.0" or selection is None or selection["version"] != "0.2.0":
+        if policy["version"] != "0.8.0" or selection is None or selection["version"] not in {"0.2.0", "0.3.0"}:
             raise ValueError("Written additions require their revised selection and current assessment")
         extra_written = additions["private_cases"]
-    elif selection is not None and selection["version"] == "0.2.0":
+    elif selection is not None and selection["version"] in {"0.2.0", "0.3.0"}:
         raise ValueError("Revised private selection requires its source-bound written addition")
+    replacements = policy.get("written_argument_replacements")
+    if replacements is not None:
+        validate_written_replacements_policy(replacements)
+        if policy["version"] != "0.8.0" or selection is None or selection["version"] != "0.3.0":
+            raise ValueError("Written replacements require their revised legacy selection")
+    elif selection is not None and selection["version"] == "0.3.0":
+        raise ValueError("Revised public selection requires source-bound written replacements")
     expected = {"written-argument": (25, 8, 3 + extra_written, 11 + extra_written) if selection is not None else (25, 14, 3, 17),
                 "argument-review": (10, 4, 0, 4),
                 "lean-audit": (10, 4, 0, 2), "lean-formalization": (15, 4, 0, 2),

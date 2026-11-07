@@ -1,0 +1,231 @@
+{
+  "schema": "math-gauge.private-pilot-ai-review/v1",
+  "case_id": "MG-PS001",
+  "case_version": "density-20261107-v1",
+  "reviewer_kind": "AI",
+  "human_review": "pending",
+  "answer_path": "answers/gemini/MG-PS001/A1/answer.md",
+  "answer_sha256": "90cd5ea89ca058d4a9c88dc77b35bdeb421b90a0b21bf733847e6f0613ed386a",
+  "rubric_path": "source/rubric.json",
+  "rubric_sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+  "reference_sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+  "task_sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+  "frozen_plan_sha256": "11323dab642013bd2095197f56dd5237f859979db853f8afd28a9c4827072ae3",
+  "criteria": [
+    {
+      "id": "K1",
+      "max_points": 5,
+      "points": 5,
+      "reason": "Finite seminorm, its linear nullspace, zero-distance equivalence and positive quotient norm are correctly established. No completeness assumption is used.",
+      "evidence": [
+        {
+          "start": 620,
+          "end": 714,
+          "quote": "3. 对任意 \\(x,y\\in E\\)，由 \\(\\limsup\\) 的次可加性，\\(\\|x+y\\| \\le \\|x\\| + \\|y\\|\\)。"
+        },
+        {
+          "start": 905,
+          "end": 1124,
+          "quote": "等价关系 \\(x\\sim y \\iff x-y\\in\\mathcal N\\)。商空间 \\(X = E/\\!\\sim = E/\\mathcal N\\) 是一个以 \\(\\|[x]\\| = \\|x\\|\\) 为范数的实赋范向量空间，\\(\\bar d([x],[y]) = \\|[x-y]\\|\\) 即为其诱导的度量。"
+        }
+      ]
+    },
+    {
+      "id": "K2",
+      "max_points": 20,
+      "points": 20,
+      "reason": "Correct full criterion finite limsup f(n)/n. The upper bound preserves the entire null ideal. For every unbounded-ratio f, geometric index blocks with f(n_k)/n_k>=4^k produce an actual bounded 0-1 input with full density zero and sampled upper density at least1/2. Both quantifiers and arbitrary-prefix control are covered.",
+      "evidence": [
+        {
+          "start": 1377,
+          "end": 1528,
+          "quote": "线性映射 \\(P_f\\) 能诱导商空间 \\(X\\) 上的良定映射 \\(T_f([x]) = [P_f x]\\)，当且仅当 \\(P_f(\\mathcal N)\\subseteq \\mathcal N\\)，即："
+        },
+        {
+          "start": 3221,
+          "end": 3288,
+          "quote": "2. \\(\\frac{f(n_k)}{n_k} \\ge 2^{2k}\\) 对一切 \\(k\\ge 1\\) 成立；"
+        },
+        {
+          "start": 4895,
+          "end": 4973,
+          "quote": "\\frac{1}{f(n)}\\sum_{j=1}^n y_j \\le \\frac{2n_k}{2^{2k} n_k} = \\frac{2}{2^{2k}}."
+        },
+        {
+          "start": 5123,
+          "end": 5251,
+          "quote": "这表明 \\(\\|x\\|=0\\)，即 \\(x\\in\\mathcal N\\)。然而 \\(\\|P_f x\\|\\ge \\frac12 > 0\\)，即 \\(P_f x\\notin\\mathcal N\\)。矛盾！"
+        }
+      ]
+    },
+    {
+      "id": "K3",
+      "max_points": 20,
+      "points": 20,
+      "reason": "Correct exact value C and valid limsup upper bound. Sparse source blocks aligned with high-ratio indices control every source prefix while maintaining positive sampled density, yielding lower ratio (C-eta+epsilon)/(1+epsilon) and hence C. The required old-block o(N_k) condition is explicitly stated and is a routine enforceable sparse-subsequence choice; no assumption that f(n)/n converges.",
+      "evidence": [
+        {
+          "start": 2730,
+          "end": 2760,
+          "quote": "\\|P_f x\\| \\le C \\|x\\|. \\tag{1}"
+        },
+        {
+          "start": 6188,
+          "end": 6417,
+          "quote": "根据上极限定义，存在严格递增子序列 \\(\\{N_k\\}_{k=1}^\\infty\\)，满足 \\(\\frac{f(N_k)}{N_k} \\ge C - \\eta\\)。通过充分稀疏地选取子序列，可令 \\(N_{k+1} \\ge 2 f(N_k + \\lfloor\\varepsilon N_k\\rfloor)\\)。"
+        },
+        {
+          "start": 7094,
+          "end": 7332,
+          "quote": "再计算 \\(\\|x\\|\\)：对于 \\(n\\in I_k\\)，由 \\(f\\) 严格递增，对 \\(n\\ge N_k\\) 有 \\(f(n) \\ge f(N_k) + n - N_k \\ge (C-\\eta)N_k + n - N_k\\)。由于之前的区间贡献满足 \\(\\sum_{j < N_k} y_j = o(N_k)\\)，故对 \\(n\\in I_k\\)："
+        },
+        {
+          "start": 7876,
+          "end": 8059,
+          "quote": "\\frac{\\|T_f([x])\\|}{\\|[x]\\|} = \\frac{\\|P_f x\\|}{\\|x\\|} \\ge \\frac{\\frac{\\varepsilon}{1+\\varepsilon}}{\\frac{\\varepsilon}{C-\\eta+\\varepsilon}} = \\frac{C-\\eta+\\varepsilon}{1+\\varepsilon}."
+        }
+      ]
+    },
+    {
+      "id": "K4",
+      "max_points": 15,
+      "points": 15,
+      "reason": "A direct zero-padded extension proves surjectivity. The omitted-image indicator gives a nonzero quotient kernel for C>1; C=1 gives density1 image and isometry using boundedness and all-prefix comparison. Continuity follows from the proved finite Lipschitz bound.",
+      "evidence": [
+        {
+          "start": 5643,
+          "end": 5751,
+          "quote": "这说明 \\(T_f\\) 是 Lipschitz 连续的（Lipschitz 常数不超过 \\(C\\)），因而必然是连续的。"
+        },
+        {
+          "start": 8998,
+          "end": 9088,
+          "quote": "因此 \\(T_f([x]) = [P_f x] = [y]\\)。这证明了 \\(T_f\\) 恒为满射。\\(\\blacksquare\\)"
+        },
+        {
+          "start": 10381,
+          "end": 10411,
+          "quote": "因此 \\(T_f\\) 不是单射。"
+        },
+        {
+          "start": 11573,
+          "end": 11687,
+          "quote": "这说明当 \\(\\lim_{n\\to\\infty}\\frac{f(n)}{n}=1\\) 时，\\(T_f\\) 是 \\(X\\) 上的**等距同构（isometry）**！"
+        }
+      ]
+    },
+    {
+      "id": "K5",
+      "max_points": 15,
+      "points": 15,
+      "reason": "Actual iterated sampling is identified; its norm formula and nonnegative-log submultiplicativity give Fekete root existence and infimum without completeness. The finite-limsup bound can be widened to a finite global constant; no substantive issue in the abbreviated finiteness argument. Necessary range1<=R<=L1 is correct.",
+      "evidence": [
+        {
+          "start": 12342,
+          "end": 12439,
+          "quote": "由第 1 问的结论，\\(T_f^k = T_{f^k}\\) 的最小 Lipschitz 常数（即算子范数）为："
+        },
+        {
+          "start": 12734,
+          "end": 12778,
+          "quote": "L_{j+k} \\le L_j L_k, \\quad \\forall j,k\\ge 1."
+        },
+        {
+          "start": 12978,
+          "end": 13058,
+          "quote": "由经典的 **Fekete 次可加引理（Fekete's Subadditive Lemma）**，极限"
+        },
+        {
+          "start": 13904,
+          "end": 13952,
+          "quote": "综上，必然有 \\(1 \\le b \\le a < \\infty\\)。"
+        }
+      ]
+    },
+    {
+      "id": "K6",
+      "max_points": 25,
+      "points": 19,
+      "reason": "Frozen allocation: reachable set5/5; actual all-parameter construction and legality proof6/8 (written positive boundary lower bound does not follow from its conditions, though formula is indeed increasing); first-step norm4/4 via independent valid upper bound and threshold limits; root/boundary verification4/8. Diagonal cases, b=1 boundary and general threshold-orbit lower growth are valid. For1<b<a the proof incorrectly asserts any crossing start n is N_next(1-o(1)) and bounds crossing ratios by max C_j without the pre-crossing b^s factor. In its own a=3,b=2 construction, n~N_next/2 yields two-step ratio~6 while the claimed bound is3. Correct final C_k/R values and a repairable map do not fill this missing uniform upper bound. No extra cap or reliability penalty; local finite-scale flaws are not stacked again.",
+      "evidence": [
+        {
+          "start": 13442,
+          "end": 13505,
+          "quote": "\\mathcal S = \\{(a, b)\\in\\mathbb R^2 : 1 \\le b \\le a < \\infty\\}."
+        },
+        {
+          "start": 15607,
+          "end": 15666,
+          "quote": "f(n) = \\lfloor a N_m \\rfloor + \\lfloor b (n - N_m) \\rfloor."
+        },
+        {
+          "start": 16482,
+          "end": 16570,
+          "quote": "  因为 \\(a > b\\) 且 \\(N_{m+1} > (a+2) N_m\\)，有 \\((a-b)N_{m+1} - a N_m - 1 > 0\\)。"
+        },
+        {
+          "start": 17022,
+          "end": 17102,
+          "quote": "\\frac{f(N_m)}{N_m} = \\frac{\\lfloor a N_m \\rfloor}{N_m} \\to a \\quad (m\\to\\infty)."
+        },
+        {
+          "start": 18783,
+          "end": 18836,
+          "quote": "\\frac{f^k(N_m)}{N_m} = C_k + o(1) \\quad (m\\to\\infty)."
+        },
+        {
+          "start": 18840,
+          "end": 19250,
+          "quote": "若 \\(n\\) 充分靠近右端点 \\(N_{m+1}\\) 使得在 \\(k\\) 步之内轨道跃入下一个区间 \\([N_{m+1}, N_{m+2}-1]\\)，则由于 \\(N_{m+1} \\gg N_m\\)，此时 \\(n = N_{m+1}(1 - o(1))\\)，在下一个区间内至多还能进行不到 \\(k\\) 步迭代，所产生的比值 \\(\\frac{f^k(n)}{n}\\) 被 \\(\\max_{0\\le j < k} C_j + o(1)\\) 控制。因为序列 \\(\\{C_k\\}\\) 严格递增，此值严格小于 \\(C_k\\)。"
+        },
+        {
+          "start": 19435,
+          "end": 19520,
+          "quote": "  R_f = \\lim_{k\\to\\infty} L_k^{1/k} = \\lim_{k\\to\\infty} (1 + k(a - 1))^{1/k} = 1 = b."
+        }
+      ]
+    }
+  ],
+  "score": 94,
+  "total_points": 100,
+  "percentage_display_score": 94.0,
+  "percentage_conversion": "Original earned points / original scale * 100; no changed obligations or additional penalties",
+  "strict_pass": false,
+  "strict_reason": "The all-parameter realization proof lacks a valid uniform upper bound for iterations crossing a threshold; it explicitly uses a false assertion for the open region1<b<a. The finite-scale boundary proof is also invalid as stated. Most mathematical results and the actual construction are correct, but every substantive proof obligation is not delivered.",
+  "local_notes": [
+    {
+      "reason": "Load-bearing crossing assertion is false for b>1. An exact analytic family in the supplied a=3,b=2 construction has start/N_next->1/2 and f^2(start)/start->6, contradicting its asserted crossing bound3. Technical note distinguishes failure of this proof from correctness of the final formula.",
+      "strict_blocking": true,
+      "evidence": {
+        "start": 18840,
+        "end": 19250,
+        "quote": "若 \\(n\\) 充分靠近右端点 \\(N_{m+1}\\) 使得在 \\(k\\) 步之内轨道跃入下一个区间 \\([N_{m+1}, N_{m+2}-1]\\)，则由于 \\(N_{m+1} \\gg N_m\\)，此时 \\(n = N_{m+1}(1 - o(1))\\)，在下一个区间内至多还能进行不到 \\(k\\) 步迭代，所产生的比值 \\(\\frac{f^k(n)}{n}\\) 被 \\(\\max_{0\\le j < k} C_j + o(1)\\) 控制。因为序列 \\(\\{C_k\\}\\) 严格递增，此值严格小于 \\(C_k\\)。"
+      }
+    },
+    {
+      "reason": "The displayed coarse boundary lower bound need not be positive under the listed growth condition. The map is actually strictly increasing by a direct floor inequality; construction credit is retained but full written verification is not.",
+      "strict_blocking": true,
+      "evidence": {
+        "start": 16482,
+        "end": 16570,
+        "quote": "  因为 \\(a > b\\) 且 \\(N_{m+1} > (a+2) N_m\\)，有 \\((a-b)N_{m+1} - a N_m - 1 > 0\\)。"
+      }
+    }
+  ],
+  "self_assessment": {
+    "source": "extracted_from_original",
+    "status": "complete",
+    "scope": "whole_task",
+    "claimed_percentage": null,
+    "evidence": {
+      "start": 198,
+      "end": 243,
+      "quote": "以下给出详尽、严格的完整论证。"
+    }
+  },
+  "reliability_findings": [],
+  "active_benchmark_member": false,
+  "official_MC_RMC_Strict_aggregation_applied": false,
+  "formal_comparison_eligible": false,
+  "mathematical_retry": false
+}

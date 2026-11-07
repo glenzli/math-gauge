@@ -11,6 +11,7 @@ from .theorem_extension import validate_inputs as validate_extension_inputs
 from .case_selection import selected_current_cases
 from .background_check import validate_inputs as validate_background_inputs
 from .written_additions import validate_inputs as validate_written_additions_inputs
+from .written_replacements import validate_inputs as validate_written_replacement_inputs
 from . import claim_penalties
 from .execution import now
 from .execution_policy import execution_condition
@@ -2290,7 +2291,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                             mathematical_substitutions=None, alignment_summary=None,
                             strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None,
                             capability_policy=None, claim_review=None, claim_policy=None,
-                            written_argument_inputs=None):
+                            written_argument_inputs=None, written_replacement_inputs=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
@@ -2408,6 +2409,39 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 "strict_pass": row["complete"],
                 "response_sha256": None if row.get("response") is None else row["response"]["sha256"],
                 "review_sha256": None if row.get("review") is None else row["review"]["sha256"]}
+    replacement_policy = policy.get("written_argument_replacements")
+    if replacement_policy is not None and written_replacement_inputs is None:
+        # Fresh current plans already bind this ordinary written task and its
+        # A1. Supplemental evidence is required only over an older source plan.
+        for pair in replacement_policy['replacements']:
+            case = index.get(pair['case_id'], {})
+            if (case.get('family_id') != pair['family_id'] or case.get('component') != 'proofs'
+                    or case.get('contract_kind') != 'written_proof' or pair['retired_case_id'] in index):
+                raise ValueError("Source-bound written replacement evidence is required, including unrun slots")
+    elif replacement_policy is not None:
+        extra = validate_written_replacement_inputs(written_replacement_inputs, replacement_policy)
+        if extra.get("model_label") != inputs["model_label"]:
+            raise ValueError("Written replacement belongs to a different model")
+        for case in extra["case_index"]:
+            cid = case["case_id"]
+            if case["replaces"] in index:
+                raise ValueError("Retired written credit entered the replacement denominator")
+            if (any(c["family_id"] == case["family_id"] for key, c in index.items() if key != cid)
+                    or cid in index and index[cid].get("group_contract_sha256", case["contract_sha256"]) != case["contract_sha256"]):
+                raise ValueError("Written replacement duplicates a family or changes its frozen contract")
+            index[cid] = case
+        for row in extra["slots"]:
+            sid = row["slot_id"]
+            response = None if row.get("response") is None else row["response"]["sha256"]
+            if sid in rows and rows[sid].get("response_sha256") != response:
+                raise ValueError("Written replacement cannot replace a frozen answer")
+            value = None if row["points"] is None else Fraction(row["points"], index[row["case_id"]]["total_weight"])
+            rows[sid] = {"completion": {"lower": 0 if value is None else float(value),
+                "upper": 1 if value is None else float(value), "exact": None if value is None else float(value)},
+                "strict_pass": row["complete"], "response_sha256": response,
+                "review_sha256": None if row.get("review") is None else row["review"]["sha256"]}
+    elif written_replacement_inputs is not None:
+        raise ValueError("Written replacement evidence needs its selected policy")
     substitutions = mathematical_substitutions or {}
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
@@ -2581,7 +2615,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
 def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
                                    assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None,
                                    background_check_inputs=None, capability_policy=None,
-                                   claim_review=None, claim_policy=None, written_argument_inputs=None):
+                                   claim_review=None, claim_policy=None, written_argument_inputs=None,
+                                   written_replacement_inputs=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
@@ -2591,7 +2626,8 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
         mathematical_substitutions=substitutions, alignment_summary=alignment,
         strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
         background_check_inputs=background_check_inputs, capability_policy=capability_policy,
-        claim_review=claim_review, claim_policy=claim_policy, written_argument_inputs=written_argument_inputs)
+        claim_review=claim_review, claim_policy=claim_policy, written_argument_inputs=written_argument_inputs,
+        written_replacement_inputs=written_replacement_inputs)
     result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
     return result
 

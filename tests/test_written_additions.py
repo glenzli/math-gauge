@@ -20,7 +20,8 @@ class WrittenAdditionsTests(unittest.TestCase):
     def setUpClass(cls):
         legacy_selection.CaseSelectionTests.setUpClass()
         cls.baseline = legacy_selection.CaseSelectionTests()
-        cls.policy = json.loads((ROOT / 'protocol/scoring-policy.json').read_bytes())
+        cls.policy = legacy_selection.before_public_replacement(
+            json.loads((ROOT / 'protocol/scoring-policy.json').read_bytes()))
         cls.strict = json.loads((ROOT / 'protocol/strict-scoring-policy.json').read_bytes())
         cls.claim = json.loads((ROOT / 'protocol/claim-penalty-policy.json').read_bytes())
         cls.capability = json.loads((ROOT / 'protocol/capability-scoring-policy.json').read_bytes())
