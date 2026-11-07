@@ -113,15 +113,6 @@ def evaluation_progress(result):
             "pending": counts["unknown"], "incomplete": counts["unknown"] > 0}
 
 
-def progress_marker(progress):
-    if not progress["incomplete"]:
-        return ""
-    title = (f"当前已测{progress['adjudicated']}/{progress['planned']}题，"
-             f"{progress['pending']}题待测或待评；分数为当前已确认贡献。")
-    label = f"部分已测 · {progress['adjudicated']}/{progress['planned']}"
-    return f'<span class="progress-mark" title="{html.escape(title, quote=True)}">{label}</span>'
-
-
 def overlaid_bars(models, score_mode="partial", score_label=None):
     """Top the first-attempt bar with the actual retry gain; never select best-of."""
     groups, labels = [], []
@@ -182,8 +173,7 @@ def overlaid_bars(models, score_mode="partial", score_label=None):
         logo = model["logo"]
         labels.append(f'<div class="chart-model" style="--model-color:{color};--model-ink:{ink}">'
                       f'<img class="provider-logo" data-score-mode="{score_mode}" src="{html.escape(logo["data_url"], quote=True)}" '
-                      f'alt="{html.escape(logo["label"], quote=True)}" width="24" height="24">{name}'
-                      f'{progress_marker(model["evaluation_progress"]["single_attempt"])}</div>')
+                      f'alt="{html.escape(logo["label"], quote=True)}" width="24" height="24">{name}</div>')
     ticks = "".join(f'<span style="bottom:{value}%">{value}</span>' for value in range(0, 101, 20))
     grid = "".join(f'<i class="chart-gridline" aria-hidden="true" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
     chart_name = (score_label or score_mode) + "已获分"
@@ -205,19 +195,25 @@ def render(data):
         single = earned_value(model["combined"])
         retry = earned_value(model["retry"]["combined"])
         display = lambda value: "—" if value is None else f"{value:.2f}"
+        progress = model["evaluation_progress"]["single_attempt"]
         rows.append(f'<tr><td class="rank">{index}</td><td class="model-name">{label}'
-                    f'{progress_marker(model["evaluation_progress"]["single_attempt"])}</td>'
+                    f'<div class="model-detail">已评 {progress["adjudicated"]}/{progress["planned"]}</div></td>'
                     f'<td class="numeric score-cell single-score"><span class="score-number">{display(single)}</span></td>'
                     f'<td class="numeric score-cell retry-score"><span class="score-number">{display(retry)}</span></td>'
                     f'<td class="numeric">—</td><td class="numeric"><a href="{source}">查看 ↗</a></td></tr>')
     values = {"DATA": payload, "ROWS": "".join(rows), "CHART": overlaid_bars(data["models"], "partial", mode_names["partial"]),
               "STRICT_CHART": overlaid_bars(data["models"], "strict", mode_names["strict"]),
               "CAPABILITY_CHART": overlaid_bars(data["models"], "capability", mode_names["capability"]),
-              "MODE_CONTROLS": "".join('<button data-score-mode="'+m['id']+'" aria-pressed="'+str(m['id']==data['default_score_mode']).lower()+'">'+html.escape(m['name'])+'</button>' for m in data['score_mode_catalog']['modes']),
+              "MODE_CONTROLS": "".join(
+                  '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)
+                  +'" aria-pressed="'+str(m['id']==data['default_score_mode']).lower()+'"><span class="mode-name">'
+                  +html.escape(m['name'])+'</span><span class="mode-code">'+html.escape(m['abbreviation'])+'</span></button>'
+                  for m in data['score_mode_catalog']['modes']),
               "TASKS": str(data["policy"]["scope"]["tasks"]),
               "PUBLIC": str(data["policy"]["scope"]["public_tasks"]),
               "PRIVATE": str(data["policy"]["scope"]["private_tasks"]),
               "FAMILIES": str(data["policy"]["scope"]["parent_families"]),
+              "ARGUMENT_FAMILIES": str(next(c['families'] for c in data['policy']['subcategories'] if c['id']=='written-argument')),
               "RESEARCH_TASKS": str(data["policy"]["theorem_extension"]["families"]),
               "COVERAGE_NOTE": html.escape("命题拓展已评：" + "；".join(
                   m["label"] + " " + str(m["combined"]["metrics"]["theorem-extension"]["coverage"]["adjudicated"])
@@ -227,7 +223,7 @@ def render(data):
               "BACKGROUND_TASKS": str(data['policy']['background_check']['families']),
               "CAPACITY": str(data["capacity"]["active"])}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
-    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|CAPABILITY_CHART|MODE_CONTROLS|TASKS|PUBLIC|PRIVATE|FAMILIES|RESEARCH_TASKS|COVERAGE_NOTE|CAPACITY|RESERVED|BACKGROUND_TASKS)@@", lambda match: values[match[1]], template)
+    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|CAPABILITY_CHART|MODE_CONTROLS|TASKS|PUBLIC|PRIVATE|FAMILIES|ARGUMENT_FAMILIES|RESEARCH_TASKS|COVERAGE_NOTE|CAPACITY|RESERVED|BACKGROUND_TASKS)@@", lambda match: values[match[1]], template)
 
 
 def write_site(destination, *, source_root=ROOT):
