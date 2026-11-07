@@ -20,9 +20,9 @@ def configure_current(private_root, config, public, private):
     public_count, private_count = len(public.cases), len(private.cases)
     total_count = public_count + private_count
     policy = load(ROOT / "protocol/scoring-policy.json")
-    policy["version"] = "0.7.0"
+    policy["version"] = "0.8.0"
     policy.update(score_modes=["capability", "partial", "strict"], default_score_mode="partial",
-                  capability_policy_version="0.1.0", score_mode_catalog_version="0.1.0")
+                  capability_policy_version="0.2.0", claim_penalty_policy_version="0.1.0", score_mode_catalog_version="0.1.0")
     policy["theorem_extension"] = extension
     if background is not None:
         policy["background_check"]=background

@@ -1,6 +1,6 @@
 # 当前固定结果档案
 
-benchmark0.6.0开发草稿；三评分聚合0.7.0／MC0.1.0／Strict0.2.0。AI审核、人审待定、正式比较资格false，尚未发布release。
+benchmark0.6.0开发草稿；三评分聚合0.8.0／MC0.2.0／Strict0.2.0。AI审核、人审待定、正式比较资格false，尚未发布release。
 
 仅保存用户选定的Terra、DeepSeek、Gemini当前记录，路径为v0.6.0/<model>/20261105。原答、自评、原工程与具名审核保持字节；日常runs不入Git，旧版本从Git历史恢复。公私统一题池，不发布独立公有分数。
 

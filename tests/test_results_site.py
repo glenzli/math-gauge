@@ -169,9 +169,9 @@ class CurrentSiteTests(unittest.TestCase):
         tips = ChartBars(page).tooltips
         self.assertEqual(len(tips), 1)
         self.assertIn("deepseek-v4.1-flash-1017", tips[0]["id"])
-        self.assertIn('<dt>首次</dt><dd>46.71</dd>', page)
-        self.assertIn('<dt>重跑后</dt><dd>49.80</dd>', page)
-        self.assertIn('<dt>增量</dt><dd>+3.09</dd>', page)
+        self.assertTrue('<dt>首次</dt><dd>42.81</dd>' in page)
+        self.assertTrue('<dt>重跑后</dt><dd>45.09</dd>' in page)
+        self.assertTrue('<dt>增量</dt><dd>+2.27</dd>' in page)
         data = copy.deepcopy(self.data)
         ds = next(m for m in data["models"] if m["id"].startswith("deepseek"))
         ds["retry"]["combined"]["metrics"]["earned"]["confirmed"] = SITE.earned_value(ds["combined"])
@@ -201,7 +201,7 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertFalse(model["retry"][scope]["formal_comparison_eligible"])
                 self.assertNotIn("slot_evidence", model["retry"][scope])
             if model["id"].startswith("deepseek"):
-                self.assertAlmostEqual(SITE.earned_value(model["retry"]["combined"]), 49.7961462451)
+                self.assertAlmostEqual(SITE.earned_value(model["retry"]["combined"]), 45.0859189723)
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
@@ -244,7 +244,15 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertGreaterEqual(SITE.earned_value(current), SITE.earned_value(reliable))
                 self.assertEqual(current["capacity"], reliable["capacity"])
                 self.assertEqual(current["coverage"], reliable["coverage"])
-
+    def test_claim_audit_uses_shared_aggregate_summaries_without_private_findings(self):
+        page=SITE.render(self.data)
+        self.assertTrue('id="claim-penalties"' in page)
+        self.assertTrue('可靠数学能力该题最高0分' in page)
+        for model in self.data['models']:
+            result=model['combined'];summary=result['claim_penalties']
+            self.assertEqual(summary['status'],'source_bound_review_applied')
+            self.assertNotIn('tasks',result)
+            self.assertNotIn('finding_ids',json.dumps(summary))
 
 
 if __name__ == "__main__":

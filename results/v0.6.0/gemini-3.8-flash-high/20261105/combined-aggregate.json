@@ -1,8 +1,28 @@
 {
   "benchmark_version": "0.6.0",
-  "scoring_method_version": "0.7.0",
+  "scoring_method_version": "0.8.0",
   "strict_method_version": "0.2.0",
   "score_mode": "partial",
+  "claim_penalty_method_version": "0.1.0",
+  "claim_penalty_policy_sha256": "aabe0dea5d97579f0104e80e24f5d6553b4674e3ff2c03739e812096bd5a27e7",
+  "claim_penalties": {
+    "method_version": "0.1.0",
+    "status": "source_bound_review_applied",
+    "reviewed_tasks": 33,
+    "unresolved_tasks": 0,
+    "not_run_tasks": 0,
+    "delivery_failed_tasks": 0,
+    "findings_by_severity": {
+      "local": 5,
+      "material": 13,
+      "critical": 6
+    },
+    "core_endorsement_tasks": 3,
+    "deductions_applied": true,
+    "strict_error_gates_applied": true,
+    "original_reviews_rewritten": false,
+    "human_review": "pending"
+  },
   "primary_metric": "earned",
   "model_label": "gemini-3.8-flash-high/high native local-tools 0.6 supplement",
   "capacity": {
@@ -433,11 +453,13 @@
     "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
     "alignment_review_sha256": "66d0ae605c0dd2cef13eced1ca0388f77329899d714a0f7465eb3f597a565cc4",
     "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
-    "assessment_policy_sha256": "ba73a202317d274764f30b5451cbec79efa90aac2856ee238cf7eca5627fe445",
+    "assessment_policy_sha256": "53e1ed6674103b9bc4699d00b9afa5124f74735a582588ab0cdffe3753f2d21b",
     "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
+    "claim_review_sha256": "67645fa9f40033e33579ffaaf5c3d08587d3f512637abcb50c37be80f1df452d",
+    "claim_penalty_policy_sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419",
     "theorem_extension_inputs_sha256": "0e87d2cf4e2d94fd9185a899662c5923cd7b35056bcab3f8e192a4eb817da2e4",
     "background_check_inputs_sha256": "1d160cd17f49f58ae8e52605b2200ce8681fd9d13c07c52c02933483042d0a9e",
-    "private_report_sha256": "8f8be9f9a9ef2dde03c043221ad6107f72286d02c9832b225054fd331c07d639"
+    "private_report_sha256": "3cf34c22be3d777bc1fb69582b5a37cf9bafbbfa58c9fbc2f480c97eebd41c4c"
   },
   "source_math_policy_version": "0.4.0",
   "engineering_review_sha256": "e46958c7cdd051ae8e5f681ec415fac17453b98ad60d90acfabd8ae2121d099f",
@@ -446,9 +468,9 @@
   "private_case_count": 9,
   "metrics": {
     "written-argument": {
-      "exact": 70.2272727273,
-      "lower": 70.2272727272,
-      "upper": 70.2272727273,
+      "exact": 58.9545454545,
+      "lower": 58.9545454545,
+      "upper": 58.9545454546,
       "complete": true,
       "coverage": {
         "unit": "family",
@@ -456,13 +478,13 @@
         "adjudicated": 11,
         "unknown": 0
       },
-      "confirmed": 70.22727272727273,
+      "confirmed": 58.95454545454545,
       "formal_comparison_eligible": false
     },
     "argument-review": {
-      "exact": 69.375,
-      "lower": 69.375,
-      "upper": 69.375,
+      "exact": 54.375,
+      "lower": 54.375,
+      "upper": 54.375,
       "complete": true,
       "coverage": {
         "unit": "parent_family",
@@ -470,13 +492,13 @@
         "adjudicated": 4,
         "unknown": 0
       },
-      "confirmed": 69.375,
+      "confirmed": 54.375,
       "formal_comparison_eligible": false
     },
     "lean-audit": {
-      "exact": 77.25,
-      "lower": 77.25,
-      "upper": 77.25,
+      "exact": 67.25,
+      "lower": 67.25,
+      "upper": 67.25,
       "complete": true,
       "coverage": {
         "unit": "family",
@@ -484,13 +506,13 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 77.25,
+      "confirmed": 67.25,
       "formal_comparison_eligible": false
     },
     "lean-formalization": {
-      "exact": 88.5507246377,
-      "lower": 88.5507246376,
-      "upper": 88.5507246377,
+      "exact": 85.2173913043,
+      "lower": 85.2173913043,
+      "upper": 85.2173913044,
       "complete": true,
       "coverage": {
         "unit": "family",
@@ -498,7 +520,7 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 88.55072463768116,
+      "confirmed": 85.21739130434783,
       "formal_comparison_eligible": false
     },
     "lean-selfcheck": {
@@ -516,9 +538,9 @@
       "formal_comparison_eligible": false
     },
     "background-check": {
-      "exact": 41.6666666667,
-      "lower": 41.6666666666,
-      "upper": 41.6666666667,
+      "exact": 31.6666666667,
+      "lower": 31.6666666666,
+      "upper": 31.6666666667,
       "complete": true,
       "coverage": {
         "unit": "family",
@@ -526,7 +548,7 @@
         "adjudicated": 4,
         "unknown": 0
       },
-      "confirmed": 41.666666666666664,
+      "confirmed": 31.666666666666668,
       "formal_comparison_eligible": false
     },
     "manuscript-completion": {
@@ -558,9 +580,9 @@
       "formal_comparison_eligible": false
     },
     "written": {
-      "exact": 69.9837662338,
-      "lower": 69.9837662337,
-      "upper": 69.9837662338,
+      "exact": 57.6461038961,
+      "lower": 57.6461038961,
+      "upper": 57.6461038962,
       "complete": true,
       "coverage": {
         "unit": "fixed subcategory",
@@ -568,13 +590,13 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 69.98376623376623,
+      "confirmed": 57.646103896103895,
       "formal_comparison_eligible": false
     },
     "lean": {
-      "exact": 54.3074534161,
-      "lower": 54.3074534161,
-      "upper": 54.3074534162,
+      "exact": 50.0217391304,
+      "lower": 50.0217391304,
+      "upper": 50.0217391305,
       "complete": true,
       "coverage": {
         "unit": "fixed subcategory",
@@ -582,13 +604,13 @@
         "adjudicated": 3,
         "unknown": 0
       },
-      "confirmed": 54.307453416149066,
+      "confirmed": 50.02173913043478,
       "formal_comparison_eligible": false
     },
     "research": {
       "exact": null,
-      "lower": 30.5555555555,
-      "upper": 63.8888888889,
+      "lower": 27.2222222222,
+      "upper": 60.5555555556,
       "complete": false,
       "coverage": {
         "unit": "fixed subcategory",
@@ -596,13 +618,13 @@
         "adjudicated": 2,
         "unknown": 1
       },
-      "confirmed": 30.555555555555557,
+      "confirmed": 27.22222222222222,
       "formal_comparison_eligible": false
     },
     "earned": {
-      "exact": 52.6685935441,
-      "lower": 52.6685935441,
-      "upper": 52.6685935442,
+      "exact": 45.850411726,
+      "lower": 45.8504117259,
+      "upper": 45.850411726,
       "complete": true,
       "coverage": {
         "unit": "fixed 100-point benchmark",
@@ -610,13 +632,13 @@
         "adjudicated": 7,
         "unknown": 0
       },
-      "confirmed": 52.668593544137025,
+      "confirmed": 45.850411725955205,
       "formal_comparison_eligible": false
     },
     "overall": {
       "exact": null,
-      "lower": 52.6685935441,
-      "upper": 62.6685935442,
+      "lower": 45.8504117259,
+      "upper": 55.850411726,
       "complete": false,
       "coverage": {
         "unit": "fixed 100-point benchmark",
@@ -629,9 +651,9 @@
   },
   "contributions": {
     "written-argument": {
-      "exact": 17.5568181818,
-      "lower": 17.5568181818,
-      "upper": 17.5568181819,
+      "exact": 14.7386363636,
+      "lower": 14.7386363636,
+      "upper": 14.7386363637,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -639,13 +661,13 @@
         "adjudicated": 11,
         "unknown": 0
       },
-      "confirmed": 17.556818181818183,
+      "confirmed": 14.738636363636363,
       "formal_comparison_eligible": false
     },
     "argument-review": {
-      "exact": 6.9375,
-      "lower": 6.9375,
-      "upper": 6.9375,
+      "exact": 5.4375,
+      "lower": 5.4375,
+      "upper": 5.4375,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -653,13 +675,13 @@
         "adjudicated": 4,
         "unknown": 0
       },
-      "confirmed": 6.9375,
+      "confirmed": 5.4375,
       "formal_comparison_eligible": false
     },
     "lean-audit": {
-      "exact": 7.725,
-      "lower": 7.725,
-      "upper": 7.725,
+      "exact": 6.725,
+      "lower": 6.725,
+      "upper": 6.725,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -667,13 +689,13 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 7.725,
+      "confirmed": 6.725,
       "formal_comparison_eligible": false
     },
     "lean-formalization": {
-      "exact": 13.2826086957,
-      "lower": 13.2826086956,
-      "upper": 13.2826086957,
+      "exact": 12.7826086957,
+      "lower": 12.7826086956,
+      "upper": 12.7826086957,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -681,7 +703,7 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 13.282608695652174,
+      "confirmed": 12.782608695652174,
       "formal_comparison_eligible": false
     },
     "lean-selfcheck": {
@@ -699,9 +721,9 @@
       "formal_comparison_eligible": false
     },
     "background-check": {
-      "exact": 4.1666666667,
-      "lower": 4.1666666666,
-      "upper": 4.1666666667,
+      "exact": 3.1666666667,
+      "lower": 3.1666666666,
+      "upper": 3.1666666667,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -709,7 +731,7 @@
         "adjudicated": 4,
         "unknown": 0
       },
-      "confirmed": 4.166666666666667,
+      "confirmed": 3.1666666666666665,
       "formal_comparison_eligible": false
     },
     "manuscript-completion": {
@@ -741,9 +763,9 @@
       "formal_comparison_eligible": false
     },
     "written": {
-      "exact": 24.4943181818,
-      "lower": 24.4943181818,
-      "upper": 24.4943181819,
+      "exact": 20.1761363636,
+      "lower": 20.1761363636,
+      "upper": 20.1761363637,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -751,13 +773,13 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 24.494318181818183,
+      "confirmed": 20.176136363636363,
       "formal_comparison_eligible": false
     },
     "lean": {
-      "exact": 19.0076086957,
-      "lower": 19.0076086956,
-      "upper": 19.0076086957,
+      "exact": 17.5076086957,
+      "lower": 17.5076086956,
+      "upper": 17.5076086957,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -765,13 +787,13 @@
         "adjudicated": 3,
         "unknown": 0
       },
-      "confirmed": 19.007608695652173,
+      "confirmed": 17.507608695652173,
       "formal_comparison_eligible": false
     },
     "research": {
       "exact": null,
-      "lower": 9.1666666666,
-      "upper": 19.1666666667,
+      "lower": 8.1666666666,
+      "upper": 18.1666666667,
       "complete": false,
       "coverage": {
         "unit": "points in full benchmark",
@@ -779,7 +801,7 @@
         "adjudicated": 2,
         "unknown": 1
       },
-      "confirmed": 9.166666666666666,
+      "confirmed": 8.166666666666666,
       "formal_comparison_eligible": false
     }
   },

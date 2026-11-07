@@ -29,7 +29,7 @@
 
 逐轮记录父节点、原始答复、KEEP/FULL、继承主体、工程快照、入口与实际 import 闭包、对齐表、封卷原因和时刻。四道形式化题统一以选定初答阶段的封卷归档工程评分；回复内源码与工程分别留存，二者有差异时不拼接或择优。
 
-`reviews/formalization.json`逐题绑定原响应散列、冻结题目合同、封卷清单、源码、允许的前置材料、编译及公理审计和逐项语义判断。通过项须指向审计中真实存在的声明；评审者对应与模型原对齐表分别标记。原数学审核绑定该审核文件和来源政策0.4.0，当前三评分聚合另绑定0.7.0，原始逐槽评审保留，工程复核另列。私有合并记录可用`formalization_evidence_location: public_archive`显式引用同模型同记录号的公开工程审核，核验时必须由调用者提供公开根目录，不允许档案路径自行跨仓库读取。
+`reviews/formalization.json`逐题绑定原响应散列、冻结题目合同、封卷清单、源码、允许的前置材料、编译及公理审计和逐项语义判断。通过项须指向审计中真实存在的声明；评审者对应与模型原对齐表分别标记。原数学审核绑定该审核文件和来源政策0.4.0，当前三评分聚合另绑定0.8.0，原始逐槽评审保留，工程复核另列。私有合并记录可用`formalization_evidence_location: public_archive`显式引用同模型同记录号的公开工程审核，核验时必须由调用者提供公开根目录，不允许档案路径自行跨仓库读取。
 
 每轮审核分别报告：执行终态、交付完整性、原字节编译及公理检查、数学完成度、语义对应、自评准确性、修复与回退。审核结论绑定具体字节并注明 AI/human/fixture；AI 审核、编译证据和人工批准分别记录。未审核不填为错误或通过。
 
@@ -59,7 +59,7 @@
 
 默认24公开／33合并A1，另三轮Lean自查；旧输入中的A2和书面分支只保留为来源，不占当前分。公私统一书面35／Lean35／研究30；命题拓展公2／私4已建，当前已建90分，研究稿完善10分待建。三种模式以metrics.earned.confirmed表示已核实贡献／100；有未测题时earned.exact为null，metrics.overall.exact仍为null。完整区间保留未测项的可能得分与扣分及待建10分。建设中、未测与模型失败分别标识，不发布独立公有总分。
 
-`record.json`以`assessment_policy`绑定当前聚合0.7.0，`strict_scoring_policy`绑定Strict0.2.0；`assessment_results`与`strict_results`均包含single_attempt／nonlogical_retry_3两个安全文件描述符。来源`scoring-policy.json`保持0.4.0以核验旧数学审核，不改旧审核散列。新报告分别绑定原计分输入、原数学政策、对齐审核、工程审核和当前政策；公开投影另绑定私有完整报告散列。
+`record.json`以`assessment_policy`绑定当前聚合0.8.0，`strict_scoring_policy`绑定Strict0.2.0；`assessment_results`与`strict_results`均包含single_attempt／nonlogical_retry_3两个安全文件描述符。来源`scoring-policy.json`保持0.4.0以核验旧数学审核，不改旧审核散列。新报告分别绑定原计分输入、原数学政策、对齐审核、工程审核和当前政策；公开投影另绑定私有完整报告散列。
 
 公开档案保存combined-aggregate.json、retry-combined-aggregate.json、strict-combined-aggregate.json、strict-retry-combined-aggregate.json；私有保存result.json、retry-result.json、strict-result.json、strict-retry-result.json。旧公有独立result.json不再作为当前结果留存。完整报告包含逐题A1与来源、家族聚合、三轮自查及Strict整轨迹判定；公开只保留合并聚合、安全覆盖、公开工程摘要和源散列，不含私有题号、原答或逐题判断。
 
@@ -95,8 +95,14 @@ MG-TX002使用structural-review-amendment.json与substantive-review-20261107.jso
 
 ## MC、RMC与Strict的具名留档
 
-三评分聚合0.7.0增加MC组件0.1.0，题包版本仍0.6.0。record的default_score_mode为partial（RMC默认主分），score_mode_catalog指向具名目录；capability_scoring_policy绑定MC正向换算，capability_results与assessment_results、strict_results均含single_attempt和nonlogical_retry_3两个描述符。源审核0.4.0、自评、B/R和工程字节不变。
+三评分聚合0.8.0增加MC组件0.2.0，题包版本仍0.6.0。record的default_score_mode为partial（RMC默认主分），score_mode_catalog指向具名目录；capability_scoring_policy绑定MC正向换算，capability_results与assessment_results、strict_results均含single_attempt和nonlogical_retry_3两个描述符。源审核0.4.0、自评、B/R和工程字节不变。
 
 公开新增capability-combined-aggregate.json与capability-retry-combined-aggregate.json；私有新增capability-result.json与capability-retry-result.json。原四份RMC/Strict文件名继续使用，数学数值保持；报告分别标数学能力MC、可靠数学能力RMC、严格数学交付Strict。每个模式保存源输入、政策散列、固定分母、已确认贡献和完整区间，不跨模式或尝试条件选答案。
 
 MC报告保留源B与原扣罚字段，另标实际应用基础扣罚为0；自查的回退、误报与Strict事实不删除。只对有效数学内容给正向分，不能由审核者补造模型未交付成果。公有仍是合并安全投影，私有逐题资料留私库。原先仅有两种结果的冻结记录仍可按旧字段读取，当前三个固定模型记录必须提供六个视图。
+
+## 承诺审核与三评分0.8.0
+
+新增claim_penalty_policy和claim_review文件描述符。私有claim-review.json保存两条件、33题的审核范围、原返回/原审核散列、证据文件、逐字定位、根因、级别及与旧扣罚的关系。公有claim-review-public.json只投影24道公开题，并绑定完整私有审核散列claim_review_source_sha256。各视图同时绑定政策和完整审核；私有重算需逐字核对原证据和正向贡献拆分。原答、原0.4.0审核及原case合同不改写。
+
+核心错误放行时，RMC该题min(0,A−D)，Strict不通过；MC继续计A。报告保留原分、移出的可靠性保留分、实际扣罚和整题封顶损失，不能只报告一个净数字。纯预览缺新增审核必须显式标为not_supplied_preview_not_current_archive，不能通过当前档案校验。

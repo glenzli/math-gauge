@@ -10,6 +10,7 @@ from .case_selection import assessment_family, selected_assessment_cases
 from .theorem_extension import validate_inputs as validate_extension_inputs
 from .case_selection import selected_current_cases
 from .background_check import validate_inputs as validate_background_inputs
+from . import claim_penalties
 from .execution import now
 from .execution_policy import execution_condition
 from .execution_policy import (declared_case_context, declared_case_timeout_seconds,
@@ -2263,7 +2264,7 @@ def validate_strict_assessment_policy(policy):
 
 
 def validate_capability_policy(policy):
-    required = {"schema": "math-gauge.capability-scoring-policy/v1", "version": "0.1.0",
+    required = {"schema": "math-gauge.capability-scoring-policy/v1",
         "benchmark_version": "0.6.0", "score_mode": "capability", "primary_metric": "earned",
         "initial_attempt_labels": ["A1"], "valid_mathematics_required": True,
         "theorem_extension_credit": "R/3_without_baseline_deduction",
@@ -2276,7 +2277,10 @@ def validate_capability_policy(policy):
         "followups_replace_A1": False, "research_invitation": False,
         "attempt_conditions": ["single_attempt", "nonlogical_retry_3"],
         "human_review": "pending", "formal_comparison_eligible": False}
-    if not isinstance(policy, dict) or any(policy.get(k) != v for k, v in required.items()):
+    if (not isinstance(policy, dict) or policy.get("version") not in {"0.1.0", "0.2.0"}
+            or any(policy.get(k) != v for k, v in required.items())
+            or policy["version"] == "0.2.0" and policy.get("embedded_reliability") !=
+                "remove_from_positive_credit_then_normalize_core_and_deduct_separately"):
         raise ValueError("Unsupported positive-contribution capability scoring policy")
     return policy
 
@@ -2284,14 +2288,14 @@ def validate_capability_policy(policy):
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
                             mathematical_substitutions=None, alignment_summary=None,
                             strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None,
-                            capability_policy=None):
+                            capability_policy=None, claim_review=None, claim_policy=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
     if mode not in {"capability", "partial", "strict"}:
         raise ValueError("Unknown assessment score mode")
     if mode == "capability":
-        if policy["version"] != "0.7.0":
+        if policy["version"] not in {"0.7.0", "0.8.0"}:
             raise ValueError("Capability mode requires the three-score assessment method")
         validate_capability_policy(capability_policy)
         if alignment_summary is not None and alignment_summary.get("score_mode") != "capability":
@@ -2299,6 +2303,12 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
     plan = validate_plan(inputs["plan"])
     if inputs.get("model_label") != plan["model_label"]:
         raise ValueError("Assessment model differs from its frozen source")
+    claim_rows = None
+    if claim_review is not None:
+        if policy["version"] != "0.8.0":
+            raise ValueError("Claim deductions cannot alter a frozen older assessment method")
+        claim_penalties.validate_policy(claim_policy)
+        claim_rows = claim_penalties.validate_review(claim_review, model_label=inputs["model_label"])
     source_index = {case["case_id"]: case for case in plan["case_index"]}
     selection = policy.get("case_selection")
     index = selected_current_cases(source_index, selection)
@@ -2311,7 +2321,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         rows[sid] = row
     research_levels = {}
     if theorem_extension_inputs is not None:
-        if policy["version"] not in {"0.6.0", "0.7.0"}:
+        if policy["version"] not in {"0.6.0", "0.7.0", "0.8.0"}:
             raise ValueError("Research evidence cannot alter the pre-research scoring method")
         extra = validate_extension_inputs(theorem_extension_inputs, policy["theorem_extension"])
         if extra.get("model_label") != inputs["model_label"]:
@@ -2376,6 +2386,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
     tasks = []
+    if claim_rows is not None and set(claim_rows) != set(index):
+        raise ValueError("Claim review must cover exactly the selected source and research tasks")
     for cid, case in index.items():
         child = by_source.get(case["component"])
         if child is None:
@@ -2405,6 +2417,35 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             if passed is True and value != (1, 1, 1):
                 raise ValueError("Strict pass contradicts the source-bound completed task")
             source = "source_bound_original_review"
+        claim_detail = None
+        if claim_rows is not None:
+            claim_row = claim_rows[cid]
+            if (claim_row.get("source_response_sha256") != row.get("response_sha256")
+                    or claim_row.get("source_review_sha256") != row.get("review_sha256")):
+                raise ValueError("Claim review belongs to a different selected answer or source judgment")
+            if ((row.get("major_error") is True and case["component"] == "answer-review"
+                    or background_levels.get(sid, {}).get("false_endorsement") is True)
+                    and not any(e["core_endorsement"] for e in claim_row["findings"])):
+                raise ValueError("An established core endorsement error cannot disappear from the claim audit")
+            embedded = claim_row.get("embedded_reliability")
+            if embedded is not None:
+                criteria = (row.get("group_diagnostic") or {}).get("criteria", [])
+                original = next((c for c in criteria if c.get("criterion_id", c.get("id")) == embedded["criterion_id"]), None)
+                if original is None or original.get("score", original.get("points")) != embedded["awarded"]:
+                    raise ValueError("Separated reliability credit differs from the selected source criterion")
+            baseline_deduction = Fraction(0)
+            if cid + ":A1" in research_levels:
+                research = research_levels[cid + ":A1"]
+                if research["research_R"] is not None:
+                    disposition = claim_row.get("baseline_disposition")
+                    if ((research["baseline_B"] == 2 and disposition != "correct")
+                            or research["baseline_B"] != 2 and disposition not in
+                               {"incorrect", "honest_incomplete", "unresolved"}):
+                        raise ValueError("Baseline error and honest incompleteness need separate adjudication")
+                    value = (Fraction(research["research_R"], 3),) * 3
+                    baseline_deduction = Fraction(research["baseline_penalty_points"] or 0, 3)
+            value, passed, claim_detail = claim_penalties.assess(value, passed, claim_row,
+                mode=mode, baseline_deduction=baseline_deduction)
         interval = _boolean(passed) if mode == "strict" else value
         family = (assessment_family(case, source_index, selection) if selection is not None else
                   case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"])
@@ -2415,7 +2456,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                                      "exact": None if value[2] is None else float(value[2])},
                       "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256"),
                       **({"research": research_levels[sid]} if sid in research_levels else {}),
-                      **({"background_check":background_levels[sid]} if sid in background_levels else {})})
+                      **({"background_check":background_levels[sid]} if sid in background_levels else {}),
+                      **({"claim_assessment": claim_detail} if claim_detail is not None else {})})
     metrics, intervals, contributions, confirmed = {}, {}, {}, {}
     for child in policy["subcategories"]:
         ident, count = child["id"], child["families"]
@@ -2449,7 +2491,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
         contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
                                                  planned=count, adjudicated=adjudicated)
-        if policy["version"] in {"0.6.0", "0.7.0"}:
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
             metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
             contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
     for group in policy["groups"]:
@@ -2460,7 +2502,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
         contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-        if policy["version"] in {"0.6.0", "0.7.0"}:
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
             known = sum((confirmed[c["id"]] * c["weight"] for c in children), Fraction(0))
             contributions[group["id"]]["confirmed"] = float(known)
             metrics[group["id"]]["confirmed"] = float(known * 100 / group["weight"])
@@ -2474,7 +2516,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
     for key, children in (("earned", active), ("overall", policy["subcategories"])):
         metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-    if policy["version"] in {"0.6.0", "0.7.0"}:
+    if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
         metrics["earned"]["confirmed"] = float(max(Fraction(0),
             sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
     missing_tasks = max(0, policy["scope"]["tasks"] - len(tasks))
@@ -2501,13 +2543,19 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         "tasks": tasks, "alignment_selfcheck": alignment_summary,
         "strict_alignment_selfcheck": strict_trajectory, "initial_answers_replaced": False,
         "human_review": "pending", "formal_comparison_eligible": False, "new_candidate_calls": 0,
+        **({"claim_penalties": claim_penalties.summary(claim_rows, mode=mode),
+            "claim_penalty_method_version": claim_policy["version"],
+            "claim_penalty_policy_sha256": identity(claim_policy)} if claim_rows is not None else
+           {"claim_penalties": {"status": "not_supplied_preview_not_current_archive"}}
+           if policy["version"] == "0.8.0" else {}),
         **({"capability_method_version": capability_policy["version"],
             "capability_policy_sha256": identity(capability_policy)} if mode == "capability" else {})}
 
 
 def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
                                    assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None,
-                                   background_check_inputs=None, capability_policy=None):
+                                   background_check_inputs=None, capability_policy=None,
+                                   claim_review=None, claim_policy=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
@@ -2516,7 +2564,8 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
     result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
         mathematical_substitutions=substitutions, alignment_summary=alignment,
         strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
-        background_check_inputs=background_check_inputs, capability_policy=capability_policy)
+        background_check_inputs=background_check_inputs, capability_policy=capability_policy,
+        claim_review=claim_review, claim_policy=claim_policy)
     result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
     return result
 

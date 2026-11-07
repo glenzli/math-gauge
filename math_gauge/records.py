@@ -152,6 +152,7 @@ def project_assessment_score(score):
     """Publish the hierarchy and numeric results, excluding private task evidence."""
     fields = ("benchmark_version", "scoring_method_version", "strict_method_version", "score_mode",
               "capability_method_version", "capability_policy_sha256",
+              "claim_penalty_method_version", "claim_penalty_policy_sha256", "claim_penalties",
               "primary_metric", "model_label", "capacity", "group_capacity", "coverage", "whole_task_counts", "profile",
               "alignment_selfcheck", "strict_alignment_selfcheck", "lean_formalization_breakdown",
               "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings",
@@ -355,6 +356,78 @@ def validate_public_background_check(root,record):
             raise ValueError('Public background judgment lost its source answer')
     return data
 
+def load_claim_review(root, record, condition, *, public_root=None):
+    """Verify an appended claim audit without altering any source adjudication."""
+    from .claim_penalties import validate_review
+    root = Path(root).resolve()
+    external = record.get("formalization_evidence_location") == "public_archive"
+    public = Path(public_root).resolve() if public_root is not None else root
+    raw = evidence_bytes(root, record["claim_review"])
+    archive = json.loads(raw)
+    expected_schema = ("math-gauge.claim-review-archive/v1" if external else
+                       "math-gauge.claim-review-projection/v1")
+    if (archive.get("schema") != expected_schema or archive.get("benchmark_version") != "0.6.0"
+            or set(archive.get("conditions", {})) != {"single_attempt", "nonlogical_retry_3"}
+            or archive.get("human_review") != "pending"):
+        raise ValueError("Current archive needs a complete attributed claim review")
+    if not external and archive.get("source_archive_sha256") != record.get("claim_review_source_sha256"):
+        raise ValueError("Public claim projection binds a different private source audit")
+    data = archive["conditions"][condition]
+    rows = validate_review(data)
+    assessment = json.loads(evidence_bytes(public, record["assessment_policy"]))
+    public_ids = set(assessment["case_selection"]["public_case_ids"])
+    public_ids.update(assessment["theorem_extension"]["public_case_ids"])
+    public_ids.update(assessment["background_check"]["public_case_ids"])
+    if (not external and set(rows) != public_ids
+            or external and (not public_ids.issubset(rows) or len(rows) != assessment["scope"]["tasks"])):
+        raise ValueError("Claim review changed the selected public/private task population")
+    if archive.get("policy_sha256") != record["claim_penalty_policy"]["sha256"]:
+        raise ValueError("Claim review binds a different penalty policy")
+    if external:
+        evidence_bytes(root, data["source_inputs"])
+    checked_sources, parsed_sources = {}, {}
+    for row in rows.values():
+        if row["status"] in {"reviewed", "unresolved"} and not row["sources"]:
+            raise ValueError("A claim review requires retained source evidence")
+        texts = []
+        for source in row["sources"]:
+            if source.get("archive") not in {"public", "private"} or not external and source["archive"] != "public":
+                raise ValueError("Claim evidence crossed its public/private projection boundary")
+            base = public if source["archive"] == "public" else root
+            key = (str(base), source["path"], source["sha256"])
+            if key not in checked_sources:
+                checked_sources[key] = evidence_bytes(base, source).decode("utf-8")
+            texts.append(checked_sources[key])
+        for finding in row["findings"]:
+            for item in finding["evidence"]:
+                number = item.get("source")
+                if type(number) is not int or not 0 <= number < len(texts) or not item.get("quote"):
+                    raise ValueError("Claim finding lost its specific source evidence")
+                text = texts[number]
+                if item.get("json_pointer") is not None:
+                    if text not in parsed_sources:
+                        parsed_sources[text] = json.loads(text)
+                    value = parsed_sources[text]
+                    for token in item["json_pointer"].strip("/").split("/"):
+                        token = token.replace("~1", "/").replace("~0", "~")
+                        value = value[int(token)] if isinstance(value, list) else value[token]
+                    text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+                if item["quote"] not in text:
+                    raise ValueError("Claim finding quotes different source bytes")
+        embedded = row.get("embedded_reliability")
+        if embedded is not None:
+            item = embedded["source_score"]
+            text = texts[item["source"]]
+            if text not in parsed_sources:
+                parsed_sources[text] = json.loads(text)
+            value = parsed_sources[text]
+            for token in item["json_pointer"].strip("/").split("/"):
+                value = value[int(token)] if isinstance(value, list) else value[token]
+            if value != embedded["awarded"]:
+                raise ValueError("Embedded reliability credit differs from the original review")
+    return data
+
+
 def load_assessment_results(root, record, *, mode="partial", public_root=None):
     """Check current score-view bytes and policy/source identities in either archive."""
     if record.get("assessment_policy") is None:
@@ -370,6 +443,11 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     strict_raw = evidence_bytes(evidence_root, record["strict_scoring_policy"])
     assessment = validate_assessment_policy(json.loads(assessment_raw))
     validate_strict_assessment_policy(json.loads(strict_raw))
+    claim_raw = None
+    if assessment["version"] == "0.8.0":
+        from .claim_penalties import validate_policy
+        claim_raw = evidence_bytes(evidence_root, record["claim_penalty_policy"])
+        validate_policy(json.loads(claim_raw))
     keys = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}
     if mode not in keys:
         raise ValueError("Unknown assessment score mode")
@@ -402,10 +480,19 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                 or bindings.get("strict_policy_sha256") != hashlib.sha256(strict_raw).hexdigest()
                 or bindings.get("engineering_review_sha256") != record["formalization_review"]["sha256"]):
             raise ValueError("Current score identity, condition or evidence binding changed")
-        if mode == "capability" and (score.get("capability_method_version") != "0.1.0"
+        if mode == "capability" and (score.get("capability_method_version") != json.loads(capability_raw)["version"]
                 or score.get("capability_policy_sha256") != identity(json.loads(capability_raw))
                 or bindings.get("capability_policy_sha256") != hashlib.sha256(capability_raw).hexdigest()):
             raise ValueError("Capability score binds a different positive-contribution policy")
+        if claim_raw is not None:
+            load_claim_review(root, record, condition, public_root=evidence_root)
+            source_sha = (record["claim_review"]["sha256"] if external else record["claim_review_source_sha256"])
+            if (score.get("claim_penalty_method_version") != "0.1.0"
+                    or score.get("claim_penalty_policy_sha256") != identity(json.loads(claim_raw))
+                    or score.get("claim_penalties", {}).get("status") != "source_bound_review_applied"
+                    or bindings.get("claim_penalty_policy_sha256") != hashlib.sha256(claim_raw).hexdigest()
+                    or bindings.get("claim_review_sha256") != source_sha):
+                raise ValueError("Current result lacks its source-bound claim penalty audit")
         if external:
             filename = ("retry-scoring-inputs.json" if condition == "nonlogical_retry_3"
                         and record.get("retry_admission") else "scoring-inputs.json")

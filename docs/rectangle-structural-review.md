@@ -110,7 +110,7 @@ w=(u_1,\ldots,u_a,1-v_1,\ldots,1-v_b).
 | Terra 6.1 Max | [审核更正清单](../results/v0.6.0/terra-6.1-max/20261105/structural-review-amendment.json) |
 | Gemini 3.8 Flash High | [审核更正清单](../results/v0.6.0/gemini-3.8-flash-high/20261105/structural-review-amendment.json) |
 
-当前33题、已建90分组合中，只有Terra与Gemini工具组各一个R1改为R3：分项各增加10/9分，Strict各增加10/6分。Terra当前可靠数学能力77.73、Strict61.67；Gemini可靠数学能力52.67、16.21。两家的首次与允许重跑值相同。DeepSeek分项首次46.71、允许重跑49.80，Strict均21.82，全部不变。研究稿完善10分仍待建，完整100分总分保持区间，见[完整报告](results.md)。
+该次结构复核在当时的33题组合中，使Terra与Gemini命题拓展分项各增加10/9、Strict各增加10/6；原复核回执保持当时观察身份。后续0.8.0补充错误承诺扣罚，未改变本题B2/R3：Terra当前RMC77.73／Strict61.67，Gemini45.85／16.21，DeepSeek首次42.81→允许重跑45.09／Strict21.82。研究稿完善10分待建，完整100分仍保留区间，见[当前完整报告](results.md)。
 
 该修订为观察后统一解释，非旧轮预注册；AI复核不等同于人工数学批准或执行认证，人审待定，正式比较资格false。无候选模型调用、补跑或研究邀请。
 

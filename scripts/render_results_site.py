@@ -76,6 +76,7 @@ def build_data(source_root=ROOT):
                                "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。")}})
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
                  record["capability_scoring_policy"]["path"], record["score_mode_catalog"]["path"],
+                 record["claim_review"]["path"], record["claim_penalty_policy"]["path"],
                  *(item["path"] for item in record["capability_results"].values()),
                  *(item["path"] for item in record["assessment_results"].values()),
                  *(item["path"] for item in record["strict_results"].values())]
@@ -85,7 +86,7 @@ def build_data(source_root=ROOT):
             path = folder / name
             sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
         sources.append({"path": str(icon_path.relative_to(root)), "sha256": hashlib.sha256(icon_bytes).hexdigest()})
-    for name in ("score-modes.json", "capability-scoring-policy.json"):
+    for name in ("score-modes.json", "capability-scoring-policy.json", "claim-penalty-policy.json"):
         path = root / "protocol" / name
         sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
     return {"schema": "math-gauge.current-results-display/v5", "benchmark_version": "0.6.0",
@@ -96,7 +97,7 @@ def build_data(source_root=ROOT):
             "group_capacity": copy.deepcopy(models[0]["combined"]["group_capacity"]),
             "publication_scope": "combined", "score_modes": [m["id"] for m in mode_catalog["modes"]],
             "score_mode_catalog": mode_catalog, "default_score_mode": mode_catalog["default"],
-            "capability_method_version": "0.1.0",
+            "capability_method_version": "0.2.0", "claim_penalty_method_version": "0.1.0",
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
 
 

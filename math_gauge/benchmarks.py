@@ -38,10 +38,10 @@ def identity(value):
 def validate_assessment_policy(policy):
     """Validate the current hierarchy, including unbuilt reserved categories."""
     if (not isinstance(policy, dict) or policy.get("schema") != "math-gauge.assessment-policy/v1"
-            or policy.get("version") not in {"0.5.0", "0.6.0", "0.7.0"} or policy.get("benchmark_version") != "0.6.0"
+            or policy.get("version") not in {"0.5.0", "0.6.0", "0.7.0", "0.8.0"} or policy.get("benchmark_version") != "0.6.0"
             or policy.get("publication_scope") != "combined" or policy.get("primary_metric") != "earned"
             or policy.get("initial_attempt_labels") != ["A1"]
-            or policy.get("score_modes") != (["capability", "partial", "strict"] if policy.get("version") == "0.7.0" else ["partial", "strict"])
+            or policy.get("score_modes") != (["capability", "partial", "strict"] if policy.get("version") in {"0.7.0", "0.8.0"} else ["partial", "strict"])
             or policy.get("overall_floor") != 0):
         raise ValueError("Unsupported current mathematical assessment policy")
     selection = policy.get("case_selection")
@@ -50,7 +50,11 @@ def validate_assessment_policy(policy):
     if policy["version"] == "0.7.0" and (policy.get("default_score_mode") != "partial"
             or policy.get("capability_policy_version") != "0.1.0"):
         raise ValueError("Three-score assessment requires reliable as default and the frozen capability method")
-    extension = policy.get("version") in {"0.6.0", "0.7.0"}
+    if policy["version"] == "0.8.0" and (policy.get("default_score_mode") != "partial"
+            or policy.get("capability_policy_version") != "0.2.0"
+            or policy.get("claim_penalty_policy_version") != "0.1.0"):
+        raise ValueError("Current assessment requires the source-bound claim penalty and separated capability policies")
+    extension = policy.get("version") in {"0.6.0", "0.7.0", "0.8.0"}
     if extension:
         extension_policy = validate_extension_policy(policy.get("theorem_extension"))
         if selection is None:
@@ -167,7 +171,7 @@ def _validate_profile_weights(data):
     if data.get("schema") == "math-gauge.benchmark-profile/v6":
         policy = validate_assessment_policy(data.get("assessment_policy"))
         expected = {"proofs": 25, "lean-audit": 10, "lean-formalization": 15, "answer-review": 10}
-        if policy["version"] in {"0.6.0", "0.7.0"}:
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
             expected["theorem-extension"] = 10
         if policy.get("background_check") is not None:
             expected["background-check"] = 10

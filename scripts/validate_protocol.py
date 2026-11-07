@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKET = "protocol/reliability"
 RUNNER_FILES = (
     "math_gauge/catalog.py", "math_gauge/execution.py", "math_gauge/execution_policy.py", "math_gauge/review.py",
-    "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/records.py", "math_gauge/reliability.py",
+    "math_gauge/benchmarks.py", "math_gauge/scoring.py", "math_gauge/records.py", "math_gauge/claim_penalties.py", "math_gauge/reliability.py",
     "math_gauge/reliability_review.py",
     "math_gauge/eligibility.py",
     "math_gauge/harness.py", "math_gauge/harness_answers.py", "math_gauge/harness_import.py",
@@ -27,6 +27,7 @@ RUNNER_FILES = (
     "scripts/isolated_cli/prepare.py", "scripts/isolated_cli/probe.py",
 )
 ACCEPTANCE_TESTS = (
+    "test_claim_penalties.py",
     "test_capability_scoring.py", "test_results_site.py", "test_strict_records.py", "test_strict_scoring.py",
     "test_answer_review.py", "test_written_proof.py", "test_author_evidence_scope.py", "test_compact_protocol.py", "test_benchmarks.py", "test_execution_policy.py", "test_scoring.py", "test_reliability_execution.py",
     "test_reliability_review.py",
@@ -36,6 +37,7 @@ ACCEPTANCE_TESTS = (
     "test_simple_harness.py", "test_simple_release_artifacts.py",
 )
 ACCEPTANCE_STANDARDS = (
+    "protocol/claim-penalty-policy.json", "protocol/claim-penalties.md",
     "protocol/capability-scoring-policy.json", "protocol/score-modes.json", "protocol/capability-scoring.md",
     "protocol/result-record.md", "protocol/result-record.schema.json",
     "protocol/benchmark-profile.json", "protocol/benchmark-scoring.md",

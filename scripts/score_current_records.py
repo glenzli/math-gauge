@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import descriptor, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, project_assessment_score, validate_record
+from math_gauge.records import descriptor, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_claim_review, project_assessment_score, validate_record
 from math_gauge.scoring import score_assessment_record_inputs
 
 
@@ -30,7 +30,8 @@ def retain(private_root, *, public_root=ROOT):
     assessment = load(public_root / "protocol/scoring-policy.json")
     strict = load(public_root / "protocol/strict-scoring-policy.json")
     capability = load(public_root / "protocol/capability-scoring-policy.json")
-    for name in ("capability-scoring-policy.json", "score-modes.json"):
+    claim_policy = load(public_root / "protocol/claim-penalty-policy.json")
+    for name in ("capability-scoring-policy.json", "score-modes.json", "claim-penalty-policy.json"):
         (private_root / "protocol" / name).write_bytes((public_root / "protocol" / name).read_bytes())
     totals = {}
     for model in load(public_root / "benchmark.json")["selected_result_models"]:
@@ -52,6 +53,7 @@ def retain(private_root, *, public_root=ROOT):
         for filename, source in (("assessment-policy.json", "scoring-policy.json"),
                                  ("strict-scoring-policy.json", "strict-scoring-policy.json"),
                                  ("capability-scoring-policy.json", "capability-scoring-policy.json"),
+                                 ("claim-penalty-policy.json", "claim-penalty-policy.json"),
                                  ("score-modes.json", "score-modes.json")):
             (public / filename).write_bytes((public_root / "protocol" / source).read_bytes())
         for target in (record, private_record):
@@ -60,12 +62,17 @@ def retain(private_root, *, public_root=ROOT):
             target["capability_scoring_policy"] = descriptor(public, public / "capability-scoring-policy.json")
             target["score_mode_catalog"] = descriptor(public, public / "score-modes.json")
             target["default_score_mode"] = "partial"
+            target["claim_penalty_policy"] = descriptor(public, public / "claim-penalty-policy.json")
             for key in ("capability_results", "assessment_results", "strict_results"):
                 target[key] = {}
+        private_record["claim_review"] = descriptor(private, private / "claim-review.json")
+        record["claim_review"] = descriptor(public, public / "claim-review-public.json")
+        record["claim_review_source_sha256"] = private_record["claim_review"]["sha256"]
         totals[model] = {}
         for condition in ("single_attempt", "nonlogical_retry_3"):
             uses_retry = condition == "nonlogical_retry_3" and retry is not None
             inputs = retry if uses_retry else original
+            claim_review = load_claim_review(private, private_record, condition, public_root=public)
             retry_summary = (copy.deepcopy(old_retry["retry_summary"]) if uses_retry else {
                 "slots_with_reruns": 0, "source": "original_records_reused_no_new_retry_evidence",
                 "all_original_attempts_independently_certified": False})
@@ -74,6 +81,7 @@ def retain(private_root, *, public_root=ROOT):
                 score = score_assessment_record_inputs(inputs, review, source_policy,
                     formalization_review=engineering, assessment_policy=assessment, strict_policy=strict, mode=mode,
                     theorem_extension_inputs=research, background_check_inputs=background,
+                    claim_review=claim_review, claim_policy=claim_policy,
                     capability_policy=capability if mode == "capability" else None)
                 score.update(attempt_condition=condition, retry_summary=retry_summary,
                     scope="combined-evaluator", source_math_policy_version=source_policy["version"],
@@ -85,6 +93,8 @@ def retain(private_root, *, public_root=ROOT):
                         "engineering_review_sha256": digest(public / "reviews/formalization.json"),
                         "assessment_policy_sha256": digest(public / "assessment-policy.json"),
                         "strict_policy_sha256": digest(public / "strict-scoring-policy.json")})
+                score["source_bindings"].update(claim_review_sha256=private_record["claim_review"]["sha256"],
+                    claim_penalty_policy_sha256=digest(public / "claim-penalty-policy.json"))
                 if research is not None:
                     score["source_bindings"]["theorem_extension_inputs_sha256"] = digest(private / private_record["theorem_extension_inputs"]["path"])
                 if background is not None:
