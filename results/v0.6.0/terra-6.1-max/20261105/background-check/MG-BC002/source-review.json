@@ -1,0 +1,95 @@
+{
+  "schema": "math-gauge.firstclass-pilot-ai-review/v1",
+  "reviewed_utc": "2026-11-06T17:00:11.232316+00:00",
+  "model": "terra",
+  "case_id": "B04",
+  "stage": "A1",
+  "reviewer_kind": "AI",
+  "reviewer": "Codex operator; one source-based mathematical review, not independent human approval",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "answer": {
+    "path": "answers/terra/B04/A1/answer.md",
+    "bytes": 5005,
+    "sha256": "c0d5183c881d99afb26cf9ab432efef55b31e3108f476721ceecee66085428ee"
+  },
+  "selection_sha256": "08debb329d0304b3f76edb49f5fa0d462589d2efa083dfd857753ad7325b16d2",
+  "input_sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af",
+  "source_input_sha256": "d19cbdde68b05e904d38b8fb8ba2f562d8132ba3ee2db555d1a00ae11843611e",
+  "source_rubric": {
+    "path": "source/02_evaluation/B04/rubric_preregistered.md",
+    "sha256": "58ea72a8363c62d278e4fd38a37243e3e5659f838eb9bfce6cc18b3dda7d1d6d"
+  },
+  "reference": {
+    "path": "source/02_evaluation/B04/reference.md",
+    "sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3"
+  },
+  "execution_qualified_for_pilot": true,
+  "operational_caveat": null,
+  "source_scores": {
+    "D": 4,
+    "U": 3,
+    "S": "S-corrected"
+  },
+  "source_rubric_pass": null,
+  "pilot_complete": true,
+  "all_substantive_requirements_verified": true,
+  "target_failure": false,
+  "outcome": "complete_corrected",
+  "summary": "全部流界和条件prox证书正确；直接对变分方程作小初值展开，证明每个固定正时间的端点Jacobian非对称，排除任何凸prox表示。",
+  "criteria": [
+    {
+      "id": "D1",
+      "points": 1,
+      "max": 1,
+      "judgment": "强凸Hessian和径向范数衰减给全局前向延拓与唯一平衡点0。"
+    },
+    {
+      "id": "D2",
+      "points": 1,
+      "max": 1,
+      "judgment": "强单调性与PL界给两项指数估计。"
+    },
+    {
+      "id": "D3",
+      "points": 1,
+      "max": 1,
+      "judgment": "自治半群、nτ叠层及范数/扰动/能量收敛界正确。"
+    },
+    {
+      "id": "D4",
+      "points": 1,
+      "max": 1,
+      "judgment": "正确次梯度条件、正确范数恒等式推出三点不等式；两点次梯度单调性给firm nonexpansiveness，全部保留条件。"
+    },
+    {
+      "id": "U",
+      "points": 3,
+      "max": 3,
+      "judgment": "先用凸共轭势函数证明任何光滑凸prox的Jacobian对称。对任意固定t>0，原点附近初值(ε,0)的变分方程给skew=−ε²e^(-t)(1−e^(-t))³+O_t(ε⁴)，故不存在任何凸r_t；不是只排除r_t=tf。"
+    },
+    {
+      "id": "S",
+      "judgment": "S-corrected：最终只承诺真实流保证，明确拒绝凸prox解释。"
+    }
+  ],
+  "quoted_evidence": [
+    {
+      "label": "all_positive_times",
+      "quote": "The draft’s proximal conclusion is false for this energy: for every \\(\\tau>0\\), the exact flow map \\(T_\\tau\\) fails to be the proximal map of any proper lower-semicontinuous convex function.",
+      "utf8_byte_start": 0,
+      "utf8_byte_end": 192,
+      "answer_sha256": "c0d5183c881d99afb26cf9ab432efef55b31e3108f476721ceecee66085428ee"
+    }
+  ],
+  "issues": [],
+  "notes": [
+    "变分方程直接控制矩阵余项，未对任意大O函数无依据地求导。",
+    "小初值邻域可依赖固定时间；没有将量词偷换为一个统一邻域覆盖所有时间。"
+  ],
+  "self_assessment": {
+    "requested": false,
+    "structured_status": null,
+    "reason": "Original task did not request complete/incomplete/uncertain; completion is the reviewer judgment, not a fabricated model declaration."
+  }
+}

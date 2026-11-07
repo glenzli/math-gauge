@@ -14,8 +14,10 @@ from pathlib import Path
 from common import REPO, digest, helper, load, now, save
 
 
-def prepare_session(config, prompt, destination, *, canary_search=False):
+def prepare_session(config, prompt, destination, *, canary_search=False, local_tools=False):
     """No inference. Keep base helper hashes plus explicit extension history."""
+    if local_tools and canary_search:
+        raise ValueError("Local-tools-no-search cannot enable search")
     config = dict(config, prompt=str(Path(prompt).resolve()), run_dir=str(Path(destination).resolve()))
     proxy_exception = config.pop("proxy_exception", None)
     plan = helper.prepare(config)
@@ -61,6 +63,9 @@ def prepare_session(config, prompt, destination, *, canary_search=False):
             agent = root / "work/.agents/agents/text-only.md"
             agent.write_text(agent.read_text().replace("  - finish\n", "  - finish\n  - search_web\n"))
             extension["changes"].append({"purpose": "Positive non-math capability control only", "added_tool": "search_web"})
+    if local_tools:
+        from local_tools import configure_local_tools
+        configure_local_tools(root, plan, extension)
     save(root / "runtime/plan.json", plan)
     save(root / "runtime/prepared-hashes.json", {name: digest(root / name) for name in original})
     save(root / "runtime/preparation-extension.json", extension, exclusive=True)
@@ -105,20 +110,30 @@ def executable(pid):
     library.proc_pidpath.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_uint32]
     buffer = ctypes.create_string_buffer(4096)
     if library.proc_pidpath(pid, buffer, len(buffer)) <= 0:
+        # A reaped or zombie child can still occur in the preceding ps snapshot.
+        # It has no executable path; this is not a failed policy of a live worker.
+        state = subprocess.run(["/bin/ps", "-p", str(pid), "-o", "stat="],
+                               capture_output=True, text=True, timeout=10)
+        if ((state.returncode == 1 and not state.stderr.strip())
+                or (state.returncode == 0 and (not state.stdout.strip()
+                                              or state.stdout.lstrip().startswith("Z")))):
+            raise ProcessLookupError("Child exited before executable identity query")
         raise RuntimeError("Cannot identify actual process executable")
     return buffer.value.decode()
 
 
 def check_pid(root, pid, role, suffix=""):
     root = Path(root)
+    observed_executable = executable(pid)
     output = root / "runtime" / (role + "-pid-check" + suffix + ".json")
     command = [sys.executable, "-B", str(root / "runtime/probe.py"), "--manifest", str(root / "runtime/probes.json"), "--pid", str(pid), "--role", role, "--out", str(output)]
     result = subprocess.run(command, capture_output=True, timeout=20)
     if pid not in process_tree():
         raise ProcessLookupError("Process exited before live policy query completed")
     if result.returncode or not load(output)["passed"]:
+        executable(pid)  # Distinguish an exited child from a live policy failure.
         raise RuntimeError("Actual process policy query failed")
-    return {"pid": pid, "executable": executable(pid), "policy_evidence": str(output)}
+    return {"pid": pid, "executable": observed_executable, "policy_evidence": str(output)}
 
 
 def stop_process(proc):
@@ -145,6 +160,7 @@ def execute_session(root, *, kind, timeout=2700, allow_search=False):
     """One stdin submission. The caller must enforce the mathematical release gate."""
     root = Path(root)
     plan = load(root / "runtime/plan.json")
+    from local_tools import allowed_event_tool
     if kind not in {"math", "non_math_canary"} or (kind == "math" and allow_search):
         raise ValueError("Invalid execution kind/tool configuration")
     if (root / "runtime/execution.json").exists():
@@ -198,7 +214,7 @@ def execute_session(root, *, kind, timeout=2700, allow_search=False):
                         execution["observed_model"] = init.get("model")
                         execution["permission_mode"] = init.get("permission_mode")
                         execution["observed_agent"] = init.get("agent")
-                        if init.get("permission_mode") != "strict" or init.get("agent") != "text-only":
+                        if init.get("permission_mode") != plan.get("expected_permission_mode", "strict") or init.get("agent") != "text-only":
                             tool = "UNEXPECTED_AGENT_OR_PERMISSION_MODE"
                     step = event.get("step_update", {})
                     if step.get("step_type") == "tool":
@@ -212,7 +228,7 @@ def execute_session(root, *, kind, timeout=2700, allow_search=False):
                         (root / "output/response.md").write_bytes(result.get("response", "").encode("utf-8"))
                 if tool:
                     execution["tool_events"].append({"utc": now(), "name": tool, "event": tag})
-                    allowed = (plan["client"] == "agy" and tool in {"finish", "manage_task"}) or (allow_search and tool in {"search_web", "web_search"})
+                    allowed = allowed_event_tool(plan, tool, allow_search=allow_search)
                     if not allowed and not mismatch.is_set():
                         execution["tool_mismatch"] = {"decided_utc": now(), "tool": tool, "answer_reviewed_at_decision": False, "selection_based_on_answer": False, "evidence": "output/events.ndjson"}
                         mismatch.set()
@@ -265,7 +281,7 @@ def execute_session(root, *, kind, timeout=2700, allow_search=False):
                     try:
                         evidence = check_pid(root, row["pid"], "worker", "-" + str(len(seen)))
                     except ProcessLookupError:
-                        execution.setdefault("transient_children", []).append({**row, "utc": now(), "status": "exited-before-policy-query-completed", "policy_basis": "inherits launcher's OS policy; no successful live policy query claimed"})
+                        execution.setdefault("transient_children", []).append({**row, "utc": now(), "status": "exited-before-policy-query-completed", "policy_basis": "Child already exited; no successful live policy query claimed. Native tool configuration and capability controls are bound separately."})
                         seen.add(row["pid"])
                         continue
                     evidence["new_since_prelaunch"] = row["pid"] not in baseline
@@ -279,7 +295,7 @@ def execute_session(root, *, kind, timeout=2700, allow_search=False):
             raise RuntimeError("CLI failed or violated tools policy")
         if plan["client"] == "agy" and (metrics["result_count"] != 1 or execution.get("result_status") != "SUCCESS"):
             raise RuntimeError("AGY did not return exactly one successful result")
-        if plan["client"] == "agy" and execution.get("permission_mode") != "strict":
+        if plan["client"] == "agy" and execution.get("permission_mode") != plan.get("expected_permission_mode", "strict"):
             raise RuntimeError("AGY strict permission metadata was not observed")
         if parse_errors:
             raise RuntimeError("Unexpected non-JSON output; retain raw evidence")

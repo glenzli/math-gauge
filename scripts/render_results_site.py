@@ -37,6 +37,7 @@ def build_data(source_root=ROOT):
         folder = root / "results/v0.6.0" / model / "20261105"
         validate_record(folder)
         record = json.loads((folder / "record.json").read_bytes())
+        research_source = json.loads((folder / record["theorem_extension_evidence"]["path"]).read_bytes())
         partial = load_assessment_results(folder, record)
         strict = load_assessment_results(folder, record, mode="strict")
         if partial is None or strict is None:
@@ -49,14 +50,23 @@ def build_data(source_root=ROOT):
             "logo": {"label": provider, "data_url": "data:image/svg+xml;base64," + base64.b64encode(icon_bytes).decode("ascii"),
                      "sha256": hashlib.sha256(icon_bytes).hexdigest()},
             "combined": combined, "strict": strict, "trajectory": record["trajectory"],
+            "evaluation_progress": {condition: evaluation_progress(result)
+                                    for condition, result in partial.items()},
             "lean_formalization_breakdown": combined["lean_formalization_breakdown"],
             "alignment_selfcheck": combined["alignment_selfcheck"],
             "source_record": str((folder / "record.json").relative_to(root)),
             "retry": {"combined": partial["nonlogical_retry_3"],
                       "note": ("GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
                                if record.get("retry_admission") else
+                               "正式研究工具组尚未完成；未测题保持未知，不回填其他条件的答卷。"
+                               if research_source.get("source_condition") == "local_tools_no_network"
+                                  and research_source.get("current_generation_status") != "completed" else
+                               "当前研究工具组已完成六题；本地工具许可已实测，实际使用情况和所有物理请求另有留档。纯系统故障不占模型次数。"
+                               if research_source.get("source_condition") == "local_tools_no_network" else
                                "研究源试答曾有15次路由连接失败且无答卷；当前采用修复环境批次的A1。本次整理未重跑，不认证整个历史首次即成功。"
                                if model == "terra-6.1-max" else
+                               f"新增研究{research_source['effective_model_attempts']}题均为首次有效模型作答；另有{research_source['excluded_pure_system_failures']}次模型启动前的纯系统故障，不占模型尝试额度，物理请求与原失败保留。"
+                               if research_source.get("excluded_pure_system_failures") else
                                "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。")}})
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
                  *(item["path"] for item in record["assessment_results"].values()),
@@ -72,6 +82,7 @@ def build_data(source_root=ROOT):
             "human_review": "pending", "formal_comparison_eligible": False,
             "models": models, "policy": policy, "strict_policy": strict_policy, "sources": sources,
             "capacity": copy.deepcopy(models[0]["combined"]["capacity"]),
+            "group_capacity": copy.deepcopy(models[0]["combined"]["group_capacity"]),
             "publication_scope": "combined", "score_modes": ["partial", "strict"],
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
 
@@ -79,6 +90,21 @@ def build_data(source_root=ROOT):
 def earned_value(result):
     value = result["metrics"]["earned"]
     return value.get("confirmed", value["exact"])
+
+
+def evaluation_progress(result):
+    """Mark unknown built tasks, independently of mistakes or unbuilt capacity."""
+    counts = result["whole_task_counts"]
+    return {"planned": counts["planned"], "adjudicated": counts["passed"] + counts["failed"],
+            "pending": counts["unknown"], "incomplete": counts["unknown"] > 0}
+
+
+def progress_marker(progress):
+    if not progress["incomplete"]:
+        return ""
+    title = (f"评测未完成：{progress['adjudicated']}/{progress['planned']}题已评，"
+             f"{progress['pending']}题待测或待评；分数为当前已确认贡献。")
+    return f'<span class="progress-mark" title="{html.escape(title, quote=True)}">未完成</span>'
 
 
 def overlaid_bars(models, score_mode="partial"):
@@ -131,14 +157,16 @@ def overlaid_bars(models, score_mode="partial"):
                        f'<div><dt>重跑后</dt><dd>{descriptions_for_model[1]}</dd></div>'
                        f'<div><dt>增量</dt><dd>{values[1] - values[0]:+.2f}</dd></div></dl></div>')
         spoken = html.escape(model["label"] + "。首次" + descriptions_for_model[0]
-                             + "，允许重跑后" + descriptions_for_model[1], quote=True)
+                             + "，允许重跑后" + descriptions_for_model[1]
+                             + ("。评测未完成" if model["evaluation_progress"]["single_attempt"]["incomplete"] else ""), quote=True)
         groups.append(f'<div class="bar-group{" has-extension" if has_gain else ""}" role="group" data-score-mode="{score_mode}" aria-label="{spoken}" '
                       f'data-model="{html.escape(model["id"], quote=True)}"{focus} '
                       f'style="--model-color:{color};--model-ink:{ink}">' + "".join(bars) + value_label + tooltip + '</div>')
         logo = model["logo"]
         labels.append(f'<div class="chart-model" style="--model-color:{color};--model-ink:{ink}">'
                       f'<img class="provider-logo" data-score-mode="{score_mode}" src="{html.escape(logo["data_url"], quote=True)}" '
-                      f'alt="{html.escape(logo["label"], quote=True)}" width="24" height="24">{name}</div>')
+                      f'alt="{html.escape(logo["label"], quote=True)}" width="24" height="24">{name}'
+                      f'{progress_marker(model["evaluation_progress"]["single_attempt"])}</div>')
     ticks = "".join(f'<span style="bottom:{value}%">{value}</span>' for value in range(0, 101, 20))
     grid = "".join(f'<i class="chart-gridline" aria-hidden="true" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
     chart_name = "Strict 已获分" if score_mode == "strict" else "分项已获分"
@@ -159,7 +187,8 @@ def render(data):
         single = earned_value(model["combined"])
         retry = earned_value(model["retry"]["combined"])
         display = lambda value: "—" if value is None else f"{value:.2f}"
-        rows.append(f'<tr><td class="rank">{index}</td><td class="model-name">{label}</td>'
+        rows.append(f'<tr><td class="rank">{index}</td><td class="model-name">{label}'
+                    f'{progress_marker(model["evaluation_progress"]["single_attempt"])}</td>'
                     f'<td class="numeric score-cell single-score"><span class="score-number">{display(single)}</span></td>'
                     f'<td class="numeric score-cell retry-score"><span class="score-number">{display(retry)}</span></td>'
                     f'<td class="numeric">—</td><td class="numeric"><a href="{source}">查看 ↗</a></td></tr>')
@@ -169,9 +198,16 @@ def render(data):
               "PUBLIC": str(data["policy"]["scope"]["public_tasks"]),
               "PRIVATE": str(data["policy"]["scope"]["private_tasks"]),
               "FAMILIES": str(data["policy"]["scope"]["parent_families"]),
+              "RESEARCH_TASKS": str(data["policy"]["theorem_extension"]["families"]),
+              "COVERAGE_NOTE": html.escape("命题拓展已评：" + "；".join(
+                  m["label"] + " " + str(m["combined"]["metrics"]["theorem-extension"]["coverage"]["adjudicated"])
+                  + "/" + str(m["combined"]["metrics"]["theorem-extension"]["coverage"]["planned"])
+                  for m in data["models"]) + "。背景核查已评：" + "；".join(m["label"]+" "+str(m["combined"]["metrics"]["background-check"]["coverage"]["adjudicated"])+"/4" for m in data["models"])+"。"),
+              "RESERVED": str(data['capacity']['under_construction']),
+              "BACKGROUND_TASKS": str(data['policy']['background_check']['families']),
               "CAPACITY": str(data["capacity"]["active"])}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
-    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|TASKS|PUBLIC|PRIVATE|FAMILIES|CAPACITY)@@", lambda match: values[match[1]], template)
+    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|TASKS|PUBLIC|PRIVATE|FAMILIES|RESEARCH_TASKS|COVERAGE_NOTE|CAPACITY|RESERVED|BACKGROUND_TASKS)@@", lambda match: values[match[1]], template)
 
 
 def write_site(destination, *, source_root=ROOT):

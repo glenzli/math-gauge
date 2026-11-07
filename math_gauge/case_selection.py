@@ -79,3 +79,15 @@ def selected_assessment_cases(cases, selection, *, current_plan=False):
     if review_families != set(parents.values()):
         raise ValueError("Assessment case selection changed the answer-review parent families")
     return selected
+
+
+def selected_current_cases(cases, selection, *, current_plan=False):
+    """Preserve research additions outside the immutable legacy selection."""
+    extra = {cid: c for cid, c in cases.items()
+             if c['component'] in {'theorem-extension', 'background-check'}}
+    base = {cid: c for cid, c in cases.items() if cid not in extra}
+    normalized = {cid: dict(c, component='exploration')
+                  if c['component']=='proofs' and c.get('source_visibility', c.get('visibility'))=='private'
+                  else c for cid,c in base.items()}
+    selected = selected_assessment_cases(normalized, selection, current_plan=current_plan)
+    return {cid:c for cid,c in cases.items() if cid in selected or cid in extra}

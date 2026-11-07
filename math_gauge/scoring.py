@@ -7,7 +7,9 @@ from pathlib import Path
 from .benchmarks import (ATTEMPTS, COMPONENTS, component_ids, identity, independent_attempts,
                          reliability_schedule, scoring_policy, validate_assessment_policy, validate_plan)
 from .case_selection import assessment_family, selected_assessment_cases
-from .theorem_extension import selected_cases as selected_current_cases, validate_inputs as validate_extension_inputs
+from .theorem_extension import validate_inputs as validate_extension_inputs
+from .case_selection import selected_current_cases
+from .background_check import validate_inputs as validate_background_inputs
 from .execution import now
 from .execution_policy import execution_condition
 from .execution_policy import (declared_case_context, declared_case_timeout_seconds,
@@ -2255,7 +2257,7 @@ def validate_strict_assessment_policy(policy):
 
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
                             mathematical_substitutions=None, alignment_summary=None,
-                            strict_trajectory=None, theorem_extension_inputs=None):
+                            strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
@@ -2310,6 +2312,31 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             research_levels[sid] = {"baseline_B": baseline, "research_R": level,
                 "baseline_penalty_points": deduction, "research_maximum_points": 3,
                 "baseline_is_research_credit": False, "answer_attempt": "A1"}
+    background_levels = {}
+    if background_check_inputs is not None:
+        if policy.get('background_check') is None:
+            raise ValueError('Background evidence needs its selected assessment policy')
+        extra = validate_background_inputs(background_check_inputs, policy['background_check'])
+        if extra.get('model_label') != inputs['model_label']:
+            raise ValueError('Background evidence belongs to a different model')
+        for case in extra['case_index']:
+            cid=case['case_id']
+            if cid in index and (index[cid]['component']!='background-check' or
+                    index[cid].get('group_contract_sha256',case['contract_sha256'])!=case['contract_sha256']):
+                raise ValueError('Background evidence cannot replace another source contract')
+            index[cid]=case
+        for row in extra['slots']:
+            sid=row['slot_id'];level=row['background_R']
+            response=None if row.get('response') is None else row['response']['sha256']
+            if sid in rows and rows[sid].get('response_sha256')!=response:
+                raise ValueError('Background evidence cannot replace a frozen source answer')
+            value=None if level is None else Fraction(level,3)
+            rows[sid]={'completion':{'lower':0 if value is None else float(value),
+                'upper':1 if value is None else float(value),'exact':None if value is None else float(value)},
+                'strict_pass':row['complete'],'response_sha256':response,
+                'review_sha256':None if row.get('review') is None else row['review']['sha256']}
+            background_levels[sid]={'background_R':level,'complete':row['complete'],
+                'false_endorsement':row.get('false_endorsement'),'downstream_calculation_is_research_credit':False}
     substitutions = mathematical_substitutions or {}
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
@@ -2324,11 +2351,16 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             research = research_levels[sid]
             value = ((Fraction(-2, 3), Fraction(1), None) if research["research_R"] is None else
                      (Fraction(research["research_R"] - research["baseline_penalty_points"], 3),) * 3)
+        if sid in background_levels:
+            level=background_levels[sid]['background_R']
+            value=UNKNOWN if level is None else (Fraction(level,3),)*3
         if sid in substitutions:
             passed = True if value[0] == 1 else False if value[1] < 1 else None
             source = "selected_sealed_engineering"
         else:
             passed = row.get("strict_pass")
+            if case["component"] == "background-check" and sid not in background_levels:
+                value, passed = UNKNOWN, None
             if case["component"] == "theorem-extension" and sid not in research_levels:
                 # Generic proof completion alone does not adjudicate the
                 # separately required original-task baseline and research tier.
@@ -2346,7 +2378,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                       "completion": {"lower": float(value[0]), "upper": float(value[1]),
                                      "exact": None if value[2] is None else float(value[2])},
                       "response_sha256": row.get("response_sha256"), "review_sha256": row.get("review_sha256"),
-                      **({"research": research_levels[sid]} if sid in research_levels else {})})
+                      **({"research": research_levels[sid]} if sid in research_levels else {}),
+                      **({"background_check":background_levels[sid]} if sid in background_levels else {})})
     metrics, intervals, contributions, confirmed = {}, {}, {}, {}
     for child in policy["subcategories"]:
         ident, count = child["id"], child["families"]
@@ -2419,6 +2452,10 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         "profile": {"groups": policy["groups"], "subcategories": policy["subcategories"]},
         "capacity": {"total": 100, "active": sum(c["weight"] for c in active),
                      "under_construction": sum(c["weight"] for c in policy["subcategories"] if c not in active)},
+        "group_capacity": {g['id']:{'total':g['weight'],
+            'active':sum(c['weight'] for c in policy['subcategories'] if c['id'] in g['children'] and c['status']=='active'),
+            'under_construction':sum(c['weight'] for c in policy['subcategories'] if c['id'] in g['children'] and c['status']=='under_construction')}
+            for g in policy['groups']},
         "coverage": dict(policy["scope"], source_initial_tasks=len(tasks),
                          source_initial_judgments=sum(t["strict_pass"] is not None for t in tasks)),
         "whole_task_counts": {"planned": policy["scope"]["tasks"],
@@ -2431,13 +2468,14 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
 
 
 def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
-                                   assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None):
+                                   assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None, background_check_inputs=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
     result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
         mathematical_substitutions=substitutions, alignment_summary=source["alignment_selfcheck"],
-        strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs)
+        strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
+        background_check_inputs=background_check_inputs)
     result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
     return result
 

@@ -1,6 +1,6 @@
 # 按考察重点选卷
 
-本目录覆盖当前22份相关任务：18份数学卷与4份真实答卷审阅。默认任务关联18个母题家族。当前数学任务含190项阶段或章节义务。另有21项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。
+本目录覆盖当前24份相关任务：20份数学卷与4份真实答卷审阅。默认任务关联20个母题家族。当前数学任务含190项阶段或章节义务。另有27项书面证明评审判准。阶段、义务、评审判准及审阅维度均不能当作独立试题。
 
 分类是AI审查建议；源题全部仍为 **draft / human pending**。本目录不产生模型调用、数学裁定或新增判卷要求，也不证明作者或候选Lean覆盖。完整要求以唯一题面和合同为准。
 
@@ -12,12 +12,12 @@
 
 | 考察重点 | 主重点任务数 | 含该标签任务数 |
 | --- | ---: | ---: |
-| F01 假设及作用域 | 1 | 14 |
+| F01 假设及作用域 | 1 | 16 |
 | F02 量词与常数一致性 | 1 | 6 |
 | F03 定义域、局部整体与提升 | 3 | 16 |
-| F04 结论强度与收敛 | 2 | 11 |
+| F04 结论强度与收敛 | 4 | 13 |
 | F05 存在、取到与极限 | 1 | 3 |
-| F06 构造、分类与自然性 | 5 | 10 |
+| F06 构造、分类与自然性 | 5 | 12 |
 | F07 证明链与依赖管理 | 1 | 8 |
 | F08 Lean语义对齐 | 4 | 8 |
 | F09 完整Lean工程交付 | 4 | 4 |
@@ -34,7 +34,7 @@
 | --- | --- | --- | --- |
 | [MG-AR004 · 真实答卷审阅 004：半局部邻域、下降与层化的依赖比较](answer-review/MG-AR004/task.md) · [合同](answer-review/MG-AR004/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **core_judgment**：区分半局部输入与任意光滑积分对象上的错误全局加强，不借已知主结论追认错误证明。 |
 
-### 次重点 · 13份（完整题库）
+### 次重点 · 15份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
@@ -44,13 +44,15 @@
 | [AHR04 · 路径保证域的语义审计](lean-audit/AHR04/task.md) · [合同](lean-audit/AHR04/group-contract.json) | 默认 | 0.1.0 · 4审阅维度 | **evidence**：对差异或对齐结论给出保持原始条件的证据。 |
 | [MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解](answer-review/MG-AR001/task.md) · [合同](answer-review/MG-AR001/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **core_judgment**：核对nil条件的逐元素作用与交换性，不额外要求全核统一指数或2可逆。 |
 | [MG-AR002 · 真实答卷审阅 002：线性关系、坐标纤维与无限赋值](answer-review/MG-AR002/task.md) · [合同](answer-review/MG-AR002/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **completeness**：保留有限域通常紧性与任意域代数延拓的不同适用范围。 |
+| [MG-BC001 · 四井刚性推广与实际零边界构造](background-check/MG-BC001/task.md) · [合同](background-check/MG-BC001/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-correction**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-BC002 · 精确梯度流与凸近端表示](background-check/MG-BC002/task.md) · [合同](background-check/MG-BC002/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-correction**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：商同伦使用非空可缩子复形条件；**S5**：删除B后需重新处理空link和孤立顶点。 |
 | [MG-GR005 · 凸成本记录、紧性与闭上图恢复](proofs/MG-GR005/task.md) · [合同](proofs/MG-GR005/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：下半连续和次水平集紧性有独立职责；**S5**：保留闭凸而不给次水平紧性时，重新检查有限投影。 |
 | [MG-GR009 · 群作用下降、稳定子与基底检验](proofs/MG-GR009/task.md) · [合同](proofs/MG-GR009/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：有限自由作用是特殊实现阶段的条件，后续一般层阶段不保留该假设。 |
 | [MG-GR021 · 同时分块与二次扩张上的下降](proofs/MG-GR021/task.md) · [合同](proofs/MG-GR021/contract.json) | 默认 | 0.1.0 · 5评审判准 | **feasibility_counts_liftability**：保持原矩阵的交换、近幂等与近对称条件，不偷换为已幂等投影。 |
 | [MG-GR023 · 有限测试记录与群作用](proofs/MG-GR023/task.md) · [合同](proofs/MG-GR023/contract.json) | 默认 | 0.1.0 · 5评审判准 | **universal_group_action**：任意群的局部固定条件与全体固定点不可混同，核对选择公理。 |
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) · [合同](proofs/MG-GR103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：精确传递使用左伴随；**S5**：改用保持底元和ω链上确界的另一机制，仍不要求右伴随。 |
-| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) · [合同](theorem-extension/MG-TX001/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) · [合同](theorem-extension/MG-TX001/contract.json) | 默认 | 0.2.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 
 ## F02 量词与常数一致性
 
@@ -112,10 +114,12 @@
 
 存在性或极值取得的专门障碍归F05；同一要求可交叉标记但不重复充数。
 
-### 主重点 · 2份（完整题库）
+### 主重点 · 4份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
+| [MG-BC001 · 四井刚性推广与实际零边界构造](background-check/MG-BC001/task.md) · [合同](background-check/MG-BC001/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-correction**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-BC002 · 精确梯度流与凸近端表示](background-check/MG-BC002/task.md) · [合同](background-check/MG-BC002/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-correction**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 | [MG-GR022 · 对角呈示的完成与商拓扑](proofs/MG-GR022/task.md) · [合同](proofs/MG-GR022/contract.json) | 默认 | 0.1.0 · 5评审判准 | **B**：完成后的核、像与闭包分开，有限商同构不提高为原商单射。 |
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) · [合同](proofs/MG-GR103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S3**：分别给两个单边更新关系的有向比较；**S4**：精确半共轭的固定点像与最小固定点等式分开。 |
 
@@ -130,8 +134,8 @@
 | [MG-GR005 · 凸成本记录、紧性与闭上图恢复](proofs/MG-GR005/task.md) · [合同](proofs/MG-GR005/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：一般目标是最大下半连续凸下界；**S6**：区分恢复原f、投影闭化和能否省略外层闭化。 |
 | [MG-GR021 · 同时分块与二次扩张上的下降](proofs/MG-GR021/task.md) · [合同](proofs/MG-GR021/contract.json) | 默认 | 0.1.0 · 5评审判准 | **reduction_maps_and_fixed_lifts**：有限固定类、固定实际提升及相容无限塔不可相互替代。 |
 | [MG-GR023 · 有限测试记录与群作用](proofs/MG-GR023/task.md) · [合同](proofs/MG-GR023/contract.json) | 默认 | 0.1.0 · 5评审判准 | **product_boundary**：任意乘积满射、有限因子双射与两个无限因子单射边界分别裁决。 |
-| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) · [合同](theorem-extension/MG-TX001/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
-| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) · [合同](theorem-extension/MG-TX002/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) · [合同](theorem-extension/MG-TX001/contract.json) | 默认 | 0.2.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) · [合同](theorem-extension/MG-TX002/contract.json) | 默认 | 0.2.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 
 ## F05 存在、取到与极限
 
@@ -165,14 +169,16 @@
 | [MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解](answer-review/MG-AR001/task.md) · [合同](answer-review/MG-AR001/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **core_judgment**：审阅逐元素幂等提升、层间唯一性组装和自然分解；允许实际有效的替代构造。 |
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：要求全部可能同伦类型、全部类型的实际实现以及有限充要判据。 |
 | [MG-GR023 · 有限测试记录与群作用](proofs/MG-GR023/task.md) · [合同](proofs/MG-GR023/contract.json) | 默认 | 0.1.0 · 5评审判准 | **truncation**：全部有限测试记录与自然性同时分类，保持截断间遗忘映射。 |
-| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) · [合同](theorem-extension/MG-TX001/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
-| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) · [合同](theorem-extension/MG-TX002/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-TX001 · 素数幂单位根稀疏消去](theorem-extension/MG-TX001/task.md) · [合同](theorem-extension/MG-TX001/contract.json) | 默认 | 0.2.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) · [合同](theorem-extension/MG-TX002/contract.json) | 默认 | 0.2.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 
-### 次重点 · 5份（完整题库）
+### 次重点 · 7份（完整题库）
 
 | 任务 | 成员 | 版本与规模 | 实际阶段、义务、评审判准或审阅维度证据 |
 | --- | --- | --- | --- |
 | [MG-AR002 · 真实答卷审阅 002：线性关系、坐标纤维与无限赋值](answer-review/MG-AR002/task.md) · [合同](answer-review/MG-AR002/group-contract.json) | 默认 | 0.2.0 · 3审阅维度 | **evidence_scope**：核查非齐次解集是仿射对象而非线性子空间，以合法例子并限定修复范围。 |
+| [MG-BC001 · 四井刚性推广与实际零边界构造](background-check/MG-BC001/task.md) · [合同](background-check/MG-BC001/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-correction**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-BC002 · 精确梯度流与凸近端表示](background-check/MG-BC002/task.md) · [合同](background-check/MG-BC002/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-correction**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 | [MG-GP002 · Fourier 逆、截断误差与参数边界](proofs/MG-GP002/task.md) · [合同](proofs/MG-GP002/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：完整分类可逆方向和全部非负Sobolev损失。 |
 | [MG-GR009 · 群作用下降、稳定子与基底检验](proofs/MG-GR009/task.md) · [合同](proofs/MG-GR009/contract.json) | 默认 | 0.1.1 · 6阶段 | **S2**：分类对象、全部态射和自同构群；**S3**：不预选D而分类所有实现。 |
 | [MG-GR021 · 同时分块与二次扩张上的下降](proofs/MG-GR021/task.md) · [合同](proofs/MG-GR021/contract.json) | 默认 | 0.1.0 · 5评审判准 | **optimal_quantitative_descent**：必须用实际整数正交解给最优性反例，有限形式解不够。 |
@@ -200,7 +206,7 @@
 | [MG-GP001 · 局部单形、锥附着与整体同伦型](proofs/MG-GP001/task.md) · [合同](proofs/MG-GP001/contract.json) | 默认 | 0.1.1 · 6阶段 | **S4**：使用S1/S2的商和拼接结论前，须验证闭子复形、cofibration或实际替代条件。 |
 | [MG-GR022 · 对角呈示的完成与商拓扑](proofs/MG-GR022/task.md) · [合同](proofs/MG-GR022/contract.json) | 默认 | 0.1.0 · 5评审判准 | **D**：追踪完成典范映射，区分子模自身与继承的两种拓扑。 |
 | [MG-GR103 · 参数最小不动点、消元与近似传递](proofs/MG-GR103/task.md) · [合同](proofs/MG-GR103/contract.json) | 默认 | 0.1.1 · 6阶段 | **S1**：各中间参数最小解及约化系统须先良定义且单调；**S2**：传递结论须与所有分块结果及同一参数恢复一致。 |
-| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) · [合同](theorem-extension/MG-TX002/contract.json) | 默认 | 0.1.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
+| [MG-TX002 · 矩形反链轨道平均](theorem-extension/MG-TX002/task.md) · [合同](theorem-extension/MG-TX002/contract.json) | 默认 | 0.2.0 · 3评审判准 | **complete-structure**：只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。 |
 
 ## F08 Lean语义对齐
 

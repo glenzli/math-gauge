@@ -73,6 +73,9 @@ class IsolatedCLIPreparationTests(unittest.TestCase):
         self.assertEqual(set((root / "input").iterdir()), {root / "input/task.md"})
         self.assertEqual(list((root / "state").iterdir()), [])
         self.assertEqual(plan["status"], "prepared-not-executed")
+        self.assertEqual(plan["environment_overrides"]["AGY_CLI_DISABLE_AUTO_UPDATE"],
+                         helper.environment(root)["AGY_CLI_DISABLE_AUTO_UPDATE"])
+        self.assertEqual(helper.environment(root)["AGY_CLI_DISABLE_AUTO_UPDATE"], "true")
         for flag, value in (("--gemini_dir", str(root / "state")), ("--app_data_dir", "antigravity-cli"), ("--agent", "text-only"), ("--model", "synthetic-model"), ("--effort", "synthetic-effort"), ("--input-format", "stream-json"), ("--output-format", "stream-json")):
             self.assertEqual(plan["argv"][plan["argv"].index(flag) + 1], value)
         agent = (root / "work/.agents/agents/text-only.md").read_text()

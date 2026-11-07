@@ -369,7 +369,11 @@ def check_schedule(plan: dict, schedule: dict, prompts: dict) -> None:
 def check_candidate(suite: Suite, case: dict, destination: Path, *, selected_ids=SELECTED) -> dict:
     cid = case["id"]
     task = safe_file(suite.root, case["task"]).read_bytes()
-    require(not SCORE_LEAKAGE.search(task.decode()), f"{cid}: task scoring leakage")
+    # A ban on reading evaluator scores is an operational boundary, not a score hint.
+    permission = "请独立解答以下题目。可使用本地工具进行计算、验证和保存自己的工作；不得访问网络或进行联网检索，也不得访问参考答案、评分、已有答卷或其他对话。"
+    text = task.decode()
+    audited = text[len(permission):] if text.startswith(permission + "\n") else text
+    require(not SCORE_LEAKAGE.search(audited), f"{cid}: task scoring leakage")
     request = suite.prepare(case, destination)
     wire = candidate_message(request)
     visible = {path.relative_to(destination).as_posix()

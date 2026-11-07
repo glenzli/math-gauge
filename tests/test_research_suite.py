@@ -45,7 +45,7 @@ class BenchmarkSuiteTests(unittest.TestCase):
         self.assertEqual(set(self.suite.cases), {read_json(path)["id"] for path in (ROOT / "cases").rglob("case.json")})
         self.assertEqual(Counter(Path(c["task"]).parts[0] for c in self.suite.cases.values()),
             {"proofs": 8, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4,
-             "theorem-extension": 2})
+             "theorem-extension": 2, "background-check": 2})
         for case in self.suite.cases.values():
             self.assertEqual(case["status"], "draft")
             self.assertEqual(case["review"]["human"], "pending")

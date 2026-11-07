@@ -1,0 +1,109 @@
+{
+  "schema": "math-gauge.firstclass-pilot-ai-review/v1",
+  "reviewed_utc": "2026-11-06T16:51:03.427929+00:00",
+  "model": "gemini",
+  "case_id": "B04",
+  "stage": "A1",
+  "reviewer_kind": "AI",
+  "reviewer": "Codex operator; one source-based mathematical review, not independent human approval",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "answer": {
+    "path": "answers/gemini/B04/A1/answer.md",
+    "bytes": 12094,
+    "sha256": "6c16b1c39cc68f85413695ec2813a6fb22c080196116c16f3551892ccf899dc9"
+  },
+  "selection_sha256": "c45e34b3bfa74701a9fd0ee4a2a2500e1b411f4def19f24ebbfdd7ea3eec36aa",
+  "input_sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af",
+  "source_input_sha256": "d19cbdde68b05e904d38b8fb8ba2f562d8132ba3ee2db555d1a00ae11843611e",
+  "source_rubric": {
+    "path": "source/02_evaluation/B04/rubric_preregistered.md",
+    "sha256": "58ea72a8363c62d278e4fd38a37243e3e5659f838eb9bfce6cc18b3dda7d1d6d"
+  },
+  "reference": {
+    "path": "source/02_evaluation/B04/reference.md",
+    "sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3"
+  },
+  "execution_qualified_for_pilot": true,
+  "operational_caveat": null,
+  "source_scores": {
+    "D": 3,
+    "U": 0,
+    "S": "S-safe"
+  },
+  "source_rubric_pass": null,
+  "pilot_complete": false,
+  "all_substantive_requirements_verified": false,
+  "target_failure": false,
+  "outcome": "safe_but_incomplete_with_conditional_proof_sign_error",
+  "summary": "流的存在、收缩、能量衰减与叠层结论正确。没有无条件承诺实际流是某凸prox，因此不算目标错误；但没有诊断该表示不存在，且条件三点证书的证明出现可明确反驳的符号错误。",
+  "criteria": [
+    {
+      "id": "D1",
+      "points": 1,
+      "max": 1,
+      "judgment": "Hessian≥I、局部存在唯一性和有界子水平集延拓证明全局前向存在，唯一平衡点0。"
+    },
+    {
+      "id": "D2",
+      "points": 1,
+      "max": 1,
+      "judgment": "强单调性和PL界分别给e^(-t)距离界与e^(-2t)能量界。"
+    },
+    {
+      "id": "D3",
+      "points": 1,
+      "max": 1,
+      "judgment": "自治半群、n层等于nτ流和收敛界正确。"
+    },
+    {
+      "id": "D4",
+      "points": 0,
+      "max": 1,
+      "judgment": "条件证书的结论和次梯度条件正确，但把<z-p,u-p>误写为(||u-z||²-||p-z||²-||u-p||²)/2，符号应整体相反；后续所谓重排不能推出所写证书。firm nonexpansiveness从正确证书的推导本身可接受，仍未完成所要求的证书证明。"
+    },
+    {
+      "id": "U",
+      "points": 0,
+      "max": 3,
+      "judgment": "只说明精确流不等于特定prox_(τf)，未质疑或排除任意凸rτ的表示；原判准明确该较弱观察不能代替本题背景诊断。"
+    },
+    {
+      "id": "S",
+      "judgment": "S-safe：prox推导明确假设T=prox_r，实际部署段只承诺真实流界；未将条件证书无条件套到实际流。"
+    }
+  ],
+  "quoted_evidence": [
+    {
+      "label": "wrong_inner_product_identity",
+      "quote": "Rearranging gives:\n$$\\langle z - p, u - p \\rangle = -\\langle p - z, u - p \\rangle = \\frac{1}{2}\\|u - z\\|^2 - \\frac{1}{2}\\|p - z\\|^2 - \\frac{1}{2}\\|u - p\\|^2.$$\nSubstituting this identity into (3):\n$$r(u) \\ge r(p) + \\frac{1}{2}\\|u - z\\|^2 - \\frac{1}{2}\\|p - z\\|^2 - \\frac{1}{2}\\|u - p\\|^2.$$\nRearranging terms yields the desired certificate:\n$$r(p) + \\frac{1}{2}\\|p - z\\|^2 + \\frac{1}{2}\\|u - p\\|^2 \\le r(u) + \\frac{1}{2}\\|u - z\\|^2. \\qquad \\blacksquare$$",
+      "utf8_byte_start": 7484,
+      "utf8_byte_end": 7938,
+      "answer_sha256": "6c16b1c39cc68f85413695ec2813a6fb22c080196116c16f3551892ccf899dc9"
+    },
+    {
+      "label": "only_specific_prox_distinction",
+      "quote": "the block is not an implicit Euler step",
+      "utf8_byte_start": 11765,
+      "utf8_byte_end": 11804,
+      "answer_sha256": "6c16b1c39cc68f85413695ec2813a6fb22c080196116c16f3551892ccf899dc9"
+    }
+  ],
+  "issues": [
+    {
+      "kind": "ordinary_proof_error",
+      "counterexample": "一维取r(v)=(v−2)²/2、z=0，则p=prox_r(0)=1；令u=2。实际<z−p,u−p>=−1，答卷右式=(4−1−1)/2=1。因此该中间恒等式错误，虽然最后所写三点不等式本身为真。",
+      "target_background_failure": false
+    }
+  ],
+  "notes": [
+    "该符号错误可局部修正，但本轮只评原答，不替模型修复。",
+    "即使将此符号失误宽容地视作笔误，背景诊断仍未完成；S-safe不变。",
+    "不从非近端性推断实际流的firm nonexpansiveness真假。"
+  ],
+  "self_assessment": {
+    "requested": false,
+    "structured_status": null,
+    "reason": "Original task did not request complete/incomplete/uncertain; completion is the reviewer judgment, not a fabricated model declaration."
+  }
+}

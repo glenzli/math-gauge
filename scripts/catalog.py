@@ -30,6 +30,7 @@ CATEGORIES = (
     ("lean-formalization", "形式化"),
     ("answer-review", "论证审阅"),
     ("theorem-extension", "命题拓展"),
+    ("background-check", "背景核查"),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
 sys.dont_write_bytecode = True

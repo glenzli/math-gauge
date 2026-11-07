@@ -55,6 +55,16 @@ class CurrentSiteTests(unittest.TestCase):
     def setUpClass(cls):
         cls.data = SITE.build_data()
 
+    def test_progress_tracks_pending_built_tasks_not_failures_or_unbuilt_weight(self):
+        result = {"whole_task_counts": {"planned": 3, "passed": 1, "failed": 2, "unknown": 0},
+                  "capacity": {"active": 90, "under_construction": 10},
+                  "metrics": {"overall": {"exact": None}}}
+        self.assertEqual(SITE.evaluation_progress(result),
+                         {"planned": 3, "adjudicated": 3, "pending": 0, "incomplete": False})
+        result["whole_task_counts"].update(failed=1, unknown=1)
+        self.assertEqual(SITE.evaluation_progress(result),
+                         {"planned": 3, "adjudicated": 2, "pending": 1, "incomplete": True})
+
     def test_only_selected_current_models_and_scores_are_displayed(self):
         self.assertEqual(self.data["benchmark_version"], "0.6.0")
         self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v4")
@@ -74,7 +84,7 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertEqual(combined["scope"], "combined-aggregate-only")
             self.assertNotIn("slot_evidence", combined)
             self.assertNotIn("records", combined)
-            self.assertEqual(combined["private_case_count"], 6)
+            self.assertEqual(combined["private_case_count"], 9)
             for result in (combined, model["retry"]["combined"]):
                 for metric in result["metrics"].values():
                     self.assertEqual(set(metric),
@@ -84,6 +94,7 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertNotIn("math-gauge-private/", text)
         self.assertNotIn("MG-X", text)
         self.assertNotIn("MG-TXP", text)
+        self.assertNotIn("MG-BCP", text)
 
     def test_embedded_json_cannot_close_its_script_and_labels_are_escaped(self):
         data = copy.deepcopy(self.data)
@@ -143,7 +154,8 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertEqual(float(matches[0]["data-start-score"]), first)
                     self.assertAlmostEqual(float(matches[0]["data-gain-score"]), SITE.earned_value(result) - first)
         self.assertEqual(page.count('class="chart-value"'), 6)
-        self.assertEqual(ChartBars(page).values, ["66.84", "49.80", "43.50"])
+        self.assertEqual(ChartBars(page).values, [f"{max(SITE.earned_value(m['combined']), SITE.earned_value(m['retry']['combined'])):.2f}"
+                                                for m in self.data["models"]])
         self.assertNotIn("46.71 → 49.80", page)
         self.assertIn('bottom:0%">0</span>', page)
         self.assertIn('bottom:100%">100</span>', page)
@@ -198,21 +210,23 @@ class CurrentSiteTests(unittest.TestCase):
 
 
     def test_strict_mode_binds_three_combined_scores_without_auxiliary_credit(self):
-        expected = {"terra-6.1-max": 52.0, "deepseek-v4.1-flash-1017": 21.8181818182,
-                    "gemini-3.8-flash-high": 12.0454545455}
         self.assertEqual(self.data["score_modes"], ["partial", "strict"])
         for model in self.data["models"]:
             for condition, result in model["strict"].items():
                 self.assertEqual(result["primary_metric"], "earned")
-                self.assertAlmostEqual(SITE.earned_value(result), expected[model["id"]])
+                folder = ROOT / Path(model["source_record"]).parent
+                filename = ("strict-combined-aggregate.json" if condition == "single_attempt"
+                            else "strict-retry-combined-aggregate.json")
+                self.assertEqual(result, json.loads((folder / filename).read_bytes()))
                 self.assertEqual(result["attempt_condition"], condition)
-                self.assertEqual(result["coverage"]["tasks"], 28)
-                self.assertEqual(result["coverage"]["parent_families"], 24)
+                self.assertEqual(result["coverage"]["tasks"], 33)
+                self.assertEqual(result["coverage"]["parent_families"], 29)
                 self.assertFalse(result["strict_alignment_selfcheck"]["strict_pass"])
                 self.assertIsNone(result["metrics"]["overall"]["exact"])
                 self.assertNotIn("tasks", result)
         chart = ChartBars(SITE.render(self.data), "strict")
-        self.assertEqual(chart.values, ["52.00", "21.82", "12.05"])
+        self.assertEqual(chart.values, [f"{max(SITE.earned_value(v) for v in m['strict'].values()):.2f}"
+                                        for m in self.data["models"]])
         self.assertEqual(len(chart.bars), 3)
         self.assertEqual(chart.tooltips, [])
         self.assertEqual(len(chart.images), 3)

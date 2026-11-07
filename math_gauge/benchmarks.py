@@ -11,14 +11,16 @@ from pathlib import Path
 from .catalog import (assessment_units, assessment_weights, candidate_message, digest_bytes, read_json, relative_name, safe_file,
                       validate_group_contract, write_json)
 from .case_selection import assessment_family, selected_assessment_cases, validate_case_selection
-from .theorem_extension import selected_cases as selected_current_cases, validate_policy as validate_extension_policy
+from .theorem_extension import validate_policy as validate_extension_policy
+from .case_selection import selected_current_cases
+from .background_check import validate_policy as validate_background_policy
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy, validate_case_execution_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
 EXTENDED_COMPONENTS = COMPONENTS + ("exploration", "answer-review")
 FORMALIZATION_COMPONENTS = ("proofs", "lean-audit", "lean-formalization", "exploration", "answer-review")
-TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("theorem-extension", "repeat", "neutral", "stance", "core", "all")
+TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("theorem-extension", "background-check", "repeat", "neutral", "stance", "core", "all")
 ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
 PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
@@ -47,15 +49,19 @@ def validate_assessment_policy(policy):
         validate_case_selection(selection)
     extension = policy.get("version") == "0.6.0"
     if extension:
-        validate_extension_policy(policy.get("theorem_extension"))
+        extension_policy = validate_extension_policy(policy.get("theorem_extension"))
         if selection is None:
             raise ValueError("The research assessment retains the selected twenty-task source baseline")
+    background = policy.get("background_check")
+    if background is not None:
+        validate_background_policy(background)
     expected = {"written-argument": (25, 8, 3, 11) if selection is not None else (25, 14, 3, 17),
                 "argument-review": (10, 4, 0, 4),
                 "lean-audit": (10, 4, 0, 2), "lean-formalization": (15, 4, 0, 2),
-                "lean-selfcheck": (10, 1, 0, 1), "background-check": (10, 0, 0, 0),
+                "lean-selfcheck": (10, 1, 0, 1), "background-check": (10, 2, 2, 4) if background is not None else (10, 0, 0, 0),
                 "manuscript-completion": (10, 0, 0, 0),
-                "theorem-extension": (10, 2, 3, 5) if extension else (10, 0, 0, 0)}
+                "theorem-extension": (10, 2, extension_policy["private_cases"], extension_policy["families"])
+                                     if extension else (10, 0, 0, 0)}
     rows = policy.get("subcategories", [])
     if ([row.get("id") for row in rows] != list(expected)
             or any(tuple(row.get(k) for k in ("weight", "public_tasks", "private_tasks", "families"))
@@ -66,13 +72,19 @@ def validate_assessment_policy(policy):
     groups = policy.get("groups", [])
     source_contract = [(["proofs", "exploration"], "family"), (["answer-review"], "parent_family"),
                        (["lean-audit"], "family"), (["lean-formalization"], "family"),
-                       ([], "trajectory"), ([], "family"), ([], "family"),
+                       ([], "trajectory"), (["background-check"] if background is not None else [], "family"), ([], "family"),
                        (["theorem-extension"] if extension else [], "family")]
     public_count, total_count, family_count = (20, 23, 19) if selection is not None else (26, 29, 21)
     if extension:
-        public_count, total_count, family_count = 22, 28, 24
+        public_count += len(extension_policy["public_case_ids"])
+        total_count += extension_policy["families"]
+        family_count += extension_policy["families"]
+    if background is not None:
+        public_count += 2
+        total_count += 4
+        family_count += 4
     if ([(row.get("source_components"), row.get("aggregation")) for row in rows] != source_contract
-            or policy.get("scope") != {"public_tasks": public_count, "private_tasks": 6 if extension else 3, "tasks": total_count,
+            or policy.get("scope") != {"public_tasks": public_count, "private_tasks": total_count - public_count, "tasks": total_count,
                 "parent_families": family_count, "initial_slots": total_count, "public_initial_slots": public_count,
                 "alignment_rounds": 3, "trajectory_assessment_units": 1}):
         raise ValueError("Current assessment changed source categories or fixed denominators")
@@ -130,7 +142,7 @@ def component_ids(data):
              "Profile requires explicit ordered components")
     ids = [row.get("id") for row in rows]
     if data.get("schema") == "math-gauge.benchmark-profile/v6":
-        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension")
+        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension", "background-check")
         _require(ids == [cid for cid in allowed if cid in ids]
                  and all(row.get("aggregation") == ("parent_family" if row["id"] == "answer-review" else "family")
                          for row in rows), "Invalid current task categories or family aggregation")
@@ -154,6 +166,8 @@ def _validate_profile_weights(data):
         expected = {"proofs": 25, "lean-audit": 10, "lean-formalization": 15, "answer-review": 10}
         if policy["version"] == "0.6.0":
             expected["theorem-extension"] = 10
+        if policy.get("background_check") is not None:
+            expected["background-check"] = 10
         _require({row["id"]: row.get("weight") for row in data["components"]} == expected
                  and "overall_weights" not in data
                  and data.get("source_only_counts") is True,
@@ -401,7 +415,7 @@ def _category_matches(component, task_kind, contract_kind, *, current=False):
     if component == "chapters":
         return contract_kind == "chapter_formalization" and task_kind == "generate"
     if contract_kind == "written_proof":
-        return component in {"proofs", "theorem-extension"} and task_kind == "written"
+        return component in {"proofs", "theorem-extension", "background-check"} and task_kind == "written"
     if contract_kind != "progressive":
         return False
     return (component == "proofs" and task_kind == "written"

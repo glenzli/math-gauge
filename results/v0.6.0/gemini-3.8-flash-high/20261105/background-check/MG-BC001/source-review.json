@@ -1,0 +1,134 @@
+{
+  "schema": "math-gauge.firstclass-pilot-ai-review/v1",
+  "reviewed_utc": "2026-11-06T16:55:33.308947+00:00",
+  "model": "gemini",
+  "case_id": "B01",
+  "stage": "A1",
+  "reviewer_kind": "AI",
+  "reviewer": "Codex operator; one source-based mathematical review, not independent human approval",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "answer": {
+    "path": "answers/gemini/B01/A1/answer.md",
+    "bytes": 20477,
+    "sha256": "e02e36f0ae33c7fe2e117973b18c13bdd1898d44a60c9b96d346a254834693bf"
+  },
+  "selection_sha256": "4663d5cdabca8e9badb6dc9091a5fc5e3ad41c9f9a52423937ca4bb6eb9ee859",
+  "input_sha256": "07bb02318d5fe35f5f7fb005de996ed7b49cbd4a832b0a2fd1e68d68c6ea75a6",
+  "source_input_sha256": "5d9f2d6c56241b82df3b51d50085055a5b0795b5151600820fef25fdf816430c",
+  "source_rubric": {
+    "path": "source/02_evaluation/B01/rubric_preregistered.md",
+    "sha256": "88aabdfb303ba567fea9af56151c9a5769179d3ba7b96de1f58e4424efa1b593"
+  },
+  "reference": {
+    "path": "source/02_evaluation/B01/reference.md",
+    "sha256": "eec5e4e01332a1e400946ae708a5f41d0ae54f0b7985cbb249da3a76215b02da"
+  },
+  "execution_qualified_for_pilot": true,
+  "operational_caveat": null,
+  "source_scores": {
+    "A": 3,
+    "B": 3,
+    "C": 3
+  },
+  "source_rubric_pass": true,
+  "pilot_complete": true,
+  "all_substantive_requirements_verified": false,
+  "target_failure": false,
+  "outcome": "core_correct_source_threshold_pass_with_unverified_construction_and_extra_errors",
+  "summary": "识别循环层合，e0、不取到和所有最小序列相分数结论正确；达到原宽松阈值，但实际多层位移的内部拼接未完整验证，另有Krc=K的错误背景断言与线性系统行列式算错，不能认可其自称完整证明。",
+  "criteria": [
+    {
+      "id": "A",
+      "points": 3,
+      "max": 3,
+      "judgment": "给出四个中间矩阵、全部正确循环分裂和残余1/6，明确反对二井刚性直接推广。额外的Krc=K断言错误另列，不能把正确机制与该断言一起认可。"
+    },
+    {
+      "id": "B",
+      "points": 3,
+      "max": 3,
+      "judgment": "给出的三个实际结论e0=0、不取到、唯一相分数(1,3,3,3)/10均正确。"
+    },
+    {
+      "id": "C1",
+      "points": 1,
+      "max": 1,
+      "judgment": "循环权重及各相比例正确，通用一阶锯齿分裂公式正确。"
+    },
+    {
+      "id": "C2",
+      "points": 0,
+      "max": 1,
+      "judgment": "给出的逐层公式只在部分方向使用截断。第三/四层限制到精确中间态矩形时，另一方向的新锯齿在内部子区域边界不保证为0；未给周期/相位匹配或全边界紧支撑截断。全域外边界乘η不能修复内部拼接。因此尚不能验证所写全局位移确在W1∞、全部梯度界和能量估计；这是构造验证缺口，不直接断言所有允许的尺度选择均不可能。"
+    },
+    {
+      "id": "C3",
+      "points": 1,
+      "max": 1,
+      "judgment": "独立的对角分量/Fubini论证及零迹迫使常值梯度0，正确证明零能不取到。"
+    },
+    {
+      "id": "C4",
+      "points": 1,
+      "max": 1,
+      "judgment": "最近井L²误差、平均梯度与determinant约束正确；虽det(M)算错，随后直接消元正确地唯一求出相分数，因此此项实质结论有独立有效依据。"
+    }
+  ],
+  "quoted_evidence": [
+    {
+      "label": "self_claims_complete",
+      "quote": "下面给出该四相材料零边界单元问题的完整数学证明与构造。",
+      "utf8_byte_start": 0,
+      "utf8_byte_end": 81,
+      "answer_sha256": "e02e36f0ae33c7fe2e117973b18c13bdd1898d44a60c9b96d346a254834693bf"
+    },
+    {
+      "label": "false_rank_one_convex_hull",
+      "quote": "虽然井与井之间没有秩一连接（秩一凸包 $K^{rc} = K$），但通过四个辅助矩阵可构成一个首尾闭合的循环相容层合链",
+      "utf8_byte_start": 1007,
+      "utf8_byte_end": 1158,
+      "answer_sha256": "e02e36f0ae33c7fe2e117973b18c13bdd1898d44a60c9b96d346a254834693bf"
+    },
+    {
+      "label": "incorrect_determinant",
+      "quote": "\\det(M) = 3 - 3(-3) = 12 \\ne 0.",
+      "utf8_byte_start": 9313,
+      "utf8_byte_end": 9344,
+      "answer_sha256": "e02e36f0ae33c7fe2e117973b18c13bdd1898d44a60c9b96d346a254834693bf"
+    }
+  ],
+  "issues": [
+    {
+      "kind": "additional_false_background_assertion",
+      "claim": "K^{rc}=K",
+      "counterargument": "对任意秩一凸函数g，沿答卷自身四步分裂迭代得g(0)≤g(A1)/12+(g(A2)+g(A3)+g(A4))/4+g(0)/6，故g(0)≤g(A1)/10+3(g(A2)+g(A3)+g(A4))/10≤max_K g。于是0∈Krc，而0∉K，所以Krc≠K。无直接秩一连接只能支持某种有限层合闭包的区别，不能推出该rank-one convex hull等式。"
+    },
+    {
+      "kind": "arithmetic_error",
+      "claim": "det(M)=12",
+      "counterargument": "所列4×4矩阵实际行列式为30。第二个3×3余子式为−9而不是−3；不影响后文直接解方程所得唯一解。"
+    },
+    {
+      "kind": "construction_verification_gap",
+      "detail": "需要补充每次局部扰动的全部内部边界兼容、精确仿射核心和冻结过渡区条件；本轮不替模型加入这些条件。"
+    }
+  ],
+  "notes": [
+    "原通过条件A≥2、B=3、C≥3得到通过；原阈值通过与任务全部实质要求核实完成分开报告。",
+    "不因其已正确拒绝正能隙而忽略另外的错误；也不把构造未完成冒充接受正能隙的目标错误。",
+    "原答明确自称完整证明，该自称与评审的未完整核实分别保留。",
+    "字段澄清：pilot_complete严格沿用冻结阈值，故为true；更强的全部实质要求核实标记为false，是逐项审查说明，不是事后提高原通过阈值。"
+  ],
+  "self_assessment": {
+    "requested": false,
+    "structured_status": null,
+    "reason": "Original task did not request complete/incomplete/uncertain; completion is the reviewer judgment, not a fabricated model declaration.",
+    "explicit_unstructured_claim": {
+      "model_claimed_complete": true,
+      "quote_evidence_label": "self_claims_complete",
+      "verified_complete": false
+    }
+  },
+  "pilot_complete_rule": "Frozen plan: A>=2, B=3, C>=3. This passes; all_substantive_requirements_verified independently remains false."
+}

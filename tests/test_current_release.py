@@ -38,11 +38,11 @@ class CurrentReleaseTests(unittest.TestCase):
                         "THIRD_PARTY_NOTICES.md": (ROOT / config["third_party_notices"]).read_bytes()})
                 self.assertEqual(inspect_release_dataset(dest, plan=plan, suite=suite), manifest)
             sizes = {name: len(ids) for name, ids in manifest["target_slot_ids"].items()}
-            self.assertEqual({k: sizes[k] for k in ["proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension"]},
-                             {"proofs": 8, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4, "theorem-extension": 2})
+            self.assertEqual({k: sizes[k] for k in ["proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension", "background-check"]},
+                             {"proofs": 8, "lean-audit": 4, "lean-formalization": 4, "answer-review": 4, "theorem-extension": 2, "background-check": 2})
             self.assertEqual({k: sizes[k] for k in ["c003-180", "lean-90", "written-new-panel", "written-refresh"]},
                              {"c003-180": 1, "lean-90": 7, "written-new-panel": 2, "written-refresh": 3})
-            self.assertEqual(manifest["planned"]["all_slots"], 22)
+            self.assertEqual(manifest["planned"]["all_slots"], 24)
             guide = (dest / "README.md").read_text()
             for phrase in ["self-assessment", "UTF-8", "KEEP/FULL", "last prescribed delivery", "fixed denominators"]:
                 self.assertIn(phrase, guide)

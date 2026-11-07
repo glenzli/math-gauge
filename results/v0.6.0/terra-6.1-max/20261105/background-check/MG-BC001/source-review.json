@@ -1,0 +1,104 @@
+{
+  "schema": "math-gauge.firstclass-pilot-ai-review/v1",
+  "reviewed_utc": "2026-11-06T16:30:35.275364+00:00",
+  "model": "terra",
+  "case_id": "B01",
+  "stage": "A1",
+  "reviewer_kind": "AI",
+  "reviewer": "Codex operator; one source-based mathematical review, not independent human approval",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "answer": {
+    "path": "answers/terra/B01/A1/answer.md",
+    "bytes": 5748,
+    "sha256": "63955cde6eb14a10a6323881ab372843cdd8cbbcc54a5659a820585d0cc30bed"
+  },
+  "selection_sha256": "e1ecf664b612e37d6792d3ff99a2a67840d0f4ea0951341ce4ed5e51888a2b46",
+  "input_sha256": "07bb02318d5fe35f5f7fb005de996ed7b49cbd4a832b0a2fd1e68d68c6ea75a6",
+  "source_input_sha256": "5d9f2d6c56241b82df3b51d50085055a5b0795b5151600820fef25fdf816430c",
+  "source_rubric": {
+    "path": "source/02_evaluation/B01/rubric_preregistered.md",
+    "sha256": "88aabdfb303ba567fea9af56151c9a5769179d3ba7b96de1f58e4424efa1b593"
+  },
+  "reference": {
+    "path": "source/02_evaluation/B01/reference.md",
+    "sha256": "eec5e4e01332a1e400946ae708a5f41d0ae54f0b7985cbb249da3a76215b02da"
+  },
+  "execution_qualified_for_pilot": true,
+  "operational_caveat": null,
+  "source_scores": {
+    "A": 3,
+    "B": 3,
+    "C": 4
+  },
+  "source_rubric_pass": true,
+  "pilot_complete": true,
+  "all_substantive_requirements_verified": true,
+  "target_failure": false,
+  "outcome": "complete_corrected",
+  "summary": "完整纠正四井正能隙，给出矩形截断锯齿的显式零迹位移、统一梯度≤4及E≤49(1/n+6^(-n))；不取到与任意最小序列唯一相分数均证明。",
+  "criteria": [
+    {
+      "id": "A",
+      "points": 3,
+      "max": 3,
+      "judgment": "四个中间态、四步秩一循环、1/6残余均正确，明确说明井间无连接不排除利用中间态的微结构。"
+    },
+    {
+      "id": "B",
+      "points": 3,
+      "max": 3,
+      "judgment": "e0=0、不取到、所有最小序列相分数(1,3,3,3)/10均正确。"
+    },
+    {
+      "id": "C1",
+      "points": 1,
+      "max": 1,
+      "judgment": "循环权重及各秩一差正确。"
+    },
+    {
+      "id": "C2",
+      "points": 1,
+      "max": 1,
+      "judgment": "实际矩形位移公式给出整数周期匹配边界；主梯度≤3、截断误差≤1；仅精确中间态核心继续分裂，坏区冻结，故梯度误差不累积。δn=1/(8n²)控制坏区≤1/n，残余≤6^(-n)，能量趋0。"
+    },
+    {
+      "id": "C3",
+      "points": 1,
+      "max": 1,
+      "judgment": "对角梯度加零迹沿Sobolev切片迫使位移0，与0不在井集矛盾。"
+    },
+    {
+      "id": "C4",
+      "points": 1,
+      "max": 1,
+      "judgment": "最近井L²误差趋0；零迹给梯度平均和determinant平均0，后一项用W0^(1,2)逼近；有限线性约束唯一解给全部最小序列同一相分数。"
+    }
+  ],
+  "quoted_evidence": [
+    {
+      "label": "background_correction",
+      "quote": "题述从两井不相容推得四相材料有严格正能量间隙的步骤不成立。下面的构造使用井和中间矩阵之间的秩一连接，给出反例。",
+      "utf8_byte_start": 289,
+      "utf8_byte_end": 454,
+      "answer_sha256": "63955cde6eb14a10a6323881ab372843cdd8cbbcc54a5659a820585d0cc30bed"
+    },
+    {
+      "label": "all_minimizing_sequences",
+      "quote": "最后证明上述相分数极限对**任意**近最优序列都唯一。",
+      "utf8_byte_start": 4605,
+      "utf8_byte_end": 4678,
+      "answer_sha256": "63955cde6eb14a10a6323881ab372843cdd8cbbcc54a5659a820585d0cc30bed"
+    }
+  ],
+  "issues": [],
+  "notes": [
+    "使用梯度上界4恰好满足题面，不要求参考中的更强7/2。",
+    "能量收敛速率O(1/n)+O(6^(-n))足够，不要求复制参考的特定速率。"
+  ],
+  "self_assessment": {
+    "requested": false,
+    "structured_status": null,
+    "reason": "Original task did not request complete/incomplete/uncertain; completion is the reviewer judgment, not a fabricated model declaration."
+  }
+}

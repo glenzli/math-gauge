@@ -91,7 +91,8 @@ def import_cases(private_root, config):
             "path_base": "case", "task": "task.md", "candidate_instruction": "", "solver_files": [],
             "reference": "reference.md", "rubric": "rubric.json", "group_contract": "contract.json",
             "sources": [source_id], "review": {"mathematical": "ai-reviewed; open research criteria; post-observation",
-                "human": "pending", "formalization": {"status": "not_performed", "author_coverage_inherited": False}},
+                "human": "pending", "formalization": {"status": "not-performed", "author_coverage_inherited": False,
+                    "inherited_parent_evidence": False}},
             "lean_checks": [], "evaluator_files": ["source-rubric.md", "research-policy.json", "provenance.json", "review.json"]})
         write(folder / "provenance.json", {"case_id": cid, "source": "User-supplied candidate package v5",
             "source_task_sha256": old["a1_sha256"], "source_reference_sha256": digest(folder / "reference.md"),
@@ -101,7 +102,11 @@ def import_cases(private_root, config):
             "post_observation": True, "human_review": "pending", "formal_comparison_eligible": False})
         write(folder / "review.json", {"case_id": cid, "status": "ai-mathematical-material-review-complete",
             "reference": "reference.md", "criteria": "source-rubric.md", "baseline_truth": "true",
-            "human_review": "pending", "lean_verification": "not_performed",
+            "human_review": "pending", "human": "pending",
+            "mathematical": "AI-reviewed mathematical materials; open research criteria; post-observation; human review pending",
+            "formalization": {"status": "not-performed", "author_coverage_inherited": False,
+                "inherited_parent_evidence": False},
+            "lean_verification": "not_performed",
             "required_flow": "one independent A1; no research invitation", "post_observation_selection": True})
         sources = load(root / "cases/sources.json")
         sources[source_id] = {"title": old["title"] + " · 用户提供材料", "visibility": row["visibility"],
@@ -135,7 +140,7 @@ def retain_answers(private_root, config, public_suite, private_suite):
         contract = load(suite.case_file(case, case["group_contract"]))
         cases.append({"case_id": cid, "family_id": cid, "component": "theorem-extension",
             "contract_kind": "written_proof", "task_kind": "written", "source_visibility": row["visibility"],
-            "version": "0.1.0", "total_weight": 3, **assessment_weights(contract),
+            "version": case["version"], "total_weight": 3, **assessment_weights(contract),
             "task_sha256": digest(suite.case_file(case, case["task"])),
             "contract_sha256": digest(suite.case_file(case, case["group_contract"]))})
     for model in load(ROOT / "benchmark.json")["selected_result_models"]:
@@ -194,7 +199,9 @@ def retain_answers(private_root, config, public_suite, private_suite):
         private_record["theorem_extension_inputs"] = descriptor(private, private / "theorem-extension-inputs.json")
         projection = {"schema": "math-gauge.theorem-extension-public-evidence/v1",
             "benchmark_version": "0.6.0", "attempt_labels": ["A1"], "research_invitation_included": False,
-            "public_cases": 2, "private_cases": 3, "records": public_rows,
+            "public_cases": len(data["policy"]["public_case_ids"]),
+            "private_cases": data["policy"]["private_cases"],
+            "research_policy_version": data["policy"]["version"], "records": public_rows,
             "combined_source_sha256": digest(private / "theorem-extension-inputs.json"),
             "human_review": "pending", "formal_comparison_eligible": False}
         write(public / "theorem-extension-evidence.json", projection)
@@ -203,168 +210,7 @@ def retain_answers(private_root, config, public_suite, private_suite):
         write(public / "record.json", public_record)
 
 
-def configure_current(private_root, config, public, private):
-    """Refresh current projections; frozen historical inputs are not rewritten."""
-    extension = validate_policy(load(ROOT / "protocol/theorem-extension-policy.json"))
-    policy = load(ROOT / "protocol/scoring-policy.json")
-    policy["version"] = "0.6.0"
-    policy["theorem_extension"] = extension
-    leaf = next(c for c in policy["subcategories"] if c["id"] == "theorem-extension")
-    leaf.update(source_components=["theorem-extension"], public_tasks=2, private_tasks=3,
-                families=5, status="active")
-    policy["scope"].update(public_tasks=22, private_tasks=6, tasks=28, parent_families=24,
-                           initial_slots=28, public_initial_slots=22)
-    write(ROOT / "protocol/scoring-policy.json", policy)
-    profile = load(ROOT / "protocol/benchmark-profile.json")
-    profile["suite"]["sha256"] = public.sha256
-    profile["assessment_policy"] = policy
-    ids = [row["case_id"] for row in config["cases"] if row["visibility"] == "public"]
-    profile["components"] = [row for row in profile["components"] if row["id"] != "theorem-extension"]
-    profile["components"].append({"id": "theorem-extension", "title": "命题拓展", "case_ids": ids,
-                                  "weight": 10, "aggregation": "family"})
-    execution = profile["case_execution_policy"]
-    for cid in ids:
-        execution["case_tracks"][cid] = "math-gauge.no-tools/v1"
-        if cid not in execution["retain_source_runtime_case_ids"]:
-            execution["retain_source_runtime_case_ids"].append(cid)
-        profile["attempt_schedule"][cid] = ["A1"]
-    write(ROOT / "protocol/benchmark-profile.json", profile)
-    edition = load(ROOT / "benchmark.json")
-    edition["public"].update(suite_sha256=public.sha256, tasks=22, standard_slots=22)
-    edition["private"].update(suite_sha256=private.sha256, tasks=6, standard_slots=6)
-    edition["combined"].update(tasks=28, standard_slots=28)
-    edition["profile"]["sha256"] = digest(ROOT / edition["profile"]["path"])
-    edition["scoring_policy"].update(version="0.6.0", sha256=digest(ROOT / "protocol/scoring-policy.json"))
-    edition["score_capacity"].update(active=80, under_construction=20)
-    edition["theorem_extension_policy"] = {"path": "protocol/theorem-extension-policy.json", "version": "0.1.0",
-                                           "sha256": digest(ROOT / "protocol/theorem-extension-policy.json")}
-    for key, filename in (("result_record_contract", "protocol/result-record.md"),
-                          ("result_record_schema", "protocol/result-record.schema.json")):
-        edition[key]["sha256"] = digest(ROOT / filename)
-    write(ROOT / "benchmark.json", edition)
-    release_path = ROOT / "releases/v0.6.0/config.json"
-    release = load(release_path)
-    release.update(case_count=len(public.cases), slot_count=len(public.cases))
-    write(release_path, release)
-    private_edition = load(private_root / "benchmark.json")
-    private_edition.update(benchmark_version="0.6.0", case_count=6, standard_slots=6,
-                           combined_standard_slots=28, scoring_method_version="0.6.0")
-    private_edition.pop("version", None)
-    private_edition.pop("tasks", None)
-    private_edition["theorem_extension"] = {"public_cases": 2, "private_cases": 3,
-        "formal_attempts": ["A1"], "research_invitation": False, "scoring_method": "0.6.0"}
-    private_edition["suite_sha256"] = private.sha256
-    private_edition["score_capacity"].update(active=80, under_construction=20)
-    private_edition["case_selection"]["source"] = "shared20-public/3-private legacy selection plus2-public/3-private theorem extension"
-    write(private_root / "benchmark.json", private_edition)
-
-    from scripts import catalog
-    taxonomy = load(ROOT / "cases/taxonomy.json")
-    for suite in taxonomy["source_suites"]:
-        suite.update(suite_sha256=public.sha256, paper_count=len(public.cases))
-    _, sources = catalog.load_sources(ROOT, taxonomy)
-    taxonomy["scope"].update(paper_count=len(sources),
-        written_proof_papers=sum(s["contract"]["kind"] == "written_proof" for s in sources.values()),
-        proof_criteria=sum(len(s["contract"].get("criteria", [])) for s in sources.values()))
-    taxonomy["paper_assignments"] = [a for a in taxonomy["paper_assignments"] if a["case_id"] not in ids]
-    for cid in ids:
-        source = sources[cid]
-        focus_ids = ["F06", "F01", "F04"] if cid == ids[0] else ["F06", "F07", "F04"]
-        taxonomy["paper_assignments"].append({"case_id": cid, "version": "0.1.0",
-            "source_bindings": source["source_bindings"],
-            "focus": [{"focus_id": fid, "role": "primary" if i == 0 else "secondary",
-                "evidence": [{"criterion_id": "complete-structure",
-                    "note": "只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。",
-                    "contract_pointer": "/criteria/2/required_evidence",
-                    "task_locator": {"path": source["paths"]["task"], "line": 1,
-                                      "applies_to": "whole-paper"}}]} for i, fid in enumerate(focus_ids)],
-            "classification_review": {"status": "ai-reviewed", "human": "pending"}})
-    write(ROOT / "cases/taxonomy.json", taxonomy)
-    index, document = catalog.build(ROOT)
-    write(ROOT / "cases/catalog.json", index)
-    (ROOT / "cases/by-focus.md").write_text(document)
-    (ROOT / "cases/README.md").write_text(catalog.render_index(index))
-
-    packet = ROOT / "protocol/reliability"
-    selection = load(packet / "selection.json")
-    selection["source_suite_sha256"] = public.sha256
-    write(packet / "selection.json", selection)
-    schedule = load(packet / "schedule.json")
-    for cid in ids:
-        if not any(row["case_id"] == cid for row in schedule["slots"]):
-            schedule["slots"].append({"ordinal_per_model": len(schedule["slots"]) + 1,
-                "slot_id": cid + ":A1", "case_id": cid, "kind": "independent", "attempt_label": "A1",
-                "context": "fresh", "parent_slot": None, "message_id": None,
-                "status": "planned", "response_sha256": None, "grade": None})
-    write(packet / "schedule.json", schedule)
-    plan = load(packet / "plan.json")
-    plan["planned_slots_per_model"] = 22
-    plan["assessment_method_version"] = "0.6.0"
-    plan["attempt_schedule"] = {cid: ["A1"] for cid in public.cases}
-    from scripts.validate_protocol import check_candidate
-    with tempfile.TemporaryDirectory(prefix="math-gauge-adoption-projection-") as temporary:
-        plan["cases"] = [check_candidate(public, case, Path(temporary) / cid,
-                                          selected_ids=plan["repeat_case_ids"])
-                         for cid, case in public.cases.items()]
-    for item in plan.get("suites", []):
-        if "sha256" in item:
-            item["sha256"] = public.sha256
-        if "suite_sha256" in item:
-            item["suite_sha256"] = public.sha256
-        if "paper_count" in item:
-            item["paper_count"] = 22
-        if isinstance(item.get("cases"), int):
-            item["cases"] = 22
-    plan["design_bindings"]["schedule_sha256"] = digest(packet / "schedule.json")
-    write(packet / "plan.json", plan)
-    configure_combined(private_root, profile, public, private)
-
-
-def configure_combined(private_root, public_profile, public, private):
-    """Keep the companion's current profile bound to the complete A1 pool."""
-    from math_gauge.benchmarks import BenchmarkProfile, build_plan
-    protocol = private_root / "protocol"
-    composition = {"schema": "math-gauge.suite-composition/v1", "id": "math-gauge-combined",
-        "version": "0.6.0", "suites": [{"path": os.path.relpath(s.root, protocol),
-            "id": s.metadata["id"], "version": s.metadata["version"], "sha256": s.sha256}
-            for s in (public, private)]}
-    write(protocol / "suite-composition.json", composition)
-    suite = Suite.load(protocol / "suite-composition.json")
-    profile = copy.deepcopy(public_profile)
-    profile["id"] = "math-gauge-assessment-combined"
-    profile["suite"] = {"id": suite.metadata["id"], "version": suite.metadata["version"], "sha256": suite.sha256}
-    for cid, case in private.cases.items():
-        component = "theorem-extension" if private.case_manifest(cid).startswith("theorem-extension/") else "proofs"
-        next(c for c in profile["components"] if c["id"] == component)["case_ids"].append(cid)
-        profile["attempt_schedule"][cid] = ["A1"]
-        profile["case_execution_policy"]["case_tracks"][cid] = "math-gauge.no-tools/v1"
-        profile["case_execution_policy"]["retain_source_runtime_case_ids"].append(cid)
-    for name in ("lean-tool-budget-policy.json", "scoring-policy.json", "strict-scoring-policy.json"):
-        (protocol / name).write_bytes((ROOT / "protocol" / name).read_bytes())
-    packet = protocol / "reliability"
-    packet.mkdir(exist_ok=True)
-    selection = load(ROOT / "protocol/reliability/selection.json")
-    selection["source_suite_sha256"] = suite.sha256
-    write(packet / "selection.json", selection)
-    write(packet / "prompts.json", load(ROOT / "protocol/reliability/prompts.json"))
-    schedule = load(ROOT / "protocol/reliability/schedule.json")
-    for cid in private.cases:
-        schedule["slots"].append({"ordinal_per_model": len(schedule["slots"]) + 1,
-            "slot_id": cid + ":A1", "case_id": cid, "kind": "independent", "attempt_label": "A1",
-            "context": "fresh", "parent_slot": None, "message_id": None,
-            "status": "planned", "response_sha256": None, "grade": None})
-    write(packet / "schedule.json", schedule)
-    write(protocol / "benchmark-profile.json", profile)
-    loaded = BenchmarkProfile.load(protocol / "benchmark-profile.json", suite)
-    plan = build_plan(loaded, suite)
-    if len(plan["slots"]) != 28 or any(row["attempt_label"] != "A1" for row in plan["slots"]):
-        raise ValueError("The current combined profile must contain28 independent A1 slots only")
-    edition = load(private_root / "benchmark.json")
-    edition["composition"] = {"path": "protocol/suite-composition.json", "suite_sha256": suite.sha256,
-                               "tasks": 28, "sha256": digest(protocol / "suite-composition.json")}
-    edition["profile"] = {"path": "protocol/benchmark-profile.json",
-                          "sha256": digest(protocol / "benchmark-profile.json"), "scope": "combined"}
-    write(private_root / "benchmark.json", edition)
+from scripts.current_assessment import configure_current, configure_combined
 
 
 def main():
@@ -374,6 +220,9 @@ def main():
     args = parser.parse_args()
     private_root = args.private_root.resolve()
     config = load(args.configuration)
+    selected = validate_policy(load(ROOT / "protocol/theorem-extension-policy.json"))
+    if len(config["cases"]) != selected["families"]:
+        raise ValueError("This initial source importer cannot replace an expanded component with an older selection; adopt additional evidence incrementally")
     public, private = import_cases(private_root, config)
     configure_current(private_root, config, public, private)
     retain_answers(private_root, config, public, private)

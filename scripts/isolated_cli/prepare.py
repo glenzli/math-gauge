@@ -85,7 +85,7 @@ def absolute(value, *, exists=True):
 def environment(run_dir=None):
     # HOME and CODEX_HOME keep their original values. No secret values are logged.
     env = {key: os.environ[key] for key in ENVIRONMENT_KEYS if key in os.environ}
-    env["AGY_CLI_DISABLE_AUTO_UPDATE"] = "1"
+    env["AGY_CLI_DISABLE_AUTO_UPDATE"] = "true"
     if run_dir is not None:
         env["TMPDIR"] = str(run_dir / "runtime/tmp")
     return env
@@ -329,7 +329,7 @@ def prepare(config):
         "environment_keys": sorted(environment(run_dir)),
         "environment_overrides": {
             "TMPDIR": str(run_dir / "runtime/tmp"),
-            "AGY_CLI_DISABLE_AUTO_UPDATE": "1",
+            "AGY_CLI_DISABLE_AUTO_UPDATE": "true",
         },
         "credential_links": links, "deny_read_roots": list(map(str, roots)),
         "read_exceptions": exceptions,

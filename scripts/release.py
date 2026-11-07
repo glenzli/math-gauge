@@ -721,6 +721,13 @@ def _external_readme(version, plan):
     first = plan["slots"][0]["slot_id"]
     targets = ", ".join(plan["profile"]["data"]["components"][i]["id"]
                         for i in range(len(plan["profile"]["data"]["components"])))
+    default_condition = (
+        "The default condition permits local tools and preinstalled public dependencies,\n"
+        "and prohibits external retrieval and tool network access. Record actual tool\n"
+        "permissions and usage separately; model-service/authentication traffic is distinct."
+        if plan["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6" else
+        "The default condition allows\nno candidate tools or external retrieval. A separately declared local-tools\n"
+        "condition still forbids external search and tool network access.")
     return f"""# Benchmark {version}
 
 This package contains {plan['planned']['papers']} complete tasks and {plan['planned']['all_slots']} planned answer slots.
@@ -737,9 +744,7 @@ Create runtime.json outside this package with the actual model_label,
 adapter_identity, candidate_parameters.model, budget.timeout_seconds and
 fresh_context=true. Supply output_tokens only when the transport enforces it;
 preserve unknown usage and unsupported limits as unknown. Freeze the mapping
-to the provider's real settings before executing. The default condition allows
-no candidate tools or external retrieval. A separately declared local-tools
-condition still forbids external search and tool network access.
+to the provider's real settings before executing. {default_condition}
 
 ```sh
 python3 tools/benchmark.py check

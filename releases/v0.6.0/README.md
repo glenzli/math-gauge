@@ -1,12 +1,12 @@
 # Benchmark 0.6.0 operator guide
 
-This is the current draft dataset: 22 public tasks, 22 independent A1 slots. Public and private scopes share benchmark version 0.6.0. This local preparation does not constitute a published release or an execution.
+This is the current draft dataset: 24 public tasks, 24 independent A1 slots. Public and private scopes share benchmark version 0.6.0. This local preparation does not constitute a published release or an execution.
 
 Only each issued role message and its explicit attachments go to the solver. This README, manifest, controller, runtime declarations and recording instructions are operator material. References, rubrics, expected truth and review information are outside this dataset.
 
 Freeze each model, system prompt, actual supported parameters, tool/network conditions and budget in a new run workspace. Use an independent context for each A1. The separate fixed-three-round C003 study retains only its own history. Written repeats and stance arms are retired from the current default plan. Do not mix histories. The controller's target groups select execution; they do not change benchmark denominators.
 
-C003 initial construction uses 10800 seconds; the other seven new Lean tasks use 5400 seconds. Written and answer-review runs use their declared conditions (the current supplement uses 2700 seconds). Theorem-extension A1 uses the source-bound no-tools track and its separately declared budget. Select compatible groups with separate runtimes. The separate three-round C003 alignment study is not automatically created by the standard22-slot dataset.
+C003 initial construction uses 10800 seconds; the other seven new Lean tasks use 5400 seconds. Written, answer-review, background-check and theorem-extension A1 use their declared budgets (the current supplement uses 2700 seconds). All formal tests permit local tools and preinstalled public dependencies, prohibit external retrieval and tool networking, and record model-service/authentication connections separately. Historical no-tools answers are a separate condition. The separate three-round C003 alignment study is not automatically created by the standard24-slot dataset.
 
 ## Record the complete return
 

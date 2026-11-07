@@ -27,6 +27,9 @@ def assessment_policy(plan, *, selected=True):
     policy = json.loads((ROOT / "protocol/scoring-policy.json").read_bytes())
     policy["version"] = "0.5.0"
     policy.pop("theorem_extension", None)
+    policy.pop("background_check", None)
+    background=next(row for row in policy["subcategories"] if row["id"]=="background-check")
+    background.update(source_components=[],public_tasks=0,private_tasks=0,families=0,status="under_construction")
     research = next(row for row in policy["subcategories"] if row["id"] == "theorem-extension")
     research.update(source_components=[], public_tasks=0, private_tasks=0,
                     families=0, status="under_construction")

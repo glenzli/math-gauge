@@ -151,7 +151,7 @@ def load_retry_inputs(root, record, *, public_root=None, validate_results=True):
 def project_assessment_score(score):
     """Publish the hierarchy and numeric results, excluding private task evidence."""
     fields = ("benchmark_version", "scoring_method_version", "strict_method_version", "score_mode",
-              "primary_metric", "model_label", "capacity", "coverage", "whole_task_counts", "profile",
+              "primary_metric", "model_label", "capacity", "group_capacity", "coverage", "whole_task_counts", "profile",
               "alignment_selfcheck", "strict_alignment_selfcheck", "lean_formalization_breakdown",
               "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings",
               "source_math_policy_version", "engineering_review_sha256",
@@ -162,6 +162,48 @@ def project_assessment_score(score):
                   contributions=project_metrics(score["contributions"]), human_review="pending",
                   formal_comparison_eligible=False, new_candidate_calls=0)
     return result
+
+
+def _validate_research_tool_evidence(root, row, execution, policy):
+    """Keep historical no-tools evidence distinct from native local-tool answers."""
+    from .execution_policy import LOCAL_TOOLS_TRACK
+    track = row.get("execution_track")
+    if track != LOCAL_TOOLS_TRACK:
+        if policy.get("local_tools_allowed") is True or track not in {None, "math-gauge.no-tools/v1"} or execution.get("tool_events") != []:
+            raise ValueError("Research answer does not bind the selected local-tool condition")
+        return
+    plan = json.loads(evidence_bytes(root, row["execution_plan"]))
+    settings = json.loads(evidence_bytes(root, row["native_tool_settings"]))
+    control = json.loads(evidence_bytes(root, row["native_capability_control"]))
+    if (plan.get("local_tool_policy") != LOCAL_TOOLS_TRACK
+            or plan.get("tool_network_access") is not False or plan.get("search_allowed") is not False
+            or execution.get("argv") != plan.get("argv") or execution.get("cwd") != plan.get("cwd")
+            or execution.get("requested_model") != plan.get("model")
+            or execution.get("requested_effort") != plan.get("effort")
+            or control.get("passed") is not True or control.get("mathematical_requests") != 0
+            or not any(c.get("passed") is True and c.get("requested_model") == plan.get("model")
+                       and c.get("requested_effort") == plan.get("effort") for c in control.get("results", []))):
+        raise ValueError("Research local-tool permission lacks matching native plan and capability evidence")
+    if plan.get("client") == "codex":
+        allowed = {"command_execution", "file_change"}
+        if (settings.get("web_search") != "disabled"
+                or settings.get("permissions.isolated-cli.network.enabled") is not False
+                or settings.get("features.shell_tool") is not True):
+            raise ValueError("Research native command settings differ from local-tools/no-network")
+    elif plan.get("client") == "agy":
+        allowed = {"finish", "manage_task", "run_command", "command_status", "send_command_input", "view_file",
+                   "write_to_file", "replace_file_content", "multi_replace_file_content",
+                   "list_dir", "grep_search", "find_by_name", "read_file", "write_file"}
+        if (settings.get("enableTerminalSandbox") is not True
+                or settings.get("toolPermission") != "proceed-in-sandbox"
+                or not {"read_url(*)", "execute_url(*)", "mcp(*)", "unsandboxed(*)"}.issubset(
+                    settings.get("permissions", {}).get("deny", []))
+                or execution.get("permission_mode") != plan.get("expected_permission_mode")):
+            raise ValueError("Research native AGY settings differ from local-tools/no-network")
+    else:
+        raise ValueError("Unsupported native research tool client")
+    if any(event.get("name") not in allowed for event in execution.get("tool_events", [])):
+        raise ValueError("Research answer used a tool outside the bound local capabilities")
 
 
 def load_theorem_extension_inputs(root, record, *, policy=None):
@@ -193,8 +235,9 @@ def load_theorem_extension_inputs(root, record, *, policy=None):
                 or row.get("invited_answer_used") is not False
                 or execution.get("kind") != "math" or execution.get("status") != "completed"
                 or execution.get("exit_code") != 0 or execution.get("request_count") != 1
-                or execution.get("tool_events") != [] or execution.get("tool_mismatch") is not None):
+                or execution.get("tool_mismatch") is not None):
             raise ValueError("Research score differs from its original A1 review or execution")
+        _validate_research_tool_evidence(root, row, execution, selected_policy)
         if (hashlib.sha256(task).hexdigest() != cases[row["case_id"]]["task_sha256"]
                 or row.get("source_prompt_sha256") != cases[row["case_id"]]["task_sha256"]):
             raise ValueError("Research answer was submitted for a different original task")
@@ -213,11 +256,13 @@ def validate_public_theorem_extension(root, record):
     """Check public A1 evidence without publishing companion case identities."""
     if record.get("theorem_extension_evidence") is None:
         return None
-    from .theorem_extension import PUBLIC_CASE_IDS
+    from .theorem_extension import PUBLIC_CASE_IDS, POLICY_EDITIONS
     data = json.loads(evidence_bytes(root, record["theorem_extension_evidence"]))
+    edition = POLICY_EDITIONS.get(data.get("research_policy_version", "0.1.0"))
     if (data.get("schema") != "math-gauge.theorem-extension-public-evidence/v1"
             or data.get("attempt_labels") != ["A1"] or data.get("research_invitation_included") is not False
-            or data.get("public_cases") != 2 or data.get("private_cases") != 3
+            or edition is None or data.get("public_cases") != len(PUBLIC_CASE_IDS)
+            or data.get("private_cases") != edition[0]
             or data.get("formal_comparison_eligible") is not False):
         raise ValueError("Invalid public theorem-extension evidence projection")
     rows = data.get("records", [])
@@ -234,6 +279,80 @@ def validate_public_theorem_extension(root, record):
             raise ValueError("Public research review is not bound to the original answer")
     return data
 
+
+
+def load_background_check_inputs(root, record, *, policy=None):
+    """Verify original answers, adopted diagnostic levels and native local-tool evidence."""
+    if record.get('background_check_inputs') is None:
+        return None
+    from .background_check import validate_inputs
+    data=json.loads(evidence_bytes(root,record['background_check_inputs']))
+    selected=data['policy'] if policy is None else policy
+    validate_inputs(data,selected)
+    cases={c['case_id']:c for c in data['case_index']}
+    for case in cases.values():
+        for field,hash_key in [('original_task','task_sha256'),('contract','contract_sha256')]:
+            if hashlib.sha256(evidence_bytes(root,case[field])).hexdigest()!=case[hash_key]:
+                raise ValueError('Background retained task or contract bytes differ')
+        evidence_bytes(root,case['source_rubric']);evidence_bytes(root,case['reference'])
+    for row in data['slots']:
+        if row['status']=='not_run': continue
+        execution=json.loads(evidence_bytes(root,row['execution']))
+        if row['status']=='delivery_failed':
+            if execution.get('status')=='completed':
+                raise ValueError('Completed background return cannot become missing delivery')
+            continue
+        raw=evidence_bytes(root,row['response'])
+        review=json.loads(evidence_bytes(root,row['review']))
+        source=json.loads(evidence_bytes(root,row['source_review']))
+        task=evidence_bytes(root,row['original_input'])
+        if (review.get('stage')!='A1' or review.get('background_R')!=row['background_R']
+            or review.get('complete')!=row['complete'] or review.get('false_endorsement')!=row['false_endorsement']
+            or review.get('answer_sha256')!=hashlib.sha256(raw).hexdigest()
+            or review.get('source_review_sha256')!=row['source_review']['sha256']
+            or source.get('source_rubric',{}).get('sha256')!=cases[row['case_id']]['source_rubric']['sha256']
+            or source.get('reference',{}).get('sha256')!=cases[row['case_id']]['reference']['sha256']
+            or source.get('answer',{}).get('sha256')!=hashlib.sha256(raw).hexdigest()
+            or review.get('complete')!=source.get('all_substantive_requirements_verified')
+            or review.get('false_endorsement')!=source.get('target_failure')
+            or execution.get('status')!='completed' or execution.get('kind')!='math'
+            or execution.get('request_count')!=1 or execution.get('exit_code')!=0
+            or execution.get('tool_mismatch') is not None
+            or hashlib.sha256(task).hexdigest()!=cases[row['case_id']]['task_sha256']
+            or row.get('source_prompt_sha256')!=cases[row['case_id']]['task_sha256']):
+            raise ValueError('Background judgment differs from its original source or execution')
+        _validate_research_tool_evidence(root,row,execution,selected)
+        original_control=evidence_bytes(root,row['original_capability_control'])
+        control=json.loads(evidence_bytes(root,row['native_capability_control']))
+        if control.get('source_control_sha256')!=hashlib.sha256(original_control).hexdigest():
+            raise ValueError('Background native capability evidence lost its source binding')
+        for q in source.get('quoted_evidence',[]):
+            if raw[q['utf8_byte_start']:q['utf8_byte_end']]!=q['quote'].encode():
+                raise ValueError('Background source quote differs from the exact answer')
+        for item in row.get('artifacts',[]): evidence_bytes(root,item)
+    return data
+
+
+def validate_public_background_check(root,record):
+    """Public source evidence contains only the two public families."""
+    if record.get('background_check_evidence') is None: return None
+    from .background_check import PUBLIC_CASE_IDS
+    data=json.loads(evidence_bytes(root,record['background_check_evidence']))
+    rows=data.get('records',[])
+    if (data.get('schema')!='math-gauge.background-check-public-evidence/v1'
+        or data.get('public_cases')!=2 or data.get('private_cases')!=2
+        or len({x.get('case_id') for x in rows})!=len(rows)
+        or data.get('formal_comparison_eligible') is not False):
+        raise ValueError('Invalid public background evidence projection')
+    for row in rows:
+        if row.get('case_id') not in PUBLIC_CASE_IDS or row.get('attempt_label')!='A1':
+            raise ValueError('Private background case entered public records')
+        raw=evidence_bytes(root,row['response']);review=json.loads(evidence_bytes(root,row['review']))
+        if (review.get('answer_sha256')!=hashlib.sha256(raw).hexdigest()
+            or review.get('background_R')!=row.get('background_R')
+            or review.get('complete')!=row.get('complete')):
+            raise ValueError('Public background judgment lost its source answer')
+    return data
 
 def load_assessment_results(root, record, *, mode="partial", public_root=None):
     """Check current score-view bytes and policy/source identities in either archive."""
@@ -282,6 +401,9 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if record.get("theorem_extension_inputs") is not None:
                 research = load_theorem_extension_inputs(root, record, policy=assessment.get("theorem_extension"))
                 expected["theorem_extension_inputs_sha256"] = root / record["theorem_extension_inputs"]["path"]
+            if record.get('background_check_inputs') is not None:
+                load_background_check_inputs(root,record,policy=assessment.get('background_check'))
+                expected['background_check_inputs_sha256']=root/record['background_check_inputs']['path']
             if any(bindings.get(key) != hashlib.sha256(path.read_bytes()).hexdigest()
                    for key, path in expected.items()):
                 raise ValueError("Current score binds different source judgments")
@@ -511,6 +633,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
         evidence_bytes(root, item)
     load_theorem_extension_inputs(root, record)
     validate_public_theorem_extension(root, record)
+    load_background_check_inputs(root, record)
+    validate_public_background_check(root, record)
     if record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:

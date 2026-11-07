@@ -7,7 +7,7 @@
   "suite": {
     "id": "math-gauge-benchmark",
     "version": "0.6.0",
-    "sha256": "5b210937a718bbc8bbbf30b6804022de80f65f6a626f5c3be743a8ef1941c851"
+    "sha256": "7c88cf834e7818fedcd0f7ad714f8a4f0156588733591ac7c38028d013991e43"
   },
   "components": [
     {
@@ -71,6 +71,16 @@
       ],
       "weight": 10,
       "aggregation": "family"
+    },
+    {
+      "id": "background-check",
+      "title": "背景核查",
+      "case_ids": [
+        "MG-BC001",
+        "MG-BC002"
+      ],
+      "weight": 10,
+      "aggregation": "family"
     }
   ],
   "case_execution_policy": {
@@ -97,8 +107,10 @@
       "LCH01": "math-gauge.local-tools-no-search/v1",
       "LCH02": "math-gauge.local-tools-no-search/v1",
       "HCH02": "math-gauge.local-tools-no-search/v1",
-      "MG-TX001": "math-gauge.no-tools/v1",
-      "MG-TX002": "math-gauge.no-tools/v1"
+      "MG-TX001": "math-gauge.local-tools-no-search/v1",
+      "MG-TX002": "math-gauge.local-tools-no-search/v1",
+      "MG-BC001": "math-gauge.local-tools-no-search/v1",
+      "MG-BC002": "math-gauge.local-tools-no-search/v1"
     },
     "new_execution_case_ids": [
       "AHR01",
@@ -124,7 +136,9 @@
       "MG-AR003",
       "MG-AR004",
       "MG-TX001",
-      "MG-TX002"
+      "MG-TX002",
+      "MG-BC001",
+      "MG-BC002"
     ],
     "new_turn_timeout_seconds": 5400,
     "budget_policy_binding": {
@@ -204,6 +218,12 @@
       "A1"
     ],
     "MG-TX002": [
+      "A1"
+    ],
+    "MG-BC001": [
+      "A1"
+    ],
+    "MG-BC002": [
       "A1"
     ]
   },
@@ -335,12 +355,14 @@
         "id": "background-check",
         "title": "背景核查",
         "weight": 10,
-        "source_components": [],
-        "public_tasks": 0,
-        "private_tasks": 0,
-        "families": 0,
+        "source_components": [
+          "background-check"
+        ],
+        "public_tasks": 2,
+        "private_tasks": 2,
+        "families": 4,
         "aggregation": "family",
-        "status": "under_construction"
+        "status": "active"
       },
       {
         "id": "manuscript-completion",
@@ -361,8 +383,8 @@
           "theorem-extension"
         ],
         "public_tasks": 2,
-        "private_tasks": 3,
-        "families": 5,
+        "private_tasks": 4,
+        "families": 6,
         "aggregation": "family",
         "status": "active"
       }
@@ -401,12 +423,12 @@
     "unknown_policy": "Fixed case/family/round denominators with explicit bounds.",
     "overall_floor": 0,
     "scope": {
-      "public_tasks": 22,
-      "private_tasks": 6,
-      "tasks": 28,
-      "parent_families": 24,
-      "initial_slots": 28,
-      "public_initial_slots": 22,
+      "public_tasks": 24,
+      "private_tasks": 9,
+      "tasks": 33,
+      "parent_families": 29,
+      "initial_slots": 33,
+      "public_initial_slots": 24,
       "alignment_rounds": 3,
       "trajectory_assessment_units": 1
     },
@@ -483,7 +505,7 @@
     },
     "theorem_extension": {
       "schema": "math-gauge.theorem-extension-policy/v1",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "benchmark_version": "0.6.0",
       "initial_attempt_labels": [
         "A1"
@@ -505,8 +527,8 @@
         "MG-TX001",
         "MG-TX002"
       ],
-      "private_cases": 3,
-      "families": 5,
+      "private_cases": 4,
+      "families": 6,
       "component_weight": 10,
       "family_aggregation": "equal",
       "baseline_points_added_to_research": false,
@@ -523,7 +545,51 @@
       "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.",
       "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.",
       "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.",
-      "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension."
+      "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.",
+      "execution_track": "math-gauge.local-tools-no-search/v1",
+      "local_tools_allowed": true,
+      "tool_network_access": false,
+      "search_allowed": false,
+      "no_tools_source_answers_replace_current_default": false,
+      "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"
+    },
+    "background_check": {
+      "schema": "math-gauge.background-check-policy/v1",
+      "version": "0.1.0",
+      "benchmark_version": "0.6.0",
+      "initial_attempt_labels": [
+        "A1"
+      ],
+      "public_case_ids": [
+        "MG-BC001",
+        "MG-BC002"
+      ],
+      "private_cases": 2,
+      "families": 4,
+      "component_weight": 10,
+      "family_aggregation": "equal",
+      "level_maximum": 3,
+      "false_actual_endorsement_level": 0,
+      "downstream_calculation_is_research_credit": false,
+      "followups_replace_initial": false,
+      "local_tools_allowed": true,
+      "search_allowed": false,
+      "tool_network_access": false,
+      "post_observation": true,
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "levels": {
+        "0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。",
+        "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。",
+        "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。",
+        "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"
+      },
+      "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.",
+      "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.",
+      "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.",
+      "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.",
+      "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。",
+      "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"
     }
   },
   "strict_policy": {

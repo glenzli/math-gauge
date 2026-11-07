@@ -8,7 +8,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, project_assessment_score,
+from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, project_assessment_score,
                                 validate_record)
 from math_gauge.scoring import score_assessment_record_inputs
 
@@ -40,6 +40,7 @@ def check(root=ROOT, *, public_root=None):
             review, source_policy = load(review_path), load(folder / "scoring-policy.json")
             assessment, strict = load(public / "assessment-policy.json"), load(public / "strict-scoring-policy.json")
             research = load_theorem_extension_inputs(folder, record, policy=assessment.get("theorem_extension"))
+            background = load_background_check_inputs(folder,record,policy=assessment.get("background_check"))
             engineering = load(public / "reviews/formalization.json")
             public_record = load(public / "record.json")
             for mode, conditions in views.items():
@@ -47,7 +48,7 @@ def check(root=ROOT, *, public_root=None):
                     selected = retry if condition == "nonlogical_retry_3" and retry is not None else inputs
                     derived = score_assessment_record_inputs(selected, review, source_policy,
                         formalization_review=engineering, assessment_policy=assessment,
-                        strict_policy=strict, mode=mode, theorem_extension_inputs=research)
+                        strict_policy=strict, mode=mode, theorem_extension_inputs=research,background_check_inputs=background)
                     for key, value in derived.items():
                         if score.get(key) != value:
                             raise ValueError(f"Archived current score differs from source evidence: {mode}/{key}")

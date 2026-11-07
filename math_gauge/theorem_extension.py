@@ -11,17 +11,22 @@ COMPONENT = "theorem-extension"
 PUBLIC_CASE_IDS = ("MG-TX001", "MG-TX002")
 POLICY_SCHEMA = "math-gauge.theorem-extension-policy/v1"
 INPUT_SCHEMA = "math-gauge.theorem-extension-inputs/v1"
+# Frozen editions remain readable; only the selected policy sets the denominator.
+POLICY_EDITIONS = {"0.1.0": (3, 5), "0.2.0": (4, 6)}
 
 
 def validate_policy(policy):
+    if not isinstance(policy, dict) or policy.get("version") not in POLICY_EDITIONS:
+        raise ValueError("Unsupported single-answer theorem-extension policy")
+    private_cases, families = POLICY_EDITIONS[policy["version"]]
     required = {
-        "schema": POLICY_SCHEMA, "version": "0.1.0", "benchmark_version": "0.6.0",
+        "schema": POLICY_SCHEMA, "benchmark_version": "0.6.0",
         "initial_attempt_labels": ["A1"], "research_invitation": False,
         "followups_replace_initial": False, "research_level_maximum": 3,
         "partial_points": [0, 1, 2, 3],
         "strict_requirements": {"baseline_B": 2, "research_R": 3},
-        "public_case_ids": list(PUBLIC_CASE_IDS), "private_cases": 3,
-        "families": 5, "component_weight": 10, "family_aggregation": "equal",
+        "public_case_ids": list(PUBLIC_CASE_IDS), "private_cases": private_cases,
+        "families": families, "component_weight": 10, "family_aggregation": "equal",
         "baseline_points_added_to_research": False,
         "baseline_penalty_points": {"0": 2, "1": 1, "2": 0},
         "per_case_floor": None,
@@ -32,24 +37,6 @@ def validate_policy(policy):
     if not isinstance(policy, dict) or any(policy.get(k) != v for k, v in required.items()):
         raise ValueError("Unsupported single-answer theorem-extension policy")
     return policy
-
-
-def split_cases(cases):
-    """Separate the new component from the immutable legacy selection pool."""
-    return ({cid: case for cid, case in cases.items() if case["component"] != COMPONENT},
-            {cid: case for cid, case in cases.items() if case["component"] == COMPONENT})
-
-
-def selected_cases(cases, selection, *, current_plan=False):
-    """Apply the legacy written selection without treating new research as retired."""
-    from .case_selection import selected_assessment_cases
-    base, extra = split_cases(cases)
-    normalized = {cid: dict(case, component="exploration")
-                  if case["component"] == "proofs" and
-                     case.get("source_visibility", case.get("visibility")) == "private"
-                  else case for cid, case in base.items()}
-    selected = selected_assessment_cases(normalized, selection, current_plan=current_plan)
-    return {cid: case for cid, case in cases.items() if cid in selected or cid in extra}
 
 
 def validate_inputs(data, policy):
@@ -63,12 +50,12 @@ def validate_inputs(data, policy):
         raise ValueError("Theorem-extension inputs must retain A1 only and explicit review status")
     cases = data.get("case_index", [])
     index = {case.get("case_id"): case for case in cases}
-    if (len(cases) != 5 or len(index) != 5
-            or len({case.get("family_id") for case in cases}) != 5
+    if (len(cases) != policy["families"] or len(index) != policy["families"]
+            or len({case.get("family_id") for case in cases}) != policy["families"]
             or {case["case_id"] for case in cases if case.get("source_visibility") == "public"}
                != set(PUBLIC_CASE_IDS)
-            or sum(case.get("source_visibility") == "private" for case in cases) != 3):
-        raise ValueError("Theorem-extension inputs require the fixed two-public/three-private families")
+            or sum(case.get("source_visibility") == "private" for case in cases) != policy["private_cases"]):
+        raise ValueError("Theorem-extension inputs differ from the selected public/private family counts")
     for cid, case in index.items():
         if (not isinstance(cid, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", cid)
                 or case.get("component") != COMPONENT or case.get("contract_kind") != "written_proof"
@@ -82,8 +69,8 @@ def validate_inputs(data, policy):
                     {"criterion_id": "complete-structure", "points": 1}]):
             raise ValueError("Theorem-extension source contract differs from the selected tier criteria")
     rows = data.get("slots", [])
-    if len(rows) != 5 or {r.get("case_id") for r in rows} != set(index):
-        raise ValueError("Theorem-extension inputs must retain all five planned answers, including unrun slots")
+    if len(rows) != policy["families"] or {r.get("case_id") for r in rows} != set(index):
+        raise ValueError("Theorem-extension inputs must retain every planned answer, including unrun slots")
     seen = set()
     for row in rows:
         cid = row["case_id"]

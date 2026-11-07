@@ -3,685 +3,229 @@
   "benchmark_version": "0.6.0",
   "scoring_method_version": "0.6.0",
   "strict_scoring_method_version": "0.2.0",
-  "theorem_extension_policy_version": "0.1.0",
+  "background_check_policy_version": "0.1.0",
+  "theorem_extension_policy_version": "0.2.0",
   "source_math_review_version": "0.4.0",
-  "status": "passed_with_full_run_and_focused_recovery",
-  "phase": "theorem_extension_adoption_and_baseline_penalty",
+  "status": "passed_targeted_archive_checks_with_inherited_validation",
+  "phase": "current_tool_archive_retained_no_tools_retired_incomplete_models_marked",
   "published": false,
   "publication_scope": "combined",
   "primary_metric": "earned",
   "capacity": {
-    "total": 100,
-    "active": 80,
-    "under_construction": 20
+    "active": 90,
+    "under_construction": 10,
+    "total": 100
   },
   "selection": {
-    "public_tasks": 22,
-    "private_tasks": 6,
-    "combined_tasks": 28,
-    "public_families": 18,
-    "combined_families": 24,
-    "public_arguments": 8,
-    "private_arguments": 3,
-    "argument_families": 11,
-    "public_theorem_extension": 2,
-    "private_theorem_extension": 3,
-    "research_invitation_in_formal_flow": false
+    "public_tasks": 24,
+    "private_tasks": 9,
+    "combined_tasks": 33,
+    "public_families": 20,
+    "combined_families": 29,
+    "background_public": 2,
+    "background_private": 2,
+    "background_families": 4,
+    "written_argument_families": 11,
+    "theorem_extension_families": 6,
+    "unscored_example_adds_family": false
   },
   "unit_tests": {
     "full_run": {
-      "command": "python3 -B -m unittest discover -s tests",
-      "tests": 597,
-      "seconds": 561.426,
-      "failures": 11,
-      "errors": 11,
+      "command": "python3 -m unittest discover -s tests",
+      "ran": 618,
+      "seconds": 490.8,
+      "failures": 3,
+      "errors": 8,
       "skipped": 17,
       "exit_code": 1,
-      "log_sha256": "ec9f17c940f28aa070edf792328a07c91278cfbc6871d7c567a8e532794dd2c5",
-      "source_identity_frozen_at_start": false,
-      "result": "Initial integration check before migration fixture and export target fixes; not a clean final full-suite pass."
+      "log_sha256": "cc33945ddeccdc3b7118a3b32581af7645d0042269610f62358fece7fda62320",
+      "log_local_path": "/private/tmp/background-adoption-full-tests.log",
+      "note": "Run preceded repairs below; do not relabel this invocation as passing."
     },
     "focused_recovery": {
-      "command": "PYTHONPATH=tests python3 -B -m unittest test_case_selection test_reliability_materials test_c003_budget test_current_release test_research_suite test_strict_records test_results_site test_v06_integration test_theorem_extension",
-      "tests": 69,
-      "seconds": 20.693,
-      "failures": 0,
-      "errors": 0,
-      "exit_code": 0,
-      "evidence": "Observed completed tool result; all modules with original failures rerun after repairs."
+      "command": "PYTHONPATH=tests python3 -m unittest test_background_check test_case_selection test_research_suite test_current_release test_strict_records test_assessment_profile test_strict_scoring test_theorem_extension test_results_site",
+      "ran": 65,
+      "seconds": 7.65,
+      "passed": true,
+      "log_sha256": "73e795fb594c05dd8c9eb08ef104602bab8ee8b1fe8faf86675aa182c7a217c7",
+      "log_local_path": "/private/tmp/background-adoption-focused-tests.log",
+      "repairs": [
+        "Historical0.5 fixture now removes the new background component when constructing old policies.",
+        "Current category/unknown-count expectations include4 new fixed slots.",
+        "Portable release controller target allowlist includes background-check; stdlib child check passed."
+      ],
+      "all_failed_full_run_owners_rechecked": true,
+      "new_background_contract_tests": 7
     },
-    "harness_and_release_recovery": {
-      "command": "PYTHONPATH=tests python3 -B -m unittest test_current_release test_harness_export test_harness_import test_harness_cli test_release_runtime test_simple_harness test_external_release test_release_projection",
-      "tests": 76,
-      "seconds": 323.549,
-      "failures": 0,
-      "errors": 0,
-      "exit_code": 0,
-      "summary": "...........\n----------------------------------------------------------------------\nRan 76 tests in 323.549s\n\nOK\n",
-      "evidence": "Completed process output after the new component was added to portable target validation, including stdlib-only current-dataset check."
+    "export_harness_followup": {
+      "actual_tests_passed": 25,
+      "invocation_errors": 2,
+      "log_sha256": "fac80958190025d0dc696dfac732e7a50439326b4611d14c49a04eaebbdec285",
+      "note": "Two obsolete module names were supplied; their import errors are invocation errors. The25 actual harness/current-release tests passed."
     },
-    "current_discoverable_tests": 610,
-    "unresolved_observed_failures": 0,
-    "final_full_suite_repeated": false,
-    "reuse_boundary": "The first full discovery exposed stale legacy/current fixtures, count assumptions and a missing portable target. All failed modules were rerun (69 passing tests). The subsequent functional harness target change was checked with the complete affected harness/release modules. A second clean current full-suite run is not claimed.",
-    "current_python_source_sha256": "8294a79e6f6386ca6c0bbc9013f6911eaea6b01dfe9e72b5bc8719fecd88acf6",
-    "current_python_source_files": {
-      "math_gauge/__init__.py": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
-      "math_gauge/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
-      "math_gauge/benchmarks.py": "8e48d30b92324645b17da891fbd3398842caea4eee2f665389d2bf7caac5d833",
-      "math_gauge/case_selection.py": "5b6fa6cb8db91485c588b9a65e8bb1f1162b851bb9cdd3ab8dc3187452bf9c61",
-      "math_gauge/catalog.py": "89b1c86de4e4db775bffb8904900b9a0521f03f703828e3e14f3eedbcf5bf2c8",
-      "math_gauge/cli.py": "2f98aa85e1d3bcff95e7925a7187b7e57559cdab767044d5b600e5b56d493a7a",
-      "math_gauge/eligibility.py": "c4f91b347595e788849be8dcb84b4584622b5f58897ee45522f116eedde7ae44",
-      "math_gauge/execution.py": "e2d126f281a2ceebccd588dfa5c792f31ba6e376ecd33bc51bb5bf8dfb688a88",
-      "math_gauge/execution_policy.py": "1278d568484e78c9d2f4b9942ccaa8e9e7a8dbee0b663c2684dd32829a2030cf",
-      "math_gauge/harness.py": "b3a2fca0c1722bf631c97d7234fae07054f870bb9451ede153b8e027b28b51bd",
-      "math_gauge/harness_answers.py": "78814c2a025c89b7dc7d0f720f89c2052b937bd6327e82fa183cd61f71c3f630",
-      "math_gauge/harness_import.py": "fa9e1f9a582ce49844a2c18a314fa6750af315d1ab08c53d6c893d20910669b1",
-      "math_gauge/lean_frontend.py": "b127a10c8da99584d1e8ed2b5d6f61d6174e5dc09c052a8fc178ae34945b5866",
-      "math_gauge/records.py": "2dd90f8e6303709dee3b6d1fc58223b30a8ade1146b4355706cd64c1dc6dfb3a",
-      "math_gauge/release_projection.py": "430b7405ab732a33a264a322fff712dae05d7a5ffc7c79ee2e8bfb8e1b66ada8",
-      "math_gauge/reliability.py": "4d86d51990d3eb715f95fe342e835f6e36331cfa535831bb4a846b5f7f5ec61d",
-      "math_gauge/reliability_review.py": "c1d117e38e49479d9e51a5c9f0fd16058228712fdb5c59cdeff25906100c11d3",
-      "math_gauge/review.py": "9d2416de5fe50a8587181d069e87cfd71ea5576e6438fbfa5e2d0e374c9e5039",
-      "math_gauge/scoring.py": "d0e15cd1eb18300eaf0695f7f732eb40d625dab3e2c3c68d41e50d15893e5130",
-      "math_gauge/theorem_extension.py": "fd78e3f9c9f99abfc4deec0fabe9492647f3e488c6d9deec9eeebb262f9de66a",
-      "scripts/adopt_theorem_extensions.py": "9c9068ee0230b12fd24bf8725be43ac147a65ee3618827cae075cc053f997def",
-      "scripts/benchmark/cli_adapter.py": "73c4a0533b566435ae00c3ff6b99674bb7967f774b69831c507bc50c83542bcc",
-      "scripts/benchmark/common.py": "e6ea85c7e68734e3e48f8df09fa8c3a4a2cb770b08d1e8e20fd244301d58dd69",
-      "scripts/benchmark/isolation.py": "98e2cd23135cb615a9978abe26ede993d8b1d84e85d88e86841ed03a990c1f46",
-      "scripts/benchmark/preflight.py": "6aec51a5a8f68c6738c7e9632f02ab58893164518df3a6d0fc4f6e0ae39c31a7",
-      "scripts/benchmark/run_comparison.py": "e957e8e1e0e7993958e0f0ed6a3af2efbec8e930a50ab402d8bed154534a764a",
-      "scripts/benchmark/test_runtime.py": "29c9d9b734c13249d335bf96a638558ac4f978cd25a047999d1b9a0fd789fe5a",
-      "scripts/catalog.py": "aeb10bdc6ed71b476d1b09eaf7456d5a21480b79ec261c29ea3916236655414a",
-      "scripts/formal/check_evidence.py": "04410560dd06b6dc4412192a9c6c6bc652be96a968798a3010ce2461dcb2d046",
-      "scripts/formal/lake_frontend_adapter.py": "423e9b0ab778afea3f70a4745c0d76b08b4a16bfd3169125b3b429851ff468c7",
-      "scripts/formal/prepare_author.py": "806aa2a1ecfbfd31492e6e5a148aa8317f5ab1dc79cb6766f5116fb006e31851",
-      "scripts/formal/verify.py": "78e051f3802c013d5a9534921723ce27fb4db01da9993803b9f535b3a2fb9231",
-      "scripts/formal/verify_suite.py": "521829b3ee30ed27da8cfbdc07d7dd4e405a678d3599ed66d6ecb2f466de2d64",
-      "scripts/isolated_cli/prepare.py": "2ca56c8ca1aaeb1ee01f31c28151516063f7ddf001ea629256ddc3fea14d547b",
-      "scripts/isolated_cli/probe.py": "d57528ae61ce1bd68cf504a263f6a912d495ed3d8dd6db75ede6e6390204b44c",
-      "scripts/records.py": "18e34e958ebc12ebcc7fea39200af1db6e05f95ec7003fccdb302f7b95896a45",
-      "scripts/regrade_archived_engineering.py": "c3e2f5001d8a6bba5ca4a46919c758f5aee470a26b89a0f3bd5d91742a54801f",
-      "scripts/release.py": "47cf6db4b3176cece938512620221f471b4e931c23d1c108c2c8092639c3421b",
-      "scripts/render_benchmark_comparison.py": "f86c687aeb45c403385a896eaa98e93e87f65953f9f0410e6cb76e26cbb82608",
-      "scripts/render_benchmark_report.py": "816c349bbe6c9ce484c9bf5f8a4da0444b7da779d5dec9d13a23c717f420e15a",
-      "scripts/render_results_site.py": "7bb9fcb634871bd7f12ca4e0a03b85c65a464234bd548f7ab8a831a3b78e06ac",
-      "scripts/score_current_records.py": "92380750193e056190fc17b77a594e16718ab09532cd87d52492fed6f193c603",
-      "scripts/validate_protocol.py": "f3996662a08bf0997c77b2ac48a1d2fc031b12c0a7584a5565548b8685014c32",
-      "tests/benchmark_fixtures.py": "7b854a76432f854e84a8195f0375c2d24e1584fd23847ac4f39c272d0c93c4ae",
-      "tests/test_alignment_contracts.py": "622dc85e0c01562a137eaa5fc5885fecb7b888284cf2ae40712c5f3ad5f999f1",
-      "tests/test_alignment_scoring.py": "cf47a47258c5a205b116f594422187c3224d183b3fd0e678ef87a4213fb1b4be",
-      "tests/test_answer_review.py": "8f3a3805d4614a3cd18d69b4e963148ae0d60f30b8f62ddf93bc62eed5f3e511",
-      "tests/test_assessment_profile.py": "48b116349a08471f7ab94190402180d365417034f921bb1fc791d4c5372195f7",
-      "tests/test_author_evidence_scope.py": "39bfe3e582798e40737e48540b0bad62342d41aa7b5370bc47d937c5bd4a0566",
-      "tests/test_benchmark_renderers.py": "0c8a99ad2f27c9d63f7d7b209d84e34b17b1b04179ed37058ce5409219b09033",
-      "tests/test_benchmarks.py": "675b43a3fdc71ac5bf3a35f16ca13c8e4446d399facba8d4d7368e3f591bc80d",
-      "tests/test_c003_budget.py": "a1b0e39aa17ce624843d8f3a2d70ab18e9049dd1d96c66a7749cca32286ada9e",
-      "tests/test_candidate_lean.py": "acfac02d2a491a7f5236e366f13fe711b0d294f7369cb81b5f9da42ef1c28902",
-      "tests/test_case_selection.py": "69f0212b7d1b5862853b8a51f29f2fa38adb4c0b78363a69bd0dd8f2089c0d47",
-      "tests/test_compact_protocol.py": "1b8377a955ae1e458b54c51046557d12fdf71f4ef0dca6c266328f476cd497e1",
-      "tests/test_comparison_report.py": "24526e6b3eda630e0a5f482e7c1556f224137ff80fda3c7d9d4a6f71f31af79d",
-      "tests/test_composite_suites.py": "11817ba078a9975c1135d645d7ccfc58901852a1362f3f080006c2a2463d72eb",
-      "tests/test_current_release.py": "c42361820c99a557527a4193769ebed81bb00032ce9ee4c1c105f3025dbeb104",
-      "tests/test_eligibility.py": "ad049c79b8c93cca72e27a75b651eef29eb09ed2f588ddc6cbe4284a29636ba6",
-      "tests/test_eligibility_acceptance.py": "0097e79b12d98b135a84a0d826b45b8debc90db6facdd169fb24dee33c1754ed",
-      "tests/test_engineering_sources.py": "953b437c0198f8d67029629fa3a580d910f6fc7fb16f31683692a29c4c87e96a",
-      "tests/test_execution_policy.py": "fc1c213c7ff57ebe35e1724807678fe4ed9fc8def692c749dcc35a315d40ad5d",
-      "tests/test_external_release.py": "27768725596006b9f5bf8fd69738f6a16b7cac4f82c02a01abd09346ea77c627",
-      "tests/test_focus_catalog.py": "ef02dedb87310277a6429c17c29a78f502cbb2e594c1469ac6c8138b7f4df161",
-      "tests/test_formal_verifier.py": "e6a72511c4029ad08ea918de021547670d92555faeaad30fec9a0f57f742ca91",
-      "tests/test_harness_cli.py": "e64b0a8c90f85194d501f2a076e8f6ff172eca1c266ee3f2a310222992084ad0",
-      "tests/test_harness_export.py": "6582faf8dc35e3648b2597c91fc778b3b688d9d96cda0a621929736fb001c42a",
-      "tests/test_harness_import.py": "4690e0fa22661b3db0a2f1a805f9765e307e9c63b5a009161eeff228d0d90210",
-      "tests/test_isolated_cli.py": "5eae13ba5420330a02c407c6796bf577a029059da72ad9ddfb0606c05078ab03",
-      "tests/test_lean_frontend.py": "2398fb2a1829817c359953794ad7e7e6255178f955aadc91b51d79b92dcab2ac",
-      "tests/test_mathematical_witnesses.py": "00bdd19fe10dd8aed185bce30696018509665e6adb378c812dffcdb7463f07da",
-      "tests/test_question_groups.py": "002942a3e4e282c761c58adbe5769955ead44b819025265c17a08a951c9bcd0f",
-      "tests/test_records.py": "43ea86e7a888dbc0248f793c785820bb19eba5360af15dd755d856ac83d942aa",
-      "tests/test_release_projection.py": "f92b98ede4cce0f86109d93984fa48a3f614af40488f816a17d00c7c67863670",
-      "tests/test_release_runtime.py": "17bdc9a3a9c756779af3c755f83db8c5a7693f390b492e98dc65ed91e7f6993c",
-      "tests/test_reliability_execution.py": "a6af0b452128f5d0c7534fcc253bbbc91a9ac93e3e5a5151ce8b3b355aaf2f3b",
-      "tests/test_reliability_materials.py": "79b76f83a4cad95596830b9eedcca7bf3cc9d88b95bce2c77dde87ca96346133",
-      "tests/test_reliability_review.py": "4bce5ef54010b98ab369b0f951db52090071850f77edc6baf15270fd656242ee",
-      "tests/test_research_suite.py": "2a458be8d0817ec19b135a6cfde6607b97eef32f9523ba366e3c7e78a01c092d",
-      "tests/test_results_site.py": "9c43663b37cf563a6d6d74bebf739adcfe1c19b7709c94aa747cb63465cd9a32",
-      "tests/test_runner.py": "177e1b3b672282a354966430ca31e8c0fc3da5b7076a2eaee21d9cdfc25571ec",
-      "tests/test_scoring.py": "17000185fbfb8ec2e899356cfb5693c1ca996860a3b9a6934cff0d44bab59345",
-      "tests/test_simple_harness.py": "f5e779400cb74eabee927356ca731b62d4b55e17c1ef464d285873f35ca99eb3",
-      "tests/test_strict_records.py": "ca731157cb9677b88dd5f6d93290fe67fd68c43ad2cd79769448060ec619a57b",
-      "tests/test_strict_scoring.py": "0a36cfa8c54c16697b32e0984a1d37e7def6d169fbf93d5d8e2b38ce2e12b1ba",
-      "tests/test_theorem_extension.py": "c637706573533b46c486d3f557e958975b131589a4f22eb902350c75f57fa0a9",
-      "tests/test_v06_integration.py": "338ff4ef47079bd319aee2ccb67d0bc4993f9d96f3d9a1be1541e4b25a05a6dd",
-      "tests/test_workspace_scoring.py": "3cf15b85afa64e12912d448db7088cef2dfa4943d82016b9d93643cfe44108d6",
-      "tests/test_written_proof.py": "08b097bbc381fc6217caeba837305a29935a5f7936e42adaaab21ce1ac020553"
+    "available_release_modules": {
+      "command": "PYTHONPATH=tests python3 -m unittest test_release_projection test_release_runtime test_external_release",
+      "ran": 17,
+      "seconds": 43.369,
+      "passed": true,
+      "log_sha256": "d5ad00855442a419de9c70595f21cc5e73af75caf84adfa44bf93c96a0fde267",
+      "log_local_path": "/private/tmp/background-adoption-release-tests.log"
+    },
+    "current_discovery_count": 620,
+    "unchanged_other_groups_reused": true,
+    "rectangle_review_amendment": {
+      "passed": true,
+      "log_sha256": "01c814347ba5c2c86f0415c63cdcb520db2e8491f32112d3b541c0040166ce41",
+      "command": "PYTHONPATH=tests python3 -B -m unittest test_theorem_extension test_strict_records test_strict_scoring test_results_site test_assessment_profile",
+      "ran": 44
+    },
+    "current_archive_focused": {
+      "command": "PYTHONPATH=tests python3 -B -m unittest test_results_site test_strict_records test_theorem_extension test_background_check",
+      "passed": true,
+      "ran": 32,
+      "seconds": 2.784,
+      "observation": "Actual tool invocation completed successfully; no second invocation solely for logging."
     }
   },
   "checks": {
-    "public_suite": {
-      "command": [
-        "python3",
-        "-B",
-        "-m",
-        "math_gauge",
-        "validate"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "4ff9432902a9a11b788ef674f12e49dd241451dc75bf47d0e5eca4fddd080169",
-      "result": {
-        "cases": 22,
-        "suite_sha256": "5b210937a718bbc8bbbf30b6804022de80f65f6a626f5c3be743a8ef1941c851",
-        "human_approved": 0
-      }
-    },
-    "private_suite": {
-      "command": [
-        "python3",
-        "-B",
-        "-m",
-        "math_gauge",
-        "validate",
-        "--suite",
-        "/Users/g4i/lab/math-gauge-private/cases"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "c476970a569977bb36ee1806b684e2e91b29841de56bc6b0c1d63459e2222bb7",
-      "result": {
-        "cases": 6,
-        "suite_sha256": "94742d648d56f8b926d313bb9a2d3cdf297ef490d8e3be3340641ef9781c8d35",
-        "human_approved": 0
-      }
-    },
-    "catalog": {
-      "command": [
-        "python3",
-        "-B",
-        "scripts/catalog.py",
-        "--check"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "bf8f5aee2ce9e76a7cea8da40c7cd9739f5222fcfa28d2241318bd85849f94cd",
-      "result": {
-        "status": "passed",
-        "mode": "check",
-        "catalog": "cases/catalog.json",
-        "catalog_sha256": "2e928b07ca2a46c74e91815d18d2e8566d6e1b7d31133413c4b544efaa1485c5",
-        "counts": {
-          "papers": 22,
-          "default_papers": 22,
-          "reserve_papers": 0,
-          "mathematical_papers": 18,
-          "answer_review_tasks": 4,
-          "semantic_audit_tasks": 4,
-          "semantic_audit_dimensions": 16,
-          "default_parent_families": 18,
-          "written_proof_papers": 5,
-          "proof_criteria": 21,
-          "default_obligations": 190,
-          "reserve_obligations": 0,
-          "progressive_stages": 30,
-          "chapter_obligations": 160,
-          "source_human_approved": 0,
-          "model_calls_by_indexer": 0
-        },
-        "scope": {
-          "id": "complete-case-bank",
-          "paper_count": 22,
-          "progressive_papers": 5,
-          "progressive_stages": 30,
-          "chapter_papers": 4,
-          "chapter_obligations": {
-            "HCH02": 40,
-            "LCH01": 8,
-            "LCH02": 20,
-            "MG-C003": 92
-          },
-          "answer_review_tasks": 4,
-          "answer_review_dimensions": 12,
-          "semantic_audit_tasks": 4,
-          "semantic_audit_dimensions": 16,
-          "sample_unit": "one full mathematical paper or complete answer review; parent-correlated",
-          "written_proof_papers": 5,
-          "proof_criteria": 21
-        },
-        "model_calls": 0
-      }
-    },
-    "protocol": {
-      "command": [
-        "python3",
-        "-B",
-        "scripts/validate_protocol.py"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "cd9663d3b8d7b53c12564a7fb951ab91212c0d191f162b7606844196ded441a6",
-      "result": {
-        "schema": "math-gauge.protocol-validation/v2",
-        "passed": true,
-        "suite_sha256": "5b210937a718bbc8bbbf30b6804022de80f65f6a626f5c3be743a8ef1941c851",
-        "profile_sha256": "0716ffe9addca7c25adb47a46722e4fdbc9bb56373dabe55928c46f87922afc4",
-        "plan_sha256": "760de86c3a3d56b3315cc6c796b934997961aebbbe5355d5b74efaf6182f7c77",
-        "candidate_projections": 22,
-        "dependent_review_obligations": 190,
-        "proof_criteria": 21,
-        "semantic_audit_dimensions": 16,
-        "answer_review_dimensions": 12,
-        "frozen_followup_messages": 0,
-        "planned_slots_per_model": 22,
-        "isolated_followup_history_edges": 0,
-        "candidate_model_calls": 0,
-        "lean_compilations": 0,
-        "human_approved": false,
-        "runner_offline_acceptance": {
-          "status": "new-version-focused-tests-separately-recorded",
-          "formal_model_result": false
-        },
-        "scope": "Local0.6 material and projection checks; no mathematical adjudication or candidate result import."
-      }
-    },
-    "public_records": {
-      "command": [
-        "python3",
-        "-B",
-        "scripts/records.py",
-        "check"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "069b48d5c300617f9aa0b1d30eea39674fe5635847766bf303399c953810d76b",
-      "result": {
-        "passed": true,
-        "benchmark_version": "0.6.0",
-        "scoring_version": "0.6.0",
-        "strict_version": "0.2.0",
-        "archives": [
-          {
-            "record_id": "20261105",
-            "records": 48,
-            "raw_responses": 45,
-            "candidate_calls_by_migration": 0,
-            "passed": true,
-            "earned": {
-              "partial": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              },
-              "strict": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              }
-            },
-            "capacity": {
-              "total": 100,
-              "active": 80,
-              "under_construction": 20
-            }
-          },
-          {
-            "record_id": "20261105",
-            "records": 46,
-            "raw_responses": 45,
-            "candidate_calls_by_migration": 0,
-            "passed": true,
-            "earned": {
-              "partial": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              },
-              "strict": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              }
-            },
-            "capacity": {
-              "total": 100,
-              "active": 80,
-              "under_construction": 20
-            }
-          },
-          {
-            "record_id": "20261105",
-            "records": 45,
-            "raw_responses": 45,
-            "candidate_calls_by_migration": 0,
-            "passed": true,
-            "earned": {
-              "partial": {
-                "single_attempt": 66.8372383253,
-                "nonlogical_retry_3": 66.8372383253
-              },
-              "strict": {
-                "single_attempt": 52.0,
-                "nonlogical_retry_3": 52.0
-              }
-            },
-            "capacity": {
-              "total": 100,
-              "active": 80,
-              "under_construction": 20
-            }
-          }
-        ],
-        "candidate_calls": 0,
-        "sealed_engineering_compilations": 0
-      }
-    },
-    "private_records": {
-      "command": [
-        "python3",
-        "-B",
-        "scripts/records.py",
-        "check",
-        "--root",
-        "/Users/g4i/lab/math-gauge-private",
-        "--public-root",
-        "/Users/g4i/lab/math-gauge"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "6f03f874451ace60119a59d0abd5192b845081f6493fec34ffd12d66d0d8c830",
-      "result": {
-        "passed": true,
-        "benchmark_version": "0.6.0",
-        "scoring_version": "0.6.0",
-        "strict_version": "0.2.0",
-        "archives": [
-          {
-            "record_id": "20261105",
-            "records": 3,
-            "raw_responses": 3,
-            "candidate_calls_by_migration": 0,
-            "passed": true,
-            "earned": {
-              "partial": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              },
-              "strict": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              }
-            },
-            "capacity": {
-              "total": 100,
-              "active": 80,
-              "under_construction": 20
-            }
-          },
-          {
-            "record_id": "20261105",
-            "records": 3,
-            "raw_responses": 3,
-            "candidate_calls_by_migration": 0,
-            "passed": true,
-            "earned": {
-              "partial": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              },
-              "strict": {
-                "single_attempt": null,
-                "nonlogical_retry_3": null
-              }
-            },
-            "capacity": {
-              "total": 100,
-              "active": 80,
-              "under_construction": 20
-            }
-          },
-          {
-            "record_id": "20261105",
-            "records": 3,
-            "raw_responses": 3,
-            "candidate_calls_by_migration": 0,
-            "passed": true,
-            "earned": {
-              "partial": {
-                "single_attempt": 66.8372383253,
-                "nonlogical_retry_3": 66.8372383253
-              },
-              "strict": {
-                "single_attempt": 52.0,
-                "nonlogical_retry_3": 52.0
-              }
-            },
-            "capacity": {
-              "total": 100,
-              "active": 80,
-              "under_construction": 20
-            }
-          }
-        ],
-        "candidate_calls": 0,
-        "sealed_engineering_compilations": 0
-      }
-    },
-    "source_integrity": {
-      "command": [
-        "python3",
-        "-B",
-        "/private/tmp/check-math-gauge-adoption-integrity.py"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "01a4d5c0f175967ee36bf6ba83ef1ec04964d57b5f88aeb0c358e00426ab65b0",
-      "result": {
-        "passed": true,
-        "checks": {
-          "original_public_answer_review_and_source_files": {
-            "files": 620,
-            "unchanged": true
-          },
-          "original_private_source_files": {
-            "files": 52,
-            "unchanged": true
-          },
-          "original_public_record_entries": {
-            "models": 3,
-            "unchanged": true
-          },
-          "retained_legacy_candidate_projections": {
-            "tasks": 20,
-            "unchanged": true
-          },
-          "private_written_relocation": {
-            "files": 30,
-            "unchanged": true
-          },
-          "pilot_A1_and_invited_A2_original_answers": {
-            "answers": 10,
-            "unchanged": true
-          },
-          "non_scoring_study_bindings": {
-            "files": 26,
-            "passed": true
-          },
-          "adopted_case_input_and_A1_bytes": {
-            "tasks": 5,
-            "unchanged": true
-          },
-          "public_projection_no_private_research_identifiers": {
-            "files": 28,
-            "passed": true
-          }
-        }
-      }
-    },
-    "public_whitespace": {
-      "command": [
-        "git",
-        "diff",
-        "--check"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "result": {
-        "passed": true
-      }
-    },
-    "private_whitespace": {
-      "command": [
-        "git",
-        "diff",
-        "--check"
-      ],
-      "exit_code": 0,
-      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "result": {
-        "passed": true
-      }
-    },
-    "combined_profile": {
-      "passed": true,
-      "suite_sha256": "f5ad083287dbb20b3c846091f9a91d54f26d1c7db2938d4b6735e0d7105d54e8",
-      "profile_sha256": "c4faf7e82f95606d519e70bfd4da33aa75879c8da0cf2308b32fe1d9abb4c1c0",
-      "tasks": 28,
-      "slots": 28,
-      "all_A1": true,
-      "candidate_calls": 0
-    }
-  },
-  "attempt_condition_totals": {
-    "terra-6.1-max": {
-      "single_attempt": {
-        "partial": 66.83723832527885,
-        "strict": 52.0
-      },
-      "nonlogical_retry_3": {
-        "partial": 66.83723832527885,
-        "strict": 52.0
-      }
-    },
-    "deepseek-v4.1-flash-1017": {
-      "single_attempt": {
-        "partial": 46.7052371541502,
-        "strict": 21.818181818181817
-      },
-      "nonlogical_retry_3": {
-        "partial": 49.79614624505929,
-        "strict": 21.818181818181817
-      }
-    },
-    "gemini-3.8-flash-high": {
-      "single_attempt": {
-        "partial": 43.50192687747035,
-        "strict": 12.045454545454545
-      },
-      "nonlogical_retry_3": {
-        "partial": 43.50192687747035,
-        "strict": 12.045454545454545
-      }
-    }
-  },
-  "strict_whole_task_counts": {
-    "terra-6.1-max": {
-      "single_attempt": {
-        "planned": 28,
-        "passed": 22,
-        "failed": 6,
-        "unknown": 0
-      },
-      "nonlogical_retry_3": {
-        "planned": 28,
-        "passed": 22,
-        "failed": 6,
-        "unknown": 0
-      }
-    },
-    "deepseek-v4.1-flash-1017": {
-      "single_attempt": {
-        "planned": 28,
-        "passed": 9,
-        "failed": 14,
-        "unknown": 5
-      },
-      "nonlogical_retry_3": {
-        "planned": 28,
-        "passed": 9,
-        "failed": 14,
-        "unknown": 5
-      }
-    },
-    "gemini-3.8-flash-high": {
-      "single_attempt": {
-        "planned": 28,
-        "passed": 5,
-        "failed": 18,
-        "unknown": 5
-      },
-      "nonlogical_retry_3": {
-        "planned": 28,
-        "passed": 5,
-        "failed": 18,
-        "unknown": 5
-      }
+    "catalog": true,
+    "protocol_candidate_projections": 24,
+    "dependent_stages_obligations": 190,
+    "public_proof_criteria": 27,
+    "semantic_audit_dimensions": 16,
+    "answer_review_dimensions": 12,
+    "public_records_archives": 3,
+    "private_records_archives": 3,
+    "all_four_score_views_recomputed_and_equal": true,
+    "original_source_files_unchanged": 137,
+    "original_pilot_deliverables_unchanged": 23,
+    "eight_native_inputs_match_adopted_tasks": true,
+    "public_tracked_and_unignored_files_no_private_task_ids_or_bytes": true,
+    "git_diff_check": true,
+    "author_evidence": {
+      "papers": 6,
+      "items": 122,
+      "modules": 160,
+      "fresh_compilation_repeated": false
     }
   },
   "source_bindings": {
-    "AGENTS.md": "d18927f5a914c95da796382ba7102e85aa0086ed748414ea61cc286c5fede721",
-    "README.md": "48ccf681cb8437cbb2ed3d59ae19372af2c0bcb0196bbd8dccbdea2701f62cba",
-    "benchmark.json": "8888d7264360ecbf40e4abdaab8773f1bbf2bac8c92312da0b31aa64a59593d9",
-    "SOURCES.md": "34f04bdc50fa398a1e0405b47ad2737f28628f834d3cc00086009606080384a2",
-    "cases/suite.json": "c4a40293ba38aa782d62ddabd5d3a88d4291c6322c3fbcbb92c24ecbb9014810",
-    "cases/taxonomy.json": "8a8fd70914089033f93dc48aacf7f35a7e9fd852482537e6cef96c91cc3200e4",
-    "cases/catalog.json": "2e928b07ca2a46c74e91815d18d2e8566d6e1b7d31133413c4b544efaa1485c5",
-    "protocol/benchmark-profile.json": "0716ffe9addca7c25adb47a46722e4fdbc9bb56373dabe55928c46f87922afc4",
-    "protocol/scoring-policy.json": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
-    "protocol/strict-scoring-policy.json": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-    "protocol/theorem-extension-policy.json": "c31102faa4c73eec096605e58a954fa6c0958baa0bb423d7636b8e83efe3c7b7",
-    "protocol/theorem-extension-scoring.md": "e3a5d9b6b78432c228cfd9f2d977be19ee3aea107734cc23e1401c1b35611dc2",
-    "protocol/result-record.md": "601abebdb9251b1e631aaf6aa4905e6ad3150d5084ddd189eb09ca5e1666ff79",
-    "protocol/reliability/plan.json": "760de86c3a3d56b3315cc6c796b934997961aebbbe5355d5b74efaf6182f7c77",
-    "protocol/reliability/schedule.json": "bfc9d5379aedb7731d903fe7aa9f12a17f3be04599c76033e29514fa21413de2",
-    "protocol/reliability/validation.json": "6d225138952d2caf587e257d0e33551ae76abccb7e46abf75dbab212f7cd30ce",
-    "releases/v0.6.0/config.json": "ca79ace4b278b68b3c57ffb443d2392c7d3589a30e9c2d87c5ca88d3ce9f1286",
-    "releases/v0.6.0/README.md": "536339841ad3df1e53c4c07a13acdfdfdaee1fde907c48c00093c8339b9542f1",
-    "docs/results.md": "4c928e42a77b26bb313b32caddb144fc337200f2a3c6da493ad0848083d1e73d",
-    "site/index.html": "99371243c5dc1fc2d8a70856d60bae054b091121aa5efddd1ab6035fb4e89c11",
-    "site/data.json": "e2b14c3c498e0512084ad6bad0f308ca09615d4dda828ec3602779874a949f78",
-    "results/v0.6.0/terra-6.1-max/20261105/combined-aggregate.json": "2eb64316fcf4b7e549c4216a1557a82da5f0910d976933f07e4e87bdda4ee516",
-    "results/v0.6.0/terra-6.1-max/20261105/strict-combined-aggregate.json": "77f0ef7d02fc610aa424b89810090db8ff2c00760d4d008e917867da7694752c",
-    "results/v0.6.0/terra-6.1-max/20261105/retry-combined-aggregate.json": "33c6f3263fdab1acd61da1190f8b972705b1ad633b8d7b2155bc0dec919b3d97",
-    "results/v0.6.0/terra-6.1-max/20261105/strict-retry-combined-aggregate.json": "73365e9bfbaa328d6769f0197bc8d524c1fbf04b67e265d9b5dd586570050aeb",
-    "results/v0.6.0/terra-6.1-max/20261105/record.json": "f5cf9a3c0a59f459ca9bf8c86ce8db91005e10282dc8cabbf379f6d23bdb1a65",
-    "results/v0.6.0/terra-6.1-max/20261105/assessment-policy.json": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
-    "results/v0.6.0/terra-6.1-max/20261105/strict-scoring-policy.json": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-    "results/v0.6.0/terra-6.1-max/20261105/theorem-extension-evidence.json": "7f672c1f70d8812534cea0be8f8cb50e68140a6c2fe57d90c300b9e8063f7bdd",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/combined-aggregate.json": "9de44c2df8a01be64032aa71600aae654e7a3f59100ca6c377913b8db779bb10",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/strict-combined-aggregate.json": "96d292ab572fe12e7e739357f86cd563e227d5cde4bdc195c806d4e41b093bd4",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/retry-combined-aggregate.json": "769e8a3871e96cb143066527f4a2fd9585f4405251b2b48348a31d6ea6a3964a",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/strict-retry-combined-aggregate.json": "80d67388a09d6bad2dbaac8d8259394905f3cc4ce7e47c29acf94c5bd8f9c4c1",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/record.json": "b7bbb830486b6bc773c13190a52b6ae00a1103cc8b5f50b42b0336fdaa4751ff",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/assessment-policy.json": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/strict-scoring-policy.json": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-    "results/v0.6.0/deepseek-v4.1-flash-1017/20261105/theorem-extension-evidence.json": "ac9a025400c4b57275ec28e0612aba73e76fab3ae39d5bd355fe8e9e7472d14c",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/combined-aggregate.json": "de478ee3229af0ee556819cfca581d6c824712902ad913cbd4c44bddbe109536",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/strict-combined-aggregate.json": "79ea6b7f66a94605e8f8d27f1387d47eb248fe8c56e99240b23873147c89fe9f",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/retry-combined-aggregate.json": "040a0edbef40d083d8143675a72ce03236fbb3ef04373ed1403d108944ff0901",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/strict-retry-combined-aggregate.json": "e7682ea022c8dc4b278a7b33df344ea2e7fdafbd8a054bf68a5815d53fb3fb24",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/record.json": "7a8dc7048da7b7d9db1a00af42fc5263dc3a1e19f6927d3ada597a41e886fcb5",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/assessment-policy.json": "c5c05259ca2cf3f99fcfb3572d5e9f88eea330ca71913e26add21556d33f5936",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/strict-scoring-policy.json": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
-    "results/v0.6.0/gemini-3.8-flash-high/20261105/theorem-extension-evidence.json": "39d908fcfa9cafb3b6d706e82efb8c3497bc548a1fabe8edc169e2e0c15a7a39"
+    "math_gauge/background_check.py": "bbd32ee72b766aba146be6d3761b73e971d820175f6e613bcb01821692b6ec1e",
+    "math_gauge/case_selection.py": "d5151e01310afdacce09e458d8a534d00d6bd01c1f994007a4991cd699dc0b3e",
+    "math_gauge/benchmarks.py": "b04af9b3737897ded0382eacdde2fa966cfff40c1690b5f9077e13ade3f19ddb",
+    "math_gauge/scoring.py": "eedba638ea729ce6fbf1737a244001bedb1be806e20ab1ee02e0b4362568a12d",
+    "math_gauge/records.py": "cd86b3a8cb48c33321d960890f48518db4140608dbe2eb568f3f0daefebba86e",
+    "math_gauge/harness.py": "0198d51e0b73b0eaf179718cc22dd1df8e9e4265bb4cd7c1a06ee805e9e825b9",
+    "math_gauge/theorem_extension.py": "a320200fc7f44e6189776fa53320399dbc17b24ebcefb31f6ab9cf8de0ab786b",
+    "scripts/current_assessment.py": "71c6b8aaeaf432188f7d740ca1d0a2d3bdedf4543db3cb52fce4e12dcff80671",
+    "scripts/adopt_background_checks.py": "3a5469020c3e593ff69f7efee83b99187be08a0652d6e0a40b23517b6f326eaf",
+    "scripts/adopt_theorem_extensions.py": "52a2cfe189a79e390b7252efd46d45b3050ac5870c3f072255a49a4d438ddd04",
+    "scripts/score_current_records.py": "c11330adfe62be36914e16c18ecdfba2cac2c89fc27aa3616081e847876cf921",
+    "scripts/records.py": "f2a02919d381c0ff8e24bc58ea2f6836b31c826418581bcaab0321c81ad0d115",
+    "scripts/validate_protocol.py": "2f9fc992b3218071a3d4780eb07095d15f48e579e138f6089485d71b89dbc2cc",
+    "scripts/render_results_site.py": "d5901f6a4fc09fd79a8e4911b9ce94d130d74a752895507396a1a3ab4a131b73",
+    "protocol/background-check-policy.json": "f334b87d532e6334288a59314d4ee0af28a2b5e78d748bdd55109017fbef6e17",
+    "protocol/scoring-policy.json": "bcec9e064e17a30557a2dcccf1abf7e6ed928f90a31735be81b9b42a6891872a",
+    "protocol/benchmark-profile.json": "f84684015ba5bf2b061a00f22cf9beeda564a27713483c1a2a989ce1bb8430e0",
+    "cases/suite.json": "6922fa429fd91efb6eada57a49fa383eb1060716bdf1c8b07b31e0657ddd456b",
+    "cases/catalog.json": "63199f099168e53ec3a5add54a4dfe2d0afa07a4cc9ffa8774487c6d9b26663c",
+    "protocol/structural-equivalence-review.json": "f8ace16eb25f07062f4822690676ff2f16532097660b98976baeb93fa2d583d2",
+    "protocol/result-record.md": "be23928419957aa6ff253061cd74b4fb9d9c87179cff23922434b10007b1245c",
+    "scripts/templates/current-results.html": "da382f7be87e5673779430e5f2b7607df7e0e93553e4f4fef79e1046c1c8fdb4"
   },
-  "validation_source_sha256": "fb966f728ae8afaf4458e67d7ed026a2290fed8bb9fa32ba71dfa551aaa60a10",
   "ui_validation": {
-    "fresh_live_browser_check": true,
-    "url": "http://127.0.0.1:8796/site/index.html#capability-section",
-    "observed": [
-      "28 tasks, public22/private6,24 families,built80",
-      "Partial Terra66.84, research4.67/10; other models research unrun",
-      "Strict toggle Terra52.00, research2/10; machine download links change to Strict",
-      "Unknown and unbuilt weights remain explicit; no separate public total"
-    ]
+    "rendered_from_shared_score_views": true,
+    "display_tests_passed": true,
+    "new_browser_interaction_claimed": true,
+    "partial_and_strict_checked": true,
+    "review_amendment_page_screenshots": {
+      "partial": {
+        "path": "/private/tmp/math-gauge-rectangle-partial-20261107.jpg",
+        "sha256": "66a8099762f75c7805d1e755bbdfc501c4679352a6020fed97a19e9fd757b3e1"
+      },
+      "strict": {
+        "path": "/private/tmp/math-gauge-rectangle-strict-20261107.jpg",
+        "sha256": "f7a65e8bd489c1332fd3ada88b653457416d846b0d352548df3969988c7fb2d8"
+      }
+    },
+    "incomplete_marker_checked_both_modes": true
   },
-  "candidate_calls_by_adoption": 0,
+  "candidate_calls_by_scoring_or_validation": 0,
   "sealed_benchmark_engineering_compilations_by_adoption": 0,
   "human_review": "pending",
   "formal_comparison_eligible": false,
-  "local_delivery": {
-    "commit_and_push_authorized_for_this_task": false,
-    "commits": 0,
-    "pushes": 0,
-    "public_source_parent": "292c26709785836c27a847cdf113fda4f34f5af7"
+  "validated_at": "2026-11-07T01:25:06.422679+00:00",
+  "attempt_condition_totals": {
+    "terra-6.1-max": {
+      "partial": 77.72612721416773,
+      "strict": 61.666666666666664
+    },
+    "deepseek-v4.1-flash-1017": {
+      "partial": 46.7052371541502,
+      "strict": 21.818181818181817
+    },
+    "gemini-3.8-flash-high": {
+      "partial": 52.668593544137025,
+      "strict": 16.21212121212121
+    }
   },
-  "validated_at": "2026-11-06T22:59:12+08:00"
+  "background_contributions": {
+    "terra-6.1-max": {
+      "partial": 10.0,
+      "strict": 10.0,
+      "adjudicated": 4
+    },
+    "deepseek-v4.1-flash-1017": {
+      "partial": null,
+      "strict": null,
+      "adjudicated": 0
+    },
+    "gemini-3.8-flash-high": {
+      "partial": 4.1666666667,
+      "strict": 2.5,
+      "adjudicated": 4
+    }
+  },
+  "test_source_bindings": {
+    "test_background_check.py": "094f274a6e657128cbb5f5adcf9ec43848d2f7f9fac93372c2fcf7bcdd852110",
+    "test_case_selection.py": "a381cf1611eedc28d181bc2405f281dac1b1fb048264733d2a0a73fb25fbdf40",
+    "test_research_suite.py": "9b9c766b8f1ce3eebfb6f32a25cb9cc9ece35d57d5324dca25329528356f90c0",
+    "test_current_release.py": "78d3166e60868ee240e3bc4495c5c807f0762b8619dc6a7818428e1d827979eb",
+    "test_strict_records.py": "962718303b03777cdc754ae1a79df3271f660e368a82f5090282d5278375562d",
+    "test_assessment_profile.py": "f636e639a9bd2ce6d36df9a2c6a455b52ce70e2ff49f748abbacdbae79dbe0e9",
+    "test_strict_scoring.py": "daa10380675798d8d85d1af3cd67d32492887707c8d2190bd19d451e8497221a",
+    "test_theorem_extension.py": "034ffd7c2d950ddcb23cd58eb571ef0e15cdb6ea5fc2aa9b2bc11ed40c60df5b",
+    "test_results_site.py": "5b2b4c7382a0e0db18afce694a4f063343a0a8beaab5c7866376e6906abe3cbc",
+    "test_harness_export.py": "6582faf8dc35e3648b2597c91fc778b3b688d9d96cda0a621929736fb001c42a",
+    "test_harness_cli.py": "e64b0a8c90f85194d501f2a076e8f6ff172eca1c266ee3f2a310222992084ad0",
+    "test_release_projection.py": "f92b98ede4cce0f86109d93984fa48a3f614af40488f816a17d00c7c67863670",
+    "test_release_runtime.py": "17bdc9a3a9c756779af3c755f83db8c5a7693f390b492e98dc65ed91e7f6993c",
+    "test_external_release.py": "27768725596006b9f5bf8fd69738f6a16b7cac4f82c02a01abd09346ea77c627"
+  },
+  "structural_equivalence_review_version": "0.1.0",
+  "review_amendment_validation": {
+    "path": "verification/rectangle-structural-review-20261107.json",
+    "bytes": 15494,
+    "sha256": "203e48e0291e34e2d64692a65b4d141d0f3527f0347a866373003a0a51b72622"
+  },
+  "prior_validation_reuse": {
+    "previous_receipt_sha256": "7f0e3aee776f481cd15bfe0f22b44596b564148a9219c19383f24bd15889a4bf",
+    "previous_status": "passed_with_full_run_and_focused_recovery",
+    "unchanged_prior_python_bindings": 14,
+    "full_suite_rerun_for_this_review_only_change": false,
+    "note": "The prior full invocation had failures and the attributed focused recovery passed; those observations retain their original source identity. This phase adds44 passing relevant tests and record/protocol/display checks; no whole-suite passing run is claimed."
+  },
+  "current_archive_validation": {
+    "path": "verification/current-archive-validation-20261107.json",
+    "bytes": 6534,
+    "sha256": "1b0491dd7f99f90cf0ff36553e31b9c905ea25fc66e73826de084c0b0e533312"
+  },
+  "retention": {
+    "removed_files": 1749,
+    "independent_no_tools_group_retained": false,
+    "old_tracked_source_available_at_private_git_revision": "f1e0f5f44b669b2e3c0a46744c3f3bb108ace8a8",
+    "untracked_old_pilot_retention_promised": false,
+    "invited_A1_retained_only_as_required_non_scoring_replay_context": true
+  },
+  "three_score_proposal_implemented": false
 }

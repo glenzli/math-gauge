@@ -34,7 +34,7 @@ class StrictRecordTests(unittest.TestCase):
         for score in scores.values():
             self.assertIsNone(score["metrics"]["earned"]["exact"])
             self.assertAlmostEqual(score["metrics"]["earned"]["confirmed"], 21.8181818182)
-            self.assertEqual(score["whole_task_counts"]["unknown"], 5)
+            self.assertEqual(score["whole_task_counts"]["unknown"], 10)
             self.assertNotIn("tasks", score)
 
     def test_wrong_condition_review_status_or_engineering_source_is_rejected(self):
