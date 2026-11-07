@@ -1391,7 +1391,7 @@ def _alignment_snapshot(snapshot, ids, source_kind):
     return values
 
 
-def _alignment_trajectory(review, policy):
+def _alignment_trajectory(review, policy, *, positive_only=False):
     policy = _alignment_policy(policy)
     if (not isinstance(review, dict)
             or review.get("schema") != "math-gauge.alignment-selfcheck-review/v1"
@@ -1408,7 +1408,7 @@ def _alignment_trajectory(review, policy):
     penalized = policy["version"] in {"0.2.0", "0.3.0", "0.4.0"}
     if penalized and kind != "sealed_workspace":
         raise ValueError("Engineering self-check selects the sealed workspace primary source")
-    unknown_score = (Fraction(-1, 5), Fraction(1), None) if penalized else UNKNOWN
+    unknown_score = (Fraction(-1, 5), Fraction(1), None) if penalized and not positive_only else UNKNOWN
     previous = _alignment_snapshot(review.get("baseline"), ids, kind)
     if previous is None:
         raise ValueError("Alignment self-check requires an explicit baseline snapshot")
@@ -1455,14 +1455,16 @@ def _alignment_trajectory(review, policy):
                           True if claimed is True and current is not None and False in current.values() else
                           False if claimed is True and known_current else None)
         if false_complete is True:
-            diagnosis_points, accurate = Fraction(0), False
+            accurate = False
+            if not positive_only:
+                diagnosis_points = Fraction(0)
         point, base_point, repair, fixed, gained, lost, first_new, restored = (None,) * 8
-        penalty = Fraction(20) if penalized and false_complete is True else Fraction(0)
+        penalty = Fraction(20) if penalized and false_complete is True and not positive_only else Fraction(0)
         if known_current and known_previous:
             before = {sid for sid, complete in previous.items() if complete}
             after = {sid for sid, complete in current.items() if complete}
             fixed, gained, lost = 92 - len(before), after - before, before - after
-            repair = (Fraction(70) * (len(gained) - len(lost)) / fixed if fixed
+            repair = (Fraction(70) * (len(gained) - (0 if positive_only else len(lost))) / fixed if fixed
                       else Fraction(70) * (92 - len(lost)) / 92)
             if history_known:
                 restored, first_new = len(gained & seen), len(gained - seen)
@@ -1513,6 +1515,11 @@ def _alignment_trajectory(review, policy):
             "unknown_rounds": sum(row["major_false_complete"] is None for row in scored)},
         "interpretation": "Repairs use adjacent verified pass sets. Restorations and first-new completions are separately labeled; history is never a source union or best-of selection.",
         "human_review": "pending", "formal_comparison_eligible": False}
+    if positive_only:
+        public["score_mode"] = "capability"
+        public["interpretation"] = ("Positive repair/preservation and source-awarded diagnosis credit only; "
+            "no regression deduction, blanket diagnosis zeroing or false-complete penalty. "
+            "Adjacent rounds remain fixed; no best-of or history union.")
     return public, aggregate
 
 
@@ -2255,14 +2262,40 @@ def validate_strict_assessment_policy(policy):
     return policy
 
 
+def validate_capability_policy(policy):
+    required = {"schema": "math-gauge.capability-scoring-policy/v1", "version": "0.1.0",
+        "benchmark_version": "0.6.0", "score_mode": "capability", "primary_metric": "earned",
+        "initial_attempt_labels": ["A1"], "valid_mathematics_required": True,
+        "theorem_extension_credit": "R/3_without_baseline_deduction",
+        "alignment_repair_credit": "70*g/m_when_m_positive",
+        "alignment_preservation_credit": "70*verified_preserved/92_when_m_zero",
+        "diagnosis_credit": "source_awarded_global_plus_local_without_blanket_zero",
+        "regression_deduction": False, "false_complete_penalty_points": 0,
+        "family_aggregation": "same_as_reliable", "component_weights": "same_as_reliable",
+        "construction_policy": "fixed_reserved_weight_unknown_full_score",
+        "followups_replace_A1": False, "research_invitation": False,
+        "attempt_conditions": ["single_attempt", "nonlogical_retry_3"],
+        "human_review": "pending", "formal_comparison_eligible": False}
+    if not isinstance(policy, dict) or any(policy.get(k) != v for k, v in required.items()):
+        raise ValueError("Unsupported positive-contribution capability scoring policy")
+    return policy
+
+
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
                             mathematical_substitutions=None, alignment_summary=None,
-                            strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None):
+                            strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None,
+                            capability_policy=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
-    if mode not in {"partial", "strict"}:
+    if mode not in {"capability", "partial", "strict"}:
         raise ValueError("Unknown assessment score mode")
+    if mode == "capability":
+        if policy["version"] != "0.7.0":
+            raise ValueError("Capability mode requires the three-score assessment method")
+        validate_capability_policy(capability_policy)
+        if alignment_summary is not None and alignment_summary.get("score_mode") != "capability":
+            raise ValueError("Capability assessment requires its positive-contribution trajectory")
     plan = validate_plan(inputs["plan"])
     if inputs.get("model_label") != plan["model_label"]:
         raise ValueError("Assessment model differs from its frozen source")
@@ -2278,7 +2311,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         rows[sid] = row
     research_levels = {}
     if theorem_extension_inputs is not None:
-        if policy["version"] != "0.6.0":
+        if policy["version"] not in {"0.6.0", "0.7.0"}:
             raise ValueError("Research evidence cannot alter the pre-research scoring method")
         extra = validate_extension_inputs(theorem_extension_inputs, policy["theorem_extension"])
         if extra.get("model_label") != inputs["model_label"]:
@@ -2312,6 +2345,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             research_levels[sid] = {"baseline_B": baseline, "research_R": level,
                 "baseline_penalty_points": deduction, "research_maximum_points": 3,
                 "baseline_is_research_credit": False, "answer_attempt": "A1"}
+            if mode == "capability":
+                research_levels[sid]["applied_baseline_penalty_points"] = 0
     background_levels = {}
     if background_check_inputs is not None:
         if policy.get('background_check') is None:
@@ -2349,8 +2384,9 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         value = substitutions.get(sid, _interval(row.get("completion")))
         if sid in research_levels:
             research = research_levels[sid]
-            value = ((Fraction(-2, 3), Fraction(1), None) if research["research_R"] is None else
-                     (Fraction(research["research_R"] - research["baseline_penalty_points"], 3),) * 3)
+            value = ((UNKNOWN if mode == "capability" else (Fraction(-2, 3), Fraction(1), None))
+                     if research["research_R"] is None else
+                     (Fraction(research["research_R"] - (0 if mode == "capability" else research["baseline_penalty_points"]), 3),) * 3)
         if sid in background_levels:
             level=background_levels[sid]['background_R']
             value=UNKNOWN if level is None else (Fraction(level,3),)*3
@@ -2364,7 +2400,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             if case["component"] == "theorem-extension" and sid not in research_levels:
                 # Generic proof completion alone does not adjudicate the
                 # separately required original-task baseline and research tier.
-                value, passed = (Fraction(-2, 3), Fraction(1), None), None
+                value, passed = (UNKNOWN if mode == "capability" else (Fraction(-2, 3), Fraction(1), None)), None
             _boolean(passed)
             if passed is True and value != (1, 1, 1):
                 raise ValueError("Strict pass contradicts the source-bound completed task")
@@ -2390,7 +2426,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             if mode == "strict":
                 value = _boolean((strict_trajectory or {}).get("strict_pass"))
             elif alignment_summary is None:
-                value = Fraction(-1, 5), Fraction(1), None
+                value = UNKNOWN if mode == "capability" else (Fraction(-1, 5), Fraction(1), None)
             else:
                 metric = alignment_summary["metric"]
                 value = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
@@ -2413,7 +2449,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
         contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
                                                  planned=count, adjudicated=adjudicated)
-        if policy["version"] == "0.6.0":
+        if policy["version"] in {"0.6.0", "0.7.0"}:
             metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
             contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
     for group in policy["groups"]:
@@ -2424,7 +2460,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
         contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-        if policy["version"] == "0.6.0":
+        if policy["version"] in {"0.6.0", "0.7.0"}:
             known = sum((confirmed[c["id"]] * c["weight"] for c in children), Fraction(0))
             contributions[group["id"]]["confirmed"] = float(known)
             metrics[group["id"]]["confirmed"] = float(known * 100 / group["weight"])
@@ -2438,7 +2474,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
     for key, children in (("earned", active), ("overall", policy["subcategories"])):
         metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-    if policy["version"] == "0.6.0":
+    if policy["version"] in {"0.6.0", "0.7.0"}:
         metrics["earned"]["confirmed"] = float(max(Fraction(0),
             sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
     missing_tasks = max(0, policy["scope"]["tasks"] - len(tasks))
@@ -2464,18 +2500,23 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             "unknown": sum(t["strict_pass"] is None for t in tasks) + missing_tasks},
         "tasks": tasks, "alignment_selfcheck": alignment_summary,
         "strict_alignment_selfcheck": strict_trajectory, "initial_answers_replaced": False,
-        "human_review": "pending", "formal_comparison_eligible": False, "new_candidate_calls": 0}
+        "human_review": "pending", "formal_comparison_eligible": False, "new_candidate_calls": 0,
+        **({"capability_method_version": capability_policy["version"],
+            "capability_policy_sha256": identity(capability_policy)} if mode == "capability" else {})}
 
 
 def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
-                                   assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None, background_check_inputs=None):
+                                   assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None,
+                                   background_check_inputs=None, capability_policy=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
+    alignment = (_alignment_trajectory(review, source_policy, positive_only=True)[0]
+                 if mode == "capability" else source["alignment_selfcheck"])
     result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
-        mathematical_substitutions=substitutions, alignment_summary=source["alignment_selfcheck"],
+        mathematical_substitutions=substitutions, alignment_summary=alignment,
         strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
-        background_check_inputs=background_check_inputs)
+        background_check_inputs=background_check_inputs, capability_policy=capability_policy)
     result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
     return result
 

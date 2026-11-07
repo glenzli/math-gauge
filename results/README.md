@@ -1,13 +1,13 @@
 # 当前固定结果档案
 
-当前为benchmark **0.6.0本地开发草稿**；分类聚合方法 **0.6.0**、Strict **0.2.0**、非逻辑重跑接纳 **0.1.0**。均为观察已有答卷后的方法调整，AI审核、人审待定，正式比较资格为false，尚未发布。
+benchmark0.6.0开发草稿；三评分聚合0.7.0／MC0.1.0／Strict0.2.0。AI审核、人审待定、正式比较资格false，尚未发布release。
 
-只保存用户选定的Terra 6.1 Max、DeepSeek v4.1 Flash 1017、Gemini 3.8 Flash High当前记录，均位于v0.6.0/<model>/20261105。完整返回、自我判定、原工程、逐轮审核与冻结来源输入保留；日常runs不入Git，旧成绩和旧题通过Git历史恢复。
+仅保存用户选定的Terra、DeepSeek、Gemini当前记录，路径为v0.6.0/<model>/20261105。原答、自评、原工程与具名审核保持字节；日常runs不入Git，旧版本从Git历史恢复。公私统一题池，不发布独立公有分数。
 
-当前四个合并视图为combined-aggregate.json、retry-combined-aggregate.json、strict-combined-aggregate.json和strict-retry-combined-aggregate.json，分别对应分项／Strict及首次／允许非逻辑重跑。不再提供独立公有分数。私有原题、原答和完整逐题报告在同版私有仓库。
+三种评分分别为数学能力MC、可靠数学能力RMC（默认）、严格数学交付Strict；每种均保存首次和允许计次非逻辑重跑视图，共六份。MC使用capability-combined-aggregate.json及capability-retry-combined-aggregate.json，RMC沿用combined-aggregate.json及retry-combined-aggregate.json，Strict沿用strict-combined-aggregate.json及strict-retry-combined-aggregate.json。私有对应capability-result.json、capability-retry-result.json、result.json、retry-result.json、strict-result.json、strict-retry-result.json。
 
-当前主值为已核实贡献／100，已建90分，研究稿完善10分待建，完整总分未知。分类聚合政策assessment-policy.json为0.6.0，Strict为0.2.0；档案scoring-policy.json仍是原数学审核0.4.0。选择组件0.1.0保留20道公有旧基准与3道私有书面论证，再加入命题拓展公2／私4及背景核查公2／私2，共24公开／33合并A1，加3轮Lean自查。旧输入中的42／45槽保留来源身份，不改原答与原审核。命题拓展正式只计无提示A1，无研究邀请；原题错误另扣分，具体见[研究规则](../protocol/theorem-extension-scoring.md)。当前Terra／Gemini的六题工具组覆盖和得分以各档案源绑定输入及[完整报告](../docs/results.md)为准，DeepSeek六题未测。正式统一允许本地工具、禁止联网；独立无工具组不再固定留档。A2单列非计分研究，不能回填。
+record.json绑定六份结果、capability-scoring-policy.json、score-modes.json和原审核政策；各模型detailed-report.md报告三种贡献与完整分区间。独立无工具正式组不再留档；单独指定的邀请研究仅留必要上下文，不计分。结构复核保留原R1及新增R3审核，当前分值不因新增模式变更。
 
-[成绩与贡献](../docs/results.md) · [结果页](../site/index.html) · [留档合同](../protocol/result-record.md)
+三种分数共用相同答卷、题池、家族聚合和权重：书面35、Lean35、数学研究30。当前公24／私9共33题、29个数学家族，另固定三轮Lean自查。已建90／100，研究稿完善10分待建；所有分数均为已确认贡献／100，不重新归一化。
 
-MG-TX002统一复核另存substantive-review-20261107.json；source-review.json保持原字节。各模型structural-review-amendment.json绑定当前工具答卷、原审核和新增审核；独立无工具组退出固定留档。[复核报告](../docs/rectangle-structural-review.md)。
+[当前总报告](../docs/results.md) · [结果页](../site/index.html) · [留档合同](../protocol/result-record.md)

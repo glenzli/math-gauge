@@ -151,6 +151,7 @@ def load_retry_inputs(root, record, *, public_root=None, validate_results=True):
 def project_assessment_score(score):
     """Publish the hierarchy and numeric results, excluding private task evidence."""
     fields = ("benchmark_version", "scoring_method_version", "strict_method_version", "score_mode",
+              "capability_method_version", "capability_policy_sha256",
               "primary_metric", "model_label", "capacity", "group_capacity", "coverage", "whole_task_counts", "profile",
               "alignment_selfcheck", "strict_alignment_selfcheck", "lean_formalization_breakdown",
               "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings",
@@ -358,8 +359,8 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     """Check current score-view bytes and policy/source identities in either archive."""
     if record.get("assessment_policy") is None:
         return None
-    from .benchmarks import validate_assessment_policy
-    from .scoring import validate_strict_assessment_policy
+    from .benchmarks import validate_assessment_policy, identity
+    from .scoring import validate_strict_assessment_policy, validate_capability_policy
     root = Path(root).resolve()
     external = record.get("formalization_evidence_location") == "public_archive"
     if external and public_root is None:
@@ -369,7 +370,19 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     strict_raw = evidence_bytes(evidence_root, record["strict_scoring_policy"])
     assessment = validate_assessment_policy(json.loads(assessment_raw))
     validate_strict_assessment_policy(json.loads(strict_raw))
-    sources = record.get("strict_results" if mode == "strict" else "assessment_results", {})
+    keys = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}
+    if mode not in keys:
+        raise ValueError("Unknown assessment score mode")
+    capability_raw = None
+    if mode == "capability":
+        capability_raw = evidence_bytes(evidence_root, record["capability_scoring_policy"])
+        validate_capability_policy(json.loads(capability_raw))
+        catalog = json.loads(evidence_bytes(evidence_root, record["score_mode_catalog"]))
+        if (record.get("default_score_mode") != "partial" or catalog.get("default") != "partial"
+                or catalog.get("primary") != "partial"
+                or [m.get("id") for m in catalog.get("modes", [])] != ["capability", "partial", "strict"]):
+            raise ValueError("Current record must bind three score modes with reliable as default")
+    sources = record.get(keys[mode], {})
     if set(sources) != {"single_attempt", "nonlogical_retry_3"}:
         raise ValueError("Current assessment needs both attempt conditions")
     scores = {}
@@ -389,6 +402,10 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                 or bindings.get("strict_policy_sha256") != hashlib.sha256(strict_raw).hexdigest()
                 or bindings.get("engineering_review_sha256") != record["formalization_review"]["sha256"]):
             raise ValueError("Current score identity, condition or evidence binding changed")
+        if mode == "capability" and (score.get("capability_method_version") != "0.1.0"
+                or score.get("capability_policy_sha256") != identity(json.loads(capability_raw))
+                or bindings.get("capability_policy_sha256") != hashlib.sha256(capability_raw).hexdigest()):
+            raise ValueError("Capability score binds a different positive-contribution policy")
         if external:
             filename = ("retry-scoring-inputs.json" if condition == "nonlogical_retry_3"
                         and record.get("retry_admission") else "scoring-inputs.json")
@@ -673,6 +690,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
     if validate_scores:
         load_assessment_results(root, record, public_root=formalization_root)
         load_strict_results(root, record, public_root=formalization_root)
+        if "capability_results" in record or "capability_scoring_policy" in record:
+            load_assessment_results(root, record, mode="capability", public_root=formalization_root)
     return {"record_id": record["record_id"], "records": len(rows),
             "raw_responses": sum(r.get("response") is not None for r in rows),
             "candidate_calls_by_migration": record.get("candidate_calls_by_migration"), "passed": True}

@@ -29,6 +29,9 @@ def retain(private_root, *, public_root=ROOT):
     public_root, private_root = Path(public_root).resolve(), Path(private_root).resolve()
     assessment = load(public_root / "protocol/scoring-policy.json")
     strict = load(public_root / "protocol/strict-scoring-policy.json")
+    capability = load(public_root / "protocol/capability-scoring-policy.json")
+    for name in ("capability-scoring-policy.json", "score-modes.json"):
+        (private_root / "protocol" / name).write_bytes((public_root / "protocol" / name).read_bytes())
     totals = {}
     for model in load(public_root / "benchmark.json")["selected_result_models"]:
         relative = Path("results/v0.6.0") / model / "20261105"
@@ -47,12 +50,18 @@ def retain(private_root, *, public_root=ROOT):
         review, source_policy = load(review_path), load(private / "scoring-policy.json")
         engineering = load(public / "reviews/formalization.json")
         for filename, source in (("assessment-policy.json", "scoring-policy.json"),
-                                 ("strict-scoring-policy.json", "strict-scoring-policy.json")):
+                                 ("strict-scoring-policy.json", "strict-scoring-policy.json"),
+                                 ("capability-scoring-policy.json", "capability-scoring-policy.json"),
+                                 ("score-modes.json", "score-modes.json")):
             (public / filename).write_bytes((public_root / "protocol" / source).read_bytes())
         for target in (record, private_record):
             target["assessment_policy"] = descriptor(public, public / "assessment-policy.json")
             target["strict_scoring_policy"] = descriptor(public, public / "strict-scoring-policy.json")
-            target["assessment_results"], target["strict_results"] = {}, {}
+            target["capability_scoring_policy"] = descriptor(public, public / "capability-scoring-policy.json")
+            target["score_mode_catalog"] = descriptor(public, public / "score-modes.json")
+            target["default_score_mode"] = "partial"
+            for key in ("capability_results", "assessment_results", "strict_results"):
+                target[key] = {}
         totals[model] = {}
         for condition in ("single_attempt", "nonlogical_retry_3"):
             uses_retry = condition == "nonlogical_retry_3" and retry is not None
@@ -61,10 +70,11 @@ def retain(private_root, *, public_root=ROOT):
                 "slots_with_reruns": 0, "source": "original_records_reused_no_new_retry_evidence",
                 "all_original_attempts_independently_certified": False})
             totals[model][condition] = {}
-            for mode in ("partial", "strict"):
+            for mode in ("capability", "partial", "strict"):
                 score = score_assessment_record_inputs(inputs, review, source_policy,
                     formalization_review=engineering, assessment_policy=assessment, strict_policy=strict, mode=mode,
-                    theorem_extension_inputs=research,background_check_inputs=background)
+                    theorem_extension_inputs=research, background_check_inputs=background,
+                    capability_policy=capability if mode == "capability" else None)
                 score.update(attempt_condition=condition, retry_summary=retry_summary,
                     scope="combined-evaluator", source_math_policy_version=source_policy["version"],
                     engineering_review_sha256=digest(public / "reviews/formalization.json"),
@@ -79,20 +89,24 @@ def retain(private_root, *, public_root=ROOT):
                     score["source_bindings"]["theorem_extension_inputs_sha256"] = digest(private / private_record["theorem_extension_inputs"]["path"])
                 if background is not None:
                     score["source_bindings"]["background_check_inputs_sha256"]=digest(private/private_record["background_check_inputs"]["path"])
+                if mode == "capability":
+                    score["source_bindings"]["capability_policy_sha256"] = digest(public / "capability-scoring-policy.json")
                 if uses_retry:
                     admission = load(public / record["retry_admission"]["path"])
                     score.update(retry_policy_sha256=admission["policy"]["sha256"],
                                  retry_admission_sha256=record["retry_admission"]["sha256"])
                 is_retry = condition == "nonlogical_retry_3"
-                private_name = (("strict-retry-result.json" if is_retry else "strict-result.json") if mode == "strict"
-                                else "retry-result.json" if is_retry else "result.json")
-                public_name = (("strict-retry-combined-aggregate.json" if is_retry else "strict-combined-aggregate.json")
-                               if mode == "strict" else "retry-combined-aggregate.json" if is_retry else "combined-aggregate.json")
+                private_name = {"capability": ("capability-result.json", "capability-retry-result.json"),
+                    "partial": ("result.json", "retry-result.json"),
+                    "strict": ("strict-result.json", "strict-retry-result.json")}[mode][is_retry]
+                public_name = {"capability": ("capability-combined-aggregate.json", "capability-retry-combined-aggregate.json"),
+                    "partial": ("combined-aggregate.json", "retry-combined-aggregate.json"),
+                    "strict": ("strict-combined-aggregate.json", "strict-retry-combined-aggregate.json")}[mode][is_retry]
                 write(private / private_name, score)
                 aggregate = project_assessment_score(score)
                 aggregate["source_bindings"]["private_report_sha256"] = digest(private / private_name)
                 write(public / public_name, aggregate)
-                key = "strict_results" if mode == "strict" else "assessment_results"
+                key = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}[mode]
                 record[key][condition] = descriptor(public, public / public_name)
                 private_record[key][condition] = descriptor(private, private / private_name)
                 totals[model][condition][mode] = score["metrics"]["earned"].get("confirmed", score["metrics"]["earned"]["exact"])
@@ -114,6 +128,7 @@ def retain(private_root, *, public_root=ROOT):
             write(folder / "record.json", target)
     active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
     return {"benchmark_version": "0.6.0", "scoring_version": assessment["version"], "strict_version": strict["version"],
+            "capability_version": capability["version"], "default_score_mode": "partial",
             "capacity": {"active": active, "under_construction": 100-active, "total": 100}, "totals": totals,
             "candidate_calls": 0, "sealed_engineering_compilations": 0}
 

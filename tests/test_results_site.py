@@ -67,7 +67,7 @@ class CurrentSiteTests(unittest.TestCase):
 
     def test_only_selected_current_models_and_scores_are_displayed(self):
         self.assertEqual(self.data["benchmark_version"], "0.6.0")
-        self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v4")
+        self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v5")
         self.assertEqual(self.data["publication_scope"], "combined")
         self.assertEqual(len(self.data["models"]), 3)
         for model in self.data["models"]:
@@ -114,11 +114,11 @@ class CurrentSiteTests(unittest.TestCase):
             before = {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()}
             SITE.write_site(root)
             self.assertEqual(before, {str(p.relative_to(root)): p.read_bytes() for p in root.rglob("*") if p.is_file()})
-            self.assertEqual(len(before), 14)
+            self.assertEqual(len(before), 20)
             self.assertEqual(set(before), {"index.html", "data.json", *(
                 "downloads/" + model["id"] + "-" + scope + suffix + ".json"
                 for model in self.data["models"] for scope in ["combined"]
-                for suffix in ["", "-retry", "-strict", "-strict-retry"])})
+                for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"])})
 
     def test_retired_public_only_downloads_are_removed_without_deleting_unrelated_files(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -153,7 +153,7 @@ class CurrentSiteTests(unittest.TestCase):
                     first = SITE.earned_value(model["combined"])
                     self.assertEqual(float(matches[0]["data-start-score"]), first)
                     self.assertAlmostEqual(float(matches[0]["data-gain-score"]), SITE.earned_value(result) - first)
-        self.assertEqual(page.count('class="chart-value"'), 6)
+        self.assertEqual(page.count('class="chart-value"'), 9)
         self.assertEqual(ChartBars(page).values, [f"{max(SITE.earned_value(m['combined']), SITE.earned_value(m['retry']['combined'])):.2f}"
                                                 for m in self.data["models"]])
         self.assertNotIn("46.71 → 49.80", page)
@@ -210,7 +210,7 @@ class CurrentSiteTests(unittest.TestCase):
 
 
     def test_strict_mode_binds_three_combined_scores_without_auxiliary_credit(self):
-        self.assertEqual(self.data["score_modes"], ["partial", "strict"])
+        self.assertEqual(self.data["score_modes"], ["capability", "partial", "strict"])
         for model in self.data["models"]:
             for condition, result in model["strict"].items():
                 self.assertEqual(result["primary_metric"], "earned")
@@ -230,6 +230,20 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(len(chart.bars), 3)
         self.assertEqual(chart.tooltips, [])
         self.assertEqual(len(chart.images), 3)
+
+    def test_capability_uses_bound_score_views_and_reliable_is_the_default(self):
+        self.assertEqual(self.data["default_score_mode"], "partial")
+        self.assertEqual(self.data["score_mode_catalog"]["primary"], "partial")
+        for model in self.data["models"]:
+            folder = ROOT / Path(model["source_record"]).parent
+            for condition, filename in [("single_attempt", "capability-combined-aggregate.json"),
+                                        ("nonlogical_retry_3", "capability-retry-combined-aggregate.json")]:
+                current = model["capability"][condition]
+                self.assertEqual(current, json.loads((folder / filename).read_bytes()))
+                reliable = model["combined"] if condition == "single_attempt" else model["retry"]["combined"]
+                self.assertGreaterEqual(SITE.earned_value(current), SITE.earned_value(reliable))
+                self.assertEqual(current["capacity"], reliable["capacity"])
+                self.assertEqual(current["coverage"], reliable["coverage"])
 
 
 

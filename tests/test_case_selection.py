@@ -26,6 +26,9 @@ def assessment_policy(plan, *, selected=True):
     # 0.6 policy adds a distinct component; it cannot serve as this fixture.
     policy = json.loads((ROOT / "protocol/scoring-policy.json").read_bytes())
     policy["version"] = "0.5.0"
+    policy["score_modes"] = ["partial", "strict"]
+    for key in ("default_score_mode", "capability_policy_version", "score_mode_catalog_version"):
+        policy.pop(key, None)
     policy.pop("theorem_extension", None)
     policy.pop("background_check", None)
     background=next(row for row in policy["subcategories"] if row["id"]=="background-check")

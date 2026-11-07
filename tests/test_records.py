@@ -329,7 +329,7 @@ class SharedAggregateCheckTests(unittest.TestCase):
             folder.mkdir(parents=True);(source/"reviews").mkdir(parents=True)
             result=json.loads((ROOT/"results/v0.6.0/terra-6.1-max/20261105/combined-aggregate.json").read_bytes())
             record={"formalization_evidence_location":"public_archive"}
-            for group in ("assessment_results","strict_results"):
+            for group in ("capability_results","assessment_results","strict_results"):
                 record[group]={c:{"path":group+"-"+c+".json"} for c in ("single_attempt","nonlogical_retry_3")}
                 for item in record[group].values():
                     raw=json.dumps(result).encode();(folder/item["path"]).write_bytes(raw)
@@ -338,7 +338,8 @@ class SharedAggregateCheckTests(unittest.TestCase):
                     (source/item["path"]).write_text(json.dumps(aggregate))
             for path in (folder/"record.json",source/"record.json"):path.write_text(json.dumps(record))
             for path in [folder/"scoring-inputs.json",folder/"alignment-review.json",folder/"scoring-policy.json",
-                         source/"assessment-policy.json",source/"strict-scoring-policy.json",source/"reviews/formalization.json"]:
+                         source/"assessment-policy.json",source/"strict-scoring-policy.json",
+                         source/"capability-scoring-policy.json",source/"reviews/formalization.json"]:
                 path.write_text("{}")
             with patch.object(cli,"validate_record",return_value={"passed":True}) as validator, \
                  patch.object(cli,"load_assessment_results",return_value={c:result for c in record["assessment_results"]}), \

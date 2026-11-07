@@ -20,7 +20,9 @@ def configure_current(private_root, config, public, private):
     public_count, private_count = len(public.cases), len(private.cases)
     total_count = public_count + private_count
     policy = load(ROOT / "protocol/scoring-policy.json")
-    policy["version"] = "0.6.0"
+    policy["version"] = "0.7.0"
+    policy.update(score_modes=["capability", "partial", "strict"], default_score_mode="partial",
+                  capability_policy_version="0.1.0", score_mode_catalog_version="0.1.0")
     policy["theorem_extension"] = extension
     if background is not None:
         policy["background_check"]=background
@@ -60,7 +62,7 @@ def configure_current(private_root, config, public, private):
     edition["private"].update(suite_sha256=private.sha256, tasks=private_count, standard_slots=private_count)
     edition["combined"].update(tasks=total_count, standard_slots=total_count)
     edition["profile"]["sha256"] = digest(ROOT / edition["profile"]["path"])
-    edition["scoring_policy"].update(version="0.6.0", sha256=digest(ROOT / "protocol/scoring-policy.json"))
+    edition["scoring_policy"].update(version=policy["version"], sha256=digest(ROOT / "protocol/scoring-policy.json"))
     edition["score_capacity"].update(active=90 if background else 80, under_construction=10 if background else 20)
     edition["theorem_extension_policy"] = {"path": "protocol/theorem-extension-policy.json", "version": extension["version"],
                                            "sha256": digest(ROOT / "protocol/theorem-extension-policy.json")}
@@ -77,12 +79,12 @@ def configure_current(private_root, config, public, private):
     write(release_path, release)
     private_edition = load(private_root / "benchmark.json")
     private_edition.update(benchmark_version="0.6.0", case_count=private_count, standard_slots=private_count,
-                           combined_standard_slots=total_count, scoring_method_version="0.6.0")
+                           combined_standard_slots=total_count, scoring_method_version=policy["version"])
     private_edition.pop("version", None)
     private_edition.pop("tasks", None)
     private_edition["theorem_extension"] = {"public_cases": len(extension["public_case_ids"]),
         "private_cases": extension["private_cases"], "policy_version": extension["version"],
-        "formal_attempts": ["A1"], "research_invitation": False, "scoring_method": "0.6.0"}
+        "formal_attempts": ["A1"], "research_invitation": False, "scoring_method": policy["version"]}
     private_edition["suite_sha256"] = private.sha256
     private_edition["score_capacity"].update(active=90 if background else 80, under_construction=10 if background else 20)
     private_edition["case_selection"]["source"] = (
@@ -135,7 +137,7 @@ def configure_current(private_root, config, public, private):
     write(packet / "schedule.json", schedule)
     plan = load(packet / "plan.json")
     plan["planned_slots_per_model"] = public_count
-    plan["assessment_method_version"] = "0.6.0"
+    plan["assessment_method_version"] = policy["version"]
     plan["attempt_schedule"] = {cid: ["A1"] for cid in public.cases}
     from scripts.validate_protocol import check_candidate
     with tempfile.TemporaryDirectory(prefix="math-gauge-adoption-projection-") as temporary:

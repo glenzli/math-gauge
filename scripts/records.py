@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify current archive integrity and recompute both classified score modes."""
+"""Verify current archive integrity and recompute all three classified score modes."""
 import argparse
 import hashlib
 import json
@@ -28,9 +28,9 @@ def check(root=ROOT, *, public_root=None):
         public = Path(public_root).resolve() / folder.relative_to(root) if external else folder
         status = validate_record(folder, formalization_root=public if external else None)
         views = {mode: load_assessment_results(folder, record, mode=mode,
-                    public_root=public if external else None) for mode in ("partial", "strict")}
+                    public_root=public if external else None) for mode in ("capability", "partial", "strict")}
         if any(value is None for value in views.values()):
-            raise ValueError("Current archives require the classified assessment and Strict views")
+            raise ValueError("Current archives require capability, reliable and Strict views")
         if external:
             inputs = load(folder / "scoring-inputs.json")
             retry = load_retry_inputs(folder, record, public_root=public)
@@ -39,6 +39,7 @@ def check(root=ROOT, *, public_root=None):
                 review_path = folder / "alignment-review.json"
             review, source_policy = load(review_path), load(folder / "scoring-policy.json")
             assessment, strict = load(public / "assessment-policy.json"), load(public / "strict-scoring-policy.json")
+            capability = load(public / "capability-scoring-policy.json")
             research = load_theorem_extension_inputs(folder, record, policy=assessment.get("theorem_extension"))
             background = load_background_check_inputs(folder,record,policy=assessment.get("background_check"))
             engineering = load(public / "reviews/formalization.json")
@@ -48,11 +49,12 @@ def check(root=ROOT, *, public_root=None):
                     selected = retry if condition == "nonlogical_retry_3" and retry is not None else inputs
                     derived = score_assessment_record_inputs(selected, review, source_policy,
                         formalization_review=engineering, assessment_policy=assessment,
-                        strict_policy=strict, mode=mode, theorem_extension_inputs=research,background_check_inputs=background)
+                        strict_policy=strict, mode=mode, theorem_extension_inputs=research, background_check_inputs=background,
+                        capability_policy=capability if mode == "capability" else None)
                     for key, value in derived.items():
                         if score.get(key) != value:
                             raise ValueError(f"Archived current score differs from source evidence: {mode}/{key}")
-                    group = "strict_results" if mode == "strict" else "assessment_results"
+                    group = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}[mode]
                     aggregate = load(public / public_record[group][condition]["path"])
                     projected = project_assessment_score(score)
                     projected["source_bindings"]["private_report_sha256"] = hashlib.sha256(

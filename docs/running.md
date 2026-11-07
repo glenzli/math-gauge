@@ -10,3 +10,5 @@
 6. 按[记录合同](../protocol/result-record.md)提交完整包。自报完整与评审核实分开；事后抽取绑定原文，缺字段如实标缺，不重新问模型后冒充原返回。日常运行在被忽略的runs，只有用户指定固定留档才移入results。
 
 检查当前材料：`python3 scripts/validate_protocol.py`；验证题库：`python3 -m math_gauge validate`。公私共用公有runner，不复制到私有仓库。对外release必须来自精确干净源提交，保持已发布资产不可变；本次没有发布。
+
+当前评分提供数学能力MC、可靠数学能力RMC（默认主分）和严格数学交付Strict，首次与允许重跑分别记录；原文的“分项”数学数值对应RMC。MC新增的正向换算不更改原答、源审核和原RMC/Strict分值，见[当前完整报告](results.md)。

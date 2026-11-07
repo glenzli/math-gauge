@@ -30,6 +30,11 @@ def build_data(source_root=ROOT):
     root = Path(source_root).resolve()
     policy = json.loads((root / "protocol/scoring-policy.json").read_bytes())
     strict_policy = json.loads((root / "protocol/strict-scoring-policy.json").read_bytes())
+    mode_catalog = json.loads((root / "protocol/score-modes.json").read_bytes())
+    if (mode_catalog.get("schema") != "math-gauge.score-modes/v1" or mode_catalog.get("default") != "partial"
+            or mode_catalog.get("primary") != "partial"
+            or [m.get("id") for m in mode_catalog.get("modes", [])] != ["capability", "partial", "strict"]):
+        raise ValueError("Current display requires all three named modes and reliable capability as default")
     models, sources = [], []
     for model, label in (("terra-6.1-max", "Terra 6.1 Max"),
                          ("deepseek-v4.1-flash-1017", "DeepSeek v4.1 Flash 1017"),
@@ -40,8 +45,9 @@ def build_data(source_root=ROOT):
         research_source = json.loads((folder / record["theorem_extension_evidence"]["path"]).read_bytes())
         partial = load_assessment_results(folder, record)
         strict = load_assessment_results(folder, record, mode="strict")
-        if partial is None or strict is None:
-            raise ValueError("Current display requires both classified assessment modes")
+        capability = load_assessment_results(folder, record, mode="capability")
+        if partial is None or strict is None or capability is None:
+            raise ValueError("Current display requires all three classified assessment modes")
         combined = partial["single_attempt"]
         provider, filename = MODEL_PROVIDERS[model]
         icon_path = root / "site/assets/logos" / filename
@@ -49,7 +55,7 @@ def build_data(source_root=ROOT):
         models.append({"id": model, "label": label, "theme": dict(MODEL_THEMES[model]),
             "logo": {"label": provider, "data_url": "data:image/svg+xml;base64," + base64.b64encode(icon_bytes).decode("ascii"),
                      "sha256": hashlib.sha256(icon_bytes).hexdigest()},
-            "combined": combined, "strict": strict, "trajectory": record["trajectory"],
+            "combined": combined, "strict": strict, "capability": capability, "trajectory": record["trajectory"],
             "evaluation_progress": {condition: evaluation_progress(result)
                                     for condition, result in partial.items()},
             "lean_formalization_breakdown": combined["lean_formalization_breakdown"],
@@ -69,6 +75,8 @@ def build_data(source_root=ROOT):
                                if research_source.get("excluded_pure_system_failures") else
                                "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。")}})
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
+                 record["capability_scoring_policy"]["path"], record["score_mode_catalog"]["path"],
+                 *(item["path"] for item in record["capability_results"].values()),
                  *(item["path"] for item in record["assessment_results"].values()),
                  *(item["path"] for item in record["strict_results"].values())]
         if record.get("retry_admission"):
@@ -77,13 +85,18 @@ def build_data(source_root=ROOT):
             path = folder / name
             sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
         sources.append({"path": str(icon_path.relative_to(root)), "sha256": hashlib.sha256(icon_bytes).hexdigest()})
-    return {"schema": "math-gauge.current-results-display/v4", "benchmark_version": "0.6.0",
+    for name in ("score-modes.json", "capability-scoring-policy.json"):
+        path = root / "protocol" / name
+        sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+    return {"schema": "math-gauge.current-results-display/v5", "benchmark_version": "0.6.0",
             "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
             "human_review": "pending", "formal_comparison_eligible": False,
             "models": models, "policy": policy, "strict_policy": strict_policy, "sources": sources,
             "capacity": copy.deepcopy(models[0]["combined"]["capacity"]),
             "group_capacity": copy.deepcopy(models[0]["combined"]["group_capacity"]),
-            "publication_scope": "combined", "score_modes": ["partial", "strict"],
+            "publication_scope": "combined", "score_modes": [m["id"] for m in mode_catalog["modes"]],
+            "score_mode_catalog": mode_catalog, "default_score_mode": mode_catalog["default"],
+            "capability_method_version": "0.1.0",
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
 
 
@@ -102,12 +115,13 @@ def evaluation_progress(result):
 def progress_marker(progress):
     if not progress["incomplete"]:
         return ""
-    title = (f"评测未完成：{progress['adjudicated']}/{progress['planned']}题已评，"
+    title = (f"当前已测{progress['adjudicated']}/{progress['planned']}题，"
              f"{progress['pending']}题待测或待评；分数为当前已确认贡献。")
-    return f'<span class="progress-mark" title="{html.escape(title, quote=True)}">未完成</span>'
+    label = f"部分已测 · {progress['adjudicated']}/{progress['planned']}"
+    return f'<span class="progress-mark" title="{html.escape(title, quote=True)}">{label}</span>'
 
 
-def overlaid_bars(models, score_mode="partial"):
+def overlaid_bars(models, score_mode="partial", score_label=None):
     """Top the first-attempt bar with the actual retry gain; never select best-of."""
     groups, labels = [], []
     for model in models:
@@ -118,6 +132,8 @@ def overlaid_bars(models, score_mode="partial"):
                                ("nonlogical_retry_3", model["retry"]["combined"])):
             if score_mode == "strict":
                 result = model["strict"][series]
+            elif score_mode == "capability":
+                result = model["capability"][series]
             value = earned_value(result)
             text = "未决" if value is None else f"{value:.2f}"
             height = 0 if value is None else max(0, min(100, value))
@@ -158,7 +174,7 @@ def overlaid_bars(models, score_mode="partial"):
                        f'<div><dt>增量</dt><dd>{values[1] - values[0]:+.2f}</dd></div></dl></div>')
         spoken = html.escape(model["label"] + "。首次" + descriptions_for_model[0]
                              + "，允许重跑后" + descriptions_for_model[1]
-                             + ("。评测未完成" if model["evaluation_progress"]["single_attempt"]["incomplete"] else ""), quote=True)
+                             + ("。部分已测" if model["evaluation_progress"]["single_attempt"]["incomplete"] else ""), quote=True)
         groups.append(f'<div class="bar-group{" has-extension" if has_gain else ""}" role="group" data-score-mode="{score_mode}" aria-label="{spoken}" '
                       f'data-model="{html.escape(model["id"], quote=True)}"{focus} '
                       f'style="--model-color:{color};--model-ink:{ink}">' + "".join(bars) + value_label + tooltip + '</div>')
@@ -169,7 +185,7 @@ def overlaid_bars(models, score_mode="partial"):
                       f'{progress_marker(model["evaluation_progress"]["single_attempt"])}</div>')
     ticks = "".join(f'<span style="bottom:{value}%">{value}</span>' for value in range(0, 101, 20))
     grid = "".join(f'<i class="chart-gridline" aria-hidden="true" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
-    chart_name = "Strict 已获分" if score_mode == "strict" else "分项已获分"
+    chart_name = (score_label or score_mode) + "已获分"
     capacity = models[0]["combined"]["capacity"]["active"]
     return (f'<div class="chart-frame" role="group" aria-label="公开＋私有{chart_name}，纵轴0至100">'
             f'<div class="chart-axis" aria-hidden="true">{ticks}</div><div class="chart-plot">'
@@ -180,6 +196,7 @@ def overlaid_bars(models, score_mode="partial"):
 def render(data):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
+    mode_names = {m["id"]: m["name"] for m in data["score_mode_catalog"]["modes"]}
     rows = []
     for index, model in enumerate(data["models"], 1):
         label = html.escape(model["label"])
@@ -192,8 +209,10 @@ def render(data):
                     f'<td class="numeric score-cell single-score"><span class="score-number">{display(single)}</span></td>'
                     f'<td class="numeric score-cell retry-score"><span class="score-number">{display(retry)}</span></td>'
                     f'<td class="numeric">—</td><td class="numeric"><a href="{source}">查看 ↗</a></td></tr>')
-    values = {"DATA": payload, "ROWS": "".join(rows), "CHART": overlaid_bars(data["models"]),
-              "STRICT_CHART": overlaid_bars(data["models"], "strict"),
+    values = {"DATA": payload, "ROWS": "".join(rows), "CHART": overlaid_bars(data["models"], "partial", mode_names["partial"]),
+              "STRICT_CHART": overlaid_bars(data["models"], "strict", mode_names["strict"]),
+              "CAPABILITY_CHART": overlaid_bars(data["models"], "capability", mode_names["capability"]),
+              "MODE_CONTROLS": "".join('<button data-score-mode="'+m['id']+'" aria-pressed="'+str(m['id']==data['default_score_mode']).lower()+'">'+html.escape(m['name'])+'</button>' for m in data['score_mode_catalog']['modes']),
               "TASKS": str(data["policy"]["scope"]["tasks"]),
               "PUBLIC": str(data["policy"]["scope"]["public_tasks"]),
               "PRIVATE": str(data["policy"]["scope"]["private_tasks"]),
@@ -207,7 +226,7 @@ def render(data):
               "BACKGROUND_TASKS": str(data['policy']['background_check']['families']),
               "CAPACITY": str(data["capacity"]["active"])}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
-    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|TASKS|PUBLIC|PRIVATE|FAMILIES|RESEARCH_TASKS|COVERAGE_NOTE|CAPACITY|RESERVED|BACKGROUND_TASKS)@@", lambda match: values[match[1]], template)
+    return re.sub(r"@@MG_(DATA|ROWS|CHART|STRICT_CHART|CAPABILITY_CHART|MODE_CONTROLS|TASKS|PUBLIC|PRIVATE|FAMILIES|RESEARCH_TASKS|COVERAGE_NOTE|CAPACITY|RESERVED|BACKGROUND_TASKS)@@", lambda match: values[match[1]], template)
 
 
 def write_site(destination, *, source_root=ROOT):
@@ -226,6 +245,8 @@ def write_site(destination, *, source_root=ROOT):
             for condition, suffix in (("single_attempt", ""), ("nonlogical_retry_3", "-retry")):
                 (dest / "downloads" / (model["id"] + "-combined-strict" + suffix + ".json")).write_text(
                     json.dumps(model["strict"][condition], ensure_ascii=False, indent=2) + "\n")
+                (dest / "downloads" / (model["id"] + "-combined-capability" + suffix + ".json")).write_text(
+                    json.dumps(model["capability"][condition], ensure_ascii=False, indent=2) + "\n")
         # Retire only this renderer's known public-only exports; preserve unrelated files.
         for suffix in ("-public.json", "-public-retry.json"):
             path = dest / "downloads" / (model["id"] + suffix)

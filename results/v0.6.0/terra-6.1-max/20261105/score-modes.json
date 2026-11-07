@@ -1,0 +1,36 @@
+{
+  "schema": "math-gauge.score-modes/v1",
+  "version": "0.1.0",
+  "benchmark_version": "0.6.0",
+  "default": "partial",
+  "primary": "partial",
+  "modes": [
+    {
+      "id": "capability",
+      "name": "数学能力",
+      "abbreviation": "MC",
+      "description": "按有效正向贡献计分，取消显式扣罚。",
+      "policy": "capability-scoring-policy.json",
+      "policy_version": "0.1.0"
+    },
+    {
+      "id": "partial",
+      "name": "可靠数学能力",
+      "abbreviation": "RMC",
+      "description": "按实际完成度计分，保留错误、回退和误报扣罚；默认主分。",
+      "policy": "scoring-policy.json",
+      "policy_version": "0.7.0"
+    },
+    {
+      "id": "strict",
+      "name": "严格数学交付",
+      "abbreviation": "Strict",
+      "description": "整题或规定三轮轨迹满足全部实质要求才给分。",
+      "policy": "strict-scoring-policy.json",
+      "policy_version": "0.2.0"
+    }
+  ],
+  "same_task_pool_weights_and_denominators": true,
+  "legacy_partial_id_means": "reliable_mathematical_capability",
+  "new_candidate_calls": 0
+}
