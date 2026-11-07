@@ -10,6 +10,7 @@ from .case_selection import assessment_family, selected_assessment_cases
 from .theorem_extension import validate_inputs as validate_extension_inputs
 from .case_selection import selected_current_cases
 from .background_check import validate_inputs as validate_background_inputs
+from .written_additions import validate_inputs as validate_written_additions_inputs
 from . import claim_penalties
 from .execution import now
 from .execution_policy import execution_condition
@@ -2288,7 +2289,8 @@ def validate_capability_policy(policy):
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
                             mathematical_substitutions=None, alignment_summary=None,
                             strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None,
-                            capability_policy=None, claim_review=None, claim_policy=None):
+                            capability_policy=None, claim_review=None, claim_policy=None,
+                            written_argument_inputs=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
@@ -2382,6 +2384,30 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 'review_sha256':None if row.get('review') is None else row['review']['sha256']}
             background_levels[sid]={'background_R':level,'complete':row['complete'],
                 'false_endorsement':row.get('false_endorsement'),'downstream_calculation_is_research_credit':False}
+    if written_argument_inputs is not None:
+        if policy.get("written_argument_additions") is None:
+            raise ValueError("Written additions need their selected assessment policy")
+        extra = validate_written_additions_inputs(written_argument_inputs, policy["written_argument_additions"])
+        if extra.get("model_label") != inputs["model_label"]:
+            raise ValueError("Private written evidence belongs to a different model")
+        for case in extra["case_index"]:
+            cid = case["case_id"]
+            if cid in index or any(c["family_id"] == case["family_id"] for c in index.values()):
+                raise ValueError("Written additions cannot replace or duplicate a source task or family")
+            index[cid] = case
+        for row in extra["slots"]:
+            sid = row["slot_id"]
+            if sid in rows and rows[sid].get("response_sha256") != (None if row.get("response") is None else row["response"]["sha256"]):
+                raise ValueError("Written additions cannot replace a frozen source answer")
+            if sid in rows and rows[sid].get("strict_pass") is not None and row["status"] == "not_run":
+                raise ValueError("Written additions cannot hide an existing adjudicated answer")
+            value = (None if row["points"] is None else
+                     Fraction(row["points"], index[row["case_id"]]["total_weight"]))
+            rows[sid] = {"completion": {"lower": 0 if value is None else float(value),
+                "upper": 1 if value is None else float(value), "exact": None if value is None else float(value)},
+                "strict_pass": row["complete"],
+                "response_sha256": None if row.get("response") is None else row["response"]["sha256"],
+                "review_sha256": None if row.get("review") is None else row["review"]["sha256"]}
     substitutions = mathematical_substitutions or {}
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
@@ -2555,7 +2581,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
 def score_assessment_record_inputs(inputs, review, source_policy, *, formalization_review,
                                    assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None,
                                    background_check_inputs=None, capability_policy=None,
-                                   claim_review=None, claim_policy=None):
+                                   claim_review=None, claim_policy=None, written_argument_inputs=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
@@ -2565,7 +2591,7 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
         mathematical_substitutions=substitutions, alignment_summary=alignment,
         strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
         background_check_inputs=background_check_inputs, capability_policy=capability_policy,
-        claim_review=claim_review, claim_policy=claim_policy)
+        claim_review=claim_review, claim_policy=claim_policy, written_argument_inputs=written_argument_inputs)
     result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
     return result
 

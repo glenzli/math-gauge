@@ -17,7 +17,7 @@ def validate_case_selection(selection):
     """Validate the component revision without changing source plans or reviews."""
     if (not isinstance(selection, dict)
             or selection.get("schema") != "math-gauge.case-selection/v1"
-            or selection.get("version") != "0.1.0"
+            or selection.get("version") not in {"0.1.0", "0.2.0"}
             or not isinstance(selection.get("source_revision"), str)
             or not re.fullmatch(r"[0-9a-f]{40}", selection["source_revision"])):
         raise ValueError("Unsupported assessment case selection")
@@ -59,7 +59,8 @@ def selected_assessment_cases(cases, selection, *, current_plan=False):
     public = {cid for cid, case in cases.items() if case["component"] != "exploration"}
     private = {cid for cid, case in cases.items() if case["component"] == "exploration"}
     if (not kept <= public or not public <= source or private & source
-            or len(private) > 3 or (current_plan and public != kept)):
+            or len(private) > (4 if selection["version"] == "0.2.0" else 3)
+            or (current_plan and public != kept)):
         raise ValueError("Assessment case selection differs from the source task inventory")
     if any(cases[cid]["component"] != "proofs" for cid in public - kept):
         raise ValueError("Assessment case selection may retire only public written arguments")

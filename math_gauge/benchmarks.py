@@ -14,6 +14,7 @@ from .case_selection import assessment_family, selected_assessment_cases, valida
 from .theorem_extension import validate_policy as validate_extension_policy
 from .case_selection import selected_current_cases
 from .background_check import validate_policy as validate_background_policy
+from .written_additions import validate_policy as validate_written_additions_policy
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy, validate_case_execution_policy
 
@@ -62,7 +63,16 @@ def validate_assessment_policy(policy):
     background = policy.get("background_check")
     if background is not None:
         validate_background_policy(background)
-    expected = {"written-argument": (25, 8, 3, 11) if selection is not None else (25, 14, 3, 17),
+    additions = policy.get("written_argument_additions")
+    extra_written = 0
+    if additions is not None:
+        validate_written_additions_policy(additions)
+        if policy["version"] != "0.8.0" or selection is None or selection["version"] != "0.2.0":
+            raise ValueError("Written additions require their revised selection and current assessment")
+        extra_written = additions["private_cases"]
+    elif selection is not None and selection["version"] == "0.2.0":
+        raise ValueError("Revised private selection requires its source-bound written addition")
+    expected = {"written-argument": (25, 8, 3 + extra_written, 11 + extra_written) if selection is not None else (25, 14, 3, 17),
                 "argument-review": (10, 4, 0, 4),
                 "lean-audit": (10, 4, 0, 2), "lean-formalization": (15, 4, 0, 2),
                 "lean-selfcheck": (10, 1, 0, 1), "background-check": (10, 2, 2, 4) if background is not None else (10, 0, 0, 0),
@@ -82,6 +92,8 @@ def validate_assessment_policy(policy):
                        ([], "trajectory"), (["background-check"] if background is not None else [], "family"), ([], "family"),
                        (["theorem-extension"] if extension else [], "family")]
     public_count, total_count, family_count = (20, 23, 19) if selection is not None else (26, 29, 21)
+    total_count += extra_written
+    family_count += extra_written
     if extension:
         public_count += len(extension_policy["public_case_ids"])
         total_count += extension_policy["families"]

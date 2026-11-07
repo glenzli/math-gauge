@@ -31,11 +31,11 @@ class CurrentAssessmentTests(unittest.TestCase):
     def test_fixed_reserve_and_private_denominators_survive_complete_public_answers(self):
         r=score_assessment_inputs(self.inputs(),self.policy,self.strict,
             strict_trajectory={'strict_pass':True},mode='strict')
-        self.assertAlmostEqual(r['metrics']['earned']['lower'],70-25*3/11)
+        self.assertAlmostEqual(r['metrics']['earned']['lower'],70-25*4/12)
         self.assertEqual(r['metrics']['earned']['upper'],90)
         self.assertIsNone(r['metrics']['earned']['exact'])
         self.assertEqual(r['metrics']['overall']['upper'],100)
-        self.assertEqual(r['whole_task_counts'],{'planned':33,'passed':20,'failed':0,'unknown':13})
+        self.assertEqual(r['whole_task_counts'],{'planned':34,'passed':20,'failed':0,'unknown':14})
         self.assertEqual(r['metrics']['lean-selfcheck']['exact'],100)
         self.assertEqual(r['contributions']['lean-selfcheck']['exact'],10)
     def test_empty_run_does_not_invent_completed_tasks_or_normalize_scores(self):
@@ -43,7 +43,7 @@ class CurrentAssessmentTests(unittest.TestCase):
         self.assertIsNone(r['metrics']['overall']['exact'])
         self.assertEqual(r['capacity'],{'total':100,'active':90,'under_construction':10})
         self.assertEqual(r['metrics']['overall']['upper'],100)
-        self.assertEqual(r['whole_task_counts']['unknown'],33)
+        self.assertEqual(r['whole_task_counts']['unknown'],34)
         public=public_score_projection(r,self.plan,private_aliases={})
         self.assertNotIn('tasks',public);self.assertNotIn('slot_evidence',public)
     def test_family_first_formalization_and_merged_argument_pool(self):
@@ -53,7 +53,7 @@ class CurrentAssessmentTests(unittest.TestCase):
         r=score_assessment_inputs(inputs,self.policy,self.strict)
         self.assertEqual(r['metrics']['lean-formalization']['exact'],50)
         self.assertEqual(r['contributions']['lean-formalization']['exact'],7.5)
-        self.assertEqual(r['metrics']['written-argument']['coverage']['planned'],11)
+        self.assertEqual(r['metrics']['written-argument']['coverage']['planned'],12)
     def test_policy_rejects_weight_source_or_fixed_population_drift(self):
         for key in ('weight','aggregation','source_components'):
             changed=copy.deepcopy(self.policy)

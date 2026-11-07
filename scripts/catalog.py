@@ -311,7 +311,7 @@ def render_index(catalog: dict) -> str:
             state = "建设中" if child["status"] == "under_construction" else "当前计分"
             lines.append(f"| {group['title']}（{group['weight']}%） | {child['title']} | {child['weight']}% | "
                          f"{count} | {child['private_tasks']} | {state} |")
-    lines += ["", f"当前{public_tasks}道公有与{private_tasks}道私有题合并评测，已建权重{active}/100；其余{100-active}分预留，不重新归一化，也不计为模型答错。原私有探索三题并入书面论证；命题拓展另含公有2题、私有3题，仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。", ""]
+    lines += ["", f"当前{public_tasks}道公有与{private_tasks}道私有题合并评测，已建权重{active}/100；其余{100-active}分预留，不重新归一化，也不计为模型答错。私有书面题并入同一书面论证池；命题拓展与背景核查按上表固定家族数、仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。", ""]
     for category in catalog["source_categories"]:
         lines += ["", f"## {category['label']} · {category['default_count']}份", "",
                   "| 试卷 | 任务 | 必答规模 | 完整材料 |", "| --- | --- | ---: | --- |"]

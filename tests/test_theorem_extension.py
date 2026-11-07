@@ -106,7 +106,7 @@ class TheoremExtensionScoringTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_inputs(self.research(), changed)
         public = project_assessment_score(self.score(self.research()))
-        self.assertEqual(public["private_case_count"], 9)
+        self.assertEqual(public["private_case_count"], self.policy["scope"]["private_tasks"])
         self.assertNotIn("tasks", public)
         self.assertNotIn("Fixture-Private-", json.dumps(public))
 

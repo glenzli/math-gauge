@@ -7,6 +7,7 @@ scoring.py; execution remains in execution.py and the existing harness.
 import hashlib
 import json
 import copy
+import re
 from pathlib import Path, PurePosixPath
 
 SCHEMA = "math-gauge.result-record/v1"
@@ -356,6 +357,104 @@ def validate_public_background_check(root,record):
             raise ValueError('Public background judgment lost its source answer')
     return data
 
+def load_written_argument_inputs(root, record, *, policy=None):
+    """Bind added private written judgments to unchanged source tasks and A1 bytes."""
+    if record.get("written_argument_inputs") is None:
+        return None
+    from .written_additions import validate_inputs
+    data = json.loads(evidence_bytes(root, record["written_argument_inputs"]))
+    selected = data["policy"] if policy is None else policy
+    validate_inputs(data, selected)
+    cases = {c["case_id"]: c for c in data["case_index"]}
+    for case in cases.values():
+        for field, hash_key in (("original_task", "task_sha256"), ("contract", "contract_sha256")):
+            if hashlib.sha256(evidence_bytes(root, case[field])).hexdigest() != case[hash_key]:
+                raise ValueError("Written addition retained different task or contract bytes")
+        contract = json.loads(evidence_bytes(root, case["contract"]))
+        rubric = json.loads(evidence_bytes(root, case["source_rubric"]))
+        evidence_bytes(root, case["reference"])
+        units = contract["criteria" if contract.get("kind") == "written_proof" else "dimensions"]
+        weights = [{"criterion_id": c["id"], "points": c["points"]} for c in units]
+        if (contract.get("id") != case["case_id"] or contract.get("kind") != case["contract_kind"]
+                or weights != case["criteria"] or weights != [
+                    {"criterion_id": c["id"], "points": c["points"]} for c in rubric["criteria"]]
+                or rubric.get("total_points") != case["total_weight"]
+                or rubric.get("task_sha256") != case["task_sha256"]):
+            raise ValueError("Written addition changed its original criterion weights")
+    for row in data["slots"]:
+        if row["status"] == "not_run":
+            continue
+        execution = json.loads(evidence_bytes(root, row["execution"]))
+        if row["status"] == "delivery_failed":
+            if execution.get("status") == "completed":
+                raise ValueError("Completed written return cannot become missing delivery")
+            continue
+        case = cases[row["case_id"]]
+        raw = evidence_bytes(root, row["response"])
+        source = json.loads(evidence_bytes(root, row["source_review"]))
+        review = json.loads(evidence_bytes(root, row["review"]))
+        statement = evidence_bytes(root, case["original_task"])
+        candidate_input = evidence_bytes(root, row["candidate_input"])
+        frozen = json.loads(evidence_bytes(root, row["original_test_plan"]))
+        control_bytes = evidence_bytes(root, row["original_capability_control"])
+        control = json.loads(control_bytes)
+        native_control = json.loads(evidence_bytes(root, row["native_capability_control"]))
+        if (review.get("schema") != "math-gauge.written-addition-review/v1"
+                or review.get("case_id") != row["case_id"] or review.get("stage") != "A1"
+                or review.get("points") != row["points"] or review.get("complete") != row["complete"]
+                or review.get("answer_sha256") != row["response"]["sha256"]
+                or review.get("source_review_sha256") != row["source_review"]["sha256"]
+                or source.get("answer_sha256") != row["response"]["sha256"]
+                or source.get("rubric_sha256") != case["source_rubric"]["sha256"]
+                or source.get("score") != row["points"] or source.get("strict_pass") != row["complete"]
+                or source.get("total_points") != case["total_weight"]
+                or execution.get("status") != "completed" or execution.get("kind") != "math"
+                or execution.get("request_count") != 1 or execution.get("exit_code") != 0
+                or execution.get("tool_mismatch") is not None
+                or execution.get("artifact_hashes", {}).get("output/response.md") != row["response"]["sha256"]
+                or execution.get("artifact_hashes", {}).get("input/task.md") != row["candidate_input"]["sha256"]
+                or frozen.get("statement_sha256") != case["task_sha256"]
+                or frozen.get("input_sha256") != row["candidate_input"]["sha256"]
+                or frozen.get("rubric_sha256") != case["source_rubric"]["sha256"]
+                or frozen.get("reference_sha256") != case["reference"]["sha256"]
+                or not candidate_input.endswith(statement)
+                or "prefix_verbatim" in frozen and candidate_input != frozen["prefix_verbatim"].encode() + statement
+                or control.get("passed") is not True or control.get("mathematical_calls") != 0
+                or any(control.get("report", {}).get(key) is not True for key in (
+                    "work_file_roundtrip", "protected_open_denied", "tool_network_denied"))
+                or control.get("plan_sha256") != row["original_test_plan"]["sha256"]
+                or native_control.get("source_control_sha256") != hashlib.sha256(control_bytes).hexdigest()):
+            raise ValueError("Written addition judgment differs from its original answer, rubric or native execution")
+        criteria = source.get("criteria", [])
+        if (len(criteria) != len(case["criteria"])
+                or [{"criterion_id": c["id"], "points": c["max_points"]} for c in criteria] != case["criteria"]
+                or any(type(c.get("points")) is not int or not 0 <= c["points"] <= c["max_points"] for c in criteria)
+                or sum(c["points"] for c in criteria) != row["points"]):
+            raise ValueError("Written addition credit differs from the retained criterion review")
+        for criterion in criteria:
+            for quote in criterion.get("evidence", []):
+                if raw[quote["start"]:quote["end"]] != quote["quote"].encode():
+                    raise ValueError("Written addition review quotes different original answer bytes")
+        _validate_research_tool_evidence(root, row, execution, selected)
+        for item in row.get("artifacts", []):
+            evidence_bytes(root, item)
+    return data
+
+
+def validate_public_written_additions(root, record):
+    """Public records expose only the additional private population and opaque hash."""
+    if record.get("written_argument_evidence") is None:
+        return None
+    data = json.loads(evidence_bytes(root, record["written_argument_evidence"]))
+    if (set(data) != {"schema", "private_cases", "source_inputs_sha256", "human_review", "formal_comparison_eligible"}
+            or data["schema"] != "math-gauge.written-additions-public-evidence/v1"
+            or data["private_cases"] != 1 or data["human_review"] != "pending"
+            or data["formal_comparison_eligible"] is not False
+            or not re.fullmatch(r"[0-9a-f]{64}", data["source_inputs_sha256"])):
+        raise ValueError("Private written evidence crossed its aggregate-only public boundary")
+    return data
+
+
 def load_claim_review(root, record, condition, *, public_root=None):
     """Verify an appended claim audit without altering any source adjudication."""
     from .claim_penalties import validate_review
@@ -442,6 +541,10 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     assessment_raw = evidence_bytes(evidence_root, record["assessment_policy"])
     strict_raw = evidence_bytes(evidence_root, record["strict_scoring_policy"])
     assessment = validate_assessment_policy(json.loads(assessment_raw))
+    if assessment.get("written_argument_additions") is not None:
+        key = "written_argument_inputs" if external else "written_argument_evidence"
+        if record.get(key) is None:
+            raise ValueError("Current written additions require their retained source evidence")
     validate_strict_assessment_policy(json.loads(strict_raw))
     claim_raw = None
     if assessment["version"] == "0.8.0":
@@ -508,12 +611,19 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if record.get('background_check_inputs') is not None:
                 load_background_check_inputs(root,record,policy=assessment.get('background_check'))
                 expected['background_check_inputs_sha256']=root/record['background_check_inputs']['path']
+            if record.get("written_argument_inputs") is not None:
+                load_written_argument_inputs(root, record, policy=assessment.get("written_argument_additions"))
+                expected["written_argument_inputs_sha256"] = root / record["written_argument_inputs"]["path"]
             if any(bindings.get(key) != hashlib.sha256(path.read_bytes()).hexdigest()
                    for key, path in expected.items()):
                 raise ValueError("Current score binds different source judgments")
         else:
             if score != project_assessment_score(score):
                 raise ValueError("Current public score must contain only projected aggregates")
+            written = validate_public_written_additions(root, record)
+            if (written is not None and bindings.get("written_argument_inputs_sha256")
+                    != written["source_inputs_sha256"]):
+                raise ValueError("Public written aggregate binds a different private input source")
         scores[condition] = score
     return scores
 
@@ -739,6 +849,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
     validate_public_theorem_extension(root, record)
     load_background_check_inputs(root, record)
     validate_public_background_check(root, record)
+    load_written_argument_inputs(root, record)
+    validate_public_written_additions(root, record)
     if record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:

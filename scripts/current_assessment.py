@@ -17,6 +17,8 @@ def configure_current(private_root, config, public, private):
     extension = validate_policy(load(ROOT / "protocol/theorem-extension-policy.json"))
     background_path=ROOT/"protocol/background-check-policy.json"
     background=load(background_path) if background_path.exists() else None
+    written_path = ROOT / "protocol/written-additions-policy.json"
+    written = load(written_path) if written_path.exists() else None
     public_count, private_count = len(public.cases), len(private.cases)
     total_count = public_count + private_count
     policy = load(ROOT / "protocol/scoring-policy.json")
@@ -24,6 +26,14 @@ def configure_current(private_root, config, public, private):
     policy.update(score_modes=["capability", "partial", "strict"], default_score_mode="partial",
                   capability_policy_version="0.2.0", claim_penalty_policy_version="0.1.0", score_mode_catalog_version="0.1.0")
     policy["theorem_extension"] = extension
+    if written is not None:
+        from math_gauge.written_additions import validate_policy as validate_written_policy
+        validate_written_policy(written)
+        policy["written_argument_additions"] = written
+        selection = load(ROOT / "protocol/case-selection.json")
+        policy["case_selection"] = {key: selection[key] for key in policy["case_selection"]}
+        next(c for c in policy["subcategories"] if c["id"] == "written-argument").update(
+            private_tasks=3 + written["private_cases"], families=11 + written["families"])
     if background is not None:
         policy["background_check"]=background
         next(c for c in policy["subcategories"] if c["id"]=="background-check").update(
@@ -32,7 +42,7 @@ def configure_current(private_root, config, public, private):
     leaf.update(source_components=["theorem-extension"], public_tasks=len(extension["public_case_ids"]),
                 private_tasks=extension["private_cases"], families=extension["families"], status="active")
     policy["scope"].update(public_tasks=public_count, private_tasks=private_count, tasks=total_count,
-                           parent_families=19 + extension["families"] + (4 if background else 0),
+                           parent_families=19 + extension["families"] + (4 if background else 0) + (written["families"] if written else 0),
                            initial_slots=total_count, public_initial_slots=public_count)
     write(ROOT / "protocol/scoring-policy.json", policy)
     profile = load(ROOT / "protocol/benchmark-profile.json")
@@ -72,6 +82,10 @@ def configure_current(private_root, config, public, private):
     if background is not None:
         edition["background_check_policy"]={"path":"protocol/background-check-policy.json",
             "version":background["version"],"sha256":digest(background_path)}
+    if written is not None:
+        edition["written_additions_policy"] = {"path": "protocol/written-additions-policy.json",
+            "version": written["version"], "sha256": digest(written_path)}
+        edition["case_selection"].update(version=selection["version"], sha256=digest(ROOT / "protocol/case-selection.json"))
     write(ROOT / "benchmark.json", edition)
     release_path = ROOT / "releases/v0.6.0/config.json"
     release = load(release_path)
@@ -88,8 +102,13 @@ def configure_current(private_root, config, public, private):
     private_edition["suite_sha256"] = private.sha256
     private_edition["score_capacity"].update(active=90 if background else 80, under_construction=10 if background else 20)
     private_edition["case_selection"]["source"] = (
-        f"shared20-public/3-private legacy selection plus{len(extension['public_case_ids'])}-public/"
-        f"{extension['private_cases']}-private theorem extension")
+        f"shared20-public/3-private frozen legacy selection plus{len(extension['public_case_ids'])}-public/"
+        f"{extension['private_cases']}-private theorem extension, "
+        f"{4 if background else 0} background checks and {written['private_cases'] if written else 0} added private written arguments")
+    if written is not None:
+        private_edition["case_selection"]["version"] = selection["version"]
+        private_edition["written_argument_additions"] = {"private_cases": written["private_cases"],
+            "policy_version": written["version"], "formal_attempts": ["A1"]}
     if background is not None:
         private_edition["background_check"]={"public_cases":2,"private_cases":2,"families":4,
             "policy_version":background["version"],"formal_attempts":["A1"]}

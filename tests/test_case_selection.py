@@ -31,13 +31,14 @@ def assessment_policy(plan, *, selected=True):
         policy.pop(key, None)
     policy.pop("theorem_extension", None)
     policy.pop("background_check", None)
+    policy.pop("written_argument_additions", None)
     background=next(row for row in policy["subcategories"] if row["id"]=="background-check")
     background.update(source_components=[],public_tasks=0,private_tasks=0,families=0,status="under_construction")
     research = next(row for row in policy["subcategories"] if row["id"] == "theorem-extension")
     research.update(source_components=[], public_tasks=0, private_tasks=0,
                     families=0, status="under_construction")
     policy.pop("case_selection", None)
-    policy["subcategories"][0].update(public_tasks=8 if selected else 14, families=11 if selected else 17)
+    policy["subcategories"][0].update(public_tasks=8 if selected else 14, private_tasks=3, families=11 if selected else 17)
     public, total, families = (20, 23, 19) if selected else (26, 29, 21)
     policy["scope"].update(public_tasks=public, private_tasks=3, tasks=total, parent_families=families,
                            initial_slots=total, public_initial_slots=public)
