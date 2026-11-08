@@ -1,14 +1,25 @@
-# 运行与交付指南
+# 运行入口
 
-当前benchmark0.6.0，聚合方法0.8.0／Strict0.2.0，均为本地未发布草稿。默认公开25个独立A1；公私完整39个A1、35个数学家族，加C003独立计10分的固定三轮对齐自查。命题拓展6题占10分，只计无提示A1，不发研究邀请；数学想法手稿化五个等权家族（公1／私4）分享10分，当前已建100分；39份A1与三轮自查共42次规定交付。旧A2、书面自查和立场分支不再默认安排。
+Math Gauge0.6.0已封版。其他Harness按[统一运行与交付指南](harness-guide.md)执行；其中列出精确请求、作答结构、Lean工程、三组预算、独立首答、C003连续三轮、全部尝试记录与导入步骤。
 
-1. 阅读[评测协议](../protocol/evaluation.md)、[评分规则](../protocol/benchmark-scoring.md)和每题完整材料。先冻结题面、模型／harness、系统提示、参数、工具网络与各层预算。候选包只包含明确投影的题面和允许附件，不能带参考、判准、主计划或运行指南。
-2. 每题A1使用独立上下文与工程。依当前执行分组冻结预算：Lean七题5400秒，C003及其每轮自查10800秒，普通新书面、审阅及命题拓展2700秒。所有正式测试允许本地工具和预置公共依赖，禁止联网检索和工具联网；模型服务及登录认证连接另行记录。保留原生工具反馈，不向研究候选提示评分方向或发邀请。独立无工具答卷不再留档；复用原答保留原条件及未知项，不能标作新调用。
-3. 保存完整UTF-8最终答复、原自评、所有代码块及附件、可获得的原生事件和工具反馈。Lean要求完整工程、入口／import闭包及原alignment.json。原生终态或截止后停止写入封卷；生成完成、CLI退出与交付完整分别记录。
-4. C003从自己封卷初答接续固定3轮，使用[冻结提示](../protocol/lean-alignment/neutral-prompt.txt)，不因自称100%提前停止。只见自己历史和工程，不给参考、外部评审或其他模型答案。每轮保留源码与自报，最后规定轮次是最终交付，不挑最好一轮、不取并集。
-5. 超预算无最终答复记交付失败，原单次为0。仅非逻辑无交付故障可按[接纳规则](../protocol/nonlogical-retries.md)含初次最多3次，首次正常交付即停止。初次与重跑两组并行保存；数学错误不重试，不额外扩展自查轮次。
-6. 按[记录合同](../protocol/result-record.md)提交完整包。自报完整与评审核实分开；事后抽取绑定原文，缺字段如实标缺，不重新问模型后冒充原返回。日常运行在被忽略的runs，只有用户指定固定留档才移入results。
+- [公开发布](https://github.com/glenzli/math-gauge/releases/tag/v0.6.0)：25个A1候选题包。
+- 受控私版：39个A1完整候选题包，已包含公版25题，不重复执行。
+- [三轮合同](../protocol/lean-alignment/study.json)及[固定提示](../protocol/lean-alignment/neutral-prompt.txt)：独立于A1清单，完整评测必须继续三轮。
 
-检查当前材料：`python3 scripts/validate_protocol.py`；验证题库：`python3 -m math_gauge validate`。公私共用公有runner，不复制到私有仓库。对外release必须来自精确干净源提交，保持已发布资产不可变；本次没有发布。
+候选只接收控制器生成的精确消息与附件；README、计划、参考、判准和评审留在运行／评审端。下载GitHub源码归档不能代替候选题包。
 
-当前评分提供数学能力MC、可靠数学能力RMC（默认主分）和严格数学交付Strict，首次与允许重跑分别记录；原文的“分项”数学数值对应RMC。MC新增的正向换算不更改原答、源审核和原RMC/Strict分值，见[当前完整报告](results.md)。
+## 从固定源码重建公开发行
+
+在v0.6.0精确干净源提交中执行，输出使用仓库外新目录：
+
+```sh
+python3 scripts/release.py build --version 0.6.0 --source-commit FULL_PUBLIC_COMMIT --out /absolute/path/to/new-assets
+python3 scripts/release.py check --archive /absolute/path/to/new-assets/benchmark-v0.6.0.zip --checksums /absolute/path/to/new-assets/SHA256SUMS --source-commit FULL_PUBLIC_COMMIT
+python3 scripts/release.py evaluator-plan --version 0.6.0 --source-commit FULL_PUBLIC_COMMIT --out /absolute/path/to/trusted-evaluator-plan.json
+```
+
+完整私版从其锁定的公私两份源码和组合profile使用同一共享发布器构建；具体命令随私版提供。release-lock.json绑定实际公私提交和资产散列。准备、检查、导入与重建不调用模型。
+
+## 记录与评分
+
+[外部交换合同](../protocol/external-harness.md)说明便携交换层及原生记录的边界；[正式结果合同](../protocol/result-record.md)保存全原答、工具／执行证据、模型自评、逐项审核和三轮轨迹。源码中的共享scoring.py负责最终MC／RMC／SMC与两率，固定满分100，未测保持未知。

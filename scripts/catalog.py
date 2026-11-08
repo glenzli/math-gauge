@@ -312,10 +312,12 @@ def render_index(catalog: dict) -> str:
     for group in catalog["categories"]:
         for child in group["children"]:
             count = "复用1题/3轮" if child["aggregation"] == "trajectory" else str(child["public_tasks"])
-            state = "建设中" if child["status"] == "under_construction" else "当前计分"
+            state = "预留权重" if child["status"] == "under_construction" else "当前计分"
             lines.append(f"| {group['title']}（{group['weight']}%） | {child['title']} | {child['weight']}% | "
                          f"{count} | {child['private_tasks']} | {state} |")
-    lines += ["", f"当前{public_tasks}道公有与{private_tasks}道私有题合并评测，已建权重{active}/100；其余{100-active}分预留，不重新归一化，也不计为模型答错。私有书面题并入同一书面论证池；命题拓展与背景核查按上表固定家族数、仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。", ""]
+    capacity_note = (f"权重覆盖{active}/100。" if active == 100 else
+                     f"已建权重{active}/100；其余{100-active}分预留。")
+    lines += ["", f"当前{public_tasks}道公有与{private_tasks}道私有题合并评测，{capacity_note}未测项目保持未知，不重新归一化，也不计为模型答错。私有书面题并入同一书面论证池；命题拓展与背景核查按上表固定家族数、仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。", ""]
     for category in catalog["source_categories"]:
         lines += ["", f"## {category['label']} · {category['default_count']}份", "",
                   "| 试卷 | 任务 | 必答规模 | 完整材料 |", "| --- | --- | ---: | --- |"]

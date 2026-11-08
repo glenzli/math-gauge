@@ -63,7 +63,7 @@
 
 ## 当前三评分结果
 
-默认25公开／39合并A1，公私共35个数学家族，另三轮Lean自查，共42次规定交付；旧输入中的A2和书面分支只保留为来源，不占当前分。公私统一书面35／Lean35／研究30；命题拓展公2／私4已建，当前已建100分，数学想法手稿化10分已建。三种模式以metrics.earned.confirmed表示已核实贡献／100；有未测题时earned.exact为null，未测项存在时metrics.overall.exact为null。完整区间保留未测项的可能得分与扣分及未测的数学想法手稿化家族。建设中、未测与模型失败分别标识，不发布独立公有总分。
+默认25公开／39合并A1，公私共35个数学家族，另三轮Lean自查，共42次规定交付；旧输入中的A2和书面分支只保留为来源，不占当前分。公私统一书面35／Lean35／研究30；命题拓展公2／私4已建，当前已建100分，数学想法手稿化10分已建。三种模式以metrics.earned.confirmed表示已核实贡献／100；有未测题时earned.exact为null，未测项存在时metrics.overall.exact为null。完整区间保留未测项的可能得分与扣分及未测的数学想法手稿化家族。未测与模型失败分别标识，不发布独立公有总分。
 
 `record.json`以`assessment_policy`绑定当前聚合0.8.0，`strict_scoring_policy`绑定Strict0.2.0；`assessment_results`与`strict_results`均包含single_attempt／nonlogical_retry_3两个安全文件描述符。来源`scoring-policy.json`保持0.4.0以核验旧数学审核，不改旧审核散列。新报告分别绑定原计分输入、原数学政策、对齐审核、工程审核和当前政策；公开投影另绑定私有完整报告散列。
 

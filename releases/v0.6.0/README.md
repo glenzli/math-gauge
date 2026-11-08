@@ -1,31 +1,87 @@
-# Benchmark 0.6.0 operator guide
+# Benchmark 0.6.0 · public operator package
 
-This is the current draft dataset: 24 public tasks, 24 independent A1 slots. Public and private scopes share benchmark version 0.6.0. This local preparation does not constitute a published release or an execution.
+Version 0.6.0 is sealed. This immutable package contains 25 independent A1 tasks.
+The separately controlled complete package contains these 25 plus 14 private
+A1 tasks: 39 tasks, 35 mathematical families. Use one package, not both.
+A full assessment also continues C003 through three fixed selfcheck rounds;
+those rounds are separate from this A1 manifest and make 42 scored deliveries.
 
-Only each issued role message and its explicit attachments go to the solver. This README, manifest, controller, runtime declarations and recording instructions are operator material. References, rubrics, expected truth and review information are outside this dataset.
+Download the companion harness-guide-v0.6.0.md, alignment-study-v0.6.0.json and
+neutral-prompt-v0.6.0.txt from the same release. The guide specifies answer
+structure, engineering returns, exact continuation prompts, attempts and import.
+These are operator materials. Only complete generated messages, explicit
+attachments, frozen parameters and permitted own history go to a candidate.
+References, rubrics, expected truth, review plans and old answers are excluded.
 
-Freeze each model, system prompt, actual supported parameters, tool/network conditions and budget in a new run workspace. Use an independent context for each A1. The separate fixed-three-round C003 study retains only its own history. Written repeats and stance arms are retired from the current default plan. Do not mix histories. The controller's target groups select execution; they do not change benchmark denominators.
+## Prepare independent A1 contexts
 
-C003 initial construction uses 10800 seconds; the other seven new Lean tasks use 5400 seconds. Written, answer-review, background-check and theorem-extension A1 use their declared budgets (the current supplement uses 2700 seconds). All formal tests permit local tools and preinstalled public dependencies, prohibit external retrieval and tool networking, and record model-service/authentication connections separately. Historical no-tools answers are a separate condition. The separate three-round C003 alignment study is not automatically created by the standard24-slot dataset.
+Python 3.10+ and the standard library suffice. The controller never calls models.
+Keep runtime declarations and every output outside this downloaded directory.
+Freeze actual model and adapter identities, system prompt, supported parameters,
+tools, network controls and native/broker/outer budgets before calls. Preserve
+unknown settings as unknown. Local tools and preinstalled public dependencies
+are allowed for every task; external retrieval and tool networking are forbidden.
+Model-service and authentication traffic are recorded separately.
 
-## Record the complete return
+Use c003-180 for the one C003 initial task at10800 seconds, lean-90 for seven
+other Lean tasks at5400 seconds, and the union proofs + answer-review +
+theorem-extension + background-check + manuscript-completion for the17 other
+public tasks at2700 seconds. Each budget group gets a new runtime and run.
+The complete package's last union has31 tasks. Do not freeze all tasks at2700.
 
-Preserve the complete original final response, beginning and ending included, self-assessment, KEEP/FULL markers, named code blocks, attachments, actual role messages, available tool/response events and original transport outcomes. Hidden reasoning is neither required nor reconstructed. Unknown usage, native limits and backend identity remain explicitly unknown.
+```sh
+python3 tools/benchmark.py check
+python3 tools/benchmark.py prepare --runtime ../runtime-10800.json --target c003-180 --out ../run-c003
+python3 tools/benchmark.py request --run ../run-c003 --responses ../responses-c003 --slot MG-C003:A1 --out ../request.json
+python3 tools/benchmark.py record --run ../run-c003 --responses ../responses-c003 --slot MG-C003:A1 --request ../request.json --response ../raw-answer.md --status ok
+python3 tools/benchmark.py pack --run ../run-c003 --responses ../responses-c003 --out ../answers-c003.zip --origin external --declared-external-calls N
+```
 
-Record every attempt's model label/version, harness identity, system prompt, sampling/reasoning settings, supported parameters, allowed tools, network conditions and outer/native/broker budgets. A label, UUID, hash or timestamp does not authenticate the provider.
+Replace N with all physical model calls, including failures and retries.
+Only use ok for observed successful native/transport delivery. Runtime settings
+for this neutral package use execution_track benchmark.local-tools-no-search/v1.
+Use only supported output limits; budget.timeout_seconds must match the group.
+The companion guide provides full runtime examples and the other target groups.
 
-For each answer retain raw UTF-8 bytes with relative path, byte count and SHA-256. Keep the raw response and the sealed engineering workspace separate. Record parent answer, KEEP/FULL, inherited body, actual files, entry point, import closure, alignment manifest, seal trigger, stop and collection times. Compilation or readable text alone does not establish successful delivery.
+## Preserve the full original return
 
-Self-assessment uses value complete / incomplete / uncertain, scope full_task / compilation / format / named_subgoal, origin model_structured / extracted_from_original / not_available, and original evidence. Extracted prose needs exact quotation with UTF-8 start/end byte offsets and the source response hash. Distinguish not_requested, not_stated, ambiguous and missing original response. A local compilation claim does not imply full-task completeness. An evaluator judgment is not a model declaration.
+Save complete UTF-8 response bytes, beginning and end, self-assessment,
+uncertainty, KEEP/FULL markers, named code blocks and explicit attachments.
+Hidden reasoning is not required or reconstructed. Save actual request/response
+and tool events, original stderr, known usage, every physical request and its
+outcome. Original engineering workspaces, entry point, full import closure and
+alignment table are sealed separately; record/pack do not collect them for you.
+Where the issued task requires full named files, links or patches do not replace
+that content. Do not invent missing self-assessment or repair an answer.
 
-These recording rules do not add a new prompt to this immutable dataset. A future required candidate self-assessment must be explicitly included in a versioned candidate message. Never ask a model retrospectively and label the new answer as an old self-assessment.
+Seal at the first native terminal or fixed deadline, whichever occurs first.
+Record native generation, stop, collection and CLI cleanup separately. Readable
+ERROR is not SUCCESS. Honest incompleteness and mathematical errors are reviewed
+from the first normal delivery; neither permits a quality retry.
 
-## Finish and retain a run
+The benchmark allows at most three effective model attempts under its fixed
+acceptance policy. Output exhaustion consumes one; evidenced pure system faults
+retain physical numbers and exclusion evidence. Keep this full ledger. The
+portable exchange itself supports at most two transport attempts per slot and
+does not implement that whole acceptance policy. Never relabel a later request
+as the first or hide extra requests; use the companion formal-record guidance.
 
-Preserve every prescribed round, including failure, missing and unresolved states. Use the last prescribed delivery, never the best round or a union of proofs. Record reviewed completion by obligation, adjacent repairs and regressions, first claimed/verified full completion, subsequent verified maintenance, false full-completion claims, last state and actual stopping reason. Finite stability is only an observation over recorded rounds.
+## Continue and retain C003
 
-Keep model statements, delivery/compilation evidence, mathematical review and human approval separate. No missing field is invented; missing slots remain in fixed denominators. Separate public/private raw returns. A combined public display may contain only private aggregates.
+After the sealed C003 A1, continue three10800-second rounds with the separately
+supplied exact neutral prompt. Use only this model's own visible history and
+adjacent parent project. Do not provide references or reviewer feedback. Do not
+stop on a self-claimed100percent. KEEP inherits the entire adjacent parent
+response and file bytes; FULL resubmits the complete answer and required files.
+Save all rounds and use the last prescribed delivery, never the best round or
+a union. Later repairs do not replace A1 formalization credit.
 
-A formal record follows result-record/v1 (the repository record contract) and results/v0.6.0/<model>/<record-id>/: record.json, raw responses, attachments, per-answer reviews, frozen scoring inputs/policy, current result and trajectory. Mark source versions and conditions when reusing compatible earlier answers. Until a user explicitly selects fixed retention, workspaces and logs are temporary. This guide authorizes no model calls, grading, publication or submission by itself.
-
-The current assessment uses written35 / Lean35 / research30, including a separately scored10-point three-round Lean selfcheck. Theorem extension has2 public and3 private cases, worth10 points, graded from the original unprompted A1 only. Do not issue a research invitation under any outcome. Record original-task correctness B separately from extension level R; partial credit is (R-D)/3 with D(B0/B1/B2)=2/1/0, allowing negative task credit. Strict requires B2 and R3. Background checking and manuscript completion remain unbuilt (20 points), so built capacity is80; report confirmed contributions in the full100-point frame, keep unrun cases unknown and never rescale80 to100. The complete total remains unknown. Partial and Strict use the same weights, with Strict judging each task and the full selfcheck trajectory as binary units. This operator explanation must not be inserted into candidate messages.
+Preserve fixed denominators and unknown slots. The full assessment uses
+written35 / Lean35 / research30 and shared MC/RMC/SMC rules. This public subset
+has no independently normalized benchmark total. AI review, real compilation,
+semantic alignment and human approval are distinct; sealing changes none of
+those recorded facts. Return all three A1 answer collections, original logs and
+sealed engineering, plus the three-round C003 evidence. The evaluator recovers
+its trusted external plan from the sealed source version and imports only a
+pre-execution-frozen run. Instructions and hashes alone do not certify backend
+identity, isolation or mathematical correctness.

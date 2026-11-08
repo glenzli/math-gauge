@@ -67,7 +67,7 @@ def shell(page, title, subtitle, body, data, script, *, back=None):
         '<header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="'+local('index.html')+'"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a>'
         '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-context-link href="'+local('method.html')+'">方法与数据</a></div></nav></header>'
         '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
-        '<div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后开发分析，正式比较资格未确立</span></div>'
+        '<div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div>'
         '<section class="panel context-panel">'+controls(data)+'<p class="panel-foot context-label" aria-live="polite"></p></section>'+body+
         '<footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="'+local('method.html')+'">计分方法与证据边界</a></footer></main>'
         '<script type="application/json" id="data">'+embedded(data)+'</script><script src="'+local('assets/results-core.js')+'"></script><script src="'+local('assets/'+script)+'"></script></body></html>')
