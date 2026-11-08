@@ -136,3 +136,7 @@ MC报告保留源B与原扣罚字段，另标实际应用基础扣罚为0；自�
 可选`content-rates.json`使用v2／组件0.2.0，绑定选定成绩、assessment政策、新`goal-attainment-policy.json`、旧内容政策与两份私有审核的散列。内容可靠率核查实际内容；目标达成率按独立完整成果验收，与MC部分进展和SMC整题/整轨迹通过区分。公开仅保留匿名汇总及散列，完整目标和逐项判决留私库。
 
 旧0.1.0细项覆盖率保存为`content-rate-coverage-v0.1.0.json`，原`content-rate-policy.json`及私有细项审核不变。新旧数字不改名混用，未测项仍保留固定分母和未知区间；原三项主分不变。详见[两率方法](content-rates.md)。
+
+## 独立原生Harness记录
+
+用户选定的Dot native harness快照按[原生记录合同](native-observations.md)使用单独的native-observation.json类型保存。它保留实际运行、未知SKU和指令隔离边界，不满足通用CLI导入的预冻结条件时如实记载；不改变本文件既有record.json的验证要求。数学评分与两率使用相同共享函数和固定分母。

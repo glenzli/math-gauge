@@ -8,6 +8,7 @@
    const wrap=node('div',null,'model'),symbol=node('span',null,'model-symbol'),text=node('div');symbol.style.background=m.theme.tint;symbol.setAttribute('aria-hidden','true');
    const icon=node('img');icon.src=m.logo.data_url;icon.alt='';symbol.append(icon);
    const name=node('a',m.label,'model-name');name.href=href('models/'+m.id+'/index.html');
+   if(m.record_kind==='native_harness'){const marker=node('sup','†','source-marker');marker.setAttribute('aria-label','Dot native harness，运行条件见详情');name.append(marker)}
    if(m.evaluation_progress[state.condition].incomplete){const marker=node('sup','*','incomplete-marker');marker.setAttribute('aria-label','尚未测完');name.append(marker)}
    text.append(name);wrap.append(symbol,text);row.insertCell().append(wrap);
    row.insertCell().append(node('span',m.harness.name,'harness-name'));row.cells[2].className='harness-cell';

@@ -1,0 +1,2987 @@
+# MG-C003：部分完成的 Lean 交付
+
+本交付不是整章完成：92 项义务中，alignment.json 将 73 项标为 complete、19 项明确标为 incomplete。未完成的主要内容是实线阶跃反例、七点非封闭反例及若干章末具体计算。未用占位证明替代它们。
+
+未完成 ID：CH03-P04-02, CH03-P10-01, CH03-P10-02, CH03-P10-03, CH03-P17-04, CH03-P20-01, CH03-P26-01, CH03-P26-02, CH03-P28-01, CH03-P28-02, CH03-P29-01, CH03-P29-02, CH03-P29-03, CH03-P29-04, CH03-P29-05, CH03-P30-01, CH03-P30-02, CH03-P30-03, CH03-P30-04.
+
+交付文件：Main.lean（全部已完成目标和辅助证明）、Audit.lean（声明及其传递依赖的公理审计）、build.sh（使用题目提供的 lean-local 编译）、alignment.json（逐项对应）。冻结的 formal_oet 源码及 lean-local 沿用附件，不修改或重复提交。所有这些交付文件均保存在本题 work 目录中。
+
+验证：在指定 Lean 4.29.1 / Mathlib 环境中，Main.lean 编译成功，Audit.lean 检查成功；审计列出的公理仅为 propext、Classical.choice、Quot.sound。没有 sorry、admit、新公理或跳过内核验证的设施。编译存在无害的弃用/未使用参数警告。
+
+表示约定：一般性结论对任意 X→X 函数和所需的伪度量公理证明；这是比保持吸收元且限制于合法定义域更一般的结论，代入原文算子及其合法域即可。需要合法结构的已完成反例则显式构造 Operator、ExtendedPseudoMetric 和定义域证明。有限非空子族的最小值以双重下确界表示，并证明最小值取得。Bool 的 true/false 分别表示阈值类型的 1/0。熵差定义必须提供原文要求的覆盖数有限性析取证明。
+
+归属：数学内容来源于 Zhe Li（Glen Li / glenzli），ORCID https://orcid.org/0009-0006-6536-3453，《The Operator Evolution Theory》，https://glenzli.com/books/oet/ ，CC BY 4.0（https://creativecommons.org/licenses/by/4.0/）。原始公开来源为题目注明的版本与提交。本交付是该来源部分数学内容的新 Lean 形式化，不主张原理论的原创性；冻结背景文件保持不变。
+
+```sh filename=build.sh
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")"
+./lean-local -o formal_oet/vol_01/ch_01_foundations/gauge_space.olean formal_oet/vol_01/ch_01_foundations/gauge_space.lean
+./lean-local -o formal_oet/vol_01/ch_01_foundations/metric_entropy.olean formal_oet/vol_01/ch_01_foundations/metric_entropy.lean
+./lean-local -o formal_oet/vol_01/ch_01_foundations/operator_space.olean formal_oet/vol_01/ch_01_foundations/operator_space.lean
+./lean-local -o Main.olean Main.lean
+./lean-local Audit.lean
+```
+
+```lean filename=Main.lean
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import Mathlib
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+/- Partial formalization of Chapter 3 of Zhe Li's The Operator Evolution Theory.
+   All results are stated for arbitrary functions, hence apply in particular to
+   absorbing-point-preserving operators on every allowed restricted domain. -/
+namespace Chapter3
+open Set
+open formal_oet.vol_01.ch_01_foundations
+variable {X I : Type}
+
+def Const (d : X → X → ENNReal) (f : X → X) (U : Set X) : Prop :=
+  ∀ x ∈ U, ∀ y ∈ U, d (f x) (f y) = 0
+def Fixed (d : X → X → ENNReal) (f : X → X) (U : Set X) : Prop :=
+  ∀ x ∈ U, d (f x) x = 0
+def Ident (d : X → X → ENNReal) (f : X → X) (U : Set X) : Prop :=
+  ¬ Const d f U ∧ Fixed d f U
+def Active (d : X → X → ENNReal) (f : X → X) (U : Set X) : Prop :=
+  ¬ (Const d f U ∨ Ident d f U)
+
+theorem component_partition (d : X → X → ENNReal) (f : X → X) (U : Set X) :
+    (Const d f U ∨ Ident d f U ∨ Active d f U) ∧
+    ¬ (Const d f U ∧ Ident d f U) ∧
+    ¬ (Const d f U ∧ Active d f U) ∧ ¬ (Ident d f U ∧ Active d f U) := by
+  unfold Active Ident
+  tauto
+
+def Fiber (d : I → X → X → ENNReal) (f : X → X) (U : Set X)
+    (J : Set I) (y : X) : Set X := {x | x ∈ U ∧ ∀ j ∈ J, d j (f x) y = 0}
+
+theorem composite_zero (d : I → X → X → ENNReal) (J : Set I) (x y : X) :
+    subfamily_pseudometric d J x y = 0 ↔ ∀ j ∈ J, d j x y = 0 := by
+  constructor
+  · intro h j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j x y ≤ subfamily_pseudometric d J x y := le_iSup_of_le ⟨j,hj⟩ le_rfl
+      _ = 0 := h
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    apply iSup_le
+    intro j
+    exact le_of_eq (h j j.property)
+
+theorem fiber_representation (d : I → X → X → ENNReal) (f : X → X)
+    (U : Set X) (J : Set I) (y : X) :
+    Fiber d f U J y = {x ∈ U | subfamily_pseudometric d J (f x) y = 0} := by
+  ext x
+  simp [Fiber, composite_zero]
+
+def EqRel (f : X → X) (U : Set X) : Set (X × X) :=
+  {p | p.1 ∈ U ∧ p.2 ∈ U ∧ f p.1 = f p.2}
+def ZeroRel (d : I → X → X → ENNReal) (f : X → X) (U : Set X) : Set (X × X) :=
+  {p | p.1 ∈ U ∧ p.2 ∈ U ∧ ∀ i, d i (f p.1) (f p.2) = 0}
+def FiberPreorder (d : I → X → X → ENNReal) (U : Set X) (f g : X → X) : Prop :=
+  ZeroRel d f U ⊆ ZeroRel d g U
+
+theorem fiber_preorder_refl (d : I → X → X → ENNReal) (U : Set X) (f : X → X) :
+    FiberPreorder d U f f := Subset.rfl
+
+theorem fiber_preorder_trans (d : I → X → X → ENNReal) (U : Set X) (f g h : X → X)
+    (hfg : FiberPreorder d U f g) (hgh : FiberPreorder d U g h) :
+    FiberPreorder d U f h := hfg.trans hgh
+
+section Metric
+variable {d : X → X → ENNReal}
+variable (self : ∀ x, d x x = 0) (symm : ∀ x y, d x y = d y x)
+variable (tri : ∀ x y z, d x z ≤ d x y + d y z)
+
+include tri in
+theorem zero_trans {x y z : X} (hxy : d x y = 0) (hyz : d y z = 0) : d x z = 0 := by
+  apply le_antisymm _ (zero_le _)
+  simpa [hxy, hyz] using tri x y z
+
+include symm tri in
+theorem zero_replace {a b c : X} (hab : d a b = 0) : d a c = d b c := by
+  apply le_antisymm
+  · simpa [hab] using tri a b c
+  · have hba : d b a = 0 := (symm b a).trans hab
+    simpa [hba] using tri b a c
+
+include symm tri in
+theorem fixed_isometry {f : X → X} {U : Set X} (h : Fixed d f U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) : d (f x) (f y) = d x y := by
+  rw [zero_replace symm tri (h x hx), symm x (f y),
+    zero_replace symm tri (h y hy), symm y x]
+
+include symm tri in
+theorem ident_isometry {f : X → X} {U : Set X} (h : Ident d f U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) : d (f x) (f y) = d x y :=
+  fixed_isometry symm tri h.2 hx hy
+
+theorem outer_const {f g : X → X} {U : Set X} (h : Const d g (f '' U)) :
+    Const d (g ∘ f) U := fun x hx y hy => h (f x) ⟨x,hx,rfl⟩ (f y) ⟨y,hy,rfl⟩
+
+include symm tri in
+theorem ident_comp {f g : X → X} {U : Set X}
+    (hf : Ident d f U) (hg : Ident d g (f '' U)) : Ident d (g ∘ f) U := by
+  constructor
+  · intro hc
+    apply hf.1
+    intro x hx y hy
+    rw [← ident_isometry symm tri hg ⟨x,hx,rfl⟩ ⟨y,hy,rfl⟩]
+    exact hc x hx y hy
+  · intro x hx
+    exact zero_trans tri (hg.2 (f x) ⟨x,hx,rfl⟩) (hf.2 x hx)
+
+include symm tri in
+theorem active_comp {f g : X → X} {U : Set X} (h : Active d (g ∘ f) U) :
+    Active d f U ∨ Active d g (f '' U) := by
+  by_contra hn
+  have hf : Const d f U ∨ Ident d f U := by unfold Active at hn; tauto
+  have hg : Const d g (f '' U) ∨ Ident d g (f '' U) := by unfold Active at hn; tauto
+  rcases hg with hg | hg
+  · exact h (Or.inl (outer_const hg))
+  rcases hf with hf | hf
+  · apply h; left
+    intro x hx y hy
+    change d (g (f x)) (g (f y)) = 0
+    rw [ident_isometry symm tri hg ⟨x,hx,rfl⟩ ⟨y,hy,rfl⟩]
+    exact hf x hx y hy
+  · exact h (Or.inr (ident_comp symm tri hf hg))
+
+include self in
+theorem identity_not_active (U : Set X) : ¬ Active d id U := by
+  intro h
+  by_cases hc : Const d id U
+  · exact h (Or.inl hc)
+  · exact h (Or.inr ⟨hc, fun x _ => self x⟩)
+end Metric
+
+theorem const_zero_row {d : I → X → X → ENNReal} {f : X → X} {U : Set X} {i : I}
+    (h : Const (d i) f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d i (f x) (f y) ≤ ∑' k : I, (0 : ENNReal) * d k x y := by
+  simp [h x hx y hy]
+
+theorem const_colip_entry {d : I → X → X → ENNReal} {f : X → X} {U : Set X}
+    {i k : I} (K : I → ENNReal) (hc : Const (d i) f U)
+    (hk : ∀ x ∈ U, ∀ y ∈ U, (∑' l, K l * d l x y) ≤ d i (f x) (f y))
+    (hp : ∃ x ∈ U, ∃ y ∈ U, 0 < d k x y) : K k = 0 := by
+  obtain ⟨x,hx,y,hy,hp⟩ := hp
+  have hle : K k * d k x y ≤ 0 := by
+    calc
+      K k * d k x y ≤ ∑' l, K l * d l x y := ENNReal.le_tsum k
+      _ ≤ d i (f x) (f y) := hk x hx y hy
+      _ = 0 := hc x hx y hy
+  exact (mul_eq_zero.mp (le_antisymm hle (zero_le _))).resolve_right (ne_of_gt hp)
+
+section Fibers
+variable {d : I → X → X → ENNReal} {f : X → X} {U : Set X} {J K : Set I}
+variable (self : ∀ i x, d i x x = 0) (symm : ∀ i x y, d i x y = d i y x)
+variable (tri : ∀ i x y z, d i x z ≤ d i x y + d i y z)
+
+include symm tri in
+theorem fiber_target_zero {y z : X} (h : ∀ i ∈ J, d i y z = 0) :
+    Fiber d f U J y = Fiber d f U J z := by
+  ext x
+  constructor
+  · rintro ⟨hx,hxy⟩
+    exact ⟨hx, fun i hi => zero_trans (tri i) (hxy i hi) (h i hi)⟩
+  · rintro ⟨hx,hxz⟩
+    exact ⟨hx, fun i hi => zero_trans (tri i) (hxz i hi) ((symm i z y).trans (h i hi))⟩
+
+include self in
+theorem fiber_image_nonempty {y : X} (hy : y ∈ f '' U) : (Fiber d f U J y).Nonempty := by
+  obtain ⟨x,hx,rfl⟩ := hy
+  exact ⟨x,hx,fun i _ => self i (f x)⟩
+
+include self in
+theorem fiber_cover : (⋃ y ∈ f '' U, Fiber d f U J y) = U := by
+  ext x
+  simp only [mem_iUnion]
+  constructor
+  · rintro ⟨y,hy,hx⟩; exact hx.1
+  · intro hx
+    exact ⟨f x,⟨x,hx,rfl⟩,hx,fun i _ => self i (f x)⟩
+
+include symm tri in
+theorem fibers_equal_or_disjoint (y z : X) :
+    Fiber d f U J y = Fiber d f U J z ∨ Disjoint (Fiber d f U J y) (Fiber d f U J z) := by
+  by_cases h : ∃ x, x ∈ Fiber d f U J y ∧ x ∈ Fiber d f U J z
+  · obtain ⟨x,hxy,hxz⟩ := h
+    left
+    apply fiber_target_zero symm tri
+    intro i hi
+    exact zero_trans (tri i) ((symm i y (f x)).trans (hxy.2 i hi)) (hxz.2 i hi)
+  · right
+    rw [Set.disjoint_left]
+    intro x hx hz
+    exact h ⟨x,hx,hz⟩
+
+theorem fiber_intersection (hJ : J.Nonempty) (y : X) :
+    Fiber d f U J y = ⋂ j ∈ J, Fiber d f U {j} y := by
+  ext x
+  simp only [Fiber, mem_setOf_eq, mem_iInter, mem_singleton_iff]
+  constructor
+  · rintro ⟨hx,h⟩ j hj
+    exact ⟨hx,fun k hk => hk ▸ h j hj⟩
+  · intro h
+    obtain ⟨j,hj⟩ := hJ
+    exact ⟨(h j hj).1,fun k hk => (h k hk).2 k rfl⟩
+
+theorem fiber_antitone (hJK : J ⊆ K) (y : X) : Fiber d f U K y ⊆ Fiber d f U J y :=
+  fun _ hx => ⟨hx.1,fun i hi => hx.2 i (hJK hi)⟩
+
+theorem fiber_singleton (i : I) (y : X) :
+    Fiber d f U {i} y = {x ∈ U | d i (f x) y = 0} := by
+  ext x; simp [Fiber]
+
+theorem fiber_full_subset (i : I) (y : X) : Fiber d f U Set.univ y ⊆ Fiber d f U {i} y :=
+  fiber_antitone (Set.subset_univ _) y
+
+include symm tri in
+theorem fiber_ident {i : I} (h : Ident (d i) f U) (y : X) :
+    Fiber d f U {i} y = {x ∈ U | d i x y = 0} := by
+  rw [fiber_singleton]
+  ext x
+  constructor
+  · rintro ⟨hx,hd⟩
+    exact ⟨hx, (zero_replace (symm i) (tri i) (h.2 x hx)).symm.trans hd⟩
+  · rintro ⟨hx,hd⟩
+    exact ⟨hx, (zero_replace (symm i) (tri i) (h.2 x hx)).trans hd⟩
+
+theorem fiber_const (hc : ∀ j ∈ J, Const (d j) f U) {y : X} (hy : y ∈ f '' U) :
+    Fiber d f U J y = U := by
+  obtain ⟨z,hz,rfl⟩ := hy
+  ext x
+  exact ⟨fun h => h.1,fun hx => ⟨hx,fun j hj => hc j hj x hx z hz⟩⟩
+
+include symm tri in
+theorem fiber_const_empty {i : I} (hc : Const (d i) f U) {y z : X}
+    (hz : z ∈ f '' U) (hpos : 0 < d i y z) : Fiber d f U {i} y = ∅ := by
+  obtain ⟨a,ha,rfl⟩ := hz
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x hx
+  have he := zero_trans (tri i) ((symm i y (f x)).trans (hx.2 i rfl)) (hc x hx.1 a ha)
+  exact (ne_of_gt hpos) he
+end Fibers
+
+/- Point-valued factorization includes empty restricted domains. -/
+def Factors (f g : X → X) (U : Set X) : Prop :=
+  ∃ T : (f '' U) → X, ∀ x (hx : x ∈ U), T ⟨f x,⟨x,hx,rfl⟩⟩ = g x
+
+theorem factors_iff (f g : X → X) (U : Set X) : Factors f g U ↔ EqRel f U ⊆ EqRel g U := by
+  classical
+  constructor
+  · rintro ⟨T,hT⟩ ⟨x,y⟩ ⟨hx,hy,he⟩
+    refine ⟨hx,hy,?_⟩
+    rw [← hT x hx, ← hT y hy]
+    congr 1
+    exact Subtype.ext he
+  · intro h
+    let rep : (f '' U) → X := fun z => Classical.choose z.property
+    have hr (z : f '' U) : rep z ∈ U ∧ f (rep z) = z.val := Classical.choose_spec z.property
+    refine ⟨fun z => g (rep z), ?_⟩
+    intro x hx
+    exact (h (show (rep ⟨f x,⟨x,hx,rfl⟩⟩, x) ∈ EqRel f U from
+      ⟨(hr _).1,hx,(hr _).2⟩)).2.2
+
+theorem mutual_factors_iff (f g : X → X) (U : Set X) :
+    Factors f g U ∧ Factors g f U ↔ EqRel f U = EqRel g U := by
+  rw [factors_iff, factors_iff]
+  exact ⟨fun h => Set.Subset.antisymm h.1 h.2,fun h => ⟨h.le,h.ge⟩⟩
+
+/- Legal radii are strictly positive and finite; the supremum is extended. -/
+def Legal (di dout : X → X → ENNReal) (f : X → X) (U : Set X) (y : X)
+    (r : ENNReal) : Prop := 0 < r ∧ r < ⊤ ∧ ∀ x ∈ U, di x y < r → dout (f x) (f y) = 0
+noncomputable def Radius (di dout : X → X → ENNReal) (f : X → X) (U : Set X) (y : X) : ENNReal :=
+  sSup {r | Legal di dout f U y r}
+noncomputable def UniformOn (di dout : X → X → ENNReal) (f : X → X) (A U : Set X) : ENNReal :=
+  ⨅ y ∈ A, Radius di dout f U y
+noncomputable def Uniform (di dout : X → X → ENNReal) (f : X → X) (U : Set X) : ENNReal :=
+  UniformOn di dout f U U
+noncomputable def NullMatrix (d : I → X → X → ENNReal) (f : X → X) (U : Set X)
+    (j i : I) : ENNReal := Uniform (d i) (d j) f U
+
+theorem legal_ball_iff (di dout : X → X → ENNReal) (f : X → X) (U : Set X)
+    (y : X) (r : ENNReal) :
+    Legal di dout f U y r ↔ 0 < r ∧ r < ⊤ ∧
+      ball di y r ∩ U ⊆ {x ∈ U | dout (f x) (f y) = 0} := by
+  constructor
+  · rintro ⟨h0,ht,h⟩
+    exact ⟨h0,ht,fun x hx => ⟨hx.2,h x hx.2 hx.1⟩⟩
+  · rintro ⟨h0,ht,h⟩
+    exact ⟨h0,ht,fun x hx hd => (h ⟨hd,hx⟩).2⟩
+
+theorem radius_empty_legal (di dout : X → X → ENNReal) (f : X → X) (U : Set X) (y : X)
+    (h : ¬ ∃ r, Legal di dout f U y r) : Radius di dout f U y = 0 := by
+  have he : {r | Legal di dout f U y r} = ∅ := by ext r; simp; exact fun hr => h ⟨r,hr⟩
+  simp [Radius,he]
+
+theorem below_radius {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {x y : X}
+    (hx : x ∈ U) (h : di x y < Radius di dout f U y) : dout (f x) (f y) = 0 := by
+  obtain ⟨r,hr,hxr⟩ := lt_sSup_iff.mp h
+  exact hr.2.2 x hx hxr
+
+theorem radius_mono_domain {di dout : X → X → ENNReal} {f : X → X} {A B : Set X}
+    (hBA : B ⊆ A) (y : X) : Radius di dout f A y ≤ Radius di dout f B y := by
+  apply sSup_le_sSup
+  rintro r ⟨h0,ht,h⟩
+  exact ⟨h0,ht,fun x hx hd => h x (hBA hx) hd⟩
+
+theorem uniform_le_radius {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {y : X} (hy : y ∈ U) : Uniform di dout f U ≤ Radius di dout f U y :=
+  iInf_le_of_le y (iInf_le_of_le hy le_rfl)
+
+theorem uniform_mono_domain {di dout : X → X → ENNReal} {f : X → X} {A B : Set X}
+    (hBA : B ⊆ A) : Uniform di dout f A ≤ Uniform di dout f B := by
+  apply le_iInf; intro y
+  apply le_iInf; intro hy
+  exact (uniform_le_radius (hBA hy)).trans (radius_mono_domain hBA y)
+
+theorem below_uniform {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {x y : X}
+    (hx : x ∈ U) (hy : y ∈ U) (h : di x y < Uniform di dout f U) : dout (f x) (f y) = 0 :=
+  below_radius hx (h.trans_le (uniform_le_radius hy))
+
+theorem separated_lower_bound {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {x y : X}
+    (hx : x ∈ U) (hy : y ∈ U) (h : 0 < dout (f x) (f y)) : Uniform di dout f U ≤ di x y := by
+  by_contra hn
+  exact (ne_of_gt h) (below_uniform hx hy (lt_of_not_ge hn))
+
+theorem threshold_ball {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {r : ENNReal}
+    (hr : r ≤ Uniform di dout f U) {y : X} (hy : y ∈ U) :
+    ball di y r ∩ U ⊆ {x ∈ U | dout (f x) (f y) = 0} := by
+  intro x hx
+  exact ⟨hx.2,below_uniform hx.2 hy (hx.1.trans_le hr)⟩
+
+theorem const_radius {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hc : Const dout f U) {y : X} (hy : y ∈ U) : Radius di dout f U y = ⊤ := by
+  apply top_unique
+  apply le_of_forall_lt
+  intro a ha
+  obtain ⟨r,har,hrt⟩ := exists_between ha
+  apply har.trans_le
+  apply le_sSup
+  exact ⟨(zero_le a).trans_lt har,hrt,fun x hx _ => hc x hx y hy⟩
+
+theorem const_uniform {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hc : Const dout f U) : Uniform di dout f U = ⊤ := by
+  apply top_unique
+  apply le_iInf; intro y
+  apply le_iInf; intro hy
+  rw [const_radius hc hy]
+
+theorem identity_radius_bound {di : X → X → ENNReal} {f : X → X} {U : Set X}
+    (symm : ∀ x y, di x y = di y x) (tri : ∀ x y z, di x z ≤ di x y + di y z)
+    (hi : Ident di f U) {y : X} (hy : y ∈ U) {r : ENNReal}
+    (h0 : 0 < r) (ht : r < ⊤) (hgap : ∀ x ∈ U, di x y < r → di x y = 0) :
+    r ≤ Radius di di f U y ∧ 0 < Radius di di f U y := by
+  have hl : Legal di di f U y r := ⟨h0,ht,fun x hx hd =>
+    (ident_isometry symm tri hi hx hy).trans (hgap x hx hd)⟩
+  exact ⟨le_sSup hl,h0.trans_le (le_sSup hl)⟩
+
+theorem composite_radius_mono {di dm dout : X → X → ENNReal} {f g : X → X}
+    {U : Set X} (hz : ∀ a ∈ f '' U, ∀ b ∈ f '' U, dm a b = 0 → dout (g a) (g b) = 0) :
+    Uniform di dm f U ≤ Uniform di dout (g ∘ f) U := by
+  apply le_iInf; intro y
+  apply le_iInf; intro hy
+  apply (uniform_le_radius hy).trans
+  apply sSup_le_sSup
+  rintro r ⟨h0,ht,h⟩
+  exact ⟨h0,ht,fun x hx hd => hz (f x) ⟨x,hx,rfl⟩ (f y) ⟨y,hy,rfl⟩ (h x hx hd)⟩
+
+theorem radius_output_antitone {d : I → X → X → ENNReal} {di : X → X → ENNReal}
+    {f : X → X} {U : Set X} {J K : Set I} (hJK : J ⊆ K) (y : X) :
+    Radius di (subfamily_pseudometric d K) f U y ≤ Radius di (subfamily_pseudometric d J) f U y := by
+  apply sSup_le_sSup
+  rintro r ⟨h0,ht,h⟩
+  refine ⟨h0,ht,?_⟩
+  intro x hx hd
+  apply (composite_zero d J _ _).mpr
+  intro j hj
+  exact (composite_zero d K _ _).mp (h x hx hd) j (hJK hj)
+
+theorem uniform_output_antitone {d : I → X → X → ENNReal} {di : X → X → ENNReal}
+    {f : X → X} {U : Set X} {J K : Set I} (hJK : J ⊆ K) :
+    Uniform di (subfamily_pseudometric d K) f U ≤ Uniform di (subfamily_pseudometric d J) f U := by
+  apply iInf_mono; intro y
+  apply iInf_mono; intro _
+  exact radius_output_antitone hJK y
+
+/- Arbitrary, monotone input scale families, and the default diameter. -/
+structure ScaleFamily (X I : Type) where
+  value : I → {A : Set X // A.Nonempty} → ENNReal
+  mono : ∀ i A B, A.val ⊆ B.val → value i A ≤ value i B
+noncomputable def diameter (di : X → X → ENNReal) (A : Set X) : ENNReal :=
+  ⨆ x ∈ A, ⨆ y ∈ A, di x y
+
+theorem diameter_mono {di : X → X → ENNReal} {A B : Set X} (h : A ⊆ B) :
+    diameter di A ≤ diameter di B := by
+  apply iSup_le; intro x
+  apply iSup_le; intro hx
+  apply iSup_le; intro y
+  apply iSup_le; intro hy
+  exact le_iSup_of_le x (le_iSup_of_le (h hx) (le_iSup_of_le y (le_iSup_of_le (h hy) le_rfl)))
+noncomputable def diameterScale (d : I → X → X → ENNReal) : ScaleFamily X I :=
+  ⟨fun i A => diameter (d i) A, fun _ _ _ h => diameter_mono h⟩
+noncomputable def thresholdType (scale radius τs τn : ENNReal) : Bool × Bool :=
+  (decide (scale < τs), decide (τn ≤ radius))
+
+theorem threshold_type_iff (s r ts tn : ENNReal) (a b : Bool) :
+    thresholdType s r ts tn = (a,b) ↔
+    (a = true ↔ s < ts) ∧ (b = true ↔ tn ≤ r) := by
+  cases a <;> cases b <;> simp [thresholdType]
+
+theorem threshold_exhaustive (s r ts tn : ENNReal) :
+    ∃! p : Bool × Bool, (p.1 = true ↔ s < ts) ∧ (p.2 = true ↔ tn ≤ r) := by
+  refine ⟨thresholdType s r ts tn, ?_, ?_⟩
+  · simp [thresholdType]
+  · rintro ⟨a,b⟩ h
+    exact ((threshold_type_iff s r ts tn a b).mpr h).symm
+
+theorem scale_threshold_mono {s ts ts' : ENNReal} (h : ts ≤ ts') (hs : s < ts) : s < ts' := hs.trans_le h
+
+theorem radius_threshold_antitone {r tn tn' : ENNReal} (h : tn ≤ tn') (hr : tn' ≤ r) : tn ≤ r := h.trans hr
+
+theorem scale_domain_mono (σ : ScaleFamily X I) (i : I) (A B : {A : Set X // A.Nonempty})
+    (h : B.val ⊆ A.val) (ts : ENNReal) : σ.value i B ≤ σ.value i A ∧
+      (σ.value i A < ts → σ.value i B < ts) :=
+  ⟨σ.mono i B A h,fun ht => (σ.mono i B A h).trans_lt ht⟩
+
+theorem small_domain_iff {di dout : X → X → ENNReal} {f : X → X} {A : Set X}
+    {ts tn : ENNReal} (hdiam : diameter di A < ts) (ht : ts ≤ tn) :
+    tn ≤ Uniform di dout f A ↔ Const dout f A := by
+  constructor
+  · intro hr x hx y hy
+    apply below_uniform hx hy
+    have hd : di x y ≤ diameter di A :=
+      le_iSup_of_le x (le_iSup_of_le hx (le_iSup_of_le y (le_iSup_of_le hy le_rfl)))
+    exact ((hd.trans_lt hdiam).trans_le ht).trans_le hr
+  · intro hc
+    rw [const_uniform hc]
+    exact le_top
+
+theorem colip_gap_point {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {K : ENNReal} (hK : 0 < K) (hco : ∀ x ∈ U, ∀ y ∈ U, K * di x y ≤ dout (f x) (f y))
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) : ¬ (0 < di x y ∧ di x y < Radius di dout f U y) := by
+  rintro ⟨hp,hr⟩
+  have hzero := below_radius hx hr
+  have hm : K * di x y = 0 := le_antisymm (by simpa [hzero] using hco x hx y hy) (zero_le _)
+  exact (mul_ne_zero (ne_of_gt hK) (ne_of_gt hp)) hm
+
+theorem colip_gap_uniform {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {K : ENNReal} (hK : 0 < K) (hco : ∀ x ∈ U, ∀ y ∈ U, K * di x y ≤ dout (f x) (f y))
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) : di x y = 0 ∨ Uniform di dout f U ≤ di x y := by
+  by_cases hz : di x y = 0
+  · exact Or.inl hz
+  · right
+    by_contra hn
+    exact colip_gap_point hK hco hx hy ⟨pos_iff_ne_zero.mpr hz,
+      (lt_of_not_ge hn).trans_le (uniform_le_radius hy)⟩
+
+theorem le_radius_iff {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {y : X} {a : ENNReal} :
+    a ≤ Radius di dout f U y ↔ ∀ x ∈ U, di x y < a → dout (f x) (f y) = 0 := by
+  constructor
+  · intro h x hx hd
+    exact below_radius hx (hd.trans_le h)
+  · intro h
+    apply le_of_forall_lt
+    intro t ht
+    obtain ⟨r,htr,hra⟩ := exists_between ht
+    apply htr.trans_le
+    apply le_sSup
+    exact ⟨(zero_le t).trans_lt htr,hra.trans_le le_top,
+      fun x hx hd => h x hx (hd.trans hra)⟩
+
+theorem radius_components (d : I → X → X → ENNReal) (di : X → X → ENNReal)
+    (f : X → X) (U : Set X) (J : Set I) (y : X) :
+    Radius di (subfamily_pseudometric d J) f U y = ⨅ j ∈ J, Radius di (d j) f U y := by
+  apply le_antisymm
+  · apply le_iInf; intro j
+    apply le_iInf; intro hj
+    apply le_radius_iff.mpr
+    intro x hx hd
+    exact (composite_zero d J _ _).mp (below_radius hx hd) j hj
+  · apply le_radius_iff.mpr
+    intro x hx hd
+    apply (composite_zero d J _ _).mpr
+    intro j hj
+    exact below_radius hx (hd.trans_le (iInf_le_of_le j (iInf_le_of_le hj le_rfl)))
+
+theorem uniform_components (d : I → X → X → ENNReal) (di : X → X → ENNReal)
+    (f : X → X) (U : Set X) (J : Set I) :
+    Uniform di (subfamily_pseudometric d J) f U = ⨅ j ∈ J, Uniform di (d j) f U := by
+  simp only [Uniform, UniformOn, radius_components]
+  apply le_antisymm
+  · apply le_iInf; intro j
+    apply le_iInf; intro hj
+    apply le_iInf; intro y
+    apply le_iInf; intro hy
+    exact iInf_le_of_le y (iInf_le_of_le hy (iInf_le_of_le j (iInf_le_of_le hj le_rfl)))
+  · apply le_iInf; intro y
+    apply le_iInf; intro hy
+    apply le_iInf; intro j
+    apply le_iInf; intro hj
+    exact iInf_le_of_le j (iInf_le_of_le hj (iInf_le_of_le y (iInf_le_of_le hy le_rfl)))
+
+theorem fiber_step {d : I → X → X → ENNReal} {f : X → X} {U : Set X} {i : I} {x y : X}
+    (symm : ∀ a b, d i a b = d i b a) (hx : x ∈ Fiber d f U {i} (f y)) : d i (f y) (f x) = 0 :=
+  (symm _ _).trans (hx.2 i rfl)
+
+theorem radius_step {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {x y : X}
+    (si : ∀ a b, di a b = di b a) (so : ∀ a b, dout a b = dout b a)
+    (hx : x ∈ U) (h : di y x < Radius di dout f U y) :
+    (∃ r, Legal di dout f U y r ∧ di y x < r) ∧ dout (f y) (f x) = 0 := by
+  constructor
+  · exact lt_sSup_iff.mp h
+  · rw [so]
+    apply below_radius (di := di) hx
+    rwa [si]
+
+theorem composite_fiber_step {d : I → X → X → ENNReal} {f g : X → X} {U : Set X}
+    {i : I} {x y : X} (symm : ∀ a b, d i a b = d i b a)
+    (_hx : f x ∈ U) (_hy : f y ∈ U) (h : f y ∈ Fiber d g U {i} (g (f x))) :
+    d i ((g ∘ f) x) ((g ∘ f) y) = 0 := by
+  exact fiber_step (f := g) symm h
+
+theorem identity_image_fiber {d : I → X → X → ENNReal} {f : X → X} {U : Set X}
+    {i : I} (symm : ∀ a b, d i a b = d i b a)
+    (tri : ∀ a b c, d i a c ≤ d i a b + d i b c) (hi : Ident (d i) f U)
+    {y : X} (hy : y ∈ U) : Fiber d f U {i} (f y) = {x ∈ U | d i x y = 0} := by
+  rw [fiber_singleton]
+  ext x
+  constructor
+  · rintro ⟨hx,h⟩
+    exact ⟨hx,(ident_isometry symm tri hi hx hy).symm.trans h⟩
+  · rintro ⟨hx,h⟩
+    exact ⟨hx,(ident_isometry symm tri hi hx hy).trans h⟩
+
+theorem const_family_radii {d : I → X → X → ENNReal} {di : X → X → ENNReal}
+    {f : X → X} {U : Set X} {J : Set I} (hc : ∀ j ∈ J, Const (d j) f U) :
+    (∀ y ∈ U, Radius di (subfamily_pseudometric d J) f U y = ⊤) ∧
+      Uniform di (subfamily_pseudometric d J) f U = ⊤ := by
+  have h : Const (subfamily_pseudometric d J) f U := by
+    intro x hx y hy
+    exact (composite_zero d J _ _).mpr (fun j hj => hc j hj x hx y hy)
+  exact ⟨fun _ hy => const_radius h hy,const_uniform h⟩
+
+/- Finite compositions use the actual chainPrefix image, including length zero. -/
+def chainPrefix (f : ℕ → X → X) : ℕ → X → X
+  | 0 => id
+  | n+1 => f n ∘ chainPrefix f n
+
+theorem chainPrefix_domain_step (f : ℕ → X → X) (U : Set X) (n : ℕ) :
+    chainPrefix f (n+1) '' U = f n '' (chainPrefix f n '' U) := by
+  simp [chainPrefix,Set.image_image]
+
+theorem active_chain {di : X → X → ENNReal}
+    (self : ∀ x, di x x = 0) (symm : ∀ x y, di x y = di y x)
+    (tri : ∀ x y z, di x z ≤ di x y + di y z)
+    (f : ℕ → X → X) (U : Set X) (n : ℕ) :
+    Active di (chainPrefix f n) U → ∃ k < n, Active di (f k) (chainPrefix f k '' U) := by
+  induction n with
+  | zero => exact fun h => (identity_not_active self U h).elim
+  | succ n ih =>
+    intro h
+    rcases active_comp symm tri h with h | h
+    · obtain ⟨k,hk,hka⟩ := ih h
+      exact ⟨k,Nat.lt.step hk,hka⟩
+    · exact ⟨n,Nat.lt_succ_self n,h⟩
+
+theorem relation_chain {α : Type} (R : ℕ → Set α) (n : ℕ)
+    (h : ∀ k < n, R k ⊆ R (k+1)) {a b : ℕ} (hab : a ≤ b) (hb : b ≤ n) : R a ⊆ R b := by
+  induction b, hab using Nat.le_induction with
+  | base => exact Subset.rfl
+  | succ b hab ih => exact (ih (Nat.le_trans (Nat.le_succ b) hb)).trans (h b (Nat.lt_of_succ_le hb))
+
+theorem relation_chain_strict {α : Type} (R : ℕ → Set α) (n : ℕ)
+    (h : ∀ k < n, R k ⊆ R (k+1)) {k : ℕ} (hk : k < n)
+    (hs : R k ⊂ R (k+1)) : R 0 ⊂ R n ∧ ∃ p, p ∈ R n ∧ p ∉ R 0 := by
+  obtain ⟨p,hp,hpn⟩ := Set.exists_of_ssubset hs
+  have hkn := relation_chain R n h (Nat.succ_le_of_lt hk) le_rfl
+  have h0k := relation_chain R n h (Nat.zero_le k) (Nat.le_of_lt hk)
+  have hn : p ∉ R 0 := fun hp0 => hpn (h0k hp0)
+  exact ⟨Set.ssubset_iff_subset_ne.mpr ⟨relation_chain R n h (Nat.zero_le n) le_rfl,
+    fun he => hn (he ▸ hkn hp)⟩,p,hkn hp,hn⟩
+
+/- A quotient is formed on the actual image, not on the entire ambient space. -/
+def imageSetoid (d : I → X → X → ENNReal) (f : X → X) (U : Set X)
+    (self : ∀ i x, d i x x = 0) (symm : ∀ i x y, d i x y = d i y x)
+    (tri : ∀ i x y z, d i x z ≤ d i x y + d i y z) : Setoid (f '' U) where
+  r a b := ∀ i, d i a b = 0
+  iseqv := ⟨fun a i => self i a, fun h i => (symm i _ _).trans (h i),
+    fun hab hbc i => zero_trans (tri i) (hab i) (hbc i)⟩
+
+def ImageQuotient (d : I → X → X → ENNReal) (f : X → X) (U : Set X)
+    (self : ∀ i x, d i x x = 0) (symm : ∀ i x y, d i x y = d i y x)
+    (tri : ∀ i x y z, d i x z ≤ d i x y + d i y z) := Quotient (imageSetoid d f U self symm tri)
+
+section Quotients
+variable (d : I → X → X → ENNReal) (f g : X → X) (U : Set X)
+variable (self : ∀ i x, d i x x = 0) (symm : ∀ i x y, d i x y = d i y x)
+variable (tri : ∀ i x y z, d i x z ≤ d i x y + d i y z)
+
+def imageClass (x : X) (hx : x ∈ U) : ImageQuotient d f U self symm tri :=
+  Quotient.mk _ ⟨f x,⟨x,hx,rfl⟩⟩
+
+def QuotientFactors : Prop :=
+  ∃ T : ImageQuotient d f U self symm tri → ImageQuotient d g U self symm tri,
+    ∀ x (hx : x ∈ U), T (imageClass d f U self symm tri x hx) = imageClass d g U self symm tri x hx
+
+theorem quotient_factors_iff : QuotientFactors d f g U self symm tri ↔ ZeroRel d f U ⊆ ZeroRel d g U := by
+  classical
+  constructor
+  · rintro ⟨T,hT⟩ ⟨x,y⟩ ⟨hx,hy,hxy⟩
+    refine ⟨hx,hy,?_⟩
+    have he : imageClass d f U self symm tri x hx = imageClass d f U self symm tri y hy := Quotient.sound hxy
+    have ht := congrArg T he
+    rw [hT x hx,hT y hy] at ht
+    exact Quotient.exact ht
+  · intro h
+    let rep : (f '' U) → X := fun z => Classical.choose z.property
+    have hr (z : f '' U) : rep z ∈ U ∧ f (rep z) = z.val := Classical.choose_spec z.property
+    let F : (f '' U) → ImageQuotient d g U self symm tri :=
+      fun z => imageClass d g U self symm tri (rep z) (hr z).1
+    have hF : ∀ a b, (imageSetoid d f U self symm tri).r a b → F a = F b := by
+      intro a b hab
+      apply Quotient.sound
+      apply (h (show (rep a,rep b) ∈ ZeroRel d f U from ?_)).2.2
+      refine ⟨(hr a).1,(hr b).1,?_⟩
+      intro i
+      rw [(hr a).2,(hr b).2]
+      exact hab i
+    refine ⟨Quotient.lift F hF, ?_⟩
+    intro x hx
+    change F ⟨f x,⟨x,hx,rfl⟩⟩ = _
+    apply Quotient.sound
+    apply (h (show (rep ⟨f x,⟨x,hx,rfl⟩⟩,x) ∈ ZeroRel d f U from ?_)).2.2
+    refine ⟨(hr _).1,hx,?_⟩
+    intro i
+    rw [(hr _).2]
+    exact self i (f x)
+
+theorem mutual_quotient_factors_iff :
+    QuotientFactors d f g U self symm tri ∧ QuotientFactors d g f U self symm tri ↔
+      ZeroRel d f U = ZeroRel d g U := by
+  rw [quotient_factors_iff,quotient_factors_iff]
+  exact ⟨fun h => Set.Subset.antisymm h.1 h.2,fun h => ⟨h.le,h.ge⟩⟩
+
+include self in
+theorem separated_relations
+    (hs : ∀ a ∈ f '' U, ∀ b ∈ f '' U, (∀ i, d i a b = 0) → a = b) :
+    ZeroRel d f U = EqRel f U := by
+  ext ⟨x,y⟩
+  constructor
+  · rintro ⟨hx,hy,h⟩
+    exact ⟨hx,hy,hs _ ⟨x,hx,rfl⟩ _ ⟨y,hy,rfl⟩ h⟩
+  · rintro ⟨hx,hy,h⟩
+    exact ⟨hx,hy,fun i => h ▸ self i (f x)⟩
+
+theorem separated_factorization
+    (hf : ∀ a ∈ f '' U, ∀ b ∈ f '' U, (∀ i, d i a b = 0) → a = b)
+    (hg : ∀ a ∈ g '' U, ∀ b ∈ g '' U, (∀ i, d i a b = 0) → a = b) :
+    QuotientFactors d f g U self symm tri ↔ Factors f g U := by
+  rw [quotient_factors_iff, separated_relations d f U self hf,
+    separated_relations d g U self hg, factors_iff]
+
+include symm in
+theorem zero_relation_fiber {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    (x,y) ∈ ZeroRel d f U ↔ y ∈ Fiber d f U Set.univ (f x) := by
+  constructor
+  · rintro ⟨_,_,h⟩
+    exact ⟨hy,fun i _ => (symm i _ _).trans (h i)⟩
+  · rintro ⟨_,h⟩
+    exact ⟨hx,hy,fun i => (symm i _ _).trans (h i trivial)⟩
+end Quotients
+
+theorem insufficient_radius_witness {di dout : X → X → ENNReal} {f : X → X}
+    {A : Set X} {α : ENNReal} (h : Uniform di dout f A < α) :
+    ∃ x ∈ A, ∃ y ∈ A, ∃ ε : ENNReal, 0 < ε ∧ ε < ⊤ ∧ di x y < α ∧ ε ≤ dout (f x) (f y) := by
+  classical
+  have hw : ∃ x ∈ A, ∃ y ∈ A, di x y < α ∧ dout (f x) (f y) ≠ 0 := by
+    by_contra hn
+    push_neg at hn
+    have hl : α ≤ Uniform di dout f A := by
+      apply le_iInf; intro y
+      apply le_iInf; intro hy
+      apply le_radius_iff.mpr
+      intro x hx hd
+      exact hn x hx y hy hd
+    exact (not_le_of_gt h) hl
+  obtain ⟨x,hx,y,hy,hd,hn⟩ := hw
+  have hp : 0 < min (dout (f x) (f y)) 1 := lt_min (pos_iff_ne_zero.mpr hn) zero_lt_one
+  exact ⟨x,hx,y,hy,min (dout (f x) (f y)) 1,hp,
+    (min_le_right _ _).trans_lt ENNReal.one_lt_top,hd,min_le_left _ _⟩
+
+/- Uniform finite-cover transfer, with internal output centers. -/
+theorem transfer_net {di dout : X → X → ENNReal} {f : X → X} {B : Set X}
+    {δ ε : ENNReal} {C : Finset X}
+    (h : ∀ x ∈ B, ∀ y ∈ B, di x y < δ → dout (f x) (f y) < ε)
+    (hC : InternalEpsilonNet di δ B C) :
+    ∃ D : Finset X, InternalEpsilonNet dout ε (f '' B) D ∧ D.card ≤ C.card := by
+  classical
+  refine ⟨C.image f, ?_,Finset.card_image_le⟩
+  constructor
+  · intro z hz
+    obtain ⟨x,hx,rfl⟩ := Finset.mem_image.mp hz
+    exact ⟨x,hC.1 hx,rfl⟩
+  · rintro z ⟨x,hx,rfl⟩
+    obtain ⟨c,hc,hd⟩ := hC.2 x hx
+    exact ⟨f c,Finset.mem_image.mpr ⟨c,hc,rfl⟩,h x hx c (hC.1 hc) hd⟩
+
+theorem transfer_cover {di dout : X → X → ENNReal} {f : X → X} {B : Set X}
+    {δ ε : ENNReal}
+    (h : ∀ x ∈ B, ∀ y ∈ B, di x y < δ → dout (f x) (f y) < ε) :
+    covering_number dout ε (f '' B) ≤ covering_number di δ B := by
+  unfold covering_number
+  apply le_iInf; intro C
+  apply le_iInf; intro hC
+  obtain ⟨D,hD,hcard⟩ := transfer_net h hC
+  apply (iInf_le_of_le D (iInf_le_of_le hD le_rfl)).trans
+  exact_mod_cast hcard
+
+theorem null_cover_bound {di dout : X → X → ENNReal} {f : X → X} {A B : Set X}
+    {τ ε : ENNReal} (hBA : B ⊆ A) (hτ : τ ≤ Uniform di dout f A) (hε : 0 < ε) :
+    covering_number dout ε (f '' B) ≤ covering_number di τ B := by
+  apply transfer_cover
+  intro x hx y hy hd
+  rw [below_uniform (hBA hx) (hBA hy) (hd.trans_le hτ)]
+  exact hε
+
+theorem const_cover_one {dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hc : Const dout f U) (hU : U.Nonempty) {ε : ENNReal} (hε : 0 < ε) :
+    covering_number dout ε (f '' U) = 1 := by
+  classical
+  obtain ⟨a,ha⟩ := hU
+  apply le_antisymm
+  · have hn : InternalEpsilonNet dout ε (f '' U) {f a} := by
+      constructor
+      · simpa using (show f a ∈ f '' U from ⟨a,ha,rfl⟩)
+      · rintro z ⟨x,hx,rfl⟩
+        exact ⟨f a,Finset.mem_singleton_self _,by rw [hc x hx a ha]; exact hε⟩
+    exact iInf_le_of_le {f a} (iInf_le_of_le hn (by simp))
+  · exact one_le_covering_number_of_nonempty _ _ _ ⟨f a,⟨a,ha,rfl⟩⟩
+
+theorem const_entropy_zero {dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hc : Const dout f U) (hU : U.Nonempty) {ε : ENNReal} (hε : 0 < ε) :
+    metric_entropy dout ε (f '' U) = 0 := by
+  simp [metric_entropy,const_cover_one hc hU hε,log2_ereal]
+
+def TotallyBoundedBy (d : X → X → ENNReal) (U : Set X) : Prop :=
+  ∀ ε : ENNReal, 0 < ε → ε < ⊤ → ∃ C : Finset X, InternalEpsilonNet d ε U C
+
+theorem totally_bounded_iff (d : X → X → ENNReal) (U : Set X) :
+    TotallyBoundedBy d U ↔ ∀ ε : ENNReal, 0 < ε → ε < ⊤ → covering_number d ε U < ⊤ := by
+  constructor
+  · intro h ε h0 ht
+    exact lt_top_iff_ne_top.mpr (fun he => (covering_number_eq_top_iff d ε U).mp he (h ε h0 ht))
+  · intro h ε h0 ht
+    by_contra hn
+    exact (ne_of_lt (h ε h0 ht)) ((covering_number_eq_top_iff d ε U).mpr hn)
+
+theorem finite_cover_bound {d : X → X → ENNReal} (self : ∀ x, d x x = 0)
+    {U : Set X} (hU : U.Finite) {ε : ENNReal} (hε : 0 < ε) :
+    covering_number d ε U ≤ hU.toFinset.card := by
+  classical
+  have hn : InternalEpsilonNet d ε U hU.toFinset := by
+    constructor
+    · simp
+    · intro x hx
+      exact ⟨x,hU.mem_toFinset.mpr hx,by simpa [self x] using hε⟩
+  exact iInf_le_of_le hU.toFinset (iInf_le_of_le hn le_rfl)
+
+theorem finite_entropy_real {d : X → X → ENNReal} (self : ∀ x, d x x = 0)
+    {U : Set X} (hU : U.Finite) (hn : U.Nonempty) {ε : ENNReal} (hε : 0 < ε) :
+    0 < covering_number d ε U ∧ covering_number d ε U < ⊤ ∧
+      ∃ r : ℝ, metric_entropy d ε U = (r : EReal) := by
+  have hp := zero_lt_one.trans_le (one_le_covering_number_of_nonempty d ε U hn)
+  have ht := (finite_cover_bound self hU hε).trans_lt (ENNReal.natCast_lt_top _)
+  refine ⟨hp,ht,Real.logb 2 (covering_number d ε U).toReal,?_⟩
+  simp [metric_entropy,log2_ereal,ne_of_gt hp,ne_of_lt ht]
+
+/- Entropy differences require a proof of the original finiteness disjunction. -/
+def DifferenceDefined (di dout : X → X → ENNReal) (f : X → X) (U : Set X) (ε : ENNReal) : Prop :=
+  covering_number di ε U < ⊤ ∨ covering_number dout ε (f '' U) < ⊤
+noncomputable def EntropyDifference (di dout : X → X → ENNReal) (f : X → X)
+    (U : Set X) (ε : ENNReal) (_h : DifferenceDefined di dout f U ε) : EReal :=
+  metric_entropy di ε U - metric_entropy dout ε (f '' U)
+
+theorem entropy_difference_formula (di dout : X → X → ENNReal) (f : X → X)
+    (U : Set X) (ε : ENNReal) (h : DifferenceDefined di dout f U ε) :
+    EntropyDifference di dout f U ε h = metric_entropy di ε U - metric_entropy dout ε (f '' U) := rfl
+
+theorem finite_difference_defined {di dout : X → X → ENNReal}
+    (si : ∀ x, di x x = 0) (so : ∀ x, dout x x = 0) (f : X → X)
+    {U : Set X} (hU : U.Finite) (hn : U.Nonempty) {ε : ENNReal} (hε : 0 < ε) :
+    DifferenceDefined di dout f U ε ∧
+    (∃ a : ℝ, metric_entropy di ε U = (a : EReal)) ∧
+    (∃ b : ℝ, metric_entropy dout ε (f '' U) = (b : EReal)) := by
+  have hi := finite_entropy_real si hU hn hε
+  have ho := finite_entropy_real so (hU.image f) (hn.image f) hε
+  exact ⟨Or.inl hi.2.1,hi.2.2,ho.2.2⟩
+
+theorem const_difference {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hc : Const dout f U) (hU : U.Nonempty) {ε : ENNReal} (hε : 0 < ε) :
+    ∃ h : DifferenceDefined di dout f U ε,
+      EntropyDifference di dout f U ε h = metric_entropy di ε U := by
+  have h : DifferenceDefined di dout f U ε := Or.inr (by
+    rw [const_cover_one hc hU hε]; exact ENNReal.one_lt_top)
+  exact ⟨h,by simp [EntropyDifference,const_entropy_zero hc hU hε]⟩
+
+theorem log2_mono_positive {a b : ENNReal} (ha : 0 < a) (hab : a ≤ b) :
+    log2_ereal a ≤ log2_ereal b := by
+  have hb : 0 < b := ha.trans_le hab
+  by_cases hbt : b = ⊤
+  · simp [log2_ereal,hbt]
+  have hat : a ≠ ⊤ := ne_of_lt (hab.trans_lt (lt_top_iff_ne_top.mpr hbt))
+  simp only [log2_ereal,if_neg (ne_of_gt ha),if_neg (ne_of_gt hb),if_neg hat,if_neg hbt]
+  apply EReal.coe_le_coe_iff.mpr
+  exact (Real.logb_le_logb one_lt_two (ENNReal.toReal_pos (ne_of_gt ha) hat)
+    (ENNReal.toReal_pos (ne_of_gt hb) hbt)).mpr (ENNReal.toReal_mono hbt hab)
+
+theorem entropy_cover_mono {di dout : X → X → ENNReal} {A B : Set X} {δ ε : ENNReal}
+    (hB : B.Nonempty) (h : covering_number dout ε B ≤ covering_number di δ A) :
+    metric_entropy dout ε B ≤ metric_entropy di δ A :=
+  log2_mono_positive (zero_lt_one.trans_le (one_le_covering_number_of_nonempty _ _ _ hB)) h
+
+theorem null_entropy_bound {di dout : X → X → ENNReal} {f : X → X} {A B : Set X}
+    {τ ε : ENNReal} (hBA : B ⊆ A) (hB : B.Nonempty)
+    (hτ : τ ≤ Uniform di dout f A) (hε : 0 < ε) :
+    metric_entropy dout ε (f '' B) ≤ metric_entropy di τ B :=
+  entropy_cover_mono (hB.image f) (null_cover_bound hBA hτ hε)
+
+theorem pull_net {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {δ ε : ENNReal}
+    (h : ∀ x ∈ U, ∀ y ∈ U, dout (f x) (f y) < ε → di x y < δ)
+    {C : Finset X} (hC : InternalEpsilonNet dout ε (f '' U) C) :
+    ∃ D : Finset X, InternalEpsilonNet di δ U D ∧ D.card ≤ C.card := by
+  classical
+  let rep : X → X := fun z => if hz : z ∈ f '' U then Classical.choose hz else z
+  have hr (z : X) (hz : z ∈ f '' U) : rep z ∈ U ∧ f (rep z) = z := by
+    dsimp only [rep]
+    rw [dif_pos hz]
+    exact Classical.choose_spec hz
+  refine ⟨C.image rep, ?_,Finset.card_image_le⟩
+  constructor
+  · intro y hy
+    obtain ⟨z,hz,rfl⟩ := Finset.mem_image.mp hy
+    exact (hr z (hC.1 hz)).1
+  · intro x hx
+    obtain ⟨c,hc,hd⟩ := hC.2 (f x) ⟨x,hx,rfl⟩
+    refine ⟨rep c,Finset.mem_image.mpr ⟨c,hc,rfl⟩,h x hx (rep c) (hr c (hC.1 hc)).1 ?_⟩
+    rwa [(hr c (hC.1 hc)).2]
+
+theorem pull_cover {di dout : X → X → ENNReal} {f : X → X} {U : Set X} {δ ε : ENNReal}
+    (h : ∀ x ∈ U, ∀ y ∈ U, dout (f x) (f y) < ε → di x y < δ) :
+    covering_number di δ U ≤ covering_number dout ε (f '' U) := by
+  unfold covering_number
+  apply le_iInf; intro C
+  apply le_iInf; intro hC
+  obtain ⟨D,hD,hcard⟩ := pull_net h hC
+  apply (iInf_le_of_le D (iInf_le_of_le hD le_rfl)).trans
+  exact_mod_cast hcard
+
+theorem ident_cover_entropy {di : X → X → ENNReal} {f : X → X} {U : Set X}
+    (symm : ∀ x y, di x y = di y x) (tri : ∀ x y z, di x z ≤ di x y + di y z)
+    (hi : Ident di f U) (ε : ENNReal) :
+    covering_number di ε (f '' U) = covering_number di ε U ∧
+    metric_entropy di ε (f '' U) = metric_entropy di ε U := by
+  have he : covering_number di ε (f '' U) = covering_number di ε U := by
+    apply le_antisymm
+    · apply transfer_cover
+      intro x hx y hy h
+      rwa [ident_isometry symm tri hi hx hy]
+    · apply pull_cover
+      intro x hx y hy h
+      rwa [ident_isometry symm tri hi hx hy] at h
+  exact ⟨he,congrArg log2_ereal he⟩
+
+theorem entropy_finite_iff {d : X → X → ENNReal} {U : Set X} (hU : U.Nonempty) (ε : ENNReal) :
+    metric_entropy d ε U ≠ ⊤ ↔ covering_number d ε U < ⊤ := by
+  have hz := ne_of_gt (zero_lt_one.trans_le (one_le_covering_number_of_nonempty d ε U hU))
+  by_cases ht : covering_number d ε U = ⊤
+  · simp [metric_entropy,log2_ereal,ht]
+  · simp [metric_entropy,log2_ereal,hz,ht,lt_top_iff_ne_top]
+
+theorem difference_no_indeterminate {di dout : X → X → ENNReal} {f : X → X}
+    {U : Set X} (hU : U.Nonempty) {ε : ENNReal} (h : DifferenceDefined di dout f U ε) :
+    ¬ (metric_entropy di ε U = ⊤ ∧ metric_entropy dout ε (f '' U) = ⊤) := by
+  rintro ⟨hi,ho⟩
+  rcases h with h | h
+  · exact (entropy_finite_iff hU ε).mpr h hi
+  · exact (entropy_finite_iff (hU.image f) ε).mpr h ho
+
+theorem difference_top {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hU : U.Nonempty) {ε : ENNReal} (h : DifferenceDefined di dout f U ε)
+    (ht : metric_entropy di ε U = ⊤) : EntropyDifference di dout f U ε h = ⊤ := by
+  unfold EntropyDifference
+  rw [ht]
+  exact EReal.top_sub (fun ho => difference_no_indeterminate hU h ⟨ht,ho⟩)
+
+theorem difference_bottom {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {ε : ENNReal} (h : DifferenceDefined di dout f U ε)
+    (ht : metric_entropy dout ε (f '' U) = ⊤) : EntropyDifference di dout f U ε h = ⊥ := by
+  simp [EntropyDifference,ht]
+
+theorem difference_real {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {ε : ENNReal} (h : DifferenceDefined di dout f U ε) {a b : ℝ}
+    (hi : metric_entropy di ε U = (a : EReal)) (ho : metric_entropy dout ε (f '' U) = (b : EReal)) :
+    EntropyDifference di dout f U ε h = ((a-b : ℝ) : EReal) := by
+  simp [EntropyDifference,hi,ho]
+
+theorem ident_difference_zero {di : X → X → ENNReal} {f : X → X} {U : Set X}
+    (symm : ∀ x y, di x y = di y x) (tri : ∀ x y z, di x z ≤ di x y + di y z)
+    (hi : Ident di f U) (hU : U.Nonempty) (ε : ENNReal) (h : DifferenceDefined di di f U ε) :
+    EntropyDifference di di f U ε h = 0 := by
+  have he := (ident_cover_entropy symm tri hi ε).2
+  have ht : metric_entropy di ε U ≠ ⊤ := by
+    intro ht
+    exact difference_no_indeterminate hU h ⟨ht,he.trans ht⟩
+  have hb : metric_entropy di ε U ≠ ⊥ := ne_of_gt (lt_of_lt_of_le (by simp) (metric_entropy_nonneg di ε U hU))
+  simp only [EntropyDifference,he]
+  exact EReal.sub_self ht hb
+
+theorem lip_transfer {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {L : ENNReal} (hL0 : 0 < L) (hLt : L < ⊤)
+    (hL : ∀ x ∈ U, ∀ y ∈ U, dout (f x) (f y) ≤ L * di x y) (ε : ENNReal) :
+    (∀ C, InternalEpsilonNet di (ε / L) U C →
+      ∃ D, InternalEpsilonNet dout ε (f '' U) D ∧ D.card ≤ C.card) ∧
+    covering_number dout ε (f '' U) ≤ covering_number di (ε / L) U := by
+  have h : ∀ x ∈ U, ∀ y ∈ U, di x y < ε / L → dout (f x) (f y) < ε := by
+    intro x hx y hy hd
+    apply (hL x hx y hy).trans_lt
+    rw [mul_comm]
+    exact ENNReal.mul_lt_of_lt_div hd
+  exact ⟨fun _ hC => transfer_net h hC, transfer_cover h⟩
+
+theorem colip_transfer {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    {K : ENNReal} (hK0 : 0 < K) (hKt : K < ⊤)
+    (hK : ∀ x ∈ U, ∀ y ∈ U, K * di x y ≤ dout (f x) (f y)) (ε : ENNReal) :
+    (∀ C, InternalEpsilonNet dout ε (f '' U) C →
+      ∃ D, InternalEpsilonNet di (ε / K) U D ∧ D.card ≤ C.card) ∧
+    covering_number di (ε / K) U ≤ covering_number dout ε (f '' U) := by
+  have h : ∀ x ∈ U, ∀ y ∈ U, dout (f x) (f y) < ε → di x y < ε / K := by
+    intro x hx y hy hd
+    apply (ENNReal.lt_div_iff_mul_lt (Or.inl (ne_of_gt hK0)) (Or.inl (ne_of_lt hKt))).mpr
+    rw [mul_comm]
+    exact (hK x hx y hy).trans_lt hd
+  exact ⟨fun _ hC => pull_net h hC, pull_cover h⟩
+
+theorem composite_lip_radius {di dm dout : X → X → ENNReal} {f g : X → X} {U : Set X}
+    {L : ENNReal} (hL0 : 0 < L) (hLt : L < ⊤)
+    (hL : ∀ x ∈ U, ∀ y ∈ U, dm (f x) (f y) ≤ L * di x y) :
+    Uniform dm dout g (f '' U) / L ≤ Uniform di dout (g ∘ f) U := by
+  apply le_iInf; intro y
+  apply le_iInf; intro hy
+  apply le_radius_iff.mpr
+  intro x hx hd
+  apply below_uniform (di := dm) (f := g) (U := f '' U) ⟨x,hx,rfl⟩ ⟨y,hy,rfl⟩
+  apply (hL x hx y hy).trans_lt
+  rw [mul_comm]
+  exact ENNReal.mul_lt_of_lt_div hd
+
+theorem sparse_row_const {d : I → X → X → ENNReal} {f g : X → X} {U : Set X}
+    {j : I} (L : I → ENNReal) (hc : Const (d j) f U)
+    (hrow : ∀ k, k ≠ j → L k = 0)
+    (hL : ∀ a ∈ f '' U, ∀ b ∈ f '' U,
+      d j (g a) (g b) ≤ ∑' k, L k * d k a b) : Const (d j) (g ∘ f) U := by
+  intro x hx y hy
+  apply le_antisymm _ (zero_le _)
+  have hz : (∑' k, L k * d k (f x) (f y)) = 0 := by
+    have hall : ∀ k, L k * d k (f x) (f y) = 0 := by
+      intro k
+      by_cases hk : k = j
+      · subst k; simp [hc x hx y hy]
+      · simp [hrow k hk]
+    simp only [hall,tsum_zero]
+  simpa [hz] using hL (f x) ⟨x,hx,rfl⟩ (f y) ⟨y,hy,rfl⟩
+
+theorem factor_lip {di : X → X → ENNReal} {f g : X → X} {U : Set X}
+    {K L : ENNReal} (hK0 : 0 < K) (hKt : K < ⊤) (_hLt : L < ⊤)
+    (hK : ∀ x ∈ U, ∀ y ∈ U, K * di x y ≤ di (f x) (f y))
+    (hL : ∀ x ∈ U, ∀ y ∈ U, di (g x) (g y) ≤ L * di x y)
+    (T : (f '' U) → X) (hT : ∀ x (hx : x ∈ U), T ⟨f x,⟨x,hx,rfl⟩⟩ = g x)
+    (a b : f '' U) : di (T a) (T b) ≤ (L / K) * di a b := by
+  obtain ⟨x,hx,hfx⟩ := a.property
+  obtain ⟨y,hy,hfy⟩ := b.property
+  have ha : (⟨f x,⟨x,hx,rfl⟩⟩ : f '' U) = a := Subtype.ext hfx
+  have hb : (⟨f y,⟨y,hy,rfl⟩⟩ : f '' U) = b := Subtype.ext hfy
+  have hxy : di x y ≤ di (f x) (f y) / K := by
+    apply (ENNReal.le_div_iff_mul_le (Or.inl (ne_of_gt hK0)) (Or.inl (ne_of_lt hKt))).mpr
+    simpa [mul_comm] using hK x hx y hy
+  calc
+    di (T a) (T b) = di (g x) (g y) := by rw [← ha,← hb,hT x hx,hT y hy]
+    _ ≤ L * di x y := hL x hx y hy
+    _ ≤ L * (di (f x) (f y) / K) := mul_le_mul_left' hxy L
+    _ = (L / K) * di a b := by rw [hfx,hfy]; simp only [div_eq_mul_inv]; ac_rfl
+
+theorem lip_entropy_bound {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hU : U.Nonempty) (hTB : TotallyBoundedBy di U) {L ε : ENNReal}
+    (hL0 : 0 < L) (hLt : L < ⊤) (hε0 : 0 < ε) (hεt : ε < ⊤)
+    (hL : ∀ x ∈ U, ∀ y ∈ U, dout (f x) (f y) ≤ L * di x y) :
+    metric_entropy di ε U ≠ ⊤ ∧ metric_entropy dout ε (f '' U) ≠ ⊤ ∧
+    ∃ h : DifferenceDefined di dout f U ε,
+      metric_entropy di ε U - metric_entropy di (ε/L) U ≤ EntropyDifference di dout f U ε h := by
+  have hδ0 := ENNReal.div_pos (ne_of_gt hε0) (ne_of_lt hLt)
+  have hδt := ENNReal.div_lt_top (ne_of_lt hεt) (ne_of_gt hL0)
+  have hi := (totally_bounded_iff di U).mp hTB ε hε0 hεt
+  have hδ := (totally_bounded_iff di U).mp hTB (ε/L) hδ0 hδt
+  have hc := (lip_transfer hL0 hLt hL ε).2
+  have ho := hc.trans_lt hδ
+  refine ⟨(entropy_finite_iff hU ε).mpr hi,
+    (entropy_finite_iff (hU.image f) ε).mpr ho,Or.inl hi,?_⟩
+  exact EReal.sub_le_sub le_rfl (entropy_cover_mono (hU.image f) hc)
+
+theorem colip_entropy_bound {di dout : X → X → ENNReal} {f : X → X} {U : Set X}
+    (hU : U.Nonempty) (hTB : TotallyBoundedBy di U) {K ε : ENNReal}
+    (hK0 : 0 < K) (hKt : K < ⊤) (hε0 : 0 < ε) (hεt : ε < ⊤)
+    (hK : ∀ x ∈ U, ∀ y ∈ U, K * di x y ≤ dout (f x) (f y)) :
+    ∃ h : DifferenceDefined di dout f U ε,
+      EntropyDifference di dout f U ε h ≤ metric_entropy di ε U - metric_entropy di (ε/K) U := by
+  have hi := (totally_bounded_iff di U).mp hTB ε hε0 hεt
+  refine ⟨Or.inl hi,?_⟩
+  exact EReal.sub_le_sub le_rfl (entropy_cover_mono hU (colip_transfer hK0 hKt hK ε).2)
+
+theorem finite_difference_real {di dout : X → X → ENNReal}
+    (si : ∀ x, di x x = 0) (so : ∀ x, dout x x = 0) (f : X → X)
+    {U : Set X} (hU : U.Finite) (hn : U.Nonempty) {ε : ENNReal} (hε : 0 < ε) :
+    ∃ h : DifferenceDefined di dout f U ε, ∃ r : ℝ, EntropyDifference di dout f U ε h = (r : EReal) := by
+  obtain ⟨h,⟨a,ha⟩,⟨b,hb⟩⟩ := finite_difference_defined si so f hU hn hε
+  exact ⟨h,a-b,difference_real h ha hb⟩
+
+namespace Examples
+/- A three-point absorbing extension of the two-point metric. -/
+def twoDist : Option Bool → Option Bool → ENNReal
+  | none,none => 0
+  | some a,some b => if a = b then 0 else 1
+  | _,_ => ⊤
+
+theorem twoDist_lawful : ExtendedPseudoMetric (Option Bool) none twoDist := by
+  constructor
+  · exact ⟨some false,by simp⟩
+  · intro x; cases x <;> simp [twoDist]
+  · intro x y
+    cases x with
+    | none => cases y <;> simp [twoDist]
+    | some a => cases y with
+      | none => simp [twoDist]
+      | some b => simp [twoDist,eq_comm]
+  · intro x y z
+    cases x with
+    | none => cases y <;> cases z <;> simp [twoDist]
+    | some a => cases y with
+      | none => cases z <;> simp [twoDist]
+      | some b => cases z with
+        | none => simp [twoDist]
+        | some c => cases a <;> cases b <;> cases c <;> norm_num [twoDist]
+  · intro x hx; cases x <;> simp_all [twoDist]
+
+def swap : Operator (Option Bool) none :=
+  ⟨Option.map Bool.not,rfl⟩
+def twoDomain : Set (Option Bool) := {some false,some true}
+
+theorem mem_twoDomain (x : Option Bool) : x ∈ twoDomain ↔ x ≠ none := by
+  cases x with
+  | none => simp [twoDomain]
+  | some b => cases b <;> simp [twoDomain]
+
+theorem swap_domain : twoDomain ⊆ dom swap := by
+  intro x hx
+  cases x with
+  | none => simp [twoDomain] at hx
+  | some b => simp [dom,swap]
+
+theorem swap_image : swap.func '' twoDomain = twoDomain := by
+  ext x
+  cases x with
+  | none => simp [twoDomain,swap]
+  | some b => cases b <;> simp [twoDomain,swap]
+
+theorem swap_twice : swap.func ∘ swap.func = id := by
+  funext x
+  cases x <;> simp [swap]
+
+theorem swap_active : Active twoDist swap.func twoDomain := by
+  intro h
+  rcases h with hc | hi
+  · have hh := hc (some false) (by simp [twoDomain]) (some true) (by simp [twoDomain])
+    norm_num [swap,twoDist] at hh
+  · have hh := hi.2 (some false) (by simp [twoDomain])
+    norm_num [swap,twoDist] at hh
+
+theorem id_ident : Ident twoDist id twoDomain := by
+  constructor
+  · intro hc
+    have hh := hc (some false) (by simp [twoDomain]) (some true) (by simp [twoDomain])
+    norm_num [twoDist] at hh
+  · intro x hx
+    exact twoDist_lawful.dist_self x
+
+theorem swap_counterexample :
+    Active twoDist swap.func twoDomain ∧ Active twoDist swap.func (swap.func '' twoDomain) ∧
+    ¬ Ident twoDist swap.func twoDomain ∧
+    ¬ Ident twoDist swap.func (swap.func '' twoDomain) ∧
+    Ident twoDist (swap.func ∘ swap.func) twoDomain ∧
+    ¬ Active twoDist (swap.func ∘ swap.func) twoDomain := by
+  rw [swap_image,swap_twice]
+  exact ⟨swap_active,swap_active,fun h => swap_active (Or.inr h),
+    fun h => swap_active (Or.inr h),id_ident,fun h => h (Or.inr id_ident)⟩
+
+noncomputable def infiniteDist (x y : Option Bool) : ENNReal := if x = y then 0 else ⊤
+
+theorem infiniteDist_lawful : ExtendedPseudoMetric (Option Bool) none infiniteDist := by
+  classical
+  constructor
+  · exact ⟨some false,by simp⟩
+  · intro x; simp [infiniteDist]
+  · intro x y; simp [infiniteDist,eq_comm]
+  · intro x y z
+    by_cases hxy : x = y
+    · subst y; simp [infiniteDist]
+    · simp [infiniteDist,hxy]
+  · intro x hx; simp [infiniteDist,hx]
+
+def identityOp : Operator (Option Bool) none := ⟨id,rfl⟩
+noncomputable def twoGauge (i : Bool) : Option Bool → Option Bool → ENNReal :=
+  if i = false then infiniteDist else twoDist
+
+theorem twoGauge_lawful (i : Bool) : ExtendedPseudoMetric (Option Bool) none (twoGauge i) := by
+  cases i
+  · exact infiniteDist_lawful
+  · exact twoDist_lawful
+
+theorem identity_domain : twoDomain ⊆ dom identityOp := by
+  intro x hx
+  exact (mem_twoDomain x).mp hx
+
+theorem infinite_input_radius (j : Bool) (y : Option Bool) :
+    Radius (twoGauge false) (twoGauge j) identityOp.func twoDomain y = ⊤ := by
+  apply top_unique
+  apply le_radius_iff.mpr
+  intro x hx hd
+  have hxy : x = y := by
+    by_contra hn
+    simp [twoGauge,infiniteDist,hn] at hd
+  subst x
+  exact (twoGauge_lawful j).dist_self y
+
+theorem infinite_input_uniform (j : Bool) :
+    NullMatrix twoGauge identityOp.func twoDomain j false = ⊤ := by
+  apply top_unique
+  apply le_iInf; intro y
+  apply le_iInf; intro hy
+  rw [infinite_input_radius]
+
+theorem identity_not_const (j : Bool) : ¬ Const (twoGauge j) identityOp.func twoDomain := by
+  intro h
+  have hh := h (some false) (by simp [twoDomain]) (some true) (by simp [twoDomain])
+  cases j <;> norm_num [twoGauge,infiniteDist,twoDist,identityOp] at hh
+
+theorem infinite_radius_counterexample :
+    (NullMatrix twoGauge identityOp.func twoDomain false false = ⊤ ∧
+      ¬ Const (twoGauge false) identityOp.func twoDomain) ∧
+    (NullMatrix twoGauge identityOp.func twoDomain true false = ⊤ ∧
+      ¬ Const (twoGauge true) identityOp.func twoDomain) :=
+  ⟨⟨infinite_input_uniform false,identity_not_const false⟩,
+    ⟨infinite_input_uniform true,identity_not_const true⟩⟩
+end Examples
+
+theorem finite_inf_attained (J : Finset I) (hJ : J.Nonempty) (a : I → ENNReal) :
+    ∃ j ∈ J, (⨅ k ∈ (J : Set I), a k) = a j ∧ ∀ k ∈ J, a j ≤ a k := by
+  obtain ⟨j,hj,hmin⟩ := J.exists_min_image a hJ
+  refine ⟨j,hj,le_antisymm ?_ ?_,hmin⟩
+  · exact iInf_le_of_le j (iInf_le_of_le hj le_rfl)
+  · apply le_iInf; intro k
+    apply le_iInf; intro hk
+    exact hmin k hk
+
+theorem radius_component_minimum (d : I → X → X → ENNReal) (di : X → X → ENNReal)
+    (f : X → X) (U : Set X) (J : Finset I) (hJ : J.Nonempty) (y : X) :
+    ∃ j ∈ J, Radius di (subfamily_pseudometric d J) f U y = Radius di (d j) f U y ∧
+      ∀ k ∈ J, Radius di (d j) f U y ≤ Radius di (d k) f U y := by
+  rw [radius_components]
+  exact finite_inf_attained J hJ _
+
+theorem uniform_component_minimum (d : I → X → X → ENNReal) (i : I)
+    (f : X → X) (U : Set X) (J : Finset I) (hJ : J.Nonempty) :
+    ∃ j ∈ J, Uniform (d i) (subfamily_pseudometric d J) f U = NullMatrix d f U j i ∧
+      ∀ k ∈ J, NullMatrix d f U j i ≤ NullMatrix d f U k i := by
+  rw [uniform_components]
+  exact finite_inf_attained J hJ _
+
+theorem point_constant_selfcomp {bot : X} (f : Operator X bot) (U : Set X) (c : X)
+    (hc : ∀ x ∈ U, f.func x = c) :
+    (∀ x ∈ U, (f.func ∘ f.func) x = f.func c) ∧
+    (∀ x ∈ U, ∀ y ∈ U, (f.func ∘ f.func) x = (f.func ∘ f.func) y) ∧
+    (f.func c ≠ bot → U ⊆ dom (f * f)) ∧
+    (f.func c = bot → U ∩ dom (f * f) = ∅) := by
+  have he : ∀ x ∈ U, (f.func ∘ f.func) x = f.func c := fun x hx => congrArg f.func (hc x hx)
+  refine ⟨he,fun x hx y hy => (he x hx).trans (he y hy).symm,?_,?_⟩
+  · intro h x hx
+    change f.func (f.func x) ≠ bot
+    simpa [hc x hx] using h
+  · intro h
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    rintro x ⟨hx,hd⟩
+    apply hd
+    exact (he x hx).trans h
+
+noncomputable def ChannelType (d : I → X → X → ENNReal) (σ : ScaleFamily X I)
+    (f : X → X) (A : {A : Set X // A.Nonempty}) (τs τn : ENNReal) (i j : I) : Bool × Bool :=
+  thresholdType (σ.value i A) (NullMatrix d f A j i) τs τn
+
+theorem channel_type_formula (d : I → X → X → ENNReal) (σ : ScaleFamily X I)
+    (f : X → X) (A : {A : Set X // A.Nonempty}) (τs τn : ENNReal) (i j : I) :
+    ChannelType d σ f A τs τn i j =
+      (decide (σ.value i A < τs), decide (τn ≤ Uniform (d i) (d j) f A)) := rfl
+
+theorem Examples.swap_composite_domain : Examples.twoDomain ⊆ dom (Examples.swap * Examples.swap) := by
+  intro x hx
+  change (Examples.swap.func ∘ Examples.swap.func) x ≠ none
+  rw [Examples.swap_twice]
+  exact (Examples.mem_twoDomain x).mp hx
+end Chapter3
+```
+
+```lean filename=Audit.lean
+import Main
+#print axioms Chapter3.Const
+#print axioms Chapter3.Fixed
+#print axioms Chapter3.Ident
+#print axioms Chapter3.Active
+#print axioms Chapter3.component_partition
+#print axioms Chapter3.Fiber
+#print axioms Chapter3.composite_zero
+#print axioms Chapter3.fiber_representation
+#print axioms Chapter3.EqRel
+#print axioms Chapter3.ZeroRel
+#print axioms Chapter3.FiberPreorder
+#print axioms Chapter3.fiber_preorder_refl
+#print axioms Chapter3.fiber_preorder_trans
+#print axioms Chapter3.zero_trans
+#print axioms Chapter3.zero_replace
+#print axioms Chapter3.fixed_isometry
+#print axioms Chapter3.ident_isometry
+#print axioms Chapter3.outer_const
+#print axioms Chapter3.ident_comp
+#print axioms Chapter3.active_comp
+#print axioms Chapter3.identity_not_active
+#print axioms Chapter3.const_zero_row
+#print axioms Chapter3.const_colip_entry
+#print axioms Chapter3.fiber_target_zero
+#print axioms Chapter3.fiber_image_nonempty
+#print axioms Chapter3.fiber_cover
+#print axioms Chapter3.fibers_equal_or_disjoint
+#print axioms Chapter3.fiber_intersection
+#print axioms Chapter3.fiber_antitone
+#print axioms Chapter3.fiber_singleton
+#print axioms Chapter3.fiber_full_subset
+#print axioms Chapter3.fiber_ident
+#print axioms Chapter3.fiber_const
+#print axioms Chapter3.fiber_const_empty
+#print axioms Chapter3.Factors
+#print axioms Chapter3.factors_iff
+#print axioms Chapter3.mutual_factors_iff
+#print axioms Chapter3.Legal
+#print axioms Chapter3.Radius
+#print axioms Chapter3.UniformOn
+#print axioms Chapter3.Uniform
+#print axioms Chapter3.NullMatrix
+#print axioms Chapter3.legal_ball_iff
+#print axioms Chapter3.radius_empty_legal
+#print axioms Chapter3.below_radius
+#print axioms Chapter3.radius_mono_domain
+#print axioms Chapter3.uniform_le_radius
+#print axioms Chapter3.uniform_mono_domain
+#print axioms Chapter3.below_uniform
+#print axioms Chapter3.separated_lower_bound
+#print axioms Chapter3.threshold_ball
+#print axioms Chapter3.const_radius
+#print axioms Chapter3.const_uniform
+#print axioms Chapter3.identity_radius_bound
+#print axioms Chapter3.composite_radius_mono
+#print axioms Chapter3.radius_output_antitone
+#print axioms Chapter3.uniform_output_antitone
+#print axioms Chapter3.ScaleFamily
+#print axioms Chapter3.diameter
+#print axioms Chapter3.diameter_mono
+#print axioms Chapter3.diameterScale
+#print axioms Chapter3.thresholdType
+#print axioms Chapter3.threshold_type_iff
+#print axioms Chapter3.threshold_exhaustive
+#print axioms Chapter3.scale_threshold_mono
+#print axioms Chapter3.radius_threshold_antitone
+#print axioms Chapter3.scale_domain_mono
+#print axioms Chapter3.small_domain_iff
+#print axioms Chapter3.colip_gap_point
+#print axioms Chapter3.colip_gap_uniform
+#print axioms Chapter3.le_radius_iff
+#print axioms Chapter3.radius_components
+#print axioms Chapter3.uniform_components
+#print axioms Chapter3.fiber_step
+#print axioms Chapter3.radius_step
+#print axioms Chapter3.composite_fiber_step
+#print axioms Chapter3.identity_image_fiber
+#print axioms Chapter3.const_family_radii
+#print axioms Chapter3.chainPrefix
+#print axioms Chapter3.chainPrefix_domain_step
+#print axioms Chapter3.active_chain
+#print axioms Chapter3.relation_chain
+#print axioms Chapter3.relation_chain_strict
+#print axioms Chapter3.imageSetoid
+#print axioms Chapter3.ImageQuotient
+#print axioms Chapter3.imageClass
+#print axioms Chapter3.QuotientFactors
+#print axioms Chapter3.quotient_factors_iff
+#print axioms Chapter3.mutual_quotient_factors_iff
+#print axioms Chapter3.separated_relations
+#print axioms Chapter3.separated_factorization
+#print axioms Chapter3.zero_relation_fiber
+#print axioms Chapter3.insufficient_radius_witness
+#print axioms Chapter3.transfer_net
+#print axioms Chapter3.transfer_cover
+#print axioms Chapter3.null_cover_bound
+#print axioms Chapter3.const_cover_one
+#print axioms Chapter3.const_entropy_zero
+#print axioms Chapter3.TotallyBoundedBy
+#print axioms Chapter3.totally_bounded_iff
+#print axioms Chapter3.finite_cover_bound
+#print axioms Chapter3.finite_entropy_real
+#print axioms Chapter3.DifferenceDefined
+#print axioms Chapter3.EntropyDifference
+#print axioms Chapter3.entropy_difference_formula
+#print axioms Chapter3.finite_difference_defined
+#print axioms Chapter3.const_difference
+#print axioms Chapter3.log2_mono_positive
+#print axioms Chapter3.entropy_cover_mono
+#print axioms Chapter3.null_entropy_bound
+#print axioms Chapter3.pull_net
+#print axioms Chapter3.pull_cover
+#print axioms Chapter3.ident_cover_entropy
+#print axioms Chapter3.entropy_finite_iff
+#print axioms Chapter3.difference_no_indeterminate
+#print axioms Chapter3.difference_top
+#print axioms Chapter3.difference_bottom
+#print axioms Chapter3.difference_real
+#print axioms Chapter3.ident_difference_zero
+#print axioms Chapter3.lip_transfer
+#print axioms Chapter3.colip_transfer
+#print axioms Chapter3.composite_lip_radius
+#print axioms Chapter3.sparse_row_const
+#print axioms Chapter3.factor_lip
+#print axioms Chapter3.lip_entropy_bound
+#print axioms Chapter3.colip_entropy_bound
+#print axioms Chapter3.finite_difference_real
+#print axioms Chapter3.Examples.twoDist
+#print axioms Chapter3.Examples.twoDist_lawful
+#print axioms Chapter3.Examples.swap
+#print axioms Chapter3.Examples.twoDomain
+#print axioms Chapter3.Examples.mem_twoDomain
+#print axioms Chapter3.Examples.swap_domain
+#print axioms Chapter3.Examples.swap_image
+#print axioms Chapter3.Examples.swap_twice
+#print axioms Chapter3.Examples.swap_active
+#print axioms Chapter3.Examples.id_ident
+#print axioms Chapter3.Examples.swap_counterexample
+#print axioms Chapter3.Examples.infiniteDist
+#print axioms Chapter3.Examples.infiniteDist_lawful
+#print axioms Chapter3.Examples.identityOp
+#print axioms Chapter3.Examples.twoGauge
+#print axioms Chapter3.Examples.twoGauge_lawful
+#print axioms Chapter3.Examples.identity_domain
+#print axioms Chapter3.Examples.infinite_input_radius
+#print axioms Chapter3.Examples.infinite_input_uniform
+#print axioms Chapter3.Examples.identity_not_const
+#print axioms Chapter3.Examples.infinite_radius_counterexample
+#print axioms Chapter3.finite_inf_attained
+#print axioms Chapter3.radius_component_minimum
+#print axioms Chapter3.uniform_component_minimum
+#print axioms Chapter3.point_constant_selfcomp
+#print axioms Chapter3.ChannelType
+#print axioms Chapter3.channel_type_formula
+#print axioms Chapter3.Examples.swap_composite_domain
+#print axioms formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet
+#print axioms formal_oet.vol_01.ch_01_foundations.covering_number
+#print axioms formal_oet.vol_01.ch_01_foundations.covering_number_attained
+#print axioms formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff
+#print axioms formal_oet.vol_01.ch_01_foundations.log2_ereal
+#print axioms formal_oet.vol_01.ch_01_foundations.metric_entropy
+#print axioms formal_oet.vol_01.ch_01_foundations.subfamily_pseudometric
+#print axioms formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy
+#print axioms formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy_eq_metric_entropy
+```
+
+```json filename=alignment.json
+{
+  "case_id": "MG-C003",
+  "version": "0.1.1",
+  "items": [
+    {
+      "id": "CH03-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Const"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Fixed"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Ident"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Active"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.component_partition"
+        }
+      ],
+      "representation": "Each index is represented by applying the predicates to d i. Ident explicitly excludes Const, so the three proved mutually exclusive and exhaustive predicates implement constant-first component partitioning.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Fiber"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.composite_zero"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_representation"
+        }
+      ],
+      "representation": "Fiber is exactly the restricted set defined by zero composite output distance. composite_zero proves equivalence of the supremum composite pseudometric with all component zero equations.",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.EqRel"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ZeroRel"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.FiberPreorder"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.imageSetoid"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ImageQuotient"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.imageClass"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.zero_relation_fiber"
+        }
+      ],
+      "representation": "Relations are subsets of X×X with both endpoints in U. The actual image subtype carries the componentwise zero setoid, whose equivalence is proved from pseudometric axioms; its quotient and canonical image class are constructed. The fiber relation correspondence includes symmetry.",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-D04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Legal"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Radius"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.legal_ball_iff"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_empty_legal"
+        }
+      ],
+      "representation": "Legal radii are ENNReal values strictly between zero and infinity. The ball-intersection inclusion is proved equivalent to Legal; Radius is their supremum, with empty legal set giving zero.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.UniformOn"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Uniform"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.NullMatrix"
+        }
+      ],
+      "representation": "UniformOn distinguishes the basepoint set A from the assessment domain U; Uniform uses A=U. NullMatrix has arguments output j followed by input i and is the singleton-output uniform radius.",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-D06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ScaleFamily"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.diameter"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.diameter_mono"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.diameterScale"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.thresholdType"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ChannelType"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.channel_type_formula"
+        }
+      ],
+      "representation": "ScaleFamily is monotone on nonempty subsets. diameterScale proves validity of the default double supremum diameter. ChannelType uses the input scale and the j,i null-matrix entry, encoding 1 and 0 by true and false.",
+      "dependencies": [
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.TotallyBoundedBy"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.totally_bounded_iff"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_attained"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.log2_ereal"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.subfamily_pseudometric"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy_eq_metric_entropy"
+        }
+      ],
+      "representation": "The imported frozen InternalEpsilonNet uses finite centers inside the set and strict open balls. covering_number_attained and covering_number_eq_top_iff supply the minimum/infinity correspondence. Composite distance and entropy are the imported chapter-1 definitions. TotallyBoundedBy is proved equivalent to finite covering number at every finite positive precision.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.DifferenceDefined"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.EntropyDifference"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.entropy_difference_formula"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.difference_no_indeterminate"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.difference_top"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.difference_bottom"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.difference_real"
+        }
+      ],
+      "representation": "The difference requires the specified disjunction of finite input/output covering numbers. Instantiating di and dout by the respective composite pseudometrics gives the chapter definition. The no-infinity-minus-infinity condition, both infinite-result branches, and finite-real subtraction are proved.",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P01-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_zero_row"
+        }
+      ],
+      "representation": "Constant output has zero ENNReal tsum upper row, for every pair in U.",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_colip_entry"
+        }
+      ],
+      "representation": "An actual sum lower bound plus a positive source-distance witness forces the corresponding ENNReal coefficient to zero, including infinite distances and coefficients.",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ident_isometry"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.zero_replace"
+        }
+      ],
+      "representation": "Identity components preserve the component distance in both directions, using symmetry and triangle inequalities.",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P02-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.active_comp"
+        }
+      ],
+      "representation": "Componentwise implication represents the requested set inclusion. The outer evaluation domain is exactly f image U. All constant/identity alternatives are handled.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P01-03",
+        "CH03-P02-03",
+        "CH03-P04-01"
+      ]
+    },
+    {
+      "id": "CH03-P02-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.chainPrefix"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.chainPrefix_domain_step"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.active_chain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.identity_not_active"
+        }
+      ],
+      "representation": "chainPrefix uses zero-based steps, starts with id, and recurses by postcomposition. The intermediate domain is exactly the prefix image. The theorem gives a step k<n witnessing activity; the zero-step case is proved impossible.",
+      "dependencies": [
+        "CH03-P02-01",
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P02-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ident_comp"
+        }
+      ],
+      "representation": "Both pointwise zero-displacement and exclusion of constant output are proved for the composition on U and the actual intermediate image.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P03-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.twoDist"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.twoDist_lawful"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.swap"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.twoDomain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.swap_domain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.swap_image"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.swap_twice"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.swap_composite_domain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.swap_counterexample"
+        }
+      ],
+      "representation": "Option Bool realizes the absorbing point and the two exchanged points, with distance 1 between them. The extended metric and lawful operator/domain/image are checked. Both steps are active and nonidentity while the composition is identity and nonactive. With a singleton index set these are the stated component-set computations and witnesses against both reverse inclusions.",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.outer_const"
+        }
+      ],
+      "representation": "Outer constancy on the actual image directly implies composite constancy on U.",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-02",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (ii) 内侧同分量零距未必复合零距的合法七点、双分量反例. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P05-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.sparse_row_const"
+        }
+      ],
+      "representation": "An actual output-row sum inequality on the image and zero off-diagonal coefficients propagate inner constancy. No coefficient finiteness assumption is imposed.",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P06-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_target_zero"
+        }
+      ],
+      "representation": "Arbitrary targets with all selected component distances zero give identical restricted fibers, by triangle inequalities and symmetry.",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_image_nonempty"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_cover"
+        }
+      ],
+      "representation": "Every image-target fiber is nonempty, and their union is exactly U, including U empty.",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fibers_equal_or_disjoint"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_cover"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_image_nonempty"
+        }
+      ],
+      "representation": "For any two targets, fibers are equal or disjoint; together with image-fiber nonemptiness and exact coverage this is the partition after duplicate removal.",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P06-01",
+        "CH03-P06-02"
+      ]
+    },
+    {
+      "id": "CH03-P06-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_intersection"
+        }
+      ],
+      "representation": "For nonempty J, the fiber equals the intersection of singleton-component fibers. The proof works for arbitrary J, hence for finite nonempty J.",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_antitone"
+        }
+      ],
+      "representation": "J subset K implies K-fiber subset J-fiber.",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_singleton"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_full_subset"
+        }
+      ],
+      "representation": "Singleton fibers have exactly one zero-distance equation; the full-family fiber is contained in each singleton fiber.",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P06-05"
+      ]
+    },
+    {
+      "id": "CH03-P06-07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_ident"
+        }
+      ],
+      "representation": "At an identity component, every arbitrary-target fiber equals the corresponding input zero-distance class within U.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P06-06"
+      ]
+    },
+    {
+      "id": "CH03-P06-08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_const"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_const_empty"
+        }
+      ],
+      "representation": "Constant component fibers at image targets equal U. For arbitrary targets at positive distance from an image target, the fiber is empty.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P07-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Factors"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.factors_iff"
+        }
+      ],
+      "representation": "The forward implication of factors_iff proves actual point-valued image factorization implies inclusion of equality relations.",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Factors"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.factors_iff"
+        }
+      ],
+      "representation": "The reverse implication constructs T on the image subtype using representatives and relation inclusion; it also works when U is empty.",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.mutual_factors_iff"
+        }
+      ],
+      "representation": "Factorizations in both directions are equivalent to equality of the restricted point-value relations.",
+      "dependencies": [
+        "CH03-P07-01",
+        "CH03-P07-02"
+      ]
+    },
+    {
+      "id": "CH03-P07-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.factor_lip"
+        }
+      ],
+      "representation": "For a specified image factorization T, positive finite K and finite L give the exact L/K scalar inequality on all actual image points.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P08-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.QuotientFactors"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.quotient_factors_iff"
+        }
+      ],
+      "representation": "The quotient-lift construction is independent of image representatives, satisfies the required canonical-class equation, and is equivalent to zero-relation inclusion.",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P08-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.mutual_quotient_factors_iff"
+        }
+      ],
+      "representation": "Factorizations between the two actual-image zero quotients in both directions are equivalent to equality of zero relations.",
+      "dependencies": [
+        "CH03-P08-01"
+      ]
+    },
+    {
+      "id": "CH03-P08-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.separated_relations"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.separated_factorization"
+        }
+      ],
+      "representation": "Explicit separation is assumed only on each actual image. Under precisely those hypotheses the zero relations equal point-value equality relations, and the factorization criteria agree.",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-01",
+        "CH03-P07-02",
+        "CH03-P08-01"
+      ]
+    },
+    {
+      "id": "CH03-P09-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_preorder_refl"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_preorder_trans"
+        }
+      ],
+      "representation": "Fixed-domain inclusion of restricted zero relations is reflexive and transitive.",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P09-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.relation_chain"
+        }
+      ],
+      "representation": "For any chain of sets R k and any a≤b≤n, consecutive inclusions imply R a subset R b. Instantiate R k with the restricted zero relations on the common U.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P09-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.relation_chain_strict"
+        }
+      ],
+      "representation": "A strict step supplies a concrete point-pair in the final relation but not the initial relation, as well as strict endpoint inclusion.",
+      "dependencies": [
+        "CH03-P09-02"
+      ]
+    },
+    {
+      "id": "CH03-P10-01",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: 构造带吸收元的通常实线和阶跃算子，验证合法结构和U的域条件. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P10-02",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: 每个y∈U的合法有限正半径恰为(0,|y|]，故点态半径=|y|>0. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P10-03",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: 用趋零基点证明同一固定U上的统一半径为0. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P11-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_const"
+        }
+      ],
+      "representation": "Constancy of every selected output component makes every image-target J-fiber equal U.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P11-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_family_radii"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_radius"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_uniform"
+        }
+      ],
+      "representation": "Constancy gives top pointwise radii at all basepoints and top uniform radius for any input distance. The proof uses arbitrarily large strictly positive finite legal radii.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D07",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P11-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.infiniteDist_lawful"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.twoGauge_lawful"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.identityOp"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.identity_domain"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.infinite_input_radius"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.Examples.infinite_radius_counterexample"
+        }
+      ],
+      "representation": "The lawful Option Bool structure with two components realizes infinite input separation and either infinite same-component or unit distinct-component output separation. Identity has top pointwise/uniform radii but is not constant in either output component.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-P12-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.identity_image_fiber"
+        }
+      ],
+      "representation": "For y in U, the identity-component fiber at f y is exactly the input zero class of y within U.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P01-03",
+        "CH03-P06-06"
+      ]
+    },
+    {
+      "id": "CH03-P12-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.identity_radius_bound"
+        }
+      ],
+      "representation": "A finite positive radius whose input ball contains only zero-distance points is legal under the identity-component assumption, yielding radius≥r>0.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D04",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P13-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_components"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.finite_inf_attained"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_component_minimum"
+        }
+      ],
+      "representation": "The pointwise family radius equals the infimum of singleton radii. For a finite nonempty family, a minimizing component is explicitly obtained, proving the stated minimum formula.",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D07",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P13-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.uniform_components"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.uniform_component_minimum"
+        }
+      ],
+      "representation": "The basepoint and component infima are interchanged with both inequalities proved. The finite nonempty result is attained at a component and equals the corresponding null-matrix entry.",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P13-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_output_antitone"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.uniform_output_antitone"
+        }
+      ],
+      "representation": "Enlarging the selected output family decreases the pointwise and uniform radii.",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P14-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.fiber_step"
+        }
+      ],
+      "representation": "A singleton-fiber membership gives output zero distance, with the chapter orientation obtained by symmetry.",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P14-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.below_radius"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_step"
+        }
+      ],
+      "representation": "Strict inequality below the supremum extracts a legal finite positive radius exceeding the distance and proves output zero distance. Both symmetry orientations are made explicit.",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-P14-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.composite_fiber_step"
+        }
+      ],
+      "representation": "Both inner image points are explicitly assumed in the downstream domain. Applying the singleton-fiber condition yields the composite output zero equation.",
+      "dependencies": [
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P15-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.composite_radius_mono"
+        }
+      ],
+      "representation": "A zero-preserving downstream map on the exact actual image sends every legal inner radius to a legal composite radius, proving the uniform lower bound.",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-P15-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.le_radius_iff"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.composite_lip_radius"
+        }
+      ],
+      "representation": "The exact downstream uniform radius divided by L is a lower bound for the composite. The proof uses a characterization valid for all extended thresholds, including 0 and infinity, without excluding either boundary.",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P14-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P16-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.threshold_type_iff"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.threshold_exhaustive"
+        }
+      ],
+      "representation": "There exists exactly one Bool×Bool pair satisfying the two threshold comparisons. As Bool has exactly false/true this proves the four combinations exhaustive and mutually exclusive.",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.scale_threshold_mono"
+        }
+      ],
+      "representation": "Increasing the scale threshold preserves every first-coordinate true comparison, pointwise on channels and hence as channel-set inclusion.",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_threshold_antitone"
+        }
+      ],
+      "representation": "Increasing the null-radius threshold can only shrink the second-coordinate true channel set.",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.scale_domain_mono"
+        }
+      ],
+      "representation": "For every monotone scale family and nonempty B subset A, both the scale inequality and the strict threshold implication are proved.",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.radius_mono_domain"
+        }
+      ],
+      "representation": "Shrinking the assessment domain enlarges the legal radius set at each fixed basepoint. The result holds even without requiring the basepoint in B, and therefore includes that case.",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-P17-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.uniform_mono_domain"
+        }
+      ],
+      "representation": "Both the assessment domain and the infimum basepoint domain shrink from A to B. Each basepoint comparison is composed with the original uniform lower bound.",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P17-02"
+      ]
+    },
+    {
+      "id": "CH03-P17-04",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (iii) 直径尺度的二点/单点反例，否定反向尺度判断. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P18-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.below_uniform"
+        }
+      ],
+      "representation": "Any input pair in the domain whose distance is strictly below the uniform radius has zero output distance.",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P18-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.separated_lower_bound"
+        }
+      ],
+      "representation": "Positive output distance forces the input distance to be at least the uniform radius, by contraposition.",
+      "dependencies": [
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.insufficient_radius_witness"
+        }
+      ],
+      "representation": "For every α strictly above the uniform radius, there are domain points with input distance below α and positive output separation. ε=min(output distance,1) is positive finite and bounded by the output distance, including infinite output separation.",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P19-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.threshold_ball"
+        }
+      ],
+      "representation": "A threshold below or equal to the uniform radius makes every restricted open input ball lie in the corresponding output zero fiber.",
+      "dependencies": [
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.transfer_net"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.transfer_cover"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.null_cover_bound"
+        }
+      ],
+      "representation": "Images of finite internal input centers form internal output centers with nonincreasing cardinality. Infima give the bound for every B subset A, including empty B and absence of any finite input cover.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.log2_mono_positive"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.entropy_cover_mono"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.null_entropy_bound"
+        }
+      ],
+      "representation": "The extended base-two logarithm is proved monotone on positive covering numbers. For nonempty B the covering bound therefore yields the stated entropy comparison, including infinite values.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P20-01",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: 在同一个阶跃反例U上，对任意有限正τ选0<a≤1、2a<τ，证明二点B输入覆盖数1、输出在1/2尺度覆盖数2. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P21-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.small_domain_iff"
+        }
+      ],
+      "representation": "Under diameter(A)<τσ≤τN, the τN uniform-radius test is equivalent to all outputs being zero-distance. Constancy gives top uniform radius for the reverse direction.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P11-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P21-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_cover_one"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.small_domain_iff"
+        }
+      ],
+      "representation": "For nonempty A and every positive ε, all-output zero distance makes a singleton internal output net, and nonemptiness supplies the matching lower bound one. Combining with small_domain_iff gives the requested consequence.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P21-01"
+      ]
+    },
+    {
+      "id": "CH03-P22-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.finite_cover_bound"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.finite_entropy_real"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.finite_difference_defined"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.finite_difference_real"
+        }
+      ],
+      "representation": "Finite U is covered by its own centers. The theorem gives positive finite covering numbers and finite real entropy for each self-zero distance, hence for both composite metrics. The image of finite nonempty U is finite nonempty, and its entropy difference is a genuine real value.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_cover_one"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_entropy_zero"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.const_difference"
+        }
+      ],
+      "representation": "Constant components give output cover number one, entropy zero, and a defined entropy difference equal to the input entropy, with no finiteness assumption on that input entropy.",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.pull_net"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.pull_cover"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ident_cover_entropy"
+        }
+      ],
+      "representation": "Forward image centers and backward chosen representatives both give cardinality-nonincreasing internal nets. Identity-component isometry proves both covering inequalities and equality of entropy.",
+      "dependencies": [
+        "CH03-P01-03",
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P23-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.ident_difference_zero"
+        }
+      ],
+      "representation": "Only under DifferenceDefined and nonempty U does equal entropy yield difference zero. Infinite input entropy is explicitly ruled out by the finiteness condition and equality of both entropies.",
+      "dependencies": [
+        "CH03-D08",
+        "CH03-P23-02"
+      ]
+    },
+    {
+      "id": "CH03-P24-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.lip_transfer"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.transfer_net"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.transfer_cover"
+        }
+      ],
+      "representation": "For positive finite L, an ε/L internal net pushes to an ε output net; the returned center set has cardinality at most the original, and the covering-number inequality follows.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P24-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.lip_entropy_bound"
+        }
+      ],
+      "representation": "Total boundedness makes the ε and ε/L input coverings finite, hence the ε output covering finite. Nonempty-set entropy is nonnegative and not top. The displayed entropy-difference lower bound follows with a proof of DifferenceDefined.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P19-03",
+        "CH03-P24-01"
+      ]
+    },
+    {
+      "id": "CH03-P25-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.colip_transfer"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.pull_net"
+        },
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.pull_cover"
+        }
+      ],
+      "representation": "For positive finite K, chosen preimages of each internal output center give an ε/K input net with no larger cardinality; the covering lower bound follows.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P23-02"
+      ]
+    },
+    {
+      "id": "CH03-P25-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.colip_entropy_bound"
+        }
+      ],
+      "representation": "Input total boundedness supplies the finiteness condition for the entropy difference. The exact difference upper bound follows from the co-Lip covering inequality, without assuming output entropy finite.",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P19-03",
+        "CH03-P25-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-01",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i-a) 验证绝对值读数伪度量、仿射算子合法，算出φ的纤维与分量类型. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P26-02",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i-b) 算出φ²的纤维与分量类型，精确保留U. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P26-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.point_constant_selfcomp"
+        }
+      ],
+      "representation": "For any lawful absorbing-point operator, a common point-value c on U remains a common point-value f(c) after selfcomposition. If f(c) is nonabsorbing U stays in the composite domain; if it is absorbing the intersection with that domain is empty. This applies in particular to the real-valued constant case of the exercise.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P27-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.colip_gap_point"
+        }
+      ],
+      "representation": "Positive co-Lip coefficient and a pointwise null-radius test exclude every input distance in (0,radius); K is allowed to be infinite.",
+      "dependencies": [
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P27-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Main.lean",
+          "name": "Chapter3.colip_gap_uniform"
+        }
+      ],
+      "representation": "Each input pair has either zero distance or distance at least the uniform radius. The result is stronger than the positive-uniform-radius case, and K need not be finite.",
+      "dependencies": [
+        "CH03-P27-01",
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-P28-01",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i) 完整列出恒等和平移算子的输入纤维分划，验证相应结构. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P28-02",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (ii) 在精确3/2半径计算两端内部覆盖数及熵差，给上下界. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P29-01",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i-a) D=[0,1/2]的直径、统一半径及类型. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P29-02",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i-b) D=[9/10,11/10]的直径、统一半径及类型. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P29-03",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i-c) D={0,2}的直径、统一半径及类型. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P29-04",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i-d) D=[0,2]的直径、统一半径及类型. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P29-05",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (ii) 由(i)合法反例否定无直径条件时半径≥1即整体零化. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P30-01",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (i) 所有有限正ε下四点集内部覆盖数的完整分段及端点，说明3/2不是合法内部中心. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P30-02",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (ii) 两算子的像集、各精度覆盖数和熵差. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P30-03",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (iii-a) 分别证明最优标量Lip常数及必要下界. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P30-04",
+      "status": "incomplete",
+      "declarations": [],
+      "representation": "Not completed: (iii-b) 在ε=7/4代入一般上界，与真实覆盖数逐项比较. No claim is made that the delivered general lemmas establish this full obligation.",
+      "dependencies": []
+    }
+  ]
+}
+```
+

@@ -43,9 +43,12 @@ SMC（Strict Mathematical Completion）为严格数学交付的展示简称；�
 
 | 模型 | Harness | 数学能力 MC | **可靠数学能力 RMC（主分）** | 严格数学交付 SMC | 已测覆盖 |
 |---|---|---:|---:|---:|---|
+| Dot Underlying Model（2026-11-08）† | Dot native harness | 91.66 | 90.28 | 77.50 | 38/38 |
 | Terra 6.1 Max | Codex CLI | 87.65 | 86.28 | 66.67 | 38/38 |
 | Gemini 3.8 Flash High | AGY CLI | 62.94 | 49.23 | 13.75 | 38/38 |
 | DeepSeek v4.1 Flash 1017 | Codex（外部交卷） | 48.07 | 41.48 | 19.17 | 部分已测 · 22/38 |
+
+† Dot native harness为独立运行方式；底层SKU未核实。每题新原生子代理、指令隔离及来源边界见[记录说明](protocol/native-observations.md)。
 
 共同条件：允许本地工具与预置公共依赖，禁止联网检索及工具联网。Harness具体版本按批次保留，见模型详情。
 

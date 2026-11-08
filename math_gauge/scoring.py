@@ -2288,6 +2288,102 @@ def validate_capability_policy(policy):
     return policy
 
 
+def _aggregate_assessment_families(policy, families, *, mode, alignment_summary, strict_trajectory):
+    """One exact category/family arithmetic path for formal and observed evidence."""
+    manuscript_policy = policy.get("manuscript_completion")
+    metrics, intervals, contributions, confirmed = {}, {}, {}, {}
+    for child in policy["subcategories"]:
+        ident, count = child["id"], child["families"]
+        if child["status"] == "under_construction":
+            value, adjudicated = UNKNOWN, 0
+            confirmed[ident] = Fraction(0)
+        elif child["aggregation"] == "trajectory":
+            if mode == "strict":
+                value = _boolean((strict_trajectory or {}).get("strict_pass"))
+            elif alignment_summary is None:
+                value = UNKNOWN if mode == "capability" else (Fraction(-1, 5), Fraction(1), None)
+            else:
+                metric = alignment_summary["metric"]
+                value = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
+                              for k in ("lower", "upper", "exact"))
+            adjudicated = int(value[2] is not None)
+            confirmed[ident] = value[2] if value[2] is not None else Fraction(0)
+        else:
+            values = [_average(items) for items in families[ident].values()]
+            if len(values) > count:
+                raise ValueError("Assessment source exceeds the frozen family denominator")
+            missing = ((Fraction(-2, 3), Fraction(1), None)
+                       if ident == "theorem-extension" and mode == "partial" else UNKNOWN)
+            if ident == "manuscript-completion" and mode == "partial" and manuscript_policy is not None:
+                missing = (-Fraction(manuscript_policy["ordinary_claim_cap_points"], 100), Fraction(1), None)
+            values += [missing] * (count - len(values))
+            value, adjudicated = _average(values), sum(item[2] is not None for item in values)
+            confirmed[ident] = sum((_average([(v[2] or Fraction(0),) * 3 for v in items])[2]
+                for items in families[ident].values()), Fraction(0)) / count
+        intervals[ident] = value
+        metrics[ident] = _assessment_metric(value, unit=child["aggregation"], planned=count,
+                                           adjudicated=adjudicated)
+        contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
+        contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
+                                                 planned=count, adjudicated=adjudicated)
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+            metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
+            contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
+    for group in policy["groups"]:
+        children = [child for child in policy["subcategories"] if child["id"] in group["children"]]
+        value = _average([intervals[c["id"]] for c in children], [c["weight"] for c in children])
+        metrics[group["id"]] = _assessment_metric(value, unit="fixed subcategory",
+            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+        contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
+        contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
+            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+            known = sum((confirmed[c["id"]] * c["weight"] for c in children), Fraction(0))
+            contributions[group["id"]]["confirmed"] = float(known)
+            metrics[group["id"]]["confirmed"] = float(known * 100 / group["weight"])
+    active = [child for child in policy["subcategories"] if child["status"] == "active"]
+    def total(children):
+        values = [intervals[c["id"]] for c in children]
+        # Divide by the full 100 points even when some categories are unbuilt.
+        return tuple(None if any(v[i] is None for v in values) else max(Fraction(0),
+                     sum((v[i] * Fraction(c["weight"], 100) for v, c in zip(values, children)), Fraction()))
+                     for i in range(3))
+    for key, children in (("earned", active), ("overall", policy["subcategories"])):
+        metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
+            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
+    if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+        metrics["earned"]["confirmed"] = float(max(Fraction(0),
+            sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
+    return metrics, contributions
+
+
+def _assess_manuscript_fidelity(value, passed, fidelity, *, mode, completion, claim_detail, findings):
+    """Apply the same source-bound fidelity adjustment to either harness type."""
+    if any(e['root_cause'] == fidelity['root_cause'] for e in findings):
+        raise ValueError('The same fidelity defect cannot also be charged as mathematical error roots')
+    ordinary = Fraction(str((claim_detail or {}).get('applied_deduction') or 0))
+    adjustment = Fraction(fidelity['adjustment_points'], 100)
+    previous = value
+    if mode == 'partial':
+        total = min(Fraction(1, 2), ordinary + adjustment)
+        positive = (claim_detail or {}).get('positive_completion', completion)
+        target = tuple(None if positive[k] is None else Fraction(str(positive[k])) - total
+                       for k in ('lower', 'upper', 'exact'))
+        value = tuple(None if a is None or b is None else min(a, b)
+                      for a, b in zip(value, target))
+    if not fidelity['passed']:
+        passed = False
+    detail = {'level': fidelity['level'], 'fidelity_pass': fidelity['passed'],
+        'reliable_acceptance': fidelity['reliable_acceptance'],
+        'single_adjustment_points': fidelity['adjustment_points'],
+        'ordinary_mathematical_deduction_points': float(ordinary * 100),
+        'applied_fidelity_loss_points': (float((previous[2] - value[2]) * 100)
+            if previous[2] is not None and value[2] is not None else None),
+        'combined_adjustment_cap_points': 50,
+        'source_review_sha256': fidelity['source']['sha256']}
+    return value, passed, detail
+
+
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
                             mathematical_substitutions=None, alignment_summary=None,
                             strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None,
@@ -2542,31 +2638,9 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         fidelity_detail = None
         fidelity = manuscript_fidelity.get(sid)
         if fidelity is not None:
-            # The calibrated case supplement is separate from mathematical
-            # error findings, and runs exactly once before the family average.
-            if claim_rows is not None and any(e["root_cause"] == fidelity["root_cause"]
-                    for e in claim_rows[cid]["findings"]):
-                raise ValueError("The same fidelity defect cannot also be charged as mathematical error roots")
-            ordinary = Fraction(str((claim_detail or {}).get("applied_deduction") or 0))
-            adjustment = Fraction(fidelity["adjustment_points"], 100)
-            previous = value
-            if mode == "partial":
-                total = min(Fraction(1, 2), ordinary + adjustment)
-                positive = (claim_detail or {}).get("positive_completion", row["completion"])
-                target = tuple(None if positive[k] is None else Fraction(str(positive[k])) - total
-                               for k in ("lower", "upper", "exact"))
-                value = tuple(None if a is None or b is None else min(a, b)
-                              for a, b in zip(value, target))
-            if not fidelity["passed"]:
-                passed = False
-            fidelity_detail = {"level": fidelity["level"], "fidelity_pass": fidelity["passed"],
-                "reliable_acceptance": fidelity["reliable_acceptance"],
-                "single_adjustment_points": fidelity["adjustment_points"],
-                "ordinary_mathematical_deduction_points": float(ordinary * 100),
-                "applied_fidelity_loss_points": (float((previous[2] - value[2]) * 100)
-                    if previous[2] is not None and value[2] is not None else None),
-                "combined_adjustment_cap_points": 50,
-                "source_review_sha256": fidelity["source"]["sha256"]}
+            value, passed, fidelity_detail = _assess_manuscript_fidelity(value, passed, fidelity,
+                mode=mode, completion=row['completion'], claim_detail=claim_detail,
+                findings=claim_rows[cid]['findings'] if claim_rows is not None else [])
         interval = _boolean(passed) if mode == "strict" else value
         family = (assessment_family(case, source_index, selection) if selection is not None else
                   case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"])
@@ -2580,69 +2654,9 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                       **({"background_check":background_levels[sid]} if sid in background_levels else {}),
                       **({"fidelity_assessment": fidelity_detail} if fidelity_detail is not None else {}),
                       **({"claim_assessment": claim_detail} if claim_detail is not None else {})})
-    metrics, intervals, contributions, confirmed = {}, {}, {}, {}
-    for child in policy["subcategories"]:
-        ident, count = child["id"], child["families"]
-        if child["status"] == "under_construction":
-            value, adjudicated = UNKNOWN, 0
-            confirmed[ident] = Fraction(0)
-        elif child["aggregation"] == "trajectory":
-            if mode == "strict":
-                value = _boolean((strict_trajectory or {}).get("strict_pass"))
-            elif alignment_summary is None:
-                value = UNKNOWN if mode == "capability" else (Fraction(-1, 5), Fraction(1), None)
-            else:
-                metric = alignment_summary["metric"]
-                value = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
-                              for k in ("lower", "upper", "exact"))
-            adjudicated = int(value[2] is not None)
-            confirmed[ident] = value[2] if value[2] is not None else Fraction(0)
-        else:
-            values = [_average(items) for items in families[ident].values()]
-            if len(values) > count:
-                raise ValueError("Assessment source exceeds the frozen family denominator")
-            missing = ((Fraction(-2, 3), Fraction(1), None)
-                       if ident == "theorem-extension" and mode == "partial" else UNKNOWN)
-            if ident == "manuscript-completion" and mode == "partial" and manuscript_policy is not None:
-                missing = (-Fraction(manuscript_policy["ordinary_claim_cap_points"], 100), Fraction(1), None)
-            values += [missing] * (count - len(values))
-            value, adjudicated = _average(values), sum(item[2] is not None for item in values)
-            confirmed[ident] = sum((_average([(v[2] or Fraction(0),) * 3 for v in items])[2]
-                for items in families[ident].values()), Fraction(0)) / count
-        intervals[ident] = value
-        metrics[ident] = _assessment_metric(value, unit=child["aggregation"], planned=count,
-                                           adjudicated=adjudicated)
-        contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
-        contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
-                                                 planned=count, adjudicated=adjudicated)
-        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
-            metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
-            contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
-    for group in policy["groups"]:
-        children = [child for child in policy["subcategories"] if child["id"] in group["children"]]
-        value = _average([intervals[c["id"]] for c in children], [c["weight"] for c in children])
-        metrics[group["id"]] = _assessment_metric(value, unit="fixed subcategory",
-            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-        contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
-        contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
-            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
-            known = sum((confirmed[c["id"]] * c["weight"] for c in children), Fraction(0))
-            contributions[group["id"]]["confirmed"] = float(known)
-            metrics[group["id"]]["confirmed"] = float(known * 100 / group["weight"])
+    metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
+        alignment_summary=alignment_summary, strict_trajectory=strict_trajectory)
     active = [child for child in policy["subcategories"] if child["status"] == "active"]
-    def total(children):
-        values = [intervals[c["id"]] for c in children]
-        # Divide by the full 100 points even when some categories are unbuilt.
-        return tuple(None if any(v[i] is None for v in values) else max(Fraction(0),
-                     sum((v[i] * Fraction(c["weight"], 100) for v, c in zip(values, children)), Fraction()))
-                     for i in range(3))
-    for key, children in (("earned", active), ("overall", policy["subcategories"])):
-        metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
-            planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-    if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
-        metrics["earned"]["confirmed"] = float(max(Fraction(0),
-            sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
     missing_tasks = max(0, policy["scope"]["tasks"] - len(tasks))
     return {"schema": "math-gauge.assessment-score/v1", "benchmark_version": policy["benchmark_version"],
         "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
@@ -2768,6 +2782,114 @@ def render_score(report):
                                                  for row in transitions)
                      + " | " + " / ".join(str(row["completion_loss"]) for row in transitions) + " |")
     return "\n".join(lines) + "\n"
+
+
+def score_native_observation(review, assessment_policy, strict_policy, capability_policy,
+                             claim_policy, *, mode='partial'):
+    """Score native-harness mathematical judgments through the shared hierarchy.
+
+    This mathematical view neither imports execution nor creates CLI receipts.
+    Original criterion points, B/R, claims and fidelity are separate inputs.
+    """
+    from .native_observations import validate_math_inputs
+    from .manuscript_completion import validate_fidelity
+
+    policy = validate_assessment_policy(assessment_policy)
+    validate_strict_assessment_policy(strict_policy)
+    validate_capability_policy(capability_policy)
+    claim_penalties.validate_policy(claim_policy)
+    validate_math_inputs(review, policy)
+    if mode not in {'capability', 'partial', 'strict'}:
+        raise ValueError('Unknown native assessment mode')
+    claims = claim_penalties.validate_review(review['claim_review'], model_label=review['model_label'])
+    if set(claims) != {t['case_id'] for t in review['tasks']}:
+        raise ValueError('Native claim review must retain every original case')
+    families = {child['id']: {} for child in policy['subcategories']}
+    tasks = []
+    for original in review['tasks']:
+        cid, category = original['case_id'], original['subcategory']
+        point = original['points']
+        value = UNKNOWN if point is None else (Fraction(str(point)) / original['maximum'],) * 3
+        passed = original['complete']
+        baseline = Fraction(0)
+        extra = {}
+        if category == 'theorem-extension':
+            b, r = original['baseline_B'], original['research_R']
+            value = (Fraction(r, 3),) * 3
+            passed = b == 2 and r == 3
+            baseline = Fraction(policy['theorem_extension']['baseline_penalty_points'][str(b)], 3)
+            extra['research'] = {'baseline_B': b, 'research_R': r,
+                'baseline_penalty_points': int(baseline * 3), 'research_maximum_points': 3,
+                'baseline_is_research_credit': False, 'answer_attempt': 'A1'}
+        elif category == 'background-check':
+            value = (Fraction(original['background_R'], 3),) * 3
+            extra['background_check'] = {'background_R': original['background_R'],
+                'complete': passed, 'false_endorsement': original['false_endorsement'],
+                'downstream_calculation_is_research_credit': False}
+        claim = claims[cid]
+        if category == 'theorem-extension' and (
+                original['baseline_B'] == 2 and claim.get('baseline_disposition') != 'correct'
+                or original['baseline_B'] != 2 and claim.get('baseline_disposition') not in
+                   {'incorrect', 'honest_incomplete', 'unresolved'}):
+            raise ValueError('Native baseline deduction lost its independently reviewed disposition')
+        if (category == 'background-check' and original['false_endorsement']
+                and not any(f['core_endorsement'] for f in claim['findings'])):
+            raise ValueError('Native core false endorsement cannot disappear from the claim review')
+        if (claim['source_response_sha256'] != original['response']['sha256']
+                or claim['source_review_sha256'] != original['review']['sha256']):
+            raise ValueError('Native claim review changed its original answer or mathematical review')
+        value, passed, detail = claim_penalties.assess(value, passed, claim, mode=mode,
+            baseline_deduction=baseline,
+            generic_cap_points=50 if category == 'manuscript-completion' else 20)
+        if original.get('fidelity') is not None:
+            validate_fidelity(original['fidelity_case'], original)
+            completion = {key: None if point is None else float(Fraction(str(point)) / original['maximum'])
+                          for key in ('lower', 'upper', 'exact')}
+            value, passed, fidelity_detail = _assess_manuscript_fidelity(value, passed,
+                original['fidelity'], mode=mode, completion=completion, claim_detail=detail,
+                findings=claim['findings'])
+            extra['fidelity_assessment'] = fidelity_detail
+        family = original['family_id']
+        families[category].setdefault(family, []).append(_boolean(passed) if mode == 'strict' else value)
+        tasks.append({'case_id': cid, 'slot_id': original['slot_id'], 'subcategory': category,
+            'family_id': family, 'strict_pass': passed, 'judgment_source': 'native_harness_source_review',
+            'completion': {key: None if v is None else float(v)
+                           for key, v in zip(('lower', 'upper', 'exact'), value)},
+            'response_sha256': original['response']['sha256'],
+            'review_sha256': original['review']['sha256'], 'claim_assessment': detail, **extra})
+    alignment, _ = _alignment_trajectory(review['alignment_review'], review['alignment_source_policy'],
+                                          positive_only=mode == 'capability')
+    strict = strict_alignment_trajectory(review['alignment_review'], review['alignment_source_policy'])
+    if (alignment != review['alignment']['capability' if mode == 'capability' else 'partial']
+            or strict != review['alignment']['strict']):
+        raise ValueError('Native trajectory summary differs from source-bound shared repair scoring')
+    metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
+        alignment_summary=alignment, strict_trajectory=strict)
+    return {'schema': 'math-gauge.assessment-score/v1', 'benchmark_version': '0.6.0',
+        'scoring_method_version': policy['version'], 'strict_method_version': strict_policy['version'],
+        'score_mode': mode, 'primary_metric': 'earned', 'model_label': review['model_label'],
+        'policy_sha256': identity(policy), 'strict_policy_sha256': identity(strict_policy),
+        'metrics': metrics, 'contributions': contributions,
+        'profile': {'groups': policy['groups'], 'subcategories': policy['subcategories']},
+        'capacity': {'total': 100, 'active': 100, 'under_construction': 0},
+        'group_capacity': {g['id']: {'total': g['weight'], 'active': g['weight'], 'under_construction': 0}
+                           for g in policy['groups']},
+        'coverage': dict(policy['scope'], source_initial_tasks=len(tasks),
+                         source_initial_judgments=sum(t['strict_pass'] is not None for t in tasks)),
+        'whole_task_counts': {'planned': policy['scope']['tasks'],
+            'passed': sum(t['strict_pass'] is True for t in tasks),
+            'failed': sum(t['strict_pass'] is False for t in tasks),
+            'unknown': sum(t['strict_pass'] is None for t in tasks)},
+        'tasks': tasks, 'alignment_selfcheck': alignment, 'strict_alignment_selfcheck': strict,
+        'lean_formalization_breakdown': review['formalization_breakdown'],
+        'initial_answers_replaced': False, 'record_kind': 'native_harness',
+        'human_review': 'pending', 'formal_comparison_eligible': False,
+        'transport_import_validated': False, 'new_candidate_calls': 0,
+        'claim_penalties': claim_penalties.summary(claims, mode=mode),
+        'claim_penalty_method_version': claim_policy['version'],
+        'claim_penalty_policy_sha256': identity(claim_policy),
+        **({'capability_method_version': capability_policy['version'],
+            'capability_policy_sha256': identity(capability_policy)} if mode == 'capability' else {})}
 
 
 def score_content_rates(review, assessment_policy, goal_review=None):

@@ -245,7 +245,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
             unknown = details['case']['views']['partial'][condition]['completion']['exact'] is None
             current += '<p class="empty-state">'+('本题尚未作答或评审未决，成绩保持未知。' if unknown else '本次没有保留可读的最终原答；已确认的交付失败或独立工程证据按正式记录计分。')+'</p>'
         links = ''.join('<li>'+source_link(s['path'],page,s['role']+' · '+Path(s['path']).name)+'<span class="hash">SHA256 '+s['sha256']+'</span></li>' for s in item['sources'])
-        links += '<li>'+source_link(model['source_record'],page,'正式记录 record.json')+'</li>'
+        links += '<li>'+source_link(model['source_record'],page,'来源记录 ↗')+'</li>'
         current += '<details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>'+html.escape(item['selected_record'])+'</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list">'+links+'</ul></div></details></div>'
         body += current
     return shell(page,cid+' · '+entry['title'],model['label']+' · '+CATEGORY_TITLES.get(entry['category'],entry['category'])+' · 公开题证据',body,details,'case-results.js',back=('models/'+model['id']+'/index.html',model['label']))
@@ -256,6 +256,11 @@ def render_model(page, data, model, cases, record, folder, markdown):
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>',
         '公开与私有合并，满分保持100；未测项目保持未知。')
+    if model.get('record_kind') == 'native_harness':
+        body = panel('Dot native harness', '<div class="prose"><p>'
+            +html.escape(model['comparison_note'])+'</p><p>'
+            +html.escape(model['harness']['detail'])+'</p><p>保留38题首答与固定三轮自查，共41份交付。'
+            '独立AI评审，人工待审；原始初评与本次复核差异另行保存。</p></div>')+body
     rates = model.get('content_rates')
     if rates:
         def percent(value):
@@ -284,17 +289,19 @@ def render_model(page, data, model, cases, record, folder, markdown):
     body += '<div class="equal-grid">'+panel('Lean · 自查计分', '<div class="table-wrap"><table id="model-selfcheck" class="compact"></table></div><p id="selfcheck-rule" class="panel-foot"></p><details class="selfcheck-comparison"><summary>比较三种计分口径</summary><div class="table-wrap"><table id="selfcheck-comparison" class="compact"></table></div></details>')
     rounds = ''
     for index in (1,2,3):
-        row = next(s for s in record['records'] if s['id']=='MG-C003:alignment:'+str(index))
+        row = (next(s for s in record['selfcheck_rounds'] if s['round']==index)
+               if model.get('record_kind') == 'native_harness' else
+               next(s for s in record['records'] if s['id']=='MG-C003:alignment:'+str(index)))
         response = row.get('response')
         content = markdown.add(evidence_bytes(folder,response).decode()) if response else '原记录没有可读的最终原答，未补写。'
         link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗') if response else ''
         rounds += '<details class="evidence-fold nested"><summary>R'+str(index)+' · 完整原答</summary><div class="prose">'+content+'<p>'+link+'</p></div></details>'
-    alignment_path = next((s['path'] for s in record['evidence'] if s['path'] in ('reviews/alignment.json','alignment-review.json')),None)
+    alignment_path = next((s['path'] for s in record.get('evidence',[]) if s['path'] in ('reviews/alignment.json','alignment-review.json')),None)
     if alignment_path:
         rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗')+'</p>'
     body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '原答事实，不随口径改变。92项义务，采用最后规定轮次；不取最好一轮，不拼接各轮成果。')+'</div>'
     body += panel('公开题 · 逐题成绩与证据', '<div class="table-wrap"><table id="case-list" class="compact case-list"></table></div>',
-        '当前25道公开题。私有12题只进入上方合并贡献，不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
+        '当前25道公开题。私有13题只进入上方合并贡献，不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
     body += '<details class="panel evidence-fold"><summary>形式化初答 · 逐题核实数</summary><div class="table-wrap"><table id="model-formalization" class="compact"></table></div><p class="panel-foot">编译与逐项语义审核同时成立才计完成。初答与后续自查分开计分。</p></details>'
     body += panel('可靠性审核', '<div id="model-penalties" class="metric-grid"></div><details class="nested evidence-fold"><summary>公开题的错误承诺与扣罚理由</summary><div id="model-findings" class="prose"></div></details>',
         '记录数不等于独立样本或扣罚次数；同根因去重。RMC 普通扣罚5%/10%/20%，通常每题最多20%，数学想法手稿化最多50%；已确立的核心错误放行使该题最高0分，SMC 不通过。')
@@ -312,6 +319,35 @@ def build_detail_pages(data, root):
     pages, markdown = {}, EvidenceRenderer()
     for model in data['models']:
         folder = root / Path(model['source_record']).parent
+        if model.get('record_kind') == 'native_harness':
+            record = json.loads((folder/'native-observation.json').read_bytes())
+            projection = json.loads(evidence_bytes(folder,record['public_task_scores']))
+            if set(projection['public_case_ids']) != set(catalog):
+                raise ValueError('Native public projection differs from the fixed public catalog')
+            native_rows = {row['case_id']:row for row in record['public_deliveries']}
+            claims = []
+            for cid,row in native_rows.items():
+                review = json.loads(evidence_bytes(folder,row['review']))
+                claims.append({'case_id':cid,'scope_note':review['scope'],'findings':review['findings']})
+            model['public_claims'] = {c:claims for c in CONDITIONS}
+            cases = []
+            for cid in projection['public_case_ids']:
+                row,entry = native_rows[cid],catalog[cid]
+                source_review = descriptor(folder,row['review'],role='source_review')
+                answer = descriptor(folder,row['response'],role='answer')
+                claim = next(c for c in claims if c['case_id']==cid)
+                evidence = {c:{'claim':claim,'review':json.loads(source_review['raw']),
+                    'selected_record':cid+':A1','sources':[answer,source_review]} for c in CONDITIONS}
+                cases.append({'id':cid,'title':entry['title'],'category':entry['category'],
+                    'category_title':CATEGORY_TITLES.get(entry['category'],entry['category']),
+                    'views':{mode:{c:next(t for t in projection['views'][mode][c]['tasks'] if t['case_id']==cid)
+                                   for c in CONDITIONS} for mode in projection['views']}})
+                path = 'models/'+model['id']+'/cases/'+cid+'.html'
+                pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
+            path = 'models/'+model['id']+'/index.html'
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown)
+            del model['public_claims']
+            continue
         record = json.loads((folder/'record.json').read_bytes())
         projection = load_public_task_scores(folder, record)
         if projection is None:

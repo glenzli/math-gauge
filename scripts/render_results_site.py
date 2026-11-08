@@ -14,6 +14,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.records import load_assessment_results, load_content_rates, validate_record
+from math_gauge.native_observations import load_public_record
 from scripts.results_details import build_detail_pages
 
 MODEL_THEMES = {
@@ -102,6 +103,30 @@ def build_data(source_root=ROOT):
     for name in ("score-modes.json", "capability-scoring-policy.json", "claim-penalty-policy.json"):
         path = root / "protocol" / name
         sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+    native_folder = root / 'results/v0.6.0/dot-underlying-model-20261108/20261108'
+    if (native_folder / 'native-observation.json').is_file():
+        native, scores, rates = load_public_record(native_folder)
+        icon_path = root / 'site/assets/logos/openai.svg'
+        icon = icon_path.read_bytes()
+        partial = scores['partial']
+        models.append({'id': native['model_id'], 'label': native['model_label'], 'short_label': 'Dot',
+            'record_kind': 'native_harness', 'comparison_note': native['comparison_note'],
+            'theme': dict(MODEL_THEMES['terra-6.1-max']),
+            'harness': native['harness'],
+            'logo': {'label': 'OpenAI', 'data_url': 'data:image/svg+xml;base64,'
+                     +base64.b64encode(icon).decode('ascii'), 'sha256': hashlib.sha256(icon).hexdigest()},
+            'combined': partial['single_attempt'], 'strict': scores['strict'],
+            'capability': scores['capability'], 'trajectory': native['trajectory'],
+            'content_rates': rates, 'evaluation_progress': {c:evaluation_progress(v) for c,v in partial.items()},
+            'lean_formalization_breakdown': partial['single_attempt']['lean_formalization_breakdown'],
+            'alignment_selfcheck': partial['single_attempt']['alignment_selfcheck'],
+            'source_record': str((native_folder/'native-observation.json').relative_to(root)),
+            'retry': {'combined': partial['nonlogical_retry_3'],
+                      'note': '38题首答与三轮固定自查，共41次封存交付；没有数学重跑。Dot native harness独立记录，底层SKU未知。'}})
+        for path in [native_folder/'native-observation.json',native_folder/'content-rates.json',icon_path,
+                     *(native_folder/item['path'] for field in ('assessment_results','capability_results','strict_results')
+                       for item in native[field].values())]:
+            sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     display_modes = copy.deepcopy(mode_catalog['modes'])
     next(m for m in display_modes if m['id'] == 'strict')['abbreviation'] = 'SMC'
     sources.append({'path': 'site/harnesses.json', 'sha256': hashlib.sha256(harness_path.read_bytes()).hexdigest()})
@@ -134,6 +159,11 @@ def evaluation_progress(result):
 def incomplete_marker(progress):
     return ('<sup class="incomplete-marker" aria-label="尚未测完">*</sup>'
             if progress['incomplete'] else '')
+
+
+def harness_marker(model):
+    return ('<sup class="source-marker" aria-label="Dot native harness，运行条件见详情">†</sup>'
+            if model.get('record_kind') == 'native_harness' else '')
 
 
 def selected_result(model, mode="partial"):
@@ -226,7 +256,7 @@ def render_gap_chart(data):
     for model in ordered:
         row = lookup['RG'][model['id']]
         progress = row['coverage']
-        marker = incomplete_marker(progress)
+        marker = incomplete_marker(progress) + harness_marker(model)
         bars = []
         for table in diagnostic['tables']:
             item = lookup[table['id']][model['id']]
@@ -253,7 +283,7 @@ def render_gap_chart(data):
             '<span>RG＝RMC−MC · DG＝SMC−MC · 百分点</span><span class="chart-legend">'
             '<span class="legend-item"><i class="legend-swatch rmc" aria-hidden="true"></i>RG · 可靠差</span>'
             '<span class="legend-item"><i class="legend-swatch smc" aria-hidden="true"></i>DG · 交付差</span></span></figcaption>'
-            '<div class="gap-vertical"><div class="gap-y-axis" aria-hidden="true">'+ticks+'</div>'
+            '<div class="gap-vertical" style="--model-count:'+str(len(data['models']))+'"><div class="gap-y-axis" aria-hidden="true">'+ticks+'</div>'
             '<div class="gap-plot">'+grid+'<div id="gap-groups" class="gap-groups">'+''.join(groups)+'</div></div></div></figure>')
 
 
@@ -263,13 +293,14 @@ def grouped_bars(data):
     ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
                      if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
     for model in ordered:
-        bars, spoken = [], []
+        bars, spoken, heights = [], [], []
         progress = model['evaluation_progress']['nonlogical_retry_3']
         for mode in modes:
             result = selected_result(model, mode['id'])
             value = earned_value(result)
             text = '—' if value is None else f'{value:.2f}'
             height = 0 if value is None else max(0, min(100, value))
+            heights.append(height)
             bounds = result['metrics']['overall']
             interval = f"完整分区间 {bounds['lower']:.2f}–{bounds['upper']:.2f}"
             spoken.append(mode['abbreviation'] + ' ' + text)
@@ -286,15 +317,16 @@ def grouped_bars(data):
         theme = model['theme']
         groups.append('<div class="bar-group" data-model="'+html.escape(model['id'], quote=True)+'" role="group" '
             +'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken)+status, quote=True)+'" '
-            +'style="--model-color:'+html.escape(theme['color'], quote=True)+';--model-ink:'+html.escape(theme['ink'], quote=True)+'">'
+            +'style="--model-color:'+html.escape(theme['color'], quote=True)+';--model-ink:'+html.escape(theme['ink'], quote=True)
+            +';--peak-score:'+str(max(heights))+'">'
             '<div class="chart-model"><img class="provider-logo" src="'+html.escape(logo['data_url'], quote=True)+'" '
             +'alt="'+html.escape(logo['label'], quote=True)+'" width="24" height="24"><div><span>'+label
-            +incomplete_marker(progress)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
+            +incomplete_marker(progress)+harness_marker(model)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
     ticks = ''.join(f'<span style="bottom:{value}%">'+str(value)+'</span>' for value in range(0, 101, 20))
     grid = ''.join(f'<i class="score-gridline" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
     return ('<div class="score-chart" role="group" aria-label="各模型MC、RMC、SMC规则成绩，统一0至100分">'
             '<div class="score-y-axis" aria-hidden="true">'+ticks+'</div><div class="score-plot">'+grid
-            +'<div class="chart-groups" id="chart-groups">'+''.join(groups)+'</div></div></div>')
+            +'<div class="chart-groups" id="chart-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div>')
 
 
 def render_content_rates(data):
@@ -327,7 +359,7 @@ def render_content_rates(data):
             +'" alt="'+html.escape(model['logo']['label'], quote=True)+'" width="24" height="24">'
             '<div><a data-context-link href="models/'+model['id']
             +'/index.html?score=partial&amp;condition=nonlogical_retry_3">'+html.escape(model['label'])
-            +incomplete_marker(progress)+'</a></div></div></div>')
+            +incomplete_marker(progress)+harness_marker(model)+'</a></div></div></div>')
     ticks = ''.join(f'<span style="bottom:{value}%">'+str(value)+'</span>' for value in range(0, 101, 20))
     grid = ''.join(f'<i class="score-gridline" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
     return ('<section class="panel" id="content-rates"><div class="panel-head"><div><h2 id="rate-heading">内容可靠率与目标达成率</h2>'
@@ -340,7 +372,7 @@ def render_content_rates(data):
             '<i class="legend-swatch smc" aria-hidden="true"></i>目标达成率</span></span></figcaption>'
             '<div class="score-chart" role="group" aria-label="各模型内容可靠率与目标达成率，统一0至100百分比">'
             '<div class="score-y-axis" aria-hidden="true">'+ticks+'</div><div class="score-plot">'+grid
-            +'<div class="chart-groups" id="rate-groups">'+''.join(groups)+'</div></div></div></figure></section>')
+            +'<div class="chart-groups" id="rate-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div></figure></section>')
 
 
 def render(data):
@@ -358,7 +390,7 @@ def render(data):
             score_cells.append('<td class="numeric score-cell'+(' primary-score' if mode['id']=='partial' else '')+'">'
                 '<span class="score-number">'+('—' if value is None else f'{value:.2f}')+'</span></td>')
         rows.append('<tr><td class="rank">'+str(index)+'</td><td class="model-name"><a href="'+source+'">'
-            +html.escape(model['label'])+incomplete_marker(progress)+'</a><span class="mobile-harness">'
+            +html.escape(model['label'])+incomplete_marker(progress)+harness_marker(model)+'</a><span class="mobile-harness">'
             +html.escape(model['harness']['name'])+'</span></td>'
             '<td class="harness-cell">'+html.escape(model['harness']['name'])+'</td>'+''.join(score_cells)
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
@@ -374,7 +406,9 @@ def render(data):
               "CONTENT_RATES": render_content_rates(data),
               "INCOMPLETE_NOTE": ('<p class="panel-foot coverage-note">* 尚未测完</p>'
                                   if any(m['evaluation_progress']['nonlogical_retry_3']['incomplete']
-                                         for m in data['models']) else ''),
+                                         for m in data['models']) else '')
+                                  + ('<p class="panel-foot">† Dot native harness为独立运行方式，条件见模型详情。</p>'
+                                     if any(m.get('record_kind') == 'native_harness' for m in data['models']) else ''),
               "RETRY_NOTES": '<br>'.join(notes) or '当前留档没有另计的非逻辑重跑。',
               "MODE_CONTROLS": ''.join(
                   '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)

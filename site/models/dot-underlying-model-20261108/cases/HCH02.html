@@ -1,0 +1,3365 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=17c03827235d"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/dot-underlying-model-20261108/index.html">Dot Underlying Model（2026-11-08）</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐</h1><p class="subtitle">Dot Underlying Model（2026-11-08） · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后开发分析，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>历史章节的完整 Lean 形式化</h1>
+<p>将附件中的第2章全部数学内容形式化为一个 Lean 项目。原文含证明；前章文字只作背景。obligations.json 明确本题全部40项定义、表示及证明义务，含正文中没有独立编号的事实。以冻结原文和该清单为完整交付范围；不得沿用其他版本的章节内容。</p>
+<p>使用 Lean 4.29.1 与 mathlib 提交5e932f97dd25535344f80f9dd8da3aab83df0fe6。给定 formal_oet/ 下两份前置模块可直接使用，不得修改或同名覆盖。只允许这些冻结模块、Lean标准库和固定mathlib；不得读取或导入目标章节或后续章的作者实现及其他外部材料。可使用本地工具，禁止联网检索或下载依赖。</p>
+<p>遵循原文的结构、量词、定义域、条件与结论强度。允许等价表示、合并声明和有效的替代证明；使用等价表示时须证明其对应。不得把待证结论作为结构字段、证书、假设或实例直接取回。</p>
+<p>提交完整源码，每个文件用独立命名代码块，例如 <code>lean filename=Main.lean</code>；Main.lean须导入所交所有目标模块，辅助文件也须全文提交。工作区路径或链接不能代替文件内容。不得使用sorry、admit、新增公理或跳过内核检查的设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 代码块提交对象，含case_id=&quot;HCH02&quot;、version=&quot;0.1.0&quot;与items。items必须恰好覆盖40个义务ID；每项为{&quot;id&quot;:&quot;…&quot;,&quot;status&quot;:&quot;complete|incomplete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;命名空间.声明名&quot;}],&quot;representation&quot;:&quot;与原文的对象、参数、量词及结论的对应说明&quot;,&quot;dependencies&quot;:[&quot;实际引用的义务ID&quot;]}。complete表示该项全部目标完成，须列真实存在的声明；incomplete须明确保留。声明可合并或复用，依赖仅记录实际采用的证明。最后说明你是否已经完整完成且严格对齐整章，并列出未完成或未确认的范围。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/HCH02/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Original task scope retained; native harness conditions recorded separately.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>HC02-D01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D07</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D08</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-P01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Singleton sum specializes without any extra distance hypothesis.</p>
+<h3>HC02-P02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Global certificate restricts to legal U.</p>
+<h3>HC02-P03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Restricts point-pair quantifiers and domain inclusion.</p>
+<h3>HC02-P04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Entry-value set inclusion yields reversed infimum inequality, including empty feasible sets.</p>
+<h3>HC02-P05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Actual intermediate image and matrix-action composition give specified product.</p>
+<h3>HC02-P06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Single co-Lip summand below zero, positive input factor, coefficient zero; applies globally by U=dom.</p>
+<h3>HC02-P07</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Independent lower composition proof preserves nonempty source.</p>
+<h3>HC02-P08</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Two triangle inequalities and symmetry give additive forward perturbation, never subtracting infinity.</p>
+<h3>HC02-P09</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Swaps functions using symmetry to prove reverse additive estimate.</p>
+<h3>HC02-P10</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Substitutes Lip bound into forward perturbation.</p>
+<h3>HC02-P11</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Co-Lip bound precedes reverse perturbation; additive direction matches.</p>
+<h3>HC02-P12</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Chain induction from step bounds at exact images; stage equivalence, list-ofFn packing and order bridge delivered.</p>
+<h3>HC02-P13</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Lower chain induction preserves nonemptiness; positive-length result derives it from first certificate.</p>
+<h3>HC02-P14</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity action yields zero-step upper certificate.</p>
+<h3>HC02-P15</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity action plus nonemptiness yields zero-step lower certificate.</p>
+<h3>HC02-P16</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Unrestricted route recursion, complete path-sum and zero-edge equivalence support the universal criterion; n=1 explicit.</p>
+<h3>HC02-P17</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Unrestricted route sum/product positivity supports existential all-positive criterion; n=1 explicit.</p>
+<h3>HC02-P18</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Zero input makes every scalar product zero, including infinity; positive output makes feasible set empty and infimum top.</p>
+<h3>HC02-P19</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Splits input distance zero, infinity, and nonzero finite. In the finite case exact ENNReal division and le_sInf prove attainment without continuity assumptions.</p>
+<h3>HC02-P20</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Multiplication monotonicity proves upward closure.</p>
+<h3>HC02-P21</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> sInf_lt_iff supplies a feasible smaller scalar; upward closure proves every strictly larger scalar feasible, including top.</p>
+<h3>HC02-P22</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Zero-infimum specialization of the previous argument.</p>
+<h3>HC02-P23</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Option Bool has a lawful absorbing extension; two components have ordinary-point distance infinity and one. Identity on the nonempty ordinary domain makes all positive scalars feasible but zero infeasible, with infimum zero.</p>
+<h3>HC02-P24</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> sInf_lt_iff gives exactly a finite feasible witness in both directions.</p>
+<h3>HC02-P25</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> zero_mul, including infinite distance, and sum_erase_add remove precisely the selected term.</p>
+<h3>HC02-P26</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Arbitrary surviving input i, not only diagonal input, gives scalar upper bound.</p>
+<h3>HC02-P27</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Column condition forces only the selected certificate contribution to vanish at every other output; no functional-dependence claim.</p>
+<h3>HC02-P28</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Specializes arbitrary-row theorem to every diagonal row.</p>
+<h3>HC02-P29</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Lip sparsity only; co-Lip lower bound comes from single nonnegative summand.</p>
+<h3>HC02-P30</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> All-component conjunction and finite-coefficient branch explicit; no claim of finite distances.</p>
+<h3>HC02-P31</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Positive ENNReal product bounded by the co-Lip sum; no finite inverse.</p>
+<h3>HC02-P32</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Reflects family zero-distance componentwise; never upgrades to point equality.</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h1>第 2 章：完整 Lean 形式化</h1>
+<p>已完成冻结清单中的全部 40 项义务。下面给出全部目标源码、构建脚本和逐项对齐清单。</p>
+<p><strong>来源与归属</strong>：本形式化改写自附件中的 Zhe Li（Glen Li / glenzli），《The Operator Evolution Theory》第 2 章。作者 ORCID：https://orcid.org/0009-0006-6536-3453；官方作品页：https://glenzli.com/books/oet/；来源仓库：https://gitlab.com/glenzli/oet-public；许可：<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本交付的改动是将冻结数学文本转写为 Lean 定义和内核核验的证明，部分证明使用等价的代数方法；不主张原理论为本回答独立发现。未检索上述网站或读取其他章节实现。</p>
+<p><strong>核验</strong>：使用题目提供的 Lean 4.29.1 与固定 mathlib 环境，运行 <code>sh build.sh</code> 成功，退出码为 0。<code>Main.lean</code> 导入全部目标模块，并逐个审计所有交付的具名定义与定理；公理依赖均限于 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。没有新增公理、证明占位或绕过内核检查。</p>
+<p><strong>表示约定</strong>：</p>
+<ul>
+<li>所有系数和距离使用 <code>ENNReal</code>，保留 <code>0·∞=0</code>。矩阵按输入、输出顺序存储，并证明与通常矩阵的转置显示及乘法相符。</li>
+<li>列表按实际施行顺序存储。中间域是前缀复合的实际像；已证明逐步域合法性、最终像对应以及单步证书表示的等价性。链中不存储最终复合界。</li>
+<li>全部路径是无约束的有限索引序列，不限于正路径；与通常 <code>Fin (n−1) → I</code> 序列有已证明的双射，并证明完整路径求和展开及单步边界。</li>
+<li>不需要某些背景条件的定理证明了更强的一般形式，例如扰动界无需域合法性，路径判据对任意非空矩阵列表成立。在原文有限非空指标、扩展规范空间和合法作用域下直接专化即可。<code>Scalars</code> 在合法域上与原文公式完全相同，且定义自然延伸到任意集合；它不等同于矩阵条目的下确界。</li>
+</ul>
+<p>构建入口为 <code>build.sh</code>，Lean 汇总入口为 <code>Main.lean</code>。以下六个 Lean 文件是全部新增目标源码。两份 <code>formal_oet/vol_01/ch_01_foundations/</code> 前置源码使用题目给定的冻结版本，未修改或覆盖；<code>lean-local</code> 使用题目提供的启动器。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.ENNReal.Inv
+
+open scoped BigOperators
+open formal_oet.vol_01.ch_01_foundations
+namespace ChapterTwo
+noncomputable section
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+abbrev Mat (I : Type) := I → I → ENNReal
+/-- Input first, output second. -/
+def composeMat (B A : Mat I) : Mat I := fun i j =&gt; ∑ k, B k j * A i k
+def display (A : Mat I) : Matrix I I ENNReal := fun j i =&gt; A i j
+theorem display_compose (B A : Mat I) : display (composeMat B A) = display B * display A := rfl
+def unitMat : Mat I := fun i j =&gt; if i = j then 1 else 0
+theorem display_unit : display (unitMat : Mat I) = 1 := by
+  ext i j
+  simp [display, unitMat, Matrix.one_apply, eq_comm]
+def act (A : Mat I) (v : I → ENNReal) (j : I) := ∑ i, A i j * v i
+@[simp] theorem act_unit (v : I → ENNReal) (j : I) : act unitMat v j = v j := by
+  simp [act, unitMat]
+@[simp] theorem compose_unit (A : Mat I) : composeMat A unitMat = A := by
+  ext i j
+  simp [composeMat, unitMat]
+@[simp] theorem unit_compose (A : Mat I) : composeMat unitMat A = A := by
+  ext i j
+  simp [composeMat, unitMat]
+theorem act_compose (B A : Mat I) (v : I → ENNReal) (j : I) :
+    act (composeMat B A) v j = act B (fun k =&gt; act A v k) j := by
+  simp only [act, composeMat, Finset.sum_mul, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro k _
+  apply Finset.sum_congr rfl
+  intro i _
+  exact mul_assoc _ _ _
+theorem act_mono (A : Mat I) {v w : I → ENNReal} (h : ∀ i, v i ≤ w i) (j : I) :
+    act A v j ≤ act A w j :=
+  Finset.sum_le_sum (fun i _ =&gt; mul_le_mul_left' (h i) _)
+def comp (g f : Operator X bot) : Operator X bot :=
+  ⟨g.func ∘ f.func, by simp [f.preserves_bot, g.preserves_bot]⟩
+def identity : Operator X bot := ⟨id, rfl⟩
+def Lip (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {A | U ⊆ dom f ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+      d j (f.func x) (f.func y) ≤ act A (fun i =&gt; d i x y) j}
+def GlobalLip (d : I → X → X → ENNReal) (f : Operator X bot) := Lip d f (dom f)
+def CoLip (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {A | U.Nonempty ∧ U ⊆ dom f ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+      act A (fun i =&gt; d i x y) j ≤ d j (f.func x) (f.func y)}
+variable {d : I → X → X → ENNReal} {f g : Operator X bot} {U V : Set X} {A B : Mat I}
+theorem lip_restrict (h : A ∈ Lip d f V) (hUV : U ⊆ V) : A ∈ Lip d f U :=
+  ⟨hUV.trans h.1, fun x hx y hy j =&gt; h.2 x (hUV hx) y (hUV hy) j⟩
+theorem global_restrict (h : U ⊆ dom f) : GlobalLip d f ⊆ Lip d f U :=
+  fun _ ha =&gt; lip_restrict ha h
+noncomputable def entryInf (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i j : I) :=
+  sInf ((fun A : Mat I =&gt; A i j) '' Lip d f U)
+theorem entryInf_mono (h : U ⊆ V) (i j : I) : entryInf d f U i j ≤ entryInf d f V i j := by
+  apply sInf_le_sInf
+  rintro _ ⟨A, ha, rfl⟩
+  exact ⟨A, lip_restrict ha h, rfl⟩
+theorem singleton_lip [Subsingleton I] (h : A ∈ Lip d f U) (i : I)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d i (f.func x) (f.func y) ≤ A i i * d i x y := by
+  letI : Unique I := ⟨⟨i⟩, fun a =&gt; Subsingleton.elim a i⟩
+  simpa [act] using h.2 x hx y hy i
+
+theorem comp_dom (h : U ⊆ dom (comp g f)) : U ⊆ dom f := by
+  intro x hx heq
+  have hn := h hx
+  apply hn
+  change g.func (f.func x) = bot
+  rw [heq, g.preserves_bot]
+theorem comp_image_dom (h : U ⊆ dom (comp g f)) : f.func '' U ⊆ dom g := by
+  rintro z ⟨x, hx, rfl⟩
+  exact h hx
+
+theorem lip_comp (hU : U ⊆ dom (comp g f)) (hA : A ∈ Lip d f U)
+    (hB : B ∈ Lip d g (f.func '' U)) : composeMat B A ∈ Lip d (comp g f) U := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  change d j (g.func (f.func x)) (g.func (f.func y)) ≤ _
+  rw [act_compose]
+  exact (hB.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j).trans
+    (act_mono B (fun k =&gt; hA.2 x hx y hy k) j)
+theorem colip_comp (hU : U ⊆ dom (comp g f)) (hA : A ∈ CoLip d f U)
+    (hB : B ∈ CoLip d g (f.func '' U)) : composeMat B A ∈ CoLip d (comp g f) U := by
+  refine ⟨hA.1, hU, ?_⟩
+  intro x hx y hy j
+  rw [act_compose]
+  exact (act_mono B (fun k =&gt; hA.2.2 x hx y hy k) j).trans
+    (hB.2.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j)
+theorem colip_term (h : A ∈ CoLip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (i j : I) :
+    A i j * d i x y ≤ d j (f.func x) (f.func y) :=
+  (Finset.single_le_sum (fun k _ =&gt; zero_le (A k j * d k x y)) (Finset.mem_univ i)).trans
+    (h.2.2 x hx y hy j)
+theorem colip_zero (h : A ∈ CoLip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    {i j : I} (hout : d j (f.func x) (f.func y) = 0) (hin : 0 &lt; d i x y) : A i j = 0 := by
+  have hz : A i j * d i x y = 0 := le_antisymm (hout ▸ colip_term h hx hy i j) (zero_le _)
+  exact (mul_eq_zero.mp hz).resolve_right (ne_of_gt hin)
+
+theorem perturb_forward (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (g.func x) (g.func y) ≤ d j (f.func x) (f.func y) + δ j + δ j := by
+  calc
+    _ ≤ d j (g.func x) (f.func x) + d j (f.func x) (g.func y) := (hd j).triangle _ _ _
+    _ ≤ d j (g.func x) (f.func x) + (d j (f.func x) (f.func y) + d j (f.func y) (g.func y)) :=
+      add_le_add le_rfl ((hd j).triangle _ _ _)
+    _ ≤ δ j + (d j (f.func x) (f.func y) + δ j) := by
+      rw [(hd j).symm (g.func x) (f.func x)]
+      exact add_le_add (hδ x hx j) (add_le_add le_rfl (hδ y hy j))
+    _ = _ := by simp only [add_comm, add_left_comm, add_assoc]
+theorem perturb_reverse (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (f.func x) (f.func y) ≤ d j (g.func x) (g.func y) + δ j + δ j := by
+  apply perturb_forward hd (f := g) (g := f) _ hx hy j
+  intro z hz k
+  rw [(hd k).symm]
+  exact hδ z hz k
+theorem perturb_lip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    (h : A ∈ Lip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (g.func x) (g.func y) ≤ act A (fun i =&gt; d i x y) j + 2 * δ j := by
+  simpa [two_mul, add_assoc] using
+    (perturb_forward hd hδ hx hy j).trans (add_le_add (add_le_add (h.2 x hx y hy j) le_rfl) le_rfl)
+theorem perturb_colip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    (h : A ∈ CoLip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    act A (fun i =&gt; d i x y) j ≤ d j (g.func x) (g.func y) + 2 * δ j := by
+  simpa [two_mul, add_assoc] using (h.2.2 x hx y hy j).trans (perturb_reverse hd hδ hx hy j)
+
+theorem identity_lip (h : U ⊆ dom (identity : Operator X bot)) : unitMat ∈ Lip d (identity : Operator X bot) U :=
+  ⟨h, by intro x hx y hy j; simp [identity]⟩
+theorem identity_colip (hU : U.Nonempty) (h : U ⊆ dom (identity : Operator X bot)) :
+    unitMat ∈ CoLip d (identity : Operator X bot) U :=
+  ⟨hU, h, by intro x hx y hy j; simp [identity]⟩
+
+def Channel (I : Type) := I × I
+def Row (A : Mat I) (i j : I) := ∀ k, k ≠ i → A k j = 0
+def Col (A : Mat I) (i j : I) := ∀ k, k ≠ j → A i k = 0
+def Diagonal (A : Mat I) := ∀ i j, i ≠ j → A i j = 0
+def RowDecoupled (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (j : I) :=
+  ∃ A ∈ Lip d f U, ∃ i, Row A i j
+def ColDecoupled (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i : I) :=
+  ∃ A ∈ Lip d f U, ∃ j, Col A i j
+
+theorem zero_term {i j : I} (h : A i j = 0) (v : I → ENNReal) : A i j * v i = 0 := by rw [h, zero_mul]
+theorem delete_zero_term {i j : I} (h : A i j = 0) (v : I → ENNReal) :
+    act A v j = ∑ k ∈ Finset.univ.erase i, A k j * v k := by
+  have hh := Finset.sum_erase_add (s := Finset.univ) (f := fun k =&gt; A k j * v k) (Finset.mem_univ i)
+  simpa [act, h] using hh.symm
+theorem row_act {i j : I} (h : Row A i j) (v : I → ENNReal) : act A v j = A i j * v i := by
+  apply Finset.sum_eq_single i
+  · intro k _ hki
+    rw [h k hki, zero_mul]
+  · simp
+
+theorem row_bound (h : A ∈ Lip d f U) {i j : I} (hr : Row A i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (f.func x) (f.func y) ≤ A i j * d i x y := by
+  simpa [row_act hr] using h.2 x hx y hy j
+theorem col_contribution {i j : I} (hc : Col A i j) {k : I} (hk : k ≠ j)
+    (v : I → ENNReal) : A i k * v i = 0 := zero_term (hc k hk) v
+theorem diagonal_bound (h : A ∈ Lip d f U) (hA : Diagonal A)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  row_bound h (fun k hk =&gt; hA k j hk) hx hy
+
+theorem two_sided (hA : A ∈ Lip d f U) (hB : B ∈ CoLip d f U)
+    {j : I} (hr : Row A j j) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    B j j * d j x y ≤ d j (f.func x) (f.func y) ∧
+    d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  ⟨colip_term hB hx hy j j, row_bound hA hr hx hy⟩
+theorem all_two_sided (hA : A ∈ Lip d f U) (hB : B ∈ CoLip d f U)
+    (hr : ∀ j, Row A j j) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    ∀ j, B j j * d j x y ≤ d j (f.func x) (f.func y) ∧
+      d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  fun j =&gt; two_sided hA hB (hr j) hx hy
+theorem finite_two_sided (hA : A ∈ Lip d f U) (hB : B ∈ CoLip d f U)
+    (hr : ∀ j, Row A j j) (hfin : ∀ j, A j j &lt; ⊤ ∧ B j j &lt; ⊤)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    ∀ j, A j j &lt; ⊤ ∧ B j j &lt; ⊤ ∧
+      B j j * d j x y ≤ d j (f.func x) (f.func y) ∧
+      d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  fun j =&gt; ⟨(hfin j).1, (hfin j).2, all_two_sided hA hB hr hx hy j⟩
+theorem positive_channel (h : A ∈ CoLip d f U) {i j : I} (ha : 0 &lt; A i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hin : 0 &lt; d i x y) :
+    0 &lt; d j (f.func x) (f.func y) :=
+  (ENNReal.mul_pos (ne_of_gt ha) (ne_of_gt hin)).trans_le (colip_term h hx hy i j)
+theorem reflects_zero (h : A ∈ CoLip d f U) (ha : ∀ j, 0 &lt; A j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hz : GaugeZeroRelated d (f.func x) (f.func y)) : GaugeZeroRelated d x y := by
+  intro j
+  by_contra hn
+  have hp := positive_channel h (ha j) hx hy (pos_iff_ne_zero.mpr hn)
+  rw [hz j] at hp
+  exact (lt_irrefl 0) hp
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Bounds
+open scoped BigOperators
+open formal_oet.vol_01.ch_01_foundations
+namespace ChapterTwo
+noncomputable section
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+/-- Lists are in execution order, first step at the head. -/
+def chain : List (Operator X bot) → Operator X bot
+  | [] =&gt; identity
+  | f :: fs =&gt; comp (chain fs) f
+def product : List (Mat I) → Mat I
+  | [] =&gt; unitMat
+  | A :: As =&gt; composeMat (product As) A
+@[simp] theorem product_nil : product ([] : List (Mat I)) = unitMat := rfl
+@[simp] theorem product_single (A : Mat I) : product [A] = A := unit_compose A
+/-- The final actual image, computed without any bounds. -/
+def images : List (Operator X bot) → Set X → Set X
+  | [], U =&gt; U
+  | f :: fs, U =&gt; images fs (f.func '' U)
+theorem images_eq (fs : List (Operator X bot)) (U : Set X) : images fs U = (chain fs).func '' U := by
+  induction fs generalizing U with
+  | nil =&gt; simp [images, chain, identity]
+  | cons f fs ih =&gt; simp [images, ih, chain, comp, Set.image_image]
+/-- Every step is defined on its actual input image. -/
+def StepDomains : List (Operator X bot) → Set X → Prop
+  | [], _ =&gt; True
+  | f :: fs, U =&gt; U ⊆ dom f ∧ StepDomains fs (f.func '' U)
+theorem step_domains (fs : List (Operator X bot)) (U : Set X) (h : U ⊆ dom (chain fs)) :
+    StepDomains fs U := by
+  induction fs generalizing U with
+  | nil =&gt; trivial
+  | cons f fs ih =&gt; exact ⟨comp_dom h, ih _ (comp_image_dom h)⟩
+theorem stepDomains_iff_stages (fs : List (Operator X bot)) (U : Set X) :
+    StepDomains fs U ↔ ∀ k : Fin fs.length,
+      images (fs.take k.val) U ⊆ dom (fs.get k) := by
+  induction fs generalizing U with
+  | nil =&gt; simp [StepDomains]
+  | cons f fs ih =&gt;
+    change StepDomains (f :: fs) U ↔ ∀ k : Fin (fs.length + 1),
+      images ((f :: fs).take k.val) U ⊆ dom ((f :: fs).get k)
+    rw [Fin.forall_fin_succ]
+    simp [StepDomains, ih, images]
+theorem chain_stage_domains (fs : List (Operator X bot)) (U : Set X)
+    (h : U ⊆ dom (chain fs)) (k : Fin fs.length) :
+    images (fs.take k.val) U ⊆ dom (fs.get k) :=
+  (stepDomains_iff_stages fs U).mp (step_domains fs U h) k
+
+/-- A step consists only of an operator and a selected coefficient matrix. -/
+abbrev Step (X I : Type) (bot : X) := Operator X bot × Mat I
+def StepLip (d : I → X → X → ENNReal) : List (Step X I bot) → Set X → Prop
+  | [], _ =&gt; True
+  | s :: ss, U =&gt; s.2 ∈ Lip d s.1 U ∧ StepLip d ss (s.1.func '' U)
+def StepCoLip (d : I → X → X → ENNReal) : List (Step X I bot) → Set X → Prop
+  | [], _ =&gt; True
+  | s :: ss, U =&gt; s.2 ∈ CoLip d s.1 U ∧ StepCoLip d ss (s.1.func '' U)
+/-- Converts separately supplied, chronological step data into the paired representation. -/
+def packSteps (n : ℕ) (fs : Fin n → Operator X bot) (ms : Fin n → Mat I) : List (Step X I bot) :=
+  List.ofFn (fun k =&gt; (fs k, ms k))
+@[simp] theorem packSteps_ops (n : ℕ) (fs : Fin n → Operator X bot) (ms : Fin n → Mat I) :
+    (packSteps n fs ms).map Prod.fst = List.ofFn fs := by simp [packSteps, List.map_ofFn, Function.comp_def]
+@[simp] theorem packSteps_mats (n : ℕ) (fs : Fin n → Operator X bot) (ms : Fin n → Mat I) :
+    (packSteps n fs ms).map Prod.snd = List.ofFn ms := by simp [packSteps, List.map_ofFn, Function.comp_def]
+
+/-- Actual input at index k is the image under the preceding k operations. -/
+def stage (ss : List (Step X I bot)) (U : Set X) (k : ℕ) : Set X :=
+  images ((ss.take k).map Prod.fst) U
+
+theorem stepLip_iff_stages (d : I → X → X → ENNReal)
+    (ss : List (Step X I bot)) (U : Set X) :
+    StepLip d ss U ↔ ∀ k : Fin ss.length,
+      (ss.get k).2 ∈ Lip d (ss.get k).1 (stage ss U k.val) := by
+  induction ss generalizing U with
+  | nil =&gt; simp [StepLip]
+  | cons s ss ih =&gt;
+    change StepLip d (s :: ss) U ↔ ∀ k : Fin (ss.length + 1),
+      ((s :: ss).get k).2 ∈ Lip d ((s :: ss).get k).1 (stage (s :: ss) U k.val)
+    rw [Fin.forall_fin_succ]
+    simp [StepLip, ih, stage, List.get_cons_succ, images]
+
+theorem stepCoLip_iff_stages (d : I → X → X → ENNReal)
+    (ss : List (Step X I bot)) (U : Set X) :
+    StepCoLip d ss U ↔ ∀ k : Fin ss.length,
+      (ss.get k).2 ∈ CoLip d (ss.get k).1 (stage ss U k.val) := by
+  induction ss generalizing U with
+  | nil =&gt; simp [StepCoLip]
+  | cons s ss ih =&gt;
+    change StepCoLip d (s :: ss) U ↔ ∀ k : Fin (ss.length + 1),
+      ((s :: ss).get k).2 ∈ CoLip d ((s :: ss).get k).1 (stage (s :: ss) U k.val)
+    rw [Fin.forall_fin_succ]
+    simp [StepCoLip, ih, stage, List.get_cons_succ, images]
+
+theorem chain_lip (d : I → X → X → ENNReal) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain (ss.map Prod.fst))) (h : StepLip d ss U) :
+    product (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_lip hdom
+  | cons s ss ih =&gt;
+    exact lip_comp hdom h.1 (ih _ (comp_image_dom hdom) h.2)
+theorem chain_colip (d : I → X → X → ENNReal) (ss : List (Step X I bot)) (U : Set X)
+    (hne : U.Nonempty) (hdom : U ⊆ dom (chain (ss.map Prod.fst))) (h : StepCoLip d ss U) :
+    product (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_colip hne hdom
+  | cons s ss ih =&gt;
+    exact colip_comp hdom h.1 (ih _ (hne.image s.1.func) (comp_image_dom hdom) h.2)
+theorem chain_colip_positive_length (d : I → X → X → ENNReal)
+    (s : Step X I bot) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain ((s :: ss).map Prod.fst))) (h : StepCoLip d (s :: ss) U) :
+    product ((s :: ss).map Prod.snd) ∈ CoLip d (chain ((s :: ss).map Prod.fst)) U :=
+  chain_colip d (s :: ss) U h.1.1 hdom h
+/-- The original individually indexed hypotheses construct the recursive proof data. -/
+theorem chain_lip_stages (d : I → X → X → ENNReal) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain (ss.map Prod.fst)))
+    (h : ∀ k : Fin ss.length, (ss.get k).2 ∈ Lip d (ss.get k).1 (stage ss U k.val)) :
+    product (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U :=
+  chain_lip d ss U hdom ((stepLip_iff_stages d ss U).mpr h)
+theorem chain_colip_stages (d : I → X → X → ENNReal)
+    (s : Step X I bot) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain ((s :: ss).map Prod.fst)))
+    (h : ∀ k : Fin (s :: ss).length,
+      ((s :: ss).get k).2 ∈ CoLip d ((s :: ss).get k).1 (stage (s :: ss) U k.val)) :
+    product ((s :: ss).map Prod.snd) ∈ CoLip d (chain ((s :: ss).map Prod.fst)) U :=
+  chain_colip_positive_length d s ss U hdom ((stepCoLip_iff_stages d (s :: ss) U).mpr h)
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Chains
+import Mathlib.Data.Fin.Tuple.Basic
+open scoped BigOperators
+namespace ChapterTwo
+noncomputable section
+variable {I : Type} [Fintype I] [DecidableEq I]
+/-- Exactly n unrestricted intermediate indices, not just positive paths. -/
+def Route (I : Type) : ℕ → Type
+  | 0 =&gt; Unit
+  | n + 1 =&gt; I × Route I n
+/-- Bijection to the ordinary full finite index sequence. -/
+def routeEquiv (I : Type) : (n : ℕ) → Route I n ≃ (Fin n → I)
+  | 0 =&gt; { toFun := fun _ =&gt; Fin.elim0, invFun := fun _ =&gt; (),
+           left_inv := fun x =&gt; by cases x; rfl,
+           right_inv := fun f =&gt; by funext k; exact Fin.elim0 k }
+  | n + 1 =&gt; (Equiv.prodCongr (Equiv.refl I) (routeEquiv I n)).trans (Fin.consEquiv (fun _ =&gt; I))
+instance routeFintype : (n : ℕ) → Fintype (Route I n)
+  | 0 =&gt; inferInstanceAs (Fintype Unit)
+  | n + 1 =&gt; letI := routeFintype n; inferInstanceAs (Fintype (I × Route I n))
+
+def routeWeight (A : Mat I) : (As : List (Mat I)) → I → I → Route I As.length → ENNReal
+  | [], i, j, _ =&gt; A i j
+  | B :: Bs, i, j, p =&gt; A i p.1 * routeWeight B Bs p.1 j p.2
+def AllPositive (A : Mat I) : (As : List (Mat I)) → I → I → Route I As.length → Prop
+  | [], i, j, _ =&gt; 0 &lt; A i j
+  | B :: Bs, i, j, p =&gt; 0 &lt; A i p.1 ∧ AllPositive B Bs p.1 j p.2
+def HasZero (A : Mat I) : (As : List (Mat I)) → I → I → Route I As.length → Prop
+  | [], i, j, _ =&gt; A i j = 0
+  | B :: Bs, i, j, p =&gt; A i p.1 = 0 ∨ HasZero B Bs p.1 j p.2
+
+theorem weight_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I) (p : Route I As.length) :
+    routeWeight A As i j p = 0 ↔ HasZero A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; rfl
+  | cons B Bs ih =&gt; simp only [routeWeight, HasZero, mul_eq_zero, ih]
+theorem weight_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I) (p : Route I As.length) :
+    0 &lt; routeWeight A As i j p ↔ AllPositive A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; rfl
+  | cons B Bs ih =&gt; simp only [routeWeight, AllPositive, ENNReal.mul_pos_iff, ih]
+
+/-- Explicit expansion over all n-1 intermediate index sequences. -/
+theorem product_path_sum (A : Mat I) (As : List (Mat I)) (i j : I) :
+    product (A :: As) i j = ∑ p : Route I As.length, routeWeight A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [product_single, routeWeight, Route]
+  | cons B Bs ih =&gt;
+    change (∑ k, product (B :: Bs) k j * A i k) =
+      ∑ p : I × Route I Bs.length, A i p.1 * routeWeight B Bs p.1 j p.2
+    rw [Fintype.sum_prod_type]
+    apply Finset.sum_congr rfl
+    intro k _
+    rw [ih B k, Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro p _
+    exact mul_comm _ _
+
+/-- Zero criterion for all coefficient lists, hence also all selected Lip certificates. -/
+theorem product_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    product (A :: As) i j = 0 ↔ ∀ p : Route I As.length, HasZero A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [product_single, HasZero, Route]
+  | cons B Bs ih =&gt;
+    change (∑ k, product (B :: Bs) k j * A i k) = 0 ↔ _
+    rw [Finset.sum_eq_zero_iff]
+    constructor
+    · intro h p
+      rcases mul_eq_zero.mp (h p.1 (Finset.mem_univ _)) with ht | ha
+      · exact Or.inr ((ih B p.1).mp ht p.2)
+      · exact Or.inl ha
+    · intro h k _
+      by_cases ha : A i k = 0
+      · simp [ha]
+      · have ht : product (B :: Bs) k j = 0 := (ih B k).mpr (fun p =&gt; (h (k, p)).resolve_left ha)
+        simp [ht]
+/-- Positive criterion for all coefficient lists, hence also all selected co-Lip certificates. -/
+theorem product_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    0 &lt; product (A :: As) i j ↔ ∃ p : Route I As.length, AllPositive A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [product_single, AllPositive, Route]
+  | cons B Bs ih =&gt;
+    change 0 &lt; (∑ k, product (B :: Bs) k j * A i k) ↔ _
+    rw [Finset.sum_pos_iff]
+    constructor
+    · rintro ⟨k, _, hk⟩
+      obtain ⟨ht, ha⟩ := ENNReal.mul_pos_iff.mp hk
+      obtain ⟨p, hp⟩ := (ih B k).mp ht
+      exact ⟨(k, p), ha, hp⟩
+    · rintro ⟨p, hp⟩
+      exact ⟨p.1, Finset.mem_univ _, ENNReal.mul_pos_iff.mpr ⟨(ih B p.1).mpr ⟨p.2, hp.2⟩, hp.1⟩⟩
+
+/-- The explicit n=1 boundary contains exactly the empty sequence. -/
+theorem one_step_paths (A : Mat I) (i j : I) :
+    (∀ p : Route I 0, HasZero A [] i j p) ↔ A i j = 0 := by simp [HasZero, Route]
+theorem one_step_positive (A : Mat I) (i j : I) :
+    (∃ p : Route I 0, AllPositive A [] i j p) ↔ 0 &lt; A i j := by simp [AllPositive, Route]
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Bounds
+open formal_oet.vol_01.ch_01_foundations
+namespace ChapterTwo
+noncomputable section
+variable {X I : Type} {bot : X}
+/-- No coefficient matrix is involved in this single-channel feasible set. -/
+def Scalars (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i j : I) : Set ENNReal :=
+  {a | ∀ x ∈ U, ∀ y ∈ U, d j (f.func x) (f.func y) ≤ a * d i x y}
+def scalarInf (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i j : I) : ENNReal :=
+  sInf (Scalars d f U i j)
+variable {d : I → X → X → ENNReal} {f : Operator X bot} {U : Set X} {i j : I}
+theorem scalars_upward {a b : ENNReal} (ha : a ∈ Scalars d f U i j) (hab : a ≤ b) :
+    b ∈ Scalars d f U i j := by
+  intro x hx y hy
+  exact (ha x hx y hy).trans (mul_le_mul_right' hab _)
+theorem above_inf_feasible {a : ENNReal} (h : scalarInf d f U i j &lt; a) :
+    a ∈ Scalars d f U i j := by
+  obtain ⟨b, hb, hba⟩ := sInf_lt_iff.mp h
+  exact scalars_upward hb hba.le
+theorem zero_inf_positive {a : ENNReal} (h : scalarInf d f U i j = 0) (ha : 0 &lt; a) :
+    a ∈ Scalars d f U i j := above_inf_feasible (h ▸ ha)
+theorem finite_inf_iff : scalarInf d f U i j &lt; ⊤ ↔
+    ∃ a : ENNReal, a &lt; ⊤ ∧ a ∈ Scalars d f U i j := by
+  change sInf (Scalars d f U i j) &lt; ⊤ ↔ _
+  rw [sInf_lt_iff]
+  exact exists_congr (fun _ =&gt; and_comm)
+theorem impossible_channel {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hin : d i x y = 0) (hout : 0 &lt; d j (f.func x) (f.func y)) :
+    Scalars d f U i j = ∅ ∧ scalarInf d f U i j = ⊤ := by
+  have he : Scalars d f U i j = ∅ := by
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    intro a ha
+    have hh := ha x hx y hy
+    rw [hin, mul_zero] at hh
+    exact (not_le_of_gt hout) hh
+  exact ⟨he, by simp [scalarInf, he]⟩
+theorem positive_finite_inf_attained (hpos : 0 &lt; scalarInf d f U i j)
+    (hfin : scalarInf d f U i j &lt; ⊤) :
+    scalarInf d f U i j ∈ Scalars d f U i j := by
+  intro x hx y hy
+  by_cases hz : d i x y = 0
+  · obtain ⟨a, _, ha⟩ := finite_inf_iff.mp hfin
+    simpa [hz] using ha x hx y hy
+  by_cases ht : d i x y = ⊤
+  · simp [ht, ENNReal.mul_top (ne_of_gt hpos)]
+  · apply (ENNReal.div_le_iff hz ht).mp
+    apply le_sInf
+    intro a ha
+    exact (ENNReal.div_le_iff hz ht).mpr (ha x hx y hy)
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Scalar
+namespace ChapterTwo
+open formal_oet.vol_01.ch_01_foundations
+noncomputable section
+/-- Two ordinary points and a distinct absorbing point. -/
+abbrev CounterX := Option Bool
+def counterDist (i : Bool) (x y : CounterX) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else if i then 1 else ⊤
+theorem counterMetric (i : Bool) : ExtendedPseudoMetric CounterX none (counterDist i) where
+  nonabsorbing := ⟨some false, by simp⟩
+  dist_self := by intro x; simp [counterDist]
+  symm := by
+    intro x y
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt; simp [counterDist]
+  triangle := by
+    intro x y z
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt; fin_cases z &lt;;&gt; simp [counterDist, Option.some_ne_none, eq_comm]
+  isolate_bot := by intro x hx; simp [counterDist, hx]
+def counterOp : Operator CounterX none := identity
+def counterDomain : Set CounterX := {x | x ≠ none}
+theorem counterDomain_nonempty : counterDomain.Nonempty := ⟨some false, by simp [counterDomain]⟩
+theorem counterDomain_legal : counterDomain ⊆ dom counterOp := by
+  intro x hx; exact hx
+
+theorem counter_positive_feasible {a : ENNReal} (ha : 0 &lt; a) :
+    a ∈ Scalars counterDist counterOp counterDomain false true := by
+  intro x hx y hy
+  have hx' : x ≠ none := hx
+  have hy' : y ≠ none := hy
+  change counterDist true x y ≤ a * counterDist false x y
+  by_cases hxy : x = y
+  · simp [counterDist, hxy]
+  · simp [counterDist, hxy, hx', hy', ENNReal.mul_top (ne_of_gt ha)]
+theorem counter_zero_infeasible :
+    0 ∉ Scalars counterDist counterOp counterDomain false true := by
+  intro h
+  have hh := h (some false) (by simp [counterDomain]) (some true) (by simp [counterDomain])
+  simp [counterOp, identity, counterDist, Option.some_ne_none] at hh
+theorem counter_inf_zero : scalarInf counterDist counterOp counterDomain false true = 0 := by
+  apply le_antisymm _ (zero_le _)
+  apply le_of_forall_gt
+  intro a ha
+  obtain ⟨b, hb, hba⟩ := exists_between ha
+  exact (sInf_le (counter_positive_feasible hb)).trans_lt hba
+theorem zero_inf_not_attained_example :
+    (∀ i, ExtendedPseudoMetric CounterX none (counterDist i)) ∧
+    counterDomain.Nonempty ∧ counterDomain ⊆ dom counterOp ∧
+    scalarInf counterDist counterOp counterDomain false true = 0 ∧
+    0 ∉ Scalars counterDist counterOp counterDomain false true :=
+  ⟨counterMetric, counterDomain_nonempty, counterDomain_legal, counter_inf_zero, counter_zero_infeasible⟩
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Bounds
+import Chains
+import Paths
+import Scalar
+import Counterexample
+
+/- Kernel axiom audit for every delivered named definition and theorem. -/
+#print axioms ChapterTwo.Mat
+#print axioms ChapterTwo.composeMat
+#print axioms ChapterTwo.display
+#print axioms ChapterTwo.display_compose
+#print axioms ChapterTwo.unitMat
+#print axioms ChapterTwo.display_unit
+#print axioms ChapterTwo.act
+#print axioms ChapterTwo.act_unit
+#print axioms ChapterTwo.compose_unit
+#print axioms ChapterTwo.unit_compose
+#print axioms ChapterTwo.act_compose
+#print axioms ChapterTwo.act_mono
+#print axioms ChapterTwo.comp
+#print axioms ChapterTwo.identity
+#print axioms ChapterTwo.Lip
+#print axioms ChapterTwo.GlobalLip
+#print axioms ChapterTwo.CoLip
+#print axioms ChapterTwo.lip_restrict
+#print axioms ChapterTwo.global_restrict
+#print axioms ChapterTwo.entryInf
+#print axioms ChapterTwo.entryInf_mono
+#print axioms ChapterTwo.singleton_lip
+#print axioms ChapterTwo.comp_dom
+#print axioms ChapterTwo.comp_image_dom
+#print axioms ChapterTwo.lip_comp
+#print axioms ChapterTwo.colip_comp
+#print axioms ChapterTwo.colip_term
+#print axioms ChapterTwo.colip_zero
+#print axioms ChapterTwo.perturb_forward
+#print axioms ChapterTwo.perturb_reverse
+#print axioms ChapterTwo.perturb_lip
+#print axioms ChapterTwo.perturb_colip
+#print axioms ChapterTwo.identity_lip
+#print axioms ChapterTwo.identity_colip
+#print axioms ChapterTwo.Channel
+#print axioms ChapterTwo.Row
+#print axioms ChapterTwo.Col
+#print axioms ChapterTwo.Diagonal
+#print axioms ChapterTwo.RowDecoupled
+#print axioms ChapterTwo.ColDecoupled
+#print axioms ChapterTwo.zero_term
+#print axioms ChapterTwo.delete_zero_term
+#print axioms ChapterTwo.row_act
+#print axioms ChapterTwo.row_bound
+#print axioms ChapterTwo.col_contribution
+#print axioms ChapterTwo.diagonal_bound
+#print axioms ChapterTwo.two_sided
+#print axioms ChapterTwo.all_two_sided
+#print axioms ChapterTwo.finite_two_sided
+#print axioms ChapterTwo.positive_channel
+#print axioms ChapterTwo.reflects_zero
+#print axioms ChapterTwo.chain
+#print axioms ChapterTwo.product
+#print axioms ChapterTwo.product_nil
+#print axioms ChapterTwo.product_single
+#print axioms ChapterTwo.images
+#print axioms ChapterTwo.images_eq
+#print axioms ChapterTwo.StepDomains
+#print axioms ChapterTwo.step_domains
+#print axioms ChapterTwo.stepDomains_iff_stages
+#print axioms ChapterTwo.chain_stage_domains
+#print axioms ChapterTwo.Step
+#print axioms ChapterTwo.StepLip
+#print axioms ChapterTwo.StepCoLip
+#print axioms ChapterTwo.packSteps
+#print axioms ChapterTwo.packSteps_ops
+#print axioms ChapterTwo.packSteps_mats
+#print axioms ChapterTwo.stage
+#print axioms ChapterTwo.stepLip_iff_stages
+#print axioms ChapterTwo.stepCoLip_iff_stages
+#print axioms ChapterTwo.chain_lip
+#print axioms ChapterTwo.chain_colip
+#print axioms ChapterTwo.chain_colip_positive_length
+#print axioms ChapterTwo.chain_lip_stages
+#print axioms ChapterTwo.chain_colip_stages
+#print axioms ChapterTwo.Route
+#print axioms ChapterTwo.routeEquiv
+#print axioms ChapterTwo.routeFintype
+#print axioms ChapterTwo.routeWeight
+#print axioms ChapterTwo.AllPositive
+#print axioms ChapterTwo.HasZero
+#print axioms ChapterTwo.weight_zero_iff
+#print axioms ChapterTwo.weight_positive_iff
+#print axioms ChapterTwo.product_path_sum
+#print axioms ChapterTwo.product_zero_iff
+#print axioms ChapterTwo.product_positive_iff
+#print axioms ChapterTwo.one_step_paths
+#print axioms ChapterTwo.one_step_positive
+#print axioms ChapterTwo.Scalars
+#print axioms ChapterTwo.scalarInf
+#print axioms ChapterTwo.scalars_upward
+#print axioms ChapterTwo.above_inf_feasible
+#print axioms ChapterTwo.zero_inf_positive
+#print axioms ChapterTwo.finite_inf_iff
+#print axioms ChapterTwo.impossible_channel
+#print axioms ChapterTwo.positive_finite_inf_attained
+#print axioms ChapterTwo.CounterX
+#print axioms ChapterTwo.counterDist
+#print axioms ChapterTwo.counterMetric
+#print axioms ChapterTwo.counterOp
+#print axioms ChapterTwo.counterDomain
+#print axioms ChapterTwo.counterDomain_nonempty
+#print axioms ChapterTwo.counterDomain_legal
+#print axioms ChapterTwo.counter_positive_feasible
+#print axioms ChapterTwo.counter_zero_infeasible
+#print axioms ChapterTwo.counter_inf_zero
+#print axioms ChapterTwo.zero_inf_not_attained_example
+</code></pre>
+<pre><code class="language-sh">#!/bin/sh
+set -eu
+# lean-local is the supplied Lean 4.29.1 / pinned-mathlib launcher.
+./lean-local -o formal_oet/vol_01/ch_01_foundations/gauge_space.olean formal_oet/vol_01/ch_01_foundations/gauge_space.lean
+./lean-local -o formal_oet/vol_01/ch_01_foundations/operator_space.olean formal_oet/vol_01/ch_01_foundations/operator_space.lean
+for module in Bounds Chains Paths Scalar Counterexample Main; do
+  ./lean-local -o &quot;$module.olean&quot; &quot;$module.lean&quot;
+done
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;HCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;HC02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.GlobalLip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Lip 的成员条件同时包含 U⊆dom φ 与全部 x,y∈U、输出 j 的求和上界；GlobalLip 取 U=dom φ。矩阵系数和距离均为 ENNReal。Fintype 表示有限指标，原文非空指标是这些更一般声明的特例。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.CoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.colip_term&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;CoLip 的成员条件明确包含 U.Nonempty、U⊆dom φ 和全部点对/输出分量的求和下界。colip_term 从有限非负和中抽取任意通道项，不是额外假设。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Mat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.composeMat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.display&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.display_compose&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.act&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.act_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Mat i j 输入优先；display M 的通常第 j 行第 i 列是 M i j。display_compose 证明所用 Σk B k j*A i k 与通常矩阵 B*A 一致，act_compose 证明对距离向量的复合等式。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_nil&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_single&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.unitMat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.display_unit&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.compose_unit&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.unit_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;列表按施行顺序存储。chain(f::fs)=chain(fs)∘f；product(A::As)=product(As)*A。空表分别为恒等算子和单位矩阵，单元素乘积等于其矩阵。Bounds.unitMat 明确定义 Kronecker δ，display_unit 证明它是通常单位矩阵。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.images&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.images_eq&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.StepDomains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.step_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stepDomains_iff_stages&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_stage_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Step&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.StepLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.StepCoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.packSteps&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.packSteps_ops&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.packSteps_mats&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stage&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stepLip_iff_stages&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stepCoLip_iff_stages&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;images 逐步取实际像；images_eq 证明最终实际像等于完整复合像。由初始域包含于完整复合定义域，chain_stage_domains 给出每个前缀像包含于下一步定义域。Step 仅存算子和矩阵；StepLip/StepCoLip 仅记录实际域上的单步界。stage 与两个 iff 将递归表示对齐为每个有限索引 k 的前缀像输入域。packSteps 将分别给出的 Fin n 算子/矩阵数据配对，并证明两投影恢复原序列。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Route&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.routeEquiv&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.routeWeight&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.AllPositive&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.HasZero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.weight_zero_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.weight_positive_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_path_sum&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_paths&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;正长度序列以 A::As 表示。Route I As.length 是所有中间索引的无约束笛卡尔积；routeEquiv 证明其与 Fin(n−1)→I 双射。起点 i、终点 j 为显式参数；权重递归乘上每条边。全正和含零分别逐边合取、析取。product_path_sum 证明对全部路径展开；n=1 的 Route I 0=Unit，只有一个空序列。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Channel&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Row&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Col&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Diagonal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.RowDecoupled&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.ColDecoupled&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.row_act&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Channel=I×I；Row 固定输出 j，仅输入 i 可非零；Col 固定输入 i，仅输出 j 可非零；Diagonal 排除所有非对角项。RowDecoupled、ColDecoupled 都显式存在合法 Lip 证书及可能支撑位置。row_act 证明任意单行支撑的求和化简。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Scalars&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.scalarInf&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Scalars 是只使用输入 i、输出 j 的所有 ENNReal 标量证书，scalarInf=sInf Scalars，空集下确界按 ENNReal 完备格取 ⊤。在原文 U⊆dom φ 上就是原定义；定义自然延伸到任意 U，不把它等同于矩阵条目。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.singleton_lip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Subsingleton I 加显式 i 等价于 I={i}，将合法 Lip 求和化为唯一条目 L i i 的标量界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.global_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意 U⊆dom φ，证明全域证书集合包含于受限证书集合。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-P03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.lip_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对 U⊆V，任意 V 上合法 Lip 证书仍在 U 上合法；V 的定义域条件来自该证书。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.entryInf&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.entryInf_mono&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;entryInf 是受限合法矩阵集合在条目投影下的像集的 sInf；证明缩小 U 后此下确界不增，允许空证书族。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-P03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.lip_comp&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;U 包含于 g∘f 的定义域，第二步域精确为 fU；两个局部证书导出 composeMat B A 的复合 Lip 界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.colip_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;更一般地对任意合法局部 CoLip 证书，输出零距且输入正距的点对迫使该通道系数为零；取 U=dom φ 得全域命题。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.colip_comp&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;与 P05 同一实际像域；两个 CoLip 单步证书推出复合 CoLip 证书，初始域非空性由第一步证书保留。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_forward&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;从每分量的扩展伪度量对称性和三角不等式、逐点 δ 界，证明全部 x,y∈U 的正向像距界，误差写成 δj+δj。事实上不需要合法域假设，故特别覆盖原文公共定义域。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_reverse&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;利用对称性交换两算子，并调用正向扰动定理，得反向像距界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-P08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_lip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;在正向像距界中代入 φ1 的合法 Lip 矩阵上界；误差用 ENNReal 等式 2δ=δ+δ 表示。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-P08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_colip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;将 φ1 的 CoLip 求和下界与反向像距界传递连接，得到 φ2 输出距加 2δ 的上界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-P09&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_lip_stages&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意列表长度归纳，以两步复合律证明所选矩阵有序乘积是完整复合的合法 Lip 证书；stages 版本接收每个原始单步在实际前缀像域上的假设。包含全部正长度及更强的零长度情形。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D05&quot;,
+        &quot;HC02-P05&quot;,
+        &quot;HC02-P14&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_colip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_colip_positive_length&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_colip_stages&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;同样归纳得到指定 CoLip 乘积。正长度版本由第一步合法性导出 U 非空，无额外非空假设；stages 版本直接接收逐步实际输入域上的 CoLip 数据。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D05&quot;,
+        &quot;HC02-P07&quot;,
+        &quot;HC02-P15&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.identity_lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.act_unit&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;恒等算子在其定义域的任意子集上有单位 Lip 证书；act_unit 证明逐分量求和恒等式。因结论对空集也成立，原文非空 U 是特例。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P15&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.identity_colip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对于非空 U⊆dom id，单位矩阵是合法 CoLip 证书。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-P14&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P16&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_zero_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_paths&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意非空系数列表证明乘积条目为零 iff 每个完整中间索引序列含零边，因此适用于所有所选合法 Lip 链证书；不需要额外正性或最优性。单步空路径边界独立列出。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P17&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_positive_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意非空系数列表证明乘积条目正 iff 存在全边正的完整路径，因此适用于所有所选合法 CoLip 链证书；包括单步唯一空中间序列。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P18&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.impossible_channel&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;给定 U 内输入零距而输出正距的点对，证明 Scalars=∅ 且 scalarInf=⊤；对 λ=⊤ 同样使用 λ·0=0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.positive_finite_inf_attained&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;0&lt;a&lt;⊤ 时证明 a 属于整个标量可行集。输入距为 0、⊤、非零有限分别处理；有限非零分支使用 ENNReal 除法保序与 le_sInf，不把下确界可行性作为假设。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;,
+        &quot;HC02-P24&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.scalars_upward&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;任意可行 a 和 b≥a 都给出 b 可行，包含无限距离与无限系数。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.above_inf_feasible&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;证明更强结论：任意 a&gt;scalarInf 都可行，不必预先限制下确界正或有限，且 a 可为 ⊤。证明使用 sInf_lt_iff 找到较小可行值再向上封闭。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;,
+        &quot;HC02-P20&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P22&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.zero_inf_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;scalarInf=0 时每个正系数都可行，包含原文要求的每个有限正常数；不声称零可行。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;,
+        &quot;HC02-P21&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P23&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.CounterX&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDist&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterMetric&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterOp&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDomain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDomain_nonempty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDomain_legal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counter_positive_feasible&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counter_zero_infeasible&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counter_inf_zero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.zero_inf_not_attained_example&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;显式三点空间 Option Bool，吸收元 none；两普通点在输入 false 分量距离为 ⊤，输出 true 分量距离为 1，两分量都隔离吸收元。恒等算子，U 为两个普通点。完整证明全部扩展伪度量公理、合法域与非空性，并证明所有正系数可行、下确界为 0、系数 0 不可行。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P24&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.finite_inf_iff&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;完整等价 scalarInf&lt;⊤ iff 存在全部点对合法的有限系数；直接由完备线性序的 sInf_lt_iff 证明，无下确界取到假设。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.zero_term&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.delete_zero_term&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;条目为零时对任意距离向量该项为零，并证明总和等于删除该输入索引后的和，包含输入距 ⊤。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P26&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.row_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;合法 Lip 证书只要满足 Row A i j，就给出输出 j 相对任意唯一输入 i 的单项界，不要求 i=j。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D07&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P27&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.col_contribution&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Col A i j 保证每个 k≠j 的 A i k·v i=0，准确表达所选证书的贡献范围，而不是算子内在独立性。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P25&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P28&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.diagonal_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Diagonal A 将每个输出行化为其对角输入项，从合法 Lip 证书得到所有分量的标量界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P26&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P29&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.two_sided&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;只对上界矩阵要求 Row A j j，下界矩阵无需稀疏性；从 CoLip 非负和抽取 B j j·dj，再与上界单行化简合并。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P26&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P30&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.all_two_sided&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.finite_two_sided&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对所有 j 的行条件给出所有分量双侧界；finite_two_sided 另外保留每个上下界对角系数 &lt;⊤，得有限标量系数的双侧界，不误称距离本身有限。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P29&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P31&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.positive_channel&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;任意通道 i→j 系数正和输入距正，利用 ENNReal 乘法正性与 CoLip 单项下界推出输出距正。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P32&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.reflects_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;全对角 CoLip 系数正时，输出的原前置模块 GaugeZeroRelated 蕴含输入的 GaugeZeroRelated；没有把族零距升级为点相等。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-P31&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+<p><strong>完成声明</strong>：已完整完成并按冻结原文及 40 项清单对齐整章。未完成范围：无。未确认的数学证明或编译范围：无。所有新增目标源文件均在上文全文列出；前置模块保持冻结。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/HCH02/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>HCH02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/HCH02/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/reviews/HCH02.json">source_review · HCH02.json</a><span class="hash">SHA256 f8dac86cc84146391f1edb58ebdbb176e93e710081674b1b4500db74dd88b90f</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Original task scope retained; native harness conditions recorded separately.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>HC02-D01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D07</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-D08</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Direct representations and their bridges inspected. Mat stores input first and display transposes. Recursive StepLip/StepCoLip contain only single-step hypotheses; actual-image stage equivalences construct chain data. Route is all unrestricted intermediate indices with Fin-sequence equivalence. Scalars is the single-channel feasible set, distinct from matrix-entry infima.</p>
+<h3>HC02-P01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Singleton sum specializes without any extra distance hypothesis.</p>
+<h3>HC02-P02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Global certificate restricts to legal U.</p>
+<h3>HC02-P03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Restricts point-pair quantifiers and domain inclusion.</p>
+<h3>HC02-P04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Entry-value set inclusion yields reversed infimum inequality, including empty feasible sets.</p>
+<h3>HC02-P05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Actual intermediate image and matrix-action composition give specified product.</p>
+<h3>HC02-P06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Single co-Lip summand below zero, positive input factor, coefficient zero; applies globally by U=dom.</p>
+<h3>HC02-P07</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Independent lower composition proof preserves nonempty source.</p>
+<h3>HC02-P08</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Two triangle inequalities and symmetry give additive forward perturbation, never subtracting infinity.</p>
+<h3>HC02-P09</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Swaps functions using symmetry to prove reverse additive estimate.</p>
+<h3>HC02-P10</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Substitutes Lip bound into forward perturbation.</p>
+<h3>HC02-P11</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Co-Lip bound precedes reverse perturbation; additive direction matches.</p>
+<h3>HC02-P12</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Chain induction from step bounds at exact images; stage equivalence, list-ofFn packing and order bridge delivered.</p>
+<h3>HC02-P13</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Lower chain induction preserves nonemptiness; positive-length result derives it from first certificate.</p>
+<h3>HC02-P14</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity action yields zero-step upper certificate.</p>
+<h3>HC02-P15</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity action plus nonemptiness yields zero-step lower certificate.</p>
+<h3>HC02-P16</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Unrestricted route recursion, complete path-sum and zero-edge equivalence support the universal criterion; n=1 explicit.</p>
+<h3>HC02-P17</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Unrestricted route sum/product positivity supports existential all-positive criterion; n=1 explicit.</p>
+<h3>HC02-P18</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Zero input makes every scalar product zero, including infinity; positive output makes feasible set empty and infimum top.</p>
+<h3>HC02-P19</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Splits input distance zero, infinity, and nonzero finite. In the finite case exact ENNReal division and le_sInf prove attainment without continuity assumptions.</p>
+<h3>HC02-P20</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Multiplication monotonicity proves upward closure.</p>
+<h3>HC02-P21</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> sInf_lt_iff supplies a feasible smaller scalar; upward closure proves every strictly larger scalar feasible, including top.</p>
+<h3>HC02-P22</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Zero-infimum specialization of the previous argument.</p>
+<h3>HC02-P23</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Option Bool has a lawful absorbing extension; two components have ordinary-point distance infinity and one. Identity on the nonempty ordinary domain makes all positive scalars feasible but zero infeasible, with infimum zero.</p>
+<h3>HC02-P24</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> sInf_lt_iff gives exactly a finite feasible witness in both directions.</p>
+<h3>HC02-P25</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> zero_mul, including infinite distance, and sum_erase_add remove precisely the selected term.</p>
+<h3>HC02-P26</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Arbitrary surviving input i, not only diagonal input, gives scalar upper bound.</p>
+<h3>HC02-P27</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Column condition forces only the selected certificate contribution to vanish at every other output; no functional-dependence claim.</p>
+<h3>HC02-P28</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Specializes arbitrary-row theorem to every diagonal row.</p>
+<h3>HC02-P29</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Lip sparsity only; co-Lip lower bound comes from single nonnegative summand.</p>
+<h3>HC02-P30</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> All-component conjunction and finite-coefficient branch explicit; no claim of finite distances.</p>
+<h3>HC02-P31</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Positive ENNReal product bounded by the co-Lip sum; no finite inverse.</p>
+<h3>HC02-P32</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Reflects family zero-distance componentwise; never upgrades to point equality.</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h1>第 2 章：完整 Lean 形式化</h1>
+<p>已完成冻结清单中的全部 40 项义务。下面给出全部目标源码、构建脚本和逐项对齐清单。</p>
+<p><strong>来源与归属</strong>：本形式化改写自附件中的 Zhe Li（Glen Li / glenzli），《The Operator Evolution Theory》第 2 章。作者 ORCID：https://orcid.org/0009-0006-6536-3453；官方作品页：https://glenzli.com/books/oet/；来源仓库：https://gitlab.com/glenzli/oet-public；许可：<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。本交付的改动是将冻结数学文本转写为 Lean 定义和内核核验的证明，部分证明使用等价的代数方法；不主张原理论为本回答独立发现。未检索上述网站或读取其他章节实现。</p>
+<p><strong>核验</strong>：使用题目提供的 Lean 4.29.1 与固定 mathlib 环境，运行 <code>sh build.sh</code> 成功，退出码为 0。<code>Main.lean</code> 导入全部目标模块，并逐个审计所有交付的具名定义与定理；公理依赖均限于 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。没有新增公理、证明占位或绕过内核检查。</p>
+<p><strong>表示约定</strong>：</p>
+<ul>
+<li>所有系数和距离使用 <code>ENNReal</code>，保留 <code>0·∞=0</code>。矩阵按输入、输出顺序存储，并证明与通常矩阵的转置显示及乘法相符。</li>
+<li>列表按实际施行顺序存储。中间域是前缀复合的实际像；已证明逐步域合法性、最终像对应以及单步证书表示的等价性。链中不存储最终复合界。</li>
+<li>全部路径是无约束的有限索引序列，不限于正路径；与通常 <code>Fin (n−1) → I</code> 序列有已证明的双射，并证明完整路径求和展开及单步边界。</li>
+<li>不需要某些背景条件的定理证明了更强的一般形式，例如扰动界无需域合法性，路径判据对任意非空矩阵列表成立。在原文有限非空指标、扩展规范空间和合法作用域下直接专化即可。<code>Scalars</code> 在合法域上与原文公式完全相同，且定义自然延伸到任意集合；它不等同于矩阵条目的下确界。</li>
+</ul>
+<p>构建入口为 <code>build.sh</code>，Lean 汇总入口为 <code>Main.lean</code>。以下六个 Lean 文件是全部新增目标源码。两份 <code>formal_oet/vol_01/ch_01_foundations/</code> 前置源码使用题目给定的冻结版本，未修改或覆盖；<code>lean-local</code> 使用题目提供的启动器。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.ENNReal.Inv
+
+open scoped BigOperators
+open formal_oet.vol_01.ch_01_foundations
+namespace ChapterTwo
+noncomputable section
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+abbrev Mat (I : Type) := I → I → ENNReal
+/-- Input first, output second. -/
+def composeMat (B A : Mat I) : Mat I := fun i j =&gt; ∑ k, B k j * A i k
+def display (A : Mat I) : Matrix I I ENNReal := fun j i =&gt; A i j
+theorem display_compose (B A : Mat I) : display (composeMat B A) = display B * display A := rfl
+def unitMat : Mat I := fun i j =&gt; if i = j then 1 else 0
+theorem display_unit : display (unitMat : Mat I) = 1 := by
+  ext i j
+  simp [display, unitMat, Matrix.one_apply, eq_comm]
+def act (A : Mat I) (v : I → ENNReal) (j : I) := ∑ i, A i j * v i
+@[simp] theorem act_unit (v : I → ENNReal) (j : I) : act unitMat v j = v j := by
+  simp [act, unitMat]
+@[simp] theorem compose_unit (A : Mat I) : composeMat A unitMat = A := by
+  ext i j
+  simp [composeMat, unitMat]
+@[simp] theorem unit_compose (A : Mat I) : composeMat unitMat A = A := by
+  ext i j
+  simp [composeMat, unitMat]
+theorem act_compose (B A : Mat I) (v : I → ENNReal) (j : I) :
+    act (composeMat B A) v j = act B (fun k =&gt; act A v k) j := by
+  simp only [act, composeMat, Finset.sum_mul, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro k _
+  apply Finset.sum_congr rfl
+  intro i _
+  exact mul_assoc _ _ _
+theorem act_mono (A : Mat I) {v w : I → ENNReal} (h : ∀ i, v i ≤ w i) (j : I) :
+    act A v j ≤ act A w j :=
+  Finset.sum_le_sum (fun i _ =&gt; mul_le_mul_left' (h i) _)
+def comp (g f : Operator X bot) : Operator X bot :=
+  ⟨g.func ∘ f.func, by simp [f.preserves_bot, g.preserves_bot]⟩
+def identity : Operator X bot := ⟨id, rfl⟩
+def Lip (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {A | U ⊆ dom f ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+      d j (f.func x) (f.func y) ≤ act A (fun i =&gt; d i x y) j}
+def GlobalLip (d : I → X → X → ENNReal) (f : Operator X bot) := Lip d f (dom f)
+def CoLip (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {A | U.Nonempty ∧ U ⊆ dom f ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+      act A (fun i =&gt; d i x y) j ≤ d j (f.func x) (f.func y)}
+variable {d : I → X → X → ENNReal} {f g : Operator X bot} {U V : Set X} {A B : Mat I}
+theorem lip_restrict (h : A ∈ Lip d f V) (hUV : U ⊆ V) : A ∈ Lip d f U :=
+  ⟨hUV.trans h.1, fun x hx y hy j =&gt; h.2 x (hUV hx) y (hUV hy) j⟩
+theorem global_restrict (h : U ⊆ dom f) : GlobalLip d f ⊆ Lip d f U :=
+  fun _ ha =&gt; lip_restrict ha h
+noncomputable def entryInf (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i j : I) :=
+  sInf ((fun A : Mat I =&gt; A i j) '' Lip d f U)
+theorem entryInf_mono (h : U ⊆ V) (i j : I) : entryInf d f U i j ≤ entryInf d f V i j := by
+  apply sInf_le_sInf
+  rintro _ ⟨A, ha, rfl⟩
+  exact ⟨A, lip_restrict ha h, rfl⟩
+theorem singleton_lip [Subsingleton I] (h : A ∈ Lip d f U) (i : I)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d i (f.func x) (f.func y) ≤ A i i * d i x y := by
+  letI : Unique I := ⟨⟨i⟩, fun a =&gt; Subsingleton.elim a i⟩
+  simpa [act] using h.2 x hx y hy i
+
+theorem comp_dom (h : U ⊆ dom (comp g f)) : U ⊆ dom f := by
+  intro x hx heq
+  have hn := h hx
+  apply hn
+  change g.func (f.func x) = bot
+  rw [heq, g.preserves_bot]
+theorem comp_image_dom (h : U ⊆ dom (comp g f)) : f.func '' U ⊆ dom g := by
+  rintro z ⟨x, hx, rfl⟩
+  exact h hx
+
+theorem lip_comp (hU : U ⊆ dom (comp g f)) (hA : A ∈ Lip d f U)
+    (hB : B ∈ Lip d g (f.func '' U)) : composeMat B A ∈ Lip d (comp g f) U := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  change d j (g.func (f.func x)) (g.func (f.func y)) ≤ _
+  rw [act_compose]
+  exact (hB.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j).trans
+    (act_mono B (fun k =&gt; hA.2 x hx y hy k) j)
+theorem colip_comp (hU : U ⊆ dom (comp g f)) (hA : A ∈ CoLip d f U)
+    (hB : B ∈ CoLip d g (f.func '' U)) : composeMat B A ∈ CoLip d (comp g f) U := by
+  refine ⟨hA.1, hU, ?_⟩
+  intro x hx y hy j
+  rw [act_compose]
+  exact (act_mono B (fun k =&gt; hA.2.2 x hx y hy k) j).trans
+    (hB.2.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j)
+theorem colip_term (h : A ∈ CoLip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (i j : I) :
+    A i j * d i x y ≤ d j (f.func x) (f.func y) :=
+  (Finset.single_le_sum (fun k _ =&gt; zero_le (A k j * d k x y)) (Finset.mem_univ i)).trans
+    (h.2.2 x hx y hy j)
+theorem colip_zero (h : A ∈ CoLip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    {i j : I} (hout : d j (f.func x) (f.func y) = 0) (hin : 0 &lt; d i x y) : A i j = 0 := by
+  have hz : A i j * d i x y = 0 := le_antisymm (hout ▸ colip_term h hx hy i j) (zero_le _)
+  exact (mul_eq_zero.mp hz).resolve_right (ne_of_gt hin)
+
+theorem perturb_forward (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (g.func x) (g.func y) ≤ d j (f.func x) (f.func y) + δ j + δ j := by
+  calc
+    _ ≤ d j (g.func x) (f.func x) + d j (f.func x) (g.func y) := (hd j).triangle _ _ _
+    _ ≤ d j (g.func x) (f.func x) + (d j (f.func x) (f.func y) + d j (f.func y) (g.func y)) :=
+      add_le_add le_rfl ((hd j).triangle _ _ _)
+    _ ≤ δ j + (d j (f.func x) (f.func y) + δ j) := by
+      rw [(hd j).symm (g.func x) (f.func x)]
+      exact add_le_add (hδ x hx j) (add_le_add le_rfl (hδ y hy j))
+    _ = _ := by simp only [add_comm, add_left_comm, add_assoc]
+theorem perturb_reverse (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (f.func x) (f.func y) ≤ d j (g.func x) (g.func y) + δ j + δ j := by
+  apply perturb_forward hd (f := g) (g := f) _ hx hy j
+  intro z hz k
+  rw [(hd k).symm]
+  exact hδ z hz k
+theorem perturb_lip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    (h : A ∈ Lip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (g.func x) (g.func y) ≤ act A (fun i =&gt; d i x y) j + 2 * δ j := by
+  simpa [two_mul, add_assoc] using
+    (perturb_forward hd hδ hx hy j).trans (add_le_add (add_le_add (h.2 x hx y hy j) le_rfl) le_rfl)
+theorem perturb_colip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {δ : I → ENNReal} (hδ : ∀ z ∈ U, ∀ j, d j (f.func z) (g.func z) ≤ δ j)
+    (h : A ∈ CoLip d f U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    act A (fun i =&gt; d i x y) j ≤ d j (g.func x) (g.func y) + 2 * δ j := by
+  simpa [two_mul, add_assoc] using (h.2.2 x hx y hy j).trans (perturb_reverse hd hδ hx hy j)
+
+theorem identity_lip (h : U ⊆ dom (identity : Operator X bot)) : unitMat ∈ Lip d (identity : Operator X bot) U :=
+  ⟨h, by intro x hx y hy j; simp [identity]⟩
+theorem identity_colip (hU : U.Nonempty) (h : U ⊆ dom (identity : Operator X bot)) :
+    unitMat ∈ CoLip d (identity : Operator X bot) U :=
+  ⟨hU, h, by intro x hx y hy j; simp [identity]⟩
+
+def Channel (I : Type) := I × I
+def Row (A : Mat I) (i j : I) := ∀ k, k ≠ i → A k j = 0
+def Col (A : Mat I) (i j : I) := ∀ k, k ≠ j → A i k = 0
+def Diagonal (A : Mat I) := ∀ i j, i ≠ j → A i j = 0
+def RowDecoupled (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (j : I) :=
+  ∃ A ∈ Lip d f U, ∃ i, Row A i j
+def ColDecoupled (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i : I) :=
+  ∃ A ∈ Lip d f U, ∃ j, Col A i j
+
+theorem zero_term {i j : I} (h : A i j = 0) (v : I → ENNReal) : A i j * v i = 0 := by rw [h, zero_mul]
+theorem delete_zero_term {i j : I} (h : A i j = 0) (v : I → ENNReal) :
+    act A v j = ∑ k ∈ Finset.univ.erase i, A k j * v k := by
+  have hh := Finset.sum_erase_add (s := Finset.univ) (f := fun k =&gt; A k j * v k) (Finset.mem_univ i)
+  simpa [act, h] using hh.symm
+theorem row_act {i j : I} (h : Row A i j) (v : I → ENNReal) : act A v j = A i j * v i := by
+  apply Finset.sum_eq_single i
+  · intro k _ hki
+    rw [h k hki, zero_mul]
+  · simp
+
+theorem row_bound (h : A ∈ Lip d f U) {i j : I} (hr : Row A i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (f.func x) (f.func y) ≤ A i j * d i x y := by
+  simpa [row_act hr] using h.2 x hx y hy j
+theorem col_contribution {i j : I} (hc : Col A i j) {k : I} (hk : k ≠ j)
+    (v : I → ENNReal) : A i k * v i = 0 := zero_term (hc k hk) v
+theorem diagonal_bound (h : A ∈ Lip d f U) (hA : Diagonal A)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  row_bound h (fun k hk =&gt; hA k j hk) hx hy
+
+theorem two_sided (hA : A ∈ Lip d f U) (hB : B ∈ CoLip d f U)
+    {j : I} (hr : Row A j j) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    B j j * d j x y ≤ d j (f.func x) (f.func y) ∧
+    d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  ⟨colip_term hB hx hy j j, row_bound hA hr hx hy⟩
+theorem all_two_sided (hA : A ∈ Lip d f U) (hB : B ∈ CoLip d f U)
+    (hr : ∀ j, Row A j j) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    ∀ j, B j j * d j x y ≤ d j (f.func x) (f.func y) ∧
+      d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  fun j =&gt; two_sided hA hB (hr j) hx hy
+theorem finite_two_sided (hA : A ∈ Lip d f U) (hB : B ∈ CoLip d f U)
+    (hr : ∀ j, Row A j j) (hfin : ∀ j, A j j &lt; ⊤ ∧ B j j &lt; ⊤)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    ∀ j, A j j &lt; ⊤ ∧ B j j &lt; ⊤ ∧
+      B j j * d j x y ≤ d j (f.func x) (f.func y) ∧
+      d j (f.func x) (f.func y) ≤ A j j * d j x y :=
+  fun j =&gt; ⟨(hfin j).1, (hfin j).2, all_two_sided hA hB hr hx hy j⟩
+theorem positive_channel (h : A ∈ CoLip d f U) {i j : I} (ha : 0 &lt; A i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hin : 0 &lt; d i x y) :
+    0 &lt; d j (f.func x) (f.func y) :=
+  (ENNReal.mul_pos (ne_of_gt ha) (ne_of_gt hin)).trans_le (colip_term h hx hy i j)
+theorem reflects_zero (h : A ∈ CoLip d f U) (ha : ∀ j, 0 &lt; A j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hz : GaugeZeroRelated d (f.func x) (f.func y)) : GaugeZeroRelated d x y := by
+  intro j
+  by_contra hn
+  have hp := positive_channel h (ha j) hx hy (pos_iff_ne_zero.mpr hn)
+  rw [hz j] at hp
+  exact (lt_irrefl 0) hp
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Bounds
+open scoped BigOperators
+open formal_oet.vol_01.ch_01_foundations
+namespace ChapterTwo
+noncomputable section
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+/-- Lists are in execution order, first step at the head. -/
+def chain : List (Operator X bot) → Operator X bot
+  | [] =&gt; identity
+  | f :: fs =&gt; comp (chain fs) f
+def product : List (Mat I) → Mat I
+  | [] =&gt; unitMat
+  | A :: As =&gt; composeMat (product As) A
+@[simp] theorem product_nil : product ([] : List (Mat I)) = unitMat := rfl
+@[simp] theorem product_single (A : Mat I) : product [A] = A := unit_compose A
+/-- The final actual image, computed without any bounds. -/
+def images : List (Operator X bot) → Set X → Set X
+  | [], U =&gt; U
+  | f :: fs, U =&gt; images fs (f.func '' U)
+theorem images_eq (fs : List (Operator X bot)) (U : Set X) : images fs U = (chain fs).func '' U := by
+  induction fs generalizing U with
+  | nil =&gt; simp [images, chain, identity]
+  | cons f fs ih =&gt; simp [images, ih, chain, comp, Set.image_image]
+/-- Every step is defined on its actual input image. -/
+def StepDomains : List (Operator X bot) → Set X → Prop
+  | [], _ =&gt; True
+  | f :: fs, U =&gt; U ⊆ dom f ∧ StepDomains fs (f.func '' U)
+theorem step_domains (fs : List (Operator X bot)) (U : Set X) (h : U ⊆ dom (chain fs)) :
+    StepDomains fs U := by
+  induction fs generalizing U with
+  | nil =&gt; trivial
+  | cons f fs ih =&gt; exact ⟨comp_dom h, ih _ (comp_image_dom h)⟩
+theorem stepDomains_iff_stages (fs : List (Operator X bot)) (U : Set X) :
+    StepDomains fs U ↔ ∀ k : Fin fs.length,
+      images (fs.take k.val) U ⊆ dom (fs.get k) := by
+  induction fs generalizing U with
+  | nil =&gt; simp [StepDomains]
+  | cons f fs ih =&gt;
+    change StepDomains (f :: fs) U ↔ ∀ k : Fin (fs.length + 1),
+      images ((f :: fs).take k.val) U ⊆ dom ((f :: fs).get k)
+    rw [Fin.forall_fin_succ]
+    simp [StepDomains, ih, images]
+theorem chain_stage_domains (fs : List (Operator X bot)) (U : Set X)
+    (h : U ⊆ dom (chain fs)) (k : Fin fs.length) :
+    images (fs.take k.val) U ⊆ dom (fs.get k) :=
+  (stepDomains_iff_stages fs U).mp (step_domains fs U h) k
+
+/-- A step consists only of an operator and a selected coefficient matrix. -/
+abbrev Step (X I : Type) (bot : X) := Operator X bot × Mat I
+def StepLip (d : I → X → X → ENNReal) : List (Step X I bot) → Set X → Prop
+  | [], _ =&gt; True
+  | s :: ss, U =&gt; s.2 ∈ Lip d s.1 U ∧ StepLip d ss (s.1.func '' U)
+def StepCoLip (d : I → X → X → ENNReal) : List (Step X I bot) → Set X → Prop
+  | [], _ =&gt; True
+  | s :: ss, U =&gt; s.2 ∈ CoLip d s.1 U ∧ StepCoLip d ss (s.1.func '' U)
+/-- Converts separately supplied, chronological step data into the paired representation. -/
+def packSteps (n : ℕ) (fs : Fin n → Operator X bot) (ms : Fin n → Mat I) : List (Step X I bot) :=
+  List.ofFn (fun k =&gt; (fs k, ms k))
+@[simp] theorem packSteps_ops (n : ℕ) (fs : Fin n → Operator X bot) (ms : Fin n → Mat I) :
+    (packSteps n fs ms).map Prod.fst = List.ofFn fs := by simp [packSteps, List.map_ofFn, Function.comp_def]
+@[simp] theorem packSteps_mats (n : ℕ) (fs : Fin n → Operator X bot) (ms : Fin n → Mat I) :
+    (packSteps n fs ms).map Prod.snd = List.ofFn ms := by simp [packSteps, List.map_ofFn, Function.comp_def]
+
+/-- Actual input at index k is the image under the preceding k operations. -/
+def stage (ss : List (Step X I bot)) (U : Set X) (k : ℕ) : Set X :=
+  images ((ss.take k).map Prod.fst) U
+
+theorem stepLip_iff_stages (d : I → X → X → ENNReal)
+    (ss : List (Step X I bot)) (U : Set X) :
+    StepLip d ss U ↔ ∀ k : Fin ss.length,
+      (ss.get k).2 ∈ Lip d (ss.get k).1 (stage ss U k.val) := by
+  induction ss generalizing U with
+  | nil =&gt; simp [StepLip]
+  | cons s ss ih =&gt;
+    change StepLip d (s :: ss) U ↔ ∀ k : Fin (ss.length + 1),
+      ((s :: ss).get k).2 ∈ Lip d ((s :: ss).get k).1 (stage (s :: ss) U k.val)
+    rw [Fin.forall_fin_succ]
+    simp [StepLip, ih, stage, List.get_cons_succ, images]
+
+theorem stepCoLip_iff_stages (d : I → X → X → ENNReal)
+    (ss : List (Step X I bot)) (U : Set X) :
+    StepCoLip d ss U ↔ ∀ k : Fin ss.length,
+      (ss.get k).2 ∈ CoLip d (ss.get k).1 (stage ss U k.val) := by
+  induction ss generalizing U with
+  | nil =&gt; simp [StepCoLip]
+  | cons s ss ih =&gt;
+    change StepCoLip d (s :: ss) U ↔ ∀ k : Fin (ss.length + 1),
+      ((s :: ss).get k).2 ∈ CoLip d ((s :: ss).get k).1 (stage (s :: ss) U k.val)
+    rw [Fin.forall_fin_succ]
+    simp [StepCoLip, ih, stage, List.get_cons_succ, images]
+
+theorem chain_lip (d : I → X → X → ENNReal) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain (ss.map Prod.fst))) (h : StepLip d ss U) :
+    product (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_lip hdom
+  | cons s ss ih =&gt;
+    exact lip_comp hdom h.1 (ih _ (comp_image_dom hdom) h.2)
+theorem chain_colip (d : I → X → X → ENNReal) (ss : List (Step X I bot)) (U : Set X)
+    (hne : U.Nonempty) (hdom : U ⊆ dom (chain (ss.map Prod.fst))) (h : StepCoLip d ss U) :
+    product (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_colip hne hdom
+  | cons s ss ih =&gt;
+    exact colip_comp hdom h.1 (ih _ (hne.image s.1.func) (comp_image_dom hdom) h.2)
+theorem chain_colip_positive_length (d : I → X → X → ENNReal)
+    (s : Step X I bot) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain ((s :: ss).map Prod.fst))) (h : StepCoLip d (s :: ss) U) :
+    product ((s :: ss).map Prod.snd) ∈ CoLip d (chain ((s :: ss).map Prod.fst)) U :=
+  chain_colip d (s :: ss) U h.1.1 hdom h
+/-- The original individually indexed hypotheses construct the recursive proof data. -/
+theorem chain_lip_stages (d : I → X → X → ENNReal) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain (ss.map Prod.fst)))
+    (h : ∀ k : Fin ss.length, (ss.get k).2 ∈ Lip d (ss.get k).1 (stage ss U k.val)) :
+    product (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U :=
+  chain_lip d ss U hdom ((stepLip_iff_stages d ss U).mpr h)
+theorem chain_colip_stages (d : I → X → X → ENNReal)
+    (s : Step X I bot) (ss : List (Step X I bot)) (U : Set X)
+    (hdom : U ⊆ dom (chain ((s :: ss).map Prod.fst)))
+    (h : ∀ k : Fin (s :: ss).length,
+      ((s :: ss).get k).2 ∈ CoLip d ((s :: ss).get k).1 (stage (s :: ss) U k.val)) :
+    product ((s :: ss).map Prod.snd) ∈ CoLip d (chain ((s :: ss).map Prod.fst)) U :=
+  chain_colip_positive_length d s ss U hdom ((stepCoLip_iff_stages d (s :: ss) U).mpr h)
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Chains
+import Mathlib.Data.Fin.Tuple.Basic
+open scoped BigOperators
+namespace ChapterTwo
+noncomputable section
+variable {I : Type} [Fintype I] [DecidableEq I]
+/-- Exactly n unrestricted intermediate indices, not just positive paths. -/
+def Route (I : Type) : ℕ → Type
+  | 0 =&gt; Unit
+  | n + 1 =&gt; I × Route I n
+/-- Bijection to the ordinary full finite index sequence. -/
+def routeEquiv (I : Type) : (n : ℕ) → Route I n ≃ (Fin n → I)
+  | 0 =&gt; { toFun := fun _ =&gt; Fin.elim0, invFun := fun _ =&gt; (),
+           left_inv := fun x =&gt; by cases x; rfl,
+           right_inv := fun f =&gt; by funext k; exact Fin.elim0 k }
+  | n + 1 =&gt; (Equiv.prodCongr (Equiv.refl I) (routeEquiv I n)).trans (Fin.consEquiv (fun _ =&gt; I))
+instance routeFintype : (n : ℕ) → Fintype (Route I n)
+  | 0 =&gt; inferInstanceAs (Fintype Unit)
+  | n + 1 =&gt; letI := routeFintype n; inferInstanceAs (Fintype (I × Route I n))
+
+def routeWeight (A : Mat I) : (As : List (Mat I)) → I → I → Route I As.length → ENNReal
+  | [], i, j, _ =&gt; A i j
+  | B :: Bs, i, j, p =&gt; A i p.1 * routeWeight B Bs p.1 j p.2
+def AllPositive (A : Mat I) : (As : List (Mat I)) → I → I → Route I As.length → Prop
+  | [], i, j, _ =&gt; 0 &lt; A i j
+  | B :: Bs, i, j, p =&gt; 0 &lt; A i p.1 ∧ AllPositive B Bs p.1 j p.2
+def HasZero (A : Mat I) : (As : List (Mat I)) → I → I → Route I As.length → Prop
+  | [], i, j, _ =&gt; A i j = 0
+  | B :: Bs, i, j, p =&gt; A i p.1 = 0 ∨ HasZero B Bs p.1 j p.2
+
+theorem weight_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I) (p : Route I As.length) :
+    routeWeight A As i j p = 0 ↔ HasZero A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; rfl
+  | cons B Bs ih =&gt; simp only [routeWeight, HasZero, mul_eq_zero, ih]
+theorem weight_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I) (p : Route I As.length) :
+    0 &lt; routeWeight A As i j p ↔ AllPositive A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; rfl
+  | cons B Bs ih =&gt; simp only [routeWeight, AllPositive, ENNReal.mul_pos_iff, ih]
+
+/-- Explicit expansion over all n-1 intermediate index sequences. -/
+theorem product_path_sum (A : Mat I) (As : List (Mat I)) (i j : I) :
+    product (A :: As) i j = ∑ p : Route I As.length, routeWeight A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [product_single, routeWeight, Route]
+  | cons B Bs ih =&gt;
+    change (∑ k, product (B :: Bs) k j * A i k) =
+      ∑ p : I × Route I Bs.length, A i p.1 * routeWeight B Bs p.1 j p.2
+    rw [Fintype.sum_prod_type]
+    apply Finset.sum_congr rfl
+    intro k _
+    rw [ih B k, Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro p _
+    exact mul_comm _ _
+
+/-- Zero criterion for all coefficient lists, hence also all selected Lip certificates. -/
+theorem product_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    product (A :: As) i j = 0 ↔ ∀ p : Route I As.length, HasZero A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [product_single, HasZero, Route]
+  | cons B Bs ih =&gt;
+    change (∑ k, product (B :: Bs) k j * A i k) = 0 ↔ _
+    rw [Finset.sum_eq_zero_iff]
+    constructor
+    · intro h p
+      rcases mul_eq_zero.mp (h p.1 (Finset.mem_univ _)) with ht | ha
+      · exact Or.inr ((ih B p.1).mp ht p.2)
+      · exact Or.inl ha
+    · intro h k _
+      by_cases ha : A i k = 0
+      · simp [ha]
+      · have ht : product (B :: Bs) k j = 0 := (ih B k).mpr (fun p =&gt; (h (k, p)).resolve_left ha)
+        simp [ht]
+/-- Positive criterion for all coefficient lists, hence also all selected co-Lip certificates. -/
+theorem product_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    0 &lt; product (A :: As) i j ↔ ∃ p : Route I As.length, AllPositive A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [product_single, AllPositive, Route]
+  | cons B Bs ih =&gt;
+    change 0 &lt; (∑ k, product (B :: Bs) k j * A i k) ↔ _
+    rw [Finset.sum_pos_iff]
+    constructor
+    · rintro ⟨k, _, hk⟩
+      obtain ⟨ht, ha⟩ := ENNReal.mul_pos_iff.mp hk
+      obtain ⟨p, hp⟩ := (ih B k).mp ht
+      exact ⟨(k, p), ha, hp⟩
+    · rintro ⟨p, hp⟩
+      exact ⟨p.1, Finset.mem_univ _, ENNReal.mul_pos_iff.mpr ⟨(ih B p.1).mpr ⟨p.2, hp.2⟩, hp.1⟩⟩
+
+/-- The explicit n=1 boundary contains exactly the empty sequence. -/
+theorem one_step_paths (A : Mat I) (i j : I) :
+    (∀ p : Route I 0, HasZero A [] i j p) ↔ A i j = 0 := by simp [HasZero, Route]
+theorem one_step_positive (A : Mat I) (i j : I) :
+    (∃ p : Route I 0, AllPositive A [] i j p) ↔ 0 &lt; A i j := by simp [AllPositive, Route]
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Bounds
+open formal_oet.vol_01.ch_01_foundations
+namespace ChapterTwo
+noncomputable section
+variable {X I : Type} {bot : X}
+/-- No coefficient matrix is involved in this single-channel feasible set. -/
+def Scalars (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i j : I) : Set ENNReal :=
+  {a | ∀ x ∈ U, ∀ y ∈ U, d j (f.func x) (f.func y) ≤ a * d i x y}
+def scalarInf (d : I → X → X → ENNReal) (f : Operator X bot) (U : Set X) (i j : I) : ENNReal :=
+  sInf (Scalars d f U i j)
+variable {d : I → X → X → ENNReal} {f : Operator X bot} {U : Set X} {i j : I}
+theorem scalars_upward {a b : ENNReal} (ha : a ∈ Scalars d f U i j) (hab : a ≤ b) :
+    b ∈ Scalars d f U i j := by
+  intro x hx y hy
+  exact (ha x hx y hy).trans (mul_le_mul_right' hab _)
+theorem above_inf_feasible {a : ENNReal} (h : scalarInf d f U i j &lt; a) :
+    a ∈ Scalars d f U i j := by
+  obtain ⟨b, hb, hba⟩ := sInf_lt_iff.mp h
+  exact scalars_upward hb hba.le
+theorem zero_inf_positive {a : ENNReal} (h : scalarInf d f U i j = 0) (ha : 0 &lt; a) :
+    a ∈ Scalars d f U i j := above_inf_feasible (h ▸ ha)
+theorem finite_inf_iff : scalarInf d f U i j &lt; ⊤ ↔
+    ∃ a : ENNReal, a &lt; ⊤ ∧ a ∈ Scalars d f U i j := by
+  change sInf (Scalars d f U i j) &lt; ⊤ ↔ _
+  rw [sInf_lt_iff]
+  exact exists_congr (fun _ =&gt; and_comm)
+theorem impossible_channel {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hin : d i x y = 0) (hout : 0 &lt; d j (f.func x) (f.func y)) :
+    Scalars d f U i j = ∅ ∧ scalarInf d f U i j = ⊤ := by
+  have he : Scalars d f U i j = ∅ := by
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    intro a ha
+    have hh := ha x hx y hy
+    rw [hin, mul_zero] at hh
+    exact (not_le_of_gt hout) hh
+  exact ⟨he, by simp [scalarInf, he]⟩
+theorem positive_finite_inf_attained (hpos : 0 &lt; scalarInf d f U i j)
+    (hfin : scalarInf d f U i j &lt; ⊤) :
+    scalarInf d f U i j ∈ Scalars d f U i j := by
+  intro x hx y hy
+  by_cases hz : d i x y = 0
+  · obtain ⟨a, _, ha⟩ := finite_inf_iff.mp hfin
+    simpa [hz] using ha x hx y hy
+  by_cases ht : d i x y = ⊤
+  · simp [ht, ENNReal.mul_top (ne_of_gt hpos)]
+  · apply (ENNReal.div_le_iff hz ht).mp
+    apply le_sInf
+    intro a ha
+    exact (ENNReal.div_le_iff hz ht).mpr (ha x hx y hy)
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Scalar
+namespace ChapterTwo
+open formal_oet.vol_01.ch_01_foundations
+noncomputable section
+/-- Two ordinary points and a distinct absorbing point. -/
+abbrev CounterX := Option Bool
+def counterDist (i : Bool) (x y : CounterX) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else if i then 1 else ⊤
+theorem counterMetric (i : Bool) : ExtendedPseudoMetric CounterX none (counterDist i) where
+  nonabsorbing := ⟨some false, by simp⟩
+  dist_self := by intro x; simp [counterDist]
+  symm := by
+    intro x y
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt; simp [counterDist]
+  triangle := by
+    intro x y z
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt; fin_cases z &lt;;&gt; simp [counterDist, Option.some_ne_none, eq_comm]
+  isolate_bot := by intro x hx; simp [counterDist, hx]
+def counterOp : Operator CounterX none := identity
+def counterDomain : Set CounterX := {x | x ≠ none}
+theorem counterDomain_nonempty : counterDomain.Nonempty := ⟨some false, by simp [counterDomain]⟩
+theorem counterDomain_legal : counterDomain ⊆ dom counterOp := by
+  intro x hx; exact hx
+
+theorem counter_positive_feasible {a : ENNReal} (ha : 0 &lt; a) :
+    a ∈ Scalars counterDist counterOp counterDomain false true := by
+  intro x hx y hy
+  have hx' : x ≠ none := hx
+  have hy' : y ≠ none := hy
+  change counterDist true x y ≤ a * counterDist false x y
+  by_cases hxy : x = y
+  · simp [counterDist, hxy]
+  · simp [counterDist, hxy, hx', hy', ENNReal.mul_top (ne_of_gt ha)]
+theorem counter_zero_infeasible :
+    0 ∉ Scalars counterDist counterOp counterDomain false true := by
+  intro h
+  have hh := h (some false) (by simp [counterDomain]) (some true) (by simp [counterDomain])
+  simp [counterOp, identity, counterDist, Option.some_ne_none] at hh
+theorem counter_inf_zero : scalarInf counterDist counterOp counterDomain false true = 0 := by
+  apply le_antisymm _ (zero_le _)
+  apply le_of_forall_gt
+  intro a ha
+  obtain ⟨b, hb, hba⟩ := exists_between ha
+  exact (sInf_le (counter_positive_feasible hb)).trans_lt hba
+theorem zero_inf_not_attained_example :
+    (∀ i, ExtendedPseudoMetric CounterX none (counterDist i)) ∧
+    counterDomain.Nonempty ∧ counterDomain ⊆ dom counterOp ∧
+    scalarInf counterDist counterOp counterDomain false true = 0 ∧
+    0 ∉ Scalars counterDist counterOp counterDomain false true :=
+  ⟨counterMetric, counterDomain_nonempty, counterDomain_legal, counter_inf_zero, counter_zero_infeasible⟩
+end
+end ChapterTwo
+</code></pre>
+<pre><code class="language-lean">import Bounds
+import Chains
+import Paths
+import Scalar
+import Counterexample
+
+/- Kernel axiom audit for every delivered named definition and theorem. -/
+#print axioms ChapterTwo.Mat
+#print axioms ChapterTwo.composeMat
+#print axioms ChapterTwo.display
+#print axioms ChapterTwo.display_compose
+#print axioms ChapterTwo.unitMat
+#print axioms ChapterTwo.display_unit
+#print axioms ChapterTwo.act
+#print axioms ChapterTwo.act_unit
+#print axioms ChapterTwo.compose_unit
+#print axioms ChapterTwo.unit_compose
+#print axioms ChapterTwo.act_compose
+#print axioms ChapterTwo.act_mono
+#print axioms ChapterTwo.comp
+#print axioms ChapterTwo.identity
+#print axioms ChapterTwo.Lip
+#print axioms ChapterTwo.GlobalLip
+#print axioms ChapterTwo.CoLip
+#print axioms ChapterTwo.lip_restrict
+#print axioms ChapterTwo.global_restrict
+#print axioms ChapterTwo.entryInf
+#print axioms ChapterTwo.entryInf_mono
+#print axioms ChapterTwo.singleton_lip
+#print axioms ChapterTwo.comp_dom
+#print axioms ChapterTwo.comp_image_dom
+#print axioms ChapterTwo.lip_comp
+#print axioms ChapterTwo.colip_comp
+#print axioms ChapterTwo.colip_term
+#print axioms ChapterTwo.colip_zero
+#print axioms ChapterTwo.perturb_forward
+#print axioms ChapterTwo.perturb_reverse
+#print axioms ChapterTwo.perturb_lip
+#print axioms ChapterTwo.perturb_colip
+#print axioms ChapterTwo.identity_lip
+#print axioms ChapterTwo.identity_colip
+#print axioms ChapterTwo.Channel
+#print axioms ChapterTwo.Row
+#print axioms ChapterTwo.Col
+#print axioms ChapterTwo.Diagonal
+#print axioms ChapterTwo.RowDecoupled
+#print axioms ChapterTwo.ColDecoupled
+#print axioms ChapterTwo.zero_term
+#print axioms ChapterTwo.delete_zero_term
+#print axioms ChapterTwo.row_act
+#print axioms ChapterTwo.row_bound
+#print axioms ChapterTwo.col_contribution
+#print axioms ChapterTwo.diagonal_bound
+#print axioms ChapterTwo.two_sided
+#print axioms ChapterTwo.all_two_sided
+#print axioms ChapterTwo.finite_two_sided
+#print axioms ChapterTwo.positive_channel
+#print axioms ChapterTwo.reflects_zero
+#print axioms ChapterTwo.chain
+#print axioms ChapterTwo.product
+#print axioms ChapterTwo.product_nil
+#print axioms ChapterTwo.product_single
+#print axioms ChapterTwo.images
+#print axioms ChapterTwo.images_eq
+#print axioms ChapterTwo.StepDomains
+#print axioms ChapterTwo.step_domains
+#print axioms ChapterTwo.stepDomains_iff_stages
+#print axioms ChapterTwo.chain_stage_domains
+#print axioms ChapterTwo.Step
+#print axioms ChapterTwo.StepLip
+#print axioms ChapterTwo.StepCoLip
+#print axioms ChapterTwo.packSteps
+#print axioms ChapterTwo.packSteps_ops
+#print axioms ChapterTwo.packSteps_mats
+#print axioms ChapterTwo.stage
+#print axioms ChapterTwo.stepLip_iff_stages
+#print axioms ChapterTwo.stepCoLip_iff_stages
+#print axioms ChapterTwo.chain_lip
+#print axioms ChapterTwo.chain_colip
+#print axioms ChapterTwo.chain_colip_positive_length
+#print axioms ChapterTwo.chain_lip_stages
+#print axioms ChapterTwo.chain_colip_stages
+#print axioms ChapterTwo.Route
+#print axioms ChapterTwo.routeEquiv
+#print axioms ChapterTwo.routeFintype
+#print axioms ChapterTwo.routeWeight
+#print axioms ChapterTwo.AllPositive
+#print axioms ChapterTwo.HasZero
+#print axioms ChapterTwo.weight_zero_iff
+#print axioms ChapterTwo.weight_positive_iff
+#print axioms ChapterTwo.product_path_sum
+#print axioms ChapterTwo.product_zero_iff
+#print axioms ChapterTwo.product_positive_iff
+#print axioms ChapterTwo.one_step_paths
+#print axioms ChapterTwo.one_step_positive
+#print axioms ChapterTwo.Scalars
+#print axioms ChapterTwo.scalarInf
+#print axioms ChapterTwo.scalars_upward
+#print axioms ChapterTwo.above_inf_feasible
+#print axioms ChapterTwo.zero_inf_positive
+#print axioms ChapterTwo.finite_inf_iff
+#print axioms ChapterTwo.impossible_channel
+#print axioms ChapterTwo.positive_finite_inf_attained
+#print axioms ChapterTwo.CounterX
+#print axioms ChapterTwo.counterDist
+#print axioms ChapterTwo.counterMetric
+#print axioms ChapterTwo.counterOp
+#print axioms ChapterTwo.counterDomain
+#print axioms ChapterTwo.counterDomain_nonempty
+#print axioms ChapterTwo.counterDomain_legal
+#print axioms ChapterTwo.counter_positive_feasible
+#print axioms ChapterTwo.counter_zero_infeasible
+#print axioms ChapterTwo.counter_inf_zero
+#print axioms ChapterTwo.zero_inf_not_attained_example
+</code></pre>
+<pre><code class="language-sh">#!/bin/sh
+set -eu
+# lean-local is the supplied Lean 4.29.1 / pinned-mathlib launcher.
+./lean-local -o formal_oet/vol_01/ch_01_foundations/gauge_space.olean formal_oet/vol_01/ch_01_foundations/gauge_space.lean
+./lean-local -o formal_oet/vol_01/ch_01_foundations/operator_space.olean formal_oet/vol_01/ch_01_foundations/operator_space.lean
+for module in Bounds Chains Paths Scalar Counterexample Main; do
+  ./lean-local -o &quot;$module.olean&quot; &quot;$module.lean&quot;
+done
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;HCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;HC02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.GlobalLip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Lip 的成员条件同时包含 U⊆dom φ 与全部 x,y∈U、输出 j 的求和上界；GlobalLip 取 U=dom φ。矩阵系数和距离均为 ENNReal。Fintype 表示有限指标，原文非空指标是这些更一般声明的特例。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.CoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.colip_term&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;CoLip 的成员条件明确包含 U.Nonempty、U⊆dom φ 和全部点对/输出分量的求和下界。colip_term 从有限非负和中抽取任意通道项，不是额外假设。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Mat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.composeMat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.display&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.display_compose&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.act&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.act_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Mat i j 输入优先；display M 的通常第 j 行第 i 列是 M i j。display_compose 证明所用 Σk B k j*A i k 与通常矩阵 B*A 一致，act_compose 证明对距离向量的复合等式。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_nil&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_single&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.unitMat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.display_unit&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.compose_unit&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.unit_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;列表按施行顺序存储。chain(f::fs)=chain(fs)∘f；product(A::As)=product(As)*A。空表分别为恒等算子和单位矩阵，单元素乘积等于其矩阵。Bounds.unitMat 明确定义 Kronecker δ，display_unit 证明它是通常单位矩阵。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.images&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.images_eq&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.StepDomains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.step_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stepDomains_iff_stages&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_stage_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Step&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.StepLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.StepCoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.packSteps&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.packSteps_ops&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.packSteps_mats&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stage&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stepLip_iff_stages&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.stepCoLip_iff_stages&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;images 逐步取实际像；images_eq 证明最终实际像等于完整复合像。由初始域包含于完整复合定义域，chain_stage_domains 给出每个前缀像包含于下一步定义域。Step 仅存算子和矩阵；StepLip/StepCoLip 仅记录实际域上的单步界。stage 与两个 iff 将递归表示对齐为每个有限索引 k 的前缀像输入域。packSteps 将分别给出的 Fin n 算子/矩阵数据配对，并证明两投影恢复原序列。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Route&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.routeEquiv&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.routeWeight&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.AllPositive&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.HasZero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.weight_zero_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.weight_positive_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_path_sum&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_paths&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;正长度序列以 A::As 表示。Route I As.length 是所有中间索引的无约束笛卡尔积；routeEquiv 证明其与 Fin(n−1)→I 双射。起点 i、终点 j 为显式参数；权重递归乘上每条边。全正和含零分别逐边合取、析取。product_path_sum 证明对全部路径展开；n=1 的 Route I 0=Unit，只有一个空序列。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Channel&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Row&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Col&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Diagonal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.RowDecoupled&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.ColDecoupled&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.row_act&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Channel=I×I；Row 固定输出 j，仅输入 i 可非零；Col 固定输入 i，仅输出 j 可非零；Diagonal 排除所有非对角项。RowDecoupled、ColDecoupled 都显式存在合法 Lip 证书及可能支撑位置。row_act 证明任意单行支撑的求和化简。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.Scalars&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.scalarInf&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Scalars 是只使用输入 i、输出 j 的所有 ENNReal 标量证书，scalarInf=sInf Scalars，空集下确界按 ENNReal 完备格取 ⊤。在原文 U⊆dom φ 上就是原定义；定义自然延伸到任意 U，不把它等同于矩阵条目。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.singleton_lip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Subsingleton I 加显式 i 等价于 I={i}，将合法 Lip 求和化为唯一条目 L i i 的标量界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.global_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意 U⊆dom φ，证明全域证书集合包含于受限证书集合。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-P03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.lip_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对 U⊆V，任意 V 上合法 Lip 证书仍在 U 上合法；V 的定义域条件来自该证书。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.entryInf&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.entryInf_mono&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;entryInf 是受限合法矩阵集合在条目投影下的像集的 sInf；证明缩小 U 后此下确界不增，允许空证书族。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-P03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.lip_comp&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;U 包含于 g∘f 的定义域，第二步域精确为 fU；两个局部证书导出 composeMat B A 的复合 Lip 界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.colip_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;更一般地对任意合法局部 CoLip 证书，输出零距且输入正距的点对迫使该通道系数为零；取 U=dom φ 得全域命题。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.colip_comp&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;与 P05 同一实际像域；两个 CoLip 单步证书推出复合 CoLip 证书，初始域非空性由第一步证书保留。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_forward&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;从每分量的扩展伪度量对称性和三角不等式、逐点 δ 界，证明全部 x,y∈U 的正向像距界，误差写成 δj+δj。事实上不需要合法域假设，故特别覆盖原文公共定义域。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_reverse&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;利用对称性交换两算子，并调用正向扰动定理，得反向像距界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-P08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_lip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;在正向像距界中代入 φ1 的合法 Lip 矩阵上界；误差用 ENNReal 等式 2δ=δ+δ 表示。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-P08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.perturb_colip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;将 φ1 的 CoLip 求和下界与反向像距界传递连接，得到 φ2 输出距加 2δ 的上界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-P09&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_lip_stages&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意列表长度归纳，以两步复合律证明所选矩阵有序乘积是完整复合的合法 Lip 证书；stages 版本接收每个原始单步在实际前缀像域上的假设。包含全部正长度及更强的零长度情形。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D05&quot;,
+        &quot;HC02-P05&quot;,
+        &quot;HC02-P14&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_colip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_colip_positive_length&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.chain_colip_stages&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;同样归纳得到指定 CoLip 乘积。正长度版本由第一步合法性导出 U 非空，无额外非空假设；stages 版本直接接收逐步实际输入域上的 CoLip 数据。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D05&quot;,
+        &quot;HC02-P07&quot;,
+        &quot;HC02-P15&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.identity_lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.act_unit&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;恒等算子在其定义域的任意子集上有单位 Lip 证书；act_unit 证明逐分量求和恒等式。因结论对空集也成立，原文非空 U 是特例。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P15&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.identity_colip&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对于非空 U⊆dom id，单位矩阵是合法 CoLip 证书。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-P14&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P16&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_zero_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_paths&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意非空系数列表证明乘积条目为零 iff 每个完整中间索引序列含零边，因此适用于所有所选合法 Lip 链证书；不需要额外正性或最优性。单步空路径边界独立列出。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P17&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.product_positive_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.one_step_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对任意非空系数列表证明乘积条目正 iff 存在全边正的完整路径，因此适用于所有所选合法 CoLip 链证书；包括单步唯一空中间序列。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;,
+        &quot;HC02-D04&quot;,
+        &quot;HC02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P18&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.impossible_channel&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;给定 U 内输入零距而输出正距的点对，证明 Scalars=∅ 且 scalarInf=⊤；对 λ=⊤ 同样使用 λ·0=0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.positive_finite_inf_attained&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;0&lt;a&lt;⊤ 时证明 a 属于整个标量可行集。输入距为 0、⊤、非零有限分别处理；有限非零分支使用 ENNReal 除法保序与 le_sInf，不把下确界可行性作为假设。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;,
+        &quot;HC02-P24&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.scalars_upward&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;任意可行 a 和 b≥a 都给出 b 可行，包含无限距离与无限系数。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.above_inf_feasible&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;证明更强结论：任意 a&gt;scalarInf 都可行，不必预先限制下确界正或有限，且 a 可为 ⊤。证明使用 sInf_lt_iff 找到较小可行值再向上封闭。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;,
+        &quot;HC02-P20&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P22&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.zero_inf_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;scalarInf=0 时每个正系数都可行，包含原文要求的每个有限正常数；不声称零可行。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;,
+        &quot;HC02-P21&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P23&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.CounterX&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDist&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterMetric&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterOp&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDomain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDomain_nonempty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counterDomain_legal&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counter_positive_feasible&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counter_zero_infeasible&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.counter_inf_zero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Counterexample.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.zero_inf_not_attained_example&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;显式三点空间 Option Bool，吸收元 none；两普通点在输入 false 分量距离为 ⊤，输出 true 分量距离为 1，两分量都隔离吸收元。恒等算子，U 为两个普通点。完整证明全部扩展伪度量公理、合法域与非空性，并证明所有正系数可行、下确界为 0、系数 0 不可行。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P24&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Scalar.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.finite_inf_iff&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;完整等价 scalarInf&lt;⊤ iff 存在全部点对合法的有限系数；直接由完备线性序的 sInf_lt_iff 证明，无下确界取到假设。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.zero_term&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.delete_zero_term&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;条目为零时对任意距离向量该项为零，并证明总和等于删除该输入索引后的和，包含输入距 ⊤。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P26&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.row_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;合法 Lip 证书只要满足 Row A i j，就给出输出 j 相对任意唯一输入 i 的单项界，不要求 i=j。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D07&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P27&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.col_contribution&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Col A i j 保证每个 k≠j 的 A i k·v i=0，准确表达所选证书的贡献范围，而不是算子内在独立性。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P25&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P28&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.diagonal_bound&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;Diagonal A 将每个输出行化为其对角输入项，从合法 Lip 证书得到所有分量的标量界。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P26&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P29&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.two_sided&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;只对上界矩阵要求 Row A j j，下界矩阵无需稀疏性；从 CoLip 非负和抽取 B j j·dj，再与上界单行化简合并。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P26&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P30&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.all_two_sided&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.finite_two_sided&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;对所有 j 的行条件给出所有分量双侧界；finite_two_sided 另外保留每个上下界对角系数 &lt;⊤，得有限标量系数的双侧界，不误称距离本身有限。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D01&quot;,
+        &quot;HC02-D02&quot;,
+        &quot;HC02-D07&quot;,
+        &quot;HC02-P29&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P31&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.positive_channel&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;任意通道 i→j 系数正和输入距正，利用 ENNReal 乘法正性与 CoLip 单项下界推出输出距正。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P32&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;ChapterTwo.reflects_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: &quot;全对角 CoLip 系数正时，输出的原前置模块 GaugeZeroRelated 蕴含输入的 GaugeZeroRelated；没有把族零距升级为点相等。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;HC02-D02&quot;,
+        &quot;HC02-P31&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+<p><strong>完成声明</strong>：已完整完成并按冻结原文及 40 项清单对齐整章。未完成范围：无。未确认的数学证明或编译范围：无。所有新增目标源文件均在上文全文列出；前置模块保持冻结。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/HCH02/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>HCH02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/HCH02/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/reviews/HCH02.json">source_review · HCH02.json</a><span class="hash">SHA256 f8dac86cc84146391f1edb58ebdbb176e93e710081674b1b4500db74dd88b90f</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 3, "families": 4, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 13, "tasks": 38, "parent_families": 34, "initial_slots": 38, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.4.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 3, "families": 4, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "dot-underlying-model-20261108", "label": "Dot Underlying Model（2026-11-08）"}, "case": {"id": "HCH02", "title": "历史完整算子界章节的Lean形式化与多轮对齐", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}, "nonlogical_retry_3": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}}, "partial": {"single_attempt": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}, "nonlogical_retry_3": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}}, "strict": {"single_attempt": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}, "nonlogical_retry_3": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "d550ef905b69a671a6d426d4266460489326206f13f95edf1d682a9aa90fbfb7", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}}}}}</script><script src="../../../assets/results-core.js?v=4bbc26d46c11"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

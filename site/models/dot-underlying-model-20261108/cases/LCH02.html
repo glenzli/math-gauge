@@ -1,0 +1,2607 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCH02 · 有限复合与路径节群 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=17c03827235d"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/dot-underlying-model-20261108/index.html">Dot Underlying Model（2026-11-08）</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>LCH02 · 有限复合与路径节群</h1><p class="subtitle">Dot Underlying Model（2026-11-08） · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后开发分析，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>有限复合与路径节群 · LCH02</h1>
+<p>将附件中 obligations.json 指定的全部20项义务完整形式化为一个Lean项目。本题是明确的选段任务；完整章节文件只为提供原文和上下文，清单之外的内容不计为交付义务。原文含证明；前置文字只作背景。</p>
+<p>使用Lean4.29.1和mathlib5e932f97dd25535344f80f9dd8da3aab83df0fe6。formal_oet/附件是冻结前置模块，可直接导入，不得修改或同名覆盖。只允许这些模块、标准库与固定mathlib，不得读取目标作者实现、评审或下载其他依赖。</p>
+<p>保留原文结构、前提、量词、定义域和结论强度。允许等价表示、合并声明、辅助引理和有效替代证明，但须给出表示对应；不得把目标藏入字段、证书或前提。</p>
+<p>交付完整源码，每个文件用独立的命名代码块，例如 <code>lean filename=Main.lean</code>。Main.lean必须导入所有目标模块，辅助文件也须全文交付。不得使用sorry、admit、新增公理或跳过内核检查设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 交付对象：case_id=&quot;LCH02&quot;、version=&quot;0.1.0&quot;、items。items必须恰好覆盖清单全部20项，每项含id、status（complete/incomplete）、declarations（file/name数组）、representation（对象/参数/量词/结论的对应说明）、dependencies（实际使用的义务ID数组）。complete须列真实声明且全部子目标均完成；未完成项不能删除。工作区路径或链接不能代替文件内容。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/LCH02/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Original task scope retained; native harness conditions recorded separately.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-P01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Unique-index finite sum gives a scalar iff, including the reverse implication.</p>
+<h3>CH02-P02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Restricts every point pair along U subset V; no added nonempty assumption.</p>
+<h3>CH02-P04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Uses the actual inner image, outer inequality, monotone matrix action and act_mul; product is later matrix on left.</p>
+<h3>CH02-P05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Restriction explicitly supplies the smaller domain nonemptiness.</p>
+<h3>CH02-P07</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> A positive input and zero output force the corresponding summand, hence coefficient, to vanish; infinity is allowed.</p>
+<h3>CH02-P08</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Uses actual image and preserves first certificate nonemptiness; reverses the bound direction correctly.</p>
+<h3>CH02-P11</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity matrix action is exactly the input component, including length zero.</p>
+<h3>CH02-P12</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity lower certificate separately includes nonempty U.</p>
+<h3>CH02-P14</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Finite nonnegative sum/product positivity is proved inductively; recursive paths are converted both ways to actual vertices and edge coefficients; one-step case explicit.</p>
+<h3>CH02-P03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Specializes restriction with V=dom operator.</p>
+<h3>CH02-P06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Global co-Lip restriction retains the nonempty smaller domain.</p>
+<h3>CH02-P09</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Induction uses only per-step certificates at actual prefix images. Fin n data are extended with identity, with an explicit prefix equivalence.</p>
+<h3>CH02-P10</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Independent lower-bound induction; positive-length variant derives nonemptiness from first certificate.</p>
+<h3>CH02-P13</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> All fixed-endpoint vertex sequences, not merely positive ones, are quantified. HasZero is bridged to an actual edge; n=1 is explicit.</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h1>LCH02 完整形式化</h1>
+<p>入口为 <code>Main.lean</code>，导入全部三个目标模块；<code>Audit.lean</code> 是公理依赖核验入口。下列代码块给出全部新增源码和构建脚本。使用题目提供的 <code>lean-local</code>，运行 <code>sh build.sh</code>。</p>
+<p>表示约定：矩阵 <code>M j i</code> 表示正文的输入 i 到输出 j；有限链内部从零编号，正文第 m+1 步对应 Lean 的 m。实际中间域定义为前缀复合的像，并证明其递推等式、非空性和定义域有效性。<code>Fin n</code> 版本不要求无限序列数据；辅助扩展的尾部不影响任何前缀。路径同时提供递归表示与通常的有限顶点序列表示。</p>
+<p>本清单的证明只使用 ENNReal 的有限和、乘法和序结构，不需要伪度量公理。因此声明对任意分量函数 d 成立，取正文的有限非空扩展伪度量族即可直接特化。<code>DecidableEq I</code> 只是单位矩阵所需的判等数据，经典逻辑下对任意 I 可得；并无额外数学限制。Co-Lip 定义始终显式保留非空性。</p>
+<p>验证：Lean 4.29.1，在提供的固定 mathlib 环境中编译全部模块并运行公理审计。所有新增声明的公理依赖均包含于 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</p>
+<p>数学内容归属：Zhe Li（Glen Li / glenzli），ORCID https://orcid.org/0009-0006-6536-3453，《The Operator Evolution Theory》第一卷，第 2 章，https://glenzli.com/books/oet/ ，CC BY 4.0（https://creativecommons.org/licenses/by/4.0/）。题目来源版本 v1.0.0，DOI https://doi.org/10.5281/zenodo.21457931，源提交 539b40cec73184d98e06d54fbd10e4b4698bd6e7。下列为新写的 Lean 形式化，原有数学内容不是本回答独立发现；冻结前置模块保持不变，不重复交付。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.Matrix.Basic
+
+/-
+Source mathematics: Zhe Li (Glen Li / glenzli), The Operator Evolution Theory,
+Volume I, Chapter 2, CC BY 4.0. This file is a new formalization.
+-/
+noncomputable section
+namespace LCH02
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+
+variable {I X : Type} [Fintype I] {bot : X}
+
+/-- Output index first, input index second: `M j i` is the entry i → j. -/
+abbrev Mat (I : Type) := Matrix I I ENNReal
+
+/-- Matrix action on a vector of component distances. -/
+def act (M : Mat I) (v : I → ENNReal) (j : I) : ENNReal := ∑ i, M j i * v i
+
+/-- The conventional product has the required order: B acts after A. -/
+theorem matrix_mul_entry (B A : Mat I) (j i : I) :
+    (B * A) j i = ∑ k, B j k * A k i := rfl
+
+theorem act_mul (B A : Mat I) (v : I → ENNReal) (j : I) :
+    act (B * A) v j = act B (fun k =&gt; act A v k) j := by
+  simp only [act, Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  exact Finset.sum_comm
+
+theorem act_mono (M : Mat I) {v w : I → ENNReal} (h : ∀ i, v i ≤ w i) (j : I) :
+    act M v j ≤ act M w j :=
+  Finset.sum_le_sum fun i _ =&gt; mul_le_mul_left' (h i) (M j i)
+
+/-- Domain validity is included in restricted membership. Empty Lip domains are allowed. -/
+def Lip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) (L : Mat I) : Prop :=
+  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    d j (φ.func x) (φ.func y) ≤ act L (fun i =&gt; d i x y) j
+
+def LipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {L | Lip d φ U L}
+
+def GlobalLipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) : Set (Mat I) :=
+  LipFamily d φ (dom φ)
+
+/-- Co-Lip membership includes the source's mandatory nonempty domain. -/
+def CoLip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) (K : Mat I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    act K (fun i =&gt; d i x y) j ≤ d j (φ.func x) (φ.func y)
+
+def CoLipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {K | CoLip d φ U K}
+
+def GlobalCoLipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) : Set (Mat I) :=
+  CoLipFamily d φ (dom φ)
+
+theorem lip_antitone (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U V : Set X} (hUV : U ⊆ V) : LipFamily d φ V ⊆ LipFamily d φ U := by
+  intro L hL
+  exact ⟨hUV.trans hL.1, fun x hx y hy j =&gt; hL.2 x (hUV hx) y (hUV hy) j⟩
+
+theorem global_lip_restrict (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U : Set X} (hU : U ⊆ dom φ) : GlobalLipFamily d φ ⊆ LipFamily d φ U :=
+  lip_antitone d φ hU
+
+theorem colip_antitone (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U V : Set X} (hU : U.Nonempty) (hUV : U ⊆ V) :
+    CoLipFamily d φ V ⊆ CoLipFamily d φ U := by
+  intro K hK
+  exact ⟨hU, hUV.trans hK.2.1, fun x hx y hy j =&gt; hK.2.2 x (hUV hx) y (hUV hy) j⟩
+
+theorem global_colip_restrict (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom φ) :
+    GlobalCoLipFamily d φ ⊆ CoLipFamily d φ U := colip_antitone d φ hne hU
+
+/-- For a singleton index type the entire global predicate is exactly the scalar bound. -/
+theorem singleton_lip_iff [Unique I] (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (L : Mat I) (i : I) :
+    L ∈ GlobalLipFamily d φ ↔ ∀ x ∈ dom φ, ∀ y ∈ dom φ,
+      d i (φ.func x) (φ.func y) ≤ L i i * d i x y := by
+  have hact : ∀ v : I → ENNReal, ∀ j, act L v j = L j i * v i := by
+    intro v j
+    simp [act, Finset.univ_unique, Unique.eq_default i]
+  constructor
+  · intro h x hx y hy
+    simpa only [hact] using h.2 x hx y hy i
+  · intro h
+    refine ⟨Set.Subset.rfl, ?_⟩
+    intro x hx y hy j
+    have hj : j = i := Subsingleton.elim _ _
+    simpa only [hj, hact] using h x hx y hy
+
+/-- Domain facts forced by the absorption law, with the exact intermediate image. -/
+theorem compose_domains (ψ φ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom (ψ * φ)) : U ⊆ dom φ ∧ φ.func '' U ⊆ dom ψ := by
+  constructor
+  · intro x hx hbot
+    have h := hU hx
+    change ψ.func (φ.func x) ≠ bot at h
+    rw [hbot, ψ.preserves_bot] at h
+    exact h rfl
+  · rintro y ⟨x, hx, rfl⟩
+    exact hU hx
+
+theorem lip_compose (d : I → X → X → ENNReal) (ψ φ : Operator X bot)
+    {U : Set X} {A B : Mat I} (hU : U ⊆ dom (ψ * φ))
+    (hA : Lip d φ U A) (hB : Lip d ψ (φ.func '' U) B) :
+    Lip d (ψ * φ) U (B * A) := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  change d j (ψ.func (φ.func x)) (ψ.func (φ.func y)) ≤ _
+  calc
+    _ ≤ act B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      hB.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+    _ ≤ act B (fun k =&gt; act A (fun i =&gt; d i x y) k) j :=
+      act_mono B (hA.2 x hx y hy) j
+    _ = act (B * A) (fun i =&gt; d i x y) j := (act_mul B A _ j).symm
+
+theorem colip_compose (d : I → X → X → ENNReal) (ψ φ : Operator X bot)
+    {U : Set X} {A B : Mat I} (hU : U ⊆ dom (ψ * φ))
+    (hA : CoLip d φ U A) (hB : CoLip d ψ (φ.func '' U) B) :
+    CoLip d (ψ * φ) U (B * A) := by
+  refine ⟨hA.1, hU, ?_⟩
+  intro x hx y hy j
+  change _ ≤ d j (ψ.func (φ.func x)) (ψ.func (φ.func y))
+  calc
+    _ = act B (fun k =&gt; act A (fun i =&gt; d i x y) k) j := act_mul B A _ j
+    _ ≤ act B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      act_mono B (hA.2.2 x hx y hy) j
+    _ ≤ _ := hB.2.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+
+theorem colip_entry_zero (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {K : Mat I} (hK : K ∈ GlobalCoLipFamily d φ)
+    {x y : X} (hx : x ∈ dom φ) (hy : y ∈ dom φ) {i j : I}
+    (hout : d j (φ.func x) (φ.func y) = 0) (hin : 0 &lt; d i x y) : K j i = 0 := by
+  have hb := hK.2.2 x hx y hy j
+  rw [hout] at hb
+  have ht : K j i * d i x y ≤ 0 :=
+    (Finset.single_le_sum (fun k _ =&gt; zero_le (K j k * d k x y)) (Finset.mem_univ i)).trans hb
+  have hz : K j i * d i x y = 0 := le_antisymm ht (zero_le _)
+  exact (mul_eq_zero.mp hz).resolve_right (ne_of_gt hin)
+
+section Identity
+variable [DecidableEq I]
+
+theorem act_one (v : I → ENNReal) (j : I) : act (1 : Mat I) v j = v j := by
+  simp [act, Matrix.one_apply]
+
+theorem identity_lip (d : I → X → X → ENNReal) {U : Set X}
+    (hU : U ⊆ dom (1 : Operator X bot)) : Lip d (1 : Operator X bot) U (1 : Mat I) := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  simpa only [act_one] using (le_refl (d j x y))
+
+theorem identity_colip (d : I → X → X → ENNReal) {U : Set X}
+    (hne : U.Nonempty) (hU : U ⊆ dom (1 : Operator X bot)) : CoLip d (1 : Operator X bot) U (1 : Mat I) := by
+  refine ⟨hne, hU, ?_⟩
+  intro x hx y hy j
+  simpa only [act_one] using (le_refl (d j x y))
+end Identity
+end LCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+
+noncomputable section
+namespace LCH02
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+variable {I X : Type} [Fintype I] [DecidableEq I] {bot : X}
+
+/-- Chronological sequence, indexed from zero. The last step multiplies on the left. -/
+def matrixProduct (M : ℕ → Mat I) : ℕ → Mat I
+  | 0 =&gt; 1
+  | n + 1 =&gt; M n * matrixProduct M n
+
+/-- `composition φ n = φ(n-1) ∘ ... ∘ φ(0)`. -/
+def composition (φ : ℕ → Operator X bot) : ℕ → Operator X bot
+  | 0 =&gt; 1
+  | n + 1 =&gt; φ n * composition φ n
+
+/-- `imageDomain φ U m` is the actual input domain of step `m` (textual U_(m+1)). -/
+def imageDomain (φ : ℕ → Operator X bot) (U : Set X) (m : ℕ) : Set X :=
+  (composition φ m).func '' U
+
+@[simp] theorem matrixProduct_zero (M : ℕ → Mat I) : matrixProduct M 0 = 1 := rfl
+@[simp] theorem matrixProduct_succ (M : ℕ → Mat I) (n : ℕ) :
+    matrixProduct M (n+1) = M n * matrixProduct M n := rfl
+@[simp] theorem matrixProduct_one (M : ℕ → Mat I) : matrixProduct M 1 = M 0 := by
+  simp [matrixProduct]
+@[simp] theorem composition_zero (φ : ℕ → Operator X bot) : composition φ 0 = 1 := rfl
+@[simp] theorem composition_succ (φ : ℕ → Operator X bot) (n : ℕ) :
+    composition φ (n+1) = φ n * composition φ n := rfl
+@[simp] theorem imageDomain_zero (φ : ℕ → Operator X bot) (U : Set X) :
+    imageDomain φ U 0 = U := by
+  change id '' U = U
+  exact Set.image_id U
+
+theorem imageDomain_succ (φ : ℕ → Operator X bot) (U : Set X) (n : ℕ) :
+    imageDomain φ U (n+1) = (φ n).func '' imageDomain φ U n := by
+  exact (Set.image_image (φ n).func (composition φ n).func U).symm
+
+theorem imageDomain_nonempty (φ : ℕ → Operator X bot) {U : Set X}
+    (hU : U.Nonempty) (m : ℕ) : (imageDomain φ U m).Nonempty :=
+  hU.image _
+
+/-- The domain of a full composition forces the validity of every earlier prefix. -/
+theorem prefix_domain (φ : ℕ → Operator X bot) {U : Set X} {n : ℕ}
+    (hU : U ⊆ dom (composition φ n)) {m : ℕ} (hm : m ≤ n) :
+    U ⊆ dom (composition φ m) := by
+  induction n with
+  | zero =&gt; simpa only [Nat.eq_zero_of_le_zero hm] using hU
+  | succ n ih =&gt;
+    rcases Nat.eq_or_lt_of_le hm with h | h
+    · simpa only [h] using hU
+    · exact ih (compose_domains (φ n) (composition φ n) hU).1 (Nat.le_of_lt_succ h)
+
+/-- In particular the recursively generated actual input domain is valid for its step. -/
+theorem step_domain (φ : ℕ → Operator X bot) {U : Set X} {n m : ℕ}
+    (hU : U ⊆ dom (composition φ n)) (hm : m &lt; n) :
+    imageDomain φ U m ⊆ dom (φ m) :=
+  (compose_domains (φ m) (composition φ m) (prefix_domain φ hU hm)).2
+
+/-- All finite lengths, including zero; hypotheses are only the individual step inequalities. -/
+theorem lip_chain (d : I → X → X → ENNReal) (φ : ℕ → Operator X bot)
+    (M : ℕ → Mat I) (U : Set X) (n : ℕ)
+    (hU : U ⊆ dom (composition φ n))
+    (hsteps : ∀ m &lt; n, Lip d (φ m) (imageDomain φ U m) (M m)) :
+    Lip d (composition φ n) U (matrixProduct M n) := by
+  induction n with
+  | zero =&gt; exact identity_lip d hU
+  | succ n ih =&gt;
+    apply lip_compose d (φ n) (composition φ n) hU
+    · apply ih (compose_domains (φ n) (composition φ n) hU).1
+      intro m hm
+      exact hsteps m (Nat.lt.step hm)
+    · exact hsteps n (Nat.lt_succ_self n)
+
+/-- The nonempty-domain variant includes the zero-step case. -/
+theorem colip_chain (d : I → X → X → ENNReal) (φ : ℕ → Operator X bot)
+    (M : ℕ → Mat I) (U : Set X) (n : ℕ) (hne : U.Nonempty)
+    (hU : U ⊆ dom (composition φ n))
+    (hsteps : ∀ m &lt; n, CoLip d (φ m) (imageDomain φ U m) (M m)) :
+    CoLip d (composition φ n) U (matrixProduct M n) := by
+  induction n with
+  | zero =&gt; exact identity_colip d hne hU
+  | succ n ih =&gt;
+    apply colip_compose d (φ n) (composition φ n) hU
+    · apply ih (compose_domains (φ n) (composition φ n) hU).1
+      intro m hm
+      exact hsteps m (Nat.lt.step hm)
+    · exact hsteps n (Nat.lt_succ_self n)
+
+/-- For positive length the first step certificate already supplies nonemptiness. -/
+theorem colip_chain_positive (d : I → X → X → ENNReal) (φ : ℕ → Operator X bot)
+    (M : ℕ → Mat I) (U : Set X) (n : ℕ) (hn : 0 &lt; n)
+    (hU : U ⊆ dom (composition φ n))
+    (hsteps : ∀ m &lt; n, CoLip d (φ m) (imageDomain φ U m) (M m)) :
+    CoLip d (composition φ n) U (matrixProduct M n) := by
+  apply colip_chain d φ M U n _ hU hsteps
+  simpa only [imageDomain_zero] using (hsteps 0 hn).1
+
+/-- No assumption or value beyond the finite prefix affects the composite. -/
+theorem composition_prefix_congr (φ ψ : ℕ → Operator X bot) (n : ℕ)
+    (h : ∀ m &lt; n, φ m = ψ m) : composition φ n = composition ψ n := by
+  induction n with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    simp only [composition_succ, h n (Nat.lt_succ_self n),
+      ih (fun m hm =&gt; h m (Nat.lt.step hm))]
+
+theorem matrixProduct_prefix_congr (M N : ℕ → Mat I) (n : ℕ)
+    (h : ∀ m &lt; n, M m = N m) : matrixProduct M n = matrixProduct N n := by
+  induction n with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    simp only [matrixProduct_succ, h n (Nat.lt_succ_self n),
+      ih (fun m hm =&gt; h m (Nat.lt.step hm))]
+
+/-- Any finite family extends to the indexing convention used here, without extra hypotheses. -/
+def extendFinite {α : Type} (fallback : α) {n : ℕ} (f : Fin n → α) (m : ℕ) : α :=
+  if h : m &lt; n then f ⟨m, h⟩ else fallback
+
+theorem extendFinite_at {α : Type} (fallback : α) {n : ℕ} (f : Fin n → α) (m : Fin n) :
+    extendFinite fallback f m = f m := by simp [extendFinite, m.isLt]
+
+/-- A fully finite-input formulation of the Lip theorem. -/
+theorem finite_lip_chain (d : I → X → X → ENNReal) {n : ℕ}
+    (φ : Fin n → Operator X bot) (M : Fin n → Mat I) (U : Set X)
+    (hU : U ⊆ dom (composition (extendFinite 1 φ) n))
+    (hsteps : ∀ m : Fin n,
+      Lip d (φ m) (imageDomain (extendFinite 1 φ) U m) (M m)) :
+    Lip d (composition (extendFinite 1 φ) n) U
+      (matrixProduct (extendFinite 1 M) n) := by
+  apply lip_chain d _ _ U n hU
+  intro m hm
+  simpa only [extendFinite, dif_pos hm] using hsteps ⟨m, hm⟩
+
+theorem finite_colip_chain (d : I → X → X → ENNReal) {n : ℕ} (hn : 0 &lt; n)
+    (φ : Fin n → Operator X bot) (M : Fin n → Mat I) (U : Set X)
+    (hU : U ⊆ dom (composition (extendFinite 1 φ) n))
+    (hsteps : ∀ m : Fin n,
+      CoLip d (φ m) (imageDomain (extendFinite 1 φ) U m) (M m)) :
+    CoLip d (composition (extendFinite 1 φ) n) U
+      (matrixProduct (extendFinite 1 M) n) := by
+  apply colip_chain_positive d _ _ U n hn hU
+  intro m hm
+  simpa only [extendFinite, dif_pos hm] using hsteps ⟨m, hm⟩
+end LCH02
+</code></pre>
+<pre><code class="language-lean">import Chains
+
+noncomputable section
+namespace LCH02
+open scoped BigOperators
+variable {I : Type} [Fintype I] [DecidableEq I]
+
+/-- A finite path with fixed endpoints, built by appending one edge.
+A length-zero path is endpoint equality. A length-(n+1) path chooses the
+penultimate index k freely and a length-n path from i to k. Thus, for positive
+length, these are precisely all choices of the n-1 intermediate indices. -/
+def IndexPath (I : Type) : ℕ → I → I → Type
+  | 0, i, j =&gt; PLift (i = j)
+  | n+1, i, _ =&gt; Σ k : I, IndexPath I n i k
+
+/-- Every step along this particular path has strictly positive entry. -/
+def AllPositive (M : ℕ → Mat I) : {n : ℕ} → {i j : I} → IndexPath I n i j → Prop
+  | 0, _, _, _ =&gt; True
+  | n+1, _, j, p =&gt; AllPositive M p.2 ∧ 0 &lt; M n j p.1
+
+/-- At least one of this path's step entries is zero. -/
+def HasZero (M : ℕ → Mat I) : {n : ℕ} → {i j : I} → IndexPath I n i j → Prop
+  | 0, _, _, _ =&gt; False
+  | n+1, _, j, p =&gt; HasZero M p.2 ∨ M n j p.1 = 0
+
+/-- The concrete sequence of step coefficients has length exactly n. -/
+def edgeEntry (M : ℕ → Mat I) : {n : ℕ} → {i j : I} → IndexPath I n i j → Fin n → ENNReal
+  | 0, _, _, _ =&gt; Fin.elim0
+  | n+1, _, j, p =&gt; Fin.lastCases (M n j p.1) (edgeEntry M p.2)
+
+theorem allPositive_iff_edges (M : ℕ → Mat I) {n : ℕ} {i j : I}
+    (p : IndexPath I n i j) : AllPositive M p ↔ ∀ m, 0 &lt; edgeEntry M p m := by
+  induction n generalizing j with
+  | zero =&gt; simp [AllPositive, edgeEntry]
+  | succ n ih =&gt;
+    change (AllPositive M p.2 ∧ 0 &lt; M n j p.1) ↔ _
+    rw [ih]
+    constructor
+    · rintro ⟨h, hl⟩ m
+      refine Fin.lastCases ?_ (fun k =&gt; ?_) m
+      · simpa only [edgeEntry, Fin.lastCases_last] using hl
+      · simpa only [edgeEntry, Fin.lastCases_castSucc] using h k
+    · intro h
+      exact ⟨fun k =&gt; by simpa only [edgeEntry, Fin.lastCases_castSucc] using h k.castSucc,
+        by simpa only [edgeEntry, Fin.lastCases_last] using h (Fin.last n)⟩
+
+theorem hasZero_iff_edges (M : ℕ → Mat I) {n : ℕ} {i j : I}
+    (p : IndexPath I n i j) : HasZero M p ↔ ∃ m, edgeEntry M p m = 0 := by
+  induction n generalizing j with
+  | zero =&gt; simp [HasZero, edgeEntry]
+  | succ n ih =&gt;
+    change (HasZero M p.2 ∨ M n j p.1 = 0) ↔ _
+    rw [ih]
+    constructor
+    · rintro (⟨k, hk⟩ | hl)
+      · exact ⟨k.castSucc, by simpa only [edgeEntry, Fin.lastCases_castSucc] using hk⟩
+      · exact ⟨Fin.last n, by simpa only [edgeEntry, Fin.lastCases_last] using hl⟩
+    · rintro ⟨m, hm⟩
+      revert hm
+      refine Fin.lastCases ?_ (fun k =&gt; ?_) m
+      · intro h
+        exact Or.inr (by simpa only [edgeEntry, Fin.lastCases_last] using h)
+      · intro h
+        exact Or.inl ⟨k, by simpa only [edgeEntry, Fin.lastCases_castSucc] using h⟩
+
+theorem hasZero_iff_not_allPositive (M : ℕ → Mat I) {n : ℕ} {i j : I}
+    (p : IndexPath I n i j) : HasZero M p ↔ ¬ AllPositive M p := by
+  rw [hasZero_iff_edges, allPositive_iff_edges]
+  simp only [not_forall, not_lt, nonpos_iff_eq_zero]
+
+/-- Positive product entries are exactly those admitting an all-positive path.
+The theorem also handles length zero, where the matrix is the identity. -/
+theorem product_pos_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    0 &lt; matrixProduct M n j i ↔ ∃ p : IndexPath I n i j, AllPositive M p := by
+  induction n generalizing j with
+  | zero =&gt;
+    by_cases h : i = j
+    · subst j
+      simp [matrixProduct, Matrix.one_apply, IndexPath, AllPositive]
+    · simp [matrixProduct, Matrix.one_apply, IndexPath, AllPositive, h, Ne.symm h]
+  | succ n ih =&gt;
+    simp only [matrixProduct_succ, Matrix.mul_apply, Finset.sum_pos_iff,
+      Finset.mem_univ, true_and, ENNReal.mul_pos_iff, ih]
+    constructor
+    · rintro ⟨k, hk, p, hp⟩
+      exact ⟨⟨k, p⟩, hp, hk⟩
+    · rintro ⟨⟨k, p⟩, hp, hk⟩
+      exact ⟨k, hk, p, hp⟩
+
+/-- A product entry is zero iff every path has a zero step factor. -/
+theorem product_zero_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    matrixProduct M n j i = 0 ↔ ∀ p : IndexPath I n i j, HasZero M p := by
+  constructor
+  · intro hz p
+    apply (hasZero_iff_not_allPositive M p).2
+    intro hp
+    have h := (product_pos_iff M n i j).2 ⟨p, hp⟩
+    simp only [hz, lt_self_iff_false] at h
+  · intro h
+    by_contra hn
+    have hp : 0 &lt; matrixProduct M n j i := pos_iff_ne_zero.mpr hn
+    obtain ⟨p, hpos⟩ := (product_pos_iff M n i j).1 hp
+    exact (hasZero_iff_not_allPositive M p).1 (h p) hpos
+
+/-- Explicit one-step specialization: the intermediate sequence is empty. -/
+theorem one_step_positive (M : ℕ → Mat I) (i j : I) :
+    (∃ p : IndexPath I 1 i j, AllPositive M p) ↔ 0 &lt; M 0 j i := by
+  rw [← product_pos_iff, matrixProduct_one]
+
+theorem one_step_zero (M : ℕ → Mat I) (i j : I) :
+    (∀ p : IndexPath I 1 i j, HasZero M p) ↔ M 0 j i = 0 := by
+  rw [← product_zero_iff, matrixProduct_one]
+
+/-- Formulation with a genuinely finite matrix family. -/
+theorem finite_product_pos_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    0 &lt; matrixProduct (extendFinite 1 M) n j i ↔
+      ∃ p : IndexPath I n i j, AllPositive (extendFinite 1 M) p :=
+  product_pos_iff _ _ _ _
+
+theorem finite_product_zero_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    matrixProduct (extendFinite 1 M) n j i = 0 ↔
+      ∀ p : IndexPath I n i j, HasZero (extendFinite 1 M) p :=
+  product_zero_iff _ _ _ _
+end LCH02
+
+namespace LCH02
+variable {I : Type}
+
+/-- The vertices underlying the recursive path, with both endpoints included. -/
+def pathVertex : {n : ℕ} → {i j : I} → IndexPath I n i j → Fin (n+1) → I
+  | 0, i, _, _, _ =&gt; i
+  | n+1, _, j, p, t =&gt; Fin.lastCases j (pathVertex p.2) t
+
+@[simp] theorem pathVertex_first {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    pathVertex p 0 = i := by
+  induction n generalizing j with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    change pathVertex p (0 : Fin (n+1)).castSucc = i
+    simpa only [pathVertex, Fin.lastCases_castSucc] using ih p.2
+
+@[simp] theorem pathVertex_last {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    pathVertex p (Fin.last n) = j := by
+  cases n with
+  | zero =&gt; exact p.down
+  | succ n =&gt; exact Fin.lastCases_last
+
+/-- Conversely every vertex sequence gives a path, with no restriction on intermediate indices. -/
+def pathFromVertices : (n : ℕ) → (v : Fin (n+1) → I) →
+    IndexPath I n (v 0) (v (Fin.last n))
+  | 0, _ =&gt; ⟨rfl⟩
+  | n+1, v =&gt; ⟨v (Fin.last n).castSucc, pathFromVertices n (fun t =&gt; v t.castSucc)⟩
+
+@[simp] theorem pathFromVertices_vertex (n : ℕ) (v : Fin (n+1) → I)
+    (t : Fin (n+1)) : pathVertex (pathFromVertices n v) t = v t := by
+  induction n with
+  | zero =&gt; have ht : t = 0 := Fin.ext (by omega); subst t; rfl
+  | succ n ih =&gt;
+    refine Fin.lastCases ?_ (fun k =&gt; ?_) t
+    · exact pathVertex_last _
+    · simpa only [pathFromVertices, pathVertex, Fin.lastCases_castSucc] using
+        ih (fun t =&gt; v t.castSucc) k
+
+/-- Edge m goes from vertex m to vertex m+1 in precisely matrix M(m). -/
+theorem edgeEntry_vertices [Fintype I] [DecidableEq I] (M : ℕ → Mat I)
+    {n : ℕ} {i j : I} (p : IndexPath I n i j) (m : Fin n) :
+    edgeEntry M p m = M m (pathVertex p m.succ) (pathVertex p m.castSucc) := by
+  induction n generalizing j with
+  | zero =&gt; exact Fin.elim0 m
+  | succ n ih =&gt;
+    refine Fin.lastCases ?_ (fun k =&gt; ?_) m
+    · simp only [edgeEntry, Fin.lastCases_last]
+      change M n j p.1 = M n (pathVertex p (Fin.last (n+1)))
+        (pathVertex p (Fin.last n).castSucc)
+      simp only [pathVertex_last, pathVertex, Fin.lastCases_castSucc, Fin.lastCases_last, pathVertex_last]
+    · simpa only [edgeEntry, Fin.lastCases_castSucc, Fin.succ_castSucc, Fin.val_castSucc,
+        pathVertex, Fin.lastCases_castSucc] using ih p.2 k
+
+/-- The recursive positive predicate is exactly the ordinary quantification over all layers. -/
+theorem allPositive_iff_vertices [Fintype I] [DecidableEq I] (M : ℕ → Mat I)
+    {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    AllPositive M p ↔ ∀ m : Fin n,
+      0 &lt; M m (pathVertex p m.succ) (pathVertex p m.castSucc) := by
+  simp only [allPositive_iff_edges, edgeEntry_vertices]
+
+theorem hasZero_iff_vertices [Fintype I] [DecidableEq I] (M : ℕ → Mat I)
+    {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    HasZero M p ↔ ∃ m : Fin n,
+      M m (pathVertex p m.succ) (pathVertex p m.castSucc) = 0 := by
+  simp only [hasZero_iff_edges, edgeEntry_vertices]
+end LCH02
+
+namespace LCH02
+variable {I : Type} [Fintype I] [DecidableEq I]
+
+/-- Usual vertex-sequence statement, including fixed endpoints and all n edge conditions. -/
+theorem product_pos_vertices_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    0 &lt; matrixProduct M n j i ↔
+      ∃ v : Fin (n+1) → I, v 0 = i ∧ v (Fin.last n) = j ∧
+        ∀ m : Fin n, 0 &lt; M m (v m.succ) (v m.castSucc) := by
+  rw [product_pos_iff]
+  constructor
+  · rintro ⟨p, hp⟩
+    exact ⟨pathVertex p, pathVertex_first p, pathVertex_last p,
+      (allPositive_iff_vertices M p).1 hp⟩
+  · rintro ⟨v, hi, hj, h⟩
+    subst i
+    subst j
+    refine ⟨pathFromVertices n v, (allPositive_iff_vertices M _).2 ?_⟩
+    simpa only [pathFromVertices_vertex] using h
+
+/-- Usual zero criterion: each fixed-endpoint vertex sequence has a zero edge. -/
+theorem product_zero_vertices_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    matrixProduct M n j i = 0 ↔
+      ∀ v : Fin (n+1) → I, v 0 = i → v (Fin.last n) = j →
+        ∃ m : Fin n, M m (v m.succ) (v m.castSucc) = 0 := by
+  rw [product_zero_iff]
+  constructor
+  · intro h v hi hj
+    subst i
+    subst j
+    have hz := (hasZero_iff_vertices M _).1 (h (pathFromVertices n v))
+    simpa only [pathFromVertices_vertex] using hz
+  · intro h p
+    apply (hasZero_iff_vertices M p).2
+    exact h (pathVertex p) (pathVertex_first p) (pathVertex_last p)
+end LCH02
+
+namespace LCH02
+variable {I : Type} [Fintype I] [DecidableEq I]
+
+theorem finite_product_pos_vertices_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    0 &lt; matrixProduct (extendFinite 1 M) n j i ↔
+      ∃ v : Fin (n+1) → I, v 0 = i ∧ v (Fin.last n) = j ∧
+        ∀ m : Fin n, 0 &lt; M m (v m.succ) (v m.castSucc) := by
+  simpa only [extendFinite_at] using product_pos_vertices_iff (extendFinite 1 M) n i j
+
+theorem finite_product_zero_vertices_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    matrixProduct (extendFinite 1 M) n j i = 0 ↔
+      ∀ v : Fin (n+1) → I, v 0 = i → v (Fin.last n) = j →
+        ∃ m : Fin n, M m (v m.succ) (v m.castSucc) = 0 := by
+  simpa only [extendFinite_at] using product_zero_vertices_iff (extendFinite 1 M) n i j
+end LCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+import Chains
+import Paths
+
+/-!
+LCH02 entrypoint. All twenty obligations are implemented in the three imported
+modules. Frozen foundations are imported unchanged through Bounds.
+
+Mathematical source: Zhe Li (Glen Li / glenzli), ORCID
+https://orcid.org/0009-0006-6536-3453, The Operator Evolution Theory,
+Volume I, Chapter 2, https://glenzli.com/books/oet/, CC BY 4.0.
+These Lean proofs and representation choices are newly generated formalizations,
+not claims of original authorship of the source mathematics.
+-/
+</code></pre>
+<pre><code class="language-lean">import Main
+
+-- Kernel dependency audit for every new declaration.
+#print axioms LCH02.Mat
+#print axioms LCH02.act
+#print axioms LCH02.matrix_mul_entry
+#print axioms LCH02.act_mul
+#print axioms LCH02.act_mono
+#print axioms LCH02.Lip
+#print axioms LCH02.LipFamily
+#print axioms LCH02.GlobalLipFamily
+#print axioms LCH02.CoLip
+#print axioms LCH02.CoLipFamily
+#print axioms LCH02.GlobalCoLipFamily
+#print axioms LCH02.lip_antitone
+#print axioms LCH02.global_lip_restrict
+#print axioms LCH02.colip_antitone
+#print axioms LCH02.global_colip_restrict
+#print axioms LCH02.singleton_lip_iff
+#print axioms LCH02.compose_domains
+#print axioms LCH02.lip_compose
+#print axioms LCH02.colip_compose
+#print axioms LCH02.colip_entry_zero
+#print axioms LCH02.act_one
+#print axioms LCH02.identity_lip
+#print axioms LCH02.identity_colip
+#print axioms LCH02.matrixProduct
+#print axioms LCH02.composition
+#print axioms LCH02.imageDomain
+#print axioms LCH02.matrixProduct_zero
+#print axioms LCH02.matrixProduct_succ
+#print axioms LCH02.matrixProduct_one
+#print axioms LCH02.composition_zero
+#print axioms LCH02.composition_succ
+#print axioms LCH02.imageDomain_zero
+#print axioms LCH02.imageDomain_succ
+#print axioms LCH02.imageDomain_nonempty
+#print axioms LCH02.prefix_domain
+#print axioms LCH02.step_domain
+#print axioms LCH02.lip_chain
+#print axioms LCH02.colip_chain
+#print axioms LCH02.colip_chain_positive
+#print axioms LCH02.composition_prefix_congr
+#print axioms LCH02.matrixProduct_prefix_congr
+#print axioms LCH02.extendFinite
+#print axioms LCH02.extendFinite_at
+#print axioms LCH02.finite_lip_chain
+#print axioms LCH02.finite_colip_chain
+#print axioms LCH02.IndexPath
+#print axioms LCH02.AllPositive
+#print axioms LCH02.HasZero
+#print axioms LCH02.edgeEntry
+#print axioms LCH02.allPositive_iff_edges
+#print axioms LCH02.hasZero_iff_edges
+#print axioms LCH02.hasZero_iff_not_allPositive
+#print axioms LCH02.product_pos_iff
+#print axioms LCH02.product_zero_iff
+#print axioms LCH02.one_step_positive
+#print axioms LCH02.one_step_zero
+#print axioms LCH02.finite_product_pos_iff
+#print axioms LCH02.finite_product_zero_iff
+#print axioms LCH02.pathVertex
+#print axioms LCH02.pathVertex_first
+#print axioms LCH02.pathVertex_last
+#print axioms LCH02.pathFromVertices
+#print axioms LCH02.pathFromVertices_vertex
+#print axioms LCH02.edgeEntry_vertices
+#print axioms LCH02.allPositive_iff_vertices
+#print axioms LCH02.hasZero_iff_vertices
+#print axioms LCH02.product_pos_vertices_iff
+#print axioms LCH02.product_zero_vertices_iff
+#print axioms LCH02.finite_product_pos_vertices_iff
+#print axioms LCH02.finite_product_zero_vertices_iff
+</code></pre>
+<pre><code class="language-sh">#!/bin/sh
+set -eu
+# Use the supplied pinned Lean 4.29.1 / mathlib environment.
+./lean-local -o formal_oet/vol_01/ch_01_foundations/gauge_space.olean formal_oet/vol_01/ch_01_foundations/gauge_space.lean
+./lean-local -o formal_oet/vol_01/ch_01_foundations/operator_space.olean formal_oet/vol_01/ch_01_foundations/operator_space.lean
+./lean-local -o Bounds.olean Bounds.lean
+./lean-local -o Chains.olean Chains.lean
+./lean-local -o Paths.olean Paths.lean
+./lean-local -o Main.olean Main.lean
+./lean-local Audit.lean
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.Lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.LipFamily&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.GlobalLipFamily&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;Lip d φ U L 与受限 Lip 合法性对应；LipFamily 是全部合法矩阵的集合，GlobalLipFamily 在 dom φ 上取该集合。&quot;,
+        &quot;parameters&quot;: &quot;沿用冻结的 Operator X bot 和 dom；d : I → X → X → ENNReal，I 有限；L j i 表示输入 i 到输出 j。&quot;,
+        &quot;quantifiers&quot;: &quot;U ⊆ dom φ，且对所有 x,y ∈ U 和所有 j 成立；允许 U 为空。&quot;,
+        &quot;conclusion&quot;: &quot;d j (φ x) (φ y) ≤ ∑ i, L j i * d i x y。全域情形取 U=dom φ。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.CoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.CoLipFamily&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.GlobalCoLipFamily&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;CoLip 为受限 co-Lip 合法性，另两定义为受限及全域证书族。&quot;,
+        &quot;parameters&quot;: &quot;同一 Operator、dom 和 ENNReal 矩阵表示。&quot;,
+        &quot;quantifiers&quot;: &quot;显式包含 U.Nonempty 和 U ⊆ dom φ；所有 x,y ∈ U、所有输出 j。&quot;,
+        &quot;conclusion&quot;: &quot;∑ i, K j i * d i x y ≤ d j (φ x) (φ y)，不指定极值矩阵。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.Mat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrix_mul_entry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act_mul&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;Mat I = Matrix I I ENNReal；先输出行 j，后输入列 i。act 为分量距离向量上的矩阵作用。&quot;,
+        &quot;parameters&quot;: &quot;标准 mathlib Matrix 乘法；ENNReal 使用 0*∞=∞*0=0 的约定。&quot;,
+        &quot;quantifiers&quot;: &quot;任意有限 I、矩阵 A B、输入 i 和输出 j。&quot;,
+        &quot;conclusion&quot;: &quot;(B*A) j i = ∑ k, B j k * A k i；act_mul 验证对应的嵌套有限求和恒等式。&quot;
+      },
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct_zero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct_succ&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct_one&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;单位矩阵使用标准 (1 : Mat I)；matrixProduct 为按时间顺序的有限复合乘积。&quot;,
+        &quot;parameters&quot;: &quot;M m 对应正文第 m+1 个矩阵。DecidableEq I 仅用于单位矩阵，经典逻辑可提供。&quot;,
+        &quot;quantifiers&quot;: &quot;任意 n≥0；matrixProduct_prefix_congr 保证只依赖前 n 项。&quot;,
+        &quot;conclusion&quot;: &quot;空乘积为 1，递推式为 P(n+1)=M(n)*P(n)，一项乘积为 M(0)。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.composition&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain_zero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain_succ&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain_nonempty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.prefix_domain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.step_domain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.composition_prefix_congr&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.extendFinite&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.extendFinite_at&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;composition φ n 是 φ(n-1)∘…∘φ(0)，imageDomain φ U m 是其 m 步前缀的实际像。&quot;,
+        &quot;parameters&quot;: &quot;φ(m) 对应正文 φ_(m+1)，imageDomain … m 对应 U_(m+1)，初始集合 U 对应 U_1。&quot;,
+        &quot;quantifiers&quot;: &quot;U ⊆ dom(composition φ n) 时，对每个 m&lt;n 推出实际输入域包含在 dom(φ m) 中。&quot;,
+        &quot;conclusion&quot;: &quot;零步像为 U，下一步像精确等于 φ(m) 对当前域的像；非空性被像保留。Fin n 序列可通过 extendFinite 无额外假设地扩展，前缀不依赖扩展尾部。&quot;
+      },
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.IndexPath&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.AllPositive&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.HasZero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.edgeEntry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.pathVertex&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.pathFromVertices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.pathFromVertices_vertex&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.allPositive_iff_vertices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.hasZero_iff_vertices&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;IndexPath I n i j 是固定起终点、逐次追加边的长度 n 路径；AllPositive 和 HasZero 是逐边条件。&quot;,
+        &quot;parameters&quot;: &quot;正文 k_0=i、k_n=j 对应 pathVertex p 0=i、pathVertex p (Fin.last n)=j；第 m+1 层使用 M m。&quot;,
+        &quot;quantifiers&quot;: &quot;所有中间指标任意；pathFromVertices 接受任意 Fin(n+1) 顶点序列，且还原所有顶点，故不限制路径。&quot;,
+        &quot;conclusion&quot;: &quot;全正等价于每个 m:Fin n 的 M m (v(m+1)) (v m)&gt;0；含零等价于存在这样的 m 条目等于零。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.singleton_lip_iff&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;一元素指标集用 Unique I 表示，并显式指定其唯一元素 i。&quot;,
+        &quot;parameters&quot;: &quot;任意 d、φ、L；Unique I 与非空且基数为 1 的集合等价。&quot;,
+        &quot;quantifiers&quot;: &quot;所有 x,y ∈ dom φ。&quot;,
+        &quot;conclusion&quot;: &quot;全域 Lip 合法性当且仅当单个标量不等式 d_i(φx,φy)≤L_ii d_i(x,y)。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.lip_antitone&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;证书族的集合包含关系直接用 Set.Subset 表示。&quot;,
+        &quot;parameters&quot;: &quot;任意固定 d、φ、U、V，U⊆V；V 的定义域有效性由证书成员性携带。&quot;,
+        &quot;quantifiers&quot;: &quot;对每一个 V 上合法的 L。&quot;,
+        &quot;conclusion&quot;: &quot;同一 L 在 U 上合法，包括空 U。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.compose_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.lip_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;ψ*φ 为先 φ 后 ψ，精确中间集合为 φ.func '' U。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(ψ*φ)，A 在 U 上是 φ 的证书，B 在 φ(U) 上是 ψ 的证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意两个算子、矩阵和集合，对所有起始点对与输出分量。&quot;,
+        &quot;conclusion&quot;: &quot;B*A 是 ψ*φ 在 U 上的 Lip 证书；compose_domains 同时推出两步所需的定义域包含。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_antitone&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;含非空条件的 co-Lip 证书族反单调。&quot;,
+        &quot;parameters&quot;: &quot;U.Nonempty、U⊆V，V 的定义域有效性由证书成员性携带。&quot;,
+        &quot;quantifiers&quot;: &quot;每个 V 上合法的 K。&quot;,
+        &quot;conclusion&quot;: &quot;K 在 U 上仍合法，保留 U 非空。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_entry_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;全域 co-Lip 矩阵的单个条目 K j i。&quot;,
+        &quot;parameters&quot;: &quot;K 为全域证书，x,y∈dom φ，d_j(φx,φy)=0，0&lt;d_i(x,y)。&quot;,
+        &quot;quantifiers&quot;: &quot;任意这样的 K、点对和输入输出指标。&quot;,
+        &quot;conclusion&quot;: &quot;K j i=0；证明使用单项不超过有限非负和及 ENNReal 的无零因子性质。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.compose_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;ψ*φ 与精确中间像 φ.func '' U，乘积顺序 B*A。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(ψ*φ)，A、B 分别为 U 与 φ(U) 上的 co-Lip 证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意两个算子与证书，对所有起始点对和输出分量。&quot;,
+        &quot;conclusion&quot;: &quot;B*A 是全复合在 U 上的 co-Lip 证书；非空性从第一步证书明确保留。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act_one&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.identity_lip&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;冻结算子幺半群的 1 是恒等算子，矩阵幺半群的 1 是单位矩阵。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(1 : Operator X bot)。&quot;,
+        &quot;quantifiers&quot;: &quot;任意这样的 U；事实上不要求 U 非空，所以包含正文非空情形。&quot;,
+        &quot;conclusion&quot;: &quot;单位矩阵为恒等算子的受限 Lip 证书。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act_one&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.identity_colip&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;同一个单位矩阵用于恒等算子的 co-Lip 下界。&quot;,
+        &quot;parameters&quot;: &quot;U.Nonempty 且 U⊆dom(1 : Operator X bot)。&quot;,
+        &quot;quantifiers&quot;: &quot;任意非空有效域 U 及其所有点对。&quot;,
+        &quot;conclusion&quot;: &quot;单位矩阵为受限 co-Lip 证书，结合 P11 得到交集结论。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_pos_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_pos_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_product_pos_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.one_step_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;最终有限族版本使用 M:Fin n→Mat I 和 v:Fin(n+1)→I，端点以等式指定。&quot;,
+        &quot;parameters&quot;: &quot;M m 对应正文 M^(m+1)，矩阵条目顺序为输出行、输入列。&quot;,
+        &quot;quantifiers&quot;: &quot;任意 n，故特别适用于所有 n≥1；存在顶点序列，且每个 m:Fin n 的边严格为正。&quot;,
+        &quot;conclusion&quot;: &quot;乘积条目&gt;0 当且仅当存在全正路径；one_step_positive 验证 n=1 的退化情况。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.global_lip_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;GlobalLipFamily 到 LipFamily 的包含。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom φ。&quot;,
+        &quot;quantifiers&quot;: &quot;任意全域合法的 Lip 矩阵。&quot;,
+        &quot;conclusion&quot;: &quot;同一矩阵在 U 上合法。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-P02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.global_colip_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;GlobalCoLipFamily 到 CoLipFamily 的包含。&quot;,
+        &quot;parameters&quot;: &quot;U.Nonempty 且 U⊆dom φ。&quot;,
+        &quot;quantifiers&quot;: &quot;任意全域合法的 co-Lip 矩阵。&quot;,
+        &quot;conclusion&quot;: &quot;同一矩阵在 U 上合法，非空性未省略。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-P05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.lip_chain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_lip_chain&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;有限族版本使用 φ:Fin n→Operator X bot、M:Fin n→Mat I；每一步都在实际前缀像域上取证书。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(c_n)，且每个 m:Fin n 的 M m 是 φ m 在 imageDomain … m 上的 Lip 证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意长度 n，包含正文全部正长度链；不以全链证书为假设。&quot;,
+        &quot;conclusion&quot;: &quot;由逐步证书归纳构造 matrixProduct 为全复合在 U 上的合法证书。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P04&quot;,
+        &quot;CH02-P11&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_chain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_chain_positive&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_colip_chain&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;同样使用实际前缀像域；正长度版本从第零步的证书取得起始域非空性。&quot;,
+        &quot;parameters&quot;: &quot;0&lt;n、U⊆dom(c_n)，每个 m:Fin n 给定实际输入域上的 co-Lip 证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意正长度和所有单步证书；不预设全链证书。&quot;,
+        &quot;conclusion&quot;: &quot;归纳得有序连乘为全复合的 co-Lip 证书，并保留起始域非空性。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P08&quot;,
+        &quot;CH02-P12&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_zero_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_zero_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_product_zero_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.one_step_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;最终版本直接量化所有 v:Fin(n+1)→I，并固定 v0=i、vn=j。&quot;,
+        &quot;parameters&quot;: &quot;任意有限 ENNReal 矩阵序列 M:Fin n→Mat I。&quot;,
+        &quot;quantifiers&quot;: &quot;每条固定端点路径都存在 m:Fin n，使该边条目为零；适用所有 n≥1，并额外覆盖 n=0。&quot;,
+        &quot;conclusion&quot;: &quot;有序乘积条目=0 当且仅当每条路径含零因子；one_step_zero 验证 n=1。证明使用 P14 与全正的有限逻辑补集。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;,
+        &quot;CH02-P14&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/LCH02/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/LCH02/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/reviews/LCH02.json">source_review · LCH02.json</a><span class="hash">SHA256 054a3cc30ac26efe88d88c06933f419068e1ef9011619e81a690de63353a304c</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Original task scope retained; native harness conditions recorded separately.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-D06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Definitions inspected: arbitrary ENNReal distance arrays specialize to the supplied gauge. Families retain domain containment and co-Lip nonemptiness. Matrix multiplication order, finite-prefix extension, actual prefix images and full vertex paths are explicit; no composite conclusion is stored as data.</p>
+<h3>CH02-P01</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Unique-index finite sum gives a scalar iff, including the reverse implication.</p>
+<h3>CH02-P02</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Restricts every point pair along U subset V; no added nonempty assumption.</p>
+<h3>CH02-P04</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Uses the actual inner image, outer inequality, monotone matrix action and act_mul; product is later matrix on left.</p>
+<h3>CH02-P05</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Restriction explicitly supplies the smaller domain nonemptiness.</p>
+<h3>CH02-P07</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> A positive input and zero output force the corresponding summand, hence coefficient, to vanish; infinity is allowed.</p>
+<h3>CH02-P08</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Uses actual image and preserves first certificate nonemptiness; reverses the bound direction correctly.</p>
+<h3>CH02-P11</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity matrix action is exactly the input component, including length zero.</p>
+<h3>CH02-P12</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Identity lower certificate separately includes nonempty U.</p>
+<h3>CH02-P14</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Finite nonnegative sum/product positivity is proved inductively; recursive paths are converted both ways to actual vertices and edge coefficients; one-step case explicit.</p>
+<h3>CH02-P03</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Specializes restriction with V=dom operator.</p>
+<h3>CH02-P06</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Global co-Lip restriction retains the nonempty smaller domain.</p>
+<h3>CH02-P09</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Induction uses only per-step certificates at actual prefix images. Fin n data are extended with identity, with an explicit prefix equivalence.</p>
+<h3>CH02-P10</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> Independent lower-bound induction; positive-length variant derives nonemptiness from first certificate.</p>
+<h3>CH02-P13</h3>
+<p><strong>判定：</strong> confirmed</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>理由：</strong> All fixed-endpoint vertex sequences, not merely positive ones, are quantified. HasZero is bridged to an actual edge; n=1 is explicit.</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h1>LCH02 完整形式化</h1>
+<p>入口为 <code>Main.lean</code>，导入全部三个目标模块；<code>Audit.lean</code> 是公理依赖核验入口。下列代码块给出全部新增源码和构建脚本。使用题目提供的 <code>lean-local</code>，运行 <code>sh build.sh</code>。</p>
+<p>表示约定：矩阵 <code>M j i</code> 表示正文的输入 i 到输出 j；有限链内部从零编号，正文第 m+1 步对应 Lean 的 m。实际中间域定义为前缀复合的像，并证明其递推等式、非空性和定义域有效性。<code>Fin n</code> 版本不要求无限序列数据；辅助扩展的尾部不影响任何前缀。路径同时提供递归表示与通常的有限顶点序列表示。</p>
+<p>本清单的证明只使用 ENNReal 的有限和、乘法和序结构，不需要伪度量公理。因此声明对任意分量函数 d 成立，取正文的有限非空扩展伪度量族即可直接特化。<code>DecidableEq I</code> 只是单位矩阵所需的判等数据，经典逻辑下对任意 I 可得；并无额外数学限制。Co-Lip 定义始终显式保留非空性。</p>
+<p>验证：Lean 4.29.1，在提供的固定 mathlib 环境中编译全部模块并运行公理审计。所有新增声明的公理依赖均包含于 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</p>
+<p>数学内容归属：Zhe Li（Glen Li / glenzli），ORCID https://orcid.org/0009-0006-6536-3453，《The Operator Evolution Theory》第一卷，第 2 章，https://glenzli.com/books/oet/ ，CC BY 4.0（https://creativecommons.org/licenses/by/4.0/）。题目来源版本 v1.0.0，DOI https://doi.org/10.5281/zenodo.21457931，源提交 539b40cec73184d98e06d54fbd10e4b4698bd6e7。下列为新写的 Lean 形式化，原有数学内容不是本回答独立发现；冻结前置模块保持不变，不重复交付。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.Matrix.Basic
+
+/-
+Source mathematics: Zhe Li (Glen Li / glenzli), The Operator Evolution Theory,
+Volume I, Chapter 2, CC BY 4.0. This file is a new formalization.
+-/
+noncomputable section
+namespace LCH02
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+
+variable {I X : Type} [Fintype I] {bot : X}
+
+/-- Output index first, input index second: `M j i` is the entry i → j. -/
+abbrev Mat (I : Type) := Matrix I I ENNReal
+
+/-- Matrix action on a vector of component distances. -/
+def act (M : Mat I) (v : I → ENNReal) (j : I) : ENNReal := ∑ i, M j i * v i
+
+/-- The conventional product has the required order: B acts after A. -/
+theorem matrix_mul_entry (B A : Mat I) (j i : I) :
+    (B * A) j i = ∑ k, B j k * A k i := rfl
+
+theorem act_mul (B A : Mat I) (v : I → ENNReal) (j : I) :
+    act (B * A) v j = act B (fun k =&gt; act A v k) j := by
+  simp only [act, Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  exact Finset.sum_comm
+
+theorem act_mono (M : Mat I) {v w : I → ENNReal} (h : ∀ i, v i ≤ w i) (j : I) :
+    act M v j ≤ act M w j :=
+  Finset.sum_le_sum fun i _ =&gt; mul_le_mul_left' (h i) (M j i)
+
+/-- Domain validity is included in restricted membership. Empty Lip domains are allowed. -/
+def Lip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) (L : Mat I) : Prop :=
+  U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    d j (φ.func x) (φ.func y) ≤ act L (fun i =&gt; d i x y) j
+
+def LipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {L | Lip d φ U L}
+
+def GlobalLipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) : Set (Mat I) :=
+  LipFamily d φ (dom φ)
+
+/-- Co-Lip membership includes the source's mandatory nonempty domain. -/
+def CoLip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) (K : Mat I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    act K (fun i =&gt; d i x y) j ≤ d j (φ.func x) (φ.func y)
+
+def CoLipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {K | CoLip d φ U K}
+
+def GlobalCoLipFamily (d : I → X → X → ENNReal) (φ : Operator X bot) : Set (Mat I) :=
+  CoLipFamily d φ (dom φ)
+
+theorem lip_antitone (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U V : Set X} (hUV : U ⊆ V) : LipFamily d φ V ⊆ LipFamily d φ U := by
+  intro L hL
+  exact ⟨hUV.trans hL.1, fun x hx y hy j =&gt; hL.2 x (hUV hx) y (hUV hy) j⟩
+
+theorem global_lip_restrict (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U : Set X} (hU : U ⊆ dom φ) : GlobalLipFamily d φ ⊆ LipFamily d φ U :=
+  lip_antitone d φ hU
+
+theorem colip_antitone (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U V : Set X} (hU : U.Nonempty) (hUV : U ⊆ V) :
+    CoLipFamily d φ V ⊆ CoLipFamily d φ U := by
+  intro K hK
+  exact ⟨hU, hUV.trans hK.2.1, fun x hx y hy j =&gt; hK.2.2 x (hUV hx) y (hUV hy) j⟩
+
+theorem global_colip_restrict (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {U : Set X} (hne : U.Nonempty) (hU : U ⊆ dom φ) :
+    GlobalCoLipFamily d φ ⊆ CoLipFamily d φ U := colip_antitone d φ hne hU
+
+/-- For a singleton index type the entire global predicate is exactly the scalar bound. -/
+theorem singleton_lip_iff [Unique I] (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (L : Mat I) (i : I) :
+    L ∈ GlobalLipFamily d φ ↔ ∀ x ∈ dom φ, ∀ y ∈ dom φ,
+      d i (φ.func x) (φ.func y) ≤ L i i * d i x y := by
+  have hact : ∀ v : I → ENNReal, ∀ j, act L v j = L j i * v i := by
+    intro v j
+    simp [act, Finset.univ_unique, Unique.eq_default i]
+  constructor
+  · intro h x hx y hy
+    simpa only [hact] using h.2 x hx y hy i
+  · intro h
+    refine ⟨Set.Subset.rfl, ?_⟩
+    intro x hx y hy j
+    have hj : j = i := Subsingleton.elim _ _
+    simpa only [hj, hact] using h x hx y hy
+
+/-- Domain facts forced by the absorption law, with the exact intermediate image. -/
+theorem compose_domains (ψ φ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom (ψ * φ)) : U ⊆ dom φ ∧ φ.func '' U ⊆ dom ψ := by
+  constructor
+  · intro x hx hbot
+    have h := hU hx
+    change ψ.func (φ.func x) ≠ bot at h
+    rw [hbot, ψ.preserves_bot] at h
+    exact h rfl
+  · rintro y ⟨x, hx, rfl⟩
+    exact hU hx
+
+theorem lip_compose (d : I → X → X → ENNReal) (ψ φ : Operator X bot)
+    {U : Set X} {A B : Mat I} (hU : U ⊆ dom (ψ * φ))
+    (hA : Lip d φ U A) (hB : Lip d ψ (φ.func '' U) B) :
+    Lip d (ψ * φ) U (B * A) := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  change d j (ψ.func (φ.func x)) (ψ.func (φ.func y)) ≤ _
+  calc
+    _ ≤ act B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      hB.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+    _ ≤ act B (fun k =&gt; act A (fun i =&gt; d i x y) k) j :=
+      act_mono B (hA.2 x hx y hy) j
+    _ = act (B * A) (fun i =&gt; d i x y) j := (act_mul B A _ j).symm
+
+theorem colip_compose (d : I → X → X → ENNReal) (ψ φ : Operator X bot)
+    {U : Set X} {A B : Mat I} (hU : U ⊆ dom (ψ * φ))
+    (hA : CoLip d φ U A) (hB : CoLip d ψ (φ.func '' U) B) :
+    CoLip d (ψ * φ) U (B * A) := by
+  refine ⟨hA.1, hU, ?_⟩
+  intro x hx y hy j
+  change _ ≤ d j (ψ.func (φ.func x)) (ψ.func (φ.func y))
+  calc
+    _ = act B (fun k =&gt; act A (fun i =&gt; d i x y) k) j := act_mul B A _ j
+    _ ≤ act B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      act_mono B (hA.2.2 x hx y hy) j
+    _ ≤ _ := hB.2.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+
+theorem colip_entry_zero (d : I → X → X → ENNReal) (φ : Operator X bot)
+    {K : Mat I} (hK : K ∈ GlobalCoLipFamily d φ)
+    {x y : X} (hx : x ∈ dom φ) (hy : y ∈ dom φ) {i j : I}
+    (hout : d j (φ.func x) (φ.func y) = 0) (hin : 0 &lt; d i x y) : K j i = 0 := by
+  have hb := hK.2.2 x hx y hy j
+  rw [hout] at hb
+  have ht : K j i * d i x y ≤ 0 :=
+    (Finset.single_le_sum (fun k _ =&gt; zero_le (K j k * d k x y)) (Finset.mem_univ i)).trans hb
+  have hz : K j i * d i x y = 0 := le_antisymm ht (zero_le _)
+  exact (mul_eq_zero.mp hz).resolve_right (ne_of_gt hin)
+
+section Identity
+variable [DecidableEq I]
+
+theorem act_one (v : I → ENNReal) (j : I) : act (1 : Mat I) v j = v j := by
+  simp [act, Matrix.one_apply]
+
+theorem identity_lip (d : I → X → X → ENNReal) {U : Set X}
+    (hU : U ⊆ dom (1 : Operator X bot)) : Lip d (1 : Operator X bot) U (1 : Mat I) := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  simpa only [act_one] using (le_refl (d j x y))
+
+theorem identity_colip (d : I → X → X → ENNReal) {U : Set X}
+    (hne : U.Nonempty) (hU : U ⊆ dom (1 : Operator X bot)) : CoLip d (1 : Operator X bot) U (1 : Mat I) := by
+  refine ⟨hne, hU, ?_⟩
+  intro x hx y hy j
+  simpa only [act_one] using (le_refl (d j x y))
+end Identity
+end LCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+
+noncomputable section
+namespace LCH02
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+variable {I X : Type} [Fintype I] [DecidableEq I] {bot : X}
+
+/-- Chronological sequence, indexed from zero. The last step multiplies on the left. -/
+def matrixProduct (M : ℕ → Mat I) : ℕ → Mat I
+  | 0 =&gt; 1
+  | n + 1 =&gt; M n * matrixProduct M n
+
+/-- `composition φ n = φ(n-1) ∘ ... ∘ φ(0)`. -/
+def composition (φ : ℕ → Operator X bot) : ℕ → Operator X bot
+  | 0 =&gt; 1
+  | n + 1 =&gt; φ n * composition φ n
+
+/-- `imageDomain φ U m` is the actual input domain of step `m` (textual U_(m+1)). -/
+def imageDomain (φ : ℕ → Operator X bot) (U : Set X) (m : ℕ) : Set X :=
+  (composition φ m).func '' U
+
+@[simp] theorem matrixProduct_zero (M : ℕ → Mat I) : matrixProduct M 0 = 1 := rfl
+@[simp] theorem matrixProduct_succ (M : ℕ → Mat I) (n : ℕ) :
+    matrixProduct M (n+1) = M n * matrixProduct M n := rfl
+@[simp] theorem matrixProduct_one (M : ℕ → Mat I) : matrixProduct M 1 = M 0 := by
+  simp [matrixProduct]
+@[simp] theorem composition_zero (φ : ℕ → Operator X bot) : composition φ 0 = 1 := rfl
+@[simp] theorem composition_succ (φ : ℕ → Operator X bot) (n : ℕ) :
+    composition φ (n+1) = φ n * composition φ n := rfl
+@[simp] theorem imageDomain_zero (φ : ℕ → Operator X bot) (U : Set X) :
+    imageDomain φ U 0 = U := by
+  change id '' U = U
+  exact Set.image_id U
+
+theorem imageDomain_succ (φ : ℕ → Operator X bot) (U : Set X) (n : ℕ) :
+    imageDomain φ U (n+1) = (φ n).func '' imageDomain φ U n := by
+  exact (Set.image_image (φ n).func (composition φ n).func U).symm
+
+theorem imageDomain_nonempty (φ : ℕ → Operator X bot) {U : Set X}
+    (hU : U.Nonempty) (m : ℕ) : (imageDomain φ U m).Nonempty :=
+  hU.image _
+
+/-- The domain of a full composition forces the validity of every earlier prefix. -/
+theorem prefix_domain (φ : ℕ → Operator X bot) {U : Set X} {n : ℕ}
+    (hU : U ⊆ dom (composition φ n)) {m : ℕ} (hm : m ≤ n) :
+    U ⊆ dom (composition φ m) := by
+  induction n with
+  | zero =&gt; simpa only [Nat.eq_zero_of_le_zero hm] using hU
+  | succ n ih =&gt;
+    rcases Nat.eq_or_lt_of_le hm with h | h
+    · simpa only [h] using hU
+    · exact ih (compose_domains (φ n) (composition φ n) hU).1 (Nat.le_of_lt_succ h)
+
+/-- In particular the recursively generated actual input domain is valid for its step. -/
+theorem step_domain (φ : ℕ → Operator X bot) {U : Set X} {n m : ℕ}
+    (hU : U ⊆ dom (composition φ n)) (hm : m &lt; n) :
+    imageDomain φ U m ⊆ dom (φ m) :=
+  (compose_domains (φ m) (composition φ m) (prefix_domain φ hU hm)).2
+
+/-- All finite lengths, including zero; hypotheses are only the individual step inequalities. -/
+theorem lip_chain (d : I → X → X → ENNReal) (φ : ℕ → Operator X bot)
+    (M : ℕ → Mat I) (U : Set X) (n : ℕ)
+    (hU : U ⊆ dom (composition φ n))
+    (hsteps : ∀ m &lt; n, Lip d (φ m) (imageDomain φ U m) (M m)) :
+    Lip d (composition φ n) U (matrixProduct M n) := by
+  induction n with
+  | zero =&gt; exact identity_lip d hU
+  | succ n ih =&gt;
+    apply lip_compose d (φ n) (composition φ n) hU
+    · apply ih (compose_domains (φ n) (composition φ n) hU).1
+      intro m hm
+      exact hsteps m (Nat.lt.step hm)
+    · exact hsteps n (Nat.lt_succ_self n)
+
+/-- The nonempty-domain variant includes the zero-step case. -/
+theorem colip_chain (d : I → X → X → ENNReal) (φ : ℕ → Operator X bot)
+    (M : ℕ → Mat I) (U : Set X) (n : ℕ) (hne : U.Nonempty)
+    (hU : U ⊆ dom (composition φ n))
+    (hsteps : ∀ m &lt; n, CoLip d (φ m) (imageDomain φ U m) (M m)) :
+    CoLip d (composition φ n) U (matrixProduct M n) := by
+  induction n with
+  | zero =&gt; exact identity_colip d hne hU
+  | succ n ih =&gt;
+    apply colip_compose d (φ n) (composition φ n) hU
+    · apply ih (compose_domains (φ n) (composition φ n) hU).1
+      intro m hm
+      exact hsteps m (Nat.lt.step hm)
+    · exact hsteps n (Nat.lt_succ_self n)
+
+/-- For positive length the first step certificate already supplies nonemptiness. -/
+theorem colip_chain_positive (d : I → X → X → ENNReal) (φ : ℕ → Operator X bot)
+    (M : ℕ → Mat I) (U : Set X) (n : ℕ) (hn : 0 &lt; n)
+    (hU : U ⊆ dom (composition φ n))
+    (hsteps : ∀ m &lt; n, CoLip d (φ m) (imageDomain φ U m) (M m)) :
+    CoLip d (composition φ n) U (matrixProduct M n) := by
+  apply colip_chain d φ M U n _ hU hsteps
+  simpa only [imageDomain_zero] using (hsteps 0 hn).1
+
+/-- No assumption or value beyond the finite prefix affects the composite. -/
+theorem composition_prefix_congr (φ ψ : ℕ → Operator X bot) (n : ℕ)
+    (h : ∀ m &lt; n, φ m = ψ m) : composition φ n = composition ψ n := by
+  induction n with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    simp only [composition_succ, h n (Nat.lt_succ_self n),
+      ih (fun m hm =&gt; h m (Nat.lt.step hm))]
+
+theorem matrixProduct_prefix_congr (M N : ℕ → Mat I) (n : ℕ)
+    (h : ∀ m &lt; n, M m = N m) : matrixProduct M n = matrixProduct N n := by
+  induction n with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    simp only [matrixProduct_succ, h n (Nat.lt_succ_self n),
+      ih (fun m hm =&gt; h m (Nat.lt.step hm))]
+
+/-- Any finite family extends to the indexing convention used here, without extra hypotheses. -/
+def extendFinite {α : Type} (fallback : α) {n : ℕ} (f : Fin n → α) (m : ℕ) : α :=
+  if h : m &lt; n then f ⟨m, h⟩ else fallback
+
+theorem extendFinite_at {α : Type} (fallback : α) {n : ℕ} (f : Fin n → α) (m : Fin n) :
+    extendFinite fallback f m = f m := by simp [extendFinite, m.isLt]
+
+/-- A fully finite-input formulation of the Lip theorem. -/
+theorem finite_lip_chain (d : I → X → X → ENNReal) {n : ℕ}
+    (φ : Fin n → Operator X bot) (M : Fin n → Mat I) (U : Set X)
+    (hU : U ⊆ dom (composition (extendFinite 1 φ) n))
+    (hsteps : ∀ m : Fin n,
+      Lip d (φ m) (imageDomain (extendFinite 1 φ) U m) (M m)) :
+    Lip d (composition (extendFinite 1 φ) n) U
+      (matrixProduct (extendFinite 1 M) n) := by
+  apply lip_chain d _ _ U n hU
+  intro m hm
+  simpa only [extendFinite, dif_pos hm] using hsteps ⟨m, hm⟩
+
+theorem finite_colip_chain (d : I → X → X → ENNReal) {n : ℕ} (hn : 0 &lt; n)
+    (φ : Fin n → Operator X bot) (M : Fin n → Mat I) (U : Set X)
+    (hU : U ⊆ dom (composition (extendFinite 1 φ) n))
+    (hsteps : ∀ m : Fin n,
+      CoLip d (φ m) (imageDomain (extendFinite 1 φ) U m) (M m)) :
+    CoLip d (composition (extendFinite 1 φ) n) U
+      (matrixProduct (extendFinite 1 M) n) := by
+  apply colip_chain_positive d _ _ U n hn hU
+  intro m hm
+  simpa only [extendFinite, dif_pos hm] using hsteps ⟨m, hm⟩
+end LCH02
+</code></pre>
+<pre><code class="language-lean">import Chains
+
+noncomputable section
+namespace LCH02
+open scoped BigOperators
+variable {I : Type} [Fintype I] [DecidableEq I]
+
+/-- A finite path with fixed endpoints, built by appending one edge.
+A length-zero path is endpoint equality. A length-(n+1) path chooses the
+penultimate index k freely and a length-n path from i to k. Thus, for positive
+length, these are precisely all choices of the n-1 intermediate indices. -/
+def IndexPath (I : Type) : ℕ → I → I → Type
+  | 0, i, j =&gt; PLift (i = j)
+  | n+1, i, _ =&gt; Σ k : I, IndexPath I n i k
+
+/-- Every step along this particular path has strictly positive entry. -/
+def AllPositive (M : ℕ → Mat I) : {n : ℕ} → {i j : I} → IndexPath I n i j → Prop
+  | 0, _, _, _ =&gt; True
+  | n+1, _, j, p =&gt; AllPositive M p.2 ∧ 0 &lt; M n j p.1
+
+/-- At least one of this path's step entries is zero. -/
+def HasZero (M : ℕ → Mat I) : {n : ℕ} → {i j : I} → IndexPath I n i j → Prop
+  | 0, _, _, _ =&gt; False
+  | n+1, _, j, p =&gt; HasZero M p.2 ∨ M n j p.1 = 0
+
+/-- The concrete sequence of step coefficients has length exactly n. -/
+def edgeEntry (M : ℕ → Mat I) : {n : ℕ} → {i j : I} → IndexPath I n i j → Fin n → ENNReal
+  | 0, _, _, _ =&gt; Fin.elim0
+  | n+1, _, j, p =&gt; Fin.lastCases (M n j p.1) (edgeEntry M p.2)
+
+theorem allPositive_iff_edges (M : ℕ → Mat I) {n : ℕ} {i j : I}
+    (p : IndexPath I n i j) : AllPositive M p ↔ ∀ m, 0 &lt; edgeEntry M p m := by
+  induction n generalizing j with
+  | zero =&gt; simp [AllPositive, edgeEntry]
+  | succ n ih =&gt;
+    change (AllPositive M p.2 ∧ 0 &lt; M n j p.1) ↔ _
+    rw [ih]
+    constructor
+    · rintro ⟨h, hl⟩ m
+      refine Fin.lastCases ?_ (fun k =&gt; ?_) m
+      · simpa only [edgeEntry, Fin.lastCases_last] using hl
+      · simpa only [edgeEntry, Fin.lastCases_castSucc] using h k
+    · intro h
+      exact ⟨fun k =&gt; by simpa only [edgeEntry, Fin.lastCases_castSucc] using h k.castSucc,
+        by simpa only [edgeEntry, Fin.lastCases_last] using h (Fin.last n)⟩
+
+theorem hasZero_iff_edges (M : ℕ → Mat I) {n : ℕ} {i j : I}
+    (p : IndexPath I n i j) : HasZero M p ↔ ∃ m, edgeEntry M p m = 0 := by
+  induction n generalizing j with
+  | zero =&gt; simp [HasZero, edgeEntry]
+  | succ n ih =&gt;
+    change (HasZero M p.2 ∨ M n j p.1 = 0) ↔ _
+    rw [ih]
+    constructor
+    · rintro (⟨k, hk⟩ | hl)
+      · exact ⟨k.castSucc, by simpa only [edgeEntry, Fin.lastCases_castSucc] using hk⟩
+      · exact ⟨Fin.last n, by simpa only [edgeEntry, Fin.lastCases_last] using hl⟩
+    · rintro ⟨m, hm⟩
+      revert hm
+      refine Fin.lastCases ?_ (fun k =&gt; ?_) m
+      · intro h
+        exact Or.inr (by simpa only [edgeEntry, Fin.lastCases_last] using h)
+      · intro h
+        exact Or.inl ⟨k, by simpa only [edgeEntry, Fin.lastCases_castSucc] using h⟩
+
+theorem hasZero_iff_not_allPositive (M : ℕ → Mat I) {n : ℕ} {i j : I}
+    (p : IndexPath I n i j) : HasZero M p ↔ ¬ AllPositive M p := by
+  rw [hasZero_iff_edges, allPositive_iff_edges]
+  simp only [not_forall, not_lt, nonpos_iff_eq_zero]
+
+/-- Positive product entries are exactly those admitting an all-positive path.
+The theorem also handles length zero, where the matrix is the identity. -/
+theorem product_pos_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    0 &lt; matrixProduct M n j i ↔ ∃ p : IndexPath I n i j, AllPositive M p := by
+  induction n generalizing j with
+  | zero =&gt;
+    by_cases h : i = j
+    · subst j
+      simp [matrixProduct, Matrix.one_apply, IndexPath, AllPositive]
+    · simp [matrixProduct, Matrix.one_apply, IndexPath, AllPositive, h, Ne.symm h]
+  | succ n ih =&gt;
+    simp only [matrixProduct_succ, Matrix.mul_apply, Finset.sum_pos_iff,
+      Finset.mem_univ, true_and, ENNReal.mul_pos_iff, ih]
+    constructor
+    · rintro ⟨k, hk, p, hp⟩
+      exact ⟨⟨k, p⟩, hp, hk⟩
+    · rintro ⟨⟨k, p⟩, hp, hk⟩
+      exact ⟨k, hk, p, hp⟩
+
+/-- A product entry is zero iff every path has a zero step factor. -/
+theorem product_zero_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    matrixProduct M n j i = 0 ↔ ∀ p : IndexPath I n i j, HasZero M p := by
+  constructor
+  · intro hz p
+    apply (hasZero_iff_not_allPositive M p).2
+    intro hp
+    have h := (product_pos_iff M n i j).2 ⟨p, hp⟩
+    simp only [hz, lt_self_iff_false] at h
+  · intro h
+    by_contra hn
+    have hp : 0 &lt; matrixProduct M n j i := pos_iff_ne_zero.mpr hn
+    obtain ⟨p, hpos⟩ := (product_pos_iff M n i j).1 hp
+    exact (hasZero_iff_not_allPositive M p).1 (h p) hpos
+
+/-- Explicit one-step specialization: the intermediate sequence is empty. -/
+theorem one_step_positive (M : ℕ → Mat I) (i j : I) :
+    (∃ p : IndexPath I 1 i j, AllPositive M p) ↔ 0 &lt; M 0 j i := by
+  rw [← product_pos_iff, matrixProduct_one]
+
+theorem one_step_zero (M : ℕ → Mat I) (i j : I) :
+    (∀ p : IndexPath I 1 i j, HasZero M p) ↔ M 0 j i = 0 := by
+  rw [← product_zero_iff, matrixProduct_one]
+
+/-- Formulation with a genuinely finite matrix family. -/
+theorem finite_product_pos_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    0 &lt; matrixProduct (extendFinite 1 M) n j i ↔
+      ∃ p : IndexPath I n i j, AllPositive (extendFinite 1 M) p :=
+  product_pos_iff _ _ _ _
+
+theorem finite_product_zero_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    matrixProduct (extendFinite 1 M) n j i = 0 ↔
+      ∀ p : IndexPath I n i j, HasZero (extendFinite 1 M) p :=
+  product_zero_iff _ _ _ _
+end LCH02
+
+namespace LCH02
+variable {I : Type}
+
+/-- The vertices underlying the recursive path, with both endpoints included. -/
+def pathVertex : {n : ℕ} → {i j : I} → IndexPath I n i j → Fin (n+1) → I
+  | 0, i, _, _, _ =&gt; i
+  | n+1, _, j, p, t =&gt; Fin.lastCases j (pathVertex p.2) t
+
+@[simp] theorem pathVertex_first {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    pathVertex p 0 = i := by
+  induction n generalizing j with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    change pathVertex p (0 : Fin (n+1)).castSucc = i
+    simpa only [pathVertex, Fin.lastCases_castSucc] using ih p.2
+
+@[simp] theorem pathVertex_last {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    pathVertex p (Fin.last n) = j := by
+  cases n with
+  | zero =&gt; exact p.down
+  | succ n =&gt; exact Fin.lastCases_last
+
+/-- Conversely every vertex sequence gives a path, with no restriction on intermediate indices. -/
+def pathFromVertices : (n : ℕ) → (v : Fin (n+1) → I) →
+    IndexPath I n (v 0) (v (Fin.last n))
+  | 0, _ =&gt; ⟨rfl⟩
+  | n+1, v =&gt; ⟨v (Fin.last n).castSucc, pathFromVertices n (fun t =&gt; v t.castSucc)⟩
+
+@[simp] theorem pathFromVertices_vertex (n : ℕ) (v : Fin (n+1) → I)
+    (t : Fin (n+1)) : pathVertex (pathFromVertices n v) t = v t := by
+  induction n with
+  | zero =&gt; have ht : t = 0 := Fin.ext (by omega); subst t; rfl
+  | succ n ih =&gt;
+    refine Fin.lastCases ?_ (fun k =&gt; ?_) t
+    · exact pathVertex_last _
+    · simpa only [pathFromVertices, pathVertex, Fin.lastCases_castSucc] using
+        ih (fun t =&gt; v t.castSucc) k
+
+/-- Edge m goes from vertex m to vertex m+1 in precisely matrix M(m). -/
+theorem edgeEntry_vertices [Fintype I] [DecidableEq I] (M : ℕ → Mat I)
+    {n : ℕ} {i j : I} (p : IndexPath I n i j) (m : Fin n) :
+    edgeEntry M p m = M m (pathVertex p m.succ) (pathVertex p m.castSucc) := by
+  induction n generalizing j with
+  | zero =&gt; exact Fin.elim0 m
+  | succ n ih =&gt;
+    refine Fin.lastCases ?_ (fun k =&gt; ?_) m
+    · simp only [edgeEntry, Fin.lastCases_last]
+      change M n j p.1 = M n (pathVertex p (Fin.last (n+1)))
+        (pathVertex p (Fin.last n).castSucc)
+      simp only [pathVertex_last, pathVertex, Fin.lastCases_castSucc, Fin.lastCases_last, pathVertex_last]
+    · simpa only [edgeEntry, Fin.lastCases_castSucc, Fin.succ_castSucc, Fin.val_castSucc,
+        pathVertex, Fin.lastCases_castSucc] using ih p.2 k
+
+/-- The recursive positive predicate is exactly the ordinary quantification over all layers. -/
+theorem allPositive_iff_vertices [Fintype I] [DecidableEq I] (M : ℕ → Mat I)
+    {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    AllPositive M p ↔ ∀ m : Fin n,
+      0 &lt; M m (pathVertex p m.succ) (pathVertex p m.castSucc) := by
+  simp only [allPositive_iff_edges, edgeEntry_vertices]
+
+theorem hasZero_iff_vertices [Fintype I] [DecidableEq I] (M : ℕ → Mat I)
+    {n : ℕ} {i j : I} (p : IndexPath I n i j) :
+    HasZero M p ↔ ∃ m : Fin n,
+      M m (pathVertex p m.succ) (pathVertex p m.castSucc) = 0 := by
+  simp only [hasZero_iff_edges, edgeEntry_vertices]
+end LCH02
+
+namespace LCH02
+variable {I : Type} [Fintype I] [DecidableEq I]
+
+/-- Usual vertex-sequence statement, including fixed endpoints and all n edge conditions. -/
+theorem product_pos_vertices_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    0 &lt; matrixProduct M n j i ↔
+      ∃ v : Fin (n+1) → I, v 0 = i ∧ v (Fin.last n) = j ∧
+        ∀ m : Fin n, 0 &lt; M m (v m.succ) (v m.castSucc) := by
+  rw [product_pos_iff]
+  constructor
+  · rintro ⟨p, hp⟩
+    exact ⟨pathVertex p, pathVertex_first p, pathVertex_last p,
+      (allPositive_iff_vertices M p).1 hp⟩
+  · rintro ⟨v, hi, hj, h⟩
+    subst i
+    subst j
+    refine ⟨pathFromVertices n v, (allPositive_iff_vertices M _).2 ?_⟩
+    simpa only [pathFromVertices_vertex] using h
+
+/-- Usual zero criterion: each fixed-endpoint vertex sequence has a zero edge. -/
+theorem product_zero_vertices_iff (M : ℕ → Mat I) (n : ℕ) (i j : I) :
+    matrixProduct M n j i = 0 ↔
+      ∀ v : Fin (n+1) → I, v 0 = i → v (Fin.last n) = j →
+        ∃ m : Fin n, M m (v m.succ) (v m.castSucc) = 0 := by
+  rw [product_zero_iff]
+  constructor
+  · intro h v hi hj
+    subst i
+    subst j
+    have hz := (hasZero_iff_vertices M _).1 (h (pathFromVertices n v))
+    simpa only [pathFromVertices_vertex] using hz
+  · intro h p
+    apply (hasZero_iff_vertices M p).2
+    exact h (pathVertex p) (pathVertex_first p) (pathVertex_last p)
+end LCH02
+
+namespace LCH02
+variable {I : Type} [Fintype I] [DecidableEq I]
+
+theorem finite_product_pos_vertices_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    0 &lt; matrixProduct (extendFinite 1 M) n j i ↔
+      ∃ v : Fin (n+1) → I, v 0 = i ∧ v (Fin.last n) = j ∧
+        ∀ m : Fin n, 0 &lt; M m (v m.succ) (v m.castSucc) := by
+  simpa only [extendFinite_at] using product_pos_vertices_iff (extendFinite 1 M) n i j
+
+theorem finite_product_zero_vertices_iff {n : ℕ} (M : Fin n → Mat I) (i j : I) :
+    matrixProduct (extendFinite 1 M) n j i = 0 ↔
+      ∀ v : Fin (n+1) → I, v 0 = i → v (Fin.last n) = j →
+        ∃ m : Fin n, M m (v m.succ) (v m.castSucc) = 0 := by
+  simpa only [extendFinite_at] using product_zero_vertices_iff (extendFinite 1 M) n i j
+end LCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+import Chains
+import Paths
+
+/-!
+LCH02 entrypoint. All twenty obligations are implemented in the three imported
+modules. Frozen foundations are imported unchanged through Bounds.
+
+Mathematical source: Zhe Li (Glen Li / glenzli), ORCID
+https://orcid.org/0009-0006-6536-3453, The Operator Evolution Theory,
+Volume I, Chapter 2, https://glenzli.com/books/oet/, CC BY 4.0.
+These Lean proofs and representation choices are newly generated formalizations,
+not claims of original authorship of the source mathematics.
+-/
+</code></pre>
+<pre><code class="language-lean">import Main
+
+-- Kernel dependency audit for every new declaration.
+#print axioms LCH02.Mat
+#print axioms LCH02.act
+#print axioms LCH02.matrix_mul_entry
+#print axioms LCH02.act_mul
+#print axioms LCH02.act_mono
+#print axioms LCH02.Lip
+#print axioms LCH02.LipFamily
+#print axioms LCH02.GlobalLipFamily
+#print axioms LCH02.CoLip
+#print axioms LCH02.CoLipFamily
+#print axioms LCH02.GlobalCoLipFamily
+#print axioms LCH02.lip_antitone
+#print axioms LCH02.global_lip_restrict
+#print axioms LCH02.colip_antitone
+#print axioms LCH02.global_colip_restrict
+#print axioms LCH02.singleton_lip_iff
+#print axioms LCH02.compose_domains
+#print axioms LCH02.lip_compose
+#print axioms LCH02.colip_compose
+#print axioms LCH02.colip_entry_zero
+#print axioms LCH02.act_one
+#print axioms LCH02.identity_lip
+#print axioms LCH02.identity_colip
+#print axioms LCH02.matrixProduct
+#print axioms LCH02.composition
+#print axioms LCH02.imageDomain
+#print axioms LCH02.matrixProduct_zero
+#print axioms LCH02.matrixProduct_succ
+#print axioms LCH02.matrixProduct_one
+#print axioms LCH02.composition_zero
+#print axioms LCH02.composition_succ
+#print axioms LCH02.imageDomain_zero
+#print axioms LCH02.imageDomain_succ
+#print axioms LCH02.imageDomain_nonempty
+#print axioms LCH02.prefix_domain
+#print axioms LCH02.step_domain
+#print axioms LCH02.lip_chain
+#print axioms LCH02.colip_chain
+#print axioms LCH02.colip_chain_positive
+#print axioms LCH02.composition_prefix_congr
+#print axioms LCH02.matrixProduct_prefix_congr
+#print axioms LCH02.extendFinite
+#print axioms LCH02.extendFinite_at
+#print axioms LCH02.finite_lip_chain
+#print axioms LCH02.finite_colip_chain
+#print axioms LCH02.IndexPath
+#print axioms LCH02.AllPositive
+#print axioms LCH02.HasZero
+#print axioms LCH02.edgeEntry
+#print axioms LCH02.allPositive_iff_edges
+#print axioms LCH02.hasZero_iff_edges
+#print axioms LCH02.hasZero_iff_not_allPositive
+#print axioms LCH02.product_pos_iff
+#print axioms LCH02.product_zero_iff
+#print axioms LCH02.one_step_positive
+#print axioms LCH02.one_step_zero
+#print axioms LCH02.finite_product_pos_iff
+#print axioms LCH02.finite_product_zero_iff
+#print axioms LCH02.pathVertex
+#print axioms LCH02.pathVertex_first
+#print axioms LCH02.pathVertex_last
+#print axioms LCH02.pathFromVertices
+#print axioms LCH02.pathFromVertices_vertex
+#print axioms LCH02.edgeEntry_vertices
+#print axioms LCH02.allPositive_iff_vertices
+#print axioms LCH02.hasZero_iff_vertices
+#print axioms LCH02.product_pos_vertices_iff
+#print axioms LCH02.product_zero_vertices_iff
+#print axioms LCH02.finite_product_pos_vertices_iff
+#print axioms LCH02.finite_product_zero_vertices_iff
+</code></pre>
+<pre><code class="language-sh">#!/bin/sh
+set -eu
+# Use the supplied pinned Lean 4.29.1 / mathlib environment.
+./lean-local -o formal_oet/vol_01/ch_01_foundations/gauge_space.olean formal_oet/vol_01/ch_01_foundations/gauge_space.lean
+./lean-local -o formal_oet/vol_01/ch_01_foundations/operator_space.olean formal_oet/vol_01/ch_01_foundations/operator_space.lean
+./lean-local -o Bounds.olean Bounds.lean
+./lean-local -o Chains.olean Chains.lean
+./lean-local -o Paths.olean Paths.lean
+./lean-local -o Main.olean Main.lean
+./lean-local Audit.lean
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.Lip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.LipFamily&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.GlobalLipFamily&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;Lip d φ U L 与受限 Lip 合法性对应；LipFamily 是全部合法矩阵的集合，GlobalLipFamily 在 dom φ 上取该集合。&quot;,
+        &quot;parameters&quot;: &quot;沿用冻结的 Operator X bot 和 dom；d : I → X → X → ENNReal，I 有限；L j i 表示输入 i 到输出 j。&quot;,
+        &quot;quantifiers&quot;: &quot;U ⊆ dom φ，且对所有 x,y ∈ U 和所有 j 成立；允许 U 为空。&quot;,
+        &quot;conclusion&quot;: &quot;d j (φ x) (φ y) ≤ ∑ i, L j i * d i x y。全域情形取 U=dom φ。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.CoLip&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.CoLipFamily&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.GlobalCoLipFamily&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;CoLip 为受限 co-Lip 合法性，另两定义为受限及全域证书族。&quot;,
+        &quot;parameters&quot;: &quot;同一 Operator、dom 和 ENNReal 矩阵表示。&quot;,
+        &quot;quantifiers&quot;: &quot;显式包含 U.Nonempty 和 U ⊆ dom φ；所有 x,y ∈ U、所有输出 j。&quot;,
+        &quot;conclusion&quot;: &quot;∑ i, K j i * d i x y ≤ d j (φ x) (φ y)，不指定极值矩阵。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.Mat&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrix_mul_entry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act_mul&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;Mat I = Matrix I I ENNReal；先输出行 j，后输入列 i。act 为分量距离向量上的矩阵作用。&quot;,
+        &quot;parameters&quot;: &quot;标准 mathlib Matrix 乘法；ENNReal 使用 0*∞=∞*0=0 的约定。&quot;,
+        &quot;quantifiers&quot;: &quot;任意有限 I、矩阵 A B、输入 i 和输出 j。&quot;,
+        &quot;conclusion&quot;: &quot;(B*A) j i = ∑ k, B j k * A k i；act_mul 验证对应的嵌套有限求和恒等式。&quot;
+      },
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct_zero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct_succ&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.matrixProduct_one&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;单位矩阵使用标准 (1 : Mat I)；matrixProduct 为按时间顺序的有限复合乘积。&quot;,
+        &quot;parameters&quot;: &quot;M m 对应正文第 m+1 个矩阵。DecidableEq I 仅用于单位矩阵，经典逻辑可提供。&quot;,
+        &quot;quantifiers&quot;: &quot;任意 n≥0；matrixProduct_prefix_congr 保证只依赖前 n 项。&quot;,
+        &quot;conclusion&quot;: &quot;空乘积为 1，递推式为 P(n+1)=M(n)*P(n)，一项乘积为 M(0)。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.composition&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain_zero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain_succ&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.imageDomain_nonempty&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.prefix_domain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.step_domain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.composition_prefix_congr&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.extendFinite&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.extendFinite_at&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;composition φ n 是 φ(n-1)∘…∘φ(0)，imageDomain φ U m 是其 m 步前缀的实际像。&quot;,
+        &quot;parameters&quot;: &quot;φ(m) 对应正文 φ_(m+1)，imageDomain … m 对应 U_(m+1)，初始集合 U 对应 U_1。&quot;,
+        &quot;quantifiers&quot;: &quot;U ⊆ dom(composition φ n) 时，对每个 m&lt;n 推出实际输入域包含在 dom(φ m) 中。&quot;,
+        &quot;conclusion&quot;: &quot;零步像为 U，下一步像精确等于 φ(m) 对当前域的像；非空性被像保留。Fin n 序列可通过 extendFinite 无额外假设地扩展，前缀不依赖扩展尾部。&quot;
+      },
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.IndexPath&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.AllPositive&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.HasZero&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.edgeEntry&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.pathVertex&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.pathFromVertices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.pathFromVertices_vertex&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.allPositive_iff_vertices&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.hasZero_iff_vertices&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;IndexPath I n i j 是固定起终点、逐次追加边的长度 n 路径；AllPositive 和 HasZero 是逐边条件。&quot;,
+        &quot;parameters&quot;: &quot;正文 k_0=i、k_n=j 对应 pathVertex p 0=i、pathVertex p (Fin.last n)=j；第 m+1 层使用 M m。&quot;,
+        &quot;quantifiers&quot;: &quot;所有中间指标任意；pathFromVertices 接受任意 Fin(n+1) 顶点序列，且还原所有顶点，故不限制路径。&quot;,
+        &quot;conclusion&quot;: &quot;全正等价于每个 m:Fin n 的 M m (v(m+1)) (v m)&gt;0；含零等价于存在这样的 m 条目等于零。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.singleton_lip_iff&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;一元素指标集用 Unique I 表示，并显式指定其唯一元素 i。&quot;,
+        &quot;parameters&quot;: &quot;任意 d、φ、L；Unique I 与非空且基数为 1 的集合等价。&quot;,
+        &quot;quantifiers&quot;: &quot;所有 x,y ∈ dom φ。&quot;,
+        &quot;conclusion&quot;: &quot;全域 Lip 合法性当且仅当单个标量不等式 d_i(φx,φy)≤L_ii d_i(x,y)。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.lip_antitone&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;证书族的集合包含关系直接用 Set.Subset 表示。&quot;,
+        &quot;parameters&quot;: &quot;任意固定 d、φ、U、V，U⊆V；V 的定义域有效性由证书成员性携带。&quot;,
+        &quot;quantifiers&quot;: &quot;对每一个 V 上合法的 L。&quot;,
+        &quot;conclusion&quot;: &quot;同一 L 在 U 上合法，包括空 U。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.compose_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.lip_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;ψ*φ 为先 φ 后 ψ，精确中间集合为 φ.func '' U。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(ψ*φ)，A 在 U 上是 φ 的证书，B 在 φ(U) 上是 ψ 的证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意两个算子、矩阵和集合，对所有起始点对与输出分量。&quot;,
+        &quot;conclusion&quot;: &quot;B*A 是 ψ*φ 在 U 上的 Lip 证书；compose_domains 同时推出两步所需的定义域包含。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_antitone&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;含非空条件的 co-Lip 证书族反单调。&quot;,
+        &quot;parameters&quot;: &quot;U.Nonempty、U⊆V，V 的定义域有效性由证书成员性携带。&quot;,
+        &quot;quantifiers&quot;: &quot;每个 V 上合法的 K。&quot;,
+        &quot;conclusion&quot;: &quot;K 在 U 上仍合法，保留 U 非空。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_entry_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;全域 co-Lip 矩阵的单个条目 K j i。&quot;,
+        &quot;parameters&quot;: &quot;K 为全域证书，x,y∈dom φ，d_j(φx,φy)=0，0&lt;d_i(x,y)。&quot;,
+        &quot;quantifiers&quot;: &quot;任意这样的 K、点对和输入输出指标。&quot;,
+        &quot;conclusion&quot;: &quot;K j i=0；证明使用单项不超过有限非负和及 ENNReal 的无零因子性质。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.compose_domains&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_compose&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;ψ*φ 与精确中间像 φ.func '' U，乘积顺序 B*A。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(ψ*φ)，A、B 分别为 U 与 φ(U) 上的 co-Lip 证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意两个算子与证书，对所有起始点对和输出分量。&quot;,
+        &quot;conclusion&quot;: &quot;B*A 是全复合在 U 上的 co-Lip 证书；非空性从第一步证书明确保留。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act_one&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.identity_lip&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;冻结算子幺半群的 1 是恒等算子，矩阵幺半群的 1 是单位矩阵。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(1 : Operator X bot)。&quot;,
+        &quot;quantifiers&quot;: &quot;任意这样的 U；事实上不要求 U 非空，所以包含正文非空情形。&quot;,
+        &quot;conclusion&quot;: &quot;单位矩阵为恒等算子的受限 Lip 证书。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.act_one&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.identity_colip&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;同一个单位矩阵用于恒等算子的 co-Lip 下界。&quot;,
+        &quot;parameters&quot;: &quot;U.Nonempty 且 U⊆dom(1 : Operator X bot)。&quot;,
+        &quot;quantifiers&quot;: &quot;任意非空有效域 U 及其所有点对。&quot;,
+        &quot;conclusion&quot;: &quot;单位矩阵为受限 co-Lip 证书，结合 P11 得到交集结论。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_pos_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_pos_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_product_pos_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.one_step_positive&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;最终有限族版本使用 M:Fin n→Mat I 和 v:Fin(n+1)→I，端点以等式指定。&quot;,
+        &quot;parameters&quot;: &quot;M m 对应正文 M^(m+1)，矩阵条目顺序为输出行、输入列。&quot;,
+        &quot;quantifiers&quot;: &quot;任意 n，故特别适用于所有 n≥1；存在顶点序列，且每个 m:Fin n 的边严格为正。&quot;,
+        &quot;conclusion&quot;: &quot;乘积条目&gt;0 当且仅当存在全正路径；one_step_positive 验证 n=1 的退化情况。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.global_lip_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;GlobalLipFamily 到 LipFamily 的包含。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom φ。&quot;,
+        &quot;quantifiers&quot;: &quot;任意全域合法的 Lip 矩阵。&quot;,
+        &quot;conclusion&quot;: &quot;同一矩阵在 U 上合法。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-P02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Bounds.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.global_colip_restrict&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;GlobalCoLipFamily 到 CoLipFamily 的包含。&quot;,
+        &quot;parameters&quot;: &quot;U.Nonempty 且 U⊆dom φ。&quot;,
+        &quot;quantifiers&quot;: &quot;任意全域合法的 co-Lip 矩阵。&quot;,
+        &quot;conclusion&quot;: &quot;同一矩阵在 U 上合法，非空性未省略。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-P05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.lip_chain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_lip_chain&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;有限族版本使用 φ:Fin n→Operator X bot、M:Fin n→Mat I；每一步都在实际前缀像域上取证书。&quot;,
+        &quot;parameters&quot;: &quot;U⊆dom(c_n)，且每个 m:Fin n 的 M m 是 φ m 在 imageDomain … m 上的 Lip 证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意长度 n，包含正文全部正长度链；不以全链证书为假设。&quot;,
+        &quot;conclusion&quot;: &quot;由逐步证书归纳构造 matrixProduct 为全复合在 U 上的合法证书。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P04&quot;,
+        &quot;CH02-P11&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_chain&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.colip_chain_positive&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Chains.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_colip_chain&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;同样使用实际前缀像域；正长度版本从第零步的证书取得起始域非空性。&quot;,
+        &quot;parameters&quot;: &quot;0&lt;n、U⊆dom(c_n)，每个 m:Fin n 给定实际输入域上的 co-Lip 证书。&quot;,
+        &quot;quantifiers&quot;: &quot;任意正长度和所有单步证书；不预设全链证书。&quot;,
+        &quot;conclusion&quot;: &quot;归纳得有序连乘为全复合的 co-Lip 证书，并保留起始域非空性。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P08&quot;,
+        &quot;CH02-P12&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_zero_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.product_zero_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.finite_product_zero_vertices_iff&quot;
+        },
+        {
+          &quot;file&quot;: &quot;Paths.lean&quot;,
+          &quot;name&quot;: &quot;LCH02.one_step_zero&quot;
+        }
+      ],
+      &quot;representation&quot;: {
+        &quot;objects&quot;: &quot;最终版本直接量化所有 v:Fin(n+1)→I，并固定 v0=i、vn=j。&quot;,
+        &quot;parameters&quot;: &quot;任意有限 ENNReal 矩阵序列 M:Fin n→Mat I。&quot;,
+        &quot;quantifiers&quot;: &quot;每条固定端点路径都存在 m:Fin n，使该边条目为零；适用所有 n≥1，并额外覆盖 n=0。&quot;,
+        &quot;conclusion&quot;: &quot;有序乘积条目=0 当且仅当每条路径含零因子；one_step_zero 验证 n=1。证明使用 P14 与全正的有限逻辑补集。&quot;
+      },
+      &quot;dependencies&quot;: [
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;,
+        &quot;CH02-P14&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/LCH02/A1/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/responses/LCH02/A1/answer.md">answer · answer.md</a><span class="hash">SHA256 7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/reviews/LCH02.json">source_review · LCH02.json</a><span class="hash">SHA256 054a3cc30ac26efe88d88c06933f419068e1ef9011619e81a690de63353a304c</span></li><li><a href="../../../../results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 3, "families": 4, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 13, "tasks": 38, "parent_families": 34, "initial_slots": 38, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.4.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 3, "families": 4, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "dot-underlying-model-20261108", "label": "Dot Underlying Model（2026-11-08）"}, "case": {"id": "LCH02", "title": "有限复合与路径节群", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "LCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}, "nonlogical_retry_3": {"case_id": "LCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}}, "partial": {"single_attempt": {"case_id": "LCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}, "nonlogical_retry_3": {"case_id": "LCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}}, "strict": {"single_attempt": {"case_id": "LCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}, "nonlogical_retry_3": {"case_id": "LCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "7469a5feaf610e78c8b396dcb8fe157b58ba7b29f1a1449ccc065202d186ff9f", "review_sha256": "609b11cc6545bf6d4e060625dc52be56565691c592dd6c50262b444309c43913"}}}}}</script><script src="../../../assets/results-core.js?v=4bbc26d46c11"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

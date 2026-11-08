@@ -8,7 +8,7 @@ window.MG = (() => {
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const result=(m,c=state.condition,mode=state.score)=>mode==='partial'?(c==='single_attempt'?m.combined:m.retry.combined):m[mode][c];
  const headline=r=>r.metrics.earned.confirmed??r.metrics.earned.exact;
- const short=m=>m.id.startsWith('terra')?'Terra':m.id.startsWith('deepseek')?'DeepSeek':'Gemini';
+ const short=m=>m.short_label||(m.id.startsWith('terra')?'Terra':m.id.startsWith('deepseek')?'DeepSeek':m.id.startsWith('gemini')?'Gemini':m.label);
  const conditionLabel=()=> '规则允许的最终成绩';
  function table(id,headers,rows){const t=el(id);t.replaceChildren();const h=t.createTHead().insertRow();headers.forEach(s=>{const c=node('th',s);c.scope='col';h.append(c)});const b=t.createTBody();rows.forEach(v=>{const r=b.insertRow();v.forEach(s=>{const c=r.insertCell();if(s instanceof Node)c.append(s);else c.textContent=s;if(typeof s==='string'&&s.startsWith('-'))c.className='negative'})});return t}
  function points(m,id,weight){
