@@ -75,7 +75,11 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data["benchmark_version"], "0.6.0")
         self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v6")
         self.assertEqual(self.data["publication_scope"], "combined")
-        self.assertEqual(len(self.data["models"]), 4)
+        from math_gauge.records import selected_cli_records
+        selected = {model for model, folder in selected_cli_records(ROOT)}
+        displayed = {model['id'] for model in self.data['models']
+                     if model.get('record_kind') != 'native_harness'}
+        self.assertEqual(displayed, selected)
         for model in self.data["models"]:
             path = ROOT / Path(model["source_record"]).parent
             original = json.loads((path / "combined-aggregate.json").read_bytes())
@@ -245,7 +249,9 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertTrue(harness['local_tools_allowed'])
             self.assertFalse(harness['tool_network_access'])
             if harness['version'] is not None:
-                self.assertEqual(harness['version_scope'], 'MG-MCP003')
+                self.assertTrue(harness['version_scope'])
+                self.assertEqual(harness['version_scope'],
+                    json.loads((ROOT / 'site/harnesses.json').read_bytes())['models'][model['id']]['version_scope'])
             else:
                 self.assertTrue(model['id'].startswith('deepseek') or model.get('record_kind')=='native_harness')
 
@@ -263,7 +269,7 @@ class CurrentSiteTests(unittest.TestCase):
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
-                    self.assertEqual(model["retry"][scope]["retry_summary"]["slots_with_reruns"], 0)
+                    self.assertEqual(model["retry"][scope].get("retry_summary", {}).get("slots_with_reruns", 0), 0)
 
 
 
@@ -273,12 +279,14 @@ class CurrentSiteTests(unittest.TestCase):
             for condition, result in model["strict"].items():
                 self.assertEqual(result["primary_metric"], "earned")
                 folder = ROOT / Path(model["source_record"]).parent
-                filename = ("strict-combined-aggregate.json" if condition == "single_attempt"
-                            else "strict-retry-combined-aggregate.json")
+                record = json.loads((ROOT / model['source_record']).read_bytes())
+                filename = record['strict_results'][condition]['path']
                 self.assertEqual(result, json.loads((folder / filename).read_bytes()))
                 self.assertEqual(result["attempt_condition"], condition)
                 self.assertEqual(result["coverage"], model["combined"]["coverage"])
-                self.assertEqual(result["strict_alignment_selfcheck"]["strict_pass"], model.get("record_kind")=="native_harness")
+                verdict = result['strict_alignment_selfcheck']['strict_pass']
+                self.assertEqual(result['metrics']['lean-selfcheck']['exact'],
+                                 None if verdict is None else 100 if verdict else 0)
                 self.assertEqual(result["metrics"]["overall"]["exact"], result["metrics"]["earned"]["exact"])
                 self.assertNotIn("tasks", result)
         chart = ChartBars(SITE.render(self.data), "strict")
@@ -293,8 +301,9 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data["score_mode_catalog"]["primary"], "partial")
         for model in self.data["models"]:
             folder = ROOT / Path(model["source_record"]).parent
-            for condition, filename in [("single_attempt", "capability-combined-aggregate.json"),
-                                        ("nonlogical_retry_3", "capability-retry-combined-aggregate.json")]:
+            record = json.loads((ROOT / model['source_record']).read_bytes())
+            for condition, item in record['capability_results'].items():
+                filename = item['path']
                 current = model["capability"][condition]
                 self.assertEqual(current, json.loads((folder / filename).read_bytes()))
                 reliable = model["combined"] if condition == "single_attempt" else model["retry"]["combined"]
@@ -323,8 +332,11 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertIsNone(task['completion']['exact'])
                 self.assertFalse(any(s['role'] == 'answer' for s in evidence['sources']))
             else:
-                self.assertEqual(evidence['review']['answer_sha256'], task['response_sha256'])
-                self.assertEqual(len(evidence['review']['criteria']), 6)
+                review = evidence['review']
+                response_hash = (review.get('answer_sha256') or
+                                 review.get('binding', {}).get('response_sha256'))
+                self.assertEqual(response_hash, task['response_sha256'])
+                self.assertEqual(len(review.get('criteria', review.get('dimensions', []))), 6)
                 self.assertIn('M4', review_markdown(evidence['review']))
 
 

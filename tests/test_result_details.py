@@ -58,11 +58,14 @@ class ResultDetailsTests(unittest.TestCase):
 
     def test_markdown_math_are_readable_without_script_or_image_requests(self):
         renderer=EvidenceRenderer()
-        token=renderer.add('Test $x^2$ and \\(a+b\\). $\\begin{psmallmatrix}1&2\\\\2&1\\end{psmallmatrix}$\n\n<script>alert(1)</script>\n\n![remote](https://example.com/pixel)\n\n[bad](javascript:alert(1))')
+        token=renderer.add('Test $x^2$ and \\(a+b\\). $\\begin{psmallmatrix}1&2\\\\2&1\\end{psmallmatrix}$\n\n<script>alert(1)</script>\n\n![remote](https://example.com/pixel)\n\n[bad](javascript:alert(1))\n\n[Local theorem](/private/tmp/native-run/work/Main.lean:12)\n\n[External reference](https://example.com/theorem)')
         page=renderer.finish({'test':token})['test']
         self.assertIn('<math ',page);self.assertIn('<msup>',page)
         self.assertNotIn('<script>',page);self.assertNotIn('<img ',page);self.assertNotIn('href="javascript:',page)
         self.assertNotIn('katex-error',page)
+        self.assertIn('Local theorem', page)
+        self.assertNotIn('href="/private/tmp/', page)
+        self.assertIn('href="https://example.com/theorem"', page)
 
     def test_unrun_replacement_keeps_null_without_retired_score(self):
         page=self.pages['models/deepseek-v4.1-flash-1017/cases/MG-PS001.html']

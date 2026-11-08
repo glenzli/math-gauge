@@ -14,6 +14,40 @@ SCHEMA = "math-gauge.result-record/v1"
 ASSESSMENTS = {"complete", "incomplete", "uncertain", "not_stated", "not_requested", "unresolved"}
 
 
+def selected_cli_records(root):
+    """Resolve user-selected CLI archives without guessing the newest result.
+
+    Older editions had one retained record per selected model. An explicit
+    record-id mapping can select among several user-retained snapshots.
+    Native observations keep their separate record contract and loader.
+    """
+    root = Path(root).resolve()
+    edition = json.loads((root / "benchmark.json").read_bytes())
+    selected = edition["selected_result_models"]
+    record_ids = edition.get("selected_result_record_ids", {})
+    if len(selected) != len(set(selected)):
+        raise ValueError("Selected result models must not repeat")
+    result = []
+    for model in selected:
+        if (not isinstance(model, str) or not re.fullmatch(r"[a-z0-9][a-z0-9._-]*", model)):
+            raise ValueError("Selected result model must be a safe model id")
+        parent = root / "results" / ("v" + edition["version"]) / model
+        record_id = record_ids.get(model)
+        if record_id is not None:
+            if not isinstance(record_id, str) or not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9._-]*", record_id):
+                raise ValueError("Selected result record must be a safe record id")
+            candidates = [parent / record_id / "record.json"]
+        else:
+            candidates = sorted(parent.glob("*/record.json"))
+        if len(candidates) != 1 or not candidates[0].is_file():
+            raise ValueError("Select exactly one retained result record for " + model)
+        path = candidates[0].resolve()
+        if not path.is_relative_to(root):
+            raise ValueError("Selected result record cannot leave the public repository")
+        result.append((model, path.parent))
+    return result
+
+
 def project_metrics(metrics):
     """Publish numeric aggregates and anonymous coverage, never slot diagnostics."""
     fields = ("exact", "lower", "upper", "complete", "coverage", "confirmed")
@@ -209,6 +243,52 @@ def _validate_research_tool_evidence(root, row, execution, policy):
         raise ValueError("Research answer used a tool outside the bound local capabilities")
 
 
+def _native_research_completed(root, row, execution):
+    """Admit an exact first native SUCCESS while preserving failed CLI cleanup.
+
+    This narrow source adapter is not provider authentication. The legacy
+    completed/exit0 path stays unchanged; readable ERROR and DONE never qualify.
+    """
+    if execution.get("status") == "completed" and execution.get("exit_code") == 0:
+        return True
+    item = row.get("native_delivery_receipt")
+    if item is None:
+        return False
+    data = json.loads(evidence_bytes(root, item))
+    plan = json.loads(evidence_bytes(root, row["execution_plan"]))
+    answer = evidence_bytes(root, row["response"])
+    events = [json.loads(line) for line in evidence_bytes(root, data["native_events"]).splitlines()]
+    terminal = json.loads(evidence_bytes(root, data["native_terminal_event"]))
+    seal = json.loads(evidence_bytes(root, data["native_terminal_seal"]))
+    qualification = json.loads(evidence_bytes(root, data["collection_qualification"]))
+    native = [event for event in events if event.get("event") == "result"]
+    answer_hash = hashlib.sha256(answer).hexdigest()
+    if (data.get("schema") != "math-gauge.native-success-cleanup-admission/v1"
+            or data.get("post_observation") is not True or data.get("source_raw_bytes_rewritten") is not False
+            or data.get("native_execution") != row.get("execution")
+            or data.get("candidate_input") != row.get("original_input")
+            or data.get("answer_sha256") != answer_hash
+            or plan.get("client") != "agy" or execution.get("status") != "failed"
+            or execution.get("exit_code") != -9 or execution.get("kind") != "math"
+            or execution.get("request_count") != 1 or execution.get("tool_mismatch") is not None
+            or (execution.get("failure") or {}).get("message") != "CLI failed or violated tools policy"
+            or len(native) != 1 or native[0] != terminal or terminal.get("event") != "result"
+            or terminal.get("result", {}).get("status") != "SUCCESS"
+            or terminal.get("result", {}).get("response", "").encode("utf-8") != answer
+            or seal.get("native_status") != "SUCCESS" or seal.get("normal_complete_delivery") is not True
+            or seal.get("answer_sha256") != answer_hash
+            or seal.get("raw_terminal_sha256") != data["native_terminal_event"].get("sha256")
+            or qualification.get("collection_status") != "qualified"
+            or qualification.get("answer_sha256") != answer_hash
+            or any(qualification.get("checks", {}).get(key) is not True for key in
+                   ("native_success", "first_native_terminal_exact", "native_final_text_exact_utf8",
+                    "input_matches_frozen_candidate_message"))
+            or execution.get("artifact_hashes", {}).get("input/task.md") != row["original_input"].get("sha256")
+            or execution.get("artifact_hashes", {}).get("output/events.ndjson") != data["native_events"].get("sha256")):
+        raise ValueError("Native research admission lacks its exact first SUCCESS and original cleanup evidence")
+    return True
+
+
 def load_theorem_extension_inputs(root, record, *, policy=None):
     """Bind adopted A1 judgments to original final text and native evidence."""
     if record.get("theorem_extension_inputs") is None:
@@ -236,8 +316,8 @@ def load_theorem_extension_inputs(root, record, *, policy=None):
                 or review.get("R") != row["research_R"]
                 or review.get("answer_sha256") != hashlib.sha256(raw).hexdigest()
                 or row.get("invited_answer_used") is not False
-                or execution.get("kind") != "math" or execution.get("status") != "completed"
-                or execution.get("exit_code") != 0 or execution.get("request_count") != 1
+                or execution.get("kind") != "math" or not _native_research_completed(root, row, execution)
+                or execution.get("request_count") != 1
                 or execution.get("tool_mismatch") is not None):
             raise ValueError("Research score differs from its original A1 review or execution")
         _validate_research_tool_evidence(root, row, execution, selected_policy)
@@ -318,8 +398,8 @@ def load_background_check_inputs(root, record, *, policy=None):
             or source.get('answer',{}).get('sha256')!=hashlib.sha256(raw).hexdigest()
             or review.get('complete')!=source.get('all_substantive_requirements_verified')
             or review.get('false_endorsement')!=source.get('target_failure')
-            or execution.get('status')!='completed' or execution.get('kind')!='math'
-            or execution.get('request_count')!=1 or execution.get('exit_code')!=0
+            or not _native_research_completed(root,row,execution) or execution.get('kind')!='math'
+            or execution.get('request_count')!=1
             or execution.get('tool_mismatch') is not None
             or hashlib.sha256(task).hexdigest()!=cases[row['case_id']]['task_sha256']
             or row.get('source_prompt_sha256')!=cases[row['case_id']]['task_sha256']):
@@ -1013,6 +1093,197 @@ def load_claim_review(root, record, condition, *, public_root=None):
     return data
 
 
+def validate_native_delivery_failure(root, row):
+    """Verify operational zero from an original first native ERROR, not math text."""
+    source = row.get("source", {})
+    data = json.loads(evidence_bytes(root, row["delivery_failure"]))
+    execution = json.loads(evidence_bytes(root, data["native_execution"]))
+    events = [json.loads(line) for line in evidence_bytes(root, data["native_events"]).splitlines()]
+    terminal = json.loads(evidence_bytes(root, data["native_terminal_event"]))
+    seal = json.loads(evidence_bytes(root, data["native_terminal_seal"]))
+    original = json.loads(evidence_bytes(root, source["slot_record"]))
+    candidate = evidence_bytes(root, source["candidate_input"])
+    transport = evidence_bytes(root, data["native_request"])
+    user_events = [json.loads(line) for line in transport.splitlines()]
+    plan = json.loads(evidence_bytes(root, data["native_plan"]))
+    native = [event for event in events if event.get("event") == "result"]
+    if (data.get("schema") != "math-gauge.native-delivery-failure-adjudication/v1"
+            or data.get("case_id") != row.get("case_id") or data.get("slot_id") != row.get("id")
+            or data.get("post_observation") is not True or data.get("outcome") != "delivery_failed"
+            or data.get("mathematical_judgment") != "not_adjudicated"
+            or data.get("additional_mathematical_penalty") != 0
+            or data.get("source_raw_bytes_rewritten") is not False
+            or row.get("response") is not None or row.get("review") is not None
+            or data.get("candidate_input") != source.get("candidate_input")
+            or data.get("slot_record") != source.get("slot_record")
+            or original.get("slot_id") != row.get("id") or original.get("case_id") != row.get("case_id")
+            or original.get("started") is not True or original.get("status") != "execution_error"
+            or original.get("response_sha256") is not None or original.get("locked_attempt") is not None
+            or execution.get("kind") != "math" or execution.get("request_count") != 1
+            or execution.get("stdin_bytes_written") != len(transport) or execution.get("stdin_write_calls") != 1
+            or plan.get("client") != "agy" or plan.get("stdin_sha256") != hashlib.sha256(transport).hexdigest()
+            or plan.get("prompt_sha256") != hashlib.sha256(candidate).hexdigest()
+            or len(user_events) != 1 or user_events[0].get("event") != "user"
+            or user_events[0].get("message", {}).get("content") != candidate.decode("utf-8")
+            or execution.get("artifact_hashes", {}).get("input/task.md") != hashlib.sha256(candidate).hexdigest()
+            or execution.get("artifact_hashes", {}).get("output/events.ndjson") != data["native_events"].get("sha256")
+            or len(native) != 1 or native[0] != terminal or terminal.get("result", {}).get("status") != "ERROR"
+            or seal.get("native_status") != "ERROR" or seal.get("normal_complete_delivery") is not False
+            or seal.get("raw_terminal_sha256") != data["native_terminal_event"].get("sha256")
+            or row.get("evaluation", {}).get("completion") != {"lower": 0, "upper": 0, "exact": 0}
+            or row.get("evaluation", {}).get("strict_pass") is not False):
+        raise ValueError("Operational delivery failure lacks its source-bound first native ERROR")
+    for item in data.get("retained_failed_physical_requests", []):
+        evidence_bytes(root, item)
+    return data
+
+
+def validate_current_written_reviews(root, record, *, policy, external=False):
+    """Verify direct current-plan written A1 sources, without legacy supplements.
+
+    Reuse the retained scoring input and each record's source/review descriptors.
+    This is a byte/criterion check, not a new mathematical review or execution
+    certificate. Legacy plans must keep their original supplemental contracts.
+    """
+    from .benchmarks import identity, validate_plan
+    from .catalog import assessment_weights, candidate_message, validate_group_contract
+    from .reliability_review import _validate_entry
+    from .reliability import compose_material
+
+    root = Path(root).resolve()
+    items = [item for item in record.get("evidence", []) if item.get("path") == "scoring-inputs.json"]
+    if len(items) != 1:
+        raise ValueError("Direct current written reviews need retained scoring-input bytes")
+    inputs = json.loads(evidence_bytes(root, items[0]))
+    plan = validate_plan(inputs["plan"])
+    data = plan["profile"]["data"]
+    if data.get("schema") != "math-gauge.benchmark-profile/v6":
+        raise ValueError("Legacy written evidence still requires its source-bound supplements")
+    if (plan.get("runtime_frozen") is not True
+            or inputs.get("model_label") != plan.get("model_label")
+            or identity(data.get("assessment_policy")) != identity(policy)):
+        raise ValueError("Direct written sources bind a different current plan or policy")
+    cases = {case["case_id"]: case for case in plan["case_index"]
+             if case["component"] in {"proofs", "exploration"}}
+    child = next(child for child in policy["subcategories"] if child["id"] == "written-argument")
+    private = {cid for cid, case in cases.items() if case.get("source_visibility") == "private"}
+    if (len(cases) != child["public_tasks"] + (child["private_tasks"] if external else 0)
+            or len(private) != (child["private_tasks"] if external else 0)):
+        raise ValueError("Direct written sources must cover every current written A1 in their archive")
+    slots = {row["slot_id"]: row for row in inputs["slots"]}
+    rows = {row["id"]: row for row in record["records"]}
+    for cid, case in cases.items():
+        sid = cid + ":A1"
+        row, scored = rows.get(sid), slots.get(sid)
+        if (row is None or scored is None or row.get("case_id") != cid
+                or scored.get("case_id") != cid or row.get("kind") != "independent"
+                or row.get("parent_id") is not None):
+            raise ValueError("Direct written sources need their own independent A1 record")
+        source = row.get("source", {})
+        # Both private compositions and public projections have a scoring index.
+        # The original group import/review plan is a separate byte-bound identity.
+        source_plan = source.get("scoring_plan_sha256", source.get("execution_plan_sha256"))
+        if source_plan != plan["plan_sha256"]:
+            raise ValueError("Direct written record belongs to a different source plan")
+        original_plan = plan
+        import_descriptor = source.get("standard_import_plan")
+        if import_descriptor is not None:
+            if not isinstance(import_descriptor, dict):
+                raise ValueError("Direct written import plan needs a retained descriptor")
+            original_plan = validate_plan(json.loads(evidence_bytes(root, import_descriptor)))
+        elif source.get("execution_plan_sha256") != plan["plan_sha256"]:
+            raise ValueError("Composed written sources need their original import plan bytes")
+        original_case = next((item for item in original_plan["case_index"]
+                              if item["case_id"] == cid), None)
+        original_slot = next((item for item in original_plan["slots"]
+                              if item["slot_id"] == sid), None)
+        compared = ("version", "track", "task_kind", "contract_kind", "component",
+                    "request_sha256", "candidate_message_sha256", "group_contract_sha256",
+                    "family_id", "parent_family_id", "assessment_unit", "stages", "criteria",
+                    "dimensions", "total_weight")
+        if (original_plan["plan_sha256"] != source.get("execution_plan_sha256")
+                or original_plan.get("runtime_frozen") is not True
+                or original_plan.get("model_label") != plan.get("model_label")
+                or identity(original_plan["profile"]["data"].get("assessment_policy")) != identity(policy)
+                or original_case is None or any(original_case.get(key) != case.get(key) for key in compared)
+                or original_slot is None or original_slot.get("selected") is not True
+                or original_slot.get("case_id") != cid or original_slot.get("kind") != "independent"
+                or original_slot.get("attempt_label") != "A1" or original_slot.get("parent_slot") is not None):
+            raise ValueError("Direct written import plan changes its source case or A1 contract")
+        if any(not isinstance(source.get(key), dict) for key in (
+                "candidate_request", "candidate_input", "case_contract")):
+            raise ValueError("Direct written records need original task and contract descriptors")
+        request = json.loads(evidence_bytes(root, source["candidate_request"]))
+        message = evidence_bytes(root, source["candidate_input"])
+        contract_raw = evidence_bytes(root, source["case_contract"])
+        contract = validate_group_contract(json.loads(contract_raw))
+        if (request.get("case_id") != cid or request.get("case_version") != case["version"]
+                or hashlib.sha256(json.dumps(request, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+                   != case["request_sha256"]
+                or message != candidate_message(request).encode()
+                or hashlib.sha256(message).hexdigest() != case["candidate_message_sha256"]
+                or hashlib.sha256(contract_raw).hexdigest() != case["group_contract_sha256"]
+                or contract.get("id") != cid or contract.get("kind") != case["contract_kind"]
+                or any(case.get(key) != value for key, value in assessment_weights(contract).items())):
+            raise ValueError("Direct written task text or criterion contract differs from its frozen plan")
+        if row.get("response") is None:
+            if row.get("delivery_failure") is not None:
+                validate_native_delivery_failure(root, row)
+                if (scored.get("response_sha256") is not None or scored.get("review_sha256") is not None
+                        or scored.get("strict_pass") is not False
+                        or scored.get("completion") != {"lower": 0, "upper": 0, "exact": 0}):
+                    raise ValueError("Known written delivery failure must retain operational zero")
+                continue
+            if (scored.get("response_sha256") is not None or row.get("review") is not None
+                    or scored.get("review_sha256") is not None
+                    or scored.get("strict_pass") is not None
+                    or scored.get("completion") != {"lower": 0, "upper": 1, "exact": None}
+                    or not row.get("missing_response_reason")):
+                raise ValueError("Unreviewed direct written evidence must stay unknown")
+            continue
+        raw = evidence_bytes(root, row["response"])
+        answer_hash = hashlib.sha256(raw).hexdigest()
+        if not isinstance(row.get("review"), dict) or not isinstance(source.get("slot_record"), dict):
+            raise ValueError("Direct written answers need their original criterion review")
+        review = json.loads(evidence_bytes(root, row["review"]))
+        original_slot = json.loads(evidence_bytes(root, source["slot_record"]))
+        review_hash = identity({key: value for key, value in review.items() if key != "review_sha256"})
+        binding = review.get("binding", {})
+        if (review.get("schema") != "math-gauge.reliability-review/v1"
+                or review.get("reviewer_kind") != "ai" or review.get("case_id") != cid
+                or review.get("slot_id") != sid or review.get("review_sha256") != review_hash
+                or scored.get("review_sha256") != review_hash or review.get("binding") != scored.get("binding")
+                or binding.get("plan_sha256") != source.get("execution_plan_sha256")
+                or binding.get("slot_id") != sid or binding.get("parent_slot") is not None
+                or binding.get("response_sha256") != answer_hash
+                or binding.get("request_sha256") != case["request_sha256"]
+                or binding.get("group_contract_sha256") != case["group_contract_sha256"]
+                or scored.get("response_sha256") != answer_hash
+                or source.get("response_sha256") != answer_hash
+                or scored.get("slot_record_sha256") != source["slot_record"]["sha256"]
+                or original_slot.get("case_id") != cid or original_slot.get("slot_id") != sid
+                or original_slot.get("response_sha256") != answer_hash):
+            raise ValueError("Direct written review is not bound to this original A1 answer")
+        # Only the archive-relative response path is relocated for this read-only
+        # replay; the retained source-slot bytes and their hash remain unchanged.
+        parsed_material = compose_material(next(item for item in original_plan["slots"]
+                                               if item["slot_id"] == sid), raw)[0]
+        if (original_slot.get("material_sha256") != parsed_material["material_sha256"]
+                or original_slot.get("material", parsed_material) != parsed_material):
+            raise ValueError("Direct written original material differs from the bound A1 bytes")
+        replay_slot = dict(original_slot, response_path=row["response"]["path"], material=parsed_material)
+        meta = {"plan": original_plan, "plan_sha256": source["execution_plan_sha256"],
+                "inputs": {cid: {"request": source["candidate_request"]["path"],
+                                 "contract": source["case_contract"]["path"]}}}
+        result = _validate_entry(root, meta, {sid: replay_slot}, review)
+        if (any(result.get(key) != scored.get(key) for key in (
+                    "group_diagnostic", "completion", "strict_pass", "whole_math", "whole_strict", "focus_math"))
+                or row.get("evaluation", {}).get("completion") != scored.get("completion")
+                or row.get("evaluation", {}).get("strict_pass") != scored.get("strict_pass")):
+            raise ValueError("Direct written credit differs from the original criterion review")
+    return set(cases)
+
+
 def load_assessment_results(root, record, *, mode="partial", public_root=None):
     """Check current score-view bytes and policy/source identities in either archive."""
     if record.get("assessment_policy") is None:
@@ -1027,13 +1298,21 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     assessment_raw = evidence_bytes(evidence_root, record["assessment_policy"])
     strict_raw = evidence_bytes(evidence_root, record["strict_scoring_policy"])
     assessment = validate_assessment_policy(json.loads(assessment_raw))
+    direct_written = set()
+    needs_direct = (external and assessment.get("written_argument_additions") is not None
+                    and record.get("written_argument_inputs") is None
+                    or assessment.get("written_argument_replacements") is not None
+                    and record.get("written_replacement_inputs" if external else "written_replacement_evidence") is None)
+    if needs_direct:
+        direct_written = validate_current_written_reviews(root, record, policy=assessment, external=external)
     if assessment.get("written_argument_additions") is not None:
         key = "written_argument_inputs" if external else "written_argument_evidence"
-        if record.get(key) is None:
+        if record.get(key) is None and not (external and direct_written):
             raise ValueError("Current written additions require their retained source evidence")
     if assessment.get("written_argument_replacements") is not None:
         key = "written_replacement_inputs" if external else "written_replacement_evidence"
-        if record.get(key) is None:
+        required = {pair["case_id"] for pair in assessment["written_argument_replacements"]["replacements"]}
+        if record.get(key) is None and not required <= direct_written:
             raise ValueError("Current written replacement requires source-bound evidence")
     if assessment.get("manuscript_completion") is not None:
         key = "manuscript_completion_inputs" if external else "manuscript_completion_evidence"
@@ -1099,6 +1378,8 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             expected = {"scoring_inputs_sha256": root / filename,
                         "source_math_policy_sha256": root / "scoring-policy.json",
                         "alignment_review_sha256": alignment}
+            if direct_written:
+                expected["current_written_scoring_inputs_sha256"] = root / "scoring-inputs.json"
             if record.get("theorem_extension_inputs") is not None:
                 research = load_theorem_extension_inputs(root, record, policy=assessment.get("theorem_extension"))
                 expected["theorem_extension_inputs_sha256"] = root / record["theorem_extension_inputs"]["path"]
@@ -1121,7 +1402,8 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if score != project_assessment_score(score):
                 raise ValueError("Current public score must contain only projected aggregates")
             written = validate_public_written_additions(root, record)
-            if (written is not None and bindings.get("written_argument_inputs_sha256")
+            if (written is not None and bindings.get("current_written_scoring_inputs_sha256",
+                                                    bindings.get("written_argument_inputs_sha256"))
                     != written["source_inputs_sha256"]):
                 raise ValueError("Public written aggregate binds a different private input source")
             replacement = validate_public_written_replacements(root, record)
@@ -1262,6 +1544,36 @@ def validate_formalization_review(root, inputs, review):
         contract = evidence_bytes(root, case["case_contract"])
         if hashlib.sha256(contract).hexdigest() != frozen_cases[case["case_id"]]["group_contract_sha256"]:
             raise ValueError("Engineering evidence binds a different mathematical contract")
+        if case.get("source_kind") == "not_available":
+            evidence = json.loads(evidence_bytes(root, case["unavailable_evidence"]))
+            rows = {item["slot_id"]: item for item in inputs["slots"]}
+            original = rows[case["slot_id"]]
+            source_slot = json.loads(evidence_bytes(root, case["source_slot_record"]))
+            failed = case.get("delivery_status") == "delivery_failed"
+            if (evidence.get("schema") != "math-gauge.unavailable-engineering-evidence/v1"
+                    or evidence.get("case_id") != case["case_id"]
+                    or evidence.get("slot_id") != case["slot_id"]
+                    or evidence.get("delivery_status") != case.get("delivery_status")
+                    or evidence.get("slot_record_sha256") != original.get("slot_record_sha256")
+                    or case["source_slot_record"].get("sha256") != original.get("slot_record_sha256")
+                    or source_slot.get("case_id") != case["case_id"]
+                    or source_slot.get("slot_id") != case["slot_id"]
+                    or source_slot.get("started") is not failed
+                    or source_slot.get("status") != ("execution_error" if failed else "not_run")
+                    or source_slot.get("response_sha256") is not None or source_slot.get("locked_attempt") is not None
+                    or (not failed and source_slot.get("attempts") != [])
+                    or (failed and not source_slot.get("attempts"))
+                    or evidence.get("original_response_sha256") is not None
+                    or evidence.get("mathematical_judgment") != "not_adjudicated"
+                    or case.get("source_manifest") is not None or case.get("kernel_report") is not None
+                    or case.get("source_files") != {}):
+                raise ValueError("Unavailable engineering evidence lost its original slot disposition")
+            if failed:
+                digest = evidence.get("native_failure_adjudication_sha256")
+                if (not isinstance(digest, str) or len(digest) != 64
+                        or any(char not in "0123456789abcdef" for char in digest)):
+                    raise ValueError("Missing engineering delivery failure needs its private native ERROR adjudication")
+            continue
         if set(case.get("background_inputs", {})) != set(json.loads(contract)["immutable_input_files"]):
             raise ValueError("Engineering background inventory differs from the frozen contract")
         manifest = json.loads(evidence_bytes(root, case["source_manifest"]))
@@ -1311,6 +1623,31 @@ def validate_formalization_review(root, inputs, review):
         for item in case.get("review_evidence", []):
             evidence_bytes(root, item)
     return {"cases": len(review["cases"]), "passed": True}
+
+
+def validate_unavailable_engineering_native_bindings(root, record, review, *, engineering_root):
+    """Cross-bind public absence projections to private original slot/ERROR bytes."""
+    rows = {row["id"]: row for row in record["records"]}
+    for case in review["cases"]:
+        if case.get("source_kind") != "not_available":
+            continue
+        row = rows.get(case["slot_id"], {})
+        source = row.get("source", {})
+        original = json.loads(evidence_bytes(root, source["slot_record"]))
+        unavailable = json.loads(evidence_bytes(engineering_root, case["unavailable_evidence"]))
+        failed = case.get("delivery_status") == "delivery_failed"
+        if (row.get("delivery_status") != case.get("delivery_status") or row.get("response") is not None
+                or source["slot_record"].get("sha256") != case["source_slot_record"].get("sha256")
+                or original.get("started") is not failed
+                or original.get("status") != ("execution_error" if failed else "not_run")
+                or original.get("response_sha256") is not None or original.get("locked_attempt") is not None):
+            raise ValueError("Unavailable engineering projection changed its private original slot")
+        if failed:
+            validate_native_delivery_failure(root, row)
+            if unavailable.get("native_failure_adjudication_sha256") != row["delivery_failure"]["sha256"]:
+                raise ValueError("Unavailable engineering projection binds another native ERROR adjudication")
+        elif row.get("delivery_failure") is not None or original.get("attempts") != []:
+            raise ValueError("Unrun engineering projection hid a native attempt")
 
 
 def load_content_rates(root, record=None):
@@ -1377,6 +1714,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
         elif not row.get("missing_response_reason"):
             raise ValueError("Missing raw response needs an explicit reason")
         validate_self_assessment(root, row["self_assessment"])
+        if row.get("delivery_failure") is not None:
+            validate_native_delivery_failure(root, row)
         for item in row.get("artifacts", []):
             evidence_bytes(root, item)
         evaluation = row.get("evaluation", {})
@@ -1408,6 +1747,8 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
         review = json.loads(evidence_bytes(source_root, record["formalization_review"]))
         inputs = json.loads((root / "scoring-inputs.json").read_bytes())
         validate_formalization_review(source_root, inputs, review)
+        if location == "public_archive":
+            validate_unavailable_engineering_native_bindings(root, record, review, engineering_root=source_root)
         policy_raw = (root / "scoring-policy.json").read_bytes()
         policy = json.loads(policy_raw)
         alignment_path = root / "reviews/alignment.json"

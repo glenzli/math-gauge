@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR01:A1",
+  "case_id": "AHR01",
+  "binding": {
+    "plan_sha256": "7c127b55014295fb74fecc29ea3760a91e7bc915e05f27ff43a888a2fb64e996",
+    "slot_id": "AHR01:A1",
+    "evidence_id": "97f9261913de4bf4a9aa84447cf325defc284c08ef13144992372945f658b30f",
+    "response_sha256": "f40c8fb515643ef039bc4eff1a46719846eb743b28e2d616351fd7634da89ca6",
+    "history_sha256": "1f254451bb1edbd945d99ae04179b4660d6d6c4042f6e1af45eabc68242bec30",
+    "projected_request_sha256": "61fffe0f0ca666e1d3c4e863420bf7f990b3367be45c63d1ef495707742d7a0f",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "9213f83572dc5500517fb0b54df247bc9411b4296d1e365c497a44304a651131",
+    "body_origin": {
+      "slot_id": "AHR01:A1",
+      "response_sha256": "f40c8fb515643ef039bc4eff1a46719846eb743b28e2d616351fd7634da89ca6",
+      "start_byte": 0,
+      "end_byte": 6328
+    },
+    "body_sha256": "f40c8fb515643ef039bc4eff1a46719846eb743b28e2d616351fd7634da89ca6",
+    "rationale_sha256": null,
+    "request_sha256": "1f4237277cd4002f5ec872b58db5fd60e2843cacc0d72b3a3262d85532a41589",
+    "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+  },
+  "reviewer": "Codex AI reviewer /root/v060_gemini4_argon_run",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "按完整冻结题面、参考、判准和实际源码逐项审阅；此判断只针对候选审计答卷的正确与完整，不提升被审目标的真假范围或人工状态。",
+  "findings": [],
+  "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整书面语义审计已交付；本题不要求新增Lean，未把源码编译当语义证明。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "正确识别弱关系choice_projection只管实际发生输出，不能完整刻画正文的全局边域公式。它没有否认网络加细后的外延保持定理。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "保留NodePartitionData真实构造、局域限制算子、自环重着色、轨迹投影和network_extensional_eq，区分抽象关系过宽与具体构造已有有效证明。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "四点有限例满足非空分划、局域限制、所有保留节点可达和相同输入域。仅把从未实际求值的b处边从无到有，旧choice_projection仍成立，而正文源子像交集公式要求边域仅{a}；这是结构范围的有效反例，不是外延保持的反例。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "建议保留操作性关系，另补完整入口/保留边交集定义并证明实际构造到该精确关系的桥，正确区分删点前后终止域；不要求新增题外Lean或否认既有构造。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T16:56:10.111000+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "d52eb27c6bdfc8e1a210eb3e695e8f951998b94d026c0ed951dfcefb2745e081",
+  "public_projection": true,
+  "original_private_review_sha256": "4f4bbf0d58afb154ed1cd4cff6c99970294f856aa72dfcfedfb32c409946a553"
+}

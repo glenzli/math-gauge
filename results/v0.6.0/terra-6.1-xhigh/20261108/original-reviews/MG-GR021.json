@@ -1,0 +1,79 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-GR021:A1",
+  "case_id": "MG-GR021",
+  "binding": {
+    "plan_sha256": "f03727eed41fcf66dbfb9ba0afe4112a5d3792a0e85ef0b40a2a8e2d7b55aae5",
+    "slot_id": "MG-GR021:A1",
+    "evidence_id": "35f736b665cbcfdda9610544549c41e1d0442b54a80ce6ccf6955e5f54239919",
+    "response_sha256": "2c663994b703f89aa7999dadd0c19affe13857dceb8a2fac27a9d9816a3fa0f8",
+    "history_sha256": "d2be03d124e857b89b5a1563c7fbc0c057b67b24f815a39e490ac11152c613c3",
+    "projected_request_sha256": "f7ec5b00efbec497f1ec181e7badbde8a15c4db65c0e60e985ef126d39e59a5a",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "415a453ce61fc035cdaa5f572934720a89feec62df1d9d55f60c19cdc8973602",
+    "body_origin": {
+      "slot_id": "MG-GR021:A1",
+      "response_sha256": "2c663994b703f89aa7999dadd0c19affe13857dceb8a2fac27a9d9816a3fa0f8",
+      "start_byte": 0,
+      "end_byte": 6587
+    },
+    "body_sha256": "2c663994b703f89aa7999dadd0c19affe13857dceb8a2fac27a9d9816a3fa0f8",
+    "rationale_sha256": null,
+    "request_sha256": "680e454d2f9c28de21b5701b8d8b4bfb0139b1fd53dd28eba586fbfe5c40c13e",
+    "group_contract_sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "partial",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "原题3个完整目标仅最优下降G3交付；G1/G2部分正确但缺少指定一般计数/真实像/固定/纤维/塔。按冻结diagnostic-rubric逐check full/half/zero评，不将诚实未完成当错误承诺；不补造候选没有写的一般公式。",
+  "findings": [
+    "Missing general counts, actual-image membership test, fixed R classes and reduction/tower theory."
+  ],
+  "group_contract_sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整保留一次初答，允许诚实标记未完成；数学交付缺失独立判。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "feasibility_counts_liftability",
+      "score": 15,
+      "notes": "原始对称对易矩阵的Hensel谱投影、图Gram行列式mod8、三个域的必要性及基域Gram-Schmidt充分性完整（子check10）。C有限层空集和M2全部C计数完整，缺R全计数及M>=3 C基数，按该check半分5；任意有限类的真实像充要提升测试缺失0。"
+    },
+    {
+      "criterion_id": "fixed_classes_and_orbits",
+      "score": 12.5,
+      "notes": "只给M2的C具体参数T0 diag(I+2X)、全体固定、固定/轨道数4^s及基域2^s；这些结论正确，两个check分别是正确但不完整，按冻结逐check半分7.5和5。其余精度和真正R固定类、Q2(i)M2耦合未交，不能取整项完成。"
+    },
+    {
+      "criterion_id": "reduction_maps_and_fixed_lifts",
+      "score": 2.5,
+      "notes": "四种约化像/非空纤维完全未给，0。给定实际U保M当且仅当Y mod2^M为0，已覆盖真正R固定类能否有基域真提升这一部分；有限C全部固定类与无限相容塔未交，固定提升check按正确但不完整半分2.5。"
+    },
+    {
+      "criterion_id": "optimal_quantitative_descent",
+      "score": 20,
+      "notes": "所有块秩1精确下降、其余M-1及给定U保M的充要条件完整。X^TX=I-muY^TY上的二项正规化在M>=3满足收敛与精度，M2取既有T；统一Cayley例t=2^(M-2)(1+i)或2^(M-2)sqrt2在M2分母仍单位，theta非对角系数恰v2=M-1且对角theta系数>=M，因此为真实整解的锐性例，两个check均全分。"
+    },
+    {
+      "criterion_id": "assertion_reliability",
+      "score": 10,
+      "notes": "全文明确自报未完成一般计数/纤维/固定描述，没有独立错误的补充断言。O/2O基数4与剩余域F2有正确区别，未将未交内容冒称完成。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T16:38:39.862729+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "8bc4c6b9a7693b86bca5ced8f76d590dbc5deeaae549c8d64ccaa0e0a517b0f6",
+  "public_projection": true,
+  "original_private_review_sha256": "79dc97022b08955cc5accc314f0abab70abfd807c9621e07514e2078443d4b87"
+}

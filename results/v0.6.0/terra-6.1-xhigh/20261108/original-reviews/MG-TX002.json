@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-TX002:A1",
+  "case_id": "MG-TX002",
+  "binding": {
+    "plan_sha256": "f03727eed41fcf66dbfb9ba0afe4112a5d3792a0e85ef0b40a2a8e2d7b55aae5",
+    "slot_id": "MG-TX002:A1",
+    "evidence_id": "31d647d8d9c14bc0a9e7995366fa1c335781473c319cf203707965ae77882cf5",
+    "response_sha256": "90ef76ff1cff8a32d1a7ed30a99207bc99e5436e8622de048d47ce4e373223e1",
+    "history_sha256": "ddd4065a717ce14643b14a7eb89402891d13d5b04b33eea16f49aed4185d8116",
+    "projected_request_sha256": "740c9008a45ade60dc7824ad043115dd318ee64bff9635695b789c4a77199294",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "ac32360fff5bba5ae9a2100318dbb17ab548da03af82ba86d4230dd808c9da99",
+    "body_origin": {
+      "slot_id": "MG-TX002:A1",
+      "response_sha256": "90ef76ff1cff8a32d1a7ed30a99207bc99e5436e8622de048d47ce4e373223e1",
+      "start_byte": 0,
+      "end_byte": 1854
+    },
+    "body_sha256": "90ef76ff1cff8a32d1a7ed30a99207bc99e5436e8622de048d47ce4e373223e1",
+    "rationale_sha256": null,
+    "request_sha256": "daf7b605668163a17379603f65b75590588f0889d27572504140d02bfbbf1106",
+    "group_contract_sha256": "82cf04537aee2d5f4d626edf4f5c1c8b89ffb9adae3d40a5694e31fadfac6053"
+  },
+  "reviewer": "Codex independent source-based research reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "B2/R3。由下理想行长严格导出全部内部行/列占用移位与x1边界关系，再求轨道平均完成基线。该答案已给全反链的完整行列占用状态及统一封闭动力学；另一边界y1'=1-xa由答案已给的两边占用数相等直接消去，反向配对仅为按行递增/列递减的常规核实。按既有structural-equivalence0.1.0认定完整结构，不额外要求打印二进制词或轨道计数，亦不倒记未陈述周期/计数。未发现错误数学承诺。",
+  "findings": [],
+  "group_contract_sha256": "82cf04537aee2d5f4d626edf4f5c1c8b89ffb9adae3d40a5694e31fadfac6053",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整独立A1数学文本；未增加Lean义务。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "local-refinement",
+      "score": 1,
+      "notes": "给出每行/每列的轨道占用平均X/T=b/(a+b)、Y/T=a/(a+b)，并有逐步占用递推。"
+    },
+    {
+      "criterion_id": "substantive-extension",
+      "score": 1,
+      "notes": "已建立完整占用状态上的封闭移位动力学，属于更高层级的实质结构；不补记未陈述的周期或计数。"
+    },
+    {
+      "criterion_id": "complete-structure",
+      "score": 1,
+      "notes": "完整状态为(x1..xa,y1..yb)，反链由占用行递增、占用列递减唯一配对。原答逐步证明xi'=x(i-1)、x1'=1-yb及yj'=y(j-1)。用已述sum x=sum y立即得y1'=1-xa；这是固定解释明确允许的冗余边界消去。取w=(x,1-y)即循环右移，不需新增本质引理。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T16:38:39.864069+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "2c04f0efbf3c09301ad147c409de15ac67a7160e415afd0e032fe85006155f4f",
+  "public_projection": true,
+  "original_private_review_sha256": "429ebc22009c319e7d2d714148c49343569015783f37c46f017900627e1f4218"
+}

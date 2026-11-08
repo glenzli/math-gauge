@@ -1,0 +1,19 @@
+import Main
+#print axioms Channels.matrixMul
+#print axioms Channels.lipOn
+#print axioms Channels.lip
+#print axioms Channels.lipFamily
+#print axioms Channels.lipFamilyOn
+#print axioms Channels.coLipOn
+#print axioms Channels.coLipFamilyOn
+#print axioms Channels.Channel
+#print axioms Channels.singleInputRow
+#print axioms Channels.diagonal
+#print axioms Channels.diagonal_singleInputRow
+#print axioms Channels.row_sum
+#print axioms Channels.lip_single_channel
+#print axioms Channels.lip_diagonal_channel
+#print axioms Channels.coLip_term_le
+#print axioms Channels.positive_channel
+#print axioms Channels.reflects_gauge_zero
+#print axioms Channels.scalar_two_sided

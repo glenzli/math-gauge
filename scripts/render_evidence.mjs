@@ -4,6 +4,25 @@ const require = createRequire(import.meta.url);
 const MarkdownIt = require('./vendor/markdown-it.min.js');
 const katex = require('./vendor/katex.min.js');
 const md = new MarkdownIt({html: false, linkify: false, typographer: false});
+// Native answers can cite ephemeral local files. Preserve the citation label
+// and original target as text metadata, without publishing a broken site link.
+md.core.ruler.after('inline', 'local_source_citations', state => {
+  for (const block of state.tokens) {
+    const links = [];
+    for (const token of block.children || []) {
+      if (token.type === 'link_open') {
+        const href = token.attrGet('href') || '';
+        const local = /^\/(?:private|tmp|var|Users|home|workspace|workspaces|mnt)\//.test(href)
+          || /^[A-Za-z]:[\\/]/.test(href);
+        links.push(local);
+        if (local) {
+          token.tag = 'span';
+          token.attrs = [['class', 'local-source-citation'], ['title', href]];
+        }
+      } else if (token.type === 'link_close' && links.pop()) token.tag = 'span';
+    }
+  }
+});
 md.inline.ruler.before('escape', 'evidence_math', (state, silent) => {
   const start = state.pos, source = state.src;
   const opener = ['$$', '\\[', '\\(', '$'].find(s => source.startsWith(s, start));

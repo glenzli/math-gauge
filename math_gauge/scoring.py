@@ -1370,9 +1370,16 @@ def _alignment_snapshot(snapshot, ids, source_kind):
     if snapshot is None:
         return None
     if (not isinstance(snapshot, dict) or not isinstance(snapshot.get("source_id"), str)
-            or not snapshot["source_id"] or snapshot.get("source_kind") != source_kind):
+            or not snapshot["source_id"] or snapshot.get("source_kind") not in {source_kind, "not_available"}):
         raise ValueError("Alignment snapshot changed the selected primary source")
-    _alignment_hash(snapshot.get("source_sha256"))
+    unavailable = snapshot.get("source_kind") == "not_available"
+    if unavailable:
+        if (snapshot.get("delivery_status") not in {"not_run", "delivery_failed"}
+                or snapshot.get("source_sha256") is not None
+                or snapshot.get("delivery_verified") is not (False if snapshot["delivery_status"] == "delivery_failed" else None)):
+            raise ValueError("Unavailable alignment source needs an explicit operational disposition")
+    else:
+        _alignment_hash(snapshot.get("source_sha256"))
     _boolean(snapshot.get("delivery_verified"))
     receipts = snapshot.get("review_evidence_sha256")
     if not isinstance(receipts, list) or not receipts:
@@ -1392,6 +1399,8 @@ def _alignment_snapshot(snapshot, ids, source_kind):
         values[row["id"]] = row["complete"]
     if set(values) != ids:
         raise ValueError("Alignment snapshot changed its 92-ID inventory")
+    if unavailable and any(value is not None for value in values.values()):
+        raise ValueError("Unavailable alignment source cannot acquire mathematical completion")
     return values
 
 
@@ -1764,11 +1773,15 @@ def _frozen_scoring_baseline(sources, expected_sha256, *, required, optional=())
     return documents, plan, inputs, baseline, scope
 
 
-def _lean_formalization_breakdown(plan, inputs, report, substitutions):
+def _lean_formalization_breakdown(plan, inputs, report, substitutions, *, formalization_review=None):
     """Public counts and family values come from the same unrounded score inputs."""
     rows = {row["slot_id"]: row for row in inputs["slots"]}
+    unavailable = {case["case_id"]: case["delivery_status"]
+                   for case in (formalization_review or {}).get("cases", [])
+                   if case.get("source_kind") == "not_available"}
     cases = []
     public_ids = set()
+    family_intervals = {}
     for case in plan["case_index"]:
         if case.get("component") != "lean-formalization" or case.get("source_visibility") == "private":
             continue
@@ -1782,14 +1795,24 @@ def _lean_formalization_breakdown(plan, inputs, report, substitutions):
         if count is not None and count.denominator != 1:
             nearest = round(count)
             count = Fraction(nearest) if _percent(Fraction(nearest, total)) == _percent(value[2]) else None
+        if cid in unavailable:
+            count = None
         cases.append({"case_id": cid, "family_id": case["family_id"],
             "complete_count": int(count) if count is not None else None, "total": total,
-            "percent": _percent(value[2])})
+            "percent": _percent(value[2]),
+            **({"status": unavailable[cid]} if cid in unavailable else {})})
         public_ids.add(cid)
+        family_intervals.setdefault(case["family_id"], []).append(value)
     families = {family: {"case_ids": list(value["case_ids"]), "variant_count": value["variant_count"],
                          "percent": value["completion"]["exact"]}
                 for family, value in report.get("component_families", {}).get("lean-formalization", {}).items()
                 if set(value["case_ids"]) <= public_ids}
+    if plan["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6":
+        # Reuse the same family average and original variants, including unknowns.
+        families = {family: {"case_ids": [case["case_id"] for case in cases
+                                         if case["family_id"] == family],
+                             "variant_count": len(values), "percent": _percent(_average(values)[2])}
+                    for family, values in family_intervals.items()}
     return {"cases": cases, "families": families}
 
 
@@ -2149,12 +2172,33 @@ def formalization_substitutions(inputs, review):
         items = case.get("obligations")
         if (frozen.get("component") != "lean-formalization" or frozen.get("total_weight") != total
                 or len(targets) != total or case.get("case_version") != frozen.get("version")
-                or case.get("slot_id") != sid or case.get("source_kind") != "sealed_workspace"
+                or case.get("slot_id") != sid or case.get("source_kind") not in {"sealed_workspace", "not_available"}
                 or case.get("original_response_sha256") != rows.get(sid, {}).get("response_sha256")
                 or not isinstance(items, list) or len(items) != total
                 or {item.get("id") for item in items} != targets):
             raise ValueError("Engineering review differs from the frozen case, response or obligations")
         sources = case.get("compiled_sources", {})
+        if case.get("source_kind") == "not_available":
+            disposition = case.get("delivery_status")
+            raw = rows.get(sid, {})
+            if (plan["profile"]["data"].get("schema") != "math-gauge.benchmark-profile/v6"
+                    or disposition not in {"not_run", "delivery_failed"}
+                    or case.get("original_response_sha256") is not None or case.get("source_sha256") is not None
+                    or sources != {} or case.get("kernel_status") != "not_run"
+                    or any(item.get("complete") is not None or item.get("declarations") != [] for item in items)
+                    or raw.get("delivery_status") != disposition
+                    or raw.get("started") is not (disposition == "delivery_failed")
+                    or raw.get("strict_pass") is not (False if disposition == "delivery_failed" else None)
+                    or raw.get("completion") != ({"lower": 0, "upper": 0, "exact": 0}
+                       if disposition == "delivery_failed" else {"lower": 0, "upper": 1, "exact": None})):
+                raise ValueError("Unavailable engineering source contradicts its operational evidence")
+            substitutions[sid] = (Fraction(0),) * 3 if disposition == "delivery_failed" else UNKNOWN
+            continue
+        if (plan["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6"
+                and (case.get("original_response_sha256") is None
+                     or rows.get(sid, {}).get("delivery_status") in {"delivery_failed", "not_run"}
+                     or rows.get(sid, {}).get("execution_status") in {"execution_error", "delivery_failed"})):
+            raise ValueError("Delivered engineering needs its accepted original response")
         if not isinstance(sources, dict) or not sources:
             raise ValueError("Engineering review needs exact compiled source hashes")
         for name, value in sources.items():
@@ -2190,14 +2234,18 @@ def score_record_inputs(inputs, review, policy, *, formalization_review=None):
     baseline = review.get("baseline", {})
     ids = set(policy["obligation_ids"])
     _alignment_snapshot(baseline, ids, review.get("primary_source_kind"))
-    if baseline.get("source_kind") != "sealed_workspace":
+    if (baseline.get("source_kind") != "sealed_workspace"
+            and not (inputs["plan"]["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6"
+                     and baseline.get("source_kind") == "not_available")):
         raise ValueError("Current engineering baseline must identify its sealed source")
     baseline_value = _average([_boolean(item["complete"]) for item in baseline["obligations"]])
     substitutions = {"MG-C003:A1": baseline_value}
     if policy["version"] == "0.4.0":
         substitutions = formalization_substitutions(inputs, formalization_review)
         chapter = next(case for case in formalization_review["cases"] if case["case_id"] == "MG-C003")
-        if (substitutions["MG-C003:A1"] != baseline_value
+        unavailable_parent = (chapter.get("source_kind") == baseline.get("source_kind") == "not_available"
+                              and chapter.get("delivery_status") == baseline.get("delivery_status"))
+        if ((not unavailable_parent and substitutions["MG-C003:A1"] != baseline_value)
                 or {item["id"]: item["complete"] for item in chapter["obligations"]}
                 != {item["id"]: item["complete"] for item in baseline["obligations"]}
                 or chapter.get("source_sha256") != baseline.get("source_sha256")):
@@ -2205,11 +2253,20 @@ def score_record_inputs(inputs, review, policy, *, formalization_review=None):
     elif formalization_review is not None:
         raise ValueError("The prior scoring method does not select four engineering sources")
     steps, interval = _alignment_trajectory(review, policy)
-    result = _score_inputs(inputs, mathematical_substitutions=substitutions,
-                           neutral_alignment=(interval, policy))
+    data = inputs["plan"]["profile"]["data"]
+    if data.get("schema") == "math-gauge.benchmark-profile/v6":
+        # Fresh complete plans already carry the current assessment axes.
+        # The unchanged source policy supplies only engineering/trajectory rules;
+        # its historical capability weights cannot be applied to these new axes.
+        result = score_assessment_inputs(inputs, data["assessment_policy"], data["strict_policy"],
+            mathematical_substitutions=substitutions, alignment_summary=steps,
+            strict_trajectory=strict_alignment_trajectory(review, policy))
+    else:
+        result = _score_inputs(inputs, mathematical_substitutions=substitutions,
+                               neutral_alignment=(interval, policy))
     return {"metrics": result["metrics"], "alignment_selfcheck": steps,
             "lean_formalization_breakdown": _lean_formalization_breakdown(
-                inputs["plan"], inputs, result, substitutions),
+                inputs["plan"], inputs, result, substitutions, formalization_review=formalization_review),
             "formal_comparison_eligible": False, "human_review": "pending"}
 
 

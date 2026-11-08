@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-PS001:A1",
+  "case_id": "MG-PS001",
+  "binding": {
+    "plan_sha256": "820642aa61e4ea28f9ccaa4adad5740f90a6cc6b2db5ef5d84c08210d52d474d",
+    "slot_id": "MG-PS001:A1",
+    "evidence_id": "359680ac1e9f0fd4ba2e179dbb8ad87bef2bb57f61832a52276288c336bfde6b",
+    "response_sha256": "25210e9ce8b2074128d7f85ffcab19407f17818f9f35c9702e1d1f79b9d9102f",
+    "history_sha256": "6183c6881757e5219e7c3e190062ccb2f01e637a4e0ef37e929cb78897b8b1a2",
+    "projected_request_sha256": "3245510606e0c0310acbcad5112c7e67a67086e8c2309461bd06cde70f252a80",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "67b767a1b9fecfb1b341440a80782c47e591fab757a04b561c632a3d8b9ecf2a",
+    "body_origin": {
+      "slot_id": "MG-PS001:A1",
+      "response_sha256": "25210e9ce8b2074128d7f85ffcab19407f17818f9f35c9702e1d1f79b9d9102f",
+      "start_byte": 0,
+      "end_byte": 14950
+    },
+    "body_sha256": "25210e9ce8b2074128d7f85ffcab19407f17818f9f35c9702e1d1f79b9d9102f",
+    "rationale_sha256": null,
+    "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "六项全部完成，任意参数构造的跨块迭代上界独立核验有效；无实质数学错误。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始书面答卷。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "完整正确使用有界数列的有限半范数、零距商与诱导距离；K1明确允许正确直接使用而不机械重证公理，未假定商完备。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "f(N)=O(N)由全前缀和给充分界；不允许f下选Nk/f(Nk)<2^-k、稀疏取样块使原密度0且采样上密度≥1/2，涵盖每个不允许函数。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "精确常数limsup而非假定极限；在最坏Nk后取epsilon Nk长度采样块，旧块相对f(Nk)消失，原密度≤epsilon/alpha而采样密度≥epsilon/(1+epsilon)，得alpha/(1+epsilon)下界并取epsilon趋0。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "满射沿采样像填y其他补0；alpha>1的像补集给非零核；f(N)/N→1时全部前缀和由取样和与有界补坐标控制，域端点全，有限常数给连续。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "f^k对应实际复合采样，Lk=limsup f^k(N)/N；log Lk次可加带余证明根极限和1≤R≤L1，不需要Banach谱论。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "任意1≤beta≤alpha有限，构造ceil(beta N)+floor((alpha-beta)Mn)，其中Mn+1/Mn快速发散；严格增、L1=alpha完整核验。固定k时至多跨两个相邻块，分别仿射递推给beta^k≤Lk≤(1+k(alpha-beta))² beta^k，故根极限beta，含beta1及beta=alpha所有边界。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T17:52:40.699490+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "0bbb7fa18c6575b050f30cef9cf5af4ca7c22082d9b128cef3cc4b819017fe42",
+  "public_projection": true,
+  "original_private_review_sha256": "e672841fbc4c14d14e8fed8ce37f4dbac3acf7552903efa727cc73799f16bb3a"
+}

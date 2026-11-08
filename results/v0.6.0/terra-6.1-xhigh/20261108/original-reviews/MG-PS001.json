@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-PS001:A1",
+  "case_id": "MG-PS001",
+  "binding": {
+    "plan_sha256": "f03727eed41fcf66dbfb9ba0afe4112a5d3792a0e85ef0b40a2a8e2d7b55aae5",
+    "slot_id": "MG-PS001:A1",
+    "evidence_id": "029d9964bae81c60df78f283830f5f5426708a361b9ae3cb23fd05dc38aa5308",
+    "response_sha256": "a392e0ed0a609d96738e1b527b6d85203ccba798c0bd8f22a87da84527a043dc",
+    "history_sha256": "6183c6881757e5219e7c3e190062ccb2f01e637a4e0ef37e929cb78897b8b1a2",
+    "projected_request_sha256": "990dac27417ce0c7cfd779cfb83a4fd39d7a8e98d7c6b6b8f5fc7cb1e411916f",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "cdfc7d9ca1c3fa625e84d6be8a9c4026bc86080f464081925c426d0dc9a32618",
+    "body_origin": {
+      "slot_id": "MG-PS001:A1",
+      "response_sha256": "a392e0ed0a609d96738e1b527b6d85203ccba798c0bd8f22a87da84527a043dc",
+      "start_byte": 0,
+      "end_byte": 6523
+    },
+    "body_sha256": "a392e0ed0a609d96738e1b527b6d85203ccba798c0bd8f22a87da84527a043dc",
+    "rationale_sha256": null,
+    "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "K1–K6均完整，替代稀疏台阶max构造的上界已独立核验；不要求逐个Lk的闭式。原文无需额外计功的无依据扩展。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "format_review": {
+    "decision": "valid",
+    "notes": "原文完整书面交付，符合编号与证明要求；无Lean交付义务。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "正确使用有界序列零半范数与商范数，反三角及齐次性所需常规依据由直接公式充分给出，符合K1允许直接使用的尺度。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "f(n)=O(n)的充分性来自全前缀平均放缩；无界limsup时稀疏取样块构造密度零的A，取样密度至少1/2，处理每个不允许的f。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "最小常数恰limsup f(n)/n：统一上界正确，稀疏短块给任意delta,epsilon下界(C-delta)/(1+epsilon)，不假设比值有极限。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "沿取样像补零给满射，像补集正上密度给非单射，补集密度零时整体前缀和由取样前N项及小余量控制给单射；双向密度判据及连续性俱全。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "实际复合取样f^k给各最优常数，log常数次可加给根极限及必要范围1≤R≤L；没有要求商完备或借用Banach谱公式。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "对所有1≤r≤L<infinity构造f(n)=max(ceil(rn),n+b(n))，两个严格增整数序列取max仍严格增；稀疏台阶给L1=L。固定k取最后到达的构造点，跨步前旧台阶o(n)、后台阶≤(L-1)r^s n+o(n)，证明r^k≤Lk≤r^k+k(L-1)r^(k-1)，含r=1和r=L全部端点，根极限=r。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T16:38:39.862373+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "274d171a8903cf5f431f0dcc279ff14bb897eba5187a67d03abf4518b650916e",
+  "public_projection": true,
+  "original_private_review_sha256": "6a4e10da3f2eb18b14c8dd522df4e5da3402c4522ad0046ded2e91a89a8ef45d"
+}

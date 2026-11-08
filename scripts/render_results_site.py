@@ -13,20 +13,30 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import load_assessment_results, load_content_rates, validate_record
+from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records
 from math_gauge.native_observations import load_public_record
 from scripts.results_details import build_detail_pages
 
 MODEL_THEMES = {
     "terra-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
+    "terra-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "deepseek-v4.1-flash-1017": {"color": "#4b6ed8", "ink": "#3655b2", "tint": "#f1f4fd"},
     "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+    "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
     "terra-6.1-max": ("OpenAI", "openai.svg"),
+    "terra-6.1-xhigh": ("OpenAI", "openai.svg"),
     "deepseek-v4.1-flash-1017": ("DeepSeek", "deepseek.svg"),
     "gemini-3.8-flash-high": ("Google", "google.svg"),
+    "gemini-4-argon": ("Google", "google.svg"),
 }
+MODEL_LABELS = {"terra-6.1-max": "Terra 6.1 Max", "terra-6.1-xhigh": "Terra 6.1 xHigh",
+                "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash 1017",
+                "gemini-3.8-flash-high": "Gemini 3.8 Flash High", "gemini-4-argon": "Gemini 4 Argon High"}
+MODEL_SHORT_LABELS = {"terra-6.1-max": "Terra Max", "terra-6.1-xhigh": "Terra xHigh",
+                      "deepseek-v4.1-flash-1017": "DeepSeek", "gemini-3.8-flash-high": "Gemini 3.8",
+                      "gemini-4-argon": "Gemini Argon"}
 
 
 def build_data(source_root=ROOT):
@@ -39,10 +49,8 @@ def build_data(source_root=ROOT):
             or [m.get("id") for m in mode_catalog.get("modes", [])] != ["capability", "partial", "strict"]):
         raise ValueError("Current display requires all three named modes and reliable capability as default")
     models, sources = [], []
-    for model, label in (("terra-6.1-max", "Terra 6.1 Max"),
-                         ("deepseek-v4.1-flash-1017", "DeepSeek v4.1 Flash 1017"),
-                         ("gemini-3.8-flash-high", "Gemini 3.8 Flash High")):
-        folder = root / "results/v0.6.0" / model / "20261105"
+    for model, folder in selected_cli_records(root):
+        label = MODEL_LABELS[model]
         validate_record(folder)
         record = json.loads((folder / "record.json").read_bytes())
         harness_path = root / 'site/harnesses.json'
@@ -60,7 +68,8 @@ def build_data(source_root=ROOT):
         provider, filename = MODEL_PROVIDERS[model]
         icon_path = root / "site/assets/logos" / filename
         icon_bytes = icon_path.read_bytes()
-        models.append({"id": model, "label": label, "theme": dict(MODEL_THEMES[model]), 'harness': harness,
+        models.append({"id": model, "label": label, "short_label": MODEL_SHORT_LABELS[model],
+            "theme": dict(MODEL_THEMES[model]), 'harness': harness,
             "logo": {"label": provider, "data_url": "data:image/svg+xml;base64," + base64.b64encode(icon_bytes).decode("ascii"),
                      "sha256": hashlib.sha256(icon_bytes).hexdigest()},
             "combined": combined, "strict": strict, "capability": capability, "trajectory": record["trajectory"],
@@ -71,7 +80,9 @@ def build_data(source_root=ROOT):
             "alignment_selfcheck": combined["alignment_selfcheck"],
             "source_record": str((folder / "record.json").relative_to(root)),
             "retry": {"combined": partial["nonlogical_retry_3"],
-                      "note": ("GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
+                      "note": (f"本批次已收{record['execution_summary']['delivered_initial_tasks']}/39道初答及{record['execution_summary']['delivered_selfcheck_rounds']}/3轮对齐自查；采用规则选定的首次有效交付。全部物理请求和纯系统故障另行留档。"
+                               if model in {"terra-6.1-xhigh", "gemini-4-argon"} else
+                               "GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
                                if record.get("retry_admission") else
                                "正式研究工具组尚未完成；未测题保持未知，不回填其他条件的答卷。"
                                if research_source.get("source_condition") == "local_tools_no_network"
@@ -284,8 +295,9 @@ def render_gap_chart(data):
             '<span>RG＝RMC−MC · DG＝SMC−MC · 百分点</span><span class="chart-legend">'
             '<span class="legend-item"><i class="legend-swatch rmc" aria-hidden="true"></i>RG · 可靠差</span>'
             '<span class="legend-item"><i class="legend-swatch smc" aria-hidden="true"></i>DG · 交付差</span></span></figcaption>'
-            '<div class="gap-vertical" style="--model-count:'+str(len(data['models']))+'"><div class="gap-y-axis" aria-hidden="true">'+ticks+'</div>'
-            '<div class="gap-plot">'+grid+'<div id="gap-groups" class="gap-groups">'+''.join(groups)+'</div></div></div></figure>')
+            '<div class="chart-viewport" tabindex="0" style="--model-count:'+str(len(data['models']))+'">'
+            '<div class="gap-vertical"><div class="gap-y-axis" aria-hidden="true">'+ticks+'</div>'
+            '<div class="gap-plot">'+grid+'<div id="gap-groups" class="gap-groups">'+''.join(groups)+'</div></div></div></div></figure>')
 
 
 def grouped_bars(data):
@@ -325,9 +337,10 @@ def grouped_bars(data):
             +incomplete_marker(progress)+harness_marker(model)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
     ticks = ''.join(f'<span style="bottom:{value}%">'+str(value)+'</span>' for value in range(0, 101, 20))
     grid = ''.join(f'<i class="score-gridline" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
-    return ('<div class="score-chart" role="group" aria-label="各模型MC、RMC、SMC规则成绩，统一0至100分">'
+    return ('<div class="chart-viewport" tabindex="0" style="--model-count:'+str(len(data['models']))+'">'
+            '<div class="score-chart" role="group" aria-label="各模型MC、RMC、SMC规则成绩，统一0至100分">'
             '<div class="score-y-axis" aria-hidden="true">'+ticks+'</div><div class="score-plot">'+grid
-            +'<div class="chart-groups" id="chart-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div>')
+            +'<div class="chart-groups" id="chart-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div></div>')
 
 
 def render_content_rates(data):
@@ -371,9 +384,10 @@ def render_content_rates(data):
             '<span>百分比 · 0–100</span><span class="chart-legend"><span class="legend-item">'
             '<i class="legend-swatch rmc" aria-hidden="true"></i>内容可靠率</span><span class="legend-item">'
             '<i class="legend-swatch smc" aria-hidden="true"></i>目标达成率</span></span></figcaption>'
+            '<div class="chart-viewport" tabindex="0" style="--model-count:'+str(len(data['models']))+'">'
             '<div class="score-chart" role="group" aria-label="各模型内容可靠率与目标达成率，统一0至100百分比">'
             '<div class="score-y-axis" aria-hidden="true">'+ticks+'</div><div class="score-plot">'+grid
-            +'<div class="chart-groups" id="rate-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div></figure></section>')
+            +'<div class="chart-groups" id="rate-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div></div></figure></section>')
 
 
 def render(data):
@@ -397,7 +411,7 @@ def render(data):
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
     notes = []
     for model in data['models']:
-        if model['retry']['combined']['retry_summary']['slots_with_reruns']:
+        if model['retry']['combined'].get('retry_summary', {}).get('slots_with_reruns'):
             first = '／'.join(f'{earned_value(model["combined"] if mode["id"]=="partial" else model[mode["id"]]["single_attempt"]):.2f}'
                              for mode in data['display_score_modes'])
             notes.append(html.escape(model['label']+'：'+model['retry']['note'])

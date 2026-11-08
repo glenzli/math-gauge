@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record
+from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record, selected_cli_records
 from math_gauge.scoring import score_assessment_record_inputs
 
 
@@ -34,8 +34,8 @@ def retain(private_root, *, public_root=ROOT):
     for name in ("capability-scoring-policy.json", "score-modes.json", "claim-penalty-policy.json"):
         (private_root / "protocol" / name).write_bytes((public_root / "protocol" / name).read_bytes())
     totals = {}
-    for model in load(public_root / "benchmark.json")["selected_result_models"]:
-        relative = Path("results/v0.6.0") / model / "20261105"
+    for model, folder in selected_cli_records(public_root):
+        relative = folder.relative_to(public_root)
         public, private = public_root / relative, private_root / relative
         validate_record(public, validate_scores=False)
         validate_record(private, formalization_root=public, validate_scores=False)
@@ -105,6 +105,8 @@ def retain(private_root, *, public_root=ROOT):
                     score["source_bindings"]["background_check_inputs_sha256"]=digest(private/private_record["background_check_inputs"]["path"])
                 if written is not None:
                     score["source_bindings"]["written_argument_inputs_sha256"] = private_record["written_argument_inputs"]["sha256"]
+                elif original["plan"]["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6":
+                    score["source_bindings"]["current_written_scoring_inputs_sha256"] = digest(private / "scoring-inputs.json")
                 if replacement is not None:
                     score["source_bindings"]["written_replacement_inputs_sha256"] = private_record["written_replacement_inputs"]["sha256"]
                 if manuscript is not None:
@@ -158,8 +160,8 @@ def export_public_tasks(private_root, *, public_root=ROOT):
     """Publish only selected public task judgments from the retained six reports."""
     public_root, private_root = Path(public_root), Path(private_root)
     published = []
-    for model in load(public_root / "benchmark.json")["selected_result_models"]:
-        relative = Path("results/v0.6.0") / model / "20261105"
+    for model, folder in selected_cli_records(public_root):
+        relative = folder.relative_to(public_root)
         public, private = public_root / relative, private_root / relative
         record, source_record = load(public / "record.json"), load(private / "record.json")
         policy = json.loads(evidence_bytes(public, record["assessment_policy"]))

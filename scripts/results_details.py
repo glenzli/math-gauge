@@ -92,6 +92,12 @@ def descriptor(root, item, *, role):
             'sha256': hashlib.sha256(raw).hexdigest(), 'role': role, 'raw': raw}
 
 
+def review_projection(value):
+    if value.get('schema') == 'math-gauge.public-adjudication-projection/v1':
+        return value.get('judgment')
+    return value
+
+
 def public_evidence(folder, record, cid, condition, task):
     """Resolve the actual selected public answer; a retry never inherits A1 text."""
     sources, notes, primary = [], [], None
@@ -116,7 +122,8 @@ def public_evidence(folder, record, cid, condition, task):
                 raise ValueError(f"Selected answer differs from task score: {cid}/{condition}")
             sources.append(descriptor(folder, answer, role='answer'))
         if legacy and row is legacy:
-            review_items = [s for s in row.get('artifacts', []) if s['path'].endswith('.json')
+            review_items = ([row['review']] if row.get('review') else [])
+            review_items += [s for s in row.get('artifacts', []) if s['path'].endswith('.json')
                             and (s['path'].startswith('reviews/')
                                  or s['path'].endswith('/mathematical-review.json'))]
             if not review_items and chosen:
@@ -124,12 +131,12 @@ def public_evidence(folder, record, cid, condition, task):
                 review_items = []
             if review_items:
                 sources.append(descriptor(folder, review_items[0], role='review'))
-                primary = json.loads(sources[-1]['raw'])
+                primary = review_projection(json.loads(sources[-1]['raw']))
         else:
             item = row.get('review') or row.get('source_review')
             if item:
                 sources.append(descriptor(folder, item, role='review'))
-                primary = json.loads(sources[-1]['raw'])
+                primary = review_projection(json.loads(sources[-1]['raw']))
                 # Background R conversion binds the original, more detailed review.
                 if primary.get('source_review_sha256'):
                     path = (folder / item['path']).parent / 'source-review.json'
@@ -150,9 +157,12 @@ def public_evidence(folder, record, cid, condition, task):
     for item in claim['sources']:
         if item.get('archive') != 'public':
             raise ValueError('A public case attempted to reference private evidence')
-        if item['path'] in {s['path'].split('/20261105/',1)[-1] for s in sources}:
+        archive_prefix = folder.relative_to(folder.parents[3]).as_posix() + '/'
+        if item['path'] in {s['path'].removeprefix(archive_prefix) for s in sources}:
             continue
-        source = descriptor(folder, item, role=item.get('role','review'))
+        inferred_role = ('answer' if item['sha256'] == task['response_sha256'] else
+                         'review' if item['path'].endswith('.json') else 'attachment')
+        source = descriptor(folder, item, role=item.get('role', inferred_role))
         if item.get('case_pointer'):
             selected = json.loads(source['raw'])
             for key in item['case_pointer'].strip('/').split('/'):
@@ -160,7 +170,18 @@ def public_evidence(folder, record, cid, condition, task):
             source['selected'] = selected
         sources.append(source)
         if primary is None and source['role']=='review':
-            primary = source.get('selected') or json.loads(source['raw'])
+            primary = review_projection(source['selected'] if 'selected' in source
+                                        else json.loads(source['raw']))
+    if record.get('formalization_review') and not any(s['role']=='engineering_review' for s in sources):
+        source = descriptor(folder, record['formalization_review'], role='engineering_review')
+        engineering = next((r for r in json.loads(source['raw'])['cases'] if r['case_id']==cid), None)
+        if engineering:
+            if engineering['original_response_sha256'] != task['response_sha256']:
+                raise ValueError(f'Engineering review differs from selected answer: {cid}/{condition}')
+            source['selected'] = engineering
+            sources.append(source)
+            if primary is None:
+                primary = engineering
     if task['response_sha256'] and not any(s['sha256']==task['response_sha256'] for s in sources):
         raise ValueError(f'Missing selected public answer for {cid}/{condition}')
     return {'sources': sources, 'review': primary, 'claim': claim, 'notes': notes,
@@ -198,6 +219,8 @@ def review_markdown(review):
 
 
 def readable(value):
+    if value is None:
+        return '未知'
     if isinstance(value, str):
         return value
     if isinstance(value, list):
@@ -291,7 +314,8 @@ def render_model(page, data, model, cases, record, folder, markdown):
     for index in (1,2,3):
         row = (next(s for s in record['selfcheck_rounds'] if s['round']==index)
                if model.get('record_kind') == 'native_harness' else
-               next(s for s in record['records'] if s['id']=='MG-C003:alignment:'+str(index)))
+               next(s for s in record['records'] if s['id'] in
+                    ('MG-C003:alignment:'+str(index), 'MG-C003:R'+str(index))))
         response = row.get('response')
         content = markdown.add(evidence_bytes(folder,response).decode()) if response else '原记录没有可读的最终原答，未补写。'
         link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗') if response else ''

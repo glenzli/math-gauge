@@ -1,0 +1,57 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-PS001",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-PS001:A1",
+    "case_id": "MG-PS001",
+    "binding": null,
+    "reviewer": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "K1–K6均完整，替代稀疏台阶max构造的上界已独立核验；不要求逐个Lk的闭式。原文无需额外计功的无依据扩展。",
+    "findings": [],
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+    "format_review": {
+      "decision": "valid",
+      "notes": "原文完整书面交付，符合编号与证明要求；无Lean交付义务。"
+    },
+    "criteria": [
+      {
+        "criterion_id": "K1",
+        "score": 5,
+        "notes": "正确使用有界序列零半范数与商范数，反三角及齐次性所需常规依据由直接公式充分给出，符合K1允许直接使用的尺度。"
+      },
+      {
+        "criterion_id": "K2",
+        "score": 20,
+        "notes": "f(n)=O(n)的充分性来自全前缀平均放缩；无界limsup时稀疏取样块构造密度零的A，取样密度至少1/2，处理每个不允许的f。"
+      },
+      {
+        "criterion_id": "K3",
+        "score": 20,
+        "notes": "最小常数恰limsup f(n)/n：统一上界正确，稀疏短块给任意delta,epsilon下界(C-delta)/(1+epsilon)，不假设比值有极限。"
+      },
+      {
+        "criterion_id": "K4",
+        "score": 15,
+        "notes": "沿取样像补零给满射，像补集正上密度给非单射，补集密度零时整体前缀和由取样前N项及小余量控制给单射；双向密度判据及连续性俱全。"
+      },
+      {
+        "criterion_id": "K5",
+        "score": 15,
+        "notes": "实际复合取样f^k给各最优常数，log常数次可加给根极限及必要范围1≤R≤L；没有要求商完备或借用Banach谱公式。"
+      },
+      {
+        "criterion_id": "K6",
+        "score": 25,
+        "notes": "对所有1≤r≤L<infinity构造f(n)=max(ceil(rn),n+b(n))，两个严格增整数序列取max仍严格增；稀疏台阶给L1=L。固定k取最后到达的构造点，跨步前旧台阶o(n)、后台阶≤(L-1)r^s n+o(n)，证明r^k≤Lk≤r^k+k(L-1)r^(k-1)，含r=1和r=L全部端点，根极限=r。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "679347f96d43dd758beee8bfca6a0f3c6f65a94ac860a7b5dfbfeea38c389b3c"
+}

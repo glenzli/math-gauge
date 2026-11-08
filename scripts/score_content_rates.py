@@ -11,8 +11,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.content_rates import project_rates, validate_review, verify_sources
 from math_gauge.goal_attainment import goal_contract, validate_goal_review
 from math_gauge.scoring import score_content_rates
-
-MODELS = ('terra-6.1-max', 'gemini-3.8-flash-high', 'deepseek-v4.1-flash-1017')
+from math_gauge.records import selected_cli_records
 
 
 def sha(path):
@@ -24,8 +23,8 @@ def run(private_root, *, public_root=ROOT, write=False, version='0.2.0'):
     policy_path = public / 'protocol/scoring-policy.json'
     policy = json.loads(policy_path.read_bytes())
     contracts, products, summaries, goals_contract = {}, [], [], None
-    for model in MODELS:
-        relative = Path('results/v0.6.0') / model / '20261105'
+    for model, folder in selected_cli_records(public):
+        relative = folder.relative_to(public)
         public_folder, private_folder = public / relative, private / relative
         review_path = private_folder / 'content-rate-review.json'
         review = json.loads(review_path.read_bytes())

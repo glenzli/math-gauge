@@ -1,0 +1,47 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "AHR04",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR04:A1",
+    "case_id": "AHR04",
+    "binding": null,
+    "reviewer": "Codex AI reviewer /root/v060_gemini4_argon_run",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "按完整冻结题面、参考、判准和实际源码逐项审阅；此判断只针对候选审计答卷的正确与完整，不提升被审目标的真假范围或人工状态。",
+    "findings": [],
+    "group_contract_sha256": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整书面语义审计已交付；本题不要求新增Lean，未把源码编译当语义证明。"
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "正确判定两个包含关系在所给精确实现中完整覆盖；依据是真实定义、条件化路径证书与证明链，而非版本标签或仅编译。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "保留公共Vstar上目标Lstar与参与并集路径的Lq区别，说明hpathV由Uq⊆U⊆Vstar得到，保留有限阈值/非空J并区分底层更一般定理；没有要求不可评估路径也有系数。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "用真实path_component_sample/path_evaluable_components、实际路径残差、Lq+Lstar和单/联合保证域定义建立对应；从同一q的保证域经已有共同锚点局部误差界与path_chain_eq_represented_proxy_on_path推得代理误差，再用path_domain_subset_source得域条件。未替换成分量独立锚点或各分量另选路径。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 15,
+        "notes": "准确限制为保证域并集的一向包含，不宣称覆盖全U或得到等式；仅将全U覆盖和全分量拟合球列作题外额外封装，不虚构本题缺口。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "9608aecdce02b468fe7530b0ec0feb359f6b925fd45906bcc5fe6fb08ab66209"
+}

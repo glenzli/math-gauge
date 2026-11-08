@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR02:A1",
+  "case_id": "AHR02",
+  "binding": {
+    "plan_sha256": "7c127b55014295fb74fecc29ea3760a91e7bc915e05f27ff43a888a2fb64e996",
+    "slot_id": "AHR02:A1",
+    "evidence_id": "04b86495d6b4b6d459e91369b3511238ff84fa5cc23151449a82a1f08b0ae564",
+    "response_sha256": "819e3ba0c64b028c6fc97bfbc6339d281d02f23851ce0608c09c535282c81274",
+    "history_sha256": "b63b97f59c5ff4bfba718135b3c699699b0ea8dc3b96f2f7535180fe0213692b",
+    "projected_request_sha256": "a78d921aa22ceaf7b44df825afe8eb8ff8003bf5dfb56f4738a5af78fe883373",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "8190c90cf7b9068d97fce69d1cb2f9355c7c759de7d1d553651f6a0e74834d47",
+    "body_origin": {
+      "slot_id": "AHR02:A1",
+      "response_sha256": "819e3ba0c64b028c6fc97bfbc6339d281d02f23851ce0608c09c535282c81274",
+      "start_byte": 0,
+      "end_byte": 4307
+    },
+    "body_sha256": "819e3ba0c64b028c6fc97bfbc6339d281d02f23851ce0608c09c535282c81274",
+    "rationale_sha256": null,
+    "request_sha256": "3c40612a4d4c86396b65b4cbb6c4df54d2efc685fb3d55cb92d604e5b6a5388d",
+    "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9"
+  },
+  "reviewer": "Codex AI reviewer /root/v060_gemini4_argon_run",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "按完整冻结题面、参考、判准和实际源码逐项审阅；此判断只针对候选审计答卷的正确与完整，不提升被审目标的真假范围或人工状态。",
+  "findings": [],
+  "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整书面语义审计已交付；本题不要求新增Lean，未把源码编译当语义证明。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "明确报告现有三个导出全局包装对所有可达路径要求IsLipMatrix，比正文仅可评估路径入并的适用范围强；开头的条件解释随后被具体严格差异论证澄清，没有放行现有接口为无条件完整。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "准确保留现有局部上界、同一q的联合保证域、路径链到代理桥和较强前提下的两个正确包含式；并未指控原定理数学为假。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "非分离四点伪度量例中，坏路径将零距a,b送到距1的a,c，因此不存在任何ENNReal Lip系数，含无穷也因∞·0=0失效。目标恒等在U上具有合法系数1；好路径单点c有系数0、残差0和零阈值保证点c。仅样本c使坏路径不可评估，全部原公共前提兼容。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "按j∈Ires(q)或J⊆Ires(q)条件化hLq，取并集见证后应用已给局部定理即可补齐，保持公共目标Lstar。未把自行组合的补充误写成现有导出签名已经具有。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T16:56:10.111359+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "c57a1c2d81c0bf46496cd61af0961831568ee2184440b33d548d58fef8ef77a9",
+  "public_projection": true,
+  "original_private_review_sha256": "631c06eb23a56b9604550c9e9b5f62c85f4129a656c8ef4f52ccbba4a21e9f98"
+}
