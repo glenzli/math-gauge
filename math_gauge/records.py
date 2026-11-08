@@ -357,6 +357,306 @@ def validate_public_background_check(root,record):
             raise ValueError('Public background judgment lost its source answer')
     return data
 
+def _validate_manuscript_request_history(root, row, case, *, selected=None):
+    """Retain submitted, uncertified requests without inventing a math zero.
+
+    Unlike a pure-system exclusion, an authorized restart keeps the unresolved
+    earlier request in the consumed physical/effective attempt history.
+    """
+    task = evidence_bytes(root, case["original_task"])
+    ledger = json.loads(evidence_bytes(root, row["physical_request_ledger"]))
+    attempts = ledger.get("attempts", [])
+    if (ledger.get("schema") != "math-gauge.manuscript-request-history/v2"
+            or ledger.get("selected_physical_request") != selected
+            or not 1 <= len(attempts) <= 3
+            or ledger.get("consumed_effective_attempts") != len(attempts)
+            or [a.get("physical_request") for a in attempts] != list(range(1, len(attempts)+1))
+            or selected is not None and selected != len(attempts)
+            or ledger.get("mathematical_disposition") != ("ungraded_execution_authentication_failed"
+                if selected is None else "first_complete_authorized_restart_delivery")):
+        raise ValueError("Uncertified manuscript execution needs its complete, unselected request history")
+    for number, attempt in enumerate(attempts, 1):
+        execution = json.loads(evidence_bytes(root, attempt["execution"]))
+        plan = json.loads(evidence_bytes(root, attempt["execution_plan"]))
+        events = [json.loads(line) for line in evidence_bytes(root, attempt["native_events"]).splitlines()]
+        request = evidence_bytes(root, attempt["native_request"])
+        evidence_bytes(root, attempt["execution_result"])
+        if (execution.get("request_count") != 1 or execution.get("kind") != "math"
+                or execution.get("requested_model") != plan.get("model")
+                or execution.get("requested_effort") != plan.get("effort")
+                or plan.get("prompt_sha256") != case["task_sha256"]
+                or plan.get("stdin_sha256") != hashlib.sha256(request).hexdigest()
+                or execution.get("stdin_bytes_written") != len(request)
+                or execution.get("stdin_write_calls") != 1
+                or execution.get("artifact_hashes", {}).get("input/task.md") != case["task_sha256"]
+                or execution.get("artifact_hashes", {}).get("output/events.ndjson") != attempt["native_events"]["sha256"]
+                or plan.get("local_tool_policy") != "math-gauge.local-tools-no-search/v1"
+                or plan.get("tool_network_access") is not False
+                or evidence_bytes(root, attempt["candidate_input"]) != task
+                or attempt.get("excluded_pure_system_failure") is not False
+                or attempt.get("effective_model_attempt") != number):
+            raise ValueError("Uncertified requests cannot be erased, relabeled pure-system or change the task")
+        if plan.get("client") == "agy":
+            if json.loads(request) != {"event": "user", "message": {"content": task.decode("utf-8")}}:
+                raise ValueError("Uncertified manuscript request differs from its frozen question")
+        elif plan.get("client") != "codex" or request != task:
+            raise ValueError("Unsupported uncertified manuscript native input")
+        delivered = (any(e.get("type") == "turn.completed" for e in events)
+                or any(e.get("event") == "result" and e.get("result", {}).get("status") == "SUCCESS"
+                    and e["result"].get("response", "").strip() for e in events))
+        if delivered != (number == selected):
+            raise ValueError("A normally delivered answer cannot be hidden as missing execution")
+        if number > 1:
+            authorization = json.loads(evidence_bytes(root, attempt["restart_authorization"]))
+            kind = authorization.get("kind")
+            if (kind not in {"user_authorized_independent_restart", "user_accepted_post_observation_trial_recovery"}
+                    or authorization.get("physical_request") != number
+                    or authorization.get("prior_request_excluded_as_pure_system") is not False
+                    or not authorization.get("user_quote")):
+                raise ValueError("Independent restart needs its explicit authorization and prior-request boundary")
+            if kind == "user_accepted_post_observation_trial_recovery":
+                if (authorization.get("post_observation") is not True
+                        or authorization.get("case_id") != case["case_id"]
+                        or authorization.get("task_sha256") != case["task_sha256"]
+                        or authorization.get("accepted_source_response_sha256") != (row.get("response") or {}).get("sha256")
+                        or authorization.get("adoption_does_not_change_original_execution") is not True):
+                    raise ValueError("Post-observation acceptance must bind the actual retained task and answer")
+                evidence_bytes(root, authorization["operator_recovery_source"])
+    last = attempts[-1]
+    if any(row.get(key) != last.get(key) for key in
+            ("execution", "execution_plan", "execution_result", "native_events", "native_request", "candidate_input")):
+        raise ValueError("Uncertified slot must point to the last retained operational attempt")
+    if selected is not None and last.get("response") != row.get("response"):
+        raise ValueError("Restart selection must retain the first delivered original answer")
+    for item in row.get("artifacts", []):
+        evidence_bytes(root, item)
+
+
+def load_manuscript_completion_inputs(root, record, *, policy=None):
+    """Bind an adopted manuscript judgment to exact original/native bytes.
+
+    Native generation completion and intentional client cleanup are independent;
+    these diagnostic sources never certify backend identity or formal eligibility.
+    """
+    if record.get("manuscript_completion_inputs") is None:
+        return None
+    from .manuscript_completion import validate_inputs, validate_system_exclusion
+    data = json.loads(evidence_bytes(root, record["manuscript_completion_inputs"]))
+    validate_inputs(data, data["policy"] if policy is None else policy)
+    cases = {c["case_id"]: c for c in data["case_index"]}
+    for case in cases.values():
+        task = evidence_bytes(root, case["original_task"])
+        contract_raw = evidence_bytes(root, case["contract"])
+        contract = json.loads(contract_raw)
+        rubric = json.loads(evidence_bytes(root, case["source_rubric"]))
+        evidence_bytes(root, case["reference"])
+        if (hashlib.sha256(task).hexdigest() != case["task_sha256"]
+                or hashlib.sha256(contract_raw).hexdigest() != case["contract_sha256"]
+                or contract.get("id") != case["case_id"] or contract.get("kind") != "research_exploration"
+                or [{"criterion_id": r["id"], "points": r["points"]} for r in contract["dimensions"]] != case["criteria"]
+                or [{"criterion_id": r["id"], "points": r["points"]} for r in rubric["criteria"]] != case["criteria"]
+                or rubric.get("task_sha256") != case["task_sha256"] or rubric.get("post_observation") is not True):
+            raise ValueError("Manuscript task, observed rubric or contract bytes changed")
+        if case.get("fidelity_policy") is not None:
+            if json.loads(evidence_bytes(root, case["fidelity_policy_source"])) != case["fidelity_policy"]:
+                raise ValueError("Manuscript fidelity policy differs from its source bytes")
+    for row in data["slots"]:
+        if row["status"] == "not_run":
+            continue
+        if row["status"] == "execution_authentication_failed":
+            _validate_manuscript_request_history(root, row, cases[row["case_id"]])
+            continue
+        if any(not isinstance(row.get(k), dict) for k in (
+                "native_request", "native_events", "candidate_input", "execution_result", "execution_plan",
+                "native_capability_control", "physical_request_ledger")):
+            raise ValueError("Manuscript delivery requires its original native input and complete request ledger")
+        execution = json.loads(evidence_bytes(root, row["execution"]))
+        case = cases[row["case_id"]]
+        answer = evidence_bytes(root, row["response"])
+        candidate = evidence_bytes(root, row["candidate_input"])
+        task = evidence_bytes(root, case["original_task"])
+        review = json.loads(evidence_bytes(root, row["review"]))
+        result = json.loads(evidence_bytes(root, row["execution_result"]))
+        plan = json.loads(evidence_bytes(root, row["execution_plan"]))
+        events = [json.loads(b) for b in evidence_bytes(root, row["native_events"]).splitlines()]
+        if plan.get("client") not in {"agy", "codex"}:
+            raise ValueError("Unsupported manuscript native client")
+        request_raw = evidence_bytes(root, row["native_request"])
+        task_hash = hashlib.sha256(task).hexdigest()
+        if (not isinstance(plan.get("stdin_file"), str) or not plan["stdin_file"]
+                or not isinstance(plan.get("model"), str) or not plan["model"]
+                or plan.get("prompt_sha256") != task_hash or plan.get("task_sha256", task_hash) != task_hash
+                or plan.get("stdin_sha256") != hashlib.sha256(request_raw).hexdigest()
+                or plan.get("stdin_file") != row.get("native_request_origin")
+                or execution.get("stdin_bytes_written") != len(request_raw)
+                or execution.get("stdin_write_calls") != 1
+                or execution.get("artifact_hashes", {}).get("input/task.md") != task_hash
+                or execution.get("artifact_hashes", {}).get("output/events.ndjson") != row["native_events"]["sha256"]
+                or execution.get("requested_model") != plan.get("model")
+                or execution.get("requested_effort") != plan.get("effort")):
+            raise ValueError("Manuscript actual stdin differs from its sealed task or native plan")
+        terminal = next((e for e in events if e.get("type", e.get("event")) in {"result", "turn.completed", "turn.failed"}), None)
+        if terminal is None:
+            raise ValueError("Manuscript needs an original native terminal")
+        if plan.get("client") == "agy":
+            native = terminal.get("result", {})
+            text = native.get("response")
+            delivered = terminal.get("event") == "result" and native.get("status") == "SUCCESS"
+            request = json.loads(request_raw)
+            if request != {"event": "user", "message": {"content": task.decode("utf-8")}}:
+                raise ValueError("Manuscript native request changed its exact task")
+        else:
+            if request_raw != task:
+                raise ValueError("Codex manuscript stdin must be the exact original task")
+            messages = [e["item"].get("text") for e in events[:events.index(terminal)]
+                if e.get("type") == "item.completed" and isinstance(e.get("item"), dict)
+                and e["item"].get("type") == "agent_message"]
+            text = messages[-1] if messages else None
+            delivered = terminal.get("type") == "turn.completed"
+            paired = json.loads(evidence_bytes(root, row["catalog_pair_check"]))
+            if paired.get("passed") is not True or paired.get("pending") != {}:
+                raise ValueError("Manuscript catalog events were not fully checked")
+        seal = result.get("native_terminal_seal") or {}
+        artifact_checks_passed = result.get("local_artifact_checks_passed") is True
+        if result.get("schema") == "math-gauge.independent-idea-native-result/v1":
+            seal = result.get("first_terminal") or {}
+            artifact_checks_passed = (result.get("artifact_checks_passed") is True
+                and result.get("normal_complete_delivery") is True
+                and result.get("prompt_sha256") == task_hash)
+        if (not delivered or not isinstance(text, str) or not text or text.encode("utf-8") != answer
+                or candidate != task or execution.get("kind") != "math" or execution.get("request_count") != 1
+                or execution.get("tool_mismatch") is not None or result.get("tool_mismatch") is not None
+                or seal.get("answer_sha256") != row["response"]["sha256"]
+                or not artifact_checks_passed
+                or plan.get("local_tool_policy") != "math-gauge.local-tools-no-search/v1"
+                or plan.get("tool_network_access") is not False
+                or review.get("schema") != "math-gauge.manuscript-completion-review/v1"
+                or review.get("case_id") != case["case_id"] or review.get("stage") != "A1"
+                or review.get("reviewer_kind") != "ai" or review.get("human_review") != "pending"
+                or review.get("formal_comparison_eligible") is not False
+                or review.get("answer_sha256") != row["response"]["sha256"]
+                or review.get("rubric_sha256") != case["source_rubric"]["sha256"]
+                or review.get("score") != row["points"] or review.get("strict_pass") != row["complete"]):
+            raise ValueError("Manuscript judgment lost its original input, answer or native execution")
+        criteria = review.get("criteria", [])
+        if ([{"criterion_id": c["id"], "points": c["max_points"]} for c in criteria] != case["criteria"]
+                or any(type(c.get("points")) is not int or not 0 <= c["points"] <= c["max_points"] for c in criteria)
+                or sum(c["points"] for c in criteria) != row["points"]):
+            raise ValueError("Manuscript mathematical credit differs from its criterion review")
+        manuscript = None
+        if row.get("manuscript") is not None:
+            manuscript = evidence_bytes(root, row["manuscript"])
+            filename = Path(row["manuscript"]["path"]).name
+            if (review.get("manuscript_sha256") != row["manuscript"]["sha256"]
+                    or filename not in text
+                    or not any(item.get("path") == filename
+                        and item.get("sha256") == row["manuscript"]["sha256"]
+                        and item.get("bytes") == len(manuscript) for item in seal.get("work", []))):
+                raise ValueError("Delivered manuscript is not bound to the native final and sealed work")
+        for criterion in criteria:
+            for quote in criterion.get("evidence", []):
+                document = quote.get("document", "answer")
+                if document not in {"answer", "manuscript"}:
+                    raise ValueError("Unsupported manuscript review document")
+                raw = manuscript if document == "manuscript" else answer
+                if raw is None or raw[quote["start"]:quote["end"]] != quote["quote"].encode("utf-8"):
+                    raise ValueError("Manuscript review quotes different original bytes")
+        fidelity = row.get("fidelity")
+        if fidelity is not None:
+            source = json.loads(evidence_bytes(root, fidelity["source"]))
+            if (source.get("schema") != "math-gauge.manuscript-fidelity-review/v1"
+                    or source.get("case_id") != case["case_id"]
+                    or source.get("answer_sha256") != row["response"]["sha256"]
+                    or source.get("rubric_sha256") != case["source_rubric"]["sha256"]
+                    or source.get("policy_sha256") != case["fidelity_policy_source"]["sha256"]
+                    or any(source.get(k) != fidelity[k] for k in
+                        ("level", "adjustment_points", "passed", "reliable_acceptance", "root_cause"))
+                    or source.get("reviewer_kind") != "ai" or source.get("human_review") != "pending"
+                    or source.get("formal_comparison_eligible") is not False
+                    or not source.get("evidence")):
+                raise ValueError("Manuscript fidelity adjustment lost its source judgment")
+            for quote in source["evidence"]:
+                if answer[quote["start"]:quote["end"]] != quote["quote"].encode("utf-8"):
+                    raise ValueError("Fidelity review quotes different original answer bytes")
+        control = json.loads(evidence_bytes(root, row["native_capability_control"]))
+        if (control.get("passed") is not True or control.get("math_requests") != 0
+                or any(control.get("proof", {}).get(k) is not True
+                    for k in ("local_read_write", "outside_denied", "network_denied"))):
+            raise ValueError("Manuscript source lacks a real local-tool compatibility control")
+        ledger = json.loads(evidence_bytes(root, row["physical_request_ledger"]))
+        selected = row.get("selected_physical_request")
+        if ledger.get("schema") == "math-gauge.manuscript-request-history/v2":
+            if type(selected) is not int or selected <= 0:
+                raise ValueError("A delivered authorized restart needs its exact selected request")
+            _validate_manuscript_request_history(root, row, case, selected=selected)
+            continue
+        attempts = ledger.get("attempts", [])
+        if (type(selected) is not int or selected <= 0 or not isinstance(attempts, list)
+                or len(attempts) != selected or [a.get("physical_request") for a in attempts] != list(range(1, selected+1))
+                or ledger.get("selected_physical_request") != selected
+                or ledger.get("effective_model_attempt") != 1
+                or ledger.get("first_complete_answer_selected") is not True
+                or attempts[-1].get("execution") != row["execution"]
+                or attempts[-1].get("native_events") != row["native_events"]
+                or attempts[-1].get("response") != row["response"]):
+            raise ValueError("Manuscript physical requests and effective A1 were conflated")
+        for number, attempt in enumerate(attempts, 1):
+            actual = json.loads(evidence_bytes(root, attempt["execution"]))
+            original_events = [json.loads(b) for b in evidence_bytes(root, attempt["native_events"]).splitlines()]
+            if actual.get("kind") != "math" or actual.get("request_count") != 1:
+                raise ValueError("Manuscript ledger invented a physical mathematical request")
+            text_available = False
+            previous_text = None
+            for event in original_events:
+                if event.get("type") == "item.completed" and event.get("item", {}).get("type") == "agent_message":
+                    previous_text = event["item"].get("text")
+                if event.get("type") == "turn.completed":
+                    text_available = bool(isinstance(previous_text, str) and previous_text.strip())
+                    break
+                if event.get("event") == "result":
+                    native = event.get("result", {})
+                    text_available = native.get("status") == "SUCCESS" and bool(native.get("response", "").strip())
+                    break
+            if attempt.get("response") is not None:
+                evidence_bytes(root, attempt["response"])
+            if number == selected:
+                if (not text_available or attempt.get("first_complete_answer") is not True
+                        or attempt.get("excluded_pure_system_failure") is not False
+                        or attempt.get("effective_model_attempt") != 1):
+                    raise ValueError("Selected manuscript request is not the first effective delivery")
+            elif (text_available or attempt.get("first_complete_answer") is not False
+                    or attempt.get("excluded_pure_system_failure") is not True
+                    or attempt.get("effective_model_attempt") is not None
+                    or attempt.get("exclusion_reason") not in {
+                        "native_empty_reply_after_headless_permission_denial",
+                        "controller_interruption_before_first_complete_answer",
+                        "controller_local_edit_alias_false_positive"}):
+                raise ValueError("Manuscript cannot exclude a normally delivered earlier answer")
+            else:
+                if not isinstance(attempt.get("stderr"), dict):
+                    raise ValueError("A system exclusion needs its retained native error stream")
+                validate_system_exclusion(actual, original_events, attempt["exclusion_reason"],
+                    evidence_bytes(root, attempt["stderr"]).decode("utf-8"))
+        for item in row.get("artifacts", []):
+            evidence_bytes(root, item)
+    return data
+
+
+def validate_public_manuscript_completion(root, record):
+    item = record.get("manuscript_completion_evidence")
+    if item is None:
+        return None
+    data = json.loads(evidence_bytes(root, item))
+    if (set(data) != {"schema", "private_cases", "source_inputs_sha256", "human_review", "formal_comparison_eligible"}
+            or data.get("schema") != "math-gauge.manuscript-completion-public-evidence/v1"
+            or type(data.get("private_cases")) is not int or data["private_cases"] not in {1, 2, 3}
+            or data.get("human_review") != "pending"
+            or data.get("formal_comparison_eligible") is not False
+            or not re.fullmatch(r"[0-9a-f]{64}", data.get("source_inputs_sha256", ""))):
+        raise ValueError("Private manuscript evidence crossed its aggregate-only public boundary")
+    return data
+
+
 def load_written_argument_inputs(root, record, *, policy=None):
     """Bind added private written judgments to unchanged source tasks and A1 bytes."""
     if record.get("written_argument_inputs") is None:
@@ -579,7 +879,8 @@ def public_assessment_case_ids(policy):
     return sorted(set(selection["public_case_ids"])
         | set(selection.get("public_replacement_case_ids", []))
         | set(policy["theorem_extension"]["public_case_ids"])
-        | set(policy["background_check"]["public_case_ids"]))
+        | set(policy["background_check"]["public_case_ids"])
+        | set(policy.get("manuscript_completion", {}).get("public_case_ids", [])))
 
 
 def project_public_task_view(score, public_ids, source_report_sha256):
@@ -652,10 +953,7 @@ def load_claim_review(root, record, condition, *, public_root=None):
     data = archive["conditions"][condition]
     rows = validate_review(data)
     assessment = json.loads(evidence_bytes(public, record["assessment_policy"]))
-    public_ids = set(assessment["case_selection"]["public_case_ids"])
-    public_ids.update(assessment["case_selection"].get("public_replacement_case_ids", []))
-    public_ids.update(assessment["theorem_extension"]["public_case_ids"])
-    public_ids.update(assessment["background_check"]["public_case_ids"])
+    public_ids = set(public_assessment_case_ids(assessment))
     if (not external and set(rows) != public_ids
             or external and (not public_ids.issubset(rows) or len(rows) != assessment["scope"]["tasks"])):
         raise ValueError("Claim review changed the selected public/private task population")
@@ -728,6 +1026,10 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
         key = "written_replacement_inputs" if external else "written_replacement_evidence"
         if record.get(key) is None:
             raise ValueError("Current written replacement requires source-bound evidence")
+    if assessment.get("manuscript_completion") is not None:
+        key = "manuscript_completion_inputs" if external else "manuscript_completion_evidence"
+        if record.get(key) is None:
+            raise ValueError("Current manuscript component requires its source-bound evidence")
     validate_strict_assessment_policy(json.loads(strict_raw))
     claim_raw = None
     if assessment["version"] == "0.8.0":
@@ -800,6 +1102,9 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if record.get("written_replacement_inputs") is not None:
                 load_written_replacement_inputs(root, record, policy=assessment.get("written_argument_replacements"))
                 expected["written_replacement_inputs_sha256"] = root / record["written_replacement_inputs"]["path"]
+            if record.get("manuscript_completion_inputs") is not None:
+                load_manuscript_completion_inputs(root, record, policy=assessment.get("manuscript_completion"))
+                expected["manuscript_completion_inputs_sha256"] = root / record["manuscript_completion_inputs"]["path"]
             if any(bindings.get(key) != hashlib.sha256(path.read_bytes()).hexdigest()
                    for key, path in expected.items()):
                 raise ValueError("Current score binds different source judgments")
@@ -814,6 +1119,13 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             if (replacement is not None and bindings.get("written_replacement_inputs_sha256")
                     != replacement["source_inputs_sha256"]):
                 raise ValueError("Public written replacement binds a different source input")
+            manuscript = validate_public_manuscript_completion(root, record)
+            if (manuscript is not None and manuscript["private_cases"]
+                    != assessment["manuscript_completion"]["private_cases"]):
+                raise ValueError("Public manuscript evidence changed its fixed family population")
+            if (manuscript is not None and bindings.get("manuscript_completion_inputs_sha256")
+                    != manuscript["source_inputs_sha256"]):
+                raise ValueError("Public manuscript aggregate binds a different private source")
         scores[condition] = score
     return scores
 
@@ -992,6 +1304,35 @@ def validate_formalization_review(root, inputs, review):
     return {"cases": len(review["cases"]), "passed": True}
 
 
+def load_content_rates(root, record=None):
+    """Read optional aggregate-only supplemental rates tied to this exact archive."""
+    from .content_rates import validate_public_rates
+
+    root = Path(root).resolve()
+    path = root / 'content-rates.json'
+    if not path.exists():
+        return None
+    record = record or json.loads((root / 'record.json').read_bytes())
+    report = validate_public_rates(json.loads(path.read_bytes()))
+    current = report['version'] == '0.2.0'
+    source = record['assessment_results']['nonlogical_retry_3']
+    expected = {
+        'record_sha256': hashlib.sha256((root / 'record.json').read_bytes()).hexdigest(),
+        'assessment_result_sha256': hashlib.sha256(evidence_bytes(root, source)).hexdigest(),
+        'assessment_policy_sha256': hashlib.sha256(evidence_bytes(root, record['assessment_policy'])).hexdigest(),
+        'method_policy_sha256': hashlib.sha256((root / ('goal-attainment-policy.json' if current
+                                                       else 'content-rate-policy.json')).read_bytes()).hexdigest(),
+    }
+    if current:
+        # Portable anonymous reports keep the original content review opaque;
+        # source verification of its private bytes belongs to the evaluator run.
+        expected.update(content_review_sha256=report['private_review_sha256'],
+            content_method_policy_sha256=hashlib.sha256((root / 'content-rate-policy.json').read_bytes()).hexdigest())
+    if report['source_bindings'] != expected or report['model_id'] != root.parent.name:
+        raise ValueError('Content rates bind a different retained record, score or policy')
+    return report
+
+
 def validate_record(root, *, formalization_root=None, validate_scores=True):
     root = Path(root).resolve()
     record = json.loads((root / "record.json").read_bytes())
@@ -1043,7 +1384,11 @@ def validate_record(root, *, formalization_root=None, validate_scores=True):
     validate_public_written_additions(root, record)
     load_written_replacement_inputs(root, record)
     validate_public_written_replacements(root, record)
+    load_manuscript_completion_inputs(root, record)
+    validate_public_manuscript_completion(root, record)
     load_public_task_scores(root, record)
+    if validate_scores:
+        load_content_rates(root, record)
     if record.get("formalization_review") is not None:
         location = record.get("formalization_evidence_location", "local")
         if location not in {"local", "public_archive"}:

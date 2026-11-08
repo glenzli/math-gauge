@@ -1,0 +1,293 @@
+{
+  "schema": "math-gauge.manuscript-completion-review/v1",
+  "case_id": "MG-MCP003",
+  "case_version": "0.1.0",
+  "rubric_version": "0.1.0",
+  "stage": "A1",
+  "model_label": "gemini-3.8-flash-high",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "post_observation": true,
+  "rubric_frozen_before_candidate_answers": true,
+  "case_adoption_post_observation": true,
+  "answer": "answer.md",
+  "answer_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+  "answer_bytes": 26914,
+  "rubric_sha256": "c4b75963d5fcc90128d7e74776bc5a5cbd0eebc6d299b7556d412ff68823a920",
+  "task_sha256": "394108946a8285599803d21c03ef6d62faddf3144691a09b6f30161be28229ce",
+  "score": 81,
+  "total_points": 100,
+  "strict_pass": false,
+  "criteria": [
+    {
+      "id": "M1",
+      "max_points": 15,
+      "points": 15,
+      "reason": "核心对象及量词正确：以CH1有限非空伪度量族构造距离向量；上界区分有效域和全空间，下界及不可区分判据在有效域比较；明确零伪距离不等于点相等。不要求额外族分离性、逆函数或特定OET命名。错误吸收定理/附加不动点定理单列，不抹掉这些已满足的核心模型项。",
+      "evidence": [
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 1920,
+          "end": 2722,
+          "quote": "设指标集 $I$ 有限，记 $|I| = m$。不妨视 $I = \\{1, \\dots, m\\}$。\n- 对任意点对 $x, y \\in \\mathcal{X}$，定义**距离向量**：\n  $$\\mathbf{d}(x, y) := \\begin{pmatrix} d_1(x, y) \\\\ \\vdots \\\\ d_m(x, y) \\end{pmatrix} \\in \\bar{\\mathbb{R}}_+^m.$$\n- 空间 $\\bar{\\mathbb{R}}_+^m$ 上的偏序由分量自然诱导：$u \\le v \\iff \\forall i \\in I,\\; u_i \\le v_i$。\n- 对矩阵 $A, B \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 及向量 $v \\in \\bar{\\mathbb{R}}_+^m$，定义标准矩阵乘积与作用：\n  $$(A v)_i := \\sum_{j=1}^m A_{ij} v_j, \\qquad (A B)_{ij} := \\sum_{k=1}^m A_{ik} B_{kj}.$$\n  由命题 1.1，矩阵乘法在 $\\bar{\\mathbb{R}}_+^{m \\times m}$ 上满足完全结合律：$(AB)C = A(BC)$，且保持单调性：$u \\le v \\implies A u \\le A v$，$A \\le B \\implies A u \\le B u$。",
+          "line_start": 24,
+          "line_end": 30
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 3410,
+          "end": 4211,
+          "quote": "> **定义 2.1（上 Lipschitz 矩阵 / 上模矩阵）**  \n> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$ 为算子。\n> 1. 若矩阵 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：\n>    $$\\forall x, y \\in \\mathrm{dom}(\\phi),\\quad \\mathbf{d}(\\phi(x), \\phi(y)) \\le A\\, \\mathbf{d}(x, y),$$\n>    即对每个 $i \\in I$：\n>    $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} d_j(x, y),$$\n>    则称 $A$ 为 $\\phi$ 的一个**（有效定义域上的）上 Lipschitz 矩阵**（Upper Lipschitz Matrix，或称**上模矩阵**）。\n> 2. 若上述不等式对全空间中的所有 $x, y \\in \\mathcal{X}$ 均成立，则称 $A$ 为 $\\phi$ 的**全局上 Lipschitz 矩阵**。\n>\n> 记 $\\mathrm{Lip}^+(\\phi) \\subseteq \\bar{\\mathbb{R}}_+^{m \\times m}$ 为 $\\phi$ 的所有上 Lipschitz 矩阵构成的集合。",
+          "line_start": 41,
+          "line_end": 50
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 12827,
+          "end": 13236,
+          "quote": "在扩展规范空间中，背景特别强调**“正文不预设族分离性；全分量零距离不必意味着两点相同”**。\n两点 $u, v$ 在伪度量 $d_i$ 下**不可区分（Indistinguishable）**，在数学上精确等价于：\n$$d_i(u, v) = 0.$$\n如果输出在所有指标上均有 $d_i(u, v) = 0$（即 $\\mathbf{d}(u, v) = \\mathbf{0}$），则输出落入了同一个不可区分等价类。",
+          "line_start": 155,
+          "line_end": 158
+        }
+      ]
+    },
+    {
+      "id": "M2",
+      "max_points": 20,
+      "points": 20,
+      "reason": "给出真正联合输入分量的非负矩阵上界，不把它冒充逐对常数。有效域上的上界乘法链式法则正确；两个显式上界例均可直接验证。没有声称逐坐标最小矩阵或最优矩阵取得，不添加这些隐藏义务。任意算子均有证书的错误专门归M4，不据此抹掉定义与正确链式法则。",
+      "evidence": [
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 3526,
+          "end": 3937,
+          "quote": "> 1. 若矩阵 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：\n>    $$\\forall x, y \\in \\mathrm{dom}(\\phi),\\quad \\mathbf{d}(\\phi(x), \\phi(y)) \\le A\\, \\mathbf{d}(x, y),$$\n>    即对每个 $i \\in I$：\n>    $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} d_j(x, y),$$\n>    则称 $A$ 为 $\\phi$ 的一个**（有效定义域上的）上 Lipschitz 矩阵**（Upper Lipschitz Matrix，或称**上模矩阵**）。",
+          "line_start": 43,
+          "line_end": 47
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 10740,
+          "end": 12146,
+          "quote": "> 设 $\\phi, \\psi \\in \\mathcal{X}_{\\mathrm{op}}$，满足 $\\phi(\\mathrm{dom}(\\psi \\circ \\phi)) \\subseteq \\mathrm{dom}(\\psi)$。\n> 1. 若 $A_\\phi, A_\\psi$ 分别为 $\\phi, \\psi$ 的上模矩阵，则 $A_\\psi A_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的上模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le (A_\\psi A_\\phi)\\, \\mathbf{d}(x, y).$$\n> 2. 若 $B_\\phi, B_\\psi$ 分别为 $\\phi, \\psi$ 的正向下模矩阵，则 $B_\\psi B_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的正向下模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\ge (B_\\psi B_\\phi)\\, \\mathbf{d}(x, y).$$\n> 3. 若 $C_\\phi, C_\\psi$ 分别为 $\\phi, \\psi$ 的余 Lipschitz 矩阵，则 $C_\\phi C_\\psi$ 为复合算子 $\\psi \\circ \\phi$ 的余 Lipschitz 矩阵：\n>    $$\\mathbf{d}(x, y) \\le (C_\\phi C_\\psi)\\, \\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))).$$\n\n*证明*：\n仅证 (1)，其余同理：对任意 $x, y \\in \\mathrm{dom}(\\psi \\circ \\phi)$，记 $u = \\phi(x), v = \\phi(y) \\in \\mathrm{dom}(\\psi)$。\n由 $\\psi$ 的上模性：$\\mathbf{d}(\\psi(u), \\psi(v)) \\le A_\\psi \\mathbf{d}(u, v)$。\n由于 $A_\\psi$ 的元素非负，矩阵作用保持 $\\le$ 的偏序单调性，将 $\\mathbf{d}(u, v) \\le A_\\phi \\mathbf{d}(x, y)$ 代入：\n$$\\mathbf{d}(\\psi(u), \\psi(v)) \\le A_\\psi \\bigl( A_\\phi \\mathbf{d}(x, y) \\bigr) = (A_\\psi A_\\phi) \\mathbf{d}(x, y).$$\n结合律由命题 1.1 的半环性质保证。 $\\blacksquare$",
+          "line_start": 130,
+          "line_end": 143
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 22307,
+          "end": 22687,
+          "quote": "$$d_1(\\phi(x), \\phi(y)) = |\\mathrm{dz}_1(x_1 + 2x_2) - \\mathrm{dz}_1(y_1 + 2y_2)| \\le |(x_1 - y_1) + 2(x_2 - y_2)| \\le 1 \\cdot d_1(x, y) + 2 \\cdot d_2(x, y).$$\n$$d_2(\\phi(x), \\phi(y)) = |\\mathrm{dz}_2(3x_1) - \\mathrm{dz}_2(3y_1)| \\le 3 \\cdot d_1(x, y) + 0 \\cdot d_2(x, y).$$\n因此，$\\phi$ 的上 Lipschitz 矩阵精确为：\n$$A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 0 \\end{pmatrix}.$$",
+          "line_start": 264,
+          "line_end": 267
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 23247,
+          "end": 24142,
+          "quote": "### 范例 6.2：非 Lipschitz 奇异算子与 $\\infty$ 矩阵元\n考虑同样的空间，设算子 $\\psi(x_1, x_2) = (\\sqrt{|x_1|}, x_2)$（$\\forall x \\in \\mathbb{R}^2$），$\\psi(\\bot) = \\bot$。\n由于 $t \\mapsto \\sqrt{|t|}$ 在原点处切线斜率无穷大，在经典意义下该函数在任何包含原点的邻域均不具备有限 Lipschitz 常数。\n但在扩展规范矩阵理论下，我们在 $\\bar{\\mathbb{R}}_+^{2 \\times 2}$ 中直接给出其上 Lipschitz 矩阵：\n$$A_\\psi = \\begin{pmatrix} +\\infty & 0 \\\\ 0 & 1 \\end{pmatrix}.$$\n- 在第 1 分量上：若 $d_1(x, y) > 0$，上界为 $(+\\infty) \\cdot d_1(x, y) = +\\infty$（接纳其奇异性）；而一旦 $d_1(x, y) = 0$（即 $x_1 = y_1$），则 $(+\\infty) \\cdot 0 = 0$，保证了 $d_1(\\psi(x), \\psi(y)) = 0 \\le 0$ 严格成立！\n- 在第 2 分量上：完全保持有限 Lipschitz 常数 $1$ 且与第 1 分量解耦。",
+          "line_start": 275,
+          "line_end": 281
+        }
+      ]
+    },
+    {
+      "id": "M3",
+      "max_points": 20,
+      "points": 20,
+      "reason": "正向下界B与逆向控制C都类型正确，距离不等式方向正确。B的正列项传递可分性；C在族分离条件下推出有效域单射；真实双射时C与逆映射上界等价；非负可逆B的逆矩阵给C合法。BψBφ及CφCψ的复合顺序正确，扩展非负运算不破坏这些推导。未把两种下界无条件等同，也未机械对上界取倒数。",
+      "evidence": [
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 7921,
+          "end": 8763,
+          "quote": "> **定义 3.1（正向下模矩阵 / 扩张矩阵）**  \n> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。若矩阵 $B \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：\n> $$\\forall x, y \\in \\mathrm{dom}(\\phi),\\quad \\mathbf{d}(\\phi(x), \\phi(y)) \\ge B\\, \\mathbf{d}(x, y),$$\n> 即对每个 $i \\in I$：\n> $$d_i(\\phi(x), \\phi(y)) \\ge \\sum_{j=1}^m B_{ij} d_j(x, y),$$\n> 则称 $B$ 为 $\\phi$ 的一个**正向下模矩阵**（Lower Lipschitz Matrix / Expansion Matrix）。\n\n- **性质分析**：\n  若存在某个分量 $i$ 使得 $B_{ij} > 0$，则只要输入的第 $j$ 分量存在差异（$d_j(x, y) > 0$），输出的第 $i$ 分量必定被强行撑开：\n  $$d_i(\\phi(x), \\phi(y)) \\ge B_{ij} d_j(x, y) > 0.$$\n  若 $B$ 的每列均有非零元，则输入在任意伪度量分量上的可分性，均能至少在一个输出分量中被识别。",
+          "line_start": 96,
+          "line_end": 106
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 8841,
+          "end": 10631,
+          "quote": "> **定义 3.2（余 Lipschitz 矩阵 / 拟逆下模矩阵）**  \n> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。若矩阵 $C \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：\n> $$\\forall x, y \\in \\mathrm{dom}(\\phi),\\quad \\mathbf{d}(x, y) \\le C\\, \\mathbf{d}(\\phi(x), \\phi(y)),$$\n> 即对每个 $j \\in I$：\n> $$d_j(x, y) \\le \\sum_{i=1}^m C_{ji} d_i(\\phi(x), \\phi(y)),$$\n> 则称 $C$ 为 $\\phi$ 的一个**余 Lipschitz 矩阵**（Co-Lipschitz Matrix）。\n\n> **命题 3.1（形式 A 与形式 B 的对偶关系及与逆算子的联系）**  \n> 1. **单射性与强分离性**：若 $\\phi$ 具有有限元素的余 Lipschitz 矩阵 $C$，且空间具有族分离性，则 $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 上严格为单射。\n> 2. **可逆算子的对偶性**：若 $\\phi: \\mathrm{dom}(\\phi) \\to \\mathrm{ran}(\\phi)$ 为可逆双射，设其逆算子为 $\\phi^{-1}$。则 $C$ 是 $\\phi$ 的余 Lipschitz 矩阵，当且仅当 $C$ 是 $\\phi^{-1}$ 在 $\\mathrm{ran}(\\phi)$ 上的上 Lipschitz 矩阵：\n>    $$\\mathbf{d}(\\phi^{-1}(u), \\phi^{-1}(v)) \\le C\\, \\mathbf{d}(u, v) \\quad (\\forall u, v \\in \\mathrm{ran}(\\phi)).$$\n> 3. **矩阵求逆联系**：若正向下模矩阵 $B$ 处在实数域且可逆，且其逆矩阵 $B^{-1}$ 满足所有元素非负（即 $B^{-1} \\in \\bar{\\mathbb{R}}_+^{m \\times m}$），则 $C = B^{-1}$ 构成 $\\phi$ 的余 Lipschitz 矩阵。\n\n*证明*：\n对结论 (2)：在定义 3.2 中令 $u = \\phi(x), v = \\phi(y)$，由于 $\\phi$ 为双射，$x = \\phi^{-1}(u), y = \\phi^{-1}(v)$，代入即得 $\\mathbf{d}(\\phi^{-1}(u), \\phi^{-1}(v)) \\le C \\mathbf{d}(u, v)$。\n对结论 (3)：由 $\\mathbf{d}(\\phi(x), \\phi(y)) \\ge B \\mathbf{d}(x, y)$，左乘非负矩阵 $B^{-1}$，由半环单调性即得 $B^{-1} \\mathbf{d}(\\phi(x), \\phi(y)) \\ge \\mathbf{d}(x, y)$。 $\\blacksquare$",
+          "line_start": 110,
+          "line_end": 125
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 11098,
+          "end": 11585,
+          "quote": "> 2. 若 $B_\\phi, B_\\psi$ 分别为 $\\phi, \\psi$ 的正向下模矩阵，则 $B_\\psi B_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的正向下模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\ge (B_\\psi B_\\phi)\\, \\mathbf{d}(x, y).$$\n> 3. 若 $C_\\phi, C_\\psi$ 分别为 $\\phi, \\psi$ 的余 Lipschitz 矩阵，则 $C_\\phi C_\\psi$ 为复合算子 $\\psi \\circ \\phi$ 的余 Lipschitz 矩阵：\n>    $$\\mathbf{d}(x, y) \\le (C_\\phi C_\\psi)\\, \\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))).$$",
+          "line_start": 133,
+          "line_end": 136
+        }
+      ]
+    },
+    {
+      "id": "M4",
+      "max_points": 20,
+      "points": 10,
+      "reason": "保留10分：非负扩展算术、0·∞=0的有限矩阵代数正确；带全族零关系保持前提的全无穷证书证明正确；平方根示例确实用∞给出合法上界。其余10分不计：首句任意算子证书存在性在非分离空间失败（B-F01）；有限系数不能控制跨∞距离的吸收边界（B-F02）；允许∞阈值的死区公式没有定义∞−∞（B-F04）。不要求未声称的最佳矩阵，也不把空有效域的真空成立算成错误。",
+      "evidence": [
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 571,
+          "end": 1882,
+          "quote": "依据 CH1 约定，$\\bar{\\mathbb{R}}_+ = [0, +\\infty]$ 配备扩展算术：\n- 加法：$\\forall a \\in \\bar{\\mathbb{R}}_+,\\; a + (+\\infty) = +\\infty + a = +\\infty$；加法单位元为 $0$。\n- 乘法：$\\forall a > 0,\\; a \\cdot (+\\infty) = (+\\infty) \\cdot a = +\\infty$；特别约定零元乘法：\n  $$0 \\cdot (+\\infty) = (+\\infty) \\cdot 0 = 0.$$\n  乘法单位元为 $1$。\n- 偏序：采用实数标准全序，扩充 $a \\le +\\infty$（$\\forall a \\in \\bar{\\mathbb{R}}_+$）。\n\n> **命题 1.1（代数结构自洽性）**  \n> 在上述约定下，$(\\bar{\\mathbb{R}}_+, +, \\cdot, 0, 1, \\le)$ 构成一个**交换、偏序完备的半环（Ordered Complete Semiring）**。特别地，乘法对加法满足完全分配律：\n> $$\\forall a, b, c \\in \\bar{\\mathbb{R}}_+,\\quad a \\cdot (b + c) = a \\cdot b + a \\cdot c.$$\n\n*证明*：当 $a, b, c$ 均为有限数时由初等实数算术保证。若 $a = 0$，左端 $0 \\cdot (b+c) = 0$，右端 $0 \\cdot b + 0 \\cdot c = 0 + 0 = 0$，等式无条件成立；若 $a = +\\infty$：当 $b = c = 0$ 时，两端皆为 $0$；当 $b > 0$ 或 $c > 0$ 时，$b + c > 0$，左端为 $(+\\infty) \\cdot (b+c) = +\\infty$，右端至少含有一项 $(+\\infty) \\cdot x = +\\infty$（$x > 0$），故和为 $+\\infty$。其余含 $+\\infty$ 的情形同理均成立。 $\\blacksquare$",
+          "line_start": 10,
+          "line_end": 21
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 4330,
+          "end": 5316,
+          "quote": "> 对任意算子 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，集合 $\\mathrm{Lip}^+(\\phi)$ 均非空。特别地，定义全无穷矩阵 $A_\\infty$（即对所有 $i, j$，$A_{\\infty, ij} = +\\infty$），若对所有 $x, y \\in \\mathrm{dom}(\\phi)$，满足条件：\n> $$\\mathbf{d}(x, y) = \\mathbf{0} \\implies \\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0},$$\n> 则 $A_\\infty \\in \\mathrm{Lip}^+(\\phi)$。\n\n*证明*：\n设 $x, y \\in \\mathrm{dom}(\\phi)$。若 $\\mathbf{d}(x, y) = \\mathbf{0}$，由假设 $\\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0}$；而右端 $(A_\\infty \\mathbf{d}(x, y))_i = \\sum_{j=1}^m (+\\infty) \\cdot 0 = 0$，不等式 $0 \\le 0$ 成立。\n若 $\\mathbf{d}(x, y) \\neq \\mathbf{0}$，则存在某个 $k \\in I$ 使得 $d_k(x, y) > 0$。于是对任意分量 $i$：\n$$(A_\\infty \\mathbf{d}(x, y))_i \\ge A_{\\infty, ik} d_k(x, y) = (+\\infty) \\cdot d_k(x, y) = +\\infty.$$\n左端 $d_i(\\phi(x), \\phi(y)) \\le +\\infty$ 自然成立。故 $A_\\infty \\in \\mathrm{Lip}^+(\\phi)$。 $\\blacksquare$",
+          "line_start": 55,
+          "line_end": 63
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 6216,
+          "end": 7451,
+          "quote": "> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$ 拥有有限矩阵元的全局上 Lipschitz 矩阵 $A$（即 $A_{ij} < +\\infty$）。若 $\\mathrm{dom}(\\phi) \\neq \\emptyset$，则必有：\n> $$\\mathrm{dom}(\\phi) = \\mathcal{X}\\setminus\\{\\bot\\},$$\n> 即 $\\phi$ 必须是**保有效定义域的（Domain-preserving）**，不可能将某个非吸收点映射到 $\\bot$。\n\n*证明*：\n反设存在 $y \\in \\mathcal{X} \\setminus \\{\\bot\\}$ 但 $y \\notin \\mathrm{dom}(\\phi)$，即 $\\phi(y) = \\bot$。由于 $\\mathrm{dom}(\\phi) \\neq \\emptyset$，任取 $x \\in \\mathrm{dom}(\\phi)$，则 $\\phi(x) \\neq \\bot$。\n由于 $\\phi(x) \\neq \\bot$ 且 $\\phi(y) = \\bot$，根据吸收元隔离公理 (iv)，对任意 $i \\in I$：\n$$d_i(\\phi(x), \\phi(y)) = d_i(\\phi(x), \\bot) = +\\infty.$$\n而若 $A$ 的元素全为有限实数，且 $x, y \\in \\mathcal{X}\\setminus\\{\\bot\\}$ 之间的伪度量 $d_j(x, y)$ 有限，则右端：\n$$(A \\mathbf{d}(x, y))_i = \\sum_{j=1}^m A_{ij} d_j(x, y) < +\\infty.$$\n这导致 $+\\infty \\le (A \\mathbf{d}(x, y))_i < +\\infty$，产生矛盾。\n因此，若算子在某些输入处未定义（即退化到 $\\bot$），其全局上 Lipschitz 矩阵的对应项必须包含 $+\\infty$ 才能吸纳边界处的距离跳变。 $\\blacksquare$",
+          "line_start": 73,
+          "line_end": 84
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 15737,
+          "end": 16131,
+          "quote": "> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。设 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为增益矩阵，$\\Theta \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为**不可区分阈值矩阵（死区矩阵 Dead-zone Matrix）**。\n> 若对所有 $x, y \\in \\mathrm{dom}(\\phi)$ 及所有 $i \\in I$，均满足：\n> $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} \\bigl[ d_j(x, y) - \\Theta_{ij} \\bigr]_+,$$",
+          "line_start": 193,
+          "line_end": 195
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 23247,
+          "end": 24142,
+          "quote": "### 范例 6.2：非 Lipschitz 奇异算子与 $\\infty$ 矩阵元\n考虑同样的空间，设算子 $\\psi(x_1, x_2) = (\\sqrt{|x_1|}, x_2)$（$\\forall x \\in \\mathbb{R}^2$），$\\psi(\\bot) = \\bot$。\n由于 $t \\mapsto \\sqrt{|t|}$ 在原点处切线斜率无穷大，在经典意义下该函数在任何包含原点的邻域均不具备有限 Lipschitz 常数。\n但在扩展规范矩阵理论下，我们在 $\\bar{\\mathbb{R}}_+^{2 \\times 2}$ 中直接给出其上 Lipschitz 矩阵：\n$$A_\\psi = \\begin{pmatrix} +\\infty & 0 \\\\ 0 & 1 \\end{pmatrix}.$$\n- 在第 1 分量上：若 $d_1(x, y) > 0$，上界为 $(+\\infty) \\cdot d_1(x, y) = +\\infty$（接纳其奇异性）；而一旦 $d_1(x, y) = 0$（即 $x_1 = y_1$），则 $(+\\infty) \\cdot 0 = 0$，保证了 $d_1(\\psi(x), \\psi(y)) = 0 \\le 0$ 严格成立！\n- 在第 2 分量上：完全保持有限 Lipschitz 常数 $1$ 且与第 1 分量解耦。",
+          "line_start": 275,
+          "line_end": 281
+        }
+      ]
+    },
+    {
+      "id": "M5",
+      "max_points": 20,
+      "points": 13,
+      "reason": "保留13分：明确以输出伪距离为0定义不可区分；逐行T条件本身是有意义的矩阵型充分判据；在距离与阈值有限的范围，死区不等式、闭阈值坍缩、Θ=0退化及嵌套复合控制均可按原文证明成立。其余7分不计：逐行与联合谓词被误称为等价简写、单个有限系数被误读为充分阈值（B-F03），以及给出的非平凡T实例实际错误（B-F05）。不要求阈值描述为必要条件或完整刻画，也不强制逐对OET阈值矩阵。B-F04的扩展算术问题主要计在M4，不额外把本项所有有限值成果清空。",
+      "evidence": [
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 12827,
+          "end": 13236,
+          "quote": "在扩展规范空间中，背景特别强调**“正文不预设族分离性；全分量零距离不必意味着两点相同”**。\n两点 $u, v$ 在伪度量 $d_i$ 下**不可区分（Indistinguishable）**，在数学上精确等价于：\n$$d_i(u, v) = 0.$$\n如果输出在所有指标上均有 $d_i(u, v) = 0$（即 $\\mathbf{d}(u, v) = \\mathbf{0}$），则输出落入了同一个不可区分等价类。",
+          "line_start": 155,
+          "line_end": 158
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 13649,
+          "end": 15260,
+          "quote": "> **定义 4.1（不可区分灵敏度矩阵）**  \n> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。若矩阵 $T \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：对任意 $x, y \\in \\mathrm{dom}(\\phi)$ 及任意分量 $i \\in I$：\n> $$\\sum_{j=1}^m T_{ij} d_j(x, y) \\le 1 \\implies d_i(\\phi(x), \\phi(y)) = 0,$$\n> 简写为向量蕴涵形式：\n> $$T\\, \\mathbf{d}(x, y) \\le \\mathbf{1}_m \\implies \\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0},$$\n> （其中 $\\mathbf{1}_m = (1, \\dots, 1)^T$ 为全 $1$ 向量），则称 $T$ 为 $\\phi$ 的一个**不可区分灵敏度矩阵**（Tolerance / Indistinguishability Sensitivity Matrix）。\n\n> **命题 4.1（矩阵元 $T_{ij} \\in [0, +\\infty]$ 的物理与几何内涵）**  \n> 矩阵元素 $T_{ij}$ 具有广义倒数阈值（辨识度灵敏度）的几何意义：\n> 1. **$T_{ij} = 0$（完全钝感 / 忽略）**：分量 $j$ 的输入距离无论多大，由于 $0 \\cdot d_j(x, y) = 0 \\le 1$，都不会阻碍输出在第 $i$ 分量上达到不可区分。\n> 2. **$0 < T_{ij} < +\\infty$（有限容差带）**：分量 $j$ 具有有限的不可区分容许上限 $R_{ij} = 1 / T_{ij}$。只要输入满足 $d_j(x, y) \\le 1 / T_{ij}$，即可使输出不可区分。\n> 3. **$T_{ij} = +\\infty$（刚性不可区分 / 零容忍）**：根据 $0 \\cdot (+\\infty) = 0$ 约定：\n>    - 若 $d_j(x, y) = 0$，则 $(+\\infty) \\cdot 0 = 0 \\le 1$；\n>    - 若 $d_j(x, y) > 0$，则 $(+\\infty) \\cdot d_j(x, y) = +\\infty > 1$。\n>    因此，$T_{ij} = +\\infty$ 意味着：分量 $j$ 必须严格达到零距离（$d_j = 0$），否则无法落入第 $i$ 分量的不可区分范畴。",
+          "line_start": 168,
+          "line_end": 182
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 15686,
+          "end": 17894,
+          "quote": "> **定义 4.2（死区 Lipschitz 矩阵对）**  \n> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。设 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为增益矩阵，$\\Theta \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为**不可区分阈值矩阵（死区矩阵 Dead-zone Matrix）**。\n> 若对所有 $x, y \\in \\mathrm{dom}(\\phi)$ 及所有 $i \\in I$，均满足：\n> $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} \\bigl[ d_j(x, y) - \\Theta_{ij} \\bigr]_+,$$\n> 简记为：\n> $$\\mathbf{d}(\\phi(x), \\phi(y)) \\le A \\odot_{\\mathrm{dead}} [\\mathbf{d}(x, y) - \\Theta]_+,$$\n> 则称算子 $\\phi$ 具有**死区 Lipschitz 结构**，记作 $\\phi \\sim \\mathrm{Lip}_{\\mathrm{DZ}}(A, \\Theta)$。\n\n> **定理 4.1（死区矩阵理论与经典 Lipschitz 矩阵的完全对等与涵盖）**  \n> 1. **不可区分范畴坍缩性**：设 $\\phi \\sim \\mathrm{Lip}_{\\mathrm{DZ}}(A, \\Theta)$。定义输入对 $(x, y)$ 在分量 $i$ 上的**不可区分输入范畴（Category of Indistinguishability）**：\n>    $$\\mathcal{U}_i(\\Theta) := \\Bigl\\{ (x, y) \\in \\mathrm{dom}(\\phi) \\times \\mathrm{dom}(\\phi) \\;\\Big|\\; \\forall j \\in I,\\; d_j(x, y) \\le \\Theta_{ij} \\Bigr\\}.$$\n>    则当 $(x, y) \\in \\mathcal{U}_i(\\Theta)$ 时，输出在第 $i$ 分量上**严格不可区分**：\n>    $$d_i(\\phi(x), \\phi(y)) = 0.$$\n> 2. **退化与经典等价**：当不可区分阈值矩阵 $\\Theta = \\mathbf{0}_{m \\times m}$ 时，由于 $[d_j - 0]_+ = d_j$，定义 4.2 精确退化为经典上 Lipschitz 矩阵定义：\n>    $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} d_j(x, y).$$\n> 3. **全域盲区分量**：若某元素 $\\Theta_{ij} = +\\infty$，则对任意有限输入距离 $d_j(x, y) < +\\infty$，均有 $[d_j(x, y) - (+\\infty)]_+ = 0$。即输入分量 $j$ 在任意有限范畴内均无法激发出输出分量 $i$ 的可区分性。\n\n*证明*：\n对 (1)：若 $(x, y) \\in \\mathcal{U}_i(\\Theta)$，则对每个 $j \\in I$，有 $d_j(x, y) \\le \\Theta_{ij}$，因此 $d_j(x, y) - \\Theta_{ij} \\le 0$，从而截断项 $[d_j(x, y) - \\Theta_{ij}]_+ = 0$。\n于是右端求和为 $\\sum_{j=1}^m A_{ij} \\cdot 0 = 0$。\n根据扩展伪度量的非负性，必有 $d_i(\\phi(x), \\phi(y)) = 0$。其余结论由扩展算术直接获证。 $\\blacksquare$",
+          "line_start": 192,
+          "line_end": 212
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 18081,
+          "end": 19452,
+          "quote": "> **定理 4.2（死区系统的复合传递法则）**  \n> 为表述紧凑，考虑分量阈值向量形式：设 $\\phi$ 具有参数 $(A, \\theta)$，即 $\\mathbf{d}(\\phi(x), \\phi(y)) \\le A [\\mathbf{d}(x, y) - \\theta]_+$（其中 $\\theta \\in \\bar{\\mathbb{R}}_+^m$）；$\\psi$ 具有参数 $(B, \\xi)$，即 $\\mathbf{d}(\\psi(u), \\psi(v)) \\le B [\\mathbf{d}(u, v) - \\xi]_+$（其中 $\\xi \\in \\bar{\\mathbb{R}}_+^m$）。\n> 则复合算子 $\\psi \\circ \\phi$ 满足：\n> $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le B \\Bigl[ A [\\mathbf{d}(x, y) - \\theta]_+ - \\xi \\Bigr]_+.$$\n> 特别地，复合算子的不可区分输入范畴被扩大，其不可区分充分条件集合包含以下非线性凸多面体区域：\n> $$\\Omega_{\\mathrm{indist}} := \\Bigl\\{ (x, y) \\;\\Big|\\; A [\\mathbf{d}(x, y) - \\theta]_+ \\le \\xi \\Bigr\\}.$$\n> 在该范畴内，输出满足全不可区分性：$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) = \\mathbf{0}$。\n\n*证明*：\n由偏序单调性，记 $u = \\phi(x), v = \\phi(y)$，直接将 $\\mathbf{d}(u, v) \\le A [\\mathbf{d}(x, y) - \\theta]_+$ 代入 $\\psi$ 的控制式中，利用截断函数 $t \\mapsto [t]_+$ 在 $\\bar{\\mathbb{R}}$ 上的单调不减性即得上述不等式。当输入落在 $\\Omega_{\\mathrm{indist}}$ 内时，括号内每一分量均非正，经正部截断后全为 $0$，矩阵乘积后输出必为零向量。 $\\blacksquare$",
+          "line_start": 220,
+          "line_end": 229
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 22728,
+          "end": 23245,
+          "quote": "当 $|x_1 - y_1| + 2|x_2 - y_2| \\le 2$ 时，第 1 个分量输出严格为 $0$（不可区分）；\n当 $3|x_1 - y_1| \\le 4$ 时，第 2 个分量输出严格为 $0$。\n根据定义 4.1，其不可区分灵敏度矩阵直接写出为：\n$$T = \\begin{pmatrix} \\frac{1}{2} & 1 \\\\ \\frac{3}{4} & 0 \\end{pmatrix} \\in \\bar{\\mathbb{R}}_+^{2 \\times 2}.$$\n当 $T \\mathbf{d}(x, y) \\le \\begin{pmatrix} 1 \\\\ 1 \\end{pmatrix}$ 时，输出两点在规范结构下完全不可区分：$\\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0}$。",
+          "line_start": 269,
+          "line_end": 273
+        }
+      ]
+    },
+    {
+      "id": "M6",
+      "max_points": 5,
+      "points": 3,
+      "reason": "保留3分：建立并证明了上/下/逆向矩阵控制的必要复合接口，明确可逆性和非负逆矩阵的作用。未获2分对应所选核心框架的接口一致性：T的逐行与联合读法不一致，全扩展死区接口缺少总定义，尚不能如文中所称形成完全自洽的统一框架。这不是另扣理论丰富度；额外定理7.1不给额外成果分，其错误也不另行扣除独立核心成果分。",
+      "evidence": [
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 9293,
+          "end": 12146,
+          "quote": "> **命题 3.1（形式 A 与形式 B 的对偶关系及与逆算子的联系）**  \n> 1. **单射性与强分离性**：若 $\\phi$ 具有有限元素的余 Lipschitz 矩阵 $C$，且空间具有族分离性，则 $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 上严格为单射。\n> 2. **可逆算子的对偶性**：若 $\\phi: \\mathrm{dom}(\\phi) \\to \\mathrm{ran}(\\phi)$ 为可逆双射，设其逆算子为 $\\phi^{-1}$。则 $C$ 是 $\\phi$ 的余 Lipschitz 矩阵，当且仅当 $C$ 是 $\\phi^{-1}$ 在 $\\mathrm{ran}(\\phi)$ 上的上 Lipschitz 矩阵：\n>    $$\\mathbf{d}(\\phi^{-1}(u), \\phi^{-1}(v)) \\le C\\, \\mathbf{d}(u, v) \\quad (\\forall u, v \\in \\mathrm{ran}(\\phi)).$$\n> 3. **矩阵求逆联系**：若正向下模矩阵 $B$ 处在实数域且可逆，且其逆矩阵 $B^{-1}$ 满足所有元素非负（即 $B^{-1} \\in \\bar{\\mathbb{R}}_+^{m \\times m}$），则 $C = B^{-1}$ 构成 $\\phi$ 的余 Lipschitz 矩阵。\n\n*证明*：\n对结论 (2)：在定义 3.2 中令 $u = \\phi(x), v = \\phi(y)$，由于 $\\phi$ 为双射，$x = \\phi^{-1}(u), y = \\phi^{-1}(v)$，代入即得 $\\mathbf{d}(\\phi^{-1}(u), \\phi^{-1}(v)) \\le C \\mathbf{d}(u, v)$。\n对结论 (3)：由 $\\mathbf{d}(\\phi(x), \\phi(y)) \\ge B \\mathbf{d}(x, y)$，左乘非负矩阵 $B^{-1}$，由半环单调性即得 $B^{-1} \\mathbf{d}(\\phi(x), \\phi(y)) \\ge \\mathbf{d}(x, y)$。 $\\blacksquare$\n\n### 3.3 算子复合下的模演化链式法则\n\n> **定理 3.1（上下模矩阵乘法链式法则）**  \n> 设 $\\phi, \\psi \\in \\mathcal{X}_{\\mathrm{op}}$，满足 $\\phi(\\mathrm{dom}(\\psi \\circ \\phi)) \\subseteq \\mathrm{dom}(\\psi)$。\n> 1. 若 $A_\\phi, A_\\psi$ 分别为 $\\phi, \\psi$ 的上模矩阵，则 $A_\\psi A_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的上模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le (A_\\psi A_\\phi)\\, \\mathbf{d}(x, y).$$\n> 2. 若 $B_\\phi, B_\\psi$ 分别为 $\\phi, \\psi$ 的正向下模矩阵，则 $B_\\psi B_\\phi$ 为复合算子 $\\psi \\circ \\phi$ 的正向下模矩阵：\n>    $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\ge (B_\\psi B_\\phi)\\, \\mathbf{d}(x, y).$$\n> 3. 若 $C_\\phi, C_\\psi$ 分别为 $\\phi, \\psi$ 的余 Lipschitz 矩阵，则 $C_\\phi C_\\psi$ 为复合算子 $\\psi \\circ \\phi$ 的余 Lipschitz 矩阵：\n>    $$\\mathbf{d}(x, y) \\le (C_\\phi C_\\psi)\\, \\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))).$$\n\n*证明*：\n仅证 (1)，其余同理：对任意 $x, y \\in \\mathrm{dom}(\\psi \\circ \\phi)$，记 $u = \\phi(x), v = \\phi(y) \\in \\mathrm{dom}(\\psi)$。\n由 $\\psi$ 的上模性：$\\mathbf{d}(\\psi(u), \\psi(v)) \\le A_\\psi \\mathbf{d}(u, v)$。\n由于 $A_\\psi$ 的元素非负，矩阵作用保持 $\\le$ 的偏序单调性，将 $\\mathbf{d}(u, v) \\le A_\\phi \\mathbf{d}(x, y)$ 代入：\n$$\\mathbf{d}(\\psi(u), \\psi(v)) \\le A_\\psi \\bigl( A_\\phi \\mathbf{d}(x, y) \\bigr) = (A_\\psi A_\\phi) \\mathbf{d}(x, y).$$\n结合律由命题 1.1 的半环性质保证。 $\\blacksquare$",
+          "line_start": 117,
+          "line_end": 143
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 13701,
+          "end": 14271,
+          "quote": "> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。若矩阵 $T \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：对任意 $x, y \\in \\mathrm{dom}(\\phi)$ 及任意分量 $i \\in I$：\n> $$\\sum_{j=1}^m T_{ij} d_j(x, y) \\le 1 \\implies d_i(\\phi(x), \\phi(y)) = 0,$$\n> 简写为向量蕴涵形式：\n> $$T\\, \\mathbf{d}(x, y) \\le \\mathbf{1}_m \\implies \\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0},$$\n> （其中 $\\mathbf{1}_m = (1, \\dots, 1)^T$ 为全 $1$ 向量），则称 $T$ 为 $\\phi$ 的一个**不可区分灵敏度矩阵**（Tolerance / Indistinguishability Sensitivity Matrix）。",
+          "line_start": 169,
+          "line_end": 173
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 15737,
+          "end": 16131,
+          "quote": "> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。设 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为增益矩阵，$\\Theta \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为**不可区分阈值矩阵（死区矩阵 Dead-zone Matrix）**。\n> 若对所有 $x, y \\in \\mathrm{dom}(\\phi)$ 及所有 $i \\in I$，均满足：\n> $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} \\bigl[ d_j(x, y) - \\Theta_{ij} \\bigr]_+,$$",
+          "line_start": 193,
+          "line_end": 195
+        },
+        {
+          "source": "answer.md",
+          "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+          "start": 25719,
+          "end": 26913,
+          "quote": "本篇回应并严格化了用户所提出的全部数学设想：\n1. **矩阵 Lipschitz 上限**：将标量 Lipschitz 常数推广为矩阵 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$，通过分量线性组合精确刻画伪度量各分量之间的耦合影响。\n2. **支持 $\\infty$ 与扩展实数半环**：利用有序完备半环 $(\\bar{\\mathbb{R}}_+, +, \\cdot)$ 与 $0 \\cdot (+\\infty) = 0$ 规则，确保包括非 Lipschitz 奇异算子在内的任意算子均能纳入统一的矩阵代数，同时论证了吸收元公理在全局延拓下的边界约束。\n3. **下限模矩阵**：构建了正向下模矩阵 $B$（扩张性）与余 Lipschitz 矩阵 $C$（逆向控制），建立了与上模矩阵的对偶性及在算子复合下的相容演化法则。\n4. **不可区分性范畴与死区/容差矩阵**：深入发掘了伪度量下零距离即不可区分的本质，建立了**不可区分灵敏度矩阵 $T$** 与 **死区 Lipschitz 矩阵对 $(A, \\Theta)$**。该定义不仅形式上与 Lipschitz 矩阵严格对等，且能将“输入落入一定范畴输出完全不可区分（零距离坍缩）”与“超出范畴后按 Lipschitz 矩阵增长”完美融为一体。",
+          "line_start": 305,
+          "line_end": 309
+        }
+      ]
+    }
+  ],
+  "source_raw_review_sha256": "6a1c85a0d16fe031ac771abd08a62dde548113c0a9e59da0b4edff2e7f186d68",
+  "source_raw_review_bytes": 68623,
+  "mathematical_judgment_changed": false,
+  "normalization": "Current case identity, canonical rubric binding and portable answer references only; original criterion points, reasons and quoted bytes retained.",
+  "new_candidate_calls": 0
+}

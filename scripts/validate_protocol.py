@@ -418,6 +418,8 @@ def check_candidate(suite: Suite, case: dict, destination: Path, *, selected_ids
                if contract["kind"] == "written_proof" else {}),
             **({"assessment_unit": "review_dimension", "semantic_audit_dimensions": len(contract["dimensions"])}
                if contract["kind"] == "semantic_audit" else {}),
+            **({"assessment_unit": "review_dimension", "manuscript_dimensions": len(contract["dimensions"])}
+               if contract["kind"] == "research_exploration" else {}),
             "selected_for_followup": cid in selected_ids,
             "candidate_message_sha256": sha(wire.encode()), "task_sha256": sha(task),
             "contract_sha256": sha(contract_path.read_bytes())}
@@ -500,6 +502,7 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
               "proof_criteria": sum(row.get("proof_criteria", 0) for row in actual.values()),
               "semantic_audit_dimensions": sum(row.get("semantic_audit_dimensions", 0) for row in actual.values()),
               "answer_review_dimensions": sum(row.get("review_dimensions", 0) for row in actual.values()),
+              "manuscript_dimensions": sum(row.get("manuscript_dimensions", 0) for row in actual.values()),
               "frozen_followup_messages": len(prompts["messages"]),
               "planned_slots_per_model": len(frozen["slots"]),
               "isolated_followup_history_edges": sum(row["kind"] == "followup" for row in frozen["slots"]),

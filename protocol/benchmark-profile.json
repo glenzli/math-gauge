@@ -7,7 +7,7 @@
   "suite": {
     "id": "math-gauge-benchmark",
     "version": "0.6.0",
-    "sha256": "b459421a93e2b01952667fa50df96e920e29eff5fc3e026e31d373704819c7c1"
+    "sha256": "b028939c8512db15021224526bd7c89a245f6ae36cb876fb3edaa4627d8c2877"
   },
   "components": [
     {
@@ -81,6 +81,15 @@
       ],
       "weight": 10,
       "aggregation": "family"
+    },
+    {
+      "id": "manuscript-completion",
+      "title": "数学想法手稿化",
+      "case_ids": [
+        "MG-MCP003"
+      ],
+      "weight": 10,
+      "aggregation": "family"
     }
   ],
   "case_execution_policy": {
@@ -110,7 +119,8 @@
       "MG-TX001": "math-gauge.local-tools-no-search/v1",
       "MG-TX002": "math-gauge.local-tools-no-search/v1",
       "MG-BC001": "math-gauge.local-tools-no-search/v1",
-      "MG-BC002": "math-gauge.local-tools-no-search/v1"
+      "MG-BC002": "math-gauge.local-tools-no-search/v1",
+      "MG-MCP003": "math-gauge.local-tools-no-search/v1"
     },
     "new_execution_case_ids": [
       "AHR01",
@@ -138,7 +148,8 @@
       "MG-TX002",
       "MG-BC001",
       "MG-BC002",
-      "MG-PS001"
+      "MG-PS001",
+      "MG-MCP003"
     ],
     "new_turn_timeout_seconds": 5400,
     "budget_policy_binding": {
@@ -224,6 +235,9 @@
       "A1"
     ],
     "MG-BC002": [
+      "A1"
+    ],
+    "MG-MCP003": [
       "A1"
     ]
   },
@@ -367,14 +381,16 @@
       },
       {
         "id": "manuscript-completion",
-        "title": "研究稿完善",
+        "title": "数学想法手稿化",
         "weight": 10,
-        "source_components": [],
-        "public_tasks": 0,
-        "private_tasks": 0,
-        "families": 0,
+        "source_components": [
+          "manuscript-completion"
+        ],
+        "public_tasks": 1,
+        "private_tasks": 3,
+        "families": 4,
         "aggregation": "family",
-        "status": "under_construction"
+        "status": "active"
       },
       {
         "id": "theorem-extension",
@@ -424,12 +440,12 @@
     "unknown_policy": "Fixed case/family/round denominators with explicit bounds.",
     "overall_floor": 0,
     "scope": {
-      "public_tasks": 24,
-      "private_tasks": 10,
-      "tasks": 34,
-      "parent_families": 30,
-      "initial_slots": 34,
-      "public_initial_slots": 24,
+      "public_tasks": 25,
+      "private_tasks": 13,
+      "tasks": 38,
+      "parent_families": 34,
+      "initial_slots": 38,
+      "public_initial_slots": 25,
       "alignment_rounds": 3,
       "trajectory_assessment_units": 1
     },
@@ -643,6 +659,39 @@
           "family_id": "density-sampling-quotient"
         }
       ]
+    },
+    "manuscript_completion": {
+      "schema": "math-gauge.manuscript-completion-policy/v1",
+      "version": "0.4.0",
+      "benchmark_version": "0.6.0",
+      "initial_attempt_labels": [
+        "A1"
+      ],
+      "private_cases": 3,
+      "families": 4,
+      "source_component": "manuscript-completion",
+      "category": "manuscript-completion",
+      "component_weight": 10,
+      "family_aggregation": "equal",
+      "ordinary_claim_cap_points": 50,
+      "followups_replace_initial": false,
+      "local_tools_allowed": true,
+      "search_allowed": false,
+      "tool_network_access": false,
+      "post_observation": true,
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation.",
+      "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.",
+      "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.",
+      "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.",
+      "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.",
+      "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.",
+      "public_cases": 1,
+      "public_case_ids": [
+        "MG-MCP003"
+      ],
+      "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required."
     }
   },
   "strict_policy": {

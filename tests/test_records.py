@@ -299,7 +299,9 @@ class CurrentArchiveTests(unittest.TestCase):
                 load("scoring-policy.json"), formalization_review=load("reviews/formalization.json"))
             self.assertEqual(result["metrics"]["overall"]["exact"], score)
             self.assertFalse((root / "result.json").exists())
-            self.assertIsNone(load("combined-aggregate.json")["metrics"]["overall"]["exact"])
+            current = load("combined-aggregate.json")
+            self.assertEqual(current["capacity"]["active"], 100)
+            self.assertEqual(current["metrics"]["overall"]["exact"], current["metrics"]["earned"]["exact"])
             self.assertEqual(load("record.json")["candidate_calls_by_migration"], 0)
             rows = {r["id"]: r for r in load("record.json")["records"]}
             for cid, count in [("LCH01", 8), ("LCH02", 20), ("HCH02", 40)]:

@@ -9,7 +9,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record
+from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record
 from math_gauge.scoring import score_assessment_record_inputs
 
 
@@ -44,6 +44,7 @@ def retain(private_root, *, public_root=ROOT):
         background = load_background_check_inputs(private,private_record,policy=assessment.get("background_check"))
         written = load_written_argument_inputs(private, private_record, policy=assessment.get("written_argument_additions"))
         replacement = load_written_replacement_inputs(private, private_record, policy=assessment.get("written_argument_replacements"))
+        manuscript = load_manuscript_completion_inputs(private, private_record, policy=assessment.get("manuscript_completion"))
         original = load(private / "scoring-inputs.json")
         retry = load_retry_inputs(private, private_record, public_root=public, validate_results=False)
         old_retry = load(public / "retry-combined-aggregate.json") if (public / "retry-combined-aggregate.json").exists() else {}
@@ -85,7 +86,7 @@ def retain(private_root, *, public_root=ROOT):
                     theorem_extension_inputs=research, background_check_inputs=background,
                     claim_review=claim_review, claim_policy=claim_policy,
                     capability_policy=capability if mode == "capability" else None, written_argument_inputs=written,
-                    written_replacement_inputs=replacement)
+                    written_replacement_inputs=replacement, manuscript_completion_inputs=manuscript)
                 score.update(attempt_condition=condition, retry_summary=retry_summary,
                     scope="combined-evaluator", source_math_policy_version=source_policy["version"],
                     engineering_review_sha256=digest(public / "reviews/formalization.json"),
@@ -106,6 +107,8 @@ def retain(private_root, *, public_root=ROOT):
                     score["source_bindings"]["written_argument_inputs_sha256"] = private_record["written_argument_inputs"]["sha256"]
                 if replacement is not None:
                     score["source_bindings"]["written_replacement_inputs_sha256"] = private_record["written_replacement_inputs"]["sha256"]
+                if manuscript is not None:
+                    score["source_bindings"]["manuscript_completion_inputs_sha256"] = private_record["manuscript_completion_inputs"]["sha256"]
                 if mode == "capability":
                     score["source_bindings"]["capability_policy_sha256"] = digest(public / "capability-scoring-policy.json")
                 if uses_retry:

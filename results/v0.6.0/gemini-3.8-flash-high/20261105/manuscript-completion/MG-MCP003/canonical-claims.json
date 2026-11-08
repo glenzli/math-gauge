@@ -1,0 +1,320 @@
+{
+  "schema": "math-gauge.claim-review-condition/v1",
+  "policy_version": "0.1.0",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "model_label": "gemini-3.8-flash-high",
+  "cases": [
+    {
+      "case_id": "MG-MCP003",
+      "status": "reviewed",
+      "scope_note": "Preregistered open manuscript candidate; correct alternative frameworks accepted; source-bound independent AI review.",
+      "sources": [
+        {
+          "path": "answer.md",
+          "bytes": 26914,
+          "sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8"
+        }
+      ],
+      "findings": [
+        {
+          "id": "B-F01",
+          "title": "任意算子的上界证书存在性错误",
+          "root_cause": "unconditional_upper_certificate_without_zero_class_preservation",
+          "severity": "material",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": true,
+          "reason": "定理2.1的首句无条件声称所有算子都存在上界矩阵。CH1不预设族分离性；任何矩阵都把全零输入距离向量映为全零，故不保持全族零距离关系的算子没有任何上界证书。其后明确带零关系保持前提的全无穷结论与证明正确，本发现不否定该条件命题。总结第2项重复的任意算子统一纳入说法属于同根后继断言，不另收费。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 4330,
+              "end": 4723,
+              "start_line": 55,
+              "end_line": 57,
+              "quote": "> 对任意算子 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，集合 $\\mathrm{Lip}^+(\\phi)$ 均非空。特别地，定义全无穷矩阵 $A_\\infty$（即对所有 $i, j$，$A_{\\infty, ij} = +\\infty$），若对所有 $x, y \\in \\mathrm{dom}(\\phi)$，满足条件：\n> $$\\mathbf{d}(x, y) = \\mathbf{0} \\implies \\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0},$$\n> 则 $A_\\infty \\in \\mathrm{Lip}^+(\\phi)$。"
+            },
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 25982,
+              "end": 26285,
+              "start_line": 307,
+              "end_line": 307,
+              "quote": "2. **支持 $\\infty$ 与扩展实数半环**：利用有序完备半环 $(\\bar{\\mathbb{R}}_+, +, \\cdot)$ 与 $0 \\cdot (+\\infty) = 0$ 规则，确保包括非 Lipschitz 奇异算子在内的任意算子均能纳入统一的矩阵代数，同时论证了吸收元公理在全局延拓下的边界约束。"
+            }
+          ],
+          "counterexample": {
+            "space": "I={1}, X={a,b,c,⊥}; d(a,b)=0, d(a,c)=d(b,c)=1, d(z,z)=0；d(z,⊥)=∞（z≠⊥），对称延拓。",
+            "operator": "φ(a)=a, φ(b)=c, φ(c)=c, φ(⊥)=⊥；有效域为{a,b,c}。",
+            "assumptions": "d是扩展伪度量且吸收元隔离；题面允许a≠b但d(a,b)=0。",
+            "calculation": "对输入对(a,b)，d(a,b)=0，而d(φ(a),φ(b))=d(a,c)=1。每个A∈[0,∞]均满足A·0=0。",
+            "failure": "1≤A·0不可能，所以Lip⁺(φ)=∅。",
+            "preserved_correct_claim": "若另加d(x,y)=0⇒d(φx,φy)=0，则A∞确实可行；原文证明正是证明这一条件版本。"
+          }
+        },
+        {
+          "id": "B-F02",
+          "title": "有限全局系数不能推出处处有效",
+          "root_cause": "finite_gain_does_not_control_infinite_components",
+          "severity": "material",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": true,
+          "reason": "全局矩阵系数有限并不使两个非吸收点之间的扩展伪距离有限。定理2.2证明到第81行额外使用输入距离有限；CH1无此假设。由有限全局矩阵推出整个非吸收部分都有效的结论错误。与B-F07共用同一根因，只取最高10点。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 6216,
+              "end": 6578,
+              "start_line": 73,
+              "end_line": 75,
+              "quote": "> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$ 拥有有限矩阵元的全局上 Lipschitz 矩阵 $A$（即 $A_{ij} < +\\infty$）。若 $\\mathrm{dom}(\\phi) \\neq \\emptyset$，则必有：\n> $$\\mathrm{dom}(\\phi) = \\mathcal{X}\\setminus\\{\\bot\\},$$\n> 即 $\\phi$ 必须是**保有效定义域的（Domain-preserving）**，不可能将某个非吸收点映射到 $\\bot$。"
+            },
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 6592,
+              "end": 7451,
+              "start_line": 78,
+              "end_line": 84,
+              "quote": "反设存在 $y \\in \\mathcal{X} \\setminus \\{\\bot\\}$ 但 $y \\notin \\mathrm{dom}(\\phi)$，即 $\\phi(y) = \\bot$。由于 $\\mathrm{dom}(\\phi) \\neq \\emptyset$，任取 $x \\in \\mathrm{dom}(\\phi)$，则 $\\phi(x) \\neq \\bot$。\n由于 $\\phi(x) \\neq \\bot$ 且 $\\phi(y) = \\bot$，根据吸收元隔离公理 (iv)，对任意 $i \\in I$：\n$$d_i(\\phi(x), \\phi(y)) = d_i(\\phi(x), \\bot) = +\\infty.$$\n而若 $A$ 的元素全为有限实数，且 $x, y \\in \\mathcal{X}\\setminus\\{\\bot\\}$ 之间的伪度量 $d_j(x, y)$ 有限，则右端：\n$$(A \\mathbf{d}(x, y))_i = \\sum_{j=1}^m A_{ij} d_j(x, y) < +\\infty.$$\n这导致 $+\\infty \\le (A \\mathbf{d}(x, y))_i < +\\infty$，产生矛盾。\n因此，若算子在某些输入处未定义（即退化到 $\\bot$），其全局上 Lipschitz 矩阵的对应项必须包含 $+\\infty$ 才能吸纳边界处的距离跳变。 $\\blacksquare$"
+            }
+          ],
+          "counterexample": {
+            "space": "I={1}, X={a,b,⊥}；任意异点之间d=∞，同点距离0。",
+            "operator": "φ(a)=a, φ(b)=φ(⊥)=⊥。",
+            "certificate": "全局上界矩阵A=[1]。",
+            "assumptions": "该d为扩展度量，φ固定⊥且有效域{a}非空；矩阵系数1有限。",
+            "calculation": "对同点，输出距离为0；对任意异点，右端1·∞=∞，而输出距离为0或∞，故全局上界对所有点对成立。",
+            "failure": "dom(φ)={a}严格小于X\\{⊥}={a,b}，直接否定定理2.2。"
+          }
+        },
+        {
+          "id": "B-F03",
+          "title": "容差判据丢失完整前件",
+          "root_cause": "dropping_or_combining_indistinguishability_antecedents",
+          "severity": "material",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": true,
+          "reason": "定义4.1逐行规定“第i行和≤1⇒第i输出距离为0”。把它简写成“所有行和同时≤1⇒所有输出距离为0”只保留了一个后果，反向不成立，不能作为等价简写。命题4.1(2)又把单项Tij·dj≤1当作整行和≤1的充分条件，忽略其他非负项。两者同属未保留不可区分判据的完整前件，根因只收一次10点。逐行定义本身是合法的矩阵型充分条件，不因这两处错误而失去全部成果分。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 13701,
+              "end": 14271,
+              "start_line": 169,
+              "end_line": 173,
+              "quote": "> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。若矩阵 $T \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 满足：对任意 $x, y \\in \\mathrm{dom}(\\phi)$ 及任意分量 $i \\in I$：\n> $$\\sum_{j=1}^m T_{ij} d_j(x, y) \\le 1 \\implies d_i(\\phi(x), \\phi(y)) = 0,$$\n> 简写为向量蕴涵形式：\n> $$T\\, \\mathbf{d}(x, y) \\le \\mathbf{1}_m \\implies \\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0},$$\n> （其中 $\\mathbf{1}_m = (1, \\dots, 1)^T$ 为全 $1$ 向量），则称 $T$ 为 $\\phi$ 的一个**不可区分灵敏度矩阵**（Tolerance / Indistinguishability Sensitivity Matrix）。"
+            },
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 14643,
+              "end": 14851,
+              "start_line": 178,
+              "end_line": 178,
+              "quote": "> 2. **$0 < T_{ij} < +\\infty$（有限容差带）**：分量 $j$ 具有有限的不可区分容许上限 $R_{ij} = 1 / T_{ij}$。只要输入满足 $d_j(x, y) \\le 1 / T_{ij}$，即可使输出不可区分。"
+            }
+          ],
+          "counterexample": {
+            "space": "两例均取I={1,2}, X={a,b,⊥}，d1(a,b)=d2(a,b)=1；各di同点0、吸收元隔离；φ在{a,b}上恒等且固定⊥。",
+            "examples": [
+              {
+                "claim": "逐行谓词与联合向量谓词等价",
+                "matrix": "T=[[2,0],[0,0]]",
+                "calculation": "异点输入距离(1,1)给T d=(2,0)，联合向量前件为假；同点输出为0。因此联合向量蕴涵对全部有效输入对成立。但第2行和为0≤1，输出d2(a,b)=1。",
+                "failure": "联合向量谓词成立而逐行定义失败。"
+              },
+              {
+                "claim": "单个有限Tij的倒数阈值足以使输出不可区分",
+                "matrix": "T=[[1,1],[1,1]]",
+                "calculation": "异点输入的每行和均为2>1，同点输出距离为0，故T满足原文逐行定义。取i=j=1时d1(a,b)=1≤1/T11=1，但d1(φa,φb)=1。",
+                "failure": "原文“只要dj≤1/Tij即可”被有效T和合法输入对否定。"
+              }
+            ]
+          }
+        },
+        {
+          "id": "B-F04",
+          "title": "全扩展死区表达式出现未定义的∞−∞",
+          "root_cause": "undefined_infinity_minus_infinity_in_dead_zone_controls",
+          "severity": "material",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": true,
+          "reason": "定义4.2和定理4.2同时允许输入距离与阈值为∞，却只定义普通正部[t]+，未定义∞−∞。题面的扩展算术仅规定非负加法与乘法，不提供该减法。因此所宣称的全扩展值死区结构不是处处有意义的定义；定理4.1(1)在d=Θ=∞时用到的“d−Θ≤0”同样无意义。有限距离、有限阈值下的死区不等式及嵌套复合证明仍正确。本发现不是对它们的反例，也不由评审补入截断剩余算术。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 15544,
+              "end": 16131,
+              "start_line": 190,
+              "end_line": 195,
+              "quote": "利用正部截断函数 $[t]_+ := \\max(0, t)$，我们将实数分析中的死区算子（Dead-zone nonlinearity）提升为矩阵形式：\n\n> **定义 4.2（死区 Lipschitz 矩阵对）**  \n> 设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$。设 $A \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为增益矩阵，$\\Theta \\in \\bar{\\mathbb{R}}_+^{m \\times m}$ 为**不可区分阈值矩阵（死区矩阵 Dead-zone Matrix）**。\n> 若对所有 $x, y \\in \\mathrm{dom}(\\phi)$ 及所有 $i \\in I$，均满足：\n> $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} \\bigl[ d_j(x, y) - \\Theta_{ij} \\bigr]_+,$$"
+            },
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 16663,
+              "end": 17704,
+              "start_line": 202,
+              "end_line": 210,
+              "quote": ">    $$\\mathcal{U}_i(\\Theta) := \\Bigl\\{ (x, y) \\in \\mathrm{dom}(\\phi) \\times \\mathrm{dom}(\\phi) \\;\\Big|\\; \\forall j \\in I,\\; d_j(x, y) \\le \\Theta_{ij} \\Bigr\\}.$$\n>    则当 $(x, y) \\in \\mathcal{U}_i(\\Theta)$ 时，输出在第 $i$ 分量上**严格不可区分**：\n>    $$d_i(\\phi(x), \\phi(y)) = 0.$$\n> 2. **退化与经典等价**：当不可区分阈值矩阵 $\\Theta = \\mathbf{0}_{m \\times m}$ 时，由于 $[d_j - 0]_+ = d_j$，定义 4.2 精确退化为经典上 Lipschitz 矩阵定义：\n>    $$d_i(\\phi(x), \\phi(y)) \\le \\sum_{j=1}^m A_{ij} d_j(x, y).$$\n> 3. **全域盲区分量**：若某元素 $\\Theta_{ij} = +\\infty$，则对任意有限输入距离 $d_j(x, y) < +\\infty$，均有 $[d_j(x, y) - (+\\infty)]_+ = 0$。即输入分量 $j$ 在任意有限范畴内均无法激发出输出分量 $i$ 的可区分性。\n\n*证明*：\n对 (1)：若 $(x, y) \\in \\mathcal{U}_i(\\Theta)$，则对每个 $j \\in I$，有 $d_j(x, y) \\le \\Theta_{ij}$，因此 $d_j(x, y) - \\Theta_{ij} \\le 0$，从而截断项 $[d_j(x, y) - \\Theta_{ij}]_+ = 0$。"
+            },
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 18139,
+              "end": 18651,
+              "start_line": 221,
+              "end_line": 223,
+              "quote": "> 为表述紧凑，考虑分量阈值向量形式：设 $\\phi$ 具有参数 $(A, \\theta)$，即 $\\mathbf{d}(\\phi(x), \\phi(y)) \\le A [\\mathbf{d}(x, y) - \\theta]_+$（其中 $\\theta \\in \\bar{\\mathbb{R}}_+^m$）；$\\psi$ 具有参数 $(B, \\xi)$，即 $\\mathbf{d}(\\psi(u), \\psi(v)) \\le B [\\mathbf{d}(u, v) - \\xi]_+$（其中 $\\xi \\in \\bar{\\mathbb{R}}_+^m$）。\n> 则复合算子 $\\psi \\circ \\phi$ 满足：\n> $$\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le B \\Bigl[ A [\\mathbf{d}(x, y) - \\theta]_+ - \\xi \\Bigr]_+.$$"
+            }
+          ],
+          "counterexample": {
+            "space": "I={1}, X={a,b,⊥}，异点距离∞。",
+            "operator": "φ(a)=φ(b)=a, φ(⊥)=⊥，有效域{a,b}。",
+            "allowed_parameters": "A=[1], Θ=[∞]；它们均属于原文允许的矩阵取值域。",
+            "calculation": "合法输入对(a,b)使右端包含[ d(a,b)−Θ11 ]+=[∞−∞]+。",
+            "failure": "在题面和答卷已提供的算术中，该项没有定义；不能判断不等式或据此推出坍缩。",
+            "repair_boundary_only": "额外声明某一种总的截断差运算，或限制距离/阈值使不出现∞−∞，可以建立另一个明确版本；原答未做这一步。"
+          }
+        },
+        {
+          "id": "B-F05",
+          "title": "范例死区矩阵未通过其自身判据",
+          "root_cause": "absolute_dead_zone_confused_with_uniform_pairwise_tolerance",
+          "severity": "material",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": true,
+          "reason": "标量死区函数在绝对输入区间[-δ,δ]上为常数，并不表示任意两个相距≤2δ的输入具有相同输出。范例6.1据此给出的两条零输出阈值及T证书错误；即使完整联合条件T d≤1同时满足，也不能挽救该证书。本根因与B-F03不同，不是漏掉其他行或其他项，而是把绝对位置死区误当作关于任意输入对的统一距离死区。上界矩阵A=[[1,2],[3,0]]的推导仍正确。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 21704,
+              "end": 22275,
+              "start_line": 258,
+              "end_line": 262,
+              "quote": "定义具有死区容差的交叉耦合算子 $\\phi: \\mathcal{X} \\to \\mathcal{X}$：$\\phi(\\bot) = \\bot$，且对 $x = (x_1, x_2) \\in \\mathbb{R}^2$：\n$$\\phi(x) = \\begin{pmatrix} \\mathrm{dz}_1(x_1 + 2 x_2) \\\\ \\mathrm{dz}_2(3 x_1) \\end{pmatrix},$$\n其中标量死区函数定义为：\n$$\\mathrm{dz}_\\delta(t) = \\begin{cases} t - \\delta, & t > \\delta \\\\ 0, & -\\delta \\le t \\le \\delta \\\\ t + \\delta, & t < -\\delta \\end{cases}$$\n易知 $|\\mathrm{dz}_\\delta(s) - \\mathrm{dz}_\\delta(t)| \\le [|s - t| - 0]_+ \\le |s - t|$，且当 $|s - t| \\le 2\\delta$ 时在原点附近坍缩。"
+            },
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 22728,
+              "end": 23245,
+              "start_line": 269,
+              "end_line": 273,
+              "quote": "当 $|x_1 - y_1| + 2|x_2 - y_2| \\le 2$ 时，第 1 个分量输出严格为 $0$（不可区分）；\n当 $3|x_1 - y_1| \\le 4$ 时，第 2 个分量输出严格为 $0$。\n根据定义 4.1，其不可区分灵敏度矩阵直接写出为：\n$$T = \\begin{pmatrix} \\frac{1}{2} & 1 \\\\ \\frac{3}{4} & 0 \\end{pmatrix} \\in \\bar{\\mathbb{R}}_+^{2 \\times 2}.$$\n当 $T \\mathbf{d}(x, y) \\le \\begin{pmatrix} 1 \\\\ 1 \\end{pmatrix}$ 时，输出两点在规范结构下完全不可区分：$\\mathbf{d}(\\phi(x), \\phi(y)) = \\mathbf{0}$。"
+            }
+          ],
+          "counterexample": {
+            "space": "原文范例6.1的R²∪{⊥}及两坐标伪度量。",
+            "input_pair": "x=(10,0), y=(101/10,0)。",
+            "calculation": "输入距离d=(1/10,0)。φ(x)=(9,28)，φ(y)=(91/10,283/10)，故输出距离dφ=(1/10,3/10)。原文T=[[1/2,1],[3/4,0]]给T d=(1/20,3/40)≤(1,1)。",
+            "failure": "两个原文阈值均满足，完整向量前件也满足，但两个输出伪距离都严格为正。",
+            "preserved_correct_claim": "标量dzδ确实1-Lipschitz，故原文上界矩阵A合法；仅全局成对零距离结论不成立。"
+          }
+        },
+        {
+          "id": "B-F06",
+          "title": "示例空间的族分离性被误分类",
+          "root_cause": "joint_separation_example_misclassification",
+          "severity": "local",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": false,
+          "reason": "范例6.1把所构造的空间称为“无全分离性”，但两个坐标伪度量联合起来实际分离所有普通点，且吸收元与普通点距离均为∞。这是局部性质分类错误；删去该错误分类后，空间仍是合法CH1对象，且正确上界例不受影响。不因此扣除M1/M2既有有效成果。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 21298,
+              "end": 21702,
+              "start_line": 252,
+              "end_line": 256,
+              "quote": "设 $\\mathcal{X} = \\mathbb{R}^2 \\cup \\{\\bot\\}$，指标集 $I = \\{1, 2\\}$。\n定义族 $\\mathcal{G} = \\{d_1, d_2\\}$：\n- 对 $x, y \\in \\mathbb{R}^2$，令 $d_1(x, y) = |x_1 - y_1|$，$d_2(x, y) = |x_2 - y_2|$；\n- 对任意 $x \\in \\mathbb{R}^2$，令 $d_i(x, \\bot) = +\\infty$（$i=1, 2$）；$d_i(\\bot, \\bot) = 0$。\n显然 $(\\mathcal{X}, \\mathcal{G}, \\bot)$ 构成无全分离性的扩展规范空间。"
+            }
+          ],
+          "counterexample": {
+            "calculation": "若x,y∈R²且d1(x,y)=d2(x,y)=0，则x1=y1且x2=y2，所以x=y；若一方是⊥另一方不是，则两个距离均为∞。",
+            "failure": "全族零距离只发生于同点，故该具体空间具有族分离性，否定原文的无全分离性标签。"
+          }
+        },
+        {
+          "id": "B-F07",
+          "title": "扩展收缩缺少有限距离分量条件",
+          "root_cause": "finite_gain_does_not_control_infinite_components",
+          "severity": "material",
+          "kind": "false_assertion",
+          "core_endorsement": false,
+          "covered_by": "none",
+          "strict_blocking": true,
+          "reason": "定理7.1不能把普通Banach/Perov收缩结论无条件用于扩展距离的所有有限距离分量。即使空间族分离、序列完备、算子保有效且有限非负矩阵谱半径<1，跨∞距离分量的位移仍可为∞；矩阵幂作用于该位移也不趋0。需要有限位移锚定/适当不变有限距离分量等条件。该附加定理不属于必需拓展成果，不以其错误抹掉独立正确的上界/下界/复合核心成果；与B-F02同根只取最高10点。",
+          "evidence": [
+            {
+              "source": 0,
+              "source_sha256": "f01ae6c52f53cdf1a158c4dcc6995ab7a6f8bf3338d7052b953ea7ddc9510ce8",
+              "encoding": "UTF-8",
+              "range_semantics": "half-open",
+              "start": 24595,
+              "end": 25393,
+              "start_line": 291,
+              "end_line": 298,
+              "quote": "> 设 $(\\mathcal{X}, \\mathcal{G}, \\bot)$ 具有全族分离性且关于 $\\mathcal{G}$ 序列完备。设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$ 是保有效定义域的算子，且具有有限实矩阵元的上 Lipschitz 矩阵 $A \\in \\mathbb{R}_+^{m \\times m}$。\n> 记矩阵 $A$ 的**谱半径**为 $\\rho(A) = \\max \\{|\\lambda| : \\lambda \\in \\sigma(A)\\}$。\n> 若：\n> $$\\rho(A) < 1,$$\n> 则：\n> 1. $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 内存在唯一的不可区分不动点 $x^* \\in \\mathrm{dom}(\\phi)$（即 $\\phi(x^*) = x^*$）。\n> 2. 对任意初值 $x_0 \\in \\mathrm{dom}(\\phi)$，Picard 迭代序列 $x_{n+1} = \\phi(x_n)$ 在规范结构下以矩阵几何级数速率收敛到 $x^*$：\n>    $$\\mathbf{d}(x_n, x^*) \\le A^n (I - A)^{-1} \\mathbf{d}(x_1, x_0) \\xrightarrow{n \\to \\infty} \\mathbf{0}.$$"
+            }
+          ],
+          "counterexample": {
+            "space": "I={1}, X=Z∪{⊥}；同点d=0，任意异点d=∞。",
+            "operator": "φ(n)=n+1（n∈Z），φ(⊥)=⊥；A=[1/2]。",
+            "assumptions": "d是分离的扩展度量。每个Cauchy序列取ε=1后必须最终常值，故空间序列完备。φ的有效域是Z，因而保有效；所有异点仍映成异点，d(φx,φy)=∞=(1/2)∞，同点为0，所以A是有效域乃至全局上界矩阵。ρ(A)=1/2<1。",
+            "failure": "Z上平移没有不动点，所以不存在所称有效不动点。对任意x0=n，d(x1,x0)=∞，而每个有限k的A^k(I−A)^−1·∞=∞，并不趋于0。",
+            "additional_same_root_check": "同一空间取φ为恒等、A=[1/2]，又有无穷多个有效不动点，故全局唯一性同样不能从这些假设推出。"
+          }
+        }
+      ],
+      "baseline_disposition": null
+    }
+  ],
+  "source_raw_review_sha256": "3dbee78fcdcbbf7de9afb007e1bd6dd81ed98cbf9113c02c669039d5a38902b8",
+  "normalization": "Public local answer source and current case identity; original findings, root causes, severity and evidence coordinates retained."
+}

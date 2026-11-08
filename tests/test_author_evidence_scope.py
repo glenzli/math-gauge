@@ -27,18 +27,21 @@ class AuthorEvidenceScopeTests(unittest.TestCase):
             (base / name).write_text("Synthetic mathematical material only\n")
         formal.V.save(base / "rubric.json", {"required_evidence": ["Synthetic"], "critical_errors": ["Synthetic"]})
         written = kind == "written_proof"
+        research = kind == "research_exploration"
         formal.V.save(base / "contract.json", {
             "schema": "math-gauge.group-contract/v2", "id": cid, "version": "fixture-1", "kind": kind,
             "assessment_unit": "proof_criterion" if written else "review_dimension",
             ("criteria" if written else "dimensions"): [{"id": "C1", "points": 100,
                 "title": "Synthetic criterion", "required_evidence": ["Synthetic"], "critical_errors": ["Synthetic"]}]})
         case = {"schema": "math-gauge.case/v1", "id": cid, "version": "fixture-1", "path_base": "case",
-                "task_kind": "written" if written else "answer_review", "track": "determinate",
+                "task_kind": "written" if written or research else "answer_review",
+                "track": "exploration" if research else "determinate",
                 "family_id": "synthetic-parent-family", "lean_checks": [], "sources": ["synthetic-source"],
                 "task": "task.md", "reference": "reference.md", "rubric": "rubric.json",
                 "group_contract": "contract.json", "evaluator_files": ["provenance.json", "review.json"],
                 "review": {"mathematical": "author-ai-fixture", "human": "pending",
-                    "formalization": {"status": "not-performed" if written else "not-required-for-written-review",
+                    "formalization": {"status": ("not-required-for-research" if research else
+                                                 "not-performed" if written else "not-required-for-written-review"),
                                       "inherited_parent_evidence": False}}}
         formal.V.save(base / "case.json", case)
         formal.V.save(base / "provenance.json", {"kind": "synthetic", "author_lean_coverage_inherited": False})
@@ -60,6 +63,7 @@ class AuthorEvidenceScopeTests(unittest.TestCase):
         frozen = (self.repo / "verification/author/checked-ledger.json").read_bytes()
         base = self.add_assessment()
         self.add_assessment("SYN-REVIEW", kind="answer_review")
+        self.add_assessment("SYN-RESEARCH", kind="research_exploration")
         result = self.checked()
         self.assertEqual(result["counts"], before["counts"])
         self.assertEqual(result["cases"], before["cases"])
@@ -74,6 +78,9 @@ class AuthorEvidenceScopeTests(unittest.TestCase):
         self.assertEqual(result["answer_reviews"]["tasks"], 1)
         self.assertEqual(result["answer_reviews"]["review_dimensions"], 1)
         self.assertEqual(result["answer_reviews"]["formal_status"], "not-applicable")
+        self.assertEqual(result["research_tasks"]["tasks"], 1)
+        self.assertEqual(result["research_tasks"]["review_dimensions"], 1)
+        self.assertFalse(result["research_tasks"]["inherited_author_coverage"])
         self.assertEqual(frozen, (self.repo / "verification/author/checked-ledger.json").read_bytes())
 
     def test_manifest_only_reserve_selection_preserves_all_original_paths_and_bytes(self):

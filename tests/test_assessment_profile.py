@@ -22,28 +22,28 @@ class CurrentAssessmentTests(unittest.TestCase):
         cls.policy=cls.profile.data['assessment_policy'];cls.strict=cls.profile.data['strict_policy']
     def inputs(self):return {'plan':self.plan,'model_label':self.plan['model_label'],'slots':fixture_rows(self.plan)}
     def test_current_schedule_only_contains_independent_a1(self):
-        self.assertEqual(self.plan['planned'],{'papers':24,'independent_slots':24,'neutral_slots':0,
-            'stance_slots':0,'all_slots':24,'selected_slots':24})
+        self.assertEqual(self.plan['planned'],{'papers':25,'independent_slots':25,'neutral_slots':0,
+            'stance_slots':0,'all_slots':25,'selected_slots':25})
         self.assertTrue(all(s['kind']=='independent' and s['attempt_label']=='A1' for s in self.plan['slots']))
         for target in ('repeat','neutral','stance'):
             with self.assertRaises(ValueError):select_slots(self.plan,[target])
         self.assertEqual(self.plan['reliability']['selection']['cases'],[])
-    def test_fixed_reserve_and_private_denominators_survive_complete_public_answers(self):
+    def test_fixed_private_denominators_survive_complete_public_answers(self):
         r=score_assessment_inputs(self.inputs(),self.policy,self.strict,
             strict_trajectory={'strict_pass':True},mode='strict')
-        self.assertAlmostEqual(r['metrics']['earned']['lower'],70-25*4/12)
-        self.assertEqual(r['metrics']['earned']['upper'],90)
+        self.assertAlmostEqual(r['metrics']['earned']['lower'],70-25*4/12+10/4)
+        self.assertEqual(r['metrics']['earned']['upper'],100)
         self.assertIsNone(r['metrics']['earned']['exact'])
         self.assertEqual(r['metrics']['overall']['upper'],100)
-        self.assertEqual(r['whole_task_counts'],{'planned':34,'passed':20,'failed':0,'unknown':14})
+        self.assertEqual(r['whole_task_counts'],{'planned':38,'passed':21,'failed':0,'unknown':17})
         self.assertEqual(r['metrics']['lean-selfcheck']['exact'],100)
         self.assertEqual(r['contributions']['lean-selfcheck']['exact'],10)
     def test_empty_run_does_not_invent_completed_tasks_or_normalize_scores(self):
         r=score_inputs({'plan':self.plan,'model_label':self.plan['model_label'],'slots':[]})
         self.assertIsNone(r['metrics']['overall']['exact'])
-        self.assertEqual(r['capacity'],{'total':100,'active':90,'under_construction':10})
+        self.assertEqual(r['capacity'],{'total':100,'active':100,'under_construction':0})
         self.assertEqual(r['metrics']['overall']['upper'],100)
-        self.assertEqual(r['whole_task_counts']['unknown'],34)
+        self.assertEqual(r['whole_task_counts']['unknown'],38)
         public=public_score_projection(r,self.plan,private_aliases={})
         self.assertNotIn('tasks',public);self.assertNotIn('slot_evidence',public)
     def test_family_first_formalization_and_merged_argument_pool(self):
@@ -71,7 +71,7 @@ class CurrentAssessmentTests(unittest.TestCase):
             self.assertEqual(m['exported_slots'],1);self.assertEqual(m['prompts'],[])
             text=(path/'manifest.json').read_text()
             self.assertNotIn('assessment_policy',text);self.assertNotIn('strict_policy',text)
-            self.assertEqual(m['planned']['all_slots'],24)
+            self.assertEqual(m['planned']['all_slots'],25)
     def test_current_plan_keeps_ar_families_after_their_source_parents_exit(self):
         from math_gauge.case_selection import CANONICAL_PARENT_FAMILIES, assessment_family
         cases={case['case_id']:case for case in self.plan['case_index']}
@@ -79,6 +79,6 @@ class CurrentAssessmentTests(unittest.TestCase):
         self.assertEqual({case['parent_family_id'] for case in cases.values()
                           if case['contract_kind']=='answer_review'},set(CANONICAL_PARENT_FAMILIES.values()))
         self.assertEqual(len({assessment_family(case,cases,self.policy['case_selection'])
-                              for case in cases.values()}),20)
+                              for case in cases.values()}),21)
 
 if __name__=='__main__':unittest.main()

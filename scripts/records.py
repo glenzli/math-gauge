@@ -8,7 +8,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_claim_review, project_assessment_score,
+from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score,
                                 validate_record, load_public_task_scores, project_public_task_view)
 from math_gauge.scoring import score_assessment_record_inputs
 
@@ -45,6 +45,7 @@ def check(root=ROOT, *, public_root=None):
             background = load_background_check_inputs(folder,record,policy=assessment.get("background_check"))
             written = load_written_argument_inputs(folder,record,policy=assessment.get("written_argument_additions"))
             replacement = load_written_replacement_inputs(folder,record,policy=assessment.get("written_argument_replacements"))
+            manuscript = load_manuscript_completion_inputs(folder,record,policy=assessment.get("manuscript_completion"))
             engineering = load(public / "reviews/formalization.json")
             public_record = load(public / "record.json")
             public_tasks = load_public_task_scores(public, public_record)
@@ -55,7 +56,7 @@ def check(root=ROOT, *, public_root=None):
                     derived = score_assessment_record_inputs(selected, review, source_policy,
                         formalization_review=engineering, assessment_policy=assessment,
                         strict_policy=strict, mode=mode, theorem_extension_inputs=research, background_check_inputs=background, written_argument_inputs=written,
-                        written_replacement_inputs=replacement,
+                        written_replacement_inputs=replacement, manuscript_completion_inputs=manuscript,
                         claim_review=claims, claim_policy=claim_policy,
                         capability_policy=capability if mode == "capability" else None)
                     for key, value in derived.items():

@@ -19,6 +19,8 @@ def configure_current(private_root, config, public, private):
     background=load(background_path) if background_path.exists() else None
     written_path = ROOT / "protocol/written-additions-policy.json"
     written = load(written_path) if written_path.exists() else None
+    manuscript_path = ROOT / "protocol/manuscript-completion-policy.json"
+    manuscript = load(manuscript_path) if manuscript_path.exists() else None
     public_count, private_count = len(public.cases), len(private.cases)
     total_count = public_count + private_count
     policy = load(ROOT / "protocol/scoring-policy.json")
@@ -38,11 +40,18 @@ def configure_current(private_root, config, public, private):
         policy["background_check"]=background
         next(c for c in policy["subcategories"] if c["id"]=="background-check").update(
             source_components=["background-check"],public_tasks=2,private_tasks=2,families=4,status="active")
+    if manuscript is not None:
+        from math_gauge.manuscript_completion import validate_policy as validate_manuscript_policy
+        validate_manuscript_policy(manuscript)
+        policy["manuscript_completion"] = manuscript
+        next(c for c in policy["subcategories"] if c["id"] == "manuscript-completion").update(
+            title="数学想法手稿化", source_components=["manuscript-completion"],
+            public_tasks=manuscript.get("public_cases", 0), private_tasks=manuscript["private_cases"], families=manuscript["families"], status="active")
     leaf = next(c for c in policy["subcategories"] if c["id"] == "theorem-extension")
     leaf.update(source_components=["theorem-extension"], public_tasks=len(extension["public_case_ids"]),
                 private_tasks=extension["private_cases"], families=extension["families"], status="active")
     policy["scope"].update(public_tasks=public_count, private_tasks=private_count, tasks=total_count,
-                           parent_families=19 + extension["families"] + (4 if background else 0) + (written["families"] if written else 0),
+                           parent_families=19 + extension["families"] + (4 if background else 0) + (written["families"] if written else 0) + (manuscript["families"] if manuscript else 0),
                            initial_slots=total_count, public_initial_slots=public_count)
     write(ROOT / "protocol/scoring-policy.json", policy)
     profile = load(ROOT / "protocol/benchmark-profile.json")
@@ -50,13 +59,17 @@ def configure_current(private_root, config, public, private):
     profile["assessment_policy"] = policy
     extension_ids=list(extension["public_case_ids"])
     background_ids=[] if background is None else list(background["public_case_ids"])
-    ids=extension_ids+background_ids
-    profile["components"] = [row for row in profile["components"] if row["id"] not in {"theorem-extension","background-check"}]
+    manuscript_ids=[] if manuscript is None else list(manuscript.get("public_case_ids", []))
+    ids=extension_ids+background_ids+manuscript_ids
+    profile["components"] = [row for row in profile["components"] if row["id"] not in {"theorem-extension","background-check","manuscript-completion"}]
     profile["components"].append({"id": "theorem-extension", "title": "命题拓展", "case_ids": extension_ids,
                                   "weight": 10, "aggregation": "family"})
     if background is not None:
         profile["components"].append({"id":"background-check","title":"背景核查",
             "case_ids":background_ids,"weight":10,"aggregation":"family"})
+    if manuscript_ids:
+        profile["components"].append({"id":"manuscript-completion","title":"数学想法手稿化",
+            "case_ids":manuscript_ids,"weight":10,"aggregation":"family"})
     execution = profile["case_execution_policy"]
     # Current formal tests share one permission policy; historical native evidence is immutable.
     for cid in public.cases:
@@ -73,7 +86,8 @@ def configure_current(private_root, config, public, private):
     edition["combined"].update(tasks=total_count, standard_slots=total_count)
     edition["profile"]["sha256"] = digest(ROOT / edition["profile"]["path"])
     edition["scoring_policy"].update(version=policy["version"], sha256=digest(ROOT / "protocol/scoring-policy.json"))
-    edition["score_capacity"].update(active=90 if background else 80, under_construction=10 if background else 20)
+    active = sum(c["weight"] for c in policy["subcategories"] if c["status"] == "active")
+    edition["score_capacity"].update(active=active, under_construction=100-active)
     edition["theorem_extension_policy"] = {"path": "protocol/theorem-extension-policy.json", "version": extension["version"],
                                            "sha256": digest(ROOT / "protocol/theorem-extension-policy.json")}
     for key, filename in (("result_record_contract", "protocol/result-record.md"),
@@ -86,6 +100,9 @@ def configure_current(private_root, config, public, private):
         edition["written_additions_policy"] = {"path": "protocol/written-additions-policy.json",
             "version": written["version"], "sha256": digest(written_path)}
         edition["case_selection"].update(version=selection["version"], sha256=digest(ROOT / "protocol/case-selection.json"))
+    if manuscript is not None:
+        edition["manuscript_completion_policy"]={"path":"protocol/manuscript-completion-policy.json",
+            "version":manuscript["version"],"sha256":digest(manuscript_path)}
     write(ROOT / "benchmark.json", edition)
     release_path = ROOT / "releases/v0.6.0/config.json"
     release = load(release_path)
@@ -100,7 +117,7 @@ def configure_current(private_root, config, public, private):
         "private_cases": extension["private_cases"], "policy_version": extension["version"],
         "formal_attempts": ["A1"], "research_invitation": False, "scoring_method": policy["version"]}
     private_edition["suite_sha256"] = private.sha256
-    private_edition["score_capacity"].update(active=90 if background else 80, under_construction=10 if background else 20)
+    private_edition["score_capacity"].update(active=active, under_construction=100-active)
     private_edition["case_selection"]["source"] = (
         f"shared20-public/3-private frozen legacy selection plus{len(extension['public_case_ids'])}-public/"
         f"{extension['private_cases']}-private theorem extension, "
@@ -112,6 +129,10 @@ def configure_current(private_root, config, public, private):
     if background is not None:
         private_edition["background_check"]={"public_cases":2,"private_cases":2,"families":4,
             "policy_version":background["version"],"formal_attempts":["A1"]}
+    if manuscript is not None:
+        private_edition["manuscript_completion"]={"public_cases":manuscript.get("public_cases",0),
+            "private_cases":manuscript["private_cases"],"families":manuscript["families"],
+            "policy_version":manuscript["version"],"formal_attempts":["A1"],"ordinary_claim_cap_points":50}
     write(private_root / "benchmark.json", private_edition)
 
     from scripts import catalog
@@ -125,16 +146,25 @@ def configure_current(private_root, config, public, private):
     taxonomy["paper_assignments"] = [a for a in taxonomy["paper_assignments"] if a["case_id"] not in ids]
     for cid in ids:
         source = sources[cid]
-        focus_ids = ["F04", "F06", "F01"] if cid in background_ids else (["F06", "F01", "F04"] if cid == extension_ids[0] else ["F06", "F07", "F04"])
-        criterion="complete-correction" if cid in background_ids else "complete-structure"
+        focus_ids = (["F06", "F03", "F05"] if cid in manuscript_ids else
+            ["F04", "F06", "F01"] if cid in background_ids else
+            ["F06", "F01", "F04"] if cid == extension_ids[0] else ["F06", "F07", "F04"])
+        criterion="M4" if cid in manuscript_ids else "complete-correction" if cid in background_ids else "complete-structure"
+        pointer="/dimensions/3/required_evidence" if cid in manuscript_ids else "/criteria/2/required_evidence"
+        focus=[]
+        manuscript_focus={"F06":("M2","/dimensions/1/required_evidence"),
+            "F03":("M1","/dimensions/0/required_evidence"),
+            "F05":("M4","/dimensions/3/required_evidence")}
+        for i,fid in enumerate(focus_ids):
+            unit,location=manuscript_focus[fid] if cid in manuscript_ids else (criterion,pointer)
+            focus.append({"focus_id":fid,"role":"primary" if i==0 else "secondary",
+                "evidence":[{"dimension_id" if cid in manuscript_ids else "criterion_id":unit,
+                    "note":"只按首答实际交付核验构造、适用条件和严格结论；接受有效替代路线。",
+                    "contract_pointer":location,"task_locator":{"path":source["paths"]["task"],
+                        "line":1,"applies_to":"whole-manuscript" if cid in manuscript_ids else "whole-paper"}}]})
         taxonomy["paper_assignments"].append({"case_id": cid, "version": source["case"]["version"],
             "source_bindings": source["source_bindings"],
-            "focus": [{"focus_id": fid, "role": "primary" if i == 0 else "secondary",
-                "evidence": [{"criterion_id": criterion,
-                    "note": "只按首答实际交付核验构造与结构、适用条件和严格结论；接受有效替代路线。",
-                    "contract_pointer": "/criteria/2/required_evidence",
-                    "task_locator": {"path": source["paths"]["task"], "line": 1,
-                                      "applies_to": "whole-paper"}}]} for i, fid in enumerate(focus_ids)],
+            "focus": focus,
             "classification_review": {"status": "ai-reviewed", "human": "pending"}})
     write(ROOT / "cases/taxonomy.json", taxonomy)
     index, document = catalog.build(ROOT)
@@ -191,8 +221,11 @@ def configure_combined(private_root, public_profile, public, private):
     profile["id"] = "math-gauge-assessment-combined"
     profile["suite"] = {"id": suite.metadata["id"], "version": suite.metadata["version"], "sha256": suite.sha256}
     for cid, case in private.cases.items():
-        component = next((name for name in ("theorem-extension", "background-check")
+        component = next((name for name in ("theorem-extension", "background-check", "manuscript-completion")
                           if private.case_manifest(cid).startswith(name + "/")), "proofs")
+        if component == "manuscript-completion" and not any(c["id"] == component for c in profile["components"]):
+            profile["components"].append({"id": component, "title": "数学想法手稿化", "case_ids": [],
+                "weight": 10, "aggregation": "family"})
         next(c for c in profile["components"] if c["id"] == component)["case_ids"].append(cid)
         profile["attempt_schedule"][cid] = ["A1"]
         profile["case_execution_policy"]["case_tracks"][cid] = "math-gauge.local-tools-no-search/v1"

@@ -12,9 +12,24 @@ from math_gauge.scoring import score_assessment_inputs
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def before_manuscript(policy):
+    """Keep historical fixtures bound to the earlier reserved manuscript slot."""
+    policy = copy.deepcopy(policy)
+    manuscript = policy.pop('manuscript_completion', None)
+    if manuscript is not None:
+        next(c for c in policy['subcategories'] if c['id'] == 'manuscript-completion').update(
+            source_components=[], public_tasks=0, private_tasks=0, families=0, status='under_construction')
+        for key in ('tasks', 'parent_families', 'initial_slots'):
+            policy['scope'][key] -= manuscript['families']
+        policy['scope']['private_tasks'] -= manuscript['private_cases']
+        for key in ('public_tasks','public_initial_slots'):
+            policy['scope'][key] -= manuscript.get('public_cases',0)
+    return policy
+
+
 def before_public_replacement(policy):
     """Retain the earlier component contract for tests of historical answers."""
-    policy = copy.deepcopy(policy)
+    policy = before_manuscript(policy)
     policy.pop('written_argument_replacements', None)
     selector = policy.get('case_selection', {})
     if selector.get('version') == '0.3.0':
@@ -37,7 +52,7 @@ def selection_for(plan):
 def assessment_policy(plan, *, selected=True):
     # Exercise the immutable pre-research 0.5 selection contract. The current
     # 0.6 policy adds a distinct component; it cannot serve as this fixture.
-    policy = json.loads((ROOT / "protocol/scoring-policy.json").read_bytes())
+    policy = before_manuscript(json.loads((ROOT / "protocol/scoring-policy.json").read_bytes()))
     policy["version"] = "0.5.0"
     policy["score_modes"] = ["partial", "strict"]
     for key in ("default_score_mode", "capability_policy_version", "score_mode_catalog_version"):

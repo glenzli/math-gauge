@@ -14,25 +14,31 @@ SPEC.loader.exec_module(SITE)
 
 
 class ChartBars(HTMLParser):
-    def __init__(self, page, score_mode="partial"):
+    def __init__(self, page, score_mode=None):
         super().__init__()
         self.bars = []
         self.groups = []
         self.images = []
         self.values = []
         self.tooltips = []
+        self.gap_groups = []
+        self.gap_bars = []
         self._in_value = False
         self.score_mode = score_mode
         self.feed(page)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if attrs.get("data-score-mode", self.score_mode) != self.score_mode:
+        if self.score_mode is not None and attrs.get("data-score-mode", self.score_mode) != self.score_mode:
             return
         if "score-bar" in attrs.get("class", "").split():
             self.bars.append(attrs)
         if "bar-group" in attrs.get("class", "").split():
             self.groups.append(attrs)
+        if "gap-model-group" in attrs.get("class", "").split():
+            self.gap_groups.append(attrs['data-model'])
+        if "gap-bar" in attrs.get("class", "").split():
+            self.gap_bars.append(attrs)
         if "provider-logo" in attrs.get("class", "").split():
             self.images.append(attrs)
         if "chart-value" in attrs.get("class", "").split():
@@ -67,7 +73,7 @@ class CurrentSiteTests(unittest.TestCase):
 
     def test_only_selected_current_models_and_scores_are_displayed(self):
         self.assertEqual(self.data["benchmark_version"], "0.6.0")
-        self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v5")
+        self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v6")
         self.assertEqual(self.data["publication_scope"], "combined")
         self.assertEqual(len(self.data["models"]), 3)
         for model in self.data["models"]:
@@ -142,69 +148,111 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertTrue(all(not path.exists() for path in retired))
             self.assertEqual(keep.read_text(), "Preserve this unrelated file.")
 
-    def test_solid_bars_and_only_observed_retry_increments_bind_to_the_retained_scores(self):
+    def test_three_scores_use_rule_selected_sources_without_first_attempt_bars(self):
         page = SITE.render(self.data)
-        bars = ChartBars(page).bars
-        self.assertEqual(len(bars), 4)
-        for model in self.data["models"]:
-            for series, result in [("single_attempt", model["combined"]),
-                                   ("nonlogical_retry_3", model["retry"]["combined"])]:
-                matches = [b for b in bars if b["data-model"] == model["id"] and b["data-series"] == series]
-                if series == "nonlogical_retry_3" and not result["retry_summary"]["slots_with_reruns"]:
-                    self.assertFalse(matches)
-                    continue
+        chart = ChartBars(page)
+        self.assertEqual(len(chart.bars), 9)
+        self.assertEqual(len(chart.groups), 3)
+        for model in self.data['models']:
+            for mode in self.data['score_modes']:
+                matches = [b for b in chart.bars if b['data-model'] == model['id']
+                           and b['data-score-mode'] == mode]
                 self.assertEqual(len(matches), 1)
-                self.assertEqual(float(matches[0]["data-score"]), SITE.earned_value(result))
-                self.assertIn("retry-extension" if series == "nonlogical_retry_3" else "first-solid", matches[0]["class"])
-                if series == "nonlogical_retry_3":
-                    first = SITE.earned_value(model["combined"])
-                    self.assertEqual(float(matches[0]["data-start-score"]), first)
-                    self.assertAlmostEqual(float(matches[0]["data-gain-score"]), SITE.earned_value(result) - first)
-        self.assertEqual(page.count('class="chart-value"'), 9)
-        self.assertEqual(ChartBars(page).values, [f"{max(SITE.earned_value(m['combined']), SITE.earned_value(m['retry']['combined'])):.2f}"
-                                                for m in self.data["models"]])
-        self.assertNotIn("46.71 → 49.80", page)
-        self.assertIn('bottom:0%">0</span>', page)
-        self.assertIn('bottom:100%">100</span>', page)
-        self.assertNotIn('data-mode=', page)
-        for model in self.data["models"]:
-            self.assertFalse((ROOT / Path(model["source_record"]).parent / "result.json").exists())
+                self.assertEqual(matches[0]['data-series'], 'nonlogical_retry_3')
+                self.assertEqual(float(matches[0]['data-score']),
+                                 SITE.earned_value(SITE.selected_result(model, mode)))
+        self.assertEqual(len(chart.images), 3)
+        self.assertNotIn('data-condition="single_attempt"', page)
 
-
-    def test_only_a_changed_model_has_first_attempt_details_on_hover(self):
-        page = SITE.render(self.data)
-        tips = ChartBars(page).tooltips
-        self.assertEqual(len(tips), 1)
-        self.assertIn("deepseek-v4.1-flash-1017", tips[0]["id"])
-        first = next(m for m in self.data["models"] if m["id"].startswith("deepseek"))["combined"]
-        self.assertIn(f'<dt>首次</dt><dd>{SITE.earned_value(first):.2f}</dd>', page)
-        ds = next(m for m in self.data["models"] if m["id"].startswith("deepseek"))
-        last = SITE.earned_value(ds["retry"]["combined"])
-        self.assertIn(f'<dt>重跑后</dt><dd>{last:.2f}</dd>', page)
-        self.assertIn(f'<dt>增量</dt><dd>+{last - SITE.earned_value(first):.2f}</dd>', page)
+    def test_rule_selected_lower_retry_is_shown_instead_of_best_score(self):
         data = copy.deepcopy(self.data)
-        ds = next(m for m in data["models"] if m["id"].startswith("deepseek"))
-        ds["retry"]["combined"]["metrics"]["earned"]["confirmed"] = SITE.earned_value(ds["combined"])
-        same = ChartBars(SITE.render(data))
-        self.assertEqual(same.tooltips, [])
-        self.assertEqual(len(same.bars), 3)
-
-
-    def test_lower_retry_source_is_marked_at_its_actual_endpoint_without_a_false_gain(self):
-        data = copy.deepcopy(self.data)
-        model = next(m for m in data["models"] if m["id"].startswith("deepseek"))
+        model = next(m for m in data['models'] if m['id'].startswith('deepseek'))
         lower = SITE.earned_value(model['combined']) - 1
-        model["retry"]["combined"]["metrics"]["earned"]["confirmed"] = lower
-        overlay = next(b for b in ChartBars(SITE.render(data)).bars
-                       if b["data-model"] == model["id"] and b["data-series"] == "nonlogical_retry_3")
-        self.assertEqual(float(overlay["data-score"]), lower)
-        self.assertIn("retry-end", overlay["class"])
-        self.assertIn(f"bottom:{lower:.8f}%;height:0.00000000%", overlay["style"])
+        model['retry']['combined']['metrics']['earned']['confirmed'] = lower
+        bar = next(b for b in ChartBars(SITE.render(data)).bars
+                   if b['data-model'] == model['id'] and b['data-score-mode'] == 'partial')
+        self.assertEqual(float(bar['data-score']), lower)
+
+    def test_gap_diagnostics_bind_retained_totals_and_keep_incomplete_coverage_unranked(self):
+        diagnostic = self.data['gap_diagnostics']
+        self.assertEqual(diagnostic['attempt_condition'], 'nonlogical_retry_3')
+        chart = ChartBars(SITE.render(self.data))
+        ordered = sorted(self.data['models'], key=lambda m: SITE.earned_value(SITE.selected_result(m)), reverse=True)
+        self.assertEqual(chart.gap_groups, [m['id'] for m in ordered])
+        self.assertEqual(len(chart.gap_bars), 6)
+        for table in diagnostic['tables']:
+            for row in table['rows']:
+                model = next(m for m in self.data['models'] if m['id'] == row['model_id'])
+                mc = SITE.earned_value(SITE.selected_result(model, 'capability'))
+                target = SITE.earned_value(SITE.selected_result(model, table['target_mode']))
+                self.assertEqual(row['value'], target - mc)
+                self.assertEqual(row['mc'], mc)
+                bar = next(b for b in chart.gap_bars if b['data-model'] == row['model_id']
+                           and b['data-gap-metric'] == table['id'])
+                self.assertEqual(float(bar['data-gap-value']), row['value'])
+                if model['evaluation_progress']['nonlogical_retry_3']['incomplete']:
+                    self.assertIsNone(row['rank'])
+                    self.assertEqual(row['status'], 'partial')
+                else:
+                    self.assertIsNotNone(row['rank'])
+
+    def test_gap_positive_zero_and_unknown_values_preserve_their_meaning(self):
+        models = copy.deepcopy(self.data['models'])
+        for model, values in zip(models, ((50, 45, 60), (None, None, None), (0, 0, 0))):
+            for mode, value in zip(('capability', 'partial', 'strict'), values):
+                metric = SITE.selected_result(model, mode)['metrics']['earned']
+                metric.update(confirmed=value, exact=value)
+        diagnostic = SITE.gap_diagnostics(models)
+        delivery = next(t for t in diagnostic['tables'] if t['id'] == 'DG')
+        positive = next(r for r in delivery['rows'] if r['model_id'] == models[0]['id'])
+        self.assertEqual(positive['value'], 10)
+        self.assertEqual(positive['display'], '+10.00')
+        self.assertGreaterEqual(diagnostic['axis']['maximum'], 10)
+        self.assertLess(diagnostic['axis']['zero'], 100)
+        positive_plot = SITE.vertical_gap_plot(positive['value'], diagnostic['axis'])
+        zero_y = SITE.vertical_gap_plot(0, diagnostic['axis'])['top']
+        self.assertLess(positive_plot['top'], zero_y)
+        self.assertAlmostEqual(positive_plot['top'] + positive_plot['height'], zero_y)
+        negative_plot = SITE.vertical_gap_plot(-5, diagnostic['axis'])
+        self.assertAlmostEqual(negative_plot['top'], zero_y)
+        self.assertGreater(negative_plot['endpoint'], zero_y)
+        self.assertIsNone(SITE.vertical_gap_plot(None, diagnostic['axis']))
+        unknown = next(r for r in delivery['rows'] if r['model_id'] == models[1]['id'])
+        self.assertIsNone(unknown['value'])
+        self.assertIsNone(unknown['rank'])
+        self.assertIsNone(unknown['plot'])
+        zero = next(r for r in delivery['rows'] if r['model_id'] == models[2]['id'])
+        self.assertEqual((zero['mc'], zero['value'], zero['display']), (0, 0, '0.00'))
+        for model in models:
+            for mode in ('capability', 'partial', 'strict'):
+                SITE.selected_result(model, mode)['metrics']['earned'].update(confirmed=0, exact=0)
+        zero_axis = SITE.gap_diagnostics(models)['axis']
+        self.assertLess(zero_axis['minimum'], zero_axis['maximum'])
+        models[2]['evaluation_progress']['nonlogical_retry_3'].update(
+            adjudicated=0, pending=37, incomplete=True)
+        unrun = next(r for r in SITE.gap_diagnostics(models)['tables'][1]['rows']
+                     if r['model_id'] == models[2]['id'])
+        self.assertIsNone(unrun['value'])
+        self.assertIsNone(unrun['rank'])
+
+    def test_display_alias_and_harness_do_not_rewrite_source_catalog_or_claim_all_batches_share_a_version(self):
+        original = json.loads((ROOT / 'protocol/score-modes.json').read_bytes())
+        self.assertEqual(self.data['score_mode_catalog'], original)
+        self.assertEqual(next(m for m in self.data['display_score_modes'] if m['id']=='strict')['abbreviation'], 'SMC')
+        self.assertEqual(self.data['default_attempt_condition'], 'nonlogical_retry_3')
+        for model in self.data['models']:
+            harness = model['harness']
+            self.assertTrue(harness['local_tools_allowed'])
+            self.assertFalse(harness['tool_network_access'])
+            if harness['version'] is not None:
+                self.assertEqual(harness['version_scope'], 'MG-MCP003')
+            else:
+                self.assertTrue(model['id'].startswith('deepseek'))
 
     def test_attempt_condition_reuses_other_models_honestly(self):
         self.assertEqual(self.data["attempt_conditions"], ["single_attempt", "nonlogical_retry_3"])
         page = SITE.render(self.data)
-        self.assertIn('data-condition="nonlogical_retry_3"', page)
+        self.assertNotIn('button data-condition=', page)
         for model in self.data["models"]:
             for scope in ["combined"]:
                 self.assertEqual(model[scope]["coverage"], model["retry"][scope]["coverage"])
@@ -231,11 +279,11 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertEqual(result["attempt_condition"], condition)
                 self.assertEqual(result["coverage"], model["combined"]["coverage"])
                 self.assertFalse(result["strict_alignment_selfcheck"]["strict_pass"])
-                self.assertIsNone(result["metrics"]["overall"]["exact"])
+                self.assertEqual(result["metrics"]["overall"]["exact"], result["metrics"]["earned"]["exact"])
                 self.assertNotIn("tasks", result)
         chart = ChartBars(SITE.render(self.data), "strict")
-        self.assertEqual(chart.values, [f"{max(SITE.earned_value(v) for v in m['strict'].values()):.2f}"
-                                        for m in self.data["models"]])
+        self.assertEqual(chart.values, [f"{SITE.earned_value(m['strict']['nonlogical_retry_3']):.2f}"
+                                        for m in sorted(self.data['models'], key=lambda m: SITE.earned_value(SITE.selected_result(m)), reverse=True)])
         self.assertEqual(len(chart.bars), 3)
         self.assertEqual(chart.tooltips, [])
         self.assertEqual(len(chart.images), 3)
@@ -259,6 +307,23 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertEqual(summary['status'],'source_bound_review_applied')
             self.assertNotIn('tasks',result)
             self.assertNotIn('finding_ids',json.dumps(summary))
+
+    def test_public_manuscript_displays_bound_review_and_keeps_unrun_answer_unknown(self):
+        from scripts.results_details import public_evidence, review_markdown
+        for model in self.data['models']:
+            folder = ROOT / Path(model['source_record']).parent
+            record = json.loads((folder / 'record.json').read_bytes())
+            projection = json.loads((folder / 'public-task-scores.json').read_bytes())
+            task = next(row for row in projection['views']['partial']['single_attempt']['tasks']
+                        if row['case_id'] == 'MG-MCP003')
+            evidence = public_evidence(folder, record, 'MG-MCP003', 'single_attempt', task)
+            if model['id'].startswith('deepseek'):
+                self.assertIsNone(task['completion']['exact'])
+                self.assertFalse(any(s['role'] == 'answer' for s in evidence['sources']))
+            else:
+                self.assertEqual(evidence['review']['answer_sha256'], task['response_sha256'])
+                self.assertEqual(len(evidence['review']['criteria']), 6)
+                self.assertIn('M4', review_markdown(evidence['review']))
 
 
 if __name__ == "__main__":

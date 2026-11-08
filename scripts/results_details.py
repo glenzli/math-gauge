@@ -11,7 +11,7 @@ from math_gauge.records import evidence_bytes, load_public_task_scores
 HERE = Path(__file__).resolve().parent
 CONDITIONS = ("single_attempt", "nonlogical_retry_3")
 CATEGORY_TITLES = {'proofs': '书面论证', 'answer-review': '论证审阅', 'lean-audit': '语义审计',
-                   'lean-formalization': '形式化', 'theorem-extension': '命题拓展', 'background-check': '背景核查'}
+                   'lean-formalization': '形式化', 'theorem-extension': '命题拓展', 'background-check': '背景核查', 'manuscript-completion': '数学想法手稿化'}
 
 
 def embedded(value):
@@ -49,8 +49,9 @@ def controls(data):
         +html.escape(m['name']+' '+m['abbreviation'], quote=True)+'" aria-pressed="'
         +str(m['id']==data['default_score_mode']).lower()+'"><span class="mode-name">'
         +html.escape(m['name'])+'</span><span class="mode-code">'+html.escape(m['abbreviation'])+'</span></button>'
-        for m in data['score_mode_catalog']['modes'])
-    return '<div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径">'+buttons+'</div></div><div class="control-group"><span class="control-name">运行条件</span><div class="segmented condition-control" role="group" aria-label="运行条件"><button data-condition="single_attempt" aria-pressed="true">原单次</button><button data-condition="nonlogical_retry_3" aria-pressed="false">允许重跑 ≤3次</button></div></div></div>'
+        for m in data['display_score_modes'])
+    return '<div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径">'+buttons+'</div></div></div>'
+
 
 
 def shell(page, title, subtitle, body, data, script, *, back=None):
@@ -74,7 +75,7 @@ def shell(page, title, subtitle, body, data, script, *, back=None):
 
 def compact_data(data, model=None):
     keys = ('schema', 'benchmark_version', 'score_mode_catalog', 'default_score_mode', 'score_modes',
-            'attempt_conditions', 'policy', 'capacity', 'human_review', 'formal_comparison_eligible')
+            'attempt_conditions', 'display_score_modes', 'default_attempt_condition', 'policy', 'capacity', 'human_review', 'formal_comparison_eligible')
     value = {k: data[k] for k in keys}
     if model:
         value['model'] = model
@@ -115,7 +116,9 @@ def public_evidence(folder, record, cid, condition, task):
                 raise ValueError(f"Selected answer differs from task score: {cid}/{condition}")
             sources.append(descriptor(folder, answer, role='answer'))
         if legacy and row is legacy:
-            review_items = [s for s in row.get('artifacts', []) if s['path'].endswith('.json') and s['path'].startswith('reviews/')]
+            review_items = [s for s in row.get('artifacts', []) if s['path'].endswith('.json')
+                            and (s['path'].startswith('reviews/')
+                                 or s['path'].endswith('/mathematical-review.json'))]
             if not review_items and chosen:
                 # Retry reviews are independently bound in the public claim audit below.
                 review_items = []
@@ -169,7 +172,7 @@ def review_markdown(review):
     if not review:
         return '当前没有可展示的逐项评审；计分状态以正式档案为准。'
     lines = []
-    for key, title in [('summary','评审摘要'), ('reason','判定理由'), ('strict_reason','Strict 理由'),
+    for key, title in [('summary','评审摘要'), ('reason','判定理由'), ('strict_reason','SMC 理由'),
                        ('baseline_findings','原题核查'), ('research_findings','拓展核查'), ('issues','主要问题')]:
         value = review.get(key)
         if value:
@@ -211,7 +214,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         'views': {mode: {c: next(r for r in projection['views'][mode][c]['tasks'] if r['case_id']==cid)
                          for c in CONDITIONS} for mode in projection['views']}}
     body = panel('本题成绩', '<div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p>',
-        'MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；Strict 显示整题判定。未测与交付失败分别保留。')
+        'MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。')
     task_path = Path(model['source_record']).parent/'inputs'/cid/'task.md'
     if not (root/task_path).is_file():
         task_path = Path(entry['paths']['task'])
@@ -233,7 +236,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         if engineering:
             review_html += '<details class="evidence-fold nested"><summary>逐项工程与语义审核（'+str(len(engineering.get('obligations',[])))+'项）</summary><div class="prose">'+markdown.add(review_markdown(engineering))+'</div></details>'
         current += panel('逐项评审', review_html,
-            '以下为原评审字段的阅读视图；当前口径的额外扣罚与 Strict 判定以本页成绩及上方理由为准。')
+            '以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。')
         answers = [s for s in item['sources'] if s['role'] in ('answer','response') and s['sha256']==details['case']['views']['partial'][condition]['response_sha256']]
         if answers:
             answer = answers[0]
@@ -252,7 +255,30 @@ def render_model(page, data, model, cases, record, folder, markdown):
     details = compact_data(data, model)
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>',
-        '公开与私有合并，满分保持100；未建的研究稿完善10分仍未知。')
+        '公开与私有合并，满分保持100；未测项目保持未知。')
+    rates = model.get('content_rates')
+    if rates:
+        def percent(value):
+            return '—' if value is None else f'{value:.2f}%'
+        target = 'attainment' if rates['version'] == '0.2.0' else 'delivery'
+        target_label = '目标达成率' if target == 'attainment' else '旧细项覆盖率'
+        r, d = rates['metrics']['reliability'], rates['metrics'][target]
+        rows = ''
+        for child in data['policy']['subcategories']:
+            category = rates['categories'][child['id']]
+            delivered = category[target]['confirmed'] if category['coverage']['reviewed_tasks'] else None
+            rows += '<tr><td>'+html.escape(child['title'])+'</td><td class="numeric">'
+            rows += percent(category['reliability']['observed'])+'</td><td class="numeric">'
+            rows += percent(delivered)+'</td></tr>'
+        body += panel('内容可靠率与'+target_label, '<div class="prose"><p>已审内容可靠率 '
+            +percent(r['observed'])+'；已确认'+target_label+' '+percent(d['confirmed'])+'。</p><p>完整题包可能范围：可靠率 '
+            +percent(r['lower'])+'–'+percent(r['upper'])+'；'+target_label+' '+percent(d['lower'])+'–'
+            +percent(d['upper'])+'。未测保持未知。</p></div><div class="table-wrap"><table class="compact rate-table">'
+            '<thead><tr><th>子类</th><th class="numeric">已审内容可靠率</th><th class="numeric">已确认'+target_label+'</th>'
+            '</tr></thead><tbody>'+rows+'</tbody></table></div><p class="panel-foot">'
+            +source_link(Path(model['source_record']).parent/'content-rates.json', page, '补审汇总 JSON ↗')
+            +' · <a data-context-link href="../../method.html#content-rate-method">计算方法 →</a></p>',
+            '内容核查实际断言；目标按完整独立成果验收。不改变MC、RMC、SMC。AI审核／人审待定。')
     body += panel('分类贡献', '<div class="table-wrap"><table id="model-categories" class="compact"></table></div>',
         '每格为贡献分 / 该项满分。书面论证12个家族等权；相关变体在家族内聚合。')
     body += '<div class="equal-grid">'+panel('Lean · 自查计分', '<div class="table-wrap"><table id="model-selfcheck" class="compact"></table></div><p id="selfcheck-rule" class="panel-foot"></p><details class="selfcheck-comparison"><summary>比较三种计分口径</summary><div class="table-wrap"><table id="selfcheck-comparison" class="compact"></table></div></details>')
@@ -268,10 +294,11 @@ def render_model(page, data, model, cases, record, folder, markdown):
         rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗')+'</p>'
     body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '原答事实，不随口径改变。92项义务，采用最后规定轮次；不取最好一轮，不拼接各轮成果。')+'</div>'
     body += panel('公开题 · 逐题成绩与证据', '<div class="table-wrap"><table id="case-list" class="compact case-list"></table></div>',
-        '当前24道公开题。私有10题只进入上方合并贡献，不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
+        '当前25道公开题。私有12题只进入上方合并贡献，不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
     body += '<details class="panel evidence-fold"><summary>形式化初答 · 逐题核实数</summary><div class="table-wrap"><table id="model-formalization" class="compact"></table></div><p class="panel-foot">编译与逐项语义审核同时成立才计完成。初答与后续自查分开计分。</p></details>'
     body += panel('可靠性审核', '<div id="model-penalties" class="metric-grid"></div><details class="nested evidence-fold"><summary>公开题的错误承诺与扣罚理由</summary><div id="model-findings" class="prose"></div></details>',
-        '记录数不等于独立样本或扣罚次数；同根因去重。RMC 普通扣罚5%/10%/20%，每题最多20%；已确立的核心错误放行使该题最高0分，Strict 不通过。')
+        '记录数不等于独立样本或扣罚次数；同根因去重。RMC 普通扣罚5%/10%/20%，通常每题最多20%，数学想法手稿化最多50%；已确立的核心错误放行使该题最高0分，SMC 不通过。')
+    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness']['detail'])+'</p><p>允许本地工具与预置公共依赖，禁止联网检索及工具联网。</p><p>'+html.escape(model['harness']['tool_usage'])+'</p></div>')
     source = source_link(model['source_record'],page,'正式档案 ↗')
     body += '<details class="panel evidence-fold"><summary>运行条件、重跑与来源</summary><div class="prose"><p>'+html.escape(model['retry']['note'])+'</p><p>允许本地工具，禁止联网检索和工具联网。历史答卷的具体条件以原始记录为准；允许重跑采用第一次正常交付，不按数学得分择优。</p><p>'+source+'</p></div></details>'
     body += panel('下载当前口径', '<div class="downloads" id="downloads"></div><p class="panel-foot"><a data-context-link href="../../method.html">查看完整方法与数据说明 →</a></p>')

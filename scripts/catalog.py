@@ -31,6 +31,7 @@ CATEGORIES = (
     ("answer-review", "论证审阅"),
     ("theorem-extension", "命题拓展"),
     ("background-check", "背景核查"),
+    ("manuscript-completion", "数学想法手稿化"),
 )
 FOCUS_FILES = {TAXONOMY, *OUTPUTS, "scripts/catalog.py"}
 sys.dont_write_bytecode = True
@@ -85,6 +86,8 @@ def assessment_label(entry: dict) -> tuple[int, str]:
         return entry["proof_criterion_count"], "评审判准"
     if entry["kind"] in {"answer_review", "semantic_audit"}:
         return entry["review_dimension_count"], "审阅维度"
+    if entry["kind"] == "research_exploration":
+        return entry["review_dimension_count"], "评审维度"
     return entry["stage_count"], "义务" if entry["kind"] == "chapter_formalization" else "阶段"
 
 
@@ -113,7 +116,7 @@ def validate_assignment(assignment: dict, source: dict) -> None:
     ids = [tag.get("focus_id") for tag in tags]
     require(len(ids) == len(set(ids)), f"{cid}: duplicate focus tag")
     require(all(fid in FOCUS_IDS for fid in ids), f"{cid}: unknown focus tag")
-    is_review = contract["kind"] in {"answer_review", "semantic_audit"}
+    is_review = contract["kind"] in {"answer_review", "semantic_audit", "research_exploration"}
     is_written = contract["kind"] == "written_proof"
     unit_key = "criterion_id" if is_written else "dimension_id" if is_review else "stage_id"
     collection = "criteria" if is_written else "dimensions" if is_review else "stages"
@@ -154,7 +157,8 @@ def validate_assignment(assignment: dict, source: dict) -> None:
                 )
             elif is_review:
                 require(
-                    locator.get("applies_to") == ("whole-semantic-audit" if contract["kind"] == "semantic_audit" else "whole-answer-review") and locator.get("line") == 1,
+                    locator.get("applies_to") == ({"semantic_audit":"whole-semantic-audit",
+                        "research_exploration":"whole-manuscript"}.get(contract["kind"],"whole-answer-review")) and locator.get("line") == 1,
                     f"{cid}/{sid}: answer-review locator drift",
                 )
             elif contract["kind"] == "progressive":

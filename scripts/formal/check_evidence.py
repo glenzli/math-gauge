@@ -662,7 +662,7 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
     reference completeness. The original author ledger retains its own complete
     inventory and all its compilation/semantic checks.
     """
-    written, reviews, audits, formalizations, seen = [], [], [], [], set(retained_case_ids)
+    written, reviews, audits, formalizations, research, seen = [], [], [], [], [], set(retained_case_ids)
     if not paths:
         return {}
     sources_path = verify.safe_relative(repo, 'cases/sources.json')
@@ -697,7 +697,8 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
         contract = verify.load(repo / paths_by_role['group_contract'])
         verify.require(isinstance(contract, dict), 'Additional assessment contract must be an object')
         kind = contract.get('kind')
-        verify.require(kind in {'written_proof', 'answer_review', 'semantic_audit', 'chapter_formalization'} and contract.get('id') == cid
+        verify.require(kind in {'written_proof', 'answer_review', 'semantic_audit', 'chapter_formalization',
+                                'research_exploration'} and contract.get('id') == cid
                        and contract.get('version') == case.get('version'),
                        'Additional mathematical papers need their own author evidence; unsupported assessment kind or identity')
         metadata = case.get('review', {})
@@ -757,6 +758,15 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
                            'Semantic audit dimensions are not author Lean obligations')
             row.update(review_dimensions=len(contract['dimensions']), formal_status='not-required')
             audits.append(row)
+        elif kind == 'research_exploration':
+            from math_gauge.catalog import validate_group_contract
+            validate_group_contract(contract)
+            verify.require(case.get('task_kind') == 'written' and case.get('track') == 'exploration'
+                           and formal.get('status') == 'not-required-for-research'
+                           and contract.get('assessment_unit') == 'review_dimension',
+                           'Research dimensions are not author Lean obligations')
+            row['review_dimensions'] = len(contract['dimensions'])
+            research.append(row)
         else:
             from math_gauge.catalog import validate_group_contract
             validate_group_contract(contract)
@@ -776,7 +786,10 @@ def assessment_inventory(repo, paths, *, retained_case_ids=()):
                  'inherited_author_coverage': False, 'cases': audits}} if audits else {}),
             **({'formalization_tasks': {'tasks': len(formalizations),
                  'obligations': sum(row['obligations'] for row in formalizations),
-                 'inherited_author_coverage': False, 'cases': formalizations}} if formalizations else {})}
+                 'inherited_author_coverage': False, 'cases': formalizations}} if formalizations else {}),
+            **({'research_tasks': {'tasks': len(research),
+                 'review_dimensions': sum(row['review_dimensions'] for row in research),
+                 'inherited_author_coverage': False, 'cases': research}} if research else {})}
 
 
 def catalog_case_paths(repo):

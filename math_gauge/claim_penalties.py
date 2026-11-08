@@ -90,11 +90,14 @@ def positive_credit(value, row):
                     (x - awarded) / Fraction(9, 10))) for x in value)
 
 
-def assess(value, passed, row, *, mode, baseline_deduction=Fraction(0)):
+def assess(value, passed, row, *, mode, baseline_deduction=Fraction(0), generic_cap_points=20):
     """One root is charged once. A critical core sign-off cannot be offset."""
+    if type(generic_cap_points) is not int or generic_cap_points not in {20, 50}:
+        raise ValueError("Claim cap must come from a supported category policy")
+    cap_fraction = Fraction(generic_cap_points, 100)
     if row["status"] in {"not_run", "delivery_failed"}:
         if row["status"] == "not_run" and mode == "partial":
-            value = (min(value[0], Fraction(-1, 5)), value[1], None)
+            value = (min(value[0], -cap_fraction), value[1], None)
         return value, passed, {"status": row["status"], "applied_deduction": 0,
                               "core_endorsement_cap": False, "findings": 0}
     value = positive_credit(value, row)
@@ -110,7 +113,7 @@ def assess(value, passed, row, *, mode, baseline_deduction=Fraction(0)):
             roots[event["root_cause"]] = max(roots.get(event["root_cause"], Fraction(0)), charge)
         blocking |= event["strict_blocking"]
         cap |= event["core_endorsement"]
-    generic = min(Fraction(1, 5), max(reserve, covered) + sum(roots.values(), Fraction(0)))
+    generic = min(cap_fraction, max(reserve, covered) + sum(roots.values(), Fraction(0)))
     baseline = Fraction(0) if row.get("baseline_disposition") == "honest_incomplete" else baseline_deduction
     deduction = max(generic, baseline)
     if blocking or row.get("baseline_disposition") == "honest_incomplete":
@@ -123,7 +126,7 @@ def assess(value, passed, row, *, mode, baseline_deduction=Fraction(0)):
         if cap:
             net = tuple(None if x is None else min(Fraction(0), x) for x in net)
         if row["status"] == "unresolved":
-            net = (min(net[0], value[0] - Fraction(1, 5)), value[1] - generic, None)
+            net = (min(net[0], value[0] - cap_fraction), value[1] - generic, None)
             if cap:
                 net = (net[0], min(Fraction(0), net[1]), None)
     detail = {"status": row["status"], "positive_completion": {

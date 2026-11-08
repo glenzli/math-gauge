@@ -7,7 +7,8 @@ import unittest
 from unittest.mock import patch
 
 from math_gauge.claim_penalties import assess, positive_credit, validate_policy, validate_review
-from math_gauge.records import load_claim_review, load_assessment_results, project_assessment_score
+from math_gauge.records import (load_claim_review, load_assessment_results, project_assessment_score,
+                                public_assessment_case_ids)
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / 'protocol/claim-penalty-policy.json').read_bytes())
@@ -116,7 +117,8 @@ class ClaimArchiveTests(unittest.TestCase):
 
     def test_review_binds_original_bytes_and_public_projection_excludes_private_cases(self):
         data=load_claim_review(self.root,self.record,'single_attempt')
-        self.assertEqual(len(data['cases']),24)
+        policy=json.loads((self.root/self.record['assessment_policy']['path']).read_bytes())
+        self.assertEqual({row['case_id'] for row in data['cases']}, set(public_assessment_case_ids(policy)))
         ar=next(r for r in data['cases'] if r['case_id']=='MG-AR003')
         self.assertTrue(any(e['core_endorsement'] for e in ar['findings']))
         self.assertTrue(all(s['archive']=='public' for r in data['cases'] for s in r['sources']))

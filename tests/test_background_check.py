@@ -44,7 +44,7 @@ class BackgroundChecks(unittest.TestCase):
         self.assertAlmostEqual(r['contributions']['background-check']['exact'],25/6)
         self.assertEqual(self.score(data,'strict')['contributions']['background-check']['exact'],2.5)
         self.assertEqual(r['metrics']['background-check']['coverage']['planned'],4)
-        self.assertEqual(r['capacity'],{'active':90,'under_construction':10,'total':100})
+        self.assertEqual(r['capacity'],{'active':100,'under_construction':0,'total':100})
     def test_unrun_keeps_all_four_unknown_without_charging_math_failure(self):
         r=self.score(self.data((None,)*4))
         self.assertIsNone(r['contributions']['background-check']['exact'])

@@ -43,7 +43,7 @@ SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
 COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
-_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review", "theorem-extension", "background-check",
+_RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review", "theorem-extension", "background-check", "manuscript-completion",
                     "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90",
                     "written-new-panel", "written-refresh")
 _DATASET_KEYS = {"schema", "controller_version", "release_version", "dataset_sha256",
@@ -267,7 +267,7 @@ def _inspect_bundle_contents(root):
                "Preparation-only status changed")
     _h_require(isinstance(value["targets"], list) and value["targets"]
                and len(value["targets"]) == len(set(value["targets"]))
-               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review", "theorem-extension", "background-check",
+               and set(value["targets"]) <= {"proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review", "theorem-extension", "background-check", "manuscript-completion",
                                              "repeat", "neutral", "stance", "core", "all", "c003-180", "lean-90",
                                              "written-new-panel", "written-refresh"},
                "Invalid export target projection")
@@ -991,7 +991,7 @@ def _inspect_release_dataset_contents(root):
             _h_require(selections["all"] == all_ids and selections["core"] == selections["repeat"] == independent,
                        "Release independent target inventory changed")
         component_targets = [t for t in selections if t in {"proofs", "lean-audit",
-            "lean-construction", "chapters", "lean-formalization", "exploration", "answer-review", "theorem-extension", "background-check"}]
+            "lean-construction", "chapters", "lean-formalization", "exploration", "answer-review", "theorem-extension", "background-check", "manuscript-completion"}]
         partition = [sid for component in component_targets for sid in selections[component]]
         _h_require(len(partition) == len(set(partition)) and set(partition) == set(core),
                    "Release component targets must partition independent slots")

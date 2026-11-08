@@ -16,13 +16,14 @@ from .case_selection import selected_current_cases
 from .background_check import validate_policy as validate_background_policy
 from .written_additions import validate_policy as validate_written_additions_policy
 from .written_replacements import validate_policy as validate_written_replacements_policy
+from .manuscript_completion import validate_policy as validate_manuscript_policy
 from .execution import now, runner_fingerprint
 from .execution_policy import execution_context, validate_context_policy, validate_case_execution_policy
 
 COMPONENTS = ("proofs", "lean-audit", "lean-construction", "chapters")
 EXTENDED_COMPONENTS = COMPONENTS + ("exploration", "answer-review")
 FORMALIZATION_COMPONENTS = ("proofs", "lean-audit", "lean-formalization", "exploration", "answer-review")
-TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("theorem-extension", "background-check", "repeat", "neutral", "stance", "core", "all")
+TARGETS = tuple(dict.fromkeys(EXTENDED_COMPONENTS + FORMALIZATION_COMPONENTS)) + ("theorem-extension", "background-check", "manuscript-completion", "repeat", "neutral", "stance", "core", "all")
 ATTEMPTS = ("A1", "A2", "A3")
 ARMS = ("neutral", "affirm", "deny")
 PROFILE_SCHEMAS = {"math-gauge.benchmark-profile/v1", "math-gauge.benchmark-profile/v2",
@@ -80,11 +81,18 @@ def validate_assessment_policy(policy):
             raise ValueError("Written replacements require their revised legacy selection")
     elif selection is not None and selection["version"] == "0.3.0":
         raise ValueError("Revised public selection requires source-bound written replacements")
+    manuscript = policy.get("manuscript_completion")
+    if manuscript is not None:
+        validate_manuscript_policy(manuscript)
+        if policy["version"] != "0.8.0":
+            raise ValueError("Manuscript evidence cannot change an older frozen scoring method")
+    extra_manuscript = 0 if manuscript is None else manuscript["families"]
     expected = {"written-argument": (25, 8, 3 + extra_written, 11 + extra_written) if selection is not None else (25, 14, 3, 17),
                 "argument-review": (10, 4, 0, 4),
                 "lean-audit": (10, 4, 0, 2), "lean-formalization": (15, 4, 0, 2),
                 "lean-selfcheck": (10, 1, 0, 1), "background-check": (10, 2, 2, 4) if background is not None else (10, 0, 0, 0),
-                "manuscript-completion": (10, 0, 0, 0),
+                "manuscript-completion": (10, 0 if manuscript is None else manuscript.get("public_cases", 0),
+                    0 if manuscript is None else manuscript["private_cases"], extra_manuscript),
                 "theorem-extension": (10, 2, extension_policy["private_cases"], extension_policy["families"])
                                      if extension else (10, 0, 0, 0)}
     rows = policy.get("subcategories", [])
@@ -97,11 +105,15 @@ def validate_assessment_policy(policy):
     groups = policy.get("groups", [])
     source_contract = [(["proofs", "exploration"], "family"), (["answer-review"], "parent_family"),
                        (["lean-audit"], "family"), (["lean-formalization"], "family"),
-                       ([], "trajectory"), (["background-check"] if background is not None else [], "family"), ([], "family"),
+                       ([], "trajectory"), (["background-check"] if background is not None else [], "family"),
+                       (["manuscript-completion"] if manuscript is not None else [], "family"),
                        (["theorem-extension"] if extension else [], "family")]
     public_count, total_count, family_count = (20, 23, 19) if selection is not None else (26, 29, 21)
     total_count += extra_written
     family_count += extra_written
+    total_count += extra_manuscript
+    family_count += extra_manuscript
+    public_count += 0 if manuscript is None else manuscript.get("public_cases", 0)
     if extension:
         public_count += len(extension_policy["public_case_ids"])
         total_count += extension_policy["families"]
@@ -169,7 +181,7 @@ def component_ids(data):
              "Profile requires explicit ordered components")
     ids = [row.get("id") for row in rows]
     if data.get("schema") == "math-gauge.benchmark-profile/v6":
-        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension", "background-check")
+        allowed = ("proofs", "lean-audit", "lean-formalization", "answer-review", "theorem-extension", "background-check", "manuscript-completion")
         _require(ids == [cid for cid in allowed if cid in ids]
                  and all(row.get("aggregation") == ("parent_family" if row["id"] == "answer-review" else "family")
                          for row in rows), "Invalid current task categories or family aggregation")
@@ -195,6 +207,9 @@ def _validate_profile_weights(data):
             expected["theorem-extension"] = 10
         if policy.get("background_check") is not None:
             expected["background-check"] = 10
+        if any(row["id"] == "manuscript-completion" for row in data["components"]):
+            _require(policy.get("manuscript_completion") is not None, "Manuscript tasks need their selected policy")
+            expected["manuscript-completion"] = 10
         _require({row["id"]: row.get("weight") for row in data["components"]} == expected
                  and "overall_weights" not in data
                  and data.get("source_only_counts") is True,
@@ -437,7 +452,7 @@ def _category_matches(component, task_kind, contract_kind, *, current=False):
         return component == "lean-audit" and task_kind == "audit"
     if component == "answer-review":
         return contract_kind == "answer_review" and task_kind == "answer_review"
-    if component == "exploration":
+    if component in {"exploration", "manuscript-completion"}:
         return contract_kind == "research_exploration" and task_kind in {"written", "exploration"}
     if component == "chapters":
         return contract_kind == "chapter_formalization" and task_kind == "generate"

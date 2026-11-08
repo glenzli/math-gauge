@@ -93,7 +93,7 @@ def selected_current_cases(cases, selection, *, current_plan=False):
     if current_plan and not replacements <= set(cases):
         raise ValueError("Current assessment plan is missing its written replacement")
     extra = {cid: c for cid, c in cases.items()
-             if c['component'] in {'theorem-extension', 'background-check'} or cid in replacements}
+             if c['component'] in {'theorem-extension', 'background-check', 'manuscript-completion'} or cid in replacements}
     base = {cid: c for cid, c in cases.items() if cid not in extra}
     normalized = {cid: dict(c, component='exploration')
                   if c['component']=='proofs' and c.get('source_visibility', c.get('visibility'))=='private'

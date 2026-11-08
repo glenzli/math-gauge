@@ -1,6 +1,6 @@
 # 当前试卷
 
-0.6.0默认题集 `cases/suite.json` 含24份相关任务，关联20个母题家族。完整题库含20份数学卷与4份真实答卷审阅，共184项阶段或章节义务，另有33项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
+0.6.0默认题集 `cases/suite.json` 含25份相关任务，关联21个母题家族。完整题库含21份数学卷与4份真实答卷审阅，共184项阶段或章节义务，另有33项书面证明评审判准。相关任务、判准及审阅维度不构成独立数学家族。
 
 材料具参考、判准、来源及AI审核记录，题目与当前答卷仍为 **human pending**。已有数学答卷及8份候选审阅答卷；AR纳入、评分与统一重评属于观察结果后的方法变更，详见[审阅说明](../docs/answer-review.md)与[当前结果](../docs/results.md)。已发布资产保持原样。
 
@@ -18,10 +18,10 @@
 | Lean（35%） | 形式化 | 15% | 4 | 0 | 当前计分 |
 | Lean（35%） | 对齐自查 | 10% | 复用1题/3轮 | 0 | 当前计分 |
 | 数学研究（30%） | 背景核查 | 10% | 2 | 2 | 当前计分 |
-| 数学研究（30%） | 研究稿完善 | 10% | 0 | 0 | 建设中 |
+| 数学研究（30%） | 数学想法手稿化 | 10% | 1 | 3 | 当前计分 |
 | 数学研究（30%） | 命题拓展 | 10% | 2 | 4 | 当前计分 |
 
-当前24道公有与10道私有题合并评测，已建权重90/100；其余10分预留，不重新归一化，也不计为模型答错。私有书面题并入同一书面论证池；命题拓展与背景核查按上表固定家族数、仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。
+当前25道公有与13道私有题合并评测，已建权重100/100；其余0分预留，不重新归一化，也不计为模型答错。私有书面题并入同一书面论证池；命题拓展与背景核查按上表固定家族数、仅按无提示A1计分。自查复用整章题，不另增题目或独立家族。
 
 
 ## 书面论证 · 8份
@@ -77,6 +77,12 @@
 | --- | --- | ---: | --- |
 | [MG-BC001 · 四井刚性推广与实际零边界构造](background-check/MG-BC001/task.md) | written | 3评审判准 | [合同](background-check/MG-BC001/contract.json) · [参考](background-check/MG-BC001/reference.md) · [评分](background-check/MG-BC001/rubric.json) · [题包复核](background-check/MG-BC001/review.json) |
 | [MG-BC002 · 精确梯度流与凸近端表示](background-check/MG-BC002/task.md) | written | 3评审判准 | [合同](background-check/MG-BC002/contract.json) · [参考](background-check/MG-BC002/reference.md) · [评分](background-check/MG-BC002/rubric.json) · [题包复核](background-check/MG-BC002/review.json) |
+
+## 数学想法手稿化 · 1份
+
+| 试卷 | 任务 | 必答规模 | 完整材料 |
+| --- | --- | ---: | --- |
+| [MG-MCP003 · 扩展伪度量下的矩阵估计与不可分辨性](manuscript-completion/MG-MCP003/task.md) | written | 6评审维度 | [合同](manuscript-completion/MG-MCP003/contract.json) · [参考](manuscript-completion/MG-MCP003/reference.md) · [评分](manuscript-completion/MG-MCP003/rubric.json) · [题包复核](manuscript-completion/MG-MCP003/review.json) |
 
 旧题和备选题通过Git历史恢复。审阅可用独立清单answer-review-suite.json选择。
 
