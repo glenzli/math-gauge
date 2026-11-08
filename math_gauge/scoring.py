@@ -2288,7 +2288,8 @@ def validate_capability_policy(policy):
     return policy
 
 
-def _aggregate_assessment_families(policy, families, *, mode, alignment_summary, strict_trajectory):
+def _aggregate_assessment_families(policy, families, *, mode, alignment_summary, strict_trajectory,
+                                  manuscript_core_family_present=False):
     """One exact category/family arithmetic path for formal and observed evidence."""
     manuscript_policy = policy.get("manuscript_completion")
     metrics, intervals, contributions, confirmed = {}, {}, {}, {}
@@ -2316,7 +2317,15 @@ def _aggregate_assessment_families(policy, families, *, mode, alignment_summary,
                        if ident == "theorem-extension" and mode == "partial" else UNKNOWN)
             if ident == "manuscript-completion" and mode == "partial" and manuscript_policy is not None:
                 missing = (-Fraction(manuscript_policy["ordinary_claim_cap_points"], 100), Fraction(1), None)
-            values += [missing] * (count - len(values))
+            missing_count = count - len(values)
+            if (ident == "manuscript-completion" and mode == "partial" and manuscript_policy is not None
+                    and manuscript_policy["version"] == "0.5.0" and missing_count
+                    and not manuscript_core_family_present):
+                # This single absent family has a source-bound RMC floor. The
+                # other four missing families retain their original intervals.
+                values.append(UNKNOWN)
+                missing_count -= 1
+            values += [missing] * missing_count
             value, adjudicated = _average(values), sum(item[2] is not None for item in values)
             confirmed[ident] = sum((_average([(v[2] or Fraction(0),) * 3 for v in items])[2]
                 for items in families[ident].values()), Fraction(0)) / count
@@ -2382,6 +2391,53 @@ def _assess_manuscript_fidelity(value, passed, fidelity, *, mode, completion, cl
         'combined_adjustment_cap_points': 50,
         'source_review_sha256': fidelity['source']['sha256']}
     return value, passed, detail
+
+
+def _assess_manuscript_floor(value, *, mode, case, claim_detail=None):
+    """Apply only the selected task's source-bound RMC floor, after all losses."""
+    policy = (case or {}).get("strict_completion_policy")
+    if mode != "partial" or policy is None:
+        return value
+    floor = Fraction(policy["rmc_floor_points"], 100)
+    previous = value
+    value = tuple(None if x is None else max(floor, x) for x in value)
+    if claim_detail is not None:
+        def interval(items):
+            return {k: None if x is None else float(x)
+                    for k, x in zip(("lower", "upper", "exact"), items)}
+        # Keep the original deduction, root counts and severity trace. The
+        # actual loss and final net reflect the task floor rather than a
+        # deduction that the floor prevented from reducing earned credit.
+        claim_detail["rmc_floor_points"] = policy["rmc_floor_points"]
+        claim_detail["unfloored_net_completion"] = interval(previous)
+        claim_detail["net_completion"] = interval(value)
+        positive = claim_detail.get("positive_completion", {}).get("exact")
+        claim_detail["actual_loss"] = (None if positive is None or value[2] is None
+                                      else float(Fraction(str(positive)) - value[2]))
+        claim_detail["floor_adjustment_points"] = (None if previous[2] is None or value[2] is None
+                                                  else float((value[2] - previous[2]) * 100))
+    return value
+
+
+def _manuscript_claim_view(claim, core_review):
+    """Apply only an evidenced independent side-branch exception to Strict.
+
+    The original claim review remains immutable and every deduction is retained.
+    The frozen task distinguishes required dependencies from optional results;
+    a source-matched local/material optional error keeps its full deduction.
+    Critical errors and core sign-offs never receive this exception.
+    """
+    if core_review is None:
+        return claim, []
+    roots = {e["root_cause"] for e in core_review["independent_side_errors"]}
+    if not roots:
+        return claim, []
+    selected = [e for e in claim["findings"] if e["root_cause"] in roots]
+    if ({e["root_cause"] for e in selected} != roots
+            or any(e["severity"] not in {"local", "material"} or e["core_endorsement"] for e in selected)):
+        raise ValueError("Only source-matched non-critical independent side errors can avoid the task Strict gate")
+    return dict(claim, findings=[dict(e, strict_blocking=False) if e["root_cause"] in roots else e
+                                for e in claim["findings"]]), sorted(roots)
 
 
 def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="partial",
@@ -2542,6 +2598,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         raise ValueError("Written replacement evidence needs its selected policy")
     manuscript_policy = policy.get("manuscript_completion")
     manuscript_fidelity = {}
+    manuscript_core_reviews = {}
+    manuscript_core_family_present = False
     if manuscript_completion_inputs is not None:
         if manuscript_policy is None:
             raise ValueError("Manuscript evidence needs its selected assessment policy")
@@ -2555,6 +2613,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                     or any(c["family_id"] == case["family_id"] for key, c in index.items() if key != cid)):
                 raise ValueError("Manuscript evidence cannot replace or duplicate a task or family")
             index[cid] = case
+            manuscript_core_family_present |= case.get("strict_completion_policy") is not None
         for row in extra["slots"]:
             if row["slot_id"] in rows and rows[row["slot_id"]].get("response_sha256") != (
                     None if row.get("response") is None else row["response"]["sha256"]):
@@ -2567,6 +2626,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 "review_sha256": None if row.get("review") is None else row["review"]["sha256"]}
             if row.get("fidelity") is not None:
                 manuscript_fidelity[row["slot_id"]] = row["fidelity"]
+            if row.get("strict_completion_review") is not None:
+                manuscript_core_reviews[row["slot_id"]] = row["strict_completion_review"]
     substitutions = mathematical_substitutions or {}
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
@@ -2599,7 +2660,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 # separately required original-task baseline and research tier.
                 value, passed = (UNKNOWN if mode == "capability" else (Fraction(-2, 3), Fraction(1), None)), None
             _boolean(passed)
-            if passed is True and value != (1, 1, 1):
+            if passed is True and value != (1, 1, 1) and sid not in manuscript_core_reviews:
                 raise ValueError("Strict pass contradicts the source-bound completed task")
             source = "source_bound_original_review"
         claim_detail = None
@@ -2629,18 +2690,23 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                         raise ValueError("Baseline error and honest incompleteness need separate adjudication")
                     value = (Fraction(research["research_R"], 3),) * 3
                     baseline_deduction = Fraction(research["baseline_penalty_points"] or 0, 3)
-            value, passed, claim_detail = claim_penalties.assess(value, passed, claim_row,
+            claim_view, nonblocking_roots = _manuscript_claim_view(claim_row, manuscript_core_reviews.get(sid))
+            value, passed, claim_detail = claim_penalties.assess(value, passed, claim_view,
                 mode=mode, baseline_deduction=baseline_deduction,
                 generic_cap_points=(manuscript_policy["ordinary_claim_cap_points"]
                     if case["component"] == "manuscript-completion" else 20))
             if case["component"] == "manuscript-completion":
                 claim_detail["ordinary_cap_points"] = manuscript_policy["ordinary_claim_cap_points"]
+            if nonblocking_roots:
+                claim_detail["task_scoped_nonblocking_roots"] = nonblocking_roots
+                claim_detail["source_strict_blocking"] = any(e["strict_blocking"] for e in claim_row["findings"])
         fidelity_detail = None
         fidelity = manuscript_fidelity.get(sid)
         if fidelity is not None:
             value, passed, fidelity_detail = _assess_manuscript_fidelity(value, passed, fidelity,
                 mode=mode, completion=row['completion'], claim_detail=claim_detail,
                 findings=claim_rows[cid]['findings'] if claim_rows is not None else [])
+        value = _assess_manuscript_floor(value, mode=mode, case=case, claim_detail=claim_detail)
         interval = _boolean(passed) if mode == "strict" else value
         family = (assessment_family(case, source_index, selection) if selection is not None else
                   case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"])
@@ -2655,7 +2721,8 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                       **({"fidelity_assessment": fidelity_detail} if fidelity_detail is not None else {}),
                       **({"claim_assessment": claim_detail} if claim_detail is not None else {})})
     metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
-        alignment_summary=alignment_summary, strict_trajectory=strict_trajectory)
+        alignment_summary=alignment_summary, strict_trajectory=strict_trajectory,
+        manuscript_core_family_present=manuscript_core_family_present)
     active = [child for child in policy["subcategories"] if child["status"] == "active"]
     missing_tasks = max(0, policy["scope"]["tasks"] - len(tasks))
     return {"schema": "math-gauge.assessment-score/v1", "benchmark_version": policy["benchmark_version"],
@@ -2792,7 +2859,7 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
     Original criterion points, B/R, claims and fidelity are separate inputs.
     """
     from .native_observations import validate_math_inputs
-    from .manuscript_completion import validate_fidelity
+    from .manuscript_completion import validate_core_completion, validate_fidelity
 
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
@@ -2838,9 +2905,15 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
         if (claim['source_response_sha256'] != original['response']['sha256']
                 or claim['source_review_sha256'] != original['review']['sha256']):
             raise ValueError('Native claim review changed its original answer or mathematical review')
-        value, passed, detail = claim_penalties.assess(value, passed, claim, mode=mode,
+        core_review = (validate_core_completion(original['strict_completion_case'], original)
+                       if original.get('strict_completion_case') is not None else None)
+        claim_view, nonblocking_roots = _manuscript_claim_view(claim, core_review)
+        value, passed, detail = claim_penalties.assess(value, passed, claim_view, mode=mode,
             baseline_deduction=baseline,
             generic_cap_points=50 if category == 'manuscript-completion' else 20)
+        if nonblocking_roots:
+            detail['task_scoped_nonblocking_roots'] = nonblocking_roots
+            detail['source_strict_blocking'] = any(e['strict_blocking'] for e in claim['findings'])
         if original.get('fidelity') is not None:
             validate_fidelity(original['fidelity_case'], original)
             completion = {key: None if point is None else float(Fraction(str(point)) / original['maximum'])
@@ -2849,6 +2922,8 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
                 original['fidelity'], mode=mode, completion=completion, claim_detail=detail,
                 findings=claim['findings'])
             extra['fidelity_assessment'] = fidelity_detail
+        value = _assess_manuscript_floor(value, mode=mode,
+            case=original.get('strict_completion_case'), claim_detail=detail)
         family = original['family_id']
         families[category].setdefault(family, []).append(_boolean(passed) if mode == 'strict' else value)
         tasks.append({'case_id': cid, 'slot_id': original['slot_id'], 'subcategory': category,
@@ -2864,7 +2939,8 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
             or strict != review['alignment']['strict']):
         raise ValueError('Native trajectory summary differs from source-bound shared repair scoring')
     metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
-        alignment_summary=alignment, strict_trajectory=strict)
+        alignment_summary=alignment, strict_trajectory=strict,
+        manuscript_core_family_present=any(t.get('strict_completion_case') is not None for t in review['tasks']))
     return {'schema': 'math-gauge.assessment-score/v1', 'benchmark_version': '0.6.0',
         'scoring_method_version': policy['version'], 'strict_method_version': strict_policy['version'],
         'score_mode': mode, 'primary_metric': 'earned', 'model_label': review['model_label'],

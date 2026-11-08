@@ -9,10 +9,10 @@ import unittest
 
 from math_gauge.case_selection import selected_current_cases
 from math_gauge.claim_penalties import assess
-from math_gauge.manuscript_completion import validate_inputs, validate_system_exclusion
+from math_gauge.manuscript_completion import validate_core_completion, validate_inputs, validate_system_exclusion
 from math_gauge.records import descriptor, load_manuscript_completion_inputs, validate_public_manuscript_completion
 from math_gauge.records import public_assessment_case_ids
-from math_gauge.scoring import score_assessment_inputs
+from math_gauge.scoring import _aggregate_assessment_families, score_assessment_inputs
 import test_case_selection as legacy
 from test_claim_penalties import event
 
@@ -216,6 +216,156 @@ class ManuscriptTests(unittest.TestCase):
         self.assertAlmostEqual(category['upper'],9.925)
         self.assertEqual(category['coverage']['unknown'],1)
         self.assertNotIn(CID+'-ADDED',public_assessment_case_ids(policy))
+
+    def five_families(self, points=99, *, complete=False, side_error=False):
+        """Keep four earlier task contracts and add one source-bound core task."""
+        data,_,_=self.dual()
+        policy=copy.deepcopy(self.policy)
+        policy['manuscript_completion'].update(version='0.5.0',public_cases=1,
+            public_case_ids=['MG-MCP003'],private_cases=4,families=5)
+        next(c for c in policy['subcategories'] if c['id']=='manuscript-completion').update(
+            public_tasks=1,private_tasks=4,families=5)
+        for k in ('tasks','initial_slots','parent_families'):policy['scope'][k]+=4
+        policy['scope']['private_tasks']+=3
+        for k in ('public_tasks','public_initial_slots'):policy['scope'][k]+=1
+        data['policy']=policy['manuscript_completion']
+        for cid,visible,score in [('MG-MCP003','public',100),(CID+'-FOURTH','private',80),
+                                 (CID+'-FIFTH','private',points)]:
+            case=copy.deepcopy(data['case_index'][0]);case.update(case_id=cid,family_id=cid,source_visibility=visible)
+            data['case_index'].append(case)
+            row=copy.deepcopy(self.data(score)['slots'][0]);row.update(case_id=cid,slot_id=cid+':A1',
+                complete=complete if cid.endswith('-FIFTH') and score is not None else True if score==100 else None if score is None else False)
+            data['slots'].append(row)
+        case,row=data['case_index'][-1],data['slots'][-1]
+        case['strict_completion_policy']={'schema':'math-gauge.manuscript-core-completion-policy/v1',
+            'version':'0.2.0','case_id':case['case_id'],'task_sha256':case['task_sha256'],
+            'contract_sha256':case['contract_sha256'],'required_goal_ids':['G1','G2','G3','G4'],
+            'independent_side_errors_may_pass':True,'numeric_pass_threshold':None,'rmc_floor_points':0}
+        case['strict_completion_policy_source']={'sha256':'2'*64}
+        if points is not None:
+            row['strict_completion_review']={'schema':'math-gauge.manuscript-core-completion-review/v1',
+                'policy_version':'0.2.0','case_id':case['case_id'],'answer_sha256':row['response']['sha256'],
+                'policy_sha256':'2'*64,'required_goals':{'G1':True,'G2':complete,'G3':True,'G4':True},
+                'self_contained':True,'core_claims_and_dependencies_correct':complete,
+                'no_false_completion':True,'no_material_object_substitution':True,'independent_side_errors':[]}
+            row['strict_completion_review_source']={'sha256':'3'*64}
+            if side_error:
+                row['strict_completion_review']['independent_side_errors']=[{
+                    'root_cause':'independent-side','outside_required_goals_and_dependencies':True,
+                    'deletion_preserves_core':True,'not_used_for_generality':True,
+                    'deletion_test':'Deleting the isolated example changes no core result.',
+                    'dependency_evidence':'No core theorem or proof refers to this example.'}]
+        claims=self.claims(data)
+        claims['cases'][-5]['findings']=[event(root='old-local',severity='local')]
+        claims['cases'][-1]['findings']=[] if points is None else [event(root='independent-side',severity='local')]
+        def score(mode='partial'):
+            return score_assessment_inputs(self.base.inputs(),policy,self.strict,mode=mode,
+                manuscript_completion_inputs=data,claim_review=claims,claim_policy=self.claim,
+                capability_policy=self.capability if mode=='capability' else None)
+        return data,policy,claims,score
+
+    def test_fifth_family_changes_only_fixed_population_and_keeps_old_task_judgments(self):
+        data,policy,claims,score=self.five_families()
+        before=copy.deepcopy(data);before['case_index'].pop();before['slots'].pop()
+        old_policy=copy.deepcopy(policy)
+        old_policy['manuscript_completion'].update(version='0.4.0',private_cases=3,families=4)
+        next(c for c in old_policy['subcategories'] if c['id']=='manuscript-completion').update(private_tasks=3,families=4)
+        for k in ('private_tasks','tasks','initial_slots','parent_families'):old_policy['scope'][k]-=1
+        before['policy']=old_policy['manuscript_completion']
+        old_claims=copy.deepcopy(claims);old_claims['cases'].pop()
+        for mode,old_points,new_points in [('capability',9.425,9.52),('partial',8.05,8.32),('strict',2.5,2)]:
+            previous=score_assessment_inputs(self.base.inputs(),old_policy,self.strict,mode=mode,
+                manuscript_completion_inputs=before,claim_review=old_claims,claim_policy=self.claim,
+                capability_policy=self.capability if mode=='capability' else None)
+            current=score(mode)
+            self.assertAlmostEqual(previous['contributions']['manuscript-completion']['exact'],old_points)
+            self.assertAlmostEqual(current['contributions']['manuscript-completion']['exact'],new_points)
+            old_tasks=[t for t in previous['tasks'] if t['subcategory']=='manuscript-completion']
+            self.assertEqual(old_tasks,[t for t in current['tasks'] if t['case_id'] in {c['case_id'] for c in before['case_index']}])
+        # A task-scoped core rule cannot make a pre-existing partial task complete.
+        legacy=self.data(99);legacy['slots'][0]['complete']=True
+        with self.assertRaisesRegex(ValueError,'Legacy manuscript'):validate_inputs(legacy,legacy['policy'])
+
+    def test_fifth_unknown_retains_possible_deductions_and_never_inherits_completion(self):
+        data,_,_,score=self.five_families(None)
+        for mode,lower,upper in [('capability',7.54,9.54),('partial',6.44,8.44),('strict',2,4)]:
+            result=score(mode)['contributions']['manuscript-completion']
+            self.assertIsNone(result['exact']);self.assertAlmostEqual(result['lower'],lower)
+            self.assertAlmostEqual(result['upper'],upper);self.assertEqual(result['coverage']['unknown'],1)
+        task=next(t for t in score()['tasks'] if t['case_id']==CID+'-FIFTH')
+        self.assertEqual(task['completion'],{'lower':0.,'upper':1.,'exact':None})
+        data['slots'][-1]['complete']=False
+        with self.assertRaises(ValueError):validate_inputs(data,data['policy'])
+
+    def test_task_rmc_floor_preserves_deductions_and_legacy_negative_credit(self):
+        data,_,claims,score=self.five_families(10)
+        data['slots'][-2]['points']=10
+        findings=[event(root='a',severity='critical'),event(root='b',severity='critical'),
+                  event(root='c',severity='material')]
+        for claim in claims['cases'][-2:]:claim['findings']=copy.deepcopy(findings)
+        original=copy.deepcopy(claims)
+        result=score()
+        new=next(t for t in result['tasks'] if t['case_id']==CID+'-FIFTH')
+        old=next(t for t in result['tasks'] if t['case_id']==CID+'-FOURTH')
+        self.assertEqual(new['completion']['exact'],0)
+        self.assertEqual(old['completion']['exact'],-.4)
+        detail=new['claim_assessment']
+        self.assertEqual(detail['applied_deduction'],.5)
+        self.assertEqual(detail['unfloored_net_completion']['exact'],-.4)
+        self.assertEqual(detail['net_completion']['exact'],0)
+        self.assertEqual(detail['actual_loss'],.1)
+        self.assertEqual(detail['floor_adjustment_points'],40)
+        self.assertEqual(claims,original)
+        for task in score('capability')['tasks']:
+            if task['case_id'] in {CID+'-FOURTH',CID+'-FIFTH'}:
+                self.assertEqual(task['completion']['exact'],.1)
+
+    def test_absent_new_family_has_one_floor_without_forgiving_old_missing_families(self):
+        _,policy,_,_=self.five_families(None)
+        families={child['id']:{} for child in policy['subcategories']}
+        _,contributions=_aggregate_assessment_families(policy,families,mode='partial',
+            alignment_summary=None,strict_trajectory=None)
+        self.assertEqual(contributions['manuscript-completion']['lower'],-4)
+        self.assertIsNone(contributions['manuscript-completion']['exact'])
+        families['manuscript-completion']['present-core']=[(F(94,100),)*3]
+        _,contributions=_aggregate_assessment_families(policy,families,mode='partial',
+            alignment_summary=None,strict_trajectory=None,manuscript_core_family_present=True)
+        self.assertAlmostEqual(contributions['manuscript-completion']['lower'],-2.12)
+
+    def test_three_retained_new_task_scores_are_unchanged_by_its_floor(self):
+        for points,findings,expected in [
+                (99,[event(severity='local')],.94),
+                (53,[event(severity='critical',cap=True)],0),
+                (100,[event(root='a',severity='material'),event(root='b',severity='local')],.85)]:
+            data,_,claims,score=self.five_families(points)
+            claims['cases'][-1]['findings']=findings
+            for mode,credit in [('capability',points/100),('partial',expected)]:
+                task=next(t for t in score(mode)['tasks'] if t['case_id']==CID+'-FIFTH')
+                self.assertEqual(task['completion']['exact'],credit)
+
+    def test_core_completion_accepts_evidenced_noncritical_independent_side_errors(self):
+        data,_,claims,score=self.five_families(99,complete=True,side_error=True)
+        source=copy.deepcopy(claims)
+        result=score('strict');task=next(t for t in result['tasks'] if t['case_id']==CID+'-FIFTH')
+        self.assertTrue(task['strict_pass']);self.assertEqual(task['completion']['exact'],.99)
+        self.assertEqual(task['claim_assessment']['task_scoped_nonblocking_roots'],['independent-side'])
+        self.assertEqual(next(t for t in score()['tasks'] if t['case_id']==CID+'-FIFTH')['completion']['exact'],.94)
+        self.assertEqual(claims,source)
+        claims['cases'][-1]['findings']=[event(root='independent-side',severity='material')]
+        material=score('strict');task=next(t for t in material['tasks'] if t['case_id']==CID+'-FIFTH')
+        self.assertTrue(task['strict_pass'])
+        self.assertEqual(next(t for t in score()['tasks'] if t['case_id']==CID+'-FIFTH')['completion']['exact'],.89)
+        for severity,cap in [('critical',False),('critical',True)]:
+            claims['cases'][-1]['findings']=[event(root='independent-side',severity=severity,cap=cap)]
+            with self.assertRaisesRegex(ValueError,'non-critical independent side'):score('strict')
+        claims['cases'][-1]['findings']=[event(root='other-root',severity='local')]
+        with self.assertRaises(ValueError):score('strict')
+        claims['cases'][-1]['findings']=source['cases'][-1]['findings']
+        row=data['slots'][-1];review=row['strict_completion_review']
+        review['required_goals']['G2']=False
+        with self.assertRaisesRegex(ValueError,'every core goal'):score('strict')
+        review['required_goals']['G2']=True;review['independent_side_errors'][0]['deletion_test']=''
+        with self.assertRaises(ValueError):validate_core_completion(data['case_index'][-1],row)
 
     def test_edit_alias_exclusion_requires_own_path_and_no_normal_delivery(self):
         execution={'status':'failed','exit_code':-9,'cwd':'/candidate/work','failure':{

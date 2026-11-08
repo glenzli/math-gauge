@@ -20,13 +20,83 @@ def validate_policy(policy):
     if not isinstance(policy, dict) or any(policy.get(k) != v for k, v in required.items()):
         raise ValueError("Unsupported manuscript-completion policy")
     population = {"0.1.0": (0, 1, 1), "0.2.0": (0, 2, 2),
-                  "0.3.0": (1, 2, 3), "0.4.0": (1, 3, 4)}.get(policy.get("version"))
+                  "0.3.0": (1, 2, 3), "0.4.0": (1, 3, 4),
+                  "0.5.0": (1, 4, 5)}.get(policy.get("version"))
     public_ids = policy.get("public_case_ids", [])
-    expected_public_ids = ["MG-MCP003"] if policy.get("version") in {"0.3.0", "0.4.0"} else []
+    expected_public_ids = ["MG-MCP003"] if policy.get("version") in {"0.3.0", "0.4.0", "0.5.0"} else []
     if (population != (policy.get("public_cases", 0), policy.get("private_cases"), policy.get("families"))
             or public_ids != expected_public_ids):
         raise ValueError("Manuscript population must match its selected component version")
     return policy
+
+
+def _core_completion_policy(case):
+    policy = case.get("strict_completion_policy")
+    source = case.get("strict_completion_policy_source")
+    if policy is None:
+        if source is not None:
+            raise ValueError("Core completion source needs its selected task contract")
+        return None
+    required = {"schema": "math-gauge.manuscript-core-completion-policy/v1",
+        "version": "0.2.0", "case_id": case["case_id"],
+        "task_sha256": case["task_sha256"], "contract_sha256": case["contract_sha256"],
+        "required_goal_ids": ["G1", "G2", "G3", "G4"],
+        "independent_side_errors_may_pass": True, "numeric_pass_threshold": None,
+        "rmc_floor_points": 0}
+    if (not isinstance(policy, dict) or any(k not in policy or policy[k] != v for k, v in required.items())
+            or type(policy.get("rmc_floor_points")) is not int
+            or not isinstance(source, dict) or not re.fullmatch(r"[0-9a-f]{64}", source.get("sha256", ""))):
+        raise ValueError("Invalid source-bound manuscript core completion contract")
+    return policy
+
+
+def validate_core_completion(case, row):
+    """Validate the selected four-goal judgment, without judging its mathematics.
+
+    CLI archives and native observations share this contract. Their respective
+    byte validators bind both source JSON files to these embedded judgments.
+    """
+    policy = _core_completion_policy(case)
+    review, source = row.get("strict_completion_review"), row.get("strict_completion_review_source")
+    if policy is None:
+        if review is not None or source is not None:
+            raise ValueError("Core completion review needs its selected task contract")
+        if row.get("complete") is True and row.get("points") != 100:
+            raise ValueError("Legacy manuscript completion still requires full mathematical credit")
+        return None
+    if row.get("points") is None:
+        if review is not None or source is not None or row.get("complete") is not None:
+            raise ValueError("Unknown manuscript answer cannot acquire a core completion verdict")
+        return None
+    required = {"schema": "math-gauge.manuscript-core-completion-review/v1",
+        "policy_version": policy["version"], "case_id": case["case_id"],
+        "answer_sha256": (row.get("response") or {}).get("sha256"),
+        "policy_sha256": case["strict_completion_policy_source"]["sha256"]}
+    gates = ("self_contained", "core_claims_and_dependencies_correct",
+             "no_false_completion", "no_material_object_substitution")
+    if (row.get("case_id") != case["case_id"] or not isinstance(review, dict)
+            or any(review.get(k) != v for k, v in required.items())
+            or not isinstance(source, dict) or not re.fullmatch(r"[0-9a-f]{64}", source.get("sha256", ""))
+            or not isinstance(review.get("required_goals"), dict)
+            or set(review["required_goals"]) != set(policy["required_goal_ids"])
+            or any(type(v) is not bool for v in review["required_goals"].values())
+            or any(type(review.get(k)) is not bool for k in gates)
+            or not isinstance(review.get("independent_side_errors"), list)):
+        raise ValueError("Core completion judgment contradicts its selected source contract")
+    expected = all(review["required_goals"].values()) and all(review[k] for k in gates)
+    if type(row.get("complete")) is not bool or row["complete"] is not expected:
+        raise ValueError("Manuscript Strict requires every core goal and its necessary proof")
+    roots = set()
+    for error in review["independent_side_errors"]:
+        root = error.get("root_cause")
+        if (not isinstance(root, str) or not root.strip() or root in roots
+                or any(error.get(k) is not True for k in ("outside_required_goals_and_dependencies",
+                    "deletion_preserves_core", "not_used_for_generality"))
+                or any(not isinstance(error.get(k), str) or not error[k].strip()
+                    for k in ("deletion_test", "dependency_evidence"))):
+            raise ValueError("Independent side errors need distinct roots and deletion/dependency evidence")
+        roots.add(root)
+    return review
 
 
 def validate_fidelity(case, row):
@@ -76,6 +146,7 @@ def validate_inputs(data, policy):
     if len(cases) != policy["private_cases"] + policy.get("public_cases", 0):
         raise ValueError("Manuscript tasks retain their fixed public/private population")
     index = {}
+    core_contracts = 0
     for case in cases:
         cid, criteria = case.get("case_id"), case.get("criteria", [])
         if (not isinstance(cid, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", cid) or cid in index
@@ -90,7 +161,13 @@ def validate_inputs(data, policy):
                 or any(not re.fullmatch(r"[0-9a-f]{64}", case.get(k, ""))
                        for k in ("task_sha256", "contract_sha256"))):
             raise ValueError("Invalid manuscript mathematical contract")
+        if _core_completion_policy(case) is not None:
+            core_contracts += 1
+            if policy["version"] != "0.5.0" or case["source_visibility"] != "private":
+                raise ValueError("Core completion applies only to the selected new private task")
         index[cid] = case
+    if core_contracts != (1 if policy["version"] == "0.5.0" else 0):
+        raise ValueError("Only the selected fifth manuscript family has the core completion contract")
     if not set(policy.get("public_case_ids", [])) <= set(index):
         raise ValueError("Manuscript evidence is missing its selected public task")
     rows = data.get("slots", [])
@@ -111,11 +188,12 @@ def validate_inputs(data, policy):
                 raise ValueError("Unverified execution is unknown mathematics, with retained native evidence")
         elif status == "response_received_execution_unverified":
             if (type(row.get("points")) is not int or not 0 <= row["points"] <= 100
-                    or type(row.get("complete")) is not bool or row["complete"] and row["points"] != 100
+                    or type(row.get("complete")) is not bool
                     or any(not isinstance(row.get(k), dict) for k in ("response", "review", "execution"))):
                 raise ValueError("Manuscript credit contradicts the retained judgment")
         else:
             raise ValueError("Unknown manuscript answer status")
+        validate_core_completion(index[row["case_id"]], row)
         validate_fidelity(index[row["case_id"]], row)
     return data
 

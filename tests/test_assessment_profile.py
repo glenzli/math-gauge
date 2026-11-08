@@ -31,11 +31,11 @@ class CurrentAssessmentTests(unittest.TestCase):
     def test_fixed_private_denominators_survive_complete_public_answers(self):
         r=score_assessment_inputs(self.inputs(),self.policy,self.strict,
             strict_trajectory={'strict_pass':True},mode='strict')
-        self.assertAlmostEqual(r['metrics']['earned']['lower'],70-25*4/12+10/4)
+        self.assertAlmostEqual(r['metrics']['earned']['lower'],70-25*4/12+10/5)
         self.assertEqual(r['metrics']['earned']['upper'],100)
         self.assertIsNone(r['metrics']['earned']['exact'])
         self.assertEqual(r['metrics']['overall']['upper'],100)
-        self.assertEqual(r['whole_task_counts'],{'planned':38,'passed':21,'failed':0,'unknown':17})
+        self.assertEqual(r['whole_task_counts'],{'planned':39,'passed':21,'failed':0,'unknown':18})
         self.assertEqual(r['metrics']['lean-selfcheck']['exact'],100)
         self.assertEqual(r['contributions']['lean-selfcheck']['exact'],10)
     def test_empty_run_does_not_invent_completed_tasks_or_normalize_scores(self):
@@ -43,7 +43,7 @@ class CurrentAssessmentTests(unittest.TestCase):
         self.assertIsNone(r['metrics']['overall']['exact'])
         self.assertEqual(r['capacity'],{'total':100,'active':100,'under_construction':0})
         self.assertEqual(r['metrics']['overall']['upper'],100)
-        self.assertEqual(r['whole_task_counts']['unknown'],38)
+        self.assertEqual(r['whole_task_counts']['unknown'],39)
         public=public_score_projection(r,self.plan,private_aliases={})
         self.assertNotIn('tasks',public);self.assertNotIn('slot_evidence',public)
     def test_family_first_formalization_and_merged_argument_pool(self):

@@ -460,6 +460,9 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
         if case.get("fidelity_policy") is not None:
             if json.loads(evidence_bytes(root, case["fidelity_policy_source"])) != case["fidelity_policy"]:
                 raise ValueError("Manuscript fidelity policy differs from its source bytes")
+        if case.get("strict_completion_policy") is not None:
+            if json.loads(evidence_bytes(root, case["strict_completion_policy_source"])) != case["strict_completion_policy"]:
+                raise ValueError("Manuscript core completion policy differs from its source bytes")
     for row in data["slots"]:
         if row["status"] == "not_run":
             continue
@@ -544,6 +547,12 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                 or sum(c["points"] for c in criteria) != row["points"]):
             raise ValueError("Manuscript mathematical credit differs from its criterion review")
         manuscript = None
+        if case.get("strict_completion_policy") is not None:
+            strict_source = row.get("strict_completion_review_source")
+            if (not isinstance(strict_source, dict)
+                    or json.loads(evidence_bytes(root, strict_source)) != row.get("strict_completion_review")
+                    or review.get("strict_completion_review_sha256") != strict_source.get("sha256")):
+                raise ValueError("Manuscript core completion review lost its source judgment")
         if row.get("manuscript") is not None:
             manuscript = evidence_bytes(root, row["manuscript"])
             filename = Path(row["manuscript"]["path"]).name
@@ -649,7 +658,7 @@ def validate_public_manuscript_completion(root, record):
     data = json.loads(evidence_bytes(root, item))
     if (set(data) != {"schema", "private_cases", "source_inputs_sha256", "human_review", "formal_comparison_eligible"}
             or data.get("schema") != "math-gauge.manuscript-completion-public-evidence/v1"
-            or type(data.get("private_cases")) is not int or data["private_cases"] not in {1, 2, 3}
+            or type(data.get("private_cases")) is not int or data["private_cases"] not in {1, 2, 3, 4}
             or data.get("human_review") != "pending"
             or data.get("formal_comparison_eligible") is not False
             or not re.fullmatch(r"[0-9a-f]{64}", data.get("source_inputs_sha256", ""))):

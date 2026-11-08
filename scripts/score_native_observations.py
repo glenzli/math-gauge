@@ -12,7 +12,8 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.content_rates import project_rates, validate_review, verify_sources
 from math_gauge.goal_attainment import validate_goal_review
 from math_gauge.native_observations import (digest, load_public_record, project_score,
-    read_artifact, require, validate_math_inputs, validate_record)
+    read_artifact, require, validate_math_inputs, validate_record, validate_source_supplements,
+    SUPPLEMENTED_VERSION)
 from math_gauge.scoring import score_content_rates, score_native_observation
 
 MODEL = 'dot-underlying-model-20261108'
@@ -33,13 +34,16 @@ def run(private_root, *, public_root=ROOT, write=False):
     pub, pri = public / relative, private / relative
     record = validate_record(read(pub / 'native-observation.json'))
     source = read(pri / 'native-observation.json')
-    require(source['public_record_sha256'] == digest(pub / 'native-observation.json'),
+    require(source.get('schema') == 'math-gauge.native-harness-private/v1'
+            and source.get('version') == record['version']
+            and source['public_record_sha256'] == digest(pub / 'native-observation.json'),
             'Private native source binds another public record')
     math = json.loads(read_artifact(pri, source['mathematical_inputs']))
     require(record['mathematical_input_sha256'] == source['mathematical_inputs']['sha256'],
             'Native mathematical inputs changed')
-    require(digest(pri / source['source_package']['path']) == source['source_package']['sha256']
-            == record['source_package_sha256'], 'Original native source ZIP changed')
+    read_artifact(pri, source['source_package'])
+    require(source['source_package']['sha256'] == record['source_package_sha256'],
+            'Original native source ZIP changed')
     original_run = json.loads(read_artifact(pri, source['run']))
     original_plan = json.loads(read_artifact(pri, source['plan']))
     inventory = json.loads(read_artifact(pri, source['raw_inventory']))
@@ -58,7 +62,14 @@ def run(private_root, *, public_root=ROOT, write=False):
         deliveries.append((pri / 'raw/run' / item['case'] / 'sealed/answer.md', item))
     for item in original_run['selfchecks']:
         deliveries.append((pri / 'raw/run/MG-C003' / ('sealed-round-' + str(item['round'])) / 'answer.md', item))
-    require(len(original_run['attempts']) == 38 and len(original_run['selfchecks']) == 3,
+    original_counts = record.get('original_delivery_counts', record['delivery_counts'])
+    require(len(original_run['attempts']) == original_counts['initial']
+            and len(original_plan['case_index']) == original_counts['initial']
+            and len({item['case'] for item in original_run['attempts']}) == original_counts['initial']
+            and {item['case'] for item in original_run['attempts']}
+                == {item['case_id'] for item in original_plan['case_index']}
+            and len(original_run['selfchecks']) == original_counts['selfcheck'] == 3
+            and {item['round'] for item in original_run['selfchecks']} == {1, 2, 3},
             'Native run lost a prescribed delivery')
     for path, item in deliveries:
         raw = path.read_bytes()
@@ -71,12 +82,29 @@ def run(private_root, *, public_root=ROOT, write=False):
     claim = read(pub / 'claim-penalty-policy.json')
     require(digest(pub / 'assessment-policy.json') == digest(public / 'protocol/scoring-policy.json'),
             'Native mathematical aggregation must use the selected common policy')
+    validate_record(record, policy)
     validate_math_inputs(math, policy)
-    require({t['case_id'] for t in math['tasks']} == {t['case_id'] for t in original_plan['case_index']},
-            'Native mathematical tasks differ from their original frozen case selection')
+    require(math['source_plan_sha256'] == record['source_plan_sha256']
+            and math['assessment_policy_sha256'] == record['assessment_policy']['sha256'],
+            'Native mathematical inputs bind another source plan or selected policy')
+    supplements = None
+    if record['version'] == SUPPLEMENTED_VERSION:
+        require(source.get('source_supplements', {}).get('sha256')
+                    == record['source_supplements']['sha256'],
+                'Private native supplement differs from its anonymous public binding')
+        supplements = json.loads(read_artifact(pri, source['source_supplements']))
+    else:
+        require('source_supplements' not in source, 'Legacy native record cannot hide a source supplement')
+    supplement_rows = validate_source_supplements(pri, supplements, record, math, original_plan)
+    original_answers = {item['case']: item for item in original_run['attempts']}
     for task in math['tasks']:
         read_artifact(pri, task['response'])
         read_artifact(pri, task['review'])
+        if task['case_id'] in original_answers:
+            item = original_answers[task['case_id']]
+            require(task['response']['sha256'] == item['answer_sha256']
+                    and task['response']['bytes'] == item['answer_bytes'],
+                    'Native original mathematical answer differs from its preserved run ledger')
     for descriptor in math['integration_reviews']:
         read_artifact(pri, descriptor)
     verify_sources({'sources': math['source_inventory'], 'tasks': []}, {'public': public, 'private': private})
@@ -99,9 +127,11 @@ def run(private_root, *, public_root=ROOT, write=False):
         for condition in ('single_attempt', 'nonlogical_retry_3'):
             full = copy.deepcopy(score)
             full.update(attempt_condition=condition,
-                retry_summary={'slots_with_reruns': 0, 'effective_attempts': 38},
+                retry_summary={'slots_with_reruns': 0, 'effective_attempts': policy['scope']['initial_slots']},
                 source_bindings={'mathematical_input_sha256': source['mathematical_inputs']['sha256'],
                     'source_plan_sha256': source['plan']['sha256'], 'source_run_sha256': source['run']['sha256']})
+            if supplements is not None:
+                full['source_bindings']['source_supplements_sha256'] = source['source_supplements']['sha256']
             name = mode + ('-retry' if condition == 'nonlogical_retry_3' else '') + '-result.json'
             raw = encoded(full)
             projection = project_score(full)
@@ -124,7 +154,9 @@ def run(private_root, *, public_root=ROOT, write=False):
         else:
             require(path.is_file() and path.read_text() == raw, 'Saved native report differs from shared recomputation')
     load_public_record(pub)
-    return {'status': 'passed', 'harness': 'Dot native harness', 'deliveries': len(deliveries),
+    return {'status': 'passed', 'harness': 'Dot native harness',
+        'deliveries': len(deliveries) + len(supplement_rows),
+        'original_deliveries': len(deliveries), 'supplemental_initial_deliveries': len(supplement_rows),
         'new_candidate_calls': 0, 'transport_import_validated': False,
         'scores': totals, 'rates': rates['metrics'], 'verified_source_files': len(verified), 'written': write}
 

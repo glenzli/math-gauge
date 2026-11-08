@@ -259,7 +259,7 @@ def render_model(page, data, model, cases, record, folder, markdown):
     if model.get('record_kind') == 'native_harness':
         body = panel('Dot native harness', '<div class="prose"><p>'
             +html.escape(model['comparison_note'])+'</p><p>'
-            +html.escape(model['harness']['detail'])+'</p><p>保留38题首答与固定三轮自查，共41份交付。'
+            +html.escape(model['harness']['detail'])+'</p><p>当前初答和三轮自查均保留原始交付；原批次与补充来源分别留证。'
             '独立AI评审，人工待审；原始初评与本次复核差异另行保存。</p></div>')+body
     rates = model.get('content_rates')
     if rates:
@@ -301,7 +301,8 @@ def render_model(page, data, model, cases, record, folder, markdown):
         rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗')+'</p>'
     body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '原答事实，不随口径改变。92项义务，采用最后规定轮次；不取最好一轮，不拼接各轮成果。')+'</div>'
     body += panel('公开题 · 逐题成绩与证据', '<div class="table-wrap"><table id="case-list" class="compact case-list"></table></div>',
-        '当前25道公开题。私有13题只进入上方合并贡献，不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
+        f"当前{data['policy']['scope']['public_tasks']}道公开题。私有{data['policy']['scope']['private_tasks']}题只进入上方合并贡献，"
+        '不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
     body += '<details class="panel evidence-fold"><summary>形式化初答 · 逐题核实数</summary><div class="table-wrap"><table id="model-formalization" class="compact"></table></div><p class="panel-foot">编译与逐项语义审核同时成立才计完成。初答与后续自查分开计分。</p></details>'
     body += panel('可靠性审核', '<div id="model-penalties" class="metric-grid"></div><details class="nested evidence-fold"><summary>公开题的错误承诺与扣罚理由</summary><div id="model-findings" class="prose"></div></details>',
         '记录数不等于独立样本或扣罚次数；同根因去重。RMC 普通扣罚5%/10%/20%，通常每题最多20%，数学想法手稿化最多50%；已确立的核心错误放行使该题最高0分，SMC 不通过。')

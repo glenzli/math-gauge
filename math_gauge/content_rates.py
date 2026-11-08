@@ -454,7 +454,7 @@ def validate_public_rates(report):
             _rate(summary[mode], "delivery" if mode == target else mode, f"categories.{category}.{mode}")
         _coverage(summary["coverage"], _CATEGORY_COVERAGE, f"categories.{category}.coverage")
     _coverage(report["coverage"], _CURRENT_COVERAGE if current else _GLOBAL_COVERAGE, "coverage")
-    _require(report["coverage"]["planned_initial_tasks"] in {37, 38}
+    _require(report["coverage"]["planned_initial_tasks"] in {37, 38, 39}
              and report["coverage"]["planned_selfcheck_rounds"] == 3,
              "public scope must retain a supported fixed task population and three selfcheck rounds")
     return report

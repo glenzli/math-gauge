@@ -122,7 +122,8 @@ def build_data(source_root=ROOT):
             'alignment_selfcheck': partial['single_attempt']['alignment_selfcheck'],
             'source_record': str((native_folder/'native-observation.json').relative_to(root)),
             'retry': {'combined': partial['nonlogical_retry_3'],
-                      'note': '38题首答与三轮固定自查，共41次封存交付；没有数学重跑。Dot native harness独立记录，底层SKU未知。'}})
+                      'note': f"{native['delivery_counts']['initial']}题首答与三轮固定自查；没有数学重跑。"
+                              '原批次和历史补充来源分别留证；Dot native harness独立记录，底层SKU未知。'}})
         for path in [native_folder/'native-observation.json',native_folder/'content-rates.json',icon_path,
                      *(native_folder/item['path'] for field in ('assessment_results','capability_results','strict_results')
                        for item in native[field].values())]:
