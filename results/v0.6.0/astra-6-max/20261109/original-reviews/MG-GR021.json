@@ -1,0 +1,77 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-GR021:A1",
+  "case_id": "MG-GR021",
+  "binding": {
+    "plan_sha256": "5c2f3b1e6f45714d99c153742159a8817284e881e23b3d56e78e15835dd68cba",
+    "slot_id": "MG-GR021:A1",
+    "evidence_id": "9d160abce89e9540a983f180af40e826250455278f7bd3963c8e960e0179d131",
+    "response_sha256": "56a4fd5087f85f675c865240ecdf5f120fea03ccf7397573240d7a3b3e01e131",
+    "history_sha256": "d2be03d124e857b89b5a1563c7fbc0c057b67b24f815a39e490ac11152c613c3",
+    "projected_request_sha256": "4d5b972c1320e5af9333412f3281783d5251b9a96f1552e295cf1c21e9c49e32",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "018b1fc3440ed5524264ef74d51da41047f293123e9acba749315be7e814029a",
+    "body_origin": {
+      "slot_id": "MG-GR021:A1",
+      "response_sha256": "56a4fd5087f85f675c865240ecdf5f120fea03ccf7397573240d7a3b3e01e131",
+      "start_byte": 0,
+      "end_byte": 16218
+    },
+    "body_sha256": "56a4fd5087f85f675c865240ecdf5f120fea03ccf7397573240d7a3b3e01e131",
+    "rationale_sha256": null,
+    "request_sha256": "680e454d2f9c28de21b5701b8d8b4bfb0139b1fd53dd28eba586fbfe5c40c13e",
+    "group_contract_sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "完整独立审核所有冻结材料与原答。特别复核Q2(i),M2的固定R耦合：候选改用1+i的整数基把耦合吸收进基域部分，这是正确完整的替代表达，并非漏掉临界例。原矩阵投影化、实际提升、计数、四种约化、固定塔与最优精度反例都成立。原始100/100；数学正分由共享政策规范化90点，严格通过。",
+  "findings": [],
+  "group_contract_sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2",
+  "format_review": {
+    "decision": "valid",
+    "notes": "原始书面答卷完整交付各个题面目标。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "feasibility_counts_liftability",
+      "score": 30,
+      "notes": "对原始并非幂等的Ai以3X²−2X³极限构造对称正交完整Pi，并用mod4公式得到规范图形基B、Gram块Hi=I+4Ci及trCi=epsilon_i；有限形式解也由局部环幂等唯一性归为B diag(Ti)。在O_L/2O_L而非残留域中逐列Gram方程给共同trace偶性判据，星形边构造与mod8消非对角误差、收敛逆平方根给真实充分性。全M的下一位列范数为充要提升判据，修改提升不变；有限mod4计数、实际mod4图度数方程、所有高层核与形式纤维分别为q^D、q^(D+d)，全部公式及空集/秩1边界正确。"
+    },
+    {
+      "criterion_id": "fixed_classes_and_orbits",
+      "score": 25,
+      "notes": "固定类采用整数基{1,varpi}，其中Q2(i)用varpi=1+i，Q2(sqrt2)用varpi=sqrt2。这是有效替代，varpi²∈2O使M=2的平方附加项已落2^(M+1)，故R固定类可以正确写V∈R_F,M、Z分块alternating。不能误按原{1,theta}基判错：Q2(i),M2时其theta常数部为V+2Z，下一位范数误差恰变为各列degZ，正好保留参考的耦合。按新基展开C固定类的对称/分块条件与R列范数判据均正确；唯一表示的维数给全部固定点与Burnside轨道数，含M2作用平凡、D0及不可行情形。"
+    },
+    {
+      "criterion_id": "reduction_maps_and_fixed_lifts",
+      "score": 15,
+      "notes": "R约化为实际截断故满，其核q^D；C高层像由下一位范数判据恰R，非空纤维q^(D+d)。固定类的高层varpi附加项约化消失，两个固定约化的像都为嵌入R_F,M，纤维分别4^D与4^(D+d)。固定类能有固定真正提升、兼容无限固定塔、再升一层固定类均等价嵌入R_F,M，已由基域真正解构造两方向，没有把有限固定性当实际固定性。"
+    },
+    {
+      "criterion_id": "optimal_quantitative_descent",
+      "score": 20,
+      "notes": "实际近固定U的{1,varpi}分解先取V的真实基域提升给M−1精度，M精度 iff附加Z=0，等价原theta系数B0 divisible2^M，再等价sigma(U)−U divisible2^(M+1)（按整数基比较，含非单位sqrt2）。D0全块秩1时WF的各块O1只有±1，故扩域实际解本来为基域。D>0选同一块二维旋转b=2^(M−1)varpi,a=sqrt(1−b²)∈1+2^M O，真实正交及近固定，b的theta系数精确2^(M−1)排除M下降；逆平方根/平方根整除性覆盖所有M≥2，不触碰Cayley分母奇异。"
+    },
+    {
+      "criterion_id": "assertion_reliability",
+      "score": 10,
+      "notes": "附加例子均核实：1/5投影跨块Gram5提供所有域不可行却mod4形式可行；diag(1+2^(M−1)varpi)在每个M为固定形式非真实截断；基域M≥3标量及M2二维I+2对称offdiagonal给非提升例，全部秩1可行时C_F,2=R_F,2边界正确。U2约化高精度给非固定两元素轨道、σ固定真正解等于基域解等其余断言均有依据。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T17:49:22.608396+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "5ec44a67e49eeb5dd58ea3f54016f356ac9ec17821108e0ce812cae79330454c",
+  "public_projection": true,
+  "original_private_review_sha256": "f45c5c6e901986888b257f8373796b7df9ba95d71e78aa4f3d6f55dc4516a316"
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-BC002:A1",
+  "case_id": "MG-BC002",
+  "binding": {
+    "plan_sha256": "5c2f3b1e6f45714d99c153742159a8817284e881e23b3d56e78e15835dd68cba",
+    "slot_id": "MG-BC002:A1",
+    "evidence_id": "d681e6fc6ebefd9e4b19913b2bd495629cd0061fda73b13afc697d4d12f31320",
+    "response_sha256": "0fba812828736eb8f9bff6e568dd65aa5cda2b18fe437a51117e474d2439081a",
+    "history_sha256": "e7feed144fb27c02aa4935a707862b2a8b6a8cdc4611e5822a3ba27eaa4b4e5e",
+    "projected_request_sha256": "9fd3f7c84144ba6475ca2689dc67e4e398c672108e43dfbd661e79e032cd297b",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "17373c19acbc58a3a00d68900f66f4758375a432f69b61f45c39969ef154b069",
+    "body_origin": {
+      "slot_id": "MG-BC002:A1",
+      "response_sha256": "0fba812828736eb8f9bff6e568dd65aa5cda2b18fe437a51117e474d2439081a",
+      "start_byte": 0,
+      "end_byte": 5483
+    },
+    "body_sha256": "0fba812828736eb8f9bff6e568dd65aa5cda2b18fe437a51117e474d2439081a",
+    "rationale_sha256": null,
+    "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+  },
+  "reviewer": "Independent Candidate A research reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "全部真实流保证和条件prox证书正确，且A1给出严谨的模型特定Jacobian障碍。其小初值、固定时间证明实际排除每个t>0的全局凸prox表示，比参考仅小时间结论更强而有效，不能因路线不同或结论更强拒绝。背景R3，原D=4/U=3/S-corrected，全部实质要求完成，SMC通过，无错误背书或承诺扣罚。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "format_review": {
+    "decision": "valid",
+    "notes": "Complete original native final text retained; research and baseline adjudicated separately."
+  },
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "明确否定实际强凸收缩流必为凸prox的作者推断；始终保留真实流和条件prox事实，τ明确为演化时间。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "从凸共轭形式ψ的唯一最大点T(z)及FNE的Lipschitz性证明∇ψ=T，故C1凸prox有对称Jacobian；给出本模型的变分方程和小初值展开。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "对每个固定t>0，在(ε,0)小初值处用两次变参数公式推J12−J21=−ε²e^−t(1−e^−t)^3+O_t(ε^4)，非零二次项排除所有proper/lsc/convex r的全局prox表示。该有效替代证明严于参考小时间范围，全部实际部署纠错闭合。 Hessian=A+3(bᵀz)²bbᵀ≥I，0为唯一极小/平衡点；光滑局部解留在紧能量子水平集，标准延拓给全局前向唯一解，没有要求后向全局。 由强单调性推距离e^−t收缩；强凸性与完成平方给f≤||∇f||²/2，再由能量恒等式给e^−2t衰减，两项均有正确证明。 由唯一性得半群，n层恰为Φ_(nτ)，给范数、能量及两输入距离的指数界，唯一固定点0，保持精确流而非隐式Euler。 明确在T=prox_r且r proper/lsc/convex的条件下用z−p∈∂r(p)证明三点证书及FNE，两次次梯度不等式和范数展开符号正确；没有套给实际流。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T17:49:22.612023+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "a430bad413698610139c5189e8c096c1b054b69cc7b0981a7e8bdd475e4d14e0",
+  "public_projection": true,
+  "original_private_review_sha256": "3db880d8458c3ed5182ffbbbcd7253319401387bc62c02c82d7f35a890bc789f"
+}

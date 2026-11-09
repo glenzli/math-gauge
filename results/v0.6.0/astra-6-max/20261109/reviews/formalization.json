@@ -1,0 +1,3409 @@
+{
+  "schema": "math-gauge.formalization-engineering-review/v1",
+  "review_version": "0.1.0",
+  "model_label": "Astra 6 (max)",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+  "source_rule": "Actual first qualified native answer-phase sealed engineering; explicit post-observation archive/schema binding; no source repair or cross-round union",
+  "cases": [
+    {
+      "case_id": "LCH01",
+      "case_version": "0.1.0",
+      "slot_id": "LCH01:A1",
+      "original_response_sha256": "86a41e01c9fd97387380b45d13679863c32b0f46f2f8ee8817c7bf208238a60b",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "c5be6c2406e1021e51066387a3832d491329b36f2a3f3c13829e7c88df094fd9",
+      "source_manifest": {
+        "path": "engineering/manifests/LCH01.json",
+        "bytes": 3485,
+        "sha256": "443c230497cfe3196de1a8272c8d80f03c0783dfdb32b938c8295a7a8602505d"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/kernel/LCH01.json",
+        "bytes": 17329,
+        "sha256": "d24911f596ef8469f90b0b2196e2d20c4a3dce3b120f28f0005cea820b9302bd"
+      },
+      "compiled_sources": {
+        "LCH01/Definitions.lean": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2",
+        "LCH01/Channels.lean": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430",
+        "Main.lean": "e3c03c47d047c3a10b56add3a03cdff4853f6731570832924b5124a37f3607b9"
+      },
+      "source_files": {
+        "LCH01/Definitions.lean": {
+          "path": "native-source/selected/LCH01/physical-1/sealed/LCH01/Definitions.lean",
+          "bytes": 4120,
+          "sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+        },
+        "LCH01/Channels.lean": {
+          "path": "native-source/selected/LCH01/physical-1/sealed/LCH01/Channels.lean",
+          "bytes": 4387,
+          "sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+        },
+        "Main.lean": {
+          "path": "native-source/selected/LCH01/physical-1/sealed/Main.lean",
+          "bytes": 936,
+          "sha256": "e3c03c47d047c3a10b56add3a03cdff4853f6731570832924b5124a37f3607b9"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "verification/engineering/LCH01/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "verification/engineering/LCH01/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "verification/engineering/LCH01/case-contract.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.IsRestrictedLipMatrix",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.IsLipMatrix",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.isLipMatrix_iff",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.lipMatrices",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.restrictedLipMatrices",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            }
+          ],
+          "notes": "IsRestrictedLipMatrix 包含 U⊆domφ 及任意 x,y∈U、j 的完整有限加权和上界；IsLipMatrix 取全域并有 isLipMatrix_iff，两个 Set 族实际定义。Lip 不要求 U 非空或系数有限。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.IsRestrictedCoLipMatrix",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.restrictedCoLipMatrices",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            }
+          ],
+          "notes": "IsRestrictedCoLipMatrix 明确包含 U.Nonempty、U⊆domφ 和所有输出分量的非负行和下界；restrictedCoLipMatrices 为真实合法证书族，ENNReal 允许零和无穷。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.ChannelMatrix",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.entry",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.entry_mul",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.rowSum",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            }
+          ],
+          "notes": "ChannelMatrix 直接采用普通 Matrix I I ENNReal，entry M i j=M j i 明确输出行/输入列；entry_mul 实证普通 M₂*M₁ 的 i→j 条目为 Σk M₂(k→j)M₁(i→k)，rowSum 方向一致。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.ComponentChannel",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.SingleInputRow",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.IsDiagonal",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            },
+            {
+              "file": "LCH01/Definitions.lean",
+              "name": "LCH01.isDiagonal_iff_singleInputRows",
+              "source_sha256": "a1d52e32a776c1e867f7c6009551a8924ce84823228f5bea7fdfa25634a21ea2"
+            }
+          ],
+          "notes": "ComponentChannel=I×I；SingleInputRow M i j 只排除 k≠i，可保留任意交叉输入 i→j，未强制 i=j；IsDiagonal 与所有对角单行的 iff 给完整对角特例。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.singleInputRow_sum",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            },
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.single_input_lip_bound",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            },
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.diagonal_lip_bound",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            }
+          ],
+          "notes": "singleInputRow_sum 实际将整行有限和化为指定任意输入项，single_input_lip_bound 对所有原合法域点对给相应界；diagonal_lip_bound 再证明每个对角分量特例。所有系数及距离可为无穷。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.entry_mul_le_rowSum",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            },
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.colip_channel_lower_bound",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            },
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.positive_colip_channel",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            }
+          ],
+          "notes": "entry_mul_le_rowSum 与 colip_channel_lower_bound 给指定非负单项不超过真实输出；positive_colip_channel 用两个正 ENNReal 因子积正，保留正通道可分辨性，无有限性附加前提。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.positive_diagonal_reflects_zero",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            }
+          ],
+          "notes": "positive_diagonal_reflects_zero 逐分量由正通道逆否推出 GaugeZeroRelated 输入零距；只要求 K 对角项正，不要求 K 稀疏，也不将全分量零距升级为点相等或单射。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/Channels.lean",
+              "name": "LCH01.scalar_two_sided_bound",
+              "source_sha256": "b0f3607409f6794ed19b2cbee1fccf1844ea2ed0b5c4d17d26fc99821eab1430"
+            }
+          ],
+          "notes": "scalar_two_sided_bound 对相同 φ、U、j，将 K 的指定单项下界与 L 的单行上界合取；仅 L 的输出行需排除非对角输入，K 无对角/正/有限假设，完整覆盖习题2.2。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        }
+      ],
+      "review_evidence": [],
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "selection": "Actual first qualified A1 sealed engineering; no source repair, later best-of or cross-round union",
+      "format_review_separate": true,
+      "raw_format_review": {
+        "decision": "valid",
+        "notes": "所有实际目标模块均在原final的命名代码块全文交付，并与首终态封存源码逐字节相同；完整alignment对象及所有真实声明均核验通过。"
+      },
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "private_original_review_sha256": "76b90cd2179a0d9e14d7cf5f7e641d7cad3f14b71b3dd5b0f2da6835ffc513d0"
+    },
+    {
+      "case_id": "LCH02",
+      "case_version": "0.1.0",
+      "slot_id": "LCH02:A1",
+      "original_response_sha256": "ab67650c6788ba218d6e6ff95a32c234f5229af397e6276bfe8502872eb626d9",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "fac02e77ca243c48d161470a721e2ecdf8a75372baa3bc0f92a40bd61f4311ac",
+      "source_manifest": {
+        "path": "engineering/manifests/LCH02.json",
+        "bytes": 4642,
+        "sha256": "9b08b9bfff45a9d05cdcade02ad09f01c3108b29a6aefdf31cfde8f4c1b4d6be"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/kernel/LCH02.json",
+        "bytes": 24706,
+        "sha256": "931ef568776f6f2bea3c7a6aa9ea1981ad55d44e3fb3da122cf76bedb36ae378"
+      },
+      "compiled_sources": {
+        "LCH02/Matrix.lean": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680",
+        "LCH02/Bounds.lean": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165",
+        "LCH02/Chains.lean": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350",
+        "LCH02/Paths.lean": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4",
+        "Main.lean": "a6ca792038edeacc87ebe9814f741d34ac7ffb984745f8ac16263501c1b8eb09"
+      },
+      "source_files": {
+        "LCH02/Matrix.lean": {
+          "path": "native-source/selected/LCH02/physical-1/sealed/LCH02/Matrix.lean",
+          "bytes": 1836,
+          "sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+        },
+        "LCH02/Bounds.lean": {
+          "path": "native-source/selected/LCH02/physical-1/sealed/LCH02/Bounds.lean",
+          "bytes": 5497,
+          "sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+        },
+        "LCH02/Chains.lean": {
+          "path": "native-source/selected/LCH02/physical-1/sealed/LCH02/Chains.lean",
+          "bytes": 5593,
+          "sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+        },
+        "LCH02/Paths.lean": {
+          "path": "native-source/selected/LCH02/physical-1/sealed/LCH02/Paths.lean",
+          "bytes": 2784,
+          "sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+        },
+        "Main.lean": {
+          "path": "native-source/selected/LCH02/physical-1/sealed/Main.lean",
+          "bytes": 79,
+          "sha256": "a6ca792038edeacc87ebe9814f741d34ac7ffb984745f8ac16263501c1b8eb09"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "verification/engineering/LCH02/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "verification/engineering/LCH02/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "verification/engineering/LCH02/case-contract.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.IsLipOn",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.IsLip",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.LipMatricesOn",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.LipMatrices",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "IsLipOn 包含 U⊆domφ 和任意 U 内点对/输出分量的完整有限和上界；IsLip 取 domφ，LipMatricesOn/LipMatrices 实际给出两合法证书族，不预选最优矩阵。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.IsCoLipOn",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            },
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.CoLipMatricesOn",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "IsCoLipOn 明确同时要求 U.Nonempty、U⊆domφ 和完整行和下界，CoLipMatricesOn 为真实矩阵集合，零与无穷 ENNReal 系数均保留。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.Mat",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.entry",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.entry_mul",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.mulVec_mono",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            }
+          ],
+          "notes": "Mat 采用普通 Matrix I I ENNReal；entry M i j=M j i，并有 entry_mul 的普通 B*A 条目等式，实际乘法和距离向量方向均为输出行/输入列。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.entry_one",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.matrixProduct",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.matrixProduct_nil",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.matrixProduct_cons",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.matrixProduct_singleton",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            },
+            {
+              "file": "LCH02/Matrix.lean",
+              "name": "LCH02.matrixProduct_eq_reverse_prod",
+              "source_sha256": "d7638f56eae077efef52ca6c729a355921e76e6762c3a5aeb02c65f05ebcc680"
+            }
+          ],
+          "notes": "matrixProduct 按执行顺序列表递归为尾积乘首项，空列表=单位、单项=M，并证明等于 reverse.prod；entry_one 给真实 Kronecker 条目，因此顺序和零步均落到定义。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.composite_domain",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_eq_frozen",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.intermediate",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.intermediate_zero",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.intermediate_cons_succ",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.intermediate_step",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.intermediate_final",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.intermediate_legal",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.Step",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            }
+          ],
+          "notes": "chain 执行顺序列表，chain_eq_frozen 证明等于冻结 OperatorChain 的逆序列表；intermediate 是前 n 步对 U 的精确像，初域/逐步递推/最终像等式俱全，intermediate_legal 从全复合合法域证明每步域合法。Step 只存算子和矩阵，不存最终界。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.IndexPath",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.AllPositive",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.HasZero",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.one_step_path",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            }
+          ],
+          "notes": "IndexPath I (n-1) 直接就是所有中间指标函数 Fin(n-1)→I，不预筛正边；AllPositive/HasZero 按 n 条实际边分别递归合取/析取。one_step_path 明证 n=1 的唯一空函数和单条目两谓词，端点 i,j 与步序准确。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.singleton_lip",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "singleton_lip 以 Subsingleton I 和指定 i 表示单分量，有限和确实化为唯一项，结论在 domφ 的全部点对上给标量上界。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_antitone",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "lip_antitone 把 V 上完整证书的域包含和点对不等式限制到 U⊆V，得到证书族逆向包含，无额外非空 U 假设。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_comp",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "lip_comp 读取第一步 U 和第二步精确像 φ(U) 的真实证书，先后应用非负矩阵向量单调及乘法结合，得到 L₂*L₁ 的完整复合上界并保留全复合合法域。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.colip_antitone",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "colip_antitone 显式接收 U.Nonempty，将 V 上 co-Lip 证书完整限制到 U，正确保留目标非空性和域条件。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.colip_entry_zero",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "colip_entry_zero 在原 domφ 的见证点对上从非负和抽出指定 K j i 项，输出零距与正输入距用 ENNReal 无零因子性推出条目零；没有有限系数/距离前提。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.colip_comp",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "colip_comp 用两步实际像域上的完整下界矩阵，经非负有限和得到 K₂*K₁ 的复合下界，U 非空从第一步证书取出，方向与上界分支分别实现。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.identity_lip",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "identity_lip 在任意合法 U 上通过单位矩阵乘向量恒等式给恒等算子的 Lip 证书；与 chain_nil/matrixProduct_nil 实际连接，包含原非空零步范围。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.identity_colip",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "identity_colip 保留 U.Nonempty 与恒等算子域条件，用相同单位矩阵乘法等式给真实 co-Lip 证书，完整覆盖零步边界。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.matrixProduct_pos_iff",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.one_step_path",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            }
+          ],
+          "notes": "matrixProduct_pos_iff 对任意非空矩阵列表和固定端点，以有限非负和及 ENNReal 正乘积判据归纳构造/拆分 Fin.cons 路径，证明正条目 iff 存在所有边正路径；one_step_path 保留 n=1。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.lip_restrict",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "lip_restrict 将已证反单调性实例化为 V=domφ，明确全域证书族包含于合法 U 的受限族。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Bounds.lean",
+              "name": "LCH02.colip_restrict",
+              "source_sha256": "acf05c9652cbcf5b71720d223dededfbeaef5a6475fe7931a5cedf0ea79e1165"
+            }
+          ],
+          "notes": "colip_restrict 在 U 非空且 U⊆domφ 时实例化 co-Lip 反单调性，得到全域向受限域的真实证书族包含。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_lip",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.finite_lip",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            }
+          ],
+          "notes": "chain_lip 从 ss 中各原算子/所选矩阵在精确 intermediate 域上的 hsteps 归纳构造整链证书，尾域为首步真实像，结论矩阵是指定逆序连乘；finite_lip 显式给正长度分支，无最终界证书循环。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.chain_colip",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            },
+            {
+              "file": "LCH02/Chains.lean",
+              "name": "LCH02.finite_colip",
+              "source_sha256": "5bd4de929e83d3e5b5c66f9731475a4804e0d83b7ded3b63908d7a6042204350"
+            }
+          ],
+          "notes": "chain_colip 单独完成下界链归纳及非空实际像；finite_colip 对非空列表从第一步 co-Lip 证书导出初域非空，故不另添加正长度正文未给的最终条件，矩阵仍为指定 K 连乘。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "CH02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.hasZero_iff_not_allPositive",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.matrixProduct_zero_iff",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            },
+            {
+              "file": "LCH02/Paths.lean",
+              "name": "LCH02.one_step_path",
+              "source_sha256": "b290a622327ea581fc201ea42c46c6dae93f786c7b18fde5153ab5d5e012def4"
+            }
+          ],
+          "notes": "hasZero_iff_not_allPositive 对每条完整路径证明存在零边 iff 不全正；matrixProduct_zero_iff 用真实正条目判据的逆否得每路径零因子，包含零乘无穷=0 与唯一单步空中间序列。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        }
+      ],
+      "review_evidence": [],
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "selection": "Actual first qualified A1 sealed engineering; no source repair, later best-of or cross-round union",
+      "format_review_separate": true,
+      "raw_format_review": {
+        "decision": "valid",
+        "notes": "全部目标模块已在原final完整命名代码块交付。明确列出的原终稿/封存源码排版差异已逐处审核为等价，分别绑定原字节；独立编译仅针对原封存源码，不冒称重编原final文本。"
+      },
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "private_original_review_sha256": "76b90cd2179a0d9e14d7cf5f7e641d7cad3f14b71b3dd5b0f2da6835ffc513d0"
+    },
+    {
+      "case_id": "HCH02",
+      "case_version": "0.1.0",
+      "slot_id": "HCH02:A1",
+      "original_response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "3fe34bd3193c0629abefef6a987946a62ae6fcc8bce7c0c9db076f99410e2d2b",
+      "source_manifest": {
+        "path": "engineering/manifests/HCH02.json",
+        "bytes": 4291,
+        "sha256": "e13443933f5917a25d446e9956b8f2efc274d3d95291394b54b4f3bdbbc43089"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/kernel/HCH02.json",
+        "bytes": 32357,
+        "sha256": "995b630f6c216da9b1f141cf9d08a2a1d93045d04bfab7254daa43d1da31b4bd"
+      },
+      "compiled_sources": {
+        "Bounds.lean": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f",
+        "Chains.lean": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d",
+        "Paths.lean": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3",
+        "Channels.lean": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144",
+        "Counterexample.lean": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45",
+        "Main.lean": "1758b0a9b2fe19db65a6e5823b18d4ef6c5ca52ab70650ad3c72d022a978c952"
+      },
+      "source_files": {
+        "Bounds.lean": {
+          "path": "native-source/selected/HCH02/physical-1/sealed/Bounds.lean",
+          "bytes": 9378,
+          "sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+        },
+        "Chains.lean": {
+          "path": "native-source/selected/HCH02/physical-1/sealed/Chains.lean",
+          "bytes": 5909,
+          "sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+        },
+        "Paths.lean": {
+          "path": "native-source/selected/HCH02/physical-1/sealed/Paths.lean",
+          "bytes": 4605,
+          "sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+        },
+        "Channels.lean": {
+          "path": "native-source/selected/HCH02/physical-1/sealed/Channels.lean",
+          "bytes": 5990,
+          "sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+        },
+        "Counterexample.lean": {
+          "path": "native-source/selected/HCH02/physical-1/sealed/Counterexample.lean",
+          "bytes": 2534,
+          "sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+        },
+        "Main.lean": {
+          "path": "native-source/selected/HCH02/physical-1/sealed/Main.lean",
+          "bytes": 79,
+          "sha256": "1758b0a9b2fe19db65a6e5823b18d4ef6c5ca52ab70650ad3c72d022a978c952"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "verification/engineering/HCH02/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "verification/engineering/HCH02/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 11333,
+          "sha256": "336ba7b68faebb4a79a39f0327ead65285bc519316503f209ed992e527b8b549"
+        }
+      },
+      "case_contract": {
+        "path": "verification/engineering/HCH02/case-contract.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646"
+      },
+      "obligations": [
+        {
+          "id": "HC02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.Lip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.GlobalLip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "Lip 是全部合法矩阵的 Set，包含 U⊆dom φ 与 U 内任意点对、任意输出 j 的完整 ENNReal 有限和上界；GlobalLip 取 dom φ。变量允许任意 d，故当然包括原有限非空规范族，没有额外分离/有限距离限制。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.CoLip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.colip_term",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "CoLip 是完整矩阵集合，明确保存 U.Nonempty、U⊆dom φ 及 action M d≤输出距；非空要求没有被域包含或空真替代，条目仍含零和无穷。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.Mat",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mmul",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.action",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.display_mul",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.action_mul",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "Mat 的存储 M i j 为输入 i 到输出 j；display M j i=M i j 且 display_mul 为普通 display B * display A 的真实等式。mmul B A i j=Σk B k j*A i k，action_mul 也证明相同顺序的实际距离向量作用。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.eye",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mprod",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mprod_nil",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.mprod_singleton",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.display_eye",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.display_product",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            }
+          ],
+          "notes": "eye 是 Kronecker δ，mprod 从施行顺序列表递归为尾积乘首矩阵，nil=eye、singleton=A；display_eye/display_product 将其桥接到普通矩阵逆序列表 prod，明确给出 Lk⋯L1 和零步单位。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.actual",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.iterImage",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.actual_prefix",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.actual_domain",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_image",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.chain_frozen",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.OnSteps",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.onSteps_iff",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            }
+          ],
+          "notes": "chain 按原施行顺序实际复合；actual 是每个前缀对初域的逐次像，actual_prefix、chain_image 给前缀/全复合像等式，actual_domain 从原全复合合法域证明每步真实输入域合法。chain_frozen 与冻结 OperatorChain 的逆序表示相等；OnSteps 只保存每个原算子在实际域上的单步证书，没有最终复合结论字段。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.Interior",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.interiorEquiv",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.edges",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.edges_length",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.weight",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.AllPositive",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.HasZero",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.product_expansion",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            }
+          ],
+          "notes": "Interior I n 是所有 n 个中间指标的有限积，interiorEquiv 明证与 Fin n→I 双射，无正边筛选。edges 依施行次序含全部 n+1 条边，weight 是其乘积，AllPositive/HasZero 分别检查全部正边/存在零边；Interior I 0=PUnit 保留单步唯一空中间序列。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Channel",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Row",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Col",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Diagonal",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.RowDecoupled",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.ColDecoupled",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.diagonal_iff_rows",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "Channel=I×I；Row L i j 仅限制输出 j 行的其他输入，Col L i j 仅限制输入 i 列的其他输出。RowDecoupled/ColDecoupled 真实量化 ∃合法 L 及任意唯一 i/唯一 j，不强迫 i=j；Diagonal 与全部对角 Row 等价。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.Scalars",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.singleInf",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "Scalars d φ U i j 是同一 U 内全部点对所满足的单通道 ENNReal 系数集合，singleInf=sInf Scalars。定义在更一般 U 上仍有意义，合法域语境可直接实例化；它与任意矩阵条目及 entryInf 分开，空族下确界仍为 top。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.singleton_lip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.singleton_lip_iff",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "singleton_lip 由 Subsingleton I 与指定 i 将完整有限和化为唯一 L i i*d i；singleton_lip_iff 反向重建整个 Lip 证书并保留 U⊆dom φ，故覆盖单分量退化。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.global_lip_restrict",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "global_lip_restrict 把 dom φ 上全部证书通过原 hU:U⊆dom φ 限制到 U；不另加非空条件。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_restrict",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_family_antitone",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "lip_restrict 将域包含及全部点对不等式限制到 U⊆V，lip_family_antitone 给真实证书族逆向包含。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.entryInf",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            },
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.entryInf_mono",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "entryInf 是合法矩阵条目像集的 sInf；entryInf_mono 用限制后的同一矩阵证明原大域条目像集包含于小域条目像集，再正确反向比较 sInf，不假设最优矩阵存在。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.lip_comp",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "lip_comp 在 U 上读取 A，在精确像 φ.func''U 上读取 B，用 ENNReal 有限和/乘法单调性及 action_mul 得到 mmul B A 的真实复合 Lip 界；保留 U⊆dom(comp ψ φ)。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.colip_degenerate",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "colip_degenerate 在原 dom φ 的实际见证点对从 CoLip 非负和抽出 K i j 项，输出零距迫使乘积零；正输入距排除右因子零从而推出 K i j=0，含无限系数/距离边界。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.colip_comp",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "colip_comp 独立将两个真实像域上的下界矩阵按 mmul B A 复合，用 action_mul 和非负乘法单调性证明下界；初域非空由第一步 CoLip 取出，没有遗漏非空。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_forward",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "perturb_forward 从真实伪度量三角不等式两次、对称性及 U 上每点偏差≤δ，证明 ψ 点对输出距≤φ 点对输出距+δ+δ；保留公共定义域，允许 ENNReal top。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_reverse",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "perturb_reverse 对调两算子和公共域，用距离对称性转换同一 hδ，再应用已证正向扰动；给原文反向点对界，不做无穷减法。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_lip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "perturb_lip 将 φ 的完整所选 Lip 上界代入正向扰动，并通过 two_mul/加法结合得到 ψ 输出距≤action L d+2*δ，所有 U 中点对均保留。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.perturb_colip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "perturb_colip 把 φ 的完整 CoLip 求和下界与反向扰动传递，得到 action K d≤ψ 输出距+2*δ；没有将 Lip 上界错用为下界。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.lip_chain",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.lip_chain_indexed",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            }
+          ],
+          "notes": "lip_chain 由执行顺序 ss 的逐步实际域 OnSteps 归纳构造指定 mprod，尾链输入恰为首算子真实像。lip_chain_indexed 从所有 actual Um 上的原逐步证书经 onSteps_iff 导出同一结论，涵盖任意正长度，没有把最终复合界当输入。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.colip_chain",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.colip_chain_positive",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            },
+            {
+              "file": "Chains.lean",
+              "name": "HCH02.colip_chain_indexed",
+              "source_sha256": "30bb7a9521a5b9e8c5b4eeabe352ee3ffc27ee837fcff9353a5e26d5ef7b8c7d"
+            }
+          ],
+          "notes": "colip_chain 独立完成下界链归纳，非空性传给真实像；colip_chain_positive/indexed 对非空列表直接从第一步 CoLip 获取 U 非空，不额外强化正长度原前提，矩阵仍为原指定逆序连乘。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.identity_lip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "identity_lip 用 action_eye 的精确有限和恒等式给任意合法 U 的恒等算子单位 Lip 界；这是比原非空 U 更强的版本，和 chain nil/mprod nil 的实际定义一致。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P15",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Bounds.lean",
+              "name": "HCH02.identity_colip",
+              "source_sha256": "b5813d6aead1b8f0b1d39a22f065572ea11bf16488d50e968b578732a23a145f"
+            }
+          ],
+          "notes": "identity_colip 明确接收 U.Nonempty 和 U⊆dom ident，以 action_eye 给单位下界，完整保留零步 CoLip 的非空要求。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P16",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.product_zero_iff",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.one_step_paths",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.local_path_criteria",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            }
+          ],
+          "notes": "product_expansion 对全部 Interior 路径展开指定有序矩阵乘积；product_zero_iff 用有限非负和为零及 ENNReal 乘积零 iff 含零因子得到所有完整路径含零。local_path_criteria 保留同一原算子链/长度/实际逐步证书语境；one_step_paths 直接核验唯一空中间序列的单条目边界。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P17",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.product_positive_iff",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.one_step_positive",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            },
+            {
+              "file": "Paths.lean",
+              "name": "HCH02.local_path_criteria",
+              "source_sha256": "0cb0284f30025a81a6fc20d4a335a5650823a24c6e5e893370a06865600ec9c3"
+            }
+          ],
+          "notes": "product_positive_iff 用完整有限路径权重和为正 iff 有正项，weight_positive_iff 将正项准确等价为所有实际边正。该纯代数结论可特化 local_path_criteria 的同一 CoLip 链；one_step_positive 给 n=1 的真实唯一空序列，未预筛路径。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P18",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.zero_input_obstruction",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "zero_input_obstruction 在 U 的见证点对对任意 a∈Scalars 代入输入零距，mul_zero 迫使正输出≤0，故 Scalars=∅且 singleInf=top；明确排除包括 top 在内的所有系数。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.positive_finite_attained",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "positive_finite_attained 从 finite inf 得到 Scalars 非空，再用 ENNReal.iInf_mul 的精确侧条件将同一输入距离乘到非空下确界中。正 inf 排除输入距离 top 时可能出现的零下确界异常；每个点对的全部可行界取下确界，真正证明 inf∈Scalars，不把取到性作为假设。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.scalars_upward",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "scalars_upward 逐个 U 内点对用 ENNReal 乘法单调性把合法 a 扩大到 b≥a，保持原输出上界，允许 b=top。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.above_inf_feasible",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "above_inf_feasible 从 singleInf<a 由 sInf_lt_iff 取得较小可行 b，再用向上封闭推出 a 可行；这比原正有限 inf 语境更一般，涵盖严格上界为 top。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P22",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.zero_inf_positive_feasible",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "zero_inf_positive_feasible 将 inf=0 与 0<a 代入严格上确界可行定理，保留原 a<top 限制，确实对全部 U 中点对成立。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P23",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Counterexample.lean",
+              "name": "HCH02.exampleDist",
+              "source_sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+            },
+            {
+              "file": "Counterexample.lean",
+              "name": "HCH02.exampleMetric",
+              "source_sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+            },
+            {
+              "file": "Counterexample.lean",
+              "name": "HCH02.exampleOp",
+              "source_sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+            },
+            {
+              "file": "Counterexample.lean",
+              "name": "HCH02.exampleU",
+              "source_sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+            },
+            {
+              "file": "Counterexample.lean",
+              "name": "HCH02.example_positive_feasible",
+              "source_sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+            },
+            {
+              "file": "Counterexample.lean",
+              "name": "HCH02.zero_not_attained",
+              "source_sha256": "d31bef10a3ce7efde30d019390c4dd8f40c8009abbd3b174018e45001a875b45"
+            }
+          ],
+          "notes": "实际模型 X=Option Bool、bot=none、I=Bool，两普通点 false 输入分量距离 top、true 输出分量距离1，吸收点在两分量均被 top 隔离。exampleMetric 逐一证明真实扩展伪度量公理；φ=id、U=两个普通点且非空合法。全部正 a 可行、0 不可行并证明 inf=0，zero_not_attained 组合完整实际反例而非假设其存在。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P24",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.finite_inf_iff",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "finite_inf_iff 直接由 sInf_lt_iff 得到有限可行系数；反向用 sInf_le 和可行系数有限。没有依赖正 inf 或取到性，因此 inf=0 的非取到分支仍完整。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.zero_term",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.erase_zero_term",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "zero_term 对任意 ENNReal 输入 v（含 top）用零乘法证明该项零；erase_zero_term 用有限和删项恒等式证明实际总和可删除 i 项，没有扩大为输出距为零或真实依赖性。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P26",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.row_action",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.row_lip",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "row_action 在任意独立 i,j 上将输出 j 的行和化为唯一输入项；row_lip 将完整合法 Lip 证书代入此等式，得到所有 U 点对的交叉单行界，不强迫 i=j。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P27",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.col_contribution",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "col_contribution 在任意固定输入 i、唯一可能输出 j 的 Col 条件下，对全部 k≠j 证明 L i k*v i=0；适用于所选证书输入距离，无实际算子依赖性或其他输入贡献的额外承诺。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P28",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.diagonal_lip",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "diagonal_lip 对任意 j 由 Diagonal L 导出 Row L j j，再用 row_lip 得全部分量的标量上界；未用不必要有限系数假设。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P29",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.scalar_two_sided",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "scalar_two_sided 只接收 Lip 的指定 Row L j j；K 仅要求合法 CoLip。下界用 colip_term 从 K 的完整行和抽取对角项，上界由稀疏 L 得到，无 K 稀疏、正性或有限性额外限制。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P30",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.diagonal_two_sided",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            },
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.finite_diagonal_two_sided",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "diagonal_two_sided 对所有 j 同时给双侧界；finite_diagonal_two_sided 额外明确保存每个 L j j 与 K j j 有限的合取及同一全部点对界。只声明系数有限，不推出所有输入或输出距离有限。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P31",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.positive_channel",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "positive_channel 从真实 CoLip 单项下界与两个正 ENNReal 因子的正乘积推出输出 j 正距，适用任意交叉 i,j、U 内全部点对及 top 边界，不依赖有限逆。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        },
+        {
+          "id": "HC02-P32",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Channels.lean",
+              "name": "HCH02.reflects_zero",
+              "source_sha256": "8f9af60df203b806ab99f3c2a6463b6807a9d47892ceecf7917421e09f8c7144"
+            }
+          ],
+          "notes": "reflects_zero 对任意分量 j 反设输入正距，用正对角 CoLip 通道推出输出正距，与输出 GaugeZeroRelated 矛盾，故反射全族零距关系；没有族分离假设或点值相等结论。",
+          "mapping_origin": "Independent direct reading of original complete source, exact frozen obligation and same-source kernel/axiom evidence."
+        }
+      ],
+      "review_evidence": [],
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "selection": "Actual first qualified A1 sealed engineering; no source repair, later best-of or cross-round union",
+      "format_review_separate": true,
+      "raw_format_review": {
+        "decision": "valid",
+        "notes": "所有实际目标模块均在原final的命名代码块全文交付，并与首终态封存源码逐字节相同；完整alignment对象及所有真实声明均核验通过。"
+      },
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "private_original_review_sha256": "76b90cd2179a0d9e14d7cf5f7e641d7cad3f14b71b3dd5b0f2da6835ffc513d0"
+    },
+    {
+      "case_id": "MG-C003",
+      "case_version": "0.1.1",
+      "slot_id": "MG-C003:A1",
+      "original_response_sha256": "6bb6ede951c1c58894e2b8f39ea024c3025174eb74988e8bdfad757317c85c60",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "13a23e1574528e0a0860259788cf8483dc192911b3dcc030ab319b2199f9b5ae",
+      "source_manifest": {
+        "path": "engineering/manifests/MG-C003.json",
+        "bytes": 8628,
+        "sha256": "9850fb3663c1c7559d413b7da5db872fb8755fe6ee4200af6bd2e7539f99c682"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/kernel/MG-C003.json",
+        "bytes": 52801,
+        "sha256": "0d693e2582b77401a035f7bf4f5195b59695e55e1d6048693c6ed758f0e7d5a1"
+      },
+      "compiled_sources": {
+        "Main.lean": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+      },
+      "source_files": {
+        "Main.lean": {
+          "path": "native-source/selected/MG-C003/physical-1/sealed/Main.lean",
+          "bytes": 82663,
+          "sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "verification/engineering/MG-C003/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": {
+          "path": "verification/engineering/MG-C003/frozen-inputs/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "bytes": 11435,
+          "sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "verification/engineering/MG-C003/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": {
+          "path": "verification/engineering/MG-C003/frozen-inputs/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean",
+          "bytes": 4007,
+          "sha256": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": {
+          "path": "verification/engineering/MG-C003/frozen-inputs/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean",
+          "bytes": 9743,
+          "sha256": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": {
+          "path": "verification/engineering/MG-C003/frozen-inputs/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean",
+          "bytes": 681,
+          "sha256": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465"
+        }
+      },
+      "case_contract": {
+        "path": "verification/engineering/MG-C003/case-contract.json",
+        "bytes": 122710,
+        "sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527"
+      },
+      "obligations": [
+        {
+          "id": "CH03-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Const",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Ident",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Active",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.component_partition",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Const 全称量化 U 内输出零距；Ident 显式排除 Const 并保留逐点输入输出零距；Active 为二者并的补集。component_partition 证明覆盖和三对不交，常值优先未丢失。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Fiber",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_representation",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.subfamily_zero",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Fiber 用 U 成员与全部 j∈J 零距定义；subfamily_zero/fiber_representation 实证其与冻结 d_J 上确界定义等价，目标 y 不限于像集。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.EqRel",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.ZeroRel",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.imageSetoid",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.ImageQuotient",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.FiberLE",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.relation_fiber",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "EqRel/ZeroRel 均限制 U×U；imageSetoid 从扩展伪度量公理证明等价性，ImageQuotient 是实际像子类型之商；relation_fiber 与 FiberLE 保留零距而非点等式。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.radius",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.LegalRadius",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.radius_sup",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.legal_ball",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "radius 取坏输出点的输入距离下确界；radius_sup 证明恰为所有 LegalRadius 的上确界。LegalRadius 明写 0<r<top，legal_ball 连接冻结开球定义，未把无穷作为合法球半径。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.nullMatrix",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform 独立接收基点集 A 与评估域 U，对 A 中各 y 取真实 radius 下确界；nullMatrix j i 按输出行/输入列读取，非空合法域可直接实例化。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.InputScale",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.scaleFromNonempty",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.scaleFromNonempty_eq",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.diameter",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.diameterScale",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.channelType",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold_cases",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "InputScale 仅要求非空集合间单调；scaleFromNonempty 证明原非空集合域表示可扩展回来。diameter 为点对上确界且单调；threshold/channelType 保留严格尺度阈值与非严格半径阈值。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.TotallyBounded",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.internal_ball_iff",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number_attained"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number_eq_top_iff"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy"
+            }
+          ],
+          "notes": "直接导入冻结 InternalEpsilonNet、covering_number 及取得/无有限覆盖等价证明；internal_ball_iff 给内部开球覆盖表示，TotallyBounded 量化全部有限正精度。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.DeltaDefined",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.subfamilyDelta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.subfamilyDelta_eq",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.entropy_top_iff",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.delta_infinite_input",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.delta_infinite_output",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "delta 的证明参数强制 DeltaDefined，即至少一端覆盖数有限；subfamilyDelta_eq 连接子族熵，entropy_top_iff 与两单端无穷定理保持正负无穷而不许可 top-top。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P01-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.const_zero_row",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "const_zero_row 对任意有限指标集和所有 U 内点对将常值输出与全部零项和同时化为 0。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P01-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.const_colip",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "const_colip 使用 U 内存在的正输入距见证和真实 IsCoLipMatrix，经冻结单项界得到指定条目零；未要求系数或距离有限。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P01-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.ident_isometry",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.zero_transport",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "ident_isometry 借 zero_transport 的两次三角不等式证明任意 U 内点对保距；没有使用族分离或输出点相等。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P02-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.active_comp",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "active_comp 的逆否证明逐一处理两个步骤的常值/恒等四分支，外步严格读取 f(U)，恒等分支排除常值优先情形。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P02-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.run",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.stepActive",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.LegalChain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.chain_domains",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.active_chain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "run 按执行顺序定义任意列表复合；stepActive 递归更新实际像域；chain_domains 从全复合合法域推出每步合法。active_chain 对空列表证明恒等无有效分量，再作列表归纳。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P02-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.ident_comp",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "ident_comp 由零距传递证明复合逐点恒等，再由外侧保距反证复合常值，准确保留 Ident 的排除条件。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P03-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Swap.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Swap.data",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Swap.reverse_inclusions_fail",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Swap 用 Option Bool 构造带吸收元三点空间和换位算子，legal 验证全部扩展公理；data 证明像域、两步有效及复合恒等，reverse_inclusions_fail 分别否定两条反向包含。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P04-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.outer_const",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "outer_const 将任意 x,y∈U 的两个像点送入 g 在 f(U) 上的常值条件，得到全复合常值。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P04-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Seven.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Seven.data",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Seven 的 Option(Fin 6) 与双 Bool 分量确为七点双分量模型；q 只合并 2,3，f/g 域外为 none。legal 与 data 分别给公理、复合域和内侧常值但复合非零距及另一分量可区分。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P05-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.inner_const_lip",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "inner_const_lip 在实际 f(U) 上使用指定输出行的单输入化简，L i i 乘零仍为零，包含无穷系数。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_target",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.subfamily_zero",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_target 对任意零距目标 y,z 用伪度量对称与零距传递证明双向纤维包含；subfamily_zero 连接 d_J。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_nonempty",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_nonempty 用像点的原像作见证；fiber_cover 证明全部像目标纤维之并恰等于 U，空 U 亦成立。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_equal_or_disjoint",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_nonempty",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_equal_or_disjoint 由交点推出目标间全部 J 分量零距，再用目标不变性给相等；与非空和覆盖结果共同构成去重分划。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_inter",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_inter 对任意非空 J 证明单分量交集等式，利用 J 的见证恢复 U 成员条件，未错误接受空交集。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_antitone",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_antitone 从 J⊆K 将 K 的全称分量条件限制到 J，方向正确且域 U 不变。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_singleton",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_full",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_singleton 展开 singleton 得精确分量纤维；fiber_full 对任意 i 给全族纤维包含于单分量纤维。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_ident",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_ident 对任意目标 y 用逐点输出输入零距及 zero_transport 证明完整纤维等于 U 内输入零距类。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P06-08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_const",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_const 证明每个像目标纤维为 U；任何距其严格正的目标纤维为空，正距离允许 top。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P07-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.factors_iff",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Factors 是实际像子类型到 X 的映射并满足规定赋值；factors_iff 的必要方向只用函数保相等导出 U×U 上关系包含。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P07-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.factor_surjective",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.imageMap",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.imageMap_surjective",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.factors_iff",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "factor_surjective 从满射选代表元，由输入等值蕴含保证赋值无歧义；imageMap_surjective 将其实际用于 f(U)，factors_iff 无 Nonempty U 前提，覆盖空像。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P07-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.factors_both",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "factors_both 对两个方向应用完整 factors_iff，以集合反对称性得到点值关系相等当且仅当双向变换存在。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P07-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.factor_lip",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "factor_lip 量化实际像子类型中的任意两点，选原像并使用 K 正有限、L 有限的真实双侧输入界；ENNReal 除法侧条件完备，结论为 L/K 像域标量界。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P08-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.quotientMap",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.quotientMap_surjective",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.quotient_factors_iff",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "ImageQuotient 是实际像集上的族零距商，quotientMap_surjective 实证商类可由原输入表示；quotient_factors_iff 用 Quotient.sound/exact 给规定赋值的存在性与零距关系包含双向等价。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P08-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.quotient_factors_both",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "quotient_factors_both 将两个单向商映射判据组合为 ZeroRel 相等充要条件，未改成任意商函数存在。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P08-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.separated_relations",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.separated_criteria",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "separated_relations 仅要求各自实际像集上的分离；separated_criteria 把两等式代入单/双向点值和商判据，不添加全空间分离。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P09-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiberLE_refl",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiberLE_trans",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "FiberLE 是固定 U 的集合包含；fiberLE_refl 与 fiberLE_trans 直接证明其自反与传递。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P09-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.relation_chain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "relation_chain 对任意有限上界 m 及 a≤b≤m 从逐步包含归纳出 R a⊆R b；实例化 ZeroRel 即任意两层结论。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P09-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.relation_chain_strict",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "relation_chain_strict 从某 r<m 的严格包含取差集见证，分别经两段链包含送至 R m\\R 0，并证明端点严格包含。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P10-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.f",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.U",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Step.f 是 Option.map 阶跃函数，realD id 经 extend_legal 满足通常实线及吸收元隔离；Step.domain 证明非空、合法域和原两个半开区间的精确等式。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P10-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.point",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.legal_radii",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Step.point 在原固定 U 的每个 some y 上证明 radius=ofReal|y|>0；上界显式选异号近零点，下界用同号条件，legal_radii 再给全部合法有限正半径恰为 (0,|y|]。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P10-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.uniform_zero",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Step.uniform_zero 以 min(1,r/2) 构造固定 U 内趋零正基点，结合点态公式及统一下确界上界反证任何正统一半径。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P11-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_const_family",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_const_family 将 J⊆Const 与任意基点 y∈U 代入全部分量，证明以 f(y) 为目标的整个 J 纤维恰为 U。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P11-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.const_family_radius",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.radius_top",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_top",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "const_family_radius 从全输出子族零距证明每基点点态 radius 与 uniform 均为 top；输入 i 任意，未由域有界限制可取球半径。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P11-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Infinite.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Infinite.data",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Infinite.legal/data 构造 Option Bool 上输入 false 分量距离 top；输出 j 可为 false 或 true，分别给 i=j 和 i≠j。合法恒等域上 uniform=top 而输出非常值。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P12-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_ident_image",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_ident_image 将 ident_isometry 对原基点 y∈U 实例化，精确得到以 f(y) 为目标的纤维等于 d_i 输入零距类。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P12-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.ident_radius_lower",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "ident_radius_lower 保留有限正 r 和受限球包含前提，经保距证明 r≤radius 且 r>0，未加强至不严格输入边界。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P13-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.radius_family",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.finite_inf_min",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "radius_family 对子族上确界距离证明真实点态 radius 等于全部单分量 radius 下确界；finite_inf_min 在有限非空 J 证明某分量取得该值，落实最小值。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P13-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_family",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.finite_inf_min",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.nullMatrix",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform_family 证明独立基点/输出子族的下确界交换，再由 finite_inf_min 及 nullMatrix j i 的定义对应原列条目最小值。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P13-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_family_antitone",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform_family_antitone 以真实子族公式把较大 K 的下确界限制到 J，得到输出子族扩大时统一半径不增。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P14-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_truncation",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "fiber_truncation 的左分支读取单分量纤维成员，并用输出对称性调整顺序得输出零距。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P14-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.extract_legal_radius",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.radius_zero",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.fiber_truncation",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "extract_legal_radius 从 t<radius 选择夹在其间的有限 NNReal r 并验证 LegalRadius；radius_sup/le_radius_zero 保证原上确界语义，fiber_truncation 的右分支保留严格不等式。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P14-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.composite_truncation",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "composite_truncation 量化两输入属于上游 dom、两像点属于指定 U，并直接使用下游纤维成员得到实际复合输出零距。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P15-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_comp_zero",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform_comp_zero 的零距保持只量化 f(U)，在统一半径以下把上游零距传至复合，以 le_uniform_zero 得真实下界。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P15-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_comp_lip",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform_comp_lip 对 L 正有限用精确 ENNReal 乘除严格不等式，把实际像域下游 uniform/L 内的输入点对送入下游零距判据；右端 0/top 均由同一完全序证明处理。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P16-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold_cases",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold_exhaustive",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "threshold_cases 逐个证明 Bool 对四值与原文四组互补不等式的 iff；threshold_exhaustive 给分类值存在唯一，零/无穷数据不破坏穷尽性。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P16-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.scale_threshold_mono",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "scale_threshold_mono 对任意尺度值及 τ≤τ′ 给 s<τ→s<τ′，逐通道实例化即第一项为真的集合单调不减。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P16-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.null_threshold_antitone",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "null_threshold_antitone 对任意半径及 τ≤τ′ 给 τ′≤r→τ≤r，对应第二项为真的通道集合单调不增。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P17-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.scale_restrict",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "scale_restrict 在非空 B⊆A 下对任意 InputScale 使用原单调公理，并给严格阈值的传递结论。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P17-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.radius_restrict",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "radius_restrict 保留同一任意基点，B⊆A 时将 A 上零距球条件限制到 B，得到 radius(A)≤radius(B)，特别覆盖基点属于 B 的原范围。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P17-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_restrict",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform_restrict 同时将评估点和基点集合从 A 限制到 B，借 le_uniform_zero 证明完整统一半径反向单调。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P17-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.realD_legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.scale_reverse_counterexample",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.scale_reverse_domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "realD_legal、scale_reverse_counterexample 与 scale_reverse_domain 给合法带吸收元实线、B={0}⊆A={0,1}、直径 0/1 与阈值 1/2 的反向失败，恒等算子域亦核实。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P18-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_zero",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.uniform_le_point",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "uniform_le_point 使统一半径不超过每基点 radius；uniform_zero 因而把严格低于统一半径的原点对送至输出零距。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P18-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.separation_lower",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "separation_lower 对正输出距用 uniform_zero 的逆否得到输入距至少为 uniform，未非法消去无穷。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P18-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.separation_witness",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "separation_witness 对每个 α>uniform 取违反零距球条件的两个 A 内点，再用有限 NNReal 插值选正 ε≤正输出距，输出为 top 时仍成立。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P19-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold_fiber",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "threshold_fiber 对任意 y∈A 和 τ≤uniform，将严格输入开球与 A 的交集逐点送入原单分量纤维。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P19-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.net_push",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.cover_push",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "net_push 实际构造 S.image f 内部输出中心并证明 card 不增；cover_push/threshold_cover 对全部有限中心取下确界，自动保留 B 空集及输入无有限覆盖的 top 分支。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P19-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.log_mono",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.entropy_mono",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.threshold_entropy",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "log_mono 显式处理 0/top 与有限正 ENNReal 的 log2 单调，entropy_mono 和 threshold_entropy 将原覆盖数不等式送到熵不等式。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P20-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Step.cover_counterexample",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Step.cover_counterexample 对每个有限正 τ 选 a=min(1,r/4)，证明 0<a≤1、2a<τ 与二点 B⊆同一 Step.U，输入内覆盖数=1、输出在 1/2 精度内覆盖数=2。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P21-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.small_domain_iff",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "small_domain_iff 精确使用 diameter(A)<τs≤τn，并证明 τn≤uniform iff 全输出零距；反向经 uniform_top，不额外假设有限距离或点相等。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P21-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.const_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.cover_one",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "cover_one/const_cover 对非空像集证明单点内部覆盖和下界 1，对每个正 ε 得恰为 1；可由上一项的全输出零距直接实例化。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P22-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.finite_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.entropy_finite",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.finite_delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "finite_cover 用有限集自身作内部中心；finite_delta 对非空有限 U 及有限像集给两覆盖数≥1且有限、两实数熵表示和实数差，子族距离的自距公理由冻结模块提供。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P23-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.const_entropy_delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "const_entropy_delta 给常值像的覆盖数 1、熵 0 和自动合法 DeltaDefined，delta 等于输入熵，即使输入熵为 top 也有真实 EReal 结论。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P23-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.ident_isometry",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.net_push",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.net_pull",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.isometry_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "ident_isometry 提供原恒等分量的点对保距；isometry_cover 实际调用 net_push/net_pull 的推中心/选原像构造，证明覆盖数及熵相等。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P23-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.isometry_delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "isometry_delta 保留 DeltaDefined；由覆盖数相等推出两端有限，再转实数熵证明差 0，没有使用 top-top=0。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P24-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.lip_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.net_push",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "lip_cover 在 L 正有限下把输入距<ε/L 转成像距<ε，调用 net_push 的内部中心构造和 card 不增，得到全部内部覆盖数上界。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P24-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.lip_delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.entropy_finite",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "lip_delta 从 TotallyBounded 在 ε 和 ε/L 的有限正性得到输入及像覆盖有限，再用 entropy_mono 和 EReal 减法次序给原熵差下界。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P25-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.matrix_colip_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.colip_cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.net_pull",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "matrix_colip_cover 从真实 IsCoLipMatrix 非负和取单项，colip_cover 在正有限系数下用 net_pull 逐输出中心选原像、证明内部覆盖及 card 不增，得到反向覆盖数界。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P25-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.matrix_colip_delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.colip_delta",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.entropy_finite",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "matrix_colip_delta/colip_delta 只要求输入全有界及系数/精度正有限；DeltaDefined 由输入端有限成立，EReal 次序证明原熵差上界并允许输出熵 top。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P26-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Affine.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Affine.first",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.realD_apply",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Affine.legal 以 realD abs 构造合法绝对值读数扩展伪度量；f=2x-1、原 U={0,1} 合法，first 明证目标纤维=U 与常值优先分量。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P26-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Affine.second",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Affine.second 在同一 U 上验证 f² 域合法，目标纤维={0} 且该分量 Active；代码中的输出读数确为 3 和 1。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P26-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.point_constant_square",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "point_constant_square 对任意点值常算子证明自复合在 U 上均为 f(c)，并分别给 f(c)≠bot 的合法域及 f(c)=bot 时 U 与复合域不交，完整保留适用域。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P27-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.colip_point_gap",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "colip_point_gap 结合真实正 co-Lip 单项反射零距与 radius_zero，排除 0<输入距<点态半径；无 K 有限前提。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P27-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.colip_uniform_gap",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "colip_uniform_gap 对每个 U 内点对给输入距=0 或输入距≥uniform；使用统一半径≤指定基点 radius，允许 top 半径及等号。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P28-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Translation.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Translation.domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Translation.fibers",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.realD_apply",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Translation 的 f=x+1 与 realD abs 合法；fibers 完整计算原 U 上恒等与平移两份去重纤维族，均为实际输入点集合。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P28-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Translation.covers",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Translation.entropy",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Translation.covers 在精确 3/2 证明输入覆盖=2（给中心与每内部单中心失效）和输出覆盖=1；entropy 用合法差值前提证明熵差=1。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P29-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.first",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Floor.legal/domain 构造合法通常实线与 floor 算子；first 证明 [0,1/2] 直径=1/2、uniform=top、threshold=(true,true)。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P29-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.second",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Floor.second 证明 [9/10,11/10] 直径=1/5；jump 显式选择从 1 左侧趋近的异值点对得到 uniform=0，分类=(true,false)。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P29-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.third",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Floor.third 对 {0,2} 证明直径=2，输入距离间隙给 uniform 下界 2，真实非零输出点对给上界 2，分类=(false,true)，开球端点处理正确。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P29-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.domain",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.fourth",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Floor.fourth 证明 [0,2] 直径=2，调用真实跨整数点对 jump 得 uniform=0，分类=(false,false)。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P29-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.counterexample",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Floor.third",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Floor.counterexample 给 {0,2} 非空合法域、uniform≥1 及明确非全输出零距；third 的下界实际由原两点距离间隙证明。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P30-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.legal",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.cover",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.external_center",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Four.cover 对全部正 ε 给 ε≤1 时4、1<ε≤2 时2、ε>2 时1，逐段上下界完整，开球端点归属正确；external_center 证明 3/2∉U。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P30-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.data",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            },
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.same_images",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Four.f/g 精确编码原取值表并域外取 none；data 证两像均为 U，same_images 对全部正 ε 给覆盖数相同和两个合法熵差均为 0。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P30-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.lips",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Four.lips 对全部 U 内点对证上界 1/3，并用原 0,1 点对证明任意可行 L 分别≥1/≥3，故给出真实最优标量常数。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        },
+        {
+          "id": "CH03-P30-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Main.lean",
+              "name": "MG.Four.estimates",
+              "source_sha256": "4066b77091823227c34bf07a06db50b7d7ba18eb0c4aa247e0a71222f02f8cd9"
+            }
+          ],
+          "notes": "Four.estimates 在 7/4 用真实 lip_cover 分别代入系数 1/3，证明两个真实输出覆盖均2，而一般上界分别为2和4，完整比较精确与宽松分支。",
+          "mapping_origin": "Independent direct reading of original 1634-line unified Main and source-frozen requirement, followed by original-byte compiler/axiom checks."
+        }
+      ],
+      "review_evidence": [],
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "selection": "Actual first qualified A1 sealed engineering; no source repair, later best-of or cross-round union",
+      "format_review_separate": true,
+      "raw_format_review": {
+        "decision": "invalid",
+        "notes": "原始 native final 只给 submission.md 与 ZIP 链接，未按题面在原返回中交付命名代码块。实际明确交付的 submission.md 内为全文命名 Main.lean 和完整 alignment.json，字节/对象与封存工程一致；该格式事实单列，不抹去已验证的工程数学成果。"
+      },
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "private_original_review_sha256": "76b90cd2179a0d9e14d7cf5f7e641d7cad3f14b71b3dd5b0f2da6835ffc513d0"
+    }
+  ],
+  "new_candidate_calls": 0
+}

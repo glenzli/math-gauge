@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-PS001:A1",
+  "case_id": "MG-PS001",
+  "binding": {
+    "plan_sha256": "5c2f3b1e6f45714d99c153742159a8817284e881e23b3d56e78e15835dd68cba",
+    "slot_id": "MG-PS001:A1",
+    "evidence_id": "068e169bf034affaa0cf97845ec9ad1f41297783f2810594f7494e2870627f6b",
+    "response_sha256": "1137a7aa31e1afd73cf2aac9a91b9ec419011a5994faf9cbd94039b5fe840f42",
+    "history_sha256": "6183c6881757e5219e7c3e190062ccb2f01e637a4e0ef37e929cb78897b8b1a2",
+    "projected_request_sha256": "2acf9f7e27f55144aa74122a78f63ab8b579ba838ac852b0e92ce75a0264ed78",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "2ea0e584abf2e3a226f3e569404a56486937cdadd1abbd30bf300570344478d1",
+    "body_origin": {
+      "slot_id": "MG-PS001:A1",
+      "response_sha256": "1137a7aa31e1afd73cf2aac9a91b9ec419011a5994faf9cbd94039b5fe840f42",
+      "start_byte": 0,
+      "end_byte": 6535
+    },
+    "body_sha256": "1137a7aa31e1afd73cf2aac9a91b9ec419011a5994faf9cbd94039b5fe840f42",
+    "rationale_sha256": null,
+    "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "已逐条复核冻结题面、参考及K1–K6。首答给出完整分类、普遍尖锐范数、根极限及每个允许实数对的合法构造。新尖锐性构造与阶乘分段迭代证明均成立；没有额外完备性或收敛假设。100/100，严格通过。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "format_review": {
+    "decision": "valid",
+    "notes": "原始书面答卷完整交付各个题面目标。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "在有界实数列上直接正确使用p为有限半范数、d(x,y)=p(x-y)及保持零半范数为商下降的充要条件；没有把零距等同逐项趋零或假设商完备。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "充分性由前f(n)项平均和f(n)/n的上极限得到统一界。必要性对任意C_f=∞选择n_(k+1)>2n_k且f(n_k)≥k²n_k，取抽样索引区间(n_k,2n_k]的实际像的并；对每个原数列前缀以相邻f(n_k)夹定并控制累计块长度，原密度0而抽样前2n_k项密度至少1/2。量词、全前缀及有界性均成立。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "最小常数C_f的上界已证。替代尖锐性构造s_j=min(f(j),s_(j-1)+M)，把非负有界增量放在f(j)坐标，累计原和≤N从而p≤1；滞后h=ceil(f(n)/M)使s_(n+h)≥f(n)。沿上极限子列得到下界C_f/(1+C_f/M)，M→∞给所需尖锐性，无需f(n)/n收敛。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "任意有界目标以像坐标赋值获得有界原像，故满射。C_f>1用像补集指标给非零商核；C_f=1用严格递增f(n)≥n推出比值趋1、计数逆a(N)/N趋1，并比较原序列平均和抽样平均，得到等距双射。连续性来自已证有限Lipschitz界。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "实际算子迭代等于复合取样，复合f仍O(n)，因此每个L_k由复合增长上极限精确给出。证明1≤L_(k+m)≤L_kL_m并以k=qm+s直接得到根极限等于下确界及1≤R≤L_1，不需Banach空间或谱理论。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "对全部实数1≤r≤ell<∞，阶乘阈值上f(n)=floor(rn)+floor((ell-r)m!)严格递增且n≤f≤ell n。固定k以阈值起点给L_k下界r^k+(ell-r)S_k；任意n的前k次迭代至多跨一个阈值，分无跨越与首次跨越t两种情形，上界误差对有限t统一，正确处理跨阈值竞争，得到相同精确L_k。r=1为线性k增长、r>1为几何r^k，所有边界包括ell=r及ell=r=1均覆盖。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T17:49:22.608002+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "53d862de90bbfd9678b36a584df715720335bce3a2d6032fdc4dcc3587620494",
+  "public_projection": true,
+  "original_private_review_sha256": "ac8d68bdbc95167d7cb440e9af26bfea894d03d73bb87e1c3fe180332ca31c42"
+}

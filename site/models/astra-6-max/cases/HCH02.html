@@ -1,0 +1,2793 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=1ab34e1a3dec"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/astra-6-max/index.html">Astra 6 (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>HCH02 · 历史完整算子界章节的Lean形式化与多轮对齐</h1><p class="subtitle">Astra 6 (max) · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><p class="original-language-note">原题与原答保留原始语言。</p><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>历史章节的完整 Lean 形式化</h1>
+<p>将附件中的第2章全部数学内容形式化为一个 Lean 项目。原文含证明；前章文字只作背景。obligations.json 明确本题全部40项定义、表示及证明义务，含正文中没有独立编号的事实。以冻结原文和该清单为完整交付范围；不得沿用其他版本的章节内容。</p>
+<p>使用 Lean 4.29.1 与 mathlib 提交5e932f97dd25535344f80f9dd8da3aab83df0fe6。给定 formal_oet/ 下两份前置模块可直接使用，不得修改或同名覆盖。只允许这些冻结模块、Lean标准库和固定mathlib；不得读取或导入目标章节或后续章的作者实现及其他外部材料。可使用本地工具，禁止联网检索或下载依赖。</p>
+<p>遵循原文的结构、量词、定义域、条件与结论强度。允许等价表示、合并声明和有效的替代证明；使用等价表示时须证明其对应。不得把待证结论作为结构字段、证书、假设或实例直接取回。</p>
+<p>提交完整源码，每个文件用独立命名代码块，例如 <code>lean filename=Main.lean</code>；Main.lean须导入所交所有目标模块，辅助文件也须全文提交。工作区路径或链接不能代替文件内容。不得使用sorry、admit、新增公理或跳过内核检查的设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 代码块提交对象，含case_id=&quot;HCH02&quot;、version=&quot;0.1.0&quot;与items。items必须恰好覆盖40个义务ID；每项为{&quot;id&quot;:&quot;…&quot;,&quot;status&quot;:&quot;complete|incomplete&quot;,&quot;declarations&quot;:[{&quot;file&quot;:&quot;Main.lean&quot;,&quot;name&quot;:&quot;命名空间.声明名&quot;}],&quot;representation&quot;:&quot;与原文的对象、参数、量词及结论的对应说明&quot;,&quot;dependencies&quot;:[&quot;实际引用的义务ID&quot;]}。complete表示该项全部目标完成，须列真实存在的声明；incomplete须明确保留。声明可合并或复用，依赖仅记录实际采用的证明。最后说明你是否已经完整完成且严格对齐整章，并列出未完成或未确认的范围。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/HCH02/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Complete independent fresh A1 adjudication of the entire original answer and supplied mathematical material; exact raw bytes/semantic review retained. Native conditions and human approval are separate.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>HC02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Lip 是全部合法矩阵的 Set，包含 U⊆dom φ 与 U 内任意点对、任意输出 j 的完整 ENNReal 有限和上界；GlobalLip 取 dom φ。变量允许任意 d，故当然包括原有限非空规范族，没有额外分离/有限距离限制。</p>
+<h3>HC02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> CoLip 是完整矩阵集合，明确保存 U.Nonempty、U⊆dom φ 及 action M d≤输出距；非空要求没有被域包含或空真替代，条目仍含零和无穷。</p>
+<h3>HC02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Mat 的存储 M i j 为输入 i 到输出 j；display M j i=M i j 且 display_mul 为普通 display B * display A 的真实等式。mmul B A i j=Σk B k j*A i k，action_mul 也证明相同顺序的实际距离向量作用。</p>
+<h3>HC02-D04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> eye 是 Kronecker δ，mprod 从施行顺序列表递归为尾积乘首矩阵，nil=eye、singleton=A；display_eye/display_product 将其桥接到普通矩阵逆序列表 prod，明确给出 Lk⋯L1 和零步单位。</p>
+<h3>HC02-D05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> chain 按原施行顺序实际复合；actual 是每个前缀对初域的逐次像，actual_prefix、chain_image 给前缀/全复合像等式，actual_domain 从原全复合合法域证明每步真实输入域合法。chain_frozen 与冻结 OperatorChain 的逆序表示相等；OnSteps 只保存每个原算子在实际域上的单步证书，没有最终复合结论字段。</p>
+<h3>HC02-D06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Interior I n 是所有 n 个中间指标的有限积，interiorEquiv 明证与 Fin n→I 双射，无正边筛选。edges 依施行次序含全部 n+1 条边，weight 是其乘积，AllPositive/HasZero 分别检查全部正边/存在零边；Interior I 0=PUnit 保留单步唯一空中间序列。</p>
+<h3>HC02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Channel=I×I；Row L i j 仅限制输出 j 行的其他输入，Col L i j 仅限制输入 i 列的其他输出。RowDecoupled/ColDecoupled 真实量化 ∃合法 L 及任意唯一 i/唯一 j，不强迫 i=j；Diagonal 与全部对角 Row 等价。</p>
+<h3>HC02-D08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Scalars d φ U i j 是同一 U 内全部点对所满足的单通道 ENNReal 系数集合，singleInf=sInf Scalars。定义在更一般 U 上仍有意义，合法域语境可直接实例化；它与任意矩阵条目及 entryInf 分开，空族下确界仍为 top。</p>
+<h3>HC02-P01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> singleton_lip 由 Subsingleton I 与指定 i 将完整有限和化为唯一 L i i*d i；singleton_lip_iff 反向重建整个 Lip 证书并保留 U⊆dom φ，故覆盖单分量退化。</p>
+<h3>HC02-P02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> global_lip_restrict 把 dom φ 上全部证书通过原 hU:U⊆dom φ 限制到 U；不另加非空条件。</p>
+<h3>HC02-P03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_restrict 将域包含及全部点对不等式限制到 U⊆V，lip_family_antitone 给真实证书族逆向包含。</p>
+<h3>HC02-P04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> entryInf 是合法矩阵条目像集的 sInf；entryInf_mono 用限制后的同一矩阵证明原大域条目像集包含于小域条目像集，再正确反向比较 sInf，不假设最优矩阵存在。</p>
+<h3>HC02-P05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_comp 在 U 上读取 A，在精确像 φ.func''U 上读取 B，用 ENNReal 有限和/乘法单调性及 action_mul 得到 mmul B A 的真实复合 Lip 界；保留 U⊆dom(comp ψ φ)。</p>
+<h3>HC02-P06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_degenerate 在原 dom φ 的实际见证点对从 CoLip 非负和抽出 K i j 项，输出零距迫使乘积零；正输入距排除右因子零从而推出 K i j=0，含无限系数/距离边界。</p>
+<h3>HC02-P07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_comp 独立将两个真实像域上的下界矩阵按 mmul B A 复合，用 action_mul 和非负乘法单调性证明下界；初域非空由第一步 CoLip 取出，没有遗漏非空。</p>
+<h3>HC02-P08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_forward 从真实伪度量三角不等式两次、对称性及 U 上每点偏差≤δ，证明 ψ 点对输出距≤φ 点对输出距+δ+δ；保留公共定义域，允许 ENNReal top。</p>
+<h3>HC02-P09</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_reverse 对调两算子和公共域，用距离对称性转换同一 hδ，再应用已证正向扰动；给原文反向点对界，不做无穷减法。</p>
+<h3>HC02-P10</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_lip 将 φ 的完整所选 Lip 上界代入正向扰动，并通过 two_mul/加法结合得到 ψ 输出距≤action L d+2*δ，所有 U 中点对均保留。</p>
+<h3>HC02-P11</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_colip 把 φ 的完整 CoLip 求和下界与反向扰动传递，得到 action K d≤ψ 输出距+2*δ；没有将 Lip 上界错用为下界。</p>
+<h3>HC02-P12</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_chain 由执行顺序 ss 的逐步实际域 OnSteps 归纳构造指定 mprod，尾链输入恰为首算子真实像。lip_chain_indexed 从所有 actual Um 上的原逐步证书经 onSteps_iff 导出同一结论，涵盖任意正长度，没有把最终复合界当输入。</p>
+<h3>HC02-P13</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_chain 独立完成下界链归纳，非空性传给真实像；colip_chain_positive/indexed 对非空列表直接从第一步 CoLip 获取 U 非空，不额外强化正长度原前提，矩阵仍为原指定逆序连乘。</p>
+<h3>HC02-P14</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> identity_lip 用 action_eye 的精确有限和恒等式给任意合法 U 的恒等算子单位 Lip 界；这是比原非空 U 更强的版本，和 chain nil/mprod nil 的实际定义一致。</p>
+<h3>HC02-P15</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> identity_colip 明确接收 U.Nonempty 和 U⊆dom ident，以 action_eye 给单位下界，完整保留零步 CoLip 的非空要求。</p>
+<h3>HC02-P16</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> product_expansion 对全部 Interior 路径展开指定有序矩阵乘积；product_zero_iff 用有限非负和为零及 ENNReal 乘积零 iff 含零因子得到所有完整路径含零。local_path_criteria 保留同一原算子链/长度/实际逐步证书语境；one_step_paths 直接核验唯一空中间序列的单条目边界。</p>
+<h3>HC02-P17</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> product_positive_iff 用完整有限路径权重和为正 iff 有正项，weight_positive_iff 将正项准确等价为所有实际边正。该纯代数结论可特化 local_path_criteria 的同一 CoLip 链；one_step_positive 给 n=1 的真实唯一空序列，未预筛路径。</p>
+<h3>HC02-P18</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_input_obstruction 在 U 的见证点对对任意 a∈Scalars 代入输入零距，mul_zero 迫使正输出≤0，故 Scalars=∅且 singleInf=top；明确排除包括 top 在内的所有系数。</p>
+<h3>HC02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> positive_finite_attained 从 finite inf 得到 Scalars 非空，再用 ENNReal.iInf_mul 的精确侧条件将同一输入距离乘到非空下确界中。正 inf 排除输入距离 top 时可能出现的零下确界异常；每个点对的全部可行界取下确界，真正证明 inf∈Scalars，不把取到性作为假设。</p>
+<h3>HC02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalars_upward 逐个 U 内点对用 ENNReal 乘法单调性把合法 a 扩大到 b≥a，保持原输出上界，允许 b=top。</p>
+<h3>HC02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> above_inf_feasible 从 singleInf&lt;a 由 sInf_lt_iff 取得较小可行 b，再用向上封闭推出 a 可行；这比原正有限 inf 语境更一般，涵盖严格上界为 top。</p>
+<h3>HC02-P22</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_inf_positive_feasible 将 inf=0 与 0&lt;a 代入严格上确界可行定理，保留原 a&lt;top 限制，确实对全部 U 中点对成立。</p>
+<h3>HC02-P23</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 实际模型 X=Option Bool、bot=none、I=Bool，两普通点 false 输入分量距离 top、true 输出分量距离1，吸收点在两分量均被 top 隔离。exampleMetric 逐一证明真实扩展伪度量公理；φ=id、U=两个普通点且非空合法。全部正 a 可行、0 不可行并证明 inf=0，zero_not_attained 组合完整实际反例而非假设其存在。</p>
+<h3>HC02-P24</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> finite_inf_iff 直接由 sInf_lt_iff 得到有限可行系数；反向用 sInf_le 和可行系数有限。没有依赖正 inf 或取到性，因此 inf=0 的非取到分支仍完整。</p>
+<h3>HC02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_term 对任意 ENNReal 输入 v（含 top）用零乘法证明该项零；erase_zero_term 用有限和删项恒等式证明实际总和可删除 i 项，没有扩大为输出距为零或真实依赖性。</p>
+<h3>HC02-P26</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> row_action 在任意独立 i,j 上将输出 j 的行和化为唯一输入项；row_lip 将完整合法 Lip 证书代入此等式，得到所有 U 点对的交叉单行界，不强迫 i=j。</p>
+<h3>HC02-P27</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> col_contribution 在任意固定输入 i、唯一可能输出 j 的 Col 条件下，对全部 k≠j 证明 L i k*v i=0；适用于所选证书输入距离，无实际算子依赖性或其他输入贡献的额外承诺。</p>
+<h3>HC02-P28</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> diagonal_lip 对任意 j 由 Diagonal L 导出 Row L j j，再用 row_lip 得全部分量的标量上界；未用不必要有限系数假设。</p>
+<h3>HC02-P29</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalar_two_sided 只接收 Lip 的指定 Row L j j；K 仅要求合法 CoLip。下界用 colip_term 从 K 的完整行和抽取对角项，上界由稀疏 L 得到，无 K 稀疏、正性或有限性额外限制。</p>
+<h3>HC02-P30</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> diagonal_two_sided 对所有 j 同时给双侧界；finite_diagonal_two_sided 额外明确保存每个 L j j 与 K j j 有限的合取及同一全部点对界。只声明系数有限，不推出所有输入或输出距离有限。</p>
+<h3>HC02-P31</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> positive_channel 从真实 CoLip 单项下界与两个正 ENNReal 因子的正乘积推出输出 j 正距，适用任意交叉 i,j、U 内全部点对及 top 边界，不依赖有限逆。</p>
+<h3>HC02-P32</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> reflects_zero 对任意分量 j 反设输入正距，用正对角 CoLip 通道推出输出正距，与输出 GaugeZeroRelated 矛盾，故反射全族零距关系；没有族分离假设或点值相等结论。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（40项）</summary><div class="prose"><h3>HC02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Lip 是全部合法矩阵的 Set，包含 U⊆dom φ 与 U 内任意点对、任意输出 j 的完整 ENNReal 有限和上界；GlobalLip 取 dom φ。变量允许任意 d，故当然包括原有限非空规范族，没有额外分离/有限距离限制。</p>
+<h3>HC02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> CoLip 是完整矩阵集合，明确保存 U.Nonempty、U⊆dom φ 及 action M d≤输出距；非空要求没有被域包含或空真替代，条目仍含零和无穷。</p>
+<h3>HC02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Mat 的存储 M i j 为输入 i 到输出 j；display M j i=M i j 且 display_mul 为普通 display B * display A 的真实等式。mmul B A i j=Σk B k j*A i k，action_mul 也证明相同顺序的实际距离向量作用。</p>
+<h3>HC02-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> eye 是 Kronecker δ，mprod 从施行顺序列表递归为尾积乘首矩阵，nil=eye、singleton=A；display_eye/display_product 将其桥接到普通矩阵逆序列表 prod，明确给出 Lk⋯L1 和零步单位。</p>
+<h3>HC02-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> chain 按原施行顺序实际复合；actual 是每个前缀对初域的逐次像，actual_prefix、chain_image 给前缀/全复合像等式，actual_domain 从原全复合合法域证明每步真实输入域合法。chain_frozen 与冻结 OperatorChain 的逆序表示相等；OnSteps 只保存每个原算子在实际域上的单步证书，没有最终复合结论字段。</p>
+<h3>HC02-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Interior I n 是所有 n 个中间指标的有限积，interiorEquiv 明证与 Fin n→I 双射，无正边筛选。edges 依施行次序含全部 n+1 条边，weight 是其乘积，AllPositive/HasZero 分别检查全部正边/存在零边；Interior I 0=PUnit 保留单步唯一空中间序列。</p>
+<h3>HC02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Channel=I×I；Row L i j 仅限制输出 j 行的其他输入，Col L i j 仅限制输入 i 列的其他输出。RowDecoupled/ColDecoupled 真实量化 ∃合法 L 及任意唯一 i/唯一 j，不强迫 i=j；Diagonal 与全部对角 Row 等价。</p>
+<h3>HC02-D08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Scalars d φ U i j 是同一 U 内全部点对所满足的单通道 ENNReal 系数集合，singleInf=sInf Scalars。定义在更一般 U 上仍有意义，合法域语境可直接实例化；它与任意矩阵条目及 entryInf 分开，空族下确界仍为 top。</p>
+<h3>HC02-P01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> singleton_lip 由 Subsingleton I 与指定 i 将完整有限和化为唯一 L i i*d i；singleton_lip_iff 反向重建整个 Lip 证书并保留 U⊆dom φ，故覆盖单分量退化。</p>
+<h3>HC02-P02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> global_lip_restrict 把 dom φ 上全部证书通过原 hU:U⊆dom φ 限制到 U；不另加非空条件。</p>
+<h3>HC02-P03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_restrict 将域包含及全部点对不等式限制到 U⊆V，lip_family_antitone 给真实证书族逆向包含。</p>
+<h3>HC02-P04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> entryInf 是合法矩阵条目像集的 sInf；entryInf_mono 用限制后的同一矩阵证明原大域条目像集包含于小域条目像集，再正确反向比较 sInf，不假设最优矩阵存在。</p>
+<h3>HC02-P05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_comp 在 U 上读取 A，在精确像 φ.func''U 上读取 B，用 ENNReal 有限和/乘法单调性及 action_mul 得到 mmul B A 的真实复合 Lip 界；保留 U⊆dom(comp ψ φ)。</p>
+<h3>HC02-P06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_degenerate 在原 dom φ 的实际见证点对从 CoLip 非负和抽出 K i j 项，输出零距迫使乘积零；正输入距排除右因子零从而推出 K i j=0，含无限系数/距离边界。</p>
+<h3>HC02-P07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_comp 独立将两个真实像域上的下界矩阵按 mmul B A 复合，用 action_mul 和非负乘法单调性证明下界；初域非空由第一步 CoLip 取出，没有遗漏非空。</p>
+<h3>HC02-P08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_forward 从真实伪度量三角不等式两次、对称性及 U 上每点偏差≤δ，证明 ψ 点对输出距≤φ 点对输出距+δ+δ；保留公共定义域，允许 ENNReal top。</p>
+<h3>HC02-P09</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_reverse 对调两算子和公共域，用距离对称性转换同一 hδ，再应用已证正向扰动；给原文反向点对界，不做无穷减法。</p>
+<h3>HC02-P10</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_lip 将 φ 的完整所选 Lip 上界代入正向扰动，并通过 two_mul/加法结合得到 ψ 输出距≤action L d+2*δ，所有 U 中点对均保留。</p>
+<h3>HC02-P11</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_colip 把 φ 的完整 CoLip 求和下界与反向扰动传递，得到 action K d≤ψ 输出距+2*δ；没有将 Lip 上界错用为下界。</p>
+<h3>HC02-P12</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_chain 由执行顺序 ss 的逐步实际域 OnSteps 归纳构造指定 mprod，尾链输入恰为首算子真实像。lip_chain_indexed 从所有 actual Um 上的原逐步证书经 onSteps_iff 导出同一结论，涵盖任意正长度，没有把最终复合界当输入。</p>
+<h3>HC02-P13</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_chain 独立完成下界链归纳，非空性传给真实像；colip_chain_positive/indexed 对非空列表直接从第一步 CoLip 获取 U 非空，不额外强化正长度原前提，矩阵仍为原指定逆序连乘。</p>
+<h3>HC02-P14</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> identity_lip 用 action_eye 的精确有限和恒等式给任意合法 U 的恒等算子单位 Lip 界；这是比原非空 U 更强的版本，和 chain nil/mprod nil 的实际定义一致。</p>
+<h3>HC02-P15</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> identity_colip 明确接收 U.Nonempty 和 U⊆dom ident，以 action_eye 给单位下界，完整保留零步 CoLip 的非空要求。</p>
+<h3>HC02-P16</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> product_expansion 对全部 Interior 路径展开指定有序矩阵乘积；product_zero_iff 用有限非负和为零及 ENNReal 乘积零 iff 含零因子得到所有完整路径含零。local_path_criteria 保留同一原算子链/长度/实际逐步证书语境；one_step_paths 直接核验唯一空中间序列的单条目边界。</p>
+<h3>HC02-P17</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> product_positive_iff 用完整有限路径权重和为正 iff 有正项，weight_positive_iff 将正项准确等价为所有实际边正。该纯代数结论可特化 local_path_criteria 的同一 CoLip 链；one_step_positive 给 n=1 的真实唯一空序列，未预筛路径。</p>
+<h3>HC02-P18</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_input_obstruction 在 U 的见证点对对任意 a∈Scalars 代入输入零距，mul_zero 迫使正输出≤0，故 Scalars=∅且 singleInf=top；明确排除包括 top 在内的所有系数。</p>
+<h3>HC02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> positive_finite_attained 从 finite inf 得到 Scalars 非空，再用 ENNReal.iInf_mul 的精确侧条件将同一输入距离乘到非空下确界中。正 inf 排除输入距离 top 时可能出现的零下确界异常；每个点对的全部可行界取下确界，真正证明 inf∈Scalars，不把取到性作为假设。</p>
+<h3>HC02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> scalars_upward 逐个 U 内点对用 ENNReal 乘法单调性把合法 a 扩大到 b≥a，保持原输出上界，允许 b=top。</p>
+<h3>HC02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> above_inf_feasible 从 singleInf&lt;a 由 sInf_lt_iff 取得较小可行 b，再用向上封闭推出 a 可行；这比原正有限 inf 语境更一般，涵盖严格上界为 top。</p>
+<h3>HC02-P22</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_inf_positive_feasible 将 inf=0 与 0&lt;a 代入严格上确界可行定理，保留原 a&lt;top 限制，确实对全部 U 中点对成立。</p>
+<h3>HC02-P23</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 实际模型 X=Option Bool、bot=none、I=Bool，两普通点 false 输入分量距离 top、true 输出分量距离1，吸收点在两分量均被 top 隔离。exampleMetric 逐一证明真实扩展伪度量公理；φ=id、U=两个普通点且非空合法。全部正 a 可行、0 不可行并证明 inf=0，zero_not_attained 组合完整实际反例而非假设其存在。</p>
+<h3>HC02-P24</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> finite_inf_iff 直接由 sInf_lt_iff 得到有限可行系数；反向用 sInf_le 和可行系数有限。没有依赖正 inf 或取到性，因此 inf=0 的非取到分支仍完整。</p>
+<h3>HC02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_term 对任意 ENNReal 输入 v（含 top）用零乘法证明该项零；erase_zero_term 用有限和删项恒等式证明实际总和可删除 i 项，没有扩大为输出距为零或真实依赖性。</p>
+<h3>HC02-P26</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> row_action 在任意独立 i,j 上将输出 j 的行和化为唯一输入项；row_lip 将完整合法 Lip 证书代入此等式，得到所有 U 点对的交叉单行界，不强迫 i=j。</p>
+<h3>HC02-P27</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> col_contribution 在任意固定输入 i、唯一可能输出 j 的 Col 条件下，对全部 k≠j 证明 L i k*v i=0；适用于所选证书输入距离，无实际算子依赖性或其他输入贡献的额外承诺。</p>
+<h3>HC02-P28</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> diagonal_lip 对任意 j 由 Diagonal L 导出 Row L j j，再用 row_lip 得全部分量的标量上界；未用不必要有限系数假设。</p>
+<h3>HC02-P29</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> scalar_two_sided 只接收 Lip 的指定 Row L j j；K 仅要求合法 CoLip。下界用 colip_term 从 K 的完整行和抽取对角项，上界由稀疏 L 得到，无 K 稀疏、正性或有限性额外限制。</p>
+<h3>HC02-P30</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> diagonal_two_sided 对所有 j 同时给双侧界；finite_diagonal_two_sided 额外明确保存每个 L j j 与 K j j 有限的合取及同一全部点对界。只声明系数有限，不推出所有输入或输出距离有限。</p>
+<h3>HC02-P31</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> positive_channel 从真实 CoLip 单项下界与两个正 ENNReal 因子的正乘积推出输出 j 正距，适用任意交叉 i,j、U 内全部点对及 top 边界，不依赖有限逆。</p>
+<h3>HC02-P32</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> reflects_zero 对任意分量 j 反设输入正距，用正对角 CoLip 通道推出输出正距，与输出 GaugeZeroRelated 矛盾，故反射全族零距关系；没有族分离假设或点值相等结论。</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>已完成全部 40 项义务。所有交付 Lean 文件均已用 Lean 4.29.1 和指定 mathlib 提交离线编译通过；108 个声明的公理审计仅出现 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。两份冻结前置源码与附件逐字一致，未作修改。</p>
+<p>数学来源：Zhe Li（Glen Li / glenzli），<a href="https://orcid.org/0009-0006-6536-3453">ORCID</a>，<a href="https://glenzli.com/books/oet/">The Operator Evolution Theory</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。以下是对指定历史快照的形式化改编；原附前置模块、署名和许可证文件继续保留。</p>
+<pre><code class="language-text">leanprover/lean4:v4.29.1
+</code></pre>
+<pre><code class="language-toml">name = &quot;hch02&quot;
+version = &quot;0.1.0&quot;
+defaultTargets = [&quot;HCH02&quot;]
+
+[[require]]
+name = &quot;mathlib&quot;
+git = &quot;https://github.com/leanprover-community/mathlib4.git&quot;
+rev = &quot;5e932f97dd25535344f80f9dd8da3aab83df0fe6&quot;
+
+[[lean_lib]]
+name = &quot;HCH02&quot;
+roots = [&quot;Main&quot;]
+globs = [&quot;Main&quot;, &quot;Bounds&quot;, &quot;Chains&quot;, &quot;Paths&quot;, &quot;Channels&quot;, &quot;Counterexample&quot;,
+  &quot;formal_oet.vol_01.ch_01_foundations.gauge_space&quot;,
+  &quot;formal_oet.vol_01.ch_01_foundations.operator_space&quot;]
+</code></pre>
+<pre><code class="language-lean">import Bounds
+import Chains
+import Paths
+import Channels
+import Counterexample
+</code></pre>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.ENNReal.Inv
+import Mathlib.Data.Matrix.Basic
+
+/-
+Formalization of the supplied historical Chapter 2 of The Operator Evolution Theory.
+Mathematical source: Zhe Li / Glen Li / glenzli, https://glenzli.com/books/oet/.
+License: CC BY 4.0. This Lean adaptation is AI-generated for the frozen HCH02 task.
+-/
+namespace HCH02
+
+noncomputable section
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+open scoped Classical
+
+variable {X I : Type} {bot : X} [Fintype I] [Nonempty I]
+
+abbrev Mat (I : Type) := I → I → ENNReal
+
+def display (M : Mat I) : Matrix I I ENNReal := fun j i =&gt; M i j
+
+def mmul (B A : Mat I) : Mat I := fun i j =&gt; ∑ k, B k j * A i k
+
+def action (M : Mat I) (v : I → ENNReal) (j : I) : ENNReal :=
+  ∑ i, M i j * v i
+
+theorem display_mul (B A : Mat I) : display (mmul B A) = display B * display A := rfl
+
+noncomputable def eye : Mat I := fun i j =&gt; if i = j then 1 else 0
+
+@[simp] theorem action_eye (v : I → ENNReal) (j : I) : action eye v j = v j := by
+  classical
+  simp [action, eye]
+
+@[simp] theorem mmul_eye (A : Mat I) : mmul A eye = A := by
+  classical
+  funext i j
+  simp [mmul, eye]
+
+@[simp] theorem eye_mmul (A : Mat I) : mmul eye A = A := by
+  classical
+  funext i j
+  simp [mmul, eye]
+
+theorem action_mul (B A : Mat I) (v : I → ENNReal) (j : I) :
+    action (mmul B A) v j = action B (fun k =&gt; action A v k) j := by
+  classical
+  simp only [action, mmul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  exact Finset.sum_comm
+
+noncomputable def mprod : List (Mat I) → Mat I
+  | [] =&gt; eye
+  | A :: As =&gt; mmul (mprod As) A
+
+@[simp] theorem mprod_nil : mprod ([] : List (Mat I)) = eye := rfl
+@[simp] theorem mprod_cons (A : Mat I) (As : List (Mat I)) :
+    mprod (A :: As) = mmul (mprod As) A := rfl
+@[simp] theorem mprod_singleton (A : Mat I) : mprod [A] = A := by simp
+
+def comp (ψ φ : Operator X bot) : Operator X bot :=
+  ⟨ψ.func ∘ φ.func, by simp [φ.preserves_bot, ψ.preserves_bot]⟩
+
+def ident : Operator X bot := ⟨id, rfl⟩
+
+theorem comp_dom (ψ φ : Operator X bot) (x : X) :
+    x ∈ dom (comp ψ φ) ↔ x ∈ dom φ ∧ φ.func x ∈ dom ψ := by
+  change ψ.func (φ.func x) ≠ bot ↔ φ.func x ≠ bot ∧ ψ.func (φ.func x) ≠ bot
+  constructor
+  · intro h
+    exact ⟨fun e =&gt; h (by rw [e, ψ.preserves_bot]), h⟩
+  · exact And.right
+
+def Lip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {M | U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    d j (φ.func x) (φ.func y) ≤ action M (fun i =&gt; d i x y) j}
+
+def GlobalLip (d : I → X → X → ENNReal) (φ : Operator X bot) : Set (Mat I) :=
+  Lip d φ (dom φ)
+
+def CoLip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {M | U.Nonempty ∧ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    action M (fun i =&gt; d i x y) j ≤ d j (φ.func x) (φ.func y)}
+
+variable {d : I → X → X → ENNReal} {φ ψ : Operator X bot}
+  {U V : Set X} {L K : Mat I}
+
+theorem lip_restrict (h : L ∈ Lip d φ V) (hUV : U ⊆ V) : L ∈ Lip d φ U :=
+  ⟨hUV.trans h.1, fun x hx y hy j =&gt; h.2 x (hUV hx) y (hUV hy) j⟩
+
+theorem global_lip_restrict (hU : U ⊆ dom φ) : GlobalLip d φ ⊆ Lip d φ U :=
+  fun _ h =&gt; lip_restrict h hU
+
+theorem lip_family_antitone (hUV : U ⊆ V) : Lip d φ V ⊆ Lip d φ U :=
+  fun _ h =&gt; lip_restrict h hUV
+
+noncomputable def entryInf (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (i j : I) : ENNReal := sInf {a | ∃ M ∈ Lip d φ U, M i j = a}
+
+theorem entryInf_mono (hUV : U ⊆ V) (i j : I) :
+    entryInf d φ U i j ≤ entryInf d φ V i j := by
+  apply sInf_le_sInf
+  rintro a ⟨M, hM, rfl⟩
+  exact ⟨M, lip_restrict hM hUV, rfl⟩
+
+theorem singleton_lip [Subsingleton I] (h : L ∈ Lip d φ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (i : I) :
+    d i (φ.func x) (φ.func y) ≤ L i i * d i x y := by
+  haveI : Unique I := ⟨⟨i⟩, fun a =&gt; Subsingleton.elim a i⟩
+  have hi : (default : I) = i := Subsingleton.elim _ _
+  simpa [action, Finset.univ_unique, hi] using h.2 x hx y hy i
+
+theorem singleton_lip_iff [Subsingleton I] (i : I) :
+    L ∈ Lip d φ U ↔ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U,
+      d i (φ.func x) (φ.func y) ≤ L i i * d i x y := by
+  constructor
+  · intro h
+    exact ⟨h.1, fun _ hx _ hy =&gt; singleton_lip h hx hy i⟩
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, ?_⟩
+    intro x hx y hy j
+    have hj : j = i := Subsingleton.elim _ _
+    subst j
+    haveI : Unique I := ⟨⟨i⟩, fun a =&gt; Subsingleton.elim a i⟩
+    have hi : (default : I) = i := Subsingleton.elim _ _
+    simpa [action, Finset.univ_unique, hi] using h x hx y hy
+
+theorem lip_comp {A B : Mat I} (hU : U ⊆ dom (comp ψ φ))
+    (hA : A ∈ Lip d φ U) (hB : B ∈ Lip d ψ (φ.func '' U)) :
+    mmul B A ∈ Lip d (comp ψ φ) U := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  calc
+    d j (ψ.func (φ.func x)) (ψ.func (φ.func y))
+        ≤ action B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      hB.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+    _ ≤ action B (fun k =&gt; action A (fun i =&gt; d i x y) k) j :=
+      Finset.sum_le_sum fun k _ =&gt; mul_le_mul_right (hA.2 x hx y hy k) _
+    _ = action (mmul B A) (fun i =&gt; d i x y) j := (action_mul _ _ _ _).symm
+
+theorem colip_comp {A B : Mat I} (hU : U ⊆ dom (comp ψ φ))
+    (hA : A ∈ CoLip d φ U) (hB : B ∈ CoLip d ψ (φ.func '' U)) :
+    mmul B A ∈ CoLip d (comp ψ φ) U := by
+  refine ⟨hA.1, hU, ?_⟩
+  intro x hx y hy j
+  calc
+    action (mmul B A) (fun i =&gt; d i x y) j
+        = action B (fun k =&gt; action A (fun i =&gt; d i x y) k) j := action_mul _ _ _ _
+    _ ≤ action B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      Finset.sum_le_sum fun k _ =&gt; mul_le_mul_right (hA.2.2 x hx y hy k) _
+    _ ≤ d j (ψ.func (φ.func x)) (ψ.func (φ.func y)) :=
+      hB.2.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+
+theorem colip_term (h : K ∈ CoLip d φ U) {x y : X}
+    (hx : x ∈ U) (hy : y ∈ U) (i j : I) :
+    K i j * d i x y ≤ d j (φ.func x) (φ.func y) :=
+  (Finset.single_le_sum (fun k _ =&gt; zero_le (K k j * d k x y))
+    (Finset.mem_univ i)).trans (h.2.2 x hx y hy j)
+
+theorem colip_degenerate (h : K ∈ CoLip d φ (dom φ)) {x y : X}
+    (hx : x ∈ dom φ) (hy : y ∈ dom φ) (i j : I)
+    (hout : d j (φ.func x) (φ.func y) = 0) (hin : 0 &lt; d i x y) : K i j = 0 := by
+  have hz : K i j * d i x y = 0 := le_antisymm (hout ▸ colip_term h hx hy i j) (zero_le _)
+  exact (mul_eq_zero.mp hz).resolve_right (ne_of_gt hin)
+
+theorem perturb_forward (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (_hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (ψ.func x) (ψ.func y) ≤ d j (φ.func x) (φ.func y) + δ j + δ j := by
+  calc
+    d j (ψ.func x) (ψ.func y)
+        ≤ d j (ψ.func x) (φ.func x) + d j (φ.func x) (ψ.func y) :=
+      (hd j).triangle _ _ _
+    _ ≤ d j (ψ.func x) (φ.func x) +
+        (d j (φ.func x) (φ.func y) + d j (φ.func y) (ψ.func y)) :=
+      add_le_add le_rfl ((hd j).triangle _ _ _)
+    _ ≤ δ j + (d j (φ.func x) (φ.func y) + δ j) := by
+      apply add_le_add
+      · rw [(hd j).symm]
+        exact hδ x hx j
+      · exact add_le_add le_rfl (hδ y hy j)
+    _ = _ := by rw [add_left_comm, ← add_assoc]
+
+theorem perturb_reverse (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ d j (ψ.func x) (ψ.func y) + δ j + δ j := by
+  apply perturb_forward hd (fun z hz =&gt; ⟨(hU hz).2, (hU hz).1⟩) δ _ hx hy j
+  intro z hz k
+  rw [(hd k).symm]
+  exact hδ z hz k
+
+theorem perturb_lip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    (hL : L ∈ Lip d φ U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (ψ.func x) (ψ.func y) ≤ action L (fun i =&gt; d i x y) j + 2 * δ j := by
+  calc
+    _ ≤ d j (φ.func x) (φ.func y) + δ j + δ j := perturb_forward hd hU δ hδ hx hy j
+    _ ≤ action L (fun i =&gt; d i x y) j + δ j + δ j :=
+      add_le_add (add_le_add (hL.2 x hx y hy j) le_rfl) le_rfl
+    _ = _ := by rw [two_mul, add_assoc]
+
+theorem perturb_colip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    (hK : K ∈ CoLip d φ U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    action K (fun i =&gt; d i x y) j ≤ d j (ψ.func x) (ψ.func y) + 2 * δ j := by
+  simpa [two_mul, add_assoc] using
+    (hK.2.2 x hx y hy j).trans (perturb_reverse hd hU δ hδ hx hy j)
+
+theorem identity_lip (hU : U ⊆ dom (ident : Operator X bot)) :
+    eye ∈ Lip d (ident : Operator X bot) U := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  simp [ident]
+
+theorem identity_colip (hU : U ⊆ dom (ident : Operator X bot)) (hne : U.Nonempty) :
+    eye ∈ CoLip d (ident : Operator X bot) U := by
+  refine ⟨hne, hU, ?_⟩
+  intro x hx y hy j
+  simp [ident]
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Classical
+
+variable {X I : Type} {bot : X} [Fintype I] [Nonempty I]
+
+def chain : List (Operator X bot) → Operator X bot
+  | [] =&gt; ident
+  | φ :: fs =&gt; comp (chain fs) φ
+
+def iterImage : List (Operator X bot) → Set X → Set X
+  | [], U =&gt; U
+  | φ :: fs, U =&gt; iterImage fs (φ.func '' U)
+
+def actual : List (Operator X bot) → Set X → ℕ → Set X
+  | [], U, _ =&gt; U
+  | _ :: _, U, 0 =&gt; U
+  | φ :: fs, U, n + 1 =&gt; actual fs (φ.func '' U) n
+
+theorem chain_image (fs : List (Operator X bot)) (U : Set X) :
+    (chain fs).func '' U = iterImage fs U := by
+  induction fs generalizing U with
+  | nil =&gt; simp [chain, ident, iterImage]
+  | cons φ fs ih =&gt;
+    simpa only [chain, comp, Set.image_image] using ih (φ.func '' U)
+
+theorem actual_prefix (fs : List (Operator X bot)) (U : Set X) (n : ℕ) :
+    actual fs U n = (chain (fs.take n)).func '' U := by
+  induction fs generalizing U n with
+  | nil =&gt; simp [actual, chain, ident]
+  | cons φ fs ih =&gt;
+    cases n with
+    | zero =&gt; simp [actual, chain, ident]
+    | succ n =&gt; simpa [actual, chain, comp, Set.image_image] using ih (φ.func '' U) n
+
+theorem initial_subset {φ ψ : Operator X bot} {U : Set X}
+    (hU : U ⊆ dom (comp ψ φ)) : U ⊆ dom φ :=
+  fun x hx =&gt; ((comp_dom ψ φ x).mp (hU hx)).1
+
+theorem image_subset {φ ψ : Operator X bot} {U : Set X}
+    (hU : U ⊆ dom (comp ψ φ)) : φ.func '' U ⊆ dom ψ := by
+  rintro y ⟨x, hx, rfl⟩
+  exact ((comp_dom ψ φ x).mp (hU hx)).2
+
+theorem actual_domain (fs : List (Operator X bot)) {U : Set X}
+    (hU : U ⊆ dom (chain fs)) (n : ℕ) (hn : n &lt; fs.length) :
+    actual fs U n ⊆ dom fs[n] := by
+  induction fs generalizing U n with
+  | nil =&gt; simp at hn
+  | cons φ fs ih =&gt;
+    cases n with
+    | zero =&gt; exact initial_subset hU
+    | succ n =&gt; exact ih (image_subset hU) n (Nat.lt_of_succ_lt_succ hn)
+
+theorem chain_append (fs gs : List (Operator X bot)) :
+    chain (fs ++ gs) = comp (chain gs) (chain fs) := by
+  induction fs with
+  | nil =&gt; ext x; rfl
+  | cons φ fs ih =&gt;
+    simp only [List.cons_append, chain, ih]
+    rfl
+
+theorem chain_frozen (fs : List (Operator X bot)) : chain fs = OperatorChain fs.reverse := by
+  induction fs using List.reverseRecOn with
+  | nil =&gt; rfl
+  | append_singleton fs φ ih =&gt;
+    rw [chain_append, List.reverse_append]
+    simp only [List.reverse_singleton, List.singleton_append, OperatorChain, ← ih]
+    ext x
+    rfl
+
+theorem display_eye : display (eye : Mat I) = (1 : Matrix I I ENNReal) := by
+  ext j i
+  simp [display, eye, Matrix.one_apply, eq_comm]
+
+theorem display_product (As : List (Mat I)) :
+    display (mprod As) = ((As.map display).reverse).prod := by
+  induction As with
+  | nil =&gt; exact display_eye
+  | cons A As ih =&gt;
+    simp only [mprod_cons, display_mul, ih, List.map_cons, List.reverse_cons,
+      List.prod_append, List.prod_singleton]
+
+def OnSteps (P : Operator X bot → Set X → Mat I → Prop) :
+    Set X → List (Operator X bot × Mat I) → Prop
+  | _, [] =&gt; True
+  | U, s :: ss =&gt; P s.1 U s.2 ∧ OnSteps P (s.1.func '' U) ss
+
+theorem onSteps_iff (P : Operator X bot → Set X → Mat I → Prop)
+    (ss : List (Operator X bot × Mat I)) (U : Set X) :
+    OnSteps P U ss ↔ ∀ n (hn : n &lt; ss.length),
+      P ss[n].1 (actual (ss.map Prod.fst) U n) ss[n].2 := by
+  induction ss generalizing U with
+  | nil =&gt; simp [OnSteps]
+  | cons s ss ih =&gt;
+    constructor
+    · rintro ⟨h, hs⟩ n hn
+      cases n with
+      | zero =&gt; exact h
+      | succ n =&gt; exact (ih _).mp hs n (Nat.lt_of_succ_lt_succ hn)
+    · intro h
+      refine ⟨h 0 (by simp), (ih _).mpr ?_⟩
+      intro n hn
+      exact h (n + 1) (Nat.succ_lt_succ hn)
+
+theorem lip_chain {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : OnSteps (fun φ V M =&gt; M ∈ Lip d φ V) U ss) :
+    mprod (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_lip hU
+  | cons s ss ih =&gt;
+    exact lip_comp hU hs.1 (ih (image_subset hU) hs.2)
+
+theorem colip_chain {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst))) (hne : U.Nonempty)
+    (hs : OnSteps (fun φ V M =&gt; M ∈ CoLip d φ V) U ss) :
+    mprod (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_colip hU hne
+  | cons s ss ih =&gt;
+    exact colip_comp hU hs.1 (ih (image_subset hU) (hne.image _) hs.2)
+
+theorem colip_chain_positive {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) (hlen : ss ≠ []) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : OnSteps (fun φ V M =&gt; M ∈ CoLip d φ V) U ss) :
+    mprod (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U := by
+  cases ss with
+  | nil =&gt; exact (hlen rfl).elim
+  | cons s ss =&gt; exact colip_chain _ hU hs.1.1 hs
+
+theorem lip_chain_indexed {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) (_hlen : ss ≠ []) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : ∀ n (hn : n &lt; ss.length),
+      ss[n].2 ∈ Lip d ss[n].1 (actual (ss.map Prod.fst) U n)) :
+    mprod (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U :=
+  lip_chain ss hU ((onSteps_iff _ ss U).mpr hs)
+
+theorem colip_chain_indexed {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) (hlen : ss ≠ []) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : ∀ n (hn : n &lt; ss.length),
+      ss[n].2 ∈ CoLip d ss[n].1 (actual (ss.map Prod.fst) U n)) :
+    mprod (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U :=
+  colip_chain_positive ss hlen hU ((onSteps_iff _ ss U).mpr hs)
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Chains
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Classical
+
+variable {I X : Type} {bot : X} [Fintype I] [Nonempty I]
+
+/-- All intermediate index sequences, without any support or positivity restriction. -/
+def Interior (I : Type) : ℕ → Type
+  | 0 =&gt; PUnit
+  | n + 1 =&gt; I × Interior I n
+
+instance interiorFintype : (n : ℕ) → Fintype (Interior I n)
+  | 0 =&gt; inferInstanceAs (Fintype PUnit)
+  | n + 1 =&gt; by
+    letI := interiorFintype n
+    exact inferInstanceAs (Fintype (I × Interior I n))
+
+def interiorEquiv : (n : ℕ) → Interior I n ≃ (Fin n → I)
+  | 0 =&gt;
+    { toFun := fun _ =&gt; Fin.elim0
+      invFun := fun _ =&gt; PUnit.unit
+      left_inv := by intro p; cases p; rfl
+      right_inv := by intro f; funext k; exact Fin.elim0 k }
+  | n + 1 =&gt;
+    { toFun := fun p =&gt; Fin.cases p.1 (interiorEquiv n p.2)
+      invFun := fun f =&gt; (f 0, (interiorEquiv n).symm (fun k =&gt; f k.succ))
+      left_inv := by intro p; rcases p with ⟨i, p⟩; simp
+      right_inv := by
+        intro f
+        funext k
+        refine Fin.cases ?_ (fun k =&gt; ?_) k
+        · rfl
+        · simp }
+
+def edges : (A : Mat I) → (As : List (Mat I)) → I → I → Interior I As.length → List ENNReal
+  | A, [], i, j, _ =&gt; [A i j]
+  | A, B :: Bs, i, j, p =&gt; A i p.1 :: edges B Bs p.1 j p.2
+
+def weight (A : Mat I) (As : List (Mat I)) (i j : I) (p : Interior I As.length) : ENNReal :=
+  (edges A As i j p).prod
+
+def AllPositive (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : Prop := ∀ a ∈ edges A As i j p, 0 &lt; a
+
+def HasZero (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : Prop := 0 ∈ edges A As i j p
+
+theorem edges_length (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : (edges A As i j p).length = As.length + 1 := by
+  induction As generalizing A i with
+  | nil =&gt; rfl
+  | cons B Bs ih =&gt; simpa [edges] using congrArg Nat.succ (ih B p.1 p.2)
+
+theorem weight_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : weight A As i j p = 0 ↔ HasZero A As i j p := by
+  simp [weight, HasZero, List.prod_eq_zero_iff]
+
+theorem weight_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : 0 &lt; weight A As i j p ↔ AllPositive A As i j p := by
+  simp [weight, AllPositive, pos_iff_ne_zero, List.prod_eq_zero_iff]
+  constructor
+  · intro h a ha haz
+    exact h (haz ▸ ha)
+  · intro h hz
+    exact h 0 hz rfl
+
+theorem product_expansion (A : Mat I) (As : List (Mat I)) (i j : I) :
+    mprod (A :: As) i j = ∑ p : Interior I As.length, weight A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [weight, edges, Interior]
+  | cons B Bs ih =&gt;
+    change (∑ k, mprod (B :: Bs) k j * A i k) =
+      ∑ p : I × Interior I Bs.length, A i p.1 * weight B Bs p.1 j p.2
+    rw [Fintype.sum_prod_type]
+    apply Finset.sum_congr rfl
+    intro k hk
+    rw [ih B k, Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro p hp
+    exact mul_comm _ _
+
+theorem product_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    mprod (A :: As) i j = 0 ↔ ∀ p : Interior I As.length, HasZero A As i j p := by
+  rw [product_expansion, Finset.sum_eq_zero_iff]
+  simp only [Finset.mem_univ, true_implies, weight_zero_iff]
+
+theorem product_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    0 &lt; mprod (A :: As) i j ↔ ∃ p : Interior I As.length, AllPositive A As i j p := by
+  rw [product_expansion, Finset.sum_pos_iff]
+  simp only [Finset.mem_univ, true_and, weight_positive_iff]
+
+theorem one_step_paths (A : Mat I) (i j : I) :
+    (∀ p : Interior I 0, HasZero A [] i j p) ↔ A i j = 0 := by
+  simp [Interior, HasZero, edges, eq_comm]
+
+theorem one_step_positive (A : Mat I) (i j : I) :
+    (∃ p : Interior I 0, AllPositive A [] i j p) ↔ 0 &lt; A i j := by
+  simp [Interior, AllPositive, edges]
+
+theorem local_path_criteria (d : I → X → X → ENNReal)
+    (fs : List (Operator X bot)) (A B : Mat I) (As Bs : List (Mat I)) (U : Set X)
+    (_hlenL : fs.length = (A :: As).length) (_hlenK : fs.length = (B :: Bs).length)
+    (_hU : U ⊆ dom (chain fs))
+    (_hL : OnSteps (fun φ V M =&gt; M ∈ Lip d φ V) U (fs.zip (A :: As)))
+    (_hK : OnSteps (fun φ V M =&gt; M ∈ CoLip d φ V) U (fs.zip (B :: Bs))) (i j : I) :
+    (mprod (A :: As) i j = 0 ↔ ∀ p : Interior I As.length, HasZero A As i j p) ∧
+    (0 &lt; mprod (B :: Bs) i j ↔ ∃ p : Interior I Bs.length, AllPositive B Bs i j p) :=
+  ⟨product_zero_iff A As i j, product_positive_iff B Bs i j⟩
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Classical
+
+variable {X I : Type} {bot : X} [Fintype I] [Nonempty I]
+  {d : I → X → X → ENNReal} {φ : Operator X bot}
+  {U : Set X} {L K : Mat I}
+
+abbrev Channel (I : Type) := I × I
+
+def Row (L : Mat I) (i j : I) : Prop := ∀ k, k ≠ i → L k j = 0
+def Col (L : Mat I) (i j : I) : Prop := ∀ k, k ≠ j → L i k = 0
+def Diagonal (L : Mat I) : Prop := ∀ i j, i ≠ j → L i j = 0
+def RowDecoupled (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (j : I) : Prop := ∃ L ∈ Lip d φ U, ∃ i, Row L i j
+def ColDecoupled (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (i : I) : Prop := ∃ L ∈ Lip d φ U, ∃ j, Col L i j
+
+theorem diagonal_iff_rows : Diagonal L ↔ ∀ j, Row L j j :=
+  ⟨fun h j k hk =&gt; h k j hk, fun h i j hij =&gt; h j i hij⟩
+
+theorem zero_term (i j : I) (h : L i j = 0) (v : I → ENNReal) : L i j * v i = 0 := by
+  rw [h, zero_mul]
+
+theorem erase_zero_term (i j : I) (h : L i j = 0) (v : I → ENNReal) :
+    action L v j = ∑ k ∈ Finset.univ.erase i, L k j * v k := by
+  simpa [action, h] using
+    (Finset.sum_erase_add Finset.univ (fun k =&gt; L k j * v k) (Finset.mem_univ i)).symm
+
+theorem row_action {i j : I} (h : Row L i j) (v : I → ENNReal) :
+    action L v j = L i j * v i := by
+  apply Finset.sum_eq_single i
+  · intro k hk hki
+    rw [h k hki, zero_mul]
+  · simp
+
+theorem row_lip (hL : L ∈ Lip d φ U) {i j : I} (hr : Row L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤ L i j * d i x y := by
+  simpa only [row_action hr] using hL.2 x hx y hy j
+
+theorem col_contribution {i j : I} (hc : Col L i j) (v : I → ENNReal)
+    (k : I) (hk : k ≠ j) : L i k * v i = 0 := zero_term i k (hc k hk) v
+
+theorem diagonal_lip (hL : L ∈ Lip d φ U) (hD : Diagonal L)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  row_lip hL (fun k hk =&gt; hD k j hk) hx hy
+
+theorem scalar_two_sided (hL : L ∈ Lip d φ U) (hK : K ∈ CoLip d φ U)
+    {j : I} (hr : Row L j j) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  ⟨colip_term hK hx hy j j, row_lip hL hr hx hy⟩
+
+theorem diagonal_two_sided (hL : L ∈ Lip d φ U) (hK : K ∈ CoLip d φ U)
+    (hD : Diagonal L) : ∀ j x, x ∈ U → ∀ y, y ∈ U →
+      K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  fun j x hx y hy =&gt; scalar_two_sided hL hK (fun k hk =&gt; hD k j hk) hx hy
+
+theorem finite_diagonal_two_sided (hL : L ∈ Lip d φ U) (hK : K ∈ CoLip d φ U)
+    (hD : Diagonal L) (hfin : ∀ j, L j j &lt; ⊤ ∧ K j j &lt; ⊤) :
+    ∀ j, L j j &lt; ⊤ ∧ K j j &lt; ⊤ ∧ ∀ x ∈ U, ∀ y ∈ U,
+      K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  fun j =&gt; ⟨(hfin j).1, (hfin j).2, diagonal_two_sided hL hK hD j⟩
+
+theorem positive_channel (hK : K ∈ CoLip d φ U) {i j : I} (hpos : 0 &lt; K i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hin : 0 &lt; d i x y) :
+    0 &lt; d j (φ.func x) (φ.func y) :=
+  (ENNReal.mul_pos (ne_of_gt hpos) (ne_of_gt hin)).trans_le (colip_term hK hx hy i j)
+
+theorem reflects_zero (hK : K ∈ CoLip d φ U) (hpos : ∀ j, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hout : GaugeZeroRelated d (φ.func x) (φ.func y)) : GaugeZeroRelated d x y := by
+  intro j
+  by_contra hne
+  have hp := positive_channel hK (hpos j) hx hy (pos_iff_ne_zero.mpr hne)
+  simpa [hout j] using hp
+
+def Scalars (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (i j : I) : Set ENNReal :=
+  {a | ∀ x ∈ U, ∀ y ∈ U, d j (φ.func x) (φ.func y) ≤ a * d i x y}
+
+def singleInf (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (i j : I) : ENNReal := sInf (Scalars d φ U i j)
+
+theorem scalars_upward {i j : I} {a b : ENNReal}
+    (ha : a ∈ Scalars d φ U i j) (hab : a ≤ b) : b ∈ Scalars d φ U i j :=
+  fun x hx y hy =&gt; (ha x hx y hy).trans (mul_le_mul_left hab _)
+
+theorem above_inf_feasible {i j : I} {a : ENNReal}
+    (ha : singleInf d φ U i j &lt; a) : a ∈ Scalars d φ U i j := by
+  obtain ⟨b, hb, hba⟩ := sInf_lt_iff.mp ha
+  exact scalars_upward hb hba.le
+
+theorem zero_input_obstruction {i j : I} {x y : X}
+    (hx : x ∈ U) (hy : y ∈ U) (hin : d i x y = 0)
+    (hout : 0 &lt; d j (φ.func x) (φ.func y)) :
+    Scalars d φ U i j = ∅ ∧ singleInf d φ U i j = ⊤ := by
+  have hempty : Scalars d φ U i j = ∅ := by
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    intro a ha
+    have h := ha x hx y hy
+    rw [hin, mul_zero] at h
+    exact (not_le_of_gt hout) h
+  exact ⟨hempty, by simp [singleInf, hempty]⟩
+
+theorem positive_finite_attained {i j : I}
+    (hpos : 0 &lt; singleInf d φ U i j) (hfin : singleInf d φ U i j &lt; ⊤) :
+    singleInf d φ U i j ∈ Scalars d φ U i j := by
+  obtain ⟨b, hb, _⟩ := sInf_lt_iff.mp hfin
+  letI : Nonempty (Scalars d φ U i j) := ⟨⟨b, hb⟩⟩
+  intro x hx y hy
+  change d j (φ.func x) (φ.func y) ≤ sInf (Scalars d φ U i j) * d i x y
+  rw [sInf_eq_iInf']
+  rw [ENNReal.iInf_mul (fun _ hz =&gt; ?_)]
+  · exact le_iInf fun a =&gt; a.property x hx y hy
+  · exact False.elim ((ne_of_gt hpos) (by simpa only [singleInf, sInf_eq_iInf'] using hz))
+
+theorem zero_inf_positive_feasible {i j : I}
+    (hzero : singleInf d φ U i j = 0) {a : ENNReal} (ha : 0 &lt; a) (_hfin : a &lt; ⊤) :
+    a ∈ Scalars d φ U i j := above_inf_feasible (hzero ▸ ha)
+
+theorem finite_inf_iff {i j : I} :
+    singleInf d φ U i j &lt; ⊤ ↔ ∃ a, a &lt; ⊤ ∧ a ∈ Scalars d φ U i j := by
+  constructor
+  · intro h
+    obtain ⟨a, ha, hfin⟩ := sInf_lt_iff.mp h
+    exact ⟨a, hfin, ha⟩
+  · rintro ⟨a, hfin, ha⟩
+    exact (sInf_le ha).trans_lt hfin
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Channels
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped Classical
+
+/-- `none` is absorbing; the two ordinary points have infinite input distance
+and unit output distance. The two components are indexed by `Bool`. -/
+def exampleDist (i : Bool) (x y : Option Bool) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else if i then 1 else ⊤
+
+theorem none_ne_some_bool (b : Bool) : (none : Option Bool) ≠ some b := by
+  intro h
+  cases h
+
+@[reducible] def exampleMetric (i : Bool) : ExtendedPseudoMetric (Option Bool) none (exampleDist i) where
+  nonabsorbing := ⟨some false, by simp⟩
+  dist_self := by intro x; simp [exampleDist]
+  symm := by
+    intro x y
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt;
+      norm_num [exampleDist, Option.some_ne_none, none_ne_some_bool]
+  triangle := by
+    intro x y z
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt; fin_cases z &lt;;&gt;
+      norm_num [exampleDist, Option.some_ne_none, none_ne_some_bool]
+  isolate_bot := by intro x hx; simp [exampleDist, hx]
+
+def exampleOp : Operator (Option Bool) none := ident
+def exampleU : Set (Option Bool) := {x | x ≠ none}
+
+theorem example_domain : exampleU.Nonempty ∧ exampleU ⊆ dom exampleOp :=
+  ⟨⟨some false, by simp [exampleU]⟩, fun _ hx =&gt; hx⟩
+
+theorem example_positive_feasible {a : ENNReal} (ha : 0 &lt; a) :
+    a ∈ Scalars exampleDist exampleOp exampleU false true := by
+  intro x hx y hy
+  change x ≠ none at hx
+  change y ≠ none at hy
+  by_cases hxy : x = y
+  · subst y
+    simp [exampleOp, ident, exampleDist]
+  · simp [exampleOp, ident, exampleDist, hxy, hx, hy, ENNReal.mul_top (ne_of_gt ha)]
+
+theorem example_zero_infeasible :
+    0 ∉ Scalars exampleDist exampleOp exampleU false true := by
+  intro h
+  have hh := h (some false) (by simp [exampleU]) (some true) (by simp [exampleU])
+  norm_num [exampleDist, exampleOp, ident, Option.some_ne_none] at hh
+
+theorem example_inf_zero : singleInf exampleDist exampleOp exampleU false true = 0 := by
+  apply le_antisymm _ (zero_le _)
+  by_contra hn
+  obtain ⟨a, ha, hlt⟩ := exists_between (lt_of_not_ge hn)
+  exact (not_lt_of_ge (sInf_le (example_positive_feasible ha))) hlt
+
+theorem zero_not_attained :
+    exampleU.Nonempty ∧ exampleU ⊆ dom exampleOp ∧
+    singleInf exampleDist exampleOp exampleU false true = 0 ∧
+    0 ∉ Scalars exampleDist exampleOp exampleU false true :=
+  ⟨example_domain.1, example_domain.2, example_inf_zero, example_zero_infeasible⟩
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;HCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;HC02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.Lip&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.GlobalLip&quot;}
+      ],
+      &quot;representation&quot;: &quot;Lip是ENNReal系数矩阵的Set，包含U⊆dom φ和全部x,y∈U、输出j的求和上界；GlobalLip取U=dom φ。有限非空指标语境保留。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.CoLip&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_term&quot;}
+      ],
+      &quot;representation&quot;: &quot;CoLip的成员条件依次为U.Nonempty、U⊆dom φ和所有点对及输出分量的求和下界。系数允许0和∞；colip_term从和中抽取单项下界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.Mat&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.display&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mmul&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.action&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.display_mul&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.action_mul&quot;}
+      ],
+      &quot;representation&quot;: &quot;Mat I=I→I→ENNReal，M i j输入在前；display M j i=M i j。mmul B A i j=Σk B k j*A i k，display_mul证明与通常矩阵乘法一致，action_mul证明其作用公式。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.eye&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mprod&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mprod_nil&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mprod_singleton&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.display_eye&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.display_product&quot;}
+      ],
+      &quot;representation&quot;: &quot;eye为Kronecker单位矩阵。列表按施行顺序存储，mprod(A::As)=mprod(As)*A；空积为eye，单项积为该项。display_product证明显示矩阵的乘积等于反向列表的通常乘积。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.chain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.actual&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.iterImage&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.actual_prefix&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.actual_domain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.chain_image&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.chain_frozen&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.OnSteps&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.onSteps_iff&quot;}
+      ],
+      &quot;representation&quot;: &quot;列表按φ1,…,φk存储；actual fs U n对应U_(n+1)。证明实际域为前n步像、各步输入在定义域内、全复合像为逐次像，并证明chain fs=冻结OperatorChain fs.reverse。OnSteps仅保存逐步前提，onSteps_iff从全部实际输入域上的逐项条件构造它。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.Interior&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.interiorEquiv&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.edges&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.edges_length&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.weight&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.AllPositive&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.HasZero&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.product_expansion&quot;}
+      ],
+      &quot;representation&quot;: &quot;非空矩阵列A::As对应n=As.length+1。Interior I As.length与Fin As.length→I等价，包含全部中间序列。edges从固定i到固定j逐层记录恰好n条边；weight为其乘积，AllPositive逐边正，HasZero表示某边为零。n=1的Interior I 0为PUnit。乘积展开为全部路径权重之和。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Channel&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Row&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Col&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Diagonal&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.RowDecoupled&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.ColDecoupled&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.diagonal_iff_rows&quot;}
+      ],
+      &quot;representation&quot;: &quot;Channel=I×I。Row L i j固定输出j且仅输入i可能非零；Col L i j固定输入i且仅输出j可能非零。解耦定义量化合法L和对应唯一可能支撑位置；Diagonal要求所有非对角项为零。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Scalars&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.singleInf&quot;}
+      ],
+      &quot;representation&quot;: &quot;Scalars逐字给出∀x,y∈U的单输入分量标量上界族；singleInf是该Set的sInf，空族自动为∞。纯公式也可用于任意U；在原文U⊆dom φ的范围内就是原定义，与矩阵条目下确界entryInf分开。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.singleton_lip&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.singleton_lip_iff&quot;}
+      ],
+      &quot;representation&quot;: &quot;以Subsingleton I及给定i表示I={i}，证明合法矩阵条件等价于定义域条件和L i i的标量界；全域情形直接取U=dom φ。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.global_lip_restrict&quot;}
+      ],
+      &quot;representation&quot;: &quot;对任意U⊆dom φ，证明GlobalLip d φ⊆Lip d φ U。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-P03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_restrict&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_family_antitone&quot;}
+      ],
+      &quot;representation&quot;: &quot;U⊆V时V上每个合法Lip证书仍在U合法，V⊆dom φ由原证书成员条件得到。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.entryInf&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.entryInf_mono&quot;}
+      ],
+      &quot;representation&quot;: &quot;entryInf取合法矩阵的第i→j项值集的sInf；证书族扩大给出U⊆V时entryInf(U)≤entryInf(V)，包括空族。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-P03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_comp&quot;}
+      ],
+      &quot;representation&quot;: &quot;U⊆dom(ψ∘φ)，A在U、B在φ(U)合法时，mmul B A在同一U上界复合。证明使用有限和单调性及action_mul。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_degenerate&quot;}
+      ],
+      &quot;representation&quot;: &quot;任意全域co-Lip证书，若所给定义域点对输出j零距且输入i正距，则K i j=0；允许输入距离或系数为∞。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_comp&quot;}
+      ],
+      &quot;representation&quot;: &quot;与Lip复合同一实际像域，所选A、B的乘积为复合co-Lip证书；结果非空性由第一步证书取得。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_forward&quot;}
+      ],
+      &quot;representation&quot;: &quot;保留完整扩展伪度量族、公共定义域和逐点δ上界前提；推出ψ点对像距≤φ点对像距+δj+δj。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_reverse&quot;}
+      ],
+      &quot;representation&quot;: &quot;由伪度量对称性交换算子，得到同一U、δ和点对上的反向扰动界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-P08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;在扰动前提下代入φ的所选合法Lip矩阵，得到ψ输出距≤原求和上界+2*δj；所有量均为ENNReal。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;,&quot;HC02-P08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_colip&quot;}
+      ],
+      &quot;representation&quot;: &quot;在同一扰动前提下，将φ的所选合法co-Lip求和下界桥接到ψ输出距+2*δj。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;,&quot;HC02-P09&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_chain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_chain_indexed&quot;}
+      ],
+      &quot;representation&quot;: &quot;非空列表ss逐项存储(φm,Lm)，indexed版本只要求全部实际Um上的逐步合法性和U1⊆dom ck；归纳证明指定mprod合法。通用辅助版本也处理零步。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D04&quot;,&quot;HC02-D05&quot;,&quot;HC02-P05&quot;,&quot;HC02-P14&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_chain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_chain_positive&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_chain_indexed&quot;}
+      ],
+      &quot;representation&quot;: &quot;同样的实际域和指定有序矩阵序列；正长度版本从第一步co-Lip义务推出U1非空，再归纳得到全复合下界，不假设最终下界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D04&quot;,&quot;HC02-D05&quot;,&quot;HC02-P07&quot;,&quot;HC02-P15&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.identity_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;eye在id的任意合法U上是Lip证书，因此包括原文非空U；action_eye证明求和恰等于原分量距离。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P15&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.identity_colip&quot;}
+      ],
+      &quot;representation&quot;: &quot;U.Nonempty和U⊆dom id下，同一eye满足co-Lip定义的全部条件。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P16&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.product_zero_iff&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.one_step_paths&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.local_path_criteria&quot;}
+      ],
+      &quot;representation&quot;: &quot;任意非空矩阵列的(i,j)乘积条目为零当且仅当每条完整路径含零边；local_path_criteria保留同一算子链、长度相等、实际域及两族合法证书的正文语境。证明为更一般的代数展开，不依赖复合界；单步明确退化为A i j=0。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D04&quot;,&quot;HC02-D06&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P17&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.product_positive_iff&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.one_step_positive&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.local_path_criteria&quot;}
+      ],
+      &quot;representation&quot;: &quot;同一正文链条件下，co-Lip乘积条目正当且仅当存在完整全正路径；证明适用于任意ENNReal矩阵。单步唯一空中间序列对应B i j&gt;0。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D04&quot;,&quot;HC02-D06&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P18&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_input_obstruction&quot;}
+      ],
+      &quot;representation&quot;: &quot;给定U中输入零距而输出正距的点对，证明Scalars=∅并同时推出singleInf=∞，排除的标量包括∞。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.positive_finite_attained&quot;}
+      ],
+      &quot;representation&quot;: &quot;0&lt;a&lt;∞时证明a∈Scalars，即全部点对上界。替代证明用ENNReal非空下确界乘法交换定理；a&gt;0排除乘数为∞时的零下确界异常。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.scalars_upward&quot;}
+      ],
+      &quot;representation&quot;: &quot;任意可行a及a≤b，由ENNReal乘法单调性证明b可行。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.above_inf_feasible&quot;}
+      ],
+      &quot;representation&quot;: &quot;证明任意λ&gt;singleInf均可行，允许λ=∞；这包含原文正有限下确界语境。证明从sInf严格上界取得较小可行常数，再向上封闭。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;,&quot;HC02-P20&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P22&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_inf_positive_feasible&quot;}
+      ],
+      &quot;representation&quot;: &quot;singleInf=0且0&lt;λ&lt;∞时，λ满足全部点对单通道界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;,&quot;HC02-P21&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P23&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleDist&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleMetric&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleOp&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleU&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.example_positive_feasible&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_not_attained&quot;}
+      ],
+      &quot;representation&quot;: &quot;X=Option Bool，bot=none，I=Bool；两普通点的false分量距离∞、true分量距离1，bot在两分量均∞隔离。证明全部扩展伪度量公理；φ=id，U为两个普通点。false→true通道每个正标量可行，inf=0而0不可行，U非空且合法。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P24&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.finite_inf_iff&quot;}
+      ],
+      &quot;representation&quot;: &quot;singleInf&lt;∞当且仅当存在λ&lt;∞属于完整Scalars族；直接用sInf_lt_iff和sInf_le，无须假定下确界取到。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_term&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.erase_zero_term&quot;}
+      ],
+      &quot;representation&quot;: &quot;L i j=0使任意ENNReal输入v i的贡献为0，并证明总和等于删除i后的有限和；取v i=d i x y即可，允许距离∞。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P26&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.row_action&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.row_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;Row L i j将输出j的完整求和化为L i j*d i x y，代入合法Lip界得到全部U中点对的单输入界；i与j独立。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;,&quot;HC02-D07&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P27&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.col_contribution&quot;}
+      ],
+      &quot;representation&quot;: &quot;Col L i j蕴含每个k≠j的L i k*v i=0。该代数结论适用于所选合法证书的所有输入点对，不声称其他输入没有贡献。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D07&quot;,&quot;HC02-P25&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P28&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.diagonal_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;Diagonal L及合法Lip证书给出任意j和U中点对的L j j标量上界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D07&quot;,&quot;HC02-P26&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P29&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.scalar_two_sided&quot;}
+      ],
+      &quot;representation&quot;: &quot;仅要求Lip矩阵的输出j行Row L j j；co-Lip矩阵无稀疏假设。从其和中抽取K j j项，与Lip行化简合并为双侧界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D02&quot;,&quot;HC02-D07&quot;,&quot;HC02-P26&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P30&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.diagonal_two_sided&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.finite_diagonal_two_sided&quot;}
+      ],
+      &quot;representation&quot;: &quot;Lip的全部对角行条件给出所有j上的双侧界；第二声明额外保留每个L j j、K j j有限，并同时给出这些系数的全部双侧界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D02&quot;,&quot;HC02-D07&quot;,&quot;HC02-P29&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P31&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.positive_channel&quot;}
+      ],
+      &quot;representation&quot;: &quot;合法co-Lip证书中K i j&gt;0与d i x y&gt;0推出输出j距离&gt;0，适用于全部U中点对和∞边界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P32&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.reflects_zero&quot;}
+      ],
+      &quot;representation&quot;: &quot;所有K j j&gt;0时，U中任意x,y的输出GaugeZeroRelated蕴含输入GaugeZeroRelated；不加入分离性，不推出点相等。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-P31&quot;]
+    }
+  ]
+}
+</code></pre>
+<p>已完整完成并对齐冻结第 2 章与全部 40 项义务；未完成或未确认的数学范围：无。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/astra-6-max/20261109/imports/lean-5400/slots/HCH02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>HCH02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/imports/lean-5400/slots/HCH02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/native-source/selected/HCH02/physical-1/output/response.md">answer · response.md</a><span class="hash">SHA256 4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/claim-public-sources/HCH02.json">review · HCH02.json</a><span class="hash">SHA256 5a7621fc33d17d7eb6c3deaf121f321d1244d6423f39322ffe00ba6c5e377bf2</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 e136cb04694a8e371cbb065cdabec421a3324bcc14418ff7d446a2fcc35d9815</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Complete independent fresh A1 adjudication of the entire original answer and supplied mathematical material; exact raw bytes/semantic review retained. Native conditions and human approval are separate.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>HC02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Lip 是全部合法矩阵的 Set，包含 U⊆dom φ 与 U 内任意点对、任意输出 j 的完整 ENNReal 有限和上界；GlobalLip 取 dom φ。变量允许任意 d，故当然包括原有限非空规范族，没有额外分离/有限距离限制。</p>
+<h3>HC02-D02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> CoLip 是完整矩阵集合，明确保存 U.Nonempty、U⊆dom φ 及 action M d≤输出距；非空要求没有被域包含或空真替代，条目仍含零和无穷。</p>
+<h3>HC02-D03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Mat 的存储 M i j 为输入 i 到输出 j；display M j i=M i j 且 display_mul 为普通 display B * display A 的真实等式。mmul B A i j=Σk B k j*A i k，action_mul 也证明相同顺序的实际距离向量作用。</p>
+<h3>HC02-D04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> eye 是 Kronecker δ，mprod 从施行顺序列表递归为尾积乘首矩阵，nil=eye、singleton=A；display_eye/display_product 将其桥接到普通矩阵逆序列表 prod，明确给出 Lk⋯L1 和零步单位。</p>
+<h3>HC02-D05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> chain 按原施行顺序实际复合；actual 是每个前缀对初域的逐次像，actual_prefix、chain_image 给前缀/全复合像等式，actual_domain 从原全复合合法域证明每步真实输入域合法。chain_frozen 与冻结 OperatorChain 的逆序表示相等；OnSteps 只保存每个原算子在实际域上的单步证书，没有最终复合结论字段。</p>
+<h3>HC02-D06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Interior I n 是所有 n 个中间指标的有限积，interiorEquiv 明证与 Fin n→I 双射，无正边筛选。edges 依施行次序含全部 n+1 条边，weight 是其乘积，AllPositive/HasZero 分别检查全部正边/存在零边；Interior I 0=PUnit 保留单步唯一空中间序列。</p>
+<h3>HC02-D07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Channel=I×I；Row L i j 仅限制输出 j 行的其他输入，Col L i j 仅限制输入 i 列的其他输出。RowDecoupled/ColDecoupled 真实量化 ∃合法 L 及任意唯一 i/唯一 j，不强迫 i=j；Diagonal 与全部对角 Row 等价。</p>
+<h3>HC02-D08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> Scalars d φ U i j 是同一 U 内全部点对所满足的单通道 ENNReal 系数集合，singleInf=sInf Scalars。定义在更一般 U 上仍有意义，合法域语境可直接实例化；它与任意矩阵条目及 entryInf 分开，空族下确界仍为 top。</p>
+<h3>HC02-P01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> singleton_lip 由 Subsingleton I 与指定 i 将完整有限和化为唯一 L i i*d i；singleton_lip_iff 反向重建整个 Lip 证书并保留 U⊆dom φ，故覆盖单分量退化。</p>
+<h3>HC02-P02</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> global_lip_restrict 把 dom φ 上全部证书通过原 hU:U⊆dom φ 限制到 U；不另加非空条件。</p>
+<h3>HC02-P03</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_restrict 将域包含及全部点对不等式限制到 U⊆V，lip_family_antitone 给真实证书族逆向包含。</p>
+<h3>HC02-P04</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> entryInf 是合法矩阵条目像集的 sInf；entryInf_mono 用限制后的同一矩阵证明原大域条目像集包含于小域条目像集，再正确反向比较 sInf，不假设最优矩阵存在。</p>
+<h3>HC02-P05</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_comp 在 U 上读取 A，在精确像 φ.func''U 上读取 B，用 ENNReal 有限和/乘法单调性及 action_mul 得到 mmul B A 的真实复合 Lip 界；保留 U⊆dom(comp ψ φ)。</p>
+<h3>HC02-P06</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_degenerate 在原 dom φ 的实际见证点对从 CoLip 非负和抽出 K i j 项，输出零距迫使乘积零；正输入距排除右因子零从而推出 K i j=0，含无限系数/距离边界。</p>
+<h3>HC02-P07</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_comp 独立将两个真实像域上的下界矩阵按 mmul B A 复合，用 action_mul 和非负乘法单调性证明下界；初域非空由第一步 CoLip 取出，没有遗漏非空。</p>
+<h3>HC02-P08</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_forward 从真实伪度量三角不等式两次、对称性及 U 上每点偏差≤δ，证明 ψ 点对输出距≤φ 点对输出距+δ+δ；保留公共定义域，允许 ENNReal top。</p>
+<h3>HC02-P09</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_reverse 对调两算子和公共域，用距离对称性转换同一 hδ，再应用已证正向扰动；给原文反向点对界，不做无穷减法。</p>
+<h3>HC02-P10</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_lip 将 φ 的完整所选 Lip 上界代入正向扰动，并通过 two_mul/加法结合得到 ψ 输出距≤action L d+2*δ，所有 U 中点对均保留。</p>
+<h3>HC02-P11</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> perturb_colip 把 φ 的完整 CoLip 求和下界与反向扰动传递，得到 action K d≤ψ 输出距+2*δ；没有将 Lip 上界错用为下界。</p>
+<h3>HC02-P12</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_chain 由执行顺序 ss 的逐步实际域 OnSteps 归纳构造指定 mprod，尾链输入恰为首算子真实像。lip_chain_indexed 从所有 actual Um 上的原逐步证书经 onSteps_iff 导出同一结论，涵盖任意正长度，没有把最终复合界当输入。</p>
+<h3>HC02-P13</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> colip_chain 独立完成下界链归纳，非空性传给真实像；colip_chain_positive/indexed 对非空列表直接从第一步 CoLip 获取 U 非空，不额外强化正长度原前提，矩阵仍为原指定逆序连乘。</p>
+<h3>HC02-P14</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> identity_lip 用 action_eye 的精确有限和恒等式给任意合法 U 的恒等算子单位 Lip 界；这是比原非空 U 更强的版本，和 chain nil/mprod nil 的实际定义一致。</p>
+<h3>HC02-P15</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> identity_colip 明确接收 U.Nonempty 和 U⊆dom ident，以 action_eye 给单位下界，完整保留零步 CoLip 的非空要求。</p>
+<h3>HC02-P16</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> product_expansion 对全部 Interior 路径展开指定有序矩阵乘积；product_zero_iff 用有限非负和为零及 ENNReal 乘积零 iff 含零因子得到所有完整路径含零。local_path_criteria 保留同一原算子链/长度/实际逐步证书语境；one_step_paths 直接核验唯一空中间序列的单条目边界。</p>
+<h3>HC02-P17</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> product_positive_iff 用完整有限路径权重和为正 iff 有正项，weight_positive_iff 将正项准确等价为所有实际边正。该纯代数结论可特化 local_path_criteria 的同一 CoLip 链；one_step_positive 给 n=1 的真实唯一空序列，未预筛路径。</p>
+<h3>HC02-P18</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_input_obstruction 在 U 的见证点对对任意 a∈Scalars 代入输入零距，mul_zero 迫使正输出≤0，故 Scalars=∅且 singleInf=top；明确排除包括 top 在内的所有系数。</p>
+<h3>HC02-P19</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> positive_finite_attained 从 finite inf 得到 Scalars 非空，再用 ENNReal.iInf_mul 的精确侧条件将同一输入距离乘到非空下确界中。正 inf 排除输入距离 top 时可能出现的零下确界异常；每个点对的全部可行界取下确界，真正证明 inf∈Scalars，不把取到性作为假设。</p>
+<h3>HC02-P20</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalars_upward 逐个 U 内点对用 ENNReal 乘法单调性把合法 a 扩大到 b≥a，保持原输出上界，允许 b=top。</p>
+<h3>HC02-P21</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> above_inf_feasible 从 singleInf&lt;a 由 sInf_lt_iff 取得较小可行 b，再用向上封闭推出 a 可行；这比原正有限 inf 语境更一般，涵盖严格上界为 top。</p>
+<h3>HC02-P22</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_inf_positive_feasible 将 inf=0 与 0&lt;a 代入严格上确界可行定理，保留原 a&lt;top 限制，确实对全部 U 中点对成立。</p>
+<h3>HC02-P23</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 实际模型 X=Option Bool、bot=none、I=Bool，两普通点 false 输入分量距离 top、true 输出分量距离1，吸收点在两分量均被 top 隔离。exampleMetric 逐一证明真实扩展伪度量公理；φ=id、U=两个普通点且非空合法。全部正 a 可行、0 不可行并证明 inf=0，zero_not_attained 组合完整实际反例而非假设其存在。</p>
+<h3>HC02-P24</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> finite_inf_iff 直接由 sInf_lt_iff 得到有限可行系数；反向用 sInf_le 和可行系数有限。没有依赖正 inf 或取到性，因此 inf=0 的非取到分支仍完整。</p>
+<h3>HC02-P25</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_term 对任意 ENNReal 输入 v（含 top）用零乘法证明该项零；erase_zero_term 用有限和删项恒等式证明实际总和可删除 i 项，没有扩大为输出距为零或真实依赖性。</p>
+<h3>HC02-P26</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> row_action 在任意独立 i,j 上将输出 j 的行和化为唯一输入项；row_lip 将完整合法 Lip 证书代入此等式，得到所有 U 点对的交叉单行界，不强迫 i=j。</p>
+<h3>HC02-P27</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> col_contribution 在任意固定输入 i、唯一可能输出 j 的 Col 条件下，对全部 k≠j 证明 L i k*v i=0；适用于所选证书输入距离，无实际算子依赖性或其他输入贡献的额外承诺。</p>
+<h3>HC02-P28</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> diagonal_lip 对任意 j 由 Diagonal L 导出 Row L j j，再用 row_lip 得全部分量的标量上界；未用不必要有限系数假设。</p>
+<h3>HC02-P29</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> scalar_two_sided 只接收 Lip 的指定 Row L j j；K 仅要求合法 CoLip。下界用 colip_term 从 K 的完整行和抽取对角项，上界由稀疏 L 得到，无 K 稀疏、正性或有限性额外限制。</p>
+<h3>HC02-P30</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> diagonal_two_sided 对所有 j 同时给双侧界；finite_diagonal_two_sided 额外明确保存每个 L j j 与 K j j 有限的合取及同一全部点对界。只声明系数有限，不推出所有输入或输出距离有限。</p>
+<h3>HC02-P31</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> positive_channel 从真实 CoLip 单项下界与两个正 ENNReal 因子的正乘积推出输出 j 正距，适用任意交叉 i,j、U 内全部点对及 top 边界，不依赖有限逆。</p>
+<h3>HC02-P32</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> reflects_zero 对任意分量 j 反设输入正距，用正对角 CoLip 通道推出输出正距，与输出 GaugeZeroRelated 矛盾，故反射全族零距关系；没有族分离假设或点值相等结论。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（40项）</summary><div class="prose"><h3>HC02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Lip 是全部合法矩阵的 Set，包含 U⊆dom φ 与 U 内任意点对、任意输出 j 的完整 ENNReal 有限和上界；GlobalLip 取 dom φ。变量允许任意 d，故当然包括原有限非空规范族，没有额外分离/有限距离限制。</p>
+<h3>HC02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> CoLip 是完整矩阵集合，明确保存 U.Nonempty、U⊆dom φ 及 action M d≤输出距；非空要求没有被域包含或空真替代，条目仍含零和无穷。</p>
+<h3>HC02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Mat 的存储 M i j 为输入 i 到输出 j；display M j i=M i j 且 display_mul 为普通 display B * display A 的真实等式。mmul B A i j=Σk B k j*A i k，action_mul 也证明相同顺序的实际距离向量作用。</p>
+<h3>HC02-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> eye 是 Kronecker δ，mprod 从施行顺序列表递归为尾积乘首矩阵，nil=eye、singleton=A；display_eye/display_product 将其桥接到普通矩阵逆序列表 prod，明确给出 Lk⋯L1 和零步单位。</p>
+<h3>HC02-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> chain 按原施行顺序实际复合；actual 是每个前缀对初域的逐次像，actual_prefix、chain_image 给前缀/全复合像等式，actual_domain 从原全复合合法域证明每步真实输入域合法。chain_frozen 与冻结 OperatorChain 的逆序表示相等；OnSteps 只保存每个原算子在实际域上的单步证书，没有最终复合结论字段。</p>
+<h3>HC02-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Interior I n 是所有 n 个中间指标的有限积，interiorEquiv 明证与 Fin n→I 双射，无正边筛选。edges 依施行次序含全部 n+1 条边，weight 是其乘积，AllPositive/HasZero 分别检查全部正边/存在零边；Interior I 0=PUnit 保留单步唯一空中间序列。</p>
+<h3>HC02-D07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Channel=I×I；Row L i j 仅限制输出 j 行的其他输入，Col L i j 仅限制输入 i 列的其他输出。RowDecoupled/ColDecoupled 真实量化 ∃合法 L 及任意唯一 i/唯一 j，不强迫 i=j；Diagonal 与全部对角 Row 等价。</p>
+<h3>HC02-D08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> Scalars d φ U i j 是同一 U 内全部点对所满足的单通道 ENNReal 系数集合，singleInf=sInf Scalars。定义在更一般 U 上仍有意义，合法域语境可直接实例化；它与任意矩阵条目及 entryInf 分开，空族下确界仍为 top。</p>
+<h3>HC02-P01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> singleton_lip 由 Subsingleton I 与指定 i 将完整有限和化为唯一 L i i*d i；singleton_lip_iff 反向重建整个 Lip 证书并保留 U⊆dom φ，故覆盖单分量退化。</p>
+<h3>HC02-P02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> global_lip_restrict 把 dom φ 上全部证书通过原 hU:U⊆dom φ 限制到 U；不另加非空条件。</p>
+<h3>HC02-P03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_restrict 将域包含及全部点对不等式限制到 U⊆V，lip_family_antitone 给真实证书族逆向包含。</p>
+<h3>HC02-P04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> entryInf 是合法矩阵条目像集的 sInf；entryInf_mono 用限制后的同一矩阵证明原大域条目像集包含于小域条目像集，再正确反向比较 sInf，不假设最优矩阵存在。</p>
+<h3>HC02-P05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_comp 在 U 上读取 A，在精确像 φ.func''U 上读取 B，用 ENNReal 有限和/乘法单调性及 action_mul 得到 mmul B A 的真实复合 Lip 界；保留 U⊆dom(comp ψ φ)。</p>
+<h3>HC02-P06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_degenerate 在原 dom φ 的实际见证点对从 CoLip 非负和抽出 K i j 项，输出零距迫使乘积零；正输入距排除右因子零从而推出 K i j=0，含无限系数/距离边界。</p>
+<h3>HC02-P07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_comp 独立将两个真实像域上的下界矩阵按 mmul B A 复合，用 action_mul 和非负乘法单调性证明下界；初域非空由第一步 CoLip 取出，没有遗漏非空。</p>
+<h3>HC02-P08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_forward 从真实伪度量三角不等式两次、对称性及 U 上每点偏差≤δ，证明 ψ 点对输出距≤φ 点对输出距+δ+δ；保留公共定义域，允许 ENNReal top。</p>
+<h3>HC02-P09</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_reverse 对调两算子和公共域，用距离对称性转换同一 hδ，再应用已证正向扰动；给原文反向点对界，不做无穷减法。</p>
+<h3>HC02-P10</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_lip 将 φ 的完整所选 Lip 上界代入正向扰动，并通过 two_mul/加法结合得到 ψ 输出距≤action L d+2*δ，所有 U 中点对均保留。</p>
+<h3>HC02-P11</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> perturb_colip 把 φ 的完整 CoLip 求和下界与反向扰动传递，得到 action K d≤ψ 输出距+2*δ；没有将 Lip 上界错用为下界。</p>
+<h3>HC02-P12</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_chain 由执行顺序 ss 的逐步实际域 OnSteps 归纳构造指定 mprod，尾链输入恰为首算子真实像。lip_chain_indexed 从所有 actual Um 上的原逐步证书经 onSteps_iff 导出同一结论，涵盖任意正长度，没有把最终复合界当输入。</p>
+<h3>HC02-P13</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> colip_chain 独立完成下界链归纳，非空性传给真实像；colip_chain_positive/indexed 对非空列表直接从第一步 CoLip 获取 U 非空，不额外强化正长度原前提，矩阵仍为原指定逆序连乘。</p>
+<h3>HC02-P14</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> identity_lip 用 action_eye 的精确有限和恒等式给任意合法 U 的恒等算子单位 Lip 界；这是比原非空 U 更强的版本，和 chain nil/mprod nil 的实际定义一致。</p>
+<h3>HC02-P15</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> identity_colip 明确接收 U.Nonempty 和 U⊆dom ident，以 action_eye 给单位下界，完整保留零步 CoLip 的非空要求。</p>
+<h3>HC02-P16</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> product_expansion 对全部 Interior 路径展开指定有序矩阵乘积；product_zero_iff 用有限非负和为零及 ENNReal 乘积零 iff 含零因子得到所有完整路径含零。local_path_criteria 保留同一原算子链/长度/实际逐步证书语境；one_step_paths 直接核验唯一空中间序列的单条目边界。</p>
+<h3>HC02-P17</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> product_positive_iff 用完整有限路径权重和为正 iff 有正项，weight_positive_iff 将正项准确等价为所有实际边正。该纯代数结论可特化 local_path_criteria 的同一 CoLip 链；one_step_positive 给 n=1 的真实唯一空序列，未预筛路径。</p>
+<h3>HC02-P18</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_input_obstruction 在 U 的见证点对对任意 a∈Scalars 代入输入零距，mul_zero 迫使正输出≤0，故 Scalars=∅且 singleInf=top；明确排除包括 top 在内的所有系数。</p>
+<h3>HC02-P19</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> positive_finite_attained 从 finite inf 得到 Scalars 非空，再用 ENNReal.iInf_mul 的精确侧条件将同一输入距离乘到非空下确界中。正 inf 排除输入距离 top 时可能出现的零下确界异常；每个点对的全部可行界取下确界，真正证明 inf∈Scalars，不把取到性作为假设。</p>
+<h3>HC02-P20</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> scalars_upward 逐个 U 内点对用 ENNReal 乘法单调性把合法 a 扩大到 b≥a，保持原输出上界，允许 b=top。</p>
+<h3>HC02-P21</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> above_inf_feasible 从 singleInf&lt;a 由 sInf_lt_iff 取得较小可行 b，再用向上封闭推出 a 可行；这比原正有限 inf 语境更一般，涵盖严格上界为 top。</p>
+<h3>HC02-P22</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_inf_positive_feasible 将 inf=0 与 0&lt;a 代入严格上确界可行定理，保留原 a&lt;top 限制，确实对全部 U 中点对成立。</p>
+<h3>HC02-P23</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 实际模型 X=Option Bool、bot=none、I=Bool，两普通点 false 输入分量距离 top、true 输出分量距离1，吸收点在两分量均被 top 隔离。exampleMetric 逐一证明真实扩展伪度量公理；φ=id、U=两个普通点且非空合法。全部正 a 可行、0 不可行并证明 inf=0，zero_not_attained 组合完整实际反例而非假设其存在。</p>
+<h3>HC02-P24</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> finite_inf_iff 直接由 sInf_lt_iff 得到有限可行系数；反向用 sInf_le 和可行系数有限。没有依赖正 inf 或取到性，因此 inf=0 的非取到分支仍完整。</p>
+<h3>HC02-P25</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_term 对任意 ENNReal 输入 v（含 top）用零乘法证明该项零；erase_zero_term 用有限和删项恒等式证明实际总和可删除 i 项，没有扩大为输出距为零或真实依赖性。</p>
+<h3>HC02-P26</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> row_action 在任意独立 i,j 上将输出 j 的行和化为唯一输入项；row_lip 将完整合法 Lip 证书代入此等式，得到所有 U 点对的交叉单行界，不强迫 i=j。</p>
+<h3>HC02-P27</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> col_contribution 在任意固定输入 i、唯一可能输出 j 的 Col 条件下，对全部 k≠j 证明 L i k*v i=0；适用于所选证书输入距离，无实际算子依赖性或其他输入贡献的额外承诺。</p>
+<h3>HC02-P28</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> diagonal_lip 对任意 j 由 Diagonal L 导出 Row L j j，再用 row_lip 得全部分量的标量上界；未用不必要有限系数假设。</p>
+<h3>HC02-P29</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> scalar_two_sided 只接收 Lip 的指定 Row L j j；K 仅要求合法 CoLip。下界用 colip_term 从 K 的完整行和抽取对角项，上界由稀疏 L 得到，无 K 稀疏、正性或有限性额外限制。</p>
+<h3>HC02-P30</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> diagonal_two_sided 对所有 j 同时给双侧界；finite_diagonal_two_sided 额外明确保存每个 L j j 与 K j j 有限的合取及同一全部点对界。只声明系数有限，不推出所有输入或输出距离有限。</p>
+<h3>HC02-P31</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> positive_channel 从真实 CoLip 单项下界与两个正 ENNReal 因子的正乘积推出输出 j 正距，适用任意交叉 i,j、U 内全部点对及 top 边界，不依赖有限逆。</p>
+<h3>HC02-P32</h3>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> reflects_zero 对任意分量 j 反设输入正距，用正对角 CoLip 通道推出输出正距，与输出 GaugeZeroRelated 矛盾，故反射全族零距关系；没有族分离假设或点值相等结论。</p>
+</div></details><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><p>已完成全部 40 项义务。所有交付 Lean 文件均已用 Lean 4.29.1 和指定 mathlib 提交离线编译通过；108 个声明的公理审计仅出现 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。两份冻结前置源码与附件逐字一致，未作修改。</p>
+<p>数学来源：Zhe Li（Glen Li / glenzli），<a href="https://orcid.org/0009-0006-6536-3453">ORCID</a>，<a href="https://glenzli.com/books/oet/">The Operator Evolution Theory</a>，<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>。以下是对指定历史快照的形式化改编；原附前置模块、署名和许可证文件继续保留。</p>
+<pre><code class="language-text">leanprover/lean4:v4.29.1
+</code></pre>
+<pre><code class="language-toml">name = &quot;hch02&quot;
+version = &quot;0.1.0&quot;
+defaultTargets = [&quot;HCH02&quot;]
+
+[[require]]
+name = &quot;mathlib&quot;
+git = &quot;https://github.com/leanprover-community/mathlib4.git&quot;
+rev = &quot;5e932f97dd25535344f80f9dd8da3aab83df0fe6&quot;
+
+[[lean_lib]]
+name = &quot;HCH02&quot;
+roots = [&quot;Main&quot;]
+globs = [&quot;Main&quot;, &quot;Bounds&quot;, &quot;Chains&quot;, &quot;Paths&quot;, &quot;Channels&quot;, &quot;Counterexample&quot;,
+  &quot;formal_oet.vol_01.ch_01_foundations.gauge_space&quot;,
+  &quot;formal_oet.vol_01.ch_01_foundations.operator_space&quot;]
+</code></pre>
+<pre><code class="language-lean">import Bounds
+import Chains
+import Paths
+import Channels
+import Counterexample
+</code></pre>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_01_foundations.operator_space
+import Mathlib.Data.ENNReal.Inv
+import Mathlib.Data.Matrix.Basic
+
+/-
+Formalization of the supplied historical Chapter 2 of The Operator Evolution Theory.
+Mathematical source: Zhe Li / Glen Li / glenzli, https://glenzli.com/books/oet/.
+License: CC BY 4.0. This Lean adaptation is AI-generated for the frozen HCH02 task.
+-/
+namespace HCH02
+
+noncomputable section
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+open scoped Classical
+
+variable {X I : Type} {bot : X} [Fintype I] [Nonempty I]
+
+abbrev Mat (I : Type) := I → I → ENNReal
+
+def display (M : Mat I) : Matrix I I ENNReal := fun j i =&gt; M i j
+
+def mmul (B A : Mat I) : Mat I := fun i j =&gt; ∑ k, B k j * A i k
+
+def action (M : Mat I) (v : I → ENNReal) (j : I) : ENNReal :=
+  ∑ i, M i j * v i
+
+theorem display_mul (B A : Mat I) : display (mmul B A) = display B * display A := rfl
+
+noncomputable def eye : Mat I := fun i j =&gt; if i = j then 1 else 0
+
+@[simp] theorem action_eye (v : I → ENNReal) (j : I) : action eye v j = v j := by
+  classical
+  simp [action, eye]
+
+@[simp] theorem mmul_eye (A : Mat I) : mmul A eye = A := by
+  classical
+  funext i j
+  simp [mmul, eye]
+
+@[simp] theorem eye_mmul (A : Mat I) : mmul eye A = A := by
+  classical
+  funext i j
+  simp [mmul, eye]
+
+theorem action_mul (B A : Mat I) (v : I → ENNReal) (j : I) :
+    action (mmul B A) v j = action B (fun k =&gt; action A v k) j := by
+  classical
+  simp only [action, mmul, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  exact Finset.sum_comm
+
+noncomputable def mprod : List (Mat I) → Mat I
+  | [] =&gt; eye
+  | A :: As =&gt; mmul (mprod As) A
+
+@[simp] theorem mprod_nil : mprod ([] : List (Mat I)) = eye := rfl
+@[simp] theorem mprod_cons (A : Mat I) (As : List (Mat I)) :
+    mprod (A :: As) = mmul (mprod As) A := rfl
+@[simp] theorem mprod_singleton (A : Mat I) : mprod [A] = A := by simp
+
+def comp (ψ φ : Operator X bot) : Operator X bot :=
+  ⟨ψ.func ∘ φ.func, by simp [φ.preserves_bot, ψ.preserves_bot]⟩
+
+def ident : Operator X bot := ⟨id, rfl⟩
+
+theorem comp_dom (ψ φ : Operator X bot) (x : X) :
+    x ∈ dom (comp ψ φ) ↔ x ∈ dom φ ∧ φ.func x ∈ dom ψ := by
+  change ψ.func (φ.func x) ≠ bot ↔ φ.func x ≠ bot ∧ ψ.func (φ.func x) ≠ bot
+  constructor
+  · intro h
+    exact ⟨fun e =&gt; h (by rw [e, ψ.preserves_bot]), h⟩
+  · exact And.right
+
+def Lip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {M | U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    d j (φ.func x) (φ.func y) ≤ action M (fun i =&gt; d i x y) j}
+
+def GlobalLip (d : I → X → X → ENNReal) (φ : Operator X bot) : Set (Mat I) :=
+  Lip d φ (dom φ)
+
+def CoLip (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (Mat I) :=
+  {M | U.Nonempty ∧ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j,
+    action M (fun i =&gt; d i x y) j ≤ d j (φ.func x) (φ.func y)}
+
+variable {d : I → X → X → ENNReal} {φ ψ : Operator X bot}
+  {U V : Set X} {L K : Mat I}
+
+theorem lip_restrict (h : L ∈ Lip d φ V) (hUV : U ⊆ V) : L ∈ Lip d φ U :=
+  ⟨hUV.trans h.1, fun x hx y hy j =&gt; h.2 x (hUV hx) y (hUV hy) j⟩
+
+theorem global_lip_restrict (hU : U ⊆ dom φ) : GlobalLip d φ ⊆ Lip d φ U :=
+  fun _ h =&gt; lip_restrict h hU
+
+theorem lip_family_antitone (hUV : U ⊆ V) : Lip d φ V ⊆ Lip d φ U :=
+  fun _ h =&gt; lip_restrict h hUV
+
+noncomputable def entryInf (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (U : Set X) (i j : I) : ENNReal := sInf {a | ∃ M ∈ Lip d φ U, M i j = a}
+
+theorem entryInf_mono (hUV : U ⊆ V) (i j : I) :
+    entryInf d φ U i j ≤ entryInf d φ V i j := by
+  apply sInf_le_sInf
+  rintro a ⟨M, hM, rfl⟩
+  exact ⟨M, lip_restrict hM hUV, rfl⟩
+
+theorem singleton_lip [Subsingleton I] (h : L ∈ Lip d φ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (i : I) :
+    d i (φ.func x) (φ.func y) ≤ L i i * d i x y := by
+  haveI : Unique I := ⟨⟨i⟩, fun a =&gt; Subsingleton.elim a i⟩
+  have hi : (default : I) = i := Subsingleton.elim _ _
+  simpa [action, Finset.univ_unique, hi] using h.2 x hx y hy i
+
+theorem singleton_lip_iff [Subsingleton I] (i : I) :
+    L ∈ Lip d φ U ↔ U ⊆ dom φ ∧ ∀ x ∈ U, ∀ y ∈ U,
+      d i (φ.func x) (φ.func y) ≤ L i i * d i x y := by
+  constructor
+  · intro h
+    exact ⟨h.1, fun _ hx _ hy =&gt; singleton_lip h hx hy i⟩
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, ?_⟩
+    intro x hx y hy j
+    have hj : j = i := Subsingleton.elim _ _
+    subst j
+    haveI : Unique I := ⟨⟨i⟩, fun a =&gt; Subsingleton.elim a i⟩
+    have hi : (default : I) = i := Subsingleton.elim _ _
+    simpa [action, Finset.univ_unique, hi] using h x hx y hy
+
+theorem lip_comp {A B : Mat I} (hU : U ⊆ dom (comp ψ φ))
+    (hA : A ∈ Lip d φ U) (hB : B ∈ Lip d ψ (φ.func '' U)) :
+    mmul B A ∈ Lip d (comp ψ φ) U := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  calc
+    d j (ψ.func (φ.func x)) (ψ.func (φ.func y))
+        ≤ action B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      hB.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+    _ ≤ action B (fun k =&gt; action A (fun i =&gt; d i x y) k) j :=
+      Finset.sum_le_sum fun k _ =&gt; mul_le_mul_right (hA.2 x hx y hy k) _
+    _ = action (mmul B A) (fun i =&gt; d i x y) j := (action_mul _ _ _ _).symm
+
+theorem colip_comp {A B : Mat I} (hU : U ⊆ dom (comp ψ φ))
+    (hA : A ∈ CoLip d φ U) (hB : B ∈ CoLip d ψ (φ.func '' U)) :
+    mmul B A ∈ CoLip d (comp ψ φ) U := by
+  refine ⟨hA.1, hU, ?_⟩
+  intro x hx y hy j
+  calc
+    action (mmul B A) (fun i =&gt; d i x y) j
+        = action B (fun k =&gt; action A (fun i =&gt; d i x y) k) j := action_mul _ _ _ _
+    _ ≤ action B (fun k =&gt; d k (φ.func x) (φ.func y)) j :=
+      Finset.sum_le_sum fun k _ =&gt; mul_le_mul_right (hA.2.2 x hx y hy k) _
+    _ ≤ d j (ψ.func (φ.func x)) (ψ.func (φ.func y)) :=
+      hB.2.2 _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩ j
+
+theorem colip_term (h : K ∈ CoLip d φ U) {x y : X}
+    (hx : x ∈ U) (hy : y ∈ U) (i j : I) :
+    K i j * d i x y ≤ d j (φ.func x) (φ.func y) :=
+  (Finset.single_le_sum (fun k _ =&gt; zero_le (K k j * d k x y))
+    (Finset.mem_univ i)).trans (h.2.2 x hx y hy j)
+
+theorem colip_degenerate (h : K ∈ CoLip d φ (dom φ)) {x y : X}
+    (hx : x ∈ dom φ) (hy : y ∈ dom φ) (i j : I)
+    (hout : d j (φ.func x) (φ.func y) = 0) (hin : 0 &lt; d i x y) : K i j = 0 := by
+  have hz : K i j * d i x y = 0 := le_antisymm (hout ▸ colip_term h hx hy i j) (zero_le _)
+  exact (mul_eq_zero.mp hz).resolve_right (ne_of_gt hin)
+
+theorem perturb_forward (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (_hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (ψ.func x) (ψ.func y) ≤ d j (φ.func x) (φ.func y) + δ j + δ j := by
+  calc
+    d j (ψ.func x) (ψ.func y)
+        ≤ d j (ψ.func x) (φ.func x) + d j (φ.func x) (ψ.func y) :=
+      (hd j).triangle _ _ _
+    _ ≤ d j (ψ.func x) (φ.func x) +
+        (d j (φ.func x) (φ.func y) + d j (φ.func y) (ψ.func y)) :=
+      add_le_add le_rfl ((hd j).triangle _ _ _)
+    _ ≤ δ j + (d j (φ.func x) (φ.func y) + δ j) := by
+      apply add_le_add
+      · rw [(hd j).symm]
+        exact hδ x hx j
+      · exact add_le_add le_rfl (hδ y hy j)
+    _ = _ := by rw [add_left_comm, ← add_assoc]
+
+theorem perturb_reverse (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ d j (ψ.func x) (ψ.func y) + δ j + δ j := by
+  apply perturb_forward hd (fun z hz =&gt; ⟨(hU hz).2, (hU hz).1⟩) δ _ hx hy j
+  intro z hz k
+  rw [(hd k).symm]
+  exact hδ z hz k
+
+theorem perturb_lip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    (hL : L ∈ Lip d φ U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (ψ.func x) (ψ.func y) ≤ action L (fun i =&gt; d i x y) j + 2 * δ j := by
+  calc
+    _ ≤ d j (φ.func x) (φ.func y) + δ j + δ j := perturb_forward hd hU δ hδ hx hy j
+    _ ≤ action L (fun i =&gt; d i x y) j + δ j + δ j :=
+      add_le_add (add_le_add (hL.2 x hx y hy j) le_rfl) le_rfl
+    _ = _ := by rw [two_mul, add_assoc]
+
+theorem perturb_colip (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hU : U ⊆ dom φ ∩ dom ψ) (δ : I → ENNReal)
+    (hδ : ∀ z ∈ U, ∀ j, d j (φ.func z) (ψ.func z) ≤ δ j)
+    (hK : K ∈ CoLip d φ U) {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    action K (fun i =&gt; d i x y) j ≤ d j (ψ.func x) (ψ.func y) + 2 * δ j := by
+  simpa [two_mul, add_assoc] using
+    (hK.2.2 x hx y hy j).trans (perturb_reverse hd hU δ hδ hx hy j)
+
+theorem identity_lip (hU : U ⊆ dom (ident : Operator X bot)) :
+    eye ∈ Lip d (ident : Operator X bot) U := by
+  refine ⟨hU, ?_⟩
+  intro x hx y hy j
+  simp [ident]
+
+theorem identity_colip (hU : U ⊆ dom (ident : Operator X bot)) (hne : U.Nonempty) :
+    eye ∈ CoLip d (ident : Operator X bot) U := by
+  refine ⟨hne, hU, ?_⟩
+  intro x hx y hy j
+  simp [ident]
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Classical
+
+variable {X I : Type} {bot : X} [Fintype I] [Nonempty I]
+
+def chain : List (Operator X bot) → Operator X bot
+  | [] =&gt; ident
+  | φ :: fs =&gt; comp (chain fs) φ
+
+def iterImage : List (Operator X bot) → Set X → Set X
+  | [], U =&gt; U
+  | φ :: fs, U =&gt; iterImage fs (φ.func '' U)
+
+def actual : List (Operator X bot) → Set X → ℕ → Set X
+  | [], U, _ =&gt; U
+  | _ :: _, U, 0 =&gt; U
+  | φ :: fs, U, n + 1 =&gt; actual fs (φ.func '' U) n
+
+theorem chain_image (fs : List (Operator X bot)) (U : Set X) :
+    (chain fs).func '' U = iterImage fs U := by
+  induction fs generalizing U with
+  | nil =&gt; simp [chain, ident, iterImage]
+  | cons φ fs ih =&gt;
+    simpa only [chain, comp, Set.image_image] using ih (φ.func '' U)
+
+theorem actual_prefix (fs : List (Operator X bot)) (U : Set X) (n : ℕ) :
+    actual fs U n = (chain (fs.take n)).func '' U := by
+  induction fs generalizing U n with
+  | nil =&gt; simp [actual, chain, ident]
+  | cons φ fs ih =&gt;
+    cases n with
+    | zero =&gt; simp [actual, chain, ident]
+    | succ n =&gt; simpa [actual, chain, comp, Set.image_image] using ih (φ.func '' U) n
+
+theorem initial_subset {φ ψ : Operator X bot} {U : Set X}
+    (hU : U ⊆ dom (comp ψ φ)) : U ⊆ dom φ :=
+  fun x hx =&gt; ((comp_dom ψ φ x).mp (hU hx)).1
+
+theorem image_subset {φ ψ : Operator X bot} {U : Set X}
+    (hU : U ⊆ dom (comp ψ φ)) : φ.func '' U ⊆ dom ψ := by
+  rintro y ⟨x, hx, rfl⟩
+  exact ((comp_dom ψ φ x).mp (hU hx)).2
+
+theorem actual_domain (fs : List (Operator X bot)) {U : Set X}
+    (hU : U ⊆ dom (chain fs)) (n : ℕ) (hn : n &lt; fs.length) :
+    actual fs U n ⊆ dom fs[n] := by
+  induction fs generalizing U n with
+  | nil =&gt; simp at hn
+  | cons φ fs ih =&gt;
+    cases n with
+    | zero =&gt; exact initial_subset hU
+    | succ n =&gt; exact ih (image_subset hU) n (Nat.lt_of_succ_lt_succ hn)
+
+theorem chain_append (fs gs : List (Operator X bot)) :
+    chain (fs ++ gs) = comp (chain gs) (chain fs) := by
+  induction fs with
+  | nil =&gt; ext x; rfl
+  | cons φ fs ih =&gt;
+    simp only [List.cons_append, chain, ih]
+    rfl
+
+theorem chain_frozen (fs : List (Operator X bot)) : chain fs = OperatorChain fs.reverse := by
+  induction fs using List.reverseRecOn with
+  | nil =&gt; rfl
+  | append_singleton fs φ ih =&gt;
+    rw [chain_append, List.reverse_append]
+    simp only [List.reverse_singleton, List.singleton_append, OperatorChain, ← ih]
+    ext x
+    rfl
+
+theorem display_eye : display (eye : Mat I) = (1 : Matrix I I ENNReal) := by
+  ext j i
+  simp [display, eye, Matrix.one_apply, eq_comm]
+
+theorem display_product (As : List (Mat I)) :
+    display (mprod As) = ((As.map display).reverse).prod := by
+  induction As with
+  | nil =&gt; exact display_eye
+  | cons A As ih =&gt;
+    simp only [mprod_cons, display_mul, ih, List.map_cons, List.reverse_cons,
+      List.prod_append, List.prod_singleton]
+
+def OnSteps (P : Operator X bot → Set X → Mat I → Prop) :
+    Set X → List (Operator X bot × Mat I) → Prop
+  | _, [] =&gt; True
+  | U, s :: ss =&gt; P s.1 U s.2 ∧ OnSteps P (s.1.func '' U) ss
+
+theorem onSteps_iff (P : Operator X bot → Set X → Mat I → Prop)
+    (ss : List (Operator X bot × Mat I)) (U : Set X) :
+    OnSteps P U ss ↔ ∀ n (hn : n &lt; ss.length),
+      P ss[n].1 (actual (ss.map Prod.fst) U n) ss[n].2 := by
+  induction ss generalizing U with
+  | nil =&gt; simp [OnSteps]
+  | cons s ss ih =&gt;
+    constructor
+    · rintro ⟨h, hs⟩ n hn
+      cases n with
+      | zero =&gt; exact h
+      | succ n =&gt; exact (ih _).mp hs n (Nat.lt_of_succ_lt_succ hn)
+    · intro h
+      refine ⟨h 0 (by simp), (ih _).mpr ?_⟩
+      intro n hn
+      exact h (n + 1) (Nat.succ_lt_succ hn)
+
+theorem lip_chain {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : OnSteps (fun φ V M =&gt; M ∈ Lip d φ V) U ss) :
+    mprod (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_lip hU
+  | cons s ss ih =&gt;
+    exact lip_comp hU hs.1 (ih (image_subset hU) hs.2)
+
+theorem colip_chain {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst))) (hne : U.Nonempty)
+    (hs : OnSteps (fun φ V M =&gt; M ∈ CoLip d φ V) U ss) :
+    mprod (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U := by
+  induction ss generalizing U with
+  | nil =&gt; exact identity_colip hU hne
+  | cons s ss ih =&gt;
+    exact colip_comp hU hs.1 (ih (image_subset hU) (hne.image _) hs.2)
+
+theorem colip_chain_positive {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) (hlen : ss ≠ []) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : OnSteps (fun φ V M =&gt; M ∈ CoLip d φ V) U ss) :
+    mprod (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U := by
+  cases ss with
+  | nil =&gt; exact (hlen rfl).elim
+  | cons s ss =&gt; exact colip_chain _ hU hs.1.1 hs
+
+theorem lip_chain_indexed {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) (_hlen : ss ≠ []) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : ∀ n (hn : n &lt; ss.length),
+      ss[n].2 ∈ Lip d ss[n].1 (actual (ss.map Prod.fst) U n)) :
+    mprod (ss.map Prod.snd) ∈ Lip d (chain (ss.map Prod.fst)) U :=
+  lip_chain ss hU ((onSteps_iff _ ss U).mpr hs)
+
+theorem colip_chain_indexed {d : I → X → X → ENNReal}
+    (ss : List (Operator X bot × Mat I)) (hlen : ss ≠ []) {U : Set X}
+    (hU : U ⊆ dom (chain (ss.map Prod.fst)))
+    (hs : ∀ n (hn : n &lt; ss.length),
+      ss[n].2 ∈ CoLip d ss[n].1 (actual (ss.map Prod.fst) U n)) :
+    mprod (ss.map Prod.snd) ∈ CoLip d (chain (ss.map Prod.fst)) U :=
+  colip_chain_positive ss hlen hU ((onSteps_iff _ ss U).mpr hs)
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Chains
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Classical
+
+variable {I X : Type} {bot : X} [Fintype I] [Nonempty I]
+
+/-- All intermediate index sequences, without any support or positivity restriction. -/
+def Interior (I : Type) : ℕ → Type
+  | 0 =&gt; PUnit
+  | n + 1 =&gt; I × Interior I n
+
+instance interiorFintype : (n : ℕ) → Fintype (Interior I n)
+  | 0 =&gt; inferInstanceAs (Fintype PUnit)
+  | n + 1 =&gt; by
+    letI := interiorFintype n
+    exact inferInstanceAs (Fintype (I × Interior I n))
+
+def interiorEquiv : (n : ℕ) → Interior I n ≃ (Fin n → I)
+  | 0 =&gt;
+    { toFun := fun _ =&gt; Fin.elim0
+      invFun := fun _ =&gt; PUnit.unit
+      left_inv := by intro p; cases p; rfl
+      right_inv := by intro f; funext k; exact Fin.elim0 k }
+  | n + 1 =&gt;
+    { toFun := fun p =&gt; Fin.cases p.1 (interiorEquiv n p.2)
+      invFun := fun f =&gt; (f 0, (interiorEquiv n).symm (fun k =&gt; f k.succ))
+      left_inv := by intro p; rcases p with ⟨i, p⟩; simp
+      right_inv := by
+        intro f
+        funext k
+        refine Fin.cases ?_ (fun k =&gt; ?_) k
+        · rfl
+        · simp }
+
+def edges : (A : Mat I) → (As : List (Mat I)) → I → I → Interior I As.length → List ENNReal
+  | A, [], i, j, _ =&gt; [A i j]
+  | A, B :: Bs, i, j, p =&gt; A i p.1 :: edges B Bs p.1 j p.2
+
+def weight (A : Mat I) (As : List (Mat I)) (i j : I) (p : Interior I As.length) : ENNReal :=
+  (edges A As i j p).prod
+
+def AllPositive (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : Prop := ∀ a ∈ edges A As i j p, 0 &lt; a
+
+def HasZero (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : Prop := 0 ∈ edges A As i j p
+
+theorem edges_length (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : (edges A As i j p).length = As.length + 1 := by
+  induction As generalizing A i with
+  | nil =&gt; rfl
+  | cons B Bs ih =&gt; simpa [edges] using congrArg Nat.succ (ih B p.1 p.2)
+
+theorem weight_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : weight A As i j p = 0 ↔ HasZero A As i j p := by
+  simp [weight, HasZero, List.prod_eq_zero_iff]
+
+theorem weight_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I)
+    (p : Interior I As.length) : 0 &lt; weight A As i j p ↔ AllPositive A As i j p := by
+  simp [weight, AllPositive, pos_iff_ne_zero, List.prod_eq_zero_iff]
+  constructor
+  · intro h a ha haz
+    exact h (haz ▸ ha)
+  · intro h hz
+    exact h 0 hz rfl
+
+theorem product_expansion (A : Mat I) (As : List (Mat I)) (i j : I) :
+    mprod (A :: As) i j = ∑ p : Interior I As.length, weight A As i j p := by
+  induction As generalizing A i with
+  | nil =&gt; simp [weight, edges, Interior]
+  | cons B Bs ih =&gt;
+    change (∑ k, mprod (B :: Bs) k j * A i k) =
+      ∑ p : I × Interior I Bs.length, A i p.1 * weight B Bs p.1 j p.2
+    rw [Fintype.sum_prod_type]
+    apply Finset.sum_congr rfl
+    intro k hk
+    rw [ih B k, Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro p hp
+    exact mul_comm _ _
+
+theorem product_zero_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    mprod (A :: As) i j = 0 ↔ ∀ p : Interior I As.length, HasZero A As i j p := by
+  rw [product_expansion, Finset.sum_eq_zero_iff]
+  simp only [Finset.mem_univ, true_implies, weight_zero_iff]
+
+theorem product_positive_iff (A : Mat I) (As : List (Mat I)) (i j : I) :
+    0 &lt; mprod (A :: As) i j ↔ ∃ p : Interior I As.length, AllPositive A As i j p := by
+  rw [product_expansion, Finset.sum_pos_iff]
+  simp only [Finset.mem_univ, true_and, weight_positive_iff]
+
+theorem one_step_paths (A : Mat I) (i j : I) :
+    (∀ p : Interior I 0, HasZero A [] i j p) ↔ A i j = 0 := by
+  simp [Interior, HasZero, edges, eq_comm]
+
+theorem one_step_positive (A : Mat I) (i j : I) :
+    (∃ p : Interior I 0, AllPositive A [] i j p) ↔ 0 &lt; A i j := by
+  simp [Interior, AllPositive, edges]
+
+theorem local_path_criteria (d : I → X → X → ENNReal)
+    (fs : List (Operator X bot)) (A B : Mat I) (As Bs : List (Mat I)) (U : Set X)
+    (_hlenL : fs.length = (A :: As).length) (_hlenK : fs.length = (B :: Bs).length)
+    (_hU : U ⊆ dom (chain fs))
+    (_hL : OnSteps (fun φ V M =&gt; M ∈ Lip d φ V) U (fs.zip (A :: As)))
+    (_hK : OnSteps (fun φ V M =&gt; M ∈ CoLip d φ V) U (fs.zip (B :: Bs))) (i j : I) :
+    (mprod (A :: As) i j = 0 ↔ ∀ p : Interior I As.length, HasZero A As i j p) ∧
+    (0 &lt; mprod (B :: Bs) i j ↔ ∃ p : Interior I Bs.length, AllPositive B Bs i j p) :=
+  ⟨product_zero_iff A As i j, product_positive_iff B Bs i j⟩
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Bounds
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Classical
+
+variable {X I : Type} {bot : X} [Fintype I] [Nonempty I]
+  {d : I → X → X → ENNReal} {φ : Operator X bot}
+  {U : Set X} {L K : Mat I}
+
+abbrev Channel (I : Type) := I × I
+
+def Row (L : Mat I) (i j : I) : Prop := ∀ k, k ≠ i → L k j = 0
+def Col (L : Mat I) (i j : I) : Prop := ∀ k, k ≠ j → L i k = 0
+def Diagonal (L : Mat I) : Prop := ∀ i j, i ≠ j → L i j = 0
+def RowDecoupled (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (j : I) : Prop := ∃ L ∈ Lip d φ U, ∃ i, Row L i j
+def ColDecoupled (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (i : I) : Prop := ∃ L ∈ Lip d φ U, ∃ j, Col L i j
+
+theorem diagonal_iff_rows : Diagonal L ↔ ∀ j, Row L j j :=
+  ⟨fun h j k hk =&gt; h k j hk, fun h i j hij =&gt; h j i hij⟩
+
+theorem zero_term (i j : I) (h : L i j = 0) (v : I → ENNReal) : L i j * v i = 0 := by
+  rw [h, zero_mul]
+
+theorem erase_zero_term (i j : I) (h : L i j = 0) (v : I → ENNReal) :
+    action L v j = ∑ k ∈ Finset.univ.erase i, L k j * v k := by
+  simpa [action, h] using
+    (Finset.sum_erase_add Finset.univ (fun k =&gt; L k j * v k) (Finset.mem_univ i)).symm
+
+theorem row_action {i j : I} (h : Row L i j) (v : I → ENNReal) :
+    action L v j = L i j * v i := by
+  apply Finset.sum_eq_single i
+  · intro k hk hki
+    rw [h k hki, zero_mul]
+  · simp
+
+theorem row_lip (hL : L ∈ Lip d φ U) {i j : I} (hr : Row L i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d j (φ.func x) (φ.func y) ≤ L i j * d i x y := by
+  simpa only [row_action hr] using hL.2 x hx y hy j
+
+theorem col_contribution {i j : I} (hc : Col L i j) (v : I → ENNReal)
+    (k : I) (hk : k ≠ j) : L i k * v i = 0 := zero_term i k (hc k hk) v
+
+theorem diagonal_lip (hL : L ∈ Lip d φ U) (hD : Diagonal L)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (j : I) :
+    d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  row_lip hL (fun k hk =&gt; hD k j hk) hx hy
+
+theorem scalar_two_sided (hL : L ∈ Lip d φ U) (hK : K ∈ CoLip d φ U)
+    {j : I} (hr : Row L j j) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  ⟨colip_term hK hx hy j j, row_lip hL hr hx hy⟩
+
+theorem diagonal_two_sided (hL : L ∈ Lip d φ U) (hK : K ∈ CoLip d φ U)
+    (hD : Diagonal L) : ∀ j x, x ∈ U → ∀ y, y ∈ U →
+      K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  fun j x hx y hy =&gt; scalar_two_sided hL hK (fun k hk =&gt; hD k j hk) hx hy
+
+theorem finite_diagonal_two_sided (hL : L ∈ Lip d φ U) (hK : K ∈ CoLip d φ U)
+    (hD : Diagonal L) (hfin : ∀ j, L j j &lt; ⊤ ∧ K j j &lt; ⊤) :
+    ∀ j, L j j &lt; ⊤ ∧ K j j &lt; ⊤ ∧ ∀ x ∈ U, ∀ y ∈ U,
+      K j j * d j x y ≤ d j (φ.func x) (φ.func y) ∧
+      d j (φ.func x) (φ.func y) ≤ L j j * d j x y :=
+  fun j =&gt; ⟨(hfin j).1, (hfin j).2, diagonal_two_sided hL hK hD j⟩
+
+theorem positive_channel (hK : K ∈ CoLip d φ U) {i j : I} (hpos : 0 &lt; K i j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) (hin : 0 &lt; d i x y) :
+    0 &lt; d j (φ.func x) (φ.func y) :=
+  (ENNReal.mul_pos (ne_of_gt hpos) (ne_of_gt hin)).trans_le (colip_term hK hx hy i j)
+
+theorem reflects_zero (hK : K ∈ CoLip d φ U) (hpos : ∀ j, 0 &lt; K j j)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (hout : GaugeZeroRelated d (φ.func x) (φ.func y)) : GaugeZeroRelated d x y := by
+  intro j
+  by_contra hne
+  have hp := positive_channel hK (hpos j) hx hy (pos_iff_ne_zero.mpr hne)
+  simpa [hout j] using hp
+
+def Scalars (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (i j : I) : Set ENNReal :=
+  {a | ∀ x ∈ U, ∀ y ∈ U, d j (φ.func x) (φ.func y) ≤ a * d i x y}
+
+def singleInf (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X)
+    (i j : I) : ENNReal := sInf (Scalars d φ U i j)
+
+theorem scalars_upward {i j : I} {a b : ENNReal}
+    (ha : a ∈ Scalars d φ U i j) (hab : a ≤ b) : b ∈ Scalars d φ U i j :=
+  fun x hx y hy =&gt; (ha x hx y hy).trans (mul_le_mul_left hab _)
+
+theorem above_inf_feasible {i j : I} {a : ENNReal}
+    (ha : singleInf d φ U i j &lt; a) : a ∈ Scalars d φ U i j := by
+  obtain ⟨b, hb, hba⟩ := sInf_lt_iff.mp ha
+  exact scalars_upward hb hba.le
+
+theorem zero_input_obstruction {i j : I} {x y : X}
+    (hx : x ∈ U) (hy : y ∈ U) (hin : d i x y = 0)
+    (hout : 0 &lt; d j (φ.func x) (φ.func y)) :
+    Scalars d φ U i j = ∅ ∧ singleInf d φ U i j = ⊤ := by
+  have hempty : Scalars d φ U i j = ∅ := by
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    intro a ha
+    have h := ha x hx y hy
+    rw [hin, mul_zero] at h
+    exact (not_le_of_gt hout) h
+  exact ⟨hempty, by simp [singleInf, hempty]⟩
+
+theorem positive_finite_attained {i j : I}
+    (hpos : 0 &lt; singleInf d φ U i j) (hfin : singleInf d φ U i j &lt; ⊤) :
+    singleInf d φ U i j ∈ Scalars d φ U i j := by
+  obtain ⟨b, hb, _⟩ := sInf_lt_iff.mp hfin
+  letI : Nonempty (Scalars d φ U i j) := ⟨⟨b, hb⟩⟩
+  intro x hx y hy
+  change d j (φ.func x) (φ.func y) ≤ sInf (Scalars d φ U i j) * d i x y
+  rw [sInf_eq_iInf']
+  rw [ENNReal.iInf_mul (fun _ hz =&gt; ?_)]
+  · exact le_iInf fun a =&gt; a.property x hx y hy
+  · exact False.elim ((ne_of_gt hpos) (by simpa only [singleInf, sInf_eq_iInf'] using hz))
+
+theorem zero_inf_positive_feasible {i j : I}
+    (hzero : singleInf d φ U i j = 0) {a : ENNReal} (ha : 0 &lt; a) (_hfin : a &lt; ⊤) :
+    a ∈ Scalars d φ U i j := above_inf_feasible (hzero ▸ ha)
+
+theorem finite_inf_iff {i j : I} :
+    singleInf d φ U i j &lt; ⊤ ↔ ∃ a, a &lt; ⊤ ∧ a ∈ Scalars d φ U i j := by
+  constructor
+  · intro h
+    obtain ⟨a, ha, hfin⟩ := sInf_lt_iff.mp h
+    exact ⟨a, hfin, ha⟩
+  · rintro ⟨a, hfin, ha⟩
+    exact (sInf_le ha).trans_lt hfin
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-lean">import Channels
+
+namespace HCH02
+noncomputable section
+open formal_oet.vol_01.ch_01_foundations
+open scoped Classical
+
+/-- `none` is absorbing; the two ordinary points have infinite input distance
+and unit output distance. The two components are indexed by `Bool`. -/
+def exampleDist (i : Bool) (x y : Option Bool) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else if i then 1 else ⊤
+
+theorem none_ne_some_bool (b : Bool) : (none : Option Bool) ≠ some b := by
+  intro h
+  cases h
+
+@[reducible] def exampleMetric (i : Bool) : ExtendedPseudoMetric (Option Bool) none (exampleDist i) where
+  nonabsorbing := ⟨some false, by simp⟩
+  dist_self := by intro x; simp [exampleDist]
+  symm := by
+    intro x y
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt;
+      norm_num [exampleDist, Option.some_ne_none, none_ne_some_bool]
+  triangle := by
+    intro x y z
+    fin_cases i &lt;;&gt; fin_cases x &lt;;&gt; fin_cases y &lt;;&gt; fin_cases z &lt;;&gt;
+      norm_num [exampleDist, Option.some_ne_none, none_ne_some_bool]
+  isolate_bot := by intro x hx; simp [exampleDist, hx]
+
+def exampleOp : Operator (Option Bool) none := ident
+def exampleU : Set (Option Bool) := {x | x ≠ none}
+
+theorem example_domain : exampleU.Nonempty ∧ exampleU ⊆ dom exampleOp :=
+  ⟨⟨some false, by simp [exampleU]⟩, fun _ hx =&gt; hx⟩
+
+theorem example_positive_feasible {a : ENNReal} (ha : 0 &lt; a) :
+    a ∈ Scalars exampleDist exampleOp exampleU false true := by
+  intro x hx y hy
+  change x ≠ none at hx
+  change y ≠ none at hy
+  by_cases hxy : x = y
+  · subst y
+    simp [exampleOp, ident, exampleDist]
+  · simp [exampleOp, ident, exampleDist, hxy, hx, hy, ENNReal.mul_top (ne_of_gt ha)]
+
+theorem example_zero_infeasible :
+    0 ∉ Scalars exampleDist exampleOp exampleU false true := by
+  intro h
+  have hh := h (some false) (by simp [exampleU]) (some true) (by simp [exampleU])
+  norm_num [exampleDist, exampleOp, ident, Option.some_ne_none] at hh
+
+theorem example_inf_zero : singleInf exampleDist exampleOp exampleU false true = 0 := by
+  apply le_antisymm _ (zero_le _)
+  by_contra hn
+  obtain ⟨a, ha, hlt⟩ := exists_between (lt_of_not_ge hn)
+  exact (not_lt_of_ge (sInf_le (example_positive_feasible ha))) hlt
+
+theorem zero_not_attained :
+    exampleU.Nonempty ∧ exampleU ⊆ dom exampleOp ∧
+    singleInf exampleDist exampleOp exampleU false true = 0 ∧
+    0 ∉ Scalars exampleDist exampleOp exampleU false true :=
+  ⟨example_domain.1, example_domain.2, example_inf_zero, example_zero_infeasible⟩
+
+end
+end HCH02
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;HCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;HC02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.Lip&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.GlobalLip&quot;}
+      ],
+      &quot;representation&quot;: &quot;Lip是ENNReal系数矩阵的Set，包含U⊆dom φ和全部x,y∈U、输出j的求和上界；GlobalLip取U=dom φ。有限非空指标语境保留。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.CoLip&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_term&quot;}
+      ],
+      &quot;representation&quot;: &quot;CoLip的成员条件依次为U.Nonempty、U⊆dom φ和所有点对及输出分量的求和下界。系数允许0和∞；colip_term从和中抽取单项下界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.Mat&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.display&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mmul&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.action&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.display_mul&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.action_mul&quot;}
+      ],
+      &quot;representation&quot;: &quot;Mat I=I→I→ENNReal，M i j输入在前；display M j i=M i j。mmul B A i j=Σk B k j*A i k，display_mul证明与通常矩阵乘法一致，action_mul证明其作用公式。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.eye&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mprod&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mprod_nil&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.mprod_singleton&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.display_eye&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.display_product&quot;}
+      ],
+      &quot;representation&quot;: &quot;eye为Kronecker单位矩阵。列表按施行顺序存储，mprod(A::As)=mprod(As)*A；空积为eye，单项积为该项。display_product证明显示矩阵的乘积等于反向列表的通常乘积。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.chain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.actual&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.iterImage&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.actual_prefix&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.actual_domain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.chain_image&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.chain_frozen&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.OnSteps&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.onSteps_iff&quot;}
+      ],
+      &quot;representation&quot;: &quot;列表按φ1,…,φk存储；actual fs U n对应U_(n+1)。证明实际域为前n步像、各步输入在定义域内、全复合像为逐次像，并证明chain fs=冻结OperatorChain fs.reverse。OnSteps仅保存逐步前提，onSteps_iff从全部实际输入域上的逐项条件构造它。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.Interior&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.interiorEquiv&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.edges&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.edges_length&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.weight&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.AllPositive&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.HasZero&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.product_expansion&quot;}
+      ],
+      &quot;representation&quot;: &quot;非空矩阵列A::As对应n=As.length+1。Interior I As.length与Fin As.length→I等价，包含全部中间序列。edges从固定i到固定j逐层记录恰好n条边；weight为其乘积，AllPositive逐边正，HasZero表示某边为零。n=1的Interior I 0为PUnit。乘积展开为全部路径权重之和。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Channel&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Row&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Col&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Diagonal&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.RowDecoupled&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.ColDecoupled&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.diagonal_iff_rows&quot;}
+      ],
+      &quot;representation&quot;: &quot;Channel=I×I。Row L i j固定输出j且仅输入i可能非零；Col L i j固定输入i且仅输出j可能非零。解耦定义量化合法L和对应唯一可能支撑位置；Diagonal要求所有非对角项为零。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-D08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.Scalars&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.singleInf&quot;}
+      ],
+      &quot;representation&quot;: &quot;Scalars逐字给出∀x,y∈U的单输入分量标量上界族；singleInf是该Set的sInf，空族自动为∞。纯公式也可用于任意U；在原文U⊆dom φ的范围内就是原定义，与矩阵条目下确界entryInf分开。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.singleton_lip&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.singleton_lip_iff&quot;}
+      ],
+      &quot;representation&quot;: &quot;以Subsingleton I及给定i表示I={i}，证明合法矩阵条件等价于定义域条件和L i i的标量界；全域情形直接取U=dom φ。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.global_lip_restrict&quot;}
+      ],
+      &quot;representation&quot;: &quot;对任意U⊆dom φ，证明GlobalLip d φ⊆Lip d φ U。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-P03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_restrict&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_family_antitone&quot;}
+      ],
+      &quot;representation&quot;: &quot;U⊆V时V上每个合法Lip证书仍在U合法，V⊆dom φ由原证书成员条件得到。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.entryInf&quot;},
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.entryInf_mono&quot;}
+      ],
+      &quot;representation&quot;: &quot;entryInf取合法矩阵的第i→j项值集的sInf；证书族扩大给出U⊆V时entryInf(U)≤entryInf(V)，包括空族。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-P03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_comp&quot;}
+      ],
+      &quot;representation&quot;: &quot;U⊆dom(ψ∘φ)，A在U、B在φ(U)合法时，mmul B A在同一U上界复合。证明使用有限和单调性及action_mul。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_degenerate&quot;}
+      ],
+      &quot;representation&quot;: &quot;任意全域co-Lip证书，若所给定义域点对输出j零距且输入i正距，则K i j=0；允许输入距离或系数为∞。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_comp&quot;}
+      ],
+      &quot;representation&quot;: &quot;与Lip复合同一实际像域，所选A、B的乘积为复合co-Lip证书；结果非空性由第一步证书取得。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_forward&quot;}
+      ],
+      &quot;representation&quot;: &quot;保留完整扩展伪度量族、公共定义域和逐点δ上界前提；推出ψ点对像距≤φ点对像距+δj+δj。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_reverse&quot;}
+      ],
+      &quot;representation&quot;: &quot;由伪度量对称性交换算子，得到同一U、δ和点对上的反向扰动界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-P08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;在扰动前提下代入φ的所选合法Lip矩阵，得到ψ输出距≤原求和上界+2*δj；所有量均为ENNReal。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;,&quot;HC02-P08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.perturb_colip&quot;}
+      ],
+      &quot;representation&quot;: &quot;在同一扰动前提下，将φ的所选合法co-Lip求和下界桥接到ψ输出距+2*δj。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;,&quot;HC02-P09&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_chain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.lip_chain_indexed&quot;}
+      ],
+      &quot;representation&quot;: &quot;非空列表ss逐项存储(φm,Lm)，indexed版本只要求全部实际Um上的逐步合法性和U1⊆dom ck；归纳证明指定mprod合法。通用辅助版本也处理零步。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D04&quot;,&quot;HC02-D05&quot;,&quot;HC02-P05&quot;,&quot;HC02-P14&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_chain&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_chain_positive&quot;},
+        {&quot;file&quot;:&quot;Chains.lean&quot;,&quot;name&quot;:&quot;HCH02.colip_chain_indexed&quot;}
+      ],
+      &quot;representation&quot;: &quot;同样的实际域和指定有序矩阵序列；正长度版本从第一步co-Lip义务推出U1非空，再归纳得到全复合下界，不假设最终下界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D04&quot;,&quot;HC02-D05&quot;,&quot;HC02-P07&quot;,&quot;HC02-P15&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.identity_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;eye在id的任意合法U上是Lip证书，因此包括原文非空U；action_eye证明求和恰等于原分量距离。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P15&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Bounds.lean&quot;,&quot;name&quot;:&quot;HCH02.identity_colip&quot;}
+      ],
+      &quot;representation&quot;: &quot;U.Nonempty和U⊆dom id下，同一eye满足co-Lip定义的全部条件。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P16&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.product_zero_iff&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.one_step_paths&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.local_path_criteria&quot;}
+      ],
+      &quot;representation&quot;: &quot;任意非空矩阵列的(i,j)乘积条目为零当且仅当每条完整路径含零边；local_path_criteria保留同一算子链、长度相等、实际域及两族合法证书的正文语境。证明为更一般的代数展开，不依赖复合界；单步明确退化为A i j=0。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D04&quot;,&quot;HC02-D06&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P17&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.product_positive_iff&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.one_step_positive&quot;},
+        {&quot;file&quot;:&quot;Paths.lean&quot;,&quot;name&quot;:&quot;HCH02.local_path_criteria&quot;}
+      ],
+      &quot;representation&quot;: &quot;同一正文链条件下，co-Lip乘积条目正当且仅当存在完整全正路径；证明适用于任意ENNReal矩阵。单步唯一空中间序列对应B i j&gt;0。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D04&quot;,&quot;HC02-D06&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P18&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_input_obstruction&quot;}
+      ],
+      &quot;representation&quot;: &quot;给定U中输入零距而输出正距的点对，证明Scalars=∅并同时推出singleInf=∞，排除的标量包括∞。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P19&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.positive_finite_attained&quot;}
+      ],
+      &quot;representation&quot;: &quot;0&lt;a&lt;∞时证明a∈Scalars，即全部点对上界。替代证明用ENNReal非空下确界乘法交换定理；a&gt;0排除乘数为∞时的零下确界异常。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P20&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.scalars_upward&quot;}
+      ],
+      &quot;representation&quot;: &quot;任意可行a及a≤b，由ENNReal乘法单调性证明b可行。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P21&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.above_inf_feasible&quot;}
+      ],
+      &quot;representation&quot;: &quot;证明任意λ&gt;singleInf均可行，允许λ=∞；这包含原文正有限下确界语境。证明从sInf严格上界取得较小可行常数，再向上封闭。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;,&quot;HC02-P20&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P22&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_inf_positive_feasible&quot;}
+      ],
+      &quot;representation&quot;: &quot;singleInf=0且0&lt;λ&lt;∞时，λ满足全部点对单通道界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;,&quot;HC02-P21&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P23&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleDist&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleMetric&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleOp&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.exampleU&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.example_positive_feasible&quot;},
+        {&quot;file&quot;:&quot;Counterexample.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_not_attained&quot;}
+      ],
+      &quot;representation&quot;: &quot;X=Option Bool，bot=none，I=Bool；两普通点的false分量距离∞、true分量距离1，bot在两分量均∞隔离。证明全部扩展伪度量公理；φ=id，U为两个普通点。false→true通道每个正标量可行，inf=0而0不可行，U非空且合法。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P24&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.finite_inf_iff&quot;}
+      ],
+      &quot;representation&quot;: &quot;singleInf&lt;∞当且仅当存在λ&lt;∞属于完整Scalars族；直接用sInf_lt_iff和sInf_le，无须假定下确界取到。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P25&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.zero_term&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.erase_zero_term&quot;}
+      ],
+      &quot;representation&quot;: &quot;L i j=0使任意ENNReal输入v i的贡献为0，并证明总和等于删除i后的有限和；取v i=d i x y即可，允许距离∞。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P26&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.row_action&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.row_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;Row L i j将输出j的完整求和化为L i j*d i x y，代入合法Lip界得到全部U中点对的单输入界；i与j独立。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D03&quot;,&quot;HC02-D07&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P27&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.col_contribution&quot;}
+      ],
+      &quot;representation&quot;: &quot;Col L i j蕴含每个k≠j的L i k*v i=0。该代数结论适用于所选合法证书的所有输入点对，不声称其他输入没有贡献。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D03&quot;,&quot;HC02-D07&quot;,&quot;HC02-P25&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P28&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.diagonal_lip&quot;}
+      ],
+      &quot;representation&quot;: &quot;Diagonal L及合法Lip证书给出任意j和U中点对的L j j标量上界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D07&quot;,&quot;HC02-P26&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P29&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.scalar_two_sided&quot;}
+      ],
+      &quot;representation&quot;: &quot;仅要求Lip矩阵的输出j行Row L j j；co-Lip矩阵无稀疏假设。从其和中抽取K j j项，与Lip行化简合并为双侧界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D02&quot;,&quot;HC02-D07&quot;,&quot;HC02-P26&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P30&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.diagonal_two_sided&quot;},
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.finite_diagonal_two_sided&quot;}
+      ],
+      &quot;representation&quot;: &quot;Lip的全部对角行条件给出所有j上的双侧界；第二声明额外保留每个L j j、K j j有限，并同时给出这些系数的全部双侧界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D01&quot;,&quot;HC02-D02&quot;,&quot;HC02-D07&quot;,&quot;HC02-P29&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P31&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.positive_channel&quot;}
+      ],
+      &quot;representation&quot;: &quot;合法co-Lip证书中K i j&gt;0与d i x y&gt;0推出输出j距离&gt;0，适用于全部U中点对和∞边界。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;HC02-P32&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        {&quot;file&quot;:&quot;Channels.lean&quot;,&quot;name&quot;:&quot;HCH02.reflects_zero&quot;}
+      ],
+      &quot;representation&quot;: &quot;所有K j j&gt;0时，U中任意x,y的输出GaugeZeroRelated蕴含输入GaugeZeroRelated；不加入分离性，不推出点相等。&quot;,
+      &quot;dependencies&quot;: [&quot;HC02-D02&quot;,&quot;HC02-P31&quot;]
+    }
+  ]
+}
+</code></pre>
+<p>已完整完成并对齐冻结第 2 章与全部 40 项义务；未完成或未确认的数学范围：无。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/astra-6-max/20261109/imports/lean-5400/slots/HCH02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>HCH02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/imports/lean-5400/slots/HCH02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/native-source/selected/HCH02/physical-1/output/response.md">answer · response.md</a><span class="hash">SHA256 4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/claim-public-sources/HCH02.json">review · HCH02.json</a><span class="hash">SHA256 5a7621fc33d17d7eb6c3deaf121f321d1244d6423f39322ffe00ba6c5e377bf2</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 e136cb04694a8e371cbb065cdabec421a3324bcc14418ff7d446a2fcc35d9815</span></li><li><a href="../../../../results/v0.6.0/astra-6-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "astra-6-max", "label": "Astra 6 (max)"}, "case": {"id": "HCH02", "title": "历史完整算子界章节的Lean形式化与多轮对齐", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68", "review_sha256": null}, "nonlogical_retry_3": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68", "review_sha256": null}}, "partial": {"single_attempt": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68", "review_sha256": null}, "nonlogical_retry_3": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68", "review_sha256": null}}, "strict": {"single_attempt": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68", "review_sha256": null}, "nonlogical_retry_3": {"case_id": "HCH02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "4b4e33aa637982346ad55131f95efe74ebe4f8807e8aae7a95b0b0f63d027c68", "review_sha256": null}}}}}</script><script src="../../../assets/results-i18n.js?v=07a55795b73f"></script><script src="../../../assets/results-core.js?v=7d12869560cf"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

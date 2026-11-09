@@ -1,0 +1,47 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "AHR02",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR02:A1",
+    "case_id": "AHR02",
+    "binding": null,
+    "reviewer": "Independent Lean AI reviewer",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "AHR02完整审计通过，四维35/20/30/15全部给分。准确承认有效证明，定位全路径证书造成的范围损失，给合法四点结构和包括无穷系数的不可补齐证明，修复正好条件化参与并集的路径。",
+    "findings": [],
+    "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始书面审计；本题不要求新增Lean或重新编译。"
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "首段准确区分现有三个全局导出声明的全路径 hLq 与原文只对进入并集的可评估路径选择证书；明确承认现有更强前提下定理正确，未把局部可组合补齐误说成当前签名已等价。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "准确核对两个受筛选路径并集、联合分量必须同一路径、非空 J 下显式路径域等于各分量域交集，以及路径链到代理的真实桥。承认现有局部界和 _text 的有限阈值等条件，未否定有效证明。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "四点合法伪度量模型把 a,b 合为零距类，代理在该类上产生距1输出，未采样路径因此对所有 ENNReal 系数（含top）均无 Lip 矩阵；采样路径 {c} 和公共常值目标具备零证书，并集 {c} 包含于真实误差域 {b,c}。独立核对全部有限结构及精确 L*0=0 代数障碍，证明全路径假设不可补出。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 15,
+        "notes": "分别把 hLq 条件化为 j∈Ires(q) 或 J⊆Ires(q)，在并集成员见证上取已有局部证书并调用原局部误差定理。无需新误差估计或额外全局/网络学习结论；保留保证只覆盖相应并集的范围。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "90df5b93d6aaf934a60ffb0abb74997061548f6652da865da737ef492dd66bb4"
+}

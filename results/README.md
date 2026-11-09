@@ -7,6 +7,7 @@ benchmark0.6.0封版；三评分聚合0.8.0／MC0.2.0／Strict0.2.0。AI审核�
 | 模型 | 当前档案 |
 |---|---|
 | Claude Opus 5.5 (max) · Claude Code | [20261109](v0.6.0/claude-opus-5.5-max/20261109/README.md) |
+| Astra 6 (max) · Codex CLI | [20261109](v0.6.0/astra-6-max/20261109/README.md) |
 | Sol 6.1 (max) · Codex CLI | [20261109](v0.6.0/sol-6.1-max/20261109/README.md) |
 | Sol 6.1 (xhigh) · Codex CLI | [20261109](v0.6.0/sol-6.1-xhigh/20261109/README.md) |
 | Terra 6.1 (max) · Codex CLI | [20261105](v0.6.0/terra-6.1-max/20261105/README.md) |

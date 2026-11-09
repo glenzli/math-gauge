@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR01:A1",
+  "case_id": "AHR01",
+  "binding": {
+    "plan_sha256": "12af56aa36cfffa325cf5ff9d75de17ec334d84d999f364aa48ae5a5a7c7d58b",
+    "slot_id": "AHR01:A1",
+    "evidence_id": "b5f571e538fcc84d88f9092919d5575ef2d15abe7a3cbc3ca13c080eacd9ae37",
+    "response_sha256": "cad9c1008ad607e4eaca452bc0a9879b46a8473bc317918223a4126e47d21670",
+    "history_sha256": "1f254451bb1edbd945d99ae04179b4660d6d6c4042f6e1af45eabc68242bec30",
+    "projected_request_sha256": "d322c29c52861907279dc5895dc12b324c3b23209553a535223f7643061b369a",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "948de87a99cd12e430cbd2234e42a9def446764d91a279f0cf58a3ec7d23a1b6",
+    "body_origin": {
+      "slot_id": "AHR01:A1",
+      "response_sha256": "cad9c1008ad607e4eaca452bc0a9879b46a8473bc317918223a4126e47d21670",
+      "start_byte": 0,
+      "end_byte": 10196
+    },
+    "body_sha256": "cad9c1008ad607e4eaca452bc0a9879b46a8473bc317918223a4126e47d21670",
+    "rationale_sha256": null,
+    "request_sha256": "1f4237277cd4002f5ec872b58db5fd60e2843cacc0d72b3a3262d85532a41589",
+    "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+  },
+  "reviewer": "Independent Lean AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "准确、完整的限定范围语义审计。四维 35/20/30/15 全部获得；完整审计目标通过。保留真实较宽关系的有效外延定理，同时以合法替代有限反例证明结构范围损失并给充分修复。",
+  "findings": [],
+  "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整书面审计按题意交付；本题无需新Lean工程或重新编译。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "首段明确指出 NodeDomainRefinement 仅限制实际输入像上的 choice_projection，故宽于完整局域边域的正文定义；同时承认真实构造通用且外延定理有效，判断及范围准确。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "逐项承认完整节点域分划、局域限制算子、逐次发生重着色、统一终止、真实 prune 构造、路径投影和 network_extensional_eq。区分关系型已有网络与 NodePartitionData 的实际构造，未虚构循环假设或以编译替代语义。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "给出可复核四点新反例：原单节点的完整域为 {a,b,c}、入口 U={a,b}，新两片均可达但仅在未实际使用的 c 上新增自环。全部旧关系字段与全局路由合法性成立，源入口仍一步终止，而正文从空原边要求的新自环为空。独立穷举验证该模型、公理、实际轨迹及外延相等；确为关系过宽，非输出不等。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "要求保留端点之间的完整边域等式并补实际构造到精确关系桥，保留旧有效外延证明。特别说明剪枝只删除不可达目标边、可能扩大终止域，故不能把 choice_projection 直接加强到整个局域像上，修复充分且不过度。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T17:51:35.828028+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "7cf8e280ec8eb469a0514717fd41016128a125c1171eb826aa6575b7eb11a2f6",
+  "public_projection": true,
+  "original_private_review_sha256": "c2d46bf5f8d08a6a1575059cb5656bef276250adb830be63fc130a835b1f2810"
+}

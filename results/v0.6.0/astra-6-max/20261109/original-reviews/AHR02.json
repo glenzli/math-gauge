@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR02:A1",
+  "case_id": "AHR02",
+  "binding": {
+    "plan_sha256": "12af56aa36cfffa325cf5ff9d75de17ec334d84d999f364aa48ae5a5a7c7d58b",
+    "slot_id": "AHR02:A1",
+    "evidence_id": "905af2c41e54bfdc466e924497351d4dcdab228326bc7dfb30c990906a2abb48",
+    "response_sha256": "140b67506da4ff47842ede3317f9a126ea04317ad3f156d306af5f1bed9f1af9",
+    "history_sha256": "b63b97f59c5ff4bfba718135b3c699699b0ea8dc3b96f2f7535180fe0213692b",
+    "projected_request_sha256": "88e4659478baa75fa13d8d2847a53393d6e0eb038a02a888e774d1e5f3b2bce9",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "1a5ca32decf964f832ff568a250bbb3e46f9f5d2f3e54b1f6e7481fd7fd55590",
+    "body_origin": {
+      "slot_id": "AHR02:A1",
+      "response_sha256": "140b67506da4ff47842ede3317f9a126ea04317ad3f156d306af5f1bed9f1af9",
+      "start_byte": 0,
+      "end_byte": 5284
+    },
+    "body_sha256": "140b67506da4ff47842ede3317f9a126ea04317ad3f156d306af5f1bed9f1af9",
+    "rationale_sha256": null,
+    "request_sha256": "3c40612a4d4c86396b65b4cbb6c4df54d2efc685fb3d55cb92d604e5b6a5388d",
+    "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9"
+  },
+  "reviewer": "Independent Lean AI reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "AHR02完整审计通过，四维35/20/30/15全部给分。准确承认有效证明，定位全路径证书造成的范围损失，给合法四点结构和包括无穷系数的不可补齐证明，修复正好条件化参与并集的路径。",
+  "findings": [],
+  "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始书面审计；本题不要求新增Lean或重新编译。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "首段准确区分现有三个全局导出声明的全路径 hLq 与原文只对进入并集的可评估路径选择证书；明确承认现有更强前提下定理正确，未把局部可组合补齐误说成当前签名已等价。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "准确核对两个受筛选路径并集、联合分量必须同一路径、非空 J 下显式路径域等于各分量域交集，以及路径链到代理的真实桥。承认现有局部界和 _text 的有限阈值等条件，未否定有效证明。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "四点合法伪度量模型把 a,b 合为零距类，代理在该类上产生距1输出，未采样路径因此对所有 ENNReal 系数（含top）均无 Lip 矩阵；采样路径 {c} 和公共常值目标具备零证书，并集 {c} 包含于真实误差域 {b,c}。独立核对全部有限结构及精确 L*0=0 代数障碍，证明全路径假设不可补出。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "分别把 hLq 条件化为 j∈Ires(q) 或 J⊆Ires(q)，在并集成员见证上取已有局部证书并调用原局部误差定理。无需新误差估计或额外全局/网络学习结论；保留保证只覆盖相应并集的范围。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T17:51:35.828511+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "4fd437efff5d2d6ea12cb529bb1328a214b613a1edc1ed4ad66a25e94b799827",
+  "public_projection": true,
+  "original_private_review_sha256": "fa679a2d906f3b746f0c289f4830c846e513240b59b94b2ee6526479c6947a40"
+}

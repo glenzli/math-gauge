@@ -1,0 +1,47 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "AHR01",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR01:A1",
+    "case_id": "AHR01",
+    "binding": null,
+    "reviewer": "Independent Lean AI reviewer",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "准确、完整的限定范围语义审计。四维 35/20/30/15 全部获得；完整审计目标通过。保留真实较宽关系的有效外延定理，同时以合法替代有限反例证明结构范围损失并给充分修复。",
+    "findings": [],
+    "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整书面审计按题意交付；本题无需新Lean工程或重新编译。"
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "首段明确指出 NodeDomainRefinement 仅限制实际输入像上的 choice_projection，故宽于完整局域边域的正文定义；同时承认真实构造通用且外延定理有效，判断及范围准确。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "逐项承认完整节点域分划、局域限制算子、逐次发生重着色、统一终止、真实 prune 构造、路径投影和 network_extensional_eq。区分关系型已有网络与 NodePartitionData 的实际构造，未虚构循环假设或以编译替代语义。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "给出可复核四点新反例：原单节点的完整域为 {a,b,c}、入口 U={a,b}，新两片均可达但仅在未实际使用的 c 上新增自环。全部旧关系字段与全局路由合法性成立，源入口仍一步终止，而正文从空原边要求的新自环为空。独立穷举验证该模型、公理、实际轨迹及外延相等；确为关系过宽，非输出不等。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 15,
+        "notes": "要求保留端点之间的完整边域等式并补实际构造到精确关系桥，保留旧有效外延证明。特别说明剪枝只删除不可达目标边、可能扩大终止域，故不能把 choice_projection 直接加强到整个局域像上，修复充分且不过度。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "43140a63cf784595cc0c6e03f9a1a62c7c8274e270738536c2d29a12a2efefd1"
+}
