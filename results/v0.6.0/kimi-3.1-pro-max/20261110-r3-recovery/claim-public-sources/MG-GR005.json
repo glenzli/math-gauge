@@ -1,0 +1,182 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-GR005",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-GR005:A1",
+    "case_id": "MG-GR005",
+    "binding": {
+      "plan_sha256": "2dab84a9de2a5fa59e1fa0cb33f183cedb03509b3f860415c830ea6b888db97a",
+      "slot_id": "MG-GR005:A1",
+      "evidence_id": "1a377fba4005f37bb5c0ae37e49246779175883d8a19706333aca98b6099f07d",
+      "response_sha256": "e48c9bb31c44eecc5f6a31202c5ec95749ea0570380653580827fe21637fee37",
+      "history_sha256": "7ae629b6952f1f62982330ed8f3b961462e435782fd0063db3ad99b8c8f60c20",
+      "projected_request_sha256": "6dbcce4b3a223c1ecb61682dd6475521d8d0d1b0afe2f625f20e9d4c45c941d4",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "6bd42f0c0a22d11d8e9b5615f94e00a28218bcd89e99784c0b3ea15f5d4b0b9a",
+      "body_origin": {
+        "slot_id": "MG-GR005:A1",
+        "response_sha256": "e48c9bb31c44eecc5f6a31202c5ec95749ea0570380653580827fe21637fee37",
+        "start_byte": 0,
+        "end_byte": 10994
+      },
+      "body_sha256": "e48c9bb31c44eecc5f6a31202c5ec95749ea0570380653580827fe21637fee37",
+      "rationale_sha256": null,
+      "request_sha256": "ee7af20d063b8895847a569bc7936692161a3d94560c550f1a3975790a4c4b66",
+      "group_contract_sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef"
+    },
+    "reviewer": "Codex source-based mathematical reviewer",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "六阶段全部成立。S4通过max(h,0)规避proper-only定理误套混合无穷竞争者，投影不闭与整体恢复边界准确。无可靠性扣罚。",
+    "findings": [],
+    "group_contract_sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+    "stages": [
+      {
+        "stage_id": "S1",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "非负、有限点及全部扩展值凸性，准确纤维分组公式；只用epsilon近极小点，无擅加取到。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "notes": "非负、有限点及全部扩展值凸性，准确纤维分组公式；只用epsilon近极小点，无擅加取到。",
+          "reasons": []
+        }
+      },
+      {
+        "stage_id": "S2",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "同一紧次水平集内嵌套闭集证明阈值取到，实数次水平集恰为紧集连续像，得下半连续。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "notes": "同一紧次水平集内嵌套闭集证明阈值取到，实数次水平集恰为紧集连续像，得下半连续。",
+          "reasons": []
+        }
+      },
+      {
+        "stage_id": "S3",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "统一成本紧集上的有限交性质、观测空间有限和与兼容性实现全记录；Hausdorff局部凸对偶分离点给唯一性。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "notes": "统一成本紧集上的有限交性质、观测空间有限和与兼容性实现全记录；Hausdorff局部凸对偶分离点给唯一性。",
+          "reasons": []
+        }
+      },
+      {
+        "stage_id": "S4",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "有限闭记录构造G；用max(h,0)合法覆盖同时含正负无穷的原竞争类，再在真正proper非负闭凸函数上用仿射分离表示。完整证明最大性与观测空间扩大有向单调关系。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "notes": "有限闭记录构造G；用max(h,0)合法覆盖同时含正负无穷的原竞争类，再在真正proper非负闭凸函数上用仿射分离表示。完整证明最大性与观测空间扩大有向单调关系。",
+          "reasons": []
+        }
+      },
+      {
+        "stage_id": "S5",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "正象限ab>=1闭凸集指标，核实闭性/凸性并给投影在0处不闭，反例合法。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "notes": "正象限ab>=1闭凸集指标，核实闭性/凸性并给投影在0处不闭，反例合法。",
+          "reasons": []
+        }
+      },
+      {
+        "stage_id": "S6",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "最大性给G=f充要条件；两边夹逼闭化公式；S5取全对偶K在0处的无穷对0反驳省略外层闭化。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "notes": "最大性给G=f充要条件；两边夹逼闭化公式；S5取全对偶K在0处的无穷对0反驳省略外层闭化。",
+          "reasons": []
+        }
+      }
+    ],
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+    }
+  },
+  "original_private_adjudication_sha256": "7800bd93731a46deb0bdc915bbeb6650c3a0f313ed5a629b43a802b3524b2367"
+}

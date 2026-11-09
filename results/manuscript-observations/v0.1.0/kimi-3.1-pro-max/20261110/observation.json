@@ -1,0 +1,162 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "kimi-3.1-pro-max",
+  "record_id": "20261110",
+  "source_record": {
+    "path": "results/v0.6.0/kimi-3.1-pro-max/20261110/record.json",
+    "bytes": 188581,
+    "sha256": "2fa280b320a89fcfddbe7fccceccad3c940efdd1b31ad61355aae5a37fd4edcb"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "13184f7e7b59a4492ad67ba56e134a79ae82a2ec1f156c7f4063b4587f616ed4",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 0,
+    "total_groups": 0,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "2d504c29ce0bcd115fc05a594b6f64c58253530bb78b1207b8cafe550fe9d72b",
+      "original_task": {
+        "strict_pass": false,
+        "completion": {
+          "lower": 0.9,
+          "upper": 0.9,
+          "exact": 0.9
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "共同必需目标：M1-M4: explicit domains/quantifiers and nonseparation; genuine multicomponent upper and lower controls, consistent extended values and zero-distance/feasibility/optimality boundaries.；M5-M6: a meaningful matrix-shaped output-indistinguishability description with valid endpoint semantics and basic justified properties. No full composition/iteration theory, fixed-point theorem or unique OET route is required.。已复核完整公开原答。上/下矩阵、∞与零距边界和零化关系属于必需框架；额外候选的普通/布尔复合及支撑关系是将既有不等式直接串接、展开有限和或代入定义。没有新迭代、优化或独立结构定理。线性例子的零行错误保持原扣罚，不抹去独立正确框架。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "普通矩阵与布尔矩阵的基础复合",
+          "statement": "合法上下矩阵按普通非负矩阵乘积传播；关系零化矩阵按布尔乘积传播。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "limited",
+          "independent_of_errors": true,
+          "scope_delta": "复合在原任务基础框架之外可作补充，但本文证明只是两条现有控制关系的直接代入，不另计独立成果。",
+          "proof_review": "数值情形先用g的不等式，再代入f的不等式，依有限非负扩展算术分配律整理；布尔情形选择一个见证中间分量并连续应用两次零化蕴含。无新构造或需要另立证明桥的结论。",
+          "nontrivial_step": "没有超出直接代入、有限和展开及蕴含串接的步骤。",
+          "value_rationale": "本项的用途与成立范围见数学核验；价值标签只作情境描述，不是当前组数门槛。",
+          "reason": "正确的基础传播公式，按共同直接推论排除规则不计组。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "2d504c29ce0bcd115fc05a594b6f64c58253530bb78b1207b8cafe550fe9d72b",
+              "start_byte": 3999,
+              "end_byte": 4903,
+              "quote": "### 命题 3：复合对应矩阵乘积\n\n再设第三个规范空间具有距离分量 \\(h_k\\)，\\(k\\in K\\)。若\n\\[\nf:\\mathcal X\\to\\mathcal Y,\\qquad g:\\mathcal Y\\to\\mathcal Z\n\\]\n均保吸收元，则：\n\n- \\(U\\in\\mathcal U(f)\\)、\\(V\\in\\mathcal U(g)\\) 蕴含 \\(VU\\in\\mathcal U(g\\circ f)\\)；\n- \\(L\\in\\mathcal L(f)\\)、\\(M\\in\\mathcal L(g)\\) 蕴含 \\(ML\\in\\mathcal L(g\\circ f)\\)。\n\n矩阵乘积按通常公式定义：\n\\[\n(VU)_{ki}=\\sum_{j\\in J}v_{kj}u_{ji}.\n\\]\n\n**证明。** 上界情形，对每个 \\(k\\)，\n\\[\n\\begin{aligned}\nh_k(gfx,gfy)\n&\\le \\sum_j v_{kj}e_j(fx,fy)\\\\\n&\\le \\sum_jv_{kj}\\sum_i u_{ji}d_i(x,y)\\\\\n&=\\sum_i\\left(\\sum_jv_{kj}u_{ji}\\right)d_i(x,y).\n\\end{aligned}\n\\]\n最后一步使用有限和的交换及扩展非负乘法的分配律。下界情形把所有不等号反向即可。 \\(\\square\\)\n\n因此，双边估计也按\n\\[\n(L,U),\\ (M,V)\\quad\\longmapsto\\quad(ML,VU)\n\\]\n复合。\n\n---\n\n"
+            },
+            {
+              "source_sha256": "2d504c29ce0bcd115fc05a594b6f64c58253530bb78b1207b8cafe550fe9d72b",
+              "start_byte": 10221,
+              "end_byte": 11179,
+              "quote": "### 7.1 布尔矩阵乘积描述复合\n\n设 \\(f:\\mathcal X\\to\\mathcal Y\\)、\\(g:\\mathcal Y\\to\\mathcal Z\\)。令\n\\[\nZ_j^{\\mathcal Y}:=\\{(u,v)\\in\\mathcal Y^2:e_j(u,v)=0\\}.\n\\]\n取 \\(\\Gamma^g\\in\\{0,1\\}^{K\\times J}\\) 为 \\(g\\) 关于关系族 \\(\\{Z_j^{\\mathcal Y}\\}_{j\\in J}\\) 的零化矩阵，即\n\\[\n\\Gamma^g_{kj}=1\n\\Longrightarrow\n\\bigl(e_j(u,v)=0\\Rightarrow h_k(gu,gv)=0\\bigr).\n\\]\n若 \\(C^f\\) 是 \\(f\\) 关于 \\(\\mathscr R\\) 的零化矩阵，定义布尔乘积\n\\[\n(\\Gamma^g\\star C^f)_{k\\alpha}\n:=\\bigvee_{j\\in J}\n\\bigl(\\Gamma^g_{kj}\\wedge C^f_{j\\alpha}\\bigr).\n\\]\n则 \\(\\Gamma^g\\star C^f\\) 是 \\(g\\circ f\\) 关于 \\(\\mathscr R\\) 的零化矩阵。\n\n**证明。** 若乘积的某元素为 \\(1\\，则存在 \\(j\\) 使两个因子均为 \\(1\\)。于是\n\\[\n(x,y)\\in R_\\alpha\n\\Longrightarrow e_j(fx,fy)=0\n\\Longrightarrow h_k(gfx,gfy)=0.\n\\]\n这正是所需结论。 \\(\\square\\)\n\n这与数值 Lipschitz 矩阵在复合下做普通矩阵乘积形成了直接类比。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S02",
+          "group_id": "G02",
+          "title": "上矩阵存在性、吸收元及零化支撑",
+          "statement": "上矩阵存在等价于保持全分量零距；零行与非零下矩阵受吸收元约束，支撑条件蕴含零化。",
+          "scope": "required",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "这些是原M1-M6中的可行性、零与∞、未定义及不可区分性基本边界，不把充分说明定义当作额外成果。",
+          "proof_review": "全零输入距离时任何矩阵作用为0，非全零时全∞矩阵给∞；将一端取吸收元得到零行与下界约束。支撑/零化关系来自有限非负和为0的逐项刻画。",
+          "nontrivial_step": "定义的零/非零分类与吸收元代入，属于必需边界核验。",
+          "value_rationale": "本项的用途与成立范围见数学核验；价值标签只作情境描述，不是当前组数门槛。",
+          "reason": "属于正常框架及其直接后果，不计额外成果。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "2d504c29ce0bcd115fc05a594b6f64c58253530bb78b1207b8cafe550fe9d72b",
+              "start_byte": 5331,
+              "end_byte": 8323,
+              "quote": "### 定理 1：扩展上矩阵存在的充要条件\n\n令 \\(\\boldsymbol\\infty\\) 表示所有元素均为 \\(+\\infty\\) 的 \\(J\\times I\\) 矩阵。则以下三命题等价：\n\n1. \\(f\\) 至少有一个上 Lipschitz 矩阵；\n2. \\(f\\) 保持“族不可区分性”，即\n   \\[\n   \\mathbf d(x,y)=0\n   \\quad\\Longrightarrow\\quad\n   \\mathbf e_f(x,y)=0;\n   \\]\n3. \\(\\boldsymbol\\infty\\in\\mathcal U(f)\\)。\n\n**证明。** 对任意矩阵 \\(A\\)，若 \\(\\mathbf d(x,y)=0\\)，则\n\\[\n(A\\mathbf d(x,y))_j=\\sum_i a_{ji}\\cdot0=0.\n\\]\n故任何上矩阵都强制 \\(\\mathbf e_f(x,y)=0\\)，得到 \\(1\\Rightarrow2\\)。\n\n另一方面，直接由题设算术可得\n\\[\n(\\boldsymbol\\infty\\mathbf d(x,y))_j=\n\\begin{cases}\n0,&\\mathbf d(x,y)=0,\\\\[2pt]\n+\\infty,&\\mathbf d(x,y)\\neq0.\n\\end{cases}\n\\]\n因此条件 2 正好保证 \\(\\boldsymbol\\infty\\) 是上矩阵，即 \\(2\\Rightarrow3\\)；而 \\(3\\Rightarrow1\\) 显然。 \\(\\square\\)\n\n特别地：\n\n- 若输入族 \\(\\mathcal G\\) 分离点，则 \\(\\mathbf d(x,y)=0\\Rightarrow x=y\\)，条件 2 自动成立，所以**每个保吸收元映射都有扩展上矩阵**，至少可以取 \\(\\boldsymbol\\infty\\)。\n- 若不预设族分离性，则任意映射未必有上矩阵。例如，若\n  \\[\n  d_i(x,y)=0\\ \\forall i,\\qquad e_j(fx,fy)>0\n  \\]\n  对某对点和某个 \\(j\\) 成立，那么即使允许所有系数为 \\(+\\infty\\)，也不可能满足上界条件。\n\n这不是定义缺陷，而是伪度量零距离和 \\(0\\cdot\\infty=0\\) 共同决定的必要兼容性。\n\n---\n\n## 5. 吸收元对上、下矩阵的强制作用\n\n吸收元隔离会使某些看似普通的矩阵条件变得很强。\n\n### 命题 4：上矩阵的零行\n\n若 \\(U\\in\\mathcal U(f)\\) 的第 \\(j_0\\) 行全为零，则\n\\[\nf(x)=\\bot_{\\mathcal Y}\\qquad(x\\in\\mathcal X).\n\\]\n即 \\(f\\) 只能是恒取吸收元的映射。\n\n**证明。** 零行给出\n\\[\ne_{j_0}(fx,fy)\\le0,\n\\]\n故对所有 \\(x,y\\) 都有 \\(e_{j_0}(fx,fy)=0\\)。取 \\(y=\\bot_{\\mathcal X}\\)，则 \\(fy=\\bot_{\\mathcal Y}\\)。若某个 \\(x\\neq\\bot_{\\mathcal X}\\) 满足 \\(fx\\neq\\bot_{\\mathcal Y}\\)，吸收元隔离给出\n\\[\ne_{j_0}(fx,\\bot_{\\mathcal Y})=+\\infty,\n\\]\n矛盾。因此所有非吸收输入也都映到 \\(\\bot_{\\mathcal Y}\\)。 \\(\\square\\)\n\n反之，若 \\(f\\equiv\\bot_{\\mathcal Y}\\)，则任何矩阵都是它的上矩阵。\n\n### 命题 5：非零下矩阵强制完全有定义\n\n若 \\(L\\in\\mathcal L(f)\\) 且 \\(L\\neq0\\)，则\n\\[\n\\mathcal X\\setminus\\{\\bot_{\\mathcal X}\\}\\subseteq\\operatorname{dom}(f).\n\\]\n换言之，对任意 \\(x\\neq\\bot_{\\mathcal X}\\)，都有 \\(fx\\neq\\bot_{\\mathcal Y}\\)。\n\n**证明。** 取 \\(\\ell_{j_0i_0}>0\\)。对任意 \\(x\\neq\\bot_{\\mathcal X}\\)，有 \\(d_{i_0}(x,\\bot_{\\mathcal X})=+\\infty\\)，从而\n\\[\ne_{j_0}(fx,\\bot_{\\mathcal Y})\n\\ge \\sum_i\\ell_{j_0i}d_i(x,\\bot_{\\mathcal X})\n\\ge \\ell_{j_0i_0}\\cdot(+\\infty)=+\\infty.\n\\]\n若 \\(fx=\\bot_{\\mathcal Y}\\)，左端为 \\(0\\)，矛盾。 \\(\\square\\)\n\n等价地，如果某个非吸收输入被 \\(f\\) 映为吸收元，那么 \\(f\\) 的下矩阵只有零矩阵。\n\n---\n\n"
+            },
+            {
+              "source_sha256": "2d504c29ce0bcd115fc05a594b6f64c58253530bb78b1207b8cafe550fe9d72b",
+              "start_byte": 11179,
+              "end_byte": 12495,
+              "quote": "### 7.2 从上 Lipschitz 矩阵提取零化信息\n\n上矩阵的零化信息由每行的支撑决定。注意到\n\\[\n(U\\mathbf d(x,y))_j=0\n\\quad\\Longleftrightarrow\\quad\n\\forall i,\\quad u_{ji}=0\\ \\text{或}\\ d_i(x,y)=0.\n\\]\n因此，若 \\(U\\in\\mathcal U(f)\\)，并且\n\\[\nR_\\alpha\\subseteq\n\\bigcap_{i:\\,u_{ji}>0}\\{(x,y):d_i(x,y)=0\\},\n\\]\n则可以令零化矩阵的 \\(c_{j\\alpha}=1\\)。因为此时上界右端为零，故 \\(e_j(fx,fy)=0\\)。\n\n特别地，零行的支撑为空，所以它对每个输出分量都给出全局零化；这与命题 4 的强结论一致。\n\n此外，取单一关系\n\\[\nR_{\\mathcal G}:=\\{(x,y):\\mathbf d(x,y)=0\\},\n\\]\n则定理 1 可以重新表述为：\n\\[\n\\mathcal U(f)\\neq\\varnothing\n\\quad\\Longleftrightarrow\\quad\nf\\text{ 在 }R_{\\mathcal G}\\text{ 上对所有输出分量零化}\n\\quad\\Longleftrightarrow\\quad\n\\boldsymbol\\infty\\in\\mathcal U(f).\n\\]\n\n### 7.3 下 Lipschitz 矩阵对零化的限制\n\n若 \\(L\\in\\mathcal L(f)\\)，且某零化矩阵满足 \\(c_{j\\alpha}=1\\)，则对 \\((x,y)\\in R_\\alpha\\)，\n\\[\n0\\le \\sum_i\\ell_{ji}d_i(x,y)\n\\le e_j(fx,fy)=0.\n\\]\n故必须有\n\\[\n\\ell_{ji}d_i(x,y)=0\\qquad\\forall i.\n\\]\n等价地，只要 \\(\\ell_{ji}>0\\)，就必有\n\\[\nR_\\alpha\\subseteq\\{(x,y):d_i(x,y)=0\\}.\n\\]\n因此，正的下界系数会排除相应正距离输入对上的输出零化。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "S03",
+          "group_id": "G03",
+          "title": "任意线性映射的全局绝对值上矩阵例",
+          "statement": "|T|被声称对添加吸收元后的任意线性T都是全局上矩阵。",
+          "scope": "direct_corollary",
+          "correctness": "incorrect",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": false,
+          "scope_delta": "这是基础定义的例子，不是额外结构成果；此外原全局范围有已确证零行错误。",
+          "proof_review": "非吸收输入与⊥比较时，每个输入分量距离为∞；T有零行时该行|T|作用得到0，但对应输出与⊥距离仍为∞。因此在原声明的全域下不成立。沿用原material10扣罚，不在本观察中改主评。",
+          "nontrivial_step": "不能由有限向量上的三角不等式越过吸收元混合对。",
+          "value_rationale": "本项的用途与成立范围见数学核验；价值标签只作情境描述，不是当前组数门槛。",
+          "reason": "错误例子不计，独立正确的其他部分不受连带剔除。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "2d504c29ce0bcd115fc05a594b6f64c58253530bb78b1207b8cafe550fe9d72b",
+              "start_byte": 2237,
+              "end_byte": 2835,
+              "quote": "### 线性例子\n\n把 \\(\\mathbb R^n,\\mathbb R^m\\) 分别配上坐标距离\n\\[\nd_i(x,y)=|x_i-y_i|,\\qquad e_j(u,v)=|u_j-v_j|,\n\\]\n并各添加一个与所有非吸收点距离为 \\(+\\infty\\) 的吸收元。对线性映射 \\(T:\\mathbb R^n\\to\\mathbb R^m\\)，令其在吸收元上保持不变。由三角不等式，\n\\[\n|(Tx-Ty)_j|\n\\le \\sum_i |t_{ji}|\\,|x_i-y_i|,\n\\]\n所以绝对值矩阵\n\\[\nU=|T|=(|t_{ji}|)\n\\]\n是上 Lipschitz 矩阵。若 \\(T=\\operatorname{diag}(\\lambda_1,\\dots,\\lambda_n)\\)，则\n\\[\nL=U=\\operatorname{diag}(|\\lambda_1|,\\dots,|\\lambda_n|)\n\\]\n同时也是下 Lipschitz 矩阵。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

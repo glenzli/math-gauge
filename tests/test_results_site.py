@@ -121,7 +121,7 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertIn("\\u003c/script>", page)
         self.assertIn("&lt;/script&gt;", page)
         payload = page.split('<script type="application/json" id="data">', 1)[1].split("</script>", 1)[0]
-        self.assertEqual(json.loads(payload), data)
+        self.assertEqual(json.loads(payload), SITE.display_harness_labels(data))
 
     def test_outputs_are_deterministic_and_only_current_results_are_exported(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -321,6 +321,9 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data['default_attempt_condition'], 'nonlogical_retry_3')
         for model in self.data['models']:
             harness = model['harness']
+            if model.get('record_kind') != 'native_harness':
+                metadata = json.loads((ROOT / 'site/harnesses.json').read_bytes())['models'][model['id']]
+                self.assertEqual(harness, metadata, 'CLI and returned-paper displays must use the same source-bound harness metadata')
             self.assertTrue(harness['local_tools_allowed'])
             self.assertFalse(harness['tool_network_access'])
             if harness['version'] is not None:
@@ -341,8 +344,11 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertEqual(first[key], retry[key])
                 self.assertFalse(model["retry"][scope]["formal_comparison_eligible"])
                 self.assertNotIn("slot_evidence", model["retry"][scope])
-            if model["id"].startswith("deepseek"):
-                self.assertGreater(SITE.earned_value(model["retry"]["combined"]), SITE.earned_value(model["combined"]))
+            summary = model['retry']['combined'].get('retry_summary', {})
+            reruns = summary.get('slots_with_reruns', summary.get('admitted_initial_reruns', 0))
+            if reruns:
+                self.assertIn(model['retry']['combined']['retry_summary']['selection'],
+                              {'first_completed_delivery', 'first_normal_native_delivery'})
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
@@ -408,6 +414,11 @@ class CurrentSiteTests(unittest.TestCase):
             evidence = public_evidence(folder, record, 'MG-MCP003', 'single_attempt', task)
             if task['completion']['exact'] is None:
                 self.assertIsNone(task['completion']['exact'])
+                self.assertFalse(any(s['role'] == 'answer' for s in evidence['sources']))
+            elif task['response_sha256'] is None:
+                self.assertEqual(task['completion']['exact'], 0)
+                self.assertFalse(task['strict_pass'])
+                self.assertIsNone(evidence['review'])
                 self.assertFalse(any(s['role'] == 'answer' for s in evidence['sources']))
             else:
                 review = evidence['review']

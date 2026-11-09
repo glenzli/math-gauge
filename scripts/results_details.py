@@ -7,7 +7,9 @@ from pathlib import Path
 import subprocess
 
 from math_gauge.records import evidence_bytes, load_public_task_scores
+from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from scripts.results_i18n import language_switch
+from scripts.results_harness import display_harness_labels
 
 HERE = Path(__file__).resolve().parent
 CONDITIONS = ("single_attempt", "nonlogical_retry_3")
@@ -16,7 +18,7 @@ CATEGORY_TITLES = {'proofs': '书面论证', 'answer-review': '论证审阅', 'l
 
 
 def embedded(value):
-    return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
+    return json.dumps(display_harness_labels(value), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
 
 
 def source_link(source, page, label):
@@ -54,6 +56,14 @@ def controls(data):
     return '<div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径">'+buttons+'</div></div></div>'
 
 
+def review_status(data, href):
+    process = data['review_process']
+    detail = '全审：'+process['primary_ai_reviewer']+'；抽审核对：'+' + '.join(process['cross_check_reviewers'])
+    return ('<div class="statusline"><span class="status-dot" aria-hidden="true"></span>'
+            '<span title="'+html.escape(detail, quote=True)+'">AI 审核 · 部分人工抽审</span>'
+            '<a data-context-link href="'+html.escape(href, quote=True)+'">审核方式 →</a></div>')
+
+
 
 def shell(page, title, subtitle, body, data, script, *, back=None):
     prefix = os.path.relpath(".", Path(page).parent)
@@ -68,15 +78,15 @@ def shell(page, title, subtitle, body, data, script, *, back=None):
         '<header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="'+local('index.html')+'"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a>'
         '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-nav-method data-context-link href="'+local('method.html')+'">方法与数据</a></div>'+language_switch()+'</nav></header>'
         '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
-        '<div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div>'
-        '<section class="panel context-panel">'+controls(data)+'<p class="panel-foot context-label" aria-live="polite"></p></section><p class="original-language-note">原题与原答保留原始语言。</p>'+body+
-        '<footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="'+local('method.html')+'">计分方法与证据边界</a></footer></main>'
+        +review_status(data, prefix+'/method.html#review-process')+
+        '<section class="panel context-panel">'+controls(data)+'</section>'+body+
+        '<footer class="footer"><span>Math Gauge</span><a data-context-link href="'+local('method.html')+'">方法与数据</a></footer></main>'
         '<script type="application/json" id="data">'+embedded(data)+'</script><script src="'+local('assets/results-i18n.js')+'"></script><script src="'+local('assets/results-core.js')+'"></script><script src="'+local('assets/'+script)+'"></script></body></html>')
 
 
 def compact_data(data, model=None):
     keys = ('schema', 'benchmark_version', 'score_mode_catalog', 'default_score_mode', 'score_modes',
-            'attempt_conditions', 'display_score_modes', 'default_attempt_condition', 'policy', 'capacity', 'human_review', 'formal_comparison_eligible')
+            'attempt_conditions', 'display_score_modes', 'default_attempt_condition', 'policy', 'capacity', 'human_review', 'review_process', 'formal_comparison_eligible')
     value = {k: data[k] for k in keys}
     if model:
         value['model'] = model
@@ -112,12 +122,14 @@ def public_evidence(folder, record, cid, condition, task):
         return {'sources': sources, 'review': review, 'claim': claim, 'notes': [],
                 'selected_record': cid + ':A1', 'source_row': row}
     sources, notes, primary = [], [], None
+    condition_sources = load_attempt_sources(folder, record, condition)
     chosen = None
     if record.get('retry_admission') and condition == 'nonlogical_retry_3':
         admission = json.loads(evidence_bytes(folder, record['retry_admission']))
         ledger = json.loads(evidence_bytes(folder, admission['ledger']))
         chosen = next((s['selected_record_id'] for s in ledger['slots'] if s['slot_id']==cid+':A1'), None)
-    legacy = next((s for s in record['records'] if s['id']==(chosen or cid+':A1')), None)
+    selected_records = condition_sources['records']['records'] if condition_sources else record['records']
+    legacy = next((s for s in selected_records if s['id']==(chosen or cid+':A1')), None)
     row = legacy
     for name, field in (('theorem_extension_evidence', 'records'), ('background_check_evidence', 'records'),
                         ('written_replacement_evidence', 'slots')):
@@ -128,6 +140,8 @@ def public_evidence(folder, record, cid, condition, task):
                 row = candidate
     if row:
         answer = row.get('response')
+        if not answer and row.get('missing_response_reason'):
+            notes.append(row['missing_response_reason'])
         if answer:
             if answer['sha256'] != task['response_sha256']:
                 raise ValueError(f"Selected answer differs from task score: {cid}/{condition}")
@@ -184,7 +198,9 @@ def public_evidence(folder, record, cid, condition, task):
             primary = review_projection(source['selected'] if 'selected' in source
                                         else json.loads(source['raw']))
     if record.get('formalization_review') and not any(s['role']=='engineering_review' for s in sources):
-        source = descriptor(folder, record['formalization_review'], role='engineering_review')
+        engineering_source = (condition_sources['bindings']['formalization_review']
+                              if condition_sources else record['formalization_review'])
+        source = descriptor(folder, engineering_source, role='engineering_review')
         engineering = next((r for r in json.loads(source['raw'])['cases'] if r['case_id']==cid), None)
         if engineering:
             if engineering['original_response_sha256'] != task['response_sha256']:
@@ -248,7 +264,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         'views': {mode: {c: next(r for r in projection['views'][mode][c]['tasks'] if r['case_id']==cid)
                          for c in CONDITIONS} for mode in projection['views']}}
     body = panel('本题成绩', '<div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p>',
-        'MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。')
+        'MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。')
     task_path = Path(model['source_record']).parent/'inputs'/cid/'task.md'
     if not (root/task_path).is_file():
         task_path = Path(entry['paths']['task'])
@@ -258,7 +274,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         claim = item['claim']
         reasons = ''.join('<li>'+markdown.add(f['reason'])+'</li>' for f in claim['findings'])
         if not reasons:
-            reasons = '<li>'+markdown.add(claim['scope_note'])+'</li>'
+            reasons = '<li>计分依据见下方逐项评审。</li>'
         current = '<div class="evidence-condition" data-evidence-condition="'+condition+'"'+(' hidden' if condition!=CONDITIONS[0] else '')+'>'
         current += panel('判定与主要理由', '<div class="prose"><ul class="findings">'+reasons+'</ul></div>')
         # Many Lean obligations belong in an expandable audit, while short proof criteria stay visible.
@@ -270,17 +286,17 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         if engineering:
             review_html += '<details class="evidence-fold nested"><summary>逐项工程与语义审核（'+str(len(engineering.get('obligations',[])))+'项）</summary><div class="prose">'+markdown.add(review_markdown(engineering))+'</div></details>'
         current += panel('逐项评审', review_html,
-            '以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。')
+            '原始评审见下方来源文件。')
         answers = [s for s in item['sources'] if s['role'] in ('answer','response') and s['sha256']==details['case']['views']['partial'][condition]['response_sha256']]
         if answers:
             answer = answers[0]
-            current += '<details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose">'+markdown.add(answer['raw'].decode('utf-8'))+'</div><p class="panel-foot">'+source_link(answer['path'],page,'原答文件 ↗')+'</p></details>'
+            current += '<details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose">'+markdown.add(answer['raw'].decode('utf-8'))+'</div><p class="panel-foot">'+source_link(answer['path'],page,'原答文件 ↗')+'</p></details>'
         else:
             unknown = details['case']['views']['partial'][condition]['completion']['exact'] is None
-            current += '<p class="empty-state">'+('本题尚未作答或评审未决，成绩保持未知。' if unknown else '本次没有保留可读的最终原答；已确认的交付失败或独立工程证据按正式记录计分。')+'</p>'
+            current += '<p class="empty-state">'+('本题尚无评审结果。' if unknown else '本题的交付记录及计分依据见档案。')+'</p>'
         links = ''.join('<li>'+source_link(s['path'],page,s['role']+' · '+Path(s['path']).name)+'<span class="hash">SHA256 '+s['sha256']+'</span></li>' for s in item['sources'])
         links += '<li>'+source_link(model['source_record'],page,'来源记录 ↗')+'</li>'
-        current += '<details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>'+html.escape(item['selected_record'])+'</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list">'+links+'</ul></div></details></div>'
+        current += '<details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>'+html.escape(item['selected_record'])+'</code></p><ul class="source-list">'+links+'</ul></div></details></div>'
         body += current
     return shell(page,cid+' · '+entry['title'],model['label']+' · '+CATEGORY_TITLES.get(entry['category'],entry['category'])+' · 公开题证据',body,details,'case-results.js',back=('models/'+model['id']+'/index.html',model['label']))
 
@@ -288,17 +304,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
 def render_model(page, data, model, cases, record, folder, markdown):
     details = compact_data(data, model)
     details['cases'] = cases
-    body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>',
-        '公开与私有合并，满分保持100；未测项目保持未知。')
-    if model.get('record_kind') == 'native_harness':
-        body = panel('Dot native harness', '<div class="prose"><p>'
-            +html.escape(model['comparison_note'])+'</p><p>'
-            +html.escape(model['harness']['detail'])+'</p><p>当前初答和三轮自查均保留原始交付；原批次与补充来源分别留证。'
-            '独立AI评审，人工待审；原始初评与本次复核差异另行保存。</p></div>')+body
-    if model.get('record_kind') == 'paper_observation':
-        body = panel('答卷观察与证据范围', '<div class="prose"><p>'
-            +html.escape(model['comparison_note'])+'</p><p>来源按原标签及所报推理档位保存，后端型号与运行遥测未核实。'
-            '数学评审、操作者声明的交付失败与未知项分别留存；内容可靠率与目标达成率尚未补审。</p></div>')+body
+    body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>')
     rates = model.get('content_rates')
     if rates:
         def percent(value):
@@ -306,6 +312,11 @@ def render_model(page, data, model, cases, record, folder, markdown):
         target = 'attainment' if rates['version'] == '0.2.0' else 'delivery'
         target_label = '目标达成率' if target == 'attainment' else '旧细项覆盖率'
         r, d = rates['metrics']['reliability'], rates['metrics'][target]
+        ranges = []
+        for label, value in [('内容可靠率', r), (target_label, d)]:
+            if percent(value['lower']) != percent(value['upper']):
+                ranges.append(label+' '+percent(value['lower'])+'–'+percent(value['upper']))
+        interval = '<p>可能范围：'+'；'.join(ranges)+'</p>' if ranges else ''
         rows = ''
         for child in data['policy']['subcategories']:
             category = rates['categories'][child['id']]
@@ -313,17 +324,14 @@ def render_model(page, data, model, cases, record, folder, markdown):
             rows += '<tr><td>'+html.escape(child['title'])+'</td><td class="numeric">'
             rows += percent(category['reliability']['observed'])+'</td><td class="numeric">'
             rows += percent(delivered)+'</td></tr>'
-        body += panel('内容可靠率与'+target_label, '<div class="prose"><p>已审内容可靠率 '
-            +percent(r['observed'])+'；已确认'+target_label+' '+percent(d['confirmed'])+'。</p><p>完整题包可能范围：可靠率 '
-            +percent(r['lower'])+'–'+percent(r['upper'])+'；'+target_label+' '+percent(d['lower'])+'–'
-            +percent(d['upper'])+'。未测保持未知。</p></div><div class="table-wrap"><table class="compact rate-table">'
+        body += panel('内容可靠率与'+target_label, '<div class="prose" data-ui-prose><p>已审内容可靠率 '
+            +percent(r['observed'])+'；已确认'+target_label+' '+percent(d['confirmed'])+'。</p>'+interval+'</div><div class="table-wrap"><table class="compact rate-table">'
             '<thead><tr><th>子类</th><th class="numeric">已审内容可靠率</th><th class="numeric">已确认'+target_label+'</th>'
             '</tr></thead><tbody>'+rows+'</tbody></table></div><p class="panel-foot">'
             +source_link(Path(model['source_record']).parent/'content-rates.json', page, '补审汇总 JSON ↗')
-            +' · <a data-context-link href="../../method.html#content-rate-method">计算方法 →</a></p>',
-            '内容核查实际断言；目标按完整独立成果验收。不改变MC、RMC、SMC。AI审核／人审待定。')
+            +' · <a data-context-link href="../../method.html#content-rate-method">计算方法 →</a></p>')
     body += panel('分类贡献', '<div class="table-wrap"><table id="model-categories" class="compact"></table></div>',
-        '每格为贡献分 / 该项满分。书面论证12个家族等权；相关变体在家族内聚合。')
+        '贡献分 / 该项满分；相关变体在家族内聚合。')
     body += '<div class="equal-grid">'+panel('Lean · 自查计分', '<div class="table-wrap"><table id="model-selfcheck" class="compact"></table></div><p id="selfcheck-rule" class="panel-foot"></p><details class="selfcheck-comparison"><summary>比较三种计分口径</summary><div class="table-wrap"><table id="selfcheck-comparison" class="compact"></table></div></details>')
     rounds = ''
     for index in (1,2,3):
@@ -332,23 +340,25 @@ def render_model(page, data, model, cases, record, folder, markdown):
                next(s for s in record['records'] if s['id'] in
                     ('MG-C003:alignment:'+str(index), 'MG-C003:R'+str(index))))
         response = row.get('response')
-        content = markdown.add(evidence_bytes(folder,response).decode()) if response else '原记录没有可读的最终原答，未补写。'
+        content = markdown.add(evidence_bytes(folder,response).decode()) if response else '未留存可读原答。'
         link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗') if response else ''
         rounds += '<details class="evidence-fold nested"><summary>R'+str(index)+' · 完整原答</summary><div class="prose">'+content+'<p>'+link+'</p></div></details>'
     alignment_path = next((s['path'] for s in record.get('evidence',[]) if s['path'] in ('reviews/alignment.json','alignment-review.json')),None)
     if alignment_path:
         rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗')+'</p>'
-    body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '原答事实，不随口径改变。92项义务，采用最后规定轮次；不取最好一轮，不拼接各轮成果。')+'</div>'
+    body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '92项义务，按最后规定轮次计分。')+'</div>'
     body += panel('公开题 · 逐题成绩与证据', '<div class="table-wrap"><table id="case-list" class="compact case-list"></table></div>',
-        f"当前{data['policy']['scope']['public_tasks']}道公开题。私有{data['policy']['scope']['private_tasks']}题只进入上方合并贡献，"
-        '不提供题号、原答或逐题评审。单题比例不可直接相加为总分。')
-    body += '<details class="panel evidence-fold"><summary>形式化初答 · 逐题核实数</summary><div class="table-wrap"><table id="model-formalization" class="compact"></table></div><p class="panel-foot">编译与逐项语义审核同时成立才计完成。初答与后续自查分开计分。</p></details>'
+        f"公开{data['policy']['scope']['public_tasks']}题；私有{data['policy']['scope']['private_tasks']}题计入合并成绩。")
+    body += '<details class="panel evidence-fold"><summary>形式化初答 · 逐题核实数</summary><div class="table-wrap"><table id="model-formalization" class="compact"></table></div><p class="panel-foot">按初答封卷工程核对编译及语义对应。</p></details>'
     body += panel('可靠性审核', '<div id="model-penalties" class="metric-grid"></div><details class="nested evidence-fold"><summary>公开题的错误承诺与扣罚理由</summary><div id="model-findings" class="prose"></div></details>',
-        '记录数不等于独立样本或扣罚次数；同根因去重。RMC 普通扣罚5%/10%/20%，通常每题最多20%，数学想法手稿化最多50%；已确立的核心错误放行使该题最高0分，SMC 不通过。')
-    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness']['detail'])+'</p><p>允许本地工具与预置公共依赖，禁止联网检索及工具联网。</p><p>'+html.escape(model['harness']['tool_usage'])+'</p></div>')
+        '同根因扣罚去重；具体依据见逐题说明。')
     source = source_link(model['source_record'],page,'正式档案 ↗')
-    body += '<details class="panel evidence-fold"><summary>运行条件、重跑与来源</summary><div class="prose"><p>'+html.escape(model['retry']['note'])+'</p><p>允许本地工具，禁止联网检索和工具联网。历史答卷的具体条件以原始记录为准；允许重跑采用第一次正常交付，不按数学得分择优。</p><p>'+source+'</p></div></details>'
-    body += panel('下载当前口径', '<div class="downloads" id="downloads"></div><p class="panel-foot"><a data-context-link href="../../method.html">查看完整方法与数据说明 →</a></p>')
+    harness_note = ('<p class="panel-foot">'+html.escape(model['harness']['note_marker']+' '+model['harness']['note_text'])+'</p>'
+                    if model['harness'].get('note_text') else '')
+    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness_display_name'])+'</p><p>'
+        +html.escape(model['harness']['tool_usage'])+'</p></div>'+harness_note+'<details class="nested evidence-fold"><summary>运行版本与来源</summary>'
+        '<div class="prose"><p>'+html.escape(model['harness']['detail'])+'</p><p>'+source+'</p></div></details>')
+    body += panel('下载当前口径', '<div class="downloads panel-downloads" id="downloads"></div><p class="panel-foot"><a data-context-link href="../../method.html">查看完整方法与数据说明 →</a></p>')
     return shell(page,model['label'],'模型详细评测 · 公开＋私有合并成绩',body,details,'model-results.js')
 
 
@@ -436,7 +446,7 @@ def build_detail_pages(data, root):
         path = 'models/'+model['id']+'/index.html'
         pages[path] = render_model(path, data, model, cases, record, folder, markdown)
         del model['public_claims']
-    pages['method.html'] = shell('method.html','方法与数据','三个计分口径、固定分母与公开证据的阅读方式',
+    pages['method.html'] = shell('method.html','方法与数据','评分、运行条件与审核方式',
         '<div data-lang-content="zh">'+(HERE/'templates/method-content.html').read_text()+'</div>'
         '<div data-lang-content="en" hidden>'+(HERE/'templates/method-content.en.html').read_text()+'</div>',
         compact_data(data),'method-results.js')

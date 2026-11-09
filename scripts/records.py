@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score,
                                 validate_record, load_public_task_scores, project_public_task_view)
 from math_gauge.scoring import score_assessment_record_inputs
+from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.paper_observations import SCHEMA as PAPER_SCHEMA, check_record as check_paper_record
 
 
@@ -58,12 +59,17 @@ def check(root=ROOT, *, public_root=None):
             public_tasks = load_public_task_scores(public, public_record)
             for mode, conditions in views.items():
                 for condition, score in conditions.items():
-                    selected = retry if condition == "nonlogical_retry_3" and retry is not None else inputs
+                    selected_sources = load_attempt_sources(folder, record, condition, public_root=public)
+                    selected = (selected_sources['inputs'] if selected_sources else
+                                retry if condition == "nonlogical_retry_3" and retry is not None else inputs)
+                    selected_review = selected_sources['alignment'] if selected_sources else review
+                    selected_engineering = selected_sources['engineering'] if selected_sources else engineering
+                    selected_manuscript = selected_sources['manuscript'] if selected_sources else manuscript
                     claims = load_claim_review(folder, record, condition, public_root=public) if claim_policy else None
-                    derived = score_assessment_record_inputs(selected, review, source_policy,
-                        formalization_review=engineering, assessment_policy=assessment,
+                    derived = score_assessment_record_inputs(selected, selected_review, source_policy,
+                        formalization_review=selected_engineering, assessment_policy=assessment,
                         strict_policy=strict, mode=mode, theorem_extension_inputs=research, background_check_inputs=background, written_argument_inputs=written,
-                        written_replacement_inputs=replacement, manuscript_completion_inputs=manuscript,
+                        written_replacement_inputs=replacement, manuscript_completion_inputs=selected_manuscript,
                         claim_review=claims, claim_policy=claim_policy,
                         capability_policy=capability if mode == "capability" else None)
                     for key, value in derived.items():

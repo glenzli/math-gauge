@@ -1,0 +1,96 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "gemini-4-argon",
+  "record_id": "20261108",
+  "source_record": {
+    "path": "results/v0.6.0/gemini-4-argon/20261108/record.json",
+    "bytes": 109003,
+    "sha256": "335c035514d514478cb9806b635e4bfe5ce177cbd255bfa21457cc1c8b7c7fe9"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "b3343309e876cd078e42050bbe021bfde8db56bce7d58580465579c06df323be",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 0,
+    "total_groups": null,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 2,
+    "not_run": 3,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "888669def16f794acd103a8efab334376997be4a0406922fc7358c2cbb7c7873",
+      "original_task": {
+        "strict_pass": false,
+        "completion": {
+          "lower": 0.75,
+          "upper": 0.75,
+          "exact": 0.75
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "共同必需目标：M1-M4: explicit domains/quantifiers and nonseparation; genuine multicomponent upper and lower controls, consistent extended values and zero-distance/feasibility/optimality boundaries.；M5-M6: a meaningful matrix-shaped output-indistinguishability description with valid endpoint semantics and basic justified properties. No full composition/iteration theory, fixed-point theorem or unique OET route is required.。 以完整原答和已明确提交的源绑定手稿筛查；原主审核沿用，不因本参考指标重评。证明在上界可达的条件下直接串接两个控制不等式，下界/联合矩阵亦如此；这属于简单组合。关于零距/端点与极值可达性的具体正确性仍沿原评分审核，不为此修改主分。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "最优系数的条件传递律",
+          "statement": "最优系数的条件传递律；本项的原文陈述及范围见字节绑定摘录。",
+          "scope": "direct_corollary",
+          "correctness": "not_reassessed",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": false,
+          "scope_delta": "证明在上界可达的条件下直接串接两个控制不等式，下界/联合矩阵亦如此；这属于简单组合。关于零距/端点与极值可达性的具体正确性仍沿原评分审核，不为此修改主分。",
+          "proof_review": "证明在上界可达的条件下直接串接两个控制不等式，下界/联合矩阵亦如此；这属于简单组合。关于零距/端点与极值可达性的具体正确性仍沿原评分审核，不为此修改主分。 此处不对正常必需成果作新的主评分判定。",
+          "nontrivial_step": "未识别到超出原必需交付、且通过本轮高价值门槛的新证明桥。",
+          "value_rationale": "证明在上界可达的条件下直接串接两个控制不等式，下界/联合矩阵亦如此；这属于简单组合。关于零距/端点与极值可达性的具体正确性仍沿原评分审核，不为此修改主分。",
+          "reason": "证明在上界可达的条件下直接串接两个控制不等式，下界/联合矩阵亦如此；这属于简单组合。关于零距/端点与极值可达性的具体正确性仍沿原评分审核，不为此修改主分。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "888669def16f794acd103a8efab334376997be4a0406922fc7358c2cbb7c7873",
+              "start_byte": 21516,
+              "end_byte": 23256,
+              "quote": "**定理 3.5（复合算子的矩阵传递律）**：\n设 $\\phi, \\psi \\in \\mathcal{X}_{\\mathrm{op}}$：\n\n**(1) 逐分量特征矩阵的热带（Min-Times / Max-Times）传递律**：\n对任意 $m, k \\in I$：\n- **下 Lipschitz 矩阵（无条件成立）**：\n  $$L^-_{mk}(\\psi \\circ \\phi) \\ge \\max_{i \\in I} \\bigl( L^-_{mi}(\\psi) \\cdot L^-_{ik}(\\phi) \\bigr).$$\n- **上 Lipschitz 矩阵**：若对中间指标 $i \\in I$，上界不等式对 $\\psi$（关于 $(m, i)$）和 $\\phi$（关于 $(i, k)$）可达（例如 $L^+_{mi}(\\psi), L^+_{ik}(\\phi) \\in (0, +\\infty)$，或满足保零性），则：\n  $$L^+_{mk}(\\psi \\circ \\phi) \\le L^+_{mi}(\\psi) \\cdot L^+_{ik}(\\phi);$$\n  若对所有 $i \\in I$ 可达，则 $L^+_{mk}(\\psi \\circ \\phi) \\le \\min_{i \\in I} \\bigl( L^+_{mi}(\\psi) \\cdot L^+_{ik}(\\phi) \\bigr)$。\n- **不可区分阈矩阵**：对任意满足 $L^+_{ik}(\\phi) \\in (0, +\\infty)$ 的中间指标 $i \\in I$，有：\n  $$\\Theta_{mk}(\\psi \\circ \\phi) \\ge \\frac{\\Theta_{mi}(\\psi)}{L^+_{ik}(\\phi)};$$\n  若进一步 $\\Theta_{mi}(\\psi) > 0$（或 $\\psi$ 关于 $(m, i)$ 保零），则同时有 $\\Theta_{mk}(\\psi \\circ \\phi) \\ge \\Theta_{ik}(\\phi)$，从而：\n  $$\\Theta_{mk}(\\psi \\circ \\phi) \\ge \\max\\Biggl(\\Theta_{ik}(\\phi),\\; \\frac{\\Theta_{mi}(\\psi)}{L^+_{ik}(\\phi)}\\Biggr).$$\n\n**(2) 联合控制矩阵的标准矩阵乘法传递律**：\n- 若 $M^+(\\phi) \\in \\mathcal{M}^+(\\phi)$ 且 $M^+(\\psi) \\in \\mathcal{M}^+(\\psi)$，则标准矩阵乘积 $M^+(\\psi) M^+(\\phi) \\in \\mathcal{M}^+(\\psi \\circ \\phi)$：\n  $$\\mathbf{d}\\bigl((\\psi \\circ \\phi)(x), (\\psi \\circ \\phi)(y)\\bigr) \\preceq \\bigl(M^+(\\psi) M^+(\\phi)\\bigr) \\mathbf{d}(x, y), \\quad \\forall\\, x, y \\in \\mathrm{dom}(\\psi \\circ \\phi).$$\n- 若 $M^-(\\phi) \\in \\mathcal{M}^-(\\phi)$ 且"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

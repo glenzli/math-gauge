@@ -1,0 +1,188 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-GR005:A1",
+  "case_id": "MG-GR005",
+  "binding": {
+    "plan_sha256": "8a98319c2f6f533c424385231a7990945fc026934c80e07e6214ada31a4baf90",
+    "slot_id": "MG-GR005:A1",
+    "evidence_id": "2d49092cfc91396c9eb55636b0532281b71b07f37927a70741edb39d29582abb",
+    "response_sha256": "44c6c9eec3592196baf5f8a986bc8a52f498f6dbf322390523b5ec2a59efed16",
+    "history_sha256": "7ae629b6952f1f62982330ed8f3b961462e435782fd0063db3ad99b8c8f60c20",
+    "projected_request_sha256": "8cc46a4ba895b964d59b33abf2b6b0a2b33f3b934972897130f4e76172a943ec",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "8fad7a79dc4cd65aef04c28f25d53a13e2a28f12a1875063d4b103bdd0b5d45f",
+    "body_origin": {
+      "slot_id": "MG-GR005:A1",
+      "response_sha256": "44c6c9eec3592196baf5f8a986bc8a52f498f6dbf322390523b5ec2a59efed16",
+      "start_byte": 0,
+      "end_byte": 36195
+    },
+    "body_sha256": "44c6c9eec3592196baf5f8a986bc8a52f498f6dbf322390523b5ec2a59efed16",
+    "rationale_sha256": null,
+    "request_sha256": "ee7af20d063b8895847a569bc7936692161a3d94560c550f1a3975790a4c4b66",
+    "group_contract_sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef"
+  },
+  "reviewer": "Codex source-based mathematical reviewer",
+  "reviewer_kind": "ai",
+  "decision": "fail",
+  "assumption_fidelity": "clean",
+  "proof_validity": "invalid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "已完整复核原生最终文本。S1/S2/S3/S5完成；S4和S6依赖的P6分离证明把半空间方向整体反转，P8的n倍仿射函数又未同步缩放共轭泛函。保留正确构造、夹逼及反例，不能由评审补写关键证明。另误报自身反例在0的成本。原始阶段诊断60；RMC三根因合计20，SMC不通过。",
+  "findings": [],
+  "group_contract_sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+  "stages": [
+    {
+      "stage_id": "S1",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "非负、适当、凸及纤维分解证明有效，不要求取到；其后误述S5例的g_F(0)，单列扣罚。",
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "非负、适当、凸及纤维分解证明有效，不要求取到；其后误述S5例的g_F(0)，单列扣罚。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S2",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "紧次水平集内闭集有限交给真正极小点；次水平像为紧闭集，条件核验完整。",
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "紧次水平集内闭集有限交给真正极小点；次水平像为紧闭集，条件核验完整。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S3",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "同一S_c(f)内有限交性质与连续对偶分离给全部观测的唯一实现。",
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "同一S_c(f)内有限交性质与连续对偶分离给全部观测的唯一实现。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S4",
+      "decision": "fail",
+      "assumption_fidelity": "clean",
+      "proof_validity": "invalid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "mathematical",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "G的共轭构造、基本性质与有限空间粘合正确；核心最大性所依赖的自证P6分离符号反转，P8另漏nφ，未交付闭合的所选证明。",
+      "math_review": {
+        "decision": "fail",
+        "assumption_fidelity": "clean",
+        "proof_validity": "invalid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "G的共轭构造、基本性质与有限空间粘合正确；核心最大性所依赖的自证P6分离符号反转，P8另漏nφ，未交付闭合的所选证明。",
+        "reasons": [
+          "mathematical_error"
+        ]
+      }
+    },
+    {
+      "stage_id": "S5",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "闭凸双曲线上方集及第二坐标投影均核验，g=δ_(0,∞)正确。",
+      "math_review": {
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "闭凸双曲线上方集及第二坐标投影均核验，g=δ_(0,∞)正确。",
+        "reasons": []
+      }
+    },
+    {
+      "stage_id": "S6",
+      "decision": "fail",
+      "assumption_fidelity": "clean",
+      "proof_validity": "invalid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "mathematical",
+      "inherited_from": [],
+      "lean_status": "not_required",
+      "declarations": [],
+      "notes": "闭化与投影的夹逼等式及不可省外层闭化的反例有效；整阶段另要求G=f充要性，其依赖S4/P8最大性仍有证明缺口，阶段未全达标。",
+      "math_review": {
+        "decision": "fail",
+        "assumption_fidelity": "clean",
+        "proof_validity": "invalid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "notes": "闭化与投影的夹逼等式及不可省外层闭化的反例有效；整阶段另要求G=f充要性，其依赖S4/P8最大性仍有证明缺口，阶段未全达标。",
+        "reasons": [
+          "mathematical_error"
+        ]
+      }
+    }
+  ],
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+  },
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-10T05:02:40.870733+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "d52265dde73ad5cb07466244308d82db83511fe25c4782c2a70cccaa9166db05",
+  "public_projection": true,
+  "original_private_review_sha256": "b1d8b32391ebd367f10a4f67702903f84e6a1c9e9d60a4d18421dbeb32501af6"
+}

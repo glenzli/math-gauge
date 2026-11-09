@@ -32,14 +32,16 @@
     "deepseek-v4.1-flash-1017": {
       "name": "Codex CLI",
       "version": null,
-      "detail": "使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。 Harness由用户确认；具体版本及本轮原生工具事件未提供。原保留8份的运行来源另绑原档案。",
-      "tool_usage": "本轮工具调用原始事件未回传；实际调用次数与权限执行未知。",
+      "detail": "此前使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，随后改用Codex CLI。具体版本按实际来源批次留存。",
+      "tool_usage": "允许本地工具及预置公共依赖，禁止工具联网；新回包含原生工具事件，其他批次的实际用量不据此推断。",
       "local_tools_allowed": true,
       "search_allowed": false,
       "tool_network_access": false,
       "runtime_verified": false,
-      "record_sha256": "94b284f1d87e072dbfb8702d47fcef4a6afd50a65a8da95819d27701c5c4b7fe",
-      "shared_evaluator": "Math Gauge"
+      "record_sha256": "741f45606cb3a8ba33585fc6bb65cd327846ac5d58a78479dfd168a061f48586",
+      "shared_evaluator": "Math Gauge",
+      "note_marker": "²",
+      "note_text": "此前使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，随后改用Codex CLI。"
     },
     "terra-6.1-xhigh": {
       "name": "Codex CLI",
@@ -137,7 +139,7 @@
         "0.1.0": "25道公开初答",
         "0.2.0": "14道私有初答"
       },
-      "detail": "Claude Code 2.1.303，tclaude 0.1.10；收集器按实际批次保留0.1.0/0.2.0。原生回显不构成独立后端认证；设置与事件已核查，未提供独立运行隔离探针。",
+      "detail": "Claude Code 2.1.303。原生回显不构成独立后端认证；设置与事件已核查，未提供独立运行隔离探针。",
       "tool_usage": "39道初答中37道实际使用工具，共338次本地工具调用；三轮工具事件分别留档。允许本地工具及预置公共依赖，禁止工具联网。"
     },
     "astra-6-max": {
@@ -180,6 +182,55 @@
       "collection_component_version": "0.2.0",
       "detail": "本批次使用Codex CLI，以xhigh请求；42次物理调用，各轮采用首次正常交付，没有另开数学答卷或系统排除。后端型号与effort未回显，保持未知。",
       "tool_usage": "39道初答中21道实际执行命令；初答及三轮合计303个本地命令事件。允许本地工具及预置公共依赖，禁止工具联网。"
+    },
+    "kimi-3.1-pro-max": {
+      "name": "Claude Code",
+      "record_sha256": "9f704063c35c82d220d4eff39210a5a20042c7bcf244f5f0464b5930caf0c611",
+      "shared_evaluator": "Math Gauge",
+      "local_tools_allowed": true,
+      "tool_network_access": false,
+      "search_allowed": false,
+      "version": "2.1.303",
+      "version_scope": "本次39个初答槽及三轮自查的原始调用",
+      "requested_model": "claude-kimi-k3.1-pro[1m]",
+      "requested_effort": "max",
+      "observed_model_labels": [
+        "kimi-k3.1-pro"
+      ],
+      "observed_effort_labels": [
+        "max"
+      ],
+      "wrapper_versions": {
+        "mg_harness": "0.3.0"
+      },
+      "detail": "Claude Code 2.1.303；47次物理调用全部保留，初答重跑按首次正常交付选定。C003 R3依据用户事后断电排查接纳同一轮恢复；原始终态保留，后台和OS隔离认证不升级。",
+      "tool_usage": "整批951次工具调用，其中301次Bash命令；包含原始中断和恢复段。允许本地工具及预置依赖，禁止工具联网。"
+    },
+    "glm-5.3-max": {
+      "name": "Claude Code",
+      "record_sha256": "51330e9f5723c50dd17b42dfb63eeb40046557bec6d45283f999c60beb7fb99f",
+      "shared_evaluator": "Math Gauge",
+      "local_tools_allowed": true,
+      "tool_network_access": false,
+      "search_allowed": false,
+      "version": "2.1.303",
+      "version_scope": "本次GLM 5.3初答及重试的原始调用；C003自查因无父工程而未执行。",
+      "requested_model": "claude-glm-5.3[1m]",
+      "requested_effort": "max",
+      "observed_model_labels": [
+        "glm-5.3"
+      ],
+      "observed_effort_labels": [
+        "max"
+      ],
+      "wrapper_versions": {
+        "mg_harness": "0.3.0",
+        "tclaude": "0.1.10"
+      },
+      "detail": "Claude Code 2.1.303；采用规则选定答卷；39道初答全部结算，C003三轮因无父工程阻断。",
+      "tool_usage": "全56次外层请求共766次工具调用，其中562次Bash；包含失败和未闭合请求。允许本地工具与预置依赖，禁止工具联网。",
+      "note_marker": "³",
+      "note_text": "GLM 5.3在Codex CLI和Claude Code下均出现过大量超时、无法按时交卷；本次留档采用Claude Code结果，未按时交卷计0分。"
     }
   }
 }

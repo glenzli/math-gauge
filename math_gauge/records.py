@@ -574,6 +574,10 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
     for row in data["slots"]:
         if row["status"] == "not_run":
             continue
+        if row["status"] == "delivery_failed":
+            from .claude_code_evidence import validate_failure
+            validate_failure(root, row, evidence_bytes)
+            continue
         if row["status"] == "execution_authentication_failed":
             _validate_manuscript_request_history(root, row, cases[row["case_id"]])
             continue
@@ -716,6 +720,15 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
             raise ValueError("Manuscript source lacks a real local-tool compatibility control")
         ledger = json.loads(evidence_bytes(root, row["physical_request_ledger"]))
         selected = row.get("selected_physical_request")
+        if ledger.get("schema") == "math-gauge.claude-code-counted-request-history/v1":
+            from .claude_code_evidence import validate_attempt_history
+            native_data = json.loads(evidence_bytes(root, row["external_harness_evidence"]))
+            verified = validate_attempt_history(root, native_data, evidence_bytes)
+            if (not verified["delivered"] or selected != verified["physical_request"]
+                    or ledger.get("native_evidence") != row["external_harness_evidence"]
+                    or ledger.get("effective_model_attempt") != verified["effective_model_attempt"]):
+                raise ValueError("Counted manuscript timeout history differs from its native source")
+            continue
         if ledger.get("schema") == "math-gauge.manuscript-request-history/v2":
             if type(selected) is not int or selected <= 0:
                 raise ValueError("A delivered authorized restart needs its exact selected request")
@@ -1143,6 +1156,9 @@ def validate_native_delivery_failure(root, row):
     """Verify operational zero from an original first native ERROR, not math text."""
     source = row.get("source", {})
     data = json.loads(evidence_bytes(root, row["delivery_failure"]))
+    if data.get("schema") == "math-gauge.claude-code-delivery-failure/v1":
+        from .claude_code_evidence import validate_failure
+        return validate_failure(root, row, evidence_bytes)
     execution = json.loads(evidence_bytes(root, data["native_execution"]))
     events = [json.loads(line) for line in evidence_bytes(root, data["native_events"]).splitlines()]
     terminal = json.loads(evidence_bytes(root, data["native_terminal_event"]))
@@ -1387,8 +1403,12 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
         raise ValueError("Current assessment needs both attempt conditions")
     scores = {}
     for condition, item in sources.items():
+        from .attempt_conditions import load_sources
+        condition_sources = load_sources(root, record, condition, public_root=evidence_root)
         score = json.loads(evidence_bytes(root, item))
         bindings = score.get("source_bindings", {})
+        engineering_descriptor = (condition_sources["bindings"]["formalization_review"]
+                                  if condition_sources else record["formalization_review"])
         if (score.get("schema") != ("math-gauge.assessment-score/v1" if external else
                                     "math-gauge.assessment-score-aggregate/v1")
                 or score.get("benchmark_version") != record["benchmark_version"]
@@ -1400,7 +1420,7 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                 or score.get("human_review") != "pending"
                 or bindings.get("assessment_policy_sha256") != hashlib.sha256(assessment_raw).hexdigest()
                 or bindings.get("strict_policy_sha256") != hashlib.sha256(strict_raw).hexdigest()
-                or bindings.get("engineering_review_sha256") != record["formalization_review"]["sha256"]):
+                or bindings.get("engineering_review_sha256") != engineering_descriptor["sha256"]):
             raise ValueError("Current score identity, condition or evidence binding changed")
         if mode == "capability" and (score.get("capability_method_version") != json.loads(capability_raw)["version"]
                 or score.get("capability_policy_sha256") != identity(json.loads(capability_raw))
@@ -1424,14 +1444,26 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             expected = {"scoring_inputs_sha256": root / filename,
                         "source_math_policy_sha256": root / "scoring-policy.json",
                         "alignment_review_sha256": alignment}
+            if condition_sources:
+                bundle = condition_sources["bindings"]
+                expected.update(scoring_inputs_sha256=root / bundle["scoring_inputs"]["path"],
+                                alignment_review_sha256=root / bundle["alignment_review"]["path"])
+                validate_formalization_review(evidence_root, condition_sources["inputs"],
+                                              condition_sources["engineering"])
             if direct_written:
                 expected["current_written_scoring_inputs_sha256"] = root / "scoring-inputs.json"
             if record.get("theorem_extension_inputs") is not None:
-                research = load_theorem_extension_inputs(root, record, policy=assessment.get("theorem_extension"))
-                expected["theorem_extension_inputs_sha256"] = root / record["theorem_extension_inputs"]["path"]
+                research_record = dict(record)
+                if condition_sources and "theorem_extension_inputs" in bundle:
+                    research_record["theorem_extension_inputs"] = bundle["theorem_extension_inputs"]
+                research = load_theorem_extension_inputs(root, research_record, policy=assessment.get("theorem_extension"))
+                expected["theorem_extension_inputs_sha256"] = root / research_record["theorem_extension_inputs"]["path"]
             if record.get('background_check_inputs') is not None:
-                load_background_check_inputs(root,record,policy=assessment.get('background_check'))
-                expected['background_check_inputs_sha256']=root/record['background_check_inputs']['path']
+                background_record = dict(record)
+                if condition_sources and "background_check_inputs" in bundle:
+                    background_record["background_check_inputs"] = bundle["background_check_inputs"]
+                load_background_check_inputs(root,background_record,policy=assessment.get('background_check'))
+                expected['background_check_inputs_sha256']=root/background_record['background_check_inputs']['path']
             if record.get("written_argument_inputs") is not None:
                 load_written_argument_inputs(root, record, policy=assessment.get("written_argument_additions"))
                 expected["written_argument_inputs_sha256"] = root / record["written_argument_inputs"]["path"]
@@ -1439,8 +1471,11 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                 load_written_replacement_inputs(root, record, policy=assessment.get("written_argument_replacements"))
                 expected["written_replacement_inputs_sha256"] = root / record["written_replacement_inputs"]["path"]
             if record.get("manuscript_completion_inputs") is not None:
-                load_manuscript_completion_inputs(root, record, policy=assessment.get("manuscript_completion"))
-                expected["manuscript_completion_inputs_sha256"] = root / record["manuscript_completion_inputs"]["path"]
+                manuscript_record = dict(record)
+                if condition_sources:
+                    manuscript_record["manuscript_completion_inputs"] = bundle["manuscript_completion_inputs"]
+                load_manuscript_completion_inputs(root, manuscript_record, policy=assessment.get("manuscript_completion"))
+                expected["manuscript_completion_inputs_sha256"] = root / manuscript_record["manuscript_completion_inputs"]["path"]
             if any(bindings.get(key) != hashlib.sha256(path.read_bytes()).hexdigest()
                    for key, path in expected.items()):
                 raise ValueError("Current score binds different source judgments")
@@ -1461,7 +1496,8 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                     != assessment["manuscript_completion"]["private_cases"]):
                 raise ValueError("Public manuscript evidence changed its fixed family population")
             if (manuscript is not None and bindings.get("manuscript_completion_inputs_sha256")
-                    != manuscript["source_inputs_sha256"]):
+                    != (condition_sources["bindings"]["manuscript_completion_inputs"]["sha256"]
+                        if condition_sources else manuscript["source_inputs_sha256"])):
                 raise ValueError("Public manuscript aggregate binds a different private source")
         scores[condition] = score
     return scores

@@ -91,6 +91,16 @@ class ManuscriptTests(unittest.TestCase):
             data=self.data();data['slots'][0].update(status=status,points=0,complete=False)
             with self.assertRaises(ValueError):validate_inputs(data,self.policy['manuscript_completion'])
 
+    def test_source_bound_missing_final_is_not_an_unknown_or_a_fake_review(self):
+        data = self.data(0)
+        row = data['slots'][0]
+        row.update(status='delivery_failed', response=None, review=None,
+                   delivery_failure={'path': 'original-timeout.json', 'sha256': 'a' * 64})
+        validate_inputs(data, self.policy['manuscript_completion'])
+        row['complete'] = True
+        with self.assertRaises(ValueError):
+            validate_inputs(data, self.policy['manuscript_completion'])
+
     def dual(self, first=97, second=100):
         policy=copy.deepcopy(self.policy)
         policy['manuscript_completion'].update(version='0.2.0',private_cases=2,families=2)
@@ -263,6 +273,21 @@ class ManuscriptTests(unittest.TestCase):
                 manuscript_completion_inputs=data,claim_review=claims,claim_policy=self.claim,
                 capability_policy=self.capability if mode=='capability' else None)
         return data,policy,claims,score
+
+    def test_failed_fifth_delivery_is_zero_without_invented_core_review(self):
+        data,policy,claims,score=self.five_families()
+        row=data['slots'][-1]
+        row.update(status='delivery_failed',points=0,complete=False,response=None,review=None,
+                   delivery_failure={'sha256':'f'*64})
+        row.pop('strict_completion_review');row.pop('strict_completion_review_source')
+        claims['cases'][-1].update(status='delivery_failed',findings=[],
+                                  source_response_sha256=None,source_review_sha256=None,sources=[])
+        for mode in ('capability','partial','strict'):
+            task=next(t for t in score(mode)['tasks'] if t['case_id']==row['case_id'])
+            self.assertEqual(task['completion']['exact'],0)
+        row['strict_completion_review']={'required_goals':{'G1':False}}
+        with self.assertRaisesRegex(ValueError,'cannot acquire a core'):
+            score()
 
     def test_fifth_family_changes_only_fixed_population_and_keeps_old_task_judgments(self):
         data,policy,claims,score=self.five_families()

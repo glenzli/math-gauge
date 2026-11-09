@@ -1,0 +1,75 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-GR023",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-GR023:A1",
+    "case_id": "MG-GR023",
+    "binding": {
+      "plan_sha256": "2dab84a9de2a5fa59e1fa0cb33f183cedb03509b3f860415c830ea6b888db97a",
+      "slot_id": "MG-GR023:A1",
+      "evidence_id": "d4df12148edb6f427bce18d62af38ca72a923d367f47e6fc4b5e13940dcd6a0e",
+      "response_sha256": "dbfdbcea439c320034206159112727b79ce690f1f4a5a66f383131f882b9870e",
+      "history_sha256": "4291a84180dfbfe25596cafa01aff1ae171ef0cb1072bc37d9d4b638a06928ff",
+      "projected_request_sha256": "26a45d23bec25b3c19f305b761eb9174c117d6c73abc57fb6ec407a7192bff6d",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "d98556b5dd42b2881caa36244699de349d5f83e060815d3059d6546f08b6a24d",
+      "body_origin": {
+        "slot_id": "MG-GR023:A1",
+        "response_sha256": "dbfdbcea439c320034206159112727b79ce690f1f4a5a66f383131f882b9870e",
+        "start_byte": 0,
+        "end_byte": 14835
+      },
+      "body_sha256": "dbfdbcea439c320034206159112727b79ce690f1f4a5a66f383131f882b9870e",
+      "rationale_sha256": null,
+      "request_sha256": "507d9f8524e9835e82d9d32769cfe889de7fd4058950e5d3972da55f1e058b30",
+      "group_contract_sha256": "2090347b95c27a6f6da4a3a14584e6be5de7e0fc66b14d30c21d342fb2eae2e3"
+    },
+    "reviewer": "Codex source-based mathematical reviewer",
+    "reviewer_kind": "ai",
+    "decision": "fail",
+    "assumption_fidelity": "clean",
+    "proof_validity": "invalid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "原始诊断74/100，SMC失败。主要核心错误是把二值层误当超滤子；三点循环作用下二值层有2个不动取向、完整层无不动记录即可反驳其计数与延拓。其余完整层的拓扑/群分类和任意乘积理论独立正确，保留对应60分。依现行政策去除原10可靠性保留后由共享评分器归一数学信用，并按同一二值根因critical20扣罚；无核心架构背书封顶。",
+    "findings": [],
+    "group_contract_sha256": "2090347b95c27a6f6da4a3a14584e6be5de7e0fc66b14d30c21d342fb2eae2e3",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+    },
+    "criteria": [
+      {
+        "criterion_id": "truncation",
+        "score": 4,
+        "notes": "T0=4，其余T1-T5按冻结量规均0：把m>=2直接认作超滤子，二值测试不强制交闭；因此二值层分类、m=3准确阈值、限制像纤维、有限作用计数和二值延拓均错。正确高层子结论仍在笔记保留，不违反各check明确zero条件。"
+      },
+      {
+        "criterion_id": "invariant_classification",
+        "score": 30,
+        "notes": "完整层m=infty的分类可用其有效有限划分构造；三色无三连同色论证覆盖所有有限周期和双向无限轨道，固定集判据与滤子/Stone闭子空间内在模型、观察拓扑、非空判据完整。显式固定集超滤子空间是允许的等价内在模型，不另因理想表示略写扣分。"
+      },
+      {
+        "criterion_id": "universal_group_action",
+        "score": 15,
+        "notes": "固定点像闭包、有限稳定子测试充要条件、任意非有限生成群的陪集并反例全部正确；Pruefer群的可数陪集层尾滤子例给全部不动记录，替代FSym合法。"
+      },
+      {
+        "criterion_id": "product_boundary",
+        "score": 15,
+        "notes": "任意指标/空指标/空因子、柱集与有限生成固定约束FIP构造完整；有限因子切片唯一性，两个无限因子Fubini次序不同的超滤子，和无实际不动点下仍非单射均有效。"
+      },
+      {
+        "criterion_id": "independent_assertion_reliability",
+        "score": 10,
+        "notes": "没有必须另扣的额外独立数学断言；二值层核心错误只按根因一次可靠性扣罚，不再扣原独立断言保留分。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "7fd5b8a5baf56f012a631693b56399ee86f95cb8d5bc47d20da1eff4735d82fa"
+}

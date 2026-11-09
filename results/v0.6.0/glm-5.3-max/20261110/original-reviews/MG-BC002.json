@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-BC002:A1",
+  "case_id": "MG-BC002",
+  "binding": {
+    "plan_sha256": "8a98319c2f6f533c424385231a7990945fc026934c80e07e6214ada31a4baf90",
+    "slot_id": "MG-BC002:A1",
+    "evidence_id": "9c92b3b8ee9fc7707e65f4f36a10d30358dd2c98e2f61173c68130e384e73663",
+    "response_sha256": "1ead8daba320501af0a7db5954cf2405f87f7e9de87c1f965537ee671a602bd4",
+    "history_sha256": "cd919b247b8fab79ae8883882b03d0ce1c7ff4282683576eaf40a445f3b22674",
+    "projected_request_sha256": "6ef0e9f756564fc453edc0d9644455a7987d23a9b395d5bd769ccdb1f3b69e50",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "b9df5e8808177c5844f9cddc7b65f6822d1db6d9f5c911463d8806531f5825a3",
+    "body_origin": {
+      "slot_id": "MG-BC002:A1",
+      "response_sha256": "1ead8daba320501af0a7db5954cf2405f87f7e9de87c1f965537ee671a602bd4",
+      "start_byte": 0,
+      "end_byte": 23532
+    },
+    "body_sha256": "1ead8daba320501af0a7db5954cf2405f87f7e9de87c1f965537ee671a602bd4",
+    "rationale_sha256": null,
+    "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+  },
+  "reviewer": "Codex source-based mathematical reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "背景R3，核心纠错成立；全局存在、收缩、能量衰减、叠加和条件prox证书均正确。附加的反向流例子错误：本系统反向u方程含(3u-v)/2而不等于4u^3。另把数值积分交叉一致性当作经证明误差界，并在C.3将小时间/已测试时间结论扩大成任意时间的无条件不表示，未给出相应证明。保留有效数学正分；两项独立可靠性扣分5+10，Strict不通过。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "明确否定从强凸梯度流直接推出凸prox表示。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "C.2(i)给出本题(u,v)坐标的非零三阶旋度6u(8u^3+3u-v)，在(1,0)为66，严格排除所有充分小正时间的prox表示；审查独立符号计算一致。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "真流估计与条件prox证书完整，且用充分小时间反证修正题目全时间的错误升级。其他附加断言的范围与动力学错误独立扣分。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-10T05:02:40.873318+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "a927a907111d3585f9e9ebe2399f8afa7192eab2eaa2a716aa2b2fc475eb6a64",
+  "public_projection": true,
+  "original_private_review_sha256": "6a7171837872cf60f90376bf5c715b18b05c21b4e2460b5132a17d7517ac7d93"
+}

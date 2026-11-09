@@ -1486,6 +1486,15 @@ def _alignment_trajectory(review, policy, *, positive_only=False):
                 point = base_point - penalty / 100
         interval = ((Fraction(-1, 5), Fraction(4, 5), None) if point is None and penalty
                     else unknown_score if point is None else (point, point, point))
+        # A proved absent final is operational zero, not 92 mathematical errors
+        # or an unresolved opportunity to earn credit. Retain the unknown
+        # obligations so a later round cannot manufacture a repair baseline.
+        failed_delivery = (snapshot is not None and snapshot.get("source_kind") == "not_available"
+                           and snapshot.get("delivery_status") == "delivery_failed")
+        if failed_delivery:
+            interval = (Fraction(0),) * 3
+            point = base_point = Fraction(0)
+            penalty = Fraction(0)
         delivery = snapshot.get("delivery_verified") if snapshot else None
         strict = (False if delivery is False or accurate is False
                   or (current is not None and False in current.values()) else
@@ -2739,7 +2748,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             baseline_deduction = Fraction(0)
             if cid + ":A1" in research_levels:
                 research = research_levels[cid + ":A1"]
-                if research["research_R"] is not None:
+                if research["research_R"] is not None and claim_row["status"] != "delivery_failed":
                     disposition = claim_row.get("baseline_disposition")
                     if ((research["baseline_B"] == 2 and disposition != "correct")
                             or research["baseline_B"] != 2 and disposition not in
@@ -2926,9 +2935,12 @@ def score_paper_observation(review, assessment_policy, strict_policy, capability
     selected = select_inputs(review, condition)
     result = _score_observation_inputs(selected, policy, strict_policy, capability_policy,
                                        claim_policy, mode=mode, record_kind='paper_observation')
+    alignment = result['alignment_selfcheck']
+    strict_alignment = result['strict_alignment_selfcheck']
     result.update(attempt_condition=condition, runtime_evidence_verified=False,
-        alignment_selfcheck=unknown_alignment(mode),
-        strict_alignment_selfcheck={'strict_pass': None, 'state': 'unresolved'},
+        alignment_selfcheck=alignment if alignment is not None else unknown_alignment(mode),
+        strict_alignment_selfcheck=(strict_alignment if strict_alignment is not None else
+                                    {'strict_pass': None, 'state': 'unresolved'}),
         retry_summary={'selection': 'first_completed_delivery', 'maximum_total_attempts': 3,
             'evidence_kind': 'operator_reported_without_native_receipts',
             'slots_with_reruns': sum(len(t['attempts']) > 1 for t in review['tasks']),
@@ -2937,7 +2949,7 @@ def score_paper_observation(review, assessment_policy, strict_policy, capability
     result['coverage'].update(source_reviewed_tasks=sum(t['status'] == 'reviewed' for t in selected['tasks']),
         observed_delivery_failures=sum(t['status'] == 'delivery_failed' for t in selected['tasks']),
         unresolved_initial_tasks=sum(t['status'] == 'unresolved' for t in selected['tasks']),
-        source_alignment_rounds=0)
+        source_alignment_rounds=3 if alignment is not None else 0)
     return result
 
 
@@ -3017,13 +3029,14 @@ def _score_observation_inputs(review, assessment_policy, strict_policy, capabili
                            for key, v in zip(('lower', 'upper', 'exact'), value)},
             'response_sha256': (original.get('response') or {}).get('sha256'),
             'review_sha256': (original.get('review') or {}).get('sha256'), 'claim_assessment': detail, **extra})
-    if record_kind == 'paper_observation':
+    if record_kind == 'paper_observation' and review.get('alignment_adoption') is None:
         alignment, strict = None, None
     else:
         alignment, _ = _alignment_trajectory(review['alignment_review'], review['alignment_source_policy'],
                                               positive_only=mode == 'capability')
         strict = strict_alignment_trajectory(review['alignment_review'], review['alignment_source_policy'])
-        if (alignment != review['alignment']['capability' if mode == 'capability' else 'partial']
+        if record_kind == 'native_harness' and (
+                alignment != review['alignment']['capability' if mode == 'capability' else 'partial']
                 or strict != review['alignment']['strict']):
             raise ValueError('Native trajectory summary differs from source-bound shared repair scoring')
     metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
@@ -3175,3 +3188,32 @@ def score_content_rates(review, assessment_policy, goal_review=None):
             reviewed_goals=sum(g['passed'] is not None for t in goal_review['tasks'] for g in t['goals']))
         result['sources'] += goal_review['sources']
     return result
+
+
+def summarize_manuscript_observations(review, source_policy, observation_policy):
+    """Count verified unrequested result groups; this is not a capability score."""
+    from .manuscript_surplus import validate_review, validate_observation_policy, observed_result, RESULT_SCHEMA
+    validate_review(review, source_policy)
+    validate_observation_policy(observation_policy)
+    rows = []
+    for original in review['cases']:
+        groups = sorted({c['group_id'] for c in original['candidates'] if observed_result(c)})
+        rows.append({'case_id': original['case_id'], 'family_id': original['family_id'],
+                     'status': original['status'], 'accepted_groups': groups,
+                     'original_task': original['original_task']})
+    unresolved = any(row['status'] in {'not_run', 'unresolved'} for row in rows)
+    count = sum(len(row['accepted_groups']) for row in rows)
+    return {'schema': RESULT_SCHEMA, 'version': '0.1.0', 'visibility': 'private',
+            'observation_id': observation_policy['observation_id'], 'base_benchmark_version': '0.6.0',
+            'kind': 'descriptive-observation', 'is_score': False, 'higher_is_better': None,
+            'capability_inference': False,
+            'model_id': review['model_id'], 'record_id': review['record_id'],
+            'counts': {'confirmed_groups': count, 'total_groups': None if unresolved else count,
+                       'unit': 'result_groups'},
+            'coverage': {'planned': len(rows), 'reviewed': sum(r['status'] == 'reviewed' for r in rows),
+                         'not_run': sum(r['status'] == 'not_run' for r in rows),
+                         'delivery_failed': sum(r['status'] == 'delivery_failed' for r in rows),
+                         'unresolved': sum(r['status'] == 'unresolved' for r in rows)},
+            'families': rows, 'new_candidate_calls': 0, 'main_scores_modified': False,
+            'reviewer_kind': 'ai', 'human_review': 'pending', 'post_observation': True,
+            'formal_comparison_eligible': False}

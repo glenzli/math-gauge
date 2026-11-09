@@ -1,0 +1,185 @@
+{
+  "case_id": "MG-BC002",
+  "category": "background-check",
+  "attempt": "A1",
+  "source_scope": "public",
+  "status": "reviewed",
+  "reviewer_kind": "ai",
+  "reviewer": "Codex independent mathematical review, 2026-11-09",
+  "human_status": "pending",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/task.md",
+      "sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af",
+      "bytes": 1993,
+      "lines": 23
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/rubric.json",
+      "sha256": "a9664da66d113b6ac0098ba8997a6fa247281873ebad84f726f3757f6216fd59",
+      "bytes": 630,
+      "lines": 14
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/reference.md",
+      "sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3",
+      "bytes": 6153,
+      "lines": 89
+    },
+    "answer": {
+      "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+      "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+      "bytes": 7382,
+      "lines": 380
+    },
+    "source_rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/source-rubric.md",
+      "sha256": "58ea72a8363c62d278e4fd38a37243e3e5659f838eb9bfce6cc18b3dda7d1d6d",
+      "bytes": 4756,
+      "lines": 39
+    },
+    "contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/background-check/MG-BC002/contract.json",
+      "sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+      "bytes": 2038,
+      "lines": 54
+    }
+  },
+  "supplemental_source_bindings": [],
+  "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+  "baseline_disposition": null,
+  "positive_completion": {
+    "earned_units": 3,
+    "maximum_units": 3,
+    "basis": "valid model-specific background correction, excluding downstream calculation credit"
+  },
+  "strict_pass": false,
+  "findings": [
+    {
+      "id": "bc002-pl-invalid-inference",
+      "root_cause": "bc002-lower-bound-used-as-upper-bound",
+      "severity": "local",
+      "severity_points": 5,
+      "error_kind": "unsupported_completion",
+      "kind": "unsupported_completion",
+      "quote": "Strong convexity gives, for all \\(z,w\\),\n\n\\[\nf(w)\\ge f(z)+\\langle g(z),w-z\\rangle+\\frac12\\|w-z\\|^2.\n\\]\n\nTake \\(w=z-g(z)\\). Since \\(f\\ge0\\),\n\n\\[\n0\\le f(z-g(z))\n\\ge f(z)-\\frac12\\|g(z)\\|^2,\n\\]\n\nso\n\n\\[\n\\|g(z)\\|^2\\ge 2f(z).\n\\]",
+      "reason": "From f(z-g(z)) >= f(z)-||g(z)||^2/2 and f(z-g(z)) >= 0 one cannot conclude f(z)-||g(z)||^2/2 <= 0. Both displayed comparisons are lower bounds on the same quantity. The requested bound ||g(z)||^2>=2f(z) is true, but this is not its proof. The local repair is to use the strong-convexity inequality with w=0 and bound g(z) dot z-||z||^2/2 <=||g(z)||^2/2. This does not impair the independently valid proximal obstruction or create an actual false-prox endorsement.",
+      "core_cap_zero": false,
+      "core_endorsement": false,
+      "strict_blocking": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 104,
+          "line_end": 121,
+          "quote": "Strong convexity gives, for all \\(z,w\\),\n\n\\[\nf(w)\\ge f(z)+\\langle g(z),w-z\\rangle+\\frac12\\|w-z\\|^2.\n\\]\n\nTake \\(w=z-g(z)\\). Since \\(f\\ge0\\),\n\n\\[\n0\\le f(z-g(z))\n\\ge f(z)-\\frac12\\|g(z)\\|^2,\n\\]\n\nso\n\n\\[\n\\|g(z)\\|^2\\ge 2f(z).\n\\]"
+        }
+      ]
+    }
+  ],
+  "criteria": [
+    {
+      "id": "gap-diagnosis",
+      "passed": true,
+      "reason": "Explicitly rejects the automatic flow-to-prox implication while keeping the certificate conditional.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 278,
+          "line_end": 288,
+          "quote": "#### Important caveat: this certificate is conditional\n\nThe above argument proves only:\n\n\\[\nT=\\operatorname{prox}_r\\text{ for convex }r\n\\quad\\Longrightarrow\\quad\nT\\text{ satisfies the certificate and is firmly nonexpansive.}\n\\]\n\nIt does **not** prove that a strongly convex gradient flow map is a proximal map. In fact, the statement in the draft that \\(T_\\tau=\\Phi_\\tau\\) admits a convex proximal representation for every \\(\\tau>0\\) is false for the present \\(f\\)."
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 328,
+          "line_end": 328,
+          "quote": "Therefore the exact flow block is not, in general, an exact convex proximal step. The correct conclusion from strong convexity is contraction and energy dissipation, not proximal representability."
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 372,
+          "line_end": 380,
+          "quote": "The coefficient in\n\n\\[\n\\operatorname{prox}_r(z)\n=\n\\arg\\min_u\\left\\{r(u)+\\frac12\\|u-z\\|^2\\right\\}\n\\]\n\nis fixed at \\(1/2\\); it is not the evolution time \\(\\tau\\). If one uses the common notation \\(\\operatorname{prox}_{\\eta r}(z)=\\arg\\min_u\\{\\eta r(u)+\\frac12\\|u-z\\|^2\\}\\), then \\(\\eta\\) is a separate proximal-step coefficient. In particular, \\(\\operatorname{prox}_{\\eta f}\\) is the backward-Euler map with step \\(\\eta\\), not the exact flow map \\(\\Phi_\\eta\\). Therefore the deployed block should be described as an exact continuous-flow contraction/dissipation step, not as an exact convex regularization step, unless a proximal representation is separately proved. For the present \\(f\\), the draft’s universal proximal-representation claim is false."
+        }
+      ]
+    },
+    {
+      "id": "model-specific-certificate",
+      "passed": true,
+      "reason": "The correct nonzero cubic skew term at (0,1) supplies an actual obstruction.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 290,
+          "line_end": 318,
+          "quote": "For example, take \\(z_0=(0,1)\\), and let \\(J_\\tau=D\\Phi_\\tau(z_0)\\). The Jacobian solves the variational equation\n\n\\[\n\\dot J_\\tau=-H(\\Phi_\\tau(z_0))J_\\tau,\n\\qquad J_0=I.\n\\]\n\nAt \\(z_0=(0,1)\\),\n\n\\[\nH(z_0)=\n\\begin{pmatrix}4&3\\\\3&5\\end{pmatrix},\n\\qquad\n\\dot H(0)\n=\n-24\n\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}\n+O(t^2).\n\\]\n\nA direct Taylor expansion of the variational equation gives\n\n\\[\n(J_\\tau)_{12}-(J_\\tau)_{21}\n=\n-4\\tau^3+O(\\tau^4).\n\\]\n\nThus, for every sufficiently small \\(\\tau>0\\), \\(D\\Phi_\\tau(z_0)\\) is not symmetric."
+        }
+      ]
+    },
+    {
+      "id": "complete-correction",
+      "passed": true,
+      "reason": "Inverse-flow/subgradient differentiability forces symmetric inverse Jacobian for any convex prox, contradicted on a nonempty interval of small times.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 318,
+          "line_end": 328,
+          "quote": "Thus, for every sufficiently small \\(\\tau>0\\), \\(D\\Phi_\\tau(z_0)\\) is not symmetric.\n\nIf \\(\\Phi_\\tau=\\operatorname{prox}_r\\) for a convex \\(r\\), then \\(\\Phi_\\tau\\) is a \\(C^\\infty\\) diffeomorphism onto its open range, and\n\n\\[\np\\mapsto \\Phi_\\tau^{-1}(p)-p\n\\]\n\nis a continuous selection of \\(\\partial r(p)\\). Convexity then forces this selection to equal \\(\\nabla r(p)\\) on the open range, so its Jacobian \\(J_\\tau^{-1}-I\\) must be symmetric. This would force \\(J_\\tau\\) itself to be symmetric, a contradiction.\n\nTherefore the exact flow block is not, in general, an exact convex proximal step. The correct conclusion from strong convexity is contraction and energy dissipation, not proximal representability."
+        }
+      ]
+    },
+    {
+      "id": "energy-decay-proof",
+      "passed": false,
+      "reason": "The PL conclusion is true, but the displayed lower bounds do not imply it. A direct strong-convexity comparison with the minimizer, followed by completion of the square, would repair this local step.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-BC002/A1/answer.md",
+          "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "bytes": 7382,
+          "lines": 380,
+          "line_start": 104,
+          "line_end": 138,
+          "quote": "Strong convexity gives, for all \\(z,w\\),\n\n\\[\nf(w)\\ge f(z)+\\langle g(z),w-z\\rangle+\\frac12\\|w-z\\|^2.\n\\]\n\nTake \\(w=z-g(z)\\). Since \\(f\\ge0\\),\n\n\\[\n0\\le f(z-g(z))\n\\ge f(z)-\\frac12\\|g(z)\\|^2,\n\\]\n\nso\n\n\\[\n\\|g(z)\\|^2\\ge 2f(z).\n\\]\n\nTherefore\n\n\\[\n\\frac{d}{dt}f(\\Phi_t(z))\n=\n-\\|g(\\Phi_t(z))\\|^2\n\\le -2f(\\Phi_t(z)),\n\\]\n\nand Gronwall's inequality yields\n\n\\[\n\\boxed{\nf(\\Phi_t(z))\\le e^{-2t}f(z).\n}\n\\]"
+        }
+      ]
+    }
+  ],
+  "background_R": 3,
+  "complete": false,
+  "background_correction_complete": true,
+  "false_actual_background_endorsement": false,
+  "detail": {
+    "target_background": "The answer correctly distinguishes exact flow from implicit Euler and conditional proximal certificates. At z0=(0,1), H0=[[4,3],[3,5]], Hdot0=-24 ee^T, so the variational equation gives J12-J21=-4 tau^3+O(tau^4). Smooth local dependence justifies the Taylor remainder, excluding every convex proximal representation for all sufficiently small positive tau. The inverse-flow/subgradient-selection argument supplies a valid symmetry obstruction without assuming backward-global existence.",
+    "downstream": "Forward global existence, unique equilibrium, contraction, semigroup stacking, conditional three-point and firm-nonexpansive calculations are correct. The energy bound is true, but its supplied PL derivation makes an invalid inequality inference; see the local finding. The extra minus in the energy identity at line 46 is an evident sign typo in a line whose actual final equality and subsequent use have the correct sign, and is not separately charged.",
+    "completeness": "The example-specific background correction is complete (R3). Full task Strict is withheld because the requested energy-decay proof has a substantive local inference error as delivered. No core false endorsement occurs; the deployment paragraph rejects the false actual-prox interpretation."
+  },
+  "summary": "R3 background correction with a valid all-small-time nonsymmetric-Jacobian obstruction. Full task incomplete because of one local proof error in the requested energy estimate; no target false endorsement or RMC core cap.",
+  "audit_source": {
+    "path": "/private/tmp/math-gauge-ds-grading-20261109/research/research-reviews.json",
+    "sha256": "10866b1f8ead9667328dc82468fe279faafb2ade81410908cf4f53ba7fd6ce68",
+    "bytes": 158827
+  }
+}

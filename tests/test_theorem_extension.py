@@ -99,6 +99,21 @@ class TheoremExtensionScoringTests(unittest.TestCase):
                        review=None, failure_reason="service_error", execution={"sha256": "c" * 64})
         self.assertEqual(self.score(data)["contributions"]["theorem-extension"]["exact"], 0)
         self.assertEqual(self.score(data, "strict")["contributions"]["theorem-extension"]["exact"], 0)
+        # Adding the reliability audit cannot require an invented B judgment.
+        failed_ids={row['case_id'] for row in data['slots']}
+        claims=dict(schema='math-gauge.claim-review-condition/v1',policy_version='0.1.0',
+            model_label=self.plan['model_label'],reviewer_kind='ai',human_review='pending',
+            formal_comparison_eligible=False,cases=[dict(case_id=t['case_id'],
+                status='delivery_failed' if t['case_id'] in failed_ids else 'not_run',
+                scope_note='No delivered answer, no mathematical baseline adjudication.',
+                source_response_sha256=None,source_review_sha256=None,sources=[],findings=[],
+                baseline_disposition=None) for t in self.score(data)['tasks']])
+        claim_policy=json.loads((ROOT/'protocol/claim-penalty-policy.json').read_bytes())
+        for mode in ('partial','strict'):
+            result=score_assessment_inputs(dict(plan=self.plan,model_label=self.plan['model_label'],slots=[]),
+                self.policy,self.strict,mode=mode,theorem_extension_inputs=data,
+                claim_review=claims,claim_policy=claim_policy)
+            self.assertEqual(result['contributions']['theorem-extension']['exact'],0)
 
     def test_policy_and_public_projection_preserve_the_privacy_and_no_invitation_boundaries(self):
         changed = copy.deepcopy(self.policy["theorem_extension"])

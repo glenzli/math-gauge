@@ -11,4 +11,6 @@
 | Google | [原始SVG](https://artificialanalysis.ai/img/logos/google.svg) | `8b694251c4d88e7ac9f0725f502b3ef3fba57291c6e9408ca15d8df74e71a627` |
 | Anthropic | [原始SVG](https://artificialanalysis.ai/img/logos/anthropic.svg) | `621687f5746b775c46a9019e136b4678a296e879bd80b8f6caf6a6eab3b7cce0` |
 
+| Z.ai | [原始SVG](https://artificialanalysis.ai/img/logos/zai.svg) | `07a45e8e35b0b631ed2c68cd1cb041f9721b1ceeb0bd0e34f1459b0304a741c7` |
+
 生成器读取本地SVG并内嵌为data URL，不向第三方请求图片。

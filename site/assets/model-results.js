@@ -3,7 +3,11 @@
  const metric=(title,value)=>{const n=node('div',null,'metric');n.append(node('div',title,'metric-label'),node('div',value,'metric-value'));return n};
  start(()=>{
   const r=result(m),v=r.metrics.overall,p=m.evaluation_progress[state.condition];
-  el('model-overview').replaceChildren(metric(modes[state.score].abbreviation+' 已获分 /100',f(headline(r))),metric('完整分区间',f(v.lower)+'–'+f(v.upper)),metric('已评任务',p.adjudicated+'/'+p.planned));
+  const overview=[metric(modes[state.score].abbreviation+' 已获分 /100',f(headline(r)))];
+  if(v.exact==null||f(v.lower)!==f(v.upper))overview.push(metric('完整分区间',f(v.lower)+'–'+f(v.upper)));
+  if(m.answer_delivery?.delivered!=null)overview.push(metric('已交卷',m.answer_delivery.delivered+'/'+m.answer_delivery.planned));
+  overview.push(metric('已评任务',p.adjudicated+'/'+p.planned));
+  el('model-overview').style.setProperty('--model-count',String(overview.length));el('model-overview').replaceChildren(...overview);
   const rows=[];d.policy.groups.forEach(g=>{rows.push([g.title,g.weight+'%',points(m,g.id,g.weight)]);g.children.forEach(id=>{const c=d.policy.subcategories.find(c=>c.id===id);rows.push(['　'+c.title,c.weight+'%',points(m,c.id,c.weight)])})});
   table('model-categories',['大类 / 子类','权重','当前贡献'],rows);
   const verdict=m.strict[state.condition].strict_alignment_selfcheck.strict_pass;
@@ -19,7 +23,7 @@
   el('model-penalties').replaceChildren(metric('局部 / 实质 / 重大记录',cp.findings_by_severity.local+' / '+cp.findings_by_severity.material+' / '+cp.findings_by_severity.critical),metric('RMC 整题最高0分',cp.core_endorsement_tasks+'题'));
   const findings=el('model-findings');findings.replaceChildren();let count=0;
   m.public_claims[state.condition].forEach(c=>{if(!c.findings.length)return;count++;const a=node('a',c.case_id+' · 查看证据');a.href=href('cases/'+c.case_id+'.html');findings.append(a);const ul=node('ul');c.findings.forEach(v=>ul.append(node('li',v.reason)));findings.append(ul)});
-  if(!count)findings.append(node('p','当前公开题没有新增错误承诺记录；原始数学缺口仍按逐题评审保留。'));
+  if(!count)findings.append(node('p','当前公开题无额外错误承诺扣罚。'));
   const a=node('a',m.label+' · '+modes[state.score].abbreviation+' JSON ↓','download-link');a.href=download(m,'../../');el('downloads').replaceChildren(a);
  });
 })();

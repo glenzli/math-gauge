@@ -1,0 +1,227 @@
+{
+  "schema": "math-gauge.source-bound-paper-review/v1",
+  "case_id": "MG-GR023",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "raw_points": 74.5,
+  "raw_max": 100,
+  "strict_pass": false,
+  "criteria": [
+    {
+      "id": "truncation",
+      "max": 30,
+      "earned": 20,
+      "checks": [
+        "T0",
+        "T1",
+        "T2",
+        "T3",
+        "T4",
+        "T5"
+      ]
+    },
+    {
+      "id": "invariant_classification",
+      "max": 30,
+      "earned": 22,
+      "checks": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5"
+      ]
+    },
+    {
+      "id": "universal_group_action",
+      "max": 15,
+      "earned": 13.5,
+      "checks": [
+        "U1",
+        "U2",
+        "U3"
+      ]
+    },
+    {
+      "id": "product_boundary",
+      "max": 15,
+      "earned": 9,
+      "checks": [
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ]
+    },
+    {
+      "id": "independent_assertion_reliability",
+      "max": 10,
+      "earned": 10,
+      "checks": [
+        "E1"
+      ]
+    }
+  ],
+  "source_response": {
+    "path": "responses/MG-GR023/A1/answer.md",
+    "bytes": 24767,
+    "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34"
+  },
+  "original_ai_judgment_sha256": "0a9811b3d96609b760271719e7c19180b708386cef10d70375b9a5ea9893a9b7",
+  "source_claim_judgment_sha256": "60f7f4b797da4b7a8cadceed2e2718f5bd6897a2c27efaf6f2493d846bee36c6",
+  "findings": [
+    {
+      "id": "GR023-F1",
+      "root_cause": "gr023-zero-membership-boolean-reconstruction",
+      "kind": "false_assertion",
+      "severity": "material",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "With rho(A)=0 for selected membership, rho(cap) must be ordinary OR and rho(cup) ordinary AND. Even A=X and B=empty contradict both displayed laws using the already stated rho(X)=0,rho(empty)=1. The chosen three-fibre partition also cannot represent arbitrary B: h^{-1}({0,2})=(A cap B) union A^c. The asserted inverse reconstruction is therefore an invalid proof of a true core classification. Material supporting-proof error, not a false core theorem judgment or a separate actual-verification claim; no whole-task core cap.",
+      "evidence": [
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 4885,
+          "byte_end": 4930,
+          "quote": "\\rho(A\\cap B)=\\rho(A)\\wedge\\rho(B). \\tag{1.7}"
+        },
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 4954,
+          "byte_end": 4987,
+          "quote": "\\rho(A\\cup B)=\\rho(A)\\vee\\rho(B)."
+        },
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 4683,
+          "byte_end": 4881,
+          "quote": "对任意 $A,B\\subseteq X$，取 $h$ 的三条纤维分别为\n\\[\nh^{-1}(0)=A\\cap B,\\qquad h^{-1}(1)=A\\setminus B,\\qquad\nh^{-1}(2)=X\\setminus A.\n\\]\n把 $S=\\{0\\},\\{0,1\\},\\{0,2\\}$ 代入 (1.6)，得到"
+        }
+      ]
+    },
+    {
+      "id": "GR023-F2",
+      "root_cause": "gr023-odd-orbit-cyclic-three-coloring",
+      "kind": "false_assertion",
+      "severity": "material",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "On a 5-cycle an equivariant color map with c(Tx)=c(x)+1 mod3 would imply c(x)=c(T^5 x)=c(x)+2 mod3. A proper three-coloring exists, but it need not be cyclically permuted by T and is not the claimed construction. The arbitrary-permutation necessity proof is incomplete. Its theorem is true, and there is no separate false endorsement of a supplied wrong core conclusion; ordinary material penalty only.",
+      "evidence": [
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 2028,
+          "byte_end": 2112,
+          "quote": "在 $E_3$ 的每个轨道上作三着色，使 $T$ 把颜色 $0,1,2$ 循环置换。"
+        },
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 2112,
+          "byte_end": 2311,
+          "quote": "于是所取的 $E_i$ 被分成有限多个非空色类，$T$ 把这些色类循环置换；超滤子取其中一类，而 $T$-不变性又迫使它取一个不相交的下一类，矛盾。证毕。"
+        }
+      ]
+    },
+    {
+      "id": "GR023-F3",
+      "root_cause": "gr023-infinite-rectangles-do-not-mix-parities",
+      "kind": "false_assertion",
+      "severity": "material",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "Every ultrafilter chooses one of the even/odd classes E0,E1. If E_p is in U and E_q in V, the allowed rectangle E_p x E_q has fixed sum parity. Hence one of the alleged plus/minus extensions is impossible. In the FSym counterexample U=V, E_p x E_p lies in the even-sum set, so adding its complement makes the proposed filter improper for every free U. Claims of two constructed witnesses are unsupported/false as constructions, though both broad noninjectivity conclusions are true. The two occurrences are one root. These are invalid proof certificates, not an independently verified supplied core architecture or a false final truth-value verdict; no whole-task cap.",
+      "evidence": [
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 20427,
+          "byte_end": 20595,
+          "quote": "把上述矩形族分别与 $\\mathcal A$ 或 $\\mathcal A^c$ 相交，再生成的滤子也各自具有有限交性质，因为无限矩形与两种奇偶类都相交。"
+        },
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 20595,
+          "byte_end": 20795,
+          "quote": "将其分别扩张为 $\\mathbb N^2$ 上的超滤子 $\\mathcal W_+,\\mathcal W_-$。二者投影恰为 $\\mathcal U,\\mathcal V$，但一个含 $\\mathcal A$、另一个含 $\\mathcal A^c$，所以不同。"
+        },
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 22565,
+          "byte_end": 22788,
+          "quote": "在 (3.5) 的每个成员中，$\\mathcal A$ 与 $\\mathcal A^c$ 都有点，所以分别加入 $\\mathcal A$ 或 $\\mathcal A^c$ 后仍具有有限交性质。分别扩张成两个超滤子 $\\mathcal W_+$ 和 $\\mathcal W_-$。"
+        },
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 23052,
+          "byte_end": 23325,
+          "quote": "它们也分别含相互补的 $\\mathcal A,\\mathcal A^c$，故不同。可是它们都含有所有 $B\\times C$ 型柱集，$B,C\\in\\mathcal U$，所以两个投影都恰为 $\\mathcal U$。故 (3.4) 把两个不同的固定记录送到同一个二元组。命题 II 为假。"
+        }
+      ]
+    },
+    {
+      "id": "GR023-F4",
+      "root_cause": "gr023-fixed-first-layer-empty-target",
+      "kind": "false_assertion",
+      "severity": "local",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "For every nonempty X, R1(X)^G is a singleton, even when X^G is empty. For a finite fixed-point-free action, q_{m,1} (m>=3) has empty source and singleton target. The statement contradicts its earlier correct first-layer count and loses a required boundary case; it is locally repairable.",
+      "evidence": [
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 10230,
+          "byte_end": 10285,
+          "quote": "当 $X^G=\\varnothing$ 时定义域与目标都为空。"
+        }
+      ]
+    },
+    {
+      "id": "GR023-F5",
+      "root_cause": "gr023-restriction-bijection-summary-overstatement",
+      "kind": "false_assertion",
+      "severity": "local",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "The unqualified only-if summary is false. q11 and q22 are always identities; on empty X all restrictions are empty bijections; for one-point X every layer is singleton. Section 1.2 gives correct detailed descriptions, so this contradictory final overstatement is a locally removable required-claim error, not an independent supplementary theorem.",
+      "evidence": [
+        {
+          "path": "responses/MG-GR023/A1/answer.md",
+          "sha256": "39fd555d54ff5e12fe3dd9119bc75e7a9bad32704d10c36d0dfa69217dc57f34",
+          "byte_start": 23814,
+          "byte_end": 23866,
+          "quote": "$q_{m,k}$ 只有在 $k\\ge3$ 且 $m\\ge3$ 时为双射"
+        }
+      ]
+    }
+  ],
+  "response_kind": "model_file_collected_at_fixed_deadline",
+  "note": "Frozen criterion credit and separately source-bound reliability findings. No candidate call, proof repair, invented terminal receipt or human approval.",
+  "score_decomposition": {
+    "frozen_total_maximum": 100,
+    "frozen_raw_score": 74.5,
+    "mathematical_maximum": 90,
+    "mathematical_points": 64.5,
+    "embedded_reliability": {
+      "criterion_id": "independent_assertion_reliability",
+      "maximum": 10,
+      "awarded": 10,
+      "total": 100
+    },
+    "aggregation_instruction": "Do not use frozen_raw_score/100 as MC. Shared scoring.py/claim_penalties.py remove awarded embedded reserve, normalize the 90 mathematical points, and apply source-bound deductions. This artifact does not independently calculate MC/RMC/benchmark weights."
+  }
+}

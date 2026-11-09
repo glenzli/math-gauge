@@ -1,0 +1,136 @@
+{
+  "schema": "math-gauge.written-retry-review/v1",
+  "case_id": "MG-GR021",
+  "attempt": 3,
+  "reviewed_on": "2026-11-06",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_response": {
+    "path": "responses/MG-GR021/A1/attempts/3/answer.md",
+    "bytes": 17457,
+    "sha256": "e4ecc3f9e2a3d6373899a21b7dbc9896302ae708e3362f2c216b886fbd2d9599"
+  },
+  "case_sources": {
+    "task.md": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+    "contract.json": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2",
+    "rubric.json": "a7175cd036b1e6c972d733e4a689dbb874f6db947b093dd9e11255ff4baba979",
+    "diagnostic-rubric.json": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+    "reference.md": "b5de32d25059d2cbdfcbe90ffc7f3af86e366f5e90f5bc3435fd555b83291a1c"
+  },
+  "grading": "Frozen diagnostic checks; full/half/zero; mandatory defects assigned once; valid alternative proofs accepted.",
+  "total": 100,
+  "points": 47.5,
+  "strict_pass": false,
+  "whole_math": "incomplete_or_invalid_submitted_proof",
+  "criteria": [
+    {
+      "id": "feasibility_counts_liftability",
+      "maximum": 30,
+      "points": 15.0,
+      "checks": [
+        {
+          "id": "original_input_and_feasibility",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§1.1, lines64–108：给出正确的mod4奇偶不变量与三域相同的可行性结论，但把生成代数的内在商A4/2A4等同于其矩阵模2像，且仅定义mod4的Q_i后直接使用mod8行列式和Z2子格，未给出实际投影提升。r=1,d=2,A=diag(1,3)时A4/2A4有4元素而非F2。保留正确不变量的半分。"
+        },
+        {
+          "id": "closed_total_counts",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§0引理C、§1.2–1.3：空集判准、基域有限C计数及二次域M=2的C计数正确。其余全称计数不正确：单块n=1,M=4时K的C实际8而非16；n=3,M=2时F的实际像16而非8；n=2,M=2时K实际像8而非16。只给正确分支半分。"
+        },
+        {
+          "id": "actual_image_test",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§1.4 lines194–244：基域的一步对角障碍和紧致性必要充分描述有正确内容；无限逐层存在性不是所要求的有限可计算判准，二次域也未给出实际整提升。缺少gamma_j=((u^Tu-I)_jj/2^M) mod2O_L全零的有限判准及充分性证明。"
+        }
+      ]
+    },
+    {
+      "id": "fixed_classes_and_orbits",
+      "maximum": 25,
+      "points": 12.5,
+      "checks": [
+        {
+          "id": "exact_fixed_class_description",
+          "maximum": 15,
+          "credit": "half",
+          "points": 7.5,
+          "reason": "§2.1–2.2 lines254–336：C固定类V+2^(M-1)theta B、B分块对称的描述正确；R固定类未具体分类，遗漏B交错及Q2(i),M=2时gamma(V)=deg(B)的耦合，不能用错误的R计数替代。"
+        },
+        {
+          "id": "closed_fixed_and_orbit_counts",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§2.1–2.2 lines290–369：C固定数由正确基域C计数乘2^S得到，Burnside公式及M=2的C全固定正确；R固定数和轨道数及K总数不正确，单块n=2,M=2已给R固定数16而实际8。"
+        }
+      ]
+    },
+    {
+      "id": "reduction_maps_and_fixed_lifts",
+      "maximum": 15,
+      "points": 10.0,
+      "checks": [
+        {
+          "id": "all_images_and_fibers",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§2.3 lines373–468：R约化满射且纤维q^D、C非空纤维q^(D+d)及固定纤维4^D/4^(D+d)有正确内容；多个像的基数继承错误总数，固定R像的基域实际像计数也错误，未完整给出所有有限像。"
+        },
+        {
+          "id": "fixed_lifts_and_towers",
+          "maximum": 5,
+          "credit": "full",
+          "points": 5,
+          "reason": "§2.4 lines471–513：实际sigma固定解正是基域解；固定有限类能有实际固定提升或无限相容固定塔，当且仅当高位theta系数为零且常数部属于实际基域像。紧致性与塔的必要性说明有效。"
+        }
+      ]
+    },
+    {
+      "id": "optimal_quantitative_descent",
+      "maximum": 20,
+      "points": 10.0,
+      "checks": [
+        {
+          "id": "best_universal_and_pointwise_precision",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§3.1、3.3–3.4 lines520–548,618–675：全秩1时精确下降及给定U的M精度条件正确；一般M-1下界证明使用R_F,M=C_F,M这一错误等式（n=1,M=3已有2对4的反例），所以统一精度证明不完整。"
+        },
+        {
+          "id": "actual_sharpness_examples_and_exact_boundary",
+          "maximum": 10,
+          "credit": "half",
+          "points": 5.0,
+          "reason": "§3.2–3.3 lines551–642：Cayley构造在M>=3给出有效锐性方向，秩1精确边界正确；Q2(i),M=2时I-iJ奇异，det(I-iJ)=1+i^2=0，所写实际矩阵未定义，不能证明所有M>=2的统一最优性。"
+        }
+      ]
+    },
+    {
+      "id": "assertion_reliability",
+      "maximum": 10,
+      "points": 0,
+      "checks": [
+        {
+          "id": "independent_assertion_reliability",
+          "maximum": 10,
+          "credit": "zero",
+          "points": 0,
+          "reason": "§1.1 lines115–123断言非空S_L总是无限紧集。所有块秩1且A_i=E_i时S_L恰为2^r个符号矩阵，是有限集。此断言关于实际解集S本身，独立于已在必做项扣分的有限截断计数/下降错误，不重复收费。"
+        }
+      ]
+    }
+  ],
+  "self_assessment_note": "Claims are preserved from original bytes; no explicit numerical100percent declaration was requested or reconstructed.",
+  "candidate_calls_by_review": 0,
+  "candidate_source_repaired": false
+}

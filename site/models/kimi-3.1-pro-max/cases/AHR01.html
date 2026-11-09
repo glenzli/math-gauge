@@ -1,0 +1,444 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AHR01 · 节点域加细的语义审计 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/kimi-3.1-pro-max/index.html">Kimi 3.1 Pro (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>AHR01 · 节点域加细的语义审计</h1><p class="subtitle">Kimi 3.1 Pro (max) · 语义审计 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><p>请审阅附件数学正文中的“节点域加细”定义，以及该情形下“网络加细保持外延等价”的 Lean 实现。附件的其余定义、证明与构造用于解释对象和实现；本题不要求审阅代数加细或其他章节结论。</p>
+<p>判断所给实现是否准确、完整地覆盖该数学范围，并逐项说明依据。若有不足，说明具体数学影响，给出可复核的论证或反例及修复方向；若认为完整，说明定义、前提与结论如何对应。请同时区分源码已证明的结论与需要补充的内容。</p>
+<p>无需修改附件或提交新增 Lean 源码。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-audit/AHR01/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 35</p>
+<p><strong>审核说明：</strong> 准确区分外延保持真与关系精确编码过宽，未把弱关系误称完整正文定义；总评开头的“完整”明确只限外延定理，后文充分识别定义缺口。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 保留关系版真实路径投影/求值证明和构造版全局外延相等，承认完整构造及自环公式，不因没有额外桥而否认主证。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 30</p>
+<p><strong>审核说明：</strong> 实际输出像限定的choice_projection精确定位；单节点未用自环b的合法替代反例：源仅a、A0={a,b}保留、A1={c}删去，额外删除保留自环违反全域边式而不改实际输出。终止域{a}到{a,b}准确。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 15</p>
+<p><strong>审核说明：</strong> 按保留标签完整边公式或与规范presentation.prune数据同构补强，区别已删目标路由必须stop与保留边不能任意删除。桥接和包装仅作为额外API建议，不增题外Lean义务。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h2>结论</h2>
+<p>**就“节点域加细保持外延等价”这一命题而言，实现是正确、完整且有实际 Lean 证明的。**关系版证明了同域上的局部等价，构造版进一步证明了删冗后的外延算子全局相等。</p>
+<p>但若把 <code>NodeDomainRefinement</code> 理解为正文“节点域加细结果”的<strong>精确关系刻画</strong>，则仍有不足：它对未被源输入实际到达的输出上的路由约束过弱，会承认额外删改未使用边域的网络。这不影响外延等价结论，却会改变原始 <code>edge_domain</code>、<code>terminal_domain</code> 等表示层数据。</p>
+<hr>
+<h2>1. 正文定义与实现的逐项对应</h2>
+<h3>1.1 有限非空分划与局部算子：对应准确</h3>
+<p>正文要求
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><munderover><mo>⨆</mo><mrow><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mi>q</mi></munderover><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo separator="true">,</mo><mspace width="2em"/><mi mathvariant="normal">dom</mi><mo>⁡</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo>=</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo separator="true">,</mo><mspace width="2em"/><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><msub><mo>≡</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></msub><msub><mi>f</mi><mi>β</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+U_\beta=\bigsqcup_{a=1}^qU_{\beta,a},\qquad
+\operatorname{dom}f_{\beta,a}=U_{\beta,a},\qquad
+f_{\beta,a}\equiv_{U_{\beta,a}}f_\beta .
+</annotation></semantics></math></span></p>
+<p>两套接口都完整表达了这些条件：</p>
+<ul>
+<li>关系版：<code>network_refinement.lean:76-102</code>
+<ul>
+<li><code>part_count_pos</code>；</li>
+<li><code>piece_nonempty</code>、<code>piece_disjoint</code>、<code>piece_cover</code>；</li>
+<li><code>local_domain</code>、<code>local_equiv</code>；</li>
+<li>新旧节点算子的兼容条件。</li>
+</ul>
+</li>
+<li>构造版：<code>domain_refinement_construction.lean:12-21</code> 的 <code>NodePartitionData</code> 使用同一组分划和局部算子条件。</li>
+</ul>
+<p>正文进一步指出局部算子实际上就是域限制算子。构造版对此有明确证明：</p>
+<ul>
+<li><code>local_op_eq_restrict</code>，<code>domain_refinement_construction.lean:31-40</code>。</li>
+</ul>
+<p>因此这里不是只假设“域内相等”而遗漏域外取值；<code>local_domain</code> 与吸收元保持条件共同保证了域外均为 <code>bot</code>。</p>
+<h3>1.2 节点标签与删冗：符合正文的事后删冗规则</h3>
+<p>关系版的标签类型为</p>
+<pre><code class="language-lean">{v : V // v ≠ target} ⊕ Fin part_count
+</code></pre>
+<p>即“未拆分旧节点 + 所有分片子节点”。其中：</p>
+<ul>
+<li><code>source_injective</code> 防止不同新节点共用同一标签；</li>
+<li><code>old_node_present</code> 保证所有旧非目标节点仍保留；</li>
+<li><code>piece_node_present_iff_reached</code> 保证分片节点恰好在其被原网络实际轨迹到达时保留，见 <code>network_refinement.lean:90-102</code>。</li>
+</ul>
+<p><code>NodePieceReached</code> 检查原网络某条实际路径在目标节点发生处的当前输入是否落入该分片，和“加细后删除不被任何输入轨迹经过的子节点”相符。旧节点原来均满足无冗余性，加细不改变其轨迹发生，因此全部保留也是正确的。</p>
+<p>构造版则先建立含所有分片的 <code>FiniteNetworkPresentation</code>，再执行</p>
+<pre><code class="language-lean">P.presentation.prune
+</code></pre>
+<p>见 <code>domain_refinement_construction.lean:208-235</code>，与正文“先加细、再按删冗引理处理”的顺序一致。</p>
+<h3>1.3 输入域与入口片：条件足够，且能推出正文公式</h3>
+<p><code>same_input_domain</code> 和 <code>entry_projection</code> 位于 <code>network_refinement.lean:103-106</code>。构造版直接使用</p>
+<pre><code class="language-lean">entry := fun x =&gt; P.lift_label (N.entry x) x.val
+</code></pre>
+<p>见 <code>domain_refinement_construction.lean:221</code>。</p>
+<p>虽然关系版只显式约束入口标签的投影，但结合：</p>
+<ul>
+<li><code>N'.entry_mem</code>；</li>
+<li>子节点定义域等于对应分片；</li>
+<li>分片互斥；</li>
+<li><code>source_injective</code>；</li>
+</ul>
+<p>即可推出：目标子节点的入口输入片正是
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>U</mi><mi>β</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+U_\beta^{\mathrm{in}}\cap U_{\beta,a},
+</annotation></semantics></math></span>
+旧节点的入口片保持不变。因此这里没有削弱实际入口行为。</p>
+<p>此外，节点域加细含有 <code>target</code>，而 <code>N.node_reachable target</code> 给出某个 <code>x : N.U</code>，所以该分支自动蕴含 <code>U</code> 非空，符合正文使用局部等价记号时的非空约定。</p>
+<h3>1.4 普通边、自环与终止域：构造版忠实，关系版只保留实际部分</h3>
+<p>构造版统一定义</p>
+<pre><code class="language-lean">map_output_choice (fun w =&gt; P.lift_label w z)
+  (N.choice (P.projection v) z)
+</code></pre>
+<p>见 <code>domain_refinement_construction.lean:111-112</code>。其含义是：</p>
+<ul>
+<li>进入目标节点时，按当前输出所属分片选择目标子节点；</li>
+<li>离开目标子节点时，沿用原目标节点的后继决策；</li>
+<li>未涉及目标节点的路由保持不变。</li>
+</ul>
+<p>这与正文的普通入边、普通出边公式相符。自环还要求同时细分源输出像和目标输入域，构造版有专门定理：</p>
+<ul>
+<li><code>self_loop_choice_iff</code>，<code>domain_refinement_construction.lean:119-152</code>，</li>
+</ul>
+<p>正好对应
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>D</mi><mrow><msub><mi>β</mi><mi>a</mi></msub><mo>→</mo><msub><mi>β</mi><mi>b</mi></msub></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>∩</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>b</mi></mrow></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+D&#x27;_{\beta_a\to\beta_b}
+=D_{\beta\to\beta}\cap f_{\beta,a}(U_{\beta,a})\cap U_{\beta,b}.
+</annotation></semantics></math></span></p>
+<p>终止域没有作为独立任意数据，而仍由节点输出像减去所有出边域得到，符合正文“由出边域补集确定”。</p>
+<p>但关系版的 <code>choice_projection</code> 只在</p>
+<pre><code class="language-lean">z ∈ (N'.node_op v).func '' N'.node_actual_input_domain v
+</code></pre>
+<p>上要求新旧路由一致，见 <code>network_refinement.lean:107-111</code>。这足以保证实际求值不变，却不足以保证正文规定的全部原始边域和终止域不变。具体问题见第 3 节。</p>
+<hr>
+<h2>2. 源码已经证明的外延保持结论</h2>
+<h3>2.1 关系版的证明链完整</h3>
+<p>节点域分支没有把“完整路径对应”作为未证明的前提，而是实际推导出来：</p>
+<ol>
+<li>
+<p><code>node_eval_eq</code><br>
+<code>network_refinement.lean:184-193</code><br>
+新旧节点在实际节点定义域上的局部算子取值相同。</p>
+</li>
+<li>
+<p><code>terminal_projection</code><br>
+<code>network_refinement.lean:195-212</code><br>
+从实际输入域出发，将新网络的终止路径投影为原网络的终止路径。每一步使用 <code>choice_projection</code>；进入下一节点时使用已证明的 <code>next_output_mem_node_actual_input_domain</code>，因此下一歩仍满足实际输入前提。</p>
+</li>
+<li>
+<p><code>path_projection</code><br>
+<code>network_refinement.lean:214-220</code><br>
+利用入口投影和终止路径唯一性得到
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">map</mi><mo>⁡</mo><mtext> </mtext><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">j</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mtext> </mtext><mo stretchy="false">(</mo><msub><mi>p</mi><msup><mi>N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>=</mo><msub><mi>p</mi><mi>N</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{map}\ \mathrm{projection}\,(p_{N&#x27;}(x))=p_N(x).
+</annotation></semantics></math></span>
+路径长度不变也随之由 <code>List.length_map</code> 得到。</p>
+</li>
+<li>
+<p><code>eval_projected</code><br>
+<code>network_refinement.lean:222-231</code><br>
+证明投影前后的路径求值相等。</p>
+</li>
+<li>
+<p><code>NetworkRefinement.path_eval_eq</code> 与<br>
+<code>refinement_preserves_local_equivalence</code><br>
+最终得到</p>
+<pre><code class="language-lean">LocalEquivalent N'.extensional_operator N.extensional_operator N.U
+</code></pre>
+<p>这正是正文的
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>ϕ</mi><msup><mi>N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><msub><mo>≡</mo><mi>U</mi></msub><msub><mi>ϕ</mi><mi>N</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\phi_{N&#x27;}\equiv_U\phi_N.
+</annotation></semantics></math></span></p>
+</li>
+</ol>
+<p><code>refinement_preserves_representation</code> 还正确给出了“若原网络表示某算子，则加细网络仍表示该算子”的推论。</p>
+<p>由于两网输入域相同，且外延算子在域外均取 <code>bot</code>，该局部等价还可立即提升为两个外延算子的全局相等；关系版没有单独包装这个推论，但不是数学缺口。</p>
+<h3>2.2 构造版独立证明了更强的结论</h3>
+<p>构造版依次证明：</p>
+<ul>
+<li><code>coloured_terminal</code>：原终止路径按各次实际输入重新着色后仍是终止路径；</li>
+<li><code>coloured_eval</code>：重新着色前后求值相同；</li>
+<li><code>network_path_labels</code>、<code>network_path_projection</code>：删冗后的实际路径就是重着色路径，遗忘分片标签即恢复原路径；</li>
+<li><code>network_extensional_eq</code>，<code>domain_refinement_construction.lean:258-269</code>：<pre><code class="language-lean">P.network.extensional_operator = N.extensional_operator
+</code></pre>
+</li>
+</ul>
+<p>这覆盖了正文证明中的“逐次重着色—终止输出不变—删冗不变—外延相等”全过程，并直接包含域外均为 <code>bot</code> 的部分。</p>
+<p>我对 <code>network_refinement.lean</code> 和 <code>domain_refinement_construction.lean</code> 运行了 Lean 类型检查，均通过；相关定理的公理报告只有 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>，未发现 <code>sorry</code> 或额外自定义公理。</p>
+<hr>
+<h2>3. 精确定义层面的反例：关系允许额外删除未使用边</h2>
+<p>取底空间
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+X=\{\bot,a,b,c\},
+</annotation></semantics></math></span>
+其中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">a,b,c</annotation></semantics></math></span> 互异且均非吸收元。原网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span> 只有一个节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span>：</p>
+<ul>
+<li>源输入域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U=\{a\}</annotation></semantics></math></span>，唯一入口片为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_\beta=\{a,b,c\}</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">f_\beta</annotation></semantics></math></span> 在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">U_\beta</annotation></semantics></math></span> 上为恒等映射，域外取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span>；</li>
+<li>有一个自环，其边域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">D_{\beta\to\beta}=\{b\}</annotation></semantics></math></span>。</li>
+</ul>
+<p>唯一源输入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 不在自环边域中，因此立即终止。该网络满足统一有限终止和无冗余节点条件；自环从未被源输入实际使用，但仍是合法原始网络数据。</p>
+<p>按正文作节点域加细，取
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="2em"/><msub><mi>A</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>c</mi><mo stretchy="false">}</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+A_0=\{a,b\},\qquad A_1=\{c\}.
+</annotation></semantics></math></span>
+分片 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">A_1</annotation></semantics></math></span> 不可达，删冗后删除；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">A_0</annotation></semantics></math></span> 对应保留节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0</annotation></semantics></math></span>。正文规定保留的自环边域应为
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>D</mi><mrow><msub><mi>β</mi><mn>0</mn></msub><mo>→</mo><msub><mi>β</mi><mn>0</mn></msub></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo><mo>∩</mo><msub><mi>f</mi><msub><mi>β</mi><mn>0</mn></msub></msub><mo stretchy="false">(</mo><msub><mi>A</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>A</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+D&#x27;_{\beta_0\to\beta_0}
+=\{b\}\cap f_{\beta_0}(A_0)\cap A_0
+=\{b\},
+</annotation></semantics></math></span>
+相应终止域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>。</p>
+<p>现在构造另一个网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span>：它与上述正规加细结果完全相同，唯一区别是把 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span> 处的自环也删掉，即在该输出上改为 <code>stop</code>。于是：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span> 的实际输入域仍只有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>，实际输出像只有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>；</li>
+<li><code>choice_projection</code> 只需在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 处检查，两边均为 <code>stop</code>，所以成立；</li>
+<li>分片保留条件、入口投影、局部算子、标签单射及其余字段也均满足；</li>
+<li>因而按各字段检查，<code>NodeDomainRefinement N M</code> 可容纳这个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span>。</li>
+</ul>
+<p>但 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span> 不是正文规定的加细结果：正文只删除不可达节点及其关联边，<strong>不会额外删除两个保留节点之间原本存在的未使用边</strong>。此处 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span> 还属于保留节点的完整局部输出像，因此这不是“选择函数在输出像外的无关紧要的全域化差异”；它实际改变了 Lean 的 <code>edge_domain</code>，并把终止域从 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span> 改成 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\}</annotation></semantics></math></span>。</p>
+<p>所以：</p>
+<ul>
+<li><strong>外延等价定理仍然正确</strong>，因为实际源输入路径完全不变；</li>
+<li><strong>关系作为正文原始数据加细的精确刻画则过宽</strong>，不能由它反推全部边域、终止域公式或规范加细的表示层身份。</li>
+</ul>
+<hr>
+<h2>4. 需要补充的内容与修复方向</h2>
+<h3>对主命题</h3>
+<p>**无需补充证明。**关系版已证明局部等价，构造版已证明全局外延算子相等。二者各自都足以支撑所审阅的节点域加细结论。</p>
+<h3>对“精确定义、完整覆盖”的要求</h3>
+<p>建议补充以下形式化内容：</p>
+<ol>
+<li>
+<p><strong>给出删冗后的全量原始数据约束。</strong><br>
+不能简单把现有 <code>choice_projection</code> 无条件扩大到所有完整输出像，因为删冗确实可能使指向已删除分片的后继变为 <code>stop</code>。可直接采取以下任一方式：</p>
+<ul>
+<li>要求 <code>N'</code> 经标签运输后，与 <code>NodePartitionData.presentation.prune</code> 的完整 <code>presentation_data</code> 相同；该数据包含 <code>U</code>、<code>node_op</code>、<code>entry_domain</code>、<code>edge_domain</code>，正好能排除上述额外删边；</li>
+<li>或分别陈述保留标签上的普通入边、普通出边、自环及终止域公式，并显式加入目标分片是否被保留的删冗条件。</li>
+</ul>
+</li>
+<li>
+<p><strong>补关系版与构造版的桥接定理。</strong><br>
+附件没有证明</p>
+<pre><code class="language-lean">NodeDomainRefinement N P.network
+</code></pre>
+<p>或更一般的“任一正文加细结果恰为规范构造的标签同构”。从定义看，现有弱关系应能容纳规范构造；若采用上述精确化，则可进一步证明双向刻画。当前没有该桥接定理并不削弱主结论，因为构造版已经独立证明了外延相等，但它限制了对“两种接口完全同义”的声明。</p>
+</li>
+<li>
+<p><strong>可复用的数据公式引理。</strong><br>
+构造版目前显式给出了自环判据；普通入边、普通出边、入口片和终止域的全量公式虽可由定义推导，但没有全部封装成独立定理。若后续需要核对表示层数据，宜补上。只为主命题服务时，这些包装不是必需的。</p>
+</li>
+</ol>
+<p>综上，最准确的评价是：<strong>节点域加细的外延保持已被可靠证明；当前关系实现是有意的实际行为层充分证书，但不是正文全部原始网络数据意义上的精确加细关系。</strong></p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR01/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR01:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR01/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/original-reviews/AHR01.json">review · AHR01.json</a><span class="hash">SHA256 5b69b8bc07500947fad28c18b3abe40b231acce2b295a173f3c968f6dcacc4aa</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/native-source/lean/AHR01-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/claim-public-sources/AHR01.json">review · AHR01.json</a><span class="hash">SHA256 465113a72bad93768b60d104e5fe6d46461bd9be235f4c2cb054a0bb53a997ac</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 35</p>
+<p><strong>审核说明：</strong> 准确区分外延保持真与关系精确编码过宽，未把弱关系误称完整正文定义；总评开头的“完整”明确只限外延定理，后文充分识别定义缺口。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 保留关系版真实路径投影/求值证明和构造版全局外延相等，承认完整构造及自环公式，不因没有额外桥而否认主证。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 30</p>
+<p><strong>审核说明：</strong> 实际输出像限定的choice_projection精确定位；单节点未用自环b的合法替代反例：源仅a、A0={a,b}保留、A1={c}删去，额外删除保留自环违反全域边式而不改实际输出。终止域{a}到{a,b}准确。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 15</p>
+<p><strong>审核说明：</strong> 按保留标签完整边公式或与规范presentation.prune数据同构补强，区别已删目标路由必须stop与保留边不能任意删除。桥接和包装仅作为额外API建议，不增题外Lean义务。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h2>结论</h2>
+<p>**就“节点域加细保持外延等价”这一命题而言，实现是正确、完整且有实际 Lean 证明的。**关系版证明了同域上的局部等价，构造版进一步证明了删冗后的外延算子全局相等。</p>
+<p>但若把 <code>NodeDomainRefinement</code> 理解为正文“节点域加细结果”的<strong>精确关系刻画</strong>，则仍有不足：它对未被源输入实际到达的输出上的路由约束过弱，会承认额外删改未使用边域的网络。这不影响外延等价结论，却会改变原始 <code>edge_domain</code>、<code>terminal_domain</code> 等表示层数据。</p>
+<hr>
+<h2>1. 正文定义与实现的逐项对应</h2>
+<h3>1.1 有限非空分划与局部算子：对应准确</h3>
+<p>正文要求
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><munderover><mo>⨆</mo><mrow><mi>a</mi><mo>=</mo><mn>1</mn></mrow><mi>q</mi></munderover><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo separator="true">,</mo><mspace width="2em"/><mi mathvariant="normal">dom</mi><mo>⁡</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo>=</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo separator="true">,</mo><mspace width="2em"/><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><msub><mo>≡</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub></msub><msub><mi>f</mi><mi>β</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+U_\beta=\bigsqcup_{a=1}^qU_{\beta,a},\qquad
+\operatorname{dom}f_{\beta,a}=U_{\beta,a},\qquad
+f_{\beta,a}\equiv_{U_{\beta,a}}f_\beta .
+</annotation></semantics></math></span></p>
+<p>两套接口都完整表达了这些条件：</p>
+<ul>
+<li>关系版：<code>network_refinement.lean:76-102</code>
+<ul>
+<li><code>part_count_pos</code>；</li>
+<li><code>piece_nonempty</code>、<code>piece_disjoint</code>、<code>piece_cover</code>；</li>
+<li><code>local_domain</code>、<code>local_equiv</code>；</li>
+<li>新旧节点算子的兼容条件。</li>
+</ul>
+</li>
+<li>构造版：<code>domain_refinement_construction.lean:12-21</code> 的 <code>NodePartitionData</code> 使用同一组分划和局部算子条件。</li>
+</ul>
+<p>正文进一步指出局部算子实际上就是域限制算子。构造版对此有明确证明：</p>
+<ul>
+<li><code>local_op_eq_restrict</code>，<code>domain_refinement_construction.lean:31-40</code>。</li>
+</ul>
+<p>因此这里不是只假设“域内相等”而遗漏域外取值；<code>local_domain</code> 与吸收元保持条件共同保证了域外均为 <code>bot</code>。</p>
+<h3>1.2 节点标签与删冗：符合正文的事后删冗规则</h3>
+<p>关系版的标签类型为</p>
+<pre><code class="language-lean">{v : V // v ≠ target} ⊕ Fin part_count
+</code></pre>
+<p>即“未拆分旧节点 + 所有分片子节点”。其中：</p>
+<ul>
+<li><code>source_injective</code> 防止不同新节点共用同一标签；</li>
+<li><code>old_node_present</code> 保证所有旧非目标节点仍保留；</li>
+<li><code>piece_node_present_iff_reached</code> 保证分片节点恰好在其被原网络实际轨迹到达时保留，见 <code>network_refinement.lean:90-102</code>。</li>
+</ul>
+<p><code>NodePieceReached</code> 检查原网络某条实际路径在目标节点发生处的当前输入是否落入该分片，和“加细后删除不被任何输入轨迹经过的子节点”相符。旧节点原来均满足无冗余性，加细不改变其轨迹发生，因此全部保留也是正确的。</p>
+<p>构造版则先建立含所有分片的 <code>FiniteNetworkPresentation</code>，再执行</p>
+<pre><code class="language-lean">P.presentation.prune
+</code></pre>
+<p>见 <code>domain_refinement_construction.lean:208-235</code>，与正文“先加细、再按删冗引理处理”的顺序一致。</p>
+<h3>1.3 输入域与入口片：条件足够，且能推出正文公式</h3>
+<p><code>same_input_domain</code> 和 <code>entry_projection</code> 位于 <code>network_refinement.lean:103-106</code>。构造版直接使用</p>
+<pre><code class="language-lean">entry := fun x =&gt; P.lift_label (N.entry x) x.val
+</code></pre>
+<p>见 <code>domain_refinement_construction.lean:221</code>。</p>
+<p>虽然关系版只显式约束入口标签的投影，但结合：</p>
+<ul>
+<li><code>N'.entry_mem</code>；</li>
+<li>子节点定义域等于对应分片；</li>
+<li>分片互斥；</li>
+<li><code>source_injective</code>；</li>
+</ul>
+<p>即可推出：目标子节点的入口输入片正是
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>U</mi><mi>β</mi><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi></mrow></msubsup><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+U_\beta^{\mathrm{in}}\cap U_{\beta,a},
+</annotation></semantics></math></span>
+旧节点的入口片保持不变。因此这里没有削弱实际入口行为。</p>
+<p>此外，节点域加细含有 <code>target</code>，而 <code>N.node_reachable target</code> 给出某个 <code>x : N.U</code>，所以该分支自动蕴含 <code>U</code> 非空，符合正文使用局部等价记号时的非空约定。</p>
+<h3>1.4 普通边、自环与终止域：构造版忠实，关系版只保留实际部分</h3>
+<p>构造版统一定义</p>
+<pre><code class="language-lean">map_output_choice (fun w =&gt; P.lift_label w z)
+  (N.choice (P.projection v) z)
+</code></pre>
+<p>见 <code>domain_refinement_construction.lean:111-112</code>。其含义是：</p>
+<ul>
+<li>进入目标节点时，按当前输出所属分片选择目标子节点；</li>
+<li>离开目标子节点时，沿用原目标节点的后继决策；</li>
+<li>未涉及目标节点的路由保持不变。</li>
+</ul>
+<p>这与正文的普通入边、普通出边公式相符。自环还要求同时细分源输出像和目标输入域，构造版有专门定理：</p>
+<ul>
+<li><code>self_loop_choice_iff</code>，<code>domain_refinement_construction.lean:119-152</code>，</li>
+</ul>
+<p>正好对应
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>D</mi><mrow><msub><mi>β</mi><mi>a</mi></msub><mo>→</mo><msub><mi>β</mi><mi>b</mi></msub></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>∩</mo><msub><mi>f</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>a</mi></mrow></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>U</mi><mrow><mi>β</mi><mo separator="true">,</mo><mi>b</mi></mrow></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+D&#x27;_{\beta_a\to\beta_b}
+=D_{\beta\to\beta}\cap f_{\beta,a}(U_{\beta,a})\cap U_{\beta,b}.
+</annotation></semantics></math></span></p>
+<p>终止域没有作为独立任意数据，而仍由节点输出像减去所有出边域得到，符合正文“由出边域补集确定”。</p>
+<p>但关系版的 <code>choice_projection</code> 只在</p>
+<pre><code class="language-lean">z ∈ (N'.node_op v).func '' N'.node_actual_input_domain v
+</code></pre>
+<p>上要求新旧路由一致，见 <code>network_refinement.lean:107-111</code>。这足以保证实际求值不变，却不足以保证正文规定的全部原始边域和终止域不变。具体问题见第 3 节。</p>
+<hr>
+<h2>2. 源码已经证明的外延保持结论</h2>
+<h3>2.1 关系版的证明链完整</h3>
+<p>节点域分支没有把“完整路径对应”作为未证明的前提，而是实际推导出来：</p>
+<ol>
+<li>
+<p><code>node_eval_eq</code><br>
+<code>network_refinement.lean:184-193</code><br>
+新旧节点在实际节点定义域上的局部算子取值相同。</p>
+</li>
+<li>
+<p><code>terminal_projection</code><br>
+<code>network_refinement.lean:195-212</code><br>
+从实际输入域出发，将新网络的终止路径投影为原网络的终止路径。每一步使用 <code>choice_projection</code>；进入下一节点时使用已证明的 <code>next_output_mem_node_actual_input_domain</code>，因此下一歩仍满足实际输入前提。</p>
+</li>
+<li>
+<p><code>path_projection</code><br>
+<code>network_refinement.lean:214-220</code><br>
+利用入口投影和终止路径唯一性得到
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">map</mi><mo>⁡</mo><mtext> </mtext><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">j</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mtext> </mtext><mo stretchy="false">(</mo><msub><mi>p</mi><msup><mi>N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>=</mo><msub><mi>p</mi><mi>N</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{map}\ \mathrm{projection}\,(p_{N&#x27;}(x))=p_N(x).
+</annotation></semantics></math></span>
+路径长度不变也随之由 <code>List.length_map</code> 得到。</p>
+</li>
+<li>
+<p><code>eval_projected</code><br>
+<code>network_refinement.lean:222-231</code><br>
+证明投影前后的路径求值相等。</p>
+</li>
+<li>
+<p><code>NetworkRefinement.path_eval_eq</code> 与<br>
+<code>refinement_preserves_local_equivalence</code><br>
+最终得到</p>
+<pre><code class="language-lean">LocalEquivalent N'.extensional_operator N.extensional_operator N.U
+</code></pre>
+<p>这正是正文的
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>ϕ</mi><msup><mi>N</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup></msub><msub><mo>≡</mo><mi>U</mi></msub><msub><mi>ϕ</mi><mi>N</mi></msub><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\phi_{N&#x27;}\equiv_U\phi_N.
+</annotation></semantics></math></span></p>
+</li>
+</ol>
+<p><code>refinement_preserves_representation</code> 还正确给出了“若原网络表示某算子，则加细网络仍表示该算子”的推论。</p>
+<p>由于两网输入域相同，且外延算子在域外均取 <code>bot</code>，该局部等价还可立即提升为两个外延算子的全局相等；关系版没有单独包装这个推论，但不是数学缺口。</p>
+<h3>2.2 构造版独立证明了更强的结论</h3>
+<p>构造版依次证明：</p>
+<ul>
+<li><code>coloured_terminal</code>：原终止路径按各次实际输入重新着色后仍是终止路径；</li>
+<li><code>coloured_eval</code>：重新着色前后求值相同；</li>
+<li><code>network_path_labels</code>、<code>network_path_projection</code>：删冗后的实际路径就是重着色路径，遗忘分片标签即恢复原路径；</li>
+<li><code>network_extensional_eq</code>，<code>domain_refinement_construction.lean:258-269</code>：<pre><code class="language-lean">P.network.extensional_operator = N.extensional_operator
+</code></pre>
+</li>
+</ul>
+<p>这覆盖了正文证明中的“逐次重着色—终止输出不变—删冗不变—外延相等”全过程，并直接包含域外均为 <code>bot</code> 的部分。</p>
+<p>我对 <code>network_refinement.lean</code> 和 <code>domain_refinement_construction.lean</code> 运行了 Lean 类型检查，均通过；相关定理的公理报告只有 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>，未发现 <code>sorry</code> 或额外自定义公理。</p>
+<hr>
+<h2>3. 精确定义层面的反例：关系允许额外删除未使用边</h2>
+<p>取底空间
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+X=\{\bot,a,b,c\},
+</annotation></semantics></math></span>
+其中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">a,b,c</annotation></semantics></math></span> 互异且均非吸收元。原网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span> 只有一个节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta</annotation></semantics></math></span>：</p>
+<ul>
+<li>源输入域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U=\{a\}</annotation></semantics></math></span>，唯一入口片为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_\beta=\{a,b,c\}</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">f_\beta</annotation></semantics></math></span> 在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>β</mi></msub></mrow><annotation encoding="application/x-tex">U_\beta</annotation></semantics></math></span> 上为恒等映射，域外取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span>；</li>
+<li>有一个自环，其边域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>β</mi><mo>→</mo><mi>β</mi></mrow></msub><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">D_{\beta\to\beta}=\{b\}</annotation></semantics></math></span>。</li>
+</ul>
+<p>唯一源输入 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 不在自环边域中，因此立即终止。该网络满足统一有限终止和无冗余节点条件；自环从未被源输入实际使用，但仍是合法原始网络数据。</p>
+<p>按正文作节点域加细，取
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="2em"/><msub><mi>A</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>c</mi><mo stretchy="false">}</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+A_0=\{a,b\},\qquad A_1=\{c\}.
+</annotation></semantics></math></span>
+分片 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">A_1</annotation></semantics></math></span> 不可达，删冗后删除；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">A_0</annotation></semantics></math></span> 对应保留节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0</annotation></semantics></math></span>。正文规定保留的自环边域应为
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>D</mi><mrow><msub><mi>β</mi><mn>0</mn></msub><mo>→</mo><msub><mi>β</mi><mn>0</mn></msub></mrow><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msubsup><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo><mo>∩</mo><msub><mi>f</mi><msub><mi>β</mi><mn>0</mn></msub></msub><mo stretchy="false">(</mo><msub><mi>A</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>∩</mo><msub><mi>A</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">{</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">
+D&#x27;_{\beta_0\to\beta_0}
+=\{b\}\cap f_{\beta_0}(A_0)\cap A_0
+=\{b\},
+</annotation></semantics></math></span>
+相应终止域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>。</p>
+<p>现在构造另一个网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span>：它与上述正规加细结果完全相同，唯一区别是把 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span> 处的自环也删掉，即在该输出上改为 <code>stop</code>。于是：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span> 的实际输入域仍只有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>，实际输出像只有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span>；</li>
+<li><code>choice_projection</code> 只需在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a</annotation></semantics></math></span> 处检查，两边均为 <code>stop</code>，所以成立；</li>
+<li>分片保留条件、入口投影、局部算子、标签单射及其余字段也均满足；</li>
+<li>因而按各字段检查，<code>NodeDomainRefinement N M</code> 可容纳这个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span>。</li>
+</ul>
+<p>但 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi></mrow><annotation encoding="application/x-tex">M</annotation></semantics></math></span> 不是正文规定的加细结果：正文只删除不可达节点及其关联边，<strong>不会额外删除两个保留节点之间原本存在的未使用边</strong>。此处 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span> 还属于保留节点的完整局部输出像，因此这不是“选择函数在输出像外的无关紧要的全域化差异”；它实际改变了 Lean 的 <code>edge_domain</code>，并把终止域从 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a\}</annotation></semantics></math></span> 改成 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\}</annotation></semantics></math></span>。</p>
+<p>所以：</p>
+<ul>
+<li><strong>外延等价定理仍然正确</strong>，因为实际源输入路径完全不变；</li>
+<li><strong>关系作为正文原始数据加细的精确刻画则过宽</strong>，不能由它反推全部边域、终止域公式或规范加细的表示层身份。</li>
+</ul>
+<hr>
+<h2>4. 需要补充的内容与修复方向</h2>
+<h3>对主命题</h3>
+<p>**无需补充证明。**关系版已证明局部等价，构造版已证明全局外延算子相等。二者各自都足以支撑所审阅的节点域加细结论。</p>
+<h3>对“精确定义、完整覆盖”的要求</h3>
+<p>建议补充以下形式化内容：</p>
+<ol>
+<li>
+<p><strong>给出删冗后的全量原始数据约束。</strong><br>
+不能简单把现有 <code>choice_projection</code> 无条件扩大到所有完整输出像，因为删冗确实可能使指向已删除分片的后继变为 <code>stop</code>。可直接采取以下任一方式：</p>
+<ul>
+<li>要求 <code>N'</code> 经标签运输后，与 <code>NodePartitionData.presentation.prune</code> 的完整 <code>presentation_data</code> 相同；该数据包含 <code>U</code>、<code>node_op</code>、<code>entry_domain</code>、<code>edge_domain</code>，正好能排除上述额外删边；</li>
+<li>或分别陈述保留标签上的普通入边、普通出边、自环及终止域公式，并显式加入目标分片是否被保留的删冗条件。</li>
+</ul>
+</li>
+<li>
+<p><strong>补关系版与构造版的桥接定理。</strong><br>
+附件没有证明</p>
+<pre><code class="language-lean">NodeDomainRefinement N P.network
+</code></pre>
+<p>或更一般的“任一正文加细结果恰为规范构造的标签同构”。从定义看，现有弱关系应能容纳规范构造；若采用上述精确化，则可进一步证明双向刻画。当前没有该桥接定理并不削弱主结论，因为构造版已经独立证明了外延相等，但它限制了对“两种接口完全同义”的声明。</p>
+</li>
+<li>
+<p><strong>可复用的数据公式引理。</strong><br>
+构造版目前显式给出了自环判据；普通入边、普通出边、入口片和终止域的全量公式虽可由定义推导，但没有全部封装成独立定理。若后续需要核对表示层数据，宜补上。只为主命题服务时，这些包装不是必需的。</p>
+</li>
+</ol>
+<p>综上，最准确的评价是：<strong>节点域加细的外延保持已被可靠证明；当前关系实现是有意的实际行为层充分证书，但不是正文全部原始网络数据意义上的精确加细关系。</strong></p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR01/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR01:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR01/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/original-reviews/AHR01.json">review · AHR01.json</a><span class="hash">SHA256 5b69b8bc07500947fad28c18b3abe40b231acce2b295a173f3c968f6dcacc4aa</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/native-source/lean/AHR01-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/claim-public-sources/AHR01.json">review · AHR01.json</a><span class="hash">SHA256 465113a72bad93768b60d104e5fe6d46461bd9be235f4c2cb054a0bb53a997ac</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "kimi-3.1-pro-max", "label": "Kimi 3.1 Pro (max)"}, "case": {"id": "AHR01", "title": "节点域加细的语义审计", "category": "lean-audit", "views": {"capability": {"single_attempt": {"case_id": "AHR01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1", "review_sha256": "a1b7c75ca9d34c199e390e675923a4f6e8c71ab0676af161804961b570b89b24"}, "nonlogical_retry_3": {"case_id": "AHR01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1", "review_sha256": "a1b7c75ca9d34c199e390e675923a4f6e8c71ab0676af161804961b570b89b24"}}, "partial": {"single_attempt": {"case_id": "AHR01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1", "review_sha256": "a1b7c75ca9d34c199e390e675923a4f6e8c71ab0676af161804961b570b89b24"}, "nonlogical_retry_3": {"case_id": "AHR01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1", "review_sha256": "a1b7c75ca9d34c199e390e675923a4f6e8c71ab0676af161804961b570b89b24"}}, "strict": {"single_attempt": {"case_id": "AHR01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1", "review_sha256": "a1b7c75ca9d34c199e390e675923a4f6e8c71ab0676af161804961b570b89b24"}, "nonlogical_retry_3": {"case_id": "AHR01", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "37c88097e22dd268300cc3edc0571433ab9b5a4d86b43d7839febb11757728f1", "review_sha256": "a1b7c75ca9d34c199e390e675923a4f6e8c71ab0676af161804961b570b89b24"}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

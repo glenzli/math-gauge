@@ -6,17 +6,23 @@
 
 Math Gauge tests whether a model can reliably complete mathematical work: understand supplied structures, calculate and prove, review arguments, turn mathematical specifications into semantically aligned Lean projects, and maintain sound judgments through self-checks.
 
-The **benchmark suite is sealed at 0.6.0**. The latest **distribution is 0.6.1** ([release notes](releases/v0.6.1/README.md)), updating the website, documentation and presentation of adopted results. The previous release and assets remain intact. **AI reviewed; human review pending. Formal comparison eligibility is not established.**
+The **benchmark suite is sealed at 0.6.0**. The latest **distribution is 0.6.1** ([release notes](releases/v0.6.1/README.md)), updating the website, documentation and presentation of adopted results. The previous release and assets remain intact. **AI reviewed, with human spot checks.** Sol 6.1 Max reviews the full set, with sampled cross-checks by Astra 6 Max and Dot; see the [review process](docs/review-process.md).
 
 ## Leaderboard preview
 
-![Math Gauge English leaderboard: nine fully evaluated models](docs/screenshots/leaderboard-en.jpg)
+![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)
 
 ![Math Gauge English mathematical research leaderboard](docs/screenshots/research-en.jpg)
 
-Screenshots enable **Completed models only**, showing the nine models whose evaluations are complete. Completion does not mean every answer is correct. The default page includes all eleven retained models, with unfinished evaluations marked *. Filtering changes display only: scores, weights and fixed denominators stay unchanged. The interface supports Chinese and English, with independent sort controls for categories, gaps and rates; language and filter choices persist in the URL.
+Screenshots enable **Completed models only**. Completion does not mean every answer is correct. Each board includes all retained models by default, with unfinished evaluations marked *. Visible metrics, model filters and sorting are independent for each board and persist in the URL, with Chinese and English support. Scores, weights and fixed denominators stay unchanged.
 
 [Static leaderboard](site/index.html) · [Method & data](site/method.html?lang=en) · [Local preview](#local-preview)
+
+Each board has its own **Settings** button at the top right for visible metrics and the completed-model filter; bars, legends and table columns update together within that board. Sort buttons stay visible beside it and work independently of metric visibility. **Score gaps** is a collapsed subboard below the overall leaderboard, using the same disclosure pattern as the additional-results observation under research. The overall sort mode also selects category contributions and result downloads.
+
+**Answer delivery** counts rule-selected initial answers or sealed engineering artifacts out of 39, independently of correctness or goal attainment. Tested tasks without a delivery score zero; untested tasks remain unknown. The three prescribed self-check rounds are listed separately. Harness labels use native product names such as Claude Code and Codex CLI; internal wrapper identities remain in original execution evidence.
+
+An expandable [Volunteered Additional Results observation](site/index.html?category=research&lang=en#research-initiative) now sits under the research leaderboard. It lists verified result-group counts and review coverage for five manuscript tasks, describing what models volunteered beyond the brief. It is not a research-capability score, and more is not necessarily better. There is no full score, percentage or projected ceiling for unrun tasks. The current AI review covers 59 of 65 manuscript slots across thirteen models, including all five manuscripts from the latest DeepSeek and Kimi records; Argon has three unrun slots. See the [observation report](docs/manuscript-observations.md) and [rules](protocol/manuscript-observations.md). Primary scores and content rates are unchanged.
 
 ## Design
 
@@ -65,15 +71,22 @@ All values are confirmed contributions in the full 100-point frame. The main vie
 | Sol 6.1 (xhigh) | Codex CLI | 90.12 | 87.96 | 68.00 | 39/39 |
 | Terra 6.1 (max) | Codex CLI | 87.65 | 86.45 | 65.67 | 39/39 |
 | Terra 6.1 (xhigh) | Codex CLI | 79.71 | 78.50 | 63.00 | 39/39 |
-| DeepSeek v4.1 Flash (max)* | Codex CLI<sup>2</sup> | 64.80 | 57.07 | 25.83 | 38/39 |
+| Kimi 3.1 Pro (max) | Claude Code | 75.28 | 70.41 | 43.67 | 39/39 |
+| DeepSeek v4.1 Flash (max) | Codex CLI<sup>2</sup> | 76.71 | 65.30 | 25.83 | 39/39 |
 | Gemini 3.8 Flash (high) | AGY CLI | 62.32 | 48.42 | 13.75 | 39/39 |
+| GLM 5.3 (max) | Claude Code<sup>3</sup> | 36.03 | 27.34 | 14.08 | 39/39 |
 | Gemini 4 Argon (high)* | AGY CLI | 36.01 | 32.17 | 17.92 | 23/39 |
 
 *Evaluation unfinished. Complete intervals and coverage remain in model details. All formal tests allow local tools and preinstalled public dependencies; external retrieval and tool networking are prohibited. Model-service / authentication traffic is separate. Harness versions and actual tool use are scoped to the original batches, not inferred across inherited answers.*
 
 ¹ Dot's independent native harness. Its underlying SKU is unverified. The original 38 + 3 batch and one historical native first delivery selected after observation are recorded separately, giving 39 + 3 scored deliveries. Native records do not relax CLI import contracts.
 
-² Several tasks exhausted the maximum output budget during lengthy reasoning in DeepSeek Harness (DSH), so execution moved to Codex CLI.
+² Earlier runs with DeepSeek Harness (DSH) failed to deliver several tasks after lengthy reasoning exhausted the maximum output budget; execution then moved to Codex CLI.
+
+³ GLM 5.3 had frequent timeouts and missed deliveries with both Codex CLI and Claude Code. The retained run uses Claude Code; answers not delivered by the deadline score zero.
+
+
+Kimi 3.1 Pro (max) now scores MC 75.28 / RMC 70.41 / SMC 43.67, with content reliability 91.14% and complete-goal attainment 68.03%. The user confirmed the C003 R3 power-loss recovery as trustworthy; the same-round diagnosis and repair earn 100/100, giving 91→91→91→92. R1/R2 false-completion deductions and all 47 physical requests remain. See the [current archive](results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/README.md).
 
 Astra 6 (xhigh) completed 39 initial tasks and three fixed self-check rounds: MC 91.45 / RMC 90.45 / SMC 79.17, content reliability 98.68% and complete-goal attainment 87.36%. With the same tasks, tools and budgets, its RMC was 3.87 points below max in this run. The main losses were a core endorsement error in AHR02, the initial C003 delivery at 82 / 92, and lower extension credit; all three C003 rounds reached 92 / 92 with accurate diagnoses and no regression. See the [Astra xhigh record](results/v0.6.0/astra-6-xhigh/20261110/README.md).
 
@@ -83,7 +96,7 @@ Both Sol efforts completed 39 initial tasks and all three self-check rounds, eac
 
 Opus delivered all 39 + 3 through Claude Code 2.1.303. Content reliability is 94.22%, goal attainment 85.84%. All four initial formalization tasks were complete; C003 was 92 / 92 from A1 through R3, but R1 misdiagnosed a proof already present in its parent, failing trajectory SMC. Final engineering completeness and diagnosis accuracy remain distinct. Thirty-seven initial tasks used tools, with 338 calls. Collector versions were 0.1.0 / 0.2.0 for the public / private batches; configuration and events were checked, without an independent runtime isolation probe. See the [retained Opus record](results/v0.6.0/claude-opus-5.5-max/20261109/README.md).
 
-DeepSeek retains 27 new reviews and 8 preselected original judgments. Three initial delivery failures earn 0; C003 and all three self-check rounds are still unknown. New answers do not inherit old reliability or attainment rates. GP001, GR009, PS001 and GR021 first delivered normally on attempt 2; all failed requests and operator summaries remain archived, with unavailable native events explicitly unknown.
+DeepSeek’s final composition scores MC 76.71 / RMC 65.30 / SMC 25.83. All 39 initial tasks and three self-check rounds are adjudicated: 38 reviewed answers and one timeout without a final answer. Sources and retry history are in the [final archive](results/v0.6.0/deepseek-v4.1-flash-1017/20261110/README.md). Content reliability is 76.64% and complete-goal attainment is 57.36%, audited on the same shared contracts.
 
 PS001 replaces GR103 in the current selection. Gemini retains only its original A1 review (94 / 100; SMC fail), as selected by the user; independent regrading is excluded. Retired GR103 source answers remain historical evidence and do not enter current aggregation. Current tasks, raw answers, original self-assessments and source policy 0.4.0 are immutable.
 
@@ -93,11 +106,11 @@ Every homepage chart has horizontal model rows, a shared zero baseline, aligned 
 
 Reliability Gap **RG = RMC − MC** and Delivery Gap **DG = SMC − MC** are presentation diagnostics in percentage points, not new benchmark scores. They share a signed axis and sort independently by distance from zero. Zero gap is not a capability claim.
 
-[Content reliability and goal attainment](protocol/content-rates.md) assess actual assertions and complete independently usable mathematical results, respectively. Current contracts share 697 assertion units and 149 complete goals, weighted by the original category / family hierarchy. MC may credit partial progress; attainment requires complete goals; SMC requires the entire task and prescribed trajectory. The earlier 0.1.0 fine-unit coverage reports are retained separately. These post-observation AI reviews do not rewrite original answers or the three main scores; human review remains pending.
+[Content reliability and goal attainment](protocol/content-rates.md) assess actual assertions and complete independently usable mathematical results, respectively. Current contracts share 697 assertion units and 149 complete goals, weighted by the original category / family hierarchy. MC may credit partial progress; attainment requires complete goals; SMC requires the entire task and prescribed trajectory. The earlier 0.1.0 fine-unit coverage reports are retained separately. Assertion and goal reviews accompany the retained answers and main scores.
 
 ## Running and retaining evidence
 
-Use the [external harness guide](docs/harness-guide.md). Every task gets a fresh runtime / workspace. At most three effective attempts include the first; proven pure system failures do not consume an attempt, output exhaustion does, and normally delivered mathematical errors never permit a retry. The first native terminal state or deadline seals actual source; controller cleanup is separate. AI review, compilation, human approval and comparison eligibility are distinct.
+Use the [external harness guide](docs/harness-guide.md). Every task gets a fresh runtime / workspace. At most three effective attempts include the first; proven pure system failures do not consume an attempt, output exhaustion does, and normally delivered mathematical errors never permit a retry. The first native terminal state or deadline seals actual source; controller cleanup is separate.
 
 The public candidate package contains 25 tasks. The controlled complete 39-task package and external evaluator plan stay private; both use the same public runner. References, expected truth, rubrics, author implementations, prior answers and reviews are evaluator-side. Public outputs expose only combined private counts, opaque hashes and aggregates. The selected Astra results are additional records; published release snapshots remain unchanged.
 

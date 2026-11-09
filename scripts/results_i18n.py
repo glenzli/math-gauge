@@ -9,10 +9,15 @@ def language_switch():
 
 
 MESSAGES = {
+    '设置': 'Settings', '榜单显示设置': 'Board display settings', '关闭设置': 'Close settings',
+    '显示设置': 'Display settings', '只影响此榜单': 'This board only', '展示项目': 'Visible metrics',
+    '可靠率': 'Reliability', '达成率': 'Attainment', '总榜排序': 'Overall sort',
+    '以MC为共同基准 · 可靠差与交付差': 'MC baseline · reliability and delivery gaps',
+    '越接近0，分数落差越小': 'Closer to zero means a smaller score gap',
+    '审阅覆盖': 'Review coverage', '按已核实组数排序': 'Sorted by verified result groups',
     '主导航': 'Main navigation', '排行榜': 'Leaderboard', '模型排行榜': 'Model leaderboard',
     '分类榜': 'Categories', '能力分项': 'Contributions', '方法与数据': 'Method & data', '题集': 'Tasks',
-    '封版': 'Sealed suite', 'AI 审核 · 人审待定': 'AI reviewed · Human review pending',
-    '观察后选题与复核，正式比较资格未确立': 'Post-observation selection and review; formal comparison eligibility not established',
+    '封版': 'Sealed suite',
     '书面证明、Lean 与数学研究。考察数学论证、形式化交付，以及发现和修复问题的能力。':
         'Written proofs, Lean and mathematical research. Testing mathematical arguments, formal delivery, and the ability to find and repair errors.',
     '当前评测范围': 'Evaluation scope', '公25题 · 私14题': '25 public · 14 private tasks',
@@ -50,8 +55,6 @@ MESSAGES = {
     'RG · 可靠差': 'RG · Reliability Gap', 'DG · 交付差': 'DG · Delivery Gap',
     'RG 接近0优先': 'RG closest to 0', 'DG 接近0优先': 'DG closest to 0',
     '排序': 'Sort', '内容可靠率与目标达成率': 'Content reliability & goal attainment',
-    '内容核查实际断言；目标按完整独立成果验收。不改变MC、RMC、SMC。AI审核／人审待定。':
-        'Assertions are checked for reliability; goals require complete, independently usable results. MC, RMC and SMC are unchanged. AI reviewed; human review pending.',
     '已审内容可靠率': 'Observed content reliability', '已确认目标达成率': 'Confirmed goal attainment',
     '计算方法 →': 'Calculation method →', '可靠': 'Rel.', '达成': 'Goal',
     '分类排行榜': 'Category leaderboards', '三个大类独立排序': 'Each category sorts independently',
@@ -78,11 +81,14 @@ MESSAGES = {
     '公开＋私有合并，采用规则允许的最终成绩，随计分口径切换。':
         'Combined public and private rule-selected results. Downloads follow the selected score mode.',
     '查看完整方法与数据说明 →': 'Full method & data →',
-    'Math Gauge · AI 审核 / 人审待定': 'Math Gauge · AI reviewed / human review pending',
     'Math Gauge · 原答与原评审保留': 'Math Gauge · Original answers and reviews retained',
     '¹ Dot原生独立运行方式': '¹ Dot’s independent native harness',
     '² 使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。':
         '² Several tasks exhausted the output budget during lengthy reasoning in DeepSeek Harness (DSH), so execution moved to Codex CLI.',
+    '此前使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，随后改用Codex CLI。':
+        'Earlier runs with DeepSeek Harness (DSH) failed to deliver several tasks after lengthy reasoning exhausted the maximum output budget; execution then moved to Codex CLI.',
+    'GLM 5.3在Codex CLI和Claude Code下均出现过大量超时、无法按时交卷；本次留档采用Claude Code结果，未按时交卷计0分。':
+        'GLM 5.3 had frequent timeouts and missed deliveries with both Codex CLI and Claude Code. The retained run uses Claude Code; answers not delivered by the deadline score zero.',
     '当前留档没有另计的非逻辑重跑。': 'No separately counted nonlogical retries in the retained records.',
     '模型详细评测 · 公开＋私有合并成绩': 'Model evaluation · combined public and private results',
     '当前成绩': 'Current results', '分类贡献': 'Category contributions', '书面论证': 'Written arguments',
@@ -155,6 +161,95 @@ MESSAGES = {
     '分类成绩图': ' category scores', '详细评测': 'full evaluation',
     '0.6.1 分发说明': 'Distribution 0.6.1', '其他 Harness 运行指南': 'External harness guide',
 }
+
+
+MESSAGES.update({
+    'AI 审核 · 部分人工抽审': 'AI reviewed · Human spot checks',
+    '累计有效数学成果。': 'Credits valid mathematical results.',
+    '按有效成果计分，扣除错误、回退和误报。': 'Credits valid work and deducts errors, regressions and false claims.',
+    '整题及规定自查轨迹全部达标才计分。': 'Credits complete tasks and prescribed self-check trajectories.',
+    '计分依据见下方逐项评审。': 'See the item-level review below for scoring evidence.',
+    '评分、运行条件与审核方式': 'Scoring, execution conditions and review process',
+    '本题尚无评审结果。': 'No review result is available for this task.',
+    '本题的交付记录及计分依据见档案。': 'Delivery records and scoring evidence are in the archive.',
+    '运行版本与来源': 'Execution versions and sources',
+    '全审：': 'Full review: ', '；抽审核对：': '; sampled cross-checks: ', '审核方式 →': 'Review process →',
+    '总分／100': 'Overall / 100', '暂无成绩': 'No score yet',
+    '初答交卷数（含封卷工程）': 'Initial answer deliveries, including sealed engineering artifacts',
+    '答题完成度统计初答交卷数（含封卷工程）；缺交计0分，未测保持未知。':
+        'Counts initial answer deliveries, including sealed engineering artifacts. Missing deliveries score zero; untested tasks remain unknown.',
+    '采用规则选定答卷，满分100。': 'Rule-selected answers, scored out of 100.',
+    '以MC为共同基准': 'Common baseline: MC',
+    '点击大类表头展开子类 · 贡献分 / 该项满分':
+        'Expand category headers for subcategories · earned / available points',
+    '分类贡献与下载使用当前总榜口径。': 'Contributions and downloads follow the overall score mode.',
+    '公私合并成绩，使用当前总榜口径。': 'Combined results in the selected overall score mode.',
+    '柱图与表格同步显示，至少保留一项。': 'Bars and tables update together. Keep at least one score visible.',
+    '内容可靠率衡量已作断言的正确性，目标达成率统计完整成果的交付。':
+        'Reliability measures the correctness of actual assertions; attainment counts complete results delivered.',
+    '各分类可独立选择排序口径。': 'Each category has its own sort mode.',
+    '类内成绩满分100；计入总榜的贡献见下表。': 'Category scores are out of 100; overall contributions appear below.',
+    '公开＋私有合并成绩，满分100。': 'Combined public and private results, out of 100.',
+    '可能范围：': 'Possible ranges: ', '已交卷': 'Answers delivered',
+    '子类': 'Subcategory',
+    '贡献分 / 该项满分；相关变体在家族内聚合。': 'Earned / available points; related variants aggregate within families.',
+    '92项义务，按最后规定轮次计分。': '92 obligations, scored using the last prescribed round.',
+    '公开25题；私有14题计入合并成绩。': '25 public tasks; 14 private tasks included in combined results.',
+    '按初答封卷工程核对编译及语义对应。': 'Compilation and semantic checks use the sealed initial engineering source.',
+    '同根因扣罚去重；具体依据见逐题说明。': 'Deductions are deduplicated by root cause; see task-level evidence.',
+    '当前公开题无额外错误承诺扣罚。': 'No additional false-claim deductions on the current public tasks.',
+    '未留存可读原答。': 'No readable original answer is retained.',
+    'MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。':
+        'MC/RMC show task credit and SMC shows the task verdict; overall contributions are on the model page.',
+    '原始评审见下方来源文件。': 'Original reviews are linked below.',
+    '完整原答': 'Original answer',
+    '统计模型主动交付、经核实的独立额外成果组。': 'Counts verified independent additional results volunteered by the model.',
+    '组数描述主动扩展任务的行为。成果价值及扩展范围是否合适，取决于研究问题和用途。':
+        'Counts describe voluntary scope expansion. Value and appropriate scope depend on the research problem and use.',
+    '五道手稿题（公1／私4） · 首答A1': 'Five manuscript tasks (1 public / 4 private) · initial A1 answers',
+    '横轴为已核实成果组数。': 'The axis counts verified result groups.',
+    '* 手稿题尚未测完，所列为已核实组数。': '* Manuscript testing is partial; counts include verified groups.',
+    '同一独立成果去重为一组；必要证明、纠错及题目要求的拓展归入原题评分。':
+        'Independent results are deduplicated; required proofs, corrections and requested extensions belong to the original task score.',
+    '此处列公有手稿题的核验依据；图表组数为公私合计。': 'Evidence here covers public manuscripts; chart counts combine public and private tasks.',
+    '答题完成度': 'Answer delivery', '交卷 ': 'Delivered ',
+    '已交卷／初答题数；不代表正确率或数学目标完成度。':
+        'Delivered answers / initial tasks; not accuracy or mathematical goal attainment.',
+    '答题完成度按已交卷题数／39统计（含封卷工程），不代表正确率或目标达成率。已测未交卷计0分，未测保持未知；三轮自查另见详情。':
+        'Answer delivery counts submitted answers or sealed engineering artifacts out of 39, not correctness or goal attainment. Tested tasks without a delivery score zero; untested tasks stay unknown. The three self-check rounds are listed separately in model details.',
+    '榜单设置': 'Leaderboard settings', '关闭榜单设置': 'Close leaderboard settings',
+    '随时调整，所有分类同步显示': 'Adjust the view across all categories',
+    '分数显示': 'Visible scores', '模型范围': 'Model filter',
+    '控制总榜排序、分类贡献及下载；分类榜仍独立排序。':
+        'Sets overall ranking, category contributions and downloads. Category rankings keep their own sort order.',
+    '全部显示': 'Show all', '只看当前口径': 'Show selected score only',
+    '同步控制总榜与分类榜的柱条、图例和分数列；至少保留一项。显示与排序独立。':
+        'Controls bars, legends and score columns in the overall and category rankings. Keep at least one visible. Display and sorting are independent.',
+    '规则成绩': 'Rule-selected results',
+    '主动额外成果': 'Volunteered additional results',
+    '原任务未要求 · 手稿题观察': 'Beyond the brief · manuscript observations',
+    '记录模型在没有被要求时，主动提出并实际交付了多少经核实的额外成果组。':
+        'Records the verified additional result groups that a model volunteered beyond the requested manuscript goals.',
+    '数量描述这批答卷的主动探索行为，不表示研究能力，也不预设越多越好。原题完成质量、可靠性和是否适合主动扩展范围须分别判断。':
+        'Counts describe initiative in these answers, not research capability. More is not necessarily better. Task completion, reliability and whether expanding the scope is appropriate must be judged separately.',
+    '已核实额外成果组': 'Verified result groups', '已审手稿': 'Reviewed manuscripts',
+    '已核实额外成果组数': 'Verified additional result groups',
+    '各模型已核实额外成果组数': 'Verified additional result groups by model',
+    '横轴为成果组数量，刻度随当前已核实数量设置，不表示上限。价值取决于具体研究本体与用途。':
+        'The axis counts result groups and adapts to the current observations; it is not a ceiling. Value depends on the research problem and intended use.',
+    '查看组数与审阅覆盖': 'View counts and review coverage',
+    '手稿题尚未测完': 'Manuscript tasks not all tested',
+    '* 手稿题尚未测完；所列为已核实组数，全部答卷的总组数未知，不估算未测成果，不设满分或上限。排列只便于浏览，不列优劣名次。':
+        '* Manuscript tasks not all tested. Counts include verified groups only; the total remains unknown. Unrun results are not estimated, and there is no full score or ceiling. Ordering is for browsing, without merit ranks.',
+    '正常纠错、必要证明、原题要求的拓展和直接推论不计。同一独立成果去重为一组，同题可以有多组。原任务错误仍按原规则处理。':
+        'Necessary corrections, proofs, requested extensions and direct corollaries are excluded. Each independent result is deduplicated into one group; a task may yield several groups. Original errors retain their original consequences.',
+    '观察规则 →': 'Observation rules →', '观察报告 →': 'Observation report →',
+    '公开题的成果依据': 'Public-task evidence',
+    '只展示公有手稿题的数学核验。私有题的内容与逐题分配留私库；这里只列公私合并组数。':
+        'Only public manuscript evidence is shown. Private mathematical content and task allocations remain private; counts combine both scopes.',
+    '原任务SMC：': 'Original task SMC: ', '原任务详情 →': 'Original task details →',
+    '暂无可审核原答。': 'No answer is available for review.', '观察记录 · JSON ↓': 'Observation record · JSON ↓',
+})
 
 
 def javascript_catalog():

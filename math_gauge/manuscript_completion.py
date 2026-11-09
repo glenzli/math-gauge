@@ -58,6 +58,11 @@ def validate_core_completion(case, row):
     """
     policy = _core_completion_policy(case)
     review, source = row.get("strict_completion_review"), row.get("strict_completion_review_source")
+    if row.get("status") == "delivery_failed":
+        if (row.get("points") != 0 or row.get("complete") is not False or row.get("response") is not None
+                or review is not None or source is not None):
+            raise ValueError("Missing manuscript delivery cannot acquire a core mathematical judgment")
+        return None
     if policy is None:
         if review is not None or source is not None:
             raise ValueError("Core completion review needs its selected task contract")
@@ -106,6 +111,11 @@ def validate_fidelity(case, row):
     fidelity finding from another candidate or the evaluator's reference.
     """
     policy, review = case.get("fidelity_policy"), row.get("fidelity")
+    if row.get("status") == "delivery_failed":
+        if (row.get("points") != 0 or row.get("complete") is not False or row.get("response") is not None
+                or review is not None):
+            raise ValueError("Missing manuscript delivery cannot acquire a fidelity judgment")
+        return None
     if policy is None:
         if review is not None:
             raise ValueError("Fidelity adjustment needs its selected case contract")
@@ -186,6 +196,11 @@ def validate_inputs(data, policy):
                         ("execution", "execution_result", "execution_plan", "native_request",
                          "native_events", "candidate_input", "physical_request_ledger"))):
                 raise ValueError("Unverified execution is unknown mathematics, with retained native evidence")
+        elif status == "delivery_failed":
+            if (row.get("points") != 0 or row.get("complete") is not False
+                    or row.get("response") is not None or row.get("review") is not None
+                    or not isinstance(row.get("delivery_failure"), dict)):
+                raise ValueError("Failed manuscript delivery is operational zero, not a mathematical review")
         elif status == "response_received_execution_unverified":
             if (type(row.get("points")) is not int or not 0 <= row["points"] <= 100
                     or type(row.get("complete")) is not bool

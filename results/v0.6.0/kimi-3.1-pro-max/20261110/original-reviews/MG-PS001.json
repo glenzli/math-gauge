@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-PS001:A1",
+  "case_id": "MG-PS001",
+  "binding": {
+    "plan_sha256": "2dab84a9de2a5fa59e1fa0cb33f183cedb03509b3f860415c830ea6b888db97a",
+    "slot_id": "MG-PS001:A1",
+    "evidence_id": "c007de3a82e92a269c3dc97030aac94f0342824a8c74e5406f74a020b6a74116",
+    "response_sha256": "11ff844bdb8caab99c6bb702e8c707cd7bf15ca0acaf37412f260309944edb3d",
+    "history_sha256": "47719d7d5c4bf59122dce1fbc145a2ccfd53654f67ef6ce8c1c71be5ea2736a0",
+    "projected_request_sha256": "2410e6f63070ee8a9c41a10d91debfac40d69d1f3e4b88c02ecdc15d6bbfdfd8",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "049b72d9a9430bc3b0c8bf6e7f4a4d96bda845af5b4c59a03a81bd726520a45d",
+    "body_origin": {
+      "slot_id": "MG-PS001:A1",
+      "response_sha256": "11ff844bdb8caab99c6bb702e8c707cd7bf15ca0acaf37412f260309944edb3d",
+      "start_byte": 0,
+      "end_byte": 9105
+    },
+    "body_sha256": "11ff844bdb8caab99c6bb702e8c707cd7bf15ca0acaf37412f260309944edb3d",
+    "rationale_sha256": null,
+    "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+  },
+  "reviewer": "Codex source-based mathematical reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "六项全部完整100/100、SMC通过。无界必要性稀疏块计数和任意实数对的跨段迭代上界都已核实，未只证明端点或假定商完备。无可靠性扣罚。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "有限半范数、零类与差序列线性商距离全程合法直接使用，依量规不要求重复基础公理。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "有限limsup界给下降；无界时选倍增稀疏指标块，支撑点总数的递推界及支撑间平均递减证密度0，但取样上密度>=1/2。适用于每个无界f。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "精确C_f值，上界一般成立；普遍稀疏短块构造证任意epsilon/delta的尖锐下界，不假设f(n)/n收敛。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "给出实际有界序列原像证满射；遗漏range的密度证C>1非单射，C=1用遗漏项密度0和有界性证零类反射；连续性已由有限Lipschitz界。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "实际复合取样识别L_k，有限次乘和Fekete对logL给根极限/下确界及全部必要范围，无未经证明Banach完备性或谱论。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "任意1<=rho<=a构造含全部实参数及边界；a>rho时分段取整递增、L1=a，固定k至多跨一边界和跨前小常量o(n)给全局上界，边界起点给下界，明确Lk与rho=1的线性增长根极限。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-10T02:23:40.979145+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "383bf4aca9548689805d53d75d49c8ae3ce206a1e5fa1530ae02cfc7004ee49f",
+  "public_projection": true,
+  "original_private_review_sha256": "ba1b0c7f6ef0a35f943768cdaea078197c80f1a36406710e18b4a93527f905f9"
+}

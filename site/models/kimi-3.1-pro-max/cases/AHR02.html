@@ -1,0 +1,298 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AHR02 · 路径保证域的语义审计 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/kimi-3.1-pro-max/index.html">Kimi 3.1 Pro (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>AHR02 · 路径保证域的语义审计</h1><p class="subtitle">Kimi 3.1 Pro (max) · 语义审计 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><p>请审阅附件数学正文中的“路径保证域的全局拟合含义”及其 Lean 实现。附件中的相关定义、局部上界和辅助声明均可使用；不要求审阅本章其他结论。</p>
+<p>判断所给实现是否准确、完整地覆盖该数学命题，并说明依据。若有不足，给出可复核的论证或反例并说明可如何补齐；若认为完整，给出对应关系。请区分源码已证明的结论与需自行补充的内容。</p>
+<p>无需修改附件或提交新增 Lean 源码。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-audit/AHR02/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>明确认可额外∀q路径Lip为正文可实例化，漏不可评估路径可完全不存在系数。零距两点映成正距的路径给任意含∞矩阵不可能证书，实际强前提缩小正文范围。正确较强定理及局部引理仍保留。</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 0</p>
+<p><strong>审核说明：</strong> 核心误判：称完整对齐，漏掉全局三个声明的hLq要求全部路径，而正文只对可评估路径需Lip。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 实际定义、局部上界、路径表示桥和更强hLq前提下两个包含关系均正确核验；保留20有效内容。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 0</p>
+<p><strong>审核说明：</strong> 列出了真实∀q hLq，但错误宣称正文背景可直接实例化，未证明范围差异或给合法修复；没有该维度所要求的有效差异证据。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 0</p>
+<p><strong>审核说明：</strong> 无修复必要的判断错误；空样本不进入并集不意味着声明前提也排除了无系数路径。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h2>结论</h2>
+<p>所给 Lean 实现<strong>准确、完整地覆盖了正文推论 #h-93b9c20ea18b4e59“路径保证域的全局拟合含义”</strong>，包括分量形式和联合形式两个包含关系。未发现影响该推论的缺失前提、方向错误或未证明的结论。</p>
+<p>我对目标文件执行了：</p>
+<pre><code class="language-bash">lake env lean formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean
+</code></pre>
+<p>编译成功且无报错；附件源码中也未检出 <code>sorry</code>、<code>admit</code> 或额外 <code>axiom</code> 声明。</p>
+<h2>正文与 Lean 的对应关系</h2>
+<table>
+<thead>
+<tr>
+<th>正文对象或前提</th>
+<th>Lean 中的对应内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路径限制采样 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span></td>
+<td><code>path_component_sample</code>，见 <code>formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean:27</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}(q)</annotation></semantics></math></span>，即路径采样非空</td>
+<td><code>j ∈ path_evaluable_components N sample q</code>；其展开正是路径采样非空，见 <code>path_sampling.lean:48</code>、<code>:59</code></td>
+</tr>
+<tr>
+<td>路径可评估蕴含全局可评估</td>
+<td><code>path_evaluable_subset_evaluable_components</code>，见 <code>path_sampling.lean:103</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_component_empirical_guarantee_domain</code>，矩阵取 <code>Lq q + Lstar</code>，残差取 <code>path_empirical_residual_upper</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></msub><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\boldsymbol\tau)=\bigcap_{j\in J}U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_joint_empirical_guarantee_domain</code>，其定义就是 <code>x ∈ U_q</code> 加上所有 <code>j ∈ J</code> 的阈值不等式</td>
+</tr>
+<tr>
+<td>网络在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 上表示代理 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span></td>
+<td><code>hrep : N.represents proxy</code>；此处正文的全局域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 对应 Lean 的 <code>N.U</code></td>
+</tr>
+<tr>
+<td>路径链在路径域上等于代理</td>
+<td><code>path_chain_eq_represented_proxy_on_path</code>，见 <code>path_sampling.lean:220</code></td>
+</tr>
+<tr>
+<td>每条路径的 Lip 证书 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span></td>
+<td><code>hLq : ∀ q, IsLipMatrix ... (Lq q)</code></td>
+</tr>
+<tr>
+<td>目标 Lip 包络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U_q\subseteq V^*</annotation></semantics></math></span></td>
+<td><code>hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar</code>；正文中由 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U_q\subseteq U\subseteq V^*</annotation></semantics></math></span> 得到</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo>=</mo><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>+</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf A_q=\mathbf L_q+\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+</tr>
+</tbody>
+</table>
+<p>两个核心定理与正文公式逐字对应：</p>
+<ol>
+<li>
+<p><strong>分量形式</strong><br>
+<code>path_component_guarantee_union_subset_proxy_error</code>，见<br>
+<code>formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520</code></p>
+<p>其左端正是</p>
+<pre><code class="language-lean">{x | ∃ q, j ∈ path_evaluable_components N sample q ∧
+  x ∈ path_component_empirical_guarantee_domain ...}
+</code></pre>
+<p>右端为</p>
+<pre><code class="language-lean">{x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau}
+</code></pre>
+<p>即正文的
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>⋃</mo><mrow><mi>q</mi><mo>:</mo><mtext> </mtext><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo>⊆</mo><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>U</mi><mo>:</mo><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\bigcup_{q:\,j\in I_{\mathrm{res}}(q)}U_{q,j}(\tau_j)
+\subseteq
+\{x\in U:d_j(\phi(x),\phi^\natural(x))\le\tau_j\}.
+</annotation></semantics></math></span></p>
+</li>
+<li>
+<p><strong>联合形式</strong><br>
+<code>path_joint_guarantee_union_subset_proxy_error</code>，见同文件 <code>:552</code>。<br>
+左端要求同一个路径 <code>q</code> 满足 <code>J ⊆ path_evaluable_components N sample q</code>，右端要求所有 <code>j ∈ J</code> 同时满足误差界，正是正文的第二个包含式。</p>
+</li>
+<li>
+<p><strong>正文前提的合并包装</strong><br>
+<code>path_guarantee_union_subset_proxy_error_text</code>，见同文件 <code>:588</code>，将上述两个结论组成合取，并显式保留：</p>
+<ul>
+<li><code>j ∈ evaluable_components sample</code>；</li>
+<li><code>J ⊆ evaluable_components sample</code>；</li>
+<li><code>tau_j</code> 有限；</li>
+<li><code>J.Nonempty</code>；</li>
+<li>所有 <code>tau i</code>（<code>i ∈ J</code>）有限。</li>
+</ul>
+<p>因而正文中的全局可评估性、有限阈值及联合分量族非空等语境也都保留了。</p>
+</li>
+</ol>
+<h2>证明链条核对</h2>
+<p>这些包含关系在源码中确实已经证明，而不是仅作了声明：</p>
+<ul>
+<li>分量证明从左端取出 <code>q</code>、<code>hj</code> 和 <code>hxq</code>：
+<ul>
+<li><code>N.path_domain_subset_source hxq.1</code> 给出 <code>x ∈ N.U</code>；</li>
+<li><code>proxy_path_component_guarantee_error_bound</code> 给出代理—目标误差不超过 <code>tau</code>。</li>
+</ul>
+</li>
+<li>联合证明同样先取得 <code>x ∈ N.U</code>，随后：
+<ul>
+<li>用 <code>path_joint_guarantee_error_bound</code> 得到路径链对所有 <code>j ∈ J</code> 的误差界；</li>
+<li>用 <code>path_chain_eq_represented_proxy_on_path</code> 将路径链改写为所表示的代理。</li>
+</ul>
+</li>
+<li>最后的正文包装直接取上述两个定理组成有序对，没有新增未经证明的断言。</li>
+</ul>
+<h2>对几个潜在疑问的说明</h2>
+<ol>
+<li>
+<p><strong>核心定理没有显式携带完整的 <code>SamplingStructure</code>，并不构成缺失。</strong><br>
+正文的全局采样结构主要用于构造路径局部证书。当前全局推论已经把所需的 <code>hLq</code>、<code>hLstar</code>、<code>hpathV</code>、<code>hrep</code> 作为前提，因此证明包含关系时不需要重新使用采样结构的全部字段。正文的背景前提可以按上表实例化得到这些 Lean 前提； Lean 核心版本实际上更一般。</p>
+</li>
+<li>
+<p><strong>路径残差虽然被全定义，空采样路径并未因此获得证书。</strong><br>
+<code>path_empirical_residual_upper</code> 在 Lean 中是对所有 <code>q,j</code> 全定义的；在空采样上，ENNReal 的空上确界按格约定取零，再加 <code>delta_o</code>。但本推论左端明确包含 <code>j ∈ path_evaluable_components N sample q</code>，联合形式也要求 <code>J ⊆ path_evaluable_components N sample q</code>，所以空采样路径不会进入被证明的保证域并集。这与正文“空路径采样不构造路径证书”的限制一致。</p>
+</li>
+<li>
+<p><strong>正文包装中的若干假设在证明里未被使用，不是逻辑漏洞。</strong><br>
+全局可评估性、阈值有限性和 <code>J.Nonempty</code> 是正文语境，包含关系本身在更弱条件下也成立。包装保留它们以对应正文，核心定理则给出了更强的泛化版本。</p>
+</li>
+</ol>
+<h2>已证明内容与无需补充的范围</h2>
+<p>上述两个包含式及其正文包装均为<strong>附件源码已经证明并编译通过的结论</strong>，不需要我另行补充证明或反例。</p>
+<p>实现没有证明、正文也没有声称以下更强结论：保证域并集等于真实误差区域、反向包含成立、或对每个 <code>x ∈ U</code> 都无条件有误差不超过阈值。路径/全局保证域之间的大小比较也不属于本推论。因此这些都不能算作本实现的缺口。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/original-reviews/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 2d4e1e2e1cf2f5b596febc8a4d94e59f5a3c03e7dcc7e3a08ff87661c50b9757</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/native-source/lean/AHR02-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/claim-public-sources/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 369056a188b29953febf725b8afd1115020fd5d68e087fbb093634891e7b3f92</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>明确认可额外∀q路径Lip为正文可实例化，漏不可评估路径可完全不存在系数。零距两点映成正距的路径给任意含∞矩阵不可能证书，实际强前提缩小正文范围。正确较强定理及局部引理仍保留。</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 0</p>
+<p><strong>审核说明：</strong> 核心误判：称完整对齐，漏掉全局三个声明的hLq要求全部路径，而正文只对可评估路径需Lip。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 实际定义、局部上界、路径表示桥和更强hLq前提下两个包含关系均正确核验；保留20有效内容。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 0</p>
+<p><strong>审核说明：</strong> 列出了真实∀q hLq，但错误宣称正文背景可直接实例化，未证明范围差异或给合法修复；没有该维度所要求的有效差异证据。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 0</p>
+<p><strong>审核说明：</strong> 无修复必要的判断错误；空样本不进入并集不意味着声明前提也排除了无系数路径。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h2>结论</h2>
+<p>所给 Lean 实现<strong>准确、完整地覆盖了正文推论 #h-93b9c20ea18b4e59“路径保证域的全局拟合含义”</strong>，包括分量形式和联合形式两个包含关系。未发现影响该推论的缺失前提、方向错误或未证明的结论。</p>
+<p>我对目标文件执行了：</p>
+<pre><code class="language-bash">lake env lean formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean
+</code></pre>
+<p>编译成功且无报错；附件源码中也未检出 <code>sorry</code>、<code>admit</code> 或额外 <code>axiom</code> 声明。</p>
+<h2>正文与 Lean 的对应关系</h2>
+<table>
+<thead>
+<tr>
+<th>正文对象或前提</th>
+<th>Lean 中的对应内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路径限制采样 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span></td>
+<td><code>path_component_sample</code>，见 <code>formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean:27</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}(q)</annotation></semantics></math></span>，即路径采样非空</td>
+<td><code>j ∈ path_evaluable_components N sample q</code>；其展开正是路径采样非空，见 <code>path_sampling.lean:48</code>、<code>:59</code></td>
+</tr>
+<tr>
+<td>路径可评估蕴含全局可评估</td>
+<td><code>path_evaluable_subset_evaluable_components</code>，见 <code>path_sampling.lean:103</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_component_empirical_guarantee_domain</code>，矩阵取 <code>Lq q + Lstar</code>，残差取 <code>path_empirical_residual_upper</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></msub><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\boldsymbol\tau)=\bigcap_{j\in J}U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_joint_empirical_guarantee_domain</code>，其定义就是 <code>x ∈ U_q</code> 加上所有 <code>j ∈ J</code> 的阈值不等式</td>
+</tr>
+<tr>
+<td>网络在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 上表示代理 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span></td>
+<td><code>hrep : N.represents proxy</code>；此处正文的全局域 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 对应 Lean 的 <code>N.U</code></td>
+</tr>
+<tr>
+<td>路径链在路径域上等于代理</td>
+<td><code>path_chain_eq_represented_proxy_on_path</code>，见 <code>path_sampling.lean:220</code></td>
+</tr>
+<tr>
+<td>每条路径的 Lip 证书 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span></td>
+<td><code>hLq : ∀ q, IsLipMatrix ... (Lq q)</code></td>
+</tr>
+<tr>
+<td>目标 Lip 包络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U_q\subseteq V^*</annotation></semantics></math></span></td>
+<td><code>hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar</code>；正文中由 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U_q\subseteq U\subseteq V^*</annotation></semantics></math></span> 得到</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo>=</mo><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>+</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf A_q=\mathbf L_q+\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+</tr>
+</tbody>
+</table>
+<p>两个核心定理与正文公式逐字对应：</p>
+<ol>
+<li>
+<p><strong>分量形式</strong><br>
+<code>path_component_guarantee_union_subset_proxy_error</code>，见<br>
+<code>formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520</code></p>
+<p>其左端正是</p>
+<pre><code class="language-lean">{x | ∃ q, j ∈ path_evaluable_components N sample q ∧
+  x ∈ path_component_empirical_guarantee_domain ...}
+</code></pre>
+<p>右端为</p>
+<pre><code class="language-lean">{x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau}
+</code></pre>
+<p>即正文的
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><munder><mo>⋃</mo><mrow><mi>q</mi><mo>:</mo><mtext> </mtext><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></munder><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo>⊆</mo><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi>U</mi><mo>:</mo><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">
+\bigcup_{q:\,j\in I_{\mathrm{res}}(q)}U_{q,j}(\tau_j)
+\subseteq
+\{x\in U:d_j(\phi(x),\phi^\natural(x))\le\tau_j\}.
+</annotation></semantics></math></span></p>
+</li>
+<li>
+<p><strong>联合形式</strong><br>
+<code>path_joint_guarantee_union_subset_proxy_error</code>，见同文件 <code>:552</code>。<br>
+左端要求同一个路径 <code>q</code> 满足 <code>J ⊆ path_evaluable_components N sample q</code>，右端要求所有 <code>j ∈ J</code> 同时满足误差界，正是正文的第二个包含式。</p>
+</li>
+<li>
+<p><strong>正文前提的合并包装</strong><br>
+<code>path_guarantee_union_subset_proxy_error_text</code>，见同文件 <code>:588</code>，将上述两个结论组成合取，并显式保留：</p>
+<ul>
+<li><code>j ∈ evaluable_components sample</code>；</li>
+<li><code>J ⊆ evaluable_components sample</code>；</li>
+<li><code>tau_j</code> 有限；</li>
+<li><code>J.Nonempty</code>；</li>
+<li>所有 <code>tau i</code>（<code>i ∈ J</code>）有限。</li>
+</ul>
+<p>因而正文中的全局可评估性、有限阈值及联合分量族非空等语境也都保留了。</p>
+</li>
+</ol>
+<h2>证明链条核对</h2>
+<p>这些包含关系在源码中确实已经证明，而不是仅作了声明：</p>
+<ul>
+<li>分量证明从左端取出 <code>q</code>、<code>hj</code> 和 <code>hxq</code>：
+<ul>
+<li><code>N.path_domain_subset_source hxq.1</code> 给出 <code>x ∈ N.U</code>；</li>
+<li><code>proxy_path_component_guarantee_error_bound</code> 给出代理—目标误差不超过 <code>tau</code>。</li>
+</ul>
+</li>
+<li>联合证明同样先取得 <code>x ∈ N.U</code>，随后：
+<ul>
+<li>用 <code>path_joint_guarantee_error_bound</code> 得到路径链对所有 <code>j ∈ J</code> 的误差界；</li>
+<li>用 <code>path_chain_eq_represented_proxy_on_path</code> 将路径链改写为所表示的代理。</li>
+</ul>
+</li>
+<li>最后的正文包装直接取上述两个定理组成有序对，没有新增未经证明的断言。</li>
+</ul>
+<h2>对几个潜在疑问的说明</h2>
+<ol>
+<li>
+<p><strong>核心定理没有显式携带完整的 <code>SamplingStructure</code>，并不构成缺失。</strong><br>
+正文的全局采样结构主要用于构造路径局部证书。当前全局推论已经把所需的 <code>hLq</code>、<code>hLstar</code>、<code>hpathV</code>、<code>hrep</code> 作为前提，因此证明包含关系时不需要重新使用采样结构的全部字段。正文的背景前提可以按上表实例化得到这些 Lean 前提； Lean 核心版本实际上更一般。</p>
+</li>
+<li>
+<p><strong>路径残差虽然被全定义，空采样路径并未因此获得证书。</strong><br>
+<code>path_empirical_residual_upper</code> 在 Lean 中是对所有 <code>q,j</code> 全定义的；在空采样上，ENNReal 的空上确界按格约定取零，再加 <code>delta_o</code>。但本推论左端明确包含 <code>j ∈ path_evaluable_components N sample q</code>，联合形式也要求 <code>J ⊆ path_evaluable_components N sample q</code>，所以空采样路径不会进入被证明的保证域并集。这与正文“空路径采样不构造路径证书”的限制一致。</p>
+</li>
+<li>
+<p><strong>正文包装中的若干假设在证明里未被使用，不是逻辑漏洞。</strong><br>
+全局可评估性、阈值有限性和 <code>J.Nonempty</code> 是正文语境，包含关系本身在更弱条件下也成立。包装保留它们以对应正文，核心定理则给出了更强的泛化版本。</p>
+</li>
+</ol>
+<h2>已证明内容与无需补充的范围</h2>
+<p>上述两个包含式及其正文包装均为<strong>附件源码已经证明并编译通过的结论</strong>，不需要我另行补充证明或反例。</p>
+<p>实现没有证明、正文也没有声称以下更强结论：保证域并集等于真实误差区域、反向包含成立、或对每个 <code>x ∈ U</code> 都无条件有误差不超过阈值。路径/全局保证域之间的大小比较也不属于本推论。因此这些都不能算作本实现的缺口。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/imports/lean/slots/AHR02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/original-reviews/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 2d4e1e2e1cf2f5b596febc8a4d94e59f5a3c03e7dcc7e3a08ff87661c50b9757</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/native-source/lean/AHR02-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/claim-public-sources/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 369056a188b29953febf725b8afd1115020fd5d68e087fbb093634891e7b3f92</span></li><li><a href="../../../../results/v0.6.0/kimi-3.1-pro-max/20261110-r3-recovery/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "kimi-3.1-pro-max", "label": "Kimi 3.1 Pro (max)"}, "case": {"id": "AHR02", "title": "路径保证域的语义审计", "category": "lean-audit", "views": {"capability": {"single_attempt": {"case_id": "AHR02", "completion": {"lower": 0.2, "upper": 0.2, "exact": 0.2}, "strict_pass": false, "response_sha256": "da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e", "review_sha256": "d61dc35efc3a64d9a54b2299620ed14895b9834221bf8fd76940d551d4195b12"}, "nonlogical_retry_3": {"case_id": "AHR02", "completion": {"lower": 0.2, "upper": 0.2, "exact": 0.2}, "strict_pass": false, "response_sha256": "da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e", "review_sha256": "d61dc35efc3a64d9a54b2299620ed14895b9834221bf8fd76940d551d4195b12"}}, "partial": {"single_attempt": {"case_id": "AHR02", "completion": {"lower": 0.0, "upper": 0.0, "exact": 0.0}, "strict_pass": false, "response_sha256": "da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e", "review_sha256": "d61dc35efc3a64d9a54b2299620ed14895b9834221bf8fd76940d551d4195b12"}, "nonlogical_retry_3": {"case_id": "AHR02", "completion": {"lower": 0.0, "upper": 0.0, "exact": 0.0}, "strict_pass": false, "response_sha256": "da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e", "review_sha256": "d61dc35efc3a64d9a54b2299620ed14895b9834221bf8fd76940d551d4195b12"}}, "strict": {"single_attempt": {"case_id": "AHR02", "completion": {"lower": 0.2, "upper": 0.2, "exact": 0.2}, "strict_pass": false, "response_sha256": "da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e", "review_sha256": "d61dc35efc3a64d9a54b2299620ed14895b9834221bf8fd76940d551d4195b12"}, "nonlogical_retry_3": {"case_id": "AHR02", "completion": {"lower": 0.2, "upper": 0.2, "exact": 0.2}, "strict_pass": false, "response_sha256": "da31279e281c202b75b4f0fe90b631f3508d1c97dc732e31c7dfbde0497ed79e", "review_sha256": "d61dc35efc3a64d9a54b2299620ed14895b9834221bf8fd76940d551d4195b12"}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

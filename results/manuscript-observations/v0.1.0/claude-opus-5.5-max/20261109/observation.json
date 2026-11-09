@@ -1,0 +1,108 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "claude-opus-5.5-max",
+  "record_id": "20261109",
+  "source_record": {
+    "path": "results/v0.6.0/claude-opus-5.5-max/20261109/record.json",
+    "bytes": 947959,
+    "sha256": "2d2b81bd95ab770e5e37c7c29f0fce2b50d170787fc70432961f7d0d5a2f4564"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "905df4d6d5c4a8e6759c3ac43b53a7b591f44a94f1b6bb6d5fe6780e1b412a66",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 6,
+    "total_groups": 6,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "96a26f0a924215ace26a762b2101e3245e6cfb6e7278e88cfc28b37b077fab96",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "共同必需目标：M1-M4: explicit domains/quantifiers and nonseparation; genuine multicomponent upper and lower controls, consistent extended values and zero-distance/feasibility/optimality boundaries.；M5-M6: a meaningful matrix-shaped output-indistinguishability description with valid endpoint semantics and basic justified properties. No full composition/iteration theory, fixed-point theorem or unique OET route is required.。 以完整原答和已明确提交的源绑定手稿筛查；原主审核沿用，不因本参考指标重评。接受为一个高价值独立成果组；上/下/N诸公式共享同一组合演算根因，不按公式数拆分计分。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "零与无穷边界下的双乘法复合演算",
+          "statement": "对所定义的残余控制系数，构造与普通乘法不同的上乘积star，在0/∞处保留正确的上系数组合；给出min-star上界、max-times下界、不可分辨半径混合传递，并用零尺度布尔信息修复丢失的定性信息。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "基本定义与零/无穷可达性完成M1-M6；该成果额外交付对任意所选算子可用的闭合复合演算及普通乘法失败的具体见证，而非仅写两个有限Lipschitz不等式相乘。",
+          "proof_review": "原文先逐情形证明Lambda可容许集为闭区间并取到上端，给出Lambda链式不等式。通过反序倒数传递得到star(a,b)=(a^-1 b^-1)^-1，其中0 star∞=∞而普通0·∞=0保持不改。定理5.3用实际复合有效域及中间像逐项证明上、下、塌缩界；注5.4补充Z条件，例7.2以恒等和坐标投影给出普通乘法会错误推导L11≤0而真实为1的见证。上下界、域限制及∞/0分支均在原答中明确交付。",
+          "nontrivial_step": "必须改变上系数的复合运算并同时保留零尺度信息；直接使用普通矩阵乘积在0/∞边界失效。残余系数、反序对偶和定性零距信息之间的桥及反例不是对原有限上界公式直接代入。",
+          "value_rationale": "提供能处理非分离扩展值场景的可复用组合工具，明确何种信息在复合中丢失以及怎样补回；超出原任务所需定义和基本性质。",
+          "reason": "接受为一个高价值独立成果组；上/下/N诸公式共享同一组合演算根因，不按公式数拆分计分。",
+          "decision": "accepted",
+          "citations": [
+            {
+              "source_sha256": "96a26f0a924215ace26a762b2101e3245e6cfb6e7278e88cfc28b37b077fab96",
+              "start_byte": 17902,
+              "end_byte": 21124,
+              "quote": "**定理 5.3（复合律）.** 设 $A\\subseteq\\operatorname{dom}(\\psi\\circ\\phi)$，$B:=\\phi(A)$；由引理 5.2，$B\\subseteq\\operatorname{dom}\\psi$。对一切 $i,j,k$：\n- (a) $\\overline L_{ik}(\\psi\\phi;A)\\le\\overline L_{ij}(\\psi;B)\\star\\overline L_{jk}(\\phi;A)$；\n- (b) $\\underline L_{ik}(\\psi\\phi;A)\\ge\\underline L_{ij}(\\psi;B)\\cdot\\underline L_{jk}(\\phi;A)$；\n- (c) $\\kappa_{ik}(\\psi\\phi;A)\\ge\\kappa_{ij}(\\psi;B)\\cdot\\overline L_{jk}(\\phi;A)^{-1}$；\n- (d) 若 $Z_{ij}(\\psi;B)$，则 $\\kappa_{ik}(\\psi\\phi;A)\\ge\\kappa_{jk}(\\phi;A)$；并且 $Z_{ij}(\\psi;B)\\wedge Z_{jk}(\\phi;A)\\Rightarrow Z_{ik}(\\psi\\phi;A)$。\n\n**矩阵形式。** 取 $A=\\operatorname{dom}(\\psi\\phi)$，用定理 5.1 与 $\\star$、乘法的单调性，再对 $j$ 取最优，得到\n\n$$\n\\overline L(\\psi\\phi)\\le\\overline L(\\psi)\\circledast\\overline L(\\phi),\\qquad\n\\underline L(\\psi\\phi)\\ge\\underline L(\\psi)\\odot\\underline L(\\phi),\\qquad\nK(\\psi\\phi)\\ge K(\\psi)\\odot\\overline L(\\phi)^{\\langle-1\\rangle},\n$$\n\n其中：\n- $(P\\circledast Q)_{ik}=\\min_j P_{ij}\\star Q_{jk}$；\n- $(P\\odot Q)_{ik}=\\max_j P_{ij}Q_{jk}$，用标准约定 $0\\cdot\\infty=0$；\n- $\\langle-1\\rangle$ 表示逐项取倒数。\n\n*证.*\n- **(a)** 令 $\\alpha=\\Lambda_B(\\psi^*d_i|d_j)$，$\\beta=\\Lambda_A(\\phi^*d_j|d_k)$。对 $x,y\\in A$，有 $(\\phi x,\\phi y)\\in B^2$，所以 $\\alpha\\,d_i(\\psi\\phi x,\\psi\\phi y)\\le d_j(\\phi x,\\phi y)$，即 $\\alpha\\in S_A\\bigl((\\psi\\phi)^*d_i\\,|\\,\\phi^*d_j\\bigr)$。由链式法则 1.2(d)，$\\Lambda_A((\\psi\\phi)^*d_i|d_k)\\ge\\alpha\\beta$。取倒数得\n  $$\\overline L_{ik}(\\psi\\phi;A)\\le(\\alpha\\beta)^{-1}=\\overline L_{ij}\\star\\overline L_{jk}.$$\n- **(b)** 令 $\\gamma=\\underline L_{jk}(\\phi;A)$，$\\eta=\\underline L_{ij}(\\psi;B)$。在 $A^2$ 上有 $\\gamma\\,d_k\\le\\phi^*d_j$ 与 $\\eta\\,\\phi^*d_j\\le(\\psi\\phi)^*d_i$，用链式法则即得。\n- **(c)** 由 $\\kappa_{ij}(\\psi;B)=\\Lambda_B(\\psi^*\\delta_i|d_j)$，在 $A^2$ 上有 $\\kappa_{ij}(\\psi;B)\\,(\\psi\\phi)^*\\delta_i\\le\\phi^*d_j$；再与 $\\beta$ 用链式法则。\n- **(d)** 若 $d_k(x,y)<\\kappa_{jk}(\\phi;A)$，由 4.3(b) 得 $d_j(\\phi x,\\phi y)=0$，再由 $Z_{ij}(\\psi;B)$ 得 $d_i(\\psi\\phi x,\\psi\\phi y)=0$。$Z$ 的传递同理。∎\n\n**注 5.4.**\n1. **$\\star$ 不能换成普通乘积。** 二者只在 $\\{0,\\infty\\}$ 处不同。例 7.2 中，$\\overline L_{12}(\\mathrm{id})=\\infty$，$\\overline L_{21}(\\pi)=0$，但 $\\overline L_{11}(\\mathrm{id}\\circ\\pi)=1$；若用 $\\infty\\cdot 0=0$，会错误地推出 $\\overline L_{11}\\le 0$。根源就是注 2.3(2)：$\\overline L=\\infty$ 不保证零距离被保持。\n2. **补上零尺度信息即可改进。** 若 $\\overline L_{jk}(\\phi;A)=0$ 且 $Z_{ij}(\\psi;B)$，则 $\\overline L_{ik}(\\psi\\phi;A)=0$。证明：依次用 4.4(a)、5.3(d)、4.4(a)。由此可见，不可区分结构（$K$ 与 $Z$）与 Lipschitz 矩阵在复合中互相补全。\n3. **迭代。** 令 $P^{\\circledast1}=P$，$P^{\\circledast n}=P\\circledast P^{\\circledast(n-1)}$（$\\odot$ 的幂同样定义）。由于 $\\operatorname{dom}\\phi^n\\subseteq\\operatorname{dom}\\phi^{n-1}$，用定理 5.1 与 $\\circledast$ 的单调性归纳，得到 $\\overline L(\\phi^n)\\le\\overline L(\\phi)^{\\circledast n}$ 与 $\\underline L(\\phi^n)\\ge\\underline L(\\phi)^{\\odot n}$。\n\n---\n\n"
+            },
+            {
+              "source_sha256": "96a26f0a924215ace26a762b2101e3245e6cfb6e7278e88cfc28b37b077fab96",
+              "start_byte": 1666,
+              "end_byte": 2283,
+              "quote": "**倒数与上乘积。**\n- 倒数：$0^{-1}:=+\\infty$，$(+\\infty)^{-1}:=0$，其余 $a^{-1}=1/a$。\n  - 它是反序对合：$a\\le b\\iff b^{-1}\\le a^{-1}$，且 $(a^{-1})^{-1}=a$。因此它把 $\\inf$ 变成 $\\sup$，把 $\\min$ 变成 $\\max$。\n  - $(ab)^{-1}=a^{-1}b^{-1}$ 恒成立，唯一例外是 $\\{a,b\\}=\\{0,\\infty\\}$。\n- 上乘积：定义 $a\\star b:=(a^{-1}b^{-1})^{-1}$。\n  - 它满足 $a\\star b=ab$，唯一例外是 $0\\star\\infty=\\infty\\star 0=+\\infty$。\n  - 这是新引入的运算，**不改变**全文约定 $0\\cdot\\infty=0$。\n  - $\\star$ 交换、结合，并且对每个变元单调不减。\n\n"
+            },
+            {
+              "source_sha256": "96a26f0a924215ace26a762b2101e3245e6cfb6e7278e88cfc28b37b077fab96",
+              "start_byte": 23681,
+              "end_byte": 24664,
+              "quote": "**例 7.2（分量结构与复合的边界情形）.** 取 $Y=\\mathbb R^2$，$\\rho_i=|x_i-y_i|$。每个 $\\rho_i$ 单独都不分离点。\n\n| 算子 | $\\overline L$ | $\\underline L$ | $K$ |\n|---|---|---|---|\n| 交换 $s(x_1,x_2)=(x_2,x_1)$ | $\\begin{pmatrix}\\infty&1\\\\1&\\infty\\end{pmatrix}$ | $\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$ | $0$ |\n| 恒等 $\\mathrm{id}$ | $\\begin{pmatrix}1&\\infty\\\\\\infty&1\\end{pmatrix}$ | $\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}$（与 3.4 吻合） | $0$ |\n| 投影 $\\pi(x)=(x_1,0)$ | $\\begin{pmatrix}1&\\infty\\\\0&0\\end{pmatrix}$ | $\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix}$ | $\\begin{pmatrix}0&0\\\\\\infty&\\infty\\end{pmatrix}$ |\n\n- $s$ 与 $\\mathrm{id}$ 的标量常数都是 $\\overline L^{\\max}=1$，但矩阵把二者区分开了。\n- 复合 $\\mathrm{id}\\circ\\pi=\\pi$：$(\\overline L(\\mathrm{id})\\circledast\\overline L(\\pi))_{11}=\\min(1\\star1,\\ \\infty\\star0)=1$，这个界是精确的；而按普通乘积计算 $\\infty\\cdot0=0$ 会得出错误结论。\n\n---\n\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

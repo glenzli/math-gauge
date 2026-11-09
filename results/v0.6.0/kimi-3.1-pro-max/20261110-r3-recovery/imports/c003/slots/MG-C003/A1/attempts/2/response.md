@@ -1,0 +1,3269 @@
+已在固定环境中完成统一构建：`lake build Main` 成功。全部 92 项均为 `complete`；主声明的公理审计仅包含 `propext`、`Classical.choice`、`Quot.sound`。
+
+```toml filename=lakefile.toml
+name = "workspace"
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "5e932f97dd25535344f80f9dd8da3aab83df0fe6"
+
+[[lean_lib]]
+name = "formal_oet"
+globs = ["formal_oet.+"]
+
+[[lean_lib]]
+name = "Ch03"
+globs = ["Ch03.+"]
+
+[[lean_lib]]
+name = "Main"
+globs = ["Main"]
+```
+
+```lean filename=Main.lean
+import Ch03.Defs
+import Ch03.Core
+import Ch03.Factorization
+import Ch03.Radius
+import Ch03.Coverage
+import Ch03.Entropy
+import Ch03.ExamplesBase
+import Ch03.Step
+import Ch03.ExercisesBasic
+import Ch03.TranslationCovering
+import Ch03.Floor
+import Ch03.Reorder
+```
+
+```lean filename=Ch03/Defs.lean
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import Mathlib.Tactic
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+universe u v
+
+variable {X : Type} {I : Type} {bot : X}
+
+/-- The constant-output components, with the convention that this class has
+priority over the identity class. -/
+def constComponents (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set I :=
+  {i | ∀ x ∈ U, ∀ y ∈ U, d i (φ.func x) (φ.func y) = 0}
+
+/-- Identity components are nonconstant components which fix every point up to
+zero distance in their own component. -/
+def idComponents (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set I :=
+  {i | i ∉ constComponents d φ U ∧ ∀ x ∈ U, d i (φ.func x) x = 0}
+
+/-- The remaining components are active. -/
+def actComponents (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set I :=
+  {i | i ∉ constComponents d φ U ∧ i ∉ idComponents d φ U}
+
+/-- Computational fibre with an arbitrary target. -/
+def Fib (d : I → X → X → ENNReal) (φ : Operator X bot) (J : Set I)
+    (y : X) (U : Set X) : Set X :=
+  {x | x ∈ U ∧ subfamily_pseudometric d J (φ.func x) y = 0}
+
+/-- Single-component computational fibre. -/
+def FibSingle (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (j : I) (y : X) (U : Set X) : Set X :=
+  {x | x ∈ U ∧ d j (φ.func x) y = 0}
+
+/-- Point-equality relation on ordered pairs from the evaluation domain. -/
+def pointRel (φ : Operator X bot) (U : Set X) : Set (X × X) :=
+  {p | p.1 ∈ U ∧ p.2 ∈ U ∧ φ.func p.1 = φ.func p.2}
+
+/-- Gauge-zero-distance relation on ordered pairs from the evaluation domain. -/
+def zeroRel (d : I → X → X → ENNReal) (φ : Operator X bot) (U : Set X) : Set (X × X) :=
+  {p | p.1 ∈ U ∧ p.2 ∈ U ∧ GaugeZeroRelated d (φ.func p.1) (φ.func p.2)}
+
+/-- The zero-distance fibre preorder. -/
+def FiberGe (d : I → X → X → ENNReal) (φ ψ : Operator X bot) (U : Set X) : Prop :=
+  zeroRel d φ U ⊆ zeroRel d ψ U
+
+/-- Finite positive radii for which the restricted input ball lies in the
+output zero-distance class.  `sSup ∅ = 0` in `ENNReal`, as required. -/
+def annihilatingRadii (φ : Operator X bot) (din dout : X → X → ENNReal)
+    (y : X) (U : Set X) : Set ENNReal :=
+  {r | 0 < r ∧ r < ⊤ ∧
+    ball din y r ∩ U ⊆ {x | x ∈ U ∧ dout (φ.func x) (φ.func y) = 0}}
+
+/-- Pointwise annihilation inner radius. -/
+noncomputable def annihilationRadius (φ : Operator X bot)
+    (din dout : X → X → ENNReal) (y : X) (U : Set X) : ENNReal :=
+  sSup (annihilatingRadii φ din dout y U)
+
+/-- Component notation for the pointwise annihilation radius. -/
+noncomputable def componentAnnihilationRadius (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (i : I) (J : Set I) (y : X) (U : Set X) : ENNReal :=
+  annihilationRadius φ (d i) (subfamily_pseudometric d J) y U
+
+/-- Uniform annihilation radius over a base-point set `A`, while balls are
+still evaluated relative to `U`. -/
+noncomputable def uniformAnnihilationRadius (φ : Operator X bot)
+    (din dout : X → X → ENNReal) (A U : Set X) : ENNReal :=
+  ⨅ y : A, annihilationRadius φ din dout y.1 U
+
+/-- Uniform radius over all points of the evaluation domain. -/
+noncomputable def uniformAnnihilationRadiusOn (φ : Operator X bot)
+    (din dout : X → X → ENNReal) (U : Set X) : ENNReal :=
+  uniformAnnihilationRadius φ din dout U U
+
+/-- Component notation for the uniform radius on the evaluation domain. -/
+noncomputable def componentUniformAnnihilationRadius (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (i : I) (J : Set I) (U : Set X) : ENNReal :=
+  uniformAnnihilationRadiusOn φ (d i) (subfamily_pseudometric d J) U
+
+/-- Rows are output components and columns are input components. -/
+noncomputable def annihilationMatrix (d : I → X → X → ENNReal)
+    (φ : Operator X bot) (U : Set X) : I → I → ENNReal :=
+  fun j i => componentUniformAnnihilationRadius d φ i ({j} : Set I) U
+
+/-- A monotone family of scales on nonempty subsets. -/
+structure InputScaleFamily (X : Type) (I : Type) where
+  scale : I → {A : Set X // A.Nonempty} → ENNReal
+  monotone : ∀ i, Monotone (scale i)
+
+/-- Diameter scale, also defined by the same formula on empty sets for
+convenience in elementary examples. -/
+noncomputable def diameter (dist : X → X → ENNReal) (A : Set X) : ENNReal :=
+  ⨆ x ∈ A, ⨆ y ∈ A, dist x y
+
+/-- The diameter scale as an input scale family. -/
+noncomputable def diameterScaleFamily (d : I → X → X → ENNReal) : InputScaleFamily X I where
+  scale i A := diameter (d i) A.1
+  monotone i := by
+    intro A B hAB
+    apply iSup_le
+    intro x
+    apply iSup_le
+    intro hx
+    apply iSup_le
+    intro y
+    apply iSup_le
+    intro hy
+    exact le_iSup_of_le x (le_iSup_of_le (hAB hx) (le_iSup_of_le y (le_iSup_of_le (hAB hy) le_rfl)))
+
+/-- The two binary threshold indicators, in the order (scale, annihilation). -/
+noncomputable def thresholdType (σ : InputScaleFamily X I) (d : I → X → X → ENNReal)
+    (f : Operator X bot) (A : Set X) (hA : A.Nonempty) (τσ τN : ENNReal) (i j : I) : ℕ × ℕ :=
+  (if σ.scale i ⟨A, hA⟩ < τσ then 1 else 0,
+   if componentUniformAnnihilationRadius d f i ({j} : Set I) A ≥ τN then 1 else 0)
+
+/-- The two-ended metric-entropy difference. -/
+noncomputable def entropyDelta (d : I → X → X → ENNReal) (Jin Jout : Set I)
+    (ε : ENNReal) (φ : Operator X bot) (U : Set X) : EReal :=
+  subfamily_metric_entropy d Jin ε U - subfamily_metric_entropy d Jout ε (φ.func '' U)
+
+/-- The definition excludes the indeterminate `+∞ - +∞` case. -/
+def EntropyDeltaAdmissible (d : I → X → X → ENNReal) (Jin Jout : Set I)
+    (ε : ENNReal) (φ : Operator X bot) (U : Set X) : Prop :=
+  covering_number (subfamily_pseudometric d Jin) ε U < ⊤ ∨
+    covering_number (subfamily_pseudometric d Jout) ε (φ.func '' U) < ⊤
+
+/-- Total boundedness expressed through finite internal covering numbers. -/
+def InternallyTotallyBounded (dist : X → X → ENNReal) (U : Set X) : Prop :=
+  ∀ ε : ENNReal, 0 < ε → ε < ⊤ → covering_number dist ε U < ⊤
+
+@[simp] theorem mem_constComponents {d : I → X → X → ENNReal} {φ : Operator X bot}
+    {U : Set X} {i : I} :
+    i ∈ constComponents d φ U ↔ ∀ x ∈ U, ∀ y ∈ U, d i (φ.func x) (φ.func y) = 0 := Iff.rfl
+
+@[simp] theorem mem_idComponents {d : I → X → X → ENNReal} {φ : Operator X bot}
+    {U : Set X} {i : I} :
+    i ∈ idComponents d φ U ↔
+      i ∉ constComponents d φ U ∧ ∀ x ∈ U, d i (φ.func x) x = 0 := Iff.rfl
+
+@[simp] theorem mem_actComponents {d : I → X → X → ENNReal} {φ : Operator X bot}
+    {U : Set X} {i : I} :
+    i ∈ actComponents d φ U ↔ i ∉ constComponents d φ U ∧ i ∉ idComponents d φ U := Iff.rfl
+
+@[simp] theorem mem_Fib {d : I → X → X → ENNReal} {φ : Operator X bot}
+    {J : Set I} {y : X} {U : Set X} {x : X} :
+    x ∈ Fib d φ J y U ↔ x ∈ U ∧ subfamily_pseudometric d J (φ.func x) y = 0 := Iff.rfl
+
+@[simp] theorem mem_FibSingle {d : I → X → X → ENNReal} {φ : Operator X bot}
+    {j : I} {y : X} {U : Set X} {x : X} :
+    x ∈ FibSingle d φ j y U ↔ x ∈ U ∧ d j (φ.func x) y = 0 := Iff.rfl
+
+theorem subfamily_zero_iff {d : I → X → X → ENNReal} {J : Set I} {x y : X} :
+    subfamily_pseudometric d J x y = 0 ↔ ∀ j ∈ J, d j x y = 0 := by
+  simp [subfamily_pseudometric]
+
+theorem fib_eq_single (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (j : I) (y : X) (U : Set X) :
+    Fib d φ ({j} : Set I) y U = FibSingle d φ j y U := by
+  ext x
+  simp [subfamily_pseudometric_singleton]
+
+theorem componentRadius_single (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (i j : I) (y : X) (U : Set X) :
+    componentAnnihilationRadius d φ i ({j} : Set I) y U =
+      annihilationRadius φ (d i) (d j) y U := by
+  rw [componentAnnihilationRadius, subfamily_pseudometric_singleton]
+
+theorem componentUniformRadius_single (d : I → X → X → ENNReal) (φ : Operator X bot)
+    (i j : I) (U : Set X) :
+    componentUniformAnnihilationRadius d φ i ({j} : Set I) U =
+      uniformAnnihilationRadiusOn φ (d i) (d j) U := by
+  simp only [componentUniformAnnihilationRadius, uniformAnnihilationRadiusOn,
+    uniformAnnihilationRadius, subfamily_pseudometric_singleton]
+
+/-- The frozen covering-number construction is the internal-centre minimum
+used by this chapter. -/
+theorem covering_number_representation {X : Type} (dist : X → X → ENNReal)
+    (ε : ENNReal) (U : Set X)
+    (hfinite : ∃ centers : Finset X, InternalEpsilonNet dist ε U centers) :
+    ∃ centers : Finset X, InternalEpsilonNet dist ε U centers ∧
+      covering_number dist ε U = (centers.card : ENNReal) ∧
+      ∀ other : Finset X, InternalEpsilonNet dist ε U other → centers.card ≤ other.card :=
+  covering_number_attained dist ε U hfinite
+
+theorem covering_number_le_of_net {X : Type} {dist : X → X → ENNReal}
+    {ε : ENNReal} {U : Set X} {centers : Finset X}
+    (h : InternalEpsilonNet dist ε U centers) :
+    covering_number dist ε U ≤ (centers.card : ENNReal) := by
+  exact iInf_le_of_le centers (iInf_le_of_le h le_rfl)
+
+theorem le_covering_number_of_card {X : Type} {dist : X → X → ENNReal}
+    {ε : ENNReal} {U : Set X} {n : ℕ}
+    (h : ∀ centers : Finset X, InternalEpsilonNet dist ε U centers → n ≤ centers.card) :
+    (n : ENNReal) ≤ covering_number dist ε U := by
+  apply le_iInf
+  intro centers
+  apply le_iInf
+  intro hc
+  exact_mod_cast h centers hc
+
+theorem covering_number_eq_natCast {X : Type} {dist : X → X → ENNReal}
+    {ε : ENNReal} {U : Set X} {n : ℕ} {centers : Finset X}
+    (hnet : InternalEpsilonNet dist ε U centers) (hcard : centers.card = n)
+    (hmin : ∀ other : Finset X, InternalEpsilonNet dist ε U other → n ≤ other.card) :
+    covering_number dist ε U = n := by
+  apply le_antisymm
+  · simpa [hcard] using covering_number_le_of_net hnet
+  · exact le_covering_number_of_card hmin
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Core.lean
+import Ch03.Defs
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+variable {X I : Type} {bot : X}
+
+section ComponentBounds
+
+variable [Fintype I] (d : I → X → X → ENNReal)
+
+/-- Proposition 3.1(i): a constant component admits the zero Lip row. -/
+theorem constComponent_zero_row (φ : Operator X bot) (U : Set X) {i : I}
+    (hi : i ∈ constComponents d φ U) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d i (φ.func x) (φ.func y) ≤ ∑ k : I, (0 : ENNReal) * d k x y := by
+  intro x hx y hy
+  simp [hi x hx y hy]
+
+/-- Proposition 3.1(ii): positive input separation forces the corresponding
+co-Lip entry in a constant output column to vanish. -/
+theorem constComponent_colip_entry_eq_zero (φ : Operator X bot) (U : Set X)
+    (K : I → I → ENNReal) (hK : IsCoLipMatrix d φ U K) {i k : I}
+    (hi : i ∈ constComponents d φ U)
+    (h : ∃ x ∈ U, ∃ y ∈ U, 0 < d k x y) : K k i = 0 := by
+  obtain ⟨x, hx, y, hy, hxy⟩ := h
+  exact colip_entry_eq_zero_of_output_zero_input_pos d φ U K k i x y hK hx hy
+    (hi x hx y hy) hxy
+
+/-- Proposition 3.1(iii): identity components preserve pairwise distances. -/
+theorem idComponent_dist_eq (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (U : Set X) {i : I} (hi : i ∈ idComponents d φ U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (φ.func x) (φ.func y) = d i x y := by
+  intro x hx y hy
+  apply le_antisymm
+  · calc
+      d i (φ.func x) (φ.func y) ≤ d i (φ.func x) x + d i x (φ.func y) :=
+        (hd i).triangle _ _ _
+      _ ≤ d i (φ.func x) x + (d i x y + d i y (φ.func y)) :=
+        add_le_add le_rfl ((hd i).triangle _ _ _)
+      _ = d i x y := by rw [hi.2 x hx, (hd i).symm y (φ.func y), hi.2 y hy]; simp
+  · calc
+      d i x y ≤ d i x (φ.func x) + d i (φ.func x) y := (hd i).triangle _ _ _
+      _ ≤ d i x (φ.func x) + (d i (φ.func x) (φ.func y) + d i (φ.func y) y) :=
+        add_le_add le_rfl ((hd i).triangle _ _ _)
+      _ = d i (φ.func x) (φ.func y) := by
+        rw [(hd i).symm x (φ.func x), hi.2 x hx, hi.2 y hy]
+        simp
+
+end ComponentBounds
+
+section Composition
+
+variable [Fintype I] (d : I → X → X → ENNReal)
+
+private lemma not_act_iff_const_or_id {φ : Operator X bot} {U : Set X} {i : I} :
+    i ∉ actComponents d φ U ↔ i ∈ constComponents d φ U ∨ i ∈ idComponents d φ U := by
+  simp only [mem_actComponents, not_and_or, not_not]
+
+
+private lemma composite_const_of_left_const {φ ψ : Operator X bot} {U : Set X} {i : I}
+    (h : i ∈ constComponents d ψ (φ.func '' U)) :
+    i ∈ constComponents d (operator_compose ψ φ) U := by
+  intro x hx y hy
+  exact h (φ.func x) ⟨x, hx, rfl⟩ (φ.func y) ⟨y, hy, rfl⟩
+
+private lemma composite_const_of_right_const
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {φ ψ : Operator X bot} {U : Set X} {i : I}
+    (hφ : i ∈ constComponents d φ U)
+    (hψ : i ∈ idComponents d ψ (φ.func '' U) ∨ i ∈ constComponents d ψ (φ.func '' U)) :
+    i ∈ constComponents d (operator_compose ψ φ) U := by
+  cases hψ with
+  | inr h => exact composite_const_of_left_const d h
+  | inl h =>
+      intro x hx y hy
+      have heq := idComponent_dist_eq d hd ψ (φ.func '' U) h
+        (φ.func x) ⟨x, hx, rfl⟩ (φ.func y) ⟨y, hy, rfl⟩
+      rw [show (operator_compose ψ φ).func x = ψ.func (φ.func x) from rfl,
+        show (operator_compose ψ φ).func y = ψ.func (φ.func y) from rfl, heq]
+      exact hφ x hx y hy
+
+private lemma composite_id_of_id
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    {φ ψ : Operator X bot} {U : Set X} {i : I}
+    (hφ : i ∈ idComponents d φ U) (hψ : i ∈ idComponents d ψ (φ.func '' U)) :
+    i ∈ idComponents d (operator_compose ψ φ) U := by
+  constructor
+  · intro hc
+    apply hφ.1
+    intro x hx y hy
+    have h1 := idComponent_dist_eq d hd φ U hφ x hx y hy
+    have h2 := idComponent_dist_eq d hd ψ (φ.func '' U) hψ
+      (φ.func x) ⟨x, hx, rfl⟩ (φ.func y) ⟨y, hy, rfl⟩
+    rw [← h2]
+    exact hc x hx y hy
+  · intro x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i ((operator_compose ψ φ).func x) x ≤
+          d i (ψ.func (φ.func x)) (φ.func x) + d i (φ.func x) x :=
+        (hd i).triangle _ _ _
+      _ = 0 := by rw [hψ.2 (φ.func x) ⟨x, hx, rfl⟩, hφ.2 x hx, add_zero]
+
+/-- Proposition 3.2(i), with the actual intermediate image domain. -/
+theorem actComponents_compose_subset
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ ψ : Operator X bot) (U : Set X) :
+    actComponents d (operator_compose ψ φ) U ⊆
+      actComponents d φ U ∪ actComponents d ψ (φ.func '' U) := by
+  intro i hi
+  by_contra hnot
+  have h1 : i ∉ actComponents d φ U := by
+    intro h; exact hnot (Or.inl h)
+  have h2 : i ∉ actComponents d ψ (φ.func '' U) := by
+    intro h; exact hnot (Or.inr h)
+  have hc1 := (not_act_iff_const_or_id d).mp h1
+  have hc2 := (not_act_iff_const_or_id d).mp h2
+  have hor : i ∈ constComponents d (operator_compose ψ φ) U ∨
+      i ∈ idComponents d (operator_compose ψ φ) U := by
+    cases hc1 with
+    | inl hc =>
+        exact Or.inl (composite_const_of_right_const d hd hc hc2.symm)
+    | inr hid =>
+        cases hc2 with
+        | inl hc => exact Or.inl (composite_const_of_left_const d hc)
+        | inr hid2 => exact Or.inr (composite_id_of_id d hd hid hid2)
+  exact (not_act_iff_const_or_id d).mpr hor hi
+
+/-- Proposition 3.2(iii), including the constant-priority exclusion. -/
+theorem idComponents_inter_compose_subset
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ ψ : Operator X bot) (U : Set X) :
+    idComponents d φ U ∩ idComponents d ψ (φ.func '' U) ⊆
+      idComponents d (operator_compose ψ φ) U := by
+  rintro i ⟨h1, h2⟩
+  exact composite_id_of_id d hd h1 h2
+
+private lemma chain_image
+    (φ c : ℕ → Operator X bot) (U : ℕ → Set X)
+    (hc0 : c 0 = operator_identity)
+    (hcsucc : ∀ n, c (n+1) = operator_compose (φ n) (c n))
+    (hU : ∀ m, U (m+1) = (φ m).func '' U m) :
+    ∀ n, (c n).func '' U 0 = U n := by
+  intro n
+  induction n with
+  | zero => simp [hc0, operator_identity]
+  | succ n ih =>
+      rw [hU n, ← ih, hcsucc n]
+      ext z
+      constructor
+      · rintro ⟨x, hx, rfl⟩
+        exact ⟨(c n).func x, ⟨x, hx, rfl⟩, rfl⟩
+      · rintro ⟨w, hw, rfl⟩
+        obtain ⟨x, hx, rfl⟩ := hw
+        exact ⟨x, hx, rfl⟩
+
+/-- Proposition 3.2(ii): arbitrary finite chains, including the empty chain.
+`U 0` is the initial domain and `U (m+1) = φ m '' U m` is the actual domain
+used at the next step. -/
+theorem actComponents_finite_chain
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ c : ℕ → Operator X bot) (U : ℕ → Set X)
+    (hc0 : c 0 = operator_identity)
+    (hcsucc : ∀ n, c (n+1) = operator_compose (φ n) (c n))
+    (hU : ∀ m, U (m+1) = (φ m).func '' U m) :
+    ∀ n, U 0 ⊆ dom (c n) →
+      actComponents d (c n) (U 0) ⊆ ⋃ m : Fin n, actComponents d (φ m.1) (U m.1) := by
+  intro n
+  induction n with
+  | zero =>
+      intro hdom i hi
+      exfalso
+      have hor : i ∈ constComponents d (c 0) (U 0) ∨ i ∈ idComponents d (c 0) (U 0) := by
+        by_cases hc : i ∈ constComponents d (c 0) (U 0)
+        · exact Or.inl hc
+        · right
+          refine ⟨hc, ?_⟩
+          intro x hx
+          rw [hc0]
+          exact (hd i).dist_self x
+      exact (not_act_iff_const_or_id d).mpr hor hi
+  | succ n ih =>
+      intro hdom
+      have hdomprev : U 0 ⊆ dom (c n) := by
+        intro x hx hzero
+        have hcomp := hdom hx
+        rw [hcsucc n] at hcomp
+        exact hcomp (by change (φ n).func ((c n).func x) = bot; rw [hzero]; exact (φ n).preserves_bot)
+      have himage : (c n).func '' U 0 = U n := chain_image φ c U hc0 hcsucc hU n
+      rw [hcsucc n]
+      intro i hi
+      have hi' := actComponents_compose_subset d hd (c n) (φ n) (U 0) hi
+      cases hi' with
+      | inl h =>
+          have hmem := ih hdomprev h
+          simp only [mem_iUnion] at hmem ⊢
+          obtain ⟨m, hm⟩ := hmem
+          exact ⟨Fin.castSucc m, hm⟩
+      | inr h =>
+          rw [himage] at h
+          simp only [mem_iUnion]
+          exact ⟨Fin.last n, h⟩
+
+/-- Proposition 3.3(i): outer constancy on the actual image is preserved. -/
+theorem constComponents_compose_of_outer
+    (φ ψ : Operator X bot) (U : Set X) :
+    constComponents d ψ (φ.func '' U) ⊆ constComponents d (operator_compose ψ φ) U := by
+  intro i hi
+  exact composite_const_of_left_const d hi
+
+/-- Corollary 3.4: a single-input Lip row propagates inner constancy. -/
+theorem constComponents_compose_of_single_input_lip
+    (φ ψ : Operator X bot) (U : Set X) (L : I → I → ENNReal) (j : I)
+    (hL : IsLipMatrix d ψ (φ.func '' U) L)
+    (hrow : ∀ k, k ≠ j → L k j = 0)
+    (hj : j ∈ constComponents d φ U) :
+    j ∈ constComponents d (operator_compose ψ φ) U := by
+  intro x hx y hy
+  apply le_antisymm _ (zero_le _)
+  have h := lip_bound_of_single_input_row d ψ (φ.func '' U) L j j hL hrow
+    (φ.func x) ⟨x, hx, rfl⟩ (φ.func y) ⟨y, hy, rfl⟩
+  exact h.trans (by rw [hj x hx y hy, mul_zero])
+
+end Composition
+
+section Fibres
+
+variable (d : I → X → X → ENNReal)
+
+/-- Proposition 3.5(i). -/
+theorem fib_target_zero_eq (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (J : Set I) {y y' : X}
+    (hyy : subfamily_pseudometric d J y y' = 0) (U : Set X) :
+    Fib d φ J y U = Fib d φ J y' U := by
+  have hcomp : ∀ j ∈ J, d j y y' = 0 := subfamily_zero_iff.mp hyy
+  ext x
+  constructor
+  · rintro ⟨hx, hxzero⟩
+    refine ⟨hx, subfamily_zero_iff.mpr ?_⟩
+    intro j hj
+    have h1 : d j (φ.func x) y = 0 := subfamily_zero_iff.mp hxzero j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j (φ.func x) y' ≤ d j (φ.func x) y + d j y y' := (hd j).triangle _ _ _
+      _ = 0 := by rw [h1, hcomp j hj, add_zero]
+  · rintro ⟨hx, hxzero⟩
+    refine ⟨hx, subfamily_zero_iff.mpr ?_⟩
+    intro j hj
+    have h1 : d j (φ.func x) y' = 0 := subfamily_zero_iff.mp hxzero j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j (φ.func x) y ≤ d j (φ.func x) y' + d j y' y := (hd j).triangle _ _ _
+      _ = 0 := by rw [h1, (hd j).symm y' y, hcomp j hj, add_zero]
+
+/-- Proposition 3.5(ii-a). -/
+theorem image_fibres_nonempty_cover (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (J : Set I) (U : Set X) :
+    (∀ y ∈ φ.func '' U, (Fib d φ J y U).Nonempty) ∧
+      U ⊆ ⋃ y ∈ φ.func '' U, Fib d φ J y U := by
+  constructor
+  · rintro y ⟨x, hx, rfl⟩
+    refine ⟨x, hx, subfamily_zero_iff.mpr ?_⟩
+    intro j hj
+    exact (hd j).dist_self _
+  · intro x hx
+    simp only [mem_iUnion]
+    refine ⟨φ.func x, ?_⟩
+    refine ⟨⟨x, hx, rfl⟩, ?_⟩
+    exact ⟨hx, subfamily_zero_iff.mpr (fun j hj => (hd j).dist_self _)⟩
+
+/-- Proposition 3.5(ii-b): two image-target fibres are equal or disjoint. -/
+theorem image_fibres_eq_or_disjoint (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (J : Set I) (U : Set X)
+    {y₁ y₂ : X} (hy₁ : y₁ ∈ φ.func '' U) (hy₂ : y₂ ∈ φ.func '' U) :
+    Fib d φ J y₁ U = Fib d φ J y₂ U ∨ Disjoint (Fib d φ J y₁ U) (Fib d φ J y₂ U) := by
+  by_cases h : (Fib d φ J y₁ U ∩ Fib d φ J y₂ U).Nonempty
+  · left
+    obtain ⟨x, hx1, hx2⟩ := h
+    apply fib_target_zero_eq d hd φ J (y := y₁) (y' := y₂) _ U
+    apply subfamily_zero_iff.mpr
+    intro j hj
+    have h1 := subfamily_zero_iff.mp hx1.2 j hj
+    have h2 := subfamily_zero_iff.mp hx2.2 j hj
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j y₁ y₂ ≤ d j y₁ (φ.func x) + d j (φ.func x) y₂ := (hd j).triangle _ _ _
+      _ = 0 := by rw [(hd j).symm y₁ (φ.func x), h1, h2, add_zero]
+  · right
+    rw [Set.not_nonempty_iff_eq_empty] at h
+    exact disjoint_iff_inter_eq_empty.mpr h
+
+/-- Proposition 3.5(iii). -/
+theorem fib_eq_iInter (φ : Operator X bot) (J : Set I) (hJ : J.Nonempty) (y : X) (U : Set X) :
+    Fib d φ J y U = ⋂ j ∈ J, FibSingle d φ j y U := by
+  ext x
+  constructor
+  · rintro ⟨hx, hzero⟩
+    simp only [mem_iInter]
+    intro j
+    intro hj
+    exact ⟨hx, subfamily_zero_iff.mp hzero j hj⟩
+  · intro h
+    obtain ⟨j₀, hj₀⟩ := hJ
+    have hx : x ∈ U := ((mem_iInter.mp (mem_iInter.mp h j₀) hj₀)).1
+    refine ⟨hx, subfamily_zero_iff.mpr ?_⟩
+    intro j hj
+    exact ((mem_iInter.mp (mem_iInter.mp h j) hj)).2
+
+/-- Proposition 3.5(iv). -/
+theorem fib_antitone (φ : Operator X bot) {J K : Set I} (hJK : J ⊆ K)
+    (y : X) (U : Set X) : Fib d φ K y U ⊆ Fib d φ J y U := by
+  intro x hx
+  refine ⟨hx.1, subfamily_zero_iff.mpr ?_⟩
+  intro j hj
+  exact subfamily_zero_iff.mp hx.2 j (hJK hj)
+
+/-- Proposition 3.5(v). -/
+theorem fib_singleton_and_full (φ : Operator X bot) (i : I) (y : X) (U : Set X) :
+    Fib d φ ({i} : Set I) y U = FibSingle d φ i y U ∧
+      Fib d φ Set.univ y U ⊆ FibSingle d φ i y U := by
+  constructor
+  · exact fib_eq_single d φ i y U
+  · intro x hx
+    refine ⟨hx.1, ?_⟩
+    exact subfamily_zero_iff.mp hx.2 i (mem_univ i)
+
+/-- Proposition 3.5(vi-a), for an arbitrary target. -/
+theorem fib_idComponent (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {j : I} (hj : j ∈ idComponents d φ U) (y : X) :
+    FibSingle d φ j y U = {x | x ∈ U ∧ d j x y = 0} := by
+  ext x
+  constructor
+  · rintro ⟨hx, hzero⟩
+    refine ⟨hx, le_antisymm ?_ (zero_le _)⟩
+    calc
+      d j x y ≤ d j x (φ.func x) + d j (φ.func x) y := (hd j).triangle _ _ _
+      _ = 0 := by rw [(hd j).symm x (φ.func x), hj.2 x hx, hzero, zero_add]
+  · rintro ⟨hx, hzero⟩
+    refine ⟨hx, le_antisymm ?_ (zero_le _)⟩
+    calc
+      d j (φ.func x) y ≤ d j (φ.func x) x + d j x y := (hd j).triangle _ _ _
+      _ = 0 := by rw [hj.2 x hx, hzero, zero_add]
+
+/-- Proposition 3.5(vi-b). -/
+theorem fib_constComponent (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {j : I} (hj : j ∈ constComponents d φ U)
+    {y₀ : X} (hy₀ : y₀ ∈ φ.func '' U) (y : X) :
+    FibSingle d φ j y₀ U = U ∧
+      (0 < d j y y₀ → FibSingle d φ j y U = ∅) := by
+  obtain ⟨z, hz, rfl⟩ := hy₀
+  constructor
+  · ext x
+    constructor
+    · intro hx; exact hx.1
+    · intro hx
+      refine ⟨hx, le_antisymm ?_ (zero_le _)⟩
+      calc
+        d j (φ.func x) (φ.func z) = 0 := hj x hx z hz
+        _ ≤ 0 := le_rfl
+  · intro hpos
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    rintro x ⟨hx, hzero⟩
+    have hconst : d j (φ.func x) (φ.func z) = 0 := hj x hx z hz
+    have : d j y (φ.func z) = 0 := by
+      apply le_antisymm _ (zero_le _)
+      calc
+        d j y (φ.func z) ≤ d j y (φ.func x) + d j (φ.func x) (φ.func z) :=
+          (hd j).triangle _ _ _
+        _ = 0 := by rw [(hd j).symm y (φ.func x), hzero, hconst, add_zero]
+    exact (ne_of_gt hpos) this
+
+end Fibres
+
+section Preorder
+
+variable (d : I → X → X → ENNReal)
+
+theorem fiberGe_refl (φ : Operator X bot) (U : Set X) : FiberGe d φ φ U := Subset.rfl
+
+theorem fiberGe_trans {φ ψ χ : Operator X bot} {U : Set X}
+    (h1 : FiberGe d φ ψ U) (h2 : FiberGe d ψ χ U) : FiberGe d φ χ U := h1.trans h2
+
+/-- Every two comparable layers of a finite fibre chain are related. -/
+theorem fiberGe_chain {φ : ℕ → Operator X bot} {U : Set X}
+    (hstep : ∀ r, FiberGe d (φ r) (φ (r+1)) U) {a b : ℕ} (hab : a ≤ b) :
+    FiberGe d (φ a) (φ b) U := by
+  induction b, hab using Nat.le_induction with
+  | base => exact fiberGe_refl d (φ a) U
+  | succ b hab ih => exact fiberGe_trans d ih (hstep b)
+
+
+/-- Packaged strictness with an explicit difference witness. -/
+theorem zeroRel_strict_endpoint_witness {φ : ℕ → Operator X bot} {U : Set X}
+    (hstep : ∀ r, FiberGe d (φ r) (φ (r+1)) U) (m : ℕ)
+    {r : ℕ} (hr : r < m) (p : X × X)
+    (hp : p ∈ zeroRel d (φ (r+1)) U \ zeroRel d (φ r) U) :
+    p ∈ zeroRel d (φ m) U \ zeroRel d (φ 0) U := by
+  constructor
+  · have h1 : zeroRel d (φ (r+1)) U ⊆ zeroRel d (φ m) U :=
+      fiberGe_chain d hstep hr
+    exact h1 hp.1
+  · intro hp0
+    have h0r : zeroRel d (φ 0) U ⊆ zeroRel d (φ r) U :=
+      fiberGe_chain d hstep (Nat.zero_le r)
+    exact hp.2 (h0r hp0)
+
+theorem zeroRel_ssubset_endpoint {φ : ℕ → Operator X bot} {U : Set X}
+    (hstep : ∀ r, FiberGe d (φ r) (φ (r+1)) U) (m : ℕ)
+    {r : ℕ} (hr : r < m) (hstrict : zeroRel d (φ r) U ⊂ zeroRel d (φ (r+1)) U) :
+    zeroRel d (φ 0) U ⊂ zeroRel d (φ m) U := by
+  obtain ⟨p, hp⟩ := Set.exists_of_ssubset hstrict
+  exact Set.ssubset_iff_of_subset (fiberGe_chain d hstep (Nat.zero_le m)) |>.mpr
+    ⟨p, (zeroRel_strict_endpoint_witness d hstep m hr p hp).1,
+      (zeroRel_strict_endpoint_witness d hstep m hr p hp).2⟩
+
+end Preorder
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Factorization.lean
+import Ch03.Core
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+variable {X I : Type} {bot : X}
+
+/-- Existence of the prescribed point-value factor map on the actual image. -/
+def PointFactorable (φA φB : Operator X bot) (U : Set X) : Prop :=
+  ∃ T : (φA.func '' U) → X,
+    ∀ x (hx : x ∈ U), T ⟨φA.func x, ⟨x, hx, rfl⟩⟩ = φB.func x
+
+/-- Canonical representative-based construction of a point-value factor. -/
+noncomputable def pointFactor (φA φB : Operator X bot) (U : Set X)
+    (a : φA.func '' U) : X :=
+  φB.func (Classical.choose a.2)
+
+theorem pointFactor_spec {φA φB : Operator X bot} {U : Set X}
+    (hrel : pointRel φA U ⊆ pointRel φB U) (x : X) (hx : x ∈ U) :
+    pointFactor φA φB U ⟨φA.func x, ⟨x, hx, rfl⟩⟩ = φB.func x := by
+  let a : φA.func '' U := ⟨φA.func x, ⟨x, hx, rfl⟩⟩
+  have ha := Classical.choose_spec a.2
+  have hpair : (Classical.choose a.2, x) ∈ pointRel φA U := ⟨ha.1, hx, ha.2⟩
+  exact (hrel hpair).2.2
+
+/-- Proposition 3.6(i), necessity and representative-independent construction. -/
+theorem pointFactorable_iff {φA φB : Operator X bot} {U : Set X} :
+    PointFactorable φA φB U ↔ pointRel φA U ⊆ pointRel φB U := by
+  constructor
+  · rintro ⟨T, hT⟩ ⟨x, y⟩ ⟨hx, hy, hxy⟩
+    refine ⟨hx, hy, ?_⟩
+    calc
+      φB.func x = T ⟨φA.func x, ⟨x, hx, rfl⟩⟩ := (hT x hx).symm
+      _ = T ⟨φA.func y, ⟨y, hy, rfl⟩⟩ := congrArg T (Subtype.ext hxy)
+      _ = φB.func y := hT y hy
+  · intro hrel
+    exact ⟨pointFactor φA φB U, pointFactor_spec hrel⟩
+
+/-- Proposition 3.6(ii). -/
+theorem pointFactorable_bidirectional_iff {φA φB : Operator X bot} {U : Set X} :
+    (PointFactorable φA φB U ∧ PointFactorable φB φA U) ↔
+      pointRel φA U = pointRel φB U := by
+  constructor
+  · rintro ⟨hAB, hBA⟩
+    exact Set.Subset.antisymm (pointFactorable_iff.mp hAB) (pointFactorable_iff.mp hBA)
+  · intro h
+    exact ⟨pointFactorable_iff.mpr (le_of_eq h),
+      pointFactorable_iff.mpr (le_of_eq h.symm)⟩
+
+/-- Proposition 3.6(iii): the finite scalar Lip bound on the actual image. -/
+theorem pointFactor_scalar_lip {φA φB : Operator X bot} {U : Set X}
+    (dist : X → X → ENNReal) (KA LB : ℝ) (hKA : 0 < KA) (hLB : 0 ≤ LB)
+    (hco : ∀ x ∈ U, ∀ y ∈ U,
+      ENNReal.ofReal KA * dist x y ≤ dist (φA.func x) (φA.func y))
+    (hlip : ∀ x ∈ U, ∀ y ∈ U,
+      dist (φB.func x) (φB.func y) ≤ ENNReal.ofReal LB * dist x y)
+    (T : (φA.func '' U) → X)
+    (hT : ∀ x (hx : x ∈ U), T ⟨φA.func x, ⟨x, hx, rfl⟩⟩ = φB.func x) :
+    ∀ y y' : (φA.func '' U),
+      dist (T y) (T y') ≤ ENNReal.ofReal (LB / KA) * dist y.1 y'.1 := by
+  intro y y'
+  rcases y with ⟨_, ⟨x, hx, rfl⟩⟩
+  rcases y' with ⟨_, ⟨x', hx', rfl⟩⟩
+  rw [hT x hx, hT x' hx']
+  have h1 := hlip x hx x' hx'
+  have hK0 : ENNReal.ofReal KA ≠ 0 := ne_of_gt (ENNReal.ofReal_pos.mpr hKA)
+  have hKtop : ENNReal.ofReal KA ≠ ⊤ := ENNReal.ofReal_ne_top
+  have hdiv : ENNReal.ofReal (LB / KA) = ENNReal.ofReal LB / ENNReal.ofReal KA := by
+    rw [ENNReal.ofReal_div_of_pos hKA]
+  rw [hdiv]
+  calc
+    dist (φB.func x) (φB.func x') ≤ ENNReal.ofReal LB * dist x x' := h1
+    _ = (ENNReal.ofReal LB / ENNReal.ofReal KA) * (ENNReal.ofReal KA * dist x x') := by
+      rw [← mul_assoc, ENNReal.div_mul_cancel hK0 hKtop]
+    _ ≤ (ENNReal.ofReal LB / ENNReal.ofReal KA) * dist (φA.func x) (φA.func x') :=
+      mul_le_mul_left' (hco x hx x' hx') _
+
+section QuotientFactorization
+
+variable (d : I → X → X → ENNReal)
+variable (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+
+/-- The zero-distance setoid on an actual operator image. -/
+def imageSetoid (φ : Operator X bot) (U : Set X) : Setoid (φ.func '' U) where
+  r a b := GaugeZeroRelated d a.1 b.1
+  iseqv := by
+    have h := gauge_zero_related_equivalence d
+      (fun i x => (hd i).dist_self x) (fun i x y => (hd i).symm x y)
+      (fun i x y z => (hd i).triangle x y z)
+    exact ⟨fun a => h.refl a.1, fun hAB => h.symm hAB, fun hAB hBC => h.trans hAB hBC⟩
+
+/-- Quotient of an actual image by all-component zero distance. -/
+def ImageQuot (φ : Operator X bot) (U : Set X) := Quotient (imageSetoid d hd φ U)
+
+/-- Class of a point of the actual image. -/
+def imageClass (φ : Operator X bot) (U : Set X) (a : φ.func '' U) : ImageQuot d hd φ U :=
+  Quotient.mk (imageSetoid d hd φ U) a
+
+/-- Existence of the prescribed quotient transformation. -/
+def QuotientFactorable (φA φB : Operator X bot) (U : Set X) : Prop :=
+  ∃ T : ImageQuot d hd φA U → ImageQuot d hd φB U,
+    ∀ x (hx : x ∈ U),
+      T (imageClass d hd φA U ⟨φA.func x, ⟨x, hx, rfl⟩⟩) =
+        imageClass d hd φB U ⟨φB.func x, ⟨x, hx, rfl⟩⟩
+
+/-- Representative-independent quotient transformation induced by a relation
+inclusion. -/
+noncomputable def quotientFactor {φA φB : Operator X bot} {U : Set X}
+    (hrel : zeroRel d φA U ⊆ zeroRel d φB U) :
+    ImageQuot d hd φA U → ImageQuot d hd φB U :=
+  fun q => Quotient.liftOn q
+    (fun a => imageClass d hd φB U
+      ⟨φB.func (Classical.choose a.2),
+        ⟨Classical.choose a.2, (Classical.choose_spec a.2).1, rfl⟩⟩)
+    (by
+      intro a b hab
+      apply Quotient.sound
+      change GaugeZeroRelated d (φB.func (Classical.choose a.2))
+        (φB.func (Classical.choose b.2))
+      have ha := Classical.choose_spec a.2
+      have hb := Classical.choose_spec b.2
+      have hp : (Classical.choose a.2, Classical.choose b.2) ∈ zeroRel d φA U := by
+        refine ⟨ha.1, hb.1, ?_⟩
+        change GaugeZeroRelated d (φA.func (Classical.choose a.2))
+          (φA.func (Classical.choose b.2))
+        rw [ha.2, hb.2]
+        exact hab
+      exact (hrel hp).2.2)
+
+theorem quotientFactor_spec {φA φB : Operator X bot} {U : Set X}
+    (hrel : zeroRel d φA U ⊆ zeroRel d φB U) (x : X) (hx : x ∈ U) :
+    quotientFactor d hd hrel
+      (imageClass d hd φA U ⟨φA.func x, ⟨x, hx, rfl⟩⟩) =
+      imageClass d hd φB U ⟨φB.func x, ⟨x, hx, rfl⟩⟩ := by
+  apply Quotient.sound
+  let a : φA.func '' U := ⟨φA.func x, ⟨x, hx, rfl⟩⟩
+  change GaugeZeroRelated d (φB.func (Classical.choose a.2)) (φB.func x)
+  have ha := Classical.choose_spec a.2
+  have hp : (Classical.choose a.2, x) ∈ zeroRel d φA U := by
+    refine ⟨ha.1, hx, ?_⟩
+    change GaugeZeroRelated d (φA.func (Classical.choose a.2)) (φA.func x)
+    rw [ha.2]
+    intro i
+    exact (hd i).dist_self _
+  exact (hrel hp).2.2
+
+/-- Proposition 3.7, one-way quotient factorization criterion. -/
+theorem quotientFactorable_iff {φA φB : Operator X bot} {U : Set X} :
+    QuotientFactorable d hd φA φB U ↔ zeroRel d φA U ⊆ zeroRel d φB U := by
+  constructor
+  · rintro ⟨T, hT⟩ ⟨x, y⟩ ⟨hx, hy, hxy⟩
+    refine ⟨hx, hy, ?_⟩
+    have hq : imageClass d hd φA U ⟨φA.func x, ⟨x, hx, rfl⟩⟩ =
+        imageClass d hd φA U ⟨φA.func y, ⟨y, hy, rfl⟩⟩ := Quotient.sound hxy
+    have heq := congrArg T hq
+    rw [hT x hx, hT y hy] at heq
+    exact Quotient.exact heq
+  · intro hrel
+    exact ⟨quotientFactor d hd hrel, quotientFactor_spec d hd hrel⟩
+
+/-- Proposition 3.7, two-way criterion. -/
+theorem quotientFactorable_bidirectional_iff {φA φB : Operator X bot} {U : Set X} :
+    (QuotientFactorable d hd φA φB U ∧ QuotientFactorable d hd φB φA U) ↔
+      zeroRel d φA U = zeroRel d φB U := by
+  constructor
+  · rintro ⟨hAB, hBA⟩
+    exact Set.Subset.antisymm (quotientFactorable_iff d hd |>.mp hAB)
+      (quotientFactorable_iff d hd |>.mp hBA)
+  · intro h
+    exact ⟨quotientFactorable_iff d hd |>.mpr (le_of_eq h),
+      quotientFactorable_iff d hd |>.mpr (le_of_eq h.symm)⟩
+
+/-- On a separating actual image, point equality and gauge zero distance give
+the same ordered-pair relation. -/
+theorem pointRel_eq_zeroRel_of_separating {φ : Operator X bot} {U : Set X}
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (hsep : ∀ a ∈ φ.func '' U, ∀ b ∈ φ.func '' U,
+      GaugeZeroRelated d a b → a = b) :
+    pointRel φ U = zeroRel d φ U := by
+  ext ⟨x, y⟩
+  constructor
+  · rintro ⟨hx, hy, hxy⟩
+    refine ⟨hx, hy, ?_⟩
+    intro i
+    rw [hxy]
+    exact (hd i).dist_self _
+  · rintro ⟨hx, hy, hxy⟩
+    exact ⟨hx, hy, hsep (φ.func x) ⟨x, hx, rfl⟩ (φ.func y) ⟨y, hy, rfl⟩ hxy⟩
+
+/-- Proposition 3.7: under separation of both actual images, the one-way point
+and quotient criteria coincide. -/
+theorem quotientFactorable_iff_pointFactorable_of_separating
+    {φA φB : Operator X bot} {U : Set X}
+    (hsepA : ∀ a ∈ φA.func '' U, ∀ b ∈ φA.func '' U, GaugeZeroRelated d a b → a = b)
+    (hsepB : ∀ a ∈ φB.func '' U, ∀ b ∈ φB.func '' U, GaugeZeroRelated d a b → a = b) :
+    QuotientFactorable d hd φA φB U ↔ PointFactorable φA φB U := by
+  rw [quotientFactorable_iff d hd, pointFactorable_iff,
+    pointRel_eq_zeroRel_of_separating d hd hsepA,
+    pointRel_eq_zeroRel_of_separating d hd hsepB]
+
+/-- The corresponding two-way point/quotient criterion. -/
+theorem quotientFactorable_bidirectional_iff_pointFactorable_of_separating
+    {φA φB : Operator X bot} {U : Set X}
+    (hsepA : ∀ a ∈ φA.func '' U, ∀ b ∈ φA.func '' U, GaugeZeroRelated d a b → a = b)
+    (hsepB : ∀ a ∈ φB.func '' U, ∀ b ∈ φB.func '' U, GaugeZeroRelated d a b → a = b) :
+    (QuotientFactorable d hd φA φB U ∧ QuotientFactorable d hd φB φA U) ↔
+      (PointFactorable φA φB U ∧ PointFactorable φB φA U) := by
+  rw [quotientFactorable_bidirectional_iff d hd, pointFactorable_bidirectional_iff,
+    pointRel_eq_zeroRel_of_separating d hd hsepA,
+    pointRel_eq_zeroRel_of_separating d hd hsepB]
+
+end QuotientFactorization
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Radius.lean
+import Ch03.Factorization
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+variable {X I : Type} {bot : X} [Fintype I]
+
+section RadiusBasics
+
+/-- A member of the defining radius set is below the pointwise supremum. -/
+theorem le_annihilationRadius_of_mem {φ : Operator X bot} {din dout : X → X → ENNReal}
+    {y : X} {U : Set X} {r : ENNReal} (hr : r ∈ annihilatingRadii φ din dout y U) :
+    r ≤ annihilationRadius φ din dout y U := le_sSup hr
+
+/-- If every finite positive radius below `M` is legal, then `M` is below the
+pointwise supremum. -/
+theorem le_annihilationRadius_of_forall_lt {φ : Operator X bot}
+    {din dout : X → X → ENNReal} {y : X} {U : Set X} {M : ENNReal}
+    (h : ∀ r : ENNReal, 0 < r → r < ⊤ → r < M →
+      ball din y r ∩ U ⊆ {x | x ∈ U ∧ dout (φ.func x) (φ.func y) = 0}) :
+    M ≤ annihilationRadius φ din dout y U := by
+  by_contra hn
+  have hs : annihilationRadius φ din dout y U < M := lt_of_not_ge hn
+  obtain ⟨r, hr, hrM⟩ := exists_between hs
+  have hr0 : 0 < r := lt_of_le_of_lt (zero_le _) hr
+  have hrt : r < ⊤ := hrM.trans_le le_top
+  have hmem : r ∈ annihilatingRadii φ din dout y U := ⟨hr0, hrt, h r hr0 hrt hrM⟩
+  exact (not_lt_of_ge (le_sSup hmem)) hr
+
+/-- Proposition 3.11, fibre-membership branch. -/
+theorem output_zero_of_mem_fib (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {j : I} {U : Set X} {y y' : X}
+    (h : y' ∈ FibSingle d φ j (φ.func y) U) :
+    d j (φ.func y) (φ.func y') = 0 := by
+  rw [(hd j).symm (φ.func y) (φ.func y')]
+  exact h.2
+
+/-- Proposition 3.11, strict-radius branch: a legal finite positive radius is
+extracted from the strict supremum inequality. -/
+theorem output_zero_of_dist_lt_radius (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {i j : I} {U : Set X} {y y' : X}
+    (hy' : y' ∈ U) (h : d i y y' < annihilationRadius φ (d i) (d j) y U) :
+    d j (φ.func y) (φ.func y') = 0 := by
+  obtain ⟨ρ, hρ, hlt⟩ := lt_sSup_iff.mp h
+  have hy'ball : y' ∈ ball (d i) y ρ ∩ U := by
+    refine ⟨?_, hy'⟩
+    exact (show d i y' y < ρ from (hd i).symm y' y ▸ hlt)
+  have hz := hρ.2.2 hy'ball
+  rw [(hd j).symm (φ.func y) (φ.func y')]
+  exact hz.2
+
+/-- Proposition 3.11, the composite-input instance with both image points
+checked against the downstream evaluation domain. -/
+theorem output_zero_compose_of_mem_fib (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ₁ φ₂ : Operator X bot) {j : I} {U₂ : Set X} {x x' : X}
+    (hy : φ₁.func x ∈ U₂) (hy' : φ₁.func x' ∈ U₂)
+    (h : φ₁.func x' ∈ FibSingle d φ₂ j (φ₂.func (φ₁.func x)) U₂) :
+    d j ((operator_compose φ₂ φ₁).func x) ((operator_compose φ₂ φ₁).func x') = 0 := by
+  exact output_zero_of_mem_fib d hd φ₂ h
+
+/-- Proposition 3.9(i). -/
+theorem fib_idComponent_image (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {i : I} {U : Set X} (hi : i ∈ idComponents d φ U)
+    (y : X) (hy : y ∈ U) :
+    FibSingle d φ i (φ.func y) U = {x | x ∈ U ∧ d i x y = 0} := by
+  ext x
+  constructor
+  · rintro ⟨hx, hzero⟩
+    refine ⟨hx, ?_⟩
+    rw [idComponent_dist_eq d hd φ U hi x hx y hy] at hzero
+    exact hzero
+  · rintro ⟨hx, hzero⟩
+    refine ⟨hx, ?_⟩
+    rw [idComponent_dist_eq d hd φ U hi x hx y hy]
+    exact hzero
+
+/-- Proposition 3.9(ii). -/
+theorem radius_ge_of_ball_subset_id (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {i : I} {U : Set X} {y : X} (hy : y ∈ U)
+    (hi : i ∈ idComponents d φ U) {r₀ : ENNReal} (hr₀ : 0 < r₀) (hr₀top : r₀ < ⊤)
+    (hball : ball (d i) y r₀ ∩ U ⊆ {x | x ∈ U ∧ d i x y = 0}) :
+    r₀ ≤ annihilationRadius φ (d i) (d i) y U ∧ 0 < r₀ := by
+  constructor
+  · apply le_sSup
+    refine ⟨hr₀, hr₀top, ?_⟩
+    intro x hx
+    have hz := hball hx
+    refine ⟨hz.1, ?_⟩
+    have heq := idComponent_dist_eq d hd φ U hi x hz.1 y hy
+    rw [heq]
+    exact hz.2
+  · exact hr₀
+
+end RadiusBasics
+
+section ConstantRadius
+
+variable (d : I → X → X → ENNReal)
+
+/-- Proposition 3.8(i-a). -/
+theorem fib_const_subfamily (φ : Operator X bot) {J : Set I} {U : Set X}
+    (hJ : ∀ j ∈ J, j ∈ constComponents d φ U) {y : X} (hy : y ∈ U) :
+    Fib d φ J (φ.func y) U = U := by
+  ext x
+  constructor
+  · intro hx; exact hx.1
+  · intro hx
+    exact ⟨hx, subfamily_zero_iff.mpr (fun j hj => hJ j hj x hx y hy)⟩
+
+/-- Proposition 3.8(i-b): every pointwise and every uniform radius is `+∞`. -/
+theorem uniformRadius_top_of_const_subfamily (φ : Operator X bot) {J : Set I}
+    {U : Set X} (hU : U.Nonempty) (hJ : ∀ j ∈ J, j ∈ constComponents d φ U) (i : I) :
+    (∀ y ∈ U, componentAnnihilationRadius d φ i J y U = ⊤) ∧
+      componentUniformAnnihilationRadius d φ i J U = ⊤ := by
+  have hp : ∀ y ∈ U, componentAnnihilationRadius d φ i J y U = ⊤ := by
+    intro y hy
+    rw [componentAnnihilationRadius, annihilationRadius, sSup_eq_top]
+    intro b hb
+    refine ⟨b + 1, ?_, ?_⟩
+    · refine ⟨by positivity, ENNReal.add_lt_top.mpr ⟨hb, ENNReal.one_lt_top⟩, ?_⟩
+      intro x hx
+      exact ⟨hx.2, subfamily_zero_iff.mpr (fun j hj => hJ j hj x hx.2 y hy)⟩
+    · exact ENNReal.lt_add_right (ne_of_lt hb) (by simp)
+  refine ⟨hp, ?_⟩
+  apply top_unique
+  apply le_iInf
+  intro y
+  change ⊤ ≤ componentAnnihilationRadius d φ i J y.1 U
+  rw [hp y.1 y.2]
+
+end ConstantRadius
+
+section RadiusMin
+
+variable (d : I → X → X → ENNReal)
+
+/-- Proposition 3.10, pointwise component-minimum formula, written as an
+infimum over the nonempty subtype `J`. -/
+theorem componentRadius_eq_iInf (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (i : I) (J : Set I) (y : X) (U : Set X) :
+    componentAnnihilationRadius d φ i J y U =
+      ⨅ j : J, componentAnnihilationRadius d φ i ({j.1} : Set I) y U := by
+  apply le_antisymm
+  · apply le_iInf
+    intro j
+    apply sSup_le
+    intro r hr
+    apply le_sSup
+    refine ⟨hr.1, hr.2.1, ?_⟩
+    intro x hx
+    have hz := hr.2.2 hx
+    refine ⟨hz.1, ?_⟩
+    rw [subfamily_pseudometric_singleton]
+    exact subfamily_zero_iff.mp hz.2 j.1 j.2
+  · apply le_annihilationRadius_of_forall_lt
+    intro r hr0 hrt hrM
+    intro x hx
+    refine ⟨hx.2, subfamily_zero_iff.mpr ?_⟩
+    intro j hj
+    have hrj : r < componentAnnihilationRadius d φ i ({j} : Set I) y U :=
+      hrM.trans_le (iInf_le (fun k : J => componentAnnihilationRadius d φ i ({k.1} : Set I) y U) ⟨j, hj⟩)
+    have hdist : d i y x < annihilationRadius φ (d i) (d j) y U := by
+      rw [← componentRadius_single d φ i j y U]
+      exact lt_of_lt_of_le ((hd i).symm y x ▸ hx.1) hrj.le
+    rw [(hd j).symm (φ.func x) (φ.func y)]
+    exact output_zero_of_dist_lt_radius d hd φ hx.2 hdist
+
+/-- Proposition 3.10, exchanging the base-point infimum and the finite
+component minimum. -/
+theorem componentUniformRadius_eq_iInf (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (i : I) (J : Set I) (U : Set X) :
+    componentUniformAnnihilationRadius d φ i J U =
+      ⨅ j : J, componentUniformAnnihilationRadius d φ i ({j.1} : Set I) U := by
+  simp only [componentUniformAnnihilationRadius, uniformAnnihilationRadiusOn,
+    uniformAnnihilationRadius, componentAnnihilationRadius]
+  simp_rw [show ∀ y : U, annihilationRadius φ (d i) (subfamily_pseudometric d J) y.1 U =
+      ⨅ j : J, annihilationRadius φ (d i) (subfamily_pseudometric d ({j.1} : Set I)) y.1 U from
+    fun y => componentRadius_eq_iInf d hd φ i J y.1 U]
+  exact iInf_comm
+
+/-- Proposition 3.10, antitonicity in the output subfamily. -/
+theorem componentUniformRadius_antitone (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) (i : I) {J K : Set I} (hJK : J ⊆ K) (U : Set X) :
+    componentUniformAnnihilationRadius d φ i K U ≤
+      componentUniformAnnihilationRadius d φ i J U := by
+  rw [componentUniformRadius_eq_iInf d hd, componentUniformRadius_eq_iInf d hd]
+  apply le_iInf
+  intro j
+  exact iInf_le (fun k : K => componentUniformAnnihilationRadius d φ i ({k.1} : Set I) U)
+    ⟨j.1, hJK j.2⟩
+
+end RadiusMin
+
+section RadiusMonotone
+
+/-- Proposition 3.14(ii-a). -/
+theorem annihilationRadius_domain_antitone {φ : Operator X bot}
+    {din dout : X → X → ENNReal} {A B : Set X} (hBA : B ⊆ A) (x : X) :
+    annihilationRadius φ din dout x A ≤ annihilationRadius φ din dout x B := by
+  apply sSup_le
+  intro r hr
+  apply le_sSup
+  refine ⟨hr.1, hr.2.1, ?_⟩
+  intro y hy
+  have hz := hr.2.2 ⟨hy.1, hBA hy.2⟩
+  exact ⟨hy.2, hz.2⟩
+
+/-- Proposition 3.14(ii-b). -/
+theorem uniformRadius_domain_antitone {φ : Operator X bot}
+    {din dout : X → X → ENNReal} {A B : Set X} (hBA : B ⊆ A) :
+    uniformAnnihilationRadiusOn φ din dout A ≤
+      uniformAnnihilationRadiusOn φ din dout B := by
+  apply le_iInf
+  intro x
+  calc
+    uniformAnnihilationRadiusOn φ din dout A ≤ annihilationRadius φ din dout x.1 A :=
+      iInf_le (fun y : A => annihilationRadius φ din dout y.1 A) ⟨x.1, hBA x.2⟩
+    _ ≤ annihilationRadius φ din dout x.1 B := annihilationRadius_domain_antitone hBA x.1
+
+end RadiusMonotone
+
+section UniformThreshold
+
+variable (d : I → X → X → ENNReal)
+
+/-- Proposition 3.15(i). -/
+theorem output_zero_of_dist_lt_uniformRadius (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A : Set X} {x y : X}
+    (hx : x ∈ A) (hy : y ∈ A)
+    (h : d i x y < uniformAnnihilationRadiusOn f (d i) (d j) A) :
+    d j (f.func x) (f.func y) = 0 := by
+  apply output_zero_of_dist_lt_radius d hd f hy
+  exact h.trans_le (iInf_le (fun z : A => annihilationRadius f (d i) (d j) z.1 A) ⟨x, hx⟩)
+
+/-- Proposition 3.15(ii). -/
+theorem dist_ge_uniformRadius_of_output_pos (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A : Set X} {x y : X}
+    (hx : x ∈ A) (hy : y ∈ A) (hpos : 0 < d j (f.func x) (f.func y)) :
+    uniformAnnihilationRadiusOn f (d i) (d j) A ≤ d i x y := by
+  by_contra hn
+  have hlt : d i x y < uniformAnnihilationRadiusOn f (d i) (d j) A := lt_of_not_ge hn
+  exact (ne_of_gt hpos) (output_zero_of_dist_lt_uniformRadius d hd f hx hy hlt)
+
+/-- Proposition 3.15(iii), including infinite output distance. -/
+theorem separation_witness_of_uniformRadius_lt (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A : Set X} {α : ENNReal}
+    (hα0 : 0 < α) (hαtop : α < ⊤)
+    (h : uniformAnnihilationRadiusOn f (d i) (d j) A < α) :
+    ∃ x ∈ A, ∃ y ∈ A, ∃ ε : ENNReal,
+      0 < ε ∧ ε < ⊤ ∧ d i x y < α ∧ ε ≤ d j (f.func x) (f.func y) := by
+  obtain ⟨y, hy⟩ := iInf_lt_iff.mp h
+  have hyα : annihilationRadius f (d i) (d j) y.1 A < α := hy
+  have hnot : ¬ ball (d i) y.1 α ∩ A ⊆
+      {x | x ∈ A ∧ d j (f.func x) (f.func y.1) = 0} := by
+    intro hall
+    have hmem : α ∈ annihilatingRadii f (d i) (d j) y.1 A := ⟨hα0, hαtop, hall⟩
+    exact (not_lt_of_ge (le_sSup hmem)) hyα
+  obtain ⟨x, hx, hnx⟩ := not_subset.mp hnot
+  have hpos : 0 < d j (f.func x) (f.func y.1) := by
+    apply pos_iff_ne_zero.mpr
+    intro hzero
+    exact hnx ⟨hx.2, hzero⟩
+  refine ⟨x, hx.2, y.1, y.2, ?_⟩
+  by_cases htop : d j (f.func x) (f.func y.1) = ⊤
+  · exact ⟨1, zero_lt_one, ENNReal.one_lt_top, hx.1, by rw [htop]; exact le_top⟩
+  · exact ⟨d j (f.func x) (f.func y.1), hpos, lt_top_iff_ne_top.mpr htop, hx.1, le_rfl⟩
+
+end UniformThreshold
+
+section CompositionRadius
+
+variable (d : I → X → X → ENNReal)
+
+/-- Proposition 3.12(i). -/
+theorem uniformRadius_compose_ge_of_zero_preserving
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ₁ φ₂ : Operator X bot) {i j l : I} {U : Set X}
+    (hpres : ∀ y ∈ φ₁.func '' U, ∀ y' ∈ φ₁.func '' U,
+      d l y y' = 0 → d j (φ₂.func y) (φ₂.func y') = 0) :
+    uniformAnnihilationRadiusOn φ₁ (d i) (d l) U ≤
+      uniformAnnihilationRadiusOn (operator_compose φ₂ φ₁) (d i) (d j) U := by
+  apply le_iInf
+  intro x
+  apply le_annihilationRadius_of_forall_lt
+  intro r hr0 hrt hrM
+  intro z hz
+  refine ⟨hz.2, ?_⟩
+  have hpoint : uniformAnnihilationRadiusOn φ₁ (d i) (d l) U ≤
+      annihilationRadius φ₁ (d i) (d l) x.1 U :=
+    iInf_le (fun y : U => annihilationRadius φ₁ (d i) (d l) y.1 U) x
+  have hdist : d i x.1 z < annihilationRadius φ₁ (d i) (d l) x.1 U :=
+    lt_of_lt_of_le ((hd i).symm x.1 z ▸ hz.1) (hrM.le.trans hpoint)
+  have hzero := output_zero_of_dist_lt_radius d hd φ₁ hz.2 hdist
+  rw [(hd j).symm ((operator_compose φ₂ φ₁).func z) ((operator_compose φ₂ φ₁).func x.1)]
+  exact hpres (φ₁.func x.1) ⟨x.1, x.2, rfl⟩ (φ₁.func z) ⟨z, hz.2, rfl⟩ hzero
+
+/-- Proposition 3.12(ii), with zero and infinite right-hand sides handled by
+`ENNReal` arithmetic. -/
+theorem uniformRadius_compose_ge_div_of_lip
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ₁ φ₂ : Operator X bot) {i j l : I} {U : Set X}
+    {L : ENNReal} (hL0 : 0 < L) (hLtop : L < ⊤)
+    (hLip : ∀ x ∈ U, ∀ x' ∈ U, d l (φ₁.func x) (φ₁.func x') ≤ L * d i x x') :
+    uniformAnnihilationRadiusOn φ₂ (d l) (d j) (φ₁.func '' U) / L ≤
+      uniformAnnihilationRadiusOn (operator_compose φ₂ φ₁) (d i) (d j) U := by
+  apply le_iInf
+  intro x
+  apply le_annihilationRadius_of_forall_lt
+  intro r hr0 hrt hrM
+  intro z hz
+  refine ⟨hz.2, ?_⟩
+  have hbase : φ₁.func x.1 ∈ φ₁.func '' U := ⟨x.1, x.2, rfl⟩
+  have hpoint : uniformAnnihilationRadiusOn φ₂ (d l) (d j) (φ₁.func '' U) ≤
+      annihilationRadius φ₂ (d l) (d j) (φ₁.func x.1) (φ₁.func '' U) :=
+    iInf_le (fun y : (φ₁.func '' U) => annihilationRadius φ₂ (d l) (d j) y.1 (φ₁.func '' U))
+      ⟨φ₁.func x.1, hbase⟩
+  have hmul : L * d i x.1 z < uniformAnnihilationRadiusOn φ₂ (d l) (d j) (φ₁.func '' U) := by
+    have hxz : d i x.1 z < r := by
+      rw [(hd i).symm x.1 z]
+      exact hz.1
+    calc
+      L * d i x.1 z < L * r := ENNReal.mul_lt_mul_right (ne_of_gt hL0) (ne_of_lt hLtop) hxz
+      _ < L * (uniformAnnihilationRadiusOn φ₂ (d l) (d j) (φ₁.func '' U) / L) :=
+        ENNReal.mul_lt_mul_right (ne_of_gt hL0) (ne_of_lt hLtop) hrM
+      _ = uniformAnnihilationRadiusOn φ₂ (d l) (d j) (φ₁.func '' U) := by
+        rw [mul_comm]
+        exact ENNReal.div_mul_cancel (ne_of_gt hL0) (ne_of_lt hLtop)
+  have hdist : d l (φ₁.func x.1) (φ₁.func z) <
+      annihilationRadius φ₂ (d l) (d j) (φ₁.func x.1) (φ₁.func '' U) := by
+    apply lt_of_le_of_lt _ (hmul.trans_le hpoint)
+    rw [(hd l).symm (φ₁.func x.1) (φ₁.func z)]
+    exact (hLip z hz.2 x.1 x.2).trans (by rw [(hd i).symm z x.1])
+  have hz' : φ₁.func z ∈ φ₁.func '' U := ⟨z, hz.2, rfl⟩
+  rw [(hd j).symm ((operator_compose φ₂ φ₁).func z) ((operator_compose φ₂ φ₁).func x.1)]
+  exact output_zero_of_dist_lt_radius d hd φ₂ hz' hdist
+
+end CompositionRadius
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Coverage.lean
+import Ch03.Radius
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+variable {X I : Type} {bot : X}
+
+section Thresholds
+
+/-- Lemma 3.13: the four threshold combinations are exhaustive. -/
+theorem thresholdType_four_cases (σ : InputScaleFamily X I) (d : I → X → X → ENNReal)
+    (f : Operator X bot) (A : Set X) (hA : A.Nonempty) (τσ τN : ENNReal) (i j : I) :
+    thresholdType σ d f A hA τσ τN i j = (1, 1) ∨
+      thresholdType σ d f A hA τσ τN i j = (1, 0) ∨
+      thresholdType σ d f A hA τσ τN i j = (0, 1) ∨
+      thresholdType σ d f A hA τσ τN i j = (0, 0) := by
+  unfold thresholdType
+  by_cases h1 : σ.scale i ⟨A, hA⟩ < τσ <;> by_cases h2 :
+    componentUniformAnnihilationRadius d f i ({j} : Set I) A ≥ τN <;>
+    simp [h1, h2]
+
+/-- Lemma 3.13(i): increasing the scale threshold enlarges the first-indicator
+one set. -/
+theorem threshold_first_monotone (σ : InputScaleFamily X I) (d : I → X → X → ENNReal)
+    (f : Operator X bot) (A : Set X) (hA : A.Nonempty) {τσ τσ' τN : ENNReal}
+    (hτ : τσ ≤ τσ') :
+    {p : I × I | (thresholdType σ d f A hA τσ τN p.1 p.2).1 = 1} ⊆
+      {p : I × I | (thresholdType σ d f A hA τσ' τN p.1 p.2).1 = 1} := by
+  rintro ⟨i, j⟩ hp
+  by_cases h : σ.scale i ⟨A, hA⟩ < τσ
+  · have h' : σ.scale i ⟨A, hA⟩ < τσ' := h.trans_le hτ
+    simp [thresholdType, h, h']
+  · simp [thresholdType, h] at hp
+
+/-- Lemma 3.13(ii): increasing the annihilation threshold shrinks the
+second-indicator one set. -/
+theorem threshold_second_antitone (σ : InputScaleFamily X I) (d : I → X → X → ENNReal)
+    (f : Operator X bot) (A : Set X) (hA : A.Nonempty) {τσ τN τN' : ENNReal}
+    (hτ : τN ≤ τN') :
+    {p : I × I | (thresholdType σ d f A hA τσ τN' p.1 p.2).2 = 1} ⊆
+      {p : I × I | (thresholdType σ d f A hA τσ τN p.1 p.2).2 = 1} := by
+  rintro ⟨i, j⟩ hp
+  by_cases h : componentUniformAnnihilationRadius d f i ({j} : Set I) A ≥ τN'
+  · have h' : componentUniformAnnihilationRadius d f i ({j} : Set I) A ≥ τN := hτ.trans h
+    simp [thresholdType, h, h']
+  · simp [thresholdType, h] at hp
+
+/-- Proposition 3.14(i), for an arbitrary monotone input scale family. -/
+theorem scale_domain_antitone (σ : InputScaleFamily X I) {A B : Set X}
+    (hA : A.Nonempty) (hB : B.Nonempty) (hBA : B ⊆ A) (i : I) :
+    σ.scale i ⟨B, hB⟩ ≤ σ.scale i ⟨A, hA⟩ := σ.monotone i hBA
+
+theorem scale_threshold_of_subset (σ : InputScaleFamily X I) {A B : Set X}
+    (hA : A.Nonempty) (hB : B.Nonempty) (hBA : B ⊆ A) {τσ : ENNReal}
+    (h : σ.scale i ⟨A, hA⟩ < τσ) : σ.scale i ⟨B, hB⟩ < τσ :=
+  (scale_domain_antitone σ hA hB hBA i).trans_lt h
+
+end Thresholds
+
+section Log
+
+/-- Monotonicity of the frozen base-two logarithm on `ENNReal`, including the
+`0 ↦ -∞` and `+∞ ↦ +∞` conventions. -/
+theorem log2_ereal_monotone {a b : ENNReal} (hab : a ≤ b) : log2_ereal a ≤ log2_ereal b := by
+  by_cases ha0 : a = 0
+  · simp [log2_ereal, ha0]
+  by_cases hbtop : b = ⊤
+  · simp [log2_ereal, hbtop]
+  have hb0 : b ≠ 0 := by
+    intro hb
+    subst b
+    exact ha0 (le_antisymm hab (zero_le _))
+  have hatop : a ≠ ⊤ := by
+    intro ha
+    subst a
+    exact hbtop (top_unique hab)
+  simp only [log2_ereal, if_neg ha0, if_neg hatop, if_neg hb0, if_neg hbtop]
+  apply EReal.coe_le_coe_iff.mpr
+  exact Real.logb_le_logb_of_le one_lt_two (ENNReal.toReal_pos ha0 hatop)
+    (ENNReal.toReal_mono hbtop hab)
+
+theorem log2_ereal_eq_coe {a : ENNReal} (ha0 : a ≠ 0) (hatop : a ≠ ⊤) :
+    log2_ereal a = ↑(Real.logb 2 a.toReal) := by simp [log2_ereal, ha0, hatop]
+
+end Log
+
+section Coverage
+
+variable [Fintype I] (d : I → X → X → ENNReal)
+
+/-- Proposition 3.16(i). -/
+theorem ball_subset_fib_of_uniformRadius_ge (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A : Set X} {τN : ENNReal}
+    (hτ : τN ≤ uniformAnnihilationRadiusOn f (d i) (d j) A) (x : X) (hx : x ∈ A) :
+    ball (d i) x τN ∩ A ⊆ FibSingle d f j (f.func x) A := by
+  intro y hy
+  refine ⟨hy.2, ?_⟩
+  have hdist : d i y x < uniformAnnihilationRadiusOn f (d i) (d j) A :=
+    lt_of_lt_of_le hy.1 (hτ)
+  exact output_zero_of_dist_lt_uniformRadius d hd f hy.2 hx hdist
+
+/-- Proposition 3.16(ii-a): map every internal input centre and take the
+infimum over all input nets.  This also covers empty `B` and the absence of a
+finite input cover. -/
+theorem covering_number_image_le_of_uniformRadius_ge
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A B : Set X} {ε τN : ENNReal}
+    (hε : 0 < ε) (hBA : B ⊆ A) (hτ : τN ≤ uniformAnnihilationRadiusOn f (d i) (d j) A) :
+    covering_number (d j) ε (f.func '' B) ≤ covering_number (d i) τN B := by
+  classical
+  apply le_iInf
+  intro S
+  apply le_iInf
+  intro hS
+  let T : Finset X := S.image f.func
+  have hT : InternalEpsilonNet (d j) ε (f.func '' B) T := by
+    constructor
+    · intro t ht
+      change t ∈ T at ht
+      obtain ⟨s, hs, rfl⟩ := Finset.mem_image.mp ht
+      exact ⟨s, hS.1 hs, rfl⟩
+    · intro z hz
+      obtain ⟨a, ha, rfl⟩ := hz
+      obtain ⟨s, hs, has⟩ := hS.2 a ha
+      refine ⟨f.func s, Finset.mem_image.mpr ⟨s, hs, rfl⟩, ?_⟩
+      have hzero : d j (f.func a) (f.func s) = 0 := by
+        apply output_zero_of_dist_lt_uniformRadius d hd f (hBA ha) (hBA (hS.1 hs))
+        exact has.trans_le hτ
+      rw [hzero]
+      exact hε
+  calc
+    covering_number (d j) ε (f.func '' B) ≤ (T.card : ENNReal) := covering_number_le_of_net hT
+    _ ≤ (S.card : ENNReal) := by exact_mod_cast Finset.card_image_le
+
+/-- Proposition 3.16(ii-b). -/
+theorem metric_entropy_image_le_of_uniformRadius_ge
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A B : Set X} {ε τN : ENNReal}
+    (hε : 0 < ε) (hBA : B ⊆ A) (hτ : τN ≤ uniformAnnihilationRadiusOn f (d i) (d j) A) :
+    metric_entropy (d j) ε (f.func '' B) ≤ metric_entropy (d i) τN B := by
+  exact log2_ereal_monotone (covering_number_image_le_of_uniformRadius_ge d hd f hε hBA hτ)
+
+/-- Corollary 3.17, exact equivalence under `diam < τσ ≤ τN`. -/
+theorem uniformRadius_ge_iff_output_zero_of_diam_lt
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) {i j : I} {A : Set X} (hA : A.Nonempty)
+    {τσ τN : ENNReal} (hdiam : diameter (d i) A < τσ) (hτ : τσ ≤ τN) :
+    τN ≤ uniformAnnihilationRadiusOn f (d i) (d j) A ↔
+      ∀ x ∈ A, ∀ y ∈ A, d j (f.func x) (f.func y) = 0 := by
+  constructor
+  · intro hr x hx y hy
+    apply output_zero_of_dist_lt_uniformRadius d hd f hx hy
+    calc
+      d i x y ≤ diameter (d i) A := by
+        exact le_iSup_of_le x (le_iSup_of_le hx (le_iSup_of_le y (le_iSup_of_le hy le_rfl)))
+      _ < τσ := hdiam
+      _ ≤ τN := hτ
+      _ ≤ uniformAnnihilationRadiusOn f (d i) (d j) A := hr
+  · intro hzero
+    have hc : j ∈ constComponents d f A := hzero
+    have h := uniformRadius_top_of_const_subfamily d f hA
+      (J := ({j} : Set I)) (fun k hk => by rw [show k = j from hk]; exact hc) i
+    rw [componentUniformRadius_single] at h
+    rw [h.2]
+    exact le_top
+
+/-- Corollary 3.17: a nonempty zero-distance image has internal covering
+number exactly one at every precision. -/
+theorem covering_number_image_eq_one_of_const
+    (f : Operator X bot) {j : I} {A : Set X} (hA : A.Nonempty)
+    (hzero : ∀ x ∈ A, ∀ y ∈ A, d j (f.func x) (f.func y) = 0) (ε : ENNReal) (hε : 0 < ε) :
+    covering_number (d j) ε (f.func '' A) = 1 := by
+  obtain ⟨a, ha⟩ := hA
+  apply le_antisymm
+  · have hnet : InternalEpsilonNet (d j) ε (f.func '' A) {f.func a} := by
+      constructor
+      · simp only [Finset.coe_singleton, singleton_subset_iff]
+        exact ⟨a, ha, rfl⟩
+      · intro z hz
+        obtain ⟨x, hx, rfl⟩ := hz
+        exact ⟨f.func a, Finset.mem_singleton_self _, by rw [hzero x hx a ha]; exact hε⟩
+    simpa using covering_number_le_of_net hnet
+  · exact one_le_covering_number_of_nonempty (d j) ε (f.func '' A) ⟨f.func a, ⟨a, ha, rfl⟩⟩
+
+end Coverage
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Entropy.lean
+import Ch03.Coverage
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+variable {X I : Type} {bot : X}
+
+section FiniteEntropy
+
+/-- A finite set is its own internal cover. -/
+theorem covering_number_lt_top_of_finite {dist : X → X → ENNReal} {U : Set X}
+    (hd0 : ∀ x, dist x x = 0) (hU : U.Finite) {ε : ENNReal} (hε : 0 < ε) :
+    covering_number dist ε U < ⊤ := by
+  classical
+  have hnet : InternalEpsilonNet dist ε U hU.toFinset := by
+    constructor
+    · simpa only [hU.coe_toFinset] using Subset.rfl
+    · intro x hx
+      exact ⟨x, hU.mem_toFinset.mpr hx, by rw [hd0]; exact hε⟩
+  exact (covering_number_le_of_net hnet).trans_lt
+    (lt_top_iff_ne_top.mpr (ENNReal.natCast_ne_top _))
+
+/-- A nonempty set with finite covering number has finite-real metric entropy. -/
+theorem metric_entropy_eq_coe_of_cover_finite {dist : X → X → ENNReal} {U : Set X}
+    (hU : U.Nonempty) {ε : ENNReal} (hfin : covering_number dist ε U < ⊤) :
+    metric_entropy dist ε U = ↑(Real.logb 2 (covering_number dist ε U).toReal) := by
+  have h0 : covering_number dist ε U ≠ 0 :=
+    ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_covering_number_of_nonempty dist ε U hU))
+  exact log2_ereal_eq_coe h0 (ne_of_lt hfin)
+
+/-- Nonempty finite sets have finite-real entropy and finite positive covering
+number at every positive precision. -/
+theorem finite_entropy_data {dist : X → X → ENNReal} {U : Set X}
+    (hd0 : ∀ x, dist x x = 0) (hU : U.Finite) (hUne : U.Nonempty)
+    {ε : ENNReal} (hε : 0 < ε) :
+    covering_number dist ε U < ⊤ ∧ 0 < covering_number dist ε U ∧
+      ∃ a : ℝ, metric_entropy dist ε U = ↑a := by
+  have hfin := covering_number_lt_top_of_finite hd0 hU hε
+  refine ⟨hfin, lt_of_lt_of_le zero_lt_one (one_le_covering_number_of_nonempty dist ε U hUne),
+    Real.logb 2 (covering_number dist ε U).toReal,
+    metric_entropy_eq_coe_of_cover_finite hUne hfin⟩
+
+/-- Note after Definition 3.6: mapping entropy difference is well-defined on
+nonempty finite sets, with both entropies finite real. -/
+theorem entropyDelta_finite (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i)) (φ : Operator X bot)
+    {U : Set X} (hU : U.Finite) (hUne : U.Nonempty)
+    (Jin Jout : Set I) {ε : ENNReal} (hε : 0 < ε) :
+    EntropyDeltaAdmissible d Jin Jout ε φ U ∧
+      (∃ a : ℝ, subfamily_metric_entropy d Jin ε U = ↑a) ∧
+      (∃ b : ℝ, subfamily_metric_entropy d Jout ε (φ.func '' U) = ↑b) := by
+  have hself : ∀ (J : Set I) (x : X), subfamily_pseudometric d J x x = 0 := by
+    intro J x
+    exact subfamily_zero_iff.mpr (fun j hj => (hd j).dist_self x)
+  have hin := finite_entropy_data (hself Jin) hU hUne hε
+  have himgFin : (φ.func '' U).Finite := hU.image φ.func
+  have himgNe : (φ.func '' U).Nonempty := hUne.image φ.func
+  have hout := finite_entropy_data (hself Jout) himgFin himgNe hε
+  exact ⟨Or.inl hin.1, hin.2.2, hout.2.2⟩
+
+end FiniteEntropy
+
+section IdentityCoverage
+
+variable (d : I → X → X → ENNReal)
+
+/-- Forward centre-push for an isometry on the evaluation domain. -/
+theorem covering_number_image_le_of_isometry (φ : Operator X bot) {j : I} {U : Set X}
+    (hdist : ∀ x ∈ U, ∀ y ∈ U, d j (φ.func x) (φ.func y) = d j x y) (ε : ENNReal) :
+    covering_number (d j) ε (φ.func '' U) ≤ covering_number (d j) ε U := by
+  classical
+  apply le_iInf
+  intro S
+  apply le_iInf
+  intro hS
+  let T := S.image φ.func
+  have hT : InternalEpsilonNet (d j) ε (φ.func '' U) T := by
+    constructor
+    · intro t ht
+      change t ∈ T at ht
+      obtain ⟨s, hs, rfl⟩ := Finset.mem_image.mp ht
+      exact ⟨s, hS.1 hs, rfl⟩
+    · intro z hz
+      obtain ⟨x, hx, rfl⟩ := hz
+      obtain ⟨s, hs, hxs⟩ := hS.2 x hx
+      exact ⟨φ.func s, Finset.mem_image.mpr ⟨s, hs, rfl⟩, by rw [hdist x hx s (hS.1 hs)]; exact hxs⟩
+  exact (covering_number_le_of_net hT).trans (by exact_mod_cast Finset.card_image_le)
+
+/-- Reverse centre-pullback for an isometry on the evaluation domain. -/
+theorem covering_number_le_image_of_isometry (φ : Operator X bot) {j : I} {U : Set X}
+    (hdist : ∀ x ∈ U, ∀ y ∈ U, d j (φ.func x) (φ.func y) = d j x y) (ε : ENNReal) :
+    covering_number (d j) ε U ≤ covering_number (d j) ε (φ.func '' U) := by
+  classical
+  apply le_iInf
+  intro T
+  apply le_iInf
+  intro hT
+  let pre : X → X := fun t => if ht : t ∈ φ.func '' U then Classical.choose ht else bot
+  have pre_mem (t : X) (ht : t ∈ T) : pre t ∈ U := by
+    have ht' : t ∈ φ.func '' U := hT.1 ht
+    simp only [pre, dif_pos ht']
+    exact (Classical.choose_spec ht').1
+  have pre_spec (t : X) (ht : t ∈ T) : φ.func (pre t) = t := by
+    have ht' : t ∈ φ.func '' U := hT.1 ht
+    simp only [pre, dif_pos ht']
+    exact (Classical.choose_spec ht').2
+  let S := T.image pre
+  have hS : InternalEpsilonNet (d j) ε U S := by
+    constructor
+    · intro s hs
+      change s ∈ S at hs
+      obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hs
+      exact pre_mem t ht
+    · intro x hx
+      obtain ⟨t, ht, hxt⟩ := hT.2 (φ.func x) ⟨x, hx, rfl⟩
+      refine ⟨pre t, Finset.mem_image.mpr ⟨t, ht, rfl⟩, ?_⟩
+      rw [← hdist x hx (pre t) (pre_mem t ht), pre_spec t ht]
+      exact hxt
+  exact (covering_number_le_of_net hS).trans (by exact_mod_cast Finset.card_image_le)
+
+end IdentityCoverage
+
+section EntropyDeltaBounds
+
+variable [Fintype I] (d : I → X → X → ENNReal)
+
+/-- Proposition 3.18(i). -/
+theorem constComponent_entropyDelta (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {U : Set X} (hU : U.Nonempty) {j : I}
+    (hj : j ∈ constComponents d φ U) {ε : ENNReal} (hε : 0 < ε) :
+    covering_number (d j) ε (φ.func '' U) = 1 ∧
+      metric_entropy (d j) ε (φ.func '' U) = 0 ∧
+      entropyDelta d ({j} : Set I) ({j} : Set I) ε φ U = metric_entropy (d j) ε U := by
+  have hN := covering_number_image_eq_one_of_const d φ hU hj ε hε
+  refine ⟨hN, ?_, ?_⟩
+  · simp [metric_entropy, hN, log2_ereal]
+  · rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton]
+    simp [metric_entropy, hN, log2_ereal]
+
+/-- Proposition 3.18(ii-a). -/
+theorem idComponent_covering_entropy_eq (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {U : Set X} {j : I} (hj : j ∈ idComponents d φ U) (ε : ENNReal) :
+    covering_number (d j) ε (φ.func '' U) = covering_number (d j) ε U ∧
+      metric_entropy (d j) ε (φ.func '' U) = metric_entropy (d j) ε U := by
+  have hdist := idComponent_dist_eq d hd φ U hj
+  have hN := le_antisymm (covering_number_image_le_of_isometry d φ hdist ε)
+    (covering_number_le_image_of_isometry d φ hdist ε)
+  exact ⟨hN, by simp [metric_entropy, hN]⟩
+
+/-- Proposition 3.18(ii-b): only the admissible case is subtracted. -/
+theorem idComponent_entropyDelta_eq_zero (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (φ : Operator X bot) {U : Set X} (hU : U.Nonempty) {j : I}
+    (hj : j ∈ idComponents d φ U) {ε : ENNReal}
+    (hadm : EntropyDeltaAdmissible d ({j} : Set I) ({j} : Set I) ε φ U) :
+    entropyDelta d ({j} : Set I) ({j} : Set I) ε φ U = 0 := by
+  have hN := (idComponent_covering_entropy_eq d hd φ hj ε).1
+  have hfin : covering_number (d j) ε U < ⊤ := by
+    cases hadm with
+    | inl h => simpa [subfamily_pseudometric_singleton] using h
+    | inr h => rw [subfamily_pseudometric_singleton, hN] at h; exact h
+  have h0 : covering_number (d j) ε U ≠ 0 :=
+    ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_covering_number_of_nonempty (d j) ε U hU))
+  have hent := metric_entropy_eq_coe_of_cover_finite hU hfin
+  rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton]
+  rw [(idComponent_covering_entropy_eq d hd φ hj ε).2, hent]
+  exact EReal.sub_self (EReal.coe_ne_top _) (EReal.coe_ne_bot _)
+
+/-- Proposition 3.19, covering-number inequality at precision `ε / L`. -/
+theorem covering_number_image_le_of_scalar_lip
+    (φ : Operator X bot) {i j : I} {U : Set X} {L ε : ENNReal}
+    (hL0 : 0 < L) (hLtop : L < ⊤)
+    (hLip : ∀ x ∈ U, ∀ y ∈ U, d j (φ.func x) (φ.func y) ≤ L * d i x y) :
+    covering_number (d j) ε (φ.func '' U) ≤ covering_number (d i) (ε / L) U := by
+  classical
+  apply le_iInf
+  intro S
+  apply le_iInf
+  intro hS
+  let T := S.image φ.func
+  have hT : InternalEpsilonNet (d j) ε (φ.func '' U) T := by
+    constructor
+    · intro t ht
+      change t ∈ T at ht
+      obtain ⟨s, hs, rfl⟩ := Finset.mem_image.mp ht
+      exact ⟨s, hS.1 hs, rfl⟩
+    · intro z hz
+      obtain ⟨x, hx, rfl⟩ := hz
+      obtain ⟨s, hs, hxs⟩ := hS.2 x hx
+      refine ⟨φ.func s, Finset.mem_image.mpr ⟨s, hs, rfl⟩, ?_⟩
+      apply lt_of_le_of_lt (hLip x hx s (hS.1 hs))
+      calc
+        L * d i x s < L * (ε / L) := ENNReal.mul_lt_mul_right (ne_of_gt hL0) (ne_of_lt hLtop) hxs
+        _ = ε := by rw [mul_comm]; exact ENNReal.div_mul_cancel (ne_of_gt hL0) (ne_of_lt hLtop)
+  exact (covering_number_le_of_net hT).trans (by exact_mod_cast Finset.card_image_le)
+
+/-- Proposition 3.20, covering-number lower bound from pulling back internal
+output centres. -/
+theorem covering_number_le_image_of_colip
+    (φ : Operator X bot) {i j : I} {U : Set X} (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d φ U K) {ε : ENNReal}
+    (hK0 : 0 < K i j) (hKtop : K i j < ⊤) :
+    covering_number (d i) (ε / K i j) U ≤ covering_number (d j) ε (φ.func '' U) := by
+  classical
+  apply le_iInf
+  intro T
+  apply le_iInf
+  intro hT
+  let pre : X → X := fun t => if ht : t ∈ φ.func '' U then Classical.choose ht else bot
+  have pre_mem (t : X) (ht : t ∈ T) : pre t ∈ U := by
+    have ht' : t ∈ φ.func '' U := hT.1 ht
+    simp only [pre, dif_pos ht']
+    exact (Classical.choose_spec ht').1
+  have pre_spec (t : X) (ht : t ∈ T) : φ.func (pre t) = t := by
+    have ht' : t ∈ φ.func '' U := hT.1 ht
+    simp only [pre, dif_pos ht']
+    exact (Classical.choose_spec ht').2
+  let S := T.image pre
+  have hS : InternalEpsilonNet (d i) (ε / K i j) U S := by
+    constructor
+    · intro s hs
+      change s ∈ S at hs
+      obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hs
+      exact pre_mem t ht
+    · intro x hx
+      obtain ⟨t, ht, hxt⟩ := hT.2 (φ.func x) ⟨x, hx, rfl⟩
+      refine ⟨pre t, Finset.mem_image.mpr ⟨t, ht, rfl⟩, ?_⟩
+      have hsingle : K i j * d i x (pre t) ≤ ∑ k : I, K k j * d k x (pre t) := by
+        exact Finset.single_le_sum (fun k hk => zero_le (K k j * d k x (pre t))) (Finset.mem_univ i)
+      have hco := hK.2.2 x hx (pre t) (pre_mem t ht) j
+      have hlt : K i j * d i x (pre t) < ε := by
+        apply hsingle.trans_lt
+        apply hco.trans_lt
+        rw [pre_spec t ht]
+        exact hxt
+      apply (ENNReal.lt_div_iff_mul_lt (Or.inl (ne_of_gt hK0)) (Or.inl (ne_of_lt hKtop))).mpr
+      simpa [mul_comm] using hlt
+  exact (covering_number_le_of_net hS).trans (by exact_mod_cast Finset.card_image_le)
+
+/-- Proposition 3.19: finite positive `L` gives the stated entropy-difference
+lower bound; total boundedness makes all three entropies finite real. -/
+theorem entropyDelta_ge_of_scalar_lip
+    (φ : Operator X bot) {i j : I} {U : Set X} (hU : U.Nonempty)
+    (htb : InternallyTotallyBounded (d i) U) {L ε : ENNReal}
+    (hε0 : 0 < ε) (hεtop : ε < ⊤) (hL0 : 0 < L) (hLtop : L < ⊤)
+    (hLip : ∀ x ∈ U, ∀ y ∈ U, d j (φ.func x) (φ.func y) ≤ L * d i x y) :
+    EntropyDeltaAdmissible d ({i} : Set I) ({j} : Set I) ε φ U ∧
+      metric_entropy (d i) ε U - metric_entropy (d i) (ε / L) U ≤
+        entropyDelta d ({i} : Set I) ({j} : Set I) ε φ U := by
+  have hdiv0 : 0 < ε / L := ENNReal.div_pos (ne_of_gt hε0) (ne_of_lt hLtop)
+  have hdivtop : ε / L < ⊤ := ENNReal.div_lt_top (ne_of_lt hεtop) (ne_of_gt hL0)
+  have hfinA := htb ε hε0 hεtop
+  have hfinB := htb (ε / L) hdiv0 hdivtop
+  have hN := covering_number_image_le_of_scalar_lip d φ hL0 hLtop hLip (ε := ε)
+  have hfinC : covering_number (d j) ε (φ.func '' U) < ⊤ := hN.trans_lt hfinB
+  have hA := metric_entropy_eq_coe_of_cover_finite hU hfinA
+  have hB := metric_entropy_eq_coe_of_cover_finite hU hfinB
+  have hC := metric_entropy_eq_coe_of_cover_finite (hU.image φ.func) hfinC
+  have hlog : metric_entropy (d j) ε (φ.func '' U) ≤ metric_entropy (d i) (ε / L) U :=
+    log2_ereal_monotone hN
+  rw [hB, hC] at hlog
+  refine ⟨Or.inl (by simpa [subfamily_pseudometric_singleton] using hfinA), ?_⟩
+  rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton,
+    hA, hB, hC, ← EReal.coe_sub, ← EReal.coe_sub]
+  exact EReal.coe_le_coe_iff.mpr (sub_le_sub_left (EReal.coe_le_coe_iff.mp hlog) _)
+
+/-- Proposition 3.20: the co-Lip entropy-difference upper bound.  The output
+entropy may be infinite, in which case the left side is `-∞`. -/
+theorem entropyDelta_le_of_colip
+    (φ : Operator X bot) {i j : I} {U : Set X} (hU : U.Nonempty)
+    (htb : InternallyTotallyBounded (d i) U) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d φ U K) {ε : ENNReal}
+    (hε0 : 0 < ε) (hεtop : ε < ⊤) (hK0 : 0 < K i j) (hKtop : K i j < ⊤) :
+    EntropyDeltaAdmissible d ({i} : Set I) ({j} : Set I) ε φ U ∧
+      entropyDelta d ({i} : Set I) ({j} : Set I) ε φ U ≤
+        metric_entropy (d i) ε U - metric_entropy (d i) (ε / K i j) U := by
+  have hdiv0 : 0 < ε / K i j := ENNReal.div_pos (ne_of_gt hε0) (ne_of_lt hKtop)
+  have hdivtop : ε / K i j < ⊤ := ENNReal.div_lt_top (ne_of_lt hεtop) (ne_of_gt hK0)
+  have hfinA := htb ε hε0 hεtop
+  have hfinB := htb (ε / K i j) hdiv0 hdivtop
+  have hN := covering_number_le_image_of_colip d φ K hK hK0 hKtop (ε := ε)
+  have hA := metric_entropy_eq_coe_of_cover_finite hU hfinA
+  have hB := metric_entropy_eq_coe_of_cover_finite hU hfinB
+  have hlog : metric_entropy (d i) (ε / K i j) U ≤ metric_entropy (d j) ε (φ.func '' U) :=
+    log2_ereal_monotone hN
+  refine ⟨Or.inl (by simpa [subfamily_pseudometric_singleton] using hfinA), ?_⟩
+  rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton]
+  by_cases hCtop : covering_number (d j) ε (φ.func '' U) = ⊤
+  · have hC : metric_entropy (d j) ε (φ.func '' U) = ⊤ := by simp [metric_entropy, log2_ereal, hCtop]
+    rw [hA, hB, hC, EReal.sub_top]
+    exact bot_le
+  · have hfinC : covering_number (d j) ε (φ.func '' U) < ⊤ := lt_top_iff_ne_top.mpr hCtop
+    have hC := metric_entropy_eq_coe_of_cover_finite (hU.image φ.func) hfinC
+    rw [hB, hC] at hlog
+    rw [hA, hB, hC, ← EReal.coe_sub, ← EReal.coe_sub]
+    exact EReal.coe_le_coe_iff.mpr (sub_le_sub_left (EReal.coe_le_coe_iff.mp hlog) _)
+
+end EntropyDeltaBounds
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/ExamplesBase.lean
+import Ch03.Entropy
+
+namespace OET.Ch03
+
+set_option maxHeartbeats 1600000
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+/-- Real points together with the absorbing point. -/
+abbrev RealBase := Option ℝ
+
+/-- Extend a real-valued distance by absorption isolation. -/
+def optionDist (ρ : ℝ → ℝ → ℝ) : RealBase → RealBase → ENNReal
+  | none, none => 0
+  | none, some _ => ⊤
+  | some _, none => ⊤
+  | some x, some y => ENNReal.ofReal (ρ x y)
+
+theorem optionDist_extended (ρ : ℝ → ℝ → ℝ)
+    (h0 : ∀ x, ρ x x = 0) (hsymm : ∀ x y, ρ x y = ρ y x)
+    (htri : ∀ x y z, ρ x z ≤ ρ x y + ρ y z)
+    (hnonneg : ∀ x y, 0 ≤ ρ x y) :
+    ExtendedPseudoMetric RealBase none (optionDist ρ) := by
+  refine ⟨⟨some 0, by simp⟩, ?_, ?_, ?_, ?_⟩
+  · intro x
+    cases x with
+    | none => rfl
+    | some x => simp [optionDist, h0]
+  · intro x y
+    cases x <;> cases y <;> simp [optionDist, hsymm]
+  · intro x y z
+    cases x <;> cases y <;> cases z <;> simp [optionDist]
+    rw [← ENNReal.ofReal_add (hnonneg _ _) (hnonneg _ _)]
+    exact ENNReal.ofReal_le_ofReal (htri _ _ _)
+  · intro x hx
+    cases x with
+    | none => exact False.elim (hx rfl)
+    | some x => rfl
+
+/-- Usual distance on the real part. -/
+def usualDist : RealBase → RealBase → ENNReal := optionDist (fun x y => |x - y|)
+
+theorem usualDist_extended : ExtendedPseudoMetric RealBase none usualDist := by
+  apply optionDist_extended
+  · intro x; simp
+  · intro x y; exact abs_sub_comm x y
+  · intro x y z; exact abs_sub_le x y z
+  · intro x y; exact abs_nonneg _
+
+/-- Absolute-value readout pseudometric on the real part. -/
+def absReadDist : RealBase → RealBase → ENNReal := optionDist (fun x y => |(|x| - |y|)|)
+
+theorem absReadDist_extended : ExtendedPseudoMetric RealBase none absReadDist := by
+  apply optionDist_extended
+  · intro x; simp
+  · intro x y; exact abs_sub_comm _ _
+  · intro x y z; exact abs_sub_le |x| |y| |z|
+  · intro x y; exact abs_nonneg _
+
+@[simp] theorem usualDist_some (x y : ℝ) :
+    usualDist (some x) (some y) = ENNReal.ofReal |x - y| := rfl
+
+@[simp] theorem absReadDist_some (x y : ℝ) :
+    absReadDist (some x) (some y) = ENNReal.ofReal |(|x| - |y|)| := rfl
+
+/-- Discrete distance with absorbing-point isolation on `Option (Fin n)`. -/
+def finDist {n : ℕ} (x y : Option (Fin n)) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else 1
+
+theorem finDist_extended {n : ℕ} [NeZero n] :
+    ExtendedPseudoMetric (Option (Fin n)) none finDist := by
+  refine ⟨⟨some ⟨0, NeZero.pos n⟩, by simp⟩, ?_, ?_, ?_, ?_⟩
+  · intro x
+    simp [finDist]
+  · intro x y
+    by_cases h : x = y
+    · subst y; simp [finDist]
+    · simp [finDist, h, Ne.symm h, or_comm]
+  · intro x y z
+    simp only [finDist]
+    split_ifs <;> simp_all
+  · intro x hx
+    cases x with
+    | none => exact (hx rfl).elim
+    | some x => simp [finDist]
+
+/-- Two-point swap counterexample data. -/
+def swapOp : Operator (Option (Fin 2)) none where
+  func
+    | none => none
+    | some k => some (if k = 0 then 1 else 0)
+  preserves_bot := rfl
+
+def swapDomain : Set (Option (Fin 2)) := {some 0, some 1}
+
+def swapGauge : Unit → Option (Fin 2) → Option (Fin 2) → ENNReal := fun _ => finDist
+
+theorem swap_image : swapOp.func '' swapDomain = swapDomain := by
+  ext x
+  cases x with
+  | none => simp [swapDomain, swapOp]
+  | some k =>
+      fin_cases k <;> simp [swapDomain, swapOp]
+
+theorem swap_active : () ∈ actComponents swapGauge swapOp swapDomain := by
+  constructor
+  · intro hc
+    have h := hc (some 0) (by simp [swapDomain]) (some 1) (by simp [swapDomain])
+    simp [swapGauge, finDist, swapOp] at h
+  · intro hi
+    have h := hi.2 (some 0) (by simp [swapDomain])
+    simp [swapGauge, finDist, swapOp] at h
+
+theorem swap_composite_id : () ∈ idComponents swapGauge (operator_compose swapOp swapOp) swapDomain := by
+  constructor
+  · intro hc
+    have h := hc (some 0) (by simp [swapDomain]) (some 1) (by simp [swapDomain])
+    simp [swapGauge, finDist, swapOp, operator_compose] at h
+  · intro x hx
+    rcases hx with (rfl | hx)
+    · norm_num [swapGauge, finDist, swapOp, operator_compose]
+    · have : x = some 1 := by simpa [swapDomain] using hx
+      subst x
+      norm_num [swapGauge, finDist, swapOp, operator_compose]
+
+theorem swap_second_active : () ∈ actComponents swapGauge swapOp (swapOp.func '' swapDomain) := by
+  rw [swap_image]
+  exact swap_active
+
+/-- Note after Proposition 3.2: both reverse inclusions fail for the same
+legal two-point swap. -/
+theorem swap_reverse_inclusions_fail :
+    ¬ (actComponents swapGauge swapOp swapDomain ∪
+        actComponents swapGauge swapOp (swapOp.func '' swapDomain)) ⊆
+      actComponents swapGauge (operator_compose swapOp swapOp) swapDomain ∧
+    ¬ idComponents swapGauge (operator_compose swapOp swapOp) swapDomain ⊆
+      idComponents swapGauge swapOp swapDomain ∩
+        idComponents swapGauge swapOp (swapOp.func '' swapDomain) := by
+  constructor
+  · intro h
+    have ha : () ∈ actComponents swapGauge swapOp swapDomain ∪
+        actComponents swapGauge swapOp (swapOp.func '' swapDomain) := Or.inl swap_active
+    have hcomp := h ha
+    exact hcomp.2 swap_composite_id
+  · intro h
+    have hboth := h swap_composite_id
+    exact swap_active.2 hboth.1
+
+/-- Seven-point, two-component counterexample for Proposition 3.3(ii).
+Component `0` identifies points 4 and 5; component `1` is discrete. -/
+def sevenDist (k : Fin 2) (x y : Option (Fin 7)) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else
+    if k = 0 ∧
+      ((x = some 4 ∧ y = some 5) ∨ (x = some 5 ∧ y = some 4)) then 0 else 1
+
+theorem sevenDist_extended (k : Fin 2) :
+    ExtendedPseudoMetric (Option (Fin 7)) none (sevenDist k) := by
+  refine ⟨⟨some 0, by simp⟩, ?_, ?_, ?_, ?_⟩
+  · intro x
+    fin_cases x <;> simp_all [sevenDist]
+  · intro x y
+    fin_cases x <;> fin_cases y <;> simp [sevenDist]
+  · intro x y z
+    fin_cases k <;> fin_cases x <;> fin_cases y <;> fin_cases z <;> simp [sevenDist]
+  · intro x hx
+    fin_cases x <;> simp_all [sevenDist]
+
+def sevenInner : Operator (Option (Fin 7)) none where
+  func
+    | none => none
+    | some 0 => some 4
+    | some 1 => some 5
+    | some _ => none
+  preserves_bot := rfl
+
+def sevenOuter : Operator (Option (Fin 7)) none where
+  func
+    | none => none
+    | some 4 => some 2
+    | some 5 => some 3
+    | some _ => none
+  preserves_bot := rfl
+
+def sevenDomain : Set (Option (Fin 7)) := {some 0, some 1}
+
+/-- Proposition 3.3(ii): inner constancy need not survive the outer map. -/
+theorem seven_inner_const_not_composite :
+    (0 : Fin 2) ∈ constComponents sevenDist sevenInner sevenDomain ∧
+    (0 : Fin 2) ∉ constComponents sevenDist (operator_compose sevenOuter sevenInner) sevenDomain := by
+  constructor
+  · intro x hx y hy
+    simp only [sevenDomain, mem_insert_iff, mem_singleton_iff] at hx hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
+      simp [sevenDist, sevenInner]
+  · intro hc
+    have h := hc (some 0) (by simp [sevenDomain]) (some 1) (by simp [sevenDomain])
+    simp [sevenDist, sevenInner, sevenOuter, operator_compose] at h
+
+/-- Input distance `+∞` on two distinct nonabsorbing points; the second
+component has unit distance instead. -/
+def twoPointDist (k : Fin 2) (x y : Option (Fin 2)) : ENNReal :=
+  if x = y then 0 else if x = none ∨ y = none then ⊤ else if k = 0 then ⊤ else 1
+
+theorem twoPointDist_extended (k : Fin 2) :
+    ExtendedPseudoMetric (Option (Fin 2)) none (twoPointDist k) := by
+  refine ⟨⟨some 0, by simp⟩, ?_, ?_, ?_, ?_⟩
+  · intro x
+    fin_cases x <;> simp_all [twoPointDist]
+  · intro x y
+    fin_cases x <;> fin_cases y <;> simp [twoPointDist]
+  · intro x y z
+    fin_cases k <;> fin_cases x <;> fin_cases y <;> fin_cases z <;> simp [twoPointDist]
+  · intro x hx
+    fin_cases x <;> simp_all [twoPointDist]
+
+def twoPointDomain : Set (Option (Fin 2)) := {some 0, some 1}
+
+def twoPointId : Operator (Option (Fin 2)) none := operator_identity
+
+/-- Proposition 3.8(ii), simultaneously covering `i = j` and `i ≠ j`: an
+infinite matrix entry for the identity need not be a constant component. -/
+theorem infinite_uniformRadius_not_const (j : Fin 2) :
+    annihilationMatrix twoPointDist twoPointId twoPointDomain j 0 = ⊤ ∧
+      j ∉ constComponents twoPointDist twoPointId twoPointDomain := by
+  have hpoint : ∀ y ∈ twoPointDomain,
+      annihilationRadius twoPointId (twoPointDist 0) (twoPointDist j) y twoPointDomain = ⊤ := by
+    intro y hy
+    rw [annihilationRadius, sSup_eq_top]
+    intro b hb
+    refine ⟨b + 1, ⟨by positivity, ENNReal.add_lt_top.mpr ⟨hb, ENNReal.one_lt_top⟩, ?_⟩,
+      ENNReal.lt_add_right (ne_of_lt hb) (by simp)⟩
+    intro x hx
+    have hxy : x = y := by
+      have hlt : twoPointDist 0 x y < b + 1 := hx.1
+      cases x with
+      | none => simp [twoPointDomain] at hx
+      | some x =>
+          cases y with
+          | none => simp [twoPointDomain] at hy
+          | some y =>
+              fin_cases x <;> fin_cases y <;> simp_all [twoPointDist]
+    subst x
+    exact ⟨hy, by simp [twoPointId, (twoPointDist_extended j).dist_self]⟩
+  constructor
+  · change componentUniformAnnihilationRadius twoPointDist twoPointId 0 ({j} : Set (Fin 2))
+      twoPointDomain = ⊤
+    rw [componentUniformRadius_single]
+    apply top_unique
+    apply le_iInf
+    intro y
+    rw [hpoint y.1 y.2]
+  · intro hc
+    have h := hc (some 0) (by simp [twoPointDomain]) (some 1) (by simp [twoPointDomain])
+    fin_cases j <;> simp [twoPointDist, twoPointId, operator_identity] at h
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Step.lean
+import Ch03.ExamplesBase
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+/-- The step operator on the real line with an absorbing point. -/
+noncomputable def stepOp : Operator RealBase none where
+  func
+    | none => none
+    | some x => some (if x < 0 then 0 else 1)
+  preserves_bot := rfl
+
+def stepDomainReal : Set ℝ := Set.Ico (-1) 0 ∪ Set.Ioc 0 1
+
+def stepDomain : Set RealBase := some '' stepDomainReal
+
+theorem stepDomain_nonempty : stepDomain.Nonempty := ⟨some 1, ⟨1, Or.inr ⟨zero_lt_one, le_rfl⟩, rfl⟩⟩
+
+theorem stepDomain_subset_dom : stepDomain ⊆ dom stepOp := by
+  rintro x ⟨y, hy, rfl⟩
+  simp [dom, stepOp]
+
+/-- Counterexample 3.1: the legal finite positive radii at `y` have supremum
+exactly `|y|`. -/
+theorem step_pointRadius (y : ℝ) (hy : y ∈ stepDomainReal) :
+    annihilationRadius stepOp usualDist usualDist (some y) stepDomain = ENNReal.ofReal |y| := by
+  have hy0 : y ≠ 0 := by
+    rcases hy with hy | hy
+    · exact ne_of_lt hy.2
+    · exact ne_of_gt hy.1
+  apply le_antisymm
+  · apply sSup_le
+    intro r hr
+    by_contra hnr
+    have hgt : ENNReal.ofReal |y| < r := lt_of_not_ge hnr
+    have hreal : |y| < r.toReal :=
+      (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg y) (ne_of_lt hr.2.1)).mp hgt
+    have hδ : 0 < r.toReal - |y| := sub_pos.mpr hreal
+    let a := min 1 ((r.toReal - |y|) / 2)
+    have ha0 : 0 < a := lt_min zero_lt_one (half_pos hδ)
+    have ha1 : a ≤ 1 := min_le_left _ _
+    have haδ : a < r.toReal - |y| :=
+      (min_le_right _ _).trans_lt (half_lt_self hδ)
+    rcases hy with hyneg | hypos
+    · let x := a
+      have hxD : x ∈ stepDomainReal := Or.inr ⟨ha0, ha1⟩
+      have hball : some x ∈ ball usualDist (some y) r ∩ stepDomain := by
+        refine ⟨?_, ⟨x, hxD, rfl⟩⟩
+        apply (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg _) (ne_of_lt hr.2.1)).mpr
+        have habs : |x - y| = x + |y| := by
+          rw [abs_of_neg hyneg.2]
+          apply abs_of_pos
+          dsimp [x]
+          linarith [ha0, hyneg.2]
+        rw [habs]
+        linarith
+      have hz := (hr.2.2 hball).2
+      have hstep : stepOp.func (some x) = some 1 := by
+        simp [stepOp, not_lt.mpr (show 0 ≤ x from ha0.le)]
+      have hstepy : stepOp.func (some y) = some 0 := by simp [stepOp, hyneg.2]
+      rw [hstep, hstepy] at hz
+      norm_num [usualDist, optionDist] at hz
+    · let x := -a
+      have hxD : x ∈ stepDomainReal := by
+        apply Or.inl
+        constructor
+        · dsimp [x]; linarith [ha1]
+        · dsimp [x]; exact neg_lt_zero.mpr ha0
+      have hball : some x ∈ ball usualDist (some y) r ∩ stepDomain := by
+        refine ⟨?_, ⟨x, hxD, rfl⟩⟩
+        apply (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg _) (ne_of_lt hr.2.1)).mpr
+        have habs : |x - y| = -x + |y| := by
+          rw [abs_of_pos hypos.1]
+          rw [abs_of_neg (show x - y < 0 by dsimp [x]; linarith [ha0, hypos.1])]
+          ring
+        rw [habs]
+        dsimp [x]
+        have haδ' : a < r.toReal - y := by simpa [abs_of_pos hypos.1] using haδ
+        linarith
+      have hz := (hr.2.2 hball).2
+      have hstep : stepOp.func (some x) = some 0 := by
+        simp [stepOp, show x < 0 from neg_lt_zero.mpr ha0]
+      have hstepy : stepOp.func (some y) = some 1 := by simp [stepOp, not_lt.mpr hypos.1.le]
+      rw [hstep, hstepy] at hz
+      norm_num [usualDist, optionDist] at hz
+  · apply le_annihilationRadius_of_forall_lt
+    intro r hr0 hrt hrM
+    intro x hx
+    rcases hx.2 with ⟨x, hxD, rfl⟩
+    have hdist : |x - y| < r.toReal :=
+      (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg _) (ne_of_lt hrt)).mp hx.1
+    have hry : r.toReal < |y| := by
+      have h := (ENNReal.toReal_lt_toReal (ne_of_lt hrt) ENNReal.ofReal_ne_top).mpr hrM
+      simpa [ENNReal.toReal_ofReal (abs_nonneg y)] using h
+    have habs : |x - y| < |y| := hdist.trans hry
+    have hsame : (x < 0 ∧ y < 0) ∨ (0 ≤ x ∧ 0 ≤ y) := by
+      by_cases hyneg : y < 0
+      · left
+        refine ⟨?_, hyneg⟩
+        by_contra hxn
+        have hx0 : 0 ≤ x := le_of_not_gt hxn
+        have heq : |x - y| = x - y := abs_of_nonneg (sub_nonneg.mpr (hyneg.le.trans hx0))
+        rw [heq, abs_of_neg hyneg] at habs
+        linarith
+      · right
+        have hy0 : 0 ≤ y := le_of_not_gt hyneg
+        refine ⟨?_, hy0⟩
+        by_contra hxn
+        have hxneg : x < 0 := lt_of_not_ge hxn
+        have heq : |x - y| = y - x := by
+          rw [abs_of_nonpos (sub_nonpos.mpr (hxneg.le.trans hy0))]
+          ring
+        rw [heq, abs_of_nonneg hy0] at habs
+        linarith
+    refine ⟨⟨x, hxD, rfl⟩, ?_⟩
+    cases hsame with
+    | inl h => simp [stepOp, h.1, h.2]
+    | inr h => simp [stepOp, not_lt.mpr h.1, not_lt.mpr h.2]
+
+/-- The legal radii at `y` are exactly the finite positive radii at most
+`|y|`; in particular the endpoint is legal. -/
+theorem step_legalRadii (y : ℝ) (hy : y ∈ stepDomainReal) :
+    annihilatingRadii stepOp usualDist usualDist (some y) stepDomain =
+      {r | 0 < r ∧ r < ⊤ ∧ r ≤ ENNReal.ofReal |y|} := by
+  ext r
+  constructor
+  · intro hr
+    refine ⟨hr.1, hr.2.1, ?_⟩
+    rw [← step_pointRadius y hy]
+    exact le_sSup hr
+  · rintro ⟨hr0, hrt, hrle⟩
+    refine ⟨hr0, hrt, ?_⟩
+    intro x hx
+    rcases hx.2 with ⟨x, hxD, rfl⟩
+    have hdist : |x - y| < r.toReal :=
+      (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg _) (ne_of_lt hrt)).mp hx.1
+    have hry : r.toReal ≤ |y| := by
+      have h := (ENNReal.toReal_le_toReal (ne_of_lt hrt) ENNReal.ofReal_ne_top).mpr hrle
+      simpa [ENNReal.toReal_ofReal (abs_nonneg y)] using h
+    have habs : |x - y| < |y| := hdist.trans_le hry
+    have hsame : (x < 0 ∧ y < 0) ∨ (0 ≤ x ∧ 0 ≤ y) := by
+      by_cases hyneg : y < 0
+      · left
+        refine ⟨?_, hyneg⟩
+        by_contra hxn
+        have hx0 : 0 ≤ x := le_of_not_gt hxn
+        have heq : |x - y| = x - y := abs_of_nonneg (sub_nonneg.mpr (hyneg.le.trans hx0))
+        rw [heq, abs_of_neg hyneg] at habs
+        linarith
+      · right
+        have hy0 : 0 ≤ y := le_of_not_gt hyneg
+        refine ⟨?_, hy0⟩
+        by_contra hxn
+        have hxneg : x < 0 := lt_of_not_ge hxn
+        have heq : |x - y| = y - x := by
+          rw [abs_of_nonpos (sub_nonpos.mpr (hxneg.le.trans hy0))]
+          ring
+        rw [heq, abs_of_nonneg hy0] at habs
+        linarith
+    refine ⟨⟨x, hxD, rfl⟩, ?_⟩
+    cases hsame with
+    | inl h => simp [stepOp, h.1, h.2]
+    | inr h => simp [stepOp, not_lt.mpr h.1, not_lt.mpr h.2]
+
+/-- Every pointwise radius is strictly positive. -/
+theorem step_pointRadius_pos {y : ℝ} (hy : y ∈ stepDomainReal) :
+    0 < annihilationRadius stepOp usualDist usualDist (some y) stepDomain := by
+  rw [step_pointRadius y hy]
+  apply ENNReal.ofReal_pos.mpr
+  apply abs_pos.mpr
+  rcases hy with hy | hy
+  · exact ne_of_lt hy.2
+  · exact ne_of_gt hy.1
+
+/-- Counterexample 3.1: the uniform radius on the fixed domain is zero. -/
+theorem step_uniformRadius_zero :
+    uniformAnnihilationRadiusOn stepOp usualDist usualDist stepDomain = 0 := by
+  apply nonpos_iff_eq_zero.mp
+  by_contra hn
+  have hpos : 0 < uniformAnnihilationRadiusOn stepOp usualDist usualDist stepDomain :=
+    lt_of_not_ge hn
+  obtain ⟨r, hr0, hrU⟩ := exists_between hpos
+  have hrt : r < ⊤ := hrU.trans_le le_top
+  let a := min 1 (r.toReal / 2)
+  have hrt0 : 0 < r.toReal := by
+    have := (ENNReal.toReal_lt_toReal (ne_of_lt hrt) (ne_of_lt hrt))
+    exact (ENNReal.toReal_pos (ne_of_gt hr0) (ne_of_lt hrt))
+  have ha0 : 0 < a := lt_min zero_lt_one (half_pos hrt0)
+  have ha1 : a ≤ 1 := min_le_left _ _
+  have har : a < r.toReal := (min_le_right _ _).trans_lt (half_lt_self hrt0)
+  have haD : a ∈ stepDomainReal := Or.inr ⟨ha0, ha1⟩
+  have hle : uniformAnnihilationRadiusOn stepOp usualDist usualDist stepDomain ≤
+      annihilationRadius stepOp usualDist usualDist (some a) stepDomain :=
+    iInf_le (fun y : stepDomain => annihilationRadius stepOp usualDist usualDist y.1 stepDomain)
+      ⟨some a, ⟨a, haD, rfl⟩⟩
+  rw [step_pointRadius a haD, abs_of_pos ha0] at hle
+  have har' : ENNReal.ofReal a < r :=
+    (ENNReal.ofReal_lt_iff_lt_toReal ha0.le (ne_of_lt hrt)).mpr har
+  exact (not_lt_of_ge hle) (har'.trans hrU)
+
+/-- The two-point output of the step map has covering number two at radius
+`1/2`. -/
+theorem step_two_point_output_covering {a : ℝ} (ha : 0 < a) :
+    covering_number usualDist (1 / 2 : ENNReal) (stepOp.func '' ({some (-a), some a} : Set RealBase)) = 2 := by
+  have himage : stepOp.func '' ({some (-a), some a} : Set RealBase) = {some 0, some 1} := by
+    ext z
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      rcases hx with rfl | hx
+      · simp [stepOp, neg_lt_zero.mpr ha]
+      · have : x = some a := by simpa using hx
+        subst x
+        simp [stepOp, not_lt.mpr ha.le]
+    · intro hz
+      rcases hz with rfl | hz
+      · exact ⟨some (-a), by simp, by simp [stepOp, neg_lt_zero.mpr ha]⟩
+      · have : z = some 1 := by simpa using hz
+        subst z
+        exact ⟨some a, by simp, by simp [stepOp, not_lt.mpr ha.le]⟩
+  rw [himage]
+  apply le_antisymm
+  · have hnet : InternalEpsilonNet usualDist (1 / 2 : ENNReal) {some 0, some 1} {some 0, some 1} := by
+      constructor
+      · simp
+      · intro x hx
+        rcases hx with rfl | hx
+        · exact ⟨some 0, by simp, by norm_num [usualDist, optionDist]⟩
+        · have : x = some 1 := by simpa using hx
+          subst x
+          exact ⟨some 1, by simp, by norm_num [usualDist, optionDist]⟩
+    simpa using covering_number_le_of_net hnet
+  · apply le_covering_number_of_card
+    intro S hS
+    have hsub : ({some 0, some 1} : Finset RealBase) ⊆ S := by
+      intro x hx
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl
+      · obtain ⟨c, hc, hxc⟩ := hS.2 (some 0) (by simp)
+        have hc' : c ∈ ({some 0, some 1} : Set RealBase) := hS.1 hc
+        rcases hc' with rfl | hc'
+        · exact hc
+        · have : c = some 1 := by simpa using hc'
+          subst c
+          norm_num [usualDist, optionDist] at hxc
+      · obtain ⟨c, hc, hxc⟩ := hS.2 (some 1) (by simp)
+        have hc' : c ∈ ({some 0, some 1} : Set RealBase) := hS.1 hc
+        rcases hc' with rfl | hc'
+        · norm_num [usualDist, optionDist] at hxc
+        · have : c = some 1 := by simpa using hc'
+          subst c
+          exact hc
+    have hc := Finset.card_le_card hsub
+    norm_num at hc ⊢
+    exact hc
+
+/-- The post-Proposition-3.16 counterexample: for every finite positive `τ`,
+choose `0 < a ≤ 1` with `2a < τ`; the two-point input has covering number one
+but its step image has covering number two at radius `1/2`. -/
+theorem step_pointwise_positive_not_uniform_covering {τ : ENNReal} (hτ0 : 0 < τ) (hτtop : τ < ⊤) :
+    ∃ a : ℝ, 0 < a ∧ a ≤ 1 ∧ (2 * a : ℝ) < τ.toReal ∧
+      ({some (-a), some a} : Set RealBase) ⊆ stepDomain ∧
+      covering_number usualDist τ ({some (-a), some a} : Set RealBase) = 1 ∧
+      covering_number usualDist (1 / 2 : ENNReal)
+        (stepOp.func '' ({some (-a), some a} : Set RealBase)) = 2 := by
+  have hτreal : 0 < τ.toReal := ENNReal.toReal_pos (ne_of_gt hτ0) (ne_of_lt hτtop)
+  let a := min 1 (τ.toReal / 4)
+  have ha0 : 0 < a := lt_min zero_lt_one (by positivity)
+  have ha1 : a ≤ 1 := min_le_left _ _
+  have ha2 : 2 * a < τ.toReal := by
+    have h := (min_le_right 1 (τ.toReal / 4)).trans_lt (by linarith : τ.toReal / 4 < τ.toReal / 2)
+    dsimp [a]
+    linarith
+  refine ⟨a, ha0, ha1, ha2, ?_, ?_, step_two_point_output_covering ha0⟩
+  · intro x hx
+    rcases hx with rfl | hx
+    · exact ⟨-a, Or.inl ⟨by linarith, neg_lt_zero.mpr ha0⟩, rfl⟩
+    · have : x = some a := by simpa using hx
+      subst x
+      exact ⟨a, Or.inr ⟨ha0, ha1⟩, rfl⟩
+  · apply le_antisymm
+    · have hnet : InternalEpsilonNet usualDist τ {some (-a), some a} {some (-a)} := by
+        constructor
+        · simp
+        · intro x hx
+          rcases hx with rfl | hx
+          · exact ⟨some (-a), by simp, by simpa [usualDist, optionDist] using hτ0⟩
+          · have : x = some a := by simpa using hx
+            subst x
+            refine ⟨some (-a), by simp, ?_⟩
+            apply (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg _) (ne_of_lt hτtop)).mpr
+            have heq : |a - (-a)| = 2 * a := by rw [sub_neg_eq_add, ← two_mul, abs_of_pos (by positivity : 0 < 2 * a)]
+            rw [heq]
+            exact ha2
+      simpa using covering_number_le_of_net hnet
+    · exact one_le_covering_number_of_nonempty usualDist τ _ ⟨some (-a), by simp⟩
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/ExercisesBasic.lean
+import Ch03.Step
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+/-- Exercise 3.1: `x ↦ 2x-1`. -/
+noncomputable def affineOp : Operator RealBase none where
+  func
+    | none => none
+    | some x => some (2*x-1)
+  preserves_bot := rfl
+
+def binaryRealDomain : Set RealBase := {some 0, some 1}
+
+theorem affine_fibre_and_const :
+    FibSingle (fun _ : Unit => absReadDist) affineOp () (affineOp.func (some 0)) binaryRealDomain =
+      binaryRealDomain ∧
+    () ∈ constComponents (fun _ : Unit => absReadDist) affineOp binaryRealDomain := by
+  have hc : () ∈ constComponents (fun _ : Unit => absReadDist) affineOp binaryRealDomain := by
+    intro x hx y hy
+    simp only [binaryRealDomain, mem_insert_iff, mem_singleton_iff] at hx hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
+      norm_num [affineOp, absReadDist, optionDist]
+  refine ⟨?_, hc⟩
+  ext x
+  constructor
+  · intro hx; exact hx.1
+  · intro hx
+    refine ⟨hx, ?_⟩
+    simp only [binaryRealDomain, mem_insert_iff, mem_singleton_iff] at hx
+    rcases hx with rfl | rfl <;> norm_num [affineOp, absReadDist, optionDist]
+
+theorem affine_squared_fibre :
+    FibSingle (fun _ : Unit => absReadDist) (operator_compose affineOp affineOp) ()
+      ((operator_compose affineOp affineOp).func (some 0)) binaryRealDomain = {some 0} := by
+  ext x
+  constructor
+  · rintro ⟨hx, hzero⟩
+    simp only [binaryRealDomain, mem_insert_iff, mem_singleton_iff] at hx
+    rcases hx with rfl | rfl
+    · simp
+    · norm_num [affineOp, operator_compose, absReadDist, optionDist] at hzero
+  · intro hx
+    have : x = some 0 := by simpa using hx
+    subst x
+    exact ⟨by simp [binaryRealDomain], by norm_num [affineOp, operator_compose, absReadDist, optionDist]⟩
+
+theorem affine_squared_active :
+    () ∈ actComponents (fun _ : Unit => absReadDist) (operator_compose affineOp affineOp) binaryRealDomain := by
+  constructor
+  · intro hc
+    have h := hc (some 0) (by simp [binaryRealDomain]) (some 1) (by simp [binaryRealDomain])
+    norm_num [affineOp, operator_compose, absReadDist, optionDist] at h
+  · intro hi
+    have h := hi.2 (some 0) (by simp [binaryRealDomain])
+    norm_num [affineOp, operator_compose, absReadDist, optionDist] at h
+
+/-- Exercise 3.1(ii): any operator pointwise constant on `U` has pointwise
+constant self-composite there, regardless of whether the second image is the
+absorbing point. -/
+theorem pointwise_constant_self_compose (ψ : Operator RealBase none) (c : ℝ)
+    (h : ∀ x ∈ binaryRealDomain, ψ.func x = some c) :
+    ∀ x ∈ binaryRealDomain, ∀ y ∈ binaryRealDomain,
+      (operator_compose ψ ψ).func x = (operator_compose ψ ψ).func y := by
+  intro x hx y hy
+  simp [operator_compose, h x hx, h y hy]
+
+/-- If the second image is absorbing, the original `U` is not a legal domain
+for the self-composite; otherwise the displayed constancy gives the component
+and fibre conclusions whenever the domain condition is supplied. -/
+theorem pointwise_constant_self_compose_domain (ψ : Operator RealBase none) (c : ℝ)
+    (h : ∀ x ∈ binaryRealDomain, ψ.func x = some c) :
+    (ψ.func (some c) = none → ¬ binaryRealDomain ⊆ dom (operator_compose ψ ψ)) ∧
+    (binaryRealDomain ⊆ dom (operator_compose ψ ψ) →
+      () ∈ constComponents (fun _ : Unit => absReadDist) (operator_compose ψ ψ) binaryRealDomain) := by
+  constructor
+  · intro hbot hdom
+    have h0 := hdom (show some 0 ∈ binaryRealDomain by simp [binaryRealDomain])
+    apply h0
+    simp [operator_compose, h (some 0) (by simp [binaryRealDomain]), hbot]
+  · intro hdom x hx y hy
+    rw [pointwise_constant_self_compose ψ c h x hx y hy]
+    exact absReadDist_extended.dist_self _
+
+/-- Exercise 3.2(i): no input distance lies strictly between zero and a
+positive pointwise annihilation radius. -/
+theorem no_input_distance_in_zero_radius [Fintype I] (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i)) (φ : Operator X bot)
+    {U : Set X} (K : I → I → ENNReal) (hK : IsCoLipMatrix d φ U K)
+    {i j : I} (hKpos : 0 < K i j) {y : X} (hy : y ∈ U) {x : X} (hx : x ∈ U) :
+    d i x y ∉ Set.Ioo 0 (annihilationRadius φ (d i) (d j) y U) := by
+  intro h
+  have hzero := output_zero_of_dist_lt_radius d hd φ hx (by
+    rw [(hd i).symm y x]
+    exact h.2)
+  have houtpos := (positive_colip_channels_preserve_distinguishability d φ U K hK).1
+    i j hKpos x hx y hy h.1
+  exact (ne_of_gt houtpos) (by
+    rw [(hd j).symm (φ.func x) (φ.func y)]
+    exact hzero)
+
+/-- Exercise 3.2(ii): all input distances are zero or at least the uniform
+radius. -/
+theorem input_distance_zero_or_ge_uniform [Fintype I] (d : I → X → X → ENNReal)
+    (hd : ∀ i, ExtendedPseudoMetric X bot (d i)) (φ : Operator X bot)
+    {U : Set X} (K : I → I → ENNReal) (hK : IsCoLipMatrix d φ U K)
+    {i j : I} (hKpos : 0 < K i j)
+    (hr : 0 < uniformAnnihilationRadiusOn φ (d i) (d j) U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    d i x y = 0 ∨ uniformAnnihilationRadiusOn φ (d i) (d j) U ≤ d i x y := by
+  by_cases hlt : d i x y < uniformAnnihilationRadiusOn φ (d i) (d j) U
+  · left
+    have hzero := output_zero_of_dist_lt_uniformRadius d hd φ hx hy hlt
+    by_contra hne
+    have hpos : 0 < d i x y := pos_iff_ne_zero.mpr hne
+    have houtpos := (positive_colip_channels_preserve_distinguishability d φ U K hK).1
+      i j hKpos x hx y hy hpos
+    exact (ne_of_gt houtpos) hzero
+  · exact Or.inr (le_of_not_gt hlt)
+
+/-- Exercise 3.3: translation by one. -/
+noncomputable def translateOp : Operator RealBase none where
+  func
+    | none => none
+    | some x => some (x+1)
+  preserves_bot := rfl
+
+def translateDomain : Set RealBase := {some (-3), some (-2), some 0, some 2}
+
+def realId : Operator RealBase none := operator_identity
+
+/-- All distinct fibres of the identity and translation on the specified
+finite domain; repeated targets are deliberately retained in the list. -/
+theorem translate_fibre_partition :
+    (FibSingle (fun _ : Unit => absReadDist) realId () (some (-3)) translateDomain = {some (-3)} ∧
+     FibSingle (fun _ : Unit => absReadDist) realId () (some (-2)) translateDomain = {some (-2), some 2} ∧
+     FibSingle (fun _ : Unit => absReadDist) realId () (some 0) translateDomain = {some 0} ∧
+     FibSingle (fun _ : Unit => absReadDist) realId () (some 2) translateDomain = {some (-2), some 2}) ∧
+    (FibSingle (fun _ : Unit => absReadDist) translateOp () (translateOp.func (some (-3))) translateDomain = {some (-3)} ∧
+     FibSingle (fun _ : Unit => absReadDist) translateOp () (translateOp.func (some (-2))) translateDomain = {some (-2), some 0} ∧
+     FibSingle (fun _ : Unit => absReadDist) translateOp () (translateOp.func (some 0)) translateDomain = {some (-2), some 0} ∧
+     FibSingle (fun _ : Unit => absReadDist) translateOp () (translateOp.func (some 2)) translateDomain = {some 2}) := by
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_⟩⟩
+  all_goals ext x; constructor
+  all_goals intro h
+  all_goals have hx : x ∈ translateDomain := by first | exact h.1 | (simp_all [translateDomain] <;> tauto)
+  all_goals simp only [translateDomain, mem_insert_iff, mem_singleton_iff] at hx
+  all_goals rcases hx with rfl | rfl | rfl | rfl
+  all_goals norm_num [FibSingle, realId, translateOp, absReadDist, optionDist, operator_identity, translateDomain] at *
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/TranslationCovering.lean
+import Ch03.ExercisesBasic
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+/-- Exercise 3.3(ii): the input needs two internal centres, the translated
+image needs one, and the entropy difference is one bit. -/
+theorem translate_covering_entropy :
+    covering_number absReadDist (3 / 2 : ENNReal) translateDomain = 2 ∧
+      covering_number absReadDist (3 / 2 : ENNReal) (translateOp.func '' translateDomain) = 1 ∧
+      entropyDelta (fun _ : Unit => absReadDist) {()} {()} (3 / 2 : ENNReal)
+        translateOp translateDomain = 1 := by
+  have h1 : (1 : ENNReal) < 3 / 2 := by
+    apply (ENNReal.lt_div_iff_mul_lt (Or.inl (by simp)) (Or.inl (by simp))).mpr
+    norm_num
+  have h0 : (0 : ENNReal) < 3 / 2 := zero_lt_one.trans h1
+  have h15 : (3 / 2 : ENNReal) < 2 := by
+    apply (ENNReal.div_lt_iff (Or.inl (by simp)) (Or.inl (by simp))).mpr
+    norm_num
+  have h3 : (3 / 2 : ENNReal) < 3 := h15.trans (by norm_num)
+  have himage : translateOp.func '' translateDomain =
+      {some (-2), some (-1), some 1, some 3} := by
+    ext z
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      simp only [translateDomain, mem_insert_iff, mem_singleton_iff] at hx
+      rcases hx with rfl | rfl | rfl | rfl <;> norm_num [translateOp]
+    · intro hz
+      simp only [mem_insert_iff, mem_singleton_iff] at hz
+      rcases hz with rfl | rfl | rfl | rfl
+      · exact ⟨some (-3), by simp [translateDomain], by norm_num [translateOp]⟩
+      · exact ⟨some (-2), by simp [translateDomain], by norm_num [translateOp]⟩
+      · exact ⟨some 0, by simp [translateDomain], by norm_num [translateOp]⟩
+      · exact ⟨some 2, by simp [translateDomain], by norm_num [translateOp]⟩
+  have hout : covering_number absReadDist (3 / 2 : ENNReal) (translateOp.func '' translateDomain) = 1 := by
+    rw [himage]
+    apply le_antisymm
+    · have hnet : InternalEpsilonNet absReadDist (3 / 2 : ENNReal)
+          {some (-2), some (-1), some 1, some 3} {some (-2)} := by
+        constructor
+        · simp
+        · intro x hx
+          simp only [mem_insert_iff, mem_singleton_iff] at hx
+          rcases hx with rfl | rfl | rfl | rfl
+          all_goals refine ⟨some (-2), by simp, ?_⟩
+          all_goals norm_num [absReadDist, optionDist, h0, h1]
+      simpa using covering_number_le_of_net hnet
+    · exact one_le_covering_number_of_nonempty _ _ _ ⟨some (-2), by simp⟩
+  have hin : covering_number absReadDist (3 / 2 : ENNReal) translateDomain = 2 := by
+    apply le_antisymm
+    · have hnet : InternalEpsilonNet absReadDist (3 / 2 : ENNReal) translateDomain
+          {some (-2), some 0} := by
+        constructor
+        · intro x hx
+          change x ∈ ({some (-2), some 0} : Finset RealBase) at hx
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+          rcases hx with rfl | rfl <;> simp [translateDomain]
+        · intro x hx
+          simp only [translateDomain, mem_insert_iff, mem_singleton_iff] at hx
+          rcases hx with rfl | rfl | rfl | rfl
+          · exact ⟨some (-2), by simp, by norm_num [absReadDist, optionDist, h0, h1]⟩
+          · exact ⟨some (-2), by simp, by norm_num [absReadDist, optionDist, h0, h1]⟩
+          · exact ⟨some 0, by simp, by norm_num [absReadDist, optionDist, h0, h1]⟩
+          · exact ⟨some (-2), by simp, by norm_num [absReadDist, optionDist, h0, h1]⟩
+      simpa using covering_number_le_of_net hnet
+    · apply le_covering_number_of_card
+      intro S hS
+      by_contra hn
+      have hcardlt : S.card < 2 := lt_of_not_ge hn
+      obtain ⟨c, hc, _⟩ := hS.2 (some (-3)) (by simp [translateDomain])
+      have hcard1 : S.card = 1 := le_antisymm (Nat.le_of_lt_succ hcardlt)
+        (Finset.card_pos.mpr ⟨c, hc⟩)
+      obtain ⟨c, rfl⟩ := Finset.card_eq_one.mp hcard1
+      have hcU : c ∈ translateDomain := hS.1 (by simp)
+      simp only [translateDomain, mem_insert_iff, mem_singleton_iff] at hcU
+      rcases hcU with rfl | rfl | rfl | rfl
+      · obtain ⟨c', hc', hd⟩ := hS.2 (some 0) (by simp [translateDomain])
+        simp at hc'
+        subst c'
+        norm_num [absReadDist, optionDist, h0, h1] at hd
+        first | exact (not_lt_of_ge h3.le) hd | exact (not_lt_of_ge h15.le) hd
+      · obtain ⟨c', hc', hd⟩ := hS.2 (some 0) (by simp [translateDomain])
+        simp at hc'
+        subst c'
+        norm_num [absReadDist, optionDist, h0, h1] at hd
+        first | exact (not_lt_of_ge h3.le) hd | exact (not_lt_of_ge h15.le) hd
+      · obtain ⟨c', hc', hd⟩ := hS.2 (some (-3)) (by simp [translateDomain])
+        simp at hc'
+        subst c'
+        norm_num [absReadDist, optionDist, h0, h1] at hd
+        first | exact (not_lt_of_ge h3.le) hd | exact (not_lt_of_ge h15.le) hd
+      · obtain ⟨c', hc', hd⟩ := hS.2 (some 0) (by simp [translateDomain])
+        simp at hc'
+        subst c'
+        norm_num [absReadDist, optionDist, h0, h1] at hd
+        first | exact (not_lt_of_ge h3.le) hd | exact (not_lt_of_ge h15.le) hd
+  refine ⟨hin, hout, ?_⟩
+  rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton]
+  simp [metric_entropy, hin, hout, log2_ereal]
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Floor.lean
+import Ch03.TranslationCovering
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+/-- Diameter of the image of a real closed interval under `some`. -/
+theorem diameter_closed_interval (a b : ℝ) (hab : a ≤ b) :
+    diameter usualDist (some '' Set.Icc a b) = ENNReal.ofReal (b - a) := by
+  apply le_antisymm
+  · apply iSup_le
+    intro x
+    apply iSup_le
+    intro hx
+    apply iSup_le
+    intro y
+    apply iSup_le
+    intro hy
+    rcases hx with ⟨x, hx, rfl⟩
+    rcases hy with ⟨y, hy, rfl⟩
+    apply ENNReal.ofReal_le_ofReal
+    rw [abs_le]
+    constructor <;> linarith [hx.1, hx.2, hy.1, hy.2]
+  · apply le_iSup_of_le (some a)
+    apply le_iSup_of_le ⟨a, ⟨le_rfl, hab⟩, rfl⟩
+    apply le_iSup_of_le (some b)
+    apply le_iSup_of_le ⟨b, ⟨hab, le_rfl⟩, rfl⟩
+    rw [usualDist_some, show |a - b| = b - a by rw [abs_sub_comm]; exact abs_of_nonneg (sub_nonneg.mpr hab)]
+
+theorem diameter_pair (x y : RealBase) :
+    diameter usualDist ({x, y} : Set RealBase) = usualDist x y := by
+  apply le_antisymm
+  · apply iSup_le
+    intro a
+    apply iSup_le
+    intro ha
+    apply iSup_le
+    intro b
+    apply iSup_le
+    intro hb
+    rcases ha with rfl | ha
+    · rcases hb with rfl | hb
+      · simp [usualDist_extended.dist_self]
+      · have : b = y := by simpa using hb
+        subst b; exact le_rfl
+    · have : a = y := by simpa using ha
+      subst a
+      rcases hb with rfl | hb
+      · simpa [usualDist_extended.symm]
+      · have : b = y := by simpa using hb
+        subst b; simp [usualDist_extended.dist_self]
+  · exact le_iSup_of_le x (le_iSup_of_le (by simp) (le_iSup_of_le y (le_iSup_of_le (by simp) le_rfl)))
+
+/-- Proposition 3.14(iii), with the original two-point/one-point real example. -/
+theorem diameter_reverse_scale_fails :
+    let A : Set RealBase := {some 0, some 1}
+    let B : Set RealBase := {some 0}
+    diameter usualDist B < (1 / 2 : ENNReal) ∧ ¬ diameter usualDist A < (1 / 2 : ENNReal) := by
+  dsimp
+  constructor
+  · rw [show ({some 0} : Set RealBase) = {some 0, some 0} by simp, diameter_pair]
+    simp [usualDist, optionDist]
+  · rw [diameter_pair]
+    norm_num [usualDist, optionDist]
+
+/-- Exercise 3.4: integer floor as an operator. -/
+noncomputable def floorOp : Operator RealBase none where
+  func
+    | none => none
+    | some x => some (⌊x⌋ : ℝ)
+  preserves_bot := rfl
+
+def floorDomain1 : Set RealBase := some '' Set.Icc 0 (1 / 2)
+def floorDomain2 : Set RealBase := some '' Set.Icc (9 / 10) (11 / 10)
+def floorDomain3 : Set RealBase := {some 0, some 2}
+def floorDomain4 : Set RealBase := some '' Set.Icc 0 2
+
+theorem floorOp_apply_zero {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
+    floorOp.func (some x) = some 0 := by
+  have hf : ⌊x⌋ = 0 := by
+    apply Int.floor_eq_iff.mpr
+    norm_num
+    exact ⟨hx0, hx1⟩
+  simp [floorOp, hf]
+
+/-- If `1` belongs to the evaluation domain and `y < 1`, then the floor
+operator's pointwise radius at `y` is at most `1-y`. -/
+theorem floor_radius_le_one_sub {D : Set RealBase} {y : ℝ}
+    (hy : some y ∈ D) (hy0 : 0 ≤ y) (hy1 : y < 1) (h1 : some 1 ∈ D) :
+    annihilationRadius floorOp usualDist usualDist (some y) D ≤ ENNReal.ofReal (1 - y) := by
+  apply sSup_le
+  intro r hr
+  by_contra hnr
+  have hgt : ENNReal.ofReal (1 - y) < r := lt_of_not_ge hnr
+  have hreal : 1 - y < r.toReal :=
+    (ENNReal.ofReal_lt_iff_lt_toReal (by linarith) (ne_of_lt hr.2.1)).mp hgt
+  have hball : some 1 ∈ ball usualDist (some y) r ∩ D := by
+    refine ⟨?_, h1⟩
+    apply (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg _) (ne_of_lt hr.2.1)).mpr
+    rw [abs_of_nonneg (by linarith)]
+    exact hreal
+  have hz := (hr.2.2 hball).2
+  rw [floorOp_apply_zero hy0 hy1] at hz
+  have hf1 : floorOp.func (some 1) = some 1 := by norm_num [floorOp]
+  rw [hf1] at hz
+  norm_num [usualDist, optionDist] at hz
+
+/-- Domain `[9/10,11/10]` has zero uniform radius. -/
+theorem floorDomain2_uniform_zero :
+    uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain2 = 0 := by
+  apply nonpos_iff_eq_zero.mp
+  by_contra hn
+  have hpos : 0 < uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain2 := lt_of_not_ge hn
+  obtain ⟨r, hr0, hrU⟩ := exists_between hpos
+  have hrt : r < ⊤ := hrU.trans_le le_top
+  have hrt0 : 0 < r.toReal := ENNReal.toReal_pos (ne_of_gt hr0) (ne_of_lt hrt)
+  let δ := min (1 / 10 : ℝ) (r.toReal / 2)
+  let y := 1 - δ
+  have hδ0 : 0 < δ := lt_min (by norm_num) (half_pos hrt0)
+  have hδsmall : δ ≤ 1 / 10 := min_le_left _ _
+  have hδr : δ < r.toReal := (min_le_right _ _).trans_lt (half_lt_self hrt0)
+  have hy0 : 0 ≤ y := by dsimp [y]; linarith
+  have hy1 : y < 1 := by dsimp [y]; linarith
+  have hyD : some y ∈ floorDomain2 := by
+    refine ⟨y, ⟨?_, ?_⟩, rfl⟩
+    · dsimp [y]; linarith
+    · dsimp [y]; linarith
+  have h1D : some 1 ∈ floorDomain2 := ⟨1, ⟨by norm_num, by norm_num⟩, rfl⟩
+  have hle : uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain2 ≤
+      annihilationRadius floorOp usualDist usualDist (some y) floorDomain2 :=
+    iInf_le (fun z : floorDomain2 => annihilationRadius floorOp usualDist usualDist z.1 floorDomain2)
+      ⟨some y, hyD⟩
+  have hle' := hle.trans (floor_radius_le_one_sub hyD hy0 hy1 h1D)
+  have hδeq : 1 - y = δ := by dsimp [y]; ring
+  rw [hδeq] at hle'
+  have hδr' : ENNReal.ofReal δ < r :=
+    (ENNReal.ofReal_lt_iff_lt_toReal hδ0.le (ne_of_lt hrt)).mpr hδr
+  exact (not_lt_of_ge hle') (hδr'.trans hrU)
+
+/-- Domain `[0,2]` also has zero uniform radius. -/
+theorem floorDomain4_uniform_zero :
+    uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain4 = 0 := by
+  apply nonpos_iff_eq_zero.mp
+  by_contra hn
+  have hpos : 0 < uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain4 := lt_of_not_ge hn
+  obtain ⟨r, hr0, hrU⟩ := exists_between hpos
+  have hrt : r < ⊤ := hrU.trans_le le_top
+  have hrt0 : 0 < r.toReal := ENNReal.toReal_pos (ne_of_gt hr0) (ne_of_lt hrt)
+  let δ := min (1 : ℝ) (r.toReal / 2)
+  let y := 1 - δ
+  have hδ0 : 0 < δ := lt_min zero_lt_one (half_pos hrt0)
+  have hδsmall : δ ≤ 1 := min_le_left _ _
+  have hδr : δ < r.toReal := (min_le_right _ _).trans_lt (half_lt_self hrt0)
+  have hy0 : 0 ≤ y := by dsimp [y]; linarith
+  have hy1 : y < 1 := by dsimp [y]; linarith
+  have hyD : some y ∈ floorDomain4 := ⟨y, ⟨hy0, by dsimp [y]; linarith⟩, rfl⟩
+  have h1D : some 1 ∈ floorDomain4 := ⟨1, ⟨zero_le_one, by norm_num⟩, rfl⟩
+  have hle : uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain4 ≤
+      annihilationRadius floorOp usualDist usualDist (some y) floorDomain4 :=
+    iInf_le (fun z : floorDomain4 => annihilationRadius floorOp usualDist usualDist z.1 floorDomain4)
+      ⟨some y, hyD⟩
+  have hle' := hle.trans (floor_radius_le_one_sub hyD hy0 hy1 h1D)
+  have hδeq : 1 - y = δ := by dsimp [y]; ring
+  rw [hδeq] at hle'
+  have hδr' : ENNReal.ofReal δ < r :=
+    (ENNReal.ofReal_lt_iff_lt_toReal hδ0.le (ne_of_lt hrt)).mpr hδr
+  exact (not_lt_of_ge hle') (hδr'.trans hrU)
+
+/-- The two-point domain `{0,2}` has uniform radius exactly two. -/
+theorem floorDomain3_uniform_two :
+    uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain3 = 2 := by
+  have hpoint : ∀ y ∈ floorDomain3,
+      annihilationRadius floorOp usualDist usualDist y floorDomain3 = 2 := by
+    intro y hyD
+    let z : ℝ := if y = some 0 then 2 else 0
+    have hzD : some z ∈ floorDomain3 := by
+      rcases hyD with rfl | hyD
+      · simp [z, floorDomain3]
+      · have : y = some 2 := by simpa [floorDomain3] using hyD
+        subst y
+        simp [z, floorDomain3]
+    have hyz : usualDist (some z) y = 2 := by
+      rcases hyD with rfl | hyD
+      · norm_num [z, usualDist, optionDist]
+      · have : y = some 2 := by simpa [floorDomain3] using hyD
+        subst y
+        norm_num [z, usualDist, optionDist]
+    have hfyz : usualDist (floorOp.func (some z)) (floorOp.func y) = 2 := by
+      rcases hyD with rfl | hyD
+      · norm_num [z, floorOp, usualDist, optionDist]
+      · have : y = some 2 := by simpa [floorDomain3] using hyD
+        subst y
+        norm_num [z, floorOp, usualDist, optionDist]
+    apply le_antisymm
+    · apply sSup_le
+      intro r hr
+      by_contra hnr
+      have hgt : (2 : ENNReal) < r := lt_of_not_ge hnr
+      have hball : some z ∈ ball usualDist y r ∩ floorDomain3 := by
+        refine ⟨?_, hzD⟩
+        change usualDist (some z) y < r
+        rw [hyz]
+        exact hgt
+      have hz := (hr.2.2 hball).2
+      rw [hfyz] at hz
+      norm_num at hz
+    · apply le_annihilationRadius_of_forall_lt
+      intro r hr0 hrt hr2
+      intro x hx
+      by_cases hxy : x = y
+      · subst x
+        exact ⟨hyD, usualDist_extended.dist_self _⟩
+      · have hxz : x = some z := by
+          have hxD := hx.2
+          rcases hyD with rfl | hyD
+          · simp only [floorDomain3, mem_insert_iff, mem_singleton_iff] at hxD
+            rcases hxD with rfl | hxD
+            · exact (hxy rfl).elim
+            · have : x = some 2 := by simpa using hxD
+              subst x
+              simp [z]
+          · have hy2 : y = some 2 := by simpa [floorDomain3] using hyD
+            subst y
+            simp only [floorDomain3, mem_insert_iff, mem_singleton_iff] at hxD
+            rcases hxD with rfl | hxD
+            · simp [z]
+            · have : x = some 2 := by simpa using hxD
+              exact (hxy this).elim
+        subst x
+        have hdist : usualDist (some z) y < r := hx.1
+        rw [hyz] at hdist
+        exact False.elim ((not_lt_of_ge hr2.le) hdist)
+  apply le_antisymm
+  · rw [← hpoint (some 0) (by simp [floorDomain3])]
+    exact iInf_le (fun y : floorDomain3 => annihilationRadius floorOp usualDist usualDist y.1 floorDomain3)
+      ⟨some 0, by simp [floorDomain3]⟩
+  · apply le_iInf
+    intro y
+    rw [hpoint y.1 y.2]
+
+/-- All four diameter/radius/type computations in Exercise 3.4(i). -/
+theorem floor_threshold_computations :
+    (diameter usualDist floorDomain1 = ENNReal.ofReal (1 / 2) ∧
+      uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain1 = ⊤) ∧
+    (diameter usualDist floorDomain2 = ENNReal.ofReal (1 / 5) ∧
+      uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain2 = 0) ∧
+    (diameter usualDist floorDomain3 = 2 ∧
+      uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain3 = 2) ∧
+    (diameter usualDist floorDomain4 = 2 ∧
+      uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain4 = 0) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · constructor
+    · rw [floorDomain1, diameter_closed_interval 0 (1 / 2) (by norm_num)]
+      norm_num
+    · have hc : () ∈ constComponents (fun _ : Unit => usualDist) floorOp floorDomain1 := by
+        rintro x ⟨x, hx, rfl⟩ y ⟨y, hy, rfl⟩
+        rw [floorOp_apply_zero hx.1 (by linarith [hx.2]), floorOp_apply_zero hy.1 (by linarith [hy.2])]
+        simp [usualDist, optionDist]
+      have h := uniformRadius_top_of_const_subfamily (fun _ : Unit => usualDist) floorOp
+        (show floorDomain1.Nonempty from ⟨some 0, ⟨0, ⟨le_rfl, by norm_num⟩, rfl⟩⟩)
+        (J := {()}) (fun j hj => by simpa using hc) ()
+      calc
+        uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain1 =
+            componentUniformAnnihilationRadius (fun _ : Unit => usualDist) floorOp () {()} floorDomain1 :=
+          (componentUniformRadius_single (fun _ : Unit => usualDist) floorOp () () floorDomain1).symm
+        _ = ⊤ := h.2
+  · constructor
+    · rw [floorDomain2, diameter_closed_interval (9 / 10) (11 / 10) (by norm_num)]
+      norm_num
+    · exact floorDomain2_uniform_zero
+  · exact ⟨by rw [floorDomain3, diameter_pair]; norm_num [usualDist, optionDist], floorDomain3_uniform_two⟩
+  · exact ⟨by rw [floorDomain4, diameter_closed_interval 0 2 (by norm_num)]; norm_num, floorDomain4_uniform_zero⟩
+
+/-- The four threshold types at `τσ = τN = 1`. -/
+theorem floor_threshold_types :
+    (∃ h1 : floorDomain1.Nonempty, thresholdType
+      (diameterScaleFamily (fun _ : Unit => usualDist)) (fun _ => usualDist) floorOp
+      floorDomain1 h1 1 1 () () = (1, 1)) ∧
+    (∃ h2 : floorDomain2.Nonempty, thresholdType
+      (diameterScaleFamily (fun _ : Unit => usualDist)) (fun _ => usualDist) floorOp
+      floorDomain2 h2 1 1 () () = (1, 0)) ∧
+    (∃ h3 : floorDomain3.Nonempty, thresholdType
+      (diameterScaleFamily (fun _ : Unit => usualDist)) (fun _ => usualDist) floorOp
+      floorDomain3 h3 1 1 () () = (0, 1)) ∧
+    (∃ h4 : floorDomain4.Nonempty, thresholdType
+      (diameterScaleFamily (fun _ : Unit => usualDist)) (fun _ => usualDist) floorOp
+      floorDomain4 h4 1 1 () () = (0, 0)) := by
+  have hdata := floor_threshold_computations
+  have hD1 : floorDomain1.Nonempty := ⟨some 0, ⟨0, ⟨le_rfl, by norm_num⟩, rfl⟩⟩
+  have hD2 : floorDomain2.Nonempty := ⟨some 1, ⟨1, ⟨by norm_num, by norm_num⟩, rfl⟩⟩
+  have hD3 : floorDomain3.Nonempty := ⟨some 0, by simp [floorDomain3]⟩
+  have hD4 : floorDomain4.Nonempty := ⟨some 0, ⟨0, ⟨le_rfl, by norm_num⟩, rfl⟩⟩
+  have hs1 : ENNReal.ofReal (1 / 2 : ℝ) < (1 : ENNReal) := by
+    have h := (ENNReal.ofReal_lt_ofReal_iff (by norm_num : (0 : ℝ) < 1)).mpr
+      (by norm_num : (1 / 2 : ℝ) < 1)
+    simpa using h
+  have hs2 : ENNReal.ofReal (1 / 5 : ℝ) < (1 : ENNReal) := by
+    have h := (ENNReal.ofReal_lt_ofReal_iff (by norm_num : (0 : ℝ) < 1)).mpr
+      (by norm_num : (1 / 5 : ℝ) < 1)
+    simpa using h
+  refine ⟨⟨hD1, ?_⟩, ⟨hD2, ?_⟩, ⟨hD3, ?_⟩, ⟨hD4, ?_⟩⟩
+  · simp [thresholdType, diameterScaleFamily, componentUniformRadius_single,
+      hdata.1.1, hdata.1.2, hs1]
+  · simp [thresholdType, diameterScaleFamily, componentUniformRadius_single,
+      hdata.2.1.1, hdata.2.1.2, hs2]
+  · simp [thresholdType, diameterScaleFamily, componentUniformRadius_single,
+      hdata.2.2.1.1, hdata.2.2.1.2]
+  · simp [thresholdType, diameterScaleFamily, componentUniformRadius_single,
+      hdata.2.2.2.1, hdata.2.2.2.2]
+
+/-- Exercise 3.4(ii): `{0,2}` refutes the implication without a diameter
+condition. -/
+theorem floorDomain3_counterexample :
+    (1 : ENNReal) ≤ uniformAnnihilationRadiusOn floorOp usualDist usualDist floorDomain3 ∧
+      ¬ ∀ x ∈ floorDomain3, ∀ y ∈ floorDomain3,
+        usualDist (floorOp.func x) (floorOp.func y) = 0 := by
+  rw [floorDomain3_uniform_two]
+  constructor
+  · norm_num
+  · intro h
+    have hz := h (some 0) (by simp [floorDomain3]) (some 2) (by simp [floorDomain3])
+    norm_num [floorOp, usualDist, optionDist] at hz
+
+end OET.Ch03
+```
+
+```lean filename=Ch03/Reorder.lean
+import Ch03.Floor
+
+namespace OET.Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+
+/-- Exercise 3.5's four-point domain. -/
+def fourDomain : Set RealBase := {some 0, some 1, some 2, some 3}
+
+noncomputable def fourFinset : Finset RealBase := {some 0, some 1, some 2, some 3}
+
+theorem fourDist_ne_lower {x y : RealBase} (hx : x ∈ fourDomain) (hy : y ∈ fourDomain)
+    (hne : x ≠ y) : 1 ≤ usualDist x y := by
+  simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx hy
+  rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+    norm_num [usualDist, optionDist] at *
+
+/-- Complete finite-positive-precision covering formula for the four points. -/
+theorem fourPoint_covering {ε : ENNReal} (hε0 : 0 < ε) (hεtop : ε < ⊤) :
+    covering_number usualDist ε fourDomain =
+      if ε ≤ 1 then 4 else if ε ≤ 2 then 2 else 1 := by
+  by_cases h1 : ε ≤ 1
+  · rw [if_pos h1]
+    apply le_antisymm
+    · have hnet : InternalEpsilonNet usualDist ε fourDomain fourFinset := by
+        constructor
+        · intro x hx
+          change x ∈ fourFinset at hx
+          simpa [fourDomain, fourFinset] using hx
+        · intro x hx
+          exact ⟨x, by simpa [fourDomain, fourFinset] using hx,
+            by simpa [usualDist_extended.dist_self] using hε0⟩
+      simpa [fourFinset] using covering_number_le_of_net hnet
+    · apply le_covering_number_of_card
+      intro S hS
+      have hsub : fourFinset ⊆ S := by
+        intro x hx
+        have hxU : x ∈ fourDomain := by simpa [fourDomain, fourFinset] using hx
+        obtain ⟨c, hc, hxc⟩ := hS.2 x hxU
+        have hcU := hS.1 hc
+        have hxc' : x = c := by
+          by_contra hne
+          have hone := fourDist_ne_lower hxU hcU hne
+          exact (not_lt_of_ge h1) (hone.trans_lt hxc)
+        rw [hxc']
+        exact hc
+      have hc := Finset.card_le_card hsub
+      norm_num [fourFinset] at hc ⊢
+      exact hc
+  · rw [if_neg h1]
+    have h1lt : 1 < ε := lt_of_not_ge h1
+    by_cases h2 : ε ≤ 2
+    · rw [if_pos h2]
+      apply le_antisymm
+      · have hnet : InternalEpsilonNet usualDist ε fourDomain {some 0, some 2} := by
+          constructor
+          · intro x hx
+            change x ∈ ({some 0, some 2} : Finset RealBase) at hx
+            simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+            rcases hx with rfl | rfl <;> simp [fourDomain]
+          · intro x hx
+            simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx
+            rcases hx with rfl | rfl | rfl | rfl
+            · exact ⟨some 0, by simp, by simpa [usualDist, optionDist] using hε0⟩
+            · exact ⟨some 0, by simp, by norm_num [usualDist, optionDist]; exact h1lt⟩
+            · exact ⟨some 2, by simp, by simpa [usualDist, optionDist] using hε0⟩
+            · exact ⟨some 2, by simp, by norm_num [usualDist, optionDist]; exact h1lt⟩
+        simpa using covering_number_le_of_net hnet
+      · apply le_covering_number_of_card
+        intro S hS
+        by_contra hn
+        have hcardlt : S.card < 2 := lt_of_not_ge hn
+        obtain ⟨c, hc, _⟩ := hS.2 (some 0) (by simp [fourDomain])
+        have hcard1 : S.card = 1 := le_antisymm (Nat.le_of_lt_succ hcardlt)
+          (Finset.card_pos.mpr ⟨c, hc⟩)
+        obtain ⟨c, rfl⟩ := Finset.card_eq_one.mp hcard1
+        have hcU : c ∈ fourDomain := hS.1 (by simp)
+        simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hcU
+        rcases hcU with rfl | rfl | rfl | rfl
+        · obtain ⟨c', hc', hd⟩ := hS.2 (some 3) (by simp [fourDomain])
+          simp at hc'; subst c'
+          norm_num [usualDist, optionDist] at hd
+          exact (not_lt_of_ge (h2.trans (by norm_num))) hd
+        · obtain ⟨c', hc', hd⟩ := hS.2 (some 3) (by simp [fourDomain])
+          simp at hc'; subst c'
+          norm_num [usualDist, optionDist] at hd
+          exact (not_lt_of_ge h2) hd
+        · obtain ⟨c', hc', hd⟩ := hS.2 (some 0) (by simp [fourDomain])
+          simp at hc'; subst c'
+          norm_num [usualDist, optionDist] at hd
+          exact (not_lt_of_ge h2) hd
+        · obtain ⟨c', hc', hd⟩ := hS.2 (some 0) (by simp [fourDomain])
+          simp at hc'; subst c'
+          norm_num [usualDist, optionDist] at hd
+          exact (not_lt_of_ge (h2.trans (by norm_num))) hd
+    · rw [if_neg h2]
+      have h2lt : 2 < ε := lt_of_not_ge h2
+      apply le_antisymm
+      · have hnet : InternalEpsilonNet usualDist ε fourDomain {some 1} := by
+          constructor
+          · simp [fourDomain]
+          · intro x hx
+            simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx
+            rcases hx with rfl | rfl | rfl | rfl
+            all_goals refine ⟨some 1, by simp, ?_⟩
+            · norm_num [usualDist, optionDist]; exact h1lt
+            · simpa [usualDist, optionDist] using hε0
+            · norm_num [usualDist, optionDist]; exact h1lt
+            · norm_num [usualDist, optionDist]; exact h2lt
+        simpa using covering_number_le_of_net hnet
+      · exact one_le_covering_number_of_nonempty _ _ _ ⟨some 0, by simp [fourDomain]⟩
+
+/-- `3/2` is not an internal centre of the four-point domain. -/
+theorem three_halves_not_internal_center : some (3 / 2 : ℝ) ∉ fourDomain := by
+  norm_num [fourDomain]
+
+/-- The two operators on the four-point domain; both are `⊥` outside it. -/
+noncomputable def reorderF : Operator RealBase none where
+  func
+    | none => none
+    | some x => if x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 then some x else none
+  preserves_bot := rfl
+
+noncomputable def reorderG : Operator RealBase none where
+  func
+    | none => none
+    | some x =>
+      if x = 0 then some 0 else if x = 1 then some 3 else if x = 2 then some 1 else
+        if x = 3 then some 2 else none
+  preserves_bot := rfl
+
+theorem reorder_images : reorderF.func '' fourDomain = fourDomain ∧ reorderG.func '' fourDomain = fourDomain := by
+  constructor
+  · ext z
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx
+      rcases hx with rfl | rfl | rfl | rfl <;> norm_num [reorderF, fourDomain]
+    · intro hz
+      simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hz
+      rcases hz with rfl | rfl | rfl | rfl
+      · exact ⟨some 0, by simp [fourDomain], by norm_num [reorderF]⟩
+      · exact ⟨some 1, by simp [fourDomain], by norm_num [reorderF]⟩
+      · exact ⟨some 2, by simp [fourDomain], by norm_num [reorderF]⟩
+      · exact ⟨some 3, by simp [fourDomain], by norm_num [reorderF]⟩
+  · ext z
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx
+      rcases hx with rfl | rfl | rfl | rfl <;> norm_num [reorderG, fourDomain]
+    · intro hz
+      simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hz
+      rcases hz with rfl | rfl | rfl | rfl
+      · exact ⟨some 0, by simp [fourDomain], by norm_num [reorderG]⟩
+      · exact ⟨some 2, by simp [fourDomain], by norm_num [reorderG]⟩
+      · exact ⟨some 3, by simp [fourDomain], by norm_num [reorderG]⟩
+      · exact ⟨some 1, by simp [fourDomain], by norm_num [reorderG]⟩
+
+/-- Both images have exactly the same covering numbers as the input. -/
+theorem reorder_image_covering {ε : ENNReal} (hε0 : 0 < ε) (hεtop : ε < ⊤) :
+    covering_number usualDist ε (reorderF.func '' fourDomain) = covering_number usualDist ε fourDomain ∧
+      covering_number usualDist ε (reorderG.func '' fourDomain) = covering_number usualDist ε fourDomain := by
+  rw [reorder_images.1, reorder_images.2]
+  exact ⟨rfl, rfl⟩
+
+/-- Both mapping entropy differences vanish at every finite positive precision. -/
+theorem reorder_entropyDelta_zero {ε : ENNReal} (hε0 : 0 < ε) (hεtop : ε < ⊤) :
+    entropyDelta (fun _ : Unit => usualDist) {()} {()} ε reorderF fourDomain = 0 ∧
+      entropyDelta (fun _ : Unit => usualDist) {()} {()} ε reorderG fourDomain = 0 := by
+  have hU : fourDomain.Nonempty := ⟨some 0, by simp [fourDomain]⟩
+  have hfin : covering_number usualDist ε fourDomain < ⊤ := by
+    rw [fourPoint_covering hε0 hεtop]
+    split_ifs <;> norm_num
+  have hent := metric_entropy_eq_coe_of_cover_finite hU hfin
+  constructor
+  · rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton,
+      reorder_images.1, hent]
+    exact EReal.sub_self (EReal.coe_ne_top _) (EReal.coe_ne_bot _)
+  · rw [entropyDelta, subfamily_metric_entropy_singleton, subfamily_metric_entropy_singleton,
+      reorder_images.2, hent]
+    exact EReal.sub_self (EReal.coe_ne_top _) (EReal.coe_ne_bot _)
+
+/-- The optimal scalar Lip constant of `f` is one, including necessity. -/
+theorem reorderF_optimal_lip :
+    (∀ x ∈ fourDomain, ∀ y ∈ fourDomain,
+      usualDist (reorderF.func x) (reorderF.func y) ≤ ENNReal.ofReal 1 * usualDist x y) ∧
+    ∀ L : ℝ, (∀ x ∈ fourDomain, ∀ y ∈ fourDomain,
+      usualDist (reorderF.func x) (reorderF.func y) ≤ ENNReal.ofReal L * usualDist x y) → 1 ≤ L := by
+  constructor
+  · intro x hx y hy
+    simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx hy
+    rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+      norm_num [reorderF, usualDist, optionDist]
+  · intro L hL
+    have h := hL (some 0) (by simp [fourDomain]) (some 1) (by simp [fourDomain])
+    norm_num [reorderF, usualDist, optionDist] at h
+    exact h
+
+/-- The optimal scalar Lip constant of `g` is three, including necessity. -/
+theorem reorderG_optimal_lip :
+    (∀ x ∈ fourDomain, ∀ y ∈ fourDomain,
+      usualDist (reorderG.func x) (reorderG.func y) ≤ ENNReal.ofReal 3 * usualDist x y) ∧
+    ∀ L : ℝ, (∀ x ∈ fourDomain, ∀ y ∈ fourDomain,
+      usualDist (reorderG.func x) (reorderG.func y) ≤ ENNReal.ofReal L * usualDist x y) → 3 ≤ L := by
+  constructor
+  · intro x hx y hy
+    simp only [fourDomain, mem_insert_iff, mem_singleton_iff] at hx hy
+    rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+      norm_num [reorderG, usualDist, optionDist, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 3)]
+  · intro L hL
+    have h := hL (some 0) (by simp [fourDomain]) (some 1) (by simp [fourDomain])
+    norm_num [reorderG, usualDist, optionDist] at h
+    exact h
+
+/-- Exercise 3.5(iii-b): instantiate the general covering upper bound at
+`ε = 7/4`; `f` gives the sharp value 2, while `g` gives the nonsharp bound 4. -/
+theorem reorder_bounds_at_seven_quarters :
+    covering_number usualDist (7 / 4 : ENNReal) (reorderF.func '' fourDomain) = 2 ∧
+    covering_number usualDist ((7 / 4 : ENNReal) / 1) fourDomain = 2 ∧
+    covering_number usualDist (7 / 4 : ENNReal) (reorderF.func '' fourDomain) ≤
+      covering_number usualDist ((7 / 4 : ENNReal) / 1) fourDomain ∧
+    covering_number usualDist (7 / 4 : ENNReal) (reorderG.func '' fourDomain) = 2 ∧
+    covering_number usualDist ((7 / 4 : ENNReal) / 3) fourDomain = 4 ∧
+    covering_number usualDist (7 / 4 : ENNReal) (reorderG.func '' fourDomain) ≤
+      covering_number usualDist ((7 / 4 : ENNReal) / 3) fourDomain := by
+  have hε0 : (0 : ENNReal) < 7 / 4 := ENNReal.div_pos (by simp) (by simp)
+  have hεtop : (7 / 4 : ENNReal) < ⊤ := ENNReal.div_lt_top (by simp) (by simp)
+  have hε1 : ¬ (7 / 4 : ENNReal) ≤ 1 := by
+    intro h
+    have h' := (ENNReal.div_le_iff (by simp) (by simp)).mp h
+    norm_num at h'
+  have hε2 : (7 / 4 : ENNReal) ≤ 2 := by
+    apply (ENNReal.div_le_iff (by simp) (by simp)).mpr
+    norm_num
+  have hsmall : ((7 / 4 : ENNReal) / 3) ≤ 1 := by
+    apply (ENNReal.div_le_iff (by simp) (by simp)).mpr
+    apply (ENNReal.div_le_iff (by simp) (by simp)).mpr
+    norm_num
+  have hsmall0 : (0 : ENNReal) < (7 / 4 : ENNReal) / 3 := ENNReal.div_pos (by positivity) (by simp)
+  have hsmalltop : ((7 / 4 : ENNReal) / 3) < ⊤ := ENNReal.div_lt_top (ne_of_lt hεtop) (by simp)
+  have hN : covering_number usualDist (7 / 4 : ENNReal) fourDomain = 2 := by
+    rw [fourPoint_covering hε0 hεtop, if_neg hε1, if_pos hε2]
+  have hNsmall : covering_number usualDist ((7 / 4 : ENNReal) / 3) fourDomain = 4 := by
+    rw [fourPoint_covering hsmall0 hsmalltop, if_pos hsmall]
+  have hf := covering_number_image_le_of_scalar_lip (fun _ : Unit => usualDist) reorderF
+    (i := ()) (j := ()) (L := 1) (ε := 7 / 4) zero_lt_one ENNReal.one_lt_top (by
+      simpa using reorderF_optimal_lip.1)
+  have hg := covering_number_image_le_of_scalar_lip (fun _ : Unit => usualDist) reorderG
+    (i := ()) (j := ()) (L := 3) (ε := 7 / 4) (by norm_num) (by norm_num) (by
+      simpa using reorderG_optimal_lip.1)
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [reorder_images.1]; exact hN
+  · simpa using hN
+  · exact hf
+  · rw [reorder_images.2]; exact hN
+  · exact hNsmall
+  · exact hg
+
+end OET.Ch03
+```
+
+```json filename=alignment.json
+{
+  "case_id": "MG-C003",
+  "version": "0.1.1",
+  "items": [
+    {"id":"CH03-D01","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.constComponents"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.idComponents"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.actComponents"}],"representation":"三个集合分别逐字表示常值、恒等（含非常值前提）和有效分量；actComponents 实现常值优先的剩余类。","dependencies":[]},
+    {"id":"CH03-D02","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.Fib"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.FibSingle"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.subfamily_zero_iff"}],"representation":"Fib 用冻结 subfamily_pseudometric 表示任意目标的子族计算纤维；FibSingle 是单分量形式，subfamily_zero_iff 给出逐分量对应。","dependencies":[]},
+    {"id":"CH03-D03","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.pointRel"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.zeroRel"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.FiberGe"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.imageSetoid"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.ImageQuot"}],"representation":"pointRel/zeroRel 是 U×U 上的点值相等与族零距关系；ImageQuot 是实际像集对零距 Setoid 的商；FiberGe 即零距关系包含预序。","dependencies":[]},
+    {"id":"CH03-D04","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.annihilatingRadii"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.annihilationRadius"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.componentAnnihilationRadius"}],"representation":"合法半径集显式要求 0<r<∞ 及受限开球包含；annihilationRadius 取其 sSup，空集由 ENNReal 的 sSup 为 0，分量版本使用 d_i,d_J。","dependencies":[]},
+    {"id":"CH03-D05","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.uniformAnnihilationRadius"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.uniformAnnihilationRadiusOn"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.componentUniformAnnihilationRadius"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.annihilationMatrix"}],"representation":"统一半径是基点子类型的 iInf；On 版本取 A=U；矩阵按 j 行 i 列存放单分量统一半径。","dependencies":[]},
+    {"id":"CH03-D06","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.InputScaleFamily"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.diameter"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.diameterScaleFamily"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.thresholdType"}],"representation":"InputScaleFamily 在非空子集子类型上封装单调尺度；diameterScaleFamily 是默认直径；thresholdType 按原文顺序返回两个 0/1 指示值。","dependencies":[]},
+    {"id":"CH03-D07","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.covering_number_representation"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.covering_number_le_of_net"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.le_covering_number_of_card"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.InternallyTotallyBounded"}],"representation":"直接复用冻结 InternalEpsilonNet、covering_number 和 metric_entropy；representation 定理证明有限时由最少内部中心数取得，全有界接口要求所有有限正精度覆盖数有限。","dependencies":[]},
+    {"id":"CH03-D08","status":"complete","declarations":[{"file":"Ch03/Defs.lean","name":"OET.Ch03.entropyDelta"},{"file":"Ch03/Defs.lean","name":"OET.Ch03.EntropyDeltaAdmissible"}],"representation":"entropyDelta 是输入子族熵减实际像集的输出子族熵；Admissible 逐字排除两端覆盖数同时为无穷的情形。","dependencies":[]},
+    {"id":"CH03-P01-01","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.constComponent_zero_row"}],"representation":"常值分量给出输出距离 0，并证明其不超过全零 Lip 行的有限和。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P01-02","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.constComponent_colip_entry_eq_zero"}],"representation":"若 U 内存在该源分量正距离点对，则常值输出列的相应 co-Lip 条目为 0。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P01-03","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.idComponent_dist_eq"}],"representation":"恒等分量在 U 内满足输出点对距离等于输入点对距离，证明含两个方向的三角不等式。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P02-01","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.actComponents_compose_subset"}],"representation":"两步复合的有效分量包含于内侧 U 与外侧实际像域 φ(U) 的有效分量之并。","dependencies":["CH03-D01","CH03-P01-03"]},
+    {"id":"CH03-P02-02","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.actComponents_finite_chain"}],"representation":"以 c0=id、c(n+1)=φn∘cn 和 U(m+1)=φm(Um) 表示任意有限链；结论含零步基例及所有实际中间域。","dependencies":["CH03-D01","CH03-P02-01"]},
+    {"id":"CH03-P02-03","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.idComponents_inter_compose_subset"}],"representation":"两步恒等分量的交集包含于复合恒等分量；证明专门排除复合落入常值优先分支。","dependencies":["CH03-D01","CH03-P01-03"]},
+    {"id":"CH03-P03-01","status":"complete","declarations":[{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.swapOp"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.finDist_extended"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.swap_active"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.swap_second_active"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.swap_composite_id"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.swap_reverse_inclusions_fail"}],"representation":"Option(Fin2) 上构造离散距离与同一换位算子；验证两步在实际像域均有效、复合恒等，并用同一成员见证否定两条反向包含。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P04-01","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.constComponents_compose_of_outer"}],"representation":"外侧算子在 φ(U) 上常值即推出复合在 U 上常值。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P04-02","status":"complete","declarations":[{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.sevenDist"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.sevenDist_extended"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.sevenInner"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.sevenOuter"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.seven_inner_const_not_composite"}],"representation":"Option(Fin7) 上实现双分量七点例；第0分量仅粘合4,5，第1分量离散，并证明内侧常值而复合非常值。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P05-01","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.constComponents_compose_of_single_input_lip"}],"representation":"给定外侧实际像域上的 Lip 行且非对角项全零，内侧常值传给复合；ENNReal 系数允许无穷。","dependencies":["CH03-D01"]},
+    {"id":"CH03-P06-01","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_target_zero_eq"}],"representation":"任意两个 d_J 零距目标给出相同纤维。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P06-02","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.image_fibres_nonempty_cover"}],"representation":"像目标纤维均非空，且其并覆盖整个 U。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P06-03","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.image_fibres_eq_or_disjoint"}],"representation":"任意两个像目标纤维相等或不交；结合非空覆盖即去重后的分划。","dependencies":["CH03-D02","CH03-P06-01","CH03-P06-02"]},
+    {"id":"CH03-P06-04","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_eq_iInter"}],"representation":"非空子族纤维等于各单分量纤维的交集，证明使用上确界为零 iff 各分量为零。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P06-05","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_antitone"}],"representation":"J⊆K 时 K 纤维包含于 J 纤维。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P06-06","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_singleton_and_full"},{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_eq_single"}],"representation":"单子族纤维等于 FibSingle，全子族纤维包含于每个单分量纤维。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P06-07","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_idComponent"}],"representation":"恒等分量的任意目标纤维恰为 U 内输入零距类。","dependencies":["CH03-D01","CH03-D02"]},
+    {"id":"CH03-P06-08","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fib_constComponent"}],"representation":"常值分量在像目标的纤维为 U；相对该像目标有正距离的任意目标纤维为空。","dependencies":["CH03-D01","CH03-D02"]},
+    {"id":"CH03-P07-01","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointFactorable_iff"}],"representation":"PointFactorable 记录实际像域上的 T 及 T(φA x)=φB x；iff 的前向给出关系包含必要性。","dependencies":["CH03-D03"]},
+    {"id":"CH03-P07-02","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointFactor"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointFactor_spec"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointFactorable_iff"}],"representation":"pointFactor 对像点选择输入代表，关系包含证明赋值无关并验证规定复合公式；U 为空时同样成立。","dependencies":["CH03-D03","CH03-P07-01"]},
+    {"id":"CH03-P07-03","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointFactorable_bidirectional_iff"}],"representation":"双向点值变换存在 iff 两个点值关系相等。","dependencies":["CH03-D03","CH03-P07-01","CH03-P07-02"]},
+    {"id":"CH03-P07-04","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointFactor_scalar_lip"}],"representation":"在有限正 KA、非负有限 LB 和 T 存在时，于 φA(U) 子类型上证明 ofReal(LB/KA) 标量 Lip 界。","dependencies":["CH03-P07-01"]},
+    {"id":"CH03-P08-01","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.quotientFactor"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.quotientFactor_spec"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.quotientFactorable_iff"}],"representation":"在两个实际像商上构造 Quotient.lift 映射，证明代表元无关和规定公式，并给出单向存在 iff 关系包含。","dependencies":["CH03-D03"]},
+    {"id":"CH03-P08-02","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.quotientFactorable_bidirectional_iff"}],"representation":"双向商变换存在 iff 两个零距点对关系相等。","dependencies":["CH03-D03","CH03-P08-01"]},
+    {"id":"CH03-P08-03","status":"complete","declarations":[{"file":"Ch03/Factorization.lean","name":"OET.Ch03.pointRel_eq_zeroRel_of_separating"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.quotientFactorable_iff_pointFactorable_of_separating"},{"file":"Ch03/Factorization.lean","name":"OET.Ch03.quotientFactorable_bidirectional_iff_pointFactorable_of_separating"}],"representation":"只假设两个实际像集各自分离，分别证明点值关系等于零距关系，并互译单向及双向判据。","dependencies":["CH03-D03","CH03-P07-03","CH03-P08-02"]},
+    {"id":"CH03-P09-01","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fiberGe_refl"},{"file":"Ch03/Core.lean","name":"OET.Ch03.fiberGe_trans"}],"representation":"固定公共域时 FiberGe 的自反性和传递性。","dependencies":["CH03-D03"]},
+    {"id":"CH03-P09-02","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.fiberGe_chain"}],"representation":"有限链逐步包含推出任意 a≤b 两层的关系包含。","dependencies":["CH03-D03","CH03-P09-01"]},
+    {"id":"CH03-P09-03","status":"complete","declarations":[{"file":"Ch03/Core.lean","name":"OET.Ch03.zeroRel_strict_endpoint_witness"},{"file":"Ch03/Core.lean","name":"OET.Ch03.zeroRel_ssubset_endpoint"}],"representation":"由某步真包含的差集见证构造端点差集见证，并证明端点真包含。","dependencies":["CH03-D03","CH03-P09-02"]},
+    {"id":"CH03-P10-01","status":"complete","declarations":[{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.usualDist"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.usualDist_extended"},{"file":"Ch03/Step.lean","name":"OET.Ch03.stepOp"},{"file":"Ch03/Step.lean","name":"OET.Ch03.stepDomain"},{"file":"Ch03/Step.lean","name":"OET.Ch03.stepDomain_nonempty"},{"file":"Ch03/Step.lean","name":"OET.Ch03.stepDomain_subset_dom"}],"representation":"Option ℝ 上构造通常距离、阶跃算子与固定 U=[-1,0)∪(0,1]；验证扩展伪度量、吸收元保持、非空及定义域包含。","dependencies":["CH03-D04"]},
+    {"id":"CH03-P10-02","status":"complete","declarations":[{"file":"Ch03/Step.lean","name":"OET.Ch03.step_legalRadii"},{"file":"Ch03/Step.lean","name":"OET.Ch03.step_pointRadius"},{"file":"Ch03/Step.lean","name":"OET.Ch03.step_pointRadius_pos"}],"representation":"证明合法半径集恰为 {r:0<r<∞ 且 r≤|y|}，故点态半径为 |y| 且严格正。","dependencies":["CH03-D04","CH03-P10-01"]},
+    {"id":"CH03-P10-03","status":"complete","declarations":[{"file":"Ch03/Step.lean","name":"OET.Ch03.step_uniformRadius_zero"}],"representation":"在同一个 stepDomain 上，用任意趋近零的基点证明统一半径为 0。","dependencies":["CH03-D04","CH03-D05","CH03-P10-02"]},
+    {"id":"CH03-P11-01","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.fib_const_subfamily"}],"representation":"若 J 中分量均在 U 上常值，则每个 y∈U 的像目标 J 纤维等于 U。","dependencies":["CH03-D01","CH03-D02"]},
+    {"id":"CH03-P11-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.uniformRadius_top_of_const_subfamily"}],"representation":"常值子族使每个输入指标的点态和统一半径均为 +∞。","dependencies":["CH03-D01","CH03-D04","CH03-D05","CH03-P11-01"]},
+    {"id":"CH03-P11-03","status":"complete","declarations":[{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.twoPointDist"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.twoPointDist_extended"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.infinite_uniformRadius_not_const"}],"representation":"两点恒等算子例中输入距离为∞；对任意输出 j 同时覆盖 i=j 与 i≠j，矩阵 entry 为∞而 j 非常值。","dependencies":["CH03-D01","CH03-D04","CH03-D05"]},
+    {"id":"CH03-P12-01","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.fib_idComponent_image"}],"representation":"恒等分量以 φ(y) 为目标的纤维等于 y 在 U 内的输入零距类。","dependencies":["CH03-D01","CH03-D02","CH03-P01-03"]},
+    {"id":"CH03-P12-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.radius_ge_of_ball_subset_id"}],"representation":"有限正 r0 的受限球落入输入零距类时，点态半径至少 r0 且 r0>0。","dependencies":["CH03-D01","CH03-D04","CH03-P12-01"]},
+    {"id":"CH03-P13-01","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.componentRadius_eq_iInf"}],"representation":"点态子族半径等于单分量半径在非空有限子族子类型上的 iInf，即有限最小值。","dependencies":["CH03-D04","CH03-P14-02"]},
+    {"id":"CH03-P13-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.componentUniformRadius_eq_iInf"}],"representation":"交换基点 iInf 与分量 iInf，统一半径等于各零化矩阵列项的有限最小值。","dependencies":["CH03-D04","CH03-D05","CH03-P13-01"]},
+    {"id":"CH03-P13-03","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.componentUniformRadius_antitone"}],"representation":"J⊆K 时统一半径关于输出子族反向单调。","dependencies":["CH03-D04","CH03-D05","CH03-P13-02"]},
+    {"id":"CH03-P14-01","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.output_zero_of_mem_fib"}],"representation":"纤维成员条件经输出对称性推出所需输出零距。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P14-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.output_zero_of_dist_lt_radius"}],"representation":"由严格小于点态 sSup 用 lt_sSup_iff 提取合法有限正半径，再推出输出零距。","dependencies":["CH03-D04","CH03-P14-01"]},
+    {"id":"CH03-P14-03","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.output_zero_compose_of_mem_fib"}],"representation":"显式给出两个像点属于下游 U2 的前提，并代入纤维判据得到复合输出零距。","dependencies":["CH03-D02","CH03-P14-01"]},
+    {"id":"CH03-P15-01","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.uniformRadius_compose_ge_of_zero_preserving"}],"representation":"下游在 φ1(U) 上保持零距时，复合统一半径至少为内侧对应统一半径。","dependencies":["CH03-D04","CH03-D05","CH03-P14-02"]},
+    {"id":"CH03-P15-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.uniformRadius_compose_ge_div_of_lip"}],"representation":"有限正 L 的单通道 Lip 界给出下游实际像域统一半径除以 L 的下界；ENNReal 运算涵盖右端 0 与∞。","dependencies":["CH03-D04","CH03-D05","CH03-P14-02"]},
+    {"id":"CH03-P16-01","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.thresholdType_four_cases"}],"representation":"对两个命题分别 by_cases，证明四种阈值组合互斥且穷尽。","dependencies":["CH03-D06"]},
+    {"id":"CH03-P16-02","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.threshold_first_monotone"}],"representation":"τσ 增大时，第一指示值为1的通道集合不减。","dependencies":["CH03-D06"]},
+    {"id":"CH03-P16-03","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.threshold_second_antitone"}],"representation":"τN 增大时，第二指示值为1的通道集合不增。","dependencies":["CH03-D04","CH03-D05","CH03-D06"]},
+    {"id":"CH03-P17-01","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.scale_domain_antitone"},{"file":"Ch03/Coverage.lean","name":"OET.Ch03.scale_threshold_of_subset"}],"representation":"任意单调尺度在非空 B⊆A 上不增，并保留严格小于阈值的判断。","dependencies":["CH03-D06"]},
+    {"id":"CH03-P17-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.annihilationRadius_domain_antitone"}],"representation":"固定基点时，缩小评估域使点态半径不减。","dependencies":["CH03-D04"]},
+    {"id":"CH03-P17-03","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.uniformRadius_domain_antitone"}],"representation":"同时缩小评估域和取 inf 的基点集合后，统一半径不减。","dependencies":["CH03-D04","CH03-D05","CH03-P17-02"]},
+    {"id":"CH03-P17-04","status":"complete","declarations":[{"file":"Ch03/Floor.lean","name":"OET.Ch03.diameter_reverse_scale_fails"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.diameter_pair"}],"representation":"实线上 B={0}、A={0,1}，直径分别为0和1，在阈值1/2下否定反向尺度判断。","dependencies":["CH03-D06"]},
+    {"id":"CH03-P18-01","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.output_zero_of_dist_lt_uniformRadius"}],"representation":"U 内点对输入距离严格小于统一半径时输出零距。","dependencies":["CH03-D04","CH03-D05","CH03-P14-02"]},
+    {"id":"CH03-P18-02","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.dist_ge_uniformRadius_of_output_pos"}],"representation":"输出正分离时输入距离至少为统一半径。","dependencies":["CH03-D04","CH03-D05","CH03-P18-01"]},
+    {"id":"CH03-P18-03","status":"complete","declarations":[{"file":"Ch03/Radius.lean","name":"OET.Ch03.separation_witness_of_uniformRadius_lt"}],"representation":"对每个有限正 α>统一半径构造 x,y 和有限正 ε；输出距离∞时取 ε=1，否则可取输出距离自身。","dependencies":["CH03-D04","CH03-D05"]},
+    {"id":"CH03-P19-01","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.ball_subset_fib_of_uniformRadius_ge"}],"representation":"统一半径至少 τN 时，每个中心的开球交 A 包含于对应纤维。","dependencies":["CH03-D02","CH03-D04","CH03-D05","CH03-P18-01"]},
+    {"id":"CH03-P19-02","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.covering_number_image_le_of_uniformRadius_ge"}],"representation":"对任意 B⊆A 将每个输入内部中心集映为 S.image f，证明输出内部覆盖及基数不增；iInf 论证涵盖空集和无有限覆盖。","dependencies":["CH03-D07","CH03-P19-01"]},
+    {"id":"CH03-P19-03","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.metric_entropy_image_le_of_uniformRadius_ge"},{"file":"Ch03/Coverage.lean","name":"OET.Ch03.log2_ereal_monotone"}],"representation":"由覆盖数不等式和 log2_ereal 单调性推出熵不等式，B 非空条件不是证明所需。","dependencies":["CH03-D07","CH03-P19-02"]},
+    {"id":"CH03-P20-01","status":"complete","declarations":[{"file":"Ch03/Step.lean","name":"OET.Ch03.step_pointwise_positive_not_uniform_covering"},{"file":"Ch03/Step.lean","name":"OET.Ch03.step_two_point_output_covering"}],"representation":"对任意有限正 τ 取 a=min(1,τ/4)，得到 0<a≤1、2a<τ；同一阶跃 U 内二点 B 的输入覆盖数为1而输出在1/2尺度为2。","dependencies":["CH03-D07","CH03-P10-01","CH03-P10-02","CH03-P10-03"]},
+    {"id":"CH03-P21-01","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.uniformRadius_ge_iff_output_zero_of_diam_lt"}],"representation":"在 diam(A)<τσ≤τN 的精确前提下证明统一半径≥τN iff 所有输出点对零距的两个方向。","dependencies":["CH03-D01","CH03-D04","CH03-D05","CH03-D06","CH03-P18-01","CH03-P11-02"]},
+    {"id":"CH03-P21-02","status":"complete","declarations":[{"file":"Ch03/Coverage.lean","name":"OET.Ch03.covering_number_image_eq_one_of_const"}],"representation":"A 非空且整体输出零距时，任选像点作单中心并证明任意正 ε 下输出覆盖数恰为1。","dependencies":["CH03-D07","CH03-P21-01"]},
+    {"id":"CH03-P22-01","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.finite_entropy_data"},{"file":"Ch03/Entropy.lean","name":"OET.Ch03.entropyDelta_finite"},{"file":"Ch03/Entropy.lean","name":"OET.Ch03.covering_number_lt_top_of_finite"}],"representation":"非空有限 U 以自身作内覆盖；输入与像集覆盖数均正有限，两个熵均为实数嵌入，且熵差 Admissible。","dependencies":["CH03-D07","CH03-D08"]},
+    {"id":"CH03-P23-01","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.constComponent_entropyDelta"}],"representation":"常值分量输出覆盖数1、熵0，熵差等于输入熵；未要求输入熵有限。","dependencies":["CH03-D01","CH03-D07","CH03-D08","CH03-P21-02"]},
+    {"id":"CH03-P23-02","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.idComponent_covering_entropy_eq"},{"file":"Ch03/Entropy.lean","name":"OET.Ch03.covering_number_image_le_of_isometry"},{"file":"Ch03/Entropy.lean","name":"OET.Ch03.covering_number_le_image_of_isometry"}],"representation":"恒等分量前向映中心、反向为输出中心选代表，得到覆盖数和熵相等。","dependencies":["CH03-D01","CH03-D07","CH03-P01-03"]},
+    {"id":"CH03-P23-03","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.idComponent_entropyDelta_eq_zero"}],"representation":"仅在 EntropyDeltaAdmissible 下将相等有限/非底熵相减为0，不定义∞−∞。","dependencies":["CH03-D07","CH03-D08","CH03-P23-02"]},
+    {"id":"CH03-P24-01","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.covering_number_image_le_of_scalar_lip"}],"representation":"有限正 L 将每个 ε/L 输入内覆盖推到 ε 输出内覆盖，像中心基数不增。","dependencies":["CH03-D07"]},
+    {"id":"CH03-P24-02","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.entropyDelta_ge_of_scalar_lip"}],"representation":"输入全有界给两端及中间精度有限实熵，并由覆盖数不等式证明原文熵差下界。","dependencies":["CH03-D07","CH03-D08","CH03-P24-01"]},
+    {"id":"CH03-P25-01","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.covering_number_le_image_of_colip"}],"representation":"正有限 co-Lip 单条目将输出内部中心原像拉成 ε/K 输入内覆盖，证明对应覆盖数下界。","dependencies":["CH03-D07"]},
+    {"id":"CH03-P25-02","status":"complete","declarations":[{"file":"Ch03/Entropy.lean","name":"OET.Ch03.entropyDelta_le_of_colip"}],"representation":"输入全有界保证左端有限；输出熵可为∞，此时差为−∞；其余情形化为实数减法并得到原文上界。","dependencies":["CH03-D07","CH03-D08","CH03-P25-01"]},
+    {"id":"CH03-P26-01","status":"complete","declarations":[{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.absReadDist"},{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.absReadDist_extended"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.affineOp"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.affine_fibre_and_const"}],"representation":"验证绝对值读数伪度量和 x↦2x−1 算子；φ 在 U={0,1} 的目标纤维为 U，且该分量为常值。","dependencies":["CH03-D01","CH03-D02"]},
+    {"id":"CH03-P26-02","status":"complete","declarations":[{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.affine_squared_fibre"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.affine_squared_active"}],"representation":"精确保留同一 U，φ² 在 φ²(0) 的纤维为 {0}，且该分量为有效。","dependencies":["CH03-D01","CH03-D02","CH03-P26-01"]},
+    {"id":"CH03-P26-03","status":"complete","declarations":[{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.pointwise_constant_self_compose"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.pointwise_constant_self_compose_domain"}],"representation":"点值常算子自复合在 U 上仍逐点相等；若再次像为⊥则 U 不在复合定义域内，若提供定义域包含则归入常值分量。","dependencies":["CH03-D01","CH03-P26-01"]},
+    {"id":"CH03-P27-01","status":"complete","declarations":[{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.no_input_distance_in_zero_radius"}],"representation":"正 co-Lip 通道与点态零化判据排除 (0,rN) 内输入距离；K 无需有限。","dependencies":["CH03-D04","CH03-P14-02"]},
+    {"id":"CH03-P27-02","status":"complete","declarations":[{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.input_distance_zero_or_ge_uniform"}],"representation":"统一正半径下所有输入点对距离满足为0或至少统一半径的二择。","dependencies":["CH03-D04","CH03-D05","CH03-P18-01"]},
+    {"id":"CH03-P28-01","status":"complete","declarations":[{"file":"Ch03/ExamplesBase.lean","name":"OET.Ch03.absReadDist_extended"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.realId"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.translateOp"},{"file":"Ch03/ExercisesBasic.lean","name":"OET.Ch03.translate_fibre_partition"}],"representation":"完整列出恒等和平移在 U={-3,-2,0,2} 上的全部纤维，含重复目标的相同纤维。","dependencies":["CH03-D02"]},
+    {"id":"CH03-P28-02","status":"complete","declarations":[{"file":"Ch03/TranslationCovering.lean","name":"OET.Ch03.translate_covering_entropy"}],"representation":"在 ε=3/2 精确证明输入覆盖数2、平移像覆盖数1、熵差1，并用显式中心和单中心反证给上下界。","dependencies":["CH03-D07","CH03-D08","CH03-P28-01"]},
+    {"id":"CH03-P29-01","status":"complete","declarations":[{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain1"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_computations"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_types"}],"representation":"D=[0,1/2]：直径 ofReal(1/2)，统一半径∞，阈值类型(1,1)。","dependencies":["CH03-D04","CH03-D05","CH03-D06"]},
+    {"id":"CH03-P29-02","status":"complete","declarations":[{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain2"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain2_uniform_zero"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_computations"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_types"}],"representation":"D=[9/10,11/10]：直径 ofReal(1/5)，统一半径0，类型(1,0)。","dependencies":["CH03-D04","CH03-D05","CH03-D06"]},
+    {"id":"CH03-P29-03","status":"complete","declarations":[{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain3"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain3_uniform_two"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_computations"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_types"}],"representation":"D={0,2}：直径2，统一半径2，类型(0,1)。","dependencies":["CH03-D04","CH03-D05","CH03-D06"]},
+    {"id":"CH03-P29-04","status":"complete","declarations":[{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain4"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain4_uniform_zero"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_computations"},{"file":"Ch03/Floor.lean","name":"OET.Ch03.floor_threshold_types"}],"representation":"D=[0,2]：直径2，统一半径0，类型(0,0)。","dependencies":["CH03-D04","CH03-D05","CH03-D06"]},
+    {"id":"CH03-P29-05","status":"complete","declarations":[{"file":"Ch03/Floor.lean","name":"OET.Ch03.floorDomain3_counterexample"}],"representation":"使用(i)的 {0,2}：统一半径2≥1，但 floor(0),floor(2) 的通常距离非零，否定无直径条件的整体零化蕴含。","dependencies":["CH03-D04","CH03-D05","CH03-P29-03"]},
+    {"id":"CH03-P30-01","status":"complete","declarations":[{"file":"Ch03/Reorder.lean","name":"OET.Ch03.fourPoint_covering"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.fourDist_ne_lower"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.three_halves_not_internal_center"}],"representation":"完整证明四点集 N(ε)=4（0<ε≤1）、2（1<ε≤2）、1（ε>2），并证明3/2不是内部中心。","dependencies":["CH03-D07"]},
+    {"id":"CH03-P30-02","status":"complete","declarations":[{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorderF"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorderG"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorder_images"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorder_image_covering"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorder_entropyDelta_zero"}],"representation":"f,g 的像集均为原四点集；各有限正精度覆盖数相同，两个映射熵差均为0。","dependencies":["CH03-D07","CH03-D08","CH03-P30-01"]},
+    {"id":"CH03-P30-03","status":"complete","declarations":[{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorderF_optimal_lip"},{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorderG_optimal_lip"}],"representation":"分别证明 f 的1-Lip上界及任意常数≥1，g 的3-Lip上界及任意常数≥3，故最优常数为1和3。","dependencies":["CH03-P30-01"]},
+    {"id":"CH03-P30-04","status":"complete","declarations":[{"file":"Ch03/Reorder.lean","name":"OET.Ch03.reorder_bounds_at_seven_quarters"}],"representation":"在 ε=7/4 代入一般上界：f 的界与真实值均2；g 的界为4而真实值2，并分别列出不等式。","dependencies":["CH03-D07","CH03-P24-01","CH03-P30-01","CH03-P30-02","CH03-P30-03"]}
+  ]
+}
+```

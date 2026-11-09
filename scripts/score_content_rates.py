@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.content_rates import project_rates, validate_review, verify_sources
 from math_gauge.goal_attainment import goal_contract, validate_goal_review
 from math_gauge.scoring import score_content_rates
-from math_gauge.records import selected_cli_records
+from math_gauge.records import selected_cli_records, selected_paper_records
 
 
 def sha(path):
@@ -23,7 +23,7 @@ def run(private_root, *, public_root=ROOT, write=False, version='0.2.0'):
     policy_path = public / 'protocol/scoring-policy.json'
     policy = json.loads(policy_path.read_bytes())
     contracts, products, summaries, goals_contract = {}, [], [], None
-    for model, folder in selected_cli_records(public):
+    for model, folder in selected_cli_records(public) + selected_paper_records(public):
         relative = folder.relative_to(public)
         public_folder, private_folder = public / relative, private / relative
         review_path = private_folder / 'content-rate-review.json'
@@ -84,9 +84,9 @@ def run(private_root, *, public_root=ROOT, write=False, version='0.2.0'):
     # Resolve and validate every source before changing either repository's outputs.
     for path, value in products:
         raw = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False, indent=2) + '\n'
-        if write:
+        if write and (not path.is_file() or path.read_text() != raw):
             path.write_text(raw)
-        elif not path.is_file() or path.read_text() != raw:
+        elif not write and (not path.is_file() or path.read_text() != raw):
             raise ValueError('Saved content rates differ from source-bound recomputation')
     return {'status': 'passed', 'version': version, 'candidate_calls': 0,
             'models': summaries, 'written': write}

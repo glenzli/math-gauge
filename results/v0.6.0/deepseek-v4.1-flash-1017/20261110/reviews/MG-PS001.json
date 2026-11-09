@@ -1,0 +1,172 @@
+{
+  "case_id": "MG-PS001",
+  "category": "written-argument",
+  "visibility": "public",
+  "bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/task.md",
+      "sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+      "bytes": 1012
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/rubric.json",
+      "sha256": "390aa44a16523d40435f5e3b51f982a3268e2ead23a9ad6b939623c9adaa6186",
+      "bytes": 543
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/reference.md",
+      "sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017",
+      "bytes": 7711
+    },
+    "contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/contract.json",
+      "sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+      "bytes": 4155
+    },
+    "answer": {
+      "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+      "sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200",
+      "bytes": 12973
+    },
+    "diagnostic-rubric.json": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/diagnostic-rubric.json",
+      "sha256": "50d0d16669f42a1b3318c8746f7839e8cbdf26160e81750f9063c34bf9a1dd4f",
+      "bytes": 5121
+    },
+    "rubric.md": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-PS001/rubric.md",
+      "sha256": "ecf07d9b7d980d0c13ee74f6fdda2ff50960e8f1b30b0a97aad905fd45dc7f60",
+      "bytes": 2488
+    }
+  },
+  "criteria": [
+    {
+      "id": "K1",
+      "earned": 5,
+      "max": 5,
+      "reason": "Correctly uses nonnegative Cesaro averages, zero-distance equivalence and induced seminorm throughout. The frozen rubric allows correct direct use rather than mechanical pseudometric verification.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 1,
+          "line_end": 16,
+          "text": "令 \\(\\|x\\|_\\infty=\\sup_{j\\ge1}|x_j|\\)。先指出\n\\[\nd(x,y)=0\\iff \\frac1N\\sum_{j=1}^N|x_j-y_j|\\xrightarrow[N\\to\\infty]{}0.\n\\]\n这是因为被求和的项非负。\n\n---\n\n## 一、\\(P_f\\) 何时诱导 \\(X\\) 上的映射\n\n### 引理 1\n\\(P_f\\) 诱导出良定义的映射 \\(T_f([x])=[P_fx]\\) 当且仅当\n\\[\nf(n)=O(n)\\qquad(n\\to\\infty).\n\\]\n由于 \\(f\\) 严格递增，自动有 \\(f(n)\\ge n\\)。",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 95,
+          "line_end": 113,
+          "text": "取 \\(z\\in E\\)，令 \\(a_j=|z_j|\\)，\\(M=\\|z\\|_\\infty\\)，并令\n\\[\n\\delta=d(z,0)=\\limsup_{m\\to\\infty}\\frac1m\\sum_{j=1}^m a_j.\n\\]\n任给 \\(\\varepsilon>0\\)。当 \\(m\\) 足够大时，\n\\[\n\\sum_{j=1}^m a_j\\le(\\delta+\\varepsilon)m.\n\\]\n又当 \\(N\\) 足够大时 \\(f(N)\\le(\\Lambda(f)+\\varepsilon)N\\)。于是\n\\[\n\\sum_{k=1}^N a_{f(k)}\n\\le \\sum_{j=1}^{f(N)}a_j\n\\le(\\delta+\\varepsilon)f(N)\n\\le(\\delta+\\varepsilon)(\\Lambda(f)+\\varepsilon)N.\n\\]\n故\n\\[\nd(P_fz,0)\\le \\Lambda(f)\\,d(z,0).\n\\]",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        }
+      ]
+    },
+    {
+      "id": "K2",
+      "earned": 20,
+      "max": 20,
+      "reason": "Exactly f(n)=O(n). Universal sparse bad-block construction for every superlinear limsup f gives density-zero A but positive-density preimage; bounded-growth sufficiency is valid.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 18,
+          "line_end": 81,
+          "text": "#### 必要性\n假设 \\(\\limsup_{n\\to\\infty}f(n)/n=+\\infty\\)。选取严格递增的整数 \\(n_k\\)，使得\n\\[\nn_k>2n_{k-1},\\qquad \nn_k>k\\sum_{j<k}(n_j+1),\\qquad \n\\frac{f(n_k)}{n_k}>k.\n\\]\n令\n\\[\nB=\\bigcup_{k=1}^\\infty [n_k,2n_k]\\cap\\mathbb N,\n\\qquad A=f(B).\n\\]\n在 \\(N=2n_k\\) 处，\n\\[\n|B\\cap[1,N]|\\ge n_k+1,\n\\]\n故 \\(B\\) 有正的上密度，例如 \\(\\overline d(B)\\ge1/2>0\\)。\n\n另一方面，若\n\\[\nf(n_k)\\le m<f(n_{k+1}),\n\\]\n则所有满足 \\(f(j)\\le m\\) 的 \\(j\\) 必满足 \\(j<n_{k+1}\\)。由于 \\(n_{k+1}>2n_k\\)，这些 \\(j\\) 至多落在 \\(B\\) 的前 \\(k\\) 个区间中。因此\n\\[\n|A\\cap[1,m]|\n\\le \\sum_{j=1}^k(n_j+1)\n\\le 2n_k.\n\\]\n又 \\(m\\ge f(n_k)>kn_k\\)，所以\n\\[\n\\frac{|A\\cap[1,m]|}{m}\\le \\frac2k\\to0.\n\\]\n于是 \\(A\\) 有上密度 \\(0\\)，即 \\(\\overline d(A)=0\\)。\n\n取 \\(z={\\bf1}_A\\)。则 \\(d(z,0)=0\\)，即 \\(z\\sim0\\)。但\n\\[\nP_fz={\\bf1}_{f^{-1}(A)}={\\bf1}_B,\n\\]\n而 \\(d(P_fz,0)=\\overline d(B)>0\\)。故 \\(P_f\\) 不保持等价关系，不能诱导 \\(X\\) 上的映射。\n\n#### 充分性\n设存在 \\(C>0\\) 使 \\(f(n)\\le Cn\\)。若 \\(z\\sim0\\)，令 \\(a_j=|z_j|\\)，\\(M=\\|z\\|_\\infty\\)。对任意 \\(\\varepsilon>0\\)，集合\n\\[\nE_\\varepsilon=\\{j:a_j>\\varepsilon\\}\n\\]\n有密度 \\(0\\)，因为\n\\[\n|E_\\varepsilon\\cap[1,N]|\n\\le \\frac1\\varepsilon\\sum_{j=1}^N a_j=o(N).\n\\]\n于是\n\\[\n\\begin{aligned}\n\\frac1N\\sum_{k=1}^N a_{f(k)}\n&\\le \\varepsilon+\nM\\frac{|E_\\varepsilon\\cap[1,f(N)]|}{N}\\\\\n&\\le \\varepsilon+\nM\\frac{|E_\\varepsilon\\cap[1,CN]|}{N}\n\\to\\varepsilon.\n\\end{aligned}\n\\]\n令 \\(\\varepsilon\\downarrow0\\)，得 \\(d(P_fz,0)=0\\)。故 \\(P_f\\) 保持等价关系，诱导映射良定义。\n\n因此第 1 问允许的全部 \\(f\\) 正是满足 \\(f(n)=O(n)\\) 的严格递增函数。",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        }
+      ]
+    },
+    {
+      "id": "K3",
+      "earned": 20,
+      "max": 20,
+      "reason": "Correct limsup value, epsilon upper bound and universal sparse-block sharpness with delta tending0; never assumes f(n)/n converges.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 94,
+          "line_end": 181,
+          "text": "#### 上界\n取 \\(z\\in E\\)，令 \\(a_j=|z_j|\\)，\\(M=\\|z\\|_\\infty\\)，并令\n\\[\n\\delta=d(z,0)=\\limsup_{m\\to\\infty}\\frac1m\\sum_{j=1}^m a_j.\n\\]\n任给 \\(\\varepsilon>0\\)。当 \\(m\\) 足够大时，\n\\[\n\\sum_{j=1}^m a_j\\le(\\delta+\\varepsilon)m.\n\\]\n又当 \\(N\\) 足够大时 \\(f(N)\\le(\\Lambda(f)+\\varepsilon)N\\)。于是\n\\[\n\\sum_{k=1}^N a_{f(k)}\n\\le \\sum_{j=1}^{f(N)}a_j\n\\le(\\delta+\\varepsilon)f(N)\n\\le(\\delta+\\varepsilon)(\\Lambda(f)+\\varepsilon)N.\n\\]\n故\n\\[\nd(P_fz,0)\\le \\Lambda(f)\\,d(z,0).\n\\]\n所以 \\(T_f\\) 是 Lipschitz 连续的，且\n\\[\n\\operatorname{Lip}(T_f)\\le \\Lambda(f).\n\\]\n\n#### 下界\n任取 \\(0<\\lambda'<\\Lambda(f)\\) 和 \\(0<\\delta<1\\)。因为\n\\[\n\\limsup_{n\\to\\infty}\\frac{f(n)}n=\\Lambda(f),\n\\]\n可以递归选取整数 \\(n_j\\to\\infty\\)，满足\n\\[\n\\frac{f(n_j)}{n_j}\\ge\\lambda',\\qquad\nn_{j+1}>(1+\\delta)n_j,\n\\]\n并且\n\\[\n\\sum_{i<j}\\bigl(\\lfloor\\delta n_i\\rfloor+1\\bigr)\\le \\delta^2n_j.\n\\]\n令\n\\[\nh_j=\\lfloor\\delta n_j\\rfloor,\\qquad\nB=\\bigcup_{j=1}^\\infty [n_j,n_j+h_j]\\cap\\mathbb N,\n\\qquad A=f(B).\n\\]\n在 \\(N_j=(1+\\delta)n_j\\) 处，\n\\[\n|B\\cap[1,N_j]|\\ge h_j+1,\n\\]\n故\n\\[\n\\overline d(B)\n\\ge \\frac{\\delta}{1+\\delta}.\n\\]\n另一方面，若 \\(f(n_j)\\le m<f(n_{j+1})\\)，则\n\\[\n|A\\cap[1,m]|\n\\le\\sum_{i\\le j}(h_i+1)\n\\le(\\delta+\\delta^2)n_j+1.\n\\]\n由于 \\(m\\ge f(n_j)\\ge\\lambda'n_j\\)，得到\n\\[\n\\overline d(A)\n\\le \\frac{\\delta(1+\\delta)}{\\lambda'}.\n\\]\n又因 \\(f(n_j+h_j)\\le C(n_j+h_j)\\)，在\n\\[\nm=f(n_j+h_j)\n\\]\n处，\\(A\\cap[1,m]\\) 至少含有 \\(h_j+1\\) 个点，所以 \\(\\overline d(A)>0\\)。\n\n取 \\(z={\\bf1}_A\\)，则 \\(P_fz={\\bf1}_B\\)，从而\n\\[\n\\frac{d(P_fz,0)}{d(z,0)}\n=\n\\frac{\\overline d(B)}{\\overline d(A)}\n\\ge\n\\frac{\\lambda'}{(1+\\delta)^2}.\n\\]\n先令 \\(\\delta\\downarrow0\\)，再令 \\(\\lambda'\\uparrow\\Lambda(f)\\)，得到\n\\[\n\\operatorname{Lip}(T_f)\\ge\\Lambda(f).\n\\]\n因此\n\\[\n\\boxed{\\operatorname{Lip}(T_f)=\\Lambda(f)\n=\\limsup_{n\\to\\infty}\\frac{f(n)}n.}\n\\]",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        }
+      ]
+    },
+    {
+      "id": "K4",
+      "earned": 15,
+      "max": 15,
+      "reason": "Surjectivity via bounded extension of sampled values; complement gives noninjectivity whenever limsup>1; density-one sampling is an isometry when f(n)/n->1; continuity follows from the proven finite Lipschitz bound.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 186,
+          "line_end": 249,
+          "text": "### 2. 满射性\n\n对任意 \\(y\\in E\\)，因为 \\(f\\) 是单射，可以定义\n\\[\nx_{f(j)}=y_j\\quad(j\\ge1),\n\\]\n而在 \\(n\\notin f(\\mathbb N)\\) 处令 \\(x_n=0\\)。则 \\(x\\in E\\) 且\n\\[\nP_fx=y.\n\\]\n故\n\\[\n\\boxed{T_f\\text{ 总是满射}.}\n\\]\n\n---\n\n### 3. 单射性\n\n断言\n\\[\n\\boxed{T_f\\text{ 是单射}\\iff \\lim_{n\\to\\infty}\\frac{f(n)}n=1\n\\iff \\Lambda(f)=1.}\n\\]\n\n若 \\(\\Lambda(f)>1\\)，取 \\(\\varepsilon>0\\) 及 \\(n_j\\to\\infty\\) 使\n\\[\n\\frac{f(n_j)}{n_j}\\ge1+\\varepsilon.\n\\]\n令\n\\[\nA=\\mathbb N\\setminus f(\\mathbb N).\n\\]\n在 \\(m=f(n_j)\\) 处，\\(f(1),\\dots,f(n_j)\\) 都 \\(\\le m\\)，所以\n\\[\n|A\\cap[1,m]|\\ge m-n_j.\n\\]\n于是\n\\[\n\\overline d(A)\n\\ge1-\\frac{n_j}{f(n_j)}\n\\ge \\frac{\\varepsilon}{1+\\varepsilon}>0.\n\\]\n取 \\(z={\\bf1}_A\\)。则 \\(P_fz=0\\)，但 \\(z\\not\\sim0\\)。故 \\(T_f\\) 不单射。\n\n反之，若 \\(f(n)/n\\to1\\)，对任意有界序列 \\(z\\)，令 \\(a_j=|z_j|\\)，并令\n\\[\nS_N=\\sum_{k=1}^N a_{f(k)},\\qquad\nD_m=\\frac1m\\sum_{j=1}^m a_j.\n\\]\n前 \\(N\\) 个采样点 \\(f(1),\\dots,f(N)\\) 是 \\([1,f(N)]\\) 中的 \\(N\\) 个不同点，故其中缺失的点数至多 \\(f(N)-N\\)。于是\n\\[\n\\bigl|S_N-f(N)D_{f(N)}\\bigr|\n\\le \\|z\\|_\\infty (f(N)-N).\n\\]\n又 \\(f(N)/N\\to1\\)，且 \\(f(N+1)-f(N)=o(N)\\)，所以\n\\[\n\\limsup_{N\\to\\infty}D_{f(N)}=\\limsup_{m\\to\\infty}D_m=d(z,0).\n\\]\n故\n\\[\nd(P_fz,0)=d(z,0).\n\\]\n于是 \\(T_f\\) 保持距离，当然单射。证毕。",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        }
+      ]
+    },
+    {
+      "id": "K5",
+      "earned": 15,
+      "max": 15,
+      "reason": "Actual iterated sampling and exact L_k; finite submultiplicative sequence and Fekete yield the root limit and1<=R<=L1, without completeness or Banach spectral assumptions.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 255,
+          "line_end": 320,
+          "text": "记 \\(f^k=f\\circ\\cdots\\circ f\\)（\\(k\\) 次）。显然\n\\[\nP_f^k=P_{f^k},\n\\]\n因此\n\\[\nT_f^k=T_{f^k}.\n\\]\n由第一部分的公式，\n\\[\n\\boxed{L_k:=\\operatorname{Lip}(T_f^k)\n=\\limsup_{n\\to\\infty}\\frac{f^k(n)}n.}\n\\]\n\n### 1. \\(R_f\\) 的存在性\n\n记 \\(a_k=L_k\\)。任取 \\(\\varepsilon>0\\)。因为\n\\[\na_k=\\limsup_{n\\to\\infty}\\frac{f^k(n)}n,\n\\]\n当 \\(n\\) 足够大时\n\\[\n\\frac{f^k(n)}n\\le a_k+\\varepsilon.\n\\]\n同理，当 \\(m\\) 足够大时\n\\[\n\\frac{f^j(m)}m\\le a_j+\\varepsilon.\n\\]\n而 \\(f^k(n)\\to\\infty\\)，故\n\\[\n\\begin{aligned}\n\\frac{f^{j+k}(n)}n\n&=\n\\frac{f^j(f^k(n))}{f^k(n)}\n\\frac{f^k(n)}n\\\\\n&\\le(a_j+\\varepsilon)(a_k+\\varepsilon)\n\\end{aligned}\n\\]\n对足够大的 \\(n\\) 成立。令 \\(n\\to\\infty\\)，再令 \\(\\varepsilon\\downarrow0\\)，得到\n\\[\na_{j+k}\\le a_ja_k.\n\\]\n于是 \\(\\log a_k\\) 是次可加序列：\n\\[\n\\log a_{j+k}\\le\\log a_j+\\log a_k.\n\\]\n由 Fekete 次可加引理，\n\\[\n\\lim_{k\\to\\infty}\\frac{\\log a_k}{k}\n\\]\n存在，从而\n\\[\n\\boxed{R_f:=\\lim_{k\\to\\infty}L_k^{1/k}\\text{ 存在}.}\n\\]\n\n此外，因 \\(f^k(n)\\ge n\\)，有 \\(L_k\\ge1\\)，故 \\(R_f\\ge1\\)。又由 \\(a_{j+k}\\le a_ja_k\\) 可归纳得\n\\[\nL_k=a_k\\le a_1^k=L_1^k,\n\\]\n于是\n\\[\nR_f\\le L_1.\n\\]\n所以必有\n\\[\n\\boxed{1\\le R_f\\le L_1<\\infty.}",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        }
+      ]
+    },
+    {
+      "id": "K6",
+      "earned": 25,
+      "max": 25,
+      "reason": "Covers all1<=R<=L<infinity. The interior construction is strictly increasing, has limsup L and lower rate R; bounded amplification per sparse episode plus O(sqrt(k)) episodes gives the uniform-in-start upper root bound. The R=1 block-translation construction gives polynomial L_k and the R=L cases include identity. These estimates are sufficient without an explicit formula for every L_k.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 338,
+          "line_end": 364,
+          "text": "### 情形 A：\\(R=L\\)\n\n若 \\(L=1\\)，取 \\(f(n)=n\\)。\n\n若 \\(L>1\\)，取\n\\[\nf(n)=\\lfloor Ln\\rfloor.\n\\]\n由于 \\(L>1\\)，\\(f\\) 严格递增，且 \\(f(n)\\le Ln\\)，故允许。并且\n\\[\n\\frac{f(n)}n\\to L,\n\\]\n所以 \\(L_1=L\\)。又\n\\[\nf(n)=Ln+O(1),\n\\]\n逐步迭代得\n\\[\nf^k(n)=L^kn+O_k(1).\n\\]\n于是\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^k(n)}n=L^k,\n\\qquad\nR_f=\\lim_{k\\to\\infty}(L^k)^{1/k}=L.\n\\]\n故 \\((L_1,R_f)=(L,L)\\) 可实现。",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 368,
+          "line_end": 504,
+          "text": "### 情形 B：\\(1<R<L\\)\n\n记\n\\[\nr=R,\\qquad \\ell=L,\\qquad 1<r<\\ell.\n\\]\n令\n\\[\n\\alpha=\\frac{\\ell-1}{r-1}>1.\n\\]\n选取严格递增的整数 \\(N_k\\)，并令\n\\[\nd_k=\\lfloor(\\ell-1)N_k\\rfloor,\\qquad\nM_k=\\left\\lceil\\frac{d_k+1}{r-1}\\right\\rceil,\n\\]\n使得\n\\[\nN_{k+1}>M_k+1,\\qquad\nN_{k+1}>r^{k+3}(M_k+1)\n\\]\n对所有 \\(k\\) 成立，且 \\(N_1\\) 足够大。注意\n\\[\n\\frac{d_k}{N_k}\\to\\ell-1,\\qquad\n\\frac{M_k}{N_k}\\to\\alpha.\n\\]\n\n定义\n\\[\nf(n)=\n\\begin{cases}\nn+d_k,&N_k\\le n\\le M_k,\\\\[2mm]\n\\lfloor rn\\rfloor,& n\\notin\\bigcup_{j=1}^\\infty[N_j,M_j].\n\\end{cases}\n\\]\n可以检查 \\(f\\) 严格递增：在区间 \\([N_k,M_k]\\) 内斜率为 \\(1\\)；在外部 \\(\\lfloor rn\\rfloor\\) 严格递增；在端点处，因为 \\(N_k\\) 很大且\n\\[\n\\frac{d_k}{N_k}\\to\\ell-1>r-1,\n\\]\n有\n\\[\nN_k+d_k>\\lfloor r(N_k-1)\\rfloor.\n\\]\n又由 \\(M_k\\ge (d_k+1)/(r-1)\\)，\n\\[\n\\lfloor r(M_k+1)\\rfloor\n\\ge r(M_k+1)-1\n>M_k+d_k,\n\\]\n所以右端点也严格递增。\n\n再者，若 \\(N_k\\le n\\le M_k\\)，则\n\\[\n\\frac{f(n)}n=1+\\frac{d_k}{n}\n\\le1+\\frac{d_k}{N_k}\\to\\ell,\n\\]\n且在 \\(n=N_k\\) 时该比值趋于 \\(\\ell\\)。在区间外\n\\[\n\\frac{f(n)}n\\to r.\n\\]\n故\n\\[\nL_1=\\limsup_{n\\to\\infty}\\frac{f(n)}n=\\ell.\n\\]\n又 \\(d_k\\le(\\ell-1)N_k\\le(\\ell-1)n\\)，故 \\(f(n)\\le\\ell n\\)，所以 \\(f\\) 是允许的。\n\n另一方面，由 \\(M_k\\) 的定义，\n\\[\n(r-1)M_k<d_k+r.\n\\]\n于是对 \\(N_k\\le n\\le M_k\\)，\n\\[\nd_k>(r-1)n-r,\n\\]\n从而\n\\[\nf(n)=n+d_k\\ge rn-r.\n\\]\n在区间外也有\n\\[\nf(n)=\\lfloor rn\\rfloor\\ge rn-1.\n\\]\n故存在常数 \\(C\\) 使\n\\[\nf(n)\\ge rn-C\\qquad(n\\ge1).\n\\]\n迭代可得，对每个固定的 \\(k\\)，\n\\[\nf^k(n)\\ge r^kn-C_k.\n\\]\n因此\n\\[\nL_k=\\limsup_{n\\to\\infty}\\frac{f^k(n)}n\\ge r^k,\n\\]\n从而\n\\[\nR_f\\ge r.\n\\]\n\n下面证明 \\(R_f\\le r\\)。考虑任一轨道\n\\[\nx_{i+1}=f(x_i).\n\\]\n把轨道的一段极大连续项落在 \\(\\bigcup_j[N_j,M_j]\\) 中者称为一个 “episode”。\n\n若一个 episode 发生在 \\([N_j,M_j]\\)，其进入值 \\(y\\ge N_j\\)，在离开时的值不超过\n\\[\nr(M_j+1).\n\\]\n由 \\(M_j/N_j\\to\\alpha\\)，存在常数 \\(K\\)，使每个 episode 至多把当前值乘以 \\(K\\)。而在区间外，\n\\[\nf(x)=\\lfloor rx\\rfloor\\le rx,\n\\]\n所以每一步至多乘以 \\(r\\)。\n\n设一个 episode 在第 \\(j\\) 个区间结束。此后在进入下一个区间之前，每一步至多乘以 \\(r\\)。由\n\\[\nN_{j+1}>r^{j+3}(M_j+1)\n\\]\n可知，在 \\(j+1\\) 步内不可能到达 \\(N_{j+1}\\)，故两次 episode 之间至少有 \\(j+2\\) 个区间外步骤。于是若在 \\(k\\) 步内发生了 \\(E\\) 个 episode，则\n\\[\n1+2+\\cdots+E\\lesssim k,\n\\]\n从而 \\(E=O(\\sqrt k)\\)。因此存在常数 \\(C\\)，使得对一切 \\(x_0\\)，\n\\[\nf^k(x_0)\\le K^{O(\\sqrt k)}r^kx_0.\n\\]\n于是\n\\[\nL_k\\le r^kK^{C\\sqrt k},\n\\qquad\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}\\le r.\n\\]\n结合 \\(R_f\\ge r\\)，得到\n\\[\nR_f=r=R.\n\\]\n故 \\((L_1,R_f)=(L,R)\\) 可实现。",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-PS001/A1/answer.md",
+          "line_start": 508,
+          "line_end": 577,
+          "text": "### 情形 C：\\(R=1<L\\)\n\n记 \\(\\ell=L>1\\)。选取整数 \\(N_k\\to\\infty\\)，满足\n\\[\nN_{k+1}>\\max\\{N_k^3,kN_k^2\\}.\n\\]\n令\n\\[\nd_k=\\lfloor(\\ell-1)N_k\\rfloor,\n\\]\n并定义\n\\[\nf(n)=\n\\begin{cases}\nn,&n<N_1,\\\\\nn+d_k,&N_k\\le n<N_{k+1}.\n\\end{cases}\n\\]\n因为\n\\[\nf(N_{k+1})-f(N_{k+1}-1)\n=1+d_{k+1}-d_k>0,\n\\]\n且在每一块内 \\(f(n+1)-f(n)=1\\)，所以 \\(f\\) 严格递增。\n\n又对 \\(N_k\\le n<N_{k+1}\\)，\n\\[\n\\frac{f(n)}n\n=1+\\frac{d_k}{n}\n\\le1+\\frac{d_k}{N_k}\n\\to\\ell,\n\\]\n且在 \\(n=N_k\\) 时该比值趋于 \\(\\ell\\)。故\n\\[\nL_1=\\limsup_{n\\to\\infty}\\frac{f(n)}n=\\ell.\n\\]\n同时 \\(f(n)\\le\\ell n\\)，所以 \\(f\\) 是允许的。\n\n显然 \\(f(n)\\ge n\\)，故 \\(f^k(n)\\ge n\\)，从而 \\(L_k\\ge1\\)，\\(R_f\\ge1\\)。\n\n下面证明 \\(R_f\\le1\\)。固定 \\(k\\)。当 \\(n\\) 足够大时，\\(n\\) 落在某个块 \\([N_j,N_{j+1})\\) 中。在未离开该块时，\n\\[\nf^t(n)=n+td_j\n\\le n(1+k(\\ell-1))\n\\]\n对 \\(t\\le k\\) 成立。\n\n若在 \\(k\\) 步内进入下一块，则进入时的值至多为\n\\[\nC_kn:=n(1+k(\\ell-1)).\n\\]\n进入下一块后，新的位移为\n\\[\nd_{j+1}\\le(\\ell-1)N_{j+1}\\le(\\ell-1)C_kn.\n\\]\n由于 \\(N_{j+2}>N_{j+1}^3\\)，当 \\(n\\) 足够大时，在剩余的 \\(k\\) 步内不可能再进入下一个块。故至多跨过一个块边界。于是\n\\[\nf^k(n)\\le C'_kn,\n\\]\n其中 \\(C'_k=O(k^2)\\)。因此\n\\[\nL_k\\le C'_k=O(k^2),\n\\qquad\nR_f=\\lim_{k\\to\\infty}L_k^{1/k}\\le1.\n\\]\n结合 \\(R_f\\ge1\\)，得到\n\\[\nR_f=1.\n\\]\n故 \\((L_1,R_f)=(\\ell,1)=(L,1)\\) 可实现。",
+          "source_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+        }
+      ]
+    }
+  ],
+  "raw_max": 100,
+  "strict_pass": true,
+  "findings": [],
+  "reviewer_kind": "ai",
+  "human_status": "pending",
+  "unresolved": [],
+  "raw_points": 100,
+  "positive_completion": {
+    "earned": 100,
+    "max": 100
+  },
+  "summary": "Complete correct solution of both goals. The sparse-ramp interior construction supplies the needed all-parameter root bound and all boundary cases are covered. No substantive false claim found.",
+  "audit_source": {
+    "path": "/private/tmp/math-gauge-ds-grading-20261109/written/written-reviews.json",
+    "sha256": "1ba57c2df38ab9bd85feccf0cd5385f104a44c92936c13ce495cbc9e8692e734",
+    "bytes": 235344
+  }
+}

@@ -176,9 +176,15 @@ def _validate_research_review(contract, entry, record):
     lower, upper, total = 0, 0, sum(row["points"] for row in dimensions)
     for dimension, row in zip(dimensions, rows):
         score = row.get("score")
-        if (score is not None and (type(score) is not int or not 0 <= score <= dimension["points"])
-                or not isinstance(row.get("notes"), str) or not row["notes"].strip()):
-            raise ValueError("Research dimension requires bounded integral credit and specific notes")
+        if score is not None:
+            try:
+                valid_score = type(score) in (int, float) and 0 <= Fraction(str(score)) <= dimension["points"]
+            except (ValueError, ZeroDivisionError):
+                valid_score = False
+            if not valid_score:
+                raise ValueError("Research dimension requires finite bounded credit")
+        if not isinstance(row.get("notes"), str) or not row["notes"].strip():
+            raise ValueError("Research dimension requires specific notes")
         lower += score or 0
         upper += dimension["points"] if score is None else score
     complete = lower == total

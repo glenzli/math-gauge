@@ -1,0 +1,135 @@
+{
+  "schema": "math-gauge.source-bound-paper-review/v1",
+  "case_id": "MG-AR004",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "raw_points": 65,
+  "raw_max": 100,
+  "strict_pass": false,
+  "criteria": [
+    {
+      "id": "global_injectivity",
+      "max": 25,
+      "earned": 25,
+      "reason": "Correctly rejects the arbitrary smooth-integral-Y dense-open injectivity assertion using the legal CH^1/Pic counterexample. The false appended sheaf assertion is separated as F3 and does not invalidate this counterexample."
+    },
+    {
+      "id": "localization_claim",
+      "max": 10,
+      "earned": 0,
+      "reason": "Only says non-finite-generation was unproved, then rejects the true locally-finite-type premise and supplies an actually-open example. It does not correctly identify/justify the false universal positive-dimensional non-finite-generation premise; its diagnosis is substantively wrong, not just incomplete."
+    },
+    {
+      "id": "actual_closed_points",
+      "max": 15,
+      "earned": 0,
+      "reason": "Omits that arbitrary Sigma can contain comparable primes and need not be the actual closed-point set of S. No reduction to inclusion-maximal primes precedes induction. This omission is not a new claim penalty."
+    },
+    {
+      "id": "target_and_retention",
+      "max": 10,
+      "earned": 10,
+      "reason": "Rejects the submitted S5 proof without asserting eta_S false; explicitly allows the target to hold by a correct theorem. Retains S2 under its hypotheses and the independent S3/S4/S6 arguments. Review does not require a fresh proof of the entire original theorem."
+    },
+    {
+      "id": "legal_counterexample_dependency",
+      "max": 15,
+      "earned": 15,
+      "reason": "CH^1=Pic over C has HI and transfers. P1-to-A1 restriction is noninjective. Correctly traces global injectivity to separation, then eta_T injective, particularly the right-hand map on S1 x_S S2 in S2."
+    },
+    {
+      "id": "localization_scope",
+      "max": 10,
+      "earned": 0,
+      "reason": "Proposed one-dimensional two-closed-point example is actually open. Original topological paragraph also had a distinct additional dimension-at-least-two condition, not addressed by this example. No valid scoped localization evidence is supplied."
+    },
+    {
+      "id": "source_hypotheses",
+      "max": 5,
+      "earned": 5,
+      "reason": "Legal independent counterexample establishes the disputed global assertion without dubious theorem numbers. Candidate only marks Artin applicability unchecked and correctly says degree-zero sheafification cannot imply false global injectivity; it imposes no false perfect-field condition on the original target. Frozen rubric accepts independent reasoning and does not require rebuilding all moving geometry."
+    },
+    {
+      "id": "other_stages",
+      "max": 10,
+      "earned": 10,
+      "reason": "Substantive correct checks of finite equalizer/filtered colimit commutation, right-injective S2 chase, S3 intersection cofinality and inverse maps, S4 empty system, and S6 multiply-by-two complex plus eventual elementwise death."
+    }
+  ],
+  "source_response": {
+    "path": "responses/MG-AR004/A1/answer.md",
+    "bytes": 8980,
+    "sha256": "bec6883d1907865ad4be508a3f2eda495697d09d76895701ab3baaae52f3a230"
+  },
+  "original_ai_judgment_sha256": "36997e11fa1d54b3154b87077868e92473d8c53a09dd68d8b2412a2955d1ec0a",
+  "source_claim_judgment_sha256": "cda76ff4a96f3aa903cd1db8698e82d35948f536b93833ff82ec601ec9cc915b",
+  "findings": [
+    {
+      "id": "AR004-F1",
+      "root_cause": "open_immersion_locally_finite_type_denial",
+      "kind": "false_rejection",
+      "severity": "material",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "The supplied answer correctly states that open immersions are locally of finite type. The candidate explicitly rejects that true premise. The actual bad premise is the universal claim that positive-dimensional localizations cannot be finitely generated over their semilocal ring.",
+      "evidence": [
+        {
+          "path": "responses/MG-AR004/A1/answer.md",
+          "sha256": "bec6883d1907865ad4be508a3f2eda495697d09d76895701ab3baaae52f3a230",
+          "byte_start": 2031,
+          "byte_end": 2103,
+          "quote": "“开浸入必须是局部有限型”这一前提本身就是错误的"
+        }
+      ]
+    },
+    {
+      "id": "AR004-F2",
+      "root_cause": "two_closed_point_semilocal_curve_topology",
+      "kind": "false_assertion",
+      "severity": "material",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "The claimed non-open example is actually open. In the intended semilocal ring of A1 at 0 and 1, each generic-point-plus-one-closed-point subset is a principal open.",
+      "evidence": [
+        {
+          "path": "responses/MG-AR004/A1/answer.md",
+          "sha256": "bec6883d1907865ad4be508a3f2eda495697d09d76895701ab3baaae52f3a230",
+          "byte_start": 2306,
+          "byte_end": 2562,
+          "quote": "只有素理想 $(0),(t),(t-1)$，其拓扑为伪有限空间：泛闭点为 $(0)$，两个闭点构成余离散子空间。因此一个两点子集根本不是开集，任一 $S_i$ 的像（泛点连同其中一个闭点）当然不是 $S$ 的开子集。"
+        }
+      ]
+    },
+    {
+      "id": "AR004-F3",
+      "root_cause": "picard_chow_codimension_one_presheaf_is_sheaf",
+      "kind": "false_assertion",
+      "severity": "material",
+      "strict_blocking": true,
+      "core_endorsement": false,
+      "covered_by": "none",
+      "reason": "The ordinary presheaf U -> CH^1(U)=Pic(U) on smooth schemes is neither a Zariski sheaf nor separated. O(1) on P1 is nonzero and restricts to zero on both standard affine opens.",
+      "evidence": [
+        {
+          "path": "responses/MG-AR004/A1/answer.md",
+          "sha256": "bec6883d1907865ad4be508a3f2eda495697d09d76895701ab3baaae52f3a230",
+          "byte_start": 5841,
+          "byte_end": 5977,
+          "quote": "这个例子甚至在 $F=\\operatorname{CH}^1$ 已经是 Zariski 层时就会出现，因此不能把它归咎于层化没有分离性。"
+        }
+      ]
+    }
+  ],
+  "response_kind": "explicitly_delivered_file",
+  "note": "Frozen criterion credit and separately source-bound reliability findings. No candidate call, proof repair, invented terminal receipt or human approval.",
+  "native_final": {
+    "path": "responses/MG-AR004/A1/native-final.md",
+    "bytes": 675,
+    "sha256": "43ec525f8ad804d90d86bd089aded69efa1c70c8cfbbdf51f142ac606eb94a36"
+  },
+  "recovered_file_sha256": "bec6883d1907865ad4be508a3f2eda495697d09d76895701ab3baaae52f3a230",
+  "recovery_evidence_sha256": "83848bb9ca80b86f23524416160fff81b5545f295e09f8cf1ba025bde6bdc28b"
+}

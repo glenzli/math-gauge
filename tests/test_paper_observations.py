@@ -1,5 +1,6 @@
 """Returned-paper evidence stays separate from runtime and native records."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -53,6 +54,161 @@ class PaperObservationTests(unittest.TestCase):
                 if status == 'delivery_failed' else [], attempt_evidence={'path':'operator.json','bytes':2,'sha256':'a'*64})
         row.update(status=status, findings=[], sources=[])
         row.pop('source_response_sha256', None); row.pop('source_review_sha256', None)
+
+    def adoption_fixture(self, folder):
+        data, policies = self.fixture()
+        native, _ = native_fixture.NativeHarnessTests().fixture()
+        review = copy.deepcopy(native['alignment_review'])
+        source_policy = native['alignment_source_policy']
+        artifacts = []
+
+        def artifact(name, value):
+            path = folder / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(value if isinstance(value, str) else json.dumps(value))
+            item = descriptor(folder, path)
+            artifacts.append(item)
+            return item
+
+        policy_source = artifact('legacy/policy.json', source_policy)
+        review['policy_sha256'] = policy_source['sha256']
+        rows, phases, phase_reviews = [], [], []
+        snapshots = [review['baseline']] + [r['snapshot'] for r in review['rounds']]
+        previous = None
+        for index, snapshot in enumerate(snapshots):
+            phase = 'A1' if index == 0 else 'R' + str(index)
+            rid = 'MG-C003:A1' if index == 0 else 'MG-C003:alignment:' + str(index)
+            response = artifact('legacy/' + phase + '/answer.md', 'Original final ' + phase)
+            source = artifact('legacy/' + phase + '/Main.lean', 'Original engineering ' + phase)
+            source_hash = hashlib.sha256(json.dumps({'Main.lean': source['sha256']},
+                sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+            snapshot.update(source_sha256=source_hash, delivery_verified=False)
+            if index:
+                review['rounds'][index - 1]['diagnosis']['source_sha256'] = source_hash
+            alignment = artifact('legacy/' + phase + '/alignment.json', snapshot['obligations'])
+            inventory = artifact('legacy/' + phase + '/inventory.json', {'files': {'Main.lean': source}})
+            row = dict(id=rid, case_id='MG-C003', parent_id=previous, response=response,
+                original_alignment=alignment, observed_snapshot=inventory,
+                evaluation={} if index == 0 else {'diagnosis': review['rounds'][index - 1]['diagnosis']})
+            rows.append(row)
+            phases.append(dict(phase=phase, source_record_id=rid, parent_source_record_id=previous,
+                response=response, original_alignment=alignment, observed_snapshot=inventory,
+                engineering_sources={'Main.lean': source}, source_sha256=source_hash))
+            phase_reviews.append(dict(case_id='MG-C003', slot_id='MG-C003:' + phase,
+                source_sha256=source_hash, original_response_sha256=response['sha256'],
+                compiled_sources={'Main.lean': source['sha256']}, obligations=snapshot['obligations']))
+            previous = rid
+        trajectory = {'state': 'incomplete_stable', 'planned_rounds': 3, 'recorded_rounds': 3}
+        record_source = artifact('legacy/record.json', dict(schema='math-gauge.result-record/v1',
+            model={'requested_label': 'synthetic-model / observed'}, human_review='pending',
+            formal_comparison_eligible=False, trajectory=trajectory, records=rows))
+        review_source = artifact('legacy/alignment-review.json', review)
+        formal_source = artifact('legacy/formalization-review.json', {'cases': [phase_reviews[0]]})
+        phase_source = artifact('legacy/phase-reviews.json', {'cases': phase_reviews})
+        authorization = artifact('private/user-selection.txt', 'Use this original whole trajectory.')
+        adoption = dict(schema=paper.ADOPTION_SCHEMA, version=paper.VERSION, case_id='MG-C003',
+            selection='explicit_user_selected_whole_legacy_trajectory', post_observation=True,
+            user_selected=True, authorization_sha256=authorization['sha256'], source_record=record_source,
+            source_policy=policy_source, source_alignment_review=review_source,
+            source_formalization_review=formal_source, source_phase_reviews=phase_source,
+            phase_sources=phases, trajectory=trajectory)
+        adoption_source = artifact('alignment-adoption.json', adoption)
+        task = next(t for t in data['tasks'] if t['case_id'] == 'MG-C003')
+        task.update(response=phases[0]['response'], points=92, maximum=92)
+        claim = next(c for c in data['claim_review']['cases'] if c['case_id'] == 'MG-C003')
+        claim['source_response_sha256'] = task['response']['sha256']
+        data.update(version=paper.ADOPTED_VERSION, alignment_adoption=adoption,
+            alignment_adoption_source=adoption_source, alignment_review=review,
+            alignment_source_policy=source_policy, sources=artifacts)
+        record = dict(version=paper.ADOPTED_VERSION, model_id='synthetic-model',
+            public_case_ids=sorted(t['case_id'] for t in data['tasks'] if t['visibility'] == 'public'),
+            public_deliveries=[dict(case_id='MG-C003', status='reviewed', response=task['response'])],
+            alignment_adoption=adoption_source, trajectory=trajectory,
+            selfcheck_rounds=[dict(round=n, status='reviewed', response=phases[n]['response'],
+                                   review=review_source) for n in (1, 2, 3)])
+        return data, policies, record
+
+    def test_adopted_whole_trajectory_uses_shared_arithmetic_and_resolves_unknowns(self):
+        from math_gauge.scoring import _alignment_trajectory, strict_alignment_trajectory
+        with tempfile.TemporaryDirectory() as temporary:
+            data, policies, record = self.adoption_fixture(Path(temporary))
+            paper._load_alignment_adoption(Path(temporary), record, data)
+            for mode in paper.MODES:
+                result = self.score(data, policies, mode)
+                expected = _alignment_trajectory(data['alignment_review'], data['alignment_source_policy'],
+                                                 positive_only=mode == 'capability')[0]
+                self.assertEqual(result['alignment_selfcheck'], expected)
+                self.assertEqual(result['strict_alignment_selfcheck'], strict_alignment_trajectory(
+                    data['alignment_review'], data['alignment_source_policy']))
+                self.assertEqual(result['coverage']['source_alignment_rounds'], 3)
+                self.assertIsNotNone(result['metrics']['overall']['exact'])
+                self.assertFalse(result['runtime_evidence_verified'])
+                self.assertFalse(result['strict_alignment_selfcheck']['strict_pass'])
+            data['version'] = paper.VERSION
+            with self.assertRaisesRegex(ValueError, 'Legacy paper'):
+                self.score(data, policies)
+
+    def test_adoption_rejects_mixed_phase_bytes_parents_and_changed_diagnosis(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            data, policies, record = self.adoption_fixture(root)
+            for mutate in (
+                lambda d: d['alignment_adoption']['phase_sources'].pop(),
+                lambda d: d['alignment_adoption']['phase_sources'][2].update(parent_source_record_id='other'),
+                lambda d: d['alignment_adoption']['phase_sources'][1]['engineering_sources']['Main.lean'].update(sha256='f'*64),
+                lambda d: next(t for t in d['tasks'] if t['case_id'] == 'MG-C003').update(points=91),
+            ):
+                changed = copy.deepcopy(data)
+                mutate(changed)
+                with self.assertRaises(ValueError):
+                    self.score(changed, policies)
+            changed = copy.deepcopy(data)
+            changed['alignment_review']['rounds'][0]['diagnosis']['accurate'] = False
+            with self.assertRaisesRegex(ValueError, 'original bytes'):
+                paper._load_alignment_adoption(root, record, changed)
+            target = root / data['alignment_adoption']['phase_sources'][2]['engineering_sources']['Main.lean']['path']
+            target.write_bytes(target.read_bytes() + b' modified')
+            with self.assertRaisesRegex(ValueError, 'evidence bytes changed'):
+                paper._load_alignment_adoption(root, record, data)
+
+    def test_source_confirmed_api_exclusions_preserve_physical_and_effective_attempts(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data, policies, _ = self.adoption_fixture(Path(temporary))
+            task = next(t for t in data['tasks'] if t['case_id'] == 'MG-GR023')
+            source = data['sources'][0]
+            task['physical_attempts'] = [dict(physical_request=n, effective_attempt=None,
+                status='delivery_failed', reason='service_error', excluded_system_failure=True,
+                source=source, exclusion=dict(basis='user_confirmed_api_failure', declaration=source,
+                    note='User confirmed the original API failures.')) for n in (1, 2, 3)]
+            task['physical_attempts'] += [dict(physical_request=4, effective_attempt=1,
+                status='delivery_failed', reason='deadline_exceeded', excluded_system_failure=False,
+                source=source, exclusion=None), dict(physical_request=5, effective_attempt=2,
+                status='delivered', reason=None, excluded_system_failure=False, source=source, exclusion=None)]
+            task['attempts'] = [dict(attempt=1, status='delivery_failed', reason='deadline_exceeded'),
+                                dict(attempt=2, status='delivered', reason=None)]
+            task['attempt_evidence'] = source
+            first, retry = (self.score(data, policies, condition=c) for c in paper.CONDITIONS)
+            first_task = next(t for t in first['tasks'] if t['case_id'] == task['case_id'])
+            retry_task = next(t for t in retry['tasks'] if t['case_id'] == task['case_id'])
+            self.assertEqual(first_task['completion']['exact'], 0)
+            self.assertEqual(retry_task['completion']['exact'], 1)
+            for reason in ('max_output_tokens', 'deadline_exceeded'):
+                changed = copy.deepcopy(data)
+                selected = next(t for t in changed['tasks'] if t['case_id'] == task['case_id'])
+                selected['physical_attempts'][0]['reason'] = reason
+                with self.assertRaisesRegex(ValueError, 'exclusion'):
+                    self.score(changed, policies)
+            changed = copy.deepcopy(data)
+            selected = next(t for t in changed['tasks'] if t['case_id'] == task['case_id'])
+            selected['physical_attempts'][3]['effective_attempt'] = 2
+            with self.assertRaisesRegex(ValueError, 'numbering'):
+                self.score(changed, policies)
+            for field, index in (('physical_request', 0), ('effective_attempt', 3)):
+                changed = copy.deepcopy(data)
+                selected = next(t for t in changed['tasks'] if t['case_id'] == task['case_id'])
+                selected['physical_attempts'][index][field] = True
+                with self.assertRaises(ValueError):
+                    self.score(changed, policies)
 
     def test_first_failed_attempt_cannot_inherit_retry_mathematics(self):
         data, policies = self.fixture()

@@ -134,6 +134,23 @@ class AlignmentTrajectoryTests(unittest.TestCase):
         self.assertIsNone(first["strict_pass"])
         self.assertIsNone(first["major_false_complete"])
 
+    def test_proved_missing_final_is_zero_but_missing_mathematics_stays_unknown(self):
+        review = alignment_review(self.policy, self.ids)
+        snapshot = review["rounds"][2]["snapshot"]
+        snapshot.update(source_kind="not_available", source_sha256=None,
+                        delivery_status="delivery_failed", delivery_verified=False)
+        for obligation in snapshot["obligations"]:
+            obligation["complete"] = None
+        review["rounds"][2]["diagnosis"] = None
+        last = self.score(review)["rounds"][2]
+        self.assertEqual(last["score"]["exact"], 0)
+        self.assertFalse(last["strict_pass"])
+        self.assertEqual((last["not_complete"], last["unknown_obligations"]), (0, 92))
+        self.assertIsNone(last["regressed"])
+        self.assertIsNone(last["major_false_complete"])
+        snapshot.update(delivery_status="not_run", delivery_verified=None)
+        self.assertIsNone(self.score(review)["rounds"][2]["score"]["exact"])
+
     def test_versions_id_inventories_booleans_and_source_binding_are_validated(self):
         mutations = [lambda r: r.update(scoring_version="0.2.0"),
             lambda r: r["rounds"].append(copy.deepcopy(r["rounds"][0])),

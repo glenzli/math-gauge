@@ -164,6 +164,74 @@ class GoalAttainmentTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_content_rates(folder)
 
+    def test_returned_paper_gets_separate_rates_without_rewriting_selected_answers(self):
+        from scripts.score_content_rates import run
+
+        content, goals, policy = self.fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            public, private = root / 'public', root / 'private'
+            relative = Path('results/v0.6.0/synthetic-model/selected')
+            pub, pri = public / relative, private / relative
+            pub.mkdir(parents=True)
+            pri.mkdir(parents=True)
+
+            def write(path, value):
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(value))
+                return hashlib.sha256(path.read_bytes()).hexdigest()
+
+            write(public / 'benchmark.json', dict(version='0.6.0',
+                selected_result_models=['synthetic-model'],
+                selected_result_record_ids={'synthetic-model': 'selected'}))
+            policy_hash = write(public / 'protocol/scoring-policy.json', policy)
+            method = write(public / 'protocol/content-rate-policy.json', {'version': '0.1.0'})
+            goal_method = write(public / 'protocol/goal-attainment-policy.json', {'version': '0.2.0'})
+            source_hash = write(public / 'source.json', {'original': 'unchanged candidate content'})
+            for review in (content, goals):
+                review['assessment_policy_sha256'] = policy_hash
+                review['sources'][0]['sha256'] = source_hash
+                for task in review['tasks']:
+                    for unit in task.get('units', task.get('goals', [])):
+                        for evidence in unit['evidence'] + unit.get('definition_evidence', []):
+                            evidence['sha256'] = source_hash
+            self.freeze(goals)
+            source = dict(benchmark_version='0.6.0', attempt_condition='nonlogical_retry_3',
+                tasks=[dict(slot_id=t['id'], case_id=t['case_id'],
+                    subcategory=t['subcategory'], family_id=t['family_id'], strict_pass=True)
+                    for t in content['tasks'] if t['kind'] == 'initial'])
+            write(pri / 'retry-result.json', source)
+            aggregate_hash = write(pub / 'retry-combined-aggregate.json', {'original': 'score'})
+            write(pub / 'assessment-policy.json', policy)
+            record = dict(schema='math-gauge.paper-observation-record/v1',
+                record_kind='paper_observation', content_rates_status='not_reviewed',
+                assessment_policy=dict(path='assessment-policy.json',
+                    bytes=(pub / 'assessment-policy.json').stat().st_size, sha256=policy_hash),
+                assessment_results={'nonlogical_retry_3': dict(path='retry-combined-aggregate.json',
+                    bytes=(pub / 'retry-combined-aggregate.json').stat().st_size, sha256=aggregate_hash)})
+            record_hash = write(pub / 'record.json', record)
+            content['source_bindings'] = dict(record_sha256=record_hash,
+                assessment_result_sha256=aggregate_hash, assessment_policy_sha256=policy_hash,
+                method_policy_sha256=method)
+            review_hash = write(pri / 'content-rate-review.json', content)
+            goals['source_bindings'] = dict(content['source_bindings'],
+                method_policy_sha256=goal_method, content_review_sha256=review_hash,
+                content_method_policy_sha256=method)
+            write(pri / 'goal-attainment-review.json', goals)
+            retained = {p: p.read_bytes() for p in (pub / 'record.json',
+                pub / 'retry-combined-aggregate.json', pri / 'retry-result.json', public / 'source.json')}
+
+            result = run(private, public_root=public, write=True)
+            self.assertEqual([r['model'] for r in result['models']], ['synthetic-model'])
+            rates = load_content_rates(pub)
+            self.assertEqual(rates['metrics']['attainment']['exact'], 100)
+            self.assertEqual(rates['metrics']['reliability']['exact'], 100)
+            self.assertEqual(retained, {p: p.read_bytes() for p in retained})
+            run(private, public_root=public)
+            write(pub / 'record.json', dict(record, comparison_note='A different retained selection'))
+            with self.assertRaisesRegex(ValueError, 'binds another record'):
+                run(private, public_root=public)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -16,10 +16,13 @@ SCHEMA = 'math-gauge.paper-observation-record/v1'
 MATH_SCHEMA = 'math-gauge.paper-observation-math/v1'
 CLAIM_SCHEMA = 'math-gauge.paper-observation-claims/v1'
 VERSION = '0.1.0'
+ADOPTED_VERSION = '0.2.0'
+ADOPTION_SCHEMA = 'math-gauge.paper-alignment-adoption/v1'
 MODES = ('capability', 'partial', 'strict')
 CONDITIONS = ('single_attempt', 'nonlogical_retry_3')
 RESULT_FIELDS = dict(capability='capability_results', partial='assessment_results', strict='strict_results')
-FAILURES = {'max_output_tokens', 'service_error', 'execution_interrupted', 'operator_reported_failure'}
+FAILURES = {'max_output_tokens', 'service_error', 'execution_interrupted', 'operator_reported_failure',
+            'deadline_exceeded'}
 
 
 def require(condition, message):
@@ -74,13 +77,107 @@ def _public_only(value, public_ids, *, family=False):
                 'Paper public projection contains a private/unselected case identifier')
 
 
+def _same_bytes(left, right):
+    return (isinstance(left, dict) and isinstance(right, dict)
+            and {'sha256', 'bytes'} <= set(left) and {'sha256', 'bytes'} <= set(right)
+            and all(left.get(key) == right.get(key) for key in ('sha256', 'bytes')))
+
+
+def _validate_adoption(adoption, review, source_policy):
+    """Validate an explicitly selected whole trajectory, without upgrading its execution."""
+    from .scoring import _alignment_trajectory, strict_alignment_trajectory
+    fields = {'schema', 'version', 'case_id', 'selection', 'post_observation', 'user_selected',
+              'authorization_sha256', 'source_record', 'source_policy', 'source_alignment_review',
+              'source_formalization_review', 'source_phase_reviews', 'phase_sources', 'trajectory'}
+    require(isinstance(adoption, dict) and set(adoption) == fields
+            and adoption.get('schema') == ADOPTION_SCHEMA and adoption.get('version') == VERSION
+            and adoption.get('case_id') == 'MG-C003'
+            and adoption.get('selection') == 'explicit_user_selected_whole_legacy_trajectory'
+            and adoption.get('post_observation') is True and adoption.get('user_selected') is True
+            and _sha(adoption.get('authorization_sha256')),
+            'Adopted alignment needs explicit post-observation selection of one whole legacy trajectory')
+    require(review.get('policy_sha256') == adoption['source_policy'].get('sha256'),
+            'Adopted alignment changed its original source policy')
+    phases = adoption['phase_sources']
+    require(isinstance(phases, list) and [p.get('phase') for p in phases] == ['A1', 'R1', 'R2', 'R3'],
+            'Adopted alignment must retain A1 and all three ordered original rounds')
+    snapshots = [review.get('baseline')] + [r.get('snapshot') for r in review.get('rounds', [])]
+    require(len(snapshots) == 4, 'Adopted alignment needs exactly three original round snapshots')
+    prior = None
+    for phase, snapshot in zip(phases, snapshots):
+        require(set(phase) == {'phase', 'source_record_id', 'parent_source_record_id', 'response',
+                              'original_alignment', 'observed_snapshot', 'engineering_sources', 'source_sha256'}
+                and isinstance(phase['source_record_id'], str) and phase['source_record_id']
+                and phase['parent_source_record_id'] == prior
+                and isinstance(snapshot, dict) and phase['source_sha256'] == snapshot.get('source_sha256')
+                and isinstance(phase['engineering_sources'], dict) and bool(phase['engineering_sources'])
+                and 'Main.lean' in phase['engineering_sources'],
+                'Adopted alignment changed its original phase, parent or engineering source')
+        hashes = {name: item.get('sha256') for name, item in phase['engineering_sources'].items()}
+        require(all(_sha(value) for value in hashes.values())
+                and hashlib.sha256(json.dumps(hashes, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+                    == phase['source_sha256'],
+                'Adopted alignment source digest differs from its complete retained engineering map')
+        prior = phase['source_record_id']
+    require(len({p['source_record_id'] for p in phases}) == 4,
+            'Adopted alignment cannot repeat or combine original phases')
+    # Both paths are the established shared scorer; no trajectory formula lives here.
+    _alignment_trajectory(review, source_policy)
+    strict_alignment_trajectory(review, source_policy)
+    return adoption
+
+
+def _validate_physical_attempts(task):
+    """Keep source-attested exclusions separate from the effective-attempt list."""
+    physical = task.get('physical_attempts')
+    if physical is None:
+        return
+    require(isinstance(physical, list) and physical, 'Paper physical attempt inventory must be nonempty')
+    effective = []
+    delivered = False
+    for number, row in enumerate(physical, 1):
+        require(isinstance(row, dict) and set(row) == {'physical_request', 'effective_attempt', 'status',
+                    'reason', 'excluded_system_failure', 'source', 'exclusion'}
+                and type(row.get('physical_request')) is int and row['physical_request'] == number
+                and isinstance(row.get('source'), dict) and not delivered,
+                'Paper physical requests must retain contiguous original numbers and source declarations')
+        excluded = row['excluded_system_failure']
+        require(type(excluded) is bool, 'Paper exclusion must be explicit')
+        if excluded:
+            decision = row['exclusion']
+            require(row['effective_attempt'] is None and row['status'] == 'delivery_failed'
+                    and row['reason'] in {'service_error', 'execution_interrupted'}
+                    and isinstance(decision, dict) and set(decision) == {'basis', 'declaration', 'note'}
+                    and decision['basis'] in {'user_confirmed_api_failure', 'source_bound_system_failure'}
+                    and isinstance(decision['declaration'], dict)
+                    and isinstance(decision['note'], str) and bool(decision['note'].strip()),
+                    'Paper system exclusion needs retained grounds; output exhaustion cannot be excluded')
+        else:
+            require(not delivered and row['exclusion'] is None and type(row['effective_attempt']) is int
+                    and row['effective_attempt'] == len(effective) + 1,
+                    'Paper effective requests must stop at first delivery and preserve their numbering')
+            attempt = {key: row[key] for key in ('status', 'reason')}
+            attempt['attempt'] = row['effective_attempt']
+            effective.append(attempt)
+            delivered = row['status'] == 'delivered'
+    require(effective == task['attempts'], 'Paper physical and effective attempt inventories disagree')
+
+
 def validate_math_inputs(data, policy):
     """Keep judgments, delivery failures and unresolved evidence separate."""
     from .manuscript_completion import validate_core_completion, validate_fidelity
     from .records import public_assessment_case_ids
-    require(data.get('schema') == MATH_SCHEMA and data.get('version') == VERSION
+    require(data.get('schema') == MATH_SCHEMA and data.get('version') in {VERSION, ADOPTED_VERSION}
             and data.get('benchmark_version') == '0.6.0', 'Unsupported paper mathematical review')
     _unqualified(data)
+    adopted = data['version'] == ADOPTED_VERSION
+    alignment_fields = {'alignment_adoption', 'alignment_adoption_source', 'alignment_review', 'alignment_source_policy'}
+    if adopted:
+        require(alignment_fields <= set(data), 'Adopted paper needs its original alignment sources')
+        adoption = _validate_adoption(data['alignment_adoption'], data['alignment_review'], data['alignment_source_policy'])
+        require(isinstance(data['alignment_adoption_source'], dict), 'Adopted paper needs its retained selection manifest')
+    else:
+        require(not alignment_fields.intersection(data), 'Legacy paper cannot silently inherit an adopted trajectory')
     require(isinstance(data.get('model_label'), str) and data['model_label'].strip(),
             'Paper observation needs its attributed model label')
     tasks = data.get('tasks')
@@ -119,8 +216,12 @@ def validate_math_inputs(data, policy):
                     and not delivered, 'Paper attempts must be contiguous and stop at first delivery')
             delivered = attempt.get('status') == 'delivered'
             require(delivered and attempt.get('reason') is None
-                    or attempt.get('status') == 'delivery_failed' and attempt.get('reason') in FAILURES,
+                    or attempt.get('status') == 'delivery_failed' and attempt.get('reason') in
+                       (FAILURES if adopted else FAILURES - {'deadline_exceeded'}),
                     'Paper retry cannot be admitted for a mathematical error')
+        require(adopted or 'physical_attempts' not in task,
+                'Legacy paper cannot silently reclassify physical requests')
+        _validate_physical_attempts(task)
         if status == 'reviewed':
             require(delivered and points is not None and type(task.get('complete')) is bool
                     and isinstance(task.get('response'), dict) and isinstance(task.get('review'), dict)
@@ -159,6 +260,13 @@ def validate_math_inputs(data, policy):
                     and (not task['false_endorsement'] or task['background_R'] == 0),
                     'Paper background review needs separate substantive level and endorsement judgment')
     require(isinstance(data.get('sources'), list), 'Paper observation needs a retained source inventory')
+    if adopted:
+        initial = next((t for t in tasks if t['case_id'] == 'MG-C003'), None)
+        require(initial is not None and initial['status'] == 'reviewed'
+                and _same_bytes(initial['response'], adoption['phase_sources'][0]['response'])
+                and initial['maximum'] == len(data['alignment_review']['baseline']['obligations'])
+                and initial['points'] == sum(o['complete'] is True for o in data['alignment_review']['baseline']['obligations']),
+                'Adopted trajectory baseline must be the actual selected original A1, not a later repair')
     return data
 
 
@@ -187,7 +295,7 @@ def unknown_alignment(mode):
 
 
 def validate_record(record, policy=None, *, private=False):
-    require(record.get('schema') == SCHEMA and record.get('version') == VERSION
+    require(record.get('schema') == SCHEMA and record.get('version') in {VERSION, ADOPTED_VERSION}
             and record.get('record_kind') == 'paper_observation'
             and record.get('benchmark_version') == '0.6.0', 'Unsupported paper observation record')
     _unqualified(record)
@@ -199,6 +307,8 @@ def validate_record(record, policy=None, *, private=False):
         'assessment_results', 'capability_results', 'strict_results', 'public_task_scores',
         'public_case_ids', 'public_deliveries', 'public_claim_review', 'selfcheck_rounds', 'trajectory',
         'content_rates_status'}
+    if record['version'] == ADOPTED_VERSION:
+        allowed.add('alignment_adoption')
     require(set(record) == allowed | ({'mathematical_inputs'} if private else set()),
             'Paper record contains unsupported fields or private source data')
     require(record.get('backend_sku') is None and _sha(record.get('mathematical_input_sha256'))
@@ -218,9 +328,17 @@ def validate_record(record, policy=None, *, private=False):
             'Paper harness cannot fabricate runtime validation or a CLI/native identity')
     for field in RESULT_FIELDS.values():
         require(set(record[field]) == set(CONDITIONS), 'Paper record needs all six score reports')
-    require(record['selfcheck_rounds'] == [dict(round=n, status='not_run', response=None, review=None)
-                                         for n in (1, 2, 3)],
-            'Unrun paper selfcheck rounds cannot inherit old completion')
+    if record['version'] == VERSION:
+        require(record['selfcheck_rounds'] == [dict(round=n, status='not_run', response=None, review=None)
+                                             for n in (1, 2, 3)],
+                'Unrun paper selfcheck rounds cannot inherit old completion')
+    else:
+        require(isinstance(record['alignment_adoption'], dict)
+                and [r.get('round') for r in record['selfcheck_rounds']] == [1, 2, 3]
+                and all(set(r) == {'round', 'status', 'response', 'review'} and r['status'] == 'reviewed'
+                        and all(isinstance(r[key], dict) for key in ('response', 'review'))
+                        for r in record['selfcheck_rounds']),
+                'Adopted paper must explicitly retain all three original reviewed rounds')
     ids = record['public_case_ids']
     require(isinstance(ids, list) and ids == sorted(set(ids)) and len(ids) == 25
             and len(record['public_deliveries']) == 25
@@ -243,6 +361,81 @@ def validate_record(record, policy=None, *, private=False):
 def _read(root, item):
     from .records import evidence_bytes
     return json.loads(evidence_bytes(root, item))
+
+
+def _load_alignment_adoption(folder, record, data=None):
+    """Bind original answers, their parent chain and the unmodified engineering review."""
+    from .records import evidence_bytes
+    if record['version'] == VERSION:
+        return None
+    adoption = _read(folder, record['alignment_adoption'])
+    _public_only(adoption, record['public_case_ids'])
+    for item in _descriptors(adoption):
+        evidence_bytes(folder, item)
+    review = _read(folder, adoption['source_alignment_review'])
+    policy = _read(folder, adoption['source_policy'])
+    _validate_adoption(adoption, review, policy)
+    original = _read(folder, adoption['source_record'])
+    require(original.get('schema') == 'math-gauge.result-record/v1'
+            and original.get('human_review') == 'pending'
+            and original.get('formal_comparison_eligible') is False
+            and original.get('trajectory') == adoption['trajectory'] == record['trajectory'],
+            'Adopted paper changed its original record, trajectory or review qualification')
+    require(record['model_id'] == original.get('model', {}).get('requested_label', '').split(' / ', 1)[0]
+            or record['model_id'] == original.get('model', {}).get('id'),
+            'Adopted paper trajectory belongs to another attributed model')
+    source_rows = {row['id']: row for row in original.get('records', [])}
+    source_reviews = _read(folder, adoption['source_formalization_review'])
+    phase_reviews = _read(folder, adoption['source_phase_reviews'])
+    first_review = next((row for row in source_reviews.get('cases', []) if row['case_id'] == 'MG-C003'), None)
+    snapshots = [review['baseline']] + [row['snapshot'] for row in review['rounds']]
+    for index, (phase, snapshot) in enumerate(zip(adoption['phase_sources'], snapshots)):
+        row = source_rows.get(phase['source_record_id'])
+        require(row is not None and row.get('case_id') == 'MG-C003'
+                and row.get('parent_id') == phase['parent_source_record_id']
+                and all(_same_bytes(row.get(key), phase[key])
+                        for key in ('response', 'original_alignment', 'observed_snapshot')),
+                'Adopted paper phase differs from its unchanged original record and parent')
+        inventory = _read(folder, phase['observed_snapshot'])
+        phase_review = next((item for item in phase_reviews.get('cases', [])
+                             if item.get('slot_id') == 'MG-C003:' + phase['phase']), None)
+        require(all(_same_bytes(inventory.get('files', {}).get(name), item)
+                    for name, item in phase['engineering_sources'].items()),
+                'Adopted engineering file differs from its original phase inventory')
+        require(phase_review is not None and phase_review.get('source_sha256') == phase['source_sha256']
+                and phase_review.get('original_response_sha256') == phase['response']['sha256']
+                and phase_review.get('compiled_sources') == {name: item['sha256']
+                    for name, item in phase['engineering_sources'].items()}
+                and {o['id']: o['complete'] for o in phase_review.get('obligations', [])}
+                    == {o['id']: o['complete'] for o in snapshot['obligations']},
+                'Adopted alignment changed its original complete import closure or phase review')
+        if index == 0:
+            require(first_review is not None and first_review.get('source_sha256') == phase['source_sha256']
+                    and first_review.get('original_response_sha256') == phase['response']['sha256']
+                    and first_review.get('obligations') is not None
+                    and {o['id']: o['complete'] for o in first_review['obligations']}
+                        == {o['id']: o['complete'] for o in snapshot['obligations']},
+                    'Adopted A1 differs from its original formalization judgment')
+        else:
+            current = record['selfcheck_rounds'][index - 1]
+            require(_same_bytes(current['response'], phase['response'])
+                    and _same_bytes(current['review'], adoption['source_alignment_review'])
+                    and row.get('evaluation', {}).get('diagnosis') == review['rounds'][index - 1]['diagnosis'],
+                    'Adopted round differs from its original response or diagnosis judgment')
+        require(snapshot.get('delivery_verified') is not True,
+                'Legacy paper adoption cannot invent authenticated delivery chronology')
+    initial = next(row for row in record['public_deliveries'] if row['case_id'] == 'MG-C003')
+    require(initial['status'] == 'reviewed' and _same_bytes(initial['response'], adoption['phase_sources'][0]['response']),
+            'Paper public A1 differs from the adopted trajectory baseline')
+    if data is not None:
+        require(data['version'] == ADOPTED_VERSION
+                and _same_bytes(record['alignment_adoption'], data['alignment_adoption_source'])
+                and data['alignment_adoption'] == adoption and data['alignment_review'] == review
+                and data['alignment_source_policy'] == policy,
+                'Paper alignment inputs changed their retained original bytes or selection manifest')
+        require(any(item.get('sha256') == adoption['authorization_sha256'] for item in _descriptors(data)),
+                'Private paper must retain the source of its explicit user selection')
+    return adoption
 
 
 def _claim_quotes(root, claims, descriptors):
@@ -281,12 +474,14 @@ def project_score(score):
 def _score_bindings(record):
     return {'mathematical_input_sha256': record['mathematical_input_sha256'],
             **{key + '_sha256': record[key]['sha256'] for key in
-               ('assessment_policy', 'strict_scoring_policy', 'capability_scoring_policy', 'claim_penalty_policy')}}
+               ('assessment_policy', 'strict_scoring_policy', 'capability_scoring_policy', 'claim_penalty_policy')},
+            **({'alignment_adoption_sha256': record['alignment_adoption']['sha256']}
+               if record['version'] == ADOPTED_VERSION else {})}
 
 
 def load_public_record(folder, *, public_case_ids=None):
     """Verify public hashes and opaque private bindings, without claiming replay."""
-    from .records import evidence_bytes, PUBLIC_TASK_FIELDS
+    from .records import evidence_bytes, PUBLIC_TASK_FIELDS, load_content_rates
     folder = Path(folder)
     record = json.loads((folder / 'record.json').read_bytes())
     policy, strict, capability, claims_policy = _policies(folder, record)
@@ -296,6 +491,7 @@ def load_public_record(folder, *, public_case_ids=None):
         require(set(record['public_case_ids']) == set(public_case_ids), 'Paper projection changed the public catalog')
     for item in _descriptors(record):
         evidence_bytes(folder, item)
+    _load_alignment_adoption(folder, record)
     for row in record['public_deliveries']:
         if row['review'] is not None:
             _public_only(_read(folder, row['review']), record['public_case_ids'])
@@ -346,7 +542,9 @@ def load_public_record(folder, *, public_case_ids=None):
         for item in _descriptors(claims['conditions'][condition]):
             evidence_bytes(folder, item)
         _claim_quotes(folder, rows.values(), _descriptors(claims['conditions'][condition]))
-    return record, scores, None
+    # The original record retains its capture-time review status. A later
+    # supplemental audit must bind these exact retained bytes independently.
+    return record, scores, load_content_rates(folder, record)
 
 
 def load_private_inputs(folder, record, policy):
@@ -356,6 +554,8 @@ def load_private_inputs(folder, record, policy):
     require(record['mathematical_inputs']['sha256'] == record['mathematical_input_sha256'],
             'Paper mathematical input hash differs from the selected record')
     validate_math_inputs(data, policy)
+    require(data['version'] == record.get('version', data['version']),
+            'Paper mathematical inputs and record use different adoption versions')
     retained = {}
     for item in _descriptors(data):
         raw = evidence_bytes(folder, item)
@@ -398,6 +598,8 @@ def load_private_inputs(folder, record, policy):
                             require((item['sha256'], item['bytes']) in retained,
                                     'Paper manuscript policy references an unretained source')
     _claim_quotes(folder, data['claim_review']['cases'], _descriptors(data))
+    if data['version'] == ADOPTED_VERSION:
+        _load_alignment_adoption(folder, record, data)
     return data
 
 

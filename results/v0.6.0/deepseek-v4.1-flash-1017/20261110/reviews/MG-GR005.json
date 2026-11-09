@@ -1,0 +1,204 @@
+{
+  "case_id": "MG-GR005",
+  "category": "written-argument",
+  "visibility": "public",
+  "bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/task.md",
+      "sha256": "c4cc57e195bd6b6904c7b3657fa070af2a86572bfd764e04239a487cec5e1938",
+      "bytes": 2068
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/rubric.json",
+      "sha256": "751b8cc5a1ee70bbc11d7e7290d28031d719f12be21c0cdc81bb9eb7ae7b352e",
+      "bytes": 768
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/reference.md",
+      "sha256": "18fbc7990926deeb6ad54c4379fa1067076271f0819ac807a33f9ec20fc13da4",
+      "bytes": 7384
+    },
+    "contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR005/contract.json",
+      "sha256": "4d0b2633d9d6b3054514000901bc26311523452895273cff4640aed97919e5ef",
+      "bytes": 6591
+    },
+    "answer": {
+      "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+      "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+      "bytes": 14390
+    }
+  },
+  "criteria": [
+    {
+      "id": "S1",
+      "earned": 12,
+      "max": 12,
+      "reason": "Correct epsilon-minimizer proof and extended-valued fiber-infimum decomposition without assuming attainment; endpoint convex weights have their immediate identity cases.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 18,
+          "line_end": 65,
+          "text": "因 \\(f\\ge 0\\)，由下确界定义立得 \\(g_F\\ge 0\\)。\n\n取 \\(x_0\\in E\\) 使 \\(f(x_0)<+\\infty\\)，令 \\(y_0=q_Fx_0\\)。则\n\\[\ng_F(y_0)=\\inf_{q_Fx=y_0}f(x)\\le f(x_0)<+\\infty,\n\\]\n故 \\(g_F\\) 至少一点有限。\n\n证明凸性。取 \\(y_1,y_2\\in F^*\\)，\\(\\lambda\\in[0,1]\\)。若\n\\[\n\\lambda g_F(y_1)+(1-\\lambda)g_F(y_2)=+\\infty,\n\\]\n则凸性不等式显然。否则两端有限。任取 \\(\\varepsilon>0\\)，由下确界定义可取 \\(x_1,x_2\\in E\\) 使\n\\[\nq_Fx_i=y_i,\\qquad f(x_i)\\le g_F(y_i)+\\varepsilon\\quad(i=1,2).\n\\]\n令 \\(x_\\lambda=\\lambda x_1+(1-\\lambda)x_2\\)。由 \\(q_F\\) 线性，\n\\[\nq_Fx_\\lambda=\\lambda y_1+(1-\\lambda)y_2.\n\\]\n于是由 \\(f\\) 的凸性，\n\\[\n\\begin{aligned}\ng_F(\\lambda y_1+(1-\\lambda)y_2)\n&\\le f(x_\\lambda)\\\\\n&\\le \\lambda f(x_1)+(1-\\lambda)f(x_2)\\\\\n&\\le \\lambda g_F(y_1)+(1-\\lambda)g_F(y_2)+\\varepsilon.\n\\end{aligned}\n\\]\n令 \\(\\varepsilon\\downarrow0\\)，得凸性。\n\n### 2. \\(g_F(y)=\\inf_{r_{KF}z=y}g_K(z)\\)\n\n设 \\(F\\subset K\\)，\\(r=r_{KF}\\)。有\n\\[\nq_F^{-1}(y)\n=\\bigcup_{\\substack{z\\in K^*\\\\ rz=y}}q_K^{-1}(z),\n\\]\n因为 \\(q_F=r\\circ q_K\\)。因此\n\\[\n\\begin{aligned}\ng_F(y)\n&=\\inf_{x:q_Fx=y}f(x)\\\\\n&=\\inf_{\\substack{z:rz=y}}\\ \\inf_{x:q_Kx=z}f(x)\\\\\n&=\\inf_{\\substack{z:rz=y}}g_K(z).\n\\end{aligned}\n\\]\n此式只是把外层下确界按纤维分解，**不需要任何纤维下确界取到**。凸性证明中也只用了近似极小点，不需要取到。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "earned": 16,
+      "max": 16,
+      "reason": "Compact sublevel sets supply convergent subnets for actual minimizers. The finite-dimensional sequential lsc proof is a valid alternative to writing the sublevel-image equality.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 77,
+          "line_end": 125,
+          "text": "设 \\(g_F(y)=L<+\\infty\\)。取序列 \\(x_n\\in E\\) 使\n\\[\nq_Fx_n=y,\\qquad f(x_n)\\le L+\\frac1n.\n\\]\n特别地，当 \\(n\\) 充分大时 \\(f(x_n)\\le L+1<+\\infty\\)。由假设，集合\n\\[\n\\{f\\le L+1\\}\n\\]\n紧。故序列 \\((x_n)\\) 有收敛子网 \\(x_\\nu\\to x\\)。由 \\(q_F\\) 连续，\n\\[\nq_Fx=\\lim q_Fx_\\nu=y.\n\\]\n又因 \\(f\\) 下半连续，\n\\[\nf(x)\\le\\liminf_\\nu f(x_\\nu)\\le L.\n\\]\n而由 \\(g_F\\) 的定义 \\(g_F(y)\\le f(x)\\)，故 \\(f(x)=L=g_F(y)\\)，下确界取到。\n\n### 2. \\(g_F\\) 下半连续\n\n设 \\(y_n\\to y\\) 于 \\(F^*\\)，令\n\\[\nL=\\liminf_{n\\to\\infty}g_F(y_n).\n\\]\n若 \\(L=+\\infty\\)，结论显然。设 \\(L<+\\infty\\)。取子列仍记为 \\(y_n\\)，使 \\(g_F(y_n)\\to L\\)。\n\n任取 \\(\\delta>0\\)。当 \\(n\\) 充分大时\n\\[\ng_F(y_n)\\le L+\\delta.\n\\]\n由下确界定义，取 \\(x_n\\) 使\n\\[\nq_Fx_n=y_n,\\qquad f(x_n)\\le g_F(y_n)+\\delta\\le L+2\\delta.\n\\]\n于是 \\(x_n\\in\\{f\\le L+2\\delta\\}\\)。该集合紧，故有子网 \\(x_\\nu\\to x\\)。由 \\(q_F\\) 连续，\n\\[\nq_Fx=y.\n\\]\n由 \\(f\\) 下半连续，\n\\[\ng_F(y)\\le f(x)\\le\\liminf_\\nu f(x_\\nu)\n\\le\\limsup_\\nu f(x_\\nu)\n\\le L+\\delta.\n\\]\n令 \\(\\delta\\downarrow0\\)，得\n\\[\ng_F(y)\\le L=\\liminf g_F(y_n).\n\\]\n故 \\(g_F\\) 下半连续。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "earned": 18,
+      "max": 18,
+      "reason": "Uses the same compact sublevel and the directed sum of observation spaces for FIP; continuous dual separation gives uniqueness.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 133,
+          "line_end": 180,
+          "text": "对每个有限维 \\(F\\subset E'\\)，令\n\\[\nC_F:=q_F^{-1}(y_F)\\cap\\{f\\le c\\}.\n\\]\n由于 \\(q_F\\) 连续、\\(\\{f\\le c\\}\\) 紧，且 \\(\\{f\\le c\\}\\) 闭，故 \\(C_F\\) 是紧集。\n\n由 S2，\\(g_F(y_F)<+\\infty\\) 时下确界取到；已知 \\(g_F(y_F)\\le c<+\\infty\\)，故存在 \\(x_F\\in E\\) 使\n\\[\nq_Fx_F=y_F,\\qquad f(x_F)=g_F(y_F)\\le c.\n\\]\n所以 \\(C_F\\neq\\varnothing\\)。\n\n证明有限交性质。取有限个 \\(F_1,\\dots,F_m\\)，令\n\\[\nK=\\operatorname{span}(F_1\\cup\\cdots\\cup F_m),\n\\]\n则 \\(K\\) 有限维。对每个 \\(i\\)，由兼容性\n\\[\nr_{KF_i}y_K=y_{F_i}.\n\\]\n若 \\(x\\in C_K\\)，则 \\(q_Kx=y_K\\)，从而\n\\[\nq_{F_i}x=r_{KF_i}q_Kx=r_{KF_i}y_K=y_{F_i},\n\\]\n且 \\(f(x)\\le c\\)。所以\n\\[\nC_K\\subset\\bigcap_{i=1}^m C_{F_i}.\n\\]\n而 \\(C_K\\neq\\varnothing\\)，故有限交非空。\n\n所有 \\(C_F\\) 都是紧集 \\(C_{\\{0\\}}=\\{f\\le c\\}\\) 的闭子集，且具有有限交性质。由紧集有限交性质，\n\\[\n\\bigcap_F C_F\\neq\\varnothing.\n\\]\n取其中一点 \\(x\\)，则\n\\[\nq_Fx=y_F\\quad(\\forall F),\\qquad f(x)\\le c.\n\\]\n\n唯一性：若 \\(x\\neq x'\\)，因 \\(E\\) 是 Hausdorff 局部凸空间，\\(E'\\) 分离点，故存在 \\(\\varphi\\in E'\\) 使\n\\[\n\\varphi(x)\\neq\\varphi(x').\n\\]\n取 \\(F=\\operatorname{span}\\varphi\\)，则\n\\[\nq_Fx\\neq q_Fx',\n\\]\n与二者都等于记录 \\(y_F\\) 矛盾。故 \\(x=x'\\)。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "earned": 22,
+      "max": 24,
+      "reason": "The closed-record construction and maximum-minorant argument cover improper h, including simultaneous infinities, and are mathematically valid. The displayed refinement inequality is correct but its textual conclusion says the values decrease rather than increase. The closed-record refinement follows from the minorant property;2 points withheld for the incorrectly stated refinement direction.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 188,
+          "line_end": 289,
+          "text": "记 \\(\\overline{u}\\) 为 \\(u\\) 的最大下半连续凸下界。定义\n\\[\nG(x):=\\sup_{F}\\overline{g_F}(q_Fx),\\qquad x\\in E. \\tag{4.1}\n\\]\n这里 \\(F\\) 取遍 \\(E'\\) 的全部有限维子空间。\n\n### 1. \\(G\\) 下半连续、凸、非负且 \\(G\\le f\\)\n\n由 S1，每个 \\(g_F\\) 非负凸，故 \\(\\overline{g_F}\\) 存在、非负、下半连续凸，并且\n\\[\n\\overline{g_F}\\le g_F.\n\\]\n于是每个 \\(\\overline{g_F}\\circ q_F\\) 下半连续凸。任意多个下半连续函数的逐点上确界仍下半连续；凸函数的上确界仍凸。因此 \\(G\\) 下半连续、凸、非负。\n\n对任意 \\(x\\) 和任意有限维 \\(F\\)，\n\\[\n\\overline{g_F}(q_Fx)\\le g_F(q_Fx)\\le f(x),\n\\]\n因为 \\(x\\) 本身满足 \\(q_Fx=q_Fx\\)。故\n\\[\nG(x)\\le f(x).\n\\]\n\n### 2. 泛性质：任意下半连续凸的 \\(h\\le f\\) 都满足 \\(h\\le G\\)\n\n设 \\(h:E\\to[-\\infty,+\\infty]\\) 下半连续凸，且 \\(h\\le f\\)。若 \\(h(x)=-\\infty\\)，显然 \\(h(x)\\le G(x)\\)。\n\n下面设 \\(h(x)>-\\infty\\)。若 \\(h\\) 在某点取 \\(-\\infty\\) 而不恒等于 \\(-\\infty\\)，则因 \\(h\\) 下半连续凸，它不能再取有限值；于是 \\(h(x)=+\\infty\\) 时必有 \\(x\\notin\\overline{\\operatorname{dom}h}\\)，归入下面的第二种情形。因此其余情形可把 \\(h\\) 看作 proper。\n\n**情形一：\\(h(x)=+\\infty\\) 且 \\(x\\notin\\overline{\\operatorname{dom}h}\\)。**\n\n令\n\\[\nC=\\overline{\\operatorname{dom}h},\n\\]\n这是闭凸集。由严格分离定理，存在 \\(\\varphi\\in E'\\) 使\n\\[\n\\varphi(x)>a:=\\sup_{z\\in C}\\varphi(z).\n\\]\n若 \\(\\varphi(z)>a\\)，则 \\(z\\notin C\\)，从而 \\(z\\notin\\operatorname{dom}h\\)，即 \\(h(z)=+\\infty\\)。由 \\(h\\le f\\)，得 \\(f(z)=+\\infty\\)。取\n\\[\nF=\\operatorname{span}\\varphi.\n\\]\n在 \\(F^*\\) 的自然坐标下，\\(q_Fz=\\varphi(z)\\)。于是对任意 \\(t>a\\)，\n\\[\ng_F(t)=\\inf_{\\varphi(z)=t}f(z)=+\\infty.\n\\]\n因此\n\\[\n\\operatorname{epi}g_F\\subset\\{t\\le a\\}\\times\\mathbb R.\n\\]\n右端闭，故\n\\[\n\\operatorname{epi}\\overline{g_F}\n=\\overline{\\operatorname{epi}g_F}\n\\subset\\{t\\le a\\}\\times\\mathbb R.\n\\]\n而 \\(\\varphi(x)>a\\)，所以\n\\[\n\\overline{g_F}(q_Fx)=+\\infty.\n\\]\n于是 \\(G(x)=+\\infty=h(x)\\)。\n\n**情形二：\\(x\\in\\overline{\\operatorname{dom}h}\\)。**\n\n若 \\(h(x)\\) 有限，取任意 \\(t<h(x)\\)；若 \\(h(x)=+\\infty\\)，取任意实数 \\(t\\)。此时\n\\[\n(x,t)\\notin\\operatorname{epi}h.\n\\]\n由于 \\(\\operatorname{epi}h\\) 闭凸，且 \\(x\\in\\overline{\\operatorname{dom}h}\\)，由严格分离可把值变量系数取负并归一化，得到连续仿射函数\n\\[\n\\ell(z)=\\varphi(z)+a\n\\]\n满足\n\\[\n\\ell\\le h,\\qquad \\ell(x)>t.\n\\]\n具体地，分离超平面中值变量系数为负；若为零，则会在 \\(E\\) 中把 \\(x\\) 与 \\(\\overline{\\operatorname{dom}h}\\) 严格分开，与 \\(x\\in\\overline{\\operatorname{dom}h}\\) 矛盾。\n\n取 \\(F=\\operatorname{span}\\varphi\\)，在 \\(F^*\\) 上定义\n\\[\n\\ell_F(y):=y(\\varphi)+a.\n\\]\n则对任意 \\(z\\in E\\)，\n\\[\n\\ell_F(q_Fz)=\\varphi(z)+a=\\ell(z)\\le h(z)\\le f(z).\n\\]\n因此 \\(\\ell_F\\le g_F\\)。由于 \\(\\ell_F\\) 是连续仿射函数，也有\n\\[\n\\ell_F\\le\\overline{g_F}.\n\\]\n于是\n\\[\n\\overline{g_F}(q_Fx)\\ge\\ell_F(q_Fx)=\\ell(x)>t.\n\\]\n故\n\\[\nG(x)>t.\n\\]\n若 \\(h(x)\\) 有限，令 \\(t\\uparrow h(x)\\)，得 \\(G(x)\\ge h(x)\\)；若 \\(h(x)=+\\infty\\)，令 \\(t\\to+\\infty\\)，得 \\(G(x)=+\\infty=h(x)\\)。\n\n综上，任意下半连续凸的 \\(h\\le f\\) 都满足 \\(h\\le G\\)。因此 \\(G\\) 是所有下半连续凸的 \\(f\\)-minorant 的最大者。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 320,
+          "line_end": 337,
+          "text": "### 4. 扩大观测空间时的关系\n\n若 \\(F\\subset K\\)，由 S1，\n\\[\ng_F(y)=\\inf_{r_{KF}z=y}g_K(z).\n\\]\n也就是说，把观测空间从 \\(F\\) 扩大到 \\(K\\) 后，\\(F\\)-记录是 \\(K\\)-记录沿限制映射的纤维下确界。对于固定点 \\(x\\)，还有\n\\[\ng_F(q_Fx)=\\inf_{r_{KF}z=q_Fx}g_K(z)\\le g_K(q_Kx).\n\\]\n因此原始记录在扩大观测时会下降。\n\n但最终的 \\(G\\) 已对全部有限维 \\(F\\) 取上确界，所以单纯扩大观测空间不会改变最终恢复出来的 \\(G\\)。更精细地，S6 将证明正则化记录满足\n\\[\n\\overline{g_F}\n=\\overline{\\inf_{r_{KF}z=\\,\\cdot\\,}\\overline{g_K}(z)}.\n\\]\n因此若改用共尾的有限维观测族，最终得到的仍是同一个 \\(G=\\overline f\\)。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "earned": 15,
+      "max": 15,
+      "reason": "Valid alternative continuous-on-domain convex cost; verifies lsc at x=0, gives g_F=0 on the positive half-line and infinity otherwise, and exhibits the lsc failure.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 345,
+          "line_end": 403,
+          "text": "反例。取 \\(E=\\mathbb R^2\\)，坐标记为 \\((x,y)\\)。定义\n\\[\nf(x,y)=\n\\begin{cases}\n\\displaystyle \\max\\left\\{\\frac1x-y,\\,0\\right\\},&x>0,\\\\[1ex]\n+\\infty,&x\\le 0.\n\\end{cases}\n\\]\n\n### 1. 验证 \\(f\\) 下半连续凸且非负\n\n在 \\(x>0\\) 上，\\(\\frac1x-y\\) 是凸函数，因为 \\(\\frac1x\\) 在 \\((0,+\\infty)\\) 上凸、\\(-y\\) 是仿射函数；与 \\(0\\) 取最大值仍凸。将 \\(f\\) 在 \\(x\\le0\\) 上定义为 \\(+\\infty\\)，仍是凸的：若凸组合中有一个点不在 \\(x>0\\) 内，则右端为 \\(+\\infty\\)，凸性不等式自动成立；若两点都在 \\(x>0\\) 内，则由原函数凸性成立。\n\n\\(f\\ge0\\) 显然，且 \\(f(1,1)=0<+\\infty\\)。\n\n下半连续性：在 \\(x>0\\) 上连续。考察边界 \\(x=0\\)。若 \\((x_n,y_n)\\to(0,y_0)\\) 且 \\(x_n>0\\)，则 \\(y_n\\to y_0\\) 有限，于是\n\\[\n\\frac1{x_n}-y_n\\to+\\infty,\n\\]\n故\n\\[\nf(x_n,y_n)=\\max\\left\\{\\frac1{x_n}-y_n,0\\right\\}\\to+\\infty=f(0,y_0).\n\\]\n所以 \\(f\\) 在 \\(x=0\\) 的各点也下半连续；\\(x<0\\) 时同理。故 \\(f\\) 下半连续。\n\n### 2. 取一维投影\n\n取\n\\[\nF=\\operatorname{span}\\varphi,\\qquad \\varphi(x,y)=x.\n\\]\n则 \\(F^*\\cong\\mathbb R\\)，且 \\(q_F(x,y)=x\\)。于是\n\\[\ng_F(t)=\\inf_{y\\in\\mathbb R}f(t,y).\n\\]\n当 \\(t>0\\) 时，取 \\(y\\ge1/t\\) 可使 \\(f(t,y)=0\\)，故\n\\[\ng_F(t)=0\\qquad(t>0).\n\\]\n当 \\(t\\le0\\) 时，\\(f(t,y)=+\\infty\\) 对所有 \\(y\\) 成立，故\n\\[\ng_F(t)=+\\infty\\qquad(t\\le0).\n\\]\n因此\n\\[\ng_F(t)=\n\\begin{cases}\n0,&t>0,\\\\\n+\\infty,&t\\le0.\n\\end{cases}\n\\]\n但\n\\[\ng_F(0)=+\\infty,\\qquad\n\\lim_{n\\to\\infty}g_F(1/n)=0,\n\\]\n故 \\(g_F\\) 在 \\(0\\) 处不下半连续。\n\n所以即使 \\(f\\) 本身下半连续凸且非负，其某个有限维投影 \\(g_F\\) 也未必下半连续。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "earned": 11,
+      "max": 15,
+      "reason": "Correct G=f equivalence and valid outer-closure counterexample. The proposed proof of the projection/closure formula twice equates an epigraph image with the epigraph of a fiber infimum, ignoring unattained boundary values. The continuous-image closure identity is valid and supplies partial progress, but the claimed exact image equalities do not establish the theorem as written. Allocation:4/4 for G=f,2/6 for closure formula progress,5/5 for indispensability of the last closure.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 409,
+          "line_end": 419,
+          "text": "### 1. \\(G=f\\) 当且仅当 \\(f\\) 下半连续\n\n若 \\(f\\) 下半连续，则由 S4 的泛性质取 \\(h=f\\)，得 \\(f\\le G\\)；而 S4 已有 \\(G\\le f\\)，故 \\(G=f\\)。\n\n反之，若 \\(G=f\\)，由 S4 的构造 \\(G\\) 下半连续，故 \\(f\\) 下半连续。\n\n等价地，由 (4.2)，\n\\[\nG=\\overline f,\n\\]\n所以 \\(G=f\\) 当且仅当 \\(\\overline f=f\\)，即 \\(f\\) 下半连续。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 437,
+          "line_end": 489,
+          "text": "令\n\\[\nC:=\\operatorname{epi}_{\\mathbb R}g_K\n=\\{(z,t)\\in K^*\\times\\mathbb R:g_K(z)\\le t\\}.\n\\]\n定义连续线性映射\n\\[\nL:K^*\\times\\mathbb R\\to F^*\\times\\mathbb R,\\qquad\nL(z,t)=(r_{KF}z,t).\n\\]\n由 S1 中 \\(g_F=P_{KF}g_K\\)，有\n\\[\nL(C)=\\operatorname{epi} g_F.\n\\]\n又因为 \\(g_K\\) 凸，故\n\\[\n\\overline C=\\operatorname{epi}\\overline{g_K}.\n\\]\n于是\n\\[\nL(\\overline C)=\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr).\n\\]\n对任意连续线性映射 \\(L\\) 和任意集合 \\(C\\)，成立\n\\[\n\\overline{L(C)}=\\overline{L(\\overline C)}.\n\\]\n事实上，若 \\(w\\in\\overline C\\)，取网 \\(c_\\alpha\\in C\\) 使 \\(c_\\alpha\\to w\\)，由连续性 \\(L(c_\\alpha)\\to L(w)\\)，故 \\(L(\\overline C)\\subset\\overline{L(C)}\\)；再取闭包即得等式。\n\n因此\n\\[\n\\overline{\\operatorname{epi}g_F}\n=\n\\overline{L(C)}\n=\n\\overline{L(\\overline C)}\n=\n\\overline{\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr)}.\n\\]\n由于 \\(g_F\\) 凸，左端等于\n\\[\n\\operatorname{epi}\\overline{g_F}.\n\\]\n由于 \\(P_{KF}\\overline{g_K}\\) 也凸，右端等于\n\\[\n\\operatorname{epi}\\overline{P_{KF}\\overline{g_K}}.\n\\]\n故两函数相等，即\n\\[\n\\boxed{\n\\overline{g_F}\n=\n\\overline{\\left(y\\mapsto \\inf_{r_{KF}z=y}\\overline{g_K}(z)\\right)}\n}.",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 495,
+          "line_end": 556,
+          "text": "不能。仍取 S5 中的反例：\n\\[\nE=\\mathbb R^2,\\qquad\nf(x,y)=\n\\begin{cases}\n\\max\\{1/x-y,0\\},&x>0,\\\\\n+\\infty,&x\\le0.\n\\end{cases}\n\\]\n已知 \\(f\\) 下半连续凸且非负。\n\n取\n\\[\nK=E',\n\\]\n这是有限维子空间，且 \\(K^*\\) 与 \\(E\\) 在自然意义下同构。取\n\\[\nF=\\operatorname{span}\\varphi,\\qquad \\varphi(x,y)=x.\n\\]\n由于 \\(K=E'\\) 且 \\(E\\) 有限维，\n\\[\ng_K(y)=f(q_K^{-1}y),\n\\]\n而 \\(f\\) 下半连续，故 \\(g_K\\) 下半连续，从而\n\\[\n\\overline{g_K}=g_K.\n\\]\n限制映射 \\(r_{KF}\\) 在坐标下就是把 \\((x,y)\\) 送到 \\(x\\)。因此\n\\[\nh(t):=\\inf_{r_{KF}z=t}\\overline{g_K}(z)\n=\\inf_{y\\in\\mathbb R}f(t,y)\n=g_F(t).\n\\]\n由 S5，\n\\[\nh(t)=g_F(t)=\n\\begin{cases}\n0,&t>0,\\\\\n+\\infty,&t\\le0.\n\\end{cases}\n\\]\n所以 \\(h=g_F\\) 在 \\(0\\) 处不下半连续：\n\\[\nh(0)=+\\infty,\\qquad\n\\lim_{n\\to\\infty}h(1/n)=0.\n\\]\n但\n\\[\n\\overline{g_F}(0)=0,\n\\]\n因为 \\(\\overline{g_F}\\) 是 \\(h\\) 的下半连续凸闭包，且 \\((1/n,0)\\to(0,0)\\)。\n\n于是\n\\[\n\\overline{g_F}(0)=0\n\\neq\n+\\infty\n=h(0)\n=\n\\inf_{r_{KF}z=0}\\overline{g_K}(z).\n\\]\n故右式若不取最外层的 \\(\\overline{\\phantom{x}}\\)，等于 \\(h=g_F\\)，一般不等于左端的 \\(\\overline{g_F}\\)。因此外层的下半连续凸闭包不能总省去。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ]
+    }
+  ],
+  "raw_max": 100,
+  "strict_pass": false,
+  "findings": [
+    {
+      "root_cause": "refinement_direction_reversal",
+      "severity": "local",
+      "error_kind": "false_monotonicity_direction",
+      "quote": "若 \\(F\\subset K\\)，由 S1，\n\\[\ng_F(y)=\\inf_{r_{KF}z=y}g_K(z).\n\\]\n也就是说，把观测空间从 \\(F\\) 扩大到 \\(K\\) 后，\\(F\\)-记录是 \\(K\\)-记录沿限制映射的纤维下确界。对于固定点 \\(x\\)，还有\n\\[\ng_F(q_Fx)=\\inf_{r_{KF}z=q_Fx}g_K(z)\\le g_K(q_Kx).\n\\]\n因此原始记录在扩大观测时会下降。",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 322,
+          "line_end": 330,
+          "text": "若 \\(F\\subset K\\)，由 S1，\n\\[\ng_F(y)=\\inf_{r_{KF}z=y}g_K(z).\n\\]\n也就是说，把观测空间从 \\(F\\) 扩大到 \\(K\\) 后，\\(F\\)-记录是 \\(K\\)-记录沿限制映射的纤维下确界。对于固定点 \\(x\\)，还有\n\\[\ng_F(q_Fx)=\\inf_{r_{KF}z=q_Fx}g_K(z)\\le g_K(q_Kx).\n\\]\n因此原始记录在扩大观测时会下降。",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ],
+      "reason": "The displayed g_F(q_F x)<=g_K(q_K x) means that enlarging F to K increases the observed cost. The following sentence asserts a decrease. The formula itself and the main reconstruction remain correct.",
+      "core_cap_zero": false
+    },
+    {
+      "root_cause": "epigraph_image_assumes_infimum_attainment",
+      "severity": "local",
+      "error_kind": "false_projection_epigraph_identity",
+      "quote": "令\n\\[\nC:=\\operatorname{epi}_{\\mathbb R}g_K\n=\\{(z,t)\\in K^*\\times\\mathbb R:g_K(z)\\le t\\}.\n\\]\n定义连续线性映射\n\\[\nL:K^*\\times\\mathbb R\\to F^*\\times\\mathbb R,\\qquad\nL(z,t)=(r_{KF}z,t).\n\\]\n由 S1 中 \\(g_F=P_{KF}g_K\\)，有\n\\[\nL(C)=\\operatorname{epi} g_F.\n\\]\n又因为 \\(g_K\\) 凸，故\n\\[\n\\overline C=\\operatorname{epi}\\overline{g_K}.\n\\]\n于是\n\\[\nL(\\overline C)=\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr).",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 437,
+          "line_end": 457,
+          "text": "令\n\\[\nC:=\\operatorname{epi}_{\\mathbb R}g_K\n=\\{(z,t)\\in K^*\\times\\mathbb R:g_K(z)\\le t\\}.\n\\]\n定义连续线性映射\n\\[\nL:K^*\\times\\mathbb R\\to F^*\\times\\mathbb R,\\qquad\nL(z,t)=(r_{KF}z,t).\n\\]\n由 S1 中 \\(g_F=P_{KF}g_K\\)，有\n\\[\nL(C)=\\operatorname{epi} g_F.\n\\]\n又因为 \\(g_K\\) 凸，故\n\\[\n\\overline C=\\operatorname{epi}\\overline{g_K}.\n\\]\n于是\n\\[\nL(\\overline C)=\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr).",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR005/A1/answer.md",
+          "line_start": 459,
+          "line_end": 473,
+          "text": "对任意连续线性映射 \\(L\\) 和任意集合 \\(C\\)，成立\n\\[\n\\overline{L(C)}=\\overline{L(\\overline C)}.\n\\]\n事实上，若 \\(w\\in\\overline C\\)，取网 \\(c_\\alpha\\in C\\) 使 \\(c_\\alpha\\to w\\)，由连续性 \\(L(c_\\alpha)\\to L(w)\\)，故 \\(L(\\overline C)\\subset\\overline{L(C)}\\)；再取闭包即得等式。\n\n因此\n\\[\n\\overline{\\operatorname{epi}g_F}\n=\n\\overline{L(C)}\n=\n\\overline{L(\\overline C)}\n=\n\\overline{\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr)}.",
+          "source_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+        }
+      ],
+      "reason": "For E=R^2 and f(x,y)=exp(y), take K=E dual and F the first-coordinate span. Then g_F=0 everywhere but L(epi f) has t>0, whereas epi g_F includes t=0. The same example refutes the second image equality even with g_K already lsc. Only closures of those epigraph images agree. Both false equalities share this root; no duplicate finding is added. The target closed formula itself is true.",
+      "core_cap_zero": false
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_status": "pending",
+  "unresolved": [],
+  "raw_points": 94,
+  "positive_completion": {
+    "earned": 94,
+    "max": 100
+  },
+  "summary": "Strong valid convex-recovery work. Two locally repairable errors remain: refinement direction in prose and unattained infima in the epigraph-image proof; strict completion fails.",
+  "audit_source": {
+    "path": "/private/tmp/math-gauge-ds-grading-20261109/written/written-reviews.json",
+    "sha256": "1ba57c2df38ab9bd85feccf0cd5385f104a44c92936c13ce495cbc9e8692e734",
+    "bytes": 235344
+  }
+}

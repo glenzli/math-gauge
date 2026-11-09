@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record, selected_cli_records, selected_paper_records
 from math_gauge.scoring import score_assessment_record_inputs
+from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.paper_observations import retain_scores as retain_paper_scores, check_record as check_paper_record
 
 
@@ -74,44 +75,64 @@ def retain(private_root, *, public_root=ROOT):
         record["claim_review_source_sha256"] = private_record["claim_review"]["sha256"]
         totals[model] = {}
         for condition in ("single_attempt", "nonlogical_retry_3"):
+            selected_sources = load_attempt_sources(private, private_record, condition, public_root=public)
             uses_retry = condition == "nonlogical_retry_3" and retry is not None
-            inputs = retry if uses_retry else original
+            inputs = selected_sources['inputs'] if selected_sources else retry if uses_retry else original
+            selected_review = selected_sources['alignment'] if selected_sources else review
+            selected_engineering = selected_sources['engineering'] if selected_sources else engineering
+            selected_manuscript = selected_sources['manuscript'] if selected_sources else manuscript
+            selected_research = selected_sources.get('theorem_extension_inputs', research) if selected_sources else research
+            selected_background = selected_sources.get('background_check_inputs', background) if selected_sources else background
+            selected_engineering_descriptor = (selected_sources['bindings']['formalization_review']
+                                               if selected_sources else record['formalization_review'])
             claim_review = load_claim_review(private, private_record, condition, public_root=public)
             retry_summary = (copy.deepcopy(old_retry["retry_summary"]) if uses_retry else {
                 "slots_with_reruns": 0, "source": "original_records_reused_no_new_retry_evidence",
                 "all_original_attempts_independently_certified": False})
+            if selected_sources:
+                retry_summary = copy.deepcopy(old_retry.get('retry_summary', retry_summary))
             totals[model][condition] = {}
             for mode in ("capability", "partial", "strict"):
-                score = score_assessment_record_inputs(inputs, review, source_policy,
-                    formalization_review=engineering, assessment_policy=assessment, strict_policy=strict, mode=mode,
-                    theorem_extension_inputs=research, background_check_inputs=background,
+                score = score_assessment_record_inputs(inputs, selected_review, source_policy,
+                    formalization_review=selected_engineering, assessment_policy=assessment, strict_policy=strict, mode=mode,
+                    theorem_extension_inputs=selected_research, background_check_inputs=selected_background,
                     claim_review=claim_review, claim_policy=claim_policy,
                     capability_policy=capability if mode == "capability" else None, written_argument_inputs=written,
-                    written_replacement_inputs=replacement, manuscript_completion_inputs=manuscript)
+                    written_replacement_inputs=replacement, manuscript_completion_inputs=selected_manuscript)
                 score.update(attempt_condition=condition, retry_summary=retry_summary,
                     scope="combined-evaluator", source_math_policy_version=source_policy["version"],
-                    engineering_review_sha256=digest(public / "reviews/formalization.json"),
+                    engineering_review_sha256=selected_engineering_descriptor['sha256'],
                     source_bindings={
                         "scoring_inputs_sha256": digest(private / ("retry-scoring-inputs.json" if uses_retry else "scoring-inputs.json")),
                         "source_math_policy_sha256": digest(private / "scoring-policy.json"),
                         "alignment_review_sha256": digest(review_path),
-                        "engineering_review_sha256": digest(public / "reviews/formalization.json"),
+                        "engineering_review_sha256": selected_engineering_descriptor['sha256'],
                         "assessment_policy_sha256": digest(public / "assessment-policy.json"),
                         "strict_policy_sha256": digest(public / "strict-scoring-policy.json")})
+                if selected_sources:
+                    bundle = selected_sources['bindings']
+                    score['source_bindings'].update(scoring_inputs_sha256=bundle['scoring_inputs']['sha256'],
+                        alignment_review_sha256=bundle['alignment_review']['sha256'])
                 score["source_bindings"].update(claim_review_sha256=private_record["claim_review"]["sha256"],
                     claim_penalty_policy_sha256=digest(public / "claim-penalty-policy.json"))
                 if research is not None:
-                    score["source_bindings"]["theorem_extension_inputs_sha256"] = digest(private / private_record["theorem_extension_inputs"]["path"])
+                    score["source_bindings"]["theorem_extension_inputs_sha256"] = (selected_sources['bindings']['theorem_extension_inputs']['sha256']
+                        if selected_sources and 'theorem_extension_inputs' in selected_sources['bindings']
+                        else digest(private / private_record["theorem_extension_inputs"]["path"]))
                 if background is not None:
-                    score["source_bindings"]["background_check_inputs_sha256"]=digest(private/private_record["background_check_inputs"]["path"])
+                    score["source_bindings"]["background_check_inputs_sha256"] = (selected_sources['bindings']['background_check_inputs']['sha256']
+                        if selected_sources and 'background_check_inputs' in selected_sources['bindings']
+                        else digest(private/private_record["background_check_inputs"]["path"]))
                 if written is not None:
                     score["source_bindings"]["written_argument_inputs_sha256"] = private_record["written_argument_inputs"]["sha256"]
                 elif original["plan"]["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6":
                     score["source_bindings"]["current_written_scoring_inputs_sha256"] = digest(private / "scoring-inputs.json")
                 if replacement is not None:
                     score["source_bindings"]["written_replacement_inputs_sha256"] = private_record["written_replacement_inputs"]["sha256"]
-                if manuscript is not None:
-                    score["source_bindings"]["manuscript_completion_inputs_sha256"] = private_record["manuscript_completion_inputs"]["sha256"]
+                if selected_manuscript is not None:
+                    score["source_bindings"]["manuscript_completion_inputs_sha256"] = (
+                        selected_sources['bindings']['manuscript_completion_inputs']['sha256']
+                        if selected_sources else private_record["manuscript_completion_inputs"]["sha256"])
                 if mode == "capability":
                     score["source_bindings"]["capability_policy_sha256"] = digest(public / "capability-scoring-policy.json")
                 if uses_retry:
