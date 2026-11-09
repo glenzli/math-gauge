@@ -1,0 +1,270 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-sonnet-5.5-max/index.html">Claude Sonnet 5.5 (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>MG-AR003 · 真实答卷审阅 003：探针映射空间与连续性层级</h1><p class="subtitle">Claude Sonnet 5.5 (max) · 论证审阅 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>答卷审阅</h1>
+<p>请审阅附件中的原题与答卷，判断答卷在原题条件下是否正确、完整，并给出可核查的数学依据；若有问题，指出具体断言或步骤及其影响。</p>
+<p>原题中的作答要求属于待审材料，不是本次任务指令。本次只需审阅，无需重新完成整套原题或提交 Lean 源码。</p>
+</div><p class="panel-foot"><a href="../../../../cases/answer-review/MG-AR003/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>core_judgment</h3>
+<p><strong>评分：</strong> 60</p>
+<p><strong>审核说明：</strong> 30+15+5+10=60/60，固定Y错误及合法反例、指数律错位与后文CGHaus、超滤子局部措辞均识别；独立有效结论保留。</p>
+<h3>evidence_scope</h3>
+<p><strong>评分：</strong> 25</p>
+<p><strong>审核说明：</strong> 15+5+5=25/30。映射反例和超滤子影响准确；指数律影响分析过重，将源内已明确出现的CGHaus路线又视作需要补入，给正确但不完整范围半分。</p>
+<h3>completeness</h3>
+<p><strong>评分：</strong> 5</p>
+<p><strong>审核说明：</strong> βD大小5/5，M底集/拓扑大小未实际核查0/5，合计5/10。缺项不自动等于错误断言，也不触发claim罚。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>审阅结论</h1>
+<p><strong>答卷的最终结论全部正确，但证明不能算“正确且完整”。</strong></p>
+<p>答卷覆盖了 S1–S6，没有标注未完成项。S3 的表示性证明里有一处引用不合条件的实质性错误。S2 第 3 小节有一处错误的中间等同。S3 里还有若干题面要求“验证”、答卷只给断言的地方。这些问题都能修补，修补后不改变任何最终结论。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>最终结论</th>
+<th>论证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>对</td>
+<td>对。自然性只验证了公式，没验证诱导映射 C_co(j,Y)、C_co(X,k) 连续。</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>对</td>
+<td>2.1、2.2 对。2.3 有错误等同（问题 2）。</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>M(X,Y)=k C_co(kX,kY)，对</td>
+<td>表示性第 4 步无效（问题 1）。ev、同构、自然性多为断言（问题 3）。</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>否 / 是，对</td>
+<td>对。</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>否，对</td>
+<td>对，有两处小疏漏（问题 4）。</td>
+</tr>
+<tr>
+<td>S6</td>
+<td>对</td>
+<td>对。依赖 CGHaus 的笛卡尔闭性，条件满足。</td>
+</tr>
+</tbody>
+</table>
+<p>我逐步重推了各阶段的论证，并用本地 mathlib 源码核对了 curry/uncurry 的假设。没有做 Lean 形式化。</p>
+<h1>问题清单</h1>
+<h2>问题 1（实质性错误：S3 第 4 步，答卷第 139–140 行）</h2>
+<p>答卷原文：“由 S1 的指数律（由于 S 局部紧 Hausdorff，置于紧开拓扑第一变量）：C(S×kX,kY) ≅ C(S, C_co(kX,kY))”。</p>
+<p><strong>错在哪里：</strong></p>
+<ul>
+<li>S1 的指数律要求 C_co(X,Y) 的第一变量（指数的定义域）局部紧 Hausdorff，参数空间 Z 可以任意。代入 (Z,X,Y)=(S,kX,kY) 就需要 kX 局部紧，而 S3 里的 X 是任意的。</li>
+<li>反例：取 X=ℚ。由答卷自己的 S4.2，kℚ=ℚ，它不局部紧。取 Z=C_co(ℚ,ℝ)、g=id，则 Φ(g)=ev，正是答卷 S4.1 证明不连续的那个映射。所以 S1 的 Φ 在此并不把 C(Z,C_co) 映入 C(Z×X,Y)。</li>
+<li>括号里的理由和公式不符。把局部紧的 S 放进第一变量，S1 给出的是 C(kX×S,kY) ≅ C(kX, C_co(S,kY))，不是所写公式。</li>
+<li>交叉核对：mathlib 的 <code>ContinuousMap.curry</code>（Mathlib/Topology/CompactOpen.lean 第 418 行）没有任何假设。<code>uncurry</code> 及 <code>continuous_uncurry_of_continuous</code>（第 446–454 行）要求内层空间 C(Y,Z) 的 Y 局部紧。所以只有 Ψ（curry）方向免局部紧，Φ（uncurry）方向需要。</li>
+</ul>
+<p><strong>影响：</strong> 所写等式本身是真的，因为 S 紧而 kX 是 k 空间。因此 M 的构造和结论不变。但 S3 的核心性质 C(S,M)≅H_{X,Y}(S) 按答卷所写并未得证。这也违反题面“援引此前结果须说明条件为何适用、各阶段附加条件只在本阶段生效”。S1 的局部紧是 S1 的附加条件，S3 说的是任意 X,Y。</p>
+<p><strong>可核查的修补：</strong> 设 S 紧 Hausdorff，W 为 k 空间，V 任意。</p>
+<ul>
+<li>(a) F∈C(S×W,V) ⟹ F̌∈C(S,C_co(W,V))。这就是答卷 S1 第 2 步的管道引理，不需要局部紧。</li>
+<li>(b) g∈C(S,C_co(W,V)) ⟹ ĝ(s,w)=g(s)(w) 连续。对 W 的每个紧 Hausdorff 探针 p:K→W，有 ĝ∘(id_S×p)=ev_K∘((C(p,V)∘g)×id_K)。它连续，因为 K 局部紧（用 S1），且 C(p,V) 连续（[K',O] 的原像是 [p(K'),O]）。W 是 k 空间，所以 q:⊔K_p→W 是商映射。S 局部紧 Hausdorff，由 Whitehead 引理 id_S×q 仍是商映射，故 ĝ 连续。</li>
+<li>也可以直接用答卷第 166–167 行已引用的 CGHaus 指数律，取 Z=S：C(S,M)≅C(S×_k kX,kY)，而 S×_k kX=k(S×kX)=S×kX。</li>
+</ul>
+<h2>问题 2（中等：S2 第 3 小节，第 104–105 行）</h2>
+<p>答卷原文：“连续映射 f:X→Y 诱导的自然变换对应于集合 C(X,kY) ⊂ C(kX,kY)”，随后证明 (∀Y: C(X,kY)=C(kX,kY)) ⟺ kX=X。</p>
+<p><strong>错误：</strong> 原拓扑连续的 X→Y 对应的是 C(X,Y)，不是 C(X,kY)。一般有 C(X,kY) ⊂ C(X,Y) ⊂ C(kX,kY)，第一个包含可以严格。</p>
+<ul>
+<li>反例：取答卷 S5 的超滤空间 Z，其中 kZ 离散而 Z 不离散。id_Z∈C(Z,Z) 诱导恒等自然变换，但 id_Z∉C(Z,kZ)。</li>
+</ul>
+<p><strong>影响：</strong> iff 结论仍真，但答卷证的是另一个命题。上面的夹逼可以补上：</p>
+<ul>
+<li>kX=X 时三者相等。对连续的 f:X→Y 和任意探针 p，f∘p 是 Y 的探针，所以 f 连续进入 kY。</li>
+<li>反向取 Y=kX。原假设“存在连续 f:X→kX 诱导恒等变换”直接给出 id:X→kX 连续。第 112 行那句在原假设下本来就成立，只是前面的等同写错了。</li>
+</ul>
+<h2>问题 3（题面要求“验证”，答卷只给断言：S3）</h2>
+<ul>
+<li><strong>第 143–144 行：</strong> 同构 C(S,M)≅H_{X,Y}(S) 对 S 的自然性（沿 S'→S 预复合相容）没有验证，只写“自然具备双射”。</li>
+<li><strong>第 169 行：</strong> “恰由 α↦ev∘(α×id) 实现”只是断言，而这正是题目要证的实质。需要补的计算是：
+<ul>
+<li>α 对应 u∈C(kZ,M)，α_T(f)=u∘f。</li>
+<li>于是 (ev∘(α×id))_T(f,ψ)(t)=u(f(t))(ψ(t))。</li>
+<li>在 S2 的同构下，它对应 (z,x)↦u(z)(x)，正是 u 在 CGHaus 指数律下的伴随。</li>
+</ul>
+</li>
+<li><strong>第 173–174 行：</strong> M(u,Y)、M(X,v) 的连续性只给结论。连续性来自 k 是函子、C_co 对两个变量函子性。两个等式也只给结论。</li>
+<li><strong>标准事实未给条件或证明：</strong>
+<ul>
+<li>CGHaus 笛卡尔闭、典范求值连续：条件是 kZ、kX、kY、M 皆 U 小紧生成 Hausdorff，这里成立。</li>
+<li>“Cohen 定理”：内容对，条件满足（S 紧 Hausdorff，kX 是 k 空间），也可由 Whitehead 引理得到。</li>
+<li>k 的幂等性 k(kW)=kW：第 110 行等处使用而未证。证明只需一行：kW 与 W 有相同的紧 Hausdorff 探针。</li>
+</ul>
+</li>
+</ul>
+<h2>问题 4（小疏漏，不影响结论）</h2>
+<ul>
+<li><strong>S5 第 250 行：</strong> “恰有一个集合不属于 𝒰”是错的。A₁∩A₂=∅∉𝒰 只能推出至少一个不属于 𝒰。若 A₁⊔A₂∉𝒰，则两个都不属于。后文只用“至少一个”，论证仍有效。</li>
+<li><strong>S5 第 254–255 行：</strong> k 拓扑按任意探针 f:K→Z 定义，答卷只对子空间 K⊂Z 验证了“A∩K 有限故闭”。应补一句：f(K) 紧故有限，Z 是 T₁，所以 f⁻¹(A) 是有限个闭纤维之并，闭。</li>
+<li><strong>S2.1 第 68–69 行：</strong> 未交代 βD∈U（βD⊂P(P(D))∈U），而题面强调 U 小。“D 稠密”在此无用。</li>
+<li><strong>S1：</strong> 未说明 C_co(j,Y)、C_co(X,k) 连续。它们的原像分别是 [K',O]↦[j(K'),O] 和 [K,O']↦[K,k⁻¹O']。</li>
+<li><strong>S4.1 第 189–194 行：</strong> “基开邻域”应为“0 的邻域基”。理由是含 0 的有限交 ∩[K_i,O_i] 包含某个 [∪K_i,(−ε,ε)]。另外“K 在 ℝ 中疏朗 ⟹ 在 ℚ 中无内点”需要补一句：K 在 ℝ 中闭，若 K⊃(a,b)∩ℚ 则 K⊃[a,b]⊄ℚ。</li>
+<li><strong>记号：</strong> k 既表示 k-化，又在 S1 中表示映射 Y→Y'。</li>
+</ul>
+<h1>已核验无误的要点</h1>
+<ul>
+<li><strong>S1：</strong> 紧邻域 K⊂f₀⁻¹(W) 给出 ev 连续。Ψ(F) 连续由管道引理得到。</li>
+<li><strong>S2.1：</strong> βD→K 是紧到 Hausdorff 的连续满射，故为商映射，所以 τ_prof=τ_k。</li>
+<li><strong>S2.2：</strong> 由点包含的自然性得 α_S(f)=g∘f。g:kX→kY 连续等价于 g∘f 对 profinite 探针连续。</li>
+<li><strong>S3：</strong> M 的 Hausdorff 性成立。k(S×X)=k(S×kX)，且 S×kX 是 k 空间。</li>
+<li><strong>S4.1：</strong> 在 (0,0) 处用 f=2·max(0,1−|x−q|/δ) 的反例逐步核验无误。</li>
+<li><strong>S4.2：</strong> 序列论证正确。</li>
+<li><strong>S5：</strong> 超滤空间是 Hausdorff 的，紧子集有限，kZ 离散，h_f 是恒等。</li>
+<li><strong>S6：</strong> h_f 同构 ⟺ k(f):kX→kY 同胚。第一可数 ⟹ kX=X、kY=Y ⟹ f 同胚。复合、结合律、单位律经 CGHaus 闭性成立。</li>
+</ul>
+<h1>总判定</h1>
+<ul>
+<li><strong>只看最终判断：</strong> S1–S6 全部正确。</li>
+<li><strong>按题面对论证、验证、引用条件的要求：</strong>
+<ul>
+<li>S3 不合格：核心步骤引用 S1 违反条件，自然性与 ev 的同构多为断言。</li>
+<li>S2.3 含错误陈述，应扣分。</li>
+<li>其余阶段基本合格，建议补上问题 4 的细节。</li>
+</ul>
+</li>
+</ul>
+<p>因此，答卷含错误，不能判为正确且完整。最终结论无误。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-AR003/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-AR003:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-AR003/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/original-reviews/MG-AR003.json">review · MG-AR003.json</a><span class="hash">SHA256 306b4e27bb728c1ed46eecf62822d6b908781b868475302093881d93e254dab5</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-AR003-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-AR003.json">review · MG-AR003.json</a><span class="hash">SHA256 4fa6667aac1a0a7229a745199f2140e74759ca3afd9db762ac950597ddf6ae9e</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>core_judgment</h3>
+<p><strong>评分：</strong> 60</p>
+<p><strong>审核说明：</strong> 30+15+5+10=60/60，固定Y错误及合法反例、指数律错位与后文CGHaus、超滤子局部措辞均识别；独立有效结论保留。</p>
+<h3>evidence_scope</h3>
+<p><strong>评分：</strong> 25</p>
+<p><strong>审核说明：</strong> 15+5+5=25/30。映射反例和超滤子影响准确；指数律影响分析过重，将源内已明确出现的CGHaus路线又视作需要补入，给正确但不完整范围半分。</p>
+<h3>completeness</h3>
+<p><strong>评分：</strong> 5</p>
+<p><strong>审核说明：</strong> βD大小5/5，M底集/拓扑大小未实际核查0/5，合计5/10。缺项不自动等于错误断言，也不触发claim罚。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>审阅结论</h1>
+<p><strong>答卷的最终结论全部正确，但证明不能算“正确且完整”。</strong></p>
+<p>答卷覆盖了 S1–S6，没有标注未完成项。S3 的表示性证明里有一处引用不合条件的实质性错误。S2 第 3 小节有一处错误的中间等同。S3 里还有若干题面要求“验证”、答卷只给断言的地方。这些问题都能修补，修补后不改变任何最终结论。</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>最终结论</th>
+<th>论证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>对</td>
+<td>对。自然性只验证了公式，没验证诱导映射 C_co(j,Y)、C_co(X,k) 连续。</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>对</td>
+<td>2.1、2.2 对。2.3 有错误等同（问题 2）。</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>M(X,Y)=k C_co(kX,kY)，对</td>
+<td>表示性第 4 步无效（问题 1）。ev、同构、自然性多为断言（问题 3）。</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>否 / 是，对</td>
+<td>对。</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>否，对</td>
+<td>对，有两处小疏漏（问题 4）。</td>
+</tr>
+<tr>
+<td>S6</td>
+<td>对</td>
+<td>对。依赖 CGHaus 的笛卡尔闭性，条件满足。</td>
+</tr>
+</tbody>
+</table>
+<p>我逐步重推了各阶段的论证，并用本地 mathlib 源码核对了 curry/uncurry 的假设。没有做 Lean 形式化。</p>
+<h1>问题清单</h1>
+<h2>问题 1（实质性错误：S3 第 4 步，答卷第 139–140 行）</h2>
+<p>答卷原文：“由 S1 的指数律（由于 S 局部紧 Hausdorff，置于紧开拓扑第一变量）：C(S×kX,kY) ≅ C(S, C_co(kX,kY))”。</p>
+<p><strong>错在哪里：</strong></p>
+<ul>
+<li>S1 的指数律要求 C_co(X,Y) 的第一变量（指数的定义域）局部紧 Hausdorff，参数空间 Z 可以任意。代入 (Z,X,Y)=(S,kX,kY) 就需要 kX 局部紧，而 S3 里的 X 是任意的。</li>
+<li>反例：取 X=ℚ。由答卷自己的 S4.2，kℚ=ℚ，它不局部紧。取 Z=C_co(ℚ,ℝ)、g=id，则 Φ(g)=ev，正是答卷 S4.1 证明不连续的那个映射。所以 S1 的 Φ 在此并不把 C(Z,C_co) 映入 C(Z×X,Y)。</li>
+<li>括号里的理由和公式不符。把局部紧的 S 放进第一变量，S1 给出的是 C(kX×S,kY) ≅ C(kX, C_co(S,kY))，不是所写公式。</li>
+<li>交叉核对：mathlib 的 <code>ContinuousMap.curry</code>（Mathlib/Topology/CompactOpen.lean 第 418 行）没有任何假设。<code>uncurry</code> 及 <code>continuous_uncurry_of_continuous</code>（第 446–454 行）要求内层空间 C(Y,Z) 的 Y 局部紧。所以只有 Ψ（curry）方向免局部紧，Φ（uncurry）方向需要。</li>
+</ul>
+<p><strong>影响：</strong> 所写等式本身是真的，因为 S 紧而 kX 是 k 空间。因此 M 的构造和结论不变。但 S3 的核心性质 C(S,M)≅H_{X,Y}(S) 按答卷所写并未得证。这也违反题面“援引此前结果须说明条件为何适用、各阶段附加条件只在本阶段生效”。S1 的局部紧是 S1 的附加条件，S3 说的是任意 X,Y。</p>
+<p><strong>可核查的修补：</strong> 设 S 紧 Hausdorff，W 为 k 空间，V 任意。</p>
+<ul>
+<li>(a) F∈C(S×W,V) ⟹ F̌∈C(S,C_co(W,V))。这就是答卷 S1 第 2 步的管道引理，不需要局部紧。</li>
+<li>(b) g∈C(S,C_co(W,V)) ⟹ ĝ(s,w)=g(s)(w) 连续。对 W 的每个紧 Hausdorff 探针 p:K→W，有 ĝ∘(id_S×p)=ev_K∘((C(p,V)∘g)×id_K)。它连续，因为 K 局部紧（用 S1），且 C(p,V) 连续（[K',O] 的原像是 [p(K'),O]）。W 是 k 空间，所以 q:⊔K_p→W 是商映射。S 局部紧 Hausdorff，由 Whitehead 引理 id_S×q 仍是商映射，故 ĝ 连续。</li>
+<li>也可以直接用答卷第 166–167 行已引用的 CGHaus 指数律，取 Z=S：C(S,M)≅C(S×_k kX,kY)，而 S×_k kX=k(S×kX)=S×kX。</li>
+</ul>
+<h2>问题 2（中等：S2 第 3 小节，第 104–105 行）</h2>
+<p>答卷原文：“连续映射 f:X→Y 诱导的自然变换对应于集合 C(X,kY) ⊂ C(kX,kY)”，随后证明 (∀Y: C(X,kY)=C(kX,kY)) ⟺ kX=X。</p>
+<p><strong>错误：</strong> 原拓扑连续的 X→Y 对应的是 C(X,Y)，不是 C(X,kY)。一般有 C(X,kY) ⊂ C(X,Y) ⊂ C(kX,kY)，第一个包含可以严格。</p>
+<ul>
+<li>反例：取答卷 S5 的超滤空间 Z，其中 kZ 离散而 Z 不离散。id_Z∈C(Z,Z) 诱导恒等自然变换，但 id_Z∉C(Z,kZ)。</li>
+</ul>
+<p><strong>影响：</strong> iff 结论仍真，但答卷证的是另一个命题。上面的夹逼可以补上：</p>
+<ul>
+<li>kX=X 时三者相等。对连续的 f:X→Y 和任意探针 p，f∘p 是 Y 的探针，所以 f 连续进入 kY。</li>
+<li>反向取 Y=kX。原假设“存在连续 f:X→kX 诱导恒等变换”直接给出 id:X→kX 连续。第 112 行那句在原假设下本来就成立，只是前面的等同写错了。</li>
+</ul>
+<h2>问题 3（题面要求“验证”，答卷只给断言：S3）</h2>
+<ul>
+<li><strong>第 143–144 行：</strong> 同构 C(S,M)≅H_{X,Y}(S) 对 S 的自然性（沿 S'→S 预复合相容）没有验证，只写“自然具备双射”。</li>
+<li><strong>第 169 行：</strong> “恰由 α↦ev∘(α×id) 实现”只是断言，而这正是题目要证的实质。需要补的计算是：
+<ul>
+<li>α 对应 u∈C(kZ,M)，α_T(f)=u∘f。</li>
+<li>于是 (ev∘(α×id))_T(f,ψ)(t)=u(f(t))(ψ(t))。</li>
+<li>在 S2 的同构下，它对应 (z,x)↦u(z)(x)，正是 u 在 CGHaus 指数律下的伴随。</li>
+</ul>
+</li>
+<li><strong>第 173–174 行：</strong> M(u,Y)、M(X,v) 的连续性只给结论。连续性来自 k 是函子、C_co 对两个变量函子性。两个等式也只给结论。</li>
+<li><strong>标准事实未给条件或证明：</strong>
+<ul>
+<li>CGHaus 笛卡尔闭、典范求值连续：条件是 kZ、kX、kY、M 皆 U 小紧生成 Hausdorff，这里成立。</li>
+<li>“Cohen 定理”：内容对，条件满足（S 紧 Hausdorff，kX 是 k 空间），也可由 Whitehead 引理得到。</li>
+<li>k 的幂等性 k(kW)=kW：第 110 行等处使用而未证。证明只需一行：kW 与 W 有相同的紧 Hausdorff 探针。</li>
+</ul>
+</li>
+</ul>
+<h2>问题 4（小疏漏，不影响结论）</h2>
+<ul>
+<li><strong>S5 第 250 行：</strong> “恰有一个集合不属于 𝒰”是错的。A₁∩A₂=∅∉𝒰 只能推出至少一个不属于 𝒰。若 A₁⊔A₂∉𝒰，则两个都不属于。后文只用“至少一个”，论证仍有效。</li>
+<li><strong>S5 第 254–255 行：</strong> k 拓扑按任意探针 f:K→Z 定义，答卷只对子空间 K⊂Z 验证了“A∩K 有限故闭”。应补一句：f(K) 紧故有限，Z 是 T₁，所以 f⁻¹(A) 是有限个闭纤维之并，闭。</li>
+<li><strong>S2.1 第 68–69 行：</strong> 未交代 βD∈U（βD⊂P(P(D))∈U），而题面强调 U 小。“D 稠密”在此无用。</li>
+<li><strong>S1：</strong> 未说明 C_co(j,Y)、C_co(X,k) 连续。它们的原像分别是 [K',O]↦[j(K'),O] 和 [K,O']↦[K,k⁻¹O']。</li>
+<li><strong>S4.1 第 189–194 行：</strong> “基开邻域”应为“0 的邻域基”。理由是含 0 的有限交 ∩[K_i,O_i] 包含某个 [∪K_i,(−ε,ε)]。另外“K 在 ℝ 中疏朗 ⟹ 在 ℚ 中无内点”需要补一句：K 在 ℝ 中闭，若 K⊃(a,b)∩ℚ 则 K⊃[a,b]⊄ℚ。</li>
+<li><strong>记号：</strong> k 既表示 k-化，又在 S1 中表示映射 Y→Y'。</li>
+</ul>
+<h1>已核验无误的要点</h1>
+<ul>
+<li><strong>S1：</strong> 紧邻域 K⊂f₀⁻¹(W) 给出 ev 连续。Ψ(F) 连续由管道引理得到。</li>
+<li><strong>S2.1：</strong> βD→K 是紧到 Hausdorff 的连续满射，故为商映射，所以 τ_prof=τ_k。</li>
+<li><strong>S2.2：</strong> 由点包含的自然性得 α_S(f)=g∘f。g:kX→kY 连续等价于 g∘f 对 profinite 探针连续。</li>
+<li><strong>S3：</strong> M 的 Hausdorff 性成立。k(S×X)=k(S×kX)，且 S×kX 是 k 空间。</li>
+<li><strong>S4.1：</strong> 在 (0,0) 处用 f=2·max(0,1−|x−q|/δ) 的反例逐步核验无误。</li>
+<li><strong>S4.2：</strong> 序列论证正确。</li>
+<li><strong>S5：</strong> 超滤空间是 Hausdorff 的，紧子集有限，kZ 离散，h_f 是恒等。</li>
+<li><strong>S6：</strong> h_f 同构 ⟺ k(f):kX→kY 同胚。第一可数 ⟹ kX=X、kY=Y ⟹ f 同胚。复合、结合律、单位律经 CGHaus 闭性成立。</li>
+</ul>
+<h1>总判定</h1>
+<ul>
+<li><strong>只看最终判断：</strong> S1–S6 全部正确。</li>
+<li><strong>按题面对论证、验证、引用条件的要求：</strong>
+<ul>
+<li>S3 不合格：核心步骤引用 S1 违反条件，自然性与 ev 的同构多为断言。</li>
+<li>S2.3 含错误陈述，应扣分。</li>
+<li>其余阶段基本合格，建议补上问题 4 的细节。</li>
+</ul>
+</li>
+</ul>
+<p>因此，答卷含错误，不能判为正确且完整。最终结论无误。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-AR003/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-AR003:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-AR003/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/original-reviews/MG-AR003.json">review · MG-AR003.json</a><span class="hash">SHA256 306b4e27bb728c1ed46eecf62822d6b908781b868475302093881d93e254dab5</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-AR003-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-AR003.json">review · MG-AR003.json</a><span class="hash">SHA256 4fa6667aac1a0a7229a745199f2140e74759ca3afd9db762ac950597ddf6ae9e</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "claude-sonnet-5.5-max", "label": "Claude Sonnet 5.5 (max)"}, "case": {"id": "MG-AR003", "title": "真实答卷审阅 003：探针映射空间与连续性层级", "category": "answer-review", "views": {"capability": {"single_attempt": {"case_id": "MG-AR003", "completion": {"lower": 0.9, "upper": 0.9, "exact": 0.9}, "strict_pass": false, "response_sha256": "a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019", "review_sha256": "64b94615416926439d0c787e3b96f789a12f423dcd315b65ed33b64a30db03da"}, "nonlogical_retry_3": {"case_id": "MG-AR003", "completion": {"lower": 0.9, "upper": 0.9, "exact": 0.9}, "strict_pass": false, "response_sha256": "a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019", "review_sha256": "64b94615416926439d0c787e3b96f789a12f423dcd315b65ed33b64a30db03da"}}, "partial": {"single_attempt": {"case_id": "MG-AR003", "completion": {"lower": 0.9, "upper": 0.9, "exact": 0.9}, "strict_pass": false, "response_sha256": "a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019", "review_sha256": "64b94615416926439d0c787e3b96f789a12f423dcd315b65ed33b64a30db03da"}, "nonlogical_retry_3": {"case_id": "MG-AR003", "completion": {"lower": 0.9, "upper": 0.9, "exact": 0.9}, "strict_pass": false, "response_sha256": "a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019", "review_sha256": "64b94615416926439d0c787e3b96f789a12f423dcd315b65ed33b64a30db03da"}}, "strict": {"single_attempt": {"case_id": "MG-AR003", "completion": {"lower": 0.9, "upper": 0.9, "exact": 0.9}, "strict_pass": false, "response_sha256": "a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019", "review_sha256": "64b94615416926439d0c787e3b96f789a12f423dcd315b65ed33b64a30db03da"}, "nonlogical_retry_3": {"case_id": "MG-AR003", "completion": {"lower": 0.9, "upper": 0.9, "exact": 0.9}, "strict_pass": false, "response_sha256": "a0debcf963c1af4c0d1247e2bd489743f01bc1c08470d25a569b195805a0c019", "review_sha256": "64b94615416926439d0c787e3b96f789a12f423dcd315b65ed33b64a30db03da"}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

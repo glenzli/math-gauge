@@ -1,0 +1,575 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MG-GP001 · 局部单形、锥附着与整体同伦型 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-sonnet-5.5-max/index.html">Claude Sonnet 5.5 (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>MG-GP001 · 局部单形、锥附着与整体同伦型</h1><p class="subtitle">Claude Sonnet 5.5 (max) · 书面论证 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>局部单形、锥附着与整体同伦型</h1>
+<p>请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。</p>
+<h2>S1 可缩子复形的商</h2>
+<p>设 Y 为有限 CW 复形，A⊂Y 是非空可缩子复形。证明商映射 Y→Y/A 是同伦等价，并说明同伦为何能下降到商。</p>
+<h2>S2 非可缩底空间上的锥附着</h2>
+<p>设 D 为路径连通有限 CW 复形，L 为非空有限子复形，包含 L→D 零伦。令 Y=D∪_L CL。证明 Y≃D∨ΣL，其中 Σ 为非约化悬挂，并说明楔点的选择。</p>
+<h2>S3 整数扭结的实例</h2>
+<p>取实射影平面 RP² 的任一有限单纯三角剖分 L。构造有限 K、顶点 v、含 v 子复形 B，使 |K|去 v 非空可缩、(|B|去 v)→|B| 为同伦等价，而 |K| 的约化有理同调全零但 |K| 不可缩。</p>
+<h2>S4 整体对象与全部恢复目标</h2>
+<p>判定下面所列目标在给定条件下是否成立。若成立，完成全部构造、分类与性质的证明；若不成立，给出满足全部给定条件的反例。</p>
+<p>设 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span> 是有限抽象单纯复形，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span> 是它的一个顶点，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>⊆</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">B\subseteq K</annotation></semantics></math></span> 是含有顶点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span> 的子复形。所有几何实现均取通常的拓扑。令</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>X</mi><mo>=</mo><mi mathvariant="normal">∣</mi><mi>K</mi><mi mathvariant="normal">∣</mi><mo separator="true">,</mo><mspace width="2em"/><mi>O</mi><mo>=</mo><mi>X</mi><mo>∖</mo><mo stretchy="false">{</mo><mi>v</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mspace width="2em"/><mi>C</mi><mo>=</mo><mi mathvariant="normal">∣</mi><mi>B</mi><mi mathvariant="normal">∣</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">X=|K|,\qquad O=X\setminus\{v\},\qquad C=|B|.</annotation></semantics></math></span></p>
+<p>假设 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi></mrow><annotation encoding="application/x-tex">O</annotation></semantics></math></span> 是非空可缩空间，且包含映射</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>O</mi><mo>∩</mo><mi>C</mi><mo>⟶</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">O\cap C\longrightarrow C</annotation></semantics></math></span></p>
+<p>是同伦等价。</p>
+<p>刻画所有满足这些条件的三元组 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>K</mi><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(K,v,B)</annotation></semantics></math></span> 中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span> 的可能同伦类型，并为刻画中的全部类型给出满足原条件的实现构造。再给出一个只用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span> 中包含 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span> 的单形及其面之间的有限关联数据即可检验的、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span> 可缩的充要条件。请证明刻画、实现构造和判据。</p>
+<h2>S5 不提供子复形 B</h2>
+<p>设 K 有限、v 为顶点，仅假设 |K|去 v 非空可缩，不再给 B 及其同伦条件。判定 |K| 是否必同伦等价于非空有限复形的悬挂；若不必，分类新增的可能类型。</p>
+<h2>S6 悬挂信息的逆向恢复</h2>
+<p>对非空有限单纯复形 L_1,L_2，判定 Σ|L_1|≃Σ|L_2| 是否必推出 |L_1|≃|L_2|。</p>
+</div><p class="panel-foot"><a href="../../../../cases/proofs/MG-GP001/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>S1</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> HEP把A内收缩延拓且保持A，分别构造gq与qg的同伦；明确q×I的紧到Hausdorff商映射性质，下降连续性正确。</p>
+<h3>S2</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 用连接零伦的整体粘合Z及锥对的强形变收缩，合法比较两端映射锥；常值锥得到D与非约化悬挂的楔，并核对D的路径连通及楔点选择。</p>
+<h3>S3</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 双锥K和单边B满足全部几何条件；顶点删除径向强形变收缩合法，悬挂RP²的整数Z/2扭结证明不可缩，同时有理约化同调为零。</p>
+<h3>S4</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 证明删除子复形可缩、B排除空link、X等价于非空有限link的悬挂；双锥实现全部类型。相对链复形由含v单形的面关联构造，整数Smith条件与link无环等价；单连通悬挂和Hurewicz/Whitehead给充分性，未把一般无环空间误当可缩。</p>
+<h3>S5</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 完整区分空link与非空link。孤立顶点加可缩删除核给唯一新增S⁰，双孤立点实现，非空悬挂路径连通排除同伦等价。</p>
+<h3>S6</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 合法替代反例：两圆不交并与8字形加孤立点。用S1/S2证明悬挂不交并分裂为各悬挂与S¹之楔，两者悬挂均为S²∨S²∨S¹，而分支基本群排除原空间同伦等价。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>答卷：S1–S6</h1>
+<p><strong>结论摘要</strong></p>
+<ul>
+<li>S1：成立。</li>
+<li>S2：Y ≃ D ∨ ΣL。</li>
+<li>S3：取 K = L∗{v,w}，B 取一条含 v 的棱。</li>
+<li>S4：X 不必可缩。恒有 X ≃ Σ|lk_K(v)|，且 lk_K(v) ≠ ∅。可能的同伦型恰为“非空有限复形的悬挂”。X 可缩 ⇔ lk_K(v) 非空、连通且整系数零调。</li>
+<li>S5：不必。唯一新增类型是 S⁰，对应 v 为孤立顶点。</li>
+<li>S6：不能。</li>
+</ul>
+<h2>0. 约定与标准事实</h2>
+<p><strong>悬挂。</strong> CY = Y×[0,1]/(Y×{1})，Y 视为 Y×{0}。ΣY = CY/Y，即把 Y×{0}、Y×{1} 各压成一点 S、N（极点）。约定 Σ∅ = S⁰。</p>
+<ul>
+<li>若 Y ≠ ∅，则 ΣY 路径连通，且 H̃ₙ(ΣY) ≅ H̃ₙ₋₁(Y)（n ≥ 1，Mayer–Vietoris）。</li>
+<li>若 Y 是非空 CW 复形，约化悬挂 = ΣY/({y₀}×I)。商掉的弧可缩，由 S1 知它与 ΣY 同伦等价。所以“约化/非约化”不影响下文任何结论。</li>
+</ul>
+<p><strong>单纯复形。</strong> K 为有限抽象单纯复形，v 为顶点。</p>
+<ul>
+<li>K−v := {σ∈K : v∉σ}。</li>
+<li>lk(v) := {σ∈K−v : σ∪{v}∈K}。</li>
+<li>St(v) := {σ∈K : σ∪{v}∈K} = v∗lk(v)。</li>
+</ul>
+<p>它们都是子复形，且 K = (K−v) ∪ St(v)，(K−v) ∩ St(v) = lk(v)。|K| ⊂ ℝ^V 取重心坐标 x = (x_u)。有限时 |K| 是紧 Hausdorff 空间，也是有限 CW 复形。</p>
+<p><strong>标准事实。</strong></p>
+<ul>
+<li><strong>(F1)</strong> (X,A) 是 CW 对 ⇒ X×{0}∪A×I 是 X×I 的强形变收缩核，因此有同伦延拓性质（HEP）。</li>
+<li><strong>(F2)</strong> Hurewicz + Whitehead：单连通 CW 复形若约化整系数同调全零，则可缩。</li>
+<li><strong>(F3)</strong> 紧空间到 Hausdorff 空间的连续满射是商映射。特别地，q×id_I 是商映射，所以“先商后乘 I”等于“先乘 I 再商”。</li>
+</ul>
+<p><strong>引理 A（删去顶点 v）</strong></p>
+<ul>
+<li>(a) |K| = |K−v| ∪ |St(v)|，且 |K−v| ∩ |St(v)| = |lk(v)|。</li>
+<li>(b) 若 lk(v) ≠ ∅，则 |St(v)| ≅ C|lk(v)|（顶点 v，底 |lk(v)|）。若 lk(v) = ∅，则 St(v) = {v}。</li>
+<li>(c) |K−v| 是 |K|∖{v} 的强形变收缩核。</li>
+<li>(d) 若 lk(v) ≠ ∅，则 |K|/|K−v| ≅ Σ|lk(v)|。若 lk(v) = ∅，则 |K| = |K−v| ⊔ {v}。</li>
+</ul>
+<p><em>证明。</em></p>
+<ul>
+<li>(a) 含 v 的单形属于 St(v)，其不含 v 的面属于 lk(v)。</li>
+<li>(b) 映射 (y,s) ↦ (1−s)y + sv 把 |lk|×[0,1] 连续地映满 |St|。点 x ≠ v 可写成 (1−x_v)ρ(x) + x_v·v，其中 ρ(x)ᵤ = xᵤ/(1−x_v)（u≠v）。该映射恰把 |lk|×{1} 压成点 v，其余处为单射。紧 → Hausdorff，故诱导同胚。</li>
+<li>(c) 对 x ≠ v 有 x_v &lt; 1。令 ρ(x)_v = 0，ρ(x)ᵤ = xᵤ/(1−x_v)，则 supp ρ(x) = supp x∖{v} ∈ K−v。令 r(x,s) = (1−s)x + sρ(x)。
+<ul>
+<li>它落在单形 |supp x| 内，且 r(x,s)_v = (1−s)x_v &lt; 1。</li>
+<li>它在有限个闭集 (|σ|∖{v})×I 上连续，由粘接引理得整体连续。</li>
+<li>r₀ = id，r₁ 的像在 |K−v| 内，且 x_v = 0 时 r(x,s) ≡ x。</li>
+</ul>
+</li>
+<li>(d) 复合 |St| ⊂ |K| → |K|/|K−v| 是连续满射，恰把 |lk| 压成点。它诱导紧 Hausdorff 空间间的连续双射 |St|/|lk| → |K|/|K−v|，故为同胚。再由 (b)，|St|/|lk| ≅ C|lk|/|lk| = Σ|lk|。∎</li>
+</ul>
+<h2>S1　可缩子复形的商</h2>
+<p><strong>命题。</strong> Y 为有限 CW 复形，A ⊂ Y 为非空可缩子复形。则 q: Y → Y/A 是同伦等价。</p>
+<p><em>证明。</em></p>
+<ol>
+<li>A 可缩：存在 h: A×I → A，h₀ = id_A，h₁ ≡ a₀。把 h 看成包含映射 A ↪ Y 的同伦。(Y,A) 是 CW 对，由 (F1) 延拓为 F: Y×I → Y，F₀ = id_Y，F|_{A×I} = h。于是 <strong>F_t(A) ⊂ A 对所有 t 成立</strong>，且 F₁(A) = {a₀}。</li>
+<li>F₁ 在 A 上为常值，故存在连续的 g: Y/A → Y，使 g∘q = F₁。</li>
+<li><strong>下降。</strong> 合成 q∘F: Y×I → Y/A 在每个 A×{t} 上恒等于基点 *，这是因为 F_t(A) ⊂ A。又 Y×I → (Y/A)×I 是商映射，因为它是紧空间到 Hausdorff 空间的满射（Y/A 是紧 Hausdorff，A 闭，见 F3）。所以 G(q(y),t) := q(F(y,t)) 良定义且连续。
+<ul>
+<li>若同伦不把 A 保持在 A 内，q∘F_t 在 A 上就不是常值，无法下降。</li>
+</ul>
+</li>
+<li>g∘q = F₁ ≃ F₀ = id_Y（由 F）。</li>
+<li>G₀ = id_{Y/A}，因为 G₀q = qF₀ = q。G₁ = q∘g，因为 G₁q = qF₁ = qgq 且 q 是满射。所以 q∘g ≃ id。∎</li>
+</ol>
+<p><strong>适用条件。</strong></p>
+<ul>
+<li>A 非空，否则 Y/A = Y ⊔ pt。</li>
+<li>A 是子复形，用于 HEP。</li>
+<li>可缩性给出 h。</li>
+<li>有限性使商空间 Hausdorff，且 (F3) 成立。</li>
+</ul>
+<h2>S2　非可缩底空间上的锥附着</h2>
+<p><strong>命题。</strong> D 是路径连通有限 CW 复形，L ≠ ∅ 是有限子复形，i: L ↪ D 零伦，Y = D ∪_L CL。则 Y ≃ D ∨ ΣL。</p>
+<p><em>证明。</em></p>
+<ol>
+<li>取零伦 H: L×I → D，H₀ = i，H₁ ≡ d₀。</li>
+<li>令 Z = (D ⊔ CL×I)/((x,0,t) ~ H(x,t))，x ∈ L，t ∈ I。
+<ul>
+<li>子空间 Y₀ = D ∪ CL×{0} 因 H₀ = i 而等于 Y。</li>
+<li>子空间 Y₁ = D ∪ CL×{1} = D ∪_c CL，c ≡ d₀。</li>
+</ul>
+</li>
+<li>(CL,L) 是 CW 对（L 为子复形）。由 (F1)（对 ε = 1 把 t 换成 1−t），CL×I 形变收缩到 CL×{ε} ∪ L×I (ε = 0,1)，且在后者上驻定。该形变在 D 上取恒等，与粘合 (x,0,t) ~ H(x,t) 相容。其连续性来自 (D⊔CL×I)×I → Z×I 是商映射（F3）。所以 Y₀ 和 Y₁ 都是 Z 的形变收缩核，从而 Y ≃ Z ≃ Y₁。</li>
+<li>在 Y₁ 中底 L 的每点都等同于 d₀，故 Y₁ = D ⊔ (CL/L)/(d₀ ~ S) = D ∨ ΣL。∎</li>
+</ol>
+<p><strong>楔点的选择。</strong></p>
+<ul>
+<li>ΣL 一侧：楔点是极点 S = [L×{0}]（锥的底）。翻转 t ↦ 1−t 交换两极点，故取锥顶 N 同样可以。取 ΣL 的任一点，同伦型也不变，因为 ΣL 是路径连通 CW 复形（L ≠ ∅）。</li>
+<li>D 一侧：楔点是零伦的终点 d₀。因为 D 路径连通，d₀ 可取 D 的任意点（沿路径改接零伦）。又因 D 是 CW 复形（良配点），D∨ΣL 的同伦型与 d₀ 无关。</li>
+<li>若 D 不路径连通，d₀ 只落在一个分支，选择就有影响。</li>
+<li>具体的同伦等价依赖所选零伦，但同伦型不依赖。</li>
+</ul>
+<p><strong>特例。</strong> D 可缩时，S1（A = D）给出 Y ≃ Y/D = CL/L = ΣL，与 D∨ΣL ≃ ΣL 一致。</p>
+<h2>S3　整数扭结的实例</h2>
+<p>设 L 是 RP² 的任一有限单纯三角剖分，顶点集为 V，u ∈ V。取新点 v、w，令</p>
+<ul>
+<li><strong>K = L∗{v,w}</strong> = {σ, σ∪{v}, σ∪{w} : σ∈L} ∪ {{v},{w}}（v、w 不相连）。</li>
+<li><strong>B = {{v},{u},{v,u}}</strong>，即一条棱。</li>
+</ul>
+<p>例如取 6 点三角剖分 123, 134, 145, 156, 162, 235, 346, 452, 563, 624。</p>
+<p><strong>验证。</strong></p>
+<ol>
+<li><strong>|K|∖v 非空可缩。</strong>
+<ul>
+<li>K−v = w∗L 是锥，|w∗L| 可缩（直线收缩到 w，每点到 w 的线段落在同一单形内）。</li>
+<li>由引理 A(c)，O ≃ |K−v| ≃ pt，且 w ∈ O。</li>
+</ul>
+</li>
+<li><strong>(|B|∖v) → |B| 是同伦等价。</strong> |B| 是线段，|B|∖v 是半开线段，二者都可缩。可缩空间之间的任何映射都是同伦等价。</li>
+<li><strong>同调。</strong> lk(v) = L，K−v 可缩，由引理 A(d) 和 S1 得 |K| ≃ Σ|L|。S1 的条件：|K| 是有限 CW，A = |K−v| 是非空可缩子复形。因此 H̃ₙ(|K|;ℤ) ≅ H̃ₙ₋₁(RP²;ℤ)，即 H̃₂ = ℤ/2，其余为 0。由万有系数定理，H̃ₙ(|K|;ℚ) = 0 对所有 n 成立。</li>
+<li><strong>不可缩。</strong> H₂(|K|;ℤ) = ℤ/2 ≠ 0。
+<ul>
+<li>实际上 |K| 单连通，π₂ = ℤ/2（Hurewicz），它是 Moore 空间 M(ℤ/2,2)。</li>
+<li>对上面的 6 点例，用 Smith 标准形机器核验得 H̃*(K;ℤ) = (0,0,ℤ/2,0)。</li>
+</ul>
+</li>
+</ol>
+<p><strong>为何“O∩C→C 为等价”推不出 O→X 为等价。</strong> C 不是 v 的邻域，B 只看到 K 的一小块，看不到 lk_K(v)。</p>
+<h2>S4　整体对象与恢复目标</h2>
+<p><strong>判定。</strong></p>
+<ul>
+<li>目标“X 必可缩”不成立（S3 的反例满足全部条件）。</li>
+<li>下面三条成立并给出证明：
+<ol>
+<li>同伦型的刻画；</li>
+<li>全部类型的实现；</li>
+<li>X 可缩的充要判据。</li>
+</ol>
+</li>
+</ul>
+<p>记 D = K−v，L = lk_K(v)。</p>
+<h3>定理 4.1（限制）</h3>
+<p>设 (K,v,B) 满足题设。则：</p>
+<ol>
+<li>|D| 非空可缩。</li>
+<li>L ≠ ∅。</li>
+<li>商映射 |K| → |K|/|D| ≅ Σ|L| 是同伦等价，所以 <strong>X ≃ Σ|lk_K(v)|</strong>。</li>
+<li>对给定的 (K,v)，若 |D| 非空可缩，则存在满足条件的 B ⇔ L ≠ ∅。此时 B 可取任一条棱 {v,u}。</li>
+</ol>
+<p><em>证明。</em></p>
+<ol>
+<li>引理 A(c) 说明 |D| ↪ O 是同伦等价，而 O 非空可缩。</li>
+<li>设 L = ∅。则 K 中含 v 的单形只有 {v}，故 {v} 在 C 中既开又闭。
+<ul>
+<li>这时 O∩C = |B−v|，其包含映射的像不含分支 {v}，π₀ 不满，不是同伦等价。</li>
+<li>矛盾，所以 L ≠ ∅。</li>
+</ul>
+</li>
+<li>用 S1，Y = |K| 有限 CW，A = |D| 是非空可缩子复形（由 1），再加引理 A(d)。
+<ul>
+<li>也可用 S2：D 路径连通，L ⊂ D 是非空子复形，D 可缩所以包含映射零伦，X = D∪_L CL ≃ D∨ΣL ≃ ΣL。</li>
+</ul>
+</li>
+<li>必要性已在 2 中证明。充分性：取棱 {v,u} (u ∈ L)，|B|∖v 与 |B| 都可缩，故包含映射是同伦等价。∎</li>
+</ol>
+<p><strong>推论。</strong></p>
+<ul>
+<li>X 路径连通。</li>
+<li>H̃ₙ(X;ℤ) ≅ H̃ₙ₋₁(|L|;ℤ)。</li>
+<li>记 c 为 L 的分支数。H₁(X) = ℤ^{c−1}，且 π₁(X) 是秩为 c−1 的自由群。这由 ΣL = 两个可缩开集的并，交 ≃ L，用 van Kampen 得到。</li>
+<li>X 单连通 ⇔ L 连通。</li>
+<li>例：L = 两点时 X ≃ S¹，不单连通。</li>
+</ul>
+<h3>定理 4.2（实现，分类完成）</h3>
+<p>对每个非空有限单纯复形 L，三元组 (L∗{v,w}, v, 棱 {v,u}) 满足全部条件，且 lk(v) = L，|K| ≅ Σ|L|。</p>
+<p><em>证明。</em> 验证同 S3：K−v = w∗L 可缩，B 是棱，lk(v) = L。∎</p>
+<p><strong>因此</strong>，可能的同伦型恰为 <strong>{Σ|L| : L 非空有限单纯复形}</strong>。因为每个有限 CW 复形都同伦等价于有限单纯复形，这也就是 {ΣY : Y 非空有限 CW 复形}。</p>
+<p><strong>不会出现的类型。</strong></p>
+<ul>
+<li>RP²、T² 不会出现，因为 π₁ 不是自由群。</li>
+<li>CP²、S²×S² 不会出现，因为 X 是两个可缩开集的并，约化上同调中的所有上积为零。</li>
+</ul>
+<h3>定理 4.3（可缩判据，只用含 v 的单形的关联数据）</h3>
+<p>取 V(K) 的全序。令 Eₙ 为以 K 中含 v 的 n 维单形为基的自由 ℤ-模（E₀ = ℤ{v}），并令</p>
+<p>∂ᵛ(u₀&lt;…&lt;uₙ) = Σ_{j: uⱼ≠v} (−1)ʲ (σ∖uⱼ)。</p>
+<p>即只保留仍含 v 的面。这正是 C*(K)/C*(K−v) 的边缘算子。数据就是含 v 的单形按包含序构成的有限偏序集，它同构于 lk(v) 的面偏序集再添一个最小元。则下列等价：</p>
+<ol>
+<li>X 可缩；</li>
+<li>H̃ₙ(X;ℤ) = 0（∀n）；</li>
+<li>L 连通，且 H̃ₙ(|L|;ℤ) = 0（∀n ≥ 1）；</li>
+<li>链复形 (E,∂ᵛ) 在所有次数正合；</li>
+<li>记 mₙ = rank Eₙ，∂ₙ: Eₙ → Eₙ₋₁（∂₀ = 0）。对所有 n ≥ 0：rank ∂ₙ + rank ∂ₙ₊₁ = mₙ，且 ∂ₙ₊₁ 的非零初等因子全为 1（Smith 标准形可检验）。</li>
+</ol>
+<p>等价地，局部同调 Hₙ(X, X∖v;ℤ) = 0 对所有 n 成立。</p>
+<p><em>证明。</em></p>
+<ul>
+<li><strong>(1)⇒(2)</strong> 显然。</li>
+<li><strong>(2)⇒(3)</strong> 对 n ≥ 0，H̃ₙ(L) ≅ H̃ₙ₊₁(ΣL) ≅ H̃ₙ₊₁(X) = 0。n = 0 时给出 L 连通。</li>
+<li><strong>(3)⇒(1)</strong>
+<ul>
+<li>ΣL 单连通：ΣL = U∪V，U = ΣL∖S，V = ΣL∖N，二者开且可缩，U∩V ≅ L×(0,1) 路径连通，van Kampen 给出 π₁ = 1。</li>
+<li>H̃ₙ(ΣL) = H̃ₙ₋₁(L) = 0。</li>
+<li>由 (F2)，ΣL 可缩，故 X ≃ ΣL 可缩。</li>
+</ul>
+</li>
+<li><strong>(3)⇔(4)</strong> 令 φ(σ) = (−1)ᵖ(σ∖v)，p 为 v 在 σ 中的位置，则 φ∂ᵛ = −∂φ。因此 (E,∂ᵛ) 与 lk(v) 的增广链复形（空单形在 −1 次）相差一个移位和符号，Hₙ(E) ≅ H̃ₙ₋₁(L)。
+<ul>
+<li>L = ∅ 时 E = ℤ（只在 0 次），H₀ = ℤ ≠ 0，故不正合，与 X ≃ S⁰ 一致。</li>
+<li>对 L ≠ ∅，E₀ 处的正合性自动成立（∂₁ 有 ±1 元）。</li>
+</ul>
+</li>
+<li><strong>(4)⇔(5)</strong> 正合 ⇔ ker ∂ₙ = im ∂ₙ₊₁。这等价于秩相等，加上 im ∂ₙ₊₁ 是直和项（初等因子全为 1）。</li>
+<li><strong>局部同调</strong>：Hₙ(K, K−v) = Hₙ(E)。∎</li>
+</ul>
+<p><strong>注记。</strong></p>
+<ul>
+<li>“lk(v) 可缩”只是充分条件，不是必要条件。取二元二十面体群表现 ⟨s,t | s³t⁻⁵, (st)²s⁻³⟩ 的 2-复形，边缘矩阵 [[3,−5],[−1,2]] 的行列式为 1，故它整系数零调、连通。它的 π₁ 是 120 阶群，故不可缩。取同伦等价于它的有限单纯复形 P，则 ΣP 可缩，但 P 不可缩。</li>
+<li>因此判据必须用同调（可由有限矩阵检验），不能用 lk(v) 的可缩性。</li>
+<li>B 的作用仅是排除孤立 v。取 B = K 时条件等价于 X 可缩。B 取 St(v) 时条件等价于 lk(v) 可缩。B 取含 v 的棱时恒成立。</li>
+</ul>
+<h2>S5　不提供子复形 B</h2>
+<p><strong>结论。</strong> 不必。设 K 有限，|K|∖v 非空可缩。则恰有两种情形：</p>
+<ul>
+<li><strong>lk(v) ≠ ∅</strong>：与 S4 的证明相同，|K| ≃ Σ|lk(v)|，这是非空有限复形的悬挂。</li>
+<li><strong>lk(v) = ∅</strong>（v 为孤立顶点）：|K| = |K−v| ⊔ {v} ≃ pt ⊔ pt = S⁰。它不路径连通，而非空复形的悬挂路径连通，所以不是这种悬挂。</li>
+</ul>
+<p><strong>分类。</strong> 新增类型只有 S⁰（两点离散空间）。它在约定 Σ∅ = S⁰ 下是空复形的悬挂。实现：K = {{v},{w}}，或 {v} ⊔ 任意可缩复形。</p>
+<p>全部可能类型 = {Σ|L| : L 非空有限} ⊔ {S⁰}，两类因路径连通性不同而不相交。</p>
+<p>S4 的 B 条件恰好排除了第二类（定理 4.1 的 2）。</p>
+<h2>S6　悬挂信息的逆向恢复</h2>
+<p><strong>结论。</strong> 不能。Σ|L₁| ≃ Σ|L₂| 推不出 |L₁| ≃ |L₂|。</p>
+<p><strong>反例。</strong></p>
+<ul>
+<li>L₁：顶点 1–6，棱 12, 23, 13, 45, 56, 46（两个不相交的三角形边界，≅ S¹⊔S¹）。</li>
+<li>L₂：顶点 1–6，棱 12, 23, 13, 34, 45, 35，外加孤立顶点 6（8 字形 F = S¹∨S¹ 与一个孤立点的不交并）。</li>
+</ul>
+<p><strong>引理 6.1。</strong> A、B 非空有限 CW 复形 ⇒ Σ(A⊔B) ≃ ΣA ∨ ΣB ∨ S¹。</p>
+<p><em>证明。</em></p>
+<ol>
+<li>Σ(A⊔B) = P/(S_A ~ S_B)，其中 P = ΣA ∨ ΣB 在 N 处楔合，P 路径连通。</li>
+<li>令 P′ = P 加一条连接 S_A 与 S_B 的弧 J，即 P′ = P ∪_{S⁰} C(S⁰)。</li>
+<li>用 S2：D = P 路径连通；L = {S_A,S_B} 是非空有限子复形；包含映射零伦（沿路径把 S_B 滑到 S_A，P 路径连通）；C(S⁰) 是弧 J。得 P′ ≃ P ∨ ΣS⁰ = P ∨ S¹。</li>
+<li>J 是 P′ 的可缩子复形，用 S1，P′ → P′/J = P/(S_A~S_B) = Σ(A⊔B) 是同伦等价。∎</li>
+</ol>
+<p><strong>计算。</strong></p>
+<ul>
+<li>ΣL₁ ≃ ΣS¹ ∨ ΣS¹ ∨ S¹ = S² ∨ S² ∨ S¹。</li>
+<li>ΣL₂ ≃ ΣF ∨ Σ{p} ∨ S¹，其中 p 为孤立点。Σ{p} 是弧，用 S1 塌缩，得 ≃ ΣF ∨ S¹。</li>
+<li>对 ΣF：塌缩弧 J₀ = {x₀}×I（x₀ 为 F 的公共顶点），由 S1 是同伦等价。ΣF/J₀ = Σ_red S¹ ∨ Σ_red S¹ = S²∨S²。</li>
+<li>所以 ΣL₂ ≃ S²∨S²∨S¹ ≃ ΣL₁。</li>
+<li>机器核验：两个悬挂的约化整系数同调都是 H₁ = ℤ，H₂ = ℤ²。</li>
+</ul>
+<p><strong>L₁ ≄ L₂。</strong></p>
+<ul>
+<li>设 f: L₁ → L₂ 是同伦等价，g 是同伦逆，p 为 L₂ 的孤立点，x = g(p)。</li>
+<li>fg ≃ id 给出 L₂ 中从 f(x) 到 p 的路径。而 {p} 是 L₂ 的一个路径分支，所以 f(x) = p。</li>
+<li>同伦等价诱导 π₁(L₁,x) ≅ π₁(L₂,p) = 0，但 π₁(L₁,x) = ℤ。矛盾。</li>
+</ul>
+<p><strong>连通情形也不成立（补充，不影响上面的完整证明）。</strong></p>
+<ul>
+<li>Σ(S¹×S¹) ≃ S²∨S²∨S³ ≃ Σ(S¹∨S¹∨S²)（标准分裂 Σ(X×Y) ≃ ΣX∨ΣY∨Σ(X∧Y)）。但 π₁(T²) = ℤ² 不是自由群，π₁(S¹∨S¹∨S²) = F₂ 是自由群，所以 T² ≄ S¹∨S¹∨S²。</li>
+<li>pt 与上面 S4 注记中的 P：ΣP 与 Σ(pt) 都可缩，但 P 不可缩。</li>
+</ul>
+<h2>附：各处援引的适用条件</h2>
+<ul>
+<li>S3 用了引理 A(c) 和 S1：|K| 有限 CW，|K−v| 是非空可缩子复形。</li>
+<li>S4 用了 S1（或 S2）：|K| 有限 CW，|K−v| 是非空可缩子复形（由 O 可缩和引理 A(c) 得到），L ≠ ∅（由 B 条件得到）。</li>
+<li>S5 沿用 S4 的论证，但需要分 lk(v) = ∅ 与 lk(v) ≠ ∅ 两种情形。</li>
+<li>S6 用了 S1 和 S2：D = P 路径连通，L = {S_A,S_B} 是非空有限子复形，包含映射零伦。</li>
+</ul>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP001/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-GP001:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP001/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/original-reviews/MG-GP001.json">review · MG-GP001.json</a><span class="hash">SHA256 82ac6b843b555d773a87168f4428b760afeee0ca5279bbfa9fe2a117e890b243</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-GP001-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-GP001.json">review · MG-GP001.json</a><span class="hash">SHA256 43aa960fd55cbe17c58da03a3eb4e6b8c63d85e2b7dbc45beda9e90ae1c4a6ab</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>S1</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> HEP把A内收缩延拓且保持A，分别构造gq与qg的同伦；明确q×I的紧到Hausdorff商映射性质，下降连续性正确。</p>
+<h3>S2</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 用连接零伦的整体粘合Z及锥对的强形变收缩，合法比较两端映射锥；常值锥得到D与非约化悬挂的楔，并核对D的路径连通及楔点选择。</p>
+<h3>S3</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 双锥K和单边B满足全部几何条件；顶点删除径向强形变收缩合法，悬挂RP²的整数Z/2扭结证明不可缩，同时有理约化同调为零。</p>
+<h3>S4</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 证明删除子复形可缩、B排除空link、X等价于非空有限link的悬挂；双锥实现全部类型。相对链复形由含v单形的面关联构造，整数Smith条件与link无环等价；单连通悬挂和Hurewicz/Whitehead给充分性，未把一般无环空间误当可缩。</p>
+<h3>S5</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 完整区分空link与非空link。孤立顶点加可缩删除核给唯一新增S⁰，双孤立点实现，非空悬挂路径连通排除同伦等价。</p>
+<h3>S6</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 合法替代反例：两圆不交并与8字形加孤立点。用S1/S2证明悬挂不交并分裂为各悬挂与S¹之楔，两者悬挂均为S²∨S²∨S¹，而分支基本群排除原空间同伦等价。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>答卷：S1–S6</h1>
+<p><strong>结论摘要</strong></p>
+<ul>
+<li>S1：成立。</li>
+<li>S2：Y ≃ D ∨ ΣL。</li>
+<li>S3：取 K = L∗{v,w}，B 取一条含 v 的棱。</li>
+<li>S4：X 不必可缩。恒有 X ≃ Σ|lk_K(v)|，且 lk_K(v) ≠ ∅。可能的同伦型恰为“非空有限复形的悬挂”。X 可缩 ⇔ lk_K(v) 非空、连通且整系数零调。</li>
+<li>S5：不必。唯一新增类型是 S⁰，对应 v 为孤立顶点。</li>
+<li>S6：不能。</li>
+</ul>
+<h2>0. 约定与标准事实</h2>
+<p><strong>悬挂。</strong> CY = Y×[0,1]/(Y×{1})，Y 视为 Y×{0}。ΣY = CY/Y，即把 Y×{0}、Y×{1} 各压成一点 S、N（极点）。约定 Σ∅ = S⁰。</p>
+<ul>
+<li>若 Y ≠ ∅，则 ΣY 路径连通，且 H̃ₙ(ΣY) ≅ H̃ₙ₋₁(Y)（n ≥ 1，Mayer–Vietoris）。</li>
+<li>若 Y 是非空 CW 复形，约化悬挂 = ΣY/({y₀}×I)。商掉的弧可缩，由 S1 知它与 ΣY 同伦等价。所以“约化/非约化”不影响下文任何结论。</li>
+</ul>
+<p><strong>单纯复形。</strong> K 为有限抽象单纯复形，v 为顶点。</p>
+<ul>
+<li>K−v := {σ∈K : v∉σ}。</li>
+<li>lk(v) := {σ∈K−v : σ∪{v}∈K}。</li>
+<li>St(v) := {σ∈K : σ∪{v}∈K} = v∗lk(v)。</li>
+</ul>
+<p>它们都是子复形，且 K = (K−v) ∪ St(v)，(K−v) ∩ St(v) = lk(v)。|K| ⊂ ℝ^V 取重心坐标 x = (x_u)。有限时 |K| 是紧 Hausdorff 空间，也是有限 CW 复形。</p>
+<p><strong>标准事实。</strong></p>
+<ul>
+<li><strong>(F1)</strong> (X,A) 是 CW 对 ⇒ X×{0}∪A×I 是 X×I 的强形变收缩核，因此有同伦延拓性质（HEP）。</li>
+<li><strong>(F2)</strong> Hurewicz + Whitehead：单连通 CW 复形若约化整系数同调全零，则可缩。</li>
+<li><strong>(F3)</strong> 紧空间到 Hausdorff 空间的连续满射是商映射。特别地，q×id_I 是商映射，所以“先商后乘 I”等于“先乘 I 再商”。</li>
+</ul>
+<p><strong>引理 A（删去顶点 v）</strong></p>
+<ul>
+<li>(a) |K| = |K−v| ∪ |St(v)|，且 |K−v| ∩ |St(v)| = |lk(v)|。</li>
+<li>(b) 若 lk(v) ≠ ∅，则 |St(v)| ≅ C|lk(v)|（顶点 v，底 |lk(v)|）。若 lk(v) = ∅，则 St(v) = {v}。</li>
+<li>(c) |K−v| 是 |K|∖{v} 的强形变收缩核。</li>
+<li>(d) 若 lk(v) ≠ ∅，则 |K|/|K−v| ≅ Σ|lk(v)|。若 lk(v) = ∅，则 |K| = |K−v| ⊔ {v}。</li>
+</ul>
+<p><em>证明。</em></p>
+<ul>
+<li>(a) 含 v 的单形属于 St(v)，其不含 v 的面属于 lk(v)。</li>
+<li>(b) 映射 (y,s) ↦ (1−s)y + sv 把 |lk|×[0,1] 连续地映满 |St|。点 x ≠ v 可写成 (1−x_v)ρ(x) + x_v·v，其中 ρ(x)ᵤ = xᵤ/(1−x_v)（u≠v）。该映射恰把 |lk|×{1} 压成点 v，其余处为单射。紧 → Hausdorff，故诱导同胚。</li>
+<li>(c) 对 x ≠ v 有 x_v &lt; 1。令 ρ(x)_v = 0，ρ(x)ᵤ = xᵤ/(1−x_v)，则 supp ρ(x) = supp x∖{v} ∈ K−v。令 r(x,s) = (1−s)x + sρ(x)。
+<ul>
+<li>它落在单形 |supp x| 内，且 r(x,s)_v = (1−s)x_v &lt; 1。</li>
+<li>它在有限个闭集 (|σ|∖{v})×I 上连续，由粘接引理得整体连续。</li>
+<li>r₀ = id，r₁ 的像在 |K−v| 内，且 x_v = 0 时 r(x,s) ≡ x。</li>
+</ul>
+</li>
+<li>(d) 复合 |St| ⊂ |K| → |K|/|K−v| 是连续满射，恰把 |lk| 压成点。它诱导紧 Hausdorff 空间间的连续双射 |St|/|lk| → |K|/|K−v|，故为同胚。再由 (b)，|St|/|lk| ≅ C|lk|/|lk| = Σ|lk|。∎</li>
+</ul>
+<h2>S1　可缩子复形的商</h2>
+<p><strong>命题。</strong> Y 为有限 CW 复形，A ⊂ Y 为非空可缩子复形。则 q: Y → Y/A 是同伦等价。</p>
+<p><em>证明。</em></p>
+<ol>
+<li>A 可缩：存在 h: A×I → A，h₀ = id_A，h₁ ≡ a₀。把 h 看成包含映射 A ↪ Y 的同伦。(Y,A) 是 CW 对，由 (F1) 延拓为 F: Y×I → Y，F₀ = id_Y，F|_{A×I} = h。于是 <strong>F_t(A) ⊂ A 对所有 t 成立</strong>，且 F₁(A) = {a₀}。</li>
+<li>F₁ 在 A 上为常值，故存在连续的 g: Y/A → Y，使 g∘q = F₁。</li>
+<li><strong>下降。</strong> 合成 q∘F: Y×I → Y/A 在每个 A×{t} 上恒等于基点 *，这是因为 F_t(A) ⊂ A。又 Y×I → (Y/A)×I 是商映射，因为它是紧空间到 Hausdorff 空间的满射（Y/A 是紧 Hausdorff，A 闭，见 F3）。所以 G(q(y),t) := q(F(y,t)) 良定义且连续。
+<ul>
+<li>若同伦不把 A 保持在 A 内，q∘F_t 在 A 上就不是常值，无法下降。</li>
+</ul>
+</li>
+<li>g∘q = F₁ ≃ F₀ = id_Y（由 F）。</li>
+<li>G₀ = id_{Y/A}，因为 G₀q = qF₀ = q。G₁ = q∘g，因为 G₁q = qF₁ = qgq 且 q 是满射。所以 q∘g ≃ id。∎</li>
+</ol>
+<p><strong>适用条件。</strong></p>
+<ul>
+<li>A 非空，否则 Y/A = Y ⊔ pt。</li>
+<li>A 是子复形，用于 HEP。</li>
+<li>可缩性给出 h。</li>
+<li>有限性使商空间 Hausdorff，且 (F3) 成立。</li>
+</ul>
+<h2>S2　非可缩底空间上的锥附着</h2>
+<p><strong>命题。</strong> D 是路径连通有限 CW 复形，L ≠ ∅ 是有限子复形，i: L ↪ D 零伦，Y = D ∪_L CL。则 Y ≃ D ∨ ΣL。</p>
+<p><em>证明。</em></p>
+<ol>
+<li>取零伦 H: L×I → D，H₀ = i，H₁ ≡ d₀。</li>
+<li>令 Z = (D ⊔ CL×I)/((x,0,t) ~ H(x,t))，x ∈ L，t ∈ I。
+<ul>
+<li>子空间 Y₀ = D ∪ CL×{0} 因 H₀ = i 而等于 Y。</li>
+<li>子空间 Y₁ = D ∪ CL×{1} = D ∪_c CL，c ≡ d₀。</li>
+</ul>
+</li>
+<li>(CL,L) 是 CW 对（L 为子复形）。由 (F1)（对 ε = 1 把 t 换成 1−t），CL×I 形变收缩到 CL×{ε} ∪ L×I (ε = 0,1)，且在后者上驻定。该形变在 D 上取恒等，与粘合 (x,0,t) ~ H(x,t) 相容。其连续性来自 (D⊔CL×I)×I → Z×I 是商映射（F3）。所以 Y₀ 和 Y₁ 都是 Z 的形变收缩核，从而 Y ≃ Z ≃ Y₁。</li>
+<li>在 Y₁ 中底 L 的每点都等同于 d₀，故 Y₁ = D ⊔ (CL/L)/(d₀ ~ S) = D ∨ ΣL。∎</li>
+</ol>
+<p><strong>楔点的选择。</strong></p>
+<ul>
+<li>ΣL 一侧：楔点是极点 S = [L×{0}]（锥的底）。翻转 t ↦ 1−t 交换两极点，故取锥顶 N 同样可以。取 ΣL 的任一点，同伦型也不变，因为 ΣL 是路径连通 CW 复形（L ≠ ∅）。</li>
+<li>D 一侧：楔点是零伦的终点 d₀。因为 D 路径连通，d₀ 可取 D 的任意点（沿路径改接零伦）。又因 D 是 CW 复形（良配点），D∨ΣL 的同伦型与 d₀ 无关。</li>
+<li>若 D 不路径连通，d₀ 只落在一个分支，选择就有影响。</li>
+<li>具体的同伦等价依赖所选零伦，但同伦型不依赖。</li>
+</ul>
+<p><strong>特例。</strong> D 可缩时，S1（A = D）给出 Y ≃ Y/D = CL/L = ΣL，与 D∨ΣL ≃ ΣL 一致。</p>
+<h2>S3　整数扭结的实例</h2>
+<p>设 L 是 RP² 的任一有限单纯三角剖分，顶点集为 V，u ∈ V。取新点 v、w，令</p>
+<ul>
+<li><strong>K = L∗{v,w}</strong> = {σ, σ∪{v}, σ∪{w} : σ∈L} ∪ {{v},{w}}（v、w 不相连）。</li>
+<li><strong>B = {{v},{u},{v,u}}</strong>，即一条棱。</li>
+</ul>
+<p>例如取 6 点三角剖分 123, 134, 145, 156, 162, 235, 346, 452, 563, 624。</p>
+<p><strong>验证。</strong></p>
+<ol>
+<li><strong>|K|∖v 非空可缩。</strong>
+<ul>
+<li>K−v = w∗L 是锥，|w∗L| 可缩（直线收缩到 w，每点到 w 的线段落在同一单形内）。</li>
+<li>由引理 A(c)，O ≃ |K−v| ≃ pt，且 w ∈ O。</li>
+</ul>
+</li>
+<li><strong>(|B|∖v) → |B| 是同伦等价。</strong> |B| 是线段，|B|∖v 是半开线段，二者都可缩。可缩空间之间的任何映射都是同伦等价。</li>
+<li><strong>同调。</strong> lk(v) = L，K−v 可缩，由引理 A(d) 和 S1 得 |K| ≃ Σ|L|。S1 的条件：|K| 是有限 CW，A = |K−v| 是非空可缩子复形。因此 H̃ₙ(|K|;ℤ) ≅ H̃ₙ₋₁(RP²;ℤ)，即 H̃₂ = ℤ/2，其余为 0。由万有系数定理，H̃ₙ(|K|;ℚ) = 0 对所有 n 成立。</li>
+<li><strong>不可缩。</strong> H₂(|K|;ℤ) = ℤ/2 ≠ 0。
+<ul>
+<li>实际上 |K| 单连通，π₂ = ℤ/2（Hurewicz），它是 Moore 空间 M(ℤ/2,2)。</li>
+<li>对上面的 6 点例，用 Smith 标准形机器核验得 H̃*(K;ℤ) = (0,0,ℤ/2,0)。</li>
+</ul>
+</li>
+</ol>
+<p><strong>为何“O∩C→C 为等价”推不出 O→X 为等价。</strong> C 不是 v 的邻域，B 只看到 K 的一小块，看不到 lk_K(v)。</p>
+<h2>S4　整体对象与恢复目标</h2>
+<p><strong>判定。</strong></p>
+<ul>
+<li>目标“X 必可缩”不成立（S3 的反例满足全部条件）。</li>
+<li>下面三条成立并给出证明：
+<ol>
+<li>同伦型的刻画；</li>
+<li>全部类型的实现；</li>
+<li>X 可缩的充要判据。</li>
+</ol>
+</li>
+</ul>
+<p>记 D = K−v，L = lk_K(v)。</p>
+<h3>定理 4.1（限制）</h3>
+<p>设 (K,v,B) 满足题设。则：</p>
+<ol>
+<li>|D| 非空可缩。</li>
+<li>L ≠ ∅。</li>
+<li>商映射 |K| → |K|/|D| ≅ Σ|L| 是同伦等价，所以 <strong>X ≃ Σ|lk_K(v)|</strong>。</li>
+<li>对给定的 (K,v)，若 |D| 非空可缩，则存在满足条件的 B ⇔ L ≠ ∅。此时 B 可取任一条棱 {v,u}。</li>
+</ol>
+<p><em>证明。</em></p>
+<ol>
+<li>引理 A(c) 说明 |D| ↪ O 是同伦等价，而 O 非空可缩。</li>
+<li>设 L = ∅。则 K 中含 v 的单形只有 {v}，故 {v} 在 C 中既开又闭。
+<ul>
+<li>这时 O∩C = |B−v|，其包含映射的像不含分支 {v}，π₀ 不满，不是同伦等价。</li>
+<li>矛盾，所以 L ≠ ∅。</li>
+</ul>
+</li>
+<li>用 S1，Y = |K| 有限 CW，A = |D| 是非空可缩子复形（由 1），再加引理 A(d)。
+<ul>
+<li>也可用 S2：D 路径连通，L ⊂ D 是非空子复形，D 可缩所以包含映射零伦，X = D∪_L CL ≃ D∨ΣL ≃ ΣL。</li>
+</ul>
+</li>
+<li>必要性已在 2 中证明。充分性：取棱 {v,u} (u ∈ L)，|B|∖v 与 |B| 都可缩，故包含映射是同伦等价。∎</li>
+</ol>
+<p><strong>推论。</strong></p>
+<ul>
+<li>X 路径连通。</li>
+<li>H̃ₙ(X;ℤ) ≅ H̃ₙ₋₁(|L|;ℤ)。</li>
+<li>记 c 为 L 的分支数。H₁(X) = ℤ^{c−1}，且 π₁(X) 是秩为 c−1 的自由群。这由 ΣL = 两个可缩开集的并，交 ≃ L，用 van Kampen 得到。</li>
+<li>X 单连通 ⇔ L 连通。</li>
+<li>例：L = 两点时 X ≃ S¹，不单连通。</li>
+</ul>
+<h3>定理 4.2（实现，分类完成）</h3>
+<p>对每个非空有限单纯复形 L，三元组 (L∗{v,w}, v, 棱 {v,u}) 满足全部条件，且 lk(v) = L，|K| ≅ Σ|L|。</p>
+<p><em>证明。</em> 验证同 S3：K−v = w∗L 可缩，B 是棱，lk(v) = L。∎</p>
+<p><strong>因此</strong>，可能的同伦型恰为 <strong>{Σ|L| : L 非空有限单纯复形}</strong>。因为每个有限 CW 复形都同伦等价于有限单纯复形，这也就是 {ΣY : Y 非空有限 CW 复形}。</p>
+<p><strong>不会出现的类型。</strong></p>
+<ul>
+<li>RP²、T² 不会出现，因为 π₁ 不是自由群。</li>
+<li>CP²、S²×S² 不会出现，因为 X 是两个可缩开集的并，约化上同调中的所有上积为零。</li>
+</ul>
+<h3>定理 4.3（可缩判据，只用含 v 的单形的关联数据）</h3>
+<p>取 V(K) 的全序。令 Eₙ 为以 K 中含 v 的 n 维单形为基的自由 ℤ-模（E₀ = ℤ{v}），并令</p>
+<p>∂ᵛ(u₀&lt;…&lt;uₙ) = Σ_{j: uⱼ≠v} (−1)ʲ (σ∖uⱼ)。</p>
+<p>即只保留仍含 v 的面。这正是 C*(K)/C*(K−v) 的边缘算子。数据就是含 v 的单形按包含序构成的有限偏序集，它同构于 lk(v) 的面偏序集再添一个最小元。则下列等价：</p>
+<ol>
+<li>X 可缩；</li>
+<li>H̃ₙ(X;ℤ) = 0（∀n）；</li>
+<li>L 连通，且 H̃ₙ(|L|;ℤ) = 0（∀n ≥ 1）；</li>
+<li>链复形 (E,∂ᵛ) 在所有次数正合；</li>
+<li>记 mₙ = rank Eₙ，∂ₙ: Eₙ → Eₙ₋₁（∂₀ = 0）。对所有 n ≥ 0：rank ∂ₙ + rank ∂ₙ₊₁ = mₙ，且 ∂ₙ₊₁ 的非零初等因子全为 1（Smith 标准形可检验）。</li>
+</ol>
+<p>等价地，局部同调 Hₙ(X, X∖v;ℤ) = 0 对所有 n 成立。</p>
+<p><em>证明。</em></p>
+<ul>
+<li><strong>(1)⇒(2)</strong> 显然。</li>
+<li><strong>(2)⇒(3)</strong> 对 n ≥ 0，H̃ₙ(L) ≅ H̃ₙ₊₁(ΣL) ≅ H̃ₙ₊₁(X) = 0。n = 0 时给出 L 连通。</li>
+<li><strong>(3)⇒(1)</strong>
+<ul>
+<li>ΣL 单连通：ΣL = U∪V，U = ΣL∖S，V = ΣL∖N，二者开且可缩，U∩V ≅ L×(0,1) 路径连通，van Kampen 给出 π₁ = 1。</li>
+<li>H̃ₙ(ΣL) = H̃ₙ₋₁(L) = 0。</li>
+<li>由 (F2)，ΣL 可缩，故 X ≃ ΣL 可缩。</li>
+</ul>
+</li>
+<li><strong>(3)⇔(4)</strong> 令 φ(σ) = (−1)ᵖ(σ∖v)，p 为 v 在 σ 中的位置，则 φ∂ᵛ = −∂φ。因此 (E,∂ᵛ) 与 lk(v) 的增广链复形（空单形在 −1 次）相差一个移位和符号，Hₙ(E) ≅ H̃ₙ₋₁(L)。
+<ul>
+<li>L = ∅ 时 E = ℤ（只在 0 次），H₀ = ℤ ≠ 0，故不正合，与 X ≃ S⁰ 一致。</li>
+<li>对 L ≠ ∅，E₀ 处的正合性自动成立（∂₁ 有 ±1 元）。</li>
+</ul>
+</li>
+<li><strong>(4)⇔(5)</strong> 正合 ⇔ ker ∂ₙ = im ∂ₙ₊₁。这等价于秩相等，加上 im ∂ₙ₊₁ 是直和项（初等因子全为 1）。</li>
+<li><strong>局部同调</strong>：Hₙ(K, K−v) = Hₙ(E)。∎</li>
+</ul>
+<p><strong>注记。</strong></p>
+<ul>
+<li>“lk(v) 可缩”只是充分条件，不是必要条件。取二元二十面体群表现 ⟨s,t | s³t⁻⁵, (st)²s⁻³⟩ 的 2-复形，边缘矩阵 [[3,−5],[−1,2]] 的行列式为 1，故它整系数零调、连通。它的 π₁ 是 120 阶群，故不可缩。取同伦等价于它的有限单纯复形 P，则 ΣP 可缩，但 P 不可缩。</li>
+<li>因此判据必须用同调（可由有限矩阵检验），不能用 lk(v) 的可缩性。</li>
+<li>B 的作用仅是排除孤立 v。取 B = K 时条件等价于 X 可缩。B 取 St(v) 时条件等价于 lk(v) 可缩。B 取含 v 的棱时恒成立。</li>
+</ul>
+<h2>S5　不提供子复形 B</h2>
+<p><strong>结论。</strong> 不必。设 K 有限，|K|∖v 非空可缩。则恰有两种情形：</p>
+<ul>
+<li><strong>lk(v) ≠ ∅</strong>：与 S4 的证明相同，|K| ≃ Σ|lk(v)|，这是非空有限复形的悬挂。</li>
+<li><strong>lk(v) = ∅</strong>（v 为孤立顶点）：|K| = |K−v| ⊔ {v} ≃ pt ⊔ pt = S⁰。它不路径连通，而非空复形的悬挂路径连通，所以不是这种悬挂。</li>
+</ul>
+<p><strong>分类。</strong> 新增类型只有 S⁰（两点离散空间）。它在约定 Σ∅ = S⁰ 下是空复形的悬挂。实现：K = {{v},{w}}，或 {v} ⊔ 任意可缩复形。</p>
+<p>全部可能类型 = {Σ|L| : L 非空有限} ⊔ {S⁰}，两类因路径连通性不同而不相交。</p>
+<p>S4 的 B 条件恰好排除了第二类（定理 4.1 的 2）。</p>
+<h2>S6　悬挂信息的逆向恢复</h2>
+<p><strong>结论。</strong> 不能。Σ|L₁| ≃ Σ|L₂| 推不出 |L₁| ≃ |L₂|。</p>
+<p><strong>反例。</strong></p>
+<ul>
+<li>L₁：顶点 1–6，棱 12, 23, 13, 45, 56, 46（两个不相交的三角形边界，≅ S¹⊔S¹）。</li>
+<li>L₂：顶点 1–6，棱 12, 23, 13, 34, 45, 35，外加孤立顶点 6（8 字形 F = S¹∨S¹ 与一个孤立点的不交并）。</li>
+</ul>
+<p><strong>引理 6.1。</strong> A、B 非空有限 CW 复形 ⇒ Σ(A⊔B) ≃ ΣA ∨ ΣB ∨ S¹。</p>
+<p><em>证明。</em></p>
+<ol>
+<li>Σ(A⊔B) = P/(S_A ~ S_B)，其中 P = ΣA ∨ ΣB 在 N 处楔合，P 路径连通。</li>
+<li>令 P′ = P 加一条连接 S_A 与 S_B 的弧 J，即 P′ = P ∪_{S⁰} C(S⁰)。</li>
+<li>用 S2：D = P 路径连通；L = {S_A,S_B} 是非空有限子复形；包含映射零伦（沿路径把 S_B 滑到 S_A，P 路径连通）；C(S⁰) 是弧 J。得 P′ ≃ P ∨ ΣS⁰ = P ∨ S¹。</li>
+<li>J 是 P′ 的可缩子复形，用 S1，P′ → P′/J = P/(S_A~S_B) = Σ(A⊔B) 是同伦等价。∎</li>
+</ol>
+<p><strong>计算。</strong></p>
+<ul>
+<li>ΣL₁ ≃ ΣS¹ ∨ ΣS¹ ∨ S¹ = S² ∨ S² ∨ S¹。</li>
+<li>ΣL₂ ≃ ΣF ∨ Σ{p} ∨ S¹，其中 p 为孤立点。Σ{p} 是弧，用 S1 塌缩，得 ≃ ΣF ∨ S¹。</li>
+<li>对 ΣF：塌缩弧 J₀ = {x₀}×I（x₀ 为 F 的公共顶点），由 S1 是同伦等价。ΣF/J₀ = Σ_red S¹ ∨ Σ_red S¹ = S²∨S²。</li>
+<li>所以 ΣL₂ ≃ S²∨S²∨S¹ ≃ ΣL₁。</li>
+<li>机器核验：两个悬挂的约化整系数同调都是 H₁ = ℤ，H₂ = ℤ²。</li>
+</ul>
+<p><strong>L₁ ≄ L₂。</strong></p>
+<ul>
+<li>设 f: L₁ → L₂ 是同伦等价，g 是同伦逆，p 为 L₂ 的孤立点，x = g(p)。</li>
+<li>fg ≃ id 给出 L₂ 中从 f(x) 到 p 的路径。而 {p} 是 L₂ 的一个路径分支，所以 f(x) = p。</li>
+<li>同伦等价诱导 π₁(L₁,x) ≅ π₁(L₂,p) = 0，但 π₁(L₁,x) = ℤ。矛盾。</li>
+</ul>
+<p><strong>连通情形也不成立（补充，不影响上面的完整证明）。</strong></p>
+<ul>
+<li>Σ(S¹×S¹) ≃ S²∨S²∨S³ ≃ Σ(S¹∨S¹∨S²)（标准分裂 Σ(X×Y) ≃ ΣX∨ΣY∨Σ(X∧Y)）。但 π₁(T²) = ℤ² 不是自由群，π₁(S¹∨S¹∨S²) = F₂ 是自由群，所以 T² ≄ S¹∨S¹∨S²。</li>
+<li>pt 与上面 S4 注记中的 P：ΣP 与 Σ(pt) 都可缩，但 P 不可缩。</li>
+</ul>
+<h2>附：各处援引的适用条件</h2>
+<ul>
+<li>S3 用了引理 A(c) 和 S1：|K| 有限 CW，|K−v| 是非空可缩子复形。</li>
+<li>S4 用了 S1（或 S2）：|K| 有限 CW，|K−v| 是非空可缩子复形（由 O 可缩和引理 A(c) 得到），L ≠ ∅（由 B 条件得到）。</li>
+<li>S5 沿用 S4 的论证，但需要分 lk(v) = ∅ 与 lk(v) ≠ ∅ 两种情形。</li>
+<li>S6 用了 S1 和 S2：D = P 路径连通，L = {S_A,S_B} 是非空有限子复形，包含映射零伦。</li>
+</ul>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP001/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-GP001:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP001/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/original-reviews/MG-GP001.json">review · MG-GP001.json</a><span class="hash">SHA256 82ac6b843b555d773a87168f4428b760afeee0ca5279bbfa9fe2a117e890b243</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-GP001-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-GP001.json">review · MG-GP001.json</a><span class="hash">SHA256 43aa960fd55cbe17c58da03a3eb4e6b8c63d85e2b7dbc45beda9e90ae1c4a6ab</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "claude-sonnet-5.5-max", "label": "Claude Sonnet 5.5 (max)"}, "case": {"id": "MG-GP001", "title": "局部单形、锥附着与整体同伦型", "category": "proofs", "views": {"capability": {"single_attempt": {"case_id": "MG-GP001", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c", "review_sha256": "f40ae993cd2325883041bc061aa222aef0d1f1983d4cd818db416f1968e29925"}, "nonlogical_retry_3": {"case_id": "MG-GP001", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c", "review_sha256": "f40ae993cd2325883041bc061aa222aef0d1f1983d4cd818db416f1968e29925"}}, "partial": {"single_attempt": {"case_id": "MG-GP001", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c", "review_sha256": "f40ae993cd2325883041bc061aa222aef0d1f1983d4cd818db416f1968e29925"}, "nonlogical_retry_3": {"case_id": "MG-GP001", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c", "review_sha256": "f40ae993cd2325883041bc061aa222aef0d1f1983d4cd818db416f1968e29925"}}, "strict": {"single_attempt": {"case_id": "MG-GP001", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c", "review_sha256": "f40ae993cd2325883041bc061aa222aef0d1f1983d4cd818db416f1968e29925"}, "nonlogical_retry_3": {"case_id": "MG-GP001", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "61c0b10854f1a13f8be24ae6ab5310d1ce3e2d6d5385119e0d117666f2086d7c", "review_sha256": "f40ae993cd2325883041bc061aa222aef0d1f1983d4cd818db416f1968e29925"}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

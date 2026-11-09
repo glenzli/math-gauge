@@ -1,0 +1,463 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MG-GP002 · Fourier 逆、截断误差与参数边界 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-sonnet-5.5-max/index.html">Claude Sonnet 5.5 (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>MG-GP002 · Fourier 逆、截断误差与参数边界</h1><p class="subtitle">Claude Sonnet 5.5 (max) · 书面论证 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>Fourier 逆、截断误差与参数边界</h1>
+<p>请按 S 编号逐项作答。所有阶段均必答；给出所要求的证明、构造或分类。判断命题时，给出结论及完整证明或满足全部前提的反例。援引前项或标准定理时说明实际适用条件。无需 Lean。</p>
+<h2>S1 有限频带上的逆</h2>
+<p>在归一化环面 T² 上令 N_α=α∂_1+∂_2，α 无理。设 H_N 为仅含 0&lt;|k|≤N 整频率的复三角多项式空间（N≥1）。构造 N_α 在 H_N 上的逆；对任意实 r 给出 H^r→H^r 逆范数精确式。</p>
+<h2>S2 有算术界的截断误差</h2>
+<p>设 |αk_1+k_2|≥c⟨k⟩^{−s} 对全部 k≠0，c&gt;0、s≥0。对光滑零均值 F 令 u_N 为 S1 中对频带截断 F_N 的解。构造光滑解 u，并对任意 r∈R、q≥0 证明 ||u−u_N||<em>{H^r}≤(2πc)^{-1}(1+N²)^{−q/2}||F||</em>{H^{r+s+q}}。</p>
+<h2>S3 固定频带内改变方向</h2>
+<p>给两个无理方向 α,β，设其在 0&lt;|k|≤N 上的小除数绝对值都至少 δ&gt;0。对同一 F∈H_N，证明对应解满足 ||u_α−u_β||<em>{H^r}≤|α−β|N(2πδ²)^{-1}||F||</em>{H^r}。</p>
+<h2>S4 整体对象与全部恢复目标</h2>
+<p>判定下面所列目标在给定条件下是否成立。若成立，完成全部构造、分类与性质的证明；若不成立，给出满足全部给定条件的反例。</p>
+<p>令 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo>=</mo><msup><mi mathvariant="double-struck">R</mi><mn>2</mn></msup><mi mathvariant="normal">/</mi><msup><mi mathvariant="double-struck">Z</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb T^2=\mathbb R^2/\mathbb Z^2</annotation></semantics></math></span>，配备归一化 Haar 测度，记</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msubsup><mi>C</mi><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">{</mo><mi>u</mi><mo>∈</mo><msup><mi>C</mi><mi mathvariant="normal">∞</mi></msup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo separator="true">;</mo><mi mathvariant="double-struck">C</mi><mo stretchy="false">)</mo><mo>:</mo><msub><mo>∫</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup></msub><mi>u</mi><mo>=</mo><mn>0</mn><mo fence="true">}</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">C^\infty_0(\mathbb T^2)=\left\{u\in C^\infty(\mathbb T^2;\mathbb C):\int_{\mathbb T^2}u=0\right\}.</annotation></semantics></math></span></p>
+<p>对无理数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>∈</mo><mi mathvariant="double-struck">R</mi><mo>∖</mo><mi mathvariant="double-struck">Q</mi></mrow><annotation encoding="application/x-tex">\alpha\in\mathbb R\setminus\mathbb Q</annotation></semantics></math></span>，定义</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>N</mi><mi>α</mi></msub><mi>u</mi><mo>=</mo><mi>α</mi><mtext> </mtext><msub><mi mathvariant="normal">∂</mi><msub><mi>y</mi><mn>1</mn></msub></msub><mi>u</mi><mo>+</mo><msub><mi mathvariant="normal">∂</mi><msub><mi>y</mi><mn>2</mn></msub></msub><mi>u</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">N_\alpha u=\alpha\,\partial_{y_1}u+\partial_{y_2}u.</annotation></semantics></math></span></p>
+<p>对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>∈</mo><msup><mi mathvariant="double-struck">Z</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">k\in\mathbb Z^2</annotation></semantics></math></span>，令 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⟨</mo><mi>k</mi><mo stretchy="false">⟩</mo><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi mathvariant="normal">∣</mi><mi>k</mi><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup><msup><mo stretchy="false">)</mo><mrow><mn>1</mn><mi mathvariant="normal">/</mi><mn>2</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\langle k\rangle=(1+|k|^2)^{1/2}</annotation></semantics></math></span>，其中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><mi>k</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|k|</annotation></semantics></math></span> 为 Euclidean 范数。对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>∈</mo><mi mathvariant="double-struck">R</mi></mrow><annotation encoding="application/x-tex">r\in\mathbb R</annotation></semantics></math></span> 和光滑函数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span>，采用范数</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>u</mi><msubsup><mi mathvariant="normal">∥</mi><msup><mi>H</mi><mi>r</mi></msup><mn>2</mn></msubsup><mo>=</mo><munder><mo>∑</mo><mrow><mi>k</mi><mo>∈</mo><msup><mi mathvariant="double-struck">Z</mi><mn>2</mn></msup></mrow></munder><mo stretchy="false">⟨</mo><mi>k</mi><msup><mo stretchy="false">⟩</mo><mrow><mn>2</mn><mi>r</mi></mrow></msup><mi mathvariant="normal">∣</mi><mover accent="true"><mi>u</mi><mo stretchy="true">^</mo></mover><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup><mo separator="true">,</mo><mspace width="2em"/><mover accent="true"><mi>u</mi><mo stretchy="true">^</mo></mover><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo>∫</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup></msub><mi>u</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><msup><mi>e</mi><mrow><mo>−</mo><mn>2</mn><mi>π</mi><mi>i</mi><mi>k</mi><mo>⋅</mo><mi>y</mi></mrow></msup><mtext> </mtext><mi>d</mi><mi>y</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">\|u\|_{H^r}^2=\sum_{k\in\mathbb Z^2}\langle k\rangle^{2r}|\widehat u(k)|^2,
+\qquad
+\widehat u(k)=\int_{\mathbb T^2}u(y)e^{-2\pi i k\cdot y}\,dy,</annotation></semantics></math></span></p>
+<p>以及</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>u</mi><msub><mi mathvariant="normal">∥</mi><msup><mi>C</mi><mi>m</mi></msup></msub><mo>=</mo><munder><mrow><mi>max</mi><mo>⁡</mo></mrow><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo>≥</mo><mn>0</mn><mo separator="true">,</mo><mtext> </mtext><mi>a</mi><mo>+</mo><mi>b</mi><mo>≤</mo><mi>m</mi></mrow></munder><munder><mrow><mi>sup</mi><mo>⁡</mo></mrow><mrow><mi>y</mi><mo>∈</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup></mrow></munder><mi mathvariant="normal">∣</mi><msubsup><mi mathvariant="normal">∂</mi><msub><mi>y</mi><mn>1</mn></msub><mi>a</mi></msubsup><msubsup><mi mathvariant="normal">∂</mi><msub><mi>y</mi><mn>2</mn></msub><mi>b</mi></msubsup><mi>u</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mi mathvariant="normal">∣</mi><mspace width="2em"/><mo stretchy="false">(</mo><mi>m</mi><mo>∈</mo><msub><mi mathvariant="double-struck">N</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\|u\|_{C^m}=\max_{a,b\ge0,\ a+b\le m}\sup_{y\in\mathbb T^2}|\partial_{y_1}^a\partial_{y_2}^b u(y)|
+\qquad(m\in\mathbb N_0).</annotation></semantics></math></span></p>
+<p>建立 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>α</mi></msub><mo>:</mo><msubsup><mi>C</mi><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>→</mo><msubsup><mi>C</mi><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">N_\alpha:C^\infty_0(\mathbb T^2)\to C^\infty_0(\mathbb T^2)</annotation></semantics></math></span> 的可逆性与正则性理论：刻画哪些 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span> 使每个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>∈</mo><msubsup><mi>C</mi><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">F\in C^\infty_0(\mathbb T^2)</annotation></semantics></math></span> 都有唯一的光滑零均值解 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>α</mi></msub><mi>u</mi><mo>=</mo><mi>F</mi></mrow><annotation encoding="application/x-tex">N_\alpha u=F</annotation></semantics></math></span>；同时确定全部 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">s\ge0</annotation></semantics></math></span>，使对每个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>∈</mo><mi mathvariant="double-struck">R</mi></mrow><annotation encoding="application/x-tex">r\in\mathbb R</annotation></semantics></math></span> 存在与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span> 无关的有限常数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mrow><mi>α</mi><mo separator="true">,</mo><mi>r</mi><mo separator="true">,</mo><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">C_{\alpha,r,s}</annotation></semantics></math></span>，满足</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><mi>u</mi><msub><mi mathvariant="normal">∥</mi><msup><mi>H</mi><mi>r</mi></msup></msub><mo>≤</mo><msub><mi>C</mi><mrow><mi>α</mi><mo separator="true">,</mo><mi>r</mi><mo separator="true">,</mo><mi>s</mi></mrow></msub><mi mathvariant="normal">∥</mi><msub><mi>N</mi><mi>α</mi></msub><mi>u</mi><msub><mi mathvariant="normal">∥</mi><msup><mi>H</mi><mrow><mi>r</mi><mo>+</mo><mi>s</mi></mrow></msup></msub><mspace width="2em"/><mtext>对所有 </mtext><mi>u</mi><mo>∈</mo><msubsup><mi>C</mi><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\|u\|_{H^r}\le C_{\alpha,r,s}\|N_\alpha u\|_{H^{r+s}}
+\qquad\text{对所有 }u\in C^\infty_0(\mathbb T^2).</annotation></semantics></math></span></p>
+<p>在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mo>∗</mo></msub><mo>=</mo><msqrt><mn>2</mn></msqrt><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\alpha_* =\sqrt2-1</annotation></semantics></math></span> 时，明确最小的允许损失 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span> 及其是否取到，并判断是否对每个 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>∈</mo><msub><mi mathvariant="double-struck">N</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">m\in\mathbb N_0</annotation></semantics></math></span> 都存在与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span> 无关的有限常数 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">C_m</annotation></semantics></math></span>，使零均值解满足</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∥</mi><msubsup><mi>N</mi><msub><mi>α</mi><mo>∗</mo></msub><mrow><mo>−</mo><mn>1</mn></mrow></msubsup><mi>F</mi><msub><mi mathvariant="normal">∥</mi><msup><mi>C</mi><mi>m</mi></msup></msub><mo>≤</mo><msub><mi>C</mi><mi>m</mi></msub><mi mathvariant="normal">∥</mi><mi>F</mi><msub><mi mathvariant="normal">∥</mi><msup><mi>C</mi><mrow><mi>m</mi><mo>+</mo><mn>4</mn></mrow></msup></msub><mspace width="2em"/><mo stretchy="false">(</mo><mi>F</mi><mo>∈</mo><msubsup><mi>C</mi><mn>0</mn><mi mathvariant="normal">∞</mi></msubsup><mo stretchy="false">(</mo><msup><mi mathvariant="double-struck">T</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\|N_{\alpha_*}^{-1}F\|_{C^m}\le C_m\|F\|_{C^{m+4}}
+\qquad(F\in C^\infty_0(\mathbb T^2)).</annotation></semantics></math></span></p>
+<p>请给出完整的定理、构造与论证。</p>
+<h2>S5 邻近方向的一致估计</h2>
+<p>令 α_<em>=√2−1。判定是否存在开区间 J∋α_</em>、有限 s≥0、C&lt;∞，使每个无理 α∈J 及每个光滑零均值 u 都满足 ||u||<em>{L²}≤C||N_αu||</em>{H^s}。</p>
+<h2>S6 一个具体方向的不可解数据</h2>
+<p>取 α=Σ_{n=1}^∞10^{−n!}。证明 α 无理，并构造一个光滑零均值 F 使 N_αu=F 没有光滑零均值解。要求给出同一个 F，而不是对每个估计分别给一个频率。</p>
+</div><p class="panel-foot"><a href="../../../../cases/proofs/MG-GP002/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>S1</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 非零Fourier乘子逐模逆，并用单频取得H^r逆范数精确值；有限频带正最小值与全频界明确区分。</p>
+<h3>S2</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 算术下界保持Fourier系数速降，给真实光滑零均值解及唯一性。尾频平方估计准确保留r实数与q≥0，常数和N指数均符合题意。</p>
+<h3>S3</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逆乘子差为(β−α)k1/(2πiωαωβ)，同时使用两方向δ下界和有限N，任意实r正交求和合法。</p>
+<h3>S4</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 完整证明光滑双射与有限阶小除数下界等价，逆向以单一速降坏F反驳。全部损失由Λ_s&gt;0精确刻画且端点不擅自纳入。二次共轭恒等式和整数迭代列给α*最小损失1并取到；Cauchy–Schwarz及Parseval给更强C^(m+3)到C^m估计，蕴含原定估计。附带最佳常数计算核对有效。</p>
+<h3>S5</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意候选区间含有理p/q，固定频率(q,−p)，取仍无理但足够靠近p/q的方向反驳同一有限常数；量词正确。</p>
+<h3>S6</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 用十进截断正尾项证明无理及超多项式小除数。一个明确实值余弦级数各阶绝对一致收敛，解的指定频率系数超多项式增长，排除光滑甚至分布解。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>答卷</h1>
+<p><strong>记号。</strong> e_k(y)=e^{2πi k·y}，ω_α(k):=αk₁+k₂，⟨k⟩=(1+|k|²)^{1/2}（|k| 为 Euclid 范数）。对 s≥0 记 Λ_s(α):=inf_{k∈ℤ²∖{0}} ⟨k⟩^s |ω_α(k)|。</p>
+<p><strong>标准事实（各自的适用条件）：</strong></p>
+<ul>
+<li><strong>(P1)</strong> 若 u∈C^∞(𝕋²)，则对每个 M 有 û(k)=O(⟨k⟩^{-M})（分部积分），且 u=Σû(k)e_k 连同各阶导数绝对一致收敛。反之，速降序列 (a_k) 给出 C^∞ 函数 Σa_k e_k，可逐项求导，其 Fourier 系数为 a_k。</li>
+<li><strong>(P2)</strong> {e_k} 是 L² 的标准正交基（Parseval）。在每个 H^r 中 e_k 两两正交，且 ‖e_k‖<em>{H^r}=⟨k⟩^r。对 f∈L¹ 有 |f̂(k)|≤‖f‖</em>{L¹}。</li>
+<li><strong>(P3)</strong> N_α e_k=2πi ω_α(k) e_k。对 u∈C¹ 有 (N_αu)^(k)=2πi ω_α(k) û(k)。特别地 ∫N_αu=0，故 N_α(C_0^∞)⊂C_0^∞。</li>
+<li><strong>(P4)</strong> 若 α∉ℚ，则对 k≠0 有 ω_α(k)≠0。理由：k₁=0 时 ω=k₂≠0；k₁≠0 且 ω=0 会推出 α=−k₂/k₁∈ℚ。另有 ω_α(−k)=−ω_α(k)。</li>
+</ul>
+<hr>
+<h2>S1 有限频带上的逆</h2>
+<p>设 H_N=span{e_k: 0&lt;|k|≤N}，它是有限维空间。</p>
+<p><strong>不变性。</strong> 由 (P3)，N_α e_k=2πiω_α(k)e_k，所以 N_αH_N⊂H_N，且 N_α|_{H_N}=diag(2πiω_α(k))。</p>
+<p><strong>逆的构造。</strong> α 无理，由 (P4) 对角元都非零。定义</p>
+<p>R_{α,N}(Σ c_k e_k) := Σ_{0&lt;|k|≤N} c_k/(2πi(αk₁+k₂)) · e_k。</p>
+<p>则 N_αR_{α,N}=R_{α,N}N_α=id_{H_N}，所以 R_{α,N} 是唯一的逆。它保持实值性，因为 ω(−k)=−ω(k)。</p>
+<p><strong>精确范数。</strong> 令 δ_N(α):=min_{0&lt;|k|≤N}|αk₁+k₂|。这是有限集上的最小值，由 (P4) 有 δ_N(α)&gt;0。</p>
+<p>对任意 r∈ℝ 和 v=Σc_ke_k∈H_N，由 (P2)，</p>
+<p>‖R v‖²_{H^r}=Σ⟨k⟩^{2r}|c_k|²/(4π²ω(k)²) ≤ (2πδ_N)^{-2}‖v‖²_{H^r}。</p>
+<p>取 v=e_{k*}（|ω(k*)|=δ_N）时等号成立。因此</p>
+<p><strong>‖R_{α,N}‖<em>{H^r→H^r} = max</em>{0&lt;|k|≤N} 1/(2π|αk₁+k₂|) = 1/(2π δ_N(α))，与 r∈ℝ 无关。</strong></p>
+<hr>
+<h2>S2 有算术界的截断误差</h2>
+<p>假设 (D)：|ω_α(k)|≥c⟨k⟩^{-s}，对一切 k≠0。</p>
+<p><strong>构造 u。</strong> 设 F 光滑零均值。由 (P1)，F̂ 速降且 F̂(0)=0。令 û(0)=0，û(k)=F̂(k)/(2πiω_α(k))。由 (D)，|û(k)|≤⟨k⟩^s|F̂(k)|/(2πc)，所以 û 仍速降。于是：</p>
+<ul>
+<li>u:=Σû(k)e_k∈C^∞（P1），且 ∫u=0。</li>
+<li>逐项求导得 N_αu=Σ_{k≠0}F̂(k)e_k=F。</li>
+<li>由 (P4)，这是唯一的光滑零均值解。</li>
+</ul>
+<p><strong>与 u_N 的关系。</strong> F_N=Σ_{0&lt;|k|≤N}F̂(k)e_k，u_N=R_{α,N}F_N=Σ_{0&lt;|k|≤N}û(k)e_k。故 u−u_N=Σ_{|k|&gt;N}û(k)e_k。</p>
+<p><strong>估计。</strong> 对任意 r∈ℝ，</p>
+<p>‖u−u_N‖²_{H^r}=Σ_{|k|&gt;N}⟨k⟩^{2r}|F̂(k)|²/(4π²ω²) ≤ (4π²c²)^{-1}Σ_{|k|&gt;N}⟨k⟩^{2(r+s)}|F̂(k)|²。</p>
+<p>当 |k|&gt;N 时 ⟨k⟩²&gt;1+N²，所以对 q≥0 有 ⟨k⟩^{-2q}≤(1+N²)^{-q}，即 ⟨k⟩^{2(r+s)}≤(1+N²)^{-q}⟨k⟩^{2(r+s+q)}。于是</p>
+<p>‖u−u_N‖²_{H^r} ≤ (4π²c²)^{-1}(1+N²)^{-q}‖F‖²_{H^{r+s+q}}，</p>
+<p>开方即得</p>
+<p><strong>‖u−u_N‖<em>{H^r} ≤ (2πc)^{-1}(1+N²)^{-q/2}‖F‖</em>{H^{r+s+q}}。</strong> ∎</p>
+<hr>
+<h2>S3 固定频带内改变方向</h2>
+<p>设 u_α=N_α^{-1}F，u_β=N_β^{-1}F（逆取自 S1）。对 0&lt;|k|≤N，</p>
+<p>û_α(k)−û_β(k)=(F̂(k)/2πi)·[1/(αk₁+k₂) − 1/(βk₁+k₂)]=(F̂(k)/2πi)·(β−α)k₁/((αk₁+k₂)(βk₁+k₂))。</p>
+<p>由 |k₁|≤|k|≤N 以及两个小除数都 ≥δ，</p>
+<p>|û_α(k)−û_β(k)| ≤ |α−β|N/(2πδ²)·|F̂(k)|。</p>
+<p>两边乘 ⟨k⟩^r、平方、求和：</p>
+<p><strong>‖u_α−u_β‖<em>{H^r} ≤ |α−β|N(2πδ²)^{-1}‖F‖</em>{H^r}。</strong> ∎</p>
+<hr>
+<h2>S4 整体对象与全部恢复目标</h2>
+<h3>4.0 结论</h3>
+<ol>
+<li>对一切无理 α 的唯一性成立。但&quot;每个 F 都有光滑零均值解&quot;<strong>不对一切无理 α 成立</strong>，所以&quot;对所有无理 α，N_α 在 C_0^∞ 上可逆&quot;这一目标<strong>不成立</strong>。
+<ul>
+<li>正确刻画：N_α: C_0^∞→C_0^∞ 双射 ⟺ α 无理且不是 Liouville 数 ⟺ ∃c&gt;0,s≥0：|αk₁+k₂|≥c⟨k⟩^{-s}（k≠0）。</li>
+<li>反例：S6 的 α=Σ10^{-n!}。</li>
+</ul>
+</li>
+<li>允许损失集合为 S(α)={s≥0: Λ_s(α)&gt;0}。它与 r 无关，最佳常数为 1/(2πΛ_s(α))，并且对一切无理 α 都有 S(α)⊂[1,∞)。</li>
+<li>对 α_<em>=√2−1：S(α_</em>)=[1,∞)。最小损失 s=1，<strong>能取到</strong>。s&lt;1 对每个 r 都失败。s=1 时的最佳常数是 √(4+2√2)/(2π)，但对任何 u≠0 取不到等号。</li>
+<li>对每个 m∈ℕ₀，‖N_{α*}^{-1}F‖<em>{C^m}≤C_m‖F‖</em>{C^{m+4}} <strong>成立</strong>。实际上 C^{m+3} 就够。</li>
+</ol>
+<h3>4.1 两个引理</h3>
+<p><strong>引理 L1（最佳常数）。</strong> 设 α 无理，r∈ℝ，s≥0。则</p>
+<p>sup_{0≠u∈C_0^∞} ‖u‖<em>{H^r}/‖N_αu‖</em>{H^{r+s}} = 1/(2πΛ_s(α))（约定 1/0=∞）。</p>
+<p><em>证。</em> 对 u∈C_0^∞ 有 û(0)=0，所以
+‖N_αu‖²_{H^{r+s}}=Σ_{k≠0}4π²ω²⟨k⟩^{2s}⟨k⟩^{2r}|û(k)|² ≥ 4π²Λ_s²‖u‖²_{H^r}。
+反之取 u=e_k，比值为 1/(2π|ω(k)|⟨k⟩^s)。对 k 取上确界即得结论。∎</p>
+<p>故估计对某个 r（等价地，对所有 r）成立 ⟺ Λ_s(α)&gt;0，且最佳常数与 r 无关。</p>
+<p><strong>引理 L2（等价形式）。</strong> 设 α 无理，s≥0，A:=(2+(1+|α|)²)^{1/2}。则</p>
+<p>Λ_s(α)&gt;0 ⟺ ∃c&gt;0 ∀p∈ℤ,q∈ℕ：|α−p/q| ≥ c·q^{-(s+1)}。(★)</p>
+<p><em>证。</em></p>
+<p>(⇒) 设 |ω(k)|≥c₀⟨k⟩^{-s}，不妨 c₀≤1。取 (p,q)。</p>
+<ul>
+<li>若 |α−p/q|≥1，则它 ≥ 1 ≥ c₀q^{-(s+1)}。</li>
+<li>否则 |p|&lt;(1+|α|)q。令 k=(q,−p)，则 ⟨k⟩²=1+q²+p²≤A²q²，故 q|α−p/q|=|ω(k)|≥c₀(Aq)^{-s}。于是 |α−p/q|≥c₀A^{-s}q^{-(s+1)}。</li>
+</ul>
+<p>(⇐) 设 (★)，不妨 c≤1。</p>
+<ul>
+<li>k₁=0 时 |ω|=|k₂|≥1≥c⟨k⟩^{-s}。</li>
+<li>k₁≠0 时，由 ω(−k)=−ω(k)，设 k₁=q≥1，p:=−k₂，则 |ω|=q|α−p/q|≥cq^{-s}≥c⟨k⟩^{-s}（因 q≤⟨k⟩）。∎</li>
+</ul>
+<p><strong>Liouville 数的定义与等价形式。</strong></p>
+<ul>
+<li>α 是 Liouville 数：对每个 n 存在 q≥2，使 0&lt;|α−p/q|&lt;q^{-n}。</li>
+<li>对无理 α，这等价于对任何指数 μ 都没有 c&gt;0 使 |α−p/q|≥cq^{-μ}（∀p,q）。</li>
+<li>记无理性指数 μ(α)∈[2,∞]，则由 L2 得 inf S(α)=μ(α)−1。S(α)≠∅ ⟺ α 非 Liouville。</li>
+</ul>
+<h3>4.2 定理 A（可逆性分类）</h3>
+<p>设 α∈ℝ∖ℚ。</p>
+<p><strong>(A1) 唯一性。</strong> 对每个无理 α，N_αu=0（u∈C_0^∞）推出 ω(k)û(k)=0。结合 (P4) 与 û(0)=0，得 u=0。</p>
+<p><strong>(A2) 等价条件。</strong> 以下四条等价：</p>
+<ul>
+<li>(a) 对每个 F∈C_0^∞ 存在 u∈C_0^∞ 使 N_αu=F，即 N_α 是 C_0^∞ 上的双射；</li>
+<li>(b) ∃c&gt;0,s≥0：|αk₁+k₂|≥c⟨k⟩^{-s}（∀k≠0）；</li>
+<li>(c) α 非 Liouville；</li>
+<li>(d) ∃s≥0，使 ∀r∈ℝ ∃C：‖u‖<em>{H^r}≤C‖N_αu‖</em>{H^{r+s}}（∀u∈C_0^∞）。</li>
+</ul>
+<p><strong>(A3) 解公式与估计。</strong> 当 (b) 成立时，
+N_α^{-1}F=Σ_{k≠0}F̂(k)/(2πiω_α(k))·e_k，
+‖N_α^{-1}F‖<em>{H^r}≤(2πc)^{-1}‖F‖</em>{H^{r+s}}。
+实值 F 给出实值 u，N_α^{-1} 与平移、∂_j 交换，并连续延拓为 H₀^{t+s}→H₀^t。N_α^{-1} 是 C_0^∞ 上的 Fréchet 同构。</p>
+<p>当 (b) 不成立时，存在<strong>单个</strong>实或复值 F∈C_0^∞，使 N_αu=F 在任何 u∈L¹(𝕋²)（因此也在光滑函数和分布意义下）都无解。</p>
+<p><strong>(A4) 有理 α（题目未定义，仅作对照）。</strong> 设 α=p/q。则 e_{(q,−p)}∈ker N_α，唯一性失败。又 F=e_{(q,−p)} 不在值域内，因为 (N_αu)^((q,−p))=0。</p>
+<p><em>证。</em></p>
+<p><strong>(b)⟹(a) 与 (A3) 的第一部分。</strong> 这就是 S2 第一步的构造。其假设恰为 (b)，估计来自 L1。</p>
+<p><strong>(a)⟹(b)（反证，给出单个 F）。</strong> 设 (b) 不成立：对任意 c&gt;0,s≥0 有 k≠0 使 |ω(k)|&lt;c⟨k⟩^{-s}。递归取 k^{(j)}（j≥1）：</p>
+<ul>
+<li>令 k^{(0)}=0，R_j:=2^j+|k^{(j−1)}|，δ_j:=min{|ω(k)|: 0&lt;|k|≤R_j}，它由 (P4) 为正。</li>
+<li>取 k^{(j)}≠0 使 |ω(k^{(j)})|&lt;min(δ_j,1)⟨k^{(j)}⟩^{-j}。</li>
+<li>由 |ω(k^{(j)})|&lt;δ_j 知 |k^{(j)}|&gt;R_j，故 |k^{(j)}|&gt;2^j，且各 k^{(j)} 互异。</li>
+</ul>
+<p>令 F:=Σ_j⟨k^{(j)}⟩^{-j/2}e_{k^{(j)}}。当 j≥2M 时系数 ≤⟨k^{(j)}⟩^{-M}，所以系数速降，F∈C^∞（P1）。又所有频率非零，故 F∈C_0^∞。</p>
+<p>设 u∈L¹ 解 N_αu=F。则 2πiω(k)û(k)=F̂(k)，所以</p>
+<p>|û(k^{(j)})| = ⟨k^{(j)}⟩^{-j/2}/(2π|ω(k^{(j)})|) &gt; ⟨k^{(j)}⟩^{j/2}/(2π) &gt; 2^{j²/2}/(2π) → ∞。</p>
+<p>而 |û(k)|≤‖u‖_{L¹}，矛盾。</p>
+<p><strong>(b)⟺(c)</strong> 由 L2 与上面的定义。<strong>(b)⟺(d)</strong> 由 L1：Λ_s&gt;0 ⟺ 估计成立。∎</p>
+<h3>4.3 定理 B（全部允许损失）</h3>
+<p>设 α 无理。</p>
+<ul>
+<li><strong>(B1)</strong> 对 s≥0，估计（对一个或所有 r）成立 ⟺ Λ_s(α)&gt;0。最佳常数 C_{α,r,s}=1/(2πΛ_s(α))，与 r 无关（L1）。</li>
+<li><strong>(B2)</strong> S(α)={s≥0: Λ_s(α)&gt;0} 是上闭集，因为 ⟨k⟩≥1，Λ_s 对 s 单调不减。S(α)≠∅ ⟺ α 非 Liouville。inf S(α)=μ(α)−1，端点是否属于 S(α) 因 α 而异。</li>
+<li><strong>(B3)</strong> 对每个无理 α，S(α)⊂[1,∞)。</li>
+<li><strong>(B4)</strong> 1∈S(α) ⟺ α 有界型（badly approximable），即 |α−p/q|≥c/q²。例如所有二次无理数；而 e 的 μ=2 但部分商无界，S(e)=(1,∞) 不含端点 1。</li>
+</ul>
+<p><em>证。</em> (B1)(B2) 已由 L1、L2 得到。</p>
+<p><strong>(B3)</strong> 取 s&lt;1，Q∈ℕ。Dirichlet 逼近定理（对任意实数 α 和整数 Q≥1 成立）给出 1≤q≤Q 和 p，使 |qα−p|&lt;1/Q。令 k=(q,−p)≠0，则 |ω(k)|&lt;1/Q，且 ⟨k⟩≤Aq≤AQ。于是</p>
+<p>⟨k⟩^s|ω(k)|&lt;A^sQ^{s−1}→0（Q→∞），</p>
+<p>所以 Λ_s(α)=0。</p>
+<p><strong>(B4)</strong> 在 (★) 中取 s=1 即得。∎</p>
+<h3>4.4 定理 C（α_*=√2−1）</h3>
+<p>α_* 是 x²+2x−1=0 的根，另一根为 α'=−1−√2（无理）。令 ω'(k):=α'k₁+k₂，则 ω'(k)≠0（k≠0），并且</p>
+<p>Q(k):=ω(k)ω'(k)=k₂²−2k₁k₂−k₁²∈ℤ∖{0}，所以 |Q|≥1。</p>
+<p>由 ω−ω'=2√2k₁ 和 ω+ω'=2(k₂−k₁)，解出 k₁=(ω−ω')/(2√2)，k₂=k₁+(ω+ω')/2。代入得</p>
+<p>|k|² = [(2+√2)ω² + (2−√2)ω'²]/4。</p>
+<p>于是，利用 ω'=Q/ω，</p>
+<p>⟨k⟩²ω² = ω² + [(2+√2)ω⁴+(2−√2)Q²]/4 &gt; (2−√2)Q²/4 ≥ (2−√2)/4 = c₀²，</p>
+<p>其中 <strong>c₀:=√(2−√2)/2=1/√(4+2√2)≈0.38268</strong>。</p>
+<p><strong>(C1)</strong> 对一切 k≠0，⟨k⟩|ω_{α*}(k)|&gt;c₀，严格不等式。</p>
+<p><strong>(C2) 下确界为 c₀，且取不到。</strong> 定义 k^{(n)}：k^{(0)}=(0,1)，k^{(n+1)}=(k₂^{(n)}−2k₁^{(n)}, k₁^{(n)})。因 α²=1−2α，对 α=α_* 与 α=α' 都有 ω(k^{(n)})=α_*^n，ω'(k^{(n)})=α'^n，所以 Q(k^{(n)})=(−1)^n。于是</p>
+<p>⟨k^{(n)}⟩²α_<em>^{2n}=α_</em>^{2n}+[(2+√2)α_*^{4n}+(2−√2)]/4 → c₀²。</p>
+<p>因此 Λ_1(α_*)=c₀，不被任何 k 取到。</p>
+<p><strong>(C3) 允许损失集合为 [1,∞)。</strong></p>
+<ul>
+<li>s≥1：Λ_s≥Λ_1=c₀&gt;0。</li>
+<li>s&lt;1：由 (C1)，⟨k^{(n)}⟩&gt;c₀/α_<em>^n→∞，所以 Λ_s ≤ ⟨k^{(n)}⟩^{s−1}·(⟨k^{(n)}⟩α_</em>^n) → 0·c₀ = 0。取 u=e_{k^{(n)}}，对每个 r，比值 ‖u‖<em>{H^r}/‖N u‖</em>{H^{r+s}}→∞，估计失败。</li>
+</ul>
+<p>所以 <strong>S(α_*)=[1,∞)，最小损失 s=1，且是最小值。</strong> 并且对一切 r、u∈C_0^∞，</p>
+<p>‖u‖<em>{H^r} ≤ [√(4+2√2)/(2π)]·‖N</em>{α*}u‖_{H^{r+1}}，</p>
+<p>常数最优（≈0.4159）。对 u≠0 不等式严格，因为 (C1) 是逐项严格的。</p>
+<h3>4.5 定理 D（C^m 估计）</h3>
+<p>设 F∈C_0^∞，u=N_{α*}^{-1}F。则对每个 m∈ℕ₀，</p>
+<p>‖u‖<em>{C^m} ≤ C_m‖F‖</em>{C^{m+3}} ≤ C_m‖F‖<em>{C^{m+4}}，
+C_m=(2π)^{m−1}c₀^{-1}Σ^{1/2}3^{(m+3)/2}，Σ:=Σ</em>{k∈ℤ²}⟨k⟩^{-4}≈3.23&lt;∞。</p>
+<p>所以所问命题<strong>成立</strong>。</p>
+<p><em>证。</em></p>
+<p><strong>第一步，把 C^m 范数化为系数和。</strong> 对 a+b≤m，由 (P1)，
+sup|∂₁^a∂₂^b u|≤(2π)^{a+b}Σ_{k≠0}|k₁|^a|k₂|^b|û(k)|≤(2π)^mΣ_{k≠0}⟨k⟩^m|û(k)|，
+这里用了 |k|≥1。</p>
+<p><strong>第二步，代入 (C1)。</strong> 由 (C1)，|û(k)|=|F̂(k)|/(2π|ω|)≤⟨k⟩|F̂(k)|/(2πc₀)。所以 ‖u‖_{C^m}≤((2π)^{m−1}/c₀)·Σ_k⟨k⟩^{m+1}|F̂(k)|。</p>
+<p><strong>第三步，Cauchy–Schwarz。</strong>
+Σ⟨k⟩^{m+1}|F̂|=Σ⟨k⟩^{-2}·⟨k⟩^{m+3}|F̂| ≤ Σ^{1/2}·(Σ⟨k⟩^{2(m+3)}|F̂|²)^{1/2}。</p>
+<p><strong>第四步，从 Sobolev 和转到 C^j 范数。</strong> 对整数 j，把 (1+k₁²+k₂²)^j 多项展开，项数权重总和为 3^j，每项为 k₁^{2a}k₂^{2b}（a+b≤j）。由 Parseval，
+Σk₁^{2a}k₂^{2b}|F̂|²=(2π)^{-2(a+b)}‖∂₁^a∂₂^bF‖²_{L²}≤‖F‖²_{C^j}，
+这里用了概率测度下 L²≤L^∞。故 Σ⟨k⟩^{2j}|F̂|²≤3^j‖F‖²_{C^j}。取 j=m+3 即得结论。∎</p>
+<p>对一般满足 (b) 的 α，同法得 ‖N_α^{-1}F‖<em>{C^m}≤C‖F‖</em>{C^{m+⌈s⌉+2}}。</p>
+<p>数值核对：在 |k_i|≤600 的格点上 min⟨k⟩|ω|≈0.382684&gt;c₀≈0.3826834，与 (C1)(C2) 一致。</p>
+<hr>
+<h2>S5 邻近方向的一致估计</h2>
+<p><strong>结论：不存在这样的 J、s、C。</strong></p>
+<p><em>证。</em> 任取开区间 J∋α_*、s≥0、C&gt;0。J 含有理数 p/q（q∈ℕ）。令 k=(q,−p)≠0，u=e_k∈C_0^∞，则 ‖u‖_{L²}=1。对无理 α∈J，</p>
+<p>‖N_αu‖_{H^s}=2π|αq−p|⟨k⟩^s=2πq|α−p/q|⟨k⟩^s。</p>
+<p>无理数稠密，所以可取 α∈J∖ℚ 满足 |α−p/q|&lt;(2πCq⟨k⟩^s)^{-1}。此时 C‖N_αu‖<em>{H^s}&lt;1=‖u‖</em>{L²}，估计失败。∎</p>
+<p><strong>说明。</strong></p>
+<ul>
+<li>α_* 本身是有界型，S4 对 α_* 单点给出 s=1 的估计。但常数 Λ_s(α) 在 α 上不连续、也不一致：任何区间 J 内都有无理数任意靠近有理数 p/q，而在频率 (q,−p) 处除数极小。</li>
+<li>J 内还含 Liouville 数，对它们任何 s 都没有估计（见 S6 和 S4 的定理 A）。</li>
+<li>低频仍然稳定，这就是 S3。若 |α−α_<em>|≤η≤c₀/(2K⟨K⟩)，则对 0&lt;|k|≤K 有 |ω_α(k)|≥|ω_{α</em>}(k)|−ηK≥c₀/(2⟨k⟩）。因此对频率支撑在 0&lt;|k|≤K 的 u，有 ‖u‖<em>{L²}≤(πc₀)^{-1}‖N_αu‖</em>{H¹}。可用频带随 η→0 才趋于无穷。</li>
+</ul>
+<hr>
+<h2>S6 一个具体方向的不可解数据</h2>
+<p><strong>记号。</strong> α=Σ_{n≥1}10^{-n!}，q_n=10^{n!}，p_n=Σ_{j=1}^n10^{n!−j!}∈ℕ，k^{(n)}=(q_n,−p_n)。</p>
+<p><strong>尾项估计。</strong> 令 t_n:=α−p_n/q_n=Σ_{j&gt;n}10^{-j!}。因 j!≥(n+1)!+(j−n−1)（j≥n+1），有</p>
+<p>10^{-(n+1)!} &lt; t_n ≤ (10/9)·10^{-(n+1)!}。</p>
+<p>由 10^{-(n+1)!}=q_n^{-(n+1)}，得 ω_n:=ω_α(k^{(n)})=αq_n−p_n=q_nt_n，满足</p>
+<p><strong>q_n^{-n} &lt; ω_n ≤ (10/9)q_n^{-n}。</strong></p>
+<p>又 p_n&lt;0.12q_n，所以 q_n≤⟨k^{(n)}⟩≤√3q_n&lt;2q_n。</p>
+<p><strong>α 无理。</strong> 设 α=a/b（b≥1）。则 aq_n−bp_n 是整数，等于 bω_n&gt;0，故 ≥1。于是 1≤bω_n≤(10b/9)q_n^{-n}，即 q_n^n≤10b/9，而 q_n^n→∞，矛盾。（同时说明 α 是 Liouville 数，因为 |α−p_n/q_n|&lt;(10/9)q_n^{-(n+1)}。）</p>
+<p><strong>构造单个 F。</strong></p>
+<p>F(y):=2Σ_{n≥1} q_n^{-n/2}·cos(2π(q_ny₁−p_ny₂))。</p>
+<p><strong>F∈C_0^∞。</strong> 对每个多重指标 γ，第 n 项的 C^{|γ|} 范数 ≤2q_n^{-n/2}(4πq_n)^{|γ|}。当 n≥2|γ|+2 时它 ≤ C·q_n^{-1}≤C·10^{-n}。所以每阶导数的级数绝对一致收敛，F∈C^∞（P1）。所有频率非零，故零均值。F̂(±k^{(n)})=q_n^{-n/2}，其余为 0。</p>
+<p><strong>N_αu=F 无解。</strong> 设 u 是光滑函数（不必零均值）的解，甚至 u∈L¹ 或分布也一样。在频率 k^{(n)} 处，2πiω_nû(k^{(n)})=q_n^{-n/2}。因此</p>
+<p>|û(k^{(n)})| = q_n^{-n/2}/(2πω_n) &gt; (9/(20π))·q_n^{n/2} → ∞。</p>
+<p>而光滑（甚至 L¹）u 的 |û(k)|≤‖u‖_{L¹} 有界；对分布，系数至多多项式增长，而 q_n^{n/2} 比 ⟨k^{(n)}⟩^M≤(2q_n)^M 增长快得多。矛盾。∎</p>
+<p><strong>这个 F 同时对所有估计失效。</strong></p>
+<ul>
+<li>它的形式解在每个 H^r（r∈ℝ）中都不存在，因为 ⟨k^{(n)}⟩^r|û(k^{(n)})|→∞。</li>
+<li>对任意 (r,s)，取 u=e_{k^{(n)}}，ratio ‖u‖<em>{H^r}/‖N_αu‖</em>{H^{r+s}}=1/(2πω_n⟨k^{(n)}⟩^s) ≥ 9q_n^n/(20π(2q_n)^s) → ∞。所以 S4 的估计对此 α 对任何 s 都不成立，没有任何有限损失。</li>
+</ul>
+<p>这与定理 A 一致：此 α 是 Liouville 数，N_α 在 C_0^∞ 上不满。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP002/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-GP002:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP002/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/original-reviews/MG-GP002.json">review · MG-GP002.json</a><span class="hash">SHA256 6f6ffada35d2f4cdb378718d28970a0c38647c3d11e0093c6fd67070fdeb0094</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-GP002-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-GP002.json">review · MG-GP002.json</a><span class="hash">SHA256 0f00e551a2e524e66c0d555d6fc909616537c1e94994cd689220353475dc4d4d</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>S1</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 非零Fourier乘子逐模逆，并用单频取得H^r逆范数精确值；有限频带正最小值与全频界明确区分。</p>
+<h3>S2</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 算术下界保持Fourier系数速降，给真实光滑零均值解及唯一性。尾频平方估计准确保留r实数与q≥0，常数和N指数均符合题意。</p>
+<h3>S3</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 逆乘子差为(β−α)k1/(2πiωαωβ)，同时使用两方向δ下界和有限N，任意实r正交求和合法。</p>
+<h3>S4</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 完整证明光滑双射与有限阶小除数下界等价，逆向以单一速降坏F反驳。全部损失由Λ_s&gt;0精确刻画且端点不擅自纳入。二次共轭恒等式和整数迭代列给α*最小损失1并取到；Cauchy–Schwarz及Parseval给更强C^(m+3)到C^m估计，蕴含原定估计。附带最佳常数计算核对有效。</p>
+<h3>S5</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意候选区间含有理p/q，固定频率(q,−p)，取仍无理但足够靠近p/q的方向反驳同一有限常数；量词正确。</p>
+<h3>S6</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 用十进截断正尾项证明无理及超多项式小除数。一个明确实值余弦级数各阶绝对一致收敛，解的指定频率系数超多项式增长，排除光滑甚至分布解。</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>答卷</h1>
+<p><strong>记号。</strong> e_k(y)=e^{2πi k·y}，ω_α(k):=αk₁+k₂，⟨k⟩=(1+|k|²)^{1/2}（|k| 为 Euclid 范数）。对 s≥0 记 Λ_s(α):=inf_{k∈ℤ²∖{0}} ⟨k⟩^s |ω_α(k)|。</p>
+<p><strong>标准事实（各自的适用条件）：</strong></p>
+<ul>
+<li><strong>(P1)</strong> 若 u∈C^∞(𝕋²)，则对每个 M 有 û(k)=O(⟨k⟩^{-M})（分部积分），且 u=Σû(k)e_k 连同各阶导数绝对一致收敛。反之，速降序列 (a_k) 给出 C^∞ 函数 Σa_k e_k，可逐项求导，其 Fourier 系数为 a_k。</li>
+<li><strong>(P2)</strong> {e_k} 是 L² 的标准正交基（Parseval）。在每个 H^r 中 e_k 两两正交，且 ‖e_k‖<em>{H^r}=⟨k⟩^r。对 f∈L¹ 有 |f̂(k)|≤‖f‖</em>{L¹}。</li>
+<li><strong>(P3)</strong> N_α e_k=2πi ω_α(k) e_k。对 u∈C¹ 有 (N_αu)^(k)=2πi ω_α(k) û(k)。特别地 ∫N_αu=0，故 N_α(C_0^∞)⊂C_0^∞。</li>
+<li><strong>(P4)</strong> 若 α∉ℚ，则对 k≠0 有 ω_α(k)≠0。理由：k₁=0 时 ω=k₂≠0；k₁≠0 且 ω=0 会推出 α=−k₂/k₁∈ℚ。另有 ω_α(−k)=−ω_α(k)。</li>
+</ul>
+<hr>
+<h2>S1 有限频带上的逆</h2>
+<p>设 H_N=span{e_k: 0&lt;|k|≤N}，它是有限维空间。</p>
+<p><strong>不变性。</strong> 由 (P3)，N_α e_k=2πiω_α(k)e_k，所以 N_αH_N⊂H_N，且 N_α|_{H_N}=diag(2πiω_α(k))。</p>
+<p><strong>逆的构造。</strong> α 无理，由 (P4) 对角元都非零。定义</p>
+<p>R_{α,N}(Σ c_k e_k) := Σ_{0&lt;|k|≤N} c_k/(2πi(αk₁+k₂)) · e_k。</p>
+<p>则 N_αR_{α,N}=R_{α,N}N_α=id_{H_N}，所以 R_{α,N} 是唯一的逆。它保持实值性，因为 ω(−k)=−ω(k)。</p>
+<p><strong>精确范数。</strong> 令 δ_N(α):=min_{0&lt;|k|≤N}|αk₁+k₂|。这是有限集上的最小值，由 (P4) 有 δ_N(α)&gt;0。</p>
+<p>对任意 r∈ℝ 和 v=Σc_ke_k∈H_N，由 (P2)，</p>
+<p>‖R v‖²_{H^r}=Σ⟨k⟩^{2r}|c_k|²/(4π²ω(k)²) ≤ (2πδ_N)^{-2}‖v‖²_{H^r}。</p>
+<p>取 v=e_{k*}（|ω(k*)|=δ_N）时等号成立。因此</p>
+<p><strong>‖R_{α,N}‖<em>{H^r→H^r} = max</em>{0&lt;|k|≤N} 1/(2π|αk₁+k₂|) = 1/(2π δ_N(α))，与 r∈ℝ 无关。</strong></p>
+<hr>
+<h2>S2 有算术界的截断误差</h2>
+<p>假设 (D)：|ω_α(k)|≥c⟨k⟩^{-s}，对一切 k≠0。</p>
+<p><strong>构造 u。</strong> 设 F 光滑零均值。由 (P1)，F̂ 速降且 F̂(0)=0。令 û(0)=0，û(k)=F̂(k)/(2πiω_α(k))。由 (D)，|û(k)|≤⟨k⟩^s|F̂(k)|/(2πc)，所以 û 仍速降。于是：</p>
+<ul>
+<li>u:=Σû(k)e_k∈C^∞（P1），且 ∫u=0。</li>
+<li>逐项求导得 N_αu=Σ_{k≠0}F̂(k)e_k=F。</li>
+<li>由 (P4)，这是唯一的光滑零均值解。</li>
+</ul>
+<p><strong>与 u_N 的关系。</strong> F_N=Σ_{0&lt;|k|≤N}F̂(k)e_k，u_N=R_{α,N}F_N=Σ_{0&lt;|k|≤N}û(k)e_k。故 u−u_N=Σ_{|k|&gt;N}û(k)e_k。</p>
+<p><strong>估计。</strong> 对任意 r∈ℝ，</p>
+<p>‖u−u_N‖²_{H^r}=Σ_{|k|&gt;N}⟨k⟩^{2r}|F̂(k)|²/(4π²ω²) ≤ (4π²c²)^{-1}Σ_{|k|&gt;N}⟨k⟩^{2(r+s)}|F̂(k)|²。</p>
+<p>当 |k|&gt;N 时 ⟨k⟩²&gt;1+N²，所以对 q≥0 有 ⟨k⟩^{-2q}≤(1+N²)^{-q}，即 ⟨k⟩^{2(r+s)}≤(1+N²)^{-q}⟨k⟩^{2(r+s+q)}。于是</p>
+<p>‖u−u_N‖²_{H^r} ≤ (4π²c²)^{-1}(1+N²)^{-q}‖F‖²_{H^{r+s+q}}，</p>
+<p>开方即得</p>
+<p><strong>‖u−u_N‖<em>{H^r} ≤ (2πc)^{-1}(1+N²)^{-q/2}‖F‖</em>{H^{r+s+q}}。</strong> ∎</p>
+<hr>
+<h2>S3 固定频带内改变方向</h2>
+<p>设 u_α=N_α^{-1}F，u_β=N_β^{-1}F（逆取自 S1）。对 0&lt;|k|≤N，</p>
+<p>û_α(k)−û_β(k)=(F̂(k)/2πi)·[1/(αk₁+k₂) − 1/(βk₁+k₂)]=(F̂(k)/2πi)·(β−α)k₁/((αk₁+k₂)(βk₁+k₂))。</p>
+<p>由 |k₁|≤|k|≤N 以及两个小除数都 ≥δ，</p>
+<p>|û_α(k)−û_β(k)| ≤ |α−β|N/(2πδ²)·|F̂(k)|。</p>
+<p>两边乘 ⟨k⟩^r、平方、求和：</p>
+<p><strong>‖u_α−u_β‖<em>{H^r} ≤ |α−β|N(2πδ²)^{-1}‖F‖</em>{H^r}。</strong> ∎</p>
+<hr>
+<h2>S4 整体对象与全部恢复目标</h2>
+<h3>4.0 结论</h3>
+<ol>
+<li>对一切无理 α 的唯一性成立。但&quot;每个 F 都有光滑零均值解&quot;<strong>不对一切无理 α 成立</strong>，所以&quot;对所有无理 α，N_α 在 C_0^∞ 上可逆&quot;这一目标<strong>不成立</strong>。
+<ul>
+<li>正确刻画：N_α: C_0^∞→C_0^∞ 双射 ⟺ α 无理且不是 Liouville 数 ⟺ ∃c&gt;0,s≥0：|αk₁+k₂|≥c⟨k⟩^{-s}（k≠0）。</li>
+<li>反例：S6 的 α=Σ10^{-n!}。</li>
+</ul>
+</li>
+<li>允许损失集合为 S(α)={s≥0: Λ_s(α)&gt;0}。它与 r 无关，最佳常数为 1/(2πΛ_s(α))，并且对一切无理 α 都有 S(α)⊂[1,∞)。</li>
+<li>对 α_<em>=√2−1：S(α_</em>)=[1,∞)。最小损失 s=1，<strong>能取到</strong>。s&lt;1 对每个 r 都失败。s=1 时的最佳常数是 √(4+2√2)/(2π)，但对任何 u≠0 取不到等号。</li>
+<li>对每个 m∈ℕ₀，‖N_{α*}^{-1}F‖<em>{C^m}≤C_m‖F‖</em>{C^{m+4}} <strong>成立</strong>。实际上 C^{m+3} 就够。</li>
+</ol>
+<h3>4.1 两个引理</h3>
+<p><strong>引理 L1（最佳常数）。</strong> 设 α 无理，r∈ℝ，s≥0。则</p>
+<p>sup_{0≠u∈C_0^∞} ‖u‖<em>{H^r}/‖N_αu‖</em>{H^{r+s}} = 1/(2πΛ_s(α))（约定 1/0=∞）。</p>
+<p><em>证。</em> 对 u∈C_0^∞ 有 û(0)=0，所以
+‖N_αu‖²_{H^{r+s}}=Σ_{k≠0}4π²ω²⟨k⟩^{2s}⟨k⟩^{2r}|û(k)|² ≥ 4π²Λ_s²‖u‖²_{H^r}。
+反之取 u=e_k，比值为 1/(2π|ω(k)|⟨k⟩^s)。对 k 取上确界即得结论。∎</p>
+<p>故估计对某个 r（等价地，对所有 r）成立 ⟺ Λ_s(α)&gt;0，且最佳常数与 r 无关。</p>
+<p><strong>引理 L2（等价形式）。</strong> 设 α 无理，s≥0，A:=(2+(1+|α|)²)^{1/2}。则</p>
+<p>Λ_s(α)&gt;0 ⟺ ∃c&gt;0 ∀p∈ℤ,q∈ℕ：|α−p/q| ≥ c·q^{-(s+1)}。(★)</p>
+<p><em>证。</em></p>
+<p>(⇒) 设 |ω(k)|≥c₀⟨k⟩^{-s}，不妨 c₀≤1。取 (p,q)。</p>
+<ul>
+<li>若 |α−p/q|≥1，则它 ≥ 1 ≥ c₀q^{-(s+1)}。</li>
+<li>否则 |p|&lt;(1+|α|)q。令 k=(q,−p)，则 ⟨k⟩²=1+q²+p²≤A²q²，故 q|α−p/q|=|ω(k)|≥c₀(Aq)^{-s}。于是 |α−p/q|≥c₀A^{-s}q^{-(s+1)}。</li>
+</ul>
+<p>(⇐) 设 (★)，不妨 c≤1。</p>
+<ul>
+<li>k₁=0 时 |ω|=|k₂|≥1≥c⟨k⟩^{-s}。</li>
+<li>k₁≠0 时，由 ω(−k)=−ω(k)，设 k₁=q≥1，p:=−k₂，则 |ω|=q|α−p/q|≥cq^{-s}≥c⟨k⟩^{-s}（因 q≤⟨k⟩）。∎</li>
+</ul>
+<p><strong>Liouville 数的定义与等价形式。</strong></p>
+<ul>
+<li>α 是 Liouville 数：对每个 n 存在 q≥2，使 0&lt;|α−p/q|&lt;q^{-n}。</li>
+<li>对无理 α，这等价于对任何指数 μ 都没有 c&gt;0 使 |α−p/q|≥cq^{-μ}（∀p,q）。</li>
+<li>记无理性指数 μ(α)∈[2,∞]，则由 L2 得 inf S(α)=μ(α)−1。S(α)≠∅ ⟺ α 非 Liouville。</li>
+</ul>
+<h3>4.2 定理 A（可逆性分类）</h3>
+<p>设 α∈ℝ∖ℚ。</p>
+<p><strong>(A1) 唯一性。</strong> 对每个无理 α，N_αu=0（u∈C_0^∞）推出 ω(k)û(k)=0。结合 (P4) 与 û(0)=0，得 u=0。</p>
+<p><strong>(A2) 等价条件。</strong> 以下四条等价：</p>
+<ul>
+<li>(a) 对每个 F∈C_0^∞ 存在 u∈C_0^∞ 使 N_αu=F，即 N_α 是 C_0^∞ 上的双射；</li>
+<li>(b) ∃c&gt;0,s≥0：|αk₁+k₂|≥c⟨k⟩^{-s}（∀k≠0）；</li>
+<li>(c) α 非 Liouville；</li>
+<li>(d) ∃s≥0，使 ∀r∈ℝ ∃C：‖u‖<em>{H^r}≤C‖N_αu‖</em>{H^{r+s}}（∀u∈C_0^∞）。</li>
+</ul>
+<p><strong>(A3) 解公式与估计。</strong> 当 (b) 成立时，
+N_α^{-1}F=Σ_{k≠0}F̂(k)/(2πiω_α(k))·e_k，
+‖N_α^{-1}F‖<em>{H^r}≤(2πc)^{-1}‖F‖</em>{H^{r+s}}。
+实值 F 给出实值 u，N_α^{-1} 与平移、∂_j 交换，并连续延拓为 H₀^{t+s}→H₀^t。N_α^{-1} 是 C_0^∞ 上的 Fréchet 同构。</p>
+<p>当 (b) 不成立时，存在<strong>单个</strong>实或复值 F∈C_0^∞，使 N_αu=F 在任何 u∈L¹(𝕋²)（因此也在光滑函数和分布意义下）都无解。</p>
+<p><strong>(A4) 有理 α（题目未定义，仅作对照）。</strong> 设 α=p/q。则 e_{(q,−p)}∈ker N_α，唯一性失败。又 F=e_{(q,−p)} 不在值域内，因为 (N_αu)^((q,−p))=0。</p>
+<p><em>证。</em></p>
+<p><strong>(b)⟹(a) 与 (A3) 的第一部分。</strong> 这就是 S2 第一步的构造。其假设恰为 (b)，估计来自 L1。</p>
+<p><strong>(a)⟹(b)（反证，给出单个 F）。</strong> 设 (b) 不成立：对任意 c&gt;0,s≥0 有 k≠0 使 |ω(k)|&lt;c⟨k⟩^{-s}。递归取 k^{(j)}（j≥1）：</p>
+<ul>
+<li>令 k^{(0)}=0，R_j:=2^j+|k^{(j−1)}|，δ_j:=min{|ω(k)|: 0&lt;|k|≤R_j}，它由 (P4) 为正。</li>
+<li>取 k^{(j)}≠0 使 |ω(k^{(j)})|&lt;min(δ_j,1)⟨k^{(j)}⟩^{-j}。</li>
+<li>由 |ω(k^{(j)})|&lt;δ_j 知 |k^{(j)}|&gt;R_j，故 |k^{(j)}|&gt;2^j，且各 k^{(j)} 互异。</li>
+</ul>
+<p>令 F:=Σ_j⟨k^{(j)}⟩^{-j/2}e_{k^{(j)}}。当 j≥2M 时系数 ≤⟨k^{(j)}⟩^{-M}，所以系数速降，F∈C^∞（P1）。又所有频率非零，故 F∈C_0^∞。</p>
+<p>设 u∈L¹ 解 N_αu=F。则 2πiω(k)û(k)=F̂(k)，所以</p>
+<p>|û(k^{(j)})| = ⟨k^{(j)}⟩^{-j/2}/(2π|ω(k^{(j)})|) &gt; ⟨k^{(j)}⟩^{j/2}/(2π) &gt; 2^{j²/2}/(2π) → ∞。</p>
+<p>而 |û(k)|≤‖u‖_{L¹}，矛盾。</p>
+<p><strong>(b)⟺(c)</strong> 由 L2 与上面的定义。<strong>(b)⟺(d)</strong> 由 L1：Λ_s&gt;0 ⟺ 估计成立。∎</p>
+<h3>4.3 定理 B（全部允许损失）</h3>
+<p>设 α 无理。</p>
+<ul>
+<li><strong>(B1)</strong> 对 s≥0，估计（对一个或所有 r）成立 ⟺ Λ_s(α)&gt;0。最佳常数 C_{α,r,s}=1/(2πΛ_s(α))，与 r 无关（L1）。</li>
+<li><strong>(B2)</strong> S(α)={s≥0: Λ_s(α)&gt;0} 是上闭集，因为 ⟨k⟩≥1，Λ_s 对 s 单调不减。S(α)≠∅ ⟺ α 非 Liouville。inf S(α)=μ(α)−1，端点是否属于 S(α) 因 α 而异。</li>
+<li><strong>(B3)</strong> 对每个无理 α，S(α)⊂[1,∞)。</li>
+<li><strong>(B4)</strong> 1∈S(α) ⟺ α 有界型（badly approximable），即 |α−p/q|≥c/q²。例如所有二次无理数；而 e 的 μ=2 但部分商无界，S(e)=(1,∞) 不含端点 1。</li>
+</ul>
+<p><em>证。</em> (B1)(B2) 已由 L1、L2 得到。</p>
+<p><strong>(B3)</strong> 取 s&lt;1，Q∈ℕ。Dirichlet 逼近定理（对任意实数 α 和整数 Q≥1 成立）给出 1≤q≤Q 和 p，使 |qα−p|&lt;1/Q。令 k=(q,−p)≠0，则 |ω(k)|&lt;1/Q，且 ⟨k⟩≤Aq≤AQ。于是</p>
+<p>⟨k⟩^s|ω(k)|&lt;A^sQ^{s−1}→0（Q→∞），</p>
+<p>所以 Λ_s(α)=0。</p>
+<p><strong>(B4)</strong> 在 (★) 中取 s=1 即得。∎</p>
+<h3>4.4 定理 C（α_*=√2−1）</h3>
+<p>α_* 是 x²+2x−1=0 的根，另一根为 α'=−1−√2（无理）。令 ω'(k):=α'k₁+k₂，则 ω'(k)≠0（k≠0），并且</p>
+<p>Q(k):=ω(k)ω'(k)=k₂²−2k₁k₂−k₁²∈ℤ∖{0}，所以 |Q|≥1。</p>
+<p>由 ω−ω'=2√2k₁ 和 ω+ω'=2(k₂−k₁)，解出 k₁=(ω−ω')/(2√2)，k₂=k₁+(ω+ω')/2。代入得</p>
+<p>|k|² = [(2+√2)ω² + (2−√2)ω'²]/4。</p>
+<p>于是，利用 ω'=Q/ω，</p>
+<p>⟨k⟩²ω² = ω² + [(2+√2)ω⁴+(2−√2)Q²]/4 &gt; (2−√2)Q²/4 ≥ (2−√2)/4 = c₀²，</p>
+<p>其中 <strong>c₀:=√(2−√2)/2=1/√(4+2√2)≈0.38268</strong>。</p>
+<p><strong>(C1)</strong> 对一切 k≠0，⟨k⟩|ω_{α*}(k)|&gt;c₀，严格不等式。</p>
+<p><strong>(C2) 下确界为 c₀，且取不到。</strong> 定义 k^{(n)}：k^{(0)}=(0,1)，k^{(n+1)}=(k₂^{(n)}−2k₁^{(n)}, k₁^{(n)})。因 α²=1−2α，对 α=α_* 与 α=α' 都有 ω(k^{(n)})=α_*^n，ω'(k^{(n)})=α'^n，所以 Q(k^{(n)})=(−1)^n。于是</p>
+<p>⟨k^{(n)}⟩²α_<em>^{2n}=α_</em>^{2n}+[(2+√2)α_*^{4n}+(2−√2)]/4 → c₀²。</p>
+<p>因此 Λ_1(α_*)=c₀，不被任何 k 取到。</p>
+<p><strong>(C3) 允许损失集合为 [1,∞)。</strong></p>
+<ul>
+<li>s≥1：Λ_s≥Λ_1=c₀&gt;0。</li>
+<li>s&lt;1：由 (C1)，⟨k^{(n)}⟩&gt;c₀/α_<em>^n→∞，所以 Λ_s ≤ ⟨k^{(n)}⟩^{s−1}·(⟨k^{(n)}⟩α_</em>^n) → 0·c₀ = 0。取 u=e_{k^{(n)}}，对每个 r，比值 ‖u‖<em>{H^r}/‖N u‖</em>{H^{r+s}}→∞，估计失败。</li>
+</ul>
+<p>所以 <strong>S(α_*)=[1,∞)，最小损失 s=1，且是最小值。</strong> 并且对一切 r、u∈C_0^∞，</p>
+<p>‖u‖<em>{H^r} ≤ [√(4+2√2)/(2π)]·‖N</em>{α*}u‖_{H^{r+1}}，</p>
+<p>常数最优（≈0.4159）。对 u≠0 不等式严格，因为 (C1) 是逐项严格的。</p>
+<h3>4.5 定理 D（C^m 估计）</h3>
+<p>设 F∈C_0^∞，u=N_{α*}^{-1}F。则对每个 m∈ℕ₀，</p>
+<p>‖u‖<em>{C^m} ≤ C_m‖F‖</em>{C^{m+3}} ≤ C_m‖F‖<em>{C^{m+4}}，
+C_m=(2π)^{m−1}c₀^{-1}Σ^{1/2}3^{(m+3)/2}，Σ:=Σ</em>{k∈ℤ²}⟨k⟩^{-4}≈3.23&lt;∞。</p>
+<p>所以所问命题<strong>成立</strong>。</p>
+<p><em>证。</em></p>
+<p><strong>第一步，把 C^m 范数化为系数和。</strong> 对 a+b≤m，由 (P1)，
+sup|∂₁^a∂₂^b u|≤(2π)^{a+b}Σ_{k≠0}|k₁|^a|k₂|^b|û(k)|≤(2π)^mΣ_{k≠0}⟨k⟩^m|û(k)|，
+这里用了 |k|≥1。</p>
+<p><strong>第二步，代入 (C1)。</strong> 由 (C1)，|û(k)|=|F̂(k)|/(2π|ω|)≤⟨k⟩|F̂(k)|/(2πc₀)。所以 ‖u‖_{C^m}≤((2π)^{m−1}/c₀)·Σ_k⟨k⟩^{m+1}|F̂(k)|。</p>
+<p><strong>第三步，Cauchy–Schwarz。</strong>
+Σ⟨k⟩^{m+1}|F̂|=Σ⟨k⟩^{-2}·⟨k⟩^{m+3}|F̂| ≤ Σ^{1/2}·(Σ⟨k⟩^{2(m+3)}|F̂|²)^{1/2}。</p>
+<p><strong>第四步，从 Sobolev 和转到 C^j 范数。</strong> 对整数 j，把 (1+k₁²+k₂²)^j 多项展开，项数权重总和为 3^j，每项为 k₁^{2a}k₂^{2b}（a+b≤j）。由 Parseval，
+Σk₁^{2a}k₂^{2b}|F̂|²=(2π)^{-2(a+b)}‖∂₁^a∂₂^bF‖²_{L²}≤‖F‖²_{C^j}，
+这里用了概率测度下 L²≤L^∞。故 Σ⟨k⟩^{2j}|F̂|²≤3^j‖F‖²_{C^j}。取 j=m+3 即得结论。∎</p>
+<p>对一般满足 (b) 的 α，同法得 ‖N_α^{-1}F‖<em>{C^m}≤C‖F‖</em>{C^{m+⌈s⌉+2}}。</p>
+<p>数值核对：在 |k_i|≤600 的格点上 min⟨k⟩|ω|≈0.382684&gt;c₀≈0.3826834，与 (C1)(C2) 一致。</p>
+<hr>
+<h2>S5 邻近方向的一致估计</h2>
+<p><strong>结论：不存在这样的 J、s、C。</strong></p>
+<p><em>证。</em> 任取开区间 J∋α_*、s≥0、C&gt;0。J 含有理数 p/q（q∈ℕ）。令 k=(q,−p)≠0，u=e_k∈C_0^∞，则 ‖u‖_{L²}=1。对无理 α∈J，</p>
+<p>‖N_αu‖_{H^s}=2π|αq−p|⟨k⟩^s=2πq|α−p/q|⟨k⟩^s。</p>
+<p>无理数稠密，所以可取 α∈J∖ℚ 满足 |α−p/q|&lt;(2πCq⟨k⟩^s)^{-1}。此时 C‖N_αu‖<em>{H^s}&lt;1=‖u‖</em>{L²}，估计失败。∎</p>
+<p><strong>说明。</strong></p>
+<ul>
+<li>α_* 本身是有界型，S4 对 α_* 单点给出 s=1 的估计。但常数 Λ_s(α) 在 α 上不连续、也不一致：任何区间 J 内都有无理数任意靠近有理数 p/q，而在频率 (q,−p) 处除数极小。</li>
+<li>J 内还含 Liouville 数，对它们任何 s 都没有估计（见 S6 和 S4 的定理 A）。</li>
+<li>低频仍然稳定，这就是 S3。若 |α−α_<em>|≤η≤c₀/(2K⟨K⟩)，则对 0&lt;|k|≤K 有 |ω_α(k)|≥|ω_{α</em>}(k)|−ηK≥c₀/(2⟨k⟩）。因此对频率支撑在 0&lt;|k|≤K 的 u，有 ‖u‖<em>{L²}≤(πc₀)^{-1}‖N_αu‖</em>{H¹}。可用频带随 η→0 才趋于无穷。</li>
+</ul>
+<hr>
+<h2>S6 一个具体方向的不可解数据</h2>
+<p><strong>记号。</strong> α=Σ_{n≥1}10^{-n!}，q_n=10^{n!}，p_n=Σ_{j=1}^n10^{n!−j!}∈ℕ，k^{(n)}=(q_n,−p_n)。</p>
+<p><strong>尾项估计。</strong> 令 t_n:=α−p_n/q_n=Σ_{j&gt;n}10^{-j!}。因 j!≥(n+1)!+(j−n−1)（j≥n+1），有</p>
+<p>10^{-(n+1)!} &lt; t_n ≤ (10/9)·10^{-(n+1)!}。</p>
+<p>由 10^{-(n+1)!}=q_n^{-(n+1)}，得 ω_n:=ω_α(k^{(n)})=αq_n−p_n=q_nt_n，满足</p>
+<p><strong>q_n^{-n} &lt; ω_n ≤ (10/9)q_n^{-n}。</strong></p>
+<p>又 p_n&lt;0.12q_n，所以 q_n≤⟨k^{(n)}⟩≤√3q_n&lt;2q_n。</p>
+<p><strong>α 无理。</strong> 设 α=a/b（b≥1）。则 aq_n−bp_n 是整数，等于 bω_n&gt;0，故 ≥1。于是 1≤bω_n≤(10b/9)q_n^{-n}，即 q_n^n≤10b/9，而 q_n^n→∞，矛盾。（同时说明 α 是 Liouville 数，因为 |α−p_n/q_n|&lt;(10/9)q_n^{-(n+1)}。）</p>
+<p><strong>构造单个 F。</strong></p>
+<p>F(y):=2Σ_{n≥1} q_n^{-n/2}·cos(2π(q_ny₁−p_ny₂))。</p>
+<p><strong>F∈C_0^∞。</strong> 对每个多重指标 γ，第 n 项的 C^{|γ|} 范数 ≤2q_n^{-n/2}(4πq_n)^{|γ|}。当 n≥2|γ|+2 时它 ≤ C·q_n^{-1}≤C·10^{-n}。所以每阶导数的级数绝对一致收敛，F∈C^∞（P1）。所有频率非零，故零均值。F̂(±k^{(n)})=q_n^{-n/2}，其余为 0。</p>
+<p><strong>N_αu=F 无解。</strong> 设 u 是光滑函数（不必零均值）的解，甚至 u∈L¹ 或分布也一样。在频率 k^{(n)} 处，2πiω_nû(k^{(n)})=q_n^{-n/2}。因此</p>
+<p>|û(k^{(n)})| = q_n^{-n/2}/(2πω_n) &gt; (9/(20π))·q_n^{n/2} → ∞。</p>
+<p>而光滑（甚至 L¹）u 的 |û(k)|≤‖u‖_{L¹} 有界；对分布，系数至多多项式增长，而 q_n^{n/2} 比 ⟨k^{(n)}⟩^M≤(2q_n)^M 增长快得多。矛盾。∎</p>
+<p><strong>这个 F 同时对所有估计失效。</strong></p>
+<ul>
+<li>它的形式解在每个 H^r（r∈ℝ）中都不存在，因为 ⟨k^{(n)}⟩^r|û(k^{(n)})|→∞。</li>
+<li>对任意 (r,s)，取 u=e_{k^{(n)}}，ratio ‖u‖<em>{H^r}/‖N_αu‖</em>{H^{r+s}}=1/(2πω_n⟨k^{(n)}⟩^s) ≥ 9q_n^n/(20π(2q_n)^s) → ∞。所以 S4 的估计对此 α 对任何 s 都不成立，没有任何有限损失。</li>
+</ul>
+<p>这与定理 A 一致：此 α 是 Liouville 数，N_α 在 C_0^∞ 上不满。</p>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP002/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-GP002:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/imports/written/slots/MG-GP002/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/original-reviews/MG-GP002.json">review · MG-GP002.json</a><span class="hash">SHA256 6f6ffada35d2f4cdb378718d28970a0c38647c3d11e0093c6fd67070fdeb0094</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-GP002-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-GP002.json">review · MG-GP002.json</a><span class="hash">SHA256 0f00e551a2e524e66c0d555d6fc909616537c1e94994cd689220353475dc4d4d</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "claude-sonnet-5.5-max", "label": "Claude Sonnet 5.5 (max)"}, "case": {"id": "MG-GP002", "title": "Fourier 逆、截断误差与参数边界", "category": "proofs", "views": {"capability": {"single_attempt": {"case_id": "MG-GP002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8", "review_sha256": "e974982316c802b5413362f814914c87006c73f1c1c58b0862fd340e9495ad0e"}, "nonlogical_retry_3": {"case_id": "MG-GP002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8", "review_sha256": "e974982316c802b5413362f814914c87006c73f1c1c58b0862fd340e9495ad0e"}}, "partial": {"single_attempt": {"case_id": "MG-GP002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8", "review_sha256": "e974982316c802b5413362f814914c87006c73f1c1c58b0862fd340e9495ad0e"}, "nonlogical_retry_3": {"case_id": "MG-GP002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8", "review_sha256": "e974982316c802b5413362f814914c87006c73f1c1c58b0862fd340e9495ad0e"}}, "strict": {"single_attempt": {"case_id": "MG-GP002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8", "review_sha256": "e974982316c802b5413362f814914c87006c73f1c1c58b0862fd340e9495ad0e"}, "nonlogical_retry_3": {"case_id": "MG-GP002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "22f6634e10a126d265f8d1fbc3439ba0d5d7fd72c6cfd8c4dbbbe64df26e35b8", "review_sha256": "e974982316c802b5413362f814914c87006c73f1c1c58b0862fd340e9495ad0e"}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

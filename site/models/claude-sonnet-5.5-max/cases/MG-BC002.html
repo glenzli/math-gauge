@@ -1,0 +1,437 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MG-BC002 · 精确梯度流与凸近端表示 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-sonnet-5.5-max/index.html">Claude Sonnet 5.5 (max)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>MG-BC002 · 精确梯度流与凸近端表示</h1><p class="subtitle">Claude Sonnet 5.5 (max) · 背景核查 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><p>请独立解答以下题目。可使用本地工具进行计算、验证和保存自己的工作；不得访问网络或进行联网检索，也不得访问参考答案、评分、已有答卷或其他对话。</p>
+<p>I am preparing the mathematical appendix and a short deployment description for an autonomous denoising block. The state is z=(x,y) in R², and</p>
+<p>f(x,y) = (x²+2y²)/2 + (x+y)^4/4.</p>
+<p>Write Φ_t(z) for the exact solution at time t of ż = −∇f(z), starting at z. Our block is T_τ=Φ_τ, with a configurable τ&gt;0; stacking n identical blocks gives Z_n=T_τ^n(Z_0). This is the exact continuous-flow block, not an implicit-Euler discretization.</p>
+<p>Here is the design rationale in the current draft: “The vector field is the gradient of a strongly convex energy, and its evolution is contractive and dissipative. Thus, for every τ&gt;0, the exact block has a convex proximal representation T_τ=prox_{r_τ} for some proper lower-semicontinuous convex r_τ. This interpretation makes each deployed block an exact convex regularization step.” We use the convention</p>
+<p>prox_r(z) = argmin_u {r(u) + ||u−z||²/2}.</p>
+<p>Please supply the appendix and then a short deployment paragraph:</p>
+<ol>
+<li>
+<p>Establish forward global well-posedness, identify the equilibrium, and derive ||Φ_t(z)−Φ_t(w)||≤e^(−t)||z−w|| and f(Φ_t(z))≤e^(−2t)f(z). Deduce quantitative convergence for a stack.</p>
+</li>
+<li>
+<p>State and prove the standard proximal certificate used in the rationale: if a map T admits T=prox_r with r proper, lower-semicontinuous and convex, then, for p=T(z) and every u in dom r,</p>
+</li>
+</ol>
+<p>r(p) + ||p−z||²/2 + ||u−p||²/2 ≤ r(u) + ||u−z||²/2.</p>
+<p>Also derive firm nonexpansiveness under that representation.</p>
+<ol start="3">
+<li>Give a concise mathematical description of what the actual continuous-flow block and its repeated deployment guarantee, suitable for the methods section. Distinguish the evolution time τ from the coefficient in our definition of prox. A closed-form solution of the ODE is not needed.</li>
+</ol>
+</div><p class="panel-foot"><a href="../../../../cases/background-check/MG-BC002/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><p>background_R：3</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>Appendix and deployment note</h1>
+<p><strong>Verdict on the draft.</strong> Parts 1 and 2 below are correct and proved. The sentence that connects them is false for this f, for every τ&gt;0. The sentence is: &quot;strongly convex, contractive, dissipative ⇒ T_τ = prox_{r_τ} for some proper lsc convex r_τ&quot;. A prox map is the gradient of a convex function, so its Jacobian is symmetric. The time-τ map of this gradient flow has a non-symmetric Jacobian (Theorem 5). Hence the certificate and firm nonexpansiveness of Part 2 cannot be claimed for the deployed block. What can be claimed is in Part 1 and is restated in Part 3.</p>
+<h2>0. Notation and elementary facts</h2>
+<p>Write z=(x,y), u:=x+y, e:=(1,1)ᵀ, e₁:=(1,0)ᵀ, A:=diag(1,2), R:=((0,1),(−1,0)), and ‖·‖ for the Euclidean norm.</p>
+<ul>
+<li>∇f(z) = Az + u³e = (x+u³, 2y+u³).</li>
+<li>H(z) := ∇²f(z) = A + 3u²eeᵀ.</li>
+<li>f = f₂+f₄ with f₂=½(x²+2y²) and f₄=¼u⁴. By Euler's relation, ⟨∇f(z),z⟩ = 2f₂+4f₄ = x²+2y²+u⁴.</li>
+</ul>
+<p><strong>(F1)</strong> ⟨∇f(a)−∇f(b), a−b⟩ = (a−b)ᵀA(a−b) + (u_a³−u_b³)(u_a−u_b) ≥ ‖a−b‖². This uses A⪰I and that t↦t³ is increasing.</p>
+<p><strong>(F2)</strong> ⟨∇f(z),z⟩ ≥ ‖z‖². Hence ∇f(z)=0 iff z=0.</p>
+<p><strong>(F3)</strong> f(z) ≥ f₂(z) ≥ ½‖z‖², and f(0)=0.</p>
+<p><strong>(F4)</strong> ‖∇f(z)‖² ≥ 2f(z). Indeed f = ⟨∇f,z⟩ − f₂ − 3f₄ ≤ ‖∇f‖‖z‖ − ½‖z‖² ≤ ½‖∇f‖².</p>
+<h2>1. The exact flow</h2>
+<p><strong>Theorem 1.</strong></p>
+<ul>
+<li>(a) For every z, the problem ż=−∇f(z), z(0)=z has a unique solution on [0,∞). Write Φ_t(z):=z(t). Then Φ₀=id, Φ_{t+s}=Φ_t∘Φ_s, and (t,z)↦Φ_t(z) is C^∞.</li>
+<li>(b) The only equilibrium is 0, which is the unique minimizer of f. Also ‖Φ_t z‖ ≤ e^{−t}‖z‖.</li>
+<li>(c) ‖Φ_t z − Φ_t w‖ ≤ e^{−t}‖z−w‖.</li>
+<li>(d) f(Φ_t z) ≤ e^{−2t} f(z).</li>
+</ul>
+<p><em>Proof.</em></p>
+<ul>
+<li>(a) ∇f is polynomial, hence locally Lipschitz. Picard–Lindelöf gives a unique maximal solution on [0,T*) with smooth dependence on (t,z). By (F2), d/dt ½‖z‖² = −⟨∇f(z),z⟩ ≤ −‖z‖², so ‖z(t)‖ ≤ e^{−t}‖z(0)‖ stays bounded and T*=∞. The semigroup law is uniqueness for an autonomous ODE. Only forward time is claimed: for ż=+∇f with x,y&gt;0 one has u̇ ≥ 2u³, which blows up in finite time.</li>
+<li>(b) The uniqueness of the equilibrium and the minimizer follow from (F2) and (F3). The bound was shown in (a).</li>
+<li>(c) Let g(t)=½‖Φ_t z−Φ_t w‖². By (F1), g′ = −⟨∇f(Φ_t z)−∇f(Φ_t w), Φ_t z−Φ_t w⟩ ≤ −2g. So (e^{2t}g)′ ≤ 0.</li>
+<li>(d) Let E(t)=f(Φ_t z). Then E′ = −‖∇f(Φ_t z)‖² ≤ −2E by (F4). So (e^{2t}E)′ ≤ 0. ∎</li>
+</ul>
+<p><em>Sharpness.</em> DΦ_t(0)=e^{−tA} has norm e^{−t}, so (c) cannot be improved. Also f(Φ_t(se₁))/f(se₁) → e^{−2t} as s→0, so (d) cannot be improved.</p>
+<p><strong>Corollary 1 (stack).</strong> By the semigroup law, Z_n = T_τⁿ(Z₀) = Φ_{nτ}(Z₀). Hence for all n≥0:</p>
+<ul>
+<li>‖Z_n‖ ≤ e^{−nτ}‖Z₀‖, and ‖Z_n−Z′_n‖ ≤ e^{−nτ}‖Z₀−Z′₀‖.</li>
+<li>f(Z_n) ≤ e^{−2nτ} f(Z₀).</li>
+<li>Both ‖Z_n‖ and f(Z_n) strictly decrease unless Z₀=0.</li>
+<li>n ≥ τ⁻¹ ln(‖Z₀‖/ε) blocks give ‖Z_n‖ ≤ ε. Likewise n ≥ (2τ)⁻¹ ln(f(Z₀)/ε) blocks give f(Z_n) ≤ ε.</li>
+<li>A computable stopping rule follows from ‖Z_n‖ ≤ ‖Z_n−Z_{n+1}‖ + e^{−τ}‖Z_n‖. It reads ‖Z_n‖ ≤ ‖Z_{n+1}−Z_n‖/(1−e^{−τ}).</li>
+<li>Only the total time nτ matters.</li>
+</ul>
+<h2>2. Proximal certificate and firm nonexpansiveness</h2>
+<p>Let r be proper, lsc and convex, and put φ_z(u)=r(u)+½‖u−z‖². Since r has an affine minorant, φ_z is lsc, strongly convex and coercive. So it has exactly one minimizer, prox_r(z). &quot;T=prox_r&quot; means T(z) is that minimizer for every z.</p>
+<p><strong>Proposition 2.</strong> Let p=prox_r(z). Then p∈dom r, and</p>
+<ul>
+<li>(2.1) r(u) ≥ r(p) + ⟨z−p, u−p⟩ for all u. That is, z−p∈∂r(p).</li>
+<li>(2.2) r(p) + ½‖p−z‖² + ½‖u−p‖² ≤ r(u) + ½‖u−z‖² for all u∈dom r.</li>
+</ul>
+<p><em>Proof.</em></p>
+<ol>
+<li>p∈dom r because φ_z(p) ≤ φ_z(u₀) &lt; ∞ for any u₀∈dom r.</li>
+<li>Fix u∈dom r and θ∈(0,1), and set u_θ=p+θ(u−p)∈dom r.</li>
+<li>Convexity gives r(u_θ) ≤ r(p)+θ(r(u)−r(p)).</li>
+<li>Expanding, ½‖u_θ−z‖² = ½‖p−z‖² + θ⟨p−z,u−p⟩ + ½θ²‖u−p‖².</li>
+<li>Minimality, φ_z(p) ≤ φ_z(u_θ), then yields 0 ≤ θ(r(u)−r(p)) + θ⟨p−z,u−p⟩ + ½θ²‖u−p‖².</li>
+<li>Divide by θ and let θ↓0. This gives (2.1), which is trivial if u∉dom r.</li>
+<li>The identity 2⟨z−p,u−p⟩ = ‖z−p‖²+‖u−p‖²−‖u−z‖² turns (2.1) into (2.2). ∎</li>
+</ol>
+<p>Inequality (2.2) says φ_z(u) ≥ φ_z(p)+½‖u−p‖², i.e. quadratic growth at the minimizer.</p>
+<p><strong>Corollary 3 (firm nonexpansiveness).</strong> If T=prox_r, then for all z,w
+‖Tz−Tw‖² ≤ ⟨Tz−Tw, z−w⟩.
+Equivalently, ‖Tz−Tw‖² + ‖(I−T)z−(I−T)w‖² ≤ ‖z−w‖². In particular T is monotone and 1-Lipschitz.</p>
+<p><em>Proof.</em></p>
+<ol>
+<li>Let p=Tz and q=Tw, both in dom r.</li>
+<li>Apply (2.2) at z with u=q, apply (2.2) at w with u=p, and add. All terms are finite.</li>
+<li>This gives ½‖p−z‖²+½‖q−w‖²+‖p−q‖² ≤ ½‖q−z‖²+½‖p−w‖².</li>
+<li>Write q−z=(q−p)+(p−z) and p−w=(p−q)+(q−w), expand, and cancel.</li>
+<li>What remains is 0 ≤ ⟨p−q, (z−p)+(q−w)⟩ = ⟨p−q, (z−w)−(p−q)⟩, which is the claim.</li>
+<li>For the equivalent form, expand ‖z−w‖² = ‖p−q‖² + ‖(z−p)−(w−q)‖² + 2⟨p−q,(z−w)−(p−q)⟩.</li>
+<li>Cauchy–Schwarz gives the Lipschitz bound. ∎</li>
+</ol>
+<p><strong>Lemma 4 (prox maps are gradients).</strong> If T=prox_r, then T=∇ψ with ψ:=(r+½‖·‖²)*, a finite convex function. If T is C¹, then DT(z) is symmetric for every z. By Corollary 3 it then also satisfies 0⪯DT⪯I.</p>
+<p><em>Proof.</em></p>
+<ol>
+<li>Put φ=r+½‖·‖², so ψ=φ*. Since φ(u) ≥ ½‖u‖²−c‖u‖−c′, ψ is finite.</li>
+<li>p=T(z) minimizes φ−⟨z,·⟩, i.e. z∈∂φ(p), i.e. p∈∂ψ(z).</li>
+<li>Conversely, if q∈∂ψ(z) then q also minimizes φ−⟨z,·⟩, so q=p. Thus ∂ψ(z)={T(z)}.</li>
+<li>A finite convex function with single-valued subdifferential is differentiable (Rockafellar, Thm 25.1). So ∇ψ=T.</li>
+<li>If T∈C¹, then ψ∈C² and DT=∇²ψ is symmetric by Schwarz's theorem. ∎</li>
+</ol>
+<p>Remark (Moreau): conversely, T is a prox of a proper lsc convex function iff T is a nonexpansive gradient of a convex function. Contractivity and dissipativity of a flow say nothing about whether its time-τ map is a gradient.</p>
+<h2>3. The exact block is not a proximal map, for any τ&gt;0</h2>
+<p><strong>Theorem 5.</strong> For every τ&gt;0 there is no proper lsc convex r with Φ_τ = prox_r.</p>
+<p><em>Proof.</em></p>
+<ol>
+<li>Φ_τ is C^∞, so by Lemma 4 it suffices to find one point where DΦ_τ is not symmetric.</li>
+<li>K(t):=DΦ_t(z) solves K̇ = −H(Φ_t z)K with K(0)=I.</li>
+<li>Take z=se₁ with 0&lt;s≤1. Put η(t)=Φ_t(se₁) and u(t)=eᵀη(t).</li>
+<li>(i) η̇=−Aη−u³e and ‖η‖≤se^{−t}. Variation of constants gives η(t)=se^{−t}e₁+O(s³) uniformly on [0,τ]. Hence u(t)²=s²e^{−2t}+O(s⁴).</li>
+<li>(ii) Since 3u²eeᵀ=O(s²), Grönwall gives K(t)=e^{−tA}+O(s²). Variation of constants then gives
+K(τ) = e^{−τA} − 3s²∫₀^τ e^{−2t} v(τ−t)v(t)ᵀ dt + O(s⁴), where v(t):=e^{−tA}e=(e^{−t},e^{−2t})ᵀ.</li>
+<li>(iii) e^{−τA} is diagonal. Also [v(τ−t)v(t)ᵀ]₁₂ = e^{−τ−t} and [v(τ−t)v(t)ᵀ]₂₁ = e^{−2τ+t}. Therefore
+K₁₂(τ)−K₂₁(τ) = −3s²∫₀^τ e^{−2t}(e^{−τ−t}−e^{−2τ+t}) dt + O(s⁴) = −s² e^{−τ}(1−e^{−τ})³ + O(s⁴).</li>
+<li>The leading coefficient is nonzero for every τ&gt;0. So DΦ_τ(se₁) is not symmetric for all small s≠0. ∎</li>
+</ol>
+<p>Numerical check of the formula: at τ=1, s=0.03 the computed value is −8.352·10⁻⁵, against −8.363·10⁻⁵ predicted.</p>
+<p><strong>Remarks.</strong></p>
+<ul>
+<li><strong>Small τ, general z.</strong> Expanding the variational equation to third order (checked symbolically) gives DΦ_τ(z)−DΦ_τ(z)ᵀ = −τ³ u(x+2y+2u³) R + O(τ⁴). The defect is O(τ³) but never zero in general.</li>
+<li><strong>Mechanism.</strong> A constant Hessian is fine: for f_q=½zᵀQz, Φ_τ=e^{−τQ}=prox_r with r(u)=½uᵀ(e^{τQ}−I)u. In dimension one, every flow map of a convex f is also a prox, since Φ_τ′∈(0,1]. Here the Hessians along a trajectory do not commute: [H(z₁),H(z₂)] = 3(u₁²−u₂²)R, and u(t)² varies along trajectories.</li>
+<li><strong>Stack.</strong> Z_n=Φ_{nτ}(Z₀) is again a flow map, so the stack is not a prox either.</li>
+</ul>
+<p><strong>Numerical corroboration (not used in the proof).</strong> A prox would satisfy ⟨Tz−Tw,z−w⟩ ≥ ‖Tz−Tw‖² ≥ 0 by Corollary 3. The exact block violates this. I computed these with DOP853, Radau, LSODA and BDF, and with an independent 25-digit Taylor integrator; all agree to at least 8 digits.</p>
+<table>
+<thead>
+<tr>
+<th>τ</th>
+<th>z</th>
+<th>w</th>
+<th>Φ_τ z</th>
+<th>Φ_τ w</th>
+<th>⟨Φz−Φw, z−w⟩</th>
+<th>‖Φz−Φw‖²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5</td>
+<td>(0,6)</td>
+<td>(8,16)</td>
+<td>(−1.347483, 1.366732)</td>
+<td>(−1.901491, 1.759640)</td>
+<td>−0.502980</td>
+<td>0.461300</td>
+</tr>
+<tr>
+<td>1</td>
+<td>(2,5)</td>
+<td>(4,8)</td>
+<td>(−0.303685, 0.282034)</td>
+<td>(−0.467935, 0.356562)</td>
+<td>−0.104916</td>
+<td>0.032533</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(4,6)</td>
+<td>(5,8)</td>
+<td>(−0.049713, 0.027789)</td>
+<td>(−0.109880, 0.038286)</td>
+<td>−0.039174</td>
+<td>0.003730</td>
+</tr>
+</tbody>
+</table>
+<p>A scan over rays at several radii found points where the symmetric part of DΦ_τ(z) has a negative eigenvalue for each τ tested. DOP853 and Radau agree on this. The τ values and the radii at which it first appeared on my scan grid were:</p>
+<table>
+<thead>
+<tr>
+<th>τ</th>
+<th>0.02</th>
+<th>0.05</th>
+<th>0.1</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>1</th>
+<th>2</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>|z|</td>
+<td>256</td>
+<td>64</td>
+<td>32</td>
+<td>12</td>
+<td>6</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>I do not claim this scan for all τ. The all-τ statement rests on Theorem 5.</p>
+<p>The table can be reproduced with:</p>
+<pre><code class="language-python">import numpy as np
+from scipy.integrate import solve_ivp
+def rhs(t, z):
+    u = z[0] + z[1]
+    return [-(z[0] + u**3), -(2*z[1] + u**3)]
+def Phi(z, tau):
+    return solve_ivp(rhs, [0, tau], z, method=&quot;DOP853&quot;, rtol=1e-12, atol=1e-14).y[:, -1]
+for tau, z, w in [(0.5, (0, 6), (8, 16)), (1.0, (2, 5), (4, 8)), (2.0, (4, 6), (5, 8))]:
+    z, w = np.array(z, float), np.array(w, float)
+    dp = Phi(z, tau) - Phi(w, tau)
+    print(tau, dp @ (z - w), dp @ dp)
+</code></pre>
+<p>I did not formalize anything in Lean. Theorems 1 and 5, Proposition 2, Corollary 3 and Lemma 4 are proved by hand above. The tables and scans are numerical.</p>
+<h2>4. Deployment paragraph (methods section)</h2>
+<blockquote>
+<p>Each block applies T_τ = Φ_τ, the exact time-τ map of the gradient flow ż = −∇f(z), f(x,y) = ½(x²+2y²) + ¼(x+y)⁴. Here τ&gt;0 is an evolution time. The flow exists for all t≥0 and forms a semigroup, so n stacked blocks give exactly Z_n = Φ_{nτ}(Z₀). Only the total time nτ matters.</p>
+<p><strong>Guarantees.</strong></p>
+<ul>
+<li>0 = argmin f is the unique fixed point of every block.</li>
+<li>‖Φ_τ z−Φ_τ w‖ ≤ e^{−τ}‖z−w‖ and f(Φ_τ z) ≤ e^{−2τ}f(z), and both constants are sharp.</li>
+<li>Hence ‖Z_n‖ ≤ e^{−nτ}‖Z₀‖, f(Z_n) ≤ e^{−2nτ}f(Z₀), and input perturbations are damped by e^{−nτ}.</li>
+<li>n ≥ τ⁻¹ln(‖Z₀‖/ε) blocks give accuracy ε.</li>
+<li>‖Z_n‖ ≤ ‖Z_{n+1}−Z_n‖/(1−e^{−τ}) is a computable stopping rule.</li>
+</ul>
+<p><strong>Not guaranteed.</strong> The block is not the proximal map of any proper lsc convex function, for any τ&gt;0. Its Jacobian is not symmetric, and in general it is not monotone, hence not firmly nonexpansive. The three-point inequality and ⟨Tz−Tw,z−w⟩ ≥ ‖Tz−Tw‖² therefore do not apply to the deployed block, and it must not be described as an exact convex regularization step.</p>
+<p><strong>Relation to prox.</strong> In the convention prox_r(z)=argmin{r(u)+½‖u−z‖²}, the proximal coefficient λ is the weight of f inside r=λf. The map prox_{λf} is the implicit-Euler step of size λ:</p>
+<ul>
+<li>It satisfies the Part 2 certificate.</li>
+<li>It is a (1+λ)⁻¹-contraction: by (F1), p+λ∇f(p)=z gives (1+λ)‖p−q‖² ≤ ⟨z−w,p−q⟩.</li>
+<li>It satisfies f(prox_{λf}z) ≤ (1+λ)⁻²f(z): by strong convexity, f(z) ≥ f(p)+(λ+λ²/2)‖∇f(p)‖², and then (F4) applies.</li>
+</ul>
+<p>It is a different map from Φ_τ. The two agree only to first order: Φ_τ(z)−prox_{τf}(z) = −(τ²/2)∇²f(z)∇f(z)+O(τ³). The exact block is the limit of proximal steps, Φ_τ = lim_{N→∞}(prox_{(τ/N)f})^N (Crandall–Liggett exponential formula; numerically the error is about 1.7/N at τ=1, z=(2,5)). Even for the quadratic part ½zᵀAz alone, e^{−τA} is a prox with r=½uᵀ(e^{τA}−I)u. That weight is e^{τA}−I, not τA, so the evolution time and the prox coefficient are different quantities even where an exact prox form exists.</p>
+</blockquote>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-BC002-A1/attempt-1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-BC002:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-BC002-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/research-public/MG-BC002.json">review · MG-BC002.json</a><span class="hash">SHA256 fbfae055bde7c18a322147e59fe8582b5c1ec6223aee809f0a97195b1dc38c55</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-BC002.json">review · MG-BC002.json</a><span class="hash">SHA256 4232e255b28debdea0f1e39a55690129b9d1d71a3a91de47c81fd551d6af6acf</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><p>background_R：3</p>
+</div><p class="panel-foot">原始评审见下方来源文件。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><h1>Appendix and deployment note</h1>
+<p><strong>Verdict on the draft.</strong> Parts 1 and 2 below are correct and proved. The sentence that connects them is false for this f, for every τ&gt;0. The sentence is: &quot;strongly convex, contractive, dissipative ⇒ T_τ = prox_{r_τ} for some proper lsc convex r_τ&quot;. A prox map is the gradient of a convex function, so its Jacobian is symmetric. The time-τ map of this gradient flow has a non-symmetric Jacobian (Theorem 5). Hence the certificate and firm nonexpansiveness of Part 2 cannot be claimed for the deployed block. What can be claimed is in Part 1 and is restated in Part 3.</p>
+<h2>0. Notation and elementary facts</h2>
+<p>Write z=(x,y), u:=x+y, e:=(1,1)ᵀ, e₁:=(1,0)ᵀ, A:=diag(1,2), R:=((0,1),(−1,0)), and ‖·‖ for the Euclidean norm.</p>
+<ul>
+<li>∇f(z) = Az + u³e = (x+u³, 2y+u³).</li>
+<li>H(z) := ∇²f(z) = A + 3u²eeᵀ.</li>
+<li>f = f₂+f₄ with f₂=½(x²+2y²) and f₄=¼u⁴. By Euler's relation, ⟨∇f(z),z⟩ = 2f₂+4f₄ = x²+2y²+u⁴.</li>
+</ul>
+<p><strong>(F1)</strong> ⟨∇f(a)−∇f(b), a−b⟩ = (a−b)ᵀA(a−b) + (u_a³−u_b³)(u_a−u_b) ≥ ‖a−b‖². This uses A⪰I and that t↦t³ is increasing.</p>
+<p><strong>(F2)</strong> ⟨∇f(z),z⟩ ≥ ‖z‖². Hence ∇f(z)=0 iff z=0.</p>
+<p><strong>(F3)</strong> f(z) ≥ f₂(z) ≥ ½‖z‖², and f(0)=0.</p>
+<p><strong>(F4)</strong> ‖∇f(z)‖² ≥ 2f(z). Indeed f = ⟨∇f,z⟩ − f₂ − 3f₄ ≤ ‖∇f‖‖z‖ − ½‖z‖² ≤ ½‖∇f‖².</p>
+<h2>1. The exact flow</h2>
+<p><strong>Theorem 1.</strong></p>
+<ul>
+<li>(a) For every z, the problem ż=−∇f(z), z(0)=z has a unique solution on [0,∞). Write Φ_t(z):=z(t). Then Φ₀=id, Φ_{t+s}=Φ_t∘Φ_s, and (t,z)↦Φ_t(z) is C^∞.</li>
+<li>(b) The only equilibrium is 0, which is the unique minimizer of f. Also ‖Φ_t z‖ ≤ e^{−t}‖z‖.</li>
+<li>(c) ‖Φ_t z − Φ_t w‖ ≤ e^{−t}‖z−w‖.</li>
+<li>(d) f(Φ_t z) ≤ e^{−2t} f(z).</li>
+</ul>
+<p><em>Proof.</em></p>
+<ul>
+<li>(a) ∇f is polynomial, hence locally Lipschitz. Picard–Lindelöf gives a unique maximal solution on [0,T*) with smooth dependence on (t,z). By (F2), d/dt ½‖z‖² = −⟨∇f(z),z⟩ ≤ −‖z‖², so ‖z(t)‖ ≤ e^{−t}‖z(0)‖ stays bounded and T*=∞. The semigroup law is uniqueness for an autonomous ODE. Only forward time is claimed: for ż=+∇f with x,y&gt;0 one has u̇ ≥ 2u³, which blows up in finite time.</li>
+<li>(b) The uniqueness of the equilibrium and the minimizer follow from (F2) and (F3). The bound was shown in (a).</li>
+<li>(c) Let g(t)=½‖Φ_t z−Φ_t w‖². By (F1), g′ = −⟨∇f(Φ_t z)−∇f(Φ_t w), Φ_t z−Φ_t w⟩ ≤ −2g. So (e^{2t}g)′ ≤ 0.</li>
+<li>(d) Let E(t)=f(Φ_t z). Then E′ = −‖∇f(Φ_t z)‖² ≤ −2E by (F4). So (e^{2t}E)′ ≤ 0. ∎</li>
+</ul>
+<p><em>Sharpness.</em> DΦ_t(0)=e^{−tA} has norm e^{−t}, so (c) cannot be improved. Also f(Φ_t(se₁))/f(se₁) → e^{−2t} as s→0, so (d) cannot be improved.</p>
+<p><strong>Corollary 1 (stack).</strong> By the semigroup law, Z_n = T_τⁿ(Z₀) = Φ_{nτ}(Z₀). Hence for all n≥0:</p>
+<ul>
+<li>‖Z_n‖ ≤ e^{−nτ}‖Z₀‖, and ‖Z_n−Z′_n‖ ≤ e^{−nτ}‖Z₀−Z′₀‖.</li>
+<li>f(Z_n) ≤ e^{−2nτ} f(Z₀).</li>
+<li>Both ‖Z_n‖ and f(Z_n) strictly decrease unless Z₀=0.</li>
+<li>n ≥ τ⁻¹ ln(‖Z₀‖/ε) blocks give ‖Z_n‖ ≤ ε. Likewise n ≥ (2τ)⁻¹ ln(f(Z₀)/ε) blocks give f(Z_n) ≤ ε.</li>
+<li>A computable stopping rule follows from ‖Z_n‖ ≤ ‖Z_n−Z_{n+1}‖ + e^{−τ}‖Z_n‖. It reads ‖Z_n‖ ≤ ‖Z_{n+1}−Z_n‖/(1−e^{−τ}).</li>
+<li>Only the total time nτ matters.</li>
+</ul>
+<h2>2. Proximal certificate and firm nonexpansiveness</h2>
+<p>Let r be proper, lsc and convex, and put φ_z(u)=r(u)+½‖u−z‖². Since r has an affine minorant, φ_z is lsc, strongly convex and coercive. So it has exactly one minimizer, prox_r(z). &quot;T=prox_r&quot; means T(z) is that minimizer for every z.</p>
+<p><strong>Proposition 2.</strong> Let p=prox_r(z). Then p∈dom r, and</p>
+<ul>
+<li>(2.1) r(u) ≥ r(p) + ⟨z−p, u−p⟩ for all u. That is, z−p∈∂r(p).</li>
+<li>(2.2) r(p) + ½‖p−z‖² + ½‖u−p‖² ≤ r(u) + ½‖u−z‖² for all u∈dom r.</li>
+</ul>
+<p><em>Proof.</em></p>
+<ol>
+<li>p∈dom r because φ_z(p) ≤ φ_z(u₀) &lt; ∞ for any u₀∈dom r.</li>
+<li>Fix u∈dom r and θ∈(0,1), and set u_θ=p+θ(u−p)∈dom r.</li>
+<li>Convexity gives r(u_θ) ≤ r(p)+θ(r(u)−r(p)).</li>
+<li>Expanding, ½‖u_θ−z‖² = ½‖p−z‖² + θ⟨p−z,u−p⟩ + ½θ²‖u−p‖².</li>
+<li>Minimality, φ_z(p) ≤ φ_z(u_θ), then yields 0 ≤ θ(r(u)−r(p)) + θ⟨p−z,u−p⟩ + ½θ²‖u−p‖².</li>
+<li>Divide by θ and let θ↓0. This gives (2.1), which is trivial if u∉dom r.</li>
+<li>The identity 2⟨z−p,u−p⟩ = ‖z−p‖²+‖u−p‖²−‖u−z‖² turns (2.1) into (2.2). ∎</li>
+</ol>
+<p>Inequality (2.2) says φ_z(u) ≥ φ_z(p)+½‖u−p‖², i.e. quadratic growth at the minimizer.</p>
+<p><strong>Corollary 3 (firm nonexpansiveness).</strong> If T=prox_r, then for all z,w
+‖Tz−Tw‖² ≤ ⟨Tz−Tw, z−w⟩.
+Equivalently, ‖Tz−Tw‖² + ‖(I−T)z−(I−T)w‖² ≤ ‖z−w‖². In particular T is monotone and 1-Lipschitz.</p>
+<p><em>Proof.</em></p>
+<ol>
+<li>Let p=Tz and q=Tw, both in dom r.</li>
+<li>Apply (2.2) at z with u=q, apply (2.2) at w with u=p, and add. All terms are finite.</li>
+<li>This gives ½‖p−z‖²+½‖q−w‖²+‖p−q‖² ≤ ½‖q−z‖²+½‖p−w‖².</li>
+<li>Write q−z=(q−p)+(p−z) and p−w=(p−q)+(q−w), expand, and cancel.</li>
+<li>What remains is 0 ≤ ⟨p−q, (z−p)+(q−w)⟩ = ⟨p−q, (z−w)−(p−q)⟩, which is the claim.</li>
+<li>For the equivalent form, expand ‖z−w‖² = ‖p−q‖² + ‖(z−p)−(w−q)‖² + 2⟨p−q,(z−w)−(p−q)⟩.</li>
+<li>Cauchy–Schwarz gives the Lipschitz bound. ∎</li>
+</ol>
+<p><strong>Lemma 4 (prox maps are gradients).</strong> If T=prox_r, then T=∇ψ with ψ:=(r+½‖·‖²)*, a finite convex function. If T is C¹, then DT(z) is symmetric for every z. By Corollary 3 it then also satisfies 0⪯DT⪯I.</p>
+<p><em>Proof.</em></p>
+<ol>
+<li>Put φ=r+½‖·‖², so ψ=φ*. Since φ(u) ≥ ½‖u‖²−c‖u‖−c′, ψ is finite.</li>
+<li>p=T(z) minimizes φ−⟨z,·⟩, i.e. z∈∂φ(p), i.e. p∈∂ψ(z).</li>
+<li>Conversely, if q∈∂ψ(z) then q also minimizes φ−⟨z,·⟩, so q=p. Thus ∂ψ(z)={T(z)}.</li>
+<li>A finite convex function with single-valued subdifferential is differentiable (Rockafellar, Thm 25.1). So ∇ψ=T.</li>
+<li>If T∈C¹, then ψ∈C² and DT=∇²ψ is symmetric by Schwarz's theorem. ∎</li>
+</ol>
+<p>Remark (Moreau): conversely, T is a prox of a proper lsc convex function iff T is a nonexpansive gradient of a convex function. Contractivity and dissipativity of a flow say nothing about whether its time-τ map is a gradient.</p>
+<h2>3. The exact block is not a proximal map, for any τ&gt;0</h2>
+<p><strong>Theorem 5.</strong> For every τ&gt;0 there is no proper lsc convex r with Φ_τ = prox_r.</p>
+<p><em>Proof.</em></p>
+<ol>
+<li>Φ_τ is C^∞, so by Lemma 4 it suffices to find one point where DΦ_τ is not symmetric.</li>
+<li>K(t):=DΦ_t(z) solves K̇ = −H(Φ_t z)K with K(0)=I.</li>
+<li>Take z=se₁ with 0&lt;s≤1. Put η(t)=Φ_t(se₁) and u(t)=eᵀη(t).</li>
+<li>(i) η̇=−Aη−u³e and ‖η‖≤se^{−t}. Variation of constants gives η(t)=se^{−t}e₁+O(s³) uniformly on [0,τ]. Hence u(t)²=s²e^{−2t}+O(s⁴).</li>
+<li>(ii) Since 3u²eeᵀ=O(s²), Grönwall gives K(t)=e^{−tA}+O(s²). Variation of constants then gives
+K(τ) = e^{−τA} − 3s²∫₀^τ e^{−2t} v(τ−t)v(t)ᵀ dt + O(s⁴), where v(t):=e^{−tA}e=(e^{−t},e^{−2t})ᵀ.</li>
+<li>(iii) e^{−τA} is diagonal. Also [v(τ−t)v(t)ᵀ]₁₂ = e^{−τ−t} and [v(τ−t)v(t)ᵀ]₂₁ = e^{−2τ+t}. Therefore
+K₁₂(τ)−K₂₁(τ) = −3s²∫₀^τ e^{−2t}(e^{−τ−t}−e^{−2τ+t}) dt + O(s⁴) = −s² e^{−τ}(1−e^{−τ})³ + O(s⁴).</li>
+<li>The leading coefficient is nonzero for every τ&gt;0. So DΦ_τ(se₁) is not symmetric for all small s≠0. ∎</li>
+</ol>
+<p>Numerical check of the formula: at τ=1, s=0.03 the computed value is −8.352·10⁻⁵, against −8.363·10⁻⁵ predicted.</p>
+<p><strong>Remarks.</strong></p>
+<ul>
+<li><strong>Small τ, general z.</strong> Expanding the variational equation to third order (checked symbolically) gives DΦ_τ(z)−DΦ_τ(z)ᵀ = −τ³ u(x+2y+2u³) R + O(τ⁴). The defect is O(τ³) but never zero in general.</li>
+<li><strong>Mechanism.</strong> A constant Hessian is fine: for f_q=½zᵀQz, Φ_τ=e^{−τQ}=prox_r with r(u)=½uᵀ(e^{τQ}−I)u. In dimension one, every flow map of a convex f is also a prox, since Φ_τ′∈(0,1]. Here the Hessians along a trajectory do not commute: [H(z₁),H(z₂)] = 3(u₁²−u₂²)R, and u(t)² varies along trajectories.</li>
+<li><strong>Stack.</strong> Z_n=Φ_{nτ}(Z₀) is again a flow map, so the stack is not a prox either.</li>
+</ul>
+<p><strong>Numerical corroboration (not used in the proof).</strong> A prox would satisfy ⟨Tz−Tw,z−w⟩ ≥ ‖Tz−Tw‖² ≥ 0 by Corollary 3. The exact block violates this. I computed these with DOP853, Radau, LSODA and BDF, and with an independent 25-digit Taylor integrator; all agree to at least 8 digits.</p>
+<table>
+<thead>
+<tr>
+<th>τ</th>
+<th>z</th>
+<th>w</th>
+<th>Φ_τ z</th>
+<th>Φ_τ w</th>
+<th>⟨Φz−Φw, z−w⟩</th>
+<th>‖Φz−Φw‖²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5</td>
+<td>(0,6)</td>
+<td>(8,16)</td>
+<td>(−1.347483, 1.366732)</td>
+<td>(−1.901491, 1.759640)</td>
+<td>−0.502980</td>
+<td>0.461300</td>
+</tr>
+<tr>
+<td>1</td>
+<td>(2,5)</td>
+<td>(4,8)</td>
+<td>(−0.303685, 0.282034)</td>
+<td>(−0.467935, 0.356562)</td>
+<td>−0.104916</td>
+<td>0.032533</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(4,6)</td>
+<td>(5,8)</td>
+<td>(−0.049713, 0.027789)</td>
+<td>(−0.109880, 0.038286)</td>
+<td>−0.039174</td>
+<td>0.003730</td>
+</tr>
+</tbody>
+</table>
+<p>A scan over rays at several radii found points where the symmetric part of DΦ_τ(z) has a negative eigenvalue for each τ tested. DOP853 and Radau agree on this. The τ values and the radii at which it first appeared on my scan grid were:</p>
+<table>
+<thead>
+<tr>
+<th>τ</th>
+<th>0.02</th>
+<th>0.05</th>
+<th>0.1</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>1</th>
+<th>2</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>|z|</td>
+<td>256</td>
+<td>64</td>
+<td>32</td>
+<td>12</td>
+<td>6</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>I do not claim this scan for all τ. The all-τ statement rests on Theorem 5.</p>
+<p>The table can be reproduced with:</p>
+<pre><code class="language-python">import numpy as np
+from scipy.integrate import solve_ivp
+def rhs(t, z):
+    u = z[0] + z[1]
+    return [-(z[0] + u**3), -(2*z[1] + u**3)]
+def Phi(z, tau):
+    return solve_ivp(rhs, [0, tau], z, method=&quot;DOP853&quot;, rtol=1e-12, atol=1e-14).y[:, -1]
+for tau, z, w in [(0.5, (0, 6), (8, 16)), (1.0, (2, 5), (4, 8)), (2.0, (4, 6), (5, 8))]:
+    z, w = np.array(z, float), np.array(w, float)
+    dp = Phi(z, tau) - Phi(w, tau)
+    print(tau, dp @ (z - w), dp @ dp)
+</code></pre>
+<p>I did not formalize anything in Lean. Theorems 1 and 5, Proposition 2, Corollary 3 and Lemma 4 are proved by hand above. The tables and scans are numerical.</p>
+<h2>4. Deployment paragraph (methods section)</h2>
+<blockquote>
+<p>Each block applies T_τ = Φ_τ, the exact time-τ map of the gradient flow ż = −∇f(z), f(x,y) = ½(x²+2y²) + ¼(x+y)⁴. Here τ&gt;0 is an evolution time. The flow exists for all t≥0 and forms a semigroup, so n stacked blocks give exactly Z_n = Φ_{nτ}(Z₀). Only the total time nτ matters.</p>
+<p><strong>Guarantees.</strong></p>
+<ul>
+<li>0 = argmin f is the unique fixed point of every block.</li>
+<li>‖Φ_τ z−Φ_τ w‖ ≤ e^{−τ}‖z−w‖ and f(Φ_τ z) ≤ e^{−2τ}f(z), and both constants are sharp.</li>
+<li>Hence ‖Z_n‖ ≤ e^{−nτ}‖Z₀‖, f(Z_n) ≤ e^{−2nτ}f(Z₀), and input perturbations are damped by e^{−nτ}.</li>
+<li>n ≥ τ⁻¹ln(‖Z₀‖/ε) blocks give accuracy ε.</li>
+<li>‖Z_n‖ ≤ ‖Z_{n+1}−Z_n‖/(1−e^{−τ}) is a computable stopping rule.</li>
+</ul>
+<p><strong>Not guaranteed.</strong> The block is not the proximal map of any proper lsc convex function, for any τ&gt;0. Its Jacobian is not symmetric, and in general it is not monotone, hence not firmly nonexpansive. The three-point inequality and ⟨Tz−Tw,z−w⟩ ≥ ‖Tz−Tw‖² therefore do not apply to the deployed block, and it must not be described as an exact convex regularization step.</p>
+<p><strong>Relation to prox.</strong> In the convention prox_r(z)=argmin{r(u)+½‖u−z‖²}, the proximal coefficient λ is the weight of f inside r=λf. The map prox_{λf} is the implicit-Euler step of size λ:</p>
+<ul>
+<li>It satisfies the Part 2 certificate.</li>
+<li>It is a (1+λ)⁻¹-contraction: by (F1), p+λ∇f(p)=z gives (1+λ)‖p−q‖² ≤ ⟨z−w,p−q⟩.</li>
+<li>It satisfies f(prox_{λf}z) ≤ (1+λ)⁻²f(z): by strong convexity, f(z) ≥ f(p)+(λ+λ²/2)‖∇f(p)‖², and then (F4) applies.</li>
+</ul>
+<p>It is a different map from Φ_τ. The two agree only to first order: Φ_τ(z)−prox_{τf}(z) = −(τ²/2)∇²f(z)∇f(z)+O(τ³). The exact block is the limit of proximal steps, Φ_τ = lim_{N→∞}(prox_{(τ/N)f})^N (Crandall–Liggett exponential formula; numerically the error is about 1.7/N at τ=1, z=(2,5)). Even for the quadratic part ½zᵀAz alone, e^{−τA} is a prox with r=½uᵀ(e^{τA}−I)u. That weight is e^{τA}−I, not τA, so the evolution time and the prox coefficient are different quantities even where an exact prox form exists.</p>
+</blockquote>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-BC002-A1/attempt-1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-BC002:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/native-source/written/MG-BC002-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/research-public/MG-BC002.json">review · MG-BC002.json</a><span class="hash">SHA256 fbfae055bde7c18a322147e59fe8582b5c1ec6223aee809f0a97195b1dc38c55</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/claim-public-sources/MG-BC002.json">review · MG-BC002.json</a><span class="hash">SHA256 4232e255b28debdea0f1e39a55690129b9d1d71a3a91de47c81fd551d6af6acf</span></li><li><a href="../../../../results/v0.6.0/claude-sonnet-5.5-max/20261110/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "claude-sonnet-5.5-max", "label": "Claude Sonnet 5.5 (max)"}, "case": {"id": "MG-BC002", "title": "精确梯度流与凸近端表示", "category": "background-check", "views": {"capability": {"single_attempt": {"case_id": "MG-BC002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e", "review_sha256": "435a9914934b6233587ddd648d3745cdd059a5b518887f85338f1d495640a246"}, "nonlogical_retry_3": {"case_id": "MG-BC002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e", "review_sha256": "435a9914934b6233587ddd648d3745cdd059a5b518887f85338f1d495640a246"}}, "partial": {"single_attempt": {"case_id": "MG-BC002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e", "review_sha256": "435a9914934b6233587ddd648d3745cdd059a5b518887f85338f1d495640a246"}, "nonlogical_retry_3": {"case_id": "MG-BC002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e", "review_sha256": "435a9914934b6233587ddd648d3745cdd059a5b518887f85338f1d495640a246"}}, "strict": {"single_attempt": {"case_id": "MG-BC002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e", "review_sha256": "435a9914934b6233587ddd648d3745cdd059a5b518887f85338f1d495640a246"}, "nonlogical_retry_3": {"case_id": "MG-BC002", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "8351874f9bd70f9ded37a8dfceaf94971f855f118961eaa296942f123185d93e", "review_sha256": "435a9914934b6233587ddd648d3745cdd059a5b518887f85338f1d495640a246"}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-PS001:A1",
+  "case_id": "MG-PS001",
+  "binding": {
+    "plan_sha256": "d4e149905b50c0ab8fbb22eeb4cb0165d4b1a296dc91ffb428d263257eeafc3f",
+    "slot_id": "MG-PS001:A1",
+    "evidence_id": "bf3358cf292275d31f1a3a8588b89e57742c73b3837338c10f43f2d098c5dff7",
+    "response_sha256": "a346229271eea9477add57190dfba68e8de59ab378d2d8068b26153dc0624ed5",
+    "history_sha256": "47719d7d5c4bf59122dce1fbc145a2ccfd53654f67ef6ce8c1c71be5ea2736a0",
+    "projected_request_sha256": "c38f924103f14f9abcb8e3d64cd04e691e7e9dd4a2e2916888e08aa99c9baed6",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "8704828d9e97f453df84464ee6fc6ad104d6177caddd9f509d231f9cf8bcf6aa",
+    "body_origin": {
+      "slot_id": "MG-PS001:A1",
+      "response_sha256": "a346229271eea9477add57190dfba68e8de59ab378d2d8068b26153dc0624ed5",
+      "start_byte": 0,
+      "end_byte": 10410
+    },
+    "body_sha256": "a346229271eea9477add57190dfba68e8de59ab378d2d8068b26153dc0624ed5",
+    "rationale_sha256": null,
+    "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+  },
+  "reviewer": "Sol 6.1 Max independent written-review subagent",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "完整阅读原始答卷及原六项100分判准。两个目标均严谨完成，任意增长取样的必要性、普遍范数尖锐性和所有(ℓ,r)的替代构造逐项核对有效。100/100，Strict通过，无确证claim扣罚。AI审核，人审pending。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "format_review": {
+    "decision": "valid",
+    "notes": "原始最终书面答卷已完整交付；本题无需Lean工程。数学完成度另行逐项判断。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "有限半范数、线性零空间及商距离合法，直接使用反三角不等式等标准事实足够。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "完整分类limsup f(n)/n有限。充分性由取样和≤原前f(N)和；必要性对每个无限limsup的f选择倍增n_k，f(B)密度0而B上密度至少1/2，真正否定商良定。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "上界与limsup常数准确。普遍尖锐性用稀疏短段及有界幅值w，原平均≤1、取样平均≥λ/(1+γ)，任意λ↑α、γ↓0逼得最优常数α，不要求增长比有极限。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "任意目标序列沿值域延拓给满射；α>1时补集指示序列给非零核，α=1时遗漏密度0并比较全平均与取样平均得到等距单射；连续性来自有限Lipschitz界。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "实际迭代为f^k取样，L_k等于相应limsup。给出Fekete分解证明根极限存在及必要范围1≤R≤L1，不假设商完备。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "替代分块构造f=max(ceil(rn),n+c_m)，块端爆发与块内线性保证严格递增及L1=ℓ。固定k的迭代至多跨一块，两段递推给r^k≤L_k≤r^k(1+kκ)^2；取根得任意实参数r及所有边界，完整覆盖可达集合。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-10T07:40:40.685357+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "95df2c73d6b51458d72c776d7767e1313864a974a2cf3acaf610364f9cb11915",
+  "public_projection": true,
+  "original_private_review_sha256": "891e43f5c52b7d9d39f3267471459007605215f01f4b698f47baa33340d76d8b"
+}
