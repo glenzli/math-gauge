@@ -1,0 +1,42 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-BC002",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-BC002:A1",
+    "case_id": "MG-BC002",
+    "binding": null,
+    "reviewer": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "正确完成全部真实流/条件prox任务并纠正实际背景，R3/complete，Strict通过。额外交付每个正时间均非任意凸prox的空间小初值Jacobian反证，已逐项独立核验Duhamel积分与非对称系数；合法强于参考小时间结论，无错误FNE推广。",
+    "findings": [],
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+    },
+    "criteria": [
+      {
+        "criterion_id": "gap-diagnosis",
+        "score": 1,
+        "notes": "准确拒绝强凸/收缩/耗散自动产生实际凸近端表示，部署段保留真实流保证并纠正背景。"
+      },
+      {
+        "criterion_id": "model-specific-certificate",
+        "score": 1,
+        "notes": "证明凸prox是(q+r)共轭的梯度，C1时Jacobian必须对称；给本具体流的真实变分方程，而非仅证明不等于prox_tf。"
+      },
+      {
+        "criterion_id": "complete-correction",
+        "score": 1,
+        "notes": "更强合法反证：任意固定t>0，在zε=(ε,0)附近Φs=(εe^-s,0)+Oε³，Js=e^-As+Oε²；Duhamel给J12=−ε²q(1−q³)+Oε⁴、J21=−3ε²q²(1−q)+Oε⁴，差=−ε²q(1−q)^3+Oε⁴。逐式独立核验系数和积分正确，q∈(0,1)确保对足够小ε非零，故每t均排除任何convex r_t。未由非对称错误推断实际FNE不成立。 自治唯一解半群精确给Tτ^n=Φnτ，状态、能量及不同初值堆叠误差的全部定量界完整，τ是演化时长。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "c313822846f942e191842e92effaa6ab39423b5e57418fac0c77135be6212c18"
+}

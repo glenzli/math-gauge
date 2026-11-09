@@ -4,7 +4,7 @@
 
 ## 留存与目录
 
-仅在用户明确选定固定留档时保存正式记录。本次固定留档范围是当前 Terra 6.1 Max、Gemini 3.8 Flash High、DeepSeek v4.1 Flash 1017，以及独立 Dot native harness 的选定结果。CLI档案使用本合同的record.json；Dot使用文末所列独立原生记录类型。日常运行使用被 Git 忽略的 `runs/`；中间稿、旧成绩、旧题与备选题不在工作树另设历史区，使用 Git 历史恢复。
+仅在用户明确选定固定留档时保存正式记录。当前CLI固定快照由 `benchmark.json` 的 `selected_result_models` 与 `selected_result_record_ids` 登记，另有独立 Dot native harness 的选定结果。CLI档案使用本合同的record.json；Dot使用文末所列独立原生记录类型。日常运行使用被 Git 忽略的 `runs/`；中间稿、旧成绩、旧题与备选题不在工作树另设历史区，使用 Git 历史恢复。
 
 正式公开档案位于 `results/v0.6.0/<model>/<record-id>/`，包含简短 README、`record.json`、原始答复、逐项评审、计分输入及必要工程。私有原题、原答和评审保存在私有仓库相同版本与记录号下；公开目录只保留私有部分的合并聚合。
 
@@ -111,7 +111,7 @@ MG-TX002使用structural-review-amendment.json与substantive-review-20261107.jso
 
 公开新增capability-combined-aggregate.json与capability-retry-combined-aggregate.json；私有新增capability-result.json与capability-retry-result.json。原四份RMC/Strict文件名继续使用，数学数值保持；报告分别标数学能力MC、可靠数学能力RMC、严格数学交付Strict。每个模式保存源输入、政策散列、固定分母、已确认贡献和完整区间，不跨模式或尝试条件选答案。
 
-MC报告保留源B与原扣罚字段，另标实际应用基础扣罚为0；自查的回退、误报与Strict事实不删除。只对有效数学内容给正向分，不能由审核者补造模型未交付成果。公有仍是合并安全投影，私有逐题资料留私库。原先仅有两种结果的冻结记录仍可按旧字段读取，当前三个固定CLI模型记录必须提供六个视图，独立原生Harness按其专用合同绑定相同计分视图。
+MC报告保留源B与原扣罚字段，另标实际应用基础扣罚为0；自查的回退、误报与Strict事实不删除。只对有效数学内容给正向分，不能由审核者补造模型未交付成果。公有仍是合并安全投影，私有逐题资料留私库。原先仅有两种结果的冻结记录仍可按旧字段读取，当前选定的CLI模型记录必须提供六个视图，独立原生Harness按其专用合同绑定相同计分视图。
 
 ## 承诺审核与三评分0.8.0
 
@@ -140,6 +140,16 @@ MC报告保留源B与原扣罚字段，另标实际应用基础扣罚为0；自�
 旧0.1.0细项覆盖率保存为`content-rate-coverage-v0.1.0.json`，原`content-rate-policy.json`及私有细项审核不变。新旧数字不改名混用，未测项仍保留固定分母和未知区间；原三项主分不变。当前各模型共用697个承诺单元和149个完整目标；旧682／145映射随原始证据保留，不冒充当前分母。详见[两率方法](content-rates.md)。
 
 ## 独立原生Harness记录
+
+### Claude Code外部CLI来源
+
+选定的Claude Code档案继续使用`record.json`，将原始请求、启动参数、会话元数据、设置、事件流、事件接收时刻、实际题文和完整最终返回作为独立的原生来源绑定。`math-gauge.claude-code-native-evidence/v1`只作观察后的接纳适配，由`claude_code_evidence.py`单独核验；不得把原日志改装成Codex或AGY事件，也不放宽它们的既有校验。
+
+原生唯一成功终态必须在原截止内交付且与所收原答字节相同。原生交卷、外层CLI退出和内层API调用分别记录：已成功交卷后的清理退出130或退出码未知不自动改成模型失败；内层工具/服务往返不是新增外层模型尝试。输出上限若按每次内层API调用生效，不能宣称它是整场总输出预算。
+
+工具设置与事件核查只证明所留配置和实际观察到的调用；没有独立的运行隔离探针时，`effective_sandbox_verified`保持false，并明确缺少该证据。原生回显的型号也不等于独立认证后端。收集器版本按实际批次分别记录，不用原导出计划的单个版本号覆盖不同收集器源码。原始导出计划与真实导入收据均保留，观察后为计分组合的索引不冒称实际执行过的统一计划。
+
+### Dot原生记录
 
 用户选定的Dot native harness快照按[原生记录合同](native-observations.md)使用单独的native-observation.json类型保存。它保留实际运行、未知SKU和指令隔离边界，不满足通用CLI导入的预冻结条件时如实记载；不改变本文件既有record.json的验证要求。数学评分与两率使用相同共享函数和固定分母。原38题A1加三轮的批次与导入探测保持原样；当前另绑定一份观察后选定的历史原生首答，合计39题A1加三轮，不改写原批次执行数、上下文或未知项。
 

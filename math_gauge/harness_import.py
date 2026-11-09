@@ -23,7 +23,7 @@ from .benchmarks import identity, select_slots, validate_plan
 from .catalog import digest_bytes, relative_name, write_json
 from .eligibility import _file, _root
 from .execution import extract_candidate_lean, now, runner_fingerprint
-from .harness_answers import _a_recovery_policy, _a_recovery_allows
+from .harness_answers import _a_recovery_policy, _a_recovery_allows, _a_parallel
 from .harness import _h_is_neutral, _h_schema_matches
 from .reliability import (
     PARSER_VERSION, PARAMETERS, _bind_suite, _budget_descriptor, _budget_totals,
@@ -411,7 +411,7 @@ def _ingest(plan, suite, dest, manifest, submitted, index, sources, recovery_pol
                                   response_path=attempt["response_path"], response_sha256=attempt["response_sha256"])
                 else:
                     record.update(status="execution_error", reason=attempt["status"])
-                    if attempt["status"] == "budget_exhausted":
+                    if attempt["status"] == "budget_exhausted" and not _a_parallel(manifest):
                         stopped = True
                         meta["budget_stop_reason"] = meta["budget_stop_reason"] or "adapter_budget_exhausted"
         material = compose_material(slot, _raw(dest, record), materials.get(slot.get("parent_slot")))

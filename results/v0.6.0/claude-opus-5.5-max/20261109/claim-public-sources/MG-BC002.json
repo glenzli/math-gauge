@@ -1,0 +1,65 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-BC002",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-BC002:A1",
+    "case_id": "MG-BC002",
+    "binding": {
+      "plan_sha256": "518836fc79cdb24b9020871e6d261fa86a4d2f545472ef1f07208ed9e2a1ba5c",
+      "slot_id": "MG-BC002:A1",
+      "evidence_id": "d4ba470acb7c9b336329f7728dfe625a5575335e1371391b5ededee6478ce241",
+      "response_sha256": "1a432adb9b8c054fcb8963e8d5f7ab0bfaf6fea33a81c79472ed11edb6850105",
+      "history_sha256": "cd919b247b8fab79ae8883882b03d0ce1c7ff4282683576eaf40a445f3b22674",
+      "projected_request_sha256": "707052f4db8e96dbf751c25b696f734a4511ad6d5ef7c8d5a24eb06f9cc17bfd",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "022b5e8c36f605343d3dc6fc559af4c0f2608d39445c1529efe785910f9c2b60",
+      "body_origin": {
+        "slot_id": "MG-BC002:A1",
+        "response_sha256": "1a432adb9b8c054fcb8963e8d5f7ab0bfaf6fea33a81c79472ed11edb6850105",
+        "start_byte": 0,
+        "end_byte": 12445
+      },
+      "body_sha256": "1a432adb9b8c054fcb8963e8d5f7ab0bfaf6fea33a81c79472ed11edb6850105",
+      "rationale_sha256": null,
+      "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+      "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+    },
+    "reviewer": "Codex source-based mathematical reviewer",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "背景R3且完整任务通过。全正时间的非近端性不是从小时间Taylor式非法外推：原答对任意固定t直接以初始振幅epsilon展开，并给可支配的四阶余项，得正主项。基线流、条件证书和实际部署结论严格分开；不把非对称直接误当一般firm失败，firm失败被另列数值证据。EVI与精确半群叠加均正确。",
+    "findings": [],
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+    },
+    "criteria": [
+      {
+        "criterion_id": "gap-diagnosis",
+        "score": 1,
+        "notes": "明确拒绝把强凸梯度流的收缩耗散自动升级为任何凸prox表示，且保留全部真实流保证与条件prox证书。"
+      },
+      {
+        "criterion_id": "model-specific-certificate",
+        "score": 1,
+        "notes": "对固定t在epsilon e1附近作振幅展开，以明确156*t^2*epsilon^4余项证明Jacobian反对称差的主项epsilon^2*exp(-t)*(1-exp(-t))^3；对每个t>0选足够小epsilon排除表示。积分式和14/12/52/78/156常数均独立逐项核算。"
+      },
+      {
+        "criterion_id": "complete-correction",
+        "score": 1,
+        "notes": "任何连续唯一prox选择都是凸势梯度，故非对称端点Jacobian排除任意r；这一全正时间结果比参考的小时间障碍更强且严格有效。全局前向、唯一平衡、能量/距离/梯度估计、条件三点不等式/firm及部署时间尺度均闭合。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "a93bf4374b1a0bc3a1679a091286379cce668cc45d869848efcf0431d9a06761"
+}

@@ -66,7 +66,13 @@ python3 "$DATASET/tools/benchmark.py" prepare --dataset "$DATASET" --runtime "$W
 python3 "$DATASET/tools/benchmark.py" prepare --dataset "$DATASET" --runtime "$WORK/runtime-2700.json" --target proofs --target answer-review --target theorem-extension --target background-check --target manuscript-completion --out "$WORK/run-written"
 ```
 
-读取各run的 `manifest.json`，按 `selected_slot_ids` 顺序签发、记录。公开三组分别为1／7／17个A1；完整包分别为1／7／31个A1。下面以C003初答说明一次操作：
+读取各run的 `manifest.json`，按 `selected_slot_ids` 核对任务清单。公开三组分别为1／7／17个A1；完整包分别为1／7／31个A1。该清单同时规定归档顺序，不要求独立题按这个顺序答完。
+
+源码生成的v4控制器支持同时签发多道独立A1、按返回先后收卷；每题仍须独立新上下文和独立工程。`request`、`record`、`skip`对同一responses目录的短暂写入须串行，写锁不会覆盖模型作答期间。`parent_slot`分支须等自身父答卷记录完成，只接收该分支历史；C003专项仍按A1→R1→R2→R3顺序接续，可以与其他独立题并行。
+
+若runtime另外设置整批共享的`max_total_tokens`或`max_transport_attempts`，控制器保留按清单顺序、一次一题的签发方式，避免未结算消耗重复使用累计预算。单独设置每题时间或输出上限不限制题间并行。v4中某题单次输出耗尽只影响该题，不会据此停止其他题。
+
+旧v2/v3控制器保留原串行与预算语义；已发布的0.6.0标签及资产不随源码修改覆盖。下面以C003初答说明一次操作：
 
 ```sh
 python3 "$DATASET/tools/benchmark.py" request --run "$WORK/run-c003" --responses "$WORK/responses-c003" --slot MG-C003:A1 --out "$WORK/request-c003-a1.json"

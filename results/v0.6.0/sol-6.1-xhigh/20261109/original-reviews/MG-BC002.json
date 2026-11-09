@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-BC002:A1",
+  "case_id": "MG-BC002",
+  "binding": {
+    "plan_sha256": "b02e88e396ee371803f5d4b54ebeda34ba8fddf78f08030cb4cdccf963b4905d",
+    "slot_id": "MG-BC002:A1",
+    "evidence_id": "211c1f6ce540a937a1fe82f3d4dde43080e7b6d188374c184f7f830de1c408a8",
+    "response_sha256": "4af43a1674d3976634fc9dbe125f09d858ba81a31b0c5a1152f121243d9dd0ea",
+    "history_sha256": "e7feed144fb27c02aa4935a707862b2a8b6a8cdc4611e5822a3ba27eaa4b4e5e",
+    "projected_request_sha256": "4683955fb478ad2e76a1176ff4018bc59aafb697063136262e2f8d223834368c",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "ac079ad21e04fa94f8a17a44e2e82535d31941fbf5161d1a7c74ecc961b2dbb7",
+    "body_origin": {
+      "slot_id": "MG-BC002:A1",
+      "response_sha256": "4af43a1674d3976634fc9dbe125f09d858ba81a31b0c5a1152f121243d9dd0ea",
+      "start_byte": 0,
+      "end_byte": 5084
+    },
+    "body_sha256": "4af43a1674d3976634fc9dbe125f09d858ba81a31b0c5a1152f121243d9dd0ea",
+    "rationale_sha256": null,
+    "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "正确完成全部真实流/条件prox任务并纠正实际背景，R3/complete，Strict通过。额外交付每个正时间均非任意凸prox的空间小初值Jacobian反证，已逐项独立核验Duhamel积分与非对称系数；合法强于参考小时间结论，无错误FNE推广。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "准确拒绝强凸/收缩/耗散自动产生实际凸近端表示，部署段保留真实流保证并纠正背景。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "证明凸prox是(q+r)共轭的梯度，C1时Jacobian必须对称；给本具体流的真实变分方程，而非仅证明不等于prox_tf。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "更强合法反证：任意固定t>0，在zε=(ε,0)附近Φs=(εe^-s,0)+Oε³，Js=e^-As+Oε²；Duhamel给J12=−ε²q(1−q³)+Oε⁴、J21=−3ε²q²(1−q)+Oε⁴，差=−ε²q(1−q)^3+Oε⁴。逐式独立核验系数和积分正确，q∈(0,1)确保对足够小ε非零，故每t均排除任何convex r_t。未由非对称错误推断实际FNE不成立。 自治唯一解半群精确给Tτ^n=Φnτ，状态、能量及不同初值堆叠误差的全部定量界完整，τ是演化时长。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T07:41:37.945414+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "8c09b85a5d5f00d63f5bb2c8e83969eee17e704854fccfdb809eeecd550bbfd7",
+  "public_projection": true,
+  "original_private_review_sha256": "80a4bcba4c6b02d5ae0835a3712ee6e8a563ebf20002223dda096b4682d740eb"
+}

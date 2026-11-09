@@ -16,11 +16,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .harness import (
-    DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA, RUN_SCHEMA, _h_require, _h_digest,
+    DATASET_SCHEMA, SIMPLE_DATASET_SCHEMA, RUN_SCHEMA, COMPACT_CONTROLLER, _h_require, _h_digest,
     _h_identity, _h_hash, _h_object, _h_relative, _h_path, _h_root, _h_file, _h_build_request,
     _r_json, _r_write, _inspect_release_dataset_contents, inspect_release_run,
     freeze_release_runtime, release_candidate_request, release_submission_template,
-    _h_is_neutral, _h_neutral_root, _neutral_runtime, _NEUTRAL_WIRE_ACTIVE,
+    _h_is_neutral, _h_schema_matches, _h_neutral_root, _neutral_runtime, _NEUTRAL_WIRE_ACTIVE,
 )
 from .reliability import _bytes, _readable, _slot_path, _transport_result
 
@@ -55,11 +55,14 @@ def _a_roots(run_root, responses, *, create=False):
     root = _h_path(responses)
     _h_require(not root.is_relative_to(run_root) and not run_root.is_relative_to(root),
                "Responses must be separate from the immutable run")
-    if create and not root.exists():
-        root.mkdir(parents=True, exist_ok=False)
-        _r_write(root / "collection.json", {"schema": COLLECTION_SCHEMA,
-            "run_sha256": run["run_sha256"], "dataset_sha256": run["dataset_sha256"],
-            "created_at": datetime.now(timezone.utc).isoformat()})
+    if create:
+        root.parent.mkdir(parents=True, exist_ok=True)
+        with _a_lock(root):
+            if not root.exists():
+                root.mkdir(exist_ok=False)
+                _r_write(root / "collection.json", {"schema": COLLECTION_SCHEMA,
+                    "run_sha256": run["run_sha256"], "dataset_sha256": run["dataset_sha256"],
+                    "created_at": datetime.now(timezone.utc).isoformat()})
     _h_require(root.is_dir(), "Responses directory does not exist; issue a request first")
     header = _r_json(_h_file(root, "collection.json").read_bytes())
     _h_object(header, {"schema", "run_sha256", "dataset_sha256", "created_at"}, "answer collection")
@@ -159,6 +162,18 @@ def _a_recovery_allows(policy, slot_id, attempt):
                and metadata.get("sha256") == entry["metadata_sha256"] for entry in policy["attempts"])
 
 
+def _a_parallel(run):
+    """New controller snapshots relax cross-slot order, never branch ancestry."""
+    return _h_schema_matches(run.get("controller_version"), COMPACT_CONTROLLER)
+
+
+def _a_serial_budget(run):
+    """Unknown future usage needs serialization when one cumulative cap is shared."""
+    return not _a_parallel(run) or any(
+        run["execution"]["budget"].get(key) is not None
+        for key in ("max_transport_attempts", "max_total_tokens"))
+
+
 def _a_budget(run, rows, recovery_policy=None):
     budget = run["execution"]["budget"]
     maximum, limit = budget.get("max_transport_attempts"), budget.get("max_total_tokens")
@@ -179,7 +194,8 @@ def _a_budget(run, rows, recovery_policy=None):
                 stopped, reason = True, reason or "cumulative_budget_exhausted"
             if limit is not None and known >= limit:
                 stopped, reason = True, reason or "total_token_budget_exhausted"
-            if attempt["status"] == "budget_exhausted" and not attempt["readable"]:
+            if (attempt["status"] == "budget_exhausted" and not attempt["readable"]
+                    and not _a_parallel(run)):
                 stopped, reason = True, reason or "adapter_budget_exhausted"
     result = {"transport_attempts": attempts, "known_total_tokens": known,
             "token_usage_complete": complete, "total_tokens": known if complete else None,
@@ -203,6 +219,7 @@ def _a_inspect(run_root, responses, *, allow_submission=False, recovery_policy=N
     expected = {"collection.json"}
     rows, locked, states = {}, {}, []
     earlier_unfinished = False
+    serial = _a_serial_budget(run)
     for sid in run["selected_slot_ids"]:
         prefix = _slot_path(sid)
         folder = root / prefix
@@ -221,8 +238,8 @@ def _a_inspect(run_root, responses, *, allow_submission=False, recovery_policy=N
             if not receipt_path.exists():
                 _h_require(not record_path.exists(), "Recorded attempt has no issued request")
                 continue
-            _h_require(parent_ready and not earlier_unfinished,
-                       "Issued requests changed frozen order or lack readable branch parents")
+            _h_require(parent_ready and (not serial or not earlier_unfinished),
+                       "Issued requests lack readable branch parents or changed a serialized budget order")
             _h_require(number == len(row["requests"]) + 1, "Issued request ordering changed")
             if number == 2:
                 _h_require(len(row["attempts"]) == 1 and not row["attempts"][0]["readable"]
@@ -289,7 +306,8 @@ def _a_inspect(run_root, responses, *, allow_submission=False, recovery_policy=N
             _h_require(skip["schema"] == _SKIP_SCHEMA and skip["slot_id"] == sid
                        and isinstance(skip["reason"], str) and skip["reason"].strip()
                        and isinstance(skip["recorded_at"], str) and sid not in locked
-                       and len(row["requests"]) == len(row["attempts"]) and not earlier_unfinished,
+                       and len(row["requests"]) == len(row["attempts"])
+                       and (not serial or not earlier_unfinished),
                        "Missingness declaration changed or discarded an outstanding/readable response")
             row["skip"] = skip
             expected.add(skip_name)
@@ -338,13 +356,16 @@ def issue_answer_request(run_root, responses, slot_id, output, *, recovery_polic
                "Request output must be a new file outside the immutable run and collected responses")
     with _a_lock(root):
         state = _a_inspect(run_root, root, recovery_policy=recovery_policy)
-        next_slot = next((s for s in state["states"] if s["state"] in {
-            "pending", "awaiting_response", "retryable"}), None)
-        _h_require(next_slot is not None and next_slot["slot_id"] == slot_id,
-                   "Request must follow frozen selected_slot_ids order; record or explicitly skip earlier slots")
+        selected = next((s for s in state["states"] if s["slot_id"] == slot_id), None)
+        _h_require(selected is not None and selected["state"] in {"pending", "awaiting_response", "retryable"},
+                   "Slot is locked, skipped or blocked by its own parent, or is not selected")
+        if _a_serial_budget(run):
+            first = next(s for s in state["states"] if s["state"] in {"pending", "awaiting_response", "retryable"})
+            _h_require(first["slot_id"] == slot_id,
+                       "Request must follow frozen slot order for this controller or shared cumulative budget")
         _h_require(not state["budget"]["stopped"], "Frozen total execution budget has stopped")
         row = state["rows"][slot_id]
-        if next_slot["state"] == "awaiting_response":
+        if selected["state"] == "awaiting_response":
             issued = row["requests"][-1]
             raw = issued["raw"]
         else:
@@ -423,11 +444,13 @@ def skip_answer_slot(run_root, responses, slot_id, reason, *, recovery_policy=No
     _h_require(isinstance(reason, str) and reason.strip(), "Record a concrete missingness reason")
     with _a_lock(root):
         state = _a_inspect(run_root, root, recovery_policy=recovery_policy)
-        next_slot = next((s for s in state["states"] if s["state"] in {
-            "pending", "awaiting_response", "retryable"}), None)
-        _h_require(next_slot is not None and next_slot["slot_id"] == slot_id,
-                   "Missingness must follow the frozen slot order")
-        _h_require(next_slot["state"] != "awaiting_response", "Record the outstanding attempt, including any failure, before skipping")
+        selected = next((s for s in state["states"] if s["slot_id"] == slot_id), None)
+        _h_require(selected is not None and selected["state"] in {"pending", "retryable", "awaiting_response"},
+                   "Cannot skip a locked, skipped or parent-blocked slot, or a slot that is not selected")
+        if _a_serial_budget(run):
+            first = next(s for s in state["states"] if s["state"] in {"pending", "awaiting_response", "retryable"})
+            _h_require(first["slot_id"] == slot_id, "Missingness must follow the frozen serialized budget order")
+        _h_require(selected["state"] != "awaiting_response", "Record the outstanding attempt, including any failure, before skipping")
         folder = root / _slot_path(slot_id)
         folder.mkdir(parents=True, exist_ok=True)
         _r_write(folder / "skip.json", {"schema": _SKIP_SCHEMA, "slot_id": slot_id, "reason": reason,
@@ -574,7 +597,7 @@ def _simple_controller_main():
 def portable_answer_source():
     functions = (_bytes, _readable, _slot_path, _transport_result, _a_json_bytes, _a_descriptor,
                  _a_read, _a_roots, _a_lock, _a_publish, _a_timing, _a_recovery_policy,
-                 _a_recovery_allows, _a_budget, _a_inspect,
+                 _a_recovery_allows, _a_parallel, _a_serial_budget, _a_budget, _a_inspect,
                  inspect_answer_collection, issue_answer_request, record_answer_attempt,
                  skip_answer_slot, _a_submission, pack_answer_archive, _simple_controller_main)
     header = "import os\nimport tempfile\nimport zipfile\nfrom contextlib import contextmanager\nidentity = _h_identity\n"

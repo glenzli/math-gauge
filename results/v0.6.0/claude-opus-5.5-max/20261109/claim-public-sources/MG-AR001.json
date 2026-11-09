@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-AR001",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-AR001:A1",
+    "case_id": "MG-AR001",
+    "binding": {
+      "plan_sha256": "518836fc79cdb24b9020871e6d261fa86a4d2f545472ef1f07208ed9e2a1ba5c",
+      "slot_id": "MG-AR001:A1",
+      "evidence_id": "e2588c9a972bd98339e17334591d334d4cef37fc6c2910ade74b39aa09e338f6",
+      "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914",
+      "history_sha256": "5b3431530b8dc86b060b5f11e5a0d03d703759ef7ba119397044535eb16b8b04",
+      "projected_request_sha256": "933cb40edefe9f966d8e4c07b1130e167d4dfb7173191fe1b7873d3c173387dd",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "8244d6295b33b79070001a158b0170e8dc0f20d6d6a5bad9f9b8ea0f630a7b75",
+      "body_origin": {
+        "slot_id": "MG-AR001:A1",
+        "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914",
+        "start_byte": 0,
+        "end_byte": 7629
+      },
+      "body_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914",
+      "rationale_sha256": null,
+      "request_sha256": "5ae7d6f87b4218c753b43ccc8c2ded1053d286d9284322712343e52a92f3c201",
+      "group_contract_sha256": "4ccdc7089c7369593ddfac73ac4c37f65ddf2587690ce5a72828d766fa9e21df"
+    },
+    "reviewer": "Codex source-based mathematical reviewer",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": false,
+    "notes": "原维度80/100，Strict不通过。审阅正确核验S1-S5和非交换矩阵反例，值得保留相应贡献。主要错误是把有明确阶段归属的总结表拆成不带背景的任意命题，再用不满足S2/S4作用域的反例宣布原答实质错误。可提出“存在且唯一”“可数塔”等编辑澄清，但原文同段已明确这些内容。此次不把它升级为否定实际幂等提升证明的核心重大误判；单列material级作用域过度否决，避免仅因总评“不完整”就整题封零。",
+    "findings": [],
+    "group_contract_sha256": "4ccdc7089c7369593ddfac73ac4c37f65ddf2587690ce5a72828d766fa9e21df",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+    },
+    "dimensions": [
+      {
+        "dimension_id": "core_judgment",
+        "score": 50,
+        "notes": "逐元素整数多项式提升15/15、逐层唯一组装/分解自然性20/20、理想化反例15/15均有充分核查。矩阵非唯一例认可，但把S6按S2/S4列出的作用域摘要抽离原条件后称为实质假命题，未完成10分的上下文和必要/充分解释检查，计0/10。"
+      },
+      {
+        "dimension_id": "evidence_scope",
+        "score": 20,
+        "notes": "提升整除与相容性依据10/10；S5导子乘性及无穷非零系数矛盾10/10。范围核查0/10：Z到Z/6反例不满足S2的nil核共同条件，omega1反例也不反驳明确归属S4的可数塔结论。正确的弱条件反例只能支持编辑澄清，不能当作原有证明的实质反驳。"
+      },
+      {
+        "dimension_id": "completeness",
+        "score": 10,
+        "notes": "空J/零环5/5；S3非nil极限核、S4元素满射与环同态截面未混淆5/5。"
+      }
+    ],
+    "major_error": false,
+    "major_error_notes": "承认所有主要提升与反例有效；问题是脱离摘要的阶段作用域作过度否决，不同于核心实际证明被错误否定。"
+  },
+  "original_private_adjudication_sha256": "e6df31edcaed76562901cf1fa7d9f46cea585a961cb3c741e485182f0bcfec24"
+}

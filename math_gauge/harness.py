@@ -40,7 +40,8 @@ SIMPLE_DATASET_SCHEMA = "math-gauge.release-dataset/v2"
 RUN_SCHEMA = "math-gauge.harness-run/v2"
 RELEASE_CONTROLLER = "math-gauge.release-controller/v1"
 SIMPLE_CONTROLLER = "math-gauge.release-controller/v2"
-COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
+LEGACY_COMPACT_CONTROLLER = "math-gauge.release-controller/v3"
+COMPACT_CONTROLLER = "math-gauge.release-controller/v4"
 RELEASE_ANCHOR = "math-gauge.release-anchor/v1"
 RELEASE_SUBMISSION = "math-gauge.harness-submission/v2"
 _RELEASE_TARGETS = ("proofs", "lean-audit", "lean-construction", "chapters", "lean-formalization", "lean-supplement", "exploration", "answer-review", "theorem-extension", "background-check", "manuscript-completion",
@@ -290,7 +291,7 @@ def _h_projection(root, value, expected_files):
     planned = value["planned"]
     labels, rounds = reliability_schedule(value["protocol_version"])
     compact = (value["protocol_version"] in {"0.2.0", "0.3.0", "0.4.0"}
-               or value["controller_version"] == COMPACT_CONTROLLER
+               or value["controller_version"] in {LEGACY_COMPACT_CONTROLLER, COMPACT_CONTROLLER}
                or planned["independent_slots"] != 3 * planned["papers"])
     if not rounds:
         valid_arrangement = (labels == ("A1",) and planned["independent_slots"] == planned["papers"]
@@ -529,7 +530,8 @@ def _controller_source():
     constants += (f"FOLLOWUP_PROMPT_PROJECTION = {FOLLOWUP_PROMPT_PROJECTION!r}\n"
                   f"SOURCE_FOLLOWUP_PERMISSION = {SOURCE_FOLLOWUP_PERMISSION!r}\n"
                   f"LOCAL_FOLLOWUP_PERMISSION = {LOCAL_FOLLOWUP_PERMISSION!r}\n")
-    constants += f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\nCOMPACT_CONTROLLER = {COMPACT_CONTROLLER!r}\n\n"
+    constants += (f"PARAMETER_NAMES = {PARAMETER_NAMES!r}\n_MANIFEST_KEYS = {tuple(sorted(_MANIFEST_KEYS))!r}\n"
+                  f"COMPACT_CONTROLLER = {COMPACT_CONTROLLER!r}\nLEGACY_COMPACT_CONTROLLER = {LEGACY_COMPACT_CONTROLLER!r}\n\n")
     return (header + constants + "\n\n".join(inspect.getsource(f).rstrip() for f in functions)
             + '\n\n\nif __name__ == "__main__":\n    _controller_main()\n').encode("utf-8")
 
@@ -923,6 +925,7 @@ def _inspect_release_dataset_contents(root):
         _h_object(value, _SIMPLE_DATASET_KEYS if simple else _DATASET_KEYS, "release dataset manifest")
         _h_require((value["schema"], value["controller_version"]) in {
                        (DATASET_SCHEMA, RELEASE_CONTROLLER), (SIMPLE_DATASET_SCHEMA, SIMPLE_CONTROLLER),
+                       (SIMPLE_DATASET_SCHEMA, LEGACY_COMPACT_CONTROLLER),
                        (SIMPLE_DATASET_SCHEMA, COMPACT_CONTROLLER)},
                    "Unsupported release dataset")
         _h_require(_h_hash(value["dataset_sha256"]) and value["dataset_sha256"] == _h_identity(
@@ -964,7 +967,7 @@ def _inspect_release_dataset_contents(root):
             _h_require(all(slots[sid]["parent_slot"] is None or slots[sid]["parent_slot"] in ids for sid in ids),
                        "Release target lacks its dependency closure")
         independent = [sid for sid, s in slots.items() if s["kind"] == "independent"]
-        compact = (value["controller_version"] == COMPACT_CONTROLLER
+        compact = (value["controller_version"] in {LEGACY_COMPACT_CONTROLLER, COMPACT_CONTROLLER}
                    or value["protocol_version"] in {"0.2.0", "0.3.0", "0.4.0"})
         if current:
             core = independent
@@ -1096,7 +1099,7 @@ def inspect_release_run(root):
             return _neutral_runtime().inspect_release_run(root)
         _h_object(value, _RUN_KEYS, "release run manifest")
         _h_require(value["schema"] == RUN_SCHEMA and value["controller_version"] in {
-                       RELEASE_CONTROLLER, SIMPLE_CONTROLLER, COMPACT_CONTROLLER},
+                       RELEASE_CONTROLLER, SIMPLE_CONTROLLER, LEGACY_COMPACT_CONTROLLER, COMPACT_CONTROLLER},
                    "Unsupported frozen release run")
         _h_require(_h_hash(value["run_sha256"]) and value["run_sha256"] == _h_identity(
             {k: v for k, v in value.items() if k != "run_sha256"}), "Frozen release run changed")
@@ -1294,6 +1297,7 @@ def _release_controller_source():
               'from datetime import datetime, timezone\nfrom pathlib import Path, PurePosixPath\n\n')
     constants = {"DATASET_SCHEMA": DATASET_SCHEMA, "SIMPLE_DATASET_SCHEMA": SIMPLE_DATASET_SCHEMA,
                  "SIMPLE_CONTROLLER": SIMPLE_CONTROLLER, "COMPACT_CONTROLLER": COMPACT_CONTROLLER,
+                 "LEGACY_COMPACT_CONTROLLER": LEGACY_COMPACT_CONTROLLER,
                  "RUN_SCHEMA": RUN_SCHEMA,
                  "RELEASE_CONTROLLER": RELEASE_CONTROLLER, "RELEASE_SUBMISSION": RELEASE_SUBMISSION,
                  "PARAMETER_NAMES": PARAMETER_NAMES, "_DATASET_KEYS": tuple(sorted(_DATASET_KEYS)),

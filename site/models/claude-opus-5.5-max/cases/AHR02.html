@@ -1,0 +1,988 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AHR02 · 路径保证域的语义审计 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=6843884d10d3"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-opus-5.5-max/index.html">Claude Opus 5.5 Max</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>AHR02 · 路径保证域的语义审计</h1><p class="subtitle">Claude Opus 5.5 Max · 语义审计 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><p>请审阅附件数学正文中的“路径保证域的全局拟合含义”及其 Lean 实现。附件中的相关定义、局部上界和辅助声明均可使用；不要求审阅本章其他结论。</p>
+<p>判断所给实现是否准确、完整地覆盖该数学命题，并说明依据。若有不足，给出可复核的论证或反例并说明可如何补齐；若认为完整，给出对应关系。请区分源码已证明的结论与需自行补充的内容。</p>
+<p>无需修改附件或提交新增 Lean 源码。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-audit/AHR02/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Independent full A1 source-based review; quoted commitments and root-cause judgments retained, raw runtime identity and human approval remain distinct.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 35</p>
+<p><strong>审核说明：</strong> 明确三个导出包装的∀q路径Lip前提强于实际可评估路径条件，未把定义或原数学结论判假。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 定义、单路径局部上界、代理路径桥梁和较强前提下定理均准确保留。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 30</p>
+<p><strong>审核说明：</strong> 五点非分离伪度量：坏路径把零距a,b映到正距a,c，因此包括无穷系数也无Lip矩阵；另一已采样单点路径使正文保证域非空。反例不是任意挑坏矩阵。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 15</p>
+<p><strong>审核说明：</strong> 将hLq按单分量/联合可评估条件化，保留Lq全函数和原独立定理，准确指出新增附录为其自行补充。</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h2>结论</h2>
+<p>源码中对应推论 #h-93b9c20ea18b4e59 的是 <code>path_guarantee_domains.lean</code> 末尾三个声明：</p>
+<ul>
+<li><code>path_component_guarantee_union_subset_proxy_error</code>（分量形式）</li>
+<li><code>path_joint_guarantee_union_subset_proxy_error</code>（联合形式）</li>
+<li><code>path_guarantee_union_subset_proxy_error_text</code>（加上正文前提的包装）</li>
+</ul>
+<p><strong>判断：定义和结论准确，但覆盖不完整，源码定理严格弱于正文推论。</strong></p>
+<ul>
+<li><strong>准确的部分。</strong> 所涉对象（<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">U_q</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">S_{q,j}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q)</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q,j}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf A_q</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\mathbf A,j}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\boldsymbol\tau)</annotation></semantics></math></span>）逐项与正文一致。两个包含关系的结论与正文逐字对应。证明结构也一致：取见证路径，代入 #h-4b5219aa3a3bbdad。</li>
+<li><strong>编译核验。</strong> <code>lake build …path_guarantee_domains</code> 通过。三个声明的 <code>#print axioms</code> 只有 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>，没有 <code>sorry</code>。</li>
+<li><strong>缺口只有一处前提。</strong> 三个声明都要求
+<code>hLq : ∀ q : N.ReachablePath, IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)</code>，
+也就是<strong>所有</strong>可达路径都要有路径链 Lip 证书。正文的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span> 只在“设 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>∈</mo><mi mathvariant="script">P</mi></mrow><annotation encoding="application/x-tex">q\in\mathcal P</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}(q)</annotation></semantics></math></span>”下选取，推论的并集也只经过这些路径。</li>
+<li><strong>这一加强是实质性的。</strong> 本理论允许规范族不分离，且采用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mi mathvariant="normal">∞</mi><mo>⋅</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">+\infty\cdot0=0</annotation></semantics></math></span> 的约定，此时 Lip 证书集合可以是空集。我构造了一个反例：正文推论的全部前提成立、左侧并集非空，而源码三个声明都无法实例化。</li>
+<li><strong>修补很简单。</strong> 把 <code>hLq</code> 改成以并集指标条件为前提的条件式，证明基本不变。补齐版与反例都已在本地编译通过，代码见附录。</li>
+</ul>
+<hr>
+<h2>一、对应关系（准确的部分）</h2>
+<table>
+<thead>
+<tr>
+<th>正文</th>
+<th>Lean</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>扩展规范空间，有限 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span></td>
+<td><code>d</code>，<code>hd : ∀ j, ExtendedPseudoMetric X bot (d j)</code>，<code>[Fintype I]</code></td>
+<td>一致</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo separator="true">,</mo><mtext> </mtext><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi^\natural,\ \phi</annotation></semantics></math></span></td>
+<td><code>target</code>，<code>proxy</code></td>
+<td></td>
+</tr>
+<tr>
+<td>输入域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 的有限网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span></td>
+<td><code>N : FiniteOperatorNetwork X bot V</code>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> = <code>N.U</code></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi mathvariant="script">N</mi></msub><msub><mo>≡</mo><mi>U</mi></msub><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi_{\mathcal N}\equiv_U\phi</annotation></semantics></math></span></td>
+<td><code>hrep : N.represents proxy</code></td>
+<td>即 <code>LocalEquivalent N.extensional_operator proxy N.U</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span></td>
+<td><code>hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar</code></td>
+<td>与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 等价，因为路径域覆盖 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span>（附录 B 已证）</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">U\subseteq\mathrm{dom}\,\phi</annotation></semantics></math></span></td>
+<td>未单列</td>
+<td>可由 <code>hrep</code> 与 <code>dom_extensional_operator_eq</code> 推出（附录 B）</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msup><mi>V</mi><mo>∗</mo></msup><mo separator="true">,</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(V^*,\mathbf L^*)</annotation></semantics></math></span></td>
+<td><code>hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar</code></td>
+<td>含 <code>Vstar ⊆ dom target</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">P</mi><mo separator="true">,</mo><mtext> </mtext><msub><mi>U</mi><mi>q</mi></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathcal P,\ U_q,\ c_q</annotation></semantics></math></span></td>
+<td><code>N.ReachablePath</code>，<code>N.path_domain q.nodes</code>，<code>N.path_chain q.nodes</code></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span></td>
+<td><code>path_component_sample N sample q j</code></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q)</annotation></semantics></math></span></td>
+<td><code>path_evaluable_components N sample q</code></td>
+<td>自动包含于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}</annotation></semantics></math></span>（<code>path_evaluable_subset_evaluable_components</code>）</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q,j}</annotation></semantics></math></span></td>
+<td><code>path_empirical_residual_upper d target N sample delta_o q j</code></td>
+<td>展开为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi>sup</mi><mo>⁡</mo></mrow><mrow><mi>x</mi><mo>∈</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow></msub><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>+</mo><msub><mi>δ</mi><mrow><mi>o</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\sup_{x\in S_{q,j}}d_j(c_q(x),\phi^\natural(x))+\delta_{o,j}</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span></td>
+<td><code>Lq q</code> 与 <code>hLq</code></td>
+<td><strong>差异所在</strong>，见第二节</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo>=</mo><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>+</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf A_q=\mathbf L_q+\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+<td><code>A i j</code> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mo stretchy="false">[</mo><mi mathvariant="bold">A</mi><msub><mo stretchy="false">]</mo><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">=[\mathbf A]_{i\to j}</annotation></semantics></math></span>，与 <code>IsLipMatrix</code> 的下标约定一致</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D_{\mathbf A,j}(x;E)</annotation></semantics></math></span></td>
+<td><code>weighted_anchor_distance d A j x E</code></td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi>inf</mi><mo>⁡</mo></mrow><mrow><mi>y</mi><mo>∈</mo><mi>E</mi></mrow></msub><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>A</mi><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub><mtext> </mtext><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\inf_{y\in E}\sum_i A_{i\to j}\,d_i(x,y)</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_component_empirical_guarantee_domain …</code></td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>:</mo><mi>D</mi><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{x\in U_q: D+\hat\varepsilon_{q,j}\le\tau_j\}</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\boldsymbol\tau)</annotation></semantics></math></span></td>
+<td><code>path_joint_empirical_guarantee_domain …</code></td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>:</mo><mi mathvariant="normal">∀</mi><mi>j</mi><mo>∈</mo><mi>J</mi><mo separator="true">,</mo><mo>…</mo><mtext> </mtext><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{x\in U_q:\forall j\in J,\dots\}</annotation></semantics></math></span>；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\neq\emptyset</annotation></semantics></math></span> 时即 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></msub><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\bigcap_{j\in J}U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td>左侧并集</td>
+<td>满足 <code>∃ q, j ∈ path_evaluable_components N sample q ∧ x ∈ …</code> 的 <code>x</code> 构成的集合</td>
+<td>联合形式把条件换成 <code>J ⊆ …</code></td>
+</tr>
+<tr>
+<td>右侧</td>
+<td><code>x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau</code></td>
+<td>联合形式对 <code>j ∈ J</code> 全称，一致</td>
+</tr>
+</tbody>
+</table>
+<p>其余几点都只是放宽前提，不影响覆盖：</p>
+<ul>
+<li><strong>省略的正文前提。</strong> 主定理没有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}</annotation></semantics></math></span>、有限阈值、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 非空且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">J\subseteq I_{\mathrm{res}}</annotation></semantics></math></span> 这些前提，结论更一般；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\tau=\top</annotation></semantics></math></span> 或 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J=\emptyset</annotation></semantics></math></span> 时结论平凡成立。<code>_text</code> 版重新列出这些前提，但证明中不使用。</li>
+<li><strong>采样结构约束不需要。</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mi>j</mi></msub><mo>⊆</mo><mi>S</mi><mo>∩</mo><mi>U</mi><mo>∩</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup></mrow><annotation encoding="application/x-tex">S_j\subseteq S\cap U\cap\mathrm{dom}\,\phi^\natural</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span> 有限都用不到，因为只用到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span>，而 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup></mrow><annotation encoding="application/x-tex">U_q\subseteq V^*\subseteq\mathrm{dom}\,\phi^\natural</annotation></semantics></math></span>。</li>
+<li><strong><code>_text</code> 版共用前提。</strong> 两个结论共用前提（包括 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\neq\emptyset</annotation></semantics></math></span>）。若只要分量结论，取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mo stretchy="false">{</mo><mi>j</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">J=\{j\}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>≡</mo><msub><mi>τ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\tau\equiv\tau_j</annotation></semantics></math></span> 即可，没有损失。</li>
+<li><strong>证明对应。</strong> 先取见证 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span>，用 <code>path_domain_subset_source</code> 得 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">x\in U</annotation></semantics></math></span>。分量形式再用 <code>proxy_path_component_guarantee_error_bound</code>；联合形式用 <code>path_joint_guarantee_error_bound</code> 加 <code>path_chain_eq_represented_proxy_on_path</code>。这正是正文的“由 @h-4b5219aa3a3bbdad 得到……对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span> 同时应用”。</li>
+</ul>
+<hr>
+<h2>二、不足：路径链 Lip 证书的量词范围</h2>
+<h3>2.1 差异</h3>
+<p>正文需要的前提是：</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>q</mi><mo>∈</mo><mi mathvariant="script">P</mi><mo>:</mo><mspace width="1em"/><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mtext> </mtext><mo>⟹</mo><mtext> </mtext><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>∈</mo><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">)</mo><msub><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">∣</mo><msub><mi>U</mi><mi>q</mi></msub></msub></mrow><annotation encoding="application/x-tex">\forall q\in\mathcal P:\quad j\in I_{\mathrm{res}}(q)\ \Longrightarrow\ \mathbf L_q\in\mathscr L(c_q)\big|_{U_q}</annotation></semantics></math></span></p>
+<p>联合形式中把条件换成 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">J\subseteq I_{\mathrm{res}}(q)</annotation></semantics></math></span>。源码则要求对全部可达路径成立。源码证明里其实只对见证路径用到了 <code>hLq q</code>，所以这个全称量词只是陈述时写宽了，数学上并不需要。</p>
+<h3>2.2 为什么这是实质性的加强</h3>
+<ul>
+<li><strong>证书集合可能为空。</strong> ENNReal 中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi><mo>⋅</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\top\cdot0=0</annotation></semantics></math></span>。若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">x,y\in U_q</annotation></semantics></math></span> 对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span> 都有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d_i(x,y)=0</annotation></semantics></math></span>，则对任何矩阵都有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>L</mi><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\sum_i L_{i\to j}d_i(x,y)=0</annotation></semantics></math></span>。所以只要 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span> 把这样一对全分量零距的点送到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">d_j</annotation></semantics></math></span> 距离为正的点对，就有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">)</mo><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><mi>q</mi></msub></msub><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">\mathscr L(c_q)|_{U_q}=\emptyset</annotation></semantics></math></span>。</li>
+<li><strong>理论本身采用同一约定。</strong> 例如 h-28ceee0bc7dbdab0“无穷传播系数强制对应局部误差归零”只在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi><mo>⋅</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\top\cdot0=0</annotation></semantics></math></span> 下才说得通。</li>
+<li><strong>这种情况确实会出现。</strong> 扩展规范空间只要求伪度量，允许不分离；<code>gauge_space.lean</code> 中专门定义了 <code>IsNonSeparating</code>。</li>
+</ul>
+<h3>2.3 反例（附录 A 已逐条机器验证）</h3>
+<p><strong>空间与度量。</strong> 取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo separator="true">,</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathcal X=\{\bot,a,b,c,e\}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>=</mo><mo stretchy="false">{</mo><mo>∗</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">I=\{\ast\}</annotation></semantics></math></span>，度量 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span> 如下：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d(x,x)=0</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo mathvariant="normal">≠</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x\neq y</annotation></semantics></math></span> 且其中一个是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 时，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mo>+</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">d(x,y)=+\infty</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d(a,b)=0</annotation></semantics></math></span>；</li>
+<li>其余不同的非 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 点对，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">d=1</annotation></semantics></math></span>。</li>
+</ul>
+<p>零距等价类是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mo stretchy="false">{</mo><mi>c</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\},\{c\},\{e\}</annotation></semantics></math></span>。三角不等式成立，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 被隔离，这是扩展伪度量，但不分离。</p>
+<p><strong>网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">N</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\mathcal N_0</annotation></semantics></math></span>。</strong> 两个节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>β</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0,\beta_1</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U=\{a,b,e\}</annotation></semantics></math></span>：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><msub><mi>β</mi><mn>0</mn></msub></msub></mrow><annotation encoding="application/x-tex">\phi_{\beta_0}</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>↦</mo><mi>a</mi></mrow><annotation encoding="application/x-tex">a\mapsto a</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>↦</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">b\mapsto c</annotation></semantics></math></span>，其余 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>↦</mo><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\mapsto\bot</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><msub><mi>β</mi><mn>1</mn></msub></msub></mrow><annotation encoding="application/x-tex">\phi_{\beta_1}</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>↦</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">e\mapsto e</annotation></semantics></math></span>，其余 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>↦</mo><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\mapsto\bot</annotation></semantics></math></span>；</li>
+<li>入口：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo>↦</mo><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">a,b\mapsto\beta_0</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>↦</mo><msub><mi>β</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">e\mapsto\beta_1</annotation></semantics></math></span>；所有输出都终止。</li>
+</ul>
+<p>可达路径为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>β</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q_0=(\beta_0)</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_{q_0}=\{a,b\}</annotation></semantics></math></span>；以及 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q_1=(\beta_1)</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><msub><mi>q</mi><mn>1</mn></msub></msub><mo>=</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_{q_1}=\{e\}</annotation></semantics></math></span>。</p>
+<p><strong>① 源码前提不可满足。</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><msub><mi>c</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>c</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo stretchy="false">(</mo><mi>b</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>=</mo><mi>d</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">d(c_{q_0}(a),c_{q_0}(b))=d(a,c)=1</annotation></semantics></math></span>，而对任意 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>∈</mo><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mo>+</mo><mi mathvariant="normal">∞</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">L\in[0,+\infty]</annotation></semantics></math></span> 都有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>⋅</mo><mi>d</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">L\cdot d(a,b)=0</annotation></semantics></math></span>。所以 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo stretchy="false">)</mo><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><msub><mi>q</mi><mn>0</mn></msub></msub></msub><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">\mathscr L(c_{q_0})|_{U_{q_0}}=\emptyset</annotation></semantics></math></span>。因此对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">N</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\mathcal N_0</annotation></semantics></math></span>，无论目标、代理、采样、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\delta_o</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span> 怎样取，<code>hLq</code> 都不可满足，三个源码声明都无法使用（<code>uniform_hLq_unsatisfiable</code>）。</p>
+<p><strong>② 正文推论适用且非平凡。</strong> 取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><msub><mi>ϕ</mi><msub><mi mathvariant="script">N</mi><mn>0</mn></msub></msub></mrow><annotation encoding="application/x-tex">\phi=\phi_{\mathcal N_0}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo>=</mo><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mrow></mrow><annotation encoding="application/x-tex">\phi^\natural=\mathrm{id}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>V</mi><mo>∗</mo></msup><mo>=</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">V^*=U</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf L^*=(1)</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mo>∗</mo></msub><mo>=</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">S_\ast=\{e\}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\delta_o</annotation></semantics></math></span> 任意。</p>
+<ul>
+<li>正文全部前提成立：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><mi>ϕ</mi><mo>∩</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq\mathrm{dom}\,\phi\cap V^*</annotation></semantics></math></span>，且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf L^*</annotation></semantics></math></span> 是目标 Lip 包络。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>q</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q_0)=\emptyset</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>q</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">{</mo><mo>∗</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q_1)=\{\ast\}</annotation></semantics></math></span>。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><msub><mi>q</mi><mn>1</mn></msub></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf L_{q_1}=(1)</annotation></semantics></math></span> 是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><msub><mi>q</mi><mn>1</mn></msub></msub></mrow><annotation encoding="application/x-tex">c_{q_1}</annotation></semantics></math></span> 在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{e\}</annotation></semantics></math></span> 上的 Lip 证书。<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">q_0</annotation></semantics></math></span> 不在并集指标中，正文不要求它的证书。</li>
+<li>左侧并集等于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><msub><mi>q</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>∗</mo></mrow></msub><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q_1,\ast}(\tau)</annotation></semantics></math></span>。由 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo stretchy="false">(</mo><mi>e</mi><mo separator="true">;</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">D(e;\{e\})=0</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><msub><mi>q</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>∗</mo></mrow></msub><mo>=</mo><msub><mi>δ</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q_1,\ast}=\delta_o</annotation></semantics></math></span>，当 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mi>o</mi></msub><mo>≤</mo><mi>τ</mi></mrow><annotation encoding="application/x-tex">\delta_o\le\tau</annotation></semantics></math></span> 时 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span> 属于左侧（<code>e_in_union</code>）。</li>
+</ul>
+<p>因此推论在这里断言了一个非空的包含关系。补齐版定理可以在这里实例化（<code>corollary_instance</code>），源码版不能。联合形式取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mo stretchy="false">{</mo><mo>∗</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">J=\{\ast\}</annotation></semantics></math></span>，情况相同。</p>
+<h3>2.4 缺口的确切范围</h3>
+<ul>
+<li><strong>何时源码版够用。</strong> 若每条不在并集指标中的路径链都在其路径域上保持全分量零距关系（规范族分离时自动成立），则全 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span> 矩阵就是它的 Lip 证书（附录 B <code>top_matrix_is_lip</code>）。此时对无关路径填 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span>：令 <code>Lq q := if j ∈ I_res(q) then L_q else ⊤</code>，并集不变，源码定理即可使用。</li>
+<li><strong>缺口出现的条件。</strong> 规范族不分离，且某条无采样路径的路径链不保持零距关系。</li>
+</ul>
+<hr>
+<h2>三、补齐方式</h2>
+<p><strong>定理改写。</strong> 只改 <code>hLq</code> 的量词范围：</p>
+<ul>
+<li>分量形式：<code>hLq : ∀ q, j ∈ path_evaluable_components N sample q → IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)</code></li>
+<li>联合形式：<code>hLq : ∀ q, J ⊆ path_evaluable_components N sample q → …</code></li>
+<li><code>_text</code> 版：<code>hLq : ∀ q, (j ∈ … ∨ J ⊆ …) → …</code></li>
+</ul>
+<p>证明中把 <code>hLq q</code> 换成 <code>hLq q hj</code>（或 <code>hLq q hJ</code>）即可。原定理是补齐版的特例，传入 <code>fun q _ =&gt; hLq q</code> 就得到。</p>
+<p><strong>等价性。</strong> <code>Lq</code> 仍是全函数；它在指标集外的取值不进入并集，所以补齐版与“只在指标路径上给出的依赖证书族”完全等价。</p>
+<p><strong>备选做法。</strong> 也可以不改原定理，直接由单路径引理推出正文推论，证明只有三行。</p>
+<hr>
+<h2>四、源码已证明的结论与需自行补充的内容</h2>
+<p><strong>源码已证明</strong>（编译通过，只依赖标准公理）：</p>
+<ol>
+<li>分量与联合两个包含关系，但前提是：所有可达路径都有 Lip 证书（<code>hLq</code>），外加 <code>hpathV</code>（与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 等价）、<code>hLstar</code>、<code>hrep</code>、<code>hd</code>。</li>
+<li><code>_text</code> 版：同样的结论，加上正文的有限阈值、非空 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span>、可评估条件（不使用），同样带一致证书前提。</li>
+<li>推论所依赖的单路径引理，它们只需要单条路径的证书：<code>proxy_path_component_guarantee_error_bound</code>、<code>path_joint_guarantee_error_bound</code>、<code>proxy_path_joint_guarantee_error_bound</code>、<code>path_chain_eq_represented_proxy_on_path</code>。</li>
+</ol>
+<p><strong>需自行补充</strong>（不在源码中，我已在本地编译验证，代码见附录）：</p>
+<ol>
+<li>只在并集指标路径上要求证书的补齐版：<code>…_rel</code> 的分量、联合与 <code>_text</code> 三个版本。这才是与正文同强度的形式化。</li>
+<li>反例 <code>ReviewCounter</code>：
+<ul>
+<li>一致证书前提严格强于正文：<code>uniform_hLq_unsatisfiable</code>。</li>
+<li>正文推论在该网络上可用且非平凡：<code>corollary_instance</code>、<code>e_in_union</code>。</li>
+</ul>
+</li>
+<li>辅助事实：
+<ul>
+<li><code>hpathV</code> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 等价；</li>
+<li><code>hrep</code> 推出 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">U\subseteq\mathrm{dom}\,\phi</annotation></semantics></math></span>；</li>
+<li>零距保持（或规范族分离）时全 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span> 矩阵是证书，这刻画了缺口的确切范围。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>附录 A：补齐版定理与反例（<code>lake env lean</code> 编译通过，公理仅 <code>propext / Classical.choice / Quot.sound</code>）</h2>
+<pre><code class="language-lean">import formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains
+
+namespace formal_oet.vol_03.ch_14_empirical_network_fitting
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_02_operator_bounds
+  formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_03.ch_12_residuals_and_substitution
+
+variable {X I V : Type} {bot : X} [Fintype I]
+
+/-- 分量形式（补齐版）：只对并集索引中的路径要求 Lip 证书。 -/
+theorem path_component_guarantee_union_subset_proxy_error_rel
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (j : I) (tau : ENNReal) (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath, j ∈ path_evaluable_components N sample q →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    {x | ∃ q : N.ReachablePath, j ∈ path_evaluable_components N sample q ∧
+      x ∈ path_component_empirical_guarantee_domain d
+        (fun i j =&gt; Lq q i j + Lstar i j) N sample q j
+        (path_empirical_residual_upper d target N sample delta_o q j) tau}
+      ⊆ {x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau} := by
+  rintro x ⟨q, hj, hxq⟩
+  exact ⟨N.path_domain_subset_source hxq.1,
+    proxy_path_component_guarantee_error_bound d hd target proxy N sample
+      delta_o q Vstar (Lq q) Lstar j tau hrep (hpathV q) (hLq q hj) hLstar hj hxq⟩
+
+/-- 联合形式（补齐版）：只对 `J ⊆ I_res(q)` 的路径要求 Lip 证书。 -/
+theorem path_joint_guarantee_union_subset_proxy_error_rel
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (J : Set I) (tau : I → ENNReal) (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    {x | ∃ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q ∧
+      x ∈ path_joint_empirical_guarantee_domain d
+        (fun i j =&gt; Lq q i j + Lstar i j) N sample q J
+        (path_empirical_residual_upper d target N sample delta_o q) tau}
+      ⊆ {x | x ∈ N.U ∧ ∀ j : I, j ∈ J → d j (proxy.func x) (target.func x) ≤ tau j} := by
+  rintro x ⟨q, hJ, hxq⟩
+  exact ⟨N.path_domain_subset_source hxq.1, fun j hj =&gt;
+    proxy_path_joint_guarantee_error_bound d hd target proxy N sample delta_o q
+      Vstar (Lq q) Lstar J tau hrep (hpathV q) (hLq q hJ) hLstar hJ hxq j hj⟩
+
+/-- 原分量定理是补齐版的特例。 -/
+example (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (j : I) (tau : ENNReal) (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath,
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :=
+  path_component_guarantee_union_subset_proxy_error_rel d hd target proxy N sample
+    delta_o Vstar Lq Lstar j tau hrep hpathV (fun q _ =&gt; hLq q) hLstar
+
+/-- `_text` 包装的补齐版：证书只在两类并集索引路径上要求。 -/
+theorem path_guarantee_union_subset_proxy_error_text_rel
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (j : I) (tau_j : ENNReal) (J : Set I) (tau : I → ENNReal)
+    (_hj_evaluable : j ∈ evaluable_components sample)
+    (_hJ_evaluable : J ⊆ evaluable_components sample)
+    (_htau_j_finite : finite_ennreal tau_j) (_hJ_nonempty : J.Nonempty)
+    (_htau_finite : ∀ i : I, i ∈ J → finite_ennreal (tau i))
+    (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath,
+      (j ∈ path_evaluable_components N sample q ∨ J ⊆ path_evaluable_components N sample q) →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    ({x | ∃ q : N.ReachablePath, j ∈ path_evaluable_components N sample q ∧
+        x ∈ path_component_empirical_guarantee_domain d
+          (fun i j =&gt; Lq q i j + Lstar i j) N sample q j
+          (path_empirical_residual_upper d target N sample delta_o q j) tau_j}
+        ⊆ {x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau_j}) ∧
+      ({x | ∃ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q ∧
+        x ∈ path_joint_empirical_guarantee_domain d
+          (fun i j =&gt; Lq q i j + Lstar i j) N sample q J
+          (path_empirical_residual_upper d target N sample delta_o q) tau}
+        ⊆ {x | x ∈ N.U ∧ ∀ i : I, i ∈ J → d i (proxy.func x) (target.func x) ≤ tau i}) :=
+  ⟨path_component_guarantee_union_subset_proxy_error_rel d hd target proxy N sample
+      delta_o Vstar Lq Lstar j tau_j hrep hpathV (fun q h =&gt; hLq q (Or.inl h)) hLstar,
+   path_joint_guarantee_union_subset_proxy_error_rel d hd target proxy N sample
+      delta_o Vstar Lq Lstar J tau hrep hpathV (fun q h =&gt; hLq q (Or.inr h)) hLstar⟩
+
+end formal_oet.vol_03.ch_14_empirical_network_fitting
+
+namespace ReviewCounter
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_02_operator_bounds
+  formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_03.ch_12_residuals_and_substitution
+  formal_oet.vol_03.ch_14_empirical_network_fitting
+
+inductive Pt | bot | a | b | c | e
+  deriving DecidableEq
+
+def cls : Pt → Nat | .bot =&gt; 0 | .a =&gt; 1 | .b =&gt; 1 | .c =&gt; 2 | .e =&gt; 3
+
+/-- 单分量非分离扩展伪度量：d(a,b)=0，其余不同非 ⊥ 点距离 1，到 ⊥ 为 ⊤。 -/
+noncomputable def dd : Unit → Pt → Pt → ENNReal := fun _ x y =&gt;
+  if x = y then 0 else if x = Pt.bot ∨ y = Pt.bot then ⊤
+  else if cls x = cls y then 0 else 1
+
+instance hdd (i : Unit) : ExtendedPseudoMetric Pt Pt.bot (dd i) where
+  nonabsorbing := ⟨Pt.a, by decide⟩
+  dist_self := by intro x; simp [dd]
+  symm := by intro x y; cases x &lt;;&gt; cases y &lt;;&gt; simp [dd, cls]
+  triangle := by intro x y z; cases x &lt;;&gt; cases y &lt;;&gt; cases z &lt;;&gt; simp [dd, cls]
+  isolate_bot := by intro x hx; cases x &lt;;&gt; simp_all [dd]
+
+def op0 : Operator Pt Pt.bot := ⟨fun x =&gt; match x with | .a =&gt; .a | .b =&gt; .c | _ =&gt; .bot, rfl⟩
+def op1 : Operator Pt Pt.bot := ⟨fun x =&gt; match x with | .e =&gt; .e | _ =&gt; .bot, rfl⟩
+def Usrc : Set Pt := {x | x = .a ∨ x = .b ∨ x = .e}
+def entryF (x : {x : Pt // x ∈ Usrc}) : Bool := decide (x.val = Pt.e)
+
+/-- 两节点、无后继：节点 false 处理 {a,b}，节点 true 处理 {e}。 -/
+def N0 : FiniteOperatorNetwork Pt Pt.bot Bool where
+  U := Usrc
+  bot_not_mem := by simp [Usrc]
+  node_fintype := inferInstance
+  node_op := fun β =&gt; if β then op1 else op0
+  node_dom_nonempty := by
+    intro β; cases β
+    · exact ⟨.a, by simp [dom, op0]⟩
+    · exact ⟨.e, by simp [dom, op1]⟩
+  entry := entryF
+  entry_mem := by rintro ⟨x, hx⟩; rcases hx with rfl | rfl | rfl &lt;;&gt; simp [entryF, dom, op0, op1]
+  choice := fun _ _ =&gt; OutputChoice.stop
+  choice_next_mem := by intro β γ y _ h; cases h
+  depth_bound := 1
+  path_of := fun x =&gt; [entryF x]
+  path_terminal := fun _ =&gt; TerminalPathFrom.stop rfl
+  path_length_le_depth := by intro x; simp
+  node_reachable := by
+    intro β; cases β
+    · exact ⟨⟨.a, by simp [Usrc]⟩, by simp [entryF]⟩
+    · exact ⟨⟨.e, by simp [Usrc]⟩, by simp [entryF]⟩
+
+theorem a_mem : Pt.a ∈ N0.path_domain [false] := ⟨Or.inl rfl, by simp [N0, entryF]⟩
+theorem b_mem : Pt.b ∈ N0.path_domain [false] := ⟨Or.inr (Or.inl rfl), by simp [N0, entryF]⟩
+theorem e_mem : Pt.e ∈ N0.path_domain [true] := ⟨Or.inr (Or.inr rfl), by simp [N0, entryF]⟩
+def q0 : N0.ReachablePath := ⟨[false], ⟨Pt.a, a_mem⟩⟩
+def q1 : N0.ReachablePath := ⟨[true], ⟨Pt.e, e_mem⟩⟩
+
+/-- 路径 q0 上不存在任何 Lip 矩阵。 -/
+theorem no_lip_on_q0 (L : Unit → Unit → ENNReal) :
+    ¬ IsLipMatrix dd (N0.path_chain q0.nodes) (N0.path_domain q0.nodes) L := by
+  intro hL
+  have h := hL.2 Pt.a a_mem Pt.b b_mem ()
+  simp [FiniteOperatorNetwork.path_chain, OperatorChain, q0, N0, op0, dd, cls] at h
+
+/-- 源码三个定理共有的一致证书前提对 N0 不可满足。 -/
+theorem uniform_hLq_unsatisfiable :
+    ¬ ∃ Lq : N0.ReachablePath → Unit → Unit → ENNReal,
+      ∀ q, IsLipMatrix dd (N0.path_chain q.nodes) (N0.path_domain q.nodes) (Lq q) :=
+  fun ⟨Lq, hLq⟩ =&gt; no_lip_on_q0 (Lq q0) (hLq q0)
+
+def sampleE : Unit → Set Pt := fun _ =&gt; {Pt.e}
+def tgt : Operator Pt Pt.bot := ⟨id, rfl⟩
+
+theorem pd_true (x : Pt) (hx : x ∈ N0.path_domain [true]) : x = Pt.e := by
+  rcases hx with ⟨hxU, hpath⟩; simpa [N0, entryF] using hpath
+
+theorem evaluable_nodes (q : N0.ReachablePath)
+    (hq : () ∈ path_evaluable_components N0 sampleE q) : q.nodes = [true] := by
+  rcases hq with ⟨x, hxS, hxU, hpath⟩
+  have hx : x = Pt.e := hxS
+  subst hx; rw [← hpath]; simp [N0, entryF]
+
+/-- 正文所需的证书（只在可评估路径上）可以给出。 -/
+theorem lip_on_relevant (q : N0.ReachablePath)
+    (hq : () ∈ path_evaluable_components N0 sampleE q) :
+    IsLipMatrix dd (N0.path_chain q.nodes) (N0.path_domain q.nodes) (fun _ _ =&gt; 1) := by
+  rw [evaluable_nodes q hq]
+  refine ⟨fun x hx =&gt; ?_, fun x hx y hy j =&gt; ?_⟩
+  · obtain rfl := pd_true x hx
+    simp [dom, FiniteOperatorNetwork.path_chain, OperatorChain, N0, op1]
+  · obtain rfl := pd_true x hx; obtain rfl := pd_true y hy; simp [dd]
+
+theorem tgt_lip : TargetLipEnvelopeCertificate dd tgt Usrc (fun _ _ =&gt; 1) := by
+  refine ⟨⟨fun x hx =&gt; ?_, fun x _ y _ j =&gt; by simp [tgt]⟩⟩
+  rcases hx with rfl | rfl | rfl &lt;;&gt; simp [dom, tgt]
+
+/-- 补齐版推论在 N0 上可实例化。 -/
+theorem corollary_instance (delta tau : ENNReal) :
+    {x | ∃ q : N0.ReachablePath, () ∈ path_evaluable_components N0 sampleE q ∧
+      x ∈ path_component_empirical_guarantee_domain dd
+        (fun i j =&gt; (fun (_ : N0.ReachablePath) (_ _ : Unit) =&gt; (1 : ENNReal)) q i j +
+          (fun (_ _ : Unit) =&gt; (1 : ENNReal)) i j) N0 sampleE q ()
+        (path_empirical_residual_upper dd tgt N0 sampleE (fun _ =&gt; delta) q ()) tau}
+      ⊆ {x | x ∈ N0.U ∧ dd () (N0.extensional_operator.func x) (tgt.func x) ≤ tau} :=
+  path_component_guarantee_union_subset_proxy_error_rel dd hdd tgt N0.extensional_operator
+    N0 sampleE (fun _ =&gt; delta) Usrc (fun _ _ _ =&gt; 1) (fun _ _ =&gt; 1) () tau
+    (fun _ _ =&gt; rfl) (fun _ _ hx =&gt; N0.path_domain_subset_source hx) lip_on_relevant tgt_lip
+
+/-- 左侧并集非空：δ ≤ τ 时 e ∈ U_{q1,*}(τ)。 -/
+theorem e_in_union (delta tau : ENNReal) (h : delta ≤ tau) :
+    ∃ q : N0.ReachablePath, () ∈ path_evaluable_components N0 sampleE q ∧
+      Pt.e ∈ path_component_empirical_guarantee_domain dd
+        (fun i j =&gt; (fun (_ : N0.ReachablePath) (_ _ : Unit) =&gt; (1 : ENNReal)) q i j +
+          (fun (_ _ : Unit) =&gt; (1 : ENNReal)) i j) N0 sampleE q ()
+        (path_empirical_residual_upper dd tgt N0 sampleE (fun _ =&gt; delta) q ()) tau := by
+  have hS : Pt.e ∈ path_component_sample N0 sampleE q1 () := ⟨rfl, e_mem⟩
+  refine ⟨q1, ⟨Pt.e, hS⟩, e_mem, ?_⟩
+  rw [weighted_anchor_distance_self_eq_zero dd hdd _ () hS, zero_add]
+  have hraw : empirical_residual_raw_sup dd tgt (N0.path_chain q1.nodes)
+      (path_component_sample N0 sampleE q1 ()) () = 0 := by
+    refine le_antisymm (iSup_le ?_) (zero_le _)
+    rintro ⟨x, hxS, hxpd⟩
+    have hx : x = Pt.e := hxS
+    subst hx
+    simp [FiniteOperatorNetwork.path_chain, OperatorChain, q1, N0, op1, tgt, dd]
+  simpa [path_empirical_residual_upper, empirical_residual_upper, path_sample_family, hraw]
+    using h
+
+end ReviewCounter
+
+#print axioms ReviewCounter.uniform_hLq_unsatisfiable
+#print axioms ReviewCounter.e_in_union
+#print axioms formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_union_subset_proxy_error_text_rel
+</code></pre>
+<h2>附录 B：辅助核验（编译通过）</h2>
+<pre><code class="language-lean">import formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_02_operator_bounds
+  formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_03.ch_14_empirical_network_fitting
+
+variable {X V I : Type} {bot : X} [Fintype I]
+
+/-- `hpathV` 与正文 `U ⊆ V*` 等价。 -/
+example (N : FiniteOperatorNetwork X bot V) (Vstar : Set X) :
+    (∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar) ↔ N.U ⊆ Vstar :=
+  ⟨fun h _ hx =&gt; h (reachable_path_at N hx) (mem_path_domain_reachable_path_at N hx),
+   fun h _ _ hx =&gt; h (N.path_domain_subset_source hx)⟩
+
+/-- 网络表示推出 `U ⊆ dom φ`。 -/
+example (N : FiniteOperatorNetwork X bot V) (proxy : Operator X bot)
+    (hrep : N.represents proxy) : N.U ⊆ dom proxy := by
+  intro x hx
+  have h : x ∈ dom N.extensional_operator := by rw [N.dom_extensional_operator_eq]; exact hx
+  simpa [dom, hrep x hx] using h
+
+/-- 路径链保持全分量零距关系时，全 ⊤ 矩阵是 Lip 证书。 -/
+theorem top_matrix_is_lip (d : I → X → X → ENNReal) (N : FiniteOperatorNetwork X bot V)
+    (q : N.ReachablePath)
+    (hzero : ∀ x ∈ N.path_domain q.nodes, ∀ y ∈ N.path_domain q.nodes, (∀ i, d i x y = 0) →
+      ∀ j, d j ((N.path_chain q.nodes).func x) ((N.path_chain q.nodes).func y) = 0) :
+    IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (fun _ _ =&gt; ⊤) := by
+  refine ⟨N.path_domain_subset_path_chain_dom q, fun x hx y hy j =&gt; ?_⟩
+  by_cases h : ∀ i, d i x y = 0
+  · rw [hzero x hx y hy h j]; exact zero_le _
+  · obtain ⟨i, hi⟩ := not_forall.mp h
+    calc _ ≤ (⊤ : ENNReal) := le_top
+      _ = ⊤ * d i x y := (ENNReal.top_mul hi).symm
+      _ ≤ ∑ k, (fun _ _ =&gt; (⊤ : ENNReal)) k j * d k x y :=
+          Finset.single_le_sum (f := fun k =&gt; (⊤ : ENNReal) * d k x y)
+            (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+
+/-- 分离规范族下该条件自动成立。 -/
+example (d : I → X → X → ENNReal) (hd : ∀ j, ExtendedPseudoMetric X bot (d j))
+    (hsep : IsSeparating d) (N : FiniteOperatorNetwork X bot V) (q : N.ReachablePath) :
+    IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (fun _ _ =&gt; ⊤) :=
+  top_matrix_is_lip d N q (fun x _ y _ h j =&gt; by rw [hsep x y h]; exact (hd j).dist_self _)
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/original-reviews/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 5022f77204e762d65cc047885c69d0124b9997ed7b857704cbf8b5b39d19b571</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/lean/AHR02-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/claim-public-sources/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 49b1557855540487901e3e5c406de312fb1242967fd9bb9ad52d0ae3702e6a17</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Independent full A1 source-based review; quoted commitments and root-cause judgments retained, raw runtime identity and human approval remain distinct.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 35</p>
+<p><strong>审核说明：</strong> 明确三个导出包装的∀q路径Lip前提强于实际可评估路径条件，未把定义或原数学结论判假。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 定义、单路径局部上界、代理路径桥梁和较强前提下定理均准确保留。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 30</p>
+<p><strong>审核说明：</strong> 五点非分离伪度量：坏路径把零距a,b映到正距a,c，因此包括无穷系数也无Lip矩阵；另一已采样单点路径使正文保证域非空。反例不是任意挑坏矩阵。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 15</p>
+<p><strong>审核说明：</strong> 将hLq按单分量/联合可评估条件化，保留Lq全函数和原独立定理，准确指出新增附录为其自行补充。</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h2>结论</h2>
+<p>源码中对应推论 #h-93b9c20ea18b4e59 的是 <code>path_guarantee_domains.lean</code> 末尾三个声明：</p>
+<ul>
+<li><code>path_component_guarantee_union_subset_proxy_error</code>（分量形式）</li>
+<li><code>path_joint_guarantee_union_subset_proxy_error</code>（联合形式）</li>
+<li><code>path_guarantee_union_subset_proxy_error_text</code>（加上正文前提的包装）</li>
+</ul>
+<p><strong>判断：定义和结论准确，但覆盖不完整，源码定理严格弱于正文推论。</strong></p>
+<ul>
+<li><strong>准确的部分。</strong> 所涉对象（<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">U_q</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">S_{q,j}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q)</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q,j}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf A_q</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{\mathbf A,j}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\boldsymbol\tau)</annotation></semantics></math></span>）逐项与正文一致。两个包含关系的结论与正文逐字对应。证明结构也一致：取见证路径，代入 #h-4b5219aa3a3bbdad。</li>
+<li><strong>编译核验。</strong> <code>lake build …path_guarantee_domains</code> 通过。三个声明的 <code>#print axioms</code> 只有 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>，没有 <code>sorry</code>。</li>
+<li><strong>缺口只有一处前提。</strong> 三个声明都要求
+<code>hLq : ∀ q : N.ReachablePath, IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)</code>，
+也就是<strong>所有</strong>可达路径都要有路径链 Lip 证书。正文的 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span> 只在“设 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>∈</mo><mi mathvariant="script">P</mi></mrow><annotation encoding="application/x-tex">q\in\mathcal P</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}(q)</annotation></semantics></math></span>”下选取，推论的并集也只经过这些路径。</li>
+<li><strong>这一加强是实质性的。</strong> 本理论允许规范族不分离，且采用 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mi mathvariant="normal">∞</mi><mo>⋅</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">+\infty\cdot0=0</annotation></semantics></math></span> 的约定，此时 Lip 证书集合可以是空集。我构造了一个反例：正文推论的全部前提成立、左侧并集非空，而源码三个声明都无法实例化。</li>
+<li><strong>修补很简单。</strong> 把 <code>hLq</code> 改成以并集指标条件为前提的条件式，证明基本不变。补齐版与反例都已在本地编译通过，代码见附录。</li>
+</ul>
+<hr>
+<h2>一、对应关系（准确的部分）</h2>
+<table>
+<thead>
+<tr>
+<th>正文</th>
+<th>Lean</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>扩展规范空间，有限 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span></td>
+<td><code>d</code>，<code>hd : ∀ j, ExtendedPseudoMetric X bot (d j)</code>，<code>[Fintype I]</code></td>
+<td>一致</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo separator="true">,</mo><mtext> </mtext><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi^\natural,\ \phi</annotation></semantics></math></span></td>
+<td><code>target</code>，<code>proxy</code></td>
+<td></td>
+</tr>
+<tr>
+<td>输入域为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> 的有限网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi></mrow><annotation encoding="application/x-tex">\mathcal N</annotation></semantics></math></span></td>
+<td><code>N : FiniteOperatorNetwork X bot V</code>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span> = <code>N.U</code></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><mi mathvariant="script">N</mi></msub><msub><mo>≡</mo><mi>U</mi></msub><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi_{\mathcal N}\equiv_U\phi</annotation></semantics></math></span></td>
+<td><code>hrep : N.represents proxy</code></td>
+<td>即 <code>LocalEquivalent N.extensional_operator proxy N.U</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span></td>
+<td><code>hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar</code></td>
+<td>与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 等价，因为路径域覆盖 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span>（附录 B 已证）</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">U\subseteq\mathrm{dom}\,\phi</annotation></semantics></math></span></td>
+<td>未单列</td>
+<td>可由 <code>hrep</code> 与 <code>dom_extensional_operator_eq</code> 推出（附录 B）</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msup><mi>V</mi><mo>∗</mo></msup><mo separator="true">,</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(V^*,\mathbf L^*)</annotation></semantics></math></span></td>
+<td><code>hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar</code></td>
+<td>含 <code>Vstar ⊆ dom target</code></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">P</mi><mo separator="true">,</mo><mtext> </mtext><msub><mi>U</mi><mi>q</mi></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathcal P,\ U_q,\ c_q</annotation></semantics></math></span></td>
+<td><code>N.ReachablePath</code>，<code>N.path_domain q.nodes</code>，<code>N.path_chain q.nodes</code></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span></td>
+<td><code>path_component_sample N sample q j</code></td>
+<td></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q)</annotation></semantics></math></span></td>
+<td><code>path_evaluable_components N sample q</code></td>
+<td>自动包含于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}</annotation></semantics></math></span>（<code>path_evaluable_subset_evaluable_components</code>）</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q,j}</annotation></semantics></math></span></td>
+<td><code>path_empirical_residual_upper d target N sample delta_o q j</code></td>
+<td>展开为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi>sup</mi><mo>⁡</mo></mrow><mrow><mi>x</mi><mo>∈</mo><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow></msub><msub><mi>d</mi><mi>j</mi></msub><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>+</mo><msub><mi>δ</mi><mrow><mi>o</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\sup_{x\in S_{q,j}}d_j(c_q(x),\phi^\natural(x))+\delta_{o,j}</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf L_q</annotation></semantics></math></span></td>
+<td><code>Lq q</code> 与 <code>hLq</code></td>
+<td><strong>差异所在</strong>，见第二节</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">A</mi><mi>q</mi></msub><mo>=</mo><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>+</mo><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf A_q=\mathbf L_q+\mathbf L^*</annotation></semantics></math></span></td>
+<td><code>fun i j =&gt; Lq q i j + Lstar i j</code></td>
+<td><code>A i j</code> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mo stretchy="false">[</mo><mi mathvariant="bold">A</mi><msub><mo stretchy="false">]</mo><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">=[\mathbf A]_{i\to j}</annotation></semantics></math></span>，与 <code>IsLipMatrix</code> 的下标约定一致</td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="bold">A</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">;</mo><mi>E</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D_{\mathbf A,j}(x;E)</annotation></semantics></math></span></td>
+<td><code>weighted_anchor_distance d A j x E</code></td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi>inf</mi><mo>⁡</mo></mrow><mrow><mi>y</mi><mo>∈</mo><mi>E</mi></mrow></msub><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>A</mi><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub><mtext> </mtext><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\inf_{y\in E}\sum_i A_{i\to j}\,d_i(x,y)</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+<td><code>path_component_empirical_guarantee_domain …</code></td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>:</mo><mi>D</mi><mo>+</mo><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>≤</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{x\in U_q: D+\hat\varepsilon_{q,j}\le\tau_j\}</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>J</mi></mrow></msub><mo stretchy="false">(</mo><mi mathvariant="bold-italic">τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q,J}(\boldsymbol\tau)</annotation></semantics></math></span></td>
+<td><code>path_joint_empirical_guarantee_domain …</code></td>
+<td><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub><mo>:</mo><mi mathvariant="normal">∀</mi><mi>j</mi><mo>∈</mo><mi>J</mi><mo separator="true">,</mo><mo>…</mo><mtext> </mtext><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{x\in U_q:\forall j\in J,\dots\}</annotation></semantics></math></span>；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\neq\emptyset</annotation></semantics></math></span> 时即 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>⋂</mo><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow></msub><msub><mi>U</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>τ</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\bigcap_{j\in J}U_{q,j}(\tau_j)</annotation></semantics></math></span></td>
+</tr>
+<tr>
+<td>左侧并集</td>
+<td>满足 <code>∃ q, j ∈ path_evaluable_components N sample q ∧ x ∈ …</code> 的 <code>x</code> 构成的集合</td>
+<td>联合形式把条件换成 <code>J ⊆ …</code></td>
+</tr>
+<tr>
+<td>右侧</td>
+<td><code>x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau</code></td>
+<td>联合形式对 <code>j ∈ J</code> 全称，一致</td>
+</tr>
+</tbody>
+</table>
+<p>其余几点都只是放宽前提，不影响覆盖：</p>
+<ul>
+<li><strong>省略的正文前提。</strong> 主定理没有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">j\in I_{\mathrm{res}}</annotation></semantics></math></span>、有限阈值、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> 非空且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">J\subseteq I_{\mathrm{res}}</annotation></semantics></math></span> 这些前提，结论更一般；<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\tau=\top</annotation></semantics></math></span> 或 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J=\emptyset</annotation></semantics></math></span> 时结论平凡成立。<code>_text</code> 版重新列出这些前提，但证明中不使用。</li>
+<li><strong>采样结构约束不需要。</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mi>j</mi></msub><mo>⊆</mo><mi>S</mi><mo>∩</mo><mi>U</mi><mo>∩</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup></mrow><annotation encoding="application/x-tex">S_j\subseteq S\cap U\cap\mathrm{dom}\,\phi^\natural</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span> 有限都用不到，因为只用到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mrow><mi>q</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>S</mi><mi>j</mi></msub><mo>∩</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">S_{q,j}=S_j\cap U_q</annotation></semantics></math></span>，而 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mi>q</mi></msub><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup></mrow><annotation encoding="application/x-tex">U_q\subseteq V^*\subseteq\mathrm{dom}\,\phi^\natural</annotation></semantics></math></span>。</li>
+<li><strong><code>_text</code> 版共用前提。</strong> 两个结论共用前提（包括 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo mathvariant="normal">≠</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">J\neq\emptyset</annotation></semantics></math></span>）。若只要分量结论，取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mo stretchy="false">{</mo><mi>j</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">J=\{j\}</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>≡</mo><msub><mi>τ</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\tau\equiv\tau_j</annotation></semantics></math></span> 即可，没有损失。</li>
+<li><strong>证明对应。</strong> 先取见证 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span>，用 <code>path_domain_subset_source</code> 得 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">x\in U</annotation></semantics></math></span>。分量形式再用 <code>proxy_path_component_guarantee_error_bound</code>；联合形式用 <code>path_joint_guarantee_error_bound</code> 加 <code>path_chain_eq_represented_proxy_on_path</code>。这正是正文的“由 @h-4b5219aa3a3bbdad 得到……对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>∈</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">j\in J</annotation></semantics></math></span> 同时应用”。</li>
+</ul>
+<hr>
+<h2>二、不足：路径链 Lip 证书的量词范围</h2>
+<h3>2.1 差异</h3>
+<p>正文需要的前提是：</p>
+<p><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">∀</mi><mi>q</mi><mo>∈</mo><mi mathvariant="script">P</mi><mo>:</mo><mspace width="1em"/><mi>j</mi><mo>∈</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo><mtext> </mtext><mo>⟹</mo><mtext> </mtext><msub><mi mathvariant="bold">L</mi><mi>q</mi></msub><mo>∈</mo><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">)</mo><msub><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">∣</mo><msub><mi>U</mi><mi>q</mi></msub></msub></mrow><annotation encoding="application/x-tex">\forall q\in\mathcal P:\quad j\in I_{\mathrm{res}}(q)\ \Longrightarrow\ \mathbf L_q\in\mathscr L(c_q)\big|_{U_q}</annotation></semantics></math></span></p>
+<p>联合形式中把条件换成 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>⊆</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">J\subseteq I_{\mathrm{res}}(q)</annotation></semantics></math></span>。源码则要求对全部可达路径成立。源码证明里其实只对见证路径用到了 <code>hLq q</code>，所以这个全称量词只是陈述时写宽了，数学上并不需要。</p>
+<h3>2.2 为什么这是实质性的加强</h3>
+<ul>
+<li><strong>证书集合可能为空。</strong> ENNReal 中 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi><mo>⋅</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\top\cdot0=0</annotation></semantics></math></span>。若 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo>∈</mo><msub><mi>U</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">x,y\in U_q</annotation></semantics></math></span> 对所有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span> 都有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d_i(x,y)=0</annotation></semantics></math></span>，则对任何矩阵都有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>L</mi><mrow><mi>i</mi><mo>→</mo><mi>j</mi></mrow></msub><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\sum_i L_{i\to j}d_i(x,y)=0</annotation></semantics></math></span>。所以只要 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">c_q</annotation></semantics></math></span> 把这样一对全分量零距的点送到 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">d_j</annotation></semantics></math></span> 距离为正的点对，就有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><mi>q</mi></msub><mo stretchy="false">)</mo><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><mi>q</mi></msub></msub><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">\mathscr L(c_q)|_{U_q}=\emptyset</annotation></semantics></math></span>。</li>
+<li><strong>理论本身采用同一约定。</strong> 例如 h-28ceee0bc7dbdab0“无穷传播系数强制对应局部误差归零”只在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi><mo>⋅</mo><mn>0</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\top\cdot0=0</annotation></semantics></math></span> 下才说得通。</li>
+<li><strong>这种情况确实会出现。</strong> 扩展规范空间只要求伪度量，允许不分离；<code>gauge_space.lean</code> 中专门定义了 <code>IsNonSeparating</code>。</li>
+</ul>
+<h3>2.3 反例（附录 A 已逐条机器验证）</h3>
+<p><strong>空间与度量。</strong> 取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">X</mi><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="normal">⊥</mi><mo separator="true">,</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo separator="true">,</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\mathcal X=\{\bot,a,b,c,e\}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>=</mo><mo stretchy="false">{</mo><mo>∗</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">I=\{\ast\}</annotation></semantics></math></span>，度量 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span> 如下：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d(x,x)=0</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo mathvariant="normal">≠</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x\neq y</annotation></semantics></math></span> 且其中一个是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 时，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mo>+</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">d(x,y)=+\infty</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d(a,b)=0</annotation></semantics></math></span>；</li>
+<li>其余不同的非 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 点对，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">d=1</annotation></semantics></math></span>。</li>
+</ul>
+<p>零距等价类是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mo stretchy="false">{</mo><mi>c</mi><mo stretchy="false">}</mo><mo separator="true">,</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\},\{c\},\{e\}</annotation></semantics></math></span>。三角不等式成立，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\bot</annotation></semantics></math></span> 被隔离，这是扩展伪度量，但不分离。</p>
+<p><strong>网络 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">N</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\mathcal N_0</annotation></semantics></math></span>。</strong> 两个节点 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>0</mn></msub><mo separator="true">,</mo><msub><mi>β</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\beta_0,\beta_1</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U=\{a,b,e\}</annotation></semantics></math></span>：</p>
+<ul>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><msub><mi>β</mi><mn>0</mn></msub></msub></mrow><annotation encoding="application/x-tex">\phi_{\beta_0}</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>↦</mo><mi>a</mi></mrow><annotation encoding="application/x-tex">a\mapsto a</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>↦</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">b\mapsto c</annotation></semantics></math></span>，其余 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>↦</mo><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\mapsto\bot</annotation></semantics></math></span>；</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϕ</mi><msub><mi>β</mi><mn>1</mn></msub></msub></mrow><annotation encoding="application/x-tex">\phi_{\beta_1}</annotation></semantics></math></span>：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>↦</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">e\mapsto e</annotation></semantics></math></span>，其余 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>↦</mo><mi mathvariant="normal">⊥</mi></mrow><annotation encoding="application/x-tex">\mapsto\bot</annotation></semantics></math></span>；</li>
+<li>入口：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo>↦</mo><msub><mi>β</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">a,b\mapsto\beta_0</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>↦</mo><msub><mi>β</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">e\mapsto\beta_1</annotation></semantics></math></span>；所有输出都终止。</li>
+</ul>
+<p>可达路径为 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>β</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q_0=(\beta_0)</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo>=</mo><mo stretchy="false">{</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_{q_0}=\{a,b\}</annotation></semantics></math></span>；以及 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">(</mo><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">q_1=(\beta_1)</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><msub><mi>q</mi><mn>1</mn></msub></msub><mo>=</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">U_{q_1}=\{e\}</annotation></semantics></math></span>。</p>
+<p><strong>① 源码前提不可满足。</strong> <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo stretchy="false">(</mo><msub><mi>c</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><msub><mi>c</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo stretchy="false">(</mo><mi>b</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>=</mo><mi>d</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">d(c_{q_0}(a),c_{q_0}(b))=d(a,c)=1</annotation></semantics></math></span>，而对任意 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>∈</mo><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mo>+</mo><mi mathvariant="normal">∞</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">L\in[0,+\infty]</annotation></semantics></math></span> 都有 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>⋅</mo><mi>d</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">L\cdot d(a,b)=0</annotation></semantics></math></span>。所以 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">L</mi><mo stretchy="false">(</mo><msub><mi>c</mi><msub><mi>q</mi><mn>0</mn></msub></msub><mo stretchy="false">)</mo><msub><mi mathvariant="normal">∣</mi><msub><mi>U</mi><msub><mi>q</mi><mn>0</mn></msub></msub></msub><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">\mathscr L(c_{q_0})|_{U_{q_0}}=\emptyset</annotation></semantics></math></span>。因此对 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">N</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\mathcal N_0</annotation></semantics></math></span>，无论目标、代理、采样、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\delta_o</annotation></semantics></math></span>、<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi></mrow><annotation encoding="application/x-tex">\tau</annotation></semantics></math></span> 怎样取，<code>hLq</code> 都不可满足，三个源码声明都无法使用（<code>uniform_hLq_unsatisfiable</code>）。</p>
+<p><strong>② 正文推论适用且非平凡。</strong> 取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><msub><mi>ϕ</mi><msub><mi mathvariant="script">N</mi><mn>0</mn></msub></msub></mrow><annotation encoding="application/x-tex">\phi=\phi_{\mathcal N_0}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϕ</mi><mi mathvariant="normal">♮</mi></msup><mo>=</mo><mrow><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mrow></mrow><annotation encoding="application/x-tex">\phi^\natural=\mathrm{id}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>V</mi><mo>∗</mo></msup><mo>=</mo><mi>U</mi></mrow><annotation encoding="application/x-tex">V^*=U</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf L^*=(1)</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mo>∗</mo></msub><mo>=</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">S_\ast=\{e\}</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\delta_o</annotation></semantics></math></span> 任意。</p>
+<ul>
+<li>正文全部前提成立：<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><mi>ϕ</mi><mo>∩</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq\mathrm{dom}\,\phi\cap V^*</annotation></semantics></math></span>，且 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="bold">L</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">\mathbf L^*</annotation></semantics></math></span> 是目标 Lip 包络。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>q</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">∅</mi></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q_0)=\emptyset</annotation></semantics></math></span>，<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">s</mi></mrow></msub><mo stretchy="false">(</mo><msub><mi>q</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">{</mo><mo>∗</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">I_{\mathrm{res}}(q_1)=\{\ast\}</annotation></semantics></math></span>。</li>
+<li><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">L</mi><msub><mi>q</mi><mn>1</mn></msub></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathbf L_{q_1}=(1)</annotation></semantics></math></span> 是 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><msub><mi>q</mi><mn>1</mn></msub></msub></mrow><annotation encoding="application/x-tex">c_{q_1}</annotation></semantics></math></span> 在 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\{e\}</annotation></semantics></math></span> 上的 Lip 证书。<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>q</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">q_0</annotation></semantics></math></span> 不在并集指标中，正文不要求它的证书。</li>
+<li>左侧并集等于 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>U</mi><mrow><msub><mi>q</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>∗</mo></mrow></msub><mo stretchy="false">(</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">U_{q_1,\ast}(\tau)</annotation></semantics></math></span>。由 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo stretchy="false">(</mo><mi>e</mi><mo separator="true">;</mo><mo stretchy="false">{</mo><mi>e</mi><mo stretchy="false">}</mo><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">D(e;\{e\})=0</annotation></semantics></math></span> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>ε</mi><mo>^</mo></mover><mrow><msub><mi>q</mi><mn>1</mn></msub><mo separator="true">,</mo><mo>∗</mo></mrow></msub><mo>=</mo><msub><mi>δ</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">\hat\varepsilon_{q_1,\ast}=\delta_o</annotation></semantics></math></span>，当 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mi>o</mi></msub><mo>≤</mo><mi>τ</mi></mrow><annotation encoding="application/x-tex">\delta_o\le\tau</annotation></semantics></math></span> 时 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span> 属于左侧（<code>e_in_union</code>）。</li>
+</ul>
+<p>因此推论在这里断言了一个非空的包含关系。补齐版定理可以在这里实例化（<code>corollary_instance</code>），源码版不能。联合形式取 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi><mo>=</mo><mo stretchy="false">{</mo><mo>∗</mo><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">J=\{\ast\}</annotation></semantics></math></span>，情况相同。</p>
+<h3>2.4 缺口的确切范围</h3>
+<ul>
+<li><strong>何时源码版够用。</strong> 若每条不在并集指标中的路径链都在其路径域上保持全分量零距关系（规范族分离时自动成立），则全 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span> 矩阵就是它的 Lip 证书（附录 B <code>top_matrix_is_lip</code>）。此时对无关路径填 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span>：令 <code>Lq q := if j ∈ I_res(q) then L_q else ⊤</code>，并集不变，源码定理即可使用。</li>
+<li><strong>缺口出现的条件。</strong> 规范族不分离，且某条无采样路径的路径链不保持零距关系。</li>
+</ul>
+<hr>
+<h2>三、补齐方式</h2>
+<p><strong>定理改写。</strong> 只改 <code>hLq</code> 的量词范围：</p>
+<ul>
+<li>分量形式：<code>hLq : ∀ q, j ∈ path_evaluable_components N sample q → IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)</code></li>
+<li>联合形式：<code>hLq : ∀ q, J ⊆ path_evaluable_components N sample q → …</code></li>
+<li><code>_text</code> 版：<code>hLq : ∀ q, (j ∈ … ∨ J ⊆ …) → …</code></li>
+</ul>
+<p>证明中把 <code>hLq q</code> 换成 <code>hLq q hj</code>（或 <code>hLq q hJ</code>）即可。原定理是补齐版的特例，传入 <code>fun q _ =&gt; hLq q</code> 就得到。</p>
+<p><strong>等价性。</strong> <code>Lq</code> 仍是全函数；它在指标集外的取值不进入并集，所以补齐版与“只在指标路径上给出的依赖证书族”完全等价。</p>
+<p><strong>备选做法。</strong> 也可以不改原定理，直接由单路径引理推出正文推论，证明只有三行。</p>
+<hr>
+<h2>四、源码已证明的结论与需自行补充的内容</h2>
+<p><strong>源码已证明</strong>（编译通过，只依赖标准公理）：</p>
+<ol>
+<li>分量与联合两个包含关系，但前提是：所有可达路径都有 Lip 证书（<code>hLq</code>），外加 <code>hpathV</code>（与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 等价）、<code>hLstar</code>、<code>hrep</code>、<code>hd</code>。</li>
+<li><code>_text</code> 版：同样的结论，加上正文的有限阈值、非空 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span>、可评估条件（不使用），同样带一致证书前提。</li>
+<li>推论所依赖的单路径引理，它们只需要单条路径的证书：<code>proxy_path_component_guarantee_error_bound</code>、<code>path_joint_guarantee_error_bound</code>、<code>proxy_path_joint_guarantee_error_bound</code>、<code>path_chain_eq_represented_proxy_on_path</code>。</li>
+</ol>
+<p><strong>需自行补充</strong>（不在源码中，我已在本地编译验证，代码见附录）：</p>
+<ol>
+<li>只在并集指标路径上要求证书的补齐版：<code>…_rel</code> 的分量、联合与 <code>_text</code> 三个版本。这才是与正文同强度的形式化。</li>
+<li>反例 <code>ReviewCounter</code>：
+<ul>
+<li>一致证书前提严格强于正文：<code>uniform_hLq_unsatisfiable</code>。</li>
+<li>正文推论在该网络上可用且非平凡：<code>corollary_instance</code>、<code>e_in_union</code>。</li>
+</ul>
+</li>
+<li>辅助事实：
+<ul>
+<li><code>hpathV</code> 与 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><msup><mi>V</mi><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">U\subseteq V^*</annotation></semantics></math></span> 等价；</li>
+<li><code>hrep</code> 推出 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>U</mi><mo>⊆</mo><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">m</mi></mrow><mtext> </mtext><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">U\subseteq\mathrm{dom}\,\phi</annotation></semantics></math></span>；</li>
+<li>零距保持（或规范族分离）时全 <span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">⊤</mi></mrow><annotation encoding="application/x-tex">\top</annotation></semantics></math></span> 矩阵是证书，这刻画了缺口的确切范围。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>附录 A：补齐版定理与反例（<code>lake env lean</code> 编译通过，公理仅 <code>propext / Classical.choice / Quot.sound</code>）</h2>
+<pre><code class="language-lean">import formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains
+
+namespace formal_oet.vol_03.ch_14_empirical_network_fitting
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_02_operator_bounds
+  formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_03.ch_12_residuals_and_substitution
+
+variable {X I V : Type} {bot : X} [Fintype I]
+
+/-- 分量形式（补齐版）：只对并集索引中的路径要求 Lip 证书。 -/
+theorem path_component_guarantee_union_subset_proxy_error_rel
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (j : I) (tau : ENNReal) (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath, j ∈ path_evaluable_components N sample q →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    {x | ∃ q : N.ReachablePath, j ∈ path_evaluable_components N sample q ∧
+      x ∈ path_component_empirical_guarantee_domain d
+        (fun i j =&gt; Lq q i j + Lstar i j) N sample q j
+        (path_empirical_residual_upper d target N sample delta_o q j) tau}
+      ⊆ {x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau} := by
+  rintro x ⟨q, hj, hxq⟩
+  exact ⟨N.path_domain_subset_source hxq.1,
+    proxy_path_component_guarantee_error_bound d hd target proxy N sample
+      delta_o q Vstar (Lq q) Lstar j tau hrep (hpathV q) (hLq q hj) hLstar hj hxq⟩
+
+/-- 联合形式（补齐版）：只对 `J ⊆ I_res(q)` 的路径要求 Lip 证书。 -/
+theorem path_joint_guarantee_union_subset_proxy_error_rel
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (J : Set I) (tau : I → ENNReal) (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    {x | ∃ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q ∧
+      x ∈ path_joint_empirical_guarantee_domain d
+        (fun i j =&gt; Lq q i j + Lstar i j) N sample q J
+        (path_empirical_residual_upper d target N sample delta_o q) tau}
+      ⊆ {x | x ∈ N.U ∧ ∀ j : I, j ∈ J → d j (proxy.func x) (target.func x) ≤ tau j} := by
+  rintro x ⟨q, hJ, hxq⟩
+  exact ⟨N.path_domain_subset_source hxq.1, fun j hj =&gt;
+    proxy_path_joint_guarantee_error_bound d hd target proxy N sample delta_o q
+      Vstar (Lq q) Lstar J tau hrep (hpathV q) (hLq q hJ) hLstar hJ hxq j hj⟩
+
+/-- 原分量定理是补齐版的特例。 -/
+example (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (j : I) (tau : ENNReal) (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath,
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :=
+  path_component_guarantee_union_subset_proxy_error_rel d hd target proxy N sample
+    delta_o Vstar Lq Lstar j tau hrep hpathV (fun q _ =&gt; hLq q) hLstar
+
+/-- `_text` 包装的补齐版：证书只在两类并集索引路径上要求。 -/
+theorem path_guarantee_union_subset_proxy_error_text_rel
+    (d : I → X → X → ENNReal) (hd : ∀ j : I, ExtendedPseudoMetric X bot (d j))
+    (target proxy : Operator X bot) (N : FiniteOperatorNetwork X bot V)
+    (sample : I → Set X) (delta_o : I → ENNReal) (Vstar : Set X)
+    (Lq : N.ReachablePath → I → I → ENNReal) (Lstar : I → I → ENNReal)
+    (j : I) (tau_j : ENNReal) (J : Set I) (tau : I → ENNReal)
+    (_hj_evaluable : j ∈ evaluable_components sample)
+    (_hJ_evaluable : J ⊆ evaluable_components sample)
+    (_htau_j_finite : finite_ennreal tau_j) (_hJ_nonempty : J.Nonempty)
+    (_htau_finite : ∀ i : I, i ∈ J → finite_ennreal (tau i))
+    (hrep : N.represents proxy)
+    (hpathV : ∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar)
+    (hLq : ∀ q : N.ReachablePath,
+      (j ∈ path_evaluable_components N sample q ∨ J ⊆ path_evaluable_components N sample q) →
+      IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q))
+    (hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar) :
+    ({x | ∃ q : N.ReachablePath, j ∈ path_evaluable_components N sample q ∧
+        x ∈ path_component_empirical_guarantee_domain d
+          (fun i j =&gt; Lq q i j + Lstar i j) N sample q j
+          (path_empirical_residual_upper d target N sample delta_o q j) tau_j}
+        ⊆ {x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau_j}) ∧
+      ({x | ∃ q : N.ReachablePath, J ⊆ path_evaluable_components N sample q ∧
+        x ∈ path_joint_empirical_guarantee_domain d
+          (fun i j =&gt; Lq q i j + Lstar i j) N sample q J
+          (path_empirical_residual_upper d target N sample delta_o q) tau}
+        ⊆ {x | x ∈ N.U ∧ ∀ i : I, i ∈ J → d i (proxy.func x) (target.func x) ≤ tau i}) :=
+  ⟨path_component_guarantee_union_subset_proxy_error_rel d hd target proxy N sample
+      delta_o Vstar Lq Lstar j tau_j hrep hpathV (fun q h =&gt; hLq q (Or.inl h)) hLstar,
+   path_joint_guarantee_union_subset_proxy_error_rel d hd target proxy N sample
+      delta_o Vstar Lq Lstar J tau hrep hpathV (fun q h =&gt; hLq q (Or.inr h)) hLstar⟩
+
+end formal_oet.vol_03.ch_14_empirical_network_fitting
+
+namespace ReviewCounter
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_02_operator_bounds
+  formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_03.ch_12_residuals_and_substitution
+  formal_oet.vol_03.ch_14_empirical_network_fitting
+
+inductive Pt | bot | a | b | c | e
+  deriving DecidableEq
+
+def cls : Pt → Nat | .bot =&gt; 0 | .a =&gt; 1 | .b =&gt; 1 | .c =&gt; 2 | .e =&gt; 3
+
+/-- 单分量非分离扩展伪度量：d(a,b)=0，其余不同非 ⊥ 点距离 1，到 ⊥ 为 ⊤。 -/
+noncomputable def dd : Unit → Pt → Pt → ENNReal := fun _ x y =&gt;
+  if x = y then 0 else if x = Pt.bot ∨ y = Pt.bot then ⊤
+  else if cls x = cls y then 0 else 1
+
+instance hdd (i : Unit) : ExtendedPseudoMetric Pt Pt.bot (dd i) where
+  nonabsorbing := ⟨Pt.a, by decide⟩
+  dist_self := by intro x; simp [dd]
+  symm := by intro x y; cases x &lt;;&gt; cases y &lt;;&gt; simp [dd, cls]
+  triangle := by intro x y z; cases x &lt;;&gt; cases y &lt;;&gt; cases z &lt;;&gt; simp [dd, cls]
+  isolate_bot := by intro x hx; cases x &lt;;&gt; simp_all [dd]
+
+def op0 : Operator Pt Pt.bot := ⟨fun x =&gt; match x with | .a =&gt; .a | .b =&gt; .c | _ =&gt; .bot, rfl⟩
+def op1 : Operator Pt Pt.bot := ⟨fun x =&gt; match x with | .e =&gt; .e | _ =&gt; .bot, rfl⟩
+def Usrc : Set Pt := {x | x = .a ∨ x = .b ∨ x = .e}
+def entryF (x : {x : Pt // x ∈ Usrc}) : Bool := decide (x.val = Pt.e)
+
+/-- 两节点、无后继：节点 false 处理 {a,b}，节点 true 处理 {e}。 -/
+def N0 : FiniteOperatorNetwork Pt Pt.bot Bool where
+  U := Usrc
+  bot_not_mem := by simp [Usrc]
+  node_fintype := inferInstance
+  node_op := fun β =&gt; if β then op1 else op0
+  node_dom_nonempty := by
+    intro β; cases β
+    · exact ⟨.a, by simp [dom, op0]⟩
+    · exact ⟨.e, by simp [dom, op1]⟩
+  entry := entryF
+  entry_mem := by rintro ⟨x, hx⟩; rcases hx with rfl | rfl | rfl &lt;;&gt; simp [entryF, dom, op0, op1]
+  choice := fun _ _ =&gt; OutputChoice.stop
+  choice_next_mem := by intro β γ y _ h; cases h
+  depth_bound := 1
+  path_of := fun x =&gt; [entryF x]
+  path_terminal := fun _ =&gt; TerminalPathFrom.stop rfl
+  path_length_le_depth := by intro x; simp
+  node_reachable := by
+    intro β; cases β
+    · exact ⟨⟨.a, by simp [Usrc]⟩, by simp [entryF]⟩
+    · exact ⟨⟨.e, by simp [Usrc]⟩, by simp [entryF]⟩
+
+theorem a_mem : Pt.a ∈ N0.path_domain [false] := ⟨Or.inl rfl, by simp [N0, entryF]⟩
+theorem b_mem : Pt.b ∈ N0.path_domain [false] := ⟨Or.inr (Or.inl rfl), by simp [N0, entryF]⟩
+theorem e_mem : Pt.e ∈ N0.path_domain [true] := ⟨Or.inr (Or.inr rfl), by simp [N0, entryF]⟩
+def q0 : N0.ReachablePath := ⟨[false], ⟨Pt.a, a_mem⟩⟩
+def q1 : N0.ReachablePath := ⟨[true], ⟨Pt.e, e_mem⟩⟩
+
+/-- 路径 q0 上不存在任何 Lip 矩阵。 -/
+theorem no_lip_on_q0 (L : Unit → Unit → ENNReal) :
+    ¬ IsLipMatrix dd (N0.path_chain q0.nodes) (N0.path_domain q0.nodes) L := by
+  intro hL
+  have h := hL.2 Pt.a a_mem Pt.b b_mem ()
+  simp [FiniteOperatorNetwork.path_chain, OperatorChain, q0, N0, op0, dd, cls] at h
+
+/-- 源码三个定理共有的一致证书前提对 N0 不可满足。 -/
+theorem uniform_hLq_unsatisfiable :
+    ¬ ∃ Lq : N0.ReachablePath → Unit → Unit → ENNReal,
+      ∀ q, IsLipMatrix dd (N0.path_chain q.nodes) (N0.path_domain q.nodes) (Lq q) :=
+  fun ⟨Lq, hLq⟩ =&gt; no_lip_on_q0 (Lq q0) (hLq q0)
+
+def sampleE : Unit → Set Pt := fun _ =&gt; {Pt.e}
+def tgt : Operator Pt Pt.bot := ⟨id, rfl⟩
+
+theorem pd_true (x : Pt) (hx : x ∈ N0.path_domain [true]) : x = Pt.e := by
+  rcases hx with ⟨hxU, hpath⟩; simpa [N0, entryF] using hpath
+
+theorem evaluable_nodes (q : N0.ReachablePath)
+    (hq : () ∈ path_evaluable_components N0 sampleE q) : q.nodes = [true] := by
+  rcases hq with ⟨x, hxS, hxU, hpath⟩
+  have hx : x = Pt.e := hxS
+  subst hx; rw [← hpath]; simp [N0, entryF]
+
+/-- 正文所需的证书（只在可评估路径上）可以给出。 -/
+theorem lip_on_relevant (q : N0.ReachablePath)
+    (hq : () ∈ path_evaluable_components N0 sampleE q) :
+    IsLipMatrix dd (N0.path_chain q.nodes) (N0.path_domain q.nodes) (fun _ _ =&gt; 1) := by
+  rw [evaluable_nodes q hq]
+  refine ⟨fun x hx =&gt; ?_, fun x hx y hy j =&gt; ?_⟩
+  · obtain rfl := pd_true x hx
+    simp [dom, FiniteOperatorNetwork.path_chain, OperatorChain, N0, op1]
+  · obtain rfl := pd_true x hx; obtain rfl := pd_true y hy; simp [dd]
+
+theorem tgt_lip : TargetLipEnvelopeCertificate dd tgt Usrc (fun _ _ =&gt; 1) := by
+  refine ⟨⟨fun x hx =&gt; ?_, fun x _ y _ j =&gt; by simp [tgt]⟩⟩
+  rcases hx with rfl | rfl | rfl &lt;;&gt; simp [dom, tgt]
+
+/-- 补齐版推论在 N0 上可实例化。 -/
+theorem corollary_instance (delta tau : ENNReal) :
+    {x | ∃ q : N0.ReachablePath, () ∈ path_evaluable_components N0 sampleE q ∧
+      x ∈ path_component_empirical_guarantee_domain dd
+        (fun i j =&gt; (fun (_ : N0.ReachablePath) (_ _ : Unit) =&gt; (1 : ENNReal)) q i j +
+          (fun (_ _ : Unit) =&gt; (1 : ENNReal)) i j) N0 sampleE q ()
+        (path_empirical_residual_upper dd tgt N0 sampleE (fun _ =&gt; delta) q ()) tau}
+      ⊆ {x | x ∈ N0.U ∧ dd () (N0.extensional_operator.func x) (tgt.func x) ≤ tau} :=
+  path_component_guarantee_union_subset_proxy_error_rel dd hdd tgt N0.extensional_operator
+    N0 sampleE (fun _ =&gt; delta) Usrc (fun _ _ _ =&gt; 1) (fun _ _ =&gt; 1) () tau
+    (fun _ _ =&gt; rfl) (fun _ _ hx =&gt; N0.path_domain_subset_source hx) lip_on_relevant tgt_lip
+
+/-- 左侧并集非空：δ ≤ τ 时 e ∈ U_{q1,*}(τ)。 -/
+theorem e_in_union (delta tau : ENNReal) (h : delta ≤ tau) :
+    ∃ q : N0.ReachablePath, () ∈ path_evaluable_components N0 sampleE q ∧
+      Pt.e ∈ path_component_empirical_guarantee_domain dd
+        (fun i j =&gt; (fun (_ : N0.ReachablePath) (_ _ : Unit) =&gt; (1 : ENNReal)) q i j +
+          (fun (_ _ : Unit) =&gt; (1 : ENNReal)) i j) N0 sampleE q ()
+        (path_empirical_residual_upper dd tgt N0 sampleE (fun _ =&gt; delta) q ()) tau := by
+  have hS : Pt.e ∈ path_component_sample N0 sampleE q1 () := ⟨rfl, e_mem⟩
+  refine ⟨q1, ⟨Pt.e, hS⟩, e_mem, ?_⟩
+  rw [weighted_anchor_distance_self_eq_zero dd hdd _ () hS, zero_add]
+  have hraw : empirical_residual_raw_sup dd tgt (N0.path_chain q1.nodes)
+      (path_component_sample N0 sampleE q1 ()) () = 0 := by
+    refine le_antisymm (iSup_le ?_) (zero_le _)
+    rintro ⟨x, hxS, hxpd⟩
+    have hx : x = Pt.e := hxS
+    subst hx
+    simp [FiniteOperatorNetwork.path_chain, OperatorChain, q1, N0, op1, tgt, dd]
+  simpa [path_empirical_residual_upper, empirical_residual_upper, path_sample_family, hraw]
+    using h
+
+end ReviewCounter
+
+#print axioms ReviewCounter.uniform_hLq_unsatisfiable
+#print axioms ReviewCounter.e_in_union
+#print axioms formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_union_subset_proxy_error_text_rel
+</code></pre>
+<h2>附录 B：辅助核验（编译通过）</h2>
+<pre><code class="language-lean">import formal_oet.vol_03.ch_14_empirical_network_fitting.path_guarantee_domains
+open formal_oet.vol_01.ch_01_foundations formal_oet.vol_01.ch_02_operator_bounds
+  formal_oet.vol_01.ch_05_operator_networks formal_oet.vol_03.ch_14_empirical_network_fitting
+
+variable {X V I : Type} {bot : X} [Fintype I]
+
+/-- `hpathV` 与正文 `U ⊆ V*` 等价。 -/
+example (N : FiniteOperatorNetwork X bot V) (Vstar : Set X) :
+    (∀ q : N.ReachablePath, N.path_domain q.nodes ⊆ Vstar) ↔ N.U ⊆ Vstar :=
+  ⟨fun h _ hx =&gt; h (reachable_path_at N hx) (mem_path_domain_reachable_path_at N hx),
+   fun h _ _ hx =&gt; h (N.path_domain_subset_source hx)⟩
+
+/-- 网络表示推出 `U ⊆ dom φ`。 -/
+example (N : FiniteOperatorNetwork X bot V) (proxy : Operator X bot)
+    (hrep : N.represents proxy) : N.U ⊆ dom proxy := by
+  intro x hx
+  have h : x ∈ dom N.extensional_operator := by rw [N.dom_extensional_operator_eq]; exact hx
+  simpa [dom, hrep x hx] using h
+
+/-- 路径链保持全分量零距关系时，全 ⊤ 矩阵是 Lip 证书。 -/
+theorem top_matrix_is_lip (d : I → X → X → ENNReal) (N : FiniteOperatorNetwork X bot V)
+    (q : N.ReachablePath)
+    (hzero : ∀ x ∈ N.path_domain q.nodes, ∀ y ∈ N.path_domain q.nodes, (∀ i, d i x y = 0) →
+      ∀ j, d j ((N.path_chain q.nodes).func x) ((N.path_chain q.nodes).func y) = 0) :
+    IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (fun _ _ =&gt; ⊤) := by
+  refine ⟨N.path_domain_subset_path_chain_dom q, fun x hx y hy j =&gt; ?_⟩
+  by_cases h : ∀ i, d i x y = 0
+  · rw [hzero x hx y hy h j]; exact zero_le _
+  · obtain ⟨i, hi⟩ := not_forall.mp h
+    calc _ ≤ (⊤ : ENNReal) := le_top
+      _ = ⊤ * d i x y := (ENNReal.top_mul hi).symm
+      _ ≤ ∑ k, (fun _ _ =&gt; (⊤ : ENNReal)) k j * d k x y :=
+          Finset.single_le_sum (f := fun k =&gt; (⊤ : ENNReal) * d k x y)
+            (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+
+/-- 分离规范族下该条件自动成立。 -/
+example (d : I → X → X → ENNReal) (hd : ∀ j, ExtendedPseudoMetric X bot (d j))
+    (hsep : IsSeparating d) (N : FiniteOperatorNetwork X bot V) (q : N.ReachablePath) :
+    IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (fun _ _ =&gt; ⊤) :=
+  top_matrix_is_lip d N q (fun x _ y _ h j =&gt; by rw [hsep x y h]; exact (hd j).dist_self _)
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR02:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/original-reviews/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 5022f77204e762d65cc047885c69d0124b9997ed7b857704cbf8b5b39d19b571</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/lean/AHR02-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/claim-public-sources/AHR02.json">review · AHR02.json</a><span class="hash">SHA256 49b1557855540487901e3e5c406de312fb1242967fd9bb9ad52d0ae3702e6a17</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "claude-opus-5.5-max", "label": "Claude Opus 5.5 Max"}, "case": {"id": "AHR02", "title": "路径保证域的语义审计", "category": "lean-audit", "views": {"capability": {"single_attempt": {"case_id": "AHR02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f", "review_sha256": "ee3ae5dbbe64474b86ee635794ebd9589ebfd45abc270050630c1972e90cc687"}, "nonlogical_retry_3": {"case_id": "AHR02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f", "review_sha256": "ee3ae5dbbe64474b86ee635794ebd9589ebfd45abc270050630c1972e90cc687"}}, "partial": {"single_attempt": {"case_id": "AHR02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f", "review_sha256": "ee3ae5dbbe64474b86ee635794ebd9589ebfd45abc270050630c1972e90cc687"}, "nonlogical_retry_3": {"case_id": "AHR02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f", "review_sha256": "ee3ae5dbbe64474b86ee635794ebd9589ebfd45abc270050630c1972e90cc687"}}, "strict": {"single_attempt": {"case_id": "AHR02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f", "review_sha256": "ee3ae5dbbe64474b86ee635794ebd9589ebfd45abc270050630c1972e90cc687"}, "nonlogical_retry_3": {"case_id": "AHR02", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "3f0bea067053d5cbefd90f568a62babd2ba235b68dc0fbbe183c21a70f4f829f", "review_sha256": "ee3ae5dbbe64474b86ee635794ebd9589ebfd45abc270050630c1972e90cc687"}}}}}</script><script src="../../../assets/results-core.js?v=60d00dbc437d"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

@@ -14,7 +14,7 @@ SPEC.loader.exec_module(SITE)
 
 
 class ChartBars(HTMLParser):
-    def __init__(self, page, score_mode=None):
+    def __init__(self, page, score_mode=None, score_scope='overall'):
         super().__init__()
         self.bars = []
         self.groups = []
@@ -23,12 +23,16 @@ class ChartBars(HTMLParser):
         self.tooltips = []
         self.gap_groups = []
         self.gap_bars = []
+        self.rate_groups = []
         self._in_value = False
         self.score_mode = score_mode
+        self.score_scope = score_scope
         self.feed(page)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if attrs.get('data-score-scope', self.score_scope) != self.score_scope:
+            return
         if self.score_mode is not None and attrs.get("data-score-mode", self.score_mode) != self.score_mode:
             return
         if "score-bar" in attrs.get("class", "").split():
@@ -37,6 +41,8 @@ class ChartBars(HTMLParser):
             self.groups.append(attrs)
         if "gap-model-group" in attrs.get("class", "").split():
             self.gap_groups.append(attrs['data-model'])
+        if "rate-model-group" in attrs.get("class", "").split():
+            self.rate_groups.append(attrs['data-model'])
         if "gap-bar" in attrs.get("class", "").split():
             self.gap_bars.append(attrs)
         if "provider-logo" in attrs.get("class", "").split():
@@ -177,11 +183,58 @@ class CurrentSiteTests(unittest.TestCase):
                    if b['data-model'] == model['id'] and b['data-score-mode'] == 'partial')
         self.assertEqual(float(bar['data-score']), lower)
 
+    def test_category_charts_use_saved_percentages_and_category_specific_order(self):
+        original = copy.deepcopy(self.data)
+        page = SITE.render(self.data)
+        for category in self.data['category_leaderboards']:
+            chart = ChartBars(page, score_scope=category['id'])
+            self.assertEqual([g['data-model'] for g in chart.groups],
+                             [row['model_id'] for row in category['views']['partial']])
+            self.assertEqual(len(chart.bars), len(self.data['models']) * 3)
+            for mode, rows in category['views'].items():
+                for row in rows:
+                    bar = next(b for b in chart.bars if b['data-model'] == row['model_id']
+                               and b['data-score-mode'] == mode)
+                    self.assertEqual(bar['data-series'], 'nonlogical_retry_3')
+                    if row['value'] is None:
+                        self.assertEqual(bar['data-score'], '')
+                    else:
+                        self.assertEqual(float(bar['data-score']), row['value'])
+                    self.assertIn(f"完整分区间 {row['lower']:.2f}–{row['upper']:.2f}", page)
+        self.assertEqual(self.data, original)
+
+    def test_category_chart_preserves_negative_zero_unknown_and_scoped_incompleteness(self):
+        data = copy.deepcopy(self.data)
+        category = next(g for g in data['category_leaderboards'] if g['id'] == 'lean')
+        negative, zero, unknown = category['views']['partial'][:3]
+        negative.update(value=-2.5, lower=-2.5, upper=-2.5)
+        zero.update(value=0, lower=0, upper=0)
+        unknown.update(value=None, lower=-20, upper=100, incomplete=True)
+        chart = ChartBars(SITE.grouped_bars(data, category), score_mode='partial', score_scope='lean')
+        bars = {b['data-model']: b for b in chart.bars}
+        def geometry(row):
+            return {k: float(v.rstrip('%')) for k, v in
+                    (pair.split(':') for pair in bars[row['model_id']]['style'].split(';'))}
+        neg, zer, unk = geometry(negative), geometry(zero), geometry(unknown)
+        self.assertGreater(neg['width'], 0)
+        self.assertLess(neg['left'], zer['left'])
+        self.assertAlmostEqual(neg['left'] + neg['width'], zer['left'])
+        self.assertEqual((zer['width'], unk['width']), (0, 0))
+        self.assertEqual(bars[zero['model_id']]['data-score'], '0')
+        self.assertEqual(bars[unknown['model_id']]['data-score'], '')
+        self.assertIn('—', chart.values)
+        ds = next(m for m in self.data['models'] if m['id'].startswith('deepseek'))
+        actual = ChartBars(SITE.render(self.data), score_scope='lean')
+        label = next(g['aria-label'] for g in actual.groups if g['data-model'] == ds['id'])
+        self.assertNotIn('尚未测完', label)
+
     def test_gap_diagnostics_bind_retained_totals_and_keep_incomplete_coverage_unranked(self):
         diagnostic = self.data['gap_diagnostics']
         self.assertEqual(diagnostic['attempt_condition'], 'nonlogical_retry_3')
         chart = ChartBars(SITE.render(self.data))
-        ordered = sorted(self.data['models'], key=lambda m: SITE.earned_value(SITE.selected_result(m)), reverse=True)
+        gaps = {r['model_id']: r['value'] for r in diagnostic['tables'][0]['rows']}
+        ordered = sorted(self.data['models'], key=lambda m: (
+            gaps[m['id']] is None, abs(gaps[m['id']]) if gaps[m['id']] is not None else 0, m['id']))
         self.assertEqual(chart.gap_groups, [m['id'] for m in ordered])
         self.assertEqual(len(chart.gap_bars), 2*len(self.data["models"]))
         for table in diagnostic['tables']:
@@ -200,6 +253,26 @@ class CurrentSiteTests(unittest.TestCase):
                 else:
                     self.assertIsNotNone(row['rank'])
 
+    def test_auxiliary_charts_do_not_inherit_overall_order(self):
+        data = copy.deepcopy(self.data)
+        before = ChartBars(SITE.render(data))
+        for index, model in enumerate(data['models']):
+            model['retry']['combined']['metrics']['earned']['confirmed'] = index
+        after = ChartBars(SITE.render(data))
+        self.assertNotEqual([g['data-model'] for g in before.groups],
+                            [g['data-model'] for g in after.groups])
+        self.assertEqual(after.gap_groups, before.gap_groups)
+        self.assertEqual(after.rate_groups, before.rate_groups)
+
+    def test_rate_sort_keeps_known_zero_before_unknown(self):
+        data = copy.deepcopy(self.data)
+        data['models'] = data['models'][:3]
+        for model, value in zip(data['models'], [None, 0, 100]):
+            model['content_rates']['metrics']['reliability']['observed'] = value
+        chart = ChartBars(SITE.render_content_rates(data))
+        self.assertEqual(chart.rate_groups,
+                         [data['models'][i]['id'] for i in [2, 1, 0]])
+
     def test_gap_positive_zero_and_unknown_values_preserve_their_meaning(self):
         models = copy.deepcopy(self.data['models'][:3])
         for model, values in zip(models, ((50, 45, 60), (None, None, None), (0, 0, 0))):
@@ -213,14 +286,14 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(positive['display'], '+10.00')
         self.assertGreaterEqual(diagnostic['axis']['maximum'], 10)
         self.assertLess(diagnostic['axis']['zero'], 100)
-        positive_plot = SITE.vertical_gap_plot(positive['value'], diagnostic['axis'])
-        zero_y = SITE.vertical_gap_plot(0, diagnostic['axis'])['top']
-        self.assertLess(positive_plot['top'], zero_y)
-        self.assertAlmostEqual(positive_plot['top'] + positive_plot['height'], zero_y)
-        negative_plot = SITE.vertical_gap_plot(-5, diagnostic['axis'])
-        self.assertAlmostEqual(negative_plot['top'], zero_y)
-        self.assertGreater(negative_plot['endpoint'], zero_y)
-        self.assertIsNone(SITE.vertical_gap_plot(None, diagnostic['axis']))
+        positive_plot = positive['plot']
+        zero_x = diagnostic['axis']['zero']
+        self.assertAlmostEqual(positive_plot['left'], zero_x)
+        self.assertGreater(positive_plot['left'] + positive_plot['width'], zero_x)
+        negative_plot = next(r for r in diagnostic['tables'][0]['rows']
+                             if r['model_id'] == models[0]['id'])['plot']
+        self.assertLess(negative_plot['left'], zero_x)
+        self.assertAlmostEqual(negative_plot['left'] + negative_plot['width'], zero_x)
         unknown = next(r for r in delivery['rows'] if r['model_id'] == models[1]['id'])
         self.assertIsNone(unknown['value'])
         self.assertIsNone(unknown['rank'])

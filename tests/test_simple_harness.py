@@ -270,8 +270,7 @@ class SimpleHarnessTests(unittest.TestCase):
     def test_recording_requires_exact_issued_request_and_first_readable_reply_locks(self):
         run = self.freeze()
         first, second = run["selected_slot_ids"][:2]
-        with self.assertRaisesRegex(ValueError, "frozen"):
-            self.issue(second)
+        self.issue(second)
         request, value = self.issue(first)
         bad = self.root / "changed-request.json"
         write_json(bad, dict(value, parameters={"model": "different"}))
@@ -280,9 +279,9 @@ class SimpleHarnessTests(unittest.TestCase):
         self.record(first, request, b"Readable even on timeout\r\n", status="timeout")
         with self.assertRaisesRegex(ValueError, "cannot be overwritten"):
             self.record(first, request, b"Replacement")
-        with self.assertRaisesRegex(ValueError, "frozen"):
+        with self.assertRaisesRegex(ValueError, "locked"):
             self.issue(first)
-        with self.assertRaisesRegex(ValueError, "frozen"):
+        with self.assertRaisesRegex(ValueError, "locked"):
             skip_answer_slot(self.run, self.responses, first, "Cannot discard a readable reply")
         original = next(self.responses.rglob("response.md"))
         self.assertEqual(original.read_bytes(), b"Readable even on timeout\r\n")

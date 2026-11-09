@@ -1,0 +1,1060 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AHR03 · 节点域加细的语义审计 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=6843884d10d3"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-opus-5.5-max/index.html">Claude Opus 5.5 Max</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>AHR03 · 节点域加细的语义审计</h1><p class="subtitle">Claude Opus 5.5 Max · 语义审计 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><p>请审阅附件数学正文中的“节点域加细”定义，以及该情形下“网络加细保持外延等价”的 Lean 实现。附件的其余定义、证明与构造用于解释对象和实现；本题不要求审阅代数加细或其他章节结论。</p>
+<p>判断所给实现是否准确、完整地覆盖该数学范围，并逐项说明依据。若有不足，说明具体数学影响，给出可复核的论证或反例及修复方向；若认为完整，说明定义、前提与结论如何对应。请同时区分源码已证明的结论与需要补充的内容。</p>
+<p>无需修改附件或提交新增 Lean 源码。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-audit/AHR03/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Independent full A1 source-based review; quoted commitments and root-cause judgments retained, raw runtime identity and human approval remain distinct.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 35</p>
+<p><strong>审核说明：</strong> 追踪精确NodeDomainRefinement而非仅Operational辅助关系，识别完整edge_domain_eq与实际构造桥，所审范围对齐。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 分划、局域限制、入口、四类边与prune、路径及外延结果逐项核查；辅助choice_projection的冗余推导为补充，未制造核心缺口。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 30</p>
+<p><strong>审核说明：</strong> 说明完整输出像/目标域交集给四类边；真实network_refinement桥和coloured路径证明均具体。删除不可达子片会扩终止域的例子合法。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 15</p>
+<p><strong>审核说明：</strong> 仅建议把可导出的路由、外延包装和表示唯一性引理显式化；承认不影响原定义/命题覆盖，不强迫新增Lean。</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h2>结论</h2>
+<p>在&quot;节点域加细&quot;这一情形下，所给 Lean 实现准确、完整地覆盖了正文定义和命题 #h-012f4ba72aeb3f20（网络加细保持外延等价）。没有发现会改变数学结论的缺陷。</p>
+<ul>
+<li><strong>定义</strong>：构造 <code>NodePartitionData</code> + <code>NodePartitionData.network</code>（已含删冗余）与关系 <code>NodeDomainRefinement</code> 都和正文数据逐项对应。我补充验证了两个方向：由关系可以推出正文的全部公式，由正文数据也可以推出关系的全部字段。所以这个关系恰好刻画正文的加细结果。</li>
+<li><strong>命题</strong>：两处已证明。
+<ul>
+<li><code>refinement_preserves_local_equivalence</code> 对任意满足关系的 N′ 给出 φ_{N′} ≡_U φ_N。</li>
+<li><code>NodePartitionData.network_extensional_eq</code> 对规范构造给出外延算子整体相等，连 U 之外也相等。</li>
+</ul>
+</li>
+<li><strong>核验</strong>：在本工程中 <code>lake build</code> 成功；源码里没有 <code>sorry</code>、<code>admit</code> 或自定义 <code>axiom</code>。上述定理以及 <code>network_refinement</code>、<code>network_edge_domain_eq</code>、<code>network_choice_projection</code>、<code>piece_label_reached_iff</code>、<code>entry_domain_eq</code>、<code>path_projection</code>、<code>eval_projected</code> 用 <code>#print axioms</code> 检查，只依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</li>
+</ul>
+<p>有一处陈述层面的间接之处：关系里的 <code>choice_projection</code> 字段在正文定义中并不存在，它其实是正文证明的核心步骤。另外有几项包装性或外围结论没有在源码中写出来。这些我都在本工程里补写并编译通过（见附录），所以它们属于&quot;建议补充&quot;，不是数学缺口。</p>
+<h2>一、对象层的对应</h2>
+<ul>
+<li><strong>网络的表示方式不同</strong>：正文用图 (V,E)、转移域 D_{β→γ} 和入口片描述网络。Lean 的 <code>FiniteOperatorNetwork</code> 用 <code>entry</code>、<code>choice</code>、<code>path_of</code>、<code>depth_bound</code>、<code>node_reachable</code> 描述，其中入口片 <code>entry_domain</code>、边域 <code>edge_domain β γ = {z ∈ f_β(U_β) | choice β z = next γ}</code> 和终止域 <code>terminal_domain</code> 都是派生出来的。
+<ul>
+<li>因此正文要求的三件事在 Lean 里自动成立：出边域互斥，&quot;空入口片、空边域省略&quot;，以及&quot;终止域由出边域的补集确定&quot;。</li>
+</ul>
+</li>
+<li><strong>局部等价</strong>：正文的 ≡_U 对应 <code>LocalEquivalent</code>，即在 U 上逐点相等。如果正文的 ≡_U 还要求 U⊆dom，也自动满足：两侧外延算子的定义域都等于 U（由 <code>dom_extensional_operator_eq</code> 和 <code>same_input_domain</code> 得到）。</li>
+</ul>
+<h2>二、定义逐项对照</h2>
+<table>
+<thead>
+<tr>
+<th>正文要素</th>
+<th>关系 <code>NodeDomainRefinement</code></th>
+<th>构造 <code>NodePartitionData</code></th>
+<th>判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>被加细节点 β，U_β=dom f_β</td>
+<td><code>target</code>，<code>N.node_dom target</code></td>
+<td>参数 <code>target</code></td>
+<td>一致</td>
+</tr>
+<tr>
+<td>有限分划 U_β=⊔U_{β,a}，各块非空</td>
+<td><code>part_count</code>、<code>piece</code>、<code>piece_nonempty</code>、<code>piece_disjoint</code>、<code>piece_cover</code></td>
+<td><code>count</code>、<code>piece</code>、<code>nonempty</code>、<code>disjoint</code>、<code>cover</code></td>
+<td>一致；<code>part_count_pos</code> 是冗余条件</td>
+</tr>
+<tr>
+<td>dom f_{β,a}=U_{β,a}，f_{β,a}≡f_β</td>
+<td><code>local_factor</code>、<code>local_domain</code>、<code>local_equiv</code></td>
+<td><code>local_op</code>、<code>local_domain</code>、<code>local_eq</code></td>
+<td>一致；正文所说&quot;f_{β,a} 正是 f_β|<em>{U</em>{β,a}}&quot;已由 <code>local_op_eq_restrict</code> 证明</td>
+</tr>
+<tr>
+<td>用子节点替换 β</td>
+<td><code>source</code>（单射）、<code>old_node_op_compat</code>、<code>piece_node_op_compat</code></td>
+<td><code>Label := {v // v≠target} ⊕ Fin count</code>、<code>node_op</code></td>
+<td>一致</td>
+</tr>
+<tr>
+<td>子节点入口片 U^in_β∩U_{β,a}，其他入口片不变</td>
+<td><code>same_input_domain</code>、<code>entry_projection</code>，由此推出 <code>entry_domain_eq</code>：N′.entry_domain v = N.entry_domain(πv) ∩ N′.node_dom v</td>
+<td><code>entry := lift_label (N.entry x) x</code></td>
+<td>一致，已证明</td>
+</tr>
+<tr>
+<td>入边、出边、自环、无关边的四个边域公式</td>
+<td>统一公式 <code>edge_domain_eq</code>：(D_{πv→πw} ∩ f′_v(U′_v)) ∩ U′_w</td>
+<td><code>network_edge_domain_eq</code>、<code>self_loop_choice_iff</code></td>
+<td>一致；四个特例都可由统一公式推出</td>
+</tr>
+<tr>
+<td>删除未被任何输入经过的子节点（引理 h-ced8c7236326e104）</td>
+<td><code>old_node_present</code>、<code>piece_node_present_iff_reached</code>（<code>NodePieceReached</code>）</td>
+<td><code>network := presentation.prune</code>；<code>old_label_reached</code>、<code>piece_label_reached_iff</code></td>
+<td>一致</td>
+</tr>
+</tbody>
+</table>
+<h3>为什么 <code>choice_projection</code> 只能在实际输出上要求</h3>
+<p>下面的例子说明，删冗余之后，&quot;路由与原网络一致&quot;在整个输出像上一般不成立。</p>
+<ul>
+<li><strong>网络 N</strong>：单节点 β，U_β={0,1,2}，f_β(0)=0，f_β(1)=f_β(2)=2；自环转移域 D_{β→β}={2}；入口片 U={0}。输入 0 一步终止，所以这是合法的有限网络。</li>
+<li><strong>加细</strong>：取 U_{β,1}={0,1}，U_{β,2}={2}。删冗余前有 D′_{β₁→β₂}={2}。</li>
+<li><strong>删冗余</strong>：β₂ 从未被输入经过，因此被删除。删除后终止域 T′<em>{β₁}={0,2}，严格大于 f</em>{β,1}(U_{β,1})∩T_β={0}。</li>
+<li><strong>结果</strong>：输出点 2 来自非实际输入 1。它在原网络中沿自环继续，在加细结果中却终止。</li>
+</ul>
+<p>源码的处理恰好与此相符：<code>edge_domain_eq</code> 只约束保留节点之间的边，<code>choice_projection</code> 只在实际输出上要求。这也说明正文证明中的等式 T′<em>{β_a}=f</em>{β,a}(U_{β,a})∩T_β 只适用于删冗余之前。正文已写明&quot;先考察尚未删除冗余节点的加细数据&quot;，所以这不是错误。</p>
+<h3>关系恰好刻画正文的加细结果</h3>
+<ul>
+<li><strong>由关系推出正文公式</strong>：
+<ul>
+<li>入口片公式由源码 <code>entry_domain_eq</code> 给出。</li>
+<li>自环公式见附录 <code>self_loop_edge</code>。</li>
+<li>以下公式我在另一个 scratch 文件中用同样的方法推出并编译通过，未收入附录：入边 <code>= N.edge_domain γ β ∩ U_{β,a}</code>，出边 <code>= N.edge_domain β γ ∩ f_{β,a}(U_{β,a})</code>，无关边不变，旧入口片不变。</li>
+<li>节点集由 <code>source</code> 单射加两个&quot;存在性&quot;字段确定。因此 N′ 的展示数据 (U, node_op, entry_domain, edge_domain) 在 <code>source</code> 重命名下是唯一的，关系不会接纳非教材网络。</li>
+</ul>
+</li>
+<li><strong>由正文数据推出关系</strong>：包括正文定义中没有的 <code>choice_projection</code> 字段，见附录 <code>choice_projection_derived</code> 和 <code>toNodeDomainRefinement</code>。所以关系也没有附加多余的约束。</li>
+</ul>
+<h2>三、命题对照</h2>
+<p>正文命题：若 N′ 由 N 经一次节点域加细得到，则 φ_{N′} ≡_U φ_N。对应的 Lean 结果如下。</p>
+<ul>
+<li><code>refinement_preserves_local_equivalence (h : NetworkRefinement N N')</code>：结论是 <code>LocalEquivalent N'.extensional_operator N.extensional_operator N.U</code>。节点域情形取 <code>h = .node_domain href</code>。</li>
+<li><code>allowed_network_refinement</code>：说明规范构造确实是一次允许的加细。</li>
+<li><code>network_extensional_eq</code>：外延算子整体相等，比 ≡_U 更强。</li>
+<li><code>refinement_preserves_representation</code>：加细保持网络表示。</li>
+</ul>
+<p>证明步骤的对应：</p>
+<table>
+<thead>
+<tr>
+<th>正文证明</th>
+<th>Lean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每次经过 β 时按当前输入选子块：(β,y_s)↦(β_{a_s},y_s)，值不变</td>
+<td>构造：<code>lift_label</code>、<code>colour_path</code>、<code>lift_apply</code>；关系：<code>node_eval_eq</code></td>
+</tr>
+<tr>
+<td>入口状态唯一</td>
+<td>构造：<code>entry := lift_label …</code>；关系：<code>entry_projection</code></td>
+</tr>
+<tr>
+<td>新边域给出 y_{s+1}∈D′，终止输出落入 T′</td>
+<td>构造：<code>coloured_terminal</code>；关系：<code>terminal_projection</code>（经由 <code>choice_projection</code>）</td>
+</tr>
+<tr>
+<td>删冗余前的数据满足 (i)–(iii)，r′=r≤ℓ(N)</td>
+<td><code>presentation</code>（<code>depth_bound := N.depth_bound</code>）、<code>colour_path_length</code></td>
+</tr>
+<tr>
+<td>删冗余后轨迹与输出不变</td>
+<td><code>prune</code>、<code>prune_eval</code>、<code>prune_path_labels</code>、<code>network_path_projection</code></td>
+</tr>
+<tr>
+<td>φ_{N′}(x)=φ_N(x)</td>
+<td>构造：<code>coloured_eval</code>、<code>network_extensional_eq</code>；关系：<code>path_projection</code>、<code>eval_projected</code>、<code>terminal_path_unique</code></td>
+</tr>
+</tbody>
+</table>
+<p>关系层的证明实际只用到以下字段：<code>node_eval_eq</code> 所需的 <code>local_domain</code>、<code>local_equiv</code> 和两个 <code>*_node_op_compat</code>，以及 <code>same_input_domain</code>、<code>entry_projection</code>、<code>choice_projection</code>。以下字段都没有用到：<code>piece_disjoint</code>、<code>piece_cover</code>、<code>source_injective</code>、两个存在性字段、<code>edge_domain_eq</code>。</p>
+<p>这意味着保持外延的结论对更宽的一类&quot;运行层&quot;加细也成立。那些精确字段的作用是保证关系就是正文的定义，而不是用来推出结论。</p>
+<h2>四、已证明与需补充</h2>
+<h3>源码已证明（无 <code>sorry</code>）</h3>
+<ul>
+<li><code>local_op_eq_restrict</code>：f_{β,a}=f_β|<em>{U</em>{β,a}}。</li>
+<li><code>presentation</code> 和 <code>network</code>：构造先满足 (i)–(iii)，删冗余后得到有限网络。</li>
+<li><code>old_label_reached</code>、<code>piece_label_reached_iff</code>：哪些节点被保留。</li>
+<li><code>network_edge_domain_eq</code>、<code>self_loop_choice_iff</code>：边域公式，包括自环和从未被使用的边。</li>
+<li><code>network_choice_projection</code>：实际输出上的路由与原网络一致。</li>
+<li><code>network_refinement</code>、<code>allowed_network_refinement</code>：规范构造满足关系。</li>
+<li>关系层的 <code>node_eval_eq</code>、<code>terminal_projection</code>、<code>path_projection</code>、<code>eval_projected</code>、<code>entry_domain_eq</code>、<code>retained_edge_mem</code>。</li>
+<li>主结论 <code>refinement_preserves_local_equivalence</code>、<code>network_extensional_eq</code>、<code>refinement_preserves_representation</code>，以及路径结果 <code>network_path_labels</code>、<code>network_path_projection</code>。</li>
+</ul>
+<h3>需补充（都不影响命题成立；附录中的代码已编译通过）</h3>
+<p>(a) <strong><code>choice_projection</code> 是证明内容而不是定义内容。</strong></p>
+<ul>
+<li><strong>问题</strong>：源码只对规范构造证明了它。对只按正文公式给出的任意 N′，一般定理在形式上多了一个前提。</li>
+<li><strong>影响</strong>：没有数学影响，因为它可以推出。</li>
+<li><strong>论证</strong>：
+<ol>
+<li>沿原网络的终止轨迹归纳。<code>exists_lift</code> 说明：原轨迹上每次实际进入节点 γ，相应的子节点必定被保留。</li>
+<li>由 <code>edge_domain_eq</code> 可知加细后的网络沿同一节点前进（附录 <code>follow</code>），所以加细轨迹投影后就是原轨迹。</li>
+<li>若加细网络在 v 处终止而原网络要继续，则由前缀求值相等（<code>prefix_eval</code>）可知原路径会继续，从而加细路径也会继续，矛盾。</li>
+</ol>
+</li>
+<li><strong>修复方向</strong>：把附录 A 的引理（<code>choice_projection_derived</code>、<code>toNodeDomainRefinement</code>、<code>preserves</code>）并入源码，或提供&quot;由正文数据构造关系&quot;的构造器。</li>
+</ul>
+<p>(b) <strong>结论的包装。</strong></p>
+<ul>
+<li><strong>问题</strong>：一般定理只给出 <code>LocalEquivalent … N.U</code>。正文&quot;外延等价&quot;要求同一个非空输入域加 ≡_U；对象空间的等价要求外延算子相等。这两种形式都没有单独陈述。</li>
+<li><strong>修复</strong>：附录 B 的 <code>refinement_extensional_equivalent</code> 同时给出两者。U 非空可由 <code>target</code> 存在和 <code>node_reachable</code> 得到。</li>
+</ul>
+<p>(c) <strong>对象空间层。</strong></p>
+<ul>
+<li><strong>问题</strong>：正文规定加细结果需先编号编码才是 X_net 的元素。源码的 <code>RefinementRule (NetworkObject X bot)</code> 只是一个抽象参数，没有具体的节点域加细规则。</li>
+<li><strong>修复</strong>：附录 B 的 <code>NodeDomainRule</code> 和 <code>node_domain_rule_preserves</code>。这一步对后续&quot;不可约代表&quot;有用。</li>
+</ul>
+<p>(d) <strong>证明内部的中间结论没有单独陈述。</strong></p>
+<ul>
+<li>ℓ(N′)=ℓ(N) 未陈述，已补在附录 C 的 <code>depth_eq</code>。</li>
+<li>删冗余前的终止域公式和&quot;旧节点终止域不变&quot;没有形式化。删冗余后只能得到&quot;⊇&quot;（见第二节的例子）。命题本身不需要这些结论。</li>
+</ul>
+<p>(e) <strong>加细结果在重命名意义下的唯一性。</strong></p>
+<ul>
+<li>第二节已说明展示数据被关系唯一确定，但源码没有&quot;N′ 与 P.network 同构&quot;的显式定理（例如通过 <code>relabel</code> 加 <code>presentation_data</code> 相等）。</li>
+<li>若要把&quot;该次加细的结果&quot;当作 X_net 中良定义的对象来用，建议补上。</li>
+</ul>
+<p>(f) <strong>细节。</strong></p>
+<ul>
+<li><code>part_count_pos</code> 是冗余条件。</li>
+<li><code>piece_nonempty</code> 对应&quot;各块非空&quot;这一读法，而且必须如此：空块的局域算子是全未定义算子，违反转移图&quot;定义域非空&quot;的要求。</li>
+<li><code>local_op_eq_restrict</code> 只在构造层给出；关系层同样成立，证明相同。</li>
+</ul>
+<h2>五、对正文定义本身的意见</h2>
+<ul>
+<li>定义是自洽的：新边域满足包含关系与出边互斥，入口片的细分保持输入分划。</li>
+<li>有一处次序问题：定义中直接调用引理 h-ced8c7236326e104 删冗余，而该引理的前提——删冗余前的数据满足 (i)–(iii)——要到命题 #h-012f4ba72aeb3f20 的证明里才验证。Lean 的构造先用 <code>presentation</code> 证明 (i)–(iii)，再执行 <code>prune</code>，所以是良基的。建议正文在定义处注明，或把这一验证前移。</li>
+<li>删冗余后终止域可能严格变大。阅读证明中的终止域等式时，要注意它只适用于删冗余之前。</li>
+</ul>
+<h2>附录：补充验证代码</h2>
+<p>以下代码为补充验证用，并非修改附件。它在本工程中用 <code>lake env lean</code> 编译通过，没有错误，三条 <code>#print axioms</code> 只显示三条标准公理。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_04_operator_chain_calculus
+open formal_oet.vol_01.ch_05_operator_networks
+open FiniteOperatorNetwork
+
+namespace ReviewCheck
+variable {X V V' : Type} {bot : X}
+
+/-! ### A. 只含教材数据的节点域加细（去掉 `choice_projection`、单射性与非空性） -/
+structure TextbookNDR (N : FiniteOperatorNetwork X bot V) (N' : FiniteOperatorNetwork X bot V') where
+  target : V
+  part_count : Nat
+  piece : Fin part_count → Set X
+  piece_disjoint : ∀ {a b : Fin part_count}, a ≠ b → Disjoint (piece a) (piece b)
+  piece_cover : (⋃ a : Fin part_count, piece a) = N.node_dom target
+  local_factor : Fin part_count → Operator X bot
+  local_domain : ∀ a, dom (local_factor a) = piece a
+  local_equiv : ∀ a, LocalEquivalent (local_factor a) (N.node_op target) (piece a)
+  source : V' → ({β : V // β ≠ target} ⊕ Fin part_count)
+  old_node_present : ∀ β : {β : V // β ≠ target}, ∃ β' : V', source β' = Sum.inl β
+  piece_node_present_iff_reached : ∀ a : Fin part_count,
+      (∃ β' : V', source β' = Sum.inr a) ↔ NodePieceReached N target piece a
+  old_node_op_compat : ∀ (β' : V') (β : {β : V // β ≠ target}),
+      source β' = Sum.inl β → N'.node_op β' = N.node_op β.val
+  piece_node_op_compat : ∀ (β' : V') (a : Fin part_count),
+      source β' = Sum.inr a → N'.node_op β' = local_factor a
+  same_input_domain : N'.U = N.U
+  entry_projection : ∀ x : N'.U, node_domain_projection target source (N'.entry x) =
+      N.entry (transport_network_input same_input_domain x)
+  edge_domain_eq : ∀ v w : V',
+    N'.edge_domain v w =
+      (N.edge_domain (node_domain_projection target source v)
+        (node_domain_projection target source w) ∩ N'.node_image v) ∩ N'.node_dom w
+
+namespace TextbookNDR
+variable {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}
+variable (T : TextbookNDR N N')
+
+def proj (v : V') : V := node_domain_projection T.target T.source v
+
+theorem node_eval_eq (v : V') (x : X) (hx : x ∈ N'.node_dom v) :
+    (N'.node_op v).func x = (N.node_op (T.proj v)).func x := by
+  cases hs : T.source v with
+  | inl w =&gt; simp [proj, node_domain_projection, hs, T.old_node_op_compat v w hs]
+  | inr a =&gt;
+    have hxpiece : x ∈ T.piece a := by
+      rw [← T.local_domain a, ← T.piece_node_op_compat v a hs]; exact hx
+    simpa [proj, node_domain_projection, hs, T.piece_node_op_compat v a hs] using
+      T.local_equiv a x hxpiece
+
+theorem dom_subset (v : V') : N'.node_dom v ⊆ N.node_dom (T.proj v) := by
+  intro x hx
+  have h' : (N'.node_op v).func x ≠ bot := hx
+  change (N.node_op (T.proj v)).func x ≠ bot
+  rw [← T.node_eval_eq v x hx]; exact h'
+
+/-- 原路径上 `γ` 的一次实际发生，其当前输入落在某个保留的 `N'` 节点（投影为 `γ`）中。 -/
+theorem exists_lift (x0 : N.U) (pref suffix : List V) (γ : V)
+    (hpath : N.path_of x0 = pref ++ γ :: suffix) :
+    ∃ w : V', T.proj w = γ ∧ N.chain_eval_nodes pref x0.val ∈ N'.node_dom w := by
+  have hlt : pref.length &lt; (N.path_of x0).length := by simp [hpath]
+  let n : Fin (N.path_of x0).length := ⟨pref.length, hlt⟩
+  have hget : (N.path_of x0).get n = γ := by simp [n, hpath]
+  have htake : (N.path_of x0).take n.val = pref := by simp [n, hpath]
+  have hmem0 := terminal_path_prefix_input_mem N.choice_next_mem
+    (N.entry_mem x0) (N.path_terminal x0) n
+  rw [hget, htake] at hmem0
+  have hmem : N.chain_eval_nodes pref x0.val ∈ N.node_dom γ := hmem0
+  by_cases hγ : γ = T.target
+  · subst hγ
+    have hcov : N.chain_eval_nodes pref x0.val ∈ ⋃ a, T.piece a := by
+      rw [T.piece_cover]; exact hmem
+    obtain ⟨a, ha⟩ := Set.mem_iUnion.mp hcov
+    have hreach : NodePieceReached N T.target T.piece a := ⟨x0, n, hget, by rw [htake]; exact ha⟩
+    obtain ⟨w, hw⟩ := (T.piece_node_present_iff_reached a).mpr hreach
+    refine ⟨w, by simp [proj, node_domain_projection, hw], ?_⟩
+    change N.chain_eval_nodes pref x0.val ∈ dom (N'.node_op w)
+    rw [T.piece_node_op_compat w a hw, T.local_domain a]; exact ha
+  · obtain ⟨w, hw⟩ := T.old_node_present ⟨γ, hγ⟩
+    refine ⟨w, by simp [proj, node_domain_projection, hw], ?_⟩
+    change N.chain_eval_nodes pref x0.val ∈ dom (N'.node_op w)
+    rw [T.old_node_op_compat w ⟨γ, hγ⟩ hw]; exact hmem
+
+/-- 教材证明的核心一步：仅由教材边域公式推出加细轨迹投影为原轨迹。 -/
+theorem follow (x0 : N.U) :
+    ∀ {v : V} {y : X} {p : List V}, TerminalPathFrom N.node_op N.choice v y p →
+    ∀ (pref : List V), N.path_of x0 = pref ++ p → y = N.chain_eval_nodes pref x0.val →
+    ∀ {v' : V'} {q : List V'}, T.proj v' = v → y ∈ N'.node_dom v' →
+      TerminalPathFrom N'.node_op N'.choice v' y q → q.map T.proj = p := by
+  intro v y p ht
+  induction ht with
+  | @stop v y hs =&gt;
+    intro pref hpath hy v' q hpv hyd ht'
+    cases ht' with
+    | stop _ =&gt; simp [hpv]
+    | @next _ w _ rest hn _ =&gt;
+      exfalso
+      have hz : (N'.node_op v').func y ∈ N'.edge_domain v' w := ⟨⟨y, hyd, rfl⟩, hn⟩
+      rw [T.edge_domain_eq] at hz
+      have h1 := hz.1.1.2
+      have hp1 : node_domain_projection T.target T.source v' = v := hpv
+      rw [T.node_eval_eq v' y hyd] at h1
+      change N.choice (node_domain_projection T.target T.source v')
+        ((N.node_op (node_domain_projection T.target T.source v')).func y) = _ at h1
+      rw [hp1, hs] at h1
+      cases h1
+  | @next v γ y rest hs htail ih =&gt;
+    intro pref hpath hy v' q hpv hyd ht'
+    have heval : (N'.node_op v').func y = (N.node_op v).func y := by
+      rw [T.node_eval_eq v' y hyd, hpv]
+    obtain ⟨rest', hrest'⟩ : ∃ rest', rest = γ :: rest' := by
+      cases htail with
+      | stop _ =&gt; exact ⟨[], rfl⟩
+      | next _ _ =&gt; exact ⟨_, rfl⟩
+    have hpath' : N.path_of x0 = (pref ++ [v]) ++ γ :: rest' := by rw [hpath, hrest']; simp
+    have hy' : (N.node_op v).func y = N.chain_eval_nodes (pref ++ [v]) x0.val := by
+      rw [FiniteOperatorNetwork.chain_eval_nodes_append, hy]; rfl
+    obtain ⟨w, hpw, hwdom⟩ := T.exists_lift x0 (pref ++ [v]) rest' γ hpath'
+    rw [← hy'] at hwdom
+    have hydN : y ∈ N.node_dom v := by have := T.dom_subset v' hyd; rwa [hpv] at this
+    have hzedge : (N'.node_op v').func y ∈ N'.edge_domain v' w := by
+      rw [T.edge_domain_eq]
+      refine ⟨⟨?_, ⟨y, hyd, rfl⟩⟩, ?_⟩
+      · have hp1 : node_domain_projection T.target T.source v' = v := hpv
+        have hp2 : node_domain_projection T.target T.source w = γ := hpw
+        rw [hp1, hp2, heval]; exact ⟨⟨y, hydN, rfl⟩, hs⟩
+      · rw [heval]; exact hwdom
+    have hnext : N'.choice v' ((N'.node_op v').func y) = OutputChoice.next w := hzedge.2
+    cases ht' with
+    | stop hstop =&gt; rw [hnext] at hstop; cases hstop
+    | @next _ w' _ restq hn hrestq =&gt;
+      have hww : w' = w := OutputChoice.next.inj (hn.symm.trans hnext)
+      subst hww
+      rw [heval] at hrestq
+      have := ih (pref ++ [v]) (by rw [hpath]; simp) hy' hpw hwdom hrestq
+      simp [hpv, this]
+
+theorem path_projection (x : N'.U) :
+    (N'.path_of x).map T.proj = N.path_of (transport_network_input T.same_input_domain x) :=
+  T.follow _ (N.path_terminal _) [] (by simp) rfl
+    (T.entry_projection x) (N'.entry_mem x) (N'.path_terminal x)
+
+theorem prefix_eval {v x p} (ht : TerminalPathFrom N'.node_op N'.choice v x p)
+    (hx : x ∈ N'.node_dom v) :
+    ∀ (pref s : List V'), p = pref ++ s →
+      chain_eval_nodes_core N'.node_op pref x =
+        chain_eval_nodes_core N.node_op (pref.map T.proj) x := by
+  induction ht with
+  | @stop v x hs =&gt;
+    intro pref s hp
+    cases pref with
+    | nil =&gt; rfl
+    | cons a pref' =&gt;
+      simp only [List.cons_append, List.cons.injEq] at hp
+      obtain ⟨rfl, hrest⟩ := hp
+      have hpref : pref' = [] := (List.append_eq_nil_iff.mp hrest.symm).1
+      subst hpref
+      simp [chain_eval_nodes_core, T.node_eval_eq _ x hx]
+  | @next v w x rest hs ht ih =&gt;
+    intro pref s hp
+    cases pref with
+    | nil =&gt; rfl
+    | cons a pref' =&gt;
+      simp only [List.cons_append, List.cons.injEq] at hp
+      obtain ⟨rfl, hrest⟩ := hp
+      simp only [List.map_cons, chain_eval_nodes_core]
+      rw [← T.node_eval_eq _ x hx]
+      exact ih (N'.choice_next_mem hx hs) pref' s hrest
+
+/-- 源码关系中的辅助字段 `choice_projection` 可由教材数据推出。 -/
+theorem choice_projection_derived (v : V') (z : X)
+    (hz : z ∈ (N'.node_op v).func '' N'.node_actual_input_domain v) :
+    map_output_choice T.proj (N'.choice v z) = N.choice (T.proj v) z := by
+  rcases hz with ⟨y, hy, rfl⟩
+  have hyd : y ∈ N'.node_dom v := N'.node_actual_input_domain_subset_node_dom v hy
+  cases hc : N'.choice v ((N'.node_op v).func y) with
+  | next w =&gt;
+    have hzedge : (N'.node_op v).func y ∈ N'.edge_domain v w := ⟨⟨y, hyd, rfl⟩, hc⟩
+    rw [T.edge_domain_eq] at hzedge
+    exact hzedge.1.1.2.symm
+  | stop =&gt;
+    cases hN : N.choice (T.proj v) ((N'.node_op v).func y) with
+    | stop =&gt; rfl
+    | next γ =&gt;
+      exfalso
+      rcases hy with ⟨x, pref, suffix, hpath, hyval, _⟩
+      have hproj : N.path_of (transport_network_input T.same_input_domain x) =
+          pref.map T.proj ++ T.proj v :: suffix.map T.proj := by
+        rw [← T.path_projection x, hpath]; simp
+      have hpre := T.prefix_eval (N'.path_terminal x) (N'.entry_mem x) pref (v :: suffix) hpath
+      have hnext : N.choice (T.proj v) ((N.node_op (T.proj v)).func
+          (chain_eval_nodes_core N.node_op (pref.map T.proj)
+            (transport_network_input T.same_input_domain x).val)) = OutputChoice.next γ := by
+        have e1 : (N'.node_op v).func y = (N.node_op (T.proj v)).func y := T.node_eval_eq v y hyd
+        have e2 : y = chain_eval_nodes_core N.node_op (pref.map T.proj)
+            (transport_network_input T.same_input_domain x).val := by rw [hyval]; exact hpre
+        rw [← e2, ← e1]; exact hN
+      obtain ⟨tail, htail⟩ :=
+        terminal_path_suffix_of_next_at_prefix (N.path_terminal _) hproj hnext
+      cases suffix with
+      | nil =&gt; simp at htail
+      | cons w rest =&gt;
+        have hadj := terminal_path_choice_at_adjacent_prefix (N'.path_terminal x) hpath
+        have hw : N'.choice v ((N'.node_op v).func y) = OutputChoice.next w := by
+          rw [hyval]; exact hadj
+        rw [hw] at hc; cases hc
+
+/-- 教材数据（加上单射与非空分块）即给出源码的 `NodeDomainRefinement`。 -/
+def toNodeDomainRefinement (hinj : Function.Injective T.source) (hpos : 0 &lt; T.part_count)
+    (hne : ∀ a, (T.piece a).Nonempty) : NodeDomainRefinement N N' where
+  target := T.target
+  part_count := T.part_count
+  part_count_pos := hpos
+  piece := T.piece
+  piece_nonempty := hne
+  piece_disjoint := T.piece_disjoint
+  piece_cover := T.piece_cover
+  local_factor := T.local_factor
+  local_domain := T.local_domain
+  local_equiv := T.local_equiv
+  source := T.source
+  source_injective := hinj
+  old_node_present := T.old_node_present
+  piece_node_present_iff_reached := T.piece_node_present_iff_reached
+  old_node_op_compat := T.old_node_op_compat
+  piece_node_op_compat := T.piece_node_op_compat
+  same_input_domain := T.same_input_domain
+  entry_projection := T.entry_projection
+  choice_projection := T.choice_projection_derived
+  edge_domain_eq := T.edge_domain_eq
+
+/-- 于是：任何只按教材数据给出的节点域加细都保持外延（直接调用源码主定理）。 -/
+theorem preserves (hinj : Function.Injective T.source) (hpos : 0 &lt; T.part_count)
+    (hne : ∀ a, (T.piece a).Nonempty) :
+    LocalEquivalent N'.extensional_operator N.extensional_operator N.U :=
+  refinement_preserves_local_equivalence (.node_domain (T.toNodeDomainRefinement hinj hpos hne))
+end TextbookNDR
+
+/-! ### B. 包装：外延等价、整体算子相等、对象空间版本 -/
+theorem refinement_extensional_equivalent
+    {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}
+    (h : NetworkRefinement N N') :
+    ExtensionalEquivalent N' N ∧ N'.extensional_operator = N.extensional_operator := by
+  classical
+  refine ⟨⟨h.same_input_domain, fun x hx =&gt;
+    refinement_preserves_local_equivalence h x (h.same_input_domain ▸ hx)⟩, ?_⟩
+  apply Operator.ext
+  funext x
+  by_cases hx : x ∈ N.U
+  · exact refinement_preserves_local_equivalence h x hx
+  · have hx' : x ∉ N'.U := by rw [h.same_input_domain]; exact hx
+    simp [FiniteOperatorNetwork.extensional_operator, hx, hx']
+
+/-- 对象空间 `X_net` 上的节点域加细规则（编号编码后）保持外延读出。 -/
+def NodeDomainRule : RefinementRule (NetworkObject X bot) :=
+  fun O O' =&gt; ∃ (M : NonemptyOperatorNetwork X bot) (V' : Type)
+    (N' : FiniteOperatorNetwork X bot V') (_ : NodeDomainRefinement M.network N')
+    (hU : N'.U.Nonempty),
+      O = NetworkObject.nonempty M ∧ O' = NetworkObject.nonempty (NonemptyOperatorNetwork.encode N' hU)
+
+theorem node_domain_rule_preserves {O O' : NetworkObject X bot}
+    (h : NodeDomainRule O O') : NetworkObject.ExtensionalEquivalent O' O := by
+  rcases h with ⟨M, V', N', href, hU, rfl, rfl⟩
+  show (NetworkObject.nonempty _).extensional_operator = (NetworkObject.nonempty M).extensional_operator
+  rw [NetworkObject.extensional_operator_nonempty, NetworkObject.extensional_operator_nonempty,
+    NonemptyOperatorNetwork.encode_extensional_operator]
+  exact (refinement_extensional_equivalent (.node_domain href)).2
+
+/-! ### C. 关系层推出教材的自环边域公式与求值深度不变 -/
+namespace NDR
+variable {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}
+variable (h : NodeDomainRefinement N N')
+
+theorem self_loop_edge (v w : V') (a b : Fin h.part_count)
+    (hv : h.source v = .inr a) (hw : h.source w = .inr b) :
+    N'.edge_domain v w =
+      N.edge_domain h.target h.target ∩ (h.local_factor a).func '' h.piece a ∩ h.piece b := by
+  have pv : node_domain_projection h.target h.source v = h.target := by
+    simp [node_domain_projection, hv]
+  have pw : node_domain_projection h.target h.source w = h.target := by
+    simp [node_domain_projection, hw]
+  have iv : N'.node_image v = (h.local_factor a).func '' h.piece a := by
+    change (N'.node_op v).func '' dom (N'.node_op v) = _
+    rw [h.piece_node_op_compat v a hv, h.local_domain a]
+  have dw : N'.node_dom w = h.piece b := by
+    change dom (N'.node_op w) = _
+    rw [h.piece_node_op_compat w b hw, h.local_domain b]
+  rw [h.edge_domain_eq, pv, pw, iv, dw]
+
+include h in
+theorem depth_eq : N'.evaluation_depth = N.evaluation_depth := by
+  have hlen : ∀ x : {x : X // x ∈ N'.U}, (N'.path_of x).length =
+      (N.path_of (transport_network_input h.same_input_domain x)).length := by
+    intro x; rw [← h.path_projection x, List.length_map]
+  apply le_antisymm
+  · apply N'.evaluation_depth_le_of_input_lengths
+    intro x; rw [hlen x]; exact N.input_path_length_le_evaluation_depth _
+  · apply N.evaluation_depth_le_of_input_lengths
+    intro x
+    let x' : {x : X // x ∈ N'.U} := ⟨x.val, h.same_input_domain.symm ▸ x.property⟩
+    have := hlen x'
+    change _ = (N.path_of x).length at this
+    rw [← this]; exact N'.input_path_length_le_evaluation_depth x'
+end NDR
+end ReviewCheck
+
+#print axioms ReviewCheck.TextbookNDR.preserves
+#print axioms ReviewCheck.node_domain_rule_preserves
+#print axioms ReviewCheck.NDR.depth_eq
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR03/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR03:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR03/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/original-reviews/AHR03.json">review · AHR03.json</a><span class="hash">SHA256 2430677e8dc8b6deab89d6258a83a0049b314ccd8d6efdfde24327c1974fdc5f</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/lean/AHR03-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/claim-public-sources/AHR03.json">review · AHR03.json</a><span class="hash">SHA256 0c8c8939f5222caec13193b979fa53bc2cea39d92227a03aa3a2562c5f336934</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>Independent full A1 source-based review; quoted commitments and root-cause judgments retained, raw runtime identity and human approval remain distinct.</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>judgment</h3>
+<p><strong>评分：</strong> 35</p>
+<p><strong>审核说明：</strong> 追踪精确NodeDomainRefinement而非仅Operational辅助关系，识别完整edge_domain_eq与实际构造桥，所审范围对齐。</p>
+<h3>valid_parts</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 分划、局域限制、入口、四类边与prune、路径及外延结果逐项核查；辅助choice_projection的冗余推导为补充，未制造核心缺口。</p>
+<h3>evidence</h3>
+<p><strong>评分：</strong> 30</p>
+<p><strong>审核说明：</strong> 说明完整输出像/目标域交集给四类边；真实network_refinement桥和coloured路径证明均具体。删除不可达子片会扩终止域的例子合法。</p>
+<h3>repair_scope</h3>
+<p><strong>评分：</strong> 15</p>
+<p><strong>审核说明：</strong> 仅建议把可导出的路由、外延包装和表示唯一性引理显式化；承认不影响原定义/命题覆盖，不强迫新增Lean。</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h2>结论</h2>
+<p>在&quot;节点域加细&quot;这一情形下，所给 Lean 实现准确、完整地覆盖了正文定义和命题 #h-012f4ba72aeb3f20（网络加细保持外延等价）。没有发现会改变数学结论的缺陷。</p>
+<ul>
+<li><strong>定义</strong>：构造 <code>NodePartitionData</code> + <code>NodePartitionData.network</code>（已含删冗余）与关系 <code>NodeDomainRefinement</code> 都和正文数据逐项对应。我补充验证了两个方向：由关系可以推出正文的全部公式，由正文数据也可以推出关系的全部字段。所以这个关系恰好刻画正文的加细结果。</li>
+<li><strong>命题</strong>：两处已证明。
+<ul>
+<li><code>refinement_preserves_local_equivalence</code> 对任意满足关系的 N′ 给出 φ_{N′} ≡_U φ_N。</li>
+<li><code>NodePartitionData.network_extensional_eq</code> 对规范构造给出外延算子整体相等，连 U 之外也相等。</li>
+</ul>
+</li>
+<li><strong>核验</strong>：在本工程中 <code>lake build</code> 成功；源码里没有 <code>sorry</code>、<code>admit</code> 或自定义 <code>axiom</code>。上述定理以及 <code>network_refinement</code>、<code>network_edge_domain_eq</code>、<code>network_choice_projection</code>、<code>piece_label_reached_iff</code>、<code>entry_domain_eq</code>、<code>path_projection</code>、<code>eval_projected</code> 用 <code>#print axioms</code> 检查，只依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code>。</li>
+</ul>
+<p>有一处陈述层面的间接之处：关系里的 <code>choice_projection</code> 字段在正文定义中并不存在，它其实是正文证明的核心步骤。另外有几项包装性或外围结论没有在源码中写出来。这些我都在本工程里补写并编译通过（见附录），所以它们属于&quot;建议补充&quot;，不是数学缺口。</p>
+<h2>一、对象层的对应</h2>
+<ul>
+<li><strong>网络的表示方式不同</strong>：正文用图 (V,E)、转移域 D_{β→γ} 和入口片描述网络。Lean 的 <code>FiniteOperatorNetwork</code> 用 <code>entry</code>、<code>choice</code>、<code>path_of</code>、<code>depth_bound</code>、<code>node_reachable</code> 描述，其中入口片 <code>entry_domain</code>、边域 <code>edge_domain β γ = {z ∈ f_β(U_β) | choice β z = next γ}</code> 和终止域 <code>terminal_domain</code> 都是派生出来的。
+<ul>
+<li>因此正文要求的三件事在 Lean 里自动成立：出边域互斥，&quot;空入口片、空边域省略&quot;，以及&quot;终止域由出边域的补集确定&quot;。</li>
+</ul>
+</li>
+<li><strong>局部等价</strong>：正文的 ≡_U 对应 <code>LocalEquivalent</code>，即在 U 上逐点相等。如果正文的 ≡_U 还要求 U⊆dom，也自动满足：两侧外延算子的定义域都等于 U（由 <code>dom_extensional_operator_eq</code> 和 <code>same_input_domain</code> 得到）。</li>
+</ul>
+<h2>二、定义逐项对照</h2>
+<table>
+<thead>
+<tr>
+<th>正文要素</th>
+<th>关系 <code>NodeDomainRefinement</code></th>
+<th>构造 <code>NodePartitionData</code></th>
+<th>判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>被加细节点 β，U_β=dom f_β</td>
+<td><code>target</code>，<code>N.node_dom target</code></td>
+<td>参数 <code>target</code></td>
+<td>一致</td>
+</tr>
+<tr>
+<td>有限分划 U_β=⊔U_{β,a}，各块非空</td>
+<td><code>part_count</code>、<code>piece</code>、<code>piece_nonempty</code>、<code>piece_disjoint</code>、<code>piece_cover</code></td>
+<td><code>count</code>、<code>piece</code>、<code>nonempty</code>、<code>disjoint</code>、<code>cover</code></td>
+<td>一致；<code>part_count_pos</code> 是冗余条件</td>
+</tr>
+<tr>
+<td>dom f_{β,a}=U_{β,a}，f_{β,a}≡f_β</td>
+<td><code>local_factor</code>、<code>local_domain</code>、<code>local_equiv</code></td>
+<td><code>local_op</code>、<code>local_domain</code>、<code>local_eq</code></td>
+<td>一致；正文所说&quot;f_{β,a} 正是 f_β|<em>{U</em>{β,a}}&quot;已由 <code>local_op_eq_restrict</code> 证明</td>
+</tr>
+<tr>
+<td>用子节点替换 β</td>
+<td><code>source</code>（单射）、<code>old_node_op_compat</code>、<code>piece_node_op_compat</code></td>
+<td><code>Label := {v // v≠target} ⊕ Fin count</code>、<code>node_op</code></td>
+<td>一致</td>
+</tr>
+<tr>
+<td>子节点入口片 U^in_β∩U_{β,a}，其他入口片不变</td>
+<td><code>same_input_domain</code>、<code>entry_projection</code>，由此推出 <code>entry_domain_eq</code>：N′.entry_domain v = N.entry_domain(πv) ∩ N′.node_dom v</td>
+<td><code>entry := lift_label (N.entry x) x</code></td>
+<td>一致，已证明</td>
+</tr>
+<tr>
+<td>入边、出边、自环、无关边的四个边域公式</td>
+<td>统一公式 <code>edge_domain_eq</code>：(D_{πv→πw} ∩ f′_v(U′_v)) ∩ U′_w</td>
+<td><code>network_edge_domain_eq</code>、<code>self_loop_choice_iff</code></td>
+<td>一致；四个特例都可由统一公式推出</td>
+</tr>
+<tr>
+<td>删除未被任何输入经过的子节点（引理 h-ced8c7236326e104）</td>
+<td><code>old_node_present</code>、<code>piece_node_present_iff_reached</code>（<code>NodePieceReached</code>）</td>
+<td><code>network := presentation.prune</code>；<code>old_label_reached</code>、<code>piece_label_reached_iff</code></td>
+<td>一致</td>
+</tr>
+</tbody>
+</table>
+<h3>为什么 <code>choice_projection</code> 只能在实际输出上要求</h3>
+<p>下面的例子说明，删冗余之后，&quot;路由与原网络一致&quot;在整个输出像上一般不成立。</p>
+<ul>
+<li><strong>网络 N</strong>：单节点 β，U_β={0,1,2}，f_β(0)=0，f_β(1)=f_β(2)=2；自环转移域 D_{β→β}={2}；入口片 U={0}。输入 0 一步终止，所以这是合法的有限网络。</li>
+<li><strong>加细</strong>：取 U_{β,1}={0,1}，U_{β,2}={2}。删冗余前有 D′_{β₁→β₂}={2}。</li>
+<li><strong>删冗余</strong>：β₂ 从未被输入经过，因此被删除。删除后终止域 T′<em>{β₁}={0,2}，严格大于 f</em>{β,1}(U_{β,1})∩T_β={0}。</li>
+<li><strong>结果</strong>：输出点 2 来自非实际输入 1。它在原网络中沿自环继续，在加细结果中却终止。</li>
+</ul>
+<p>源码的处理恰好与此相符：<code>edge_domain_eq</code> 只约束保留节点之间的边，<code>choice_projection</code> 只在实际输出上要求。这也说明正文证明中的等式 T′<em>{β_a}=f</em>{β,a}(U_{β,a})∩T_β 只适用于删冗余之前。正文已写明&quot;先考察尚未删除冗余节点的加细数据&quot;，所以这不是错误。</p>
+<h3>关系恰好刻画正文的加细结果</h3>
+<ul>
+<li><strong>由关系推出正文公式</strong>：
+<ul>
+<li>入口片公式由源码 <code>entry_domain_eq</code> 给出。</li>
+<li>自环公式见附录 <code>self_loop_edge</code>。</li>
+<li>以下公式我在另一个 scratch 文件中用同样的方法推出并编译通过，未收入附录：入边 <code>= N.edge_domain γ β ∩ U_{β,a}</code>，出边 <code>= N.edge_domain β γ ∩ f_{β,a}(U_{β,a})</code>，无关边不变，旧入口片不变。</li>
+<li>节点集由 <code>source</code> 单射加两个&quot;存在性&quot;字段确定。因此 N′ 的展示数据 (U, node_op, entry_domain, edge_domain) 在 <code>source</code> 重命名下是唯一的，关系不会接纳非教材网络。</li>
+</ul>
+</li>
+<li><strong>由正文数据推出关系</strong>：包括正文定义中没有的 <code>choice_projection</code> 字段，见附录 <code>choice_projection_derived</code> 和 <code>toNodeDomainRefinement</code>。所以关系也没有附加多余的约束。</li>
+</ul>
+<h2>三、命题对照</h2>
+<p>正文命题：若 N′ 由 N 经一次节点域加细得到，则 φ_{N′} ≡_U φ_N。对应的 Lean 结果如下。</p>
+<ul>
+<li><code>refinement_preserves_local_equivalence (h : NetworkRefinement N N')</code>：结论是 <code>LocalEquivalent N'.extensional_operator N.extensional_operator N.U</code>。节点域情形取 <code>h = .node_domain href</code>。</li>
+<li><code>allowed_network_refinement</code>：说明规范构造确实是一次允许的加细。</li>
+<li><code>network_extensional_eq</code>：外延算子整体相等，比 ≡_U 更强。</li>
+<li><code>refinement_preserves_representation</code>：加细保持网络表示。</li>
+</ul>
+<p>证明步骤的对应：</p>
+<table>
+<thead>
+<tr>
+<th>正文证明</th>
+<th>Lean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每次经过 β 时按当前输入选子块：(β,y_s)↦(β_{a_s},y_s)，值不变</td>
+<td>构造：<code>lift_label</code>、<code>colour_path</code>、<code>lift_apply</code>；关系：<code>node_eval_eq</code></td>
+</tr>
+<tr>
+<td>入口状态唯一</td>
+<td>构造：<code>entry := lift_label …</code>；关系：<code>entry_projection</code></td>
+</tr>
+<tr>
+<td>新边域给出 y_{s+1}∈D′，终止输出落入 T′</td>
+<td>构造：<code>coloured_terminal</code>；关系：<code>terminal_projection</code>（经由 <code>choice_projection</code>）</td>
+</tr>
+<tr>
+<td>删冗余前的数据满足 (i)–(iii)，r′=r≤ℓ(N)</td>
+<td><code>presentation</code>（<code>depth_bound := N.depth_bound</code>）、<code>colour_path_length</code></td>
+</tr>
+<tr>
+<td>删冗余后轨迹与输出不变</td>
+<td><code>prune</code>、<code>prune_eval</code>、<code>prune_path_labels</code>、<code>network_path_projection</code></td>
+</tr>
+<tr>
+<td>φ_{N′}(x)=φ_N(x)</td>
+<td>构造：<code>coloured_eval</code>、<code>network_extensional_eq</code>；关系：<code>path_projection</code>、<code>eval_projected</code>、<code>terminal_path_unique</code></td>
+</tr>
+</tbody>
+</table>
+<p>关系层的证明实际只用到以下字段：<code>node_eval_eq</code> 所需的 <code>local_domain</code>、<code>local_equiv</code> 和两个 <code>*_node_op_compat</code>，以及 <code>same_input_domain</code>、<code>entry_projection</code>、<code>choice_projection</code>。以下字段都没有用到：<code>piece_disjoint</code>、<code>piece_cover</code>、<code>source_injective</code>、两个存在性字段、<code>edge_domain_eq</code>。</p>
+<p>这意味着保持外延的结论对更宽的一类&quot;运行层&quot;加细也成立。那些精确字段的作用是保证关系就是正文的定义，而不是用来推出结论。</p>
+<h2>四、已证明与需补充</h2>
+<h3>源码已证明（无 <code>sorry</code>）</h3>
+<ul>
+<li><code>local_op_eq_restrict</code>：f_{β,a}=f_β|<em>{U</em>{β,a}}。</li>
+<li><code>presentation</code> 和 <code>network</code>：构造先满足 (i)–(iii)，删冗余后得到有限网络。</li>
+<li><code>old_label_reached</code>、<code>piece_label_reached_iff</code>：哪些节点被保留。</li>
+<li><code>network_edge_domain_eq</code>、<code>self_loop_choice_iff</code>：边域公式，包括自环和从未被使用的边。</li>
+<li><code>network_choice_projection</code>：实际输出上的路由与原网络一致。</li>
+<li><code>network_refinement</code>、<code>allowed_network_refinement</code>：规范构造满足关系。</li>
+<li>关系层的 <code>node_eval_eq</code>、<code>terminal_projection</code>、<code>path_projection</code>、<code>eval_projected</code>、<code>entry_domain_eq</code>、<code>retained_edge_mem</code>。</li>
+<li>主结论 <code>refinement_preserves_local_equivalence</code>、<code>network_extensional_eq</code>、<code>refinement_preserves_representation</code>，以及路径结果 <code>network_path_labels</code>、<code>network_path_projection</code>。</li>
+</ul>
+<h3>需补充（都不影响命题成立；附录中的代码已编译通过）</h3>
+<p>(a) <strong><code>choice_projection</code> 是证明内容而不是定义内容。</strong></p>
+<ul>
+<li><strong>问题</strong>：源码只对规范构造证明了它。对只按正文公式给出的任意 N′，一般定理在形式上多了一个前提。</li>
+<li><strong>影响</strong>：没有数学影响，因为它可以推出。</li>
+<li><strong>论证</strong>：
+<ol>
+<li>沿原网络的终止轨迹归纳。<code>exists_lift</code> 说明：原轨迹上每次实际进入节点 γ，相应的子节点必定被保留。</li>
+<li>由 <code>edge_domain_eq</code> 可知加细后的网络沿同一节点前进（附录 <code>follow</code>），所以加细轨迹投影后就是原轨迹。</li>
+<li>若加细网络在 v 处终止而原网络要继续，则由前缀求值相等（<code>prefix_eval</code>）可知原路径会继续，从而加细路径也会继续，矛盾。</li>
+</ol>
+</li>
+<li><strong>修复方向</strong>：把附录 A 的引理（<code>choice_projection_derived</code>、<code>toNodeDomainRefinement</code>、<code>preserves</code>）并入源码，或提供&quot;由正文数据构造关系&quot;的构造器。</li>
+</ul>
+<p>(b) <strong>结论的包装。</strong></p>
+<ul>
+<li><strong>问题</strong>：一般定理只给出 <code>LocalEquivalent … N.U</code>。正文&quot;外延等价&quot;要求同一个非空输入域加 ≡_U；对象空间的等价要求外延算子相等。这两种形式都没有单独陈述。</li>
+<li><strong>修复</strong>：附录 B 的 <code>refinement_extensional_equivalent</code> 同时给出两者。U 非空可由 <code>target</code> 存在和 <code>node_reachable</code> 得到。</li>
+</ul>
+<p>(c) <strong>对象空间层。</strong></p>
+<ul>
+<li><strong>问题</strong>：正文规定加细结果需先编号编码才是 X_net 的元素。源码的 <code>RefinementRule (NetworkObject X bot)</code> 只是一个抽象参数，没有具体的节点域加细规则。</li>
+<li><strong>修复</strong>：附录 B 的 <code>NodeDomainRule</code> 和 <code>node_domain_rule_preserves</code>。这一步对后续&quot;不可约代表&quot;有用。</li>
+</ul>
+<p>(d) <strong>证明内部的中间结论没有单独陈述。</strong></p>
+<ul>
+<li>ℓ(N′)=ℓ(N) 未陈述，已补在附录 C 的 <code>depth_eq</code>。</li>
+<li>删冗余前的终止域公式和&quot;旧节点终止域不变&quot;没有形式化。删冗余后只能得到&quot;⊇&quot;（见第二节的例子）。命题本身不需要这些结论。</li>
+</ul>
+<p>(e) <strong>加细结果在重命名意义下的唯一性。</strong></p>
+<ul>
+<li>第二节已说明展示数据被关系唯一确定，但源码没有&quot;N′ 与 P.network 同构&quot;的显式定理（例如通过 <code>relabel</code> 加 <code>presentation_data</code> 相等）。</li>
+<li>若要把&quot;该次加细的结果&quot;当作 X_net 中良定义的对象来用，建议补上。</li>
+</ul>
+<p>(f) <strong>细节。</strong></p>
+<ul>
+<li><code>part_count_pos</code> 是冗余条件。</li>
+<li><code>piece_nonempty</code> 对应&quot;各块非空&quot;这一读法，而且必须如此：空块的局域算子是全未定义算子，违反转移图&quot;定义域非空&quot;的要求。</li>
+<li><code>local_op_eq_restrict</code> 只在构造层给出；关系层同样成立，证明相同。</li>
+</ul>
+<h2>五、对正文定义本身的意见</h2>
+<ul>
+<li>定义是自洽的：新边域满足包含关系与出边互斥，入口片的细分保持输入分划。</li>
+<li>有一处次序问题：定义中直接调用引理 h-ced8c7236326e104 删冗余，而该引理的前提——删冗余前的数据满足 (i)–(iii)——要到命题 #h-012f4ba72aeb3f20 的证明里才验证。Lean 的构造先用 <code>presentation</code> 证明 (i)–(iii)，再执行 <code>prune</code>，所以是良基的。建议正文在定义处注明，或把这一验证前移。</li>
+<li>删冗余后终止域可能严格变大。阅读证明中的终止域等式时，要注意它只适用于删冗余之前。</li>
+</ul>
+<h2>附录：补充验证代码</h2>
+<p>以下代码为补充验证用，并非修改附件。它在本工程中用 <code>lake env lean</code> 编译通过，没有错误，三条 <code>#print axioms</code> 只显示三条标准公理。</p>
+<pre><code class="language-lean">import formal_oet.vol_01.ch_05_operator_networks.domain_refinement_construction
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_04_operator_chain_calculus
+open formal_oet.vol_01.ch_05_operator_networks
+open FiniteOperatorNetwork
+
+namespace ReviewCheck
+variable {X V V' : Type} {bot : X}
+
+/-! ### A. 只含教材数据的节点域加细（去掉 `choice_projection`、单射性与非空性） -/
+structure TextbookNDR (N : FiniteOperatorNetwork X bot V) (N' : FiniteOperatorNetwork X bot V') where
+  target : V
+  part_count : Nat
+  piece : Fin part_count → Set X
+  piece_disjoint : ∀ {a b : Fin part_count}, a ≠ b → Disjoint (piece a) (piece b)
+  piece_cover : (⋃ a : Fin part_count, piece a) = N.node_dom target
+  local_factor : Fin part_count → Operator X bot
+  local_domain : ∀ a, dom (local_factor a) = piece a
+  local_equiv : ∀ a, LocalEquivalent (local_factor a) (N.node_op target) (piece a)
+  source : V' → ({β : V // β ≠ target} ⊕ Fin part_count)
+  old_node_present : ∀ β : {β : V // β ≠ target}, ∃ β' : V', source β' = Sum.inl β
+  piece_node_present_iff_reached : ∀ a : Fin part_count,
+      (∃ β' : V', source β' = Sum.inr a) ↔ NodePieceReached N target piece a
+  old_node_op_compat : ∀ (β' : V') (β : {β : V // β ≠ target}),
+      source β' = Sum.inl β → N'.node_op β' = N.node_op β.val
+  piece_node_op_compat : ∀ (β' : V') (a : Fin part_count),
+      source β' = Sum.inr a → N'.node_op β' = local_factor a
+  same_input_domain : N'.U = N.U
+  entry_projection : ∀ x : N'.U, node_domain_projection target source (N'.entry x) =
+      N.entry (transport_network_input same_input_domain x)
+  edge_domain_eq : ∀ v w : V',
+    N'.edge_domain v w =
+      (N.edge_domain (node_domain_projection target source v)
+        (node_domain_projection target source w) ∩ N'.node_image v) ∩ N'.node_dom w
+
+namespace TextbookNDR
+variable {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}
+variable (T : TextbookNDR N N')
+
+def proj (v : V') : V := node_domain_projection T.target T.source v
+
+theorem node_eval_eq (v : V') (x : X) (hx : x ∈ N'.node_dom v) :
+    (N'.node_op v).func x = (N.node_op (T.proj v)).func x := by
+  cases hs : T.source v with
+  | inl w =&gt; simp [proj, node_domain_projection, hs, T.old_node_op_compat v w hs]
+  | inr a =&gt;
+    have hxpiece : x ∈ T.piece a := by
+      rw [← T.local_domain a, ← T.piece_node_op_compat v a hs]; exact hx
+    simpa [proj, node_domain_projection, hs, T.piece_node_op_compat v a hs] using
+      T.local_equiv a x hxpiece
+
+theorem dom_subset (v : V') : N'.node_dom v ⊆ N.node_dom (T.proj v) := by
+  intro x hx
+  have h' : (N'.node_op v).func x ≠ bot := hx
+  change (N.node_op (T.proj v)).func x ≠ bot
+  rw [← T.node_eval_eq v x hx]; exact h'
+
+/-- 原路径上 `γ` 的一次实际发生，其当前输入落在某个保留的 `N'` 节点（投影为 `γ`）中。 -/
+theorem exists_lift (x0 : N.U) (pref suffix : List V) (γ : V)
+    (hpath : N.path_of x0 = pref ++ γ :: suffix) :
+    ∃ w : V', T.proj w = γ ∧ N.chain_eval_nodes pref x0.val ∈ N'.node_dom w := by
+  have hlt : pref.length &lt; (N.path_of x0).length := by simp [hpath]
+  let n : Fin (N.path_of x0).length := ⟨pref.length, hlt⟩
+  have hget : (N.path_of x0).get n = γ := by simp [n, hpath]
+  have htake : (N.path_of x0).take n.val = pref := by simp [n, hpath]
+  have hmem0 := terminal_path_prefix_input_mem N.choice_next_mem
+    (N.entry_mem x0) (N.path_terminal x0) n
+  rw [hget, htake] at hmem0
+  have hmem : N.chain_eval_nodes pref x0.val ∈ N.node_dom γ := hmem0
+  by_cases hγ : γ = T.target
+  · subst hγ
+    have hcov : N.chain_eval_nodes pref x0.val ∈ ⋃ a, T.piece a := by
+      rw [T.piece_cover]; exact hmem
+    obtain ⟨a, ha⟩ := Set.mem_iUnion.mp hcov
+    have hreach : NodePieceReached N T.target T.piece a := ⟨x0, n, hget, by rw [htake]; exact ha⟩
+    obtain ⟨w, hw⟩ := (T.piece_node_present_iff_reached a).mpr hreach
+    refine ⟨w, by simp [proj, node_domain_projection, hw], ?_⟩
+    change N.chain_eval_nodes pref x0.val ∈ dom (N'.node_op w)
+    rw [T.piece_node_op_compat w a hw, T.local_domain a]; exact ha
+  · obtain ⟨w, hw⟩ := T.old_node_present ⟨γ, hγ⟩
+    refine ⟨w, by simp [proj, node_domain_projection, hw], ?_⟩
+    change N.chain_eval_nodes pref x0.val ∈ dom (N'.node_op w)
+    rw [T.old_node_op_compat w ⟨γ, hγ⟩ hw]; exact hmem
+
+/-- 教材证明的核心一步：仅由教材边域公式推出加细轨迹投影为原轨迹。 -/
+theorem follow (x0 : N.U) :
+    ∀ {v : V} {y : X} {p : List V}, TerminalPathFrom N.node_op N.choice v y p →
+    ∀ (pref : List V), N.path_of x0 = pref ++ p → y = N.chain_eval_nodes pref x0.val →
+    ∀ {v' : V'} {q : List V'}, T.proj v' = v → y ∈ N'.node_dom v' →
+      TerminalPathFrom N'.node_op N'.choice v' y q → q.map T.proj = p := by
+  intro v y p ht
+  induction ht with
+  | @stop v y hs =&gt;
+    intro pref hpath hy v' q hpv hyd ht'
+    cases ht' with
+    | stop _ =&gt; simp [hpv]
+    | @next _ w _ rest hn _ =&gt;
+      exfalso
+      have hz : (N'.node_op v').func y ∈ N'.edge_domain v' w := ⟨⟨y, hyd, rfl⟩, hn⟩
+      rw [T.edge_domain_eq] at hz
+      have h1 := hz.1.1.2
+      have hp1 : node_domain_projection T.target T.source v' = v := hpv
+      rw [T.node_eval_eq v' y hyd] at h1
+      change N.choice (node_domain_projection T.target T.source v')
+        ((N.node_op (node_domain_projection T.target T.source v')).func y) = _ at h1
+      rw [hp1, hs] at h1
+      cases h1
+  | @next v γ y rest hs htail ih =&gt;
+    intro pref hpath hy v' q hpv hyd ht'
+    have heval : (N'.node_op v').func y = (N.node_op v).func y := by
+      rw [T.node_eval_eq v' y hyd, hpv]
+    obtain ⟨rest', hrest'⟩ : ∃ rest', rest = γ :: rest' := by
+      cases htail with
+      | stop _ =&gt; exact ⟨[], rfl⟩
+      | next _ _ =&gt; exact ⟨_, rfl⟩
+    have hpath' : N.path_of x0 = (pref ++ [v]) ++ γ :: rest' := by rw [hpath, hrest']; simp
+    have hy' : (N.node_op v).func y = N.chain_eval_nodes (pref ++ [v]) x0.val := by
+      rw [FiniteOperatorNetwork.chain_eval_nodes_append, hy]; rfl
+    obtain ⟨w, hpw, hwdom⟩ := T.exists_lift x0 (pref ++ [v]) rest' γ hpath'
+    rw [← hy'] at hwdom
+    have hydN : y ∈ N.node_dom v := by have := T.dom_subset v' hyd; rwa [hpv] at this
+    have hzedge : (N'.node_op v').func y ∈ N'.edge_domain v' w := by
+      rw [T.edge_domain_eq]
+      refine ⟨⟨?_, ⟨y, hyd, rfl⟩⟩, ?_⟩
+      · have hp1 : node_domain_projection T.target T.source v' = v := hpv
+        have hp2 : node_domain_projection T.target T.source w = γ := hpw
+        rw [hp1, hp2, heval]; exact ⟨⟨y, hydN, rfl⟩, hs⟩
+      · rw [heval]; exact hwdom
+    have hnext : N'.choice v' ((N'.node_op v').func y) = OutputChoice.next w := hzedge.2
+    cases ht' with
+    | stop hstop =&gt; rw [hnext] at hstop; cases hstop
+    | @next _ w' _ restq hn hrestq =&gt;
+      have hww : w' = w := OutputChoice.next.inj (hn.symm.trans hnext)
+      subst hww
+      rw [heval] at hrestq
+      have := ih (pref ++ [v]) (by rw [hpath]; simp) hy' hpw hwdom hrestq
+      simp [hpv, this]
+
+theorem path_projection (x : N'.U) :
+    (N'.path_of x).map T.proj = N.path_of (transport_network_input T.same_input_domain x) :=
+  T.follow _ (N.path_terminal _) [] (by simp) rfl
+    (T.entry_projection x) (N'.entry_mem x) (N'.path_terminal x)
+
+theorem prefix_eval {v x p} (ht : TerminalPathFrom N'.node_op N'.choice v x p)
+    (hx : x ∈ N'.node_dom v) :
+    ∀ (pref s : List V'), p = pref ++ s →
+      chain_eval_nodes_core N'.node_op pref x =
+        chain_eval_nodes_core N.node_op (pref.map T.proj) x := by
+  induction ht with
+  | @stop v x hs =&gt;
+    intro pref s hp
+    cases pref with
+    | nil =&gt; rfl
+    | cons a pref' =&gt;
+      simp only [List.cons_append, List.cons.injEq] at hp
+      obtain ⟨rfl, hrest⟩ := hp
+      have hpref : pref' = [] := (List.append_eq_nil_iff.mp hrest.symm).1
+      subst hpref
+      simp [chain_eval_nodes_core, T.node_eval_eq _ x hx]
+  | @next v w x rest hs ht ih =&gt;
+    intro pref s hp
+    cases pref with
+    | nil =&gt; rfl
+    | cons a pref' =&gt;
+      simp only [List.cons_append, List.cons.injEq] at hp
+      obtain ⟨rfl, hrest⟩ := hp
+      simp only [List.map_cons, chain_eval_nodes_core]
+      rw [← T.node_eval_eq _ x hx]
+      exact ih (N'.choice_next_mem hx hs) pref' s hrest
+
+/-- 源码关系中的辅助字段 `choice_projection` 可由教材数据推出。 -/
+theorem choice_projection_derived (v : V') (z : X)
+    (hz : z ∈ (N'.node_op v).func '' N'.node_actual_input_domain v) :
+    map_output_choice T.proj (N'.choice v z) = N.choice (T.proj v) z := by
+  rcases hz with ⟨y, hy, rfl⟩
+  have hyd : y ∈ N'.node_dom v := N'.node_actual_input_domain_subset_node_dom v hy
+  cases hc : N'.choice v ((N'.node_op v).func y) with
+  | next w =&gt;
+    have hzedge : (N'.node_op v).func y ∈ N'.edge_domain v w := ⟨⟨y, hyd, rfl⟩, hc⟩
+    rw [T.edge_domain_eq] at hzedge
+    exact hzedge.1.1.2.symm
+  | stop =&gt;
+    cases hN : N.choice (T.proj v) ((N'.node_op v).func y) with
+    | stop =&gt; rfl
+    | next γ =&gt;
+      exfalso
+      rcases hy with ⟨x, pref, suffix, hpath, hyval, _⟩
+      have hproj : N.path_of (transport_network_input T.same_input_domain x) =
+          pref.map T.proj ++ T.proj v :: suffix.map T.proj := by
+        rw [← T.path_projection x, hpath]; simp
+      have hpre := T.prefix_eval (N'.path_terminal x) (N'.entry_mem x) pref (v :: suffix) hpath
+      have hnext : N.choice (T.proj v) ((N.node_op (T.proj v)).func
+          (chain_eval_nodes_core N.node_op (pref.map T.proj)
+            (transport_network_input T.same_input_domain x).val)) = OutputChoice.next γ := by
+        have e1 : (N'.node_op v).func y = (N.node_op (T.proj v)).func y := T.node_eval_eq v y hyd
+        have e2 : y = chain_eval_nodes_core N.node_op (pref.map T.proj)
+            (transport_network_input T.same_input_domain x).val := by rw [hyval]; exact hpre
+        rw [← e2, ← e1]; exact hN
+      obtain ⟨tail, htail⟩ :=
+        terminal_path_suffix_of_next_at_prefix (N.path_terminal _) hproj hnext
+      cases suffix with
+      | nil =&gt; simp at htail
+      | cons w rest =&gt;
+        have hadj := terminal_path_choice_at_adjacent_prefix (N'.path_terminal x) hpath
+        have hw : N'.choice v ((N'.node_op v).func y) = OutputChoice.next w := by
+          rw [hyval]; exact hadj
+        rw [hw] at hc; cases hc
+
+/-- 教材数据（加上单射与非空分块）即给出源码的 `NodeDomainRefinement`。 -/
+def toNodeDomainRefinement (hinj : Function.Injective T.source) (hpos : 0 &lt; T.part_count)
+    (hne : ∀ a, (T.piece a).Nonempty) : NodeDomainRefinement N N' where
+  target := T.target
+  part_count := T.part_count
+  part_count_pos := hpos
+  piece := T.piece
+  piece_nonempty := hne
+  piece_disjoint := T.piece_disjoint
+  piece_cover := T.piece_cover
+  local_factor := T.local_factor
+  local_domain := T.local_domain
+  local_equiv := T.local_equiv
+  source := T.source
+  source_injective := hinj
+  old_node_present := T.old_node_present
+  piece_node_present_iff_reached := T.piece_node_present_iff_reached
+  old_node_op_compat := T.old_node_op_compat
+  piece_node_op_compat := T.piece_node_op_compat
+  same_input_domain := T.same_input_domain
+  entry_projection := T.entry_projection
+  choice_projection := T.choice_projection_derived
+  edge_domain_eq := T.edge_domain_eq
+
+/-- 于是：任何只按教材数据给出的节点域加细都保持外延（直接调用源码主定理）。 -/
+theorem preserves (hinj : Function.Injective T.source) (hpos : 0 &lt; T.part_count)
+    (hne : ∀ a, (T.piece a).Nonempty) :
+    LocalEquivalent N'.extensional_operator N.extensional_operator N.U :=
+  refinement_preserves_local_equivalence (.node_domain (T.toNodeDomainRefinement hinj hpos hne))
+end TextbookNDR
+
+/-! ### B. 包装：外延等价、整体算子相等、对象空间版本 -/
+theorem refinement_extensional_equivalent
+    {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}
+    (h : NetworkRefinement N N') :
+    ExtensionalEquivalent N' N ∧ N'.extensional_operator = N.extensional_operator := by
+  classical
+  refine ⟨⟨h.same_input_domain, fun x hx =&gt;
+    refinement_preserves_local_equivalence h x (h.same_input_domain ▸ hx)⟩, ?_⟩
+  apply Operator.ext
+  funext x
+  by_cases hx : x ∈ N.U
+  · exact refinement_preserves_local_equivalence h x hx
+  · have hx' : x ∉ N'.U := by rw [h.same_input_domain]; exact hx
+    simp [FiniteOperatorNetwork.extensional_operator, hx, hx']
+
+/-- 对象空间 `X_net` 上的节点域加细规则（编号编码后）保持外延读出。 -/
+def NodeDomainRule : RefinementRule (NetworkObject X bot) :=
+  fun O O' =&gt; ∃ (M : NonemptyOperatorNetwork X bot) (V' : Type)
+    (N' : FiniteOperatorNetwork X bot V') (_ : NodeDomainRefinement M.network N')
+    (hU : N'.U.Nonempty),
+      O = NetworkObject.nonempty M ∧ O' = NetworkObject.nonempty (NonemptyOperatorNetwork.encode N' hU)
+
+theorem node_domain_rule_preserves {O O' : NetworkObject X bot}
+    (h : NodeDomainRule O O') : NetworkObject.ExtensionalEquivalent O' O := by
+  rcases h with ⟨M, V', N', href, hU, rfl, rfl⟩
+  show (NetworkObject.nonempty _).extensional_operator = (NetworkObject.nonempty M).extensional_operator
+  rw [NetworkObject.extensional_operator_nonempty, NetworkObject.extensional_operator_nonempty,
+    NonemptyOperatorNetwork.encode_extensional_operator]
+  exact (refinement_extensional_equivalent (.node_domain href)).2
+
+/-! ### C. 关系层推出教材的自环边域公式与求值深度不变 -/
+namespace NDR
+variable {N : FiniteOperatorNetwork X bot V} {N' : FiniteOperatorNetwork X bot V'}
+variable (h : NodeDomainRefinement N N')
+
+theorem self_loop_edge (v w : V') (a b : Fin h.part_count)
+    (hv : h.source v = .inr a) (hw : h.source w = .inr b) :
+    N'.edge_domain v w =
+      N.edge_domain h.target h.target ∩ (h.local_factor a).func '' h.piece a ∩ h.piece b := by
+  have pv : node_domain_projection h.target h.source v = h.target := by
+    simp [node_domain_projection, hv]
+  have pw : node_domain_projection h.target h.source w = h.target := by
+    simp [node_domain_projection, hw]
+  have iv : N'.node_image v = (h.local_factor a).func '' h.piece a := by
+    change (N'.node_op v).func '' dom (N'.node_op v) = _
+    rw [h.piece_node_op_compat v a hv, h.local_domain a]
+  have dw : N'.node_dom w = h.piece b := by
+    change dom (N'.node_op w) = _
+    rw [h.piece_node_op_compat w b hw, h.local_domain b]
+  rw [h.edge_domain_eq, pv, pw, iv, dw]
+
+include h in
+theorem depth_eq : N'.evaluation_depth = N.evaluation_depth := by
+  have hlen : ∀ x : {x : X // x ∈ N'.U}, (N'.path_of x).length =
+      (N.path_of (transport_network_input h.same_input_domain x)).length := by
+    intro x; rw [← h.path_projection x, List.length_map]
+  apply le_antisymm
+  · apply N'.evaluation_depth_le_of_input_lengths
+    intro x; rw [hlen x]; exact N.input_path_length_le_evaluation_depth _
+  · apply N.evaluation_depth_le_of_input_lengths
+    intro x
+    let x' : {x : X // x ∈ N'.U} := ⟨x.val, h.same_input_domain.symm ▸ x.property⟩
+    have := hlen x'
+    change _ = (N.path_of x).length at this
+    rw [← this]; exact N'.input_path_length_le_evaluation_depth x'
+end NDR
+end ReviewCheck
+
+#print axioms ReviewCheck.TextbookNDR.preserves
+#print axioms ReviewCheck.node_domain_rule_preserves
+#print axioms ReviewCheck.NDR.depth_eq
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR03/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>AHR03:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/lean/slots/AHR03/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/original-reviews/AHR03.json">review · AHR03.json</a><span class="hash">SHA256 2430677e8dc8b6deab89d6258a83a0049b314ccd8d6efdfde24327c1974fdc5f</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/lean/AHR03-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/claim-public-sources/AHR03.json">review · AHR03.json</a><span class="hash">SHA256 0c8c8939f5222caec13193b979fa53bc2cea39d92227a03aa3a2562c5f336934</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "claude-opus-5.5-max", "label": "Claude Opus 5.5 Max"}, "case": {"id": "AHR03", "title": "节点域加细的语义审计", "category": "lean-audit", "views": {"capability": {"single_attempt": {"case_id": "AHR03", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5", "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580"}, "nonlogical_retry_3": {"case_id": "AHR03", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5", "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580"}}, "partial": {"single_attempt": {"case_id": "AHR03", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5", "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580"}, "nonlogical_retry_3": {"case_id": "AHR03", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5", "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580"}}, "strict": {"single_attempt": {"case_id": "AHR03", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5", "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580"}, "nonlogical_retry_3": {"case_id": "AHR03", "completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5", "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580"}}}}}</script><script src="../../../assets/results-core.js?v=60d00dbc437d"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>

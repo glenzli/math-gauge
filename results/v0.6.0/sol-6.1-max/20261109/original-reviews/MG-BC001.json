@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-BC001:A1",
+  "case_id": "MG-BC001",
+  "binding": {
+    "plan_sha256": "82cd1c2d7d015cf302fff079ecc2d46815b52b978c59ecd3e7b0326dad564651",
+    "slot_id": "MG-BC001:A1",
+    "evidence_id": "9d485b6d16191ac88c715f2a19f704f518acbcb68c09684f73b2f0eac79184d4",
+    "response_sha256": "affb88262ac32c80fe68572770f7cd46c070d9b818db780e9bf566841113b0fb",
+    "history_sha256": "4ae01430f764df7d3ab275d46816093aedbfcbe8bb64c96fc2c3bccd63abcbd3",
+    "projected_request_sha256": "c551727b4ba2fc29f8c8ec4e2c24c217fbc6b9f129af83d6d95a3090d01557d2",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "ff7a320ea33e8343bfa868656f194cb2314bdadf11938a8ac8c7385529b2bcea",
+    "body_origin": {
+      "slot_id": "MG-BC001:A1",
+      "response_sha256": "affb88262ac32c80fe68572770f7cd46c070d9b818db780e9bf566841113b0fb",
+      "start_byte": 0,
+      "end_byte": 6520
+    },
+    "body_sha256": "affb88262ac32c80fe68572770f7cd46c070d9b818db780e9bf566841113b0fb",
+    "rationale_sha256": null,
+    "request_sha256": "cfcca77856d4a354dd7772f23662abd2c37b34ac300000c12c7008133978656f",
+    "group_contract_sha256": "8b7cdc0511da4d6e14a9df7322389b3e04722c46916d68b332b342703439c1de"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "完整纠正四井错误背景，实际有限循环锯齿/边层位移构造、统一7/2梯度界与98*6^-N能量界有效。下确界0不达到、全部最小序列相分数唯一。R3/complete、Strict通过，原ABC3/3/4；AI审阅、人工未审。",
+  "findings": [],
+  "group_contract_sha256": "8b7cdc0511da4d6e14a9df7322389b3e04722c46916d68b332b342703439c1de",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "明确指出没有两井秩一连接不推出四井正能隙，实际保留原四井/零迹/梯度≤4，不放行错误背景。 四个中间对角P0..P3和四个秩一分裂逐项正确，构成具体四井循环，不是泛泛提醒。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "四步残余比例1/6，通过中间梯度而非直接井井连接；井条带/边界层冻结，实际有限递归构造验证原背景推断失效。 四条具体秩一分裂井权重1/4,1/3,1/2,1/3，实际锯齿零均值且峰值≤1；每个C矩形可继续下一步，不假设井间相容。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "矩形边界距离截断η，完整m周期h使内矩形精确B/C比例。δR=εmin边/4，边层≤ε面积；h≤δ/2使梯度≤3+1/2<4。每阶段活动总面积≤1，4N阶段边层≤6^-N，活跃残余≤6^-N；逐边零扰动有限拼接W1∞零迹，后续只改精确中间矩形而不累计边层误差。实际位移/界/能量完整。 W1∞沿坐标线积分及水平/竖直零迹给严格不可达到证明，无错误刚性推广。 零迹平均梯度0和det积分0以光滑紧支撑强W1,2逼近自足论证。det差≤(normX+normY)normdiff给7sqrtE误差，连同sumπ1解出唯一极限，覆盖所有实际近最优序列。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T08:55:06.866511+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "40d9d1f9cbc27cc72b6fac530c99598e33d10e78a486e7b8130121f4ad423341",
+  "public_projection": true,
+  "original_private_review_sha256": "0525b1e40e408c75ef2b99951c7ec5b709890f3b00f8405f43255cd3132dd991"
+}

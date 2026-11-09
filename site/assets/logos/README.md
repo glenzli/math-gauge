@@ -9,5 +9,6 @@
 | OpenAI | [原始SVG](https://artificialanalysis.ai/img/logos/openai.svg) | `f067fbdf1e3bf44575b53998d0b7e31765a02af3c37bfdc5c06c89975cca7cb7` |
 | DeepSeek | [原始SVG](https://artificialanalysis.ai/img/logos/deepseek.svg) | `b4605874bbc5aef0b11be909f17ebfe1b6507dc6b4d725799563754a126d8505` |
 | Google | [原始SVG](https://artificialanalysis.ai/img/logos/google.svg) | `8b694251c4d88e7ac9f0725f502b3ef3fba57291c6e9408ca15d8df74e71a627` |
+| Anthropic | [原始SVG](https://artificialanalysis.ai/img/logos/anthropic.svg) | `621687f5746b775c46a9019e136b4678a296e879bd80b8f6caf6a6eab3b7cce0` |
 
 生成器读取本地SVG并内嵌为data URL，不向第三方请求图片。

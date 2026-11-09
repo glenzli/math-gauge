@@ -1,0 +1,82 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-PS001:A1",
+  "case_id": "MG-PS001",
+  "binding": {
+    "plan_sha256": "b02e88e396ee371803f5d4b54ebeda34ba8fddf78f08030cb4cdccf963b4905d",
+    "slot_id": "MG-PS001:A1",
+    "evidence_id": "6ee83ec1511fb7a1967f857a3e8cf204ff057780853bf15ebb1b63b6af8c20fe",
+    "response_sha256": "3ba9500d8ac9d67246ce38887a3dcaae341b53067cd53281a03915a1784bf8a7",
+    "history_sha256": "6183c6881757e5219e7c3e190062ccb2f01e637a4e0ef37e929cb78897b8b1a2",
+    "projected_request_sha256": "161ee317f185d2a273bc01fca909d8bdca00084650095986cec8fae6c414acf6",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "5257118f1e9f94d17f9fe8305ed6202a97c0f0184fae58dc2d0aac3ed2e13249",
+    "body_origin": {
+      "slot_id": "MG-PS001:A1",
+      "response_sha256": "3ba9500d8ac9d67246ce38887a3dcaae341b53067cd53281a03915a1784bf8a7",
+      "start_byte": 0,
+      "end_byte": 7103
+    },
+    "body_sha256": "3ba9500d8ac9d67246ce38887a3dcaae341b53067cd53281a03915a1784bf8a7",
+    "rationale_sha256": null,
+    "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "两道原目标及六个准则全部正确。独立核对稀疏块的全前缀密度和全参数阶梯轨道跨界估计，未依赖参考路线或旧Gemini评分。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "format_review": {
+    "decision": "valid",
+    "notes": "原始书面答卷完整交付各个题面目标。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "在有界数列上实际以p和密度指示序列运算；P/Q对零距的保持均严证，允许直接使用初等半范数商。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "对任意f，用稀疏指标块A统一控制全部前缀，a=无穷时A密度0而逆像上密度至少1/2；a有限时求和上界给充分性。未默认增长比极限。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "任意有限a的普遍上界与同一块构造的epsilon/(1+epsilon)下界，epsilon趋0给精确最优a。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "零填充Q是商上收缩右逆，故满射；补像密度给a>1非单射，a=1密度1及双收缩逆得等距。连续性来自有限Lip。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "真实复合取样f^k给Lk，次乘性通过整除余数证明根极限与inf公式，不用空间完备或谱理论。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "阶梯f(n)=n+max(floor((r−1)n),floor((a−1)i!))实际严格增且全参数a正确。r=1详证每个Lk=1+k(a−1)，包括跨阶梯上界；r>1证明固定k最终至多遇一异常带，每带至多M步，Lk在r^k与固定Kr^k之间，K独立k。覆盖a=r=1及a=r>1。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T07:41:37.941136+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "cd1d93c24be4115fcb58056bff4cb85c91ee5f7505d0183ca1975375c7242870",
+  "public_projection": true,
+  "original_private_review_sha256": "8d4b6869fc1acb1ab925435a20de08d0b21ecaf4f58e20e8f90cf35e2f6c7f61"
+}

@@ -204,6 +204,12 @@ def project_assessment_score(score):
 def _validate_research_tool_evidence(root, row, execution, policy):
     """Keep historical no-tools evidence distinct from native local-tool answers."""
     from .execution_policy import LOCAL_TOOLS_TRACK
+    if row.get("external_harness_evidence") is not None:
+        from .claude_code_evidence import validate_delivery
+        if row.get("execution_track") != LOCAL_TOOLS_TRACK or policy.get("local_tools_allowed") is not True:
+            raise ValueError("External native research needs its selected local-tool policy")
+        validate_delivery(root, row, evidence_bytes)
+        return
     track = row.get("execution_track")
     if track != LOCAL_TOOLS_TRACK:
         if policy.get("local_tools_allowed") is True or track not in {None, "math-gauge.no-tools/v1"} or execution.get("tool_events") != []:
@@ -249,6 +255,9 @@ def _native_research_completed(root, row, execution):
     This narrow source adapter is not provider authentication. The legacy
     completed/exit0 path stays unchanged; readable ERROR and DONE never qualify.
     """
+    if row.get("external_harness_evidence") is not None:
+        from .claude_code_evidence import validate_delivery
+        return validate_delivery(root, row, evidence_bytes)["delivered"]
     if execution.get("status") == "completed" and execution.get("exit_code") == 0:
         return True
     item = row.get("native_delivery_receipt")
@@ -562,11 +571,14 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
         result = json.loads(evidence_bytes(root, row["execution_result"]))
         plan = json.loads(evidence_bytes(root, row["execution_plan"]))
         events = [json.loads(b) for b in evidence_bytes(root, row["native_events"]).splitlines()]
-        if plan.get("client") not in {"agy", "codex"}:
+        if plan.get("client") not in {"agy", "codex", "claude-code"}:
             raise ValueError("Unsupported manuscript native client")
         request_raw = evidence_bytes(root, row["native_request"])
         task_hash = hashlib.sha256(task).hexdigest()
-        if (not isinstance(plan.get("stdin_file"), str) or not plan["stdin_file"]
+        if plan.get("client") == "claude-code":
+            from .claude_code_evidence import validate_delivery
+            validate_delivery(root, row, evidence_bytes)
+        elif (not isinstance(plan.get("stdin_file"), str) or not plan["stdin_file"]
                 or not isinstance(plan.get("model"), str) or not plan["model"]
                 or plan.get("prompt_sha256") != task_hash or plan.get("task_sha256", task_hash) != task_hash
                 or plan.get("stdin_sha256") != hashlib.sha256(request_raw).hexdigest()
@@ -581,7 +593,13 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
         terminal = next((e for e in events if e.get("type", e.get("event")) in {"result", "turn.completed", "turn.failed"}), None)
         if terminal is None:
             raise ValueError("Manuscript needs an original native terminal")
-        if plan.get("client") == "agy":
+        if plan.get("client") == "claude-code":
+            from .claude_code_evidence import validate_delivery
+            native = validate_delivery(root, row, evidence_bytes)
+            text, delivered = native["text"], native["delivered"]
+            if request_raw != task:
+                raise ValueError("Claude Code manuscript stdin must be the exact original task")
+        elif plan.get("client") == "agy":
             native = terminal.get("result", {})
             text = native.get("response")
             delivered = terminal.get("event") == "result" and native.get("status") == "SUCCESS"
@@ -668,7 +686,12 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                 if answer[quote["start"]:quote["end"]] != quote["quote"].encode("utf-8"):
                     raise ValueError("Fidelity review quotes different original answer bytes")
         control = json.loads(evidence_bytes(root, row["native_capability_control"]))
-        if (control.get("passed") is not True or control.get("math_requests") != 0
+        if plan.get("client") == "claude-code":
+            if (control.get("schema") != "math-gauge.claude-code-configuration-audit/v1"
+                    or control.get("effective_sandbox_verified") is not False
+                    or control.get("source_evidence") != row.get("external_harness_evidence")):
+                raise ValueError("Claude Code configuration audit cannot impersonate a native capability probe")
+        elif (control.get("passed") is not True or control.get("math_requests") != 0
                 or any(control.get("proof", {}).get(k) is not True
                     for k in ("local_read_write", "outside_denied", "network_denied"))):
             raise ValueError("Manuscript source lacks a real local-tool compatibility control")
@@ -701,6 +724,10 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                     previous_text = event["item"].get("text")
                 if event.get("type") == "turn.completed":
                     text_available = bool(isinstance(previous_text, str) and previous_text.strip())
+                    break
+                if plan.get("client") == "claude-code" and event.get("type") == "result":
+                    text_available = (event.get("subtype") == "success" and event.get("is_error") is False
+                        and isinstance(event.get("result"), str) and bool(event["result"].strip()))
                     break
                 if event.get("event") == "result":
                     native = event.get("result", {})

@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR03:A1",
+  "case_id": "AHR03",
+  "binding": {
+    "plan_sha256": "c75b9eb58b9d8138d70140ca0b86f9bdb3b65604d635b020d91d8ef4e38eff92",
+    "slot_id": "AHR03:A1",
+    "evidence_id": "57cec27f2dbbe1f49c0685287653d3d2f3fe961d66118d78252d963c41f81354",
+    "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5",
+    "history_sha256": "74ff06816da6bab3b2b104f3e42950d5696f1512b0f0e15a28a002c9b413378f",
+    "projected_request_sha256": "eae908b276ca3edb78228d4f326e8e4ab8ba2015bf3ef4a0938bc9bc4ad084e9",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "8b92ab3133e8a4afdee359871ef00fb8671bb8f06648bc70fea9349193afb08a",
+    "body_origin": {
+      "slot_id": "AHR03:A1",
+      "response_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5",
+      "start_byte": 0,
+      "end_byte": 27826
+    },
+    "body_sha256": "9c2691c1761af075613d1c141137311e820c5a627b2853a9246e1bce88f936c5",
+    "rationale_sha256": null,
+    "request_sha256": "50bf334fc2ddae69d9f070cb2fce4e227517b85eba22e9ee5f8219e190dcd66d",
+    "group_contract_sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac"
+  },
+  "reviewer": "Codex source-based mathematical reviewer",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "100/100，SMC通过。完整对应关系和构造桥均正确识别；额外补证只是常规等价表述，没有否定正确核心实现。",
+  "findings": [],
+  "group_contract_sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始独立A1；按原题冻结交付方式审核，不追加Lean义务。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "追踪精确NodeDomainRefinement而非仅Operational辅助关系，识别完整edge_domain_eq与实际构造桥，所审范围对齐。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "分划、局域限制、入口、四类边与prune、路径及外延结果逐项核查；辅助choice_projection的冗余推导为补充，未制造核心缺口。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "说明完整输出像/目标域交集给四类边；真实network_refinement桥和coloured路径证明均具体。删除不可达子片会扩终止域的例子合法。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "仅建议把可导出的路由、外延包装和表示唯一性引理显式化；承认不影响原定义/命题覆盖，不强迫新增Lean。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T11:45:10.601074+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "914cb55297608c53fd651d0b223794bb95de51e8615927453742a9a250057580",
+  "public_projection": true,
+  "original_private_review_sha256": "5c2e1fb27bfe88650db3e43eb515b235e5be3b4345ce2d5b251c0ab1b5df5098"
+}

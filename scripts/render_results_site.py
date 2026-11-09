@@ -16,8 +16,12 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records
 from math_gauge.native_observations import load_public_record
 from scripts.results_details import build_detail_pages
+from scripts.results_rankings import category_rankings
 
 MODEL_THEMES = {
+    "claude-opus-5.5-max": {"color": "#d97757", "ink": "#9f4d34", "tint": "#fbf1ec"},
+    "sol-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
+    "sol-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "terra-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "terra-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "deepseek-v4.1-flash-1017": {"color": "#4b6ed8", "ink": "#3655b2", "tint": "#f1f4fd"},
@@ -25,16 +29,23 @@ MODEL_THEMES = {
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
+    "claude-opus-5.5-max": ("Anthropic", "anthropic.svg"),
+    "sol-6.1-max": ("OpenAI", "openai.svg"),
+    "sol-6.1-xhigh": ("OpenAI", "openai.svg"),
     "terra-6.1-max": ("OpenAI", "openai.svg"),
     "terra-6.1-xhigh": ("OpenAI", "openai.svg"),
     "deepseek-v4.1-flash-1017": ("DeepSeek", "deepseek.svg"),
     "gemini-3.8-flash-high": ("Google", "google.svg"),
     "gemini-4-argon": ("Google", "google.svg"),
 }
-MODEL_LABELS = {"terra-6.1-max": "Terra 6.1 Max", "terra-6.1-xhigh": "Terra 6.1 xHigh",
+MODEL_LABELS = {"claude-opus-5.5-max": "Claude Opus 5.5 Max",
+                "sol-6.1-max": "Sol 6.1 Max", "sol-6.1-xhigh": "Sol 6.1 xHigh",
+                "terra-6.1-max": "Terra 6.1 Max", "terra-6.1-xhigh": "Terra 6.1 xHigh",
                 "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash 1017",
                 "gemini-3.8-flash-high": "Gemini 3.8 Flash High", "gemini-4-argon": "Gemini 4 Argon High"}
-MODEL_SHORT_LABELS = {"terra-6.1-max": "Terra Max", "terra-6.1-xhigh": "Terra xHigh",
+MODEL_SHORT_LABELS = {"claude-opus-5.5-max": "Opus 5.5",
+                      "sol-6.1-max": "Sol Max", "sol-6.1-xhigh": "Sol xHigh",
+                      "terra-6.1-max": "Terra Max", "terra-6.1-xhigh": "Terra xHigh",
                       "deepseek-v4.1-flash-1017": "DeepSeek", "gemini-3.8-flash-high": "Gemini 3.8",
                       "gemini-4-argon": "Gemini Argon"}
 
@@ -80,8 +91,8 @@ def build_data(source_root=ROOT):
             "alignment_selfcheck": combined["alignment_selfcheck"],
             "source_record": str((folder / "record.json").relative_to(root)),
             "retry": {"combined": partial["nonlogical_retry_3"],
-                      "note": (f"本批次已收{record['execution_summary']['delivered_initial_tasks']}/39道初答及{record['execution_summary']['delivered_selfcheck_rounds']}/3轮对齐自查；采用规则选定的首次有效交付。全部物理请求和纯系统故障另行留档。"
-                               if model in {"terra-6.1-xhigh", "gemini-4-argon"} else
+                      "note": (f"本批次已收{record['execution_summary'].get('delivered_initial_tasks', record['execution_summary'].get('initial_answers'))}/39道初答及{record['execution_summary'].get('delivered_selfcheck_rounds', record['execution_summary'].get('fixed_selfcheck_rounds'))}/3轮对齐自查；采用规则选定的首次有效交付。全部物理请求和纯系统故障另行留档。"
+                               if record.get("execution_summary") else
                                "GR021共3次、采用第3次；GR023共2次、采用第2次。原失败保留，重跑接纳依据为操作者声明，运行细节未独立认证。"
                                if record.get("retry_admission") else
                                "正式研究工具组尚未完成；未测题保持未知，不回填其他条件的答卷。"
@@ -152,6 +163,7 @@ def build_data(source_root=ROOT):
             "score_mode_catalog": mode_catalog, "default_score_mode": mode_catalog["default"],
             'display_score_modes': display_modes, 'default_attempt_condition': 'nonlogical_retry_3',
             'gap_diagnostics': gap_diagnostics(models),
+            'category_leaderboards': category_rankings(models, policy['groups'], result_selector=selected_result),
             "capability_method_version": "0.2.0", "claim_penalty_method_version": "0.1.0",
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
 
@@ -189,16 +201,6 @@ def signed_points(value):
         return '未知'
     text = f'{value:+.2f}'
     return '0.00' if float(text) == 0 else text.replace('-', '−')
-
-
-def vertical_gap_plot(value, axis):
-    """Map a signed saved value to a standard vertical number axis."""
-    if value is None:
-        return None
-    span = axis['maximum'] - axis['minimum']
-    return {'top': (axis['maximum'] - max(0, value)) / span * 100,
-            'height': abs(value) / span * 100,
-            'endpoint': (axis['maximum'] - value) / span * 100}
 
 
 def gap_diagnostics(models):
@@ -258,13 +260,35 @@ def gap_diagnostics(models):
             'tables': tables}
 
 
+def sort_control(key, label, options, selected):
+    choices = ''.join('<option value="'+html.escape(value, quote=True)+'"'
+                      +(' selected' if value == selected else '')+'>'+html.escape(text)+'</option>'
+                      for value, text in options)
+    return ('<label class="chart-sort"><span>排序</span><select id="chart-sort-'+html.escape(key, quote=True)
+            +'" aria-label="'+html.escape(label, quote=True)+'">'+choices+'</select></label>')
+
+
+def horizontal_chart(groups, chart_id, label, ticks, zero):
+    """Shared model-row layout; callers supply source-derived values and axes."""
+    step = ticks[1]['position'] - ticks[0]['position']
+    labels = ''.join(f'<span style="left:{tick["position"]:.8f}%">'
+                     + html.escape(tick['label']) + '</span>' for tick in ticks)
+    return ('<div class="horizontal-score-chart" role="group" aria-label="'
+            +html.escape(label, quote=True)+f'" style="--score-grid-step:{step:.8f}%;--score-zero:{zero:.8f}%">'
+            '<div class="score-x-axis" aria-hidden="true">'+labels+'</div>'
+            '<div class="chart-groups" id="'+html.escape(chart_id, quote=True)+'">'
+            +''.join(groups)+'</div></div>')
+
+
 def render_gap_chart(data):
     diagnostic, groups = data['gap_diagnostics'], []
     axis = diagnostic['axis']
     lookup = {table['id']: {row['model_id']: row for row in table['rows']}
               for table in diagnostic['tables']}
-    ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
-                     if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
+    def order(model):
+        value = lookup['RG'][model['id']]['value']
+        return (value is None, 0 if value is None else abs(value), model['id'])
+    ordered = sorted(data['models'], key=order)
     for model in ordered:
         row = lookup['RG'][model['id']]
         progress = row['coverage']
@@ -272,82 +296,95 @@ def render_gap_chart(data):
         bars = []
         for table in diagnostic['tables']:
             item = lookup[table['id']][model['id']]
-            plot = vertical_gap_plot(item['value'], axis)
+            plot = item['plot']
             bar = '' if plot is None else (
                 '<span class="gap-bar gap-'+table['id'].lower()+'" data-model="'+model['id']+'" '
                 f'data-gap-metric="{table["id"]}" data-gap-value="{item["value"]}" '
-                f'style="top:{plot["top"]:.8f}%;height:{plot["height"]:.8f}%"></span>')
-            endpoint = (100 - axis['zero']) if plot is None else plot['endpoint']
-            offset = '- 20px' if item['value'] is not None and item['value'] >= 0 else '+ 8px'
+                f'style="left:{plot["left"]:.8f}%;width:{plot["width"]:.8f}%"></span>')
             bars.append('<div class="gap-metric-row">'
-                '<div class="gap-track" aria-hidden="true">'+bar+'</div><span class="gap-value" '
+                '<div class="gap-track" aria-hidden="true">'+bar+'</div>'
+                '<span class="score-readout"><small>'+table['id']+'</small><span class="gap-value" '
                 'aria-label="'+html.escape(table['id']+' '+item['display'], quote=True)+'" '
-                f'style="top:calc({endpoint:.8f}% {offset})">'+item['display']+'</span></div>')
-        groups.append('<div class="gap-model-group" data-model="'+model['id']+'" style="--gap-color:'
-            +html.escape(model['theme']['color'], quote=True)+'"><div class="gap-model-label"><img class="gap-logo" '
+                +'>'+item['display']+'</span></span></div>')
+        groups.append('<div class="gap-model-group" data-model="'+model['id']+'" style="--model-color:'
+            +html.escape(model['theme']['color'], quote=True)+';--model-ink:'
+            +html.escape(model['theme']['ink'], quote=True)+'"><div class="gap-model-label"><img class="gap-logo" '
             'alt="" width="24" height="24" src="'+html.escape(model['logo']['data_url'], quote=True)+'"><div><span>'
             +html.escape(model['label'])+marker+'</span></div></div>'
             '<div class="gap-model-bars">'+''.join(bars)+'</div></div>')
-    ticks = ''.join(f'<span style="top:{100-tick["position"]:.8f}%">'+tick['label']+'</span>' for tick in axis['ticks'])
-    grid = ''.join('<i class="gap-gridline'+(' zero' if tick['value']==0 else '')
-        +f'" style="top:{100-tick["position"]:.8f}%"></i>' for tick in axis['ticks'])
     return ('<figure class="gap-figure" aria-labelledby="gap-heading"><figcaption class="gap-caption">'
-            '<span>RG＝RMC−MC · DG＝SMC−MC · 百分点</span><span class="chart-legend">'
+            '<span>RG＝RMC−MC · DG＝SMC−MC · 百分点</span><div class="chart-tools"><span class="chart-legend">'
             '<span class="legend-item"><i class="legend-swatch rmc" aria-hidden="true"></i>RG · 可靠差</span>'
-            '<span class="legend-item"><i class="legend-swatch smc" aria-hidden="true"></i>DG · 交付差</span></span></figcaption>'
-            '<div class="chart-viewport" tabindex="0" style="--model-count:'+str(len(data['models']))+'">'
-            '<div class="gap-vertical"><div class="gap-y-axis" aria-hidden="true">'+ticks+'</div>'
-            '<div class="gap-plot">'+grid+'<div id="gap-groups" class="gap-groups">'+''.join(groups)+'</div></div></div></div></figure>')
+            '<span class="legend-item"><i class="legend-swatch smc" aria-hidden="true"></i>DG · 交付差</span></span>'
+            +sort_control('gap', '分数落差排序', [('RG','RG 接近0优先'),('DG','DG 接近0优先')], 'RG')+'</div></figcaption>'
+            +horizontal_chart(groups, 'gap-groups', '各模型可靠差与交付差，共用正负轴', axis['ticks'], axis['zero'])
+            +'</figure>')
 
 
-def grouped_bars(data):
+def grouped_bars(data, category=None):
     groups = []
     modes = data['display_score_modes']
-    ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
-                     if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
+    scope = 'overall' if category is None else category['id']
+    scope_attr = ' data-score-scope="'+html.escape(scope, quote=True)+'"'
+    if category is None:
+        ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
+                         if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
+        views = {mode['id']: {m['id']: dict(selected_result(m, mode['id'])['metrics']['overall'],
+                    value=earned_value(selected_result(m, mode['id']))) for m in ordered} for mode in modes}
+    else:
+        by_id = {m['id']: m for m in data['models']}
+        ordered = [by_id[row['model_id']] for row in category['views']['partial']]
+        views = {mode['id']: {row['model_id']: row for row in category['views'][mode['id']]}
+                 for mode in modes}
+    values = [row['value'] for view in views.values() for row in view.values() if row['value'] is not None]
+    minimum = math.floor(min([0] + values) / 20) * 20
+    span, zero = 100 - minimum, -minimum / (100 - minimum) * 100
     for model in ordered:
-        bars, spoken, heights = [], [], []
-        progress = model['evaluation_progress']['nonlogical_retry_3']
+        bars, spoken = [], []
+        progress = (model['evaluation_progress']['nonlogical_retry_3'] if category is None else
+                    {'incomplete': any(views[mode['id']][model['id']]['incomplete'] for mode in modes)})
         for mode in modes:
-            result = selected_result(model, mode['id'])
-            value = earned_value(result)
+            bounds = views[mode['id']][model['id']]
+            value = bounds['value']
             text = '—' if value is None else f'{value:.2f}'
-            height = 0 if value is None else max(0, min(100, value))
-            heights.append(height)
-            bounds = result['metrics']['overall']
+            position = zero if value is None else (value - minimum) / span * 100
+            width = abs(position - zero)
             interval = f"完整分区间 {bounds['lower']:.2f}–{bounds['upper']:.2f}"
             spoken.append(mode['abbreviation'] + ' ' + text)
             bars.append('<div class="metric-bar-row" data-score-mode="'+mode['id']+'">'
                 '<div class="bar-track">'
-                '<div class="score-bar mode-'+mode['id']+'" aria-hidden="true" data-score-mode="'+mode['id']
+                '<div class="score-bar mode-'+mode['id']+'"'+scope_attr+' aria-hidden="true" data-score-mode="'+mode['id']
                 +'" data-model="'+html.escape(model['id'], quote=True)+'" data-series="nonlogical_retry_3" '
-                +'data-score="'+('' if value is None else str(value))+'" style="height:'+f'{height:.8f}'+'%"></div></div>'
-                '<span class="chart-value" data-score-mode="'+mode['id']+'" '
-                f'style="bottom:calc({height:.8f}% + 8px)" title="'+html.escape(interval, quote=True)+'">'+text+'</span></div>')
+                +'data-score="'+('' if value is None else str(value))+'" style="width:'+f'{width:.8f}'+'%;left:'
+                +f'{min(zero, position):.8f}'+'%"></div></div>'
+                '<span class="score-readout"><small>'+mode['abbreviation']+'</small>'
+                '<span class="chart-value"'+scope_attr+' data-score-mode="'+mode['id']+'" '
+                +'title="'+html.escape(interval, quote=True)+'">'+text+'</span></span></div>')
         status = '。尚未测完' if progress['incomplete'] else ''
         label = html.escape(model['label'])
         logo = model['logo']
         theme = model['theme']
-        groups.append('<div class="bar-group" data-model="'+html.escape(model['id'], quote=True)+'" role="group" '
+        groups.append('<div class="bar-group"'+scope_attr+' data-model="'+html.escape(model['id'], quote=True)+'" role="group" '
             +'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken)+status, quote=True)+'" '
             +'style="--model-color:'+html.escape(theme['color'], quote=True)+';--model-ink:'+html.escape(theme['ink'], quote=True)
-            +';--peak-score:'+str(max(heights))+'">'
-            '<div class="chart-model"><img class="provider-logo" src="'+html.escape(logo['data_url'], quote=True)+'" '
+            +'">'
+            '<div class="chart-model"><img class="provider-logo"'+scope_attr+' src="'+html.escape(logo['data_url'], quote=True)+'" '
             +'alt="'+html.escape(logo['label'], quote=True)+'" width="24" height="24"><div><span>'+label
             +incomplete_marker(progress)+harness_marker(model)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
-    ticks = ''.join(f'<span style="bottom:{value}%">'+str(value)+'</span>' for value in range(0, 101, 20))
-    grid = ''.join(f'<i class="score-gridline" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
-    return ('<div class="chart-viewport" tabindex="0" style="--model-count:'+str(len(data['models']))+'">'
-            '<div class="score-chart" role="group" aria-label="各模型MC、RMC、SMC规则成绩，统一0至100分">'
-            '<div class="score-y-axis" aria-hidden="true">'+ticks+'</div><div class="score-plot">'+grid
-            +'<div class="chart-groups" id="chart-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div></div>')
+    ticks = [dict(position=(value-minimum)/span*100, label=str(value)) for value in range(minimum, 101, 20)]
+    chart_id = 'chart-groups' if category is None else 'category-chart-groups-'+scope
+    label = ('各模型' if category is None else category['title']+'各模型')+'MC、RMC、SMC规则成绩'
+    return horizontal_chart(groups, chart_id, label+f'，统一{minimum}至100分', ticks, zero)
 
 
 def render_content_rates(data):
     groups = []
     definitions = (('reliability', '内容可靠率', 'observed', 'partial'),
                    ('attainment', '目标达成率', 'confirmed', 'strict'))
-    for model in sorted(data['models'], key=lambda m: earned_value(selected_result(m)) or 0, reverse=True):
+    def order(model):
+        value = (model.get('content_rates') or {}).get('metrics', {}).get('reliability', {}).get('observed')
+        return (value is None, 0 if value is None else -value, model['id'])
+    for model in sorted(data['models'], key=order):
         report = model.get('content_rates')
         if report is None or report['version'] != '0.2.0':
             return ''
@@ -355,39 +392,66 @@ def render_content_rates(data):
         for ident, label, field, style in definitions:
             value = report['metrics'][ident][field]
             text = '—' if value is None else f'{value:.2f}%'
-            height = 0 if value is None else value
+            width = 0 if value is None else value
             spoken.append(label+' '+text)
             bars.append('<div class="metric-bar-row"><div class="bar-track"><div '
                 'class="content-rate-bar mode-'+style+'" aria-hidden="true" data-model="'+model['id']
                 +'" data-rate="'+ident+'" data-rate-value="'+('' if value is None else str(value))
-                +'" style="height:'+f'{height:.8f}'+'%"></div></div><span class="rate-value" '
-                f'style="bottom:calc({height:.8f}% + 8px)">'+text+'</span></div>')
+                +'" style="width:'+f'{width:.8f}'+'%;left:0%"></div></div>'
+                '<span class="score-readout"><small>'+('可靠' if ident == 'reliability' else '达成')+'</small>'
+                '<span class="rate-value">'+text+'</span></span></div>')
         progress = model['evaluation_progress']['nonlogical_retry_3']
         spoken_status = '。尚未测完' if progress['incomplete'] else ''
         theme = model['theme']
         groups.append('<div class="rate-model-group" data-model="'+model['id']+'" role="group" '
             'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken)+spoken_status, quote=True)+'" '
             'style="--model-color:'+theme['color']+';--model-ink:'+theme['ink']+'">'
-            '<div class="metric-bars">'+''.join(bars)+'</div><div class="chart-model">'
+            '<div class="chart-model">'
             '<img class="rate-provider-logo" src="'+html.escape(model['logo']['data_url'], quote=True)
             +'" alt="'+html.escape(model['logo']['label'], quote=True)+'" width="24" height="24">'
             '<div><a data-context-link href="models/'+model['id']
             +'/index.html?score=partial&amp;condition=nonlogical_retry_3">'+html.escape(model['label'])
-            +incomplete_marker(progress)+harness_marker(model)+'</a></div></div></div>')
-    ticks = ''.join(f'<span style="bottom:{value}%">'+str(value)+'</span>' for value in range(0, 101, 20))
-    grid = ''.join(f'<i class="score-gridline" style="bottom:{value}%"></i>' for value in range(0, 101, 20))
+            +incomplete_marker(progress)+harness_marker(model)+'</a></div></div>'
+            '<div class="metric-bars">'+''.join(bars)+'</div></div>')
+    ticks = [dict(position=value, label=str(value)) for value in range(0, 101, 20)]
     return ('<section class="panel" id="content-rates"><div class="panel-head"><div><h2 id="rate-heading">内容可靠率与目标达成率</h2>'
             '<p class="panel-desc">内容可靠率看实际内容是否正确且有论证支持；目标达成率看完整数学成果是否按题意交付。</p>'
             '<p class="panel-desc">按独立成果验收；SMC要求整题及规定轨迹全部达标。</p></div><a data-context-link '
             'href="method.html#content-rate-method">计算方法 →</a></div>'
             '<figure class="score-figure rate-figure" aria-labelledby="rate-heading"><figcaption class="chart-caption">'
-            '<span>百分比 · 0–100</span><span class="chart-legend"><span class="legend-item">'
+            '<span>百分比 · 0–100</span><div class="chart-tools"><span class="chart-legend"><span class="legend-item">'
             '<i class="legend-swatch rmc" aria-hidden="true"></i>内容可靠率</span><span class="legend-item">'
-            '<i class="legend-swatch smc" aria-hidden="true"></i>目标达成率</span></span></figcaption>'
-            '<div class="chart-viewport" tabindex="0" style="--model-count:'+str(len(data['models']))+'">'
-            '<div class="score-chart" role="group" aria-label="各模型内容可靠率与目标达成率，统一0至100百分比">'
-            '<div class="score-y-axis" aria-hidden="true">'+ticks+'</div><div class="score-plot">'+grid
-            +'<div class="chart-groups" id="rate-groups" style="--model-count:'+str(len(data['models']))+'">'+''.join(groups)+'</div></div></div></div></figure></section>')
+            '<i class="legend-swatch smc" aria-hidden="true"></i>目标达成率</span></span>'
+            +sort_control('rates', '两率图排序', [('reliability','内容可靠率 高→低'),('attainment','目标达成率 高→低')], 'reliability')+'</div></figcaption>'
+            +horizontal_chart(groups, 'rate-groups', '各模型内容可靠率与目标达成率，统一0至100百分比', ticks, 0)
+            +'</figure></section>')
+
+
+def render_category_leaderboards(data):
+    tabs, panels = [], []
+    for index, group in enumerate(data['category_leaderboards']):
+        cid, title = html.escape(group['id'], quote=True), html.escape(group['title'])
+        tabs.append('<button role="tab" id="category-tab-'+cid+'" aria-controls="category-panel-'+cid
+                    +'" aria-selected="'+str(index == 0).lower()+'" tabindex="'+('0' if index == 0 else '-1')
+                    +'">'+title+'</button>')
+        panels.append('<section role="tabpanel" class="category-ranking-panel" id="category-panel-'+cid
+                      +'" aria-labelledby="category-tab-'+cid+'"'+(' hidden' if index else '')+'>'
+                      '<div class="panel-head"><div><h3>'+title+'排行榜</h3><p class="panel-desc">类内满分100 · 总榜权重'
+                      +str(group['weight'])+'%</p></div>'
+                      +sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'partial')
+                      +'</div><figure class="score-figure category-figure" aria-label="'+title+'分类成绩图">'
+                      '<figcaption class="chart-caption"><span>类内百分制</span><span class="chart-legend">'
+                      +''.join('<span class="legend-item"><i class="legend-swatch '+style+'" aria-hidden="true"></i>'
+                               +name+'</span>' for style, name in (('mc', 'MC'), ('rmc', 'RMC'), ('smc', 'SMC')))
+                      +'</span></figcaption>'+grouped_bars(data, group)+'</figure>'
+                      '<div class="table-wrap"><table class="compact category-ranking" id="category-ranking-'
+                      +cid+'"></table></div></section>')
+    return ('<section id="category-leaderboards" aria-labelledby="category-leaderboards-title">'
+            '<div class="section-title"><h2 id="category-leaderboards-title">分类排行榜</h2>'
+            '<span class="section-context">三个大类独立排序</span></div><div class="panel">'
+            '<div role="tablist" class="segmented category-tabs" aria-label="分类排行榜">'+''.join(tabs)+'</div>'
+            '<p class="category-ranking-note">各分类独立选择排序口径。分数沿用固定题池，完整值与未知区间见模型详情。</p>'
+            +''.join(panels)+'<p class="panel-foot">分榜显示类内百分制成绩；总分贡献见下表。未测部分不折算为已测部分的满分。</p></div></section>')
 
 
 def render(data):
@@ -419,6 +483,7 @@ def render(data):
     values = {"DATA": payload, "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
               "GAP_CHART": render_gap_chart(data),
               "CONTENT_RATES": render_content_rates(data),
+              "CATEGORY_RANKINGS": render_category_leaderboards(data),
               "INCOMPLETE_NOTE": ('<p class="panel-foot coverage-note">* 尚未测完</p>'
                                   if any(m['evaluation_progress']['nonlogical_retry_3']['incomplete']
                                          for m in data['models']) else '')

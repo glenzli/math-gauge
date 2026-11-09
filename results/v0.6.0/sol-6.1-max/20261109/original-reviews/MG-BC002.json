@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-BC002:A1",
+  "case_id": "MG-BC002",
+  "binding": {
+    "plan_sha256": "82cd1c2d7d015cf302fff079ecc2d46815b52b978c59ecd3e7b0326dad564651",
+    "slot_id": "MG-BC002:A1",
+    "evidence_id": "cab4e34e089f2e0664d58ef2a6708b6fbb581e1027a55cea17a658b4d6f6d3cd",
+    "response_sha256": "977d9431385b20dda46aa2f38bc070839316917cbfff51f7d64ab1237ab7eba5",
+    "history_sha256": "e7feed144fb27c02aa4935a707862b2a8b6a8cdc4611e5822a3ba27eaa4b4e5e",
+    "projected_request_sha256": "e985077596c3fb400f3233ba4561d86627cc32948f361fef7e70ac6c9ba3082c",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "a880f7095424c3a3764c8d6968449f7d617ae8d915dc05aff9baa657d751979e",
+    "body_origin": {
+      "slot_id": "MG-BC002:A1",
+      "response_sha256": "977d9431385b20dda46aa2f38bc070839316917cbfff51f7d64ab1237ab7eba5",
+      "start_byte": 0,
+      "end_byte": 5409
+    },
+    "body_sha256": "977d9431385b20dda46aa2f38bc070839316917cbfff51f7d64ab1237ab7eba5",
+    "rationale_sha256": null,
+    "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "全部真实流和条件近端任务完成，实际小初值Jacobian反证严格排除每个正时间的所有凸prox表示。独立核验Duhamel积分/系数/量词均有效，合法强于参考；R3/complete、Strict通过，原D4/U3，AI审阅人工未审。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "明确原强凸/收缩/耗散到任意凸prox的推断错误，部署段仅保留真实连续流保证并否定具体本模型的prox表示。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "共轭sup唯一最大点和FNE连续性给梯度ψ=T，C1prox Jacobian须对称。原实际流变分方程/Duhamel直接测得非对称，排除所有convex r，而非仅排除proxτf。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "对任意固定τ>0，小初值(ε,0)解=(εe^-s,0)+Oε³，Hessian=B+3ε²e^-2sP+Oε⁴；Duhamel给J12=−a(1−a³)ε²，J21=−3a²(1−a)ε²，差−a(1−a)^3ε²+Oε⁴。独立重新核验两个积分均正确，a=e^-τ在(0,1)，足够小ε使差非0；逐个τ非prox严格成立，不要求统一ε。未错误推断实际FNE失败。 自治唯一性半群给Tτ^n=Φnτ，状态/能量/双输入堆叠界完整，唯一固定点0，清楚演化时间τ与prox系数/隐式Euler不同。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T08:55:06.866822+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "453194805d8da36399b67094853ed213169c16a033f72acfe3f79a0b0ff7c101",
+  "public_projection": true,
+  "original_private_review_sha256": "0de1206fb11f193a58c16c6e488220bdda299f2748624ef3e517c5e33e22d435"
+}

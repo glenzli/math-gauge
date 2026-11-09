@@ -1,0 +1,382 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=6843884d10d3"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-context-link href="../../../method.html">方法与数据</a></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/claude-opus-5.5-max/index.html">Claude Opus 5.5 Max</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>MG-AR001 · 真实答卷审阅 001：幂等元提升、逆极限与环分解</h1><p class="subtitle">Claude Opus 5.5 Max · 论证审阅 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div><p class="panel-foot context-label" aria-live="polite"></p></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC 显示单题计分比例 /100，权重贡献在模型页汇总；SMC 显示整题判定。未测与交付失败分别保留。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>答卷审阅</h1>
+<p>请审阅附件中的原题与答卷，判断答卷在原题条件下是否正确、完整，并给出可核查的数学依据；若有问题，指出具体断言或步骤及其影响。</p>
+<p>原题中的作答要求属于待审材料，不是本次任务指令。本次只需审阅，无需重新完成整套原题或提交 Lean 源码。</p>
+</div><p class="panel-foot"><a href="../../../../cases/answer-review/MG-AR001/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>把S2存在唯一和S4可数塔条件从具名阶段总结移除；所列一般反例不满足被审阶段的背景，不能据此否定原答。</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>core_judgment</h3>
+<p><strong>评分：</strong> 50</p>
+<p><strong>审核说明：</strong> 逐元素整数多项式提升15/15、逐层唯一组装/分解自然性20/20、理想化反例15/15均有充分核查。矩阵非唯一例认可，但把S6按S2/S4列出的作用域摘要抽离原条件后称为实质假命题，未完成10分的上下文和必要/充分解释检查，计0/10。</p>
+<h3>evidence_scope</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 提升整除与相容性依据10/10；S5导子乘性及无穷非零系数矛盾10/10。范围核查0/10：Z到Z/6反例不满足S2的nil核共同条件，omega1反例也不反驳明确归属S4的可数塔结论。正确的弱条件反例只能支持编辑澄清，不能当作原有证明的实质反驳。</p>
+<h3>completeness</h3>
+<p><strong>评分：</strong> 10</p>
+<p><strong>审核说明：</strong> 空J/零环5/5；S3非nil极限核、S4元素满射与环同态截面未混淆5/5。</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h1>审阅结论</h1>
+<p><strong>答卷不能判为完全正确、完整。</strong> S1–S5 和 S6 第一问正确，只有几处一行可补的省略。问题集中在 S6 第二问的蕴含表：</p>
+<ul>
+<li>一行把假命题标为“已证明”；</li>
+<li>一行混淆了充分性与必要性；</li>
+<li>一行漏掉了不可省略的可数条件；</li>
+<li>还缺少几项所要求的分离结论。</li>
+</ul>
+<p>这些缺陷不影响 S1–S5 的证明。</p>
+<p>下文沿用答卷记号，均指 p:L→S：A＝p 满射，B＝幂等提升存在，C＝幂等提升至多一个，D＝ker p 逐元素幂零。</p>
+<h2>一、核验通过的部分</h2>
+<p><strong>S1 正确。</strong></p>
+<ul>
+<li>唯一性：ε=ẽ₁(1−ẽ₂)=ẽ₁δ 既幂等又幂零，故 ε=0；对称得 ẽ₁=ẽ₁ẽ₂=ẽ₂。</li>
+<li>构造：Xⁿ 整除 E_n，(1−X)ⁿ 整除 1−E_n，故 E_n(1−E_n)∈((X²−X)ⁿ)。又 E_n 模 X 与模 1−X 都同余于 X，故 E_n−X∈(X²−X)。</li>
+<li>n 在取定 x 后才选，无需统一指数；系数在 ℤ 中，无需 2 可逆。</li>
+</ul>
+<p><strong>S2 正确。</strong></p>
+<ul>
+<li>p 良定：取 i,j 的上界 k，得 p_i(x_i)=p_k(x_k)=p_j(x_j)。答卷未声称 p 满射，这是对的。</li>
+<li>J=∅：D_∅(R) 非空当且仅当 R=0。S=0 时 1∈ker p_i 幂零，故 R_i=0；S≠0 时 p(1)≠0，故 L≠0。</li>
+<li>J≠∅：单射由逐层唯一性得到。满射时，ρ_ik(ẽ_{j,k}) 也是 R_i 中 e_j 的幂等提升，故等于 ẽ_{j,i}，无需选择。正交性和单位和分别由 0、1 的提升唯一得到。</li>
+<li>Φ、Ψ 互逆：k≠j 时 ẽ_k=(1−ẽ_j)ẽ_k。J=∅ 时 L=0，公式仍成立。</li>
+<li>自然性：p′v=up 给出 p′<em>*v</em>*=u_<em>p_</em>，取逆即得；并有 Φ′v=(∏v_j)Φ。</li>
+</ul>
+<p><strong>S3 正确。</strong> ker p_n=(t)/(tⁿ⁺¹) 为 nil，共同设定成立。L≅k[[t]]，tᵐ 在第 m 层非零，故 t 不幂零。这与 S2 一致：D_J(k[[t]]) 与 D_J(k) 都等同于“在 J 中选一点”，J=∅ 时都空。</p>
+<p><strong>S4 正确。</strong> 由 p₁ 满射取 x₁，由 ρ_n 满射递归取 x_{n+1}，用 DC 得到序列；p_{n+1}(x_{n+1})=p_n(x_n)=s。</p>
+<p><strong>S5 正确，反例成立。</strong></p>
+<ul>
+<li>乘性归结为 (ab)′(0)=a′(0)b(0)+a(0)b′(0)。ker p_n 平方为零，p_nρ_n=p_{n+1}。</li>
+<li>由 P_n=1+tP_{n+1} 得 P₁ 的所有系数为 1，与多项式矛盾。</li>
+<li>补充：ρ_n 不满射，因 (x,0) 不在像中（需 1+tP=0），这与 S4 不冲突。</li>
+<li>更精确地，a′(0)=c≠0 时同样矛盾，a′(0)=0 时 P_n=tP_{n+1} 迫使 P_n=0。故 L≅k[x²,x³]，p 为包含映射，<strong>ker p=0</strong>。</li>
+</ul>
+<p><strong>S6 第一问正确。</strong> R 为上三角矩阵环，I²=0，X_b²=X_b，且 X_b 都提升 (1,0)。</p>
+<p>用 sympy 做过辅助校验，全部通过：E_n 的两条整除关系（n≤9），S5 的环运算与 ρ_n 乘性（300 组随机多项式）。上述结论依据的是手工论证。</p>
+<h2>二、S6 第二问的问题</h2>
+<h3>问题 1（实质错误）：“各层幂等提升唯一 ⟹ 极限幂等提升存在且唯一｜已证明｜S2”</h3>
+<p>答卷把 (B) 存在与 (C) 唯一列为两个概念，因此前件只有 C。这样读，该蕴含为假。</p>
+<p>反例：任取非空有向 I，令 R_i=ℤ，ρ_ij=id，S=ℤ/6，p_i 为约化。ℤ 只有幂等元 0、1，它们在 ℤ/6 中的像不同，故各层提升至多一个。但 3∈ℤ/6 幂等（9≡3），在 L=ℤ 中没有幂等提升。</p>
+<p>S2 实际证明的是：各层<strong>存在且唯一</strong> ⟹ 极限存在且唯一，其中层上存在性来自 S1。“拼接”必须先有各层的 ẽ_{j,i}。答卷在 S3 中写过“存在且仅存在唯一”，与此行不一致。</p>
+<p>影响：第二问正是要区分这些条件，此处“已证明”的归类错误。S2 的证明本身不受影响。修正方法是在前件加上“存在且”。</p>
+<h3>问题 2（方向混淆）：“极限核逐元素幂零 ⟹ 极限幂等提升唯一｜不必要”</h3>
+<p>“不必要”不是这个箭头的真值。S3 说明的是逆向不成立：C 成立而 D 不成立。所写箭头本身的情况是：</p>
+<ul>
+<li>L 交换时为真：两提升之差在 ker p 中幂零，S1 唯一性一段逐字适用，且不需要 p 满射。</li>
+<li>不要求交换时为假：把 S6 的 q 作成常值塔，ker p 平方为零，但 (1,0) 有多个提升。</li>
+</ul>
+<p>影响：一条可证的蕴含没有得到判定，读者还可能误读为不成立。</p>
+<h3>问题 3（条件遗漏）：“各层过渡满射 + 各层元素提升 ⟹ 极限元素提升｜已证明｜S4”</h3>
+<p>S4 只证明了可数塔（或有可数共尾链的情形），证明依赖沿 ℕ 递归。去掉这一条件后命题为假，即使再要求环交换、核平方为零。反例如下：</p>
+<ol>
+<li>取 I=ω₁，S=ℚ[x]。递归取有限到一函数 e_α:α→ℕ，使 α&lt;β 时 e_β|α 与 e_α 只差有限点：e_{α+1}=e_α∪{(α,0)}；极限 α 取 0=α₀&lt;α₁&lt;…→α，在 [α_n,α_{n+1}) 上令 e_α=max(e_{α_{n+1}},n)。</li>
+<li>令 G_α 为 α 上取值于 ℚ 的有限支撑函数，R_α=S⋉G_α，乘法同 S5，p_α(a,g)=a。</li>
+<li>令 c_{αβ}=e_β|α−e_α∈G_α，ρ_{αβ}(a,g)=(a, g|α+a′(0)c_{αβ})。由 c_{βγ}|α+c_{αβ}=c_{αγ} 得逆系，乘性计算同 S5。ρ_{αβ} 满射：取 h−a′(0)c_{αβ} 的零延拓。</li>
+<li>若 x 有原像 (x,g_α)，则 g_α+e_α 粘成 F:ω₁→ℚ，且 F|α−e_α 有限支撑。ℚ 可数，故 F 有不可数纤维，于是存在 α 使该纤维与 α 的交无限，e_α 在无限集上取常值，与有限到一矛盾。</li>
+</ol>
+<p>影响：S4 本身不受影响，但总结表必须写明“可数塔”。</p>
+<h3>问题 4（覆盖不全）</h3>
+<p>表中缺少以下所要求的关系：</p>
+<ul>
+<li>反方向 A ⟹̸ B、A ⟹̸ C。表中只有 “B∧C ⟹̸ A”，也没有指出 S4 对幂等元没有任何推论。</li>
+<li>D ⟹̸ A。S5 的例子 ker p=0，答卷未注意到。</li>
+<li>共同设定下 A 与 D 相互独立（见第三节）。</li>
+</ul>
+<h2>三、修正后的整理</h2>
+<table>
+<thead>
+<tr>
+<th>命题</th>
+<th>状态</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R 交换、ker q nil、q 满 ⟹ 单层幂等提升存在且唯一</td>
+<td>已证</td>
+<td>S1（唯一性不用满射）</td>
+</tr>
+<tr>
+<td>各层存在且唯一 ⟹ 极限 B∧C</td>
+<td>已证</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>各层 C ⟹ 极限 C</td>
+<td>成立</td>
+<td>投影到各层</td>
+</tr>
+<tr>
+<td>可数塔、过渡满、p₁ 满 ⟹ A</td>
+<td>已证</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>L 交换且 D ⟹ C</td>
+<td>成立</td>
+<td>S1 唯一性段</td>
+</tr>
+<tr>
+<td>L 交换且 A∧D ⟹ B</td>
+<td>成立</td>
+<td>S1 构造用于 p</td>
+</tr>
+<tr>
+<td>各层 C ⟹ 极限 B</td>
+<td>假</td>
+<td>常值系统 ℤ→ℤ/6</td>
+</tr>
+<tr>
+<td>B∧C∧D ⟹ A</td>
+<td>假</td>
+<td>S5</td>
+</tr>
+<tr>
+<td>各层 nil ⟹ D；A∧B∧C ⟹ D</td>
+<td>假</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>A ⟹ B</td>
+<td>假</td>
+<td>常值塔 ℤ→ℤ/6（满足 S4 条件）</td>
+</tr>
+<tr>
+<td>A∧D ⟹ C（不要求交换）</td>
+<td>假</td>
+<td>S6 的常值塔</td>
+</tr>
+<tr>
+<td>过渡满且 p_i 满 ⟹ A（不可数 I）</td>
+<td>假</td>
+<td>问题 3 的 ω₁ 例</td>
+</tr>
+</tbody>
+</table>
+<p>共同设定下 B、C 恒成立，而 A、D 的四种真值组合都出现：</p>
+<table>
+<thead>
+<tr>
+<th>例子</th>
+<th>A</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常值系统 k→k</td>
+<td>真</td>
+<td>真</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>真</td>
+<td>假</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>假</td>
+<td>真</td>
+</tr>
+<tr>
+<td>S3 与 S5 的积（S=k×k[x]）</td>
+<td>假</td>
+<td>假</td>
+</tr>
+</tbody>
+</table>
+<p>因此在共同设定下，A、D 之间没有任何蕴含，由 B、C 也推不出 A 或 D。这也说明 S1 不能直接用于 p:L→S（p 可能不满，ker p 可能非 nil），S2 必须逐层论证。</p>
+<h2>四、不影响结论的小省略</h2>
+<ul>
+<li>S2 第 4 部分未写 v 落入 L′：ρ′_ij(u_jx_j)=u_iρ_ij(x_j)=u_ix_i。</li>
+<li>S4 不在 S2 的设定内，应单独说明 p(x):=p_n(x_n) 与 n 无关（由 p_nρ_n=p_{n+1}）。</li>
+<li>S5 只给相邻过渡，应说明 ρ_ij 取复合，p_iρ_ij=p_j 由归纳得到；结合律只是断言，但直接展开成立。</li>
+<li>S3 中“S2 的证明仅依赖各层 nil”说得过强，还用到了 R_i 交换（S6 的反例说明不可省）和 p_i 满射。</li>
+<li>S6 表中“一般的多项式元素无法提升”不够精确：可提升的恰为 a′(0)=0 的 a。lim¹ 的说法正确，但只是未证明的旁注。</li>
+<li>S6 中“若域 k 至少含两个元素”是空条件。</li>
+</ul>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/written/slots/MG-AR001/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-AR001:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/written/slots/MG-AR001/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/original-reviews/MG-AR001.json">review · MG-AR001.json</a><span class="hash">SHA256 3d2233cc1fcdc1b330b89710838487847c1a60c41fb05ecd174ea03f781cb9ef</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/written/MG-AR001-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/claim-public-sources/MG-AR001.json">review · MG-AR001.json</a><span class="hash">SHA256 757b6c0f506e89fc8a7c85f82d25c17ced3810f518b72c5444cf48840c05427c</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li><p>把S2存在唯一和S4可数塔条件从具名阶段总结移除；所列一般反例不满足被审阶段的背景，不能据此否定原答。</p>
+</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>core_judgment</h3>
+<p><strong>评分：</strong> 50</p>
+<p><strong>审核说明：</strong> 逐元素整数多项式提升15/15、逐层唯一组装/分解自然性20/20、理想化反例15/15均有充分核查。矩阵非唯一例认可，但把S6按S2/S4列出的作用域摘要抽离原条件后称为实质假命题，未完成10分的上下文和必要/充分解释检查，计0/10。</p>
+<h3>evidence_scope</h3>
+<p><strong>评分：</strong> 20</p>
+<p><strong>审核说明：</strong> 提升整除与相容性依据10/10；S5导子乘性及无穷非零系数矛盾10/10。范围核查0/10：Z到Z/6反例不满足S2的nil核共同条件，omega1反例也不反驳明确归属S4的可数塔结论。正确的弱条件反例只能支持编辑澄清，不能当作原有证明的实质反驳。</p>
+<h3>completeness</h3>
+<p><strong>评分：</strong> 10</p>
+<p><strong>审核说明：</strong> 空J/零环5/5；S3非nil极限核、S4元素满射与环同态截面未混淆5/5。</p>
+</div><p class="panel-foot">以下为原评审字段的阅读视图；当前口径的额外扣罚与 SMC 判定以本页成绩及上方理由为准。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答 · 含原自评与不确定性表述</summary><div class="prose"><h1>审阅结论</h1>
+<p><strong>答卷不能判为完全正确、完整。</strong> S1–S5 和 S6 第一问正确，只有几处一行可补的省略。问题集中在 S6 第二问的蕴含表：</p>
+<ul>
+<li>一行把假命题标为“已证明”；</li>
+<li>一行混淆了充分性与必要性；</li>
+<li>一行漏掉了不可省略的可数条件；</li>
+<li>还缺少几项所要求的分离结论。</li>
+</ul>
+<p>这些缺陷不影响 S1–S5 的证明。</p>
+<p>下文沿用答卷记号，均指 p:L→S：A＝p 满射，B＝幂等提升存在，C＝幂等提升至多一个，D＝ker p 逐元素幂零。</p>
+<h2>一、核验通过的部分</h2>
+<p><strong>S1 正确。</strong></p>
+<ul>
+<li>唯一性：ε=ẽ₁(1−ẽ₂)=ẽ₁δ 既幂等又幂零，故 ε=0；对称得 ẽ₁=ẽ₁ẽ₂=ẽ₂。</li>
+<li>构造：Xⁿ 整除 E_n，(1−X)ⁿ 整除 1−E_n，故 E_n(1−E_n)∈((X²−X)ⁿ)。又 E_n 模 X 与模 1−X 都同余于 X，故 E_n−X∈(X²−X)。</li>
+<li>n 在取定 x 后才选，无需统一指数；系数在 ℤ 中，无需 2 可逆。</li>
+</ul>
+<p><strong>S2 正确。</strong></p>
+<ul>
+<li>p 良定：取 i,j 的上界 k，得 p_i(x_i)=p_k(x_k)=p_j(x_j)。答卷未声称 p 满射，这是对的。</li>
+<li>J=∅：D_∅(R) 非空当且仅当 R=0。S=0 时 1∈ker p_i 幂零，故 R_i=0；S≠0 时 p(1)≠0，故 L≠0。</li>
+<li>J≠∅：单射由逐层唯一性得到。满射时，ρ_ik(ẽ_{j,k}) 也是 R_i 中 e_j 的幂等提升，故等于 ẽ_{j,i}，无需选择。正交性和单位和分别由 0、1 的提升唯一得到。</li>
+<li>Φ、Ψ 互逆：k≠j 时 ẽ_k=(1−ẽ_j)ẽ_k。J=∅ 时 L=0，公式仍成立。</li>
+<li>自然性：p′v=up 给出 p′<em>*v</em>*=u_<em>p_</em>，取逆即得；并有 Φ′v=(∏v_j)Φ。</li>
+</ul>
+<p><strong>S3 正确。</strong> ker p_n=(t)/(tⁿ⁺¹) 为 nil，共同设定成立。L≅k[[t]]，tᵐ 在第 m 层非零，故 t 不幂零。这与 S2 一致：D_J(k[[t]]) 与 D_J(k) 都等同于“在 J 中选一点”，J=∅ 时都空。</p>
+<p><strong>S4 正确。</strong> 由 p₁ 满射取 x₁，由 ρ_n 满射递归取 x_{n+1}，用 DC 得到序列；p_{n+1}(x_{n+1})=p_n(x_n)=s。</p>
+<p><strong>S5 正确，反例成立。</strong></p>
+<ul>
+<li>乘性归结为 (ab)′(0)=a′(0)b(0)+a(0)b′(0)。ker p_n 平方为零，p_nρ_n=p_{n+1}。</li>
+<li>由 P_n=1+tP_{n+1} 得 P₁ 的所有系数为 1，与多项式矛盾。</li>
+<li>补充：ρ_n 不满射，因 (x,0) 不在像中（需 1+tP=0），这与 S4 不冲突。</li>
+<li>更精确地，a′(0)=c≠0 时同样矛盾，a′(0)=0 时 P_n=tP_{n+1} 迫使 P_n=0。故 L≅k[x²,x³]，p 为包含映射，<strong>ker p=0</strong>。</li>
+</ul>
+<p><strong>S6 第一问正确。</strong> R 为上三角矩阵环，I²=0，X_b²=X_b，且 X_b 都提升 (1,0)。</p>
+<p>用 sympy 做过辅助校验，全部通过：E_n 的两条整除关系（n≤9），S5 的环运算与 ρ_n 乘性（300 组随机多项式）。上述结论依据的是手工论证。</p>
+<h2>二、S6 第二问的问题</h2>
+<h3>问题 1（实质错误）：“各层幂等提升唯一 ⟹ 极限幂等提升存在且唯一｜已证明｜S2”</h3>
+<p>答卷把 (B) 存在与 (C) 唯一列为两个概念，因此前件只有 C。这样读，该蕴含为假。</p>
+<p>反例：任取非空有向 I，令 R_i=ℤ，ρ_ij=id，S=ℤ/6，p_i 为约化。ℤ 只有幂等元 0、1，它们在 ℤ/6 中的像不同，故各层提升至多一个。但 3∈ℤ/6 幂等（9≡3），在 L=ℤ 中没有幂等提升。</p>
+<p>S2 实际证明的是：各层<strong>存在且唯一</strong> ⟹ 极限存在且唯一，其中层上存在性来自 S1。“拼接”必须先有各层的 ẽ_{j,i}。答卷在 S3 中写过“存在且仅存在唯一”，与此行不一致。</p>
+<p>影响：第二问正是要区分这些条件，此处“已证明”的归类错误。S2 的证明本身不受影响。修正方法是在前件加上“存在且”。</p>
+<h3>问题 2（方向混淆）：“极限核逐元素幂零 ⟹ 极限幂等提升唯一｜不必要”</h3>
+<p>“不必要”不是这个箭头的真值。S3 说明的是逆向不成立：C 成立而 D 不成立。所写箭头本身的情况是：</p>
+<ul>
+<li>L 交换时为真：两提升之差在 ker p 中幂零，S1 唯一性一段逐字适用，且不需要 p 满射。</li>
+<li>不要求交换时为假：把 S6 的 q 作成常值塔，ker p 平方为零，但 (1,0) 有多个提升。</li>
+</ul>
+<p>影响：一条可证的蕴含没有得到判定，读者还可能误读为不成立。</p>
+<h3>问题 3（条件遗漏）：“各层过渡满射 + 各层元素提升 ⟹ 极限元素提升｜已证明｜S4”</h3>
+<p>S4 只证明了可数塔（或有可数共尾链的情形），证明依赖沿 ℕ 递归。去掉这一条件后命题为假，即使再要求环交换、核平方为零。反例如下：</p>
+<ol>
+<li>取 I=ω₁，S=ℚ[x]。递归取有限到一函数 e_α:α→ℕ，使 α&lt;β 时 e_β|α 与 e_α 只差有限点：e_{α+1}=e_α∪{(α,0)}；极限 α 取 0=α₀&lt;α₁&lt;…→α，在 [α_n,α_{n+1}) 上令 e_α=max(e_{α_{n+1}},n)。</li>
+<li>令 G_α 为 α 上取值于 ℚ 的有限支撑函数，R_α=S⋉G_α，乘法同 S5，p_α(a,g)=a。</li>
+<li>令 c_{αβ}=e_β|α−e_α∈G_α，ρ_{αβ}(a,g)=(a, g|α+a′(0)c_{αβ})。由 c_{βγ}|α+c_{αβ}=c_{αγ} 得逆系，乘性计算同 S5。ρ_{αβ} 满射：取 h−a′(0)c_{αβ} 的零延拓。</li>
+<li>若 x 有原像 (x,g_α)，则 g_α+e_α 粘成 F:ω₁→ℚ，且 F|α−e_α 有限支撑。ℚ 可数，故 F 有不可数纤维，于是存在 α 使该纤维与 α 的交无限，e_α 在无限集上取常值，与有限到一矛盾。</li>
+</ol>
+<p>影响：S4 本身不受影响，但总结表必须写明“可数塔”。</p>
+<h3>问题 4（覆盖不全）</h3>
+<p>表中缺少以下所要求的关系：</p>
+<ul>
+<li>反方向 A ⟹̸ B、A ⟹̸ C。表中只有 “B∧C ⟹̸ A”，也没有指出 S4 对幂等元没有任何推论。</li>
+<li>D ⟹̸ A。S5 的例子 ker p=0，答卷未注意到。</li>
+<li>共同设定下 A 与 D 相互独立（见第三节）。</li>
+</ul>
+<h2>三、修正后的整理</h2>
+<table>
+<thead>
+<tr>
+<th>命题</th>
+<th>状态</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R 交换、ker q nil、q 满 ⟹ 单层幂等提升存在且唯一</td>
+<td>已证</td>
+<td>S1（唯一性不用满射）</td>
+</tr>
+<tr>
+<td>各层存在且唯一 ⟹ 极限 B∧C</td>
+<td>已证</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>各层 C ⟹ 极限 C</td>
+<td>成立</td>
+<td>投影到各层</td>
+</tr>
+<tr>
+<td>可数塔、过渡满、p₁ 满 ⟹ A</td>
+<td>已证</td>
+<td>S4</td>
+</tr>
+<tr>
+<td>L 交换且 D ⟹ C</td>
+<td>成立</td>
+<td>S1 唯一性段</td>
+</tr>
+<tr>
+<td>L 交换且 A∧D ⟹ B</td>
+<td>成立</td>
+<td>S1 构造用于 p</td>
+</tr>
+<tr>
+<td>各层 C ⟹ 极限 B</td>
+<td>假</td>
+<td>常值系统 ℤ→ℤ/6</td>
+</tr>
+<tr>
+<td>B∧C∧D ⟹ A</td>
+<td>假</td>
+<td>S5</td>
+</tr>
+<tr>
+<td>各层 nil ⟹ D；A∧B∧C ⟹ D</td>
+<td>假</td>
+<td>S3</td>
+</tr>
+<tr>
+<td>A ⟹ B</td>
+<td>假</td>
+<td>常值塔 ℤ→ℤ/6（满足 S4 条件）</td>
+</tr>
+<tr>
+<td>A∧D ⟹ C（不要求交换）</td>
+<td>假</td>
+<td>S6 的常值塔</td>
+</tr>
+<tr>
+<td>过渡满且 p_i 满 ⟹ A（不可数 I）</td>
+<td>假</td>
+<td>问题 3 的 ω₁ 例</td>
+</tr>
+</tbody>
+</table>
+<p>共同设定下 B、C 恒成立，而 A、D 的四种真值组合都出现：</p>
+<table>
+<thead>
+<tr>
+<th>例子</th>
+<th>A</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常值系统 k→k</td>
+<td>真</td>
+<td>真</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>真</td>
+<td>假</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>假</td>
+<td>真</td>
+</tr>
+<tr>
+<td>S3 与 S5 的积（S=k×k[x]）</td>
+<td>假</td>
+<td>假</td>
+</tr>
+</tbody>
+</table>
+<p>因此在共同设定下，A、D 之间没有任何蕴含，由 B、C 也推不出 A 或 D。这也说明 S1 不能直接用于 p:L→S（p 可能不满，ker p 可能非 nil），S2 必须逐层论证。</p>
+<h2>四、不影响结论的小省略</h2>
+<ul>
+<li>S2 第 4 部分未写 v 落入 L′：ρ′_ij(u_jx_j)=u_iρ_ij(x_j)=u_ix_i。</li>
+<li>S4 不在 S2 的设定内，应单独说明 p(x):=p_n(x_n) 与 n 无关（由 p_nρ_n=p_{n+1}）。</li>
+<li>S5 只给相邻过渡，应说明 ρ_ij 取复合，p_iρ_ij=p_j 由归纳得到；结合律只是断言，但直接展开成立。</li>
+<li>S3 中“S2 的证明仅依赖各层 nil”说得过强，还用到了 R_i 交换（S6 的反例说明不可省）和 p_i 满射。</li>
+<li>S6 表中“一般的多项式元素无法提升”不够精确：可提升的恰为 a′(0)=0 的 a。lim¹ 的说法正确，但只是未证明的旁注。</li>
+<li>S6 中“若域 k 至少含两个元素”是空条件。</li>
+</ul>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/written/slots/MG-AR001/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>MG-AR001:A1</code>。正文来自已保留的公开文件，原始字节与哈希不变。</p><ul class="source-list"><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/imports/written/slots/MG-AR001/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/original-reviews/MG-AR001.json">review · MG-AR001.json</a><span class="hash">SHA256 3d2233cc1fcdc1b330b89710838487847c1a60c41fb05ecd174ea03f781cb9ef</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/native-source/written/MG-AR001-A1/attempt-1/response.md">answer · response.md</a><span class="hash">SHA256 28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/claim-public-sources/MG-AR001.json">review · MG-AR001.json</a><span class="hash">SHA256 757b6c0f506e89fc8a7c85f82d25c17ced3810f518b72c5444cf48840c05427c</span></li><li><a href="../../../../results/v0.6.0/claude-opus-5.5-max/20261109/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="../../../method.html">计分方法与证据边界</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "pending", "formal_comparison_eligible": false, "model": {"id": "claude-opus-5.5-max", "label": "Claude Opus 5.5 Max"}, "case": {"id": "MG-AR001", "title": "真实答卷审阅 001：幂等元提升、逆极限与环分解", "category": "answer-review", "views": {"capability": {"single_attempt": {"case_id": "MG-AR001", "completion": {"lower": 0.8, "upper": 0.8, "exact": 0.8}, "strict_pass": false, "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914", "review_sha256": "3f662a5ace6784daa0fca80e2e7a5ee67a0d8d3e2ddeffcd515026b8e094a858"}, "nonlogical_retry_3": {"case_id": "MG-AR001", "completion": {"lower": 0.8, "upper": 0.8, "exact": 0.8}, "strict_pass": false, "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914", "review_sha256": "3f662a5ace6784daa0fca80e2e7a5ee67a0d8d3e2ddeffcd515026b8e094a858"}}, "partial": {"single_attempt": {"case_id": "MG-AR001", "completion": {"lower": 0.7, "upper": 0.7, "exact": 0.7}, "strict_pass": false, "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914", "review_sha256": "3f662a5ace6784daa0fca80e2e7a5ee67a0d8d3e2ddeffcd515026b8e094a858"}, "nonlogical_retry_3": {"case_id": "MG-AR001", "completion": {"lower": 0.7, "upper": 0.7, "exact": 0.7}, "strict_pass": false, "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914", "review_sha256": "3f662a5ace6784daa0fca80e2e7a5ee67a0d8d3e2ddeffcd515026b8e094a858"}}, "strict": {"single_attempt": {"case_id": "MG-AR001", "completion": {"lower": 0.8, "upper": 0.8, "exact": 0.8}, "strict_pass": false, "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914", "review_sha256": "3f662a5ace6784daa0fca80e2e7a5ee67a0d8d3e2ddeffcd515026b8e094a858"}, "nonlogical_retry_3": {"case_id": "MG-AR001", "completion": {"lower": 0.8, "upper": 0.8, "exact": 0.8}, "strict_pass": false, "response_sha256": "28d3429b0b06493d70b3225c27f14bb1a905d639b0619caa1583b27a849bd914", "review_sha256": "3f662a5ace6784daa0fca80e2e7a5ee67a0d8d3e2ddeffcd515026b8e094a858"}}}}}</script><script src="../../../assets/results-core.js?v=60d00dbc437d"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>
