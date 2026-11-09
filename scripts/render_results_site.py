@@ -18,6 +18,7 @@ from math_gauge.native_observations import load_public_record
 from math_gauge.paper_observations import load_public_record as load_paper_record
 from scripts.results_details import build_detail_pages
 from scripts.results_rankings import category_rankings
+from scripts.results_i18n import javascript_catalog, language_switch
 
 MODEL_THEMES = {
     "claude-opus-5.5-max": {"color": "#d97757", "ink": "#9f4d34", "tint": "#fbf1ec"},
@@ -188,6 +189,7 @@ def build_data(source_root=ROOT):
             sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     for model in models:
         model['harness_display_name'] = harness_display_name(model)
+        model['fully_evaluated'] = is_fully_evaluated(model)
     display_modes = copy.deepcopy(mode_catalog['modes'])
     next(m for m in display_modes if m['id'] == 'strict')['abbreviation'] = 'SMC'
     sources.append({'path': 'site/harnesses.json', 'sha256': hashlib.sha256(harness_path.read_bytes()).hexdigest()})
@@ -427,11 +429,11 @@ def render_content_rates(data):
         return (value is None, 0 if value is None else -value, model['id'])
     for model in sorted(data['models'], key=order):
         report = model.get('content_rates')
-        if report is None or report['version'] != '0.2.0':
-            return ''
+        if report is not None and report['version'] != '0.2.0':
+            raise ValueError('Current rates require a source-bound 0.2.0 report')
         bars, spoken = [], []
         for ident, label, field, style in definitions:
-            value = report['metrics'][ident][field]
+            value = None if report is None else report['metrics'][ident][field]
             text = '—' if value is None else f'{value:.2f}%'
             width = 0 if value is None else value
             spoken.append(label+' '+text)
@@ -495,6 +497,13 @@ def render_category_leaderboards(data):
             +''.join(panels)+'<p class="panel-foot">分榜显示类内百分制成绩；总分贡献见下表。未测部分不折算为已测部分的满分。</p></div></section>')
 
 
+def is_fully_evaluated(model):
+    """Evaluation coverage, not mathematical success or a self-claimed finish."""
+    progress = model['evaluation_progress']['nonlogical_retry_3']
+    return (not progress['incomplete']
+            and selected_result(model)['metrics']['overall']['exact'] is not None)
+
+
 def render(data):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
@@ -519,18 +528,20 @@ def render(data):
         if model['retry']['combined'].get('retry_summary', {}).get('slots_with_reruns'):
             first = '／'.join(f'{earned_value(model["combined"] if mode["id"]=="partial" else model[mode["id"]]["single_attempt"]):.2f}'
                              for mode in data['display_score_modes'])
-            notes.append(html.escape(model['label']+'：'+model['retry']['note'])
-                         +' 首答MC／RMC／SMC：'+first+'。')
+            notes.append('<span data-model-note="'+html.escape(model['id'], quote=True)+'">'
+                         +html.escape(model['label']+'：'+model['retry']['note'])
+                         +' 首答MC／RMC／SMC：'+first+'。</span>')
     values = {"DATA": payload, "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
+              "LANGUAGE_SWITCH": language_switch(),
               "GAP_CHART": render_gap_chart(data),
               "CONTENT_RATES": render_content_rates(data),
               "CATEGORY_RANKINGS": render_category_leaderboards(data),
               "INCOMPLETE_NOTE": ('<p class="panel-foot coverage-note">* 尚未测完</p>'
                                   if any(m['evaluation_progress']['nonlogical_retry_3']['incomplete']
                                          for m in data['models']) else '')
-                                  + ('<p class="panel-foot">¹ Dot原生独立运行方式</p>'
+                                  + ('<p class="panel-foot" data-model-note="dot-underlying-model-20261108">¹ Dot原生独立运行方式</p>'
                                      if any(m.get('record_kind') == 'native_harness' for m in data['models']) else '')
-                                  + ('<p class="panel-foot">² 使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。</p>'
+                                  + ('<p class="panel-foot" data-model-note="deepseek-v4.1-flash-1017">² 使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。</p>'
                                      if any(m['id'] == 'deepseek-v4.1-flash-1017' for m in data['models']) else ''),
               "RETRY_NOTES": '<br>'.join(notes) or '当前留档没有另计的非逻辑重跑。',
               "MODE_CONTROLS": ''.join(
@@ -563,8 +574,9 @@ def write_site(destination, *, source_root=ROOT):
     files = build_detail_pages(data, source_root)
     files["index.html"] = render(data)
     files["data.json"] = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-core.js", "home-results.js", "model-results.js", "case-results.js", "method-results.js"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "model-results.js", "case-results.js", "method-results.js"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
+    files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     # Keep rebuilt presentation and browser assets in sync across cached visits.
     for asset in [path for path in files if path.startswith('assets/')]:
         digest = hashlib.sha256(files[asset].encode()).hexdigest()[:12]

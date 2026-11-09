@@ -1,6 +1,7 @@
 (() => {
  const {d,state,modes,el,f,node,result,headline,short,table,points,href,download,start}=MG;
  const harnessName=m=>m.harness_display_name||m.harness.name;
+ const visibleModels=()=>d.models.filter(m=>!state.completeOnly||m.fully_evaluated);
  const expanded=new Set();
  const sortDefaults={...Object.fromEntries(d.policy.groups.map(g=>[g.id,'partial'])),gap:'RG',rates:'reliability'};
  const sortChoices={...Object.fromEntries(d.policy.groups.map(g=>[g.id,d.score_modes])),gap:['RG','DG'],rates:['reliability','attainment']};
@@ -10,9 +11,9 @@
   Object.keys(sortDefaults).forEach(key=>{const value=q.get('sort-'+key);chartSort[key]=sortChoices[key].includes(value)?value:sortDefaults[key];const select=el('chart-sort-'+key);if(select)select.value=chartSort[key]});
  }
  function orderedModels(value,ascending=false){
-  return [...d.models].sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?a.id.localeCompare(b.id):1):-1;return (ascending?x-y:y-x)||a.id.localeCompare(b.id)});
+  return visibleModels().sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?a.id.localeCompare(b.id):1):-1;return (ascending?x-y:y-x)||a.id.localeCompare(b.id)});
  }
- function orderChart(id,models){const chart=el(id);if(chart)models.forEach(m=>chart.append(chart.querySelector(':scope > [data-model="'+m.id+'"]')))}
+ function orderChart(id,models){const chart=el(id);if(!chart)return;const ids=new Set(models.map(m=>m.id));chart.querySelectorAll(':scope > [data-model]').forEach(n=>n.hidden=!ids.has(n.dataset.model));models.forEach(m=>chart.append(chart.querySelector(':scope > [data-model="'+m.id+'"]')))}
  function auxiliaryCharts(){
   const gap=Object.fromEntries(d.gap_diagnostics.tables.find(t=>t.id===chartSort.gap).rows.map(r=>[r.model_id,r.value]));
   orderChart('gap-groups',orderedModels(m=>gap[m.id]==null?null:Math.abs(gap[m.id]),true));
@@ -29,7 +30,7 @@
  }
  function ranking(){
   const b=el('ranking-body');b.replaceChildren();
-  [...d.models].sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)).forEach((m,i)=>{
+  visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)).forEach((m,i)=>{
    const row=b.insertRow();row.style.setProperty('--model-ink',m.theme.ink);row.insertCell().append(node('span',String(i+1),'rank'+(i===0?' first':'')));
    const wrap=node('div',null,'model'),symbol=node('span',null,'model-symbol'),text=node('div');symbol.style.background=m.theme.tint;symbol.setAttribute('aria-hidden','true');
    const icon=node('img');icon.src=m.logo.data_url;icon.alt='';symbol.append(icon);
@@ -49,26 +50,27 @@
    const cell=node('th'),btn=node('button',(expanded.has(g.id)?'▾ ':'▸ ')+g.title,'category-toggle');cell.scope='col';
    btn.id='taxonomy-toggle-'+g.id;btn.setAttribute('aria-expanded',String(expanded.has(g.id)));btn.setAttribute('aria-controls','capabilities');
    btn.setAttribute('aria-label',(expanded.has(g.id)?'收起':'展开')+g.title+'的子类成绩');
-   btn.onclick=()=>{if(expanded.has(g.id))expanded.delete(g.id);else expanded.add(g.id);taxonomy();el(btn.id).focus({preventScroll:true})};
+   btn.onclick=()=>{if(expanded.has(g.id))expanded.delete(g.id);else expanded.add(g.id);taxonomy();MGI18n.apply(state.lang);el(btn.id).focus({preventScroll:true})};
    cell.append(btn,node('span',' / '+g.weight,'category-weight'));head.append(cell);columns.push({item:g,total:true});
    if(expanded.has(g.id))g.children.forEach(id=>{const c=d.policy.subcategories.find(c=>c.id===id),h=node('th',c.title+' / '+c.weight,'taxonomy-child-heading');h.scope='col';head.append(h);columns.push({item:c,total:false})});
   });
   const body=t.createTBody();
-  [...d.models].sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)).forEach(m=>{
+  visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)).forEach(m=>{
    const row=body.insertRow(),label=node('th');label.scope='row';label.append(modelLink(m,m.evaluation_progress[state.condition].incomplete));row.append(label);
    columns.forEach(({item,total})=>{const c=row.insertCell();c.className=total?'taxonomy-total':'taxonomy-child';c.textContent=points(m,item.id,item.weight);const v=result(m).contributions[item.id];c.title='完整贡献区间 '+f(v.lower)+'–'+f(v.upper)+' / '+item.weight});
   });
  }
  function categoryRanking(){
-  const byId=Object.fromEntries(d.models.map(m=>[m.id,m]));
+  const byId=Object.fromEntries(visibleModels().map(m=>[m.id,m]));
   d.category_leaderboards.forEach(g=>{
    const score=chartSort[g.id];
    table('category-ranking-'+g.id,['#','模型','Harness',...d.display_score_modes.map(m=>m.abbreviation)],[]);
    const t=el('category-ranking-'+g.id);t.tHead.rows[0].cells[2].className='category-harness';
    const views=Object.fromEntries(d.score_modes.map(mode=>[mode,Object.fromEntries(g.views[mode].map(r=>[r.model_id,r]))]));
-   g.views[score].forEach(item=>{
-    const chart=el('category-chart-groups-'+g.id);chart.append(chart.querySelector(':scope > [data-model="'+item.model_id+'"]'));
-    const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank??'—';r.insertCell().append(modelLink(m,item.incomplete,score));
+   const items=g.views[score].filter(item=>byId[item.model_id]);
+   orderChart('category-chart-groups-'+g.id,items.map(item=>byId[item.model_id]));
+   items.forEach((item,index)=>{
+    const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank==null?'—':index+1;r.insertCell().append(modelLink(m,item.incomplete,score));
     const harness=r.insertCell();harness.className='category-harness';harness.textContent=harnessName(m);
     d.display_score_modes.forEach(mode=>{const v=views[mode.id][m.id],c=r.insertCell();c.className='numeric score-cell'+(mode.id===score?' primary-score':'');if(v.value<0)c.classList.add('negative');c.append(node('span',f(v.value),'score-number'));c.title='完整分区间 '+f(v.lower)+'–'+f(v.upper)});
    });
@@ -90,13 +92,17 @@
    const value=e.currentTarget.value;if(!sortChoices[key].includes(value))return;
    chartSort[key]=value;const u=new URL(location.href);u.searchParams.set('sort-'+key,value);history.replaceState(null,'',u);
    if(d.policy.groups.some(g=>g.id===key))categoryRanking();else auxiliaryCharts();
+   MGI18n.apply(state.lang);
   };
  });
  start(()=>{
   syncSorts();ranking();taxonomy();categoryRanking();auxiliaryCharts();
-  orderChart('chart-groups',[...d.models].sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)));
+  orderChart('chart-groups',visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)));
+  document.querySelectorAll('.coverage-note').forEach(n=>n.hidden=!visibleModels().some(m=>m.evaluation_progress[state.condition].incomplete));
+  const visibleIds=new Set(visibleModels().map(m=>m.id));document.querySelectorAll('[data-model-note]').forEach(n=>n.hidden=!visibleIds.has(n.dataset.modelNote));
+  el('no-completed-models').hidden=visibleModels().length>0;
   const selected=modes[state.score];el('leaderboard-desc').textContent='公开＋私有 · 按'+selected.abbreviation+'排序 · 满分100';el('score-explanation').textContent=selected.description;
   el('contributions-title').textContent=selected.abbreviation+' · 分类贡献';el('contribution-mode').textContent=selected.abbreviation;el('active-condition').textContent=MG.conditionLabel();
-  el('downloads').replaceChildren(...d.models.map(m=>{const a=node('a',short(m)+' · JSON ↓','download-link');a.href=download(m);return a}));
+  el('downloads').replaceChildren(...visibleModels().map(m=>{const a=node('a',short(m)+' · JSON ↓','download-link');a.href=download(m);return a}));
  });
 })();

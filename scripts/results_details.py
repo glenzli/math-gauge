@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 
 from math_gauge.records import evidence_bytes, load_public_task_scores
+from scripts.results_i18n import language_switch
 
 HERE = Path(__file__).resolve().parent
 CONDITIONS = ("single_attempt", "nonlogical_retry_3")
@@ -65,12 +66,12 @@ def shell(page, title, subtitle, body, data, script, *, back=None):
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<title>'+html.escape(title)+' · Math Gauge</title><link rel="stylesheet" href="'+local('assets/results.css')+'"></head><body>'
         '<header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="'+local('index.html')+'"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a>'
-        '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-context-link href="'+local('method.html')+'">方法与数据</a></div></nav></header>'
+        '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-nav-method data-context-link href="'+local('method.html')+'">方法与数据</a></div>'+language_switch()+'</nav></header>'
         '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
         '<div class="statusline"><span class="status-dot"></span><span>AI 审核 · 人审待定</span><span class="divider"></span><span>观察后选题与复核，正式比较资格未确立</span></div>'
-        '<section class="panel context-panel">'+controls(data)+'<p class="panel-foot context-label" aria-live="polite"></p></section>'+body+
+        '<section class="panel context-panel">'+controls(data)+'<p class="panel-foot context-label" aria-live="polite"></p></section><p class="original-language-note">原题与原答保留原始语言。</p>'+body+
         '<footer class="footer"><span>Math Gauge · 原答与原评审保留</span><a data-context-link href="'+local('method.html')+'">计分方法与证据边界</a></footer></main>'
-        '<script type="application/json" id="data">'+embedded(data)+'</script><script src="'+local('assets/results-core.js')+'"></script><script src="'+local('assets/'+script)+'"></script></body></html>')
+        '<script type="application/json" id="data">'+embedded(data)+'</script><script src="'+local('assets/results-i18n.js')+'"></script><script src="'+local('assets/results-core.js')+'"></script><script src="'+local('assets/'+script)+'"></script></body></html>')
 
 
 def compact_data(data, model=None):
@@ -436,5 +437,7 @@ def build_detail_pages(data, root):
         pages[path] = render_model(path, data, model, cases, record, folder, markdown)
         del model['public_claims']
     pages['method.html'] = shell('method.html','方法与数据','三个计分口径、固定分母与公开证据的阅读方式',
-        (HERE/'templates/method-content.html').read_text(),compact_data(data),'method-results.js')
+        '<div data-lang-content="zh">'+(HERE/'templates/method-content.html').read_text()+'</div>'
+        '<div data-lang-content="en" hidden>'+(HERE/'templates/method-content.en.html').read_text()+'</div>',
+        compact_data(data),'method-results.js')
     return markdown.finish(pages)

@@ -1,10 +1,23 @@
 # Math Gauge
 
+[简体中文](README.md) · [English](README.en.md)
+
 **Measure the capability, not just the answer.**
 
 Math Gauge 关心模型能否可靠地完成数学工作：理解给定结构，计算与证明，检查别人的论证，把自然语言目标落实为语义对应的 Lean 工程，并在自查时保持判断。
 
-当前为 **0.6.0 封版**；AI 审核 / 人审待定，正式比较资格为 false。
+当前题包为 **benchmark 0.6.0 封版**，最新分发版为 **0.6.1**（[更新说明](releases/v0.6.1/README.md)）。保留0.6.0发行及原资产；本次更新页面、文档和已入库结果展示。AI 审核 / 人审待定，正式比较资格为 false。
+
+
+## 排行榜预览
+
+![Math Gauge 中文总榜：七个已完成评测的模型](docs/screenshots/leaderboard-zh.jpg)
+
+![Math Gauge 中文数学研究分榜](docs/screenshots/research-zh.jpg)
+
+截图启用“仅显示已测完模型”，展示当前7个完成评测的模型；完成评测不代表全题正确。页面默认保留全部9个已选模型，未测完者以 * 标记。此开关只影响显示，不改分数、权重或固定分母。界面支持中文／English，分类、差值与两率图独立排序，语言和筛选都可随URL分享。
+
+[打开静态榜单](site/index.html) · [方法与数据](site/method.html) · [本地预览方式](#本地查看)
 
 ## 设计理念
 
@@ -91,3 +104,14 @@ PS001按用户选择替换公开GR103，仍为8公／4私书面论证、12家族
 benchmark0.6.0封版；聚合0.8.0／MC0.2.0／Strict0.2.0，承诺扣罚组件0.1.0，选题组件0.3.0、书面替换组件0.1.0。AI审核、人审待定，正式比较资格false。
 
 [排行榜](site/index.html) · [完整报告](docs/results.md) · [0.6.0发布说明](releases/v0.6.0/README.md) · [其他Harness运行指南](docs/harness-guide.md) · [评分规范](protocol/benchmark-scoring.md) · [留档合同](protocol/result-record.md)
+
+
+## 本地查看
+
+```bash
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+打开 `http://127.0.0.1:8000/site/`。中文截图视图为 `?lang=zh&complete=1`，英文为 `?lang=en&complete=1`；去掉 `complete=1` 显示全部模型。页面本身无需联网。重新生成页面使用 `python3 scripts/render_results_site.py`。
+
+候选题包使用独立的[Harness指南](docs/harness-guide.md)。0.6.1分发保留 `benchmark-v0.6.0.zip` 的冻结题包身份；精确源提交及各资产散列见相应发行的 `release-lock.json`，不替换旧发行的同名资产。

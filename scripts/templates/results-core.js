@@ -2,7 +2,7 @@
 window.MG = (() => {
  const d=JSON.parse(document.getElementById('data').textContent), q=new URLSearchParams(location.search);
  const state={score:d.score_modes.includes(q.get('score'))?q.get('score'):d.default_score_mode,
-  condition:d.default_attempt_condition};
+  condition:d.default_attempt_condition,lang:q.get('lang')==='en'?'en':'zh',completeOnly:q.get('complete')==='1'};
  const modes=Object.fromEntries(d.display_score_modes.map(m=>[m.id,m]));
  const el=id=>document.getElementById(id), f=v=>v==null?'—':Number(v).toFixed(2);
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
@@ -18,7 +18,7 @@ window.MG = (() => {
   const value=knownValue(v);
   return value==null?'—':f(value)+'/'+weight;
  }
- function href(path){const u=new URL(path,document.baseURI);u.searchParams.set('score',state.score);u.searchParams.set('condition',state.condition);return u.href}
+ function href(path){const u=new URL(path,document.baseURI),current=new URLSearchParams(location.search);u.searchParams.set('score',state.score);u.searchParams.set('condition',state.condition);u.searchParams.set('lang',state.lang);if(state.completeOnly)u.searchParams.set('complete','1');else u.searchParams.delete('complete');['category','sort-written','sort-lean','sort-research','sort-gap','sort-rates'].forEach(key=>{if(current.has(key))u.searchParams.set(key,current.get(key));else u.searchParams.delete(key)});return u.href}
  function download(m,prefix=''){return prefix+'downloads/'+m.id+'-combined'+(state.score==='strict'?'-strict':state.score==='capability'?'-capability':'')+(state.condition==='single_attempt'?'':'-retry')+'.json'}
  function taskValue(task){return state.score==='strict'?(task.strict_pass==null?'未知':task.strict_pass?'通过':'未通过'):(task.completion.exact==null?'未知':f(task.completion.exact*100)+'/100')}
  function start(render){
@@ -29,10 +29,14 @@ window.MG = (() => {
    document.querySelectorAll('[data-context-link]').forEach(a=>a.href=href(a.getAttribute('href')));
    try{history.replaceState(null,'',href(location.href))}catch{}
    render();
+   const filter=el('completed-only');if(filter)filter.checked=state.completeOnly;
+   MGI18n.apply(state.lang);
   }
   document.querySelectorAll('button[data-score-mode]').forEach(b=>b.onclick=()=>{state.score=b.dataset.scoreMode;update()});
   document.querySelectorAll('button[data-condition]').forEach(b=>b.onclick=()=>{state.condition=b.dataset.condition;update()});
-  window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);state.score=d.score_modes.includes(p.get('score'))?p.get('score'):d.default_score_mode;state.condition=d.default_attempt_condition;update()});
+  document.querySelectorAll('button[data-language]').forEach(b=>b.onclick=()=>{state.lang=b.dataset.language;update()});
+  const filter=el('completed-only');if(filter)filter.onchange=()=>{state.completeOnly=filter.checked;update()};
+  window.addEventListener('popstate',()=>{const p=new URLSearchParams(location.search);state.score=d.score_modes.includes(p.get('score'))?p.get('score'):d.default_score_mode;state.lang=p.get('lang')==='en'?'en':'zh';state.completeOnly=p.get('complete')==='1';state.condition=d.default_attempt_condition;update()});
   update();
  }
  return {d,state,modes,el,f,node,result,headline,knownValue,short,conditionLabel,table,points,href,download,taskValue,start};
