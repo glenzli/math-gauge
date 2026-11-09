@@ -1,0 +1,662 @@
+{
+  "benchmark_version": "0.6.0",
+  "scoring_method_version": "0.8.0",
+  "strict_method_version": "0.2.0",
+  "score_mode": "partial",
+  "claim_penalty_method_version": "0.1.0",
+  "claim_penalty_policy_sha256": "aabe0dea5d97579f0104e80e24f5d6553b4674e3ff2c03739e812096bd5a27e7",
+  "claim_penalties": {
+    "method_version": "0.1.0",
+    "status": "source_bound_review_applied",
+    "reviewed_tasks": 35,
+    "unresolved_tasks": 1,
+    "not_run_tasks": 0,
+    "delivery_failed_tasks": 3,
+    "findings_by_severity": {
+      "local": 16,
+      "material": 13,
+      "critical": 2
+    },
+    "core_endorsement_tasks": 2,
+    "deductions_applied": true,
+    "strict_error_gates_applied": true,
+    "original_reviews_rewritten": false,
+    "human_review": "pending"
+  },
+  "primary_metric": "earned",
+  "model_label": "DeepSeek v4.1 Flash Max",
+  "capacity": {
+    "total": 100,
+    "active": 100,
+    "under_construction": 0
+  },
+  "group_capacity": {
+    "written": {
+      "total": 35,
+      "active": 35,
+      "under_construction": 0
+    },
+    "lean": {
+      "total": 35,
+      "active": 35,
+      "under_construction": 0
+    },
+    "research": {
+      "total": 30,
+      "active": 30,
+      "under_construction": 0
+    }
+  },
+  "coverage": {
+    "public_tasks": 25,
+    "private_tasks": 14,
+    "tasks": 39,
+    "parent_families": 35,
+    "initial_slots": 39,
+    "public_initial_slots": 25,
+    "alignment_rounds": 3,
+    "trajectory_assessment_units": 1,
+    "source_initial_tasks": 39,
+    "source_initial_judgments": 38,
+    "source_reviewed_tasks": 35,
+    "observed_delivery_failures": 3,
+    "unresolved_initial_tasks": 1,
+    "source_alignment_rounds": 0
+  },
+  "whole_task_counts": {
+    "planned": 39,
+    "passed": 11,
+    "failed": 27,
+    "unknown": 1
+  },
+  "profile": {
+    "groups": [
+      {
+        "id": "written",
+        "title": "书面证明",
+        "weight": 35,
+        "children": [
+          "written-argument",
+          "argument-review"
+        ]
+      },
+      {
+        "id": "lean",
+        "title": "Lean",
+        "weight": 35,
+        "children": [
+          "lean-audit",
+          "lean-formalization",
+          "lean-selfcheck"
+        ]
+      },
+      {
+        "id": "research",
+        "title": "数学研究",
+        "weight": 30,
+        "children": [
+          "background-check",
+          "manuscript-completion",
+          "theorem-extension"
+        ]
+      }
+    ],
+    "subcategories": [
+      {
+        "id": "written-argument",
+        "title": "书面论证",
+        "weight": 25,
+        "source_components": [
+          "proofs",
+          "exploration"
+        ],
+        "public_tasks": 8,
+        "private_tasks": 4,
+        "families": 12,
+        "aggregation": "family",
+        "status": "active"
+      },
+      {
+        "id": "argument-review",
+        "title": "论证审阅",
+        "weight": 10,
+        "source_components": [
+          "answer-review"
+        ],
+        "public_tasks": 4,
+        "private_tasks": 0,
+        "families": 4,
+        "aggregation": "parent_family",
+        "status": "active"
+      },
+      {
+        "id": "lean-audit",
+        "title": "语义审计",
+        "weight": 10,
+        "source_components": [
+          "lean-audit"
+        ],
+        "public_tasks": 4,
+        "private_tasks": 0,
+        "families": 2,
+        "aggregation": "family",
+        "status": "active"
+      },
+      {
+        "id": "lean-formalization",
+        "title": "形式化",
+        "weight": 15,
+        "source_components": [
+          "lean-formalization"
+        ],
+        "public_tasks": 4,
+        "private_tasks": 0,
+        "families": 2,
+        "aggregation": "family",
+        "status": "active"
+      },
+      {
+        "id": "lean-selfcheck",
+        "title": "对齐自查",
+        "weight": 10,
+        "source_components": [],
+        "public_tasks": 1,
+        "private_tasks": 0,
+        "families": 1,
+        "aggregation": "trajectory",
+        "status": "active",
+        "reuses_case_id": "MG-C003",
+        "rounds": 3,
+        "adds_independent_family": false
+      },
+      {
+        "id": "background-check",
+        "title": "背景核查",
+        "weight": 10,
+        "source_components": [
+          "background-check"
+        ],
+        "public_tasks": 2,
+        "private_tasks": 2,
+        "families": 4,
+        "aggregation": "family",
+        "status": "active"
+      },
+      {
+        "id": "manuscript-completion",
+        "title": "数学想法手稿化",
+        "weight": 10,
+        "source_components": [
+          "manuscript-completion"
+        ],
+        "public_tasks": 1,
+        "private_tasks": 4,
+        "families": 5,
+        "aggregation": "family",
+        "status": "active"
+      },
+      {
+        "id": "theorem-extension",
+        "title": "命题拓展",
+        "weight": 10,
+        "source_components": [
+          "theorem-extension"
+        ],
+        "public_tasks": 2,
+        "private_tasks": 4,
+        "families": 6,
+        "aggregation": "family",
+        "status": "active"
+      }
+    ]
+  },
+  "alignment_selfcheck": {
+    "metric": {
+      "lower": -20,
+      "upper": 100,
+      "exact": null
+    },
+    "rounds": [
+      {
+        "round": 1,
+        "complete": null,
+        "status": "not_run"
+      },
+      {
+        "round": 2,
+        "complete": null,
+        "status": "not_run"
+      },
+      {
+        "round": 3,
+        "complete": null,
+        "status": "not_run"
+      }
+    ],
+    "major_false_complete_events": {
+      "count": 0
+    },
+    "state": "unresolved"
+  },
+  "strict_alignment_selfcheck": {
+    "strict_pass": null,
+    "state": "unresolved"
+  },
+  "lean_formalization_breakdown": {
+    "cases": [
+      {
+        "case_id": "MG-C003",
+        "family_id": "oet-volume1-chapter03",
+        "complete_count": null,
+        "total": 92,
+        "percent": null,
+        "status": "unresolved_new_batch"
+      },
+      {
+        "case_id": "LCH01",
+        "family_id": "oet-volume1-chapter02",
+        "complete_count": 8,
+        "total": 8,
+        "percent": 100.0
+      },
+      {
+        "case_id": "LCH02",
+        "family_id": "oet-volume1-chapter02",
+        "complete_count": 20,
+        "total": 20,
+        "percent": 100.0
+      },
+      {
+        "case_id": "HCH02",
+        "family_id": "oet-volume1-chapter02",
+        "complete_count": 40,
+        "total": 40,
+        "percent": 100.0
+      }
+    ],
+    "families": {
+      "oet-volume1-chapter02": {
+        "case_ids": [
+          "LCH01",
+          "LCH02",
+          "HCH02"
+        ],
+        "variant_count": 3,
+        "percent": 100.0
+      },
+      "oet-volume1-chapter03": {
+        "case_ids": [
+          "MG-C003"
+        ],
+        "variant_count": 1,
+        "percent": null
+      }
+    }
+  },
+  "initial_answers_replaced": false,
+  "attempt_condition": "nonlogical_retry_3",
+  "retry_summary": {
+    "selection": "first_completed_delivery",
+    "maximum_total_attempts": 3,
+    "evidence_kind": "operator_reported_without_native_receipts",
+    "slots_with_reruns": 7,
+    "effective_attempts": 48
+  },
+  "source_bindings": {
+    "mathematical_input_sha256": "1821f62bfbc18a96335c11dd7c49bf6c99078b14b5e34c2ef568c72e5d9b29d2",
+    "assessment_policy_sha256": "eed009cdfa8bfb31be9e853355b50fce6e92b4353c6cde5ac26741d4bef9405a",
+    "strict_scoring_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
+    "capability_scoring_policy_sha256": "c150d764a9f8958d73206afaa8155f7802de4c8f9b4559c34151099c96c5bda2",
+    "claim_penalty_policy_sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419",
+    "private_report_sha256": "aa04cc941115ebee3a2056edb624d2dbc276439c5289613b6ebe29bf3de38055"
+  },
+  "schema": "math-gauge.assessment-score-aggregate/v1",
+  "scope": "combined-aggregate-only",
+  "private_case_count": 14,
+  "metrics": {
+    "written-argument": {
+      "exact": 70.1296296296,
+      "lower": 70.1296296296,
+      "upper": 70.1296296297,
+      "complete": true,
+      "coverage": {
+        "unit": "family",
+        "planned": 12,
+        "adjudicated": 12,
+        "unknown": 0
+      },
+      "confirmed": 70.12962962962963,
+      "formal_comparison_eligible": false
+    },
+    "argument-review": {
+      "exact": 61.875,
+      "lower": 61.875,
+      "upper": 61.875,
+      "complete": true,
+      "coverage": {
+        "unit": "parent_family",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0
+      },
+      "confirmed": 61.875,
+      "formal_comparison_eligible": false
+    },
+    "lean-audit": {
+      "exact": 97.5,
+      "lower": 97.5,
+      "upper": 97.5,
+      "complete": true,
+      "coverage": {
+        "unit": "family",
+        "planned": 2,
+        "adjudicated": 2,
+        "unknown": 0
+      },
+      "confirmed": 97.5,
+      "formal_comparison_eligible": false
+    },
+    "lean-formalization": {
+      "exact": null,
+      "lower": 40.0,
+      "upper": 100.0,
+      "complete": false,
+      "coverage": {
+        "unit": "family",
+        "planned": 2,
+        "adjudicated": 1,
+        "unknown": 1
+      },
+      "confirmed": 50.0,
+      "formal_comparison_eligible": false
+    },
+    "lean-selfcheck": {
+      "exact": null,
+      "lower": -20.0,
+      "upper": 100.0,
+      "complete": false,
+      "coverage": {
+        "unit": "trajectory",
+        "planned": 1,
+        "adjudicated": 0,
+        "unknown": 1
+      },
+      "confirmed": 0.0,
+      "formal_comparison_eligible": false
+    },
+    "background-check": {
+      "exact": 72.5,
+      "lower": 72.5,
+      "upper": 72.5,
+      "complete": true,
+      "coverage": {
+        "unit": "family",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0
+      },
+      "confirmed": 72.5,
+      "formal_comparison_eligible": false
+    },
+    "manuscript-completion": {
+      "exact": 56.8,
+      "lower": 56.8,
+      "upper": 56.8,
+      "complete": true,
+      "coverage": {
+        "unit": "family",
+        "planned": 5,
+        "adjudicated": 5,
+        "unknown": 0
+      },
+      "confirmed": 56.8,
+      "formal_comparison_eligible": false
+    },
+    "theorem-extension": {
+      "exact": 31.6666666667,
+      "lower": 31.6666666666,
+      "upper": 31.6666666667,
+      "complete": true,
+      "coverage": {
+        "unit": "family",
+        "planned": 6,
+        "adjudicated": 6,
+        "unknown": 0
+      },
+      "confirmed": 31.666666666666668,
+      "formal_comparison_eligible": false
+    },
+    "written": {
+      "exact": 67.7711640212,
+      "lower": 67.7711640211,
+      "upper": 67.7711640212,
+      "complete": true,
+      "coverage": {
+        "unit": "fixed subcategory",
+        "planned": 2,
+        "adjudicated": 2,
+        "unknown": 0
+      },
+      "confirmed": 67.77116402116403,
+      "formal_comparison_eligible": false
+    },
+    "lean": {
+      "exact": null,
+      "lower": 39.2857142857,
+      "upper": 99.2857142858,
+      "complete": false,
+      "coverage": {
+        "unit": "fixed subcategory",
+        "planned": 3,
+        "adjudicated": 1,
+        "unknown": 2
+      },
+      "confirmed": 49.285714285714285,
+      "formal_comparison_eligible": false
+    },
+    "research": {
+      "exact": 53.6555555556,
+      "lower": 53.6555555555,
+      "upper": 53.6555555556,
+      "complete": true,
+      "coverage": {
+        "unit": "fixed subcategory",
+        "planned": 3,
+        "adjudicated": 3,
+        "unknown": 0
+      },
+      "confirmed": 53.65555555555556,
+      "formal_comparison_eligible": false
+    },
+    "earned": {
+      "exact": null,
+      "lower": 53.566574074,
+      "upper": 74.5665740741,
+      "complete": false,
+      "coverage": {
+        "unit": "fixed 100-point benchmark",
+        "planned": 8,
+        "adjudicated": 6,
+        "unknown": 2
+      },
+      "confirmed": 57.066574074074076,
+      "formal_comparison_eligible": false
+    },
+    "overall": {
+      "exact": null,
+      "lower": 53.566574074,
+      "upper": 74.5665740741,
+      "complete": false,
+      "coverage": {
+        "unit": "fixed 100-point benchmark",
+        "planned": 8,
+        "adjudicated": 6,
+        "unknown": 2
+      },
+      "formal_comparison_eligible": false
+    }
+  },
+  "contributions": {
+    "written-argument": {
+      "exact": 17.5324074074,
+      "lower": 17.5324074074,
+      "upper": 17.5324074075,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 12,
+        "adjudicated": 12,
+        "unknown": 0
+      },
+      "confirmed": 17.53240740740741,
+      "formal_comparison_eligible": false
+    },
+    "argument-review": {
+      "exact": 6.1875,
+      "lower": 6.1875,
+      "upper": 6.1875,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0
+      },
+      "confirmed": 6.1875,
+      "formal_comparison_eligible": false
+    },
+    "lean-audit": {
+      "exact": 9.75,
+      "lower": 9.75,
+      "upper": 9.75,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 2,
+        "adjudicated": 2,
+        "unknown": 0
+      },
+      "confirmed": 9.75,
+      "formal_comparison_eligible": false
+    },
+    "lean-formalization": {
+      "exact": null,
+      "lower": 6.0,
+      "upper": 15.0,
+      "complete": false,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 2,
+        "adjudicated": 1,
+        "unknown": 1
+      },
+      "confirmed": 7.5,
+      "formal_comparison_eligible": false
+    },
+    "lean-selfcheck": {
+      "exact": null,
+      "lower": -2.0,
+      "upper": 10.0,
+      "complete": false,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 1,
+        "adjudicated": 0,
+        "unknown": 1
+      },
+      "confirmed": 0.0,
+      "formal_comparison_eligible": false
+    },
+    "background-check": {
+      "exact": 7.25,
+      "lower": 7.25,
+      "upper": 7.25,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 4,
+        "adjudicated": 4,
+        "unknown": 0
+      },
+      "confirmed": 7.25,
+      "formal_comparison_eligible": false
+    },
+    "manuscript-completion": {
+      "exact": 5.68,
+      "lower": 5.68,
+      "upper": 5.68,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 5,
+        "adjudicated": 5,
+        "unknown": 0
+      },
+      "confirmed": 5.68,
+      "formal_comparison_eligible": false
+    },
+    "theorem-extension": {
+      "exact": 3.1666666667,
+      "lower": 3.1666666666,
+      "upper": 3.1666666667,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 6,
+        "adjudicated": 6,
+        "unknown": 0
+      },
+      "confirmed": 3.1666666666666665,
+      "formal_comparison_eligible": false
+    },
+    "written": {
+      "exact": 23.7199074074,
+      "lower": 23.7199074074,
+      "upper": 23.7199074075,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 2,
+        "adjudicated": 2,
+        "unknown": 0
+      },
+      "confirmed": 23.71990740740741,
+      "formal_comparison_eligible": false
+    },
+    "lean": {
+      "exact": null,
+      "lower": 13.75,
+      "upper": 34.75,
+      "complete": false,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 3,
+        "adjudicated": 1,
+        "unknown": 2
+      },
+      "confirmed": 17.25,
+      "formal_comparison_eligible": false
+    },
+    "research": {
+      "exact": 16.0966666667,
+      "lower": 16.0966666666,
+      "upper": 16.0966666667,
+      "complete": true,
+      "coverage": {
+        "unit": "points in full benchmark",
+        "planned": 3,
+        "adjudicated": 3,
+        "unknown": 0
+      },
+      "confirmed": 16.096666666666668,
+      "formal_comparison_eligible": false
+    }
+  },
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "record_kind": "paper_observation",
+  "transport_import_validated": false,
+  "runtime_evidence_verified": false,
+  "backend_sku": null
+}

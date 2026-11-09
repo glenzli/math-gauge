@@ -14,7 +14,7 @@ SCHEMA = "math-gauge.result-record/v1"
 ASSESSMENTS = {"complete", "incomplete", "uncertain", "not_stated", "not_requested", "unresolved"}
 
 
-def selected_cli_records(root):
+def _selected_result_records(root):
     """Resolve user-selected CLI archives without guessing the newest result.
 
     Older editions had one retained record per selected model. An explicit
@@ -45,6 +45,25 @@ def selected_cli_records(root):
         if not path.is_relative_to(root):
             raise ValueError("Selected result record cannot leave the public repository")
         result.append((model, path.parent))
+    return result
+
+
+def selected_cli_records(root):
+    """Keep only selected CLI records; paper observations have their own loader."""
+    return [(model, folder) for model, folder in _selected_result_records(root)
+            if json.loads((folder / 'record.json').read_bytes()).get('schema')
+                != 'math-gauge.paper-observation-record/v1']
+
+
+def selected_paper_records(root):
+    """Resolve explicitly selected paper snapshots, never a latest-folder guess."""
+    result = []
+    for model, folder in _selected_result_records(root):
+        record = json.loads((folder / 'record.json').read_bytes())
+        if record.get('schema') == 'math-gauge.paper-observation-record/v1':
+            if record.get('record_kind') != 'paper_observation':
+                raise ValueError('Selected paper record changed its explicit source kind')
+            result.append((model, folder))
     return result
 
 

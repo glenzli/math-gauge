@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class StrictRecordTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261105"
+        cls.root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
         cls.record = json.loads((cls.root / "record.json").read_bytes())
 
     def poisoned(self, change):

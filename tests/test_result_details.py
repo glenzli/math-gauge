@@ -47,7 +47,7 @@ class ResultDetailsTests(unittest.TestCase):
                     else:self.assertTrue(target.is_file(),str(target))
 
     def test_retry_uses_admitted_answer_and_original_failure_is_not_filled(self):
-        folder=ROOT/'results/v0.6.0/deepseek-v4.1-flash-1017/20261105'
+        folder=ROOT/'results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105'
         record=json.loads((folder/'record.json').read_bytes());scores=load_public_task_scores(folder,record);samples={}
         for c in ('single_attempt','nonlogical_retry_3'):
             task=next(r for r in scores['views']['partial'][c]['tasks'] if r['case_id']=='MG-GR021')
@@ -67,13 +67,17 @@ class ResultDetailsTests(unittest.TestCase):
         self.assertNotIn('href="/private/tmp/', page)
         self.assertIn('href="https://example.com/theorem"', page)
 
-    def test_unrun_replacement_keeps_null_without_retired_score(self):
+    def test_replacement_uses_its_first_delivery_without_retired_credit(self):
         page=self.pages['models/deepseek-v4.1-flash-1017/cases/MG-PS001.html']
         payload=page.split('<script type="application/json" id="data">',1)[1].split('</script>',1)[0];data=json.loads(payload)
         for views in data['case']['views'].values():
-            for task in views.values():
-                self.assertIsNone(task['completion']['exact']);self.assertIsNone(task['strict_pass'])
-        self.assertIn('未知',page)
+            first, selected = views['single_attempt'], views['nonlogical_retry_3']
+            self.assertEqual(first['completion']['exact'], 0)
+            self.assertFalse(first['strict_pass'])
+            self.assertIsNone(first['response_sha256'])
+            self.assertEqual(selected['completion']['exact'], 1)
+            self.assertTrue(selected['strict_pass'])
+            self.assertIsNotNone(selected['response_sha256'])
 
     def test_stale_generated_pages_removed_and_unowned_files_preserved(self):
         with tempfile.TemporaryDirectory() as name:

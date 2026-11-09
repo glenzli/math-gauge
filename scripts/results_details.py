@@ -100,6 +100,16 @@ def review_projection(value):
 
 def public_evidence(folder, record, cid, condition, task):
     """Resolve the actual selected public answer; a retry never inherits A1 text."""
+    if record.get('record_kind') == 'paper_observation':
+        row = next(r for r in record['public_deliveries'] if r['case_id'] == cid)
+        claims = json.loads(evidence_bytes(folder, record['public_claim_review']))['conditions'][condition]
+        claim = next(r for r in claims['cases'] if r['case_id'] == cid)
+        sources = [descriptor(folder, row[key], role=role) for key, role in
+                   (('response', 'answer'), ('review', 'source_review')) if row.get(key) is not None
+                   and row[key]['sha256'] == task['response_sha256' if key == 'response' else 'review_sha256']]
+        review = next((json.loads(s['raw']) for s in sources if s['role'] == 'source_review'), None)
+        return {'sources': sources, 'review': review, 'claim': claim, 'notes': [],
+                'selected_record': cid + ':A1', 'source_row': row}
     sources, notes, primary = [], [], None
     chosen = None
     if record.get('retry_admission') and condition == 'nonlogical_retry_3':
@@ -284,6 +294,10 @@ def render_model(page, data, model, cases, record, folder, markdown):
             +html.escape(model['comparison_note'])+'</p><p>'
             +html.escape(model['harness']['detail'])+'</p><p>当前初答和三轮自查均保留原始交付；原批次与补充来源分别留证。'
             '独立AI评审，人工待审；原始初评与本次复核差异另行保存。</p></div>')+body
+    if model.get('record_kind') == 'paper_observation':
+        body = panel('答卷观察与证据范围', '<div class="prose"><p>'
+            +html.escape(model['comparison_note'])+'</p><p>来源按原标签及所报推理档位保存，后端型号与运行遥测未核实。'
+            '数学评审、操作者声明的交付失败与未知项分别留存；内容可靠率与目标达成率尚未补审。</p></div>')+body
     rates = model.get('content_rates')
     if rates:
         def percent(value):
@@ -313,7 +327,7 @@ def render_model(page, data, model, cases, record, folder, markdown):
     rounds = ''
     for index in (1,2,3):
         row = (next(s for s in record['selfcheck_rounds'] if s['round']==index)
-               if model.get('record_kind') == 'native_harness' else
+               if model.get('record_kind') in {'native_harness', 'paper_observation'} else
                next(s for s in record['records'] if s['id'] in
                     ('MG-C003:alignment:'+str(index), 'MG-C003:R'+str(index))))
         response = row.get('response')
@@ -342,8 +356,34 @@ def build_detail_pages(data, root):
     entries = json.loads((root/'cases/catalog.json').read_bytes())['entries']
     catalog = {e['case_id']:e for e in entries}
     pages, markdown = {}, EvidenceRenderer()
-    for model in data['models']:
+    for source_model in data['models']:
+        model = dict(source_model, label=source_model.get('source_model_label', source_model['label']))
         folder = root / Path(model['source_record']).parent
+        if model.get('record_kind') == 'paper_observation':
+            record = json.loads((folder/'record.json').read_bytes())
+            projection = json.loads(evidence_bytes(folder,record['public_task_scores']))
+            claims = json.loads(evidence_bytes(folder,record['public_claim_review']))['conditions']
+            model['public_claims'] = {c:claims[c]['cases'] for c in CONDITIONS}
+            rows = {r['case_id']:r for r in record['public_deliveries']}
+            if set(rows) != set(catalog) or set(projection['public_case_ids']) != set(catalog):
+                raise ValueError('Paper public projection differs from the fixed public catalog')
+            cases = []
+            for cid in projection['public_case_ids']:
+                row,entry = rows[cid],catalog[cid]
+                evidence = {}
+                for condition in CONDITIONS:
+                    task = next(t for t in projection['views']['partial'][condition]['tasks'] if t['case_id']==cid)
+                    evidence[condition] = public_evidence(folder, record, cid, condition, task)
+                cases.append({'id':cid, 'title':entry['title'], 'category':entry['category'],
+                    'category_title':CATEGORY_TITLES.get(entry['category'],entry['category']),
+                    'views':{mode:{c:next(t for t in projection['views'][mode][c]['tasks'] if t['case_id']==cid)
+                                   for c in CONDITIONS} for mode in projection['views']}})
+                path = 'models/'+model['id']+'/cases/'+cid+'.html'
+                pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
+            path = 'models/'+model['id']+'/index.html'
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown)
+            del model['public_claims']
+            continue
         if model.get('record_kind') == 'native_harness':
             record = json.loads((folder/'native-observation.json').read_bytes())
             projection = json.loads(evidence_bytes(folder,record['public_task_scores']))

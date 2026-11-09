@@ -1,5 +1,6 @@
 (() => {
  const {d,state,modes,el,f,node,result,headline,short,table,points,href,download,start}=MG;
+ const harnessName=m=>m.harness_display_name||m.harness.name;
  const expanded=new Set();
  const sortDefaults={...Object.fromEntries(d.policy.groups.map(g=>[g.id,'partial'])),gap:'RG',rates:'reliability'};
  const sortChoices={...Object.fromEntries(d.policy.groups.map(g=>[g.id,d.score_modes])),gap:['RG','DG'],rates:['reliability','attainment']};
@@ -23,7 +24,6 @@
  function modelLink(m,incomplete,score=state.score){
   const a=node('a',m.label,'model-name');a.href=href('models/'+m.id+'/index.html');
   const u=new URL(a.href);u.searchParams.set('score',score);a.href=u.href;
-  if(m.record_kind==='native_harness'){const s=node('sup','†','source-marker');s.setAttribute('aria-label','Dot native harness，运行条件见详情');a.append(s)}
   if(incomplete){const s=node('sup','*','incomplete-marker');s.setAttribute('aria-label','尚未测完');a.append(s)}
   return a;
  }
@@ -34,11 +34,10 @@
    const wrap=node('div',null,'model'),symbol=node('span',null,'model-symbol'),text=node('div');symbol.style.background=m.theme.tint;symbol.setAttribute('aria-hidden','true');
    const icon=node('img');icon.src=m.logo.data_url;icon.alt='';symbol.append(icon);
    const name=node('a',m.label,'model-name');name.href=href('models/'+m.id+'/index.html');
-   if(m.record_kind==='native_harness'){const marker=node('sup','†','source-marker');marker.setAttribute('aria-label','Dot native harness，运行条件见详情');name.append(marker)}
    if(m.evaluation_progress[state.condition].incomplete){const marker=node('sup','*','incomplete-marker');marker.setAttribute('aria-label','尚未测完');name.append(marker)}
    text.append(name);wrap.append(symbol,text);row.insertCell().append(wrap);
-   row.insertCell().append(node('span',m.harness.name,'harness-name'));row.cells[2].className='harness-cell';
-   text.append(node('span',m.harness.name,'mobile-harness'));
+   row.insertCell().append(node('span',harnessName(m),'harness-name'));row.cells[2].className='harness-cell';
+   text.append(node('span',harnessName(m),'mobile-harness'));
    d.display_score_modes.forEach(mode=>{const cell=row.insertCell();cell.className='numeric score-cell'+(mode.id==='partial'?' primary-score':'');cell.append(node('span',f(headline(result(m,state.condition,mode.id))),'score-number'))});
    const a=node('a','详细评测 →','record-link');a.href=name.href;a.setAttribute('aria-label',m.label+' 详细评测');row.insertCell().append(a);
   });
@@ -70,7 +69,7 @@
    g.views[score].forEach(item=>{
     const chart=el('category-chart-groups-'+g.id);chart.append(chart.querySelector(':scope > [data-model="'+item.model_id+'"]'));
     const m=byId[item.model_id],r=t.tBodies[0].insertRow();r.insertCell().textContent=item.rank??'—';r.insertCell().append(modelLink(m,item.incomplete,score));
-    const harness=r.insertCell();harness.className='category-harness';harness.textContent=m.harness.name;
+    const harness=r.insertCell();harness.className='category-harness';harness.textContent=harnessName(m);
     d.display_score_modes.forEach(mode=>{const v=views[mode.id][m.id],c=r.insertCell();c.className='numeric score-cell'+(mode.id===score?' primary-score':'');if(v.value<0)c.classList.add('negative');c.append(node('span',f(v.value),'score-number'));c.title='完整分区间 '+f(v.lower)+'–'+f(v.upper)});
    });
   });

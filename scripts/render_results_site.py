@@ -13,8 +13,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records
+from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records, selected_paper_records
 from math_gauge.native_observations import load_public_record
+from math_gauge.paper_observations import load_public_record as load_paper_record
 from scripts.results_details import build_detail_pages
 from scripts.results_rankings import category_rankings
 
@@ -38,16 +39,26 @@ MODEL_PROVIDERS = {
     "gemini-3.8-flash-high": ("Google", "google.svg"),
     "gemini-4-argon": ("Google", "google.svg"),
 }
-MODEL_LABELS = {"claude-opus-5.5-max": "Claude Opus 5.5 Max",
-                "sol-6.1-max": "Sol 6.1 Max", "sol-6.1-xhigh": "Sol 6.1 xHigh",
-                "terra-6.1-max": "Terra 6.1 Max", "terra-6.1-xhigh": "Terra 6.1 xHigh",
-                "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash 1017",
-                "gemini-3.8-flash-high": "Gemini 3.8 Flash High", "gemini-4-argon": "Gemini 4 Argon High"}
-MODEL_SHORT_LABELS = {"claude-opus-5.5-max": "Opus 5.5",
-                      "sol-6.1-max": "Sol Max", "sol-6.1-xhigh": "Sol xHigh",
-                      "terra-6.1-max": "Terra Max", "terra-6.1-xhigh": "Terra xHigh",
-                      "deepseek-v4.1-flash-1017": "DeepSeek", "gemini-3.8-flash-high": "Gemini 3.8",
-                      "gemini-4-argon": "Gemini Argon"}
+MODEL_LABELS = {
+    "claude-opus-5.5-max": "Claude Opus 5.5 (max)",
+    "sol-6.1-max": "Sol 6.1 (max)",
+    "sol-6.1-xhigh": "Sol 6.1 (xhigh)",
+    "terra-6.1-max": "Terra 6.1 (max)",
+    "terra-6.1-xhigh": "Terra 6.1 (xhigh)",
+    "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash (max)",
+    "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
+    "gemini-4-argon": "Gemini 4 Argon (high)"
+}
+MODEL_SHORT_LABELS = {
+    "claude-opus-5.5-max": "Opus 5.5 (max)",
+    "sol-6.1-max": "Sol (max)",
+    "sol-6.1-xhigh": "Sol (xhigh)",
+    "terra-6.1-max": "Terra (max)",
+    "terra-6.1-xhigh": "Terra (xhigh)",
+    "deepseek-v4.1-flash-1017": "DeepSeek (max)",
+    "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
+    "gemini-4-argon": "Gemini 4 Argon (high)"
+}
 
 
 def build_data(source_root=ROOT):
@@ -125,13 +136,38 @@ def build_data(source_root=ROOT):
     for name in ("score-modes.json", "capability-scoring-policy.json", "claim-penalty-policy.json"):
         path = root / "protocol" / name
         sources.append({"path": str(path.relative_to(root)), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
+    for model, folder in selected_paper_records(root):
+        record, scores, rates = load_paper_record(folder)
+        provider, filename = MODEL_PROVIDERS[model]
+        icon_path = root / 'site/assets/logos' / filename
+        icon = icon_path.read_bytes()
+        partial = scores['partial']
+        combined = partial['single_attempt']
+        models.append({'id': model, 'label': MODEL_LABELS.get(model, record['model_label']), 'short_label': MODEL_SHORT_LABELS[model],
+            'record_kind': 'paper_observation', 'comparison_note': record['comparison_note'],
+            'theme': dict(MODEL_THEMES[model]), 'harness': record['harness'],
+            'logo': {'label': provider, 'data_url': 'data:image/svg+xml;base64,'
+                     + base64.b64encode(icon).decode('ascii'), 'sha256': hashlib.sha256(icon).hexdigest()},
+            'combined': combined, 'strict': scores['strict'], 'capability': scores['capability'],
+            'trajectory': record['trajectory'], 'content_rates': rates,
+            'evaluation_progress': {c: evaluation_progress(v) for c, v in partial.items()},
+            'lean_formalization_breakdown': combined['lean_formalization_breakdown'],
+            'alignment_selfcheck': combined['alignment_selfcheck'],
+            'source_record': str((folder / 'record.json').relative_to(root)),
+            'retry': {'combined': partial['nonlogical_retry_3'], 'note': record['comparison_note']}})
+        for path in [folder / 'record.json', icon_path,
+                     *(folder / item['path'] for field in ('assessment_results', 'capability_results', 'strict_results')
+                       for item in record[field].values()),
+                     *(folder / record[field]['path'] for field in ('assessment_policy', 'strict_scoring_policy',
+                        'capability_scoring_policy', 'claim_penalty_policy', 'public_task_scores', 'public_claim_review'))]:
+            sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     native_folder = root / 'results/v0.6.0/dot-underlying-model-20261108/20261108'
     if (native_folder / 'native-observation.json').is_file():
         native, scores, rates = load_public_record(native_folder)
         icon_path = root / 'site/assets/logos/openai.svg'
         icon = icon_path.read_bytes()
         partial = scores['partial']
-        models.append({'id': native['model_id'], 'label': native['model_label'], 'short_label': 'Dot',
+        models.append({'id': native['model_id'], 'label': 'Dot Underlying', 'source_model_label': native['model_label'], 'short_label': 'Dot Underlying',
             'record_kind': 'native_harness', 'comparison_note': native['comparison_note'],
             'theme': dict(MODEL_THEMES['terra-6.1-max']),
             'harness': native['harness'],
@@ -150,6 +186,8 @@ def build_data(source_root=ROOT):
                      *(native_folder/item['path'] for field in ('assessment_results','capability_results','strict_results')
                        for item in native[field].values())]:
             sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+    for model in models:
+        model['harness_display_name'] = harness_display_name(model)
     display_modes = copy.deepcopy(mode_catalog['modes'])
     next(m for m in display_modes if m['id'] == 'strict')['abbreviation'] = 'SMC'
     sources.append({'path': 'site/harnesses.json', 'sha256': hashlib.sha256(harness_path.read_bytes()).hexdigest()})
@@ -185,9 +223,12 @@ def incomplete_marker(progress):
             if progress['incomplete'] else '')
 
 
-def harness_marker(model):
-    return ('<sup class="source-marker" aria-label="Dot native harness，运行条件见详情">†</sup>'
-            if model.get('record_kind') == 'native_harness' else '')
+def harness_display_name(model):
+    if model.get('record_kind') == 'native_harness':
+        return 'Unknown¹'
+    if model['id'] == 'deepseek-v4.1-flash-1017':
+        return 'Codex CLI²'
+    return model['harness']['name']
 
 
 def selected_result(model, mode="partial"):
@@ -292,7 +333,7 @@ def render_gap_chart(data):
     for model in ordered:
         row = lookup['RG'][model['id']]
         progress = row['coverage']
-        marker = incomplete_marker(progress) + harness_marker(model)
+        marker = incomplete_marker(progress)
         bars = []
         for table in diagnostic['tables']:
             item = lookup[table['id']][model['id']]
@@ -370,7 +411,7 @@ def grouped_bars(data, category=None):
             +'">'
             '<div class="chart-model"><img class="provider-logo"'+scope_attr+' src="'+html.escape(logo['data_url'], quote=True)+'" '
             +'alt="'+html.escape(logo['label'], quote=True)+'" width="24" height="24"><div><span>'+label
-            +incomplete_marker(progress)+harness_marker(model)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
+            +incomplete_marker(progress)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
     ticks = [dict(position=(value-minimum)/span*100, label=str(value)) for value in range(minimum, 101, 20)]
     chart_id = 'chart-groups' if category is None else 'category-chart-groups-'+scope
     label = ('各模型' if category is None else category['title']+'各模型')+'MC、RMC、SMC规则成绩'
@@ -411,7 +452,7 @@ def render_content_rates(data):
             +'" alt="'+html.escape(model['logo']['label'], quote=True)+'" width="24" height="24">'
             '<div><a data-context-link href="models/'+model['id']
             +'/index.html?score=partial&amp;condition=nonlogical_retry_3">'+html.escape(model['label'])
-            +incomplete_marker(progress)+harness_marker(model)+'</a></div></div>'
+            +incomplete_marker(progress)+'</a></div></div>'
             '<div class="metric-bars">'+''.join(bars)+'</div></div>')
     ticks = [dict(position=value, label=str(value)) for value in range(0, 101, 20)]
     return ('<section class="panel" id="content-rates"><div class="panel-head"><div><h2 id="rate-heading">内容可靠率与目标达成率</h2>'
@@ -469,9 +510,9 @@ def render(data):
             score_cells.append('<td class="numeric score-cell'+(' primary-score' if mode['id']=='partial' else '')+'">'
                 '<span class="score-number">'+('—' if value is None else f'{value:.2f}')+'</span></td>')
         rows.append('<tr><td class="rank">'+str(index)+'</td><td class="model-name"><a href="'+source+'">'
-            +html.escape(model['label'])+incomplete_marker(progress)+harness_marker(model)+'</a><span class="mobile-harness">'
-            +html.escape(model['harness']['name'])+'</span></td>'
-            '<td class="harness-cell">'+html.escape(model['harness']['name'])+'</td>'+''.join(score_cells)
+            +html.escape(model['label'])+incomplete_marker(progress)+'</a><span class="mobile-harness">'
+            +html.escape(harness_display_name(model))+'</span></td>'
+            '<td class="harness-cell">'+html.escape(harness_display_name(model))+'</td>'+''.join(score_cells)
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
     notes = []
     for model in data['models']:
@@ -487,8 +528,10 @@ def render(data):
               "INCOMPLETE_NOTE": ('<p class="panel-foot coverage-note">* 尚未测完</p>'
                                   if any(m['evaluation_progress']['nonlogical_retry_3']['incomplete']
                                          for m in data['models']) else '')
-                                  + ('<p class="panel-foot">† Dot native harness为独立运行方式，条件见模型详情。</p>'
-                                     if any(m.get('record_kind') == 'native_harness' for m in data['models']) else ''),
+                                  + ('<p class="panel-foot">¹ Dot原生独立运行方式</p>'
+                                     if any(m.get('record_kind') == 'native_harness' for m in data['models']) else '')
+                                  + ('<p class="panel-foot">² 使用DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用Codex CLI执行。</p>'
+                                     if any(m['id'] == 'deepseek-v4.1-flash-1017' for m in data['models']) else ''),
               "RETRY_NOTES": '<br>'.join(notes) or '当前留档没有另计的非逻辑重跑。',
               "MODE_CONTROLS": ''.join(
                   '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)

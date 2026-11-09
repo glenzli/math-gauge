@@ -103,7 +103,7 @@ class CapabilityResearchTests(unittest.TestCase):
 
 class CapabilityRecordTests(unittest.TestCase):
     def test_capability_policy_binding_is_verified_in_public_archives(self):
-        root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261105"
+        root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
         record = json.loads((root / "record.json").read_text())
         data = load_assessment_results(root, record, mode="capability")
         self.assertEqual(set(data), {"single_attempt", "nonlogical_retry_3"})

@@ -1,0 +1,357 @@
+{
+  "case_id": "MG-GR021",
+  "category": "written-argument",
+  "visibility": "public",
+  "bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/task.md",
+      "sha256": "8520b27f14449af954872ebaafb6de58160e3c49e389bbc3772bf078e7d7c6af",
+      "bytes": 3052
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/rubric.json",
+      "sha256": "a7175cd036b1e6c972d733e4a689dbb874f6db947b093dd9e11255ff4baba979",
+      "bytes": 1018
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/reference.md",
+      "sha256": "b5de32d25059d2cbdfcbe90ffc7f3af86e366f5e90f5bc3435fd555b83291a1c",
+      "bytes": 12214
+    },
+    "contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/contract.json",
+      "sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2",
+      "bytes": 4056
+    },
+    "answer": {
+      "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+      "sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5",
+      "bytes": 25176
+    },
+    "diagnostic-rubric.json": {
+      "path": "/Users/g4i/lab/math-gauge/cases/proofs/MG-GR021/diagnostic-rubric.json",
+      "sha256": "bdcdf398fbda5205e4b513ecbb3fae619797120a09db75ab9bd76a8263db34f6",
+      "bytes": 4476
+    }
+  },
+  "criteria": [
+    {
+      "id": "original_input_and_feasibility",
+      "earned": 5,
+      "max": 10,
+      "reason": "Correctly extracts commuting self-adjoint spectral projectors from the original non-idempotent inputs and gives a correct determinant-mod8 feasibility invariant, equivalent to the finite mod4 parity obstruction. But the mod4 computability and the needed near-identity isometry are asserted rather than constructed: an arbitrary lattice isometry U0 need not be I mod2. The frozen check receives half for correct but incomplete proof.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 26,
+          "line_end": 83,
+          "text": "因为 \\(A_i\\equiv E_i\\pmod 2\\)，所以 \\(A_i\\) 的特征多项式模 \\(2\\) 为\n\\[\nx^{d-n_i}(x-1)^{n_i},\n\\]\n两个因子互素。由 Hensel 引理，存在唯一的幂等对称矩阵\n\\[\nP_i\\in M_d(\\mathbb Z_2),\\qquad \nP_i^2=P_i,\\quad P_i^{\\mathsf T}=P_i,\\quad\nP_i\\equiv E_i\\pmod 2,\n\\]\n并且 \\(P_i\\) 是 \\(A_i\\) 的多项式，因此与所有 \\(A_j\\) 交换。于是\n\\[\nP_iP_j=0\\ (i\\ne j),\\qquad \\sum_{i=1}^rP_i=I_d.\n\\]\n事实上 \\(P_iP_j\\) 仍幂等且模 \\(2\\) 为零，故必为零；同理 \\(\\sum P_i\\) 幂等且模 \\(2\\) 为 \\(I\\)，故等于 \\(I\\)。\n\n令\n\\[\nL_i=\\operatorname{im}P_i\\subset \\mathbb Z_2^d.\n\\]\n则\n\\[\n\\mathbb Z_2^d=\\bigoplus_{i=1}^r L_i\n\\]\n是相互正交的直和，且每个 \\(L_i\\) 是无幺模格（unimodular lattice），并且\n\\[\nL_i\\bmod 2=\\mathbb F_2^{I_i}.\n\\]\n\n### 引理 1.1（\\(\\mathscr S_L(A)\\) 的精确描述）\n\n设 \\(V_i=\\mathcal O_L^{I_i}\\) 是标准坐标块。若 \\(U\\in\\mathscr S_L(A)\\)，则\n\\[\nU V_i=L_i\\otimes_{\\mathbb Z_2}\\mathcal O_L\n\\qquad(1\\le i\\le r).\n\\]\n因此\n\\[\n\\mathscr S_L(A)\\ne\\varnothing\n\\]\n当且仅当每个 \\(L_i\\) 在 \\(\\mathcal O_L\\) 上等距同构于标准格 \\(\\mathcal O_L^{n_i}\\)。\n\n若此条件成立，取任意一组等距\n\\[\nU_0:V_i\\longrightarrow L_i\\otimes\\mathcal O_L,\n\\]\n则 \\(U_0\\in\\mathscr S_L(A)\\)，并且\n\\[\n\\mathscr S_L(A)\n=\nU_0\\cdot \\prod_{i=1}^r\n\\{V\\in O_{n_i}(\\mathcal O_L):V\\equiv I_{n_i}\\!\\!\\pmod{2\\mathcal O_L}\\}.\n\\tag{1.1}\n\\]\n特别地，只要非空，\\(\\mathscr S_L(A)\\) 就是一个主齐性空间，其结构只由块大小 \\(n_i\\) 决定。\n\n**证明要点.**  \n由 \\(U^{\\mathsf T}A_iU\\) 关于标准块分解为块对角，知 \\(A_i\\) 保持每个 \\(U V_j\\)。模 \\(2\\) 时 \\(A_i\\equiv E_i\\)，所以 \\(A_i\\) 在 \\(UV_j\\) 上模 \\(2\\) 可逆当且仅当 \\(i=j\\)。于是 \\(UV_j\\) 必等于 \\(A_i\\) 的单位谱子空间，即 \\(L_j\\)。反过来同理。其余部分是标准的稳定子计算。\\(\\square\\)",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 89,
+          "line_end": 167,
+          "text": "在块 \\(I_i\\) 的坐标中定义\n\\[\nG_i:=E_iP_iE_i\\in M_{n_i}(\\mathbb Z_2).\n\\]\n这是 \\(L_i\\) 在基\n\\[\nP_ie_{i,1},\\dots,P_ie_{i,n_i}\n\\]\n下的 Gram 矩阵。\n\n### 定理 1.2（可行性判准）\n\n对每个 \\(i\\)，\\(L_i\\) 等距同构于标准格\n\\[\n(\\mathbb Z_2^{n_i},\\,\\langle\\,,\\,\\rangle)\n\\]\n当且仅当\n\\[\n\\boxed{\\ \\det G_i\\equiv 1\\pmod 8.\\ }\n\\tag{1.2}\n\\]\n因此\n\\[\n\\boxed{\n\\operatorname{Feas}(A)=1\n\\iff\n\\det(E_iP_iE_i)\\equiv1\\pmod 8\n\\quad(\\forall i).\n}\n\\tag{1.3}\n\\]\n这个条件与 \\(L=F,K_{-1},K_2\\) 无关。\n\n此外，\\(P_i\\bmod4\\) 由 \\(A_i\\bmod4\\) 唯一决定，\\(G_i\\bmod8\\) 由 \\(P_i\\bmod4\\) 决定，所以 (1.3) 确实可由所有 \\(A_i\\bmod4\\) 有限计算。\n\n**证明.**  \n由于 \\(P_i\\) 是自伴幂等矩阵，\n\\[\n(P_ie_{i,a})\\cdot(P_ie_{i,b})\n=e_{i,a}^{\\mathsf T}P_i^{\\mathsf T}P_ie_{i,b}\n=e_{i,a}^{\\mathsf T}P_ie_{i,b}\n=(G_i)_{ab}.\n\\]\n又 \\(P_ie_{i,a}\\equiv e_{i,a}\\pmod2\\)，故\n\\[\n(G_i)_{aa}\\equiv1\\pmod4,\\qquad\n(G_i)_{ab}\\equiv0\\pmod2\\ (a\\ne b).\n\\]\n于是对应的二次型\n\\[\nq_i(x)=x^{\\mathsf T}G_ix\n\\]\n满足\n\\[\nq_i(x)\\equiv\\sum_{a=1}^{n_i}x_a^2\\pmod4.\n\\tag{1.4}\n\\]\n因此 \\(q_i\\) 的模 \\(4\\) Gauss 和与标准型相同。对 \\(\\mathbb Z_2\\) 上的奇幺模二次型，等距类由“模 \\(4\\) 二次型”和“行列式模 \\(8\\)”决定。由 (1.4) 知唯一的剩余不变量是 \\(\\det G_i\\pmod8\\)。因为 \\(\\det G_i\\equiv1\\pmod4\\)，只有两种可能：\n\\[\n\\det G_i\\equiv1\\pmod8\n\\quad\\text{或}\\quad\n\\det G_i\\equiv5\\pmod8.\n\\]\n第一种就是标准型；第二种是非标准型\n\\[\n\\langle 5\\rangle\\oplus \\langle 1\\rangle^{n_i-1}.\n\\]\n证毕。\\(\\square\\)\n\n在 \\(K_\\mu\\) 上，若\n\\[\n\\langle 5\\rangle\\oplus \\langle 1\\rangle^{n_i-1}\n\\]\n变成标准型，则必须有 \\(5\\) 在 \\(K_\\mu\\) 中为平方。但\n\\[\n5\\notin (K_{-1}^\\times)^2,\\qquad\n5\\notin (K_2^\\times)^2.\n\\]\n例如 \\(K_2=\\mathbb Q_2(\\sqrt2)\\) 中，若 \\(5=(a+b\\sqrt2)^2\\)，则 \\(ab=0\\)，分别化为 \\(a^2=5\\) 或 \\(2b^2=5\\)，均不可能；\\(K_{-1}=\\mathbb Q_2(i)\\) 中同理化为 \\(a^2=5\\) 或 \\(-b^2=5\\)，也不可能。因此可行性确实与 \\(L\\) 无关。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "closed_total_counts",
+      "earned": 5,
+      "max": 10,
+      "reason": "The stated total C/R formulas are correct for every M>=2 (including rank1 and empty cases), and the ramified coefficient ring is not mistaken for a field. However actual-image counts are justified using the false decomposition of the entire level2 orthogonal group as global +/-I times exp(2 so). First-column counts are largely asserted. Correct formulas with invalid/missing lifting proof earn half.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 204,
+          "line_end": 255,
+          "text": "则\n\\[\n\\boxed{\nc^F_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{n(n+1)/2},&M=2,\\\\[2mm]\n2^{(M-1)\\binom n2+n+1},&M\\ge3,\n\\end{cases}}\n\\tag{2.1}\n\\]\n以及\n\\[\n\\boxed{\nr^F_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{(M-1)\\binom n2+1},&M\\ge2.\n\\end{cases}}\n\\tag{2.2}\n\\]\n\n**证明要点.**  \n计数 \\(\\mathscr C^F_{n,M}\\) 可按第一列做归纳。令 \\(a_n(M)\\) 为向量\n\\[\nu\\equiv e_1\\pmod2,\\qquad u^{\\mathsf T}u\\equiv1\\pmod{2^M}\n\\]\n的个数。\\(\\mathscr C^F_{n,M}\\) 在全体这样的向量上传递作用，稳定子同构于 \\(\\mathscr C^F_{n-1,M}\\)。于是\n\\[\nc^F_n(M)=\\prod_{k=1}^n a_k(M).\n\\]\n直接计算得\n\\[\na_1(1)=1,\\quad a_1(2)=2,\\quad a_1(M)=4\\ (M\\ge3),\n\\]\n\\[\na_k(2)=2^k,\\qquad\na_k(M)=2^{(k-1)(M-1)+1}\n\\quad(k\\ge2,\\ M\\ge3).\n\\]\n相乘即得 (2.1)。\n\n对 \\(\\mathscr R^F_{n,M}\\)，利用标准事实\n\\[\n\\{U\\in O_n(\\mathbb Z_2):U\\equiv I\\pmod2\\}\n=\\{\\pm I\\}\\exp\\bigl(2\\mathfrak{so}_n(\\mathbb Z_2)\\bigr),\n\\]\n且 \\(p\\)-adic 对数在 \\(I+4M_n(\\mathbb Z_2)\\) 上给出标准同构。由此\n\\[\nr^F_n(M)=2\\cdot 2^{(M-1)\\binom n2}.\n\\]\n当 \\(M=1\\) 时 \\(\\pm I\\) 在模 \\(2\\) 下相同，故为 \\(1\\)。\\(\\square\\)",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 267,
+          "line_end": 316,
+          "text": "则\n\\[\n\\boxed{\nc^K_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{n(n+1)},&M=2,\\\\[2mm]\n2^{(M-1)n(n-1)+2n+1},&M\\ge3,\n\\end{cases}}\n\\tag{2.3}\n\\]\n以及\n\\[\n\\boxed{\nr^K_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{(M-1)n(n-1)+1},&M\\ge2.\n\\end{cases}}\n\\tag{2.4}\n\\]\n\n**证明要点.**  \n同样按第一列归纳。在 \\(\\mathcal O_K\\) 中 \\(2=\\pi^2u\\)，直接计数给\n\\[\na_1(1)=1,\\quad a_1(2)=4,\\quad a_1(M)=8\\ (M\\ge3),\n\\]\n\\[\na_k(2)=4^k,\\qquad\na_k(M)=2^{(k-1)(2M-2)+2}\n\\quad(k\\ge2,\\ M\\ge3).\n\\]\n相乘即得 (2.3)。\n\n对 \\(\\mathscr R^K_{n,M}\\)，标准 \\(p\\)-adic 对数给出\n\\[\n\\{U\\in O_n(\\mathcal O_K):U\\equiv I\\pmod{2\\mathcal O_K}\\}\n=\\{\\pm I\\}\\exp\\bigl(\\pi^2\\mathfrak{so}_n(\\mathcal O_K)\\bigr).\n\\]\n商去模 \\(2^M\\mathcal O_K=\\pi^{2M}\\) 后，对数部分的秩为\n\\[\n[\\mathcal O_K/\\pi^{2M-2}:\\mathcal O_K]^{\\binom n2}\n=\\bigl(2^{2M-2}\\bigr)^{\\binom n2}.\n\\]\n故\n\\[\nr^K_n(M)=2\\cdot 2^{(2M-2)\\binom n2}\n=2^{(M-1)n(n-1)+1}.\n\\]\n\\(M=1\\) 时 \\(\\pm I\\) 在模 \\(2\\) 下相同。\\(\\square\\)",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 330,
+          "line_end": 405,
+          "text": "则对任意 \\(L\\in\\{F,K_{-1},K_2\\}\\)：\n\n\\[\n\\boxed{\n\\mathscr R_{L,M}(A)=\\varnothing\n\\iff\n\\operatorname{Feas}(A)=0\n\\qquad(\\text{对一切 }M).\n}\n\\tag{3.1}\n\\]\n\n并且\n\\[\n\\boxed{\n\\mathscr C_{L,M}(A)\\ne\\varnothing\n\\iff\n\\begin{cases}\nM=1\\text{ 或 }M=2,& \\text{总成立};\\\\[1mm]\nM\\ge3,& \\operatorname{Feas}(A)=1.\n\\end{cases}}\n\\tag{3.2}\n\\]\n也就是说：无论 \\(A\\) 如何，\\(M=1,2\\) 时模 \\(2^M\\) 总有解；但若精确格 \\(L_i\\) 非标准，则从 \\(M=3\\) 起没有解。\n\n## 3.2 精确基数\n\n若 \\(\\operatorname{Feas}(A)=1\\)，则\n\\[\n\\boxed{\n|\\mathscr R_{L,M}(A)|\n=\n\\prod_{i=1}^r r^L_{n_i}(M).\n}\n\\tag{3.3}\n\\]\n\n对 \\(\\mathscr C\\)：\n\\[\n\\boxed{\n|\\mathscr C_{L,M}(A)|=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n\\displaystyle\\prod_{i=1}^r c^L_{n_i}(2),&M=2,\\\\[4mm]\n0,&M\\ge3,\\ \\operatorname{Feas}(A)=0,\\\\[2mm]\n\\displaystyle\\prod_{i=1}^r c^L_{n_i}(M),\n&M\\ge3,\\ \\operatorname{Feas}(A)=1.\n\\end{cases}}\n\\tag{3.4}\n\\]\n其中 \\(c^L_n(M)\\) 由 (2.1)、(2.3) 给出，\\(r^L_n(M)\\) 由 (2.2)、(2.4) 给出。\n\n显式写出总量：\n\\[\n|\\mathscr C_{F,M}(A)|\n=\n\\prod_i 2^{(M-1)\\binom{n_i}2+n_i+1}\n\\quad(M\\ge3,\\ \\operatorname{Feas}=1),\n\\]\n\\[\n|\\mathscr C_{K,M}(A)|\n=\n\\prod_i 2^{(M-1)n_i(n_i-1)+2n_i+1}\n\\quad(M\\ge3,\\ \\operatorname{Feas}=1),\n\\]\n\\[\n|\\mathscr R_{F,M}(A)|\n=\n\\prod_i 2^{(M-1)\\binom{n_i}2+1}\n\\quad(M\\ge2,\\ \\operatorname{Feas}=1),\n\\]\n\\[\n|\\mathscr R_{K,M}(A)|\n=\n\\prod_i 2^{(M-1)n_i(n_i-1)+1}\n\\quad(M\\ge2,\\ \\operatorname{Feas}=1).",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "actual_image_test",
+      "earned": 5,
+      "max": 10,
+      "reason": "The one-additional-finite-level test is a valid computable criterion for R_M, but equality of that image with genuine integral truncations is only asserted. There is no valid integral correction/convergence proof, and the false exponential parametrization cannot supply it. Correct but incomplete earns half.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 410,
+          "line_end": 454,
+          "text": "对单个块，约化映射\n\\[\n\\mathscr C^L_{n,M+1}\\longrightarrow \\mathscr C^L_{n,M}\n\\]\n的像恰为\n\\[\n\\operatorname{im}\\bigl(\\mathscr C^L_{n,M+1}\\to\\mathscr C^L_{n,M}\\bigr)\n=\n\\mathscr R^L_{n,M}.\n\\tag{3.5}\n\\]\n于是对全部分块，在 \\(\\operatorname{Feas}(A)=1\\) 时\n\\[\n\\operatorname{im}\\bigl(\\mathscr C_{L,M+1}(A)\\to\\mathscr C_{L,M}(A)\\bigr)\n=\n\\mathscr R_{L,M}(A).\n\\tag{3.6}\n\\]\n\n因此有非常简洁的判准：\n\n\\[\n\\boxed{\n\\bar U\\in\\mathscr C_{L,M}(A)\n\\text{ 属于 }\\mathscr R_{L,M}(A)\n\\iff\n\\bar U\\text{ 可提升为某个 }\n\\widetilde U\\in\\mathscr C_{L,M+1}(A).\n}\n\\tag{3.7}\n\\]\n当 \\(M\\ge2\\) 时此判准对全部合法 \\(A\\) 都成立；当 \\(M=1\\) 时，若 \\(\\operatorname{Feas}(A)=1\\) 则\n\\(\\mathscr R_{L,1}(A)=\\{I\\}\\)，否则为空。\n\n等价地，若先构造 \\(U_0\\in\\mathscr S_L(A)\\)，令\n\\[\nV=U_0^{-1}\\bar U\\pmod{2^M\\mathcal O_L}.\n\\]\n则 \\(V\\) 必为关于标准分块的块对角矩阵，并且\n\\[\n\\bar U\\in\\mathscr R_{L,M}(A)\n\\iff\nV_i\\in\\mathscr R^L_{n_i,M}\\quad(1\\le i\\le r).\n\\]\n而单块成员 \\(V_i\\in\\mathscr C^L_{n_i,M}\\) 是否属于 \\(\\mathscr R^L_{n_i,M}\\)，可由“是否可提升一层到 \\(\\mathscr C^L_{n_i,M+1}\\)”直接检验。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "exact_fixed_class_description",
+      "earned": 7.5,
+      "max": 15,
+      "reason": "The fixed coefficient ring and C-fixed classes are correctly described using epsilon=2^(M-1) pi. For Q2(i), pi=1+i absorbs the special M=2 norm coupling, so using this coordinate is legitimate and is not penalized merely for differing from the theta-coordinate reference. But no explicit necessary/sufficient actual-R fixed-class condition (alternating B plus the actual base condition in this pi coordinate) is established; the purported logarithmic description is invalid. Half.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 462,
+          "line_end": 533,
+          "text": "## 4.1 固定环的显式描述\n\n令\n\\[\nR_M=\\mathcal O_\\mu/2^M\\mathcal O_\\mu.\n\\]\n取 \\(\\pi=\\pi_\\mu\\)，并令\n\\[\n\\varepsilon_M=2^{M-1}\\pi.\n\\]\n则在 \\(R_M\\) 中\n\\[\n2\\varepsilon_M=0,\\qquad \\varepsilon_M^2=0,\n\\qquad \\sigma_\\mu(\\varepsilon_M)\\equiv\\varepsilon_M\n\\pmod{2^M}.\n\\]\n并且\n\\[\n\\boxed{\nR_M^{\\sigma_\\mu}\n=\n\\mathbb Z/2^M\\mathbb Z\n\\oplus\n\\mathbb F_2\\varepsilon_M\n\\cong\n\\mathbb Z/2^M[\\varepsilon]/(2\\varepsilon,\\varepsilon^2).\n}\n\\tag{4.1}\n\\]\n于是任何 \\(\\sigma_\\mu\\)-固定矩阵类可唯一写成\n\\[\nU=A+\\varepsilon_M B,\n\\qquad\nA\\in M_n(\\mathbb Z/2^M),\\quad\nB\\in M_n(\\mathbb F_2).\n\\tag{4.2}\n\\]\n\n由\n\\[\nU^{\\mathsf T}U=I,\\qquad\nU\\equiv I\\pmod2\n\\]\n得到，对 \\(M\\ge2\\)，\n\\[\nA^{\\mathsf T}A=I\\pmod{2^M},\\qquad\nA\\equiv I\\pmod2,\n\\]\n以及\n\\[\nA^{\\mathsf T}B+B^{\\mathsf T}A=0\n\\quad\\text{in }M_n(\\mathbb F_2).\n\\]\n因为 \\(A\\equiv I\\pmod2\\)，第二式等价于\n\\[\nB^{\\mathsf T}+B=0\n\\quad\\Longleftrightarrow\\quad\nB=B^{\\mathsf T}.\n\\]\n因此有精确的集合分解\n\\[\n\\boxed{\n\\mathscr C_{K,M}^{\\sigma_\\mu}\n\\cong\n\\mathscr C_{F,M}\\times \\operatorname{Sym}_n(\\mathbb F_2)\n\\qquad(M\\ge2),\n}\n\\tag{4.3}\n\\]\n其中 \\(\\operatorname{Sym}_n(\\mathbb F_2)\\) 是 \\(n\\times n\\) 对称矩阵的加法群。\n\n对多个块取乘积即可。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 568,
+          "line_end": 661,
+          "text": "对 \\(\\mathscr R\\)，利用\n\\[\n\\mathscr R^K_{n,M}\n\\cong\n\\{\\pm I\\}\\times\n\\mathfrak{so}_n(\\mathcal O_\\mu)/\\pi^{2M-2}\\mathfrak{so}_n(\\mathcal O_\\mu)\n\\qquad(M\\ge2),\n\\]\n并在固定环 (4.1) 中数斜对称矩阵。模 \\(\\pi^{2M-2}\\) 下，每个非对角独立分量有 \\(2^M\\) 个固定值，对角为 \\(0\\)。故\n\\[\n\\boxed{\nr^{K,\\sigma}_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{M\\binom n2+1},&M\\ge2.\n\\end{cases}}\n\\tag{4.5}\n\\]\n特别地，当 \\(M=2\\) 时\n\\[\n\\mathscr R^K_{n,2}{}^{\\sigma_\\mu}\n=\n\\mathscr R^K_{n,2}.\n\\]\n\n对全部分块，若 \\(\\operatorname{Feas}(A)=1\\)，则\n\\[\n\\boxed{\n|\\mathscr R_{K,M}(A)^{\\sigma_\\mu}|\n=\n\\prod_{i=1}^r r^{K,\\sigma}_{n_i}(M)\n\\qquad(M\\ge2),\n}\n\\tag{4.6}\n\\]\n以及\n\\[\n\\boxed{\n|\\mathscr C_{K,M}(A)^{\\sigma_\\mu}|\n=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n\\displaystyle\\prod_{i=1}^r c^{K}_{n_i}(2),&M=2,\\\\[4mm]\n\\displaystyle\\prod_{i=1}^r c^{K,\\sigma}_{n_i}(M),\n&M\\ge3.\n\\end{cases}}\n\\tag{4.7}\n\\]\n若 \\(\\operatorname{Feas}(A)=0\\)，则 \\(M\\ge3\\) 时固定集为空；\\(M=1,2\\) 的公式仍成立。\n\n---\n\n## 4.3 与基域集合的精确关系\n\n由 (4.3) 直接得到\n\\[\n\\boxed{\n\\mathscr C_{K,M}^{\\sigma_\\mu}\n\\supset \\mathscr C_{F,M},\n\\qquad\n\\mathscr C_{K,M}^{\\sigma_\\mu}\n=\n\\{A+\\varepsilon_M B:A\\in\\mathscr C_{F,M},\\ \nB=B^{\\mathsf T}\\in M_n(\\mathbb F_2)\\}.\n}\n\\tag{4.8}\n\\]\n因此嵌入商为\n\\[\n\\bigl[\\mathscr C_{K,M}^{\\sigma_\\mu}:\\mathscr C_{F,M}\\bigr]\n=\n2^{n(n+1)/2}\n\\qquad(M\\ge2).\n\\]\n\n类似地，\n\\[\n\\boxed{\n\\mathscr R_{F,M}\\subsetneq \\mathscr R_{K,M}^{\\sigma_\\mu}\n}\n\\]\n一般真正包含，且当 \\(M\\ge2\\) 时\n\\[\n\\bigl[\\mathscr R_{K,M}^{\\sigma_\\mu}:\\mathscr R_{F,M}\\bigr]\n=\n2^{\\binom n2}.\n\\tag{4.9}\n\\]\n对多个块，指数分别为\n\\[\n2^{\\sum_i n_i(n_i+1)/2}\n\\quad\\text{和}\\quad\n2^{\\sum_i\\binom{n_i}2}.\n\\]",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "closed_fixed_and_orbit_counts",
+      "earned": 5,
+      "max": 10,
+      "reason": "The closed fixed-point and Burnside orbit formulas are numerically correct, including M=2 and D=0, but the R-fixed proof again relies on the invalid global logarithmic parametrization. This is correct but incomplete evidence, not full proof.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 537,
+          "line_end": 616,
+          "text": "## 4.2 固定点数\n\n对单个块 \\(n\\)，记\n\\[\nc^{K,\\sigma}_n(M)\n=\n|\\mathscr C^K_{n,M}{}^{\\sigma_\\mu}|,\n\\qquad\nr^{K,\\sigma}_n(M)\n=\n|\\mathscr R^K_{n,M}{}^{\\sigma_\\mu}|.\n\\]\n\n由 (4.3)：\n\\[\n\\boxed{\nc^{K,\\sigma}_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{n(n+1)},&M=2,\\\\[2mm]\n2^{(M-1)\\binom n2+\\frac{(n+1)(n+2)}2},&M\\ge3.\n\\end{cases}}\n\\tag{4.4}\n\\]\n其中 \\(M=2\\) 时恰有\n\\[\n\\mathscr C^K_{n,2}{}^{\\sigma_\\mu}\n=\n\\mathscr C^K_{n,2}.\n\\]\n\n对 \\(\\mathscr R\\)，利用\n\\[\n\\mathscr R^K_{n,M}\n\\cong\n\\{\\pm I\\}\\times\n\\mathfrak{so}_n(\\mathcal O_\\mu)/\\pi^{2M-2}\\mathfrak{so}_n(\\mathcal O_\\mu)\n\\qquad(M\\ge2),\n\\]\n并在固定环 (4.1) 中数斜对称矩阵。模 \\(\\pi^{2M-2}\\) 下，每个非对角独立分量有 \\(2^M\\) 个固定值，对角为 \\(0\\)。故\n\\[\n\\boxed{\nr^{K,\\sigma}_n(M)=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n2^{M\\binom n2+1},&M\\ge2.\n\\end{cases}}\n\\tag{4.5}\n\\]\n特别地，当 \\(M=2\\) 时\n\\[\n\\mathscr R^K_{n,2}{}^{\\sigma_\\mu}\n=\n\\mathscr R^K_{n,2}.\n\\]\n\n对全部分块，若 \\(\\operatorname{Feas}(A)=1\\)，则\n\\[\n\\boxed{\n|\\mathscr R_{K,M}(A)^{\\sigma_\\mu}|\n=\n\\prod_{i=1}^r r^{K,\\sigma}_{n_i}(M)\n\\qquad(M\\ge2),\n}\n\\tag{4.6}\n\\]\n以及\n\\[\n\\boxed{\n|\\mathscr C_{K,M}(A)^{\\sigma_\\mu}|\n=\n\\begin{cases}\n1,&M=1,\\\\[2mm]\n\\displaystyle\\prod_{i=1}^r c^{K}_{n_i}(2),&M=2,\\\\[4mm]\n\\displaystyle\\prod_{i=1}^r c^{K,\\sigma}_{n_i}(M),\n&M\\ge3.\n\\end{cases}}\n\\tag{4.7}\n\\]\n若 \\(\\operatorname{Feas}(A)=0\\)，则 \\(M\\ge3\\) 时固定集为空；\\(M=1,2\\) 的公式仍成立。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 723,
+          "line_end": 772,
+          "text": "## 4.5 \\(\\langle\\sigma_\\mu\\rangle\\)-轨道数\n\n因为 \\(\\sigma_\\mu\\) 是二阶置换，轨道长只能为 \\(1\\) 或 \\(2\\)。故对任何 \\(\\sigma_\\mu\\)-稳定集合 \\(X\\)，\n\\[\n\\#\\{\\langle\\sigma_\\mu\\rangle\\text{-轨道}\\}\n=\n\\frac{|X|+|X^{\\sigma_\\mu}|}{2}.\n\\]\n\n因此对单个块：\n\n- \\(\\mathscr C^K_{n,M}\\) 的轨道数为\n  \\[\n  \\frac{c^K_n(M)+c^{K,\\sigma}_n(M)}2.\n  \\]\n- \\(\\mathscr R^K_{n,M}\\) 的轨道数为\n  \\[\n  \\frac{r^K_n(M)+r^{K,\\sigma}_n(M)}2.\n  \\]\n  对 \\(M=1\\) 为 \\(1\\)。\n\n对多个块，把 \\(c^K_n\\) 等换成乘积即可：\n\\[\n\\boxed{\n\\#\\operatorname{Orb}\\bigl(\\sigma_\\mu;\n\\mathscr C_{K,M}(A)\\bigr)\n=\n\\frac{\n\\prod_i c^K_{n_i}(M)\n+\n\\prod_i c^{K,\\sigma}_{n_i}(M)\n}{2},\n}\n\\tag{4.14}\n\\]\n（若 \\(M\\ge3\\) 且 \\(\\operatorname{Feas}(A)=0\\)，则为 \\(0\\)；\\(M=1\\) 为 \\(1\\)；\\(M=2\\) 时固定集等于全空间，故轨道数为 \\(\\prod_i c^K_{n_i}(2)\\)），以及\n\\[\n\\boxed{\n\\#\\operatorname{Orb}\\bigl(\\sigma_\\mu;\n\\mathscr R_{K,M}(A)\\bigr)\n=\n\\frac{\n\\prod_i r^K_{n_i}(M)\n+\n\\prod_i r^{K,\\sigma}_{n_i}(M)\n}{2}.\n}\n\\tag{4.15}\n\\]\n若 \\(\\operatorname{Feas}(A)=0\\)，则为 \\(0\\)。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "all_images_and_fibers",
+      "earned": 5,
+      "max": 10,
+      "reason": "All four images and nonempty fiber-size formulas for target M>=2 are correct, including target2/source3. They are stated without a valid lifting argument; the claimed exponential parametrization is insufficient. Half.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 796,
+          "line_end": 909,
+          "text": "## 5.1 基域 \\(F\\)\n\n1. 对\n   \\[\n   \\mathscr C^F_{n,M+1}\\longrightarrow \\mathscr C^F_{n,M},\n   \\]\n   有\n   \\[\n   \\operatorname{im}= \\mathscr R^F_{n,M}.\n   \\]\n   每个非空纤维大小恒为\n   \\[\n   \\boxed{2^{n(n+1)/2}.}\n   \\tag{5.1}\n   \\]\n\n2. 对\n   \\[\n   \\mathscr R^F_{n,M+1}\\longrightarrow \\mathscr R^F_{n,M},\n   \\]\n   映射满射；纤维大小\n   \\[\n   \\boxed{\n   \\begin{cases}\n   2^{\\binom n2+1},&M=1,\\\\[2mm]\n   2^{\\binom n2},&M\\ge2.\n   \\end{cases}}\n   \\tag{5.2}\n   \\]\n\n## 5.2 二次扩张 \\(K_\\mu\\)\n\n1. 对\n   \\[\n   \\mathscr C^K_{n,M+1}\\longrightarrow \\mathscr C^K_{n,M},\n   \\]\n   有\n   \\[\n   \\operatorname{im}= \\mathscr R^K_{n,M}.\n   \\]\n   每个非空纤维大小恒为\n   \\[\n   \\boxed{2^{n(n+1)}.}\n   \\tag{5.3}\n   \\]\n\n2. 对\n   \\[\n   \\mathscr R^K_{n,M+1}\\longrightarrow \\mathscr R^K_{n,M},\n   \\]\n   映射满射；纤维大小\n   \\[\n   \\boxed{\n   \\begin{cases}\n   2^{n(n-1)+1},&M=1,\\\\[2mm]\n   2^{n(n-1)},&M\\ge2.\n   \\end{cases}}\n   \\tag{5.4}\n   \\]\n\n## 5.3 固定点集\n\n对\n\\[\n\\mathscr C^{K,\\sigma}_{n,M+1}\\longrightarrow\n\\mathscr C^{K,\\sigma}_{n,M},\n\\]\n有\n\\[\n\\boxed{\n\\operatorname{im}\n=\n\\mathscr R^F_{n,M}\\quad(\\text{嵌入的基域集合}),\n}\n\\tag{5.5}\n\\]\n且每个非空纤维大小恒为\n\\[\n\\boxed{2^{n(n+1)}.}\n\\tag{5.6}\n\\]\n\n对\n\\[\n\\mathscr R^{K,\\sigma}_{n,M+1}\\longrightarrow\n\\mathscr R^{K,\\sigma}_{n,M},\n\\]\n有\n\\[\n\\boxed{\n\\operatorname{im}\n=\n\\mathscr R^F_{n,M}\n\\quad(\\text{嵌入的基域集合}),\n}\n\\tag{5.7}\n\\]\n且纤维大小\n\\[\n\\boxed{\n\\begin{cases}\n2^{n(n-1)+1},&M=1,\\\\[2mm]\n2^{n(n-1)},&M\\ge2.\n\\end{cases}}\n\\tag{5.8}\n\\]\n\n对多个块，以上纤维大小分别取乘积；例如\n\\[\n\\prod_i 2^{n_i(n_i+1)}\n=\n2^{\\sum_i n_i(n_i+1)}\n\\]\n等。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "fixed_lifts_and_towers",
+      "earned": 2.5,
+      "max": 5,
+      "reason": "Correct identifies exact sigma-fixed solutions with S_F and fixed class/tower components with R_F,M. Exact fixed-lift necessity/sufficiency is immediate from field-fixed entries; tower necessity relies on an asserted rather than proved one-step fixed-image property. Half for incomplete justification.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 665,
+          "line_end": 719,
+          "text": "## 4.4 哪些固定类能提升为真正的 \\(\\sigma_\\mu\\)-固定解？\n\n若 \\(U\\in\\mathscr S_K(A)\\) 且 \\(\\sigma_\\mu(U)=U\\)，则由固定性\n\\[\nU\\in GL_d(\\mathcal O_K)\\cap GL_d(F)=GL_d(\\mathbb Z_2).\n\\]\n因此\n\\[\n\\boxed{\n\\mathscr S_K(A)^{\\sigma_\\mu}\n=\n\\mathscr S_F(A).\n}\n\\tag{4.10}\n\\]\n\n于是对固定矩阵类 \\(x\\in\\mathscr C_{K,M}(A)^{\\sigma_\\mu}\\)：\n\n\\[\n\\boxed{\nx\\text{ 可提升为某个真正的 }\\sigma_\\mu\\text{-固定解}\n\\iff\nx\\in \\mathscr R_{F,M}(A)\n\\subset \\mathscr R_{K,M}(A)^{\\sigma_\\mu}.\n}\n\\tag{4.11}\n\\]\n在 (4.2) 的坐标下等价于\n\\[\nB=0\n\\quad\\text{且}\\quad\nA\\in\\mathscr R_{F,M}.\n\\tag{4.12}\n\\]\n\n同样地，\\(x\\) 能作为一条逐层相容的固定矩阵类序列在精度 \\(M\\) 处的分量，也当且仅当\n\\[\nx\\in\\mathscr R_{F,M}(A).\n\\]\n原因是：在单块情形下，固定类约化映射\n\\[\n\\mathscr C_{K,M+1}^{\\sigma_\\mu}\\longrightarrow\n\\mathscr C_{K,M}^{\\sigma_\\mu}\n\\]\n的像恰为嵌入的 \\(\\mathscr R_{F,M}\\)；而对 \\(\\mathscr R\\) 也有\n\\[\n\\operatorname{im}\\bigl(\n\\mathscr R_{K,M+1}^{\\sigma_\\mu}\\to\n\\mathscr R_{K,M}^{\\sigma_\\mu}\n\\bigr)\n=\n\\mathscr R_{F,M}.\n\\tag{4.13}\n\\]\n因此，一个固定类只要能在固定类中提升一层，就已经必须是基域上的真正解类。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "best_universal_and_pointwise_precision",
+      "earned": 5,
+      "max": 10,
+      "reason": "The largest N and the pointwise R_F,M condition are correct. The lower-bound proof is invalid: the claimed whole-group exp decomposition is false, exp at valuation1 is not defined in general, and in Q2(i) pi^2=2i is not a base-field scalar so the purported V_i-prime need not be a base matrix. Rank1 conclusion is correct; overall half for correct conclusions with unproved general guarantee.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 933,
+          "line_end": 967,
+          "text": "## 6.1 统一下降界\n\n### 定理 6.1\n\n固定块秩 \\(n_1,\\dots,n_r\\) 与 \\(M\\ge2\\)。\n\n1. 若\n   \\[\n   n_1=\\cdots=n_r=1,\n   \\]\n   则对一切合法 \\(A\\) 与满足 \\(\\sigma_\\mu(U)\\equiv U\\pmod{2^M}\\) 的 \\(U\\)，都有\n   \\[\n   U\\in\\mathscr S_F(A).\n   \\]\n   因此可取\n   \\[\n   \\boxed{N=M.}\n   \\]\n\n2. 若至少有一个 \\(i\\) 满足 \\(n_i\\ge2\\)，则最大的统一整数是\n   \\[\n   \\boxed{N=M-1.}\n   \\]\n   即：对一切合法 \\(A,U\\)，总存在 \\(W\\in\\mathscr S_F(A)\\) 使得\n   \\[\n   U\\equiv W\\pmod{2^{M-1}\\mathcal O_\\mu},\n   \\]\n   但一般不能做到 \\(N=M\\)。\n\n**证明.**  \n当所有 \\(n_i=1\\) 时，\n\\[\nO_1(\\mathcal O_K)=\\{\\pm1\\}=\\mathcal O_F^\\times,\n\\]\n故 \\(\\mathscr S_K(A)=\\mathscr S_F(A)\\)，断言显然。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 1014,
+          "line_end": 1077,
+          "text": "再证明 \\(N=M-1\\) 总能达到。由 (1.1)，取 \\(U_0\\in\\mathscr S_F(A)\\)（可行性与 \\(L\\) 无关，故存在）。写\n\\[\nU=U_0V,\\qquad\nV=\\prod_{i=1}^rV_i,\n\\]\n其中 \\(V_i\\in O_{n_i}(\\mathcal O_K)\\)，且 \\(V_i\\equiv I\\pmod{\\pi^2}\\)。对每个 \\(i\\)，由 p-adic 对数分解\n\\[\nV_i=\\eta_i\\exp(\\pi^2X_i),\n\\qquad\n\\eta_i=\\pm I_{n_i},\n\\quad\nX_i\\in\\mathfrak{so}_{n_i}(\\mathcal O_K).\n\\]\n条件 \\(\\sigma_\\mu(V_i)\\equiv V_i\\pmod{\\pi^{2M}}\\) 给出\n\\[\nX_i\\equiv\\sigma_\\mu(X_i)\\pmod{\\pi^{2M-2}}.\n\\]\n写\n\\[\nX_i=A_i+\\pi_\\mu B_i,\n\\qquad\nA_i\\in M_{n_i}(\\mathbb Z_2),\n\\]\n其中 \\(A_i\\) 为常数项。因为\n\\[\nX_i-\\sigma_\\mu(X_i)=-2\\pi_\\mu B_i,\n\\]\n而 \\(2\\in\\pi_\\mu^2\\mathcal O_K^\\times\\)，所以\n\\[\n\\pi_\\mu^3B_i\\in\\pi_\\mu^{2M-2}M_{n_i}(\\mathcal O_K),\n\\]\n从而\n\\[\nB_i\\in\\pi_\\mu^{2M-5}M_{n_i}(\\mathcal O_K),\n\\]\n所以\n\\[\nX_i\\equiv A_i\\pmod{\\pi_\\mu^{2M-4}}.\n\\]\n由 \\(X_i^{\\mathsf T}=-X_i\\) 得\n\\[\nA_i^{\\mathsf T}=-A_i.\n\\]\n令\n\\[\nV_i':=\\eta_i\\exp(\\pi^2A_i)\\in O_{n_i}(\\mathbb Z_2),\n\\qquad\nV':=\\prod_iV_i',\n\\]\n并令\n\\[\nW:=U_0V'\\in\\mathscr S_F(A).\n\\]\n指数映射在 \\(I+\\pi^2M_n\\) 上是等距同构，故\n\\[\nV_i\\equiv V_i'\\pmod{\\pi_\\mu^{2M-2}},\n\\]\n于是\n\\[\nU\\equiv W\\pmod{\\pi_\\mu^{2M-2}}\n=\n\\pmod{2^{M-1}\\mathcal O_\\mu}.\n\\]\n即 \\(N=M-1\\) 总可以达到。结合上界，得到最大统一值 \\(M-1\\)。\\(\\square\\)",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 1081,
+          "line_end": 1115,
+          "text": "## 6.2 对给定 \\(A,U\\) 何时可取 \\(N=M\\)\n\n由 (4.10)，能做到 \\(N=M\\) 当且仅当\n\\[\nU\\bmod 2^M\\mathcal O_\\mu\n\\in\n\\mathscr R_{F,M}(A)\n\\quad\n(\\text{视 }\\mathscr R_{F,M}(A)\\text{ 通过自然嵌入为 }\\mathscr R_{K,M}(A)^{\\sigma_\\mu}\\text{ 的子集}).\n\\]\n等价地，取 \\(U_0\\in\\mathscr S_F(A)\\)，令\n\\[\nV=U_0^{-1}U\\pmod{2^M\\mathcal O_\\mu}.\n\\]\n因为 \\(U\\) 近似固定，\\(V\\) 在固定环中可唯一写成\n\\[\nV=A+\\varepsilon_M B,\n\\qquad\nA\\in M_d(\\mathbb Z/2^M),\\quad\nB\\in M_d(\\mathbb F_2),\n\\]\n并按块分解。则\n\\[\n\\boxed{\nN=M\n\\iff\nB=0\n\\quad\\text{且}\\quad\nA\\in\\prod_{i=1}^r\\mathscr R^F_{n_i,M}.\n}\n\\tag{6.1}\n\\]\n这里 \\(A\\in\\prod_i\\mathscr R^F_{n_i,M}\\) 可用第 3.3 节的“一层提升”判准直接检验：每个块类必须属于模 \\(2^M\\) 的基域精确解像。\n\n在块秩全部为 \\(1\\) 时，(6.1) 自动成立，因此统一地有 \\(N=M\\)。若某个 \\(n_i\\ge2\\)，(6.1) 不再自动成立；第 6.1 节中的统一构造说明它可以被破坏到任意精度。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "actual_sharpness_examples_and_exact_boundary",
+      "earned": 10,
+      "max": 10,
+      "reason": "The separate high-valuation exponential witness exp(pi^(2M-1) C) is an actual integral orthogonal matrix for M>=2 since v_2(pi^(2M-1))=M-1/2>1. Nonlinear off-diagonal terms vanish mod2^M; its leading off-diagonal has odd pi-valuation2M-1, impossible for a base-field class. For pi=1+i its theta coefficient is +/-2^(M-1), so approximate invariance still holds even though the earlier asserted anti-invariance of pi itself is false. The all-rank1 exact boundary follows from the +/-1 orthogonal factors once a base solution exists. This valid independent sharpness contribution is retained.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 969,
+          "line_end": 1012,
+          "text": "现设某个 \\(n_j\\ge2\\)。先证明上界 \\(N\\le M-1\\)。取\n\\[\nA_i=E_i\\qquad(1\\le i\\le r),\n\\]\n即 \\(A\\) 已经是标准块投影。取非零斜对称矩阵\n\\[\nC=E_{12}-E_{21}\\in\\mathfrak{so}_{n_j}(\\mathbb Z_2),\n\\]\n把 \\(C\\) 只放在第 \\(j\\) 块，其它块取 \\(0\\)。令\n\\[\nz=\\pi_\\mu^{2M-1},\\qquad\nU_j=\\exp(zC),\n\\]\n并令整个矩阵为\n\\[\nU=\\operatorname{diag}(I_{n_1},\\dots,U_j,\\dots,I_{n_r}).\n\\]\n则：\n\\[\nU\\equiv I\\pmod{\\pi_\\mu^2}\n\\]\n（因为 \\(2M-1\\ge3\\)），且 \\(U\\) 关于标准块对角，故\n\\[\nU\\in\\mathscr S_{K_\\mu}(E).\n\\]\n又\n\\[\n\\sigma_\\mu(U)\\equiv \\exp(-zC)\\pmod{\\pi_\\mu^{2M}},\n\\]\n于是\n\\[\nU-\\sigma_\\mu(U)\n\\equiv 2zC\n\\equiv 0\\pmod{\\pi_\\mu^{2M}}.\n\\]\n所以\n\\[\nU\\equiv\\sigma_\\mu(U)\\pmod{2^M\\mathcal O_\\mu}.\n\\]\n但\n\\[\nU_{12}=\\pi_\\mu^{2M-1}\n\\]\n（模 \\(\\pi_\\mu^{2M}\\)），而任何基域矩阵 \\(W\\in GL_d(\\mathbb Z_2)\\) 的 \\((\\mathbb Z_2)\\)-元素在 \\(\\mathcal O_K\\) 中只含 \\(\\pi_\\mu\\) 的偶次项。因此 \\(U\\not\\equiv W\\pmod{\\pi_\\mu^{2M}}\\) 对任意 \\(W\\in\\mathscr S_F(E)\\) 成立。故 \\(N=M\\) 不可能，统一上界至多 \\(M-1\\)。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 939,
+          "line_end": 967,
+          "text": "1. 若\n   \\[\n   n_1=\\cdots=n_r=1,\n   \\]\n   则对一切合法 \\(A\\) 与满足 \\(\\sigma_\\mu(U)\\equiv U\\pmod{2^M}\\) 的 \\(U\\)，都有\n   \\[\n   U\\in\\mathscr S_F(A).\n   \\]\n   因此可取\n   \\[\n   \\boxed{N=M.}\n   \\]\n\n2. 若至少有一个 \\(i\\) 满足 \\(n_i\\ge2\\)，则最大的统一整数是\n   \\[\n   \\boxed{N=M-1.}\n   \\]\n   即：对一切合法 \\(A,U\\)，总存在 \\(W\\in\\mathscr S_F(A)\\) 使得\n   \\[\n   U\\equiv W\\pmod{2^{M-1}\\mathcal O_\\mu},\n   \\]\n   但一般不能做到 \\(N=M\\)。\n\n**证明.**  \n当所有 \\(n_i=1\\) 时，\n\\[\nO_1(\\mathcal O_K)=\\{\\pm1\\}=\\mathcal O_F^\\times,\n\\]\n故 \\(\\mathscr S_K(A)=\\mathscr S_F(A)\\)，断言显然。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    },
+    {
+      "id": "assertion_reliability",
+      "earned": 10,
+      "max": 10,
+      "reason": "No independent supplementary substantive false assertion beyond the defects already charged to mandatory goals. The incorrect uniformizer assumption and exponential identities are charged to those mathematical goals and to claim findings; they are not charged again through this legacy reserve. G1=5 instead of1/5 and O_1={+/-1}=O_F-units are contextually harmless notation/choice slips with no additional mathematical effect.",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 169,
+          "line_end": 188,
+          "text": "**非空反例（可实际计算）：** 取\n\\[\nr=2,\\quad n_1=n_2=1,\\quad\nv=\\binom12,\\quad\nP=\\frac{vv^{\\mathsf T}}{5}\n=\\begin{pmatrix}1/5&2/5\\\\2/5&4/5\\end{pmatrix},\n\\]\n\\[\nA_1=P,\\qquad A_2=I-P.\n\\]\n则 \\(A_1,A_2\\) 对称、交换、分别 \\(\\equiv E_1,E_2\\pmod2\\)，但\n\\[\nG_1=5,\\qquad \\det G_1\\equiv5\\pmod8.\n\\]\n所以对全部三个域 \\(F,K_{-1},K_2\\)，\\(\\mathscr S_L(A)=\\varnothing\\)。此时\n\\[\n\\mathscr C_{L,1}(A)=\\{I\\},\\qquad\n\\mathscr C_{L,2}(A)\\ne\\varnothing,\n\\]\n但当 \\(M\\ge3\\) 时 \\(\\mathscr C_{L,M}(A)=\\varnothing\\)。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 963,
+          "line_end": 967,
+          "text": "当所有 \\(n_i=1\\) 时，\n\\[\nO_1(\\mathcal O_K)=\\{\\pm1\\}=\\mathcal O_F^\\times,\n\\]\n故 \\(\\mathscr S_K(A)=\\mathscr S_F(A)\\)，断言显然。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ]
+    }
+  ],
+  "raw_max": 100,
+  "strict_pass": false,
+  "findings": [
+    {
+      "root_cause": "invalid_level2_orthogonal_exponential_parametrization",
+      "severity": "material",
+      "error_kind": "false_standard_theorem_and_invalid_analytic_domain",
+      "quote": "对 \\(\\mathscr R^F_{n,M}\\)，利用标准事实\n\\[\n\\{U\\in O_n(\\mathbb Z_2):U\\equiv I\\pmod2\\}\n=\\{\\pm I\\}\\exp\\bigl(2\\mathfrak{so}_n(\\mathbb Z_2)\\bigr),\n\\]\n且 \\(p\\)-adic 对数在 \\(I+4M_n(\\mathbb Z_2)\\) 上给出标准同构。由此",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 246,
+          "line_end": 251,
+          "text": "对 \\(\\mathscr R^F_{n,M}\\)，利用标准事实\n\\[\n\\{U\\in O_n(\\mathbb Z_2):U\\equiv I\\pmod2\\}\n=\\{\\pm I\\}\\exp\\bigl(2\\mathfrak{so}_n(\\mathbb Z_2)\\bigr),\n\\]\n且 \\(p\\)-adic 对数在 \\(I+4M_n(\\mathbb Z_2)\\) 上给出标准同构。由此",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 301,
+          "line_end": 305,
+          "text": "对 \\(\\mathscr R^K_{n,M}\\)，标准 \\(p\\)-adic 对数给出\n\\[\n\\{U\\in O_n(\\mathcal O_K):U\\equiv I\\pmod{2\\mathcal O_K}\\}\n=\\{\\pm I\\}\\exp\\bigl(\\pi^2\\mathfrak{so}_n(\\mathcal O_K)\\bigr).\n\\]",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 1019,
+          "line_end": 1026,
+          "text": "其中 \\(V_i\\in O_{n_i}(\\mathcal O_K)\\)，且 \\(V_i\\equiv I\\pmod{\\pi^2}\\)。对每个 \\(i\\)，由 p-adic 对数分解\n\\[\nV_i=\\eta_i\\exp(\\pi^2X_i),\n\\qquad\n\\eta_i=\\pm I_{n_i},\n\\quad\nX_i\\in\\mathfrak{so}_{n_i}(\\mathcal O_K).\n\\]",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 1067,
+          "line_end": 1077,
+          "text": "指数映射在 \\(I+\\pi^2M_n\\) 上是等距同构，故\n\\[\nV_i\\equiv V_i'\\pmod{\\pi_\\mu^{2M-2}},\n\\]\n于是\n\\[\nU\\equiv W\\pmod{\\pi_\\mu^{2M-2}}\n=\n\\pmod{2^{M-1}\\mathcal O_\\mu}.\n\\]\n即 \\(N=M-1\\) 总可以达到。结合上界，得到最大统一值 \\(M-1\\)。\\(\\square\\)",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ],
+      "reason": "For n=2, diag(-1,1) lies in O_2(Z2) and is I mod2 but has determinant-1; every +/-I times an exponential of a skew matrix has determinant1, contradicting the displayed identity. Moreover exp(2 C) generally does not converge: at n=2^j the valuation of its nonzero nth term is n-v_2(n!)=1, so terms do not tend to0. The same level2 issue affects O_K. Counts and the descent lower-bound proof use this invalid parametrization; the separately high-valuation sharpness witness is valid. The headline target conclusions are true, so this is a material invalid-proof commitment, not evidence of an endorsed false core conclusion warranting a zero cap.",
+      "core_cap_zero": false
+    },
+    {
+      "root_cause": "q2i_uniformizer_treated_as_antiinvariant_base_scalar",
+      "severity": "material",
+      "error_kind": "false_field_and_conjugation_claim",
+      "quote": "- 对 \\(K_\\mu\\)，取一致化元 \\(\\pi=\\pi_\\mu\\)，使 \\(2\\in \\pi^2\\mathcal O_\\mu^\\times\\)，且\n  \\[\n  \\sigma_\\mu(\\pi)\\equiv-\\pi\\pmod{\\pi^{2M}}\\quad(M\\ge2).\n  \\]\n  例如 \\(K_2\\) 取 \\(\\pi=\\theta\\)；\\(K_{-1}\\) 取 \\(\\pi=1+\\theta\\) 即可。",
+      "quotes": [
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 14,
+          "line_end": 18,
+          "text": "- 对 \\(K_\\mu\\)，取一致化元 \\(\\pi=\\pi_\\mu\\)，使 \\(2\\in \\pi^2\\mathcal O_\\mu^\\times\\)，且\n  \\[\n  \\sigma_\\mu(\\pi)\\equiv-\\pi\\pmod{\\pi^{2M}}\\quad(M\\ge2).\n  \\]\n  例如 \\(K_2\\) 取 \\(\\pi=\\theta\\)；\\(K_{-1}\\) 取 \\(\\pi=1+\\theta\\) 即可。",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        },
+        {
+          "source_file": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-GR021/A1/answer.md",
+          "line_start": 1031,
+          "line_end": 1065,
+          "text": "写\n\\[\nX_i=A_i+\\pi_\\mu B_i,\n\\qquad\nA_i\\in M_{n_i}(\\mathbb Z_2),\n\\]\n其中 \\(A_i\\) 为常数项。因为\n\\[\nX_i-\\sigma_\\mu(X_i)=-2\\pi_\\mu B_i,\n\\]\n而 \\(2\\in\\pi_\\mu^2\\mathcal O_K^\\times\\)，所以\n\\[\n\\pi_\\mu^3B_i\\in\\pi_\\mu^{2M-2}M_{n_i}(\\mathcal O_K),\n\\]\n从而\n\\[\nB_i\\in\\pi_\\mu^{2M-5}M_{n_i}(\\mathcal O_K),\n\\]\n所以\n\\[\nX_i\\equiv A_i\\pmod{\\pi_\\mu^{2M-4}}.\n\\]\n由 \\(X_i^{\\mathsf T}=-X_i\\) 得\n\\[\nA_i^{\\mathsf T}=-A_i.\n\\]\n令\n\\[\nV_i':=\\eta_i\\exp(\\pi^2A_i)\\in O_{n_i}(\\mathbb Z_2),\n\\qquad\nV':=\\prod_iV_i',\n\\]\n并令\n\\[\nW:=U_0V'\\in\\mathscr S_F(A).",
+          "source_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+        }
+      ],
+      "reason": "For Q2(i), pi=1+i gives sigma(pi)+pi=2, which is not0 modulo pi^(2M) for M>=2. Also pi^2=2i is not in Q2, so exp(pi^2 A_i) cannot be asserted to lie in O_n(Z2). This is a separate ramified-coefficient error in the proposed base descent construction. Epsilon=2^(M-1)pi is still fixed modulo2^M, and the high-valuation witness remains correct; those independent contributions are preserved. No false optimal-precision theorem itself is established, so no automatic core-zero cap is recommended.",
+      "core_cap_zero": false
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_status": "pending",
+  "unresolved": [],
+  "raw_points": 60,
+  "legacy_reliability_points": 10,
+  "legacy_reliability_max": 10,
+  "positive_completion": {
+    "earned": 50,
+    "max": 90,
+    "basis": "raw_points minus source embedded assertion_reliability_points; parent must use shared scorer for normalized MC/RMC"
+  },
+  "criterion_group_totals": {
+    "feasibility_counts_liftability": {
+      "earned": 15,
+      "max": 30
+    },
+    "fixed_classes_and_orbits": {
+      "earned": 12.5,
+      "max": 25
+    },
+    "reduction_maps_and_fixed_lifts": {
+      "earned": 7.5,
+      "max": 15
+    },
+    "optimal_quantitative_descent": {
+      "earned": 15,
+      "max": 20
+    },
+    "assertion_reliability": {
+      "earned": 10,
+      "max": 10
+    }
+  },
+  "summary": "Headline formulas and optimal precision are largely correct, but the proof has fundamental p=2 exponential and ramified-parameter errors and omits actual integral lifting. Frozen full/half/zero subcheck total60/100 includes10 legacy reliability points; valid mathematical contribution is50/90. Strict fails.",
+  "audit_source": {
+    "path": "/private/tmp/math-gauge-ds-grading-20261109/written/written-reviews.json",
+    "sha256": "1ba57c2df38ab9bd85feccf0cd5385f104a44c92936c13ce495cbc9e8692e734",
+    "bytes": 235344
+  }
+}

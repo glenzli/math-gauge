@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score,
                                 validate_record, load_public_task_scores, project_public_task_view)
 from math_gauge.scoring import score_assessment_record_inputs
+from math_gauge.paper_observations import SCHEMA as PAPER_SCHEMA, check_record as check_paper_record
 
 
 def load(path):
@@ -20,8 +21,14 @@ def load(path):
 def check(root=ROOT, *, public_root=None):
     root = Path(root).resolve()
     archives = []
+    scoring_version = None
     for path in sorted((root / "results/v0.6.0").glob("*/*/record.json")):
         folder, record = path.parent, load(path)
+        if record.get('schema') == PAPER_SCHEMA:
+            public = Path(public_root).resolve() / folder.relative_to(root) if public_root is not None else None
+            archives.append(check_paper_record(folder, public_folder=public))
+            scoring_version = load(folder / record['assessment_policy']['path'])['version']
+            continue
         external = record.get("formalization_evidence_location") == "public_archive"
         if external and public_root is None:
             raise ValueError("Private archives require --public-root for shared evidence")
@@ -78,9 +85,10 @@ def check(root=ROOT, *, public_root=None):
             for condition, score in conditions.items()} for mode, conditions in views.items()}
         status["capacity"] = next(iter(views["partial"].values()))["capacity"]
         archives.append(status)
+        scoring_version = next(iter(views['partial'].values()))['scoring_method_version']
     if not archives:
         raise ValueError("No current user-selected archives found")
-    return {"passed": True, "benchmark_version": "0.6.0", "scoring_version": next(iter(views["partial"].values()))["scoring_method_version"],
+    return {"passed": True, "benchmark_version": "0.6.0", "scoring_version": scoring_version,
             "strict_version": "0.2.0", "archives": archives, "candidate_calls": 0,
             "sealed_engineering_compilations": 0}
 

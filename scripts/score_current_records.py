@@ -9,8 +9,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record, selected_cli_records
+from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score, project_public_task_view, public_assessment_case_ids, validate_record, selected_cli_records, selected_paper_records
 from math_gauge.scoring import score_assessment_record_inputs
+from math_gauge.paper_observations import retain_scores as retain_paper_scores, check_record as check_paper_record
 
 
 def load(path):
@@ -148,6 +149,12 @@ def retain(private_root, *, public_root=ROOT):
                 else item for item in target["evidence"]
                 if not (folder == public and item["path"] in {"result.json", "retry-result.json"})]
             write(folder / "record.json", target)
+    for model, public in selected_paper_records(public_root):
+        private = private_root / public.relative_to(public_root)
+        retained = retain_paper_scores(private, public)
+        totals[model] = {condition: {mode: retained['earned'][mode][condition]
+                                   for mode in ('capability', 'partial', 'strict')}
+                         for condition in ('single_attempt', 'nonlogical_retry_3')}
     export_public_tasks(private_root, public_root=public_root)
     active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
     return {"benchmark_version": "0.6.0", "scoring_version": assessment["version"], "strict_version": strict["version"],
@@ -185,6 +192,9 @@ def export_public_tasks(private_root, *, public_root=ROOT):
         record["evidence"] = [r for r in record["evidence"] if r["path"] != target.name] + [descriptor(public, target)]
         write(public / "record.json", record)
         published.append({"model": model, "public_tasks": len(ids)})
+    for model, public in selected_paper_records(public_root):
+        check_paper_record(private_root / public.relative_to(public_root), public_folder=public)
+        published.append({'model': model, 'public_tasks': 25})
     return {"published": published, "candidate_calls": 0, "scores_recomputed": False}
 
 

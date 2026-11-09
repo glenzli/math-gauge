@@ -1,0 +1,206 @@
+{
+  "case_id": "MG-TX002",
+  "category": "theorem-extension",
+  "attempt": "A1",
+  "source_scope": "public",
+  "status": "reviewed",
+  "reviewer_kind": "ai",
+  "reviewer": "Codex independent mathematical review, 2026-11-09",
+  "human_status": "pending",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX002/task.md",
+      "sha256": "2e499a6a924181afa9d13db24f78bdd25ca6e266a25c8f14c2cc93aa059153de",
+      "bytes": 884,
+      "lines": 19
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX002/rubric.json",
+      "sha256": "71f24269061f30969a82c05bc03291e53dfb80a58c456771f58269c19327961c",
+      "bytes": 866,
+      "lines": 16
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX002/reference.md",
+      "sha256": "116cf87ac1bd7f9d9f2399b42b1dbcabae47026d8a34559cc050b28acb1f81a7",
+      "bytes": 7084,
+      "lines": 155
+    },
+    "answer": {
+      "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+      "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+      "bytes": 4378,
+      "lines": 156
+    },
+    "source_rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX002/source-rubric.md",
+      "sha256": "5f79faac603c08b4d7f5346a42bd449673bbb6cb2a90cede4696964f4cda1cd5",
+      "bytes": 2221,
+      "lines": 27
+    },
+    "contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX002/contract.json",
+      "sha256": "82cf04537aee2d5f4d626edf4f5c1c8b89ffb9adae3d40a5694e31fadfac6053",
+      "bytes": 2194,
+      "lines": 55
+    },
+    "research_policy": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX002/research-policy.json",
+      "sha256": "2e0e24469b38507116c475674f1dbd4252c6d15736bb2eec8bd168f3d2cfc8ef",
+      "bytes": 2314,
+      "lines": 50
+    }
+  },
+  "supplemental_source_bindings": [],
+  "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+  "baseline_disposition": "incorrect",
+  "positive_completion": {
+    "earned_units": 1,
+    "maximum_units": 3,
+    "basis": "valid independent research evidence; baseline B gives no positive research credit"
+  },
+  "strict_pass": false,
+  "findings": [
+    {
+      "id": "tx002-unproved-cylinder-count",
+      "root_cause": "tx002-missing-full-boundary-dynamics",
+      "severity": "material",
+      "severity_points": 10,
+      "error_kind": "unsupported_completion",
+      "kind": "unsupported_completion",
+      "quote": "这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复",
+      "reason": "The central count is certified as complete without a defined cylinder state or an established correspondence between rowmotion and the asserted segment motion. Internal row shifts and the (true) period identity do not imply exactly b visits; this requires the missing boundary-count mechanism. The answer never marks that step as conjectural or incomplete. Finite enumeration by the reviewer confirms the intended count in examples, but cannot be inserted as the candidate general proof.",
+      "core_cap_zero": false,
+      "core_endorsement": false,
+      "strict_blocking": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 86,
+          "line_end": 102,
+          "quote": "这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 93,
+          "line_end": 115,
+          "quote": "在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复\n\\[\nd=\\frac{a+b}{L}\n\\]\n次，就得到一个完整的 \\(a+b\\) 周期。于是\n\\[\nd\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=b,\n\\]\n即\n\\[\n\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=\\frac{b}{d}\n=\\frac{Lb}{a+b}.\n\\]\n引理 2 得证。\\(\\square\\)"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 149,
+          "line_end": 156,
+          "quote": "回到原来的反链记号，因为 \\(A_t=\\max I_t\\)，这正是题中要证的\n\\[\n\\boxed{\\displaystyle\n\\frac1{|\\mathcal O|}\\sum_{A\\in\\mathcal O}|A|\n=\\frac{ab}{a+b}}.\n\\]\n\n故该轨道平均值结论成立。"
+        }
+      ]
+    }
+  ],
+  "criteria": [
+    {
+      "id": "baseline",
+      "passed": false,
+      "reason": "The row-length update formula and internal row-occupation shift are correct, as is the final summation conditional on Lemma 2. The decisive Lemma 2 count is not proved: no boundary encoding, inverse or specified diagonal action is defined, and the claim that the moving bottom segment visits b positions in a+b times is asserted after two qualitative bullets. The true period identity rho^(a+b)=id does not by itself determine the number of epsilon_1=1 events. The answer presents this as a complete proof, not honest incompleteness.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 43,
+          "line_end": 72,
+          "quote": "**引理 1.** 对 \\(1\\le i<a\\)，\n\\[\n\\varepsilon_{i+1}(t+1)=\\varepsilon_i(t). \\tag{2}\n\\]\n\n证明：给出 rowmotion 在行长度上的显式公式。若 \\(\\lambda(t)\\) 中不同的值 \\(v<b\\) 第一次出现在第 \\(r_v\\) 行，则\n\\[\n\\lambda_i(t+1)\n=\\max\\{v+1:\\ v<b,\\ r_v\\ge i\\},\n\\]\n空集时取 \\(0\\)。\n\n现在比较相邻两行。\n\n- 若 \\(\\varepsilon_i(t)=1\\)，即 \\(\\lambda_i(t)>\\lambda_{i+1}(t)\\) 且 \\(\\lambda_i(t)>0\\)。令\n  \\(w=\\lambda_{i+1}(t)\\)。第 \\(i+1\\) 行是值为 \\(w\\) 的块的第一行，所以\n  \\(\\lambda_{i+1}(t+1)=w+1\\)。而第 \\(i+2\\) 行要么仍在同一块中，要么进入更低的值，因此\n  \\(\\lambda_{i+2}(t+1)<w+1\\)（若 \\(i+1=a\\)，则只需注意 \\(\\lambda_a(t+1)=w+1>0\\)）。故\n  \\(\\varepsilon_{i+1}(t+1)=1\\)。\n\n- 若 \\(\\varepsilon_i(t)=0\\)，则 \\(\\lambda_i(t)=\\lambda_{i+1}(t)\\)。于是第 \\(i+1\\) 行不是新块的第一行；按上面的公式，它与第 \\(i+2\\) 行在上一步后的长度相等，或至少不会形成一个新的正块终点。故\n  \\(\\varepsilon_{i+1}(t+1)=0\\)。\n\n两种情况合起来就是 (2)。\\(\\square\\)\n\n由 (2) 立刻得到\n\\[\n\\varepsilon_i(t)=\\varepsilon_1(t-i+1),\\qquad i=1,\\dots,a, \\tag{3}\n\\]\n下标按轨道周期取模。"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 80,
+          "line_end": 115,
+          "quote": "**引理 2.** 设轨道 \\(\\mathcal O\\) 的长度为 \\(L\\)。则\n\\[\n\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)\n=\\frac{Lb}{a+b}. \\tag{4}\n\\]\n\n这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复\n\\[\nd=\\frac{a+b}{L}\n\\]\n次，就得到一个完整的 \\(a+b\\) 周期。于是\n\\[\nd\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=b,\n\\]\n即\n\\[\n\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=\\frac{b}{d}\n=\\frac{Lb}{a+b}.\n\\]\n引理 2 得证。\\(\\square\\)"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 121,
+          "line_end": 156,
+          "quote": "由 (1)、(3) 得\n\\[\n\\begin{aligned}\n\\sum_{t\\in\\mathcal O}|\\max I_t|\n&=\\sum_{t\\in\\mathcal O}\\sum_{i=1}^a \\varepsilon_i(t)\\\\\n&=\\sum_{i=1}^a\\sum_{t\\in\\mathcal O}\\varepsilon_1(t-i+1).\n\\end{aligned}\n\\]\n由于 \\(t\\mapsto t-i+1\\) 只是轨道时间指标的一个平移，\n\\[\n\\sum_{t\\in\\mathcal O}\\varepsilon_1(t-i+1)\n=\\sum_{t\\in\\mathcal O}\\varepsilon_1(t).\n\\]\n所以由引理 2，\n\\[\n\\sum_{t\\in\\mathcal O}|\\max I_t|\n=a\\cdot \\frac{Lb}{a+b}.\n\\]\n于是\n\\[\n\\frac1{|\\mathcal O|}\n\\sum_{A\\in\\mathcal O}|A|\n=\n\\frac1L\\cdot \\frac{aLb}{a+b}\n=\n\\frac{ab}{a+b}.\n\\]\n\n回到原来的反链记号，因为 \\(A_t=\\max I_t\\)，这正是题中要证的\n\\[\n\\boxed{\\displaystyle\n\\frac1{|\\mathcal O|}\\sum_{A\\in\\mathcal O}|A|\n=\\frac{ab}{a+b}}.\n\\]\n\n故该轨道平均值结论成立。"
+        }
+      ]
+    },
+    {
+      "id": "local-refinement",
+      "passed": true,
+      "reason": "The explicit update and internal occupation shift are valid for all row lengths.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 29,
+          "line_end": 66,
+          "quote": "定义\n\\[\n\\varepsilon_i(t)=\n\\begin{cases}\n1,&\\lambda_i(t)>0\\ \\text{且}\\ \\bigl(i=a\\ \\text{或}\\ \\lambda_i(t)>\\lambda_{i+1}(t)\\bigr),\\\\\n0,&\\text{其他}.\n\\end{cases}\n\\]\n这恰好标记“某一个正的行长度块在这一行结束”。因此\n\\[\n|\\max I_t|=|\\{\\text{不同正的行长度}\\}|\n=\\sum_{i=1}^a \\varepsilon_i(t). \\tag{1}\n\\]\n\n**引理 1.** 对 \\(1\\le i<a\\)，\n\\[\n\\varepsilon_{i+1}(t+1)=\\varepsilon_i(t). \\tag{2}\n\\]\n\n证明：给出 rowmotion 在行长度上的显式公式。若 \\(\\lambda(t)\\) 中不同的值 \\(v<b\\) 第一次出现在第 \\(r_v\\) 行，则\n\\[\n\\lambda_i(t+1)\n=\\max\\{v+1:\\ v<b,\\ r_v\\ge i\\},\n\\]\n空集时取 \\(0\\)。\n\n现在比较相邻两行。\n\n- 若 \\(\\varepsilon_i(t)=1\\)，即 \\(\\lambda_i(t)>\\lambda_{i+1}(t)\\) 且 \\(\\lambda_i(t)>0\\)。令\n  \\(w=\\lambda_{i+1}(t)\\)。第 \\(i+1\\) 行是值为 \\(w\\) 的块的第一行，所以\n  \\(\\lambda_{i+1}(t+1)=w+1\\)。而第 \\(i+2\\) 行要么仍在同一块中，要么进入更低的值，因此\n  \\(\\lambda_{i+2}(t+1)<w+1\\)（若 \\(i+1=a\\)，则只需注意 \\(\\lambda_a(t+1)=w+1>0\\)）。故\n  \\(\\varepsilon_{i+1}(t+1)=1\\)。\n\n- 若 \\(\\varepsilon_i(t)=0\\)，则 \\(\\lambda_i(t)=\\lambda_{i+1}(t)\\)。于是第 \\(i+1\\) 行不是新块的第一行；按上面的公式，它与第 \\(i+2\\) 行在上一步后的长度相等，或至少不会形成一个新的正块终点。故\n  \\(\\varepsilon_{i+1}(t+1)=0\\)。\n\n两种情况合起来就是 (2)。\\(\\square\\)"
+        }
+      ]
+    },
+    {
+      "id": "substantive-extension",
+      "passed": false,
+      "reason": "A true uniform period is asserted, but neither proved by a defined construction nor supplied as a transparently applicable external theorem. The cylinder count is the main unresolved gap.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 86,
+          "line_end": 108,
+          "quote": "这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复\n\\[\nd=\\frac{a+b}{L}\n\\]\n次，就得到一个完整的 \\(a+b\\) 周期。于是\n\\[\nd\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=b,"
+        }
+      ]
+    },
+    {
+      "id": "complete-structure",
+      "passed": false,
+      "reason": "The answer does not establish an effective invertible complete-state representation with a closed pointwise update. Supplying that representation would add the missing substantive correspondence, beyond a complement/concatenation of already supplied coordinates.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX002/A1/answer.md",
+          "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "bytes": 4378,
+          "lines": 156,
+          "line_start": 86,
+          "line_end": 115,
+          "quote": "这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复\n\\[\nd=\\frac{a+b}{L}\n\\]\n次，就得到一个完整的 \\(a+b\\) 周期。于是\n\\[\nd\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=b,\n\\]\n即\n\\[\n\\sum_{t\\in\\mathcal O}\\varepsilon_1(t)=\\frac{b}{d}\n=\\frac{Lb}{a+b}.\n\\]\n引理 2 得证。\\(\\square\\)"
+        }
+      ]
+    }
+  ],
+  "baseline_B": 1,
+  "research_R": 1,
+  "detail": {
+    "baseline": "The row-length update formula and internal row-occupation shift are correct, as is the final summation conditional on Lemma 2. The decisive Lemma 2 count is not proved: no boundary encoding, inverse or specified diagonal action is defined, and the claim that the moving bottom segment visits b positions in a+b times is asserted after two qualitative bullets. The true period identity rho^(a+b)=id does not by itself determine the number of epsilon_1=1 events. The answer presents this as a complete proof, not honest incompleteness.",
+    "research": "The correct pointwise internal shift epsilon_(i+1)(t+1)=epsilon_i(t) is a useful local dynamical refinement and earns R1. The full a+b period theorem is stated but not independently proved or transparently invoked with an applicable theorem/reduction. There is no closed complete-state system: only row occupation coordinates are supplied, without column coordinates or the necessary boundary closure. The structural-equivalence policy therefore does not license R3."
+  },
+  "summary": "B1/R1. Important valid local dynamics, but the universal orbit count rests on an undefined cylinder picture and a missing decisive counting argument. This is unsupported claimed completion, not a counterexample to the true average formula.",
+  "audit_source": {
+    "path": "/private/tmp/math-gauge-ds-grading-20261109/research/research-reviews.json",
+    "sha256": "10866b1f8ead9667328dc82468fe279faafb2ade81410908cf4f53ba7fd6ce68",
+    "bytes": 158827
+  }
+}

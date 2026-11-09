@@ -1,6 +1,8 @@
 # DeepSeek 两题重跑评审
 
-[完整成绩](results.md) · [接纳规则](../protocol/nonlogical-retries.md) · [尝试序列](../results/v0.6.0/deepseek-v4.1-flash-1017/20261105/retry-attempts.json)
+> 本文记录旧批次；当前20261109补测成绩与计次见[现行档案](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/README.md)。旧原答保留为来源，不替代本轮失败或未知项。
+
+[完整成绩](results.md) · [接纳规则](../protocol/nonlogical-retries.md) · [尝试序列](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/retry-attempts.json)
 
 原单次失败和原答保持原样，首次与重跑均按当前分类复算。benchmark0.6.0、原数学审核0.4.0、分类聚合0.8.0／Strict0.2.0、接纳规则0.1.0；本报告为AI审核，人审待定，正式比较资格false。没有调用候选模型，没有修改候选答案或代码。两个新答都未严格通过。
 
@@ -13,7 +15,7 @@
 
 ## 运行与模型返回
 
-GR021第1/2次均无最终答复，第3次交付；GR023第1次无最终答复，第2次交付。补充包声明三次失败都是incomplete/max_output_tokens、输出131072 tokens、最终0字节，成功尝试均completed，分别约20分18秒/13分13秒。这是[原包说明](../results/v0.6.0/deepseek-v4.1-flash-1017/20261105/execution/reruns-20261106/00-%E7%BB%93%E6%9E%9C%E8%AF%B4%E6%98%8E.md)的声明，未取得原生事件文件。
+GR021第1/2次均无最终答复，第3次交付；GR023第1次无最终答复，第2次交付。补充包声明三次失败都是incomplete/max_output_tokens、输出131072 tokens、最终0字节，成功尝试均completed，分别约20分18秒/13分13秒。这是[原包说明](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/execution/reruns-20261106/00-%E7%BB%93%E6%9E%9C%E8%AF%B4%E6%98%8E.md)的声明，未取得原生事件文件。
 
 模型1017/Codex的连续身份来自用户上下文；补充包自身只写Flash及reasoning.effort=max。题文、提示、工具权限、成功尝试预算、实际harness构建和新上下文记录缺少独立回执，故只作声明级暂定接纳，不声称完全等条件认证。输出耗尽失败可以重跑；交付后发现的证明或计数错误不能再用这条规则重试。
 
@@ -22,7 +24,7 @@ GR021开头“下面给出完整结论。”作为模型对结论范围的自我
 
 ## MG-GR021：47.5/100
 
-[第3次原答](../results/v0.6.0/deepseek-v4.1-flash-1017/20261105/responses/MG-GR021/A1/attempts/3/answer.md) · [逐项机器评审](../results/v0.6.0/deepseek-v4.1-flash-1017/20261105/reviews/MG-GR021-attempt-3.json)
+[第3次原答](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/responses/MG-GR021/A1/attempts/3/answer.md) · [逐项机器评审](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/reviews/MG-GR021-attempt-3.json)
 
 | 评分项 | 得分 | 满分 |
 |---|---:|---:|
@@ -62,7 +64,7 @@ GR021开头“下面给出完整结论。”作为模型对结论范围的自我
 
 ## MG-GR023：88.5/100
 
-[第2次原答](../results/v0.6.0/deepseek-v4.1-flash-1017/20261105/responses/MG-GR023/A1/attempts/2/answer.md) · [逐项机器评审](../results/v0.6.0/deepseek-v4.1-flash-1017/20261105/reviews/MG-GR023-attempt-2.json)
+[第2次原答](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/responses/MG-GR023/A1/attempts/2/answer.md) · [逐项机器评审](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/reviews/MG-GR023-attempt-2.json)
 
 | 评分项 | 得分 | 满分 |
 |---|---:|---:|

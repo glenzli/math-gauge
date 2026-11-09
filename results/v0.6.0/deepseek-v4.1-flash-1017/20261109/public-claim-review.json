@@ -1,0 +1,1520 @@
+{
+  "schema": "math-gauge.paper-observation-claims/v1",
+  "benchmark_version": "0.6.0",
+  "model_label": "DeepSeek v4.1 Flash Max",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "conditions": {
+    "single_attempt": {
+      "schema": "math-gauge.claim-review-condition/v1",
+      "policy_version": "0.1.0",
+      "model_label": "DeepSeek v4.1 Flash Max",
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "cases": [
+        {
+          "case_id": "MG-GP001",
+          "status": "delivery_failed",
+          "scope_note": "First observed attempt failed to deliver; later mathematics is excluded.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-GP002",
+          "status": "reviewed",
+          "scope_note": "Complete correct six-stage argument, including endpoint arithmetic, a single bad right-hand side, and all parameter quantifiers. No substantive false claim found.",
+          "sources": [
+            {
+              "path": "responses/MG-GP002/A1/answer.md",
+              "bytes": 15706,
+              "sha256": "8132411c90ebe98433322b0ac00ea6b6a48a440ba6e513f66c15922c08b083d3"
+            },
+            {
+              "path": "reviews/MG-GP002.json",
+              "bytes": 21458,
+              "sha256": "a47ae8ece219c88ddfd454174a353f83e97d7f56af64b3de49fa6748542f4470"
+            }
+          ],
+          "source_response_sha256": "8132411c90ebe98433322b0ac00ea6b6a48a440ba6e513f66c15922c08b083d3",
+          "source_review_sha256": "a47ae8ece219c88ddfd454174a353f83e97d7f56af64b3de49fa6748542f4470",
+          "findings": []
+        },
+        {
+          "case_id": "MG-GR005",
+          "status": "reviewed",
+          "scope_note": "Strong valid convex-recovery work. Two locally repairable errors remain: refinement direction in prose and unattained infima in the epigraph-image proof; strict completion fails.",
+          "sources": [
+            {
+              "path": "responses/MG-GR005/A1/answer.md",
+              "bytes": 14390,
+              "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+            },
+            {
+              "path": "reviews/MG-GR005.json",
+              "bytes": 25177,
+              "sha256": "86acdfaae95d5d365f352b191aefc76715352d418a21a585b6d1320d5f1b0d7b"
+            }
+          ],
+          "source_response_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+          "source_review_sha256": "86acdfaae95d5d365f352b191aefc76715352d418a21a585b6d1320d5f1b0d7b",
+          "findings": [
+            {
+              "id": "mg-gr005-1",
+              "root_cause": "refinement_direction_reversal",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The displayed g_F(q_F x)<=g_K(q_K x) means that enlarging F to K increases the observed cost. The following sentence asserts a decrease. The formula itself and the main reconstruction remain correct.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR005/A1/answer.md",
+                  "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+                  "byte_start": 8487,
+                  "byte_end": 8816,
+                  "quote": "若 \\(F\\subset K\\)，由 S1，\n\\[\ng_F(y)=\\inf_{r_{KF}z=y}g_K(z).\n\\]\n也就是说，把观测空间从 \\(F\\) 扩大到 \\(K\\) 后，\\(F\\)-记录是 \\(K\\)-记录沿限制映射的纤维下确界。对于固定点 \\(x\\)，还有\n\\[\ng_F(q_Fx)=\\inf_{r_{KF}z=q_Fx}g_K(z)\\le g_K(q_Kx).\n\\]\n因此原始记录在扩大观测时会下降。"
+                }
+              ]
+            },
+            {
+              "id": "mg-gr005-2",
+              "root_cause": "epigraph_image_assumes_infimum_attainment",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "For E=R^2 and f(x,y)=exp(y), take K=E dual and F the first-coordinate span. Then g_F=0 everywhere but L(epi f) has t>0, whereas epi g_F includes t=0. The same example refutes the second image equality even with g_K already lsc. Only closures of those epigraph images agree. Both false equalities share this root; no duplicate finding is added. The target closed formula itself is true.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR005/A1/answer.md",
+                  "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+                  "byte_start": 11564,
+                  "byte_end": 11984,
+                  "quote": "令\n\\[\nC:=\\operatorname{epi}_{\\mathbb R}g_K\n=\\{(z,t)\\in K^*\\times\\mathbb R:g_K(z)\\le t\\}.\n\\]\n定义连续线性映射\n\\[\nL:K^*\\times\\mathbb R\\to F^*\\times\\mathbb R,\\qquad\nL(z,t)=(r_{KF}z,t).\n\\]\n由 S1 中 \\(g_F=P_{KF}g_K\\)，有\n\\[\nL(C)=\\operatorname{epi} g_F.\n\\]\n又因为 \\(g_K\\) 凸，故\n\\[\n\\overline C=\\operatorname{epi}\\overline{g_K}.\n\\]\n于是\n\\[\nL(\\overline C)=\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr)."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR009",
+          "status": "delivery_failed",
+          "scope_note": "First observed attempt failed to deliver; later mathematics is excluded.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-PS001",
+          "status": "delivery_failed",
+          "scope_note": "First observed attempt failed to deliver; later mathematics is excluded.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-GR021",
+          "status": "delivery_failed",
+          "scope_note": "First observed attempt failed to deliver; later mathematics is excluded.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-GR022",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/MG-GR022/A1/answer.md",
+              "bytes": 19667,
+              "sha256": "1ad1c49f0d0e73a73492a4632325ce3fc9d5d7cb3eb89fdbb14e3b247a234bfe"
+            },
+            {
+              "path": "reviews/MG-GR022.json",
+              "bytes": 2008,
+              "sha256": "22244bf57d68eded8cd4085a76d7f3a7c15b870788d8916552b97610e13dc505"
+            }
+          ],
+          "source_response_sha256": "1ad1c49f0d0e73a73492a4632325ce3fc9d5d7cb3eb89fdbb14e3b247a234bfe",
+          "source_review_sha256": "22244bf57d68eded8cd4085a76d7f3a7c15b870788d8916552b97610e13dc505",
+          "findings": [],
+          "embedded_reliability": {
+            "criterion_id": "R",
+            "maximum": 10,
+            "total": 100,
+            "awarded": 10,
+            "source_score": {
+              "source": 0,
+              "json_pointer": "/slots/13/group_diagnostic/criteria/4/points"
+            }
+          }
+        },
+        {
+          "case_id": "MG-GR023",
+          "status": "delivery_failed",
+          "scope_note": "Operator reports three nonlogical failures and no normal final; delivery0 with no mathematical penalty.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "AHR01",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/AHR01/A1/answer.md",
+              "bytes": 16888,
+              "sha256": "fe82743e7f9516aec093ba76658ff62b65f807ea1347d86cdce1b23a5045d85e"
+            },
+            {
+              "path": "reviews/AHR01.json",
+              "bytes": 2007,
+              "sha256": "1fe28bc55e4e30daaf729910b531828e268585f1828ade774f0e48a811b94ace"
+            }
+          ],
+          "source_response_sha256": "fe82743e7f9516aec093ba76658ff62b65f807ea1347d86cdce1b23a5045d85e",
+          "source_review_sha256": "1fe28bc55e4e30daaf729910b531828e268585f1828ade774f0e48a811b94ace",
+          "findings": []
+        },
+        {
+          "case_id": "AHR02",
+          "status": "reviewed",
+          "scope_note": "成功发现真正的全路径Lip假设范围损失并给正确修复，但另把原文U_{q,J}误引为U_{q,J_q}，提出不存在的正文缺口。",
+          "sources": [
+            {
+              "path": "responses/AHR02/A1/answer.md",
+              "bytes": 12606,
+              "sha256": "a4527b4ced121313a323e00b25a9380acff41ad309c2d13a48b93281f309c147"
+            },
+            {
+              "path": "reviews/AHR02.json",
+              "bytes": 15757,
+              "sha256": "9fad6b04f0251de8648508be1e87cd9ff7b57f424d541b17059af4ec5e70409f"
+            }
+          ],
+          "source_response_sha256": "a4527b4ced121313a323e00b25a9380acff41ad309c2d13a48b93281f309c147",
+          "source_review_sha256": "9fad6b04f0251de8648508be1e87cd9ff7b57f424d541b17059af4ec5e70409f",
+          "findings": [
+            {
+              "id": "ahr02-1",
+              "root_cause": "invented-Jq-global-source",
+              "kind": "false_rejection",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "实际冻结source.md第253至260行全局联合式明确写U_{q,J}，没有该答卷第156至171行所引的任意J_q。该段制造了原文不存在的量词问题，J={1,2},J_q={1}反例不适用于实际原命题。正确发现全路径hLq范围损失的部分仍计满数学贡献；额外实质错误指控扣10%，不作核心清零。",
+              "evidence": [
+                {
+                  "path": "responses/AHR02/A1/answer.md",
+                  "sha256": "a4527b4ced121313a323e00b25a9380acff41ad309c2d13a48b93281f309c147",
+                  "byte_start": 6174,
+                  "byte_end": 6201,
+                  "quote": "正文一般形式写的是"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "AHR03",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/AHR03/A1/answer.md",
+              "bytes": 13890,
+              "sha256": "aa1428767e633028ec89b146d986b65aa0d9287d74ca70cdaa9bc04b1a943dc7"
+            },
+            {
+              "path": "reviews/AHR03.json",
+              "bytes": 2007,
+              "sha256": "732870d2046918eacc301fef60ef811f276687f64179f85d2b019b81da5aee3d"
+            }
+          ],
+          "source_response_sha256": "aa1428767e633028ec89b146d986b65aa0d9287d74ca70cdaa9bc04b1a943dc7",
+          "source_review_sha256": "732870d2046918eacc301fef60ef811f276687f64179f85d2b019b81da5aee3d",
+          "findings": []
+        },
+        {
+          "case_id": "AHR04",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/AHR04/A1/answer.md",
+              "bytes": 10875,
+              "sha256": "e35238f697ac8f1a390d5b5063aa045fc215127e7b882134e461395fa28f92f2"
+            },
+            {
+              "path": "reviews/AHR04.json",
+              "bytes": 2007,
+              "sha256": "bb80009cbec8139835850bf9e2d9ed78c342cc835126da593144d38ef015416c"
+            }
+          ],
+          "source_response_sha256": "e35238f697ac8f1a390d5b5063aa045fc215127e7b882134e461395fa28f92f2",
+          "source_review_sha256": "bb80009cbec8139835850bf9e2d9ed78c342cc835126da593144d38ef015416c",
+          "findings": []
+        },
+        {
+          "case_id": "LCH01",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/LCH01/A1/answer.md",
+              "bytes": 25209,
+              "sha256": "c0b6e0af97e71d8daf16fde0e93e7ac9fb0e7202cf48c6d61a3ca18c5309e4d4"
+            },
+            {
+              "path": "reviews/LCH01.json",
+              "bytes": 2016,
+              "sha256": "5f7c6a542d79234e88c22bd8c57d2cee01602c36d0235bfe7c151522a95c4a5f"
+            }
+          ],
+          "source_response_sha256": "c0b6e0af97e71d8daf16fde0e93e7ac9fb0e7202cf48c6d61a3ca18c5309e4d4",
+          "source_review_sha256": "5f7c6a542d79234e88c22bd8c57d2cee01602c36d0235bfe7c151522a95c4a5f",
+          "findings": []
+        },
+        {
+          "case_id": "LCH02",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/LCH02/A1/answer.md",
+              "bytes": 51467,
+              "sha256": "c4a865ae5a7d1d896c3ce79691807f27580ab1f134cc3485ffbf6b5963580fb3"
+            },
+            {
+              "path": "reviews/LCH02.json",
+              "bytes": 2018,
+              "sha256": "21872ca51126a89835de32636d126045f6b58d14b84cb1a006dbd23176d08c9b"
+            }
+          ],
+          "source_response_sha256": "c4a865ae5a7d1d896c3ce79691807f27580ab1f134cc3485ffbf6b5963580fb3",
+          "source_review_sha256": "21872ca51126a89835de32636d126045f6b58d14b84cb1a006dbd23176d08c9b",
+          "findings": []
+        },
+        {
+          "case_id": "HCH02",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/HCH02/A1/answer.md",
+              "bytes": 83456,
+              "sha256": "f79f7b9beddcb1f051bf4db1817811f6ac17a1f68aa2b55a7f15e039cfa50f35"
+            },
+            {
+              "path": "reviews/HCH02.json",
+              "bytes": 2018,
+              "sha256": "a34afc8e2f31981b375583313d14ab78af238ee9f198ab2fa656d809ad3568d6"
+            }
+          ],
+          "source_response_sha256": "f79f7b9beddcb1f051bf4db1817811f6ac17a1f68aa2b55a7f15e039cfa50f35",
+          "source_review_sha256": "a34afc8e2f31981b375583313d14ab78af238ee9f198ab2fa656d809ad3568d6",
+          "findings": []
+        },
+        {
+          "case_id": "MG-C003",
+          "status": "unresolved",
+          "scope_note": "Original final missing; retained source/terminal identity unresolved, no mathematical claim inferred.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-AR001",
+          "status": "reviewed",
+          "scope_note": "Independent second opinion:90/100, Strict false; one material10 supplementary scope/misreading finding, no core-zero cap. Sound verification of all core mathematics is retained.",
+          "sources": [
+            {
+              "path": "responses/MG-AR001/A1/answer.md",
+              "bytes": 5868,
+              "sha256": "2d8c00fb745035dc6b94c7422b05bc836d23065dcc014a6b6b26317fcd901250"
+            },
+            {
+              "path": "reviews/MG-AR001.json",
+              "bytes": 29866,
+              "sha256": "04a403ac6f724fceb7fa4fbf754505be02855a00cbb8331cc9490f2117e60411"
+            }
+          ],
+          "source_response_sha256": "2d8c00fb745035dc6b94c7422b05bc836d23065dcc014a6b6b26317fcd901250",
+          "source_review_sha256": "04a403ac6f724fceb7fa4fbf754505be02855a00cbb8331cc9490f2117e60411",
+          "findings": [
+            {
+              "id": "mg-ar001-1",
+              "root_cause": "table_editorial_clarifications_promoted_to_substantive_rejection",
+              "kind": "false_rejection",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The original proof explicitly gives existence and uniqueness at every layer before row3; common S2 assumptions continue to apply. The last row says in its own explanation that nilpotence of the limit kernel is not necessary, which is correct and consistent with S2/S3. The reviewer accurately verifies the substantive core and offers reasonable editorial rewrites, but turns contextual shorthand and optional extra consequences into an unsubstantiated verdict that a required mathematical goal is incomplete. Treat all those table complaints as one root; do not penalize every suggested editorial rewrite separately.",
+              "evidence": [
+                {
+                  "path": "responses/MG-AR001/A1/answer.md",
+                  "sha256": "2d8c00fb745035dc6b94c7422b05bc836d23065dcc014a6b6b26317fcd901250",
+                  "byte_start": 17,
+                  "byte_end": 341,
+                  "quote": "**S1–S5 的主要数学结论和论证是正确的；S6 的非交换反例也正确。**  \n但 S6 最后那张“逻辑蕴含整理表”存在**方向写反、前件不足和遗漏蕴含**的问题，因此整份答卷不能判为完全正确、完整。核心证明不需要推翻，主要需修订 S6 的整理部分。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR002",
+          "status": "reviewed",
+          "scope_note": "闭性与全部主证核验正确，对补充第三条仿射/线性条件缺口只作术语提示，证据和修复未闭合。其已明确提示该问题，不将笼统肯定再认定为独立核心错误放行。",
+          "sources": [
+            {
+              "path": "responses/MG-AR002/A1/answer.md",
+              "bytes": 7439,
+              "sha256": "e5b531d7ceb71ceabba5dff1daeea91f60e819e735445b8f76c3474e086521a0"
+            },
+            {
+              "path": "reviews/MG-AR002.json",
+              "bytes": 4742,
+              "sha256": "d0726cf49ff72bbff3441db0fae2122adffcf2b139430cea4b00500e092120a3"
+            }
+          ],
+          "source_response_sha256": "e5b531d7ceb71ceabba5dff1daeea91f60e819e735445b8f76c3474e086521a0",
+          "source_review_sha256": "d0726cf49ff72bbff3441db0fae2122adffcf2b139430cea4b00500e092120a3",
+          "findings": []
+        },
+        {
+          "case_id": "MG-AR003",
+          "status": "reviewed",
+          "scope_note": "关键映射识别与指数律错误均识别，保留有效路线；遗漏两项宇宙大小核查，并额外错误指控开闭集族包含方向相反。",
+          "sources": [
+            {
+              "path": "responses/MG-AR003/A1/answer.md",
+              "bytes": 12872,
+              "sha256": "2d5d12ca5836007227e37baf247c1917ddaa1dbd51c51b408d8e8f393fe1f1aa"
+            },
+            {
+              "path": "reviews/MG-AR003.json",
+              "bytes": 5138,
+              "sha256": "a8fc618bf124d9723de5f704ad30306933c8077f3c39660ad49e497abdcdc40d"
+            }
+          ],
+          "source_response_sha256": "2d5d12ca5836007227e37baf247c1917ddaa1dbd51c51b408d8e8f393fe1f1aa",
+          "source_review_sha256": "a8fc618bf124d9723de5f704ad30306933c8077f3c39660ad49e497abdcdc40d",
+          "findings": [
+            {
+              "id": "mg-ar003-1",
+              "root_cause": "topology-closed-open-containment",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "同一底集上取补是双射：闭集族包含与开集族包含方向相同。原文的两个包含标签并未反向。该错误是可删的局部附加指控，不使正确主审阅成果失效。",
+              "evidence": [
+                {
+                  "path": "responses/MG-AR003/A1/answer.md",
+                  "sha256": "2d5d12ca5836007227e37baf247c1917ddaa1dbd51c51b408d8e8f393fe1f1aa",
+                  "byte_start": 2297,
+                  "byte_end": 2367,
+                  "quote": "若把 \\(\\tau\\) 理解为开集拓扑，则与闭集论证方向相反"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR004",
+          "status": "delivery_failed",
+          "scope_note": "Operator reports three nonlogical failures and no normal final; delivery0 with no mathematical penalty.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-TX001",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-TX001/A1/answer.md",
+              "bytes": 4798,
+              "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7"
+            },
+            {
+              "path": "reviews/MG-TX001.json",
+              "bytes": 13273,
+              "sha256": "853ab7a948e519f4140971bf871b5e23627d6aae50da7f8366d22845ad61bc63"
+            }
+          ],
+          "source_response_sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "source_review_sha256": "853ab7a948e519f4140971bf871b5e23627d6aae50da7f8366d22845ad61bc63",
+          "findings": [
+            {
+              "id": "tx001-missing-constant",
+              "root_cause": "tx001-G-at-one-expansion",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The identity drops the constant t-1. In fact G_t(y)-G_t(1)=sum_{k=1}^{t-1}(y^k-1). Already for permitted p=3,N=9,t=2 and y a nontrivial ninth root, its value is y-1, whereas the displayed sum is y. This is a local algebra error; the correct uniform S_k calculation already in the answer repairs the required case without new mathematics.",
+              "evidence": [
+                {
+                  "path": "responses/MG-TX001/A1/answer.md",
+                  "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+                  "byte_start": 935,
+                  "byte_end": 1168,
+                  "quote": "若 \\(x=1,y\\ne1\\)，则\n\\[\n0=G_t(y)-G_t(1)\n=\\sum_{k=1}^{t-1}y^k\n=\\frac{y(1-y^{t-1})}{1-y}.\n\\]\n于是 \\(y^{t-1}=1\\)。但 \\(p\\nmid(t-1)\\)，而 \\(y\\) 的阶是 \\(p\\) 的幂，故只能有 \\(y=1\\)，矛盾。所以不妨 \\(x,y\\ne1\\)。"
+                }
+              ]
+            },
+            {
+              "id": "tx001-equal-order-ratio",
+              "root_cause": "tx001-ratio-of-primitive-roots",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "Two different roots of the same p-power order need not have a quotient of that same order. Take p=3,N=9,x=zeta_9,y=zeta_9^4: both have order 9, while x/y=zeta_9^6 has order 3, so the displayed equality of valuations is false. This assertion is not needed by the subsequent residue calculation, which only uses x,y == 1 mod P.",
+              "evidence": [
+                {
+                  "path": "responses/MG-TX001/A1/answer.md",
+                  "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+                  "byte_start": 1170,
+                  "byte_end": 1334,
+                  "quote": "### 情形一：\\(x,y\\) 的阶相同\n\n设其公共阶为 \\(p^s\\)。因为二者同阶且不同，\\(x/y\\) 的阶仍为 \\(p^s\\)，所以\n\\[\nv(x-y)=v(x-1)=v(y-1)>0.\n\\]"
+                }
+              ]
+            }
+          ],
+          "baseline_disposition": "correct"
+        },
+        {
+          "case_id": "MG-TX002",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-TX002/A1/answer.md",
+              "bytes": 4378,
+              "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542"
+            },
+            {
+              "path": "reviews/MG-TX002.json",
+              "bytes": 20474,
+              "sha256": "6e589a3bd0d70298086e8e0af19cb1ff070b7ac34a2ae095f66cc2b2da908a5e"
+            }
+          ],
+          "source_response_sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "source_review_sha256": "6e589a3bd0d70298086e8e0af19cb1ff070b7ac34a2ae095f66cc2b2da908a5e",
+          "findings": [
+            {
+              "id": "tx002-unproved-cylinder-count",
+              "root_cause": "tx002-missing-full-boundary-dynamics",
+              "kind": "unsupported_completion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The central count is certified as complete without a defined cylinder state or an established correspondence between rowmotion and the asserted segment motion. Internal row shifts and the (true) period identity do not imply exactly b visits; this requires the missing boundary-count mechanism. The answer never marks that step as conjectural or incomplete. Finite enumeration by the reviewer confirms the intended count in examples, but cannot be inserted as the candidate general proof.",
+              "evidence": [
+                {
+                  "path": "responses/MG-TX002/A1/answer.md",
+                  "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+                  "byte_start": 2448,
+                  "byte_end": 3364,
+                  "quote": "这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复"
+                }
+              ]
+            }
+          ],
+          "baseline_disposition": "incorrect"
+        },
+        {
+          "case_id": "MG-BC001",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-BC001/A1/answer.md",
+              "bytes": 8597,
+              "sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09"
+            },
+            {
+              "path": "reviews/MG-BC001.json",
+              "bytes": 22359,
+              "sha256": "771936f681bc4da2e193f9ebcc3089741756c233f7f9eed43dc7b8c00219d4a8"
+            }
+          ],
+          "source_response_sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09",
+          "source_review_sha256": "771936f681bc4da2e193f9ebcc3089741756c233f7f9eed43dc7b8c00219d4a8",
+          "findings": [
+            {
+              "id": "bc001-impossible-zero-trace-realization",
+              "root_cause": "bc001-localized-laminate-realization",
+              "kind": "false_verification",
+              "severity": "critical",
+              "strict_blocking": true,
+              "core_endorsement": true,
+              "covered_by": "none",
+              "reason": "The answer certifies its concrete near-minimizers have zero trace, all gradients in conv(K union {0}), and vanishing energy. Every matrix in that hull is diagonal. Therefore partial_2 u_1=partial_1 u_2=0; ACL plus the horizontal/vertical zero traces force u_1=u_2=0. Its energy is then dist(0,K)^2=5, contradicting the asserted E->0. The periodic h prescribed with derivative 1/0 and positive average is an additional manifestation of this same missing localized construction, not a separately charged root. A correct localized proof would need a zero-mean oscillatory perturbation and small off-diagonal cutoff errors, which the answer explicitly rules out by its convex-hull claim. This is a false verification of the central requested actual construction, so the task-level RMC cap applies while valid cycle evidence remains positive.",
+              "evidence": [
+                {
+                  "path": "responses/MG-BC001/A1/answer.md",
+                  "sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09",
+                  "byte_start": 8102,
+                  "byte_end": 8526,
+                  "quote": "近最优位移可由四步秩一循环\n\\[\nM_0\n\\xrightarrow[\\;1/4\\;]{A_4}M_1\n\\xrightarrow[\\;1/3\\;]{A_3}M_2\n\\xrightarrow[\\;1/2\\;]{A_2}M_3\n\\xrightarrow[\\;1/3\\;]{A_1}M_0\n\\]\n的有限截断层合实现；其梯度保持在 \\(K\\cup\\{0\\}\\) 的凸包内，故统一满足\n\\[\n\\|\\nabla u\\|_F\\le3<4,\n\\]\n零边界由标准零迹修正层实现，能量满足\n\\[\nE(u_{N,\\delta_N})\n\\le\n5\\left(\\frac16\\right)^N+C\\delta_N\n\\longrightarrow0."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-BC002",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-BC002/A1/answer.md",
+              "bytes": 7382,
+              "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86"
+            },
+            {
+              "path": "reviews/MG-BC002.json",
+              "bytes": 12530,
+              "sha256": "11efeb22d3ad2b9c22e381ce1a3a54bb808a57dc248a31997ba2ff51c96e3618"
+            }
+          ],
+          "source_response_sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "source_review_sha256": "11efeb22d3ad2b9c22e381ce1a3a54bb808a57dc248a31997ba2ff51c96e3618",
+          "findings": [
+            {
+              "id": "bc002-pl-invalid-inference",
+              "root_cause": "bc002-lower-bound-used-as-upper-bound",
+              "kind": "unsupported_completion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "From f(z-g(z)) >= f(z)-||g(z)||^2/2 and f(z-g(z)) >= 0 one cannot conclude f(z)-||g(z)||^2/2 <= 0. Both displayed comparisons are lower bounds on the same quantity. The requested bound ||g(z)||^2>=2f(z) is true, but this is not its proof. The local repair is to use the strong-convexity inequality with w=0 and bound g(z) dot z-||z||^2/2 <=||g(z)||^2/2. This does not impair the independently valid proximal obstruction or create an actual false-prox endorsement.",
+              "evidence": [
+                {
+                  "path": "responses/MG-BC002/A1/answer.md",
+                  "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+                  "byte_start": 1806,
+                  "byte_end": 2027,
+                  "quote": "Strong convexity gives, for all \\(z,w\\),\n\n\\[\nf(w)\\ge f(z)+\\langle g(z),w-z\\rangle+\\frac12\\|w-z\\|^2.\n\\]\n\nTake \\(w=z-g(z)\\). Since \\(f\\ge0\\),\n\n\\[\n0\\le f(z-g(z))\n\\ge f(z)-\\frac12\\|g(z)\\|^2,\n\\]\n\nso\n\n\\[\n\\|g(z)\\|^2\\ge 2f(z).\n\\]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-MCP003",
+          "status": "reviewed",
+          "scope_note": "正向89/100。有效域内正有限逐对上斜率、真正下界和零类矩阵均有有效贡献；无限输入未进入U却被当作已控制，造成上复合与双Lip宣告错误。单位/常值的退化边界另记根因。Strict不通过；名义普通扣罚10+5+5，核心清零不自动启动。",
+          "sources": [
+            {
+              "path": "responses/MG-MCP003/A1/answer.md",
+              "bytes": 15723,
+              "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2"
+            },
+            {
+              "path": "reviews/MG-MCP003.json",
+              "bytes": 31573,
+              "sha256": "f8a1c10d2535259448c5f939e664843f2e0c8a0c818cb8c14c9720d9e75e4e84"
+            }
+          ],
+          "source_response_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+          "source_review_sha256": "f8a1c10d2535259448c5f939e664843f2e0c8a0c818cb8c14c9720d9e75e4e84",
+          "findings": [
+            {
+              "id": "mg-mcp003-1",
+              "root_cause": "mcp003_upper_slope_omits_infinite_input_pairs",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "上矩阵只对正有限输入距离取商。反例：X*={a,b,c,d}，d(a,b)=1，其他不同非底点距离∞，补隔离⊥；φ仅在a,b有效且φ(a)=c, φ(b)=d；ψ仅在c,d有效并恒等。这是分离的扩展度量，ψ自动全零保持。Uφ=∞，Uψ=0（没有正有限有效点对），U(ψ∘φ)=∞，但其右端为0·∞=0。证明第394行把‘某分量正’误当成‘某分量正且有限’，违反自己2.2的前提。同根还使4.3的双Lip上界失败：两有效点距离∞、φ=id时ell=∞>0,K=1,u=0<∞，上界却要求∞<=0·∞=0。两处只记一次最高material。",
+              "evidence": [
+                {
+                  "path": "responses/MG-MCP003/A1/answer.md",
+                  "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+                  "byte_start": 9629,
+                  "byte_end": 10130,
+                  "quote": "2. **上矩阵在“全零保持”条件下次可乘。** 若 \\(\\psi\\) 满足\n\n\\[\n\\forall x,y\\in\\operatorname{dom}(\\psi),\\quad\n\\Big(\\forall j\\in I,\\ d_j(x,y)=0\\Big)\n\\Longrightarrow\n\\Big(\\forall k\\in I,\\ d_k(\\psi x,\\psi y)=0\\Big),\n\\]\n\n则对有限正输入距离有\n\n\\[\nu^{\\psi\\circ\\phi}_{ki}\n\\le\n\\max_{j\\in I}u^\\psi_{kj}u^\\phi_{ji}.\n\\]\n\n在通常的分离规范空间（全分量零距离仅当两点相同）中，该条件自动满足，于是\n\n\\[\nU(\\psi\\circ\\phi)\n\\preceq\nU(\\psi)\\boxtimes U(\\phi)."
+                }
+              ]
+            },
+            {
+              "id": "mg-mcp003-2",
+              "root_cause": "mcp003_identity_lower_specialization_drops_infinite_boundary",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "定义3.1已要求一旦输入i距离∞而输出j距离有限，ell_ji=0；单位算子式只写正有限输入点对商的inf，漏这一分支。取X*={a,b}，d1(a,b)=∞、d2(a,b)=1，两个分量各为扩展度量并补隔离⊥。φ=id时真实ell_{2,1}=0，而所显示inf空集=∞。局部特化式可修，但现式实质错误。",
+              "evidence": [
+                {
+                  "path": "responses/MG-MCP003/A1/answer.md",
+                  "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+                  "byte_start": 12036,
+                  "byte_end": 12278,
+                  "quote": "对恒等算子 \\(\\mathrm{id}_{\\mathcal X}\\)，\n\n\\[\nu_{ji}(\\mathrm{id})\n=\n\\sup_{\\substack{0<d_i(x,y)<\\infty}}\n\\frac{d_j(x,y)}{d_i(x,y)},\n\\qquad\n\\ell_{ji}(\\mathrm{id})\n=\n\\inf_{\\substack{0<d_i(x,y)<\\infty}}\n\\frac{d_j(x,y)}{d_i(x,y)}.\n\\]\n\n并且"
+                }
+              ]
+            },
+            {
+              "id": "mg-mcp003-3",
+              "root_cause": "mcp003_constant_lower_ignores_vacuous_pairs",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "常值算子不必有L=0。取X*={a,b}、d(a,b)=0并补隔离⊥，φ在a,b恒取a。没有正有限输入点对，也没有∞输入/有限输出点对，按其定义ell=inf空集=∞，不是0。单元素有效域或空有效域同样失败。需额外存在相应正输入距离条件，不能由‘输出常值’单独推出所显示L=0。",
+              "evidence": [
+                {
+                  "path": "responses/MG-MCP003/A1/answer.md",
+                  "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+                  "byte_start": 13165,
+                  "byte_end": 13562,
+                  "quote": "2. **常值算子**  \n   若 \\(\\phi(x)=x_0\\neq\\bot\\) 对所有 \\(x\\in\\operatorname{dom}(\\phi)\\)，则\n   \\[\n   U(\\phi)=0,\\qquad L(\\phi)=0,\\qquad K(\\phi)=\\mathbf 1\n   \\]\n   （所有 \\(k_{ji}=1\\)）。上矩阵为 \\(0\\) 表示像是零直径；下矩阵为 \\(0\\) 表示所有可区分性都被压掉；\\(K=\\mathbf 1\\) 表示每个输入零类都被送进每个输出零类。\n\n3. **无界算子**  "
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "nonlogical_retry_3": {
+      "schema": "math-gauge.claim-review-condition/v1",
+      "policy_version": "0.1.0",
+      "model_label": "DeepSeek v4.1 Flash Max",
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "cases": [
+        {
+          "case_id": "MG-GP001",
+          "status": "reviewed",
+          "scope_note": "All six target conclusions are correct. One substantive local false containment in the empty-link exclusion prevents strict completion; the remaining constructions and classification are valid.",
+          "sources": [
+            {
+              "path": "responses/MG-GP001/A1/answer.md",
+              "bytes": 12051,
+              "sha256": "de968638b6fb8a2b6132008bdd8ae83b161deb15ae8dc4d2ae99d578358499aa"
+            },
+            {
+              "path": "reviews/MG-GP001.json",
+              "bytes": 20851,
+              "sha256": "266d4d4169984459a02cbf0051639bfcaa0bd38e5ce8d75952edea623caf3097"
+            }
+          ],
+          "source_response_sha256": "de968638b6fb8a2b6132008bdd8ae83b161deb15ae8dc4d2ae99d578358499aa",
+          "source_review_sha256": "266d4d4169984459a02cbf0051639bfcaa0bd38e5ce8d75952edea623caf3097",
+          "findings": [
+            {
+              "id": "mg-gp001-1",
+              "root_cause": "isolated_vertex_does_not_force_singleton_subcomplex",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "Take K consisting of two isolated vertices v,w and B=K: v is isolated but B is not a subcomplex of {v}. This is a counterexample to the asserted intermediate containment, not to the task theorem (the homotopy-equivalence hypothesis then fails on components). A component argument repairs it locally; no false core theorem is endorsed.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GP001/A1/answer.md",
+                  "sha256": "de968638b6fb8a2b6132008bdd8ae83b161deb15ae8dc4d2ae99d578358499aa",
+                  "byte_start": 5602,
+                  "byte_end": 5921,
+                  "quote": "在 S4 的假设下，\\(C=|B|\\) 含 \\(v\\)，且\n\\[\nA=O\\cap C=C\\setminus\\{v\\}\\longrightarrow C\n\\]\n是同伦等价。若 \\(v\\) 在 \\(K\\) 中是孤立点，则 \\(B\\subset\\{v\\}\\)，从而 \\(C=\\{v\\}\\)，\\(A=\\varnothing\\)，空集不可能同伦等价于非空单点空间。因此 \\(v\\) 非孤立。由穿刺-悬挂引理，"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GP002",
+          "status": "reviewed",
+          "scope_note": "Complete correct six-stage argument, including endpoint arithmetic, a single bad right-hand side, and all parameter quantifiers. No substantive false claim found.",
+          "sources": [
+            {
+              "path": "responses/MG-GP002/A1/answer.md",
+              "bytes": 15706,
+              "sha256": "8132411c90ebe98433322b0ac00ea6b6a48a440ba6e513f66c15922c08b083d3"
+            },
+            {
+              "path": "reviews/MG-GP002.json",
+              "bytes": 21458,
+              "sha256": "a47ae8ece219c88ddfd454174a353f83e97d7f56af64b3de49fa6748542f4470"
+            }
+          ],
+          "source_response_sha256": "8132411c90ebe98433322b0ac00ea6b6a48a440ba6e513f66c15922c08b083d3",
+          "source_review_sha256": "a47ae8ece219c88ddfd454174a353f83e97d7f56af64b3de49fa6748542f4470",
+          "findings": []
+        },
+        {
+          "case_id": "MG-GR005",
+          "status": "reviewed",
+          "scope_note": "Strong valid convex-recovery work. Two locally repairable errors remain: refinement direction in prose and unattained infima in the epigraph-image proof; strict completion fails.",
+          "sources": [
+            {
+              "path": "responses/MG-GR005/A1/answer.md",
+              "bytes": 14390,
+              "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41"
+            },
+            {
+              "path": "reviews/MG-GR005.json",
+              "bytes": 25177,
+              "sha256": "86acdfaae95d5d365f352b191aefc76715352d418a21a585b6d1320d5f1b0d7b"
+            }
+          ],
+          "source_response_sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+          "source_review_sha256": "86acdfaae95d5d365f352b191aefc76715352d418a21a585b6d1320d5f1b0d7b",
+          "findings": [
+            {
+              "id": "mg-gr005-1",
+              "root_cause": "refinement_direction_reversal",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The displayed g_F(q_F x)<=g_K(q_K x) means that enlarging F to K increases the observed cost. The following sentence asserts a decrease. The formula itself and the main reconstruction remain correct.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR005/A1/answer.md",
+                  "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+                  "byte_start": 8487,
+                  "byte_end": 8816,
+                  "quote": "若 \\(F\\subset K\\)，由 S1，\n\\[\ng_F(y)=\\inf_{r_{KF}z=y}g_K(z).\n\\]\n也就是说，把观测空间从 \\(F\\) 扩大到 \\(K\\) 后，\\(F\\)-记录是 \\(K\\)-记录沿限制映射的纤维下确界。对于固定点 \\(x\\)，还有\n\\[\ng_F(q_Fx)=\\inf_{r_{KF}z=q_Fx}g_K(z)\\le g_K(q_Kx).\n\\]\n因此原始记录在扩大观测时会下降。"
+                }
+              ]
+            },
+            {
+              "id": "mg-gr005-2",
+              "root_cause": "epigraph_image_assumes_infimum_attainment",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "For E=R^2 and f(x,y)=exp(y), take K=E dual and F the first-coordinate span. Then g_F=0 everywhere but L(epi f) has t>0, whereas epi g_F includes t=0. The same example refutes the second image equality even with g_K already lsc. Only closures of those epigraph images agree. Both false equalities share this root; no duplicate finding is added. The target closed formula itself is true.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR005/A1/answer.md",
+                  "sha256": "619c3a6007262076152bb1504707fbc68bc4839ae02db18d029d59dcbe9e3b41",
+                  "byte_start": 11564,
+                  "byte_end": 11984,
+                  "quote": "令\n\\[\nC:=\\operatorname{epi}_{\\mathbb R}g_K\n=\\{(z,t)\\in K^*\\times\\mathbb R:g_K(z)\\le t\\}.\n\\]\n定义连续线性映射\n\\[\nL:K^*\\times\\mathbb R\\to F^*\\times\\mathbb R,\\qquad\nL(z,t)=(r_{KF}z,t).\n\\]\n由 S1 中 \\(g_F=P_{KF}g_K\\)，有\n\\[\nL(C)=\\operatorname{epi} g_F.\n\\]\n又因为 \\(g_K\\) 凸，故\n\\[\n\\overline C=\\operatorname{epi}\\overline{g_K}.\n\\]\n于是\n\\[\nL(\\overline C)=\\operatorname{epi}\\bigl(P_{KF}\\overline{g_K}\\bigr)."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR009",
+          "status": "reviewed",
+          "scope_note": "All required descent constructions and counterexamples are valid. A final supplementary necessity claim about finite base tests is false, so strict completion fails.",
+          "sources": [
+            {
+              "path": "responses/MG-GR009/A1/answer.md",
+              "bytes": 22450,
+              "sha256": "71f0e5f2ad3a89ecc2afa5416ebd8b77000462fec31210dcdf785c40c7a7689b"
+            },
+            {
+              "path": "reviews/MG-GR009.json",
+              "bytes": 31439,
+              "sha256": "79dd248fe21a4524e36163191cdd18ebef72717ece4a8df80e365cf775dd5f0a"
+            }
+          ],
+          "source_response_sha256": "71f0e5f2ad3a89ecc2afa5416ebd8b77000462fec31210dcdf785c40c7a7689b",
+          "source_review_sha256": "79dd248fe21a4524e36163191cdd18ebef72717ece4a8df80e365cf775dd5f0a",
+          "findings": [
+            {
+              "id": "mg-gr009-1",
+              "root_cause": "cover_sufficient_condition_promoted_to_necessary_test",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "Take the trivial group and T={a,b}. Then H=Q=h_T and every E over H is already realized with D=E. A nonsurjective B=h_{a}->Q therefore reflects realizability for every E, although S->Q is not surjective. The displayed iff is false as an unqualified characterization of bidirectional testing. The correct local-epimorphism iff for S->Q itself and the actual S6 counterexample are unaffected.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR009/A1/answer.md",
+                  "sha256": "71f0e5f2ad3a89ecc2afa5416ebd8b77000462fec31210dcdf785c40c7a7689b",
+                  "byte_start": 21925,
+                  "byte_end": 22418,
+                  "quote": "6. **有限离散商上的实用判别**  \n   特别地，在 S2 的有限情形，\\(Q=T/\\Gamma\\) 是有限离散的。若取可表示基底 \\(B=h_S\\) 及映射 \\(h_S\\to h_Q\\)，则它在层意义下局部满射当且仅当 \\(S\\to Q\\) 在点上满射。因此：\n   \\[\n   B=h_S\\text{ 可以用来作双向检验}\n   \\iff\n   S\\to Q\\text{ 满射}.\n   \\]\n   单个非空点 \\(B=h_*\\) 只能检验其像所在的那个轨道；若 \\(Q\\) 还有别的轨道，就不能据此推出全局可实现。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-PS001",
+          "status": "reviewed",
+          "scope_note": "Complete correct solution of both goals. The sparse-ramp interior construction supplies the needed all-parameter root bound and all boundary cases are covered. No substantive false claim found.",
+          "sources": [
+            {
+              "path": "responses/MG-PS001/A1/answer.md",
+              "bytes": 12973,
+              "sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200"
+            },
+            {
+              "path": "reviews/MG-PS001.json",
+              "bytes": 20494,
+              "sha256": "fe7b4abb15a1968665691fd593d6cf1200337c27dcc17f6b0c677ac648c4668e"
+            }
+          ],
+          "source_response_sha256": "b34d46258dd1e5332e699732df2cf753e1961e64958c96b852867b206d0d0200",
+          "source_review_sha256": "fe7b4abb15a1968665691fd593d6cf1200337c27dcc17f6b0c677ac648c4668e",
+          "findings": []
+        },
+        {
+          "case_id": "MG-GR021",
+          "status": "reviewed",
+          "scope_note": "Headline formulas and optimal precision are largely correct, but the proof has fundamental p=2 exponential and ramified-parameter errors and omits actual integral lifting. Frozen full/half/zero subcheck total60/100 includes10 legacy reliability points; valid mathematical contribution is50/90. Strict fails.",
+          "sources": [
+            {
+              "path": "responses/MG-GR021/A1/answer.md",
+              "bytes": 25176,
+              "sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5"
+            },
+            {
+              "path": "reviews/MG-GR021.json",
+              "bytes": 45652,
+              "sha256": "e727bddd22e424bc9fec4d3db08ba075dbb221e468443d4b4093239730be79a0"
+            }
+          ],
+          "source_response_sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5",
+          "source_review_sha256": "e727bddd22e424bc9fec4d3db08ba075dbb221e468443d4b4093239730be79a0",
+          "findings": [
+            {
+              "id": "mg-gr021-1",
+              "root_cause": "invalid_level2_orthogonal_exponential_parametrization",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "For n=2, diag(-1,1) lies in O_2(Z2) and is I mod2 but has determinant-1; every +/-I times an exponential of a skew matrix has determinant1, contradicting the displayed identity. Moreover exp(2 C) generally does not converge: at n=2^j the valuation of its nonzero nth term is n-v_2(n!)=1, so terms do not tend to0. The same level2 issue affects O_K. Counts and the descent lower-bound proof use this invalid parametrization; the separately high-valuation sharpness witness is valid. The headline target conclusions are true, so this is a material invalid-proof commitment, not evidence of an endorsed false core conclusion warranting a zero cap.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR021/A1/answer.md",
+                  "sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5",
+                  "byte_start": 6217,
+                  "byte_end": 6449,
+                  "quote": "对 \\(\\mathscr R^F_{n,M}\\)，利用标准事实\n\\[\n\\{U\\in O_n(\\mathbb Z_2):U\\equiv I\\pmod2\\}\n=\\{\\pm I\\}\\exp\\bigl(2\\mathfrak{so}_n(\\mathbb Z_2)\\bigr),\n\\]\n且 \\(p\\)-adic 对数在 \\(I+4M_n(\\mathbb Z_2)\\) 上给出标准同构。由此"
+                }
+              ]
+            },
+            {
+              "id": "mg-gr021-2",
+              "root_cause": "q2i_uniformizer_treated_as_antiinvariant_base_scalar",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "For Q2(i), pi=1+i gives sigma(pi)+pi=2, which is not0 modulo pi^(2M) for M>=2. Also pi^2=2i is not in Q2, so exp(pi^2 A_i) cannot be asserted to lie in O_n(Z2). This is a separate ramified-coefficient error in the proposed base descent construction. Epsilon=2^(M-1)pi is still fixed modulo2^M, and the high-valuation witness remains correct; those independent contributions are preserved. No false optimal-precision theorem itself is established, so no automatic core-zero cap is recommended.",
+              "evidence": [
+                {
+                  "path": "responses/MG-GR021/A1/answer.md",
+                  "sha256": "701972d8eb397f27b11f16f9c7655197be12ad95209bdb4187f9ea8895960dd5",
+                  "byte_start": 381,
+                  "byte_end": 624,
+                  "quote": "- 对 \\(K_\\mu\\)，取一致化元 \\(\\pi=\\pi_\\mu\\)，使 \\(2\\in \\pi^2\\mathcal O_\\mu^\\times\\)，且\n  \\[\n  \\sigma_\\mu(\\pi)\\equiv-\\pi\\pmod{\\pi^{2M}}\\quad(M\\ge2).\n  \\]\n  例如 \\(K_2\\) 取 \\(\\pi=\\theta\\)；\\(K_{-1}\\) 取 \\(\\pi=1+\\theta\\) 即可。"
+                }
+              ]
+            }
+          ],
+          "embedded_reliability": {
+            "criterion_id": "assertion_reliability",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100
+          }
+        },
+        {
+          "case_id": "MG-GR022",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/MG-GR022/A1/answer.md",
+              "bytes": 19667,
+              "sha256": "1ad1c49f0d0e73a73492a4632325ce3fc9d5d7cb3eb89fdbb14e3b247a234bfe"
+            },
+            {
+              "path": "reviews/MG-GR022.json",
+              "bytes": 2008,
+              "sha256": "22244bf57d68eded8cd4085a76d7f3a7c15b870788d8916552b97610e13dc505"
+            }
+          ],
+          "source_response_sha256": "1ad1c49f0d0e73a73492a4632325ce3fc9d5d7cb3eb89fdbb14e3b247a234bfe",
+          "source_review_sha256": "22244bf57d68eded8cd4085a76d7f3a7c15b870788d8916552b97610e13dc505",
+          "findings": [],
+          "embedded_reliability": {
+            "criterion_id": "R",
+            "maximum": 10,
+            "total": 100,
+            "awarded": 10,
+            "source_score": {
+              "source": 0,
+              "json_pointer": "/slots/13/group_diagnostic/criteria/4/points"
+            }
+          }
+        },
+        {
+          "case_id": "MG-GR023",
+          "status": "delivery_failed",
+          "scope_note": "Operator reports three nonlogical failures and no normal final; delivery0 with no mathematical penalty.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "AHR01",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/AHR01/A1/answer.md",
+              "bytes": 16888,
+              "sha256": "fe82743e7f9516aec093ba76658ff62b65f807ea1347d86cdce1b23a5045d85e"
+            },
+            {
+              "path": "reviews/AHR01.json",
+              "bytes": 2007,
+              "sha256": "1fe28bc55e4e30daaf729910b531828e268585f1828ade774f0e48a811b94ace"
+            }
+          ],
+          "source_response_sha256": "fe82743e7f9516aec093ba76658ff62b65f807ea1347d86cdce1b23a5045d85e",
+          "source_review_sha256": "1fe28bc55e4e30daaf729910b531828e268585f1828ade774f0e48a811b94ace",
+          "findings": []
+        },
+        {
+          "case_id": "AHR02",
+          "status": "reviewed",
+          "scope_note": "成功发现真正的全路径Lip假设范围损失并给正确修复，但另把原文U_{q,J}误引为U_{q,J_q}，提出不存在的正文缺口。",
+          "sources": [
+            {
+              "path": "responses/AHR02/A1/answer.md",
+              "bytes": 12606,
+              "sha256": "a4527b4ced121313a323e00b25a9380acff41ad309c2d13a48b93281f309c147"
+            },
+            {
+              "path": "reviews/AHR02.json",
+              "bytes": 15757,
+              "sha256": "9fad6b04f0251de8648508be1e87cd9ff7b57f424d541b17059af4ec5e70409f"
+            }
+          ],
+          "source_response_sha256": "a4527b4ced121313a323e00b25a9380acff41ad309c2d13a48b93281f309c147",
+          "source_review_sha256": "9fad6b04f0251de8648508be1e87cd9ff7b57f424d541b17059af4ec5e70409f",
+          "findings": [
+            {
+              "id": "ahr02-1",
+              "root_cause": "invented-Jq-global-source",
+              "kind": "false_rejection",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "实际冻结source.md第253至260行全局联合式明确写U_{q,J}，没有该答卷第156至171行所引的任意J_q。该段制造了原文不存在的量词问题，J={1,2},J_q={1}反例不适用于实际原命题。正确发现全路径hLq范围损失的部分仍计满数学贡献；额外实质错误指控扣10%，不作核心清零。",
+              "evidence": [
+                {
+                  "path": "responses/AHR02/A1/answer.md",
+                  "sha256": "a4527b4ced121313a323e00b25a9380acff41ad309c2d13a48b93281f309c147",
+                  "byte_start": 6174,
+                  "byte_end": 6201,
+                  "quote": "正文一般形式写的是"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "AHR03",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/AHR03/A1/answer.md",
+              "bytes": 13890,
+              "sha256": "aa1428767e633028ec89b146d986b65aa0d9287d74ca70cdaa9bc04b1a943dc7"
+            },
+            {
+              "path": "reviews/AHR03.json",
+              "bytes": 2007,
+              "sha256": "732870d2046918eacc301fef60ef811f276687f64179f85d2b019b81da5aee3d"
+            }
+          ],
+          "source_response_sha256": "aa1428767e633028ec89b146d986b65aa0d9287d74ca70cdaa9bc04b1a943dc7",
+          "source_review_sha256": "732870d2046918eacc301fef60ef811f276687f64179f85d2b019b81da5aee3d",
+          "findings": []
+        },
+        {
+          "case_id": "AHR04",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/AHR04/A1/answer.md",
+              "bytes": 10875,
+              "sha256": "e35238f697ac8f1a390d5b5063aa045fc215127e7b882134e461395fa28f92f2"
+            },
+            {
+              "path": "reviews/AHR04.json",
+              "bytes": 2007,
+              "sha256": "bb80009cbec8139835850bf9e2d9ed78c342cc835126da593144d38ef015416c"
+            }
+          ],
+          "source_response_sha256": "e35238f697ac8f1a390d5b5063aa045fc215127e7b882134e461395fa28f92f2",
+          "source_review_sha256": "bb80009cbec8139835850bf9e2d9ed78c342cc835126da593144d38ef015416c",
+          "findings": []
+        },
+        {
+          "case_id": "LCH01",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/LCH01/A1/answer.md",
+              "bytes": 25209,
+              "sha256": "c0b6e0af97e71d8daf16fde0e93e7ac9fb0e7202cf48c6d61a3ca18c5309e4d4"
+            },
+            {
+              "path": "reviews/LCH01.json",
+              "bytes": 2016,
+              "sha256": "5f7c6a542d79234e88c22bd8c57d2cee01602c36d0235bfe7c151522a95c4a5f"
+            }
+          ],
+          "source_response_sha256": "c0b6e0af97e71d8daf16fde0e93e7ac9fb0e7202cf48c6d61a3ca18c5309e4d4",
+          "source_review_sha256": "5f7c6a542d79234e88c22bd8c57d2cee01602c36d0235bfe7c151522a95c4a5f",
+          "findings": []
+        },
+        {
+          "case_id": "LCH02",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/LCH02/A1/answer.md",
+              "bytes": 51467,
+              "sha256": "c4a865ae5a7d1d896c3ce79691807f27580ab1f134cc3485ffbf6b5963580fb3"
+            },
+            {
+              "path": "reviews/LCH02.json",
+              "bytes": 2018,
+              "sha256": "21872ca51126a89835de32636d126045f6b58d14b84cb1a006dbd23176d08c9b"
+            }
+          ],
+          "source_response_sha256": "c4a865ae5a7d1d896c3ce79691807f27580ab1f134cc3485ffbf6b5963580fb3",
+          "source_review_sha256": "21872ca51126a89835de32636d126045f6b58d14b84cb1a006dbd23176d08c9b",
+          "findings": []
+        },
+        {
+          "case_id": "HCH02",
+          "status": "reviewed",
+          "scope_note": "User-preselected unchanged legacy A1 and engineering judgment; no mathematical rescoring or new candidate call.",
+          "sources": [
+            {
+              "path": "responses/HCH02/A1/answer.md",
+              "bytes": 83456,
+              "sha256": "f79f7b9beddcb1f051bf4db1817811f6ac17a1f68aa2b55a7f15e039cfa50f35"
+            },
+            {
+              "path": "reviews/HCH02.json",
+              "bytes": 2018,
+              "sha256": "a34afc8e2f31981b375583313d14ab78af238ee9f198ab2fa656d809ad3568d6"
+            }
+          ],
+          "source_response_sha256": "f79f7b9beddcb1f051bf4db1817811f6ac17a1f68aa2b55a7f15e039cfa50f35",
+          "source_review_sha256": "a34afc8e2f31981b375583313d14ab78af238ee9f198ab2fa656d809ad3568d6",
+          "findings": []
+        },
+        {
+          "case_id": "MG-C003",
+          "status": "unresolved",
+          "scope_note": "Original final missing; retained source/terminal identity unresolved, no mathematical claim inferred.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-AR001",
+          "status": "reviewed",
+          "scope_note": "Independent second opinion:90/100, Strict false; one material10 supplementary scope/misreading finding, no core-zero cap. Sound verification of all core mathematics is retained.",
+          "sources": [
+            {
+              "path": "responses/MG-AR001/A1/answer.md",
+              "bytes": 5868,
+              "sha256": "2d8c00fb745035dc6b94c7422b05bc836d23065dcc014a6b6b26317fcd901250"
+            },
+            {
+              "path": "reviews/MG-AR001.json",
+              "bytes": 29866,
+              "sha256": "04a403ac6f724fceb7fa4fbf754505be02855a00cbb8331cc9490f2117e60411"
+            }
+          ],
+          "source_response_sha256": "2d8c00fb745035dc6b94c7422b05bc836d23065dcc014a6b6b26317fcd901250",
+          "source_review_sha256": "04a403ac6f724fceb7fa4fbf754505be02855a00cbb8331cc9490f2117e60411",
+          "findings": [
+            {
+              "id": "mg-ar001-1",
+              "root_cause": "table_editorial_clarifications_promoted_to_substantive_rejection",
+              "kind": "false_rejection",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The original proof explicitly gives existence and uniqueness at every layer before row3; common S2 assumptions continue to apply. The last row says in its own explanation that nilpotence of the limit kernel is not necessary, which is correct and consistent with S2/S3. The reviewer accurately verifies the substantive core and offers reasonable editorial rewrites, but turns contextual shorthand and optional extra consequences into an unsubstantiated verdict that a required mathematical goal is incomplete. Treat all those table complaints as one root; do not penalize every suggested editorial rewrite separately.",
+              "evidence": [
+                {
+                  "path": "responses/MG-AR001/A1/answer.md",
+                  "sha256": "2d8c00fb745035dc6b94c7422b05bc836d23065dcc014a6b6b26317fcd901250",
+                  "byte_start": 17,
+                  "byte_end": 341,
+                  "quote": "**S1–S5 的主要数学结论和论证是正确的；S6 的非交换反例也正确。**  \n但 S6 最后那张“逻辑蕴含整理表”存在**方向写反、前件不足和遗漏蕴含**的问题，因此整份答卷不能判为完全正确、完整。核心证明不需要推翻，主要需修订 S6 的整理部分。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR002",
+          "status": "reviewed",
+          "scope_note": "闭性与全部主证核验正确，对补充第三条仿射/线性条件缺口只作术语提示，证据和修复未闭合。其已明确提示该问题，不将笼统肯定再认定为独立核心错误放行。",
+          "sources": [
+            {
+              "path": "responses/MG-AR002/A1/answer.md",
+              "bytes": 7439,
+              "sha256": "e5b531d7ceb71ceabba5dff1daeea91f60e819e735445b8f76c3474e086521a0"
+            },
+            {
+              "path": "reviews/MG-AR002.json",
+              "bytes": 4742,
+              "sha256": "d0726cf49ff72bbff3441db0fae2122adffcf2b139430cea4b00500e092120a3"
+            }
+          ],
+          "source_response_sha256": "e5b531d7ceb71ceabba5dff1daeea91f60e819e735445b8f76c3474e086521a0",
+          "source_review_sha256": "d0726cf49ff72bbff3441db0fae2122adffcf2b139430cea4b00500e092120a3",
+          "findings": []
+        },
+        {
+          "case_id": "MG-AR003",
+          "status": "reviewed",
+          "scope_note": "关键映射识别与指数律错误均识别，保留有效路线；遗漏两项宇宙大小核查，并额外错误指控开闭集族包含方向相反。",
+          "sources": [
+            {
+              "path": "responses/MG-AR003/A1/answer.md",
+              "bytes": 12872,
+              "sha256": "2d5d12ca5836007227e37baf247c1917ddaa1dbd51c51b408d8e8f393fe1f1aa"
+            },
+            {
+              "path": "reviews/MG-AR003.json",
+              "bytes": 5138,
+              "sha256": "a8fc618bf124d9723de5f704ad30306933c8077f3c39660ad49e497abdcdc40d"
+            }
+          ],
+          "source_response_sha256": "2d5d12ca5836007227e37baf247c1917ddaa1dbd51c51b408d8e8f393fe1f1aa",
+          "source_review_sha256": "a8fc618bf124d9723de5f704ad30306933c8077f3c39660ad49e497abdcdc40d",
+          "findings": [
+            {
+              "id": "mg-ar003-1",
+              "root_cause": "topology-closed-open-containment",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "同一底集上取补是双射：闭集族包含与开集族包含方向相同。原文的两个包含标签并未反向。该错误是可删的局部附加指控，不使正确主审阅成果失效。",
+              "evidence": [
+                {
+                  "path": "responses/MG-AR003/A1/answer.md",
+                  "sha256": "2d5d12ca5836007227e37baf247c1917ddaa1dbd51c51b408d8e8f393fe1f1aa",
+                  "byte_start": 2297,
+                  "byte_end": 2367,
+                  "quote": "若把 \\(\\tau\\) 理解为开集拓扑，则与闭集论证方向相反"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR004",
+          "status": "delivery_failed",
+          "scope_note": "Operator reports three nonlogical failures and no normal final; delivery0 with no mathematical penalty.",
+          "sources": [],
+          "findings": []
+        },
+        {
+          "case_id": "MG-TX001",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-TX001/A1/answer.md",
+              "bytes": 4798,
+              "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7"
+            },
+            {
+              "path": "reviews/MG-TX001.json",
+              "bytes": 13273,
+              "sha256": "853ab7a948e519f4140971bf871b5e23627d6aae50da7f8366d22845ad61bc63"
+            }
+          ],
+          "source_response_sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "source_review_sha256": "853ab7a948e519f4140971bf871b5e23627d6aae50da7f8366d22845ad61bc63",
+          "findings": [
+            {
+              "id": "tx001-missing-constant",
+              "root_cause": "tx001-G-at-one-expansion",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The identity drops the constant t-1. In fact G_t(y)-G_t(1)=sum_{k=1}^{t-1}(y^k-1). Already for permitted p=3,N=9,t=2 and y a nontrivial ninth root, its value is y-1, whereas the displayed sum is y. This is a local algebra error; the correct uniform S_k calculation already in the answer repairs the required case without new mathematics.",
+              "evidence": [
+                {
+                  "path": "responses/MG-TX001/A1/answer.md",
+                  "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+                  "byte_start": 935,
+                  "byte_end": 1168,
+                  "quote": "若 \\(x=1,y\\ne1\\)，则\n\\[\n0=G_t(y)-G_t(1)\n=\\sum_{k=1}^{t-1}y^k\n=\\frac{y(1-y^{t-1})}{1-y}.\n\\]\n于是 \\(y^{t-1}=1\\)。但 \\(p\\nmid(t-1)\\)，而 \\(y\\) 的阶是 \\(p\\) 的幂，故只能有 \\(y=1\\)，矛盾。所以不妨 \\(x,y\\ne1\\)。"
+                }
+              ]
+            },
+            {
+              "id": "tx001-equal-order-ratio",
+              "root_cause": "tx001-ratio-of-primitive-roots",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "Two different roots of the same p-power order need not have a quotient of that same order. Take p=3,N=9,x=zeta_9,y=zeta_9^4: both have order 9, while x/y=zeta_9^6 has order 3, so the displayed equality of valuations is false. This assertion is not needed by the subsequent residue calculation, which only uses x,y == 1 mod P.",
+              "evidence": [
+                {
+                  "path": "responses/MG-TX001/A1/answer.md",
+                  "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+                  "byte_start": 1170,
+                  "byte_end": 1334,
+                  "quote": "### 情形一：\\(x,y\\) 的阶相同\n\n设其公共阶为 \\(p^s\\)。因为二者同阶且不同，\\(x/y\\) 的阶仍为 \\(p^s\\)，所以\n\\[\nv(x-y)=v(x-1)=v(y-1)>0.\n\\]"
+                }
+              ]
+            }
+          ],
+          "baseline_disposition": "correct"
+        },
+        {
+          "case_id": "MG-TX002",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-TX002/A1/answer.md",
+              "bytes": 4378,
+              "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542"
+            },
+            {
+              "path": "reviews/MG-TX002.json",
+              "bytes": 20474,
+              "sha256": "6e589a3bd0d70298086e8e0af19cb1ff070b7ac34a2ae095f66cc2b2da908a5e"
+            }
+          ],
+          "source_response_sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+          "source_review_sha256": "6e589a3bd0d70298086e8e0af19cb1ff070b7ac34a2ae095f66cc2b2da908a5e",
+          "findings": [
+            {
+              "id": "tx002-unproved-cylinder-count",
+              "root_cause": "tx002-missing-full-boundary-dynamics",
+              "kind": "unsupported_completion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The central count is certified as complete without a defined cylinder state or an established correspondence between rowmotion and the asserted segment motion. Internal row shifts and the (true) period identity do not imply exactly b visits; this requires the missing boundary-count mechanism. The answer never marks that step as conjectural or incomplete. Finite enumeration by the reviewer confirms the intended count in examples, but cannot be inserted as the candidate general proof.",
+              "evidence": [
+                {
+                  "path": "responses/MG-TX002/A1/answer.md",
+                  "sha256": "40d17cdbd7948e96cae5986082092ec73b013c75b4866575d07fb5ff6d5b7542",
+                  "byte_start": 2448,
+                  "byte_end": 3364,
+                  "quote": "这里给一个简短但完整的几何解释。把行长度图 \\(I_t\\) 的边界画在由\n\\[\n(i,j)\\sim(i+a,j-b)\n\\]\n得到的柱面上；rowmotion 一步就是把这个边界沿对角线方向推进一格。事件\n\\(\\varepsilon_1(t)=1\\) 正是“底边出现一个正的水平段”。\n\n在这个柱面提升中，记录该正底段左端所在的列。由引理 1 证明中的分块公式逐格检查可知：\n\n- 若底段仍在矩形内部，则下一时刻它的左端列号增加 \\(1\\)；\n- 当它碰到右边界后，下一次重新出现时列号也恰好增加 \\(1\\)（越过 \\(b\\) 后从 \\(1\\) 重新开始）。\n\n因此，经过 \\(a+b\\) 次 rowmotion，底段正好扫过 \\(b\\) 个列位置，也就是在 \\(a+b\\) 个时刻中恰好有 \\(b\\) 次\n\\(\\varepsilon_1=1\\)。\n\n若轨道的极小周期是 \\(L\\)，则 \\(L\\mid(a+b)\\)，因为矩形上的 rowmotion 满足\n\\(\\rho^{a+b}=\\mathrm{id}\\)。把轨道重复"
+                }
+              ]
+            }
+          ],
+          "baseline_disposition": "incorrect"
+        },
+        {
+          "case_id": "MG-BC001",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-BC001/A1/answer.md",
+              "bytes": 8597,
+              "sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09"
+            },
+            {
+              "path": "reviews/MG-BC001.json",
+              "bytes": 22359,
+              "sha256": "771936f681bc4da2e193f9ebcc3089741756c233f7f9eed43dc7b8c00219d4a8"
+            }
+          ],
+          "source_response_sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09",
+          "source_review_sha256": "771936f681bc4da2e193f9ebcc3089741756c233f7f9eed43dc7b8c00219d4a8",
+          "findings": [
+            {
+              "id": "bc001-impossible-zero-trace-realization",
+              "root_cause": "bc001-localized-laminate-realization",
+              "kind": "false_verification",
+              "severity": "critical",
+              "strict_blocking": true,
+              "core_endorsement": true,
+              "covered_by": "none",
+              "reason": "The answer certifies its concrete near-minimizers have zero trace, all gradients in conv(K union {0}), and vanishing energy. Every matrix in that hull is diagonal. Therefore partial_2 u_1=partial_1 u_2=0; ACL plus the horizontal/vertical zero traces force u_1=u_2=0. Its energy is then dist(0,K)^2=5, contradicting the asserted E->0. The periodic h prescribed with derivative 1/0 and positive average is an additional manifestation of this same missing localized construction, not a separately charged root. A correct localized proof would need a zero-mean oscillatory perturbation and small off-diagonal cutoff errors, which the answer explicitly rules out by its convex-hull claim. This is a false verification of the central requested actual construction, so the task-level RMC cap applies while valid cycle evidence remains positive.",
+              "evidence": [
+                {
+                  "path": "responses/MG-BC001/A1/answer.md",
+                  "sha256": "d637a0104757574255fb329b148f6297f03ddc61528c9d68f9206ad56bd62e09",
+                  "byte_start": 8102,
+                  "byte_end": 8526,
+                  "quote": "近最优位移可由四步秩一循环\n\\[\nM_0\n\\xrightarrow[\\;1/4\\;]{A_4}M_1\n\\xrightarrow[\\;1/3\\;]{A_3}M_2\n\\xrightarrow[\\;1/2\\;]{A_2}M_3\n\\xrightarrow[\\;1/3\\;]{A_1}M_0\n\\]\n的有限截断层合实现；其梯度保持在 \\(K\\cup\\{0\\}\\) 的凸包内，故统一满足\n\\[\n\\|\\nabla u\\|_F\\le3<4,\n\\]\n零边界由标准零迹修正层实现，能量满足\n\\[\nE(u_{N,\\delta_N})\n\\le\n5\\left(\\frac16\\right)^N+C\\delta_N\n\\longrightarrow0."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-BC002",
+          "status": "reviewed",
+          "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+          "sources": [
+            {
+              "path": "responses/MG-BC002/A1/answer.md",
+              "bytes": 7382,
+              "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86"
+            },
+            {
+              "path": "reviews/MG-BC002.json",
+              "bytes": 12530,
+              "sha256": "11efeb22d3ad2b9c22e381ce1a3a54bb808a57dc248a31997ba2ff51c96e3618"
+            }
+          ],
+          "source_response_sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+          "source_review_sha256": "11efeb22d3ad2b9c22e381ce1a3a54bb808a57dc248a31997ba2ff51c96e3618",
+          "findings": [
+            {
+              "id": "bc002-pl-invalid-inference",
+              "root_cause": "bc002-lower-bound-used-as-upper-bound",
+              "kind": "unsupported_completion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "From f(z-g(z)) >= f(z)-||g(z)||^2/2 and f(z-g(z)) >= 0 one cannot conclude f(z)-||g(z)||^2/2 <= 0. Both displayed comparisons are lower bounds on the same quantity. The requested bound ||g(z)||^2>=2f(z) is true, but this is not its proof. The local repair is to use the strong-convexity inequality with w=0 and bound g(z) dot z-||z||^2/2 <=||g(z)||^2/2. This does not impair the independently valid proximal obstruction or create an actual false-prox endorsement.",
+              "evidence": [
+                {
+                  "path": "responses/MG-BC002/A1/answer.md",
+                  "sha256": "46b1dfaf9a4acd4debde82a6c0024fccc07c7f4dd481397e10a14f741b3e4d86",
+                  "byte_start": 1806,
+                  "byte_end": 2027,
+                  "quote": "Strong convexity gives, for all \\(z,w\\),\n\n\\[\nf(w)\\ge f(z)+\\langle g(z),w-z\\rangle+\\frac12\\|w-z\\|^2.\n\\]\n\nTake \\(w=z-g(z)\\). Since \\(f\\ge0\\),\n\n\\[\n0\\le f(z-g(z))\n\\ge f(z)-\\frac12\\|g(z)\\|^2,\n\\]\n\nso\n\n\\[\n\\|g(z)\\|^2\\ge 2f(z).\n\\]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "MG-MCP003",
+          "status": "reviewed",
+          "scope_note": "正向89/100。有效域内正有限逐对上斜率、真正下界和零类矩阵均有有效贡献；无限输入未进入U却被当作已控制，造成上复合与双Lip宣告错误。单位/常值的退化边界另记根因。Strict不通过；名义普通扣罚10+5+5，核心清零不自动启动。",
+          "sources": [
+            {
+              "path": "responses/MG-MCP003/A1/answer.md",
+              "bytes": 15723,
+              "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2"
+            },
+            {
+              "path": "reviews/MG-MCP003.json",
+              "bytes": 31573,
+              "sha256": "f8a1c10d2535259448c5f939e664843f2e0c8a0c818cb8c14c9720d9e75e4e84"
+            }
+          ],
+          "source_response_sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+          "source_review_sha256": "f8a1c10d2535259448c5f939e664843f2e0c8a0c818cb8c14c9720d9e75e4e84",
+          "findings": [
+            {
+              "id": "mg-mcp003-1",
+              "root_cause": "mcp003_upper_slope_omits_infinite_input_pairs",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "上矩阵只对正有限输入距离取商。反例：X*={a,b,c,d}，d(a,b)=1，其他不同非底点距离∞，补隔离⊥；φ仅在a,b有效且φ(a)=c, φ(b)=d；ψ仅在c,d有效并恒等。这是分离的扩展度量，ψ自动全零保持。Uφ=∞，Uψ=0（没有正有限有效点对），U(ψ∘φ)=∞，但其右端为0·∞=0。证明第394行把‘某分量正’误当成‘某分量正且有限’，违反自己2.2的前提。同根还使4.3的双Lip上界失败：两有效点距离∞、φ=id时ell=∞>0,K=1,u=0<∞，上界却要求∞<=0·∞=0。两处只记一次最高material。",
+              "evidence": [
+                {
+                  "path": "responses/MG-MCP003/A1/answer.md",
+                  "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+                  "byte_start": 9629,
+                  "byte_end": 10130,
+                  "quote": "2. **上矩阵在“全零保持”条件下次可乘。** 若 \\(\\psi\\) 满足\n\n\\[\n\\forall x,y\\in\\operatorname{dom}(\\psi),\\quad\n\\Big(\\forall j\\in I,\\ d_j(x,y)=0\\Big)\n\\Longrightarrow\n\\Big(\\forall k\\in I,\\ d_k(\\psi x,\\psi y)=0\\Big),\n\\]\n\n则对有限正输入距离有\n\n\\[\nu^{\\psi\\circ\\phi}_{ki}\n\\le\n\\max_{j\\in I}u^\\psi_{kj}u^\\phi_{ji}.\n\\]\n\n在通常的分离规范空间（全分量零距离仅当两点相同）中，该条件自动满足，于是\n\n\\[\nU(\\psi\\circ\\phi)\n\\preceq\nU(\\psi)\\boxtimes U(\\phi)."
+                }
+              ]
+            },
+            {
+              "id": "mg-mcp003-2",
+              "root_cause": "mcp003_identity_lower_specialization_drops_infinite_boundary",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "定义3.1已要求一旦输入i距离∞而输出j距离有限，ell_ji=0；单位算子式只写正有限输入点对商的inf，漏这一分支。取X*={a,b}，d1(a,b)=∞、d2(a,b)=1，两个分量各为扩展度量并补隔离⊥。φ=id时真实ell_{2,1}=0，而所显示inf空集=∞。局部特化式可修，但现式实质错误。",
+              "evidence": [
+                {
+                  "path": "responses/MG-MCP003/A1/answer.md",
+                  "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+                  "byte_start": 12036,
+                  "byte_end": 12278,
+                  "quote": "对恒等算子 \\(\\mathrm{id}_{\\mathcal X}\\)，\n\n\\[\nu_{ji}(\\mathrm{id})\n=\n\\sup_{\\substack{0<d_i(x,y)<\\infty}}\n\\frac{d_j(x,y)}{d_i(x,y)},\n\\qquad\n\\ell_{ji}(\\mathrm{id})\n=\n\\inf_{\\substack{0<d_i(x,y)<\\infty}}\n\\frac{d_j(x,y)}{d_i(x,y)}.\n\\]\n\n并且"
+                }
+              ]
+            },
+            {
+              "id": "mg-mcp003-3",
+              "root_cause": "mcp003_constant_lower_ignores_vacuous_pairs",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "常值算子不必有L=0。取X*={a,b}、d(a,b)=0并补隔离⊥，φ在a,b恒取a。没有正有限输入点对，也没有∞输入/有限输出点对，按其定义ell=inf空集=∞，不是0。单元素有效域或空有效域同样失败。需额外存在相应正输入距离条件，不能由‘输出常值’单独推出所显示L=0。",
+              "evidence": [
+                {
+                  "path": "responses/MG-MCP003/A1/answer.md",
+                  "sha256": "0953d4e6d47c2f66a4373dcc4bed70c4ccba1a5722317baa401455d09a4537b2",
+                  "byte_start": 13165,
+                  "byte_end": 13562,
+                  "quote": "2. **常值算子**  \n   若 \\(\\phi(x)=x_0\\neq\\bot\\) 对所有 \\(x\\in\\operatorname{dom}(\\phi)\\)，则\n   \\[\n   U(\\phi)=0,\\qquad L(\\phi)=0,\\qquad K(\\phi)=\\mathbf 1\n   \\]\n   （所有 \\(k_{ji}=1\\)）。上矩阵为 \\(0\\) 表示像是零直径；下矩阵为 \\(0\\) 表示所有可区分性都被压掉；\\(K=\\mathbf 1\\) 表示每个输入零类都被送进每个输出零类。\n\n3. **无界算子**  "
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "case_id": "MG-TX001",
+  "category": "theorem-extension",
+  "attempt": "A1",
+  "source_scope": "public",
+  "status": "reviewed",
+  "reviewer_kind": "ai",
+  "reviewer": "Codex independent mathematical review, 2026-11-09",
+  "human_status": "pending",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "bindings": {
+    "task": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX001/task.md",
+      "sha256": "5d37d58b4f2067b339ed4b580a2c8dbb5b6e23b7ed64b3d4907fc165efb00fcf",
+      "bytes": 650,
+      "lines": 11
+    },
+    "rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX001/rubric.json",
+      "sha256": "ce9ecf570b6283d591bd9b5a804f2a9ffc6a92804471a55734fc9c860e7e3c14",
+      "bytes": 866,
+      "lines": 16
+    },
+    "reference": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX001/reference.md",
+      "sha256": "490700c8a90ae4772ed5745fb2792a01b570fc3767ac05a308d83c997e486794",
+      "bytes": 6495,
+      "lines": 126
+    },
+    "answer": {
+      "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+      "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+      "bytes": 4798,
+      "lines": 208
+    },
+    "source_rubric": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX001/source-rubric.md",
+      "sha256": "472c0ad489aaffdc2b75c5e8cb3107c26d7f0e6ccfaf4e0f956aa62f6f0b26bf",
+      "bytes": 2080,
+      "lines": 22
+    },
+    "contract": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX001/contract.json",
+      "sha256": "49d1b6c2ab97d28932cf21dabefcd72870b623869e62d2cd12f3328074eaaab3",
+      "bytes": 2137,
+      "lines": 55
+    },
+    "research_policy": {
+      "path": "/Users/g4i/lab/math-gauge/cases/theorem-extension/MG-TX001/research-policy.json",
+      "sha256": "2e0e24469b38507116c475674f1dbd4252c6d15736bb2eec8bd168f3d2cfc8ef",
+      "bytes": 2314,
+      "lines": 50
+    }
+  },
+  "supplemental_source_bindings": [],
+  "scope_note": "Independently reviewed the complete supplied A1 and the frozen case task, reference, source rubric, machine rubric and contract. No old model answer or old score was reused. Candidate answer bytes and all source inputs are unchanged.",
+  "baseline_disposition": "correct",
+  "positive_completion": {
+    "earned_units": 0,
+    "maximum_units": 3,
+    "basis": "valid independent research evidence; baseline B gives no positive research credit"
+  },
+  "strict_pass": false,
+  "findings": [
+    {
+      "id": "tx001-missing-constant",
+      "root_cause": "tx001-G-at-one-expansion",
+      "severity": "local",
+      "severity_points": 5,
+      "error_kind": "false_assertion",
+      "kind": "false_assertion",
+      "quote": "若 \\(x=1,y\\ne1\\)，则\n\\[\n0=G_t(y)-G_t(1)\n=\\sum_{k=1}^{t-1}y^k\n=\\frac{y(1-y^{t-1})}{1-y}.\n\\]\n于是 \\(y^{t-1}=1\\)。但 \\(p\\nmid(t-1)\\)，而 \\(y\\) 的阶是 \\(p\\) 的幂，故只能有 \\(y=1\\)，矛盾。所以不妨 \\(x,y\\ne1\\)。",
+      "reason": "The identity drops the constant t-1. In fact G_t(y)-G_t(1)=sum_{k=1}^{t-1}(y^k-1). Already for permitted p=3,N=9,t=2 and y a nontrivial ninth root, its value is y-1, whereas the displayed sum is y. This is a local algebra error; the correct uniform S_k calculation already in the answer repairs the required case without new mathematics.",
+      "core_cap_zero": false,
+      "core_endorsement": false,
+      "strict_blocking": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 33,
+          "line_end": 39,
+          "quote": "若 \\(x=1,y\\ne1\\)，则\n\\[\n0=G_t(y)-G_t(1)\n=\\sum_{k=1}^{t-1}y^k\n=\\frac{y(1-y^{t-1})}{1-y}.\n\\]\n于是 \\(y^{t-1}=1\\)。但 \\(p\\nmid(t-1)\\)，而 \\(y\\) 的阶是 \\(p\\) 的幂，故只能有 \\(y=1\\)，矛盾。所以不妨 \\(x,y\\ne1\\)。"
+        }
+      ]
+    },
+    {
+      "id": "tx001-equal-order-ratio",
+      "root_cause": "tx001-ratio-of-primitive-roots",
+      "severity": "local",
+      "severity_points": 5,
+      "error_kind": "false_assertion",
+      "kind": "false_assertion",
+      "quote": "### 情形一：\\(x,y\\) 的阶相同\n\n设其公共阶为 \\(p^s\\)。因为二者同阶且不同，\\(x/y\\) 的阶仍为 \\(p^s\\)，所以\n\\[\nv(x-y)=v(x-1)=v(y-1)>0.\n\\]",
+      "reason": "Two different roots of the same p-power order need not have a quotient of that same order. Take p=3,N=9,x=zeta_9,y=zeta_9^4: both have order 9, while x/y=zeta_9^6 has order 3, so the displayed equality of valuations is false. This assertion is not needed by the subsequent residue calculation, which only uses x,y == 1 mod P.",
+      "core_cap_zero": false,
+      "core_endorsement": false,
+      "strict_blocking": true,
+      "covered_by": "none",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 41,
+          "line_end": 46,
+          "quote": "### 情形一：\\(x,y\\) 的阶相同\n\n设其公共阶为 \\(p^s\\)。因为二者同阶且不同，\\(x/y\\) 的阶仍为 \\(p^s\\)，所以\n\\[\nv(x-y)=v(x-1)=v(y-1)>0.\n\\]"
+        }
+      ]
+    }
+  ],
+  "criteria": [
+    {
+      "id": "baseline",
+      "passed": true,
+      "reason": "The determinant reduction covers all nonzero coefficient vectors, including vanishing individual coefficients. The divided-difference calculation already written at lines 47-69 is valid uniformly for every distinct pair x,y in mu_N, including 1: G_t is the polynomial sum 1+x+...+x^(t-1), S_k is integral, and its sum reduces to t(t-1)/2 != 0 mod P. Dropping the superfluous order restriction and applying this same existing identity to x=1 is direct routine algebra, not a new lemma. Thus the required zero bound is established, despite the two locally false auxiliary assertions recorded below.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 47,
+          "line_end": 69,
+          "quote": "对 \\(1\\le k\\le t-1\\)，置\n\\[\nS_k=\\frac{x^k-y^k}{x-y}\n=\\sum_{j=0}^{k-1}x^{k-1-j}y^j.\n\\]\n由于 \\(x\\equiv y\\equiv1\\pmod{\\mathfrak P}\\)，有\n\\[\nS_k\\equiv k\\pmod{\\mathfrak P}.\n\\]\n于是\n\\[\nG_t(x)-G_t(y)\n=\\sum_{k=1}^{t-1}(x^k-y^k)\n=(x-y)\\sum_{k=1}^{t-1}S_k.\n\\]\n而\n\\[\n\\sum_{k=1}^{t-1}S_k\n\\equiv \\sum_{k=1}^{t-1}k\n=\\frac{t(t-1)}2\n\\not\\equiv0\\pmod{\\mathfrak P},\n\\]\n因为 \\(p\\) 为奇素数且 \\(p\\nmid t(t-1)\\)。又 \\(x-y\\ne0\\)，故 \\(G_t(x)-G_t(y)\\ne0\\)，矛盾。"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 121,
+          "line_end": 133,
+          "quote": "由于 \\(c_1,c_2,c_3\\) 不全为零，线性方程组\n\\[\nc_1\\xi_i^{a_1}+c_2\\xi_i^{a_2}+c_3\\xi_i^{a_3}=0\n\\qquad(i=1,2,3)\n\\]\n有非零解，所以三阶矩阵\n\\[\n\\bigl(\\xi_i^{a_j}\\bigr)_{1\\le i,j\\le3}\n\\]\n奇异，即\n\\[\n\\det\\bigl(\\xi_i^{a_j}\\bigr)=0.\n\\]"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 166,
+          "line_end": 208,
+          "quote": "由于 \\(b\\) 与 \\(N\\) 互素，存在整数 \\(t\\)，\\(1\\le t<N\\)，使得\n\\[\nd\\equiv bt\\pmod N.\n\\]\n并且\n\\[\np\\nmid t,\\qquad t\\not\\equiv1\\pmod p,\n\\]\n因为 \\(p\\nmid d\\)，且\n\\[\nt-1\\equiv b^{-1}(d-b)\\not\\equiv0\\pmod p.\n\\]\n\n置\n\\[\nU=X^b,\\qquad V=Y^b.\n\\]\n它们都是 \\(N\\) 次单位根。又因为 \\(X,Y\\ne1\\)，且 \\(b\\) 与 \\(N\\) 互素，故\n\\[\nU\\ne1,\\qquad V\\ne1.\n\\]\n若 \\(U=V\\)，则 \\(X^b=Y^b\\)，从而 \\(X=Y\\)，即 \\(\\xi_2=\\xi_3\\)，矛盾。因此\n\\[\nU\\ne V.\n\\]\n\n将 \\(d\\equiv bt\\pmod N\\) 代入 (1)，并注意 \\(X^d=(X^b)^t=U^t\\)，\\(Y^d=(Y^b)^t=V^t\\)，得到\n\\[\n(U-1)(V^t-1)=(U^t-1)(V-1).\n\\]\n由于 \\(U,V\\ne1\\)，可除以 \\((U-1)(V-1)\\)，得\n\\[\n\\frac{V^t-1}{V-1}\n=\n\\frac{U^t-1}{U-1},\n\\]\n即\n\\[\nG_t(V)=G_t(U).\n\\]\n但引理说明 \\(G_t\\) 在 \\(\\mu_N\\) 上单射，故 \\(U=V\\)，与前面所得矛盾。\n\n因此不存在三个不同的 \\(N\\) 次单位根同时为 \\(P\\) 的零点。故在全部 \\(N\\) 次单位根中，满足 \\(P(z)=0\\) 的不同根至多有两个。\\(\\blacksquare\\)"
+        }
+      ]
+    },
+    {
+      "id": "local-refinement",
+      "passed": false,
+      "reason": "No independent extra result beyond the proof mechanism.",
+      "evidence": [
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 1,
+          "line_end": 21,
+          "quote": "下面给出一个证明。关键是把“三条单位根同时为零点”化成 Fourier 矩阵的一个三阶子式为零，再证明在题设条件下该子式不可能为零。\n\n---\n\n记 \\(\\mu_N=\\{z\\in\\mathbb C:z^N=1\\}\\)。\n\n## 1. 一个单射性引理\n\n**引理.** 设 \\(p\\) 为奇素数，\\(N=p^r\\)，整数 \\(t\\) 满足\n\\[\n1\\le t<N,\\qquad p\\nmid t,\\qquad t\\not\\equiv 1\\pmod p.\n\\]\n定义\n\\[\nG_t(x)=\n\\begin{cases}\n\\dfrac{x^t-1}{x-1},&x\\ne1,\\\\[1ex]\nt,&x=1.\n\\end{cases}\n\\]\n则 \\(G_t\\) 在 \\(\\mu_N\\) 上是单射。"
+        },
+        {
+          "path": "/Users/g4i/Downloads/deepseek-v4.1-flash-max-MathGauge-20261109-answers-code/public/MG-TX001/A1/answer.md",
+          "sha256": "37b98d9c7ff13335e8aa7dde8091238078e5437b233ca5c8f11a2aa67ad57ac7",
+          "bytes": 4798,
+          "lines": 208,
+          "line_start": 192,
+          "line_end": 208,
+          "quote": "将 \\(d\\equiv bt\\pmod N\\) 代入 (1)，并注意 \\(X^d=(X^b)^t=U^t\\)，\\(Y^d=(Y^b)^t=V^t\\)，得到\n\\[\n(U-1)(V^t-1)=(U^t-1)(V-1).\n\\]\n由于 \\(U,V\\ne1\\)，可除以 \\((U-1)(V-1)\\)，得\n\\[\n\\frac{V^t-1}{V-1}\n=\n\\frac{U^t-1}{U-1},\n\\]\n即\n\\[\nG_t(V)=G_t(U).\n\\]\n但引理说明 \\(G_t\\) 在 \\(\\mu_N\\) 上单射，故 \\(U=V\\)，与前面所得矛盾。\n\n因此不存在三个不同的 \\(N\\) 次单位根同时为 \\(P\\) 的零点。故在全部 \\(N\\) 次单位根中，满足 \\(P(z)=0\\) 的不同根至多有两个。\\(\\blacksquare\\)"
+        }
+      ]
+    },
+    {
+      "id": "substantive-extension",
+      "passed": false,
+      "reason": "No extra sharpness, necessity or generalized support theorem is delivered.",
+      "evidence": []
+    },
+    {
+      "id": "complete-structure",
+      "passed": false,
+      "reason": "No full support/evaluation classification or comparably complete structure is delivered.",
+      "evidence": []
+    }
+  ],
+  "baseline_B": 2,
+  "research_R": 0,
+  "detail": {
+    "baseline": "The determinant reduction covers all nonzero coefficient vectors, including vanishing individual coefficients. The divided-difference calculation already written at lines 47-69 is valid uniformly for every distinct pair x,y in mu_N, including 1: G_t is the polynomial sum 1+x+...+x^(t-1), S_k is integral, and its sum reduces to t(t-1)/2 != 0 mod P. Dropping the superfluous order restriction and applying this same existing identity to x=1 is direct routine algebra, not a new lemma. Thus the required zero bound is established, despite the two locally false auxiliary assertions recorded below.",
+    "research": "No independent classification, sharpness example, parameter generalization, or other additional theorem is delivered. The G_t injectivity lemma and 3x3 minor reduction are the baseline proof mechanism, rather than a separate research result."
+  },
+  "summary": "B2/R0. The original zero bound is solved by an already supplied uniform divided-difference argument; two independent local false auxiliary equalities receive separate reliability findings. No research extension is supplied.",
+  "audit_source": {
+    "path": "/private/tmp/math-gauge-ds-grading-20261109/research/research-reviews.json",
+    "sha256": "10866b1f8ead9667328dc82468fe279faafb2ade81410908cf4f53ba7fd6ce68",
+    "bytes": 158827
+  }
+}

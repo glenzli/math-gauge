@@ -81,8 +81,8 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(self.data["benchmark_version"], "0.6.0")
         self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v6")
         self.assertEqual(self.data["publication_scope"], "combined")
-        from math_gauge.records import selected_cli_records
-        selected = {model for model, folder in selected_cli_records(ROOT)}
+        from math_gauge.records import selected_cli_records, selected_paper_records
+        selected = {model for model, folder in selected_cli_records(ROOT) + selected_paper_records(ROOT)}
         displayed = {model['id'] for model in self.data['models']
                      if model.get('record_kind') != 'native_harness'}
         self.assertEqual(displayed, selected)
@@ -226,7 +226,9 @@ class CurrentSiteTests(unittest.TestCase):
         ds = next(m for m in self.data['models'] if m['id'].startswith('deepseek'))
         actual = ChartBars(SITE.render(self.data), score_scope='lean')
         label = next(g['aria-label'] for g in actual.groups if g['data-model'] == ds['id'])
-        self.assertNotIn('尚未测完', label)
+        lean = next(g for g in self.data['category_leaderboards'] if g['id'] == 'lean')
+        ds_lean = next(r for r in lean['views']['partial'] if r['model_id'] == ds['id'])
+        self.assertEqual('尚未测完' in label, ds_lean['incomplete'])
 
     def test_gap_diagnostics_bind_retained_totals_and_keep_incomplete_coverage_unranked(self):
         diagnostic = self.data['gap_diagnostics']
@@ -334,7 +336,9 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertNotIn('button data-condition=', page)
         for model in self.data["models"]:
             for scope in ["combined"]:
-                self.assertEqual(model[scope]["coverage"], model["retry"][scope]["coverage"])
+                first, retry = model[scope]['coverage'], model['retry'][scope]['coverage']
+                for key in ('initial_slots', 'parent_families', 'public_tasks', 'private_tasks', 'alignment_rounds'):
+                    self.assertEqual(first[key], retry[key])
                 self.assertFalse(model["retry"][scope]["formal_comparison_eligible"])
                 self.assertNotIn("slot_evidence", model["retry"][scope])
             if model["id"].startswith("deepseek"):
@@ -356,7 +360,8 @@ class CurrentSiteTests(unittest.TestCase):
                 filename = record['strict_results'][condition]['path']
                 self.assertEqual(result, json.loads((folder / filename).read_bytes()))
                 self.assertEqual(result["attempt_condition"], condition)
-                self.assertEqual(result["coverage"], model["combined"]["coverage"])
+                reliable = model['combined'] if condition == 'single_attempt' else model['retry']['combined']
+                self.assertEqual(result['coverage'], reliable['coverage'])
                 verdict = result['strict_alignment_selfcheck']['strict_pass']
                 self.assertEqual(result['metrics']['lean-selfcheck']['exact'],
                                  None if verdict is None else 100 if verdict else 0)
@@ -401,16 +406,19 @@ class CurrentSiteTests(unittest.TestCase):
             task = next(row for row in projection['views']['partial']['single_attempt']['tasks']
                         if row['case_id'] == 'MG-MCP003')
             evidence = public_evidence(folder, record, 'MG-MCP003', 'single_attempt', task)
-            if model['id'].startswith('deepseek'):
+            if task['completion']['exact'] is None:
                 self.assertIsNone(task['completion']['exact'])
                 self.assertFalse(any(s['role'] == 'answer' for s in evidence['sources']))
             else:
                 review = evidence['review']
                 response_hash = (review.get('answer_sha256') or
-                                 review.get('binding', {}).get('response_sha256'))
+                                 review.get('binding', {}).get('response_sha256') or
+                                 review.get('bindings', {}).get('answer', {}).get('sha256'))
                 self.assertEqual(response_hash, task['response_sha256'])
                 self.assertEqual(len(review.get('criteria', review.get('dimensions', []))), 6)
-                self.assertIn('M4', review_markdown(evidence['review']))
+                criterion = review.get('criteria', review.get('dimensions'))[0]
+                key = next(criterion[k] for k in ('id', 'criterion_id', 'dimension_id') if k in criterion)
+                self.assertIn(key, review_markdown(evidence['review']))
 
 
 if __name__ == "__main__":

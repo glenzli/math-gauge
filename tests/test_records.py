@@ -4,6 +4,8 @@ import copy
 import hashlib
 import importlib.util
 import json
+import shutil
+import tempfile
 from pathlib import Path
 import tempfile
 import unittest
@@ -274,7 +276,7 @@ class FiniteTrajectoryTests(unittest.TestCase):
 
 class CurrentArchiveTests(unittest.TestCase):
     def test_retry_condition_reproduces_both_reviewed_answers_with_the_original_plan(self):
-        root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261105"
+        root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
         load = lambda name: json.loads((root / name).read_bytes())
         inputs = load_retry_inputs(root, load("record.json"))
         self.assertEqual(inputs["plan"], load("scoring-inputs.json")["plan"])
@@ -293,6 +295,12 @@ class CurrentArchiveTests(unittest.TestCase):
                     "deepseek-v4.1-flash-1017": 74.2149456522}
         for model, score in expected.items():
             root = ROOT / "results/v0.6.0" / model / "20261105"
+            if model == "deepseek-v4.1-flash-1017":
+                source = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
+                temporary = tempfile.TemporaryDirectory()
+                self.addCleanup(temporary.cleanup)
+                root = Path(temporary.name) / model / "20261105"
+                shutil.copytree(source, root)
             self.assertTrue(validate_record(root)["passed"])
             load = lambda name: json.loads((root / name).read_bytes())
             result = score_record_inputs(load("scoring-inputs.json"), load("reviews/alignment.json"),

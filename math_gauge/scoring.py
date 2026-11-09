@@ -2910,21 +2910,48 @@ def render_score(report):
 
 def score_native_observation(review, assessment_policy, strict_policy, capability_policy,
                              claim_policy, *, mode='partial'):
-    """Score native-harness mathematical judgments through the shared hierarchy.
-
-    This mathematical view neither imports execution nor creates CLI receipts.
-    Original criterion points, B/R, claims and fidelity are separate inputs.
-    """
+    """Score native observations without changing their separate evidence contract."""
     from .native_observations import validate_math_inputs
+    validate_math_inputs(review, validate_assessment_policy(assessment_policy))
+    return _score_observation_inputs(review, assessment_policy, strict_policy, capability_policy,
+                                     claim_policy, mode=mode, record_kind='native_harness')
+
+
+def score_paper_observation(review, assessment_policy, strict_policy, capability_policy,
+                            claim_policy, *, mode='partial', condition='nonlogical_retry_3'):
+    """Score retained papers without manufacturing execution or native receipts."""
+    from .paper_observations import validate_math_inputs, select_inputs, unknown_alignment
+    policy = validate_assessment_policy(assessment_policy)
+    validate_math_inputs(review, policy)
+    selected = select_inputs(review, condition)
+    result = _score_observation_inputs(selected, policy, strict_policy, capability_policy,
+                                       claim_policy, mode=mode, record_kind='paper_observation')
+    result.update(attempt_condition=condition, runtime_evidence_verified=False,
+        alignment_selfcheck=unknown_alignment(mode),
+        strict_alignment_selfcheck={'strict_pass': None, 'state': 'unresolved'},
+        retry_summary={'selection': 'first_completed_delivery', 'maximum_total_attempts': 3,
+            'evidence_kind': 'operator_reported_without_native_receipts',
+            'slots_with_reruns': sum(len(t['attempts']) > 1 for t in review['tasks']),
+            'effective_attempts': sum(len(t['attempts']) if condition == 'nonlogical_retry_3'
+                                      else min(len(t['attempts']), 1) for t in review['tasks'])})
+    result['coverage'].update(source_reviewed_tasks=sum(t['status'] == 'reviewed' for t in selected['tasks']),
+        observed_delivery_failures=sum(t['status'] == 'delivery_failed' for t in selected['tasks']),
+        unresolved_initial_tasks=sum(t['status'] == 'unresolved' for t in selected['tasks']),
+        source_alignment_rounds=0)
+    return result
+
+
+def _score_observation_inputs(review, assessment_policy, strict_policy, capability_policy,
+                               claim_policy, *, mode, record_kind):
+    """One claim, fidelity, floor and family arithmetic path for observed sources."""
     from .manuscript_completion import validate_core_completion, validate_fidelity
 
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
     validate_capability_policy(capability_policy)
     claim_penalties.validate_policy(claim_policy)
-    validate_math_inputs(review, policy)
     if mode not in {'capability', 'partial', 'strict'}:
-        raise ValueError('Unknown native assessment mode')
+        raise ValueError('Unknown observed assessment mode')
     claims = claim_penalties.validate_review(review['claim_review'], model_label=review['model_label'])
     if set(claims) != {t['case_id'] for t in review['tasks']}:
         raise ValueError('Native claim review must retain every original case')
@@ -2933,11 +2960,12 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
     for original in review['tasks']:
         cid, category = original['case_id'], original['subcategory']
         point = original['points']
+        status = original.get('status', 'reviewed')
         value = UNKNOWN if point is None else (Fraction(str(point)) / original['maximum'],) * 3
         passed = original['complete']
         baseline = Fraction(0)
         extra = {}
-        if category == 'theorem-extension':
+        if category == 'theorem-extension' and status == 'reviewed':
             b, r = original['baseline_B'], original['research_R']
             value = (Fraction(r, 3),) * 3
             passed = b == 2 and r == 3
@@ -2945,21 +2973,21 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
             extra['research'] = {'baseline_B': b, 'research_R': r,
                 'baseline_penalty_points': int(baseline * 3), 'research_maximum_points': 3,
                 'baseline_is_research_credit': False, 'answer_attempt': 'A1'}
-        elif category == 'background-check':
+        elif category == 'background-check' and status == 'reviewed':
             value = (Fraction(original['background_R'], 3),) * 3
             extra['background_check'] = {'background_R': original['background_R'],
                 'complete': passed, 'false_endorsement': original['false_endorsement'],
                 'downstream_calculation_is_research_credit': False}
         claim = claims[cid]
-        if category == 'theorem-extension' and (
+        if category == 'theorem-extension' and status == 'reviewed' and (
                 original['baseline_B'] == 2 and claim.get('baseline_disposition') != 'correct'
                 or original['baseline_B'] != 2 and claim.get('baseline_disposition') not in
                    {'incorrect', 'honest_incomplete', 'unresolved'}):
             raise ValueError('Native baseline deduction lost its independently reviewed disposition')
-        if (category == 'background-check' and original['false_endorsement']
+        if (category == 'background-check' and status == 'reviewed' and original['false_endorsement']
                 and not any(f['core_endorsement'] for f in claim['findings'])):
             raise ValueError('Native core false endorsement cannot disappear from the claim review')
-        if (claim['source_response_sha256'] != original['response']['sha256']
+        if status == 'reviewed' and (claim['source_response_sha256'] != original['response']['sha256']
                 or claim['source_review_sha256'] != original['review']['sha256']):
             raise ValueError('Native claim review changed its original answer or mathematical review')
         core_review = (validate_core_completion(original['strict_completion_case'], original)
@@ -2984,17 +3012,20 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
         family = original['family_id']
         families[category].setdefault(family, []).append(_boolean(passed) if mode == 'strict' else value)
         tasks.append({'case_id': cid, 'slot_id': original['slot_id'], 'subcategory': category,
-            'family_id': family, 'strict_pass': passed, 'judgment_source': 'native_harness_source_review',
+            'family_id': family, 'strict_pass': passed, 'judgment_source': ('native_harness_source_review' if record_kind == 'native_harness' else 'paper_observation_source_review'),
             'completion': {key: None if v is None else float(v)
                            for key, v in zip(('lower', 'upper', 'exact'), value)},
-            'response_sha256': original['response']['sha256'],
-            'review_sha256': original['review']['sha256'], 'claim_assessment': detail, **extra})
-    alignment, _ = _alignment_trajectory(review['alignment_review'], review['alignment_source_policy'],
-                                          positive_only=mode == 'capability')
-    strict = strict_alignment_trajectory(review['alignment_review'], review['alignment_source_policy'])
-    if (alignment != review['alignment']['capability' if mode == 'capability' else 'partial']
-            or strict != review['alignment']['strict']):
-        raise ValueError('Native trajectory summary differs from source-bound shared repair scoring')
+            'response_sha256': (original.get('response') or {}).get('sha256'),
+            'review_sha256': (original.get('review') or {}).get('sha256'), 'claim_assessment': detail, **extra})
+    if record_kind == 'paper_observation':
+        alignment, strict = None, None
+    else:
+        alignment, _ = _alignment_trajectory(review['alignment_review'], review['alignment_source_policy'],
+                                              positive_only=mode == 'capability')
+        strict = strict_alignment_trajectory(review['alignment_review'], review['alignment_source_policy'])
+        if (alignment != review['alignment']['capability' if mode == 'capability' else 'partial']
+                or strict != review['alignment']['strict']):
+            raise ValueError('Native trajectory summary differs from source-bound shared repair scoring')
     metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
         alignment_summary=alignment, strict_trajectory=strict,
         manuscript_core_family_present=any(t.get('strict_completion_case') is not None for t in review['tasks']))
@@ -3015,7 +3046,7 @@ def score_native_observation(review, assessment_policy, strict_policy, capabilit
             'unknown': sum(t['strict_pass'] is None for t in tasks)},
         'tasks': tasks, 'alignment_selfcheck': alignment, 'strict_alignment_selfcheck': strict,
         'lean_formalization_breakdown': review['formalization_breakdown'],
-        'initial_answers_replaced': False, 'record_kind': 'native_harness',
+        'initial_answers_replaced': False, 'record_kind': record_kind,
         'human_review': 'pending', 'formal_comparison_eligible': False,
         'transport_import_validated': False, 'new_candidate_calls': 0,
         'claim_penalties': claim_penalties.summary(claims, mode=mode),
