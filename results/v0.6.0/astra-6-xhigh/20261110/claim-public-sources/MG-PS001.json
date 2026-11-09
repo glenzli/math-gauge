@@ -1,0 +1,57 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-PS001",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-PS001:A1",
+    "case_id": "MG-PS001",
+    "binding": null,
+    "reviewer": "Codex coordinator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "已完整阅读本轮首次正常原生终稿及冻结题目、参考、量规与六准则合同。独立验证全部结论，尤其新的max型稀疏阈值构造及跨阈值迭代界，全部参数与端点成立。六准则满分，无额外错误承诺。AI审核，人审pending。",
+    "findings": [],
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+    "format_review": {
+      "decision": "valid",
+      "notes": "原始书面答卷完整交付各个题面目标。"
+    },
+    "criteria": [
+      {
+        "criterion_id": "K1",
+        "score": 5,
+        "notes": "全篇在有界序列的有限Cesaro上极限伪距离与零距商上合法计算，指标序列与上密度严格对应；使用三角不等式和零距类的基本性质足以支持商距离，未假设商完备性。"
+      },
+      {
+        "criterion_id": "K2",
+        "score": 20,
+        "notes": "对每个C_f无穷的严格递增f构造稀疏取样块，其像集合密度零而逆像上密度至少1/2；C_f有限时以f(n)/n和原Cesaro平均的乘积给零距保持。必要性没有只举特例或误用逐项趋零。"
+      },
+      {
+        "criterion_id": "K3",
+        "score": 20,
+        "notes": "上界由有界非负平均及有限limsup得到。任意epsilon的稀疏块在f(n_i)/n_i趋于C的子列上给输入密度至多epsilon/C、输出至少epsilon/(1+epsilon)，推出所有可用常数K至少C/(1+epsilon)，再取epsilon趋零。覆盖C=1而不假设一般f(n)/n有极限。"
+      },
+      {
+        "criterion_id": "K4",
+        "score": 15,
+        "notes": "逐坐标沿单射f填入任意有界目标序列证明满射；C>1用像的补集给非零核；C=1推出像密度1，并比较等长初段和取样集对任意有界非负序列的对称差误差，证明等距双射。连续性由有限Lipschitz界。"
+      },
+      {
+        "criterion_id": "K5",
+        "score": 15,
+        "notes": "T_f的每次复合正是f迭代取样，故L_k等于实际迭代比值上极限。复合Lipschitz常数次乘，按k=qm+s直接证明根极限为下确界，并由f(n)至少n得到1<=R<=C。没有调用需要完备性的谱理论。"
+      },
+      {
+        "criterion_id": "K6",
+        "score": 25,
+        "notes": "对任意1<=r<=c有限，给n+floor(max((r-1)n,(c-1)H(n)))的合法严格递增整数构造。稀疏阈值上取得L1=c；固定k用迭代中遇到的最大阈值N_i和首次越过时间j控制跨尺度效应，前一阈值p/n趋零，给r^k<=L_k<=r^k+(c-r)sum_{t<k}r^t。该两侧界充分推出r>1和r=1的所有根极限，亦覆盖r=c=1；未要求不必要的L_k显式精确式。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "4ae97fbfed5d5af0f31492fc8afd44972121819887b1b0d7c5d0b7a1ca6930e6"
+}

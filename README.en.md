@@ -10,11 +10,11 @@ The **benchmark suite is sealed at 0.6.0**. The latest **distribution is 0.6.1**
 
 ## Leaderboard preview
 
-![Math Gauge English leaderboard: eight fully evaluated models](docs/screenshots/leaderboard-en.jpg)
+![Math Gauge English leaderboard: nine fully evaluated models](docs/screenshots/leaderboard-en.jpg)
 
 ![Math Gauge English mathematical research leaderboard](docs/screenshots/research-en.jpg)
 
-Screenshots enable **Completed models only**, showing the eight models whose evaluations are complete. Completion does not mean every answer is correct. The default page includes all ten retained models, with unfinished evaluations marked *. Filtering changes display only: scores, weights and fixed denominators stay unchanged. The interface supports Chinese and English, with independent sort controls for categories, gaps and rates; language and filter choices persist in the URL.
+Screenshots enable **Completed models only**, showing the nine models whose evaluations are complete. Completion does not mean every answer is correct. The default page includes all eleven retained models, with unfinished evaluations marked *. Filtering changes display only: scores, weights and fixed denominators stay unchanged. The interface supports Chinese and English, with independent sort controls for categories, gaps and rates; language and filter choices persist in the URL.
 
 [Static leaderboard](site/index.html) · [Method & data](site/method.html?lang=en) · [Local preview](#local-preview)
 
@@ -55,24 +55,27 @@ Manuscript completion accepts rigorous, faithful alternative approaches, without
 
 All values are confirmed contributions in the full 100-point frame. The main view uses the **first normal delivery selected by `nonlogical_retry_3`**, with original failures and every attempt retained. No best-of or union of answers is used.
 
-| Model | Harness | MC | **RMC** | SMC | Evaluated initial tasks |
-|---|---|---:|---:|---:|---|
-| Astra 6 (max) | Codex CLI | 94.32 | **94.32** | 89.17 | 39 / 39 |
-| Sol 6.1 (max) | Codex CLI | 94.32 | **94.22** | 89.17 | 39 / 39 |
-| Claude Opus 5.5 (max) | Claude Code | 93.76 | **91.44** | 59.42 | 39 / 39 |
-| Dot Underlying | Unknown¹ | 91.66 | **90.23** | 78.00 | 39 / 39 |
-| Sol 6.1 (xhigh) | Codex CLI | 90.12 | **87.96** | 68.00 | 39 / 39 |
-| Terra 6.1 (max) | Codex CLI | 87.65 | **86.45** | 65.67 | 39 / 39 |
-| Terra 6.1 (xhigh) | Codex CLI | 79.71 | **78.50** | 63.00 | 39 / 39 |
-| DeepSeek v4.1 Flash (max)* | Codex CLI² | 64.80 | **57.07** | 25.83 | 38 / 39; unfinished |
-| Gemini 3.8 Flash (high) | AGY CLI | 62.32 | **48.42** | 13.75 | 39 / 39 |
-| Gemini 4 Argon (high)* | AGY CLI | 36.01 | **32.17** | 17.92 | 23 / 39; unfinished |
+| Model | Harness | MC | **RMC (primary)** | SMC | Coverage |
+| --- | --- | --- | --- | --- | --- |
+| Astra 6 (max) | Codex CLI | 94.32 | 94.32 | 89.17 | 39/39 |
+| Sol 6.1 (max) | Codex CLI | 94.32 | 94.22 | 89.17 | 39/39 |
+| Claude Opus 5.5 (max) | Claude Code | 93.76 | 91.44 | 59.42 | 39/39 |
+| Astra 6 (xhigh) | Codex CLI | 91.45 | 90.45 | 79.17 | 39/39 |
+| Dot Underlying | Unknown<sup>1</sup> | 91.66 | 90.23 | 78.00 | 39/39 |
+| Sol 6.1 (xhigh) | Codex CLI | 90.12 | 87.96 | 68.00 | 39/39 |
+| Terra 6.1 (max) | Codex CLI | 87.65 | 86.45 | 65.67 | 39/39 |
+| Terra 6.1 (xhigh) | Codex CLI | 79.71 | 78.50 | 63.00 | 39/39 |
+| DeepSeek v4.1 Flash (max)* | Codex CLI<sup>2</sup> | 64.80 | 57.07 | 25.83 | 38/39 |
+| Gemini 3.8 Flash (high) | AGY CLI | 62.32 | 48.42 | 13.75 | 39/39 |
+| Gemini 4 Argon (high)* | AGY CLI | 36.01 | 32.17 | 17.92 | 23/39 |
 
 *Evaluation unfinished. Complete intervals and coverage remain in model details. All formal tests allow local tools and preinstalled public dependencies; external retrieval and tool networking are prohibited. Model-service / authentication traffic is separate. Harness versions and actual tool use are scoped to the original batches, not inferred across inherited answers.*
 
 ¹ Dot's independent native harness. Its underlying SKU is unverified. The original 38 + 3 batch and one historical native first delivery selected after observation are recorded separately, giving 39 + 3 scored deliveries. Native records do not relax CLI import contracts.
 
 ² Several tasks exhausted the maximum output budget during lengthy reasoning in DeepSeek Harness (DSH), so execution moved to Codex CLI.
+
+Astra 6 (xhigh) completed 39 initial tasks and three fixed self-check rounds: MC 91.45 / RMC 90.45 / SMC 79.17, content reliability 98.68% and complete-goal attainment 87.36%. With the same tasks, tools and budgets, its RMC was 3.87 points below max in this run. The main losses were a core endorsement error in AHR02, the initial C003 delivery at 82 / 92, and lower extension credit; all three C003 rounds reached 92 / 92 with accurate diagnoses and no regression. See the [Astra xhigh record](results/v0.6.0/astra-6-xhigh/20261110/README.md).
 
 Astra 6 (max) completed all 39 initial tasks and three fixed self-check rounds, with 42 first deliveries and no retries. MC / RMC / SMC are 94.32 / 94.32 / 89.17; content reliability is 100% and complete-goal attainment 90.92%. Its initial Lean projects and all self-check rounds passed. MC and SMC tie Sol Max; the 0.10 RMC difference comes from one optional false assertion in Sol. Paired review corrected the network-manuscript fidelity judgment for both answers, which already supplied nodewise operators and organization; original answers and earlier reviews are retained. See the [Astra record](results/v0.6.0/astra-6-max/20261109/README.md).
 
@@ -96,7 +99,7 @@ Reliability Gap **RG = RMC − MC** and Delivery Gap **DG = SMC − MC** are pre
 
 Use the [external harness guide](docs/harness-guide.md). Every task gets a fresh runtime / workspace. At most three effective attempts include the first; proven pure system failures do not consume an attempt, output exhaustion does, and normally delivered mathematical errors never permit a retry. The first native terminal state or deadline seals actual source; controller cleanup is separate. AI review, compilation, human approval and comparison eligibility are distinct.
 
-The public candidate package contains 25 tasks. The controlled complete 39-task package and external evaluator plan stay private; both use the same public runner. References, expected truth, rubrics, author implementations, prior answers and reviews are evaluator-side. Public outputs expose only combined private counts, opaque hashes and aggregates. The selected Astra result is an additional record; published release snapshots remain unchanged.
+The public candidate package contains 25 tasks. The controlled complete 39-task package and external evaluator plan stay private; both use the same public runner. References, expected truth, rubrics, author implementations, prior answers and reviews are evaluator-side. Public outputs expose only combined private counts, opaque hashes and aggregates. The selected Astra results are additional records; published release snapshots remain unchanged.
 
 ## Local preview
 

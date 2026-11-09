@@ -1,0 +1,67 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "MG-BC002:A1",
+  "case_id": "MG-BC002",
+  "binding": {
+    "plan_sha256": "b15c6f709e99ea6c385b01670c41a31b61d804d08e027847d281a1ffc730f7f6",
+    "slot_id": "MG-BC002:A1",
+    "evidence_id": "979132b4e757933cf0d74a6f350878fd00be3d16ca40e925059bdcb09ed26926",
+    "response_sha256": "6b94717e6387f0d4af07124278cb3684c6907de4f2f98e52852817f70a732b74",
+    "history_sha256": "e7feed144fb27c02aa4935a707862b2a8b6a8cdc4611e5822a3ba27eaa4b4e5e",
+    "projected_request_sha256": "87afd290629fb57c658f0183254338fc36470995ce8e972d597e871a7c639ee2",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "39d98853abc6fba59b1e49e20d8a39d3ab3e5ed22f6b591fc7acc3110017efed",
+    "body_origin": {
+      "slot_id": "MG-BC002:A1",
+      "response_sha256": "6b94717e6387f0d4af07124278cb3684c6907de4f2f98e52852817f70a732b74",
+      "start_byte": 0,
+      "end_byte": 5214
+    },
+    "body_sha256": "6b94717e6387f0d4af07124278cb3684c6907de4f2f98e52852817f70a732b74",
+    "rationale_sha256": null,
+    "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+  },
+  "reviewer": "Independent Astra xHigh A1 research/review evaluator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "本轮5214-byte正常首答独立核验：原D=4/4、U=3/3、S-corrected；background R=3，complete=true，actual false endorsement=false。真实流/叠层、条件prox证书和部署说明全部正确；额外全正时间Jacobian反证经独立核对成立，接受其比参考局部时间反证更强的合法路线。7单元与3完整目标通过，Strict通过；无claim findings。AI审核，人审pending。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+  },
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "开头及最终部署段明确否定实际每个正时间凸prox的升级，保留真实流稳定与条件prox证书，并区别tau为演化时间与prox_(tau f)隐式Euler系数。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "Moreau包络梯度公式说明C¹凸prox必须有对称Jacobian；对给定三次耦合流作平衡点初值Taylor/变常数展开，得在(epsilon,0)的交叉导数差，确为本模型的可积性障碍而非仅比较prox_(tf)。 独立核对所有t>0的反证：J12=−eps²e^(−t)(1−e^(−3t))+O_t(eps^4)，J21=−3eps²e^(−2t)(1−e^(−t))+O_t(eps^4)，差为−eps²e^(−t)(1−e^(−t))³+O_t(eps^4)。对每个固定t>0首项系数非零，可选依t的小eps非零，排除任何全局proper/lsc/convex r；部署纠错闭合。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "真实D1–D4全交付；具体全正时间反证覆盖任意可能凸正则项，最终描述只用实际收缩耗散和时间叠层，不误用条件prox结论。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T21:34:55.883662+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "8c06cdb9d7c29b9d78c8313b514281cb269550f16474d278d56c19ec985b8cce",
+  "public_projection": true,
+  "original_private_review_sha256": "320992557efb7f6ce58a90b48d07c3baf0b3da84b57846102cec466d0a6b7c3e"
+}

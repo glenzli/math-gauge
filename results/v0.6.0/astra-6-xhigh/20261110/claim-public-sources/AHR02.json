@@ -1,0 +1,49 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "AHR02",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR02:A1",
+    "case_id": "AHR02",
+    "binding": null,
+    "reviewer": "Independent Astra xHigh Lean semantic-audit evaluator",
+    "reviewer_kind": "ai",
+    "decision": "fail",
+    "assumption_fidelity": "drift",
+    "proof_validity": "invalid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": false,
+    "notes": "原答保留大量正确源码分析，但把所有路径的Lip证书新增前提放行成正文完整覆盖。原数学判准0/20/15/5，共40/100；Strict失败；单一critical核心错误背书，当前RMC封顶交共享评分器处理，不手写聚合。",
+    "findings": [
+      "独立根因是把未参加任何采样保证的路径也必须有 Lip 证书的强前提，当成正文原有前提。取合法五点扩展伪度量模型，b≠c但d(b,c)=0，代理未采样路径把b,c分别送到距离1的a,d，则任何ENNReal系数（包括top）乘0仍为0，不可能给该路径Lip证书；目标常为a、只采样a的可评估单点路径却有0证书，原正文仍适用。因此这不是仅省略抄写定义，而是对所审核心接口的错误完整性放行。"
+    ],
+    "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+    "format_review": {
+      "decision": "valid",
+      "notes": "正常首答完整保留；本题无需新增Lean源码或编译。"
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 0,
+        "notes": "肯定完整覆盖的主判断错误。三个现有包装的 hLq 均量化所有路径 q；正文只为参加可评估路径并集的路径要求证书。原答未指出这一额外前提和范围损失。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "准确承认当前声明在其 hLq/hLstar 前提下成立；实际核对路径样本、局部上界、同q联合量词、hrep改写、有限阈值包装及保证域不必覆盖U，均为有效读码成果。这里保留有效定理分析的20分，不据此认定原前提等价。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 15,
+        "notes": "样本/残差/共同锚点、三个真实声明、同q量词和链到代理的桥有具体且正确的源码依据，保留该部分证据分；但没有对比 hLq 的全路径量词，也没有证明正文到该额外前提的蕴含或给范围损失见证，故不能取得范围差异证据的完整30分。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 5,
+        "notes": "正确限制保证域并集、没有误称覆盖整个U，也将额外InFittingBall封装留在题外，保留边界控制的5分；核心需将 hLq 按可评估条件化的修复完全遗漏，反称两条正文结论已完整证明，不给其余10分。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "fbb076210d7ff5d0b8f03311fd91ac411582bbb824fe9829e7fabc3c6f840a3d"
+}

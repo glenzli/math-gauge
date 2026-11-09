@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR01:A1",
+  "case_id": "AHR01",
+  "binding": {
+    "plan_sha256": "80b977eafe5474476ebdd6ba91dea3422a0a814783fab92fa518db2849560657",
+    "slot_id": "AHR01:A1",
+    "evidence_id": "9bc20cfa4c143c1386dd95131580c3dfa1c20faa8be1c076c32ed4f58df47f9b",
+    "response_sha256": "e821be248d95f9b532a1a4b58f0415ac1369240813fe981e79462643e4bc2cad",
+    "history_sha256": "1f254451bb1edbd945d99ae04179b4660d6d6c4042f6e1af45eabc68242bec30",
+    "projected_request_sha256": "6e16361a778f4e45f5e5faf8272109005824275ad794b79a121ecd01b4286e3f",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "6dc98749bc8fa12421579130d3a1efd364e76e50ecf69132140862e0572625da",
+    "body_origin": {
+      "slot_id": "AHR01:A1",
+      "response_sha256": "e821be248d95f9b532a1a4b58f0415ac1369240813fe981e79462643e4bc2cad",
+      "start_byte": 0,
+      "end_byte": 8896
+    },
+    "body_sha256": "e821be248d95f9b532a1a4b58f0415ac1369240813fe981e79462643e4bc2cad",
+    "rationale_sha256": null,
+    "request_sha256": "1f4237277cd4002f5ec872b58db5fd60e2843cacc0d72b3a3262d85532a41589",
+    "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+  },
+  "reviewer": "Codex coordinator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "独立AI审核：本轮AHR01首份正常原生答卷正确、完整。诊断分为 judgment35/35、valid_parts20/20、evidence30/30、repair_scope15/15；严格数学完成为真。候选四点自环反例已按完整有限网络与当前加细记录逐项独立核验；未发现错误承诺、核心错误放行/错误否决或不必要限制。未读取其他模型/旧轮候选答案或判决，未调用模型、网络或修改生产/候选源码。人审pending，非正式数学比较资格。",
+  "findings": [],
+  "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "准确判为规格关系欠约束，而非外延定理错误：choice_projection 仅量化子节点实际输入域的输出像；正文 h-eddd1f2d0a9d3528 要求完整局域输出像上的全部入边、出边、自环与非关联边数据。原答首段及第3、4项明确作出这一区分，没有用编译替代语义对应。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "准确承认完整节点域上的有限非空分划、逐点局部相等和限制算子刻画。第1项说明入口投影结合 entry_mem、互斥和标签单射已决定完整入口片；第2项准确读出独立具体构造的 lift_label、完整 choice、自环引理、逐次 colour_path、统一终止界、保留完整算子的 prune 及 network_extensional_eq。第4项正确保留当前抽象关系下的路径投影与外延等价证明，既未错误否决有效结论，也未声称构造不存在。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "给出与参考不同但完全合法的四点自环反例。原单节点恒等算子定义域{a,b,c}、入口{a,b}且无边；分片{a,c}/{b}后额外加上仅在c触发的第一子节点自环。两子节点都由入口到达；实际输入仅为a、b，所有入口路径长度为1，choice_next_mem和当前choice_projection均满足，全部NodeDomainRefinement字段成立；正文却要求该自环边域为空。候选逐项核对、终止域变化和全域算子相等均正确。独立有限枚举重新验证了两网络公理、关系各字段及边域差异；这不是Lean实例或本轮编译结果。PresentationData确实保留完整边域，故不能以外延商或域外总化抹去反例。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "第5项提出对所有保留节点对施加统一完整边域交集等式，并正确指出把choice_projection直接扩大到完整node_image会错误排除合法剪枝。它区分剪枝前终止域交集等式和剪枝后终止域可能扩大，提出补齐具体构造到抽象关系、以及加强关系到完整原数据的接口对应，同时保留已有外延证明；这些方向足够且无额外源码交付要求。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T21:34:57.594050+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "a9cf9095333c83db7f46ad984e225a747f157244f55b1d33b18717221f362e1f",
+  "public_projection": true,
+  "original_private_review_sha256": "412ba859edb96788033bc60c8854ca88aa5f9d48c856a10088d35e4219b7aaed"
+}

@@ -1,0 +1,159 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-GP002",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-GP002:A1",
+    "case_id": "MG-GP002",
+    "binding": null,
+    "reviewer": "Independent AI reviewer, Astra xHigh fresh batch",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "本轮新首答六阶段完整正确，包括一般光滑满射的必要量词桥、全部损失端点、固定二次方向最小损失和更强C^{m+3}估计，以及一个固定Liouville不可解右端。无错误承诺；AI审核、人审pending。",
+    "findings": [],
+    "group_contract_sha256": "b27ac08cc7f14f57e5e0dae316caeb81a82de920c4fc1b8f482af6451b52de73",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整首答按S1–S6书面交付，无Lean义务，无独立附件。"
+    },
+    "stages": [
+      {
+        "stage_id": "S1",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "固定有限非零频带逐模乘子2πi(αk1+k2)均非零，除法给实际双侧逆。H^r加权正交求和给逆范数精确为max 1/(2π|dα(k)|)，由最小除数单频模取得；对任意实r同样成立，没有升级为全频率统一界。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "固定有限非零频带逐模乘子2πi(αk1+k2)均非零，除法给实际双侧逆。H^r加权正交求和给逆范数精确为max 1/(2π|dα(k)|)，由最小除数单频模取得；对任意实r同样成立，没有升级为全频率统一界。"
+        }
+      },
+      {
+        "stage_id": "S2",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "全频率多项式下界使逆乘子仅多项式增长，故光滑F的快速衰减保留、所有导数绝对一致收敛；零均值与无理性给唯一性。尾部|k|>N逐项使用<k>^{-2q}≤(1+N²)^{-q}，精确得到所需(2πc)^−1因子及r+s+q输入范数，对r实、q≥0均正确。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "全频率多项式下界使逆乘子仅多项式增长，故光滑F的快速衰减保留、所有导数绝对一致收敛；零均值与无理性给唯一性。尾部|k|>N逐项使用<k>^{-2q}≤(1+N²)^{-q}，精确得到所需(2πc)^−1因子及r+s+q输入范数，对r实、q≥0均正确。"
+        }
+      },
+      {
+        "stage_id": "S3",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "正确计算逆乘子差为(β−α)k1/(2πi dα dβ)，两方向同一δ下界均实际使用，|k1|≤N给所需N/(2πδ²)系数；对任意实r平方求和，未把固定频带信息扩成全参数/全频率一致性。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "正确计算逆乘子差为(β−α)k1/(2πi dα dβ)，两方向同一δ下界均实际使用，|k1|≤N给所需N/(2πδ²)系数；对任意实r平方求和，未把固定频带信息扩成全参数/全频率一致性。"
+        }
+      },
+      {
+        "stage_id": "S4",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "全部四项目标闭合。Sobolev允许损失严格等价κ_s=inf<k>^s|dα|>0，单频测试给必要性和最优常数，保留端点。证明与A_s=inf q^s||qα||等价，并用适用的简单连分数误差/第二类最佳逼近性质推导q[n+1]/q[n]^s有界的精确端点判据；μ有限时高于μ−1全允许、低于全不允许，端点另查。光滑满射充分由Fourier构造，必要用一组互异稀疏频率构成同一个光滑F，逆系数无界，量词正确。对sqrt2−1以代数共轭非零整数乘积给s1统一下界，以Dirichlet排除每个s<1，故最小1且取到。最后在二维用H^{m+2}→C^m、损失1及H^{m+3}≤D C^{m+3}，得到更强C^{m+3}→C^m并正确推出C^{m+4}目标。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "全部四项目标闭合。Sobolev允许损失严格等价κ_s=inf<k>^s|dα|>0，单频测试给必要性和最优常数，保留端点。证明与A_s=inf q^s||qα||等价，并用适用的简单连分数误差/第二类最佳逼近性质推导q[n+1]/q[n]^s有界的精确端点判据；μ有限时高于μ−1全允许、低于全不允许，端点另查。光滑满射充分由Fourier构造，必要用一组互异稀疏频率构成同一个光滑F，逆系数无界，量词正确。对sqrt2−1以代数共轭非零整数乘积给s1统一下界，以Dirichlet排除每个s<1，故最小1且取到。最后在二维用H^{m+2}→C^m、损失1及H^{m+3}≤D C^{m+3}，得到更强C^{m+3}→C^m并正确推出C^{m+4}目标。"
+        }
+      },
+      {
+        "stage_id": "S5",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "对任意J、有限s/C，选J中有理p/q并固定k=(q,−p)、u=e_k；取无理α_j=p/q+sqrt2/j最终在J中，所求右范数=2πq sqrt2 <k>^s/j→0而左L2=1，严格反驳共同常数。没有否定固定α*的正确界。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "对任意J、有限s/C，选J中有理p/q并固定k=(q,−p)、u=e_k；取无理α_j=p/q+sqrt2/j最终在J中，所求右范数=2πq sqrt2 <k>^s/j→0而左L2=1，严格反驳共同常数。没有否定固定α*的正确界。"
+        }
+      },
+      {
+        "stage_id": "S6",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "not_required",
+        "declarations": [],
+        "notes": "明确指定q_n=10^{n!}与整数p_n截断，几何级数尾界0<α−p_n/q_n<2q_n^{−n−1}，以有理差至少1/(Bq_n)证明无理。选同一个F=Σ[n≥2] q_n^{−n/2} e_{(q_n,−p_n)}，频率互异非零；每个m阶导数尾由常数Σ q_n^{−1}控制，故C∞且零均值。相应任何解的该频系数>q_n^{n/2}/(4π)→∞，与L1 Fourier系数有界矛盾。不是每个估计另选右端。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "明确指定q_n=10^{n!}与整数p_n截断，几何级数尾界0<α−p_n/q_n<2q_n^{−n−1}，以有理差至少1/(Bq_n)证明无理。选同一个F=Σ[n≥2] q_n^{−n/2} e_{(q_n,−p_n)}，频率互异非零；每个m阶导数尾由常数Σ q_n^{−1}控制，故C∞且零均值。相应任何解的该频系数>q_n^{n/2}/(4π)→∞，与L1 Fourier系数有界矛盾。不是每个估计另选右端。"
+        }
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "e3fc90766800404c689bce086eef32a7bf3d50a566546f81798f3896d22deae7"
+}

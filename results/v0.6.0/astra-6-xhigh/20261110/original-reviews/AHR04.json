@@ -1,0 +1,72 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR04:A1",
+  "case_id": "AHR04",
+  "binding": {
+    "plan_sha256": "80b977eafe5474476ebdd6ba91dea3422a0a814783fab92fa518db2849560657",
+    "slot_id": "AHR04:A1",
+    "evidence_id": "4cf19aba2c784c4d3af073df96cb5c7ae906c8980722daaf1a34ad1c348ae940",
+    "response_sha256": "158fdacf5891e160b5a92aae8a2669d5b1224c52771f798bb6e5c6efb59c5ef5",
+    "history_sha256": "873bf2d5239fab30d214f22b2902bf7285f6c46e0a24f0aa91924146f70c1e95",
+    "projected_request_sha256": "eb24214a55725456fd303e8b4ed4a7dcb376b90ebf1bcc11cb7614555c0791fe",
+    "prompt_sha256": null,
+    "parser_version": "math-gauge.keep-full/v1",
+    "parent_slot": null,
+    "parent_response_sha256": null,
+    "parent_material_sha256": null,
+    "material_sha256": "348f58833625bb0b54f88cf69f50d00b6b58bff2ca5b5554c7f2534ed4c0ea2d",
+    "body_origin": {
+      "slot_id": "AHR04:A1",
+      "response_sha256": "158fdacf5891e160b5a92aae8a2669d5b1224c52771f798bb6e5c6efb59c5ef5",
+      "start_byte": 0,
+      "end_byte": 3693
+    },
+    "body_sha256": "158fdacf5891e160b5a92aae8a2669d5b1224c52771f798bb6e5c6efb59c5ef5",
+    "rationale_sha256": null,
+    "request_sha256": "783b84f0c15ea7ceb14c03bd0a84efb6a252714b0ae58b168a68cebb369c523d",
+    "group_contract_sha256": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0"
+  },
+  "reviewer": "Independent Astra xHigh Lean semantic-audit evaluator",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "本轮冻结四维35/20/30/15均满足，原数学100/100、Strict通过。接受原题许可的简短定义/局部上界使用及同q推导，不额外要求公式重抄或便利接口。原答诚实说明未重新编译，无需新增Lean。",
+  "findings": [],
+  "group_contract_sha256": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0",
+  "format_review": {
+    "decision": "valid",
+    "notes": "正常首答完整保留；本题无需新增Lean源码或编译。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "正确判定题面两条路径保证域并集包含已完整覆盖；主结论以实际定义、局部上界、同q量词及代理桥支撑，范围限定明确，不靠编译或历史修订标签。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "说明样本与路径可评估非空条件、Lq+Lstar及同q路径残差、原J非空和阈值有限包装、TargetLipEnvelopeCertificate含目标域条件及hpathV。其选可评估路径后使用已许可局部上界，符合本版本条件化hLq；没有要求不可评估路径也有证书。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "用正确D_{Lq+Lstar,j}(x;Sqj)+eps预算和联合交集表达识别实际保证域，按左侧成员选同一q、Uq⊆U、局部界和hrep实际桥逐步推出两条包含。题面许可现有定义与局部结果，D/路径残差的准确符号及使用已足，不另要求把共同锚点inf或残差sup定义再抄一遍。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "准确说明本范围无需补修，且保证域之并不必等于或覆盖U，也不能仅凭局部/全局标签比较大小；额外InFittingBall便利封装被正确列为题外可推论，换成整个U需额外覆盖条件。未扩大到整章目标。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-09T21:34:57.594960+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "f740cca9e6e7c39a545115c88c86931053da144110117650a9fddc9c3d11afcd",
+  "public_projection": true,
+  "original_private_review_sha256": "a0a9e1db60bff01094e0c6ce2d8b8928a04be5ec7b0f29e830b57bd070b59606"
+}

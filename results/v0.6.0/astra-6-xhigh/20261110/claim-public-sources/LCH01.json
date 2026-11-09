@@ -1,0 +1,303 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "LCH01",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "LCH01:A1",
+    "case_id": "LCH01",
+    "binding": null,
+    "reviewer": "Independent Astra xHigh Lean evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "独立逐项核验8/8完整、4/4完整目标达成；原final源码和映射与首终态封存工程逐字一致。固定Lean4.29.1下真实入口/闭包编译及全声明公理审计通过（112 originating constants）。原自报8项完成准确，无错误承诺；Strict通过，AI审核、人审pending。",
+    "findings": [],
+    "group_contract_sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+    "format_review": {
+      "decision": "valid",
+      "notes": "实际Main和目标import闭包均在原final独立命名代码块全文交付，逐字等于首终态封存源码；映射覆盖全部原义务，原文与封存映射分别绑定。"
+    },
+    "stages": [
+      {
+        "stage_id": "CH02-D01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.Gauge"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.LipOn"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.Lip"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.lipMatricesOn"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.lipMatrices"
+          }
+        ],
+        "notes": "Gauge 的有限非空 I 与冻结 ExtendedPseudoMetric 恰封装原规范结构，没有存入任何欲证结果；LipOn 保留 U⊆domφ 并对全体 x,y∈U、输出j给 ENNReal 有限加权和上界。Lip 及两个集合推导式给原全域/受限证书族，不预设最优矩阵。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "Gauge 的有限非空 I 与冻结 ExtendedPseudoMetric 恰封装原规范结构，没有存入任何欲证结果；LipOn 保留 U⊆domφ 并对全体 x,y∈U、输出j给 ENNReal 有限加权和上界。Lip 及两个集合推导式给原全域/受限证书族，不预设最优矩阵。"
+        }
+      },
+      {
+        "stage_id": "CH02-D02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.CoLipOn"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.coLipMatricesOn"
+          },
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.coLip_term_le"
+          }
+        ],
+        "notes": "CoLipOn 同时包含 U.Nonempty、U⊆domφ 和每个点对/输出的完整求和下界；coLipMatricesOn 是该谓词的矩阵族。全域只需把同一定义取 U=domφ，不删非空条件；K条目未被要求有限。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "CoLipOn 同时包含 U.Nonempty、U⊆domφ 和每个点对/输出的完整求和下界；coLipMatricesOn 是该谓词的矩阵族。全域只需把同一定义取 U=domφ，不删非空条件；K条目未被要求有限。"
+        }
+      },
+      {
+        "stage_id": "CH02-D03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.ChannelMatrix"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.entry"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.matrixComp"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.entry_matrixComp"
+          }
+        ],
+        "notes": "ChannelMatrix 采用真实 Matrix I I ENNReal，entry M i j 定义为通常第j行第i列 M j i；matrixComp 是标准 M₂*M₁，entry_matrixComp 证明条目等于Σk M₂(k→j)M₁(i→k)，给出输入/输出表示和作用次序的实际桥。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "ChannelMatrix 采用真实 Matrix I I ENNReal，entry M i j 定义为通常第j行第i列 M j i；matrixComp 是标准 M₂*M₁，entry_matrixComp 证明条目等于Σk M₂(k→j)M₁(i→k)，给出输入/输出表示和作用次序的实际桥。"
+        }
+      },
+      {
+        "stage_id": "CH02-D07",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.ComponentChannel"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.channelCoefficient"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.RowSupported"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.IsDiagonal"
+          },
+          {
+            "file": "LCH01/MatrixBounds.lean",
+            "name": "LCH01.ChannelLipOn"
+          }
+        ],
+        "notes": "ComponentChannel 是输入/输出有序对；channelCoefficient 用正确 entry。RowSupported M i j 对所有k≠i清零第j行，保留任意交叉通道且允许所选项也为0；IsDiagonal 对每个j取i=j。ChannelLipOn 还保留原评估域合法性和全部点对。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "ComponentChannel 是输入/输出有序对；channelCoefficient 用正确 entry。RowSupported M i j 对所有k≠i清零第j行，保留任意交叉通道且允许所选项也为0；IsDiagonal 对每个j取i=j。ChannelLipOn 还保留原评估域合法性和全部点对。"
+        }
+      },
+      {
+        "stage_id": "CH02-P19",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.row_sum_eq"
+          },
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.lip_single_input"
+          },
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.lip_diagonal"
+          }
+        ],
+        "notes": "row_sum_eq 对任意 ENNReal 向量使用 finite sum 单项化简，零项含0*top仍为0；lip_single_input 为任意i,j给原单通道界，lip_diagonal 对全部同指标通道实例化，没有只证对角特例替代交叉情形。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "row_sum_eq 对任意 ENNReal 向量使用 finite sum 单项化简，零项含0*top仍为0；lip_single_input 为任意i,j给原单通道界，lip_diagonal 对全部同指标通道实例化，没有只证对角特例替代交叉情形。"
+        }
+      },
+      {
+        "stage_id": "CH02-P20",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.positive_coLip_channel"
+          }
+        ],
+        "notes": "coLip_term_le 从真实co-Lip有限和取任意非负单项；positive_coLip_channel 以 K(i→j)>0 和 d_i(x,y)>0 得乘积正并传到输出距离，系数与距离都允许top，域和任意i,j完整。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "coLip_term_le 从真实co-Lip有限和取任意非负单项；positive_coLip_channel 以 K(i→j)>0 和 d_i(x,y)>0 得乘积正并传到输出距离，系数与距离都允许top，域和任意i,j完整。"
+        }
+      },
+      {
+        "stage_id": "CH02-P21",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.coLip_reflects_gaugeZero"
+          }
+        ],
+        "notes": "coLip_reflects_gaugeZero 使用所有对角条目正及前项，对每个j反证输入距离非零，将输出 GaugeZeroRelated 反射为输入同一全族零距。未假定分离或偷换成 x=y。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "coLip_reflects_gaugeZero 使用所有对角条目正及前项，对每个j反证输入距离非零，将输出 GaugeZeroRelated 反射为输入同一全族零距。未假定分离或偷换成 x=y。"
+        }
+      },
+      {
+        "stage_id": "CH02-P25",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "LCH01/Channels.lean",
+            "name": "LCH01.scalar_two_sided"
+          }
+        ],
+        "notes": "scalar_two_sided 在同一φ/U的两个真实证书下，以K单项取下界、L单行化简取上界，只要求L第j行对角支撑。未增加K稀疏、对角正、系数有限或距离有限条件。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "scalar_two_sided 在同一φ/U的两个真实证书下，以K单项取下界、L单行化简取上界，只要求L第j行对角支撑。未增加K稀疏、对角正、系数有限或距离有限条件。"
+        }
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "d3a53886837a2e8350469fb981a82ba5dd5504fe479f7dfd7d97e9cb480efd77"
+}

@@ -1,0 +1,2813 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-C003",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-C003:A1",
+    "case_id": "MG-C003",
+    "binding": null,
+    "reviewer": "Independent Astra xHigh Lean evaluator",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "本轮独立核验82/92项完整；其余10项与原答的 incomplete 清单一致。Main真实import闭包在固定环境通过编译和全声明允许公理审计。原final与明确链接的独立源码附件分别保存；不把附件伪装成501-byte原final。未见错误数学承诺或虚报整章完成；Strict因必做义务未交齐不通过。",
+    "findings": [],
+    "group_contract_sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527",
+    "format_review": {
+      "decision": "valid",
+      "notes": "原final以明确链接交付完整命名代码块附件；附件所有实际目标模块与首终态封存源码逐字相等，alignment原字节相同。保留原final仅含摘要/链接的事实，不另要求重复全文。"
+    },
+    "stages": [
+      {
+        "stage_id": "CH03-D01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.constComp"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.idComp"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.activeComp"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.component_partition"
+          }
+        ],
+        "notes": "constComp 量化 U 内全部点对；idComp 明确排除常值后要求逐点零距；activeComp 是前两者并集的补集。component_partition 证明覆盖及两两不交，全域仅将 U 取为 dom，不假定伪度量分离。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "constComp 量化 U 内全部点对；idComp 明确排除常值后要求逐点零距；activeComp 是前两者并集的补集。component_partition 证明覆盖及两两不交，全域仅将 U 取为 dom，不假定伪度量分离。"
+        }
+      },
+      {
+        "stage_id": "CH03-D02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_representation"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.subfamily_zero"
+          }
+        ],
+        "notes": "fiber 保留 x∈U 及任意目标 y，subfamily_zero 和 fiber_representation 把逐 j 零距合取严格等同冻结 d_J=0；无像目标或近似距离限制。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber 保留 x∈U 及任意目标 y，subfamily_zero 和 fiber_representation 把逐 j 零距合取严格等同冻结 d_J=0；无像目标或近似距离限制。"
+        }
+      },
+      {
+        "stage_id": "CH03-D03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.eqRel"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.zeroRel"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.imageSetoid"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.ImageQuotient"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.quotientPoint"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiberPreorder"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.zeroRel_fiber"
+          }
+        ],
+        "notes": "eqRel/zeroRel 都保留两输入属于 U，imageSetoid 在真实像子类型上证明等价三公理，ImageQuotient 是该 Setoid 的实际 Quotient；zeroRel_fiber 验证与全纤维的对应，未把零距改成点相等。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "eqRel/zeroRel 都保留两输入属于 U，imageSetoid 在真实像子类型上证明等价三公理，ImageQuotient 是该 Setoid 的实际 Quotient；zeroRel_fiber 验证与全纤维的对应，未把零距改成点相等。"
+        }
+      },
+      {
+        "stage_id": "CH03-D04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.GoodRadius"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.radius"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.radius_representation"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.goodRadius_iff"
+          }
+        ],
+        "notes": "GoodRadius 要求 0<r<top 和严格输入球条件；radius 对所有且仅这些有限正合法参数取 sSup。radius_representation 证明与球∩U 的定义相等，空集上确界和无穷由 ENNReal 完备格保留。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "GoodRadius 要求 0<r<top 和严格输入球条件；radius 对所有且仅这些有限正合法参数取 sSup。radius_representation 证明与球∩U 的定义相等，空集上确界和无穷由 ENNReal 完备格保留。"
+        }
+      },
+      {
+        "stage_id": "CH03-D05",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.uniformRadius"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.nullMatrix"
+          }
+        ],
+        "notes": "uniformRadius din dout f A U 对 A 中基点取双 iInf，而点态球始终在独立 U 评估；nullMatrix j i 取 A=U、输入 d_i、输出 d_j，正确保持行列顺序。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "uniformRadius din dout f A U 对 A 中基点取双 iInf，而点态球始终在独立 U 评估；nullMatrix j i 取 A=U、输入 d_i、输出 d_j，正确保持行列顺序。"
+        }
+      },
+      {
+        "stage_id": "CH03-D06",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.InputScale"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.diameter"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.diameterScale"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.channelType"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.threshold_cases"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.diameter_mono"
+          }
+        ],
+        "notes": "InputScale 的载体是非空集合子类型，mono 仅规定包含单调性；diameterScale 由点对 iSup 和 diameter_mono 构成。channelType 使用任意尺度、原 nullMatrix 及严格尺度/弱零化阈值，threshold_cases 给精确四值桥。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "InputScale 的载体是非空集合子类型，mono 仅规定包含单调性；diameterScale 由点对 iSup 和 diameter_mono 构成。channelType 使用任意尺度、原 nullMatrix 及严格尺度/弱零化阈值，threshold_cases 给精确四值桥。"
+        }
+      },
+      {
+        "stage_id": "CH03-D07",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.TotallyBoundedAt"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.covering_interface"
+          }
+        ],
+        "notes": "实际导入冻结 InternalEpsilonNet/covering_number/metric_entropy；covering_interface 证明无有限内部网 iff top 及有网时最小基数取得，TotallyBoundedAt 量化每个有限正半径，未换用外部中心。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "实际导入冻结 InternalEpsilonNet/covering_number/metric_entropy；covering_interface 证明无有限内部网 iff top 及有网时最小基数取得，TotallyBoundedAt 量化每个有限正半径，未换用外部中心。"
+        }
+      },
+      {
+        "stage_id": "CH03-D08",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.EntropyDefined"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.entropyDifference"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.entropy_difference_infinite"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.subfamilyEntropyDifference"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.subfamily_difference_representation"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.entropy_difference_finite"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.entropy_difference_signs"
+          }
+        ],
+        "notes": "EntropyDefined 将至少一端覆盖数有限作为显式定义前提；entropyDifference 是输入熵减实际像熵。subfamily_difference_representation 对任意两端 d_J/d_K 给定义相等，finite/infinite/signs 三引理保留有限实值和 ±∞ 分支并排除不定差。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "EntropyDefined 将至少一端覆盖数有限作为显式定义前提；entropyDifference 是输入熵减实际像熵。subfamily_difference_representation 对任意两端 d_J/d_K 给定义相等，finite/infinite/signs 三引理保留有限实值和 ±∞ 分支并排除不定差。"
+        }
+      },
+      {
+        "stage_id": "CH03-P01-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.const_zero_row"
+          }
+        ],
+        "notes": "const_zero_row 把常值点对像距化为零，并对有限指标的全零行给原求和上界。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "const_zero_row 把常值点对像距化为零，并对有限指标的全零行给原求和上界。"
+        }
+      },
+      {
+        "stage_id": "CH03-P01-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.const_colip_zero"
+          }
+        ],
+        "notes": "const_colip_zero 由任意源分量的正输入距离见证及真 co-Lip 证书，应用冻结单项退化引理推出相应 K k i=0；不要求距离或系数有限。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "const_colip_zero 由任意源分量的正输入距离见证及真 co-Lip 证书，应用冻结单项退化引理推出相应 K k i=0；不要求距离或系数有限。"
+        }
+      },
+      {
+        "stage_id": "CH03-P01-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.id_distance"
+          }
+        ],
+        "notes": "id_distance 用两次零距换端点和对称性证明任意 U 内点对的输出距离等于原输入距离，保留伪度量而非点值恒等。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "id_distance 用两次零距换端点和对称性证明任意 U 内点对的输出距离等于原输入距离，保留伪度量而非点值恒等。"
+        }
+      },
+      {
+        "stage_id": "CH03-P02-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.compose_active"
+          }
+        ],
+        "notes": "compose_active 对外算子在 f(U) 的分类讨论；外常值、外恒等与内常值/恒等的所有非有效组合均排除复合有效，得到所需并集包含。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "compose_active 对外算子在 f(U) 的分类讨论；外常值、外恒等与内常值/恒等的所有非有效组合均排除复合有效，得到所需并集包含。"
+        }
+      },
+      {
+        "stage_id": "CH03-P02-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.run"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.stageActive"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.run_active"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.run_domains"
+          }
+        ],
+        "notes": "run 按作用顺序递归复合，stageActive 每步将 U 替为该步真实像；run_active 对任意列表归纳并证明空列表没有有效分量。run_domains 给复合域到当前算子及后继真实像域的递推合法性，不引入额外中间域假设。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "run 按作用顺序递归复合，stageActive 每步将 U 替为该步真实像；run_active 对任意列表归纳并证明空列表没有有效分量。run_domains 给复合域到当前算子及后继真实像域的递推合法性，不引入额外中间域假设。"
+        }
+      },
+      {
+        "stage_id": "CH03-P02-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.compose_id"
+          }
+        ],
+        "notes": "compose_id 不只传递逐点零距，还由外恒等分量的保距式排除复合常值，否则与内恒等的常值排除矛盾，符合常值优先约定。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "compose_id 不只传递逐点零距，还由外恒等分量的保距式排除复合常值，否则与内恒等的常值排除矛盾，符合常值优先约定。"
+        }
+      },
+      {
+        "stage_id": "CH03-P03-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.two"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.twoD"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.swap"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.swap_example"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.swap_nonreverse"
+          }
+        ],
+        "notes": "Option Bool、离散距离及 swap 均具体定义；swap_example 证明度量合法、域/像闭合、两步有效及复合恒等。swap_nonreverse 用同一计算明确否定两条逆包含。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "Option Bool、离散距离及 swap 均具体定义；swap_example 证明度量合法、域/像闭合、两步有效及复合恒等。swap_nonreverse 用同一计算明确否定两条逆包含。"
+        }
+      },
+      {
+        "stage_id": "CH03-P04-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.outer_const"
+          }
+        ],
+        "notes": "outer_const 直接将 U 中两点的像作为 f(U) 中的两个代表代入外常值条件，结论是实际复合的常值分量。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "outer_const 直接将 U 中两点的像作为 f(U) 中的两个代表代入外常值条件，结论是实际复合的常值分量。"
+        }
+      },
+      {
+        "stage_id": "CH03-P04-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.sevenGauge"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.sevenPhi"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.sevenPsi"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.seven_example"
+          }
+        ],
+        "notes": "七点由 Option(Fin 6) 实现；sevenGauge false 仅合并指定 p,q，true 为离散分量。seven_example 证明两个扩展伪度量、复合域、内常值而复合非常值，并计算另一分量可区分 p,q。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "七点由 Option(Fin 6) 实现；sevenGauge false 仅合并指定 p,q，true 为离散分量。seven_example 证明两个扩展伪度量、复合域、内常值而复合非常值，并计算另一分量可区分 p,q。"
+        }
+      },
+      {
+        "stage_id": "CH03-P05-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.const_diagonal"
+          }
+        ],
+        "notes": "const_diagonal 使用真实外 Lip 矩阵及仅该输出行的异输入零项条件，冻结单行化简后以 ENNReal 的乘零律得零；L j j 未被限定有限。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "const_diagonal 使用真实外 Lip 矩阵及仅该输出行的异输入零项条件，冻结单行化简后以 ENNReal 的乘零律得零；L j j 未被限定有限。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_target"
+          }
+        ],
+        "notes": "fiber_target 对任意两个目标的 J 零距条件双向使用三角传递，证明纤维集合相等，无像目标加强。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_target 对任意两个目标的 J 零距条件双向使用三角传递，证明纤维集合相等，无像目标加强。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_cover"
+          }
+        ],
+        "notes": "fiber_cover 为每个实际像目标选其原像证明纤维非空，并以 f(x) 为目标证明全 U 覆盖；U 为空时也保留集合等式。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_cover 为每个实际像目标选其原像证明纤维非空，并以 f(x) 为目标证明全 U 覆盖；U 为空时也保留集合等式。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_disjoint"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_cover"
+          }
+        ],
+        "notes": "fiber_disjoint 对有公共成员的两纤维推出目标逐分量零距，从而相等；结合已证像目标非空和覆盖，确给去重后的分划。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_disjoint 对有公共成员的两纤维推出目标逐分量零距，从而相等；结合已证像目标非空和覆盖，确给去重后的分划。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_inter"
+          }
+        ],
+        "notes": "fiber_inter 明确保留 J.Nonempty，反向以一个分量纤维恢复 x∈U，且逐分量恢复全部零距条件，证明原交集等式。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_inter 明确保留 J.Nonempty，反向以一个分量纤维恢复 x∈U，且逐分量恢复全部零距条件，证明原交集等式。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-05",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_antitone"
+          }
+        ],
+        "notes": "fiber_antitone 将 K 的零距合取限制到 J⊆K，输入域和目标完全不变。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_antitone 将 K 的零距合取限制到 J⊆K，输入域和目标完全不变。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-06",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_singleton"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_full"
+          }
+        ],
+        "notes": "fiber_singleton 化简单元素指标的合取，fiber_full 由子族包含给全族纤维到每一分量的包含；未声称反向相等。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_singleton 化简单元素指标的合取，fiber_full 由子族包含给全族纤维到每一分量的包含；未声称反向相等。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-07",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_id"
+          }
+        ],
+        "notes": "fiber_id 对任何目标 y 用恒等分量的逐点零距换端点，证明输出目标零距 iff 输入目标零距，故不局限于像目标。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_id 对任何目标 y 用恒等分量的逐点零距换端点，证明输出目标零距 iff 输入目标零距，故不局限于像目标。"
+        }
+      },
+      {
+        "stage_id": "CH03-P06-08",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_const"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_const_empty"
+          }
+        ],
+        "notes": "fiber_const 由真实像目标代表得整个 U；fiber_const_empty 再以与该像目标正距离及三角传递推出另一目标纤维为空。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_const 由真实像目标代表得整个 U；fiber_const_empty 再以与该像目标正距离及三角传递推出另一目标纤维为空。"
+        }
+      },
+      {
+        "stage_id": "CH03-P07-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.Factors"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.factor_iff"
+          }
+        ],
+        "notes": "Factors 真的量化从 f(U) 子类型到 X 的函数及逐输入赋值式；factor_iff 必要方向以两个等像子类型相等得到 g 的点值相等。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "Factors 真的量化从 f(U) 子类型到 X 的函数及逐输入赋值式；factor_iff 必要方向以两个等像子类型相等得到 g 的点值相等。"
+        }
+      },
+      {
+        "stage_id": "CH03-P07-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.Factors"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.factor_iff"
+          }
+        ],
+        "notes": "factor_iff 充分方向在每个实际像点的存在原像上作 Classical.choose，关系包含证明所得函数满足 T(f(x))=g(x)。空 U 时像为空，不增加非空前提。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "factor_iff 充分方向在每个实际像点的存在原像上作 Classical.choose，关系包含证明所得函数满足 T(f(x))=g(x)。空 U 时像为空，不增加非空前提。"
+        }
+      },
+      {
+        "stage_id": "CH03-P07-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.factors_both"
+          }
+        ],
+        "notes": "factors_both 对两个方向应用已证 factor_iff，再以集合包含反对称性得到关系相等的 iff，保留同一 U。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "factors_both 对两个方向应用已证 factor_iff，再以集合包含反对称性得到关系相等的 iff，保留同一 U。"
+        }
+      },
+      {
+        "stage_id": "CH03-P07-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.scalar_factor_lip"
+          }
+        ],
+        "notes": "scalar_factor_lip 为实际像点选原像，使用 K≠0、K≠top 的除法消去 co-Lip 下界，再代入 L 上界得到 L/K。它还允许 L=top，原有限非负 L 情形全部覆盖。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "scalar_factor_lip 为实际像点选原像，使用 K≠0、K≠top 的除法消去 co-Lip 下界，再代入 L 上界得到 L/K。它还允许 L=top，原有限非负 L 情形全部覆盖。"
+        }
+      },
+      {
+        "stage_id": "CH03-P08-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.QuotientFactors"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.quotient_factor_iff"
+          }
+        ],
+        "notes": "quotient_factor_iff 在真实像 Setoid 的 Quotient 上用 Quotient.lift 构造代表无关函数，并逐 x 证明指定赋值式；必要方向用 Quotient.sound/exact 恢复零距关系包含，含空域。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "quotient_factor_iff 在真实像 Setoid 的 Quotient 上用 Quotient.lift 构造代表无关函数，并逐 x 证明指定赋值式；必要方向用 Quotient.sound/exact 恢复零距关系包含，含空域。"
+        }
+      },
+      {
+        "stage_id": "CH03-P08-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.quotient_factors_both"
+          }
+        ],
+        "notes": "quotient_factors_both 将两个方向的实际商映射存在转换为零距关系双包含，再证明关系相等，不以仅有关系命题代替映射构造。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "quotient_factors_both 将两个方向的实际商映射存在转换为零距关系双包含，再证明关系相等，不以仅有关系命题代替映射构造。"
+        }
+      },
+      {
+        "stage_id": "CH03-P08-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.separated_rel"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.separated_criteria"
+          }
+        ],
+        "notes": "separated_rel 只对各自实际像集要求全族零距蕴含相等；separated_criteria 分别使用两像集分离，给单向和双向点值/商值判据一致。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "separated_rel 只对各自实际像集要求全族零距蕴含相等；separated_criteria 分别使用两像集分离，给单向和双向点值/商值判据一致。"
+        }
+      },
+      {
+        "stage_id": "CH03-P09-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_preorder_refl"
+          },
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_preorder_trans"
+          }
+        ],
+        "notes": "fiberPreorder 是固定 U 的零距关系包含；fiber_preorder_refl/trans 分别直接证明自反和传递，未跨域传递。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiberPreorder 是固定 U 的零距关系包含；fiber_preorder_refl/trans 分别直接证明自反和传递，未跨域传递。"
+        }
+      },
+      {
+        "stage_id": "CH03-P09-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.relation_chain"
+          }
+        ],
+        "notes": "relation_chain 对任意 m 和 a≤b≤m 从逐步包含归纳出任意两层包含；其任意集合参数可直接取定义过的算子 zeroRel，映射无额外数学桥缺口。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "relation_chain 对任意 m 和 a≤b≤m 从逐步包含归纳出任意两层包含；其任意集合参数可直接取定义过的算子 zeroRel，映射无额外数学桥缺口。"
+        }
+      },
+      {
+        "stage_id": "CH03-P09-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.relation_chain_strict"
+          }
+        ],
+        "notes": "relation_chain_strict 从指定真包含取实际差集见证，用前后包含证明其属于末层且不属于首层，同时给端点真包含。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "relation_chain_strict 从指定真包含取实际差集见证，用前后包含证明其属于末层且不属于首层，同时给端点真包含。"
+        }
+      },
+      {
+        "stage_id": "CH03-P10-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.realGauge"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.realGauge_valid"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.liftOperator_domain"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.step"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.stepDomain"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.step_valid"
+          }
+        ],
+        "notes": "step 是 Option ℝ 上保持 none 的原阶跃函数，stepDomain 精确为 [-1,0)∪(0,1] 的 some 像；step_valid 证明通常扩展伪度量、域非空及域包含。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "step 是 Option ℝ 上保持 none 的原阶跃函数，stepDomain 精确为 [-1,0)∪(0,1] 的 some 像；step_valid 证明通常扩展伪度量、域非空及域包含。"
+        }
+      },
+      {
+        "stage_id": "CH03-P10-02",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；实际源码只有阶跃算子及域合法性，没有该固定 U 上全部合法半径恰为 (0,|y|]、点态半径精确值和处处正的证明。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；实际源码只有阶跃算子及域合法性，没有该固定 U 上全部合法半径恰为 (0,|y|]、点态半径精确值和处处正的证明。"
+        }
+      },
+      {
+        "stage_id": "CH03-P10-03",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有在同一阶跃 U 中构造趋零基点并证明统一半径下确界为零。已有一般 inf 定义不代替此计算。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有在同一阶跃 U 中构造趋零基点并证明统一半径下确界为零。已有一般 inf 定义不代替此计算。"
+        }
+      },
+      {
+        "stage_id": "CH03-P11-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Core.lean",
+            "name": "Chapter3.fiber_const"
+          }
+        ],
+        "notes": "fiber_const 对任意常值输出子族及每个实际像目标证明子族纤维等于 U，原非空子族条件是其合法特例。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_const 对任意常值输出子族及每个实际像目标证明子族纤维等于 U，原非空子族条件是其合法特例。"
+        }
+      },
+      {
+        "stage_id": "CH03-P11-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.constant_radii"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.constant_subfamily_radii"
+          }
+        ],
+        "notes": "constant_subfamily_radii 通过 subfamily_zero 化为全输出零距，constant_radii 用全部严格距离条件证明每点半径与统一半径均 top，不从输入域无界性推导。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "constant_subfamily_radii 通过 subfamily_zero 化为全输出零距，constant_radii 用全部严格距离条件证明每点半径与统一半径均 top，不从输入域无界性推导。"
+        }
+      },
+      {
+        "stage_id": "CH03-P11-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.infiniteGauge"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.infinite_radius_example"
+          }
+        ],
+        "notes": "infinite_radius_example 对任意 i,j 具体构造两点结构：输入 i 异点距 top、其他分量距1；有限球不能跨异点，统一半径 top，而输出 j 正分离。包含 i=j 和 i≠j 两分支。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "infinite_radius_example 对任意 i,j 具体构造两点结构：输入 i 异点距 top、其他分量距1；有限球不能跨异点，统一半径 top，而输出 j 正分离。包含 i=j 和 i≠j 两分支。"
+        }
+      },
+      {
+        "stage_id": "CH03-P12-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.id_image_fiber"
+          }
+        ],
+        "notes": "id_image_fiber 在 y∈U 下用已证保距等式得到以 f(y) 为目标的纤维就是输入零距类，未假定点值恒等。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "id_image_fiber 在 y∈U 下用已证保距等式得到以 f(y) 为目标的纤维就是输入零距类，未假定点值恒等。"
+        }
+      },
+      {
+        "stage_id": "CH03-P12-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.id_radius_lower"
+          }
+        ],
+        "notes": "id_radius_lower 对原有限正 r 和球内输入零距前提，将保距式代入 le_radius_iff，得到 r≤点态半径及 r>0。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "id_radius_lower 对原有限正 r 和球内输入零距前提，将保距式代入 le_radius_iff，得到 r≤点态半径及 r>0。"
+        }
+      },
+      {
+        "stage_id": "CH03-P13-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.radius_subfamily"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.radius_min_attained"
+          }
+        ],
+        "notes": "radius_subfamily 通过零距合取和半径下界等价式证明子族半径等于分量 iInf；radius_min_attained 在有限非空 J 上证明此下确界由某 j 取得，故确是原最小值。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "radius_subfamily 通过零距合取和半径下界等价式证明子族半径等于分量 iInf；radius_min_attained 在有限非空 J 上证明此下确界由某 j 取得，故确是原最小值。"
+        }
+      },
+      {
+        "stage_id": "CH03-P13-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.uniform_subfamily"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.uniform_min_attained"
+          }
+        ],
+        "notes": "uniform_subfamily 在独立基点集 A、评估域 U 上交换全称量词，证明两个 iInf 的相等；uniform_min_attained 给 A=U 时有限非空分量最小值及 nullMatrix 对应。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "uniform_subfamily 在独立基点集 A、评估域 U 上交换全称量词，证明两个 iInf 的相等；uniform_min_attained 给 A=U 时有限非空分量最小值及 nullMatrix 对应。"
+        }
+      },
+      {
+        "stage_id": "CH03-P13-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.uniform_subfamily_antitone"
+          }
+        ],
+        "notes": "uniform_subfamily_antitone 对 J⊆K 使用同一 A/U 的分量 iInf 单调性，得到增大输出子族时统一半径不增。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "uniform_subfamily_antitone 对 J⊆K 使用同一 A/U 的分量 iInf 单调性，得到增大输出子族时统一半径不增。"
+        }
+      },
+      {
+        "stage_id": "CH03-P14-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.fiber_truncation"
+          }
+        ],
+        "notes": "fiber_truncation 从单分量纤维成员取得反向输出零距，再用输出伪度量对称性得到原方向。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "fiber_truncation 从单分量纤维成员取得反向输出零距，再用输出伪度量对称性得到原方向。"
+        }
+      },
+      {
+        "stage_id": "CH03-P14-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.radius_witness"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.below_radius"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.radius_truncation"
+          }
+        ],
+        "notes": "radius_witness 由严格低于 sSup 提取更大的有限正 GoodRadius；below_radius 应用其球条件，radius_truncation 再处理输入和输出的方向，未假定上确界取到。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "radius_witness 由严格低于 sSup 提取更大的有限正 GoodRadius；below_radius 应用其球条件，radius_truncation 再处理输入和输出的方向，未假定上确界取到。"
+        }
+      },
+      {
+        "stage_id": "CH03-P14-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.composition_truncation"
+          }
+        ],
+        "notes": "composition_truncation 显式保留原输入属于上游域、两个像点属于指定下游 U，并将实际像点代入纤维截断，不扩大复合适用域。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "composition_truncation 显式保留原输入属于上游域、两个像点属于指定下游 U，并将实际像点代入纤维截断，不扩大复合适用域。"
+        }
+      },
+      {
+        "stage_id": "CH03-P15-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.compose_radius_zero"
+          }
+        ],
+        "notes": "compose_radius_zero 的下游零距保持仅量化 f(U)，并对严格低于上游统一半径的任意 U 内点对证明复合归零，导出原矩阵下界。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "compose_radius_zero 的下游零距保持仅量化 f(U)，并对严格低于上游统一半径的任意 U 内点对证明复合归零，导出原矩阵下界。"
+        }
+      },
+      {
+        "stage_id": "CH03-P15-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.compose_radius_lip"
+          }
+        ],
+        "notes": "compose_radius_lip 在 L 非零有限下用 ENNReal 严格除法等价式，将真实像域的下游统一半径/L 拉回；同一证明保留右端0、top，不引入所有距离有限假设。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "compose_radius_lip 在 L 非零有限下用 ENNReal 严格除法等价式，将真实像域的下游统一半径/L 拉回；同一证明保留右端0、top，不引入所有距离有限假设。"
+        }
+      },
+      {
+        "stage_id": "CH03-P16-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.thresholdType"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.threshold_cases"
+          }
+        ],
+        "notes": "threshold_cases 分别证明 Bool 四个不同值与原四组互补不等式的 iff；第一坐标严格小于、第二坐标大于等于，既互斥又穷尽。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "threshold_cases 分别证明 Bool 四个不同值与原四组互补不等式的 iff；第一坐标严格小于、第二坐标大于等于，既互斥又穷尽。"
+        }
+      },
+      {
+        "stage_id": "CH03-P16-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.threshold_scale_mono"
+          }
+        ],
+        "notes": "threshold_scale_mono 证明 s<旧阈值≤新阈值推出 s<新阈值，参数泛化足以逐通道给第一项为真集合不减。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "threshold_scale_mono 证明 s<旧阈值≤新阈值推出 s<新阈值，参数泛化足以逐通道给第一项为真集合不减。"
+        }
+      },
+      {
+        "stage_id": "CH03-P16-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.threshold_null_antitone"
+          }
+        ],
+        "notes": "threshold_null_antitone 证明旧阈值≤新阈值≤n 推出旧阈值≤n，逐通道正是第二项为真集合不增。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "threshold_null_antitone 证明旧阈值≤新阈值≤n 推出旧阈值≤n，逐通道正是第二项为真集合不增。"
+        }
+      },
+      {
+        "stage_id": "CH03-P17-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.scale_domain_mono"
+          }
+        ],
+        "notes": "scale_domain_mono 只使用任意 InputScale 的包含单调公理，证明 B⊆A 时尺度不增及 A 严格小阈值传给 B，未偷换为直径特例。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "scale_domain_mono 只使用任意 InputScale 的包含单调公理，证明 B⊆A 时尺度不增及 A 严格小阈值传给 B，未偷换为直径特例。"
+        }
+      },
+      {
+        "stage_id": "CH03-P17-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.radius_domain_mono"
+          }
+        ],
+        "notes": "radius_domain_mono 直接将大评估域的严格球归零条件限制到小域，证明固定基点点态半径不减，实际还不需额外基点属于 B 的加强。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "radius_domain_mono 直接将大评估域的严格球归零条件限制到小域，证明固定基点点态半径不减，实际还不需额外基点属于 B 的加强。"
+        }
+      },
+      {
+        "stage_id": "CH03-P17-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.uniform_domain_mono"
+          }
+        ],
+        "notes": "uniform_domain_mono 同时把两个点限制到 B；le_uniform_iff 把该结论转换为基点集合和评估域均缩小时统一半径不减。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "uniform_domain_mono 同时把两个点限制到 B；le_uniform_iff 把该结论转换为基点集合和评估域均缩小时统一半径不减。"
+        }
+      },
+      {
+        "stage_id": "CH03-P17-04",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.realGauge_valid"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.real_diameter_pair"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.scale_counterexample"
+          }
+        ],
+        "notes": "realGauge_valid 提供带吸收元通常实线；real_diameter_pair/scale_counterexample 在 A={0,1},B={0}、阈值1/2 具体证明包含、小域尺度小及大域尺度不小，足以否定反向判断。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "realGauge_valid 提供带吸收元通常实线；real_diameter_pair/scale_counterexample 在 A={0,1},B={0}、阈值1/2 具体证明包含、小域尺度小及大域尺度不小，足以否定反向判断。"
+        }
+      },
+      {
+        "stage_id": "CH03-P18-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.uniform_le_point"
+          },
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.uniform_zero"
+          }
+        ],
+        "notes": "uniform_le_point 证明基点 inf 不大于每个点态半径；uniform_zero 以原 U 内两点及严格距离条件应用 below_radius，保留严格边界。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "uniform_le_point 证明基点 inf 不大于每个点态半径；uniform_zero 以原 U 内两点及严格距离条件应用 below_radius，保留严格边界。"
+        }
+      },
+      {
+        "stage_id": "CH03-P18-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.output_separation"
+          }
+        ],
+        "notes": "output_separation 反证使用严格低于统一半径即输出零距，得到正输出距离的输入下界，允许任一距离 top。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "output_separation 反证使用严格低于统一半径即输出零距，得到正输出距离的输入下界，允许任一距离 top。"
+        }
+      },
+      {
+        "stage_id": "CH03-P18-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.separation_witness"
+          }
+        ],
+        "notes": "separation_witness 对任意高于统一半径的 a 从 le_uniform_iff 失败提取 U 内两点；以 min(1,输出距) 构造有限正 ε 并证明 ε≤输出距，包含输出 top。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "separation_witness 对任意高于统一半径的 a 从 le_uniform_iff 失败提取 U 内两点；以 min(1,输出距) 构造有限正 ε 并证明 ε≤输出距，包含输出 top。"
+        }
+      },
+      {
+        "stage_id": "CH03-P19-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.threshold_fiber"
+          }
+        ],
+        "notes": "threshold_fiber 对中心 y∈A，将 ball∩A 的严格距离小于阈值≤nullMatrix 代入 uniform_zero，证明原单分量纤维包含。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "threshold_fiber 对中心 y∈A，将 ball∩A 的严格距离小于阈值≤nullMatrix 代入 uniform_zero，证明原单分量纤维包含。"
+        }
+      },
+      {
+        "stage_id": "CH03-P19-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.cover_push"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.threshold_cover"
+          }
+        ],
+        "notes": "cover_push 将每个有限内部中心集 S 映为 f(S)，证明中心仍位于真实像及覆盖、card_image≤card；threshold_cover 对任意 B⊆A 实例化。iInf 论证同时包括空 B 和无有限网。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "cover_push 将每个有限内部中心集 S 映为 f(S)，证明中心仍位于真实像及覆盖、card_image≤card；threshold_cover 对任意 B⊆A 实例化。iInf 论证同时包括空 B 和无有限网。"
+        }
+      },
+      {
+        "stage_id": "CH03-P19-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.log2_mono"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.threshold_entropy"
+          }
+        ],
+        "notes": "log2_mono 按0/top/正有限分支证明冻结扩展对数单调；threshold_entropy 应用前项覆盖不等式，故原非空 B 的熵结论成立。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "log2_mono 按0/top/正有限分支证明冻结扩展对数单调；threshold_entropy 应用前项覆盖不等式，故原非空 B 的熵结论成立。"
+        }
+      },
+      {
+        "stage_id": "CH03-P20-01",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；未交付在同一阶跃固定 U 上对每个有限正 τ 选择 ±a 并证明输入网数1、输出1/2网数2的参数化反例。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；未交付在同一阶跃固定 U 上对每个有限正 τ 选择 ±a 并证明输入网数1、输出1/2网数2的参数化反例。"
+        }
+      },
+      {
+        "stage_id": "CH03-P21-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.small_domain_iff"
+          }
+        ],
+        "notes": "small_domain_iff 保留 diameter<τs≤τn；正向以每对距离≤直径给严格零化，反向由全部输出零距得统一半径 top，确证两个方向。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "small_domain_iff 保留 diameter<τs≤τn；正向以每对距离≤直径给严格零化，反向由全部输出零距得统一半径 top，确证两个方向。"
+        }
+      },
+      {
+        "stage_id": "CH03-P21-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.cover_zero_class"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.constant_cover"
+          },
+          {
+            "file": "Chapter3/Correspondence.lean",
+            "name": "Chapter3.small_domain_cover"
+          }
+        ],
+        "notes": "small_domain_cover 与 constant_cover/cover_zero_class 在非空像中选真实内部单中心，结合非空覆盖数≥1 给每个有限正精度的覆盖数恰1。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "small_domain_cover 与 constant_cover/cover_zero_class 在非空像中选真实内部单中心，结合非空覆盖数≥1 给每个有限正精度的覆盖数恰1。"
+        }
+      },
+      {
+        "stage_id": "CH03-P22-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.finite_cover"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.finite_entropy_difference"
+          }
+        ],
+        "notes": "finite_cover 以有限集自身为内部中心并给基数上界；finite_entropy_difference 对任意两子族及非空有限 U 给两端正有限覆盖数、有限实熵和实差表示，提供同一来源的良定性。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "finite_cover 以有限集自身为内部中心并给基数上界；finite_entropy_difference 对任意两子族及非空有限 U 给两端正有限覆盖数、有限实熵和实差表示，提供同一来源的良定性。"
+        }
+      },
+      {
+        "stage_id": "CH03-P23-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.const_entropy"
+          }
+        ],
+        "notes": "const_entropy 由常值输出给内部网数1和熵0，输出有限提供 EntropyDefined，故差等于输入熵，未把输入熵要求有限。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "const_entropy 由常值输出给内部网数1和熵0，输出有限提供 EntropyDefined，故差等于输入熵，未把输入熵要求有限。"
+        }
+      },
+      {
+        "stage_id": "CH03-P23-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.cover_push"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.cover_pull"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.isometric_cover"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.id_entropy"
+          }
+        ],
+        "notes": "id_entropy 由 id_distance 得保距；isometric_cover 前向推内部中心，反向 cover_pull 为每个像中心选择原像，证明两端网数和熵相等，允许网数 top。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "id_entropy 由 id_distance 得保距；isometric_cover 前向推内部中心，反向 cover_pull 为每个像中心选择原像，证明两端网数和熵相等，允许网数 top。"
+        }
+      },
+      {
+        "stage_id": "CH03-P23-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.id_entropy_difference"
+          }
+        ],
+        "notes": "id_entropy_difference 明确保留 EntropyDefined 和非空 U，由相等网数及至少一端有限推出有限，再消去有限熵自差，未作 top-top=0。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "id_entropy_difference 明确保留 EntropyDefined 和非空 U，由相等网数及至少一端有限推出有限，再消去有限熵自差，未作 top-top=0。"
+        }
+      },
+      {
+        "stage_id": "CH03-P24-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.cover_push"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.lip_cover"
+          }
+        ],
+        "notes": "lip_cover 在正有限 L 下将 ε/L 的输入网经 cover_push 映为 ε 的输出内部网，并保留中心基数不增。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "lip_cover 在正有限 L 下将 ε/L 的输入网经 cover_push 映为 ε 的输出内部网，并保留中心基数不增。"
+        }
+      },
+      {
+        "stage_id": "CH03-P24-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.lip_entropy_bound"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.entropy_finite"
+          }
+        ],
+        "notes": "lip_entropy_bound 的 TotallyBoundedAt 前提给 ε 及 ε/L 两端输入网数有限，且由前项给输出有限；差的定义和 EReal 减法单调性证明原熵差下界。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "lip_entropy_bound 的 TotallyBoundedAt 前提给 ε 及 ε/L 两端输入网数有限，且由前项给输出有限；差的定义和 EReal 减法单调性证明原熵差下界。"
+        }
+      },
+      {
+        "stage_id": "CH03-P25-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.cover_pull"
+          },
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.colip_cover"
+          }
+        ],
+        "notes": "colip_cover 用 co-Lip 求和单项≤输出距及正有限 K 除法，cover_pull 实际选取内部输出中心原像；若无有限输出网，iInf 的 top 分支仍适用。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "colip_cover 用 co-Lip 求和单项≤输出距及正有限 K 除法，cover_pull 实际选取内部输出中心原像；若无有限输出网，iInf 的 top 分支仍适用。"
+        }
+      },
+      {
+        "stage_id": "CH03-P25-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Cover.lean",
+            "name": "Chapter3.colip_entropy_bound"
+          }
+        ],
+        "notes": "colip_entropy_bound 仅由输入全有界给差值定义，应用前项网数及对数/减法单调性得原上界，未额外要求输出熵有限。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "colip_entropy_bound 仅由输入全有界给差值定义，应用前项网数及对数/减法单调性得原上界，未额外要求输出熵有限。"
+        }
+      },
+      {
+        "stage_id": "CH03-P26-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.realGauge_valid"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.absGauge"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.affine"
+          },
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.affine_example"
+          }
+        ],
+        "notes": "realGauge abs 是 | |x|-|y| | 的合法 Option 实扩展伪度量，affine 是原 2x-1；affine_example 在精确 U={0,1} 证明域合法、φ 目标纤维为 U 和常值优先分类。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "realGauge abs 是 | |x|-|y| | 的合法 Option 实扩展伪度量，affine 是原 2x-1；affine_example 在精确 U={0,1} 证明域合法、φ 目标纤维为 U 和常值优先分类。"
+        }
+      },
+      {
+        "stage_id": "CH03-P26-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.affine_example"
+          }
+        ],
+        "notes": "同一 affine_example 明确证明 U⊆dom(φ²)、指定 φ² 纤维={0} 和有效分类，未更换域或使用普通绝对差距离。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "同一 affine_example 明确证明 U⊆dom(φ²)、指定 φ² 纤维={0} 和有效分类，未更换域或使用普通绝对差距离。"
+        }
+      },
+      {
+        "stage_id": "CH03-P26-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.point_constant_iteration"
+          }
+        ],
+        "notes": "point_constant_iteration 对任意 U 上同一实际值 c 证明 φ²(x)=φ(c)，并分别证明再次像非吸收时域合法、吸收时与复合域不交，保留原适用域警告。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "point_constant_iteration 对任意 U 上同一实际值 c 证明 φ²(x)=φ(c)，并分别证明再次像非吸收时域合法、吸收时与复合域不交，保留原适用域警告。"
+        }
+      },
+      {
+        "stage_id": "CH03-P27-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.colip_point_gap"
+          }
+        ],
+        "notes": "colip_point_gap 利用严格低于点态半径给输出零距，再用真 co-Lip 正条目反射零距，排除输入距离落在 (0,rN)；K 未被限定有限。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "colip_point_gap 利用严格低于点态半径给输出零距，再用真 co-Lip 正条目反射零距，排除输入距离落在 (0,rN)；K 未被限定有限。"
+        }
+      },
+      {
+        "stage_id": "CH03-P27-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Radius.lean",
+            "name": "Chapter3.colip_uniform_gap"
+          }
+        ],
+        "notes": "colip_uniform_gap 对非零输入距用统一半径≤点态半径和前项反证，给零或≥统一半径二择；距离恰等半径和 top 情形未被删除。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "colip_uniform_gap 对非零输入距用统一半径≤点态半径和前项反证，给零或≥统一半径二择；距离恰等半径和 top 情形未被删除。"
+        }
+      },
+      {
+        "stage_id": "CH03-P28-01",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.realGauge_valid"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.translate"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.translateDomain"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.translate_fibers"
+          }
+        ],
+        "notes": "translate_fibers 在原四点域逐根计算恒等与 x+1 的纤维，准确给重复块 {-2,2} 与 {-2,0}；translate 及 absGauge 的结构合法性由已证 lift/realGauge 定理提供。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "translate_fibers 在原四点域逐根计算恒等与 x+1 的纤维，准确给重复块 {-2,2} 与 {-2,0}；translate 及 absGauge 的结构合法性由已证 lift/realGauge 定理提供。"
+        }
+      },
+      {
+        "stage_id": "CH03-P28-02",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.translate_image"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.cover_two_lower"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.translate_cover"
+          }
+        ],
+        "notes": "translate_cover 在精确3/2 半径给输入两个内部中心上界及任意单中心失败的下界，输出用实际像内 -2 作单中心得1，随后证明同一熵差为1。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "translate_cover 在精确3/2 半径给输入两个内部中心上界及任意单中心失败的下界，输出用实际像内 -2 作单中心得1，随后证明同一熵差为1。"
+        }
+      },
+      {
+        "stage_id": "CH03-P29-01",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有原取整算子在 [0,1/2] 上直径、统一半径 top 和阈值类型的完整计算。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有原取整算子在 [0,1/2] 上直径、统一半径 top 和阈值类型的完整计算。"
+        }
+      },
+      {
+        "stage_id": "CH03-P29-02",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有在 [9/10,11/10] 上跨整数基点、统一半径0以及直径和类型的完整证明。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有在 [9/10,11/10] 上跨整数基点、统一半径0以及直径和类型的完整证明。"
+        }
+      },
+      {
+        "stage_id": "CH03-P29-03",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/Examples.lean",
+            "name": "Chapter3.realGauge_valid"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.floorOperator"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.floorPair"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.uniform_pair"
+          },
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.floor_pair"
+          }
+        ],
+        "notes": "floorOperator 是实际 floor 的实嵌入而非未证明等价函数；floor_pair 用通常实线和精确 {0,2} 域证明合法性、直径2、统一半径2及类型(false,true)。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "floorOperator 是实际 floor 的实嵌入而非未证明等价函数；floor_pair 用通常实线和精确 {0,2} 域证明合法性、直径2、统一半径2及类型(false,true)。"
+        }
+      },
+      {
+        "stage_id": "CH03-P29-04",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有原 [0,2] 区间直径、统一半径0和类型的完整证明，二点 floorPair 不能替代该区间。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有原 [0,2] 区间直径、统一半径0和类型的完整证明，二点 floorPair 不能替代该区间。"
+        }
+      },
+      {
+        "stage_id": "CH03-P29-05",
+        "decision": "pass",
+        "assumption_fidelity": "clean",
+        "proof_validity": "valid",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "none",
+        "inherited_from": [],
+        "lean_status": "passed",
+        "declarations": [
+          {
+            "file": "Chapter3/MoreExamples.lean",
+            "name": "Chapter3.floor_pair"
+          }
+        ],
+        "notes": "floor_pair 的同一合法 {0,2} 例同时给半径2和非整体零距，阈值为1；这确实否定无直径限制的蕴含，半径来源是两点间隙。",
+        "math_review": {
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [],
+          "notes": "floor_pair 的同一合法 {0,2} 例同时给半径2和非整体零距，阈值为1；这确实否定无直径限制的蕴含，半径来源是两点间隙。"
+        }
+      },
+      {
+        "stage_id": "CH03-P30-01",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有四点集全部有限正 ε 的内部覆盖数分段、ε=1 与 ε=2 两处开球边界及3/2不可作内部中心的完整形式化。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有四点集全部有限正 ε 的内部覆盖数分段、ε=1 与 ε=2 两处开球边界及3/2不可作内部中心的完整形式化。"
+        }
+      },
+      {
+        "stage_id": "CH03-P30-02",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有指定 f/g 的完整定义与真实像、各精度网数及熵差；一般推/拉覆盖引理不完成该计算。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有指定 f/g 的完整定义与真实像、各精度网数及熵差；一般推/拉覆盖引理不完成该计算。"
+        }
+      },
+      {
+        "stage_id": "CH03-P30-03",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有指定两个四点算子的最优 Lip 常数1、3及强迫下界的证明。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有指定两个四点算子的最优 Lip 常数1、3及强迫下界的证明。"
+        }
+      },
+      {
+        "stage_id": "CH03-P30-04",
+        "decision": "partial",
+        "assumption_fidelity": "clean",
+        "proof_validity": "unknown",
+        "scope_accuracy": "correct",
+        "unnecessary_restriction": false,
+        "failure_category": "mathematical",
+        "inherited_from": [],
+        "lean_status": "not_run",
+        "declarations": [],
+        "notes": "诚实标为 incomplete；没有在 ε=7/4 将一般上界分别代入两个指定算子并与实际覆盖数逐项比较。",
+        "math_review": {
+          "decision": "partial",
+          "assumption_fidelity": "clean",
+          "proof_validity": "unknown",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "reasons": [
+            "candidate_incomplete"
+          ],
+          "notes": "诚实标为 incomplete；没有在 ε=7/4 将一般上界分别代入两个指定算子并与实际覆盖数逐项比较。"
+        }
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "36a31f0df5b11464574f97fd0bd0c725c798ce1f3e82715a550a225f7947673b"
+}

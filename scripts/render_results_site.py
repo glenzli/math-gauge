@@ -22,6 +22,7 @@ from scripts.results_i18n import javascript_catalog, language_switch
 
 MODEL_THEMES = {
     "astra-6-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
+    "astra-6-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "claude-opus-5.5-max": {"color": "#d97757", "ink": "#9f4d34", "tint": "#fbf1ec"},
     "sol-6.1-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "sol-6.1-xhigh": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
@@ -33,6 +34,7 @@ MODEL_THEMES = {
 }
 MODEL_PROVIDERS = {
     "astra-6-max": ("OpenAI", "openai.svg"),
+    "astra-6-xhigh": ("OpenAI", "openai.svg"),
     "claude-opus-5.5-max": ("Anthropic", "anthropic.svg"),
     "sol-6.1-max": ("OpenAI", "openai.svg"),
     "sol-6.1-xhigh": ("OpenAI", "openai.svg"),
@@ -44,6 +46,7 @@ MODEL_PROVIDERS = {
 }
 MODEL_LABELS = {
     "astra-6-max": "Astra 6 (max)",
+    "astra-6-xhigh": "Astra 6 (xhigh)",
     "claude-opus-5.5-max": "Claude Opus 5.5 (max)",
     "sol-6.1-max": "Sol 6.1 (max)",
     "sol-6.1-xhigh": "Sol 6.1 (xhigh)",
@@ -55,6 +58,7 @@ MODEL_LABELS = {
 }
 MODEL_SHORT_LABELS = {
     "astra-6-max": "Astra (max)",
+    "astra-6-xhigh": "Astra (xhigh)",
     "claude-opus-5.5-max": "Opus 5.5 (max)",
     "sol-6.1-max": "Sol (max)",
     "sol-6.1-xhigh": "Sol (xhigh)",

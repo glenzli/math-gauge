@@ -1,0 +1,42 @@
+{
+  "schema": "math-gauge.public-adjudication-projection/v1",
+  "case_id": "MG-BC002",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-BC002:A1",
+    "case_id": "MG-BC002",
+    "binding": null,
+    "reviewer": "Independent Astra xHigh A1 research/review evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "本轮5214-byte正常首答独立核验：原D=4/4、U=3/3、S-corrected；background R=3，complete=true，actual false endorsement=false。真实流/叠层、条件prox证书和部署说明全部正确；额外全正时间Jacobian反证经独立核对成立，接受其比参考局部时间反证更强的合法路线。7单元与3完整目标通过，Strict通过；无claim findings。AI审核，人审pending。",
+    "findings": [],
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+    "format_review": {
+      "decision": "valid",
+      "notes": "完整原始答卷已交付，数学完成度和正确性另行明确评审。"
+    },
+    "criteria": [
+      {
+        "criterion_id": "gap-diagnosis",
+        "score": 1,
+        "notes": "开头及最终部署段明确否定实际每个正时间凸prox的升级，保留真实流稳定与条件prox证书，并区别tau为演化时间与prox_(tau f)隐式Euler系数。"
+      },
+      {
+        "criterion_id": "model-specific-certificate",
+        "score": 1,
+        "notes": "Moreau包络梯度公式说明C¹凸prox必须有对称Jacobian；对给定三次耦合流作平衡点初值Taylor/变常数展开，得在(epsilon,0)的交叉导数差，确为本模型的可积性障碍而非仅比较prox_(tf)。 独立核对所有t>0的反证：J12=−eps²e^(−t)(1−e^(−3t))+O_t(eps^4)，J21=−3eps²e^(−2t)(1−e^(−t))+O_t(eps^4)，差为−eps²e^(−t)(1−e^(−t))³+O_t(eps^4)。对每个固定t>0首项系数非零，可选依t的小eps非零，排除任何全局proper/lsc/convex r；部署纠错闭合。"
+      },
+      {
+        "criterion_id": "complete-correction",
+        "score": 1,
+        "notes": "真实D1–D4全交付；具体全正时间反证覆盖任意可能凸正则项，最终描述只用实际收缩耗散和时间叠层，不误用条件prox结论。"
+      }
+    ]
+  },
+  "original_private_adjudication_sha256": "41609fc2af059a7ff7d4437321065447d17204538df51391597e401c59a82e1a"
+}
