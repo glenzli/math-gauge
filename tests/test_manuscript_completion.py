@@ -82,6 +82,19 @@ class ManuscriptTests(unittest.TestCase):
         self.assertEqual(assess((F(7,10),)*3,False,claim,mode='partial')[0][2],F(1,2))
         self.assertEqual(assess((F(7,10),)*3,False,claim,mode='partial',generic_cap_points=50)[0][2],F(1,5))
 
+    def test_fractional_source_credit_is_preserved_in_all_three_modes(self):
+        data = self.data(70.5)
+        for mode, expected in [('capability', .705), ('partial', .205), ('strict', .705)]:
+            result = self.score(data, mode)
+            task = next(t for t in result['tasks'] if t['case_id'] == CID)
+            self.assertEqual(task['completion']['exact'], expected)
+            if mode == 'strict':
+                self.assertFalse(task['strict_pass'])
+                self.assertEqual(result['contributions']['manuscript-completion']['exact'], 0)
+        for invalid in [True, float('nan'), float('inf'), -.5, 100.5]:
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                validate_inputs(self.data(invalid), self.policy['manuscript_completion'])
+
     def test_unrun_keeps_fixed_weight_and_full_negative_possibility_without_failure(self):
         result=self.score(self.data(None));task=next(t for t in result['tasks'] if t['case_id']==CID)
         self.assertEqual(task['completion'],{'lower':-.5,'upper':1.,'exact':None})
@@ -458,6 +471,19 @@ class ManuscriptTests(unittest.TestCase):
                     earlier=copy.deepcopy(ledger['attempts'][0]);earlier.update(first_complete_answer=False,excluded_pure_system_failure=True,effective_model_attempt=None,exclusion_reason='controller_interruption_before_first_complete_answer')
                     ledger.update(selected_physical_request=2,attempts=[earlier,{**ledger['attempts'][0],'physical_request':2}]);row['selected_physical_request']=2;row['physical_request_ledger']=put('ledger.json',ledger)
                 with self.assertRaises((ValueError,KeyError)):check()
+
+    def test_fractional_criterion_review_remains_bound_to_exact_source_total(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data, row, _, _, put, check = self.fixture(root)
+            review = json.loads((root / row['review']['path']).read_bytes())
+            row['points'] = review['score'] = review['criteria'][0]['points'] = 70.5
+            row['review'] = put('review.json', review)
+            check()
+            review['criteria'][0]['points'] = 70
+            row['review'] = put('review.json', review)
+            with self.assertRaisesRegex(ValueError, 'criterion review'):
+                check()
 
     def test_delivered_manuscript_quotes_bind_native_final_and_sealed_work(self):
         with tempfile.TemporaryDirectory() as tmp:

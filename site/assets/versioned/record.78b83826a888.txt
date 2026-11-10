@@ -1,0 +1,292 @@
+import Chapter3.Correspondence
+
+/- Additional proofs based on Zhe Li, The Operator Evolution Theory, vol. I,
+   chapter 3, CC BY 4.0. https://glenzli.com/books/oet/ -/
+namespace Chapter3
+open formal_oet.vol_01.ch_01_foundations
+open Set
+open scoped Classical
+
+@[simp] theorem realGauge_some (q : ℝ → ℝ) (x y : ℝ) :
+    realGauge q (some x) (some y) = ENNReal.ofReal |q x - q y| := rfl
+
+theorem step_near {y r : ℝ} (hy : y ∈ Ico (-1 : ℝ) 0 ∪ Ioc 0 1)
+    (hr : |y| < r) :
+    ∃ x ∈ Ico (-1 : ℝ) 0 ∪ Ioc 0 1, |x-y| < r ∧
+      realGauge id (step.func (some x)) (step.func (some y)) = 1 := by
+  let t := min (1/2 : ℝ) ((r - |y|)/2)
+  have ht : 0 < t := lt_min (by norm_num) (by linarith)
+  have ht1 : t ≤ 1/2 := min_le_left _ _
+  have htr : t ≤ (r - |y|)/2 := min_le_right _ _
+  rcases hy with hy | hy
+  · have hy0 := hy.2
+    refine ⟨t, Or.inr ⟨ht,by linarith⟩, ?_, ?_⟩
+    · rw [abs_of_neg hy0] at htr hr
+      rw [abs_of_pos (by linarith : 0 < t-y)]
+      linarith
+    · simp [step,liftOperator,hy0,not_lt.mpr ht.le,realGauge,liftDistance]
+  · have hy0 := hy.1
+    refine ⟨-t, Or.inl ⟨by linarith,by linarith⟩, ?_, ?_⟩
+    · rw [abs_of_pos hy0] at htr hr
+      rw [abs_of_neg (by linarith : -t-y < 0)]
+      linarith
+    · simp [step,liftOperator,not_lt.mpr hy0.le,show -t < 0 by linarith,
+        realGauge,liftDistance]
+
+theorem step_radius {y : ℝ} (hy : y ∈ Ico (-1 : ℝ) 0 ∪ Ioc 0 1) :
+    radius (realGauge id) (realGauge id) step stepDomain (some y) = ENNReal.ofReal |y| ∧
+    0 < ENNReal.ofReal |y| := by
+  have hyne : y ≠ 0 := by rcases hy with hy | hy <;> linarith [hy.2,hy.1]
+  refine ⟨le_antisymm ?_ ?_,ENNReal.ofReal_pos.mpr (abs_pos.mpr hyne)⟩
+  · apply sSup_le
+    intro r hr
+    by_contra hn
+    have hyr : |y| < r.toReal := (ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg y)
+      (ne_of_lt hr.2.1)).mp (lt_of_not_ge hn)
+    obtain ⟨x,hx,hxy,hout⟩ := step_near hy hyr
+    have hz := hr.2.2 (some x) ⟨x,hx,rfl⟩
+      ((ENNReal.ofReal_lt_iff_lt_toReal (abs_nonneg (x-y)) (ne_of_lt hr.2.1)).mpr hxy)
+    rw [hout] at hz
+    exact one_ne_zero hz
+  · apply (le_radius_iff _ _ _ _ _ _).mpr
+    rintro _ ⟨x,hx,rfl⟩ hxy
+    have hdist : |x-y| < |y| := (ENNReal.ofReal_lt_ofReal_iff (abs_pos.mpr hyne)).mp hxy
+    have hs : (x < 0) ↔ (y < 0) := by
+      rw [abs_lt] at hdist
+      rcases hy with hy | hy
+      · rw [abs_of_neg hy.2] at hdist
+        constructor <;> intro h <;> linarith [hy.2]
+      · rw [abs_of_pos hy.1] at hdist
+        constructor <;> intro h <;> linarith [hy.1]
+    simp [step,liftOperator,hs,realGauge,liftDistance]
+
+theorem step_good_radius {y : ℝ} (hy : y ∈ Ico (-1 : ℝ) 0 ∪ Ioc 0 1) (r : ENNReal) :
+    GoodRadius (realGauge id) (realGauge id) step stepDomain (some y) r ↔
+      0 < r ∧ r < ⊤ ∧ r ≤ ENNReal.ofReal |y| := by
+  rw [goodRadius_iff, (step_radius hy).1]
+
+theorem uniform_zero_of_small {X : Type} {bot : X} (din dout : X → X → ENNReal)
+    (f : Operator X bot) (U : Set X)
+    (h : ∀ t : ℝ, 0 < t → ∃ x ∈ U, ∃ y ∈ U,
+      din x y < ENNReal.ofReal t ∧ 0 < dout (f.func x) (f.func y)) :
+    uniformRadius din dout f U U = 0 := by
+  apply le_antisymm _ (zero_le _)
+  apply le_of_forall_gt
+  intro a ha
+  obtain ⟨b,hb,hba⟩ := exists_between ha
+  have hbt : b ≠ ⊤ := ne_of_lt (hba.trans_le le_top)
+  obtain ⟨x,hx,y,hy,hxy,hout⟩ := h b.toReal (ENNReal.toReal_pos (ne_of_gt hb) hbt)
+  rw [ENNReal.ofReal_toReal hbt] at hxy
+  exact (output_separation hx hy hout).trans_lt (hxy.trans hba)
+
+theorem step_uniform_zero :
+    uniformRadius (realGauge id) (realGauge id) step stepDomain stepDomain = 0 := by
+  apply uniform_zero_of_small
+  intro t ht
+  let a := min (1/2 : ℝ) (t/4)
+  have ha : 0 < a := lt_min (by norm_num) (by linarith)
+  have ha1 : a ≤ 1/2 := min_le_left _ _
+  have hat : a ≤ t/4 := min_le_right _ _
+  refine ⟨some (-a),⟨-a,Or.inl ⟨by linarith,by linarith⟩,rfl⟩,
+    some a,⟨a,Or.inr ⟨ha,by linarith⟩,rfl⟩,?_,?_⟩
+  · apply (ENNReal.ofReal_lt_ofReal_iff ht).mpr
+    dsimp only [id]
+    rw [abs_of_neg (by linarith : -a-a < 0)]
+    linarith
+  · norm_num [step,liftOperator,show -a < 0 by linarith,not_lt.mpr ha.le,
+      realGauge,liftDistance]
+
+theorem cover_pair_small {X : Type} (d : X → X → ENNReal) (hs : ∀ x, d x x = 0)
+    (a b : X) {ε : ENNReal} (he : 0 < ε) (hab : d b a < ε) :
+    covering_number d ε {a,b} = 1 := by
+  apply le_antisymm _ (one_le_covering_number_of_nonempty _ _ _ ⟨a,by simp⟩)
+  have hn : InternalEpsilonNet d ε {a,b} {a} := by
+    constructor
+    · simp
+    · intro x hx
+      refine ⟨a,by simp,?_⟩
+      rcases hx with rfl | hx
+      · simpa [hs] using he
+      · have : x = b := hx; subst x; exact hab
+  exact iInf_le_of_le _ (iInf_le_of_le hn (by simp))
+
+theorem cover_pair_large {X : Type} (d : X → X → ENNReal) (hs : ∀ x, d x x = 0)
+    (a b : X) {ε : ENNReal} (he : 0 < ε) (hab : ε ≤ d a b) (hba : ε ≤ d b a) :
+    covering_number d ε {a,b} = 2 := by
+  have hne : a ≠ b := by intro h; subst b; rw [hs] at hab; exact (not_le_of_gt he) hab
+  apply le_antisymm
+  · have hn : InternalEpsilonNet d ε {a,b} {a,b} := by
+      constructor
+      · simp
+      · intro x hx; exact ⟨x,by simpa using hx,by simpa [hs] using he⟩
+    exact iInf_le_of_le _ (iInf_le_of_le hn (by simp [hne]))
+  · apply cover_two_lower _ _ ⟨a,by simp⟩
+    intro c hc
+    rcases hc with rfl | hc
+    · exact ⟨b,by simp,hba⟩
+    · have : c = b := hc; subst c; exact ⟨a,by simp,hab⟩
+
+theorem step_cover_counterexample (τ : ENNReal) (hτ : 0 < τ) (hτt : τ < ⊤) :
+    ∃ a : ℝ, 0 < a ∧ a ≤ 1 ∧ ENNReal.ofReal (2*a) < τ ∧
+      ({some (-a),some a} : Set (Option ℝ)) ⊆ stepDomain ∧
+      covering_number (realGauge id) τ {some (-a),some a} = 1 ∧
+      covering_number (realGauge id) (1/2) (step.func '' {some (-a),some a}) = 2 := by
+  let a := min (1/2 : ℝ) (τ.toReal/4)
+  have ht : 0 < τ.toReal := ENNReal.toReal_pos (ne_of_gt hτ) (ne_of_lt hτt)
+  have ha : 0 < a := lt_min (by norm_num) (by linarith)
+  have ha1 : a ≤ 1/2 := min_le_left _ _
+  have hat : a ≤ τ.toReal/4 := min_le_right _ _
+  have hlt : ENNReal.ofReal (2*a) < τ :=
+    (ENNReal.ofReal_lt_iff_lt_toReal (by positivity) (ne_of_lt hτt)).mpr (by linarith)
+  refine ⟨a,ha,by linarith,hlt,?_,?_,?_⟩
+  · intro x hx
+    rcases hx with rfl | hx
+    · exact ⟨-a,Or.inl ⟨by linarith,by linarith⟩,rfl⟩
+    · have : x = some a := hx; subst x
+      exact ⟨a,Or.inr ⟨ha,by linarith⟩,rfl⟩
+  · apply cover_pair_small _ (realGauge_valid id).dist_self _ _ hτ
+    simpa [realGauge,liftDistance,abs_of_nonneg (show 0 ≤ a+a by linarith),two_mul] using hlt
+  · have him : step.func '' {some (-a),some a} = {some (0 : ℝ),some 1} := by
+      ext z
+      simp [step,liftOperator,show -a < 0 by linarith,not_lt.mpr ha.le,eq_comm]
+    rw [him]
+    apply cover_pair_large _ (realGauge_valid id).dist_self <;>
+      norm_num [realGauge,liftDistance]
+
+def realInterval (a b : ℝ) : Set (Option ℝ) := some '' Icc a b
+
+theorem interval_valid {a b : ℝ} (hab : a ≤ b) :
+    (realInterval a b).Nonempty ∧ realInterval a b ⊆ dom floorOperator := by
+  refine ⟨⟨some a,a,⟨le_rfl,hab⟩,rfl⟩,?_⟩
+  rintro _ ⟨x,hx,rfl⟩; simp [dom,floorOperator,liftOperator]
+
+theorem interval_diameter {a b : ℝ} (hab : a ≤ b) :
+    diameter (realGauge id) (realInterval a b) = ENNReal.ofReal (b-a) := by
+  apply le_antisymm
+  · apply iSup_le; intro x; apply iSup_le; rintro ⟨x,hx,rfl⟩
+    apply iSup_le; intro y; apply iSup_le; rintro ⟨y,hy,rfl⟩
+    apply ENNReal.ofReal_le_ofReal
+    dsimp only [id]
+    exact abs_le.mpr ⟨by linarith [hx.1,hx.2,hy.1,hy.2],by linarith [hx.1,hx.2,hy.1,hy.2]⟩
+  · have h := le_diameter (realGauge id) (A := realInterval a b)
+      (x := some b) (y := some a) ⟨b,⟨hab,le_rfl⟩,rfl⟩ ⟨a,⟨le_rfl,hab⟩,rfl⟩
+    simpa [realGauge,liftDistance,abs_of_nonneg (sub_nonneg.mpr hab)] using h
+
+theorem floor_interval_small :
+    diameter (realGauge id) (realInterval 0 (1/2)) = 1/2 ∧
+    uniformRadius (realGauge id) (realGauge id) floorOperator
+      (realInterval 0 (1/2)) (realInterval 0 (1/2)) = ⊤ ∧
+    thresholdType (diameter (realGauge id) (realInterval 0 (1/2)))
+      (uniformRadius (realGauge id) (realGauge id) floorOperator
+        (realInterval 0 (1/2)) (realInterval 0 (1/2))) 1 1 = (true,true) := by
+  have hd : diameter (realGauge id) (realInterval 0 (1/2)) = 1/2 := by
+    rw [interval_diameter (by norm_num)]; norm_num
+    rw [ENNReal.ofReal_div_of_pos (show (0 : ℝ) < 2 by norm_num)]; norm_num
+  have hr : uniformRadius (realGauge id) (realGauge id) floorOperator
+      (realInterval 0 (1/2)) (realInterval 0 (1/2)) = ⊤ := by
+    apply (constant_radii _ _ _ _ ?_).2
+    rintro _ ⟨x,hx,rfl⟩ _ ⟨y,hy,rfl⟩
+    have fx : ⌊x⌋ = (0 : ℤ) := Int.floor_eq_iff.mpr ⟨by simpa using hx.1,by norm_num; linarith [hx.2]⟩
+    have fy : ⌊y⌋ = (0 : ℤ) := Int.floor_eq_iff.mpr ⟨by simpa using hy.1,by norm_num; linarith [hy.2]⟩
+    simp [floorOperator,liftOperator,fx,fy,realGauge,liftDistance]
+  exact ⟨hd,hr,by norm_num [thresholdType,hd,hr]⟩
+
+theorem floor_interval_cross :
+    diameter (realGauge id) (realInterval (9/10) (11/10)) = 1/5 ∧
+    uniformRadius (realGauge id) (realGauge id) floorOperator
+      (realInterval (9/10) (11/10)) (realInterval (9/10) (11/10)) = 0 ∧
+    thresholdType (diameter (realGauge id) (realInterval (9/10) (11/10)))
+      (uniformRadius (realGauge id) (realGauge id) floorOperator
+        (realInterval (9/10) (11/10)) (realInterval (9/10) (11/10))) 1 1 = (true,false) := by
+  have hd : diameter (realGauge id) (realInterval (9/10) (11/10)) = 1/5 := by
+    rw [interval_diameter (by norm_num)]; norm_num
+    rw [ENNReal.ofReal_div_of_pos (show (0 : ℝ) < 5 by norm_num)]; norm_num
+  have hr : uniformRadius (realGauge id) (realGauge id) floorOperator
+      (realInterval (9/10) (11/10)) (realInterval (9/10) (11/10)) = 0 := by
+    apply uniform_zero_of_small
+    intro t ht
+    let δ := min (1/10 : ℝ) (t/2)
+    have hδ : 0 < δ := lt_min (by norm_num) (by linarith)
+    have hδ1 : δ ≤ 1/10 := min_le_left _ _
+    have hδt : δ ≤ t/2 := min_le_right _ _
+    have hf : ⌊1-δ⌋ = (0 : ℤ) := Int.floor_eq_iff.mpr ⟨by norm_num; linarith,by norm_num; linarith⟩
+    refine ⟨some (1-δ),⟨1-δ,⟨by linarith,by linarith⟩,rfl⟩,
+      some 1,⟨1,by norm_num,rfl⟩,?_,?_⟩
+    · apply (ENNReal.ofReal_lt_ofReal_iff ht).mpr
+      dsimp only [id]
+      rw [abs_of_neg (by linarith : 1-δ-1 < 0)]
+      linarith
+    · norm_num [floorOperator,liftOperator,hf,realGauge,liftDistance]
+  exact ⟨hd,hr,by norm_num [thresholdType,hd,hr]⟩
+
+theorem floor_interval_large :
+    diameter (realGauge id) (realInterval 0 2) = 2 ∧
+    uniformRadius (realGauge id) (realGauge id) floorOperator
+      (realInterval 0 2) (realInterval 0 2) = 0 ∧
+    thresholdType (diameter (realGauge id) (realInterval 0 2))
+      (uniformRadius (realGauge id) (realGauge id) floorOperator
+        (realInterval 0 2) (realInterval 0 2)) 1 1 = (false,false) := by
+  have hd : diameter (realGauge id) (realInterval 0 2) = 2 := by
+    rw [interval_diameter (by norm_num)]; norm_num
+  have hr : uniformRadius (realGauge id) (realGauge id) floorOperator
+      (realInterval 0 2) (realInterval 0 2) = 0 := by
+    apply le_antisymm _ (zero_le _)
+    rw [← floor_interval_cross.2.1]
+    apply uniform_domain_mono
+    rintro _ ⟨x,hx,rfl⟩
+    exact ⟨x,⟨by linarith [hx.1],by linarith [hx.2]⟩,rfl⟩
+  exact ⟨hd,hr,by norm_num [thresholdType,hd,hr]⟩
+
+def StagesValid {X : Type} {bot : X} : List (Operator X bot) → Set X → Prop
+  | [], _ => True
+  | f :: fs, U => U ⊆ dom f ∧ StagesValid fs (f.func '' U)
+
+theorem scale_counterexample_domain :
+    ({some (0 : ℝ)} : Set (Option ℝ)).Nonempty ∧ realTwo.Nonempty ∧
+    realTwo ⊆ dom (1 : Operator (Option ℝ) none) ∧
+    ({some (0 : ℝ)} : Set (Option ℝ)) ⊆ realTwo ∧
+    diameter (realGauge id) ({some (0 : ℝ)} : Set (Option ℝ)) = 0 ∧
+    diameter (realGauge id) realTwo = 1 ∧
+    diameter (realGauge id) ({some (0 : ℝ)} : Set (Option ℝ)) < (1/2 : ENNReal) ∧
+    (1/2 : ENNReal) ≤ diameter (realGauge id) realTwo := by
+  have h0 := real_diameter_pair 0 0
+  have h1 := real_diameter_pair 0 1
+  norm_num at h0 h1
+  refine ⟨⟨some 0,rfl⟩,⟨some 0,by simp [realTwo]⟩,?_,?_,h0,?_,
+    scale_counterexample.2.1,scale_counterexample.2.2⟩
+  · intro x hx
+    rcases hx with rfl | hx
+    · simp [dom]
+    · have : x = some 1 := hx; subst x; simp [dom]
+  · simp [realTwo]
+  · exact h1
+
+theorem floor_intervals_valid :
+    ((realInterval 0 (1/2)).Nonempty ∧ realInterval 0 (1/2) ⊆ dom floorOperator) ∧
+    ((realInterval (9/10) (11/10)).Nonempty ∧ realInterval (9/10) (11/10) ⊆ dom floorOperator) ∧
+    ((realInterval 0 2).Nonempty ∧ realInterval 0 2 ⊆ dom floorOperator) :=
+  ⟨interval_valid (by norm_num),interval_valid (by norm_num),interval_valid (by norm_num)⟩
+
+theorem run_stages_valid {X : Type} {bot : X} (fs : List (Operator X bot))
+    (U : Set X) (hU : U ⊆ dom (run fs)) : StagesValid fs U := by
+  induction fs generalizing U with
+  | nil => trivial
+  | cons f fs ih =>
+      have h := run_domains f fs U hU
+      exact ⟨h.1, ih _ h.2⟩
+
+theorem point_constant_fibers {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (U : Set X) (J : Set I) {c : X}
+    (h : ∀ x ∈ U, f.func x = c) :
+    (∀ y ∈ U, fiber d (f * f) J ((f * f).func y) U = U) ∧
+    (f.func c ≠ bot → U ⊆ dom (f * f)) ∧
+    (f.func c = bot → U ∩ dom (f * f) = ∅) := by
+  have hi := point_constant_iteration f U h
+  refine ⟨?_,hi.2⟩
+  intro y hy
+  apply fiber_const d (fun j hj x hx z hz => ?_) ⟨y,hy,rfl⟩
+  rw [hi.1 x hx, hi.1 z hz]
+  exact (hd j).dist_self _
+
+end Chapter3

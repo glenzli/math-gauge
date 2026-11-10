@@ -13,6 +13,7 @@ from math_gauge.records import (load_assessment_results, load_retry_inputs, load
 from math_gauge.scoring import score_assessment_record_inputs
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.paper_observations import SCHEMA as PAPER_SCHEMA, check_record as check_paper_record
+from math_gauge import submission_evidence
 
 
 def load(path):
@@ -48,7 +49,7 @@ def check(root=ROOT, *, public_root=None):
             review, source_policy = load(review_path), load(folder / "scoring-policy.json")
             assessment, strict = load(public / "assessment-policy.json"), load(public / "strict-scoring-policy.json")
             capability = load(public / "capability-scoring-policy.json")
-            claim_policy = load(public / "claim-penalty-policy.json") if assessment.get("version") == "0.8.0" else None
+            claim_policy = load(public / "claim-penalty-policy.json") if assessment.get("version") in {"0.8.0", "0.9.0"} else None
             research = load_theorem_extension_inputs(folder, record, policy=assessment.get("theorem_extension"))
             background = load_background_check_inputs(folder,record,policy=assessment.get("background_check"))
             written = load_written_argument_inputs(folder,record,policy=assessment.get("written_argument_additions"))
@@ -65,12 +66,16 @@ def check(root=ROOT, *, public_root=None):
                     selected_review = selected_sources['alignment'] if selected_sources else review
                     selected_engineering = selected_sources['engineering'] if selected_sources else engineering
                     selected_manuscript = selected_sources['manuscript'] if selected_sources else manuscript
+                    selected_research = selected_sources.get('theorem_extension_inputs', research) if selected_sources else research
+                    selected_background = selected_sources.get('background_check_inputs', background) if selected_sources else background
                     claims = load_claim_review(folder, record, condition, public_root=public) if claim_policy else None
                     derived = score_assessment_record_inputs(selected, selected_review, source_policy,
                         formalization_review=selected_engineering, assessment_policy=assessment,
-                        strict_policy=strict, mode=mode, theorem_extension_inputs=research, background_check_inputs=background, written_argument_inputs=written,
+                        strict_policy=strict, mode=mode, theorem_extension_inputs=selected_research, background_check_inputs=selected_background, written_argument_inputs=written,
                         written_replacement_inputs=replacement, manuscript_completion_inputs=selected_manuscript,
                         claim_review=claims, claim_policy=claim_policy,
+                        submission_review=submission_evidence.load_condition(folder,record,condition),
+                        submission_policy=submission_evidence.load_policy(folder,record),
                         capability_policy=capability if mode == "capability" else None)
                     for key, value in derived.items():
                         if score.get(key) != value:

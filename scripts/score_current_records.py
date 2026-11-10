@@ -13,6 +13,8 @@ from math_gauge.records import descriptor, evidence_bytes, load_retry_inputs, lo
 from math_gauge.scoring import score_assessment_record_inputs
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.paper_observations import retain_scores as retain_paper_scores, check_record as check_paper_record
+from math_gauge import submission_evidence
+from math_gauge.records import rebind_content_rates
 
 
 def load(path):
@@ -33,7 +35,7 @@ def retain(private_root, *, public_root=ROOT):
     strict = load(public_root / "protocol/strict-scoring-policy.json")
     capability = load(public_root / "protocol/capability-scoring-policy.json")
     claim_policy = load(public_root / "protocol/claim-penalty-policy.json")
-    for name in ("capability-scoring-policy.json", "score-modes.json", "claim-penalty-policy.json"):
+    for name in ("capability-scoring-policy.json", "score-modes.json", "claim-penalty-policy.json", "submission-scoring-policy.json"):
         (private_root / "protocol" / name).write_bytes((public_root / "protocol" / name).read_bytes())
     totals = {}
     for model, folder in selected_cli_records(public_root):
@@ -59,6 +61,7 @@ def retain(private_root, *, public_root=ROOT):
                                  ("strict-scoring-policy.json", "strict-scoring-policy.json"),
                                  ("capability-scoring-policy.json", "capability-scoring-policy.json"),
                                  ("claim-penalty-policy.json", "claim-penalty-policy.json"),
+                                 ("submission-scoring-policy.json", "submission-scoring-policy.json"),
                                  ("score-modes.json", "score-modes.json")):
             (public / filename).write_bytes((public_root / "protocol" / source).read_bytes())
         for target in (record, private_record):
@@ -68,6 +71,8 @@ def retain(private_root, *, public_root=ROOT):
             target["score_mode_catalog"] = descriptor(public, public / "score-modes.json")
             target["default_score_mode"] = "partial"
             target["claim_penalty_policy"] = descriptor(public, public / "claim-penalty-policy.json")
+            if assessment['version']=='0.9.0':
+                target['submission_policy'] = descriptor(public,public/'submission-scoring-policy.json')
             for key in ("capability_results", "assessment_results", "strict_results"):
                 target[key] = {}
         private_record["claim_review"] = descriptor(private, private / private_record.get("claim_review", {"path": "claim-review.json"})["path"])
@@ -98,7 +103,9 @@ def retain(private_root, *, public_root=ROOT):
                     theorem_extension_inputs=selected_research, background_check_inputs=selected_background,
                     claim_review=claim_review, claim_policy=claim_policy,
                     capability_policy=capability if mode == "capability" else None, written_argument_inputs=written,
-                    written_replacement_inputs=replacement, manuscript_completion_inputs=selected_manuscript)
+                    written_replacement_inputs=replacement, manuscript_completion_inputs=selected_manuscript,
+                    submission_review=submission_evidence.load_condition(private,private_record,condition),
+                    submission_policy=submission_evidence.load_policy(private,private_record))
                 score.update(attempt_condition=condition, retry_summary=retry_summary,
                     scope="combined-evaluator", source_math_policy_version=source_policy["version"],
                     engineering_review_sha256=selected_engineering_descriptor['sha256'],
@@ -129,12 +136,25 @@ def retain(private_root, *, public_root=ROOT):
                     score["source_bindings"]["current_written_scoring_inputs_sha256"] = digest(private / "scoring-inputs.json")
                 if replacement is not None:
                     score["source_bindings"]["written_replacement_inputs_sha256"] = private_record["written_replacement_inputs"]["sha256"]
+                elif (original["plan"]["profile"]["data"].get("schema") == "math-gauge.benchmark-profile/v6"
+                      and record.get('written_replacement_evidence') is not None):
+                    # Fresh v6 plans already contain PS001. Its public source
+                    # projection binds those direct inputs, not a supplement.
+                    projection=load(public/record['written_replacement_evidence']['path'])
+                    direct_hash=digest(private/'scoring-inputs.json')
+                    if projection['source_inputs_sha256']!=direct_hash:
+                        raise ValueError('Direct written replacement lost its original source input')
+                    score['source_bindings']['written_replacement_inputs_sha256']=direct_hash
                 if selected_manuscript is not None:
                     score["source_bindings"]["manuscript_completion_inputs_sha256"] = (
                         selected_sources['bindings']['manuscript_completion_inputs']['sha256']
                         if selected_sources else private_record["manuscript_completion_inputs"]["sha256"])
                 if mode == "capability":
                     score["source_bindings"]["capability_policy_sha256"] = digest(public / "capability-scoring-policy.json")
+                if assessment['version']=='0.9.0':
+                    score['source_bindings'].update(
+                        submission_evidence_sha256=private_record['submission_evidence']['sha256'],
+                        submission_policy_sha256=private_record['submission_policy']['sha256'])
                 if uses_retry:
                     admission = load(public / record["retry_admission"]["path"])
                     score.update(retry_policy_sha256=admission["policy"]["sha256"],
@@ -176,7 +196,15 @@ def retain(private_root, *, public_root=ROOT):
         totals[model] = {condition: {mode: retained['earned'][mode][condition]
                                    for mode in ('capability', 'partial', 'strict')}
                          for condition in ('single_attempt', 'nonlogical_retry_3')}
+    if assessment['version']=='0.9.0':
+        totals.update(retain_native_scores(private_root,public_root=public_root)['totals'])
     export_public_tasks(private_root, public_root=public_root)
+    if assessment['version']=='0.9.0':
+        # The public task attachment is part of record.json. Bind auxiliary
+        # observations only after that final record identity has been written.
+        for _,public in selected_cli_records(public_root):
+            rebind_content_rates(private_root/public.relative_to(public_root),public,
+                                 private_root=private_root,public_root=public_root)
     active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
     return {"benchmark_version": "0.6.0", "scoring_version": assessment["version"], "strict_version": strict["version"],
             "capability_version": capability["version"], "default_score_mode": "partial",
@@ -217,6 +245,64 @@ def export_public_tasks(private_root, *, public_root=ROOT):
         check_paper_record(private_root / public.relative_to(public_root), public_folder=public)
         published.append({'model': model, 'public_tasks': 25})
     return {"published": published, "candidate_calls": 0, "scores_recomputed": False}
+
+
+def retain_native_scores(private_root, *, public_root=ROOT):
+    """Derive native views without converting their retained source into CLI evidence."""
+    from math_gauge.native_observations import project_score
+    from math_gauge.scoring import score_native_observation
+    public_root,private_root=Path(public_root),Path(private_root)
+    selected=[];totals={}
+    for path in sorted((public_root/'results/v0.6.0').glob('*/*/native-observation.json')):
+        public=path.parent;private=private_root/public.relative_to(public_root)
+        record,source=load(path),load(private/'native-observation.json')
+        data=load(private/source['mathematical_inputs']['path'])
+        policies=[load(public_root/'protocol'/name) for name in ('scoring-policy.json',
+            'strict-scoring-policy.json','capability-scoring-policy.json','claim-penalty-policy.json')]
+        for filename,original in (('assessment-policy.json','scoring-policy.json'),
+                ('strict-scoring-policy.json','strict-scoring-policy.json'),
+                ('capability-scoring-policy.json','capability-scoring-policy.json'),
+                ('claim-penalty-policy.json','claim-penalty-policy.json')):
+            for folder in (public,private):
+                (folder/filename).write_bytes((public_root/'protocol'/original).read_bytes())
+        record['assessment_policy']=descriptor(public,public/'assessment-policy.json')
+        totals[record['model_id']]={c:{} for c in ('single_attempt','nonlogical_retry_3')}
+        task_views=dict(schema='math-gauge.public-task-scores/v1',benchmark_version='0.6.0',
+            model_label=data['model_label'],public_case_ids=record['public_case_ids'],human_review='pending',
+            formal_comparison_eligible=False,views={})
+        for mode,field in (('capability','capability_results'),('partial','assessment_results'),('strict','strict_results')):
+            task_views['views'][mode]={}
+            for condition in ('single_attempt','nonlogical_retry_3'):
+                full=score_native_observation(data,*policies,mode=mode,
+                    submission_review=submission_evidence.load_condition(private,source,condition),
+                    submission_policy=submission_evidence.load_policy(private,source))
+                full.update(attempt_condition=condition,
+                    retry_summary=dict(slots_with_reruns=0,effective_attempts=policies[0]['scope']['initial_slots']),
+                    source_bindings=dict(mathematical_input_sha256=source['mathematical_inputs']['sha256'],
+                        source_plan_sha256=source['plan']['sha256'],source_run_sha256=source['run']['sha256']))
+                totals[record['model_id']][condition][mode]=full['metrics']['earned'].get('confirmed',full['metrics']['earned']['exact'])
+                if source.get('source_supplements'):
+                    full['source_bindings']['source_supplements_sha256']=source['source_supplements']['sha256']
+                if policies[0]['version']=='0.9.0':
+                    full['source_bindings'].update(submission_evidence_sha256=source['submission_evidence']['sha256'],
+                        submission_policy_sha256=source['submission_policy']['sha256'])
+                name=mode+('-retry' if condition=='nonlogical_retry_3' else '')+'-result.json'
+                write(private/name,full)
+                aggregate=project_score(full)
+                aggregate['source_bindings']['private_report_sha256']=digest(private/name)
+                target=public/record[field][condition]['path'];write(target,aggregate)
+                record[field][condition]=descriptor(public,target)
+                task_views['views'][mode][condition]=project_public_task_view(full,
+                    record['public_case_ids'],digest(private/name))
+        target=public/record['public_task_scores']['path'];write(target,task_views)
+        record['public_task_scores']=descriptor(public,target)
+        write(path,record)
+        source['public_record_sha256']=digest(path)
+        write(private/'native-observation.json',source)
+        if policies[0]['version']=='0.9.0':
+            rebind_content_rates(private,public,private_root=private_root,public_root=public_root)
+        selected.append(record['model_id'])
+    return dict(models=selected,totals=totals,candidate_calls=0)
 
 
 def main():

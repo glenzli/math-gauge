@@ -90,6 +90,20 @@ def _source(root, item):
 
 def _bound_seconds(root, binding, method):
     """Resolve one measurement, including attempt clocks outside selected rows."""
+    if binding.get("kind") == "sum_segments":
+        parts = binding.get("segments")
+        _require(isinstance(parts, list) and 2 <= len(parts) <= 16,
+                 "a continued run needs bounded source-bound segments")
+        _require(method != "native_terminal_wall",
+                 "segmented timing must name its combined historical boundary")
+        _require(all(isinstance(part, dict) and part.get("kind") in
+                     {"elapsed_field", "timestamp_difference"} for part in parts),
+                 "timing segments must be individual measurements")
+        _require(len({json.dumps(part, sort_keys=True) for part in parts}) == len(parts),
+                 "a timing segment cannot be counted twice")
+        values = [_bound_seconds(root, part, method)[0] for part in parts]
+        _require(all(_seconds(value) for value in values), "timing segment must be nonnegative")
+        return math.fsum(values), None, None
     if binding.get("kind") == "elapsed_field":
         _require(binding.get("pointer", "").split("/")[-1] in {"elapsed_seconds", "native_elapsed_seconds", "duration_seconds"},
                  "a configured limit or other numeric field is not observed elapsed time")

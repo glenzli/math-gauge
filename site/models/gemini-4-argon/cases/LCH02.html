@@ -1,247 +1,2884 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCH02 · 有限复合与路径节群 · Math Gauge</title><link rel="stylesheet" href="../../../assets/results.css?v=e5b4d687d85e"></head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/gemini-4-argon/index.html">Gemini 4 Argon (high)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>LCH02 · 有限复合与路径节群</h1><p class="subtitle">Gemini 4 Argon (high) · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>有限复合与路径节群 · LCH02</h1>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCH02 · 有限复合与路径节群 · Math Gauge</title><link rel="stylesheet" href="../../../assets/versioned/results.5665ff9442d2.css"><script defer src="../../../assets/versioned/results-i18n.f47e0bf8d059.js"></script><script defer src="../../../assets/versioned/results-core.2ae558a64735.js"></script><script defer src="../../../assets/versioned/case-results.919ac4bfd308.js"></script>
+</head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/gemini-4-argon/index.html">Gemini 4 Argon (high)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>LCH02 · 有限复合与路径节群</h1><p class="subtitle">Gemini 4 Argon (high) · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>有限复合与路径节群 · LCH02</h1>
 <p>将附件中 obligations.json 指定的全部20项义务完整形式化为一个Lean项目。本题是明确的选段任务；完整章节文件只为提供原文和上下文，清单之外的内容不计为交付义务。原文含证明；前置文字只作背景。</p>
 <p>使用Lean4.29.1和mathlib5e932f97dd25535344f80f9dd8da3aab83df0fe6。formal_oet/附件是冻结前置模块，可直接导入，不得修改或同名覆盖。只允许这些模块、标准库与固定mathlib，不得读取目标作者实现、评审或下载其他依赖。</p>
 <p>保留原文结构、前提、量词、定义域和结论强度。允许等价表示、合并声明、辅助引理和有效替代证明，但须给出表示对应；不得把目标藏入字段、证书或前提。</p>
 <p>交付完整源码，每个文件用独立的命名代码块，例如 <code>lean filename=Main.lean</code>。Main.lean必须导入所有目标模块，辅助文件也须全文交付。不得使用sorry、admit、新增公理或跳过内核检查设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
 <p>另用 <code>json filename=alignment.json</code> 交付对象：case_id=&quot;LCH02&quot;、version=&quot;0.1.0&quot;、items。items必须恰好覆盖清单全部20项，每项含id、status（complete/incomplete）、declarations（file/name数组）、representation（对象/参数/量词/结论的对应说明）、dependencies（实际使用的义务ID数组）。complete须列真实声明且全部子目标均完成；未完成项不能删除。工作区路径或链接不能代替文件内容。</p>
-</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/LCH02/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/LCH02/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>提交来源</h2></div><div class="prose"><p>正常交卷；三种评分采用实际交付。</p></div></section><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>原始逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> IsLipMatrix与受限谓词、真实Set证书族量化全部点对/输出，受限对象包含U⊆dom；全域↔定义域受限及集合相等有实际桥。任意d的更一般证明可实例化冻结伪度量，不削弱范围。</p>
 <h3>CH02-D02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> IsRestrictedCoLipMatrix含U.Nonempty、U⊆dom及全部点对完整和下界，RestrictedCoLipCertFamily和GlobalCoLipCertFamily为实际Set定义，ENNReal允许∞。</p>
 <h3>CH02-D03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> GaugeMatrix i j为输入i到输出j，toRowColMatrix转置为输出行/输入列；matMul M2 M1=Σk M2 k j*M1 i k及标准Matrix乘法等式实际证明，次序正确。</p>
 <h3>CH02-D04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> idMatrix对角1非对角0及左右单位元真实证明；matNonemptyProd递归是Mn…M1，matChainProd空列表单位、单元素和两元素退化均有真实对应。</p>
 <h3>CH02-D05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> stepChain与冻结OperatorChain.reverse等式实际证明；intermediateImage为逐步真实operator_image，递推及在U⊆dom全链时每层域包含通过吸收元和链递归推得，不将目标域合法性当额外输入。</p>
 <h3>CH02-D06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> List I中间指标长度n−1，pathVertex补起止i,j，已证明首尾和cons递推。stepMatrixEntry真实取第m矩阵的相邻路径节点；全正与含零谓词含正确层级量词，n=1保留唯一空路径。</p>
 <h3>CH02-P01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 以i0及∀j,j=i0准确表达单指标，有限和化为唯一项，给全域和受限iff，无额外有限条目条件。</p>
 <h3>CH02-P02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意U⊆V⊆dom，受限证书族通过点对限制反单调，空Lip域同样允许。</p>
 <h3>CH02-P04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_matrix_comp只以两步各自真实域证书及U1⊆dom复合为输入，像点位于精确operator_image；非负求和、分配与交换给matMul L2 L1，不将最终复合证书当假设。</p>
 <h3>CH02-P05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 明确保留非空U，U⊆V⊆dom，实际限制co-Lip证书完整下界。</p>
 <h3>CH02-P07</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 从非负和抽单项，输出零得Kij*di=0，再以di&gt;0排除di=0；ENNReal含∞合法，全域及受限两式均真实。</p>
 <h3>CH02-P08</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 精确像域上的K2与U1上的K1为输入，非空性从K1提取，逐项相乘和求和给K2K1实际co-Lip复合证书。</p>
 <h3>CH02-P11</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> sum_idMatrix_mul_dist实际化简有限和；zero_step_identity_lip给任意合法U的单位上界，联合定理亦覆盖非空原目标。</p>
 <h3>CH02-P12</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_step_identity_colip显式非空U且U⊆dom恒等，单位下界和Lip/coLip交集真实证明。</p>
 <h3>CH02-P14</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 正乘积由实际有限和非零项提取首节点，再归纳构造全正路径；反向以ENNReal.mul_pos及单项≤和得到正条目。任意非空列表与单矩阵空中间序列均真实。</p>
 <h3>CH02-P03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 由全域/定义域受限桥及P02推出任意U上的全域证书限制。</p>
 <h3>CH02-P06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 以P05特化V=dom，保留非空U得到全域co-Lip限制。</p>
 <h3>CH02-P09</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> finite_comp_lip_bound按任意正长度List归纳，等长矩阵列表与Fin逐层证书定义在真实intermediateImage；实际用两步定理构造全链证书，非把全链界作字段输入。</p>
 <h3>CH02-P10</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 有限co-Lip连乘同样从每步真实像域证书归纳构造，全程非空由首步证书保留，正长度任意，不是仅两步特例。</p>
 <h3>CH02-P13</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matNonemptyProd_entry_eq_zero_iff逐个长度归纳，和为零↔全部项零、乘积零↔因子零；通过路径cons与长度桥构造所有合法List路径，覆盖任意n和n=1边界，不限固定长度。</p>
 </div><details class="evidence-fold nested"><summary>逐项工程与语义审核（20项）</summary><div class="prose"><h3>CH02-D01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> IsLipMatrix与受限谓词、真实Set证书族量化全部点对/输出，受限对象包含U⊆dom；全域↔定义域受限及集合相等有实际桥。任意d的更一般证明可实例化冻结伪度量，不削弱范围。</p>
 <h3>CH02-D02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> IsRestrictedCoLipMatrix含U.Nonempty、U⊆dom及全部点对完整和下界，RestrictedCoLipCertFamily和GlobalCoLipCertFamily为实际Set定义，ENNReal允许∞。</p>
 <h3>CH02-D03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> GaugeMatrix i j为输入i到输出j，toRowColMatrix转置为输出行/输入列；matMul M2 M1=Σk M2 k j*M1 i k及标准Matrix乘法等式实际证明，次序正确。</p>
 <h3>CH02-D04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> idMatrix对角1非对角0及左右单位元真实证明；matNonemptyProd递归是Mn…M1，matChainProd空列表单位、单元素和两元素退化均有真实对应。</p>
 <h3>CH02-D05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> stepChain与冻结OperatorChain.reverse等式实际证明；intermediateImage为逐步真实operator_image，递推及在U⊆dom全链时每层域包含通过吸收元和链递归推得，不将目标域合法性当额外输入。</p>
 <h3>CH02-D06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> List I中间指标长度n−1，pathVertex补起止i,j，已证明首尾和cons递推。stepMatrixEntry真实取第m矩阵的相邻路径节点；全正与含零谓词含正确层级量词，n=1保留唯一空路径。</p>
 <h3>CH02-P01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 以i0及∀j,j=i0准确表达单指标，有限和化为唯一项，给全域和受限iff，无额外有限条目条件。</p>
 <h3>CH02-P02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 任意U⊆V⊆dom，受限证书族通过点对限制反单调，空Lip域同样允许。</p>
 <h3>CH02-P04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_matrix_comp只以两步各自真实域证书及U1⊆dom复合为输入，像点位于精确operator_image；非负求和、分配与交换给matMul L2 L1，不将最终复合证书当假设。</p>
 <h3>CH02-P05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 明确保留非空U，U⊆V⊆dom，实际限制co-Lip证书完整下界。</p>
 <h3>CH02-P07</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 从非负和抽单项，输出零得Kij*di=0，再以di&gt;0排除di=0；ENNReal含∞合法，全域及受限两式均真实。</p>
 <h3>CH02-P08</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 精确像域上的K2与U1上的K1为输入，非空性从K1提取，逐项相乘和求和给K2K1实际co-Lip复合证书。</p>
 <h3>CH02-P11</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> sum_idMatrix_mul_dist实际化简有限和；zero_step_identity_lip给任意合法U的单位上界，联合定理亦覆盖非空原目标。</p>
 <h3>CH02-P12</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_step_identity_colip显式非空U且U⊆dom恒等，单位下界和Lip/coLip交集真实证明。</p>
 <h3>CH02-P14</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 正乘积由实际有限和非零项提取首节点，再归纳构造全正路径；反向以ENNReal.mul_pos及单项≤和得到正条目。任意非空列表与单矩阵空中间序列均真实。</p>
 <h3>CH02-P03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 由全域/定义域受限桥及P02推出任意U上的全域证书限制。</p>
 <h3>CH02-P06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 以P05特化V=dom，保留非空U得到全域co-Lip限制。</p>
 <h3>CH02-P09</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> finite_comp_lip_bound按任意正长度List归纳，等长矩阵列表与Fin逐层证书定义在真实intermediateImage；实际用两步定理构造全链证书，非把全链界作字段输入。</p>
 <h3>CH02-P10</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 有限co-Lip连乘同样从每步真实像域证书归纳构造，全程非空由首步证书保留，正长度任意，不是仅两步特例。</p>
 <h3>CH02-P13</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
-</div></details><p class="panel-foot">原始评审见下方来源文件。</p></section><p class="empty-state">本题尚无评审结果。</p><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261108/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 47b5c8d879b32824e8940442687a61a66bbbc56aad2bdcf22727e3c33e06f98d</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261108/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> matNonemptyProd_entry_eq_zero_iff逐个长度归纳，和为零↔全部项零、乘积零↔因子零；通过路径cons与长度桥构造所有合法List路径，覆盖任意n和n=1边界，不限固定长度。</p>
+</div></details><p class="panel-foot">原评保留原审核范围；当前采用的提交与成绩见上方及模型档案。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><p>已启动 <code>OperatorBounds.lean</code> 与 <code>Main.lean</code> 的 Lean 编译任务，正在等待编译完成。
+{}
+已完成 [obligations.json](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/obligations.json) 指定的全部 20 项义务（<code>CH02-D01</code> 至 <code>CH02-D06</code>，<code>CH02-P01</code> 至 <code>CH02-P14</code>）的完整形式化证明与对齐映射：</p>
+<ul>
+<li>目标模块 [OperatorBounds.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean)：在冻结前置模块 [gauge_space.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean) 与 [operator_space.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean) 基础上定义了输入/输出矩阵表示 [<code>GaugeMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L24)、行列约定转换 [<code>toRowColMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L37) 及矩阵乘法 [<code>matMul</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L59)；定义了全域与受限 Lip 矩阵及证书族 [<code>IsLipMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L88)、[<code>LipCertFamily</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L97)、[<code>IsRestrictedLipMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L106)、[<code>RestrictedLipCertFamily</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L115)，含非空条件的受限 co-Lip 矩阵及证书族 [<code>IsRestrictedCoLipMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L139)、[<code>RestrictedCoLipCertFamily</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L149)；定义了单位矩阵 [<code>idMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L166)、空乘积 [<code>matEmptyProd</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L195)、有序非空乘积 [<code>matNonemptyProd</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L203) 与复合链乘积 [<code>matChainProd</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L219)，步序算子链 [<code>stepChain</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L244) 与实际中间像集 [<code>intermediateImage</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L298)，以及路径节点 [<code>pathVertex</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L375)、指标路径谓词 [<code>IsIndexPath</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L401)、全正路径谓词 [<code>IsAllPositivePath</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L418) 与路径含零因子谓词 [<code>PathHasZeroFactor</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L426)；并完整证明了 <code>CH02-P01</code> 至 <code>CH02-P14</code> 的全部定理与引理。</li>
+<li>顶层入口 [Main.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/Main.lean) 与对齐清单 [alignment.json](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/alignment.json)。</li>
+</ul>
+<pre><code class="language-lean">import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Tactic
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+
+noncomputable section
+
+/-!
+# 第 2 章 算子界 · 有限复合与路径节群 (LCH02)
+
+本模块形式化《算子演化理论》第一卷第 2 章 §2.1 中关于 Lipschitz / co-Lipschitz 矩阵界、
+受限证书族单调性、两步及任意正长度有限复合连乘律、零步单位矩阵证书以及有限矩阵乘积条目
+零值与正值路径判据的全部 20 项义务（CH02-D01 至 CH02-D06，CH02-P01 至 CH02-P14）。
+-/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+**输入/输出矩阵与指标约定**
+以通道方向 `i → j`（输入分量 `i` 到输出分量 `j`）索引的扩展非负实数矩阵：`L i j` 表示 $L_{i \to j} \in \bar{\mathbb{R}}_+$。
+-/
+abbrev GaugeMatrix (I : Type) : Type := I → I → ENNReal
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道条目读取：`channelEntry L i j` 对应正文中从输入分量 $i$ 到输出分量 $j$ 的矩阵条目 $L_{i \to j}$。
+-/
+def channelEntry {I : Type} (L : GaugeMatrix I) (i j : I) : ENNReal := L i j
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+行列视图转换：书写矩阵 $\mathbf{L}$ 时，以输出分量 $j$ 为行指标、输入分量 $i$ 为列指标，
+即第 $j$ 行、第 $i$ 列元素满足 $(\mathbf{L})_{j i} = L_{i \to j}$。
+-/
+def toRowColMatrix {I : Type} (L : GaugeMatrix I) : Matrix I I ENNReal :=
+  fun j i =&gt; L i j
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+从以输出为行、输入为列的标准 `Matrix I I ENNReal` 还原通道索引矩阵。
+-/
+def ofRowColMatrix {I : Type} (A : Matrix I I ENNReal) : GaugeMatrix I :=
+  fun i j =&gt; A j i
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+行列指标约定恒等式：$(\mathbf{L})_{j i} = L_{i \to j}$。
+-/
+@[simp] theorem toRowColMatrix_apply {I : Type} (L : GaugeMatrix I) (j i : I) :
+    toRowColMatrix L j i = channelEntry L i j := rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+**矩阵乘法（按输入/输出通道约定）**
+$$(\mathbf{M}^{(2)} \cdot \mathbf{M}^{(1)})_{i \to j} := \sum_{k \in I} M^{(2)}_{k \to j} M^{(1)}_{i \to k}.$$
+-/
+def matMul {I : Type} [Fintype I] (M₂ M₁ : GaugeMatrix I) : GaugeMatrix I :=
+  fun i j =&gt; ∑ k : I, M₂ k j * M₁ i k
+
+@[simp] theorem matMul_apply {I : Type} [Fintype I] (M₂ M₁ : GaugeMatrix I) (i j : I) :
+    matMul M₂ M₁ i j = ∑ k : I, M₂ k j * M₁ i k := rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道指标下的 `matMul` 与“输出为行、输入为列”约定下的标准代数矩阵乘法严格一致：
+$(\mathbf{M}^{(2)} \cdot \mathbf{M}^{(1)})_{j i} = \sum_{k \in I} (\mathbf{M}^{(2)})_{j k} (\mathbf{M}^{(1)})_{k i}$。
+-/
+theorem toRowColMatrix_matMul {I : Type} [Fintype I] (M₂ M₁ : GaugeMatrix I) :
+    toRowColMatrix (matMul M₂ M₁) = toRowColMatrix M₂ * toRowColMatrix M₁ := by
+  ext j i
+  simp [toRowColMatrix, matMul, Matrix.mul_apply]
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负矩阵乘法的结合律。
+-/
+theorem matMul_assoc {I : Type} [Fintype I] (M₃ M₂ M₁ : GaugeMatrix I) :
+    matMul (matMul M₃ M₂) M₁ = matMul M₃ (matMul M₂ M₁) := by
+  ext i j
+  simp only [matMul_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  rw [Finset.sum_comm]
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（全域 Lipschitz 矩阵谓词）**
+对 $\phi \in \mathcal{X}_{\mathrm{op}}$，矩阵 $\mathbf{L}$ 为 $\phi$ 的合法 Lipschitz 矩阵，当且仅当
+对所有 $x, y \in \mathrm{dom}(\phi)$ 和所有 $j \in I$：
+$$d_j(\phi(x), \phi(y)) \le \sum_{i \in I} L_{i \to j} \cdot d_i(x, y).$$
+-/
+def IsLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) : Prop :=
+  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（全域 Lipschitz 证书族 $\mathscr{L}(\phi)$）**
+-/
+def LipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (GaugeMatrix I) :=
+  { L | IsLipMatrix d ϕ L }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（子集受限 Lipschitz 矩阵谓词）**
+对子集 $U \subseteq \mathrm{dom}(\phi)$，在 $U$ 上对任意 $x, y \in U$ 与 $j \in I$ 满足距离放缩上界。
+-/
+def IsRestrictedLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I) : Prop :=
+  U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（子集受限 Lipschitz 证书族 $\mathscr{L}(\phi)\big|_U$）**
+-/
+def RestrictedLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { L | IsRestrictedLipMatrix d ϕ U L }
+
+/-- 全域 Lip 矩阵与定义域 $\mathrm{dom}(\phi)$ 上的受限 Lip 矩阵等价。 -/
+theorem isLipMatrix_iff_restricted_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) :
+    IsLipMatrix d ϕ L ↔ IsRestrictedLipMatrix d ϕ (dom ϕ) L :=
+  ⟨fun h =&gt; ⟨Set.Subset.rfl, h⟩, fun h =&gt; h.2⟩
+
+theorem lipCertFamily_eq_restricted_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    LipCertFamily d ϕ = RestrictedLipCertFamily d ϕ (dom ϕ) := by
+  ext L
+  exact isLipMatrix_iff_restricted_dom d ϕ L
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+**定义（含非空条件的子集受限 co-Lipschitz 矩阵谓词）**
+对 $\phi \in \mathcal{X}_{\mathrm{op}}$ 与非空子集 $U \subseteq \mathrm{dom}(\phi)$（$U \neq \emptyset$），
+矩阵 $\mathbf{K}$ 为 $\phi$ 在 $U$ 上的合法受限 co-Lipschitz 矩阵，当且仅当对所有 $x, y \in U$ 和所有 $j \in I$：
+$$d_j(\phi(x), \phi(y)) \ge \sum_{i \in I} K_{i \to j} \cdot d_i(x, y).$$
+-/
+def IsRestrictedCoLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : GaugeMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+**定义（子集受限 co-Lipschitz 证书族 $\mathscr{K}(\phi)\big|_U$）**
+凡出现 $\mathscr{K}(\phi)\big|_U$，均包含非空性条件 $U \neq \emptyset$ 及 $U \subseteq \mathrm{dom}(\phi)$。
+-/
+def RestrictedCoLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d ϕ U K }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+全域（即定义域 $\mathrm{dom}(\phi)$ 上）co-Lipschitz 证书族 $\mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)}$。
+-/
+def GlobalCoLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (GaugeMatrix I) :=
+  RestrictedCoLipCertFamily d ϕ (dom ϕ)
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（单位矩阵 $\mathbf{I}$）**
+对角线元素 $\mathbf{I}_{i \to i} = 1$，非对角线元素 $\mathbf{I}_{i \to j} = 0$（$i \neq j$）。
+-/
+def idMatrix {I : Type} [DecidableEq I] : GaugeMatrix I :=
+  fun i j =&gt; if i = j then 1 else 0
+
+@[simp] theorem idMatrix_self {I : Type} [DecidableEq I] (i : I) :
+    idMatrix i i = 1 := if_pos rfl
+
+theorem idMatrix_of_ne {I : Type} [DecidableEq I] {i j : I} (h : i ≠ j) :
+    idMatrix i j = 0 := if_neg h
+
+/-- 单位矩阵作为 `matMul` 的左单位元。 -/
+@[simp] theorem idMatrix_matMul {I : Type} [Fintype I] [DecidableEq I] (M : GaugeMatrix I) :
+    matMul idMatrix M = M := by
+  ext i j
+  simp [matMul, idMatrix]
+
+/-- 单位矩阵作为 `matMul` 的右单位元。 -/
+@[simp] theorem matMul_idMatrix {I : Type} [Fintype I] [DecidableEq I] (M : GaugeMatrix I) :
+    matMul M idMatrix = M := by
+  ext i j
+  simp [matMul, idMatrix]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（矩阵空复合乘积）**
+当 $k = 0$ 时，定义矩阵空复合乘积为单位矩阵 $\mathbf{I}$。
+-/
+def matEmptyProd {I : Type} [DecidableEq I] : GaugeMatrix I := idMatrix
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（有序非空矩阵乘积 $\mathbf{M}^{(n)} \cdot \cdots \cdot \mathbf{M}^{(1)}$）**
+对按步序给出的非空矩阵序列 $(\mathbf{M}^{(1)}, \dots, \mathbf{M}^{(n)})$（其中 `M₁` 为第 1 步矩阵，`rest` 为后续步矩阵），
+递归定义为左乘后继矩阵：当 $n=1$ 时直接为 $\mathbf{M}^{(1)}$；当 $n \ge 2$ 时为 $(\mathbf{M}^{(n)} \cdots \mathbf{M}^{(2)}) \cdot \mathbf{M}^{(1)}$。
+-/
+def matNonemptyProd {I : Type} [Fintype I] (M₁ : GaugeMatrix I) : List (GaugeMatrix I) → GaugeMatrix I
+  | [] =&gt; M₁
+  | M₂ :: tail =&gt; matMul (matNonemptyProd M₂ tail) M₁
+
+@[simp] theorem matNonemptyProd_nil {I : Type} [Fintype I] (M₁ : GaugeMatrix I) :
+    matNonemptyProd M₁ [] = M₁ := rfl
+
+@[simp] theorem matNonemptyProd_cons {I : Type} [Fintype I]
+    (M₁ M₂ : GaugeMatrix I) (tail : List (GaugeMatrix I)) :
+    matNonemptyProd M₁ (M₂ :: tail) = matMul (matNonemptyProd M₂ tail) M₁ := rfl
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（任意有限步序矩阵列表的复合乘积）**
+空列表取单位矩阵 $\mathbf{I}$（`matEmptyProd`），非空列表 `[M₁, ..., Mₙ]` 取有序非空乘积 $\mathbf{M}^{(n)} \cdot \cdots \cdot \mathbf{M}^{(1)}$。
+-/
+def matChainProd {I : Type} [Fintype I] [DecidableEq I] : List (GaugeMatrix I) → GaugeMatrix I
+  | [] =&gt; matEmptyProd
+  | M₁ :: rest =&gt; matNonemptyProd M₁ rest
+
+@[simp] theorem matChainProd_nil {I : Type} [Fintype I] [DecidableEq I] :
+    (matChainProd ([] : List (GaugeMatrix I))) = idMatrix := rfl
+
+@[simp] theorem matChainProd_singleton {I : Type} [Fintype I] [DecidableEq I] (M : GaugeMatrix I) :
+    matChainProd [M] = M := rfl
+
+@[simp] theorem matChainProd_pair {I : Type} [Fintype I] [DecidableEq I] (M₁ M₂ : GaugeMatrix I) :
+    matChainProd [M₁, M₂] = matMul M₂ M₁ := rfl
+
+theorem matChainProd_cons {I : Type} [Fintype I] [DecidableEq I]
+    (M : GaugeMatrix I) (Ms : List (GaugeMatrix I)) :
+    matChainProd (M :: Ms) = matMul (matChainProd Ms) M := by
+  cases Ms with
+  | nil =&gt; simp [matChainProd, matEmptyProd]
+  | cons M₂ tail =&gt; rfl
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+**定义（按步序排列的有限算子复合链 $c_k = \phi_k \circ \cdots \circ \phi_1$）**
+输入列表 `[ϕ₁, ϕ₂, ..., ϕₖ]` 按实际作用步序排列（$\phi_1$ 最先作用，$\phi_k$ 最后作用）；
+当 $k = 0$ 时 $c_0 = \mathrm{id}_{\mathcal{X}}$。
+-/
+def stepChain {X : Type} {bot : X} : List (Operator X bot) → Operator X bot
+  | [] =&gt; operator_identity
+  | ϕ :: tail =&gt; operator_compose (stepChain tail) ϕ
+
+@[simp] theorem stepChain_nil {X : Type} {bot : X} :
+    (stepChain ([] : List (Operator X bot))) = operator_identity := rfl
+
+@[simp] theorem stepChain_singleton {X : Type} {bot : X} (ϕ : Operator X bot) :
+    stepChain [ϕ] = ϕ := rfl
+
+@[simp] theorem stepChain_pair {X : Type} {bot : X} (ϕ₁ ϕ₂ : Operator X bot) :
+    stepChain [ϕ₁, ϕ₂] = operator_compose ϕ₂ ϕ₁ := rfl
+
+@[simp] theorem stepChain_cons {X : Type} {bot : X}
+    (ϕ : Operator X bot) (tail : List (Operator X bot)) :
+    stepChain (ϕ :: tail) = operator_compose (stepChain tail) ϕ := rfl
+
+theorem stepChain_append {X : Type} {bot : X}
+    (ϕs₁ ϕs₂ : List (Operator X bot)) :
+    stepChain (ϕs₁ ++ ϕs₂) = operator_compose (stepChain ϕs₂) (stepChain ϕs₁) := by
+  induction ϕs₁ with
+  | nil =&gt; rfl
+  | cons ϕ tail ih =&gt;
+      simp only [List.cons_append, stepChain_cons, ih]
+      rfl
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+**链表示对应定理**：步序复合 `stepChain [ϕ₁, ..., ϕₖ]` 与前置模块 `OperatorChain [ϕₖ, ..., ϕ₁]`
+及算子幺半群乘积 `List.prod` 通过列表反转严格对应。
+-/
+theorem stepChain_eq_operatorChain_reverse {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) :
+    stepChain ϕs = OperatorChain ϕs.reverse := by
+  induction ϕs with
+  | nil =&gt; rfl
+  | cons ϕ tail ih =&gt;
+      rw [List.reverse_cons, stepChain_cons, ih]
+      rw [operator_chain_eq_prod, operator_chain_eq_prod, List.prod_append, List.prod_singleton]
+      rfl
+
+theorem operatorChain_eq_stepChain_reverse {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) :
+    OperatorChain ϕs = stepChain ϕs.reverse := by
+  rw [stepChain_eq_operatorChain_reverse, List.reverse_reverse]
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+**定义（实际中间像域序列 $U_1, U_2, \dots, U_{k+1}$）**
+对起始定义域子集 $U_1$ 与步序算子列表 `ϕs = [ϕ₁, ..., ϕₖ]`，以 0-基下标递归定义实际中间像集：
+第 $0$ 个集合对应 $U_1$，第 $m+1$ 个集合对应 $U_{m+2} = \phi_{m+1}(U_{m+1})$。
+-/
+def intermediateImage {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) (U₁ : Set X) : ℕ → Set X
+  | 0 =&gt; U₁
+  | m + 1 =&gt;
+    match ϕs with
+    | [] =&gt; U₁
+    | ϕ :: tail =&gt; intermediateImage tail (operator_image ϕ U₁) m
+
+@[simp] theorem intermediateImage_zero {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) (U₁ : Set X) :
+    intermediateImage ϕs U₁ 0 = U₁ := by
+  cases ϕs &lt;;&gt; rfl
+
+@[simp] theorem intermediateImage_cons_succ {X : Type} {bot : X}
+    (ϕ : Operator X bot) (tail : List (Operator X bot)) (U₁ : Set X) (m : ℕ) :
+    intermediateImage (ϕ :: tail) U₁ (m + 1) =
+      intermediateImage tail (operator_image ϕ U₁) m := rfl
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+实际中间像集满足正文递推式 $U_{m+1} = \phi_m(U_m)$。
+-/
+theorem intermediateImage_succ_eq_operator_image {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) (U₁ : Set X) (m : ℕ) (hm : m &lt; ϕs.length) :
+    intermediateImage ϕs U₁ (m + 1) =
+      operator_image (ϕs[m]) (intermediateImage ϕs U₁ m) := by
+  induction ϕs generalizing U₁ m with
+  | nil =&gt;
+      contradiction
+  | cons ϕ tail ih =&gt;
+      cases m with
+      | zero =&gt;
+          simp [intermediateImage]
+      | succ m' =&gt;
+          have hm' : m' &lt; tail.length := Nat.lt_of_succ_lt_succ hm
+          simpa [intermediateImage] using ih (operator_image ϕ U₁) m' hm'
+
+/--
+OET anchor: oet-193cebcc1a7f9259 &amp; oet-c80171fa685dc795 (CH02-D05)
+两步复合定义域包含关系：若 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，则
+$U_1 \subseteq \mathrm{dom}(\phi_1)$ 且 $U_2 = \phi_1(U_1) \subseteq \mathrm{dom}(\phi_2)$。
+-/
+theorem dom_operator_compose_subset {X : Type} {bot : X}
+    (ϕ₂ ϕ₁ : Operator X bot) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)) :
+    U₁ ⊆ dom ϕ₁ ∧ operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by
+  constructor
+  · intro x hx hbot
+    have hx_comp : (operator_compose ϕ₂ ϕ₁).func x ≠ bot := hU₁ hx
+    apply hx_comp
+    change ϕ₂.func (ϕ₁.func x) = bot
+    rw [hbot, ϕ₂.preserves_bot]
+  · rintro y ⟨x, hx, rfl⟩
+    exact hU₁ hx
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+有限复合链上各步实际中间像集均落入对应单步算子的定义域：
+若 $U_1 \subseteq \mathrm{dom}(c_k)$，则对一切 $m \in \{1, \dots, k\}$ 有 $U_m \subseteq \mathrm{dom}(\phi_m)$。
+-/
+theorem intermediateImage_subset_dom {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (stepChain ϕs)) (m : Fin ϕs.length) :
+    intermediateImage ϕs U₁ m.val ⊆ dom (ϕs.get m) := by
+  induction ϕs generalizing U₁ with
+  | nil =&gt;
+      exact Fin.elim0 m
+  | cons ϕ tail ih =&gt;
+      rcases dom_operator_compose_subset (stepChain tail) ϕ hU₁ with ⟨h_dom_head, h_dom_tail⟩
+      refine Fin.cases ?_ ?_ m
+      · simpa [intermediateImage] using h_dom_head
+      · intro m'
+        simpa [intermediateImage] using ih h_dom_tail m'
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（带起止边界约定的路径节点读取）**
+给定起点指标 $k_0 = i$、终点指标 $k_n = j$ 以及长度为 $n - 1$ 的中间指标序列 `ks = [k₁, ..., k_{n-1}]`，
+`pathVertex i j ks m` 给出第 $m$ 个节点指标 $k_m$（满足 $k_0 = i, k_n = j$）。
+-/
+def pathVertex {I : Type} (i j : I) (ks : List I) (m : ℕ) : I :=
+  ((i :: ks) ++ [j]).getD m j
+
+@[simp] theorem pathVertex_zero {I : Type} (i j : I) (ks : List I) :
+    pathVertex i j ks 0 = i := rfl
+
+@[simp] theorem pathVertex_nil_one {I : Type} (i j : I) :
+    pathVertex i j [] 1 = j := rfl
+
+@[simp] theorem pathVertex_cons_succ {I : Type} (i j k₁ : I) (ktail : List I) (m : ℕ) :
+    pathVertex i j (k₁ :: ktail) (m + 1) = pathVertex k₁ j ktail m := rfl
+
+theorem pathVertex_last {I : Type} (i j : I) (ks : List I) :
+    pathVertex i j ks (ks.length + 1) = j := by
+  induction ks generalizing i with
+  | nil =&gt; rfl
+  | cons k₁ ktail ih =&gt;
+      simpa [pathVertex_cons_succ] using ih k₁
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（有限指标路径谓词）**
+对长度 $n \ge 1$ 的矩阵序列 `Ms`，中间指标序列 `ks` 是合法的 $(n-1)$ 阶中间指标路径，
+当且仅当 `ks.length + 1 = Ms.length`。当 $n = 1$ 时唯一合法的中间指标路径为空序列 `[]`。
+-/
+def IsIndexPath {I : Type} (n : ℕ) (ks : List I) : Prop :=
+  ks.length + 1 = n
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+沿路径 `ks`（起止约定 $k_0 = i, k_n = j$）在第 $m$ 层级上的单步矩阵条目 $[\mathbf{M}^{(m)}]_{k_{m-1} \to k_m}$。
+-/
+def stepMatrixEntry {I : Type} (Ms : List (GaugeMatrix I)) (i j : I) (ks : List I)
+    (m : Fin Ms.length) : ENNReal :=
+  (Ms.get m) (pathVertex i j ks m.val) (pathVertex i j ks (m.val + 1))
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（全正路径谓词）**
+中间指标序列 `ks` 构成从 $i$ 到 $j$ 沿矩阵序列 `Ms` 的全正路径，当且仅当 `ks` 长度合法（`ks.length + 1 = Ms.length`）
+且沿该路径的所有单步矩阵条目均严格为正：$\forall m,\; [\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} &gt; 0$。
+-/
+def IsAllPositivePath {I : Type} (Ms : List (GaugeMatrix I)) (i j : I) (ks : List I) : Prop :=
+  IsIndexPath Ms.length ks ∧ ∀ m : Fin Ms.length, stepMatrixEntry Ms i j ks m &gt; 0
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（路径含零因子谓词）**
+存在至少一个层级 $m$ 使得 $[\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} = 0$。
+-/
+def PathHasZeroFactor {I : Type} (Ms : List (GaugeMatrix I)) (i j : I) (ks : List I) : Prop :=
+  ∃ m : Fin Ms.length, stepMatrixEntry Ms i j ks m = 0
+
+/--
+OET anchor: oet-c4369c63c86cbacf (CH02-P01)
+**注（单分量情形下的标量 Lip 界）**
+当 $|I| = 1$ 且 $I = \{i_0\}$（即任意指标均等于 $i_0$）时，全域 Lip 矩阵条件退化为单个标量不等式：
+$$d_{i_0}(\phi(x), \phi(y)) \le L_{i_0 \to i_0} d_{i_0}(x, y) \qquad (x, y \in \mathrm{dom}(\phi)).$$
+-/
+theorem single_component_lip_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I)
+    (i₀ : I) (hI : ∀ j : I, j = i₀) :
+    IsLipMatrix d ϕ L ↔
+      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y := by
+  have huniv : (Finset.univ : Finset I) = {i₀} := by
+    ext j
+    simp [hI j]
+  constructor
+  · intro h x hx y hy
+    have h_step := h x hx y hy i₀
+    simpa [huniv] using h_step
+  · intro h x hx y hy j
+    rw [hI j, huniv, Finset.sum_singleton]
+    exact h x hx y hy
+
+/-- 单分量情形下受限 Lip 矩阵条件退化为标量不等式。 -/
+theorem single_component_restricted_lip_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I)
+    (i₀ : I) (hI : ∀ j : I, j = i₀) :
+    IsRestrictedLipMatrix d ϕ U L ↔
+      U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y := by
+  have huniv : (Finset.univ : Finset I) = {i₀} := by
+    ext j
+    simp [hI j]
+  constructor
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, fun x hx y hy =&gt; ?_⟩
+    have h_step := h x hx y hy i₀
+    simpa [huniv] using h_step
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, fun x hx y hy j =&gt; ?_⟩
+    rw [hI j, huniv, Finset.sum_singleton]
+    exact h x hx y hy
+
+/--
+OET anchor: oet-4ff5c58d71e1651f (CH02-P02)
+**引理 2.1（受限 Lip 矩阵族的单调性 / 反单调包含）**
+固定算子 $\phi \in \mathcal{X}_{\mathrm{op}}$。若 $U \subseteq V \subseteq \mathrm{dom}(\phi)$，则
+$$\mathscr{L}(\phi)\big|_V \subseteq \mathscr{L}(\phi)\big|_U.$$
+-/
+theorem restricted_lip_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedLipCertFamily d ϕ V ⊆ RestrictedLipCertFamily d ϕ U := by
+  intro L hL
+  refine ⟨Set.Subset.trans hUV hV, ?_⟩
+  intro x hx y hy j
+  exact hL.2 x (hUV hx) y (hUV hy) j
+
+/--
+OET anchor: oet-4ff5c58d71e1651f (CH02-P03)
+**引理 2.1（全域 Lip 证书可限制）**
+特别地，对任意 $U \subseteq \mathrm{dom}(\phi)$，有
+$$\mathscr{L}(\phi) \subseteq \mathscr{L}(\phi)\big|_U.$$
+-/
+theorem global_lip_subset_restricted_lip {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom ϕ) :
+    LipCertFamily d ϕ ⊆ RestrictedLipCertFamily d ϕ U := by
+  rw [lipCertFamily_eq_restricted_dom]
+  exact restricted_lip_antitone d ϕ hU Set.Subset.rfl
+
+/--
+OET anchor: oet-193cebcc1a7f9259 (CH02-P04)
+**命题 2.2（Lip 矩阵复合律）**
+对于复合算子 $\phi_2 \circ \phi_1$，选定起始定义域的局部子集 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，
+记像集 $U_2 = \phi_1(U_1)$。若 $\mathbf{L}^{(1)} \in \mathscr{L}(\phi_1)\big|_{U_1}$ 且
+$\mathbf{L}^{(2)} \in \mathscr{L}(\phi_2)\big|_{U_2}$，则
+$$\mathbf{L}^{(2)} \cdot \mathbf{L}^{(1)} \in \mathscr{L}(\phi_2 \circ \phi_1)\big|_{U_1}.$$
+-/
+theorem lip_matrix_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₂ ϕ₁ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁))
+    {L₁ L₂ : GaugeMatrix I}
+    (hL₁ : L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁)
+    (hL₂ : L₂ ∈ RestrictedLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)) :
+    matMul L₂ L₁ ∈ RestrictedLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hU₁, ?_⟩
+  intro x hx y hy j
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  have step₂ :
+      d j ((operator_compose ϕ₂ ϕ₁).func x) ((operator_compose ϕ₂ ϕ₁).func y) ≤
+        ∑ k : I, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) :=
+    hL₂.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+  have step₁ :
+      ∑ k : I, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) ≤
+        ∑ k : I, L₂ k j * (∑ i : I, L₁ i k * d i x y) := by
+    apply Finset.sum_le_sum
+    intro k _
+    exact mul_le_mul_of_nonneg_left (hL₁.2 x hx y hy k) (zero_le _)
+  have h_rearrange :
+      (∑ k : I, L₂ k j * (∑ i : I, L₁ i k * d i x y)) =
+        ∑ i : I, matMul L₂ L₁ i j * d i x y := by
+    simp only [matMul_apply, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+    rw [Finset.sum_comm]
+  exact le_trans step₂ (h_rearrange ▸ step₁)
+
+/--
+OET anchor: oet-893b1d33535f7245 (CH02-P05)
+**引理 2.3（受限 co-Lip 矩阵族的单调性 / 反单调包含）**
+固定算子 $\phi \in \mathcal{X}_{\mathrm{op}}$。若 $\varnothing \neq U \subseteq V \subseteq \mathrm{dom}(\phi)$，则
+$$\mathscr{K}(\phi)\big|_V \subseteq \mathscr{K}(\phi)\big|_U.$$
+-/
+theorem restricted_colip_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hU_ne : U.Nonempty) (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedCoLipCertFamily d ϕ V ⊆ RestrictedCoLipCertFamily d ϕ U := by
+  intro K hK
+  refine ⟨hU_ne, Set.Subset.trans hUV hV, ?_⟩
+  intro x hx y hy j
+  exact hK.2.2 x (hUV hx) y (hUV hy) j
+
+/--
+OET anchor: oet-893b1d33535f7245 (CH02-P06)
+**引理 2.3（全域 co-Lip 证书可限制）**
+特别地，对任意非空子集 $U \subseteq \mathrm{dom}(\phi)$，有
+$$\mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)} \subseteq \mathscr{K}(\phi)\big|_U.$$
+-/
+theorem global_colip_subset_restricted_colip {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) :
+    RestrictedCoLipCertFamily d ϕ (dom ϕ) ⊆ RestrictedCoLipCertFamily d ϕ U :=
+  restricted_colip_antitone d ϕ hU_ne hU Set.Subset.rfl
+
+/--
+OET anchor: oet-88784dcbfff0ea66 (CH02-P07)
+**注（co-Lip 条目为零的充分条件，受限域版本）**
+若存在 $x, y \in U$ 使 $d_j(\phi(x), \phi(y)) = 0$ 且 $d_i(x, y) &gt; 0$，
+则任一 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$ 必满足 $K_{i \to j} = 0$。
+-/
+theorem colip_entry_eq_zero_of_restricted {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    {K : GaugeMatrix I} (hK : K ∈ RestrictedCoLipCertFamily d ϕ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) {i j : I}
+    (h_out_zero : d j (ϕ.func x) (ϕ.func y) = 0)
+    (h_in_pos : d i x y &gt; 0) :
+    K i j = 0 := by
+  have h_le_sum : K i j * d i x y ≤ ∑ k : I, K k j * d k x y :=
+    Finset.single_le_sum (fun k _ =&gt; zero_le (K k j * d k x y)) (Finset.mem_univ i)
+  have h_sum_le : ∑ k : I, K k j * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK.2.2 x hx y hy j
+  have h_prod_zero : K i j * d i x y = 0 := by
+    apply le_antisymm _ (zero_le _)
+    calc
+      K i j * d i x y ≤ ∑ k : I, K k j * d k x y := h_le_sum
+      _ ≤ d j (ϕ.func x) (ϕ.func y) := h_sum_le
+      _ = 0 := h_out_zero
+  rcases mul_eq_zero.mp h_prod_zero with hK_zero | hd_zero
+  · exact hK_zero
+  · exact False.elim ((ne_of_gt h_in_pos) hd_zero)
+
+/--
+OET anchor: oet-88784dcbfff0ea66 (CH02-P07)
+**注（co-Lip 条目为零的充分条件，正文全域版本）**
+若存在 $x, y \in \mathrm{dom}(\phi)$ 使 $d_j(\phi(x), \phi(y)) = 0$ 且 $d_i(x, y) &gt; 0$，
+则任一全域 co-Lip 矩阵 $\mathbf{K} \in \mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)}$ 必满足 $K_{i \to j} = 0$。
+-/
+theorem colip_entry_eq_zero_of_output_zero {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    {K : GaugeMatrix I} (hK : K ∈ RestrictedCoLipCertFamily d ϕ (dom ϕ))
+    {x y : X} (hx : x ∈ dom ϕ) (hy : y ∈ dom ϕ) {i j : I}
+    (h_out_zero : d j (ϕ.func x) (ϕ.func y) = 0)
+    (h_in_pos : d i x y &gt; 0) :
+    K i j = 0 :=
+  colip_entry_eq_zero_of_restricted d ϕ hK hx hy h_out_zero h_in_pos
+
+/--
+OET anchor: oet-0f256e6f1d38a612 (CH02-P08)
+**命题 2.4（co-Lip 矩阵复合律）**
+对于复合算子 $\phi_2 \circ \phi_1$，选定起始定义域的局部子集 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，
+记像集 $U_2 = \phi_1(U_1)$。若 $\mathbf{K}^{(1)} \in \mathscr{K}(\phi_1)\big|_{U_1}$ 且
+$\mathbf{K}^{(2)} \in \mathscr{K}(\phi_2)\big|_{U_2}$，则
+$$\mathbf{K}^{(2)} \cdot \mathbf{K}^{(1)} \in \mathscr{K}(\phi_2 \circ \phi_1)\big|_{U_1}.$$
+-/
+theorem colip_matrix_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₂ ϕ₁ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁))
+    {K₁ K₂ : GaugeMatrix I}
+    (hK₁ : K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁)
+    (hK₂ : K₂ ∈ RestrictedCoLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)) :
+    matMul K₂ K₁ ∈ RestrictedCoLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hK₁.1, hU₁, ?_⟩
+  intro x hx y hy j
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  have h_rearrange :
+      (∑ i : I, matMul K₂ K₁ i j * d i x y) =
+        ∑ k : I, K₂ k j * (∑ i : I, K₁ i k * d i x y) := by
+    simp only [matMul_apply, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+    rw [Finset.sum_comm]
+  have step₁ :
+      ∑ k : I, K₂ k j * (∑ i : I, K₁ i k * d i x y) ≤
+        ∑ k : I, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by
+    apply Finset.sum_le_sum
+    intro k _
+    exact mul_le_mul_of_nonneg_left (hK₁.2.2 x hx y hy k) (zero_le _)
+  have step₂ :
+      ∑ k : I, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) ≤
+        d j ((operator_compose ϕ₂ ϕ₁).func x) ((operator_compose ϕ₂ ϕ₁).func y) :=
+    hK₂.2.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+  rw [h_rearrange]
+  exact le_trans step₁ step₂
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-P09)
+**推论 2.5 (i)（有限复合的局部 Lip 上界）**
+设有限复合 $c_k = \phi_k \circ \cdots \circ \phi_1$（$k \ge 1$），并取起始定义域子集 $U_1 \subseteq \mathrm{dom}(c_k)$。
+递归定义中间像集 $U_{m+1} = \phi_m(U_m)$。若各单步具有合法矩阵 $\mathbf{L}^{(m)} \in \mathscr{L}(\phi_m)\big|_{U_m}$，
+则全复合满足：
+$$\mathbf{L}^{(k)} \cdot \cdots \cdot \mathbf{L}^{(1)} \in \mathscr{L}(c_k)\big|_{U_1}.$$
+-/
+theorem finite_comp_lip_bound {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal)
+    (ϕs : List (Operator X bot)) (h_ne : ϕs ≠ [])
+    (Ls : List (GaugeMatrix I)) (h_len : Ls.length = ϕs.length)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (stepChain ϕs))
+    (h_certs : ∀ m : Fin ϕs.length,
+      Ls.get (m.cast h_len.symm) ∈
+        RestrictedLipCertFamily d (ϕs.get m) (intermediateImage ϕs U₁ m.val)) :
+    matChainProd Ls ∈ RestrictedLipCertFamily d (stepChain ϕs) U₁ := by
+  induction ϕs generalizing Ls U₁ with
+  | nil =&gt;
+      exact False.elim (h_ne rfl)
+  | cons ϕ₁ tail ih =&gt;
+      cases Ls with
+      | nil =&gt;
+          simp at h_len
+      | cons L₁ Ltail =&gt;
+          cases tail with
+          | nil =&gt;
+              have hLtail : Ltail = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+              subst hLtail
+              have h0 := h_certs ⟨0, Nat.zero_lt_one⟩
+              simpa [matChainProd, stepChain, intermediateImage] using h0
+          | cons ϕ₂ tail' =&gt;
+              have hL₁ : L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁ := by
+                simpa [intermediateImage] using h_certs ⟨0, Nat.zero_lt_succ _⟩
+              rcases dom_operator_compose_subset (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ with
+                ⟨_, hU₂_dom⟩
+              have h_len_tail : Ltail.length = (ϕ₂ :: tail').length := Nat.succ.inj h_len
+              have h_tail_certs :
+                  ∀ m : Fin (ϕ₂ :: tail').length,
+                    Ltail.get (m.cast h_len_tail.symm) ∈
+                      RestrictedLipCertFamily d ((ϕ₂ :: tail').get m)
+                        (intermediateImage (ϕ₂ :: tail') (operator_image ϕ₁ U₁) m.val) := by
+                intro m
+                have hm := h_certs m.succ
+                simpa [intermediateImage] using hm
+              have h_ind :=
+                ih (List.cons_ne_nil ϕ₂ tail') Ltail h_len_tail hU₂_dom h_tail_certs
+              rw [matChainProd_cons, stepChain_cons]
+              exact lip_matrix_comp d (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ hL₁ h_ind
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-P10)
+**推论 2.5 (ii)（有限复合的局部 co-Lip 下界）**
+设有限复合 $c_k = \phi_k \circ \cdots \circ \phi_1$（$k \ge 1$），并取起始定义域子集 $U_1 \subseteq \mathrm{dom}(c_k)$。
+递归定义中间像集 $U_{m+1} = \phi_m(U_m)$。若各单步具有合法矩阵 $\mathbf{K}^{(m)} \in \mathscr{K}(\phi_m)\big|_{U_m}$，
+则全复合满足：
+$$\mathbf{K}^{(k)} \cdot \cdots \cdot \mathbf{K}^{(1)} \in \mathscr{K}(c_k)\big|_{U_1}.$$
+-/
+theorem finite_comp_colip_bound {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal)
+    (ϕs : List (Operator X bot)) (h_ne : ϕs ≠ [])
+    (Ks : List (GaugeMatrix I)) (h_len : Ks.length = ϕs.length)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (stepChain ϕs))
+    (h_certs : ∀ m : Fin ϕs.length,
+      Ks.get (m.cast h_len.symm) ∈
+        RestrictedCoLipCertFamily d (ϕs.get m) (intermediateImage ϕs U₁ m.val)) :
+    matChainProd Ks ∈ RestrictedCoLipCertFamily d (stepChain ϕs) U₁ := by
+  induction ϕs generalizing Ks U₁ with
+  | nil =&gt;
+      exact False.elim (h_ne rfl)
+  | cons ϕ₁ tail ih =&gt;
+      cases Ks with
+      | nil =&gt;
+          simp at h_len
+      | cons K₁ Ktail =&gt;
+          cases tail with
+          | nil =&gt;
+              have hKtail : Ktail = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+              subst hKtail
+              have h0 := h_certs ⟨0, Nat.zero_lt_one⟩
+              simpa [matChainProd, stepChain, intermediateImage] using h0
+          | cons ϕ₂ tail' =&gt;
+              have hK₁ : K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁ := by
+                simpa [intermediateImage] using h_certs ⟨0, Nat.zero_lt_succ _⟩
+              rcases dom_operator_compose_subset (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ with
+                ⟨_, hU₂_dom⟩
+              have h_len_tail : Ktail.length = (ϕ₂ :: tail').length := Nat.succ.inj h_len
+              have h_tail_certs :
+                  ∀ m : Fin (ϕ₂ :: tail').length,
+                    Ktail.get (m.cast h_len_tail.symm) ∈
+                      RestrictedCoLipCertFamily d ((ϕ₂ :: tail').get m)
+                        (intermediateImage (ϕ₂ :: tail') (operator_image ϕ₁ U₁) m.val) := by
+                intro m
+                have hm := h_certs m.succ
+                simpa [intermediateImage] using hm
+              have h_ind :=
+                ih (List.cons_ne_nil ϕ₂ tail') Ktail h_len_tail hU₂_dom h_tail_certs
+              rw [matChainProd_cons, stepChain_cons]
+              exact colip_matrix_comp d (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ hK₁ h_ind
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P11 &amp; CH02-P12 辅助等式)
+恒等映射满足 $d_j(x, y) = \sum_{i \in I} \mathbf{I}_{i \to j} d_i(x, y)$。
+-/
+@[simp] theorem sum_idMatrix_mul_dist {X I : Type} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (x y : X) (j : I) :
+    (∑ i : I, idMatrix i j * d i x y) = d j x y := by
+  simp [idMatrix]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P11)
+**注（零步复合的单位 Lip 矩阵证书）**
+当 $k = 0$ 时，$c_0 = \mathrm{id}_{\mathcal{X}}$，空复合矩阵乘积为单位矩阵 $\mathbf{I}$。
+对任意 $U \subseteq \mathrm{dom}(\mathrm{id}_{\mathcal{X}})$，有 $\mathbf{I} \in \mathscr{L}(\mathrm{id}_{\mathcal{X}})\big|_U$。
+-/
+theorem zero_step_identity_lip {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU : U ⊆ dom (operator_identity : Operator X bot)) :
+    idMatrix ∈ RestrictedLipCertFamily d (operator_identity : Operator X bot) U := by
+  refine ⟨hU, ?_⟩
+  intro x _ y _ j
+  simp [operator_identity]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P12)
+**注（零步复合的单位 co-Lip 矩阵证书）**
+对任意非空 $U \subseteq \mathrm{dom}(\mathrm{id}_{\mathcal{X}})$，有 $\mathbf{I} \in \mathscr{K}(\mathrm{id}_{\mathcal{X}})\big|_U$。
+-/
+theorem zero_step_identity_colip {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom (operator_identity : Operator X bot)) :
+    idMatrix ∈ RestrictedCoLipCertFamily d (operator_identity : Operator X bot) U := by
+  refine ⟨hU_ne, hU, ?_⟩
+  intro x _ y _ j
+  simp [operator_identity]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P11 &amp; CH02-P12 联合结论)
+对任意非空 $U \subseteq \mathrm{dom}(\mathrm{id}_{\mathcal{X}})$，
+$\mathbf{I} \in \mathscr{L}(\mathrm{id}_{\mathcal{X}})\big|_U \cap \mathscr{K}(\mathrm{id}_{\mathcal{X}})\big|_U$。
+-/
+theorem zero_step_identity_lip_and_colip {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom (operator_identity : Operator X bot)) :
+    idMatrix ∈
+      RestrictedLipCertFamily d (operator_identity : Operator X bot) U ∩
+        RestrictedCoLipCertFamily d (operator_identity : Operator X bot) U :=
+  ⟨zero_step_identity_lip d hU, zero_step_identity_colip d hU_ne hU⟩
+
+/--
+路径含零因子在首步拆分下的递归刻画：
+对 `Ms = M₁ :: M₂ :: tail` 和 `ks = k₁ :: ktail`，沿路径存在零因子当且仅当首步因子 $M^{(1)}_{i \to k_1} = 0$
+或后续路径 `ktail` 存在零因子。
+-/
+theorem pathHasZeroFactor_cons_iff {I : Type}
+    (M₁ M₂ : GaugeMatrix I) (tail : List (GaugeMatrix I))
+    (i j k₁ : I) (ktail : List I) :
+    PathHasZeroFactor (M₁ :: M₂ :: tail) i j (k₁ :: ktail) ↔
+      M₁ i k₁ = 0 ∨ PathHasZeroFactor (M₂ :: tail) k₁ j ktail := by
+  constructor
+  · rintro ⟨m, hm⟩
+    refine Fin.cases ?_ ?_ m hm
+    · intro h0
+      left
+      simpa [stepMatrixEntry, pathVertex] using h0
+    · intro m' hm'
+      right
+      refine ⟨m', ?_⟩
+      simpa [stepMatrixEntry, pathVertex] using hm'
+  · rintro (h0 | ⟨m', hm'⟩)
+    · refine ⟨⟨0, Nat.zero_lt_succ _⟩, ?_⟩
+      simpa [stepMatrixEntry, pathVertex] using h0
+    · refine ⟨m'.succ, ?_⟩
+      simpa [stepMatrixEntry, pathVertex] using hm'
+
+/--
+全正路径在首步拆分下的递归刻画：
+对 `Ms = M₁ :: M₂ :: tail` 和 `ks = k₁ :: ktail`，`k₁ :: ktail` 是全正路径当且仅当
+首步因子 $M^{(1)}_{i \to k_1} &gt; 0$ 且 `ktail` 是从 $k_1$ 到 $j$ 的全正路径。
+-/
+theorem isAllPositivePath_cons_iff {I : Type}
+    (M₁ M₂ : GaugeMatrix I) (tail : List (GaugeMatrix I))
+    (i j k₁ : I) (ktail : List I) :
+    IsAllPositivePath (M₁ :: M₂ :: tail) i j (k₁ :: ktail) ↔
+      M₁ i k₁ &gt; 0 ∧ IsAllPositivePath (M₂ :: tail) k₁ j ktail := by
+  constructor
+  · rintro ⟨h_len, h_pos⟩
+    refine ⟨?_, ⟨Nat.succ.inj h_len, ?_⟩⟩
+    · have h0 := h_pos ⟨0, Nat.zero_lt_succ _⟩
+      simpa [stepMatrixEntry, pathVertex] using h0
+    · intro m'
+      have hm' := h_pos m'.succ
+      simpa [stepMatrixEntry, pathVertex] using hm'
+  · rintro ⟨h0, ⟨h_len, h_pos⟩⟩
+    refine ⟨congrArg Nat.succ h_len, ?_⟩
+    intro m
+    refine Fin.cases ?_ ?_ m
+    · simpa [stepMatrixEntry, pathVertex] using h0
+    · intro m'
+      simpa [stepMatrixEntry, pathVertex] using h_pos m'
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P13)
+**命题 2.6 (i)（有限矩阵乘积条目的零值判据，有序非空乘积形式）**
+设 $\mathbf{M}^{(1)}, \dots, \mathbf{M}^{(n)}$（$n \ge 1$）为以 $I$ 为指标集的扩展非负矩阵。
+则 $[\mathbf{M}^{(n)} \cdots \mathbf{M}^{(1)}]_{i \to j} = 0$，当且仅当对任意长度为 $n - 1$ 的中间指标序列
+`ks = (k₁, ..., k_{n-1})`（起止约定 $k_0 = i, k_n = j$），必然存在至少一个层级 $m$ 使得
+$[\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} = 0$。
+-/
+theorem matNonemptyProd_entry_eq_zero_iff {I : Type} [Fintype I]
+    (M₁ : GaugeMatrix I) (rest : List (GaugeMatrix I)) (i j : I) :
+    matNonemptyProd M₁ rest i j = 0 ↔
+      ∀ ks : List I, IsIndexPath (M₁ :: rest).length ks →
+        PathHasZeroFactor (M₁ :: rest) i j ks := by
+  induction rest generalizing M₁ i with
+  | nil =&gt;
+      constructor
+      · intro h0 ks h_len
+        have hks : ks = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+        subst hks
+        refine ⟨⟨0, Nat.zero_lt_one⟩, ?_⟩
+        simpa [stepMatrixEntry, pathVertex] using h0
+      · intro h
+        have h_empty := h [] rfl
+        rcases h_empty with ⟨m, hm⟩
+        have hm0 : m = ⟨0, Nat.zero_lt_one⟩ := Fin.ext (Nat.lt_one_iff.mp m.isLt)
+        subst hm0
+        simpa [stepMatrixEntry, pathVertex] using hm
+  | cons M₂ tail ih =&gt;
+      simp only [matNonemptyProd_cons, matMul_apply, Finset.sum_eq_zero_iff,
+        Finset.mem_univ, forall_true_left, mul_eq_zero]
+      constructor
+      · intro h ks h_len
+        cases ks with
+        | nil =&gt;
+            exact absurd h_len (by simp [IsIndexPath])
+        | cons k₁ ktail =&gt;
+            rw [pathHasZeroFactor_cons_iff]
+            have h_ktail_len : IsIndexPath (M₂ :: tail).length ktail := Nat.succ.inj h_len
+            rcases h k₁ with h_tail_zero | h_head_zero
+            · right
+              exact (ih M₂ k₁).mp h_tail_zero ktail h_ktail_len
+            · left
+              exact h_head_zero
+      · intro h k₁
+        by_cases h_head : M₁ i k₁ = 0
+        · exact Or.inr h_head
+        · left
+          rw [ih M₂ k₁]
+          intro ktail h_ktail_len
+          have h_full_len : IsIndexPath (M₁ :: M₂ :: tail).length (k₁ :: ktail) :=
+            congrArg Nat.succ h_ktail_len
+          have h_path := (pathHasZeroFactor_cons_iff M₁ M₂ tail i j k₁ ktail).mp
+            (h (k₁ :: ktail) h_full_len)
+          rcases h_path with h_zero | h_rest
+          · exact False.elim (h_head h_zero)
+          · exact h_rest
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P13)
+**命题 2.6 (i)（有限矩阵乘积条目的零值判据，`matChainProd` 形式，含 $n=1$）**
+对任意非空矩阵列表 `Ms`（长度 $n \ge 1$），`matChainProd Ms i j = 0` 当且仅当每条合法中间指标路径均含零因子。
+-/
+theorem matChainProd_entry_eq_zero_iff {I : Type} [Fintype I] [DecidableEq I]
+    (Ms : List (GaugeMatrix I)) (h_ne : Ms ≠ []) (i j : I) :
+    matChainProd Ms i j = 0 ↔
+      ∀ ks : List I, IsIndexPath Ms.length ks → PathHasZeroFactor Ms i j ks := by
+  cases Ms with
+  | nil =&gt; exact False.elim (h_ne rfl)
+  | cons M₁ rest =&gt; exact matNonemptyProd_entry_eq_zero_iff M₁ rest i j
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P13，$n=1$ 边界退化定理)
+当 $n = 1$ 时，唯一合法中间指标序列为空序列 `[]`，零值路径判据退化为单个矩阵条目 $M^{(1)}_{i \to j} = 0$。
+-/
+theorem matChainProd_singleton_entry_eq_zero_iff {I : Type} [Fintype I] [DecidableEq I]
+    (M₁ : GaugeMatrix I) (i j : I) :
+    (∀ ks : List I, IsIndexPath [M₁].length ks → PathHasZeroFactor [M₁] i j ks) ↔
+      M₁ i j = 0 := by
+  rw [← matChainProd_entry_eq_zero_iff [M₁] (List.cons_ne_nil M₁ []) i j]
+  rfl
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P14)
+**命题 2.6 (ii)（有限矩阵乘积条目的正值判据，有序非空乘积形式）**
+设 $\mathbf{M}^{(1)}, \dots, \mathbf{M}^{(n)}$（$n \ge 1$）为以 $I$ 为指标集的扩展非负矩阵。
+则 $[\mathbf{M}^{(n)} \cdots \mathbf{M}^{(1)}]_{i \to j} &gt; 0$，当且仅当存在至少一条长度为 $n - 1$ 的中间指标序列
+`ks = (k₁, ..., k_{n-1})`（起止约定 $k_0 = i, k_n = j$），使得沿该路径的所有单步矩阵条目均严格正：
+$$\forall m \in \{1, \dots, n\},\quad [\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} &gt; 0.$$
+-/
+theorem matNonemptyProd_entry_pos_iff {I : Type} [Fintype I]
+    (M₁ : GaugeMatrix I) (rest : List (GaugeMatrix I)) (i j : I) :
+    matNonemptyProd M₁ rest i j &gt; 0 ↔
+      ∃ ks : List I, IsAllPositivePath (M₁ :: rest) i j ks := by
+  induction rest generalizing M₁ i with
+  | nil =&gt;
+      constructor
+      · intro h_pos
+        refine ⟨[], ⟨rfl, ?_⟩⟩
+        intro m
+        have hm0 : m = ⟨0, Nat.zero_lt_one⟩ := Fin.ext (Nat.lt_one_iff.mp m.isLt)
+        subst hm0
+        simpa [stepMatrixEntry, pathVertex] using h_pos
+      · rintro ⟨ks, h_len, h_pos⟩
+        have h0 := h_pos ⟨0, Nat.zero_lt_one⟩
+        have hks : ks = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+        subst hks
+        simpa [stepMatrixEntry, pathVertex] using h0
+  | cons M₂ tail ih =&gt;
+      constructor
+      · intro h_pos
+        have h_ne_zero : (∑ k₁ : I, matNonemptyProd M₂ tail k₁ j * M₁ i k₁) ≠ 0 :=
+          ne_of_gt h_pos
+        have h_exists : ∃ k₁ ∈ (Finset.univ : Finset I),
+            matNonemptyProd M₂ tail k₁ j * M₁ i k₁ ≠ 0 := by
+          by_contra h_all
+          push Not at h_all
+          exact h_ne_zero (Finset.sum_eq_zero h_all)
+        rcases h_exists with ⟨k₁, _, hk₁_ne⟩
+        have h_tail_pos : matNonemptyProd M₂ tail k₁ j &gt; 0 :=
+          pos_iff_ne_zero.mpr (left_ne_zero_of_mul hk₁_ne)
+        have h_head_pos : M₁ i k₁ &gt; 0 :=
+          pos_iff_ne_zero.mpr (right_ne_zero_of_mul hk₁_ne)
+        rcases (ih M₂ k₁).mp h_tail_pos with ⟨ktail, h_ktail⟩
+        refine ⟨k₁ :: ktail, ?_⟩
+        exact (isAllPositivePath_cons_iff M₁ M₂ tail i j k₁ ktail).mpr ⟨h_head_pos, h_ktail⟩
+      · rintro ⟨ks, h_ks⟩
+        cases ks with
+        | nil =&gt;
+            rcases h_ks with ⟨h_len, _⟩
+            exact absurd h_len (by simp [IsIndexPath])
+        | cons k₁ ktail =&gt;
+            rcases (isAllPositivePath_cons_iff M₁ M₂ tail i j k₁ ktail).mp h_ks with
+              ⟨h_head_pos, h_ktail⟩
+            have h_tail_pos : matNonemptyProd M₂ tail k₁ j &gt; 0 :=
+              (ih M₂ k₁).mpr ⟨ktail, h_ktail⟩
+            have h_term_pos : matNonemptyProd M₂ tail k₁ j * M₁ i k₁ &gt; 0 :=
+              ENNReal.mul_pos (ne_of_gt h_tail_pos) (ne_of_gt h_head_pos)
+            have h_le :
+                matNonemptyProd M₂ tail k₁ j * M₁ i k₁ ≤
+                  ∑ k : I, matNonemptyProd M₂ tail k j * M₁ i k :=
+              Finset.single_le_sum
+                (fun k _ =&gt; zero_le (matNonemptyProd M₂ tail k j * M₁ i k))
+                (Finset.mem_univ k₁)
+            exact lt_of_lt_of_le h_term_pos h_le
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P14)
+**命题 2.6 (ii)（有限矩阵乘积条目的正值判据，`matChainProd` 形式，含 $n=1$）**
+对任意非空矩阵列表 `Ms`（长度 $n \ge 1$），`matChainProd Ms i j &gt; 0` 当且仅当存在全正路径。
+-/
+theorem matChainProd_entry_pos_iff {I : Type} [Fintype I] [DecidableEq I]
+    (Ms : List (GaugeMatrix I)) (h_ne : Ms ≠ []) (i j : I) :
+    matChainProd Ms i j &gt; 0 ↔ ∃ ks : List I, IsAllPositivePath Ms i j ks := by
+  cases Ms with
+  | nil =&gt; exact False.elim (h_ne rfl)
+  | cons M₁ rest =&gt; exact matNonemptyProd_entry_pos_iff M₁ rest i j
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P14，$n=1$ 边界退化定理)
+当 $n = 1$ 时，唯一合法中间指标序列为空序列 `[]`，正值路径判据退化为单个矩阵条目 $M^{(1)}_{i \to j} &gt; 0$。
+-/
+theorem matChainProd_singleton_entry_pos_iff {I : Type} [Fintype I] [DecidableEq I]
+    (M₁ : GaugeMatrix I) (i j : I) :
+    (∃ ks : List I, IsAllPositivePath [M₁] i j ks) ↔ M₁ i j &gt; 0 := by
+  rw [← matChainProd_entry_pos_iff [M₁] (List.cons_ne_nil M₁ []) i j]
+  rfl
+
+end
+</code></pre>
+<pre><code class="language-lean">import OperatorBounds
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsLipMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LipCertFamily&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsRestrictedLipMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;RestrictedLipCertFamily&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;isLipMatrix_iff_restricted_dom&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;lipCertFamily_eq_restricted_dom&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：算子 ϕ : Operator X bot、分量伪度量族 d : I → X → X → ENNReal（[Fintype I]）及扩展非负矩阵 L : GaugeMatrix I。参数与量词：IsLipMatrix 量化 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I；IsRestrictedLipMatrix 包含定义域子集条件 U ⊆ dom ϕ 并量化 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I。结论：满足上界不等式 d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y，并以集合 LipCertFamily d ϕ 与 RestrictedLipCertFamily d ϕ U 分别表示全文与受限证书族 mathscr{L}(ϕ) 与 mathscr{L}(ϕ)|_U。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsRestrictedCoLipMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;RestrictedCoLipCertFamily&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;GlobalCoLipCertFamily&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：算子 ϕ : Operator X bot、分量伪度量族 d : I → X → X → ENNReal、评估子集 U : Set X 及扩展非负矩阵 K : GaugeMatrix I。参数与量词：IsRestrictedCoLipMatrix 显式包含非空性条件 U.Nonempty、定义域包含条件 U ⊆ dom ϕ，并全称量化 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I。结论：满足下界不等式 ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)，集合 RestrictedCoLipCertFamily d ϕ U 与 GlobalCoLipCertFamily d ϕ 分别对应 mathscr{K}(ϕ)|_U 与 mathscr{K}(ϕ)|_{dom(ϕ)}。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;GaugeMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;channelEntry&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;toRowColMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;ofRowColMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;toRowColMatrix_apply&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul_apply&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;toRowColMatrix_matMul&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul_assoc&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：扩展非负矩阵类型 GaugeMatrix I := I → I → ENNReal。参数与指标约定：channelEntry L i j := L i j 表示通道条目 L_{i→j}（输入 i 到输出 j）；toRowColMatrix L j i := L i j 表示以输出分量 j 为行指标、输入分量 i 为列指标的矩阵条目 (L)_{ji} = L_{i→j}。乘法与结论：matMul M₂ M₁ i j := ∑ k : I, M₂ k j * M₁ i k 给出通道约定下的矩阵乘积 (M^{(2)}·M^{(1)})_{i→j}，toRowColMatrix_matMul 证明其与行列约定下的标准矩阵乘法严格一致，matMul_assoc 证明结合律。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix_self&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix_of_ne&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix_matMul&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul_idMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matEmptyProd&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matNonemptyProd&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_nil&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_singleton&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_pair&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_cons&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：单位矩阵 idMatrix（I_{i→j} = if i = j then 1 else 0）、空乘积 matEmptyProd := idMatrix、按步序非空矩阵序列 (M₁, rest) 的有序非空乘积 matNonemptyProd（对应 M^{(n)} · ... · M^{(1)}，n=1 时直接为 M₁，n≥2 时递归左乘后继矩阵）以及一般有限矩阵列表乘积 matChainProd。结论：证明单位矩阵的左右乘法单位元性质及空列表、单元素、两元素与递归展开性质。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;stepChain&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;stepChain_eq_operatorChain_reverse&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;operatorChain_eq_stepChain_reverse&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;intermediateImage&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;intermediateImage_succ_eq_operator_image&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;dom_operator_compose_subset&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;intermediateImage_subset_dom&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：按作用步序 [ϕ₁, ..., ϕₖ] 排列的复合算子 stepChain ϕs（对应 c_k = ϕ_k ∘ ... ∘ ϕ_1，k=0 时为 operator_identity）与起始子集 U₁ 上的递归实际中间像集序列 intermediateImage ϕs U₁ m（m=0 为 U₁，m+1 步为 ϕ_{m+1}(U_{m+1})）。结论：stepChain_eq_operatorChain_reverse 与 operatorChain_eq_stepChain_reverse 建立步序链与前置模块 OperatorChain 的反转对应；intermediateImage_succ_eq_operator_image 证明递推式 U_{m+1} = ϕ_m(U_m)；intermediateImage_subset_dom 证明当 U₁ ⊆ dom(c_k) 时每步中间像集满足 U_m ⊆ dom(ϕ_m)。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_zero&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_nil_one&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_cons_succ&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_last&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsIndexPath&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;stepMatrixEntry&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsAllPositivePath&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;PathHasZeroFactor&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：中间指标序列 ks : List I（对应 (k_1, ..., k_{n-1})）、带起止边界约定 k_0 = i, k_n = j 的路径节点函数 pathVertex i j ks m、路径长度谓词 IsIndexPath n ks（ks.length + 1 = n）、单步矩阵条目 stepMatrixEntry Ms i j ks m（对应 [M^{(m)}]_{k_{m-1}→k_m}）。结论与谓词：IsAllPositivePath 刻画长度合法且对一切层级 m : Fin Ms.length 单步条目严格正（&gt; 0）；PathHasZeroFactor 刻画存在层级 m 使单步条目等于 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;single_component_lip_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;single_component_restricted_lip_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：算子 ϕ、分量伪度量族 d、矩阵 L 及唯一指标 i₀ : I（满足 ∀ j : I, j = i₀，即 I = {i₀} 且 |I| = 1）。量词与结论：证明 IsLipMatrix d ϕ L 等价于单分量标量不等式 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y（并给出受限版本 single_component_restricted_lip_iff）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;restricted_lip_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot，子集 U, V : Set X，满足 hUV : U ⊆ V 与 hV : V ⊆ dom ϕ。结论：受限 Lip 证书族反单调包含 RestrictedLipCertFamily d ϕ V ⊆ RestrictedLipCertFamily d ϕ U（即 mathscr{L}(ϕ)|_V ⊆ mathscr{L}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;lip_matrix_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ₂, ϕ₁ : Operator X bot，起始定义域子集 U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)，精确中间像域 U₂ = operator_image ϕ₁ U₁，以及局部证书 L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁、L₂ ∈ RestrictedLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)。结论：按逆向次序相乘的矩阵乘积满足 matMul L₂ L₁ ∈ RestrictedLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;restricted_colip_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot，子集 U, V : Set X，满足非空性 hU_ne : U.Nonempty、包含关系 hUV : U ⊆ V 及定义域条件 hV : V ⊆ dom ϕ。结论：受限 co-Lip 证书族反单调包含 RestrictedCoLipCertFamily d ϕ V ⊆ RestrictedCoLipCertFamily d ϕ U（即 mathscr{K}(ϕ)|_V ⊆ mathscr{K}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;colip_entry_eq_zero_of_output_zero&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;colip_entry_eq_zero_of_restricted&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot，全域（或受限）co-Lip 证书 K ∈ RestrictedCoLipCertFamily d ϕ (dom ϕ)，定义域中点 x, y ∈ dom ϕ 及指标 i, j : I，满足输出零距 d j (ϕ.func x) (ϕ.func y) = 0 与输入正距 d i x y &gt; 0。结论：对应通道条目必为零 K i j = 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;colip_matrix_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ₂, ϕ₁ : Operator X bot，起始定义域子集 U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)，精确中间像域 U₂ = operator_image ϕ₁ U₁，以及含非空条件的局部证书 K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁、K₂ ∈ RestrictedCoLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)。结论：乘积矩阵满足 matMul K₂ K₁ ∈ RestrictedCoLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁（含 U₁ 非空性与定义域包含）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;sum_idMatrix_mul_dist&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_lip&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_lip_and_colip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：零步复合恒等算子 c_0 = operator_identity、空乘积单位矩阵 idMatrix 及子集 U ⊆ dom operator_identity。结论：由恒等式 ∑ i : I, idMatrix i j * d i x y = d j x y 证明 idMatrix ∈ RestrictedLipCertFamily d operator_identity U。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;sum_idMatrix_mul_dist&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_colip&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_lip_and_colip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：零步复合恒等算子 c_0 = operator_identity、空乘积单位矩阵 idMatrix 及满足 hU_ne : U.Nonempty 与 hU : U ⊆ dom operator_identity 的非空子集 U。结论：证明 idMatrix ∈ RestrictedCoLipCertFamily d operator_identity U，从而 idMatrix 属于 Lip 与 co-Lip 受限证书族的交集。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-P11&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;isAllPositivePath_cons_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matNonemptyProd_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_singleton_entry_pos_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：任意非空有限扩展非负矩阵序列 Ms（n = Ms.length ≥ 1，含 n = 1 单矩阵情形）及起止指标 i, j : I。量词与结论：证明有序乘积条目 matChainProd Ms i j &gt; 0（及 matNonemptyProd M₁ rest i j &gt; 0）当且仅当 ∃ ks : List I, IsAllPositivePath Ms i j ks；并由 matChainProd_singleton_entry_pos_iff 给出 n = 1 时退化为 M₁ i j &gt; 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;global_lip_subset_restricted_lip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot 及定义域子集 U ⊆ dom ϕ。结论：全域 Lip 证书族可限制到 U，即 LipCertFamily d ϕ ⊆ RestrictedLipCertFamily d ϕ U（mathscr{L}(ϕ) ⊆ mathscr{L}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-P02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;global_colip_subset_restricted_colip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot 及满足 hU_ne : U.Nonempty 与 hU : U ⊆ dom ϕ 的非空子集 U。结论：全域 co-Lip 证书族可限制到 U，即 RestrictedCoLipCertFamily d ϕ (dom ϕ) ⊆ RestrictedCoLipCertFamily d ϕ U（mathscr{K}(ϕ)|_{dom(ϕ)} ⊆ mathscr{K}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-P05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;finite_comp_lip_bound&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：正长度步序算子链 ϕs : List (Operator X bot)（h_ne : ϕs ≠ []，对应 c_k = ϕ_k ∘ ... ∘ ϕ_1，k ≥ 1）、等长矩阵序列 Ls（h_len : Ls.length = ϕs.length）、起始域 U₁ ⊆ dom (stepChain ϕs) 以及逐步局部证书条件 ∀ m : Fin ϕs.length, Ls[m] ∈ RestrictedLipCertFamily d ϕs[m] (intermediateImage ϕs U₁ m)。结论：连乘矩阵满足 matChainProd Ls ∈ RestrictedLipCertFamily d (stepChain ϕs) U₁（即 L^{(k)} · ... · L^{(1)} ∈ mathscr{L}(c_k)|_{U_1}）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;finite_comp_colip_bound&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：正长度步序算子链 ϕs : List (Operator X bot)（h_ne : ϕs ≠ []，k ≥ 1）、等长矩阵序列 Ks（h_len : Ks.length = ϕs.length）、起始域 U₁ ⊆ dom (stepChain ϕs) 以及逐步局部 co-Lip 证书条件 ∀ m : Fin ϕs.length, Ks[m] ∈ RestrictedCoLipCertFamily d ϕs[m] (intermediateImage ϕs U₁ m)。结论：连乘矩阵满足 matChainProd Ks ∈ RestrictedCoLipCertFamily d (stepChain ϕs) U₁（即 K^{(k)} · ... · K^{(1)} ∈ mathscr{K}(c_k)|_{U_1}）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathHasZeroFactor_cons_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matNonemptyProd_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_singleton_entry_eq_zero_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：任意非空有限扩展非负矩阵序列 Ms（n = Ms.length ≥ 1，含 n = 1 单矩阵情形）及起止指标 i, j : I。量词与结论：证明有序乘积条目 matChainProd Ms i j = 0（及 matNonemptyProd M₁ rest i j = 0）当且仅当 ∀ ks : List I, IsIndexPath Ms.length ks → PathHasZeroFactor Ms i j ks；并由 matChainProd_singleton_entry_eq_zero_iff 给出 n = 1 时退化为 M₁ i j = 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/gcp-native-acquisition/deliveries/LCH02/physical-2/sealed/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/gcp-native-acquisition/deliveries/LCH02/physical-2/sealed/answer.md">answer · answer.md</a><span class="hash">SHA256 b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/claim-public-sources/LCH02-cc14fd5ca04f.json">review · LCH02-cc14fd5ca04f.json</a><span class="hash">SHA256 135a6aff593d0a0e56f5cba41e594fa23549b8f03bb60c4bca747ebe4e21c907</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 4dd270b33648e46ea815c7fad5341a2499752d6fb0e5913edb545cee94395b00</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>提交来源</h2></div><div class="prose"><p>正常交卷；三种评分采用实际交付。</p></div></section><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>原始逐项评审</h2></div><div class="prose review-criteria"><h3>CH02-D01</h3>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> IsLipMatrix与受限谓词、真实Set证书族量化全部点对/输出，受限对象包含U⊆dom；全域↔定义域受限及集合相等有实际桥。任意d的更一般证明可实例化冻结伪度量，不削弱范围。</p>
 <h3>CH02-D02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> IsRestrictedCoLipMatrix含U.Nonempty、U⊆dom及全部点对完整和下界，RestrictedCoLipCertFamily和GlobalCoLipCertFamily为实际Set定义，ENNReal允许∞。</p>
 <h3>CH02-D03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> GaugeMatrix i j为输入i到输出j，toRowColMatrix转置为输出行/输入列；matMul M2 M1=Σk M2 k j*M1 i k及标准Matrix乘法等式实际证明，次序正确。</p>
 <h3>CH02-D04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> idMatrix对角1非对角0及左右单位元真实证明；matNonemptyProd递归是Mn…M1，matChainProd空列表单位、单元素和两元素退化均有真实对应。</p>
 <h3>CH02-D05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> stepChain与冻结OperatorChain.reverse等式实际证明；intermediateImage为逐步真实operator_image，递推及在U⊆dom全链时每层域包含通过吸收元和链递归推得，不将目标域合法性当额外输入。</p>
 <h3>CH02-D06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> List I中间指标长度n−1，pathVertex补起止i,j，已证明首尾和cons递推。stepMatrixEntry真实取第m矩阵的相邻路径节点；全正与含零谓词含正确层级量词，n=1保留唯一空路径。</p>
 <h3>CH02-P01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 以i0及∀j,j=i0准确表达单指标，有限和化为唯一项，给全域和受限iff，无额外有限条目条件。</p>
 <h3>CH02-P02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 任意U⊆V⊆dom，受限证书族通过点对限制反单调，空Lip域同样允许。</p>
 <h3>CH02-P04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> lip_matrix_comp只以两步各自真实域证书及U1⊆dom复合为输入，像点位于精确operator_image；非负求和、分配与交换给matMul L2 L1，不将最终复合证书当假设。</p>
 <h3>CH02-P05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 明确保留非空U，U⊆V⊆dom，实际限制co-Lip证书完整下界。</p>
 <h3>CH02-P07</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 从非负和抽单项，输出零得Kij*di=0，再以di&gt;0排除di=0；ENNReal含∞合法，全域及受限两式均真实。</p>
 <h3>CH02-P08</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 精确像域上的K2与U1上的K1为输入，非空性从K1提取，逐项相乘和求和给K2K1实际co-Lip复合证书。</p>
 <h3>CH02-P11</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> sum_idMatrix_mul_dist实际化简有限和；zero_step_identity_lip给任意合法U的单位上界，联合定理亦覆盖非空原目标。</p>
 <h3>CH02-P12</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> zero_step_identity_colip显式非空U且U⊆dom恒等，单位下界和Lip/coLip交集真实证明。</p>
 <h3>CH02-P14</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 正乘积由实际有限和非零项提取首节点，再归纳构造全正路径；反向以ENNReal.mul_pos及单项≤和得到正条目。任意非空列表与单矩阵空中间序列均真实。</p>
 <h3>CH02-P03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 由全域/定义域受限桥及P02推出任意U上的全域证书限制。</p>
 <h3>CH02-P06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 以P05特化V=dom，保留非空U得到全域co-Lip限制。</p>
 <h3>CH02-P09</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> finite_comp_lip_bound按任意正长度List归纳，等长矩阵列表与Fin逐层证书定义在真实intermediateImage；实际用两步定理构造全链证书，非把全链界作字段输入。</p>
 <h3>CH02-P10</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> 有限co-Lip连乘同样从每步真实像域证书归纳构造，全程非空由首步证书保留，正长度任意，不是仅两步特例。</p>
 <h3>CH02-P13</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>判定：</strong> pass</p>
+<p><strong>审核说明：</strong> matNonemptyProd_entry_eq_zero_iff逐个长度归纳，和为零↔全部项零、乘积零↔因子零；通过路径cons与长度桥构造所有合法List路径，覆盖任意n和n=1边界，不限固定长度。</p>
 </div><details class="evidence-fold nested"><summary>逐项工程与语义审核（20项）</summary><div class="prose"><h3>CH02-D01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> IsLipMatrix与受限谓词、真实Set证书族量化全部点对/输出，受限对象包含U⊆dom；全域↔定义域受限及集合相等有实际桥。任意d的更一般证明可实例化冻结伪度量，不削弱范围。</p>
 <h3>CH02-D02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> IsRestrictedCoLipMatrix含U.Nonempty、U⊆dom及全部点对完整和下界，RestrictedCoLipCertFamily和GlobalCoLipCertFamily为实际Set定义，ENNReal允许∞。</p>
 <h3>CH02-D03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> GaugeMatrix i j为输入i到输出j，toRowColMatrix转置为输出行/输入列；matMul M2 M1=Σk M2 k j*M1 i k及标准Matrix乘法等式实际证明，次序正确。</p>
 <h3>CH02-D04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> idMatrix对角1非对角0及左右单位元真实证明；matNonemptyProd递归是Mn…M1，matChainProd空列表单位、单元素和两元素退化均有真实对应。</p>
 <h3>CH02-D05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> stepChain与冻结OperatorChain.reverse等式实际证明；intermediateImage为逐步真实operator_image，递推及在U⊆dom全链时每层域包含通过吸收元和链递归推得，不将目标域合法性当额外输入。</p>
 <h3>CH02-D06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> List I中间指标长度n−1，pathVertex补起止i,j，已证明首尾和cons递推。stepMatrixEntry真实取第m矩阵的相邻路径节点；全正与含零谓词含正确层级量词，n=1保留唯一空路径。</p>
 <h3>CH02-P01</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 以i0及∀j,j=i0准确表达单指标，有限和化为唯一项，给全域和受限iff，无额外有限条目条件。</p>
 <h3>CH02-P02</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 任意U⊆V⊆dom，受限证书族通过点对限制反单调，空Lip域同样允许。</p>
 <h3>CH02-P04</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> lip_matrix_comp只以两步各自真实域证书及U1⊆dom复合为输入，像点位于精确operator_image；非负求和、分配与交换给matMul L2 L1，不将最终复合证书当假设。</p>
 <h3>CH02-P05</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 明确保留非空U，U⊆V⊆dom，实际限制co-Lip证书完整下界。</p>
 <h3>CH02-P07</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 从非负和抽单项，输出零得Kij*di=0，再以di&gt;0排除di=0；ENNReal含∞合法，全域及受限两式均真实。</p>
 <h3>CH02-P08</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 精确像域上的K2与U1上的K1为输入，非空性从K1提取，逐项相乘和求和给K2K1实际co-Lip复合证书。</p>
 <h3>CH02-P11</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> sum_idMatrix_mul_dist实际化简有限和；zero_step_identity_lip给任意合法U的单位上界，联合定理亦覆盖非空原目标。</p>
 <h3>CH02-P12</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> zero_step_identity_colip显式非空U且U⊆dom恒等，单位下界和Lip/coLip交集真实证明。</p>
 <h3>CH02-P14</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 正乘积由实际有限和非零项提取首节点，再归纳构造全正路径；反向以ENNReal.mul_pos及单项≤和得到正条目。任意非空列表与单矩阵空中间序列均真实。</p>
 <h3>CH02-P03</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 由全域/定义域受限桥及P02推出任意U上的全域证书限制。</p>
 <h3>CH02-P06</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 以P05特化V=dom，保留非空U得到全域co-Lip限制。</p>
 <h3>CH02-P09</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> finite_comp_lip_bound按任意正长度List归纳，等长矩阵列表与Fin逐层证书定义在真实intermediateImage；实际用两步定理构造全链证书，非把全链界作字段输入。</p>
 <h3>CH02-P10</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> 有限co-Lip连乘同样从每步真实像域证书归纳构造，全程非空由首步证书保留，正长度任意，不是仅两步特例。</p>
 <h3>CH02-P13</h3>
-<p><strong>已核实完成：</strong> 未知</p>
-<p><strong>审核说明：</strong> No accepted successful source; mathematical completion unadjudicated. Operational failure and unrun remain distinct.</p>
-</div></details><p class="panel-foot">原始评审见下方来源文件。</p></section><p class="empty-state">本题尚无评审结果。</p><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261108/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 47b5c8d879b32824e8940442687a61a66bbbc56aad2bdcf22727e3c33e06f98d</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261108/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0", "score_mode_catalog": {"schema": "math-gauge.score-modes/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "default": "partial", "primary": "partial", "modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "Strict", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "same_task_pool_weights_and_denominators": true, "legacy_partial_id_means": "reliable_mathematical_capability", "new_candidate_calls": 0}, "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "attempt_conditions": ["single_attempt", "nonlogical_retry_3"], "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "按有效正向贡献计分，取消显式扣罚。", "policy": "capability-scoring-policy.json", "policy_version": "0.2.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "按有效数学贡献计分，扣除有据的错误承诺；核心错误放行该题最高0分。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.8.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "default_attempt_condition": "nonlogical_retry_3", "policy": {"schema": "math-gauge.assessment-policy/v1", "version": "0.8.0", "benchmark_version": "0.6.0", "status": "post-observation-local-draft-human-pending", "operator_only": true, "publication_scope": "combined", "primary_metric": "earned", "score_modes": ["capability", "partial", "strict"], "groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "source_components": ["proofs", "exploration"], "public_tasks": 8, "private_tasks": 4, "families": 12, "aggregation": "family", "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "source_components": ["answer-review"], "public_tasks": 4, "private_tasks": 0, "families": 4, "aggregation": "parent_family", "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "source_components": ["lean-audit"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "source_components": ["lean-formalization"], "public_tasks": 4, "private_tasks": 0, "families": 2, "aggregation": "family", "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "source_components": [], "public_tasks": 1, "private_tasks": 0, "families": 1, "aggregation": "trajectory", "status": "active", "reuses_case_id": "MG-C003", "rounds": 3, "adds_independent_family": false}, {"id": "background-check", "title": "背景核查", "weight": 10, "source_components": ["background-check"], "public_tasks": 2, "private_tasks": 2, "families": 4, "aggregation": "family", "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "source_components": ["manuscript-completion"], "public_tasks": 1, "private_tasks": 4, "families": 5, "aggregation": "family", "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "source_components": ["theorem-extension"], "public_tasks": 2, "private_tasks": 4, "families": 6, "aggregation": "family", "status": "active"}], "source_review_method_version": "0.4.0", "initial_attempt_labels": ["A1"], "disabled_default_metrics": ["repeat", "neutral_written", "stance"], "alignment_study": {"case_id": "MG-C003", "rounds": 3, "repair_points": 70, "diagnosis_points": {"global": 10, "localization": 20}, "false_complete_penalty_points": 20, "aggregation": "fixed_three_round_average", "no_best_of_or_source_union": true}, "strict_trajectory": {"final_all_obligations_verified": true, "every_round_delivered": true, "every_diagnosis_accurate": true, "no_false_complete_claim": true, "no_regression": true, "initial_failure_does_not_fail_trajectory": true, "followups_replace_initial": false}, "construction_policy": "Unknown full-score contribution; current earned points exclude unbuilt leaves without renormalization or labeling them model failures.", "unknown_policy": "Fixed case/family/round denominators with explicit bounds.", "overall_floor": 0, "scope": {"public_tasks": 25, "private_tasks": 14, "tasks": 39, "parent_families": 35, "initial_slots": 39, "public_initial_slots": 25, "alignment_rounds": 3, "trajectory_assessment_units": 1}, "human_review": "pending", "formal_comparison_eligible": false, "case_selection": {"schema": "math-gauge.case-selection/v1", "version": "0.3.0", "public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GR005", "MG-GR009", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "retired_public_case_ids": ["MG-GP003", "MG-GR002", "MG-GR008", "MG-GR010", "MG-GR014", "MG-GR104", "MG-GR103"], "source_public_case_ids": ["MG-C003", "MG-GP001", "MG-GP002", "MG-GP003", "MG-GR002", "MG-GR005", "MG-GR008", "MG-GR009", "MG-GR010", "MG-GR014", "MG-GR103", "MG-GR104", "MG-GR021", "MG-GR022", "MG-GR023", "MG-AR001", "MG-AR002", "MG-AR003", "MG-AR004", "AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"], "canonical_parent_families": {"MG-GR104": "MG-R104", "MG-GR014": "MG-R014", "MG-GR010": "MG-R010", "MG-GP003": "MG-P003"}, "source_revision": "292c26709785836c27a847cdf113fda4f34f5af7", "public_replacement_case_ids": ["MG-PS001"]}, "theorem_extension": {"schema": "math-gauge.theorem-extension-policy/v1", "version": "0.2.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "research_invitation": false, "followups_replace_initial": false, "research_level_maximum": 3, "partial_points": [0, 1, 2, 3], "strict_requirements": {"baseline_B": 2, "research_R": 3}, "public_case_ids": ["MG-TX001", "MG-TX002"], "private_cases": 4, "families": 6, "component_weight": 10, "family_aggregation": "equal", "baseline_points_added_to_research": false, "baseline_penalty_points": {"0": 2, "1": 1, "2": 0}, "per_case_floor": null, "absent_extension_is_baseline_failure": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "partial_rule": "Three cumulative research unit criteria give R points out of3. Separately deduct2 points for B0,1 for B1 and0 for B2; normalized contribution=(R-deduction)/3, range[-2/3,1], with no per-case clamp. Report B, R and the penalty independently. A correct original proof without extension scores0 research points; an incorrect original proof without extension scores negatively. The full benchmark alone is floored at0. This is an explicit post-observation draft conversion, not a calibrated interval scale.", "strict_rule": "The original task is correct and a complete structural extension is rigorously delivered in A1. Equally substantial alternative structures qualify; a reference proof route is never mandatory.", "source_rule": "Preserve exact original A1 text, original rubric and attributed AI review. The task selection and this conversion are post-observation local draft methods; they do not authenticate a backend or establish human approval.", "exploratory_followups": "Invited research outputs are stored as a separate non-scoring study. No invitation is issued in the formal procedure, including when A1 contains an extension.", "execution_track": "math-gauge.local-tools-no-search/v1", "local_tools_allowed": true, "tool_network_access": false, "search_allowed": false, "no_tools_source_answers_replace_current_default": false, "tool_condition_amended": "2026-11-07; explicit user instruction; fresh six-case tests of Terra and Gemini"}, "background_check": {"schema": "math-gauge.background-check-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "public_case_ids": ["MG-BC001", "MG-BC002"], "private_cases": 2, "families": 4, "component_weight": 10, "family_aggregation": "equal", "level_maximum": 3, "false_actual_endorsement_level": 0, "downstream_calculation_is_research_credit": false, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "levels": {"0": "未纠正实际背景，或仍作出错误的实际承诺；安全但未诊断也可为0，另报S状态。", "1": "准确定位缺失条件或非法推广，但缺乏本模型的有效证据。", "2": "有正确模型特定机制与实质反证贡献，所需证据仍有明确缺口。", "3": "完成本模型背景纠错及支持该纠错的完整有效证据。"}, "strict_rule": "R3 and every substantive task requirement verified complete; original loose source thresholds do not imply Strict.", "partial_rule": "Each family contributes R/3 of its equal share. Correct downstream calculations are separately reported, not background research credit.", "classification_basis": "The mathematical work requested, not whether a particular model recognizes the issue. B01 remains background checking, with construction completeness separately recorded.", "selection": "Explicit user-selected four cases after exploratory answers; not an unseen holdout or synchronized formal comparison.", "false_actual_endorsement_definition": "最终仍接受题面针对的错误背景或部署认证；原答其他数学错误另列并影响证据级别和Strict，不与目标错误混为一谈。", "ordinal_scale_notice": "观察后的有序证据级别，不声称已校准为等距能力尺度。"}, "default_score_mode": "partial", "capability_policy_version": "0.2.0", "score_mode_catalog_version": "0.1.0", "claim_penalty_policy_version": "0.1.0", "written_argument_additions": {"schema": "math-gauge.written-additions-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 1, "families": 1, "source_component": "exploration", "category": "written-argument", "family_aggregation": "equal", "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "User-selected after exploratory evidence; original inputs, answers and reviews remain unchanged. Not an unseen holdout or synchronized formal comparison."}, "written_argument_replacements": {"schema": "math-gauge.written-replacements-policy/v1", "version": "0.1.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "category": "written-argument", "family_aggregation": "equal", "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "followups_replace_initial": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "replacements": [{"retired_case_id": "MG-GR103", "case_id": "MG-PS001", "family_id": "density-sampling-quotient"}]}, "manuscript_completion": {"schema": "math-gauge.manuscript-completion-policy/v1", "version": "0.5.0", "benchmark_version": "0.6.0", "initial_attempt_labels": ["A1"], "private_cases": 4, "families": 5, "source_component": "manuscript-completion", "category": "manuscript-completion", "component_weight": 10, "family_aggregation": "equal", "ordinary_claim_cap_points": 50, "followups_replace_initial": false, "local_tools_allowed": true, "search_allowed": false, "tool_network_access": false, "post_observation": true, "human_review": "pending", "formal_comparison_eligible": false, "selection": "Cases are user-selected after observing trial answers. Preserve each original rubric timing: the new public directed task was frozen before its candidate calls; its adoption is post-observation. Older private cases retain their actual observed rubric revisions. The added private fitting family retains its unchanged pre-call six-dimensional rubric and first normal native deliveries; adoption alone is post-observation. The fifth family is a separately selected private idea-to-manuscript task. Its task-scoped four-goal rubric retains its actual freeze and post-observation adoption history; the preceding four task judgments are unchanged.", "mathematical_credit": "Judge defensible modeling choices, explicit assumptions and consequences, correct definitions, proofs and relevant boundaries. Any coherent route may qualify. No credit for an unsupported property merely because it is a familiar theorem under stronger assumptions.", "extensibility": "Concrete, unnecessary restrictions that block an operation, example class or continuation required by the stated mathematical purpose can reduce only the affected criterion credit. Identify the restriction, excluded example/failed operation and downstream consequence, including whether it was disclosed and can be repaired without changing the core object. Different notation or route, lawful explicit finite scope, unrequested optional theory and subjective richness alone are not faults. An established false extension claim uses existing ordinary severity rules; the same root is never charged again as fidelity or a separate extensibility penalty.", "claim_penalty": "The existing 5/10/20 severity rates and maximum-per-root deduplication apply. This category alone raises the ordinary task cap from20 to50 points. Existing critical core endorsement rules remain independent. System failures are not mathematical claims.", "execution_selection": "Preserve every physical request. User-authorized independent restarts retain consumed uncertified requests and explicit authorization; unresolved policy failures are not silently excluded as pure system failures. Use the first complete delivery, no quality best-of.", "fidelity_review": "Only explicitly selected, source-bound case supplements apply after ordinary claims and before equal-family aggregation. Correct mathematical work remains MC; the selected supplement can reject fidelity without a numeric pass threshold.", "public_cases": 1, "public_case_ids": ["MG-MCP003"], "public_task_intent": "The public task is a directed idea-to-manuscript exercise based only on the supplied CH1 definitions. Full marks are acceptable for a sufficiently rigorous and faithful construction; independent frontier discovery or an exact OET route is not required.", "task_scoped_strict_completion": "Only the newly selected private family uses its source-bound four-required-goal core completion contract. Every required goal and necessary proof must be correct and the manuscript self-contained. The frozen rule distinguishes dependencies, not a numeric severity threshold: a source-matched independently deletable local or material side error may be nonblocking only when deleting it changes no required goal, dependency or generality claim; its full reliability deduction remains. Critical errors and core endorsements never qualify. The preceding four tasks retain their original completion rules; no score threshold replaces a task contract.", "task_scoped_reliable_floor": "Only the new source-bound0.2 task has RMC floor0, including the lower endpoint of an unknown answer. Ordinary deductions and their root causes remain recorded. The preceding four tasks and other categories retain their original bounds."}}, "capacity": {"total": 100, "active": 100, "under_construction": 0}, "human_review": "partial_spot_checks", "review_process": {"schema": "math-gauge.review-process/v1", "scope": "current_benchmark_review", "review_type": "ai_review_with_sampled_cross_checks", "ai_reviewers": ["Sol 6.1 Max", "Astra 6 Max", "Dot"], "human_review": "partial_spot_checks", "source": "project_owner_declaration", "declared_on": "2026-11-10", "primary_ai_reviewer": "Sol 6.1 Max", "primary_review_coverage": "all", "cross_check_reviewers": ["Astra 6 Max", "Dot"], "cross_check_coverage": "sampled"}, "formal_comparison_eligible": false, "model": {"id": "gemini-4-argon", "label": "Gemini 4 Argon (high)"}, "case": {"id": "LCH02", "title": "有限复合与路径节群", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"case_id": "LCH02", "completion": {"lower": 0.0, "upper": 1.0, "exact": null}, "strict_pass": null, "response_sha256": null, "review_sha256": null}, "nonlogical_retry_3": {"case_id": "LCH02", "completion": {"lower": 0.0, "upper": 1.0, "exact": null}, "strict_pass": null, "response_sha256": null, "review_sha256": null}}, "partial": {"single_attempt": {"case_id": "LCH02", "completion": {"lower": -0.2, "upper": 1.0, "exact": null}, "strict_pass": null, "response_sha256": null, "review_sha256": null}, "nonlogical_retry_3": {"case_id": "LCH02", "completion": {"lower": -0.2, "upper": 1.0, "exact": null}, "strict_pass": null, "response_sha256": null, "review_sha256": null}}, "strict": {"single_attempt": {"case_id": "LCH02", "completion": {"lower": 0.0, "upper": 1.0, "exact": null}, "strict_pass": null, "response_sha256": null, "review_sha256": null}, "nonlogical_retry_3": {"case_id": "LCH02", "completion": {"lower": 0.0, "upper": 1.0, "exact": null}, "strict_pass": null, "response_sha256": null, "review_sha256": null}}}}}</script><script src="../../../assets/results-i18n.js?v=10824d78d221"></script><script src="../../../assets/results-core.js?v=3fc9f7af48fd"></script><script src="../../../assets/case-results.js?v=919ac4bfd308"></script></body></html>
+<p><strong>已核实完成：</strong> true</p>
+<p><strong>审核说明：</strong> matNonemptyProd_entry_eq_zero_iff逐个长度归纳，和为零↔全部项零、乘积零↔因子零；通过路径cons与长度桥构造所有合法List路径，覆盖任意n和n=1边界，不限固定长度。</p>
+</div></details><p class="panel-foot">原评保留原审核范围；当前采用的提交与成绩见上方及模型档案。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><p>已启动 <code>OperatorBounds.lean</code> 与 <code>Main.lean</code> 的 Lean 编译任务，正在等待编译完成。
+{}
+已完成 [obligations.json](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/obligations.json) 指定的全部 20 项义务（<code>CH02-D01</code> 至 <code>CH02-D06</code>，<code>CH02-P01</code> 至 <code>CH02-P14</code>）的完整形式化证明与对齐映射：</p>
+<ul>
+<li>目标模块 [OperatorBounds.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean)：在冻结前置模块 [gauge_space.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean) 与 [operator_space.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean) 基础上定义了输入/输出矩阵表示 [<code>GaugeMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L24)、行列约定转换 [<code>toRowColMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L37) 及矩阵乘法 [<code>matMul</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L59)；定义了全域与受限 Lip 矩阵及证书族 [<code>IsLipMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L88)、[<code>LipCertFamily</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L97)、[<code>IsRestrictedLipMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L106)、[<code>RestrictedLipCertFamily</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L115)，含非空条件的受限 co-Lip 矩阵及证书族 [<code>IsRestrictedCoLipMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L139)、[<code>RestrictedCoLipCertFamily</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L149)；定义了单位矩阵 [<code>idMatrix</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L166)、空乘积 [<code>matEmptyProd</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L195)、有序非空乘积 [<code>matNonemptyProd</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L203) 与复合链乘积 [<code>matChainProd</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L219)，步序算子链 [<code>stepChain</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L244) 与实际中间像集 [<code>intermediateImage</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L298)，以及路径节点 [<code>pathVertex</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L375)、指标路径谓词 [<code>IsIndexPath</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L401)、全正路径谓词 [<code>IsAllPositivePath</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L418) 与路径含零因子谓词 [<code>PathHasZeroFactor</code>](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/OperatorBounds.lean#L426)；并完整证明了 <code>CH02-P01</code> 至 <code>CH02-P14</code> 的全部定理与引理。</li>
+<li>顶层入口 [Main.lean](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/Main.lean) 与对齐清单 [alignment.json](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/LCH02/physical-2/session/work/alignment.json)。</li>
+</ul>
+<pre><code class="language-lean">import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Tactic
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators
+
+noncomputable section
+
+/-!
+# 第 2 章 算子界 · 有限复合与路径节群 (LCH02)
+
+本模块形式化《算子演化理论》第一卷第 2 章 §2.1 中关于 Lipschitz / co-Lipschitz 矩阵界、
+受限证书族单调性、两步及任意正长度有限复合连乘律、零步单位矩阵证书以及有限矩阵乘积条目
+零值与正值路径判据的全部 20 项义务（CH02-D01 至 CH02-D06，CH02-P01 至 CH02-P14）。
+-/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+**输入/输出矩阵与指标约定**
+以通道方向 `i → j`（输入分量 `i` 到输出分量 `j`）索引的扩展非负实数矩阵：`L i j` 表示 $L_{i \to j} \in \bar{\mathbb{R}}_+$。
+-/
+abbrev GaugeMatrix (I : Type) : Type := I → I → ENNReal
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道条目读取：`channelEntry L i j` 对应正文中从输入分量 $i$ 到输出分量 $j$ 的矩阵条目 $L_{i \to j}$。
+-/
+def channelEntry {I : Type} (L : GaugeMatrix I) (i j : I) : ENNReal := L i j
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+行列视图转换：书写矩阵 $\mathbf{L}$ 时，以输出分量 $j$ 为行指标、输入分量 $i$ 为列指标，
+即第 $j$ 行、第 $i$ 列元素满足 $(\mathbf{L})_{j i} = L_{i \to j}$。
+-/
+def toRowColMatrix {I : Type} (L : GaugeMatrix I) : Matrix I I ENNReal :=
+  fun j i =&gt; L i j
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+从以输出为行、输入为列的标准 `Matrix I I ENNReal` 还原通道索引矩阵。
+-/
+def ofRowColMatrix {I : Type} (A : Matrix I I ENNReal) : GaugeMatrix I :=
+  fun i j =&gt; A j i
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+行列指标约定恒等式：$(\mathbf{L})_{j i} = L_{i \to j}$。
+-/
+@[simp] theorem toRowColMatrix_apply {I : Type} (L : GaugeMatrix I) (j i : I) :
+    toRowColMatrix L j i = channelEntry L i j := rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+**矩阵乘法（按输入/输出通道约定）**
+$$(\mathbf{M}^{(2)} \cdot \mathbf{M}^{(1)})_{i \to j} := \sum_{k \in I} M^{(2)}_{k \to j} M^{(1)}_{i \to k}.$$
+-/
+def matMul {I : Type} [Fintype I] (M₂ M₁ : GaugeMatrix I) : GaugeMatrix I :=
+  fun i j =&gt; ∑ k : I, M₂ k j * M₁ i k
+
+@[simp] theorem matMul_apply {I : Type} [Fintype I] (M₂ M₁ : GaugeMatrix I) (i j : I) :
+    matMul M₂ M₁ i j = ∑ k : I, M₂ k j * M₁ i k := rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道指标下的 `matMul` 与“输出为行、输入为列”约定下的标准代数矩阵乘法严格一致：
+$(\mathbf{M}^{(2)} \cdot \mathbf{M}^{(1)})_{j i} = \sum_{k \in I} (\mathbf{M}^{(2)})_{j k} (\mathbf{M}^{(1)})_{k i}$。
+-/
+theorem toRowColMatrix_matMul {I : Type} [Fintype I] (M₂ M₁ : GaugeMatrix I) :
+    toRowColMatrix (matMul M₂ M₁) = toRowColMatrix M₂ * toRowColMatrix M₁ := by
+  ext j i
+  simp [toRowColMatrix, matMul, Matrix.mul_apply]
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负矩阵乘法的结合律。
+-/
+theorem matMul_assoc {I : Type} [Fintype I] (M₃ M₂ M₁ : GaugeMatrix I) :
+    matMul (matMul M₃ M₂) M₁ = matMul M₃ (matMul M₂ M₁) := by
+  ext i j
+  simp only [matMul_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  rw [Finset.sum_comm]
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（全域 Lipschitz 矩阵谓词）**
+对 $\phi \in \mathcal{X}_{\mathrm{op}}$，矩阵 $\mathbf{L}$ 为 $\phi$ 的合法 Lipschitz 矩阵，当且仅当
+对所有 $x, y \in \mathrm{dom}(\phi)$ 和所有 $j \in I$：
+$$d_j(\phi(x), \phi(y)) \le \sum_{i \in I} L_{i \to j} \cdot d_i(x, y).$$
+-/
+def IsLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) : Prop :=
+  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（全域 Lipschitz 证书族 $\mathscr{L}(\phi)$）**
+-/
+def LipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (GaugeMatrix I) :=
+  { L | IsLipMatrix d ϕ L }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（子集受限 Lipschitz 矩阵谓词）**
+对子集 $U \subseteq \mathrm{dom}(\phi)$，在 $U$ 上对任意 $x, y \in U$ 与 $j \in I$ 满足距离放缩上界。
+-/
+def IsRestrictedLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I) : Prop :=
+  U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（子集受限 Lipschitz 证书族 $\mathscr{L}(\phi)\big|_U$）**
+-/
+def RestrictedLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { L | IsRestrictedLipMatrix d ϕ U L }
+
+/-- 全域 Lip 矩阵与定义域 $\mathrm{dom}(\phi)$ 上的受限 Lip 矩阵等价。 -/
+theorem isLipMatrix_iff_restricted_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) :
+    IsLipMatrix d ϕ L ↔ IsRestrictedLipMatrix d ϕ (dom ϕ) L :=
+  ⟨fun h =&gt; ⟨Set.Subset.rfl, h⟩, fun h =&gt; h.2⟩
+
+theorem lipCertFamily_eq_restricted_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    LipCertFamily d ϕ = RestrictedLipCertFamily d ϕ (dom ϕ) := by
+  ext L
+  exact isLipMatrix_iff_restricted_dom d ϕ L
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+**定义（含非空条件的子集受限 co-Lipschitz 矩阵谓词）**
+对 $\phi \in \mathcal{X}_{\mathrm{op}}$ 与非空子集 $U \subseteq \mathrm{dom}(\phi)$（$U \neq \emptyset$），
+矩阵 $\mathbf{K}$ 为 $\phi$ 在 $U$ 上的合法受限 co-Lipschitz 矩阵，当且仅当对所有 $x, y \in U$ 和所有 $j \in I$：
+$$d_j(\phi(x), \phi(y)) \ge \sum_{i \in I} K_{i \to j} \cdot d_i(x, y).$$
+-/
+def IsRestrictedCoLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : GaugeMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+**定义（子集受限 co-Lipschitz 证书族 $\mathscr{K}(\phi)\big|_U$）**
+凡出现 $\mathscr{K}(\phi)\big|_U$，均包含非空性条件 $U \neq \emptyset$ 及 $U \subseteq \mathrm{dom}(\phi)$。
+-/
+def RestrictedCoLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d ϕ U K }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+全域（即定义域 $\mathrm{dom}(\phi)$ 上）co-Lipschitz 证书族 $\mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)}$。
+-/
+def GlobalCoLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (GaugeMatrix I) :=
+  RestrictedCoLipCertFamily d ϕ (dom ϕ)
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（单位矩阵 $\mathbf{I}$）**
+对角线元素 $\mathbf{I}_{i \to i} = 1$，非对角线元素 $\mathbf{I}_{i \to j} = 0$（$i \neq j$）。
+-/
+def idMatrix {I : Type} [DecidableEq I] : GaugeMatrix I :=
+  fun i j =&gt; if i = j then 1 else 0
+
+@[simp] theorem idMatrix_self {I : Type} [DecidableEq I] (i : I) :
+    idMatrix i i = 1 := if_pos rfl
+
+theorem idMatrix_of_ne {I : Type} [DecidableEq I] {i j : I} (h : i ≠ j) :
+    idMatrix i j = 0 := if_neg h
+
+/-- 单位矩阵作为 `matMul` 的左单位元。 -/
+@[simp] theorem idMatrix_matMul {I : Type} [Fintype I] [DecidableEq I] (M : GaugeMatrix I) :
+    matMul idMatrix M = M := by
+  ext i j
+  simp [matMul, idMatrix]
+
+/-- 单位矩阵作为 `matMul` 的右单位元。 -/
+@[simp] theorem matMul_idMatrix {I : Type} [Fintype I] [DecidableEq I] (M : GaugeMatrix I) :
+    matMul M idMatrix = M := by
+  ext i j
+  simp [matMul, idMatrix]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（矩阵空复合乘积）**
+当 $k = 0$ 时，定义矩阵空复合乘积为单位矩阵 $\mathbf{I}$。
+-/
+def matEmptyProd {I : Type} [DecidableEq I] : GaugeMatrix I := idMatrix
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（有序非空矩阵乘积 $\mathbf{M}^{(n)} \cdot \cdots \cdot \mathbf{M}^{(1)}$）**
+对按步序给出的非空矩阵序列 $(\mathbf{M}^{(1)}, \dots, \mathbf{M}^{(n)})$（其中 `M₁` 为第 1 步矩阵，`rest` 为后续步矩阵），
+递归定义为左乘后继矩阵：当 $n=1$ 时直接为 $\mathbf{M}^{(1)}$；当 $n \ge 2$ 时为 $(\mathbf{M}^{(n)} \cdots \mathbf{M}^{(2)}) \cdot \mathbf{M}^{(1)}$。
+-/
+def matNonemptyProd {I : Type} [Fintype I] (M₁ : GaugeMatrix I) : List (GaugeMatrix I) → GaugeMatrix I
+  | [] =&gt; M₁
+  | M₂ :: tail =&gt; matMul (matNonemptyProd M₂ tail) M₁
+
+@[simp] theorem matNonemptyProd_nil {I : Type} [Fintype I] (M₁ : GaugeMatrix I) :
+    matNonemptyProd M₁ [] = M₁ := rfl
+
+@[simp] theorem matNonemptyProd_cons {I : Type} [Fintype I]
+    (M₁ M₂ : GaugeMatrix I) (tail : List (GaugeMatrix I)) :
+    matNonemptyProd M₁ (M₂ :: tail) = matMul (matNonemptyProd M₂ tail) M₁ := rfl
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-D04)
+**定义（任意有限步序矩阵列表的复合乘积）**
+空列表取单位矩阵 $\mathbf{I}$（`matEmptyProd`），非空列表 `[M₁, ..., Mₙ]` 取有序非空乘积 $\mathbf{M}^{(n)} \cdot \cdots \cdot \mathbf{M}^{(1)}$。
+-/
+def matChainProd {I : Type} [Fintype I] [DecidableEq I] : List (GaugeMatrix I) → GaugeMatrix I
+  | [] =&gt; matEmptyProd
+  | M₁ :: rest =&gt; matNonemptyProd M₁ rest
+
+@[simp] theorem matChainProd_nil {I : Type} [Fintype I] [DecidableEq I] :
+    (matChainProd ([] : List (GaugeMatrix I))) = idMatrix := rfl
+
+@[simp] theorem matChainProd_singleton {I : Type} [Fintype I] [DecidableEq I] (M : GaugeMatrix I) :
+    matChainProd [M] = M := rfl
+
+@[simp] theorem matChainProd_pair {I : Type} [Fintype I] [DecidableEq I] (M₁ M₂ : GaugeMatrix I) :
+    matChainProd [M₁, M₂] = matMul M₂ M₁ := rfl
+
+theorem matChainProd_cons {I : Type} [Fintype I] [DecidableEq I]
+    (M : GaugeMatrix I) (Ms : List (GaugeMatrix I)) :
+    matChainProd (M :: Ms) = matMul (matChainProd Ms) M := by
+  cases Ms with
+  | nil =&gt; simp [matChainProd, matEmptyProd]
+  | cons M₂ tail =&gt; rfl
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+**定义（按步序排列的有限算子复合链 $c_k = \phi_k \circ \cdots \circ \phi_1$）**
+输入列表 `[ϕ₁, ϕ₂, ..., ϕₖ]` 按实际作用步序排列（$\phi_1$ 最先作用，$\phi_k$ 最后作用）；
+当 $k = 0$ 时 $c_0 = \mathrm{id}_{\mathcal{X}}$。
+-/
+def stepChain {X : Type} {bot : X} : List (Operator X bot) → Operator X bot
+  | [] =&gt; operator_identity
+  | ϕ :: tail =&gt; operator_compose (stepChain tail) ϕ
+
+@[simp] theorem stepChain_nil {X : Type} {bot : X} :
+    (stepChain ([] : List (Operator X bot))) = operator_identity := rfl
+
+@[simp] theorem stepChain_singleton {X : Type} {bot : X} (ϕ : Operator X bot) :
+    stepChain [ϕ] = ϕ := rfl
+
+@[simp] theorem stepChain_pair {X : Type} {bot : X} (ϕ₁ ϕ₂ : Operator X bot) :
+    stepChain [ϕ₁, ϕ₂] = operator_compose ϕ₂ ϕ₁ := rfl
+
+@[simp] theorem stepChain_cons {X : Type} {bot : X}
+    (ϕ : Operator X bot) (tail : List (Operator X bot)) :
+    stepChain (ϕ :: tail) = operator_compose (stepChain tail) ϕ := rfl
+
+theorem stepChain_append {X : Type} {bot : X}
+    (ϕs₁ ϕs₂ : List (Operator X bot)) :
+    stepChain (ϕs₁ ++ ϕs₂) = operator_compose (stepChain ϕs₂) (stepChain ϕs₁) := by
+  induction ϕs₁ with
+  | nil =&gt; rfl
+  | cons ϕ tail ih =&gt;
+      simp only [List.cons_append, stepChain_cons, ih]
+      rfl
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+**链表示对应定理**：步序复合 `stepChain [ϕ₁, ..., ϕₖ]` 与前置模块 `OperatorChain [ϕₖ, ..., ϕ₁]`
+及算子幺半群乘积 `List.prod` 通过列表反转严格对应。
+-/
+theorem stepChain_eq_operatorChain_reverse {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) :
+    stepChain ϕs = OperatorChain ϕs.reverse := by
+  induction ϕs with
+  | nil =&gt; rfl
+  | cons ϕ tail ih =&gt;
+      rw [List.reverse_cons, stepChain_cons, ih]
+      rw [operator_chain_eq_prod, operator_chain_eq_prod, List.prod_append, List.prod_singleton]
+      rfl
+
+theorem operatorChain_eq_stepChain_reverse {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) :
+    OperatorChain ϕs = stepChain ϕs.reverse := by
+  rw [stepChain_eq_operatorChain_reverse, List.reverse_reverse]
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+**定义（实际中间像域序列 $U_1, U_2, \dots, U_{k+1}$）**
+对起始定义域子集 $U_1$ 与步序算子列表 `ϕs = [ϕ₁, ..., ϕₖ]`，以 0-基下标递归定义实际中间像集：
+第 $0$ 个集合对应 $U_1$，第 $m+1$ 个集合对应 $U_{m+2} = \phi_{m+1}(U_{m+1})$。
+-/
+def intermediateImage {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) (U₁ : Set X) : ℕ → Set X
+  | 0 =&gt; U₁
+  | m + 1 =&gt;
+    match ϕs with
+    | [] =&gt; U₁
+    | ϕ :: tail =&gt; intermediateImage tail (operator_image ϕ U₁) m
+
+@[simp] theorem intermediateImage_zero {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) (U₁ : Set X) :
+    intermediateImage ϕs U₁ 0 = U₁ := by
+  cases ϕs &lt;;&gt; rfl
+
+@[simp] theorem intermediateImage_cons_succ {X : Type} {bot : X}
+    (ϕ : Operator X bot) (tail : List (Operator X bot)) (U₁ : Set X) (m : ℕ) :
+    intermediateImage (ϕ :: tail) U₁ (m + 1) =
+      intermediateImage tail (operator_image ϕ U₁) m := rfl
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+实际中间像集满足正文递推式 $U_{m+1} = \phi_m(U_m)$。
+-/
+theorem intermediateImage_succ_eq_operator_image {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) (U₁ : Set X) (m : ℕ) (hm : m &lt; ϕs.length) :
+    intermediateImage ϕs U₁ (m + 1) =
+      operator_image (ϕs[m]) (intermediateImage ϕs U₁ m) := by
+  induction ϕs generalizing U₁ m with
+  | nil =&gt;
+      contradiction
+  | cons ϕ tail ih =&gt;
+      cases m with
+      | zero =&gt;
+          simp [intermediateImage]
+      | succ m' =&gt;
+          have hm' : m' &lt; tail.length := Nat.lt_of_succ_lt_succ hm
+          simpa [intermediateImage] using ih (operator_image ϕ U₁) m' hm'
+
+/--
+OET anchor: oet-193cebcc1a7f9259 &amp; oet-c80171fa685dc795 (CH02-D05)
+两步复合定义域包含关系：若 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，则
+$U_1 \subseteq \mathrm{dom}(\phi_1)$ 且 $U_2 = \phi_1(U_1) \subseteq \mathrm{dom}(\phi_2)$。
+-/
+theorem dom_operator_compose_subset {X : Type} {bot : X}
+    (ϕ₂ ϕ₁ : Operator X bot) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)) :
+    U₁ ⊆ dom ϕ₁ ∧ operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by
+  constructor
+  · intro x hx hbot
+    have hx_comp : (operator_compose ϕ₂ ϕ₁).func x ≠ bot := hU₁ hx
+    apply hx_comp
+    change ϕ₂.func (ϕ₁.func x) = bot
+    rw [hbot, ϕ₂.preserves_bot]
+  · rintro y ⟨x, hx, rfl⟩
+    exact hU₁ hx
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-D05)
+有限复合链上各步实际中间像集均落入对应单步算子的定义域：
+若 $U_1 \subseteq \mathrm{dom}(c_k)$，则对一切 $m \in \{1, \dots, k\}$ 有 $U_m \subseteq \mathrm{dom}(\phi_m)$。
+-/
+theorem intermediateImage_subset_dom {X : Type} {bot : X}
+    (ϕs : List (Operator X bot)) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (stepChain ϕs)) (m : Fin ϕs.length) :
+    intermediateImage ϕs U₁ m.val ⊆ dom (ϕs.get m) := by
+  induction ϕs generalizing U₁ with
+  | nil =&gt;
+      exact Fin.elim0 m
+  | cons ϕ tail ih =&gt;
+      rcases dom_operator_compose_subset (stepChain tail) ϕ hU₁ with ⟨h_dom_head, h_dom_tail⟩
+      refine Fin.cases ?_ ?_ m
+      · simpa [intermediateImage] using h_dom_head
+      · intro m'
+        simpa [intermediateImage] using ih h_dom_tail m'
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（带起止边界约定的路径节点读取）**
+给定起点指标 $k_0 = i$、终点指标 $k_n = j$ 以及长度为 $n - 1$ 的中间指标序列 `ks = [k₁, ..., k_{n-1}]`，
+`pathVertex i j ks m` 给出第 $m$ 个节点指标 $k_m$（满足 $k_0 = i, k_n = j$）。
+-/
+def pathVertex {I : Type} (i j : I) (ks : List I) (m : ℕ) : I :=
+  ((i :: ks) ++ [j]).getD m j
+
+@[simp] theorem pathVertex_zero {I : Type} (i j : I) (ks : List I) :
+    pathVertex i j ks 0 = i := rfl
+
+@[simp] theorem pathVertex_nil_one {I : Type} (i j : I) :
+    pathVertex i j [] 1 = j := rfl
+
+@[simp] theorem pathVertex_cons_succ {I : Type} (i j k₁ : I) (ktail : List I) (m : ℕ) :
+    pathVertex i j (k₁ :: ktail) (m + 1) = pathVertex k₁ j ktail m := rfl
+
+theorem pathVertex_last {I : Type} (i j : I) (ks : List I) :
+    pathVertex i j ks (ks.length + 1) = j := by
+  induction ks generalizing i with
+  | nil =&gt; rfl
+  | cons k₁ ktail ih =&gt;
+      simpa [pathVertex_cons_succ] using ih k₁
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（有限指标路径谓词）**
+对长度 $n \ge 1$ 的矩阵序列 `Ms`，中间指标序列 `ks` 是合法的 $(n-1)$ 阶中间指标路径，
+当且仅当 `ks.length + 1 = Ms.length`。当 $n = 1$ 时唯一合法的中间指标路径为空序列 `[]`。
+-/
+def IsIndexPath {I : Type} (n : ℕ) (ks : List I) : Prop :=
+  ks.length + 1 = n
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+沿路径 `ks`（起止约定 $k_0 = i, k_n = j$）在第 $m$ 层级上的单步矩阵条目 $[\mathbf{M}^{(m)}]_{k_{m-1} \to k_m}$。
+-/
+def stepMatrixEntry {I : Type} (Ms : List (GaugeMatrix I)) (i j : I) (ks : List I)
+    (m : Fin Ms.length) : ENNReal :=
+  (Ms.get m) (pathVertex i j ks m.val) (pathVertex i j ks (m.val + 1))
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（全正路径谓词）**
+中间指标序列 `ks` 构成从 $i$ 到 $j$ 沿矩阵序列 `Ms` 的全正路径，当且仅当 `ks` 长度合法（`ks.length + 1 = Ms.length`）
+且沿该路径的所有单步矩阵条目均严格为正：$\forall m,\; [\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} &gt; 0$。
+-/
+def IsAllPositivePath {I : Type} (Ms : List (GaugeMatrix I)) (i j : I) (ks : List I) : Prop :=
+  IsIndexPath Ms.length ks ∧ ∀ m : Fin Ms.length, stepMatrixEntry Ms i j ks m &gt; 0
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-D06)
+**定义（路径含零因子谓词）**
+存在至少一个层级 $m$ 使得 $[\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} = 0$。
+-/
+def PathHasZeroFactor {I : Type} (Ms : List (GaugeMatrix I)) (i j : I) (ks : List I) : Prop :=
+  ∃ m : Fin Ms.length, stepMatrixEntry Ms i j ks m = 0
+
+/--
+OET anchor: oet-c4369c63c86cbacf (CH02-P01)
+**注（单分量情形下的标量 Lip 界）**
+当 $|I| = 1$ 且 $I = \{i_0\}$（即任意指标均等于 $i_0$）时，全域 Lip 矩阵条件退化为单个标量不等式：
+$$d_{i_0}(\phi(x), \phi(y)) \le L_{i_0 \to i_0} d_{i_0}(x, y) \qquad (x, y \in \mathrm{dom}(\phi)).$$
+-/
+theorem single_component_lip_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I)
+    (i₀ : I) (hI : ∀ j : I, j = i₀) :
+    IsLipMatrix d ϕ L ↔
+      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y := by
+  have huniv : (Finset.univ : Finset I) = {i₀} := by
+    ext j
+    simp [hI j]
+  constructor
+  · intro h x hx y hy
+    have h_step := h x hx y hy i₀
+    simpa [huniv] using h_step
+  · intro h x hx y hy j
+    rw [hI j, huniv, Finset.sum_singleton]
+    exact h x hx y hy
+
+/-- 单分量情形下受限 Lip 矩阵条件退化为标量不等式。 -/
+theorem single_component_restricted_lip_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I)
+    (i₀ : I) (hI : ∀ j : I, j = i₀) :
+    IsRestrictedLipMatrix d ϕ U L ↔
+      U ⊆ dom ϕ ∧ ∀ x ∈ U, ∀ y ∈ U, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y := by
+  have huniv : (Finset.univ : Finset I) = {i₀} := by
+    ext j
+    simp [hI j]
+  constructor
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, fun x hx y hy =&gt; ?_⟩
+    have h_step := h x hx y hy i₀
+    simpa [huniv] using h_step
+  · rintro ⟨hU, h⟩
+    refine ⟨hU, fun x hx y hy j =&gt; ?_⟩
+    rw [hI j, huniv, Finset.sum_singleton]
+    exact h x hx y hy
+
+/--
+OET anchor: oet-4ff5c58d71e1651f (CH02-P02)
+**引理 2.1（受限 Lip 矩阵族的单调性 / 反单调包含）**
+固定算子 $\phi \in \mathcal{X}_{\mathrm{op}}$。若 $U \subseteq V \subseteq \mathrm{dom}(\phi)$，则
+$$\mathscr{L}(\phi)\big|_V \subseteq \mathscr{L}(\phi)\big|_U.$$
+-/
+theorem restricted_lip_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedLipCertFamily d ϕ V ⊆ RestrictedLipCertFamily d ϕ U := by
+  intro L hL
+  refine ⟨Set.Subset.trans hUV hV, ?_⟩
+  intro x hx y hy j
+  exact hL.2 x (hUV hx) y (hUV hy) j
+
+/--
+OET anchor: oet-4ff5c58d71e1651f (CH02-P03)
+**引理 2.1（全域 Lip 证书可限制）**
+特别地，对任意 $U \subseteq \mathrm{dom}(\phi)$，有
+$$\mathscr{L}(\phi) \subseteq \mathscr{L}(\phi)\big|_U.$$
+-/
+theorem global_lip_subset_restricted_lip {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom ϕ) :
+    LipCertFamily d ϕ ⊆ RestrictedLipCertFamily d ϕ U := by
+  rw [lipCertFamily_eq_restricted_dom]
+  exact restricted_lip_antitone d ϕ hU Set.Subset.rfl
+
+/--
+OET anchor: oet-193cebcc1a7f9259 (CH02-P04)
+**命题 2.2（Lip 矩阵复合律）**
+对于复合算子 $\phi_2 \circ \phi_1$，选定起始定义域的局部子集 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，
+记像集 $U_2 = \phi_1(U_1)$。若 $\mathbf{L}^{(1)} \in \mathscr{L}(\phi_1)\big|_{U_1}$ 且
+$\mathbf{L}^{(2)} \in \mathscr{L}(\phi_2)\big|_{U_2}$，则
+$$\mathbf{L}^{(2)} \cdot \mathbf{L}^{(1)} \in \mathscr{L}(\phi_2 \circ \phi_1)\big|_{U_1}.$$
+-/
+theorem lip_matrix_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₂ ϕ₁ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁))
+    {L₁ L₂ : GaugeMatrix I}
+    (hL₁ : L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁)
+    (hL₂ : L₂ ∈ RestrictedLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)) :
+    matMul L₂ L₁ ∈ RestrictedLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hU₁, ?_⟩
+  intro x hx y hy j
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  have step₂ :
+      d j ((operator_compose ϕ₂ ϕ₁).func x) ((operator_compose ϕ₂ ϕ₁).func y) ≤
+        ∑ k : I, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) :=
+    hL₂.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+  have step₁ :
+      ∑ k : I, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) ≤
+        ∑ k : I, L₂ k j * (∑ i : I, L₁ i k * d i x y) := by
+    apply Finset.sum_le_sum
+    intro k _
+    exact mul_le_mul_of_nonneg_left (hL₁.2 x hx y hy k) (zero_le _)
+  have h_rearrange :
+      (∑ k : I, L₂ k j * (∑ i : I, L₁ i k * d i x y)) =
+        ∑ i : I, matMul L₂ L₁ i j * d i x y := by
+    simp only [matMul_apply, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+    rw [Finset.sum_comm]
+  exact le_trans step₂ (h_rearrange ▸ step₁)
+
+/--
+OET anchor: oet-893b1d33535f7245 (CH02-P05)
+**引理 2.3（受限 co-Lip 矩阵族的单调性 / 反单调包含）**
+固定算子 $\phi \in \mathcal{X}_{\mathrm{op}}$。若 $\varnothing \neq U \subseteq V \subseteq \mathrm{dom}(\phi)$，则
+$$\mathscr{K}(\phi)\big|_V \subseteq \mathscr{K}(\phi)\big|_U.$$
+-/
+theorem restricted_colip_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hU_ne : U.Nonempty) (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedCoLipCertFamily d ϕ V ⊆ RestrictedCoLipCertFamily d ϕ U := by
+  intro K hK
+  refine ⟨hU_ne, Set.Subset.trans hUV hV, ?_⟩
+  intro x hx y hy j
+  exact hK.2.2 x (hUV hx) y (hUV hy) j
+
+/--
+OET anchor: oet-893b1d33535f7245 (CH02-P06)
+**引理 2.3（全域 co-Lip 证书可限制）**
+特别地，对任意非空子集 $U \subseteq \mathrm{dom}(\phi)$，有
+$$\mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)} \subseteq \mathscr{K}(\phi)\big|_U.$$
+-/
+theorem global_colip_subset_restricted_colip {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) :
+    RestrictedCoLipCertFamily d ϕ (dom ϕ) ⊆ RestrictedCoLipCertFamily d ϕ U :=
+  restricted_colip_antitone d ϕ hU_ne hU Set.Subset.rfl
+
+/--
+OET anchor: oet-88784dcbfff0ea66 (CH02-P07)
+**注（co-Lip 条目为零的充分条件，受限域版本）**
+若存在 $x, y \in U$ 使 $d_j(\phi(x), \phi(y)) = 0$ 且 $d_i(x, y) &gt; 0$，
+则任一 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$ 必满足 $K_{i \to j} = 0$。
+-/
+theorem colip_entry_eq_zero_of_restricted {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    {K : GaugeMatrix I} (hK : K ∈ RestrictedCoLipCertFamily d ϕ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U) {i j : I}
+    (h_out_zero : d j (ϕ.func x) (ϕ.func y) = 0)
+    (h_in_pos : d i x y &gt; 0) :
+    K i j = 0 := by
+  have h_le_sum : K i j * d i x y ≤ ∑ k : I, K k j * d k x y :=
+    Finset.single_le_sum (fun k _ =&gt; zero_le (K k j * d k x y)) (Finset.mem_univ i)
+  have h_sum_le : ∑ k : I, K k j * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK.2.2 x hx y hy j
+  have h_prod_zero : K i j * d i x y = 0 := by
+    apply le_antisymm _ (zero_le _)
+    calc
+      K i j * d i x y ≤ ∑ k : I, K k j * d k x y := h_le_sum
+      _ ≤ d j (ϕ.func x) (ϕ.func y) := h_sum_le
+      _ = 0 := h_out_zero
+  rcases mul_eq_zero.mp h_prod_zero with hK_zero | hd_zero
+  · exact hK_zero
+  · exact False.elim ((ne_of_gt h_in_pos) hd_zero)
+
+/--
+OET anchor: oet-88784dcbfff0ea66 (CH02-P07)
+**注（co-Lip 条目为零的充分条件，正文全域版本）**
+若存在 $x, y \in \mathrm{dom}(\phi)$ 使 $d_j(\phi(x), \phi(y)) = 0$ 且 $d_i(x, y) &gt; 0$，
+则任一全域 co-Lip 矩阵 $\mathbf{K} \in \mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)}$ 必满足 $K_{i \to j} = 0$。
+-/
+theorem colip_entry_eq_zero_of_output_zero {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot)
+    {K : GaugeMatrix I} (hK : K ∈ RestrictedCoLipCertFamily d ϕ (dom ϕ))
+    {x y : X} (hx : x ∈ dom ϕ) (hy : y ∈ dom ϕ) {i j : I}
+    (h_out_zero : d j (ϕ.func x) (ϕ.func y) = 0)
+    (h_in_pos : d i x y &gt; 0) :
+    K i j = 0 :=
+  colip_entry_eq_zero_of_restricted d ϕ hK hx hy h_out_zero h_in_pos
+
+/--
+OET anchor: oet-0f256e6f1d38a612 (CH02-P08)
+**命题 2.4（co-Lip 矩阵复合律）**
+对于复合算子 $\phi_2 \circ \phi_1$，选定起始定义域的局部子集 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，
+记像集 $U_2 = \phi_1(U_1)$。若 $\mathbf{K}^{(1)} \in \mathscr{K}(\phi_1)\big|_{U_1}$ 且
+$\mathbf{K}^{(2)} \in \mathscr{K}(\phi_2)\big|_{U_2}$，则
+$$\mathbf{K}^{(2)} \cdot \mathbf{K}^{(1)} \in \mathscr{K}(\phi_2 \circ \phi_1)\big|_{U_1}.$$
+-/
+theorem colip_matrix_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₂ ϕ₁ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁))
+    {K₁ K₂ : GaugeMatrix I}
+    (hK₁ : K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁)
+    (hK₂ : K₂ ∈ RestrictedCoLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)) :
+    matMul K₂ K₁ ∈ RestrictedCoLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hK₁.1, hU₁, ?_⟩
+  intro x hx y hy j
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  have h_rearrange :
+      (∑ i : I, matMul K₂ K₁ i j * d i x y) =
+        ∑ k : I, K₂ k j * (∑ i : I, K₁ i k * d i x y) := by
+    simp only [matMul_apply, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+    rw [Finset.sum_comm]
+  have step₁ :
+      ∑ k : I, K₂ k j * (∑ i : I, K₁ i k * d i x y) ≤
+        ∑ k : I, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by
+    apply Finset.sum_le_sum
+    intro k _
+    exact mul_le_mul_of_nonneg_left (hK₁.2.2 x hx y hy k) (zero_le _)
+  have step₂ :
+      ∑ k : I, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) ≤
+        d j ((operator_compose ϕ₂ ϕ₁).func x) ((operator_compose ϕ₂ ϕ₁).func y) :=
+    hK₂.2.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+  rw [h_rearrange]
+  exact le_trans step₁ step₂
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-P09)
+**推论 2.5 (i)（有限复合的局部 Lip 上界）**
+设有限复合 $c_k = \phi_k \circ \cdots \circ \phi_1$（$k \ge 1$），并取起始定义域子集 $U_1 \subseteq \mathrm{dom}(c_k)$。
+递归定义中间像集 $U_{m+1} = \phi_m(U_m)$。若各单步具有合法矩阵 $\mathbf{L}^{(m)} \in \mathscr{L}(\phi_m)\big|_{U_m}$，
+则全复合满足：
+$$\mathbf{L}^{(k)} \cdot \cdots \cdot \mathbf{L}^{(1)} \in \mathscr{L}(c_k)\big|_{U_1}.$$
+-/
+theorem finite_comp_lip_bound {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal)
+    (ϕs : List (Operator X bot)) (h_ne : ϕs ≠ [])
+    (Ls : List (GaugeMatrix I)) (h_len : Ls.length = ϕs.length)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (stepChain ϕs))
+    (h_certs : ∀ m : Fin ϕs.length,
+      Ls.get (m.cast h_len.symm) ∈
+        RestrictedLipCertFamily d (ϕs.get m) (intermediateImage ϕs U₁ m.val)) :
+    matChainProd Ls ∈ RestrictedLipCertFamily d (stepChain ϕs) U₁ := by
+  induction ϕs generalizing Ls U₁ with
+  | nil =&gt;
+      exact False.elim (h_ne rfl)
+  | cons ϕ₁ tail ih =&gt;
+      cases Ls with
+      | nil =&gt;
+          simp at h_len
+      | cons L₁ Ltail =&gt;
+          cases tail with
+          | nil =&gt;
+              have hLtail : Ltail = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+              subst hLtail
+              have h0 := h_certs ⟨0, Nat.zero_lt_one⟩
+              simpa [matChainProd, stepChain, intermediateImage] using h0
+          | cons ϕ₂ tail' =&gt;
+              have hL₁ : L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁ := by
+                simpa [intermediateImage] using h_certs ⟨0, Nat.zero_lt_succ _⟩
+              rcases dom_operator_compose_subset (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ with
+                ⟨_, hU₂_dom⟩
+              have h_len_tail : Ltail.length = (ϕ₂ :: tail').length := Nat.succ.inj h_len
+              have h_tail_certs :
+                  ∀ m : Fin (ϕ₂ :: tail').length,
+                    Ltail.get (m.cast h_len_tail.symm) ∈
+                      RestrictedLipCertFamily d ((ϕ₂ :: tail').get m)
+                        (intermediateImage (ϕ₂ :: tail') (operator_image ϕ₁ U₁) m.val) := by
+                intro m
+                have hm := h_certs m.succ
+                simpa [intermediateImage] using hm
+              have h_ind :=
+                ih (List.cons_ne_nil ϕ₂ tail') Ltail h_len_tail hU₂_dom h_tail_certs
+              rw [matChainProd_cons, stepChain_cons]
+              exact lip_matrix_comp d (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ hL₁ h_ind
+
+/--
+OET anchor: oet-c80171fa685dc795 (CH02-P10)
+**推论 2.5 (ii)（有限复合的局部 co-Lip 下界）**
+设有限复合 $c_k = \phi_k \circ \cdots \circ \phi_1$（$k \ge 1$），并取起始定义域子集 $U_1 \subseteq \mathrm{dom}(c_k)$。
+递归定义中间像集 $U_{m+1} = \phi_m(U_m)$。若各单步具有合法矩阵 $\mathbf{K}^{(m)} \in \mathscr{K}(\phi_m)\big|_{U_m}$，
+则全复合满足：
+$$\mathbf{K}^{(k)} \cdot \cdots \cdot \mathbf{K}^{(1)} \in \mathscr{K}(c_k)\big|_{U_1}.$$
+-/
+theorem finite_comp_colip_bound {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal)
+    (ϕs : List (Operator X bot)) (h_ne : ϕs ≠ [])
+    (Ks : List (GaugeMatrix I)) (h_len : Ks.length = ϕs.length)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (stepChain ϕs))
+    (h_certs : ∀ m : Fin ϕs.length,
+      Ks.get (m.cast h_len.symm) ∈
+        RestrictedCoLipCertFamily d (ϕs.get m) (intermediateImage ϕs U₁ m.val)) :
+    matChainProd Ks ∈ RestrictedCoLipCertFamily d (stepChain ϕs) U₁ := by
+  induction ϕs generalizing Ks U₁ with
+  | nil =&gt;
+      exact False.elim (h_ne rfl)
+  | cons ϕ₁ tail ih =&gt;
+      cases Ks with
+      | nil =&gt;
+          simp at h_len
+      | cons K₁ Ktail =&gt;
+          cases tail with
+          | nil =&gt;
+              have hKtail : Ktail = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+              subst hKtail
+              have h0 := h_certs ⟨0, Nat.zero_lt_one⟩
+              simpa [matChainProd, stepChain, intermediateImage] using h0
+          | cons ϕ₂ tail' =&gt;
+              have hK₁ : K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁ := by
+                simpa [intermediateImage] using h_certs ⟨0, Nat.zero_lt_succ _⟩
+              rcases dom_operator_compose_subset (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ with
+                ⟨_, hU₂_dom⟩
+              have h_len_tail : Ktail.length = (ϕ₂ :: tail').length := Nat.succ.inj h_len
+              have h_tail_certs :
+                  ∀ m : Fin (ϕ₂ :: tail').length,
+                    Ktail.get (m.cast h_len_tail.symm) ∈
+                      RestrictedCoLipCertFamily d ((ϕ₂ :: tail').get m)
+                        (intermediateImage (ϕ₂ :: tail') (operator_image ϕ₁ U₁) m.val) := by
+                intro m
+                have hm := h_certs m.succ
+                simpa [intermediateImage] using hm
+              have h_ind :=
+                ih (List.cons_ne_nil ϕ₂ tail') Ktail h_len_tail hU₂_dom h_tail_certs
+              rw [matChainProd_cons, stepChain_cons]
+              exact colip_matrix_comp d (stepChain (ϕ₂ :: tail')) ϕ₁ hU₁ hK₁ h_ind
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P11 &amp; CH02-P12 辅助等式)
+恒等映射满足 $d_j(x, y) = \sum_{i \in I} \mathbf{I}_{i \to j} d_i(x, y)$。
+-/
+@[simp] theorem sum_idMatrix_mul_dist {X I : Type} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (x y : X) (j : I) :
+    (∑ i : I, idMatrix i j * d i x y) = d j x y := by
+  simp [idMatrix]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P11)
+**注（零步复合的单位 Lip 矩阵证书）**
+当 $k = 0$ 时，$c_0 = \mathrm{id}_{\mathcal{X}}$，空复合矩阵乘积为单位矩阵 $\mathbf{I}$。
+对任意 $U \subseteq \mathrm{dom}(\mathrm{id}_{\mathcal{X}})$，有 $\mathbf{I} \in \mathscr{L}(\mathrm{id}_{\mathcal{X}})\big|_U$。
+-/
+theorem zero_step_identity_lip {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU : U ⊆ dom (operator_identity : Operator X bot)) :
+    idMatrix ∈ RestrictedLipCertFamily d (operator_identity : Operator X bot) U := by
+  refine ⟨hU, ?_⟩
+  intro x _ y _ j
+  simp [operator_identity]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P12)
+**注（零步复合的单位 co-Lip 矩阵证书）**
+对任意非空 $U \subseteq \mathrm{dom}(\mathrm{id}_{\mathcal{X}})$，有 $\mathbf{I} \in \mathscr{K}(\mathrm{id}_{\mathcal{X}})\big|_U$。
+-/
+theorem zero_step_identity_colip {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom (operator_identity : Operator X bot)) :
+    idMatrix ∈ RestrictedCoLipCertFamily d (operator_identity : Operator X bot) U := by
+  refine ⟨hU_ne, hU, ?_⟩
+  intro x _ y _ j
+  simp [operator_identity]
+
+/--
+OET anchor: oet-11006ddd8c43bfec (CH02-P11 &amp; CH02-P12 联合结论)
+对任意非空 $U \subseteq \mathrm{dom}(\mathrm{id}_{\mathcal{X}})$，
+$\mathbf{I} \in \mathscr{L}(\mathrm{id}_{\mathcal{X}})\big|_U \cap \mathscr{K}(\mathrm{id}_{\mathcal{X}})\big|_U$。
+-/
+theorem zero_step_identity_lip_and_colip {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom (operator_identity : Operator X bot)) :
+    idMatrix ∈
+      RestrictedLipCertFamily d (operator_identity : Operator X bot) U ∩
+        RestrictedCoLipCertFamily d (operator_identity : Operator X bot) U :=
+  ⟨zero_step_identity_lip d hU, zero_step_identity_colip d hU_ne hU⟩
+
+/--
+路径含零因子在首步拆分下的递归刻画：
+对 `Ms = M₁ :: M₂ :: tail` 和 `ks = k₁ :: ktail`，沿路径存在零因子当且仅当首步因子 $M^{(1)}_{i \to k_1} = 0$
+或后续路径 `ktail` 存在零因子。
+-/
+theorem pathHasZeroFactor_cons_iff {I : Type}
+    (M₁ M₂ : GaugeMatrix I) (tail : List (GaugeMatrix I))
+    (i j k₁ : I) (ktail : List I) :
+    PathHasZeroFactor (M₁ :: M₂ :: tail) i j (k₁ :: ktail) ↔
+      M₁ i k₁ = 0 ∨ PathHasZeroFactor (M₂ :: tail) k₁ j ktail := by
+  constructor
+  · rintro ⟨m, hm⟩
+    refine Fin.cases ?_ ?_ m hm
+    · intro h0
+      left
+      simpa [stepMatrixEntry, pathVertex] using h0
+    · intro m' hm'
+      right
+      refine ⟨m', ?_⟩
+      simpa [stepMatrixEntry, pathVertex] using hm'
+  · rintro (h0 | ⟨m', hm'⟩)
+    · refine ⟨⟨0, Nat.zero_lt_succ _⟩, ?_⟩
+      simpa [stepMatrixEntry, pathVertex] using h0
+    · refine ⟨m'.succ, ?_⟩
+      simpa [stepMatrixEntry, pathVertex] using hm'
+
+/--
+全正路径在首步拆分下的递归刻画：
+对 `Ms = M₁ :: M₂ :: tail` 和 `ks = k₁ :: ktail`，`k₁ :: ktail` 是全正路径当且仅当
+首步因子 $M^{(1)}_{i \to k_1} &gt; 0$ 且 `ktail` 是从 $k_1$ 到 $j$ 的全正路径。
+-/
+theorem isAllPositivePath_cons_iff {I : Type}
+    (M₁ M₂ : GaugeMatrix I) (tail : List (GaugeMatrix I))
+    (i j k₁ : I) (ktail : List I) :
+    IsAllPositivePath (M₁ :: M₂ :: tail) i j (k₁ :: ktail) ↔
+      M₁ i k₁ &gt; 0 ∧ IsAllPositivePath (M₂ :: tail) k₁ j ktail := by
+  constructor
+  · rintro ⟨h_len, h_pos⟩
+    refine ⟨?_, ⟨Nat.succ.inj h_len, ?_⟩⟩
+    · have h0 := h_pos ⟨0, Nat.zero_lt_succ _⟩
+      simpa [stepMatrixEntry, pathVertex] using h0
+    · intro m'
+      have hm' := h_pos m'.succ
+      simpa [stepMatrixEntry, pathVertex] using hm'
+  · rintro ⟨h0, ⟨h_len, h_pos⟩⟩
+    refine ⟨congrArg Nat.succ h_len, ?_⟩
+    intro m
+    refine Fin.cases ?_ ?_ m
+    · simpa [stepMatrixEntry, pathVertex] using h0
+    · intro m'
+      simpa [stepMatrixEntry, pathVertex] using h_pos m'
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P13)
+**命题 2.6 (i)（有限矩阵乘积条目的零值判据，有序非空乘积形式）**
+设 $\mathbf{M}^{(1)}, \dots, \mathbf{M}^{(n)}$（$n \ge 1$）为以 $I$ 为指标集的扩展非负矩阵。
+则 $[\mathbf{M}^{(n)} \cdots \mathbf{M}^{(1)}]_{i \to j} = 0$，当且仅当对任意长度为 $n - 1$ 的中间指标序列
+`ks = (k₁, ..., k_{n-1})`（起止约定 $k_0 = i, k_n = j$），必然存在至少一个层级 $m$ 使得
+$[\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} = 0$。
+-/
+theorem matNonemptyProd_entry_eq_zero_iff {I : Type} [Fintype I]
+    (M₁ : GaugeMatrix I) (rest : List (GaugeMatrix I)) (i j : I) :
+    matNonemptyProd M₁ rest i j = 0 ↔
+      ∀ ks : List I, IsIndexPath (M₁ :: rest).length ks →
+        PathHasZeroFactor (M₁ :: rest) i j ks := by
+  induction rest generalizing M₁ i with
+  | nil =&gt;
+      constructor
+      · intro h0 ks h_len
+        have hks : ks = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+        subst hks
+        refine ⟨⟨0, Nat.zero_lt_one⟩, ?_⟩
+        simpa [stepMatrixEntry, pathVertex] using h0
+      · intro h
+        have h_empty := h [] rfl
+        rcases h_empty with ⟨m, hm⟩
+        have hm0 : m = ⟨0, Nat.zero_lt_one⟩ := Fin.ext (Nat.lt_one_iff.mp m.isLt)
+        subst hm0
+        simpa [stepMatrixEntry, pathVertex] using hm
+  | cons M₂ tail ih =&gt;
+      simp only [matNonemptyProd_cons, matMul_apply, Finset.sum_eq_zero_iff,
+        Finset.mem_univ, forall_true_left, mul_eq_zero]
+      constructor
+      · intro h ks h_len
+        cases ks with
+        | nil =&gt;
+            exact absurd h_len (by simp [IsIndexPath])
+        | cons k₁ ktail =&gt;
+            rw [pathHasZeroFactor_cons_iff]
+            have h_ktail_len : IsIndexPath (M₂ :: tail).length ktail := Nat.succ.inj h_len
+            rcases h k₁ with h_tail_zero | h_head_zero
+            · right
+              exact (ih M₂ k₁).mp h_tail_zero ktail h_ktail_len
+            · left
+              exact h_head_zero
+      · intro h k₁
+        by_cases h_head : M₁ i k₁ = 0
+        · exact Or.inr h_head
+        · left
+          rw [ih M₂ k₁]
+          intro ktail h_ktail_len
+          have h_full_len : IsIndexPath (M₁ :: M₂ :: tail).length (k₁ :: ktail) :=
+            congrArg Nat.succ h_ktail_len
+          have h_path := (pathHasZeroFactor_cons_iff M₁ M₂ tail i j k₁ ktail).mp
+            (h (k₁ :: ktail) h_full_len)
+          rcases h_path with h_zero | h_rest
+          · exact False.elim (h_head h_zero)
+          · exact h_rest
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P13)
+**命题 2.6 (i)（有限矩阵乘积条目的零值判据，`matChainProd` 形式，含 $n=1$）**
+对任意非空矩阵列表 `Ms`（长度 $n \ge 1$），`matChainProd Ms i j = 0` 当且仅当每条合法中间指标路径均含零因子。
+-/
+theorem matChainProd_entry_eq_zero_iff {I : Type} [Fintype I] [DecidableEq I]
+    (Ms : List (GaugeMatrix I)) (h_ne : Ms ≠ []) (i j : I) :
+    matChainProd Ms i j = 0 ↔
+      ∀ ks : List I, IsIndexPath Ms.length ks → PathHasZeroFactor Ms i j ks := by
+  cases Ms with
+  | nil =&gt; exact False.elim (h_ne rfl)
+  | cons M₁ rest =&gt; exact matNonemptyProd_entry_eq_zero_iff M₁ rest i j
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P13，$n=1$ 边界退化定理)
+当 $n = 1$ 时，唯一合法中间指标序列为空序列 `[]`，零值路径判据退化为单个矩阵条目 $M^{(1)}_{i \to j} = 0$。
+-/
+theorem matChainProd_singleton_entry_eq_zero_iff {I : Type} [Fintype I] [DecidableEq I]
+    (M₁ : GaugeMatrix I) (i j : I) :
+    (∀ ks : List I, IsIndexPath [M₁].length ks → PathHasZeroFactor [M₁] i j ks) ↔
+      M₁ i j = 0 := by
+  rw [← matChainProd_entry_eq_zero_iff [M₁] (List.cons_ne_nil M₁ []) i j]
+  rfl
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P14)
+**命题 2.6 (ii)（有限矩阵乘积条目的正值判据，有序非空乘积形式）**
+设 $\mathbf{M}^{(1)}, \dots, \mathbf{M}^{(n)}$（$n \ge 1$）为以 $I$ 为指标集的扩展非负矩阵。
+则 $[\mathbf{M}^{(n)} \cdots \mathbf{M}^{(1)}]_{i \to j} &gt; 0$，当且仅当存在至少一条长度为 $n - 1$ 的中间指标序列
+`ks = (k₁, ..., k_{n-1})`（起止约定 $k_0 = i, k_n = j$），使得沿该路径的所有单步矩阵条目均严格正：
+$$\forall m \in \{1, \dots, n\},\quad [\mathbf{M}^{(m)}]_{k_{m-1} \to k_m} &gt; 0.$$
+-/
+theorem matNonemptyProd_entry_pos_iff {I : Type} [Fintype I]
+    (M₁ : GaugeMatrix I) (rest : List (GaugeMatrix I)) (i j : I) :
+    matNonemptyProd M₁ rest i j &gt; 0 ↔
+      ∃ ks : List I, IsAllPositivePath (M₁ :: rest) i j ks := by
+  induction rest generalizing M₁ i with
+  | nil =&gt;
+      constructor
+      · intro h_pos
+        refine ⟨[], ⟨rfl, ?_⟩⟩
+        intro m
+        have hm0 : m = ⟨0, Nat.zero_lt_one⟩ := Fin.ext (Nat.lt_one_iff.mp m.isLt)
+        subst hm0
+        simpa [stepMatrixEntry, pathVertex] using h_pos
+      · rintro ⟨ks, h_len, h_pos⟩
+        have h0 := h_pos ⟨0, Nat.zero_lt_one⟩
+        have hks : ks = [] := List.eq_nil_of_length_eq_zero (Nat.succ.inj h_len)
+        subst hks
+        simpa [stepMatrixEntry, pathVertex] using h0
+  | cons M₂ tail ih =&gt;
+      constructor
+      · intro h_pos
+        have h_ne_zero : (∑ k₁ : I, matNonemptyProd M₂ tail k₁ j * M₁ i k₁) ≠ 0 :=
+          ne_of_gt h_pos
+        have h_exists : ∃ k₁ ∈ (Finset.univ : Finset I),
+            matNonemptyProd M₂ tail k₁ j * M₁ i k₁ ≠ 0 := by
+          by_contra h_all
+          push Not at h_all
+          exact h_ne_zero (Finset.sum_eq_zero h_all)
+        rcases h_exists with ⟨k₁, _, hk₁_ne⟩
+        have h_tail_pos : matNonemptyProd M₂ tail k₁ j &gt; 0 :=
+          pos_iff_ne_zero.mpr (left_ne_zero_of_mul hk₁_ne)
+        have h_head_pos : M₁ i k₁ &gt; 0 :=
+          pos_iff_ne_zero.mpr (right_ne_zero_of_mul hk₁_ne)
+        rcases (ih M₂ k₁).mp h_tail_pos with ⟨ktail, h_ktail⟩
+        refine ⟨k₁ :: ktail, ?_⟩
+        exact (isAllPositivePath_cons_iff M₁ M₂ tail i j k₁ ktail).mpr ⟨h_head_pos, h_ktail⟩
+      · rintro ⟨ks, h_ks⟩
+        cases ks with
+        | nil =&gt;
+            rcases h_ks with ⟨h_len, _⟩
+            exact absurd h_len (by simp [IsIndexPath])
+        | cons k₁ ktail =&gt;
+            rcases (isAllPositivePath_cons_iff M₁ M₂ tail i j k₁ ktail).mp h_ks with
+              ⟨h_head_pos, h_ktail⟩
+            have h_tail_pos : matNonemptyProd M₂ tail k₁ j &gt; 0 :=
+              (ih M₂ k₁).mpr ⟨ktail, h_ktail⟩
+            have h_term_pos : matNonemptyProd M₂ tail k₁ j * M₁ i k₁ &gt; 0 :=
+              ENNReal.mul_pos (ne_of_gt h_tail_pos) (ne_of_gt h_head_pos)
+            have h_le :
+                matNonemptyProd M₂ tail k₁ j * M₁ i k₁ ≤
+                  ∑ k : I, matNonemptyProd M₂ tail k j * M₁ i k :=
+              Finset.single_le_sum
+                (fun k _ =&gt; zero_le (matNonemptyProd M₂ tail k j * M₁ i k))
+                (Finset.mem_univ k₁)
+            exact lt_of_lt_of_le h_term_pos h_le
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P14)
+**命题 2.6 (ii)（有限矩阵乘积条目的正值判据，`matChainProd` 形式，含 $n=1$）**
+对任意非空矩阵列表 `Ms`（长度 $n \ge 1$），`matChainProd Ms i j &gt; 0` 当且仅当存在全正路径。
+-/
+theorem matChainProd_entry_pos_iff {I : Type} [Fintype I] [DecidableEq I]
+    (Ms : List (GaugeMatrix I)) (h_ne : Ms ≠ []) (i j : I) :
+    matChainProd Ms i j &gt; 0 ↔ ∃ ks : List I, IsAllPositivePath Ms i j ks := by
+  cases Ms with
+  | nil =&gt; exact False.elim (h_ne rfl)
+  | cons M₁ rest =&gt; exact matNonemptyProd_entry_pos_iff M₁ rest i j
+
+/--
+OET anchor: oet-e4154c34e95d3c23 (CH02-P14，$n=1$ 边界退化定理)
+当 $n = 1$ 时，唯一合法中间指标序列为空序列 `[]`，正值路径判据退化为单个矩阵条目 $M^{(1)}_{i \to j} &gt; 0$。
+-/
+theorem matChainProd_singleton_entry_pos_iff {I : Type} [Fintype I] [DecidableEq I]
+    (M₁ : GaugeMatrix I) (i j : I) :
+    (∃ ks : List I, IsAllPositivePath [M₁] i j ks) ↔ M₁ i j &gt; 0 := by
+  rw [← matChainProd_entry_pos_iff [M₁] (List.cons_ne_nil M₁ []) i j]
+  rfl
+
+end
+</code></pre>
+<pre><code class="language-lean">import OperatorBounds
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsLipMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LipCertFamily&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsRestrictedLipMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;RestrictedLipCertFamily&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;isLipMatrix_iff_restricted_dom&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;lipCertFamily_eq_restricted_dom&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：算子 ϕ : Operator X bot、分量伪度量族 d : I → X → X → ENNReal（[Fintype I]）及扩展非负矩阵 L : GaugeMatrix I。参数与量词：IsLipMatrix 量化 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I；IsRestrictedLipMatrix 包含定义域子集条件 U ⊆ dom ϕ 并量化 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I。结论：满足上界不等式 d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y，并以集合 LipCertFamily d ϕ 与 RestrictedLipCertFamily d ϕ U 分别表示全文与受限证书族 mathscr{L}(ϕ) 与 mathscr{L}(ϕ)|_U。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsRestrictedCoLipMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;RestrictedCoLipCertFamily&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;GlobalCoLipCertFamily&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：算子 ϕ : Operator X bot、分量伪度量族 d : I → X → X → ENNReal、评估子集 U : Set X 及扩展非负矩阵 K : GaugeMatrix I。参数与量词：IsRestrictedCoLipMatrix 显式包含非空性条件 U.Nonempty、定义域包含条件 U ⊆ dom ϕ，并全称量化 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I。结论：满足下界不等式 ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)，集合 RestrictedCoLipCertFamily d ϕ U 与 GlobalCoLipCertFamily d ϕ 分别对应 mathscr{K}(ϕ)|_U 与 mathscr{K}(ϕ)|_{dom(ϕ)}。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;GaugeMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;channelEntry&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;toRowColMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;ofRowColMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;toRowColMatrix_apply&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul_apply&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;toRowColMatrix_matMul&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul_assoc&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：扩展非负矩阵类型 GaugeMatrix I := I → I → ENNReal。参数与指标约定：channelEntry L i j := L i j 表示通道条目 L_{i→j}（输入 i 到输出 j）；toRowColMatrix L j i := L i j 表示以输出分量 j 为行指标、输入分量 i 为列指标的矩阵条目 (L)_{ji} = L_{i→j}。乘法与结论：matMul M₂ M₁ i j := ∑ k : I, M₂ k j * M₁ i k 给出通道约定下的矩阵乘积 (M^{(2)}·M^{(1)})_{i→j}，toRowColMatrix_matMul 证明其与行列约定下的标准矩阵乘法严格一致，matMul_assoc 证明结合律。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix_self&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix_of_ne&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;idMatrix_matMul&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matMul_idMatrix&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matEmptyProd&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matNonemptyProd&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_nil&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_singleton&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_pair&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_cons&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：单位矩阵 idMatrix（I_{i→j} = if i = j then 1 else 0）、空乘积 matEmptyProd := idMatrix、按步序非空矩阵序列 (M₁, rest) 的有序非空乘积 matNonemptyProd（对应 M^{(n)} · ... · M^{(1)}，n=1 时直接为 M₁，n≥2 时递归左乘后继矩阵）以及一般有限矩阵列表乘积 matChainProd。结论：证明单位矩阵的左右乘法单位元性质及空列表、单元素、两元素与递归展开性质。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;stepChain&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;stepChain_eq_operatorChain_reverse&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;operatorChain_eq_stepChain_reverse&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;intermediateImage&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;intermediateImage_succ_eq_operator_image&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;dom_operator_compose_subset&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;intermediateImage_subset_dom&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：按作用步序 [ϕ₁, ..., ϕₖ] 排列的复合算子 stepChain ϕs（对应 c_k = ϕ_k ∘ ... ∘ ϕ_1，k=0 时为 operator_identity）与起始子集 U₁ 上的递归实际中间像集序列 intermediateImage ϕs U₁ m（m=0 为 U₁，m+1 步为 ϕ_{m+1}(U_{m+1})）。结论：stepChain_eq_operatorChain_reverse 与 operatorChain_eq_stepChain_reverse 建立步序链与前置模块 OperatorChain 的反转对应；intermediateImage_succ_eq_operator_image 证明递推式 U_{m+1} = ϕ_m(U_m)；intermediateImage_subset_dom 证明当 U₁ ⊆ dom(c_k) 时每步中间像集满足 U_m ⊆ dom(ϕ_m)。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_zero&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_nil_one&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_cons_succ&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathVertex_last&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsIndexPath&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;stepMatrixEntry&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;IsAllPositivePath&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;PathHasZeroFactor&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象：中间指标序列 ks : List I（对应 (k_1, ..., k_{n-1})）、带起止边界约定 k_0 = i, k_n = j 的路径节点函数 pathVertex i j ks m、路径长度谓词 IsIndexPath n ks（ks.length + 1 = n）、单步矩阵条目 stepMatrixEntry Ms i j ks m（对应 [M^{(m)}]_{k_{m-1}→k_m}）。结论与谓词：IsAllPositivePath 刻画长度合法且对一切层级 m : Fin Ms.length 单步条目严格正（&gt; 0）；PathHasZeroFactor 刻画存在层级 m 使单步条目等于 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;single_component_lip_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;single_component_restricted_lip_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：算子 ϕ、分量伪度量族 d、矩阵 L 及唯一指标 i₀ : I（满足 ∀ j : I, j = i₀，即 I = {i₀} 且 |I| = 1）。量词与结论：证明 IsLipMatrix d ϕ L 等价于单分量标量不等式 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y（并给出受限版本 single_component_restricted_lip_iff）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;restricted_lip_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot，子集 U, V : Set X，满足 hUV : U ⊆ V 与 hV : V ⊆ dom ϕ。结论：受限 Lip 证书族反单调包含 RestrictedLipCertFamily d ϕ V ⊆ RestrictedLipCertFamily d ϕ U（即 mathscr{L}(ϕ)|_V ⊆ mathscr{L}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;lip_matrix_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ₂, ϕ₁ : Operator X bot，起始定义域子集 U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)，精确中间像域 U₂ = operator_image ϕ₁ U₁，以及局部证书 L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁、L₂ ∈ RestrictedLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)。结论：按逆向次序相乘的矩阵乘积满足 matMul L₂ L₁ ∈ RestrictedLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;restricted_colip_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot，子集 U, V : Set X，满足非空性 hU_ne : U.Nonempty、包含关系 hUV : U ⊆ V 及定义域条件 hV : V ⊆ dom ϕ。结论：受限 co-Lip 证书族反单调包含 RestrictedCoLipCertFamily d ϕ V ⊆ RestrictedCoLipCertFamily d ϕ U（即 mathscr{K}(ϕ)|_V ⊆ mathscr{K}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;colip_entry_eq_zero_of_output_zero&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;colip_entry_eq_zero_of_restricted&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot，全域（或受限）co-Lip 证书 K ∈ RestrictedCoLipCertFamily d ϕ (dom ϕ)，定义域中点 x, y ∈ dom ϕ 及指标 i, j : I，满足输出零距 d j (ϕ.func x) (ϕ.func y) = 0 与输入正距 d i x y &gt; 0。结论：对应通道条目必为零 K i j = 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;colip_matrix_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ₂, ϕ₁ : Operator X bot，起始定义域子集 U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)，精确中间像域 U₂ = operator_image ϕ₁ U₁，以及含非空条件的局部证书 K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁、K₂ ∈ RestrictedCoLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)。结论：乘积矩阵满足 matMul K₂ K₁ ∈ RestrictedCoLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁（含 U₁ 非空性与定义域包含）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;sum_idMatrix_mul_dist&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_lip&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_lip_and_colip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：零步复合恒等算子 c_0 = operator_identity、空乘积单位矩阵 idMatrix 及子集 U ⊆ dom operator_identity。结论：由恒等式 ∑ i : I, idMatrix i j * d i x y = d j x y 证明 idMatrix ∈ RestrictedLipCertFamily d operator_identity U。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;sum_idMatrix_mul_dist&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_colip&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;zero_step_identity_lip_and_colip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：零步复合恒等算子 c_0 = operator_identity、空乘积单位矩阵 idMatrix 及满足 hU_ne : U.Nonempty 与 hU : U ⊆ dom operator_identity 的非空子集 U。结论：证明 idMatrix ∈ RestrictedCoLipCertFamily d operator_identity U，从而 idMatrix 属于 Lip 与 co-Lip 受限证书族的交集。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-P11&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;isAllPositivePath_cons_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matNonemptyProd_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_singleton_entry_pos_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：任意非空有限扩展非负矩阵序列 Ms（n = Ms.length ≥ 1，含 n = 1 单矩阵情形）及起止指标 i, j : I。量词与结论：证明有序乘积条目 matChainProd Ms i j &gt; 0（及 matNonemptyProd M₁ rest i j &gt; 0）当且仅当 ∃ ks : List I, IsAllPositivePath Ms i j ks；并由 matChainProd_singleton_entry_pos_iff 给出 n = 1 时退化为 M₁ i j &gt; 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;global_lip_subset_restricted_lip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot 及定义域子集 U ⊆ dom ϕ。结论：全域 Lip 证书族可限制到 U，即 LipCertFamily d ϕ ⊆ RestrictedLipCertFamily d ϕ U（mathscr{L}(ϕ) ⊆ mathscr{L}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-P02&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;global_colip_subset_restricted_colip&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：算子 ϕ : Operator X bot 及满足 hU_ne : U.Nonempty 与 hU : U ⊆ dom ϕ 的非空子集 U。结论：全域 co-Lip 证书族可限制到 U，即 RestrictedCoLipCertFamily d ϕ (dom ϕ) ⊆ RestrictedCoLipCertFamily d ϕ U（mathscr{K}(ϕ)|_{dom(ϕ)} ⊆ mathscr{K}(ϕ)|_U）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-P05&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;finite_comp_lip_bound&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：正长度步序算子链 ϕs : List (Operator X bot)（h_ne : ϕs ≠ []，对应 c_k = ϕ_k ∘ ... ∘ ϕ_1，k ≥ 1）、等长矩阵序列 Ls（h_len : Ls.length = ϕs.length）、起始域 U₁ ⊆ dom (stepChain ϕs) 以及逐步局部证书条件 ∀ m : Fin ϕs.length, Ls[m] ∈ RestrictedLipCertFamily d ϕs[m] (intermediateImage ϕs U₁ m)。结论：连乘矩阵满足 matChainProd Ls ∈ RestrictedLipCertFamily d (stepChain ϕs) U₁（即 L^{(k)} · ... · L^{(1)} ∈ mathscr{L}(c_k)|_{U_1}）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D01&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P04&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;finite_comp_colip_bound&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与前提：正长度步序算子链 ϕs : List (Operator X bot)（h_ne : ϕs ≠ []，k ≥ 1）、等长矩阵序列 Ks（h_len : Ks.length = ϕs.length）、起始域 U₁ ⊆ dom (stepChain ϕs) 以及逐步局部 co-Lip 证书条件 ∀ m : Fin ϕs.length, Ks[m] ∈ RestrictedCoLipCertFamily d ϕs[m] (intermediateImage ϕs U₁ m)。结论：连乘矩阵满足 matChainProd Ks ∈ RestrictedCoLipCertFamily d (stepChain ϕs) U₁（即 K^{(k)} · ... · K^{(1)} ∈ mathscr{K}(c_k)|_{U_1}）。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D02&quot;,
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D05&quot;,
+        &quot;CH02-P08&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;pathHasZeroFactor_cons_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matNonemptyProd_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;OperatorBounds.lean&quot;, &quot;name&quot;: &quot;matChainProd_singleton_entry_eq_zero_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象与参数：任意非空有限扩展非负矩阵序列 Ms（n = Ms.length ≥ 1，含 n = 1 单矩阵情形）及起止指标 i, j : I。量词与结论：证明有序乘积条目 matChainProd Ms i j = 0（及 matNonemptyProd M₁ rest i j = 0）当且仅当 ∀ ks : List I, IsIndexPath Ms.length ks → PathHasZeroFactor Ms i j ks；并由 matChainProd_singleton_entry_eq_zero_iff 给出 n = 1 时退化为 M₁ i j = 0。&quot;,
+      &quot;dependencies&quot;: [
+        &quot;CH02-D03&quot;,
+        &quot;CH02-D04&quot;,
+        &quot;CH02-D06&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/gcp-native-acquisition/deliveries/LCH02/physical-2/sealed/answer.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/gcp-native-acquisition/deliveries/LCH02/physical-2/sealed/answer.md">answer · answer.md</a><span class="hash">SHA256 b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/claim-public-sources/LCH02-cc14fd5ca04f.json">review · LCH02-cc14fd5ca04f.json</a><span class="hash">SHA256 135a6aff593d0a0e56f5cba41e594fa23549b8f03bb60c4bca747ebe4e21c907</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/reviews/retry-formalization.json">engineering_review · retry-formalization.json</a><span class="hash">SHA256 2f72923e812474cf609ebbedfb72dbc531ccc640b6929f384fedc60a50ecda63</span></li><li><a href="../../../../results/v0.6.0/gemini-4-argon/20261111/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.browser-presentation/v1", "benchmark_version": "0.6.0", "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "default_attempt_condition": "nonlogical_retry_3", "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "正常答卷的有效数学贡献；无正常交卷时可审核截止前固定原工程。", "policy": "capability-scoring-policy.json", "policy_version": "0.3.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "正常交卷的有效数学贡献并保留有据扣罚；未正常交卷为0。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.9.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "source_schema": "math-gauge.current-results-display/v6", "policy": {"groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "status": "active"}, {"id": "background-check", "title": "背景核查", "weight": 10, "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "status": "active"}]}, "model": {"id": "gemini-4-argon", "label": "Gemini 4 Argon (high)"}, "case": {"id": "LCH02", "title": "有限复合与路径节群", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7", "review_sha256": null}, "nonlogical_retry_3": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7", "review_sha256": null}}, "partial": {"single_attempt": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7", "review_sha256": null}, "nonlogical_retry_3": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7", "review_sha256": null}}, "strict": {"single_attempt": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7", "review_sha256": null}, "nonlogical_retry_3": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "b057c19652d5b8b217dece02a137f9b286b601ff28dd576d612257a0eba100b7", "review_sha256": null}}}}}</script></body></html>

@@ -8,6 +8,7 @@ import unittest
 from math_gauge.manuscript_surplus import (
     REVIEW_SCHEMA, descriptor, public_projection, validate_review, validate_sources, validate_observation_policy,
     REVIEW_ROOT_PATH, ROOT_PATH, check_pair, prepare_reuse_binding, validate_reuse_binding,
+    validate_context_rebinding,
 )
 from math_gauge.scoring import summarize_manuscript_observations
 
@@ -59,6 +60,30 @@ class ManuscriptObservationTests(unittest.TestCase):
         self.assertEqual(result['counts']['total_groups'], 2)
         self.assertFalse(result['families'][0]['original_task']['strict_pass'])
         self.assertEqual(review, before)
+
+    def test_metadata_rebinding_preserves_original_math_and_history_bytes(self):
+        review, _ = self.fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            retained = {}
+            for key in ('source_record', 'source_score', 'source_inputs'):
+                path = root/(key+'.json')
+                path.write_text(json.dumps({'original':key}))
+                retained[key] = descriptor(path, root)
+                review[key] = retained[key]
+            original = root/'original-review.json'
+            original.write_text(json.dumps(review))
+            current = copy.deepcopy(review)
+            current['record_id'] = 'current-snapshot'
+            current['metadata_rebind'] = dict(
+                schema='math-gauge.manuscript-observation-context/v1',
+                original_review=descriptor(original, root),
+                retained_original_context=retained,
+                mathematical_judgments_changed=False,new_candidate_calls=0)
+            validate_context_rebinding(current,root)
+            current['cases'][0]['candidates'][0]['statement'] = 'Changed mathematical claim'
+            with self.assertRaisesRegex(ValueError,'changed mathematical review'):
+                validate_context_rebinding(current,root)
 
     def test_equivalent_results_are_deduplicated_within_family(self):
         review, policy = self.fixture()

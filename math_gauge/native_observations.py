@@ -114,6 +114,8 @@ def validate_record(record, policy=None):
         'selfcheck_rounds','trajectory','comparison_note'}
     if record['version'] == SUPPLEMENTED_VERSION:
         allowed |= {'original_delivery_counts', 'source_supplements'}
+    allowed |= {key for key in ('submission_policy','submission_evidence',
+        'submission_evidence_source_sha256','score_history') if key in record}
     require(set(record) == allowed, 'Native public record contains unsupported fields')
     require(set(record['harness']) == {'name','version','fork_turns','model_override','effort_override',
         'isolation','local_tools_allowed','search_allowed','tool_network_access','detail','tool_usage'},
@@ -271,6 +273,10 @@ def load_public_record(folder, *, public_case_ids=None):
     record = json.loads(path.read_bytes())
     policy = json.loads(read_artifact(folder, record['assessment_policy']))
     validate_record(record, policy)
+    if policy['version']=='0.9.0':
+        from . import submission_evidence
+        submission_evidence.validate_record_component(folder,record,public=True)
+        submission_evidence.validate_history(folder,record)
     require(record['model_id'] == folder.parent.name, 'Native record belongs to another model')
     scores = {}
     for mode, field in (('capability', 'capability_results'), ('partial', 'assessment_results'),

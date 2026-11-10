@@ -357,6 +357,23 @@ class SharedAggregateCheckTests(unittest.TestCase):
                  patch.object(cli,"score_assessment_record_inputs",return_value={"metrics":result["metrics"]}):
                 self.assertTrue(cli.check(private,public_root=public)["passed"])
                 validator.assert_called_with(folder,formalization_root=source)
+                selected = {condition: {"inputs": {"condition": condition}, "alignment": {},
+                    "engineering": {}, "manuscript": {"manuscript": condition},
+                    "theorem_extension_inputs": {"extension": condition},
+                    "background_check_inputs": {"background": condition}}
+                    for condition in ("single_attempt", "nonlogical_retry_3")}
+                observed = []
+                def recompute(inputs, *args, **kwargs):
+                    observed.append((inputs, kwargs["theorem_extension_inputs"],
+                        kwargs["background_check_inputs"], kwargs["manuscript_completion_inputs"]))
+                    return {"metrics": result["metrics"]}
+                with patch.object(cli, "load_attempt_sources",
+                        side_effect=lambda root, record, condition, **kwargs: selected[condition]), \
+                     patch.object(cli, "score_assessment_record_inputs", side_effect=recompute):
+                    self.assertTrue(cli.check(private, public_root=public)["passed"])
+                self.assertEqual(observed, [(selected[c]["inputs"], selected[c]["theorem_extension_inputs"],
+                    selected[c]["background_check_inputs"], selected[c]["manuscript"])
+                    for _ in range(3) for c in ("single_attempt", "nonlogical_retry_3")])
                 path=source/record["assessment_results"]["single_attempt"]["path"]
                 original=json.loads(path.read_bytes())
                 for mutation in ("total","source"):

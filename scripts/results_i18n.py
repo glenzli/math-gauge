@@ -78,6 +78,7 @@ MESSAGES = {
     '同一份答卷，三个计分口径。分类贡献与下载跟随当前选择；自查、三轮轨迹和扣罚依据在模型详情展开。':
         'Three score modes use the same answers. Contributions and downloads follow the overall mode; model details contain self-check rounds and penalty evidence.',
     '当前成绩下载': 'Download current results',
+    '下载当前口径': 'Download current results',
     '公开＋私有合并，采用规则允许的最终成绩，随计分口径切换。':
         'Combined public and private rule-selected results. Downloads follow the selected score mode.',
     '查看完整方法与数据说明 →': 'Full method & data →',
@@ -89,6 +90,10 @@ MESSAGES = {
         'Earlier runs with DeepSeek Harness (DSH) failed to deliver several tasks after lengthy reasoning exhausted the maximum output budget; execution then moved to Codex CLI.',
     'GLM 5.3在Codex CLI和Claude Code下均出现过大量超时、无法按时交卷；本次留档采用Claude Code结果，未按时交卷计0分。':
         'GLM 5.3 had frequent timeouts and missed deliveries with both Codex CLI and Claude Code. The retained run uses Claude Code; answers not delivered by the deadline score zero.',
+    'GLM 5.3在Codex CLI和Claude Code下均出现过大量超时、无法按时交卷；本次留档采用Claude Code结果。未正常交卷的RMC与SMC为0，MC可计经核实的原成果。':
+        'GLM 5.3 had frequent timeouts and missed deliveries with both Codex CLI and Claude Code. The retained results use Claude Code. Without a normal submission, RMC and SMC are zero; verified original work may earn MC.',
+    'Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。':
+        'Some Argon tasks did not terminate with a normal submission. Two tasks retained verifiable mathematical content and receive MC only; their RMC and SMC are zero.',
     '当前留档没有另计的非逻辑重跑。': 'No separately counted nonlogical retries in the retained records.',
     '模型详细评测 · 公开＋私有合并成绩': 'Model evaluation · combined public and private results',
     '当前成绩': 'Current results', '分类贡献': 'Category contributions', '书面论证': 'Written arguments',
@@ -213,6 +218,19 @@ MESSAGES.update({
         'Independent results are deduplicated; required proofs, corrections and requested extensions belong to the original task score.',
     '此处列公有手稿题的核验依据；图表组数为公私合计。': 'Evidence here covers public manuscripts; chart counts combine public and private tasks.',
     '答题完成度': 'Answer delivery', '交卷 ': 'Delivered ',
+    '主动交卷／强收有内容／总初答题数': 'Active finals / collected work with content / total initial tasks',
+    '主动交卷／强收有内容／总初答题数。强收仅可计MC，RMC与SMC为0；未测保持未知。':
+        'Active finals / collected work with content / total initial tasks. Collected work can earn MC only; RMC and SMC are zero. Untested tasks remain unknown.',
+    '主动／强收／题数': 'Active / collected / tasks',
+    '待补原记录复核': 'Original records pending recovery',
+    '项 · 暂记0': ' items · provisionally zero',
+    '未正常交卷': 'No normal final',
+    ' · 强收工程': ' · collected engineering work',
+    '未交付本轮答卷 · 计0': 'No submission for this round · scored 0',
+    '未正常交卷 · 计0': 'No normal submission · scored 0',
+    '未核实': 'Unverified',
+    '未知项保留固定分母与可能区间。有正常交卷时只审实际交付的答卷；没有正常交卷时，MC可审截止前已存在的可核验数学工程，RMC与SMC为0。提交进度分别统计主动交卷与强收有内容，强收的MC也可能为0。':
+        'Unknown tasks keep fixed denominators and possible ranges. When a normal final exists, only its delivered content is reviewed. Otherwise, MC may credit verifiable mathematical work present before the deadline; RMC and SMC are zero. Active finals and collected work with content are counted separately; collected work may earn zero MC.',
     '已交卷／初答题数；不代表正确率或数学目标完成度。':
         'Delivered answers / initial tasks; not accuracy or mathematical goal attainment.',
     '答题完成度按已交卷题数／39统计（含封卷工程），不代表正确率或目标达成率。已测未交卷计0分，未测保持未知；三轮自查另见详情。':

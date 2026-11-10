@@ -1,6 +1,6 @@
 {
   "benchmark_version": "0.6.0",
-  "scoring_method_version": "0.8.0",
+  "scoring_method_version": "0.9.0",
   "strict_method_version": "0.2.0",
   "score_mode": "partial",
   "claim_penalty_method_version": "0.1.0",
@@ -22,6 +22,17 @@
     "strict_error_gates_applied": true,
     "original_reviews_rewritten": false,
     "human_review": "pending"
+  },
+  "submission_method_version": "0.1.0",
+  "submission_policy_sha256": "0e7e5c0643320ffbb640de73fc2dcd24d97f03f6ab99749d83318abff70a7f49",
+  "submission_review_sha256": "73f3b2d89ba08fa47860d9db040b31ba8c771853c00ad17392a53449b1cf5701",
+  "submission_summary": {
+    "planned": 39,
+    "active_final": 38,
+    "forced_content": 0,
+    "blank": 1,
+    "pending": 0,
+    "pending_original_record_review": 0
   },
   "primary_metric": "earned",
   "model_label": "Kimi K3.1 Pro (1M) · effort max · tclaude",
@@ -274,7 +285,22 @@
         "source_sha256": "b6dd6fe391a8ea080b98a930bb04e8e2402375a94d9a3c022f0173bee7ed24e6",
         "base_score": 0.0,
         "penalty_points": 20.0,
-        "net_score": -20.0
+        "net_score": -20.0,
+        "prior_score": {
+          "exact": -20.0,
+          "lower": -20.0,
+          "upper": -20.0,
+          "complete": true,
+          "formal_comparison_eligible": false,
+          "coverage": {
+            "unit": "adjacent alignment round",
+            "planned": 1,
+            "adjudicated": 1,
+            "unknown": 0
+          }
+        },
+        "submission_classification": "active_final",
+        "active_final": true
       },
       {
         "round": 2,
@@ -310,7 +336,22 @@
         "source_sha256": "b6dd6fe391a8ea080b98a930bb04e8e2402375a94d9a3c022f0173bee7ed24e6",
         "base_score": 0.0,
         "penalty_points": 20.0,
-        "net_score": -20.0
+        "net_score": -20.0,
+        "prior_score": {
+          "exact": -20.0,
+          "lower": -20.0,
+          "upper": -20.0,
+          "complete": true,
+          "formal_comparison_eligible": false,
+          "coverage": {
+            "unit": "adjacent alignment round",
+            "planned": 1,
+            "adjudicated": 1,
+            "unknown": 0
+          }
+        },
+        "submission_classification": "active_final",
+        "active_final": true
       },
       {
         "round": 3,
@@ -346,7 +387,22 @@
         "source_sha256": "fae1c8b6326f2b30efb6983efcf87076eeb05c9b79dd828c5fc2526ca7a50076",
         "base_score": 100.0,
         "penalty_points": 0.0,
-        "net_score": 100.0
+        "net_score": 100.0,
+        "prior_score": {
+          "exact": 100.0,
+          "lower": 100.0,
+          "upper": 100.0,
+          "complete": true,
+          "formal_comparison_eligible": false,
+          "coverage": {
+            "unit": "adjacent alignment round",
+            "planned": 1,
+            "adjudicated": 1,
+            "unknown": 0
+          }
+        },
+        "submission_classification": "active_final",
+        "active_final": true
       }
     ],
     "last_completion": {
@@ -362,7 +418,8 @@
     },
     "interpretation": "Repairs use adjacent verified pass sets. Restorations and first-new completions are separately labeled; history is never a source union or best-of selection.",
     "human_review": "pending",
-    "formal_comparison_eligible": false
+    "formal_comparison_eligible": false,
+    "submission_method_version": "0.1.0"
   },
   "strict_alignment_selfcheck": {
     "strict_pass": false,
@@ -391,7 +448,9 @@
       }
     ],
     "assessment_units": 1,
-    "initial_answer_replaced": false
+    "initial_answer_replaced": false,
+    "active_rounds": 3,
+    "submission_method_version": "0.1.0"
   },
   "lean_formalization_breakdown": {
     "cases": [
@@ -400,28 +459,33 @@
         "family_id": "oet-volume1-chapter03",
         "complete_count": 91,
         "total": 92,
-        "percent": 98.9130434783
+        "percent": 98.9130434783,
+        "submission_classification": "active_final"
       },
       {
         "case_id": "LCH01",
         "family_id": "oet-volume1-chapter02",
         "complete_count": 8,
         "total": 8,
-        "percent": 100.0
+        "percent": 100.0,
+        "submission_classification": "active_final"
       },
       {
         "case_id": "LCH02",
         "family_id": "oet-volume1-chapter02",
         "complete_count": 20,
         "total": 20,
-        "percent": 100.0
+        "percent": 100.0,
+        "submission_classification": "active_final"
       },
       {
         "case_id": "HCH02",
         "family_id": "oet-volume1-chapter02",
         "complete_count": 40,
         "total": 40,
-        "percent": 100.0
+        "percent": 100.0,
+        "submission_classification": "active_final",
+        "status": "reviewed_normal_final"
       }
     ],
     "families": {
@@ -459,16 +523,18 @@
     "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
     "alignment_review_sha256": "7a73cbaabda0b1454981fa94d8c5c81b210c0b1191d5c4d44d8d437578eff7de",
     "engineering_review_sha256": "1633c6ab158734456d4ec94d220afc0d2135158092c648eb34addfdf681b962e",
-    "assessment_policy_sha256": "eed009cdfa8bfb31be9e853355b50fce6e92b4353c6cde5ac26741d4bef9405a",
+    "assessment_policy_sha256": "9527df908c8123f56fab156344a4915b77e43e5daf59a47ebfa92ce48aa20752",
     "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
     "claim_review_sha256": "03203fd2805532f50df84214b2154f836a210a4168311209d0bc1a345c9d07f9",
     "claim_penalty_policy_sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419",
     "theorem_extension_inputs_sha256": "8cb16581ee32212e434a1cb13963156f31eb0cf6adaaf466cfbdae2facbd7ee1",
     "background_check_inputs_sha256": "2483e0d10465c9c8556c95637d104a6143a04218d2a6dcd45142aacb202e16b4",
     "current_written_scoring_inputs_sha256": "c4c54834fc18839087e2948f3ad2e21285313aac20fc495fd062ee2a8906ebea",
-    "manuscript_completion_inputs_sha256": "875ce7903b9f272ad8f95dd0f77222e46d5a758761de76052e5f0bff6786498e",
     "written_replacement_inputs_sha256": "c4c54834fc18839087e2948f3ad2e21285313aac20fc495fd062ee2a8906ebea",
-    "private_report_sha256": "c262a72fb5b3f33afbe168ded1e5fa738e70587d72772f7dd3d9c32becbe6acf"
+    "manuscript_completion_inputs_sha256": "875ce7903b9f272ad8f95dd0f77222e46d5a758761de76052e5f0bff6786498e",
+    "submission_evidence_sha256": "295591417a5e52facecb08c5b6b40a837f59abe39b010b7f150db668ad7a182b",
+    "submission_policy_sha256": "0e7e4265a1604357ec59d0b49908d104c015647d2282df692b874a44ee6cdb5b",
+    "private_report_sha256": "bce8364415012fef4b0ac8831b70782932286617110d79eaa03fa6a9879fd31c"
   },
   "source_math_policy_version": "0.4.0",
   "engineering_review_sha256": "1633c6ab158734456d4ec94d220afc0d2135158092c648eb34addfdf681b962e",

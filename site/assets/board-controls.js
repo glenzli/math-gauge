@@ -51,9 +51,13 @@
   panel.style.top=Math.max(12,Math.min(r.bottom+10,innerHeight-height-12))+'px';
  }
  function owned(root,selector){return [...root.querySelectorAll(selector)].filter(n=>n.closest('[data-board]')===root)}
- function sync(){
+ const applied=new WeakMap();
+ function sync(event){
   roots.forEach(root=>{
    const key=root.dataset.board,{shown,completeOnly}=readBoard(location.search,key);
+   const signature=JSON.stringify([shown,completeOnly]);
+   if(event?.detail?.rendered===false&&applied.get(root)===signature)return;
+   applied.set(root,signature);
    root.dataset.visibleScores=String(shown.length);
    applyVisibility(owned(root,'[data-display-mode]'),shown);
    owned(root,'[data-show-score]').forEach(input=>{input.checked=shown.includes(input.dataset.showScore);input.disabled=input.checked&&shown.length===1});

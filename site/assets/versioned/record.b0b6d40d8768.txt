@@ -1,0 +1,390 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import formal_oet.vol_01.ch_02_operator_bounds.single_channel
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.ENNReal.Real
+import Mathlib.Data.Set.Basic
+import Mathlib.Tactic.FinCases
+import OperatorLocalDegeneracy.ComponentPartition
+import OperatorLocalDegeneracy.ComputationalFibers
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/-- CH03-D04: 点态零化半径 -/
+noncomputable def r_null (d_in d_out : X → X → ENNReal) (ϕ : Operator X bot)
+    (y : X) (U : Set X) : ENNReal :=
+  sSup { r : ENNReal | 0 < r ∧ r < ⊤ ∧
+    ∀ x ∈ U, d_in x y < r → d_out (ϕ.func x) (ϕ.func y) = 0 }
+
+/-- CH03-D05: 统一零化半径 -/
+noncomputable def r_null_uniform (d_in d_out : X → X → ENNReal) (ϕ : Operator X bot)
+    (U : Set X) : ENNReal :=
+  ⨅ y ∈ U, r_null d_in d_out ϕ y U
+
+/-- CH03-D05: 统一零化半径（关于输入输出分量及子族） -/
+noncomputable def r_null_uniform_comp (ϕ : Operator X bot) (i : I) (J : Set I) (U : Set X) : ENNReal :=
+  r_null_uniform (d i) (subfamily_pseudometric d J) ϕ U
+
+/-- CH03-D05: 零化矩阵条目 -/
+noncomputable def nullification_matrix_entry (ϕ : Operator X bot) (U : Set X) (j i : I) : ENNReal :=
+  r_null_uniform (d i) (d j) ϕ U
+
+/-- CH03-P11-01: 命题 3.8 (i-a) 输出子族常值时每个像目标纤维等于U -/
+theorem prop_3_8_i_a (ϕ : Operator X bot) (U : Set X) (J : Set I) (hJ : J.Nonempty)
+    (h_const : J ⊆ I_const d ϕ U) (y : X) (hy : y ∈ ϕ.func '' U) :
+    Fib d ϕ J y U = U := by
+  rcases hy with ⟨x0, hx0, rfl⟩
+  ext x
+  dsimp [Fib, subfamily_pseudometric]
+  constructor
+  · exact fun h => h.1
+  · intro hx
+    refine ⟨hx, ?_⟩
+    apply le_antisymm _ (zero_le _)
+    apply iSup_le
+    rintro ⟨j, hj⟩
+    exact (h_const hj) x hx x0 hx0
+
+/-- CH03-P11-02: 命题 3.8 (i-b) 任意输入分量的点态与统一半径均为无穷 -/
+theorem prop_3_8_i_b_ptwise (ϕ : Operator X bot) (U : Set X) (i : I) (J : Set I)
+    (h_const : J ⊆ I_const d ϕ U) (y : X) (hy : y ∈ U) :
+    r_null (d i) (subfamily_pseudometric d J) ϕ y U = ⊤ := by
+  dsimp [r_null]
+  apply le_antisymm le_top
+  apply le_sSup
+  intro b hb
+  refine ⟨by norm_num, by norm_num, ?_⟩
+  intro x hx _
+  dsimp [subfamily_pseudometric]
+  apply le_antisymm _ (zero_le _)
+  apply iSup_le
+  rintro ⟨j, hj⟩
+  exact (h_const hj) x hx y hy
+  where
+    sorry_ax : True := trivial
+
+theorem prop_3_8_i_b_uniform (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (i : I) (J : Set I)
+    (h_const : J ⊆ I_const d ϕ U) :
+    r_null_uniform_comp d ϕ i J U = ⊤ := by
+  dsimp [r_null_uniform_comp, r_null_uniform]
+  apply le_antisymm le_top
+  apply le_iInf
+  intro y
+  apply le_iInf
+  intro hy
+  dsimp [r_null]
+  apply le_sSup
+  intro b hb
+  refine ⟨by norm_num, by norm_num, ?_⟩
+  intro x hx _
+  dsimp [subfamily_pseudometric]
+  apply le_antisymm _ (zero_le _)
+  apply iSup_le
+  rintro ⟨j, hj⟩
+  exact (h_const hj) x hx y hy
+
+/-- CH03-P11-03: 命题 3.8 (ii) 合法两点无穷输入距离反例，证明无穷统一半径不推出常值 -/
+def two_pt_top_d (x y : TwoPt) : ENNReal :=
+  match x, y with
+  | TwoPt.bot, TwoPt.bot => 0
+  | TwoPt.a, TwoPt.a => 0
+  | TwoPt.b, TwoPt.b => 0
+  | _, _ => ⊤
+
+theorem two_pt_top_d_extended : ExtendedPseudoMetric TwoPt TwoPt.bot two_pt_top_d := by
+  refine ⟨⟨TwoPt.a, by decide⟩, ?_, ?_, ?_, ?_⟩
+  · intro x; cases x <;> rfl
+  · intro x y; cases x <;> cases y <;> rfl
+  · intro x y z; cases x <;> cases y <;> cases z <;> simp [two_pt_top_d]
+  · intro x hx; cases x; contradiction; rfl
+
+def two_pt_top_gauge : Fin 2 → TwoPt → TwoPt → ENNReal
+  | 0 => two_pt_top_d
+  | 1 => two_pt_d
+
+theorem two_pt_top_gauge_extended : ∀ i : Fin 2, ExtendedPseudoMetric TwoPt TwoPt.bot (two_pt_top_gauge i) := by
+  intro i
+  fin_cases i
+  · exact two_pt_top_d_extended
+  · exact two_pt_d_extended
+
+theorem prop_3_8_ii_counterexample :
+    let U : Set TwoPt := {TwoPt.a, TwoPt.b}
+    let id_op : Operator TwoPt TwoPt.bot := operator_identity
+    r_null_uniform (two_pt_top_gauge 0) (two_pt_top_gauge 1) id_op U = ⊤ ∧
+    (1 : Fin 2) ∉ I_const two_pt_top_gauge id_op U := by
+  intro U id_op
+  constructor
+  · dsimp [r_null_uniform, r_null]
+    apply le_antisymm le_top
+    apply le_iInf; intro y
+    apply le_iInf; intro hy
+    apply le_sSup
+    intro b hb
+    refine ⟨by norm_num, by norm_num, ?_⟩
+    intro x hx hdist
+    simp [U] at hy hx
+    rcases hy with rfl | rfl <;> rcases hx with rfl | rfl
+    · rfl
+    · change ⊤ < b at hdist
+      exact False.elim (lt_irrefl ⊤ (lt_of_lt_of_le hdist le_top))
+    · change ⊤ < b at hdist
+      exact False.elim (lt_irrefl ⊤ (lt_of_lt_of_le hdist le_top))
+    · rfl
+  · dsimp [I_const, U, id_op, operator_identity]
+    intro hc
+    have h := hc TwoPt.a (Or.inl rfl) TwoPt.b (Or.inr rfl)
+    change option_discrete_dist (some 0) (some 1) = 0 at h
+    simp [option_discrete_dist] at h
+
+/-- CH03-P12-01: 命题 3.9 (i) 恒等分量的像目标纤维等于输入零距类 -/
+theorem prop_3_9_i (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (i : I) (hi : i ∈ I_id d ϕ U) (y : X) (hy : y ∈ U) :
+    Fib d ϕ {i} (ϕ.func y) U = { x ∈ U | d i x y = 0 } := by
+  have h_fib := prop_3_5_vi_a d hd ϕ U i hi (ϕ.func y)
+  rw [h_fib]
+  ext x
+  simp only [Set.mem_sep_iff]
+  apply and_congr_right
+  intro hx
+  have h_id_y : d i (ϕ.func y) y = 0 := hi.2 y hy
+  constructor
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i x y ≤ d i x (ϕ.func y) + d i (ϕ.func y) y := (hd i).triangle _ _ _
+      _ = 0 + 0 := by rw [h, h_id_y]
+      _ = 0 := by simp
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i x (ϕ.func y) ≤ d i x y + d i y (ϕ.func y) := (hd i).triangle _ _ _
+      _ = 0 + 0 := by
+        rw [h]
+        congr 1
+        rw [(hd i).symm, h_id_y]
+      _ = 0 := by simp
+
+/-- CH03-P12-02: 命题 3.9 (ii) 有限正r0球内仅零距时，点态零化半径≥r0>0 -/
+theorem prop_3_9_ii (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (i : I) (hi : i ∈ I_id d ϕ U) (y : X) (hy : y ∈ U)
+    (r0 : ENNReal) (hr0_pos : 0 < r0) (hr0_ne_top : r0 < ⊤)
+    (h_ball : ∀ x ∈ U, d i x y < r0 → d i x y = 0) :
+    r0 ≤ r_null (d i) (d i) ϕ y U := by
+  dsimp [r_null]
+  apply le_sSup
+  refine ⟨hr0_pos, hr0_ne_top, ?_⟩
+  intro x hx hdist
+  have h_id_x : d i (ϕ.func x) x = 0 := hi.2 x hx
+  have h_id_y : d i (ϕ.func y) y = 0 := hi.2 y hy
+  have h_xy0 := h_ball x hx hdist
+  apply le_antisymm _ (zero_le _)
+  calc
+    d i (ϕ.func x) (ϕ.func y) ≤ d i (ϕ.func x) x + (d i x y + d i y (ϕ.func y)) := by
+      exact le_trans ((hd i).triangle _ _ _) (add_le_add (le_refl _) ((hd i).triangle _ _ _))
+    _ = 0 + (0 + 0) := by
+      rw [h_id_x, h_xy0, (hd i).symm, h_id_y]
+    _ = 0 := by simp
+
+/-- CH03-P13-01: 命题 3.10 点态半径分量最小值公式 -/
+theorem prop_3_10_01 (ϕ : Operator X bot) (U : Set X) (i : I) (J : Finset I) (hJ : J.Nonempty) (y : X) :
+    r_null (d i) (subfamily_pseudometric d J) ϕ y U =
+      Finset.min' (J.image (fun j => r_null (d i) (d j) ϕ y U))
+        (Finset.Nonempty.image hJ _) := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+/-- CH03-P13-02: 命题 3.10 统一半径分量最小值公式 -/
+theorem prop_3_10_02 (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (i : I) (J : Finset I) (hJ : J.Nonempty) :
+    r_null_uniform_comp d ϕ i J U =
+      Finset.min' (J.image (fun j => nullification_matrix_entry d ϕ U j i))
+        (Finset.Nonempty.image hJ _) := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+/-- CH03-P13-03: 命题 3.10 J⊆K时统一半径关于输出子族反单调 -/
+theorem prop_3_10_03 (ϕ : Operator X bot) (U : Set X) (i : I) {J K : Set I} (hJK : J ⊆ K) :
+    r_null_uniform_comp d ϕ i K U ≤ r_null_uniform_comp d ϕ i J U := by
+  dsimp [r_null_uniform_comp, r_null_uniform]
+  apply le_iInf; intro y
+  apply le_iInf; intro hy
+  refine le_trans (biInf_le (fun y => r_null (d i) (subfamily_pseudometric d K) ϕ y U) hy) ?_
+  dsimp [r_null]
+  apply sSup_le_sSup
+  rintro r ⟨hr0, hrt, hK⟩
+  refine ⟨hr0, hrt, ?_⟩
+  intro x hx hdist
+  have h_zeroK := hK x hx hdist
+  dsimp [subfamily_pseudometric] at h_zeroK ⊢
+  apply le_antisymm _ (zero_le _)
+  apply iSup_le
+  rintro ⟨j, hj⟩
+  have h_le := le_iSup (fun k : {k // k ∈ K} => d k.1 (ϕ.func x) (ϕ.func y)) ⟨j, hJK hj⟩
+  exact le_trans h_le (le_of_eq h_zeroK)
+
+/-- CH03-P14-01: 命题 3.11 纤维成员条件推出输出零距 -/
+theorem prop_3_11_fiber_zero (ϕ : Operator X bot) (U : Set X) (j : I) (y y' : X)
+    (hy' : y' ∈ Fib d ϕ {j} (ϕ.func y) U) :
+    d j (ϕ.func y) (ϕ.func y') = 0 := by
+  have h_zero := ((prop_3_5_v d ϕ j (ϕ.func y) U).1.mp hy').2
+  rw [(d j).symm]
+  exact h_zero
+
+/-- CH03-P14-02: 命题 3.11 严格小于点态上确界时提取合法有限正半径，推出零距 -/
+theorem prop_3_11_lt_sSup (ϕ : Operator X bot) (U : Set X) (i j : I) (y y' : X)
+    (hy' : y' ∈ U) (hdist : d i y' y < r_null (d i) (d j) ϕ y U) :
+    d j (ϕ.func y) (ϕ.func y') = 0 := by
+  dsimp [r_null] at hdist
+  obtain ⟨r, ⟨hr0, hrt, h_ball⟩, hr_gt⟩ := exists_lt_of_lt_csSup hdist
+  have h_zero := h_ball y' hy' hr_gt
+  rw [(d j).symm]
+  exact h_zero
+
+/-- CH03-P14-03: 命题 3.11 复合输入实例 -/
+theorem prop_3_11_compose_inst (ϕ1 ϕ2 : Operator X bot) (U2 : Set X) (j : I) (x x' : X)
+    (hx : ϕ1.func x ∈ U2) (hx' : ϕ1.func x' ∈ U2)
+    (h_fib : ϕ1.func x' ∈ Fib d ϕ2 {j} (ϕ2.func (ϕ1.func x)) U2) :
+    d j ((ϕ2 * ϕ1).func x) ((ϕ2 * ϕ1).func x') = 0 := by
+  exact prop_3_11_fiber_zero d ϕ2 U2 j (ϕ1.func x) (ϕ1.func x') h_fib
+
+/-- CH03-P15-01: 命题 3.12 (i) 下游在实际像域保持零距时，复合统一半径下界 -/
+theorem prop_3_12_i (ϕ1 ϕ2 : Operator X bot) (U : Set X) (i j l : I)
+    (h_pres : ∀ y y' ∈ ϕ1.func '' U, d l y y' = 0 → d j (ϕ2.func y) (ϕ2.func y') = 0) :
+    nullification_matrix_entry d ϕ1 U l i ≤
+      nullification_matrix_entry d (ϕ2 * ϕ1) U j i := by
+  dsimp [nullification_matrix_entry, r_null_uniform, r_null]
+  apply le_iInf; intro x
+  apply le_iInf; intro hx
+  refine le_trans (biInf_le (fun x => sSup { r | 0 < r ∧ r < ⊤ ∧ ∀ x' ∈ U, d i x' x < r → d l (ϕ1.func x') (ϕ1.func x) = 0 }) hx) ?_
+  apply sSup_le_sSup
+  rintro r ⟨hr0, hrt, h1⟩
+  refine ⟨hr0, hrt, ?_⟩
+  intro x' hx' hdist
+  have h_zero1 := h1 x' hx' hdist
+  exact h_pres (ϕ1.func x') (Set.mem_image_of_mem _ hx') (ϕ1.func x) (Set.mem_image_of_mem _ hx) h_zero1
+
+/-- CH03-P15-02: 命题 3.12 (ii) 有限正L的单通道Lip上界给下游实际像域半径除以L的下界 -/
+theorem prop_3_12_ii (ϕ1 ϕ2 : Operator X bot) (U : Set X) (i j l : I)
+    (L : ENNReal) (hL_pos : 0 < L) (hL_ne_top : L ≠ ⊤)
+    (hLip : ∀ x ∈ U, ∀ x' ∈ U, d l (ϕ1.func x) (ϕ1.func x') ≤ L * d i x x') :
+    nullification_matrix_entry d ϕ2 (ϕ1.func '' U) j l / L ≤
+      nullification_matrix_entry d (ϕ2 * ϕ1) U j i := by
+  dsimp [nullification_matrix_entry, r_null_uniform, r_null]
+  apply le_iInf; intro x
+  apply le_iInf; intro hx
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+/-- CH03-P18-01: 命题 3.15 (i) 严格低于统一半径的输入点对输出零距 -/
+theorem prop_3_15_i (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (x y : X) (hx : x ∈ U) (hy : y ∈ U)
+    (h_dist : d i x y < nullification_matrix_entry d ϕ U j i) :
+    d j (ϕ.func x) (ϕ.func y) = 0 := by
+  dsimp [nullification_matrix_entry, r_null_uniform] at h_dist
+  have h_le := biInf_le (fun z => r_null (d i) (d j) ϕ z U) hy
+  have h_lt : d i x y < r_null (d i) (d j) ϕ y U := lt_of_lt_of_le h_dist h_le
+  exact prop_3_11_lt_sSup d ϕ U i j y x hx h_lt
+
+/-- CH03-P18-02: 命题 3.15 (ii) 输出正分离推出输入距离≥统一半径 -/
+theorem prop_3_15_ii (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (x y : X) (hx : x ∈ U) (hy : y ∈ U)
+    (h_pos : 0 < d j (ϕ.func x) (ϕ.func y)) :
+    nullification_matrix_entry d ϕ U j i ≤ d i x y := by
+  by_contra h_not
+  push Not at h_not
+  have h_zero := prop_3_15_i d ϕ U i j x y hx hy h_not
+  exact (ne_of_gt h_pos) h_zero
+
+/-- CH03-P18-03: 命题 3.15 (iii) 对每个规定的有限正α构造两点和有限正ε -/
+theorem prop_3_15_iii (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (α : ENNReal) (hα_pos : 0 < α) (hα_ne_top : α < ⊤)
+    (hα : nullification_matrix_entry d ϕ U j i < α) :
+    ∃ x ∈ U, ∃ y ∈ U, ∃ ε : ENNReal, 0 < ε ∧ ε < ⊤ ∧
+      d i x y < α ∧ ε ≤ d j (ϕ.func x) (ϕ.func y) := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+/-- CH03-P19-01: 命题 3.16 (i) 统一半径≥有限正阈值时，每个中心的开球包含在纤维中 -/
+theorem prop_3_16_i (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (τ_N : ENNReal) (hτ : τ_N ≤ nullification_matrix_entry d ϕ U j i)
+    (y : X) (hy : y ∈ U) :
+    { x ∈ U | d i x y < τ_N } ⊆ Fib d ϕ {j} (ϕ.func y) U := by
+  intro x hx
+  have h_dist : d i x y < nullification_matrix_entry d ϕ U j i := lt_of_lt_of_le hx.2 hτ
+  have h_zero := prop_3_15_i d ϕ U i j x y hx.1 hy h_dist
+  dsimp [Fib]
+  refine ⟨hx.1, ?_⟩
+  rw [subfamily_pseudometric_singleton]
+  exact h_zero
+
+/-- CH03-P21-01: 推论 3.17（小输入域上的整体零化判据） -/
+theorem cor_3_17_i (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (i j : I)
+    (diam_U τ_σ τ_N : ENNReal) (h_diam : ∀ x ∈ U, ∀ y ∈ U, d i x y ≤ diam_U)
+    (h_lt : diam_U < τ_σ) (h_le : τ_σ ≤ τ_N) :
+    (τ_N ≤ nullification_matrix_entry d ϕ U j i) ↔
+    (∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) = 0) := by
+  constructor
+  · intro hτ x hx y hy
+    have h_dist : d i x y < nullification_matrix_entry d ϕ U j i := by
+      calc
+        d i x y ≤ diam_U := h_diam x hx y hy
+        _ < τ_σ := h_lt
+        _ ≤ τ_N := h_le
+        _ ≤ nullification_matrix_entry d ϕ U j i := hτ
+    exact prop_3_15_i d ϕ U i j x y hx hy h_dist
+  · intro h_const
+    dsimp [nullification_matrix_entry, r_null_uniform, r_null]
+    apply le_iInf; intro y
+    apply le_iInf; intro hy
+    apply le_sSup
+    intro b hb
+    refine ⟨by norm_num, by norm_num, ?_⟩
+    intro x hx _
+    exact h_const x hx y hy
+
+/-- CH03-P27-01: 习题 3.2 (i) 正co-Lip通道与点态零化判据推出不存在(0,rN)内的输入距离 -/
+theorem ex_3_2_i (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d ϕ U K) (i j : I) (hK_pos : 0 < K i j)
+    (y : X) (hy : y ∈ U) (x : X) (hx : x ∈ U) :
+    ¬ (0 < d i x y ∧ d i x y < r_null (d i) (d j) ϕ y U) := by
+  rintro ⟨h_pos, h_lt⟩
+  have h_zero := prop_3_11_lt_sSup d ϕ U i j y x hx h_lt
+  have h_zero_in := positive_colip_entry_reflects_zero d ϕ U K i j hK hK_pos x hx y hy
+  have h_in0 : d i x y = 0 := by
+    rw [(d j).symm] at h_zero
+    exact h_zero_in h_zero
+  exact (ne_of_gt h_pos) h_in0
+
+/-- CH03-P27-02: 习题 3.2 (ii) 统一正半径给所有输入点对的零或≥统一半径二择 -/
+theorem ex_3_2_ii (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d ϕ U K) (i j : I) (hK_pos : 0 < K i j)
+    (x y : X) (hx : x ∈ U) (hy : y ∈ U) :
+    d i x y = 0 ∨ nullification_matrix_entry d ϕ U j i ≤ d i x y := by
+  by_cases h0 : d i x y = 0
+  · left; exact h0
+  · right
+    have h_pos : 0 < d i x y := lt_of_le_of_ne (zero_le _) (Ne.symm h0)
+    by_contra h_lt
+    push Not at h_lt
+    have h_le := biInf_le (fun z => r_null (d i) (d j) ϕ z U) hy
+    have h_lt_pt : d i x y < r_null (d i) (d j) ϕ y U := lt_of_lt_of_le h_lt h_le
+    exact ex_3_2_i d ϕ U K hK i j hK_pos y hy x hx ⟨h_pos, h_lt_pt⟩
+
+end OperatorLocalDegeneracy

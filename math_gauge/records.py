@@ -207,6 +207,7 @@ def project_assessment_score(score):
     fields = ("benchmark_version", "scoring_method_version", "strict_method_version", "score_mode",
               "capability_method_version", "capability_policy_sha256",
               "claim_penalty_method_version", "claim_penalty_policy_sha256", "claim_penalties",
+              "submission_method_version", "submission_policy_sha256", "submission_review_sha256", "submission_summary",
               "primary_metric", "model_label", "capacity", "group_capacity", "coverage", "whole_task_counts", "profile",
               "alignment_selfcheck", "strict_alignment_selfcheck", "lean_formalization_breakdown",
               "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings",
@@ -223,6 +224,12 @@ def project_assessment_score(score):
 def _validate_research_tool_evidence(root, row, execution, policy):
     """Keep historical no-tools evidence distinct from native local-tool answers."""
     from .execution_policy import LOCAL_TOOLS_TRACK
+    if row.get("agy_native_evidence") is not None:
+        from .agy_evidence import validate_local_tools
+        if row.get("execution_track") != LOCAL_TOOLS_TRACK or policy.get("local_tools_allowed") is not True:
+            raise ValueError("AGY research needs its selected local-tool policy")
+        validate_local_tools(root, row, execution, evidence_bytes)
+        return
     if row.get("external_harness_evidence") is not None:
         from .claude_code_evidence import validate_delivery
         if row.get("execution_track") != LOCAL_TOOLS_TRACK or policy.get("local_tools_allowed") is not True:
@@ -274,6 +281,9 @@ def _native_research_completed(root, row, execution):
     This narrow source adapter is not provider authentication. The legacy
     completed/exit0 path stays unchanged; readable ERROR and DONE never qualify.
     """
+    if row.get("agy_native_evidence") is not None:
+        from .agy_evidence import validate_delivery
+        return validate_delivery(root, row, evidence_bytes)["delivered"]
     if row.get("external_harness_evidence") is not None:
         from .claude_code_evidence import validate_delivery
         return validate_delivery(root, row, evidence_bytes)["delivered"]
@@ -548,7 +558,7 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
     """
     if record.get("manuscript_completion_inputs") is None:
         return None
-    from .manuscript_completion import validate_inputs, validate_system_exclusion
+    from .manuscript_completion import validate_inputs, validate_system_exclusion, criterion_total_matches
     data = json.loads(evidence_bytes(root, record["manuscript_completion_inputs"]))
     validate_inputs(data, data["policy"] if policy is None else policy)
     cases = {c["case_id"]: c for c in data["case_index"]}
@@ -664,8 +674,7 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
             raise ValueError("Manuscript judgment lost its original input, answer or native execution")
         criteria = review.get("criteria", [])
         if ([{"criterion_id": c["id"], "points": c["max_points"]} for c in criteria] != case["criteria"]
-                or any(type(c.get("points")) is not int or not 0 <= c["points"] <= c["max_points"] for c in criteria)
-                or sum(c["points"] for c in criteria) != row["points"]):
+                or not criterion_total_matches(criteria, row["points"])):
             raise ValueError("Manuscript mathematical credit differs from its criterion review")
         manuscript = None
         if case.get("strict_completion_policy") is not None:
@@ -1156,6 +1165,11 @@ def validate_native_delivery_failure(root, row):
     """Verify operational zero from an original first native ERROR, not math text."""
     source = row.get("source", {})
     data = json.loads(evidence_bytes(root, row["delivery_failure"]))
+    if data.get("schema") == "math-gauge.agy-native-evidence/v1":
+        from .agy_evidence import validate_failure
+        if row.get("agy_native_evidence") != row["delivery_failure"]:
+            raise ValueError("AGY failure must bind its original native evidence")
+        return validate_failure(root, row, evidence_bytes)
     if data.get("schema") == "math-gauge.claude-code-delivery-failure/v1":
         from .claude_code_evidence import validate_failure
         return validate_failure(root, row, evidence_bytes)
@@ -1221,9 +1235,13 @@ def validate_current_written_reviews(root, record, *, policy, external=False):
     data = plan["profile"]["data"]
     if data.get("schema") != "math-gauge.benchmark-profile/v6":
         raise ValueError("Legacy written evidence still requires its source-bound supplements")
+    original_policy=policy
+    if policy.get('version')=='0.9.0':
+        from .submission_evidence import original_assessment_policy
+        original_policy=original_assessment_policy(root,record,policy)
     if (plan.get("runtime_frozen") is not True
             or inputs.get("model_label") != plan.get("model_label")
-            or identity(data.get("assessment_policy")) != identity(policy)):
+            or identity(data.get("assessment_policy")) != identity(original_policy)):
         raise ValueError("Direct written sources bind a different current plan or policy")
     cases = {case["case_id"]: case for case in plan["case_index"]
              if case["component"] in {"proofs", "exploration"}}
@@ -1266,7 +1284,7 @@ def validate_current_written_reviews(root, record, *, policy, external=False):
         if (original_plan["plan_sha256"] != source.get("execution_plan_sha256")
                 or original_plan.get("runtime_frozen") is not True
                 or original_plan.get("model_label") != plan.get("model_label")
-                or identity(original_plan["profile"]["data"].get("assessment_policy")) != identity(policy)
+                or identity(original_plan["profile"]["data"].get("assessment_policy")) != identity(original_policy)
                 or original_case is None or any(original_case.get(key) != case.get(key) for key in compared)
                 or original_slot is None or original_slot.get("selected") is not True
                 or original_slot.get("case_id") != cid or original_slot.get("kind") != "independent"
@@ -1382,10 +1400,15 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
             raise ValueError("Current manuscript component requires its source-bound evidence")
     validate_strict_assessment_policy(json.loads(strict_raw))
     claim_raw = None
-    if assessment["version"] == "0.8.0":
+    if assessment["version"] in {"0.8.0", "0.9.0"}:
         from .claim_penalties import validate_policy
         claim_raw = evidence_bytes(evidence_root, record["claim_penalty_policy"])
         validate_policy(json.loads(claim_raw))
+    submission = None
+    if assessment['version'] == '0.9.0':
+        from . import submission_evidence
+        submission = submission_evidence.validate_record_component(root, record, public=not external)
+        submission_evidence.validate_history(root, record)
     keys = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}
     if mode not in keys:
         raise ValueError("Unknown assessment score mode")
@@ -1407,6 +1430,18 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
         condition_sources = load_sources(root, record, condition, public_root=evidence_root)
         score = json.loads(evidence_bytes(root, item))
         bindings = score.get("source_bindings", {})
+        if submission is not None:
+            from .benchmarks import identity
+            observed = (submission_evidence.load_condition(root, record, condition) if external
+                        else submission['conditions'][condition])
+            expected_summary = submission_evidence.summary(observed) if external else observed['summary']
+            source_sha = record['submission_evidence']['sha256'] if external else record['submission_evidence_source_sha256']
+            if (score.get('submission_method_version') != '0.1.0'
+                    or score.get('submission_summary') != expected_summary
+                    or bindings.get('submission_evidence_sha256') != source_sha
+                    or bindings.get('submission_policy_sha256') != record['submission_policy']['sha256']
+                    or score.get('submission_policy_sha256') != identity(submission_evidence.load_policy(root, record))):
+                raise ValueError('Current score lost its original submission/work binding')
         engineering_descriptor = (condition_sources["bindings"]["formalization_review"]
                                   if condition_sources else record["formalization_review"])
         if (score.get("schema") != ("math-gauge.assessment-score/v1" if external else
@@ -1759,6 +1794,98 @@ def load_content_rates(root, record=None):
     if report['source_bindings'] != expected or report['model_id'] != root.parent.name:
         raise ValueError('Content rates bind a different retained record, score or policy')
     return report
+
+
+def rebind_content_rates(private_folder, public_folder, *, private_root, public_root):
+    """Rebind reviewed observations after record changes, then use shared scoring.
+
+    This never infers observations from MC/SMC or changes units, goals or their
+    judgments. Source revisions must already have their independent review.
+    """
+    from .content_rates import project_rates,validate_review,verify_sources
+    from .goal_attainment import validate_goal_review
+    from .scoring import score_content_rates
+    private,public=Path(private_folder),Path(public_folder)
+    if not (private/'content-rate-review.json').is_file():
+        return None
+    record_name='native-observation.json' if (public/'native-observation.json').is_file() else 'record.json'
+    record=json.loads((public/record_name).read_bytes())
+    policy=json.loads(evidence_bytes(public,record['assessment_policy']))
+    native=record_name=='native-observation.json'
+    if native:
+        score_path=private/'partial-retry-result.json'
+    else:
+        private_record=json.loads((private/record_name).read_bytes())
+        score_path=private/private_record['assessment_results']['nonlogical_retry_3']['path']
+    score=json.loads(score_path.read_bytes())
+    def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+    def write(path,data):
+        path.write_text(json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
+    histories=[]
+    for repository,folder,repository_root in (('private',private,Path(private_root)),('public',public,Path(public_root))):
+        history_path=folder/'score-history/assessment-0.8.0/manifest.json'
+        if history_path.is_file():
+            history=json.loads(history_path.read_bytes())
+            for item in history['files']:
+                histories.append(dict(repository=repository,path=str(folder.relative_to(repository_root)/item['path']),
+                    sha256=item['sha256']))
+    def relocate(value, *, preserve=frozenset(), relocations=None):
+        if isinstance(value,dict):
+            if {'repository','path','sha256'}<=set(value):
+                base=Path(public_root) if value['repository']=='public' else Path(private_root)
+                original=base/value['path']
+                if not original.is_file() or digest(original)!=value['sha256']:
+                    kept=next((r for r in histories if r['repository']==value['repository']
+                               and r['sha256']==value['sha256']),None)
+                    if kept is None:
+                        raise ValueError('Supplemental evidence changed without a retained historical source: '
+                                         +value['repository']+':'+value['path']+'@'+value['sha256'])
+                    if (value['repository'],value['path'],value['sha256']) in preserve:
+                        key=(value['repository'],value['path'])
+                        relocations[key]=dict(original={k:value[k] for k in ('repository','path','sha256')},
+                                              retained=kept)
+                        return dict(value)
+                    return dict(value,path=kept['path'])
+            return {k:relocate(v,preserve=preserve,relocations=relocations) for k,v in value.items()}
+        if isinstance(value,list):return [relocate(v,preserve=preserve,relocations=relocations) for v in value]
+        return value
+    content_path=private/'content-rate-review.json'
+    content=relocate(json.loads(content_path.read_bytes()))
+    bindings=dict(record_sha256=digest(public/record_name),
+        assessment_result_sha256=record['assessment_results']['nonlogical_retry_3']['sha256'],
+        assessment_policy_sha256=record['assessment_policy']['sha256'],
+        method_policy_sha256=digest(public/'content-rate-policy.json'))
+    content['source_bindings']=bindings
+    if 'assessment_policy_sha256' in content:
+        content['assessment_policy_sha256']=bindings['assessment_policy_sha256']
+    validate_review(content,policy,score)
+    verify_sources(content,{'public':Path(public_root),'private':Path(private_root)})
+    write(content_path,content)
+    legacy=score_content_rates(content,policy)
+    legacy['private_review_sha256']=digest(content_path)
+    write(private/'content-rates-report-v0.1.0.json',legacy)
+    write(public/'content-rate-coverage-v0.1.0.json',project_rates(legacy))
+    goals_path=private/'goal-attainment-review.json'
+    original_goals=json.loads(goals_path.read_bytes())
+    definitions={(d['repository'],d['path'],d['sha256']) for task in original_goals['tasks']
+                 for goal in task['goals'] for d in goal['definition_evidence']}
+    relocations={}
+    goals=relocate({k:v for k,v in original_goals.items() if k!='source_relocations'},
+                   preserve=definitions,relocations=relocations)
+    if relocations:
+        goals['source_relocations']=list(relocations.values())
+    goals['source_bindings']=dict(bindings,method_policy_sha256=digest(public/'goal-attainment-policy.json'),
+        content_review_sha256=digest(content_path),content_method_policy_sha256=bindings['method_policy_sha256'])
+    if 'assessment_policy_sha256' in goals:
+        goals['assessment_policy_sha256']=bindings['assessment_policy_sha256']
+    validate_goal_review(goals,content,policy,score)
+    verify_sources(goals,{'public':Path(public_root),'private':Path(private_root)})
+    write(goals_path,goals)
+    report=score_content_rates(content,policy,goals)
+    report.update(private_review_sha256=digest(content_path),private_goal_review_sha256=digest(goals_path))
+    write(private/'content-rates-report.json',report)
+    write(public/'content-rates.json',project_rates(report))
+    return dict(rebound=True,observations_inferred=False,new_candidate_calls=0)
 
 
 def validate_record(root, *, formalization_root=None, validate_scores=True):

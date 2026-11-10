@@ -5,7 +5,20 @@ bytes and execution evidence; scoring.py owns all aggregation.
 """
 import re
 import json
+import math
+from fractions import Fraction
 from pathlib import PurePosixPath
+
+
+def valid_points(value, maximum):
+    """Keep finite fractional source credit without rounding an adjudication."""
+    return type(value) in {int, float} and math.isfinite(value) and 0 <= value <= maximum
+
+
+def criterion_total_matches(criteria, total):
+    return (valid_points(total, 100)
+            and all(valid_points(c.get("points"), c["max_points"]) for c in criteria)
+            and sum(Fraction(str(c["points"])) for c in criteria) == Fraction(str(total)))
 
 
 def validate_policy(policy):
@@ -202,7 +215,7 @@ def validate_inputs(data, policy):
                     or not isinstance(row.get("delivery_failure"), dict)):
                 raise ValueError("Failed manuscript delivery is operational zero, not a mathematical review")
         elif status == "response_received_execution_unverified":
-            if (type(row.get("points")) is not int or not 0 <= row["points"] <= 100
+            if (not valid_points(row.get("points"), 100)
                     or type(row.get("complete")) is not bool
                     or any(not isinstance(row.get(k), dict) for k in ("response", "review", "execution"))):
                 raise ValueError("Manuscript credit contradicts the retained judgment")

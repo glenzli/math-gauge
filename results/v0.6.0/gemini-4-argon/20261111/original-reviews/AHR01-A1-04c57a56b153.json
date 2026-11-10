@@ -1,0 +1,49 @@
+{
+  "schema": "math-gauge.reliability-review/v1",
+  "slot_id": "AHR01:A1",
+  "case_id": "AHR01",
+  "reviewer": "Codex AI reviewer /root/v060_gemini4_argon_run",
+  "reviewer_kind": "ai",
+  "decision": "fail",
+  "assumption_fidelity": "clean",
+  "proof_validity": "invalid",
+  "scope_accuracy": "incorrect",
+  "unnecessary_restriction": true,
+  "notes": "核心失配诊断、保留已有结论与主反例正确；附加的剪枝后终止域等式要求是实质错误，修复范围不完整准确。不得把这一侧错误扩大为核心诊断完全失效，也不能以正确主结论免除错误必要条件。",
+  "findings": [
+    "post-pruning-terminal-domain-formula"
+  ],
+  "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+  "format_review": {
+    "decision": "valid",
+    "notes": "完整书面审计交付；开头独立{}没有违反冻结格式要求，不作格式扣分。本题无需新增Lean。"
+  },
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "正确找出choice_projection只约束实际发生输出、遗漏完整保留边范围；总体misaligned判断正确，没有把编译作语义证据。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "详细准确保留NodePartitionData、剪枝、重着色、局域限制、自环操作判据、完整路径与全域构造外延相等，以及关系层有效局部等价定理；没有错称主定理为假。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "三点平凡分划反例有效：保留γ在未实际出现的x1输出处增加自环，输入x0仍沿γ,β终止，两节点均可达，旧关系全部字段可满足而正文不关联边保持条件失败。局域算子域、非空分片、标签映射和实际发生条件均一致。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 10,
+      "notes": "全保留边edge_choice_iff与构造桥建议是有效修复；但同时要求剪枝后的子节点仍有Tnew=image(child)∩Told，并把这作为必要待补公式，是错误的额外限制。删除不可达目标片会把保留源片的未实际使用出边改成stop，终止域可严格扩大。正确修复应分清剪枝前公式与剪枝后出边补集，不能要求两者同式。该错误只扣此维，不抹去正确核心诊断和反例。"
+    }
+  ],
+  "post_observation_binding": true,
+  "recorded_at": "2026-11-08T17:52:42.373588+00:00",
+  "review_revision": 1,
+  "supersedes_review_sha256": null,
+  "review_sha256": "35484da95dab2c666070b238ac427f20f8453dbaf000041756d0aed490c27812",
+  "original_private_review_sha256": "04c57a56b153b4d9326023feb59d57607a09737e44fded1b754e9f609b78b4a2"
+}

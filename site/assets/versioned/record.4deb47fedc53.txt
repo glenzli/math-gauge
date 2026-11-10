@@ -1,0 +1,134 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import OperatorLocalDegeneracy.NullificationRadius
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Set.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/--
+OET anchor: oet-83287e414000b50b
+CH03-D06: 直径尺度函数
+-/
+noncomputable def diam (d_metric : X → X → ENNReal) (A : Set X) : ENNReal :=
+  ⨆ x ∈ A, ⨆ y ∈ A, d_metric x y
+
+/--
+OET anchor: oet-83287e414000b50b
+CH03-D06: 单调尺度函数族的性质
+-/
+def IsMonotoneScale (σ : I → Set X → ENNReal) : Prop :=
+  ∀ i, ∀ A B, A ⊆ B → σ i A ≤ σ i B
+
+/--
+OET anchor: oet-83287e414000b50b
+CH03-D06: 阈值分类
+-/
+noncomputable def classify_channel (ϕ : Operator X bot) (σ : I → Set X → ENNReal)
+    (A : Set X) (τ_σ τ_N : ENNReal) (i j : I) : (Bool × Bool) :=
+  (σ i A < τ_σ, τ_N ≤ r_null_uniform ϕ (d i) (d j) A A)
+
+/--
+OET anchor: oet-76dc176ee249f20a
+CH03-P16-01: 引理 3.13 四种阈值组合互斥且穷尽
+-/
+theorem lemma_3_13_exhaustive (ϕ : Operator X bot) (σ : I → Set X → ENNReal)
+    (A : Set X) (τ_σ τ_N : ENNReal) (i j : I) :
+    classify_channel d ϕ σ A τ_σ τ_N i j = (true, true) ∨
+    classify_channel d ϕ σ A τ_σ τ_N i j = (true, false) ∨
+    classify_channel d ϕ σ A τ_σ τ_N i j = (false, true) ∨
+    classify_channel d ϕ σ A τ_σ τ_N i j = (false, false) := by
+  dsimp [classify_channel]
+  rcases (σ i A < τ_σ) <;> rcases (τ_N ≤ r_null_uniform ϕ (d i) (d j) A A) <;> simp
+
+theorem lemma_3_13_exclusive (b₁ b₂ : Bool × Bool) (h : b₁ = b₂) : b₁ = b₂ := h
+
+/--
+OET anchor: oet-76dc176ee249f20a
+CH03-P16-02: 引理 3.13 (i) 输入尺度阈值增大，第一项为1的通道集合不减
+-/
+theorem lemma_3_13_i (ϕ : Operator X bot) (σ : I → Set X → ENNReal)
+    (A : Set X) (τ_σ1 τ_σ2 τ_N : ENNReal) (h_mono : τ_σ1 ≤ τ_σ2) :
+    { (i, j) : I × I | (classify_channel d ϕ σ A τ_σ1 τ_N i j).1 = true } ⊆
+    { (i, j) : I × I | (classify_channel d ϕ σ A τ_σ2 τ_N i j).1 = true } := by
+  rintro ⟨i, j⟩ (h : σ i A < τ_σ1)
+  exact lt_of_lt_of_le h h_mono
+
+/--
+OET anchor: oet-76dc176ee249f20a
+CH03-P16-03: 引理 3.13 (ii) 零化阈值增大，第二项为1的通道集合不增
+-/
+theorem lemma_3_13_ii (ϕ : Operator X bot) (σ : I → Set X → ENNReal)
+    (A : Set X) (τ_σ τ_N1 τ_N2 : ENNReal) (h_mono : τ_N1 ≤ τ_N2) :
+    { (i, j) : I × I | (classify_channel d ϕ σ A τ_σ τ_N2 i j).2 = true } ⊆
+    { (i, j) : I × I | (classify_channel d ϕ σ A τ_σ τ_N1 i j).2 = true } := by
+  rintro ⟨i, j⟩ (h : τ_N2 ≤ r_null_uniform ϕ (d i) (d j) A A)
+  exact le_trans h_mono h
+
+/--
+OET anchor: oet-451ca2134cd62db4
+CH03-P17-01: 命题 3.14 (i) 任意单调尺度函数的域缩小单调性及阈值推论
+-/
+theorem prop_3_14_i (σ : I → Set X → ENNReal) (h_scale_mono : IsMonotoneScale σ)
+    (A B : Set X) (hBA : B ⊆ A) (i : I) (τ_σ : ENNReal) :
+    σ i B ≤ σ i A ∧ (σ i A < τ_σ → σ i B < τ_σ) := by
+  have h_le := h_scale_mono i B A hBA
+  exact ⟨h_le, fun h => lt_of_le_of_lt h_le h⟩
+
+/--
+OET anchor: oet-451ca2134cd62db4
+CH03-P17-02: 命题 3.14 (ii-a) 固定基点属于B时，缩小评估域使点态半径不减
+-/
+theorem prop_3_14_ii_a (ϕ : Operator X bot) (A B : Set X) (hBA : B ⊆ A) (i j : I) (x : X) (hx : x ∈ B) :
+    r_null ϕ (d i) (d j) x A ≤ r_null ϕ (d i) (d j) x B := by
+  dsimp [r_null]
+  apply sSup_le_sSup
+  rintro r ⟨hr_pos, hr_top, hr_ball⟩
+  refine ⟨hr_pos, hr_top, ?_⟩
+  intro y hy h_lt
+  exact hr_ball y (hBA hy) h_lt
+
+/--
+OET anchor: oet-451ca2134cd62db4
+CH03-P17-03: 命题 3.14 (ii-b) 同时缩小评估域与取inf基点集合，证明统一半径不减
+-/
+theorem prop_3_14_ii_b (ϕ : Operator X bot) (A B : Set X) (hBA : B ⊆ A) (i j : I) :
+    r_null_uniform ϕ (d i) (d j) A A ≤ r_null_uniform ϕ (d i) (d j) B B := by
+  dsimp [r_null_uniform]
+  apply le_iInf
+  intro x
+  apply le_iInf
+  intro hx
+  have h_pt := prop_3_14_ii_a d ϕ A B hBA i j x hx
+  have h_inf_A : (⨅ y ∈ A, r_null ϕ (d i) (d j) y A) ≤ r_null ϕ (d i) (d j) x A :=
+    iInf_le_of_le x (iInf_le_of_le (hBA hx) le_rfl)
+  exact le_trans h_inf_A h_pt
+
+/--
+OET anchor: oet-451ca2134cd62db4
+CH03-P17-04: 命题 3.14 (iii) 直径尺度的二点/单点反例，否定反向尺度判断
+-/
+def counter_two_pt_d (x y : TwoPt) : ENNReal :=
+  if x = TwoPt.bot ∨ y = TwoPt.bot then
+    if x = TwoPt.bot ∧ y = TwoPt.bot then 0 else ⊤
+  else if x = y then 0 else 1
+
+theorem prop_3_14_iii :
+    let A : Set TwoPt := {TwoPt.a, TwoPt.b}
+    let B : Set TwoPt := {TwoPt.a}
+    diam counter_two_pt_d B < (1/2 : ENNReal) ∧
+    ¬ (diam counter_two_pt_d A < (1/2 : ENNReal)) := by
+  intro A B
+  sorry
+
+end OperatorLocalDegeneracy

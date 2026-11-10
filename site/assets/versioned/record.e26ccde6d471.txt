@@ -1,0 +1,482 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import OperatorLocalDegeneracy.ComponentPartition
+import OperatorLocalDegeneracy.ComputationalFibers
+import OperatorLocalDegeneracy.NullificationRadius
+import OperatorLocalDegeneracy.ThresholdClassification
+import OperatorLocalDegeneracy.CoveringEntropy
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Finset.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/-- CH03-P26-01: 习题 3.1 (i-a) 验证绝对值读数伪度量、仿射算子合法，算出φ的纤维与分量类型 -/
+theorem ex_3_1_i_a_extended :
+    ExtendedPseudoMetric RBot RBot.bot (fun x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)) := by
+  sorry
+
+theorem ex_3_1_i_a_fiber :
+    let U : Set RBot := {RBot.val 0, RBot.val 1}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_aff : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (2 * r - 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    Fib d_abs phi_aff (Set.univ : Set Unit) (phi_aff.func (RBot.val 0)) U = U := by
+  sorry
+
+theorem ex_3_1_i_a_const :
+    let U : Set RBot := {RBot.val 0, RBot.val 1}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_aff : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (2 * r - 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    () ∈ I_const d_abs phi_aff U := by
+  sorry
+
+/-- CH03-P26-02: 习题 3.1 (i-b) 算出φ²的纤维与分量类型，精确保留U -/
+theorem ex_3_1_i_b_fiber :
+    let U : Set RBot := {RBot.val 0, RBot.val 1}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_aff : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (2 * r - 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    Fib d_abs (phi_aff * phi_aff) (Set.univ : Set Unit) ((phi_aff * phi_aff).func (RBot.val 0)) U = {RBot.val 0} := by
+  sorry
+
+theorem ex_3_1_i_b_act :
+    let U : Set RBot := {RBot.val 0, RBot.val 1}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_aff : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (2 * r - 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    () ∈ I_act d_abs (phi_aff * phi_aff) U := by
+  sorry
+
+/-- CH03-P26-03: 习题 3.1 (ii) 点值常算子自复合仍不能区分两点 -/
+theorem ex_3_1_ii (c : Real) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_c : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val _ => RBot.val c
+      | RBot.bot => RBot.bot, rfl⟩
+    Fib d_abs (phi_c * phi_c) (Set.univ : Set Unit) ((phi_c * phi_c).func (RBot.val 0)) U = U := by
+  sorry
+
+/-- CH03-P27-01: 习题 3.2 (i) 正co-Lip通道与点态零化判据推出不存在(0,rN)内的输入距离 -/
+theorem ex_3_2_i (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d ϕ U K) (i j : I) (hK_pos : 0 < K i j) (y : X) (hy : y ∈ U)
+    (hr_pos : r_null ϕ (d i) (d j) y U > 0)
+    (hd_i : ExtendedPseudoMetric X bot (d i))
+    (hd_j : ExtendedPseudoMetric X bot (d j)) :
+    ∀ x ∈ U, ¬ (0 < d i x y ∧ d i x y < r_null ϕ (d i) (d j) y U) := by
+  intro x hx ⟨h_dist_pos, h_dist_lt⟩
+  have h_zero := prop_3_11_lt_sSup d ϕ U i j y x hx (by
+    rwa [hd_i.symm]) hd_i hd_j
+  rw [hd_j.symm] at h_zero
+  have h_coLip := hK.2.2 x hx y hy j
+  have h_single_le : K i j * d i x y ≤ ∑ k : I, K k j * d k x y :=
+    Finset.single_le_sum (fun _ _ => zero_le _) (Finset.mem_univ i)
+  have h_le_zero : K i j * d i x y ≤ 0 := by
+    calc
+      K i j * d i x y ≤ ∑ k : I, K k j * d k x y := h_single_le
+      _ ≤ d j (ϕ.func x) (ϕ.func y) := h_coLip
+      _ = 0 := h_zero
+  have h_mul_pos : 0 < K i j * d i x y := ENNReal.mul_pos (ne_of_gt hK_pos) (ne_of_gt h_dist_pos)
+  exact (not_le_of_gt h_mul_pos) h_le_zero
+
+/-- CH03-P27-02: 习题 3.2 (ii) 统一正半径给所有输入点对的零或≥统一半径二择 -/
+theorem ex_3_2_ii (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d ϕ U K) (i j : I) (hK_pos : 0 < K i j)
+    (h_unif_pos : r_null_uniform ϕ (d i) (d j) U U > 0)
+    (hd_i : ExtendedPseudoMetric X bot (d i))
+    (hd_j : ExtendedPseudoMetric X bot (d j)) :
+    ∀ x ∈ U, ∀ y ∈ U, d i x y = 0 ∨ d i x y ≥ r_null_uniform ϕ (d i) (d j) U U := by
+  intro x hx y hy
+  by_cases h_zero : d i x y = 0
+  · left; exact h_zero
+  · right
+    have h_pos : 0 < d i x y := lt_of_le_of_ne (zero_le _) (Ne.symm h_zero)
+    by_contra h_lt
+    push_neg at h_lt
+    have h_pt_le : r_null_uniform ϕ (d i) (d j) U U ≤ r_null ϕ (d i) (d j) y U :=
+      iInf_le_of_le y (iInf_le_of_le hy (le_refl _))
+    have h_pt_lt : d i x y < r_null ϕ (d i) (d j) y U := lt_of_lt_of_le h_lt h_pt_le
+    have h_pt_pos : r_null ϕ (d i) (d j) y U > 0 := lt_of_lt_of_le h_unif_pos h_pt_le
+    exact ex_3_2_i d ϕ U K hK i j hK_pos y hy h_pt_pos hd_i hd_j x hx ⟨h_pos, h_pt_lt⟩
+
+/-- CH03-P28-01: 习题 3.3 (i) 平移算子的输入纤维分划 -/
+theorem ex_3_3_i_id_fiber :
+    let U : Set RBot := {RBot.val (-3), RBot.val (-2), RBot.val 0, RBot.val 2}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    Fib d_abs (@operator_identity RBot RBot.bot) (Set.univ : Set Unit) (RBot.val (-2)) U =
+      {RBot.val (-2), RBot.val 2} := by
+  sorry
+
+theorem ex_3_3_i_trans_fiber :
+    let U : Set RBot := {RBot.val (-3), RBot.val (-2), RBot.val 0, RBot.val 2}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_trans : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (r + 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    Fib d_abs phi_trans (Set.univ : Set Unit) (RBot.val (-1)) U =
+      {RBot.val (-2), RBot.val 0} := by
+  sorry
+
+/-- CH03-P28-02: 习题 3.3 (ii) 精确3/2半径计算两端内部覆盖数及熵差 -/
+theorem ex_3_3_cov_U :
+    let U : Set RBot := {RBot.val (-3), RBot.val (-2), RBot.val 0, RBot.val 2}
+    let d_abs : RBot → RBot → ENNReal := fun x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    covering_number d_abs (3 / 2) U = 2 := by
+  sorry
+
+theorem ex_3_3_cov_phi_U :
+    let U : Set RBot := {RBot.val (-3), RBot.val (-2), RBot.val 0, RBot.val 2}
+    let d_abs : RBot → RBot → ENNReal := fun x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_trans : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (r + 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    covering_number d_abs (3 / 2) (phi_trans.func '' U) = 2 := by
+  sorry
+
+theorem ex_3_3_entropy_diff :
+    let U : Set RBot := {RBot.val (-3), RBot.val (-2), RBot.val 0, RBot.val 2}
+    let d_abs : Unit → RBot → RBot → ENNReal := fun _ x y => match x, y with
+      | RBot.bot, RBot.bot => 0
+      | RBot.bot, _ => ⊤
+      | _, RBot.bot => ⊤
+      | RBot.val a, RBot.val b => ENNReal.ofReal (||a| - |b||)
+    let phi_trans : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (r + 1)
+      | RBot.bot => RBot.bot, rfl⟩
+    entropy_diff d_abs phi_trans Set.univ Set.univ (3 / 2) U = 0 := by
+  sorry
+
+/-- CH03-P29-01: 习题 3.4 (i-a) D=[0,1/2] -/
+theorem diam_Da :
+    let Da : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 0 ≤ r ∧ r ≤ 1 / 2 }
+    diam rbot_dist Da = 1 / 2 := by
+  sorry
+
+theorem r_null_unif_Da :
+    let Da : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 0 ≤ r ∧ r ≤ 1 / 2 }
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    r_null_uniform f_floor rbot_dist rbot_dist Da Da = ⊤ := by
+  sorry
+
+theorem type_Da :
+    let Da : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 0 ≤ r ∧ r ≤ 1 / 2 }
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    classify_channel (fun _ => diam (d ())) f_floor Da 1 1 () () = (true, true) := by
+  sorry
+
+/-- CH03-P29-02: 习题 3.4 (i-b) D=[9/10,11/10] -/
+theorem diam_Db :
+    let Db : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 9 / 10 ≤ r ∧ r ≤ 11 / 10 }
+    diam rbot_dist Db = 1 / 5 := by
+  sorry
+
+theorem r_null_unif_Db :
+    let Db : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 9 / 10 ≤ r ∧ r ≤ 11 / 10 }
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    r_null_uniform f_floor rbot_dist rbot_dist Db Db = 0 := by
+  sorry
+
+theorem type_Db :
+    let Db : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 9 / 10 ≤ r ∧ r ≤ 11 / 10 }
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    classify_channel (fun _ => diam (d ())) f_floor Db 1 1 () () = (true, false) := by
+  sorry
+
+/-- CH03-P29-03: 习题 3.4 (i-c) D={0,2} -/
+theorem diam_Dc :
+    let Dc : Set RBot := {RBot.val 0, RBot.val 2}
+    diam rbot_dist Dc = 2 := by
+  sorry
+
+theorem r_null_unif_Dc :
+    let Dc : Set RBot := {RBot.val 0, RBot.val 2}
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    r_null_uniform f_floor rbot_dist rbot_dist Dc Dc = 2 := by
+  sorry
+
+theorem type_Dc :
+    let Dc : Set RBot := {RBot.val 0, RBot.val 2}
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    classify_channel (fun _ => diam (d ())) f_floor Dc 1 1 () () = (false, true) := by
+  sorry
+
+/-- CH03-P29-04: 习题 3.4 (i-d) D=[0,2] -/
+theorem diam_Dd :
+    let Dd : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 0 ≤ r ∧ r ≤ 2 }
+    diam rbot_dist Dd = 2 := by
+  sorry
+
+theorem r_null_unif_Dd :
+    let Dd : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 0 ≤ r ∧ r ≤ 2 }
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    r_null_uniform f_floor rbot_dist rbot_dist Dd Dd = 0 := by
+  sorry
+
+theorem type_Dd :
+    let Dd : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ 0 ≤ r ∧ r ≤ 2 }
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    classify_channel (fun _ => diam (d ())) f_floor Dd 1 1 () () = (false, false) := by
+  sorry
+
+/-- CH03-P29-05: 习题 3.4 (ii) 反例否定无直径条件时半径≥1即整体零化 -/
+theorem ex_3_4_ii_counterexample :
+    let Dc : Set RBot := {RBot.val 0, RBot.val 2}
+    let f_floor : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val r => RBot.val (Real.floor r)
+      | RBot.bot => RBot.bot, rfl⟩
+    r_null_uniform f_floor rbot_dist rbot_dist Dc Dc ≥ 1 ∧
+    ¬ (∀ x ∈ Dc, ∀ y ∈ Dc, rbot_dist (f_floor.func x) (f_floor.func y) = 0) := by
+  sorry
+
+/-- CH03-P30-01: 习题 3.5 (i) 覆盖数分段及3/2不是合法内部中心 -/
+theorem ex35_cov_gt_2 (ε : ENNReal) (hε : ε > 2) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    covering_number rbot_dist ε U = 2 := by
+  sorry
+
+theorem ex35_cov_1_to_2 (ε : ENNReal) (h1 : ε > 1) (h2 : ε ≤ 2) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    covering_number rbot_dist ε U = 2 := by
+  sorry
+
+theorem ex35_cov_le_1 (ε : ENNReal) (h_pos : 0 < ε) (h1 : ε ≤ 1) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    covering_number rbot_dist ε U = 4 := by
+  sorry
+
+theorem ex35_center_3_2_not_in_U :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    RBot.val (3 / 2) ∉ U := by
+  intro U
+  simp [U]
+  intro h
+  rcases h with h | h | h | h <;> injection h with h' <;> linarith
+
+/-- CH03-P30-02: 习题 3.5 (ii) 像集覆盖数与熵差 -/
+theorem ex35_f_image :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let f : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 1
+      | RBot.val 2 => RBot.val 2
+      | RBot.val 3 => RBot.val 3
+      | _ => RBot.bot, rfl⟩
+    f.func '' U = U := by
+  sorry
+
+theorem ex35_g_image :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let g : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 3
+      | RBot.val 2 => RBot.val 1
+      | RBot.val 3 => RBot.val 2
+      | _ => RBot.bot, rfl⟩
+    g.func '' U = U := by
+  sorry
+
+theorem ex35_cov_f_image (ε : ENNReal) (hε_pos : 0 < ε) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let f : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 1
+      | RBot.val 2 => RBot.val 2
+      | RBot.val 3 => RBot.val 3
+      | _ => RBot.bot, rfl⟩
+    covering_number rbot_dist ε (f.func '' U) = covering_number rbot_dist ε U := by
+  sorry
+
+theorem ex35_cov_g_image (ε : ENNReal) (hε_pos : 0 < ε) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let g : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 3
+      | RBot.val 2 => RBot.val 1
+      | RBot.val 3 => RBot.val 2
+      | _ => RBot.bot, rfl⟩
+    covering_number rbot_dist ε (g.func '' U) = covering_number rbot_dist ε U := by
+  sorry
+
+theorem ex35_entropy_diff_f (ε : ENNReal) (hε_pos : 0 < ε) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let d_single : Unit → RBot → RBot → ENNReal := fun _ => rbot_dist
+    let f : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 1
+      | RBot.val 2 => RBot.val 2
+      | RBot.val 3 => RBot.val 3
+      | _ => RBot.bot, rfl⟩
+    entropy_diff d_single f Set.univ Set.univ ε U = 0 := by
+  sorry
+
+theorem ex35_entropy_diff_g (ε : ENNReal) (hε_pos : 0 < ε) :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let d_single : Unit → RBot → RBot → ENNReal := fun _ => rbot_dist
+    let g : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 3
+      | RBot.val 2 => RBot.val 1
+      | RBot.val 3 => RBot.val 2
+      | _ => RBot.bot, rfl⟩
+    entropy_diff d_single g Set.univ Set.univ ε U = 0 := by
+  sorry
+
+/-- CH03-P30-03: 习题 3.5 (iii-a) 标量 Lip 常数及下界 -/
+theorem ex35_f_lip :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let f : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 1
+      | RBot.val 2 => RBot.val 2
+      | RBot.val 3 => RBot.val 3
+      | _ => RBot.bot, rfl⟩
+    ∀ x ∈ U, ∀ y ∈ U, rbot_dist (f.func x) (f.func y) ≤ 1 * rbot_dist x y := by
+  sorry
+
+theorem ex35_f_lip_lower :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let f : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 1
+      | RBot.val 2 => RBot.val 2
+      | RBot.val 3 => RBot.val 3
+      | _ => RBot.bot, rfl⟩
+    ∀ L : ENNReal, (∀ x ∈ U, ∀ y ∈ U, rbot_dist (f.func x) (f.func y) ≤ L * rbot_dist x y) → L ≥ 1 := by
+  sorry
+
+theorem ex35_g_lip :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let g : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 3
+      | RBot.val 2 => RBot.val 1
+      | RBot.val 3 => RBot.val 2
+      | _ => RBot.bot, rfl⟩
+    ∀ x ∈ U, ∀ y ∈ U, rbot_dist (g.func x) (g.func y) ≤ 3 * rbot_dist x y := by
+  sorry
+
+theorem ex35_g_lip_lower :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let g : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 3
+      | RBot.val 2 => RBot.val 1
+      | RBot.val 3 => RBot.val 2
+      | _ => RBot.bot, rfl⟩
+    ∀ L : ENNReal, (∀ x ∈ U, ∀ y ∈ U, rbot_dist (g.func x) (g.func y) ≤ L * rbot_dist x y) → L ≥ 3 := by
+  sorry
+
+/-- CH03-P30-04: 习题 3.5 (iii-b) 在ε=7/4代入一般上界与真实覆盖数比较 -/
+theorem ex35_cov_at_7_4 :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    covering_number rbot_dist (7 / 4) U = 2 := by
+  sorry
+
+theorem ex35_bound_f_at_7_4 :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    covering_number rbot_dist ((7 / 4) / 1) U = 2 := by
+  sorry
+
+theorem ex35_bound_g_at_7_4 :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    covering_number rbot_dist ((7 / 4) / 3) U = 4 := by
+  sorry
+
+theorem ex35_compare_f :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let f : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 1
+      | RBot.val 2 => RBot.val 2
+      | RBot.val 3 => RBot.val 3
+      | _ => RBot.bot, rfl⟩
+    covering_number rbot_dist (7 / 4) (f.func '' U) = covering_number rbot_dist ((7 / 4) / 1) U := by
+  sorry
+
+theorem ex35_compare_g :
+    let U : Set RBot := {RBot.val 0, RBot.val 1, RBot.val 2, RBot.val 3}
+    let g : Operator RBot RBot.bot := ⟨fun x => match x with
+      | RBot.val 0 => RBot.val 0
+      | RBot.val 1 => RBot.val 3
+      | RBot.val 2 => RBot.val 1
+      | RBot.val 3 => RBot.val 2
+      | _ => RBot.bot, rfl⟩
+    covering_number rbot_dist (7 / 4) (g.func '' U) < covering_number rbot_dist ((7 / 4) / 3) U := by
+  sorry
+
+end OperatorLocalDegeneracy

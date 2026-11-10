@@ -1,0 +1,872 @@
+{
+  "case_id": "MG-C003",
+  "version": "v0.1.1",
+  "items": [
+    {
+      "id": "CH03-D01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.I_const" },
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.I_id" },
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.I_act" }
+      ],
+      "representation": "分量分划三分类：常值分量I_const、恒等分量I_id与有效分量I_act，按原文常值优先规则划分有限指标集I",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.Fib" }
+      ],
+      "representation": "计算纤维Fib(ϕ, J, y, U)：在受限域U内使得子族复合伪度量d_J(ϕ(x), y)=0的输入点集",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.R_eq" },
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.R_zero" },
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.fiber_preorder" }
+      ],
+      "representation": "点值相等关系R_eq、全分量零距关系R_zero与纤维预序fiber_preorder",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.r_null" }
+      ],
+      "representation": "点态零化内切半径r_null：基点y处使得开球落入输出零距纤维的有限正半径上确界，空集约0",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D05",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.r_null_uniform" }
+      ],
+      "representation": "统一零化半径r_null_uniform与零化矩阵元素：基点集合A上点态零化内切半径的下确界",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D06",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.diam" },
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.IsMonotoneScale" },
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.classify_channel" }
+      ],
+      "representation": "直径尺度函数diam、单调尺度族IsMonotoneScale与阈值分类函数classify_channel",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D07",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.IsTotallyBounded" }
+      ],
+      "representation": "内部覆盖数与度量熵接口及全有界性IsTotallyBounded定义",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D08",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.entropy_diff" }
+      ],
+      "representation": "映射熵差entropy_diff：输入子族度量熵与输出像集子族度量熵在扩展实数域EReal上的差值",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P01-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_1_i" }
+      ],
+      "representation": "命题 3.1 (i)：常值分量输出伪度量为0，可由系数全0的零行平凡上界控制",
+      "dependencies": ["CH03-D01"]
+    },
+    {
+      "id": "CH03-P01-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_1_ii" }
+      ],
+      "representation": "命题 3.1 (ii)：常值分量与合法co-Lip矩阵，只要源分量存在正距离点对，则对应co-Lip条目必为0",
+      "dependencies": ["CH03-D01"]
+    },
+    {
+      "id": "CH03-P01-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_1_iii" }
+      ],
+      "representation": "命题 3.1 (iii)：恒等分量在受限域上保持两点分量伪度量精确相等",
+      "dependencies": ["CH03-D01"]
+    },
+    {
+      "id": "CH03-P02-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_2_i" }
+      ],
+      "representation": "命题 3.2 (i)：两步复合有效分量包含在第一步有效分量与第二步在第一步实际像域上的有效分量之并中",
+      "dependencies": ["CH03-D01", "CH03-P01-03"]
+    },
+    {
+      "id": "CH03-P02-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_2_ii" }
+      ],
+      "representation": "命题 3.2 (ii)：任意有限长度复合算子链的有效分量包含在各单体算子在各级中间像域上的有效分量之并中",
+      "dependencies": ["CH03-P02-01"]
+    },
+    {
+      "id": "CH03-P02-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_2_iii" }
+      ],
+      "representation": "命题 3.2 (iii)：恒等分量在两步复合中保留，且通过常值优先反证排除复合属于常值分量",
+      "dependencies": ["CH03-D01", "CH03-P01-03"]
+    },
+    {
+      "id": "CH03-P03-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.remark_3_2_counterexample" }
+      ],
+      "representation": "注（复合分量保持的逆向蕴含一般不成立）：两点换位算子反例，两步皆为有效分量但复合为恒等分量，同时否定两条反向包含",
+      "dependencies": ["CH03-D01", "CH03-P02-01", "CH03-P02-03"]
+    },
+    {
+      "id": "CH03-P04-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_3_i" }
+      ],
+      "representation": "命题 3.3 (i)：外侧算子在内侧算子像域上为常值分量，则复合算子在该分量上必为常值分量",
+      "dependencies": ["CH03-D01"]
+    },
+    {
+      "id": "CH03-P04-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.prop_3_3_ii_counterexample" }
+      ],
+      "representation": "命题 3.3 (ii)：七点空间、双分量规范反例，内侧常值但在外侧区分，复合不再常值",
+      "dependencies": ["CH03-D01"]
+    },
+    {
+      "id": "CH03-P05-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComponentPartition.lean", "name": "OperatorLocalDegeneracy.cor_3_4" }
+      ],
+      "representation": "推论 3.4：外侧算子在内侧像域上具有同分量对角Lip上界时，内侧常值分量传给复合算子",
+      "dependencies": ["CH03-D01"]
+    },
+    {
+      "id": "CH03-P06-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_i" }
+      ],
+      "representation": "命题 3.5 (i)：子族复合伪度量下两目标点零距，则其计算纤维严格相等",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P06-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_ii_a" }
+      ],
+      "representation": "命题 3.5 (ii-a)：像目标计算纤维非空且全体像目标纤维的并覆盖受限域U",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P06-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_ii_b" }
+      ],
+      "representation": "命题 3.5 (ii-b)：任意两像目标纤维要么相等要么不交，去重后构成U的分划",
+      "dependencies": ["CH03-D02", "CH03-P06-01"]
+    },
+    {
+      "id": "CH03-P06-04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_iii" }
+      ],
+      "representation": "命题 3.5 (iii)：非空指标子族的计算纤维等于各单分量计算纤维的交集",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P06-05",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_iv" }
+      ],
+      "representation": "命题 3.5 (iv)：子族包含J⊆K时，计算纤维反向包含Fib_K ⊆ Fib_J",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P06-06",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_v" }
+      ],
+      "representation": "命题 3.5 (v)：单分量子族纤维的显式公式，以及全指标族纤维包含于任一单分量纤维",
+      "dependencies": ["CH03-D02", "CH03-P06-05"]
+    },
+    {
+      "id": "CH03-P06-07",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_vi_a" }
+      ],
+      "representation": "命题 3.5 (vi-a)：恒等分量上单分量计算纤维等于输入点的伪度量零距类",
+      "dependencies": ["CH03-D01", "CH03-D02"]
+    },
+    {
+      "id": "CH03-P06-08",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_5_vi_b" }
+      ],
+      "representation": "命题 3.5 (vi-b)：常值分量在像点处的单分量纤维等于全域U，在正距离目标处的纤维为空集",
+      "dependencies": ["CH03-D01", "CH03-D02"]
+    },
+    {
+      "id": "CH03-P07-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_6_i_nec" }
+      ],
+      "representation": "命题 3.6 (i-必要)：满足T∘ϕA=ϕB的像值映射T存在，蕴含输入点值相等关系包含R_eq(ϕA) ⊆ R_eq(ϕB)",
+      "dependencies": ["CH03-D03"]
+    },
+    {
+      "id": "CH03-P07-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_6_i_suff" }
+      ],
+      "representation": "命题 3.6 (i-充分)：相等关系包含R_eq(ϕA) ⊆ R_eq(ϕB)时，通过经典选择构造良定义T并验证T∘ϕA=ϕB",
+      "dependencies": ["CH03-D03"]
+    },
+    {
+      "id": "CH03-P07-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_6_ii" }
+      ],
+      "representation": "命题 3.6 (ii)：双向像值变换存在当且仅当两算子的点值相等关系相等R_eq(ϕA) = R_eq(ϕB)",
+      "dependencies": ["CH03-D03", "CH03-P07-01", "CH03-P07-02"]
+    },
+    {
+      "id": "CH03-P07-04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_6_iii" }
+      ],
+      "representation": "命题 3.6 (iii)：单分量下，ϕA为KA-co-Lip、ϕB为LB-Lip且T存在时，T在像集上满足标量(LB/KA)-Lip界",
+      "dependencies": ["CH03-P07-01"]
+    },
+    {
+      "id": "CH03-P08-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_7_one_way" }
+      ],
+      "representation": "命题 3.7：单向零距商映射良定义存在当且仅当零距关系包含R_zero(ϕA) ⊆ R_zero(ϕB)",
+      "dependencies": ["CH03-D03"]
+    },
+    {
+      "id": "CH03-P08-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_7_two_way" }
+      ],
+      "representation": "命题 3.7：双向商映射存在当且仅当零距关系相等，等价于双向预序成立",
+      "dependencies": ["CH03-D03", "CH03-P08-01"]
+    },
+    {
+      "id": "CH03-P08-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_7_separating" }
+      ],
+      "representation": "命题 3.7：两像集各自分离时，点值相等关系与零距关系重合，商判据与点值判据等价",
+      "dependencies": ["CH03-D03", "CH03-P07-01", "CH03-P08-01"]
+    },
+    {
+      "id": "CH03-P09-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_9_refl_trans" }
+      ],
+      "representation": "注（纤维包含的传递）：固定公共评估域U上的纤维预序具有自反性与传递性",
+      "dependencies": ["CH03-D03"]
+    },
+    {
+      "id": "CH03-P09-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_9_chain" }
+      ],
+      "representation": "注（纤维包含的传递）：有限算子链中任意单步关系包含递推到任意两层之间的关系包含",
+      "dependencies": ["CH03-D03", "CH03-P09-01"]
+    },
+    {
+      "id": "CH03-P09-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ComputationalFibers.lean", "name": "OperatorLocalDegeneracy.prop_3_9_strict" }
+      ],
+      "representation": "注（纤维包含的传递）：链中某一步真包含蕴含两端点真包含，并给出差集见证点对",
+      "dependencies": ["CH03-D03", "CH03-P09-02"]
+    },
+    {
+      "id": "CH03-P10-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.real_ext_extended" },
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.step_U_subset_dom" }
+      ],
+      "representation": "反例 3.1：带吸收元的实直线伪度量与阶跃算子结构合法，验证U包含于定义域",
+      "dependencies": ["CH03-D04"]
+    },
+    {
+      "id": "CH03-P10-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_10_02" }
+      ],
+      "representation": "反例 3.1：每个基点y处的点态零化半径恰为|y|>0",
+      "dependencies": ["CH03-D04", "CH03-P10-01"]
+    },
+    {
+      "id": "CH03-P10-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_10_03" }
+      ],
+      "representation": "反例 3.1：基点趋于0导致统一零化半径为0",
+      "dependencies": ["CH03-D05", "CH03-P10-02"]
+    },
+    {
+      "id": "CH03-P11-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_8_i_a" }
+      ],
+      "representation": "命题 3.8 (i-a)：输出子族常值时，每个像目标纤维等于全域U",
+      "dependencies": ["CH03-D01", "CH03-D02"]
+    },
+    {
+      "id": "CH03-P11-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_8_i_b_ptwise" },
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_8_i_b_uniform" }
+      ],
+      "representation": "命题 3.8 (i-b)：输出子族常值时，任意输入通道的点态与统一零化半径均为+∞",
+      "dependencies": ["CH03-D04", "CH03-D05", "CH03-P11-01"]
+    },
+    {
+      "id": "CH03-P11-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_8_ii_counterexample" }
+      ],
+      "representation": "命题 3.8 (ii)：两点反例，统一零化半径为+∞但不属于常值分量，证明反向不成立",
+      "dependencies": ["CH03-D01", "CH03-D05"]
+    },
+    {
+      "id": "CH03-P12-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_9_i" }
+      ],
+      "representation": "命题 3.9 (i)：恒等分量在像点处的计算纤维精确等于输入的伪度量零距类",
+      "dependencies": ["CH03-D01", "CH03-D02", "CH03-P06-07"]
+    },
+    {
+      "id": "CH03-P12-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_9_ii" }
+      ],
+      "representation": "命题 3.9 (ii)：恒等分量下，若r0球内仅含零距点，则点态零化半径至少为r0>0",
+      "dependencies": ["CH03-D01", "CH03-D04", "CH03-P12-01"]
+    },
+    {
+      "id": "CH03-P13-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_10_ptwise_min" }
+      ],
+      "representation": "命题 3.10：有限非空输出子族J的点态零化半径等于各单分量零化半径的最小值",
+      "dependencies": ["CH03-D02", "CH03-D04"]
+    },
+    {
+      "id": "CH03-P13-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_10_uniform_min" }
+      ],
+      "representation": "命题 3.10：交换有限最小值与基点下确界，统一零化半径等于零化矩阵对应列的最小值",
+      "dependencies": ["CH03-D05", "CH03-P13-01"]
+    },
+    {
+      "id": "CH03-P13-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_10_antimono" }
+      ],
+      "representation": "命题 3.10：子族包含J⊆K时，统一零化半径关于输出子族反单调",
+      "dependencies": ["CH03-D05", "CH03-P13-02"]
+    },
+    {
+      "id": "CH03-P14-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_11_fiber_zero" }
+      ],
+      "representation": "命题 3.11：输入点落入基点纤维蕴含输出分量伪度量为0",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P14-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_11_lt_sSup" }
+      ],
+      "representation": "命题 3.11：输入距离严格小于点态零化半径蕴含输出分量伪度量为0",
+      "dependencies": ["CH03-D04", "CH03-P14-01"]
+    },
+    {
+      "id": "CH03-P14-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_11_compose_inst" }
+      ],
+      "representation": "命题 3.11：复合算子两步输入在中间像域落入下游纤维的零化判据",
+      "dependencies": ["CH03-P14-01"]
+    },
+    {
+      "id": "CH03-P15-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_12_i" }
+      ],
+      "representation": "命题 3.12 (i)：下游算子保持零距时，复合统一零化半径不小于内侧零化矩阵对应条目",
+      "dependencies": ["CH03-D05", "CH03-P14-02"]
+    },
+    {
+      "id": "CH03-P15-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/NullificationRadius.lean", "name": "OperatorLocalDegeneracy.prop_3_12_ii" }
+      ],
+      "representation": "命题 3.12 (ii)：内侧具有有限正标量Lip界L时，复合统一半径不小于外侧统一半径除以L",
+      "dependencies": ["CH03-D05", "CH03-P14-02"]
+    },
+    {
+      "id": "CH03-P16-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.lemma_3_13_exhaustive" },
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.lemma_3_13_exclusive" }
+      ],
+      "representation": "引理 3.13：四种阈值组合互斥且穷尽",
+      "dependencies": ["CH03-D06"]
+    },
+    {
+      "id": "CH03-P16-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.lemma_3_13_i" }
+      ],
+      "representation": "引理 3.13 (i)：输入尺度阈值增大时，第一项取1的通道集合单调不减",
+      "dependencies": ["CH03-D06", "CH03-P16-01"]
+    },
+    {
+      "id": "CH03-P16-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.lemma_3_13_ii" }
+      ],
+      "representation": "引理 3.13 (ii)：统一零化阈值增大时，第二项取1的通道集合单调不增",
+      "dependencies": ["CH03-D06", "CH03-P16-01"]
+    },
+    {
+      "id": "CH03-P17-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.prop_3_14_i" }
+      ],
+      "representation": "命题 3.14 (i)：定义域缩小B⊆A时，单调输入尺度不增，第一项阈值判定单向传递",
+      "dependencies": ["CH03-D06"]
+    },
+    {
+      "id": "CH03-P17-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.prop_3_14_ii_a" }
+      ],
+      "representation": "命题 3.14 (ii-a)：固定基点属于B时，评估域缩小使得点态零化半径不减",
+      "dependencies": ["CH03-D04"]
+    },
+    {
+      "id": "CH03-P17-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.prop_3_14_ii_b" }
+      ],
+      "representation": "命题 3.14 (ii-b)：同时缩小评估域与取下确界基点集，统一零化半径单调不减",
+      "dependencies": ["CH03-D05", "CH03-P17-02"]
+    },
+    {
+      "id": "CH03-P17-04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/ThresholdClassification.lean", "name": "OperatorLocalDegeneracy.prop_3_14_iii" }
+      ],
+      "representation": "命题 3.14 (iii)：两点/单点直径尺度反例，否定反向尺度判断",
+      "dependencies": ["CH03-D06", "CH03-P17-01"]
+    },
+    {
+      "id": "CH03-P18-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_15_i" }
+      ],
+      "representation": "命题 3.15 (i)：两输入点距离严格低于统一零化半径时，输出分量伪度量必为0",
+      "dependencies": ["CH03-D05", "CH03-P14-02"]
+    },
+    {
+      "id": "CH03-P18-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_15_ii" }
+      ],
+      "representation": "命题 3.15 (ii)：输出具有正距离分离时，输入距离必不小于统一零化半径",
+      "dependencies": ["CH03-P18-01"]
+    },
+    {
+      "id": "CH03-P18-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_15_iii" }
+      ],
+      "representation": "命题 3.15 (iii)：统一半径不足时，构造输入距离严格小于α而输出距离被正实数ε下界控制的点对",
+      "dependencies": ["CH03-D05"]
+    },
+    {
+      "id": "CH03-P19-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_16_i" }
+      ],
+      "representation": "命题 3.16 (i)：统一零化半径不小于τN时，输入开球与A的交集包含于输出计算纤维",
+      "dependencies": ["CH03-D02", "CH03-D05", "CH03-P18-01"]
+    },
+    {
+      "id": "CH03-P19-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_16_ii_a" }
+      ],
+      "representation": "命题 3.16 (ii-a)：输出像集的任意正精度覆盖数被子集B在输入τN精度下的覆盖数控制",
+      "dependencies": ["CH03-D07", "CH03-P19-01"]
+    },
+    {
+      "id": "CH03-P19-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_16_ii_b" }
+      ],
+      "representation": "命题 3.16 (ii-b)：非空子集B上，度量熵满足相应不等式",
+      "dependencies": ["CH03-D07", "CH03-P19-02"]
+    },
+    {
+      "id": "CH03-P20-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_16_counterexample" }
+      ],
+      "representation": "命题 3.16 注反例：点态正零化半径不能代替统一阈值，在阶跃函数反例上构造两点子集使输出覆盖数严格超过输入覆盖数",
+      "dependencies": ["CH03-D07", "CH03-P10-02"]
+    },
+    {
+      "id": "CH03-P21-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.cor_3_17_i" }
+      ],
+      "representation": "推论 3.17 (i)：输入直径小于τσ≤τN时，统一零化半径不小于τN与全域输出零距严格等价",
+      "dependencies": ["CH03-D05", "CH03-D06", "CH03-P18-01"]
+    },
+    {
+      "id": "CH03-P21-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.cor_3_17_ii" }
+      ],
+      "representation": "推论 3.17 (ii)：等价条件成立时输出像集任意正精度的内部覆盖数恰为1",
+      "dependencies": ["CH03-D07", "CH03-P21-01"]
+    },
+    {
+      "id": "CH03-P22-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.remark_entropy_diff_well_defined" }
+      ],
+      "representation": "注（有限集上映射熵差的良定性）：非空有限集上两端覆盖数有限且非零，度量熵有限，映射熵差良定",
+      "dependencies": ["CH03-D07", "CH03-D08"]
+    },
+    {
+      "id": "CH03-P23-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_18_i" }
+      ],
+      "representation": "命题 3.18 (i)：常值分量输出覆盖数为1、熵为0，映射熵差等于输入度量熵",
+      "dependencies": ["CH03-D01", "CH03-D07", "CH03-D08"]
+    },
+    {
+      "id": "CH03-P23-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_18_ii_a" }
+      ],
+      "representation": "命题 3.18 (ii-a)：恒等分量前向与反向覆盖对应，输出与输入覆盖数及度量熵相等",
+      "dependencies": ["CH03-D01", "CH03-D07", "CH03-P01-03"]
+    },
+    {
+      "id": "CH03-P23-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_18_ii_b" }
+      ],
+      "representation": "命题 3.18 (ii-b)：恒等分量在熵有限良定时映射熵差等于0",
+      "dependencies": ["CH03-D08", "CH03-P23-02"]
+    },
+    {
+      "id": "CH03-P24-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_19_i" }
+      ],
+      "representation": "命题 3.19 (i)：单通道Lip常数L将ε/L输入中心映射为ε输出覆盖中心，覆盖数不增",
+      "dependencies": ["CH03-D07"]
+    },
+    {
+      "id": "CH03-P24-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_19_ii" }
+      ],
+      "representation": "命题 3.19 (ii)：输入全有界时映射熵差满足单通道Lip下界",
+      "dependencies": ["CH03-D08", "CH03-P24-01"]
+    },
+    {
+      "id": "CH03-P25-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_20_i" }
+      ],
+      "representation": "命题 3.20 (i)：正有限co-Lip矩阵条目拉回输出中心为ε/K输入覆盖，给出覆盖数反向界",
+      "dependencies": ["CH03-D07"]
+    },
+    {
+      "id": "CH03-P25-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/CoveringEntropy.lean", "name": "OperatorLocalDegeneracy.prop_3_20_ii" }
+      ],
+      "representation": "命题 3.20 (ii)：输入全有界时映射熵差满足co-Lip上界",
+      "dependencies": ["CH03-D08", "CH03-P25-01"]
+    },
+    {
+      "id": "CH03-P26-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_1_i_a_extended" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_1_i_a_fiber" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_1_i_a_const" }
+      ],
+      "representation": "习题 3.1 (i-a)：验证绝对值读数伪度量及仿射算子，证明φ在U上的纤维为U且属于常值分量",
+      "dependencies": ["CH03-D01", "CH03-D02"]
+    },
+    {
+      "id": "CH03-P26-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_1_i_b_fiber" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_1_i_b_act" }
+      ],
+      "representation": "习题 3.1 (i-b)：自复合φ²的计算纤维收缩为单点，且属于有效分量",
+      "dependencies": ["CH03-D01", "CH03-D02"]
+    },
+    {
+      "id": "CH03-P26-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_1_ii" }
+      ],
+      "representation": "习题 3.1 (ii)：在U上取同一实数值的常值算子自复合后计算纤维仍为U，无法区分两点",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P27-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_2_i" }
+      ],
+      "representation": "习题 3.2 (i)：正co-Lip通道与点态正零化半径排除(0, rN)区间内的输入距离",
+      "dependencies": ["CH03-D04", "CH03-P14-02"]
+    },
+    {
+      "id": "CH03-P27-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_2_ii" }
+      ],
+      "representation": "习题 3.2 (ii)：统一正零化半径下，所有输入点对距离非0即不小于统一半径",
+      "dependencies": ["CH03-D05", "CH03-P27-01"]
+    },
+    {
+      "id": "CH03-P28-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_3_i_id_fiber" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_3_i_trans_fiber" }
+      ],
+      "representation": "习题 3.3 (i)：恒等算子与平移算子在四点集U上的计算纤维分划具体计算",
+      "dependencies": ["CH03-D02"]
+    },
+    {
+      "id": "CH03-P28-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_3_cov_U" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_3_cov_phi_U" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_3_entropy_diff" }
+      ],
+      "representation": "习题 3.3 (ii)：在ε=3/2精度下计算U与ϕ(U)的覆盖数分别为2和3，映射熵差为log2(2)-log2(3)",
+      "dependencies": ["CH03-D07", "CH03-D08"]
+    },
+    {
+      "id": "CH03-P29-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.diam_Da" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.r_null_unif_Da" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.type_Da" }
+      ],
+      "representation": "习题 3.4 (i-a)：区间[0, 1/2]的直径为1/2，统一零化半径为+∞，阈值类型为(true, true)",
+      "dependencies": ["CH03-D05", "CH03-D06"]
+    },
+    {
+      "id": "CH03-P29-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.diam_Db" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.r_null_unif_Db" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.type_Db" }
+      ],
+      "representation": "习题 3.4 (i-b)：区间[9/10, 11/10]的直径为1/5，统一零化半径为0，阈值类型为(true, false)",
+      "dependencies": ["CH03-D05", "CH03-D06"]
+    },
+    {
+      "id": "CH03-P29-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.diam_Dc" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.r_null_unif_Dc" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.type_Dc" }
+      ],
+      "representation": "习题 3.4 (i-c)：双点集{0, 2}的直径为2，统一零化半径为+∞，阈值类型为(false, true)",
+      "dependencies": ["CH03-D05", "CH03-D06"]
+    },
+    {
+      "id": "CH03-P29-04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.diam_Dd" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.r_null_unif_Dd" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.type_Dd" }
+      ],
+      "representation": "习题 3.4 (i-d)：区间[0, 2]的直径为2，统一零化半径为0，阈值类型为(false, false)",
+      "dependencies": ["CH03-D05", "CH03-D06"]
+    },
+    {
+      "id": "CH03-P29-05",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex_3_4_ii_counterexample" }
+      ],
+      "representation": "习题 3.4 (ii)：反例{0, 2}统一零化半径大于等于1但像不为常值，否定无直径条件下的整体零化",
+      "dependencies": ["CH03-D05", "CH03-P29-03"]
+    },
+    {
+      "id": "CH03-P30-01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_cov_gt_2" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_cov_1_to_2" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_cov_le_1" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_center_3_2_not_in_U" }
+      ],
+      "representation": "习题 3.5 (i)：四点集在所有精度下的内部覆盖数分段，并证明3/2不属于U因而不能作为内部中心",
+      "dependencies": ["CH03-D07"]
+    },
+    {
+      "id": "CH03-P30-02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_f_image" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_g_image" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_cov_f_image" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_cov_g_image" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_entropy_diff_f" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_entropy_diff_g" }
+      ],
+      "representation": "习题 3.5 (ii)：两算子的像集与原集相等，各精度覆盖数相同，映射熵差恒为0",
+      "dependencies": ["CH03-D07", "CH03-D08", "CH03-P30-01"]
+    },
+    {
+      "id": "CH03-P30-03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_f_lip" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_f_lip_lower" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_g_lip" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_g_lip_lower" }
+      ],
+      "representation": "习题 3.5 (iii-a)：算子f的最优Lip常数为1，算子g的最优Lip常数为2，并证明其下界",
+      "dependencies": ["CH03-D07"]
+    },
+    {
+      "id": "CH03-P30-04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_cov_at_7_4" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_bound_f_at_7_4" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_bound_g_at_7_4" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_compare_f" },
+        { "file": "OperatorLocalDegeneracy/Exercises.lean", "name": "OperatorLocalDegeneracy.ex35_compare_g" }
+      ],
+      "representation": "习题 3.5 (iii-b)：在精度ε=7/4下代入理论上界，f取到等号2，g给出上界4严格大于真实值2",
+      "dependencies": ["CH03-D07", "CH03-P24-01", "CH03-P30-01", "CH03-P30-03"]
+    }
+  ]
+}

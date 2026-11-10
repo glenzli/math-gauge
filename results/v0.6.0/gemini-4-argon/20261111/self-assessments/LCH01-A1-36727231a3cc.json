@@ -1,0 +1,304 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsLipMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "LipCertFamily"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsLipOn"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsRestrictedLipMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "RestrictedLipCertFamily"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "isRestrictedLipMatrix_iff_isLipOn"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "isRestrictedLipMatrix_dom_iff"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedLipCertFamily_dom_eq"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedLipCertFamily_mono"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "lipCertFamily_subset_restrictedLipCertFamily"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedLipCertFamily_comp"
+        }
+      ],
+      "representation": "以 d : I → X → X → ENNReal 表示扩展伪度量族，ϕ : Operator X bot 表示算子，L : ChannelMatrix I 表示扩展非负实数矩阵。IsLipMatrix 与 LipCertFamily 对应全域合法 Lip 矩阵谓词（∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y）及证书族 mathscr{L}(ϕ)；IsRestrictedLipMatrix 与 RestrictedLipCertFamily 对应受限子集 U ⊆ dom ϕ 上的受限 Lip 矩阵谓词（含 U ⊆ dom ϕ 及 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I 的距离上界不等式）与受限证书族 mathscr{L}(ϕ)|_U，并证明其在 U = dom ϕ 处与全域证书族一致、关于限制域的反单调包含性（引理 2.1）及两步复合律（命题 2.2）。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsRestrictedCoLipMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "RestrictedCoLipCertFamily"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "nonempty_of_mem_restrictedCoLipCertFamily"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedCoLipCertFamily_empty"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedCoLipCertFamily_mono"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedCoLipCertFamily_dom_subset"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "restrictedCoLipCertFamily_comp"
+        }
+      ],
+      "representation": "以 IsRestrictedCoLipMatrix 和 RestrictedCoLipCertFamily 形式化算子 ϕ 在子集 U 上的受限 co-Lipschitz 矩阵谓词与证书族 mathscr{K}(ϕ)|_U。定义显式包含非空性条件 U.Nonempty、定义域包含条件 U ⊆ dom ϕ，以及全称量词条件 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)。同时由 nonempty_of_mem_restrictedCoLipCertFamily 与 restrictedCoLipCertFamily_empty 验证证书族内置非空性约束，并给出非空限制域间的单调性（引理 2.3）及两步复合律（命题 2.4）。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ChannelMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "channelEntry"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "rowColEntry"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "toRowColMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ofRowColMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "rowColEntry_eq_channelEntry"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "toRowColMatrix_apply"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ofRowColMatrix_apply"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ofRowColMatrix_toRowColMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "toRowColMatrix_ofRowColMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "channelMatrixMul"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "channelMatrixMul_apply"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "channelMatrixId"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "toRowColMatrix_channelMatrixMul"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "channelMatrixMul_assoc"
+        }
+      ],
+      "representation": "以 ChannelMatrix I := I → I → ENNReal 表示扩展非负实数通道矩阵，其中 channelEntry M i j = M i j 表示从输入分量 i 到输出分量 j 的条目 M_{i→j}，rowColEntry M j i 与 toRowColMatrix M j i 表示以输出分量 j 为行指标、输入分量 i 为列指标的矩阵条目 (M)_{j,i} = M_{i→j}，并由 rowColEntry_eq_channelEntry、ofRowColMatrix_toRowColMatrix、toRowColMatrix_ofRowColMatrix 建立双射对应。channelMatrixMul M₂ M₁ i j := ∑ k : I, M₂ k j * M₁ i k 形式化复合乘法 (M^(2)·M^(1))_{i→j} = ∑_{k∈I} M^(2)_{k→j} M^(1)_{i→k}，并由 toRowColMatrix_channelMatrixMul 证明其与输出行/输入列矩阵的标准矩阵乘法 Matrix.mul 完全一致。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ComponentChannel"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ComponentChannel.inputIdx"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "ComponentChannel.outputIdx"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "sameComponentChannel"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "channelCoeff"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsSingleInputRow"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsDiagonalInputRow"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "IsDiagonalChannelMatrix"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "isDiagonalChannelMatrix_iff_forall_isSingleInputRow"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "isDiagonalChannelMatrix_iff_toRowColMatrix_offDiag_zero"
+        }
+      ],
+      "representation": "以 ComponentChannel I := I × I 表示从输入分量 d_i 到输出分量 d_j 的分量通道有序对 (i, j)，sameComponentChannel i := (i, i) 表示同分量对角通道，channelCoeff M (i, j) := M i j 表示通道系数 M_{i→j}。IsSingleInputRow M i j := ∀ k : I, k ≠ i → M k j = 0 形式化第 j 输出行除输入项 M_{i→j} 外全为零的单行稀疏条件；IsDiagonalInputRow M j := IsSingleInputRow M j j 表示第 j 行仅保留对角输入项；IsDiagonalChannelMatrix M := ∀ i j : I, i ≠ j → M i j = 0 表示对角矩阵，并证明其等价于所有输出行 j 均满足 IsSingleInputRow M j j。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "singleInputRow_sum_eq"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "singleInputRow_lip_bound"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "singleInputRow_lip_le"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "diagonal_lip_bound"
+        }
+      ],
+      "representation": "在 Fintype I 下，singleInputRow_sum_eq 对满足 IsSingleInputRow L i j 的矩阵行证明有限和坍缩 ∑ k : I, L k j * d k x y = L i j * d i x y。singleInputRow_lip_bound 与 singleInputRow_lip_le 对受限 Lip 证书 hL : L ∈ RestrictedLipCertFamily d ϕ U 及单行稀疏条件 IsSingleInputRow L i j，在 ∀ x ∈ U, ∀ y ∈ U 上给出完整的行化简链 d j (ϕ.func x) (ϕ.func y) ≤ ∑ k : I, L k j * d k x y = L i j * d i x y。diagonal_lip_bound 对满足 IsDiagonalChannelMatrix L 的对角 Lip 证书证明上述化简对每个同分量通道 (i, i)（∀ i : I, ∀ x ∈ U, ∀ y ∈ U）均成立。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D07"
+      ]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "single_channel_coLip_le"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "pos_coLip_channel_preserves_pos_dist"
+        },
+        {
+          "file": "OperatorBounds.lean",
+          "name": "coLip_entry_eq_zero_of_dist_zero_of_pos"
+        }
+      ],
+      "representation": "single_channel_coLip_le 对受限 co-Lip 证书 hK : K ∈ RestrictedCoLipCertFamily d ϕ U 证明单通道下界 ∀ x ∈ U, ∀ y ∈ U, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)。pos_coLip_channel_preserves_pos_dist 形式化命题 2.8(i)：在 hK : K ∈ RestrictedCoLipCertFamily d ϕ U 与正通道条件 hKij : 0 < K i j 下，对任意 x ∈ U, y ∈ U，若 0 < d i x y，则 0 < d j (ϕ.func x) (ϕ.func y)。coLip_entry_eq_zero_of_dist_zero_of_pos 进一步给出其逆否命题（正文注记：输出零距且输入正距迫使对应 co-Lip 条目为零）。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D07"
+      ]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "diag_pos_coLip_reflects_gaugeZeroRelated"
+        }
+      ],
+      "representation": "diag_pos_coLip_reflects_gaugeZeroRelated 形式化命题 2.8(ii)：设 hK : K ∈ RestrictedCoLipCertFamily d ϕ U 且全对角条目严格为正（h_diag_pos : ∀ j : I, 0 < K j j），则对任意 x ∈ U, y ∈ U，有 GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y。该定理直接复用前置模块 gauge_space.lean 中的族零距关系 GaugeZeroRelated，不预设规范族分离性 IsSeparating，也不将结论加强为点相等 x = y。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D07",
+        "CH02-P20"
+      ]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "OperatorBounds.lean",
+          "name": "exercise_2_2_scalar_two_sided_bound"
+        }
+      ],
+      "representation": "exercise_2_2_scalar_two_sided_bound 形式化习题 2.2：给定算子 ϕ : Operator X bot、子集 U ⊆ dom ϕ、分量指标 j : I，以及受限证书 hL : L ∈ RestrictedLipCertFamily d ϕ U 和 hK : K ∈ RestrictedCoLipCertFamily d ϕ U；若第 j 行满足仅保留对角输入项的稀疏条件 hL_diag_row : IsSingleInputRow L j j（即 ∀ k ≠ j, L k j = 0），则对任意 x ∈ U, y ∈ U 同时成立标量双侧界 K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧ d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D07",
+        "CH02-P19",
+        "CH02-P20"
+      ]
+    }
+  ]
+}

@@ -15,6 +15,7 @@ from math_gauge.native_observations import (digest, load_public_record, project_
     read_artifact, require, validate_math_inputs, validate_record, validate_source_supplements,
     SUPPLEMENTED_VERSION)
 from math_gauge.scoring import score_content_rates, score_native_observation
+from math_gauge import submission_evidence
 
 MODEL = 'dot-underlying-model-20261108'
 RECORD = '20261108'
@@ -84,8 +85,12 @@ def run(private_root, *, public_root=ROOT, write=False):
             'Native mathematical aggregation must use the selected common policy')
     validate_record(record, policy)
     validate_math_inputs(math, policy)
+    original_policy_sha = record['assessment_policy']['sha256']
+    if policy['version']=='0.9.0':
+        history=submission_evidence.validate_history(pri,source)
+        original_policy_sha=history['original_policy_sha256']
     require(math['source_plan_sha256'] == record['source_plan_sha256']
-            and math['assessment_policy_sha256'] == record['assessment_policy']['sha256'],
+            and math['assessment_policy_sha256'] == original_policy_sha,
             'Native mathematical inputs bind another source plan or selected policy')
     supplements = None
     if record['version'] == SUPPLEMENTED_VERSION:
@@ -122,9 +127,11 @@ def run(private_root, *, public_root=ROOT, write=False):
     products, totals = [], {}
     for mode, field in (('capability', 'capability_results'), ('partial', 'assessment_results'),
                         ('strict', 'strict_results')):
-        score = score_native_observation(math, policy, strict, capability, claim, mode=mode)
-        totals[mode] = score['metrics']['earned']['exact']
         for condition in ('single_attempt', 'nonlogical_retry_3'):
+            score = score_native_observation(math, policy, strict, capability, claim, mode=mode,
+                submission_review=submission_evidence.load_condition(pri,source,condition),
+                submission_policy=submission_evidence.load_policy(pri,source))
+            totals[mode] = score['metrics']['earned']['exact']
             full = copy.deepcopy(score)
             full.update(attempt_condition=condition,
                 retry_summary={'slots_with_reruns': 0, 'effective_attempts': policy['scope']['initial_slots']},
@@ -132,6 +139,9 @@ def run(private_root, *, public_root=ROOT, write=False):
                     'source_plan_sha256': source['plan']['sha256'], 'source_run_sha256': source['run']['sha256']})
             if supplements is not None:
                 full['source_bindings']['source_supplements_sha256'] = source['source_supplements']['sha256']
+            if policy['version']=='0.9.0':
+                full['source_bindings'].update(submission_evidence_sha256=source['submission_evidence']['sha256'],
+                    submission_policy_sha256=source['submission_policy']['sha256'])
             name = mode + ('-retry' if condition == 'nonlogical_retry_3' else '') + '-result.json'
             raw = encoded(full)
             projection = project_score(full)

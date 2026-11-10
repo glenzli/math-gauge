@@ -68,7 +68,7 @@ def summary_report(summaries):
 
 逐项数学核验与原文绑定保持原字节。公开手稿MG-MCP003的接受/排除理由可在研究分榜的折叠观察栏查看；四道私有手稿的数学内容、标识和逐题分配留私库，公开只列合并组数、覆盖和不透明散列。原任务的错误和扣分保留，额外成果不能抵销错误。
 
-这是观察后AI核验，人审待定；只判断相对给定材料和必需目标的额外成果，不声称文献首创、盲审或事前预注册。已核实组数不保证未来主动性，也不能据此将某模型认定为更好的研究者。
+审核方式见[统一审核说明](review-process.md)。这里核查相对给定材料和必需目标的额外成果，不认定文献首创、盲审或事前预注册。已核实组数不保证未来主动性，也不能据此将某模型认定为更好的研究者。
 
 当前观察记录位于`results/manuscript-observations/v0.1.0/<model>/<record-id>/observation.json`。私库另留可读报告，并通过描述符引用不变的原数学审核、共同边界、原答和主成绩。旧MRS百分比派生结果和独立页面退出当前工作树。
 
@@ -98,13 +98,25 @@ def run(public_root, private_root, *, write=False, reuse_bindings=()):
     policy_raw = policy_path.read_bytes()
     private_policy = {'path': private_policy_path.as_posix(), 'bytes': len(policy_raw),
                       'sha256': hashlib.sha256(policy_raw).hexdigest()}
-    reviews = sorted((private_root / REVIEW_ROOT_PATH).glob('*/*/review.json'))
+    rebound = list((private_root / REVIEW_ROOT_PATH).glob('*/*/current-review.json'))
+    if rebound:
+        edition = json.loads((public_root/'benchmark.json').read_bytes())
+        selected = dict(edition['selected_result_record_ids'])
+        native = public_root/'results/v0.6.0/dot-underlying-model-20261108/20261108/native-observation.json'
+        if native.is_file():
+            selected['dot-underlying-model-20261108'] = '20261108'
+        reviews = []
+        for model,record_id in selected.items():
+            folder = private_root/REVIEW_ROOT_PATH/model/record_id
+            reviews.append(folder/('current-review.json' if (folder/'current-review.json').is_file() else 'review.json'))
+    else:
+        reviews = sorted((private_root / REVIEW_ROOT_PATH).glob('*/*/review.json'))
     if not reviews:
         raise ValueError('No retained manuscript result reviews')
     outputs = [(private_root / private_policy_path, policy_raw)]
     public_rows, private_rows, summaries = [], [], []
     reuses = {}
-    for item in reuse_sources(private_root, reuse_bindings):
+    for item in ([] if rebound else reuse_sources(private_root, reuse_bindings)):
         binding = validate_reuse_binding(read_source(private_root, item), public_root, private_root)
         key = (binding['model_id'], binding['source_review_record_id'])
         if key in reuses:
@@ -114,7 +126,8 @@ def run(public_root, private_root, *, write=False, reuse_bindings=()):
     for path in reviews:
         review = json.loads(path.read_bytes())
         model_id, record_id = review['model_id'], review['record_id']
-        if path != private_root / REVIEW_ROOT_PATH / model_id / record_id / 'review.json':
+        expected_name = 'current-review.json' if review.get('metadata_rebind') else 'review.json'
+        if path != private_root / REVIEW_ROOT_PATH / model_id / record_id / expected_name:
             raise ValueError('Review identity differs from source path')
         source_identity = model_id, record_id
         binding, binding_source = reuses.get(source_identity, (None, None))

@@ -49,28 +49,30 @@ Public tasks support replication and inspection; private tasks add undisclosed m
 
 All three use the same rule-selected answers, families and weights. Incorrect work receives no credit merely for being present; compilation also requires a separate check against the mathematical goal. Honest incompleteness and a false claim of completeness have different reliability consequences.
 
-[Content reliability and complete-goal attainment](protocol/content-rates.md) provide two further views: correctness and support of actual delivered content, and acceptance of complete independent goals required by a task. The research panel's [additional-results observation](docs/manuscript-observations.md) counts verified result groups not requested by the original task. It is separate from the scores and currently covers 64 of 70 manuscript slots across 14 models.
+Current aggregation is **0.9.0**, MC **0.3.0**, SMC **0.2.0**, with submission component **0.1.0**. A normal final limits all three scores to the actually delivered work. Without one, verified original work present by the cutoff may earn MC; RMC and SMC are zero. Finals and collected content are mutually exclusive counts. Original 0.8.0 records and reviews remain source-bound.
+
+[Content reliability and complete-goal attainment](protocol/content-rates.md) provide two further views: correctness and support of actual delivered content, and acceptance of complete independent goals required by a task. The research panel's [additional-results observation](docs/manuscript-observations.md) counts verified result groups not requested by the original task. It is separate from the scores and currently covers 67 of 70 manuscript slots across 14 models.
 
 ## Current leaderboard
 
 Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Permitted retries select the first normal delivery under the rules; source records retain the process. Some tests reuse prior answers produced under equivalent conditions.
 
-| Model | Harness | MC | **RMC** | SMC |
-|---|---|---:|---:|---:|
-| [Astra 6 (max)](site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 |
-| [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 |
-| [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 |
-| [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 |
-| [Dot Underlying](site/models/dot-underlying-model-20261108/index.html) | Unknown<sup>1</sup> | 91.66 | 90.23 | 78.00 |
-| [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 |
-| [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 |
-| [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 87.65 | 86.45 | 65.67 |
-| [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 |
-| [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 |
-| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI<sup>2</sup> | 76.71 | 65.30 | 25.83 |
-| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 62.32 | 48.42 | 13.75 |
-| [Gemini 4 Argon (high)*](site/models/gemini-4-argon/index.html) | AGY CLI | 36.01 | 32.17 | 17.92 |
-| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code<sup>3</sup> | 36.03 | 27.34 | 14.08 |
+| Model | Harness | MC | **RMC (main)** | SMC | Finals / collected / tasks |
+|---|---|---:|---:|---:|---:|
+| [Astra 6 (max)](site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 | 39 / 0 / 39 |
+| [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39 / 0 / 39 |
+| [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39 / 0 / 39 |
+| [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39 / 0 / 39 |
+| [Dot Underlying](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39 / 0 / 39 |
+| [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39 / 0 / 39 |
+| [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39 / 0 / 39 |
+| [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39 / 0 / 39 |
+| [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39 / 0 / 39 |
+| [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38 / 0 / 39 |
+| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI | 76.71 | 64.23 | 25.83 | 37 / 1 / 39 |
+| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37 / 2 / 39 |
+| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38 / 1 / 39 |
+| [GLM 5.3 (max)*](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
 
 \* Evaluation is incomplete: the value is confirmed contribution, while unrun tasks remain unknown. Full intervals are available in model details. Tested tasks that time out without a submission are scored under the failure rules.
 
@@ -78,7 +80,9 @@ Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Pe
 
 ² Under DeepSeek Harness (DSH), many tasks exhausted the maximum output budget through prolonged reasoning without delivering an answer, so execution uses Codex CLI.
 
-³ GLM 5.3 had many timeouts under both Codex CLI and Claude Code. The retained results use Claude Code; missed-deadline submissions receive zero.
+³ GLM 5.3 had many timeouts under both Codex CLI and Claude Code. The retained results use Claude Code; without a normal final, RMC and SMC are zero; verified original work may earn MC.
+
+⁴ Some Argon tasks did not terminate with a normal submission. Two tasks retained verifiable mathematical content and receive MC only; their RMC and SMC are zero.
 
 Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set, with sampled cross-checks by Astra 6 Max and Dot. See the [review process](docs/review-process.md) for reviewer identities, evidence and limitations, and the [results report](docs/results.md) for model-level analysis.
 

@@ -363,6 +363,7 @@ def verify_sources(review, roots):
     _object(roots, "roots")
     _require(set(roots) == {"public", "private"}, "exactly public/private roots are required")
     inventory = _inventory(review)
+    relocations = _source_relocations(review, inventory)
     checked_roots = {}
     for repository, root in roots.items():
         try:
@@ -373,10 +374,40 @@ def verify_sources(review, roots):
         checked_roots[repository] = path
     verified = []
     for (repository, relative), expected in sorted(inventory.items()):
-        actual = _read_source_digest(checked_roots[repository], _relative_path(relative))
+        retained = relocations.get((repository, relative))
+        source_path = retained["path"] if retained is not None else relative
+        actual = _read_source_digest(checked_roots[repository], _relative_path(source_path))
         _require(actual == expected, "source SHA256 does not match its binding")
         verified.append({"repository": repository, "path": relative, "sha256": actual})
     return verified
+
+
+def _source_relocations(review, inventory):
+    """Resolve explicitly retained bytes without changing frozen definitions.
+
+    A relocation changes only a source location. It cannot change repository,
+    content hash, mathematical definitions or judgments, and cannot chain.
+    """
+    rows = review.get("source_relocations", [])
+    _require(isinstance(rows, list), "source relocations must be a list")
+    resolved = {}
+    for row in rows:
+        _keys(row, {"original", "retained"}, "source relocation")
+        original, retained = row["original"], row["retained"]
+        _descriptor(original)
+        _descriptor(retained)
+        key = (original["repository"], original["path"])
+        _require(key in inventory and inventory[key] == original["sha256"].lower(),
+                 "source relocation is not bound by the review")
+        _require(original["repository"] == retained["repository"]
+                 and original["sha256"].lower() == retained["sha256"].lower(),
+                 "source relocation must retain identical bytes in the same repository")
+        _require(original["path"] != retained["path"] and key not in resolved,
+                 "source relocation is redundant or repeated")
+        resolved[key] = retained
+    _require(all((row["repository"], row["path"]) not in resolved
+                 for row in resolved.values()), "source relocations cannot chain")
+    return resolved
 
 
 def _coverage(value, keys, label):

@@ -4,6 +4,12 @@ import json
 
 
 def delivery_progress(record, result, *, record_sha256, projection=None):
+    if result.get('submission_summary') is not None:
+        source=result['submission_summary']
+        if source['planned']!=result['whole_task_counts']['planned']:
+            raise ValueError('Submission progress changed the fixed A1 population')
+        return dict(source,delivered=source['active_final'],undelivered=source['blank'],
+                    method_version=result['submission_method_version'])
     counts = result['whole_task_counts']
     planned, pending = counts['planned'], counts['unknown']
     coverage = result['coverage']
@@ -56,6 +62,8 @@ def build_legacy_projections(root, private_root):
     for model, folder in selected_cli_records(root):
         raw = (folder / 'record.json').read_bytes()
         record = json.loads(raw)
+        if record.get('submission_evidence') is not None:
+            continue
         if record.get('execution_summary'):
             continue
         private = private_root / folder.relative_to(root)

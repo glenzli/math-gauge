@@ -22,6 +22,9 @@ from scripts.results_i18n import javascript_catalog, language_switch
 from scripts.results_surplus import load_observations, render_subboard
 from scripts.results_delivery import delivery_progress, load_legacy_projections
 from scripts.results_harness import display_harness_labels
+from scripts.results_presentation import project_payload
+from scripts.results_publication import prepare_publication, write_publication
+from scripts.timing_reference import build_reference, render_panel
 
 MODEL_THEMES = {
     "glm-5.3-max": {"color": "#444b60", "ink": "#363d50", "tint": "#f1f2f5"},
@@ -127,8 +130,8 @@ def build_data(source_root=ROOT):
             "content_rates": load_content_rates(folder, record),
             "evaluation_progress": {condition: evaluation_progress(result)
                                     for condition, result in partial.items()},
-            "lean_formalization_breakdown": combined["lean_formalization_breakdown"],
-            "alignment_selfcheck": combined["alignment_selfcheck"],
+            "lean_formalization_breakdown": partial["nonlogical_retry_3"]["lean_formalization_breakdown"],
+            "alignment_selfcheck": partial["nonlogical_retry_3"]["alignment_selfcheck"],
             "source_record": str((folder / "record.json").relative_to(root)),
             "retry": {"combined": partial["nonlogical_retry_3"],
                       "note": (f"本批次已收{record['execution_summary'].get('delivered_initial_tasks', record['execution_summary'].get('initial_answers'))}/39道初答及{record['execution_summary'].get('delivered_selfcheck_rounds', record['execution_summary'].get('fixed_selfcheck_rounds'))}/3轮对齐自查；采用规则选定的首次有效交付。全部物理请求和纯系统故障另行留档。"
@@ -181,8 +184,8 @@ def build_data(source_root=ROOT):
             'combined': combined, 'strict': scores['strict'], 'capability': scores['capability'],
             'trajectory': record['trajectory'], 'content_rates': rates,
             'evaluation_progress': {c: evaluation_progress(v) for c, v in partial.items()},
-            'lean_formalization_breakdown': combined['lean_formalization_breakdown'],
-            'alignment_selfcheck': combined['alignment_selfcheck'],
+            'lean_formalization_breakdown': partial['nonlogical_retry_3']['lean_formalization_breakdown'],
+            'alignment_selfcheck': partial['nonlogical_retry_3']['alignment_selfcheck'],
             'source_record': str((folder / 'record.json').relative_to(root)),
             'retry': {'combined': partial['nonlogical_retry_3'], 'note': record['comparison_note']}})
         for path in [folder / 'record.json', icon_path,
@@ -211,8 +214,8 @@ def build_data(source_root=ROOT):
             'combined': partial['single_attempt'], 'strict': scores['strict'],
             'capability': scores['capability'], 'trajectory': native['trajectory'],
             'content_rates': rates, 'evaluation_progress': {c:evaluation_progress(v) for c,v in partial.items()},
-            'lean_formalization_breakdown': partial['single_attempt']['lean_formalization_breakdown'],
-            'alignment_selfcheck': partial['single_attempt']['alignment_selfcheck'],
+            'lean_formalization_breakdown': partial['nonlogical_retry_3']['lean_formalization_breakdown'],
+            'alignment_selfcheck': partial['nonlogical_retry_3']['alignment_selfcheck'],
             'source_record': str((native_folder/'native-observation.json').relative_to(root)),
             'retry': {'combined': partial['nonlogical_retry_3'],
                       'note': f"{native['delivery_counts']['initial']}题首答与三轮固定自查；没有数学重跑。"
@@ -256,7 +259,8 @@ def build_data(source_root=ROOT):
             'display_score_modes': display_modes, 'default_attempt_condition': 'nonlogical_retry_3',
             'gap_diagnostics': gap_diagnostics(models),
             'category_leaderboards': category_rankings(models, policy['groups'], result_selector=selected_result),
-            "capability_method_version": "0.2.0", "claim_penalty_method_version": "0.1.0",
+            "capability_method_version": next(m['policy_version'] for m in mode_catalog['modes'] if m['id']=='capability'),
+            "claim_penalty_method_version": "0.1.0",
             "attempt_conditions": ["single_attempt", "nonlogical_retry_3"]}
 
 
@@ -268,8 +272,11 @@ def earned_value(result):
 def evaluation_progress(result):
     """Mark unknown built tasks, independently of mistakes or unbuilt capacity."""
     counts = result["whole_task_counts"]
+    pending_rounds = sum(row['score']['exact'] is None
+                        for row in result.get('alignment_selfcheck', {}).get('rounds', []))
     return {"planned": counts["planned"], "adjudicated": counts["passed"] + counts["failed"],
-            "pending": counts["unknown"], "incomplete": counts["unknown"] > 0}
+            "pending": counts["unknown"], "pending_rounds": pending_rounds,
+            "incomplete": counts["unknown"] > 0 or pending_rounds > 0}
 
 
 def incomplete_marker(progress):
@@ -589,9 +596,9 @@ def is_fully_evaluated(model):
             and selected_result(model)['metrics']['overall']['exact'] is not None)
 
 
-def render(data):
+def render(data, *, timing_reference=None):
     # Only escaped data enters the standalone template; scores come from archives.
-    payload = json.dumps(display_harness_labels(data), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
+    payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
     ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
                      if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
@@ -599,7 +606,9 @@ def render(data):
         source = html.escape('models/'+model['id']+'/index.html?score=partial&condition=nonlogical_retry_3', quote=True)
         progress = model['evaluation_progress']['nonlogical_retry_3']
         delivery = model['answer_delivery']
-        delivered = '—' if delivery['delivered'] is None else str(delivery['delivered'])+'／'+str(delivery['planned'])
+        delivered = (str(delivery['active_final'])+'／'+str(delivery['forced_content'])+'／'+str(delivery['planned'])
+            if delivery.get('active_final') is not None else
+            '—' if delivery['delivered'] is None else str(delivery['delivered'])+'／'+str(delivery['planned']))
         score_cells = []
         for mode in data['display_score_modes']:
             value = earned_value(selected_result(model, mode['id']))
@@ -655,7 +664,10 @@ def render(data):
                   for m in data["models"]) + "。背景核查已评：" + "；".join(m["label"]+" "+str(m["combined"]["metrics"]["background-check"]["coverage"]["adjudicated"])+"/4" for m in data["models"])+"。"),
               "RESERVED": str(data['capacity']['under_construction']),
               "BACKGROUND_TASKS": str(data['policy']['background_check']['families']),
-              "CAPACITY": str(data["capacity"]["active"])}
+              "CAPACITY": str(data["capacity"]["active"]),
+              "TIMING_REFERENCE": render_panel(timing_reference) if timing_reference else '',
+              "TIMING_CSS": '<link rel="stylesheet" href="assets/timing-reference.css">' if timing_reference else '',
+              "TIMING_JS": '<script src="assets/timing-reference.js"></script>' if timing_reference else ''}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
     return re.sub(r"@@MG_(" + '|'.join(re.escape(key) for key in values) + r")@@",
                   lambda match: values[match[1]], template)
@@ -664,19 +676,15 @@ def render(data):
 def write_site(destination, *, source_root=ROOT):
     dest = Path(destination)
     data = build_data(source_root)
+    timings = build_reference(source_root,display_data=data)
     # Resolve all evidence before changing navigation or writing any page.
     files = build_detail_pages(data, source_root)
-    files["index.html"] = render(data)
+    files["index.html"] = render(data,timing_reference=timings)
+    files['downloads/timing-reference.json'] = json.dumps(timings,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
-    # Keep rebuilt presentation and browser assets in sync across cached visits.
-    for asset in [path for path in files if path.startswith('assets/')]:
-        digest = hashlib.sha256(files[asset].encode()).hexdigest()[:12]
-        for path in files:
-            if path.endswith('.html'):
-                files[path] = files[path].replace(asset+'"', asset+'?v='+digest+'"')
     for model in data["models"]:
         for scope in ["combined"]:
             files["downloads/"+model["id"]+"-"+scope+".json"] = json.dumps(model[scope], ensure_ascii=False, indent=2)+"\n"
@@ -684,28 +692,9 @@ def write_site(destination, *, source_root=ROOT):
             for condition, suffix in (("single_attempt", ""), ("nonlogical_retry_3", "-retry")):
                 files["downloads/"+model["id"]+"-combined-strict"+suffix+".json"] = json.dumps(model["strict"][condition], ensure_ascii=False, indent=2)+"\n"
                 files["downloads/"+model["id"]+"-combined-capability"+suffix+".json"] = json.dumps(model["capability"][condition], ensure_ascii=False, indent=2)+"\n"
-    manifest = dest/"generated-pages.json"
-    previous = json.loads(manifest.read_text()) if manifest.exists() else []
-    for path in set(previous)|set(files):
-        part = Path(path)
-        if part.is_absolute() or ".." in part.parts or not (dest/part).resolve().is_relative_to(dest.resolve()):
-            raise ValueError("Generated page path escapes site directory")
-    for path in set(previous)-set(files):
-        target = dest/path
-        if target.is_file():
-            target.unlink()
-    # Homepage last: all detail destinations exist before links become visible.
-    for path in [p for p in sorted(files) if p != "index.html"]+["index.html"]:
-        target = dest/path
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(files[path], encoding="utf-8")
-    manifest.write_text(json.dumps(sorted(files),indent=2)+"\n")
-    for model in data["models"]:
-        # Retire only this renderer's known public-only exports; preserve unrelated files.
-        for suffix in ("-public.json", "-public-retry.json"):
-            path = dest / "downloads" / (model["id"] + suffix)
-            if path.is_file():
-                path.unlink()
+    retired = ["downloads/" + model["id"] + suffix for model in data["models"]
+               for suffix in ("-public.json", "-public-retry.json")]
+    write_publication(dest, prepare_publication(files, source_root), retired=retired)
     return data
 
 

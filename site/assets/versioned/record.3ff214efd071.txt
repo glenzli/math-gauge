@@ -1,0 +1,188 @@
+import Chapter3.Completion
+
+/- Exercise 3.5 of Zhe Li, The Operator Evolution Theory, vol. I.
+   CC BY 4.0. https://glenzli.com/books/oet/ -/
+namespace Chapter3
+open formal_oet.vol_01.ch_01_foundations
+open Set
+open scoped Classical
+
+def fourU : Set (Option ℝ) := {some 0,some 1,some 2,some 3}
+noncomputable def fourF : Operator (Option ℝ) none :=
+  ⟨fun x => if x ∈ fourU then x else none, by simp [fourU]⟩
+noncomputable def fourG : Operator (Option ℝ) none :=
+  ⟨fun x => if x = some 0 then some 0 else if x = some 1 then some 3
+    else if x = some 2 then some 1 else if x = some 3 then some 2 else none,by simp⟩
+
+theorem four_operators :
+    dom fourF = fourU ∧ dom fourG = fourU ∧
+    fourF.func '' fourU = fourU ∧ fourG.func '' fourU = fourU ∧
+    (∀ x ∉ fourU, fourF.func x = none ∧ fourG.func x = none) := by
+  refine ⟨?_,?_,?_,?_,?_⟩
+  · ext x
+    by_cases hx : x ∈ fourU
+    · have hn : x ≠ none := by
+        simp only [fourU,mem_insert_iff,mem_singleton_iff] at hx
+        rcases hx with rfl | rfl | rfl | rfl <;> simp
+      simp [dom,fourF,hx,hn]
+    · simp [dom,fourF,hx]
+  · ext x
+    by_cases h0 : x = some 0 <;> by_cases h1 : x = some 1 <;>
+      by_cases h2 : x = some 2 <;> by_cases h3 : x = some 3 <;>
+      simp [dom,fourG,fourU,h0,h1,h2,h3]
+  · ext x; norm_num [fourU,fourF,eq_comm]
+  · ext x; norm_num [fourU,fourG,eq_comm]; tauto
+  · intro x hx
+    simp only [fourU,mem_insert_iff,mem_singleton_iff,not_or] at hx
+    simp [fourF,fourG,fourU,hx]
+
+theorem cover_one_center {X : Type} (d : X → X → ENNReal) (U : Set X)
+    (c : X) (hc : c ∈ U) (ε : ENNReal) (h : ∀ x ∈ U, d x c < ε) :
+    covering_number d ε U = 1 := by
+  apply le_antisymm _ (one_le_covering_number_of_nonempty _ _ _ ⟨c,hc⟩)
+  have hn : InternalEpsilonNet d ε U {c} := ⟨by simpa,fun x hx => ⟨c,by simp,h x hx⟩⟩
+  exact iInf_le_of_le _ (iInf_le_of_le hn (by simp))
+
+theorem separated_finite_cover {X : Type} (d : X → X → ENNReal)
+    (hs : ∀ x, d x x = 0) (S : Finset X) {ε : ENNReal} (he : 0 < ε)
+    (hsep : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → ε ≤ d x y) :
+    covering_number d ε (S : Set X) = (S.card : ENNReal) := by
+  have hn : InternalEpsilonNet d ε (S : Set X) S :=
+    ⟨Subset.rfl,fun x hx => ⟨x,hx,by simpa [hs] using he⟩⟩
+  apply le_antisymm
+  · exact iInf_le_of_le S (iInf_le_of_le hn le_rfl)
+  apply le_iInf; intro T; apply le_iInf; intro hT
+  have hST : S ⊆ T := by
+    intro x hx
+    obtain ⟨c,hc,hd⟩ := hT.2 x hx
+    have heq : x = c := by
+      by_contra hh
+      exact (not_lt_of_ge (hsep x hx c (hT.1 hc) hh)) hd
+    rwa [heq]
+  exact_mod_cast Finset.card_le_card hST
+
+theorem four_cover (ε : ENNReal) (he : 0 < ε) :
+    covering_number (realGauge id) ε fourU =
+      if ε ≤ 1 then 4 else if ε ≤ 2 then 2 else 1 := by
+  by_cases h1 : ε ≤ 1
+  · rw [if_pos h1]
+    have hsep : ∀ x ∈ ({some (0 : ℝ),some 1,some 2,some 3} : Finset (Option ℝ)),
+        ∀ y ∈ ({some (0 : ℝ),some 1,some 2,some 3} : Finset (Option ℝ)),
+          x ≠ y → ε ≤ realGauge id x y := by
+      intro x hx y hy hne
+      simp only [Finset.mem_insert,Finset.mem_singleton] at hx hy
+      rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl
+      all_goals first | exact (hne rfl).elim | exact h1.trans (by norm_num [realGauge,liftDistance])
+    simpa [fourU] using separated_finite_cover (realGauge id) (realGauge_valid id).dist_self
+      {some 0,some 1,some 2,some 3} he hsep
+  · rw [if_neg h1]
+    have h1' : 1 < ε := lt_of_not_ge h1
+    by_cases h2 : ε ≤ 2
+    · rw [if_pos h2]
+      apply le_antisymm
+      · have hn : InternalEpsilonNet (realGauge id) ε fourU {some 1,some 2} := by
+          constructor
+          · intro x hx
+            simp only [Finset.mem_coe,Finset.mem_insert,Finset.mem_singleton] at hx
+            rcases hx with rfl | rfl <;> norm_num [fourU]
+          · intro x hx
+            simp only [fourU,mem_insert_iff,mem_singleton_iff] at hx
+            rcases hx with rfl | rfl | rfl | rfl
+            · exact ⟨some 1,by simp,by simpa [realGauge,liftDistance] using h1'⟩
+            · exact ⟨some 1,by simp,by simpa [realGauge,liftDistance] using he⟩
+            · exact ⟨some 2,by simp,by simpa [realGauge,liftDistance] using he⟩
+            · exact ⟨some 2,by simp,by norm_num [realGauge,liftDistance]; exact h1'⟩
+        exact iInf_le_of_le _ (iInf_le_of_le hn (by norm_num))
+      · apply cover_two_lower _ _ ⟨some 0,by norm_num [fourU]⟩
+        intro c hc
+        simp only [fourU,mem_insert_iff,mem_singleton_iff] at hc
+        rcases hc with rfl | rfl | rfl | rfl
+        · exact ⟨some 3,by norm_num [fourU],h2.trans (by norm_num [realGauge,liftDistance])⟩
+        · exact ⟨some 3,by norm_num [fourU],by norm_num [realGauge,liftDistance]; exact h2⟩
+        · exact ⟨some 0,by norm_num [fourU],by simpa [realGauge,liftDistance] using h2⟩
+        · exact ⟨some 0,by norm_num [fourU],h2.trans (by norm_num [realGauge,liftDistance])⟩
+    · rw [if_neg h2]
+      apply cover_one_center _ _ (some 1) (by norm_num [fourU])
+      intro x hx
+      apply lt_of_le_of_lt _ (lt_of_not_ge h2)
+      simp only [fourU,mem_insert_iff,mem_singleton_iff] at hx
+      rcases hx with rfl | rfl | rfl | rfl <;> norm_num [realGauge,liftDistance]
+
+theorem four_center_exclusion :
+    some (3/2 : ℝ) ∉ fourU ∧
+    ¬ InternalEpsilonNet (realGauge id) (7/4) fourU {some (3/2 : ℝ)} := by
+  have hn : some (3/2 : ℝ) ∉ fourU := by norm_num [fourU]
+  exact ⟨hn,fun h => hn (h.1 (by simp))⟩
+
+theorem four_entropy (ε : ENNReal) (he : 0 < ε) (f : Operator (Option ℝ) none)
+    (hf : f = fourF ∨ f = fourG) :
+    f.func '' fourU = fourU ∧
+    covering_number (realGauge id) ε (f.func '' fourU) =
+      (if ε ≤ 1 then 4 else if ε ≤ 2 then 2 else 1) ∧
+    ∃ hD : EntropyDefined (realGauge id) (realGauge id) f fourU ε,
+      entropyDifference (realGauge id) (realGauge id) f fourU ε hD = 0 := by
+  have him : f.func '' fourU = fourU := by
+    rcases hf with rfl | rfl
+    · exact four_operators.2.2.1
+    · exact four_operators.2.2.2.1
+  have hfin : fourU.Finite := by simp [fourU]
+  have hU : fourU.Nonempty := ⟨some 0,by norm_num [fourU]⟩
+  have hc := finite_cover (realGauge id) (realGauge_valid id).dist_self fourU hfin he
+  refine ⟨him,by rw [him]; exact four_cover ε he,Or.inl hc,?_⟩
+  simp [entropyDifference,him,entropy_finite _ _ hU ε hc,← EReal.coe_sub]
+
+def ScalarBound (f : Operator (Option ℝ) none) (L : ENNReal) : Prop :=
+  ∀ x ∈ fourU, ∀ y ∈ fourU, realGauge id (f.func x) (f.func y) ≤ L * realGauge id x y
+
+theorem four_lip_bounds : ScalarBound fourF 1 ∧ ScalarBound fourG 3 := by
+  constructor <;> intro x hx y hy
+  all_goals
+    simp only [fourU,mem_insert_iff,mem_singleton_iff] at hx hy
+    rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+      norm_num [fourF,fourG,fourU,realGauge,liftDistance]
+
+theorem four_lip_optimal (L : ENNReal) :
+    (ScalarBound fourF L ↔ 1 ≤ L) ∧ (ScalarBound fourG L ↔ 3 ≤ L) := by
+  constructor <;> constructor
+  · intro h
+    have hh := h (some 0) (by norm_num [fourU]) (some 1) (by norm_num [fourU])
+    simpa [fourF,fourU,realGauge,liftDistance] using hh
+  · intro h x hx y hy
+    exact (four_lip_bounds.1 x hx y hy).trans (mul_le_mul_right' h _)
+  · intro h
+    have hh := h (some 0) (by norm_num [fourU]) (some 1) (by norm_num [fourU])
+    simpa [fourG,realGauge,liftDistance] using hh
+  · intro h x hx y hy
+    exact (four_lip_bounds.2 x hx y hy).trans (mul_le_mul_right' h _)
+
+theorem four_lip_cover_comparison :
+    covering_number (realGauge id) (7/4) (fourF.func '' fourU) ≤
+      covering_number (realGauge id) ((7/4)/1) fourU ∧
+    covering_number (realGauge id) (7/4) (fourG.func '' fourU) ≤
+      covering_number (realGauge id) ((7/4)/3) fourU ∧
+    covering_number (realGauge id) ((7/4)/1) fourU = 2 ∧
+    covering_number (realGauge id) ((7/4)/3) fourU = 4 ∧
+    covering_number (realGauge id) (7/4) (fourF.func '' fourU) = 2 ∧
+    covering_number (realGauge id) (7/4) (fourG.func '' fourU) = 2 := by
+  have hp : (0 : ENNReal) < 7/4 := ENNReal.div_pos (by norm_num) (by norm_num)
+  have hp' : (0 : ENNReal) < (7/4)/3 := ENNReal.div_pos (ne_of_gt hp) (by norm_num)
+  have h1 : (1 : ENNReal) < 7/4 := by
+    apply (ENNReal.lt_div_iff_mul_lt (by norm_num) (by norm_num)).mpr
+    norm_num
+  have h2 : (7/4 : ENNReal) ≤ 2 := by
+    apply (ENNReal.div_le_iff (by norm_num) (by norm_num)).mpr
+    norm_num
+  have h3 : ((7/4)/3 : ENNReal) ≤ 1 := by
+    apply (ENNReal.div_le_iff (by norm_num) (by norm_num)).mpr
+    norm_num
+    exact h2.trans (by norm_num)
+  have hc : covering_number (realGauge id) (7/4) fourU = 2 := by
+    rw [four_cover _ hp,if_neg (not_le_of_gt h1),if_pos h2]
+  refine ⟨lip_cover _ _ fourF fourU (7/4) (by norm_num) (by norm_num) four_lip_bounds.1,
+    lip_cover _ _ fourG fourU (7/4) (by norm_num) (by norm_num) four_lip_bounds.2,
+    by simpa using hc,?_,?_,?_⟩
+  · rw [four_cover _ hp',if_pos h3]
+  · rw [four_operators.2.2.1]; exact hc
+  · rw [four_operators.2.2.2.1]; exact hc
+
+end Chapter3

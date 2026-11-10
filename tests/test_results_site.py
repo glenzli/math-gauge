@@ -72,10 +72,10 @@ class CurrentSiteTests(unittest.TestCase):
                   "capacity": {"active": 90, "under_construction": 10},
                   "metrics": {"overall": {"exact": None}}}
         self.assertEqual(SITE.evaluation_progress(result),
-                         {"planned": 3, "adjudicated": 3, "pending": 0, "incomplete": False})
+                         {"planned": 3, "adjudicated": 3, "pending": 0, "pending_rounds": 0, "incomplete": False})
         result["whole_task_counts"].update(failed=1, unknown=1)
         self.assertEqual(SITE.evaluation_progress(result),
-                         {"planned": 3, "adjudicated": 2, "pending": 1, "incomplete": True})
+                         {"planned": 3, "adjudicated": 2, "pending": 1, "pending_rounds": 0, "incomplete": True})
 
     def test_only_selected_current_models_and_scores_are_displayed(self):
         self.assertEqual(self.data["benchmark_version"], "0.6.0")
@@ -93,6 +93,9 @@ class CurrentSiteTests(unittest.TestCase):
             self.assertNotIn("public", model)
             self.assertNotIn("public", model["retry"])
             self.assertFalse(model["combined"]["formal_comparison_eligible"])
+            admitted = model["retry"]["combined"]
+            self.assertEqual(model["lean_formalization_breakdown"], admitted["lean_formalization_breakdown"])
+            self.assertEqual(model["alignment_selfcheck"], admitted["alignment_selfcheck"])
 
     def test_public_display_has_no_private_task_identifiers_or_raw_inputs(self):
         for model in self.data["models"]:
@@ -121,7 +124,11 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertIn("\\u003c/script>", page)
         self.assertIn("&lt;/script&gt;", page)
         payload = page.split('<script type="application/json" id="data">', 1)[1].split("</script>", 1)[0]
-        self.assertEqual(json.loads(payload), SITE.display_harness_labels(data))
+        projected = json.loads(payload)
+        self.assertEqual(projected['models'][0]['label'], label)
+        self.assertEqual([model['id'] for model in projected['models']],
+                         [model['id'] for model in data['models']])
+        self.assertNotIn('sources', projected)
 
     def test_outputs_are_deterministic_and_only_current_results_are_exported(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -134,7 +141,10 @@ class CurrentSiteTests(unittest.TestCase):
                 "downloads/" + model["id"] + "-" + scope + suffix + ".json"
                 for model in self.data["models"] for scope in ["combined"]
                 for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"]}
+            downloads.add('downloads/timing-reference.json')
             self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
+            timings=json.loads(before['downloads/timing-reference.json'])
+            self.assertEqual(timings,SITE.build_reference(SITE.ROOT,display_data=self.data))
             owned = json.loads(before['generated-pages.json'])
             self.assertEqual(set(before), set(owned)|{'generated-pages.json'})
             self.assertIn('method.html',owned)
@@ -331,7 +341,14 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertEqual(harness['version_scope'],
                     json.loads((ROOT / 'site/harnesses.json').read_bytes())['models'][model['id']]['version_scope'])
             else:
-                self.assertTrue(model['id'].startswith('deepseek') or model.get('record_kind')=='native_harness')
+                versions = harness.get('observed_versions', [])
+                if versions:
+                    self.assertGreaterEqual(len(set(versions)), 2)
+                    self.assertTrue(harness['version_scope'])
+                    for version in versions:
+                        self.assertIn(version, harness['version_scope'])
+                else:
+                    self.assertTrue(model['id'].startswith('deepseek') or model.get('record_kind')=='native_harness')
 
     def test_attempt_condition_reuses_other_models_honestly(self):
         self.assertEqual(self.data["attempt_conditions"], ["single_attempt", "nonlogical_retry_3"])
@@ -347,12 +364,30 @@ class CurrentSiteTests(unittest.TestCase):
             summary = model['retry']['combined'].get('retry_summary', {})
             reruns = summary.get('slots_with_reruns', summary.get('admitted_initial_reruns', 0))
             if reruns:
-                self.assertIn(model['retry']['combined']['retry_summary']['selection'],
-                              {'first_completed_delivery', 'first_normal_native_delivery'})
+                if summary.get('selection'):
+                    self.assertIn(summary['selection'],
+                                  {'first_completed_delivery', 'first_normal_native_delivery'})
+                else:
+                    from math_gauge.records import evidence_bytes
+                    folder = ROOT / Path(model['source_record']).parent
+                    record = json.loads((folder / 'record.json').read_bytes())
+                    selection = json.loads(evidence_bytes(folder, record['attempt_condition_sources']))
+                    self.assertEqual(selection['selection'], 'first_normal_delivery_after_counted_operational_failures')
+                    self.assertEqual(set(selection['conditions']), {'single_attempt', 'nonlogical_retry_3'})
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
                     self.assertEqual(model["retry"][scope].get("retry_summary", {}).get("slots_with_reruns", 0), 0)
+
+    def test_unreviewed_fixed_rounds_keep_the_model_coverage_marker(self):
+        model = next(m for m in self.data['models'] if m['id'] == 'gemini-4-argon')
+        result = copy.deepcopy(model['retry']['combined'])
+        self.assertFalse(SITE.evaluation_progress(result)['incomplete'])
+        result['alignment_selfcheck']['rounds'][0]['score']['exact'] = None
+        progress = SITE.evaluation_progress(result)
+        self.assertEqual(progress['pending'], 0, 'Unknown rounds must not invent pending A1 tasks')
+        self.assertEqual(progress['pending_rounds'], 1)
+        self.assertTrue(progress['incomplete'])
 
 
 
@@ -425,7 +460,15 @@ class CurrentSiteTests(unittest.TestCase):
                 response_hash = (review.get('answer_sha256') or
                                  review.get('binding', {}).get('response_sha256') or
                                  review.get('bindings', {}).get('answer', {}).get('sha256'))
-                self.assertEqual(response_hash, task['response_sha256'])
+                if response_hash is not None:
+                    self.assertEqual(response_hash, task['response_sha256'])
+                else:
+                    # Some original review schemas pair answer/review descriptors in
+                    # the source-bound record instead of repeating the answer hash.
+                    row = evidence['source_row']
+                    self.assertEqual(row['response']['sha256'], task['response_sha256'])
+                    self.assertEqual(row['source']['response_sha256'], task['response_sha256'])
+                    self.assertTrue(any(s['sha256'] == row['review']['sha256'] for s in evidence['sources']))
                 self.assertEqual(len(review.get('criteria', review.get('dimensions', []))), 6)
                 criterion = review.get('criteria', review.get('dimensions'))[0]
                 key = next(criterion[k] for k in ('id', 'criterion_id', 'dimension_id') if k in criterion)

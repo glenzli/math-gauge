@@ -6,6 +6,7 @@
 <meta name="description" content="Math Gauge 0.6.0 书面证明、Lean与数学研究三大类评测，数学能力、可靠数学能力及严格数学交付成绩与完整来源。">
 <title>Math Gauge — Benchmark Leaderboard</title>
 <link rel="stylesheet" href="assets/results.css">
+@@MG_TIMING_CSS@@
 </head>
 <body class="leaderboard-page">
 <header class="topbar"><nav class="nav" aria-label="主导航">
@@ -21,8 +22,8 @@
 <p class="panel-foot" id="no-completed-models" hidden>当前筛选下没有已测完的模型。</p>
 <figure class="score-figure" aria-labelledby="chart-heading"><figcaption class="chart-caption"><span id="chart-heading">总分／100</span><span class="chart-legend"><span class="legend-item" data-display-mode="capability"><i class="legend-swatch mc" aria-hidden="true"></i>MC</span><span class="legend-item" data-display-mode="partial"><i class="legend-swatch rmc" aria-hidden="true"></i>RMC</span><span class="legend-item" data-display-mode="strict"><i class="legend-swatch smc" aria-hidden="true"></i>SMC</span></span></figcaption>@@MG_TRIPLE_CHART@@<p class="chart-note">采用规则选定答卷，满分100。</p></figure>
 <p class="panel-desc score-explanation" id="score-explanation" aria-live="polite">可靠数学能力按实际完成度计分，并保留错误、回退和误报扣罚。</p>
-<div class="table-wrap"><table class="leaderboard" id="ranking"><thead><tr><th scope="col">#</th><th scope="col">模型</th><th scope="col">Harness</th><th scope="col" class="numeric delivery-cell" title="初答交卷数（含封卷工程）">答题完成度</th><th scope="col" class="numeric" data-display-mode="capability">MC</th><th scope="col" class="numeric primary-score" data-display-mode="partial">RMC · 主分</th><th scope="col" class="numeric" data-display-mode="strict">SMC</th><th scope="col" class="numeric">评测详情</th></tr></thead><tbody id="ranking-body">@@MG_ROWS@@</tbody></table></div>
-<p class="panel-foot delivery-explanation">答题完成度统计初答交卷数（含封卷工程）；缺交计0分，未测保持未知。</p>
+<div class="table-wrap"><table class="leaderboard" id="ranking"><thead><tr><th scope="col">#</th><th scope="col">模型</th><th scope="col">Harness</th><th scope="col" class="numeric delivery-cell" title="主动交卷／强收有内容／总初答题数">答题完成度</th><th scope="col" class="numeric" data-display-mode="capability">MC</th><th scope="col" class="numeric primary-score" data-display-mode="partial">RMC · 主分</th><th scope="col" class="numeric" data-display-mode="strict">SMC</th><th scope="col" class="numeric">评测详情</th></tr></thead><tbody id="ranking-body">@@MG_ROWS@@</tbody></table></div>
+<p class="panel-foot delivery-explanation">主动交卷／强收有内容／总初答题数。强收仅可计MC，RMC与SMC为0；未测保持未知。</p>
 @@MG_INCOMPLETE_NOTE@@
 <p class="panel-foot">共同条件：允许本地工具及预置公共依赖，禁止联网检索与工具联网。各Harness版本及实际使用情况见模型详情。</p>
 <details class="note-disclosure"><summary>重跑与来源备注</summary><p><span data-original>@@MG_RETRY_NOTES@@</span><br>按规则采用首次正常交付；原答、失败及全部尝试记录保留。<a data-context-link href="method.html">查看方法与来源 →</a></p></details>
@@ -34,9 +35,11 @@
 <section class="panel contribution-panel"><div class="panel-head"><div><h2>大类贡献</h2><p class="panel-desc" id="coverage">点击大类表头展开子类 · 贡献分 / 该项满分</p></div><span class="label" id="contribution-mode">RMC</span></div><div class="table-wrap"><table id="capabilities" class="compact taxonomy"></table></div></section>
 <details class="panel score-structure"><summary>总分结构 · 书面证明35% · Lean35% · 数学研究30%</summary><div class="weights-body"><div class="weight-bar" aria-hidden="true"><span class="weight-segment" style="width:35%"></span><span class="weight-segment" style="width:35%"></span><span class="weight-segment" style="width:30%"></span></div><div class="weight-row"><span>书面证明</span><span class="weight-value">35%</span></div><div class="weight-row"><span>Lean</span><span class="weight-value">35%</span></div><div class="weight-row"><span>数学研究</span><span class="weight-value">30%</span></div><p class="weight-explain">分类贡献与下载使用当前总榜口径。<br><a data-context-link href="method.html">方法与数据 →</a></p></div></details>
 <section class="panel" id="data-downloads"><div class="panel-head"><div><h2>当前成绩下载</h2><p class="panel-desc">公私合并成绩，使用当前总榜口径。</p></div><a data-context-link href="method.html">方法与数据 →</a></div><div class="downloads panel-downloads" id="downloads"></div></section>
+@@MG_TIMING_REFERENCE@@
 <footer class="footer"><span>Math Gauge</span><span><a href="../releases/v0.6.1/README.md">0.6.1 分发说明</a> · <a href="../docs/harness-guide.md">其他 Harness 运行指南</a></span></footer>
 </main>
 <script type="application/json" id="data">@@MG_DATA@@</script>
 <script src="assets/results-i18n.js"></script><script src="assets/results-core.js"></script><script src="assets/board-controls.js"></script><script src="assets/home-results.js"></script>
+@@MG_TIMING_JS@@
 </body>
 </html>

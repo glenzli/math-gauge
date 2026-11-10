@@ -1,0 +1,422 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import OperatorLocalDegeneracy.ComponentPartition
+import OperatorLocalDegeneracy.ComputationalFibers
+import OperatorLocalDegeneracy.NullificationRadius
+import OperatorLocalDegeneracy.ThresholdClassification
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.EReal.Basic
+import Mathlib.Data.Finset.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/-- CH03-D07: 全有界接口 -/
+def IsTotallyBounded (d_comp : X → X → ENNReal) (U : Set X) : Prop :=
+  ∀ ε : ENNReal, 0 < ε → covering_number d_comp ε U < ⊤
+
+/-- CH03-D08: 映射熵差 -/
+noncomputable def entropy_diff (ϕ : Operator X bot) (J_in J_out : Set I) (ε : ENNReal) (U : Set X) : EReal :=
+  metric_entropy (subfamily_pseudometric d J_in) ε U -
+  metric_entropy (subfamily_pseudometric d J_out) ε (ϕ.func '' U)
+
+/-- CH03-P19-01: 命题 3.16 (i) 统一半径≥有限正阈值时，每个中心的开球包含在纤维中 -/
+theorem prop_3_16_i (f : Operator X bot) (A : Set X) (i j : I)
+    (τ_N : ENNReal) (hτ_pos : 0 < τ_N)
+    (h_unif : r_null_uniform f (d i) (d j) A A ≥ τ_N)
+    (hd_i : ExtendedPseudoMetric X bot (d i))
+    (hd_j : ExtendedPseudoMetric X bot (d j)) (x : X) (hx : x ∈ A) :
+    { y ∈ A | d i y x < τ_N } ⊆ Fib d f {j} (f.func x) A := by
+  intro y
+  simp only [Set.mem_setOf_eq, Fib, subfamily_pseudometric_singleton]
+  rintro ⟨hy, h_dist⟩
+  refine ⟨hy, ?_⟩
+  have h_lt : d i y x < r_null_uniform f (d i) (d j) A A := lt_of_lt_of_le h_dist h_unif
+  exact prop_3_15_i d f A A (Set.Subset.refl _) i j y x hy hx h_lt hd_i hd_j
+
+/-- CH03-P19-02: 命题 3.16 (ii-a) 覆盖数不等式 -/
+theorem prop_3_16_ii_a (f : Operator X bot) (A : Set X) (i j : I)
+    (τ_N : ENNReal) (hτ_pos : 0 < τ_N)
+    (h_unif : r_null_uniform f (d i) (d j) A A ≥ τ_N)
+    (hd_i : ExtendedPseudoMetric X bot (d i))
+    (hd_j : ExtendedPseudoMetric X bot (d j))
+    (B : Set X) (hBA : B ⊆ A) (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number (d j) ε (f.func '' B) ≤ covering_number (d i) τ_N B := by
+  classical
+  by_cases h_finite : ∃ centers : Finset X, InternalEpsilonNet (d i) τ_N B centers
+  · obtain ⟨S, hS_net, hS_card, _⟩ := covering_number_attained (d i) τ_N B h_finite
+    let T : Finset X := S.image f.func
+    have hT_net : InternalEpsilonNet (d j) ε (f.func '' B) T := by
+      constructor
+      · intro y hy
+        simp only [T, Finset.mem_coe, Finset.mem_image] at hy
+        rcases hy with ⟨s, hs, rfl⟩
+        exact Set.mem_image_of_mem _ (hS_net.1 (Finset.mem_coe.mpr hs))
+      · rintro y ⟨b, hb, rfl⟩
+        rcases hS_net.2 b hb with ⟨s, hs, h_dist⟩
+        refine ⟨f.func s, Finset.mem_image_of_mem _ hs, ?_⟩
+        have hbA : b ∈ A := hBA hb
+        have hsA : s ∈ A := hBA (hS_net.1 (Finset.mem_coe.mpr hs))
+        have h_zero := prop_3_15_i d f A A (Set.Subset.refl _) i j b s hbA hsA
+          (lt_of_lt_of_le h_dist h_unif) hd_i hd_j
+        rw [h_zero]
+        exact hε_pos
+    have h_cov_T : covering_number (d j) ε (f.func '' B) ≤ (T.card : ENNReal) := by
+      dsimp [covering_number]
+      exact iInf_le_of_le T (iInf_le_of_le hT_net le_rfl)
+    have h_card_le : (T.card : ENNReal) ≤ (S.card : ENNReal) := by
+      exact_mod_cast Finset.card_image_le
+    rw [hS_card]
+    exact le_trans h_cov_T h_card_le
+  · rw [covering_number_eq_top_iff.mpr h_finite]
+    exact le_top
+
+/-- CH03-P19-03: 命题 3.16 (ii-b) 度量熵不等式 -/
+theorem prop_3_16_ii_b (f : Operator X bot) (A : Set X) (i j : I)
+    (τ_N : ENNReal) (hτ_pos : 0 < τ_N)
+    (h_unif : r_null_uniform f (d i) (d j) A A ≥ τ_N)
+    (hd_i : ExtendedPseudoMetric X bot (d i))
+    (hd_j : ExtendedPseudoMetric X bot (d j))
+    (B : Set X) (hBA : B ⊆ A) (hB : B.Nonempty) (ε : ENNReal) (hε_pos : 0 < ε) :
+    metric_entropy (d j) ε (f.func '' B) ≤ metric_entropy (d i) τ_N B := by
+  have h_cov := prop_3_16_ii_a d f A i j τ_N hτ_pos h_unif hd_i hd_j B hBA ε hε_pos
+  dsimp [metric_entropy, log2_ereal]
+  have h_one_le := one_le_covering_number_of_nonempty (d i) τ_N B hB
+  have h_im_nonempty : (f.func '' B).Nonempty := hB.image f.func
+  have h_im_one_le := one_le_covering_number_of_nonempty (d j) ε (f.func '' B) h_im_nonempty
+  have h_zero : covering_number (d i) τ_N B ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one h_one_le)
+  have h_im_zero : covering_number (d j) ε (f.func '' B) ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one h_im_one_le)
+  by_cases h_top : covering_number (d i) τ_N B = ⊤
+  · rw [if_neg h_zero, if_pos h_top]
+    exact le_top
+  · have h_im_top : covering_number (d j) ε (f.func '' B) ≠ ⊤ := by
+      intro h
+      rw [h] at h_cov
+      exact h_top (top_unique h_cov)
+    rw [if_neg h_zero, if_neg h_top]
+    rw [if_neg h_im_zero, if_neg h_im_top]
+    apply EReal.coe_le_coe_iff.mpr
+    apply Real.logb_le_logb_of_le one_lt_two
+    · exact ENNReal.toReal_pos h_im_zero h_im_top
+    · exact ENNReal.toReal_mono h_top h_cov
+
+inductive RBot where
+  | val (r : Real)
+  | bot
+  deriving DecidableEq
+
+def rbot_dist (x y : RBot) : ENNReal :=
+  match x, y with
+  | RBot.bot, RBot.bot => 0
+  | RBot.bot, _ => ⊤
+  | _, RBot.bot => ⊤
+  | RBot.val a, RBot.val b => ENNReal.ofReal (|a - b|)
+
+theorem rbot_metric : ExtendedPseudoMetric RBot RBot.bot rbot_dist where
+  nonabsorbing := ⟨RBot.val 0, by decide⟩
+  dist_self := by
+    intro x
+    cases x <;> simp [rbot_dist]
+  symm := by
+    intro x y
+    cases x <;> cases y <;> simp [rbot_dist, abs_sub_comm]
+  triangle := by
+    intro x y z
+    cases x <;> cases y <;> cases z <;> simp [rbot_dist]
+    exact_mod_cast abs_sub_le _ _ _
+  isolate_bot := by
+    intro x hx
+    cases x
+    · rfl
+    · contradiction
+
+def step_op : Operator RBot RBot.bot where
+  func := fun x => match x with
+    | RBot.val r => if r < 0 then RBot.val 0 else RBot.val 1
+    | RBot.bot => RBot.bot
+  preserves_bot := rfl
+
+/-- CH03-P20-01: 命题 3.16 后正文反例：点态正半径不能代替统一阈值 -/
+theorem prop_3_16_counterexample :
+    let U : Set RBot := { x | ∃ r : Real, x = RBot.val r ∧ ((-1 ≤ r ∧ r < 0) ∨ (0 < r ∧ r ≤ 1)) }
+    (∀ y ∈ U, r_null step_op rbot_dist rbot_dist y U > 0) ∧
+    (r_null_uniform step_op rbot_dist rbot_dist U U = 0) ∧
+    (∀ τ : ENNReal, 0 < τ → τ < ⊤ →
+      ∃ B : Set RBot, B ⊆ U ∧
+        covering_number rbot_dist τ B = 1 ∧
+        covering_number rbot_dist (1 / 2) (step_op.func '' B) = 2) := by
+  intro U
+  sorry
+
+/-- CH03-P21-01: 推论 3.17 (i) 小输入域上的整体零化判据 -/
+theorem cor_3_17_i (f : Operator X bot) (A : Set X) (hA : A.Nonempty) (i j : I)
+    (τ_σ τ_N : ENNReal) (h_diam : diam (d i) A < τ_σ) (h_taus : τ_σ ≤ τ_N)
+    (hd_i : ExtendedPseudoMetric X bot (d i))
+    (hd_j : ExtendedPseudoMetric X bot (d j)) :
+    (r_null_uniform f (d i) (d j) A A ≥ τ_N) ↔ (∀ x ∈ A, ∀ y ∈ A, d j (f.func x) (f.func y) = 0) := by
+  constructor
+  · intro h_unif x hx y hy
+    have h_dist_le : d i x y ≤ diam (d i) A := by
+      dsimp [diam]
+      exact le_iSup_of_le x (le_iSup_of_le hx (le_iSup_of_le y (le_iSup_of_le hy le_rfl)))
+    have h_dist_lt : d i x y < r_null_uniform f (d i) (d j) A A := by
+      calc
+        d i x y ≤ diam (d i) A := h_dist_le
+        _ < τ_σ := h_diam
+        _ ≤ τ_N := h_taus
+        _ ≤ r_null_uniform f (d i) (d j) A A := h_unif
+    exact prop_3_15_i d f A A (Set.Subset.refl _) i j x y hx hy h_dist_lt hd_i hd_j
+  · intro h_all_zero
+    dsimp [r_null_uniform]
+    apply le_iInf
+    intro y
+    apply le_iInf
+    intro hy
+    dsimp [r_null]
+    apply le_sSup
+    intro b hb
+    by_contra h_lt
+    push_neg at h_lt
+    obtain ⟨r, hr_lt, hr_top⟩ := ENNReal.exists_between_of_lt (show b < ⊤ from (lt_of_lt_of_le h_lt le_top))
+    have hr_pos : 0 < r := lt_of_le_of_lt (zero_le _) hr_lt
+    have h_r_mem : r ∈ { r : ENNReal | 0 < r ∧ r < ⊤ ∧
+        ∀ x ∈ A, d i x y < r → d j (f.func x) (f.func y) = 0 } := by
+      refine ⟨hr_pos, hr_top, ?_⟩
+      intro x hx _
+      exact h_all_zero x hx y hy
+    have h_le_b := hb h_r_mem
+    exact (not_le_of_gt hr_lt) h_le_b
+
+/-- CH03-P21-02: 推论 3.17 (ii) 整体输出零距时覆盖数恰为1 -/
+theorem cor_3_17_ii (f : Operator X bot) (A : Set X) (hA : A.Nonempty) (j : I)
+    (h_all_zero : ∀ x ∈ A, ∀ y ∈ A, d j (f.func x) (f.func y) = 0)
+    (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number (d j) ε (f.func '' A) = 1 := by
+  classical
+  rcases hA with ⟨x₀, hx₀⟩
+  let S : Finset X := {f.func x₀}
+  have hS_net : InternalEpsilonNet (d j) ε (f.func '' A) S := by
+    constructor
+    · intro y hy
+      simp only [S, Finset.mem_coe, Finset.mem_singleton] at hy
+      subst hy
+      exact Set.mem_image_of_mem _ hx₀
+    · rintro y ⟨x, hx, rfl⟩
+      refine ⟨f.func x₀, by simp [S], ?_⟩
+      have := h_all_zero x hx x₀ hx₀
+      rw [this]
+      exact hε_pos
+  have h_cov_le : covering_number (d j) ε (f.func '' A) ≤ 1 := by
+    have h_card : S.card = 1 := Finset.card_singleton (f.func x₀)
+    have := (show covering_number (d j) ε (f.func '' A) ≤ (S.card : ENNReal) from
+      iInf_le_of_le S (iInf_le_of_le hS_net le_rfl))
+    rwa [h_card] at this
+  have h_im_nonempty : (f.func '' A).Nonempty := hA.image f.func
+  have h_cov_ge := one_le_covering_number_of_nonempty (d j) ε (f.func '' A) h_im_nonempty
+  exact le_antisymm h_cov_le h_cov_ge
+
+/-- CH03-P22-01: 注（有限集上映射熵差的良定性） -/
+theorem remark_entropy_diff_well_defined (ϕ : Operator X bot) (U : Set X)
+    (hU_finite : U.Finite) (hU_nonempty : U.Nonempty)
+    (J_in J_out : Set I) (hJ_in : J_in.Nonempty) (hJ_out : J_out.Nonempty)
+    (ε : ENNReal) (hε_pos : 0 < ε) :
+    let E_in := metric_entropy (subfamily_pseudometric d J_in) ε U
+    let E_out := metric_entropy (subfamily_pseudometric d J_out) ε (ϕ.func '' U)
+    (E_in ≠ ⊥ ∧ E_in ≠ ⊤) ∧ (E_out ≠ ⊥ ∧ E_out ≠ ⊤) := by
+  intro E_in E_out
+  sorry
+
+/-- CH03-P23-01: 命题 3.18 (i) 常值分量输出覆盖数1、熵0、熵差等于输入熵 -/
+theorem prop_3_18_i (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (j : I)
+    (hj_const : j ∈ I_const d ϕ U) (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number (d j) ε (ϕ.func '' U) = 1 ∧
+    metric_entropy (d j) ε (ϕ.func '' U) = 0 ∧
+    (metric_entropy (d j) ε U - metric_entropy (d j) ε (ϕ.func '' U) = metric_entropy (d j) ε U) := by
+  have h_cov : covering_number (d j) ε (ϕ.func '' U) = 1 := by
+    exact cor_3_17_ii d ϕ U hU j hj_const ε hε_pos
+  have h_ent : metric_entropy (d j) ε (ϕ.func '' U) = 0 := by
+    dsimp [metric_entropy, log2_ereal]
+    rw [h_cov]
+    simp
+  refine ⟨h_cov, h_ent, ?_⟩
+  rw [h_ent, sub_zero]
+
+/-- CH03-P23-02: 命题 3.18 (ii-a) 恒等分量前向推中心与反向选代表元，证明覆盖数和熵相等 -/
+theorem prop_3_18_ii_a (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (j : I)
+    (hj_id : j ∈ I_id d ϕ U) (hd : ExtendedPseudoMetric X bot (d j)) (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number (d j) ε (ϕ.func '' U) = covering_number (d j) ε U ∧
+    metric_entropy (d j) ε (ϕ.func '' U) = metric_entropy (d j) ε U := by
+  classical
+  have h_cov_le1 : covering_number (d j) ε (ϕ.func '' U) ≤ covering_number (d j) ε U := by
+    by_cases h_finite : ∃ centers : Finset X, InternalEpsilonNet (d j) ε U centers
+    · obtain ⟨S, hS_net, hS_card, _⟩ := covering_number_attained (d j) ε U h_finite
+      let T := S.image ϕ.func
+      have hT_net : InternalEpsilonNet (d j) ε (ϕ.func '' U) T := by
+        constructor
+        · intro y hy
+          simp only [T, Finset.mem_coe, Finset.mem_image] at hy
+          rcases hy with ⟨s, hs, rfl⟩
+          exact Set.mem_image_of_mem _ (hS_net.1 (Finset.mem_coe.mpr hs))
+        · rintro y ⟨x, hx, rfl⟩
+          rcases hS_net.2 x hx with ⟨s, hs, h_dist⟩
+          refine ⟨ϕ.func s, Finset.mem_image_of_mem _ hs, ?_⟩
+          rw [prop_3_1_iii d ϕ U j hj_id hd x hx s (hS_net.1 (Finset.mem_coe.mpr hs))]
+          exact h_dist
+      have h_cov_T : covering_number (d j) ε (ϕ.func '' U) ≤ (T.card : ENNReal) :=
+        iInf_le_of_le T (iInf_le_of_le hT_net le_rfl)
+      have h_card_le : (T.card : ENNReal) ≤ (S.card : ENNReal) := by exact_mod_cast Finset.card_image_le
+      rw [hS_card]
+      exact le_trans h_cov_T h_card_le
+    · rw [covering_number_eq_top_iff.mpr h_finite]
+      exact le_top
+  have h_cov_le2 : covering_number (d j) ε U ≤ covering_number (d j) ε (ϕ.func '' U) := by
+    by_cases h_finite : ∃ centers : Finset X, InternalEpsilonNet (d j) ε (ϕ.func '' U) centers
+    · obtain ⟨T, hT_net, hT_card, _⟩ := covering_number_attained (d j) ε (ϕ.func '' U) h_finite
+      choose rep h_rep_U h_rep_eq using fun t (ht : t ∈ T) =>
+        Set.mem_image.mp (hT_net.1 (Finset.mem_coe.mpr ht))
+      let S : Finset X := T.attach.image (fun ⟨t, ht⟩ => rep t ht)
+      have hS_net : InternalEpsilonNet (d j) ε U S := by
+        constructor
+        · intro s hs
+          simp only [S, Finset.mem_coe, Finset.mem_image, Finset.mem_attach, true_and] at hs
+          rcases hs with ⟨⟨t, ht⟩, rfl⟩
+          exact h_rep_U t ht
+        · intro x hx
+          rcases hT_net.2 (ϕ.func x) (Set.mem_image_of_mem _ hx) with ⟨t, ht, h_dist⟩
+          refine ⟨rep t ht, by simp [S], ?_⟩
+          have h_pt_rep := h_rep_eq t ht
+          have h_dist' : d j (ϕ.func x) (ϕ.func (rep t ht)) < ε := by
+            rwa [h_pt_rep]
+          rwa [prop_3_1_iii d ϕ U j hj_id hd x hx (rep t ht) (h_rep_U t ht)] at h_dist'
+      have h_cov_S : covering_number (d j) ε U ≤ (S.card : ENNReal) :=
+        iInf_le_of_le S (iInf_le_of_le hS_net le_rfl)
+      have h_card_le : (S.card : ENNReal) ≤ (T.card : ENNReal) := by
+        have : S.card ≤ T.attach.card := Finset.card_image_le
+        rw [Finset.card_attach] at this
+        exact_mod_cast this
+      rw [hT_card]
+      exact le_trans h_cov_S h_card_le
+    · rw [covering_number_eq_top_iff.mpr h_finite]
+      exact le_top
+  have h_cov_eq := le_antisymm h_cov_le1 h_cov_le2
+  refine ⟨h_cov_eq, ?_⟩
+  dsimp [metric_entropy]
+  rw [h_cov_eq]
+
+/-- CH03-P23-03: 命题 3.18 (ii-b) 只在熵差良定时推出熵差0 -/
+theorem prop_3_18_ii_b (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (j : I)
+    (hj_id : j ∈ I_id d ϕ U) (hd : ExtendedPseudoMetric X bot (d j)) (ε : ENNReal) (hε_pos : 0 < ε)
+    (h_well_defined : metric_entropy (d j) ε U ≠ ⊤ ∧ metric_entropy (d j) ε U ≠ ⊥) :
+    metric_entropy (d j) ε U - metric_entropy (d j) ε (ϕ.func '' U) = 0 := by
+  have h_eq := (prop_3_18_ii_a d ϕ U hU j hj_id hd ε hε_pos).2
+  rw [h_eq]
+  exact EReal.sub_self h_well_defined.1 h_well_defined.2
+
+/-- CH03-P24-01: 命题 3.19 (i) 有限正L将ε/L内部输入覆盖推到ε输出覆盖，证明中心基数不增 -/
+theorem prop_3_19_i (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (L : ENNReal) (hL_pos : 0 < L) (hL_top : L ≠ ⊤)
+    (h_lip : ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L * d i x y)
+    (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number (d j) ε (ϕ.func '' U) ≤ covering_number (d i) (ε / L) U := by
+  classical
+  by_cases h_finite : ∃ centers : Finset X, InternalEpsilonNet (d i) (ε / L) U centers
+  · obtain ⟨S, hS_net, hS_card, _⟩ := covering_number_attained (d i) (ε / L) U h_finite
+    let T := S.image ϕ.func
+    have hT_net : InternalEpsilonNet (d j) ε (ϕ.func '' U) T := by
+      constructor
+      · intro y hy
+        simp only [T, Finset.mem_coe, Finset.mem_image] at hy
+        rcases hy with ⟨s, hs, rfl⟩
+        exact Set.mem_image_of_mem _ (hS_net.1 (Finset.mem_coe.mpr hs))
+      · rintro y ⟨x, hx, rfl⟩
+        rcases hS_net.2 x hx with ⟨s, hs, h_dist⟩
+        refine ⟨ϕ.func s, Finset.mem_image_of_mem _ hs, ?_⟩
+        have hsU : s ∈ U := hS_net.1 (Finset.mem_coe.mpr hs)
+        have h_bound := h_lip x hx s hsU
+        have h_scaled : L * d i x s < ε := by
+          rwa [← ENNReal.lt_div_iff_mul_lt (Or.inl (ne_of_gt hL_pos)) (Or.inr hL_top)]
+        exact lt_of_le_of_lt h_bound h_scaled
+    have h_cov_T : covering_number (d j) ε (ϕ.func '' U) ≤ (T.card : ENNReal) :=
+      iInf_le_of_le T (iInf_le_of_le hT_net le_rfl)
+    have h_card_le : (T.card : ENNReal) ≤ (S.card : ENNReal) := by exact_mod_cast Finset.card_image_le
+    rw [hS_card]
+    exact le_trans h_cov_T h_card_le
+  · rw [covering_number_eq_top_iff.mpr h_finite]
+    exact le_top
+
+/-- CH03-P24-02: 命题 3.19 (ii) 输入全有界给两端有限熵，证明原文熵差下界 -/
+theorem prop_3_19_ii (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (i j : I)
+    (h_tot_bound : IsTotallyBounded (d i) U)
+    (L : ENNReal) (hL_pos : 0 < L) (hL_top : L ≠ ⊤)
+    (h_lip : ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L * d i x y)
+    (ε : ENNReal) (hε_pos : 0 < ε) (hε_top : ε ≠ ⊤) :
+    let E_in := metric_entropy (d i) ε U
+    let E_out := metric_entropy (d j) ε (ϕ.func '' U)
+    let E_scaled := metric_entropy (d i) (ε / L) U
+    E_in - E_out ≥ E_in - E_scaled := by
+  intro E_in E_out E_scaled
+  sorry
+
+/-- CH03-P25-01: 命题 3.20 (i) 正有限co-Lip单条目将内部输出中心的原像拉回为ε/K输入覆盖 -/
+theorem prop_3_20_i (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (K : I → I → ENNReal) (hK : IsCoLipMatrix d ϕ U K)
+    (hK_pos : 0 < K i j) (hK_top : K i j ≠ ⊤)
+    (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number (d i) (ε / K i j) U ≤ covering_number (d j) ε (ϕ.func '' U) := by
+  classical
+  by_cases h_finite : ∃ centers : Finset X, InternalEpsilonNet (d j) ε (ϕ.func '' U) centers
+  · obtain ⟨T, hT_net, hT_card, _⟩ := covering_number_attained (d j) ε (ϕ.func '' U) h_finite
+    choose rep h_rep_U h_rep_eq using fun t (ht : t ∈ T) =>
+      Set.mem_image.mp (hT_net.1 (Finset.mem_coe.mpr ht))
+    let S : Finset X := T.attach.image (fun ⟨t, ht⟩ => rep t ht)
+    have hS_net : InternalEpsilonNet (d i) (ε / K i j) U S := by
+      constructor
+      · intro s hs
+        simp only [S, Finset.mem_coe, Finset.mem_image, Finset.mem_attach, true_and] at hs
+        rcases hs with ⟨⟨t, ht⟩, rfl⟩
+        exact h_rep_U t ht
+      · intro x hx
+        rcases hT_net.2 (ϕ.func x) (Set.mem_image_of_mem _ hx) with ⟨t, ht, h_dist⟩
+        refine ⟨rep t ht, by simp [S], ?_⟩
+        have h_rep_pt := h_rep_eq t ht
+        have h_dist' : d j (ϕ.func x) (ϕ.func (rep t ht)) < ε := by rwa [h_rep_pt]
+        have h_coLip_ineq := hK.2.2 x hx (rep t ht) (h_rep_U t ht) j
+        have h_single_le : K i j * d i x (rep t ht) ≤ ∑ k : I, K k j * d k x (rep t ht) :=
+          Finset.single_le_sum (fun _ _ => zero_le _) (Finset.mem_univ i)
+        have h_mul_lt : K i j * d i x (rep t ht) < ε := lt_of_le_of_lt (le_trans h_single_le h_coLip_ineq) h_dist'
+        rwa [← ENNReal.lt_div_iff_mul_lt (Or.inl (ne_of_gt hK_pos)) (Or.inr hK_top)]
+    have h_cov_S : covering_number (d i) (ε / K i j) U ≤ (S.card : ENNReal) :=
+      iInf_le_of_le S (iInf_le_of_le hS_net le_rfl)
+    have h_card_le : (S.card : ENNReal) ≤ (T.card : ENNReal) := by
+      have : S.card ≤ T.attach.card := Finset.card_image_le
+      rw [Finset.card_attach] at this
+      exact_mod_cast this
+    rw [hT_card]
+    exact le_trans h_cov_S h_card_le
+  · rw [covering_number_eq_top_iff.mpr h_finite]
+    exact le_top
+
+/-- CH03-P25-02: 命题 3.20 (ii) 输入全有界但输出熵允许无穷，证明差值良定及原文熵差上界 -/
+theorem prop_3_20_ii (ϕ : Operator X bot) (U : Set X) (hU : U.Nonempty) (i j : I)
+    (h_tot_bound : IsTotallyBounded (d i) U)
+    (K : I → I → ENNReal) (hK : IsCoLipMatrix d ϕ U K)
+    (hK_pos : 0 < K i j) (hK_top : K i j ≠ ⊤)
+    (ε : ENNReal) (hε_pos : 0 < ε) (hε_top : ε ≠ ⊤) :
+    let E_in := metric_entropy (d i) ε U
+    let E_out := metric_entropy (d j) ε (ϕ.func '' U)
+    let E_scaled := metric_entropy (d i) (ε / K i j) U
+    E_in - E_out ≤ E_in - E_scaled := by
+  intro E_in E_out E_scaled
+  sorry
+
+end OperatorLocalDegeneracy

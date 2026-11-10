@@ -45,7 +45,7 @@ def validate_goal_review(review, content_review, assessment_policy, source_repor
     validate_review(content_review, assessment_policy, source_report)
     _metadata(review, SCHEMA, version=CURRENT_VERSION, bindings=_CURRENT_BINDINGS)
     _keys(review, _META | {"post_observation", "goal_definition_sha256", "tasks", "sources"},
-          "goal review")
+          "goal review", optional={"source_relocations"})
     _require(review["post_observation"] is True, "goal mapping is post-observation")
     _require(review["model_id"] == content_review["model_id"], "goal/content models differ")
     _hash(review["goal_definition_sha256"], "goal_definition_sha256")
@@ -112,5 +112,6 @@ def validate_goal_review(review, content_review, assessment_policy, source_repor
     _policy_counts(tasks, assessment_policy)
     if source_report is not None:
         _source_task_identity(tasks, source_report)
-    _inventory(review)
+    from .content_rates import _source_relocations
+    _source_relocations(review, _inventory(review))
     return review

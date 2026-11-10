@@ -1,6 +1,7 @@
 """Versioned fixed-denominator aggregation of separately validated review evidence."""
 
 from collections import Counter
+from copy import deepcopy
 from fractions import Fraction
 from pathlib import Path
 
@@ -13,7 +14,7 @@ from .background_check import validate_inputs as validate_background_inputs
 from .written_additions import validate_inputs as validate_written_additions_inputs
 from .written_replacements import validate_inputs as validate_written_replacement_inputs
 from .manuscript_completion import validate_inputs as validate_manuscript_inputs
-from . import claim_penalties
+from . import claim_penalties, submission_evidence
 from .execution import now
 from .execution_policy import execution_condition
 from .execution_policy import (declared_case_context, declared_case_timeout_seconds,
@@ -1369,8 +1370,10 @@ def _alignment_metric(interval, *, unit, planned, adjudicated=None):
 def _alignment_snapshot(snapshot, ids, source_kind):
     if snapshot is None:
         return None
+    kinds = ({'original_final','diagnosis_only','sealed_workspace','not_available'}
+             if source_kind=='submission_selected' else {source_kind,'not_available'})
     if (not isinstance(snapshot, dict) or not isinstance(snapshot.get("source_id"), str)
-            or not snapshot["source_id"] or snapshot.get("source_kind") not in {source_kind, "not_available"}):
+            or not snapshot["source_id"] or snapshot.get("source_kind") not in kinds):
         raise ValueError("Alignment snapshot changed the selected primary source")
     unavailable = snapshot.get("source_kind") == "not_available"
     if unavailable:
@@ -1404,7 +1407,7 @@ def _alignment_snapshot(snapshot, ids, source_kind):
     return values
 
 
-def _alignment_trajectory(review, policy, *, positive_only=False):
+def _alignment_trajectory(review, policy, *, positive_only=False, allow_submission_sources=False):
     policy = _alignment_policy(policy)
     if (not isinstance(review, dict)
             or review.get("schema") != "math-gauge.alignment-selfcheck-review/v1"
@@ -1414,12 +1417,13 @@ def _alignment_trajectory(review, policy, *, positive_only=False):
             or not isinstance(review.get("model_label"), str) or not review["model_label"]
             or review.get("reviewer_kind") != "ai" or review.get("human_review") != "pending"
             or review.get("formal_comparison_eligible") is not False
-            or review.get("primary_source_kind") not in {"sealed_workspace", "response_inline"}):
+            or review.get("primary_source_kind") not in ({"sealed_workspace", "response_inline", "submission_selected"}
+                if allow_submission_sources else {"sealed_workspace", "response_inline"})):
         raise ValueError("Unsupported alignment review identity, version or evidence status")
     _alignment_hash(review.get("policy_sha256"))
     ids, kind = set(policy["obligation_ids"]), review["primary_source_kind"]
     penalized = policy["version"] in {"0.2.0", "0.3.0", "0.4.0"}
-    if penalized and kind != "sealed_workspace":
+    if penalized and kind != "sealed_workspace" and not (allow_submission_sources and kind=='submission_selected'):
         raise ValueError("Engineering self-check selects the sealed workspace primary source")
     unknown_score = (Fraction(-1, 5), Fraction(1), None) if penalized and not positive_only else UNKNOWN
     previous = _alignment_snapshot(review.get("baseline"), ids, kind)
@@ -2294,9 +2298,9 @@ def _all_requirements(values):
     return True if all(value is True for value in values) else None
 
 
-def strict_alignment_trajectory(review, source_policy):
+def strict_alignment_trajectory(review, source_policy, *, allow_submission_sources=False):
     """Judge a whole repair trajectory, not the average of three round passes."""
-    summary, _ = _alignment_trajectory(review, source_policy)
+    summary, _ = _alignment_trajectory(review, source_policy,allow_submission_sources=allow_submission_sources)
     supplied = {row["round"]: row for row in review["rounds"]}
     gates = []
     for row in summary["rounds"]:
@@ -2346,12 +2350,106 @@ def validate_capability_policy(policy):
         "followups_replace_A1": False, "research_invitation": False,
         "attempt_conditions": ["single_attempt", "nonlogical_retry_3"],
         "human_review": "pending", "formal_comparison_eligible": False}
-    if (not isinstance(policy, dict) or policy.get("version") not in {"0.1.0", "0.2.0"}
+    if (not isinstance(policy, dict) or policy.get("version") not in {"0.1.0", "0.2.0", "0.3.0"}
             or any(policy.get(k) != v for k, v in required.items())
-            or policy["version"] == "0.2.0" and policy.get("embedded_reliability") !=
-                "remove_from_positive_credit_then_normalize_core_and_deduct_separately"):
+            or policy["version"] in {"0.2.0", "0.3.0"} and policy.get("embedded_reliability") !=
+                "remove_from_positive_credit_then_normalize_core_and_deduct_separately"
+            or policy["version"] == "0.3.0" and policy.get("nonfinal_work") !=
+                "verified_fixed_attempt_work_without_active_delivery"):
         raise ValueError("Unsupported positive-contribution capability scoring policy")
     return policy
+
+
+def _submission_task(value, passed, source, submission, *, case, mode, condition, claim=None):
+    """Gate delivery separately from valid work in the selected fixed attempt."""
+    classification = submission['classification']
+    if classification == 'not_run':
+        # Unrun research can still have a negative possible lower bound under
+        # RMC. Submission status must not erase those frozen deduction bounds.
+        return (value if value[2] is None else UNKNOWN), None, source
+    if classification == 'active_final':
+        if case.get('component')=='lean-formalization' and source=='selected_sealed_engineering' and (
+                submission.get('normal_math') is None
+                and submission.get('scored_math_is_delivered') is not True):
+            raise ValueError('Normal final cannot inherit additional undelivered engineering')
+        return value, passed, source
+    if mode != 'capability' or classification == 'blank':
+        return (Fraction(0),)*3, False, source
+    if submission.get('work_review_pending'):
+        return UNKNOWN, False, 'pending_nonfinal_work_review'
+    work = submission.get('work')
+    if work is None:
+        if submission.get('mathematical_source') == 'nonfinal_work':
+            raise ValueError('Nonfinal work credit needs its loaded original review')
+        return value, False, source
+    submission_evidence.validate_work(work, case, condition)
+    # These three written tasks reserve ten points for reliability. MC still
+    # normalizes only their ninety mathematical points, including for work.
+    # The frozen case determines the reserve even when its old failed-delivery
+    # claim audit has no awarded-reliability field.
+    excluded = claim_penalties.EMBEDDED.get(case['case_id'])
+    units = [u for u in work['credit_units'] if u['id'] != excluded]
+    points = sum((Fraction(str(u['earned'])) for u in units), Fraction())
+    maximum = sum((Fraction(str(u['maximum'])) for u in units), Fraction())
+    if not maximum:
+        raise ValueError('Nonfinal work has no mathematical credit denominator')
+    return (points/maximum,)*3, False, 'verified_nonfinal_work'
+
+
+def _submission_trajectory(alignment, strict, review, *, mode):
+    """Keep all three adjacent rounds; never inherit a later condition's work."""
+    rows = {r['round']: r for r in review['rounds']}
+    result = deepcopy(alignment) if alignment is not None else {
+        'rounds': [{'round': n} for n in (1, 2, 3)]}
+    intervals, strict_intervals = [], []
+    for item in result['rounds']:
+        row = rows[item['round']]
+        classification = row['classification']
+        original = item.get('score', {})
+        value = (tuple(None if original.get(k) is None else Fraction(str(original[k]))/100
+                       for k in ('lower', 'upper', 'exact')) if original else UNKNOWN)
+        passed = item.get('strict_pass')
+        if classification=='active_final' and (row.get('scored_math_is_delivered') is not True
+                or not row.get('mathematical_source_sha256')
+                or row['mathematical_source_sha256']!=item.get('source_sha256')):
+            raise ValueError('Normal selfcheck cannot inherit additional undelivered engineering')
+        if classification == 'not_run':
+            value, passed = UNKNOWN, None
+        elif classification != 'active_final':
+            passed = False
+            if mode != 'capability' or classification == 'blank':
+                value = (Fraction(0),)*3
+            elif (row.get('reviewable_content_verified') is not True
+                    or not row.get('mathematical_source_sha256')
+                    or row['mathematical_source_sha256'] != item.get('source_sha256')):
+                raise ValueError('Forced selfcheck MC must bind that same round original source')
+        item['prior_score'] = original or None
+        item['score'] = _alignment_metric(value, unit='adjacent alignment round', planned=1,
+            adjudicated=int(value[2] is not None))
+        item['submission_classification'] = classification
+        item['active_final'] = classification == 'active_final'
+        item['strict_pass'] = passed
+        if classification not in {'active_final', 'not_run'}:
+            item['delivery_verified'] = False
+        intervals.append(value)
+        strict_intervals.append(_boolean(passed))
+    result['metric'] = _alignment_metric(_average(intervals),
+        unit='three fixed adjacent neutral rounds', planned=3,
+        adjudicated=sum(v[2] is not None for v in intervals))
+    result['strict_pass_rate'] = _alignment_metric(_average(strict_intervals),
+        unit='fixed alignment round', planned=3,
+        adjudicated=sum(v[2] is not None for v in strict_intervals))
+    result['submission_method_version'] = submission_evidence.VERSION
+    gate = deepcopy(strict) if strict is not None else {'strict_pass': None}
+    classes = [r['classification'] for r in rows.values()]
+    if any(c in {'blank', 'forced_content'} for c in classes):
+        gate['strict_pass'] = False
+    elif any(c == 'not_run' for c in classes):
+        gate['strict_pass'] = (False if any(i.get('strict_pass') is False
+            and rows[i['round']]['classification']=='active_final' for i in result['rounds']) else None)
+    gate['active_rounds'] = sum(c == 'active_final' for c in classes)
+    gate['submission_method_version'] = submission_evidence.VERSION
+    return result, gate
 
 
 def _aggregate_assessment_families(policy, families, *, mode, alignment_summary, strict_trajectory,
@@ -2401,7 +2499,7 @@ def _aggregate_assessment_families(policy, families, *, mode, alignment_summary,
         contribution = tuple(None if x is None else x * Fraction(child["weight"], 100) for x in value)
         contributions[ident] = _assessment_metric(contribution, unit="points in full benchmark",
                                                  planned=count, adjudicated=adjudicated)
-        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}:
             metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
             contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
     for group in policy["groups"]:
@@ -2412,7 +2510,7 @@ def _aggregate_assessment_families(policy, families, *, mode, alignment_summary,
         contribution = tuple(None if x is None else x * Fraction(group["weight"], 100) for x in value)
         contributions[group["id"]] = _assessment_metric(contribution, unit="points in full benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}:
             known = sum((confirmed[c["id"]] * c["weight"] for c in children), Fraction(0))
             contributions[group["id"]]["confirmed"] = float(known)
             metrics[group["id"]]["confirmed"] = float(known * 100 / group["weight"])
@@ -2426,7 +2524,7 @@ def _aggregate_assessment_families(policy, families, *, mode, alignment_summary,
     for key, children in (("earned", active), ("overall", policy["subcategories"])):
         metrics[key] = _assessment_metric(total(children), unit="fixed 100-point benchmark",
             planned=len(children), adjudicated=sum(intervals[c["id"]][2] is not None for c in children))
-    if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+    if policy["version"] in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}:
         metrics["earned"]["confirmed"] = float(max(Fraction(0),
             sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
     return metrics, contributions
@@ -2511,16 +2609,19 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                             strict_trajectory=None, theorem_extension_inputs=None, background_check_inputs=None,
                             capability_policy=None, claim_review=None, claim_policy=None,
                             written_argument_inputs=None, written_replacement_inputs=None,
-                            manuscript_completion_inputs=None):
+                            manuscript_completion_inputs=None, submission_review=None,
+                            submission_policy=None):
     """Aggregate a fixed hierarchy; unbuilt research stays unknown, never renormalized."""
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
     if mode not in {"capability", "partial", "strict"}:
         raise ValueError("Unknown assessment score mode")
     if mode == "capability":
-        if policy["version"] not in {"0.7.0", "0.8.0"}:
+        if policy["version"] not in {"0.7.0", "0.8.0", "0.9.0"}:
             raise ValueError("Capability mode requires the three-score assessment method")
         validate_capability_policy(capability_policy)
+        if policy['version']=='0.9.0' and capability_policy['version']!='0.3.0':
+            raise ValueError('Assessment0.9.0 requires capability0.3.0')
         if alignment_summary is not None and alignment_summary.get("score_mode") != "capability":
             raise ValueError("Capability assessment requires its positive-contribution trajectory")
     plan = validate_plan(inputs["plan"])
@@ -2528,7 +2629,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         raise ValueError("Assessment model differs from its frozen source")
     claim_rows = None
     if claim_review is not None:
-        if policy["version"] != "0.8.0":
+        if policy["version"] not in {"0.8.0", "0.9.0"}:
             raise ValueError("Claim deductions cannot alter a frozen older assessment method")
         claim_penalties.validate_policy(claim_policy)
         claim_rows = claim_penalties.validate_review(claim_review, model_label=inputs["model_label"])
@@ -2544,7 +2645,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
         rows[sid] = row
     research_levels = {}
     if theorem_extension_inputs is not None:
-        if policy["version"] not in {"0.6.0", "0.7.0", "0.8.0"}:
+        if policy["version"] not in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}:
             raise ValueError("Research evidence cannot alter the pre-research scoring method")
         extra = validate_extension_inputs(theorem_extension_inputs, policy["theorem_extension"])
         if extra.get("model_label") != inputs["model_label"]:
@@ -2684,7 +2785,7 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             if row["slot_id"] in rows and rows[row["slot_id"]].get("response_sha256") != (
                     None if row.get("response") is None else row["response"]["sha256"]):
                 raise ValueError("Manuscript evidence cannot replace an existing frozen answer")
-            value = None if row["points"] is None else Fraction(row["points"], 100)
+            value = None if row["points"] is None else Fraction(str(row["points"])) / 100
             rows[row["slot_id"]] = {"completion": {"lower": 0 if value is None else float(value),
                 "upper": 1 if value is None else float(value), "exact": None if value is None else float(value)},
                 "strict_pass": row["complete"],
@@ -2698,6 +2799,14 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
     by_source = {source: child for child in policy["subcategories"] for source in child["source_components"]}
     families = {child["id"]: {} for child in policy["subcategories"]}
     tasks = []
+    submission_rows = None
+    if policy['version'] == '0.9.0' or submission_review is not None or submission_policy is not None:
+        if policy['version'] != '0.9.0' or submission_review is None or submission_policy is None:
+            raise ValueError('Submission and work evidence require the complete0.9.0 policy pair')
+        submission_evidence.validate_policy(submission_policy)
+        submission_rows = submission_evidence.validate_condition(submission_review,
+            model_label=inputs['model_label'], case_ids=index,
+            response_hashes={cid:rows.get(cid+':A1',{}).get('response_sha256') for cid in index})
     if claim_rows is not None and set(claim_rows) != set(index):
         raise ValueError("Claim review must cover exactly the selected source and research tasks")
     for cid, case in index.items():
@@ -2730,6 +2839,15 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 raise ValueError("Strict pass contradicts the source-bound completed task")
             source = "source_bound_original_review"
         claim_detail = None
+        if submission_rows is not None and submission_rows[cid].get('normal_math') is not None:
+            normal=submission_rows[cid]['normal_math']
+            submission_evidence.validate_normal_math(normal,case,submission_review['attempt_condition'],
+                row.get('response_sha256'))
+            numerator=sum((Fraction(str(u['earned'])) for u in normal['credit_units']),Fraction())
+            denominator=sum((Fraction(str(u['maximum'])) for u in normal['credit_units']),Fraction())
+            value=(numerator/denominator,)*3
+            passed=normal['complete']
+            source='verified_normal_final'
         if claim_rows is not None:
             claim_row = claim_rows[cid]
             if (claim_row.get("source_response_sha256") != row.get("response_sha256")
@@ -2773,6 +2891,21 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                 mode=mode, completion=row['completion'], claim_detail=claim_detail,
                 findings=claim_rows[cid]['findings'] if claim_rows is not None else [])
         value = _assess_manuscript_floor(value, mode=mode, case=case, claim_detail=claim_detail)
+        submission_detail = None
+        if submission_rows is not None:
+            submission = submission_rows[cid]
+            classification = submission['classification']
+            previous = value
+            prior_passed = passed
+            value, passed, source = _submission_task(value, passed, source,
+                submission, case=case, mode=mode, condition=submission_review['attempt_condition'],
+                claim=claim_rows[cid] if claim_rows is not None else None)
+            submission_detail = dict(classification=classification,
+                active_final=classification=='active_final',
+                prior_strict_pass=prior_passed,
+                prior_completion={k:None if x is None else float(x) for k,x in zip(('lower','upper','exact'),previous)},
+                work_review_sha256=(submission.get('work_review') or {}).get('sha256'),
+                pending_original_record_review=bool(submission.get('pending_original_record_review')))
         interval = _boolean(passed) if mode == "strict" else value
         family = (assessment_family(case, source_index, selection) if selection is not None else
                   case["parent_family_id"] if child["aggregation"] == "parent_family" else case["family_id"])
@@ -2786,6 +2919,10 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
                       **({"background_check":background_levels[sid]} if sid in background_levels else {}),
                       **({"fidelity_assessment": fidelity_detail} if fidelity_detail is not None else {}),
                       **({"claim_assessment": claim_detail} if claim_detail is not None else {})})
+        if submission_detail is not None:tasks[-1]['submission_assessment']=submission_detail
+    if submission_rows is not None:
+        alignment_summary, strict_trajectory = _submission_trajectory(
+            alignment_summary, strict_trajectory, submission_review, mode=mode)
     metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
         alignment_summary=alignment_summary, strict_trajectory=strict_trajectory,
         manuscript_core_family_present=manuscript_core_family_present)
@@ -2812,13 +2949,17 @@ def score_assessment_inputs(inputs, assessment_policy, strict_policy, *, mode="p
             "failed": sum(t["strict_pass"] is False for t in tasks),
             "unknown": sum(t["strict_pass"] is None for t in tasks) + missing_tasks},
         "tasks": tasks, "alignment_selfcheck": alignment_summary,
+        **({'submission_method_version':submission_policy['version'],
+            'submission_policy_sha256':identity(submission_policy),
+            'submission_review_sha256':identity(submission_review),
+            'submission_summary':submission_evidence.summary(submission_review)} if submission_rows is not None else {}),
         "strict_alignment_selfcheck": strict_trajectory, "initial_answers_replaced": False,
         "human_review": "pending", "formal_comparison_eligible": False, "new_candidate_calls": 0,
         **({"claim_penalties": claim_penalties.summary(claim_rows, mode=mode),
             "claim_penalty_method_version": claim_policy["version"],
             "claim_penalty_policy_sha256": identity(claim_policy)} if claim_rows is not None else
            {"claim_penalties": {"status": "not_supplied_preview_not_current_archive"}}
-           if policy["version"] == "0.8.0" else {}),
+           if policy["version"] in {"0.8.0", "0.9.0"} else {}),
         **({"capability_method_version": capability_policy["version"],
             "capability_policy_sha256": identity(capability_policy)} if mode == "capability" else {})}
 
@@ -2827,20 +2968,45 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
                                    assessment_policy, strict_policy, mode="partial", theorem_extension_inputs=None,
                                    background_check_inputs=None, capability_policy=None,
                                    claim_review=None, claim_policy=None, written_argument_inputs=None,
-                                   written_replacement_inputs=None, manuscript_completion_inputs=None):
+                                   written_replacement_inputs=None, manuscript_completion_inputs=None,
+                                   submission_review=None, submission_policy=None):
     source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
     substitutions = formalization_substitutions(inputs, formalization_review)
     trajectory = strict_alignment_trajectory(review, source_policy)
     alignment = (_alignment_trajectory(review, source_policy, positive_only=True)[0]
                  if mode == "capability" else source["alignment_selfcheck"])
+    if submission_review is not None and submission_review.get('normal_alignment') is not None:
+        if assessment_policy['version']!='0.9.0' or submission_policy is None:
+            raise ValueError('Normal-final trajectory requires its explicit submission policy')
+        selected=submission_review['normal_alignment']
+        alignment=_alignment_trajectory(selected,source_policy,positive_only=mode=='capability',
+            allow_submission_sources=True)[0]
+        trajectory=strict_alignment_trajectory(selected,source_policy,allow_submission_sources=True)
     result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
         mathematical_substitutions=substitutions, alignment_summary=alignment,
         strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
         background_check_inputs=background_check_inputs, capability_policy=capability_policy,
         claim_review=claim_review, claim_policy=claim_policy, written_argument_inputs=written_argument_inputs,
         written_replacement_inputs=written_replacement_inputs,
-        manuscript_completion_inputs=manuscript_completion_inputs)
-    result["lean_formalization_breakdown"] = source["lean_formalization_breakdown"]
+        manuscript_completion_inputs=manuscript_completion_inputs,
+        submission_review=submission_review,submission_policy=submission_policy)
+    breakdown=deepcopy(source['lean_formalization_breakdown'])
+    if submission_review is not None:
+        observed={r['case_id']:r for r in submission_review['initials']}
+        for case in breakdown['cases']:
+            row=observed[case['case_id']]
+            math=row.get('normal_math') or row.get('work')
+            case['submission_classification']=row['classification']
+            if math is not None:
+                count=sum(Fraction(str(u['earned'])) for u in math['credit_units'])
+                total=sum(Fraction(str(u['maximum'])) for u in math['credit_units'])
+                case.update(complete_count=int(count),percent=_percent(count/total),
+                    status='reviewed_normal_final' if row.get('normal_math') else 'reviewed_nonfinal_work')
+        for family in breakdown['families'].values():
+            values=[Fraction(c['complete_count'],c['total']) if c['complete_count'] is not None else None
+                    for c in breakdown['cases'] if c['case_id'] in family['case_ids']]
+            family['percent']=_percent(sum(values,Fraction())/len(values)) if all(v is not None for v in values) else None
+    result['lean_formalization_breakdown']=breakdown
     return result
 
 
@@ -2918,23 +3084,26 @@ def render_score(report):
 
 
 def score_native_observation(review, assessment_policy, strict_policy, capability_policy,
-                             claim_policy, *, mode='partial'):
+                             claim_policy, *, mode='partial', submission_review=None, submission_policy=None):
     """Score native observations without changing their separate evidence contract."""
     from .native_observations import validate_math_inputs
     validate_math_inputs(review, validate_assessment_policy(assessment_policy))
     return _score_observation_inputs(review, assessment_policy, strict_policy, capability_policy,
-                                     claim_policy, mode=mode, record_kind='native_harness')
+                                     claim_policy, mode=mode, record_kind='native_harness',
+                                     submission_review=submission_review, submission_policy=submission_policy)
 
 
 def score_paper_observation(review, assessment_policy, strict_policy, capability_policy,
-                            claim_policy, *, mode='partial', condition='nonlogical_retry_3'):
+                            claim_policy, *, mode='partial', condition='nonlogical_retry_3',
+                            submission_review=None, submission_policy=None):
     """Score retained papers without manufacturing execution or native receipts."""
     from .paper_observations import validate_math_inputs, select_inputs, unknown_alignment
     policy = validate_assessment_policy(assessment_policy)
     validate_math_inputs(review, policy)
     selected = select_inputs(review, condition)
     result = _score_observation_inputs(selected, policy, strict_policy, capability_policy,
-                                       claim_policy, mode=mode, record_kind='paper_observation')
+                                       claim_policy, mode=mode, record_kind='paper_observation',
+                                       submission_review=submission_review, submission_policy=submission_policy)
     alignment = result['alignment_selfcheck']
     strict_alignment = result['strict_alignment_selfcheck']
     result.update(attempt_condition=condition, runtime_evidence_verified=False,
@@ -2954,13 +3123,16 @@ def score_paper_observation(review, assessment_policy, strict_policy, capability
 
 
 def _score_observation_inputs(review, assessment_policy, strict_policy, capability_policy,
-                               claim_policy, *, mode, record_kind):
+                               claim_policy, *, mode, record_kind,
+                               submission_review=None, submission_policy=None):
     """One claim, fidelity, floor and family arithmetic path for observed sources."""
     from .manuscript_completion import validate_core_completion, validate_fidelity
 
     policy = validate_assessment_policy(assessment_policy)
     validate_strict_assessment_policy(strict_policy)
     validate_capability_policy(capability_policy)
+    if policy['version']=='0.9.0' and capability_policy['version']!='0.3.0':
+        raise ValueError('Observed assessment0.9.0 requires capability0.3.0')
     claim_penalties.validate_policy(claim_policy)
     if mode not in {'capability', 'partial', 'strict'}:
         raise ValueError('Unknown observed assessment mode')
@@ -2969,6 +3141,14 @@ def _score_observation_inputs(review, assessment_policy, strict_policy, capabili
         raise ValueError('Native claim review must retain every original case')
     families = {child['id']: {} for child in policy['subcategories']}
     tasks = []
+    submission_rows = None
+    if policy['version'] == '0.9.0' or submission_review is not None or submission_policy is not None:
+        if policy['version'] != '0.9.0' or submission_review is None or submission_policy is None:
+            raise ValueError('Observed submission scoring requires the complete0.9.0 policy pair')
+        submission_evidence.validate_policy(submission_policy)
+        submission_rows = submission_evidence.validate_condition(submission_review,
+            model_label=review['model_label'], case_ids=[t['case_id'] for t in review['tasks']],
+            response_hashes={t['case_id']:(t.get('response') or {}).get('sha256') for t in review['tasks']})
     for original in review['tasks']:
         cid, category = original['case_id'], original['subcategory']
         point = original['points']
@@ -3021,10 +3201,23 @@ def _score_observation_inputs(review, assessment_policy, strict_policy, capabili
             extra['fidelity_assessment'] = fidelity_detail
         value = _assess_manuscript_floor(value, mode=mode,
             case=original.get('strict_completion_case'), claim_detail=detail)
+        source = 'native_harness_source_review' if record_kind == 'native_harness' else 'paper_observation_source_review'
+        if submission_rows is not None:
+            submission = submission_rows[cid]
+            previous = value
+            prior_passed = passed
+            value, passed, source = _submission_task(value, passed, source, submission,
+                case=original, mode=mode, condition=submission_review['attempt_condition'], claim=claim)
+            extra['submission_assessment'] = dict(classification=submission['classification'],
+                active_final=submission['classification']=='active_final',
+                prior_strict_pass=prior_passed,
+                prior_completion={k:None if x is None else float(x) for k,x in zip(('lower','upper','exact'),previous)},
+                work_review_sha256=(submission.get('work_review') or {}).get('sha256'),
+                pending_original_record_review=bool(submission.get('pending_original_record_review')))
         family = original['family_id']
         families[category].setdefault(family, []).append(_boolean(passed) if mode == 'strict' else value)
         tasks.append({'case_id': cid, 'slot_id': original['slot_id'], 'subcategory': category,
-            'family_id': family, 'strict_pass': passed, 'judgment_source': ('native_harness_source_review' if record_kind == 'native_harness' else 'paper_observation_source_review'),
+            'family_id': family, 'strict_pass': passed, 'judgment_source': source,
             'completion': {key: None if v is None else float(v)
                            for key, v in zip(('lower', 'upper', 'exact'), value)},
             'response_sha256': (original.get('response') or {}).get('sha256'),
@@ -3039,6 +3232,8 @@ def _score_observation_inputs(review, assessment_policy, strict_policy, capabili
                 alignment != review['alignment']['capability' if mode == 'capability' else 'partial']
                 or strict != review['alignment']['strict']):
             raise ValueError('Native trajectory summary differs from source-bound shared repair scoring')
+    if submission_rows is not None:
+        alignment, strict = _submission_trajectory(alignment, strict, submission_review, mode=mode)
     metrics, contributions = _aggregate_assessment_families(policy, families, mode=mode,
         alignment_summary=alignment, strict_trajectory=strict,
         manuscript_core_family_present=any(t.get('strict_completion_case') is not None for t in review['tasks']))
@@ -3058,6 +3253,10 @@ def _score_observation_inputs(review, assessment_policy, strict_policy, capabili
             'failed': sum(t['strict_pass'] is False for t in tasks),
             'unknown': sum(t['strict_pass'] is None for t in tasks)},
         'tasks': tasks, 'alignment_selfcheck': alignment, 'strict_alignment_selfcheck': strict,
+        **({'submission_method_version':submission_policy['version'],
+            'submission_policy_sha256':identity(submission_policy),
+            'submission_review_sha256':identity(submission_review),
+            'submission_summary':submission_evidence.summary(submission_review)} if submission_rows is not None else {}),
         'lean_formalization_breakdown': review['formalization_breakdown'],
         'initial_answers_replaced': False, 'record_kind': record_kind,
         'human_review': 'pending', 'formal_comparison_eligible': False,

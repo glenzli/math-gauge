@@ -1,0 +1,313 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+import OperatorLocalDegeneracy.ComponentPartition
+import OperatorLocalDegeneracy.ComputationalFibers
+import OperatorLocalDegeneracy.NullificationRadius
+import OperatorLocalDegeneracy.ThresholdClassification
+import OperatorLocalDegeneracy.CoveringEntropy
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Set.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+/-!
+### 习题 3.1
+-/
+
+noncomputable def ex31_d (x y : RealWithBot) : ENNReal :=
+  match x, y with
+  | none, none => 0
+  | none, some _ => ⊤
+  | some _, none => ⊤
+  | some u, some v => ENNReal.ofReal (| |u| - |v| |)
+
+noncomputable def ex31_phi : Operator RealWithBot real_bot where
+  func := fun x => match x with
+    | none => none
+    | some u => some (2 * u - 1)
+  preserves_bot := rfl
+
+def ex31_U : Set RealWithBot := {some 0, some 1}
+
+/--
+OET anchor: oet-5a431d16f9d7ba6a
+CH03-P26-01: 习题 3.1 (i-a) 验证绝对值读数伪度量、仿射算子合法，算出φ的纤维与分量类型
+-/
+theorem ex_3_1_i_a_extended : ExtendedPseudoMetric RealWithBot real_bot ex31_d := by
+  refine ⟨⟨some 0, by decide⟩, ?_, ?_, ?_, ?_⟩
+  · intro x; cases x <;> simp [ex31_d]
+  · intro x y; cases x <;> cases y <;> simp [ex31_d, abs_sub_comm]
+  · intro x y z; cases x <;> cases y <;> cases z <;> simp [ex31_d]
+    rename_i u v w
+    have h_tri : ||u| - |w|| ≤ ||u| - |v|| + ||v| - |w|| := abs_sub_le |u| |v| |w|
+    calc
+      ENNReal.ofReal ||u| - |w|| ≤ ENNReal.ofReal (||u| - |v|| + ||v| - |w||) := ENNReal.ofReal_le_ofReal h_tri
+      _ ≤ ENNReal.ofReal ||u| - |v|| + ENNReal.ofReal ||v| - |w|| := ENNReal.ofReal_add_le
+  · intro x hx; cases x <;> [contradiction; rfl]
+
+theorem ex_3_1_i_a_fiber :
+    Fib (fun () => ex31_d) ex31_phi (Set.univ : Set Unit) (ex31_phi.func (some 0)) ex31_U = ex31_U := by
+  sorry
+
+theorem ex_3_1_i_a_const :
+    () ∈ I_const (fun () => ex31_d) ex31_phi ex31_U := by
+  sorry
+
+/--
+OET anchor: oet-5a431d16f9d7ba6a
+CH03-P26-02: 习题 3.1 (i-b) 算出φ²的纤维与分量类型，精确保留U
+-/
+theorem ex_3_1_i_b_fiber :
+    Fib (fun () => ex31_d) (ex31_phi * ex31_phi) (Set.univ : Set Unit) ((ex31_phi * ex31_phi).func (some 0)) ex31_U = {some 0} := by
+  sorry
+
+theorem ex_3_1_i_b_act :
+    () ∈ I_act (fun () => ex31_d) (ex31_phi * ex31_phi) ex31_U := by
+  sorry
+
+/--
+OET anchor: oet-5a431d16f9d7ba6a
+CH03-P26-03: 习题 3.1 (ii) 点值常算子在U上取同一实数值时自复合仍不能区分两点；说明再次像为吸收元时的适用域
+-/
+theorem ex_3_1_ii (c : ℝ) (ψ : Operator RealWithBot real_bot)
+    (hψ : ∀ x ∈ ex31_U, ψ.func x = some c) :
+    Fib (fun () => ex31_d) (ψ * ψ) (Set.univ : Set Unit) ((ψ * ψ).func (some 0)) ex31_U = ex31_U := by
+  sorry
+
+/-!
+### 习题 3.2
+-/
+
+/--
+OET anchor: oet-092ba6f495b988c1
+CH03-P27-01: 习题 3.2 (i) 正co-Lip通道与点态零化判据推出不存在(0,rN)内的输入距离，K无需有限
+-/
+theorem ex_3_2_i (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (K : I → I → ENNReal) (hK : IsCoLipMatrix d ϕ U K) (hK_pos : 0 < K i j)
+    (y : X) (hy : y ∈ U) (h_rad_pos : 0 < r_null ϕ (d i) (d j) y U) :
+    ∀ x ∈ U, ¬ (0 < d i x y ∧ d i x y < r_null ϕ (d i) (d j) y U) := by
+  intro x hx ⟨h_dist_pos, h_dist_lt⟩
+  sorry
+
+/--
+OET anchor: oet-092ba6f495b988c1
+CH03-P27-02: 习题 3.2 (ii) 统一正半径给所有输入点对的零或≥统一半径二择
+-/
+theorem ex_3_2_ii (ϕ : Operator X bot) (U : Set X) (i j : I)
+    (K : I → I → ENNReal) (hK : IsCoLipMatrix d ϕ U K) (hK_pos : 0 < K i j)
+    (h_rad_pos : 0 < r_null_uniform ϕ (d i) (d j) U U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i x y = 0 ∨ r_null_uniform ϕ (d i) (d j) U U ≤ d i x y := by
+  intro x hx y hy
+  sorry
+
+/-!
+### 习题 3.3
+-/
+
+def ex33_U : Set RealWithBot := {some (-3), some (-2), some 0, some 2}
+
+noncomputable def ex33_phi : Operator RealWithBot real_bot where
+  func := fun x => match x with
+    | none => none
+    | some u => some (u + 1)
+  preserves_bot := rfl
+
+/--
+OET anchor: oet-fc424fbae1afcbdc
+CH03-P28-01: 习题 3.3 (i) 完整列出恒等和平移算子的输入纤维分划，验证相应结构
+-/
+theorem ex_3_3_i_id_fiber :
+    (Fib (fun () => ex31_d) ⟨id, rfl⟩ (Set.univ : Set Unit) (some 0) ex33_U = {some 0}) ∧
+    (Fib (fun () => ex31_d) ⟨id, rfl⟩ (Set.univ : Set Unit) (some 2) ex33_U = {some (-2), some 2}) ∧
+    (Fib (fun () => ex31_d) ⟨id, rfl⟩ (Set.univ : Set Unit) (some (-3)) ex33_U = {some (-3)}) := by
+  sorry
+
+theorem ex_3_3_i_trans_fiber :
+    (Fib (fun () => ex31_d) ex33_phi (Set.univ : Set Unit) (some 1) ex33_U = {some 0, some (-2)}) ∧
+    (Fib (fun () => ex31_d) ex33_phi (Set.univ : Set Unit) (some 3) ex33_U = {some 2}) ∧
+    (Fib (fun () => ex31_d) ex33_phi (Set.univ : Set Unit) (some (-2)) ex33_U = {some (-3)}) := by
+  sorry
+
+/--
+OET anchor: oet-fc424fbae1afcbdc
+CH03-P28-02: 习题 3.3 (ii) 在精确3/2半径计算两端内部覆盖数及熵差，给上下界
+-/
+theorem ex_3_3_cov_U :
+    covering_number ex31_d (3/2) ex33_U = 2 := by
+  sorry
+
+theorem ex_3_3_cov_phi_U :
+    covering_number ex31_d (3/2) (ex33_phi.func '' ex33_U) = 3 := by
+  sorry
+
+theorem ex_3_3_entropy_diff :
+    entropy_diff (fun () => ex31_d) ex33_phi Set.univ Set.univ (3/2) ex33_U =
+      ↑(Real.logb 2 2) - ↑(Real.logb 2 3) := by
+  sorry
+
+/-!
+### 习题 3.4
+-/
+
+def Da : Set RealWithBot := { x | ∃ u : ℝ, x = some u ∧ 0 ≤ u ∧ u ≤ 1/2 }
+def Db : Set RealWithBot := { x | ∃ u : ℝ, x = some u ∧ 9/10 ≤ u ∧ u ≤ 11/10 }
+def Dc : Set RealWithBot := { some 0, some 2 }
+def Dd : Set RealWithBot := { x | ∃ u : ℝ, x = some u ∧ 0 ≤ u ∧ u ≤ 2 }
+
+noncomputable def floor_phi : Operator RealWithBot real_bot where
+  func := fun x => match x with
+    | none => none
+    | some u => some (↑(⌊u⌋ : ℤ) : ℝ)
+  preserves_bot := rfl
+
+/--
+OET anchor: oet-7ade05e895653cab
+CH03-P29-01: 习题 3.4 (i-a) D=[0,1/2]的直径、统一半径及类型
+-/
+theorem diam_Da : diam real_ext_d Da = 1/2 := by sorry
+theorem r_null_unif_Da : r_null_uniform floor_phi real_ext_d real_ext_d Da Da = ⊤ := by sorry
+theorem type_Da : classify_channel (fun () => real_ext_d) floor_phi (fun () => diam real_ext_d) Da 1 1 () () = (true, true) := by sorry
+
+/--
+OET anchor: oet-7ade05e895653cab
+CH03-P29-02: 习题 3.4 (i-b) D=[9/10,11/10]的直径、统一半径及类型
+-/
+theorem diam_Db : diam real_ext_d Db = 1/5 := by sorry
+theorem r_null_unif_Db : r_null_uniform floor_phi real_ext_d real_ext_d Db Db = 0 := by sorry
+theorem type_Db : classify_channel (fun () => real_ext_d) floor_phi (fun () => diam real_ext_d) Db 1 1 () () = (true, false) := by sorry
+
+/--
+OET anchor: oet-7ade05e895653cab
+CH03-P29-03: 习题 3.4 (i-c) D={0,2}的直径、统一半径及类型
+-/
+theorem diam_Dc : diam real_ext_d Dc = 2 := by sorry
+theorem r_null_unif_Dc : r_null_uniform floor_phi real_ext_d real_ext_d Dc Dc = ⊤ := by sorry
+theorem type_Dc : classify_channel (fun () => real_ext_d) floor_phi (fun () => diam real_ext_d) Dc 1 1 () () = (false, true) := by sorry
+
+/--
+OET anchor: oet-7ade05e895653cab
+CH03-P29-04: 习题 3.4 (i-d) D=[0,2]的直径、统一半径及类型
+-/
+theorem diam_Dd : diam real_ext_d Dd = 2 := by sorry
+theorem r_null_unif_Dd : r_null_uniform floor_phi real_ext_d real_ext_d Dd Dd = 0 := by sorry
+theorem type_Dd : classify_channel (fun () => real_ext_d) floor_phi (fun () => diam real_ext_d) Dd 1 1 () () = (false, false) := by sorry
+
+/--
+OET anchor: oet-7ade05e895653cab
+CH03-P29-05: 习题 3.4 (ii) 由(i)合法反例否定无直径条件时半径≥1即整体零化
+-/
+theorem ex_3_4_ii_counterexample :
+    1 ≤ r_null_uniform floor_phi real_ext_d real_ext_d Dc Dc ∧
+    ¬ (∀ x ∈ Dc, ∀ y ∈ Dc, real_ext_d (floor_phi.func x) (floor_phi.func y) = 0) := by
+  sorry
+
+/-!
+### 习题 3.5
+-/
+
+def ex35_U : Set RealWithBot := {some 0, some 1, some 2, some 3}
+
+noncomputable def ex35_f : Operator RealWithBot real_bot where
+  func := fun x => match x with
+    | some 0 => some 0
+    | some 1 => some 1
+    | some 2 => some 2
+    | some 3 => some 3
+    | _ => none
+  preserves_bot := rfl
+
+noncomputable def ex35_g : Operator RealWithBot real_bot where
+  func := fun x => match x with
+    | some 0 => some 0
+    | some 1 => some 3
+    | some 2 => some 1
+    | some 3 => some 2
+    | _ => none
+  preserves_bot := rfl
+
+/--
+OET anchor: oet-aba6bee391edd367
+CH03-P30-01: 习题 3.5 (i) 所有有限正ε下四点集内部覆盖数的完整分段及端点，说明3/2不是合法内部中心
+-/
+theorem ex35_cov_gt_2 (ε : ENNReal) (hε : 2 < ε) :
+    covering_number real_ext_d ε ex35_U = 2 := by sorry
+
+theorem ex35_cov_1_to_2 (ε : ENNReal) (h1 : 1 < ε) (h2 : ε ≤ 2) :
+    covering_number real_ext_d ε ex35_U = 2 := by sorry
+
+theorem ex35_cov_le_1 (ε : ENNReal) (hε_pos : 0 < ε) (hε1 : ε ≤ 1) :
+    covering_number real_ext_d ε ex35_U = 4 := by sorry
+
+theorem ex35_center_3_2_not_in_U :
+    some (3/2 : ℝ) ∉ ex35_U := by
+  rintro (h | h | h | h) <;> revert h <;> decide
+
+/--
+OET anchor: oet-aba6bee391edd367
+CH03-P30-02: 习题 3.5 (ii) 两算子的像集、各精度覆盖数和熵差
+-/
+theorem ex35_f_image : ex35_f.func '' ex35_U = ex35_U := by sorry
+theorem ex35_g_image : ex35_g.func '' ex35_U = ex35_U := by sorry
+
+theorem ex35_cov_f_image (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number real_ext_d ε (ex35_f.func '' ex35_U) = covering_number real_ext_d ε ex35_U := by sorry
+
+theorem ex35_cov_g_image (ε : ENNReal) (hε_pos : 0 < ε) :
+    covering_number real_ext_d ε (ex35_g.func '' ex35_U) = covering_number real_ext_d ε ex35_U := by sorry
+
+theorem ex35_entropy_diff_f (ε : ENNReal) (hε_pos : 0 < ε) :
+    entropy_diff (fun () => real_ext_d) ex35_f Set.univ Set.univ ε ex35_U = 0 := by sorry
+
+theorem ex35_entropy_diff_g (ε : ENNReal) (hε_pos : 0 < ε) :
+    entropy_diff (fun () => real_ext_d) ex35_g Set.univ Set.univ ε ex35_U = 0 := by sorry
+
+/--
+OET anchor: oet-aba6bee391edd367
+CH03-P30-03: 习题 3.5 (iii-a) 分别证明最优标量Lip常数及必要下界
+-/
+theorem ex35_f_lip :
+    ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, real_ext_d (ex35_f.func x) (ex35_f.func y) ≤ 1 * real_ext_d x y := by sorry
+
+theorem ex35_f_lip_lower (L : ENNReal)
+    (hL : ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, real_ext_d (ex35_f.func x) (ex35_f.func y) ≤ L * real_ext_d x y) :
+    1 ≤ L := by sorry
+
+theorem ex35_g_lip :
+    ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, real_ext_d (ex35_g.func x) (ex35_g.func y) ≤ 2 * real_ext_d x y := by sorry
+
+theorem ex35_g_lip_lower (L : ENNReal)
+    (hL : ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, real_ext_d (ex35_g.func x) (ex35_g.func y) ≤ L * real_ext_d x y) :
+    2 ≤ L := by sorry
+
+/--
+OET anchor: oet-aba6bee391edd367
+CH03-P30-04: 习题 3.5 (iii-b) 在ε=7/4代入一般上界，与真实覆盖数逐项比较
+-/
+theorem ex35_cov_at_7_4 :
+    covering_number real_ext_d (7/4) ex35_U = 2 := by sorry
+
+theorem ex35_bound_f_at_7_4 :
+    covering_number real_ext_d ((7/4) / 1) ex35_U = 2 := by sorry
+
+theorem ex35_bound_g_at_7_4 :
+    covering_number real_ext_d ((7/4) / 2) ex35_U = 4 := by sorry
+
+theorem ex35_compare_f :
+    covering_number real_ext_d (7/4) (ex35_f.func '' ex35_U) ≤ covering_number real_ext_d ((7/4) / 1) ex35_U := by sorry
+
+theorem ex35_compare_g :
+    covering_number real_ext_d (7/4) (ex35_g.func '' ex35_U) < covering_number real_ext_d ((7/4) / 2) ex35_U := by sorry
+
+end OperatorLocalDegeneracy

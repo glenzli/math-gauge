@@ -2,19 +2,30 @@
  const {d,state,modes,el,f,node,result,headline,short,table,points,href,download,start}=MG;
  const harnessName=m=>m.harness_display_name||m.harness.name;
  const visibleModels=(key='overall')=>d.models.filter(m=>!MGBoards.readBoard(location.search,key).completeOnly||m.fully_evaluated);
- const deliveryLabel=m=>m.answer_delivery?.delivered==null?'—':m.answer_delivery.delivered+'／'+m.answer_delivery.planned;
- const expanded=new Set();
+ const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
+ const expanded=new Set(),renderedViews=new Map();
+ const displayKey=(key,score=state.score)=>JSON.stringify([state.condition,score,MGBoards.readBoard(location.search,key).completeOnly]);
+ function renderView(key,render){const value=displayKey('overall');if(renderedViews.get(key)!==value){render();renderedViews.set(key,value)}}
  const sortDefaults={...Object.fromEntries(d.policy.groups.map(g=>[g.id,'partial'])),gap:'RG',rates:'reliability'};
  const sortChoices={...Object.fromEntries(d.policy.groups.map(g=>[g.id,d.score_modes])),gap:['RG','DG'],rates:['reliability','attainment']};
  const chartSort={...sortDefaults};
  function syncSorts(){
   const q=new URLSearchParams(location.search);
+  const requested=q.get('category');
+  category=d.policy.groups.some(group=>group.id===requested)?requested:d.policy.groups[0].id;
   Object.keys(sortDefaults).forEach(key=>{const value=q.get('sort-'+key);chartSort[key]=sortChoices[key].includes(value)?value:sortDefaults[key];document.querySelectorAll('[data-chart-sort="'+key+'"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sortValue===chartSort[key])))});
  }
  function orderedModels(value,ascending=false,key='overall'){
   return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?a.id.localeCompare(b.id):1):-1;return (ascending?x-y:y-x)||a.id.localeCompare(b.id)});
  }
- function orderChart(id,models){const chart=el(id);if(!chart)return;const ids=new Set(models.map(m=>m.id));chart.querySelectorAll(':scope > [data-model]').forEach(n=>n.hidden=!ids.has(n.dataset.model));models.forEach(m=>chart.append(chart.querySelector(':scope > [data-model="'+m.id+'"]')))}
+ function orderChart(id,models){
+  const chart=el(id);if(!chart)return;
+  const rows=new Map([...chart.children].map(row=>[row.dataset.model,row])),ids=new Set(models.map(model=>model.id));
+  rows.forEach((row,id)=>{const hidden=!ids.has(id);if(row.hidden!==hidden)row.hidden=hidden});
+  let previous=null;
+  models.forEach(model=>{const row=rows.get(model.id),next=previous?previous.nextElementSibling:chart.firstElementChild;
+   if(row!==next)chart.insertBefore(row,next);previous=row});
+ }
  function auxiliaryCharts(){
   const gap=Object.fromEntries(d.gap_diagnostics.tables.find(t=>t.id===chartSort.gap).rows.map(r=>[r.model_id,r.value]));
   orderChart('gap-groups',orderedModels(m=>gap[m.id]==null?null:Math.abs(gap[m.id]),true,'gap'));
@@ -42,7 +53,7 @@
    text.append(node('span',harnessName(m),'mobile-harness'));
    text.append(node('span','交卷 '+deliveryLabel(m),'mobile-delivery'));
    const delivery=row.insertCell();delivery.className='numeric delivery-cell';delivery.textContent=deliveryLabel(m);
-   delivery.title='初答交卷数（含封卷工程）';
+   delivery.title='主动交卷／强收有内容／总初答题数';
    d.display_score_modes.forEach(mode=>{const cell=row.insertCell();cell.dataset.displayMode=mode.id;cell.className='numeric score-cell'+(mode.id==='partial'?' primary-score':'');cell.append(node('span',f(headline(result(m,state.condition,mode.id))),'score-number'))});
    const a=node('a','详细评测 →','record-link');a.href=name.href;a.setAttribute('aria-label',m.label+' 详细评测');row.insertCell().append(a);
   });
@@ -67,7 +78,9 @@
  function categoryRanking(){
   d.category_leaderboards.forEach(g=>{
    const byId=Object.fromEntries(visibleModels(g.id).map(m=>[m.id,m]));
-   const score=chartSort[g.id];
+   const score=chartSort[g.id],key='category-'+g.id,value=displayKey(g.id,score);
+   if(renderedViews.get(key)===value)return;
+   renderedViews.set(key,value);
    table('category-ranking-'+g.id,['#','模型','Harness',...d.display_score_modes.map(m=>m.abbreviation)],[]);
    const t=el('category-ranking-'+g.id);t.tHead.rows[0].cells[2].className='category-harness';
    d.display_score_modes.forEach((mode,index)=>t.tHead.rows[0].cells[index+3].dataset.displayMode=mode.id);
@@ -85,7 +98,7 @@
  function selectCategory(id,updateUrl=true){
   category=id;
   d.policy.groups.forEach(g=>{const selected=g.id===id,b=el('category-tab-'+g.id);b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;el('category-panel-'+g.id).hidden=!selected});
-  if(updateUrl){const u=new URL(location.href);u.searchParams.set('category',id);u.hash='category-leaderboards';history.replaceState(null,'',u)}
+  if(updateUrl){const u=new URL(location.href);u.searchParams.set('category',id);u.hash='category-leaderboards';history.replaceState(null,'',u);window.dispatchEvent(new CustomEvent('mg:updated',{detail:{rendered:false}}))}
  }
  d.policy.groups.forEach((g,i)=>{
   const b=el('category-tab-'+g.id);b.onclick=()=>selectCategory(g.id);
@@ -101,7 +114,7 @@
   };
  });
  start(()=>{
-  syncSorts();ranking();taxonomy();categoryRanking();auxiliaryCharts();
+  syncSorts();renderView('ranking',ranking);renderView('taxonomy',taxonomy);categoryRanking();auxiliaryCharts();
   orderChart('chart-groups',visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)));
   document.querySelectorAll('.coverage-note').forEach(n=>n.hidden=!visibleModels().some(m=>m.evaluation_progress[state.condition].incomplete));
   const visibleIds=new Set(visibleModels().map(m=>m.id)),initiativeIds=new Set(visibleModels('initiative').map(m=>m.id));

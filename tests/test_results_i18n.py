@@ -41,6 +41,7 @@ class ResultsPresentationTests(unittest.TestCase):
         harness = r'''
 const assert=require('node:assert/strict');
 global.window={};global.NodeFilter={SHOW_TEXT:4};
+global.MutationObserver=class{observe(){}takeRecords(){return []}};
 const container=blocked=>({closest:selector=>selector==='[data-ui-prose]'?null:(blocked?{}:null)});
 const texts=[{nodeValue:'模型排行榜',parentElement:container(false)},
  {nodeValue:'题目与要求：可靠数学能力',parentElement:container(true)}];

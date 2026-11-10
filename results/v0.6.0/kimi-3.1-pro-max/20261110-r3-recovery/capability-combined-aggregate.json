@@ -1,10 +1,10 @@
 {
   "benchmark_version": "0.6.0",
-  "scoring_method_version": "0.8.0",
+  "scoring_method_version": "0.9.0",
   "strict_method_version": "0.2.0",
   "score_mode": "capability",
-  "capability_method_version": "0.2.0",
-  "capability_policy_sha256": "420be8a8e11047f00856623fba77d18c2d1b99703d78ad9e9fc0dbf85bcbc69c",
+  "capability_method_version": "0.3.0",
+  "capability_policy_sha256": "90f500d6a0b649ce6a800e9b63f4cde1ece141029624d23e185dcece719fa7f4",
   "claim_penalty_method_version": "0.1.0",
   "claim_penalty_policy_sha256": "aabe0dea5d97579f0104e80e24f5d6553b4674e3ff2c03739e812096bd5a27e7",
   "claim_penalties": {
@@ -24,6 +24,17 @@
     "strict_error_gates_applied": true,
     "original_reviews_rewritten": false,
     "human_review": "pending"
+  },
+  "submission_method_version": "0.1.0",
+  "submission_policy_sha256": "0e7e5c0643320ffbb640de73fc2dcd24d97f03f6ab99749d83318abff70a7f49",
+  "submission_review_sha256": "900a2e367d80532303caf4a34eeb1a00e8c149a320ff49ac2694489df14538c0",
+  "submission_summary": {
+    "planned": 39,
+    "active_final": 35,
+    "forced_content": 3,
+    "blank": 1,
+    "pending": 0,
+    "pending_original_record_review": 0
   },
   "primary_metric": "earned",
   "model_label": "Kimi K3.1 Pro (1M) · effort max · tclaude",
@@ -276,7 +287,22 @@
         "source_sha256": null,
         "base_score": null,
         "penalty_points": 0.0,
-        "net_score": null
+        "net_score": null,
+        "prior_score": {
+          "exact": null,
+          "lower": 0.0,
+          "upper": 100.0,
+          "complete": false,
+          "formal_comparison_eligible": false,
+          "coverage": {
+            "unit": "adjacent alignment round",
+            "planned": 1,
+            "adjudicated": 0,
+            "unknown": 1
+          }
+        },
+        "submission_classification": "not_run",
+        "active_final": false
       },
       {
         "round": 2,
@@ -312,7 +338,22 @@
         "source_sha256": null,
         "base_score": null,
         "penalty_points": 0.0,
-        "net_score": null
+        "net_score": null,
+        "prior_score": {
+          "exact": null,
+          "lower": 0.0,
+          "upper": 100.0,
+          "complete": false,
+          "formal_comparison_eligible": false,
+          "coverage": {
+            "unit": "adjacent alignment round",
+            "planned": 1,
+            "adjudicated": 0,
+            "unknown": 1
+          }
+        },
+        "submission_classification": "not_run",
+        "active_final": false
       },
       {
         "round": 3,
@@ -348,7 +389,22 @@
         "source_sha256": null,
         "base_score": null,
         "penalty_points": 0.0,
-        "net_score": null
+        "net_score": null,
+        "prior_score": {
+          "exact": null,
+          "lower": 0.0,
+          "upper": 100.0,
+          "complete": false,
+          "formal_comparison_eligible": false,
+          "coverage": {
+            "unit": "adjacent alignment round",
+            "planned": 1,
+            "adjudicated": 0,
+            "unknown": 1
+          }
+        },
+        "submission_classification": "not_run",
+        "active_final": false
       }
     ],
     "last_completion": {
@@ -365,7 +421,8 @@
     "interpretation": "Positive repair/preservation and source-awarded diagnosis credit only; no regression deduction, blanket diagnosis zeroing or false-complete penalty. Adjacent rounds remain fixed; no best-of or history union.",
     "human_review": "pending",
     "formal_comparison_eligible": false,
-    "score_mode": "capability"
+    "score_mode": "capability",
+    "submission_method_version": "0.1.0"
   },
   "strict_alignment_selfcheck": {
     "strict_pass": null,
@@ -394,39 +451,45 @@
       }
     ],
     "assessment_units": 1,
-    "initial_answer_replaced": false
+    "initial_answer_replaced": false,
+    "active_rounds": 0,
+    "submission_method_version": "0.1.0"
   },
   "lean_formalization_breakdown": {
     "cases": [
       {
         "case_id": "MG-C003",
         "family_id": "oet-volume1-chapter03",
-        "complete_count": null,
+        "complete_count": 73,
         "total": 92,
-        "percent": 0.0,
-        "status": "delivery_failed"
+        "percent": 79.347826087,
+        "status": "reviewed_nonfinal_work",
+        "submission_classification": "forced_content"
       },
       {
         "case_id": "LCH01",
         "family_id": "oet-volume1-chapter02",
         "complete_count": 8,
         "total": 8,
-        "percent": 100.0
+        "percent": 100.0,
+        "submission_classification": "active_final"
       },
       {
         "case_id": "LCH02",
         "family_id": "oet-volume1-chapter02",
         "complete_count": 20,
         "total": 20,
-        "percent": 100.0
+        "percent": 100.0,
+        "submission_classification": "active_final"
       },
       {
         "case_id": "HCH02",
         "family_id": "oet-volume1-chapter02",
-        "complete_count": null,
+        "complete_count": 40,
         "total": 40,
-        "percent": 0.0,
-        "status": "delivery_failed"
+        "percent": 100.0,
+        "status": "reviewed_nonfinal_work",
+        "submission_classification": "forced_content"
       }
     ],
     "families": {
@@ -435,7 +498,7 @@
           "MG-C003"
         ],
         "variant_count": 1,
-        "percent": 0.0
+        "percent": 79.347826087
       },
       "oet-volume1-chapter02": {
         "case_ids": [
@@ -444,7 +507,7 @@
           "HCH02"
         ],
         "variant_count": 3,
-        "percent": 66.6666666667
+        "percent": 100.0
       }
     }
   },
@@ -464,17 +527,19 @@
     "source_math_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
     "alignment_review_sha256": "835528d24dc8e306ade20468e7cd4421cf7221dd468c96084d792905d4370b2d",
     "engineering_review_sha256": "aea61bc4f7df23c8ce2a3bce4dd889764f5dce8d6d3bd9f843c15af7e57af54d",
-    "assessment_policy_sha256": "eed009cdfa8bfb31be9e853355b50fce6e92b4353c6cde5ac26741d4bef9405a",
+    "assessment_policy_sha256": "9527df908c8123f56fab156344a4915b77e43e5daf59a47ebfa92ce48aa20752",
     "strict_policy_sha256": "20e1afd0f6512b5d45915372201d3f146779e0c4c5ec1e42e2dcdaa6de976bb1",
     "claim_review_sha256": "03203fd2805532f50df84214b2154f836a210a4168311209d0bc1a345c9d07f9",
     "claim_penalty_policy_sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419",
     "theorem_extension_inputs_sha256": "8cb16581ee32212e434a1cb13963156f31eb0cf6adaaf466cfbdae2facbd7ee1",
     "background_check_inputs_sha256": "2483e0d10465c9c8556c95637d104a6143a04218d2a6dcd45142aacb202e16b4",
     "current_written_scoring_inputs_sha256": "c4c54834fc18839087e2948f3ad2e21285313aac20fc495fd062ee2a8906ebea",
-    "manuscript_completion_inputs_sha256": "2d99c8454fa0d973d4a7b36081a7cdedb5d8e08383428edb088095846a8d378e",
-    "capability_policy_sha256": "c150d764a9f8958d73206afaa8155f7802de4c8f9b4559c34151099c96c5bda2",
     "written_replacement_inputs_sha256": "c4c54834fc18839087e2948f3ad2e21285313aac20fc495fd062ee2a8906ebea",
-    "private_report_sha256": "fd44706b86fcef5654a86b7b113334b1636c0ee5e3749e331f0c63a94e383f10"
+    "manuscript_completion_inputs_sha256": "2d99c8454fa0d973d4a7b36081a7cdedb5d8e08383428edb088095846a8d378e",
+    "capability_policy_sha256": "3de31213a6bf36642b4e93cfaad538f71de1d98aceb5352a628301ae1198d8de",
+    "submission_evidence_sha256": "295591417a5e52facecb08c5b6b40a837f59abe39b010b7f150db668ad7a182b",
+    "submission_policy_sha256": "0e7e4265a1604357ec59d0b49908d104c015647d2282df692b874a44ee6cdb5b",
+    "private_report_sha256": "0f4b96ad21cc58398a93dba86130b79286f57a6bbdb8b7169e9fe832fc4377b7"
   },
   "source_math_policy_version": "0.4.0",
   "engineering_review_sha256": "aea61bc4f7df23c8ce2a3bce4dd889764f5dce8d6d3bd9f843c15af7e57af54d",
@@ -525,9 +590,9 @@
       "formal_comparison_eligible": false
     },
     "lean-formalization": {
-      "exact": 33.3333333333,
-      "lower": 33.3333333333,
-      "upper": 33.3333333334,
+      "exact": 89.6739130435,
+      "lower": 89.6739130434,
+      "upper": 89.6739130435,
       "complete": true,
       "coverage": {
         "unit": "family",
@@ -535,7 +600,7 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 33.333333333333336,
+      "confirmed": 89.67391304347827,
       "formal_comparison_eligible": false
     },
     "lean-selfcheck": {
@@ -567,9 +632,9 @@
       "formal_comparison_eligible": false
     },
     "manuscript-completion": {
-      "exact": 79.0,
-      "lower": 79.0,
-      "upper": 79.0,
+      "exact": 88.7,
+      "lower": 88.7,
+      "upper": 88.7,
       "complete": true,
       "coverage": {
         "unit": "family",
@@ -577,7 +642,7 @@
         "adjudicated": 5,
         "unknown": 0
       },
-      "confirmed": 79.0,
+      "confirmed": 88.7,
       "formal_comparison_eligible": false
     },
     "theorem-extension": {
@@ -610,8 +675,8 @@
     },
     "lean": {
       "exact": null,
-      "lower": 37.1428571428,
-      "upper": 65.7142857143,
+      "lower": 61.2888198757,
+      "upper": 89.8602484473,
       "complete": false,
       "coverage": {
         "unit": "fixed subcategory",
@@ -619,13 +684,13 @@
         "adjudicated": 2,
         "unknown": 1
       },
-      "confirmed": 37.142857142857146,
+      "confirmed": 61.2888198757764,
       "formal_comparison_eligible": false
     },
     "research": {
-      "exact": 56.8888888889,
-      "lower": 56.8888888888,
-      "upper": 56.8888888889,
+      "exact": 60.1222222222,
+      "lower": 60.1222222222,
+      "upper": 60.1222222223,
       "complete": true,
       "coverage": {
         "unit": "fixed subcategory",
@@ -633,13 +698,13 @@
         "adjudicated": 3,
         "unknown": 0
       },
-      "confirmed": 56.888888888888886,
+      "confirmed": 60.12222222222222,
       "formal_comparison_eligible": false
     },
     "earned": {
       "exact": null,
-      "lower": 60.5273148148,
-      "upper": 70.5273148149,
+      "lower": 69.9484017713,
+      "upper": 79.9484017714,
       "complete": false,
       "coverage": {
         "unit": "fixed 100-point benchmark",
@@ -647,13 +712,13 @@
         "adjudicated": 7,
         "unknown": 1
       },
-      "confirmed": 60.527314814814815,
+      "confirmed": 69.94840177133655,
       "formal_comparison_eligible": false
     },
     "overall": {
       "exact": null,
-      "lower": 60.5273148148,
-      "upper": 70.5273148149,
+      "lower": 69.9484017713,
+      "upper": 79.9484017714,
       "complete": false,
       "coverage": {
         "unit": "fixed 100-point benchmark",
@@ -708,9 +773,9 @@
       "formal_comparison_eligible": false
     },
     "lean-formalization": {
-      "exact": 5.0,
-      "lower": 5.0,
-      "upper": 5.0,
+      "exact": 13.4510869565,
+      "lower": 13.4510869565,
+      "upper": 13.4510869566,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -718,7 +783,7 @@
         "adjudicated": 2,
         "unknown": 0
       },
-      "confirmed": 5.0,
+      "confirmed": 13.451086956521738,
       "formal_comparison_eligible": false
     },
     "lean-selfcheck": {
@@ -750,9 +815,9 @@
       "formal_comparison_eligible": false
     },
     "manuscript-completion": {
-      "exact": 7.9,
-      "lower": 7.9,
-      "upper": 7.9,
+      "exact": 8.87,
+      "lower": 8.87,
+      "upper": 8.87,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -760,7 +825,7 @@
         "adjudicated": 5,
         "unknown": 0
       },
-      "confirmed": 7.9,
+      "confirmed": 8.87,
       "formal_comparison_eligible": false
     },
     "theorem-extension": {
@@ -793,8 +858,8 @@
     },
     "lean": {
       "exact": null,
-      "lower": 13.0,
-      "upper": 23.0,
+      "lower": 21.4510869565,
+      "upper": 31.4510869566,
       "complete": false,
       "coverage": {
         "unit": "points in full benchmark",
@@ -802,13 +867,13 @@
         "adjudicated": 2,
         "unknown": 1
       },
-      "confirmed": 13.0,
+      "confirmed": 21.45108695652174,
       "formal_comparison_eligible": false
     },
     "research": {
-      "exact": 17.0666666667,
-      "lower": 17.0666666666,
-      "upper": 17.0666666667,
+      "exact": 18.0366666667,
+      "lower": 18.0366666666,
+      "upper": 18.0366666667,
       "complete": true,
       "coverage": {
         "unit": "points in full benchmark",
@@ -816,7 +881,7 @@
         "adjudicated": 3,
         "unknown": 0
       },
-      "confirmed": 17.066666666666666,
+      "confirmed": 18.036666666666665,
       "formal_comparison_eligible": false
     }
   },

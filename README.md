@@ -43,42 +43,44 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 | 指标 | 衡量什么 |
 |---|---|
-| **MC · 数学能力** | 答卷中有效数学成果的正向贡献，包含可确认的部分进展。 |
+| **MC · 数学能力** | 有效数学成果的正向贡献；无正常交卷时，可审核截止前经核实的原成果。 |
 | **RMC · 可靠数学能力** | 在有效成果上扣除错误承诺、误判等损失，是默认主分。 |
 | **SMC · 严格数学交付** | 按整题目标验收；Lean 自查还要求固定三轮轨迹满足完整性、诊断与无回退要求。 |
 
-三项分数采用同一组规则选定答卷、家族与权重。错误成果不得按“完成了”计分；编译通过也须另审是否对齐原数学目标。诚实地报告未完成，与错误宣称完整，会产生不同的可靠性结果。
+当前聚合0.9.0／MC0.3.0／SMC0.2.0，另绑提交来源0.1.0。三项分数采用同一组规则选定答卷、家族与权重。错误成果不得按“完成了”计分；编译通过也须另审是否对齐原数学目标。诚实地报告未完成，与错误宣称完整，会产生不同的可靠性结果。
 
-另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 14 个模型的 64／70 个手稿槽。
+另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 14 个模型的 67／70 个手稿槽。
 
 ## 当前总榜
 
 下表按 RMC 排序，所有分数均在固定满分 100 下报告。允许的重跑按规则采用首次正常交付，来源与过程见各模型档案；部分测试继承了条件一致的既有答卷。
 
-| 模型 | Harness | MC | **RMC（主分）** | SMC |
-|---|---|---:|---:|---:|
-| [Astra 6 (max)](site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 |
-| [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 |
-| [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 |
-| [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 |
-| [Dot Underlying](site/models/dot-underlying-model-20261108/index.html) | Unknown<sup>1</sup> | 91.66 | 90.23 | 78.00 |
-| [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 |
-| [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 |
-| [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 87.65 | 86.45 | 65.67 |
-| [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 |
-| [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 |
-| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI<sup>2</sup> | 76.71 | 65.30 | 25.83 |
-| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 62.32 | 48.42 | 13.75 |
-| [Gemini 4 Argon (high)*](site/models/gemini-4-argon/index.html) | AGY CLI | 36.01 | 32.17 | 17.92 |
-| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code<sup>3</sup> | 36.03 | 27.34 | 14.08 |
+| 模型 | Harness | MC | **RMC（主分）** | SMC | 主动／强收／总题数 |
+|---|---|---:|---:|---:|---:|
+| [Astra 6 (max)](site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 | 39／0／39 |
+| [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
+| [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
+| [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
+| [Dot Underlying](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39／0／39 |
+| [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
+| [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
+| [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
+| [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
+| [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
+| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI | 76.71 | 64.23 | 25.83 | 37／1／39 |
+| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37／2／39 |
+| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38／1／39 |
+| [GLM 5.3 (max)*](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21／5／39 |
 
-\* 尚未测完，数值为已确认贡献；未测项保持未知，完整区间见模型详情。已测但超时未交卷按规则计分。
+\* 尚未测完，数值为已确认贡献；未测项保持未知，完整区间见模型详情。主动交卷与强收有内容互斥；无正常交卷时RMC／SMC为0，MC可审核原成果。
 
 ¹ Dot 原生独立运行方式。
 
 ² 使用 DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用 Codex CLI。
 
-³ GLM 5.3 在 Codex CLI 和 Claude Code 下均出现过大量超时；留档采用 Claude Code 结果，未按时交卷计 0 分。
+³ GLM 5.3 在 Codex CLI 和 Claude Code 下均出现过大量超时；留档采用 Claude Code 结果，未正常交卷的RMC／SMC为0，MC仅计经核实的截止原成果。
+
+⁴ Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。
 
 当前结果由 AI 评审并有部分人工抽审：Sol 6.1 Max 全审，Astra 6 Max 与 Dot 抽审核对。具体审核身份、证据与局限见[审核方式](docs/review-process.md)，逐模型分析见[结果报告](docs/results.md)。
 

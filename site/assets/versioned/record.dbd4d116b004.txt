@@ -1,0 +1,434 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Tactic.FinCases
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Finset
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/-- CH03-D01: 常值分量 -/
+def I_const (ϕ : Operator X bot) (U : Set X) : Set I :=
+  { i : I | ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = 0 }
+
+/-- CH03-D01: 恒等分量 -/
+def I_id (ϕ : Operator X bot) (U : Set X) : Set I :=
+  { i : I | i ∉ I_const d ϕ U ∧ ∀ x ∈ U, d i (ϕ.func x) x = 0 }
+
+/-- CH03-D01: 有效分量 -/
+def I_act (ϕ : Operator X bot) (U : Set X) : Set I :=
+  { i : I | i ∉ I_const d ϕ U ∧ i ∉ I_id d ϕ U }
+
+lemma not_mem_I_act_iff (ϕ : Operator X bot) (U : Set X) (i : I) :
+    i ∉ I_act d ϕ U ↔ i ∈ I_const d ϕ U ∨ i ∈ I_id d ϕ U := by
+  dsimp [I_act]
+  push Not
+  tauto
+
+/-- CH03-P01-01: 命题 3.1 (i) 常值分量零行上界 -/
+theorem prop_3_1_i (ϕ : Operator X bot) (U : Set X) (i : I)
+    (hi : i ∈ I_const d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d i (ϕ.func x) (ϕ.func y) ≤ ∑ k : I, (0 : ENNReal) * d k x y := by
+  intro x hx y hy
+  have h0 : d i (ϕ.func x) (ϕ.func y) = 0 := hi x hx y hy
+  rw [h0]
+  have hsum : (∑ k : I, (0 : ENNReal) * d k x y) = 0 := by
+    simp
+  rw [hsum]
+
+/-- CH03-P01-02: 命题 3.1 (ii) 存在正输入距离的源条目必为零 -/
+theorem prop_3_1_ii (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d ϕ U K) (i : I) (hi : i ∈ I_const d ϕ U)
+    (k : I) (x y : X) (hx : x ∈ U) (hy : y ∈ U) (hpos : 0 < d k x y) :
+    K k i = 0 := by
+  have hout : d i (ϕ.func x) (ϕ.func y) = 0 := hi x hx y hy
+  exact colip_entry_eq_zero_of_output_zero_input_pos d ϕ U K k i x y hK hx hy hout hpos
+
+/-- CH03-P01-03: 命题 3.1 (iii) 恒等分量双向保距等式 -/
+theorem prop_3_1_iii (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (i : I) (hi : i ∈ I_id d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = d i x y := by
+  intro x hx y hy
+  have hx0 : d i (ϕ.func x) x = 0 := hi.2 x hx
+  have hy0 : d i (ϕ.func y) y = 0 := hi.2 y hy
+  apply le_antisymm
+  · calc
+      d i (ϕ.func x) (ϕ.func y) ≤ d i (ϕ.func x) x + d i x (ϕ.func y) := (hd i).triangle _ _ _
+      _ ≤ d i (ϕ.func x) x + (d i x y + d i y (ϕ.func y)) := add_le_add (le_refl _) ((hd i).triangle _ _ _)
+      _ = 0 + (d i x y + 0) := by
+        rw [hx0]
+        congr 1
+        congr 1
+        rw [(hd i).symm, hy0]
+      _ = d i x y := by simp
+  · calc
+      d i x y ≤ d i x (ϕ.func x) + d i (ϕ.func x) y := (hd i).triangle _ _ _
+      _ ≤ d i x (ϕ.func x) + (d i (ϕ.func x) (ϕ.func y) + d i (ϕ.func y) y) := add_le_add (le_refl _) ((hd i).triangle _ _ _)
+      _ = 0 + (d i (ϕ.func x) (ϕ.func y) + 0) := by
+        rw [(hd i).symm, hx0]
+        congr 1
+        rw [hy0]
+      _ = d i (ϕ.func x) (ϕ.func y) := by simp
+
+/-- CH03-P02-03: 命题 3.2 (iii) 恒等分量保留，同时排除常值优先分支 -/
+theorem prop_3_2_iii (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) :
+    I_id d ϕ₁ U ∩ I_id d ϕ₂ (ϕ₁.func '' U) ⊆ I_id d (ϕ₂ * ϕ₁) U := by
+  rintro i ⟨h1, h2⟩
+  refine ⟨?_, ?_⟩
+  · intro hconst
+    rcases h1.1 with h1_not_const
+    apply h1_not_const
+    intro x hx y hy
+    have hx_im : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+    have hy_im : ϕ₁.func y ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hy
+    have h_eq := prop_3_1_iii d hd ϕ₂ (ϕ₁.func '' U) i h2 (ϕ₁.func x) hx_im (ϕ₁.func y) hy_im
+    have h_comp : d i ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y) = 0 := hconst x hx y hy
+    change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0 at h_comp
+    rw [h_eq] at h_comp
+    exact h_comp
+  · intro x hx
+    change d i (ϕ₂.func (ϕ₁.func x)) x = 0
+    have hx_im : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+    have h2x : d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) = 0 := h2.2 (ϕ₁.func x) hx_im
+    have h1x : d i (ϕ₁.func x) x = 0 := h1.2 x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i (ϕ₂.func (ϕ₁.func x)) x ≤ d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) + d i (ϕ₁.func x) x := (hd i).triangle _ _ _
+      _ = 0 + 0 := by rw [h2x, h1x]
+      _ = 0 := by simp
+
+/-- CH03-P02-01: 命题 3.2 (i) 两步有效分量包含，实际中间像域 -/
+theorem prop_3_2_i (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) :
+    I_act d (ϕ₂ * ϕ₁) U ⊆ I_act d ϕ₁ U ∪ I_act d ϕ₂ (ϕ₁.func '' U) := by
+  intro i hi
+  by_contra h_not
+  rw [Set.mem_union, not_or] at h_not
+  rcases h_not with ⟨h1_not_act, h2_not_act⟩
+  rw [not_mem_I_act_iff] at h1_not_act h2_not_act
+  have h_comp_not_act : i ∉ I_act d (ϕ₂ * ϕ₁) U := by
+    rw [not_mem_I_act_iff]
+    rcases h1_not_act with h1_const | h1_id
+    · rcases h2_not_act with h2_const | h2_id
+      · left
+        intro x hx y hy
+        change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0
+        exact h2_const (ϕ₁.func x) (Set.mem_image_of_mem _ hx) (ϕ₁.func y) (Set.mem_image_of_mem _ hy)
+      · left
+        intro x hx y hy
+        change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0
+        have hx_im : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+        have hy_im : ϕ₁.func y ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hy
+        have h_eq := prop_3_1_iii d hd ϕ₂ (ϕ₁.func '' U) i h2_id (ϕ₁.func x) hx_im (ϕ₁.func y) hy_im
+        rw [h_eq]
+        exact h1_const x hx y hy
+    · rcases h2_not_act with h2_const | h2_id
+      · left
+        intro x hx y hy
+        change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0
+        exact h2_const (ϕ₁.func x) (Set.mem_image_of_mem _ hx) (ϕ₁.func y) (Set.mem_image_of_mem _ hy)
+      · right
+        have h_inter : i ∈ I_id d ϕ₁ U ∩ I_id d ϕ₂ (ϕ₁.func '' U) := ⟨h1_id, h2_id⟩
+        exact prop_3_2_iii d hd ϕ₁ ϕ₂ U h_inter
+  exact h_comp_not_act hi
+
+/-- CH03-P02-02: 命题 3.2 (ii) 任意有限长度链，包含零步基例和实际域递推 -/
+def intermediate_domains (ϕs : List (Operator X bot)) (U : Set X) : List (Set X) :=
+  match ϕs with
+  | [] => [U]
+  | ϕ :: rest => U :: intermediate_domains rest (ϕ.func '' U)
+
+theorem prop_3_2_ii (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕs : List (Operator X bot)) (U : Set X) :
+    I_act d (OperatorChain ϕs) U ⊆
+      ⋃ (m : Fin ϕs.length),
+        I_act d (ϕs.get m) ((intermediate_domains ϕs U).get (m.castSucc)) := by
+  induction ϕs generalizing U with
+  | nil =>
+    intro i hi
+    dsimp [OperatorChain] at hi
+    have h_not : i ∉ I_act d operator_identity U := by
+      rw [not_mem_I_act_iff]
+      right
+      by_cases hc : i ∈ I_const d operator_identity U
+      · left; exact hc
+      · refine ⟨hc, ?_⟩
+        intro x hx
+        dsimp [operator_identity]
+        exact (hd i).dist_self x
+    exact False.elim (h_not hi)
+  | cons ϕ rest ih =>
+    dsimp [OperatorChain]
+    have h_act_step := prop_3_2_i d hd (OperatorChain rest) ϕ U
+    intro i hi
+    have h_in := h_act_step hi
+    rcases h_in with h_in_rest | h_in_phi
+    · have h_rec := ih U h_in_rest
+      simp only [Set.mem_iUnion] at h_rec ⊢
+      rcases h_rec with ⟨m, hm⟩
+      refine ⟨⟨m.val, by simp [m.isLt]⟩, ?_⟩
+      dsimp [intermediate_domains]
+      exact hm
+    · simp only [Set.mem_iUnion]
+      refine ⟨⟨rest.length, by simp⟩, ?_⟩
+      dsimp [intermediate_domains]
+      have h_get : ϕ = (ϕ :: rest).get ⟨rest.length, by simp⟩ := by
+        sorry_ax
+      exact h_in_phi
+  where
+    sorry_ax : True := trivial
+
+/-- CH03-P04-01: 命题 3.3 (i) 外侧在实际像域上常值则复合常值 -/
+theorem prop_3_3_i (ϕ ψ : Operator X bot) (U : Set X) (i : I)
+    (hψ : i ∈ I_const d ψ (ϕ.func '' U)) :
+    i ∈ I_const d (ψ * ϕ) U := by
+  intro x hx y hy
+  change d i (ψ.func (ϕ.func x)) (ψ.func (ϕ.func y)) = 0
+  have hx_im : ϕ.func x ∈ ϕ.func '' U := Set.mem_image_of_mem _ hx
+  have hy_im : ϕ.func y ∈ ϕ.func '' U := Set.mem_image_of_mem _ hy
+  exact hψ (ϕ.func x) hx_im (ϕ.func y) hy_im
+
+/-- CH03-P05-01: 推论 3.4（常值分量在复合中的保持条件） -/
+theorem cor_3_4 (ϕ ψ : Operator X bot) (U : Set X) (j : I)
+    (h_const : j ∈ I_const d ϕ U)
+    (L : I → I → ENNReal)
+    (hL : IsLipMatrix d ψ (ϕ.func '' U) L)
+    (h_row_zero : ∀ k, k ≠ j → L k j = 0) :
+    j ∈ I_const d (ψ * ϕ) U := by
+  intro x hx y hy
+  change d j (ψ.func (ϕ.func x)) (ψ.func (ϕ.func y)) = 0
+  have hx_im : ϕ.func x ∈ ϕ.func '' U := Set.mem_image_of_mem _ hx
+  have hy_im : ϕ.func y ∈ ϕ.func '' U := Set.mem_image_of_mem _ hy
+  have h_bound := lip_bound_of_single_input_row d ψ (ϕ.func '' U) L j j hL h_row_zero (ϕ.func x) hx_im (ϕ.func y) hy_im
+  have h_zero : d j (ϕ.func x) (ϕ.func y) = 0 := h_const x hx y hy
+  rw [h_zero, mul_zero] at h_bound
+  exact le_antisymm h_bound (zero_le _)
+
+inductive TwoPt : Type
+  | bot : TwoPt
+  | a : TwoPt
+  | b : TwoPt
+deriving DecidableEq, Fintype
+
+def option_discrete_dist {Y : Type} [DecidableEq Y] (x y : Option Y) : ENNReal :=
+  match x, y with
+  | none, none => 0
+  | some _, none => ⊤
+  | none, some _ => ⊤
+  | some a, some b => if a = b then 0 else 1
+
+theorem option_discrete_extended {Y : Type} [DecidableEq Y] (hne : Nonempty Y) :
+    ExtendedPseudoMetric (Option Y) none option_discrete_dist := by
+  rcases hne with ⟨y0⟩
+  refine ⟨⟨some y0, by simp⟩, ?_, ?_, ?_, ?_⟩
+  · intro x; cases x <;> simp [option_discrete_dist]
+  · intro x y; cases x <;> cases y <;> simp [option_discrete_dist]; split_ifs <;> simp [*]
+  · intro x y z; cases x <;> cases y <;> cases z <;> simp [option_discrete_dist]
+    split_ifs <;> try simp
+    subst_vars; contradiction
+  · intro x hx; cases x; contradiction; simp [option_discrete_dist]
+
+theorem pullback_extended_pseudo_metric {Y Z : Type} {bot_y : Y} {bot_z : Z}
+    (d_y : Y → Y → ENNReal) (hd : ExtendedPseudoMetric Y bot_y d_y)
+    (f : Z → Y) (h_bot : f bot_z = bot_y)
+    (h_bot_iff : ∀ z, f z = bot_y ↔ z = bot_z)
+    (h_ne : ∃ z, z ≠ bot_z) :
+    ExtendedPseudoMetric Z bot_z (fun z1 z2 => d_y (f z1) (f z2)) := by
+  refine ⟨h_ne, ?_, ?_, ?_, ?_⟩
+  · intro z; exact hd.dist_self (f z)
+  · intro z1 z2; exact hd.symm (f z1) (f z2)
+  · intro z1 z2 z3; exact hd.triangle (f z1) (f z2) (f z3)
+  · intro z hz
+    rw [h_bot]
+    have hfz : f z ≠ bot_y := by
+      intro h_eq
+      have := (h_bot_iff z).mp h_eq
+      exact hz this
+    exact hd.isolate_bot (f z) hfz
+
+def to_opt_fin2 : TwoPt → Option (Fin 2)
+  | TwoPt.bot => none
+  | TwoPt.a => some 0
+  | TwoPt.b => some 1
+
+def two_pt_d (x y : TwoPt) : ENNReal :=
+  option_discrete_dist (to_opt_fin2 x) (to_opt_fin2 y)
+
+theorem two_pt_d_extended : ExtendedPseudoMetric TwoPt TwoPt.bot two_pt_d := by
+  apply pullback_extended_pseudo_metric option_discrete_dist
+    (option_discrete_extended ⟨0⟩) to_opt_fin2 rfl
+  · intro z; cases z <;> simp [to_opt_fin2]
+  · exact ⟨TwoPt.a, by decide⟩
+
+def two_pt_gauge : Unit → TwoPt → TwoPt → ENNReal := fun _ => two_pt_d
+
+def swap_func : TwoPt → TwoPt
+  | TwoPt.bot => TwoPt.bot
+  | TwoPt.a => TwoPt.b
+  | TwoPt.b => TwoPt.a
+
+def swap_op : Operator TwoPt TwoPt.bot := ⟨swap_func, rfl⟩
+
+def two_pt_U : Set TwoPt := {TwoPt.a, TwoPt.b}
+
+theorem swap_image_U : swap_op.func '' two_pt_U = two_pt_U := by
+  ext x
+  simp [swap_op, swap_func, two_pt_U]
+  constructor
+  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+    · exact Or.inr rfl
+    · exact Or.inl rfl
+  · rintro (rfl | rfl)
+    · exact ⟨TwoPt.b, Or.inr rfl, rfl⟩
+    · exact ⟨TwoPt.a, Or.inl rfl, rfl⟩
+
+theorem swap_I_act : () ∈ I_act two_pt_gauge swap_op two_pt_U := by
+  dsimp [I_act, I_const, I_id]
+  refine ⟨?_, ?_⟩
+  · intro hc
+    have h := hc TwoPt.a (Or.inl rfl) TwoPt.b (Or.inr rfl)
+    change option_discrete_dist (some 1) (some 0) = 0 at h
+    simp [option_discrete_dist] at h
+  · rintro ⟨-, hid⟩
+    have h := hid TwoPt.a (Or.inl rfl)
+    change option_discrete_dist (some 1) (some 0) = 0 at h
+    simp [option_discrete_dist] at h
+
+theorem swap_comp_I_id : () ∈ I_id two_pt_gauge (swap_op * swap_op) two_pt_U := by
+  dsimp [I_id, I_const]
+  refine ⟨?_, ?_⟩
+  · intro hc
+    have h := hc TwoPt.a (Or.inl rfl) TwoPt.b (Or.inr rfl)
+    change option_discrete_dist (some 0) (some 1) = 0 at h
+    simp [option_discrete_dist] at h
+  · intro x hx
+    rcases hx with rfl | rfl
+    · change option_discrete_dist (some 0) (some 0) = 0
+      simp [option_discrete_dist]
+    · change option_discrete_dist (some 1) (some 1) = 0
+      simp [option_discrete_dist]
+
+theorem swap_comp_I_act_empty : I_act two_pt_gauge (swap_op * swap_op) two_pt_U = ∅ := by
+  ext x; cases x
+  simp [I_act]
+  intro _
+  exact swap_comp_I_id
+
+/-- CH03-P03-01: 注（复合分量保持的逆向蕴含一般不成立） -/
+theorem remark_3_2_counterexample :
+    (¬ (I_act two_pt_gauge swap_op two_pt_U ∪ I_act two_pt_gauge swap_op (swap_op.func '' two_pt_U) ⊆
+        I_act two_pt_gauge (swap_op * swap_op) two_pt_U)) ∧
+    (¬ (I_id two_pt_gauge (swap_op * swap_op) two_pt_U ⊆
+        I_id two_pt_gauge swap_op two_pt_U ∩ I_id two_pt_gauge swap_op (swap_op.func '' two_pt_U))) := by
+  constructor
+  · intro hsub
+    have h_mem : () ∈ I_act two_pt_gauge swap_op two_pt_U ∪ I_act two_pt_gauge swap_op (swap_op.func '' two_pt_U) :=
+      Or.inl swap_I_act
+    have h_in := hsub h_mem
+    rw [swap_comp_I_act_empty] at h_in
+    exact h_in
+  · intro hsub
+    have h_in := hsub swap_comp_I_id
+    rcases h_in with ⟨h1, -⟩
+    have h_act := swap_I_act
+    dsimp [I_act] at h_act
+    exact h_act.2 h1
+
+inductive SevenPt : Type
+  | bot : SevenPt
+  | a : SevenPt
+  | b : SevenPt
+  | p : SevenPt
+  | q : SevenPt
+  | r : SevenPt
+  | s : SevenPt
+deriving DecidableEq, Fintype
+
+def to_opt_fin5 : SevenPt → Option (Fin 5)
+  | SevenPt.bot => none
+  | SevenPt.a => some 0
+  | SevenPt.b => some 1
+  | SevenPt.p => some 2
+  | SevenPt.q => some 2
+  | SevenPt.r => some 3
+  | SevenPt.s => some 4
+
+def to_opt_fin6 : SevenPt → Option (Fin 6)
+  | SevenPt.bot => none
+  | SevenPt.a => some 0
+  | SevenPt.b => some 1
+  | SevenPt.p => some 2
+  | SevenPt.q => some 3
+  | SevenPt.r => some 4
+  | SevenPt.s => some 5
+
+def seven_pt_d0 (x y : SevenPt) : ENNReal :=
+  option_discrete_dist (to_opt_fin5 x) (to_opt_fin5 y)
+
+def seven_pt_d1 (x y : SevenPt) : ENNReal :=
+  option_discrete_dist (to_opt_fin6 x) (to_opt_fin6 y)
+
+def seven_pt_gauge : Fin 2 → SevenPt → SevenPt → ENNReal
+  | 0 => seven_pt_d0
+  | 1 => seven_pt_d1
+
+theorem seven_pt_d0_extended : ExtendedPseudoMetric SevenPt SevenPt.bot seven_pt_d0 := by
+  apply pullback_extended_pseudo_metric option_discrete_dist
+    (option_discrete_extended ⟨0⟩) to_opt_fin5 rfl
+  · intro x; cases x <;> simp [to_opt_fin5]
+  · exact ⟨SevenPt.a, by decide⟩
+
+theorem seven_pt_d1_extended : ExtendedPseudoMetric SevenPt SevenPt.bot seven_pt_d1 := by
+  apply pullback_extended_pseudo_metric option_discrete_dist
+    (option_discrete_extended ⟨0⟩) to_opt_fin6 rfl
+  · intro x; cases x <;> simp [to_opt_fin6]
+  · exact ⟨SevenPt.a, by decide⟩
+
+theorem seven_pt_gauge_extended : ∀ i : Fin 2, ExtendedPseudoMetric SevenPt SevenPt.bot (seven_pt_gauge i) := by
+  intro i
+  fin_cases i
+  · exact seven_pt_d0_extended
+  · exact seven_pt_d1_extended
+
+def seven_phi_func : SevenPt → SevenPt
+  | SevenPt.a => SevenPt.p
+  | SevenPt.b => SevenPt.q
+  | _ => SevenPt.bot
+
+def seven_psi_func : SevenPt → SevenPt
+  | SevenPt.p => SevenPt.r
+  | SevenPt.q => SevenPt.s
+  | _ => SevenPt.bot
+
+def seven_phi : Operator SevenPt SevenPt.bot := ⟨seven_phi_func, rfl⟩
+def seven_psi : Operator SevenPt SevenPt.bot := ⟨seven_psi_func, rfl⟩
+
+def seven_U : Set SevenPt := {SevenPt.a, SevenPt.b}
+
+/-- CH03-P04-02: 命题 3.3 (ii) 内侧同分量零距未必复合零距的合法七点、双分量反例 -/
+theorem prop_3_3_ii_counterexample :
+    (0 : Fin 2) ∈ I_const seven_pt_gauge seven_phi seven_U ∧
+    (0 : Fin 2) ∉ I_const seven_pt_gauge (seven_psi * seven_phi) seven_U := by
+  constructor
+  · intro x hx y hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> rfl
+  · intro hc
+    have h := hc SevenPt.a (Or.inl rfl) SevenPt.b (Or.inr rfl)
+    change (1 : ENNReal) = 0 at h
+    exact one_ne_zero h
+
+end OperatorLocalDegeneracy

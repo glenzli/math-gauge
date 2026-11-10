@@ -309,6 +309,8 @@ def validate_record(record, policy=None, *, private=False):
         'content_rates_status'}
     if record['version'] == ADOPTED_VERSION:
         allowed.add('alignment_adoption')
+    allowed |= {key for key in ('submission_policy','submission_evidence',
+        'submission_evidence_source_sha256','score_history') if key in record}
     require(set(record) == allowed | ({'mathematical_inputs'} if private else set()),
             'Paper record contains unsupported fields or private source data')
     require(record.get('backend_sku') is None and _sha(record.get('mathematical_input_sha256'))
@@ -476,7 +478,16 @@ def _score_bindings(record):
             **{key + '_sha256': record[key]['sha256'] for key in
                ('assessment_policy', 'strict_scoring_policy', 'capability_scoring_policy', 'claim_penalty_policy')},
             **({'alignment_adoption_sha256': record['alignment_adoption']['sha256']}
-               if record['version'] == ADOPTED_VERSION else {})}
+               if record['version'] == ADOPTED_VERSION else {}),
+            **({'submission_policy_sha256':record['submission_policy']['sha256'],
+                'submission_evidence_sha256':record['submission_evidence_source_sha256']}
+               if record.get('submission_policy') is not None else {})}
+
+
+def _submission_args(folder, record, condition):
+    from . import submission_evidence
+    return dict(submission_review=submission_evidence.load_condition(folder,record,condition),
+                submission_policy=submission_evidence.load_policy(folder,record))
 
 
 def load_public_record(folder, *, public_case_ids=None):
@@ -486,6 +497,10 @@ def load_public_record(folder, *, public_case_ids=None):
     record = json.loads((folder / 'record.json').read_bytes())
     policy, strict, capability, claims_policy = _policies(folder, record)
     validate_record(record, policy)
+    if policy['version']=='0.9.0':
+        from . import submission_evidence
+        submission_evidence.validate_record_component(folder,record,public=True)
+        submission_evidence.validate_history(folder,record)
     require(record['model_id'] == folder.parent.name, 'Paper record belongs to another model')
     if public_case_ids is not None:
         require(set(record['public_case_ids']) == set(public_case_ids), 'Paper projection changed the public catalog')
@@ -618,8 +633,9 @@ def check_record(folder, *, public_folder=None):
         public = Path(public_folder) if public_folder is not None else None
         public_record, public_scores, _ = load_public_record(public) if public is not None else (None, None, None)
         if public_record is not None:
-            require({k: v for k, v in record.items() if k not in {*RESULT_FIELDS.values(), 'mathematical_inputs'}}
-                    == {k: v for k, v in public_record.items() if k not in RESULT_FIELDS.values()},
+            separate = {*RESULT_FIELDS.values(),'mathematical_inputs','submission_evidence','score_history'}
+            require({k: v for k, v in record.items() if k not in separate}
+                    == {k: v for k, v in public_record.items() if k not in separate},
                     'Paper private/public records differ in common source metadata')
             projected_claims = _read(public, public_record['public_claim_review'])['conditions']
             for condition in CONDITIONS:
@@ -632,7 +648,8 @@ def check_record(folder, *, public_folder=None):
             scores[mode] = {}
             for condition in CONDITIONS:
                 score = _read(folder, record[field][condition])
-                derived = score_paper_observation(data, *policies, mode=mode, condition=condition)
+                derived = score_paper_observation(data, *policies, mode=mode, condition=condition,
+                    **_submission_args(folder,record,condition))
                 require(all(score.get(k) == value for k, value in derived.items()),
                         'Paper report differs from the shared mathematical scorer')
                 require(score.get('source_bindings') == _score_bindings(record),
@@ -648,7 +665,12 @@ def check_record(folder, *, public_folder=None):
                     if old.get('score_mode') != mode:
                         keys = keys[1:]
                     original_review = task.get('legacy_original_review', task.get('review'))
-                    require(prior is not None and all(prior[k] == current[k] for k in keys)
+                    compared = current
+                    if policies[0]['version']=='0.9.0' and current.get('submission_assessment'):
+                        compared=dict(current,
+                            completion=current['submission_assessment']['prior_completion'],
+                            strict_pass=current['submission_assessment']['prior_strict_pass'])
+                    require(prior is not None and all(prior[k] == compared[k] for k in keys)
                             and original_review is not None and prior['review_sha256'] == original_review['sha256'],
                             'Retained legacy paper changed its original selected judgment or source bytes')
                 scores[mode][condition] = score
@@ -701,7 +723,8 @@ def retain_scores(private_folder, public_folder):
     for mode, field in RESULT_FIELDS.items():
         task_views['views'][mode] = {}
         for condition in CONDITIONS:
-            score = score_paper_observation(data, *policies, mode=mode, condition=condition)
+            score = score_paper_observation(data, *policies, mode=mode, condition=condition,
+                **_submission_args(private,source,condition))
             score['source_bindings'] = _score_bindings(source)
             retry = condition == 'nonlogical_retry_3'
             private_name = {'capability': ('capability-result.json', 'capability-retry-result.json'),
@@ -725,4 +748,7 @@ def retain_scores(private_folder, public_folder):
             record[field] = descriptor(folder, folder / filename)
     for folder, record in zip((private, public), records):
         write(folder / 'record.json', record)
+    if policies[0]['version']=='0.9.0':
+        from .records import rebind_content_rates
+        rebind_content_rates(private,public,private_root=private.parents[3],public_root=public.parents[3])
     return check_record(private, public_folder=public)

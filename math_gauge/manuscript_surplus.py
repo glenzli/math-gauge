@@ -190,6 +190,7 @@ def source_context(public_root, private_root, model_id, record_id, *, include_ju
 
 
 def validate_sources(review, root, context, baseline, policy):
+    validate_context_rebinding(review, root)
     validate_review(review, policy)
     for key, expected in (('source_record', context['record']), ('source_score', context['score']), ('source_inputs', context['inputs'])):
         require(review.get(key) == expected, 'Surplus binds another selected record/score/input')
@@ -220,6 +221,29 @@ def validate_sources(review, root, context, baseline, policy):
                 require(type(start) is int and type(end) is int and 0 <= start < end <= len(raw), 'Surplus citation bytes are invalid')
                 require(raw[start:end].decode('utf-8') == citation['quote'], 'Surplus quote differs from original answer bytes')
     return review
+
+
+def validate_context_rebinding(review, root):
+    """A current metadata copy must retain every original mathematical judgment."""
+    binding = review.get('metadata_rebind')
+    if binding is None:
+        return
+    require(binding.get('schema') == 'math-gauge.manuscript-observation-context/v1'
+            and binding.get('new_candidate_calls') == 0
+            and binding.get('mathematical_judgments_changed') is False,
+            'Invalid observation context rebinding')
+    original = read_source(root, binding['original_review'])
+    require('metadata_rebind' not in original, 'Observation context rebinding cannot chain')
+    for name in ('source_record', 'source_score', 'source_inputs'):
+        retained = binding['retained_original_context'][name]
+        require(retained['sha256'] == original[name]['sha256']
+                and retained['bytes'] == original[name]['bytes'],
+                'Observation context lost its original source bytes')
+        evidence_bytes(root, retained)
+    identity_fields = {'record_id', 'source_record', 'source_score', 'source_inputs', 'metadata_rebind'}
+    content = lambda value: _content_identity({k:v for k,v in value.items() if k not in identity_fields})
+    require(content(review) == content(original),
+            'Observation context rebinding changed mathematical review content')
 
 
 def _content_identity(value):

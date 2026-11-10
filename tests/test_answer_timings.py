@@ -90,6 +90,25 @@ class AnswerTimingsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.check([row])
 
+    def test_continuation_sums_actual_segments_without_counting_the_pause(self):
+        row = self.row(seconds=12)
+        later = self.keep("continuation.json", {"elapsed_seconds": 8, "timeout_seconds": 5400})
+        first = copy.deepcopy(row["time_binding"])
+        second = {"kind": "elapsed_field", "source": later, "pointer": "/elapsed_seconds"}
+        row.update(seconds=20, method="historical_reported_elapsed",
+                   time_binding={"kind": "sum_segments", "segments": [first, second]})
+        self.check([row])
+        row["seconds"] = 21
+        with self.assertRaisesRegex(ValueError, "source bytes"):
+            self.check([row])
+        row["seconds"] = 20
+        row["time_binding"]["segments"][1]["pointer"] = "/timeout_seconds"
+        with self.assertRaisesRegex(ValueError, "configured limit"):
+            self.check([row])
+        row["time_binding"]["segments"] = [first, first]
+        with self.assertRaisesRegex(ValueError, "counted twice"):
+            self.check([row])
+
     def test_public_projection_keeps_combined_statistics_without_private_paths(self):
         public, private = self.row(), self.row("secret-case", 24)
         private["note"] = "/private/reference/secret-case"

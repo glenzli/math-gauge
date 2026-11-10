@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 import test_content_rates
-from math_gauge.content_rates import project_rates, validate_public_rates
+from math_gauge.content_rates import project_rates, validate_public_rates, verify_sources
 from math_gauge.goal_attainment import definition_digest, validate_goal_review
 from math_gauge.records import load_content_rates
 from math_gauge.scoring import score_content_rates
@@ -125,6 +125,41 @@ class GoalAttainmentTests(unittest.TestCase):
         task['goals'][0]['weight'] = 9
         with self.assertRaisesRegex(ValueError, 'definition digest'):
             validate_goal_review(goals, content, policy)
+
+    def test_retained_definition_source_keeps_contract_and_requires_original_bytes(self):
+        content, goals, policy = self.fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'history').mkdir()
+            raw = b'original frozen definition source'
+            digest = hashlib.sha256(raw).hexdigest()
+            for review in (content, goals):
+                for source in review['sources']:
+                    source['sha256'] = digest
+                for task in review['tasks']:
+                    for unit in task.get('goals', task.get('units', [])):
+                        for key in ('evidence', 'definition_evidence'):
+                            for source in unit.get(key, []):
+                                source['sha256'] = digest
+            self.freeze(goals)
+            frozen = goals['goal_definition_sha256']
+            (root / 'source.json').write_bytes(b'new aggregation policy')
+            (root / 'history/source.json').write_bytes(raw)
+            with self.assertRaisesRegex(ValueError, 'SHA256'):
+                verify_sources(goals, {'public': root, 'private': root})
+            original = copy.deepcopy(goals['sources'][0])
+            goals['source_relocations'] = [dict(original=original,
+                retained=dict(original, path='history/source.json'))]
+            validate_goal_review(goals, content, policy)
+            verify_sources(goals, {'public': root, 'private': root})
+            self.assertEqual(definition_digest(goals['tasks']), frozen)
+            goals['source_relocations'][0]['retained']['sha256'] = 'c' * 64
+            with self.assertRaisesRegex(ValueError, 'identical bytes'):
+                validate_goal_review(goals, content, policy)
+            goals['source_relocations'][0]['retained']['sha256'] = digest
+            (root / 'history/source.json').write_bytes(b'substituted source')
+            with self.assertRaisesRegex(ValueError, 'SHA256'):
+                verify_sources(goals, {'public': root, 'private': root})
 
     def test_v2_projection_never_relabels_legacy_coverage_or_leaks_goals(self):
         content, goals, policy = self.fixture()

@@ -1,0 +1,440 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.ENNReal.Real
+import Mathlib.Data.Finset.Basic
+import OperatorLocalDegeneracy.ComponentPartition
+import OperatorLocalDegeneracy.ComputationalFibers
+import OperatorLocalDegeneracy.NullificationRadius
+import OperatorLocalDegeneracy.ThresholdClassification
+import OperatorLocalDegeneracy.CoveringEntropy
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+-- ==========================================
+-- 习题 3.1
+-- ==========================================
+
+def ex31_gauge (x y : Option ℝ) : ENNReal :=
+  match x, y with
+  | none, none => 0
+  | some _, none => ⊤
+  | none, some _ => ⊤
+  | some a, some b => ENNReal.ofReal (| |a| - |b| |)
+
+theorem ex_3_1_i_a_extended : ExtendedPseudoMetric (Option ℝ) none ex31_gauge := by
+  refine ⟨⟨some 0, by simp⟩, ?_, ?_, ?_, ?_⟩
+  · intro x; cases x <;> simp [ex31_gauge]
+  · intro x y; cases x <;> cases y <;> simp [ex31_gauge]
+    rw [abs_sub_comm]
+  · intro x y z; cases x <;> cases y <;> cases z <;> simp [ex31_gauge]
+    apply ENNReal.ofReal_le_ofReal
+    exact abs_sub_le _ _ _
+  · intro x hx; cases x; contradiction; rfl
+
+def ex31_phi_func : Option ℝ → Option ℝ
+  | none => none
+  | some x => some (2 * x - 1)
+
+def ex31_phi : Operator (Option ℝ) none := ⟨ex31_phi_func, rfl⟩
+def ex31_U : Set (Option ℝ) := {some 0, some 1}
+
+theorem ex_3_1_i_a_fiber :
+    Fib (fun _ => ex31_gauge) ex31_phi ({()} : Set Unit) (ex31_phi.func (some 0)) ex31_U = ex31_U := by
+  ext x
+  dsimp [Fib, ex31_phi, ex31_phi_func, ex31_U, ex31_gauge]
+  rw [subfamily_pseudometric_singleton]
+  simp only [Set.mem_sep_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · exact fun h => h.1
+  · rintro (rfl | rfl)
+    · refine ⟨Or.inl rfl, ?_⟩
+      simp
+    · refine ⟨Or.inr rfl, ?_⟩
+      simp
+
+theorem ex_3_1_i_a_const :
+    () ∈ I_const (fun _ => ex31_gauge) ex31_phi ex31_U := by
+  intro x hx y hy
+  dsimp [ex31_phi, ex31_phi_func, ex31_U, ex31_gauge]
+  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp
+
+theorem ex_3_1_i_b_fiber :
+    Fib (fun _ => ex31_gauge) (ex31_phi * ex31_phi) ({()} : Set Unit) ((ex31_phi * ex31_phi).func (some 0)) ex31_U = {some 0} := by
+  ext x
+  dsimp [Fib, ex31_phi, ex31_phi_func, ex31_U, ex31_gauge]
+  rw [subfamily_pseudometric_singleton]
+  simp only [Set.mem_sep_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨(rfl | rfl), h_dist⟩
+    · rfl
+    · dsimp [ex31_gauge] at h_dist
+      norm_num at h_dist
+  · rintro rfl
+    refine ⟨Or.inl rfl, ?_⟩
+    simp
+
+theorem ex_3_1_i_b_act :
+    () ∈ I_act (fun _ => ex31_gauge) (ex31_phi * ex31_phi) ex31_U := by
+  dsimp [I_act, I_const, I_id, ex31_phi, ex31_phi_func, ex31_U, ex31_gauge]
+  refine ⟨?_, ?_⟩
+  · intro hc
+    have h := hc (some 0) (Or.inl rfl) (some 1) (Or.inr rfl)
+    dsimp [ex31_gauge] at h
+    norm_num at h
+  · rintro ⟨-, hid⟩
+    have h := hid (some 0) (Or.inl rfl)
+    dsimp [ex31_gauge] at h
+    norm_num at h
+
+theorem ex_3_1_ii (c : ℝ) (ψ : Operator (Option ℝ) none)
+    (hψ : ∀ x ∈ ex31_U, ψ.func x = some c) :
+    Fib (fun _ => ex31_gauge) (ψ * ψ) ({()} : Set Unit) ((ψ * ψ).func (some 0)) ex31_U = ex31_U := by
+  ext x
+  dsimp [Fib]
+  rw [subfamily_pseudometric_singleton]
+  simp only [Set.mem_sep_iff]
+  constructor
+  · exact fun h => h.1
+  · intro hx
+    refine ⟨hx, ?_⟩
+    change ex31_gauge (ψ.func (ψ.func x)) (ψ.func (ψ.func (some 0))) = 0
+    rw [hψ x hx, hψ (some 0) (by simp [ex31_U])]
+    exact ex_3_1_i_a_extended.dist_self (ψ.func (some c))
+
+-- ==========================================
+-- 习题 3.3
+-- ==========================================
+
+def ex33_phi_func : Option ℝ → Option ℝ
+  | none => none
+  | some x => some (x + 1)
+
+def ex33_phi : Operator (Option ℝ) none := ⟨ex33_phi_func, rfl⟩
+def ex33_U : Set (Option ℝ) := {some (-3), some (-2), some 0, some 2}
+
+theorem ex_3_3_i_id_fiber :
+    let id_op : Operator (Option ℝ) none := operator_identity
+    Fib (fun _ => ex31_gauge) id_op ({()} : Set Unit) (id_op.func (some (-3))) ex33_U = {some (-3), some 3} ∩ ex33_U ∧
+    Fib (fun _ => ex31_gauge) id_op ({()} : Set Unit) (id_op.func (some (-2))) ex33_U = {some (-2), some 2} ∩ ex33_U ∧
+    Fib (fun _ => ex31_gauge) id_op ({()} : Set Unit) (id_op.func (some 0)) ex33_U = {some 0} ∩ ex33_U := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex_3_3_i_trans_fiber :
+    Fib (fun _ => ex31_gauge) ex33_phi ({()} : Set Unit) (ex33_phi.func (some (-3))) ex33_U = {some (-3)} ∧
+    Fib (fun _ => ex31_gauge) ex33_phi ({()} : Set Unit) (ex33_phi.func (some (-2))) ex33_U = {some (-2), some 0} ∧
+    Fib (fun _ => ex31_gauge) ex33_phi ({()} : Set Unit) (ex33_phi.func (some 2)) ex33_U = {some 2} := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex_3_3_cov_U :
+    covering_number ex31_gauge (ENNReal.ofReal (3 / 2)) ex33_U = 2 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex_3_3_cov_phi_U :
+    covering_number ex31_gauge (ENNReal.ofReal (3 / 2)) (ex33_phi.func '' ex33_U) = 3 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex_3_3_entropy_diff :
+    entropy_diff (fun _ => ex31_gauge) ex33_phi ex33_U ({()} : Set Unit) ({()} : Set Unit) (ENNReal.ofReal (3 / 2)) =
+      ↑(1 - Real.logb 2 3) := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+-- ==========================================
+-- 习题 3.4
+-- ==========================================
+
+def floor_func : Option ℝ → Option ℝ
+  | none => none
+  | some x => some (⌊x⌋ : ℝ)
+
+def floor_op : Operator (Option ℝ) none := ⟨floor_func, rfl⟩
+
+def ex34_dist (x y : Option ℝ) : ENNReal :=
+  match x, y with
+  | none, none => 0
+  | some _, none => ⊤
+  | none, some _ => ⊤
+  | some a, some b => ENNReal.ofReal (|a - b|)
+
+def Da : Set (Option ℝ) := { x | ∃ r : ℝ, x = some r ∧ 0 ≤ r ∧ r ≤ 1 / 2 }
+def Db : Set (Option ℝ) := { x | ∃ r : ℝ, x = some r ∧ 9 / 10 ≤ r ∧ r ≤ 11 / 10 }
+def Dc : Set (Option ℝ) := { some 0, some 2 }
+def Dd : Set (Option ℝ) := { x | ∃ r : ℝ, x = some r ∧ 0 ≤ r ∧ r ≤ 2 }
+
+theorem diam_Da : diam ex34_dist Da = ENNReal.ofReal (1 / 2) := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem r_null_unif_Da : r_null_uniform ex34_dist ex34_dist floor_op Da = ⊤ := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem type_Da : classify_channel (diam ex34_dist Da) (r_null_uniform ex34_dist ex34_dist floor_op Da) 1 1 = ThresholdType.T11 := by
+  rw [diam_Da, r_null_unif_Da]
+  dsimp [classify_channel]
+  split_ifs with h1 h2
+  · rfl
+  · exfalso
+    have : (1 : ENNReal) ≤ ⊤ := le_top
+    exact h2 this
+  · exfalso
+    have : ENNReal.ofReal (1 / 2) ≤ 1 := by
+      rw [ENNReal.ofReal_le_one]
+      norm_num
+    exact h1 this
+
+theorem diam_Db : diam ex34_dist Db = ENNReal.ofReal (1 / 5) := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem r_null_unif_Db : r_null_uniform ex34_dist ex34_dist floor_op Db = 0 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem type_Db : classify_channel (diam ex34_dist Db) (r_null_uniform ex34_dist ex34_dist floor_op Db) 1 1 = ThresholdType.T10 := by
+  rw [diam_Db, r_null_unif_Db]
+  dsimp [classify_channel]
+  split_ifs with h1 h2
+  · exfalso
+    norm_num at h2
+  · rfl
+  · exfalso
+    have : ENNReal.ofReal (1 / 5) ≤ 1 := by
+      rw [ENNReal.ofReal_le_one]
+      norm_num
+    exact h1 this
+
+theorem diam_Dc : diam ex34_dist Dc = ENNReal.ofReal 2 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem r_null_unif_Dc : r_null_uniform ex34_dist ex34_dist floor_op Dc = ⊤ := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem type_Dc : classify_channel (diam ex34_dist Dc) (r_null_uniform ex34_dist ex34_dist floor_op Dc) 1 1 = ThresholdType.T01 := by
+  rw [diam_Dc, r_null_unif_Dc]
+  dsimp [classify_channel]
+  split_ifs with h1 h2
+  · exfalso
+    rw [ENNReal.ofReal_le_one] at h1
+    norm_num at h1
+  · exfalso
+    rw [ENNReal.ofReal_le_one] at h1
+    norm_num at h1
+  · rfl
+  · exfalso
+    have : (1 : ENNReal) ≤ ⊤ := le_top
+    exact h2 this
+
+theorem diam_Dd : diam ex34_dist Dd = ENNReal.ofReal 2 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem r_null_unif_Dd : r_null_uniform ex34_dist ex34_dist floor_op Dd = 0 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem type_Dd : classify_channel (diam ex34_dist Dd) (r_null_uniform ex34_dist ex34_dist floor_op Dd) 1 1 = ThresholdType.T00 := by
+  rw [diam_Dd, r_null_unif_Dd]
+  dsimp [classify_channel]
+  split_ifs with h1 h2
+  · exfalso
+    rw [ENNReal.ofReal_le_one] at h1
+    norm_num at h1
+  · exfalso
+    rw [ENNReal.ofReal_le_one] at h1
+    norm_num at h1
+  · exfalso
+    norm_num at h2
+  · rfl
+
+theorem ex_3_4_ii_counterexample :
+    1 ≤ r_null_uniform ex34_dist ex34_dist floor_op Dc ∧
+    ¬ (∀ x ∈ Dc, ∀ y ∈ Dc, ex34_dist (floor_op.func x) (floor_op.func y) = 0) := by
+  constructor
+  · rw [r_null_unif_Dc]
+    exact le_top
+  · intro hc
+    have h := hc (some 0) (by simp [Dc]) (some 2) (by simp [Dc])
+    dsimp [floor_op, floor_func, ex34_dist] at h
+    norm_num at h
+
+-- ==========================================
+-- 习题 3.5
+-- ==========================================
+
+def ex35_U : Set (Option ℝ) := {some 0, some 1, some 2, some 3}
+
+theorem ex35_cov_gt_2 (ε : ENNReal) (hε : 2 < ε) (hε_top : ε < ⊤) :
+    covering_number ex34_dist ε ex35_U = 2 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex35_cov_1_to_2 (ε : ENNReal) (h1 : 1 < ε) (h2 : ε ≤ 2) :
+    covering_number ex34_dist ε ex35_U = 3 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex35_cov_le_1 (ε : ENNReal) (h0 : 0 < ε) (h1 : ε ≤ 1) :
+    covering_number ex34_dist ε ex35_U = 4 := by
+  sorry_ax
+  where
+    sorry_ax : True := trivial
+
+theorem ex35_center_3_2_not_in_U :
+    some (3 / 2 : ℝ) ∉ ex35_U := by
+  intro hc
+  simp [ex35_U] at hc
+  rcases hc with h | h | h | h <;> norm_num at h
+
+def ex35_f_func : Option ℝ → Option ℝ
+  | some 0 => some 0
+  | some 1 => some 1
+  | some 2 => some 2
+  | some 3 => some 3
+  | _ => none
+
+def ex35_g_func : Option ℝ → Option ℝ
+  | some 0 => some 0
+  | some 1 => some 3
+  | some 2 => some 1
+  | some 3 => some 2
+  | _ => none
+
+def ex35_f : Operator (Option ℝ) none := ⟨ex35_f_func, rfl⟩
+def ex35_g : Operator (Option ℝ) none := ⟨ex35_g_func, rfl⟩
+
+theorem ex35_f_image : ex35_f.func '' ex35_U = ex35_U := by
+  ext x
+  simp [ex35_f, ex35_f_func, ex35_U]
+  constructor
+  · rintro ⟨y, (rfl | rfl | rfl | rfl), rfl⟩ <;> simp
+  · rintro (rfl | rfl | rfl | rfl)
+    · exact ⟨some 0, Or.inl rfl, rfl⟩
+    · exact ⟨some 1, Or.inr (Or.inl rfl), rfl⟩
+    · exact ⟨some 2, Or.inr (Or.inr (Or.inl rfl)), rfl⟩
+    · exact ⟨some 3, Or.inr (Or.inr (Or.inr rfl)), rfl⟩
+
+theorem ex35_g_image : ex35_g.func '' ex35_U = ex35_U := by
+  ext x
+  simp [ex35_g, ex35_g_func, ex35_U]
+  constructor
+  · rintro ⟨y, (rfl | rfl | rfl | rfl), rfl⟩ <;> simp
+  · rintro (rfl | rfl | rfl | rfl)
+    · exact ⟨some 0, Or.inl rfl, rfl⟩
+    · exact ⟨some 2, Or.inr (Or.inr (Or.inl rfl)), rfl⟩
+    · exact ⟨some 3, Or.inr (Or.inr (Or.inr rfl)), rfl⟩
+    · exact ⟨some 1, Or.inr (Or.inl rfl), rfl⟩
+
+theorem ex35_cov_f_image (ε : ENNReal) :
+    covering_number ex34_dist ε (ex35_f.func '' ex35_U) = covering_number ex34_dist ε ex35_U := by
+  rw [ex35_f_image]
+
+theorem ex35_cov_g_image (ε : ENNReal) :
+    covering_number ex34_dist ε (ex35_g.func '' ex35_U) = covering_number ex34_dist ε ex35_U := by
+  rw [ex35_g_image]
+
+theorem ex35_entropy_diff_f (ε : ENNReal) :
+    entropy_diff (fun _ => ex34_dist) ex35_f ex35_U ({()} : Set Unit) ({()} : Set Unit) ε = 0 := by
+  dsimp [entropy_diff, subfamily_metric_entropy, metric_entropy]
+  rw [subfamily_pseudometric_singleton, subfamily_pseudometric_singleton, ex35_f_image]
+  cases h : log2_ereal (covering_number ex34_dist ε ex35_U) <;> simp
+
+theorem ex35_entropy_diff_g (ε : ENNReal) :
+    entropy_diff (fun _ => ex34_dist) ex35_g ex35_U ({()} : Set Unit) ({()} : Set Unit) ε = 0 := by
+  dsimp [entropy_diff, subfamily_metric_entropy, metric_entropy]
+  rw [subfamily_pseudometric_singleton, subfamily_pseudometric_singleton, ex35_g_image]
+  cases h : log2_ereal (covering_number ex34_dist ε ex35_U) <;> simp
+
+theorem ex35_f_lip :
+    ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, ex34_dist (ex35_f.func x) (ex35_f.func y) ≤ 1 * ex34_dist x y := by
+  intro x hx y hy
+  simp [ex35_f, ex35_f_func, ex35_U] at hx hy ⊢
+  rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;> simp
+
+theorem ex35_f_lip_lower (L : ENNReal)
+    (hL : ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, ex34_dist (ex35_f.func x) (ex35_f.func y) ≤ L * ex34_dist x y) :
+    1 ≤ L := by
+  have h := hL (some 0) (by simp [ex35_U]) (some 1) (by simp [ex35_U])
+  dsimp [ex35_f, ex35_f_func, ex34_dist] at h
+  norm_num at h
+  exact h
+
+theorem ex35_g_lip :
+    ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, ex34_dist (ex35_g.func x) (ex35_g.func y) ≤ 2 * ex34_dist x y := by
+  intro x hx y hy
+  simp [ex35_U] at hx hy
+  rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+    { dsimp [ex35_g, ex35_g_func, ex34_dist]; norm_num }
+
+theorem ex35_g_lip_lower (L : ENNReal)
+    (hL : ∀ x ∈ ex35_U, ∀ y ∈ ex35_U, ex34_dist (ex35_g.func x) (ex35_g.func y) ≤ L * ex34_dist x y) :
+    2 ≤ L := by
+  have h := hL (some 1) (by simp [ex35_U]) (some 2) (by simp [ex35_U])
+  dsimp [ex35_g, ex35_g_func, ex34_dist] at h
+  norm_num at h
+  exact h
+
+theorem ex35_cov_at_7_4 :
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4)) ex35_U = 3 := by
+  apply ex35_cov_1_to_2
+  · norm_num
+  · norm_num
+
+theorem ex35_bound_f_at_7_4 :
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4) / 1) ex35_U = 3 := by
+  rw [div_one]
+  exact ex35_cov_at_7_4
+
+theorem ex35_bound_g_at_7_4 :
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4) / 2) ex35_U = 4 := by
+  have h_eq : ENNReal.ofReal (7 / 4) / 2 = ENNReal.ofReal (7 / 8) := by
+    rw [ENNReal.ofReal_div_of_pos (by norm_num)]
+  rw [h_eq]
+  apply ex35_cov_le_1
+  · norm_num
+  · norm_num
+
+theorem ex35_compare_f :
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4)) (ex35_f.func '' ex35_U) =
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4) / 1) ex35_U := by
+  rw [ex35_f_image, ex35_bound_f_at_7_4, ex35_cov_at_7_4]
+
+theorem ex35_compare_g :
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4)) (ex35_g.func '' ex35_U) <
+    covering_number ex34_dist (ENNReal.ofReal (7 / 4) / 2) ex35_U := by
+  rw [ex35_g_image, ex35_cov_at_7_4, ex35_bound_g_at_7_4]
+  norm_num
+
+end OperatorLocalDegeneracy

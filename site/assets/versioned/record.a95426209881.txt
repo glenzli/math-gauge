@@ -1,0 +1,438 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Finset.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/--
+OET anchor: oet-273361882c9d8ace
+CH03-D01: 常值分量
+-/
+def I_const (ϕ : Operator X bot) (U : Set X) : Set I :=
+  { i : I | ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = 0 }
+
+/--
+OET anchor: oet-273361882c9d8ace
+CH03-D01: 恒等分量
+-/
+def I_id (ϕ : Operator X bot) (U : Set X) : Set I :=
+  { i : I | i ∉ I_const d ϕ U ∧ ∀ x ∈ U, d i (ϕ.func x) x = 0 }
+
+/--
+OET anchor: oet-273361882c9d8ace
+CH03-D01: 有效分量
+-/
+def I_act (ϕ : Operator X bot) (U : Set X) : Set I :=
+  { i : I | i ∉ I_const d ϕ U ∧ i ∉ I_id d ϕ U }
+
+lemma mem_I_act_iff (ϕ : Operator X bot) (U : Set X) (i : I) :
+    i ∈ I_act d ϕ U ↔ i ∉ I_const d ϕ U ∧ ¬ (∀ x ∈ U, d i (ϕ.func x) x = 0) := by
+  dsimp [I_act, I_id]
+  constructor
+  · rintro ⟨h_not_const, h_not_id⟩
+    refine ⟨h_not_const, ?_⟩
+    intro h_pt
+    exact h_not_id ⟨h_not_const, h_pt⟩
+  · rintro ⟨h_not_const, h_not_pt⟩
+    refine ⟨h_not_const, ?_⟩
+    rintro ⟨_, h_pt⟩
+    exact h_not_pt h_pt
+
+/--
+OET anchor: oet-176471fbe0cf6b8c
+CH03-P01-01: 命题 3.1 (i) 常值分量零行上界
+-/
+theorem prop_3_1_i (ϕ : Operator X bot) (U : Set X) (i : I)
+    (h_const : i ∈ I_const d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d i (ϕ.func x) (ϕ.func y) ≤ ∑ k : I, (0 : ENNReal) * d k x y ∧
+      (∑ k : I, (0 : ENNReal) * d k x y) = 0 := by
+  intro x hx y hy
+  have h_zero : d i (ϕ.func x) (ϕ.func y) = 0 := h_const x hx y hy
+  have h_sum : (∑ k : I, (0 : ENNReal) * d k x y) = 0 := by
+    simp only [zero_mul, Finset.sum_const_zero]
+  constructor
+  · rw [h_zero, h_sum]
+  · exact h_sum
+
+/--
+OET anchor: oet-176471fbe0cf6b8c
+CH03-P01-02: 命题 3.1 (ii) 存在正输入距离的源条目必为零
+-/
+theorem prop_3_1_ii (ϕ : Operator X bot) (U : Set X) (i : I)
+    (h_const : i ∈ I_const d ϕ U) (K : I → I → ENNReal)
+    (hK : IsCoLipMatrix d ϕ U K) (k : I)
+    (h_pos : ∃ x ∈ U, ∃ y ∈ U, 0 < d k x y) :
+    K k i = 0 := by
+  rcases h_pos with ⟨x, hx, y, hy, h_dist_pos⟩
+  have h_zero : d i (ϕ.func x) (ϕ.func y) = 0 := h_const x hx y hy
+  exact colip_entry_eq_zero_of_output_zero_input_pos d ϕ U K k i x y hK hx hy h_zero h_dist_pos
+
+/--
+OET anchor: oet-176471fbe0cf6b8c
+CH03-P01-03: 命题 3.1 (iii) 恒等分量双向保距等式
+-/
+theorem prop_3_1_iii (ϕ : Operator X bot) (U : Set X) (i : I)
+    (h_id : i ∈ I_id d ϕ U) (hd_metric : ExtendedPseudoMetric X bot (d i)) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = d i x y := by
+  intro x hx y hy
+  have hx_zero : d i (ϕ.func x) x = 0 := h_id.2 x hx
+  have hy_zero : d i (ϕ.func y) y = 0 := h_id.2 y hy
+  have h_le1 : d i (ϕ.func x) (ϕ.func y) ≤ d i x y := by
+    calc
+      d i (ϕ.func x) (ϕ.func y) ≤ d i (ϕ.func x) x + d i x (ϕ.func y) := hd_metric.triangle _ _ _
+      _ = 0 + d i x (ϕ.func y) := by rw [hx_zero]
+      _ = d i x (ϕ.func y) := zero_add _
+      _ ≤ d i x y + d i y (ϕ.func y) := hd_metric.triangle _ _ _
+      _ = d i x y + 0 := by rw [hy_zero]
+      _ = d i x y := add_zero _
+  have h_le2 : d i x y ≤ d i (ϕ.func x) (ϕ.func y) := by
+    calc
+      d i x y ≤ d i x (ϕ.func x) + d i (ϕ.func x) y := hd_metric.triangle _ _ _
+      _ = d i (ϕ.func x) x + d i (ϕ.func x) y := by rw [hd_metric.symm x (ϕ.func x)]
+      _ = 0 + d i (ϕ.func x) y := by rw [hx_zero]
+      _ = d i (ϕ.func x) y := zero_add _
+      _ ≤ d i (ϕ.func x) (ϕ.func y) + d i (ϕ.func y) y := hd_metric.triangle _ _ _
+      _ = d i (ϕ.func x) (ϕ.func y) + 0 := by rw [hy_zero]
+      _ = d i (ϕ.func x) (ϕ.func y) := add_zero _
+  exact le_antisymm h_le1 h_le2
+
+/--
+OET anchor: oet-e1615fa20ede09bc
+CH03-P02-03: 命题 3.2 (iii) 恒等分量保留，同时排除常值优先分支
+-/
+theorem prop_3_2_iii (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) (i : I)
+    (hd_metric : ExtendedPseudoMetric X bot (d i))
+    (h₁ : i ∈ I_id d ϕ₁ U)
+    (h₂ : i ∈ I_id d ϕ₂ (ϕ₁.func '' U)) :
+    i ∈ I_id d (ϕ₂ * ϕ₁) U := by
+  refine ⟨?_, ?_⟩
+  · intro h_const
+    rcases h₁.1 with h₁_not_const
+    apply h₁_not_const
+    intro x hx y hy
+    have h_comp : d i ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y) = 0 := h_const x hx y hy
+    have h_phi1_x : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+    have h_phi1_y : ϕ₁.func y ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hy
+    have h_dist_eq := prop_3_1_iii d ϕ₂ (ϕ₁.func '' U) i h₂ hd_metric (ϕ₁.func x) h_phi1_x (ϕ₁.func y) h_phi1_y
+    change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0 at h_comp
+    rwa [h_dist_eq] at h_comp
+  · intro x hx
+    have h_phi1_x : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+    have h2_pt : d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) = 0 := h₂.2 (ϕ₁.func x) h_phi1_x
+    have h1_pt : d i (ϕ₁.func x) x = 0 := h₁.2 x hx
+    change d i (ϕ₂.func (ϕ₁.func x)) x ≤ 0
+    calc
+      d i (ϕ₂.func (ϕ₁.func x)) x ≤ d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) + d i (ϕ₁.func x) x := hd_metric.triangle _ _ _
+      _ = 0 + 0 := by rw [h2_pt, h1_pt]
+      _ = 0 := add_zero 0
+
+/--
+OET anchor: oet-e1615fa20ede09bc
+CH03-P02-01: 命题 3.2 (i) 两步有效分量包含，实际中间像域
+-/
+theorem prop_3_2_i (ϕ₁ ϕ₂ : Operator X bot) (U : Set X)
+    (hd_metric : ∀ i : I, ExtendedPseudoMetric X bot (d i)) :
+    I_act d (ϕ₂ * ϕ₁) U ⊆ I_act d ϕ₁ U ∪ I_act d ϕ₂ (ϕ₁.func '' U) := by
+  intro i hi
+  by_contra h_not_mem
+  rw [Set.mem_union, not_or] at h_not_mem
+  rcases h_not_mem with ⟨h_not_act1, h_not_act2⟩
+  have h_or1 : i ∈ I_const d ϕ₁ U ∨ i ∈ I_id d ϕ₁ U := by
+    dsimp [I_act] at h_not_act1
+    push_neg at h_not_act1
+    tauto
+  have h_or2 : i ∈ I_const d ϕ₂ (ϕ₁.func '' U) ∨ i ∈ I_id d ϕ₂ (ϕ₁.func '' U) := by
+    dsimp [I_act] at h_not_act2
+    push_neg at h_not_act2
+    tauto
+  rcases h_or1 with h1_const | h1_id
+  · rcases h_or2 with h2_const | h2_id
+    · have h_comp_const : i ∈ I_const d (ϕ₂ * ϕ₁) U := by
+        intro x hx y hy
+        have hx_im : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+        have hy_im : ϕ₁.func y ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hy
+        change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0
+        exact h2_const (ϕ₁.func x) hx_im (ϕ₁.func y) hy_im
+      exact hi.1 h_comp_const
+    · have h_comp_const : i ∈ I_const d (ϕ₂ * ϕ₁) U := by
+        intro x hx y hy
+        have hx_im : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+        have hy_im : ϕ₁.func y ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hy
+        change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0
+        have h_eq := prop_3_1_iii d ϕ₂ (ϕ₁.func '' U) i h2_id (hd_metric i) (ϕ₁.func x) hx_im (ϕ₁.func y) hy_im
+        rw [h_eq]
+        exact h1_const x hx y hy
+      exact hi.1 h_comp_const
+  · rcases h_or2 with h2_const | h2_id
+    · have h_comp_const : i ∈ I_const d (ϕ₂ * ϕ₁) U := by
+        intro x hx y hy
+        have hx_im : ϕ₁.func x ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hx
+        have hy_im : ϕ₁.func y ∈ ϕ₁.func '' U := Set.mem_image_of_mem _ hy
+        change d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) = 0
+        exact h2_const (ϕ₁.func x) hx_im (ϕ₁.func y) hy_im
+      exact hi.1 h_comp_const
+    · have h_comp_id : i ∈ I_id d (ϕ₂ * ϕ₁) U := prop_3_2_iii d ϕ₁ ϕ₂ U i (hd_metric i) h1_id h2_id
+      exact hi.2 h_comp_id
+
+/--
+OET anchor: oet-e1615fa20ede09bc
+CH03-P02-02: 命题 3.2 (ii) 任意有限长度链，包含零步基例和实际域递推
+-/
+def intermediate_domain (ϕs : List (Operator X bot)) (U₁ : Set X) : Nat → Set X
+  | 0 => U₁
+  | m + 1 => match ϕs.get? m with
+    | some ϕ => ϕ.func '' (intermediate_domain ϕs U₁ m)
+    | none => ∅
+
+theorem prop_3_2_ii (ϕs : List (Operator X bot)) (U₁ : Set X)
+    (hd_metric : ∀ i : I, ExtendedPseudoMetric X bot (d i)) :
+    I_act d (OperatorChain ϕs) U₁ ⊆ ⋃ (m : Fin ϕs.length), I_act d (ϕs.get m) (intermediate_domain ϕs U₁ m.val) := by
+  induction ϕs with
+  | nil =>
+    dsimp [OperatorChain]
+    intro i hi
+    exfalso
+    have h_id_op : i ∈ I_id d ⟨id, rfl⟩ U₁ ∨ i ∈ I_const d ⟨id, rfl⟩ U₁ := by
+      by_cases hc : ∀ x ∈ U₁, ∀ y ∈ U₁, d i x y = 0
+      · right
+        exact hc
+      · left
+        refine ⟨hc, ?_⟩
+        intro x _
+        exact (hd_metric i).dist_self x
+    rcases h_id_op with hid | hconst
+    · exact hi.2 hid
+    · exact hi.1 hconst
+  | cons ϕ rest ih =>
+    change I_act d (OperatorChain (ϕ :: rest)) U₁ ⊆ _
+    dsimp [OperatorChain]
+    have h_chain_comp : OperatorChain (ϕ :: rest) = ϕ * (OperatorChain rest) := rfl
+    rw [h_chain_comp]
+    have h_two_step := prop_3_2_i d (OperatorChain rest) ϕ U₁ hd_metric
+    intro i hi
+    have hi_or := h_two_step hi
+    rcases hi_or with hi_rest | hi_head
+    · have h_sub := ih hi_rest
+      simp only [Set.mem_iUnion] at h_sub ⊢
+      rcases h_sub with ⟨⟨m, hm⟩, hm_act⟩
+      refine ⟨⟨m + 1, ?_⟩, ?_⟩
+      · simp [hm]
+      · dsimp [intermediate_domain]
+        have h_get : (ϕ :: rest).get? m = some (rest.get ⟨m, hm⟩) := by
+          simp [List.get?_eq_get hm]
+        have h_interm : intermediate_domain (ϕ :: rest) U₁ (m + 1) =
+            (rest.get ⟨m, hm⟩).func '' (intermediate_domain (ϕ :: rest) U₁ m) := by
+          sorry
+        sorry
+    · sorry
+
+/--
+OET anchor: oet-8f36f69dab71e689
+CH03-P03-01: 注（复合分量保持的逆向蕴含一般不成立）
+-/
+inductive TwoPt where
+  | bot : TwoPt
+  | a : TwoPt
+  | b : TwoPt
+  deriving DecidableEq
+
+def two_pt_d (x y : TwoPt) : ENNReal :=
+  match x, y with
+  | TwoPt.bot, TwoPt.bot => 0
+  | TwoPt.bot, _ => ⊤
+  | _, TwoPt.bot => ⊤
+  | TwoPt.a, TwoPt.a => 0
+  | TwoPt.b, TwoPt.b => 0
+  | TwoPt.a, TwoPt.b => 1
+  | TwoPt.b, TwoPt.a => 1
+
+theorem two_pt_extended_pseudo_metric : ExtendedPseudoMetric TwoPt TwoPt.bot two_pt_d := by
+  refine ⟨⟨TwoPt.a, by decide⟩, ?_, ?_, ?_, ?_⟩
+  · intro x; cases x <;> rfl
+  · intro x y; cases x <;> cases y <;> rfl
+  · intro x y z; cases x <;> cases y <;> cases z <;> decide
+  · intro x hx; cases x <;> [contradiction; rfl; rfl]
+
+def two_pt_swap : Operator TwoPt TwoPt.bot where
+  func := fun x => match x with
+    | TwoPt.bot => TwoPt.bot
+    | TwoPt.a => TwoPt.b
+    | TwoPt.b => TwoPt.a
+  preserves_bot := rfl
+
+theorem remark_3_2_counterexample :
+    let U : Set TwoPt := {TwoPt.a, TwoPt.b}
+    let d_single : Unit → TwoPt → TwoPt → ENNReal := fun () => two_pt_d
+    () ∈ I_act d_single two_pt_swap U ∧
+    () ∈ I_act d_single two_pt_swap (two_pt_swap.func '' U) ∧
+    () ∉ I_act d_single (two_pt_swap * two_pt_swap) U ∧
+    () ∈ I_id d_single (two_pt_swap * two_pt_swap) U ∧
+    () ∉ I_id d_single two_pt_swap U := by
+  intro U d_single
+  have h_im : two_pt_swap.func '' U = U := by
+    ext x
+    simp only [U, Set.mem_image, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨y, hy, rfl⟩
+      rcases hy with rfl | rfl <;> simp [two_pt_swap]
+    · rintro (rfl | rfl)
+      · exact ⟨TwoPt.b, Or.inr rfl, rfl⟩
+      · exact ⟨TwoPt.a, Or.inl rfl, rfl⟩
+  have h_not_const : () ∉ I_const d_single two_pt_swap U := by
+    intro h_c
+    have h := h_c TwoPt.a (Or.inl rfl) TwoPt.b (Or.inr rfl)
+    change two_pt_d TwoPt.b TwoPt.a = 0 at h
+    revert h
+    decide
+  have h_not_id : () ∉ I_id d_single two_pt_swap U := by
+    rintro ⟨_, h_pt⟩
+    have h := h_pt TwoPt.a (Or.inl rfl)
+    change two_pt_d TwoPt.b TwoPt.a = 0 at h
+    revert h
+    decide
+  have h_act1 : () ∈ I_act d_single two_pt_swap U := ⟨h_not_const, h_not_id⟩
+  have h_act2 : () ∈ I_act d_single two_pt_swap (two_pt_swap.func '' U) := by
+    rwa [h_im]
+  have h_comp_id : () ∈ I_id d_single (two_pt_swap * two_pt_swap) U := by
+    refine ⟨?_, ?_⟩
+    · intro h_c
+      have h := h_c TwoPt.a (Or.inl rfl) TwoPt.b (Or.inr rfl)
+      change two_pt_d TwoPt.a TwoPt.b = 0 at h
+      revert h
+      decide
+    · intro x hx
+      rcases hx with rfl | rfl <;> rfl
+  have h_not_act_comp : () ∉ I_act d_single (two_pt_swap * two_pt_swap) U := by
+    intro h_act
+    exact h_act.2 h_comp_id
+  exact ⟨h_act1, h_act2, h_not_act_comp, h_comp_id, h_not_id⟩
+
+/--
+OET anchor: oet-2c5dc85febaac657
+CH03-P04-01: 命题 3.3 (i) 外侧在实际像域上常值则复合常值
+-/
+theorem prop_3_3_i (ϕ ψ : Operator X bot) (U : Set X) (i : I)
+    (h_const : i ∈ I_const d ψ (ϕ.func '' U)) :
+    i ∈ I_const d (ψ * ϕ) U := by
+  intro x hx y hy
+  have hx_im : ϕ.func x ∈ ϕ.func '' U := Set.mem_image_of_mem _ hx
+  have hy_im : ϕ.func y ∈ ϕ.func '' U := Set.mem_image_of_mem _ hy
+  exact h_const (ϕ.func x) hx_im (ϕ.func y) hy_im
+
+/--
+OET anchor: oet-2c5dc85febaac657
+CH03-P04-02: 命题 3.3 (ii) 内侧同分量零距未必复合零距的合法七点、双分量反例
+-/
+inductive SevenPt where
+  | bot : SevenPt
+  | a : SevenPt
+  | b : SevenPt
+  | p : SevenPt
+  | q : SevenPt
+  | r : SevenPt
+  | s : SevenPt
+  deriving DecidableEq
+
+inductive TwoIndices where
+  | i : TwoIndices
+  | m : TwoIndices
+  deriving DecidableEq
+
+def seven_d_i (x y : SevenPt) : ENNReal :=
+  match x, y with
+  | SevenPt.bot, SevenPt.bot => 0
+  | SevenPt.bot, _ => ⊤
+  | _, SevenPt.bot => ⊤
+  | SevenPt.p, SevenPt.p => 0
+  | SevenPt.q, SevenPt.q => 0
+  | SevenPt.p, SevenPt.q => 0
+  | SevenPt.q, SevenPt.p => 0
+  | u, v => if u = v then 0 else 1
+
+def seven_d_m (x y : SevenPt) : ENNReal :=
+  match x, y with
+  | SevenPt.bot, SevenPt.bot => 0
+  | SevenPt.bot, _ => ⊤
+  | _, SevenPt.bot => ⊤
+  | u, v => if u = v then 0 else 1
+
+def seven_d (idx : TwoIndices) : SevenPt → SevenPt → ENNReal :=
+  match idx with
+  | TwoIndices.i => seven_d_i
+  | TwoIndices.m => seven_d_m
+
+theorem seven_d_extended (idx : TwoIndices) : ExtendedPseudoMetric SevenPt SevenPt.bot (seven_d idx) := by
+  cases idx
+  · refine ⟨⟨SevenPt.a, by decide⟩, ?_, ?_, ?_, ?_⟩
+    · intro x; cases x <;> rfl
+    · intro x y; cases x <;> cases y <;> rfl
+    · intro x y z; cases x <;> cases y <;> cases z <;> decide
+    · intro x hx; cases x <;> [contradiction; rfl; rfl; rfl; rfl; rfl; rfl]
+  · refine ⟨⟨SevenPt.a, by decide⟩, ?_, ?_, ?_, ?_⟩
+    · intro x; cases x <;> rfl
+    · intro x y; cases x <;> cases y <;> rfl
+    · intro x y z; cases x <;> cases y <;> cases z <;> decide
+    · intro x hx; cases x <;> [contradiction; rfl; rfl; rfl; rfl; rfl; rfl]
+
+def seven_phi : Operator SevenPt SevenPt.bot where
+  func := fun x => match x with
+    | SevenPt.a => SevenPt.p
+    | SevenPt.b => SevenPt.q
+    | _ => SevenPt.bot
+  preserves_bot := rfl
+
+def seven_psi : Operator SevenPt SevenPt.bot where
+  func := fun x => match x with
+    | SevenPt.p => SevenPt.r
+    | SevenPt.q => SevenPt.s
+    | _ => SevenPt.bot
+  preserves_bot := rfl
+
+theorem prop_3_3_ii_counterexample :
+    let U : Set SevenPt := {SevenPt.a, SevenPt.b}
+    TwoIndices.i ∈ I_const seven_d seven_phi U ∧
+    TwoIndices.i ∉ I_const seven_d (seven_psi * seven_phi) U := by
+  intro U
+  constructor
+  · intro x hx y hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> rfl
+  · intro h_const
+    have h := h_const SevenPt.a (Or.inl rfl) SevenPt.b (Or.inr rfl)
+    change seven_d_i SevenPt.r SevenPt.s = 0 at h
+    revert h
+    decide
+
+/--
+OET anchor: oet-87c593824d28aa93
+CH03-P05-01: 推论 3.4（常值分量在复合中的保持条件）
+-/
+theorem cor_3_4 (ϕ ψ : Operator X bot) (U : Set X) (j : I)
+    (h_const : j ∈ I_const d ϕ U)
+    (L : I → I → ENNReal)
+    (hL : IsLipMatrix d ψ (ϕ.func '' U) L)
+    (h_row_zero : ∀ k, k ≠ j → L k j = 0) :
+    j ∈ I_const d (ψ * ϕ) U := by
+  intro x hx y hy
+  have hx_im : ϕ.func x ∈ ϕ.func '' U := Set.mem_image_of_mem _ hx
+  have hy_im : ϕ.func y ∈ ϕ.func '' U := Set.mem_image_of_mem _ hy
+  have h_bound := lip_bound_of_single_input_row d ψ (ϕ.func '' U) L j j hL h_row_zero (ϕ.func x) hx_im (ϕ.func y) hy_im
+  have h_phi_zero : d j (ϕ.func x) (ϕ.func y) = 0 := h_const x hx y hy
+  rw [h_phi_zero, mul_zero] at h_bound
+  exact le_antisymm h_bound (zero_le _)
+
+end OperatorLocalDegeneracy

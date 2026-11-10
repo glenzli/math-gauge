@@ -55,12 +55,32 @@ def load_sources(root, record, condition, *, public_root=None):
             if external:
                 from .claude_code_evidence import validate_delivery, validate_failure
                 if raw is not None:
+                    if row.get("agy_native_evidence") is not None:
+                        from .agy_evidence import validate_delivery as validate_agy_delivery
+                        validate_agy_delivery(root, row, evidence_bytes)
+                        continue
                     native = row.get("native_delivery")
                     if not isinstance(native, dict) or native.get("response", {}).get("sha256") != raw["sha256"]:
                         raise ValueError("Retry answer lost its original native delivery")
                     validate_delivery(root, native, evidence_bytes)
                 else:
-                    validate_failure(root, row, evidence_bytes)
+                    if row.get("delivery_failure") is not None:
+                        from .records import validate_native_delivery_failure
+                        validate_native_delivery_failure(root, row)
+                    elif (row.get("delivery_status") == "not_run"
+                            and scored.get("delivery_status") == "not_run"
+                            and row.get("agy_native_evidence") is None
+                            and row.get("native_delivery") is None
+                            and scored.get("completion", {}).get("exact") is None
+                            and scored.get("strict_pass") is None):
+                        # An unrun slot has no native failure to validate. Its
+                        # fixed denominator and unresolved judgment remain.
+                        continue
+                    else:
+                        try:
+                            validate_failure(root, row, evidence_bytes)
+                        except KeyError as error:
+                            raise ValueError("Missing answer needs an unresolved unrun slot or native failure evidence") from error
         if external:
             manuscript = json.loads(evidence_bytes(root, bundle["manuscript_completion_inputs"]))
         else:

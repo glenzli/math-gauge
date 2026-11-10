@@ -1,0 +1,297 @@
+{
+  "case_id": "LCH02",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "IsLipMatrix" },
+        { "file": "OperatorBounds.lean", "name": "LipCertFamily" },
+        { "file": "OperatorBounds.lean", "name": "IsRestrictedLipMatrix" },
+        { "file": "OperatorBounds.lean", "name": "RestrictedLipCertFamily" },
+        { "file": "OperatorBounds.lean", "name": "isLipMatrix_iff_restricted_dom" },
+        { "file": "OperatorBounds.lean", "name": "lipCertFamily_eq_restricted_dom" }
+      ],
+      "representation": "对象：算子 ϕ : Operator X bot、分量伪度量族 d : I → X → X → ENNReal（[Fintype I]）及扩展非负矩阵 L : GaugeMatrix I。参数与量词：IsLipMatrix 量化 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I；IsRestrictedLipMatrix 包含定义域子集条件 U ⊆ dom ϕ 并量化 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I。结论：满足上界不等式 d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y，并以集合 LipCertFamily d ϕ 与 RestrictedLipCertFamily d ϕ U 分别表示全文与受限证书族 mathscr{L}(ϕ) 与 mathscr{L}(ϕ)|_U。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "IsRestrictedCoLipMatrix" },
+        { "file": "OperatorBounds.lean", "name": "RestrictedCoLipCertFamily" },
+        { "file": "OperatorBounds.lean", "name": "GlobalCoLipCertFamily" }
+      ],
+      "representation": "对象：算子 ϕ : Operator X bot、分量伪度量族 d : I → X → X → ENNReal、评估子集 U : Set X 及扩展非负矩阵 K : GaugeMatrix I。参数与量词：IsRestrictedCoLipMatrix 显式包含非空性条件 U.Nonempty、定义域包含条件 U ⊆ dom ϕ，并全称量化 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I。结论：满足下界不等式 ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)，集合 RestrictedCoLipCertFamily d ϕ U 与 GlobalCoLipCertFamily d ϕ 分别对应 mathscr{K}(ϕ)|_U 与 mathscr{K}(ϕ)|_{dom(ϕ)}。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "GaugeMatrix" },
+        { "file": "OperatorBounds.lean", "name": "channelEntry" },
+        { "file": "OperatorBounds.lean", "name": "toRowColMatrix" },
+        { "file": "OperatorBounds.lean", "name": "ofRowColMatrix" },
+        { "file": "OperatorBounds.lean", "name": "toRowColMatrix_apply" },
+        { "file": "OperatorBounds.lean", "name": "matMul" },
+        { "file": "OperatorBounds.lean", "name": "matMul_apply" },
+        { "file": "OperatorBounds.lean", "name": "toRowColMatrix_matMul" },
+        { "file": "OperatorBounds.lean", "name": "matMul_assoc" }
+      ],
+      "representation": "对象：扩展非负矩阵类型 GaugeMatrix I := I → I → ENNReal。参数与指标约定：channelEntry L i j := L i j 表示通道条目 L_{i→j}（输入 i 到输出 j）；toRowColMatrix L j i := L i j 表示以输出分量 j 为行指标、输入分量 i 为列指标的矩阵条目 (L)_{ji} = L_{i→j}。乘法与结论：matMul M₂ M₁ i j := ∑ k : I, M₂ k j * M₁ i k 给出通道约定下的矩阵乘积 (M^{(2)}·M^{(1)})_{i→j}，toRowColMatrix_matMul 证明其与行列约定下的标准矩阵乘法严格一致，matMul_assoc 证明结合律。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "idMatrix" },
+        { "file": "OperatorBounds.lean", "name": "idMatrix_self" },
+        { "file": "OperatorBounds.lean", "name": "idMatrix_of_ne" },
+        { "file": "OperatorBounds.lean", "name": "idMatrix_matMul" },
+        { "file": "OperatorBounds.lean", "name": "matMul_idMatrix" },
+        { "file": "OperatorBounds.lean", "name": "matEmptyProd" },
+        { "file": "OperatorBounds.lean", "name": "matNonemptyProd" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_nil" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_singleton" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_pair" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_cons" }
+      ],
+      "representation": "对象：单位矩阵 idMatrix（I_{i→j} = if i = j then 1 else 0）、空乘积 matEmptyProd := idMatrix、按步序非空矩阵序列 (M₁, rest) 的有序非空乘积 matNonemptyProd（对应 M^{(n)} · ... · M^{(1)}，n=1 时直接为 M₁，n≥2 时递归左乘后继矩阵）以及一般有限矩阵列表乘积 matChainProd。结论：证明单位矩阵的左右乘法单位元性质及空列表、单元素、两元素与递归展开性质。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-D05",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "stepChain" },
+        { "file": "OperatorBounds.lean", "name": "stepChain_eq_operatorChain_reverse" },
+        { "file": "OperatorBounds.lean", "name": "operatorChain_eq_stepChain_reverse" },
+        { "file": "OperatorBounds.lean", "name": "intermediateImage" },
+        { "file": "OperatorBounds.lean", "name": "intermediateImage_succ_eq_operator_image" },
+        { "file": "OperatorBounds.lean", "name": "dom_operator_compose_subset" },
+        { "file": "OperatorBounds.lean", "name": "intermediateImage_subset_dom" }
+      ],
+      "representation": "对象：按作用步序 [ϕ₁, ..., ϕₖ] 排列的复合算子 stepChain ϕs（对应 c_k = ϕ_k ∘ ... ∘ ϕ_1，k=0 时为 operator_identity）与起始子集 U₁ 上的递归实际中间像集序列 intermediateImage ϕs U₁ m（m=0 为 U₁，m+1 步为 ϕ_{m+1}(U_{m+1})）。结论：stepChain_eq_operatorChain_reverse 与 operatorChain_eq_stepChain_reverse 建立步序链与前置模块 OperatorChain 的反转对应；intermediateImage_succ_eq_operator_image 证明递推式 U_{m+1} = ϕ_m(U_m)；intermediateImage_subset_dom 证明当 U₁ ⊆ dom(c_k) 时每步中间像集满足 U_m ⊆ dom(ϕ_m)。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D06",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "pathVertex" },
+        { "file": "OperatorBounds.lean", "name": "pathVertex_zero" },
+        { "file": "OperatorBounds.lean", "name": "pathVertex_nil_one" },
+        { "file": "OperatorBounds.lean", "name": "pathVertex_cons_succ" },
+        { "file": "OperatorBounds.lean", "name": "pathVertex_last" },
+        { "file": "OperatorBounds.lean", "name": "IsIndexPath" },
+        { "file": "OperatorBounds.lean", "name": "stepMatrixEntry" },
+        { "file": "OperatorBounds.lean", "name": "IsAllPositivePath" },
+        { "file": "OperatorBounds.lean", "name": "PathHasZeroFactor" }
+      ],
+      "representation": "对象：中间指标序列 ks : List I（对应 (k_1, ..., k_{n-1})）、带起止边界约定 k_0 = i, k_n = j 的路径节点函数 pathVertex i j ks m、路径长度谓词 IsIndexPath n ks（ks.length + 1 = n）、单步矩阵条目 stepMatrixEntry Ms i j ks m（对应 [M^{(m)}]_{k_{m-1}→k_m}）。结论与谓词：IsAllPositivePath 刻画长度合法且对一切层级 m : Fin Ms.length 单步条目严格正（> 0）；PathHasZeroFactor 刻画存在层级 m 使单步条目等于 0。",
+      "dependencies": [
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P01",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "single_component_lip_iff" },
+        { "file": "OperatorBounds.lean", "name": "single_component_restricted_lip_iff" }
+      ],
+      "representation": "对象与参数：算子 ϕ、分量伪度量族 d、矩阵 L 及唯一指标 i₀ : I（满足 ∀ j : I, j = i₀，即 I = {i₀} 且 |I| = 1）。量词与结论：证明 IsLipMatrix d ϕ L 等价于单分量标量不等式 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i₀ (ϕ.func x) (ϕ.func y) ≤ L i₀ i₀ * d i₀ x y（并给出受限版本 single_component_restricted_lip_iff）。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P02",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "restricted_lip_antitone" }
+      ],
+      "representation": "对象与前提：算子 ϕ : Operator X bot，子集 U, V : Set X，满足 hUV : U ⊆ V 与 hV : V ⊆ dom ϕ。结论：受限 Lip 证书族反单调包含 RestrictedLipCertFamily d ϕ V ⊆ RestrictedLipCertFamily d ϕ U（即 mathscr{L}(ϕ)|_V ⊆ mathscr{L}(ϕ)|_U）。",
+      "dependencies": [
+        "CH02-D01"
+      ]
+    },
+    {
+      "id": "CH02-P04",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "lip_matrix_comp" }
+      ],
+      "representation": "对象与前提：算子 ϕ₂, ϕ₁ : Operator X bot，起始定义域子集 U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)，精确中间像域 U₂ = operator_image ϕ₁ U₁，以及局部证书 L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁、L₂ ∈ RestrictedLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)。结论：按逆向次序相乘的矩阵乘积满足 matMul L₂ L₁ ∈ RestrictedLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D05"
+      ]
+    },
+    {
+      "id": "CH02-P05",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "restricted_colip_antitone" }
+      ],
+      "representation": "对象与前提：算子 ϕ : Operator X bot，子集 U, V : Set X，满足非空性 hU_ne : U.Nonempty、包含关系 hUV : U ⊆ V 及定义域条件 hV : V ⊆ dom ϕ。结论：受限 co-Lip 证书族反单调包含 RestrictedCoLipCertFamily d ϕ V ⊆ RestrictedCoLipCertFamily d ϕ U（即 mathscr{K}(ϕ)|_V ⊆ mathscr{K}(ϕ)|_U）。",
+      "dependencies": [
+        "CH02-D02"
+      ]
+    },
+    {
+      "id": "CH02-P07",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "colip_entry_eq_zero_of_output_zero" },
+        { "file": "OperatorBounds.lean", "name": "colip_entry_eq_zero_of_restricted" }
+      ],
+      "representation": "对象与前提：算子 ϕ : Operator X bot，全域（或受限）co-Lip 证书 K ∈ RestrictedCoLipCertFamily d ϕ (dom ϕ)，定义域中点 x, y ∈ dom ϕ 及指标 i, j : I，满足输出零距 d j (ϕ.func x) (ϕ.func y) = 0 与输入正距 d i x y > 0。结论：对应通道条目必为零 K i j = 0。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03"
+      ]
+    },
+    {
+      "id": "CH02-P08",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "colip_matrix_comp" }
+      ],
+      "representation": "对象与前提：算子 ϕ₂, ϕ₁ : Operator X bot，起始定义域子集 U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁)，精确中间像域 U₂ = operator_image ϕ₁ U₁，以及含非空条件的局部证书 K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁、K₂ ∈ RestrictedCoLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)。结论：乘积矩阵满足 matMul K₂ K₁ ∈ RestrictedCoLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁（含 U₁ 非空性与定义域包含）。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D05"
+      ]
+    },
+    {
+      "id": "CH02-P11",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "sum_idMatrix_mul_dist" },
+        { "file": "OperatorBounds.lean", "name": "zero_step_identity_lip" },
+        { "file": "OperatorBounds.lean", "name": "zero_step_identity_lip_and_colip" }
+      ],
+      "representation": "对象与前提：零步复合恒等算子 c_0 = operator_identity、空乘积单位矩阵 idMatrix 及子集 U ⊆ dom operator_identity。结论：由恒等式 ∑ i : I, idMatrix i j * d i x y = d j x y 证明 idMatrix ∈ RestrictedLipCertFamily d operator_identity U。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D04"
+      ]
+    },
+    {
+      "id": "CH02-P12",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "sum_idMatrix_mul_dist" },
+        { "file": "OperatorBounds.lean", "name": "zero_step_identity_colip" },
+        { "file": "OperatorBounds.lean", "name": "zero_step_identity_lip_and_colip" }
+      ],
+      "representation": "对象与前提：零步复合恒等算子 c_0 = operator_identity、空乘积单位矩阵 idMatrix 及满足 hU_ne : U.Nonempty 与 hU : U ⊆ dom operator_identity 的非空子集 U。结论：证明 idMatrix ∈ RestrictedCoLipCertFamily d operator_identity U，从而 idMatrix 属于 Lip 与 co-Lip 受限证书族的交集。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D04",
+        "CH02-P11"
+      ]
+    },
+    {
+      "id": "CH02-P14",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "isAllPositivePath_cons_iff" },
+        { "file": "OperatorBounds.lean", "name": "matNonemptyProd_entry_pos_iff" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_entry_pos_iff" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_singleton_entry_pos_iff" }
+      ],
+      "representation": "对象与参数：任意非空有限扩展非负矩阵序列 Ms（n = Ms.length ≥ 1，含 n = 1 单矩阵情形）及起止指标 i, j : I。量词与结论：证明有序乘积条目 matChainProd Ms i j > 0（及 matNonemptyProd M₁ rest i j > 0）当且仅当 ∃ ks : List I, IsAllPositivePath Ms i j ks；并由 matChainProd_singleton_entry_pos_iff 给出 n = 1 时退化为 M₁ i j > 0。",
+      "dependencies": [
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D06"
+      ]
+    },
+    {
+      "id": "CH02-P03",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "global_lip_subset_restricted_lip" }
+      ],
+      "representation": "对象与前提：算子 ϕ : Operator X bot 及定义域子集 U ⊆ dom ϕ。结论：全域 Lip 证书族可限制到 U，即 LipCertFamily d ϕ ⊆ RestrictedLipCertFamily d ϕ U（mathscr{L}(ϕ) ⊆ mathscr{L}(ϕ)|_U）。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-P02"
+      ]
+    },
+    {
+      "id": "CH02-P06",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "global_colip_subset_restricted_colip" }
+      ],
+      "representation": "对象与前提：算子 ϕ : Operator X bot 及满足 hU_ne : U.Nonempty 与 hU : U ⊆ dom ϕ 的非空子集 U。结论：全域 co-Lip 证书族可限制到 U，即 RestrictedCoLipCertFamily d ϕ (dom ϕ) ⊆ RestrictedCoLipCertFamily d ϕ U（mathscr{K}(ϕ)|_{dom(ϕ)} ⊆ mathscr{K}(ϕ)|_U）。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-P05"
+      ]
+    },
+    {
+      "id": "CH02-P09",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "finite_comp_lip_bound" }
+      ],
+      "representation": "对象与前提：正长度步序算子链 ϕs : List (Operator X bot)（h_ne : ϕs ≠ []，对应 c_k = ϕ_k ∘ ... ∘ ϕ_1，k ≥ 1）、等长矩阵序列 Ls（h_len : Ls.length = ϕs.length）、起始域 U₁ ⊆ dom (stepChain ϕs) 以及逐步局部证书条件 ∀ m : Fin ϕs.length, Ls[m] ∈ RestrictedLipCertFamily d ϕs[m] (intermediateImage ϕs U₁ m)。结论：连乘矩阵满足 matChainProd Ls ∈ RestrictedLipCertFamily d (stepChain ϕs) U₁（即 L^{(k)} · ... · L^{(1)} ∈ mathscr{L}(c_k)|_{U_1}）。",
+      "dependencies": [
+        "CH02-D01",
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-P04"
+      ]
+    },
+    {
+      "id": "CH02-P10",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "finite_comp_colip_bound" }
+      ],
+      "representation": "对象与前提：正长度步序算子链 ϕs : List (Operator X bot)（h_ne : ϕs ≠ []，k ≥ 1）、等长矩阵序列 Ks（h_len : Ks.length = ϕs.length）、起始域 U₁ ⊆ dom (stepChain ϕs) 以及逐步局部 co-Lip 证书条件 ∀ m : Fin ϕs.length, Ks[m] ∈ RestrictedCoLipCertFamily d ϕs[m] (intermediateImage ϕs U₁ m)。结论：连乘矩阵满足 matChainProd Ks ∈ RestrictedCoLipCertFamily d (stepChain ϕs) U₁（即 K^{(k)} · ... · K^{(1)} ∈ mathscr{K}(c_k)|_{U_1}）。",
+      "dependencies": [
+        "CH02-D02",
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D05",
+        "CH02-P08"
+      ]
+    },
+    {
+      "id": "CH02-P13",
+      "status": "complete",
+      "declarations": [
+        { "file": "OperatorBounds.lean", "name": "pathHasZeroFactor_cons_iff" },
+        { "file": "OperatorBounds.lean", "name": "matNonemptyProd_entry_eq_zero_iff" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_entry_eq_zero_iff" },
+        { "file": "OperatorBounds.lean", "name": "matChainProd_singleton_entry_eq_zero_iff" }
+      ],
+      "representation": "对象与参数：任意非空有限扩展非负矩阵序列 Ms（n = Ms.length ≥ 1，含 n = 1 单矩阵情形）及起止指标 i, j : I。量词与结论：证明有序乘积条目 matChainProd Ms i j = 0（及 matNonemptyProd M₁ rest i j = 0）当且仅当 ∀ ks : List I, IsIndexPath Ms.length ks → PathHasZeroFactor Ms i j ks；并由 matChainProd_singleton_entry_eq_zero_iff 给出 n = 1 时退化为 M₁ i j = 0。",
+      "dependencies": [
+        "CH02-D03",
+        "CH02-D04",
+        "CH02-D06"
+      ]
+    }
+  ]
+}

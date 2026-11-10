@@ -10,6 +10,7 @@ from math_gauge.records import evidence_bytes, load_public_task_scores
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from scripts.results_i18n import language_switch
 from scripts.results_harness import display_harness_labels
+from scripts.results_presentation import project_payload
 
 HERE = Path(__file__).resolve().parent
 CONDITIONS = ("single_attempt", "nonlogical_retry_3")
@@ -18,7 +19,7 @@ CATEGORY_TITLES = {'proofs': '书面论证', 'answer-review': '论证审阅', 'l
 
 
 def embedded(value):
-    return json.dumps(display_harness_labels(value), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
+    return json.dumps(display_harness_labels(project_payload(value)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
 
 
 def source_link(source, page, label):
@@ -270,12 +271,25 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         task_path = Path(entry['paths']['task'])
     task = (root/task_path).read_text()
     body += '<details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose">'+markdown.add(task)+'</div><p class="panel-foot">'+source_link(task_path,page,'原题文件 ↗')+'</p></details>'
+    source_folder=root/Path(model['source_record']).parent
+    source_record=json.loads((root/model['source_record']).read_bytes())
+    submissions=(json.loads(evidence_bytes(source_folder,source_record['submission_evidence']))
+                 if source_record.get('submission_evidence') else None)
     for condition, item in evidence.items():
         claim = item['claim']
         reasons = ''.join('<li>'+markdown.add(f['reason'])+'</li>' for f in claim['findings'])
         if not reasons:
             reasons = '<li>计分依据见下方逐项评审。</li>'
         current = '<div class="evidence-condition" data-evidence-condition="'+condition+'"'+(' hidden' if condition!=CONDITIONS[0] else '')+'>'
+        if submissions:
+            selected=next(row for row in submissions['conditions'][condition]['public_initials'] if row['case_id']==cid)
+            label={'active_final':'正常交卷；三种评分采用实际交付。',
+                   'forced_content':'强收有内容；MC按已核实原成果计分，RMC与SMC为0。',
+                   'blank':'原记录待复核，按已确认口径暂记0。' if selected['pending_original_record_review'] else '无可审核交付，计0。',
+                   'not_run':'未测，保留未知。'}[selected['classification']]
+            if selected['pending_original_record_review']:
+                label+=' 待补原记录复核。'
+            current += panel('提交来源','<div class="prose"><p>'+html.escape(label)+'</p></div>')
         current += panel('判定与主要理由', '<div class="prose"><ul class="findings">'+reasons+'</ul></div>')
         # Many Lean obligations belong in an expandable audit, while short proof criteria stay visible.
         selected_review = item['review']
@@ -285,8 +299,9 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         review_html = '<div class="prose review-criteria">'+markdown.add(review_markdown(criterion_review))+'</div>'
         if engineering:
             review_html += '<details class="evidence-fold nested"><summary>逐项工程与语义审核（'+str(len(engineering.get('obligations',[])))+'项）</summary><div class="prose">'+markdown.add(review_markdown(engineering))+'</div></details>'
-        current += panel('逐项评审', review_html,
-            '原始评审见下方来源文件。')
+        current += panel('原始逐项评审' if submissions else '逐项评审', review_html,
+            ('原评保留原审核范围；当前采用的提交与成绩见上方及模型档案。' if submissions
+             else '原始评审见下方来源文件。'))
         answers = [s for s in item['sources'] if s['role'] in ('answer','response') and s['sha256']==details['case']['views']['partial'][condition]['response_sha256']]
         if answers:
             answer = answers[0]

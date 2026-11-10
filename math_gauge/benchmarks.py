@@ -41,10 +41,10 @@ def identity(value):
 def validate_assessment_policy(policy):
     """Validate the current hierarchy, including unbuilt reserved categories."""
     if (not isinstance(policy, dict) or policy.get("schema") != "math-gauge.assessment-policy/v1"
-            or policy.get("version") not in {"0.5.0", "0.6.0", "0.7.0", "0.8.0"} or policy.get("benchmark_version") != "0.6.0"
+            or policy.get("version") not in {"0.5.0", "0.6.0", "0.7.0", "0.8.0", "0.9.0"} or policy.get("benchmark_version") != "0.6.0"
             or policy.get("publication_scope") != "combined" or policy.get("primary_metric") != "earned"
             or policy.get("initial_attempt_labels") != ["A1"]
-            or policy.get("score_modes") != (["capability", "partial", "strict"] if policy.get("version") in {"0.7.0", "0.8.0"} else ["partial", "strict"])
+            or policy.get("score_modes") != (["capability", "partial", "strict"] if policy.get("version") in {"0.7.0", "0.8.0", "0.9.0"} else ["partial", "strict"])
             or policy.get("overall_floor") != 0):
         raise ValueError("Unsupported current mathematical assessment policy")
     selection = policy.get("case_selection")
@@ -53,11 +53,13 @@ def validate_assessment_policy(policy):
     if policy["version"] == "0.7.0" and (policy.get("default_score_mode") != "partial"
             or policy.get("capability_policy_version") != "0.1.0"):
         raise ValueError("Three-score assessment requires reliable as default and the frozen capability method")
-    if policy["version"] == "0.8.0" and (policy.get("default_score_mode") != "partial"
-            or policy.get("capability_policy_version") != "0.2.0"
+    if policy["version"] in {"0.8.0", "0.9.0"} and (policy.get("default_score_mode") != "partial"
+            or policy.get("capability_policy_version") != ("0.3.0" if policy['version']=='0.9.0' else "0.2.0")
             or policy.get("claim_penalty_policy_version") != "0.1.0"):
         raise ValueError("Current assessment requires the source-bound claim penalty and separated capability policies")
-    extension = policy.get("version") in {"0.6.0", "0.7.0", "0.8.0"}
+    if policy['version']=='0.9.0' and policy.get('submission_policy_version')!='0.1.0':
+        raise ValueError('Assessment0.9.0 requires the active-submission/work source component')
+    extension = policy.get("version") in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}
     if extension:
         extension_policy = validate_extension_policy(policy.get("theorem_extension"))
         if selection is None:
@@ -69,7 +71,7 @@ def validate_assessment_policy(policy):
     extra_written = 0
     if additions is not None:
         validate_written_additions_policy(additions)
-        if policy["version"] != "0.8.0" or selection is None or selection["version"] not in {"0.2.0", "0.3.0"}:
+        if policy["version"] not in {"0.8.0", "0.9.0"} or selection is None or selection["version"] not in {"0.2.0", "0.3.0"}:
             raise ValueError("Written additions require their revised selection and current assessment")
         extra_written = additions["private_cases"]
     elif selection is not None and selection["version"] in {"0.2.0", "0.3.0"}:
@@ -77,14 +79,14 @@ def validate_assessment_policy(policy):
     replacements = policy.get("written_argument_replacements")
     if replacements is not None:
         validate_written_replacements_policy(replacements)
-        if policy["version"] != "0.8.0" or selection is None or selection["version"] != "0.3.0":
+        if policy["version"] not in {"0.8.0", "0.9.0"} or selection is None or selection["version"] != "0.3.0":
             raise ValueError("Written replacements require their revised legacy selection")
     elif selection is not None and selection["version"] == "0.3.0":
         raise ValueError("Revised public selection requires source-bound written replacements")
     manuscript = policy.get("manuscript_completion")
     if manuscript is not None:
         validate_manuscript_policy(manuscript)
-        if policy["version"] != "0.8.0":
+        if policy["version"] not in {"0.8.0", "0.9.0"}:
             raise ValueError("Manuscript evidence cannot change an older frozen scoring method")
     extra_manuscript = 0 if manuscript is None else manuscript["families"]
     expected = {"written-argument": (25, 8, 3 + extra_written, 11 + extra_written) if selection is not None else (25, 14, 3, 17),
@@ -203,7 +205,7 @@ def _validate_profile_weights(data):
     if data.get("schema") == "math-gauge.benchmark-profile/v6":
         policy = validate_assessment_policy(data.get("assessment_policy"))
         expected = {"proofs": 25, "lean-audit": 10, "lean-formalization": 15, "answer-review": 10}
-        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0"}:
+        if policy["version"] in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}:
             expected["theorem-extension"] = 10
         if policy.get("background_check") is not None:
             expected["background-check"] = 10

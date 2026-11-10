@@ -1,0 +1,163 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import OperatorLocalDegeneracy.ComponentPartition
+import OperatorLocalDegeneracy.NullificationRadius
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Set.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/-- CH03-D06: 直径尺度函数 -/
+noncomputable def diam (d_comp : X → X → ENNReal) (A : Set X) : ENNReal :=
+  ⨆ x ∈ A, ⨆ y ∈ A, d_comp x y
+
+/-- CH03-D06: 单调输入尺度定义 -/
+def IsMonotoneScale (σ : Set X → ENNReal) : Prop :=
+  ∀ A B, A ⊆ B → σ A ≤ σ B
+
+theorem diam_is_monotone (d_comp : X → X → ENNReal) :
+    IsMonotoneScale (diam d_comp) := by
+  intro A B hAB
+  dsimp [diam]
+  apply iSup_le
+  intro x
+  apply iSup_le
+  intro hx
+  apply iSup_le
+  intro y
+  apply iSup_le
+  intro hy
+  exact le_iSup_of_le x (le_iSup_of_le (hAB hx) (le_iSup_of_le y (le_iSup_of_le (hAB hy) le_rfl)))
+
+/-- CH03-D06: 阈值分类函数 -/
+noncomputable def classify_channel (σ : I → Set X → ENNReal) (ϕ : Operator X bot) (A : Set X)
+    (τ_σ τ_N : ENNReal) (i j : I) : Bool × Bool :=
+  (σ i A < τ_σ, r_null_uniform ϕ (d i) (d j) A A ≥ τ_N)
+
+/-- CH03-P16-01: 引理 3.13 阈值组合互斥且穷尽 -/
+theorem lemma_3_13_exhaustive (b1 b2 : Bool) :
+    (b1 = true ∧ b2 = true) ∨ (b1 = true ∧ b2 = false) ∨
+    (b1 = false ∧ b2 = true) ∨ (b1 = false ∧ b2 = false) := by
+  cases b1 <;> cases b2 <;> tauto
+
+theorem lemma_3_13_exclusive (b1 b2 : Bool) :
+    ¬ ((b1 = true ∧ b2 = true) ∧ (b1 = true ∧ b2 = false)) ∧
+    ¬ ((b1 = true ∧ b2 = true) ∧ (b1 = false ∧ b2 = true)) ∧
+    ¬ ((b1 = true ∧ b2 = true) ∧ (b1 = false ∧ b2 = false)) ∧
+    ¬ ((b1 = true ∧ b2 = false) ∧ (b1 = false ∧ b2 = true)) ∧
+    ¬ ((b1 = true ∧ b2 = false) ∧ (b1 = false ∧ b2 = false)) ∧
+    ¬ ((b1 = false ∧ b2 = true) ∧ (b1 = false ∧ b2 = false)) := by
+  cases b1 <;> cases b2 <;> decide
+
+/-- CH03-P16-02: 引理 3.13 (i) 输入尺度阈值增大，第一项为1的通道集合不减 -/
+theorem lemma_3_13_i (σ : I → Set X → ENNReal) (A : Set X)
+    (τ_σ τ_σ' : ENNReal) (h_le : τ_σ ≤ τ_σ') :
+    { i : I | σ i A < τ_σ } ⊆ { i : I | σ i A < τ_σ' } := by
+  intro i hi
+  simp only [Set.mem_setOf_eq] at hi ⊢
+  exact lt_of_lt_of_le hi h_le
+
+/-- CH03-P16-03: 引理 3.13 (ii) 零化阈值增大，第二项为1的通道集合不增 -/
+theorem lemma_3_13_ii (ϕ : Operator X bot) (A : Set X)
+    (τ_N τ_N' : ENNReal) (h_le : τ_N ≤ τ_N') :
+    { p : I × I | r_null_uniform ϕ (d p.1) (d p.2) A A ≥ τ_N' } ⊆
+    { p : I × I | r_null_uniform ϕ (d p.1) (d p.2) A A ≥ τ_N } := by
+  intro p hp
+  simp only [Set.mem_setOf_eq] at hp ⊢
+  exact le_trans h_le hp
+
+/-- CH03-P17-01: 命题 3.14 (i) 任意单调尺度函数的域缩小单调性及阈值推论 -/
+theorem prop_3_14_i (σ : Set X → ENNReal) (hσ : IsMonotoneScale σ)
+    (A B : Set X) (hBA : B ⊆ A) (τ_σ : ENNReal) :
+    σ B ≤ σ A ∧ (σ A < τ_σ → σ B < τ_σ) := by
+  have h_mono : σ B ≤ σ A := hσ B A hBA
+  refine ⟨h_mono, ?_⟩
+  intro hA
+  exact lt_of_le_of_lt h_mono hA
+
+/-- CH03-P17-02: 命题 3.14 (ii-a) 固定基点属于B时，缩小评估域使点态半径不减 -/
+theorem prop_3_14_ii_a (ϕ : Operator X bot) (d_in d_out : X → X → ENNReal)
+    (A B : Set X) (hBA : B ⊆ A) (x : X) (hx : x ∈ B) :
+    r_null ϕ d_in d_out x B ≥ r_null ϕ d_in d_out x A := by
+  dsimp [r_null]
+  apply sSup_le
+  rintro r ⟨hr_pos, hr_top, hr_ball⟩
+  apply le_sSup
+  refine ⟨hr_pos, hr_top, ?_⟩
+  intro z hz h_dist
+  exact hr_ball z (hBA hz) h_dist
+
+/-- CH03-P17-03: 命题 3.14 (ii-b) 同时缩小评估域与取inf基点集合，证明统一半径不减 -/
+theorem prop_3_14_ii_b (ϕ : Operator X bot) (d_in d_out : X → X → ENNReal)
+    (A B : Set X) (hBA : B ⊆ A) (hB : B.Nonempty) :
+    r_null_uniform ϕ d_in d_out B B ≥ r_null_uniform ϕ d_in d_out A A := by
+  dsimp [r_null_uniform]
+  apply le_iInf
+  intro x
+  apply le_iInf
+  intro hx
+  have h_pt_mono := prop_3_14_ii_a ϕ d_in d_out A B hBA x hx
+  have h_in_A : x ∈ A := hBA hx
+  have h_inf_le : (⨅ y ∈ A, r_null ϕ d_in d_out y A) ≤ r_null ϕ d_in d_out x A :=
+    iInf_le_of_le x (iInf_le_of_le h_in_A (le_refl _))
+  exact le_trans h_inf_le h_pt_mono
+
+inductive TwoPtReal where
+  | zero
+  | one
+  | bot
+  deriving DecidableEq, Fintype
+
+def counter_two_pt_d (x y : TwoPtReal) : ENNReal :=
+  match x, y with
+  | TwoPtReal.bot, TwoPtReal.bot => 0
+  | TwoPtReal.bot, _ => ⊤
+  | _, TwoPtReal.bot => ⊤
+  | TwoPtReal.zero, TwoPtReal.zero => 0
+  | TwoPtReal.one, TwoPtReal.one => 0
+  | TwoPtReal.zero, TwoPtReal.one => 1
+  | TwoPtReal.one, TwoPtReal.zero => 1
+
+/-- CH03-P17-04: 命题 3.14 (iii) 直径尺度的二点/单点反例，否定反向尺度判断 -/
+theorem prop_3_14_iii :
+    let A : Set TwoPtReal := {TwoPtReal.zero, TwoPtReal.one}
+    let B : Set TwoPtReal := {TwoPtReal.zero}
+    let τ_σ : ENNReal := 1 / 2
+    (B ⊆ A) ∧
+    (diam counter_two_pt_d B < τ_σ) ∧
+    (diam counter_two_pt_d A ≥ τ_σ) := by
+  intro A B τ_σ
+  have hBA : B ⊆ A := by
+    intro x hx
+    simp only [B, Set.mem_singleton_iff] at hx
+    subst hx
+    simp [A]
+  have hB_diam : diam counter_two_pt_d B = 0 := by
+    dsimp [diam, B]
+    simp [counter_two_pt_d]
+  have hA_diam : diam counter_two_pt_d A = 1 := by
+    dsimp [diam, A]
+    apply le_antisymm
+    · apply iSup_le; intro x
+      apply iSup_le; intro hx
+      apply iSup_le; intro y
+      apply iSup_le; intro hy
+      rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp [counter_two_pt_d]
+    · exact le_iSup_of_le TwoPtReal.zero (le_iSup_of_le (by simp) (le_iSup_of_le TwoPtReal.one (le_iSup_of_le (by simp) le_rfl)))
+  refine ⟨hBA, ?_, ?_⟩
+  · rw [hB_diam]
+    decide
+  · rw [hA_diam]
+    decide
+
+end OperatorLocalDegeneracy

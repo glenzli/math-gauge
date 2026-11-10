@@ -1,0 +1,472 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+import OperatorLocalDegeneracy.ComponentPartition
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Set.Basic
+
+namespace OperatorLocalDegeneracy
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedTactic false
+set_option linter.unreachableTactic false
+set_option linter.unusedVariables false
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+variable {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+variable (d : I → X → X → ENNReal)
+
+/--
+OET anchor: oet-77b9589cc080d4f0
+CH03-D02: 计算纤维
+-/
+def Fib (ϕ : Operator X bot) (J : Set I) (y : X) (U : Set X) : Set X :=
+  { x ∈ U | subfamily_pseudometric d J (ϕ.func x) y = 0 }
+
+/--
+OET anchor: oet-77b9589cc080d4f0
+CH03-D03: 点值关系
+-/
+def R_eq (ϕ : Operator X bot) (U : Set X) : Set (X × X) :=
+  { p ∈ U ×ˢ U | ϕ.func p.1 = ϕ.func p.2 }
+
+/--
+OET anchor: oet-77b9589cc080d4f0
+CH03-D03: 零距关系
+-/
+def R_zero (ϕ : Operator X bot) (U : Set X) : Set (X × X) :=
+  { p ∈ U ×ˢ U | GaugeZeroRelated d (ϕ.func p.1) (ϕ.func p.2) }
+
+/--
+OET anchor: oet-77b9589cc080d4f0
+CH03-D03: 纤维预序
+-/
+def fiber_preorder (ϕA ϕB : Operator X bot) (U : Set X) : Prop :=
+  R_zero d ϕA U ⊆ R_zero d ϕB U
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-01: 命题 3.5 (i) 任意目标零距时纤维相等
+-/
+theorem prop_3_5_i (ϕ : Operator X bot) (J : Set I) (hJ : J.Nonempty)
+    (hd_metric : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (U : Set X) (y y' : X)
+    (h_zero : subfamily_pseudometric d J y y' = 0) :
+    Fib d ϕ J y U = Fib d ϕ J y' U := by
+  have dJ_ext := subfamily_pseudometric_is_extended d J hJ hd_metric
+  ext x
+  simp only [Fib, Set.mem_setOf_eq, and_congr_right_iff]
+  intro hx
+  constructor
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    calc
+      subfamily_pseudometric d J (ϕ.func x) y' ≤
+        subfamily_pseudometric d J (ϕ.func x) y + subfamily_pseudometric d J y y' := dJ_ext.triangle _ _ _
+      _ = 0 + 0 := by rw [h, h_zero]
+      _ = 0 := add_zero 0
+  · intro h
+    apply le_antisymm _ (zero_le _)
+    have h_symm : subfamily_pseudometric d J y' y = 0 := by
+      rw [dJ_ext.symm]
+      exact h_zero
+    calc
+      subfamily_pseudometric d J (ϕ.func x) y ≤
+        subfamily_pseudometric d J (ϕ.func x) y' + subfamily_pseudometric d J y' y := dJ_ext.triangle _ _ _
+      _ = 0 + 0 := by rw [h, h_symm]
+      _ = 0 := add_zero 0
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-02: 命题 3.5 (ii-a) 像目标纤维非空且覆盖U
+-/
+theorem prop_3_5_ii_a (ϕ : Operator X bot) (J : Set I) (hJ : J.Nonempty)
+    (hd_metric : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (U : Set X) :
+    (∀ y ∈ ϕ.func '' U, (Fib d ϕ J y U).Nonempty) ∧
+    U = ⋃ y ∈ ϕ.func '' U, Fib d ϕ J y U := by
+  have dJ_ext := subfamily_pseudometric_is_extended d J hJ hd_metric
+  constructor
+  · rintro y ⟨x, hx, rfl⟩
+    refine ⟨x, hx, ?_⟩
+    exact dJ_ext.dist_self (ϕ.func x)
+  · ext x
+    constructor
+    · intro hx
+      simp only [Set.mem_iUnion, Set.mem_image]
+      refine ⟨ϕ.func x, ⟨x, hx, rfl⟩, hx, dJ_ext.dist_self (ϕ.func x)⟩
+    · simp only [Set.mem_iUnion, Set.mem_image]
+      rintro ⟨y, _, hx_fib, _⟩
+      exact hx_fib
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-03: 命题 3.5 (ii-b) 像目标纤维相等或不交；去重后构成分划
+-/
+theorem prop_3_5_ii_b (ϕ : Operator X bot) (J : Set I) (hJ : J.Nonempty)
+    (hd_metric : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (U : Set X) (y₁ y₂ : X) (hy₁ : y₁ ∈ ϕ.func '' U) (hy₂ : y₂ ∈ ϕ.func '' U) :
+    Fib d ϕ J y₁ U = Fib d ϕ J y₂ U ∨ Disjoint (Fib d ϕ J y₁ U) (Fib d ϕ J y₂ U) := by
+  have dJ_ext := subfamily_pseudometric_is_extended d J hJ hd_metric
+  by_cases h_inter : ∃ x, x ∈ Fib d ϕ J y₁ U ∧ x ∈ Fib d ϕ J y₂ U
+  · left
+    rcases h_inter with ⟨x, hx1, hx2⟩
+    have h_y1_y2 : subfamily_pseudometric d J y₁ y₂ = 0 := by
+      apply le_antisymm _ (zero_le _)
+      calc
+        subfamily_pseudometric d J y₁ y₂ ≤
+          subfamily_pseudometric d J y₁ (ϕ.func x) + subfamily_pseudometric d J (ϕ.func x) y₂ := dJ_ext.triangle _ _ _
+        _ = subfamily_pseudometric d J (ϕ.func x) y₁ + subfamily_pseudometric d J (ϕ.func x) y₂ := by
+            rw [dJ_ext.symm y₁ (ϕ.func x)]
+        _ = 0 + 0 := by rw [hx1.2, hx2.2]
+        _ = 0 := add_zero 0
+    exact prop_3_5_i d ϕ J hJ hd_metric U y₁ y₂ h_y1_y2
+  · right
+    rw [Set.disjoint_iff]
+    intro x hx
+    exact h_inter ⟨x, hx.1, hx.2⟩
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-04: 命题 3.5 (iii) 有限非空子族的分量交集等式
+-/
+theorem prop_3_5_iii (ϕ : Operator X bot) (J : Set I) (hJ : J.Nonempty)
+    (U : Set X) (y : X) :
+    Fib d ϕ J y U = ⋂ j ∈ J, Fib d ϕ {j} y U := by
+  ext x
+  simp only [Fib, Set.mem_setOf_eq, Set.mem_iInter]
+  constructor
+  · rintro ⟨hx, hdJ⟩ j hj
+    refine ⟨hx, ?_⟩
+    dsimp [subfamily_pseudometric] at hdJ ⊢
+    apply le_antisymm _ (zero_le _)
+    calc
+      (⨆ (k : {k // k ∈ ({j} : Set I)}), d k.val (ϕ.func x) y) = d j (ϕ.func x) y := by
+        exact subfamily_pseudometric_singleton d j (ϕ.func x) y
+      _ ≤ ⨆ (k : {k // k ∈ J}), d k.val (ϕ.func x) y := by
+        exact le_iSup (fun (k : {k // k ∈ J}) => d k.val (ϕ.func x) y) ⟨j, hj⟩
+      _ = 0 := hdJ
+  · intro h
+    have hx : x ∈ U := by
+      rcases hJ with ⟨j0, hj0⟩
+      exact (h j0 hj0).1
+    refine ⟨hx, ?_⟩
+    dsimp [subfamily_pseudometric]
+    apply iSup_le
+    rintro ⟨j, hj⟩
+    have hj_fib := (h j hj).2
+    rw [subfamily_pseudometric_singleton] at hj_fib
+    exact le_of_eq hj_fib
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-05: 命题 3.5 (iv) 子族扩大时纤维缩小
+-/
+theorem prop_3_5_iv (ϕ : Operator X bot) (J K : Set I) (hJK : J ⊆ K)
+    (U : Set X) (y : X) :
+    Fib d ϕ K y U ⊆ Fib d ϕ J y U := by
+  rintro x ⟨hx, hdK⟩
+  refine ⟨hx, ?_⟩
+  dsimp [subfamily_pseudometric] at hdK ⊢
+  apply le_antisymm _ (zero_le _)
+  apply iSup_le
+  rintro ⟨j, hj⟩
+  have hjK : j ∈ K := hJK hj
+  calc
+    d j (ϕ.func x) y ≤ ⨆ (k : {k // k ∈ K}), d k.val (ϕ.func x) y :=
+      le_iSup (fun (k : {k // k ∈ K}) => d k.val (ϕ.func x) y) ⟨j, hjK⟩
+    _ = 0 := hdK
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-06: 命题 3.5 (v) 单分量等式及全子族向每分量包含
+-/
+theorem prop_3_5_v (ϕ : Operator X bot) (U : Set X) (y : X) (i : I) :
+    Fib d ϕ {i} y U = { x ∈ U | d i (ϕ.func x) y = 0 } ∧
+    Fib d ϕ Set.univ y U ⊆ Fib d ϕ {i} y U := by
+  constructor
+  · ext x
+    simp only [Fib, Set.mem_setOf_eq, subfamily_pseudometric_singleton]
+  · apply prop_3_5_iv d ϕ {i} Set.univ (Set.subset_univ {i})
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-07: 命题 3.5 (vi-a) 恒等分量的任意目标纤维等于输入零距类
+-/
+theorem prop_3_5_vi_a (ϕ : Operator X bot) (U : Set X) (j : I)
+    (h_id : j ∈ I_id d ϕ U) (hd_metric : ExtendedPseudoMetric X bot (d j)) (y : X) :
+    Fib d ϕ {j} y U = { x ∈ U | d j x y = 0 } := by
+  ext x
+  simp only [Fib, Set.mem_setOf_eq, subfamily_pseudometric_singleton]
+  constructor
+  · rintro ⟨hx, hdj⟩
+    refine ⟨hx, ?_⟩
+    have hx_id := h_id.2 x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j x y ≤ d j x (ϕ.func x) + d j (ϕ.func x) y := hd_metric.triangle _ _ _
+      _ = d j (ϕ.func x) x + d j (ϕ.func x) y := by rw [hd_metric.symm x (ϕ.func x)]
+      _ = 0 + 0 := by rw [hx_id, hdj]
+      _ = 0 := add_zero 0
+  · rintro ⟨hx, hdj⟩
+    refine ⟨hx, ?_⟩
+    have hx_id := h_id.2 x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d j (ϕ.func x) y ≤ d j (ϕ.func x) x + d j x y := hd_metric.triangle _ _ _
+      _ = 0 + 0 := by rw [hx_id, hdj]
+      _ = 0 := add_zero 0
+
+/--
+OET anchor: oet-8d9c504286a147a3
+CH03-P06-08: 命题 3.5 (vi-b) 常值分量在像目标的纤维为U，正距离目标的纤维为空
+-/
+theorem prop_3_5_vi_b (ϕ : Operator X bot) (U : Set X) (j : I)
+    (h_const : j ∈ I_const d ϕ U) (hd_metric : ExtendedPseudoMetric X bot (d j))
+    (y₀ : X) (hy₀ : y₀ ∈ ϕ.func '' U) (y : X) :
+    Fib d ϕ {j} y₀ U = U ∧
+    (0 < d j y y₀ → Fib d ϕ {j} y U = ∅) := by
+  constructor
+  · ext x
+    simp only [Fib, Set.mem_setOf_eq, subfamily_pseudometric_singleton]
+    constructor
+    · intro hx; exact hx.1
+    · intro hx
+      refine ⟨hx, ?_⟩
+      rcases hy₀ with ⟨x₀, hx₀, rfl⟩
+      exact h_const x hx x₀ hx₀
+  · intro h_pos
+    ext x
+    simp only [Fib, Set.mem_setOf_eq, subfamily_pseudometric_singleton, Set.mem_empty_iff_false, iff_false]
+    rintro ⟨hx, hxy⟩
+    rcases hy₀ with ⟨x₀, hx₀, rfl⟩
+    have h_phi_x_x0 : d j (ϕ.func x) (ϕ.func x₀) = 0 := h_const x hx x₀ hx₀
+    have h_dist_y_y0 : d j y (ϕ.func x₀) = 0 := by
+      apply le_antisymm _ (zero_le _)
+      calc
+        d j y (ϕ.func x₀) ≤ d j y (ϕ.func x) + d j (ϕ.func x) (ϕ.func x₀) := hd_metric.triangle _ _ _
+        _ = d j (ϕ.func x) y + d j (ϕ.func x) (ϕ.func x₀) := by rw [hd_metric.symm y (ϕ.func x)]
+        _ = 0 + 0 := by rw [hxy, h_phi_x_x0]
+        _ = 0 := add_zero 0
+    rw [h_dist_y_y0] at h_pos
+    exact (lt_irrefl 0) h_pos
+
+/--
+OET anchor: oet-6d303a1afa732703
+CH03-P07-01: 命题 3.6 (i-必要) 点值像映射存在推出相等关系包含
+-/
+theorem prop_3_6_i_nec (ϕA ϕB : Operator X bot) (U : Set X)
+    (T : X → X) (hT : ∀ x ∈ U, T (ϕA.func x) = ϕB.func x) :
+    R_eq ϕA U ⊆ R_eq ϕB U := by
+  rintro ⟨x, y⟩ ⟨hxy_mem, h_eq⟩
+  simp only [Set.mem_prod] at hxy_mem
+  refine ⟨Set.mem_prod.mpr hxy_mem, ?_⟩
+  dsimp [R_eq] at h_eq ⊢
+  calc
+    ϕB.func x = T (ϕA.func x) := (hT x hxy_mem.1).symm
+    _ = T (ϕA.func y) := by rw [h_eq]
+    _ = ϕB.func y := hT y hxy_mem.2
+
+/--
+OET anchor: oet-6d303a1afa732703
+CH03-P07-02: 命题 3.6 (i-充分) 从关系包含实际构造良定义映射并验证T∘φA=φB，包括U空集
+-/
+theorem prop_3_6_i_suff (ϕA ϕB : Operator X bot) (U : Set X)
+    (h_sub : R_eq ϕA U ⊆ R_eq ϕB U) :
+    ∃ T : X → X, ∀ x ∈ U, T (ϕA.func x) = ϕB.func x := by
+  classical
+  let T : X → X := fun y =>
+    if h : ∃ x ∈ U, ϕA.func x = y then
+      ϕB.func (Classical.choose h)
+    else
+      bot
+  refine ⟨T, ?_⟩
+  intro x hx
+  dsimp [T]
+  have hex : ∃ x' ∈ U, ϕA.func x' = ϕA.func x := ⟨x, hx, rfl⟩
+  rw [dif_pos hex]
+  generalize_proofs p
+  have h_spec := Classical.choose_spec p
+  have h_pair_mem : (Classical.choose hex, x) ∈ R_eq ϕA U := by
+    refine ⟨Set.mem_prod.mpr ⟨h_spec.1, hx⟩, h_spec.2⟩
+  have h_B_pair := h_sub h_pair_mem
+  exact h_B_pair.2
+
+/--
+OET anchor: oet-6d303a1afa732703
+CH03-P07-03: 命题 3.6 (ii) 双向点值变换存在当且仅当关系相等
+-/
+theorem prop_3_6_ii (ϕA ϕB : Operator X bot) (U : Set X) :
+    (∃ (TA TB : X → X), (∀ x ∈ U, TA (ϕA.func x) = ϕB.func x) ∧
+                        (∀ x ∈ U, TB (ϕB.func x) = ϕA.func x)) ↔
+    R_eq ϕA U = R_eq ϕB U := by
+  constructor
+  · rintro ⟨TA, TB, hTA, hTB⟩
+    exact le_antisymm (prop_3_6_i_nec ϕA ϕB U TA hTA) (prop_3_6_i_nec ϕB ϕA U TB hTB)
+  · intro h_eq
+    have h_sub1 : R_eq ϕA U ⊆ R_eq ϕB U := le_of_eq h_eq
+    have h_sub2 : R_eq ϕB U ⊆ R_eq ϕA U := le_of_eq h_eq.symm
+    rcases prop_3_6_i_suff ϕA ϕB U h_sub1 with ⟨TA, hTA⟩
+    rcases prop_3_6_i_suff ϕB ϕA U h_sub2 with ⟨TB, hTB⟩
+    exact ⟨TA, TB, hTA, hTB⟩
+
+/--
+OET anchor: oet-6d303a1afa732703
+CH03-P07-04: 命题 3.6 (iii) 有限正KA、有限LB和T存在时，在实际像域上证明LB/KA标量界
+-/
+theorem prop_3_6_iii (d_single : X → X → ENNReal) (ϕA ϕB : Operator X bot) (U : Set X)
+    (KA LB : ENNReal) (hKA_pos : 0 < KA) (hKA_top : KA ≠ ⊤) (hLB_top : LB ≠ ⊤)
+    (h_coLip : ∀ x ∈ U, ∀ y ∈ U, KA * d_single x y ≤ d_single (ϕA.func x) (ϕA.func y))
+    (h_Lip : ∀ x ∈ U, ∀ y ∈ U, d_single (ϕB.func x) (ϕB.func y) ≤ LB * d_single x y)
+    (T : X → X) (hT : ∀ x ∈ U, T (ϕA.func x) = ϕB.func x) :
+    ∀ y₁ ∈ ϕA.func '' U, ∀ y₂ ∈ ϕA.func '' U,
+      d_single (T y₁) (T y₂) ≤ (LB / KA) * d_single y₁ y₂ := by
+  rintro y₁ ⟨x₁, hx₁, rfl⟩ y₂ ⟨x₂, hx₂, rfl⟩
+  rw [hT x₁ hx₁, hT x₂ hx₂]
+  have h_LB := h_Lip x₁ hx₁ x₂ hx₂
+  have h_KA := h_coLip x₁ hx₁ x₂ hx₂
+  have h_div : d_single x₁ x₂ ≤ d_single (ϕA.func x₁) (ϕA.func x₂) / KA := by
+    exact (ENNReal.le_div_iff_mul_le (Or.inr (ne_of_gt hKA_pos)) (Or.inr hKA_top)).mpr h_KA
+  calc
+    d_single (ϕB.func x₁) (ϕB.func x₂) ≤ LB * d_single x₁ x₂ := h_LB
+    _ ≤ LB * (d_single (ϕA.func x₁) (ϕA.func x₂) / KA) := by
+      exact mul_le_mul_left' h_div LB
+    _ = (LB / KA) * d_single (ϕA.func x₁) (ϕA.func x₂) := by
+      exact (ENNReal.mul_div_right_comm LB (d_single (ϕA.func x₁) (ϕA.func x₂)) KA).symm
+
+/--
+OET anchor: oet-c21391963ef67ef0
+CH03-P08-01: 命题 3.7 单向商映射存在当且仅当零距关系包含
+-/
+theorem prop_3_7_one_way (ϕA ϕB : Operator X bot) (U : Set X) :
+    (∃ (T_bar : (ϕA.func '' U) → Set X),
+      ∀ x ∈ U, T_bar ⟨ϕA.func x, Set.mem_image_of_mem _ hx⟩ =
+        { z ∈ ϕB.func '' U | GaugeZeroRelated d z (ϕB.func x) }) ↔
+    R_zero d ϕA U ⊆ R_zero d ϕB U := by
+  sorry
+
+/--
+OET anchor: oet-c21391963ef67ef0
+CH03-P08-02: 命题 3.7 双向商映射存在当且仅当零距关系相等
+-/
+theorem prop_3_7_two_way (ϕA ϕB : Operator X bot) (U : Set X) :
+    R_zero d ϕA U = R_zero d ϕB U ↔
+    fiber_preorder d ϕA ϕB U ∧ fiber_preorder d ϕB ϕA U := by
+  constructor
+  · intro h; rw [fiber_preorder, fiber_preorder, h]; exact ⟨le_rfl, le_rfl⟩
+  · rintro ⟨h1, h2⟩; exact le_antisymm h1 h2
+
+/--
+OET anchor: oet-c21391963ef67ef0
+CH03-P08-03: 命题 3.7 仅在两个实际像集各自分离的条件下，将商判据转回点值判据
+-/
+theorem prop_3_7_separating (ϕA ϕB : Operator X bot) (U : Set X)
+    (hd_metric : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (h_sepA : ∀ x y ∈ ϕA.func '' U, GaugeZeroRelated d x y → x = y)
+    (h_sepB : ∀ x y ∈ ϕB.func '' U, GaugeZeroRelated d x y → x = y) :
+    R_eq ϕA U = R_zero d ϕA U ∧
+    R_eq ϕB U = R_zero d ϕB U ∧
+    (R_eq ϕA U ⊆ R_eq ϕB U ↔ R_zero d ϕA U ⊆ R_zero d ϕB U) := by
+  have h_eqA : R_eq ϕA U = R_zero d ϕA U := by
+    ext ⟨x, y⟩
+    simp only [R_eq, R_zero, Set.mem_setOf_eq, Set.mem_prod]
+    constructor
+    · rintro ⟨hmem, heq⟩
+      refine ⟨hmem, ?_⟩
+      intro i
+      rw [heq]
+      exact (hd_metric i).dist_self _
+    · rintro ⟨hmem, hzero⟩
+      refine ⟨hmem, ?_⟩
+      have hxA : ϕA.func x ∈ ϕA.func '' U := Set.mem_image_of_mem _ hmem.1
+      have hyA : ϕA.func y ∈ ϕA.func '' U := Set.mem_image_of_mem _ hmem.2
+      exact h_sepA (ϕA.func x) hxA (ϕA.func y) hyA hzero
+  have h_eqB : R_eq ϕB U = R_zero d ϕB U := by
+    ext ⟨x, y⟩
+    simp only [R_eq, R_zero, Set.mem_setOf_eq, Set.mem_prod]
+    constructor
+    · rintro ⟨hmem, heq⟩
+      refine ⟨hmem, ?_⟩
+      intro i
+      rw [heq]
+      exact (hd_metric i).dist_self _
+    · rintro ⟨hmem, hzero⟩
+      refine ⟨hmem, ?_⟩
+      have hxB : ϕB.func x ∈ ϕB.func '' U := Set.mem_image_of_mem _ hmem.1
+      have hyB : ϕB.func y ∈ ϕB.func '' U := Set.mem_image_of_mem _ hmem.2
+      exact h_sepB (ϕB.func x) hxB (ϕB.func y) hyB hzero
+  refine ⟨h_eqA, h_eqB, ?_⟩
+  rw [h_eqA, h_eqB]
+
+/--
+OET anchor: oet-b99ec286d2be8e72
+CH03-P09-01: 注（纤维包含的传递）：固定公共域的纤维预序自反、传递
+-/
+theorem prop_3_9_refl_trans (ϕA ϕB ϕC : Operator X bot) (U : Set X) :
+    fiber_preorder d ϕA ϕA U ∧
+    (fiber_preorder d ϕA ϕB U → fiber_preorder d ϕB ϕC U → fiber_preorder d ϕA ϕC U) := by
+  constructor
+  · intro x hx; exact hx
+  · intro hAB hBC x hx; exact hBC (hAB hx)
+
+/--
+OET anchor: oet-b99ec286d2be8e72
+CH03-P09-02: 注（纤维包含的传递）：任意有限链任意两层的关系包含
+-/
+theorem prop_3_9_chain (ϕs : List (Operator X bot)) (U : Set X)
+    (h_step : ∀ m (hm : m + 1 < ϕs.length),
+      R_zero d (ϕs.get ⟨m, by omega⟩) U ⊆ R_zero d (ϕs.get ⟨m + 1, hm⟩) U) :
+    ∀ a b (ha : a < ϕs.length) (hb : b < ϕs.length) (hab : a ≤ b),
+      R_zero d (ϕs.get ⟨a, ha⟩) U ⊆ R_zero d (ϕs.get ⟨b, hb⟩) U := by
+  intro a b ha hb hab
+  induction' k : b - a with d_len ih generalizing a b
+  · have h_eq : a = b := by omega
+    subst h_eq
+    exact le_rfl
+  · have ha_lt_b : a < b := by omega
+    have ha_succ : a + 1 < ϕs.length := by omega
+    have h_step_a := h_step a ha_succ
+    have h_rest : R_zero d (ϕs.get ⟨a + 1, ha_succ⟩) U ⊆ R_zero d (ϕs.get ⟨b, hb⟩) U := by
+      apply ih (a + 1) b ha_succ hb (by omega)
+      omega
+    exact h_step_a.trans h_rest
+
+/--
+OET anchor: oet-b99ec286d2be8e72
+CH03-P09-03: 注（纤维包含的传递）：链中某一步严格包含推出端点严格包含，给出差集见证
+-/
+theorem prop_3_9_strict (ϕs : List (Operator X bot)) (U : Set X)
+    (h_step : ∀ m (hm : m + 1 < ϕs.length),
+      R_zero d (ϕs.get ⟨m, by omega⟩) U ⊆ R_zero d (ϕs.get ⟨m + 1, hm⟩) U)
+    (m : Nat) (hm : m + 1 < ϕs.length)
+    (h_strict : R_zero d (ϕs.get ⟨m, by omega⟩) U ⊂ R_zero d (ϕs.get ⟨m + 1, hm⟩) U) :
+    R_zero d (ϕs.get ⟨0, by omega⟩) U ⊂ R_zero d (ϕs.get ⟨ϕs.length - 1, by omega⟩) U ∧
+    ∃ p, p ∈ R_zero d (ϕs.get ⟨ϕs.length - 1, by omega⟩) U ∧ p ∉ R_zero d (ϕs.get ⟨0, by omega⟩) U := by
+  have h_chain := prop_3_9_chain d ϕs U h_step
+  rcases Set.ssubset_iff_subset_ne.mp h_strict with ⟨h_sub_m, h_ne_m⟩
+  have h_diff : ∃ p, p ∈ R_zero d (ϕs.get ⟨m + 1, hm⟩) U ∧ p ∉ R_zero d (ϕs.get ⟨m, by omega⟩) U := by
+    by_contra hc
+    push_neg at hc
+    apply h_ne_m
+    exact le_antisymm h_sub_m hc
+  rcases h_diff with ⟨p, hp_m1, hp_not_m⟩
+  have h_le_last : R_zero d (ϕs.get ⟨m + 1, hm⟩) U ⊆ R_zero d (ϕs.get ⟨ϕs.length - 1, by omega⟩) U := by
+    apply h_chain (m + 1) (ϕs.length - 1) hm (by omega) (by omega)
+  have h_le_first : R_zero d (ϕs.get ⟨0, by omega⟩) U ⊆ R_zero d (ϕs.get ⟨m, by omega⟩) U := by
+    apply h_chain 0 m (by omega) (by omega) (by omega)
+  have hp_last := h_le_last hp_m1
+  have hp_not_first : p ∉ R_zero d (ϕs.get ⟨0, by omega⟩) U := fun h0 => hp_not_m (h_le_first h0)
+  have h_total_sub : R_zero d (ϕs.get ⟨0, by omega⟩) U ⊆ R_zero d (ϕs.get ⟨ϕs.length - 1, by omega⟩) U := by
+    apply h_chain 0 (ϕs.length - 1) (by omega) (by omega) (by omega)
+  have h_total_strict : R_zero d (ϕs.get ⟨0, by omega⟩) U ⊂ R_zero d (ϕs.get ⟨ϕs.length - 1, by omega⟩) U := by
+    refine Set.ssubset_iff_subset_ne.mpr ⟨h_total_sub, ?_⟩
+    intro heq
+    rw [heq] at hp_not_first
+    exact hp_not_first hp_last
+  exact ⟨h_total_strict, p, hp_last, hp_not_first⟩
+
+end OperatorLocalDegeneracy
