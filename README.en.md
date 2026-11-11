@@ -90,7 +90,11 @@ Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set
 
 ![Math Gauge English research leaderboard](docs/screenshots/research-en.jpg)
 
-Screenshots use the completed-model filter; completed evaluation does not imply correct answers to every task. The default page includes all selected models. It provides an overall leaderboard, three category leaderboards, two rates, and a collapsed score-gap panel. Each board has independent metric, model-filter and sorting controls, with bilingual display and shareable URL state. Model pages expose subcategory and task details.
+![Math Gauge English answer-time reference](docs/screenshots/timings-en.jpg)
+
+The timing chart compares whole-chapter formalization with the weighted mean and median of five typical tasks, in minutes. It includes tool use and waiting; harness, network and hardware vary. See the [method and sources](docs/answer-timings.md) for this practical runtime reference.
+
+The overall and research screenshots use the completed-model filter; completed evaluation does not imply correct answers to every task. The timing chart retains every model with recorded times. The default page includes all selected models. It provides an overall leaderboard, three category leaderboards, two rates, and a collapsed score-gap panel. Each board has independent metric, model-filter and sorting controls, with bilingual display and shareable URL state. Model pages expose subcategory and task details.
 
 ## Running and reproducing
 
