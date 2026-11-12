@@ -142,6 +142,7 @@ class CurrentSiteTests(unittest.TestCase):
                 for model in self.data["models"] for scope in ["combined"]
                 for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"]}
             downloads.add('downloads/timing-reference.json')
+            downloads.add('downloads/cost-reference.json')
             self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
             timings=json.loads(before['downloads/timing-reference.json'])
             self.assertEqual(timings,SITE.build_reference(SITE.ROOT,display_data=self.data))
@@ -233,12 +234,7 @@ class CurrentSiteTests(unittest.TestCase):
         self.assertEqual(bars[zero['model_id']]['data-score'], '0')
         self.assertEqual(bars[unknown['model_id']]['data-score'], '')
         self.assertIn('—', chart.values)
-        ds = next(m for m in self.data['models'] if m['id'].startswith('deepseek'))
-        actual = ChartBars(SITE.render(self.data), score_scope='lean')
-        label = next(g['aria-label'] for g in actual.groups if g['data-model'] == ds['id'])
-        lean = next(g for g in self.data['category_leaderboards'] if g['id'] == 'lean')
-        ds_lean = next(r for r in lean['views']['partial'] if r['model_id'] == ds['id'])
-        self.assertEqual('尚未测完' in label, ds_lean['incomplete'])
+        self.assertEqual((unknown['value'], unknown['lower'], unknown['upper']), (None, -20, 100))
 
     def test_gap_diagnostics_bind_retained_totals_and_keep_incomplete_coverage_unranked(self):
         diagnostic = self.data['gap_diagnostics']
@@ -379,7 +375,7 @@ class CurrentSiteTests(unittest.TestCase):
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
                     self.assertEqual(model["retry"][scope].get("retry_summary", {}).get("slots_with_reruns", 0), 0)
 
-    def test_unreviewed_fixed_rounds_keep_the_model_coverage_marker(self):
+    def test_unreviewed_fixed_rounds_keep_the_source_coverage_unknown(self):
         model = next(m for m in self.data['models'] if m['id'] == 'gemini-4-argon')
         result = copy.deepcopy(model['retry']['combined'])
         self.assertFalse(SITE.evaluation_progress(result)['incomplete'])

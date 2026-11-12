@@ -64,7 +64,7 @@ class DisplayAssets:
                     image["data_url"] = self.relative(page, target)
             encoded_data = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
             return match[1] + encoded_data + match[3]
-        value = re.sub(r'(<script\b[^>]*\bid="data"[^>]*>)([\s\S]*?)(</script>)', payload, value)
+        value = re.sub(r'(<script\b[^>]*\bid="(?:data|cost-reference-data)"[^>]*>)([\s\S]*?)(</script>)', payload, value)
         def resource(match):
             target = os.path.normpath(os.path.join(PurePosixPath(page).parent, match[2])).replace(os.sep, "/")
             if target not in self.versions:

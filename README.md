@@ -61,7 +61,7 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 | [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
 | [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
 | [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
-| [Dot Underlying](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39／0／39 |
+| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39／0／39 |
 | [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
@@ -70,15 +70,15 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 | [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI | 76.71 | 64.23 | 25.83 | 37／1／39 |
 | [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37／2／39 |
 | [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38／1／39 |
-| [GLM 5.3 (max)*](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21／5／39 |
+| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21／5／39 |
 
-\* 尚未测完，数值为已确认贡献；未测项保持未知，完整区间见模型详情。主动交卷与强收有内容互斥；无正常交卷时RMC／SMC为0，MC可审核原成果。
+逐轮来源和完整分数区间见模型详情。主动交卷与强收有内容互斥；无正常交卷时RMC／SMC为0，MC可审核原成果。
 
 ¹ Dot 原生独立运行方式。
 
 ² 使用 DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用 Codex CLI。
 
-³ GLM 5.3 在 Codex CLI 和 Claude Code 下均出现过大量超时；留档采用 Claude Code 结果，未正常交卷的RMC／SMC为0，MC仅计经核实的截止原成果。
+³ GLM 5.3 的39道初答来源审核已完成，三项缺档已复核销项；三轮自查未执行，继续保留未知。留档采用 Claude Code 结果，未正常交卷的RMC／SMC为0，MC仅计经核实的截止原成果。
 
 ⁴ Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。
 
@@ -92,7 +92,9 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 耗时图对比整章形式化与日常五道典型题的加权均值、中位数，单位为分钟。包含工具与等待时间；Harness、网络和硬件各异，仅作实际运行参考，[计算方式与来源](docs/answer-timings.md)另列。
 
-总榜和数学研究截图启用“仅显示已测完模型”；完成评测不代表全题正确。耗时图保留全部有记录的模型。页面默认保留全部已选模型，提供总榜、三大类分榜、两率与默认收起的分数落差榜。每榜可独立设置指标、模型筛选和排序，支持中英文及 URL 分享；模型页可展开子类与逐题成绩。
+主体下方提供[总成本与前沿图](site/index.html#cost-reference)：每题只计当前留档采用的尝试，其他重试不计。Argon按最终累计回执记$33.84；Dot Underlying (2026-11-08)使用订阅附赠的独立额度，额外费用为$0。DeepSeek统一按官方峰价折算为$6.41，保留缓存优惠。Terra Max与Gemini 3.8 Flash用量均已补齐，API参考总额分别为$10.96、$23.41；Kimi、GLM按调用方留存用量折算，参考总额分别为$29.85、$40.88，不再补入用量估算。价格、来源确认及前沿图口径见[成本说明](docs/cost-reference.md)。
+
+排行榜发布测试流程已结束并选定留档的结果；后续测试结算后再上榜。页面提供总榜、三大类分榜、两率与默认收起的分数落差榜，各榜独立设置指标与排序，支持中英文及 URL 分享。模型页保留逐题结果、自查执行状态和分数区间。
 
 ## 运行与复现
 

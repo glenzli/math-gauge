@@ -8,7 +8,8 @@ from unittest.mock import patch
 
 from math_gauge.agy_evidence import SCHEMA, validate_delivery, validate_failure
 from math_gauge.attempt_conditions import load_sources
-from math_gauge.records import descriptor, evidence_bytes, validate_native_delivery_failure
+from math_gauge.records import (descriptor, evidence_bytes, validate_native_delivery_failure,
+                                load_manuscript_completion_inputs)
 
 
 class AgyEvidenceTests(unittest.TestCase):
@@ -151,6 +152,51 @@ class AgyEvidenceTests(unittest.TestCase):
         self.save()
         with self.assertRaises(ValueError):
             validate_failure(self.root, self.row, evidence_bytes)
+
+    def test_manuscript_failure_uses_agy_evidence_and_its_exact_task(self):
+        self.deadline()
+        policy = copy.deepcopy(json.loads((Path(__file__).resolve().parents[1]
+            / "protocol/scoring-policy.json").read_bytes())["manuscript_completion"])
+        policy.update(version="0.1.0", public_cases=0, public_case_ids=[], private_cases=1, families=1)
+        task = self.data["candidate_input"]
+        contract = self.put("manuscript-contract.json", dict(id="S", kind="research_exploration",
+            dimensions=[dict(id="model", points=100)]))
+        case = dict(case_id="S", family_id="synthetic-manuscript", component="manuscript-completion",
+            source_visibility="private", contract_kind="research_exploration", task_kind="written",
+            criteria=[dict(criterion_id="model", points=100)], total_weight=100,
+            original_task=task, task_sha256=task["sha256"], contract=contract,
+            contract_sha256=contract["sha256"], reference=self.put("reference.md", b"Synthetic reference."),
+            source_rubric=self.put("manuscript-rubric.json", dict(task_sha256=task["sha256"],
+                post_observation=True, criteria=[dict(id="model", points=100)])))
+        self.row.update(slot_id="S:A1", attempt_label="A1", status="delivery_failed", points=0,
+            complete=False, execution=self.data["native_execution"])
+        inputs = dict(schema="math-gauge.manuscript-completion-inputs/v1", benchmark_version="0.6.0",
+            model_label="Synthetic AGY", attempt_labels=["A1"], policy=policy, human_review="pending",
+            formal_comparison_eligible=False, case_index=[case], slots=[self.row])
+        def check():
+            return load_manuscript_completion_inputs(self.root,
+                dict(manuscript_completion_inputs=self.put("manuscript-inputs.json", inputs)))
+        with patch("math_gauge.claude_code_evidence.validate_failure",
+                   side_effect=AssertionError("Wrong native harness")):
+            actual = check()["slots"][0]
+            self.assertEqual(actual["points"], 0)
+            self.assertIsNone(actual["review"])
+            original = copy.deepcopy(case)
+            other = self.put("other-manuscript-task.md", b"A different frozen question.")
+            case.update(original_task=other, task_sha256=other["sha256"],
+                source_rubric=self.put("other-manuscript-rubric.json", dict(task_sha256=other["sha256"],
+                    post_observation=True, criteria=[dict(id="model", points=100)])))
+            with self.assertRaisesRegex(ValueError, "exact task"):
+                check()
+            inputs["case_index"] = [original]
+            self.data["native_events"] = self.put("events.ndjson", (json.dumps(self.terminal) + "\n").encode())
+            self.execution["artifact_hashes"]["output/events.ndjson"] = self.data["native_events"]["sha256"]
+            self.data["native_execution"] = self.put("execution.json", self.execution)
+            self.save()
+            self.row.update(execution=self.data["native_execution"],
+                delivery_failure=self.row["agy_native_evidence"])
+            with self.assertRaisesRegex(ValueError, "actual fixed limit"):
+                check()
 
     def attempt_record(self):
         bundles = {}

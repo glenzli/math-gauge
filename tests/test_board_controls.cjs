@@ -7,21 +7,22 @@ test('scoped preferences restore independently while legacy shared links remain 
  assert.deepEqual(readBoard('').shown,all);
  assert.deepEqual(readBoard('?show=smc,mc,smc','written').shown,['capability','strict']);
  const search='?show=rmc&complete=1&show-written=smc&complete-written=0';
- assert.deepEqual(readBoard(search,'overall'),{shown:['partial'],completeOnly:true});
- assert.deepEqual(readBoard(search,'written'),{shown:['strict'],completeOnly:false});
- assert.deepEqual(readBoard(search,'gap'),{shown:['RG','DG'],completeOnly:true});
+ assert.deepEqual(readBoard(search,'overall'),{shown:['partial']});
+ assert.deepEqual(readBoard(search,'written'),{shown:['strict']});
+ assert.deepEqual(readBoard(search,'gap'),{shown:['RG','DG']});
  assert.deepEqual(readBoard('?show-rates=attainment','rates').shown,['attainment']);
  assert.deepEqual(readBoard('?show-lean=unknown','lean').shown,all);
 });
 
 test('changing one board cannot change other boards, scores, sorting, language or anchor',()=>{
  const original=new URL('https://example.test/site/index.html?score=partial&sort-written=strict&sort-gap=DG&complete=1&show=rmc&lang=en&category=research#category-leaderboards');
+ const canonical=new URL(original);canonical.searchParams.delete('complete');
  for(const key of Object.keys(series)){
-  const changed=boardURL(original.href,key,{shown:[series[key][0].id],completeOnly:false});
+  const changed=boardURL(original.href,key,{shown:[series[key][0].id]});
   for(const other of Object.keys(series))if(other!==key)assert.deepEqual(readBoard(changed.search,other),readBoard(original.search,other));
-  assert.deepEqual(readBoard(changed.search,key),{shown:[series[key][0].id],completeOnly:false});
-  changed.searchParams.delete('show-'+key);changed.searchParams.delete('complete-'+key);
-  assert.equal(changed.href,original.href);
+  assert.deepEqual(readBoard(changed.search,key),{shown:[series[key][0].id]});
+  changed.searchParams.delete('show-'+key);
+  assert.equal(changed.href,canonical.href);
  }
 });
 
@@ -35,9 +36,11 @@ test('every board keeps at least one metric and canonical ordering without chang
 });
 
 test('returning to all metrics overrides a narrow legacy link for this board only',()=>{
- const url=boardURL('https://example.test/?show=rmc&complete=1','overall',{shown:all,completeOnly:false});
- assert.deepEqual(readBoard(url.search),{shown:all,completeOnly:false});
- assert.deepEqual(readBoard(url.search,'lean'),{shown:['partial'],completeOnly:true});
+ const url=boardURL('https://example.test/?show=rmc&complete=1&complete-lean=1','overall',{shown:all});
+ assert.deepEqual(readBoard(url.search),{shown:all});
+ assert.deepEqual(readBoard(url.search,'lean'),{shown:['partial']});
+ assert.equal(url.searchParams.has('complete'),false);
+ assert.equal(url.searchParams.has('complete-lean'),false);
 });
 
 test('visibility changes only supplied elements, preserving zero and unknown values',()=>{

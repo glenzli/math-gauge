@@ -3,13 +3,18 @@ import hashlib
 import json
 
 
-def delivery_progress(record, result, *, record_sha256, projection=None):
+def delivery_progress(record, result, *, record_sha256, projection=None, review_completion=None):
     if result.get('submission_summary') is not None:
         source=result['submission_summary']
         if source['planned']!=result['whole_task_counts']['planned']:
             raise ValueError('Submission progress changed the fixed A1 population')
-        return dict(source,delivered=source['active_final'],undelivered=source['blank'],
-                    method_version=result['submission_method_version'])
+        progress = dict(source,delivered=source['active_final'],undelivered=source['blank'],
+                        method_version=result['submission_method_version'])
+        if review_completion is not None:
+            if review_completion['resolved_pending_count'] != source['pending_original_record_review']:
+                raise ValueError('Source recovery belongs to another submission population')
+            progress.update(pending_original_record_review=0, source_review_status='complete')
+        return progress
     counts = result['whole_task_counts']
     planned, pending = counts['planned'], counts['unknown']
     coverage = result['coverage']

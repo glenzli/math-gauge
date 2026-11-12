@@ -44,6 +44,7 @@ MESSAGES = {
     '共同条件：允许本地工具及预置公共依赖，禁止联网检索与工具联网。各Harness版本及实际使用情况见模型详情。':
         'Common conditions: local tools and preinstalled public dependencies allowed; external retrieval and tool networking prohibited. See model details for scoped harness versions and actual usage.',
     '重跑与来源备注': 'Retries & provenance',
+    '首答 MC / RMC / SMC：': 'First attempt MC / RMC / SMC: ',
     '按规则采用首次正常交付；原答、失败及全部尝试记录保留。':
         'The first normal delivery is selected under the retry rule; original answers, failures and all attempts are retained.',
     '查看方法与来源 →': 'Method & provenance →', '分数落差': 'Score gaps',

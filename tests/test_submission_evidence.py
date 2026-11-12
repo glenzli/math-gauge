@@ -18,6 +18,52 @@ def descriptor(path, raw=b'original'):
     return dict(path=path, bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
 
 
+class SourceRecoveryReceiptTests(unittest.TestCase):
+    def fixture(self, root):
+        folder = root / 'fixture-model/snapshot'
+        folder.mkdir(parents=True)
+        source = {'conditions': {'nonlogical_retry_3': {
+            'summary': {'planned':39, 'pending':0, 'pending_original_record_review':3},
+            'public_initials':[{'case_id':'MG-C003','pending_original_record_review':True}],
+            'private_pending_original_record_review':2}}}
+        raw = json.dumps(source).encode()
+        (folder/'submission.json').write_bytes(raw)
+        record = {'submission_evidence':descriptor('submission.json',raw),
+                  'execution_summary':{'blocked_selfcheck_rounds':3,'delivered_selfcheck_rounds':0}}
+        raw = json.dumps(record).encode()
+        (folder/'record.json').write_bytes(raw)
+        receipt = dict(schema='math-gauge.source-review-completion/v1',version='0.1.0',
+            model_id='fixture-model',record_id='snapshot',record=descriptor('record.json',raw),
+            submission_evidence=record['submission_evidence'],status='complete',
+            scope='retained_initial_answers_and_source_recovery',reviewed_at='2026-11-11T00:00:00Z',
+            initial_tasks_reviewed=39,resolved_public_cases=['MG-C003'],resolved_private_count=2,
+            resolved_pending_count=3,unexecuted_selfcheck_rounds=[1,2,3],private_review_sha256='a'*64,
+            reviewer_kind='ai',human_review='pending',scores_modified=False,new_candidate_calls=0)
+        return folder, record, receipt
+
+    def test_recovery_keeps_original_record_and_unrun_rounds(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder,record,receipt = self.fixture(Path(temp))
+            original=(folder/'record.json').read_bytes()
+            self.assertIsNone(evidence.load_review_completion(folder,record))
+            (folder/'review-completion.json').write_text(json.dumps(receipt))
+            self.assertEqual(evidence.load_review_completion(folder,record),receipt)
+            self.assertEqual((folder/'record.json').read_bytes(),original)
+            (folder/'record.json').write_bytes(original+b' ')
+            with self.assertRaisesRegex(ValueError,'bytes changed'):
+                evidence.load_review_completion(folder,record)
+
+    def test_recovery_cannot_leak_private_ids_or_invent_round_delivery(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder,record,receipt=self.fixture(Path(temp))
+            for key,value in [('private_case_ids',['secret']),('unexecuted_selfcheck_rounds',[]),
+                              ('resolved_pending_count',2),('human_review','approved')]:
+                bad=dict(receipt,**{key:value})
+                (folder/'review-completion.json').write_text(json.dumps(bad))
+                with self.subTest(key=key),self.assertRaises(ValueError):
+                    evidence.load_review_completion(folder,record)
+
+
 class SubmissionScoringTests(unittest.TestCase):
     def work(self):
         case = dict(case_id='MG-GR021', contract_sha256='a'*64,

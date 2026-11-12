@@ -87,7 +87,6 @@ def count_chart(data, chart_renderer):
     for model in ordered_models(data):
         counts, coverage = model['observation']['counts'], model['observation']['coverage']
         value, mid = counts['confirmed_groups'], html.escape(model['id'], quote=True)
-        marker = '<sup aria-label="手稿题尚未测完">*</sup>' if counts['total_groups'] is None else ''
         color = html.escape(model['theme']['color'], quote=True)
         groups.append('<div class="initiative-bar-group" data-model-note="' + mid + '" style="--model-color:' + color + '">'
             '<div class="initiative-chart-model"><img alt="" src="' + html.escape(model['logo']['data_url'], quote=True) + '">'
@@ -97,7 +96,7 @@ def count_chart(data, chart_renderer):
             + f'{value / axis_end * 100:.8f}' + '%"></span></div><span class="initiative-value">' + str(value)
             + '<small data-lang-content="zh">组</small><small data-lang-content="en" hidden>'
             + ('group' if value == 1 else 'groups') + '</small>'
-            + marker + '</span></div></div>')
+            + '</span></div></div>')
     ticks = [{'position': value / axis_end * 100, 'label': str(value)} for value in range(0, axis_end + 1, step)]
     return chart_renderer(groups, 'initiative-chart-groups', '各模型已核实额外成果组数', ticks, 0)
 
@@ -109,18 +108,16 @@ def render_subboard(data, *, chart_renderer, controls=''):
     for model in ordered_models(data):
         observation = model['observation']
         counts, coverage = observation['counts'], observation['coverage']
-        marker = '<sup aria-label="手稿题尚未测完">*</sup>' if counts['total_groups'] is None else ''
         mid = html.escape(model['id'], quote=True)
         rows.append('<tr data-model-note="' + mid + '"><td><span class="initiative-model">'
             '<img alt="" src="' + html.escape(model['logo']['data_url'], quote=True) + '">'
             '<a data-context-link href="models/' + mid + '/index.html">' + html.escape(model['label'])
-            + '</a></span></td><td class="initiative-count">' + str(counts['confirmed_groups']) + marker
+            + '</a></span></td><td class="initiative-count">' + str(counts['confirmed_groups'])
             + '</td><td>' + str(coverage['reviewed']) + '/' + str(coverage['planned']) + '</td></tr>')
     return ('<details class="manuscript-observations view-board" data-board="initiative" id="research-initiative">'
         '<summary><span><strong>主动额外成果</strong><small>原任务未要求 · 手稿题观察</small></span>'
         '<span class="initiative-expand" aria-hidden="true">＋</span></summary>'
         '<div class="initiative-body"><div class="board-subhead"><span class="board-sort-static">按已核实组数排序</span><div class="board-toolbar">'+controls+'</div></div>'
-        '<p class="board-empty" data-board-empty hidden>当前筛选下没有已测完的模型。</p>'
         '<p class="initiative-intro">统计模型主动交付、经核实的独立额外成果组。</p>'
         '<p class="initiative-caveat">组数描述主动扩展任务的行为。成果价值及扩展范围是否合适，取决于研究问题和用途。</p>'
         '<p class="initiative-meta">五道手稿题（公1／私4） · 首答A1</p>'
@@ -129,7 +126,6 @@ def render_subboard(data, *, chart_renderer, controls=''):
         '<p class="initiative-foot">横轴为已核实成果组数。</p>'
         '<details class="initiative-coverage" data-display-mode="coverage"><summary>查看组数与审阅覆盖</summary><div class="table-wrap"><table class="compact initiative-table"><thead><tr><th>模型</th>'
         '<th>已核实额外成果组</th><th>已审手稿</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div></details>'
-        '<p class="initiative-foot" id="initiative-pending-note">* 手稿题尚未测完，所列为已核实组数。</p>'
         '<p class="initiative-foot">同一独立成果去重为一组；必要证明、纠错及题目要求的拓展归入原题评分。</p>'
         '<p class="initiative-links"><a href="../protocol/manuscript-observations.md">观察规则 →</a>'
         '<a href="../docs/manuscript-observations.md">观察报告 →</a></p>'

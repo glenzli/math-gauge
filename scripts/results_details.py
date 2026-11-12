@@ -283,6 +283,9 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         current = '<div class="evidence-condition" data-evidence-condition="'+condition+'"'+(' hidden' if condition!=CONDITIONS[0] else '')+'>'
         if submissions:
             selected=next(row for row in submissions['conditions'][condition]['public_initials'] if row['case_id']==cid)
+            if (model.get('review_completion') and condition == 'nonlogical_retry_3'
+                    and cid in model['review_completion']['resolved_public_cases']):
+                selected = dict(selected, pending_original_record_review=False)
             label={'active_final':'正常交卷；三种评分采用实际交付。',
                    'forced_content':'强收有内容；MC按已核实原成果计分，RMC与SMC为0。',
                    'blank':'原记录待复核，按已确认口径暂记0。' if selected['pending_original_record_review'] else '无可审核交付，计0。',
@@ -320,6 +323,11 @@ def render_model(page, data, model, cases, record, folder, markdown):
     details = compact_data(data, model)
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>')
+    if model.get('review_completion'):
+        receipt = Path(model['source_record']).parent / 'review-completion.json'
+        body += panel('来源审核完成', '<div class="prose"><p data-lang-content="zh">39道初答的原始答卷审核完成，三项缺档已复核。三轮自查因初答未交付而未执行，仍保留未知。</p>'
+            '<p data-lang-content="en" hidden>All 39 initial-answer sources have been reviewed, including the three recovered records. The three self-check rounds were not run because the initial engineering delivery was absent; their scores remain unknown.</p></div>'
+            '<p class="panel-foot">'+source_link(receipt,page,'补充复核记录 ↗')+'</p>')
     rates = model.get('content_rates')
     if rates:
         def percent(value):
@@ -373,6 +381,19 @@ def render_model(page, data, model, cases, record, folder, markdown):
     body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness_display_name'])+'</p><p>'
         +html.escape(model['harness']['tool_usage'])+'</p></div>'+harness_note+'<details class="nested evidence-fold"><summary>运行版本与来源</summary>'
         '<div class="prose"><p>'+html.escape(model['harness']['detail'])+'</p><p>'+source+'</p></div></details>')
+    if (model.get('record_kind') != 'paper_observation' and
+            model['retry']['combined'].get('retry_summary', {}).get('slots_with_reruns')):
+        first = []
+        for mode in data['display_score_modes']:
+            report = model['combined'] if mode['id'] == 'partial' else model[mode['id']]['single_attempt']
+            value = report['metrics']['earned']['confirmed']
+            first.append('—' if value is None else f'{value:.2f}')
+        body += panel('重跑与来源备注', '<div class="prose"><p data-original>'
+            +html.escape(model['retry']['note'])+'</p></div>'
+            '<p class="panel-foot"><span>首答 MC / RMC / SMC：</span>'
+            +'<span class="mono">'+' / '.join(first)+'</span> · '
+            '<a data-context-link href="../../method.html">查看方法与来源 →</a></p>',
+            id='retry-provenance')
     body += panel('下载当前口径', '<div class="downloads panel-downloads" id="downloads"></div><p class="panel-foot"><a data-context-link href="../../method.html">查看完整方法与数据说明 →</a></p>')
     return shell(page,model['label'],'模型详细评测 · 公开＋私有合并成绩',body,details,'model-results.js')
 

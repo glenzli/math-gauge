@@ -585,8 +585,15 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
         if row["status"] == "not_run":
             continue
         if row["status"] == "delivery_failed":
-            from .claude_code_evidence import validate_failure
-            validate_failure(root, row, evidence_bytes)
+            if row.get("agy_native_evidence") is not None:
+                failure = validate_native_delivery_failure(root, row)
+                if (failure.get("schema") != "math-gauge.agy-native-evidence/v1"
+                        or evidence_bytes(root, failure["candidate_input"])
+                        != evidence_bytes(root, cases[row["case_id"]]["original_task"])):
+                    raise ValueError("AGY manuscript failure changed its exact task")
+            else:
+                from .claude_code_evidence import validate_failure
+                validate_failure(root, row, evidence_bytes)
             continue
         if row["status"] == "execution_authentication_failed":
             _validate_manuscript_request_history(root, row, cases[row["case_id"]])

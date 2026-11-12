@@ -42,3 +42,31 @@ class AnswerDeliveryTests(unittest.TestCase):
         self.result['whole_task_counts']['unknown'] = 3
         progress = delivery_progress({'execution_summary': {'delivered_initial_tasks': 39}}, self.result, record_sha256='source')
         self.assertEqual((progress['delivered'], progress['pending'], progress['undelivered']), (39, 0, 0))
+
+    def test_recovered_source_status_does_not_change_delivery_or_math(self):
+        self.result.update(submission_method_version='0.1.0', submission_summary={
+            'planned':39, 'active_final':21, 'forced_content':5, 'blank':13, 'pending':0,
+            'pending_original_record_review':3})
+        original = copy.deepcopy(self.result)
+        progress = delivery_progress({}, self.result, record_sha256='source',
+                                     review_completion={'resolved_pending_count':3})
+        self.assertEqual((progress['delivered'],progress['forced_content'],progress['blank']), (21,5,13))
+        self.assertEqual(progress['pending_original_record_review'],0)
+        self.assertEqual(self.result, original)
+        with self.assertRaisesRegex(ValueError, 'another submission population'):
+            delivery_progress({},self.result,record_sha256='source',
+                              review_completion={'resolved_pending_count':2})
+
+    def test_browser_recovery_hides_old_pending_note_without_rewriting_scores(self):
+        from scripts.results_presentation import model_view
+        result = {'metrics':{'earned':{'confirmed':41.48,'exact':None}},'contributions':{},
+                  'submission_summary':{'planned':39,'active_final':21,'forced_content':5,
+                      'blank':13,'pending':0,'pending_original_record_review':3}}
+        model = {'combined':result,'retry':{'combined':result},'content_rates':None,
+                 'capability':{'nonlogical_retry_3':result},'strict':{'nonlogical_retry_3':result},
+                 'answer_delivery':{'source_review_status':'complete'}}
+        before=copy.deepcopy(model)
+        projected=model_view(model)
+        self.assertEqual(projected['retry']['combined']['submission_summary']['pending_original_record_review'],0)
+        self.assertEqual(projected['retry']['combined']['metrics'],result['metrics'])
+        self.assertEqual(model,before)

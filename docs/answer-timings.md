@@ -76,6 +76,12 @@ python3 scripts/render_timing_reference.py
 
 输入为当前公开成绩、源绑定时间附件、模型显示资料和具名补充观察；独立预览及JSON在`site/timings/`。主站和预览共用同一面板、脚本与样式，排序使用与其他榜单一致的分段按钮，保留在`sort-time`参数，中英文跟随页面语言。
 
+## GLM补充复核与中止计时更正
+
+2026-11-11已完成GLM三项末次来源复核，数学分数保持不变。C003、另两份私有书面题的末次尝试均由操作者中止，启动至最后真实输出的观测间隔分别约17.93、6.96、4.96分钟；没有精确退出事件，采用`operator_reported_elapsed`并标明约值。C003主图改用该末次约17.93分钟；首试180.12分钟仍留物理尝试历史。
+
+另四次首试的原`elapsed_seconds`混入隔夜等待与重新接上，已按原始输出时钟更正为约15.87、15.87、13.60、3.28分钟。原元数据和更正前附件完整保留在私库；更正不改变题目选择、日常五题加权均值或中位数。三轮未执行自查继续没有耗时。
+
 ## 历史十模型恢复批次
 
 下表保留旧批次的正常交卷描述统计，包含旧DeepSeek快照，不能用作当前典型题参考榜或完整运行成本。
@@ -95,7 +101,7 @@ python3 scripts/render_timing_reference.py
 | [Astra 6 max](../results/v0.6.0/astra-6-max/20261109/answer-timings.json) | 39/39 | 9.22 | 10.30 | 37.20 | 6.69 | 3/3 |
 | [Claude Opus 5.5 max](../results/v0.6.0/claude-opus-5.5-max/20261109/answer-timings.json) | 39/39 | 15.63 | 18.24 | 76.72 | 11.85 | 3/3 |
 | [DeepSeek v4.1 Flash 1017](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/answer-timings.json) | 27/39 | 9.92 | 10.53 | 25.60 | 4.74 | 0/3 |
-| [Dot Underlying Model](../results/v0.6.0/dot-underlying-model-20261108/20261108/answer-timings.json) | 38/39 | 3.49 | 4.91 | 18.28 | 3.11 | 3/3 |
+| [Dot Underlying (2026-11-08)](../results/v0.6.0/dot-underlying-model-20261108/20261108/answer-timings.json) | 38/39 | 3.49 | 4.91 | 18.28 | 3.11 | 3/3 |
 
 Terra xhigh、Sol两档、Astra及Opus用原生首次终态口径。Terra max与Gemini 3.8混合原运行器耗时和历史恢复摘要；Dot为协调者观察间隔，可能多含轮询延迟；DeepSeek为操作者交回摘要。覆盖、题目构成、运行批次和计时精度不同，这张总表不能直接充作同条件速度排名。
 

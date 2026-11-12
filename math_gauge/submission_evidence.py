@@ -32,6 +32,49 @@ def validate_descriptor(item):
     return item
 
 
+def load_review_completion(folder, record):
+    """Read a later source-recovery receipt without rewriting frozen judgments."""
+    folder = Path(folder)
+    path = folder / 'review-completion.json'
+    if not path.is_file():
+        return None
+    data = json.loads(path.read_bytes())
+    fields = {'schema', 'version', 'model_id', 'record_id', 'record', 'submission_evidence',
+              'status', 'scope', 'reviewed_at', 'initial_tasks_reviewed',
+              'resolved_public_cases', 'resolved_private_count', 'resolved_pending_count',
+              'unexecuted_selfcheck_rounds', 'private_review_sha256', 'reviewer_kind',
+              'human_review', 'scores_modified', 'new_candidate_calls'}
+    require(set(data) == fields and data['schema'] == 'math-gauge.source-review-completion/v1'
+            and data['version'] == '0.1.0' and data['status'] == 'complete'
+            and data['scope'] == 'retained_initial_answers_and_source_recovery'
+            and data['reviewer_kind'] == 'ai' and data['human_review'] == 'pending'
+            and data['scores_modified'] is False and data['new_candidate_calls'] == 0,
+            'Invalid source-review completion receipt')
+    require(data['model_id'] == folder.parent.name and data['record_id'] == folder.name
+            and json.loads(_read(folder, data['record'])) == record
+            and data['record']['path'] == 'record.json'
+            and data['submission_evidence'] == record['submission_evidence'],
+            'Source-review completion binds another retained record')
+    require(isinstance(data['private_review_sha256'], str)
+            and re.fullmatch(r'[0-9a-f]{64}', data['private_review_sha256']),
+            'Source-review completion lost its private evidence')
+    archive = json.loads(_read(folder, data['submission_evidence']))
+    current = archive['conditions']['nonlogical_retry_3']
+    resolved = {r['case_id'] for r in current['public_initials'] if r['pending_original_record_review']}
+    require(data['resolved_public_cases'] == sorted(resolved)
+            and data['resolved_private_count'] == current['private_pending_original_record_review']
+            and data['resolved_pending_count'] == len(resolved) + data['resolved_private_count']
+            == current['summary']['pending_original_record_review']
+            and data['initial_tasks_reviewed'] == current['summary']['planned'] == 39
+            and current['summary']['pending'] == 0,
+            'Source-review completion changed the fixed review population')
+    require(data['unexecuted_selfcheck_rounds'] == [1, 2, 3]
+            and record['execution_summary']['blocked_selfcheck_rounds'] == 3
+            and record['execution_summary']['delivered_selfcheck_rounds'] == 0,
+            'Source review cannot invent selfcheck delivery')
+    return data
+
+
 def _evidence(items):
     require(isinstance(items, list) and items, 'Original byte evidence is required')
     for item in items:

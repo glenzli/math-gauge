@@ -1,0 +1,35 @@
+{
+  "schema": "math-gauge.cost-policy/v1",
+  "version": "0.1.0",
+  "benchmark_version": "0.6.0",
+  "currency": "USD",
+  "selection": "one_retained_attempt_per_slot",
+  "failed_selection": "last_retained_attempt_when_no_normal_final",
+  "fixed_selfcheck_rounds": 3,
+  "other_retries_included": false,
+  "reviewer_and_controller_calls_included": false,
+  "scope": "39 initial-answer slots and 3 prescribed self-check slots; recorded non-execution is distinct from missing usage",
+  "token_rules": {
+    "codex": "input includes cached input; output includes reasoning",
+    "agy": "native input excludes cached input; output includes thinking",
+    "claude_code": "ordinary input, cache reads and cache writes are disjoint; output includes thinking",
+    "missing_is_zero": false,
+    "api_caller_ledger": "API input includes cache read/write; preserve caller-recorded fields and statuses without estimating unreported physical generation"
+  },
+  "cost_resolutions": {
+    "source_bound": true,
+    "reported_terminal_usage": "A user-selected reported-usage reference binds each retained final cumulative receipt; original generation gaps remain unchanged and no missing tokens are imputed",
+    "test_date_zero_charge": "Dot Underlying 2026-11-08 used a sufficient separate allowance bundled with its subscription and incurred zero additional charge; no subscription amortization, token counters and backend SKU remain unknown",
+    "native_usage_coverage_preserved": true,
+    "caller_recorded_usage_reference": "A user-confirmed API caller ledger is filtered to rule-selected attempts; absent caller records add no imputed usage under that specific confirmation. Recorded zero-output and ERROR input fields stay unchanged; this is reference repricing, not an invoice or a general missing-log exemption."
+  },
+  "presentation": {
+    "show": "total_cost_only",
+    "estimated_models": [],
+    "partial_totals_ranked": false,
+    "estimated_points_define_observed_frontier": false,
+    "frontier_score_default": "partial",
+    "time_measure": "the_existing_five_task_weighted_mean",
+    "actual_invoice_claimed": false
+  }
+}

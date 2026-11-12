@@ -16,7 +16,7 @@
 | Terra 6.1 (max) | 1 | 5/5 |
 | Astra 6 (max) | 0 | 5/5 |
 | DeepSeek v4.1 Flash (max) | 0 | 5/5 |
-| Dot Underlying | 0 | 5/5 |
+| Dot Underlying (2026-11-08) | 0 | 5/5 |
 | Gemini 3.8 Flash (high) | 0 | 5/5 |
 | Gemini 4 Argon (high) | 0 | 5/5 |
 | GLM 5.3 (max) | 0 | 2/5 |

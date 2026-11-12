@@ -40,6 +40,12 @@ def model_view(model, *, model_page=False):
     for mode in ("capability", "strict"):
         view[mode] = {condition: result_view(result, model_page=model_page)
                       for condition, result in model[mode].items()}
+    if model.get('answer_delivery', {}).get('source_review_status') == 'complete':
+        retained_views = [view['combined'], view['retry']['combined'],
+                          *view['capability'].values(), *view['strict'].values()]
+        for result in retained_views:
+            if result.get('submission_summary') is not None:
+                result['submission_summary']['pending_original_record_review'] = 0
     if model_page:
         alignment = model["alignment_selfcheck"]
         view["alignment_selfcheck"] = {

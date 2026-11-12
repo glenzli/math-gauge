@@ -63,7 +63,7 @@ Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Pe
 | [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39 / 0 / 39 |
 | [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39 / 0 / 39 |
 | [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39 / 0 / 39 |
-| [Dot Underlying](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39 / 0 / 39 |
+| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39 / 0 / 39 |
 | [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39 / 0 / 39 |
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39 / 0 / 39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39 / 0 / 39 |
@@ -72,15 +72,15 @@ Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Pe
 | [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI | 76.71 | 64.23 | 25.83 | 37 / 1 / 39 |
 | [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37 / 2 / 39 |
 | [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38 / 1 / 39 |
-| [GLM 5.3 (max)*](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
+| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
 
-\* Evaluation is incomplete: the value is confirmed contribution, while unrun tasks remain unknown. Full intervals are available in model details. Tested tasks that time out without a submission are scored under the failure rules.
+Per-round sources and full score intervals are available in model details. Tested tasks that time out without a submission are scored under the failure rules.
 
 ¹ Dot's native independent execution mode.
 
 ² Under DeepSeek Harness (DSH), many tasks exhausted the maximum output budget through prolonged reasoning without delivering an answer, so execution uses Codex CLI.
 
-³ GLM 5.3 had many timeouts under both Codex CLI and Claude Code. The retained results use Claude Code; without a normal final, RMC and SMC are zero; verified original work may earn MC.
+³ GLM 5.3's 39 initial-answer sources have all been reviewed, including the three recovered records. The three self-check rounds were not run and remain unknown. The retained results use Claude Code; without a normal final, RMC and SMC are zero; verified original work may earn MC.
 
 ⁴ Some Argon tasks did not terminate with a normal submission. Two tasks retained verifiable mathematical content and receive MC only; their RMC and SMC are zero.
 
@@ -94,7 +94,9 @@ Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set
 
 The timing chart compares whole-chapter formalization with the weighted mean and median of five typical tasks, in minutes. It includes tool use and waiting; harness, network and hardware vary. See the [method and sources](docs/answer-timings.md) for this practical runtime reference.
 
-The overall and research screenshots use the completed-model filter; completed evaluation does not imply correct answers to every task. The timing chart retains every model with recorded times. The default page includes all selected models. It provides an overall leaderboard, three category leaderboards, two rates, and a collapsed score-gap panel. Each board has independent metric, model-filter and sorting controls, with bilingual display and shareable URL state. Model pages expose subcategory and task details.
+Below the main results, the [total-cost and frontier panels](site/index.html?lang=en#cost-reference) count only the retained attempt for each task, excluding other retries. Argon is $33.84 using its final cumulative receipts; Dot Underlying (2026-11-08) used a separate subscription-bundled allowance with $0 additional cost. DeepSeek uses uniform official peak rates with cache discounts, totaling $6.41. Terra Max and Gemini 3.8 Flash usage is fully recovered at $10.96 and $23.41. Kimi and GLM use caller-recorded usage, repriced at $29.85 and $40.88 without imputed usage. See the [cost method](docs/cost-reference.md) for prices, source confirmations and frontier rules.
+
+The leaderboard publishes selected snapshots after their test process has ended; future tests are added after settlement. It provides an overall leaderboard, three category leaderboards, two rates, and a collapsed score-gap panel, with independent metric and sorting controls, bilingual display and shareable URL state. Model pages retain task results, self-check execution states and score intervals.
 
 ## Running and reproducing
 

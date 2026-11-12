@@ -25,6 +25,8 @@ from scripts.results_harness import display_harness_labels
 from scripts.results_presentation import project_payload
 from scripts.results_publication import prepare_publication, write_publication
 from scripts.timing_reference import build_reference, render_panel
+from scripts.cost_reference import build_reference as build_cost_reference, render_panel as render_cost_panel
+from math_gauge.submission_evidence import load_review_completion
 
 MODEL_THEMES = {
     "glm-5.3-max": {"color": "#444b60", "ink": "#363d50", "tint": "#f1f2f5"},
@@ -40,6 +42,7 @@ MODEL_THEMES = {
     "deepseek-v4.1-flash-1017": {"color": "#4b6ed8", "ink": "#3655b2", "tint": "#f1f4fd"},
     "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+    "gemini-4-carbon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
     "glm-5.3-max": ("Z.ai", "zai.svg"),
@@ -55,8 +58,10 @@ MODEL_PROVIDERS = {
     "deepseek-v4.1-flash-1017": ("DeepSeek", "deepseek.svg"),
     "gemini-3.8-flash-high": ("Google", "google.svg"),
     "gemini-4-argon": ("Google", "google.svg"),
+    "gemini-4-carbon": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
+    "dot-underlying-model-20261108": "Dot Underlying (2026-11-08)",
     "glm-5.3-max": "GLM 5.3 (max)",
     "kimi-3.1-pro-max": "Kimi 3.1 Pro (max)",
     "astra-6-max": "Astra 6 (max)",
@@ -69,9 +74,11 @@ MODEL_LABELS = {
     "terra-6.1-xhigh": "Terra 6.1 (xhigh)",
     "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash (max)",
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
-    "gemini-4-argon": "Gemini 4 Argon (high)"
+    "gemini-4-argon": "Gemini 4 Argon (high)",
+    "gemini-4-carbon": "Gemini 4 Carbon (high)"
 }
 MODEL_SHORT_LABELS = {
+    "dot-underlying-model-20261108": "Dot (2026-11-08)",
     "glm-5.3-max": "GLM (max)",
     "kimi-3.1-pro-max": "Kimi (max)",
     "astra-6-max": "Astra (max)",
@@ -84,7 +91,8 @@ MODEL_SHORT_LABELS = {
     "terra-6.1-xhigh": "Terra (xhigh)",
     "deepseek-v4.1-flash-1017": "DeepSeek (max)",
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
-    "gemini-4-argon": "Gemini 4 Argon (high)"
+    "gemini-4-argon": "Gemini 4 Argon (high)",
+    "gemini-4-carbon": "Gemini 4 Carbon (high)"
 }
 
 
@@ -205,7 +213,7 @@ def build_data(source_root=ROOT):
         icon_path = root / 'site/assets/logos/openai.svg'
         icon = icon_path.read_bytes()
         partial = scores['partial']
-        models.append({'id': native['model_id'], 'label': 'Dot Underlying', 'source_model_label': native['model_label'], 'short_label': 'Dot Underlying',
+        models.append({'id': native['model_id'], 'label': MODEL_LABELS[native['model_id']], 'source_model_label': native['model_label'], 'short_label': MODEL_SHORT_LABELS[native['model_id']],
             'record_kind': 'native_harness', 'comparison_note': native['comparison_note'],
             'theme': dict(MODEL_THEMES['terra-6.1-max']),
             'harness': native['harness'],
@@ -229,8 +237,16 @@ def build_data(source_root=ROOT):
         model['harness_display_name'] = harness_display_name(model)
         model['fully_evaluated'] = is_fully_evaluated(model)
         record_bytes = (root / model['source_record']).read_bytes()
+        original_record = json.loads(record_bytes)
+        completion = load_review_completion((root / model['source_record']).parent, original_record)
+        if completion is not None:
+            model['review_completion'] = completion
+            path = (root / model['source_record']).parent / 'review-completion.json'
+            sources.append({'path': str(path.relative_to(root)),
+                            'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
         model['answer_delivery'] = delivery_progress(json.loads(record_bytes), model['retry']['combined'],
-            record_sha256=hashlib.sha256(record_bytes).hexdigest(), projection=delivery_projections.get(model['id']))
+            record_sha256=hashlib.sha256(record_bytes).hexdigest(), projection=delivery_projections.get(model['id']),
+            review_completion=completion)
         if model.get('record_kind') == 'paper_observation':
             model['comparison_note'] = ''
             model['retry']['note'] = '全部尝试记录与答卷来源见正式档案。'
@@ -277,11 +293,6 @@ def evaluation_progress(result):
     return {"planned": counts["planned"], "adjudicated": counts["passed"] + counts["failed"],
             "pending": counts["unknown"], "pending_rounds": pending_rounds,
             "incomplete": counts["unknown"] > 0 or pending_rounds > 0}
-
-
-def incomplete_marker(progress):
-    return ('<sup class="incomplete-marker" aria-label="尚未测完">*</sup>'
-            if progress['incomplete'] else '')
 
 
 def harness_display_name(model):
@@ -381,14 +392,12 @@ def board_settings(key, items):
             +'" aria-controls="board-options-'+key+'" aria-expanded="false" aria-label="榜单显示设置">'
             '<svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">'
             '<path d="M3 5h14M3 10h14M3 15h14"/><path d="M7 2.5v5M13 7.5v5M8 12.5v5" stroke-width="3"/></svg>'
-            '<span>设置</span><i class="board-filter-dot" data-filter-active hidden></i></button>'
+            '<span>设置</span></button>'
             '<div class="board-options" id="board-options-'+key+'" role="dialog" aria-label="榜单显示设置" hidden>'
             '<div class="board-options-head"><div><strong>显示设置</strong><small>只影响此榜单</small></div>'
             '<button type="button" class="board-options-close" data-board-close aria-label="关闭设置">×</button></div>'
             '<fieldset><legend>展示项目</legend><div class="board-series-options">'+options+'</div>'
-            '<button type="button" class="board-show-all" data-show-all>全部显示</button></fieldset>'
-            '<fieldset><legend>模型范围</legend><label class="board-completed-filter"><input type="checkbox" data-board-complete>'
-            '<span>仅显示已测完模型</span></label></fieldset></div>')
+            '<button type="button" class="board-show-all" data-show-all>全部显示</button></fieldset></div>')
 
 
 def score_board_settings(key, modes):
@@ -418,8 +427,6 @@ def render_gap_chart(data):
     ordered = sorted(data['models'], key=order)
     for model in ordered:
         row = lookup['RG'][model['id']]
-        progress = row['coverage']
-        marker = incomplete_marker(progress)
         bars = []
         for table in diagnostic['tables']:
             item = lookup[table['id']][model['id']]
@@ -437,13 +444,12 @@ def render_gap_chart(data):
             +html.escape(model['theme']['color'], quote=True)+';--model-ink:'
             +html.escape(model['theme']['ink'], quote=True)+'"><div class="gap-model-label"><img class="gap-logo" '
             'alt="" width="24" height="24" src="'+html.escape(model['logo']['data_url'], quote=True)+'"><div><span>'
-            +html.escape(model['label'])+marker+'</span></div></div>'
+            +html.escape(model['label'])+'</span></div></div>'
             '<div class="gap-model-bars">'+''.join(bars)+'</div></div>')
     return ('<div class="board-subhead"><p class="panel-desc">RG＝RMC−MC · DG＝SMC−MC · 百分点</p>'
             '<div class="board-toolbar">'
             +sort_control('gap', '分数落差排序', [('RG','RG 接近0优先'),('DG','DG 接近0优先')], 'RG')
             +board_settings('gap', [('RG','RG · 可靠差'),('DG','DG · 交付差')])+'</div></div>'
-            '<p class="board-empty" data-board-empty hidden>当前筛选下没有已测完的模型。</p>'
             '<figure class="gap-figure" aria-labelledby="gap-heading"><figcaption class="gap-caption">'
             '<span>越接近0，分数落差越小</span><span class="chart-legend">'
             '<span class="legend-item" data-display-mode="RG"><i class="legend-swatch rmc" aria-hidden="true"></i>RG · 可靠差</span>'
@@ -472,8 +478,6 @@ def grouped_bars(data, category=None):
     span, zero = 100 - minimum, -minimum / (100 - minimum) * 100
     for model in ordered:
         bars, spoken = [], []
-        progress = (model['evaluation_progress']['nonlogical_retry_3'] if category is None else
-                    {'incomplete': any(views[mode['id']][model['id']]['incomplete'] for mode in modes)})
         for mode in modes:
             bounds = views[mode['id']][model['id']]
             value = bounds['value']
@@ -491,17 +495,16 @@ def grouped_bars(data, category=None):
                 '<span class="score-readout"><small>'+mode['abbreviation']+'</small>'
                 '<span class="chart-value"'+scope_attr+' data-score-mode="'+mode['id']+'" '
                 +'title="'+html.escape(interval, quote=True)+'">'+text+'</span></span></div>')
-        status = '。尚未测完' if progress['incomplete'] else ''
         label = html.escape(model['label'])
         logo = model['logo']
         theme = model['theme']
         groups.append('<div class="bar-group"'+scope_attr+' data-model="'+html.escape(model['id'], quote=True)+'" role="group" '
-            +'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken)+status, quote=True)+'" '
+            +'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken), quote=True)+'" '
             +'style="--model-color:'+html.escape(theme['color'], quote=True)+';--model-ink:'+html.escape(theme['ink'], quote=True)
             +'">'
             '<div class="chart-model"><img class="provider-logo"'+scope_attr+' src="'+html.escape(logo['data_url'], quote=True)+'" '
             +'alt="'+html.escape(logo['label'], quote=True)+'" width="24" height="24"><div><span>'+label
-            +incomplete_marker(progress)+'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
+            +'</span></div></div><div class="metric-bars">'+''.join(bars)+'</div></div>')
     ticks = [dict(position=(value-minimum)/span*100, label=str(value)) for value in range(minimum, 101, 20)]
     chart_id = 'chart-groups' if category is None else 'category-chart-groups-'+scope
     label = ('各模型' if category is None else category['title']+'各模型')+'MC、RMC、SMC规则成绩'
@@ -532,17 +535,16 @@ def render_content_rates(data):
                 '<span class="score-readout"><small>'+('可靠' if ident == 'reliability' else '达成')+'</small>'
                 '<span class="rate-value">'+text+'</span></span></div>')
         progress = model['evaluation_progress']['nonlogical_retry_3']
-        spoken_status = '。尚未测完' if progress['incomplete'] else ''
         theme = model['theme']
         groups.append('<div class="rate-model-group" data-model="'+model['id']+'" role="group" '
-            'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken)+spoken_status, quote=True)+'" '
+            'aria-label="'+html.escape(model['label']+'。'+'，'.join(spoken), quote=True)+'" '
             'style="--model-color:'+theme['color']+';--model-ink:'+theme['ink']+'">'
             '<div class="chart-model">'
             '<img class="rate-provider-logo" src="'+html.escape(model['logo']['data_url'], quote=True)
             +'" alt="'+html.escape(model['logo']['label'], quote=True)+'" width="24" height="24">'
             '<div><a data-context-link href="models/'+model['id']
             +'/index.html?score=partial&amp;condition=nonlogical_retry_3">'+html.escape(model['label'])
-            +incomplete_marker(progress)+'</a></div></div>'
+            +'</a></div></div>'
             '<div class="metric-bars">'+''.join(bars)+'</div></div>')
     ticks = [dict(position=value, label=str(value)) for value in range(0, 101, 20)]
     return ('<section class="panel view-board" data-board="rates" id="content-rates"><div class="panel-head"><div><h2 id="rate-heading">内容可靠率与目标达成率</h2>'
@@ -550,7 +552,6 @@ def render_content_rates(data):
             '<div class="board-toolbar">'
             +sort_control('rates', '两率图排序', [('reliability','内容可靠率 高→低'),('attainment','目标达成率 高→低')], 'reliability')
             +board_settings('rates', [('reliability','内容可靠率'),('attainment','目标达成率')])+'</div></div>'
-            '<p class="board-empty" data-board-empty hidden>当前筛选下没有已测完的模型。</p>'
             '<figure class="score-figure rate-figure" aria-labelledby="rate-heading"><figcaption class="chart-caption">'
             '<span>百分比 · 0–100</span><span class="chart-legend"><span class="legend-item" data-display-mode="reliability">'
             '<i class="legend-swatch rmc" aria-hidden="true"></i>内容可靠率</span><span class="legend-item" data-display-mode="attainment">'
@@ -572,7 +573,7 @@ def render_category_leaderboards(data):
                       +str(group['weight'])+'%</p></div>'
                       +'<div class="board-toolbar">'+sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'partial')
                       +score_board_settings(group['id'], data['display_score_modes'])+'</div>'
-                      +'</div><p class="board-empty" data-board-empty hidden>当前筛选下没有已测完的模型。</p><figure class="score-figure category-figure" aria-label="'+title+'分类成绩图">'
+                      +'</div><figure class="score-figure category-figure" aria-label="'+title+'分类成绩图">'
                       '<figcaption class="chart-caption"><span>类内百分制</span><span class="chart-legend">'
                       +''.join('<span class="legend-item" data-display-mode="'+mode['id']+'"><i class="legend-swatch '+mode['abbreviation'].lower()+'" aria-hidden="true"></i>'
                                +mode['abbreviation']+'</span>' for mode in data['display_score_modes'])
@@ -596,7 +597,7 @@ def is_fully_evaluated(model):
             and selected_result(model)['metrics']['overall']['exact'] is not None)
 
 
-def render(data, *, timing_reference=None):
+def render(data, *, timing_reference=None, cost_reference=None):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
@@ -615,21 +616,11 @@ def render(data, *, timing_reference=None):
             score_cells.append('<td data-display-mode="'+mode['id']+'" class="numeric score-cell'+(' primary-score' if mode['id']=='partial' else '')+'">'
                 '<span class="score-number">'+('—' if value is None else f'{value:.2f}')+'</span></td>')
         rows.append('<tr><td class="rank">'+str(index)+'</td><td class="model-name"><a href="'+source+'">'
-            +html.escape(model['label'])+incomplete_marker(progress)+'</a><span class="mobile-harness">'
+            +html.escape(model['label'])+'</a><span class="mobile-harness">'
             +html.escape(harness_display_name(model))+'</span><span class="mobile-delivery">交卷 '+delivered+'</span></td>'
             '<td class="harness-cell">'+html.escape(harness_display_name(model))+'</td>'
             '<td class="numeric delivery-cell">'+delivered+'</td>'+''.join(score_cells)
             +'<td class="numeric"><a href="'+source+'">详细评测 →</a></td></tr>')
-    notes = []
-    for model in data['models']:
-        if model.get('record_kind') == 'paper_observation':
-            continue
-        if model['retry']['combined'].get('retry_summary', {}).get('slots_with_reruns'):
-            first = '／'.join(f'{earned_value(model["combined"] if mode["id"]=="partial" else model[mode["id"]]["single_attempt"]):.2f}'
-                             for mode in data['display_score_modes'])
-            notes.append('<span data-model-note="'+html.escape(model['id'], quote=True)+'">'
-                         +html.escape(model['label']+'：'+model['retry']['note'])
-                         +' 首答MC／RMC／SMC：'+first+'。</span>')
     values = {"DATA": payload, "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
               "REVIEW_STATUS": review_status(data, 'method.html#review-process'),
               "LANGUAGE_SWITCH": language_switch(),
@@ -637,16 +628,12 @@ def render(data, *, timing_reference=None):
               "GAP_CHART": render_gap_chart(data),
               "CONTENT_RATES": render_content_rates(data),
               "CATEGORY_RANKINGS": render_category_leaderboards(data),
-              "INCOMPLETE_NOTE": ('<p class="panel-foot coverage-note">* 尚未测完</p>'
-                                  if any(m['evaluation_progress']['nonlogical_retry_3']['incomplete']
-                                         for m in data['models']) else '')
-                                  + ('<p class="panel-foot" data-model-note="dot-underlying-model-20261108">¹ Dot原生独立运行方式</p>'
+              "MODEL_NOTES": ('<p class="panel-foot" data-model-note="dot-underlying-model-20261108">¹ Dot原生独立运行方式</p>'
                                      if any(m.get('record_kind') == 'native_harness' for m in data['models']) else '')
                                   + ''.join('<p class="panel-foot" data-model-note="'+html.escape(m['id'], quote=True)+'">'
                                              +html.escape(m['harness']['note_marker']+' '+m['harness']['note_text'])+'</p>'
                                              for m in sorted(data['models'], key=lambda m: m['harness'].get('note_marker', ''))
                                              if m['harness'].get('note_text')),
-              "RETRY_NOTES": '<br>'.join(notes) or '当前留档没有另计的非逻辑重跑。',
               "MODE_CONTROLS": ''.join(
                   '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)
                   +'" aria-pressed="'+str(m['id']==data['default_score_mode']).lower()+'"><span class="mode-name">'
@@ -667,7 +654,10 @@ def render(data, *, timing_reference=None):
               "CAPACITY": str(data["capacity"]["active"]),
               "TIMING_REFERENCE": render_panel(timing_reference) if timing_reference else '',
               "TIMING_CSS": '<link rel="stylesheet" href="assets/timing-reference.css">' if timing_reference else '',
-              "TIMING_JS": '<script src="assets/timing-reference.js"></script>' if timing_reference else ''}
+              "TIMING_JS": '<script src="assets/timing-reference.js"></script>' if timing_reference else '',
+              "COST_REFERENCE": render_cost_panel(cost_reference),
+              "COST_CSS": '<link rel="stylesheet" href="assets/cost-reference.css">' if cost_reference else '',
+              "COST_JS": '<script src="assets/cost-reference.js"></script>' if cost_reference else ''}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
     return re.sub(r"@@MG_(" + '|'.join(re.escape(key) for key in values) + r")@@",
                   lambda match: values[match[1]], template)
@@ -677,12 +667,15 @@ def write_site(destination, *, source_root=ROOT):
     dest = Path(destination)
     data = build_data(source_root)
     timings = build_reference(source_root,display_data=data)
+    costs = build_cost_reference(source_root,display_data=data,timing_reference=timings)
     # Resolve all evidence before changing navigation or writing any page.
     files = build_detail_pages(data, source_root)
-    files["index.html"] = render(data,timing_reference=timings)
+    files["index.html"] = render(data,timing_reference=timings,cost_reference=costs)
     files['downloads/timing-reference.json'] = json.dumps(timings,ensure_ascii=False,indent=2)+'\n'
+    if costs is not None:
+        files['downloads/cost-reference.json'] = json.dumps(costs,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-reference.js"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     for model in data["models"]:
