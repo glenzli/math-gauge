@@ -118,7 +118,7 @@ def check_plan(plan: dict) -> None:
     if plan.get("schema") == "math-gauge.reliability-material-plan/v3":
         ids = [row["case_id"] for row in plan.get("cases", [])]
         public_count = read(ROOT / "benchmark.json")["public"]["tasks"]
-        require(plan.get("protocol_version") == "0.5.0" and plan.get("suite_version") == "0.6.0"
+        require(plan.get("protocol_version") == "0.5.0" and plan.get("suite_version") == read(ROOT / "benchmark.json")["version"]
                 and len(ids) == public_count and len(set(ids)) == public_count
                 and plan.get("candidate_calls") == 0 and plan.get("execution_authorized") is False
                 and plan.get("human_approved") is False and plan.get("actual_results") is None
@@ -509,7 +509,7 @@ def validate_v06_materials(root, plan, selection, prompts, schedule, *, refresh=
               "candidate_model_calls": 0, "lean_compilations": 0, "human_approved": False,
               "runner_offline_acceptance": {"status": "new-version-focused-tests-separately-recorded",
                                              "formal_model_result": False},
-              "scope": "Local0.6 material and projection checks; no mathematical adjudication or candidate result import."}
+              "scope": f"Local{suite.metadata['version']} material and projection checks; no mathematical adjudication or candidate result import."}
     if write_report or refresh:
         (packet / "validation.json").write_bytes(encoded(result))
     return result
