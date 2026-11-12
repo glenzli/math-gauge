@@ -1,0 +1,661 @@
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Tactic
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+
+open formal_oet.vol_01.ch_01_foundations
+open scoped BigOperators Matrix
+
+/-!
+# 第 2 章 算子界 · 通道接口节群 (LCH01)
+
+本模块形式化 `obligations.json` 指定的全部 8 项义务：
+- `CH02-D03`：输入/输出矩阵指标约定与乘法
+- `CH02-D01`：全域/受限 Lip 矩阵谓词与证书族
+- `CH02-D02`：含非空条件的受限 co-Lip 矩阵及证书族
+- `CH02-D07`：单输入通道、单行稀疏与对角特例
+- `CH02-P19`：单一输入项行化简；包含对角特例
+- `CH02-P20`：正 co-Lip 通道保持正距离
+- `CH02-P21`：全对角正 co-Lip 反射族零距；不加强为点相等
+- `CH02-P25`：习题 2.2：标量双侧界
+-/
+
+/-! ## CH02-D03：输入/输出矩阵指标约定与乘法 -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+扩展非负实数通道矩阵：以 `M i j` 表示从输入分量 `i` 到输出分量 `j` 的条目 $M_{i \to j} \in \bar{\mathbb{R}}_+$。
+-/
+abbrev ChannelMatrix (I : Type) : Type := I → I → ENNReal
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+按通道方向读取矩阵条目：`channelEntry M i j` 对应 $M_{i \to j}$（输入分量 `i` 指向输出分量 `j`）。
+-/
+def channelEntry {I : Type} (M : ChannelMatrix I) (i j : I) : ENNReal :=
+  M i j
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+按“输出分量为行指标 `j`、输入分量为列指标 `i`”的行列约定读取条目：$(\mathbf{M})_{j, i} = M_{i \to j}$。
+-/
+def rowColEntry {I : Type} (M : ChannelMatrix I) (j i : I) : ENNReal :=
+  M i j
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+将通道矩阵转换为以输出分量为行指标、输入分量为列指标的标准 `Matrix I I ENNReal`。
+-/
+def toRowColMatrix {I : Type} (M : ChannelMatrix I) : Matrix I I ENNReal :=
+  Matrix.of (fun j i => M i j)
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+将“输出行、输入列”的标准矩阵还原为按通道索引的 `ChannelMatrix I`。
+-/
+def ofRowColMatrix {I : Type} (A : Matrix I I ENNReal) : ChannelMatrix I :=
+  fun i j => A j i
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+行列约定与通道箭头标记的恒等对应：$(\mathbf{M})_{j, i} = M_{i \to j}$。
+-/
+@[simp] theorem rowColEntry_eq_channelEntry {I : Type} (M : ChannelMatrix I) (i j : I) :
+    rowColEntry M j i = channelEntry M i j :=
+  rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+`toRowColMatrix` 在第 `j` 行、第 `i` 列处的条目恰为 $M_{i \to j}$。
+-/
+@[simp] theorem toRowColMatrix_apply {I : Type} (M : ChannelMatrix I) (j i : I) :
+    toRowColMatrix M j i = M i j :=
+  rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+`ofRowColMatrix` 在输入分量 `i`、输出分量 `j` 处的条目恰为标准矩阵的第 `j` 行、第 `i` 列。
+-/
+@[simp] theorem ofRowColMatrix_apply {I : Type} (A : Matrix I I ENNReal) (i j : I) :
+    ofRowColMatrix A i j = A j i :=
+  rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道矩阵与输出行/输入列矩阵表示左逆。
+-/
+@[simp] theorem ofRowColMatrix_toRowColMatrix {I : Type} (M : ChannelMatrix I) :
+    ofRowColMatrix (toRowColMatrix M) = M :=
+  rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道矩阵与输出行/输入列矩阵表示右逆。
+-/
+@[simp] theorem toRowColMatrix_ofRowColMatrix {I : Type} (A : Matrix I I ENNReal) :
+    toRowColMatrix (ofRowColMatrix A) = A :=
+  rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道矩阵乘法：对应复合顺序 $\phi_2 \circ \phi_1$，
+$(\mathbf{M}^{(2)} \cdot \mathbf{M}^{(1)})_{i \to j} = \sum_{k \in I} M^{(2)}_{k \to j} M^{(1)}_{i \to k}$。
+-/
+noncomputable def channelMatrixMul {I : Type} [Fintype I] (M₂ M₁ : ChannelMatrix I) : ChannelMatrix I :=
+  fun i j => ∑ k : I, M₂ k j * M₁ i k
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道矩阵乘法在通道 $(i, j)$ 处的展开式。
+-/
+@[simp] theorem channelMatrixMul_apply {I : Type} [Fintype I]
+    (M₂ M₁ : ChannelMatrix I) (i j : I) :
+    channelMatrixMul M₂ M₁ i j = ∑ k : I, M₂ k j * M₁ i k :=
+  rfl
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+单位通道矩阵：对角元为 `1`，非对角元为 `0`。
+-/
+noncomputable def channelMatrixId {I : Type} [DecidableEq I] : ChannelMatrix I :=
+  fun i j => if i = j then 1 else 0
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+在 $(\mathbf{M})_{j, i} = M_{i \to j}$ 约定下，通道矩阵乘法与标准矩阵乘法 `Matrix.mul` 完全一致。
+-/
+theorem toRowColMatrix_channelMatrixMul {I : Type} [Fintype I] (M₂ M₁ : ChannelMatrix I) :
+    toRowColMatrix (channelMatrixMul M₂ M₁) = toRowColMatrix M₂ * toRowColMatrix M₁ := by
+  ext j i
+  simp [toRowColMatrix, channelMatrixMul, Matrix.mul_apply]
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D03)
+通道矩阵乘法满足结合律。
+-/
+theorem channelMatrixMul_assoc {I : Type} [Fintype I]
+    (M₃ M₂ M₁ : ChannelMatrix I) :
+    channelMatrixMul (channelMatrixMul M₃ M₂) M₁ =
+      channelMatrixMul M₃ (channelMatrixMul M₂ M₁) := by
+  have h := Matrix.mul_assoc (toRowColMatrix M₃) (toRowColMatrix M₂) (toRowColMatrix M₁)
+  simp only [← toRowColMatrix_channelMatrixMul] at h
+  exact congrArg ofRowColMatrix h
+
+/-! ## CH02-D01：全域/受限 Lip 矩阵谓词与证书族 -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（全域 Lipschitz 矩阵谓词）**：
+对 $\phi \in \mathcal{X}_{\mathrm{op}}$，矩阵 $\mathbf{L}$ 在 $\mathrm{dom}(\phi)$ 上对所有 $x, y \in \mathrm{dom}(\phi)$ 和 $j \in I$ 满足
+$d_j(\phi(x), \phi(y)) \le \sum_{i \in I} L_{i \to j} \cdot d_i(x, y)$。
+-/
+def IsLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : ChannelMatrix I) : Prop :=
+  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（全域 Lip 证书族 $\mathscr{L}(\phi)$）**：算子 $\phi$ 的全体合法全域 Lip 矩阵之集。
+-/
+def LipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (ChannelMatrix I) :=
+  { L | IsLipMatrix d ϕ L }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（给定集合上的逐点 Lip 不等式谓词）**：
+对任意 $x, y \in U$ 和 $j \in I$ 满足 $d_j(\phi(x), \phi(y)) \le \sum_{i \in I} L_{i \to j} \cdot d_i(x, y)$。
+-/
+def IsLipOn {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : ChannelMatrix I) : Prop :=
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（子集受限 Lip 矩阵谓词）**：
+对子集 $U \subseteq \mathrm{dom}(\phi)$，在 $U$ 上对任意 $x, y \in U$ 和 $j \in I$ 均满足
+$d_j(\phi(x), \phi(y)) \le \sum_{i \in I} L_{i \to j} \cdot d_i(x, y)$。
+-/
+def IsRestrictedLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : ChannelMatrix I) : Prop :=
+  U ⊆ dom ϕ ∧
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+**定义（受限 Lip 证书族 $\mathscr{L}(\phi)\big|_U$）**：算子 $\phi$ 在子集 $U \subseteq \mathrm{dom}(\phi)$ 上的合法受限 Lip 矩阵之集。
+-/
+def RestrictedLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (ChannelMatrix I) :=
+  { L | IsRestrictedLipMatrix d ϕ U L }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+当已知 $U \subseteq \mathrm{dom}(\phi)$ 时，`IsRestrictedLipMatrix` 与 `IsLipOn` 等价。
+-/
+theorem isRestrictedLipMatrix_iff_isLipOn {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom ϕ) (L : ChannelMatrix I) :
+    IsRestrictedLipMatrix d ϕ U L ↔ IsLipOn d ϕ U L :=
+  ⟨fun h => h.2, fun h => ⟨hU, h⟩⟩
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+当限制域取全域 $U = \mathrm{dom}(\phi)$ 时，受限 Lip 谓词与全域 Lip 谓词等价。
+-/
+theorem isRestrictedLipMatrix_dom_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : ChannelMatrix I) :
+    IsRestrictedLipMatrix d ϕ (dom ϕ) L ↔ IsLipMatrix d ϕ L := by
+  constructor
+  · exact fun h => h.2
+  · exact fun h => ⟨Set.Subset.rfl, h⟩
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D01)
+$\mathscr{L}(\phi)\big|_{\mathrm{dom}(\phi)} = \mathscr{L}(\phi)$。
+-/
+theorem restrictedLipCertFamily_dom_eq {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    RestrictedLipCertFamily d ϕ (dom ϕ) = LipCertFamily d ϕ := by
+  ext L
+  exact isRestrictedLipMatrix_dom_iff d ϕ L
+
+/--
+OET anchor: oet-4ff5c58d71e1651f (CH02-D01)
+**引理 2.1（受限 Lip 矩阵族的单调性）**：
+若 $U \subseteq V \subseteq \mathrm{dom}(\phi)$，则 $\mathscr{L}(\phi)\big|_V \subseteq \mathscr{L}(\phi)\big|_U$。
+-/
+theorem restrictedLipCertFamily_mono {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedLipCertFamily d ϕ V ⊆ RestrictedLipCertFamily d ϕ U := by
+  intro L hL
+  refine ⟨Set.Subset.trans hUV hV, ?_⟩
+  intro x hx y hy j
+  exact hL.2 x (hUV hx) y (hUV hy) j
+
+/--
+OET anchor: oet-4ff5c58d71e1651f (CH02-D01)
+对任意 $U \subseteq \mathrm{dom}(\phi)$，有 $\mathscr{L}(\phi) \subseteq \mathscr{L}(\phi)\big|_U$。
+-/
+theorem lipCertFamily_subset_restrictedLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom ϕ) :
+    LipCertFamily d ϕ ⊆ RestrictedLipCertFamily d ϕ U := by
+  rw [← restrictedLipCertFamily_dom_eq d ϕ]
+  exact restrictedLipCertFamily_mono d ϕ hU Set.Subset.rfl
+
+/--
+OET anchor: oet-193cebcc1a7f9259 (CH02-D01, CH02-D03)
+**命题 2.2（Lip 矩阵复合律）**：
+设 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，$U_2 = \phi_1(U_1)$。
+若 $\mathbf{L}^{(1)} \in \mathscr{L}(\phi_1)\big|_{U_1}$ 且 $\mathbf{L}^{(2)} \in \mathscr{L}(\phi_2)\big|_{U_2}$，
+则 $\mathbf{L}^{(2)} \cdot \mathbf{L}^{(1)} \in \mathscr{L}(\phi_2 \circ \phi_1)\big|_{U_1}$。
+-/
+theorem restrictedLipCertFamily_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₂ ϕ₁ : Operator X bot) (U₁ : Set X)
+    (L₂ L₁ : ChannelMatrix I)
+    (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁))
+    (hL₁ : L₁ ∈ RestrictedLipCertFamily d ϕ₁ U₁)
+    (hL₂ : L₂ ∈ RestrictedLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)) :
+    channelMatrixMul L₂ L₁ ∈ RestrictedLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hU₁, ?_⟩
+  intro x hx y hy j
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  have h_step₂ := hL₂.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+  have h_step₁ :
+      ∑ k : I, L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) ≤
+        ∑ k : I, L₂ k j * (∑ i : I, L₁ i k * d i x y) := by
+    apply Finset.sum_le_sum
+    intro k _
+    exact mul_le_mul_of_nonneg_left (hL₁.2 x hx y hy k) (zero_le _)
+  have h_rearrange :
+      (∑ k : I, L₂ k j * (∑ i : I, L₁ i k * d i x y)) =
+        ∑ i : I, channelMatrixMul L₂ L₁ i j * d i x y := by
+    simp_rw [Finset.mul_sum, ← mul_assoc]
+    rw [Finset.sum_comm]
+    congr 1 with i
+    rw [← Finset.sum_mul]
+    rfl
+  exact le_trans h_step₂ (h_rearrange ▸ h_step₁)
+
+/-! ## CH02-D02：含非空条件的受限 co-Lip 矩阵及证书族 -/
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+**定义（子集受限 co-Lipschitz 矩阵谓词）**：
+对 $\phi \in \mathcal{X}_{\mathrm{op}}$ 与给定的**非空**子集 $U \subseteq \mathrm{dom}(\phi)$，
+矩阵 $\mathbf{K}$ 在 $U$ 上对所有 $x, y \in U$ 和 $j \in I$ 满足
+$d_j(\phi(x), \phi(y)) \ge \sum_{i \in I} K_{i \to j} \cdot d_i(x, y)$。
+-/
+def IsRestrictedCoLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : ChannelMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧
+    ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+      ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+**定义（受限 co-Lip 证书族 $\mathscr{K}(\phi)\big|_U$）**：
+包含非空性条件 $U \neq \emptyset$ 及 $U \subseteq \mathrm{dom}(\phi)$ 的全体合法受限 co-Lip 矩阵之集。
+-/
+def RestrictedCoLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (ChannelMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d ϕ U K }
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+凡属于 $\mathscr{K}(\phi)\big|_U$ 的证书，必蕴含限制域 $U$ 非空且 $U \subseteq \mathrm{dom}(\phi)$。
+-/
+theorem nonempty_of_mem_restrictedCoLipCertFamily {X I : Type} {bot : X} [Fintype I]
+    {d : I → X → X → ENNReal} {ϕ : Operator X bot} {U : Set X} {K : ChannelMatrix I}
+    (hK : K ∈ RestrictedCoLipCertFamily d ϕ U) :
+    U.Nonempty ∧ U ⊆ dom ϕ :=
+  ⟨hK.1, hK.2.1⟩
+
+/--
+OET anchor: oet-af85899693cc8750 (CH02-D02)
+空集不满足 $\mathscr{K}(\phi)\big|_U$ 的非空性条件，故空集上的受限 co-Lip 证书族为空。
+-/
+@[simp] theorem restrictedCoLipCertFamily_empty {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    RestrictedCoLipCertFamily d ϕ ∅ = ∅ := by
+  ext K
+  simp [RestrictedCoLipCertFamily, IsRestrictedCoLipMatrix]
+
+/--
+OET anchor: oet-893b1d33535f7245 (CH02-D02)
+**引理 2.3（受限 co-Lip 矩阵族的单调性）**：
+若 $\varnothing \neq U \subseteq V \subseteq \mathrm{dom}(\phi)$，则 $\mathscr{K}(\phi)\big|_V \subseteq \mathscr{K}(\phi)\big|_U$。
+-/
+theorem restrictedCoLipCertFamily_mono {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hU_ne : U.Nonempty) (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedCoLipCertFamily d ϕ V ⊆ RestrictedCoLipCertFamily d ϕ U := by
+  intro K hK
+  refine ⟨hU_ne, Set.Subset.trans hUV hV, ?_⟩
+  intro x hx y hy j
+  exact hK.2.2 x (hUV hx) y (hUV hy) j
+
+/--
+OET anchor: oet-893b1d33535f7245 (CH02-D02)
+对任意非空子集 $U \subseteq \mathrm{dom}(\phi)$，有 $\mathscr{K}(\phi)\big|_{\mathrm{dom}(\phi)} \subseteq \mathscr{K}(\phi)\big|_U$。
+-/
+theorem restrictedCoLipCertFamily_dom_subset {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) :
+    RestrictedCoLipCertFamily d ϕ (dom ϕ) ⊆ RestrictedCoLipCertFamily d ϕ U :=
+  restrictedCoLipCertFamily_mono d ϕ hU_ne hU Set.Subset.rfl
+
+/--
+OET anchor: oet-0f256e6f1d38a612 (CH02-D02, CH02-D03)
+**命题 2.4（co-Lip 矩阵复合律）**：
+设 $U_1 \subseteq \mathrm{dom}(\phi_2 \circ \phi_1)$，$U_2 = \phi_1(U_1)$。
+若 $\mathbf{K}^{(1)} \in \mathscr{K}(\phi_1)\big|_{U_1}$ 且 $\mathbf{K}^{(2)} \in \mathscr{K}(\phi_2)\big|_{U_2}$，
+则 $\mathbf{K}^{(2)} \cdot \mathbf{K}^{(1)} \in \mathscr{K}(\phi_2 \circ \phi_1)\big|_{U_1}$。
+-/
+theorem restrictedCoLipCertFamily_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₂ ϕ₁ : Operator X bot) (U₁ : Set X)
+    (K₂ K₁ : ChannelMatrix I)
+    (hU₁ : U₁ ⊆ dom (operator_compose ϕ₂ ϕ₁))
+    (hK₁ : K₁ ∈ RestrictedCoLipCertFamily d ϕ₁ U₁)
+    (hK₂ : K₂ ∈ RestrictedCoLipCertFamily d ϕ₂ (operator_image ϕ₁ U₁)) :
+    channelMatrixMul K₂ K₁ ∈ RestrictedCoLipCertFamily d (operator_compose ϕ₂ ϕ₁) U₁ := by
+  refine ⟨hK₁.1, hU₁, ?_⟩
+  intro x hx y hy j
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  have h_step₂ := hK₂.2.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+  have h_step₁ :
+      ∑ k : I, K₂ k j * (∑ i : I, K₁ i k * d i x y) ≤
+        ∑ k : I, K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by
+    apply Finset.sum_le_sum
+    intro k _
+    exact mul_le_mul_of_nonneg_left (hK₁.2.2 x hx y hy k) (zero_le _)
+  have h_rearrange :
+      (∑ i : I, channelMatrixMul K₂ K₁ i j * d i x y) =
+        ∑ k : I, K₂ k j * (∑ i : I, K₁ i k * d i x y) := by
+    simp_rw [Finset.mul_sum, ← mul_assoc]
+    rw [Finset.sum_comm]
+    congr 1 with i
+    rw [← Finset.sum_mul]
+    rfl
+  exact le_trans (h_rearrange.trans_le h_step₁) h_step₂
+
+/-! ## CH02-D07：单输入通道、单行稀疏与对角特例 -/
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+**定义（分量通道）**：对 $i, j \in I$，有序对 $(i, j)$ 称为从输入分量 $d_i$ 到输出分量 $d_j$ 的一个分量通道。
+-/
+abbrev ComponentChannel (I : Type) : Type := I × I
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+分量通道的输入指标 $i \in I$。
+-/
+def ComponentChannel.inputIdx {I : Type} (c : ComponentChannel I) : I :=
+  c.1
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+分量通道的输出指标 $j \in I$。
+-/
+def ComponentChannel.outputIdx {I : Type} (c : ComponentChannel I) : I :=
+  c.2
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+同分量（对角）通道 $(i, i)$。
+-/
+def sameComponentChannel {I : Type} (i : I) : ComponentChannel I :=
+  (i, i)
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+读取矩阵在指定分量通道 $c = (i, j)$ 上的系数 $M_{i \to j}$。
+-/
+def channelCoeff {I : Type} (M : ChannelMatrix I) (c : ComponentChannel I) : ENNReal :=
+  M c.1 c.2
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+**定义（单输入通道行稀疏）**：
+矩阵 $\mathbf{M}$ 在输出行 $j$ 处除输入分量 $i$ 对应的条目 $M_{i \to j}$ 外均为零：
+$\forall k \neq i,\ M_{k \to j} = 0$。
+-/
+def IsSingleInputRow {I : Type} (M : ChannelMatrix I) (i j : I) : Prop :=
+  ∀ k : I, k ≠ i → M k j = 0
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+**定义（对角输入项行稀疏）**：
+矩阵 $\mathbf{M}$ 在输出行 $j$ 处只保留同分量对角输入项 $M_{j \to j}$：
+$\forall k \neq j,\ M_{k \to j} = 0$。
+-/
+def IsDiagonalInputRow {I : Type} (M : ChannelMatrix I) (j : I) : Prop :=
+  IsSingleInputRow M j j
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+**定义（对角通道矩阵）**：
+所有异分量通道 $(i, j)$（$i \neq j$）的条目均为零：$\forall i \neq j,\ M_{i \to j} = 0$。
+-/
+def IsDiagonalChannelMatrix {I : Type} (M : ChannelMatrix I) : Prop :=
+  ∀ i j : I, i ≠ j → M i j = 0
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+矩阵为对角通道矩阵，当且仅当每个输出行 $j$ 都只保留同分量通道 $(j, j)$。
+-/
+theorem isDiagonalChannelMatrix_iff_forall_isSingleInputRow {I : Type} (M : ChannelMatrix I) :
+    IsDiagonalChannelMatrix M ↔ ∀ j : I, IsSingleInputRow M j j := by
+  constructor
+  · intro h j k hkj
+    exact h k j hkj
+  · intro h i j hij
+    exact h j i hij
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-D07)
+通道矩阵为对角通道矩阵，当且仅当其对应的输出行/输入列矩阵在所有非对角位置 `(j, i)`（`j ≠ i`）处为零。
+-/
+theorem isDiagonalChannelMatrix_iff_toRowColMatrix_offDiag_zero {I : Type} (M : ChannelMatrix I) :
+    IsDiagonalChannelMatrix M ↔ ∀ j i : I, j ≠ i → toRowColMatrix M j i = 0 := by
+  constructor
+  · intro h j i hji
+    exact h i j (Ne.symm hji)
+  · intro h i j hij
+    exact h j i (Ne.symm hij)
+
+/-! ## CH02-P19：单一输入项行化简；包含对角特例 -/
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+**单一输入项行求和化简**：
+若第 $j$ 行除 $L_{i \to j}$ 外均为零，则 $\sum_{k \in I} L_{k \to j} d_k(x, y) = L_{i \to j} d_i(x, y)$。
+-/
+theorem singleInputRow_sum_eq {X I : Type} [Fintype I]
+    (d : I → X → X → ENNReal) (L : ChannelMatrix I) (i j : I)
+    (h_row : IsSingleInputRow L i j) (x y : X) :
+    (∑ k : I, L k j * d k x y) = L i j * d i x y := by
+  refine Finset.sum_eq_single i ?_ ?_
+  · intro k _ hki
+    rw [h_row k hki, zero_mul]
+  · intro hi_not_mem
+    exact False.elim (hi_not_mem (Finset.mem_univ i))
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+**单一输入项行 Lip 不等式化简**：
+设 $\mathbf{L} \in \mathscr{L}(\phi)\big|_U$。若第 $j$ 行除 $L_{i \to j}$ 外均为零，则对任意 $x, y \in U$，
+$d_j(\phi(x), \phi(y)) \le \sum_{k \in I} L_{k \to j} d_k(x, y) = L_{i \to j} d_i(x, y)$。
+-/
+theorem singleInputRow_lip_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : ChannelMatrix I) (i j : I)
+    (hL : L ∈ RestrictedLipCertFamily d ϕ U)
+    (h_row : IsSingleInputRow L i j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d j (ϕ.func x) (ϕ.func y) ≤ ∑ k : I, L k j * d k x y ∧
+      (∑ k : I, L k j * d k x y) = L i j * d i x y ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y := by
+  intro x hx y hy
+  have h_sum : (∑ k : I, L k j * d k x y) = L i j * d i x y :=
+    singleInputRow_sum_eq d L i j h_row x y
+  have h_lip : d j (ϕ.func x) (ϕ.func y) ≤ ∑ k : I, L k j * d k x y :=
+    hL.2 x hx y hy j
+  exact ⟨h_lip, h_sum, h_sum ▸ h_lip⟩
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+**单一输入项行 Lip 标量上界**：
+若 $\mathbf{L} \in \mathscr{L}(\phi)\big|_U$ 且第 $j$ 行除 $L_{i \to j}$ 外均为零，则对任意 $x, y \in U$，
+$d_j(\phi(x), \phi(y)) \le L_{i \to j} d_i(x, y)$。
+-/
+theorem singleInputRow_lip_le {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : ChannelMatrix I) (i j : I)
+    (hL : L ∈ RestrictedLipCertFamily d ϕ U)
+    (h_row : IsSingleInputRow L i j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y :=
+  fun x hx y hy => (singleInputRow_lip_bound d ϕ U L i j hL h_row x hx y hy).2.2
+
+/--
+OET anchor: oet-7fa97eb6e24d5527 (CH02-P19)
+**对角 Lip 矩阵特例**：
+若 $\mathbf{L} \in \mathscr{L}(\phi)\big|_U$ 为对角矩阵，则对每个同分量通道 $(i, i)$ 及任意 $x, y \in U$，
+$\sum_{k \in I} L_{k \to i} d_k(x, y) = L_{i \to i} d_i(x, y)$ 且
+$d_i(\phi(x), \phi(y)) \le L_{i \to i} d_i(x, y)$。
+-/
+theorem diagonal_lip_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (L : ChannelMatrix I)
+    (hL : L ∈ RestrictedLipCertFamily d ϕ U)
+    (h_diag : IsDiagonalChannelMatrix L) :
+    ∀ i : I, ∀ x ∈ U, ∀ y ∈ U,
+      (∑ k : I, L k i * d k x y) = L i i * d i x y ∧
+      d i (ϕ.func x) (ϕ.func y) ≤ L i i * d i x y := by
+  intro i x hx y hy
+  have h_row : IsSingleInputRow L i i :=
+    (isDiagonalChannelMatrix_iff_forall_isSingleInputRow L).mp h_diag i
+  have h := singleInputRow_lip_bound d ϕ U L i i hL h_row x hx y hy
+  exact ⟨h.2.1, h.2.2⟩
+
+/-! ## CH02-P20：正 co-Lip 通道保持正距离 -/
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P20)
+**单通道 co-Lip 下界引理**：
+若 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$，则对任意通道 $(i, j)$ 与 $x, y \in U$，
+$K_{i \to j} d_i(x, y) \le \sum_{k \in I} K_{k \to j} d_k(x, y) \le d_j(\phi(x), \phi(y))$。
+-/
+theorem single_channel_coLip_le {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : ChannelMatrix I) (i j : I)
+    (hK : K ∈ RestrictedCoLipCertFamily d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+  intro x hx y hy
+  have h_single : K i j * d i x y ≤ ∑ k : I, K k j * d k x y :=
+    Finset.single_le_sum (fun k _ => zero_le (K k j * d k x y)) (Finset.mem_univ i)
+  exact le_trans h_single (hK.2.2 x hx y hy j)
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P20)
+**命题 2.8 (i)（正 co-Lip 通道保持可分辨性 / 正距离）**：
+设 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$。若 $K_{i \to j} > 0$，则对任意 $x, y \in U$，
+$d_i(x, y) > 0 \implies d_j(\phi(x), \phi(y)) > 0$。
+-/
+theorem pos_coLip_channel_preserves_pos_dist {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : ChannelMatrix I) (i j : I)
+    (hK : K ∈ RestrictedCoLipCertFamily d ϕ U)
+    (hKij : 0 < K i j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      0 < d i x y → 0 < d j (ϕ.func x) (ϕ.func y) := by
+  intro x hx y hy hd
+  have h_prod_pos : 0 < K i j * d i x y :=
+    ENNReal.mul_pos hKij.ne' hd.ne'
+  have h_le : K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    single_channel_coLip_le d ϕ U K i j hK x hx y hy
+  exact lt_of_lt_of_le h_prod_pos h_le
+
+/--
+OET anchor: oet-88784dcbfff0ea66 (CH02-D02, CH02-P20)
+**注（co-Lip 条目为零的充分条件）**：
+若存在 $x, y \in U$ 使 $d_j(\phi(x), \phi(y)) = 0$ 且 $d_i(x, y) > 0$，
+则任一 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$ 必满足 $K_{i \to j} = 0$。
+-/
+theorem coLip_entry_eq_zero_of_dist_zero_of_pos {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : ChannelMatrix I) (i j : I)
+    (hK : K ∈ RestrictedCoLipCertFamily d ϕ U)
+    {x y : X} (hx : x ∈ U) (hy : y ∈ U)
+    (h_out : d j (ϕ.func x) (ϕ.func y) = 0)
+    (h_in : 0 < d i x y) :
+    K i j = 0 := by
+  by_contra hK_ne
+  have hK_pos : 0 < K i j := pos_iff_ne_zero.mpr hK_ne
+  have h_pos := pos_coLip_channel_preserves_pos_dist d ϕ U K i j hK hK_pos x hx y hy h_in
+  exact h_pos.ne' h_out
+
+/-! ## CH02-P21：全对角正 co-Lip 反射族零距；不加强为点相等 -/
+
+/--
+OET anchor: oet-f82672ec0dd48f28 (CH02-P21)
+**命题 2.8 (ii)（全对角正 co-Lip 反射族零距关系）**：
+设 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$。若对所有 $j \in I$ 均有 $K_{j \to j} > 0$，
+则 $\phi$ 在 $U$ 上反射族零距关系：对任意 $x, y \in U$，
+$\phi(x) \sim_{\mathcal{G}} \phi(y) \implies x \sim_{\mathcal{G}} y$。
+（严格保持正文非分离规范空间的结论强度 `GaugeZeroRelated d x y`，不加强为点相等 `x = y`。）
+-/
+theorem diag_pos_coLip_reflects_gaugeZeroRelated {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : ChannelMatrix I)
+    (hK : K ∈ RestrictedCoLipCertFamily d ϕ U)
+    (h_diag_pos : ∀ j : I, 0 < K j j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y := by
+  intro x hx y hy h_phi_zero j
+  by_contra h_ne_zero
+  have hd_pos : 0 < d j x y := pos_iff_ne_zero.mpr h_ne_zero
+  have h_out_pos : 0 < d j (ϕ.func x) (ϕ.func y) :=
+    pos_coLip_channel_preserves_pos_dist d ϕ U K j j hK (h_diag_pos j) x hx y hy hd_pos
+  exact h_out_pos.ne' (h_phi_zero j)
+
+/-! ## CH02-P25：习题 2.2：标量双侧界 -/
+
+/--
+OET anchor: oet-6a98a58b5bc95360 (CH02-P25)
+**习题 2.2（对角输入项的标量双侧界）**：
+设 $\phi \in \mathcal{X}_{\mathrm{op}}$，$U \subseteq \mathrm{dom}(\phi)$，$j \in I$。
+给定 $\mathbf{L} \in \mathscr{L}(\phi)\big|_U$ 与 $\mathbf{K} \in \mathscr{K}(\phi)\big|_U$。
+若 $\phi$ 在 $U$ 上关于输出分量 $d_j$ 满足只保留对角输入项的 Lip 上界
+$L_{k \to j} = 0\ (\forall k \neq j)$，
+则对任意 $x, y \in U$ 有标量双侧不等式：
+$K_{j \to j} \cdot d_j(x, y) \le d_j(\phi(x), \phi(y)) \le L_{j \to j} \cdot d_j(x, y)$。
+-/
+theorem exercise_2_2_scalar_two_sided_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (j : I)
+    (L K : ChannelMatrix I)
+    (_hU : U ⊆ dom ϕ)
+    (hL : L ∈ RestrictedLipCertFamily d ϕ U)
+    (hK : K ∈ RestrictedCoLipCertFamily d ϕ U)
+    (hL_diag_row : IsSingleInputRow L j j) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ∧
+      d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y := by
+  intro x hx y hy
+  have h_lower : K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    single_channel_coLip_le d ϕ U K j j hK x hx y hy
+  have h_upper : d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y :=
+    singleInputRow_lip_le d ϕ U L j j hL hL_diag_row x hx y hy
+  exact ⟨h_lower, h_upper⟩

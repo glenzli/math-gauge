@@ -1,0 +1,101 @@
+我将审阅数学正文中的**推论 #h-93b9c20ea18b4e59（路径保证域的全局拟合含义）**及其在 Lean 源码中的实现。
+
+---
+
+### 一、总体审阅结论
+
+**所给 Lean 实现准确、完整地覆盖了该数学命题。**
+
+在 [`path_guarantee_domains.lean`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L514-L638) 中，推论 `#h-93b9c20ea18b4e59` 由三个无 `sorry` 的定理共同实现：
+1. [`path_component_guarantee_union_subset_proxy_error`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L520-L545)：覆盖推论第一式（单分量路径保证域之并的全局误差包含关系）；
+2. [`path_joint_guarantee_union_subset_proxy_error`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L553-L582)：覆盖推论第二式（多分量联合路径保证域之并的全局误差包含关系）；
+3. [`path_guarantee_union_subset_proxy_error_text`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L590-L637)：将上述两式合并为一个合取命题，并显式保留了正文中的可读性前提（如 $j \in I_{\mathrm{res}}$、$J \subseteq I_{\mathrm{res}}$、$J \neq \emptyset$ 以及阈值有限性 $\tau_j \in [0,+\infty)$）。
+
+---
+
+### 二、数学正文与 Lean 实现的对应关系
+
+#### 1. 前置设定与核心定义对应表
+
+| 数学正文对象（[source.md](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/source.md#L5-L116)） | Lean 形式化定义 / 参数 | 对应依据与说明 |
+| :--- | :--- | :--- |
+| 扩展规范空间 $(\mathcal X, \mathcal G, \bot)$ 与有限指标集 $I$ | `[Fintype I]`、`d : I → X → X → ENNReal`、`hd : ∀ j : I, ExtendedPseudoMetric X bot (d j)` | 见 [`ExtendedPseudoMetric`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean#L15-L20) |
+| 目标算子 $\phi^\natural$、代理算子 $\phi$ | `target proxy : Operator X bot` | 见 [`Operator`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean#L16-L18) |
+| 输入域为 $U$ 的有限算子网络 $\mathcal N$ 及表示条件 $\phi_{\mathcal N} \equiv_U \phi$ | `N : FiniteOperatorNetwork X bot V`（其输入域为 `N.U`），`hrep : N.represents proxy` | [`FiniteOperatorNetwork.represents`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean#L814-L815) 定义为 `LocalEquivalent N.extensional_operator proxy N.U` |
+| 可达路径 $q \in \mathcal P(\mathcal N)$、路径域 $U_q$、路径链 $c_q$ | `q : N.ReachablePath`、`N.path_domain q.nodes`、`N.path_chain q.nodes` | 见 [`ReachablePath`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean#L556-L558)、[`path_domain`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean#L548-L549)、[`path_chain`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean#L497-L498) |
+| 目标 Lip 包络证书 $(V^*, \mathbf L^*)$ 及包含条件 $U \subseteq V^*$ | `hLstar : TargetLipEnvelopeCertificate d target Vstar Lstar`，`hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar` | 见 [`TargetLipEnvelopeCertificate`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/structural_priors.lean#L25-L28)；由 $U = \bigcup_q U_q$ 知逐路径包含与 $U \subseteq V^*$ 等价 |
+| 全局可评估分量 $I_{\mathrm{res}} = \{j \in I : S_j \neq \emptyset\}$ | [`evaluable_components`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/empirical_residuals.lean#L35-L36) `sample` | 定义为 `{j | (sample j).Nonempty}` |
+| 路径采样集 $S_{q,j} = S_j \cap U_q$ | [`path_component_sample`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean#L27-L30) `N sample q j` | 定义为 `sample j ∩ N.path_domain q.nodes` |
+| 路径可评估分量 $I_{\mathrm{res}}(q) = \{j \in I_{\mathrm{res}} : S_{q,j} \neq \emptyset\}$ | [`path_evaluable_components`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean#L48-L51) `N sample q` | 定义为 `{j | S_{q,j}.Nonempty}`；由 [`path_evaluable_subset_evaluable_components`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean#L103-L109) 自动包含于 $I_{\mathrm{res}}$ |
+| 路径经验残差上界 $\hat\varepsilon_{q,j} = \sup_{x_s \in S_{q,j}} d_j(c_q(x_s), \phi^\natural(x_s)) + \delta_{o,j}$ | [`path_empirical_residual_upper`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean#L136-L142) `d target N sample delta_o q j` | 展开为 [`empirical_residual_raw_sup`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/empirical_residuals.lean#L105-L108) `+ delta_o j` |
+| 路径链受限 Lip 证书 $\mathbf L_q \in \mathscr L(c_q)|_{U_q}$ 与组合矩阵 $\mathbf A_q = \mathbf L_q + \mathbf L^*$ | `IsLipMatrix d (N.path_chain q.nodes) (N.path_domain q.nodes) (Lq q)`，`fun i j => Lq q i j + Lstar i j` | 在涉及可评估路径时要求给出 `Lq q` 证书 |
+| 路径分量经验保证域 $U_{q,j}(\tau_j)$ | [`path_component_empirical_guarantee_domain`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L26-L32) | 展开为 `{x | x ∈ U_q ∧ weighted_anchor_distance d A_q j x S_{q,j} + ε̂_{q,j} ≤ τ_j}` |
+| 路径联合经验保证域 $U_{q,J}(\boldsymbol\tau)$ | [`path_joint_empirical_guarantee_domain`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L39-L46) | 展开为 `{x | x ∈ U_q ∧ ∀ j ∈ J, weighted_anchor_distance d A_q j x S_{q,j} + ε̂_{q,j} ≤ τ j}` |
+| 有限阈值 $\tau_j \in [0, +\infty)$ | [`finite_ennreal`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/empirical_residuals.lean#L26-L27) `tau_j`（即 `tau_j ≠ ⊤`） | 在 [`path_guarantee_union_subset_proxy_error_text`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L601-L603) 中显式保留 |
+
+#### 2. 结论与证明逻辑对应关系
+
+1. **单分量结论（推论第一式）**：
+   - **正文**：
+     $$\bigcup_{\substack{q\in\mathcal P\\ j\in I_{\mathrm{res}}(q)}}U_{q,j}(\tau_j) \subseteq \{x\in U:d_j(\phi(x),\phi^\natural(x))\leq\tau_j\}.$$
+   - **Lean（[`path_component_guarantee_union_subset_proxy_error`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L520-L545)）**：
+     ```lean
+     {x | ∃ q : N.ReachablePath,
+       j ∈ path_evaluable_components N sample q ∧
+       x ∈ path_component_empirical_guarantee_domain d
+         (fun i j => Lq q i j + Lstar i j) N sample q j
+         (path_empirical_residual_upper d target N sample delta_o q j) tau}
+       ⊆ {x | x ∈ N.U ∧ d j (proxy.func x) (target.func x) ≤ tau}
+     ```
+   - **证明对应**：任取左侧元素 $x$ 及见证路径 $q$，由 [`N.path_domain_subset_source`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean#L768-L771) 得 $x \in U_q \subseteq U$；再调用命题 `#h-4b5219aa3a3bbdad` 的代理保证域形式 [`proxy_path_component_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L152-L174)，直接推出 $d_j(\phi(x), \phi^\natural(x)) \le \tau_j$。
+
+2. **联合分量族结论（推论第二式）**：
+   - **正文**：
+     $$\bigcup_{\substack{q\in\mathcal P\\ J\subseteq I_{\mathrm{res}}(q)}} U_{q,J}(\boldsymbol\tau) \subseteq \{x\in U:\forall j\in J,\ d_j(\phi(x),\phi^\natural(x))\leq\tau_j\}.$$
+   - **Lean（[`path_joint_guarantee_union_subset_proxy_error`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L553-L582)）**：
+     ```lean
+     {x | ∃ q : N.ReachablePath,
+       J ⊆ path_evaluable_components N sample q ∧
+       x ∈ path_joint_empirical_guarantee_domain d
+         (fun i j => Lq q i j + Lstar i j) N sample q J
+         (path_empirical_residual_upper d target N sample delta_o q) tau}
+       ⊆ {x | x ∈ N.U ∧
+         ∀ j : I, j ∈ J → d j (proxy.func x) (target.func x) ≤ tau j}
+     ```
+   - **证明对应**：任取左侧元素 $x$ 及见证路径 $q$，由 `N.path_domain_subset_source` 得 $x \in U$；对任意 $j \in J$，利用 [`path_chain_eq_represented_proxy_on_path`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean#L220-L231) 将 $c_q(x)$ 替换为 $\phi(x)$，并调用 [`path_joint_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L210-L236) 得到 $d_j(\phi(x), \phi^\natural(x)) \le \tau_j$。
+
+---
+
+### 三、源码已证明结论与需自行补充内容的区分
+
+#### 1. 源码已完整证明的结论
+
+以下支撑推论 `#h-93b9c20ea18b4e59` 的全部引理与主定理均已在附件及工作区源码中完整形式化证明（无未证假设）：
+- **底层经验上界与保证域转化**：
+  - [`empirical_target_perturbation_upper_point_from_residual_certificate`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/structural_priors.lean#L161-L179)（共同锚点经验扰动逐点上界）
+  - [`empirical_component_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean#L182-L194) 与 [`empirical_joint_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean#L202-L216)
+- **路径局部经验上界（命题 `#h-4b5219aa3a3bbdad`）**：
+  - [`path_local_empirical_upper`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L54-L84) 与 [`proxy_path_local_empirical_upper`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L92-L114)
+  - [`path_component_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L122-L144)、[`proxy_path_component_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L152-L174) 及其正文前提包装 [`proxy_path_component_guarantee_error_bound_text`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L181-L202)
+  - [`path_joint_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L210-L236)、[`proxy_path_joint_guarantee_error_bound`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L244-L268) 及其正文前提包装 [`proxy_path_joint_guarantee_error_bound_text`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L276-L300)
+- **路径保证域的全局拟合含义（推论 `#h-93b9c20ea18b4e59`）**：
+  - [`path_component_guarantee_union_subset_proxy_error`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L520-L545)
+  - [`path_joint_guarantee_union_subset_proxy_error`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L553-L582)
+  - [`path_guarantee_union_subset_proxy_error_text`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L590-L637)
+
+#### 2. 形式化表记差异（如需与正文字面符号完全一字不差，可自行补充的等价桥接）
+
+源码实现中采用了更契合 Lean/Mathlib 习惯的等价编码方式。这些并非逻辑缺失，但若需要将符号形式还原为与正文完全字面一致的写法，可补充以下三条平凡等价引理：
+
+1. **存在量词集合与索引并集 `⋃` 的字面转换**：
+   源码用 `{x | ∃ q, P q ∧ x ∈ U_q}` 表达正文的 $\bigcup_{q : P(q)} U_q$。在 Mathlib 中，只需通过 `Set.mem_iUnion` 即可直接互转：
+   $$\left\{x \;\middle|\; \exists q,\ P(q) \wedge x \in U_q\right\} = \bigcup_{q : \mathcal P} \bigcup_{\_ : P(q)} U_q.$$
+2. **非空分量族上联合保证域与分量保证域交集 $\bigcap_{j \in J} U_{q,j}(\tau_j)$ 的等价性**：
+   正文将联合保证域定义为 $U_{q,J_q}(\boldsymbol\tau) = \bigcap_{j \in J_q} U_{q,j}(\tau_j)$（其中 $J_q \neq \emptyset$），而源码 [`empirical_joint_guarantee_domain`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_03/ch_12_residuals_and_substitution/guarantee_domains.lean#L35-L42) 直接定义为 `{x | x ∈ U_q ∧ ∀ j ∈ J, ...}`（避免 $J = \emptyset$ 时交集退化为全空间 `Set.univ`）。在正文前提 `hJ : J.Nonempty` 下，利用存在某个 $j_0 \in J$ 即可证明二者外延相等：
+   ```lean
+   -- 需自行补充的集合外延等价（当 J.Nonempty 时）
+   path_joint_empirical_guarantee_domain d A N sample q J eps tau =
+     ⋂ j ∈ J, path_component_empirical_guarantee_domain d A N sample q j (eps j) (tau j)
+   ```
+3. **全局包络域包含条件 $U \subseteq V^*$ 与逐路径包含条件的桥接**：
+   正文在节首设 $U \subseteq \mathrm{dom}(\phi) \cap V^*$，而定理前提写作逐路径条件 `hpathV : ∀ q, N.path_domain q.nodes ⊆ Vstar`。若直接以全局条件 `hUVstar : N.U ⊆ Vstar` 作为输入，只需结合源码已证的 [`N.path_domain_subset_source`](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/AHR04/physical-1/session/work/formal_oet/vol_01/ch_05_operator_networks/operator_network.lean#L768-L771) 构造 `fun q => N.path_domain_subset_source.trans hUVstar` 即可传入定理。

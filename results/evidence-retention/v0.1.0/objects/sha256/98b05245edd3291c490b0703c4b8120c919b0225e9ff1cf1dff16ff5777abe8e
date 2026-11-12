@@ -1,0 +1,180 @@
+I have launched a verification script to check the properties of the gradient flow map $\Phi_\tau$ and will proceed once it completes.
+I am completing the numerical verification across the grid of initial states and flow times and will proceed once the task finishes.
+{}
+Below is the complete **Mathematical Appendix** (addressing Parts 1 and 2, followed by a rigorous analysis showing why the draft rationale's claim $T_\tau = \operatorname{prox}_{r_\tau}$ actually fails for every $\tau > 0$ despite strong convexity, contractivity, and dissipativity) and a **Deployment Description for the Methods Section** (addressing Part 3).
+
+---
+
+## Mathematical Appendix
+
+### A.1 Forward Global Well-Posedness, Contraction, Dissipation, and Stack Convergence
+
+Let $z = (x,y)^\top \in \mathbb{R}^2$ endowed with the standard Euclidean inner product $\langle z, w \rangle = x u + y v$ and norm $\|z\| = \sqrt{x^2 + y^2}$, and consider the energy functional
+$$f(x,y) = \frac{x^2 + 2y^2}{2} + \frac{(x+y)^4}{4}.$$
+
+#### 1. Regularity, $1$-Strong Convexity, and Unique Equilibrium
+Since $f$ is a polynomial, $f \in C^\infty(\mathbb{R}^2; \mathbb{R})$. Its gradient and Hessian are given for all $z = (x,y)^\top \in \mathbb{R}^2$ by
+$$\nabla f(z) = \begin{pmatrix} x + (x+y)^3 \\ 2y + (x+y)^3 \end{pmatrix}, \qquad \nabla^2 f(z) = \begin{pmatrix} 1 & 0 \\ 0 & 2 \end{pmatrix} + 3(x+y)^2 \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}.$$
+
+For every $z = (x,y)^\top \in \mathbb{R}^2$ and every direction $v = (v_1, v_2)^\top \in \mathbb{R}^2$,
+$$\langle \nabla^2 f(z) v, v \rangle = v_1^2 + 2v_2^2 + 3(x+y)^2 (v_1 + v_2)^2 \ge v_1^2 + v_2^2 = \|v\|^2.$$
+Thus $\nabla^2 f(z) \succeq I_2$ everywhere on $\mathbb{R}^2$ (and the bound is sharp, attained at $z=(0,0)^\top, v=(1,0)^\top$). Consequently, $f$ is **$1$-strongly convex** on $\mathbb{R}^2$, which implies:
+- **Strong monotonicity of $\nabla f$**: For all $z, w \in \mathbb{R}^2$, integrating along $z_\theta = w + \theta(z - w)$ for $\theta \in [0,1]$,
+  $$\langle \nabla f(z) - \nabla f(w), z - w \rangle = \int_0^1 \langle \nabla^2 f(z_\theta)(z - w), z - w \rangle \, d\theta \ge \|z - w\|^2. \tag{A.1}$$
+- **Quadratic lower bound**: For all $z, w \in \mathbb{R}^2$,
+  $$f(w) \ge f(z) + \langle \nabla f(z), w - z \rangle + \frac{1}{2}\|w - z\|^2. \tag{A.2}$$
+
+**Equilibrium identification.** Equilibria of the autonomous system $\dot{z} = -\nabla f(z)$ satisfy $\nabla f(z^*) = 0$. By (A.1), $\nabla f$ is strictly monotone, so at most one equilibrium exists. Solving $\nabla f(x,y) = 0$ directly:
+$$x + (x+y)^3 = 0, \qquad 2y + (x+y)^3 = 0.$$
+Subtracting the two equations gives $x = 2y$, and substituting into the first gives $2y + 27y^3 = y(2 + 27y^2) = 0 \implies y = 0 \implies x = 0$. Therefore,
+$$z^* = (0,0)^\top$$
+is the **unique equilibrium** of the flow and the unique global minimizer of $f$, with $f(z^*) = 0$ and
+$$f(z) \ge \frac{1}{2}(x^2 + 2y^2) \ge \frac{1}{2}\|z\|^2 > 0 \qquad \forall z \neq (0,0)^\top. \tag{A.3}$$
+
+---
+
+#### 2. Forward Global Well-Posedness
+Consider the initial value problem (IVP)
+$$\dot{z}(t) = -\nabla f(z(t)), \qquad z(0) = z_0 \in \mathbb{R}^2. \tag{A.4}$$
+
+1. **Local existence and uniqueness.** Since $-\nabla f \in C^\infty(\mathbb{R}^2; \mathbb{R}^2)$, it is locally Lipschitz continuous on $\mathbb{R}^2$ (on any closed ball $\overline{B(0, R)}$, $\|\nabla^2 f(z)\|_{\mathrm{op}} \le 2 + 12R^2$). By the Picard–Lindelöf theorem, for each $z_0 \in \mathbb{R}^2$ there exists a unique maximal solution $z(t) = \Phi_t(z_0)$ defined on a maximal forward interval $[0, T_{\max}(z_0))$ with $T_{\max}(z_0) \in (0, \infty]$.
+2. **A priori bounds and global continuation on $[0, \infty)$.** Along any solution $z(t)$ on $[0, T_{\max}(z_0))$, the chain rule gives
+   $$\frac{d}{dt} f(z(t)) = \langle \nabla f(z(t)), \dot{z}(t) \rangle = -\|\nabla f(z(t))\|^2 \le 0,$$
+   and similarly
+   $$\frac{d}{dt} \frac{1}{2}\|z(t)\|^2 = -\langle z(t), \nabla f(z(t)) \rangle = -\left(x(t)^2 + 2y(t)^2 + (x(t)+y(t))^4\right) \le -\|z(t)\|^2 \le 0.$$
+   Hence, for all $t \in [0, T_{\max}(z_0))$,
+   $$\frac{1}{2}\|z(t)\|^2 \le f(z(t)) \le f(z_0) \qquad \text{and} \qquad \|z(t)\| \le e^{-t}\|z_0\| \le \|z_0\|.$$
+   Because the trajectory $z(t)$ remains confined to the compact ball $\overline{B(0, \|z_0\|)}$, finite-time blow-up is impossible and the standard ODE continuation theorem yields $T_{\max}(z_0) = +\infty$.
+3. **Semigroup structure and regularity.** By smooth dependence on initial data and global contractivity proved below, $\Phi_t: \mathbb{R}^2 \to \mathbb{R}^2$ is a globally defined $C^\infty$ map for every $t \ge 0$, forming an autonomous flow semigroup:
+   $$\Phi_0 = I, \qquad \Phi_{t+s} = \Phi_t \circ \Phi_s \quad (\forall t, s \ge 0), \qquad \Phi_t(0) = 0 \quad (\forall t \ge 0).$$
+
+---
+
+#### 3. Exponential Contractivity: $\|\Phi_t(z) - \Phi_t(w)\| \le e^{-t}\|z - w\|$
+Let $z, w \in \mathbb{R}^2$ and set $z(t) := \Phi_t(z)$, $w(t) := \Phi_t(w)$, and $\Delta(t) := z(t) - w(t)$ for $t \ge 0$. Differentiating $\|\Delta(t)\|^2$ and applying the $1$-strong monotonicity bound (A.1) yields
+$$\frac{d}{dt}\|\Delta(t)\|^2 = 2\langle z(t) - w(t), \dot{z}(t) - \dot{w}(t) \rangle = -2\langle \nabla f(z(t)) - \nabla f(w(t)), z(t) - w(t) \rangle \le -2\|\Delta(t)\|^2.$$
+Multiplying by the integrating factor $e^{2t}$ gives
+$$\frac{d}{dt}\left(e^{2t}\|\Delta(t)\|^2\right) = e^{2t}\left(\frac{d}{dt}\|\Delta(t)\|^2 + 2\|\Delta(t)\|^2\right) \le 0 \qquad \forall t \ge 0.$$
+Integrating from $0$ to $t$ yields $e^{2t}\|\Delta(t)\|^2 \le \|\Delta(0)\|^2$, and taking square roots establishes
+$$\|\Phi_t(z) - \Phi_t(w)\| \le e^{-t}\|z - w\| \qquad \forall z, w \in \mathbb{R}^2, \; \forall t \ge 0. \tag{A.5}$$
+
+---
+
+#### 4. Exponential Energy Dissipation: $f(\Phi_t(z)) \le e^{-2t} f(z)$
+We first show that $f$ satisfies the global Polyak–Łojasiewicz (gradient dominance) inequality
+$$\|\nabla f(z)\|^2 \ge 2f(z) \qquad \forall z \in \mathbb{R}^2. \tag{A.6}$$
+- *Proof via $1$-strong convexity:* Minimizing both sides of (A.2) with respect to $w \in \mathbb{R}^2$ (where the right-hand side is minimized at $w = z - \nabla f(z)$) gives
+  $$0 = f(0) = \min_{w \in \mathbb{R}^2} f(w) \ge f(z) - \frac{1}{2}\|\nabla f(z)\|^2 \implies \|\nabla f(z)\|^2 \ge 2f(z).$$
+- *Direct algebraic certificate:* Writing $s = x+y$, direct expansion yields an explicit sum of squares:
+  $$\|\nabla f(x,y)\|^2 - 2f(x,y) = (x+s^3)^2 + (2y+s^3)^2 - (x^2+2y^2) - \frac{1}{2}s^4 = 2\left(y + \frac{1}{2}s^3\right)^2 + \frac{3}{2}s^4 + \frac{3}{2}s^6 \ge 0.$$
+
+Along any trajectory $z(t) = \Phi_t(z)$, applying (A.6) gives
+$$\frac{d}{dt}f(z(t)) = \langle \nabla f(z(t)), \dot{z}(t) \rangle = -\|\nabla f(z(t))\|^2 \le -2f(z(t)).$$
+Therefore,
+$$\frac{d}{dt}\left(e^{2t} f(z(t))\right) = e^{2t}\left(\frac{d}{dt}f(z(t)) + 2f(z(t))\right) \le 0 \qquad \forall t \ge 0,$$
+and integrating from $0$ to $t$ establishes
+$$f(\Phi_t(z)) \le e^{-2t} f(z) \qquad \forall z \in \mathbb{R}^2, \; \forall t \ge 0. \tag{A.7}$$
+
+---
+
+#### 5. Quantitative Convergence for an $n$-Block Stack
+Fix a block horizon $\tau > 0$ and set $T_\tau := \Phi_\tau$. For any initial state $Z_0 \in \mathbb{R}^2$, stacking $n \in \mathbb{N}$ blocks defines $Z_n = T_\tau(Z_{n-1}) = T_\tau^n(Z_0)$. By the semigroup property $\Phi_\tau^n = \Phi_{n\tau}$, we have $Z_n = \Phi_{n\tau}(Z_0)$. Combining (A.3), (A.5), and (A.7) at $t = n\tau$ (or by induction on $n$ with single-block contraction factor $q_\tau := e^{-\tau} < 1$) yields:
+1. **Two-state contraction (perturbation stability):** For all $Z_0, W_0 \in \mathbb{R}^2$ and $n \ge 0$,
+   $$\|T_\tau^n(Z_0) - T_\tau^n(W_0)\| \le e^{-n\tau}\|Z_0 - W_0\|. \tag{A.8}$$
+2. **Global geometric convergence to equilibrium $z^* = (0,0)^\top$:** Setting $W_0 = z^* = 0$ (and using (A.3) for the energy-based bound),
+   $$\|Z_n\| \le e^{-n\tau}\|Z_0\|, \qquad \|Z_n\| \le \sqrt{2 f(Z_n)} \le e^{-n\tau}\sqrt{2 f(Z_0)}. \tag{A.9}$$
+3. **Geometric energy dissipation:**
+   $$f(Z_n) \le e^{-2n\tau} f(Z_0). \tag{A.10}$$
+4. **A priori and a posteriori step-residual bounds:** By the Banach contraction theorem with modulus $q_\tau = e^{-\tau}$,
+   $$\|Z_{n+1} - Z_n\| \le e^{-n\tau}\|Z_1 - Z_0\|, \qquad \|Z_n\| \le \frac{e^{-\tau}}{1 - e^{-\tau}}\|Z_n - Z_{n-1}\| \le \frac{e^{-n\tau}}{1 - e^{-\tau}}\|Z_1 - Z_0\| \quad (n \ge 1). \tag{A.11}$$
+5. **Stack depth complexity:** To guarantee $\|Z_n\| \le \varepsilon$ (for $0 < \varepsilon < \|Z_0\|$) or $f(Z_n) \le \varepsilon_f$ (for $0 < \varepsilon_f < f(Z_0)$), it suffices to deploy
+   $$n \ge \left\lceil \frac{1}{\tau}\ln\frac{\|Z_0\|}{\varepsilon} \right\rceil \qquad \text{or} \qquad n \ge \left\lceil \frac{1}{2\tau}\ln\frac{f(Z_0)}{\varepsilon_f} \right\rceil$$
+   stacked blocks, respectively.
+
+---
+
+### A.2 Standard Proximal Certificate and Firm Nonexpansiveness
+
+Recall the convention
+$$\operatorname{prox}_r(z) := \operatorname{argmin}_{u \in \mathbb{R}^d} \left\{ r(u) + \frac{1}{2}\|u - z\|^2 \right\}$$
+for a proper ($\operatorname{dom} r := \{u \in \mathbb{R}^d : r(u) < +\infty\} \neq \emptyset$), lower-semicontinuous (lsc), and convex function $r: \mathbb{R}^d \to (-\infty, +\infty]$ (here $d = 2$). For every $z \in \mathbb{R}^d$, the objective $u \mapsto r(u) + \frac{1}{2}\|u - z\|^2$ is proper, lsc, and $1$-strongly convex (hence strictly convex and coercive), so it attains its minimum at a unique point $p = \operatorname{prox}_r(z) \in \operatorname{dom} r$.
+
+#### Proposition A.1 (Three-Point Proximal Certificate and Firm Nonexpansiveness)
+*Suppose an operator $T: \mathbb{R}^d \to \mathbb{R}^d$ admits the representation $T = \operatorname{prox}_r$ for a proper, lower-semicontinuous, convex function $r: \mathbb{R}^d \to (-\infty, +\infty]$. Then:*
+1. *(Proximal Certificate / Three-Point Inequality) For every $z \in \mathbb{R}^d$, setting $p = T(z) \in \operatorname{dom} r$, and for every $u \in \operatorname{dom} r$,*
+   $$r(p) + \frac{1}{2}\|p - z\|^2 + \frac{1}{2}\|u - p\|^2 \le r(u) + \frac{1}{2}\|u - z\|^2. \tag{A.12}$$
+2. *(Firm Nonexpansiveness) For all $z, w \in \mathbb{R}^d$,*
+   $$\|T(z) - T(w)\|^2 + \|(I - T)(z) - (I - T)(w)\|^2 \le \|z - w\|^2, \tag{A.13}$$
+   *or equivalently,*
+   $$\|T(z) - T(w)\|^2 \le \langle T(z) - T(w), z - w \rangle. \tag{A.14}$$
+   *In particular, $T$ is nonexpansive: $\|T(z) - T(w)\| \le \|z - w\|$ for all $z, w \in \mathbb{R}^d$.*
+
+#### Proof
+1. **Proof of (A.12):** Fix $z \in \mathbb{R}^d$, let $p = T(z) = \operatorname{prox}_r(z) \in \operatorname{dom} r$, and let $u \in \operatorname{dom} r$. For any $\theta \in (0, 1)$, define the convex combination $u_\theta := (1 - \theta)p + \theta u = p + \theta(u - p) \in \operatorname{dom} r$. By optimality of $p$ and convexity of $r$,
+   $$r(p) + \frac{1}{2}\|p - z\|^2 \le r(u_\theta) + \frac{1}{2}\|u_\theta - z\|^2 \le (1 - \theta)r(p) + \theta r(u) + \frac{1}{2}\|u_\theta - z\|^2.$$
+   Using the exact Euclidean convex-combination identity
+   $$\frac{1}{2}\|(1 - \theta)(p - z) + \theta(u - z)\|^2 = (1 - \theta)\frac{1}{2}\|p - z\|^2 + \theta \frac{1}{2}\|u - z\|^2 - \frac{\theta(1 - \theta)}{2}\|u - p\|^2,$$
+   subtracting $(1 - \theta)\left(r(p) + \frac{1}{2}\|p - z\|^2\right)$ from both sides, and dividing by $\theta \in (0, 1)$ yields
+   $$r(p) + \frac{1}{2}\|p - z\|^2 + \frac{1 - \theta}{2}\|u - p\|^2 \le r(u) + \frac{1}{2}\|u - z\|^2.$$
+   Passing to the limit as $\theta \downarrow 0$ yields the proximal certificate (A.12).
+   *(Equivalently, expanding $\frac{1}{2}\|u - z\|^2 = \frac{1}{2}\|u - p\|^2 + \frac{1}{2}\|p - z\|^2 + \langle u - p, p - z \rangle$ shows that (A.12) is identical to the subgradient optimality condition $r(u) \ge r(p) + \langle z - p, u - p \rangle$ for all $u \in \operatorname{dom} r$, i.e., $z - p \in \partial r(p)$.)*
+
+2. **Proof of (A.13)–(A.14):** Let $z, w \in \mathbb{R}^d$, and set $p := T(z) \in \operatorname{dom} r$ and $q := T(w) \in \operatorname{dom} r$.
+   - Applying (A.12) at input $z$ with test point $u = q \in \operatorname{dom} r$ gives
+     $$r(p) + \frac{1}{2}\|p - z\|^2 + \frac{1}{2}\|q - p\|^2 \le r(q) + \frac{1}{2}\|q - z\|^2.$$
+   - Applying (A.12) at input $w$ with test point $u = p \in \operatorname{dom} r$ gives
+     $$r(q) + \frac{1}{2}\|q - w\|^2 + \frac{1}{2}\|p - q\|^2 \le r(p) + \frac{1}{2}\|p - w\|^2.$$
+   Summing these two inequalities and canceling the finite terms $r(p) + r(q)$ produces
+   $$\|p - q\|^2 \le \frac{1}{2}\left(\|q - z\|^2 - \|p - z\|^2 + \|p - w\|^2 - \|q - w\|^2\right).$$
+   Applying the polarization identities
+   $$\|q - z\|^2 - \|p - z\|^2 = \|p - q\|^2 + 2\langle q - p, p - z \rangle, \qquad \|p - w\|^2 - \|q - w\|^2 = \|p - q\|^2 + 2\langle p - q, q - w \rangle,$$
+   the right-hand side simplifies to
+   $$\frac{1}{2}\left(2\|p - q\|^2 + 2\langle p - q, (z - p) - (w - q) \rangle\right) = \langle p - q, z - w \rangle.$$
+   Thus $\|p - q\|^2 \le \langle p - q, z - w \rangle$, which is (A.14). Finally, expanding
+   $$\|(I - T)(z) - (I - T)(w)\|^2 = \|(z - w) - (p - q)\|^2 = \|z - w\|^2 - 2\langle p - q, z - w \rangle + \|p - q\|^2$$
+   and substituting $2\langle p - q, z - w \rangle \ge 2\|p - q\|^2$ immediately gives (A.13). By Cauchy–Schwarz on (A.14), $\|T(z) - T(w)\|^2 \le \|T(z) - T(w)\|\|z - w\|$, so $\|T(z) - T(w)\| \le \|z - w\|$. $\blacksquare$
+
+---
+
+### A.3 Why the Draft Rationale's Proximal Representation Claim Fails for Every $\tau > 0$
+
+The draft rationale asserts that because $\dot{z} = -\nabla f(z)$ is the gradient flow of a strongly convex energy and is contractive and dissipative, the exact flow block $T_\tau = \Phi_\tau$ must admit a convex proximal representation $T_\tau = \operatorname{prox}_{r_\tau}$ for some proper, lsc, convex function $r_\tau: \mathbb{R}^2 \to (-\infty, +\infty]$. **This deduction is false for every $\tau > 0$.** In fact, $T_\tau = \Phi_\tau$ violates two necessary conditions that follow directly from Proposition A.1:
+
+#### 1. Obstruction 1: Failure of Cyclic Monotonicity and Jacobian Symmetry (for all $\tau > 0$)
+Using $\frac{1}{2}\|u - z\|^2 - \frac{1}{2}\|p - z\|^2 - \frac{1}{2}\|u - p\|^2 = \langle u - p, p - z \rangle$, the proximal certificate (A.12) with $\phi(u) := r(u) + \frac{1}{2}\|u\|^2$ reads
+$$\phi(T(z)) - \phi(u) \le \langle z, T(z) - u \rangle \qquad \forall u \in \operatorname{dom} r.$$
+Hence $T(z) \in \partial \phi^*(z)$ for the convex conjugate $\phi^*(z) = \sup_u \{\langle z, u \rangle - \phi(u)\}$ (Moreau's characterization: $T = \operatorname{prox}_r$ for a proper, lsc, convex $r$ if and only if $T$ is nonexpansive and is the subdifferential of a convex potential $\psi = \phi^*$). Because our flow map $T_\tau = \Phi_\tau$ is $C^\infty$ on $\mathbb{R}^2$, the existence of such an $r_\tau$ requires $\Phi_\tau = \nabla \psi_\tau$ for a $C^\infty$ convex potential $\psi_\tau$, which in turn forces the Jacobian $D\Phi_\tau(z) = \nabla^2 \psi_\tau(z)$ to be **symmetric everywhere on $\mathbb{R}^2$**, i.e.,
+$$\operatorname{curl}\Phi_\tau(x,y) := \frac{\partial (\Phi_\tau)_2}{\partial x}(x,y) - \frac{\partial (\Phi_\tau)_1}{\partial y}(x,y) \equiv 0 \qquad \text{on } \mathbb{R}^2.$$
+
+For our energy $f(x,y) = \frac{1}{2}(x^2 + 2y^2) + \frac{1}{4}(x+y)^4$, the quadratic Hessian $A = \operatorname{diag}(1,2)$ and the quartic Hessian $3(x+y)^2 B$ with $B = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}$ **do not commute** ($[A, B] \neq 0$). Expanding the ODE
+$$\dot{x} = -x - (x+y)^3, \qquad \dot{y} = -2y - (x+y)^3$$
+in a Taylor series around the equilibrium $(x,y) = (0,0)$ up to third order via Duhamel's formula gives
+$$\Phi_\tau(x,y) = \begin{pmatrix} e^{-\tau} x - e^{-\tau}\int_0^\tau e^s(e^{-s}x + e^{-2s}y)^3\,ds \\ e^{-2\tau} y - e^{-2\tau}\int_0^\tau e^{2s}(e^{-s}x + e^{-2s}y)^3\,ds \end{pmatrix} + O(\|z\|^5).$$
+Computing $\operatorname{curl}\Phi_\tau(x,y) = \partial_x(\Phi_\tau)_2 - \partial_y(\Phi_\tau)_1$ explicitly from these elementary integrals yields, for **every** $\tau > 0$:
+$$\operatorname{curl}\Phi_\tau(x,y) = e^{-\tau}(1 - e^{-\tau})^3 \left[ x^2 + \frac{3}{2}(1 + e^{-\tau})xy + \frac{1}{5}(3 + 4e^{-\tau} + 3e^{-2\tau})y^2 \right] + O(\|z\|^4). \tag{A.15}$$
+In particular, at $(0,0)$,
+$$\left.\frac{\partial^2}{\partial x^2}\operatorname{curl}\Phi_\tau(x,y)\right|_{(0,0)} = 2e^{-\tau}(1 - e^{-\tau})^3 > 0 \qquad \forall \tau > 0.$$
+Thus $D\Phi_\tau(z)$ is not symmetric for any $\tau > 0$, so $\Phi_\tau$ is not a conservative gradient map (nor cyclically monotone) and **cannot** be written as $\operatorname{prox}_{r_\tau}$ for any proper, lsc, convex $r_\tau$.
+
+#### 2. Obstruction 2: Failure of Firm Nonexpansiveness at Large Amplitude (for all $\tau > 0$)
+Even the weaker property of **firm nonexpansiveness** (A.14) derived in Proposition A.1 fails for $\Phi_\tau$ for every $\tau > 0$. Indeed, taking $w = z + \varepsilon v$ as $\varepsilon \to 0$ in (A.14) shows that firm nonexpansiveness of a $C^1$ map $T_\tau = \Phi_\tau$ requires
+$$\langle D\Phi_\tau(z)v, v \rangle \ge \|D\Phi_\tau(z)v\|^2 \quad \forall v \in \mathbb{R}^2 \iff M_\tau(z) := \frac{1}{2}\left(D\Phi_\tau(z) + D\Phi_\tau(z)^\top\right) - D\Phi_\tau(z)^\top D\Phi_\tau(z) \succeq 0 \quad \forall z \in \mathbb{R}^2.$$
+In the rotated orthogonal coordinates $s = x+y$ and $d = x-y$ (corresponding to the orthonormal basis $e_+ = \frac{1}{\sqrt{2}}(1,1)^\top, e_- = \frac{1}{\sqrt{2}}(1,-1)^\top$), the ODE becomes
+$$\dot{s} = -\frac{3}{2}s - 2s^3 + \frac{1}{2}d, \qquad \dot{d} = \frac{1}{2}s - \frac{3}{2}d.$$
+For any fixed $\tau > 0$, consider initial states with $d_0 = 0$ and $s_0 \to +\infty$. The variational matrix $\widetilde{J}_\tau(s_0) = \frac{\partial(s(\tau), d(\tau))}{\partial(s_0, d_0)}$ (which is orthogonally similar to $D\Phi_\tau(z_0)$) satisfies the cooperative linear system
+$$\frac{d}{dt}\widetilde{J}_t = \begin{pmatrix} -(\frac{3}{2} + 6s(t)^2) & 1/2 \\ 1/2 & -3/2 \end{pmatrix} \widetilde{J}_t, \qquad \widetilde{J}_0 = I_2.$$
+As $s_0 \to +\infty$, strong cubic damping $\int_0^t 6s(\xi)^2\,d\xi \to +\infty$ drives the first column $(\frac{\partial s(\tau)}{\partial s_0}, \frac{\partial d(\tau)}{\partial s_0})^\top \to (0,0)^\top$, whereas positivity of the off-diagonal coupling $+1/2$ keeps $\sigma(\tau) := \frac{\partial s(\tau)}{\partial d_0}$ bounded below by a strictly positive constant $\underline{\sigma}(\tau) > 0$. Consequently, as $s_0 \to +\infty$,
+$$\widetilde{J}_\tau(s_0) = \begin{pmatrix} o(1) & \sigma(\tau) \\ o(1) & \delta(\tau) \end{pmatrix} \implies \det M_\tau(z_0) = -\frac{1}{4}\sigma(\tau)^2 + o(1) \le -\frac{1}{4}\underline{\sigma}(\tau)^2 + o(1) < 0.$$
+Because $\det M_\tau(z_0) < 0$ for all sufficiently large $s_0$, $M_\tau(z_0)$ has a strictly negative eigenvalue (for instance, at $\tau = 1$ and $z_0 = (2, 5)^\top$, $\lambda_{\min}(M_1(z_0)) \approx -0.01015 < 0$). Hence $\Phi_\tau$ is **not firmly nonexpansive** on $\mathbb{R}^2$ for any $\tau > 0$.
+
+---
+
+## Deployment Description (Methods Section)
+
+> **Mathematical Guarantees of the Autonomous Continuous-Flow Denoising Block.**
+> Each denoising block $T_\tau: \mathbb{R}^2 \to \mathbb{R}^2$ evaluates the exact time-$\tau$ flow map $T_\tau(z) := \Phi_\tau(z)$ ($\tau > 0$) of the autonomous gradient system $\dot{z} = -\nabla f(z)$ governed by the smooth, $1$-strongly convex Lyapunov energy $f(x,y) = \frac{1}{2}(x^2 + 2y^2) + \frac{1}{4}(x+y)^4$ ($\nabla^2 f(z) \succeq I_2$), whose unique global minimizer and equilibrium is the origin $z^* = (0,0)$. The forward flow is globally well-posed on $[0, \infty)$ and guarantees both strict Euclidean contraction and exponential energy dissipation across every single block:
+> $$\|T_\tau(z) - T_\tau(w)\| \le e^{-\tau}\|z - w\| \qquad \text{and} \qquad f(T_\tau(z)) \le e^{-2\tau} f(z) \qquad \forall z, w \in \mathbb{R}^2.$$
+> Because $T_\tau = \Phi_\tau$ is an exact autonomous flow rather than a discrete time-stepping scheme, stacking $n$ identical blocks $Z_n = T_\tau^n(Z_0)$ obeys exact semigroup additivity $T_\tau^n = \Phi_{n\tau}$, guaranteeing global geometric perturbation stability $\|T_\tau^n(Z_0) - T_\tau^n(W_0)\| \le e^{-n\tau}\|Z_0 - W_0\|$, exponential state convergence $\|Z_n\| \le e^{-n\tau}\|Z_0\|$ to $z^* = (0,0)$, and exponential energy decay $f(Z_n) \le e^{-2n\tau} f(Z_0)$ governed solely by the cumulative integration horizon $n\tau$.
+>
+> **Distinction Between Flow Horizon $\tau$ and Proximal Regularization.**
+> In our proximal notation $\operatorname{prox}_r(z) = \operatorname{argmin}_u \{r(u) + \frac{1}{2}\|u - z\|^2\}$, the quadratic fidelity term carries a fixed unit coefficient $\frac{1}{2}$; an implicit-Euler discretization of $\dot{z} = -\nabla f(z)$ with step size $\tau$ would therefore take the proximal form $J_\tau(z) = (I + \tau \nabla f)^{-1}(z) = \operatorname{prox}_{\tau f}(z) = \operatorname{argmin}_u \{\tau f(u) + \frac{1}{2}\|u - z\|^2\}$, where $\tau$ acts as a scalar multiplier on the regularizer $f$ (and $J_\tau^n \neq J_{n\tau}$). By contrast, in our deployed block $T_\tau = \Phi_\tau$, $\tau > 0$ is the continuous ODE integration time. Furthermore, although $T_\tau$ agrees with $\operatorname{prox}_{\tau f}$ to first order as $\tau \downarrow 0$ ($\Phi_\tau(z) = \operatorname{prox}_{\tau f}(z) + O(\tau^2)$) and is a strict $e^{-\tau}$-contraction, the non-commutativity of the quadratic and quartic Hessians of $f$ renders the flow Jacobian $D\Phi_\tau(z)$ asymmetric ($\operatorname{curl}\Phi_\tau \not\equiv 0$) and causes $\Phi_\tau$ to violate firm nonexpansiveness at large amplitudes for every $\tau > 0$. Consequently, the exact block $T_\tau = \Phi_\tau$ is **not** a proximal map $\operatorname{prox}_{r_\tau}$ for any proper, lower-semicontinuous convex function $r_\tau$; its regularization and stability guarantees are instead rigorously certified by its exact $e^{-\tau}$-Lipschitz contractivity and $e^{-2\tau}$-Lyapunov energy dissipation.

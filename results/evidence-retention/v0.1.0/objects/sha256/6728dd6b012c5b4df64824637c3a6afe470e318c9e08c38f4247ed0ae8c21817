@@ -1,0 +1,192 @@
+我们可以通过构造反链与 $0\text{-}1$ 序列之间的双射（即 Stanley–Thomas 词），将映射 $R$ 转化为序列的循环移位，从而给出完整证明。
+
+---
+
+### 第一步：反链的坐标刻画与编码
+
+对任意反链 $A \subseteq P = \{1,\dots,a\} \times \{1,\dots,b\}$，设 $|A| = k$（$k \ge 0$）。
+
+1. **坐标投影的单调性：**
+   若 $(i,j), (i,j') \in A$，则由 $j \le j'$ 或 $j' \le j$ 知二者可比较，故必有 $j = j'$。因此 $A$ 中不同元素的第一坐标互不相同；同理，第二坐标也互不相同。
+   将 $A$ 的元素按第一坐标从小到大排列为
+   $$(i_1, j_1), (i_2, j_2), \dots, (i_k, j_k), \qquad 1 \le i_1 < i_2 < \dots < i_k \le a.$$
+   对任意 $1 \le r < s \le k$，因 $i_r < i_s$ 且 $(i_r, j_r)$ 与 $(i_s, j_s)$ 不可比较，故不能有 $j_r \le j_s$，从而必有
+   $$b \ge j_1 > j_2 > \dots > j_k \ge 1.$$
+   反之，任意满足 $1 \le i_1 < \dots < i_k \le a$ 与 $b \ge j_1 > \dots > j_k \ge 1$ 的点集 $\{(i_r, j_r)\}_{r=1}^k$ 显然构成 $P$ 的一条反链。
+
+2. **定义编码映射 $W$：**
+   记 $A$ 的第一、第二坐标集合分别为
+   $$X(A) = \{i_1, \dots, i_k\} \subseteq \{1,\dots,a\}, \qquad Y(A) = \{j_1, \dots, j_k\} \subseteq \{1,\dots,b\}.$$
+   由上述单调性可知，$A$ 由子集对 $(X(A), Y(A))$ 唯一决定（将 $X(A)$ 的元素从小到大排列、$Y(A)$ 的元素从大到小排列后逐项配对即可还原 $A$）。
+
+   定义长度为 $a+b$ 的 $0\text{-}1$ 序列
+   $$W(A) = \bigl(x_1(A), \dots, x_a(A), y_1(A), \dots, y_b(A)\bigr) \in \{0,1\}^{a+b},$$
+   其中：
+   - 对 $1 \le i \le a$，
+     $$x_i(A) = \begin{cases} 1, & i \in X(A), \\ 0, & i \notin X(A); \end{cases}$$
+   - 对 $1 \le j \le b$，
+     $$y_j(A) = \begin{cases} 0, & j \in Y(A), \\ 1, & j \notin Y(A). \end{cases}$$
+
+   由定义立即得到以下两条性质：
+   - **唯一性（单射性）：** $W(A)$ 唯一确定 $X(A)$ 与 $Y(A)$，从而唯一确定反链 $A$。
+   - **和与反链大小的关系：** 因为 $|X(A)| = |Y(A)| = |A|$，我们有
+     $$|A| = \sum_{i=1}^a x_i(A), \qquad \sum_{j=1}^b y_j(A) = b - |Y(A)| = b - |A|,$$
+     故 $W(A)$ 的所有 $a+b$ 个分量之和恒为
+     $$\sum_{i=1}^a x_i(A) + \sum_{j=1}^b y_j(A) = |A| + (b - |A|) = b.$$
+
+---
+
+### 第二步：刻画 $R(A)$ 并证明循环移位性质
+
+补充记号 $i_0 = 0$，$j_{k+1} = 0$。我们来证明：
+$$R(A) = \bigl\{ (i_r + 1,\, j_{r+1} + 1) : 0 \le r \le k,\ i_r < a,\ j_{r+1} < b \bigr\}.$$
+
+**证明：** 记右端集合为 $B$。
+1. **$B \subseteq P \setminus I(A)$：**
+   对任意 $(i_r + 1, j_{r+1} + 1) \in B$，由 $0 \le i_r < a$ 和 $0 \le j_{r+1} < b$ 知 $(i_r + 1, j_{r+1} + 1) \in P$。若它属于 $I(A)$，则存在 $1 \le s \le k$ 使得
+   $$i_r + 1 \le i_s \quad \text{且} \quad j_{r+1} + 1 \le j_s.$$
+   由第一式及 $i$ 的严格递增性得 $r < s$，即 $r + 1 \le s$；由第二式及 $j$ 的严格递减性得 $r + 1 > s$，矛盾。故 $B \subseteq P \setminus I(A)$。
+2. **$P \setminus I(A)$ 中每个元素都大于等于 $B$ 中某个元素：**
+   任取 $(u, v) \in P \setminus I(A)$。因 $i_0 = 0 < 1 \le u$，可取最大下标 $r \in \{0, 1, \dots, k\}$ 使得 $i_r < u$，于是 $i_r + 1 \le u \le a$（故 $i_r < a$）。
+   - 若 $r = k$，则 $j_{k+1} + 1 = 1 \le v \le b$；
+   - 若 $r < k$，由 $r$ 的最大性知 $u \le i_{r+1}$。因 $(u, v) \notin I(A)$，不能有 $(u, v) \le (i_{r+1}, j_{r+1})$，故必有 $v > j_{r+1}$，即 $j_{r+1} + 1 \le v \le b$。
+   因此在两种情形下都有 $j_{r+1} < b$，从而 $(i_r + 1, j_{r+1} + 1) \in B$ 且 $(i_r + 1, j_{r+1} + 1) \le (u, v)$。
+3. **$B$ 是反链：**
+   当 $r$ 增大时，$i_r + 1$ 严格递增而 $j_{r+1} + 1$ 严格递减，故 $B$ 中任意两个不同元素不可比较。
+
+由以上三点可知，$B$ 恰为 $P \setminus I(A)$ 的全体极小元，即 $R(A) = B$。$\blacksquare$
+
+---
+
+现在比较 $W(R(A))$ 与 $W(A)$ 的各个分量：
+- **对 $2 \le i \le a$：** $B$ 中第一坐标大于等于 $2$ 的元素只能来自 $1 \le r \le k$。当 $1 \le r \le k$ 时，$j_{r+1} < j_1 \le b$（当 $r<k$）或 $j_{k+1} = 0 < b$（当 $r=k$）自动成立，故 $(i_r + 1, j_{r+1} + 1) \in B \iff i_r < a$。因此
+  $$i \in X(R(A)) \iff i - 1 \in X(A), \qquad \text{即} \quad x_i(R(A)) = x_{i-1}(A).$$
+- **对 $i = 1$：** $B$ 中第一坐标为 $1$ 的元素只能来自 $r = 0$（因为 $i_0 + 1 = 1$）。此时 $i_0 = 0 < a$ 自动成立，故 $(1, j_1 + 1) \in B \iff j_1 < b \iff b \notin Y(A)$（当 $k=0$ 时 $j_1=0<b$ 且 $b \notin \emptyset$，同样成立）。因此
+  $$1 \in X(R(A)) \iff b \notin Y(A), \qquad \text{即} \quad x_1(R(A)) = y_b(A).$$
+- **对 $2 \le j \le b$：** $B$ 中第二坐标大于等于 $2$ 的元素只能来自 $0 \le r \le k - 1$。此时 $i_r < i_k \le a$（当 $r \ge 1$）或 $i_0 = 0 < a$（当 $r=0$）自动成立，故 $(i_r + 1, j_{r+1} + 1) \in B \iff j_{r+1} < b$。令 $s = r + 1 \in \{1,\dots,k\}$，可得
+  $$j \in Y(R(A)) \iff j - 1 \in Y(A), \qquad \text{即} \quad y_j(R(A)) = y_{j-1}(A).$$
+- **对 $j = 1$：** $B$ 中第二坐标为 $1$ 的元素只能来自 $r = k$（因为 $j_{k+1} + 1 = 1$）。此时 $j_{k+1} = 0 < b$ 自动成立，故 $(i_k + 1, 1) \in B \iff i_k < a \iff a \notin X(A)$。因此
+  $$1 \in Y(R(A)) \iff a \notin X(A), \qquad \text{即} \quad y_1(R(A)) = x_a(A).$$
+
+综合以上四式，若记 $\sigma: \{0,1\}^{a+b} \to \{0,1\}^{a+b}$ 为向右循环移位一格的映射：
+$$\sigma(w_1, w_2, \dots, w_{a+b}) = (w_{a+b}, w_1, w_2, \dots, w_{a+b-1}),$$
+则对任意反链 $A$，恒有
+$$W(R(A)) = \sigma(W(A)).$$
+
+---
+
+### 第三步：计算轨道上的反链大小均值
+
+由 $W(R(A)) = \sigma(W(A))$ 递推可知，对任意整数 $m \ge 0$，
+$$W(R^m(A)) = \sigma^m(W(A)).$$
+因为 $\sigma^{a+b}$ 是 $\{0,1\}^{a+b}$ 上的恒等映射，所以 $W(R^{a+b}(A)) = W(A)$。又因 $W$ 是单射，故对任意反链 $A$ 都有
+$$R^{a+b}(A) = A.$$
+
+设 $O$ 是 $R$ 的任意一条轨道，任取 $A_0 \in O$，记 $d = |O|$。则 $O = \{A_0, R(A_0), \dots, R^{d-1}(A_0)\}$，且 $d$ 是使 $R^d(A_0) = A_0$ 的最小正整数。由 $R^{a+b}(A_0) = A_0$ 知 $d \mid (a+b)$，设 $a + b = qd$（$q \in \mathbb{Z}_{\ge 1}$）。于是当 $m$ 从 $0$ 取到 $a+b-1$ 时，$R^m(A_0)$ 恰好遍历轨道 $O$ 中每个元素各 $q$ 次，因此
+$$\frac{1}{|O|} \sum_{A \in O} |A| = \frac{1}{d} \sum_{m=0}^{d-1} |R^m(A_0)| = \frac{1}{qd} \sum_{m=0}^{qd-1} |R^m(A_0)| = \frac{1}{a+b} \sum_{m=0}^{a+b-1} |R^m(A_0)|.$$
+
+记 $W_i(A)$ 为 $W(A)$ 的第 $i$ 个分量，则 $|A| = \sum_{i=1}^a x_i(A) = \sum_{i=1}^a W_i(A)$。對固定的 $i \in \{1,\dots,a\}$，当 $m$ 遍历 $0, 1, \dots, a+b-1$ 时，$W_i(R^m(A_0)) = (\sigma^m(W(A_0)))_i$ 恰好遍历 $W(A_0)$ 的全部 $a+b$ 个分量各一次，而由第一步知 $W(A_0)$ 的各分量之和恒为 $b$，故
+$$\sum_{m=0}^{a+b-1} W_i(R^m(A_0)) = \sum_{s=1}^{a+b} W_s(A_0) = b.$$
+
+对 $i = 1, \dots, a$ 求和，得
+$$\sum_{m=0}^{a+b-1} |R^m(A_0)| = \sum_{i=1}^a \sum_{m=0}^{a+b-1} W_i(R^m(A_0)) = \sum_{i=1}^a b = ab.$$
+
+代入前式即得
+$$\frac{1}{|O|} \sum_{A \in O} |A| = \frac{ab}{a+b}.$$
+证毕。$]{}
+下面给出该结论的完整证明。
+
+---
+
+### 第一步：反链的坐标刻画与 $0\text{-}1$ 序列编码
+
+对任意反链 $A \subseteq P = \{1,\dots,a\} \times \{1,\dots,b\}$，设 $|A| = k$（$k \ge 0$）。
+
+1. **坐标投影的单调性：**
+   若 $(i,j), (i,j') \in A$，则由 $j \le j'$ 或 $j' \le j$ 知二者可比较，故必有 $j = j'$。因此 $A$ 中不同元素的第一坐标互不相同；同理，第二坐标也互不相同。
+   将 $A$ 的元素按第一坐标从小到大排列为
+   $$(i_1, j_1), (i_2, j_2), \dots, (i_k, j_k), \qquad 1 \le i_1 < i_2 < \dots < i_k \le a.$$
+   对任意 $1 \le r < s \le k$，因 $i_r < i_s$ 且 $(i_r, j_r)$ 与 $(i_s, j_s)$ 不可比较，故不能有 $j_r \le j_s$，从而必有
+   $$b \ge j_1 > j_2 > \dots > j_k \ge 1.$$
+   反之，任意满足 $1 \le i_1 < \dots < i_k \le a$ 与 $b \ge j_1 > \dots > j_k \ge 1$ 的点集 $\{(i_r, j_r)\}_{r=1}^k$ 显然构成 $P$ 的一条反链。
+
+2. **定义编码映射 $W$：**
+   记 $A$ 的第一、第二坐标集合分别为
+   $$X(A) = \{i_1, \dots, i_k\} \subseteq \{1,\dots,a\}, \qquad Y(A) = \{j_1, \dots, j_k\} \subseteq \{1,\dots,b\}.$$
+   由上述单调性可知，$A$ 由子集对 $(X(A), Y(A))$ 唯一决定（将 $X(A)$ 的元素从小到大排列、$Y(A)$ 的元素从大到小排列后逐项配对即可还原 $A$）。
+
+   定义长度为 $a+b$ 的 $0\text{-}1$ 序列
+   $$W(A) = \bigl(x_1(A), \dots, x_a(A), y_1(A), \dots, y_b(A)\bigr) \in \{0,1\}^{a+b},$$
+   其中：
+   - 对 $1 \le i \le a$，
+     $$x_i(A) = \begin{cases} 1, & i \in X(A), \\ 0, & i \notin X(A); \end{cases}$$
+   - 对 $1 \le j \le b$，
+     $$y_j(A) = \begin{cases} 0, & j \in Y(A), \\ 1, & j \notin Y(A). \end{cases}$$
+
+   由定义立即得到以下两条性质：
+   - **单射性：** $W(A)$ 唯一确定 $X(A)$ 与 $Y(A)$，从而唯一确定反链 $A$。
+   - **分量和与反链大小的关系：** 因为 $|X(A)| = |Y(A)| = |A|$，我们有
+     $$|A| = \sum_{i=1}^a x_i(A), \qquad \sum_{j=1}^b y_j(A) = b - |Y(A)| = b - |A|,$$
+     故 $W(A)$ 的所有 $a+b$ 个分量之和恒为
+     $$\sum_{i=1}^a x_i(A) + \sum_{j=1}^b y_j(A) = |A| + (b - |A|) = b.$$
+
+---
+
+### 第二步：刻画 $R(A)$ 并证明循环移位性质
+
+补充记号 $i_0 = 0$，$j_{k+1} = 0$。我们来证明：
+$$R(A) = \bigl\{ (i_r + 1,\, j_{r+1} + 1) : 0 \le r \le k,\ i_r < a,\ j_{r+1} < b \bigr\}.$$
+
+**证明：** 记右端集合为 $B$。
+1. **$B \subseteq P \setminus I(A)$：**
+   对任意 $(i_r + 1, j_{r+1} + 1) \in B$，由 $0 \le i_r < a$ 和 $0 \le j_{r+1} < b$ 知 $(i_r + 1, j_{r+1} + 1) \in P$。若它属于 $I(A)$，则存在 $1 \le s \le k$ 使得
+   $$i_r + 1 \le i_s \quad \text{且} \quad j_{r+1} + 1 \le j_s.$$
+   由第一式及 $i$ 的严格递增性得 $r < s$，即 $r + 1 \le s$；由第二式及 $j$ 的严格递减性得 $r + 1 > s$，矛盾。故 $B \subseteq P \setminus I(A)$。
+2. **$P \setminus I(A)$ 中每个元素都大于等于 $B$ 中某个元素：**
+   任取 $(u, v) \in P \setminus I(A)$。因 $i_0 = 0 < 1 \le u$，可取最大下标 $r \in \{0, 1, \dots, k\}$ 使得 $i_r < u$，于是 $i_r + 1 \le u \le a$（故 $i_r < a$）。
+   - 若 $r = k$，则 $j_{k+1} + 1 = 1 \le v \le b$；
+   - 若 $r < k$，由 $r$ 的最大性知 $u \le i_{r+1}$。因 $(u, v) \notin I(A)$，不能有 $(u, v) \le (i_{r+1}, j_{r+1})$，故必有 $v > j_{r+1}$，即 $j_{r+1} + 1 \le v \le b$。
+   因此在两种情形下都有 $j_{r+1} < b$，从而 $(i_r + 1, j_{r+1} + 1) \in B$ 且 $(i_r + 1, j_{r+1} + 1) \le (u, v)$。
+3. **$B$ 是反链：**
+   当 $r$ 增大时，$i_r + 1$ 严格递增而 $j_{r+1} + 1$ 严格递减，故 $B$ 中任意两个不同元素不可比较。
+
+由以上三点可知，$B$ 恰为 $P \setminus I(A)$ 的全体极小元，即 $R(A) = B$。$\blacksquare$
+
+---
+
+现在比较 $W(R(A))$ 与 $W(A)$ 的各个分量：
+- **对 $2 \le i \le a$：** $B$ 中第一坐标大于等于 $2$ 的元素只能来自 $1 \le r \le k$。当 $1 \le r \le k$ 时，$j_{r+1} < j_1 \le b$（当 $r<k$）或 $j_{k+1} = 0 < b$（当 $r=k$）自动成立，故 $(i_r + 1, j_{r+1} + 1) \in B \iff i_r < a$。因此
+  $$i \in X(R(A)) \iff i - 1 \in X(A), \qquad \text{即} \quad x_i(R(A)) = x_{i-1}(A).$$
+- **对 $i = 1$：** $B$ 中第一坐标为 $1$ 的元素只能来自 $r = 0$（因为 $i_0 + 1 = 1$）。此时 $i_0 = 0 < a$ 自动成立，故 $(1, j_1 + 1) \in B \iff j_1 < b \iff b \notin Y(A)$（当 $k=0$ 时 $j_1=0<b$ 且 $b \notin \emptyset$，同样成立）。因此
+  $$1 \in X(R(A)) \iff b \notin Y(A), \qquad \text{即} \quad x_1(R(A)) = y_b(A).$$
+- **对 $2 \le j \le b$：** $B$ 中第二坐标大于等于 $2$ 的元素只能来自 $0 \le r \le k - 1$。此时 $i_r < i_k \le a$（当 $r \ge 1$）或 $i_0 = 0 < a$（当 $r=0$）自动成立，故 $(i_r + 1, j_{r+1} + 1) \in B \iff j_{r+1} < b$。令 $s = r + 1 \in \{1,\dots,k\}$，可得
+  $$j \in Y(R(A)) \iff j - 1 \in Y(A), \qquad \text{即} \quad y_j(R(A)) = y_{j-1}(A).$$
+- **对 $j = 1$：** $B$ 中第二坐标为 $1$ 的元素只能来自 $r = k$（因为 $j_{k+1} + 1 = 1$）。此时 $j_{k+1} = 0 < b$ 自动成立，故 $(i_k + 1, 1) \in B \iff i_k < a \iff a \notin X(A)$。因此
+  $$1 \in Y(R(A)) \iff a \notin X(A), \qquad \text{即} \quad y_1(R(A)) = x_a(A).$$
+
+综合以上四式，若记 $\sigma: \{0,1\}^{a+b} \to \{0,1\}^{a+b}$ 为向右循环移位一格的映射：
+$$\sigma(w_1, w_2, \dots, w_{a+b}) = (w_{a+b}, w_1, w_2, \dots, w_{a+b-1}),$$
+则对任意反链 $A$，恒有
+$$W(R(A)) = \sigma(W(A)).$$
+
+---
+
+### 第三步：计算轨道上的反链大小均值
+
+由 $W(R(A)) = \sigma(W(A))$ 递推可知，对任意整数 $m \ge 0$，
+$$W(R^m(A)) = \sigma^m(W(A)).$$
+因为 $\sigma^{a+b}$ 是 $\{0,1\}^{a+b}$ 上的恒等映射，所以 $W(R^{a+b}(A)) = W(A)$。又因 $W$ 是单射，故对任意反链 $A$ 都有
+$$R^{a+b}(A) = A.$$
+
+设 $O$ 是 $R$ 的任意一条轨道，任取 $A_0 \in O$，记 $d = |O|$。则 $O = \{A_0, R(A_0), \dots, R^{d-1}(A_0)\}$，且 $d$ 是使 $R^d(A_0) = A_0$ 的最小正整数。由 $R^{a+b}(A_0) = A_0$ 知 $d \mid (a+b)$，设 $a + b = qd$（$q \in \mathbb{Z}_{\ge 1}$）。于是当 $m$ 从 $0$ 取到 $a+b-1$ 时，$R^m(A_0)$ 恰好遍历轨道 $O$ 中每个元素各 $q$ 次，因此
+$$\frac{1}{|O|} \sum_{A \in O} |A| = \frac{1}{d} \sum_{m=0}^{d-1} |R^m(A_0)| = \frac{1}{qd} \sum_{m=0}^{qd-1} |R^m(A_0)| = \frac{1}{a+b} \sum_{m=0}^{a+b-1} |R^m(A_0)|.$$
+
+记 $W_i(A)$ 为 $W(A)$ 的第 $i$ 个分量，则 $|A| = \sum_{i=1}^a x_i(A) = \sum_{i=1}^a W_i(A)$。对固定的 $i \in \{1,\dots,a\}$，当 $m$ 遍历 $0, 1, \dots, a+b-1$ 时，$W_i(R^m(A_0)) = (\sigma^m(W(A_0)))_i$ 恰好遍历 $W(A_0)$ 的全部 $a+b$ 个分量各一次，而由第一步知 $W(A_0)$ 的各分量之和恒为 $b$，故
+$$\sum_{m=0}^{a+b-1} W_i(R^m(A_0)) = \sum_{s=1}^{a+b} W_s(A_0) = b.$$
+
+对 $i = 1, \dots, a$ 求和，得
+$$\sum_{m=0}^{a+b-1} |R^m(A_0)| = \sum_{i=1}^a \sum_{m=0}^{a+b-1} W_i(R^m(A_0)) = \sum_{i=1}^a b = ab.$$
+
+代入前式即得
+$$\frac{1}{|O|} \sum_{A \in O} |A| = \frac{ab}{a+b}.$$
+证毕。

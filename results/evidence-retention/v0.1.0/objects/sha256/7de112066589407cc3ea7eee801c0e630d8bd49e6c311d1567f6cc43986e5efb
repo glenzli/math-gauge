@@ -1,0 +1,106 @@
+{}
+# 答卷审阅报告
+
+基于原题 [original-task.md](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md) 与待审答卷 [original-answer.md](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md)（材料说明见 [materials.md](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/materials.md)），审阅结论与数学核查依据如下。
+
+---
+
+## 一、总体评估
+
+| 题号 | 判定/主结论是否正确 | 论证是否完整严密 | 审阅结论摘要 |
+| :--- | :---: | :---: | :--- |
+| **S1** | 是 | 基本完整（局部断言有误） | 等化子主证明及拓扑层面的反例分析正确；但概形层面声称“$\dim \mathcal{O}_{X,x_i}\ge 1$ 时 $S_i\to S$ 不是有限型”过于宽泛（在 $\dim X=1$ 或 $n=1$ 时有反例），且对纤维积余极限的余终性省略了验证。 |
+| **S2** | 是 | 部分缺失 | 差映射核正合列归约与四引理图追逐完全正确；但在取滤过余极限时，未验证分离可缩覆盖对 $(U,V)$ 的有向性及在 $\mathcal{I}_{x_1}\times\mathcal{I}_{x_2}$ 中的余终性。 |
+| **S3** | 是 | 完整严密 | 余终性证明及预层余极限正反典范同态的构造与互逆验证完全正确。 |
+| **S4** | 是 | 完整严密 | 否定结论正确，所举反例（$X=\mathbb{A}^1_k, \Sigma=\{0\}, W=D(t)$）满足全部题设，论证完整。 |
+| **S5** | 是 | **存在实质性错误与缺漏** | 目标同构结论正确，但核心中间定理（整体稠密开浸入单射性）及两条推论（$F$ 为分离预层、$F(U)\to F_{\mathrm{Zar}}(U)$ 对任意开集单射）在原题条件下**不成立**（存在反例 $F=\operatorname{Pic}$），导致其通过 `S2` 证明满射性的关键单射性前提失去依据，且省略了具体几何构造。 |
+| **S6** | 是 | 完整严密 | 第一问否定结论及乘 $2$ 复形反例完全正确；第二问给出的两种正合性证明均严密完备。 |
+
+---
+
+## 二、逐项详细审阅与数学依据
+
+### 1. S1 层的半局部拼接（[original-task.md#L7-L9](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md#L7-L9)，[original-answer.md#L5-L44](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L5-L44)）
+
+- **正确部分**：
+  - 在乘积有向集 $\mathcal{I}=\prod_{i=1}^n\mathcal{I}_{x_i}$ 上对开覆盖 $U=\bigcup_{i=1}^n U_i$ 应用 Zariski 层公理，再利用 $\mathrm{Ab}$ 中滤过余极限与有限极限（等化子、有限积）可交换导出 $G(S)$ 是 $\prod_i G(S_i)\rightrightarrows\prod_{i,j}G(S_i\times_S S_j)$ 的等化子（[original-answer.md#L16-L38](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L16-L38)），逻辑正确。
+  - 第 3 小节“拓扑层面”（[original-answer.md#L42](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L42)）指出当同一不可约分支上存在 $j\neq i$ 使得 $\dim\mathcal{O}_{X,x_j}\ge 2$ 时，由高度 $1$ 素理想的无穷性可知 $x_i$ 不是 $S_i$ 在 $S$ 中的内点，从而说明了 $S_i$ 不必是 $S$ 的开子概形。
+
+- **存在的问题与影响**：
+  1. **概形层面的全称断言条件有误（[original-answer.md#L43](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L43)）**：
+     - **具体断言**：答卷声称“*然而当 $\dim\mathcal{O}_{X,x_i}\ge 1$ 时，局部环 $\mathcal{O}_{X,x_i}$ 作为 $\mathcal{O}_{X,\Sigma}$-代数不是有限生成的，故态射 $S_i\to S$ 虽然是平坦单射，但不是有限型的，因而不是开子概形。*”
+     - **数学依据（反例）**：该断言在 $n=1$（此时 $S_1=S$）或 $\dim X=1$ 时**不成立**。例如取 $X=\mathbb{A}^1_k=\operatorname{Spec}k[t]$，闭点 $x_1=(t), x_2=(t-1)$，则 $\dim\mathcal{O}_{X,x_1}=1\ge 1$。此时半局部环 $R=\mathcal{O}_{X,\Sigma}$ 是仅有三个素理想 $(0), tR, (t-1)R$ 的主理想整环，$R\setminus tR$ 中元素均为单位与 $(t-1)$ 幂次的乘积，故
+       $$\mathcal{O}_{X,x_1}=R_{tR}=R\left[\frac{1}{t-1}\right]$$
+       **是**有限生成 $\mathcal{O}_{X,\Sigma}$-代数，$S_1=D(t-1)=S\setminus\{x_2\}$ **是** $S$ 的开子概形。只有当 $S_i\to X$（作为 $\mathcal{O}_X(U)$-代数）时 $\dim\mathcal{O}_{X,x_i}\ge 1$ 才足以保证非有限型；若针对态射 $S_i\to S$，仍需像拓扑层面那样要求同一连通分支上存在 $j\neq i$ 满足 $\dim\mathcal{O}_{X,x_j}\ge 2$。
+     - **影响**：由于题目仅要求说明“$S_i$ **不必是**开子概形”，而第 42 行已给出 $\dim\ge 2$ 的有效说明，故不影响本题主结论，但第 43 行的代数判据表述有误。
+  2. **纤维积余极限的余终性未作说明（[original-answer.md#L14](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L14), [#L30-L33](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L30-L33)）**：
+     - 答卷直接将 $G(S_i\times_S S_j)$ 定义/等同为 $\varinjlim_{x_i\in U_i, x_j\in U_j}G(U_i\cap U_j)$。严格而言，按“值以开邻域滤过余极限延拓”的定义，应指出在包含 $\Sigma$ 的仿射开集 $\operatorname{Spec}A$ 中，$S_i\times_S S_j=\operatorname{Spec}((A\setminus\mathfrak p_i)^{-1}(A\setminus\mathfrak p_j)^{-1}A)$ 的任一开邻域 $W$ 均包含形如 $D(fg)=D(f)\cap D(g)$（$f\notin\mathfrak p_i, g\notin\mathfrak p_j$）的基本开集，从而形如 $U_i\cap U_j$ 的开集在 $S_i\times_S S_j$ 的全体开邻域中余终。
+
+---
+
+### 2. S2 分离预层的比较图（[original-task.md#L11-L13](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md#L11-L13)，[original-answer.md#L47-L95](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L47-L95)）
+
+- **正确部分**：
+  - 第 1 小节（[original-answer.md#L49-L56](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L49-L56)）消去对角冗余项、将 $n=2$ 时的等化子化为差映射核正合列 $0\to G(S)\to G(S_1)\oplus G(S_2)\to G(S_1\times_S S_2)$ 完全正确。
+  - 第 3 小节（[original-answer.md#L68-L95](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L68-L95)）通过交换图追逐证明 $\eta_S$ 单射与满射的步骤清晰严密。
+
+- **存在的问题与影响**：
+  - **可缩覆盖系统的有向性与余终性缺失验证（[original-answer.md#L61-L65](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L61-L65)）**：
+    - **具体步骤**：答卷直接写“*在所有使该序列正合的可缩覆盖 $(U,V)$ 构成的有向系统上取滤过余极限……有 $\varinjlim H(U)=H(S_1)$，$\varinjlim H(V)=H(S_2)$，$\varinjlim H(U\cap V)=H(S_1\times_S S_2)$*”。
+    - **数学依据**：
+      1. **余终性依赖闭点分离**：题设前提仅针对“分开 $x_1,x_2$ 的二开覆盖 $(U_0,V)$”。对任意邻域对 $(W_1,W_2)\in\mathcal{I}_{x_1}\times\mathcal{I}_{x_2}$，必须利用 $x_1,x_2$ 是 $S$ 的两个不同**闭点**（故 $x_1\notin\overline{\{x_2\}}$, $x_2\notin\overline{\{x_1\}}$），先取 $U_0=W_1\setminus\overline{\{x_2\}}$ 与 $V=W_2\setminus\overline{\{x_1\}}$ 得到分开 $x_1,x_2$ 且覆盖 $S$ 的二开覆盖，再按题设缩为正合对 $(U,V)\subset(W_1,W_2)$，方能证明正合对 $(U,V)$ 在 $\mathcal{I}_{x_1}\times\mathcal{I}_{x_2}$ 中**余终**。
+      2. **有向性**：两个正合对 $(U_1,V_1)$ 与 $(U_2,V_2)$ 的逐分量交 $(U_1\cap U_2, V_1\cap V_2)$ 本身未必直接满足正合性，需对其再次应用收缩假设得到更小的正合对 $(U_3, V_1\cap V_2)$，才能说明该子族构成有向系统。
+    - **影响**：顶行余极限正合列结论正确，但推导跳过了使余极限等于 $H(S_1),H(S_2),H(S_1\times_S S_2)$ 的余终性验证。
+
+---
+
+### 3. S3 含指定点的开集（[original-task.md#L15-L17](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md#L15-L17)，[original-answer.md#L99-L132](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L99-L132)）
+
+- **审阅结论**：**完全正确且完整**。
+- **核查依据**：对任意 $V\in\mathcal{I}$ 构造 $U=V\cap W\in\mathcal{I}_W$ 验证了余终性，并通过限制映射 $\mathcal{F}(V)\to\mathcal{F}(V\cap W)$ 与滤过余极限泛性质显式给出了诱导同态 $\phi$ 的逆映射 $\psi$，完整验证了 $\psi\circ\phi=\mathrm{id}$ 与 $\phi\circ\psi=\mathrm{id}$。
+
+---
+
+### 4. S4 稠密开与邻域系统（[original-task.md#L19-L21](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md#L19-L21)，[original-answer.md#L135-L162](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L135-L162)）
+
+- **审阅结论**：**完全正确且完整**。
+- **核查依据**：判定“不成立”正确；构造的 $X=\mathbb{A}^1_k$, $\Sigma=\{0\}$, $W=\mathbb{A}^1_k\setminus\{0\}=D(t)$ 满足“$k$ 为域、$X$ 为光滑积分仿射 $k$-概形、$\Sigma$ 有限非空、$W$ 稠密开”的全部前提，且满足 $\Sigma\subset U\subset W$ 的开集族 $\mathcal{I}_W=\emptyset$，在非空有向集 $\mathcal{I}$ 中不余终。
+
+---
+
+### 5. S5 整体对象与全部恢复目标（[original-task.md#L23-L50](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md#L23-L50)，[original-answer.md#L165-L252](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L165-L252)）
+
+- **正确部分**：
+  - 最终判定结论“$\eta_S:F(S)\to F_{\mathrm{Zar}}(S)$ 是同构”（[original-answer.md#L168-L169](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L168-L169)）正确（对应 Voevodsky, *Cohomological Theory of Presheaves with Transfers*, Lemma 4.23；Mazza–Voevodsky–Weibel [MVW], *Lectures on Motivic Cohomology*, Lemma 22.10）。
+  - 第 4 小节单点情形 $|\Sigma|=1$（[original-answer.md#L210-L217](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L210-L217)）利用层化在茎上诱导同构 $F_x\xrightarrow{\sim}(F_{\mathrm{Zar}})_x$ 的证明完全正确。
+
+- **存在的问题与影响**：
+  1. **第 3 小节的核心定理与两条单射性推论均为错误命题（[original-answer.md#L191-L206](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L191-L206)）**：
+     - **具体断言**：答卷对满足题设的任意加性 $\mathbb{A}^1$-同伦不变预层 $F:\mathrm{Cor}_k^{\mathrm{op}}\to\mathrm{Ab}$ 断言：
+       - **定理**（[#L191-L194](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L191-L194)）：对任意连通光滑整概形 $Y\in\mathrm{Sm}/k$ 及稠密开子集 $W\subset Y$，限制映射 $F(Y)\to F(W)$ 是单射；
+       - **推论 1**（[#L202](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L202)）：$F$ 是 Zariski 分离预层；
+       - **推论 2**（[#L203](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L203)）：对任一开子集 $U$，$F(U)\to F_{\mathrm{Zar}}(U)$ 均是单射。
+     - **可核查反例**：考虑 Picard 群函子
+       $$F(Y):=\operatorname{Pic}(Y)=H^1_{\mathrm{Zar}}(Y,\mathbb{G}_m).$$
+       有限对应通过行列式/范数映射诱导加性反变函子结构 $\operatorname{Pic}:\mathrm{Cor}_k^{\mathrm{op}}\to\mathrm{Ab}$；且因 $Y\in\mathrm{Sm}/k$ 正规，投影诱导同构 $\operatorname{Pic}(Y)\xrightarrow{\sim}\operatorname{Pic}(Y\times_k\mathbb{A}^1_k)$。故 $F=\operatorname{Pic}$ **满足 `S5` 的全部前提**。然而：
+       - 取具有非平凡线丛 $\mathcal{L}\neq 0\in\operatorname{Pic}(Y)$ 的连通光滑整概形 $Y$（例如 $Y=\mathbb{P}^1_k$ 或类群非平凡的光滑仿射曲线），取使 $\mathcal{L}$ 平凡化的非空稠密开集 $W\subset Y$，则 $\mathcal{L}|_W=0\in\operatorname{Pic}(W)$，故 **$F(Y)\to F(W)$ 不是单射**；
+       - 因 $\mathcal{L}$ 在某个 Zariski 开覆盖 $\{U_\alpha\}$ 上局部平凡（$\mathcal{L}|_{U_\alpha}=0$），故 **$F=\operatorname{Pic}$ 不是 Zariski 分离预层**；
+       - 因局部环的 Picard 群为零，$F_{\mathrm{Zar}}=0$，故对任何满足 $\operatorname{Pic}(U)\neq 0$ 的开集 $U$，**$F(U)\to F_{\mathrm{Zar}}(U)=0$ 不是单射**（而半局部环上 $\operatorname{Pic}(\mathcal{O}_{X,\Sigma})=0$，故 $\eta_S:F(S)=0\xrightarrow{\sim}F_{\mathrm{Zar}}(S)=0$ 依然成立）。
+     - **出错原因（数学依据）**：标准三元组 $(p:C\to B, Z\subset C\subset\bar C)$ 仅在给定有限点集 $\Sigma\subset Y$ 的某个**局部开邻域** $U\subset Y$ 上存在，故移动引理构造的对应 $\Phi\in\mathrm{Cor}_k(U,W)$ 仅给出交换三角 $F(Y)\to F(W)\xrightarrow{\Phi^*}F(U)$，即 $\ker(F(Y)\to F(W))\subset\ker(F(Y)\to F(U))$（见 Voevodsky Lemma 4.21 / MVW Lemma 22.8）。答卷在 [#L199](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L199) 将局部收缩后的等式 $s|_U=\Phi^*(s|_W)=0$ 误写成了整体等式 $s=\Phi^*(s|_W)=0$。实际上，单射性仅在取遍 $\Sigma$ 的开邻域滤过余极限后对**半局部概形** $S$ 成立（即 $F(S)\hookrightarrow F(W\times_X S)\hookrightarrow\bigoplus_{\eta\in S^{(0)}}F(\eta)$ 单射，进而由分解 $F(S)\to F_{\mathrm{Zar}}(S)\to\bigoplus_{\eta}F(\eta)$ 推出 $\eta_S$ 单射）。
+
+  2. **推论 1 的推导过程存在循环论证（[original-answer.md#L202](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L202)）**：
+     - 答卷写“*若开覆盖 $(U_\alpha)$ 上 $s|_{U_\alpha}=0$，则 $s$ 在稠密集 $\bigcup U_\alpha$ 上处处为 0，由上述单射性知 $s=0$*”。对预层而言，由各覆盖片 $s|_{U_\alpha}=0\in F(U_\alpha)$ 推出并集 $s|_{\bigcup U_\alpha}=0\in F(\bigcup U_\alpha)$ **本身就是分离预层的定义**，不能在证明分离性时直接默认（若整体稠密开浸入单射性真的成立，原本应直接取单片非空开集 $U_\alpha$ 利用 $F(Y)\to F(U_\alpha)$ 单射导出 $s=0$）。
+
+  3. **依赖错误推论导致满射性图追逐的右列单射性依据失效，且 MV 序列与几何构造不完整（[original-answer.md#L204-L206](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L204-L206), [#L226-L249](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L226-L249)）**：
+     - **对右竖直箭头单射性的影响**：答卷在第 5 小节套用 `S2` 及归纳步时，需要右竖直映射 $\eta_{S_1\times_S S_2}$ 与 $\eta_{S'\times_S S_n}$ 为单射（[#L233](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L233), [#L247](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L247)），而答卷对此给出的唯一证明是错误的“推论 2（$F(U)\to F_{\mathrm{Zar}}(U)$ 对任意开集 $U$ 单射）”配合滤过余极限保单射（[#L203-L206](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L203-L206)）。当 $\dim X\ge 2$ 时，$S_1\times_S S_2$ 含有无穷多个极大理想，**不是**半局部概形，不能直接套用半局部概形的单射性引理（在 Voevodsky Lemma 4.23 / MVW Lemma 22.10 的标准证明中，满射性是对代表 $F_{\mathrm{Zar}}(S)$ 中元素的有限开覆盖截面先利用半局部单射性引理收缩使其在交集上相等，再直接用二开覆盖粘合引理归纳粘合，从而绕开了 $S_1\times_S S_2$）。
+     - **MV 序列符号与阶段正合性混同（[#L228](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L228)）**：对固定开邻域 $U,V\subset X$，限制映射方向为 $F(U\cup V)\to F(S)$，不存在 $F(S)\to F(U)\oplus F(V)$；且 Voevodsky Lemma 4.22 / MVW Proposition 22.9 对给定的 $(U_0,V)$ 收缩 $U\subset U_0$ 仅保证 $\ker(F(U_0)\oplus F(V)\to F(U_0\cap V))$ 在限制到 $F(U)\oplus F(V)$ 后落入 $\operatorname{im}(F(U\cup V))$（即二项复形的同调类在后阶段变为零，需结合 `S6` 第二问才得出余极限正合）。
+     - **构造省略与文献援引瑕疵**：原题要求“*完成全部构造、分类与性质的证明*”及“*援引前项或标准定理时说明实际适用条件*”，而答卷在 [#L197-L198](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L197-L198) 与 [#L227](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L227) 中仅以一两句文字概述“利用高斯除法与移动引理”，未给出相对光滑射影曲线完备化、模去相对有效除子的同伦构造过程；此外 [#L181-L185](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L181-L185) 援引 Voevodsky 层化定理时未说明完整定理对完美域（perfect field）的要求（且该定理逻辑上依赖于 $\eta_S$ 为同构这一结论），所引用的文献编号“MVW Theorem 4.18/5.7、Lemma 4.22/5.7”亦有误（实为 MVW Lecture 22 中的 Lemma 22.8、Proposition 22.9、Lemma 22.10、Theorem 22.15）。
+
+---
+
+### 6. S6 极限正合与阶段正合（[original-task.md#L52-L54](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-task.md#L52-L54)，[original-answer.md#L255-L332](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L255-L332)）
+
+- **审阅结论**：**完全正确且完整**。
+- **核查依据**：
+  - 第一问（[original-answer.md#L257-L291](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L257-L291)）判定“不成立”，构造二项复形滤过系统 $C_1^{(i)}=\mathbb{Z}\xrightarrow{\times 2}C_0^{(i)}=\mathbb{Z}$ 及乘 $2$ 过渡链映射，每阶段 $H_0(C_\bullet^{(i)})=\mathbb{Z}/2\mathbb{Z}\neq 0$，而余极限复形 $\mathbb{Z}[1/2]\xrightarrow{\times 2}\mathbb{Z}[1/2]$ 为同构（正合），反例完全符合题设。
+  - 第二问（[original-answer.md#L295-L332](file:///private/tmp/math-gauge-v060-argon-gcp-20261110/attempts/MG-AR004/physical-2/session/work/original-answer.md#L295-L332)）分别利用 $H_n(\varinjlim C_\bullet^{(i)})\cong\varinjlim H_n(C_\bullet^{(i)})$ 与直接元素追逐完成了严谨证明。
