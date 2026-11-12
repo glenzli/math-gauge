@@ -8,8 +8,9 @@ from unittest.mock import patch
 
 from math_gauge.costs import (normalize_usage, unit_cost, summarize_model,
                               project_public, source_descriptor, verify_source, pareto_frontier,
-                              resolved_reference_cost)
+                              resolved_reference_cost, validate_private, SUPPLEMENT_REFERENCE_SCHEMA)
 from scripts.collect_cost_reference import Collector
+from scripts.compact_cost_evidence import compact_snapshot
 from scripts.cost_reference import build_reference
 
 
@@ -33,6 +34,76 @@ def fixture():
 
 
 class CostReferenceTest(unittest.TestCase):
+    def test_active_release_projection_preserves_original_cost_source_identity(self):
+        model, prices = fixture()
+        document = {"schema": "math-gauge.cost-reference/v1", "version": "0.1.0",
+            "benchmark_version": "0.6.0", "as_of": "2026-11-12", "selection_rule": "one_retained_attempt_per_slot",
+            "other_retries_included": False, "models": [model], "prices": list(prices.values())}
+        original = project_public(document, source_sha256="a" * 64)
+        active = project_public(document, source_sha256="a" * 64, benchmark_version="1.0.0")
+        self.assertEqual(active.pop("source_benchmark_version"), "0.6.0")
+        self.assertEqual(active["benchmark_version"], "1.0.0")
+        active["benchmark_version"] = "0.6.0"
+        self.assertEqual(active, original)
+        self.assertEqual(document["benchmark_version"], "0.6.0")
+
+    def test_archive_deduplicates_exact_bytes_and_recovers_every_original_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); source = root / "original"; source.mkdir()
+            (source / "first.json").write_text('{"retained":true}')
+            (source / "duplicate.json").write_bytes((source / "first.json").read_bytes())
+            model, prices = fixture()
+            for slot in model["slots"]:
+                slot["sources"] = [source_descriptor(source / "first.json", source)]
+            model["slots"][0]["sources"].append(source_descriptor(source / "duplicate.json", source))
+            document = {"schema": "math-gauge.cost-reference/v1", "version": "0.1.0", "as_of": "2026-11-12",
+                "selection_rule": "one_retained_attempt_per_slot", "other_retries_included": False,
+                "models": [model], "prices": list(prices.values())}
+            (source / "costs.json").write_text(json.dumps(document))
+            output = root / "canonical"
+            result = compact_snapshot(source, output, source_git_revision="checkpoint")
+            current = json.loads((output / "costs.json").read_text())
+            self.assertEqual(validate_private(document, root=source), validate_private(current, root=output))
+            self.assertEqual(result["preserved"]["original_files"], 3)
+            self.assertEqual(result["preserved"]["unique_objects"], 2)
+            manifest = json.loads((output / "evidence-archive.json").read_text())
+            for item in manifest["files"]:
+                retained = output / "evidence" / "sha256" / item["sha256"]
+                self.assertEqual(retained.read_bytes(), (source / item["original_path"]).read_bytes())
+            extra = output / "unarchived.json"; extra.write_text('{"extra":true}')
+            current["models"][0]["slots"][0]["sources"].append(source_descriptor(extra, output))
+            with self.assertRaisesRegex(ValueError, "outside its retained archive"):
+                validate_private(current, root=output)
+            current["models"][0]["slots"][0]["sources"].pop()
+            blob = output / current["models"][0]["slots"][0]["sources"][0]["path"]
+            blob.write_text('{"retained":false}')
+            with self.assertRaisesRegex(ValueError, "source bytes changed"):
+                validate_private(current, root=output)
+
+    def test_reproduction_reference_binds_one_model_without_copying_its_inventory(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            native = root / "native.json"; native.write_text('{"retained":true}')
+            model, prices = fixture()
+            for slot in model["slots"]:
+                slot["sources"] = [source_descriptor(native, root)]
+            model["pricing_basis"] = "caller_recorded_usage_reference"
+            inventory = root / "costs.json"
+            inventory.write_text(json.dumps({"schema": "math-gauge.cost-reference/v1", "models": [model]}))
+            pointer = root / "supplement.json"
+            pointer.write_text(json.dumps({"schema": SUPPLEMENT_REFERENCE_SCHEMA, "version": "0.1.0",
+                "model_id": model["model_id"], "record_id": model["record_id"],
+                "inventory": source_descriptor(inventory, root)}))
+            target, _ = fixture()
+            Collector(root, root, root / "out").supplement(target, pointer)
+            self.assertEqual(target["slots"][0]["units"], model["slots"][0]["units"])
+            self.assertEqual(target["pricing_basis"], model["pricing_basis"])
+            for descriptor in target["slots"][0]["sources"]:
+                verify_source(root / "out", descriptor)
+            inventory.write_text('{"changed":true}')
+            with self.assertRaisesRegex(ValueError, "source bytes changed"):
+                Collector(root, root, root / "out").supplement(target, pointer)
+
     def test_supplement_preserves_declared_reference_basis_without_replacing_usage(self):
         model, prices = fixture()
         original_slots = copy.deepcopy(model["slots"])

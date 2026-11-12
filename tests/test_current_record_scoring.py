@@ -3,6 +3,7 @@ import copy
 import json
 from pathlib import Path
 import unittest
+from assessment_fixtures import before_submission_policy
 
 from math_gauge.benchmarks import BenchmarkProfile, build_plan
 from math_gauge.catalog import Suite
@@ -52,7 +53,8 @@ class FreshRecordScoringTests(unittest.TestCase):
                 kernel_status='passed',compiled_sources={'Synthetic.lean':'e'*64},obligations=items))
         self.formal = dict(schema='math-gauge.formalization-engineering-review/v1',model_label=plan['model_label'],
             reviewer_kind='ai',human_review='pending',formal_comparison_eligible=False,cases=cases)
-        self.data=plan['profile']['data']
+        self.data=copy.deepcopy(plan['profile']['data'])
+        self.data['assessment_policy']=before_submission_policy(self.data['assessment_policy'])
         self.capability=json.loads((ROOT/'protocol/capability-scoring-policy.json').read_bytes())
 
     def score(self, mode):

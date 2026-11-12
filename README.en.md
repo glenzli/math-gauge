@@ -6,7 +6,7 @@
 
 Math Gauge measures whether models can perform mathematical work reliably: prove and refute, review arguments, turn natural-language goals into semantically aligned Lean projects, check research premises, extend propositions, and develop ideas into rigorous manuscripts.
 
-The **benchmark suite is sealed at 0.6.0**; the latest distribution is **0.6.1**. Public and private tasks form one benchmark, with a shared runner and scoring rules.
+The current formal release is **benchmark 1.0.0**. Public and private tasks form one benchmark, with a shared runner and scoring rules. This release reuses archived 0.6 answers while preserving their original execution identities, responses and reviews; the [release notes](releases/v1.0.0/README.md) record compatibility.
 
 [Leaderboard](site/index.html?lang=en) · [Full results](docs/results.md) · [Task catalog](cases/README.md) · [Harness guide](docs/harness-guide.md)
 
@@ -63,16 +63,16 @@ Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Pe
 | [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39 / 0 / 39 |
 | [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39 / 0 / 39 |
 | [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39 / 0 / 39 |
-| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39 / 0 / 39 |
+| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness¹ | 91.66 | 90.23 | 78.00 | 39 / 0 / 39 |
 | [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39 / 0 / 39 |
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39 / 0 / 39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39 / 0 / 39 |
 | [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39 / 0 / 39 |
 | [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38 / 0 / 39 |
-| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI | 76.71 | 64.23 | 25.83 | 37 / 1 / 39 |
+| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37 / 1 / 39 |
 | [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37 / 2 / 39 |
 | [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38 / 1 / 39 |
-| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
+| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
 
 Per-round sources and full score intervals are available in model details. Tested tasks that time out without a submission are scored under the failure rules.
 
@@ -80,7 +80,7 @@ Per-round sources and full score intervals are available in model details. Teste
 
 ² Under DeepSeek Harness (DSH), many tasks exhausted the maximum output budget through prolonged reasoning without delivering an answer, so execution uses Codex CLI.
 
-³ GLM 5.3's 39 initial-answer sources have all been reviewed, including the three recovered records. The three self-check rounds were not run and remain unknown. The retained results use Claude Code; without a normal final, RMC and SMC are zero; verified original work may earn MC.
+³ GLM 5.3 had frequent timeouts under both Codex CLI and Claude Code; the retained results use Claude Code. Without a normal final, RMC and SMC are zero; verified original work may earn MC. The three self-check rounds were not run.
 
 ⁴ Some Argon tasks did not terminate with a normal submission. Two tasks retained verifiable mathematical content and receive MC only; their RMC and SMC are zero.
 
@@ -88,15 +88,15 @@ Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set
 
 ![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)
 
-![Math Gauge English research leaderboard](docs/screenshots/research-en.jpg)
+![Math Gauge English cost–RMC frontier](docs/screenshots/cost-frontier-en.jpg)
 
-![Math Gauge English answer-time reference](docs/screenshots/timings-en.jpg)
+![Math Gauge English time–RMC frontier](docs/screenshots/time-frontier-en.jpg)
 
-The timing chart compares whole-chapter formalization with the weighted mean and median of five typical tasks, in minutes. It includes tool use and waiting; harness, network and hardware vary. See the [method and sources](docs/answer-timings.md) for this practical runtime reference.
+Both frontier plots default to RMC: total cost uses a linear dollar scale starting at zero, and typical-task time is measured in minutes. Solid points indicate normal final submissions on all 39 initial tasks; other points are hollow. Colors follow model brands. Time includes tool use and waiting, and varies with harness, network and hardware; see the [method and sources](docs/answer-timings.md).
 
-Below the main results, the [total-cost and frontier panels](site/index.html?lang=en#cost-reference) count only the retained attempt for each task, excluding other retries. Argon is $33.84 using its final cumulative receipts; Dot Underlying (2026-11-08) used a separate subscription-bundled allowance with $0 additional cost. DeepSeek uses uniform official peak rates with cache discounts, totaling $6.41. Terra Max and Gemini 3.8 Flash usage is fully recovered at $10.96 and $23.41. Kimi and GLM use caller-recorded usage, repriced at $29.85 and $40.88 without imputed usage. See the [cost method](docs/cost-reference.md) for prices, source confirmations and frontier rules.
+Cost counts only the retained attempt for each task, excluding other retries. Dot used a separate subscription-bundled allowance on its test date, with $0 additional cost; other models use public API prices with cache discounts. See the [cost method](docs/cost-reference.md) for full usage, prices and sources. The [interactive plots](site/index.html?lang=en#cost-frontier) provide score and axis controls.
 
-The leaderboard publishes selected snapshots after their test process has ended; future tests are added after settlement. It provides an overall leaderboard, three category leaderboards, two rates, and a collapsed score-gap panel, with independent metric and sorting controls, bilingual display and shareable URL state. Model pages retain task results, self-check execution states and score intervals.
+The leaderboard publishes selected snapshots after their test process has ended; future tests are added after settlement. The [interactive page](site/index.html?lang=en) provides category leaderboards, two rates, score gaps, and separate cost and timing rankings, with MC/RMC/SMC controls, bilingual display and shareable URL state. Model pages retain task results, self-check execution states and score intervals.
 
 ## Running and reproducing
 
@@ -118,6 +118,6 @@ The page itself works offline. See the [results report](docs/results.md) for sit
 | Execution and external harnesses | [Shared harness guide](docs/harness-guide.md) · [Evaluation protocol](protocol/evaluation.md) |
 | Scoring and evidence | [Scoring specification](protocol/benchmark-scoring.md) · [Result-record contract](protocol/result-record.md) |
 | Results and supplementary metrics | [Full results](docs/results.md) · [Two rates](protocol/content-rates.md) · [Additional-results observation](docs/manuscript-observations.md) |
-| Distributions and reproduction packages | [0.6.1 distribution](releases/v0.6.1/README.md) · [0.6.0 sealed release](releases/v0.6.0/README.md) |
+| Distributions and reproduction packages | [1.0.0 release](releases/v1.0.0/README.md) · [0.6.1 distribution](releases/v0.6.1/README.md) · [0.6.0 sealed release](releases/v0.6.0/README.md) |
 
-The 0.6.0 task package and published assets remain frozen. Distribution, execution components and scoring methods retain their own version and source identities.
+Release 1.0.0 records the current suite and scoring rules; the 0.6.0 task package and published assets remain frozen. Distribution, execution components and scoring methods retain their own version and source identities.

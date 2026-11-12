@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from assessment_fixtures import before_submission_policy
 
 import test_case_selection as legacy_selection
 from math_gauge.records import descriptor, validate_public_written_replacements
@@ -18,7 +19,7 @@ class WrittenReplacementsTests(unittest.TestCase):
     def setUpClass(cls):
         legacy_selection.CaseSelectionTests.setUpClass()
         cls.baseline = legacy_selection.CaseSelectionTests()
-        cls.policy = json.loads((ROOT/'protocol/scoring-policy.json').read_bytes())
+        cls.policy = before_submission_policy(json.loads((ROOT/'protocol/scoring-policy.json').read_bytes()))
         cls.strict = json.loads((ROOT/'protocol/strict-scoring-policy.json').read_bytes())
 
     def data(self, points=94):

@@ -1,12 +1,12 @@
 # 正式结果记录合同
 
-合同版本：`math-gauge.result-record/v1`。当前 benchmark 统一版本为 **0.6.0**，公开与私有是同一版本的不同范围。单题修订号、软件版本与评分政策版本作为组件身份记录，不另立私有 benchmark 版本。
+合同版本：`math-gauge.result-record/v1`。当前 benchmark 统一版本为 **1.0.0**，公开与私有是同一版本的不同范围。单题修订号、软件版本与评分政策版本作为组件身份记录，不另立私有 benchmark 版本。
 
 ## 留存与目录
 
 仅在用户明确选定固定留档时保存正式记录。当前CLI固定快照由 `benchmark.json` 的 `selected_result_models` 与 `selected_result_record_ids` 登记，另有独立 Dot native harness 的选定结果。CLI档案使用本合同的record.json；Dot使用文末所列独立原生记录类型。日常运行使用被 Git 忽略的 `runs/`；中间稿、旧成绩、旧题与备选题不在工作树另设历史区，使用 Git 历史恢复。
 
-正式公开档案位于 `results/v0.6.0/<model>/<record-id>/`，包含简短 README、`record.json`、原始答复、逐项评审、计分输入及必要工程。私有原题、原答和评审保存在私有仓库相同版本与记录号下；公开目录只保留私有部分的合并聚合。
+原始结果按其真实测试版本存放于 `results/v<source-benchmark-version>/<model>/<record-id>/`。当前复用的既有档案位于 `results/v0.6.0/<model>/<record-id>/`，通过[1.0兼容清单](../releases/v1.0.0/compatibility.json)纳入当前版本，包含简短 README、`record.json`、原始答复、逐项评审、计分输入及必要工程。私有原题、原答和评审保存在私有仓库相同版本与记录号下；公开目录只保留私有部分的合并聚合。
 
 记录应能脱离原临时目录阅读。引用本记录内的材料使用安全相对路径、字节数与 SHA-256。大型证据可外置，但须有稳定位置与完整性绑定；缺失必须明示，不能用旧绝对路径伪装为已经留存。原执行路径可以作为历史元数据，不能成为唯一恢复入口。
 

@@ -78,7 +78,7 @@ class CurrentSiteTests(unittest.TestCase):
                          {"planned": 3, "adjudicated": 2, "pending": 1, "pending_rounds": 0, "incomplete": True})
 
     def test_only_selected_current_models_and_scores_are_displayed(self):
-        self.assertEqual(self.data["benchmark_version"], "0.6.0")
+        self.assertEqual(self.data["benchmark_version"], json.loads((ROOT / "benchmark.json").read_bytes())["version"])
         self.assertEqual(self.data["schema"], "math-gauge.current-results-display/v6")
         self.assertEqual(self.data["publication_scope"], "combined")
         from math_gauge.records import selected_cli_records, selected_paper_records

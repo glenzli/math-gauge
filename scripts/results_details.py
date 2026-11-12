@@ -78,7 +78,7 @@ def shell(page, title, subtitle, body, data, script, *, back=None):
         '<title>'+html.escape(title)+' · Math Gauge</title><link rel="stylesheet" href="'+local('assets/results.css')+'"></head><body>'
         '<header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="'+local('index.html')+'"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a>'
         '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-nav-method data-context-link href="'+local('method.html')+'">方法与数据</a></div>'+language_switch()+'</nav></header>'
-        '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v0.6.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
+        '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v1.0.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
         +review_status(data, prefix+'/method.html#review-process')+
         '<section class="panel context-panel">'+controls(data)+'</section>'+body+
         '<footer class="footer"><span>Math Gauge</span><a data-context-link href="'+local('method.html')+'">方法与数据</a></footer></main>'

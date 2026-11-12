@@ -105,6 +105,8 @@ def bound_harness_display(harnesses, model, record_path):
 
 def build_data(source_root=ROOT):
     root = Path(source_root).resolve()
+    from math_gauge.editions import verify_compatibility
+    edition = verify_compatibility(root)
     policy = json.loads((root / "protocol/scoring-policy.json").read_bytes())
     strict_policy = json.loads((root / "protocol/strict-scoring-policy.json").read_bytes())
     mode_catalog = json.loads((root / "protocol/score-modes.json").read_bytes())
@@ -262,7 +264,8 @@ def build_data(source_root=ROOT):
     review_process = json.loads(review_path.read_bytes())
     sources.append({'path': 'protocol/review-process.json',
                     'sha256': hashlib.sha256(review_path.read_bytes()).hexdigest()})
-    return {"schema": "math-gauge.current-results-display/v6", "benchmark_version": "0.6.0",
+    return {"schema": "math-gauge.current-results-display/v6", "benchmark_version": edition["version"],
+            "result_compatibility": edition.get("result_compatibility"),
             "scoring_method_version": policy["version"], "strict_method_version": strict_policy["version"],
             "human_review": review_process['human_review'], "review_process": review_process,
             "formal_comparison_eligible": False,

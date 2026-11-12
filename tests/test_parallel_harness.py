@@ -38,7 +38,7 @@ class ParallelHarnessTests(unittest.TestCase):
         cls.addClassCleanup(cls.shared_temp.cleanup)
         cls.shared = Path(cls.shared_temp.name).resolve() / 'dataset'
         cls.manifest = export_simple_release_dataset(cls.plan, cls.suite, cls.shared,
-            release_version='0.6.0', readme=b'Synthetic software fixture, no candidate calls.\n',
+            release_version=cls.suite.metadata['version'], readme=b'Synthetic software fixture, no candidate calls.\n',
             extra_files={'LICENSE': b'fixture\n', 'THIRD_PARTY_NOTICES.md': b'fixture\n'})
         cls.anchor = make_release_anchor(cls.plan, cls.manifest)
 
@@ -174,7 +174,7 @@ class ParallelHarnessTests(unittest.TestCase):
         from scripts.release import release_plan
         plan, suite = release_plan()
         dataset = self.root / 'neutral'
-        manifest = export_simple_release_dataset(plan, suite, dataset, release_version='0.6.0',
+        manifest = export_simple_release_dataset(plan, suite, dataset, release_version=suite.metadata['version'],
             readme=b'Neutral synthetic software check\n',
             extra_files={'LICENSE': b'fixture\n', 'THIRD_PARTY_NOTICES.md': b'fixture\n'},
             release_provenance={'candidate_projection': plan['candidate_projection']})

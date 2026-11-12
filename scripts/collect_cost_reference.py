@@ -14,7 +14,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.costs import SCHEMA, VERSION, project_public, source_descriptor, validate_private, verify_source
+from math_gauge.costs import (SCHEMA, VERSION, SUPPLEMENT_REFERENCE_SCHEMA, project_public,
+                              source_descriptor, validate_private, verify_source)
 from math_gauge.timings import record_context
 
 
@@ -347,6 +348,15 @@ class Collector:
 
     def supplement(self, model, path):
         supplement = read(path)
+        if supplement.get("schema") == SUPPLEMENT_REFERENCE_SCHEMA:
+            if supplement.get("model_id") != model["model_id"] or supplement.get("record_id") != model["record_id"]:
+                raise ValueError("Cost supplement reference belongs to a different selected record")
+            verify_source(path.parent, supplement["inventory"])
+            inventory = read(path.parent / supplement["inventory"]["path"])
+            matches = [item for item in inventory["models"] if item["model_id"] == model["model_id"]]
+            if inventory.get("schema") != SCHEMA or len(matches) != 1:
+                raise ValueError("Cost supplement reference must select one frozen model inventory")
+            supplement = matches[0]
         if supplement["record_id"] != model["record_id"]:
             raise ValueError("Cost supplement belongs to an old selected record")
         prefix = Path("evidence") / ("supplement-" + model["model_id"])
@@ -399,7 +409,8 @@ def main():
             expected[name] = record_context(args.root / "results/v0.6.0" / name / rid,
                                              args.private_root / "results/v0.6.0" / name / rid)["expected"]
         raw = (args.out_dir / "costs.json").read_bytes()
-        projected = project_public(document, source_sha256=digest(raw), root=args.out_dir, expected_answers=expected)
+        projected = project_public(document, source_sha256=digest(raw), root=args.out_dir,
+                                   expected_answers=expected, benchmark_version=edition["version"])
         if projected != read(args.out_dir / "public.json"):
             raise ValueError("Public cost projection differs from its private sources")
         print(json.dumps({"status": "passed", "models": len(document["models"]), "new_candidate_calls": 0}))
@@ -417,13 +428,14 @@ def main():
     tariffs = prices()
     for path in args.extra_prices:
         tariffs.extend(read(path))
-    document = {"schema": SCHEMA, "version": VERSION, "benchmark_version": "0.6.0", "as_of": args.as_of,
+    document = {"schema": SCHEMA, "version": VERSION, "benchmark_version": edition["version"], "as_of": args.as_of,
                 "selection_rule": "one_retained_attempt_per_slot", "other_retries_included": False,
                 "prices": tariffs, "models": models, "new_candidate_calls": 0, "scores_modified": False}
     rows = validate_private(document, root=args.out_dir, expected_answers=expected)
     raw = (json.dumps(document, ensure_ascii=False, indent=2) + "\n").encode()
     (args.out_dir / "costs.json").write_bytes(raw)
-    public = project_public(document, source_sha256=digest(raw), root=args.out_dir, expected_answers=expected)
+    public = project_public(document, source_sha256=digest(raw), root=args.out_dir,
+                            expected_answers=expected, benchmark_version=edition["version"])
     (args.out_dir / "public.json").write_text(json.dumps(public, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps({"status": "passed", "models": [{key: row[key] for key in ("model_id", "status", "known_usd", "total_usd", "coverage")} for row in rows]}, ensure_ascii=False))
 

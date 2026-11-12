@@ -44,7 +44,7 @@ class C003BudgetTests(unittest.TestCase):
             self.assertEqual(seconds, 10800 if cid == "MG-C003" else 5400 if cid in
                 {"AHR01", "AHR02", "AHR03", "AHR04", "LCH01", "LCH02", "HCH02"} else None, cid)
         self.assertNotIn("future_budget_variant", self.future.data)
-        self.assertEqual(self.future.data["standard_version"], "0.6.0")
+        self.assertEqual(self.future.data["standard_version"], self.suite.metadata["version"])
 
     def test_only_the_versioned_c003_override_is_accepted(self):
         validate_case_execution_policy(self.future.data, self.components)

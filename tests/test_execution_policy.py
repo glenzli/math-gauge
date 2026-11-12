@@ -45,7 +45,7 @@ class ExecutionPolicyTests(unittest.TestCase):
         cls.addClassCleanup(cls.shared_temp.cleanup)
         cls.shared = Path(cls.shared_temp.name).resolve() / "dataset"
         cls.dataset = export_simple_release_dataset(cls.base_plan, cls.suite, cls.shared,
-            release_version="0.6.0", readme=b"# Synthetic policy consumer guide\n",
+            release_version=cls.suite.metadata["version"], readme=b"# Synthetic policy consumer guide\n",
             extra_files={"LICENSE": (ROOT / "LICENSE").read_bytes(),
                          "THIRD_PARTY_NOTICES.md": b"Synthetic fixture only\n"})
         cls.anchor = make_release_anchor(cls.base_plan, cls.dataset)

@@ -3,6 +3,7 @@ import copy
 import json
 from pathlib import Path
 import unittest
+from assessment_fixtures import before_submission_policy
 
 from math_gauge.benchmarks import identity, validate_assessment_policy, validate_plan
 from math_gauge.case_selection import CANONICAL_PARENT_FAMILIES, RETIRED_PUBLIC_CASE_IDS
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def before_manuscript(policy):
     """Keep historical fixtures bound to the earlier reserved manuscript slot."""
-    policy = copy.deepcopy(policy)
+    policy = before_submission_policy(policy)
     manuscript = policy.pop('manuscript_completion', None)
     if manuscript is not None:
         next(c for c in policy['subcategories'] if c['id'] == 'manuscript-completion').update(

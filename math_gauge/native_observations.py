@@ -275,7 +275,7 @@ def load_public_record(folder, *, public_case_ids=None):
     validate_record(record, policy)
     if policy['version']=='0.9.0':
         from . import submission_evidence
-        submission_evidence.validate_record_component(folder,record,public=True)
+        submission_evidence.validate_record_component(folder,record,public=True,public_ids=public_case_ids)
         submission_evidence.validate_history(folder,record)
     require(record['model_id'] == folder.parent.name, 'Native record belongs to another model')
     scores = {}

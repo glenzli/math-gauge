@@ -32,7 +32,7 @@ class CurrentReleaseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             dest = Path(directory).resolve() / "dataset"
             with patch("subprocess.Popen", side_effect=AssertionError("No candidate or Lean call")):
-                manifest = export_simple_release_dataset(plan, suite, dest, release_version="0.6.0",
+                manifest = export_simple_release_dataset(plan, suite, dest, release_version=config["release_version"],
                     readme=(ROOT / config["readme"]).read_bytes(), extra_files={
                         "LICENSE": (ROOT / "LICENSE").read_bytes(),
                         "THIRD_PARTY_NOTICES.md": (ROOT / config["third_party_notices"]).read_bytes()})

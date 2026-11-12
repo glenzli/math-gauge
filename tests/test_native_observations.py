@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+from assessment_fixtures import before_submission_policy
 
 import test_alignment_scoring as alignment_fixture
 import test_content_rates as content_fixture
@@ -38,6 +39,7 @@ class NativeHarnessTests(unittest.TestCase):
 
     def fixture(self):
         content, policy = content_fixture.ContentRateTests().fixture()
+        policy = before_submission_policy(policy)
         align_policy = alignment_fixture.alignment_policy()
         ids = align_policy['obligation_ids']
         align_review = alignment_fixture.alignment_review(align_policy, ids,

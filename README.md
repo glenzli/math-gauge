@@ -6,7 +6,7 @@
 
 Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审阅论证，将自然语言目标落实为语义对应的 Lean 工程，以及核查研究背景、拓展命题和把想法写成严格手稿。
 
-当前题包为 **benchmark 0.6.0**，已封版；最新分发版为 **0.6.1**。公有与私有题库组成同一套评测，共用运行器和评分规则。
+当前正式版本为 **benchmark 1.0.0**。公有与私有题库组成同一套评测，共用运行器和评分规则。本版复用已留档的0.6答卷，原始运行身份、答卷和审核记录保持不变；[发行说明](releases/v1.0.0/README.md)记录兼容关系。
 
 [排行榜](site/index.html) · [完整结果](docs/results.md) · [题库目录](cases/README.md) · [运行指南](docs/harness-guide.md)
 
@@ -61,16 +61,16 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 | [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
 | [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
 | [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
-| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness | 91.66 | 90.23 | 78.00 | 39／0／39 |
+| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness¹ | 91.66 | 90.23 | 78.00 | 39／0／39 |
 | [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
 | [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
 | [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
-| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI | 76.71 | 64.23 | 25.83 | 37／1／39 |
+| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
 | [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37／2／39 |
 | [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38／1／39 |
-| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code | 41.48 | 27.34 | 14.08 | 21／5／39 |
+| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21／5／39 |
 
 逐轮来源和完整分数区间见模型详情。主动交卷与强收有内容互斥；无正常交卷时RMC／SMC为0，MC可审核原成果。
 
@@ -78,7 +78,7 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 ² 使用 DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用 Codex CLI。
 
-³ GLM 5.3 的39道初答来源审核已完成，三项缺档已复核销项；三轮自查未执行，继续保留未知。留档采用 Claude Code 结果，未正常交卷的RMC／SMC为0，MC仅计经核实的截止原成果。
+³ GLM 5.3 在 Codex CLI 和 Claude Code 中均出现大量超时；留档采用 Claude Code。无正常交卷时RMC／SMC为0，MC仅计经核实的截止原成果；三轮自查未执行。
 
 ⁴ Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。
 
@@ -86,15 +86,15 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 ![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)
 
-![Math Gauge 中文数学研究分榜](docs/screenshots/research-zh.jpg)
+![Math Gauge 中文成本—RMC 前沿图](docs/screenshots/cost-frontier-zh.jpg)
 
-![Math Gauge 中文答题耗时参考](docs/screenshots/timings-zh.jpg)
+![Math Gauge 中文耗时—RMC 前沿图](docs/screenshots/time-frontier-zh.jpg)
 
-耗时图对比整章形式化与日常五道典型题的加权均值、中位数，单位为分钟。包含工具与等待时间；Harness、网络和硬件各异，仅作实际运行参考，[计算方式与来源](docs/answer-timings.md)另列。
+两张前沿图默认使用RMC：总成本采用从0开始的线性美元刻度，典型题耗时以分钟计。实心点表示39道初答均正常交卷，其余为空心；颜色对应模型品牌。耗时包含工具与等待，受Harness、网络和硬件影响，见[计算方式与来源](docs/answer-timings.md)。
 
-主体下方提供[总成本与前沿图](site/index.html#cost-reference)：每题只计当前留档采用的尝试，其他重试不计。Argon按最终累计回执记$33.84；Dot Underlying (2026-11-08)使用订阅附赠的独立额度，额外费用为$0。DeepSeek统一按官方峰价折算为$6.41，保留缓存优惠。Terra Max与Gemini 3.8 Flash用量均已补齐，API参考总额分别为$10.96、$23.41；Kimi、GLM按调用方留存用量折算，参考总额分别为$29.85、$40.88，不再补入用量估算。价格、来源确认及前沿图口径见[成本说明](docs/cost-reference.md)。
+成本每题只计留档采用的尝试，其他重试不计。Dot使用测试日订阅附赠的独立额度，额外费用为$0；其余按公开API价格折算并计缓存优惠。完整用量、价格与来源见[成本说明](docs/cost-reference.md)，[交互图表](site/index.html#cost-frontier)可切换分数与横轴。
 
-排行榜发布测试流程已结束并选定留档的结果；后续测试结算后再上榜。页面提供总榜、三大类分榜、两率与默认收起的分数落差榜，各榜独立设置指标与排序，支持中英文及 URL 分享。模型页保留逐题结果、自查执行状态和分数区间。
+排行榜发布测试流程已结束并选定留档的结果；后续测试结算后再上榜。[交互页面](site/index.html)提供分类榜、两率、分数落差、独立成本和耗时排序，支持切换MC／RMC／SMC、中英文及URL分享。模型页保留逐题结果、自查执行状态和分数区间。
 
 ## 运行与复现
 
@@ -116,6 +116,6 @@ python3 -m http.server 8000 --bind 127.0.0.1
 | 执行与外部 Harness | [统一运行指南](docs/harness-guide.md) · [评测协议](protocol/evaluation.md) |
 | 评分与留档 | [评分规范](protocol/benchmark-scoring.md) · [正式结果合同](protocol/result-record.md) |
 | 结果与附加指标 | [完整结果](docs/results.md) · [两率](protocol/content-rates.md) · [额外成果观察](docs/manuscript-observations.md) |
-| 发行与复现包 | [0.6.1 分发说明](releases/v0.6.1/README.md) · [0.6.0 封版说明](releases/v0.6.0/README.md) |
+| 发行与复现包 | [1.0.0 发行说明](releases/v1.0.0/README.md) · [0.6.1 分发说明](releases/v0.6.1/README.md) · [0.6.0 封版说明](releases/v0.6.0/README.md) |
 
-0.6.0 题包及已发布资产保持冻结；分发版、执行组件与评分方法分别记录版本和来源。
+1.0.0记录当前题包与评分口径；0.6.0题包及已发布资产保持冻结。分发版、执行组件与评分方法分别记录版本和来源。

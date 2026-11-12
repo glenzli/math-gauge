@@ -31,7 +31,8 @@ def _selected_result_records(root):
     for model in selected:
         if (not isinstance(model, str) or not re.fullmatch(r"[a-z0-9][a-z0-9._-]*", model)):
             raise ValueError("Selected result model must be a safe model id")
-        parent = root / "results" / ("v" + edition["version"]) / model
+        from .editions import result_archive
+        parent = root / result_archive(edition) / model
         record_id = record_ids.get(model)
         if record_id is not None:
             if not isinstance(record_id, str) or not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9._-]*", record_id):

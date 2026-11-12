@@ -2,7 +2,7 @@
 
 - First read README.md, protocol/evaluation.md, protocol/result-record.md and the relevant case's complete material.
 - Preserve supplied mathematical structures, quantifiers, domains and conclusion strengths. New cases need provenance, a full argument/counterexample, specific review criteria and explicit AI/human status.
-- Benchmark version0.6.0 is shared by public and private components. Case, harness and scoring-method revisions are separate component metadata.
+- Benchmark version1.0.0 is shared by public and private components. Case, harness and scoring-method revisions are separate component metadata.
 - Keep only the current25 public tasks (21 mathematical families) and14 private tasks (4 written arguments,4 theorem extension,2 background check,4 manuscript completion). No reserve bank or superseded editions in the worktree; Git history is the archive.
 - Public25 A1 slots; combined39 (35 mathematical families), plus3 fixed C003 rounds for42 scored deliveries. C003 adds a separate fixed3-round scored trajectory (no extra independent family). A2, written neutral and stance arms are retired from current default scoring; preserve source inputs, raw responses and reviews.
 - Current assessment0.9.0: written35(argument25/review10), Lean35(audit10/formalization15/selfcheck10), research30(background check10/manuscript completion10/theorem extension10; extension has2 public+4 private cases, background check has2 public+2 private; manuscript completion5 families:1 public/4 private). Merge private4 with public8 into12 argument families. Strict0.2.0 includes whole-three-round selfcheck: final92 verified, all rounds delivered and accurately diagnosed, no false-complete or regression. Partial retains70 repair/30 diagnosis/minus20 false-complete.
@@ -21,7 +21,7 @@
 - New C003 rounds use10800s; other seven new Lean tasks5400s; new written/AR2700s. Freeze native/broker/outer limits separately. Preserve historical actual conditions and source versions when reusing answers.
 - New engineering stops candidate writes at first native terminal or deadline, then seals actual source and mapping. Native generation and CLI cleanup are separate. Do not promote DONE or readable ERROR to success.
 - AI review, real compilation and human approval are separate. Never fabricate model results, human approval or formal comparison eligibility.
-- Only user-selected fixed snapshots belong in results/v0.6.0/<model>/<record-id>. Private raw data stays private; public combined reports are aggregate only. Temporary runs/logs are disposable after necessary current evidence is secured.
+- Only user-selected fixed snapshots belong in results/v<actual-source-benchmark-version>/<model>/<record-id>; current adopted0.6 originals keep their paths. Private raw data stays private; public combined reports are aggregate only. Temporary runs/logs are disposable after necessary current evidence is secured.
 - Run python3 -m unittest discover -s tests and python3 -m math_gauge validate for runner/format/migration changes, plus current catalog/protocol/record checks. Compile only changed Lean fixtures; reuse unchanged hash-bound evidence.
 - Keep tests focused on scoring behavior, fixed denominators, source integrity, privacy and export contracts. Avoid repeated catalog/count/score snapshots and cosmetic string/icon tests. Documentation or presentation-only changes use focused checks; reuse unchanged full-suite evidence.
 - Do not commit, push or publish without user authorization. Keep .dev-mesh, runs and deliveries local.
@@ -59,7 +59,7 @@
 
 - The newly selected private manuscript family has a source-bound rmc_floor_points0 contract. Apply its RMC floor after all adjustments, including unknown bounds; preserve original deductions and keep exact null for unknowns. The previous four manuscript tasks retain their original bounds. CLI and native share the same floor helper.
 
-- Benchmark0.6.0 is sealed. Keep its published tags/assets immutable; follow-on mathematical changes require a new benchmark release. The release state is independent of AI/human review status and unknown model coverage. Common external-harness guidance lives in docs/harness-guide.md; public25 and private complete39 packages use the same public controller implementation.
+- Benchmark1.0.0 is sealed. Preserve historical0.6.0 tags/assets and original results/v0.6.0 identities; releases/v1.0.0/compatibility.json binds unchanged answers/judgments to the current edition. Keep its published tags/assets immutable; follow-on mathematical changes require a new benchmark release. The release state is independent of AI/human review status and unknown model coverage. Common external-harness guidance lives in docs/harness-guide.md; public25 and private complete39 packages use the same public controller implementation.
 
 - Homepage chart sorting is independent: the overall score mode controls the main leaderboard/contribution view only; each written/Lean/research panel retains its own MC/RMC/SMC sort, gap rows sort by RG or DG distance from zero, and rates sort by observed reliability or confirmed attainment. Retain local sort choices in URL parameters; category tables, highlighting and detail links use their own chosen mode. Unknown sort values stay last and known zero stays known. Never change source scores or weights for presentation sorting.
 

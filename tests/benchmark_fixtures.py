@@ -20,6 +20,7 @@ def retired_transport_fixtures(root, source):
     old request hashes, model evidence or author implementation.
     """
     metadata = read_json(root / "cases/suite.json")
+    metadata["version"] = source["suite"]["version"]
     manifests = {read_json(root / "cases" / name)["id"]: name for name in metadata["cases"]}
     registry = read_json(root / "cases/sources.json")
     source_id = "synthetic-retired-transport-fixture"

@@ -45,7 +45,7 @@ class SimpleHarnessTests(unittest.TestCase):
         cls.addClassCleanup(cls.shared_temp.cleanup)
         cls.shared = Path(cls.shared_temp.name).resolve() / "dataset"
         cls.manifest = export_simple_release_dataset(cls.plan, cls.suite, cls.shared,
-            release_version="0.6.0", readme=b"# Standalone fixture guide\n",
+            release_version=cls.suite.metadata["version"], readme=b"# Standalone fixture guide\n",
             extra_files={"LICENSE": (ROOT / "LICENSE").read_bytes(),
                          "THIRD_PARTY_NOTICES.md": b"Synthetic fixture notice\n"})
         cls.anchor = make_release_anchor(cls.plan, cls.manifest)

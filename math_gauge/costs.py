@@ -13,6 +13,8 @@ from pathlib import Path
 SCHEMA = "math-gauge.cost-reference/v1"
 VERSION = "0.1.0"
 PUBLIC_SCHEMA = "math-gauge.cost-reference-public/v1"
+ARCHIVE_SCHEMA = "math-gauge.cost-evidence-archive/v1"
+SUPPLEMENT_REFERENCE_SCHEMA = "math-gauge.cost-supplement-reference/v1"
 SELECTIONS = {"retained_final", "last_retained_failure", "fixed_round", "not_run", "unresolved"}
 STATES = {"complete", "partial", "missing", "not_run"}
 ESTIMATED_MODELS = {"terra-6.1-max", "gemini-3.8-flash-high", "kimi-3.1-pro-max", "glm-5.3-max"}
@@ -84,6 +86,50 @@ def verify_source(root, descriptor):
     raw = path.read_bytes()
     _require(len(raw) == descriptor.get("bytes") and hashlib.sha256(raw).hexdigest() == descriptor.get("sha256"),
              "Cost source bytes changed")
+
+
+def validate_evidence_archive(document, *, root):
+    """Verify the optional lossless path map and its single-copy source objects."""
+    descriptor = document.get("evidence_archive")
+    if descriptor is None:
+        return None
+    verify_source(root, descriptor)
+    manifest = json.loads((Path(root) / descriptor["path"]).read_text())
+    _require(manifest.get("schema") == ARCHIVE_SCHEMA and manifest.get("version") == VERSION,
+             "Unknown cost evidence archive schema")
+    objects = {}
+    for item in manifest["objects"]:
+        sha = item["sha256"]
+        _require(isinstance(sha, str) and len(sha) == 64 and
+                 item["path"] == f"evidence/sha256/{sha}" and sha not in objects,
+                 "Cost archive objects must have unique content-addressed paths")
+        verify_source(root, item)
+        objects[sha] = item
+    paths = {}
+    original_bytes = 0
+    for item in manifest["files"]:
+        rel = Path(item["original_path"])
+        _require(not rel.is_absolute() and ".." not in rel.parts and rel.parts and
+                 item["original_path"] not in paths,
+                 "Cost archive original paths must be unique relative paths")
+        sha = item["sha256"]
+        _require(sha in objects, "Cost archive logical file has no retained object")
+        paths[item["original_path"]] = sha
+        original_bytes += objects[sha]["bytes"]
+    inventory = manifest["source_inventory"]
+    _require(objects.get(inventory.get("sha256")) == inventory and
+             paths.get("costs.json") == inventory.get("sha256"),
+             "Cost archive must retain its exact original inventory")
+    stats = {"original_files": len(paths), "original_bytes": original_bytes,
+             "unique_objects": len(objects), "unique_bytes": sum(x["bytes"] for x in objects.values())}
+    _require(manifest.get("preserved") == stats, "Cost archive preservation totals differ")
+    for model in document["models"]:
+        sources = [source for slot in model["slots"] for source in slot.get("sources", [])]
+        for field in ("estimate", "cost_resolution"):
+            sources.extend((model.get(field) or {}).get("sources", []))
+        _require(all(objects.get(item.get("sha256")) == item for item in sources),
+                 "Current cost source is outside its retained archive objects")
+    return stats
 
 
 def resolved_reference_cost(model, known, *, root=None):
@@ -204,6 +250,8 @@ def validate_private(document, *, root=None, expected_answers=None):
              "Unknown cost reference schema")
     _require(document.get("selection_rule") == "one_retained_attempt_per_slot" and
              document.get("other_retries_included") is False, "Wrong cost attempt selection")
+    if root is not None:
+        validate_evidence_archive(document, root=root)
     prices = {price["id"]: price for price in document["prices"]}
     _require(len(prices) == len(document["prices"]), "Duplicate cost tariff")
     ids = [model["model_id"] for model in document["models"]]
@@ -213,15 +261,20 @@ def validate_private(document, *, root=None, expected_answers=None):
             for model in document["models"]]
 
 
-def project_public(document, *, source_sha256, root=None, expected_answers=None):
+def project_public(document, *, source_sha256, root=None, expected_answers=None, benchmark_version=None):
     rows = validate_private(document, root=root, expected_answers=expected_answers)
     # No slot IDs, source paths, native identities, token details or private breakdowns leave this owner.
-    return {"schema": PUBLIC_SCHEMA, "version": VERSION, "benchmark_version": "0.6.0",
+    source_version = document.get("benchmark_version", "0.6.0")
+    active_version = source_version if benchmark_version is None else benchmark_version
+    projection = {"schema": PUBLIC_SCHEMA, "version": VERSION, "benchmark_version": active_version,
             "as_of": document["as_of"], "currency": "USD", "selection_rule": document["selection_rule"],
             "other_retries_included": False, "private_source_sha256": source_sha256,
             "prices": [{key: p[key] for key in ("id", "label", "source_url")} for p in document["prices"]],
             "models": [{key: row[key] for key in ("model_id", "record_id", "record_sha256", "status", "total_usd", "known_usd",
                        "estimate_range_usd", "coverage", "pricing_basis")} for row in rows]}
+    if active_version != source_version:
+        projection["source_benchmark_version"] = source_version
+    return projection
 
 
 def pareto_frontier(rows, *, axis="cost"):
