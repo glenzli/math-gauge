@@ -347,6 +347,12 @@ def _read_source_digest(root, parts):
             signature = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
             _require(signature(before) == signature(after), "source changed during verification")
             return digest.hexdigest()
+    except FileNotFoundError as exc:
+        from .evidence_retention import read_bytes
+        try:
+            return hashlib.sha256(read_bytes(root.joinpath(*parts))).hexdigest()
+        except FileNotFoundError:
+            raise ValueError("source cannot be safely read beneath its repository root") from exc
     except OSError as exc:
         raise ValueError("source cannot be safely read beneath its repository root") from exc
     finally:

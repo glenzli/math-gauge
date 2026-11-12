@@ -54,4 +54,4 @@ HCH02正常返回的原模块未通过内核，数学义务0/40；额外封存�
 
 AI审核，部分人工抽审；Sol 6.1 Max全审，Astra 6 Max／Dot抽审核对。编译核验、数学审核和运行证据分别留存。
 
-[来源记录](record.json) · [公有逐题成绩](public-task-scores.json) · [提交分类](submission-evidence-public.json) · [旧0.8.0方法与六视图](score-history/assessment-0.8.0/manifest.json)
+[来源记录](record.json) · [公有逐题成绩](public-task-scores.json) · [提交分类](submission-evidence-public.json) · [旧0.8.0方法与六视图](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/gemini-3.8-flash-high/20261105/score-history/assessment-0.8.0/manifest.json)

@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.content_rates import project_rates, validate_review, verify_sources
 from math_gauge.goal_attainment import validate_goal_review
+from math_gauge.evidence_retention import iter_files, read_bytes, read_json
 from math_gauge.native_observations import (digest, load_public_record, project_score,
     read_artifact, require, validate_math_inputs, validate_record, validate_source_supplements,
     SUPPLEMENTED_VERSION)
@@ -22,7 +23,7 @@ RECORD = '20261108'
 
 
 def read(path):
-    return json.loads(Path(path).read_bytes())
+    return read_json(path)
 
 
 def encoded(value):
@@ -48,7 +49,7 @@ def run(private_root, *, public_root=ROOT, write=False):
     original_run = json.loads(read_artifact(pri, source['run']))
     original_plan = json.loads(read_artifact(pri, source['plan']))
     inventory = json.loads(read_artifact(pri, source['raw_inventory']))
-    raw_paths = {str(p.relative_to(pri)) for p in (pri / 'raw').rglob('*') if p.is_file()}
+    raw_paths = {str(p.relative_to(pri)) for p in iter_files(pri / 'raw')}
     require(raw_paths == {item['path'] for item in inventory['files']}
             and len(raw_paths) == len(inventory['files']),
             'Native raw archive lost or duplicated a source file')
@@ -73,7 +74,7 @@ def run(private_root, *, public_root=ROOT, write=False):
             and {item['round'] for item in original_run['selfchecks']} == {1, 2, 3},
             'Native run lost a prescribed delivery')
     for path, item in deliveries:
-        raw = path.read_bytes()
+        raw = read_bytes(path)
         require(len(raw) == item['answer_bytes']
                 and hashlib.sha256(raw).hexdigest() == item['answer_sha256'],
                 'Native sealed answer differs from its original run ledger')

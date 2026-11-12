@@ -110,6 +110,8 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 The page itself works offline. See the [results report](docs/results.md) for site regeneration and data recomputation.
 
+Current answers, reviews, mathematical source and timing/cost summaries remain in the working tree. Duplicate copies, original containers, complete event streams and build caches are retained by immutable Git commits and a hash-bound index. Both repositories follow the same [evidence retention and recovery rules](docs/evidence-retention.md); a complete audit requires local Git history.
+
 ## Documentation
 
 | Topic | Entry point |

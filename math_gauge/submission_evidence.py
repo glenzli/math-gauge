@@ -9,6 +9,7 @@ import json
 import re
 from fractions import Fraction
 from pathlib import Path
+from .evidence_retention import read_bytes as retained_bytes
 
 VERSION = '0.1.0'
 POLICY_SCHEMA = 'math-gauge.submission-scoring-policy/v1'
@@ -243,9 +244,11 @@ def _read(folder, item):
     folder = Path(folder).resolve()
     path = folder / item['path']
     require(not any(p.is_symlink() for p in (path, *path.parents) if p != folder and folder in p.parents)
-            and path.resolve().is_relative_to(folder)
-            and path.is_file(), 'Submission evidence escapes its retained archive')
-    raw = path.read_bytes()
+            and path.resolve().is_relative_to(folder), 'Submission evidence escapes its retained archive')
+    try:
+        raw = retained_bytes(path)
+    except FileNotFoundError as error:
+        raise ValueError('Submission evidence is missing from its retained archive') from error
     require(len(raw) == item['bytes'] and hashlib.sha256(raw).hexdigest() == item['sha256'],
             'Submission evidence bytes changed')
     return raw

@@ -9,7 +9,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.records import (load_assessment_results, load_retry_inputs, load_theorem_extension_inputs, load_background_check_inputs, load_written_argument_inputs, load_written_replacement_inputs, load_manuscript_completion_inputs, load_claim_review, project_assessment_score,
-                                validate_record, load_public_task_scores, project_public_task_view)
+                                validate_record, load_public_task_scores, project_public_task_view,
+                                selected_cli_records, selected_paper_records)
 from math_gauge.scoring import score_assessment_record_inputs
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.paper_observations import SCHEMA as PAPER_SCHEMA, check_record as check_paper_record
@@ -24,7 +25,10 @@ def check(root=ROOT, *, public_root=None):
     root = Path(root).resolve()
     archives = []
     scoring_version = None
-    for path in sorted((root / "results/v0.6.0").glob("*/*/record.json")):
+    selection_root = Path(public_root).resolve() if public_root is not None else root
+    selected = selected_cli_records(selection_root) + selected_paper_records(selection_root)
+    paths = [root / folder.relative_to(selection_root) / "record.json" for _, folder in selected]
+    for path in sorted(paths):
         folder, record = path.parent, load(path)
         if record.get('schema') == PAPER_SCHEMA:
             public = Path(public_root).resolve() / folder.relative_to(root) if public_root is not None else None

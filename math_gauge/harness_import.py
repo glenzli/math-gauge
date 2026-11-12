@@ -605,13 +605,30 @@ def import_answer_archive(archive_path, evaluator_anchor, suite, destination, *,
 
 def inspect_import_sources(root, meta, records):
     """Recheck retained external evidence; shared reliability inspection calls this."""
-    from .harness import inspect_harness_bundle, inspect_release_run, reconstruct_release_plan
+    # Only evaluator-side retrospective inspection can restore an old bundle.
+    # Live import/export and the candidate controller keep their original APIs.
+    from .evidence_retention import iter_files, materialize_tree
 
     root = _root(root)
+    external = root / "external-import"
+    if any(not path.is_file() for path in iter_files(external)):
+        with materialize_tree(external) as restored:
+            return _inspect_import_sources(root, meta, records, restored)
+    return _inspect_import_sources(root, meta, records, external)
+
+
+def _inspect_import_sources(root, meta, records, external):
+    from .harness import inspect_harness_bundle, inspect_release_run, reconstruct_release_plan
+    from .evidence_retention import read_bytes
+
+    def original_bytes(name):
+        relative_name(name)
+        return read_bytes(root / name)
+
     descriptor = meta.get("external_import")
     _require(isinstance(descriptor, dict) and descriptor.get("receipt_path") == "external-import/receipt.json",
              "External import source receipt is missing")
-    receipt_raw = _file(root, descriptor["receipt_path"]).read_bytes()
+    receipt_raw = _file(external, "receipt.json").read_bytes()
     _require(digest_bytes(receipt_raw) == descriptor.get("receipt_sha256"), "External import receipt changed")
     receipt = _json(receipt_raw)
     _require(receipt.get("schema") in {RECEIPT, RELEASE_RECEIPT}, "Unsupported external import receipt")
@@ -619,21 +636,21 @@ def inspect_import_sources(root, meta, records):
         archive = receipt["answers_archive"]
         _require(isinstance(archive, dict) and archive.get("path") == "external-import/answers.zip",
                  "Retained answers ZIP descriptor changed")
-        raw = _file(root, archive["path"]).read_bytes()
+        raw = _file(external, "answers.zip").read_bytes()
         _require(type(archive.get("bytes")) is int and len(raw) == archive["bytes"]
                  and digest_bytes(raw) == archive.get("sha256"), "Original answers ZIP changed")
         from .harness import validate_release_anchor
-        anchor_raw = _file(root, "external-import/evaluator-anchor.json").read_bytes()
+        anchor_raw = _file(external, "evaluator-anchor.json").read_bytes()
         _require(digest_bytes(anchor_raw) == receipt.get("evaluator_anchor_sha256"),
                  "Retained trusted evaluator anchor changed")
         anchor = _json(anchor_raw)
         validate_release_anchor(anchor)
-    source_raw = _file(root, "external-import/submission.json").read_bytes()
+    source_raw = _file(external, "submission.json").read_bytes()
     _require(digest_bytes(source_raw) == receipt.get("source_submission_sha256"), "Original external submission changed")
     source = _json(source_raw)
-    bundle = root / "external-import/bundle"
+    bundle = external / "bundle"
     if receipt["schema"] == RELEASE_RECEIPT:
-        base_raw = _file(root, "external-import/evaluator-base-plan.json").read_bytes()
+        base_raw = _file(external, "evaluator-base-plan.json").read_bytes()
         _require(digest_bytes(base_raw) == receipt.get("base_plan_file_sha256"), "Retained release base plan changed")
         base_plan = _json(base_raw)
         manifest = inspect_release_run(bundle)
@@ -653,7 +670,7 @@ def inspect_import_sources(root, meta, records):
     for name, expected in receipt["bundle_files"].items():
         raw = _file(bundle, name).read_bytes()
         _require(len(raw) == expected["bytes"] and digest_bytes(raw) == expected["sha256"], "Retained bundle bytes changed")
-    sources = _SourceFiles(root / "external-import/files")
+    sources = _SourceFiles(external / "files")
     index = _submission(source, manifest, meta["plan"], sources)
     runtime, parameters = _validate_runtime(meta["plan"])
     recovery_policy = _a_recovery_policy(manifest.get("run_sha256"), receipt.get("local_transport_recovery"))
@@ -684,8 +701,8 @@ def inspect_import_sources(root, meta, records):
             attempt, raw, stderr = _attempt(external, number, source_hash, prefix, sources,
                 normalized_hash=record["projected_request_sha256"] if _h_is_neutral(manifest) else None)
             _require(attempt == record["attempts"][number - 1]
-                     and _file(root, attempt["response_path"]).read_bytes() == raw
-                     and _file(root, prefix + "/stderr.txt").read_bytes() == stderr,
+                     and original_bytes(attempt["response_path"]) == raw
+                     and original_bytes(prefix + "/stderr.txt") == stderr,
                      "Imported attempt differs from its retained original source")
     _require(list(sources.descriptors.values()) == receipt.get("source_files"), "Retained source inventory changed")
     totals = _budget_totals(meta["budget_evidence"])

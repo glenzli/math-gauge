@@ -108,13 +108,15 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 页面本身无需联网。页面重建与数据复算方式见[结果报告](docs/results.md)。
 
+当前原答、审核、数学源码和时间／费用摘要保留在工作树；重复副本、原始大包、完整事件流与编译缓存通过固定 Git 提交和散列索引留存。公私库采用同一套[证据留存与恢复规则](docs/evidence-retention.md)，完整审计须保留 Git 历史。
+
 ## 文档
 
 | 内容 | 入口 |
 |---|---|
 | 题型与选题 | [题库目录](cases/README.md) · [选题说明](docs/selection.md) |
 | 执行与外部 Harness | [统一运行指南](docs/harness-guide.md) · [评测协议](protocol/evaluation.md) |
-| 评分与留档 | [评分规范](protocol/benchmark-scoring.md) · [正式结果合同](protocol/result-record.md) |
+| 评分与留档 | [评分规范](protocol/benchmark-scoring.md) · [正式结果合同](protocol/result-record.md) · [证据恢复](docs/evidence-retention.md) |
 | 结果与附加指标 | [完整结果](docs/results.md) · [两率](protocol/content-rates.md) · [额外成果观察](docs/manuscript-observations.md) |
 | 发行与复现包 | [1.0.0 发行说明](releases/v1.0.0/README.md) · [0.6.1 分发说明](releases/v0.6.1/README.md) · [0.6.0 封版说明](releases/v0.6.0/README.md) |
 

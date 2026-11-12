@@ -5,9 +5,11 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from urllib.parse import quote
 
 from math_gauge.records import evidence_bytes, load_public_task_scores
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
+from math_gauge.evidence_retention import source_location, read_bytes as retained_bytes, is_file as retained_file
 from scripts.results_i18n import language_switch
 from scripts.results_harness import display_harness_labels
 from scripts.results_presentation import project_payload
@@ -22,8 +24,21 @@ def embedded(value):
     return json.dumps(display_harness_labels(project_payload(value)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
 
 
-def source_link(source, page, label):
-    href = os.path.relpath(source, Path("site") / Path(page).parent)
+def source_link(source, page, label, *, root=None):
+    root = Path(root or HERE.parent).resolve()
+    source = Path(source)
+    source = Path(os.path.abspath(source if source.is_absolute() else root / source))
+    if not source.is_relative_to(root):
+        raise ValueError("Public evidence link escapes its source repository")
+    location = source_location(source)
+    if Path(location['repository_root']).resolve() != root:
+        raise ValueError("Public evidence link belongs to another repository")
+    if location['revision'] is not None:
+        href = ('https://github.com/glenzli/math-gauge/blob/' + location['revision']
+                + '/' + quote(location['git_path'], safe='/'))
+    else:
+        href = quote(os.path.relpath(root / location['git_path'],
+                                    root / "site" / Path(page).parent), safe='/')
     return f'<a href="{html.escape(href, quote=True)}">{html.escape(label)}</a>'
 
 
@@ -166,7 +181,7 @@ def public_evidence(folder, record, cid, condition, task):
                 # Background R conversion binds the original, more detailed review.
                 if primary.get('source_review_sha256'):
                     path = (folder / item['path']).parent / 'source-review.json'
-                    raw = path.read_bytes()
+                    raw = retained_bytes(path)
                     if hashlib.sha256(raw).hexdigest() != primary['source_review_sha256']:
                         raise ValueError('Background detailed review does not match its retained conversion')
                     item = {'path': str(path.relative_to(folder)), 'bytes': len(raw), 'sha256': primary['source_review_sha256']}
@@ -267,10 +282,10 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
     body = panel('本题成绩', '<div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p>',
         'MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。')
     task_path = Path(model['source_record']).parent/'inputs'/cid/'task.md'
-    if not (root/task_path).is_file():
+    if not retained_file(root/task_path):
         task_path = Path(entry['paths']['task'])
-    task = (root/task_path).read_text()
-    body += '<details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose">'+markdown.add(task)+'</div><p class="panel-foot">'+source_link(task_path,page,'原题文件 ↗')+'</p></details>'
+    task = retained_bytes(root/task_path).decode('utf-8')
+    body += '<details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose">'+markdown.add(task)+'</div><p class="panel-foot">'+source_link(task_path,page,'原题文件 ↗',root=root)+'</p></details>'
     source_folder=root/Path(model['source_record']).parent
     source_record=json.loads((root/model['source_record']).read_bytes())
     submissions=(json.loads(evidence_bytes(source_folder,source_record['submission_evidence']))
@@ -308,18 +323,19 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         answers = [s for s in item['sources'] if s['role'] in ('answer','response') and s['sha256']==details['case']['views']['partial'][condition]['response_sha256']]
         if answers:
             answer = answers[0]
-            current += '<details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose">'+markdown.add(answer['raw'].decode('utf-8'))+'</div><p class="panel-foot">'+source_link(answer['path'],page,'原答文件 ↗')+'</p></details>'
+            current += '<details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose">'+markdown.add(answer['raw'].decode('utf-8'))+'</div><p class="panel-foot">'+source_link(answer['path'],page,'原答文件 ↗',root=root)+'</p></details>'
         else:
             unknown = details['case']['views']['partial'][condition]['completion']['exact'] is None
             current += '<p class="empty-state">'+('本题尚无评审结果。' if unknown else '本题的交付记录及计分依据见档案。')+'</p>'
-        links = ''.join('<li>'+source_link(s['path'],page,s['role']+' · '+Path(s['path']).name)+'<span class="hash">SHA256 '+s['sha256']+'</span></li>' for s in item['sources'])
-        links += '<li>'+source_link(model['source_record'],page,'来源记录 ↗')+'</li>'
+        links = ''.join('<li>'+source_link(s['path'],page,s['role']+' · '+Path(s['path']).name,root=root)+'<span class="hash">SHA256 '+s['sha256']+'</span></li>' for s in item['sources'])
+        links += '<li>'+source_link(model['source_record'],page,'来源记录 ↗',root=root)+'</li>'
         current += '<details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>'+html.escape(item['selected_record'])+'</code></p><ul class="source-list">'+links+'</ul></div></details></div>'
         body += current
     return shell(page,cid+' · '+entry['title'],model['label']+' · '+CATEGORY_TITLES.get(entry['category'],entry['category'])+' · 公开题证据',body,details,'case-results.js',back=('models/'+model['id']+'/index.html',model['label']))
 
 
 def render_model(page, data, model, cases, record, folder, markdown):
+    root = folder.parents[3]
     details = compact_data(data, model)
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>')
@@ -327,7 +343,7 @@ def render_model(page, data, model, cases, record, folder, markdown):
         receipt = Path(model['source_record']).parent / 'review-completion.json'
         body += panel('来源审核完成', '<div class="prose"><p data-lang-content="zh">39道初答的原始答卷审核完成，三项缺档已复核。三轮自查因初答未交付而未执行，仍保留未知。</p>'
             '<p data-lang-content="en" hidden>All 39 initial-answer sources have been reviewed, including the three recovered records. The three self-check rounds were not run because the initial engineering delivery was absent; their scores remain unknown.</p></div>'
-            '<p class="panel-foot">'+source_link(receipt,page,'补充复核记录 ↗')+'</p>')
+            '<p class="panel-foot">'+source_link(receipt,page,'补充复核记录 ↗',root=root)+'</p>')
     rates = model.get('content_rates')
     if rates:
         def percent(value):
@@ -351,7 +367,7 @@ def render_model(page, data, model, cases, record, folder, markdown):
             +percent(r['observed'])+'；已确认'+target_label+' '+percent(d['confirmed'])+'。</p>'+interval+'</div><div class="table-wrap"><table class="compact rate-table">'
             '<thead><tr><th>子类</th><th class="numeric">已审内容可靠率</th><th class="numeric">已确认'+target_label+'</th>'
             '</tr></thead><tbody>'+rows+'</tbody></table></div><p class="panel-foot">'
-            +source_link(Path(model['source_record']).parent/'content-rates.json', page, '补审汇总 JSON ↗')
+            +source_link(Path(model['source_record']).parent/'content-rates.json', page, '补审汇总 JSON ↗',root=root)
             +' · <a data-context-link href="../../method.html#content-rate-method">计算方法 →</a></p>')
     body += panel('分类贡献', '<div class="table-wrap"><table id="model-categories" class="compact"></table></div>',
         '贡献分 / 该项满分；相关变体在家族内聚合。')
@@ -364,18 +380,18 @@ def render_model(page, data, model, cases, record, folder, markdown):
                     ('MG-C003:alignment:'+str(index), 'MG-C003:R'+str(index))))
         response = row.get('response')
         content = markdown.add(evidence_bytes(folder,response).decode()) if response else '未留存可读原答。'
-        link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗') if response else ''
+        link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗',root=root) if response else ''
         rounds += '<details class="evidence-fold nested"><summary>R'+str(index)+' · 完整原答</summary><div class="prose">'+content+'<p>'+link+'</p></div></details>'
     alignment_path = next((s['path'] for s in record.get('evidence',[]) if s['path'] in ('reviews/alignment.json','alignment-review.json')),None)
     if alignment_path:
-        rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗')+'</p>'
+        rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗',root=root)+'</p>'
     body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '92项义务，按最后规定轮次计分。')+'</div>'
     body += panel('公开题 · 逐题成绩与证据', '<div class="table-wrap"><table id="case-list" class="compact case-list"></table></div>',
         f"公开{data['policy']['scope']['public_tasks']}题；私有{data['policy']['scope']['private_tasks']}题计入合并成绩。")
     body += '<details class="panel evidence-fold"><summary>形式化初答 · 逐题核实数</summary><div class="table-wrap"><table id="model-formalization" class="compact"></table></div><p class="panel-foot">按初答封卷工程核对编译及语义对应。</p></details>'
     body += panel('可靠性审核', '<div id="model-penalties" class="metric-grid"></div><details class="nested evidence-fold"><summary>公开题的错误承诺与扣罚理由</summary><div id="model-findings" class="prose"></div></details>',
         '同根因扣罚去重；具体依据见逐题说明。')
-    source = source_link(model['source_record'],page,'正式档案 ↗')
+    source = source_link(model['source_record'],page,'正式档案 ↗',root=root)
     harness_note = ('<p class="panel-foot">'+html.escape(model['harness']['note_marker']+' '+model['harness']['note_text'])+'</p>'
                     if model['harness'].get('note_text') else '')
     body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness_display_name'])+'</p><p>'

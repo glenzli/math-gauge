@@ -2,7 +2,7 @@
 
 目标：把已经发生的 DeepSeek v4.1 Flash 1017 作答按当前正式记录规范整理完整。**本说明只约束证据恢复与整理：不重新作答、不评分、不修复数学或 Lean，不让模型事后补一份“当时的自评”。**
 
-当前已按后续授权完成评分并固定留档，见[DeepSeek档案](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/README.md)和[三模型汇总](results.md)。恢复原答与评审核查是不同步骤，以下规则仍用于避免补造历史证据。
+当前已按后续授权完成评分并固定留档，见[DeepSeek档案](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/deepseek-v4.1-flash-1017/20261109/README.md)和[三模型汇总](results.md)。恢复原答与评审核查是不同步骤，以下规则仍用于避免补造历史证据。
 
 输入是原 `deepseek-v4.1-flash-max-answer-20261104` 目录及原始平台会话/运行输出。原目录已发现81份 `answer.md`，其中公开78份、私有3份。不要覆盖这个原目录；另建 `deepseek-v4.1-flash-1017-records/`，保留每份所用原文件的路径、字节数与SHA-256。
 

@@ -9,6 +9,7 @@ import json
 import copy
 import re
 from pathlib import Path, PurePosixPath
+from .evidence_retention import read_bytes as retained_bytes
 
 SCHEMA = "math-gauge.result-record/v1"
 ASSESSMENTS = {"complete", "incomplete", "uncertain", "not_stated", "not_requested", "unresolved"}
@@ -1552,9 +1553,12 @@ def load_strict_results(root, record, *, public_root=None):
 
 def descriptor(root, path):
     root, path = Path(root).resolve(), Path(path).resolve()
-    if not path.is_file() or not path.is_relative_to(root):
+    if not path.is_relative_to(root):
         raise ValueError("Record evidence must be a local regular file")
-    raw = path.read_bytes()
+    try:
+        raw = retained_bytes(path)
+    except FileNotFoundError as error:
+        raise ValueError("Record evidence must be a local regular file") from error
     return {"path": str(path.relative_to(root)), "bytes": len(raw),
             "sha256": hashlib.sha256(raw).hexdigest()}
 
@@ -1570,9 +1574,12 @@ def evidence_bytes(root, item):
     path = root / name
     if any(p.is_symlink() for p in [path, *path.parents] if p != root.parent):
         raise ValueError("Record evidence cannot traverse a symlink")
-    if not path.is_file() or not path.resolve().is_relative_to(root):
+    if not path.resolve().is_relative_to(root):
         raise ValueError("Missing record evidence")
-    raw = path.read_bytes()
+    try:
+        raw = retained_bytes(path)
+    except FileNotFoundError as error:
+        raise ValueError("Missing record evidence") from error
     if len(raw) != item.get("bytes") or hashlib.sha256(raw).hexdigest() != item.get("sha256"):
         raise ValueError("Record evidence bytes changed")
     return raw

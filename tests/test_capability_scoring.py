@@ -8,6 +8,7 @@ from unittest.mock import patch
 import test_theorem_extension as research_fixtures
 from test_alignment_scoring import alignment_review
 from math_gauge.records import evidence_bytes, load_assessment_results, project_assessment_score
+from math_gauge.evidence_retention import read_json as retained_json
 from math_gauge.scoring import (_alignment_trajectory, score_assessment_inputs,
                                 validate_capability_policy)
 
@@ -104,7 +105,7 @@ class CapabilityResearchTests(unittest.TestCase):
 class CapabilityRecordTests(unittest.TestCase):
     def test_capability_policy_binding_is_verified_in_public_archives(self):
         root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
-        record = json.loads((root / "record.json").read_text())
+        record = retained_json(root / "record.json")
         data = load_assessment_results(root, record, mode="capability")
         self.assertEqual(set(data), {"single_attempt", "nonlogical_retry_3"})
         def poisoned(base, item):

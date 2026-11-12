@@ -20,6 +20,6 @@ Gemini HCH02此前按回复内代码判为0/40；重新核对实际归档工程�
 
 DeepSeek现行快照按预选清单继承CH2三份工程（8/8、20/20、40/40）及其编译与语义审核。本轮C003只收到空最终答复与9份代码片段，初答和规定三轮保持未知；旧批次C003的82/92与91/92仅保留为历史来源，不进入当前成绩。
 
-- DeepSeek：[保留CH2工程审核](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/reviews/formalization.json) · [当前档案：C003待补](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/record.json)
+- DeepSeek：[保留CH2工程审核](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105/reviews/formalization.json) · [当前档案：C003待补](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/deepseek-v4.1-flash-1017/20261109/record.json)
 
 公开与私有合并成绩都由共享评分器重算，结果见[成绩报告](results.md)。本次没有新增候选调用或修补候选源码。当前为AI审核，人工复核待完成。

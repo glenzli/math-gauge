@@ -7,6 +7,7 @@ import tempfile
 import unittest
 
 from math_gauge.records import descriptor, validate_formalization_review
+from math_gauge.evidence_retention import read_bytes as retained_bytes
 from math_gauge.scoring import score_record_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -146,7 +147,7 @@ class EngineeringSourceTests(unittest.TestCase):
                     if {"path", "bytes", "sha256"} <= value.keys():
                         target = root / value["path"]
                         target.parent.mkdir(parents=True, exist_ok=True)
-                        target.write_bytes((self.root / value["path"]).read_bytes())
+                        target.write_bytes(retained_bytes(self.root / value["path"]))
                     for item in value.values():
                         localize(item)
                 elif isinstance(value, list):

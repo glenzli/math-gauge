@@ -9,6 +9,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from .evidence_retention import read_bytes, read_json
 
 SCHEMA = "math-gauge.cost-reference/v1"
 VERSION = "0.1.0"
@@ -70,7 +71,7 @@ def unit_cost(unit, prices):
 
 def source_descriptor(path, root):
     path, root = Path(path), Path(root)
-    raw = path.read_bytes()
+    raw = read_bytes(path)
     return {"path": path.relative_to(root).as_posix(), "bytes": len(raw),
             "sha256": hashlib.sha256(raw).hexdigest()}
 
@@ -81,9 +82,12 @@ def verify_source(root, descriptor):
     _require(not rel.is_absolute() and ".." not in rel.parts and rel.parts,
              "Cost source must remain inside its evidence root")
     path = root / rel
-    _require(not path.is_symlink() and path.is_file() and path.resolve().is_relative_to(root),
+    _require(not path.is_symlink() and path.resolve().is_relative_to(root),
              "Cost evidence must be a regular in-root file")
-    raw = path.read_bytes()
+    try:
+        raw = read_bytes(path)
+    except FileNotFoundError as error:
+        raise ValueError("Cost evidence must be a regular in-root file") from error
     _require(len(raw) == descriptor.get("bytes") and hashlib.sha256(raw).hexdigest() == descriptor.get("sha256"),
              "Cost source bytes changed")
 
@@ -94,7 +98,7 @@ def validate_evidence_archive(document, *, root):
     if descriptor is None:
         return None
     verify_source(root, descriptor)
-    manifest = json.loads((Path(root) / descriptor["path"]).read_text())
+    manifest = read_json(Path(root) / descriptor["path"])
     _require(manifest.get("schema") == ARCHIVE_SCHEMA and manifest.get("version") == VERSION,
              "Unknown cost evidence archive schema")
     objects = {}
@@ -161,7 +165,7 @@ def resolved_reference_cost(model, known, *, root=None):
                      binding.get("usage") == unit["usage"],
                      "Reported usage resolution differs from the retained native receipt")
             if root is not None:
-                extracts = [json.loads((Path(root) / item["path"]).read_text()) for item in slot["sources"]]
+                extracts = [read_json(Path(root) / item["path"]) for item in slot["sources"]]
                 _require(any(item.get("native_final_usage_present") is True for item in extracts),
                          "Reported usage resolution requires a native final cumulative receipt")
         return known

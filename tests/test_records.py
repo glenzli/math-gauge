@@ -14,6 +14,7 @@ from unittest.mock import patch
 from math_gauge.records import (SCHEMA, apply_retry_selection, descriptor, evidence_bytes,
                                 load_retry_inputs, project_metrics, trajectory, validate_record, validate_self_assessment)
 from math_gauge.scoring import score_record_inputs
+from math_gauge.evidence_retention import materialize_tree
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -276,7 +277,8 @@ class FiniteTrajectoryTests(unittest.TestCase):
 
 class CurrentArchiveTests(unittest.TestCase):
     def test_retry_condition_reproduces_both_reviewed_answers_with_the_original_plan(self):
-        root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
+        source = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
+        root = self.enterContext(materialize_tree(source))
         load = lambda name: json.loads((root / name).read_bytes())
         inputs = load_retry_inputs(root, load("record.json"))
         self.assertEqual(inputs["plan"], load("scoring-inputs.json")["plan"])
@@ -300,7 +302,8 @@ class CurrentArchiveTests(unittest.TestCase):
                 temporary = tempfile.TemporaryDirectory()
                 self.addCleanup(temporary.cleanup)
                 root = Path(temporary.name) / model / "20261105"
-                shutil.copytree(source, root)
+                with materialize_tree(source) as original:
+                    shutil.copytree(original, root, copy_function=shutil.copyfile)
             self.assertTrue(validate_record(root)["passed"])
             load = lambda name: json.loads((root / name).read_bytes())
             result = score_record_inputs(load("scoring-inputs.json"), load("reviews/alignment.json"),
@@ -334,9 +337,12 @@ class SharedAggregateCheckTests(unittest.TestCase):
         cli = importlib.util.module_from_spec(spec); spec.loader.exec_module(cli)
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory).resolve(); private,public=root/"private",root/"public"
-            relative=Path("results/v0.6.0/SOFTWARE-FIXTURE/fixture")
+            relative=Path("results/v0.6.0/software-fixture/fixture")
             folder,source=private/relative,public/relative
             folder.mkdir(parents=True);(source/"reviews").mkdir(parents=True)
+            (public/"benchmark.json").write_text(json.dumps({"version":"0.6.0",
+                "selected_result_models":["software-fixture"],
+                "selected_result_record_ids":{"software-fixture":"fixture"}}))
             result=json.loads((ROOT/"results/v0.6.0/terra-6.1-max/20261105/combined-aggregate.json").read_bytes())
             record={"formalization_evidence_location":"public_archive"}
             for group in ("capability_results","assessment_results","strict_results"):

@@ -11,6 +11,7 @@ import test_alignment_scoring as alignment_fixture
 import test_content_rates as content_fixture
 from test_claim_penalties import event
 from math_gauge.harness_import import _validate_runtime
+from math_gauge.evidence_retention import materialize_tree
 from math_gauge.native_observations import (digest, load_public_record, project_score,
     validate_math_inputs, validate_record, validate_source_supplements)
 from math_gauge.records import validate_record as validate_formal_record
@@ -316,7 +317,8 @@ class NativeHarnessTests(unittest.TestCase):
         expected=[row['case_id'] for row in json.loads((ROOT/'cases/catalog.json').read_bytes())['entries']]
         with tempfile.TemporaryDirectory() as directory:
             folder=Path(directory)/FOLDER.parent.name/FOLDER.name
-            shutil.copytree(FOLDER,folder)
+            with materialize_tree(FOLDER) as original:
+                shutil.copytree(original,folder,copy_function=shutil.copyfile)
             record,_,_=load_public_record(folder,public_case_ids=expected)
             (folder/record['public_deliveries'][0]['response']['path']).write_text('mutated')
             with self.assertRaises(ValueError):load_public_record(folder,public_case_ids=expected)

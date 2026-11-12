@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 
 from math_gauge.records import evidence_bytes, load_strict_results
+from math_gauge.evidence_retention import materialize_tree
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -13,7 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class StrictRecordTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.root = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
+        source = ROOT / "results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105"
+        cls.root = cls.enterClassContext(materialize_tree(source))
         cls.record = json.loads((cls.root / "record.json").read_bytes())
 
     def poisoned(self, change):

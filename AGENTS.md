@@ -1,5 +1,7 @@
 # Math Gauge
 
+- Evidence storage component0.1.0 is evaluator-only: evidence_retention.py owns local Git cold reads and explicit temporary materialization; scripts/retain_evidence.py owns reviewed preparation/pruning/recovery. Preserve original record/review/seal bytes and current mathematical source. Index fixed full source commits, blob/path/size/SHA256 and regular modes; no network fetch or fallback from damaged hot files. Keep public/private indexes separate and the candidate controller free of this reader. Cold archival payload is not a new mathematical or execution judgment.
+
 - First read README.md, protocol/evaluation.md, protocol/result-record.md and the relevant case's complete material.
 - Preserve supplied mathematical structures, quantifiers, domains and conclusion strengths. New cases need provenance, a full argument/counterexample, specific review criteria and explicit AI/human status.
 - Benchmark version1.0.0 is shared by public and private components. Case, harness and scoring-method revisions are separate component metadata.

@@ -10,6 +10,7 @@ import math
 from pathlib import Path
 import re
 import statistics
+from math_gauge.evidence_retention import is_file, iter_files, read_bytes, read_json
 
 
 CASES = (
@@ -25,11 +26,11 @@ DAILY_IDS = tuple(cid for cid in CASE_IDS if cid != "MG-C003")
 
 
 def read(path):
-    return json.loads(Path(path).read_bytes())
+    return read_json(path)
 
 
 def sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    return hashlib.sha256(read_bytes(path)).hexdigest()
 
 
 def summarize(rows):
@@ -114,19 +115,27 @@ def build_reference(root, *, display_data=None):
     category_weights = {item["id"]: item["weight"] for item in read(policy_path)["subcategories"]}
     weights = {c["id"]: category_weights[c["group"]] for c in cases if c["id"] in DAILY_IDS}
     observations_path = root / "site/timings/observed-clocks.json"
-    observations = read(observations_path) if observations_path.exists() else {"rows": []}
+    observations = read(observations_path) if is_file(observations_path) else {"rows": []}
     if observations.get("rows") and observations.get("schema") != "math-gauge.timing-reference-observations/v1":
         raise ValueError("Unknown timing observations")
     models, inputs = [], [{"path": "protocol/scoring-policy.json", "sha256": sha(policy_path)}]
     for model_id, record_id in selected.items():
         folder = root / "results/v0.6.0" / model_id / record_id
-        record_path = folder / ("record.json" if (folder / "record.json").exists() else "native-observation.json")
+        record_path = folder / ("record.json" if is_file(folder / "record.json") else "native-observation.json")
         task_path = folder / "public-task-scores.json"
         scores = {r["case_id"]: r for r in read(task_path)["views"]["partial"]["nonlogical_retry_3"]["tasks"]}
         inputs.append({"path": task_path.relative_to(root).as_posix(), "sha256": sha(task_path)})
         # Reused answer clocks require the exact same response hash, not just a case ID.
-        candidates = sorted(folder.parent.glob("*/answer-timings.json"), reverse=True)
-        sources = [load_supplement(path, record_id) for path in candidates]
+        current = folder / "answer-timings.json"
+        sources = [load_supplement(current, record_id)] if is_file(current) else []
+        needs_history = any(scores[cid].get("response_sha256") is not None
+                            and select_timing(cid, scores[cid]["response_sha256"], sources)[1] is None
+                            for cid in CASE_IDS)
+        if needs_history:
+            candidates = sorted((path for path in iter_files(folder.parent)
+                                 if path.name == "answer-timings.json" and path != current
+                                 and len(path.relative_to(folder.parent).parts) == 2), reverse=True)
+            sources.extend(load_supplement(path, record_id) for path in candidates)
         rows = []
         for case_id in CASE_IDS:
             score = scores[case_id]

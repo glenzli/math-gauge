@@ -95,12 +95,12 @@ python3 scripts/render_timing_reference.py
 | [Terra 6.1 max](../results/v0.6.0/terra-6.1-max/20261105/answer-timings.json) | 24/39 | 6.19 | 7.14 | 33.69 | 2.86 | 3/3 |
 | [Terra 6.1 xhigh](../results/v0.6.0/terra-6.1-xhigh/20261108/answer-timings.json) | 39/39 | 1.77 | 2.46 | 10.26 | 1.60 | 3/3 |
 | [Gemini 3.8 Flash high](../results/v0.6.0/gemini-3.8-flash-high/20261105/answer-timings.json) | 25/39 | 5.80 | 7.44 | 20.63 | 3.10 | 2/3 |
-| [Gemini 4 Argon high](../results/v0.6.0/gemini-4-argon/20261108/answer-timings.json) | 19/39 | 6.06 | 6.82 | 14.21 | 2.16 | 0/3 |
+| [Gemini 4 Argon high](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/gemini-4-argon/20261108/answer-timings.json) | 19/39 | 6.06 | 6.82 | 14.21 | 2.16 | 0/3 |
 | [Sol 6.1 max](../results/v0.6.0/sol-6.1-max/20261109/answer-timings.json) | 39/39 | 6.89 | 10.80 | 59.44 | 7.02 | 3/3 |
 | [Sol 6.1 xhigh](../results/v0.6.0/sol-6.1-xhigh/20261109/answer-timings.json) | 39/39 | 6.05 | 8.42 | 32.30 | 5.47 | 3/3 |
 | [Astra 6 max](../results/v0.6.0/astra-6-max/20261109/answer-timings.json) | 39/39 | 9.22 | 10.30 | 37.20 | 6.69 | 3/3 |
 | [Claude Opus 5.5 max](../results/v0.6.0/claude-opus-5.5-max/20261109/answer-timings.json) | 39/39 | 15.63 | 18.24 | 76.72 | 11.85 | 3/3 |
-| [DeepSeek v4.1 Flash 1017](../results/v0.6.0/deepseek-v4.1-flash-1017/20261109/answer-timings.json) | 27/39 | 9.92 | 10.53 | 25.60 | 4.74 | 0/3 |
+| [DeepSeek v4.1 Flash 1017](https://github.com/glenzli/math-gauge/blob/d670d845086d8c8d25a9d153ccd7cb97b48d12f5/results/v0.6.0/deepseek-v4.1-flash-1017/20261109/answer-timings.json) | 27/39 | 9.92 | 10.53 | 25.60 | 4.74 | 0/3 |
 | [Dot Underlying (2026-11-08)](../results/v0.6.0/dot-underlying-model-20261108/20261108/answer-timings.json) | 38/39 | 3.49 | 4.91 | 18.28 | 3.11 | 3/3 |
 
 Terra xhigh、Sol两档、Astra及Opus用原生首次终态口径。Terra max与Gemini 3.8混合原运行器耗时和历史恢复摘要；Dot为协调者观察间隔，可能多含轮询延迟；DeepSeek为操作者交回摘要。覆盖、题目构成、运行批次和计时精度不同，这张总表不能直接充作同条件速度排名。

@@ -5,10 +5,12 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 from urllib.parse import unquote,urlsplit
 from scripts.render_results_site import build_data,write_site
-from scripts.results_details import EvidenceRenderer,build_detail_pages,public_evidence
+from scripts.results_details import EvidenceRenderer,build_detail_pages,public_evidence,source_link
 from math_gauge.records import load_public_task_scores
+from math_gauge.evidence_retention import read_bytes as retained_bytes
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -21,6 +23,35 @@ class Links(HTMLParser):
         if tag=='a' and a.get('href'):self.links.append(a['href'])
         if tag in ('script','img','link') and (a.get('src') or a.get('href')):
             self.resources.append(a.get('src') or a['href'])
+
+
+class SourceLinkTests(unittest.TestCase):
+    def test_cold_or_alias_link_uses_original_git_location(self):
+        with tempfile.TemporaryDirectory() as name:
+            root=Path(name).resolve()
+            location={'repository_root':str(root),'revision':'a'*40,
+                      'git_path':'results/evidence-retention/原答 body.md',
+                      'sha256':'b'*64,'bytes':17}
+            with patch('scripts.results_details.source_location',return_value=location) as locate:
+                value=source_link('results/logical/answer.md','models/model/index.html','原答 <&>',root=root)
+            self.assertEqual(locate.call_args.args[0],root/'results/logical/answer.md')
+            self.assertIn('/blob/'+('a'*40)+'/results/evidence-retention/%E5%8E%9F%E7%AD%94%20body.md',value)
+            self.assertNotIn('/results/logical/',value)
+            self.assertIn('原答 &lt;&amp;&gt;',value)
+
+    def test_hot_link_remains_local_and_private_repository_is_rejected(self):
+        with tempfile.TemporaryDirectory() as name:
+            root=Path(name).resolve();(root/'.git').mkdir()
+            source=root/'results/answer body.md';source.parent.mkdir();source.write_text('original\n')
+            value=source_link('results/answer body.md','models/model/index.html','原答',root=root)
+            self.assertIn('href="../../../results/answer%20body.md"',value)
+            with self.assertRaisesRegex(ValueError,'escapes'):
+                source_link('../math-gauge-private/answer.md','index.html','private',root=root)
+            other={'repository_root':str(root/'other'),'revision':'a'*40,
+                   'git_path':'private/answer.md','sha256':'b'*64,'bytes':1}
+            with patch('scripts.results_details.source_location',return_value=other):
+                with self.assertRaisesRegex(ValueError,'another repository'):
+                    source_link('results/answer body.md','index.html','private',root=root)
 
 
 class ResultDetailsTests(unittest.TestCase):
@@ -48,7 +79,7 @@ class ResultDetailsTests(unittest.TestCase):
 
     def test_retry_uses_admitted_answer_and_original_failure_is_not_filled(self):
         folder=ROOT/'results/v0.6.0/deepseek-v4.1-flash-1017/20261109/sources/legacy-public-20261105'
-        record=json.loads((folder/'record.json').read_bytes());scores=load_public_task_scores(folder,record);samples={}
+        record=json.loads(retained_bytes(folder/'record.json'));scores=load_public_task_scores(folder,record);samples={}
         for c in ('single_attempt','nonlogical_retry_3'):
             task=next(r for r in scores['views']['partial'][c]['tasks'] if r['case_id']=='MG-GR021')
             samples[c]=public_evidence(folder,record,'MG-GR021',c,task)

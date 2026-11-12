@@ -17,10 +17,11 @@ sys.path.insert(0, str(ROOT))
 from math_gauge.costs import (SCHEMA, VERSION, SUPPLEMENT_REFERENCE_SCHEMA, project_public,
                               source_descriptor, validate_private, verify_source)
 from math_gauge.timings import record_context
+from math_gauge.evidence_retention import is_file, iter_files, read_bytes, read_json
 
 
 def read(path):
-    return json.loads(Path(path).read_bytes())
+    return read_json(path)
 
 
 def digest(value):
@@ -127,7 +128,7 @@ class Collector:
     def recovered_failures(self, folder, record_file):
         """A later sealed failure supersedes an earlier failed attempt's counters."""
         path = folder / "review-completion-private.json"
-        if not path.is_file():
+        if not is_file(path):
             return {}
         document = read(path)
         if (document.get("schema") != "math-gauge.source-recovery-review/v1" or
@@ -156,7 +157,7 @@ class Collector:
         final_usage_present, coverage_gaps = False, []
         if meta_path.name == "execution.json":
             events = meta_path.parent.parent / "output/events.ndjson"
-            if not events.is_file():
+            if not is_file(events):
                 return None
             expected = data.get("artifact_hashes", {}).get("output/events.ndjson")
             desc = self.upstream(events)
@@ -164,7 +165,7 @@ class Collector:
                 raise ValueError("Native cost events changed: " + str(events))
             provenance.append(desc)
             terminal, native_ids, step_updates, native_results = [], set(), [], []
-            for line in events.read_text().splitlines():
+            for line in read_bytes(events).decode("utf-8").splitlines():
                 try:
                     event = json.loads(line)
                 except ValueError:
@@ -205,9 +206,9 @@ class Collector:
                 identity_basis = "native_cli_session"
             stdout = meta_path.parent / "stdout.jsonl"
             result = None
-            if stdout.is_file():
+            if is_file(stdout):
                 provenance.append(self.upstream(stdout))
-                for line in stdout.read_text().splitlines():
+                for line in read_bytes(stdout).decode("utf-8").splitlines():
                     try:
                         event = json.loads(line)
                     except ValueError:
@@ -215,7 +216,7 @@ class Collector:
                     if event.get("type") == "result":
                         result = event
             usage_path = meta_path.parent / "usage.json"
-            if result is not None and usage_path.is_file():
+            if result is not None and is_file(usage_path):
                 raw = read(usage_path)
                 provenance.append(self.upstream(usage_path))
                 native = result.get("usage", {})
@@ -244,9 +245,11 @@ class Collector:
                 # A timed-out CLI may still retain completed provider-message usage.
                 # Repeated streamed blocks for one provider message are one counter.
                 unique = {}
-                for path in sorted((meta_path.parent / "transcript").glob("*.jsonl")):
+                transcript = meta_path.parent / "transcript"
+                for path in (item for item in iter_files(transcript)
+                             if item.parent == transcript and item.suffix == ".jsonl"):
                     found = False
-                    for line in path.read_text().splitlines():
+                    for line in read_bytes(path).decode("utf-8").splitlines():
                         try:
                             event = json.loads(line)
                         except ValueError:

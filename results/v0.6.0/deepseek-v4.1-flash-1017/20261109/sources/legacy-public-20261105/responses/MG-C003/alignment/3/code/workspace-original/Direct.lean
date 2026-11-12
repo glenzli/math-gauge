@@ -1,3 +1,0 @@
-import CH03.OperatorLocalDegeneracy
-#check formal_oet.vol_01.ch_03_operator_local_degeneracy.f4_lip_min
-#check formal_oet.vol_01.ch_03_operator_local_degeneracy.e35_isometry
