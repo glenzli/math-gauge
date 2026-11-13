@@ -206,6 +206,12 @@ def retain(private_root, *, public_root=ROOT):
             rebind_content_rates(private_root/public.relative_to(public_root),public,
                                  private_root=private_root,public_root=public_root)
     active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
+    from math_gauge.result_corrections import load_selected
+    for model, folder in selected_cli_records(public_root):
+        correction = load_selected(public_root, model, folder)
+        if correction is not None:
+            for mode, score in correction['_scores'].items():
+                totals[model]['nonlogical_retry_3'][mode] = score['metrics']['earned']['confirmed']
     return {"benchmark_version": "0.6.0", "scoring_version": assessment["version"], "strict_version": strict["version"],
             "capability_version": capability["version"], "default_score_mode": "partial",
             "capacity": {"active": active, "under_construction": 100-active, "total": 100}, "totals": totals,

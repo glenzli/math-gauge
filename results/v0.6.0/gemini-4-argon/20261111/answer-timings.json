@@ -15,7 +15,7 @@
     "bytes": 60466,
     "sha256": "226edb7fb30e7dc93335f59500daed834ead06462ef7c5a2ce61ebe6fec4a4ee"
   },
-  "private_timing_sha256": "7401e8e51bdfc981a3ff230c4dc966fd5051cc54563e5ed35cf1bb34fa1c4137",
+  "private_timing_sha256": "4d94bcb422bc45f96f9fe582c9de871a068d88e8d1da8be960d8fe6abd949f62",
   "public_case_ids": [
     "AHR01",
     "AHR02",
@@ -51,15 +51,17 @@
       "answer_sha256": null,
       "delivery_status": "delivery_failed",
       "availability": "known",
-      "seconds": 10800.695397,
-      "method": "native_terminal_wall",
-      "quality": "native-launch-to-first-terminal-seal",
+      "seconds": 6334.841531,
+      "method": "historical_reported_elapsed",
+      "quality": "post_observation_native_backend_boundary",
       "started_at": "2026-11-11T03:23:00.337040+00:00",
-      "ended_at": "2026-11-11T06:23:01.032437+00:00",
-      "note": "原生上下文开始至首次终态；客户端收尾另计。失败请求不混入已交卷耗时。",
+      "ended_at": "2026-11-11T05:08:35.178571+00:00",
+      "note": "按事后恢复的原生时钟扣除末尾空等；C003保留至末次429错误，HCH02保留至后端末次回复完成。原始外层计时另留档，未改交卷分类。",
       "source_sha256": [
+        "5500a3c0f4f8ca179e07da9ea3d060cfba71b1ae8139c41fa4a268bfea7c6161",
         "76c2841d8c0051e40a455ece27efcd0123444b5d633f28ac45c6e4ec72cec30c",
-        "dcb4bc01145e9eaff5fe6b8b00211b6a4722c7c3a7c368792d59054a160dc6bc"
+        "dcb4bc01145e9eaff5fe6b8b00211b6a4722c7c3a7c368792d59054a160dc6bc",
+        "f28a48e56ac4e22e9d3c8b264df66066f88bdaeb944d6210124dec26456150f6"
       ]
     },
     {
@@ -393,15 +395,17 @@
       "answer_sha256": null,
       "delivery_status": "delivery_failed",
       "availability": "known",
-      "seconds": 5400.756969,
-      "method": "native_terminal_wall",
-      "quality": "native-launch-to-first-terminal-seal",
+      "seconds": 3274.131106,
+      "method": "historical_reported_elapsed",
+      "quality": "post_observation_native_backend_boundary",
       "started_at": "2026-11-11T01:49:57.841260+00:00",
-      "ended_at": "2026-11-11T03:19:58.598229+00:00",
-      "note": "原生上下文开始至首次终态；客户端收尾另计。失败请求不混入已交卷耗时。",
+      "ended_at": "2026-11-11T02:44:31.972366+00:00",
+      "note": "按事后恢复的原生时钟扣除末尾空等；C003保留至末次429错误，HCH02保留至后端末次回复完成。原始外层计时另留档，未改交卷分类。",
       "source_sha256": [
+        "7d08ef365a8878d4f11633d9b33d0d3215c6d3a3f61104c6576e163952b1a683",
         "ac7c45d6c388cfe605914bcaa3765976d424ba5f5ae906d3336bbed26f6b0ea9",
-        "c0b920f83eec8cb8fb76a9ee540cd4fa966702d59476b43235725abd3bcbb24d"
+        "c0b920f83eec8cb8fb76a9ee540cd4fa966702d59476b43235725abd3bcbb24d",
+        "f28a48e56ac4e22e9d3c8b264df66066f88bdaeb944d6210124dec26456150f6"
       ]
     },
     {
@@ -575,10 +579,17 @@
   "new_candidate_calls": 0,
   "scores_modified": false,
   "interpretation": {
-    "boundary": "Native process launch to first native terminal seal; cleanup excluded.",
+    "boundary": "Launch to the observed native terminal, or a source-bound post-observation backend boundary when the CLI was proven to keep waiting without further steps.",
     "failure_times_separate": true,
     "system_excluded_requests_retained": true,
     "summed_context_seconds_are_not_end_to_end_wall_time": true,
-    "configured_limits_never_imputed": true
+    "configured_limits_never_imputed": true,
+    "idle_tail_correction": {
+      "observed_on": "2026-11-13",
+      "source_sha256": "f28a48e56ac4e22e9d3c8b264df66066f88bdaeb944d6210124dec26456150f6",
+      "source_is_post_observation": true,
+      "normal_delivery_not_inferred": true,
+      "original_outer_clocks_retained": true
+    }
   }
 }

@@ -1,0 +1,80 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR04:A1",
+    "case_id": "AHR04",
+    "binding": {
+      "plan_sha256": "fb3cd5ad9755dbbd66a37709e87d9a097c75811e601f362cb42fcd16ea1f8fb8",
+      "slot_id": "AHR04:A1",
+      "evidence_id": "5df88cf9c2e979485d9d9002280bc6f495b7b16353b5a32e37ec8bd6e1f04554",
+      "response_sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+      "history_sha256": "873bf2d5239fab30d214f22b2902bf7285f6c46e0a24f0aa91924146f70c1e95",
+      "projected_request_sha256": "fb0626437aec802310b7223a079cdf091f83993428ca1414b5f1124852b4be8d",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "d3eb8f2ca8967f8cdf5471f2a83a663c251308067e480a262fb86cc8f61a910d",
+      "body_origin": {
+        "slot_id": "AHR04:A1",
+        "response_sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+        "start_byte": 0,
+        "end_byte": 23030
+      },
+      "body_sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+      "rationale_sha256": null,
+      "request_sha256": "783b84f0c15ea7ceb14c03bd0a84efb6a252714b0ae58b168a68cebb369c523d",
+      "group_contract_sha256": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "100/100（35+20+30+15），Strict true。最终回复明确认可指定两条包含在数学内容上实质完整，准确核对真实路径链→代理桥、实际样本残差、公共目标Lip与按可评估路径条件化的Lq、非空J/有限阈值和独立component/joint声明。其额外桥接均给出正确等价/前提转化；_text耦合例证只描述一个合取包装的调用限制，并在62行明确现成独立joint声明直接适用。完整上下文将其保留为可选接口说明，不作为本题缺陷。新增claim处罚建议0，无核心封顶。",
+    "findings": [
+      "本范围完整对齐：独立component/joint声明的hLq分别条件化于j可评估/J全部可评估，真实路径链→代理桥与样本残差链核对正确。",
+      "核心结论严格限于路径保证域并集；同一q上对全部J量化，未扩张为全U或更强保证域比较。",
+      "新_text包装限制的观察有效：OR前提同时要求两分支所需路径证书；独立联合应用可遇到额外单分量路径阻碍。原答明确指出现有独立joint定理适用，故此观察不影响任务完整判断。",
+      "联合域非空交、域前提、并集存在见证及阈值延拓均获正确解释；额外形式包装建议按全文作为可选接口说明处理。",
+      "claim建议0；未确认实质数学假断言、核心错误放行/否决或虚假核验。不以本评审未重复编译推断候选编译声明为假。"
+    ],
+    "group_contract_sha256": "c4d6ad179ea7f7ef93ef2bc7ade15f0b1b935d2d0dfba95f7cbbcba277ac0ba0",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "6行明确判定两条包含关系准确且在数学内容上实质完整；25–26、36–39、62行保持全部独立源码结论。判断有真实定义/签名/桥及证明依赖支持，未以编译或修订身份替代语义。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "17–26、34–39、58行正确核对有限扩展伪度量族、网络表示、公共Vstar目标证书、路径样本及实际残差、条件化路径Lq、有限阈值与非空J；明确底层更一般阈值/空J结果与正文包装边界。没有要求不可评估路径有Lip或把目标Lip当采样推出。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "21–26、34–39行给出真实路径样本/残差/anchor_gap_sublevel/联合保证域对应，准确引用path_chain_eq_represented_proxy_on_path和真实残差证书推导；从一个存在路径q取得单分量或同一路径全部J误差，再用路径域⊆U得到两个包含。45–55行正确解释非空交、域假设等价、并集见证、阈值延拓与忽略更强采样前提，构成有效语义桥。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 15,
+        "notes": "全文将核心结论明确判完整，说明空并集、J非空、有限阈值与保证域并集的范围。56–64行的_text耦合只针对把合取包装单独用作第二式入口，零距三路径阻碍有效，且62行明确已有独立joint可直接使用；额外包装是接口说明，未据此否定本题覆盖。1–4桥接均由最终回复给出正确直接解释，应按上下文认可为语义对照，不把“需外补”片语孤立升级为缺陷宣称或强迫交付新Lean。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:14.135955+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "bae45fd7be6a4771d5687f59b4e664c9d7039567f2e5ef359519cc1b440c0860"
+  },
+  "original_private_review_sha256": "7f1e4e55f4c2cd522ba42290eb3644376bfc23d4830495e669821dcc49f1bb9e"
+}

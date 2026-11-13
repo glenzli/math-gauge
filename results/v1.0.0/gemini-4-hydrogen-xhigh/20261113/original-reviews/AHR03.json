@@ -1,0 +1,80 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR03:A1",
+    "case_id": "AHR03",
+    "binding": {
+      "plan_sha256": "fb3cd5ad9755dbbd66a37709e87d9a097c75811e601f362cb42fcd16ea1f8fb8",
+      "slot_id": "AHR03:A1",
+      "evidence_id": "68597bd43a1f365f19414389c71361bf27460c629e17e3a2b0c8c3ecfa9659fe",
+      "response_sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+      "history_sha256": "aa2b2c1fc759a6961da6faa319dca7eb02cb5b077c3f74bba353e071a00d4a2a",
+      "projected_request_sha256": "b2f60e7a15a43c98c9540c791b2dfb5eb8ec4a967a18a4d785fc239a02230e2c",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "0b3f05094cd3a53f368314390eeeae7ae050fea1cbd003996dcf8b2d7e821b40",
+      "body_origin": {
+        "slot_id": "AHR03:A1",
+        "response_sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+        "start_byte": 0,
+        "end_byte": 32845
+      },
+      "body_sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+      "rationale_sha256": null,
+      "request_sha256": "50bf334fc2ddae69d9f070cb2fce4e227517b85eba22e9ee5f8219e190dcd66d",
+      "group_contract_sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": true,
+    "notes": "85/100（35+20+30+0）。答卷准确核实精确NodeDomainRefinement的全域边等式、实际构造network_refinement/allowed桥、入口与可达性、轨迹及完整算子相等，正确区分Operational辅助关系；按冻结参考不以“基本完整”等判断词单独扣judgment。repair_scope为0：所列五处必补均为题外对象空间/不可约代表目标、冗余命名包装或文档改进，未发现本题所审定义及外延等价的新真实缺陷。Strict false；新增claim处罚建议0，无核心错误否决封顶。",
+    "findings": [
+      "正确认可精确关系及实际构造：没有把Operational误作NodeDomainRefinement，也没有漏掉network_refinement/allowed_network_refinement。",
+      "完整边域、入口和保留节点规则均被正确解释；全局算子相等与关系侧外延结论明确保留，数学信用85。",
+      "终止域剪枝扩大反例有效：本题删除不可达子片可扩大保留子片终止域；模型未错误要求删后仍等于原终止域限制。",
+      "五项必补要求均未证明本题实现有真实缺陷；对象空间/不可约代表与冗余封装范围过度，repair_scope=0，Strict false。",
+      "claim建议0：候选明确认可核心有效证明，不能将过度包装建议或“基本完整”措辞自动升级为核心错误否决。未复验编译不等于虚报。"
+    ],
+    "group_contract_sha256": "4eba8ef431c8a59896145d91b88a2952f66958562ef4bf260f5ae4a58baf71ac",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "6、19–23、27、35–36、47–48、84行准确认可本题精确关系、完整保留边域、实际构造桥和已有外延证明，并明确Operational仅为辅助且正式关系已避免其过弱问题。7行附加的广义“全链路缺口”属于repair_scope范围错误，不以判断词措辞重复否定其已明确作出的正确语义核验。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "逐项保留分划/限制算子、入口、完整四类边域（含保留未使用边和自环）、按NodePieceReached剪枝、network_refinement及allowed_network_refinement；明确承认构造侧global operator equality和关系侧LocalEquivalent/表示保持。没有假称构造缺失或最终结果作为输入。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "22–23、27、32–36、45–48、84行给出真实声明类型和证明依赖，至少完整覆盖full edge_domain_eq与actual construction bridge。72–75行终止域剪枝扩大反例合法，说明不可将删前等式错误照搬删后；84行弱辅助关系的反例及正式关系排除该例也正确。未以编译或版本标签代替语义。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 0,
+        "notes": "7、24–25、50–85行把本题并不要求的NetworkObject/不可约代表衔接、ExtensionalEquivalent/非空/global equality额外封装、终止域/路径长度/深度命名推论、逆向唯一性及锚点整理列为明确必补缺口。完整边域已决定终止域，实际路径投影已给长度不变，所需外延等价及真实构造已证明；本范围没有被证实需要修复，故不满足无需修复时不虚构缺陷、不得要求题外目标/冗余包装的维度。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:14.135560+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "5d064faacea0ca53e97d3858a456888d11e133142905482e080418ec19cbd096"
+  },
+  "original_private_review_sha256": "da8a684d6fa486c14d508e4df4197cc1af49b77eb6d6152454fcc950648d8d76"
+}

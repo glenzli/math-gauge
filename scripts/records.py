@@ -15,6 +15,7 @@ from math_gauge.scoring import score_assessment_record_inputs
 from math_gauge.attempt_conditions import load_sources as load_attempt_sources
 from math_gauge.paper_observations import SCHEMA as PAPER_SCHEMA, check_record as check_paper_record
 from math_gauge import submission_evidence
+from math_gauge.result_corrections import load_selected as load_correction, verify_private as verify_private_correction
 
 
 def load(path):
@@ -96,6 +97,20 @@ def check(root=ROOT, *, public_root=None):
                             projected["source_bindings"]["private_report_sha256"])
                         if public_tasks["views"][mode][condition] != task_view:
                             raise ValueError("Public task judgments differ from the private shared-scorer result")
+        original_earned = {mode: {condition: score["metrics"]["earned"]["exact"]
+            for condition, score in conditions.items()} for mode, conditions in views.items()}
+        model_id = folder.parent.name
+        correction = load_correction(selection_root, model_id, public,
+                                     record=public_record if external else record)
+        if correction is not None:
+            corrected = (verify_private_correction(root, selection_root, model_id, folder, correction)
+                         if external else correction['_scores'])
+            for mode, score in corrected.items():
+                views[mode]['nonlogical_retry_3'] = score
+            status['archived_earned'] = original_earned
+            status['harness_source_correction'] = {
+                'affected_cases': correction['affected_cases'], 'original_native_status': 'ERROR',
+                'new_candidate_calls': 0, 'scoring_rules_changed': False}
         status["earned"] = {mode: {condition: score["metrics"]["earned"]["exact"]
             for condition, score in conditions.items()} for mode, conditions in views.items()}
         status["capacity"] = next(iter(views["partial"].values()))["capacity"]

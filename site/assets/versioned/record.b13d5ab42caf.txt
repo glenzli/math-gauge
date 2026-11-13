@@ -1,0 +1,1184 @@
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import Ch03.Partition
+import Ch03.Fiber
+import Ch03.Radius
+import Ch03.Scale
+import Ch03.Entropy
+import Mathlib.Tactic
+
+namespace Ch03
+
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+
+private lemma ennreal_three_halves :
+    (3 / 2 : ENNReal) = ENNReal.ofReal (3 / 2) := by
+  rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num
+
+private lemma ennreal_one_half :
+    (1 / 2 : ENNReal) = ENNReal.ofReal (1 / 2) := by
+  rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num
+
+private lemma ennreal_one_fifth :
+    (1 / 5 : ENNReal) = ENNReal.ofReal (1 / 5) := by
+  rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num
+
+private lemma ennreal_seven_fourths :
+    (7 / 4 : ENNReal) = ENNReal.ofReal (7 / 4) := by
+  rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num
+
+private lemma ennreal_seven_twelfths :
+    ((7 / 4 : ENNReal) / 3) = ENNReal.ofReal (7 / 12) := by
+  rw [ennreal_seven_fourths, show (3 : ENNReal) = ENNReal.ofReal 3 by norm_num,
+    ← ENNReal.ofReal_div_of_pos (by norm_num)]
+  norm_num
+
+section Exercise31
+
+/-- 习题 3.1 与 3.3 使用的绝对值读数伪度量：`d(x, y) = ||x| - |y||`（实数部分），`⊥` 隔离。 -/
+noncomputable def absReadoutDist : Option ℝ → Option ℝ → ENNReal
+  | none, none => 0
+  | none, some _ => ⊤
+  | some _, none => ⊤
+  | some x, some y => ENNReal.ofReal |(|x| - |y|)|
+
+lemma absReadoutDist_is_extended :
+    ExtendedPseudoMetric (Option ℝ) none absReadoutDist := by
+  refine
+    { nonabsorbing := ⟨some 0, by simp⟩
+      dist_self := by
+        intro x
+        cases x with
+        | none => rfl
+        | some r => simp [absReadoutDist]
+      symm := by
+        intro x y
+        cases x <;> cases y <;> simp [absReadoutDist, abs_sub_comm]
+      triangle := by
+        intro x y z
+        cases x with
+        | none =>
+            cases y with
+            | none => simp [absReadoutDist]
+            | some _ => simp [absReadoutDist]
+        | some a =>
+            cases y with
+            | none => simp [absReadoutDist]
+            | some b =>
+                cases z with
+                | none => simp [absReadoutDist]
+                | some c =>
+                    simp only [absReadoutDist]
+                    calc
+                      ENNReal.ofReal |(|a| - |c|)|
+                          ≤ ENNReal.ofReal (|(|a| - |b|)| + |(|b| - |c|)|) :=
+                            ENNReal.ofReal_le_ofReal (abs_sub_le |a| |b| |c|)
+                      _ = ENNReal.ofReal |(|a| - |b|)| + ENNReal.ofReal |(|b| - |c|)| :=
+                            ENNReal.ofReal_add (abs_nonneg _) (abs_nonneg _)
+      isolate_bot := by
+        intro x hx
+        cases x with
+        | none => exact False.elim (hx rfl)
+        | some _ => rfl }
+
+/-- 习题 3.1 中的仿射算子：`x ↦ 2x - 1`。 -/
+noncomputable def ex31_op : Operator (Option ℝ) none where
+  func
+    | none => none
+    | some x => some (2 * x - 1)
+  preserves_bot := rfl
+
+def ex31_U : Set (Option ℝ) := {some 0, some 1}
+
+/-- **习题 3.1 (i-a)**：验证绝对值读数伪度量、算子合法性，并计算 `ϕ` 在 `U = {0, 1}` 上的计算纤维与分量类型。 -/
+theorem ex31_part_i_a :
+    ExtendedPseudoMetric (Option ℝ) none absReadoutDist ∧
+    ex31_U ⊆ dom ex31_op ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) ex31_op () (ex31_op.func (some 0)) ex31_U =
+      ex31_U ∧
+    () ∈ I_const (fun _ : Unit => absReadoutDist) ex31_op ex31_U ∧
+    () ∉ I_id (fun _ : Unit => absReadoutDist) ex31_op ex31_U ∧
+    () ∉ I_act (fun _ : Unit => absReadoutDist) ex31_op ex31_U := by
+  have hdom : ex31_U ⊆ dom ex31_op := by
+    intro x hx
+    rcases hx with rfl | rfl <;> simp [dom, ex31_op]
+  have hconst : () ∈ I_const (fun _ : Unit => absReadoutDist) ex31_op ex31_U := by
+    intro x hx y hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
+      norm_num [ex31_op, absReadoutDist]
+  have hfib : compFiber_single (fun _ : Unit => absReadoutDist) ex31_op ()
+      (ex31_op.func (some 0)) ex31_U = ex31_U := by
+    rw [compFiber_single_eq]
+    ext x
+    simp only [Set.mem_setOf_eq, and_iff_left_iff_imp]
+    intro hx
+    exact hconst x hx (some 0) (Or.inl rfl)
+  have hnid : () ∉ I_id (fun _ : Unit => absReadoutDist) ex31_op ex31_U :=
+    fun h => h.1 hconst
+  have hnact : () ∉ I_act (fun _ : Unit => absReadoutDist) ex31_op ex31_U :=
+    fun h => h.1 hconst
+  exact ⟨absReadoutDist_is_extended, hdom, hfib, hconst, hnid, hnact⟩
+
+/-- **习题 3.1 (i-b)**：计算 `ϕ²` 在 `U = {0, 1}` 上的计算纤维与分量类型，精确保留评估域 `U`。 -/
+theorem ex31_part_i_b :
+    ex31_U ⊆ dom (ex31_op * ex31_op) ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ()
+      ((ex31_op * ex31_op).func (some 0)) ex31_U = {some 0} ∧
+    some 1 ∉ compFiber_single (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ()
+      ((ex31_op * ex31_op).func (some 0)) ex31_U ∧
+    () ∈ I_act (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ex31_U := by
+  have hdom : ex31_U ⊆ dom (ex31_op * ex31_op) := by
+    intro x hx
+    rcases hx with rfl | rfl <;> simp [dom, ex31_op]
+  have hfib : compFiber_single (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ()
+      ((ex31_op * ex31_op).func (some 0)) ex31_U = {some 0} := by
+    rw [compFiber_single_eq]
+    ext x
+    simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl, h0⟩
+      · rfl
+      · exfalso
+        norm_num [ex31_op, absReadoutDist] at h0
+    · rintro rfl
+      refine ⟨Or.inl rfl, ?_⟩
+      exact absReadoutDist_is_extended.dist_self _
+  have hnot1 : some 1 ∉ compFiber_single (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ()
+      ((ex31_op * ex31_op).func (some 0)) ex31_U := by
+    rw [hfib]
+    simp
+  have hnconst : () ∉ I_const (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ex31_U := by
+    intro h
+    have h0 := h (some 0) (Or.inl rfl) (some 1) (Or.inr rfl)
+    norm_num [ex31_op, absReadoutDist] at h0
+  have hnid : () ∉ I_id (fun _ : Unit => absReadoutDist) (ex31_op * ex31_op) ex31_U := by
+    intro h
+    have h0 := h.2 (some 0) (Or.inl rfl)
+    norm_num [ex31_op, absReadoutDist] at h0
+  exact ⟨hdom, hfib, hnot1, ⟨hnconst, hnid⟩⟩
+
+/-- **习题 3.1 (ii)**：若 `ψ` 在 `U` 上取同一实数值 `c`，则自复合不能区分 `0, 1`；并完整刻画 `ψ(c)` 为吸收元与非吸收元时的适用域。 -/
+theorem ex31_part_ii (ψ : Operator (Option ℝ) none) (c : ℝ)
+    (hconst : ∀ x ∈ ex31_U, ψ.func x = some c) :
+    (ex31_U ⊆ dom (ψ * ψ) ↔ some c ∈ dom ψ) ∧
+    (ψ * ψ).func (some 0) = (ψ * ψ).func (some 1) ∧
+    (some c ∈ dom ψ →
+      ex31_U ⊆ dom (ψ * ψ) ∧
+      compFiber_single (fun _ : Unit => absReadoutDist) (ψ * ψ) ()
+        ((ψ * ψ).func (some 0)) ex31_U = ex31_U ∧
+      ∀ y : Option ℝ,
+        (some 0 ∈ compFiber_single (fun _ : Unit => absReadoutDist) (ψ * ψ) () y ex31_U ↔
+         some 1 ∈ compFiber_single (fun _ : Unit => absReadoutDist) (ψ * ψ) () y ex31_U)) ∧
+    (some c ∉ dom ψ →
+      ¬ (ex31_U ⊆ dom (ψ * ψ)) ∧ dom (ψ * ψ) ∩ ex31_U = ∅) := by
+  have h0 : ψ.func (some 0) = some c := hconst (some 0) (Or.inl rfl)
+  have h1 : ψ.func (some 1) = some c := hconst (some 1) (Or.inr rfl)
+  have hsame : (ψ * ψ).func (some 0) = (ψ * ψ).func (some 1) := by
+    simp [h0, h1]
+  have hdom_iff : ex31_U ⊆ dom (ψ * ψ) ↔ some c ∈ dom ψ := by
+    constructor
+    · intro h
+      have hmem := h (Or.inl rfl)
+      simp only [dom, Set.mem_setOf_eq, op_mul_func, h0] at hmem ⊢
+      exact hmem
+    · intro hc x hx
+      rcases hx with rfl | rfl
+      · simpa [dom, h0] using hc
+      · simpa [dom, h1] using hc
+  refine ⟨hdom_iff, hsame, ?_, ?_⟩
+  · intro hc
+    have hdom : ex31_U ⊆ dom (ψ * ψ) := hdom_iff.mpr hc
+    have hsame_iff : ∀ y : Option ℝ,
+        (some 0 ∈ compFiber_single (fun _ : Unit => absReadoutDist) (ψ * ψ) () y ex31_U ↔
+         some 1 ∈ compFiber_single (fun _ : Unit => absReadoutDist) (ψ * ψ) () y ex31_U) := by
+      intro y
+      simp only [compFiber_single_eq, Set.mem_setOf_eq, hsame]
+      exact and_congr_left fun _ => ⟨fun _ => Or.inr rfl, fun _ => Or.inl rfl⟩
+    have hfib : compFiber_single (fun _ : Unit => absReadoutDist) (ψ * ψ) ()
+        ((ψ * ψ).func (some 0)) ex31_U = ex31_U := by
+      rw [compFiber_single_eq]
+      ext x
+      simp only [Set.mem_setOf_eq, and_iff_left_iff_imp]
+      intro hx
+      rcases hx with rfl | rfl
+      · exact absReadoutDist_is_extended.dist_self _
+      · rw [← hsame]; exact absReadoutDist_is_extended.dist_self _
+    exact ⟨hdom, hfib, hsame_iff⟩
+  · intro hnc
+    refine ⟨fun h => hnc (hdom_iff.mp h), ?_⟩
+    ext x
+    simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
+    intro hxdom hxU
+    apply hnc
+    rcases hxU with rfl | rfl
+    · simpa [dom, h0] using hxdom
+    · simpa [dom, h1] using hxdom
+
+end Exercise31
+
+section Exercise32
+
+variable {X I : Type} {bot : X}
+
+/-- **习题 3.2 (i)**：正 co-Lip 通道与点态零化半径推出 `(0, r^N(y | U))` 内无输入距离（`K_{i → j}` 允许无穷）。 -/
+theorem ex32_pointwise_gap [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : I → I → ENNReal) (i j : I)
+    (hdi : ExtendedPseudoMetric X bot (d i))
+    (hdj : ExtendedPseudoMetric X bot (d j))
+    (_hUne : U.Nonempty) (_hUdom : U ⊆ dom ϕ)
+    (hK : IsCoLipMatrix d ϕ U K) (hK_pos : 0 < K i j) :
+    ∀ y ∈ U, 0 < pointwiseZeroRadiusComp d ϕ i j U y →
+      ∀ x ∈ U, ¬ (0 < d i x y ∧ d i x y < pointwiseZeroRadiusComp d ϕ i j U y) := by
+  intro y hy _ x hx ⟨hd_pos, hd_lt⟩
+  have hd_lt_symm : d i y x < pointwiseZeroRadiusComp d ϕ i j U y := by
+    rw [hdi.symm]; exact hd_lt
+  have hzero : d j (ϕ.func y) (ϕ.func x) = 0 :=
+    prop_3_11_cutoff_radius d ϕ U i j y x hdi hdj hy hx hd_lt_symm
+  have hsingle : K i j * d i x y ≤ ∑ k : I, K k j * d k x y :=
+    Finset.single_le_sum (f := fun k : I => K k j * d k x y)
+      (fun _ _ => zero_le _) (Finset.mem_univ i)
+  have hcolip : ∑ k : I, K k j * d k x y ≤ d j (ϕ.func x) (ϕ.func y) :=
+    hK.2.2 x hx y hy j
+  have hmul_pos : 0 < K i j * d i x y := ENNReal.mul_pos (ne_of_gt hK_pos) (ne_of_gt hd_pos)
+  have hpos_out : 0 < d j (ϕ.func y) (ϕ.func x) := by
+    rw [hdj.symm]
+    exact lt_of_lt_of_le hmul_pos (le_trans hsingle hcolip)
+  exact ne_of_gt hpos_out hzero
+
+/-- **习题 3.2 (ii)**：正统一零化半径给出所有输入点对距离为 `0` 或至少为统一零化半径的二择间隙。 -/
+theorem ex32_uniform_gap [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : I → I → ENNReal) (i j : I)
+    (hdi : ExtendedPseudoMetric X bot (d i))
+    (hdj : ExtendedPseudoMetric X bot (d j))
+    (hUne : U.Nonempty) (hUdom : U ⊆ dom ϕ)
+    (hK : IsCoLipMatrix d ϕ U K) (hK_pos : 0 < K i j)
+    (hunif_pos : 0 < uniformZeroRadiusComp d ϕ i j U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i x y = 0 ∨ uniformZeroRadiusComp d ϕ i j U ≤ d i x y := by
+  intro x hx y hy
+  by_cases h0 : d i x y = 0
+  · exact Or.inl h0
+  · right
+    by_contra hlt
+    rw [not_le] at hlt
+    have hpt_le : uniformZeroRadiusComp d ϕ i j U ≤ pointwiseZeroRadiusComp d ϕ i j U y :=
+      iInf_le_of_le y (iInf_le_of_le hy le_rfl)
+    have hpt_pos : 0 < pointwiseZeroRadiusComp d ϕ i j U y := lt_of_lt_of_le hunif_pos hpt_le
+    exact ex32_pointwise_gap d ϕ U K i j hdi hdj hUne hUdom hK hK_pos y hy hpt_pos x hx
+      ⟨pos_iff_ne_zero.mpr h0, lt_of_lt_of_le hlt hpt_le⟩
+
+end Exercise32
+
+section Exercise33
+
+/-- 习题 3.3 的平移算子：`x ↦ x + 1`。 -/
+noncomputable def ex33_op : Operator (Option ℝ) none where
+  func
+    | none => none
+    | some x => some (x + 1)
+  preserves_bot := rfl
+
+def ex33_U : Set (Option ℝ) := {some (-3), some (-2), some 0, some 2}
+
+/-- **习题 3.3 (i)**：完整计算恒等算子与平移算子在 `U = {-3, -2, 0, 2}` 上的计算纤维及分划。 -/
+theorem ex33_part_i :
+    ExtendedPseudoMetric (Option ℝ) none absReadoutDist ∧
+    ex33_U ⊆ dom (1 : Operator (Option ℝ) none) ∧
+    ex33_U ⊆ dom ex33_op ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some 0)) ex33_U = {some 0} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some (-2))) ex33_U = {some (-2), some 2} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some 2)) ex33_U = {some (-2), some 2} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some (-3))) ex33_U = {some (-3)} ∧
+    fiberPartition (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) Set.univ ex33_U =
+      {{some 0}, {some (-2), some 2}, {some (-3)}} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) ex33_op () (ex33_op.func (some (-3))) ex33_U =
+      {some (-3)} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) ex33_op () (ex33_op.func (some (-2))) ex33_U =
+      {some (-2), some 0} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) ex33_op () (ex33_op.func (some 0)) ex33_U =
+      {some (-2), some 0} ∧
+    compFiber_single (fun _ : Unit => absReadoutDist) ex33_op () (ex33_op.func (some 2)) ex33_U =
+      {some 2} ∧
+    fiberPartition (fun _ : Unit => absReadoutDist) ex33_op Set.univ ex33_U =
+      {{some (-3)}, {some (-2), some 0}, {some 2}} := by
+  have hdom1 : ex33_U ⊆ dom (1 : Operator (Option ℝ) none) := by
+    intro x hx
+    rcases hx with rfl | rfl | rfl | rfl <;> simp [dom]
+  have hdom_op : ex33_U ⊆ dom ex33_op := by
+    intro x hx
+    rcases hx with rfl | rfl | rfl | rfl <;> simp [dom, ex33_op]
+  have hid0 : compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some 0)) ex33_U = {some 0} := by
+    rw [compFiber_single_eq]; ext x; simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · (rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [absReadoutDist] at hd); rfl
+    · rintro rfl; exact ⟨Or.inr (Or.inr (Or.inl rfl)), absReadoutDist_is_extended.dist_self _⟩
+  have hid_m2 : compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some (-2))) ex33_U = {some (-2), some 2} := by
+    rw [compFiber_single_eq]; ext x
+    simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [absReadoutDist] at hd <;> simp
+    · rintro (rfl | rfl)
+      · exact ⟨Or.inr (Or.inl rfl), absReadoutDist_is_extended.dist_self _⟩
+      · exact ⟨Or.inr (Or.inr (Or.inr rfl)), by norm_num [absReadoutDist]⟩
+  have hid_2 : compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some 2)) ex33_U = {some (-2), some 2} := by
+    rw [compFiber_single_eq]; ext x
+    simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [absReadoutDist] at hd <;> simp
+    · rintro (rfl | rfl)
+      · exact ⟨Or.inr (Or.inl rfl), by norm_num [absReadoutDist]⟩
+      · exact ⟨Or.inr (Or.inr (Or.inr rfl)), absReadoutDist_is_extended.dist_self _⟩
+  have hid_m3 : compFiber_single (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none) ()
+      ((1 : Operator (Option ℝ) none).func (some (-3))) ex33_U = {some (-3)} := by
+    rw [compFiber_single_eq]; ext x; simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · (rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [absReadoutDist] at hd); rfl
+    · rintro rfl; exact ⟨Or.inl rfl, absReadoutDist_is_extended.dist_self _⟩
+  have hpart1 : fiberPartition (fun _ : Unit => absReadoutDist) (1 : Operator (Option ℝ) none)
+      Set.univ ex33_U = {{some 0}, {some (-2), some 2}, {some (-3)}} := by
+    ext S
+    simp only [fiberPartition, Set.mem_setOf_eq, Set.mem_image, Set.mem_insert_iff,
+      Set.mem_singleton_iff]
+    have huniv : (Set.univ : Set Unit) = {()} := by ext ⟨⟩; simp
+    rw [huniv]
+    constructor
+    · rintro ⟨y, ⟨x, rfl | rfl | rfl | rfl, rfl⟩, rfl⟩
+      · right; right; exact hid_m3
+      · right; left; exact hid_m2
+      · left; exact hid0
+      · right; left; exact hid_2
+    · rintro (rfl | rfl | rfl)
+      · exact ⟨(1 : Operator _ _).func (some 0), ⟨some 0, Or.inr (Or.inr (Or.inl rfl)), rfl⟩,
+          hid0.symm⟩
+      · exact ⟨(1 : Operator _ _).func (some (-2)), ⟨some (-2), Or.inr (Or.inl rfl), rfl⟩,
+          hid_m2.symm⟩
+      · exact ⟨(1 : Operator _ _).func (some (-3)), ⟨some (-3), Or.inl rfl, rfl⟩, hid_m3.symm⟩
+  have hop_m3 : compFiber_single (fun _ : Unit => absReadoutDist) ex33_op ()
+      (ex33_op.func (some (-3))) ex33_U = {some (-3)} := by
+    rw [compFiber_single_eq]; ext x; simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · (rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [ex33_op, absReadoutDist] at hd); rfl
+    · rintro rfl; exact ⟨Or.inl rfl, by simp [ex33_op, absReadoutDist]⟩
+  have hop_m2 : compFiber_single (fun _ : Unit => absReadoutDist) ex33_op ()
+      (ex33_op.func (some (-2))) ex33_U = {some (-2), some 0} := by
+    rw [compFiber_single_eq]; ext x
+    simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [ex33_op, absReadoutDist] at hd <;> simp
+    · rintro (rfl | rfl)
+      · exact ⟨Or.inr (Or.inl rfl), by simp [ex33_op, absReadoutDist]⟩
+      · exact ⟨Or.inr (Or.inr (Or.inl rfl)), by norm_num [ex33_op, absReadoutDist]⟩
+  have hop_0 : compFiber_single (fun _ : Unit => absReadoutDist) ex33_op ()
+      (ex33_op.func (some 0)) ex33_U = {some (-2), some 0} := by
+    rw [compFiber_single_eq]; ext x
+    simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [ex33_op, absReadoutDist] at hd <;> simp
+    · rintro (rfl | rfl)
+      · exact ⟨Or.inr (Or.inl rfl), by norm_num [ex33_op, absReadoutDist]⟩
+      · exact ⟨Or.inr (Or.inr (Or.inl rfl)), by simp [ex33_op, absReadoutDist]⟩
+  have hop_2 : compFiber_single (fun _ : Unit => absReadoutDist) ex33_op ()
+      (ex33_op.func (some 2)) ex33_U = {some 2} := by
+    rw [compFiber_single_eq]; ext x; simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · (rintro ⟨rfl | rfl | rfl | rfl, hd⟩ <;> norm_num [ex33_op, absReadoutDist] at hd); rfl
+    · rintro rfl; exact ⟨Or.inr (Or.inr (Or.inr rfl)), by simp [ex33_op, absReadoutDist]⟩
+  have hpart_op : fiberPartition (fun _ : Unit => absReadoutDist) ex33_op Set.univ ex33_U =
+      {{some (-3)}, {some (-2), some 0}, {some 2}} := by
+    ext S
+    simp only [fiberPartition, Set.mem_setOf_eq, Set.mem_image, Set.mem_insert_iff,
+      Set.mem_singleton_iff]
+    have huniv : (Set.univ : Set Unit) = {()} := by ext ⟨⟩; simp
+    rw [huniv]
+    constructor
+    · rintro ⟨y, ⟨x, rfl | rfl | rfl | rfl, rfl⟩, rfl⟩
+      · left; exact hop_m3
+      · right; left; exact hop_m2
+      · right; left; exact hop_0
+      · right; right; exact hop_2
+    · rintro (rfl | rfl | rfl)
+      · exact ⟨ex33_op.func (some (-3)), ⟨some (-3), Or.inl rfl, rfl⟩, hop_m3.symm⟩
+      · exact ⟨ex33_op.func (some (-2)), ⟨some (-2), Or.inr (Or.inl rfl), rfl⟩, hop_m2.symm⟩
+      · exact ⟨ex33_op.func (some 2), ⟨some 2, Or.inr (Or.inr (Or.inr rfl)), rfl⟩, hop_2.symm⟩
+  exact ⟨absReadoutDist_is_extended, hdom1, hdom_op,
+    hid0, hid_m2, hid_2, hid_m3, hpart1,
+    hop_m3, hop_m2, hop_0, hop_2, hpart_op⟩
+
+/-- **习题 3.3 (ii)**：在 `ε = 3/2` 下给出上下界并算出 `N(3/2, U) = 2`、`N(3/2, ϕ(U)) = 1` 及 `ΔE = 1`。 -/
+theorem ex33_part_ii :
+    (2 : ENNReal) ≤ covering_number absReadoutDist (3 / 2) ex33_U ∧
+    covering_number absReadoutDist (3 / 2) ex33_U ≤ 2 ∧
+    covering_number absReadoutDist (3 / 2) ex33_U = 2 ∧
+    (1 : ENNReal) ≤ covering_number absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) ∧
+    covering_number absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) ≤ 1 ∧
+    covering_number absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) = 1 ∧
+    MappingEntropyDiffWellDefined (fun _ : Unit => absReadoutDist) ex33_op {()} {()} (3 / 2) ex33_U ∧
+    mappingEntropyDiffSame (fun _ : Unit => absReadoutDist) ex33_op {()} (3 / 2) ex33_U = 1 := by
+  have hU_le : covering_number absReadoutDist (3 / 2) ex33_U ≤ 2 := by
+    let S : Finset (Option ℝ) := {some 0, some 2}
+    have hSnet : InternalEpsilonNet absReadoutDist (3 / 2) ex33_U S := by
+      constructor
+      · intro z hz
+        simp only [S, Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+          Set.mem_singleton_iff] at hz
+        rcases hz with rfl | rfl
+        · exact Or.inr (Or.inr (Or.inl rfl))
+        · exact Or.inr (Or.inr (Or.inr rfl))
+      · intro x hx
+        rcases hx with rfl | rfl | rfl | rfl
+        · refine ⟨some 2, by simp [S], ?_⟩
+          dsimp [absReadoutDist]
+          rw [ennreal_three_halves, ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+          norm_num
+        · refine ⟨some 2, by simp [S], ?_⟩
+          norm_num [absReadoutDist]
+        · refine ⟨some 0, by simp [S], ?_⟩
+          exact lt_of_eq_of_lt (absReadoutDist_is_extended.dist_self _)
+            (ENNReal.div_pos (by norm_num) (by norm_num))
+        · refine ⟨some 2, by simp [S], ?_⟩
+          exact lt_of_eq_of_lt (absReadoutDist_is_extended.dist_self _)
+            (ENNReal.div_pos (by norm_num) (by norm_num))
+    have hcard : S.card ≤ 2 := by simp [S]
+    exact le_trans (covering_number_le_card absReadoutDist (3 / 2) ex33_U S hSnet)
+      (by exact_mod_cast hcard)
+  have hU_ge : (2 : ENNReal) ≤ covering_number absReadoutDist (3 / 2) ex33_U := by
+    apply le_iInf; intro S
+    apply le_iInf; intro hSnet
+    rcases hSnet.2 (some 0) (Or.inr (Or.inr (Or.inl rfl))) with ⟨c₀, hc₀S, hc₀d⟩
+    rcases hSnet.2 (some (-3)) (Or.inl rfl) with ⟨c₃, hc₃S, hc₃d⟩
+    have hc₀_eq : c₀ = some 0 := by
+      rw [ennreal_three_halves] at hc₀d
+      rcases hSnet.1 hc₀S with h | h | h | h
+      · exfalso; rw [h] at hc₀d; dsimp [absReadoutDist] at hc₀d
+        rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)] at hc₀d; norm_num at hc₀d
+      · exfalso; rw [h] at hc₀d; dsimp [absReadoutDist] at hc₀d
+        rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)] at hc₀d; norm_num at hc₀d
+      · exact h
+      · exfalso; rw [h] at hc₀d; dsimp [absReadoutDist] at hc₀d
+        rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)] at hc₀d; norm_num at hc₀d
+    have hc₃_ne : c₃ ≠ c₀ := by
+      intro heq
+      rw [heq, hc₀_eq, ennreal_three_halves] at hc₃d
+      dsimp [absReadoutDist] at hc₃d
+      rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)] at hc₃d
+      norm_num at hc₃d
+    have hlt : 1 < S.card := Finset.one_lt_card.mpr ⟨c₀, hc₀S, c₃, hc₃S, hc₃_ne.symm⟩
+    exact_mod_cast hlt
+  have hU_eq : covering_number absReadoutDist (3 / 2) ex33_U = 2 := le_antisymm hU_le hU_ge
+  have himg_ne : (ex33_op.func '' ex33_U).Nonempty := ⟨ex33_op.func (some 0), some 0,
+    Or.inr (Or.inr (Or.inl rfl)), rfl⟩
+  have himg_ge : (1 : ENNReal) ≤ covering_number absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) :=
+    one_le_covering_number_of_nonempty absReadoutDist (3 / 2) _ himg_ne
+  have himg_le : covering_number absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) ≤ 1 := by
+    let T : Finset (Option ℝ) := {ex33_op.func (some (-3))}
+    have hTnet : InternalEpsilonNet absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) T := by
+      constructor
+      · intro z hz
+        simp only [T, Finset.coe_singleton, Set.mem_singleton_iff] at hz
+        rw [hz]
+        exact ⟨some (-3), Or.inl rfl, rfl⟩
+      · rintro y ⟨x, hx, rfl⟩
+        refine ⟨ex33_op.func (some (-3)), Finset.mem_singleton_self _, ?_⟩
+        rw [ennreal_three_halves]
+        rcases hx with rfl | rfl | rfl | rfl
+        · dsimp [ex33_op, absReadoutDist]
+          rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
+        · dsimp [ex33_op, absReadoutDist]
+          rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
+        · dsimp [ex33_op, absReadoutDist]
+          rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
+        · dsimp [ex33_op, absReadoutDist]
+          rw [ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num
+    simpa [T] using covering_number_le_card absReadoutDist (3 / 2) _ T hTnet
+  have himg_eq : covering_number absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) = 1 :=
+    le_antisymm himg_le himg_ge
+  have hwd : MappingEntropyDiffWellDefined (fun _ : Unit => absReadoutDist)
+      ex33_op {()} {()} (3 / 2) ex33_U := by
+    refine ⟨⟨some 0, Or.inr (Or.inr (Or.inl rfl))⟩, ?_,
+      ⟨(), Set.mem_singleton ()⟩, ⟨(), Set.mem_singleton ()⟩,
+      ENNReal.div_pos (by norm_num) (by norm_num), ?_, Or.inl ?_⟩
+    · intro x hx
+      rcases hx with rfl | rfl | rfl | rfl <;> simp [dom, ex33_op]
+    · rw [ennreal_three_halves]
+      exact ENNReal.ofReal_lt_top
+    · rw [subfamily_covering_number, subfamily_pseudometric_singleton, hU_eq]
+      norm_num
+  have hdiff : mappingEntropyDiffSame (fun _ : Unit => absReadoutDist)
+      ex33_op {()} (3 / 2) ex33_U = 1 := by
+    unfold mappingEntropyDiffSame
+    rw [mappingEntropyDiff_single_pair]
+    have hE_in : metric_entropy absReadoutDist (3 / 2) ex33_U = 1 := by
+      simp [metric_entropy, log2_ereal, hU_eq]
+    have hE_out : metric_entropy absReadoutDist (3 / 2) (ex33_op.func '' ex33_U) = 0 :=
+      metric_entropy_one himg_eq
+    rw [hE_in, hE_out, sub_zero]
+  exact ⟨hU_ge, hU_le, hU_eq, himg_ge, himg_le, himg_eq, hwd, hdiff⟩
+
+end Exercise33
+
+section Exercise34
+
+/-- 习题 3.4 中的取整算子：`x ↦ ⌊x⌋`。 -/
+noncomputable def floorOp : Operator (Option ℝ) none where
+  func
+    | none => none
+    | some x => some (⌊x⌋ : ℝ)
+  preserves_bot := rfl
+
+def ex34_D1 : Set (Option ℝ) := { p | ∃ x : ℝ, p = some x ∧ 0 ≤ x ∧ x ≤ 1 / 2 }
+def ex34_D2 : Set (Option ℝ) := { p | ∃ x : ℝ, p = some x ∧ 9 / 10 ≤ x ∧ x ≤ 11 / 10 }
+def ex34_D3 : Set (Option ℝ) := {some 0, some 2}
+def ex34_D4 : Set (Option ℝ) := { p | ∃ x : ℝ, p = some x ∧ 0 ≤ x ∧ x ≤ 2 }
+
+lemma floorOp_eq_zero_on_Ico {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) : ⌊x⌋ = 0 :=
+  Int.floor_eq_zero_iff.mpr ⟨hx0, hx1⟩
+
+/-- **习题 3.4 (i-a)**：`D₁ = [0, 1/2]` 的直径 `1/2`、统一半径 `+∞`、类型 `(1, 1)`。 -/
+theorem ex34_part_ia :
+    ex34_D1.Nonempty ∧
+    ex34_D1 ⊆ dom floorOp ∧
+    diam realAbsDist ex34_D1 = 1 / 2 ∧
+    uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D1 = ⊤ ∧
+    thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D1 1 1 () () = (1, 1) := by
+  have hne : ex34_D1.Nonempty := ⟨some 0, 0, rfl, le_rfl, by norm_num⟩
+  have hdom : ex34_D1 ⊆ dom floorOp := by
+    rintro p ⟨x, rfl, _⟩; simp [dom, floorOp]
+  have hdiam : diam realAbsDist ex34_D1 = 1 / 2 := by
+    apply le_antisymm
+    · apply iSup_le; rintro x
+      apply iSup_le; rintro ⟨a, rfl, ha0, ha1⟩
+      apply iSup_le; rintro y
+      apply iSup_le; rintro ⟨b, rfl, hb0, hb1⟩
+      dsimp [realAbsDist]
+      have hab : |a - b| ≤ 1 / 2 := abs_sub_le_iff.mpr ⟨by linarith, by linarith⟩
+      calc
+        ENNReal.ofReal |a - b| ≤ ENNReal.ofReal (1 / 2) := ENNReal.ofReal_le_ofReal hab
+        _ = 1 / 2 := by rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num
+    · have hle := le_diam_of_mem (d := realAbsDist) (A := ex34_D1) (x := some 0) (y := some (1 / 2))
+        (by refine ⟨0, rfl, le_rfl, by norm_num⟩) (by refine ⟨1 / 2, rfl, by norm_num, le_rfl⟩)
+      have hd : realAbsDist (some 0) (some (1 / 2)) = 1 / 2 := by
+        dsimp [realAbsDist]
+        rw [show |(0 : ℝ) - 1 / 2| = 1 / 2 by norm_num, ENNReal.ofReal_div_of_pos (by norm_num)]
+        norm_num
+      rwa [hd] at hle
+  have hunif : uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D1 = ⊤ := by
+    unfold uniformZeroRadiusComp uniformZeroRadius uniformZeroRadiusOn
+    apply le_antisymm le_top
+    apply le_iInf; intro y
+    apply le_iInf; rintro ⟨t, rfl, ht0, ht1⟩
+    have hpt : pointwiseZeroRadius floorOp realAbsDist realAbsDist ex34_D1 (some t) = ⊤ := by
+      apply pointwiseZeroRadius_eq_top_of_forall_pos
+      intro r hr_pos hr_fin
+      refine ⟨hr_pos, hr_fin, ?_⟩
+      rintro x ⟨_, s, rfl, hs0, hs1⟩
+      refine ⟨⟨s, rfl, hs0, hs1⟩, ?_⟩
+      have hfs : ⌊s⌋ = 0 := floorOp_eq_zero_on_Ico hs0 (by linarith)
+      have hft : ⌊t⌋ = 0 := floorOp_eq_zero_on_Ico ht0 (by linarith)
+      simp [floorOp, hfs, hft, realAbsDist]
+    rw [hpt]
+  have htype : thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D1 1 1 () () = (1, 1) := by
+    classical
+    unfold thresholdType diamScale
+    simp only [hdiam, hunif]
+    rw [if_pos (by rw [ennreal_one_half, show (1 : ENNReal) = ENNReal.ofReal 1 by norm_num,
+      ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num), if_pos le_top]
+  exact ⟨hne, hdom, hdiam, hunif, htype⟩
+
+/-- 公共引理：`some 1 ∈ D` 且 `D` 在 `1` 左侧任意逼近 `1` 时，点态和统一零化半径均为 `0`。 -/
+lemma floorOp_zero_radius_at_one {D : Set (Option ℝ)}
+    (h1 : some (1 : ℝ) ∈ D)
+    (hleft : ∀ δ : ℝ, 0 < δ → δ ≤ 1 / 10 → some (1 - δ) ∈ D) :
+    pointwiseZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () D (some 1) = 0 ∧
+    uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () D = 0 := by
+  have hpt : pointwiseZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () D (some 1) = 0 := by
+    apply le_antisymm _ (zero_le _)
+    unfold pointwiseZeroRadiusComp pointwiseZeroRadius
+    apply iSup₂_le
+    intro r hr
+    by_contra hpos
+    have hr_pos : 0 < r := hr.1
+    have hr_fin : r < ⊤ := hr.2.1
+    have hr_real : 0 < r.toReal := ENNReal.toReal_pos (ne_of_gt hr_pos) (ne_of_lt hr_fin)
+    let δ : ℝ := min (1 / 10) (r.toReal / 2)
+    have hδ_pos : 0 < δ := lt_min (by norm_num) (by linarith)
+    have hδ_le : δ ≤ 1 / 10 := min_le_left _ _
+    have hδ_lt : δ < r.toReal := lt_of_le_of_lt (min_le_right _ _) (by linarith)
+    have hmem : some (1 - δ) ∈ ball realAbsDist (some 1) r ∩ D := by
+      refine ⟨?_, hleft δ hδ_pos hδ_le⟩
+      dsimp [ball, realAbsDist]
+      have habs : |(1 - δ) - 1| = δ := by
+        rw [show (1 - δ) - 1 = -δ by ring, abs_neg, abs_of_pos hδ_pos]
+      rw [habs]
+      calc
+        ENNReal.ofReal δ < ENNReal.ofReal r.toReal :=
+          (ENNReal.ofReal_lt_ofReal_iff hr_real).mpr hδ_lt
+        _ = r := ENNReal.ofReal_toReal (ne_of_lt hr_fin)
+    have hzero := (hr.2.2 hmem).2
+    have hfl : ⌊1 - δ⌋ = 0 := floorOp_eq_zero_on_Ico (by linarith) (by linarith)
+    simp [floorOp, hfl, realAbsDist] at hzero
+  refine ⟨hpt, ?_⟩
+  apply le_antisymm _ (zero_le _)
+  calc
+    uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () D
+        ≤ pointwiseZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () D (some 1) :=
+          iInf_le_of_le (some 1) (iInf_le_of_le h1 le_rfl)
+    _ = 0 := hpt
+
+/-- **习题 3.4 (i-b)**：`D₂ = [9/10, 11/10]` 的直径 `1/5`、统一半径 `0`、类型 `(1, 0)`。 -/
+theorem ex34_part_ib :
+    ex34_D2.Nonempty ∧
+    ex34_D2 ⊆ dom floorOp ∧
+    diam realAbsDist ex34_D2 = 1 / 5 ∧
+    uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D2 = 0 ∧
+    thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D2 1 1 () () = (1, 0) := by
+  have hne : ex34_D2.Nonempty := ⟨some 1, 1, rfl, by norm_num, by norm_num⟩
+  have hdom : ex34_D2 ⊆ dom floorOp := by
+    rintro p ⟨x, rfl, _⟩; simp [dom, floorOp]
+  have hdiam : diam realAbsDist ex34_D2 = 1 / 5 := by
+    apply le_antisymm
+    · apply iSup_le; rintro x
+      apply iSup_le; rintro ⟨a, rfl, ha0, ha1⟩
+      apply iSup_le; rintro y
+      apply iSup_le; rintro ⟨b, rfl, hb0, hb1⟩
+      dsimp [realAbsDist]
+      have hab : |a - b| ≤ 1 / 5 := abs_sub_le_iff.mpr ⟨by linarith, by linarith⟩
+      calc
+        ENNReal.ofReal |a - b| ≤ ENNReal.ofReal (1 / 5) := ENNReal.ofReal_le_ofReal hab
+        _ = 1 / 5 := by rw [ENNReal.ofReal_div_of_pos (by norm_num)]; norm_num
+    · have hle := le_diam_of_mem (d := realAbsDist) (A := ex34_D2)
+        (x := some (9 / 10)) (y := some (11 / 10))
+        (by refine ⟨9 / 10, rfl, le_rfl, by norm_num⟩)
+        (by refine ⟨11 / 10, rfl, by norm_num, le_rfl⟩)
+      have hd : realAbsDist (some (9 / 10)) (some (11 / 10)) = 1 / 5 := by
+        dsimp [realAbsDist]
+        rw [show |(9 / 10 : ℝ) - 11 / 10| = 1 / 5 by norm_num, ENNReal.ofReal_div_of_pos (by norm_num)]
+        norm_num
+      rwa [hd] at hle
+  have hunif : uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D2 = 0 :=
+    (floorOp_zero_radius_at_one (D := ex34_D2) ⟨1, rfl, by norm_num, by norm_num⟩ fun δ hδ0 hδ1 =>
+      ⟨1 - δ, rfl, by linarith, by linarith⟩).2
+  have htype : thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D2 1 1 () () = (1, 0) := by
+    classical
+    unfold thresholdType diamScale
+    simp only [hdiam, hunif]
+    rw [if_pos (by rw [ennreal_one_fifth, show (1 : ENNReal) = ENNReal.ofReal 1 by norm_num,
+      ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num), if_neg (by norm_num)]
+  exact ⟨hne, hdom, hdiam, hunif, htype⟩
+
+/-- **习题 3.4 (i-c)**：`D₃ = {0, 2}` 的直径 `2`、统一半径 `2`、类型 `(0, 1)`。 -/
+theorem ex34_part_ic :
+    ex34_D3.Nonempty ∧
+    ex34_D3 ⊆ dom floorOp ∧
+    diam realAbsDist ex34_D3 = 2 ∧
+    uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D3 = 2 ∧
+    thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D3 1 1 () () = (0, 1) := by
+  have hne : ex34_D3.Nonempty := ⟨some 0, Or.inl rfl⟩
+  have hdom : ex34_D3 ⊆ dom floorOp := by
+    intro x hx; rcases hx with rfl | rfl <;> simp [dom, floorOp]
+  have hdiam : diam realAbsDist ex34_D3 = 2 := by
+    apply le_antisymm
+    · apply iSup_le; intro x
+      apply iSup_le; intro hx
+      apply iSup_le; intro y
+      apply iSup_le; intro hy
+      rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> norm_num [realAbsDist]
+    · have hle := le_diam_of_mem (d := realAbsDist) (A := ex34_D3) (x := some 0) (y := some 2)
+        (Or.inl rfl) (Or.inr rfl)
+      have hd : realAbsDist (some 0) (some 2) = 2 := by simp [realAbsDist]
+      rwa [hd] at hle
+  have hpt0 : pointwiseZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () ()
+      ex34_D3 (some 0) = 2 := by
+    apply le_antisymm
+    · unfold pointwiseZeroRadiusComp pointwiseZeroRadius
+      apply iSup₂_le
+      intro r hr
+      by_contra hlt
+      rw [not_le] at hlt
+      have hball2 : some 2 ∈ ball realAbsDist (some 0) r ∩ ex34_D3 := by
+        refine ⟨?_, Or.inr rfl⟩
+        dsimp [ball, realAbsDist]
+        norm_num
+        exact hlt
+      have hzero := (hr.2.2 hball2).2
+      norm_num [floorOp, realAbsDist] at hzero
+    · apply le_pointwiseZeroRadius_of_admissible
+      refine ⟨by norm_num, by norm_num, ?_⟩
+      rintro x ⟨hxball, rfl | rfl⟩
+      · exact ⟨Or.inl rfl, realAbsDist_is_extended.dist_self _⟩
+      · exfalso
+        dsimp [ball, realAbsDist] at hxball
+        norm_num at hxball
+  have hpt2 : pointwiseZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () ()
+      ex34_D3 (some 2) = 2 := by
+    apply le_antisymm
+    · unfold pointwiseZeroRadiusComp pointwiseZeroRadius
+      apply iSup₂_le
+      intro r hr
+      by_contra hlt
+      rw [not_le] at hlt
+      have hball0 : some 0 ∈ ball realAbsDist (some 2) r ∩ ex34_D3 := by
+        refine ⟨?_, Or.inl rfl⟩
+        dsimp [ball, realAbsDist]
+        norm_num
+        exact hlt
+      have hzero := (hr.2.2 hball0).2
+      norm_num [floorOp, realAbsDist] at hzero
+    · apply le_pointwiseZeroRadius_of_admissible
+      refine ⟨by norm_num, by norm_num, ?_⟩
+      rintro x ⟨hxball, rfl | rfl⟩
+      · exfalso
+        dsimp [ball, realAbsDist] at hxball
+        norm_num at hxball
+      · exact ⟨Or.inr rfl, realAbsDist_is_extended.dist_self _⟩
+  have hunif : uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D3 = 2 := by
+    apply le_antisymm
+    · calc
+        uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D3
+            ≤ pointwiseZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () ()
+                ex34_D3 (some 0) :=
+              iInf_le_of_le (some 0) (iInf_le_of_le (Or.inl rfl) le_rfl)
+        _ = 2 := hpt0
+    · apply le_iInf; intro y
+      apply le_iInf; intro hy
+      rcases hy with rfl | rfl
+      · exact hpt0.ge
+      · exact hpt2.ge
+  have htype : thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D3 1 1 () () = (0, 1) := by
+    classical
+    unfold thresholdType diamScale
+    simp only [hdiam, hunif]
+    rw [if_neg (by norm_num), if_pos (by norm_num)]
+  exact ⟨hne, hdom, hdiam, hunif, htype⟩
+
+/-- **习题 3.4 (i-d)**：`D₄ = [0, 2]` 的直径 `2`、统一半径 `0`、类型 `(0, 0)`。 -/
+theorem ex34_part_id :
+    ex34_D4.Nonempty ∧
+    ex34_D4 ⊆ dom floorOp ∧
+    diam realAbsDist ex34_D4 = 2 ∧
+    uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D4 = 0 ∧
+    thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D4 1 1 () () = (0, 0) := by
+  have hne : ex34_D4.Nonempty := ⟨some 0, 0, rfl, le_rfl, by norm_num⟩
+  have hdom : ex34_D4 ⊆ dom floorOp := by
+    rintro p ⟨x, rfl, _⟩; simp [dom, floorOp]
+  have hdiam : diam realAbsDist ex34_D4 = 2 := by
+    apply le_antisymm
+    · apply iSup_le; rintro x
+      apply iSup_le; rintro ⟨a, rfl, ha0, ha1⟩
+      apply iSup_le; rintro y
+      apply iSup_le; rintro ⟨b, rfl, hb0, hb1⟩
+      dsimp [realAbsDist]
+      have hab : |a - b| ≤ 2 := abs_sub_le_iff.mpr ⟨by linarith, by linarith⟩
+      calc
+        ENNReal.ofReal |a - b| ≤ ENNReal.ofReal 2 := ENNReal.ofReal_le_ofReal hab
+        _ = 2 := by norm_num
+    · have hle := le_diam_of_mem (d := realAbsDist) (A := ex34_D4) (x := some 0) (y := some 2)
+        (by refine ⟨0, rfl, le_rfl, by norm_num⟩) (by refine ⟨2, rfl, by norm_num, le_rfl⟩)
+      have hd : realAbsDist (some 0) (some 2) = 2 := by simp [realAbsDist]
+      rwa [hd] at hle
+  have hunif : uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D4 = 0 :=
+    (floorOp_zero_radius_at_one (D := ex34_D4) ⟨1, rfl, by norm_num, by norm_num⟩ fun δ hδ0 hδ1 =>
+      ⟨1 - δ, rfl, by linarith, by linarith⟩).2
+  have htype : thresholdType (fun _ : Unit => realAbsDist) floorOp
+      (diamScale (fun _ : Unit => realAbsDist)) ex34_D4 1 1 () () = (0, 0) := by
+    classical
+    unfold thresholdType diamScale
+    simp only [hdiam, hunif]
+    rw [if_neg (by norm_num), if_neg (by norm_num)]
+  exact ⟨hne, hdom, hdiam, hunif, htype⟩
+
+/-- **习题 3.4 (ii)**：从 `(i)` 选取 `D₃ = {0, 2}` 反例，否定无直径约束时 `r^N ≥ 1` 蕴含整体零化，
+并说明其正零化半径来自局部开球 `B(y, 2) ∩ D₃ = {y}` 的点间孤立性。 -/
+theorem ex34_part_ii :
+    (1 ≤ uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D3 ∧
+      ∃ x ∈ ex34_D3, ∃ y ∈ ex34_D3,
+        0 < realAbsDist (floorOp.func x) (floorOp.func y)) ∧
+    (∀ y ∈ ex34_D3, ball realAbsDist y 2 ∩ ex34_D3 = {y}) ∧
+    ¬ (∀ D : Set (Option ℝ), D.Nonempty → D ⊆ dom floorOp →
+        1 ≤ uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () D →
+        ∀ x ∈ D, ∀ y ∈ D, realAbsDist (floorOp.func x) (floorOp.func y) = 0) := by
+  rcases ex34_part_ic with ⟨hne, hdom, _, hunif, _⟩
+  have hge1 : (1 : ENNReal) ≤
+      uniformZeroRadiusComp (fun _ : Unit => realAbsDist) floorOp () () ex34_D3 := by
+    rw [hunif]; norm_num
+  have hsep : ∃ x ∈ ex34_D3, ∃ y ∈ ex34_D3,
+      0 < realAbsDist (floorOp.func x) (floorOp.func y) := by
+    refine ⟨some 0, Or.inl rfl, some 2, Or.inr rfl, ?_⟩
+    norm_num [floorOp, realAbsDist]
+  have hisol : ∀ y ∈ ex34_D3, ball realAbsDist y 2 ∩ ex34_D3 = {y} := by
+    intro y hy
+    ext x
+    simp only [Set.mem_inter_iff, ball, Set.mem_setOf_eq, Set.mem_singleton_iff]
+    rcases hy with rfl | rfl
+    · constructor
+      · rintro ⟨hball, rfl | rfl⟩
+        · rfl
+        · exfalso; dsimp [realAbsDist] at hball; norm_num at hball
+      · rintro rfl; exact ⟨by simp [realAbsDist], Or.inl rfl⟩
+    · constructor
+      · rintro ⟨hball, rfl | rfl⟩
+        · exfalso; dsimp [realAbsDist] at hball; norm_num at hball
+        · rfl
+      · rintro rfl; exact ⟨by simp [realAbsDist], Or.inr rfl⟩
+  refine ⟨⟨hge1, hsep⟩, hisol, ?_⟩
+  intro hall
+  rcases hsep with ⟨x, hx, y, hy, hpos⟩
+  exact ne_of_gt hpos (hall ex34_D3 hne hdom hge1 x hx y hy)
+
+end Exercise34
+
+section Exercise35
+
+def ex35_U : Set (Option ℝ) := {some 0, some 1, some 2, some 3}
+
+noncomputable def ex35_f : Operator (Option ℝ) none where
+  func
+    | none => none
+    | some x =>
+        if x = 0 then some 0
+        else if x = 1 then some 1
+        else if x = 2 then some 2
+        else if x = 3 then some 3
+        else none
+  preserves_bot := rfl
+
+noncomputable def ex35_g : Operator (Option ℝ) none where
+  func
+    | none => none
+    | some x =>
+        if x = 0 then some 0
+        else if x = 1 then some 3
+        else if x = 2 then some 1
+        else if x = 3 then some 2
+        else none
+  preserves_bot := rfl
+
+lemma ex35_U_dom_f : ex35_U ⊆ dom ex35_f := by
+  intro x hx
+  rcases hx with rfl | rfl | rfl | rfl <;> simp [dom, ex35_f]
+
+lemma ex35_U_dom_g : ex35_U ⊆ dom ex35_g := by
+  intro x hx
+  rcases hx with rfl | rfl | rfl | rfl <;> simp [dom, ex35_g]
+
+lemma ex35_covering_le_one (ε : ENNReal) (hε_pos : 0 < ε) (hε_le : ε ≤ 1) :
+    covering_number realAbsDist ε ex35_U = 4 := by
+  apply le_antisymm
+  · let S : Finset (Option ℝ) := {some 0, some 1, some 2, some 3}
+    have hSnet : InternalEpsilonNet realAbsDist ε ex35_U S := by
+      constructor
+      · intro z hz
+        simp only [S, Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+          Set.mem_singleton_iff] at hz
+        exact hz
+      · intro x hx
+        rcases hx with rfl | rfl | rfl | rfl
+        · exact ⟨some 0, by simp [S], by simpa [realAbsDist] using hε_pos⟩
+        · exact ⟨some 1, by simp [S], by simpa [realAbsDist] using hε_pos⟩
+        · exact ⟨some 2, by simp [S], by simpa [realAbsDist] using hε_pos⟩
+        · exact ⟨some 3, by simp [S], by simpa [realAbsDist] using hε_pos⟩
+    have hcard : S.card ≤ 4 := by simp [S]
+    exact le_trans (covering_number_le_card realAbsDist ε ex35_U S hSnet)
+      (by exact_mod_cast hcard)
+  · apply le_iInf; intro S
+    apply le_iInf; intro hSnet
+    have hmem : ∀ k ∈ ({some 0, some 1, some 2, some 3} : Finset (Option ℝ)), k ∈ S := by
+      intro k hk
+      have hkU : k ∈ ex35_U := by
+        simp only [Finset.mem_insert, Finset.mem_singleton] at hk
+        exact hk
+      rcases hSnet.2 k hkU with ⟨c, hcS, hdist⟩
+      have hlt1 : realAbsDist k c < 1 := lt_of_lt_of_le hdist hε_le
+      have hkc : k = c := by
+        rcases hkU with rfl | rfl | rfl | rfl <;> rcases hSnet.1 hcS with h | h | h | h
+        · exact h.symm
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exact h.symm
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exact h.symm
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exfalso; rw [h] at hlt1; norm_num [realAbsDist] at hlt1
+        · exact h.symm
+      rw [hkc]; exact hcS
+    have hsub : ({some 0, some 1, some 2, some 3} : Finset (Option ℝ)) ⊆ S := hmem
+    have h4 : 4 ≤ S.card := by
+      have hcard4 : ({some 0, some 1, some 2, some 3} : Finset (Option ℝ)).card = 4 := by
+        simp [Finset.card_insert_of_notMem]
+      rw [← hcard4]
+      exact Finset.card_le_card hsub
+    exact_mod_cast h4
+
+lemma ex35_covering_one_two (ε : ENNReal) (hε_gt : 1 < ε) (hε_le : ε ≤ 2) :
+    covering_number realAbsDist ε ex35_U = 2 := by
+  apply le_antisymm
+  · let S : Finset (Option ℝ) := {some 0, some 2}
+    have hSnet : InternalEpsilonNet realAbsDist ε ex35_U S := by
+      constructor
+      · intro z hz
+        simp only [S, Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+          Set.mem_singleton_iff] at hz
+        rcases hz with rfl | rfl
+        · exact Or.inl rfl
+        · exact Or.inr (Or.inr (Or.inl rfl))
+      · intro x hx
+        rcases hx with rfl | rfl | rfl | rfl
+        · exact ⟨some 0, by simp [S], by simpa [realAbsDist] using (lt_trans zero_lt_one hε_gt)⟩
+        · refine ⟨some 0, by simp [S], ?_⟩
+          simpa [realAbsDist] using hε_gt
+        · exact ⟨some 2, by simp [S], by simpa [realAbsDist] using (lt_trans zero_lt_one hε_gt)⟩
+        · refine ⟨some 2, by simp [S], ?_⟩
+          dsimp [realAbsDist]; norm_num; exact hε_gt
+    have hcard : S.card ≤ 2 := by simp [S]
+    exact le_trans (covering_number_le_card realAbsDist ε ex35_U S hSnet)
+      (by exact_mod_cast hcard)
+  · apply le_iInf; intro S
+    apply le_iInf; intro hSnet
+    rcases hSnet.2 (some 0) (Or.inl rfl) with ⟨c₀, hc₀S, hc₀d⟩
+    rcases hSnet.2 (some 3) (Or.inr (Or.inr (Or.inr rfl))) with ⟨c₃, hc₃S, hc₃d⟩
+    have hc₀_le2 : c₀ = some 0 ∨ c₀ = some 1 := by
+      rcases hSnet.1 hc₀S with h | h | h | h
+      · exact Or.inl h
+      · exact Or.inr h
+      · exfalso; rw [h] at hc₀d; norm_num [realAbsDist] at hc₀d
+        exact not_lt_of_ge hε_le hc₀d
+      · exfalso; rw [h] at hc₀d; norm_num [realAbsDist] at hc₀d
+        exact not_lt_of_ge (le_trans hε_le (by norm_num)) hc₀d
+    have hc₃_ge2 : c₃ = some 2 ∨ c₃ = some 3 := by
+      rcases hSnet.1 hc₃S with h | h | h | h
+      · exfalso; rw [h] at hc₃d; norm_num [realAbsDist] at hc₃d
+        exact not_lt_of_ge (le_trans hε_le (by norm_num)) hc₃d
+      · exfalso; rw [h] at hc₃d; norm_num [realAbsDist] at hc₃d
+        exact not_lt_of_ge hε_le hc₃d
+      · exact Or.inl h
+      · exact Or.inr h
+    have hc_ne : c₀ ≠ c₃ := by
+      rcases hc₀_le2 with rfl | rfl <;> rcases hc₃_ge2 with rfl | rfl <;> simp
+    have hlt : 1 < S.card := Finset.one_lt_card.mpr ⟨c₀, hc₀S, c₃, hc₃S, hc_ne⟩
+    exact_mod_cast hlt
+
+lemma ex35_covering_gt_two (ε : ENNReal) (hε_gt : 2 < ε) :
+    covering_number realAbsDist ε ex35_U = 1 := by
+  apply le_antisymm
+  · let S : Finset (Option ℝ) := {some 1}
+    have hSnet : InternalEpsilonNet realAbsDist ε ex35_U S := by
+      constructor
+      · intro z hz
+        simp only [S, Finset.coe_singleton, Set.mem_singleton_iff] at hz
+        rw [hz]; exact Or.inr (Or.inl rfl)
+      · intro x hx
+        refine ⟨some 1, by simp [S], ?_⟩
+        rcases hx with rfl | rfl | rfl | rfl
+        · norm_num [realAbsDist]; exact lt_trans (by norm_num) hε_gt
+        · simp [realAbsDist]; exact lt_trans (by norm_num) hε_gt
+        · norm_num [realAbsDist]; exact lt_trans (by norm_num) hε_gt
+        · norm_num [realAbsDist]; exact hε_gt
+    simpa [S] using covering_number_le_card realAbsDist ε ex35_U S hSnet
+  · exact one_le_covering_number_of_nonempty realAbsDist ε ex35_U ⟨some 0, Or.inl rfl⟩
+
+/-- **习题 3.5 (i)**：所有有限正精度 `ε` 下 `U = {0, 1, 2, 3}` 的内部覆盖数分段及端点，
+并说明在 `ε = 7/4` 时不能以 `3/2` 为中心得到合法内覆盖。 -/
+theorem ex35_part_i :
+    (∀ ε : ENNReal, 0 < ε → ε ≤ 1 → covering_number realAbsDist ε ex35_U = 4) ∧
+    (∀ ε : ENNReal, 1 < ε → ε ≤ 2 → covering_number realAbsDist ε ex35_U = 2) ∧
+    (∀ ε : ENNReal, 2 < ε → ε < ⊤ → covering_number realAbsDist ε ex35_U = 1) ∧
+    (∀ x ∈ ex35_U, realAbsDist x (some (3 / 2 : ℝ)) < 7 / 4) ∧
+    ¬ InternalEpsilonNet realAbsDist (7 / 4) ex35_U {some (3 / 2 : ℝ)} ∧
+    covering_number realAbsDist (7 / 4) ex35_U = 2 := by
+  have h74_gt : (1 : ENNReal) < 7 / 4 := by
+    rw [ennreal_seven_fourths, show (1 : ENNReal) = ENNReal.ofReal 1 by norm_num,
+      ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+    norm_num
+  have h74_le : (7 / 4 : ENNReal) ≤ 2 := by
+    rw [ennreal_seven_fourths, show (2 : ENNReal) = ENNReal.ofReal 2 by norm_num,
+      ENNReal.ofReal_le_ofReal_iff (by norm_num)]
+    norm_num
+  refine ⟨ex35_covering_le_one, ex35_covering_one_two, fun ε hgt _ => ex35_covering_gt_two ε hgt,
+    ?_, ?_, ex35_covering_one_two (7 / 4) h74_gt h74_le⟩
+  · intro x hx
+    rcases hx with rfl | rfl | rfl | rfl <;>
+      · dsimp [realAbsDist]
+        rw [ennreal_seven_fourths, ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+        norm_num
+  · intro hnet
+    have hmem : some (3 / 2 : ℝ) ∈ ex35_U := hnet.1 (Finset.mem_coe.mpr (Finset.mem_singleton_self _))
+    rcases hmem with h | h | h | h <;> norm_num at h
+
+/-- **习题 3.5 (ii)**：两个像集均等于 `U`，因此所有有限正精度下两端覆盖数相等且映射熵差为 `0`。 -/
+theorem ex35_part_ii :
+    ex35_f.func '' ex35_U = ex35_U ∧
+    ex35_g.func '' ex35_U = ex35_U ∧
+    ∀ ε : ENNReal, 0 < ε → ε < ⊤ →
+      covering_number realAbsDist ε (ex35_f.func '' ex35_U) = covering_number realAbsDist ε ex35_U ∧
+      covering_number realAbsDist ε (ex35_g.func '' ex35_U) = covering_number realAbsDist ε ex35_U ∧
+      metric_entropy realAbsDist ε (ex35_f.func '' ex35_U) = metric_entropy realAbsDist ε ex35_U ∧
+      metric_entropy realAbsDist ε (ex35_g.func '' ex35_U) = metric_entropy realAbsDist ε ex35_U ∧
+      MappingEntropyDiffWellDefined (fun _ : Unit => realAbsDist) ex35_f {()} {()} ε ex35_U ∧
+      MappingEntropyDiffWellDefined (fun _ : Unit => realAbsDist) ex35_g {()} {()} ε ex35_U ∧
+      mappingEntropyDiffSame (fun _ : Unit => realAbsDist) ex35_f {()} ε ex35_U = 0 ∧
+      mappingEntropyDiffSame (fun _ : Unit => realAbsDist) ex35_g {()} ε ex35_U = 0 := by
+  have himgf : ex35_f.func '' ex35_U = ex35_U := by
+    ext z
+    constructor
+    · rintro ⟨x, rfl | rfl | rfl | rfl, rfl⟩ <;> simp [ex35_f, ex35_U]
+    · intro hz
+      rcases hz with rfl | rfl | rfl | rfl
+      · exact ⟨some 0, Or.inl rfl, by simp [ex35_f]⟩
+      · exact ⟨some 1, Or.inr (Or.inl rfl), by simp [ex35_f]⟩
+      · exact ⟨some 2, Or.inr (Or.inr (Or.inl rfl)), by simp [ex35_f]⟩
+      · exact ⟨some 3, Or.inr (Or.inr (Or.inr rfl)), by simp [ex35_f]⟩
+  have himgg : ex35_g.func '' ex35_U = ex35_U := by
+    ext z
+    constructor
+    · rintro ⟨x, rfl | rfl | rfl | rfl, rfl⟩ <;> simp [ex35_g, ex35_U]
+    · intro hz
+      rcases hz with rfl | rfl | rfl | rfl
+      · exact ⟨some 0, Or.inl rfl, by simp [ex35_g]⟩
+      · exact ⟨some 2, Or.inr (Or.inr (Or.inl rfl)), by simp [ex35_g]⟩
+      · exact ⟨some 3, Or.inr (Or.inr (Or.inr rfl)), by simp [ex35_g]⟩
+      · exact ⟨some 1, Or.inr (Or.inl rfl), by simp [ex35_g]⟩
+  refine ⟨himgf, himgg, ?_⟩
+  intro ε hε_pos hε_fin
+  have hU_fin : ex35_U.Finite := by
+    change ({some 0, some 1, some 2, some 3} : Set (Option ℝ)).Finite
+    exact Set.toFinite _
+  have hwd_f : MappingEntropyDiffWellDefined (fun _ : Unit => realAbsDist)
+      ex35_f {()} {()} ε ex35_U :=
+    (note_finite_mapping_entropy_diff_well_defined (fun _ : Unit => realAbsDist)
+      ex35_f {()} {()} ε ex35_U (fun _ => realAbsDist_is_extended)
+      ⟨some 0, Or.inl rfl⟩ hU_fin ex35_U_dom_f ⟨(), Set.mem_singleton ()⟩
+      ⟨(), Set.mem_singleton ()⟩ hε_pos hε_fin).2.2.2.2.1
+  have hwd_g : MappingEntropyDiffWellDefined (fun _ : Unit => realAbsDist)
+      ex35_g {()} {()} ε ex35_U :=
+    (note_finite_mapping_entropy_diff_well_defined (fun _ : Unit => realAbsDist)
+      ex35_g {()} {()} ε ex35_U (fun _ => realAbsDist_is_extended)
+      ⟨some 0, Or.inl rfl⟩ hU_fin ex35_U_dom_g ⟨(), Set.mem_singleton ()⟩
+      ⟨(), Set.mem_singleton ()⟩ hε_pos hε_fin).2.2.2.2.1
+  have hcov_fin : covering_number realAbsDist ε ex35_U < ⊤ := by
+    have hcov_le4 : covering_number realAbsDist ε ex35_U ≤ 4 := by
+      by_cases h1 : ε ≤ 1
+      · rw [ex35_covering_le_one ε hε_pos h1]
+      · by_cases h2 : ε ≤ 2
+        · rw [ex35_covering_one_two ε (lt_of_not_ge h1) h2]; norm_num
+        · rw [ex35_covering_gt_two ε (lt_of_not_ge h2)]; norm_num
+    exact lt_of_le_of_lt hcov_le4 (by norm_num)
+  obtain ⟨r, _, hr⟩ := metric_entropy_eq_coe_of_nonempty_of_lt_top ⟨some 0, Or.inl rfl⟩ hcov_fin
+  refine ⟨by rw [himgf], by rw [himgg], by rw [himgf], by rw [himgg], hwd_f, hwd_g, ?_, ?_⟩
+  · unfold mappingEntropyDiffSame
+    rw [mappingEntropyDiff_single_pair, himgf, hr]
+    simp
+  · unfold mappingEntropyDiffSame
+    rw [mappingEntropyDiff_single_pair, himgg, hr]
+    simp
+
+/-- **习题 3.5 (iii-a)**：`f` 与 `g` 在 `U` 上的最小标量 Lip 常数分别为 `1` 与 `3`（含必要下界）。 -/
+theorem ex35_part_iiia :
+    (∀ x ∈ ex35_U, ∀ y ∈ ex35_U,
+      realAbsDist (ex35_f.func x) (ex35_f.func y) ≤ 1 * realAbsDist x y) ∧
+    (∀ L : ENNReal,
+      (∀ x ∈ ex35_U, ∀ y ∈ ex35_U,
+        realAbsDist (ex35_f.func x) (ex35_f.func y) ≤ L * realAbsDist x y) →
+      1 ≤ L) ∧
+    (∀ x ∈ ex35_U, ∀ y ∈ ex35_U,
+      realAbsDist (ex35_g.func x) (ex35_g.func y) ≤ 3 * realAbsDist x y) ∧
+    (∀ L : ENNReal,
+      (∀ x ∈ ex35_U, ∀ y ∈ ex35_U,
+        realAbsDist (ex35_g.func x) (ex35_g.func y) ≤ L * realAbsDist x y) →
+      3 ≤ L) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro x hx y hy
+    rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+      simp [ex35_f, realAbsDist]
+  · intro L hL
+    have h01 := hL (some 0) (Or.inl rfl) (some 1) (Or.inr (Or.inl rfl))
+    simpa [ex35_f, realAbsDist] using h01
+  · intro x hx y hy
+    rcases hx with rfl | rfl | rfl | rfl <;> rcases hy with rfl | rfl | rfl | rfl <;>
+      (simp only [ex35_g, realAbsDist]; norm_num; try exact le_rfl)
+  · intro L hL
+    have h01 := hL (some 0) (Or.inl rfl) (some 1) (Or.inr (Or.inl rfl))
+    simp only [ex35_g, realAbsDist] at h01
+    norm_num at h01
+    exact h01
+
+/-- **习题 3.5 (iii-b)**：在 `ε = 7/4` 下显式应用命题 3.19 的单通道 Lip 覆盖数上界，并逐项与真实覆盖数比较。 -/
+theorem ex35_part_iiib :
+    covering_number realAbsDist (7 / 4) (ex35_f.func '' ex35_U) ≤
+      covering_number realAbsDist ((7 / 4 : ENNReal) / 1) ex35_U ∧
+    covering_number realAbsDist ((7 / 4 : ENNReal) / 1) ex35_U = 2 ∧
+    covering_number realAbsDist (7 / 4) (ex35_f.func '' ex35_U) = 2 ∧
+    covering_number realAbsDist (7 / 4) (ex35_f.func '' ex35_U) =
+      covering_number realAbsDist ((7 / 4 : ENNReal) / 1) ex35_U ∧
+    covering_number realAbsDist (7 / 4) (ex35_g.func '' ex35_U) ≤
+      covering_number realAbsDist ((7 / 4 : ENNReal) / 3) ex35_U ∧
+    covering_number realAbsDist ((7 / 4 : ENNReal) / 3) ex35_U = 4 ∧
+    covering_number realAbsDist (7 / 4) (ex35_g.func '' ex35_U) = 2 ∧
+    covering_number realAbsDist (7 / 4) (ex35_g.func '' ex35_U) <
+      covering_number realAbsDist ((7 / 4 : ENNReal) / 3) ex35_U := by
+  have h74_pos : (0 : ENNReal) < 7 / 4 := by
+    rw [ennreal_seven_fourths, ENNReal.ofReal_pos]; norm_num
+  have h74_fin : (7 / 4 : ENNReal) < ⊤ := by
+    rw [ennreal_seven_fourths]; exact ENNReal.ofReal_lt_top
+  have h74_gt : (1 : ENNReal) < 7 / 4 := by
+    rw [ennreal_seven_fourths, show (1 : ENNReal) = ENNReal.ofReal 1 by norm_num,
+      ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+    norm_num
+  have h74_le : (7 / 4 : ENNReal) ≤ 2 := by
+    rw [ennreal_seven_fourths, show (2 : ENNReal) = ENNReal.ofReal 2 by norm_num,
+      ENNReal.ofReal_le_ofReal_iff (by norm_num)]
+    norm_num
+  have hf_upper : covering_number realAbsDist (7 / 4) (ex35_f.func '' ex35_U) ≤
+      covering_number realAbsDist ((7 / 4 : ENNReal) / 1) ex35_U :=
+    (prop_3_19_lip_covering_le (fun _ : Unit => realAbsDist) ex35_f ex35_U () () (7 / 4) 1
+      ex35_U_dom_f h74_pos h74_fin zero_lt_one ENNReal.one_lt_top ex35_part_iiia.1).2
+  have hg_upper : covering_number realAbsDist (7 / 4) (ex35_g.func '' ex35_U) ≤
+      covering_number realAbsDist ((7 / 4 : ENNReal) / 3) ex35_U :=
+    (prop_3_19_lip_covering_le (fun _ : Unit => realAbsDist) ex35_g ex35_U () () (7 / 4) 3
+      ex35_U_dom_g h74_pos h74_fin (by norm_num) (by norm_num) ex35_part_iiia.2.2.1).2
+  have hf_bound : covering_number realAbsDist ((7 / 4 : ENNReal) / 1) ex35_U = 2 := by
+    rw [div_one]
+    exact ex35_covering_one_two (7 / 4) h74_gt h74_le
+  have hf_true : covering_number realAbsDist (7 / 4) (ex35_f.func '' ex35_U) = 2 := by
+    rw [ex35_part_ii.1]
+    exact ex35_covering_one_two (7 / 4) h74_gt h74_le
+  have hg_bound : covering_number realAbsDist ((7 / 4 : ENNReal) / 3) ex35_U = 4 := by
+    apply ex35_covering_le_one
+    · rw [ennreal_seven_twelfths, ENNReal.ofReal_pos]; norm_num
+    · rw [ennreal_seven_twelfths,
+        show (1 : ENNReal) = ENNReal.ofReal 1 by norm_num, ENNReal.ofReal_le_ofReal_iff (by norm_num)]
+      norm_num
+  have hg_true : covering_number realAbsDist (7 / 4) (ex35_g.func '' ex35_U) = 2 := by
+    rw [ex35_part_ii.2.1]
+    exact ex35_covering_one_two (7 / 4) h74_gt h74_le
+  refine ⟨hf_upper, hf_bound, hf_true, by rw [hf_bound, hf_true],
+    hg_upper, hg_bound, hg_true, ?_⟩
+  rw [hg_true, hg_bound]
+  norm_num
+
+end Exercise35
+
+end Ch03

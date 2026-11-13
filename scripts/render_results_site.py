@@ -27,6 +27,7 @@ from scripts.results_publication import prepare_publication, write_publication
 from scripts.timing_reference import build_reference, render_panel
 from scripts.cost_reference import build_reference as build_cost_reference, render_panel as render_cost_panel
 from math_gauge.submission_evidence import load_review_completion
+from math_gauge.result_corrections import load_selected as load_result_correction
 
 MODEL_THEMES = {
     "glm-5.3-max": {"color": "#444b60", "ink": "#363d50", "tint": "#f1f2f5"},
@@ -42,6 +43,7 @@ MODEL_THEMES = {
     "deepseek-v4.1-flash-1017": {"color": "#4b6ed8", "ink": "#3655b2", "tint": "#f1f4fd"},
     "gemini-3.8-flash-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+    "gemini-4-hydrogen-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
@@ -58,6 +60,7 @@ MODEL_PROVIDERS = {
     "deepseek-v4.1-flash-1017": ("DeepSeek", "deepseek.svg"),
     "gemini-3.8-flash-high": ("Google", "google.svg"),
     "gemini-4-argon": ("Google", "google.svg"),
+    "gemini-4-hydrogen-xhigh": ("Google", "google.svg"),
     "gemini-4-carbon": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
@@ -75,6 +78,7 @@ MODEL_LABELS = {
     "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash (max)",
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
+    "gemini-4-hydrogen-xhigh": "Gemini Hydrogen (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)"
 }
 MODEL_SHORT_LABELS = {
@@ -92,6 +96,7 @@ MODEL_SHORT_LABELS = {
     "deepseek-v4.1-flash-1017": "DeepSeek (max)",
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
+    "gemini-4-hydrogen-xhigh": "Hydrogen (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)"
 }
 
@@ -128,6 +133,10 @@ def build_data(source_root=ROOT):
         capability = load_assessment_results(folder, record, mode="capability")
         if partial is None or strict is None or capability is None:
             raise ValueError("Current display requires all three classified assessment modes")
+        correction = load_result_correction(root, model, folder, record=record)
+        if correction is not None:
+            for mode, views in (('partial', partial), ('strict', strict), ('capability', capability)):
+                views['nonlogical_retry_3'] = correction['_scores'][mode]
         combined = partial["single_attempt"]
         provider, filename = MODEL_PROVIDERS[model]
         icon_path = root / "site/assets/logos" / filename
@@ -158,6 +167,14 @@ def build_data(source_root=ROOT):
                                f"新增研究{research_source['effective_model_attempts']}题均为首次有效模型作答；另有{research_source['excluded_pure_system_failures']}次模型启动前的纯系统故障，不占模型尝试额度，物理请求与原失败保留。"
                                if research_source.get("excluded_pure_system_failures") else
                                "无新增重跑，沿用原答；新增研究题未测，不据此认证全部历史底层调用均一次完成。")}})
+        if correction is not None:
+            models[-1]['harness_correction'] = {key: correction[key] for key in
+                ('affected_cases', 'affected_conditions', 'answer', 'math_review', 'claim_review', 'public_tasks',
+                 'source_response_sha256', 'rates')}
+            models[-1]['harness_correction']['manifest'] = correction['_selection']
+            models[-1]['content_rates'] = correction.get('_rates', models[-1]['content_rates'])
+            models[-1]['retry']['note'] = 'HCH02采用因harness回传故障而恢复的原答；原始ERROR和旧审核保留，按既有规则补审。'
+            sources.append(correction['_selection'])
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
                  "public-task-scores.json",
                  record["capability_scoring_policy"]["path"], record["score_mode_catalog"]["path"],
@@ -606,6 +623,14 @@ def render(data, *, timing_reference=None, cost_reference=None):
     rows = []
     ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
                      if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
+    harness_notes = {}
+    for model in ordered:
+        harness = model['harness']
+        if harness.get('note_text'):
+            marker = harness['note_marker']
+            if marker in harness_notes and harness_notes[marker]['harness']['note_text'] != harness['note_text']:
+                raise ValueError('Shared harness note markers must have the same explanation')
+            harness_notes.setdefault(marker, model)
     for index, model in enumerate(ordered, 1):
         source = html.escape('models/'+model['id']+'/index.html?score=partial&condition=nonlogical_retry_3', quote=True)
         progress = model['evaluation_progress']['nonlogical_retry_3']
@@ -635,8 +660,7 @@ def render(data, *, timing_reference=None, cost_reference=None):
                                      if any(m.get('record_kind') == 'native_harness' for m in data['models']) else '')
                                   + ''.join('<p class="panel-foot" data-model-note="'+html.escape(m['id'], quote=True)+'">'
                                              +html.escape(m['harness']['note_marker']+' '+m['harness']['note_text'])+'</p>'
-                                             for m in sorted(data['models'], key=lambda m: m['harness'].get('note_marker', ''))
-                                             if m['harness'].get('note_text')),
+                                             for m in sorted(harness_notes.values(), key=lambda m: m['harness']['note_marker'])),
               "MODE_CONTROLS": ''.join(
                   '<button data-score-mode="'+m['id']+'" aria-label="'+html.escape(m['name']+' '+m['abbreviation'], quote=True)
                   +'" aria-pressed="'+str(m['id']==data['default_score_mode']).lower()+'"><span class="mode-name">'

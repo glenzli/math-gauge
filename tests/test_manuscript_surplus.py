@@ -244,6 +244,7 @@ class ManuscriptObservationTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(value if isinstance(value, bytes) else json.dumps(value).encode())
             return descriptor(path, root)
+        write(public, 'benchmark.json', {'version': '0.6.0'})
         write(public, 'protocol/manuscript-observations-policy.json', self.observation_policy())
         review['policy'] = write(private, 'verification/source-policy.json', policy)
         task = write(private, 'verification/task.txt', b'frozen original task')

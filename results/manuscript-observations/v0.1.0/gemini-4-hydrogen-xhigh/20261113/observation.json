@@ -1,0 +1,195 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "gemini-4-hydrogen-xhigh",
+  "record_id": "20261113",
+  "source_record": {
+    "path": "results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/record.json",
+    "bytes": 890941,
+    "sha256": "478a6e78a3da3e959eb423a6f1c18561ff12d201e664a343bf4ca89a245c8934"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "80116d0dc15405db21ae5e8a0390905d115b8f4f64003e9a857a832a686b5357",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 11,
+    "total_groups": 11,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+      "original_task": {
+        "strict_pass": false,
+        "completion": {
+          "lower": 0.6,
+          "upper": 0.6,
+          "exact": 0.6
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "全文§1–5及表格按冻结M1–M6核对。U/M/K/C的类型与有效域、0∞与非分离存在性、极值边界、标量例子及与坍缩定义直接相容的基本性质均属正常交付。普通U/M/K复合只是两次不等式串接；5.1的直接交互式、5.2零距链三角推论与5.3加权标量化不另计。4.2(4a–c)给出含支撑max合成的完整坍缩复合体系，4.3进一步在有界不变域、有限C/U及rho(U)<1下交付有限步精确坍缩；将复合证明桥及其谱推论合为一组。该组不需要全局上矩阵各元素∞、反射零距即商单射或任意可行集由Pareto边界刻画，原三根处罚完整保留。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "S01",
+          "title": "坍缩矩阵复合体系与有限步精确坍缩",
+          "statement": "对C d<1型坍缩矩阵，在有效复合域上有Cpsi Uphi、Upsi diamond Cphi及Cpsi diamond Cphi三类证书（diamond按左矩阵正支撑逐行取右矩阵max）；若D前向不变且距离直径有限，C与U有限、rho(U)<1，则某有限N使phi^N(D)落入一个全分量零距等价类。",
+          "scope": "beyond_required",
+          "correctness": "proved",
+          "nontrivial": true,
+          "value": "high",
+          "independent_of_errors": true,
+          "scope_delta": "冻结M5只要求一个有正确端点与基本性质的不可分辨矩阵；共同边界明确不要求完整复合/迭代理论。此组交付可复用的混合组合代数及比渐近收缩更强的有限时间结果。",
+          "proof_review": "4.2(4a)用Cpsi乘上Uphi距离界；(4b/c)的正支撑max逐项压住全部被使用行，零系数遇infinity仍为0，故相关中间输出全零。原文逐项写出证明。4.3在不变域反复应用4a得到C U^(n-1)，由有限矩阵幂趋0与有限直径向量B使每行严格小于1，直接触发全对坍缩。量词只在D，未推出点相等或额外固定点。",
+          "nontrivial_step": "支撑max合成处理多通道零化依赖，并把谱收缩越过严格阈值转为有限步而非仅极限的全对零距。",
+          "value_rationale": "价值按本题的研究情境描述；当前观察不以high标签作为计数门槛。 三条混合复合、必要支撑辅助式、U^n及有限步推论只计同一组；正权标量化和零链不另加。",
+          "reason": "三条混合复合、必要支撑辅助式、U^n及有限步推论只计同一组；正权标量化和零链不另加。",
+          "decision": "accepted",
+          "citations": [
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 19857,
+              "end_byte": 22608,
+              "quote": "4. **坍缩矩阵的三条复合律**：\n   对任意矩阵 $A \\in \\bar{\\mathbb{R}}_+^{I \\times I}$，定义其支撑指示矩阵 $S(A) \\in \\{0, 1\\}^{I \\times I}$ 为 $S(A)_{mi} = 1$（当 $A_{mi} > 0$）及 $0$（当 $A_{mi} = 0$）；再定义行支撑极大合成 $\\diamond$：\n   $$\n   (A \\diamond B)_{mj} := \\max\\bigl\\{\\, B_{ij} \\;\\big|\\; i \\in I,\\; A_{mi} > 0 \\,\\bigr\\} \\qquad (\\max \\emptyset := 0).\n   $$\n   则：\n   - **(4a) 左坍缩 $\\circ$ 右上 Lip**：若 $U_\\phi \\in \\mathcal{U}_D(\\phi)$，$C_\\psi \\in \\mathcal{C}_{\\phi(D)}(\\psi)$，则 $C_\\psi U_\\phi \\in \\mathcal{C}_D(\\psi \\circ \\phi)$。\n   - **(4b) 左上 Lip $\\circ$ 右坍缩**：若 $C_\\phi \\in \\mathcal{C}_D(\\phi)$，$U_\\psi \\in \\mathcal{U}_{\\phi(D)}(\\psi)$，则 $U_\\psi \\diamond C_\\phi \\in \\mathcal{C}_D(\\psi \\circ \\phi)$（从而更粗的矩阵乘积 $S(U_\\psi) C_\\phi$ 亦属于 $\\mathcal{C}_D(\\psi \\circ \\phi)$）。\n   - **(4c) 纯坍缩封闭律**：若 $C_\\phi \\in \\mathcal{C}_D(\\phi)$，$C_\\psi \\in \\mathcal{C}_{\\phi(D)}(\\psi)$，则 $C_\\psi \\diamond C_\\phi \\in \\mathcal{C}_D(\\psi \\circ \\phi)$（且 $S(C_\\psi) C_\\phi \\in \\mathcal{C}_D(\\psi \\circ \\phi)$）。\n\n**证明**：\n- (1)–(3) 由引理 1.1 的保序性与结合律直接串联即得：例如对 $x, y \\in D$，\n  $\\mathbf{d}(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le U_\\psi \\mathbf{d}(\\phi(x), \\phi(y)) \\le U_\\psi (U_\\phi \\mathbf{d}(x, y)) = (U_\\psi U_\\phi) \\mathbf{d}(x, y)$。\n- (4a)：对 $x, y \\in D$，若 $(C_\\psi U_\\phi \\mathbf{d}(x, y))_i < 1$，则由 $(C_\\psi \\mathbf{d}(\\phi(x), \\phi(y)))_i \\le (C_\\psi (U_\\phi \\mathbf{d}(x, y)))_i = (C_\\psi U_\\phi \\mathbf{d}(x, y))_i < 1$（包括 $0 \\cdot (+\\infty) = 0$ 情形），由 $C_\\psi \\in \\mathcal{C}_{\\phi(D)}(\\psi)$ 即得 $d_i(\\psi(\\phi(x)), \\psi(\\phi(y))) = 0$。\n- (4b)：设 $((U_\\psi \\diamond C_\\phi)\\mathbf{d}(x, y))_m < 1$。对所有满足 $(U_\\psi)_{mi} > 0$ 的分量 $i$，由 $(C_\\phi)_{ij} \\le (U_\\psi \\diamond C_\\phi)_{mj}$ 得 $\\sum_j (C_\\phi)_{ij} d_j(x, y) < 1$，故 $d_i(\\phi(x), \\phi(y)) = 0$。而对 $(U_\\psi)_{mi} = 0$ 的分量 $i$，有 $(U_\\psi)_{mi} d_i(\\phi(x), \\phi(y)) = 0$（即使 $d_i(\\phi(x), \\phi(y)) = +\\infty$）。于是 $d_m(\\psi(\\phi(x)), \\psi(\\phi(y))) \\le \\sum_i (U_\\psi)_{mi} d_i(\\phi(x), \\phi(y)) = 0$。又 $U_\\psi \\diamond C_\\phi \\le S(U_\\psi) C_\\phi$，由上闭性即得 $S(U_\\psi) C_\\phi \\in \\mathcal{C}_D(\\psi \\circ \\phi)$。\n- (4c)：设 $((C_\\psi \\diamond C_\\phi)\\mathbf{d}(x, y))_m < 1$。同理可知对所有 $(C_\\psi)_{mk} > 0$ 的 $k$ 均有 $d_k(\\phi(x), \\phi(y)) = 0$，于是 $\\sum_k (C_\\psi)_{mk} d_k(\\phi(x), \\phi(y)) = 0 < 1$（因 $(C_\\psi)_{mk}=0$ 项贡献 $0\\cdot(+\\infty)=0$），由 $C_\\psi \\in \\mathcal{C}_{\\phi(D)}(\\psi)$ 得 $d_m(\\psi(\\phi(x)), \\psi(\\phi(y))) = 0$。 $\\square$\n\n---\n\n"
+            },
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 22608,
+              "end_byte": 23470,
+              "quote": "### 推论 4.3（迭代传播与有限步全局坍缩）\n若 $\\phi(D) \\subseteq D$（例如 $\\mathrm{dom}(\\phi^2) = \\mathrm{dom}(\\phi)$ 且取 $D = \\mathrm{dom}(\\phi)$），则对一切 $n \\ge 1$：\n$$\nU \\in \\mathcal{U}_D(\\phi) \\implies U^n \\in \\mathcal{U}_D(\\phi^n), \\qquad\nC \\in \\mathcal{C}_D(\\phi),\\; U \\in \\mathcal{U}_D(\\phi) \\implies C U^{n-1} \\in \\mathcal{C}_D(\\phi^n).\n$$\n特别地，若 $D$ 具有有限 $\\mathcal{G}$-直径（即 $\\exists \\mathbf{B} \\in [0, +\\infty)^I$ 使 $\\forall x, y \\in D,\\; \\mathbf{d}(x,y) \\le \\mathbf{B}$），$C \\in \\mathcal{C}_D(\\phi)$ 为有限矩阵，且 $U \\in \\mathcal{U}_D(\\phi)$ 为有限矩阵且谱半径 $\\rho(U) < 1$，则 $U^n \\to O$，故存在有限步数 $N \\ge 1$ 使 $(C U^{N-1}\\mathbf{B})_i < 1$（$\\forall i \\in I$），从而 **$\\phi^N(D)$ 完全坍缩为单一的 $\\sim_{\\mathcal{G}}$-等价类**。\n\n---\n\n"
+            }
+          ],
+          "observation_included": true,
+          "observation_note": "原任务未要求；原文已交付正确、非简单重复的独立数学成果。同组论证与推论合并计数，价值另按研究情境判断。"
+        },
+        {
+          "id": "X01",
+          "group_id": "X01",
+          "title": "核心矩阵定义、存在性与极值边界",
+          "statement": "四类矩阵、0∞算术、空域、非分离存在性、下界/上界及坍缩端点等基本性质。",
+          "scope": "required",
+          "correctness": "not_reassessed",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "原题显式所求的正常数学成果及必要边界。",
+          "proof_review": "原六维审核原样保留；不以额外观察重算MC。",
+          "nontrivial_step": "必要定义及其直接验证。",
+          "value_rationale": "价值按本题的研究情境描述；当前观察不以high标签作为计数门槛。 不计额外。",
+          "reason": "不计额外。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 4304,
+              "end_byte": 9995,
+              "quote": "## 2. 核心定义：四类扩展规范估计矩阵\n\n设 $\\phi \\in \\mathcal{X}_{\\mathrm{op}}$，$D \\subseteq \\mathrm{dom}(\\phi)$。\n\n### 定义 2.1（上 Lipschitz 矩阵，Upper Lipschitz Matrix）\n称 $U \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $D$ 上的一个**上 Lipschitz 矩阵**，若\n$$\n\\forall x, y \\in D,\\ \\forall i \\in I,\\qquad d_i\\bigl(\\phi(x), \\phi(y)\\bigr) \\le \\sum_{j \\in I} U_{ij}\\, d_j(x, y),\n$$\n即向量形式 $\\mathbf{d}(\\phi(x), \\phi(y)) \\le U\\,\\mathbf{d}(x, y)$。记所有这类矩阵的集合为 $\\mathcal{U}_D(\\phi)$。\n\n---\n\n### 定义 2.2（下界估计矩阵：直接型与余 Lipschitz 型）\n在多分量伪度量下，一维的“下限” $m\\,d(x,y) \\le d(\\phi(x),\\phi(y))$（等价于 $d(x,y) \\le m^{-1} d(\\phi(x),\\phi(y))$）会分化为两种不等价、各有侧重的矩阵概念：\n\n1. **直接下 Lipschitz 矩阵（Direct Lower Matrix）**：称 $M \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $D$ 上的一个**直接下 Lipschitz 矩阵**，若\n   $$\n   \\forall x, y \\in D,\\ \\forall i \\in I,\\qquad \\sum_{j \\in I} M_{ij}\\, d_j(x, y) \\le d_i\\bigl(\\phi(x), \\phi(y)\\bigr),\n   $$\n   即 $M\\,\\mathbf{d}(x, y) \\le \\mathbf{d}(\\phi(x), \\phi(y))$。其全体记为 $\\mathcal{M}_D(\\phi)$。\n\n2. **余 Lipschitz 矩阵 / 逆 Lipschitz 矩阵（Co-Lipschitz Matrix）**：称 $K \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $D$ 上的一个**余 Lipschitz 矩阵**，若\n   $$\n   \\forall x, y \\in D,\\ \\forall j \\in I,\\qquad d_j(x, y) \\le \\sum_{i \\in I} K_{ji}\\, d_i\\bigl(\\phi(x), \\phi(y)\\bigr),\n   $$\n   即 $\\mathbf{d}(x, y) \\le K\\,\\mathbf{d}(\\phi(x), \\phi(y))$。其全体记为 $\\mathcal{K}_D(\\phi)$。\n\n> **注 2.3（为什么需要同时区分 $M$ 与 $K$？）**\n> 当 $|I| = 1$ 时（忽略 $0/\\infty$ 边界细节后），两者互为倒数关系；但在 $|I| \\ge 2$ 时两者互不包含：\n> - 考虑 $\\mathcal{X} = \\mathbb{R}^2 \\cup \\{\\bot\\}$（$d_1 = |x_1 - y_1|,\\; d_2 = |x_2 - y_2|$）上的可逆线性映射 $\\phi(x_1, x_2) = (x_1 + x_2,\\, x_1 - x_2)$。取 $x - y = (1, -1)$ 得 $d_1(\\phi(x),\\phi(y)) = 0$，取 $x - y = (1, 1)$ 得 $d_2(\\phi(x),\\phi(y)) = 0$，故其**唯一**直接下矩阵为 $M = O$；但它却拥有有限余 Lipschitz 矩阵 $K = \\frac{1}{2}\\begin{pmatrix} 1 & 1 \\\\ 1 & 1 \\end{pmatrix}$，准确刻画了其全局双 Lipschitz 可逆性。\n> - 反之，对投影型算子 $\\phi(x_1, x_2) = (2x_1, 0)$，由于丢弃了第 2 分量，故**不存在**任何 $K \\in \\bar{\\mathbb{R}}_+^{2 \\times 2}$；然而它拥有直接下矩阵 $M = \\begin{pmatrix} 2 & 0 \\\\ 0 & 0 \\end{pmatrix}$，能局部保留第 1 分量的扩张下界。\n> - 直观上：$M$ 与 $U$ 构成**正向夹逼** $M\\mathbf{d}(x,y) \\le \\mathbf{d}(\\phi(x),\\phi(y)) \\le U\\mathbf{d}(x,y)$，而 $K$ 刻画**整体信息不丢失与逆映射的稳健性**。\n\n---\n\n### 定义 2.4（不可区分矩阵 / 坍缩矩阵，Collapse Matrix）\n为了刻画“当输入差异落入一定范畴时，输出在相应分量上不再可区分”，我们提出与上、下 Lipschitz 矩阵完全对等的矩阵定义：\n\n称 $C \\in \\bar{\\mathbb{R}}_+^{I \\times I}$ 为 $\\phi$ 在 $D$ 上的一个**坍缩矩阵（或不可区分阈值矩阵）**，若\n$$\n\\forall x, y \\in D,\\ \\forall i \\in I,\\qquad \\sum_{j \\in I} C_{ij}\\, d_j(x, y) < 1 \\implies d_i\\bigl(\\phi(x), \\phi(y)\\bigr) = 0,\n$$\n即 $(C\\,\\mathbf{d}(x, y))_i < 1 \\implies d_i(\\phi(x), \\phi(y)) = 0$。等价的逆否表述为：\n$$\n\\forall x, y \\in D,\\ \\forall i \\in I,\\qquad d_i\\bigl(\\phi(x), \\phi(y)\\bigr) > 0 \\implies \\sum_{j \\in I} C_{ij}\\, d_j(x, y) \\ge 1.\n$$\n其全体记为 $\\mathcal{C}_D(\\phi)$。\n\n> **注 2.5（矩阵元素 $C_{ij}$ 的几何与算子含义，以及为何采用“严格 $<1$”）**\n> 1. **元素含义**：$C_{ij}$ 的量纲是“输入第 $j$ 分量距离的倒数”（可理解为**分辨率门槛 / 灵敏度逆半径**）：\n>    - $C_{ij} = 0$：由 $0 \\cdot (+\\infty) = 0$，无论 $d_j(x, y)$ 多大（包括 $+\\infty$），都不影响坍缩条件，即**输出分量 $i$ 对输入分量 $j$ 完全不敏感**；特别地，若第 $i$ 行为全 $0$，则 $\\phi$ 在分量 $i$ 上在 $D$ 内常值（模 $d_i=0$）。\n>    - $C_{ij} \\in (0, +\\infty)$：赋予分量 $j$ 一个有限容差权重（1D 时坍缩半径即为 $1/C$）。\n>    - $C_{ij} = +\\infty$：因 $(+\\infty)\\cdot 0 = 0 < 1$ 而 $(+\\infty)\\cdot t = +\\infty \\not< 1$（$t>0$），第 $j$ 分量仅在 $d_j(x,y) = 0$ 时才允许坍缩。特别地，若某行全为 $+\\infty$，仅表达“当输入全分量不可区分时，输出分量 $i$ 不可区分”。\n> 2. **为何取 $< 1$ 而非 $\\le 1$**：\n>    - 逆否条件 $\\sum_j C_{ij} d_j(x,y) \\ge 1$ 是**闭不等式**，使得一维时的极小坍缩系数 $C^* = 1/\\delta_D(\\phi)$ 在边界可达（例如集群间距离恰好为 $\\delta > 0$ 时，$C = 1/\\delta$ 本身合法，若用 $\\le 1$ 则仅 $(1/\\delta, +\\infty]$ 合法且下确界不可达）。\n>    - 且与方盒型条件 $(\\forall j,\\, d_j(x,y) \\le R_{ij}) \\implies d_i(\\phi(x),\\phi(y)) = 0$ 相比（注：方盒若用 $< R_{ij}$ 在 $R_{ij}=0$ 时会退化为空条件，无法表达“要求 $d_1=0$ 但忽略 $d_2$”），线性阈值 $(C\\mathbf{d})_i < 1$ 同时避开了除法与 $\\pm\\infty$ 歧义，并直接与上 Lipschitz 矩阵形成乘法复合（见第 4 节）。在有限维上，方盒与单纯形至多差因子 $|I|$。\n> 3. **局部定点或死区**：若需表达类似 ReLU 在原点附近或某区域内的局部坍缩，只需将作用域 $D$ 取为该区域（此时 $C = O$），或将 $y$ 固定为参考点 $x_0 \\in D$ 得到**定点局部坍缩矩阵**：$(C\\mathbf{d}(x, x_0))_i < 1 \\implies d_i(\\phi(x), \\phi(x_0)) = 0$。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "X02",
+          "group_id": "X02",
+          "title": "普通矩阵串接、零距链与加权标量化",
+          "statement": "U/M/K乘法复合，零距离沿有限链传递，以及正权线性泛函对矩阵距离界的标量化。",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "none",
+          "independent_of_errors": true,
+          "scope_delta": "直接串联不等式、反复三角式或左乘正权，并非另一个独立非简单结果。",
+          "proof_review": "原文证明与正式假设下均可核对；不扩写5.2非正式解释的连通条件。",
+          "nontrivial_step": "只是现有证书或三角不等式的直接应用。",
+          "value_rationale": "价值按本题的研究情境描述；当前观察不以high标签作为计数门槛。 不按引理数量增加成果组。",
+          "reason": "不按引理数量增加成果组。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 25778,
+              "end_byte": 28593,
+              "quote": "### 定理 5.2（链连通空间上坍缩矩阵的刚性定理）\n设 $C \\in \\mathcal{C}_D(\\phi)$，对固定行 $i \\in I$ 记加权伪度量 $\\rho_i(x, y) := \\sum_{j \\in I} C_{ij} d_j(x, y)$（由引理 1.1 知 $\\rho_i$ 满足非负对称与三角不等式）。若 $x, y \\in D$ 之间存在 $D$ 中的有限链 $x = z_0, z_1, \\dots, z_N = y$ 满足 $\\rho_i(z_{k-1}, z_k) < 1$（$k = 1, \\dots, N$），则\n$$\nd_i\\bigl(\\phi(x), \\phi(y)\\bigr) = 0.\n$$\n**推论**：在每个 $(D, \\rho_i)$ 的 $1$-链连通分支上，$\\phi$ 在分量 $i$ 上必常值（模 $d_i=0$）。\n\n**证明**：对每个 $k$ 由 $\\rho_i(z_{k-1}, z_k) < 1$ 及 $C \\in \\mathcal{C}_D(\\phi)$ 得 $d_i(\\phi(z_{k-1}), \\phi(z_k)) = 0$，对 $d_i$ 反复应用三角不等式即得 $d_i(\\phi(x), \\phi(y)) \\le \\sum_{k=1}^N d_i(\\phi(z_{k-1}), \\phi(z_k)) = 0$。 $\\square$\n\n> **意义解释**：该定理阐明了坍缩矩阵 $C$ 在何种结构中取有限非零值：\n> - 若 $(D, d_j)$ 是像 $\\mathbb{R}$ 一样的连通无间隙空间且全行 $C_{ij} < +\\infty$，则刚性定理迫使 $\\phi$ 在分量 $i$ 上全局常值（故行 $i$ 可降为全 $0$）；\n> - 真正非平凡的有限非零 $C_{ij} \\in (0, +\\infty)$ 出现在**非连通 / 聚簇 / 离散间隔 / 分片有效域**（例如以 $+\\infty$ 或正间隔分离的聚类空间、含 margin 的分类/量化算子）或**局部子区域 $D$** 中；而在连通空间中，$C_{ij} \\in \\{0, +\\infty\\}$ 的 $0/\\infty$ 型坍缩矩阵仍非平凡，精确刻画“哪些输入分量可被完全忽略（$C_{ij}=0$）”。\n\n---\n\n### 命题 5.3（加权标量化与压缩归约）\n取任意正权向量 $\\mathbf{w} = (w_i)_{i\\in I} \\in (0, +\\infty)^I$，定义标量加权距离 $d_{\\mathbf{w}}(x, y) := \\sum_{i\\in I} w_i d_i(x, y)$。由于 $I$ 有限非空且 $w_i > 0$，$d_{\\mathbf{w}}$ 仍是满足 CH1(i)–(iv) 的扩展伪度量。\n1. 若 $U \\in \\mathcal{U}_D(\\phi)$ 存在 $\\lambda \\in \\bar{\\mathbb{R}}_+$ 使 $\\mathbf{w}^T U \\le \\lambda \\mathbf{w}^T$（左次特征不等式，即 $\\forall j,\\; \\sum_i w_i U_{ij} \\le \\lambda w_j$），则对一切 $x, y \\in D$ 有\n   $$\n   d_{\\mathbf{w}}\\bigl(\\phi(x), \\phi(y)\\bigr) \\le \\lambda\\, d_{\\mathbf{w}}(x, y)\n   $$\n   （包括 $\\lambda = 0$ 且 $d_j = +\\infty$ 的情形：因 $w_i > 0$ 迫使 $U = O$，两端均为 $0$）。\n2. 对偶地，若 $M \\in \\mathcal{M}_D(\\phi)$ 满足 $\\mathbf{w}^T M \\ge \\mu \\mathbf{w}^T$（$\\mu \\in \\bar{\\mathbb{R}}_+$），则 $d_{\\mathbf{w}}(\\phi(x), \\phi(y)) \\ge \\mu\\, d_{\\mathbf{w}}(x, y)$。\n\n由此，当 $U$ 为有限矩阵且谱半径 $\\rho(U) < 1$ 时，由 Perron–Frobenius 扰动必存在正权 $\\mathbf{w}$ 及 $\\lambda \\in (0, 1)$ 使 $\\mathbf{w}^T U \\le \\lambda \\mathbf{w}^T$，从而将多分量矩阵估计直接归约为经典标量压缩映射（Perov 型不动点框架）。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        },
+        {
+          "id": "X03",
+          "group_id": "X03",
+          "title": "未成立的普遍商/全局/Pareto强化",
+          "statement": "全局U每项∞、单靠反射零距得到商单射、无条件Pareto边界表示。",
+          "scope": "beyond_required",
+          "correctness": "incorrect",
+          "nontrivial": true,
+          "value": "none",
+          "independent_of_errors": false,
+          "scope_delta": "形式上多作断言不构成正确额外成果。",
+          "proof_review": "原三根错误及其source-bound反例/扣罚保留，独立正向工作不因此被抹去。",
+          "nontrivial_step": "没有可核准的额外真定理。",
+          "value_rationale": "价值按本题的研究情境描述；当前观察不以high标签作为计数门槛。 错误旁支不计额外，亦不能抵扣主罚。",
+          "reason": "错误旁支不计额外，亦不能抵扣主罚。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 3619,
+              "end_byte": 4050,
+              "quote": "2. **部分算子边界爆炸**：若 $\\emptyset \\neq \\mathrm{dom}(\\phi) \\subsetneq \\mathcal{X} \\setminus \\{\\bot\\}$，且存在 $x \\in \\mathrm{dom}(\\phi)$、$y \\in \\mathcal{X} \\setminus (\\mathrm{dom}(\\phi) \\cup \\{\\bot\\})$ 使 $d_j(x, y) < +\\infty$，则 $d_i(\\phi(x), \\phi(y)) = +\\infty$ 迫使全空间上所有 $U_{ij} = +\\infty$ 且所有下界 $M_{ij} = 0$，从而淹没 $\\phi$ 在 $\\mathrm{dom}(\\phi)$ 上的精细结构。\n\n"
+            },
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 10754,
+              "end_byte": 11140,
+              "quote": "3. **对 $\\mathcal{K}_D(\\phi)$**：以下三个条件等价：\n   - (a) $\\mathcal{K}_D(\\phi) \\neq \\emptyset$；\n   - (b) $\\mathbf{\\infty} \\in \\mathcal{K}_D(\\phi)$；\n   - (c) $\\phi|_D$ **反射 $\\mathcal{G}$-不可区分性**（即 $\\forall x, y \\in D,\\; \\phi(x) \\sim_{\\mathcal{G}} \\phi(y) \\implies x \\sim_{\\mathcal{G}} y$，亦即在商空间 $D/\\!\\sim_{\\mathcal{G}}$ 上单射）。\n\n"
+            },
+            {
+              "source_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "start_byte": 17563,
+              "end_byte": 18414,
+              "quote": "2. **多维非唯一性（$|I| \\ge 2$）**：当输入规范分量间存在耦合时，一般**不存在**逐元素最小的上 Lip / 坍缩矩阵或逐元素最大的下矩阵，合法集合由 Pareto 极小（大）边界刻画。\n   - **例**：取 $\\mathcal{X} = \\mathbb{R} \\cup \\{\\bot\\}$，$I = \\{1, 2\\}$ 且 $d_1 = d_2 = |x - y|$，$\\phi = \\mathrm{id}_{\\mathcal{X}}$。则第 1 行在 $\\mathcal{U}(\\mathrm{id})$ 中的条件为 $U_{11} + U_{12} \\ge 1$，故 $(1, 0)$ 与 $(0, 1)$ 均为极小行向量，但其逐元下确界 $(0, 0) \\notin \\mathcal{U}_1(\\mathrm{id})$。同理 $(1, 0), (0, 1)$ 在 $\\mathcal{M}_1(\\mathrm{id})$ 中均为极大元而逐元上确界 $(1, 1) \\notin \\mathcal{M}_1(\\mathrm{id})$；若取 $\\mathcal{X} = \\mathbb{Z} \\cup \\{\\bot\\}$，坍缩矩阵第 1 行满足 $C_{11} + C_{12} \\ge 1$，亦无唯一最小元。\n\n---\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "现有核验尚未确认闭合且正确的数学成果，不计入已核实额外成果组。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

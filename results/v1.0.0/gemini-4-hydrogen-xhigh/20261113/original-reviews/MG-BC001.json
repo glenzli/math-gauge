@@ -1,0 +1,69 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-BC001:A1",
+    "case_id": "MG-BC001",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-BC001:A1",
+      "evidence_id": "ace44e318852a4da6ab69ea4e5da0a8c6ded05e5b23ee2fe298734d52668b12c",
+      "response_sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+      "history_sha256": "4ae01430f764df7d3ab275d46816093aedbfcbe8bb64c96fc2c3bccd63abcbd3",
+      "projected_request_sha256": "cdd14aa686022992283d62215a632cd62a48b19d6da0c39eb781c1c16a9ceec0",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "f9c3a9bd038d41378e55fb3657a7727b614cc8b128fbc527a68be0922ef8bb81",
+      "body_origin": {
+        "slot_id": "MG-BC001:A1",
+        "response_sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+        "start_byte": 0,
+        "end_byte": 24997
+      },
+      "body_sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+      "rationale_sha256": null,
+      "request_sha256": "cfcca77856d4a354dd7772f23662abd2c37b34ac300000c12c7008133978656f",
+      "group_contract_sha256": "8b7cdc0511da4d6e14a9df7322389b3e04722c46916d68b332b342703439c1de"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "背景核查A1：background_R=3，complete=true，false_endorsement=false，S-corrected。三个累积criterion各1/1；原source-rubric为A3/B3/C4。原答明确推翻四相正能隙错误升级，给四步模型特定循环分裂，并通过真实矩形锯齿截断构造闭合零迹、统一梯度界与能量趋零证据。独立证明不取到及任意最小序列相分数唯一。全部实质任务完成，Strict通过。新增RMC处罚建议0；运行资格与人工批准另行处理。",
+    "findings": [],
+    "group_contract_sha256": "8b7cdc0511da4d6e14a9df7322389b3e04722c46916d68b332b342703439c1de",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "criteria": [
+      {
+        "criterion_id": "gap-diagnosis",
+        "score": 1,
+        "notes": "1/1。第7–20行保留六个正确两井差行列式，明确否定无两井直接秩一连接⇒四相正能隙的推广；第22–36行区分井与中间状态，识别循环机制。"
+      },
+      {
+        "criterion_id": "model-specific-certificate",
+        "score": 1,
+        "notes": "1/1。第22–34行给0/P3/P2/P1四个实际中间矩阵及精确权重1/4、1/3、1/2、1/3，残余一轮1/6。第137–191行用真实矩形位移、梯形截断与周期锯齿递归实现，而非任意矩阵场或抽象概率测度。"
+      },
+      {
+        "criterion_id": "complete-correction",
+        "score": 1,
+        "notes": "1/1。第166–178、198–230行验证每步边界精确拼接、截断带冻结而误差不累加、梯度<=sqrt(153)/4<4，以及E(u_j)<=5*6^(-j)+36/j->0。第52–65行以零迹Poincare证明不能有精确四井解；第77–129行以最近井L2误差、弱极限对角性与det散度约束证明任意最小序列相分数趋(1,3,3,3)/10，并在第232–243行独立核验构造比例。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.183526+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "3a4cdbed13b7a79fa38536566b8b06c125205f848d7a54d49e7a89bcea9b433d"
+  },
+  "original_private_review_sha256": "b45ed7c91776a3fa8d3cc82cc2193123a357fc0040611183282e43328d60aa0f"
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-GR021:A1",
+    "case_id": "MG-GR021",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-GR021:A1",
+      "evidence_id": "15e0ee57ae41789f8f89f652cd3141d2d2c49cc29833054e91050f6ce128a642",
+      "response_sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+      "history_sha256": "d2be03d124e857b89b5a1563c7fbc0c057b67b24f815a39e490ac11152c613c3",
+      "projected_request_sha256": "4333ce2776a459ca4a95f7b081e34e73f5de066e26a222c400fcb8178d7d80bf",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "0585a27912b010c6333fe3081a9dcc18e2fceac66aa4416cc6622c1d5ce85efa",
+      "body_origin": {
+        "slot_id": "MG-GR021:A1",
+        "response_sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+        "start_byte": 0,
+        "end_byte": 51987
+      },
+      "body_sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+      "rationale_sha256": null,
+      "request_sha256": "680e454d2f9c28de21b5701b8d8b4bfb0139b1fd53dd28eba586fbfe5c40c13e",
+      "group_contract_sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "仅审首份正常完整交卷的 sealed/answer.md。按 written_proof 连续 criteria 合同逐项核验，不使用S阶段。原始30/25/15/20数学分与10分独立附带断言可靠性均满额，整体严格完成通过。原答保留非幂等输入、整数环/模2O、模4耦合、真实截断/有限同余差别与全部秩/精度边界；无新增RMC处罚建议。运行身份、隔离资格和人工批准由主控另行核验。",
+    "findings": [],
+    "group_contract_sha256": "a3191cb0a49900e7575afc598a3a3aefda0897bfbe698feea032bef0e67b4dd2",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "criteria": [
+      {
+        "criterion_id": "feasibility_counts_liftability",
+        "score": 30,
+        "notes": "30/30，三个冻结子检查各10/10。第32–72行从原始交换对称、模2标准投影输入构造精确P，并经B与G_i约化，未增强输入。第80–111行给只依赖A_i mod4的s_i，证明可行当且仅当全部s_i=0：必要性在两扩域仍成立，充分性以G_i=I mod4、det G_i=1 mod8做基域对角化及成对5类消去。第125–155行按每层对角多一位条件构造真2进提升，含M=2；第159–183行给原矩阵列范数判据与所有精确计数、空集条件。O_K/2O_K被正确当成非约化4元环，未当成F4。"
+      },
+      {
+        "criterion_id": "fixed_classes_and_orbits",
+        "score": 25,
+        "notes": "25/25 = 具体类15 + 固定/轨道计数10。第193–239行给唯一表示U0+2^(M-1)theta Y及C、R具体类；特别第216–239行明确Q2(i),M=2的常系数列范数与Y度数耦合，U0允许C_F,2而非强制R_F,2，且给其满射投影与纤维。第241–253行固定点/轨道闭式覆盖M=2、D=0与不可行输入；与总数独立核对一致。"
+      },
+      {
+        "criterion_id": "reduction_maps_and_fixed_lifts",
+        "score": 15,
+        "notes": "15/15 = 四类约化像/纤维10 + 固定真提升/相容塔5。第255–268行逐一给R->R满射及q^D纤维、C->C像R及q^(D+d)纤维、固定R像嵌入R_F且4^D纤维、固定C像嵌入R_F且4^(D+d)纤维。源M+1总>=3，因而其论证正确包括目标M=2。第270–276行分别证明固定真提升及相容固定塔分量恰为R_F,M，并有实际非固定真解截断的反例。"
+      },
+      {
+        "criterion_id": "optimal_quantitative_descent",
+        "score": 20,
+        "notes": "20/20，两个冻结子检查各10/10。第282–305行证明全部秩1时S_K=S_F、Nmax=M；有块秩>=2时可保证N=M-1，包括M=2。第307–329行对每种固定块秩、两个mu及任意M构造实际整系数正交旋转证明不能统一保留M：M>=3与mu=2,M=2用基域Hensel平方根；Q2(i),M=2用b=2+2i、a^2=1-8i，避免非法Cayley分母。第291–294、331–335行给具体U保留M的充要条件U的theta系数被2^M整除，等价sigmaU=U mod2^(M+1)，并证明基域真提升。"
+      },
+      {
+        "criterion_id": "assertion_reliability",
+        "score": 10,
+        "notes": "10/10。已核查标准局部域事实的适用性、G_i determinant mod8公式、对角化/成对消去、两模2环平方映射、偶图维数、固定投影纤维、以及实际反例的Hensel估值；未发现独立错误附带断言。第187行对平方省略2^(2M-2)高阶项，在所用M>=3及模2^(M+1)下该项确实为零，是不影响论证的模算术省写。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.179810+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "4b32e41c427b3c2bc50d81195a769faacf9a063716ba07800e7c4af724c8968d"
+  },
+  "original_private_review_sha256": "da7d6a92020846e4b0e8417d7076be2b6dcb36dc7ad6d874cc63dd523ce4b915"
+}

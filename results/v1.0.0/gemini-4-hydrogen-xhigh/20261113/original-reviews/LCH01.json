@@ -1,0 +1,321 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "LCH01": {
+      "case_id": "LCH01",
+      "response_sha256": "b4efe5ed36d96176fb64ed2f1c004a44555cda59178315769f587cc43b660e56",
+      "reviewer": "Sol 6.1 max, independent evaluator",
+      "reviewer_kind": "ai",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "notes": "独立核对physical-4正常final及封卷源码，8/8冻结义务通过。显示矩阵/箭头指标与乘法桥正确；Lip/co-Lip域及非空性完整；单行任意输入和对角特例齐全；正通道保持正距及族零距反射未暗加分离性；习题2.2仅要求L单行稀疏，K不受额外稀疏限制。额外非分离反例为真实合法构造。主评审实际Main闭包编译与公理审计通过，固定输入未改，原答3个Lean块和alignment与工程逐字相同。无跨attempt内容合并，AI判断、人审pending。",
+      "findings": [],
+      "group_contract_sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+      "stages": [
+        {
+          "stage_id": "CH02-D01",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.IsLipMatrix"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.lipMatrices"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.IsRestrictedLipMatrix"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedLipMatrices"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedLipMatrices_subset_dom"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.isRestrictedLipMatrix_dom_iff"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedLipMatrices_dom_eq"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedLipMatrices_antitone"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.lipMatrices_subset_restrictedLipMatrices"
+            }
+          ],
+          "notes": "实际声明定义全域 IsLipMatrix/lipMatrices 与受限 IsRestrictedLipMatrix/restrictedLipMatrices；受限定义本身含 U⊆dom ϕ 和完整 x,y∈U、输出 j 量词。dom 受限与全域族等价已证明，附加单调性也有效。 边界：允许空 Lip 域；ENNReal 距离及系数可∞；声明对一般 d 和有限 I 更强，在原题有限非空合法 gauge 上直接特化。"
+        },
+        {
+          "stage_id": "CH02-D02",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.IsRestrictedCoLipMatrix"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedCoLipMatrices"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedCoLipMatrices_nonempty"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedCoLipMatrices_subset_dom"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedCoLipMatrices_empty"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.restrictedCoLipMatrices_antitone"
+            }
+          ],
+          "notes": "IsRestrictedCoLipMatrix 显式合取 U.Nonempty、U⊆dom ϕ 与所有输出下界，证书族为对应 Set；投影非空/合法域、空集证书族为空及非空域上的单调性均有证明。 边界：没有遗漏 co-Lip 非空条件；允许0、∞及∞·0=0；未加入有限距离或分离性。"
+        },
+        {
+          "stage_id": "CH02-D03",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.GaugeMatrix"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.channelEntry"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.ofChannelEntries"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.channelEntry_ofChannelEntries"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.gaugeMatrix_ext"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.channelEntry_mul"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.channelEntry_one"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.gaugeMatrix_mul_assoc"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.gaugeMatrix_one_mul"
+            },
+            {
+              "file": "GaugeMatrix.lean",
+              "name": "LCH01.gaugeMatrix_mul_one"
+            }
+          ],
+          "notes": "GaugeMatrix 采用 Matrix I I ENNReal 的输出行/输入列表示，channelEntry M i j=M j i。ofChannelEntries 及其读取定理、ext 引理给出表示对应，channelEntry_mul 精确证明 M₂M₁ 的输入到输出公式；结合/单位律亦交付。 边界：不同表示有实际桥；输入 i、输出 j 独立；非交换矩阵乘积顺序正确；无要求按参考存储。"
+        },
+        {
+          "stage_id": "CH02-D07",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.ComponentChannel"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.sameComponentChannel"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.channelCoeff"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.IsInactiveChannel"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.IsSingleInputRow"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.IsDiagonalInputRow"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.IsDiagonalMatrix"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.diagonalGaugeMatrix"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.channelEntry_diagonalGaugeMatrix"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.diagonalGaugeMatrix_isDiagonal"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.one_isDiagonalMatrix"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.isDiagonalMatrix_iff_forall_singleInputRow"
+            }
+          ],
+          "notes": "ComponentChannel 的 input/output 两字段正好表示任意有序通道；IsSingleInputRow M i j 量化全部 k≠i 的输出 j 行系数为零。IsDiagonalInputRow 是 i=j 特例，IsDiagonalMatrix 与全部对角输入行等价并有实际证明。 边界：唯一输入不必等于输出；对角例构造和等价桥齐全；零系数仅描述所选上界证书。"
+        },
+        {
+          "stage_id": "CH02-P19",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.sum_omit_of_inactive_channel"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.sum_eq_single_of_singleInputRow"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.singleInputRow_lip_reduction"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.diagonal_lip_reduction"
+            }
+          ],
+          "notes": "sum_eq_single_of_singleInputRow 从任意 i,j 的单行稀疏推出整个有限和等于 Lij·di；singleInputRow_lip_reduction 将此等式接到合法 Lip 界，并明确保留全部点对量词。diagonal_lip_reduction 给全部对角分量特例。 边界：任意非对角通道；d_i 可∞且0∞=0；没有把化简结论作为证书字段或前提。"
+        },
+        {
+          "stage_id": "CH02-P20",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.pos_colip_channel_preserves_pos_dist"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.pos_colip_componentChannel_preserves_pos_dist"
+            }
+          ],
+          "notes": "pos_colip_channel_preserves_pos_dist 从 co-Lip 和中提取 Kij·di，利用 ENNReal 正乘积推正输出距，另有 ComponentChannel 封装。合法 co-Lip 的非空与域包含由实际前提保持。 边界：0<Kij 与0<di严格；Kij或di可∞；不要求分离性、有限距离或额外稀疏。"
+        },
+        {
+          "stage_id": "CH02-P21",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.diag_pos_colip_reflects_gauge_zero_related"
+            },
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.diag_pos_colip_not_implies_eq"
+            }
+          ],
+          "notes": "diag_pos_colip_reflects_gauge_zero_related 对每个分量用 P20 反证，结论直接复用冻结 CH1 的 GaugeZeroRelated。额外交付 Fin3、Unit、普通两点零距、bot隔离∞、id、K=1 的合法非分离反例，逐项证明 gauge 公理，证实不能推出点相等。 边界：不假定族分离；只反射族零距而非单射；反例域非空且在真实 dom 中，未假定反例结论。"
+        },
+        {
+          "stage_id": "CH02-P25",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "ComponentChannel.lean",
+              "name": "LCH01.scalar_two_sided_bound_of_diagonal_input"
+            }
+          ],
+          "notes": "scalar_two_sided_bound_of_diagonal_input 的稀疏前提只有 IsDiagonalInputRow L j；上界用 P19，下界从任意合法 K 的和中取对角项。逐点对给 Kjj·dj≤输出距≤Ljj·dj，正好匹配冻结习题2.2全部内容。 边界：K 不必对角或稀疏；非空和域包含由证书合法性提供；允许系数与距离∞；不新增未选全章义务。"
+        }
+      ],
+      "candidate_lean_report": "LCH01/evaluator-lean/receipt.json",
+      "candidate_lean_report_sha256": "b96989060fd6fba0cb99b74494d94ad6a6918c7267ce500bf80d2863abb62a49",
+      "recorded_at": "2026-11-13T09:13:24.799610+00:00"
+    }
+  },
+  "original_private_review_sha256": "89e1c92dfe8bec896bea504a701cb456fe507606b19073e292ace237adba8c4c"
+}

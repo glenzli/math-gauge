@@ -49,6 +49,19 @@ class RecordIntegrityTests(unittest.TestCase):
         self.assertTrue(self.check()["passed"])
         self.assertEqual(evidence_bytes(self.root, self.file), self.raw)
 
+    def test_new_edition_keeps_original_byte_integrity_checks(self):
+        self.record['benchmark_version'] = '1.0.0'
+        self.assertTrue(self.check()['passed'])
+        (self.root / 'answer.md').write_bytes(self.raw + b'edited')
+        with self.assertRaisesRegex(ValueError, 'bytes changed'):
+            self.check()
+
+    def test_unsupported_record_editions_are_rejected(self):
+        for version in ('0.9.9', '1.0.1', '../1.0.0'):
+            self.record['benchmark_version'] = version
+            with self.subTest(version=version), self.assertRaisesRegex(ValueError, 'Unsupported'):
+                self.check()
+
     def test_modified_answer_or_quote_is_rejected(self):
         for field, value in [("start_byte", 6), ("quote", "全部完成")]:
             changed = copy.deepcopy(self.assessment)

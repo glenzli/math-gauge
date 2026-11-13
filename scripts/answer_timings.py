@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from math_gauge.timings import check_pair
+from math_gauge.editions import result_archive
 
 
 def main():
@@ -20,7 +21,7 @@ def main():
     records["dot-underlying-model-20261108"] = "20261108"
     checked = []
     for model, record_id in records.items():
-        relative = Path("results/v0.6.0") / model / record_id
+        relative = Path(result_archive(edition, model)) / model / record_id
         public, private = args.public_root / relative, args.private_root / relative
         if not (public / "answer-timings.json").exists():
             checked.append({"model_id": model, "status": "not_supplied"})

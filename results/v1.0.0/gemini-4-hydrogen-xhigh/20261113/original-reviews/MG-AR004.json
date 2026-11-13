@@ -1,0 +1,73 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-AR004:A1",
+    "case_id": "MG-AR004",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-AR004:A1",
+      "evidence_id": "66c22d1567fb725ca642d16628aa3e81325b59a2b7ca0425725e3e5bf6cb863b",
+      "response_sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+      "history_sha256": "c51faddd9f5c2e9409c0df6aeaf8871b774617e5fb54580f54ebd7deeb2a47b1",
+      "projected_request_sha256": "f0597edd654bade0a92b43db96d6a2c6041024e3daa9b7b29d0bede889e6f52d",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "620a17d2d08b3959ff24795b48b051a42a12e0ff20ddc48db9a9d090fe127db9",
+      "body_origin": {
+        "slot_id": "MG-AR004:A1",
+        "response_sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+        "start_byte": 0,
+        "end_byte": 27209
+      },
+      "body_sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+      "rationale_sha256": null,
+      "request_sha256": "df15a3e6b4a96d9663ad82ab14198f13796f79f4900061131b20bfeffe5ce2a6",
+      "group_contract_sha256": "f644b57696ecd102fc6e92d720457055a8f07056326032d8890db242ff383b45"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "独立审核正常封存首答；按冻结子检查full/half/zero累计为60/60、27.5/30、10/10，共97.5/100。核心发现、合法反例与实际依赖定位准确；未把Pic的全局反例当成原半局部目标反例，保留其余阶段。source_hypotheses因未明确拆分任意域的度零/半局部结论与经典高次比较的完美域条件给半分2.5/5；这是范围核查不完整，不判定错误核心承诺。major_error=false，Strict因该检查未实质完成而不通过。新增RMC处罚建议0。",
+    "findings": [
+      "source_hypotheses未完整区分：第115行只称层化定理“完全版本通常在完美域”，没有明确分开度零层化/半局部比较与高次上同调比较；第85行仍承认原任意域目标成立，故不解释为给本题暗加完美域条件。"
+    ],
+    "group_contract_sha256": "f644b57696ecd102fc6e92d720457055a8f07056326032d8890db242ff383b45",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "core_judgment",
+        "score": 60,
+        "notes": "60/60。global_injectivity=25/25：第87–110行明确否定任意光滑积分Y的稠密开单射/全局分离，仍承认半局部目标真。localization_claim=10/10：第31–42行以n=1和两点A1例反驳正维即非有限生成，并用不连通A2并例准确回应原拓扑段的维数>=2条件；保留“不必开”。actual_closed_points=15/15：第124行识别可比较点、要求保留极大素理想并说明M/S/邻域余极限不变。target_and_retention=10/10：第85、107–110行把错误限制于当前S5证明，同时保留S2的正确图追与S3/S4/S6。"
+      },
+      {
+        "dimension_id": "evidence_scope",
+        "score": 27.5,
+        "notes": "27.5/30。legal_counterexample_dependency=15/15：第97–105行核验Pic的转移/同伦不变资格，Pic(P1)=Z->Pic(A1)=0，O(1)局部平凡给全局非分离；第108行精确指出它被用于T=S1×S2和S′×Sn交上单射，第110行分离商修复与原答已有证明分开。localization_scope=10/10：第33–39行反例合法；一维例仅反驳无条件代数句，另用A2不交并满足拓扑句高维条件，没有把所有光滑曲线说成积分PID或把维数作充要判据。source_hypotheses=2.5/5：第115、118行谨慎提示有限/非完美域与引文条件，但未明确区分任意域度零层化/半局部结论和经典高次上同调比较的完美域条件；范围核查中心关切正确但不完整。"
+      },
+      {
+        "dimension_id": "completeness",
+        "score": 10,
+        "notes": "10/10。other_stages=10/10：第25–26行核查有限积/等化子余极限，给交邻域余终的代数依据；第50–59行保留S2图追并讨论共同细化/收缩；第68–77行有内容验证S3典范同构与S4空子系统；第135–137行精确核验S6每阶段Z/2而极限Z[1/2]正合及逐同调类消失论证。审阅不要求重做母题或Lean。"
+      }
+    ],
+    "major_error": false,
+    "major_error_notes": "未发现明确接受核心数学假断言、把当前证明失效升级成主命题为假，或用非法反例否定有效核心结论。第85、107–110行准确把Pic反例限制于全局单射/分离性，定位到S5比较图交上的单射；第10–13、50–52、68–77、135–137行保留独立成立内容。第115行引文条件比较不完整按source_hypotheses半分记录，不自动重大。",
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.182327+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "f3337369148f416daee4d4c76d922196d1723e5ed46bd78eba0b8664c0989ce4"
+  },
+  "original_private_review_sha256": "87b9b21133bdc024fbb353696cb998e11f7ecdf84b355274be311847a58f9198"
+}

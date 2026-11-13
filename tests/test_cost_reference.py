@@ -399,6 +399,7 @@ class CostReferenceTest(unittest.TestCase):
     def test_last_recovered_failure_excludes_earlier_native_counters(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
+            (root / 'benchmark.json').write_text(json.dumps({'version': '0.6.0'}))
             archive = root / "results/v0.6.0/sol-6.1-max/example"
             archive.mkdir(parents=True)
             record = {"records": [{"id": "T000:A1", "source": {"native_metadata": {
@@ -430,6 +431,7 @@ class CostReferenceTest(unittest.TestCase):
     def test_display_joins_source_scores_and_rejects_stale_record_bytes(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
+            (root / 'benchmark.json').write_text(json.dumps({'version': '0.6.0'}))
             archive = root / "results/v0.6.0/sol-6.1-max/example"
             archive.mkdir(parents=True)
             source = archive / "record.json"; source.write_text("{}")

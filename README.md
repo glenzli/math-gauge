@@ -49,7 +49,7 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 当前聚合0.9.0／MC0.3.0／SMC0.2.0，另绑提交来源0.1.0。三项分数采用同一组规则选定答卷、家族与权重。错误成果不得按“完成了”计分；编译通过也须另审是否对齐原数学目标。诚实地报告未完成，与错误宣称完整，会产生不同的可靠性结果。
 
-另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 14 个模型的 67／70 个手稿槽。
+另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 15 个模型的 72／75 个手稿槽。
 
 ## 当前总榜
 
@@ -66,10 +66,11 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
 | [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
+| [Gemini Hydrogen (xhigh)](site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
 | [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
 | [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
-| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37／2／39 |
-| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38／1／39 |
+| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 77.00 | 60.91 | 37.92 | 38／1／39 |
+| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 61.82 | 40.43 | 13.75 | 38／1／39 |
 | [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21／5／39 |
 
 逐轮来源和完整分数区间见模型详情。主动交卷与强收有内容互斥；无正常交卷时RMC／SMC为0，MC可审核原成果。
@@ -80,7 +81,9 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 ³ GLM 5.3 在 Codex CLI 和 Claude Code 中均出现大量超时；留档采用 Claude Code。无正常交卷时RMC／SMC为0，MC仅计经核实的截止原成果；三轮自查未执行。
 
-⁴ Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。
+⁴ AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。
+
+HCH02因AGY回传故障恢复的原答已按既有规则补审计入，原始ERROR和旧成绩保留；benchmark1.0.0与评分方法不变，见[故障更正说明](docs/harness-corrections.md)。
 
 当前结果由 AI 评审并有部分人工抽审：Sol 6.1 Max 全审，Astra 6 Max 与 Dot 抽审核对。具体审核身份、证据与局限见[审核方式](docs/review-process.md)，逐模型分析见[结果报告](docs/results.md)。
 
@@ -92,7 +95,7 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 两张前沿图默认使用RMC：总成本采用从0开始的线性美元刻度，典型题耗时以分钟计。实心点表示39道初答均正常交卷，其余为空心；颜色对应模型品牌。耗时包含工具与等待，受Harness、网络和硬件影响，见[计算方式与来源](docs/answer-timings.md)。
 
-成本每题只计留档采用的尝试，其他重试不计。Dot使用测试日订阅附赠的独立额度，额外费用为$0；其余按公开API价格折算并计缓存优惠。完整用量、价格与来源见[成本说明](docs/cost-reference.md)，[交互图表](site/index.html#cost-frontier)可切换分数与横轴。
+成本每题只计留档采用的尝试，其他重试不计。Dot使用测试日订阅附赠的独立额度，额外费用为$0；有可核实单价的模型按公开API价格折算并计缓存优惠。Hydrogen通过AGY订阅运行，按官方Standard API价格与42份原生用量折算为$51.63。Argon的$33.84为截至2026-11-30的限时五折价；12月起相同用量约$67.67。完整用量、价格与来源见[成本说明](docs/cost-reference.md)，[交互图表](site/index.html#cost-frontier)可切换分数与横轴。
 
 排行榜发布测试流程已结束并选定留档的结果；后续测试结算后再上榜。[交互页面](site/index.html)提供分类榜、两率、分数落差、独立成本和耗时排序，支持切换MC／RMC／SMC、中英文及URL分享。模型页保留逐题结果、自查执行状态和分数区间。
 

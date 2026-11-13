@@ -27,7 +27,9 @@
       "cli_identity_sha256": "074e9e97879ae423263c7174dfb18bfe58ab4edfc3d1626b026d323a66195aa4",
       "execution_plan_sha256": "b026977082c6ad2b74a0ca5d7596567371a0bf32d1c71c00a1cc00fbdeb9d4cb",
       "detail": "原生补测使用AGY CLI；MG-MCP003留档版本1.5.2。各批次具体条件见源记录。",
-      "tool_usage": "MG-MCP003实际调用7次本地命令；允许工具不等于每题必须使用。"
+      "tool_usage": "MG-MCP003实际调用7次本地命令；允许工具不等于每题必须使用。",
+      "note_marker": "⁴",
+      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。"
     },
     "deepseek-v4.1-flash-1017": {
       "name": "Codex CLI",
@@ -73,14 +75,14 @@
         "gemini-4-argon-high"
       ],
       "observed_effort": null,
-      "detail": "订阅批次AGY CLI1.5.2；GCP批次AGY CLI1.5.4。39道初答均已结算：37份正常交卷，2项未正常交卷；C003三轮因初答未正常交付而未调用。原生证据按批次分别保留。",
+      "detail": "订阅批次AGY CLI1.5.2；GCP批次AGY CLI1.5.4。39道初答已结算：37份原CLI正常交卷，HCH02后端原答因回传故障恢复并接纳，C003仍未正常交卷。当前交付38／强收1；C003三轮未调用。原生ERROR、原记录与更正来源分别保留。",
       "tool_usage": "允许本地文件、命令与固定Lean依赖；实际调用见逐题原始记录。",
       "observed_versions": [
         "1.5.2",
         "1.5.4"
       ],
       "note_marker": "⁴",
-      "note_text": "Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。"
+      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。"
     },
     "sol-6.1-max": {
       "name": "Codex CLI",
@@ -263,6 +265,32 @@
       },
       "detail": "Claude Code 2.1.303。主批共享临时目录问题及阅卷前的一次隔离替换留档；C003原答工程恢复后按原字节核验。",
       "tool_usage": "39道选定初答中38道实际使用本地工具，共559次；允许本地工具及预置公共依赖，禁止工具联网。"
+    },
+    "gemini-4-hydrogen-xhigh": {
+      "name": "AGY CLI",
+      "version": "1.5.7",
+      "authentication": "consumer subscription",
+      "gcp_used": false,
+      "requested_model": "gemini-4-hydrogen-xhigh",
+      "requested_effort": "xhigh",
+      "observed_model_labels": [
+        "gemini-4-hydrogen-xhigh"
+      ],
+      "observed_effort": null,
+      "backend_sku": null,
+      "local_tools_allowed": true,
+      "tool_network_access": false,
+      "search_allowed": false,
+      "record_sha256": "478a6e78a3da3e959eb423a6f1c18561ff12d201e664a343bf4ca89a245c8934",
+      "shared_evaluator": "Math Gauge",
+      "version_scope": "本次39份初答及三轮对齐自查",
+      "observed_versions": [
+        "1.5.7"
+      ],
+      "detail": "AGY CLI1.5.7，consumer订阅，xHigh；39份初答及三轮固定自查均正常交卷。允许本地工具，禁止工具联网和检索。",
+      "tool_usage": "允许本地文件、命令与预装公开依赖；实际调用由逐题原生记录留证。",
+      "note_marker": "⁴",
+      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。"
     }
   }
 }

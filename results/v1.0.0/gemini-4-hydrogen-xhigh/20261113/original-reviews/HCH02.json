@@ -1,0 +1,1077 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "HCH02": {
+      "case_id": "HCH02",
+      "response_sha256": "307eb7d3670ac42b7077dbc1c6f1d56a3dd6a82a2cb9342e066b083595e894e6",
+      "reviewer": "Sol 6.1 max, independent evaluator",
+      "reviewer_kind": "ai",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "notes": "逐项独立核对原答命名块、实际声明和完整40项冻结合同，40/40通过。输入优先矩阵转显示矩阵、CH1反序OperatorChain、实际像域和逐步证书字段、全部无约束索引路径、零/∞运算、正有限inf取到和合法零inf不取到反例、仅L稀疏的双侧界及族零距反射全部匹配。实际Main import闭包由主评审独立编译并审计，未修复源，原回复块与封卷工程逐字一致。AI判断，人审pending；本收据为evaluator metadata binding，不是候选模型原生产物。",
+      "findings": [],
+      "group_contract_sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646",
+      "stages": [
+        {
+          "stage_id": "HC02-D01",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsLipMatrix"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.LipSet"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRestrictedLipMatrix"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.LipRestricted"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipRestricted_dom_eq_lipSet"
+            }
+          ],
+          "notes": "IsRestrictedLipMatrix 的第一合取项明确 U⊆dom，后接全部 x,y∈U 和输出 j；LipSet 在 dom 上量化并证明受限 dom 与全域族相等。没有给 Lip 的 U 增加非空限制。 边界：有限非空指标集；ENNReal 系数和距离；允许空 U；d 不必分离或有限。"
+        },
+        {
+          "stage_id": "HC02-D02",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRestrictedCoLipMatrix"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipRestricted"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_mem_coLipRestricted"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.top_entry_mem_coLipRestricted_of_zero_dist"
+            }
+          ],
+          "notes": "CoLipRestricted 的定义本身含 U.Nonempty、U⊆dom 和每个输出的有限和下界；零矩阵及合法 ∞ 条目的辅助证明实际使用 ENNReal 的乘法边界。 边界：非空性不能省去；0 与 ∞ 均允许；未以有限距离代替扩展距离。"
+        },
+        {
+          "stage_id": "HC02-D03",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.GaugeMatrix"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplayMatrix"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ofDisplayMatrix"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplayMatrix_apply"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matMul"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matMul_apply"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplayMatrix_mul"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matMul_assoc"
+            }
+          ],
+          "notes": "GaugeMatrix 输入 i、输出 j；toDisplayMatrix 的 j 行 i 列等于 M i j，反向映射互逆。matMul M₂ M₁=Σk M₂ k j·M₁ i k，toDisplayMatrix_mul 证明与普通矩阵乘法对应。 边界：非对角指标独立；乘法顺序显式；ENNReal 半环运算无有限性限制。"
+        },
+        {
+          "stage_id": "HC02-D04",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.idMatrix"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplayMatrix_id"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_zero"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_one"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_two"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matListProd"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matListProd_ofFn"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.idOperator"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.opComp"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.opSeqComp"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.opSeqComp_zero"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.opSeqComp_one"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.opSeqComp_eq_operatorChain"
+            }
+          ],
+          "notes": "idMatrix、matProd 的零步/单步定理及列表乘积桥保持执行顺序 0,…,k−1 对应 M_last…M_first。opSeqComp_eq_operatorChain 显式用 List.ofFn ops 的 reverse 匹配冻结 CH1 的头部最后施行约定。 边界：k=0 单位；k=1 唯一矩阵/算子；k=2 顺序；CH1 声明未覆盖。"
+        },
+        {
+          "stage_id": "HC02-D05",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.subset_dom_opComp_iff"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.prefixOpComp"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainDomainAux"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainDomain"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainDomain_zero"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainDomain_succ"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainDomain_last_eq_image"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainDomain_subset_dom"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChainData"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChainData"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipChain_domains_nonempty"
+            }
+          ],
+          "notes": "chainDomain 递归定义真正像域并证明末像等于完整复合像；由初域包含完整 dom 推出每步实际域包含单步 dom。LipChainData/CoLipChainData 只有逐步算子、矩阵、实际域合法性等字段，复合界由后续归纳得出。 边界：任意链长；零起点索引只是重编号；co-Lip 非空沿真正像域传递；无最终目标作为字段。"
+        },
+        {
+          "stage_id": "HC02-D06",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathVertex"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathVertex_zero"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathVertex_last"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.PathAllPos"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.PathHasZero"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.empty_mid_seq_unique"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight_one"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathAllPos_one_iff"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathHasZero_one_iff"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight_pos_iff"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight_eq_zero_iff"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_apply_eq_sum_paths"
+            }
+          ],
+          "notes": "mid:Fin(n−1)→I 遍历所有中间序列，pathVertex 固定两端，PathAllPos 与 PathHasZero 是另行谓词。完整路径权重与 matProd_apply_eq_sum_paths 提供全部路径和的实际表示桥。 边界：n≥1；n=1 唯一空中间序列及三个退化定理；没有只枚举正路径。"
+        },
+        {
+          "stage_id": "HC02-D07",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.Channel"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.RowSparseAt"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ColSparseAt"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsDiagMatrix"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.isDiagMatrix_iff_rowSparseAt"
+            },
+            {
+              "file": "Ch02Matrices.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.isDiagMatrix_iff_colSparseAt"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRowDecoupledAt"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsColDecoupledAt"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsFullyDecoupledCert"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsFullyDecoupled"
+            }
+          ],
+          "notes": "Channel=I×I，RowSparseAt/ColSparseAt 的输入与输出指标分别独立；Channels 文件另外定义了存在输入/输出的行列解耦和存在对角证书的完全解耦，未把任意唯一通道强制为对角。 边界：任意 i,j；行/列存在型均交付；对角等价桥；只描述所选证书。"
+        },
+        {
+          "stage_id": "HC02-D08",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelFeasible"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip_ne_matrix_entry_witness"
+            }
+          ],
+          "notes": "singleChannelFeasible 是完整点对标量不等式的 ENNReal Set，singleChannelLip 是其 sInf；函数定义推广到任意 U，在原题合法 U 上正好是所需对象。另以真实两分量 gauge 证明该标量最优值一般不等于合法矩阵的某条目。 边界：合法 U 的原题实例未受限制；空可行族 inf=∞；不声称逐条目 inf 矩阵一定合法。"
+        },
+        {
+          "stage_id": "HC02-P01",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_singleton_iff"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_unique_iff"
+            }
+          ],
+          "notes": "lipSet_singleton_iff 用 ∀k,k=i（并另有 Unique I 版）把全有限和确实约化成 Lii·di，给出双向等价而非假定标量结论。 边界：任意合法全域点对；单指标且非空；∞ 运算保留。"
+        },
+        {
+          "stage_id": "HC02-P02",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_subset_lipRestricted"
+            }
+          ],
+          "notes": "lipSet_subset_lipRestricted 将 U⊆dom 逐点代入全域矩阵界，并构造受限族所需域包含字段。 边界：U 允许空；没有额外非空/紧致/稠密假设。"
+        },
+        {
+          "stage_id": "HC02-P03",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipRestricted_antitone"
+            }
+          ],
+          "notes": "lipRestricted_antitone 从 V 的域包含和点对界直接限制到 U⊆V，方向为 V 的证书族包含在 U 的证书族内。 边界：V 合法由成员字段保证；不把域单调方向颠倒。"
+        },
+        {
+          "stage_id": "HC02-P04",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipEntryInf"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipEntryInf_mono"
+            }
+          ],
+          "notes": "lipEntryInf 定义为实际可行矩阵条目集合的 sInf，lipEntryInf_mono 以 P03 给集合包含，结论为 U⊆V⇒a(U)≤a(V)。 边界：允许空证书集合；未把各条目 inf 集合自动拼成可行矩阵。"
+        },
+        {
+          "stage_id": "HC02-P05",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipRestricted_comp"
+            }
+          ],
+          "notes": "lipRestricted_comp 在 U₁⊆dom(ϕ₂∘ϕ₁)、第二层仅于真正像 ϕ₁(U₁) 有效的条件下，逐层代入再交换有限和，推得 L₂L₁ 的完整上界。 边界：实际像域；非交换矩阵顺序；允许 0/∞；U₁ 可空。"
+        },
+        {
+          "stage_id": "HC02-P06",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_entry_eq_zero_of_dist_zero"
+            }
+          ],
+          "notes": "coLip_entry_eq_zero_of_dist_zero 在 dom 上取给定点对，先从有限和提取 Kij·di≤0，再由零乘积及 di>0 排除距离为零一支，得到 Kij=0。 边界：全域 K；di 可为∞；无除法、有限性或分离性假设。"
+        },
+        {
+          "stage_id": "HC02-P07",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipRestricted_comp"
+            }
+          ],
+          "notes": "coLipRestricted_comp 保留第一层合法证书的非空性，在真正第二层像域应用下界，有限和代入与展开得到 K₂K₁ 的下界。 边界：U₁ 非空写入结果；实际像域；允许扩展系数和距离。"
+        },
+        {
+          "stage_id": "HC02-P08",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.commonDom₂"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturbation_dist_forward"
+            }
+          ],
+          "notes": "perturbation_dist_forward 只用各 d 的原 ExtendedPseudoMetric 对称性和两次三角不等式，以及 U 内逐点算子扰动界，得旧输出距+δ+δ。 边界：共同有效域；逐点扰动前提完整；δ 可∞；非纯 Lip 结论。"
+        },
+        {
+          "stage_id": "HC02-P09",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturbation_dist_backward"
+            }
+          ],
+          "notes": "perturbation_dist_backward 在交换两个算子后用度量对称性构造反向扰动前提，再调用前向定理，方向与原命题一致。 边界：共同域交换不改变；同一 δ；扩展值加法。"
+        },
+        {
+          "stage_id": "HC02-P10",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturbation_lip_bridge"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturbation_lip_bridge_symm"
+            }
+          ],
+          "notes": "perturbation_lip_bridge 先用 P08 的距离扰动式，再代入 ϕ₁ 在 U 的合法 Lip 和式，得到带 2δ 的加性界；对称版本也有声明。 边界：未把加性扰动错误宣称为同一纯矩阵 Lip 界；允许∞。"
+        },
+        {
+          "stage_id": "HC02-P11",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturbation_coLip_bridge"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturbation_coLip_bridge_symm"
+            }
+          ],
+          "notes": "perturbation_coLip_bridge 先用 ϕ₁ 的合法 co-Lip 下界，再接 P09，得到 ΣK₁di≤新输出距+2δ；对称版本齐全。 边界：co-Lip 非空由成员前提保留；加性边界而非擅自减∞。"
+        },
+        {
+          "stage_id": "HC02-P12",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipChain_prod_mem_all"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipChain_prod_mem"
+            }
+          ],
+          "notes": "lipChain_prod_mem_all 对链长归纳，前缀结构仅取原逐步字段；chainDomain_last_eq_image 将末步实际域与前缀复合像对齐，然后应用两步组合。正链长声明是该已证明结论的特化。 边界：任意 k≥1；k=0 另有效；无目标界作为链数据；完整 U 点对量词。"
+        },
+        {
+          "stage_id": "HC02-P13",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipChain_succ_prod_mem"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipChain_prod_mem"
+            }
+          ],
+          "notes": "coLipChain_succ_prod_mem 从真正单步证书开始，利用前缀链和实际像域桥归纳，coLipChain_prod_mem 对任意 k≥1 得到完整复合 co-Lip 界。 边界：k=1 基础；非空从每步 co-Lip 合法性导出；k=0 单独处理。"
+        },
+        {
+          "stage_id": "HC02-P14",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.idMatrix_mem_lipRestricted"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_step_idMatrix_mem_lipRestricted"
+            }
+          ],
+          "notes": "零步 opSeqComp=id 且 matProd=idMatrix，在任意合法 U 上有限和只剩 j 项，得到单位 Lip 证书；显式目标版亦接受原题非空 U。 边界：原题非空 U；辅助定理更强地允许空 U；∞ 距离无改变。"
+        },
+        {
+          "stage_id": "HC02-P15",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.idMatrix_mem_coLipRestricted"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_step_idMatrix_mem_coLipRestricted"
+            }
+          ],
+          "notes": "单位 co-Lip 定理显式接受 U.Nonempty 和 U⊆dom id，以同一单位有限和等式构造完整合法证书，零步版本桥接 opSeqComp 和 matProd。 边界：非空性未因零步消失；没有把空 co-Lip 链当非空证书。"
+        },
+        {
+          "stage_id": "HC02-P16",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_eq_zero_iff_all_paths_hasZero"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipChain_prod_eq_zero_iff"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipChain_prod_one_eq_zero_iff"
+            }
+          ],
+          "notes": "先由全部路径权重和及非负有限和为零 iff 各项零，证明任意矩阵序列的纯代数等价，再特化到真实 LipChainData；单步空中间序列退化也交付。 边界：n≥1；遍历全部无正性限制的路径；每条路径某零边；n=1。"
+        },
+        {
+          "stage_id": "HC02-P17",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.matProd_pos_iff_exists_path_allPos"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipChain_prod_pos_iff"
+            },
+            {
+              "file": "Ch02Certificates.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLipChain_prod_one_pos_iff"
+            }
+          ],
+          "notes": "纯矩阵路径和的正性 iff 存在正权重路径，再用有限乘积为正 iff 各边正得到存在全正路径；显式特化到 CoLipChainData。 边界：n≥1；n=1 唯一空中间序列；∞ 正项允许；不把证书图当真实动力学精确依赖。"
+        },
+        {
+          "stage_id": "HC02-P18",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelFeasible_eq_empty_of_zero_pos"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip_eq_top_of_zero_pos"
+            }
+          ],
+          "notes": "singleChannelFeasible_eq_empty_of_zero_pos 对任意 λ 代入坏点对，利用 λ·0=0 与输出距正矛盾，随后由 sInf_empty 得 a=∞。 边界：包括 λ=∞；不遗漏∞·0=0；结论为不存在任何 ENNReal 标量。"
+        },
+        {
+          "stage_id": "HC02-P19",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip_mem_feasible_of_pos_lt_top"
+            }
+          ],
+          "notes": "正有限 a 的取到证明对输入距 B 分 B=0、B=∞、0<B<∞：第一支从∞可行推出输出零；第二支 a>0 使 a∞=∞；第三支用严格大于 inf 的可行常数和 ENNReal 除法反证。 边界：未预设输入距全有限；a>0 与 a<∞ 均在声明中；输出距可∞。"
+        },
+        {
+          "stage_id": "HC02-P20",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelFeasible_upward_closed"
+            }
+          ],
+          "notes": "singleChannelFeasible_upward_closed 对完整点对界用 ENNReal 乘法单调性，给 λ₀ 可行且 λ₀≤λ₁ 时 λ₁ 可行。 边界：λ₁ 可∞；输入距 0 或∞ 仍成立。"
+        },
+        {
+          "stage_id": "HC02-P21",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip_lt_mem_feasible"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip_gt_mem_feasible_of_pos_lt_top"
+            }
+          ],
+          "notes": "singleChannelLip_lt_mem_feasible 由 sInf 的序性质找到某 λ₀<λ，再用 P20；另提供显式 0<a<∞ 目标声明。 边界：允许 λ=∞；更强的一般版本不构成额外假设；空 S 时前提不成立。"
+        },
+        {
+          "stage_id": "HC02-P22",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.finite_pos_mem_feasible_of_singleChannelLip_eq_zero"
+            }
+          ],
+          "notes": "a=0、λ>0 直接满足严格大于 inf 的前提，再用 P21 得可行；声明显式含 λ<∞，覆盖原题有限正常数范围。 边界：不能推出 λ=0 可行；未把零 inf 当取到。"
+        },
+        {
+          "stage_id": "HC02-P23",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.discreteGauge"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.discreteGauge_extendedPseudoMetric"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_singleChannelLip_not_necessarily_attained"
+            }
+          ],
+          "notes": "实际构造 X=Option Bool、bot=none、I=Unit 的离散 0/∞ 扩展度量，逐项证明五条 gauge 公理；idOperator 和 U={some false,some true} 合法非空。所有 λ>0 可行、λ=0 对不同两点失败，并证明 inf=0。 边界：合法替代参考反例；同一输入/输出分量允许；普通点间距∞为原域合法情形；无假定反例公理。"
+        },
+        {
+          "stage_id": "HC02-P24",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.singleChannelLip_lt_top_iff"
+            }
+          ],
+          "notes": "singleChannelLip_lt_top_iff 的正向分 a=0 与 a>0：前者选有限常数1，后者用 P19 的有限取到值；反向由 sInf≤任一可行常数。 边界：没有先假设 inf 一定取到；零 inf 未取到反例也覆盖。"
+        },
+        {
+          "stage_id": "HC02-P25",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_coeff_mul_eq_zero"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.sum_erase_of_coeff_zero"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipRestricted_erase_of_coeff_zero"
+            }
+          ],
+          "notes": "zero_coeff_mul_eq_zero 在 ENNReal 中证明零条目乘任意距离为零，sum_erase_of_coeff_zero 给有限和精确删项等式，再对合法 Lip 证书给删项后上界。 边界：d_i=∞ 允许；只移除该输入贡献，不宣称整个输出恒零。"
+        },
+        {
+          "stage_id": "HC02-P26",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.rowSparseAt_bound"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.isRowDecoupledAt_bound"
+            }
+          ],
+          "notes": "rowSparseAt_bound 的 i,j 为独立参数，有限和中所有 k≠i 项为零，仅留下 Lij·di；另给存在型行解耦版本。 边界：唯一输入不必等于输出；任意合法 U 点对；不额外要求 K 稀疏。"
+        },
+        {
+          "stage_id": "HC02-P27",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.colSparseAt_off_zero"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.colSparseAt_erase_bound"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.isColDecoupledAt_erase_bound"
+            }
+          ],
+          "notes": "colSparseAt_off_zero 对固定输入 i、所有 k≠j 证明 Lik·di=0；erase_bound 实际从这些输出的证书和中删去该输入，存在型列解耦版本也给出。 边界：只限制所选证书贡献；不提升为实际函数依赖的必要或最小描述。"
+        },
+        {
+          "stage_id": "HC02-P28",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.diag_lip_bounds"
+            }
+          ],
+          "notes": "diag_lip_bounds 通过对角矩阵 iff 所有输出的对角单行稀疏桥，调用任意单行上界，量化全部分量。 边界：所有 j；仅 Lip 矩阵对角；扩展值可无穷。"
+        },
+        {
+          "stage_id": "HC02-P29",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.diag_row_bilateral_bound"
+            }
+          ],
+          "notes": "diag_row_bilateral_bound 的唯一稀疏前提是 RowSparseAt L j j；下界只从合法 K 的和中提取对角项，K 没有任何对角或稀疏假设。 边界：保持历史修正后的结论强度；上下界对同一 U 的全部点对。"
+        },
+        {
+          "stage_id": "HC02-P30",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.all_diag_row_bilateral_bounds"
+            },
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.all_diag_row_bilateral_bounds_finite"
+            }
+          ],
+          "notes": "all_diag_row_bilateral_bounds 同时量化所有 j；有限系数分支用 toNNReal 与 coe_toNNReal 提取 k_fin,l_fin，明确保留两者等于原 Kjj,Ljj 的等式。 边界：有限性只假定系数而非距离；允许距离∞；无额外 K 稀疏。"
+        },
+        {
+          "stage_id": "HC02-P31",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_pos_preserves_dist_pos"
+            }
+          ],
+          "notes": "coLip_pos_preserves_dist_pos 用 Kij>0 与 di>0 得正乘积，再以单项≤co-Lip 有限和≤输出距推出输出距正。 边界：输入/输出指标任意；Kij 或 di 可∞；无分离性或有限性。"
+        },
+        {
+          "stage_id": "HC02-P32",
+          "decision": "pass",
+          "assumption_fidelity": "clean",
+          "proof_validity": "valid",
+          "scope_accuracy": "correct",
+          "unnecessary_restriction": false,
+          "failure_category": "none",
+          "inherited_from": [],
+          "lean_status": "passed",
+          "declarations": [
+            {
+              "file": "Ch02Channels.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_pos_diag_reflects_gaugeZeroRelated"
+            }
+          ],
+          "notes": "coLip_pos_diag_reflects_gaugeZeroRelated 对每一分量以 P31 反证，证明输出族零距反射为输入族零距。结论明确是 GaugeZeroRelated，未升级成点相等或单射。 边界：∀j 正对角；x,y∈U；无全局分离性附加。"
+        }
+      ],
+      "candidate_lean_report": "HCH02/evaluator-lean/receipt.json",
+      "candidate_lean_report_sha256": "a156b2cb0d7ea7680a56db77ea427b310d0a19b2532dd5971391d1715efb6a75",
+      "recorded_at": "2026-11-13T08:43:28.880338+00:00"
+    }
+  },
+  "original_private_review_sha256": "6db66da530fbe193ff3d9c5f049d636a2d52bfcaaaba6fa8668686f591349d0f"
+}

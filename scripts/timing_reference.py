@@ -120,7 +120,8 @@ def build_reference(root, *, display_data=None):
         raise ValueError("Unknown timing observations")
     models, inputs = [], [{"path": "protocol/scoring-policy.json", "sha256": sha(policy_path)}]
     for model_id, record_id in selected.items():
-        folder = root / "results/v0.6.0" / model_id / record_id
+        from math_gauge.editions import result_archive
+        folder = root / result_archive(edition, model_id) / model_id / record_id
         record_path = folder / ("record.json" if is_file(folder / "record.json") else "native-observation.json")
         task_path = folder / "public-task-scores.json"
         scores = {r["case_id"]: r for r in read(task_path)["views"]["partial"]["nonlogical_retry_3"]["tasks"]}

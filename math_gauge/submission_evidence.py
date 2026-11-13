@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 from fractions import Fraction
+from datetime import datetime
 from pathlib import Path
 from .evidence_retention import read_bytes as retained_bytes
 
@@ -409,8 +410,81 @@ def validate_history(folder, record):
     return data
 
 
+def _git_oid(kind, raw):
+    return hashlib.sha1(kind.encode() + b' ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+
+
+def _tree_entry(raw, name):
+    offset, entries = 0, {}
+    while offset < len(raw):
+        nul = raw.index(b'\0', offset)
+        mode, entry = raw[offset:nul].split(b' ', 1)
+        oid = raw[nul + 1:nul + 21]
+        require(len(oid) == 20 and entry not in entries,
+                'Malformed or repeated retained Git tree entry')
+        entries[entry] = (mode, oid.hex())
+        offset = nul + 21
+    return entries.get(name.encode())
+
+
+def validate_first_assessment_source(folder, record, current):
+    """Verify a fresh run's first policy without inventing migrated score views."""
+    from .benchmarks import validate_assessment_policy
+    item = record.get('first_assessment_source')
+    require(item is not None and record.get('score_history') is None
+            and record.get('benchmark_version') == '1.0.0'
+            and current.get('version') == '0.9.0',
+            'Fresh source assessment requires actual edition1.0/current0.9 and no invented history')
+    validate_assessment_policy(current)
+    proof = json.loads(_read(folder, item))
+    require(proof.get('schema') == 'math-gauge.first-assessment-source/v1'
+            and proof.get('kind') == 'fresh_source'
+            and proof.get('assessment_method_version') == current['version']
+            and proof.get('source_benchmark_version') == record['benchmark_version']
+            and proof.get('model_id') == record.get('model_id')
+            and proof.get('new_candidate_calls') == 0,
+            'First assessment proof changed its source or method identity')
+    freeze_raw = _read(folder, proof['source_freeze'])
+    freeze = json.loads(freeze_raw)
+    first = json.loads(_read(folder, proof['first_dispatch']))
+    require(freeze.get('benchmark_version') == record['benchmark_version']
+            and freeze.get('all_initials_fresh') is True
+            and freeze.get('historical_answers_reused') == 0
+            and freeze.get('mathematical_requests') == 0
+            and first.get('freeze_sha256') == hashlib.sha256(freeze_raw).hexdigest()
+            and datetime.fromisoformat(freeze['utc'].replace('Z', '+00:00'))
+                < datetime.fromisoformat(first['utc'].replace('Z', '+00:00')),
+            'Fresh assessment lacks its actual pre-call fresh source freeze/first dispatch')
+    commit = _read(folder, proof['source_commit_object'])
+    root = _read(folder, proof['source_root_tree'])
+    protocol = _read(folder, proof['source_protocol_tree'])
+    policy_raw = _read(folder, proof['source_assessment_policy'])
+    commit_oid = _git_oid('commit', commit)
+    root_oid, protocol_oid = _git_oid('tree', root), _git_oid('tree', protocol)
+    require(commit_oid == freeze.get('public_commit')
+            and commit.split(b'\n', 1)[0] == ('tree ' + root_oid).encode()
+            and _tree_entry(root, 'protocol') == (b'40000', protocol_oid)
+            and _tree_entry(protocol, 'scoring-policy.json') == (b'100644', _git_oid('blob', policy_raw)),
+            'Fresh first-assessment policy is not in the actual frozen source commit')
+    original = json.loads(policy_raw)
+    require(original == current, 'Fresh assessment changed its original source policy')
+    if proof.get('source_benchmark_profile') is not None:
+        profile_raw = _read(folder, proof['source_benchmark_profile'])
+        require(_tree_entry(protocol, 'benchmark-profile.json') ==
+                (b'100644', _git_oid('blob', profile_raw)),
+                'Fresh execution profile is not in the actual frozen source commit')
+        original = validate_assessment_policy(json.loads(profile_raw)['assessment_policy'])
+        expected = dict(original, version='0.9.0', capability_policy_version='0.3.0',
+                        submission_policy_version='0.1.0')
+        require(current == expected,
+                'Fresh profile transition changed the frozen mathematical policy')
+    return original
+
+
 def original_assessment_policy(folder, record, current):
     """Bind inherited v6 inputs to the exact policy kept in method history."""
+    if record.get('first_assessment_source') is not None:
+        return validate_first_assessment_source(folder, record, current)
     history = validate_history(folder, record)
     require(history is not None, 'Inherited current inputs need their original policy history')
     item = next(row for row in history['files']

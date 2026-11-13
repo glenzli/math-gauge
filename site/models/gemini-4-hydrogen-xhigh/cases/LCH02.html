@@ -1,0 +1,2936 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LCH02 · 有限复合与路径节群 · Math Gauge</title><link rel="stylesheet" href="../../../assets/versioned/results.08e590798f7f.css"><script defer src="../../../assets/versioned/results-i18n.2660b47b9429.js"></script><script defer src="../../../assets/versioned/results-core.c9fd1ecad877.js"></script><script defer src="../../../assets/versioned/case-results.919ac4bfd308.js"></script>
+</head><body><header class="topbar"><nav class="nav" aria-label="主导航"><a class="brand" data-context-link href="../../../index.html"><span class="mark" aria-hidden="true">MG</span>Math Gauge</a><div class="navlinks"><a data-context-link href="../../../index.html">排行榜</a><a data-nav-method data-context-link href="../../../method.html">方法与数据</a></div><div class="language-switch" role="group" aria-label="Language / 语言"><button data-language="zh" aria-pressed="true" lang="zh-CN">中文</button><button data-language="en" aria-pressed="false" lang="en">EN</button></div></nav></header><main class="detail-main"><div class="breadcrumbs"><a data-context-link href="../../../index.html">排行榜</a> <span>／</span> <a data-context-link href="../../../models/gemini-4-hydrogen-xhigh/index.html">Gemini Hydrogen (xhigh)</a></div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v1.0.0</div><h1>LCH02 · 有限复合与路径节群</h1><p class="subtitle">Gemini Hydrogen (xhigh) · 形式化 · 公开题证据</p></div></div><div class="statusline"><span class="status-dot" aria-hidden="true"></span><span title="全审：Sol 6.1 Max；抽审核对：Astra 6 Max + Dot">AI 审核 · 部分人工抽审</span><a data-context-link href="../../../method.html#review-process">审核方式 →</a></div><section class="panel context-panel"><div class="controls detail-controls"><div class="control-group"><span class="control-name">计分口径</span><div class="segmented" role="group" aria-label="计分口径"><button data-score-mode="capability" aria-label="数学能力 MC" aria-pressed="false"><span class="mode-name">数学能力</span><span class="mode-code">MC</span></button><button data-score-mode="partial" aria-label="可靠数学能力 RMC" aria-pressed="true"><span class="mode-name">可靠数学能力</span><span class="mode-code">RMC</span></button><button data-score-mode="strict" aria-label="严格数学交付 SMC" aria-pressed="false"><span class="mode-name">严格数学交付</span><span class="mode-code">SMC</span></button></div></div></div></section><section class="panel"><div class="panel-head"><h2>本题成绩</h2></div><div class="case-score" id="case-score"></div><p class="panel-foot" id="case-score-note"></p><p class="panel-foot">MC/RMC为单题比例，SMC为整题判定；总分贡献见模型页。</p></section><details class="panel evidence-fold"><summary>题目与要求</summary><div class="prose"><h1>有限复合与路径节群 · LCH02</h1>
+<p>将附件中 obligations.json 指定的全部20项义务完整形式化为一个Lean项目。本题是明确的选段任务；完整章节文件只为提供原文和上下文，清单之外的内容不计为交付义务。原文含证明；前置文字只作背景。</p>
+<p>使用Lean4.29.1和mathlib5e932f97dd25535344f80f9dd8da3aab83df0fe6。formal_oet/附件是冻结前置模块，可直接导入，不得修改或同名覆盖。只允许这些模块、标准库与固定mathlib，不得读取目标作者实现、评审或下载其他依赖。</p>
+<p>保留原文结构、前提、量词、定义域和结论强度。允许等价表示、合并声明、辅助引理和有效替代证明，但须给出表示对应；不得把目标藏入字段、证书或前提。</p>
+<p>交付完整源码，每个文件用独立的命名代码块，例如 <code>lean filename=Main.lean</code>。Main.lean必须导入所有目标模块，辅助文件也须全文交付。不得使用sorry、admit、新增公理或跳过内核检查设施；逻辑公理仅允许propext、Classical.choice、Quot.sound。</p>
+<p>另用 <code>json filename=alignment.json</code> 交付对象：case_id=&quot;LCH02&quot;、version=&quot;0.1.0&quot;、items。items必须恰好覆盖清单全部20项，每项含id、status（complete/incomplete）、declarations（file/name数组）、representation（对象/参数/量词/结论的对应说明）、dependencies（实际使用的义务ID数组）。complete须列真实声明且全部子目标均完成；未完成项不能删除。工作区路径或链接不能代替文件内容。</p>
+</div><p class="panel-foot"><a href="../../../../cases/lean-formalization/LCH02/candidate/task.md">原题文件 ↗</a></p></details><div class="evidence-condition" data-evidence-condition="single_attempt"><section class="panel"><div class="panel-head"><h2>提交来源</h2></div><div class="prose"><p>正常交卷；三种评分采用实际交付。</p></div></section><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>原始逐项评审</h2></div><div class="prose review-criteria"><p>原评审未提供独立摘要。完整判断及证据见下方原评审文件。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（20项）</summary><div class="prose"><h3>CH02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P11</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P12</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P14</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P09</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P10</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P13</h3>
+<p><strong>已核实完成：</strong> true</p>
+</div></details><p class="panel-foot">原评保留原审核范围；当前采用的提交与成绩见上方及模型档案。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><p>已生成 <code>Main.lean</code>、<code>LCH02/MatrixBounds.lean</code>、<code>LCH02/OperatorBounds.lean</code> 与 <code>alignment.json</code>，并已启动最终的 <code>Main.lean</code> 编译、全部 76 个声明的公理审计与运行验证，正在等待后台任务完成。
+{}
+已完成 <code>LCH02</code> 全部 20 项义务在 Lean 4.29.1（固定 mathlib <code>5e932f97dd25535344f80f9dd8da3aab83df0fe6</code>，基于冻结前置模块 [gauge_space.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean) 与 [operator_space.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean)）的形式化与对齐交付：</p>
+<ul>
+<li>交付模块：[Main.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/Main.lean)、[LCH02/MatrixBounds.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/LCH02/MatrixBounds.lean)、[LCH02/OperatorBounds.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/LCH02/OperatorBounds.lean) 及 [alignment.json](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/alignment.json)。</li>
+<li>验证结果：各模块均在 Lean 4.29.1 下无报错无警告编译通过，<code>lean --run Main.lean</code> 正常退出（exit code 0）；对 <code>alignment.json</code> 所列全部 76 个唯一声明逐一执行 <code>#print axioms</code> 审计，均仅依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code> 子集，无 <code>sorry</code>/<code>admit</code>/新增公理或绕过内核机制；<code>formal_oet/</code> 原目录保持未修改。</li>
+</ul>
+<p>以下为全部交付文件的完整源码：</p>
+<pre><code class="language-lean">/-
+  Main entrypoint for the LCH02 formalization of OET Volume I, Chapter 2
+  (finite operator composition, matrix bounds, and index-path criteria).
+
+  Original mathematical theory by Zhe Li (Glen Li / glenzli),
+  The Operator Evolution Theory, Volume I, v1.0.0, licensed under CC BY 4.0.
+-/
+
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import LCH02.MatrixBounds
+import LCH02.OperatorBounds
+
+/-- Entrypoint for standalone Lean execution. -/
+def main : IO Unit :=
+  pure ()
+</code></pre>
+<pre><code class="language-lean">/-
+  Formalization of matrix-bound foundations for Operator Evolution Theory (OET),
+  Volume I, Chapter 2 (finite matrix bounds, ordered products, and index-path criteria).
+
+  Original mathematical theory by Zhe Li (Glen Li / glenzli),
+  The Operator Evolution Theory, Volume I, v1.0.0, licensed under CC BY 4.0.
+-/
+
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fintype.Card
+import Mathlib.Tactic
+
+namespace LCH02
+
+universe u
+
+section MatrixConventions
+
+/--
+**CH02-D03**: Extended nonnegative matrix over index set `I`.
+Following the OET convention, output component `j` is the row index and
+input component `i` is the column index, so `L_{i -&gt; j}` sits at `(j, i)`.
+-/
+abbrev GaugeMatrix (I : Type u) : Type u := Matrix I I ENNReal
+
+/--
+**CH02-D03**: Entry `M_{i -&gt; j}` from input component `i` to output component `j`,
+defined as `M j i` (row = output `j`, column = input `i`).
+-/
+def matrixEntry {I : Type u} (M : GaugeMatrix I) (i j : I) : ENNReal :=
+  M j i
+
+@[simp]
+theorem matrixEntry_apply {I : Type u} (M : GaugeMatrix I) (i j : I) :
+    matrixEntry M i j = M j i :=
+  rfl
+
+/-- Construct a `GaugeMatrix` from channel weights `f i j = M_{i -&gt; j}`. -/
+def ofChannel {I : Type u} (f : I → I → ENNReal) : GaugeMatrix I :=
+  Matrix.of (fun j i =&gt; f i j)
+
+@[simp]
+theorem matrixEntry_ofChannel {I : Type u} (f : I → I → ENNReal) (i j : I) :
+    matrixEntry (ofChannel f) i j = f i j :=
+  rfl
+
+/--
+**CH02-D03**: Algebraic matrix product in channel-entry form:
+`(M₂ * M₁)_{i -&gt; j} = ∑ k, (M₂)_{k -&gt; j} * (M₁)_{i -&gt; k}`.
+-/
+theorem matrixEntry_mul {I : Type u} [Fintype I] (M₂ M₁ : GaugeMatrix I) (i j : I) :
+    matrixEntry (M₂ * M₁) i j = ∑ k : I, matrixEntry M₂ k j * matrixEntry M₁ i k := by
+  simp [matrixEntry, Matrix.mul_apply]
+
+/-- Sum-exchange identity for matrix multiplication acting on a nonnegative vector `v`. -/
+theorem matrixEntry_mul_sum_eq {I : Type u} [Fintype I]
+    (M₂ M₁ : GaugeMatrix I) (v : I → ENNReal) (j : I) :
+    ∑ i : I, matrixEntry (M₂ * M₁) i j * v i =
+      ∑ k : I, matrixEntry M₂ k j * ∑ i : I, matrixEntry M₁ i k * v i := by
+  calc
+    ∑ i : I, matrixEntry (M₂ * M₁) i j * v i
+        = ∑ i : I, (∑ k : I, matrixEntry M₂ k j * matrixEntry M₁ i k) * v i := by
+            refine Finset.sum_congr rfl fun i _ =&gt; ?_
+            rw [matrixEntry_mul]
+    _ = ∑ i : I, ∑ k : I, (matrixEntry M₂ k j * matrixEntry M₁ i k) * v i := by
+            refine Finset.sum_congr rfl fun i _ =&gt; ?_
+            rw [Finset.sum_mul]
+    _ = ∑ k : I, ∑ i : I, (matrixEntry M₂ k j * matrixEntry M₁ i k) * v i :=
+            Finset.sum_comm
+    _ = ∑ k : I, ∑ i : I, matrixEntry M₂ k j * (matrixEntry M₁ i k * v i) := by
+            refine Finset.sum_congr rfl fun k _ =&gt; Finset.sum_congr rfl fun i _ =&gt; ?_
+            rw [mul_assoc]
+    _ = ∑ k : I, matrixEntry M₂ k j * ∑ i : I, matrixEntry M₁ i k * v i := by
+            refine Finset.sum_congr rfl fun k _ =&gt; ?_
+            rw [Finset.mul_sum]
+
+end MatrixConventions
+
+section OrderedProducts
+
+noncomputable section
+
+/-- **CH02-D04**: Identity matrix `I` under the input/output convention. -/
+def matrixOne {I : Type u} [DecidableEq I] : GaugeMatrix I :=
+  (1 : Matrix I I ENNReal)
+
+@[simp]
+theorem matrixEntry_one {I : Type u} [DecidableEq I] (i j : I) :
+    matrixEntry (matrixOne : GaugeMatrix I) i j = if i = j then 1 else 0 := by
+  simp [matrixEntry, matrixOne, Matrix.one_apply, eq_comm]
+
+/--
+**CH02-D04**: Ordered nonempty matrix product `M^{(m+1)} * ... * M^{(1)}`
+for a sequence indexed by `Fin (m + 1)` in step order (`0` applied first, `m` last).
+-/
+def matrixPosProd {I : Type u} [Fintype I] :
+    {m : ℕ} → (Fin (m + 1) → GaugeMatrix I) → GaugeMatrix I
+  | 0, Ms =&gt; Ms 0
+  | m + 1, Ms =&gt; Ms (Fin.last (m + 1)) * matrixPosProd (fun r : Fin (m + 1) =&gt; Ms r.castSucc)
+
+@[simp]
+theorem matrixPosProd_zero {I : Type u} [Fintype I] (Ms : Fin 1 → GaugeMatrix I) :
+    matrixPosProd Ms = Ms 0 :=
+  rfl
+
+@[simp]
+theorem matrixPosProd_succ {I : Type u} [Fintype I] {m : ℕ}
+    (Ms : Fin (m + 2) → GaugeMatrix I) :
+    matrixPosProd Ms =
+      Ms (Fin.last (m + 1)) * matrixPosProd (fun r : Fin (m + 1) =&gt; Ms r.castSucc) :=
+  rfl
+
+/--
+**CH02-D04**: Ordered nonempty matrix product `M^{(n)} * ... * M^{(1)}`
+for any `n ≥ 1` (`hn : 0 &lt; n`).
+-/
+def matrixNonemptyProd {I : Type u} [Fintype I] {n : ℕ} (hn : 0 &lt; n)
+    (Ms : Fin n → GaugeMatrix I) : GaugeMatrix I :=
+  match n, hn with
+  | 0, hn =&gt; absurd hn (Nat.lt_irrefl 0)
+  | _ + 1, _ =&gt; matrixPosProd Ms
+
+@[simp]
+theorem matrixNonemptyProd_one {I : Type u} [Fintype I] (Ms : Fin 1 → GaugeMatrix I) :
+    matrixNonemptyProd Nat.one_pos Ms = Ms 0 :=
+  rfl
+
+theorem matrixNonemptyProd_succ {I : Type u} [Fintype I] {m : ℕ}
+    (Ms : Fin (m + 2) → GaugeMatrix I) :
+    matrixNonemptyProd (Nat.succ_pos (m + 1)) Ms =
+      Ms (Fin.last (m + 1)) *
+        matrixNonemptyProd (Nat.succ_pos m) (fun r : Fin (m + 1) =&gt; Ms r.castSucc) :=
+  rfl
+
+/--
+**CH02-D04**: General ordered matrix product for `n : ℕ` matrices,
+defining the empty product (`n = 0`) as the identity matrix `matrixOne`.
+-/
+def matrixProd {I : Type u} [Fintype I] [DecidableEq I] :
+    {n : ℕ} → (Fin n → GaugeMatrix I) → GaugeMatrix I
+  | 0, _ =&gt; matrixOne
+  | _ + 1, Ms =&gt; matrixPosProd Ms
+
+@[simp]
+theorem matrixProd_zero {I : Type u} [Fintype I] [DecidableEq I]
+    (Ms : Fin 0 → GaugeMatrix I) :
+    matrixProd Ms = matrixOne :=
+  rfl
+
+theorem matrixProd_eq_nonemptyProd {I : Type u} [Fintype I] [DecidableEq I]
+    {n : ℕ} (hn : 0 &lt; n) (Ms : Fin n → GaugeMatrix I) :
+    matrixProd Ms = matrixNonemptyProd hn Ms := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt; rfl
+
+theorem matrixProd_succ {I : Type u} [Fintype I] [DecidableEq I] {n : ℕ}
+    (Ms : Fin (n + 1) → GaugeMatrix I) :
+    matrixProd Ms = Ms (Fin.last n) * matrixProd (fun r : Fin n =&gt; Ms r.castSucc) := by
+  cases n with
+  | zero =&gt;
+      simp [matrixProd, matrixPosProd, matrixOne]
+  | succ m =&gt;
+      rfl
+
+theorem matrixPosProd_eq_list_reverse_prod {I : Type u} [Fintype I] [DecidableEq I] :
+    {m : ℕ} → (Ms : Fin (m + 1) → GaugeMatrix I) →
+      matrixPosProd Ms = (List.ofFn Ms).reverse.prod
+  | 0, Ms =&gt; by
+      simp [matrixPosProd, List.ofFn_succ]
+  | m + 1, Ms =&gt; by
+      have ih := matrixPosProd_eq_list_reverse_prod (fun r : Fin (m + 1) =&gt; Ms r.castSucc)
+      rw [matrixPosProd_succ, ih]
+      conv_rhs =&gt; rw [List.ofFn_succ', List.concat_eq_append, List.reverse_append]
+      simp
+
+theorem matrixProd_eq_list_reverse_prod {I : Type u} [Fintype I] [DecidableEq I]
+    {n : ℕ} (Ms : Fin n → GaugeMatrix I) :
+    matrixProd Ms = (List.ofFn Ms).reverse.prod := by
+  cases n with
+  | zero =&gt; simp [matrixProd, matrixOne]
+  | succ m =&gt; exact matrixPosProd_eq_list_reverse_prod Ms
+
+end
+
+end OrderedProducts
+
+section IndexPaths
+
+/--
+**CH02-D06**: Interior index sequence `(k_1, ..., k_{n-1})` for `n` matrices.
+When `n = 1`, `n - 1 = 0`, so `InteriorPath I 1 = (Fin 0 → I)` is uniquely the empty sequence.
+-/
+abbrev InteriorPath (I : Type u) (n : ℕ) : Type u :=
+  Fin (n - 1) → I
+
+/-- Full vertex sequence `(k_0, ..., k_{m+1})` with `k_0 = i` and `k_{m+1} = j`. -/
+def pathNodesPos {I : Type u} {m : ℕ} (i j : I) (p : Fin m → I) : Fin (m + 2) → I :=
+  Fin.snoc (Fin.cons i p) j
+
+/--
+**CH02-D06**: Full index sequence `(k_0, k_1, ..., k_n)` built from endpoints `k_0 = i`,
+`k_n = j`, and interior sequence `p : InteriorPath I n` (for `hn : 0 &lt; n`).
+-/
+def pathNodes {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I)
+    (p : InteriorPath I n) : Fin (n + 1) → I :=
+  match n, hn, p with
+  | 0, hn, _ =&gt; absurd hn (Nat.lt_irrefl 0)
+  | _ + 1, _, p =&gt; pathNodesPos i j p
+
+@[simp]
+theorem pathNodesPos_zero {I : Type u} {m : ℕ} (i j : I) (p : Fin m → I) :
+    pathNodesPos i j p 0 = i := by
+  unfold pathNodesPos
+  rw [show (0 : Fin (m + 2)) = (0 : Fin (m + 1)).castSucc from rfl, Fin.snoc_castSucc]
+  simp
+
+@[simp]
+theorem pathNodesPos_last {I : Type u} {m : ℕ} (i j : I) (p : Fin m → I) :
+    pathNodesPos i j p (Fin.last (m + 1)) = j := by
+  simp [pathNodesPos]
+
+@[simp]
+theorem pathNodes_zero {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I)
+    (p : InteriorPath I n) :
+    pathNodes hn i j p 0 = i := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt; exact pathNodesPos_zero i j p
+
+@[simp]
+theorem pathNodes_last {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I)
+    (p : InteriorPath I n) :
+    pathNodes hn i j p (Fin.last n) = j := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt; exact pathNodesPos_last i j p
+
+/-- For `n = 1`, the interior index sequence is uniquely the empty sequence. -/
+instance interiorPath_one_unique {I : Type u} : Unique (InteriorPath I 1) where
+  default := fun r =&gt; Fin.elim0 r
+  uniq _ := funext fun r =&gt; Fin.elim0 r
+
+@[simp]
+theorem pathNodes_one_zero {I : Type u} (i j : I) (p : InteriorPath I 1) :
+    pathNodes Nat.one_pos i j p 0 = i :=
+  pathNodes_zero Nat.one_pos i j p
+
+@[simp]
+theorem pathNodes_one_one {I : Type u} (i j : I) (p : InteriorPath I 1) :
+    pathNodes Nat.one_pos i j p 1 = j :=
+  pathNodes_last Nat.one_pos i j p
+
+theorem pathNodesPos_succ_castSucc_eq {I : Type u} {m : ℕ} (i j : I)
+    (p : Fin (m + 1) → I) (r : Fin (m + 2)) :
+    pathNodesPos i j p r.castSucc =
+      pathNodesPos i (p (Fin.last m)) (fun q : Fin m =&gt; p q.castSucc) r := by
+  unfold pathNodesPos
+  rw [Fin.snoc_castSucc]
+  induction r using Fin.lastCases with
+  | last =&gt;
+      rw [Fin.snoc_last]
+      simp
+  | cast s =&gt;
+      rw [Fin.snoc_castSucc]
+      induction s using Fin.cases with
+      | zero =&gt; simp
+      | succ t =&gt; simp
+
+/--
+**CH02-D06**: Step-`r` matrix entry `[M^{(r)}]_{k_{r-1} -&gt; k_r}` along a path `p`.
+-/
+def pathStepEntry {I : Type u} {n : ℕ} (Ms : Fin n → GaugeMatrix I)
+    (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) (r : Fin n) : ENNReal :=
+  matrixEntry (Ms r)
+    (pathNodes hn i j p r.castSucc)
+    (pathNodes hn i j p r.succ)
+
+/-- **CH02-D06**: All-positive path predicate: every step entry along `p` is strictly positive. -/
+def IsPositivePath {I : Type u} {n : ℕ} (Ms : Fin n → GaugeMatrix I)
+    (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) : Prop :=
+  ∀ r : Fin n, 0 &lt; pathStepEntry Ms hn i j p r
+
+/-- **CH02-D06**: Zero-factor path predicate: at least one step entry along `p` equals `0`. -/
+def HasZeroFactorPath {I : Type u} {n : ℕ} (Ms : Fin n → GaugeMatrix I)
+    (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) : Prop :=
+  ∃ r : Fin n, pathStepEntry Ms hn i j p r = 0
+
+theorem not_isPositivePath_iff_hasZeroFactorPath {I : Type u} {n : ℕ}
+    (Ms : Fin n → GaugeMatrix I) (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) :
+    ¬ IsPositivePath Ms hn i j p ↔ HasZeroFactorPath Ms hn i j p := by
+  simp [IsPositivePath, HasZeroFactorPath, pos_iff_ne_zero]
+
+@[simp]
+theorem pathStepEntry_one {I : Type u} (Ms : Fin 1 → GaugeMatrix I)
+    (i j : I) (p : InteriorPath I 1) (r : Fin 1) :
+    pathStepEntry Ms Nat.one_pos i j p r = matrixEntry (Ms 0) i j := by
+  have hr : r = 0 := Fin.eq_zero r
+  subst hr
+  simp [pathStepEntry]
+
+theorem isPositivePath_one_iff {I : Type u} (Ms : Fin 1 → GaugeMatrix I)
+    (i j : I) (p : InteriorPath I 1) :
+    IsPositivePath Ms Nat.one_pos i j p ↔ 0 &lt; matrixEntry (Ms 0) i j := by
+  simp [IsPositivePath]
+
+theorem hasZeroFactorPath_one_iff {I : Type u} (Ms : Fin 1 → GaugeMatrix I)
+    (i j : I) (p : InteriorPath I 1) :
+    HasZeroFactorPath Ms Nat.one_pos i j p ↔ matrixEntry (Ms 0) i j = 0 := by
+  simp [HasZeroFactorPath]
+
+/-- Explicit endpoint-constrained index path representation, equivalent to `InteriorPath`. -/
+@[ext]
+structure IndexPath (I : Type u) (n : ℕ) (i j : I) where
+  nodes : Fin (n + 1) → I
+  start_eq : nodes 0 = i
+  end_eq : nodes (Fin.last n) = j
+
+/-- Canonical equivalence between interior sequences `(k_1, ..., k_{n-1})` and endpoint-fixed paths. -/
+def interiorPathEquivIndexPath {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I) :
+    InteriorPath I n ≃ IndexPath I n i j where
+  toFun p :=
+    { nodes := pathNodes hn i j p
+      start_eq := pathNodes_zero hn i j p
+      end_eq := pathNodes_last hn i j p }
+  invFun q :=
+    match n, hn, q with
+    | 0, hn, _ =&gt; absurd hn (Nat.lt_irrefl 0)
+    | _ + 1, _, q =&gt; fun r =&gt; q.nodes r.succ.castSucc
+  left_inv p := by
+    cases n with
+    | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+    | succ m =&gt;
+        ext r
+        change pathNodesPos i j p r.succ.castSucc = p r
+        unfold pathNodesPos
+        rw [Fin.snoc_castSucc, Fin.cons_succ]
+  right_inv q := by
+    cases n with
+    | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+    | succ m =&gt;
+        ext s
+        induction s using Fin.lastCases with
+        | last =&gt;
+            simpa [pathNodes, pathNodesPos] using q.end_eq.symm
+        | cast t =&gt;
+            change pathNodesPos i j (fun r : Fin m =&gt; q.nodes r.succ.castSucc) t.castSucc = q.nodes t.castSucc
+            unfold pathNodesPos
+            rw [Fin.snoc_castSucc]
+            induction t using Fin.cases with
+            | zero =&gt;
+                simpa using q.start_eq.symm
+            | succ u =&gt;
+                simp
+
+end IndexPaths
+
+section PathCriteria
+
+private theorem pathNodesPos_step_prefix {I : Type u} {m : ℕ} (i j : I)
+    (p : Fin (m + 1) → I) (r : Fin (m + 1)) :
+    pathNodesPos i j p r.castSucc.castSucc =
+      pathNodesPos i (p (Fin.last m)) (fun q : Fin m =&gt; p q.castSucc) r.castSucc ∧
+    pathNodesPos i j p r.castSucc.succ =
+      pathNodesPos i (p (Fin.last m)) (fun q : Fin m =&gt; p q.castSucc) r.succ := by
+  constructor
+  · exact pathNodesPos_succ_castSucc_eq i j p r.castSucc
+  · exact pathNodesPos_succ_castSucc_eq i j p r.succ
+
+private theorem pathNodesPos_step_last {I : Type u} {m : ℕ} (i j : I)
+    (p : Fin (m + 1) → I) :
+    pathNodesPos i j p (Fin.last (m + 1)).castSucc = p (Fin.last m) ∧
+    pathNodesPos i j p (Fin.last (m + 1)).succ = j := by
+  constructor
+  · unfold pathNodesPos
+    rw [Fin.snoc_castSucc, Fin.cons_last]
+  · simp [pathNodesPos]
+
+private theorem matrixPosProd_entry_eq_zero_iff {I : Type u} [Fintype I] :
+    {m : ℕ} → (Ms : Fin (m + 1) → GaugeMatrix I) → (i j : I) →
+      (matrixEntry (matrixPosProd Ms) i j = 0 ↔
+        ∀ p : Fin m → I, ∃ r : Fin (m + 1),
+          matrixEntry (Ms r)
+            (pathNodesPos i j p r.castSucc)
+            (pathNodesPos i j p r.succ) = 0)
+  | 0, Ms, i, j =&gt; by
+      simp [matrixPosProd, pathNodesPos, Fin.snoc]
+  | m + 1, Ms, i, j =&gt; by
+      have ih := matrixPosProd_entry_eq_zero_iff (fun r : Fin (m + 1) =&gt; Ms r.castSucc)
+      rw [matrixPosProd_succ, matrixEntry_mul, Finset.sum_eq_zero_iff]
+      simp only [Finset.mem_univ, true_implies, mul_eq_zero]
+      constructor
+      · intro h p
+        rcases h (p (Fin.last m)) with hLast | hPrev
+        · refine ⟨Fin.last (m + 1), ?_⟩
+          rcases pathNodesPos_step_last i j p with ⟨h1, h2⟩
+          rw [h1, h2]
+          exact hLast
+        · rw [ih i (p (Fin.last m))] at hPrev
+          rcases hPrev (fun q : Fin m =&gt; p q.castSucc) with ⟨r, hr⟩
+          refine ⟨r.castSucc, ?_⟩
+          rcases pathNodesPos_step_prefix i j p r with ⟨h1, h2⟩
+          rw [h1, h2]
+          exact hr
+      · intro h k
+        by_cases hLast : matrixEntry (Ms (Fin.last (m + 1))) k j = 0
+        · exact Or.inl hLast
+        · refine Or.inr ((ih i k).2 ?_)
+          intro p'
+          let p : Fin (m + 1) → I := Fin.snoc p' k
+          rcases h p with ⟨r, hr⟩
+          induction r using Fin.lastCases with
+          | last =&gt;
+              exfalso
+              have hp_last : p (Fin.last m) = k := by simp [p]
+              rcases pathNodesPos_step_last i j p with ⟨h1, h2⟩
+              rw [hp_last] at h1
+              rw [h1, h2] at hr
+              exact hLast hr
+          | cast r' =&gt;
+              have hp_last : p (Fin.last m) = k := by simp [p]
+              have hp_init : (fun q : Fin m =&gt; p q.castSucc) = p' := by
+                ext q
+                simp [p, Fin.snoc_castSucc]
+              rcases pathNodesPos_step_prefix i j p r' with ⟨h1, h2⟩
+              rw [hp_last, hp_init] at h1 h2
+              rw [h1, h2] at hr
+              exact ⟨r', hr⟩
+
+/--
+**CH02-P13 (Proposition 2.6(i))**: For any `n ≥ 1` and matrices `M^{(1)}, ..., M^{(n)}`,
+the `(i -&gt; j)` entry of `M^{(n)} * ... * M^{(1)}` vanishes iff every interior index
+sequence `(k_1, ..., k_{n-1})` contains at least one zero factor `[M^{(r)}]_{k_{r-1} -&gt; k_r} = 0`
+(with `k_0 = i`, `k_n = j`).
+-/
+theorem matrixNonemptyProd_entry_eq_zero_iff {I : Type u} [Fintype I]
+    {n : ℕ} (hn : 0 &lt; n) (Ms : Fin n → GaugeMatrix I) (i j : I) :
+    matrixEntry (matrixNonemptyProd hn Ms) i j = 0 ↔
+      ∀ p : InteriorPath I n, HasZeroFactorPath Ms hn i j p := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt;
+      simpa [matrixNonemptyProd, HasZeroFactorPath, pathStepEntry, pathNodes] using
+        matrixPosProd_entry_eq_zero_iff Ms i j
+
+/--
+**CH02-P13 (n = 1 degeneration)**: When `n = 1`, the interior index sequence is empty,
+so the path-zero-factor condition degenerates to `[M^{(1)}]_{i -&gt; j} = 0`.
+-/
+theorem matrixNonemptyProd_one_entry_eq_zero_iff {I : Type u} [Fintype I]
+    (Ms : Fin 1 → GaugeMatrix I) (i j : I) :
+    (∀ p : InteriorPath I 1, HasZeroFactorPath Ms Nat.one_pos i j p) ↔
+      matrixEntry (Ms 0) i j = 0 := by
+  rw [← matrixNonemptyProd_entry_eq_zero_iff Nat.one_pos Ms i j, matrixNonemptyProd_one]
+
+/--
+**CH02-P14 (Proposition 2.6(ii))**: For any `n ≥ 1` and matrices `M^{(1)}, ..., M^{(n)}`,
+the `(i -&gt; j)` entry of `M^{(n)} * ... * M^{(1)}` is strictly positive iff there exists
+at least one interior index sequence `(k_1, ..., k_{n-1})` along which every factor
+`[M^{(r)}]_{k_{r-1} -&gt; k_r}` is strictly positive.
+-/
+theorem matrixNonemptyProd_entry_pos_iff {I : Type u} [Fintype I]
+    {n : ℕ} (hn : 0 &lt; n) (Ms : Fin n → GaugeMatrix I) (i j : I) :
+    0 &lt; matrixEntry (matrixNonemptyProd hn Ms) i j ↔
+      ∃ p : InteriorPath I n, IsPositivePath Ms hn i j p := by
+  rw [pos_iff_ne_zero, ne_eq, matrixNonemptyProd_entry_eq_zero_iff hn Ms i j]
+  push Not
+  simp only [← not_isPositivePath_iff_hasZeroFactorPath, not_not]
+
+/--
+**CH02-P14 (n = 1 degeneration)**: When `n = 1`, existence of an all-positive path
+degenerates to `0 &lt; [M^{(1)}]_{i -&gt; j}`.
+-/
+theorem matrixNonemptyProd_one_entry_pos_iff {I : Type u} [Fintype I]
+    (Ms : Fin 1 → GaugeMatrix I) (i j : I) :
+    (∃ p : InteriorPath I 1, IsPositivePath Ms Nat.one_pos i j p) ↔
+      0 &lt; matrixEntry (Ms 0) i j := by
+  rw [← matrixNonemptyProd_entry_pos_iff Nat.one_pos Ms i j, matrixNonemptyProd_one]
+
+end PathCriteria
+
+end LCH02
+</code></pre>
+<pre><code class="language-lean">/-
+  Formalization of Operator Evolution Theory (OET), Volume I, Chapter 2,
+  Section 2.1 (operator Lip/co-Lip matrix bounds, monotonicity, two-step and
+  finite-chain composition, and zero-step identity certificates).
+
+  Original mathematical theory by Zhe Li (Glen Li / glenzli),
+  The Operator Evolution Theory, Volume I, v1.0.0, licensed under CC BY 4.0.
+-/
+
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import LCH02.MatrixBounds
+
+namespace LCH02
+
+open formal_oet.vol_01.ch_01_foundations
+
+section MatrixCertificates
+
+/--
+**CH02-D01**: Predicate asserting that `L` is a valid global Lipschitz matrix
+for operator `ϕ` under gauge family `d` (over `dom ϕ`).
+-/
+def IsLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) : Prop :=
+  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, matrixEntry L i j * d i x y
+
+/-- **CH02-D01**: Global Lipschitz certificate family `L(ϕ)`. -/
+def LipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (GaugeMatrix I) :=
+  { L | IsLipMatrix d ϕ L }
+
+/--
+**CH02-D01**: Predicate asserting that `L` is a valid restricted Lipschitz matrix
+for `ϕ` on `U ⊆ dom ϕ`.
+-/
+def IsRestrictedLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I) : Prop :=
+  U ⊆ dom ϕ ∧
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, matrixEntry L i j * d i x y
+
+/-- **CH02-D01**: Restricted Lipschitz certificate family `L(ϕ)|_U`. -/
+def RestrictedLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { L | IsRestrictedLipMatrix d ϕ U L }
+
+theorem isRestrictedLipMatrix_dom_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) :
+    IsRestrictedLipMatrix d ϕ (dom ϕ) L ↔ IsLipMatrix d ϕ L := by
+  simp [IsRestrictedLipMatrix, IsLipMatrix]
+
+@[simp]
+theorem restrictedLipMatrices_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    RestrictedLipMatrices d ϕ (dom ϕ) = LipMatrices d ϕ := by
+  ext L
+  exact isRestrictedLipMatrix_dom_iff d ϕ L
+
+/--
+**CH02-D02**: Predicate asserting that `K` is a valid restricted co-Lipschitz matrix
+for `ϕ` on `U`. By definition, `U` must be nonempty and contained in `dom ϕ`.
+-/
+def IsRestrictedCoLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : GaugeMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, matrixEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/-- **CH02-D02**: Restricted co-Lipschitz certificate family `K(ϕ)|_U`. -/
+def RestrictedCoLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d ϕ U K }
+
+end MatrixCertificates
+
+section SingleComponentAndMonotonicity
+
+private theorem sum_eq_single_of_subsingleton {I : Type} [Fintype I] [Subsingleton I]
+    (i : I) (f : I → ENNReal) :
+    ∑ k : I, f k = f i := by
+  have huniv : (Finset.univ : Finset I) = {i} := by
+    ext k
+    simp [Subsingleton.elim k i]
+  rw [huniv, Finset.sum_singleton]
+
+/--
+**CH02-P01 (Single-component scalar Lip bound)**:
+When `|I| = 1` with `I = {i}`, the global Lip matrix condition degenerates
+to the scalar inequality `d_i(ϕ(x), ϕ(y)) ≤ L_{i -&gt; i} * d_i(x, y)` on `dom ϕ`.
+-/
+theorem isLipMatrix_iff_scalar_of_card_eq_one {X I : Type} {bot : X} [Fintype I]
+    (hcard : Fintype.card I = 1) (i : I)
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) :
+    IsLipMatrix d ϕ L ↔
+      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ,
+        d i (ϕ.func x) (ϕ.func y) ≤ matrixEntry L i i * d i x y := by
+  haveI : Subsingleton I := Fintype.card_le_one_iff_subsingleton.mp hcard.le
+  constructor
+  · intro hL x hx y hy
+    simpa [sum_eq_single_of_subsingleton i] using hL x hx y hy i
+  · intro hscalar x hx y hy j
+    have hj : j = i := Subsingleton.elim j i
+    subst hj
+    rw [sum_eq_single_of_subsingleton j]
+    exact hscalar x hx y hy
+
+/-- Restricted scalar Lip degeneration when `|I| = 1` and `I = {i}`. -/
+theorem isRestrictedLipMatrix_iff_scalar_of_card_eq_one {X I : Type} {bot : X} [Fintype I]
+    (hcard : Fintype.card I = 1) (i : I)
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I) :
+    IsRestrictedLipMatrix d ϕ U L ↔
+      U ⊆ dom ϕ ∧
+      ∀ x ∈ U, ∀ y ∈ U,
+        d i (ϕ.func x) (ϕ.func y) ≤ matrixEntry L i i * d i x y := by
+  haveI : Subsingleton I := Fintype.card_le_one_iff_subsingleton.mp hcard.le
+  constructor
+  · rintro ⟨hU, hL⟩
+    exact ⟨hU, fun x hx y hy =&gt; by simpa [sum_eq_single_of_subsingleton i] using hL x hx y hy i⟩
+  · rintro ⟨hU, hscalar⟩
+    refine ⟨hU, fun x hx y hy j =&gt; ?_⟩
+    have hj : j = i := Subsingleton.elim j i
+    subst hj
+    rw [sum_eq_single_of_subsingleton j]
+    exact hscalar x hx y hy
+
+/--
+**CH02-P02 (Lemma 2.1, part 1)**:
+Antitonicity of restricted Lip certificate families:
+if `U ⊆ V ⊆ dom ϕ`, then `L(ϕ)|_V ⊆ L(ϕ)|_U`.
+-/
+theorem restrictedLipMatrices_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedLipMatrices d ϕ V ⊆ RestrictedLipMatrices d ϕ U := by
+  intro L hL
+  refine ⟨hUV.trans hV, fun x hx y hy j =&gt; ?_⟩
+  exact hL.2 x (hUV hx) y (hUV hy) j
+
+/--
+**CH02-P03 (Lemma 2.1, part 2)**:
+Global Lip certificates restrict to any subset `U ⊆ dom ϕ`: `L(ϕ) ⊆ L(ϕ)|_U`.
+-/
+theorem lipMatrices_subset_restrictedLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom ϕ) :
+    LipMatrices d ϕ ⊆ RestrictedLipMatrices d ϕ U := by
+  rw [← restrictedLipMatrices_dom]
+  exact restrictedLipMatrices_antitone d ϕ hU Set.Subset.rfl
+
+/--
+**CH02-P05 (Lemma 2.3, part 1)**:
+Antitonicity of restricted co-Lip certificate families:
+if `U` is nonempty and `U ⊆ V ⊆ dom ϕ`, then `K(ϕ)|_V ⊆ K(ϕ)|_U`.
+-/
+theorem restrictedCoLipMatrices_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hU_ne : U.Nonempty) (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedCoLipMatrices d ϕ V ⊆ RestrictedCoLipMatrices d ϕ U := by
+  intro K hK
+  refine ⟨hU_ne, hUV.trans hV, fun x hx y hy j =&gt; ?_⟩
+  exact hK.2.2 x (hUV hx) y (hUV hy) j
+
+/--
+**CH02-P06 (Lemma 2.3, part 2)**:
+Global co-Lip certificates on `dom ϕ` restrict to any nonempty subset `U ⊆ dom ϕ`:
+`K(ϕ)|_{dom ϕ} ⊆ K(ϕ)|_U`.
+-/
+theorem coLipMatrices_dom_subset_restrictedCoLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) :
+    RestrictedCoLipMatrices d ϕ (dom ϕ) ⊆ RestrictedCoLipMatrices d ϕ U :=
+  restrictedCoLipMatrices_antitone d ϕ hU_ne hU Set.Subset.rfl
+
+/--
+**CH02-P07 (Sufficient condition for zero co-Lip entry)**:
+If there exist `x, y ∈ dom ϕ` with `d_j(ϕ(x), ϕ(y)) = 0` and `0 &lt; d_i(x, y)`,
+then any global co-Lip matrix `K ∈ K(ϕ)|_{dom ϕ}` satisfies `K_{i -&gt; j} = 0`.
+-/
+theorem coLipMatrix_entry_eq_zero_of_dist_zero_pos {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {i j : I} {K : GaugeMatrix I}
+    (hxy : ∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d j (ϕ.func x) (ϕ.func y) = 0 ∧ 0 &lt; d i x y)
+    (hK : K ∈ RestrictedCoLipMatrices d ϕ (dom ϕ)) :
+    matrixEntry K i j = 0 := by
+  rcases hxy with ⟨x, hx, y, hy, h_out_zero, h_in_pos⟩
+  have h_le : matrixEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+    calc
+      matrixEntry K i j * d i x y
+          ≤ ∑ k : I, matrixEntry K k j * d k x y :=
+            Finset.single_le_sum (f := fun k =&gt; matrixEntry K k j * d k x y)
+              (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+      _ ≤ d j (ϕ.func x) (ϕ.func y) := hK.2.2 x hx y hy j
+  rw [h_out_zero] at h_le
+  have h_mul_zero : matrixEntry K i j * d i x y = 0 := le_antisymm h_le (zero_le _)
+  rcases mul_eq_zero.mp h_mul_zero with hK_zero | hd_zero
+  · exact hK_zero
+  · exact absurd hd_zero (ne_of_gt h_in_pos)
+
+end SingleComponentAndMonotonicity
+
+section TwoStepComposition
+
+theorem subset_dom_left_of_subset_dom_comp {X : Type} {bot : X}
+    (ϕ₁ ϕ₂ : Operator X bot) {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) :
+    U₁ ⊆ dom ϕ₁ := by
+  intro x hx h_bot
+  have h_comp : (ϕ₂ * ϕ₁).func x ≠ bot := hU₁ hx
+  apply h_comp
+  change ϕ₂.func (ϕ₁.func x) = bot
+  rw [h_bot, ϕ₂.preserves_bot]
+
+theorem operator_image_subset_dom_right_of_subset_dom_comp {X : Type} {bot : X}
+    (ϕ₁ ϕ₂ : Operator X bot) {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) :
+    operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by
+  rintro y ⟨x, hx, rfl⟩
+  exact hU₁ hx
+
+theorem operator_image_nonempty {X : Type} {bot : X}
+    (ϕ : Operator X bot) {U : Set X} (hU : U.Nonempty) :
+    (operator_image ϕ U).Nonempty :=
+  hU.image ϕ.func
+
+/--
+**CH02-P04 (Proposition 2.2, Lip matrix composition law)**:
+For `ϕ₂ * ϕ₁` and `U₁ ⊆ dom (ϕ₂ * ϕ₁)` with exact intermediate image `U₂ = ϕ₁(U₁)`,
+if `L₁ ∈ L(ϕ₁)|_{U₁}` and `L₂ ∈ L(ϕ₂)|_{U₂}`, then `L₂ * L₁ ∈ L(ϕ₂ * ϕ₁)|_{U₁}`.
+-/
+theorem restrictedLipMatrices_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₁ ϕ₂ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁))
+    {L₁ L₂ : GaugeMatrix I}
+    (hL₁ : L₁ ∈ RestrictedLipMatrices d ϕ₁ U₁)
+    (hL₂ : L₂ ∈ RestrictedLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)) :
+    L₂ * L₁ ∈ RestrictedLipMatrices d (ϕ₂ * ϕ₁) U₁ := by
+  refine ⟨hU₁, fun x hx y hy j =&gt; ?_⟩
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  calc
+    d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y)
+        = d j (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) := rfl
+    _ ≤ ∑ k : I, matrixEntry L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) :=
+          hL₂.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+    _ ≤ ∑ k : I, matrixEntry L₂ k j * ∑ i : I, matrixEntry L₁ i k * d i x y := by
+          refine Finset.sum_le_sum fun k _ =&gt; ?_
+          exact mul_le_mul_of_nonneg_left (hL₁.2 x hx y hy k) (zero_le _)
+    _ = ∑ i : I, matrixEntry (L₂ * L₁) i j * d i x y := by
+          rw [matrixEntry_mul_sum_eq]
+
+/--
+**CH02-P08 (Proposition 2.4, co-Lip matrix composition law)**:
+For `ϕ₂ * ϕ₁` and `U₁ ⊆ dom (ϕ₂ * ϕ₁)` with exact intermediate image `U₂ = ϕ₁(U₁)`,
+if `K₁ ∈ K(ϕ₁)|_{U₁}` and `K₂ ∈ K(ϕ₂)|_{U₂}`, then `K₂ * K₁ ∈ K(ϕ₂ * ϕ₁)|_{U₁}`
+(with nonemptiness of `U₁` inherited from `K₁ ∈ K(ϕ₁)|_{U₁}`).
+-/
+theorem restrictedCoLipMatrices_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₁ ϕ₂ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁))
+    {K₁ K₂ : GaugeMatrix I}
+    (hK₁ : K₁ ∈ RestrictedCoLipMatrices d ϕ₁ U₁)
+    (hK₂ : K₂ ∈ RestrictedCoLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)) :
+    K₂ * K₁ ∈ RestrictedCoLipMatrices d (ϕ₂ * ϕ₁) U₁ := by
+  refine ⟨hK₁.1, hU₁, fun x hx y hy j =&gt; ?_⟩
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  calc
+    ∑ i : I, matrixEntry (K₂ * K₁) i j * d i x y
+        = ∑ k : I, matrixEntry K₂ k j * ∑ i : I, matrixEntry K₁ i k * d i x y :=
+          matrixEntry_mul_sum_eq K₂ K₁ (fun i =&gt; d i x y) j
+    _ ≤ ∑ k : I, matrixEntry K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by
+          refine Finset.sum_le_sum fun k _ =&gt; ?_
+          exact mul_le_mul_of_nonneg_left (hK₁.2.2 x hx y hy k) (zero_le _)
+    _ ≤ d j (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) :=
+          hK₂.2.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+    _ = d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y) := rfl
+
+end TwoStepComposition
+
+section ZeroStepIdentity
+
+private theorem matrixOne_sum_eq {I : Type} [Fintype I] [DecidableEq I]
+    (v : I → ENNReal) (j : I) :
+    ∑ i : I, matrixEntry (matrixOne : GaugeMatrix I) i j * v i = v j := by
+  have h : (fun i : I =&gt; matrixEntry (matrixOne : GaugeMatrix I) i j * v i) =
+      fun i : I =&gt; if i = j then v i else 0 := by
+    ext i
+    rw [matrixEntry_one]
+    by_cases hij : i = j &lt;;&gt; simp [hij]
+  rw [h]
+  simp
+
+/--
+**CH02-P11 (Zero-step identity Lip certificate)**:
+For any `U ⊆ dom id`, the identity matrix `I` belongs to `L(id)|_U`.
+-/
+theorem matrixOne_mem_restrictedLipMatrices_id {X I : Type} {bot : X}
+    [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU : U ⊆ dom (operator_identity (X := X) (bot := bot))) :
+    matrixOne ∈ RestrictedLipMatrices d (operator_identity (X := X) (bot := bot)) U := by
+  refine ⟨hU, fun x _ y _ j =&gt; ?_⟩
+  rw [matrixOne_sum_eq]
+  rfl
+
+/--
+**CH02-P12 (Zero-step identity co-Lip certificate)**:
+For any nonempty `U ⊆ dom id`, the identity matrix `I` belongs to `K(id)|_U`.
+-/
+theorem matrixOne_mem_restrictedCoLipMatrices_id {X I : Type} {bot : X}
+    [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty)
+    (hU : U ⊆ dom (operator_identity (X := X) (bot := bot))) :
+    matrixOne ∈ RestrictedCoLipMatrices d (operator_identity (X := X) (bot := bot)) U := by
+  refine ⟨hU_ne, hU, fun x _ y _ j =&gt; ?_⟩
+  rw [matrixOne_sum_eq]
+  rfl
+
+/-- Combined zero-step identity note: `I ∈ L(id)|_U ∩ K(id)|_U` for nonempty `U ⊆ dom id`. -/
+theorem matrixOne_mem_id_inter {X I : Type} {bot : X}
+    [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty)
+    (hU : U ⊆ dom (operator_identity (X := X) (bot := bot))) :
+    matrixOne ∈ RestrictedLipMatrices d (operator_identity (X := X) (bot := bot)) U ∩
+      RestrictedCoLipMatrices d (operator_identity (X := X) (bot := bot)) U :=
+  ⟨matrixOne_mem_restrictedLipMatrices_id d hU,
+    matrixOne_mem_restrictedCoLipMatrices_id d hU_ne hU⟩
+
+end ZeroStepIdentity
+
+section ChainDomainsAndFiniteComposition
+
+theorem operator_image_mul {X : Type} {bot : X}
+    (ϕ₂ ϕ₁ : Operator X bot) (U : Set X) :
+    operator_image (ϕ₂ * ϕ₁) U = operator_image ϕ₂ (operator_image ϕ₁ U) := by
+  ext z
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    exact ⟨ϕ₁.func x, ⟨x, hx, rfl⟩, rfl⟩
+  · rintro ⟨y, ⟨x, hx, rfl⟩, rfl⟩
+    exact ⟨x, hx, rfl⟩
+
+/--
+**CH02-D05**: Step-indexed finite composition `c_k = ϕ_k ∘ ... ∘ ϕ_1`,
+with `c_0 = id` when `k = 0`.
+-/
+def chainCompose {X : Type} {bot : X} :
+    {k : ℕ} → (Fin k → Operator X bot) → Operator X bot
+  | 0, _ =&gt; operator_identity
+  | k + 1, ϕs =&gt; ϕs (Fin.last k) * chainCompose (fun r : Fin k =&gt; ϕs r.castSucc)
+
+@[simp]
+theorem chainCompose_zero {X : Type} {bot : X} (ϕs : Fin 0 → Operator X bot) :
+    chainCompose ϕs = operator_identity :=
+  rfl
+
+@[simp]
+theorem chainCompose_succ {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) :
+    chainCompose ϕs = ϕs (Fin.last k) * chainCompose (fun r : Fin k =&gt; ϕs r.castSucc) :=
+  rfl
+
+/--
+**CH02-D05**: Exact correspondence between step-indexed composition `chainCompose ϕs`
+and `formal_oet.vol_01.ch_01_foundations.OperatorChain`.
+Because `OperatorChain [ϕ_k, ..., ϕ_1]` applies the rightmost element first,
+it equals `chainCompose` on the reversed step list.
+-/
+theorem chainCompose_eq_operatorChain_reverse {X : Type} {bot : X} :
+    {k : ℕ} → (ϕs : Fin k → Operator X bot) →
+      chainCompose ϕs = OperatorChain (List.ofFn ϕs).reverse
+  | 0, _ =&gt; rfl
+  | k + 1, ϕs =&gt; by
+      have ih := chainCompose_eq_operatorChain_reverse (fun r : Fin k =&gt; ϕs r.castSucc)
+      rw [chainCompose_succ, ih]
+      conv_rhs =&gt; rw [List.ofFn_succ', List.concat_eq_append, List.reverse_append]
+      rfl
+
+theorem chainCompose_eq_prod {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) :
+    chainCompose ϕs = (List.ofFn ϕs).reverse.prod := by
+  rw [chainCompose_eq_operatorChain_reverse, operator_chain_eq_prod]
+
+/-- Extract step-ordered operators `(ϕ_1, ..., ϕ_k)` from an `OperatorChain` list `[ϕ_k, ..., ϕ_1]`. -/
+def chainSteps {X : Type} {bot : X} (chain : List (Operator X bot)) :
+    Fin chain.length → Operator X bot :=
+  fun m =&gt; chain.reverse[m.1]'(by simp)
+
+/-- Reverse correspondence: `OperatorChain` on any list equals `chainCompose` on `chainSteps chain`. -/
+theorem operatorChain_eq_chainCompose_reverse {X : Type} {bot : X}
+    (chain : List (Operator X bot)) :
+    OperatorChain chain = chainCompose (chainSteps chain) := by
+  have hrev : (List.ofFn (chainSteps chain)).reverse = chain := by
+    have hof : List.ofFn (chainSteps chain) = chain.reverse := by
+      refine List.ext_getElem (by simp) fun i hi₁ hi₂ =&gt; ?_
+      simp [chainSteps]
+    rw [hof, List.reverse_reverse]
+  rw [chainCompose_eq_operatorChain_reverse, hrev]
+
+/-- Recursive helper defining intermediate image domains `U_1, U_2, ..., U_{k+1}`. -/
+def stepImage {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) : ℕ → Set X
+  | 0 =&gt; U₁
+  | m + 1 =&gt;
+      if h : m &lt; k then operator_image (ϕs ⟨m, h⟩) (stepImage ϕs U₁ m)
+      else stepImage ϕs U₁ m
+
+/--
+**CH02-D05**: Actual intermediate image domains `U_1, ..., U_{k+1}` along `ϕ_1, ..., ϕ_k`,
+defined recursively by `U_1` at index `0` and `U_{m+1} = ϕ_m(U_m)`.
+-/
+def chainDomain {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) (m : Fin (k + 1)) : Set X :=
+  stepImage ϕs U₁ m.1
+
+@[simp]
+theorem chainDomain_zero {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) :
+    chainDomain ϕs U₁ 0 = U₁ :=
+  rfl
+
+@[simp]
+theorem chainDomain_succ {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) (m : Fin k) :
+    chainDomain ϕs U₁ m.succ = operator_image (ϕs m) (chainDomain ϕs U₁ m.castSucc) := by
+  simp [chainDomain, stepImage, m.isLt]
+
+private theorem stepImage_prefix_eq {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) (U₁ : Set X) :
+    (m : ℕ) → m ≤ k →
+      stepImage (fun r : Fin k =&gt; ϕs r.castSucc) U₁ m = stepImage ϕs U₁ m
+  | 0, _ =&gt; rfl
+  | m + 1, hm =&gt; by
+      have hm_lt_k : m &lt; k := hm
+      have hm_lt_k1 : m &lt; k + 1 := Nat.lt_succ_of_lt hm_lt_k
+      have ih := stepImage_prefix_eq ϕs U₁ m (Nat.le_of_lt hm_lt_k)
+      simp only [stepImage, dif_pos hm_lt_k, dif_pos hm_lt_k1]
+      rw [ih]
+      rfl
+
+theorem chainDomain_prefix_eq {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) (U₁ : Set X) (m : Fin (k + 1)) :
+    chainDomain (fun r : Fin k =&gt; ϕs r.castSucc) U₁ m = chainDomain ϕs U₁ m.castSucc :=
+  stepImage_prefix_eq ϕs U₁ m.1 (Nat.lt_succ_iff.mp m.isLt)
+
+/--
+**CH02-D05**: The final domain `U_{k+1}` equals the image of `U_1` under `c_k = chainCompose ϕs`.
+-/
+theorem chainDomain_last_eq_image_chainCompose {X : Type} {bot : X} :
+    {k : ℕ} → (ϕs : Fin k → Operator X bot) → (U₁ : Set X) →
+      chainDomain ϕs U₁ (Fin.last k) = operator_image (chainCompose ϕs) U₁
+  | 0, ϕs, U₁ =&gt; by
+      simp [chainDomain, stepImage, chainCompose, operator_image, operator_identity]
+  | k + 1, ϕs, U₁ =&gt; by
+      have ih := chainDomain_last_eq_image_chainCompose (fun r : Fin k =&gt; ϕs r.castSucc) U₁
+      have hlast : (Fin.last (k + 1) : Fin (k + 2)) = (Fin.last k : Fin (k + 1)).succ := rfl
+      rw [hlast, chainDomain_succ, ← chainDomain_prefix_eq, ih, chainCompose_succ,
+        operator_image_mul]
+
+/-- Prefix composition `c_m = ϕ_m ∘ ... ∘ ϕ_1` for `m : Fin (k + 1)`. -/
+def prefixCompose {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (m : Fin (k + 1)) : Operator X bot :=
+  chainCompose (fun r : Fin m.1 =&gt;
+    ϕs ⟨r.1, Nat.lt_of_lt_of_le r.isLt (Nat.lt_succ_iff.mp m.isLt)⟩)
+
+private theorem prefixCompose_succ_eq {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (m : Fin k) :
+    prefixCompose ϕs m.succ = ϕs m * prefixCompose ϕs m.castSucc := by
+  unfold prefixCompose
+  simp only [Fin.val_succ, Fin.val_castSucc]
+  rw [chainCompose_succ]
+  rfl
+
+/--
+**CH02-D05**: Every intermediate domain `U_{m+1}` equals the image of `U_1` under
+the prefix chain `c_m` (matching `OperatorChain` of the reversed prefix).
+-/
+theorem chainDomain_eq_image_prefix {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) (m : Fin (k + 1)) :
+    chainDomain ϕs U₁ m = operator_image (prefixCompose ϕs m) U₁ := by
+  induction m using Fin.induction with
+  | zero =&gt;
+      simp [prefixCompose, operator_image, operator_identity]
+  | succ i ih =&gt;
+      rw [chainDomain_succ, ih, prefixCompose_succ_eq, operator_image_mul]
+
+theorem subset_dom_prefix_of_subset_dom_chainCompose {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (chainCompose ϕs)) :
+    U₁ ⊆ dom (chainCompose (fun r : Fin k =&gt; ϕs r.castSucc)) := by
+  rw [chainCompose_succ] at hU₁
+  exact subset_dom_left_of_subset_dom_comp _ _ hU₁
+
+/--
+**CH02-D05**: Domain propagation along a chain:
+if `U₁ ⊆ dom (c_k)`, then every actual intermediate domain `U_m` satisfies `U_m ⊆ dom (ϕ_m)`.
+-/
+theorem chainDomain_subset_dom_step {X : Type} {bot : X} :
+    {k : ℕ} → (ϕs : Fin k → Operator X bot) → {U₁ : Set X} →
+      U₁ ⊆ dom (chainCompose ϕs) →
+      ∀ m : Fin k, chainDomain ϕs U₁ m.castSucc ⊆ dom (ϕs m)
+  | 0, _, _, _, m =&gt; Fin.elim0 m
+  | k + 1, ϕs, U₁, hU₁, m =&gt; by
+      have h_pref : U₁ ⊆ dom (chainCompose (fun r : Fin k =&gt; ϕs r.castSucc)) :=
+        subset_dom_prefix_of_subset_dom_chainCompose ϕs hU₁
+      induction m using Fin.lastCases with
+      | last =&gt;
+          rw [← chainDomain_prefix_eq, chainDomain_last_eq_image_chainCompose]
+          rw [chainCompose_succ] at hU₁
+          exact operator_image_subset_dom_right_of_subset_dom_comp _ _ hU₁
+      | cast r =&gt;
+          change chainDomain ϕs U₁ r.castSucc.castSucc ⊆ dom (ϕs r.castSucc)
+          rw [← chainDomain_prefix_eq]
+          exact chainDomain_subset_dom_step (fun q : Fin k =&gt; ϕs q.castSucc) h_pref r
+
+/-- Nonemptiness propagation along intermediate image domains. -/
+theorem chainDomain_nonempty {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) {U₁ : Set X} (hU₁ : U₁.Nonempty)
+    (m : Fin (k + 1)) :
+    (chainDomain ϕs U₁ m).Nonempty := by
+  rw [chainDomain_eq_image_prefix]
+  exact operator_image_nonempty _ hU₁
+
+/--
+**CH02-P11 (Zero-step chain form)**:
+For `k = 0`, the empty matrix product belongs to `L(c_0)|_{U₁}` for any `U₁ ⊆ dom (c_0)`.
+-/
+theorem matrixProd_zero_mem_restrictedLipMatrices_chainCompose_zero
+    {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (ϕs : Fin 0 → Operator X bot)
+    (Ls : Fin 0 → GaugeMatrix I) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (chainCompose ϕs)) :
+    matrixProd Ls ∈ RestrictedLipMatrices d (chainCompose ϕs) U₁ := by
+  simpa [matrixProd_zero, chainCompose_zero] using matrixOne_mem_restrictedLipMatrices_id d hU₁
+
+/--
+**CH02-P12 (Zero-step chain form)**:
+For `k = 0` and nonempty `U₁ ⊆ dom (c_0)`, the empty matrix product belongs to `K(c_0)|_{U₁}`.
+-/
+theorem matrixProd_zero_mem_restrictedCoLipMatrices_chainCompose_zero
+    {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (ϕs : Fin 0 → Operator X bot)
+    (Ks : Fin 0 → GaugeMatrix I) {U₁ : Set X}
+    (hU₁_ne : U₁.Nonempty) (hU₁ : U₁ ⊆ dom (chainCompose ϕs)) :
+    matrixProd Ks ∈ RestrictedCoLipMatrices d (chainCompose ϕs) U₁ := by
+  simpa [matrixProd_zero, chainCompose_zero] using
+    matrixOne_mem_restrictedCoLipMatrices_id d hU₁_ne hU₁
+
+private theorem chain_matrix_bound_pos_ind {X I : Type} {bot : X} [Fintype I]
+    (P : Operator X bot → Set X → GaugeMatrix I → Prop)
+    (h_comp : ∀ ϕ₁ ϕ₂ U₁ M₁ M₂,
+      U₁ ⊆ dom (ϕ₂ * ϕ₁) →
+      P ϕ₁ U₁ M₁ → P ϕ₂ (operator_image ϕ₁ U₁) M₂ →
+      P (ϕ₂ * ϕ₁) U₁ (M₂ * M₁)) :
+    {m : ℕ} → (ϕs : Fin (m + 1) → Operator X bot) → {U₁ : Set X} →
+      U₁ ⊆ dom (chainCompose ϕs) →
+      (Ms : Fin (m + 1) → GaugeMatrix I) →
+      (∀ r : Fin (m + 1), P (ϕs r) (chainDomain ϕs U₁ r.castSucc) (Ms r)) →
+      P (chainCompose ϕs) U₁ (matrixPosProd Ms)
+  | 0, ϕs, U₁, _, Ms, hMs =&gt; by
+      have h0 := hMs 0
+      simpa [matrixPosProd, chainCompose, chainDomain] using h0
+  | m + 1, ϕs, U₁, hU₁, Ms, hMs =&gt; by
+      let ϕs' : Fin (m + 1) → Operator X bot := fun r =&gt; ϕs r.castSucc
+      let Ms' : Fin (m + 1) → GaugeMatrix I := fun r =&gt; Ms r.castSucc
+      have hU₁' : U₁ ⊆ dom (chainCompose ϕs') :=
+        subset_dom_prefix_of_subset_dom_chainCompose ϕs hU₁
+      have hMs' : ∀ r : Fin (m + 1),
+          P (ϕs' r) (chainDomain ϕs' U₁ r.castSucc) (Ms' r) := by
+        intro r
+        rw [chainDomain_prefix_eq]
+        exact hMs r.castSucc
+      have ih := chain_matrix_bound_pos_ind P h_comp ϕs' hU₁' Ms' hMs'
+      have h_last : P (ϕs (Fin.last (m + 1)))
+          (operator_image (chainCompose ϕs') U₁) (Ms (Fin.last (m + 1))) := by
+        rw [← chainDomain_last_eq_image_chainCompose, chainDomain_prefix_eq]
+        exact hMs (Fin.last (m + 1))
+      rw [matrixPosProd_succ, chainCompose_succ]
+      exact h_comp (chainCompose ϕs') (ϕs (Fin.last (m + 1))) U₁
+        (matrixPosProd Ms') (Ms (Fin.last (m + 1)))
+        (by simpa [chainCompose_succ] using hU₁) ih h_last
+
+private theorem chain_matrix_bound_ind {X I : Type} {bot : X} [Fintype I]
+    (P : Operator X bot → Set X → GaugeMatrix I → Prop)
+    (h_comp : ∀ ϕ₁ ϕ₂ U₁ M₁ M₂,
+      U₁ ⊆ dom (ϕ₂ * ϕ₁) →
+      P ϕ₁ U₁ M₁ → P ϕ₂ (operator_image ϕ₁ U₁) M₂ →
+      P (ϕ₂ * ϕ₁) U₁ (M₂ * M₁))
+    {k : ℕ} (hk : 0 &lt; k) (ϕs : Fin k → Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (chainCompose ϕs))
+    (Ms : Fin k → GaugeMatrix I)
+    (hMs : ∀ m : Fin k, P (ϕs m) (chainDomain ϕs U₁ m.castSucc) (Ms m)) :
+    P (chainCompose ϕs) U₁ (matrixNonemptyProd hk Ms) := by
+  cases k with
+  | zero =&gt; exact absurd hk (Nat.lt_irrefl 0)
+  | succ m =&gt; exact chain_matrix_bound_pos_ind P h_comp ϕs hU₁ Ms hMs
+
+/--
+**CH02-P09 (Corollary 2.5(i), finite-chain Lip product bound)**:
+For any positive length `k ≥ 1`, if each step `m` has a restricted Lip certificate
+`L^{(m)} ∈ L(ϕ_m)|_{U_m}` on the actual intermediate image domain `U_m`, then
+`L^{(k)} * ... * L^{(1)} ∈ L(c_k)|_{U₁}`.
+-/
+theorem restrictedLipMatrices_chain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    {k : ℕ} (hk : 0 &lt; k) (ϕs : Fin k → Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (chainCompose ϕs))
+    (Ls : Fin k → GaugeMatrix I)
+    (hLs : ∀ m : Fin k, Ls m ∈ RestrictedLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)) :
+    matrixNonemptyProd hk Ls ∈ RestrictedLipMatrices d (chainCompose ϕs) U₁ :=
+  chain_matrix_bound_ind
+    (fun ϕ U M =&gt; M ∈ RestrictedLipMatrices d ϕ U)
+    (fun ϕ₁ ϕ₂ _ _ _ hU h₁ h₂ =&gt; restrictedLipMatrices_comp d ϕ₁ ϕ₂ hU h₁ h₂)
+    hk ϕs hU₁ Ls hLs
+
+/-- Direct corollary of `CH02-P09` formulated via `OperatorChain` from Chapter 1. -/
+theorem restrictedLipMatrices_operatorChain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    (chain : List (Operator X bot)) (hchain : chain ≠ [])
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (OperatorChain chain))
+    (Ls : Fin chain.length → GaugeMatrix I)
+    (hLs : ∀ m : Fin chain.length,
+      Ls m ∈ RestrictedLipMatrices d (chainSteps chain m)
+        (chainDomain (chainSteps chain) U₁ m.castSucc)) :
+    matrixNonemptyProd (List.length_pos_of_ne_nil hchain) Ls ∈
+      RestrictedLipMatrices d (OperatorChain chain) U₁ := by
+  have h_eq : OperatorChain chain = chainCompose (chainSteps chain) :=
+    operatorChain_eq_chainCompose_reverse chain
+  rw [h_eq] at hU₁ ⊢
+  exact restrictedLipMatrices_chain d (List.length_pos_of_ne_nil hchain) (chainSteps chain) hU₁ Ls hLs
+
+/--
+**CH02-P10 (Corollary 2.5(ii), finite-chain co-Lip product bound)**:
+For any positive length `k ≥ 1`, if each step `m` has a restricted co-Lip certificate
+`K^{(m)} ∈ K(ϕ_m)|_{U_m}` on the actual intermediate image domain `U_m`, then
+`K^{(k)} * ... * K^{(1)} ∈ K(c_k)|_{U₁}`.
+-/
+theorem restrictedCoLipMatrices_chain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    {k : ℕ} (hk : 0 &lt; k) (ϕs : Fin k → Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (chainCompose ϕs))
+    (Ks : Fin k → GaugeMatrix I)
+    (hKs : ∀ m : Fin k, Ks m ∈ RestrictedCoLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)) :
+    matrixNonemptyProd hk Ks ∈ RestrictedCoLipMatrices d (chainCompose ϕs) U₁ :=
+  chain_matrix_bound_ind
+    (fun ϕ U M =&gt; M ∈ RestrictedCoLipMatrices d ϕ U)
+    (fun ϕ₁ ϕ₂ _ _ _ hU h₁ h₂ =&gt; restrictedCoLipMatrices_comp d ϕ₁ ϕ₂ hU h₁ h₂)
+    hk ϕs hU₁ Ks hKs
+
+/-- Direct corollary of `CH02-P10` formulated via `OperatorChain` from Chapter 1. -/
+theorem restrictedCoLipMatrices_operatorChain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    (chain : List (Operator X bot)) (hchain : chain ≠ [])
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (OperatorChain chain))
+    (Ks : Fin chain.length → GaugeMatrix I)
+    (hKs : ∀ m : Fin chain.length,
+      Ks m ∈ RestrictedCoLipMatrices d (chainSteps chain m)
+        (chainDomain (chainSteps chain) U₁ m.castSucc)) :
+    matrixNonemptyProd (List.length_pos_of_ne_nil hchain) Ks ∈
+      RestrictedCoLipMatrices d (OperatorChain chain) U₁ := by
+  have h_eq : OperatorChain chain = chainCompose (chainSteps chain) :=
+    operatorChain_eq_chainCompose_reverse chain
+  rw [h_eq] at hU₁ ⊢
+  exact restrictedCoLipMatrices_chain d (List.length_pos_of_ne_nil hchain) (chainSteps chain) hU₁ Ks hKs
+
+end ChainDomainsAndFiniteComposition
+
+end LCH02
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsLipMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.LipMatrices&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsRestrictedLipMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.RestrictedLipMatrices&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isRestrictedLipMatrix_dom_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_dom&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：固定基底类型 X、吸收元 bot、有限指标集 I [Fintype I]、规范函数族 d : I → X → X → ENNReal 与算子 ϕ : Operator X bot。量词/定义域：IsLipMatrix 要求 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, matrixEntry L i j * d i x y；IsRestrictedLipMatrix 要求 U ⊆ dom ϕ 且 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I 满足同式。结论/族：LipMatrices d ϕ := { L | IsLipMatrix d ϕ L } 对应 L(ϕ)，RestrictedLipMatrices d ϕ U := { L | IsRestrictedLipMatrix d ϕ U L } 对应 L(ϕ)|_U，并证 restrictedLipMatrices_dom 表明当 U = dom ϕ 时两者相等。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsRestrictedCoLipMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.RestrictedCoLipMatrices&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：固定 X, bot, I [Fintype I], d : I → X → X → ENNReal, ϕ : Operator X bot, U : Set X 与矩阵 K : GaugeMatrix I。量词/定义域：IsRestrictedCoLipMatrix d ϕ U K 显式合取 U.Nonempty、U ⊆ dom ϕ 与 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, matrixEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)，完整保留“凡出现 K(ϕ)|_U 均包含非空性 U ≠ ∅”的原文要求。结论/族：RestrictedCoLipMatrices d ϕ U := { K | IsRestrictedCoLipMatrix d ϕ U K } 对应 K(ϕ)|_U。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.GaugeMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.ofChannel&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry_mul&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry_mul_sum_eq&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：GaugeMatrix I := Matrix I I ENNReal 表示以 ENNReal 为条目的 I × I 矩阵，自然实现原文 R̄_+ 算术（含 0 * +∞ = 0）。指标约定：matrixEntry M i j := M j i 将输入分量 i 置于列指标、输出分量 j 置于行指标，对应 (M)_{ji} = M_{i→j}；ofChannel f 则从通道函数 f i j 构造矩阵。乘法结论：在 [Fintype I] 下直接采用代数矩阵乘法 M₂ * M₁，matrixEntry_mul 证明 matrixEntry (M₂ * M₁) i j = ∑ k : I, matrixEntry M₂ k j * matrixEntry M₁ i k。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry_one&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixPosProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_one&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_succ&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_zero&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_eq_nonemptyProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_succ&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixPosProd_eq_list_reverse_prod&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_eq_list_reverse_prod&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：matrixOne := (1 : Matrix I I ENNReal) 在 [DecidableEq I] 下定义单位矩阵 I（matrixEntry_one 验证其条目为 if i = j then 1 else 0）。有序非空乘积：matrixPosProd 对 Fin (m + 1) → GaugeMatrix I 递归定义 M^{(m+1)} * ... * M^{(1)}，matrixNonemptyProd 对任意 hn : 0 &lt; n 的序列 Ms : Fin n → GaugeMatrix I 给出同式（无需 DecidableEq I）。一般/空乘积：matrixProd 在 n = 0 时取 matrixOne（空乘积），在 n = m + 1 时等于 matrixPosProd Ms，并通过 matrixProd_eq_list_reverse_prod 与 List.prod 对应。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainCompose&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainCompose_eq_operatorChain_reverse&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainCompose_eq_prod&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainSteps&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.operatorChain_eq_chainCompose_reverse&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.stepImage&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_zero&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_succ&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_prefix_eq&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_last_eq_image_chainCompose&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.prefixCompose&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_eq_image_prefix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_subset_dom_step&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_nonempty&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：以步序族 ϕs : Fin k → Operator X bot 表示 ϕ_1, ..., ϕ_k，chainCompose ϕs 递归定义为 c_0 = id 与 c_{m+1} = ϕ_{m+1} * c_m。链表示对应：chainCompose_eq_operatorChain_reverse 与 operatorChain_eq_chainCompose_reverse（配 chainSteps）建立步序复合与前置模块 OperatorChain 的双向严格对应（OperatorChain 以链表头为最后作用算子，故与步序反转对应）。实际中间像域：chainDomain ϕs U₁ : Fin (k + 1) → Set X 经 stepImage 递归定义 U_1 = U₁ 与 U_{m+1} = ϕ_m(U_m)，chainDomain_eq_image_prefix 与 chainDomain_last_eq_image_chainCompose 刻画其等于前缀复合像集 c_m(U₁)，chainDomain_subset_dom_step 证 U₁ ⊆ dom c_k 蕴含每步 U_m ⊆ dom ϕ_m。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.InteriorPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodesPos&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodes&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodes_zero&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodes_last&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.interiorPath_one_unique&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathStepEntry&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsPositivePath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.HasZeroFactorPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.not_isPositivePath_iff_hasZeroFactorPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IndexPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.interiorPathEquivIndexPath&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：InteriorPath I n := Fin (n - 1) → I 表示中间指标序列 (k_1, ..., k_{n-1})，n = 1 时由 interiorPath_one_unique 证其为唯一空序列；pathNodes hn i j p : Fin (n + 1) → I 拼接首尾端点 k_0 = i, k_n = j（并由 interiorPathEquivIndexPath 与显式端点路径结构 IndexPath I n i j 等价）。谓词：pathStepEntry Ms hn i j p r 给出步条目 [M^{(r)}]_{k_{r-1}→k_r}；IsPositivePath 谓词为 ∀ r : Fin n, 0 &lt; pathStepEntry ... r（全正路径）；HasZeroFactorPath 谓词为 ∃ r : Fin n, pathStepEntry ... r = 0（含零因子路径）。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isLipMatrix_iff_scalar_of_card_eq_one&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isRestrictedLipMatrix_iff_scalar_of_card_eq_one&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：假设 Fintype.card I = 1 且取唯一指标 i : I，对任意 d : I → X → X → ENNReal、ϕ : Operator X bot、L : GaugeMatrix I。量词/结论：isLipMatrix_iff_scalar_of_card_eq_one 证明 IsLipMatrix d ϕ L 等价于单标量不等式 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i (ϕ.func x) (ϕ.func y) ≤ matrixEntry L i i * d i x y（并附受限版本）。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ : Operator X bot 与子集 U, V : Set X，前提为 U ⊆ V 与 V ⊆ dom ϕ。结论：RestrictedLipMatrices d ϕ V ⊆ RestrictedLipMatrices d ϕ U，完整对应引理 2.1 第一式。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：算子 ϕ₁, ϕ₂ : Operator X bot、U₁ ⊆ dom (ϕ₂ * ϕ₁)，中间像域精确取为 operator_image ϕ₁ U₁，L₁ ∈ RestrictedLipMatrices d ϕ₁ U₁ 且 L₂ ∈ RestrictedLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)。结论：L₂ * L₁ ∈ RestrictedLipMatrices d (ϕ₂ * ϕ₁) U₁，严格保持复合方向 ϕ₂ ∘ ϕ₁ 与乘积次序 L^{(2)} · L^{(1)}。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ 与子集 U, V : Set X，前提为 U.Nonempty、U ⊆ V 与 V ⊆ dom ϕ。结论：RestrictedCoLipMatrices d ϕ V ⊆ RestrictedCoLipMatrices d ϕ U，对应引理 2.3 第一式。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.coLipMatrix_entry_eq_zero_of_dist_zero_pos&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ, i, j : I 与 K : GaugeMatrix I，前提为 ∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d j (ϕ.func x) (ϕ.func y) = 0 ∧ 0 &lt; d i x y 且 K ∈ RestrictedCoLipMatrices d ϕ (dom ϕ)。结论：matrixEntry K i j = 0。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：算子 ϕ₁, ϕ₂、U₁ ⊆ dom (ϕ₂ * ϕ₁)、精确中间像域 operator_image ϕ₁ U₁、K₁ ∈ RestrictedCoLipMatrices d ϕ₁ U₁ 与 K₂ ∈ RestrictedCoLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)（其中 K₁ 的成员资格已携带 U₁.Nonempty）。结论：K₂ * K₁ ∈ RestrictedCoLipMatrices d (ϕ₂ * ϕ₁) U₁。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne_mem_restrictedLipMatrices_id&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_zero_mem_restrictedLipMatrices_chainCompose_zero&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：[Fintype I] [DecidableEq I]，对任意 U ⊆ dom operator_identity（无需非空性，故自动包含非空情形）。结论：matrixOne ∈ RestrictedLipMatrices d operator_identity U，且 matrixProd_zero_mem_restrictedLipMatrices_chainCompose_zero 将其等价表述为 k = 0 零步复合与空乘积的情形。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne_mem_restrictedCoLipMatrices_id&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne_mem_id_inter&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_zero_mem_restrictedCoLipMatrices_chainCompose_zero&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：[Fintype I] [DecidableEq I]，显式要求 U.Nonempty 与 U ⊆ dom operator_identity。结论：matrixOne ∈ RestrictedCoLipMatrices d operator_identity U，并由 matrixOne_mem_id_inter 给出 I ∈ L(id)|_U ∩ K(id)|_U 及 k = 0 空乘积形式。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;, &quot;CH02-P11&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_one_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isPositivePath_one_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意 [Fintype I]、hn : 0 &lt; n、Ms : Fin n → GaugeMatrix I 与起止指标 i, j : I。结论：matrixNonemptyProd_entry_pos_iff 证明 0 &lt; matrixEntry (matrixNonemptyProd hn Ms) i j ↔ ∃ p : InteriorPath I n, IsPositivePath Ms hn i j p；matrixNonemptyProd_one_entry_pos_iff 与 isPositivePath_one_iff 显式刻画 n = 1 退化为 0 &lt; matrixEntry (Ms 0) i j。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D06&quot;, &quot;CH02-P13&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.lipMatrices_subset_restrictedLipMatrices&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ 与子集 U ⊆ dom ϕ。结论：LipMatrices d ϕ ⊆ RestrictedLipMatrices d ϕ U，通过令引理 2.1 中 V = dom ϕ 并结合 restrictedLipMatrices_dom 证得。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-P02&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.coLipMatrices_dom_subset_restrictedCoLipMatrices&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ 与非空子集 U.Nonempty 且 U ⊆ dom ϕ。结论：RestrictedCoLipMatrices d ϕ (dom ϕ) ⊆ RestrictedCoLipMatrices d ϕ U，通过令引理 2.3 中 V = dom ϕ 证得。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-P05&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_chain&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_operatorChain&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意正长度 hk : 0 &lt; k，算子序列 ϕs : Fin k → Operator X bot，U₁ ⊆ dom (chainCompose ϕs)，逐步证书族 Ls : Fin k → GaugeMatrix I 满足 ∀ m : Fin k, Ls m ∈ RestrictedLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)。结论：matrixNonemptyProd hk Ls ∈ RestrictedLipMatrices d (chainCompose ϕs) U₁，并附以 OperatorChain 表达的推论 restrictedLipMatrices_operatorChain。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;, &quot;CH02-P04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_chain&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_operatorChain&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意正长度 hk : 0 &lt; k，算子序列 ϕs : Fin k → Operator X bot，U₁ ⊆ dom (chainCompose ϕs)，逐步证书族 Ks : Fin k → GaugeMatrix I 满足 ∀ m : Fin k, Ks m ∈ RestrictedCoLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)。结论：matrixNonemptyProd hk Ks ∈ RestrictedCoLipMatrices d (chainCompose ϕs) U₁，并附以 OperatorChain 表达的推论 restrictedCoLipMatrices_operatorChain。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;, &quot;CH02-P08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_one_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.hasZeroFactorPath_one_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意 [Fintype I]、hn : 0 &lt; n、Ms : Fin n → GaugeMatrix I 与起止指标 i, j : I。结论：matrixNonemptyProd_entry_eq_zero_iff 证明 matrixEntry (matrixNonemptyProd hn Ms) i j = 0 ↔ ∀ p : InteriorPath I n, HasZeroFactorPath Ms hn i j p；matrixNonemptyProd_one_entry_eq_zero_iff 与 hasZeroFactorPath_one_iff 显式刻画 n = 1 退化为 matrixEntry (Ms 0) i j = 0。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D06&quot;]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/imports/native-5400/slots/LCH02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/imports/native-5400/slots/LCH02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034</span></li><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/claim-public-sources/single_attempt/LCH02.json">review · LCH02.json</a><span class="hash">SHA256 6ef70443f0fb07c714992c885c989864f8c0f1b737636f61839a36529b4f9d48</span></li><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 a6a9e5de2810d1b5eb099174a0ec9339e3bad8193dc8d8c8b3ded706e7814278</span></li><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/record.json">来源记录 ↗</a></li></ul></div></details></div><div class="evidence-condition" data-evidence-condition="nonlogical_retry_3" hidden><section class="panel"><div class="panel-head"><h2>提交来源</h2></div><div class="prose"><p>正常交卷；三种评分采用实际交付。</p></div></section><section class="panel"><div class="panel-head"><h2>判定与主要理由</h2></div><div class="prose"><ul class="findings"><li>计分依据见下方逐项评审。</li></ul></div></section><section class="panel"><div class="panel-head"><h2>原始逐项评审</h2></div><div class="prose review-criteria"><p>原评审未提供独立摘要。完整判断及证据见下方原评审文件。</p>
+</div><details class="evidence-fold nested"><summary>逐项工程与语义审核（20项）</summary><div class="prose"><h3>CH02-D01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-D06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P01</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P02</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P04</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P05</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P07</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P08</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P11</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P12</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P14</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P03</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P06</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P09</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P10</h3>
+<p><strong>已核实完成：</strong> true</p>
+<h3>CH02-P13</h3>
+<p><strong>已核实完成：</strong> true</p>
+</div></details><p class="panel-foot">原评保留原审核范围；当前采用的提交与成绩见上方及模型档案。</p></section><details class="panel evidence-fold original-answer"><summary>完整原答</summary><div class="prose"><p>已生成 <code>Main.lean</code>、<code>LCH02/MatrixBounds.lean</code>、<code>LCH02/OperatorBounds.lean</code> 与 <code>alignment.json</code>，并已启动最终的 <code>Main.lean</code> 编译、全部 76 个声明的公理审计与运行验证，正在等待后台任务完成。
+{}
+已完成 <code>LCH02</code> 全部 20 项义务在 Lean 4.29.1（固定 mathlib <code>5e932f97dd25535344f80f9dd8da3aab83df0fe6</code>，基于冻结前置模块 [gauge_space.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/formal_oet/vol_01/ch_01_foundations/gauge_space.lean) 与 [operator_space.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/formal_oet/vol_01/ch_01_foundations/operator_space.lean)）的形式化与对齐交付：</p>
+<ul>
+<li>交付模块：[Main.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/Main.lean)、[LCH02/MatrixBounds.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/LCH02/MatrixBounds.lean)、[LCH02/OperatorBounds.lean](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/LCH02/OperatorBounds.lean) 及 [alignment.json](file:///private/tmp/math-gauge-hydrogen-xhigh-20261113/attempts/LCH02/physical-4/session/work/alignment.json)。</li>
+<li>验证结果：各模块均在 Lean 4.29.1 下无报错无警告编译通过，<code>lean --run Main.lean</code> 正常退出（exit code 0）；对 <code>alignment.json</code> 所列全部 76 个唯一声明逐一执行 <code>#print axioms</code> 审计，均仅依赖 <code>propext</code>、<code>Classical.choice</code>、<code>Quot.sound</code> 子集，无 <code>sorry</code>/<code>admit</code>/新增公理或绕过内核机制；<code>formal_oet/</code> 原目录保持未修改。</li>
+</ul>
+<p>以下为全部交付文件的完整源码：</p>
+<pre><code class="language-lean">/-
+  Main entrypoint for the LCH02 formalization of OET Volume I, Chapter 2
+  (finite operator composition, matrix bounds, and index-path criteria).
+
+  Original mathematical theory by Zhe Li (Glen Li / glenzli),
+  The Operator Evolution Theory, Volume I, v1.0.0, licensed under CC BY 4.0.
+-/
+
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import LCH02.MatrixBounds
+import LCH02.OperatorBounds
+
+/-- Entrypoint for standalone Lean execution. -/
+def main : IO Unit :=
+  pure ()
+</code></pre>
+<pre><code class="language-lean">/-
+  Formalization of matrix-bound foundations for Operator Evolution Theory (OET),
+  Volume I, Chapter 2 (finite matrix bounds, ordered products, and index-path criteria).
+
+  Original mathematical theory by Zhe Li (Glen Li / glenzli),
+  The Operator Evolution Theory, Volume I, v1.0.0, licensed under CC BY 4.0.
+-/
+
+import Mathlib.Data.ENNReal.Basic
+import Mathlib.Data.Matrix.Mul
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fintype.Card
+import Mathlib.Tactic
+
+namespace LCH02
+
+universe u
+
+section MatrixConventions
+
+/--
+**CH02-D03**: Extended nonnegative matrix over index set `I`.
+Following the OET convention, output component `j` is the row index and
+input component `i` is the column index, so `L_{i -&gt; j}` sits at `(j, i)`.
+-/
+abbrev GaugeMatrix (I : Type u) : Type u := Matrix I I ENNReal
+
+/--
+**CH02-D03**: Entry `M_{i -&gt; j}` from input component `i` to output component `j`,
+defined as `M j i` (row = output `j`, column = input `i`).
+-/
+def matrixEntry {I : Type u} (M : GaugeMatrix I) (i j : I) : ENNReal :=
+  M j i
+
+@[simp]
+theorem matrixEntry_apply {I : Type u} (M : GaugeMatrix I) (i j : I) :
+    matrixEntry M i j = M j i :=
+  rfl
+
+/-- Construct a `GaugeMatrix` from channel weights `f i j = M_{i -&gt; j}`. -/
+def ofChannel {I : Type u} (f : I → I → ENNReal) : GaugeMatrix I :=
+  Matrix.of (fun j i =&gt; f i j)
+
+@[simp]
+theorem matrixEntry_ofChannel {I : Type u} (f : I → I → ENNReal) (i j : I) :
+    matrixEntry (ofChannel f) i j = f i j :=
+  rfl
+
+/--
+**CH02-D03**: Algebraic matrix product in channel-entry form:
+`(M₂ * M₁)_{i -&gt; j} = ∑ k, (M₂)_{k -&gt; j} * (M₁)_{i -&gt; k}`.
+-/
+theorem matrixEntry_mul {I : Type u} [Fintype I] (M₂ M₁ : GaugeMatrix I) (i j : I) :
+    matrixEntry (M₂ * M₁) i j = ∑ k : I, matrixEntry M₂ k j * matrixEntry M₁ i k := by
+  simp [matrixEntry, Matrix.mul_apply]
+
+/-- Sum-exchange identity for matrix multiplication acting on a nonnegative vector `v`. -/
+theorem matrixEntry_mul_sum_eq {I : Type u} [Fintype I]
+    (M₂ M₁ : GaugeMatrix I) (v : I → ENNReal) (j : I) :
+    ∑ i : I, matrixEntry (M₂ * M₁) i j * v i =
+      ∑ k : I, matrixEntry M₂ k j * ∑ i : I, matrixEntry M₁ i k * v i := by
+  calc
+    ∑ i : I, matrixEntry (M₂ * M₁) i j * v i
+        = ∑ i : I, (∑ k : I, matrixEntry M₂ k j * matrixEntry M₁ i k) * v i := by
+            refine Finset.sum_congr rfl fun i _ =&gt; ?_
+            rw [matrixEntry_mul]
+    _ = ∑ i : I, ∑ k : I, (matrixEntry M₂ k j * matrixEntry M₁ i k) * v i := by
+            refine Finset.sum_congr rfl fun i _ =&gt; ?_
+            rw [Finset.sum_mul]
+    _ = ∑ k : I, ∑ i : I, (matrixEntry M₂ k j * matrixEntry M₁ i k) * v i :=
+            Finset.sum_comm
+    _ = ∑ k : I, ∑ i : I, matrixEntry M₂ k j * (matrixEntry M₁ i k * v i) := by
+            refine Finset.sum_congr rfl fun k _ =&gt; Finset.sum_congr rfl fun i _ =&gt; ?_
+            rw [mul_assoc]
+    _ = ∑ k : I, matrixEntry M₂ k j * ∑ i : I, matrixEntry M₁ i k * v i := by
+            refine Finset.sum_congr rfl fun k _ =&gt; ?_
+            rw [Finset.mul_sum]
+
+end MatrixConventions
+
+section OrderedProducts
+
+noncomputable section
+
+/-- **CH02-D04**: Identity matrix `I` under the input/output convention. -/
+def matrixOne {I : Type u} [DecidableEq I] : GaugeMatrix I :=
+  (1 : Matrix I I ENNReal)
+
+@[simp]
+theorem matrixEntry_one {I : Type u} [DecidableEq I] (i j : I) :
+    matrixEntry (matrixOne : GaugeMatrix I) i j = if i = j then 1 else 0 := by
+  simp [matrixEntry, matrixOne, Matrix.one_apply, eq_comm]
+
+/--
+**CH02-D04**: Ordered nonempty matrix product `M^{(m+1)} * ... * M^{(1)}`
+for a sequence indexed by `Fin (m + 1)` in step order (`0` applied first, `m` last).
+-/
+def matrixPosProd {I : Type u} [Fintype I] :
+    {m : ℕ} → (Fin (m + 1) → GaugeMatrix I) → GaugeMatrix I
+  | 0, Ms =&gt; Ms 0
+  | m + 1, Ms =&gt; Ms (Fin.last (m + 1)) * matrixPosProd (fun r : Fin (m + 1) =&gt; Ms r.castSucc)
+
+@[simp]
+theorem matrixPosProd_zero {I : Type u} [Fintype I] (Ms : Fin 1 → GaugeMatrix I) :
+    matrixPosProd Ms = Ms 0 :=
+  rfl
+
+@[simp]
+theorem matrixPosProd_succ {I : Type u} [Fintype I] {m : ℕ}
+    (Ms : Fin (m + 2) → GaugeMatrix I) :
+    matrixPosProd Ms =
+      Ms (Fin.last (m + 1)) * matrixPosProd (fun r : Fin (m + 1) =&gt; Ms r.castSucc) :=
+  rfl
+
+/--
+**CH02-D04**: Ordered nonempty matrix product `M^{(n)} * ... * M^{(1)}`
+for any `n ≥ 1` (`hn : 0 &lt; n`).
+-/
+def matrixNonemptyProd {I : Type u} [Fintype I] {n : ℕ} (hn : 0 &lt; n)
+    (Ms : Fin n → GaugeMatrix I) : GaugeMatrix I :=
+  match n, hn with
+  | 0, hn =&gt; absurd hn (Nat.lt_irrefl 0)
+  | _ + 1, _ =&gt; matrixPosProd Ms
+
+@[simp]
+theorem matrixNonemptyProd_one {I : Type u} [Fintype I] (Ms : Fin 1 → GaugeMatrix I) :
+    matrixNonemptyProd Nat.one_pos Ms = Ms 0 :=
+  rfl
+
+theorem matrixNonemptyProd_succ {I : Type u} [Fintype I] {m : ℕ}
+    (Ms : Fin (m + 2) → GaugeMatrix I) :
+    matrixNonemptyProd (Nat.succ_pos (m + 1)) Ms =
+      Ms (Fin.last (m + 1)) *
+        matrixNonemptyProd (Nat.succ_pos m) (fun r : Fin (m + 1) =&gt; Ms r.castSucc) :=
+  rfl
+
+/--
+**CH02-D04**: General ordered matrix product for `n : ℕ` matrices,
+defining the empty product (`n = 0`) as the identity matrix `matrixOne`.
+-/
+def matrixProd {I : Type u} [Fintype I] [DecidableEq I] :
+    {n : ℕ} → (Fin n → GaugeMatrix I) → GaugeMatrix I
+  | 0, _ =&gt; matrixOne
+  | _ + 1, Ms =&gt; matrixPosProd Ms
+
+@[simp]
+theorem matrixProd_zero {I : Type u} [Fintype I] [DecidableEq I]
+    (Ms : Fin 0 → GaugeMatrix I) :
+    matrixProd Ms = matrixOne :=
+  rfl
+
+theorem matrixProd_eq_nonemptyProd {I : Type u} [Fintype I] [DecidableEq I]
+    {n : ℕ} (hn : 0 &lt; n) (Ms : Fin n → GaugeMatrix I) :
+    matrixProd Ms = matrixNonemptyProd hn Ms := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt; rfl
+
+theorem matrixProd_succ {I : Type u} [Fintype I] [DecidableEq I] {n : ℕ}
+    (Ms : Fin (n + 1) → GaugeMatrix I) :
+    matrixProd Ms = Ms (Fin.last n) * matrixProd (fun r : Fin n =&gt; Ms r.castSucc) := by
+  cases n with
+  | zero =&gt;
+      simp [matrixProd, matrixPosProd, matrixOne]
+  | succ m =&gt;
+      rfl
+
+theorem matrixPosProd_eq_list_reverse_prod {I : Type u} [Fintype I] [DecidableEq I] :
+    {m : ℕ} → (Ms : Fin (m + 1) → GaugeMatrix I) →
+      matrixPosProd Ms = (List.ofFn Ms).reverse.prod
+  | 0, Ms =&gt; by
+      simp [matrixPosProd, List.ofFn_succ]
+  | m + 1, Ms =&gt; by
+      have ih := matrixPosProd_eq_list_reverse_prod (fun r : Fin (m + 1) =&gt; Ms r.castSucc)
+      rw [matrixPosProd_succ, ih]
+      conv_rhs =&gt; rw [List.ofFn_succ', List.concat_eq_append, List.reverse_append]
+      simp
+
+theorem matrixProd_eq_list_reverse_prod {I : Type u} [Fintype I] [DecidableEq I]
+    {n : ℕ} (Ms : Fin n → GaugeMatrix I) :
+    matrixProd Ms = (List.ofFn Ms).reverse.prod := by
+  cases n with
+  | zero =&gt; simp [matrixProd, matrixOne]
+  | succ m =&gt; exact matrixPosProd_eq_list_reverse_prod Ms
+
+end
+
+end OrderedProducts
+
+section IndexPaths
+
+/--
+**CH02-D06**: Interior index sequence `(k_1, ..., k_{n-1})` for `n` matrices.
+When `n = 1`, `n - 1 = 0`, so `InteriorPath I 1 = (Fin 0 → I)` is uniquely the empty sequence.
+-/
+abbrev InteriorPath (I : Type u) (n : ℕ) : Type u :=
+  Fin (n - 1) → I
+
+/-- Full vertex sequence `(k_0, ..., k_{m+1})` with `k_0 = i` and `k_{m+1} = j`. -/
+def pathNodesPos {I : Type u} {m : ℕ} (i j : I) (p : Fin m → I) : Fin (m + 2) → I :=
+  Fin.snoc (Fin.cons i p) j
+
+/--
+**CH02-D06**: Full index sequence `(k_0, k_1, ..., k_n)` built from endpoints `k_0 = i`,
+`k_n = j`, and interior sequence `p : InteriorPath I n` (for `hn : 0 &lt; n`).
+-/
+def pathNodes {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I)
+    (p : InteriorPath I n) : Fin (n + 1) → I :=
+  match n, hn, p with
+  | 0, hn, _ =&gt; absurd hn (Nat.lt_irrefl 0)
+  | _ + 1, _, p =&gt; pathNodesPos i j p
+
+@[simp]
+theorem pathNodesPos_zero {I : Type u} {m : ℕ} (i j : I) (p : Fin m → I) :
+    pathNodesPos i j p 0 = i := by
+  unfold pathNodesPos
+  rw [show (0 : Fin (m + 2)) = (0 : Fin (m + 1)).castSucc from rfl, Fin.snoc_castSucc]
+  simp
+
+@[simp]
+theorem pathNodesPos_last {I : Type u} {m : ℕ} (i j : I) (p : Fin m → I) :
+    pathNodesPos i j p (Fin.last (m + 1)) = j := by
+  simp [pathNodesPos]
+
+@[simp]
+theorem pathNodes_zero {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I)
+    (p : InteriorPath I n) :
+    pathNodes hn i j p 0 = i := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt; exact pathNodesPos_zero i j p
+
+@[simp]
+theorem pathNodes_last {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I)
+    (p : InteriorPath I n) :
+    pathNodes hn i j p (Fin.last n) = j := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt; exact pathNodesPos_last i j p
+
+/-- For `n = 1`, the interior index sequence is uniquely the empty sequence. -/
+instance interiorPath_one_unique {I : Type u} : Unique (InteriorPath I 1) where
+  default := fun r =&gt; Fin.elim0 r
+  uniq _ := funext fun r =&gt; Fin.elim0 r
+
+@[simp]
+theorem pathNodes_one_zero {I : Type u} (i j : I) (p : InteriorPath I 1) :
+    pathNodes Nat.one_pos i j p 0 = i :=
+  pathNodes_zero Nat.one_pos i j p
+
+@[simp]
+theorem pathNodes_one_one {I : Type u} (i j : I) (p : InteriorPath I 1) :
+    pathNodes Nat.one_pos i j p 1 = j :=
+  pathNodes_last Nat.one_pos i j p
+
+theorem pathNodesPos_succ_castSucc_eq {I : Type u} {m : ℕ} (i j : I)
+    (p : Fin (m + 1) → I) (r : Fin (m + 2)) :
+    pathNodesPos i j p r.castSucc =
+      pathNodesPos i (p (Fin.last m)) (fun q : Fin m =&gt; p q.castSucc) r := by
+  unfold pathNodesPos
+  rw [Fin.snoc_castSucc]
+  induction r using Fin.lastCases with
+  | last =&gt;
+      rw [Fin.snoc_last]
+      simp
+  | cast s =&gt;
+      rw [Fin.snoc_castSucc]
+      induction s using Fin.cases with
+      | zero =&gt; simp
+      | succ t =&gt; simp
+
+/--
+**CH02-D06**: Step-`r` matrix entry `[M^{(r)}]_{k_{r-1} -&gt; k_r}` along a path `p`.
+-/
+def pathStepEntry {I : Type u} {n : ℕ} (Ms : Fin n → GaugeMatrix I)
+    (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) (r : Fin n) : ENNReal :=
+  matrixEntry (Ms r)
+    (pathNodes hn i j p r.castSucc)
+    (pathNodes hn i j p r.succ)
+
+/-- **CH02-D06**: All-positive path predicate: every step entry along `p` is strictly positive. -/
+def IsPositivePath {I : Type u} {n : ℕ} (Ms : Fin n → GaugeMatrix I)
+    (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) : Prop :=
+  ∀ r : Fin n, 0 &lt; pathStepEntry Ms hn i j p r
+
+/-- **CH02-D06**: Zero-factor path predicate: at least one step entry along `p` equals `0`. -/
+def HasZeroFactorPath {I : Type u} {n : ℕ} (Ms : Fin n → GaugeMatrix I)
+    (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) : Prop :=
+  ∃ r : Fin n, pathStepEntry Ms hn i j p r = 0
+
+theorem not_isPositivePath_iff_hasZeroFactorPath {I : Type u} {n : ℕ}
+    (Ms : Fin n → GaugeMatrix I) (hn : 0 &lt; n) (i j : I) (p : InteriorPath I n) :
+    ¬ IsPositivePath Ms hn i j p ↔ HasZeroFactorPath Ms hn i j p := by
+  simp [IsPositivePath, HasZeroFactorPath, pos_iff_ne_zero]
+
+@[simp]
+theorem pathStepEntry_one {I : Type u} (Ms : Fin 1 → GaugeMatrix I)
+    (i j : I) (p : InteriorPath I 1) (r : Fin 1) :
+    pathStepEntry Ms Nat.one_pos i j p r = matrixEntry (Ms 0) i j := by
+  have hr : r = 0 := Fin.eq_zero r
+  subst hr
+  simp [pathStepEntry]
+
+theorem isPositivePath_one_iff {I : Type u} (Ms : Fin 1 → GaugeMatrix I)
+    (i j : I) (p : InteriorPath I 1) :
+    IsPositivePath Ms Nat.one_pos i j p ↔ 0 &lt; matrixEntry (Ms 0) i j := by
+  simp [IsPositivePath]
+
+theorem hasZeroFactorPath_one_iff {I : Type u} (Ms : Fin 1 → GaugeMatrix I)
+    (i j : I) (p : InteriorPath I 1) :
+    HasZeroFactorPath Ms Nat.one_pos i j p ↔ matrixEntry (Ms 0) i j = 0 := by
+  simp [HasZeroFactorPath]
+
+/-- Explicit endpoint-constrained index path representation, equivalent to `InteriorPath`. -/
+@[ext]
+structure IndexPath (I : Type u) (n : ℕ) (i j : I) where
+  nodes : Fin (n + 1) → I
+  start_eq : nodes 0 = i
+  end_eq : nodes (Fin.last n) = j
+
+/-- Canonical equivalence between interior sequences `(k_1, ..., k_{n-1})` and endpoint-fixed paths. -/
+def interiorPathEquivIndexPath {I : Type u} {n : ℕ} (hn : 0 &lt; n) (i j : I) :
+    InteriorPath I n ≃ IndexPath I n i j where
+  toFun p :=
+    { nodes := pathNodes hn i j p
+      start_eq := pathNodes_zero hn i j p
+      end_eq := pathNodes_last hn i j p }
+  invFun q :=
+    match n, hn, q with
+    | 0, hn, _ =&gt; absurd hn (Nat.lt_irrefl 0)
+    | _ + 1, _, q =&gt; fun r =&gt; q.nodes r.succ.castSucc
+  left_inv p := by
+    cases n with
+    | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+    | succ m =&gt;
+        ext r
+        change pathNodesPos i j p r.succ.castSucc = p r
+        unfold pathNodesPos
+        rw [Fin.snoc_castSucc, Fin.cons_succ]
+  right_inv q := by
+    cases n with
+    | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+    | succ m =&gt;
+        ext s
+        induction s using Fin.lastCases with
+        | last =&gt;
+            simpa [pathNodes, pathNodesPos] using q.end_eq.symm
+        | cast t =&gt;
+            change pathNodesPos i j (fun r : Fin m =&gt; q.nodes r.succ.castSucc) t.castSucc = q.nodes t.castSucc
+            unfold pathNodesPos
+            rw [Fin.snoc_castSucc]
+            induction t using Fin.cases with
+            | zero =&gt;
+                simpa using q.start_eq.symm
+            | succ u =&gt;
+                simp
+
+end IndexPaths
+
+section PathCriteria
+
+private theorem pathNodesPos_step_prefix {I : Type u} {m : ℕ} (i j : I)
+    (p : Fin (m + 1) → I) (r : Fin (m + 1)) :
+    pathNodesPos i j p r.castSucc.castSucc =
+      pathNodesPos i (p (Fin.last m)) (fun q : Fin m =&gt; p q.castSucc) r.castSucc ∧
+    pathNodesPos i j p r.castSucc.succ =
+      pathNodesPos i (p (Fin.last m)) (fun q : Fin m =&gt; p q.castSucc) r.succ := by
+  constructor
+  · exact pathNodesPos_succ_castSucc_eq i j p r.castSucc
+  · exact pathNodesPos_succ_castSucc_eq i j p r.succ
+
+private theorem pathNodesPos_step_last {I : Type u} {m : ℕ} (i j : I)
+    (p : Fin (m + 1) → I) :
+    pathNodesPos i j p (Fin.last (m + 1)).castSucc = p (Fin.last m) ∧
+    pathNodesPos i j p (Fin.last (m + 1)).succ = j := by
+  constructor
+  · unfold pathNodesPos
+    rw [Fin.snoc_castSucc, Fin.cons_last]
+  · simp [pathNodesPos]
+
+private theorem matrixPosProd_entry_eq_zero_iff {I : Type u} [Fintype I] :
+    {m : ℕ} → (Ms : Fin (m + 1) → GaugeMatrix I) → (i j : I) →
+      (matrixEntry (matrixPosProd Ms) i j = 0 ↔
+        ∀ p : Fin m → I, ∃ r : Fin (m + 1),
+          matrixEntry (Ms r)
+            (pathNodesPos i j p r.castSucc)
+            (pathNodesPos i j p r.succ) = 0)
+  | 0, Ms, i, j =&gt; by
+      simp [matrixPosProd, pathNodesPos, Fin.snoc]
+  | m + 1, Ms, i, j =&gt; by
+      have ih := matrixPosProd_entry_eq_zero_iff (fun r : Fin (m + 1) =&gt; Ms r.castSucc)
+      rw [matrixPosProd_succ, matrixEntry_mul, Finset.sum_eq_zero_iff]
+      simp only [Finset.mem_univ, true_implies, mul_eq_zero]
+      constructor
+      · intro h p
+        rcases h (p (Fin.last m)) with hLast | hPrev
+        · refine ⟨Fin.last (m + 1), ?_⟩
+          rcases pathNodesPos_step_last i j p with ⟨h1, h2⟩
+          rw [h1, h2]
+          exact hLast
+        · rw [ih i (p (Fin.last m))] at hPrev
+          rcases hPrev (fun q : Fin m =&gt; p q.castSucc) with ⟨r, hr⟩
+          refine ⟨r.castSucc, ?_⟩
+          rcases pathNodesPos_step_prefix i j p r with ⟨h1, h2⟩
+          rw [h1, h2]
+          exact hr
+      · intro h k
+        by_cases hLast : matrixEntry (Ms (Fin.last (m + 1))) k j = 0
+        · exact Or.inl hLast
+        · refine Or.inr ((ih i k).2 ?_)
+          intro p'
+          let p : Fin (m + 1) → I := Fin.snoc p' k
+          rcases h p with ⟨r, hr⟩
+          induction r using Fin.lastCases with
+          | last =&gt;
+              exfalso
+              have hp_last : p (Fin.last m) = k := by simp [p]
+              rcases pathNodesPos_step_last i j p with ⟨h1, h2⟩
+              rw [hp_last] at h1
+              rw [h1, h2] at hr
+              exact hLast hr
+          | cast r' =&gt;
+              have hp_last : p (Fin.last m) = k := by simp [p]
+              have hp_init : (fun q : Fin m =&gt; p q.castSucc) = p' := by
+                ext q
+                simp [p, Fin.snoc_castSucc]
+              rcases pathNodesPos_step_prefix i j p r' with ⟨h1, h2⟩
+              rw [hp_last, hp_init] at h1 h2
+              rw [h1, h2] at hr
+              exact ⟨r', hr⟩
+
+/--
+**CH02-P13 (Proposition 2.6(i))**: For any `n ≥ 1` and matrices `M^{(1)}, ..., M^{(n)}`,
+the `(i -&gt; j)` entry of `M^{(n)} * ... * M^{(1)}` vanishes iff every interior index
+sequence `(k_1, ..., k_{n-1})` contains at least one zero factor `[M^{(r)}]_{k_{r-1} -&gt; k_r} = 0`
+(with `k_0 = i`, `k_n = j`).
+-/
+theorem matrixNonemptyProd_entry_eq_zero_iff {I : Type u} [Fintype I]
+    {n : ℕ} (hn : 0 &lt; n) (Ms : Fin n → GaugeMatrix I) (i j : I) :
+    matrixEntry (matrixNonemptyProd hn Ms) i j = 0 ↔
+      ∀ p : InteriorPath I n, HasZeroFactorPath Ms hn i j p := by
+  cases n with
+  | zero =&gt; exact absurd hn (Nat.lt_irrefl 0)
+  | succ m =&gt;
+      simpa [matrixNonemptyProd, HasZeroFactorPath, pathStepEntry, pathNodes] using
+        matrixPosProd_entry_eq_zero_iff Ms i j
+
+/--
+**CH02-P13 (n = 1 degeneration)**: When `n = 1`, the interior index sequence is empty,
+so the path-zero-factor condition degenerates to `[M^{(1)}]_{i -&gt; j} = 0`.
+-/
+theorem matrixNonemptyProd_one_entry_eq_zero_iff {I : Type u} [Fintype I]
+    (Ms : Fin 1 → GaugeMatrix I) (i j : I) :
+    (∀ p : InteriorPath I 1, HasZeroFactorPath Ms Nat.one_pos i j p) ↔
+      matrixEntry (Ms 0) i j = 0 := by
+  rw [← matrixNonemptyProd_entry_eq_zero_iff Nat.one_pos Ms i j, matrixNonemptyProd_one]
+
+/--
+**CH02-P14 (Proposition 2.6(ii))**: For any `n ≥ 1` and matrices `M^{(1)}, ..., M^{(n)}`,
+the `(i -&gt; j)` entry of `M^{(n)} * ... * M^{(1)}` is strictly positive iff there exists
+at least one interior index sequence `(k_1, ..., k_{n-1})` along which every factor
+`[M^{(r)}]_{k_{r-1} -&gt; k_r}` is strictly positive.
+-/
+theorem matrixNonemptyProd_entry_pos_iff {I : Type u} [Fintype I]
+    {n : ℕ} (hn : 0 &lt; n) (Ms : Fin n → GaugeMatrix I) (i j : I) :
+    0 &lt; matrixEntry (matrixNonemptyProd hn Ms) i j ↔
+      ∃ p : InteriorPath I n, IsPositivePath Ms hn i j p := by
+  rw [pos_iff_ne_zero, ne_eq, matrixNonemptyProd_entry_eq_zero_iff hn Ms i j]
+  push Not
+  simp only [← not_isPositivePath_iff_hasZeroFactorPath, not_not]
+
+/--
+**CH02-P14 (n = 1 degeneration)**: When `n = 1`, existence of an all-positive path
+degenerates to `0 &lt; [M^{(1)}]_{i -&gt; j}`.
+-/
+theorem matrixNonemptyProd_one_entry_pos_iff {I : Type u} [Fintype I]
+    (Ms : Fin 1 → GaugeMatrix I) (i j : I) :
+    (∃ p : InteriorPath I 1, IsPositivePath Ms Nat.one_pos i j p) ↔
+      0 &lt; matrixEntry (Ms 0) i j := by
+  rw [← matrixNonemptyProd_entry_pos_iff Nat.one_pos Ms i j, matrixNonemptyProd_one]
+
+end PathCriteria
+
+end LCH02
+</code></pre>
+<pre><code class="language-lean">/-
+  Formalization of Operator Evolution Theory (OET), Volume I, Chapter 2,
+  Section 2.1 (operator Lip/co-Lip matrix bounds, monotonicity, two-step and
+  finite-chain composition, and zero-step identity certificates).
+
+  Original mathematical theory by Zhe Li (Glen Li / glenzli),
+  The Operator Evolution Theory, Volume I, v1.0.0, licensed under CC BY 4.0.
+-/
+
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import LCH02.MatrixBounds
+
+namespace LCH02
+
+open formal_oet.vol_01.ch_01_foundations
+
+section MatrixCertificates
+
+/--
+**CH02-D01**: Predicate asserting that `L` is a valid global Lipschitz matrix
+for operator `ϕ` under gauge family `d` (over `dom ϕ`).
+-/
+def IsLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) : Prop :=
+  ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, matrixEntry L i j * d i x y
+
+/-- **CH02-D01**: Global Lipschitz certificate family `L(ϕ)`. -/
+def LipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) : Set (GaugeMatrix I) :=
+  { L | IsLipMatrix d ϕ L }
+
+/--
+**CH02-D01**: Predicate asserting that `L` is a valid restricted Lipschitz matrix
+for `ϕ` on `U ⊆ dom ϕ`.
+-/
+def IsRestrictedLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I) : Prop :=
+  U ⊆ dom ϕ ∧
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, matrixEntry L i j * d i x y
+
+/-- **CH02-D01**: Restricted Lipschitz certificate family `L(ϕ)|_U`. -/
+def RestrictedLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { L | IsRestrictedLipMatrix d ϕ U L }
+
+theorem isRestrictedLipMatrix_dom_iff {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) :
+    IsRestrictedLipMatrix d ϕ (dom ϕ) L ↔ IsLipMatrix d ϕ L := by
+  simp [IsRestrictedLipMatrix, IsLipMatrix]
+
+@[simp]
+theorem restrictedLipMatrices_dom {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) :
+    RestrictedLipMatrices d ϕ (dom ϕ) = LipMatrices d ϕ := by
+  ext L
+  exact isRestrictedLipMatrix_dom_iff d ϕ L
+
+/--
+**CH02-D02**: Predicate asserting that `K` is a valid restricted co-Lipschitz matrix
+for `ϕ` on `U`. By definition, `U` must be nonempty and contained in `dom ϕ`.
+-/
+def IsRestrictedCoLipMatrix {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (K : GaugeMatrix I) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧
+  ∀ x ∈ U, ∀ y ∈ U, ∀ j : I,
+    ∑ i : I, matrixEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)
+
+/-- **CH02-D02**: Restricted co-Lipschitz certificate family `K(ϕ)|_U`. -/
+def RestrictedCoLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) : Set (GaugeMatrix I) :=
+  { K | IsRestrictedCoLipMatrix d ϕ U K }
+
+end MatrixCertificates
+
+section SingleComponentAndMonotonicity
+
+private theorem sum_eq_single_of_subsingleton {I : Type} [Fintype I] [Subsingleton I]
+    (i : I) (f : I → ENNReal) :
+    ∑ k : I, f k = f i := by
+  have huniv : (Finset.univ : Finset I) = {i} := by
+    ext k
+    simp [Subsingleton.elim k i]
+  rw [huniv, Finset.sum_singleton]
+
+/--
+**CH02-P01 (Single-component scalar Lip bound)**:
+When `|I| = 1` with `I = {i}`, the global Lip matrix condition degenerates
+to the scalar inequality `d_i(ϕ(x), ϕ(y)) ≤ L_{i -&gt; i} * d_i(x, y)` on `dom ϕ`.
+-/
+theorem isLipMatrix_iff_scalar_of_card_eq_one {X I : Type} {bot : X} [Fintype I]
+    (hcard : Fintype.card I = 1) (i : I)
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (L : GaugeMatrix I) :
+    IsLipMatrix d ϕ L ↔
+      ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ,
+        d i (ϕ.func x) (ϕ.func y) ≤ matrixEntry L i i * d i x y := by
+  haveI : Subsingleton I := Fintype.card_le_one_iff_subsingleton.mp hcard.le
+  constructor
+  · intro hL x hx y hy
+    simpa [sum_eq_single_of_subsingleton i] using hL x hx y hy i
+  · intro hscalar x hx y hy j
+    have hj : j = i := Subsingleton.elim j i
+    subst hj
+    rw [sum_eq_single_of_subsingleton j]
+    exact hscalar x hx y hy
+
+/-- Restricted scalar Lip degeneration when `|I| = 1` and `I = {i}`. -/
+theorem isRestrictedLipMatrix_iff_scalar_of_card_eq_one {X I : Type} {bot : X} [Fintype I]
+    (hcard : Fintype.card I = 1) (i : I)
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (L : GaugeMatrix I) :
+    IsRestrictedLipMatrix d ϕ U L ↔
+      U ⊆ dom ϕ ∧
+      ∀ x ∈ U, ∀ y ∈ U,
+        d i (ϕ.func x) (ϕ.func y) ≤ matrixEntry L i i * d i x y := by
+  haveI : Subsingleton I := Fintype.card_le_one_iff_subsingleton.mp hcard.le
+  constructor
+  · rintro ⟨hU, hL⟩
+    exact ⟨hU, fun x hx y hy =&gt; by simpa [sum_eq_single_of_subsingleton i] using hL x hx y hy i⟩
+  · rintro ⟨hU, hscalar⟩
+    refine ⟨hU, fun x hx y hy j =&gt; ?_⟩
+    have hj : j = i := Subsingleton.elim j i
+    subst hj
+    rw [sum_eq_single_of_subsingleton j]
+    exact hscalar x hx y hy
+
+/--
+**CH02-P02 (Lemma 2.1, part 1)**:
+Antitonicity of restricted Lip certificate families:
+if `U ⊆ V ⊆ dom ϕ`, then `L(ϕ)|_V ⊆ L(ϕ)|_U`.
+-/
+theorem restrictedLipMatrices_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedLipMatrices d ϕ V ⊆ RestrictedLipMatrices d ϕ U := by
+  intro L hL
+  refine ⟨hUV.trans hV, fun x hx y hy j =&gt; ?_⟩
+  exact hL.2 x (hUV hx) y (hUV hy) j
+
+/--
+**CH02-P03 (Lemma 2.1, part 2)**:
+Global Lip certificates restrict to any subset `U ⊆ dom ϕ`: `L(ϕ) ⊆ L(ϕ)|_U`.
+-/
+theorem lipMatrices_subset_restrictedLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU : U ⊆ dom ϕ) :
+    LipMatrices d ϕ ⊆ RestrictedLipMatrices d ϕ U := by
+  rw [← restrictedLipMatrices_dom]
+  exact restrictedLipMatrices_antitone d ϕ hU Set.Subset.rfl
+
+/--
+**CH02-P05 (Lemma 2.3, part 1)**:
+Antitonicity of restricted co-Lip certificate families:
+if `U` is nonempty and `U ⊆ V ⊆ dom ϕ`, then `K(ϕ)|_V ⊆ K(ϕ)|_U`.
+-/
+theorem restrictedCoLipMatrices_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U V : Set X}
+    (hU_ne : U.Nonempty) (hUV : U ⊆ V) (hV : V ⊆ dom ϕ) :
+    RestrictedCoLipMatrices d ϕ V ⊆ RestrictedCoLipMatrices d ϕ U := by
+  intro K hK
+  refine ⟨hU_ne, hUV.trans hV, fun x hx y hy j =&gt; ?_⟩
+  exact hK.2.2 x (hUV hx) y (hUV hy) j
+
+/--
+**CH02-P06 (Lemma 2.3, part 2)**:
+Global co-Lip certificates on `dom ϕ` restrict to any nonempty subset `U ⊆ dom ϕ`:
+`K(ϕ)|_{dom ϕ} ⊆ K(ϕ)|_U`.
+-/
+theorem coLipMatrices_dom_subset_restrictedCoLipMatrices {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {U : Set X}
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) :
+    RestrictedCoLipMatrices d ϕ (dom ϕ) ⊆ RestrictedCoLipMatrices d ϕ U :=
+  restrictedCoLipMatrices_antitone d ϕ hU_ne hU Set.Subset.rfl
+
+/--
+**CH02-P07 (Sufficient condition for zero co-Lip entry)**:
+If there exist `x, y ∈ dom ϕ` with `d_j(ϕ(x), ϕ(y)) = 0` and `0 &lt; d_i(x, y)`,
+then any global co-Lip matrix `K ∈ K(ϕ)|_{dom ϕ}` satisfies `K_{i -&gt; j} = 0`.
+-/
+theorem coLipMatrix_entry_eq_zero_of_dist_zero_pos {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) {i j : I} {K : GaugeMatrix I}
+    (hxy : ∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d j (ϕ.func x) (ϕ.func y) = 0 ∧ 0 &lt; d i x y)
+    (hK : K ∈ RestrictedCoLipMatrices d ϕ (dom ϕ)) :
+    matrixEntry K i j = 0 := by
+  rcases hxy with ⟨x, hx, y, hy, h_out_zero, h_in_pos⟩
+  have h_le : matrixEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y) := by
+    calc
+      matrixEntry K i j * d i x y
+          ≤ ∑ k : I, matrixEntry K k j * d k x y :=
+            Finset.single_le_sum (f := fun k =&gt; matrixEntry K k j * d k x y)
+              (fun _ _ =&gt; zero_le _) (Finset.mem_univ i)
+      _ ≤ d j (ϕ.func x) (ϕ.func y) := hK.2.2 x hx y hy j
+  rw [h_out_zero] at h_le
+  have h_mul_zero : matrixEntry K i j * d i x y = 0 := le_antisymm h_le (zero_le _)
+  rcases mul_eq_zero.mp h_mul_zero with hK_zero | hd_zero
+  · exact hK_zero
+  · exact absurd hd_zero (ne_of_gt h_in_pos)
+
+end SingleComponentAndMonotonicity
+
+section TwoStepComposition
+
+theorem subset_dom_left_of_subset_dom_comp {X : Type} {bot : X}
+    (ϕ₁ ϕ₂ : Operator X bot) {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) :
+    U₁ ⊆ dom ϕ₁ := by
+  intro x hx h_bot
+  have h_comp : (ϕ₂ * ϕ₁).func x ≠ bot := hU₁ hx
+  apply h_comp
+  change ϕ₂.func (ϕ₁.func x) = bot
+  rw [h_bot, ϕ₂.preserves_bot]
+
+theorem operator_image_subset_dom_right_of_subset_dom_comp {X : Type} {bot : X}
+    (ϕ₁ ϕ₂ : Operator X bot) {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁)) :
+    operator_image ϕ₁ U₁ ⊆ dom ϕ₂ := by
+  rintro y ⟨x, hx, rfl⟩
+  exact hU₁ hx
+
+theorem operator_image_nonempty {X : Type} {bot : X}
+    (ϕ : Operator X bot) {U : Set X} (hU : U.Nonempty) :
+    (operator_image ϕ U).Nonempty :=
+  hU.image ϕ.func
+
+/--
+**CH02-P04 (Proposition 2.2, Lip matrix composition law)**:
+For `ϕ₂ * ϕ₁` and `U₁ ⊆ dom (ϕ₂ * ϕ₁)` with exact intermediate image `U₂ = ϕ₁(U₁)`,
+if `L₁ ∈ L(ϕ₁)|_{U₁}` and `L₂ ∈ L(ϕ₂)|_{U₂}`, then `L₂ * L₁ ∈ L(ϕ₂ * ϕ₁)|_{U₁}`.
+-/
+theorem restrictedLipMatrices_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₁ ϕ₂ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁))
+    {L₁ L₂ : GaugeMatrix I}
+    (hL₁ : L₁ ∈ RestrictedLipMatrices d ϕ₁ U₁)
+    (hL₂ : L₂ ∈ RestrictedLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)) :
+    L₂ * L₁ ∈ RestrictedLipMatrices d (ϕ₂ * ϕ₁) U₁ := by
+  refine ⟨hU₁, fun x hx y hy j =&gt; ?_⟩
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  calc
+    d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y)
+        = d j (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) := rfl
+    _ ≤ ∑ k : I, matrixEntry L₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) :=
+          hL₂.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+    _ ≤ ∑ k : I, matrixEntry L₂ k j * ∑ i : I, matrixEntry L₁ i k * d i x y := by
+          refine Finset.sum_le_sum fun k _ =&gt; ?_
+          exact mul_le_mul_of_nonneg_left (hL₁.2 x hx y hy k) (zero_le _)
+    _ = ∑ i : I, matrixEntry (L₂ * L₁) i j * d i x y := by
+          rw [matrixEntry_mul_sum_eq]
+
+/--
+**CH02-P08 (Proposition 2.4, co-Lip matrix composition law)**:
+For `ϕ₂ * ϕ₁` and `U₁ ⊆ dom (ϕ₂ * ϕ₁)` with exact intermediate image `U₂ = ϕ₁(U₁)`,
+if `K₁ ∈ K(ϕ₁)|_{U₁}` and `K₂ ∈ K(ϕ₂)|_{U₂}`, then `K₂ * K₁ ∈ K(ϕ₂ * ϕ₁)|_{U₁}`
+(with nonemptiness of `U₁` inherited from `K₁ ∈ K(ϕ₁)|_{U₁}`).
+-/
+theorem restrictedCoLipMatrices_comp {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ₁ ϕ₂ : Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (ϕ₂ * ϕ₁))
+    {K₁ K₂ : GaugeMatrix I}
+    (hK₁ : K₁ ∈ RestrictedCoLipMatrices d ϕ₁ U₁)
+    (hK₂ : K₂ ∈ RestrictedCoLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)) :
+    K₂ * K₁ ∈ RestrictedCoLipMatrices d (ϕ₂ * ϕ₁) U₁ := by
+  refine ⟨hK₁.1, hU₁, fun x hx y hy j =&gt; ?_⟩
+  have hx₂ : ϕ₁.func x ∈ operator_image ϕ₁ U₁ := ⟨x, hx, rfl⟩
+  have hy₂ : ϕ₁.func y ∈ operator_image ϕ₁ U₁ := ⟨y, hy, rfl⟩
+  calc
+    ∑ i : I, matrixEntry (K₂ * K₁) i j * d i x y
+        = ∑ k : I, matrixEntry K₂ k j * ∑ i : I, matrixEntry K₁ i k * d i x y :=
+          matrixEntry_mul_sum_eq K₂ K₁ (fun i =&gt; d i x y) j
+    _ ≤ ∑ k : I, matrixEntry K₂ k j * d k (ϕ₁.func x) (ϕ₁.func y) := by
+          refine Finset.sum_le_sum fun k _ =&gt; ?_
+          exact mul_le_mul_of_nonneg_left (hK₁.2.2 x hx y hy k) (zero_le _)
+    _ ≤ d j (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y)) :=
+          hK₂.2.2 (ϕ₁.func x) hx₂ (ϕ₁.func y) hy₂ j
+    _ = d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func y) := rfl
+
+end TwoStepComposition
+
+section ZeroStepIdentity
+
+private theorem matrixOne_sum_eq {I : Type} [Fintype I] [DecidableEq I]
+    (v : I → ENNReal) (j : I) :
+    ∑ i : I, matrixEntry (matrixOne : GaugeMatrix I) i j * v i = v j := by
+  have h : (fun i : I =&gt; matrixEntry (matrixOne : GaugeMatrix I) i j * v i) =
+      fun i : I =&gt; if i = j then v i else 0 := by
+    ext i
+    rw [matrixEntry_one]
+    by_cases hij : i = j &lt;;&gt; simp [hij]
+  rw [h]
+  simp
+
+/--
+**CH02-P11 (Zero-step identity Lip certificate)**:
+For any `U ⊆ dom id`, the identity matrix `I` belongs to `L(id)|_U`.
+-/
+theorem matrixOne_mem_restrictedLipMatrices_id {X I : Type} {bot : X}
+    [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU : U ⊆ dom (operator_identity (X := X) (bot := bot))) :
+    matrixOne ∈ RestrictedLipMatrices d (operator_identity (X := X) (bot := bot)) U := by
+  refine ⟨hU, fun x _ y _ j =&gt; ?_⟩
+  rw [matrixOne_sum_eq]
+  rfl
+
+/--
+**CH02-P12 (Zero-step identity co-Lip certificate)**:
+For any nonempty `U ⊆ dom id`, the identity matrix `I` belongs to `K(id)|_U`.
+-/
+theorem matrixOne_mem_restrictedCoLipMatrices_id {X I : Type} {bot : X}
+    [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty)
+    (hU : U ⊆ dom (operator_identity (X := X) (bot := bot))) :
+    matrixOne ∈ RestrictedCoLipMatrices d (operator_identity (X := X) (bot := bot)) U := by
+  refine ⟨hU_ne, hU, fun x _ y _ j =&gt; ?_⟩
+  rw [matrixOne_sum_eq]
+  rfl
+
+/-- Combined zero-step identity note: `I ∈ L(id)|_U ∩ K(id)|_U` for nonempty `U ⊆ dom id`. -/
+theorem matrixOne_mem_id_inter {X I : Type} {bot : X}
+    [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) {U : Set X}
+    (hU_ne : U.Nonempty)
+    (hU : U ⊆ dom (operator_identity (X := X) (bot := bot))) :
+    matrixOne ∈ RestrictedLipMatrices d (operator_identity (X := X) (bot := bot)) U ∩
+      RestrictedCoLipMatrices d (operator_identity (X := X) (bot := bot)) U :=
+  ⟨matrixOne_mem_restrictedLipMatrices_id d hU,
+    matrixOne_mem_restrictedCoLipMatrices_id d hU_ne hU⟩
+
+end ZeroStepIdentity
+
+section ChainDomainsAndFiniteComposition
+
+theorem operator_image_mul {X : Type} {bot : X}
+    (ϕ₂ ϕ₁ : Operator X bot) (U : Set X) :
+    operator_image (ϕ₂ * ϕ₁) U = operator_image ϕ₂ (operator_image ϕ₁ U) := by
+  ext z
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    exact ⟨ϕ₁.func x, ⟨x, hx, rfl⟩, rfl⟩
+  · rintro ⟨y, ⟨x, hx, rfl⟩, rfl⟩
+    exact ⟨x, hx, rfl⟩
+
+/--
+**CH02-D05**: Step-indexed finite composition `c_k = ϕ_k ∘ ... ∘ ϕ_1`,
+with `c_0 = id` when `k = 0`.
+-/
+def chainCompose {X : Type} {bot : X} :
+    {k : ℕ} → (Fin k → Operator X bot) → Operator X bot
+  | 0, _ =&gt; operator_identity
+  | k + 1, ϕs =&gt; ϕs (Fin.last k) * chainCompose (fun r : Fin k =&gt; ϕs r.castSucc)
+
+@[simp]
+theorem chainCompose_zero {X : Type} {bot : X} (ϕs : Fin 0 → Operator X bot) :
+    chainCompose ϕs = operator_identity :=
+  rfl
+
+@[simp]
+theorem chainCompose_succ {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) :
+    chainCompose ϕs = ϕs (Fin.last k) * chainCompose (fun r : Fin k =&gt; ϕs r.castSucc) :=
+  rfl
+
+/--
+**CH02-D05**: Exact correspondence between step-indexed composition `chainCompose ϕs`
+and `formal_oet.vol_01.ch_01_foundations.OperatorChain`.
+Because `OperatorChain [ϕ_k, ..., ϕ_1]` applies the rightmost element first,
+it equals `chainCompose` on the reversed step list.
+-/
+theorem chainCompose_eq_operatorChain_reverse {X : Type} {bot : X} :
+    {k : ℕ} → (ϕs : Fin k → Operator X bot) →
+      chainCompose ϕs = OperatorChain (List.ofFn ϕs).reverse
+  | 0, _ =&gt; rfl
+  | k + 1, ϕs =&gt; by
+      have ih := chainCompose_eq_operatorChain_reverse (fun r : Fin k =&gt; ϕs r.castSucc)
+      rw [chainCompose_succ, ih]
+      conv_rhs =&gt; rw [List.ofFn_succ', List.concat_eq_append, List.reverse_append]
+      rfl
+
+theorem chainCompose_eq_prod {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) :
+    chainCompose ϕs = (List.ofFn ϕs).reverse.prod := by
+  rw [chainCompose_eq_operatorChain_reverse, operator_chain_eq_prod]
+
+/-- Extract step-ordered operators `(ϕ_1, ..., ϕ_k)` from an `OperatorChain` list `[ϕ_k, ..., ϕ_1]`. -/
+def chainSteps {X : Type} {bot : X} (chain : List (Operator X bot)) :
+    Fin chain.length → Operator X bot :=
+  fun m =&gt; chain.reverse[m.1]'(by simp)
+
+/-- Reverse correspondence: `OperatorChain` on any list equals `chainCompose` on `chainSteps chain`. -/
+theorem operatorChain_eq_chainCompose_reverse {X : Type} {bot : X}
+    (chain : List (Operator X bot)) :
+    OperatorChain chain = chainCompose (chainSteps chain) := by
+  have hrev : (List.ofFn (chainSteps chain)).reverse = chain := by
+    have hof : List.ofFn (chainSteps chain) = chain.reverse := by
+      refine List.ext_getElem (by simp) fun i hi₁ hi₂ =&gt; ?_
+      simp [chainSteps]
+    rw [hof, List.reverse_reverse]
+  rw [chainCompose_eq_operatorChain_reverse, hrev]
+
+/-- Recursive helper defining intermediate image domains `U_1, U_2, ..., U_{k+1}`. -/
+def stepImage {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) : ℕ → Set X
+  | 0 =&gt; U₁
+  | m + 1 =&gt;
+      if h : m &lt; k then operator_image (ϕs ⟨m, h⟩) (stepImage ϕs U₁ m)
+      else stepImage ϕs U₁ m
+
+/--
+**CH02-D05**: Actual intermediate image domains `U_1, ..., U_{k+1}` along `ϕ_1, ..., ϕ_k`,
+defined recursively by `U_1` at index `0` and `U_{m+1} = ϕ_m(U_m)`.
+-/
+def chainDomain {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) (m : Fin (k + 1)) : Set X :=
+  stepImage ϕs U₁ m.1
+
+@[simp]
+theorem chainDomain_zero {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) :
+    chainDomain ϕs U₁ 0 = U₁ :=
+  rfl
+
+@[simp]
+theorem chainDomain_succ {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) (m : Fin k) :
+    chainDomain ϕs U₁ m.succ = operator_image (ϕs m) (chainDomain ϕs U₁ m.castSucc) := by
+  simp [chainDomain, stepImage, m.isLt]
+
+private theorem stepImage_prefix_eq {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) (U₁ : Set X) :
+    (m : ℕ) → m ≤ k →
+      stepImage (fun r : Fin k =&gt; ϕs r.castSucc) U₁ m = stepImage ϕs U₁ m
+  | 0, _ =&gt; rfl
+  | m + 1, hm =&gt; by
+      have hm_lt_k : m &lt; k := hm
+      have hm_lt_k1 : m &lt; k + 1 := Nat.lt_succ_of_lt hm_lt_k
+      have ih := stepImage_prefix_eq ϕs U₁ m (Nat.le_of_lt hm_lt_k)
+      simp only [stepImage, dif_pos hm_lt_k, dif_pos hm_lt_k1]
+      rw [ih]
+      rfl
+
+theorem chainDomain_prefix_eq {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) (U₁ : Set X) (m : Fin (k + 1)) :
+    chainDomain (fun r : Fin k =&gt; ϕs r.castSucc) U₁ m = chainDomain ϕs U₁ m.castSucc :=
+  stepImage_prefix_eq ϕs U₁ m.1 (Nat.lt_succ_iff.mp m.isLt)
+
+/--
+**CH02-D05**: The final domain `U_{k+1}` equals the image of `U_1` under `c_k = chainCompose ϕs`.
+-/
+theorem chainDomain_last_eq_image_chainCompose {X : Type} {bot : X} :
+    {k : ℕ} → (ϕs : Fin k → Operator X bot) → (U₁ : Set X) →
+      chainDomain ϕs U₁ (Fin.last k) = operator_image (chainCompose ϕs) U₁
+  | 0, ϕs, U₁ =&gt; by
+      simp [chainDomain, stepImage, chainCompose, operator_image, operator_identity]
+  | k + 1, ϕs, U₁ =&gt; by
+      have ih := chainDomain_last_eq_image_chainCompose (fun r : Fin k =&gt; ϕs r.castSucc) U₁
+      have hlast : (Fin.last (k + 1) : Fin (k + 2)) = (Fin.last k : Fin (k + 1)).succ := rfl
+      rw [hlast, chainDomain_succ, ← chainDomain_prefix_eq, ih, chainCompose_succ,
+        operator_image_mul]
+
+/-- Prefix composition `c_m = ϕ_m ∘ ... ∘ ϕ_1` for `m : Fin (k + 1)`. -/
+def prefixCompose {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (m : Fin (k + 1)) : Operator X bot :=
+  chainCompose (fun r : Fin m.1 =&gt;
+    ϕs ⟨r.1, Nat.lt_of_lt_of_le r.isLt (Nat.lt_succ_iff.mp m.isLt)⟩)
+
+private theorem prefixCompose_succ_eq {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (m : Fin k) :
+    prefixCompose ϕs m.succ = ϕs m * prefixCompose ϕs m.castSucc := by
+  unfold prefixCompose
+  simp only [Fin.val_succ, Fin.val_castSucc]
+  rw [chainCompose_succ]
+  rfl
+
+/--
+**CH02-D05**: Every intermediate domain `U_{m+1}` equals the image of `U_1` under
+the prefix chain `c_m` (matching `OperatorChain` of the reversed prefix).
+-/
+theorem chainDomain_eq_image_prefix {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) (U₁ : Set X) (m : Fin (k + 1)) :
+    chainDomain ϕs U₁ m = operator_image (prefixCompose ϕs m) U₁ := by
+  induction m using Fin.induction with
+  | zero =&gt;
+      simp [prefixCompose, operator_image, operator_identity]
+  | succ i ih =&gt;
+      rw [chainDomain_succ, ih, prefixCompose_succ_eq, operator_image_mul]
+
+theorem subset_dom_prefix_of_subset_dom_chainCompose {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin (k + 1) → Operator X bot) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (chainCompose ϕs)) :
+    U₁ ⊆ dom (chainCompose (fun r : Fin k =&gt; ϕs r.castSucc)) := by
+  rw [chainCompose_succ] at hU₁
+  exact subset_dom_left_of_subset_dom_comp _ _ hU₁
+
+/--
+**CH02-D05**: Domain propagation along a chain:
+if `U₁ ⊆ dom (c_k)`, then every actual intermediate domain `U_m` satisfies `U_m ⊆ dom (ϕ_m)`.
+-/
+theorem chainDomain_subset_dom_step {X : Type} {bot : X} :
+    {k : ℕ} → (ϕs : Fin k → Operator X bot) → {U₁ : Set X} →
+      U₁ ⊆ dom (chainCompose ϕs) →
+      ∀ m : Fin k, chainDomain ϕs U₁ m.castSucc ⊆ dom (ϕs m)
+  | 0, _, _, _, m =&gt; Fin.elim0 m
+  | k + 1, ϕs, U₁, hU₁, m =&gt; by
+      have h_pref : U₁ ⊆ dom (chainCompose (fun r : Fin k =&gt; ϕs r.castSucc)) :=
+        subset_dom_prefix_of_subset_dom_chainCompose ϕs hU₁
+      induction m using Fin.lastCases with
+      | last =&gt;
+          rw [← chainDomain_prefix_eq, chainDomain_last_eq_image_chainCompose]
+          rw [chainCompose_succ] at hU₁
+          exact operator_image_subset_dom_right_of_subset_dom_comp _ _ hU₁
+      | cast r =&gt;
+          change chainDomain ϕs U₁ r.castSucc.castSucc ⊆ dom (ϕs r.castSucc)
+          rw [← chainDomain_prefix_eq]
+          exact chainDomain_subset_dom_step (fun q : Fin k =&gt; ϕs q.castSucc) h_pref r
+
+/-- Nonemptiness propagation along intermediate image domains. -/
+theorem chainDomain_nonempty {X : Type} {bot : X} {k : ℕ}
+    (ϕs : Fin k → Operator X bot) {U₁ : Set X} (hU₁ : U₁.Nonempty)
+    (m : Fin (k + 1)) :
+    (chainDomain ϕs U₁ m).Nonempty := by
+  rw [chainDomain_eq_image_prefix]
+  exact operator_image_nonempty _ hU₁
+
+/--
+**CH02-P11 (Zero-step chain form)**:
+For `k = 0`, the empty matrix product belongs to `L(c_0)|_{U₁}` for any `U₁ ⊆ dom (c_0)`.
+-/
+theorem matrixProd_zero_mem_restrictedLipMatrices_chainCompose_zero
+    {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (ϕs : Fin 0 → Operator X bot)
+    (Ls : Fin 0 → GaugeMatrix I) {U₁ : Set X}
+    (hU₁ : U₁ ⊆ dom (chainCompose ϕs)) :
+    matrixProd Ls ∈ RestrictedLipMatrices d (chainCompose ϕs) U₁ := by
+  simpa [matrixProd_zero, chainCompose_zero] using matrixOne_mem_restrictedLipMatrices_id d hU₁
+
+/--
+**CH02-P12 (Zero-step chain form)**:
+For `k = 0` and nonempty `U₁ ⊆ dom (c_0)`, the empty matrix product belongs to `K(c_0)|_{U₁}`.
+-/
+theorem matrixProd_zero_mem_restrictedCoLipMatrices_chainCompose_zero
+    {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (ϕs : Fin 0 → Operator X bot)
+    (Ks : Fin 0 → GaugeMatrix I) {U₁ : Set X}
+    (hU₁_ne : U₁.Nonempty) (hU₁ : U₁ ⊆ dom (chainCompose ϕs)) :
+    matrixProd Ks ∈ RestrictedCoLipMatrices d (chainCompose ϕs) U₁ := by
+  simpa [matrixProd_zero, chainCompose_zero] using
+    matrixOne_mem_restrictedCoLipMatrices_id d hU₁_ne hU₁
+
+private theorem chain_matrix_bound_pos_ind {X I : Type} {bot : X} [Fintype I]
+    (P : Operator X bot → Set X → GaugeMatrix I → Prop)
+    (h_comp : ∀ ϕ₁ ϕ₂ U₁ M₁ M₂,
+      U₁ ⊆ dom (ϕ₂ * ϕ₁) →
+      P ϕ₁ U₁ M₁ → P ϕ₂ (operator_image ϕ₁ U₁) M₂ →
+      P (ϕ₂ * ϕ₁) U₁ (M₂ * M₁)) :
+    {m : ℕ} → (ϕs : Fin (m + 1) → Operator X bot) → {U₁ : Set X} →
+      U₁ ⊆ dom (chainCompose ϕs) →
+      (Ms : Fin (m + 1) → GaugeMatrix I) →
+      (∀ r : Fin (m + 1), P (ϕs r) (chainDomain ϕs U₁ r.castSucc) (Ms r)) →
+      P (chainCompose ϕs) U₁ (matrixPosProd Ms)
+  | 0, ϕs, U₁, _, Ms, hMs =&gt; by
+      have h0 := hMs 0
+      simpa [matrixPosProd, chainCompose, chainDomain] using h0
+  | m + 1, ϕs, U₁, hU₁, Ms, hMs =&gt; by
+      let ϕs' : Fin (m + 1) → Operator X bot := fun r =&gt; ϕs r.castSucc
+      let Ms' : Fin (m + 1) → GaugeMatrix I := fun r =&gt; Ms r.castSucc
+      have hU₁' : U₁ ⊆ dom (chainCompose ϕs') :=
+        subset_dom_prefix_of_subset_dom_chainCompose ϕs hU₁
+      have hMs' : ∀ r : Fin (m + 1),
+          P (ϕs' r) (chainDomain ϕs' U₁ r.castSucc) (Ms' r) := by
+        intro r
+        rw [chainDomain_prefix_eq]
+        exact hMs r.castSucc
+      have ih := chain_matrix_bound_pos_ind P h_comp ϕs' hU₁' Ms' hMs'
+      have h_last : P (ϕs (Fin.last (m + 1)))
+          (operator_image (chainCompose ϕs') U₁) (Ms (Fin.last (m + 1))) := by
+        rw [← chainDomain_last_eq_image_chainCompose, chainDomain_prefix_eq]
+        exact hMs (Fin.last (m + 1))
+      rw [matrixPosProd_succ, chainCompose_succ]
+      exact h_comp (chainCompose ϕs') (ϕs (Fin.last (m + 1))) U₁
+        (matrixPosProd Ms') (Ms (Fin.last (m + 1)))
+        (by simpa [chainCompose_succ] using hU₁) ih h_last
+
+private theorem chain_matrix_bound_ind {X I : Type} {bot : X} [Fintype I]
+    (P : Operator X bot → Set X → GaugeMatrix I → Prop)
+    (h_comp : ∀ ϕ₁ ϕ₂ U₁ M₁ M₂,
+      U₁ ⊆ dom (ϕ₂ * ϕ₁) →
+      P ϕ₁ U₁ M₁ → P ϕ₂ (operator_image ϕ₁ U₁) M₂ →
+      P (ϕ₂ * ϕ₁) U₁ (M₂ * M₁))
+    {k : ℕ} (hk : 0 &lt; k) (ϕs : Fin k → Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (chainCompose ϕs))
+    (Ms : Fin k → GaugeMatrix I)
+    (hMs : ∀ m : Fin k, P (ϕs m) (chainDomain ϕs U₁ m.castSucc) (Ms m)) :
+    P (chainCompose ϕs) U₁ (matrixNonemptyProd hk Ms) := by
+  cases k with
+  | zero =&gt; exact absurd hk (Nat.lt_irrefl 0)
+  | succ m =&gt; exact chain_matrix_bound_pos_ind P h_comp ϕs hU₁ Ms hMs
+
+/--
+**CH02-P09 (Corollary 2.5(i), finite-chain Lip product bound)**:
+For any positive length `k ≥ 1`, if each step `m` has a restricted Lip certificate
+`L^{(m)} ∈ L(ϕ_m)|_{U_m}` on the actual intermediate image domain `U_m`, then
+`L^{(k)} * ... * L^{(1)} ∈ L(c_k)|_{U₁}`.
+-/
+theorem restrictedLipMatrices_chain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    {k : ℕ} (hk : 0 &lt; k) (ϕs : Fin k → Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (chainCompose ϕs))
+    (Ls : Fin k → GaugeMatrix I)
+    (hLs : ∀ m : Fin k, Ls m ∈ RestrictedLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)) :
+    matrixNonemptyProd hk Ls ∈ RestrictedLipMatrices d (chainCompose ϕs) U₁ :=
+  chain_matrix_bound_ind
+    (fun ϕ U M =&gt; M ∈ RestrictedLipMatrices d ϕ U)
+    (fun ϕ₁ ϕ₂ _ _ _ hU h₁ h₂ =&gt; restrictedLipMatrices_comp d ϕ₁ ϕ₂ hU h₁ h₂)
+    hk ϕs hU₁ Ls hLs
+
+/-- Direct corollary of `CH02-P09` formulated via `OperatorChain` from Chapter 1. -/
+theorem restrictedLipMatrices_operatorChain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    (chain : List (Operator X bot)) (hchain : chain ≠ [])
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (OperatorChain chain))
+    (Ls : Fin chain.length → GaugeMatrix I)
+    (hLs : ∀ m : Fin chain.length,
+      Ls m ∈ RestrictedLipMatrices d (chainSteps chain m)
+        (chainDomain (chainSteps chain) U₁ m.castSucc)) :
+    matrixNonemptyProd (List.length_pos_of_ne_nil hchain) Ls ∈
+      RestrictedLipMatrices d (OperatorChain chain) U₁ := by
+  have h_eq : OperatorChain chain = chainCompose (chainSteps chain) :=
+    operatorChain_eq_chainCompose_reverse chain
+  rw [h_eq] at hU₁ ⊢
+  exact restrictedLipMatrices_chain d (List.length_pos_of_ne_nil hchain) (chainSteps chain) hU₁ Ls hLs
+
+/--
+**CH02-P10 (Corollary 2.5(ii), finite-chain co-Lip product bound)**:
+For any positive length `k ≥ 1`, if each step `m` has a restricted co-Lip certificate
+`K^{(m)} ∈ K(ϕ_m)|_{U_m}` on the actual intermediate image domain `U_m`, then
+`K^{(k)} * ... * K^{(1)} ∈ K(c_k)|_{U₁}`.
+-/
+theorem restrictedCoLipMatrices_chain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    {k : ℕ} (hk : 0 &lt; k) (ϕs : Fin k → Operator X bot)
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (chainCompose ϕs))
+    (Ks : Fin k → GaugeMatrix I)
+    (hKs : ∀ m : Fin k, Ks m ∈ RestrictedCoLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)) :
+    matrixNonemptyProd hk Ks ∈ RestrictedCoLipMatrices d (chainCompose ϕs) U₁ :=
+  chain_matrix_bound_ind
+    (fun ϕ U M =&gt; M ∈ RestrictedCoLipMatrices d ϕ U)
+    (fun ϕ₁ ϕ₂ _ _ _ hU h₁ h₂ =&gt; restrictedCoLipMatrices_comp d ϕ₁ ϕ₂ hU h₁ h₂)
+    hk ϕs hU₁ Ks hKs
+
+/-- Direct corollary of `CH02-P10` formulated via `OperatorChain` from Chapter 1. -/
+theorem restrictedCoLipMatrices_operatorChain {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal)
+    (chain : List (Operator X bot)) (hchain : chain ≠ [])
+    {U₁ : Set X} (hU₁ : U₁ ⊆ dom (OperatorChain chain))
+    (Ks : Fin chain.length → GaugeMatrix I)
+    (hKs : ∀ m : Fin chain.length,
+      Ks m ∈ RestrictedCoLipMatrices d (chainSteps chain m)
+        (chainDomain (chainSteps chain) U₁ m.castSucc)) :
+    matrixNonemptyProd (List.length_pos_of_ne_nil hchain) Ks ∈
+      RestrictedCoLipMatrices d (OperatorChain chain) U₁ := by
+  have h_eq : OperatorChain chain = chainCompose (chainSteps chain) :=
+    operatorChain_eq_chainCompose_reverse chain
+  rw [h_eq] at hU₁ ⊢
+  exact restrictedCoLipMatrices_chain d (List.length_pos_of_ne_nil hchain) (chainSteps chain) hU₁ Ks hKs
+
+end ChainDomainsAndFiniteComposition
+
+end LCH02
+</code></pre>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;LCH02&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;items&quot;: [
+    {
+      &quot;id&quot;: &quot;CH02-D01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsLipMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.LipMatrices&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsRestrictedLipMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.RestrictedLipMatrices&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isRestrictedLipMatrix_dom_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_dom&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：固定基底类型 X、吸收元 bot、有限指标集 I [Fintype I]、规范函数族 d : I → X → X → ENNReal 与算子 ϕ : Operator X bot。量词/定义域：IsLipMatrix 要求 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, matrixEntry L i j * d i x y；IsRestrictedLipMatrix 要求 U ⊆ dom ϕ 且 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I 满足同式。结论/族：LipMatrices d ϕ := { L | IsLipMatrix d ϕ L } 对应 L(ϕ)，RestrictedLipMatrices d ϕ U := { L | IsRestrictedLipMatrix d ϕ U L } 对应 L(ϕ)|_U，并证 restrictedLipMatrices_dom 表明当 U = dom ϕ 时两者相等。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsRestrictedCoLipMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.RestrictedCoLipMatrices&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：固定 X, bot, I [Fintype I], d : I → X → X → ENNReal, ϕ : Operator X bot, U : Set X 与矩阵 K : GaugeMatrix I。量词/定义域：IsRestrictedCoLipMatrix d ϕ U K 显式合取 U.Nonempty、U ⊆ dom ϕ 与 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, matrixEntry K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)，完整保留“凡出现 K(ϕ)|_U 均包含非空性 U ≠ ∅”的原文要求。结论/族：RestrictedCoLipMatrices d ϕ U := { K | IsRestrictedCoLipMatrix d ϕ U K } 对应 K(ϕ)|_U。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.GaugeMatrix&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.ofChannel&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry_mul&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry_mul_sum_eq&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：GaugeMatrix I := Matrix I I ENNReal 表示以 ENNReal 为条目的 I × I 矩阵，自然实现原文 R̄_+ 算术（含 0 * +∞ = 0）。指标约定：matrixEntry M i j := M j i 将输入分量 i 置于列指标、输出分量 j 置于行指标，对应 (M)_{ji} = M_{i→j}；ofChannel f 则从通道函数 f i j 构造矩阵。乘法结论：在 [Fintype I] 下直接采用代数矩阵乘法 M₂ * M₁，matrixEntry_mul 证明 matrixEntry (M₂ * M₁) i j = ∑ k : I, matrixEntry M₂ k j * matrixEntry M₁ i k。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixEntry_one&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixPosProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_one&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_succ&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_zero&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_eq_nonemptyProd&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_succ&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixPosProd_eq_list_reverse_prod&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_eq_list_reverse_prod&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：matrixOne := (1 : Matrix I I ENNReal) 在 [DecidableEq I] 下定义单位矩阵 I（matrixEntry_one 验证其条目为 if i = j then 1 else 0）。有序非空乘积：matrixPosProd 对 Fin (m + 1) → GaugeMatrix I 递归定义 M^{(m+1)} * ... * M^{(1)}，matrixNonemptyProd 对任意 hn : 0 &lt; n 的序列 Ms : Fin n → GaugeMatrix I 给出同式（无需 DecidableEq I）。一般/空乘积：matrixProd 在 n = 0 时取 matrixOne（空乘积），在 n = m + 1 时等于 matrixPosProd Ms，并通过 matrixProd_eq_list_reverse_prod 与 List.prod 对应。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainCompose&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainCompose_eq_operatorChain_reverse&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainCompose_eq_prod&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainSteps&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.operatorChain_eq_chainCompose_reverse&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.stepImage&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_zero&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_succ&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_prefix_eq&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_last_eq_image_chainCompose&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.prefixCompose&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_eq_image_prefix&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_subset_dom_step&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.chainDomain_nonempty&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：以步序族 ϕs : Fin k → Operator X bot 表示 ϕ_1, ..., ϕ_k，chainCompose ϕs 递归定义为 c_0 = id 与 c_{m+1} = ϕ_{m+1} * c_m。链表示对应：chainCompose_eq_operatorChain_reverse 与 operatorChain_eq_chainCompose_reverse（配 chainSteps）建立步序复合与前置模块 OperatorChain 的双向严格对应（OperatorChain 以链表头为最后作用算子，故与步序反转对应）。实际中间像域：chainDomain ϕs U₁ : Fin (k + 1) → Set X 经 stepImage 递归定义 U_1 = U₁ 与 U_{m+1} = ϕ_m(U_m)，chainDomain_eq_image_prefix 与 chainDomain_last_eq_image_chainCompose 刻画其等于前缀复合像集 c_m(U₁)，chainDomain_subset_dom_step 证 U₁ ⊆ dom c_k 蕴含每步 U_m ⊆ dom ϕ_m。&quot;,
+      &quot;dependencies&quot;: []
+    },
+    {
+      &quot;id&quot;: &quot;CH02-D06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.InteriorPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodesPos&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodes&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodes_zero&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathNodes_last&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.interiorPath_one_unique&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.pathStepEntry&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IsPositivePath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.HasZeroFactorPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.not_isPositivePath_iff_hasZeroFactorPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.IndexPath&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.interiorPathEquivIndexPath&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/参数：InteriorPath I n := Fin (n - 1) → I 表示中间指标序列 (k_1, ..., k_{n-1})，n = 1 时由 interiorPath_one_unique 证其为唯一空序列；pathNodes hn i j p : Fin (n + 1) → I 拼接首尾端点 k_0 = i, k_n = j（并由 interiorPathEquivIndexPath 与显式端点路径结构 IndexPath I n i j 等价）。谓词：pathStepEntry Ms hn i j p r 给出步条目 [M^{(r)}]_{k_{r-1}→k_r}；IsPositivePath 谓词为 ∀ r : Fin n, 0 &lt; pathStepEntry ... r（全正路径）；HasZeroFactorPath 谓词为 ∃ r : Fin n, pathStepEntry ... r = 0（含零因子路径）。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P01&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isLipMatrix_iff_scalar_of_card_eq_one&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isRestrictedLipMatrix_iff_scalar_of_card_eq_one&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：假设 Fintype.card I = 1 且取唯一指标 i : I，对任意 d : I → X → X → ENNReal、ϕ : Operator X bot、L : GaugeMatrix I。量词/结论：isLipMatrix_iff_scalar_of_card_eq_one 证明 IsLipMatrix d ϕ L 等价于单标量不等式 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i (ϕ.func x) (ϕ.func y) ≤ matrixEntry L i i * d i x y（并附受限版本）。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P02&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ : Operator X bot 与子集 U, V : Set X，前提为 U ⊆ V 与 V ⊆ dom ϕ。结论：RestrictedLipMatrices d ϕ V ⊆ RestrictedLipMatrices d ϕ U，完整对应引理 2.1 第一式。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P04&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：算子 ϕ₁, ϕ₂ : Operator X bot、U₁ ⊆ dom (ϕ₂ * ϕ₁)，中间像域精确取为 operator_image ϕ₁ U₁，L₁ ∈ RestrictedLipMatrices d ϕ₁ U₁ 且 L₂ ∈ RestrictedLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)。结论：L₂ * L₁ ∈ RestrictedLipMatrices d (ϕ₂ * ϕ₁) U₁，严格保持复合方向 ϕ₂ ∘ ϕ₁ 与乘积次序 L^{(2)} · L^{(1)}。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P05&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_antitone&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ 与子集 U, V : Set X，前提为 U.Nonempty、U ⊆ V 与 V ⊆ dom ϕ。结论：RestrictedCoLipMatrices d ϕ V ⊆ RestrictedCoLipMatrices d ϕ U，对应引理 2.3 第一式。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P07&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.coLipMatrix_entry_eq_zero_of_dist_zero_pos&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ, i, j : I 与 K : GaugeMatrix I，前提为 ∃ x ∈ dom ϕ, ∃ y ∈ dom ϕ, d j (ϕ.func x) (ϕ.func y) = 0 ∧ 0 &lt; d i x y 且 K ∈ RestrictedCoLipMatrices d ϕ (dom ϕ)。结论：matrixEntry K i j = 0。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P08&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_comp&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：算子 ϕ₁, ϕ₂、U₁ ⊆ dom (ϕ₂ * ϕ₁)、精确中间像域 operator_image ϕ₁ U₁、K₁ ∈ RestrictedCoLipMatrices d ϕ₁ U₁ 与 K₂ ∈ RestrictedCoLipMatrices d ϕ₂ (operator_image ϕ₁ U₁)（其中 K₁ 的成员资格已携带 U₁.Nonempty）。结论：K₂ * K₁ ∈ RestrictedCoLipMatrices d (ϕ₂ * ϕ₁) U₁。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P11&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne_mem_restrictedLipMatrices_id&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_zero_mem_restrictedLipMatrices_chainCompose_zero&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：[Fintype I] [DecidableEq I]，对任意 U ⊆ dom operator_identity（无需非空性，故自动包含非空情形）。结论：matrixOne ∈ RestrictedLipMatrices d operator_identity U，且 matrixProd_zero_mem_restrictedLipMatrices_chainCompose_zero 将其等价表述为 k = 0 零步复合与空乘积的情形。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P12&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne_mem_restrictedCoLipMatrices_id&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixOne_mem_id_inter&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixProd_zero_mem_restrictedCoLipMatrices_chainCompose_zero&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：[Fintype I] [DecidableEq I]，显式要求 U.Nonempty 与 U ⊆ dom operator_identity。结论：matrixOne ∈ RestrictedCoLipMatrices d operator_identity U，并由 matrixOne_mem_id_inter 给出 I ∈ L(id)|_U ∩ K(id)|_U 及 k = 0 空乘积形式。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;, &quot;CH02-P11&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P14&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_one_entry_pos_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.isPositivePath_one_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意 [Fintype I]、hn : 0 &lt; n、Ms : Fin n → GaugeMatrix I 与起止指标 i, j : I。结论：matrixNonemptyProd_entry_pos_iff 证明 0 &lt; matrixEntry (matrixNonemptyProd hn Ms) i j ↔ ∃ p : InteriorPath I n, IsPositivePath Ms hn i j p；matrixNonemptyProd_one_entry_pos_iff 与 isPositivePath_one_iff 显式刻画 n = 1 退化为 0 &lt; matrixEntry (Ms 0) i j。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D06&quot;, &quot;CH02-P13&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P03&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.lipMatrices_subset_restrictedLipMatrices&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ 与子集 U ⊆ dom ϕ。结论：LipMatrices d ϕ ⊆ RestrictedLipMatrices d ϕ U，通过令引理 2.1 中 V = dom ϕ 并结合 restrictedLipMatrices_dom 证得。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-P02&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P06&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.coLipMatrices_dom_subset_restrictedCoLipMatrices&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：固定 d, ϕ 与非空子集 U.Nonempty 且 U ⊆ dom ϕ。结论：RestrictedCoLipMatrices d ϕ (dom ϕ) ⊆ RestrictedCoLipMatrices d ϕ U，通过令引理 2.3 中 V = dom ϕ 证得。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-P05&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P09&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_chain&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedLipMatrices_operatorChain&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意正长度 hk : 0 &lt; k，算子序列 ϕs : Fin k → Operator X bot，U₁ ⊆ dom (chainCompose ϕs)，逐步证书族 Ls : Fin k → GaugeMatrix I 满足 ∀ m : Fin k, Ls m ∈ RestrictedLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)。结论：matrixNonemptyProd hk Ls ∈ RestrictedLipMatrices d (chainCompose ϕs) U₁，并附以 OperatorChain 表达的推论 restrictedLipMatrices_operatorChain。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D01&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;, &quot;CH02-P04&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P10&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_chain&quot; },
+        { &quot;file&quot;: &quot;LCH02/OperatorBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.restrictedCoLipMatrices_operatorChain&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意正长度 hk : 0 &lt; k，算子序列 ϕs : Fin k → Operator X bot，U₁ ⊆ dom (chainCompose ϕs)，逐步证书族 Ks : Fin k → GaugeMatrix I 满足 ∀ m : Fin k, Ks m ∈ RestrictedCoLipMatrices d (ϕs m) (chainDomain ϕs U₁ m.castSucc)。结论：matrixNonemptyProd hk Ks ∈ RestrictedCoLipMatrices d (chainCompose ϕs) U₁，并附以 OperatorChain 表达的推论 restrictedCoLipMatrices_operatorChain。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D02&quot;, &quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D05&quot;, &quot;CH02-P08&quot;]
+    },
+    {
+      &quot;id&quot;: &quot;CH02-P13&quot;,
+      &quot;status&quot;: &quot;complete&quot;,
+      &quot;declarations&quot;: [
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.matrixNonemptyProd_one_entry_eq_zero_iff&quot; },
+        { &quot;file&quot;: &quot;LCH02/MatrixBounds.lean&quot;, &quot;name&quot;: &quot;LCH02.hasZeroFactorPath_one_iff&quot; }
+      ],
+      &quot;representation&quot;: &quot;对象/前提：任意 [Fintype I]、hn : 0 &lt; n、Ms : Fin n → GaugeMatrix I 与起止指标 i, j : I。结论：matrixNonemptyProd_entry_eq_zero_iff 证明 matrixEntry (matrixNonemptyProd hn Ms) i j = 0 ↔ ∀ p : InteriorPath I n, HasZeroFactorPath Ms hn i j p；matrixNonemptyProd_one_entry_eq_zero_iff 与 hasZeroFactorPath_one_iff 显式刻画 n = 1 退化为 matrixEntry (Ms 0) i j = 0。&quot;,
+      &quot;dependencies&quot;: [&quot;CH02-D03&quot;, &quot;CH02-D04&quot;, &quot;CH02-D06&quot;]
+    }
+  ]
+}
+</code></pre>
+</div><p class="panel-foot"><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/imports/native-5400/slots/LCH02/A1/attempts/1/response.md">原答文件 ↗</a></p></details><details class="panel evidence-fold"><summary>来源、原评审与运行附件</summary><div class="prose"><p>采用记录：<code>LCH02:A1</code></p><ul class="source-list"><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/imports/native-5400/slots/LCH02/A1/attempts/1/response.md">answer · response.md</a><span class="hash">SHA256 19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034</span></li><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/claim-public-sources/nonlogical_retry_3/LCH02.json">review · LCH02.json</a><span class="hash">SHA256 6ef70443f0fb07c714992c885c989864f8c0f1b737636f61839a36529b4f9d48</span></li><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/reviews/formalization.json">engineering_review · formalization.json</a><span class="hash">SHA256 a6a9e5de2810d1b5eb099174a0ec9339e3bad8193dc8d8c8b3ded706e7814278</span></li><li><a href="../../../../results/v1.0.0/gemini-4-hydrogen-xhigh/20261113/record.json">来源记录 ↗</a></li></ul></div></details></div><footer class="footer"><span>Math Gauge</span><a data-context-link href="../../../method.html">方法与数据</a></footer></main><script type="application/json" id="data">{"schema": "math-gauge.browser-presentation/v1", "benchmark_version": "1.0.0", "default_score_mode": "partial", "score_modes": ["capability", "partial", "strict"], "default_attempt_condition": "nonlogical_retry_3", "display_score_modes": [{"id": "capability", "name": "数学能力", "abbreviation": "MC", "description": "正常答卷的有效数学贡献；无正常交卷时可审核截止前固定原工程。", "policy": "capability-scoring-policy.json", "policy_version": "0.3.0"}, {"id": "partial", "name": "可靠数学能力", "abbreviation": "RMC", "description": "正常交卷的有效数学贡献并保留有据扣罚；未正常交卷为0。默认主分。", "policy": "scoring-policy.json", "policy_version": "0.9.0"}, {"id": "strict", "name": "严格数学交付", "abbreviation": "SMC", "description": "整题或规定三轮轨迹满足全部实质要求才给分。", "policy": "strict-scoring-policy.json", "policy_version": "0.2.0"}], "source_schema": "math-gauge.current-results-display/v6", "policy": {"groups": [{"id": "written", "title": "书面证明", "weight": 35, "children": ["written-argument", "argument-review"]}, {"id": "lean", "title": "Lean", "weight": 35, "children": ["lean-audit", "lean-formalization", "lean-selfcheck"]}, {"id": "research", "title": "数学研究", "weight": 30, "children": ["background-check", "manuscript-completion", "theorem-extension"]}], "subcategories": [{"id": "written-argument", "title": "书面论证", "weight": 25, "status": "active"}, {"id": "argument-review", "title": "论证审阅", "weight": 10, "status": "active"}, {"id": "lean-audit", "title": "语义审计", "weight": 10, "status": "active"}, {"id": "lean-formalization", "title": "形式化", "weight": 15, "status": "active"}, {"id": "lean-selfcheck", "title": "对齐自查", "weight": 10, "status": "active"}, {"id": "background-check", "title": "背景核查", "weight": 10, "status": "active"}, {"id": "manuscript-completion", "title": "数学想法手稿化", "weight": 10, "status": "active"}, {"id": "theorem-extension", "title": "命题拓展", "weight": 10, "status": "active"}]}, "model": {"id": "gemini-4-hydrogen-xhigh", "label": "Gemini Hydrogen (xhigh)"}, "case": {"id": "LCH02", "title": "有限复合与路径节群", "category": "lean-formalization", "views": {"capability": {"single_attempt": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034", "review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992"}, "nonlogical_retry_3": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034", "review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992"}}, "partial": {"single_attempt": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034", "review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992"}, "nonlogical_retry_3": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034", "review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992"}}, "strict": {"single_attempt": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034", "review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992"}, "nonlogical_retry_3": {"completion": {"lower": 1.0, "upper": 1.0, "exact": 1.0}, "strict_pass": true, "response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034", "review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992"}}}}}</script></body></html>

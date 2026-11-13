@@ -1,0 +1,1509 @@
+{
+  "schema": "math-gauge.claim-review-projection/v1",
+  "benchmark_version": "0.6.0",
+  "policy_version": "0.1.0",
+  "policy_sha256": "c6f4783ccb7946963f0f364694f346822803c44b571dbecb2d47b04a819b4419",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "source_archive_sha256": "329736dca7ea51fab8953c9a36e85e96f664e5614a6bba532c489ab472146258",
+  "conditions": {
+    "single_attempt": {
+      "schema": "math-gauge.claim-review-condition/v1",
+      "policy_version": "0.1.0",
+      "model_label": "Gemini Hydrogen (xhigh)",
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "attempt_condition": "single_attempt",
+      "source_inputs_sha256": "29b18a3d21f5297f2c11b47238063420f9ad6de21f655b5fabcfade1c5eecbfe",
+      "cases": [
+        {
+          "case_id": "MG-C003",
+          "status": "reviewed",
+          "scope_note": "Reviewed entire physical-3 normal final: all six module proofs and auxiliary definitions, Main closure, 92 alignment status/representation claims, all non-code completion/compile/axiom declarations. No first-failure or later-round content read. All 92 mandatory goals pass; one isolated false uniqueness clause in alignment is recorded separately, and harmless directional/method-description wording is retained and explicitly excluded from additional charges.",
+          "findings": [
+            {
+              "id": "C003-A1-alignment-lip-uniqueness",
+              "root_cause": "unrequested-unique-lip-matrix-description",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": false,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The literal extra alignment assertion that ψ has a unique controlled Lip matrix is false. In the actual seven-point example dom ψ={p,q}, d_i(p,q)=0 and d_m(p,q)=1, while ψ(p)=r, ψ(q)=s have both component distances 1. Set L(m→i)=L(m→m)=1 and all other entries 0: it is a legal full-domain Lip certificate. Raising only L(m→i) from 1 to 2 gives a second distinct legal certificate. This extra descriptive clause can be deleted without changing any definition, theorem, proof, required scope or any of the 92 completed goals. It is a localized annotation overstatement, not core endorsement, unsupported completion, or a necessary bridge in the mathematics. Recommend local 5%, no additional Strict blocker under the local/material distinction in the claim contract; preserve the exact clause rather than silently correcting it.",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "验证 sevenU ⊆ dom (sevenPsi * sevenPhi)、i ∈ I_const d ϕ U、ψ 具有唯一受控 Lip 矩阵但 i ∉ I_const d (ψ * ϕ) U。"
+                }
+              ],
+              "counterexample_basis": {
+                "source_file": "Ch03/Partition.lean",
+                "lines": [
+                  509,
+                  517,
+                  586,
+                  593,
+                  600,
+                  603
+                ],
+                "actual_theorem": "Ch03.prop_3_3_const_comp_right_counterexample",
+                "actual_type_has_lip_uniqueness": false,
+                "domain": "{SevenPt.p,SevenPt.q}",
+                "two_distinct_legal_matrices": [
+                  {
+                    "i_to_i": 0,
+                    "m_to_i": 1,
+                    "i_to_m": 0,
+                    "m_to_m": 1
+                  },
+                  {
+                    "i_to_i": 0,
+                    "m_to_i": 2,
+                    "i_to_m": 0,
+                    "m_to_m": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "source_response_sha256": "d947fd4cfef26f20af651a4cbcbae8cfd907d1d1d85edf8b515d15e0c04f5410",
+          "source_review_sha256": "88eae4ba4307f74b08df1c6ecb1467e047cb36f49cfd6b4c1e4fed0ce382c63e",
+          "sources": [
+            {
+              "path": "imports/native-10800/slots/MG-C003/A1/attempts/1/response.md",
+              "bytes": 259053,
+              "sha256": "d947fd4cfef26f20af651a4cbcbae8cfd907d1d1d85edf8b515d15e0c04f5410",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-C003.json",
+              "bytes": 896,
+              "sha256": "21262490924204967cb9168f566ecf1576206f94c48c3e662c0697353f56ed67",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GP001",
+          "status": "reviewed",
+          "scope_note": "数学审核通过：S1–S6 全通过，冻结阶段诊断完成权重100/100。完整非约化悬挂分类、整数局部判据、空 link 边界及合法不可消悬挂反例均完成。未发现可确认的实质数学错误、隐加结构或不必要限制；新增承诺扣罚建议0。只审核正常首答原文；未调用 apply_reviews，未改变 records 或候选工程。运行/订阅/模型身份由主 agent 另核，人审仍 pending。",
+          "findings": [],
+          "source_response_sha256": "6b9b0d3f025fcad67bd6be71b954808f4e7c652a399f6ac66093c953a7c565d9",
+          "source_review_sha256": "a0cc2cee24a841f36ad9ccde7577b25aaab51e56c3b808d9139ac2b1972ccafd",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GP001/A1/attempts/1/response.md",
+              "bytes": 35100,
+              "sha256": "6b9b0d3f025fcad67bd6be71b954808f4e7c652a399f6ac66093c953a7c565d9",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GP001.json",
+              "bytes": 392,
+              "sha256": "22e4dfa62735bd7e8cdc825ac68eddf582bb417396ce8a5c6588653cd916cb94",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GP002",
+          "status": "reviewed",
+          "scope_note": "已对完整正常首答、原题和冻结判准逐项核查；六个必答阶段均完成。不同于参考的合法路线予以接受。AI数学审核，人工未审。",
+          "findings": [],
+          "source_response_sha256": "23e2402192d5f9960c97b16f38a860d04bebda8a17a59e3b91cebf9628205b0c",
+          "source_review_sha256": "c51dd3dd0f213d04a9e4d11d036f381fbf6e4d287fa130222aad406b46ee7cee",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GP002/A1/attempts/1/response.md",
+              "bytes": 27094,
+              "sha256": "23e2402192d5f9960c97b16f38a860d04bebda8a17a59e3b91cebf9628205b0c",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GP002.json",
+              "bytes": 392,
+              "sha256": "8d0b07c32dd1278fa39ea76e3323f5667c52bce925da56f99c73045a3dfcc86c",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR005",
+          "status": "reviewed",
+          "scope_note": "已对完整正常首答、原题和冻结判准逐项核查；六个必答阶段均完成。不同于参考的合法路线予以接受。AI数学审核，人工未审。",
+          "findings": [],
+          "source_response_sha256": "e6e64da2b6960b61e8f922988bf77490ea871911e5e8bc7d749b593542720811",
+          "source_review_sha256": "92867906704a162110d0d3b44229a5039ba25ddbadd21d59ea61ef8edb7ae876",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR005/A1/attempts/1/response.md",
+              "bytes": 30718,
+              "sha256": "e6e64da2b6960b61e8f922988bf77490ea871911e5e8bc7d749b593542720811",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GR005.json",
+              "bytes": 392,
+              "sha256": "1a08c3fab59db818e8d2fff4c09a6b9e6002997533d01cc0e29a23e4b4ae8da3",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR009",
+          "status": "reviewed",
+          "scope_note": "数学审核通过：S1–S6 全通过，冻结阶段诊断完成权重100/100。真实层商、全部测试对象稳定子充要判据、所有态射及任意层基底相容性、单点反例与基底反映边界均完成。L123/L183 的唯一同构措辞结合给定实现识别、已证明全忠实及明确非平凡自同构群读取，不形成独立实质错误；具体理由见 findings。无已确认错误根因，新增承诺扣罚建议0。未调用 apply_reviews，未改变 records；运行资格另核，人审 pending。",
+          "findings": [],
+          "source_response_sha256": "d539bb004f3a7e3eeea1d00ae434e891a2f44a814de477f3780b5ee558042ee8",
+          "source_review_sha256": "7a8f4ca92fb20444dc1133802821fc8be84ff1f95134b46122de6c9678566053",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR009/A1/attempts/1/response.md",
+              "bytes": 51563,
+              "sha256": "d539bb004f3a7e3eeea1d00ae434e891a2f44a814de477f3780b5ee558042ee8",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GR009.json",
+              "bytes": 392,
+              "sha256": "00c1a17e48a2e23bb45928d371c0f3f83ef32bb68815d92bc4901b4a09cdcb68",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-PS001",
+          "status": "reviewed",
+          "scope_note": "仅审首份正常交卷的 sealed/answer.md。原答完整证明两项目标；不假设 f(n)/n 收敛或 X 完备。六项冻结判准均获满额数学信用，整体严格完成通过。未发现需新增 RMC 扣罚的实质错误断言。执行资格、模型身份认证与人工批准由主控另行判断；本文件是具名 AI 数学评审草稿。",
+          "findings": [],
+          "source_response_sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+          "source_review_sha256": "96096d6ae9e69ef43ed73933d1dc431f54050b3a14e95d72486bd2a11a99011e",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-PS001/A1/attempts/1/response.md",
+              "bytes": 19381,
+              "sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-PS001.json",
+              "bytes": 392,
+              "sha256": "bdd09092139aa40d122e1ba298d0af31aa93ed6ac6ddd7bc4200583d5aae9f59",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR021",
+          "status": "reviewed",
+          "scope_note": "仅审首份正常完整交卷的 sealed/answer.md。按 written_proof 连续 criteria 合同逐项核验，不使用S阶段。原始30/25/15/20数学分与10分独立附带断言可靠性均满额，整体严格完成通过。原答保留非幂等输入、整数环/模2O、模4耦合、真实截断/有限同余差别与全部秩/精度边界；无新增RMC处罚建议。运行身份、隔离资格和人工批准由主控另行核验。",
+          "findings": [],
+          "source_response_sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+          "source_review_sha256": "4b32e41c427b3c2bc50d81195a769faacf9a063716ba07800e7c4af724c8968d",
+          "embedded_reliability": {
+            "criterion_id": "assertion_reliability",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100,
+            "source_score": {
+              "source": 1,
+              "json_pointer": "/embedded_reliability_awarded"
+            }
+          },
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR021/A1/attempts/1/response.md",
+              "bytes": 51987,
+              "sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GR021.json",
+              "bytes": 430,
+              "sha256": "82ab435b20f3073a5fcfeef55e9711690a4c2c6a6a335a7d8b58409b9eee2b72",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR022",
+          "status": "reviewed",
+          "scope_note": "三个整体目标全部完成。特别核验 E 自身的分离完备与其在 Q 中的平凡继承拓扑没有混同；采用显式有限商 U_m 及相容代表调整的合法替代证明。AI数学评审，人工未审。",
+          "findings": [],
+          "source_response_sha256": "d2d5a87e579e0f63f409a3be9c545b15cd79813d34db6a57df16c788617d5db2",
+          "source_review_sha256": "2255997f060acb7f1091487e36e3bf86c6e512288d8e1d491e69b976bef457c9",
+          "embedded_reliability": {
+            "criterion_id": "R",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100,
+            "source_score": {
+              "source": 1,
+              "json_pointer": "/embedded_reliability_awarded"
+            }
+          },
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR022/A1/attempts/1/response.md",
+              "bytes": 40654,
+              "sha256": "d2d5a87e579e0f63f409a3be9c545b15cd79813d34db6a57df16c788617d5db2",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GR022.json",
+              "bytes": 430,
+              "sha256": "6012fdce6ec309319a4dc09db4bb2f1c8f041de1f1260d7502fbce030c80e24c",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR023",
+          "status": "reviewed",
+          "scope_note": "三个必答目标全部完成。冻结五项得分30/30、30/30、15/15、15/15、10/10，总诊断100/100，其中必答数学90/90、独立附带断言可靠性10/10。完整原答与冻结合同绑定；无已确认实质错误，根因去重后新增承诺扣罚建议0。接受 Fubini 两次序作为有效替代反例，不增加参考路线义务。只生成评审草稿，未 apply、未改 ROOT/records 或候选原件；运行/后端/订阅资格由主 agent 另核，human pending。",
+          "findings": [],
+          "source_response_sha256": "1513b8f55387ba678e32a6ab31ab713c6a834182f7cf1830f31ed4c6c25a6f22",
+          "source_review_sha256": "5dee10a65fa01839de77d0cc3e7f3cbaefa4a66bc6f7fc04768f5503d9403dd7",
+          "embedded_reliability": {
+            "criterion_id": "independent_assertion_reliability",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100,
+            "source_score": {
+              "source": 1,
+              "json_pointer": "/embedded_reliability_awarded"
+            }
+          },
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR023/A1/attempts/1/response.md",
+              "bytes": 46748,
+              "sha256": "1513b8f55387ba678e32a6ab31ab713c6a834182f7cf1830f31ed4c6c25a6f22",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-GR023.json",
+              "bytes": 430,
+              "sha256": "3d95e46a76e0534612b4d1214ba5784111b65c93d59eb0f7237fcd68dc2cfbfe",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR001",
+          "status": "reviewed",
+          "scope_note": "S1–S5与矩阵反例均有实质独立核查；但把S6表格中已经由同一行解释和S2消除的编辑歧义判作实质充分/必要逻辑错误，并把有S2/S4归属的摘要改按无共同条件的孤立一般命题否决。原有效主体提升/理想化路线保留正向信用。按冻结full/half/zero细检查为15+20+15+0、10+10+0、5+5=80；核心错误否决单一具名根因使当前RMC该任务最高0，MC保留80，SMC不通过。不是因笼统“未全部正确”字样处罚，而是有明确具体错误否决。AI审核，人工pending。",
+          "findings": [
+            {
+              "id": "AR001-CONTEXT-REJECTION",
+              "root_cause": "source_scoped_summary_treated_as_unscoped_false_implication",
+              "severity": "critical",
+              "core_endorsement": true,
+              "reason": "原同一行与S2明确说明非必要条件；候选依此实质否决有效蕴含梳理，并把阶段条件从摘要剥离。按冻结AR001 critical/major policy，单根核心错误否决。",
+              "strict_blocking": true,
+              "kind": "false_rejection",
+              "covered_by": "none",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "第 7 行逻辑方向写反，评估自相矛盾（实质性错误）"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "e7d822513b475aaa95e4ddb13047e3c760fdcb338b7514ce783b5bbf5ab74491",
+          "source_review_sha256": "90285dae44bc84cf822762419bfd1f294e33c36136f56d3ec47318e192715785",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR001/A1/attempts/1/response.md",
+              "bytes": 14379,
+              "sha256": "e7d822513b475aaa95e4ddb13047e3c760fdcb338b7514ce783b5bbf5ab74491",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-AR001.json",
+              "bytes": 543,
+              "sha256": "cfb3528f688cc586dab7a48420eef961a55d28a9508d377d21c0509d37edc8ea",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR002",
+          "status": "reviewed",
+          "scope_note": "独立交叉核准后按统一边界更正初审：冻结check body为实质错误0/20；其余检查全额保留，总80/100=40+30+10。候选正确指出第三路线的仿射/线性缺口，且认可两条闭性主证，这些信用保留；但同时否定原S4已给出的有效整体分类/恢复证明，属于核心错误否决，不仅是局部风格意见。major_error=true，Strict=false，单根critical20及RMC该题最高0。原初审与其宽判保留为历史，不覆盖原执行记录或原已应用review；采用本源绑定补充审阅。AI审核，人审pending。",
+          "findings": [
+            {
+              "id": "AR002-OVERREQUIRED-DETAILS",
+              "root_cause": "existing_algebraic_construction_mislabelled_as_materially_missing",
+              "severity": "critical",
+              "core_endorsement": true,
+              "reason": "错误否定原S4已给出的整体恢复构造与对偶分类主证；明确标为主要证明落空，而非可选写作建议。以false_rejection按单根核心错误封顶，正确第三路线缺口、闭性路线等正向信用保留。",
+              "strict_blocking": true,
+              "kind": "false_rejection",
+              "covered_by": "none",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "直接导致原题"
+                },
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/1",
+                  "quote": "**没有给出表中充要条件的证明**"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "22d7addfa11d240f7cbbc74f434f61f5ed0231e78659baefc9e5fd3fbee7ebf7",
+          "source_review_sha256": "0cce7913d1d85e065e0d84bd6fa451e2c30047b163501858608ea2e202b59e75",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR002/A1/attempts/1/response.md",
+              "bytes": 14355,
+              "sha256": "22d7addfa11d240f7cbbc74f434f61f5ed0231e78659baefc9e5fd3fbee7ebf7",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-AR002.json",
+              "bytes": 543,
+              "sha256": "fd74781e8b07236cbec67b6ff15a5a81ec860f1ca925ed8561dc50c596dc5d4d",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR003",
+          "status": "reviewed",
+          "scope_note": "Source-bound typed projection of the already applied AR003 review and its explicit independent RMC recommendation. No new mathematical regrading.",
+          "findings": [
+            {
+              "id": "AR003-CGHAUS-REJECTION",
+              "root_cause": "AR003-CGHAUS-REJECTION",
+              "kind": "false_rejection",
+              "severity": "critical",
+              "strict_blocking": true,
+              "core_endorsement": true,
+              "covered_by": "none",
+              "reason": "The existing review explicitly finds that the candidate falsely rejects the permitted, applicable standard CGHaus Cartesian-closedness theorem as a circular core proof; S3/S6 consequences share this root.",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "而是把“$\\mathbf{CGHaus}$ 是笛卡尔闭范畴且指数对象为 $kC_{co}(kX,kY)$”作为黑箱结论直接引用，属于**跳过核心证明 / 实质循环论证**。"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+          "source_review_sha256": "b95d714c34fa13d545dbf127673cbaf16109ad0d90b6ca72e888b8aa6f7eeddf",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR003/A1/attempts/1/response.md",
+              "bytes": 16020,
+              "sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-AR003.json",
+              "bytes": 649,
+              "sha256": "0a5c3e406f2d1c9115a85b1f4dea8845d1ea83e90a38f5f758b22bf2811d8335",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR004",
+          "status": "reviewed",
+          "scope_note": "独立审核正常封存首答；按冻结子检查full/half/zero累计为60/60、27.5/30、10/10，共97.5/100。核心发现、合法反例与实际依赖定位准确；未把Pic的全局反例当成原半局部目标反例，保留其余阶段。source_hypotheses因未明确拆分任意域的度零/半局部结论与经典高次比较的完美域条件给半分2.5/5；这是范围核查不完整，不判定错误核心承诺。major_error=false，Strict因该检查未实质完成而不通过。新增RMC处罚建议0。",
+          "findings": [],
+          "source_response_sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+          "source_review_sha256": "f3337369148f416daee4d4c76d922196d1723e5ed46bd78eba0b8664c0989ce4",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR004/A1/attempts/1/response.md",
+              "bytes": 27209,
+              "sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-AR004.json",
+              "bytes": 392,
+              "sha256": "d7d7d0251a766d1bb3d10bbbb58daeb421f0fbbd50d4929837de4ca8e4f8084c",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR01",
+          "status": "reviewed",
+          "scope_note": "95/100（35+20+30+10）。正确识别冻结旧 NodeDomainRefinement 仅约束实际输入像，严格弱于原文完整保留边域；有效的独立有限 DAG 反例与含删除子节点分支的完整域修复成立，且准确保留构造及关系侧全部外延结果。仅 repair_scope 未满分：把唯一性、NetworkObject 层提升、长度/ExtensionalEquivalent 等直接推论或题外封装列为必补完成缺口，超出所限范围。Strict 不通过；新增 claim 处罚建议0，未确认实质数学假断言或核心错误否决。",
+          "findings": [],
+          "source_response_sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+          "source_review_sha256": "3fbdc51050331c5536b4f23d90604ae5156ce6e27ebb1450da1d0ae04deddecd",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR01/A1/attempts/1/response.md",
+              "bytes": 30071,
+              "sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/AHR01.json",
+              "bytes": 389,
+              "sha256": "cc3daffd856c5b8c872f3a9cb1fa65cb625254c7c635915079da60e8af220fd3",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR02",
+          "status": "reviewed",
+          "scope_note": "完整读取physical-2正常首个有效final并按冻结AHR02范围独立审核；physical-1是已排除quota服务故障，不据其过程补答。数学内容与实际范围单独核对；未证伪的编译声明不等于虚报。",
+          "findings": [],
+          "source_response_sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+          "source_review_sha256": "cb6164d8b0c57b4179b4f58a3a0ec004b6f6f8b6865580fa9e11316a3ffc7900",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR02/A1/attempts/1/response.md",
+              "bytes": 17984,
+              "sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/AHR02.json",
+              "bytes": 1037,
+              "sha256": "e1b1a791d6b0927fbd6712b501794f82842b899093a9819a5cb14b8a2c6f1a22",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR03",
+          "status": "reviewed",
+          "scope_note": "完整审核physical-4的首次有效正常final；此前服务失败请求只保留既有排除身份，未读取/合并其工作。按本题冻结限定范围核验实际数学，而非按判定词或附加包装数量处罚。",
+          "findings": [],
+          "source_response_sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+          "source_review_sha256": "5d064faacea0ca53e97d3858a456888d11e133142905482e080418ec19cbd096",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR03/A1/attempts/1/response.md",
+              "bytes": 32845,
+              "sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/AHR03.json",
+              "bytes": 1109,
+              "sha256": "9f915bd94c7232d5f27a5552e53abd55cdbd298de3dc98fb32160fda21998ec3",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR04",
+          "status": "reviewed",
+          "scope_note": "仅审核physical-4的首次有效正常sealed final，前三次服务故障工作未读/未并。按本题两个包含、实际定义及桥独立评判，附加接口观察结合全文与实际独立声明理解。",
+          "findings": [],
+          "source_response_sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+          "source_review_sha256": "bae45fd7be6a4771d5687f59b4e664c9d7039567f2e5ef359519cc1b440c0860",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR04/A1/attempts/1/response.md",
+              "bytes": 23030,
+              "sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/AHR04.json",
+              "bytes": 1109,
+              "sha256": "0aad06bd50ccad070bbead6cf6d1523f98c53c167526d7a88e4409f2a0ae24c0",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "LCH01",
+          "status": "reviewed",
+          "scope_note": "完整审核physical-4正常final全部定义、定理、辅助构造、对齐声明与自评；包括前置不修改、8项complete、34条定理及编译/公理表述。无已确认新增不实断言、核心错误背书或虚假完成，不并入physical1/2/3任何内容。",
+          "findings": [],
+          "source_response_sha256": "b4efe5ed36d96176fb64ed2f1c004a44555cda59178315769f587cc43b660e56",
+          "source_review_sha256": "89e1c92dfe8bec896bea504a701cb456fe507606b19073e292ace237adba8c4c",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/LCH01/A1/attempts/1/response.md",
+              "bytes": 36059,
+              "sha256": "b4efe5ed36d96176fb64ed2f1c004a44555cda59178315769f587cc43b660e56",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/LCH01.json",
+              "bytes": 677,
+              "sha256": "c283d564e9dce9bffbb5925dc50a2a867687a343f3ce87ecc26a4c2eca313b46",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "LCH02",
+          "status": "reviewed",
+          "scope_note": "完整审核physical-4正常final的全部定义、定理、辅助表示和归纳引理、20项alignment完成声明及非代码自评。未发现新增不实断言、核心错误背书、虚假完成或已证实虚假验证。早期等待后台任务语句与最后明确完整交付均保留原文；不读/合并失败attempt，不借其他CH2通过或未导入.tmp脚本补数学内容。",
+          "findings": [],
+          "source_response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034",
+          "source_review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/LCH02/A1/attempts/1/response.md",
+              "bytes": 70837,
+              "sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/LCH02.json",
+              "bytes": 677,
+              "sha256": "6ef70443f0fb07c714992c885c989864f8c0f1b737636f61839a36529b4f9d48",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "HCH02",
+          "status": "reviewed",
+          "scope_note": "完整正常final的全部形式化定义、定理、附加辅助命题、alignment完成声明和非代码自评均已纳入；逐40项检查量词、域、表示、边界及依赖。不存在已确认新增不实断言、核心错误背书、虚假完成或虚假验证。",
+          "findings": [],
+          "source_response_sha256": "307eb7d3670ac42b7077dbc1c6f1d56a3dd6a82a2cb9342e066b083595e894e6",
+          "source_review_sha256": "6db66da530fbe193ff3d9c5f049d636a2d52bfcaaaba6fa8668686f591349d0f",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/HCH02/A1/attempts/1/response.md",
+              "bytes": 120079,
+              "sha256": "307eb7d3670ac42b7077dbc1c6f1d56a3dd6a82a2cb9342e066b083595e894e6",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/HCH02.json",
+              "bytes": 677,
+              "sha256": "587cf066005b85c7a2430efa7e1250fe118dc721c3533b57146a259ebd1be834",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-TX001",
+          "status": "reviewed",
+          "scope_note": "基线 B2：完整正确证明原题，覆盖全部正参数及所有非全零系数向量。R0：A1 未实际提出并证明额外实质结果；一项/两项边界和互素幂映射均是原题必要证明步骤，不额外充作 R1。三个累计研究项均0；研究 Strict 不通过仅因 R<3，不是原题数学失败。无已确认实质错误，baseline_disposition=correct，新增承诺扣罚0。",
+          "findings": [],
+          "source_response_sha256": "d53562ceb1464dedfb53e9da734c887cb81c5eb69a64f559ff5329d8dbaa5948",
+          "source_review_sha256": "69cd353d6bbb107ba375ae0fed171ab44c48a9a2d2759ef5bc14af0b99e33b0c",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-TX001/A1/attempts/1/response.md",
+              "bytes": 4067,
+              "sha256": "d53562ceb1464dedfb53e9da734c887cb81c5eb69a64f559ff5329d8dbaa5948",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-TX001.json",
+              "bytes": 392,
+              "sha256": "53dbec8a0a691c9d108f64c1edc72b01da4f0d3238fa77a4c070f7d8e756a6d0",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-TX002",
+          "status": "reviewed",
+          "scope_note": "基线 B2：对所有 a,b≥2 及全部轨道证明题定均值。R3：完整行列占用状态与固定重量二进制编码已经交付，单步更新完整等于循环右移，满足 structural-equivalence0.1.0；仅作占用行增序/占用列逆序配对的常规逆核实，不补造实质对应。三个累计研究项均1。研究 Strict 通过；无已确认实质错误，baseline_disposition=correct，新增承诺扣罚0。",
+          "findings": [],
+          "source_response_sha256": "e38a492c928428d9a3b803e03e4dd8cffa310cc256e4943f9441d17bd260e348",
+          "source_review_sha256": "582aa227860dfafe5626c8e3c16438a339d4aae344e20275c70054710e779306",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-TX002/A1/attempts/1/response.md",
+              "bytes": 8658,
+              "sha256": "e38a492c928428d9a3b803e03e4dd8cffa310cc256e4943f9441d17bd260e348",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-TX002.json",
+              "bytes": 392,
+              "sha256": "0ce2b3781ddd559f03066853b2962bc1ddcd472953c74aaa0510022d07eb7cd6",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-BC001",
+          "status": "reviewed",
+          "scope_note": "背景核查A1：background_R=3，complete=true，false_endorsement=false，S-corrected。三个累积criterion各1/1；原source-rubric为A3/B3/C4。原答明确推翻四相正能隙错误升级，给四步模型特定循环分裂，并通过真实矩形锯齿截断构造闭合零迹、统一梯度界与能量趋零证据。独立证明不取到及任意最小序列相分数唯一。全部实质任务完成，Strict通过。新增RMC处罚建议0；运行资格与人工批准另行处理。",
+          "findings": [],
+          "source_response_sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+          "source_review_sha256": "eda52fbeb4dd7b159a9721c97d577bad6a1317f2e2c18d1d01285f2117257b07",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-BC001/A1/attempts/1/response.md",
+              "bytes": 24997,
+              "sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-BC001.json",
+              "bytes": 392,
+              "sha256": "bb4055654fda079a3820daa989ef6476059ab1bc3437759559d98951c6cf318d",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-BC002",
+          "status": "reviewed",
+          "scope_note": "背景核查A1：background_R=3，complete=true，false_endorsement=false，S-corrected；三个累积criterion各1/1。原source-rubric D4/U3。原答正确完成全局流、收缩/能量、stack与条件prox证书；另以合法初值扰动排除每个正时间的任意凸prox表示，强于参考局部时间结论且有完整证明。独立大初值变分系统证明actual flow每个正时间不FNE，未从Jacobian非对称直接误推。方法段区分实际精确流与implicit Euler及prox系数。Strict通过，新增RMC罚0。",
+          "findings": [],
+          "source_response_sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+          "source_review_sha256": "35cee2bfb1dc99e3276e07941230eb2a72171ed92d52e9052d3b35bc6f3b729e",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-BC002/A1/attempts/1/response.md",
+              "bytes": 23204,
+              "sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-BC002.json",
+              "bytes": 392,
+              "sha256": "f100dec3cc2c571a8f1784b2f49d242b8dfceee42a599246550798c4c382d3ae",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-MCP003",
+          "status": "reviewed",
+          "scope_note": "完整正常首答及独立交叉核准；不改原答，不回喂候选。",
+          "findings": [
+            {
+              "id": "MCP003-GLOBAL-UPPER",
+              "root_cause": "sum_constraint_strengthened_to_all_entries_infinite",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "全局上矩阵仅需每行加和足够大，两个重复离散分量与部分吸收算子有diag(∞,∞)合法而非对角0；并非所有条目∞。原同段下矩阵0半句保留。",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "所有 $U_{ij} = +\\infty$"
+                }
+              ]
+            },
+            {
+              "id": "MCP003-QUOTIENT",
+              "root_cause": "zero_reflection_promoted_to_well_defined_injective_quotient",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "反射零距不保证保持零距，故无良定的输入商到输出商映射。两个输入零距点可映到不同零距类而K=0合法；需补U/保持条件，原括号未给。",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/1",
+                  "quote": "亦即在商空间 $D/\\!\\sim_{\\mathcal{G}}$ 上单射"
+                }
+              ]
+            },
+            {
+              "id": "MCP003-PARETO",
+              "root_cause": "nonclosed_feasible_set_assumed_generated_by_pareto_minima",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "双分量全∞离散度量上的id使U/C每行仅需非零；任意正条目可减小且保持可行，故无Pareto极小元。原有限距离条件不能默加到这一一般多维断言。",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/2",
+                  "quote": "合法集合由 Pareto 极小（大）边界刻画"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+          "source_review_sha256": "5c74291e9afa94b09349d235f747c48c77b023449b1c0e72e6bef086adfecf18",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-MCP003/A1/attempts/1/response.md",
+              "bytes": 29759,
+              "sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/single_attempt/MG-MCP003.json",
+              "bytes": 623,
+              "sha256": "549fdad178565b77d770363f1b11c0e43dc08350e9447daf9a4f14da4384334e",
+              "archive": "public"
+            }
+          ]
+        }
+      ]
+    },
+    "nonlogical_retry_3": {
+      "schema": "math-gauge.claim-review-condition/v1",
+      "policy_version": "0.1.0",
+      "model_label": "Gemini Hydrogen (xhigh)",
+      "reviewer_kind": "ai",
+      "human_review": "pending",
+      "formal_comparison_eligible": false,
+      "attempt_condition": "nonlogical_retry_3",
+      "source_inputs_sha256": "29b18a3d21f5297f2c11b47238063420f9ad6de21f655b5fabcfade1c5eecbfe",
+      "cases": [
+        {
+          "case_id": "MG-C003",
+          "status": "reviewed",
+          "scope_note": "Reviewed entire physical-3 normal final: all six module proofs and auxiliary definitions, Main closure, 92 alignment status/representation claims, all non-code completion/compile/axiom declarations. No first-failure or later-round content read. All 92 mandatory goals pass; one isolated false uniqueness clause in alignment is recorded separately, and harmless directional/method-description wording is retained and explicitly excluded from additional charges.",
+          "findings": [
+            {
+              "id": "C003-A1-alignment-lip-uniqueness",
+              "root_cause": "unrequested-unique-lip-matrix-description",
+              "kind": "false_assertion",
+              "severity": "local",
+              "strict_blocking": false,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "The literal extra alignment assertion that ψ has a unique controlled Lip matrix is false. In the actual seven-point example dom ψ={p,q}, d_i(p,q)=0 and d_m(p,q)=1, while ψ(p)=r, ψ(q)=s have both component distances 1. Set L(m→i)=L(m→m)=1 and all other entries 0: it is a legal full-domain Lip certificate. Raising only L(m→i) from 1 to 2 gives a second distinct legal certificate. This extra descriptive clause can be deleted without changing any definition, theorem, proof, required scope or any of the 92 completed goals. It is a localized annotation overstatement, not core endorsement, unsupported completion, or a necessary bridge in the mathematics. Recommend local 5%, no additional Strict blocker under the local/material distinction in the claim contract; preserve the exact clause rather than silently correcting it.",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "验证 sevenU ⊆ dom (sevenPsi * sevenPhi)、i ∈ I_const d ϕ U、ψ 具有唯一受控 Lip 矩阵但 i ∉ I_const d (ψ * ϕ) U。"
+                }
+              ],
+              "counterexample_basis": {
+                "source_file": "Ch03/Partition.lean",
+                "lines": [
+                  509,
+                  517,
+                  586,
+                  593,
+                  600,
+                  603
+                ],
+                "actual_theorem": "Ch03.prop_3_3_const_comp_right_counterexample",
+                "actual_type_has_lip_uniqueness": false,
+                "domain": "{SevenPt.p,SevenPt.q}",
+                "two_distinct_legal_matrices": [
+                  {
+                    "i_to_i": 0,
+                    "m_to_i": 1,
+                    "i_to_m": 0,
+                    "m_to_m": 1
+                  },
+                  {
+                    "i_to_i": 0,
+                    "m_to_i": 2,
+                    "i_to_m": 0,
+                    "m_to_m": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "source_response_sha256": "d947fd4cfef26f20af651a4cbcbae8cfd907d1d1d85edf8b515d15e0c04f5410",
+          "source_review_sha256": "88eae4ba4307f74b08df1c6ecb1467e047cb36f49cfd6b4c1e4fed0ce382c63e",
+          "sources": [
+            {
+              "path": "imports/native-10800/slots/MG-C003/A1/attempts/1/response.md",
+              "bytes": 259053,
+              "sha256": "d947fd4cfef26f20af651a4cbcbae8cfd907d1d1d85edf8b515d15e0c04f5410",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-C003.json",
+              "bytes": 896,
+              "sha256": "21262490924204967cb9168f566ecf1576206f94c48c3e662c0697353f56ed67",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GP001",
+          "status": "reviewed",
+          "scope_note": "数学审核通过：S1–S6 全通过，冻结阶段诊断完成权重100/100。完整非约化悬挂分类、整数局部判据、空 link 边界及合法不可消悬挂反例均完成。未发现可确认的实质数学错误、隐加结构或不必要限制；新增承诺扣罚建议0。只审核正常首答原文；未调用 apply_reviews，未改变 records 或候选工程。运行/订阅/模型身份由主 agent 另核，人审仍 pending。",
+          "findings": [],
+          "source_response_sha256": "6b9b0d3f025fcad67bd6be71b954808f4e7c652a399f6ac66093c953a7c565d9",
+          "source_review_sha256": "a0cc2cee24a841f36ad9ccde7577b25aaab51e56c3b808d9139ac2b1972ccafd",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GP001/A1/attempts/1/response.md",
+              "bytes": 35100,
+              "sha256": "6b9b0d3f025fcad67bd6be71b954808f4e7c652a399f6ac66093c953a7c565d9",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GP001.json",
+              "bytes": 392,
+              "sha256": "22e4dfa62735bd7e8cdc825ac68eddf582bb417396ce8a5c6588653cd916cb94",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GP002",
+          "status": "reviewed",
+          "scope_note": "已对完整正常首答、原题和冻结判准逐项核查；六个必答阶段均完成。不同于参考的合法路线予以接受。AI数学审核，人工未审。",
+          "findings": [],
+          "source_response_sha256": "23e2402192d5f9960c97b16f38a860d04bebda8a17a59e3b91cebf9628205b0c",
+          "source_review_sha256": "c51dd3dd0f213d04a9e4d11d036f381fbf6e4d287fa130222aad406b46ee7cee",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GP002/A1/attempts/1/response.md",
+              "bytes": 27094,
+              "sha256": "23e2402192d5f9960c97b16f38a860d04bebda8a17a59e3b91cebf9628205b0c",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GP002.json",
+              "bytes": 392,
+              "sha256": "8d0b07c32dd1278fa39ea76e3323f5667c52bce925da56f99c73045a3dfcc86c",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR005",
+          "status": "reviewed",
+          "scope_note": "已对完整正常首答、原题和冻结判准逐项核查；六个必答阶段均完成。不同于参考的合法路线予以接受。AI数学审核，人工未审。",
+          "findings": [],
+          "source_response_sha256": "e6e64da2b6960b61e8f922988bf77490ea871911e5e8bc7d749b593542720811",
+          "source_review_sha256": "92867906704a162110d0d3b44229a5039ba25ddbadd21d59ea61ef8edb7ae876",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR005/A1/attempts/1/response.md",
+              "bytes": 30718,
+              "sha256": "e6e64da2b6960b61e8f922988bf77490ea871911e5e8bc7d749b593542720811",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GR005.json",
+              "bytes": 392,
+              "sha256": "1a08c3fab59db818e8d2fff4c09a6b9e6002997533d01cc0e29a23e4b4ae8da3",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR009",
+          "status": "reviewed",
+          "scope_note": "数学审核通过：S1–S6 全通过，冻结阶段诊断完成权重100/100。真实层商、全部测试对象稳定子充要判据、所有态射及任意层基底相容性、单点反例与基底反映边界均完成。L123/L183 的唯一同构措辞结合给定实现识别、已证明全忠实及明确非平凡自同构群读取，不形成独立实质错误；具体理由见 findings。无已确认错误根因，新增承诺扣罚建议0。未调用 apply_reviews，未改变 records；运行资格另核，人审 pending。",
+          "findings": [],
+          "source_response_sha256": "d539bb004f3a7e3eeea1d00ae434e891a2f44a814de477f3780b5ee558042ee8",
+          "source_review_sha256": "7a8f4ca92fb20444dc1133802821fc8be84ff1f95134b46122de6c9678566053",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR009/A1/attempts/1/response.md",
+              "bytes": 51563,
+              "sha256": "d539bb004f3a7e3eeea1d00ae434e891a2f44a814de477f3780b5ee558042ee8",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GR009.json",
+              "bytes": 392,
+              "sha256": "00c1a17e48a2e23bb45928d371c0f3f83ef32bb68815d92bc4901b4a09cdcb68",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-PS001",
+          "status": "reviewed",
+          "scope_note": "仅审首份正常交卷的 sealed/answer.md。原答完整证明两项目标；不假设 f(n)/n 收敛或 X 完备。六项冻结判准均获满额数学信用，整体严格完成通过。未发现需新增 RMC 扣罚的实质错误断言。执行资格、模型身份认证与人工批准由主控另行判断；本文件是具名 AI 数学评审草稿。",
+          "findings": [],
+          "source_response_sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+          "source_review_sha256": "96096d6ae9e69ef43ed73933d1dc431f54050b3a14e95d72486bd2a11a99011e",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-PS001/A1/attempts/1/response.md",
+              "bytes": 19381,
+              "sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-PS001.json",
+              "bytes": 392,
+              "sha256": "bdd09092139aa40d122e1ba298d0af31aa93ed6ac6ddd7bc4200583d5aae9f59",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR021",
+          "status": "reviewed",
+          "scope_note": "仅审首份正常完整交卷的 sealed/answer.md。按 written_proof 连续 criteria 合同逐项核验，不使用S阶段。原始30/25/15/20数学分与10分独立附带断言可靠性均满额，整体严格完成通过。原答保留非幂等输入、整数环/模2O、模4耦合、真实截断/有限同余差别与全部秩/精度边界；无新增RMC处罚建议。运行身份、隔离资格和人工批准由主控另行核验。",
+          "findings": [],
+          "source_response_sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+          "source_review_sha256": "4b32e41c427b3c2bc50d81195a769faacf9a063716ba07800e7c4af724c8968d",
+          "embedded_reliability": {
+            "criterion_id": "assertion_reliability",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100,
+            "source_score": {
+              "source": 1,
+              "json_pointer": "/embedded_reliability_awarded"
+            }
+          },
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR021/A1/attempts/1/response.md",
+              "bytes": 51987,
+              "sha256": "46c019c385e465a5b97f5cec514befc7ac6f6cc5775de6b0c8f03dcb26bc6671",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GR021.json",
+              "bytes": 430,
+              "sha256": "82ab435b20f3073a5fcfeef55e9711690a4c2c6a6a335a7d8b58409b9eee2b72",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR022",
+          "status": "reviewed",
+          "scope_note": "三个整体目标全部完成。特别核验 E 自身的分离完备与其在 Q 中的平凡继承拓扑没有混同；采用显式有限商 U_m 及相容代表调整的合法替代证明。AI数学评审，人工未审。",
+          "findings": [],
+          "source_response_sha256": "d2d5a87e579e0f63f409a3be9c545b15cd79813d34db6a57df16c788617d5db2",
+          "source_review_sha256": "2255997f060acb7f1091487e36e3bf86c6e512288d8e1d491e69b976bef457c9",
+          "embedded_reliability": {
+            "criterion_id": "R",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100,
+            "source_score": {
+              "source": 1,
+              "json_pointer": "/embedded_reliability_awarded"
+            }
+          },
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR022/A1/attempts/1/response.md",
+              "bytes": 40654,
+              "sha256": "d2d5a87e579e0f63f409a3be9c545b15cd79813d34db6a57df16c788617d5db2",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GR022.json",
+              "bytes": 430,
+              "sha256": "6012fdce6ec309319a4dc09db4bb2f1c8f041de1f1260d7502fbce030c80e24c",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-GR023",
+          "status": "reviewed",
+          "scope_note": "三个必答目标全部完成。冻结五项得分30/30、30/30、15/15、15/15、10/10，总诊断100/100，其中必答数学90/90、独立附带断言可靠性10/10。完整原答与冻结合同绑定；无已确认实质错误，根因去重后新增承诺扣罚建议0。接受 Fubini 两次序作为有效替代反例，不增加参考路线义务。只生成评审草稿，未 apply、未改 ROOT/records 或候选原件；运行/后端/订阅资格由主 agent 另核，human pending。",
+          "findings": [],
+          "source_response_sha256": "1513b8f55387ba678e32a6ab31ab713c6a834182f7cf1830f31ed4c6c25a6f22",
+          "source_review_sha256": "5dee10a65fa01839de77d0cc3e7f3cbaefa4a66bc6f7fc04768f5503d9403dd7",
+          "embedded_reliability": {
+            "criterion_id": "independent_assertion_reliability",
+            "awarded": 10,
+            "maximum": 10,
+            "total": 100,
+            "source_score": {
+              "source": 1,
+              "json_pointer": "/embedded_reliability_awarded"
+            }
+          },
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-GR023/A1/attempts/1/response.md",
+              "bytes": 46748,
+              "sha256": "1513b8f55387ba678e32a6ab31ab713c6a834182f7cf1830f31ed4c6c25a6f22",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-GR023.json",
+              "bytes": 430,
+              "sha256": "3d95e46a76e0534612b4d1214ba5784111b65c93d59eb0f7237fcd68dc2cfbfe",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR001",
+          "status": "reviewed",
+          "scope_note": "S1–S5与矩阵反例均有实质独立核查；但把S6表格中已经由同一行解释和S2消除的编辑歧义判作实质充分/必要逻辑错误，并把有S2/S4归属的摘要改按无共同条件的孤立一般命题否决。原有效主体提升/理想化路线保留正向信用。按冻结full/half/zero细检查为15+20+15+0、10+10+0、5+5=80；核心错误否决单一具名根因使当前RMC该任务最高0，MC保留80，SMC不通过。不是因笼统“未全部正确”字样处罚，而是有明确具体错误否决。AI审核，人工pending。",
+          "findings": [
+            {
+              "id": "AR001-CONTEXT-REJECTION",
+              "root_cause": "source_scoped_summary_treated_as_unscoped_false_implication",
+              "severity": "critical",
+              "core_endorsement": true,
+              "reason": "原同一行与S2明确说明非必要条件；候选依此实质否决有效蕴含梳理，并把阶段条件从摘要剥离。按冻结AR001 critical/major policy，单根核心错误否决。",
+              "strict_blocking": true,
+              "kind": "false_rejection",
+              "covered_by": "none",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "第 7 行逻辑方向写反，评估自相矛盾（实质性错误）"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "e7d822513b475aaa95e4ddb13047e3c760fdcb338b7514ce783b5bbf5ab74491",
+          "source_review_sha256": "90285dae44bc84cf822762419bfd1f294e33c36136f56d3ec47318e192715785",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR001/A1/attempts/1/response.md",
+              "bytes": 14379,
+              "sha256": "e7d822513b475aaa95e4ddb13047e3c760fdcb338b7514ce783b5bbf5ab74491",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-AR001.json",
+              "bytes": 543,
+              "sha256": "cfb3528f688cc586dab7a48420eef961a55d28a9508d377d21c0509d37edc8ea",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR002",
+          "status": "reviewed",
+          "scope_note": "独立交叉核准后按统一边界更正初审：冻结check body为实质错误0/20；其余检查全额保留，总80/100=40+30+10。候选正确指出第三路线的仿射/线性缺口，且认可两条闭性主证，这些信用保留；但同时否定原S4已给出的有效整体分类/恢复证明，属于核心错误否决，不仅是局部风格意见。major_error=true，Strict=false，单根critical20及RMC该题最高0。原初审与其宽判保留为历史，不覆盖原执行记录或原已应用review；采用本源绑定补充审阅。AI审核，人审pending。",
+          "findings": [
+            {
+              "id": "AR002-OVERREQUIRED-DETAILS",
+              "root_cause": "existing_algebraic_construction_mislabelled_as_materially_missing",
+              "severity": "critical",
+              "core_endorsement": true,
+              "reason": "错误否定原S4已给出的整体恢复构造与对偶分类主证；明确标为主要证明落空，而非可选写作建议。以false_rejection按单根核心错误封顶，正确第三路线缺口、闭性路线等正向信用保留。",
+              "strict_blocking": true,
+              "kind": "false_rejection",
+              "covered_by": "none",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "直接导致原题"
+                },
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/1",
+                  "quote": "**没有给出表中充要条件的证明**"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "22d7addfa11d240f7cbbc74f434f61f5ed0231e78659baefc9e5fd3fbee7ebf7",
+          "source_review_sha256": "0cce7913d1d85e065e0d84bd6fa451e2c30047b163501858608ea2e202b59e75",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR002/A1/attempts/1/response.md",
+              "bytes": 14355,
+              "sha256": "22d7addfa11d240f7cbbc74f434f61f5ed0231e78659baefc9e5fd3fbee7ebf7",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-AR002.json",
+              "bytes": 543,
+              "sha256": "fd74781e8b07236cbec67b6ff15a5a81ec860f1ca925ed8561dc50c596dc5d4d",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR003",
+          "status": "reviewed",
+          "scope_note": "Source-bound typed projection of the already applied AR003 review and its explicit independent RMC recommendation. No new mathematical regrading.",
+          "findings": [
+            {
+              "id": "AR003-CGHAUS-REJECTION",
+              "root_cause": "AR003-CGHAUS-REJECTION",
+              "kind": "false_rejection",
+              "severity": "critical",
+              "strict_blocking": true,
+              "core_endorsement": true,
+              "covered_by": "none",
+              "reason": "The existing review explicitly finds that the candidate falsely rejects the permitted, applicable standard CGHaus Cartesian-closedness theorem as a circular core proof; S3/S6 consequences share this root.",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "而是把“$\\mathbf{CGHaus}$ 是笛卡尔闭范畴且指数对象为 $kC_{co}(kX,kY)$”作为黑箱结论直接引用，属于**跳过核心证明 / 实质循环论证**。"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+          "source_review_sha256": "b95d714c34fa13d545dbf127673cbaf16109ad0d90b6ca72e888b8aa6f7eeddf",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR003/A1/attempts/1/response.md",
+              "bytes": 16020,
+              "sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-AR003.json",
+              "bytes": 649,
+              "sha256": "0a5c3e406f2d1c9115a85b1f4dea8845d1ea83e90a38f5f758b22bf2811d8335",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-AR004",
+          "status": "reviewed",
+          "scope_note": "独立审核正常封存首答；按冻结子检查full/half/zero累计为60/60、27.5/30、10/10，共97.5/100。核心发现、合法反例与实际依赖定位准确；未把Pic的全局反例当成原半局部目标反例，保留其余阶段。source_hypotheses因未明确拆分任意域的度零/半局部结论与经典高次比较的完美域条件给半分2.5/5；这是范围核查不完整，不判定错误核心承诺。major_error=false，Strict因该检查未实质完成而不通过。新增RMC处罚建议0。",
+          "findings": [],
+          "source_response_sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+          "source_review_sha256": "f3337369148f416daee4d4c76d922196d1723e5ed46bd78eba0b8664c0989ce4",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-AR004/A1/attempts/1/response.md",
+              "bytes": 27209,
+              "sha256": "378c5ddf9b85ae77fbeacda818cd96686e208c8593b9f7660cc3d399f4ffd48a",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-AR004.json",
+              "bytes": 392,
+              "sha256": "d7d7d0251a766d1bb3d10bbbb58daeb421f0fbbd50d4929837de4ca8e4f8084c",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR01",
+          "status": "reviewed",
+          "scope_note": "95/100（35+20+30+10）。正确识别冻结旧 NodeDomainRefinement 仅约束实际输入像，严格弱于原文完整保留边域；有效的独立有限 DAG 反例与含删除子节点分支的完整域修复成立，且准确保留构造及关系侧全部外延结果。仅 repair_scope 未满分：把唯一性、NetworkObject 层提升、长度/ExtensionalEquivalent 等直接推论或题外封装列为必补完成缺口，超出所限范围。Strict 不通过；新增 claim 处罚建议0，未确认实质数学假断言或核心错误否决。",
+          "findings": [],
+          "source_response_sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+          "source_review_sha256": "3fbdc51050331c5536b4f23d90604ae5156ce6e27ebb1450da1d0ae04deddecd",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR01/A1/attempts/1/response.md",
+              "bytes": 30071,
+              "sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/AHR01.json",
+              "bytes": 389,
+              "sha256": "cc3daffd856c5b8c872f3a9cb1fa65cb625254c7c635915079da60e8af220fd3",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR02",
+          "status": "reviewed",
+          "scope_note": "完整读取physical-2正常首个有效final并按冻结AHR02范围独立审核；physical-1是已排除quota服务故障，不据其过程补答。数学内容与实际范围单独核对；未证伪的编译声明不等于虚报。",
+          "findings": [],
+          "source_response_sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+          "source_review_sha256": "cb6164d8b0c57b4179b4f58a3a0ec004b6f6f8b6865580fa9e11316a3ffc7900",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR02/A1/attempts/1/response.md",
+              "bytes": 17984,
+              "sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/AHR02.json",
+              "bytes": 1037,
+              "sha256": "e1b1a791d6b0927fbd6712b501794f82842b899093a9819a5cb14b8a2c6f1a22",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR03",
+          "status": "reviewed",
+          "scope_note": "完整审核physical-4的首次有效正常final；此前服务失败请求只保留既有排除身份，未读取/合并其工作。按本题冻结限定范围核验实际数学，而非按判定词或附加包装数量处罚。",
+          "findings": [],
+          "source_response_sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+          "source_review_sha256": "5d064faacea0ca53e97d3858a456888d11e133142905482e080418ec19cbd096",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR03/A1/attempts/1/response.md",
+              "bytes": 32845,
+              "sha256": "9750cfebd250aec4cf90901e219d2fc56d874868cd3593395cbb8cbaeb106063",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/AHR03.json",
+              "bytes": 1109,
+              "sha256": "9f915bd94c7232d5f27a5552e53abd55cdbd298de3dc98fb32160fda21998ec3",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "AHR04",
+          "status": "reviewed",
+          "scope_note": "仅审核physical-4的首次有效正常sealed final，前三次服务故障工作未读/未并。按本题两个包含、实际定义及桥独立评判，附加接口观察结合全文与实际独立声明理解。",
+          "findings": [],
+          "source_response_sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+          "source_review_sha256": "bae45fd7be6a4771d5687f59b4e664c9d7039567f2e5ef359519cc1b440c0860",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/AHR04/A1/attempts/1/response.md",
+              "bytes": 23030,
+              "sha256": "86b5c15b185448ab222740bf0dec3ffb8d639c5a6d081ab4277960151a3c0604",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/AHR04.json",
+              "bytes": 1109,
+              "sha256": "0aad06bd50ccad070bbead6cf6d1523f98c53c167526d7a88e4409f2a0ae24c0",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "LCH01",
+          "status": "reviewed",
+          "scope_note": "完整审核physical-4正常final全部定义、定理、辅助构造、对齐声明与自评；包括前置不修改、8项complete、34条定理及编译/公理表述。无已确认新增不实断言、核心错误背书或虚假完成，不并入physical1/2/3任何内容。",
+          "findings": [],
+          "source_response_sha256": "b4efe5ed36d96176fb64ed2f1c004a44555cda59178315769f587cc43b660e56",
+          "source_review_sha256": "89e1c92dfe8bec896bea504a701cb456fe507606b19073e292ace237adba8c4c",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/LCH01/A1/attempts/1/response.md",
+              "bytes": 36059,
+              "sha256": "b4efe5ed36d96176fb64ed2f1c004a44555cda59178315769f587cc43b660e56",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/LCH01.json",
+              "bytes": 677,
+              "sha256": "c283d564e9dce9bffbb5925dc50a2a867687a343f3ce87ecc26a4c2eca313b46",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "LCH02",
+          "status": "reviewed",
+          "scope_note": "完整审核physical-4正常final的全部定义、定理、辅助表示和归纳引理、20项alignment完成声明及非代码自评。未发现新增不实断言、核心错误背书、虚假完成或已证实虚假验证。早期等待后台任务语句与最后明确完整交付均保留原文；不读/合并失败attempt，不借其他CH2通过或未导入.tmp脚本补数学内容。",
+          "findings": [],
+          "source_response_sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034",
+          "source_review_sha256": "a52b3b23f122c2ec10216d2b714c1080e04731d52eb9d5c37c39b7330123b992",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/LCH02/A1/attempts/1/response.md",
+              "bytes": 70837,
+              "sha256": "19ddb25d1dc2e94bac706d8e8b3919f1727f9d5642a12607c07f62d308e44034",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/LCH02.json",
+              "bytes": 677,
+              "sha256": "6ef70443f0fb07c714992c885c989864f8c0f1b737636f61839a36529b4f9d48",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "HCH02",
+          "status": "reviewed",
+          "scope_note": "完整正常final的全部形式化定义、定理、附加辅助命题、alignment完成声明和非代码自评均已纳入；逐40项检查量词、域、表示、边界及依赖。不存在已确认新增不实断言、核心错误背书、虚假完成或虚假验证。",
+          "findings": [],
+          "source_response_sha256": "307eb7d3670ac42b7077dbc1c6f1d56a3dd6a82a2cb9342e066b083595e894e6",
+          "source_review_sha256": "6db66da530fbe193ff3d9c5f049d636a2d52bfcaaaba6fa8668686f591349d0f",
+          "sources": [
+            {
+              "path": "imports/native-5400/slots/HCH02/A1/attempts/1/response.md",
+              "bytes": 120079,
+              "sha256": "307eb7d3670ac42b7077dbc1c6f1d56a3dd6a82a2cb9342e066b083595e894e6",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/HCH02.json",
+              "bytes": 677,
+              "sha256": "587cf066005b85c7a2430efa7e1250fe118dc721c3533b57146a259ebd1be834",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-TX001",
+          "status": "reviewed",
+          "scope_note": "基线 B2：完整正确证明原题，覆盖全部正参数及所有非全零系数向量。R0：A1 未实际提出并证明额外实质结果；一项/两项边界和互素幂映射均是原题必要证明步骤，不额外充作 R1。三个累计研究项均0；研究 Strict 不通过仅因 R<3，不是原题数学失败。无已确认实质错误，baseline_disposition=correct，新增承诺扣罚0。",
+          "findings": [],
+          "source_response_sha256": "d53562ceb1464dedfb53e9da734c887cb81c5eb69a64f559ff5329d8dbaa5948",
+          "source_review_sha256": "69cd353d6bbb107ba375ae0fed171ab44c48a9a2d2759ef5bc14af0b99e33b0c",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-TX001/A1/attempts/1/response.md",
+              "bytes": 4067,
+              "sha256": "d53562ceb1464dedfb53e9da734c887cb81c5eb69a64f559ff5329d8dbaa5948",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-TX001.json",
+              "bytes": 392,
+              "sha256": "53dbec8a0a691c9d108f64c1edc72b01da4f0d3238fa77a4c070f7d8e756a6d0",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-TX002",
+          "status": "reviewed",
+          "scope_note": "基线 B2：对所有 a,b≥2 及全部轨道证明题定均值。R3：完整行列占用状态与固定重量二进制编码已经交付，单步更新完整等于循环右移，满足 structural-equivalence0.1.0；仅作占用行增序/占用列逆序配对的常规逆核实，不补造实质对应。三个累计研究项均1。研究 Strict 通过；无已确认实质错误，baseline_disposition=correct，新增承诺扣罚0。",
+          "findings": [],
+          "source_response_sha256": "e38a492c928428d9a3b803e03e4dd8cffa310cc256e4943f9441d17bd260e348",
+          "source_review_sha256": "582aa227860dfafe5626c8e3c16438a339d4aae344e20275c70054710e779306",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-TX002/A1/attempts/1/response.md",
+              "bytes": 8658,
+              "sha256": "e38a492c928428d9a3b803e03e4dd8cffa310cc256e4943f9441d17bd260e348",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-TX002.json",
+              "bytes": 392,
+              "sha256": "0ce2b3781ddd559f03066853b2962bc1ddcd472953c74aaa0510022d07eb7cd6",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-BC001",
+          "status": "reviewed",
+          "scope_note": "背景核查A1：background_R=3，complete=true，false_endorsement=false，S-corrected。三个累积criterion各1/1；原source-rubric为A3/B3/C4。原答明确推翻四相正能隙错误升级，给四步模型特定循环分裂，并通过真实矩形锯齿截断构造闭合零迹、统一梯度界与能量趋零证据。独立证明不取到及任意最小序列相分数唯一。全部实质任务完成，Strict通过。新增RMC处罚建议0；运行资格与人工批准另行处理。",
+          "findings": [],
+          "source_response_sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+          "source_review_sha256": "eda52fbeb4dd7b159a9721c97d577bad6a1317f2e2c18d1d01285f2117257b07",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-BC001/A1/attempts/1/response.md",
+              "bytes": 24997,
+              "sha256": "8617d9cbe9cef374769876691a4c60fa890d53be02a922019088fee57b98b2fa",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-BC001.json",
+              "bytes": 392,
+              "sha256": "bb4055654fda079a3820daa989ef6476059ab1bc3437759559d98951c6cf318d",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-BC002",
+          "status": "reviewed",
+          "scope_note": "背景核查A1：background_R=3，complete=true，false_endorsement=false，S-corrected；三个累积criterion各1/1。原source-rubric D4/U3。原答正确完成全局流、收缩/能量、stack与条件prox证书；另以合法初值扰动排除每个正时间的任意凸prox表示，强于参考局部时间结论且有完整证明。独立大初值变分系统证明actual flow每个正时间不FNE，未从Jacobian非对称直接误推。方法段区分实际精确流与implicit Euler及prox系数。Strict通过，新增RMC罚0。",
+          "findings": [],
+          "source_response_sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+          "source_review_sha256": "35cee2bfb1dc99e3276e07941230eb2a72171ed92d52e9052d3b35bc6f3b729e",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-BC002/A1/attempts/1/response.md",
+              "bytes": 23204,
+              "sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-BC002.json",
+              "bytes": 392,
+              "sha256": "f100dec3cc2c571a8f1784b2f49d242b8dfceee42a599246550798c4c382d3ae",
+              "archive": "public"
+            }
+          ]
+        },
+        {
+          "case_id": "MG-MCP003",
+          "status": "reviewed",
+          "scope_note": "完整正常首答及独立交叉核准；不改原答，不回喂候选。",
+          "findings": [
+            {
+              "id": "MCP003-GLOBAL-UPPER",
+              "root_cause": "sum_constraint_strengthened_to_all_entries_infinite",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "全局上矩阵仅需每行加和足够大，两个重复离散分量与部分吸收算子有diag(∞,∞)合法而非对角0；并非所有条目∞。原同段下矩阵0半句保留。",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/0",
+                  "quote": "所有 $U_{ij} = +\\infty$"
+                }
+              ]
+            },
+            {
+              "id": "MCP003-QUOTIENT",
+              "root_cause": "zero_reflection_promoted_to_well_defined_injective_quotient",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "反射零距不保证保持零距，故无良定的输入商到输出商映射。两个输入零距点可映到不同零距类而K=0合法；需补U/保持条件，原括号未给。",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/1",
+                  "quote": "亦即在商空间 $D/\\!\\sim_{\\mathcal{G}}$ 上单射"
+                }
+              ]
+            },
+            {
+              "id": "MCP003-PARETO",
+              "root_cause": "nonclosed_feasible_set_assumed_generated_by_pareto_minima",
+              "kind": "false_assertion",
+              "severity": "material",
+              "strict_blocking": true,
+              "core_endorsement": false,
+              "covered_by": "none",
+              "reason": "双分量全∞离散度量上的id使U/C每行仅需非零；任意正条目可减小且保持可行，故无Pareto极小元。原有限距离条件不能默加到这一一般多维断言。",
+              "evidence": [
+                {
+                  "source": 1,
+                  "json_pointer": "/quotes/2",
+                  "quote": "合法集合由 Pareto 极小（大）边界刻画"
+                }
+              ]
+            }
+          ],
+          "source_response_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+          "source_review_sha256": "5c74291e9afa94b09349d235f747c48c77b023449b1c0e72e6bef086adfecf18",
+          "sources": [
+            {
+              "path": "imports/native-2700/slots/MG-MCP003/A1/attempts/1/response.md",
+              "bytes": 29759,
+              "sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+              "archive": "public"
+            },
+            {
+              "path": "claim-public-sources/nonlogical_retry_3/MG-MCP003.json",
+              "bytes": 623,
+              "sha256": "549fdad178565b77d770363f1b11c0e43dc08350e9447daf9a4f14da4384334e",
+              "archive": "public"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

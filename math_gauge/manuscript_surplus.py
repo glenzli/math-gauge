@@ -135,7 +135,9 @@ def validate_review(review, policy):
 def source_context(public_root, private_root, model_id, record_id, *, include_judgments=False):
     """Resolve selected manuscripts across CLI, returned-paper and native archives."""
     public_root, private_root = Path(public_root), Path(private_root)
-    relative = Path('results/v0.6.0') / model_id / record_id
+    from .editions import result_archive
+    edition = json.loads((public_root / 'benchmark.json').read_bytes())
+    relative = Path(result_archive(edition, model_id)) / model_id / record_id
     P, D = public_root / relative, private_root / relative
     name = 'record.json' if (D / 'record.json').is_file() else 'native-observation.json'
     record = json.loads((D / name).read_bytes())

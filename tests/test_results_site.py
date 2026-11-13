@@ -395,6 +395,10 @@ class CurrentSiteTests(unittest.TestCase):
                 folder = ROOT / Path(model["source_record"]).parent
                 record = json.loads((ROOT / model['source_record']).read_bytes())
                 filename = record['strict_results'][condition]['path']
+                if model.get('harness_correction') and condition in model['harness_correction']['affected_conditions']:
+                    from math_gauge.records import evidence_bytes
+                    manifest = json.loads(evidence_bytes(ROOT, model['harness_correction']['manifest']))
+                    filename = manifest['scores']['strict']['path']
                 self.assertEqual(result, json.loads((folder / filename).read_bytes()))
                 self.assertEqual(result["attempt_condition"], condition)
                 reliable = model['combined'] if condition == 'single_attempt' else model['retry']['combined']
@@ -419,6 +423,10 @@ class CurrentSiteTests(unittest.TestCase):
             record = json.loads((ROOT / model['source_record']).read_bytes())
             for condition, item in record['capability_results'].items():
                 filename = item['path']
+                if model.get('harness_correction') and condition in model['harness_correction']['affected_conditions']:
+                    from math_gauge.records import evidence_bytes
+                    manifest = json.loads(evidence_bytes(ROOT, model['harness_correction']['manifest']))
+                    filename = manifest['scores']['capability']['path']
                 current = model["capability"][condition]
                 self.assertEqual(current, json.loads((folder / filename).read_bytes()))
                 reliable = model["combined"] if condition == "single_attempt" else model["retry"]["combined"]

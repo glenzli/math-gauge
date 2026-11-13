@@ -120,7 +120,8 @@ def descriptor(root, item, *, role):
 
 
 def review_projection(value):
-    if value.get('schema') == 'math-gauge.public-adjudication-projection/v1':
+    if value.get('schema') in {'math-gauge.public-adjudication-projection/v1',
+                               'math-gauge.public-original-review-projection/v1'}:
         return value.get('judgment')
     return value
 
@@ -146,6 +147,22 @@ def public_evidence(folder, record, cid, condition, task):
         chosen = next((s['selected_record_id'] for s in ledger['slots'] if s['slot_id']==cid+':A1'), None)
     selected_records = condition_sources['records']['records'] if condition_sources else record['records']
     legacy = next((s for s in selected_records if s['id']==(chosen or cid+':A1')), None)
+    if condition_sources and legacy and not legacy.get('review'):
+        original = next((r for r in record['records'] if r['id'] == legacy['id']), None)
+        if (original and original.get('review')
+                and (original.get('response') or {}).get('sha256') == task['response_sha256']):
+            projected = json.loads(evidence_bytes(folder, original['review']))
+            if (projected.get('schema') == 'math-gauge.public-original-review-projection/v1'
+                    and isinstance(projected.get('judgment', {}).get('binding'), dict)):
+                judgment = projected['judgment']
+                normalized_sha = judgment.get('review_sha256')
+                # Component score adapters may have their own review hash. This
+                # displays the original judgment selected for the same response.
+                if (normalized_sha != original.get('evaluation', {}).get('review_sha256')
+                        or normalized_sha != legacy.get('evaluation', {}).get('review_sha256')
+                        or judgment.get('binding', {}).get('response_sha256') != task['response_sha256']):
+                    raise ValueError('Original review projection belongs to another selected answer')
+                legacy = dict(legacy, review=original['review'], artifacts=original.get('artifacts', []))
     row = legacy
     for name, field in (('theorem_extension_evidence', 'records'), ('background_check_evidence', 'records'),
                         ('written_replacement_evidence', 'slots')):
@@ -236,7 +253,7 @@ def review_markdown(review):
     if not review:
         return '当前没有可展示的逐项评审；计分状态以正式档案为准。'
     lines = []
-    for key, title in [('summary','评审摘要'), ('reason','判定理由'), ('strict_reason','SMC 理由'),
+    for key, title in [('summary','评审摘要'), ('reason','判定理由'), ('finding','核查结论'), ('strict_reason','SMC 理由'),
                        ('baseline_findings','原题核查'), ('research_findings','拓展核查'), ('issues','主要问题')]:
         value = review.get(key)
         if value:
@@ -247,12 +264,12 @@ def review_markdown(review):
         if key in review:
             lines.append(key+'：'+str(review[key]))
     diagnostic = review.get('group_diagnostic') or review
-    rows = next((diagnostic[k] for k in ('criteria','stages','dimensions','obligations')
+    rows = next((diagnostic[k] for k in ('criteria','stages','dimensions','obligations','credit_units')
                  if isinstance(diagnostic.get(k), list)), [])
     for index, row in enumerate(rows, 1):
         key = next((row[k] for k in ('criterion_id','stage_id','dimension_id','id','obligation_id') if k in row), str(index))
         lines.append('### '+str(key))
-        fields = [('points','分数'), ('max_points','满分'), ('score','评分'), ('decision','判定'),
+        fields = [('points','分数'), ('max_points','满分'), ('earned','已获分'), ('maximum','满分'), ('score','评分'), ('decision','判定'),
                   ('status','状态'), ('complete','已核实完成'), ('reason','理由'), ('notes','审核说明'),
                   ('finding','核查结论'), ('counterexample','反例'), ('additional_gap','补充缺口')]
         for field, title in fields:
@@ -298,6 +315,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         current = '<div class="evidence-condition" data-evidence-condition="'+condition+'"'+(' hidden' if condition!=CONDITIONS[0] else '')+'>'
         if submissions:
             selected=next(row for row in submissions['conditions'][condition]['public_initials'] if row['case_id']==cid)
+            selected = dict(selected, **item.get('submission_override', {}))
             if (model.get('review_completion') and condition == 'nonlogical_retry_3'
                     and cid in model['review_completion']['resolved_public_cases']):
                 selected = dict(selected, pending_original_record_review=False)
@@ -305,6 +323,8 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
                    'forced_content':'强收有内容；MC按已核实原成果计分，RMC与SMC为0。',
                    'blank':'原记录待复核，按已确认口径暂记0。' if selected['pending_original_record_review'] else '无可审核交付，计0。',
                    'not_run':'未测，保留未知。'}[selected['classification']]
+            if item.get('recovered_original_reply'):
+                label = '原后端答卷已恢复并接纳；三种评分采用该原答。原CLI ERROR保留。'
             if selected['pending_original_record_review']:
                 label+=' 待补原记录复核。'
             current += panel('提交来源','<div class="prose"><p>'+html.escape(label)+'</p></div>')
@@ -317,7 +337,9 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
         review_html = '<div class="prose review-criteria">'+markdown.add(review_markdown(criterion_review))+'</div>'
         if engineering:
             review_html += '<details class="evidence-fold nested"><summary>逐项工程与语义审核（'+str(len(engineering.get('obligations',[])))+'项）</summary><div class="prose">'+markdown.add(review_markdown(engineering))+'</div></details>'
-        current += panel('原始逐项评审' if submissions else '逐项评审', review_html,
+        review_title = ('补充逐项评审' if item.get('recovered_original_reply') else
+                        '原始逐项评审' if submissions else '逐项评审')
+        current += panel(review_title, review_html,
             ('原评保留原审核范围；当前采用的提交与成绩见上方及模型档案。' if submissions
              else '原始评审见下方来源文件。'))
         answers = [s for s in item['sources'] if s['role'] in ('answer','response') and s['sha256']==details['case']['views']['partial'][condition]['response_sha256']]
@@ -339,6 +361,13 @@ def render_model(page, data, model, cases, record, folder, markdown):
     details = compact_data(data, model)
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>')
+    if model.get('harness_correction'):
+        correction = model['harness_correction']
+        body += panel('Harness故障更正',
+            '<div class="prose"><p>HCH02采用因回传故障而恢复的原始后端答卷，按原判分规则补审。'
+            '原始ERROR、旧成绩与审核均保留；没有补跑，也没有将执行错误改写为成功。</p></div>'
+            '<p class="panel-foot">' + source_link(correction['manifest']['path'], page,
+                '恢复来源与更正记录 ↗', root=root) + '</p>')
     if model.get('review_completion'):
         receipt = Path(model['source_record']).parent / 'review-completion.json'
         body += panel('来源审核完成', '<div class="prose"><p data-lang-content="zh">39道初答的原始答卷审核完成，三项缺档已复核。三轮自查因初答未交付而未执行，仍保留未知。</p>'
@@ -363,11 +392,13 @@ def render_model(page, data, model, cases, record, folder, markdown):
             rows += '<tr><td>'+html.escape(child['title'])+'</td><td class="numeric">'
             rows += percent(category['reliability']['observed'])+'</td><td class="numeric">'
             rows += percent(delivered)+'</td></tr>'
+        rates_path = (model['harness_correction']['rates']['path'] if model.get('harness_correction')
+                      else 'content-rates.json')
         body += panel('内容可靠率与'+target_label, '<div class="prose" data-ui-prose><p>已审内容可靠率 '
             +percent(r['observed'])+'；已确认'+target_label+' '+percent(d['confirmed'])+'。</p>'+interval+'</div><div class="table-wrap"><table class="compact rate-table">'
             '<thead><tr><th>子类</th><th class="numeric">已审内容可靠率</th><th class="numeric">已确认'+target_label+'</th>'
             '</tr></thead><tbody>'+rows+'</tbody></table></div><p class="panel-foot">'
-            +source_link(Path(model['source_record']).parent/'content-rates.json', page, '补审汇总 JSON ↗',root=root)
+            +source_link(Path(model['source_record']).parent/rates_path, page, '补审汇总 JSON ↗',root=root)
             +' · <a data-context-link href="../../method.html#content-rate-method">计算方法 →</a></p>')
     body += panel('分类贡献', '<div class="table-wrap"><table id="model-categories" class="compact"></table></div>',
         '贡献分 / 该项满分；相关变体在家族内聚合。')
@@ -485,10 +516,30 @@ def build_detail_pages(data, root):
         cases = []
         audits = json.loads(evidence_bytes(folder,record['claim_review']))
         model['public_claims'] = {c: audits['conditions'][c]['cases'] for c in CONDITIONS}
+        correction = model.get('harness_correction')
+        if correction:
+            projection = json.loads(evidence_bytes(folder, correction['public_tasks']))
+            corrected_claim = json.loads(evidence_bytes(folder, correction['claim_review']))['case']
+            for condition in correction['affected_conditions']:
+                model['public_claims'][condition] = [corrected_claim if row['case_id'] == 'HCH02' else row
+                    for row in model['public_claims'][condition]]
         for cid in projection['public_case_ids']:
             entry = catalog[cid]
             evidence = {c: public_evidence(folder, record, cid, c,
-                next(r for r in projection['views']['partial'][c]['tasks'] if r['case_id']==cid)) for c in CONDITIONS}
+                next(r for r in projection['views']['partial'][c]['tasks'] if r['case_id']==cid)) for c in CONDITIONS
+                if not (correction and cid in correction['affected_cases'] and c in correction['affected_conditions'])}
+            if correction and cid in correction['affected_cases']:
+                for condition in correction['affected_conditions']:
+                    review_source = descriptor(folder, correction['math_review'], role='source_review')
+                    evidence[condition] = {
+                        'sources': [descriptor(folder, correction['answer'], role='answer'), review_source,
+                                    descriptor(folder, correction['claim_review'], role='claim_review')],
+                        'review': json.loads(review_source['raw']), 'claim': corrected_claim,
+                        'notes': ['因harness回传故障恢复的原答；原生ERROR与旧审核保留，按既有规则补审。'],
+                        'submission_override': {'classification': 'active_final',
+                                                'pending_original_record_review': False},
+                        'recovered_original_reply': True,
+                        'selected_record': cid + ':A1:recovered-original', 'source_row': {}}
             cases.append({'id':cid,'title':entry['title'],'category':entry['category'],
                 'category_title':CATEGORY_TITLES.get(entry['category'],entry['category']),
                 'views': {mode:{c:next(r for r in projection['views'][mode][c]['tasks'] if r['case_id']==cid)

@@ -5,8 +5,20 @@ from pathlib import Path
 import re
 
 
-def result_archive(edition):
+def result_archive(edition, model=None):
+    """Resolve an explicitly selected source edition, retaining legacy defaults.
+
+    A new run belongs to the current edition. It must not be added to an older
+    release's immutable answer-adoption manifest.
+    """
     version = edition['version']
+    if not isinstance(version, str) or not re.fullmatch(r'\d+\.\d+\.\d+', version):
+        raise ValueError('Invalid benchmark version')
+    sources = edition.get('selected_result_source_versions', {})
+    if (not isinstance(sources, dict)
+            or any(key not in edition.get('selected_result_models', []) or value != version
+                   for key, value in sources.items())):
+        raise ValueError('Invalid selected result source edition')
     adoption = edition.get('result_compatibility')
     if adoption is not None:
         source = adoption.get('source_benchmark_version')
@@ -16,9 +28,8 @@ def result_archive(edition):
                 or adoption.get('new_candidate_calls') != 0
                 or adoption.get('mathematical_judgments_changed') is not False):
             raise ValueError('Invalid edition compatibility boundary')
-        return adoption['archive_root']
-    if not re.fullmatch(r'\d+\.\d+\.\d+', version):
-        raise ValueError('Invalid benchmark version')
+        if model not in sources:
+            return adoption['archive_root']
     return 'results/v' + version
 
 
@@ -55,7 +66,9 @@ def verify_compatibility(root):
                 or not path.is_file() or not path.resolve().is_relative_to(root)
                 or hashlib.sha256(path.read_bytes()).hexdigest() != row['sha256']):
             raise ValueError('Edition compatibility source changed: ' + row['path'])
-    selected = dict(edition['selected_result_record_ids'])
+    fresh = edition.get('selected_result_source_versions', {})
+    selected = {model: record_id for model, record_id in edition['selected_result_record_ids'].items()
+                if model not in fresh}
     selected['dot-underlying-model-20261108'] = '20261108'
     adopted = manifest.get('selected_records', [])
     if {row['model_id']: row['record_id'] for row in adopted} != selected or len(adopted) != len(selected):
@@ -67,4 +80,15 @@ def verify_compatibility(root):
                 or len(row['score_paths']) != 6
                 or any(p not in bound or not p.startswith(parent) for p in row['score_paths'])):
             raise ValueError('Edition compatibility must retain the original record and six views')
+    for model in fresh:
+        record_id = edition['selected_result_record_ids'].get(model)
+        if (not re.fullmatch(r'[a-z0-9][a-z0-9._-]*', model)
+                or not isinstance(record_id, str)
+                or not re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9._-]*', record_id)):
+            raise ValueError('New edition record requires safe explicit identities')
+        path = root / result_archive(edition, model) / model / record_id / 'record.json'
+        if (not path.is_file() or not path.resolve().is_relative_to(root)
+                or any(p.is_symlink() for p in (path, *path.parents))
+                or json.loads(path.read_bytes()).get('benchmark_version') != fresh[model]):
+            raise ValueError('New result record differs from its selected source edition')
     return edition

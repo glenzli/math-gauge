@@ -1,0 +1,80 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR02:A1",
+    "case_id": "AHR02",
+    "binding": {
+      "plan_sha256": "fb3cd5ad9755dbbd66a37709e87d9a097c75811e601f362cb42fcd16ea1f8fb8",
+      "slot_id": "AHR02:A1",
+      "evidence_id": "756e3d72da427c10a8a05de0bc6d21f12ab9656f0092477122a24520dabff0aa",
+      "response_sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+      "history_sha256": "b63b97f59c5ff4bfba718135b3c699699b0ea8dc3b96f2f7535180fe0213692b",
+      "projected_request_sha256": "5092294bc60d551364aa7cfea64d40a785a2669c79e7f05a1776eeb2f48ea5c9",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "bdcd94f93b2ea129201b3478168732ac1ff7367dd26f0faea604fb579e24795a",
+      "body_origin": {
+        "slot_id": "AHR02:A1",
+        "response_sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+        "start_byte": 0,
+        "end_byte": 17984
+      },
+      "body_sha256": "082d405eae4397514c9bf1e2d794de37a9c2f297f288e059fe8ae9b000a84be8",
+      "rationale_sha256": null,
+      "request_sha256": "3c40612a4d4c86396b65b4cbb6c4df54d2efc685fb3d55cb92d604e5b6a5388d",
+      "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": true,
+    "notes": "95/100（35+20+30+10）。正确识别三个全局接口无条件∀可达路径Lip相对正文只约束参与并集的活跃路径而过强；四点非分离扩展伪度量反例完整合法，允许ENNReal无穷系数仍不能取得未采样路径Lip。准确保留局部误差界、真实路径链到代理桥和强前提下全局定理。仅repair_scope扣5：把非空交/域条件的直接等价桥与额外text包装拆分列为必要语义缺口。Strict false；新增claim处罚建议0，未确认核心错误放行/否决或实质数学假断言。",
+    "findings": [
+      "核心失配诊断正确：三个全局接口中hLq无条件∀q，原文只需参与保证域并集的路径；不能因局部引理可组合修复而说当前接口已完整对齐。",
+      "独立4点非分离反例保留原文全部条件，含目标公共Lip证书、非空采样与有限阈值，未采样路径确无任何（可为∞）Lip矩阵。",
+      "准确保留真实path_chain_eq_represented_proxy_on_path桥及所有有效局部/强前提全局结论；不扩大为整章审计。",
+      "修复范围过度：把非空时已经相等的联合域定义、hpathV与U⊆Vstar的直接等价及hrep的定义域推论缺少命名引理视作必要缺口；repair_scope扣5。",
+      "claim建议0：不以缺少可见编译日志推断虚假核验，也不把可选包装建议放大为核心错误否决。"
+    ],
+    "group_contract_sha256": "fa7b925ce30ad4ca5dc2851feef07905d558a3cbbde04206d78823f14d3b41a9",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "6、32–39行精确指出三条现有导出接口的hLq对所有ReachablePath全称量化，超出原文j可评估/J全部可评估的路径范围；没有以编译代替语义。正确保留完整范围与强前提特例的区别。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "18–26、66–75行准确保留有限伪度量族、目标公共Vstar证书、代理表示、路径样本/实际残差、局部单分量与联合误差界，以及path_chain_eq_represented_proxy_on_path和强hLq下三个全局定理。59行明确承认联合域在J非空时与正文交集相等；未错误否认这些定理。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "41–55行独立四点反例合法：d(a,b)=0，d(a,c)=d(b,c)=1，bot隔离；未采样路径输入a,b分别输出a,c，无任何ENNReal Lip（包括∞，因∞·0=0）；采样路径{c}为常值，有零Lip与零残差，目标常值、公共域、表示、SamplingStructure、有限阈值与非空J均满足。现有全路径hLq确实不可实例化，原文活跃路径包含仍正确。39、69–75行的真实签名/证明依赖说明可核验。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 10,
+        "notes": "79–93行精确给出两类活跃路径条件及hLq q hj/hJ的直接修复；95行接受OR条件或分支证书的合取包装，方向足够。但7–10、20、24、59–60、96–100行把已在数学上承认等价的非空交、hpathV及hrep蕴含的显式包装也列作严格闭环缺口，过度于本题范围。拆text只能作可选组织；这些直接等价关系不要求额外交付命名Lean桥。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:14.135141+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "cb6164d8b0c57b4179b4f58a3a0ec004b6f6f8b6865580fa9e11316a3ffc7900"
+  },
+  "original_private_review_sha256": "9d93ea52eb52e4775c02f73a71154ece265d173c16e3a343f7a0ebf729f7c297"
+}

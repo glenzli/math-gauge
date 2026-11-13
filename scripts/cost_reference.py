@@ -6,11 +6,13 @@ import json
 from pathlib import Path
 
 from math_gauge.costs import PUBLIC_SCHEMA, pareto_frontier
+from math_gauge.editions import result_archive
 
 DATA_PATH = "results/costs/v0.1.0/current.json"
 
 
 def build_reference(root, *, display_data, timing_reference):
+    edition = json.loads((Path(root) / "benchmark.json").read_bytes())
     path = Path(root) / DATA_PATH
     if not path.is_file():
         return None
@@ -26,7 +28,7 @@ def build_reference(root, *, display_data, timing_reference):
         row = costs.get(model["id"])
         if row is None:
             raise ValueError("Missing model in cost reference: " + model["id"])
-        folder = Path(root) / "results/v0.6.0" / model["id"] / row["record_id"]
+        folder = Path(root) / result_archive(edition, model["id"]) / model["id"] / row["record_id"]
         source = folder / ("record.json" if (folder / "record.json").is_file() else "native-observation.json")
         if not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != row.get("record_sha256"):
             raise ValueError("Cost reference binds a different public model record")

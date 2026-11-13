@@ -1,0 +1,84 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-PS001:A1",
+    "case_id": "MG-PS001",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-PS001:A1",
+      "evidence_id": "35f271e047754c7b03394c50a7add86a7f7eb245322ea828154501975d5096e8",
+      "response_sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+      "history_sha256": "6183c6881757e5219e7c3e190062ccb2f01e637a4e0ef37e929cb78897b8b1a2",
+      "projected_request_sha256": "7ec01154f505ddda4671ca9756626a856c8f2c20b2bb95e264d4fc7d756823e3",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "7722fe410fd642d8b51b2cc4d14641fcfb1f1c61c2dff8c95e7ebc20f587c64d",
+      "body_origin": {
+        "slot_id": "MG-PS001:A1",
+        "response_sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+        "start_byte": 0,
+        "end_byte": 19381
+      },
+      "body_sha256": "d76aac84e897d80129dcf805a46f2e2a848d73bb74ed2ed621e11bfc8c24fa0c",
+      "rationale_sha256": null,
+      "request_sha256": "86208bde7a9c0f86b822b85c9ee6e69e4514daabd5ece171ca91605e42e18d21",
+      "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "仅审首份正常交卷的 sealed/answer.md。原答完整证明两项目标；不假设 f(n)/n 收敛或 X 完备。六项冻结判准均获满额数学信用，整体严格完成通过。未发现需新增 RMC 扣罚的实质错误断言。执行资格、模型身份认证与人工批准由主控另行判断；本文件是具名 AI 数学评审草稿。",
+    "findings": [],
+    "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "criteria": [
+      {
+        "criterion_id": "K1",
+        "score": 5,
+        "notes": "5/5。原答第3、5、27–28行验证有限伪度量、零距商及线性取样；商范数的直接使用合法，无完备性假设。"
+      },
+      {
+        "criterion_id": "K2",
+        "score": 20,
+        "notes": "20/20 = 分类4 + 充分6 + 必要10。第13–14、30–39行给有限 limsup 增长的分类与上界；第41–57行对任意无界 limsup 递归构造 I_k=[a_k,2a_k] 及 z=1_{union f(I_k)}，逐一证明 z 零距而取样上密度至少1/2，覆盖每个不允许的 f。"
+      },
+      {
+        "criterion_id": "K3",
+        "score": 20,
+        "notes": "20/20 = 正确值5 + 上界5 + 普遍尖锐性10。第31–39行上界；第65–96行对任意 eps、delta 构造有界加权稀疏块，证明 d(x,0)<=1、d(P_f x,0)>=(C-delta+eps)/(1+eps)，再取参数极限得到任意 Lipschitz 常数>=C。没有默认 f(n)/n 极限存在，C=1亦包括。"
+      },
+      {
+        "criterion_id": "K4",
+        "score": 15,
+        "notes": "15/15 = 满射4 + 单射8 + 连续3。第105行以有限 Lipschitz 界得连续；第106–108行逐代表延拓给满射；第110–112行用像集余集给 C>1 非单射；第113–117行以 f(n)/n->1 及缺失密度趋零证明等距并核验充要密度条件。"
+      },
+      {
+        "criterion_id": "K5",
+        "score": 15,
+        "notes": "15/15 = 实际复合常数5 + 根极限6 + 范围4。第135–142行把迭代对应到 f 的实际复合并用已证分类确定 L_k，建立1<=L_{k+m}<=L_k L_m；第144–151行完整给出次可加引理证明；第158–159行保留1<=R_f<=L_1<infty。"
+      },
+      {
+        "criterion_id": "K6",
+        "score": 25,
+        "notes": "25/25 = 可达集合5 + 构造8 + 首步4 + 根极限及边界8。第163–173行处理 L=R；第177–192行对全部1<=R<L构造 n_m=A m! 上的严格递增整数取样。第202–232行对每个固定 k 分单段与仅一次跨段证明精确 L_k=R^k+(L-R)sum_{i<k}R^i；跨段所需 n_m/n<=L^{k-1}/(m+1) 已在原答证明，不需评审补引理。第238–242行含 R=1 和 R>1 两边界，L=R=1已由首情形覆盖。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.179358+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "96096d6ae9e69ef43ed73933d1dc431f54050b3a14e95d72486bd2a11a99011e"
+  },
+  "original_private_review_sha256": "6c4d4a5bf33d8d23f5fc867193119974bc95698c891d5c1c4d9ab651f8b01e10"
+}

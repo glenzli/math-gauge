@@ -33,7 +33,7 @@ def _selected_result_records(root):
         if (not isinstance(model, str) or not re.fullmatch(r"[a-z0-9][a-z0-9._-]*", model)):
             raise ValueError("Selected result model must be a safe model id")
         from .editions import result_archive
-        parent = root / result_archive(edition) / model
+        parent = root / result_archive(edition, model) / model
         record_id = record_ids.get(model)
         if record_id is not None:
             if not isinstance(record_id, str) or not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9._-]*", record_id):
@@ -552,6 +552,99 @@ def _validate_manuscript_request_history(root, row, case, *, selected=None):
         evidence_bytes(root, item)
 
 
+def validate_agy_manuscript_history(root, row, case):
+    from math_gauge.agy_evidence import validate_delivery, validate_failure
+
+    ledger = json.loads(evidence_bytes(root, row['physical_request_ledger']))
+    if (ledger.get('schema') != 'math-gauge.agy-manuscript-request-history/v3'
+            or ledger.get('case_id') != case['case_id']
+            or ledger.get('first_normal_final_selected') is not True
+            or ledger.get('selection_depends_on_mathematical_quality') is not False
+            or ledger.get('source_raw_bytes_rewritten') is not False):
+        raise ValueError('AGY manuscript history changed its fixed source selection')
+    freeze = json.loads(evidence_bytes(root, ledger['pre_call_freeze']))
+    maximum = freeze.get('maximum_effective_attempts')
+    selected = row.get('selected_physical_request')
+    attempts = ledger.get('attempts')
+    if (freeze.get('benchmark_version') != '1.0.0'
+            or freeze.get('first_normal_final_locks_selection') is not True
+            or freeze.get('mathematical_errors_never_retry') is not True
+            or freeze.get('proven_pure_system_failures_excluded_separately') is not True
+            or type(maximum) is not int or maximum != 3
+            or type(selected) is not int or selected < 1
+            or ledger.get('selected_physical_request') != selected
+            or not isinstance(attempts, list) or len(attempts) != selected
+            or [a.get('physical_request') for a in attempts] != list(range(1, selected+1))):
+        raise ValueError('AGY history lost its actual pre-call retry/first-final policy')
+    task = evidence_bytes(root, case['original_task'])
+    effective = 0
+    for number, attempt in enumerate(attempts, 1):
+        data = json.loads(evidence_bytes(root, attempt['agy_native_evidence']))
+        result = json.loads(evidence_bytes(root, attempt['execution_result']))
+        native_plan = json.loads(evidence_bytes(root, data['native_plan']))
+        requested = (freeze.get('requested_model'), freeze.get('requested_effort'))
+        if (any(not isinstance(value, str) or not value for value in requested)
+                or (native_plan.get('model'), native_plan.get('effort')) != requested
+                or (result.get('requested_model'), result.get('requested_effort')) != requested):
+            raise ValueError('AGY history changed its frozen request model or effort')
+        if (result.get('case_id') != case['case_id']
+                or result.get('physical_request_number') != number
+                or result.get('freeze_sha256') != ledger['pre_call_freeze']['sha256']
+                or result.get('normal_complete_delivery') is not (number == selected)):
+            raise ValueError('AGY physical result belongs to a different request or freeze')
+        if (data.get('case_id') != case['case_id'] or data.get('phase') != 'A1'
+                or data.get('physical_request') != number
+                or evidence_bytes(root, data['candidate_input']) != task):
+            raise ValueError('AGY history borrowed another physical request or task')
+        native_row = dict(case_id=case['case_id'], slot_id=case['case_id']+':A1',
+            agy_native_evidence=attempt['agy_native_evidence'],
+            execution=data['native_execution'], original_input=data['candidate_input'],
+            response=data.get('response') if number == selected else None,
+            review=None, evaluation=dict(completion=dict(lower=0,upper=0,exact=0),strict_pass=False))
+        if number == selected:
+            validate_delivery(root, native_row, evidence_bytes)
+            if attempt.get('excluded_pure_system_failure') is not False:
+                raise ValueError('A normal first final cannot be a pure service exclusion')
+        else:
+            validate_failure(root, native_row, evidence_bytes)
+        excluded = attempt.get('excluded_pure_system_failure')
+        if type(excluded) is not bool:
+            raise ValueError('AGY physical request needs an explicit exclusion observation')
+        if excluded:
+            admission = json.loads(evidence_bytes(root, attempt['exclusion_admission']))
+            records = admission.get('affected_physical_requests', [])
+            admitted = next((r for r in records if r.get('case_id') == case['case_id']
+                and r.get('physical_request_number') == number), None)
+            if (admission.get('schema') != 'math-gauge.source-bound-service-failure-admission/v1'
+                    or admitted is None or admitted.get('adjudicated_pure_service_failure') is not True
+                    or admitted.get('effective_attempt_consumed') is not False
+                    or admitted.get('terminal_evidence',{}).get('sha256')
+                        != data.get('native_terminal_event',{}).get('sha256')
+                    or admitted.get('original_result_sha256',admitted.get('result_sha256'))
+                        != attempt['execution_result']['sha256']
+                    or attempt.get('effective_model_attempt') is not None):
+                raise ValueError('AGY pure service exclusion lacks the original admitted native/result bytes')
+        else:
+            effective += 1
+            if attempt.get('effective_model_attempt') != effective:
+                raise ValueError('AGY consumed request was erased or renumbered')
+        if attempt.get('first_normal_final') is not (number == selected):
+            raise ValueError('AGY history selected a later normal answer')
+    if (not 1 <= effective <= maximum
+            or ledger.get('consumed_effective_attempts') != effective
+            or ledger.get('effective_model_attempt') != effective
+            or row.get('effective_model_attempt') != effective
+            or row.get('agy_native_evidence') != attempts[-1]['agy_native_evidence']):
+        raise ValueError('AGY selected delivery changed its effective-attempt count')
+    last = json.loads(evidence_bytes(root, attempts[-1]['agy_native_evidence']))
+    for row_key, native_key in [('execution','native_execution'),('execution_plan','native_plan'),
+            ('native_events','native_events'),('native_request','native_request'),
+            ('candidate_input','candidate_input'),('response','response')]:
+        if row.get(row_key) != last.get(native_key):
+            raise ValueError('AGY manuscript row is not the first normal selected native delivery')
+    return ledger
+
+
 def load_manuscript_completion_inputs(root, record, *, policy=None):
     """Bind an adopted manuscript judgment to exact original/native bytes.
 
@@ -666,6 +759,16 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
             artifact_checks_passed = (result.get("artifact_checks_passed") is True
                 and result.get("normal_complete_delivery") is True
                 and result.get("prompt_sha256") == task_hash)
+        elif (plan.get('client') == 'agy'
+                and result.get('schema') == 'math-gauge.argon-physical-result/v1'
+                and row.get('agy_native_evidence') is not None):
+            from .agy_evidence import validate_delivery
+            validate_delivery(root, row, evidence_bytes)
+            receipt = json.loads(evidence_bytes(root, row['agy_native_evidence']))
+            seal = json.loads(evidence_bytes(root, receipt['native_terminal_seal']))
+            artifact_checks_passed = (result.get('artifact_checks_passed') is True
+                and result.get('normal_complete_delivery') is True
+                and result.get('native_terminal') == seal)
         if (not delivered or not isinstance(text, str) or not text or text.encode("utf-8") != answer
                 or candidate != task or execution.get("kind") != "math" or execution.get("request_count") != 1
                 or execution.get("tool_mismatch") is not None or result.get("tool_mismatch") is not None
@@ -746,6 +849,9 @@ def load_manuscript_completion_inputs(root, record, *, policy=None):
                     or ledger.get("native_evidence") != row["external_harness_evidence"]
                     or ledger.get("effective_model_attempt") != verified["effective_model_attempt"]):
                 raise ValueError("Counted manuscript timeout history differs from its native source")
+            continue
+        if ledger.get('schema') == 'math-gauge.agy-manuscript-request-history/v3':
+            validate_agy_manuscript_history(root, row, case)
             continue
         if ledger.get("schema") == "math-gauge.manuscript-request-history/v2":
             if type(selected) is not int or selected <= 0:
@@ -1417,6 +1523,8 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
     if assessment['version'] == '0.9.0':
         from . import submission_evidence
         submission = submission_evidence.validate_record_component(root, record, public=not external)
+        if record.get('first_assessment_source') is not None:
+            submission_evidence.validate_first_assessment_source(root, record, assessment)
         submission_evidence.validate_history(root, record)
     keys = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}
     if mode not in keys:
@@ -1455,7 +1563,7 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                                   if condition_sources else record["formalization_review"])
         if (score.get("schema") != ("math-gauge.assessment-score/v1" if external else
                                     "math-gauge.assessment-score-aggregate/v1")
-                or score.get("benchmark_version") != record["benchmark_version"]
+                or score.get("benchmark_version") != assessment["benchmark_version"]
                 or score.get("scoring_method_version") != assessment["version"]
                 or score.get("strict_method_version") != "0.2.0"
                 or score.get("score_mode") != mode or score.get("primary_metric") != "earned"
@@ -1906,7 +2014,7 @@ def rebind_content_rates(private_folder, public_folder, *, private_root, public_
 def validate_record(root, *, formalization_root=None, validate_scores=True):
     root = Path(root).resolve()
     record = json.loads((root / "record.json").read_bytes())
-    if record.get("schema") != SCHEMA or record.get("benchmark_version") != "0.6.0":
+    if record.get("schema") != SCHEMA or record.get("benchmark_version") not in ("0.6.0", "1.0.0"):
         raise ValueError("Unsupported formal result record")
     if record.get("retention", {}).get("user_requested") is not True:
         raise ValueError("Formal retention requires an explicit user selection")

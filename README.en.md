@@ -51,7 +51,7 @@ All three use the same rule-selected answers, families and weights. Incorrect wo
 
 Current aggregation is **0.9.0**, MC **0.3.0**, SMC **0.2.0**, with submission component **0.1.0**. A normal final limits all three scores to the actually delivered work. Without one, verified original work present by the cutoff may earn MC; RMC and SMC are zero. Finals and collected content are mutually exclusive counts. Original 0.8.0 records and reviews remain source-bound.
 
-[Content reliability and complete-goal attainment](protocol/content-rates.md) provide two further views: correctness and support of actual delivered content, and acceptance of complete independent goals required by a task. The research panel's [additional-results observation](docs/manuscript-observations.md) counts verified result groups not requested by the original task. It is separate from the scores and currently covers 67 of 70 manuscript slots across 14 models.
+[Content reliability and complete-goal attainment](protocol/content-rates.md) provide two further views: correctness and support of actual delivered content, and acceptance of complete independent goals required by a task. The research panel's [additional-results observation](docs/manuscript-observations.md) counts verified result groups not requested by the original task. It is separate from the scores and currently covers 72 of 75 manuscript slots across 15 models.
 
 ## Current leaderboard
 
@@ -68,10 +68,11 @@ Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Pe
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39 / 0 / 39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39 / 0 / 39 |
 | [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39 / 0 / 39 |
+| [Gemini Hydrogen (xhigh)](site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39 / 0 / 39 |
 | [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38 / 0 / 39 |
 | [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37 / 1 / 39 |
-| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 79.50 | 61.41 | 37.92 | 37 / 2 / 39 |
-| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI | 61.82 | 40.43 | 13.75 | 38 / 1 / 39 |
+| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 77.00 | 60.91 | 37.92 | 38 / 1 / 39 |
+| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 61.82 | 40.43 | 13.75 | 38 / 1 / 39 |
 | [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
 
 Per-round sources and full score intervals are available in model details. Tested tasks that time out without a submission are scored under the failure rules.
@@ -82,7 +83,9 @@ Per-round sources and full score intervals are available in model details. Teste
 
 ³ GLM 5.3 had frequent timeouts under both Codex CLI and Claude Code; the retained results use Claude Code. Without a normal final, RMC and SMC are zero; verified original work may earn MC. The three self-check rounds were not run.
 
-⁴ Some Argon tasks did not terminate with a normal submission. Two tasks retained verifiable mathematical content and receive MC only; their RMC and SMC are zero.
+⁴ Retained AGY CLI runs show serious response-delivery and termination defects that can lose model replies or keep waiting until timeout. Additional reruns are allowed for evidenced harness faults, so physical calls may exceed the usual three attempts. Verified idle tails are removed from displayed times while original clocks are retained. Mathematical errors after a normal submission do not permit a rerun.
+
+The recovered HCH02 reply has been adopted after an AGY delivery fault and reviewed under the existing rules. Original ERROR receipts and scores are retained; benchmark1.0.0 and its scoring methods are unchanged. See the [source correction](docs/harness-corrections.md).
 
 Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set, with sampled cross-checks by Astra 6 Max and Dot. See the [review process](docs/review-process.md) for reviewer identities, evidence and limitations, and the [results report](docs/results.md) for model-level analysis.
 
@@ -94,7 +97,7 @@ Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set
 
 Both frontier plots default to RMC: total cost uses a linear dollar scale starting at zero, and typical-task time is measured in minutes. Solid points indicate normal final submissions on all 39 initial tasks; other points are hollow. Colors follow model brands. Time includes tool use and waiting, and varies with harness, network and hardware; see the [method and sources](docs/answer-timings.md).
 
-Cost counts only the retained attempt for each task, excluding other retries. Dot used a separate subscription-bundled allowance on its test date, with $0 additional cost; other models use public API prices with cache discounts. See the [cost method](docs/cost-reference.md) for full usage, prices and sources. The [interactive plots](site/index.html?lang=en#cost-frontier) provide score and axis controls.
+Cost counts only the retained attempt for each task, excluding other retries. Dot used a separate subscription-bundled allowance on its test date, with $0 additional cost. Models with verified tariffs use public API prices with cache discounts. Hydrogen ran through the AGY subscription; its 42 native usage receipts yield a $51.63 reference cost at official Standard API rates. Argon's $33.84 uses introductory 50%-off rates through November 30, 2026; the same usage at December rates would cost about $67.67. See the [cost method](docs/cost-reference.md) for full usage, prices and sources. The [interactive plots](site/index.html?lang=en#cost-frontier) provide score and axis controls.
 
 The leaderboard publishes selected snapshots after their test process has ended; future tests are added after settlement. The [interactive page](site/index.html?lang=en) provides category leaderboards, two rates, score gaps, and separate cost and timing rankings, with MC/RMC/SMC controls, bilingual display and shareable URL state. Model pages retain task results, self-check execution states and score intervals.
 

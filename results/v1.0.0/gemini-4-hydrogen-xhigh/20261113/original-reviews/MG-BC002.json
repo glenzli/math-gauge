@@ -1,0 +1,69 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-BC002:A1",
+    "case_id": "MG-BC002",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-BC002:A1",
+      "evidence_id": "ba23081f237f77ed8c9611e8c911764ba65b1a339a9cb6b0219fbefc3c86edd6",
+      "response_sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+      "history_sha256": "e7feed144fb27c02aa4935a707862b2a8b6a8cdc4611e5822a3ba27eaa4b4e5e",
+      "projected_request_sha256": "f0113254a651906a19841e41a31ec38338098affbc7e96bdcc9a3875134f2737",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "0644419fee5abe5fae2a106973e46ab98a51a762973d2a897f3b5a43e36494ce",
+      "body_origin": {
+        "slot_id": "MG-BC002:A1",
+        "response_sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+        "start_byte": 0,
+        "end_byte": 23204
+      },
+      "body_sha256": "b8e4d2ef06498c1253e8947587858df998a155cd14c889c5a88c2745150e2d07",
+      "rationale_sha256": null,
+      "request_sha256": "32f11c759038e2e17ec9d820a7f3f8ad3ad5d4ac0941e27bd44481736506077b",
+      "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "pass",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "correct",
+    "unnecessary_restriction": false,
+    "notes": "背景核查A1：background_R=3，complete=true，false_endorsement=false，S-corrected；三个累积criterion各1/1。原source-rubric D4/U3。原答正确完成全局流、收缩/能量、stack与条件prox证书；另以合法初值扰动排除每个正时间的任意凸prox表示，强于参考局部时间结论且有完整证明。独立大初值变分系统证明actual flow每个正时间不FNE，未从Jacobian非对称直接误推。方法段区分实际精确流与implicit Euler及prox系数。Strict通过，新增RMC罚0。",
+    "findings": [],
+    "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "criteria": [
+      {
+        "criterion_id": "gap-diagnosis",
+        "score": 1,
+        "notes": "1/1。第105–111、156行明确反对实际精确流因强凸/耗散/收缩即为凸prox的背景升级，保留真正流保证与条件prox定理，未替换成implicit Euler。"
+      },
+      {
+        "criterion_id": "model-specific-certificate",
+        "score": 1,
+        "notes": "1/1。第113–129行先由Moreau envelope自证C1凸prox必须有对称Jacobian；再固定任意tau>0，在初值epsilon e1处用变分方程作二阶epsilon扰动，准确得(d_epsilon^2)(J12-J21)|0=2e^-tau(e^-tau-1)^3<0，故排除每个tau的所有proper lsc convex regularizer。不是仅比较prox_(tau f)。"
+      },
+      {
+        "criterion_id": "complete-correction",
+        "score": 1,
+        "notes": "1/1。第13–62行给全局存在、唯一0、e^-t收缩、e^-2t能量与stack；第68–101行给合法prox存在唯一、条件三点不等式及FNE。第131–150行还独立证明实际flow不FNE：s,d系统中R->infty时第一变分列衰至0、第二列u2有正下界，symJ-J^T J有负特征值；屏障、积分及下界均成立。第156行正确区分tau演化时间、prox单位二次系数与implicit Euler，不错误认证实际凸正则化。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.184004+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "78a469e25f0a7320ec91a2af57deaa046418a5ae1463ce5d90b4223eed30220d"
+  },
+  "original_private_review_sha256": "87c301452a1c422e7fda973b64412c0461c0cf986c590baeffaaa33914a2571f"
+}

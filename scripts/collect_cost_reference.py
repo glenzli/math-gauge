@@ -294,8 +294,11 @@ class Collector:
                 "answer_sha256": expected_answer, "units": units, "sources": [source]}
 
     def model(self, model, record_id):
-        public = self.public_root / "results/v0.6.0" / model / record_id
-        private = self.private_root / "results/v0.6.0" / model / record_id
+        from math_gauge.editions import result_archive
+        edition = read(self.public_root / 'benchmark.json')
+        relative = Path(result_archive(edition, model)) / model / record_id
+        public = self.public_root / relative
+        private = self.private_root / relative
         context = record_context(public, private)
         record = context["private_record"]
         candidates = list(record.get("records", []))
@@ -409,8 +412,10 @@ def main():
             record_path = args.private_root / model["record_binding"]["path"]
             if collector.upstream(record_path) != model["record_binding"]:
                 raise ValueError("The cost observation's source record changed")
-            expected[name] = record_context(args.root / "results/v0.6.0" / name / rid,
-                                             args.private_root / "results/v0.6.0" / name / rid)["expected"]
+            from math_gauge.editions import result_archive
+            relative = Path(result_archive(edition, name)) / name / rid
+            expected[name] = record_context(args.root / relative,
+                                             args.private_root / relative)["expected"]
         raw = (args.out_dir / "costs.json").read_bytes()
         projected = project_public(document, source_sha256=digest(raw), root=args.out_dir,
                                    expected_answers=expected, benchmark_version=edition["version"])

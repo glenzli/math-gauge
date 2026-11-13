@@ -1,0 +1,80 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "AHR01:A1",
+    "case_id": "AHR01",
+    "binding": {
+      "plan_sha256": "fb3cd5ad9755dbbd66a37709e87d9a097c75811e601f362cb42fcd16ea1f8fb8",
+      "slot_id": "AHR01:A1",
+      "evidence_id": "41449597e17d052c031b8d13cebf2d419c2146b1c626ab91a796f489aaeeed61",
+      "response_sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+      "history_sha256": "1f254451bb1edbd945d99ae04179b4660d6d6c4042f6e1af45eabc68242bec30",
+      "projected_request_sha256": "332ef55290304baafc14547edc62b33940c633c6daa9bf89fe72ade61bac9e4f",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "3a9bb2560a4d2287cb7472bfa1add3e5437a02bcbf0381dc3417229e0b3f6146",
+      "body_origin": {
+        "slot_id": "AHR01:A1",
+        "response_sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+        "start_byte": 0,
+        "end_byte": 30071
+      },
+      "body_sha256": "736c51d58a7b8b7bc1ab3ef325431203fff9687eb8fedac1995c955ef936ef3f",
+      "rationale_sha256": null,
+      "request_sha256": "1f4237277cd4002f5ec872b58db5fd60e2843cacc0d72b3a3262d85532a41589",
+      "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "valid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": true,
+    "notes": "95/100（35+20+30+10）。正确识别冻结旧 NodeDomainRefinement 仅约束实际输入像，严格弱于原文完整保留边域；有效的独立有限 DAG 反例与含删除子节点分支的完整域修复成立，且准确保留构造及关系侧全部外延结果。仅 repair_scope 未满分：把唯一性、NetworkObject 层提升、长度/ExtensionalEquivalent 等直接推论或题外封装列为必补完成缺口，超出所限范围。Strict 不通过；新增 claim 处罚建议0，未确认实质数学假断言或核心错误否决。",
+    "findings": [
+      "核心失配证据有效：旧 relation 的 choice_projection 只在实际输入域的像上约束，不能推出保留节点间的完整边域交集公式。",
+      "独立有限 DAG 加边反例满足原网络条件；外延仍一致，证伪的是关系定义的忠实度。",
+      "修复规则已处理删去不可达子节点后next变stop，不能孤立82行开头而判其要求无例外的旧choice投影。",
+      "范围过度：将唯一性/NetworkObject/额外命名封装作为完成缺口，虽不使其核心诊断失效，但不满足足够且不过度的修复维度。",
+      "claim建议：0；没有已确证的实质数学错误承诺，核心错误否决封顶不适用。"
+    ],
+    "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "judgment",
+        "score": 35,
+        "notes": "答卷6–8、35–38、60–64行正确区分完整局域输出像与实际输入像，明确判定当前关系定义过宽，同时没有否认外延等价命题。核心判断完整正确。"
+      },
+      {
+        "dimension_id": "valid_parts",
+        "score": 20,
+        "notes": "23–34、48–52、120–123行准确承认分划/限制算子、入口及可达节点、实际构造、路径投影、剪枝及 network_extensional_eq；关系侧局部外延及表示保持均保留，未将整份源码判错。"
+      },
+      {
+        "dimension_id": "evidence",
+        "score": 30,
+        "notes": "66–79行提供独立合法反例：原两节点恒等域{1,2,3}，U={1,3}，原0仅在1、3进入1；二分目标1为{1,2}和{3}后，在未实际到达的输出2新增0→首子节点。所有节点保持可达，全部旧record字段成立，但完整入边域从应为{1}变{1,2}。37–38行所引量词真实，结构对应和证明依赖均可复核。"
+      },
+      {
+        "dimension_id": "repair_scope",
+        "score": 10,
+        "notes": "81–89行的完整输出域逐情形修复正确，明确被删不可达子节点须转stop；97行补实际构造到精确关系桥也合理。但9、50、52、98、109–112、125–127行把唯一性、NetworkObject 层提升及已证外延/路径结果的冗余命名封装列为必要缺口，原范围并不要求这些新增目标。正确修复方向给10/15，过度要求扣5；不是将其已承认有效的核心证明再判错误。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:14.134720+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "3fbdc51050331c5536b4f23d90604ae5156ce6e27ebb1450da1d0ae04deddecd"
+  },
+  "original_private_review_sha256": "40f27b97b1abc4232b3594f273ac22ec9ff4ec6a6b85d0cb906124fef6c13d0b"
+}

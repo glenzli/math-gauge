@@ -1,0 +1,89 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-MCP003:A1",
+    "case_id": "MG-MCP003",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-MCP003:A1",
+      "evidence_id": "f4a1aea275dca3cfa830d654259aab2361711301b551b06274b26cf1c44c7c20",
+      "response_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+      "history_sha256": "ad9a5435ff1effb08815f851e6c978d43d17ea5721e548c738ca72e403b520a5",
+      "projected_request_sha256": "6968a3df547c20709725d8ba9d37d793f7375291c4c40694b6ee05a23f87216e",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "10accd76261d456297b937500a041947aa7ad8cf3b988d2d2b23ff6225460dfc",
+      "body_origin": {
+        "slot_id": "MG-MCP003:A1",
+        "response_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+        "start_byte": 0,
+        "end_byte": 29759
+      },
+      "body_sha256": "779a8189e347b97f0d7b2228578d9cc19b1032b5362887b106a1e22cbd630b21",
+      "rationale_sha256": null,
+      "request_sha256": "0abf941c6e9f47f06871b95185c18185829f1c4a05cac4065333397f5326be98",
+      "group_contract_sha256": "c033cb125bb4030ca0de329b2bc0ad5534588d5168495ca168ed8c68bde5a58d"
+    },
+    "reviewer": "Codex evaluator with independent Sol 6.1 max crosscheck",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "invalid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": false,
+    "notes": "完整原答及全部冻结材料已审，独立交叉核准一致。六维15/20/15/15/20/5，共90。U/M/K与weighted-simplex坍缩是合法且有实质价值的替代框架，主要复合/迭代/无穷端点论证成立。三条独立错误：全局上矩阵各元素被要求∞；反射零距被等同无需良定性条件的商单射；非闭可行集被声称由实际Pareto前沿刻画。每根material10，普通合计30、手稿上限50；非核心依赖可删除，不自动整题封顶，Strict不通过。5.2模糊连通解释按正式加权1链定理理解，不擅加第四根。AI审核、人审pending。",
+    "findings": [
+      "全局上矩阵只需每行加和控制，不要求每个条目∞；两个相同离散分量和部分吸收算子已有U=diag(∞,∞)而非对角0的反例。同段全局直接下M=0则是真的，不误罚。",
+      "K族非空等价反射零距是真；诱导D/~到输出商的函数还须保持零距，反射单独不足，故原括号的商单射解释为假。K本身与反变复合不受影响。",
+      "输入距离可为∞时，合法U/C可行集可能每行非零而没有任何Pareto极小元；不能普遍由前沿刻画。原有限距离标量极值及3.3闭性结论保留。",
+      "明确接受C d<1的加权单纯形坍缩，不强制参考中的逐分量N；4.2三条C复合、零距保持存在性和有限步坍缩均已核验。"
+    ],
+    "group_contract_sha256": "c033cb125bb4030ca0de329b2bc0ad5534588d5168495ca168ed8c68bde5a58d",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "M1",
+        "score": 15,
+        "notes": "15/15：有效比较域、行列、空域、非分离/底点语义固定。全局必要性附加错误未使实际所选D定义失效。"
+      },
+      {
+        "dimension_id": "M2",
+        "score": 20,
+        "notes": "20/20：真正联合上矩阵、零距保持存在等价、单调凸与正确Upsi Uphi复合。"
+      },
+      {
+        "dimension_id": "M3",
+        "score": 15,
+        "notes": "15/20：直接M及反向K定义、例子、存在/反射等价、基本复合完整；错误把反射当商映射良定及单射。"
+      },
+      {
+        "dimension_id": "M4",
+        "score": 15,
+        "notes": "15/20：扩展值算术、零距障碍、闭性、有限输入标量极值有效；无条件Pareto前沿表示缺少极小元存在条件。"
+      },
+      {
+        "dimension_id": "M5",
+        "score": 20,
+        "notes": "20/20：合法weighted-simplex阈值，严格边界/0/∞、支撑max复合与链式坍缩充分，接受替代路线。"
+      },
+      {
+        "dimension_id": "M6",
+        "score": 5,
+        "notes": "5/5：主要定义和实际域上的组合接口、迭代、正权标量化自洽；独立附加错误不重复另作理论丰度罚。"
+      }
+    ],
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.184899+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "d6eef571fd99c11df9a94ba6ffe1aa4cdad36226e52715d72dd9728925a6f03e"
+  },
+  "original_private_review_sha256": "6c61cfd97ada96df73389fa27951016218ab17d2bca896f113344035aef7daa4"
+}

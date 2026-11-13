@@ -1,6 +1,6 @@
 # 总成本参考
 
-成本是运行观察，不进入 MC、RMC、SMC 或题型权重。当前组件为0.1.0，当前题包为1.0.0；费用来源保留原0.6.0记录身份。页面只展示每个模型的总成本，原始 token 和逐题核对材料留在私有来源中。
+成本是运行观察，不进入 MC、RMC、SMC 或题型权重。当前组件为0.1.0，当前题包为1.0.0；历史费用来源保留原0.6.0记录身份，新测来源保留实际1.0.0身份。页面只展示每个模型的总成本，原始 token 和逐题核对材料留在私有来源中。
 
 ## 采用哪些作答
 
@@ -20,7 +20,11 @@ DeepSeek 两道未交卷题的327次实际调用已补回。统一按官方峰�
 
 ## 价格与用量
 
-币种为美元。Dot采用上述具名测试日费用，其余模型使用公开 API 标准价格，计入可核实的缓存优惠。OpenAI 采用标准短上下文价格作统一参考；逐次内部请求的长上下文分档、Fast/Ultrafast 服务费和订阅分摊没有完整证据时，不倒推为实际账单。
+币种为美元。Dot采用上述具名测试日费用，有可核实单价的模型使用公开 API 标准价格，计入可核实的缓存优惠。OpenAI 采用标准短上下文价格作统一参考；逐次内部请求的长上下文分档、Fast/Ultrafast 服务费和订阅分摊没有完整证据时，不倒推为实际账单。
+
+Argon采用测试时有效的公开Standard限时五折价：每百万token普通输入$2、缓存命中$0.10、输出（含思考）$10，合计 **$33.84**。[Google官方定价](https://aistudio.google.com/docs/pricing#gemini-4-argon)注明优惠截至2026年11月30日，12月1日起分别为$4／$0.20／$20；相同用量届时折算约$67.67。当前榜单保留本次价格快照。[Artificial Analysis的Argon页面](https://artificialanalysis.ai/models/gemini-4-argon)在2026年11月14日同样采用$2输入、$10输出和95%缓存折扣。
+
+Hydrogen（xhigh）通过AGY CLI1.5.7的consumer订阅运行，42份采用答卷的原生累计用量全部留存，含三轮固定自查。[官方Standard API价格](https://aistudio.google.com/docs/pricing#gemini-4-hydrogen)为每百万token普通输入$1.50、缓存命中$0.075、输出（含思考）$7.50，参考总额 **$51.63**；xhigh是同一型号的[思考档位](https://aistudio.google.com/docs/thinking)。该型号[只支持隐式缓存](https://aistudio.google.com/docs/caching)，没有适用的显式缓存写入或存储费用；原生未提供的写入计数仍保留为空。普通输入与缓存读取分别计价，思考量已包含在输出中。此值是统一API参考成本，订阅实际账单不作逐题分摊。
 
 Claude Code 明确标为 `list` 的原生标价成本，与其用量和逐模型成本相互核对。Kimi、GLM 等自定义模型的 `costBasis: unknown` 美元字段不直接采用，须根据实际记录的模型及官方价格重算。
 
@@ -28,7 +32,7 @@ Claude Code 明确标为 `list` 的原生标价成本，与其用量和逐模型
 
 DeepSeek 主榜统一采用官方峰价：输入未命中、缓存命中和输出分别为每百万 token $0.30、$0.006、$1.20，缓存命中量按实际记录计算。这与 [Artificial Analysis 当前该型号展示的费率](https://artificialanalysis.ai/models/deepseek-v4-1-flash-1017/)一致，避免运行时段影响成本比较。原按运行时段峰谷混合折算的$4.30保留在来源记录中。
 
-价格来源：[OpenAI](https://developers.openai.com/api/docs/pricing)、[Google Gemini](https://ai.google.dev/gemini-api/docs/pricing)、[Google Cloud](https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing)、[Claude](https://platform.claude.com/docs/en/about-claude/pricing)、[Kimi](https://platform.kimi.ai/)、[GLM](https://docs.z.ai/guides/overview/pricing)、[DeepSeek](https://api-docs.deepseek.com/quick_start/pricing/)。折算不含无法核实的代理加价、税费、赠金或订阅权益。
+价格来源：[OpenAI](https://developers.openai.com/api/docs/pricing)、[Google Gemini](https://aistudio.google.com/docs/pricing)、[Google Cloud](https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing)、[Claude](https://platform.claude.com/docs/en/about-claude/pricing)、[Kimi](https://platform.kimi.ai/)、[GLM](https://docs.z.ai/guides/overview/pricing)、[DeepSeek](https://api-docs.deepseek.com/quick_start/pricing/)。折算不含无法核实的代理加价、税费、赠金或订阅权益。
 
 ## 来源核对
 
@@ -69,5 +73,7 @@ Pareto 前沿保留无法同时在更低资源消耗和更高成绩上被另一�
 ## English summary
 
 The cost panel reports one retained attempt per task, or the last retained failed attempt when none delivered. Prescribed self-check rounds are included once; other retries and evaluator calls are excluded. Internal API requests within an included attempt are summed.
+
+Hydrogen's 42 retained receipts, including the three fixed self-check rounds, yield **$51.63** at official Standard API rates: $1.50 ordinary input, $0.075 cache hits and $7.50 output including thinking per million tokens. Its xhigh setting uses the same model tariff. Implicit-only caching makes explicit cache writes and storage inapplicable; unavailable native write counters remain null. Argon's **$33.84** uses the published introductory rates through November 30, 2026 ($2 / $0.10 / $10); the same usage at the announced December rates would cost about $67.67. Artificial Analysis currently uses the same introductory rates. These are API reference costs, not an allocation of subscription fees.
 
 Dot Underlying (2026-11-08) used a separate allowance included with the subscription. The user confirmed that this allowance covered the tests without additional payment, so its additional cost is $0; the subscription is not amortized per task. Its backend SKU and token usage remain unknown. Other values use USD API reference prices with verified cache discounts. Argon's $33.84 includes both nondeliveries (about $11.98). All 39 selected native totals match Infra Sentinel; its C003 final cumulative receipt equals the sum of 75 reported generation steps. The user selected that reported usage as the reference-cost scope, without imputing the three failed stream retries. Their original usage gaps remain retained; this is not GCP invoice reconciliation. Source-bound cost resolutions preserve the original counters and their coverage. DeepSeek's 327 recovered calls from its two selected nondeliveries are included. Its benchmark total uses uniform official peak rates with measured cache discounts, giving $6.41; the former time-of-day calculation of $4.30 remains in the source record. Terra Max's four historical gaps are now closed by unique original-dispatch/native-ledger matching: all 42 cost slots have actual usage, giving a $10.96 reference total without an approximation mark. Gemini 3.8 Flash now also has actual usage for all 42 cost slots: the remaining four calls were recovered by exact native receipt hashes using restored conversation IDs and submission times, giving an API reference total of $23.41 without an approximation mark. Kimi and GLM use the user-confirmed API caller ledger: 904 records are bound to 81 retained attempts, while the other 628 records are excluded. Repricing the recorded fields yields $29.853496 and $40.87734396. Kimi includes $0.366596 from the input fields of seven ERROR records. The caller scope replaces prior imputation; absent records and recorded zero-output fields do not receive generated-token estimates. Original native evidence, statuses and prior estimates remain retained. This source-specific confirmation is not an invoice reconciliation or a general missing-log exemption. All plot points have equal size. Solid points mean all 39 initial tasks have normal final submissions. Fewer than 39 is always hollow; forcibly collected content does not count. This marker stays unchanged across cost/time axes and MC/RMC/SMC modes, independently of score or review coverage. Tooltips and accessible labels include the normal-submission count. Cost and time use linear axes starting at zero, so distances reflect actual dollar amounts or minutes. The cost frontier requires verified costs and completed evaluations; the time frontier uses recorded five-task weighted time independently of cost coverage. Raw usage and private task identifiers stay private.

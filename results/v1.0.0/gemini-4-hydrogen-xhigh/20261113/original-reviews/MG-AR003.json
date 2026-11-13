@@ -1,0 +1,73 @@
+{
+  "schema": "math-gauge.public-original-review-projection/v1",
+  "judgment": {
+    "schema": "math-gauge.reliability-review/v1",
+    "slot_id": "MG-AR003:A1",
+    "case_id": "MG-AR003",
+    "binding": {
+      "plan_sha256": "8a86b4c7d81edbd94c5cd40547b94d95e2bb518cc4a4344e692419c6ff54b1f6",
+      "slot_id": "MG-AR003:A1",
+      "evidence_id": "5615234dc18c868d2bfe4bcdb74854528be2f158d6e996c20fc8f2fdfc8d490b",
+      "response_sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+      "history_sha256": "bf1f96644c828868992c3765f1762875717c9c0251c7caa4ee0ef2e43510cc2c",
+      "projected_request_sha256": "845f1732c0e5e7c6ce3b63ac6e20d626e6e107300c68120034bcdd7587ee4b83",
+      "prompt_sha256": null,
+      "parser_version": "math-gauge.keep-full/v1",
+      "parent_slot": null,
+      "parent_response_sha256": null,
+      "parent_material_sha256": null,
+      "material_sha256": "916423a728af213a1136bb92b55dd94e73c9fe3e6efda41f9cbc52e7faf2d26c",
+      "body_origin": {
+        "slot_id": "MG-AR003:A1",
+        "response_sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+        "start_byte": 0,
+        "end_byte": 16020
+      },
+      "body_sha256": "8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e",
+      "rationale_sha256": null,
+      "request_sha256": "f129a24ea4240b25053c2a7e1c233c213c82be37bdb842ff49fe91303008053c",
+      "group_contract_sha256": "826a01e25228de8de09f74e2cf9523381d18095d6c5dce0d111e073f8374b2e6"
+    },
+    "reviewer": "Sol 6.1 max, independent evaluator",
+    "reviewer_kind": "ai",
+    "decision": "partial",
+    "assumption_fidelity": "clean",
+    "proof_validity": "invalid",
+    "scope_accuracy": "incorrect",
+    "unnecessary_restriction": true,
+    "notes": "独立审核正常封存首答；按冻结子检查full/half/zero累计为45/60、20/30、10/10，共75/100。正确识别映射集、S1引用条件、超滤子措辞及U小遗漏；但明确把适用的CGHaus Cartesian闭性定理引用误判为实质循环论证，错误否决原答后文独立有效核心路线，故major_error=true、Strict不通过。原题明许匹配条件的标准定理，不能追加必须从零证明该定理的解法限制。新增RMC建议单一critical20分并适用核心错误否决整题最高0；不重复计算其S3/S6多个后果。",
+    "findings": [
+      "AR003-CGHAUS-REJECTION：原答第38行将允许的标准CGHaus指数定理引用称为“跳过核心证明 / 实质循环论证”，第40、83、93行据此否决S3/S6.1证明。该定理的实际条件由原答的kX、kY、kZ、k乘积与k紧开指数对象满足；与目标相关不构成循环引用。"
+    ],
+    "group_contract_sha256": "826a01e25228de8de09f74e2cf9523381d18095d6c5dce0d111e073f8374b2e6",
+    "format_review": {
+      "decision": "valid",
+      "notes": "Source projection: actual first normal native final is nonempty and complete as a text delivery. Original answer and all self-assessments retained; no new mathematical judgment."
+    },
+    "dimensions": [
+      {
+        "dimension_id": "core_judgment",
+        "score": 45,
+        "notes": "45/60。mapping_identification=30/30：第15–21行准确改为C(X,Y)，区分固定Y与全Y结论。exponential_law=0/15：第25–29行确实识别S1局紧变量错位，但第31–40行又实质错误否决原答独立CGHaus标准路线；按“实质错误得零”处理该组合检查，不作为仅证据不完整给半分。ultrafilter=5/5：第44–48行识别“恰有一个”过强，并保留“至少一个”及修复后的反例。retained_results=10/10：第6、55、71、75、78、85–86行仍明确保留全部最终判断、全Y充要结论、S1/S4与S6的正确结论及非k反例；不因同一CGHaus根因再逐段扣这一保留项。"
+      },
+      {
+        "dimension_id": "evidence_scope",
+        "score": 20,
+        "notes": "20/30。mapping_evidence=15/15：第17–18行用X=Y=非k Hausdorff Z的恒等映射给合法固定目标反例，并在第20–21行解释全Y结论可保留。exponential_scope=0/10：第27–29行的变量核查正确，但第38–40、83、93行未承认已存在的独立有效CGHaus路线而把标准定理引用判为循环；这是实质错误范围判断。ultrafilter_scope=5/5：第46行说明若K∩N不属于U，两个部分同时不属于U，第47–48行用至少一个即可保留开覆盖论证。"
+      },
+      {
+        "dimension_id": "completeness",
+        "score": 10,
+        "notes": "10/10。beta_size=5/5：第59行明确指出beta D的U小验证未展开，并给P(P(D))的正确补足；没有声称事实上越界。mapping_space_size=5/5：第65行指出/补足C(kX,kY)⊂Y^X及拓扑幂集的U小验证。无需重做母题或交Lean。"
+      }
+    ],
+    "major_error": true,
+    "major_error_notes": "核心有效证明的错误否决。封存答案第38行逐字：而是把“$\\mathbf{CGHaus}$ 是笛卡尔闭范畴且指数对象为 $kC_{co}(kX,kY)$”作为黑箱结论直接引用，属于**跳过核心证明 / 实质循环论证**。 UTF-8字节区间[6335,6509)；SHA256=8263e6a9db9a2976358172ccb6b28eec124d511e8cf6f79ca3761ec0b1308f5e。第40、83、93行将此错误指控用于否定S3求值/伴随和S6.1连续复合的当前证明。原题第7行明确允许适用标准定理，原答所援引的CGHaus笛卡尔闭性及其指数对象正是匹配条件的合法标准结果。不是仅漏一项核查，亦不由75分反推major_error。",
+    "post_observation_format_projection": true,
+    "recorded_at": "2026-11-13T16:19:12.181898+00:00",
+    "review_revision": 1,
+    "supersedes_review_sha256": null,
+    "review_sha256": "b95d714c34fa13d545dbf127673cbaf16109ad0d90b6ca72e888b8aa6f7eeddf"
+  },
+  "original_private_review_sha256": "ee8e211788366218043e906a688786fec0148821289300c93aa222b5f01aaf4c"
+}

@@ -95,6 +95,15 @@ MESSAGES = {
         'GLM 5.3 had frequent timeouts and missed deliveries with both Codex CLI and Claude Code. The retained results use Claude Code. Without a normal submission, RMC and SMC are zero; verified original work may earn MC.',
     'Argon部分任务未能正常结束并交卷。两题虽保留可核实的数学内容，但仅计入MC，RMC与SMC均为0。':
         'Some Argon tasks did not terminate with a normal submission. Two tasks retained verifiable mathematical content and receive MC only; their RMC and SMC are zero.',
+    'AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。':
+        'Retained AGY CLI runs show serious response-delivery and termination defects that can lose model replies or keep waiting until timeout. Additional reruns are allowed for evidenced harness faults, so physical calls may exceed the usual three attempts. Verified idle tails are removed from displayed times while original clocks are retained. Mathematical errors after a normal submission do not permit a rerun.',
+    'Harness故障更正': 'Harness source correction',
+    '补充逐项评审': 'Supplemental item review',
+    '原后端答卷已恢复并接纳；三种评分采用该原答。原CLI ERROR保留。': 'The original backend reply was recovered and adopted for all three scores. The original CLI ERROR is retained.',
+    'HCH02采用因harness回传故障而恢复的原答；原始ERROR和旧审核保留，按既有规则补审。': 'HCH02 uses the original reply recovered after a harness delivery fault. The original ERROR and previous review are retained; the existing scoring rules apply.',
+    'HCH02采用因回传故障而恢复的原始后端答卷，按原判分规则补审。原始ERROR、旧成绩与审核均保留；没有补跑，也没有将执行错误改写为成功。': 'HCH02 uses its original backend reply recovered after a delivery fault and reviewed under the existing rules. The original ERROR, scores and reviews are retained. No model was rerun and no execution error was relabeled as success.',
+    '恢复来源与更正记录 ↗': 'Recovery sources and correction ↗',
+    '因harness回传故障恢复的原答；原生ERROR与旧审核保留，按既有规则补审。': 'Original reply recovered after a harness delivery fault. The native ERROR and previous review are retained; the existing scoring rules apply.',
     '当前留档没有另计的非逻辑重跑。': 'No separately counted nonlogical retries in the retained records.',
     '模型详细评测 · 公开＋私有合并成绩': 'Model evaluation · combined public and private results',
     '当前成绩': 'Current results', '分类贡献': 'Category contributions', '书面论证': 'Written arguments',

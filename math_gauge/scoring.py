@@ -2970,18 +2970,59 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
                                    claim_review=None, claim_policy=None, written_argument_inputs=None,
                                    written_replacement_inputs=None, manuscript_completion_inputs=None,
                                    submission_review=None, submission_policy=None):
-    source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
-    substitutions = formalization_substitutions(inputs, formalization_review)
-    trajectory = strict_alignment_trajectory(review, source_policy)
-    alignment = (_alignment_trajectory(review, source_policy, positive_only=True)[0]
-                 if mode == "capability" else source["alignment_selfcheck"])
-    if submission_review is not None and submission_review.get('normal_alignment') is not None:
-        if assessment_policy['version']!='0.9.0' or submission_policy is None:
-            raise ValueError('Normal-final trajectory requires its explicit submission policy')
-        selected=submission_review['normal_alignment']
-        alignment=_alignment_trajectory(selected,source_policy,positive_only=mode=='capability',
+    if review.get('primary_source_kind') == 'submission_selected':
+        from . import submission_evidence
+        if (assessment_policy.get('version') != '0.9.0' or submission_policy is None
+                or submission_review is None or submission_review.get('normal_alignment') != review
+                or review.get('source_selection_component_version') != '0.1.0'
+                or review.get('model_label') != inputs.get('model_label')
+                or submission_review.get('attempt_condition') not in review.get('attempt_conditions', [])):
+            raise ValueError('Selected final trajectory requires its matching current submission evidence')
+        submission_evidence.validate_policy(submission_policy)
+        cases = {case['case_id'] for case in inputs['plan']['case_index']}
+        rows = {row['case_id']: row for row in inputs['slots'] if row['slot_id'].endswith(':A1')}
+        submission_evidence.validate_condition(submission_review, model_label=inputs['model_label'],
+            case_ids=cases, response_hashes={cid: row.get('response_sha256') for cid, row in rows.items()})
+        selected_rounds = {row['round']: row for row in review['rounds']}
+        for row in submission_review['rounds']:
+            snapshot = selected_rounds.get(row['round'], {}).get('snapshot') or {}
+            if snapshot.get('source_response_sha256') != row.get('source_response_sha256'):
+                raise ValueError('Selected final trajectory borrowed a different round response')
+        substitutions = formalization_substitutions(inputs, formalization_review)
+        policy = _alignment_policy(source_policy)
+        if policy['version'] != '0.4.0':
+            raise ValueError('Current selected finals require the four-source engineering policy0.4.0')
+        baseline = review['baseline']
+        values = _alignment_snapshot(baseline, set(policy['obligation_ids']), 'submission_selected')
+        chapter = next(case for case in formalization_review['cases'] if case['case_id'] == 'MG-C003')
+        original_sha = (baseline.get('source_response_sha256') or
+                        (baseline.get('source_sha256') if baseline.get('source_kind') == 'original_final' else None))
+        if (chapter.get('original_response_sha256') != original_sha
+                or {item['id']: item['complete'] for item in chapter['obligations']} != values
+                or baseline.get('source_kind') == 'sealed_workspace'
+                   and chapter.get('source_sha256') != baseline.get('source_sha256')
+                or baseline.get('source_kind') == 'original_final'
+                   and baseline.get('source_sha256') != original_sha):
+            raise ValueError('C003 final baseline differs from its original engineering judgment')
+        alignment = _alignment_trajectory(review, policy, positive_only=mode == 'capability',
             allow_submission_sources=True)[0]
-        trajectory=strict_alignment_trajectory(selected,source_policy,allow_submission_sources=True)
+        trajectory = strict_alignment_trajectory(review, policy, allow_submission_sources=True)
+        source_breakdown = _lean_formalization_breakdown(inputs['plan'], inputs, {}, substitutions,
+            formalization_review=formalization_review)
+    else:
+        source = score_record_inputs(inputs, review, source_policy, formalization_review=formalization_review)
+        source_breakdown = source['lean_formalization_breakdown']
+        substitutions = formalization_substitutions(inputs, formalization_review)
+        trajectory = strict_alignment_trajectory(review, source_policy)
+        alignment = (_alignment_trajectory(review, source_policy, positive_only=True)[0]
+                     if mode == "capability" else source["alignment_selfcheck"])
+        if submission_review is not None and submission_review.get('normal_alignment') is not None:
+            if assessment_policy['version']!='0.9.0' or submission_policy is None:
+                raise ValueError('Normal-final trajectory requires its explicit submission policy')
+            selected=submission_review['normal_alignment']
+            alignment=_alignment_trajectory(selected,source_policy,positive_only=mode=='capability',
+                allow_submission_sources=True)[0]
+            trajectory=strict_alignment_trajectory(selected,source_policy,allow_submission_sources=True)
     result = score_assessment_inputs(inputs, assessment_policy, strict_policy, mode=mode,
         mathematical_substitutions=substitutions, alignment_summary=alignment,
         strict_trajectory=trajectory, theorem_extension_inputs=theorem_extension_inputs,
@@ -2990,7 +3031,14 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
         written_replacement_inputs=written_replacement_inputs,
         manuscript_completion_inputs=manuscript_completion_inputs,
         submission_review=submission_review,submission_policy=submission_policy)
-    breakdown=deepcopy(source['lean_formalization_breakdown'])
+    result['lean_formalization_breakdown'] = submission_formalization_breakdown(
+        source_breakdown, submission_review)
+    return result
+
+
+def submission_formalization_breakdown(source_breakdown, submission_review):
+    """Reuse original obligation counts, replacing only selected delivery reviews."""
+    breakdown=deepcopy(source_breakdown)
     if submission_review is not None:
         observed={r['case_id']:r for r in submission_review['initials']}
         for case in breakdown['cases']:
@@ -3006,8 +3054,7 @@ def score_assessment_record_inputs(inputs, review, source_policy, *, formalizati
             values=[Fraction(c['complete_count'],c['total']) if c['complete_count'] is not None else None
                     for c in breakdown['cases'] if c['case_id'] in family['case_ids']]
             family['percent']=_percent(sum(values,Fraction())/len(values)) if all(v is not None for v in values) else None
-    result['lean_formalization_breakdown']=breakdown
-    return result
+    return breakdown
 
 
 def score_strict_record_inputs(inputs, review, source_policy, *, formalization_review,
