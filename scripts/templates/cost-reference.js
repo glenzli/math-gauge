@@ -22,20 +22,18 @@
   costNote:['实线连接费用已核对且具有完整成绩的 Pareto 前沿模型。','The line connects Pareto-frontier models with verified costs and complete evaluations.'],
   timeNote:['实线按同一组日常五题的已记录加权耗时与完整数学成绩计算。耗时包含工具和等待。','The time frontier uses recorded weighted time for the same five everyday tasks and completed mathematical evaluations. Time includes tools and waiting.'],
   noData:['没有足够的数据绘图。','Insufficient data to plot.'],score:['成绩','Score'],lowerBound:['仅有成本下限','Cost lower bound only'],
-  names:['名称','Labels'],autoNames:['自动','Auto'],allNames:['全部','All'],selectedNames:['仅选中','Selected'],
-  clearSelection:['清除选择','Clear selection'],pinLabel:['固定名称','Pin label'],unpinLabel:['取消固定','Unpin label'],
+  highlight:['高亮','Highlight'],
+  clearSelection:['清除高亮','Clear highlights'],pinLabel:['固定高亮','Pin highlight'],unpinLabel:['取消高亮','Unpin highlight'],
   selectionCount:['已固定 {count} 个','{count} pinned'],
-  interactionHint:['悬停查看详情，点击点或名称可固定标签。','Hover for details; click a point or name to pin its label.'],
-  autoHint:['自动优先标注前沿与选中模型；悬停查看，点击固定。','Auto prioritizes frontier and pinned models. Hover to inspect; click to pin.']
+  interactionHint:['悬停查看详情，点击点或名称可固定高亮。','Hover for details; click a point or name to pin its highlight.']
  };
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const svg=(tag,attrs={},text)=>{const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));if(text!=null)n.textContent=text;return n};
- let lang='zh',axis='cost',mode='partial',labelMode='auto',selected=new Set();
+ let lang='zh',axis='cost',mode='partial',selected=new Set();
  const t=key=>labels[key][lang==='en'?1:0],locale=()=>lang==='en'?'en-US':'zh-CN';
  const money=v=>'$'+v.toLocaleString(locale(),{minimumFractionDigits:2,maximumFractionDigits:2});
  const amount=m=>m.total_usd??(m.status==='partial'?m.known_usd:null);
  const costText=m=>amount(m)==null?'—':(m.status==='estimated'?'≈ ':m.status==='partial'?'≥ ':'')+money(amount(m));
- const short=m=>m.label.replace('Claude ','').replace('Gemini ','').replace('DeepSeek v4.1 Flash','DeepSeek').replace('Underlying','').trim();
  const brand=m=>m.theme.color||m.theme.ink||'#556f98';
  function link(m){const a=node('a',m.label);a.href='models/'+encodeURIComponent(m.model_id)+'/index.html?lang='+lang+'&score='+mode;return a}
  function icon(m){const img=node('img');img.src=m.logo.data_url;img.alt='';return img}
@@ -96,7 +94,7 @@
    const halo=svg('circle',{cx,cy,r:7,class:'cost-point-halo',fill:'none',stroke:brand(m),'aria-hidden':'true'});
    target.append(halo,p);pointLayer.append(target);
    if(axis==='cost'&&m.status==='partial')target.append(svg('path',{d:`M${cx+r+4},${cy}h18m-5,-4l5,4l-5,4`,fill:'none',stroke:brand(m),'stroke-width':1.5}));
-   const text=svg('text',{class:'cost-label',fill:brand(m),'font-size':fontSize,visibility:'hidden'},short(m));
+   const text=svg('text',{class:'cost-label',fill:brand(m),'font-size':fontSize,visibility:'hidden'},m.label);
    text.style.fontSize=fontSize+'px';labelLayer.append(text);
    const measured=text.getBBox();text.removeAttribute('visibility');
    const label=svg('g',{class:'cost-label-target','data-cost-label':m.model_id,'data-cost-model':m.model_id,role:'button','aria-label':m.label,'aria-pressed':selected.has(m.model_id)});
@@ -109,7 +107,7 @@
   });
   const segments=fp.slice(1).map((m,i)=>({x1:x(axis==='cost'?amount(fp[i]):fp[i].seconds/60),y1:y(fp[i].scores[mode].value),x2:x(axis==='cost'?amount(m):m.seconds/60),y2:y(m.scores[mode].value)}));
   const layouts=globalThis.MathGaugeCostLabels.layout(placed,{bounds:{left:left-8,top:top-8,right:W-8,bottom:bottom-4},
-   mode:labelMode,maxLabels:Math.max(5,Math.min(20,Math.floor(plot.getBoundingClientRect().width/78))),padding:4,lines:segments,interactiveConnectors:true});
+   mode:'all',padding:4,lines:segments});
   layouts.forEach(layout=>{
    const state=states.get(layout.id);state.layout=layout;
    state.text.setAttribute('x',layout.x+labelPadding-state.measured.x);state.text.setAttribute('y',layout.y+labelPadding-state.measured.y);
@@ -121,9 +119,9 @@
   function highlight(id,event){
    plot.classList.toggle('cost-has-active',id!=null);
    states.forEach((state,key)=>{
-    const active=key===id,pinned=selected.has(key),visible=state.layout.visible||pinned||active;
+    const active=key===id,pinned=selected.has(key);
     for(const part of [state.target,state.label,state.line]){part.classList.toggle('cost-active',active);part.classList.toggle('cost-pinned',pinned)}
-    state.label.style.display=visible?'':'none';state.line.style.display=visible&&(active||pinned)?'':'none';
+    state.label.style.display='';state.line.style.display=active||pinned||state.layout.connector.needed?'':'none';
    });
    if(id==null){tooltip.hidden=true;return}
    const state=states.get(id),m=state.m,score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2);
@@ -173,17 +171,14 @@
 
  function render(){
   const params=new URLSearchParams(location.search);lang=params.get('lang')==='en'?'en':'zh';axis=params.get('cost-axis')==='time'?'time':'cost';mode=modes.includes(params.get('cost-score'))?params.get('cost-score'):'partial';
-  labelMode=['auto','all','selected'].includes(params.get('cost-labels'))?params.get('cost-labels'):'auto';
   const validIds=new Set(data.models.map(m=>m.model_id));selected=new Set((params.get('cost-selected')||'').split(',').filter(id=>validIds.has(id)));
   document.getElementById('cost-tooltip').hidden=true;
   document.querySelectorAll('[data-cost-t]').forEach(n=>n.textContent=t(n.dataset.costT));
   document.querySelectorAll('[data-cost-axis]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costAxis===axis)));
   document.querySelectorAll('[data-cost-score]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costScore===mode)));
-  document.querySelectorAll('[data-cost-labels]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costLabels===labelMode)));
-  document.querySelector('[data-cost-group="names"]').setAttribute('aria-label',t('names'));
   document.getElementById('cost-selection-count').textContent=selected.size?t('selectionCount').replace('{count}',selected.size):'';
   document.getElementById('cost-clear-selection').hidden=!selected.size;
-  document.getElementById('cost-interaction-hint').textContent=t(labelMode==='auto'?'autoHint':'interactionHint');
+  document.getElementById('cost-interaction-hint').textContent=t('interactionHint');
   const scoreName=({capability:'MC',partial:'RMC',strict:'SMC'})[mode];
   document.getElementById('cost-frontier-title').textContent=t(axis==='cost'?'costAxisButton':'timeAxisButton');
   document.getElementById('cost-frontier-subtitle').textContent=t(axis==='cost'?'costSubtitle':'timeSubtitle').replace('{score}',scoreName);
@@ -194,8 +189,8 @@
   document.getElementById('cost-frontier-note').textContent=t(axis==='cost'?'costNote':'timeNote');document.getElementById('cost-table-score').textContent=scoreName;
   board.setAttribute('aria-label',t('title'));renderBoard();renderPlot();
  }
- document.querySelectorAll('[data-cost-axis],[data-cost-score],[data-cost-labels]').forEach(b=>b.addEventListener('click',()=>{const u=new URL(location.href);if(b.dataset.costAxis)u.searchParams.set('cost-axis',b.dataset.costAxis);else if(b.dataset.costScore)u.searchParams.set('cost-score',b.dataset.costScore);else u.searchParams.set('cost-labels',b.dataset.costLabels);history.replaceState(null,'',u);render()}));
- document.getElementById('cost-clear-selection').addEventListener('click',()=>{clearSelection();document.querySelector('[data-cost-labels="'+labelMode+'"]').focus({preventScroll:true})});
+ document.querySelectorAll('[data-cost-axis],[data-cost-score]').forEach(b=>b.addEventListener('click',()=>{const u=new URL(location.href);if(b.dataset.costAxis)u.searchParams.set('cost-axis',b.dataset.costAxis);else u.searchParams.set('cost-score',b.dataset.costScore);history.replaceState(null,'',u);render()}));
+ document.getElementById('cost-clear-selection').addEventListener('click',()=>{clearSelection();document.querySelector('[data-cost-score="'+mode+'"]').focus({preventScroll:true})});
  document.getElementById('cost-frontier').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();clearSelection();document.getElementById('cost-tooltip').hidden=true}});
  let resizeFrame=0,lastWidth=plot.getBoundingClientRect().width;
  const observer=new ResizeObserver(()=>{const width=plot.getBoundingClientRect().width;if(Math.abs(width-lastWidth)<1)return;lastWidth=width;cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(renderPlot)});observer.observe(plot);
