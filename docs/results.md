@@ -15,7 +15,7 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 | Sol 6.1 (xhigh) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
 | Terra 6.1 (max) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
 | Terra 6.1 (xhigh) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
-| Gemini Hydrogen (xhigh) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
+| Gemini 4 Hydrogen (xhigh) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
 | Kimi 3.1 Pro (max) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
 | DeepSeek v4.1 Flash (max) | Codex CLI | 76.71 | 64.23 | 25.83 | 37／1／39 |
 | Gemini 4 Argon (high) | AGY CLI⁴ | 77.00 | 60.91 | 37.92 | 38／1／39 |
@@ -57,7 +57,7 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 | Sol 6.1 (xhigh) | 98.93% | 82.61% |
 | Terra 6.1 (max) | 97.93% | 72.51% |
 | Terra 6.1 (xhigh) | 99.80% | 69.67% |
-| Gemini Hydrogen (xhigh) | 90.53% | 78.42% |
+| Gemini 4 Hydrogen (xhigh) | 90.53% | 78.42% |
 | Kimi 3.1 Pro (max) | 91.14% | 68.03% |
 | DeepSeek v4.1 Flash (max) | 76.64% | 57.36% |
 | Gemini 4 Argon (high) | 82.67% | 61.78% |
@@ -80,4 +80,4 @@ AI审核，部分人工抽审：Sol 6.1 Max全审，Astra 6 Max／Dot抽审核�
 
 HCH02恢复原答的更正于2026-11-13按用户确认计入，原判分标准和benchmark1.0.0不变。该原答代码块原样编译失败，核验承诺按Flash同题标准扣罚；更正后的总分为MC77.00／RMC60.91／SMC37.92。原始ERROR、原记录及旧成绩保留，见[更正说明](harness-corrections.md)。
 
-Gemini Hydrogen（xhigh）使用AGY CLI1.5.7订阅完成39道初答与三轮固定自查。整章形式化首答及三轮均核实92/92；R1、R2诊断不准确，自查SMC不通过。三大类RMC贡献为书面25.30/35、Lean33.33/35、研究18.18/30；所有评分使用同一批规则选定答卷。本次没有新增人工数学批准。
+Gemini 4 Hydrogen（xhigh）使用AGY CLI1.5.7订阅完成39道初答与三轮固定自查。整章形式化首答及三轮均核实92/92；R1、R2诊断不准确，自查SMC不通过。三大类RMC贡献为书面25.30/35、Lean33.33/35、研究18.18/30；所有评分使用同一批规则选定答卷。本次没有新增人工数学批准。

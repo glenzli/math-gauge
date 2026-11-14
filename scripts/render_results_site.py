@@ -78,7 +78,7 @@ MODEL_LABELS = {
     "deepseek-v4.1-flash-1017": "DeepSeek v4.1 Flash (max)",
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
-    "gemini-4-hydrogen-xhigh": "Gemini Hydrogen (xhigh)",
+    "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)"
 }
 MODEL_SHORT_LABELS = {
@@ -96,7 +96,7 @@ MODEL_SHORT_LABELS = {
     "deepseek-v4.1-flash-1017": "DeepSeek (max)",
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
-    "gemini-4-hydrogen-xhigh": "Hydrogen (xhigh)",
+    "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)"
 }
 

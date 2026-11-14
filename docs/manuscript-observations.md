@@ -8,7 +8,7 @@
 
 | 模型 | 已核实额外成果组 | 已审手稿 |
 |---|---:|---:|
-| Gemini Hydrogen (xhigh) | 11 | 5/5 |
+| Gemini 4 Hydrogen (xhigh) | 11 | 5/5 |
 | Claude Opus 5.5 (max) | 6 | 5/5 |
 | Claude Sonnet 5.5 (max) | 6 | 5/5 |
 | Sol 6.1 (max) | 2 | 5/5 |
