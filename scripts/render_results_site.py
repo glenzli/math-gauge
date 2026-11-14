@@ -684,7 +684,7 @@ def render(data, *, timing_reference=None, cost_reference=None):
               "TIMING_JS": '<script src="assets/timing-reference.js"></script>' if timing_reference else '',
               "COST_REFERENCE": render_cost_panel(cost_reference),
               "COST_CSS": '<link rel="stylesheet" href="assets/cost-reference.css">' if cost_reference else '',
-              "COST_JS": '<script src="assets/cost-reference.js"></script>' if cost_reference else ''}
+              "COST_JS": '<script src="assets/cost-label-layout.js"></script><script src="assets/cost-reference.js"></script>' if cost_reference else ''}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
     return re.sub(r"@@MG_(" + '|'.join(re.escape(key) for key in values) + r")@@",
                   lambda match: values[match[1]], template)
@@ -702,7 +702,7 @@ def write_site(destination, *, source_root=ROOT):
     if costs is not None:
         files['downloads/cost-reference.json'] = json.dumps(costs,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
-    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-reference.js"):
+    for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
     for model in data["models"]:

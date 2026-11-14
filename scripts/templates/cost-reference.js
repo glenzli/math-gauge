@@ -21,11 +21,16 @@
   range:['估算范围','Scenario range'],minutes:['分钟','min'],
   costNote:['实线连接费用已核对且具有完整成绩的 Pareto 前沿模型。','The line connects Pareto-frontier models with verified costs and complete evaluations.'],
   timeNote:['实线按同一组日常五题的已记录加权耗时与完整数学成绩计算。耗时包含工具和等待。','The time frontier uses recorded weighted time for the same five everyday tasks and completed mathematical evaluations. Time includes tools and waiting.'],
-  noData:['没有足够的数据绘图。','Insufficient data to plot.'],score:['成绩','Score'],lowerBound:['仅有成本下限','Cost lower bound only']
+  noData:['没有足够的数据绘图。','Insufficient data to plot.'],score:['成绩','Score'],lowerBound:['仅有成本下限','Cost lower bound only'],
+  names:['名称','Labels'],autoNames:['自动','Auto'],allNames:['全部','All'],selectedNames:['仅选中','Selected'],
+  clearSelection:['清除选择','Clear selection'],pinLabel:['固定名称','Pin label'],unpinLabel:['取消固定','Unpin label'],
+  selectionCount:['已固定 {count} 个','{count} pinned'],
+  interactionHint:['悬停查看详情，点击点或名称可固定标签。','Hover for details; click a point or name to pin its label.'],
+  autoHint:['自动优先标注前沿与选中模型；悬停查看，点击固定。','Auto prioritizes frontier and pinned models. Hover to inspect; click to pin.']
  };
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const svg=(tag,attrs={},text)=>{const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));if(text!=null)n.textContent=text;return n};
- let lang='zh',axis='cost',mode='partial';
+ let lang='zh',axis='cost',mode='partial',labelMode='auto',selected=new Set();
  const t=key=>labels[key][lang==='en'?1:0],locale=()=>lang==='en'?'en-US':'zh-CN';
  const money=v=>'$'+v.toLocaleString(locale(),{minimumFractionDigits:2,maximumFractionDigits:2});
  const amount=m=>m.total_usd??(m.status==='partial'?m.known_usd:null);
@@ -71,49 +76,114 @@
   const frontier=new Set(data.frontiers[mode][axis]),byId=Object.fromEntries(rows.map(m=>[m.model_id,m]));
   const fp=data.frontiers[mode][axis].filter(id=>byId[id]).map(id=>byId[id]);
   if(fp.length>1)plot.append(svg('path',{d:fp.map((m,i)=>(i?'L':'M')+x(axis==='cost'?amount(m):m.seconds/60)+','+y(m.scores[mode].value)).join(' '),class:'cost-frontier-path'}));
-  const occupied=[],placed=[];
+  // Geometry is independent of score projection; only labels may move.
+  const connectorLayer=svg('g',{class:'cost-connectors','aria-hidden':'true'}),pointLayer=svg('g'),labelLayer=svg('g');
+  plot.append(connectorLayer,pointLayer,labelLayer);
+  const placed=[],states=new Map(),tooltip=document.getElementById('cost-tooltip'),wrap=plot.parentElement;
+  const screenScale=plot.getBoundingClientRect().width/W||1,fontSize=Math.max(12,Math.min(16,12/screenScale)),labelPadding=3;
   rows.forEach((m,index)=>{
    const value=axis==='cost'?amount(m):m.seconds/60,cx=x(value),cy=y(m.scores[mode].value),r=3.5;
    const resourceStatus=axis==='cost'?m.status:'observed';
    const complete=m.answer_delivery.complete===true,delivery=t('normalSubmissions')+' '+(m.answer_delivery.active_final??'—')+'/39';
-   if(axis==='cost'&&m.estimate_range_usd){plot.append(svg('line',{x1:x(m.estimate_range_usd[0]),y1:cy,x2:x(m.estimate_range_usd[1]),y2:cy,class:'cost-error-bar',stroke:brand(m)}))}
+   if(axis==='cost'&&m.estimate_range_usd)pointLayer.append(svg('line',{x1:x(m.estimate_range_usd[0]),y1:cy,x2:x(m.estimate_range_usd[1]),y2:cy,class:'cost-error-bar',stroke:brand(m)}));
    const resourceText=axis==='cost'?costText(m):(m.seconds/60).toFixed(1)+' '+t('minutes');
    const p=svg('circle',{cx,cy,r,class:'cost-model-point '+resourceStatus,
-    fill:complete?brand(m):'#fff',stroke:brand(m),tabindex:0,role:'img','data-cost-point':m.model_id,
+    fill:complete?brand(m):'#fff',stroke:brand(m),tabindex:0,role:'button','data-cost-point':m.model_id,
+    'aria-pressed':selected.has(m.model_id),
     'aria-label':m.label+' · '+resourceText+' · '+({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2)+' · '+delivery});
    if(frontier.has(m.model_id))p.setAttribute('stroke-width','3');
-   const target=svg('g',{class:'cost-model-target'});
-   target.append(svg('circle',{cx,cy,r:7,fill:'transparent','aria-hidden':'true'}),p);
-   const tooltip=document.getElementById('cost-tooltip'),wrap=plot.parentElement;
-   const show=event=>{
-    const score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2);
-    tooltip.textContent=m.label+'\n'+delivery+'\n'+t('total')+' '+costText(m)+'\n'+score+(m.seconds==null?'':'\n'+t('timeLabel')+' '+(m.seconds/60).toFixed(1))+
-     (m.status==='estimated'?'\n'+t('range')+' '+m.estimate_range_usd.map(money).join('–'):m.status==='partial'?'\n'+t('lowerBound'):'');
-    tooltip.hidden=false;
-    const box=wrap.getBoundingClientRect(),pbox=p.getBoundingClientRect(),px=event?.clientX??pbox.left,py=event?.clientY??pbox.top;
-    tooltip.style.left=Math.max(4,Math.min(px-box.left+12,box.width-tooltip.offsetWidth-8))+'px';tooltip.style.top=Math.max(5,py-box.top-tooltip.offsetHeight-12)+'px';
-   };
-   target.addEventListener('mouseenter',show);target.addEventListener('mousemove',show);p.addEventListener('focus',()=>show());target.addEventListener('mouseleave',()=>tooltip.hidden=true);p.addEventListener('blur',()=>tooltip.hidden=true);
-   plot.append(target);placed.push({m,cx,cy,r,index});
-   if(axis==='cost'&&m.status==='partial')plot.append(svg('path',{d:`M${cx+r+4},${cy}h18m-5,-4l5,4l-5,4`,fill:'none',stroke:brand(m),'stroke-width':1.5}));
+   const target=svg('g',{class:'cost-model-target','data-cost-model':m.model_id});
+   const halo=svg('circle',{cx,cy,r:7,class:'cost-point-halo',fill:'none',stroke:brand(m),'aria-hidden':'true'});
+   target.append(halo,p);pointLayer.append(target);
+   if(axis==='cost'&&m.status==='partial')target.append(svg('path',{d:`M${cx+r+4},${cy}h18m-5,-4l5,4l-5,4`,fill:'none',stroke:brand(m),'stroke-width':1.5}));
+   const text=svg('text',{class:'cost-label',fill:brand(m),'font-size':fontSize,visibility:'hidden'},short(m));
+   text.style.fontSize=fontSize+'px';labelLayer.append(text);
+   const measured=text.getBBox();text.removeAttribute('visibility');
+   const label=svg('g',{class:'cost-label-target','data-cost-label':m.model_id,'data-cost-model':m.model_id,role:'button','aria-label':m.label,'aria-pressed':selected.has(m.model_id)});
+   const hit=svg('rect',{fill:'transparent',rx:3});label.append(hit,text);labelLayer.append(label);
+   const line=svg('line',{class:'cost-label-connector',stroke:brand(m),'data-cost-model':m.model_id,'data-cost-connector':m.model_id});connectorLayer.append(line);
+   const isolation=Math.min(...rows.filter(o=>o!==m).map(o=>Math.hypot(cx-x(axis==='cost'?amount(o):o.seconds/60),cy-y(o.scores[mode].value))),1000);
+   placed.push({id:m.model_id,cx,cy,r,width:measured.width+labelPadding*2,height:measured.height+labelPadding*2,
+    priority:(frontier.has(m.model_id)?10000:0)+isolation,required:selected.has(m.model_id)});
+   states.set(m.model_id,{m,p,target,label,text,hit,line,measured,delivery});
   });
-  const pointBoxes=placed.map(p=>[p.cx-p.r-3,p.cy-p.r-3,p.cx+p.r+3,p.cy+p.r+3]);
-  placed.sort((a,b)=>a.cy-b.cy).forEach(({m,cx,cy,r})=>{
-   const text=short(m),width=Math.min(200,text.length*6.5),candidates=[[cx+r+7,cy-8],[cx-width-r-7,cy-8],[cx+r+7,cy+18],[cx-width-r-7,cy+18],[cx-width/2,cy-r-10],[cx-width/2,cy+r+22]];
-   const overlaps=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
-   let chosen=null;
-   for(const [px,py] of candidates){const box=[px,py-12,px+width,py+4];if(px>=left-8&&px+width<=W-8&&py>=top-6&&py<bottom+3&&![...occupied,...pointBoxes].some(o=>overlaps(box,o))){chosen=[px,py,box];break}}
-   if(!chosen){const px=Math.min(W-width-8,Math.max(left,cx+r+7)),py=Math.min(bottom-3,cy+31);chosen=[px,py,[px,py-12,px+width,py+4]]}
-   occupied.push(chosen[2]);plot.append(svg('text',{x:chosen[0],y:chosen[1],class:'cost-label',fill:brand(m)},text));
+  const segments=fp.slice(1).map((m,i)=>({x1:x(axis==='cost'?amount(fp[i]):fp[i].seconds/60),y1:y(fp[i].scores[mode].value),x2:x(axis==='cost'?amount(m):m.seconds/60),y2:y(m.scores[mode].value)}));
+  const layouts=globalThis.MathGaugeCostLabels.layout(placed,{bounds:{left:left-8,top:top-8,right:W-8,bottom:bottom-4},
+   mode:labelMode,maxLabels:Math.max(5,Math.min(20,Math.floor(plot.getBoundingClientRect().width/78))),padding:4,lines:segments,interactiveConnectors:true});
+  layouts.forEach(layout=>{
+   const state=states.get(layout.id);state.layout=layout;
+   state.text.setAttribute('x',layout.x+labelPadding-state.measured.x);state.text.setAttribute('y',layout.y+labelPadding-state.measured.y);
+   for(const [attr,value] of Object.entries({x:layout.x,y:layout.y,width:layout.width,height:layout.height}))state.hit.setAttribute(attr,value);
+   for(const attr of ['x1','y1','x2','y2'])state.line.setAttribute(attr,layout.connector[attr]);
+   state.label.dataset.costVisible=String(layout.visible);
   });
+  let hoverId=null,focusId=null;
+  function highlight(id,event){
+   plot.classList.toggle('cost-has-active',id!=null);
+   states.forEach((state,key)=>{
+    const active=key===id,pinned=selected.has(key),visible=state.layout.visible||pinned||active;
+    for(const part of [state.target,state.label,state.line]){part.classList.toggle('cost-active',active);part.classList.toggle('cost-pinned',pinned)}
+    state.label.style.display=visible?'':'none';state.line.style.display=visible&&(active||pinned)?'':'none';
+   });
+   if(id==null){tooltip.hidden=true;return}
+   const state=states.get(id),m=state.m,score=({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' '+m.scores[mode].value.toFixed(2);
+   tooltip.textContent=m.label+'\n'+state.delivery+'\n'+t('total')+' '+costText(m)+'\n'+score+(m.seconds==null?'':'\n'+t('timeLabel')+' '+(m.seconds/60).toFixed(1))+
+    (m.status==='estimated'?'\n'+t('range')+' '+m.estimate_range_usd.map(money).join('–'):m.status==='partial'?'\n'+t('lowerBound'):'');
+   tooltip.hidden=false;
+   const box=wrap.getBoundingClientRect(),pbox=state.p.getBoundingClientRect(),px=event?.clientX??pbox.left+pbox.width/2,py=event?.clientY??pbox.top;
+   tooltip.style.left=Math.max(wrap.scrollLeft+4,Math.min(px-box.left+wrap.scrollLeft+12,wrap.scrollLeft+box.width-tooltip.offsetWidth-8))+'px';
+   tooltip.style.top=Math.max(5,py-box.top-tooltip.offsetHeight-12)+'px';
+  }
+  function hitModel(event){
+   const label=event.target.closest('[data-cost-label]');if(label)return label.dataset.costLabel;
+   const matrix=plot.getScreenCTM();if(!matrix)return null;
+   const at=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+   const threshold=(event.pointerType==='touch'?22:12)/Math.hypot(matrix.a,matrix.b);
+   let nearest=null,distance=threshold;
+   placed.forEach(point=>{const d=Math.hypot(point.cx-at.x,point.cy-at.y);if(d<distance){distance=d;nearest=point.id}});
+   return nearest;
+  }
+  plot.onpointermove=event=>{if(event.pointerType==='touch')return;hoverId=hitModel(event);highlight(hoverId??focusId,event)};
+  plot.onpointerleave=()=>{hoverId=null;highlight(focusId)};
+  plot.onfocusin=event=>{focusId=event.target.dataset.costPoint??null;highlight(focusId)};
+  plot.onfocusout=()=>{focusId=null;highlight(hoverId)};
+  plot.onclick=event=>{const id=hitModel(event);if(id)toggleSelection(id,true)};
+  plot.onkeydown=event=>{const id=event.target.dataset.costPoint;if(id&&['Enter',' '].includes(event.key)){event.preventDefault();toggleSelection(id,true)}};
+  highlight(null);
   const table=document.getElementById('cost-plot-table');table.replaceChildren();
-  rows.forEach(m=>{const tr=document.createElement('tr'),name=node('th');name.scope='row';name.append(link(m));tr.append(name);for(const text of [costText(m),m.scores[mode].value.toFixed(2),m.seconds==null?'—':(m.seconds/60).toFixed(1)])tr.append(node('td',text,'numeric'));table.append(tr)});
+  rows.forEach(m=>{
+   const tr=document.createElement('tr'),name=node('th');name.scope='row';name.append(link(m));tr.append(name);
+   for(const text of [costText(m),m.scores[mode].value.toFixed(2),m.seconds==null?'—':(m.seconds/60).toFixed(1)])tr.append(node('td',text,'numeric'));
+   const cell=node('td'),pin=node('button',t(selected.has(m.model_id)?'unpinLabel':'pinLabel'),'cost-pin-button');pin.type='button';pin.dataset.costPin=m.model_id;
+   pin.setAttribute('aria-pressed',String(selected.has(m.model_id)));pin.setAttribute('aria-label',t(selected.has(m.model_id)?'unpinLabel':'pinLabel')+' · '+m.label);
+   pin.addEventListener('click',()=>{toggleSelection(m.model_id);document.querySelector('[data-cost-pin="'+m.model_id+'"]').focus({preventScroll:true})});
+   cell.append(pin);tr.append(cell);table.append(tr);
+  });
  }
+ function toggleSelection(id,restorePoint=false){
+  const ids=new Set(selected);if(ids.has(id))ids.delete(id);else ids.add(id);
+  const url=new URL(location.href);if(ids.size)url.searchParams.set('cost-selected',[...ids].sort().join(','));else url.searchParams.delete('cost-selected');
+  history.replaceState(null,'',url);render();
+  if(restorePoint)plot.querySelector('[data-cost-point="'+id+'"]')?.focus({preventScroll:true});
+ }
+ function clearSelection(){
+  if(!selected.size)return;
+  const url=new URL(location.href);url.searchParams.delete('cost-selected');history.replaceState(null,'',url);render();
+ }
+
  function render(){
   const params=new URLSearchParams(location.search);lang=params.get('lang')==='en'?'en':'zh';axis=params.get('cost-axis')==='time'?'time':'cost';mode=modes.includes(params.get('cost-score'))?params.get('cost-score'):'partial';
+  labelMode=['auto','all','selected'].includes(params.get('cost-labels'))?params.get('cost-labels'):'auto';
+  const validIds=new Set(data.models.map(m=>m.model_id));selected=new Set((params.get('cost-selected')||'').split(',').filter(id=>validIds.has(id)));
+  document.getElementById('cost-tooltip').hidden=true;
   document.querySelectorAll('[data-cost-t]').forEach(n=>n.textContent=t(n.dataset.costT));
   document.querySelectorAll('[data-cost-axis]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costAxis===axis)));
   document.querySelectorAll('[data-cost-score]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costScore===mode)));
+  document.querySelectorAll('[data-cost-labels]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costLabels===labelMode)));
+  document.querySelector('[data-cost-group="names"]').setAttribute('aria-label',t('names'));
+  document.getElementById('cost-selection-count').textContent=selected.size?t('selectionCount').replace('{count}',selected.size):'';
+  document.getElementById('cost-clear-selection').hidden=!selected.size;
+  document.getElementById('cost-interaction-hint').textContent=t(labelMode==='auto'?'autoHint':'interactionHint');
   const scoreName=({capability:'MC',partial:'RMC',strict:'SMC'})[mode];
   document.getElementById('cost-frontier-title').textContent=t(axis==='cost'?'costAxisButton':'timeAxisButton');
   document.getElementById('cost-frontier-subtitle').textContent=t(axis==='cost'?'costSubtitle':'timeSubtitle').replace('{score}',scoreName);
@@ -124,6 +194,11 @@
   document.getElementById('cost-frontier-note').textContent=t(axis==='cost'?'costNote':'timeNote');document.getElementById('cost-table-score').textContent=scoreName;
   board.setAttribute('aria-label',t('title'));renderBoard();renderPlot();
  }
- document.querySelectorAll('[data-cost-axis],[data-cost-score]').forEach(b=>b.addEventListener('click',()=>{const u=new URL(location.href);if(b.dataset.costAxis)u.searchParams.set('cost-axis',b.dataset.costAxis);else u.searchParams.set('cost-score',b.dataset.costScore);history.replaceState(null,'',u);document.getElementById('cost-tooltip').hidden=true;render()}));
+ document.querySelectorAll('[data-cost-axis],[data-cost-score],[data-cost-labels]').forEach(b=>b.addEventListener('click',()=>{const u=new URL(location.href);if(b.dataset.costAxis)u.searchParams.set('cost-axis',b.dataset.costAxis);else if(b.dataset.costScore)u.searchParams.set('cost-score',b.dataset.costScore);else u.searchParams.set('cost-labels',b.dataset.costLabels);history.replaceState(null,'',u);render()}));
+ document.getElementById('cost-clear-selection').addEventListener('click',()=>{clearSelection();document.querySelector('[data-cost-labels="'+labelMode+'"]').focus({preventScroll:true})});
+ document.getElementById('cost-frontier').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();clearSelection();document.getElementById('cost-tooltip').hidden=true}});
+ let resizeFrame=0,lastWidth=plot.getBoundingClientRect().width;
+ const observer=new ResizeObserver(()=>{const width=plot.getBoundingClientRect().width;if(Math.abs(width-lastWidth)<1)return;lastWidth=width;cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(renderPlot)});observer.observe(plot);
+ document.fonts.ready.then(()=>renderPlot());
  window.addEventListener('mg:updated',render);window.addEventListener('popstate',render);render();
 })();
