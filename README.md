@@ -4,141 +4,85 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审阅论证，将自然语言目标落实为语义对应的 Lean 工程，以及核查研究背景、拓展命题和把想法写成严格手稿。
+Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前版本为 **1.0.0**。
 
-当前正式版本为 **benchmark 1.0.0**。公有与私有题库组成同一套评测，共用运行器和评分规则。本版复用已留档的0.6答卷，原始运行身份、答卷和审核记录保持不变；[发行说明](releases/v1.0.0/README.md)记录兼容关系。
+[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh) · [完整结果](docs/results.md) · [公开题目](cases/README.md) · [运行指南](docs/harness-guide.md)
 
-[排行榜](site/index.html) · [完整结果](docs/results.md) · [题库目录](cases/README.md) · [运行指南](docs/harness-guide.md)
+## 为什么做 Math Gauge
 
-## 设计理念
+> 我最先想到的比喻，是把核桃浸在某种能让它软化的液体里——为什么不干脆用水呢？
+>
+> （引自格罗滕迪克《收获与播种》，据 Colin McLarty〈[The Rising Sea](https://www.landsburg.com/grothendieck/mclarty1.pdf)〉所引英译转译。）
 
-数学进展也来自找到让问题变得简单的空间、对象与语言。格罗滕迪克在《Récoltes et Semailles》中用浸泡坚果作比喻：让周围的理论逐渐成熟，直到坚硬的外壳可以打开。Math Gauge 借用这种“泡核桃”的思路，重视发现适合问题的结构。出处可见 Colin McLarty 的 [The Rising Sea](https://www.landsburg.com/grothendieck/mclarty1.pdf)，其中译引原手稿第 552–553 页。
+我很喜欢“泡核桃”这个表述。
 
-有效的短证、反例、商空间和替代表示都可以完成目标。转换空间时，要证明对应关系，并将结论带回原问题；假设、量词、定义域与结论强度都须保留。严谨、自洽且忠实于题意的不同路线可以得满分，篇幅与参考路线本身不计功。
+现在的前沿模型，数学能力已经很强。[FrontierMath](https://epoch.ai/frontiermath)、[BrokenArXiv](https://matharena.ai/?comp=overall--brokenarxiv) 等评测，也为了解它们提供了很好的参考。不过，在编写 [OET（算子演化论）](https://glenzli.com/books/oet/) 的过程中，我还是会遇到一些问题：有的推导写得流畅，仔细检查却少了条件；有的回答看似正确，实际上已经把问题换成了模型更熟悉的样子。
 
-按照作者在[《AI，数学能力，与未来》](https://glenzli.com/notes/ai-mathematical-ability-and-the-future/)中的区分，**Lv1** 是在已知对象与规则下计算、执行和实现，**Lv2** 是在已有定义、公理、语言与问题框架内证明或反驳。两者描述工作类型；极难的计算与证明也可能属于其中。
+在我自己的数学工作中，往往是先有一个想法，再慢慢理清概念、寻找合适的表示，把推导和证明展开。有些思路未必走在模型熟悉的套路上，我会更看重它能否跟住原来的问题，认真检查每一步，守住条件和意图。它可以质疑、举反例，也可以提出别的做法，但要把理由和与原问题的关系讲清楚。
 
-这一代题包围绕 OET 数学写作、审计与形式化工作，验证一部分 Lv1/Lv2 能力能否稳定使用：长论证中条件是否漂移，形式化是否真正证明了原命题，自查能否发现并修好缺口，研究背景里的错误是否会被继续放大。独立解决前沿未解问题不作为本题包的要求。提出有生产力的新问题、创造数学框架，需要其他方式进一步考察。
+这一路，我的主力也从早期的 Gemini、Claude 逐渐换成了 GPT 系列。使用中，我慢慢摸到了不同模型的强项、盲点和风格；但模型还在不断进步，过去的经验也需要更新。我于是想做一套贴近自己数学工作的 benchmark，把日常需要的推导、审阅、背景核查和 Lean 形式化整理成题，看各个模型实际做得怎样，再决定接下来选谁做主力、怎样分工。Math Gauge 就是这样来的。
 
-## 题包结构
+## 测什么
 
-| 大类 | 子类 | 分值 | 公有题 | 私有题 | 聚合单位 |
-|---|---|---:|---:|---:|---|
-| 书面证明 · 35 | 书面论证 | 25 | 8 | 4 | 12 个数学家族 |
-| | 论证审阅 | 10 | 4 | 0 | 4 个父家族 |
-| Lean · 35 | 语义审计 | 10 | 4 | 0 | 2 个数学家族 |
-| | 形式化 | 15 | 4 | 0 | 2 个数学家族 |
-| | 对齐自查 | 10 | 复用 1 题 | 0 | 92 项整章题的固定三轮轨迹 |
-| 数学研究 · 30 | 背景核查 | 10 | 2 | 2 | 4 个数学家族 |
-| | 数学想法手稿化 | 10 | 1 | 4 | 5 个数学家族 |
-| | 命题拓展 | 10 | 2 | 4 | 6 个数学家族 |
+| 方向 | 满分 | 主要任务 |
+|---|---:|---|
+| 书面证明 | 35 | 书面论证、反例与边界分析，以及对已有论证的审阅。 |
+| Lean | 35 | 语义审计、形式化与连续三轮自查，分别检查代码、数学对应和纠错。 |
+| 数学研究 | 30 | 背景核查、命题拓展，以及把一个数学想法展开成严谨手稿。 |
 
-共 **39 道初答任务：公有 25／私有 14，涵盖 35 个数学家族**。另对同一整章 Lean 工程连续自查三轮，共 42 次规定交付。相关变体先在家族内聚合；公私合并计入固定的 100 分。
+完整评测有 **39 道初答题：公开 25 道、私有 14 道，共 35 个数学家族**。同一整章 Lean 题另接续三轮自查，合计 42 次规定交付；相关变体先在家族内聚合，公私题共用运行与计分规则。
 
-书面题考察证明、边界与反例；Lean 题逐步扩展到半章、整章规模，分别检验内核通过、语义对应和持续自查；研究题要求主动核查背景、尝试拓展或严格化给定想法。公开示例 [MG-MCP003](cases/manuscript-completion/MG-MCP003/task.md)从矩阵估计想法出发，要求交付完整的数学手稿。
+想先看一道题，可以从[矩阵估计想法的手稿化任务](cases/manuscript-completion/MG-MCP003/task.md)读起。各子类的题目、权重和选题理由见[题目目录](cases/README.md)与[选题说明](docs/selection.md)。候选只接收题面和明确提供的材料，参考与判准不进入答题上下文；私有题的题面、原答和逐题评审保持私有。
 
-公有题便于复现与检查，私有题补充未公开的数学任务。候选者只接收题面与明确提供的材料；私有参考、判准、原答和逐项评审保存在私库，公开结果仅展示其合并贡献。选题取舍见[选题说明](docs/selection.md)。
+## 怎么读分数
 
-## 如何读分数
-
-| 指标 | 衡量什么 |
+| 分数 | 含义 |
 |---|---|
-| **MC · 数学能力** | 有效数学成果的正向贡献；无正常交卷时，可审核截止前经核实的原成果。 |
-| **RMC · 可靠数学能力** | 在有效成果上扣除错误承诺、误判等损失，是默认主分。 |
-| **SMC · 严格数学交付** | 按整题目标验收；Lean 自查还要求固定三轮轨迹满足完整性、诊断与无回退要求。 |
+| **MC · Mathematical Capability** | 只计经过核实的有效数学贡献，包括未完成任务中的有效进展。 |
+| **RMC · Reliable Mathematical Capability** | 在有效成果上扣除错误断言、误判等造成的损失，是默认主分。 |
+| **SMC · Strict Mathematical Completion** | 整题达到全部实质要求才得分；自查按完整三轮的完成情况、诊断和无回退要求验收。 |
 
-当前聚合0.9.0／MC0.3.0／SMC0.2.0，另绑提交来源0.1.0。三项分数采用同一组规则选定答卷、家族与权重。错误成果不得按“完成了”计分；编译通过也须另审是否对齐原数学目标。诚实地报告未完成，与错误宣称完整，会产生不同的可靠性结果。
+三种分数使用同一批规则选定答卷和固定权重，均按 **100 分**报告；未测项保留未知范围，不把已测部分放大到满分。每题采用规则内首次正常交卷；没有正常交卷时，MC 可计经核实的截止前原成果，RMC 与 SMC 为 0。具体判准见[评分规范](protocol/benchmark-scoring.md)。
 
-另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 17 个模型的 80／85 个手稿槽。
+## 当前结果
 
-## 当前总榜
+榜单默认按 RMC 排序。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
 
-下表按 RMC 排序，所有分数均在固定满分 100 下报告。允许的重跑按规则采用首次正常交付，来源与过程见各模型档案；部分测试继承了条件一致的既有答卷。
+[![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 
-| 模型 | Harness | MC | **RMC（主分）** | SMC | 主动／强收／总题数 |
-|---|---|---:|---:|---:|---:|
-| [Astra 6 (max)](site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 | 39／0／39 |
-| [Sol 6.1 (max)](site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
-| [Claude Opus 5.5 (max)](site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
-| [Astra 6 (xhigh)](site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
-| [Dot Underlying (2026-11-08)](site/models/dot-underlying-model-20261108/index.html) | Dot native harness¹ | 91.66 | 90.23 | 78.00 | 39／0／39 |
-| [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
-| [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
-| [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
-| [Gemini 4 Carbon (medium)](site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 91.78 | 79.74 | 64.50 | 38／1／39 |
-| [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
-| [Gemini 4 Hydrogen (xhigh)](site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
-| [Gemini 4 Carbon (high)](site/models/gemini-4-carbon-high/index.html) | AGY CLI⁴ | 88.51 | 74.78 | 32.83 | 38／1／39 |
-| [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
-| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 86.33 | 70.24 | 37.92 | 38／1／39 |
-| [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
-| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 59.94 | 39.77 | 13.75 | 38／1／39 |
-| [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21／5／39 |
+当前结果汇集不同批次的留档答卷，部分含旧答复用和后续补测；采用 **AI 审核，另有部分人工抽审**。实际运行条件、故障与重试经过随来源保留，阅读模型差异时可一并查看[审核方式](docs/review-process.md)和[运行记录](docs/results.md#记录与复算)。
 
-逐轮来源和完整分数区间见模型详情。主动交卷与强收有内容互斥；无正常交卷时RMC／SMC为0，MC可审核原成果。
+<details>
+<summary>成本与耗时截图</summary>
 
-¹ Dot 原生独立运行方式。
+以下两图以 RMC 为例。成本只计每题采用的一次作答及三轮固定自查，使用留档的 API 参考价或测试日费用；耗时包含工具使用与等待，受运行环境影响。两者的来源和限制分别见[成本口径](docs/cost-reference.md)与[计时口径](docs/answer-timings.md)。
 
-² 使用 DeepSeek Harness（DSH）时，多道题因推理过程过长、耗尽最大输出预算而未能交卷，因此改用 Codex CLI。
+[![Math Gauge 中文成本与 RMC 前沿](docs/screenshots/cost-frontier-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&cost-axis=cost&cost-score=partial#cost-frontier)
 
-³ GLM 5.3 在 Codex CLI 和 Claude Code 中均出现大量超时；留档采用 Claude Code。无正常交卷时RMC／SMC为0，MC仅计经核实的截止原成果；三轮自查未执行。
+[![Math Gauge 中文耗时与 RMC 前沿](docs/screenshots/time-frontier-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh&cost-axis=time&cost-score=partial#cost-frontier)
 
-⁴ AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。
+</details>
 
-HCH02因AGY回传故障恢复的原答已按既有规则补审计入，原始ERROR和旧成绩保留；benchmark1.0.0与评分方法不变，见[故障更正说明](docs/harness-corrections.md)。
+## 本地查看与运行评测
 
-Argon另完成[整章工程补充自查](docs/c003-sealed-continuation.md)：三轮均核实92／92，核查说明分别得30、25、15／30，自查计9.33／10；原初答失败和HCH02成绩保留。
-
-Flash也通过AGY订阅完整补跑三轮工程自查：均正常交卷，但始终74／92、无新增修复，三轮均误报完整，自查RMC计−2／10。逐轮原答、审核和新旧分数见[补测结果](results/v0.6.0/gemini-3.8-flash-high/20261105/supplements/c003-20261114/README.md)。
-
-Carbon Medium保留38份正常交卷、1项强收有内容。该项已按最后一次有效尝试的原稿复核，仅计MC；RMC／SMC为0。C003初答及三轮KEEP均核实92／92，整条轨迹Strict通过。来源次数、故障排除及评审记录见[模型详情](site/models/gemini-4-carbon-medium/index.html)与[来源选择说明](results/v0.6.0/gemini-4-carbon-medium/20261115/source-selection-disclosure.json)。
-
-包含High、Medium及环境排查的Carbon整轮工作跨越两天以上；旧Medium批次窗口约47小时40分，此后另行补测C003。AGY/GCP反复出现断流、超时与HTTP429。Argon与Carbon在本轮复杂题上也暴露出严重推理错误及完成问题；未交卷原因仍须结合调用不稳定的证据判断。最初的High批次未形成可用的成套答卷；后续续跑另列于下。
-
-Carbon High 的 2026-11-15 续跑现已结算：39道初答中38份正常交卷、1项强收有内容、0项无可审核正文；MC／RMC／SMC为88.51/74.78/32.83。先测非Lean题，再测Lean题，最后接续C003及固定三轮自查；成功试跑直接留作正式答卷。AGY1.5.9后继原生请求的HIGH／MEDIUM档位按原请求保留；已确证的本地控制或认证TLS故障单独留证，不消耗有效尝试；无法确证为纯系统故障的断流保留原计次，作答超时和输出耗尽计次。逐题数学判断、三轮状态及实际条件见[模型详情](site/models/gemini-4-carbon-high/index.html)和[来源说明](results/v0.6.0/gemini-4-carbon-high/20261115/source-selection-disclosure.json)。
-
-完整运行档案包含62条任务尝试记录：早期失败批次7条、后继续跑及自查55条。51次有效尝试、11项系统排除；相对39道初答＋3轮自查的42个交付槽，多出20条尝试，其中9次属于有效重试。旧异常表中的7条是此前时间截点的已审样本，不是整轮重试总数；这些尝试记录也不等同于API请求数。见[完整尝试与重试统计](docs/execution-attempts.md)。
-
-C003初答的92项形式目标全部核实；三轮均正常交卷，自查MC／RMC依次为70→100→100。第一轮漏诊原映射说明中的局部数值错误，因此整条自查轨迹SMC为0；后两轮的准确诊断不追溯替换第一轮。
-
-此次采用用户观察后明确接纳的额外补试来源，保留原物理／有效次数、超出通常三次的实际调用及此前失败；按具体来源与首次正常交付选卷，没有按最高分挑卷。接入保留AI评审／人工待审状态，不提升正式比较资格。
-
-当前结果采用AI审核，并有部分人工抽审。既有全审记录由Sol 6.1 Max完成，Astra 6 Max与Dot抽审核对；Carbon本轮审核身份按来源记录。具体审核身份、证据与局限见[审核方式](docs/review-process.md)，逐模型分析见[结果报告](docs/results.md)。
-
-![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)
-
-![Math Gauge 中文成本—RMC 前沿图](docs/screenshots/cost-frontier-zh.jpg)
-
-![Math Gauge 中文耗时—RMC 前沿图](docs/screenshots/time-frontier-zh.jpg)
-
-两张前沿图默认使用RMC：总成本采用从0开始的线性美元刻度，典型题耗时以分钟计。实心点表示39道初答均正常交卷，其余为空心；颜色对应模型品牌。交互图展示模型名称，悬停联动高亮，点击可固定标签；前沿用实线标示。耗时包含工具与等待，受Harness、网络和硬件影响，见[计算方式与来源](docs/answer-timings.md)。
-
-成本每题只计留档采用的尝试，其他重试不计。Dot使用测试日订阅附赠的独立额度，额外费用为$0；有可核实单价的模型按公开API价格折算并计缓存优惠。Gemini 4 Hydrogen通过AGY订阅运行，按官方Standard API价格与42份原生用量折算为$51.63。Argon含新三轮自查的参考成本为$37.74，采用截至2026-11-30的限时五折价；12月起相同用量约$75.48。Carbon Medium的API参考总额为$56.99，不计安全审核辅助调用。Carbon High采用尝试的API参考为$73.52，42份采用交付的原生用量均已对齐；其他重试与辅助调用不计入。完整用量、价格与来源见[成本说明](docs/cost-reference.md)，[交互图表](site/index.html#cost-frontier)可切换分数与横轴。
-
-排行榜发布测试流程已结束并选定留档的结果；后续测试结算后再上榜。[交互页面](site/index.html)提供分类榜、两率、分数落差、独立成本和耗时排序，支持切换MC／RMC／SMC、中英文及URL分享。模型页保留逐题结果、自查执行状态和分数区间。
-
-## 运行与复现
-
-所有正式题目均允许本地工具与预置公共依赖，禁止联网检索和工具联网；模型服务与认证连接单独记录。独立初答可以并行；同一 C003 工程的三轮自查须依次承接上一轮。答卷格式、时限、封卷、隔离、失败与重跑规则统一见[其他 Harness 运行指南](docs/harness-guide.md)。
-
-在仓库根目录运行以下命令后，打开 <http://127.0.0.1:8000/site/> 即可本地查看静态榜单：
+在仓库根目录启动本地服务，再打开 <http://127.0.0.1:8000/site/>：
 
 ```bash
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-页面本身无需联网。横图默认采用紧凑行距；总榜与分类榜可各自切换图表／表格，视图、指标显示和排序均随URL保留。下载和长运行说明按需展开。页面重建与数据复算方式见[结果报告](docs/results.md)。
+要运行评测，请按[运行与交付指南](docs/harness-guide.md)准备题包和独立答题环境。所有正式题目均 **允许本地工具及预置公共依赖，禁止联网检索和工具联网**；模型服务与认证连接另行记录。题包、时间限制、封卷、隔离和重试的具体要求都在指南中。
 
-当前原答、审核、数学源码和时间／费用摘要保留在工作树；重复副本、原始大包、完整事件流与编译缓存通过固定 Git 提交和散列索引留存。公私库采用同一套[证据留存与恢复规则](docs/evidence-retention.md)，完整审计须保留 Git 历史。
+## 继续阅读
 
-## 文档
-
-| 内容 | 入口 |
+| 想了解 | 入口 |
 |---|---|
-| 题型与选题 | [题库目录](cases/README.md) · [选题说明](docs/selection.md) |
-| 执行与外部 Harness | [统一运行指南](docs/harness-guide.md) · [评测协议](protocol/evaluation.md) |
-| 评分与留档 | [评分规范](protocol/benchmark-scoring.md) · [正式结果合同](protocol/result-record.md) · [证据恢复](docs/evidence-retention.md) |
-| 结果与附加指标 | [完整结果](docs/results.md) · [两率](protocol/content-rates.md) · [额外成果观察](docs/manuscript-observations.md) |
-| 发行与复现包 | [1.0.0 发行说明](releases/v1.0.0/README.md) · [0.6.1 分发说明](releases/v0.6.1/README.md) · [0.6.0 封版说明](releases/v0.6.0/README.md) |
+| 题目与选题 | [公开题目](cases/README.md) · [选题说明](docs/selection.md) |
+| 评分与审核 | [评测协议](protocol/evaluation.md) · [评分规范](protocol/benchmark-scoring.md) · [审核方式](docs/review-process.md) |
+| 辅助指标 | [内容可靠率与目标达成率](protocol/content-rates.md) · [手稿主动额外成果](docs/manuscript-observations.md) |
+| 执行与留档 | [运行与交付指南](docs/harness-guide.md) · [正式记录合同](protocol/result-record.md) |
+| 时间与费用 | [计时口径](docs/answer-timings.md) · [成本口径](docs/cost-reference.md) |
+| 故障与补测 | [答卷来源更正](docs/harness-corrections.md) · [整章自查补充](docs/c003-sealed-continuation.md) · [尝试与重试统计](docs/execution-attempts.md) |
+| 版本与证据 | [1.0.0 发行说明](releases/v1.0.0/README.md) · [历史发行](releases/) · [证据留存与恢复](docs/evidence-retention.md) |
 
-1.0.0记录当前题包与评分口径；0.6.0题包及已发布资产保持冻结。分发版、执行组件与评分方法分别记录版本和来源。
+当前 1.0.0 复用的历史答卷保留原执行版本、原答和原审核，兼容关系见发行说明。查看或复算这些结果不表示模型重新参加了测试。
