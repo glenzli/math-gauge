@@ -1,0 +1,95 @@
+{}
+# 答卷审阅报告
+
+审阅范围依据 [materials.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/materials.md)，对照原题 [original-task.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-task.md) 与待审答卷 [original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md) 逐项核查。
+
+---
+
+## 一、总体结论
+
+- **命题结论与构造选型层面**：答卷在全部六个阶段（S1–S6）给出的**最终判断结论、核心空间构造与具体反例选型在数学上均成立**（例如 $M(X,Y)=k(C_{co}(kX,kY))$ 的底集与拓扑选型、S4 的 $\mathbb{Q},\mathbb{R}$ 反例与第一可数紧生成性、S5 的自由超滤子空间反例、S6 的充要条件 $k(f):kX\to kY$ 同胚及第一可数升级结论均正确）。
+- **证明正确性与完整性层面**：**答卷在原题要求下并不完全正确，也不完整**。对照 [original-task.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-task.md#L7)（“证明题须写出论证……构造题须验证所需性质。援引此前结果或标准定理时，说明其条件在当前阶段为何适用”），答卷存在 **3 处实质性的论证错误或核心证明缺失**（位于 **S2.3、S3.1、S3.2–S6.1**），以及若干**局部断言失误或技术细节疏漏**（位于 **S1.2、S4.1、S5.2** 等）。
+
+---
+
+## 二、实质性问题与可核查数学依据
+
+### 1. S2.3：错将原拓扑连续映射诱导的子集识别为 $C(X,kY)$，导致充分性证明未闭环
+- **问题位置**：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L104-L107)
+- **具体断言**：
+  > “连续映射 $f: X \to Y$ 诱导的自然变换对应于集合 $C(X, kY) \subset C(kX, kY)$。欲证：$(\forall \text{Hausdorff } Y, C(X, kY) = C(kX, kY)) \iff kX = X$”
+- **数学核查依据**：
+  1. 在 S2.2 建立的双射 $\mathrm{Nat}(h_X,h_Y)\cong C(kX,kY)$（$\alpha \leftrightarrow g,\ \alpha_S(\phi)=g\circ\phi$）下，原拓扑连续映射 $f\in C(X,Y)$ 诱导的自然变换 $h_f$ 对应的底集映射就是 $f$ 本身。因此“由原拓扑连续映射 $X\to Y$ 诱导的自然变换”在 $C(kX,kY)$ 中对应的子集是 **$C(X,Y)$**，而非 $C(X,kY)$。
+  2. 因为 $\tau_Y \subset \tau_{kY}$（恒等映射 $\mathrm{id}_Y:kY\to Y$ 连续），对任意空间恒有
+     $$C(X,kY) \subset C(X,Y) \subset C(kX,kY).$$
+     当 $X=Y=Z$ 取非紧生成 Hausdorff 空间（如答卷 S5.2 构造的超滤子空间 $Z$，$\tau_Z\subsetneq\tau_{kZ}$）时，$\mathrm{id}_Z\in C(Z,Z)$ 显然是原拓扑连续映射并诱导 $\mathrm{id}_{h_Z}$，但 $\mathrm{id}_Z\notin C(Z,kZ)$，故 **$C(X,kY)\subsetneq C(X,Y)$**，第 104 行的集合等式断言严格不成立。
+- **影响评估**：
+  - **对充分性（$\Leftarrow$，第 107 行）造成实质缺口**：答卷由 $kX=X$ 仅推出 $C(kX,kY)=C(X,kY)$ 即宣告证毕，未利用 $\mathrm{id}_Y:kY\to Y$ 的连续性说明 $C(X,kY)\subset C(X,Y)$，从而未真正证出每个自然变换都由**原拓扑**连续映射 $X\to Y$ 诱导。
+  - **必要性（$\Rightarrow$，第 108–114 行）仍可挽救**：必要性取测试空间 $Y=kX$，此时 $kY=k(kX)=kX=Y$（注：第 110 行直接援引幂等性 $k(kX)=kX$ 未附说明，可由 S2.2 已证的紧探针集合相等 $C(K,kX)=C(K,X)$ 立即推出），对这一特定 $Y$ 恰好有 $C(X,kY)=C(X,Y)=C(X,kX)$，修正表述后必要性论证成立。
+
+---
+
+### 2. S3.1：错误套用 S1 的指数律（混淆变量位置且局部紧条件不成立），且漏证关于 $S$ 的自然性
+- **问题位置**：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L139-L144)
+- **具体步骤**：
+  > “4. 由 S1 的指数律（由于 $S$ 局部紧 Hausdorff，置于紧开拓扑第一变量）：$C(S \times kX, kY) \cong C(S, C_{co}(kX, kY))$”
+- **数学核查依据**：
+  1. **变量位置与定理前提双重错误**：S1（[original-task.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-task.md#L11)，[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L27)）证明的是：当 **$A$（即 $C_{co}(A,B)$ 的第一变量）局部紧 Hausdorff**、$Z$ 任意 Hausdorff 时，$C(Z\times A, B)\cong C(Z, C_{co}(A,B))$。
+  2. 在第 140 行的目标同构 $C(S\times kX, kY)\cong C(S, C_{co}(kX,kY))$ 中，$C_{co}(-,-)$ 的第一变量是 **$kX$** 而非 $S$（若把局部紧空间 $S$ 放入 $C_{co}$ 第一变量，S1 给出的是 $C(kX\times S, kY)\cong C(kX, C_{co}(S,kY))$）。
+  3. 在 S3 中 $X$ 是**任意** Hausdorff 空间，$kX$ 一般**不是**局部紧空间（例如取 $X=\mathbb{Q}$，由 S4.2 知 $k\mathbb{Q}=\mathbb{Q}$ 非局部紧；且由 S4.1 知通常求值 $ev:C_{co}(\mathbb{Q},\mathbb{R})\times\mathbb{Q}\to\mathbb{R}$ **不连续**，故 S1 中通过 $\Phi(g)=ev\circ(g\times\mathrm{id})$ 证明连续性的路径在此直接失效）。
+  4. **正确的可核查补全方式**：逆柯里化 $\Psi:C(S\times kX,kY)\to C(S,C_{co}(kX,kY))$ 仅依赖管道引理，无需 $kX$ 局部紧；而正向柯里化 $\Phi(g):S\times kX\to kY$ 的连续性必须结合第 3 步 $k(S\times kX)=S\times kX$，对任意紧 Hausdorff 探针 $(p_1,p_2):K\to S\times kX$，利用 **$kX$ 的 Hausdorff 性**推出紧像 $C:=p_2(K)\subset kX$ 是紧 Hausdorff（从而局部紧 Hausdorff）子空间，再由限制映射 $C_{co}(kX,kY)\to C_{co}(C,kY)$ 的连续性及 $C$ 上的 S1 求值连续性得出。答卷完全缺失这一关键论证。
+  5. **漏证自然性**：[original-task.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-task.md#L19) 明确要求“使 $C(S,M)\cong H_{X,Y}(S)$ 在全部 profinite $S$ 上自然”，答卷第 133–144 行仅对固定 $S$ 拼出集合双射链，未写出复合双射的显式公式，也未验证沿态射 $\theta:S'\to S$ 的自然交换性。
+- **影响评估**：直接违反原题援引定理须核验适用条件的要求，使 S3.1 的核心同构缺少关键方向的合法证明，且缺少对 $S$ 自然性的验证。
+
+---
+
+### 3. S3.2 与 S6.1：将待证核心命题当作外部黑箱定理（循环援引 $\mathbf{CGHaus}$ 的笛卡尔闭性）
+- **问题位置**：
+  - S3.2：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L153-L154)、[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L165-L175)
+  - S6.1：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L270-L280)、[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L286-L287)
+- **具体步骤**：
+  - 在 S3.2 第 154 行直接断言：“在紧生成 Hausdorff 空间范畴 $\mathbf{CGHaus}$ 中，典范求值 $M\times_k kX = kC_{co}(kX,kY)\times_k kX \to kY$ 是连续的”，以此证明 $ev_T$ 连续；
+  - 在 S3.2 第 166–170 行将 $\mathrm{Nat}(h_Z,h_M)\cong\mathrm{Nat}(h_Z\times h_X,h_Y)$ 通过 S2 转化为 $C(kZ,kC_{co}(kX,kY))\cong C(kZ\times_k kX,kY)$ 后，直接断言：“在 Cartesian 闭范畴 $\mathbf{CGHaus}$ 中，具有伴随同构……该同构由典范求值映射 $E:M\times_k kX\to kY$ 诱导”；
+  - 在 S6.1 第 270–280 行继续未经证明地使用 $\times_k$ 作为范畴积的泛性质、结合同构 $(M(Y,Z)\times_k M(X,Y))\times_k kX \cong M(Y,Z)\times_k (M(X,Y)\times_k kX)$、态射积 $\mathrm{id}\times_k ev_{X,Y}$ 的连续性以及上述笛卡尔闭伴随。
+- **数学核查依据与影响评估**：
+  1. **实质乞题（Petitio Principii）**：在 S2 已建立全忠实嵌入/范畴等价 $\mathrm{Nat}(h_A,h_B)\cong C(kA,kB)$ 的前提下，S3.2 要求构造 $M(X,Y)$、$ev$ 并证明对任意 Hausdorff 空间 $Z$ 有 $\mathrm{Nat}(h_Z,h_M)\cong\mathrm{Nat}(h_Z\times h_X,h_Y)$，**其数学内容本身正是要求证明 $\mathbf{CGHaus}$ 在本题定义下的指数伴随（笛卡尔闭性）**。直接把“$\mathbf{CGHaus}$ 是笛卡尔闭范畴且 $E:M\times_k kX\to kY$ 连续并诱导伴随”当作已知定理援引，跳过了 S3.2 的全部核心证明（注：文献中“紧生成空间”存在紧子集定义、紧 Hausdorff 探针定义、弱 Hausdorff 空间中探针紧开拓扑等不同变体；即使援引外部定理，也必须核验在本题的**子集紧开拓扑 $C_{co}$** 与 **$U$ 小紧 Hausdorff 探针 $k$ 拓扑**下，因 $kX$ 为 Hausdorff 空间使得紧探针像集仍为紧 Hausdorff 子集，二者方才相容）。
+  2. **S3.2 内部的附加跳步**：
+     - 第 165 行断言 $k(Z\times X)\cong kZ\times_k kX$ 未给证明（第 137 行仅针对紧空间 $S$ 作了说明；一般 Hausdorff $Z$ 需由紧探针泛性质 $C(K,Z\times X)=C(K,Z)\times C(K,X)=C(K,kZ)\times C(K,kX)=C(K,kZ\times kX)$ 推出）。
+     - 第 169 行未具体核验空间层面的伴随映射 $f\mapsto E\circ(f\times_k\mathrm{id}_{kX})$ 经 S2 翻译到预层层面后恰为 $\alpha\mapsto ev\circ(\alpha\times\mathrm{id}_{h_X})$（实际上若已在 S3.1 完整证明 $h_M\cong H_{X,Y}$ 作为 $\mathrm{Prof}_U$ 上预层的自然同构，直接由预层范畴中的 Yoneda 引理即可推出对任意 $Z$ 的伴随同构，无需绕道外部 $\mathbf{CGHaus}$ 定理）。
+     - 第 173–174 行未验证预复合 $M(u,Y)$ 与后复合 $M(X,v)$ 在 $k(C_{co}(-,-))$ 拓扑下的连续性，且存在记号混用（在自然变换复合式中将 $h_{M(u,Y)},h_{M(X,v)}$ 直接写作空间映射 $M(u,Y),M(X,v)$）。
+  3. **对 S6.1 的连带影响**：S6.1 连续复合 $\circ:M(Y,Z)\times_k M(X,Y)\to M(X,Z)$ 的存在性与连续性完全建立在 S3.2 未证的笛卡尔闭性及未证的 $\times_k$ 结合律同胚之上（第 287 行书写结合律等式 $\circ\circ(\circ\times_k\mathrm{id})=\circ\circ(\mathrm{id}\times_k\circ)$ 时亦省略了两侧定义域之间的结合同构 $\alpha$）。
+
+---
+
+## 三、局部断言失误与次要完整性疏漏
+
+1. **S5.2 超滤子划分断言失误（局部错误，不影响后续反例成立）**
+   - **位置**：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L250)
+   - **问题**：将无限集 $K\cap\mathbb{N}$ 分拆为不交无限子集 $A_1\sqcup A_2$ 后，断言“由超滤子性质，**恰有一个**集合不属于 $\mathcal{U}$”。
+   - **核查依据**：当 $K\cap\mathbb{N}\notin\mathcal{U}$ 时（例如 $\mathcal{U}$ 含奇数集而取 $K=2\mathbb{N}\cup\{p\}$），由滤子向上封闭性知 $A_1\notin\mathcal{U}$ 且 $A_2\notin\mathcal{U}$，即**两个集合都不属于 $\mathcal{U}$**，“恰有一个”不成立。对任意不交集 $A_1\cap A_2=\emptyset$，由 $\emptyset\notin\mathcal{U}$ 只能推出**至少有一个**不属于 $\mathcal{U}$（至多有一个属于 $\mathcal{U}$）。
+   - **影响**：后续推理仅需取定其中一个不属于 $\mathcal{U}$ 的 $A_1$ 以得到 $\mathbb{N}\setminus A_1\in\mathcal{U}$，故将“恰有”改为“至少有”即可完全修复，不影响 S5 反例的有效性。此外，S5.2 略去了 $Z=\mathbb{N}\cup\{p\}$ 拓扑公理的验证（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L243-L245)），且第 254 行按紧子集而非紧 Hausdorff 探针验证 $kZ$ 离散（因探针像 $p(K)$ 在 Hausdorff 空间 $Z$ 中紧故有限，$p^{-1}(A)=p^{-1}(A\cap p(K))$ 仍必闭，易于补齐）。
+
+2. **S1.2 紧开拓扑函子性连续性漏检（次要疏漏）**
+   - **位置**：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L49-L52)
+   - **问题**：验证关于 $Y$ 和 $X$ 的自然性时，直接将 $C(X,k)\circ g$ 与 $C(j,Y)\circ g$ 代入 $\Phi$，未定义记号 $C(X,k),C(j,Y)$，也未验证推前 $f\mapsto k\circ f:C_{co}(X,Y)\to C_{co}(X,Y')$ 与拉回 $f\mapsto f\circ j:C_{co}(X,Y)\to C_{co}(X',Y)$ 的连续性（可由子基原像 $(C(X,k))^{-1}([K,W'])=[K,k^{-1}(W')]$ 与 $(C(j,Y))^{-1}([K',W])=[j(K'),W]$ 直接补证）。
+
+3. **S4.1 紧开拓扑基与子基的约化省略及空集边界（次要疏漏）**
+   - **位置**：[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L191-L197)
+   - **问题**：原题定义 $[K,O]$ 为**子基**（[original-task.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-task.md#L5)），一般基开邻域应为有限交 $\bigcap_{i=1}^m [K_i,O_i]$，而第 191–192 行直接将基开邻域写为单一子基集 $U=[K,(-\epsilon,\epsilon)]$，且未排除 $K=\emptyset$ 就直接书写 $\sup_{k\in K}|f(k)|<\epsilon$ 与有限正距离 $\delta=\mathrm{dist}(q,K)>0$。
+   - **影响**：对常值零函数 $0\in\bigcap_{i=1}^m[K_i,O_i]$，总可取非空紧集 $K=\{0\}\cup\bigcup_{i=1}^m K_i$ 及 $\epsilon=\min(\{1\}\cup\{\epsilon_i:K_i\neq\emptyset\})>0$（其中 $(-\epsilon_i,\epsilon_i)\subset O_i$），使得 $[K,(-\epsilon,\epsilon)]\subset \bigcap_{i=1}^m[K_i,O_i]$。补上这一有限交约化后反例完全严密。
+
+4. **Grothendieck 宇宙 $U$ 小性说明简略（次要疏漏）**
+   - 原题全局约定固定 Grothendieck 宇宙 $U\in V,\ \mathbb{N}\in U$，所有空间为 $U$ 小 Hausdorff（[original-task.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-task.md#L5)）。答卷在 S2.1（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L68-L69)，由 $D\in U$ 直接写 $\beta D\in\mathrm{Prof}_U$）、S3.1（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L122-L130)，未提 $M(X,Y)$ 的 $U$ 小性）以及 S4.1/S5.2（$\mathbb{Q},\mathbb{R},Z$ 的 $U$ 小性）中未显式交代由 $U$ 对幂集、子集及 $\mathbb{N}\in U$ 的封闭性所得的 $U$ 小性核验，但不构成实质障碍。
+
+---
+
+## 四、分阶段审阅汇总
+
+| 阶段 | 结论/构造是否正确 | 证明是否完整严密 | 审阅结论摘要 |
+| :--- | :---: | :---: | :--- |
+| **S1**（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L5-L53)） | 是 | 基本完整（含小疏漏） | 求值连续性与柯里化双射证明严密；仅自然性部分（`#L49-L52`）漏检 $C(X,k)$ 与 $C(j,Y)$ 的连续性。 |
+| **S2**（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L57-L114)） | 是 | **存在实质缺陷** | S2.1、S2.2 论证正确；**S2.3（`#L104-L107`）误将 $C(X,Y)$ 写成 $C(X,kY)$**，断言不成立且导致充分性证明未闭环。 |
+| **S3**（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L118-L175)） | 是 | **存在重大缺陷** | $M(X,Y)$ 与 $ev$ 构造正确；但 **S3.1 第 4 步（`#L139-L140`）错误套用 S1** 且漏证对 $S$ 的自然性，**S3.2（`#L153-L154`, `#L166-L170`）循环援引 $\mathbf{CGHaus}$ 笛卡尔闭性**代替核心证明。 |
+| **S4**（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L179-L220)） | 是 | 基本完整（含小疏漏） | S4.1 反例正确（`#L191-L197` 省略了子基有限交约化与非空性说明）；S4.2 第一可数蕴含 $kX=X$ 的证明完全严密。 |
+| **S5**（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L224-L259)） | 是 | 基本完整（含局部失误） | 反例机制与自由超滤子空间构造有效；`#L250` 误写“恰有一个集合不属于 $\mathcal{U}$”（应为“至少有一个”），但不影响后续推理。 |
+| **S6**（[original-answer.md](file:///private/tmp/math-gauge-carbon-high-lane2-20261115-v1/attempts/MG-AR003/physical-1/session/work/original-answer.md#L263-L328)） | 是 | **部分缺失（S6.1）** | **S6.1（`#L270-L280`）承袭 S3.2 未证的笛卡尔闭性及未证的 $\times_k$ 范畴积性质**；S6.2 充要条件证明与 S6.3 第一可数同胚升级证明均完整严密。 |

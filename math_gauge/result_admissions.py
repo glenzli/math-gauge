@@ -90,6 +90,32 @@ def _record_source(value, prefix):
     return {**item, 'path': prefix + item['path']}
 
 
+def policy_matches_current(name, original_raw, current_raw):
+    """Keep default policies exact while permitting named nonfinal source receipts.
+
+    The submission owner validates the added opaque descriptors. Its full
+    record validator separately checks the private authorization and original
+    work; edition admission does not grant that authorization or alter scores.
+    """
+    if original_raw == current_raw:
+        return True
+    if name != 'submission':
+        return False
+    original, current = json.loads(original_raw), json.loads(current_raw)
+    if not isinstance(original, dict) or not isinstance(current, dict):
+        return False
+    extension = {'nonfinal_source_selection_exception_version',
+                 'nonfinal_source_selection_exceptions'}
+    if (extension.intersection(current) or set(original) - set(current) != extension
+            or {k: v for k, v in original.items() if k not in extension} != current):
+        return False
+    from .submission_evidence import validate_policy
+
+    validate_policy(current)
+    validate_policy(original)
+    return True
+
+
 def _public_contracts(root, edition, document, policy, prefix):
     from .records import public_assessment_case_ids
 
@@ -173,7 +199,7 @@ def verify_result_admissions(root, edition, sealed_manifest):
             _require(policies[name]['path'] == path, 'Admission policy is not the current public policy')
             raw = _bytes(root, policies[name])
             original = _record_source(record[record_field], prefix)
-            _require(_archived(root, original, prefix) == raw,
+            _require(policy_matches_current(name, _archived(root, original, prefix), raw),
                      'Admission original record policy differs from the current policy')
             loaded[name] = json.loads(raw)
         views = document['score_views']

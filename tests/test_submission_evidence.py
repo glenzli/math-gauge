@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+from fractions import Fraction
 from pathlib import Path
 import tempfile
 import unittest
@@ -94,6 +95,53 @@ class SubmissionScoringTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             _submission_task((0,0,0),False,'old',row,case=case,mode='capability',condition='single_attempt')
 
+    def test_written_and_manuscript_stages_keep_verified_partial_credit(self):
+        for component in ('proofs', 'manuscript-completion'):
+            with self.subTest(component=component):
+                case, row = self.work()
+                case.pop('criteria')
+                case['case_id'] = row['work']['case_id'] = 'staged-written-fixture'
+                case['component'] = component
+                case['stages'] = [dict(stage_id='math', points=90, lean_required=False),
+                    dict(stage_id='assertion_reliability', points=10, lean_required=False)]
+                row['work']['credit_units'][0]['earned'] = 45
+                original = copy.deepcopy(row['work'])
+                for mode in ('capability', 'partial', 'strict'):
+                    value, passed, _ = _submission_task((0,0,0), False, 'old', row,
+                        case=case, mode=mode, condition='single_attempt')
+                    self.assertEqual(value, (Fraction(45,100),)*3 if mode=='capability' else (0,)*3)
+                    self.assertFalse(passed)
+                self.assertEqual(row['work'], original)
+
+    def test_formalization_partial_obligation_remains_invalid(self):
+        case, row = self.work()
+        case.pop('criteria')
+        case['stages'] = [dict(stage_id='math', points=90),
+                          dict(stage_id='assertion_reliability', points=10)]
+        row['work']['credit_units'][0]['earned'] = 45
+        for explicit_component in (False, True):
+            with self.subTest(explicit_component=explicit_component):
+                if explicit_component:
+                    case['component'] = 'lean-formalization'
+                    case['stages'][0].pop('lean_required', None)
+                else:
+                    case['component'] = 'proofs'
+                    case['stages'][0]['lean_required'] = True
+                with self.assertRaisesRegex(ValueError, 'binary unit'):
+                    evidence.validate_work(row['work'], case, 'single_attempt')
+
+    def test_mixed_stages_only_require_binary_credit_for_the_lean_obligation(self):
+        case, row = self.work()
+        case.pop('criteria')
+        case['component'] = 'proofs'
+        case['stages'] = [dict(stage_id='math', points=90, lean_required=True),
+            dict(stage_id='assertion_reliability', points=10, lean_required=False)]
+        row['work']['credit_units'][1]['earned'] = 4.5
+        evidence.validate_work(row['work'], case, 'single_attempt')
+        row['work']['credit_units'][0]['earned'] = 45
+        with self.assertRaisesRegex(ValueError, 'binary unit'):
+            evidence.validate_work(row['work'], case, 'single_attempt')
+
     def test_forced_formal_body_is_referenced_once_and_unknown_is_not_failure(self):
         row = dict(classification='forced_content', mathematical_source='retained_formal_body')
         value, passed, _ = _submission_task((.7,.7,.7),False,'old',row,
@@ -175,6 +223,126 @@ class SubmissionScoringTests(unittest.TestCase):
             task=next(t for t in report['tasks'] if t['case_id']=='MG-C003')
             self.assertAlmostEqual(task['completion']['exact'],18/92)
             self.assertEqual(task['judgment_source'],'verified_normal_final')
+
+
+class UserNonfinalSourceSelectionTests(unittest.TestCase):
+    def fixture(self, folder, *, auth_updates=None, seal_updates=None, declared=True,
+                changed_selection_payload=False):
+        def keep(name, value):
+            raw = (json.dumps(value, ensure_ascii=False, indent=2) + '\n').encode()
+            (folder/name).write_bytes(raw)
+            return descriptor(name, raw)
+        artifact = descriptor('source.lean', b'unchanged original source')
+        (folder/'source.lean').write_bytes(b'unchanged original source')
+        seal = dict(normal_complete_delivery=False, answer_sha256=None,
+                    utc='2026-11-15T00:00:00Z', work=[artifact])
+        seal.update(seal_updates or {})
+        seal_d = keep('seal.json', seal)
+        auth = dict(schema='math-gauge.explicit-user-nonfinal-source-selection/v1',
+            version='0.1.0', model_id='fixture-model', case_id='fixture-case', phase='A1',
+            attempt_condition='nonlogical_retry_3', explicit_user_selection=True,
+            post_observation=True, execution_time_authorization=False,
+            human_mathematical_approval=False, new_candidate_calls=0, RMC=0, SMC=0,
+            selected_attempt_root='/original/physical-3', selected_cumulative_physical_request=3,
+            selected_effective_attempt=2, selected_mathematical_source=artifact,
+            selected_native_seal=seal_d, source_message_id='original-message',
+            source_thread_id='original-chat', exact_user_quote='Select the second effective original.',
+            user_message_utc='2026-11-15T01:00:00Z')
+        auth.update(auth_updates or {})
+        selection = dict(schema=evidence.USER_SELECTION_SCHEMA, version='0.1.0',
+            model_id='fixture-model', case_id='fixture-case', phase='A1',
+            attempt_condition='nonlogical_retry_3', case_contract_sha256='a'*64,
+            selected_original_attempt='/original/physical-3', selected_physical_request=3,
+            selected_effective_attempt=2, selected_native_seal=seal_d,
+            selected_mathematical_sources=[artifact], authorization=keep('authorization.json', auth),
+            post_observation=True, no_normal_final=True, applies_to_MC_only=True,
+            rmc=0, smc=0, source_repaired=False, cross_attempt_union=False, new_candidate_calls=0)
+        payload = copy.deepcopy(selection)
+        if changed_selection_payload:
+            payload['selected_effective_attempt'] = 1
+        selection['source'] = keep('exception.json', payload)
+        work = dict(schema=evidence.WORK_SCHEMA, version='0.1.0', model_id='fixture-model',
+            case_id='fixture-case', phase='A1', attempt_condition='nonlogical_retry_3',
+            case_contract_sha256='a'*64, reviewer_kind='ai', source_repaired=False,
+            new_candidate_calls=0, candidate_scripts_executed=False,
+            selection=evidence.USER_SELECTION, user_source_selection=selection,
+            deadline_existence_verified=True, normal_final_exists=False,
+            actual_original_attempt='/original/physical-3', actual_physical_request=3,
+            actual_effective_attempt=2, original_work_sources=[artifact],
+            evidence=[selection['source'], seal_d, artifact],
+            credit_units=[dict(id='math', maximum=100, earned=100, reason='Complete original proof')])
+        case = dict(case_id='fixture-case', contract_sha256='a'*64,
+                    criteria=[dict(criterion_id='math', points=100)])
+        row = dict(case_id='fixture-case', classification='forced_content',
+            reason='User selected one original nonfinal source after observation.',
+            source_response_sha256=None, mathematical_source='nonfinal_work',
+            reviewable_content_verified=True, evidence=[artifact], work_review=keep('work.json', work))
+        conditions = {}
+        for condition in evidence.CONDITIONS:
+            r = row if condition == 'nonlogical_retry_3' else dict(
+                case_id='fixture-case', classification='blank', reason='Original first failure.',
+                source_response_sha256=None, evidence=[artifact])
+            conditions[condition] = dict(schema=evidence.REVIEW_SCHEMA, version='0.1.0',
+                model_label='Fixture model', attempt_condition=condition, initials=[r],
+                rounds=[dict(round=n, classification='not_run', reason='No round.',
+                             evidence=[artifact]) for n in (1, 2, 3)])
+        archive = dict(schema='math-gauge.submission-archive/v1', version='0.1.0', conditions=conditions)
+        policy = json.loads((ROOT/'protocol/submission-scoring-policy.json').read_bytes())
+        if declared:
+            policy.update(nonfinal_source_selection_exception_version='0.1.0',
+                          nonfinal_source_selection_exceptions=[selection['source']])
+        record = dict(submission_evidence=keep('archive.json', archive),
+                      submission_policy=keep('policy.json', policy))
+        return case, work, record
+
+    def test_bound_user_selection_preserves_failed_delivery_and_mc_only(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp); case, work, record = self.fixture(folder)
+            original = (folder/'source.lean').read_bytes()
+            loaded = evidence.load_condition(folder, record, 'nonlogical_retry_3')
+            row = loaded['initials'][0]
+            self.assertEqual(row['work'], work)
+            for mode in ('capability', 'partial', 'strict'):
+                value, passed, _ = _submission_task((0, 0, 0), False, 'old', row,
+                    case=case, mode=mode, condition='nonlogical_retry_3')
+                self.assertEqual(value, (1, 1, 1) if mode == 'capability' else (0, 0, 0))
+                self.assertFalse(passed)
+            self.assertEqual((folder/'source.lean').read_bytes(), original)
+
+    def test_user_selection_cannot_change_scope_attempt_or_combine_originals(self):
+        with tempfile.TemporaryDirectory() as temp:
+            case, work, _ = self.fixture(Path(temp))
+            for key, value in [('case_id', 'other-case'), ('attempt_condition', 'single_attempt'),
+                               ('selected_effective_attempt', 3), ('no_normal_final', False),
+                               ('applies_to_MC_only', False), ('rmc', 1),
+                               ('selected_mathematical_sources', [descriptor('other.lean')]),
+                               ('cross_attempt_union', True)]:
+                bad = copy.deepcopy(work); bad['user_source_selection'][key] = value
+                with self.subTest(key=key), self.assertRaises(ValueError):
+                    evidence.validate_work(bad, case, 'nonlogical_retry_3')
+
+    def test_loader_requires_declared_exact_authority_and_original_cutoff(self):
+        examples = [dict(declared=False), dict(changed_selection_payload=True),
+            dict(auth_updates={'selected_effective_attempt': 1}),
+            dict(auth_updates={'exact_user_quote': ''}),
+            dict(auth_updates={'execution_time_authorization': True}),
+            dict(auth_updates={'human_mathematical_approval': True}),
+            dict(auth_updates={'user_message_utc': '2026-11-14T23:59:59Z'}),
+            dict(auth_updates={'selected_mathematical_source': descriptor('other.lean')}),
+            dict(seal_updates={'normal_complete_delivery': True}),
+            dict(seal_updates={'work': []})]
+        for params in examples:
+            with self.subTest(params=params), tempfile.TemporaryDirectory() as temp:
+                folder = Path(temp); _, _, record = self.fixture(folder, **params)
+                with self.assertRaises(ValueError):
+                    evidence.load_condition(folder, record, 'nonlogical_retry_3')
+
+    def test_source_bytes_cannot_change_after_user_selection(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp); _, _, record = self.fixture(folder)
+            (folder/'source.lean').write_bytes(b'repaired source')
+            with self.assertRaisesRegex(ValueError, 'bytes changed'):
+                evidence.load_condition(folder, record, 'nonlogical_retry_3')
 
 
 class SubmissionSourceTests(unittest.TestCase):

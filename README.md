@@ -49,7 +49,7 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 
 当前聚合0.9.0／MC0.3.0／SMC0.2.0，另绑提交来源0.1.0。三项分数采用同一组规则选定答卷、家族与权重。错误成果不得按“完成了”计分；编译通过也须另审是否对齐原数学目标。诚实地报告未完成，与错误宣称完整，会产生不同的可靠性结果。
 
-另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 15 个模型的 72／75 个手稿槽。
+另有[内容可靠率与完整目标达成率](protocol/content-rates.md)：前者检查实际交付内容的正确性与论证支持，后者验收题目要求的完整独立成果。数学研究分榜下的[主动额外成果观察](docs/manuscript-observations.md)记录经核实的、原任务未要求的成果组数，单独展示，不计入主分。目前覆盖 17 个模型的 80／85 个手稿槽。
 
 ## 当前总榜
 
@@ -68,6 +68,7 @@ Math Gauge 衡量模型能否可靠地完成数学工作：证明与反驳，审
 | [Gemini 4 Carbon (medium)](site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 91.78 | 79.74 | 64.50 | 38／1／39 |
 | [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
 | [Gemini 4 Hydrogen (xhigh)](site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
+| [Gemini 4 Carbon (high)](site/models/gemini-4-carbon-high/index.html) | AGY CLI⁴ | 88.51 | 74.78 | 32.83 | 38／1／39 |
 | [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
 | [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 86.33 | 70.24 | 37.92 | 38／1／39 |
 | [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
@@ -92,7 +93,11 @@ Flash也通过AGY订阅完整补跑三轮工程自查：均正常交卷，但始
 
 Carbon Medium保留38份正常交卷、1项强收有内容。该项已按最后一次有效尝试的原稿复核，仅计MC；RMC／SMC为0。C003初答及三轮KEEP均核实92／92，整条轨迹Strict通过。来源次数、故障排除及评审记录见[模型详情](site/models/gemini-4-carbon-medium/index.html)与[来源选择说明](results/v0.6.0/gemini-4-carbon-medium/20261115/source-selection-disclosure.json)。
 
-包含High、Medium及环境排查的Carbon整轮工作跨越两天以上；旧Medium批次窗口约47小时40分，此后另行补测C003。AGY/GCP反复出现断流、超时与HTTP429。Argon与Carbon在本轮复杂题上也暴露出严重推理错误及完成问题；未交卷原因仍须结合调用不稳定的证据判断。Carbon High未形成可用的成套Math Gauge答卷，未发布High总分。
+包含High、Medium及环境排查的Carbon整轮工作跨越两天以上；旧Medium批次窗口约47小时40分，此后另行补测C003。AGY/GCP反复出现断流、超时与HTTP429。Argon与Carbon在本轮复杂题上也暴露出严重推理错误及完成问题；未交卷原因仍须结合调用不稳定的证据判断。最初的High批次未形成可用的成套答卷；后续续跑另列于下。
+
+Carbon High 的 2026-11-15 续跑现已结算：39道初答中38份正常交卷、1项强收有内容、0项无可审核正文；MC／RMC／SMC为88.51/74.78/32.83。先测非Lean题，再测Lean题，最后接续C003及固定三轮自查；成功试跑直接留作正式答卷。AGY1.5.9后继原生请求的HIGH／MEDIUM档位按原请求保留；已确证的本地控制或认证TLS故障单独留证，不消耗有效尝试；无法确证为纯系统故障的断流保留原计次，作答超时和输出耗尽计次。逐题数学判断、三轮状态及实际条件见[模型详情](site/models/gemini-4-carbon-high/index.html)和[来源说明](results/v0.6.0/gemini-4-carbon-high/20261115/source-selection-disclosure.json)。
+
+C003初答的92项形式目标全部核实；三轮均正常交卷，自查MC／RMC依次为70→100→100。第一轮漏诊原映射说明中的局部数值错误，因此整条自查轨迹SMC为0；后两轮的准确诊断不追溯替换第一轮。
 
 此次采用用户观察后明确接纳的额外补试来源，保留原物理／有效次数、超出通常三次的实际调用及此前失败；按具体来源与首次正常交付选卷，没有按最高分挑卷。接入保留AI评审／人工待审状态，不提升正式比较资格。
 
@@ -106,7 +111,7 @@ Carbon Medium保留38份正常交卷、1项强收有内容。该项已按最后�
 
 两张前沿图默认使用RMC：总成本采用从0开始的线性美元刻度，典型题耗时以分钟计。实心点表示39道初答均正常交卷，其余为空心；颜色对应模型品牌。交互图展示模型名称，悬停联动高亮，点击可固定标签；前沿用实线标示。耗时包含工具与等待，受Harness、网络和硬件影响，见[计算方式与来源](docs/answer-timings.md)。
 
-成本每题只计留档采用的尝试，其他重试不计。Dot使用测试日订阅附赠的独立额度，额外费用为$0；有可核实单价的模型按公开API价格折算并计缓存优惠。Gemini 4 Hydrogen通过AGY订阅运行，按官方Standard API价格与42份原生用量折算为$51.63。Argon含新三轮自查的参考成本为$37.74，采用截至2026-11-30的限时五折价；12月起相同用量约$75.48。Carbon Medium的API参考总额为$56.99，不计安全审核辅助调用。完整用量、价格与来源见[成本说明](docs/cost-reference.md)，[交互图表](site/index.html#cost-frontier)可切换分数与横轴。
+成本每题只计留档采用的尝试，其他重试不计。Dot使用测试日订阅附赠的独立额度，额外费用为$0；有可核实单价的模型按公开API价格折算并计缓存优惠。Gemini 4 Hydrogen通过AGY订阅运行，按官方Standard API价格与42份原生用量折算为$51.63。Argon含新三轮自查的参考成本为$37.74，采用截至2026-11-30的限时五折价；12月起相同用量约$75.48。Carbon Medium的API参考总额为$56.99，不计安全审核辅助调用。Carbon High采用尝试的API参考为$73.52，42份采用交付的原生用量均已对齐；其他重试与辅助调用不计入。完整用量、价格与来源见[成本说明](docs/cost-reference.md)，[交互图表](site/index.html#cost-frontier)可切换分数与横轴。
 
 排行榜发布测试流程已结束并选定留档的结果；后续测试结算后再上榜。[交互页面](site/index.html)提供分类榜、两率、分数落差、独立成本和耗时排序，支持切换MC／RMC／SMC、中英文及URL分享。模型页保留逐题结果、自查执行状态和分数区间。
 

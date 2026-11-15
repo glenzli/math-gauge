@@ -6,22 +6,23 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 
 | 模型 | Harness | MC | RMC（主分） | SMC | 主动／强收／总题数 |
 |---|---|---:|---:|---:|---:|
-| Astra 6 (max) | Codex CLI | 94.32 | 94.32 | 89.17 | 39／0／39 |
-| Sol 6.1 (max) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
-| Claude Opus 5.5 (max) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
-| Astra 6 (xhigh) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
-| Dot Underlying (2026-11-08) | Dot native harness | 91.66 | 90.23 | 78.00 | 39／0／39 |
-| Claude Sonnet 5.5 (max) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
-| Sol 6.1 (xhigh) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
-| Terra 6.1 (max) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
+| [Astra 6 (max)](../site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 | 39／0／39 |
+| [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
+| [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
+| [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
+| [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | Dot native harness¹ | 91.66 | 90.23 | 78.00 | 39／0／39 |
+| [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39／0／39 |
+| [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39／0／39 |
+| [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39／0／39 |
 | [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 91.78 | 79.74 | 64.50 | 38／1／39 |
-| Terra 6.1 (xhigh) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
-| Gemini 4 Hydrogen (xhigh) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
-| Kimi 3.1 Pro (max) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
-| Gemini 4 Argon (high) | AGY CLI⁴ | 86.33 | 70.24 | 37.92 | 38／1／39 |
-| DeepSeek v4.1 Flash (max) | Codex CLI | 76.71 | 64.23 | 25.83 | 37／1／39 |
-| Gemini 3.8 Flash (high) | AGY CLI⁴ | 59.94 | 39.77 | 13.75 | 38／1／39 |
-| GLM 5.3 (max) | Claude Code | 41.48 | 27.34 | 14.08 | 21／5／39 |
+| [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39／0／39 |
+| [Gemini 4 Hydrogen (xhigh)](../site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39／0／39 |
+| [Gemini 4 Carbon (high)](../site/models/gemini-4-carbon-high/index.html) | AGY CLI⁴ | 88.51 | 74.78 | 32.83 | 38／1／39 |
+| [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38／0／39 |
+| [Gemini 4 Argon (high)](../site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 86.33 | 70.24 | 37.92 | 38／1／39 |
+| [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37／1／39 |
+| [Gemini 3.8 Flash (high)](../site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 59.94 | 39.77 | 13.75 | 38／1／39 |
+| [GLM 5.3 (max)](../site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21／5／39 |
 
 主动交卷与强收有内容互斥；强收表示留有可审核数学内容，MC可以为0。三轮自查另列，执行状态与完整区间见模型档案。后续测试完成结算并选定留档后再上榜。
 
@@ -49,22 +50,23 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 
 | 模型 | 已审内容可靠率 | 已确认目标达成率 |
 |---|---:|---:|
-| Astra 6 (max) | 100.00% | 90.92% |
-| Sol 6.1 (max) | 99.90% | 90.92% |
-| Claude Opus 5.5 (max) | 94.22% | 85.84% |
-| Astra 6 (xhigh) | 98.68% | 87.36% |
-| Dot Underlying | 99.65% | 85.29% |
-| Claude Sonnet 5.5 (max) | 90.83% | 83.38% |
-| Sol 6.1 (xhigh) | 98.93% | 82.61% |
-| Terra 6.1 (max) | 97.93% | 72.51% |
-| Terra 6.1 (xhigh) | 99.80% | 69.67% |
-| Gemini 4 Hydrogen (xhigh) | 90.53% | 78.42% |
-| Kimi 3.1 Pro (max) | 91.14% | 68.03% |
-| DeepSeek v4.1 Flash (max) | 76.64% | 57.36% |
-| Gemini 4 Argon (high) | 83.13% | 69.78% |
+| [Astra 6 (max)](../site/models/astra-6-max/index.html) | 100.00% | 90.92% |
+| [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | 99.90% | 90.92% |
+| [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 94.22% | 85.84% |
+| [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 98.68% | 87.36% |
+| [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | 99.65% | 85.29% |
+| [Claude Sonnet 5.5 (max)](../site/models/claude-sonnet-5.5-max/index.html) | 90.83% | 83.38% |
+| [Sol 6.1 (xhigh)](../site/models/sol-6.1-xhigh/index.html) | 98.93% | 82.61% |
+| [Terra 6.1 (max)](../site/models/terra-6.1-max/index.html) | 97.93% | 72.51% |
 | [Gemini 4 Carbon (medium)](../site/models/gemini-4-carbon-medium/index.html) | 93.59% | 83.60% |
-| Gemini 3.8 Flash (high) | 65.28% | 38.79% |
-| GLM 5.3 (max) | 69.48% | 32.44% |
+| [Terra 6.1 (xhigh)](../site/models/terra-6.1-xhigh/index.html) | 99.80% | 69.67% |
+| [Gemini 4 Hydrogen (xhigh)](../site/models/gemini-4-hydrogen-xhigh/index.html) | 90.53% | 78.42% |
+| [Gemini 4 Carbon (high)](../site/models/gemini-4-carbon-high/index.html) | 88.92% | 84.24% |
+| [Kimi 3.1 Pro (max)](../site/models/kimi-3.1-pro-max/index.html) | 91.14% | 68.03% |
+| [Gemini 4 Argon (high)](../site/models/gemini-4-argon/index.html) | 83.13% | 69.78% |
+| [DeepSeek v4.1 Flash (max)](../site/models/deepseek-v4.1-flash-1017/index.html) | 76.64% | 57.36% |
+| [Gemini 3.8 Flash (high)](../site/models/gemini-3.8-flash-high/index.html) | 65.28% | 38.79% |
+| [GLM 5.3 (max)](../site/models/glm-5.3-max/index.html) | 69.48% | 32.44% |
 
 Carbon Medium内容可靠率93.5938864629%、完整目标达成率83.60%；697项断言与149项完整目标均已判定。本次只更新最后强收手稿的来源与相应成果判断，其余38题及固定三轮自查不改判，断言／目标契约与权重不变。
 
@@ -97,8 +99,13 @@ Flash于2026-11-15（新加坡时间）通过AGY CLI1.5.9订阅完整补跑三�
 
 [Carbon Medium模型详情](../site/models/gemini-4-carbon-medium/index.html)与[公开来源选择说明](../results/v0.6.0/gemini-4-carbon-medium/20261115/source-selection-disclosure.json)保留采用边界。当前MC91.78／RMC79.74／SMC64.50，38份正常交卷、1项强收有内容，无空白初答。2026-11-15新加坡时间01:00后额外补测C003，累计物理第7次／有效第6次正常交卷；实际初答及三轮KEEP均AI核验92／92，诊断准确、无回退，整条轨迹Strict通过。此前五次有效失败及物理第6次原ERROR均保留；物理第6次已证明是本地控制器误拒原生上下文压缩，单独排除，不计模型尝试。初答用时116分23.8秒，三轮合计34分30.1秒；首次口径及其余38题保持。
 
-包含High、Medium与环境排查的旧批次及排查从2026-11-11 17:01:45 UTC延续至2026-11-14约14:30 UTC，随后本次C003补测于2026-11-14约21:17 UTC结束，跨越两天以上；旧Medium批次窗口约47小时40分，此后另行补测C003。两者表示不同范围的经过时间，均包含等待与运行中断。AGY/GCP期间频繁断流、超时与HTTP429；这些记录影响未交卷的归因。Argon与Carbon的已审复杂题同时暴露出严重推理错误及完成问题。Carbon High未形成可用的成套Math Gauge答卷，未发布High总分。
+包含High、Medium与环境排查的旧批次及排查从2026-11-11 17:01:45 UTC延续至2026-11-14约14:30 UTC，随后本次C003补测于2026-11-14约21:17 UTC结束，跨越两天以上；旧Medium批次窗口约47小时40分，此后另行补测C003。两者表示不同范围的经过时间，均包含等待与运行中断。AGY/GCP期间频繁断流、超时与HTTP429；这些记录影响未交卷的归因。Argon与Carbon的已审复杂题同时暴露出严重推理错误及完成问题。最初的High批次未形成可用的成套答卷；2026-11-15续跑已完成结算。
 
 本次来源采用包含用户观察后明确接纳的额外补试；原物理次数、有效次数与此前失败均保留，第4／5次没有改写成通常三次以内的重试资格。正常交卷锁定来源，不因数学错误重跑，不挑最高分、不跨尝试拼卷。AI评审、人工待审与原比较资格分别保留；用户接纳来源不构成人工数学批准。
 
 当前API参考总额为$56.9869815：唯一无回执的内部请求经Infra Sentinel核对后，按用户确认以0补记费用；安全审核辅助调用不计入。原生用量缺失状态保持，原答卷保留题源版本0.6.0身份，通过独立的来源兼容记录接入当前benchmark1.0.0；本次整理与接入不再调用候选模型。
+
+
+Carbon High 的 2026-11-15 续跑现已结算：39道初答中38份正常交卷、1项强收有内容、0项无可审核正文；MC／RMC／SMC为88.51/74.78/32.83。先测非Lean题，再测Lean题，最后接续C003及固定三轮自查；成功试跑直接留作正式答卷。AGY1.5.9后继原生请求的HIGH／MEDIUM档位按原请求保留；已确证的本地控制或认证TLS故障单独留证，不消耗有效尝试；无法确证为纯系统故障的断流保留原计次，作答超时和输出耗尽计次。逐题数学判断、三轮状态及实际条件见[模型详情](../site/models/gemini-4-carbon-high/index.html)和[来源说明](../results/v0.6.0/gemini-4-carbon-high/20261115/source-selection-disclosure.json)。
+
+本批High保留共同697项断言和149项完整目标合同；三种分数、两率、时间与费用均绑定同一批规则选定来源。采用尝试API参考$73.52，42份采用交付的原生用量均已对齐；其他重试与安全审核辅助调用另存，不计入该参考总额。

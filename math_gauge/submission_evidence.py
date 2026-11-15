@@ -17,6 +17,8 @@ POLICY_SCHEMA = 'math-gauge.submission-scoring-policy/v1'
 REVIEW_SCHEMA = 'math-gauge.submission-evidence/v1'
 WORK_SCHEMA = 'math-gauge.nonfinal-work-review/v1'
 NORMAL_SCHEMA = 'math-gauge.normal-final-math-review/v1'
+USER_SELECTION_SCHEMA = 'math-gauge.nonfinal-source-selection-exception/v1'
+USER_SELECTION = 'explicit_user_selected_original_failed_attempt'
 CONDITIONS = ('single_attempt', 'nonlogical_retry_3')
 CLASSES = {'active_final', 'forced_content', 'blank', 'not_run'}
 
@@ -100,6 +102,15 @@ def validate_policy(policy):
         new_candidate_calls=0)
     require(isinstance(policy, dict) and all(policy.get(k) == v for k, v in expected.items()),
             'Unsupported active-submission and nonfinal-work scoring policy')
+    extension = {'nonfinal_source_selection_exception_version', 'nonfinal_source_selection_exceptions'}
+    if extension & set(policy):
+        rows = policy.get('nonfinal_source_selection_exceptions')
+        require(extension <= set(policy)
+                and policy['nonfinal_source_selection_exception_version'] == '0.1.0'
+                and isinstance(rows, list) and rows,
+                'Nonfinal source exceptions need their separate version and exact retained selections')
+        _evidence(rows)
+        require(len({r['sha256'] for r in rows}) == len(rows), 'Repeated nonfinal source exception')
     return policy
 
 
@@ -117,10 +128,97 @@ def validate_work(review, case, condition):
             and review.get('phase') == 'A1' and review.get('attempt_condition') == condition
             and review.get('reviewer_kind') == 'ai' and review.get('source_repaired') is False
             and review.get('new_candidate_calls') == 0 and review.get('candidate_scripts_executed') is False
-            and review.get('selection') == 'fixed_last_effective_attempt_within_condition'
             and review.get('deadline_existence_verified') is True,
             'Nonfinal capability credit needs the fixed, deadline-bound original work review')
+    if review.get('selection') == USER_SELECTION:
+        _validate_user_source_selection(review)
+    else:
+        require(review.get('selection') == 'fixed_last_effective_attempt_within_condition'
+                and review.get('user_source_selection') is None,
+                'Nonfinal work needs fixed selection or an explicit source-bound user exception')
     return _validate_credit_units(review,case)
+
+
+def _validate_user_source_selection(review):
+    """A named post-observation exception cannot become an automatic best-of rule."""
+    selected = review.get('user_source_selection')
+    require(isinstance(selected, dict), 'User-selected work needs its explicit source selection')
+    expected = dict(schema=USER_SELECTION_SCHEMA, version='0.1.0', phase='A1',
+        attempt_condition='nonlogical_retry_3', post_observation=True,
+        no_normal_final=True, applies_to_MC_only=True, rmc=0, smc=0,
+        source_repaired=False, cross_attempt_union=False, new_candidate_calls=0)
+    require(all(selected.get(k) == v for k, v in expected.items())
+            and review.get('attempt_condition') == 'nonlogical_retry_3'
+            and review.get('normal_final_exists') is False
+            and isinstance(review.get('model_id'), str) and review['model_id']
+            and all(selected.get(k) == review.get(k)
+                    for k in ('model_id', 'case_id', 'phase', 'attempt_condition', 'case_contract_sha256'))
+            and type(selected['rmc']) is int and type(selected['smc']) is int,
+            'User source selection changed its scope, normal-final status or MC-only boundary')
+    physical, effective = selected.get('selected_physical_request'), selected.get('selected_effective_attempt')
+    require(type(physical) is int and physical >= 1 and type(effective) is int
+            and 1 <= effective <= min(3, physical)
+            and physical == review.get('actual_physical_request')
+            and effective == review.get('actual_effective_attempt')
+            and isinstance(selected.get('selected_original_attempt'), str)
+            and selected['selected_original_attempt']
+            and selected['selected_original_attempt'] == review.get('actual_original_attempt'),
+            'User source selection binds another physical or effective attempt')
+    sources = selected.get('selected_mathematical_sources')
+    require(isinstance(sources, list) and len(sources) == 1
+            and sources == review.get('original_work_sources'),
+            'User source selection needs exactly the original selected artifact, without a union')
+    _evidence([selected.get('source'), selected.get('authorization'),
+               selected.get('selected_native_seal'), *sources])
+    require(selected['source'] in review.get('evidence', [])
+            and selected['selected_native_seal'] in review.get('evidence', []),
+            'User selection must retain its exact selection and original native seal')
+    return selected
+
+
+def _load_user_source_selection(folder, review, policy):
+    selected = _validate_user_source_selection(review)
+    require(policy is not None
+            and selected['source'] in policy.get('nonfinal_source_selection_exceptions', []),
+            'User-selected work is absent from this record source-selection exceptions')
+    raw = json.loads(_read(folder, selected['source']))
+    require(raw == {k: v for k, v in selected.items() if k != 'source'},
+            'User source-selection payload differs from its retained original')
+    authorization = json.loads(_read(folder, selected['authorization']))
+    require(authorization.get('schema') == 'math-gauge.explicit-user-nonfinal-source-selection/v1'
+            and authorization.get('version') == '0.1.0'
+            and authorization.get('explicit_user_selection') is True
+            and authorization.get('post_observation') is True
+            and authorization.get('execution_time_authorization') is False
+            and authorization.get('human_mathematical_approval') is False
+            and authorization.get('new_candidate_calls') == 0
+            and authorization.get('RMC') == authorization.get('SMC') == 0
+            and all(authorization.get(k) == selected[k]
+                    for k in ('model_id', 'case_id', 'phase', 'attempt_condition'))
+            and authorization.get('selected_attempt_root') == selected['selected_original_attempt']
+            and authorization.get('selected_cumulative_physical_request') == selected['selected_physical_request']
+            and authorization.get('selected_effective_attempt') == selected['selected_effective_attempt']
+            and all(isinstance(authorization.get(k), str) and authorization[k].strip()
+                    for k in ('source_message_id', 'source_thread_id', 'exact_user_quote')),
+            'User selection needs the exact scoped, post-observation operator authorization')
+    artifact = selected['selected_mathematical_sources'][0]
+    seal_descriptor = selected['selected_native_seal']
+    require(all(authorization.get('selected_mathematical_source', {}).get(k) == artifact[k]
+                and authorization.get('selected_native_seal', {}).get(k) == seal_descriptor[k]
+                for k in ('bytes', 'sha256')),
+            'User authorization names another mathematical source or native seal')
+    seal = json.loads(_read(folder, seal_descriptor))
+    require(seal.get('normal_complete_delivery') is False and seal.get('answer_sha256') is None
+            and any(all(row.get(k) == artifact[k] for k in ('bytes', 'sha256'))
+                    for row in seal.get('work', [])),
+            'Selected mathematics was not present in this original nonfinal native cutoff')
+    try:
+        chosen_at = datetime.fromisoformat(authorization['user_message_utc'].replace('Z', '+00:00'))
+        sealed_at = datetime.fromisoformat(seal['utc'].replace('Z', '+00:00'))
+        require(chosen_at.tzinfo is not None and sealed_at.tzinfo is not None and chosen_at >= sealed_at,
+                'User selection must preserve its actual post-observation time')
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError('User selection must preserve its actual post-observation time') from error
 
 
 def _validate_credit_units(review, case):
@@ -141,7 +239,10 @@ def _validate_credit_units(review, case):
                 and 0 <= _number(row.get('earned')) <= maxima[row['id']]
                 and isinstance(row.get('reason'), str) and row['reason'].strip(),
                 'Nonfinal work credit exceeds or changes its original unit')
-        if case.get('stages'):
+        formal_unit = (case.get('component') == 'lean-formalization'
+            or any(stage.get('stage_id', stage.get('id')) == row['id']
+                   and stage.get('lean_required') is True for stage in case.get('stages', [])))
+        if formal_unit:
             require(row['earned'] in (0, row['maximum']),
                     'Formalization obligations keep their original binary unit judgments')
     _evidence(review.get('evidence'))
@@ -277,6 +378,8 @@ def load_condition(folder, record, condition):
             row['work'] = json.loads(_read(folder, row['work_review']))
             for item in descriptors(row['work']):
                 _read(folder, item)
+            if row['work'].get('selection') == USER_SELECTION:
+                _load_user_source_selection(folder, row['work'], load_policy(folder, record))
         if row.get('normal_review'):
             row['normal_math']=json.loads(_read(folder,row['normal_review']))
             for item in descriptors(row['normal_math']):

@@ -272,6 +272,71 @@ class ResultAdmissionTests(unittest.TestCase):
         self.save_record()
         self.assert_rejected('policy differs from the current policy')
 
+    def submission_policy_with_source_receipt(self):
+        policy = json.loads((self.root / POLICIES['submission'][0]).read_bytes())
+        policy.update(nonfinal_source_selection_exception_version='0.1.0',
+            nonfinal_source_selection_exceptions=[dict(
+                path='submission/source-selection-exceptions/opaque-fixture.json',
+                bytes=12, sha256='a' * 64)])
+        return policy
+
+    def save_submission_policy(self, policy):
+        path = self.folder / self.record['submission_policy']['path']
+        dump(path, policy)
+        self.record['submission_policy'] = descriptor(self.folder, path)
+        self.save_record()
+
+    def test_record_scoped_source_receipt_keeps_default_policy_and_sealed_inputs(self):
+        default = self.root / POLICIES['submission'][0]
+        before = default.read_bytes()
+        self.save_submission_policy(self.submission_policy_with_source_receipt())
+        self.assertEqual(verify_compatibility(self.root), self.edition)
+        self.assertEqual(default.read_bytes(), before)
+        self.assertEqual(self.sealed.read_bytes(), self.sealed_bytes)
+        self.assertEqual(dict(selected_cli_records(self.root))[MODEL], self.folder)
+
+    def test_source_receipt_cannot_change_default_arithmetic_selection_or_extra_fields(self):
+        for field, value in [('best_of', True), ('nonfinal_rmc', 1),
+                             ('nonfinal_smc', 1), ('attempt_selection', 'best_attempt'),
+                             ('cross_attempt_union', True), ('unreviewed_extension', True)]:
+            with self.subTest(field=field):
+                policy = self.submission_policy_with_source_receipt()
+                policy[field] = value
+                self.save_submission_policy(policy)
+                self.assert_rejected('policy differs from the current policy')
+
+    def test_source_receipt_requires_version_and_valid_unique_relative_descriptors(self):
+        for defect in ('non-object', 'missing-version', 'wrong-version', 'empty', 'duplicate', 'escape'):
+            with self.subTest(defect=defect):
+                policy = self.submission_policy_with_source_receipt()
+                if defect == 'non-object':
+                    policy = []
+                elif defect == 'missing-version':
+                    del policy['nonfinal_source_selection_exception_version']
+                elif defect == 'wrong-version':
+                    policy['nonfinal_source_selection_exception_version'] = 'different'
+                elif defect == 'empty':
+                    policy['nonfinal_source_selection_exceptions'] = []
+                elif defect == 'duplicate':
+                    policy['nonfinal_source_selection_exceptions'] *= 2
+                else:
+                    policy['nonfinal_source_selection_exceptions'][0]['path'] = '../private.json'
+                self.save_submission_policy(policy)
+                with self.assertRaises(ValueError):
+                    verify_compatibility(self.root)
+
+    def test_nonfinal_source_receipt_does_not_relax_other_policy_byte_bindings(self):
+        path = self.folder / self.record['capability_scoring_policy']['path']
+        policy = json.loads(path.read_bytes())
+        extension = self.submission_policy_with_source_receipt()
+        for key in ('nonfinal_source_selection_exception_version',
+                    'nonfinal_source_selection_exceptions'):
+            policy[key] = extension[key]
+        dump(path, policy)
+        self.record['capability_scoring_policy'] = descriptor(self.folder, path)
+        self.save_record()
+        self.assert_rejected('policy differs from the current policy')
+
     def test_public_membership_and_source_request_are_bound_to_current_contract(self):
         original = copy.deepcopy(self.document)
         self.document['public_case_contracts'].pop()

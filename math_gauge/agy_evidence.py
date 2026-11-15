@@ -165,9 +165,25 @@ def validate_failure(root, row, evidence):
     if data.get("native_terminal_event") is not None:
         terminal = _load(root, data["native_terminal_event"], evidence)
         seal = _load(root, data["native_terminal_seal"], evidence)
-        if (execution.get("status") != "failed" or native != [terminal]
-                or terminal.get("result", {}).get("status") != "ERROR"
-                or seal.get("native_status") != "ERROR" or seal.get("normal_complete_delivery") is not False
+        result = terminal.get("result", {})
+        if result.get("status") == "SUCCESS":
+            elapsed, limit = execution.get("elapsed_seconds"), dispatch.get("outer_budget_seconds")
+            sealed_elapsed = seal.get("elapsed_seconds")
+            if (execution.get("status") != "failed" or native != [terminal]
+                    or result.get("response") != "" or result.get("finished_reason") != "print_timeout"
+                    or (execution.get("failure") or {}).get("type") != "TimeoutError"
+                    or any(type(value) not in (int, float) or not math.isfinite(value)
+                           for value in (elapsed, limit, sealed_elapsed))
+                    or limit <= 0 or elapsed < limit or sealed_elapsed < limit
+                    or seal.get("native_status") != "SUCCESS"
+                    or seal.get("normal_complete_delivery") is not False
+                    or seal.get("answer_sha256") is not None
+                    or seal.get("native_return_sha256") != hashlib.sha256(b"").hexdigest()
+                    or seal.get("raw_terminal_sha256") != data["native_terminal_event"]["sha256"]):
+                raise ValueError("AGY empty native SUCCESS needs its original print timeout and proved deadline")
+        elif (execution.get("status") != "failed" or native != [terminal]
+                or result.get("status") != "ERROR" or seal.get("native_status") != "ERROR"
+                or seal.get("normal_complete_delivery") is not False
                 or seal.get("raw_terminal_sha256") != data["native_terminal_event"]["sha256"]):
             raise ValueError("AGY failure changed its original native ERROR")
     else:

@@ -1,5 +1,6 @@
 """Operational evidence fixtures; no model calls or mathematical judgments."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -152,6 +153,81 @@ class AgyEvidenceTests(unittest.TestCase):
         self.save()
         with self.assertRaises(ValueError):
             validate_failure(self.root, self.row, evidence_bytes)
+
+    def empty_success_deadline(self, *, response="", reason="print_timeout"):
+        self.deadline()
+        event = dict(event="result", result=dict(status="SUCCESS", response=response,
+                                                 finished_reason=reason))
+        terminal = self.put("terminal.json", event)
+        self.data["native_events"] = self.put("events.ndjson", (json.dumps(event) + "\n").encode())
+        self.execution["artifact_hashes"]["output/events.ndjson"] = self.data["native_events"]["sha256"]
+        self.data.update(native_execution=self.put("execution.json", self.execution),
+            native_terminal_event=terminal,
+            native_terminal_seal=self.put("seal.json", dict(native_status="SUCCESS",
+                normal_complete_delivery=False, answer_sha256=None, elapsed_seconds=10.25,
+                native_return_sha256=hashlib.sha256(response.encode()).hexdigest(),
+                raw_terminal_sha256=terminal["sha256"])))
+        self.save()
+        self.row["delivery_failure"] = self.row["agy_native_evidence"]
+
+    def test_empty_native_print_timeout_keeps_success_but_is_not_a_delivery(self):
+        self.empty_success_deadline()
+        actual = validate_native_delivery_failure(self.root, self.row)
+        self.assertEqual(actual["mathematical_judgment"], "not_adjudicated")
+        self.assertIsNone(self.row["response"])
+        self.assertEqual(json.loads(evidence_bytes(self.root, self.data["native_terminal_event"]))[
+            "result"]["status"], "SUCCESS")
+        attempted_delivery = dict(self.row, response=self.put("empty-final.md", b""))
+        with self.assertRaises(ValueError):
+            validate_delivery(self.root, attempted_delivery, evidence_bytes)
+
+    def test_native_print_timeout_cannot_hide_a_nonempty_answer(self):
+        for response in ("Actual mathematical answer", " "):
+            with self.subTest(response=response):
+                self.empty_success_deadline(response=response)
+                with self.assertRaisesRegex(ValueError, "empty native SUCCESS"):
+                    validate_failure(self.root, self.row, evidence_bytes)
+
+    def test_empty_native_success_requires_both_timeout_and_fixed_budget(self):
+        for broken in ("reason", "failure", "elapsed", "sealed_elapsed", "limit", "nan", "boolean"):
+            with self.subTest(broken=broken):
+                self.empty_success_deadline(reason="complete" if broken == "reason" else "print_timeout")
+                if broken == "failure":
+                    self.execution["failure"] = dict(type="ConnectionError")
+                elif broken in {"elapsed", "nan", "boolean"}:
+                    self.execution["elapsed_seconds"] = {"elapsed": 9, "nan": float("nan"), "boolean": True}[broken]
+                elif broken == "limit":
+                    self.data["dispatch"] = self.put("dispatch.json", dict(case_id="S", outer_budget_seconds=0))
+                elif broken == "sealed_elapsed":
+                    seal = json.loads(evidence_bytes(self.root, self.data["native_terminal_seal"]))
+                    seal["elapsed_seconds"] = 9
+                    self.data["native_terminal_seal"] = self.put("seal.json", seal)
+                self.data["native_execution"] = self.put("execution.json", self.execution)
+                self.save()
+                with self.assertRaisesRegex(ValueError, "proved deadline"):
+                    validate_failure(self.root, self.row, evidence_bytes)
+                self.data["dispatch"] = self.put("dispatch.json", dict(case_id="S", outer_budget_seconds=10))
+
+    def test_empty_print_timeout_still_requires_one_exact_unaltered_terminal(self):
+        for broken in ("duplicate", "normal", "answer_hash", "return_hash", "seal_status"):
+            with self.subTest(broken=broken):
+                self.empty_success_deadline()
+                if broken == "duplicate":
+                    original = evidence_bytes(self.root, self.data["native_events"])
+                    self.data["native_events"] = self.put("events.ndjson", original * 2)
+                    self.execution["artifact_hashes"]["output/events.ndjson"] = self.data["native_events"]["sha256"]
+                    self.data["native_execution"] = self.put("execution.json", self.execution)
+                else:
+                    seal = json.loads(evidence_bytes(self.root, self.data["native_terminal_seal"]))
+                    key, value = {"normal": ("normal_complete_delivery", True),
+                                  "answer_hash": ("answer_sha256", self.answer["sha256"]),
+                                  "return_hash": ("native_return_sha256", self.answer["sha256"]),
+                                  "seal_status": ("native_status", "ERROR")}[broken]
+                    seal[key] = value
+                    self.data["native_terminal_seal"] = self.put("seal.json", seal)
+                self.save()
+                with self.assertRaisesRegex(ValueError, "empty native SUCCESS"):
+                    validate_failure(self.root, self.row, evidence_bytes)
 
     def test_manuscript_failure_uses_agy_evidence_and_its_exact_task(self):
         self.deadline()

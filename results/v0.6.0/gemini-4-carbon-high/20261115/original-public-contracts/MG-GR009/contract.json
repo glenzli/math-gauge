@@ -1,0 +1,268 @@
+{
+  "id": "MG-GR009",
+  "parent_case_id": "MG-R009",
+  "version": "0.1.1",
+  "title": "群作用下降、稳定子与基底检验",
+  "track": "determinate",
+  "stages": [
+    {
+      "title": "有限群的自由作用",
+      "kind": "construct",
+      "assumptions": [
+        "Γ有限",
+        "T为profinite且Γ作用自由",
+        "E任意等变层"
+      ],
+      "expected": "construction",
+      "depends_on": [],
+      "required_evidence": [
+        "轨道空间Hausdorff及全不连通",
+        "真正层商泛性质",
+        "所有测试对象上单射并局部满射"
+      ],
+      "critical_errors": [
+        "任意群轨道商都Hausdorff",
+        "只检查集合轨道而未检查层"
+      ],
+      "id": "S1",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "有限集合上的纤维分类",
+      "kind": "synthesize",
+      "assumptions": [
+        "Γ,T,X均有限离散",
+        "X→T等变",
+        "每轨道选代表t用于分类表达"
+      ],
+      "expected": "classification",
+      "depends_on": [
+        "S1"
+      ],
+      "required_evidence": [
+        "诱导Γ集合的双向构造",
+        "全部态射对应",
+        "稳定子作用判据",
+        "自同构群含空纤维"
+      ],
+      "critical_errors": [
+        "基底非自由就断言所有对象不下降",
+        "忽略对象的自同构"
+      ],
+      "id": "S2",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "一般层的完整下降",
+      "kind": "construct",
+      "assumptions": [
+        "共同站点、宇宙和群作用全部条件",
+        "Γ不要求有限或作用自由",
+        "E任意Set_V值层",
+        "B任意层而非仅可表示"
+      ],
+      "expected": "construction",
+      "depends_on": [
+        "S1",
+        "S2"
+      ],
+      "required_evidence": [
+        "层商与局部轨道相等",
+        "所有测试对象稳定子判据两方向",
+        "对象和全部态射等价",
+        "任意层基底相容"
+      ],
+      "critical_errors": [
+        "逐对象商直接当层",
+        "假设全局代表",
+        "把全部等变对象都当有效下降数据"
+      ],
+      "id": "S3",
+      "points": 30,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "单点上的检验",
+      "kind": "decide",
+      "assumptions": [
+        "共同设定",
+        "仅在单点测试对象*上给稳定子作用平凡",
+        "E任意层，不要求可表示"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S2",
+        "S3"
+      ],
+      "required_evidence": [
+        "真实层的点不可见作用例",
+        "非单点截面上作用非平凡",
+        "全部大小/连续性合法"
+      ],
+      "critical_errors": [
+        "用有限集合S2纤维结论替代一般层全测试条件"
+      ],
+      "id": "S4",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "局部满射的基底检验",
+      "kind": "decide",
+      "assumptions": [
+        "共同设定",
+        "B→Q局部满射",
+        "拉回等变对象在B上可实现"
+      ],
+      "expected": "true",
+      "depends_on": [
+        "S3",
+        "S4"
+      ],
+      "required_evidence": [
+        "按局部提升检测稳定子",
+        "用层分离性回到原对象",
+        "不选择全局截面"
+      ],
+      "critical_errors": [
+        "局部满射误作每个U全局满射"
+      ],
+      "id": "S5",
+      "points": 15,
+      "lean_required": false,
+      "mandatory": true
+    },
+    {
+      "title": "非空基底与全局结论",
+      "kind": "decide",
+      "assumptions": [
+        "共同设定",
+        "B非空可表示且任意映到Q",
+        "拉回对象可实现",
+        "不假设B→Q局部满射"
+      ],
+      "expected": "false",
+      "depends_on": [
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "required_evidence": [
+        "非空而非空基底的合法反例",
+        "原与拉回下降分别核验",
+        "正确检验边界"
+      ],
+      "critical_errors": [
+        "只给空基底例不满足题设",
+        "非空当覆盖"
+      ],
+      "id": "S6",
+      "points": 10,
+      "lean_required": false,
+      "mandatory": true
+    }
+  ],
+  "turns": [
+    {
+      "stage_id": "S3",
+      "earlier_stage_ids": [
+        "S1"
+      ],
+      "changed_assumptions": "Γ与作用不要求有限自由，改为一般层分类",
+      "expected_truth": "true",
+      "mechanism": "从特殊实现到判据",
+      "tempting_invalid_transfer": "继续假设Q是profinite空间",
+      "correct_boundary": "层商总存在，只有满足全测试稳定子条件的对象下降",
+      "target_claim": "任意共同设定均存在具有指定泛性质的层商及完整的判据分类与任意基底相容性。",
+      "scope": "subclaim"
+    },
+    {
+      "stage_id": "S4",
+      "earlier_stage_ids": [
+        "S2",
+        "S3"
+      ],
+      "changed_assumptions": "一般层只检查普通单点值",
+      "expected_truth": "false",
+      "mechanism": "测试对象量词",
+      "tempting_invalid_transfer": "单点纤维检测所有层截面",
+      "correct_boundary": "需所有profinite测试对象",
+      "target_claim": "单点测试对象上的稳定子作用平凡足以保证一般等变层可下降。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S5",
+      "earlier_stage_ids": [
+        "S3"
+      ],
+      "changed_assumptions": "用任意局部满射层基底检测原对象",
+      "expected_truth": "true",
+      "mechanism": "有效局部到整体",
+      "tempting_invalid_transfer": "需要全局代表才可反映",
+      "correct_boundary": "局部提升和层分离性足够",
+      "target_claim": "沿任意局部满射层B→Q拉回后可实现，必反映原对象可实现。",
+      "scope": "stage"
+    },
+    {
+      "stage_id": "S6",
+      "earlier_stage_ids": [
+        "S5"
+      ],
+      "changed_assumptions": "仅非空可表示基底而无局部满射",
+      "expected_truth": "false",
+      "mechanism": "覆盖与非空",
+      "tempting_invalid_transfer": "非空拉回可检测全部轨道",
+      "correct_boundary": "未覆盖轨道可携带非平凡稳定子作用",
+      "target_claim": "沿非空可表示层B→Q拉回后可实现，必反映原对象可实现。",
+      "scope": "stage"
+    }
+  ],
+  "source_paths": [
+    "cases/public/MG-R009/task.md",
+    "cases/public/MG-R009/reference.md",
+    "cases/public/MG-R009/rubric.json"
+  ],
+  "source_sha256": {
+    "cases/public/MG-R009/task.md": "9281a387aa63823bc3ffb6a23d4c00a54fa5b473cf1aa58575544f44befd0958",
+    "cases/public/MG-R009/reference.md": "041910443d36dd0457938acbc7102faca16d95290efc4ba84e8ba060c6dc4c9c",
+    "cases/public/MG-R009/rubric.json": "1170933a34f33996ff05ede77f44c9572e34b8bc2c18a5a763f8d7fcba5cd527"
+  },
+  "review": {
+    "mathematical": "author-self-check-complete",
+    "human": "pending"
+  },
+  "scoring": {
+    "total_points": 100,
+    "all_stages_mandatory": true,
+    "strict_pass": "all_stages_pass",
+    "partial_points_do_not_imply_pass": true,
+    "valid_alternative_proofs_accepted": true,
+    "candidate_lean_required": false
+  },
+  "candidate_files": [
+    "task.md"
+  ],
+  "evaluator_files": [
+    "reference.md",
+    "contract.json"
+  ],
+  "model_runs": [],
+  "dependency_policy": "记录参考中实际使用或明确可复用的前序结论；允许独立有效替代证明，不强迫沿此路线。",
+  "schema": "math-gauge.group-contract/v1",
+  "kind": "progressive",
+  "all_stages_mandatory": true,
+  "parent": {
+    "suite": "cases/public",
+    "case_id": "MG-R009",
+    "version": "0.3.0",
+    "suite_sha256": "6ad8a8a7c80a7ba769b0677ef250bf9998d9601d190f271ce6b357fa91f5308d",
+    "case_manifest_sha256": "a49c92f944ad8ebfd065ab5fce61586d9861af4ed4c8b32451a3129eacbcff44"
+  }
+}

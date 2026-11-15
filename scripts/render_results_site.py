@@ -48,6 +48,7 @@ MODEL_THEMES = {
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-hydrogen-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+    "gemini-4-carbon-high": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon-medium": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
@@ -66,6 +67,7 @@ MODEL_PROVIDERS = {
     "gemini-4-argon": ("Google", "google.svg"),
     "gemini-4-hydrogen-xhigh": ("Google", "google.svg"),
     "gemini-4-carbon": ("Google", "google.svg"),
+    "gemini-4-carbon-high": ("Google", "google.svg"),
     "gemini-4-carbon-medium": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
@@ -85,6 +87,7 @@ MODEL_LABELS = {
     "gemini-4-argon": "Gemini 4 Argon (high)",
     "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)",
+    "gemini-4-carbon-high": "Gemini 4 Carbon (high)",
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 MODEL_SHORT_LABELS = {
@@ -104,6 +107,7 @@ MODEL_SHORT_LABELS = {
     "gemini-4-argon": "Gemini 4 Argon (high)",
     "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
     "gemini-4-carbon": "Gemini 4 Carbon (high)",
+    "gemini-4-carbon-high": "Gemini 4 Carbon (high)",
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 
