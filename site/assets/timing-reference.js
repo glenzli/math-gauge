@@ -67,7 +67,7 @@
    const notes=node('div',null,'timing-run-notes');notes.append(node('span',t('leanShort')+' · '+chapterStatus.text,chapterStatus.failed?'fail':chapterStatus.passed?'pass':''));
    if(dailyStatus.text)notes.append(node('span',t('everyday')+' · '+dailyStatus.text,dailyStatus.failed?'fail':''));
    const description=[model.harness,...[...notes.children].map(n=>n.textContent)].join('\n');
-   identity.title=description;row.setAttribute('aria-description',description);
+   identity.title=model.label+'\n'+description;link.title=identity.title;row.setAttribute('aria-description',description);
    name.append(notes);identity.append(img,name);row.append(identity);
    const bars=node('div',null,'timing-bars');
    keys.forEach(key=>{
