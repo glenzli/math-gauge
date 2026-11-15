@@ -16,6 +16,9 @@
   const keys=(q.get('show-'+key)??legacy??'').toLowerCase().split(',');
   return {shown:normalizeShown(series[key].filter(s=>keys.includes(s.key)).map(s=>s.id),key)};
  }
+ function readView(search,key='overall'){
+  return new URLSearchParams(search).get('view-'+key)==='table'?'table':'chart';
+ }
  function toggleShown(current,id,checked,key='overall'){
   const selected=normalizeShown(current,key);
   if(!ids(key).includes(id))return selected;
@@ -25,11 +28,13 @@
  function boardURL(href,key,patch){
   const url=new URL(href);
   if(patch.shown)url.searchParams.set('show-'+key,series[key].filter(s=>normalizeShown(patch.shown,key).includes(s.id)).map(s=>s.key).join(','));
+  if(patch.view!==undefined)url.searchParams.set('view-'+key,patch.view==='table'?'table':'chart');
   [...url.searchParams.keys()].filter(k=>k==='complete'||k.startsWith('complete-')).forEach(k=>url.searchParams.delete(k));
   return url;
  }
  function applyVisibility(elements,values){elements.forEach(element=>{element.hidden=!values.includes(element.dataset.displayMode)})}
- const api={series,normalizeShown,readBoard,toggleShown,boardURL,applyVisibility};
+ function applyView(elements,view){elements.forEach(element=>{element.hidden=element.dataset.viewPane!==view})}
+ const api={series,normalizeShown,readBoard,readView,toggleShown,boardURL,applyVisibility,applyView};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  if(typeof window==='undefined')return;
  window.MGBoards=api;
@@ -53,12 +58,15 @@
  const applied=new WeakMap();
  function sync(event){
   roots.forEach(root=>{
-   const key=root.dataset.board,{shown}=readBoard(location.search,key);
-   const signature=JSON.stringify(shown);
+   const key=root.dataset.board,{shown}=readBoard(location.search,key),view=readView(location.search,key);
+   const signature=JSON.stringify([shown,view]);
    if(event?.detail?.rendered===false&&applied.get(root)===signature)return;
    applied.set(root,signature);
    root.dataset.visibleScores=String(shown.length);
+   root.dataset.view=view;
    applyVisibility(owned(root,'[data-display-mode]'),shown);
+   applyView(owned(root,'[data-view-pane]'),view);
+   owned(root,'[data-view-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.viewChoice===view)));
    owned(root,'[data-show-score]').forEach(input=>{input.checked=shown.includes(input.dataset.showScore);input.disabled=input.checked&&shown.length===1});
   });
  }
@@ -68,6 +76,7 @@
  }
  roots.forEach(root=>{
   const key=root.dataset.board,button=root.querySelector('[data-board-settings="'+key+'"]'),panel=document.getElementById('board-options-'+key);
+  owned(root,'[data-view-choice]').forEach(choice=>choice.addEventListener('click',()=>change(key,{view:choice.dataset.viewChoice})));
   if(!button||!panel)return;
   button.addEventListener('click',()=>{
    if(opened?.panel===panel){close(true);return}

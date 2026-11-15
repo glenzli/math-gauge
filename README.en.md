@@ -99,6 +99,8 @@ The Carbon campaign, including High, Medium and environment troubleshooting, spa
 
 The 2026-11-15 Carbon High continuation is settled: 38 normal A1 finals, 1 forced-content slot and 0 slots without assessable text out of 39, with MC/RMC/SMC 88.51/74.78/32.83. Non-Lean tasks ran first, followed by Lean tasks, with C003 and its three fixed self-checks last; successful pilots are retained as formal answers. Later native HIGH/MEDIUM requests under AGY1.5.9 preserve their original effort settings. Proven local-controller or authentication TLS faults are preserved separately and consume no effective attempt. Stream failures without proof of a pure system fault retain their original count; deadlines and output exhaustion consume an attempt. See [model details](site/models/gemini-4-carbon-high/index.html) and the [source disclosure](results/v0.6.0/gemini-4-carbon-high/20261115/source-selection-disclosure.json) for mathematical judgments, round states and actual conditions.
 
+The complete retained history contains 62 task-attempt records: seven from the earlier failed batch and 55 from the resumed run and self-checks. These comprise 51 effective attempts and 11 system exclusions. Relative to 39 initial tasks plus three self-check rounds, there are 20 additional attempt records, including nine effective retries. The seven reviewed samples in the older anomaly table are a historical subset, not the campaign retry total; task-attempt records are not API-call counts. See the [complete attempt and retry report](docs/execution-attempts.md).
+
 All 92 formal targets in C003's initial answer were verified. Its three self-checks delivered normally, earning MC/RMC 70→100→100. The first round missed a local numerical error in the original mapping explanation, so the whole trajectory earns SMC0; the later accurate diagnoses do not replace the first round retrospectively.
 
 The user explicitly accepted the retained extra trials after observation. Actual physical and effective attempt numbers and prior failures remain intact, including attempts beyond three; answers were selected by source and first normal delivery, without best-of scoring. This adoption retains AI-review/human-pending status and does not upgrade comparison eligibility.
@@ -127,7 +129,7 @@ From the repository root, start a local server and open <http://127.0.0.1:8000/s
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-The page itself works offline. See the [results report](docs/results.md) for site regeneration and data recomputation.
+The page itself works offline. Horizontal charts use compact rows. Overall and category boards switch independently between chart and table views, with view, visible metrics and sort choices retained in the URL. Downloads and longer run notes expand on demand. See the [results report](docs/results.md) for site regeneration and data recomputation.
 
 Current answers, reviews, mathematical source and timing/cost summaries remain in the working tree. Duplicate copies, original containers, complete event streams and build caches are retained by immutable Git commits and a hash-bound index. Both repositories follow the same [evidence retention and recovery rules](docs/evidence-retention.md); a complete audit requires local Git history.
 

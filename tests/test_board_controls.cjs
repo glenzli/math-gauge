@@ -1,6 +1,6 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {series,readBoard,toggleShown,boardURL,applyVisibility}=require('../scripts/templates/board-controls.js');
+const {series,readBoard,readView,toggleShown,boardURL,applyVisibility,applyView}=require('../scripts/templates/board-controls.js');
 const all=['capability','partial','strict'];
 
 test('scoped preferences restore independently while legacy shared links remain readable',()=>{
@@ -51,4 +51,44 @@ test('visibility changes only supplied elements, preserving zero and unknown val
  applyVisibility(elements,all);
  assert.deepEqual(elements.map(element=>element.hidden),[false,false,false]);
  assert.deepEqual(elements.map(element=>element.textContent),original);
+});
+
+test('chart and table views restore independently without changing score preferences',()=>{
+ const search='?view-overall=table&view-written=chart&view-lean=table&show=rmc&sort-written=strict';
+ assert.equal(readView(search),'table');
+ assert.equal(readView(search,'written'),'chart');
+ assert.equal(readView(search,'lean'),'table');
+ assert.equal(readView(search,'research'),'chart');
+ assert.deepEqual(readBoard(search),{shown:['partial']});
+ for(const invalid of ['', '?view=table', '?view-overall=unknown', '?view-overall=TABLE'])assert.equal(readView(invalid),'chart');
+});
+
+test('switching views preserves every other board, sorting, language and shared URL state',()=>{
+ const original=new URL('https://example.test/site/index.html?score=strict&sort-written=capability&sort-gap=DG&show=rmc&show-lean=mc,smc&view-overall=table&view-written=table&lang=en&category=lean&custom=0#category-leaderboards');
+ for(const key of Object.keys(series)){
+  const changed=boardURL(original.href,key,{view:'chart'});
+  assert.equal(readView(changed.search,key),'chart');
+  assert.deepEqual(readBoard(changed.search,key),readBoard(original.search,key));
+  for(const other of Object.keys(series))if(other!==key){
+   assert.equal(readView(changed.search,other),readView(original.search,other));
+   assert.deepEqual(readBoard(changed.search,other),readBoard(original.search,other));
+  }
+  const expected=new URL(original);expected.searchParams.set('view-'+key,'chart');
+  assert.equal(changed.href,expected.href);
+ }
+ const changed=boardURL(original.href,'research',{view:'table',shown:['strict']});
+ assert.equal(readView(changed.search,'research'),'table');
+ assert.deepEqual(readBoard(changed.search,'research'),{shown:['strict']});
+ assert.equal(readView(boardURL(changed.href,'research',{view:'unknown'}).search,'research'),'chart');
+});
+
+test('changing metrics retains the selected view, and panes retain zero and unknown text',()=>{
+ const changed=boardURL('https://example.test/?view-overall=table&view-written=chart','overall',{shown:all});
+ assert.equal(readView(changed.search),'table');
+ const panes=['chart','table'].map((viewPane,index)=>({dataset:{viewPane},hidden:false,textContent:['0.00','—'][index]}));
+ applyView(panes,'chart');
+ assert.deepEqual(panes.map(pane=>pane.hidden),[false,true]);
+ applyView(panes,'table');
+ assert.deepEqual(panes.map(pane=>pane.hidden),[true,false]);
+ assert.deepEqual(panes.map(pane=>pane.textContent),['0.00','—']);
 });

@@ -27,6 +27,7 @@ from scripts.results_publication import prepare_publication, write_publication
 from scripts.timing_reference import build_reference, render_panel
 from scripts.cost_reference import build_reference as build_cost_reference, render_panel as render_cost_panel
 from scripts.results_anomalies import render_panel as render_anomaly_panel
+from scripts.results_attempt_history import load_public as load_attempt_history
 from math_gauge.execution_anomalies import load_public as load_execution_anomalies
 from math_gauge.submission_evidence import load_review_completion
 from math_gauge.result_corrections import load_selected as load_result_correction
@@ -452,6 +453,12 @@ def score_board_settings(key, modes):
     return board_settings(key, [(m['id'], m['abbreviation']) for m in modes])
 
 
+def view_control():
+    return ('<div class="segmented board-view" role="group" aria-label="展示方式">'
+            '<button type="button" data-view-choice="chart" aria-pressed="true">图表</button>'
+            '<button type="button" data-view-choice="table" aria-pressed="false">表格</button></div>')
+
+
 def horizontal_chart(groups, chart_id, label, ticks, zero):
     """Shared model-row layout; callers supply source-derived values and axes."""
     step = ticks[1]['position'] - ticks[0]['position']
@@ -619,14 +626,14 @@ def render_category_leaderboards(data):
                       +'" aria-labelledby="category-tab-'+cid+'"'+(' hidden' if index else '')+'>'
                       '<div class="panel-head"><div><h3>'+title+'排行榜</h3><p class="panel-desc">类内满分100 · 总榜权重'
                       +str(group['weight'])+'%</p></div>'
-                      +'<div class="board-toolbar">'+sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'partial')
+                      +'<div class="board-toolbar">'+view_control()+sort_control(group['id'], group['title']+'排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], 'partial')
                       +score_board_settings(group['id'], data['display_score_modes'])+'</div>'
-                      +'</div><figure class="score-figure category-figure" aria-label="'+title+'分类成绩图">'
+                      +'</div><figure class="score-figure category-figure" data-view-pane="chart" aria-label="'+title+'分类成绩图">'
                       '<figcaption class="chart-caption"><span>类内百分制</span><span class="chart-legend">'
                       +''.join('<span class="legend-item" data-display-mode="'+mode['id']+'"><i class="legend-swatch '+mode['abbreviation'].lower()+'" aria-hidden="true"></i>'
                                +mode['abbreviation']+'</span>' for mode in data['display_score_modes'])
                       +'</span></figcaption>'+grouped_bars(data, group)+'</figure>'
-                      '<div class="table-wrap"><table class="compact category-ranking" id="category-ranking-'
+                      '<div class="table-wrap" data-view-pane="table" hidden><table class="compact category-ranking" id="category-ranking-'
                       +cid+'"></table></div>'
                       +(render_subboard(data.get('manuscript_observations'), chart_renderer=horizontal_chart, controls=board_settings('initiative', [('groups','已核实额外成果组'),('coverage','审阅覆盖')])) if group['id']=='research' else '')
                       +'</section>')
@@ -645,7 +652,7 @@ def is_fully_evaluated(model):
             and selected_result(model)['metrics']['overall']['exact'] is not None)
 
 
-def render(data, *, timing_reference=None, cost_reference=None, anomaly_reference=None):
+def render(data, *, timing_reference=None, cost_reference=None, anomaly_reference=None, attempt_reference=None):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
@@ -680,7 +687,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
     values = {"DATA": payload, "ROWS": ''.join(rows), "TRIPLE_CHART": grouped_bars(data),
               "REVIEW_STATUS": review_status(data, 'method.html#review-process'),
               "LANGUAGE_SWITCH": language_switch(),
-              "OVERALL_CONTROLS": sort_control('overall', '总榜排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], data['default_score_mode'])+score_board_settings('overall', data['display_score_modes']),
+              "OVERALL_CONTROLS": view_control()+sort_control('overall', '总榜排序', [(m['id'],m['abbreviation']+' 高→低') for m in data['display_score_modes']], data['default_score_mode'])+score_board_settings('overall', data['display_score_modes']),
               "GAP_CHART": render_gap_chart(data),
               "CONTENT_RATES": render_content_rates(data),
               "CATEGORY_RANKINGS": render_category_leaderboards(data),
@@ -713,7 +720,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
               "COST_REFERENCE": render_cost_panel(cost_reference),
               "COST_CSS": '<link rel="stylesheet" href="assets/cost-reference.css">' if cost_reference else '',
               "COST_JS": '<script src="assets/cost-label-layout.js"></script><script src="assets/cost-reference.js"></script>' if cost_reference else '',
-              "EXECUTION_ANOMALIES": render_anomaly_panel(anomaly_reference, models=data['models']),
+              "EXECUTION_ANOMALIES": render_anomaly_panel(anomaly_reference, models=data['models'], attempt_reference=attempt_reference),
               "ANOMALY_CSS": '<link rel="stylesheet" href="assets/execution-anomalies.css">' if anomaly_reference else ''}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
     return re.sub(r"@@MG_(" + '|'.join(re.escape(key) for key in values) + r")@@",
@@ -726,14 +733,17 @@ def write_site(destination, *, source_root=ROOT):
     timings = build_reference(source_root,display_data=data)
     costs = build_cost_reference(source_root,display_data=data,timing_reference=timings)
     anomalies = load_execution_anomalies(source_root)
+    attempts = load_attempt_history(source_root)
     # Resolve all evidence before changing navigation or writing any page.
     files = build_detail_pages(data, source_root, anomaly_reference=anomalies)
-    files["index.html"] = render(data,timing_reference=timings,cost_reference=costs,anomaly_reference=anomalies)
+    files["index.html"] = render(data,timing_reference=timings,cost_reference=costs,anomaly_reference=anomalies,attempt_reference=attempts)
     files['downloads/timing-reference.json'] = json.dumps(timings,ensure_ascii=False,indent=2)+'\n'
     if costs is not None:
         files['downloads/cost-reference.json'] = json.dumps(costs,ensure_ascii=False,indent=2)+'\n'
     if anomalies is not None:
         files['downloads/execution-anomalies.json'] = json.dumps(anomalies,ensure_ascii=False,indent=2)+'\n'
+    if attempts is not None:
+        files['downloads/execution-attempts.json'] = json.dumps(attempts,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
     for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()

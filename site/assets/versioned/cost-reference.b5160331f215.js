@@ -51,7 +51,8 @@
   data.models.filter(m=>m.total_usd==null).forEach(m=>{const item=node('span',null,'cost-unavailable-item');item.append(icon(m),link(m),node('strong',costText(m)),node('span',m.status==='partial'?t('partial'):t('unknown')));missing.append(item)});
  }
  function renderPlot(){
-  const W=1040,H=520,left=70,right=955,top=38,bottom=438;
+  const W=1040,H=460,left=70,right=955,top=32,bottom=384;
+  plot.setAttribute('viewBox','0 0 '+W+' '+H);
   plot.replaceChildren(svg('title',{id:'cost-svg-title'},t(axis==='cost'?'costAxisButton':'timeAxisButton')),
    svg('desc',{id:'cost-svg-desc'},t(axis==='cost'?'costNote':'timeNote')+' '+t('submissionNote')));
   const rows=data.models.filter(m=>axis==='cost'?amount(m)!=null:m.seconds!=null);
@@ -70,7 +71,7 @@
   const y=v=>bottom-Math.max(0,Math.min(100,v))/100*(bottom-top);
   for(let value=0;value<=100;value+=20){plot.append(svg('line',{x1:left,y1:y(value),x2:right,y2:y(value),class:'cost-grid'}),svg('text',{x:left-14,y:y(value)+4,'text-anchor':'end',class:'cost-axis-text'},value))}
   ticks.forEach(value=>{plot.append(svg('line',{x1:x(value),y1:top,x2:x(value),y2:bottom,class:'cost-grid'}),svg('text',{x:x(value),y:bottom+24,'text-anchor':'middle',class:'cost-axis-text'},axis==='cost'?'$'+value.toLocaleString(locale()):value))});
-  plot.append(svg('text',{x:left,y:19,class:'cost-axis-title'},({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' / 100'),svg('text',{x:(left+right)/2,y:493,'text-anchor':'middle',class:'cost-axis-title'},t(axis==='cost'?'costAxis':'timeAxis')));
+  plot.append(svg('text',{x:left,y:17,class:'cost-axis-title'},({capability:'MC',partial:'RMC',strict:'SMC'})[mode]+' / 100'),svg('text',{x:(left+right)/2,y:H-27,'text-anchor':'middle',class:'cost-axis-title'},t(axis==='cost'?'costAxis':'timeAxis')));
   const frontier=new Set(data.frontiers[mode][axis]),byId=Object.fromEntries(rows.map(m=>[m.model_id,m]));
   const fp=data.frontiers[mode][axis].filter(id=>byId[id]).map(id=>byId[id]);
   if(fp.length>1)plot.append(svg('path',{d:fp.map((m,i)=>(i?'L':'M')+x(axis==='cost'?amount(m):m.seconds/60)+','+y(m.scores[mode].value)).join(' '),class:'cost-frontier-path'}));
@@ -78,7 +79,8 @@
   const connectorLayer=svg('g',{class:'cost-connectors','aria-hidden':'true'}),pointLayer=svg('g'),labelLayer=svg('g');
   plot.append(connectorLayer,pointLayer,labelLayer);
   const placed=[],states=new Map(),tooltip=document.getElementById('cost-tooltip'),wrap=plot.parentElement;
-  const screenScale=plot.getBoundingClientRect().width/W||1,fontSize=Math.max(12,Math.min(16,12/screenScale)),labelPadding=3;
+  const labelSize=Number.parseFloat(getComputedStyle(plot).getPropertyValue('--board-label-size'))||12;
+  const screenScale=plot.getBoundingClientRect().width/W||1,fontSize=labelSize/screenScale,labelPadding=3;
   rows.forEach((m,index)=>{
    const value=axis==='cost'?amount(m):m.seconds/60,cx=x(value),cy=y(m.scores[mode].value),r=3.5;
    const resourceStatus=axis==='cost'?m.status:'observed';

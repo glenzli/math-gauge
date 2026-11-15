@@ -14,6 +14,7 @@ from scripts.results_i18n import language_switch
 from scripts.results_harness import display_harness_labels
 from scripts.results_presentation import project_payload
 from scripts.results_anomalies import render_model_details as render_operational_details
+from scripts.results_attempt_history import load_public as load_attempt_history
 
 HERE = Path(__file__).resolve().parent
 CONDITIONS = ("single_attempt", "nonlogical_retry_3")
@@ -383,7 +384,7 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
     return shell(page,cid+' · '+entry['title'],model['label']+' · '+CATEGORY_TITLES.get(entry['category'],entry['category'])+' · 公开题证据',body,details,'case-results.js',back=('models/'+model['id']+'/index.html',model['label']))
 
 
-def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_reference=None):
+def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_reference=None, attempt_reference=None):
     root = folder.parents[3]
     details = compact_data(data, model)
     details['cases'] = cases
@@ -476,7 +477,8 @@ def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_
         +harness_note+'<details class="nested evidence-fold"><summary>运行版本与来源</summary>'
         '<div class="prose">'+interface_paragraph(model['harness']['detail'], model['harness'].get('detail_en'))
         +'<p>'+source+'</p></div></details>')
-    body += render_operational_details(anomaly_reference, model['id'])
+    body += render_operational_details(anomaly_reference, model['id'], root=root,
+                                       attempt_reference=attempt_reference, model_label=model['label'])
     if (model.get('record_kind') != 'paper_observation' and
             model['retry']['combined'].get('retry_summary', {}).get('slots_with_reruns')):
         first = []
@@ -496,6 +498,7 @@ def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_
 
 def build_detail_pages(data, root, *, anomaly_reference=None):
     root = Path(root)
+    attempts = load_attempt_history(root)
     entries = json.loads((root/'cases/catalog.json').read_bytes())['entries']
     catalog = {e['case_id']:e for e in entries}
     pages, markdown = {}, EvidenceRenderer()
@@ -524,7 +527,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
                 path = 'models/'+model['id']+'/cases/'+cid+'.html'
                 pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
             path = 'models/'+model['id']+'/index.html'
-            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference)
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference,attempt_reference=attempts)
             del model['public_claims']
             continue
         if model.get('record_kind') == 'native_harness':
@@ -553,7 +556,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
                 path = 'models/'+model['id']+'/cases/'+cid+'.html'
                 pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
             path = 'models/'+model['id']+'/index.html'
-            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference)
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference,attempt_reference=attempts)
             del model['public_claims']
             continue
         record = json.loads((folder/'record.json').read_bytes())
@@ -596,7 +599,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
             path = 'models/'+model['id']+'/cases/'+cid+'.html'
             pages[path] = render_case(path, data, model, entry, projection, evidence, markdown, root)
         path = 'models/'+model['id']+'/index.html'
-        pages[path] = render_model(path, data, model, cases, record, folder, markdown,anomaly_reference=anomaly_reference)
+        pages[path] = render_model(path, data, model, cases, record, folder, markdown,anomaly_reference=anomaly_reference,attempt_reference=attempts)
         del model['public_claims']
     if anomaly_reference is not None:
         published = {model['id'] for model in data['models']}
@@ -604,7 +607,7 @@ def build_detail_pages(data, root, *, anomaly_reference=None):
                     if row['model_id'] not in published}
         for model_id, label in unranked.items():
             path = 'models/'+model_id+'/operations.html'
-            pages[path] = shell(path,label,'运行过程记录',render_operational_details(anomaly_reference,model_id),
+            pages[path] = shell(path,label,'运行过程记录',render_operational_details(anomaly_reference,model_id,root=root,attempt_reference=attempts),
                                 compact_data(data),'method-results.js',show_controls=False)
     pages['method.html'] = shell('method.html','方法与数据','评分、运行条件与审核方式',
         '<div data-lang-content="zh">'+(HERE/'templates/method-content.html').read_text()+'</div>'

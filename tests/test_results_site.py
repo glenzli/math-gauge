@@ -145,6 +145,8 @@ class CurrentSiteTests(unittest.TestCase):
             downloads.add('downloads/cost-reference.json')
             if SITE.load_execution_anomalies(SITE.ROOT) is not None:
                 downloads.add('downloads/execution-anomalies.json')
+            if SITE.load_attempt_history(SITE.ROOT) is not None:
+                downloads.add('downloads/execution-attempts.json')
             self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
             timings=json.loads(before['downloads/timing-reference.json'])
             self.assertEqual(timings,SITE.build_reference(SITE.ROOT,display_data=self.data))
@@ -382,7 +384,13 @@ class CurrentSiteTests(unittest.TestCase):
                 self.assertEqual(len(summary['actual_history_sha256']), 64)
                 self.assertFalse(summary['all_original_attempts_independently_certified'])
                 self.assertTrue(summary['actual_physical_and_effective_ordinals_preserved'])
-                self.assertTrue(summary['additional_trials_not_relabelled_within_three'])
+                if 'additional_trials_not_relabelled_within_three' in summary:
+                    self.assertTrue(summary['additional_trials_not_relabelled_within_three'])
+                else:
+                    self.assertTrue(summary['actual_three_effective_attempt_rule_and_pure_system_exclusions_preserved'])
+                    attempts = SITE.load_attempt_history(ROOT)['models'][model['id']]
+                    self.assertEqual(attempts['source_binding']['private_history_sha256'],
+                                     summary['actual_history_sha256'])
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])

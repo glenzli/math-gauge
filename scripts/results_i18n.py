@@ -9,6 +9,9 @@ def language_switch():
 
 
 MESSAGES = {
+    '展示方式': 'Display view', '图表': 'Chart', '表格': 'Table',
+    '运行条件与测试说明': 'Conditions and test notes',
+    '运行与重试记录': 'Attempts, retries and anomalies', '历史异常样本': 'Historical anomaly sample',
     '运行异常记录': 'Operational anomalies',
     '只统计正式题目作答及重试；同一次运行可涉及多类异常，合计去重。':
         'Formal task attempts and retries only. Categories can overlap; the total counts each affected run once.',

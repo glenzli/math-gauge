@@ -365,6 +365,53 @@
         "zh": "采用用户明确选定的固定快照，并保留首次正常交卷与所有原始请求。个别追加尝试由用户另行指定；原始物理编号与实际有效次数（包括第4／5次）分别留档，不混同、不改写成常规三次以内，也不按得分择优。 本快照另保留物理第7次／有效第6次及其先前全部失败，不将其改写为三次以内。",
         "en": "This fixed snapshot was explicitly selected by the user. First normal finals and all original requests are retained. Specific additional trials were separately requested. Original physical request IDs and effective attempt counts, including effective attempts4/5, are kept distinct; they are not relabeled as within the ordinary three-attempt limit or selected by score. This snapshot also retains physical7/effective6 and all preceding failures without relabeling them within three attempts."
       }
+    },
+    "gemini-4-carbon-high": {
+      "name": "AGY CLI",
+      "version": null,
+      "authentication": "Google Cloud Platform",
+      "gcp_used": true,
+      "requested_model": "gemini-4-carbon",
+      "requested_effort": "high",
+      "observed_model_labels": [
+        "gemini-4-carbon"
+      ],
+      "observed_effort": null,
+      "backend_sku": null,
+      "local_tools_allowed": true,
+      "tool_network_access": false,
+      "search_allowed": false,
+      "record_sha256": "9fc4d75a578beb6727d7171acda62e3755fa275f03610fc69de89bc88fbbeb1d",
+      "shared_evaluator": "Math Gauge",
+      "version_scope": "逐来源核实：历史失败使用AGY1.5.5；本次正式续跑使用1.5.9；GCP SDK续接按实际批次保留。",
+      "observed_versions": [
+        "1.5.5",
+        "1.5.9"
+      ],
+      "detail": "历史失败保留AGY CLI1.5.5实际条件，2026-11-15续跑使用1.5.9，通过GCP请求Carbon High；本次网关使用google-genai2.34.0／v1beta1续接。CLI请求High，部分后继原生请求会自行采用MEDIUM，传输层原样保留，不强制改档。原生effort与后台SKU没有独立回显认证。",
+      "detail_en": "Historical failed attempts retain AGY CLI1.5.5; the2026-11-15 continuation uses1.5.9 through GCP with Carbon High requested. The later gateway uses google-genai2.34.0/v1beta1 continuation. The CLI requests High; some later native requests select MEDIUM and are preserved without a transport effort override. Native effort and backend SKU were not independently authenticated.",
+      "tool_usage": "允许本地文件、命令及预装公开依赖；禁止联网检索和工具联网。模型服务与认证流量另计，逐题实际使用见原生记录。",
+      "tool_usage_en": "Local files, commands and preinstalled public dependencies are allowed; external retrieval and tool networking are prohibited. Model-service and authentication traffic is accounted for separately. Actual tool usage is retained per task.",
+      "note_marker": "⁴",
+      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。",
+      "run_notes": [
+        {
+          "zh": "本次先完成非Lean题，再测试Lean题，C003最后执行；成功试跑直接作为正式原答，正常交卷后不因数学错误重跑。",
+          "en": "This continuation completes non-Lean tasks first, then Lean tasks, with C003 last. Successful pilots are the formal original deliveries; mathematical errors after a normal final never trigger a retry."
+        },
+        {
+          "zh": "一项本地控制器把后继原生MEDIUM请求误当违例，在联网前拒绝；原ERROR及调用记录保留，确证的控制器或TLS握手故障不消耗有效尝试。随后原样保存原生自动变档；未确证为纯系统故障的流读取中断仍保守计次，实际超时和输出耗尽计次。",
+          "en": "A local controller incorrectly rejected a later native MEDIUM request before HTTP dispatch. Original errors and calls are retained; proven controller or TLS-handshake failures do not consume effective attempts. Native effort adaptation is preserved. Stream-read failures not proven to be pure system faults are conservatively counted, as are actual deadlines and output exhaustion."
+        },
+        {
+          "zh": "本次测试流程已结束：39道初答中38份正常交卷；其他槽按实际最后有效尝试留证，MC可计独立核实的截止内容，未正常交卷的RMC／SMC为0。三轮自查固定保留，不以其他尝试或更大工作区补卷。",
+          "en": "The test process has ended, with38normal A1 finals out of39. Other slots retain their actual last effective attempt; MC may credit independently verified cutoff work, while nondelivery RMC/SMC are0. The three fixed self-check rounds are retained without cross-attempt unions or undelivered workspace supplementation."
+        },
+        {
+          "zh": "其中1项未交卷任务的MC按用户在观察后明确指定的第二次有效尝试原稿核验，原稿及实际选择时间单独绑定。RMC／SMC仍为0；操作计时与用量保留实际末次失败，全部尝试继续留存，未跨尝试拼接。",
+          "en": "For one nonfinal task, MC uses the exact second-effective original artifact explicitly selected by the user after observation, with its source and actual selection time retained separately. RMC/SMC remain0. Operational timing and usage keep the actual last failure; all attempts are preserved without a cross-attempt union."
+        }
+      ]
     }
   }
 }
