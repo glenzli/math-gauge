@@ -1,0 +1,34 @@
+{
+  "schema": "math-gauge.operational-model-notes/v1",
+  "source_review_sha256": "2eda9959c3ae2373c3761cfa065c2e3e83100ad386332d32b03d91518e356a25",
+  "models": {
+    "gemini-4-carbon-medium": {
+      "unresolved_runs": 6,
+      "title": {
+        "zh": "归因未决：6次，未计入已确认异常",
+        "en": "6 unresolved runs, excluded from confirmed anomalies"
+      },
+      "events": [
+        {
+          "runs": 4,
+          "zh": "4次在建立加密连接时断开，其中整章形式化2次；未收到服务端响应。",
+          "en": "4 connections ended during TLS establishment, including 2 whole-chapter formalization runs; no server response was received."
+        },
+        {
+          "runs": 1,
+          "zh": "1次在收到响应前连接关闭，缺少独立的请求正文发送完成记录。",
+          "en": "1 connection closed before a response; independent evidence of completed request-body transmission is unavailable."
+        },
+        {
+          "runs": 1,
+          "zh": "1次已确认请求正文发出，约600秒后连接关闭，始终没有响应。",
+          "en": "1 request body was confirmed sent; the connection closed about 600 seconds later without a response."
+        }
+      ],
+      "explanation": {
+        "zh": "现有记录不足以区分本机网络、自建适配层或远端故障。这6次继续保留未决，不纳入上方已确认异常；不会改变数学成绩。",
+        "en": "The retained evidence cannot distinguish the local network, custom adapter, or remote service as the cause. These 6 runs remain unresolved and are not included in the confirmed counts above; mathematical scores are unchanged."
+      }
+    }
+  }
+}
