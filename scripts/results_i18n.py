@@ -9,6 +9,35 @@ def language_switch():
 
 
 MESSAGES = {
+    '运行异常记录': 'Operational anomalies',
+    '只统计正式题目作答及重试；同一次运行可涉及多类异常，合计去重。':
+        'Formal task attempts and retries only. Categories can overlap; the total counts each affected run once.',
+    '模型与Harness运行异常统计': 'Operational anomalies by model and harness',
+    '已核对运行': 'Reviewed runs', '异常运行': 'Affected runs',
+    '超时': 'Timeout', '断流／服务错误': 'Stream / service', '输出／上下文耗尽': 'Output / context limit',
+    '运行器／环境': 'Harness / environment', '其他': 'Other', '记录覆盖': 'Evidence coverage',
+    '服务端错误': 'Server errors', '上下文': 'Context', '运行器': 'Runner',
+    '完整留档批次': 'Complete retained batch', '部分记录': 'Partial history',
+    '缺少运行记录': 'Run history unavailable', '仅有定性记录': 'Qualitative only',
+    '运行记录': 'Run records', '运行过程记录': 'Operational run records', '异常归因待核实': 'Attribution unresolved',
+    '历史执行器（未核实）': 'Historical executor (unverified)', '订阅': 'Subscription', '订阅／GCP': 'Subscription / GCP',
+    '订阅额度耗尽、主动取消及正常续接本身不计异常；恢复后成功交卷的真实断流或429仍计入。':
+        'Subscription limits, voluntary cancellation and normal continuation alone are excluded. Genuine stream errors or HTTP429 count even when the run later recovers.',
+    '服务端错误含断流与429；上下文含输入／输出上限；运行器含答题超时、回传和环境故障。':
+        'Server errors include stream failures and HTTP429; context covers input/output limits; runner covers answer deadlines, delivery and environment failures.',
+    '* 部分历史运行记录未能补全或异常归因未确认；表中仅列已核实次数。':
+        '* Some run history or anomaly attribution remains incomplete; only verified counts are shown.',
+    '测试脚本和环境配置导致的中断已排除；原生Harness自身的超时、回传与上下文故障照计。':
+        'Test-script and environment-configuration interruptions are excluded; native harness timeouts, delivery and context failures remain counted.',
+    '已核对运行包含正式题目作答及重试；异常次数仅计模型、服务端或原生Harness自身的问题。':
+        'Reviewed runs include formal tasks and retries; anomalies count only model, service or native harness problems.',
+    '测试脚本、采集器、本地适配器和环境配置导致的中断不计入；记录不全或归因待确认时，仅列已核实次数。':
+        'Test-script, collector, local-adapter and environment-configuration interruptions are excluded; incomplete history or attribution retains verified counts only.',
+    '返回运行异常统计 →': 'Back to operational anomalies →',
+    '—表示记录不足，不能视作0。不同模型的运行次数、留档范围与环境不同，本表不作可用性排名，也不影响数学分数。':
+        '— means insufficient evidence, not zero. Run counts, coverage and environments differ; this is not an availability ranking and does not change mathematical scores.',
+    '统计口径与来源 ↗': 'Counting method & sources ↗', '下载异常统计': 'Download anomaly data',
+    '截至 ': 'As of ',
     '设置': 'Settings', '榜单显示设置': 'Board display settings', '关闭设置': 'Close settings',
     '显示设置': 'Display settings', '只影响此榜单': 'This board only', '展示项目': 'Visible metrics',
     '可靠率': 'Reliability', '达成率': 'Attainment', '总榜排序': 'Overall sort',

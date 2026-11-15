@@ -13,6 +13,7 @@ from math_gauge.evidence_retention import source_location, read_bytes as retaine
 from scripts.results_i18n import language_switch
 from scripts.results_harness import display_harness_labels
 from scripts.results_presentation import project_payload
+from scripts.results_anomalies import render_model_details as render_operational_details
 
 HERE = Path(__file__).resolve().parent
 CONDITIONS = ("single_attempt", "nonlogical_retry_3")
@@ -81,7 +82,7 @@ def review_status(data, href):
 
 
 
-def shell(page, title, subtitle, body, data, script, *, back=None):
+def shell(page, title, subtitle, body, data, script, *, back=None, show_controls=True):
     prefix = os.path.relpath(".", Path(page).parent)
     def local(path):
         return html.escape(prefix + "/" + path, quote=True)
@@ -95,7 +96,7 @@ def shell(page, title, subtitle, body, data, script, *, back=None):
         '<div class="navlinks"><a data-context-link href="'+local('index.html')+'">排行榜</a><a data-nav-method data-context-link href="'+local('method.html')+'">方法与数据</a></div>'+language_switch()+'</nav></header>'
         '<main class="detail-main"><div class="breadcrumbs">'+crumbs+'</div><div class="intro"><div><div class="eyebrow">MATH GAUGE · v1.0.0</div><h1>'+html.escape(title)+'</h1><p class="subtitle">'+html.escape(subtitle)+'</p></div></div>'
         +review_status(data, prefix+'/method.html#review-process')+
-        '<section class="panel context-panel">'+controls(data)+'</section>'+body+
+        ('<section class="panel context-panel">'+controls(data)+'</section>' if show_controls else '')+body+
         '<footer class="footer"><span>Math Gauge</span><a data-context-link href="'+local('method.html')+'">方法与数据</a></footer></main>'
         '<script type="application/json" id="data">'+embedded(data)+'</script><script src="'+local('assets/results-i18n.js')+'"></script><script src="'+local('assets/results-core.js')+'"></script><script src="'+local('assets/'+script)+'"></script></body></html>')
 
@@ -111,6 +112,25 @@ def compact_data(data, model=None):
 
 def panel(title, body, note=None, *, id=None):
     return '<section class="panel"'+(' id="'+id+'"' if id else '')+'><div class="panel-head"><h2>'+html.escape(title)+'</h2></div>'+body+('<p class="panel-foot">'+html.escape(note)+'</p>' if note else '')+'</section>'
+
+
+def interface_paragraph(text, english=None, *, original=False):
+    attribute = ' data-original' if original else ''
+    if english is None:
+        return '<p'+attribute+'>'+html.escape(text)+'</p>'
+    return ('<p'+attribute+' data-lang-content="zh">'+html.escape(text)+'</p>'
+            '<p'+attribute+' data-lang-content="en" hidden>'+html.escape(english)+'</p>')
+
+
+def render_run_notes(harness):
+    notes = harness.get('run_notes')
+    if not notes:
+        return ''
+    body = ''.join(interface_paragraph(row['zh'], row['en']) for row in notes)
+    return ('<section class="panel"><div class="panel-head"><h2>'
+            '<span data-lang-content="zh">测试与采用说明</span>'
+            '<span data-lang-content="en" hidden>Evaluation and adoption notes</span>'
+            '</h2></div><div class="prose">'+body+'</div></section>')
 
 
 def descriptor(root, item, *, role):
@@ -170,6 +190,13 @@ def public_evidence(folder, record, cid, condition, task):
             data = json.loads(evidence_bytes(folder, record[name]))
             candidate = next((s for s in data[field] if s['case_id']==cid), None)
             if candidate:
+                # A component's default A1 projection can describe the first
+                # failed attempt. The independently bound condition source owns
+                # a later selected normal final; never replace it with that A1.
+                if ((candidate.get('response') or {}).get('sha256') != task['response_sha256']
+                        and condition_sources is not None and legacy is not None
+                        and (legacy.get('response') or {}).get('sha256') == task['response_sha256']):
+                    continue
                 row = candidate
     if row:
         answer = row.get('response')
@@ -356,11 +383,12 @@ def render_case(page, data, model, entry, projection, evidence, markdown, root):
     return shell(page,cid+' · '+entry['title'],model['label']+' · '+CATEGORY_TITLES.get(entry['category'],entry['category'])+' · 公开题证据',body,details,'case-results.js',back=('models/'+model['id']+'/index.html',model['label']))
 
 
-def render_model(page, data, model, cases, record, folder, markdown):
+def render_model(page, data, model, cases, record, folder, markdown, *, anomaly_reference=None):
     root = folder.parents[3]
     details = compact_data(data, model)
     details['cases'] = cases
     body = panel('当前成绩', '<div id="model-overview" class="metric-grid"></div>')
+    body += render_run_notes(model['harness'])
     if model.get('harness_correction'):
         correction = model['harness_correction']
         body += panel('Harness故障更正',
@@ -368,6 +396,18 @@ def render_model(page, data, model, cases, record, folder, markdown):
             '原始ERROR、旧成绩与审核均保留；没有补跑，也没有将执行错误改写为成功。</p></div>'
             '<p class="panel-foot">' + source_link(correction['manifest']['path'], page,
                 '恢复来源与更正记录 ↗', root=root) + '</p>')
+    if model.get('c003_continuation'):
+        supplement = model['c003_continuation']
+        selected = model['retry']['combined']
+        count = selected['alignment_selfcheck']['last_completion']['complete']
+        inaccurate = [f"R{r['round']}" for r in selected['strict_alignment_selfcheck']['rounds']
+                      if r['diagnosis_accurate'] is False]
+        diagnosis_note = ('；'+ '、'.join(inaccurate)+'的诊断未通过完整准确性验收' if inaccurate else '')
+        body += panel('整章形式化 · 补充自查',
+            '<div class="prose"><p>从可审封卷工程接续固定三轮，以正常核查回复和实际工程交付。'
+            '最终工程核实'+('未决' if count is None else str(count)+'／92')+diagnosis_note+'。'
+            '原初答及形式化成绩保留。</p></div><p class="panel-foot">'
+            +source_link(supplement['manifest']['path'],page,'补充测试与来源 ↗',root=root)+'</p>')
     if model.get('review_completion'):
         receipt = Path(model['source_record']).parent / 'review-completion.json'
         body += panel('来源审核完成', '<div class="prose"><p data-lang-content="zh">39道初答的原始答卷审核完成，三项缺档已复核。三轮自查因初答未交付而未执行，仍保留未知。</p>'
@@ -392,7 +432,8 @@ def render_model(page, data, model, cases, record, folder, markdown):
             rows += '<tr><td>'+html.escape(child['title'])+'</td><td class="numeric">'
             rows += percent(category['reliability']['observed'])+'</td><td class="numeric">'
             rows += percent(delivered)+'</td></tr>'
-        rates_path = (model['harness_correction']['rates']['path'] if model.get('harness_correction')
+        rates_path = (model['c003_continuation']['rates']['path'] if model.get('c003_continuation', {}).get('rates')
+                      else model['harness_correction']['rates']['path'] if model.get('harness_correction')
                       else 'content-rates.json')
         body += panel('内容可靠率与'+target_label, '<div class="prose" data-ui-prose><p>已审内容可靠率 '
             +percent(r['observed'])+'；已确认'+target_label+' '+percent(d['confirmed'])+'。</p>'+interval+'</div><div class="table-wrap"><table class="compact rate-table">'
@@ -404,16 +445,21 @@ def render_model(page, data, model, cases, record, folder, markdown):
         '贡献分 / 该项满分；相关变体在家族内聚合。')
     body += '<div class="equal-grid">'+panel('Lean · 自查计分', '<div class="table-wrap"><table id="model-selfcheck" class="compact"></table></div><p id="selfcheck-rule" class="panel-foot"></p><details class="selfcheck-comparison"><summary>比较三种计分口径</summary><div class="table-wrap"><table id="selfcheck-comparison" class="compact"></table></div></details>')
     rounds = ''
+    delivery = model.get('c003_continuation', {}).get('delivery_evidence')
     for index in (1,2,3):
-        row = (next(s for s in record['selfcheck_rounds'] if s['round']==index)
+        row = (next(s for s in delivery if s['round']==index) if delivery else
+               next(s for s in record['selfcheck_rounds'] if s['round']==index)
                if model.get('record_kind') in {'native_harness', 'paper_observation'} else
                next(s for s in record['records'] if s['id'] in
                     ('MG-C003:alignment:'+str(index), 'MG-C003:R'+str(index))))
-        response = row.get('response')
+        response = row.get('final_text') if delivery else row.get('response')
         content = markdown.add(evidence_bytes(folder,response).decode()) if response else '未留存可读原答。'
         link = source_link(Path(model['source_record']).parent/response['path'],page,'原答文件 ↗',root=root) if response else ''
+        if delivery:
+            link += ' · '+source_link(Path(model['source_record']).parent/row['review']['path'],page,'本轮审核 ↗',root=root)
         rounds += '<details class="evidence-fold nested"><summary>R'+str(index)+' · 完整原答</summary><div class="prose">'+content+'<p>'+link+'</p></div></details>'
-    alignment_path = next((s['path'] for s in record.get('evidence',[]) if s['path'] in ('reviews/alignment.json','alignment-review.json')),None)
+    alignment_path = (None if delivery else
+                      next((s['path'] for s in record.get('evidence',[]) if s['path'] in ('reviews/alignment.json','alignment-review.json')),None))
     if alignment_path:
         rounds += '<p class="panel-foot">'+source_link(Path(model['source_record']).parent/alignment_path,page,'完整三轮审核与诊断依据 ↗',root=root)+'</p>'
     body += panel('整章对齐 · 固定三轮', '<div class="table-wrap"><table id="model-trajectory" class="compact"></table></div><details class="evidence-fold nested"><summary>展开三轮原答与审核</summary>'+rounds+'</details>', '92项义务，按最后规定轮次计分。')+'</div>'
@@ -425,9 +471,12 @@ def render_model(page, data, model, cases, record, folder, markdown):
     source = source_link(model['source_record'],page,'正式档案 ↗',root=root)
     harness_note = ('<p class="panel-foot">'+html.escape(model['harness']['note_marker']+' '+model['harness']['note_text'])+'</p>'
                     if model['harness'].get('note_text') else '')
-    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness_display_name'])+'</p><p>'
-        +html.escape(model['harness']['tool_usage'])+'</p></div>'+harness_note+'<details class="nested evidence-fold"><summary>运行版本与来源</summary>'
-        '<div class="prose"><p>'+html.escape(model['harness']['detail'])+'</p><p>'+source+'</p></div></details>')
+    body += panel('Harness与工具', '<div class="prose"><p>'+html.escape(model['harness_display_name'])+'</p>'
+        +interface_paragraph(model['harness']['tool_usage'], model['harness'].get('tool_usage_en'))+'</div>'
+        +harness_note+'<details class="nested evidence-fold"><summary>运行版本与来源</summary>'
+        '<div class="prose">'+interface_paragraph(model['harness']['detail'], model['harness'].get('detail_en'))
+        +'<p>'+source+'</p></div></details>')
+    body += render_operational_details(anomaly_reference, model['id'])
     if (model.get('record_kind') != 'paper_observation' and
             model['retry']['combined'].get('retry_summary', {}).get('slots_with_reruns')):
         first = []
@@ -435,8 +484,8 @@ def render_model(page, data, model, cases, record, folder, markdown):
             report = model['combined'] if mode['id'] == 'partial' else model[mode['id']]['single_attempt']
             value = report['metrics']['earned']['confirmed']
             first.append('—' if value is None else f'{value:.2f}')
-        body += panel('重跑与来源备注', '<div class="prose"><p data-original>'
-            +html.escape(model['retry']['note'])+'</p></div>'
+        body += panel('重跑与来源备注', '<div class="prose">'
+            +interface_paragraph(model['retry']['note'], model['retry'].get('note_en'), original=True)+'</div>'
             '<p class="panel-foot"><span>首答 MC / RMC / SMC：</span>'
             +'<span class="mono">'+' / '.join(first)+'</span> · '
             '<a data-context-link href="../../method.html">查看方法与来源 →</a></p>',
@@ -445,7 +494,7 @@ def render_model(page, data, model, cases, record, folder, markdown):
     return shell(page,model['label'],'模型详细评测 · 公开＋私有合并成绩',body,details,'model-results.js')
 
 
-def build_detail_pages(data, root):
+def build_detail_pages(data, root, *, anomaly_reference=None):
     root = Path(root)
     entries = json.loads((root/'cases/catalog.json').read_bytes())['entries']
     catalog = {e['case_id']:e for e in entries}
@@ -475,7 +524,7 @@ def build_detail_pages(data, root):
                 path = 'models/'+model['id']+'/cases/'+cid+'.html'
                 pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
             path = 'models/'+model['id']+'/index.html'
-            pages[path] = render_model(path,data,model,cases,record,folder,markdown)
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference)
             del model['public_claims']
             continue
         if model.get('record_kind') == 'native_harness':
@@ -504,7 +553,7 @@ def build_detail_pages(data, root):
                 path = 'models/'+model['id']+'/cases/'+cid+'.html'
                 pages[path] = render_case(path,data,model,entry,projection,evidence,markdown,root)
             path = 'models/'+model['id']+'/index.html'
-            pages[path] = render_model(path,data,model,cases,record,folder,markdown)
+            pages[path] = render_model(path,data,model,cases,record,folder,markdown,anomaly_reference=anomaly_reference)
             del model['public_claims']
             continue
         record = json.loads((folder/'record.json').read_bytes())
@@ -547,8 +596,16 @@ def build_detail_pages(data, root):
             path = 'models/'+model['id']+'/cases/'+cid+'.html'
             pages[path] = render_case(path, data, model, entry, projection, evidence, markdown, root)
         path = 'models/'+model['id']+'/index.html'
-        pages[path] = render_model(path, data, model, cases, record, folder, markdown)
+        pages[path] = render_model(path, data, model, cases, record, folder, markdown,anomaly_reference=anomaly_reference)
         del model['public_claims']
+    if anomaly_reference is not None:
+        published = {model['id'] for model in data['models']}
+        unranked = {row['model_id']:row['model_label'] for row in anomaly_reference['rows']
+                    if row['model_id'] not in published}
+        for model_id, label in unranked.items():
+            path = 'models/'+model_id+'/operations.html'
+            pages[path] = shell(path,label,'运行过程记录',render_operational_details(anomaly_reference,model_id),
+                                compact_data(data),'method-results.js',show_controls=False)
     pages['method.html'] = shell('method.html','方法与数据','评分、运行条件与审核方式',
         '<div data-lang-content="zh">'+(HERE/'templates/method-content.html').read_text()+'</div>'
         '<div data-lang-content="en" hidden>'+(HERE/'templates/method-content.en.html').read_text()+'</div>',

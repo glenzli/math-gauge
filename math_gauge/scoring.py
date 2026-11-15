@@ -1407,7 +1407,8 @@ def _alignment_snapshot(snapshot, ids, source_kind):
     return values
 
 
-def _alignment_trajectory(review, policy, *, positive_only=False, allow_submission_sources=False):
+def _alignment_trajectory(review, policy, *, positive_only=False, allow_submission_sources=False,
+                          _include_intervals=False):
     policy = _alignment_policy(policy)
     if (not isinstance(review, dict)
             or review.get("schema") != "math-gauge.alignment-selfcheck-review/v1"
@@ -1546,7 +1547,7 @@ def _alignment_trajectory(review, policy, *, positive_only=False, allow_submissi
         public["interpretation"] = ("Positive repair/preservation and source-awarded diagnosis credit only; "
             "no regression deduction, blanket diagnosis zeroing or false-complete penalty. "
             "Adjacent rounds remain fixed; no best-of or history union.")
-    return public, aggregate
+    return (public, aggregate, intervals) if _include_intervals else (public, aggregate)
 
 
 def score_alignment_trajectory(review, policy):
@@ -2396,7 +2397,8 @@ def _submission_task(value, passed, source, submission, *, case, mode, condition
     return (points/maximum,)*3, False, 'verified_nonfinal_work'
 
 
-def _submission_trajectory(alignment, strict, review, *, mode):
+def _submission_trajectory(alignment, strict, review, *, mode, exact_intervals=None,
+                           _include_interval=False):
     """Keep all three adjacent rounds; never inherit a later condition's work."""
     rows = {r['round']: r for r in review['rounds']}
     result = deepcopy(alignment) if alignment is not None else {
@@ -2408,6 +2410,8 @@ def _submission_trajectory(alignment, strict, review, *, mode):
         original = item.get('score', {})
         value = (tuple(None if original.get(k) is None else Fraction(str(original[k]))/100
                        for k in ('lower', 'upper', 'exact')) if original else UNKNOWN)
+        if exact_intervals is not None:
+            value = exact_intervals[item['round'] - 1]
         passed = item.get('strict_pass')
         if classification=='active_final' and (row.get('scored_math_is_delivered') is not True
                 or not row.get('mathematical_source_sha256')
@@ -2449,7 +2453,7 @@ def _submission_trajectory(alignment, strict, review, *, mode):
             and rows[i['round']]['classification']=='active_final' for i in result['rounds']) else None)
     gate['active_rounds'] = sum(c == 'active_final' for c in classes)
     gate['submission_method_version'] = submission_evidence.VERSION
-    return result, gate
+    return (result, gate, _average(intervals)) if _include_interval else (result, gate)
 
 
 def _aggregate_assessment_families(policy, families, *, mode, alignment_summary, strict_trajectory,
@@ -2502,6 +2506,11 @@ def _aggregate_assessment_families(policy, families, *, mode, alignment_summary,
         if policy["version"] in {"0.6.0", "0.7.0", "0.8.0", "0.9.0"}:
             metrics[ident]["confirmed"] = float(confirmed[ident] * 100)
             contributions[ident]["confirmed"] = float(confirmed[ident] * child["weight"])
+    return _assessment_rollups(policy, intervals, confirmed, metrics, contributions)
+
+
+def _assessment_rollups(policy, intervals, confirmed, metrics, contributions):
+    """Shared fixed-weight group/total rollup for base scores and companions."""
     for group in policy["groups"]:
         children = [child for child in policy["subcategories"] if child["id"] in group["children"]]
         value = _average([intervals[c["id"]] for c in children], [c["weight"] for c in children])
@@ -2528,6 +2537,70 @@ def _aggregate_assessment_families(policy, families, *, mode, alignment_summary,
         metrics["earned"]["confirmed"] = float(max(Fraction(0),
             sum((confirmed[c["id"]] * c["weight"] for c in active), Fraction(0))))
     return metrics, contributions
+
+
+def score_c003_continuation_overlay(base, policy, *, continuation, inputs, mode):
+    """Replace only selfcheck, after resolving all existing A1 source corrections.
+
+    The effective base report is immutable and includes any selected HCH02
+    correction. This path never enters the legacy baseline==A1 validator, and
+    cannot change a task, a denominator, or a mathematical review.
+    """
+    from .c003_continuations import ContinuationInputs
+    policy = validate_assessment_policy(policy)
+    if not isinstance(continuation, ContinuationInputs) or mode not in {'capability', 'partial', 'strict'}:
+        raise ValueError('C003 selfcheck needs its separately validated source component')
+    selected = continuation.for_score(inputs, condition=base.get('attempt_condition'))
+    if (policy['version'] != '0.9.0' or base.get('schema') != 'math-gauge.assessment-score/v1'
+            or base.get('score_mode') != mode or base.get('model_label') != inputs.get('model_label')
+            or identity(base) != selected['effective_base_identities'][mode]
+            or base.get('scoring_method_version') != policy['version']):
+        raise ValueError('C003 selfcheck lost its current effective score source')
+    source_policy, review = selected['source_policy'], selected['alignment_review']
+    alignment, _, exact_rounds = _alignment_trajectory(review, source_policy,
+        positive_only=mode == 'capability', _include_intervals=True)
+    strict = strict_alignment_trajectory(review, source_policy)
+    alignment, strict, exact_trajectory = _submission_trajectory(alignment, strict,
+        {'rounds': selected['round_submissions']}, mode=mode, exact_intervals=exact_rounds,
+        _include_interval=True)
+    result = deepcopy(base)
+    metrics, contributions = deepcopy(base['metrics']), deepcopy(base['contributions'])
+    intervals, confirmed = {}, {}
+    for child in policy['subcategories']:
+        name = child['id']
+        metric = metrics[name]
+        intervals[name] = tuple(None if metric[k] is None else Fraction(str(metric[k])) / 100
+                                for k in ('lower', 'upper', 'exact'))
+        confirmed[name] = Fraction(str(metric.get('confirmed', metric['exact'] or 0))) / 100
+    child = next(c for c in policy['subcategories'] if c['id'] == 'lean-selfcheck')
+    if child['weight'] != 10 or child['families'] != 1 or child['aggregation'] != 'trajectory':
+        raise ValueError('C003 continuation cannot change the selfcheck weight or denominator')
+    if mode == 'strict':
+        value = _boolean(strict['strict_pass'])
+    else:
+        value = exact_trajectory
+    intervals['lean-selfcheck'] = value
+    confirmed['lean-selfcheck'] = value[2] if value[2] is not None else Fraction(0)
+    metrics['lean-selfcheck'] = _assessment_metric(value, unit='trajectory', planned=1,
+                                                   adjudicated=int(value[2] is not None))
+    metrics['lean-selfcheck']['confirmed'] = float(confirmed['lean-selfcheck'] * 100)
+    weighted = tuple(None if v is None else v / 10 for v in value)
+    contributions['lean-selfcheck'] = _assessment_metric(weighted, unit='points in full benchmark',
+                                                        planned=1, adjudicated=int(value[2] is not None))
+    contributions['lean-selfcheck']['confirmed'] = float(confirmed['lean-selfcheck'] * 10)
+    metrics, contributions = _assessment_rollups(policy, intervals, confirmed, metrics, contributions)
+    # Preserve every unaffected value byte-for-byte in its JSON representation.
+    for key in ('lean-selfcheck', 'lean', 'earned', 'overall'):
+        if key in metrics:
+            result['metrics'][key] = metrics[key]
+        if key in contributions:
+            result['contributions'][key] = contributions[key]
+    result['alignment_selfcheck'], result['strict_alignment_selfcheck'] = alignment, strict
+    result['c003_continuation'] = selected['public_identity']
+    result['source_bindings'] = dict(base.get('source_bindings', {}),
+        c003_continuation_sha256=selected['public_identity']['source_component_sha256'],
+        c003_effective_base_report_sha256=selected['effective_base_sha256'][mode])
+    return result
 
 
 def _assess_manuscript_fidelity(value, passed, fidelity, *, mode, completion, claim_detail, findings):

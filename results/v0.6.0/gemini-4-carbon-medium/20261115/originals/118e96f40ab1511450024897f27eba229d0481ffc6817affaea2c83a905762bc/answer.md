@@ -1,0 +1,25 @@
+{}
+KEEP
+
+### 本轮核查依据
+
+本轮完整读取了 [index.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/.visible-history/R2/index.json) 所列全部可见历史附件并校验其字节数与 SHA-256 完整性，在不改动工作区任何源码、冻结背景模块及历史附件原字节的前提下，对紧邻上一版封卷工程完成了独立复核，未发现任何数学或工程缺陷：
+
+1. **固定环境全量编译与模块完整性验证**
+   - 加载 [LEAN_ENV.sh](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/LEAN_ENV.sh) 指定的冻结工具链（Lean 4.29.1 + 固定 mathlib），在独立临时构建目录中依次编译全部冻结背景文件（`formal_oet/` 下 6 个模块）及本答卷全部自建文件：[Defs.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Defs.lean)、[Sec01.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec01.lean)、[Sec02.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec02.lean)、[Sec03.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec03.lean)、[Sec04_05.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec04_05.lean)、[Sec06.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec06.lean)、[Sec07_Ex1_3.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec07_Ex1_3.lean)、[Sec07_Ex4_5.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Ch03/Sec07_Ex4_5.lean) 与入口 [Main.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Main.lean)，全部 0 错误、0 警告通过，随后清理临时构建产物，保持工作区原字节不变。
+   - [Main.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/Main.lean) 已完整导入全部目标模块，未修改或同名覆盖任何冻结依赖。
+
+2. **公理闭包与内核检查合规性审计**
+   - 扫描全部自建 Lean 源码，确认不含 `sorry`、`admit`、`axiom`、`unsafe`、`partial`、`native_decide`、`implemented_by`、`extern` 等受禁设施，亦不存在将待证结论混入结构字段、前提假设或类型类实例的做法。
+   - 使用 Lean 元编程对 [alignment.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/alignment.json) 中列出的全部 210 个去重声明逐一校验模块归属（`env.getModuleIdxFor?` 与 `file` 精确一致），并对上述 210 个声明及 `Ch03` 命名空间下全部 518 个常元执行 `Lean.collectAxioms`，确认公理闭包严格包含于 `{propext, Classical.choice, Quot.sound}`。
+
+3. **92 项义务与原文语义逐项对齐核查**
+   - 对照 [obligations.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/obligations.json) 与 [03-operator-local-degeneracy.md](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/source/03-operator-local-degeneracy.md) 核验 [alignment.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/alignment.json)：`case_id`（`MG-C003`）、`version`（`0.1.1`）及 92 个义务 ID（`CH03-D01` 至 `CH03-P30-04`）一一对应、无重复无缺失，全部状态为 `complete`；仅在显式标记 `allow_background_declarations: true` 的 `CH03-D07` 中复用了 [metric_entropy.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/alignment/R2/physical-1/session/work/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean) 的内部覆盖数与度量熵定义，并给出了开球覆盖等价性与全有界接口证明。
+   - 复核全部关键边界、量词与反例合法性：常值优先分划（`I_id` 排除 `I_const`）、有限复合链零步基例 `c₀ = id` 与实际中间像域递推、两点换位与七点双分量反例的扩展伪度量验证、推论 3.4 允许同分量条目取 `⊤`、命题 3.6(i) 涵盖 `U = ∅`、命题 3.7 仅要求两个实际像集各自分离（`IsSeparatingOn`）、零化矩阵行输出列输入下标 `nullMatrix d ϕ U j i`、阶跃反例 3.1 点态合法半径集 `(0, |y|]` 与同一 `U` 上统一半径为 `0`、命题 3.8(ii) 兼顾 `i = j` 与 `i ≠ j`、命题 3.12(ii) 兼容 `0` 与 `⊤`、命题 3.15(iii) 兼容输出距离 `⊤`、映射熵差严格以 `MappingEntropyDiffWellDefined` 排除 `∞ - ∞`，以及习题 3.1–3.5 的全部合法性证明、再次像落入 `⊥` 分支、无多余 `K_{i→j} < ⊤` 限制、分段端点 `ε = 1, 2` 与外部中心 `3/2 ∉ U` 的非法性证明。
+
+### 仍有的不确定性说明
+
+数学命题覆盖、边界条件与公理限制上无已知缺陷；仅保留以下符合题面“允许等价表示、合并声明、辅助引理”规定的形式化表示选择：
+
+1. **指标与有限链的编码约定**：有限算子复合链 `chainCompSeq` 与中间像域序列 `chainDomainSeq` 使用 Lean 标准的 0 基索引（`m < n`）对应原文的 `$m = 1, \dots, n$`；两项阈值分类 `channelType` 使用 `Fin 2 × Fin 2` 表示 `$\{0, 1\}^2$`，并在引理 3.13 中给出了与四类显式集合 `Regime11`..`Regime00` 的充要对应。
+2. **部分定义良定前提的参数化方式**：映射熵差 `mappingEntropyDiff` 将原文“输入或输出覆盖数至少一个有限”的良定前提建模为显式证明参数 `hwf : MappingEntropyDiffWellDefined ...`，从定义层面避免给不定形 `∞ - ∞` 赋予任意默认值；所有涉及映射熵差的结论均显式构造并携载该良定性证明。

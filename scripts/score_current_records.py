@@ -29,18 +29,67 @@ def write(path, value):
     Path(path).write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
 
 
+def c003_selections(public_root):
+    path = Path(public_root) / 'benchmark.json'
+    return load(path).get('c003_continuations', {}) if path.is_file() else {}
+
+
+def retained_c003_totals(private_root, public_root, model, public, private):
+    """Revalidate a selected companion while preserving its frozen base files."""
+    from math_gauge import c003_continuations, result_corrections
+    from math_gauge.records import (load_assessment_results, load_c003_continuation,
+                                    validate_c003_continuation_score)
+    record, original = load(public / 'record.json'), load(private / 'record.json')
+    base = c003_continuations.effective_base_reports(public_root,private_root,model,public,private)
+    effective = base['private']
+    selected = c003_continuations.load_selected_public(public_root, model, public,
+        record=record, effective_scores=base['public'])
+    registration = load(private_root / 'results/current-c003-continuations.json')['selections'][model]
+    evidence_bytes(private_root, registration['component'])
+    archive = private_root / Path(registration['component']['path']).parent
+    component_descriptor = descriptor(archive, archive / 'component.json')
+    if (registration['record_id'] != public.name
+            or registration['attempt_condition'] != 'nonlogical_retry_3'
+            or registration['component']['sha256'] != component_descriptor['sha256']
+            or component_descriptor['sha256'] != selected['private_component_sha256']):
+        raise ValueError('Public and private C003 selections differ')
+    inputs = base['inputs']
+    policy = load(private / 'scoring-policy.json')
+    continuation = load_c003_continuation(archive, component_descriptor, record=original, inputs=inputs,
+        source_policy=policy, condition='nonlogical_retry_3', effective_scores=effective)
+    registry = json.loads(evidence_bytes(private_root, registration['registry']))
+    result = {'single_attempt': {}, 'nonlogical_retry_3': {}}
+    for mode in ('capability', 'partial', 'strict'):
+        item = registry['private_scores'][mode]
+        report = validate_c003_continuation_score(archive, item, base=effective[mode],
+            policy=load(public_root / 'protocol/scoring-policy.json'), continuation=continuation,
+            inputs=inputs, mode=mode)
+        projection = project_assessment_score(report)
+        projection['source_bindings']['private_report_sha256'] = item['sha256']
+        if projection != selected['_scores'][mode]:
+            raise ValueError('C003 public score differs from its current private source')
+        first = load_assessment_results(public, record, mode=mode)['single_attempt']
+        result['single_attempt'][mode] = first['metrics']['earned']['confirmed']
+        result['nonlogical_retry_3'][mode] = report['metrics']['earned']['confirmed']
+    return result
+
+
 def retain(private_root, *, public_root=ROOT):
     public_root, private_root = Path(public_root).resolve(), Path(private_root).resolve()
     assessment = load(public_root / "protocol/scoring-policy.json")
     strict = load(public_root / "protocol/strict-scoring-policy.json")
     capability = load(public_root / "protocol/capability-scoring-policy.json")
     claim_policy = load(public_root / "protocol/claim-penalty-policy.json")
+    protected = c003_selections(public_root)
     for name in ("capability-scoring-policy.json", "score-modes.json", "claim-penalty-policy.json", "submission-scoring-policy.json"):
         (private_root / "protocol" / name).write_bytes((public_root / "protocol" / name).read_bytes())
     totals = {}
     for model, folder in selected_cli_records(public_root):
         relative = folder.relative_to(public_root)
         public, private = public_root / relative, private_root / relative
+        if model in protected:
+            totals[model] = retained_c003_totals(private_root, public_root, model, public, private)
+            continue
         validate_record(public, validate_scores=False)
         validate_record(private, formalization_root=public, validate_scores=False)
         record, private_record = load(public / "record.json"), load(private / "record.json")
@@ -202,12 +251,16 @@ def retain(private_root, *, public_root=ROOT):
     if assessment['version']=='0.9.0':
         # The public task attachment is part of record.json. Bind auxiliary
         # observations only after that final record identity has been written.
-        for _,public in selected_cli_records(public_root):
+        for model,public in selected_cli_records(public_root):
+            if model in protected:
+                continue
             rebind_content_rates(private_root/public.relative_to(public_root),public,
                                  private_root=private_root,public_root=public_root)
     active = sum(c["weight"] for c in assessment["subcategories"] if c["status"] == "active")
     from math_gauge.result_corrections import load_selected
     for model, folder in selected_cli_records(public_root):
+        if model in protected:
+            continue
         correction = load_selected(public_root, model, folder)
         if correction is not None:
             for mode, score in correction['_scores'].items():
@@ -222,7 +275,11 @@ def export_public_tasks(private_root, *, public_root=ROOT):
     """Publish only selected public task judgments from the retained six reports."""
     public_root, private_root = Path(public_root), Path(private_root)
     published = []
+    protected = c003_selections(public_root)
     for model, folder in selected_cli_records(public_root):
+        if model in protected:
+            published.append({'model': model, 'public_tasks': 25})
+            continue
         relative = folder.relative_to(public_root)
         public, private = public_root / relative, private_root / relative
         record, source_record = load(public / "record.json"), load(private / "record.json")

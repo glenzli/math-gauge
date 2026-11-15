@@ -26,8 +26,11 @@ from scripts.results_presentation import project_payload
 from scripts.results_publication import prepare_publication, write_publication
 from scripts.timing_reference import build_reference, render_panel
 from scripts.cost_reference import build_reference as build_cost_reference, render_panel as render_cost_panel
+from scripts.results_anomalies import render_panel as render_anomaly_panel
+from math_gauge.execution_anomalies import load_public as load_execution_anomalies
 from math_gauge.submission_evidence import load_review_completion
 from math_gauge.result_corrections import load_selected as load_result_correction
+from math_gauge.c003_continuations import load_selected_public as load_c003_continuation
 
 MODEL_THEMES = {
     "glm-5.3-max": {"color": "#444b60", "ink": "#363d50", "tint": "#f1f2f5"},
@@ -45,6 +48,7 @@ MODEL_THEMES = {
     "gemini-4-argon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-hydrogen-xhigh": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
     "gemini-4-carbon": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
+    "gemini-4-carbon-medium": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
     "glm-5.3-max": ("Z.ai", "zai.svg"),
@@ -62,6 +66,7 @@ MODEL_PROVIDERS = {
     "gemini-4-argon": ("Google", "google.svg"),
     "gemini-4-hydrogen-xhigh": ("Google", "google.svg"),
     "gemini-4-carbon": ("Google", "google.svg"),
+    "gemini-4-carbon-medium": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
     "dot-underlying-model-20261108": "Dot Underlying (2026-11-08)",
@@ -79,7 +84,8 @@ MODEL_LABELS = {
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
     "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
-    "gemini-4-carbon": "Gemini 4 Carbon (high)"
+    "gemini-4-carbon": "Gemini 4 Carbon (high)",
+    "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 MODEL_SHORT_LABELS = {
     "dot-underlying-model-20261108": "Dot (2026-11-08)",
@@ -97,7 +103,8 @@ MODEL_SHORT_LABELS = {
     "gemini-3.8-flash-high": "Gemini 3.8 Flash (high)",
     "gemini-4-argon": "Gemini 4 Argon (high)",
     "gemini-4-hydrogen-xhigh": "Gemini 4 Hydrogen (xhigh)",
-    "gemini-4-carbon": "Gemini 4 Carbon (high)"
+    "gemini-4-carbon": "Gemini 4 Carbon (high)",
+    "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 
 
@@ -137,6 +144,12 @@ def build_data(source_root=ROOT):
         if correction is not None:
             for mode, views in (('partial', partial), ('strict', strict), ('capability', capability)):
                 views['nonlogical_retry_3'] = correction['_scores'][mode]
+        c003 = load_c003_continuation(root, model, folder, record=record, effective_scores={
+            'partial': partial['nonlogical_retry_3'], 'strict': strict['nonlogical_retry_3'],
+            'capability': capability['nonlogical_retry_3']})
+        if c003 is not None:
+            for mode, views in (('partial', partial), ('strict', strict), ('capability', capability)):
+                views['nonlogical_retry_3'] = c003['_scores'][mode]
         combined = partial["single_attempt"]
         provider, filename = MODEL_PROVIDERS[model]
         icon_path = root / "site/assets/logos" / filename
@@ -175,6 +188,13 @@ def build_data(source_root=ROOT):
             models[-1]['content_rates'] = correction.get('_rates', models[-1]['content_rates'])
             models[-1]['retry']['note'] = 'HCH02采用因harness回传故障而恢复的原答；原始ERROR和旧审核保留，按既有规则补审。'
             sources.append(correction['_selection'])
+        if c003 is not None:
+            models[-1]['c003_continuation'] = {
+                'manifest': c003['_selection'],
+                **{key: c003[key] for key in ('rates', 'delivery_evidence', 'cost_source', 'timing_source') if key in c003}}
+            models[-1]['content_rates'] = c003.get('_rates', models[-1]['content_rates'])
+            models[-1]['retry']['note'] += ' MG-C003另以封卷工程完成固定三轮补充自查，原初答成绩保留。'
+            sources.append(c003['_selection'])
         names = ["record.json", record["assessment_policy"]["path"], record["strict_scoring_policy"]["path"],
                  "public-task-scores.json",
                  record["capability_scoring_policy"]["path"], record["score_mode_catalog"]["path"],
@@ -253,6 +273,10 @@ def build_data(source_root=ROOT):
             sources.append({'path': str(path.relative_to(root)), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
     delivery_projections = load_legacy_projections(root)
     for model in models:
+        selection_note = model['harness'].get('selection_note')
+        if selection_note:
+            model['retry']['note'] = selection_note['zh']
+            model['retry']['note_en'] = selection_note['en']
         model['harness_display_name'] = harness_display_name(model)
         model['fully_evaluated'] = is_fully_evaluated(model)
         record_bytes = (root / model['source_record']).read_bytes()
@@ -617,7 +641,7 @@ def is_fully_evaluated(model):
             and selected_result(model)['metrics']['overall']['exact'] is not None)
 
 
-def render(data, *, timing_reference=None, cost_reference=None):
+def render(data, *, timing_reference=None, cost_reference=None, anomaly_reference=None):
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
@@ -684,7 +708,9 @@ def render(data, *, timing_reference=None, cost_reference=None):
               "TIMING_JS": '<script src="assets/timing-reference.js"></script>' if timing_reference else '',
               "COST_REFERENCE": render_cost_panel(cost_reference),
               "COST_CSS": '<link rel="stylesheet" href="assets/cost-reference.css">' if cost_reference else '',
-              "COST_JS": '<script src="assets/cost-label-layout.js"></script><script src="assets/cost-reference.js"></script>' if cost_reference else ''}
+              "COST_JS": '<script src="assets/cost-label-layout.js"></script><script src="assets/cost-reference.js"></script>' if cost_reference else '',
+              "EXECUTION_ANOMALIES": render_anomaly_panel(anomaly_reference, models=data['models']),
+              "ANOMALY_CSS": '<link rel="stylesheet" href="assets/execution-anomalies.css">' if anomaly_reference else ''}
     template = (Path(__file__).parent / "templates/current-results.html").read_text(encoding="utf-8")
     return re.sub(r"@@MG_(" + '|'.join(re.escape(key) for key in values) + r")@@",
                   lambda match: values[match[1]], template)
@@ -695,16 +721,20 @@ def write_site(destination, *, source_root=ROOT):
     data = build_data(source_root)
     timings = build_reference(source_root,display_data=data)
     costs = build_cost_reference(source_root,display_data=data,timing_reference=timings)
+    anomalies = load_execution_anomalies(source_root)
     # Resolve all evidence before changing navigation or writing any page.
-    files = build_detail_pages(data, source_root)
-    files["index.html"] = render(data,timing_reference=timings,cost_reference=costs)
+    files = build_detail_pages(data, source_root, anomaly_reference=anomalies)
+    files["index.html"] = render(data,timing_reference=timings,cost_reference=costs,anomaly_reference=anomalies)
     files['downloads/timing-reference.json'] = json.dumps(timings,ensure_ascii=False,indent=2)+'\n'
     if costs is not None:
         files['downloads/cost-reference.json'] = json.dumps(costs,ensure_ascii=False,indent=2)+'\n'
+    if anomalies is not None:
+        files['downloads/execution-anomalies.json'] = json.dumps(anomalies,ensure_ascii=False,indent=2)+'\n'
     files["data.json"] = json.dumps(display_harness_labels(data), ensure_ascii=False, indent=2) + "\n"
     for name in ("results.css", "results-i18n.js", "results-core.js", "home-results.js", "board-controls.js", "model-results.js", "case-results.js", "method-results.js", "records.js", "timing-reference.css", "timing-reference.js", "cost-reference.css", "cost-label-layout.js", "cost-reference.js"):
         files["assets/"+name] = (Path(__file__).parent/"templates"/name).read_text()
     files['assets/results-i18n.js'] = files['assets/results-i18n.js'].replace('@@MG_MESSAGES@@', javascript_catalog())
+    files['assets/execution-anomalies.css'] = (Path(__file__).parent/'templates/execution-anomalies.css').read_text()
     for model in data["models"]:
         for scope in ["combined"]:
             files["downloads/"+model["id"]+"-"+scope+".json"] = json.dumps(model[scope], ensure_ascii=False, indent=2)+"\n"

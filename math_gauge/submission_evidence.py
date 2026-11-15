@@ -483,6 +483,9 @@ def validate_first_assessment_source(folder, record, current):
 
 def original_assessment_policy(folder, record, current):
     """Bind inherited v6 inputs to the exact policy kept in method history."""
+    if record.get('source_assessment_admission') is not None:
+        from .source_assessments import validate
+        return validate(folder, record, current)
     if record.get('first_assessment_source') is not None:
         return validate_first_assessment_source(folder, record, current)
     history = validate_history(folder, record)

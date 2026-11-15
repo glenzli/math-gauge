@@ -1,0 +1,6212 @@
+{}
+已完成《The Operator Evolution Theory》第1卷第3章（“算子局部退化”）全部 **92 项定义、表示及证明义务**（`CH03-D01` 至 `CH03-P30-04`）的 Lean 4 形式化与固定环境编译验证（0 错误、0 警告、无 `sorry`/`admit`/新增公理，公理闭包仅含 `{propext, Classical.choice, Quot.sound}`）。
+
+项目模块结构与对应文件如下：
+- [Defs.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Defs.lean)：本章全部核心定义与基础接口（`CH03-D01` .. `CH03-D08`）
+- [Sec01.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec01.lean)：第 3.1 节分量类型矩阵约束、复合保持与两点/七点反例（`CH03-P01-01` .. `CH03-P05-01`）
+- [Sec02.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec02.lean)：第 3.2 节计算纤维性质、点值与零距商因子化及纤维预序链（`CH03-P06-01` .. `CH03-P09-03`）
+- [Sec03.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec03.lean)：第 3.3 节阶跃反例 3.1、点态与统一零化半径公式及复合传播（`CH03-P10-01` .. `CH03-P15-02`）
+- [Sec04_05.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec04_05.lean)：第 3.4 与 3.5 节输入尺度与阈值四体制、局部零化与内部覆盖数（`CH03-P16-01` .. `CH03-P21-02`）
+- [Sec06.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec06.lean)：第 3.6 节有限集映射熵差良定性及 Lip/co-Lip 熵差上下界（`CH03-P22-01` .. `CH03-P25-02`）
+- [Sec07_Ex1_3.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec07_Ex1_3.lean)：第 3.7 节习题 3.1–3.3（`CH03-P26-01` .. `CH03-P28-02`）
+- [Sec07_Ex4_5.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Ch03/Sec07_Ex4_5.lean)：第 3.7 节习题 3.4–3.5（`CH03-P29-01` .. `CH03-P30-04`）
+- [Main.lean](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/Main.lean)：汇总导入全部目标模块的入口文件
+- [alignment.json](file:///private/tmp/math-gauge-carbon-medium-c003-native-context-worker-20261115-v12/attempts/MG-C003/physical-1/session/work/alignment.json)：92 项义务完整对齐清单
+
+```lean filename=Ch03/Defs.lean
+import formal_oet.vol_01.ch_01_foundations.gauge_space
+import formal_oet.vol_01.ch_01_foundations.metric_entropy
+import formal_oet.vol_01.ch_01_foundations.operator_space
+import formal_oet.vol_01.ch_02_operator_bounds.lip_matrix
+import formal_oet.vol_01.ch_02_operator_bounds.decoupling
+import formal_oet.vol_01.ch_02_operator_bounds.single_channel
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+ 
+/-! ### CH03-D01: 分量分划 -/
+ 
+/-- 常值分量 `I_const(ϕ | U)`：在受限域 `U` 上输出两两零距的分量指标集合。 -/
+def I_const {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (U : Set X) : Set I :=
+  {i : I | ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = 0}
+ 
+/-- 恒等分量 `I_id(ϕ | U)`：按常值优先排除 `I_const(ϕ | U)` 后，在 `U` 上输出与输入逐点零距的分量指标集合。 -/
+def I_id {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (U : Set X) : Set I :=
+  {i : I | i ∉ I_const d ϕ U ∧ ∀ x ∈ U, d i (ϕ.func x) x = 0}
+ 
+/-- 有效分量 `I_act(ϕ | U) = I \ (I_const(ϕ | U) ∪ I_id(ϕ | U))`。 -/
+def I_act {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (U : Set X) : Set I :=
+  Set.univ \ (I_const d ϕ U ∪ I_id d ϕ U)
+ 
+/-- 全域常值分量 `I_const(ϕ) := I_const(ϕ | dom(ϕ))`。 -/
+def I_const_global {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) : Set I :=
+  I_const d ϕ (dom ϕ)
+ 
+/-- 全域恒等分量 `I_id(ϕ) := I_id(ϕ | dom(ϕ))`。 -/
+def I_id_global {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) : Set I :=
+  I_id d ϕ (dom ϕ)
+ 
+/-- 全域有效分量 `I_act(ϕ) := I_act(ϕ | dom(ϕ))`。 -/
+def I_act_global {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) : Set I :=
+  I_act d ϕ (dom ϕ)
+ 
+/-- 分量分划两两不交且覆盖全体指标集 `I`，并满足常值优先约定。 -/
+theorem component_partition_props {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) :
+    Disjoint (I_const d ϕ U) (I_id d ϕ U) ∧
+    Disjoint (I_const d ϕ U) (I_act d ϕ U) ∧
+    Disjoint (I_id d ϕ U) (I_act d ϕ U) ∧
+    I_const d ϕ U ∪ I_id d ϕ U ∪ I_act d ϕ U = Set.univ ∧
+    (∀ i : I,
+      (∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = 0) →
+      (∀ x ∈ U, d i (ϕ.func x) x = 0) →
+      i ∈ I_const d ϕ U ∧ i ∉ I_id d ϕ U) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · exact Set.disjoint_left.mpr (fun _ hc hid => hid.1 hc)
+  · exact Set.disjoint_left.mpr (fun _ hc hact => hact.2 (Or.inl hc))
+  · exact Set.disjoint_left.mpr (fun _ hid hact => hact.2 (Or.inr hid))
+  · ext i
+    simp only [I_act, Set.mem_union, Set.mem_diff, Set.mem_univ, true_and]
+    tauto
+  · intro i hconst _
+    exact ⟨hconst, fun hid => hid.1 hconst⟩
+ 
+/-! ### CH03-D02: 计算纤维 -/
+ 
+/-- 受限计算纤维 `Fib_{ϕ, J}(y | U) := {x ∈ U | d_J(ϕ(x), y) = 0}`。 -/
+def CompFiber {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (J : Set I) (y : X) (U : Set X) : Set X :=
+  {x ∈ U | subfamily_pseudometric d J (ϕ.func x) y = 0}
+ 
+/-- 全域计算纤维 `Fib_{ϕ, J}(y) := Fib_{ϕ, J}(y | dom(ϕ))`。 -/
+def CompFiberGlobal {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (J : Set I) (y : X) : Set X :=
+  CompFiber d ϕ J y (dom ϕ)
+ 
+/-- 单分量计算纤维 `Fib_{ϕ, j}(y | U)`。 -/
+def CompFiberSingle {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (j : I) (y : X) (U : Set X) : Set X :=
+  CompFiber d ϕ {j} y U
+ 
+theorem CompFiberSingle_eq {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (j : I) (y : X) (U : Set X) :
+    CompFiberSingle d ϕ j y U = {x ∈ U | d j (ϕ.func x) y = 0} := by
+  unfold CompFiberSingle CompFiber
+  rw [subfamily_pseudometric_singleton]
+ 
+theorem CompFiber_eq_empty_of_pos_dist {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (J : Set I) (y : X) (U : Set X)
+    (hpos : ∀ z ∈ operator_image ϕ U, 0 < subfamily_pseudometric d J z y) :
+    CompFiber d ϕ J y U = ∅ := by
+  ext x
+  simp only [CompFiber, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
+  intro hxU hzero
+  exact (ne_of_gt (hpos (ϕ.func x) ⟨x, hxU, rfl⟩)) hzero
+ 
+/-! ### CH03-D03: 点值和零距关系、像商、纤维预序 -/
+ 
+/-- 点值相等点对集 `ℛ_{=}(ϕ | U) = {(x, y) ∈ U × U : ϕ(x) = ϕ(y)}`。 -/
+def RelEq {X : Type} {bot : X} (ϕ : Operator X bot) (U : Set X) : Set (X × X) :=
+  {p : X × X | p.1 ∈ U ∧ p.2 ∈ U ∧ ϕ.func p.1 = ϕ.func p.2}
+ 
+/-- 族零距点对集 `ℛ_{∼}(ϕ | U) = {(x, y) ∈ U × U : ϕ(x) ∼_𝒢 ϕ(y)}`。 -/
+def RelGaugeZero {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (U : Set X) : Set (X × X) :=
+  {p : X × X | p.1 ∈ U ∧ p.2 ∈ U ∧ GaugeZeroRelated d (ϕ.func p.1) (ϕ.func p.2)}
+ 
+/-- `(x, y) ∈ ℛ_{∼}(ϕ | U) ↔ y ∈ Fib_{ϕ, I}(ϕ(x) | U)`（对 `x, y ∈ U`）。 -/
+theorem mem_RelGaugeZero_iff_mem_CompFiber_univ {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal)
+    (hsymm : ∀ i x y, d i x y = d i y x)
+    (ϕ : Operator X bot) (U : Set X) {x y : X} (hx : x ∈ U) (hy : y ∈ U) :
+    (x, y) ∈ RelGaugeZero d ϕ U ↔ y ∈ CompFiber d ϕ Set.univ (ϕ.func x) U := by
+  simp only [RelGaugeZero, CompFiber, Set.mem_setOf_eq, hx, hy, true_and]
+  constructor
+  · intro hrel
+    apply le_antisymm _ (zero_le _)
+    apply iSup_le
+    intro i
+    rw [hsymm i.1 (ϕ.func y) (ϕ.func x)]
+    exact le_of_eq (hrel i.1)
+  · intro hsup i
+    have hle : d i (ϕ.func y) (ϕ.func x) ≤ subfamily_pseudometric d Set.univ (ϕ.func y) (ϕ.func x) :=
+      le_iSup (fun j : {j // j ∈ (Set.univ : Set I)} => d j.1 (ϕ.func y) (ϕ.func x)) ⟨i, trivial⟩
+    rw [hsup] at hle
+    rw [hsymm i (ϕ.func x) (ϕ.func y)]
+    exact le_antisymm hle (zero_le _)
+ 
+/-- 族零距关系限制到实际像集 `ϕ(U)` 上的 `Setoid`。 -/
+def ImageGaugeSetoid {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) : Setoid ↥(operator_image ϕ U) where
+  r a b := GaugeZeroRelated d a.1 b.1
+  iseqv := by
+    have heq := gauge_zero_related_equivalence d
+      (fun i => (hd i).dist_self) (fun i => (hd i).symm) (fun i => (hd i).triangle)
+    exact ⟨fun a => heq.refl a.1, fun hab => heq.symm hab, fun hab hbc => heq.trans hab hbc⟩
+ 
+/-- 像集在族零距关系下的商集 `ϕ(U) / ∼_𝒢`。 -/
+def ImageGaugeQuotient {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) : Type :=
+  Quotient (ImageGaugeSetoid d hd ϕ U)
+ 
+/-- 输入点 `x ∈ U` 在像商 `ϕ(U) / ∼_𝒢` 中对应的等价类 `[ϕ(x)]`。 -/
+def imageQuotientClass {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) {x : X} (hx : x ∈ U) :
+    ImageGaugeQuotient d hd ϕ U :=
+  Quotient.mk (ImageGaugeSetoid d hd ϕ U) ⟨ϕ.func x, ⟨x, hx, rfl⟩⟩
+ 
+/-- 规范族在指定子集 `S` 上分离。 -/
+def IsSeparatingOn {X I : Type} (d : I → X → X → ENNReal) (S : Set X) : Prop :=
+  ∀ y₁ ∈ S, ∀ y₂ ∈ S, GaugeZeroRelated d y₁ y₂ → y₁ = y₂
+ 
+/-- 零测距纤维预序 `ϕ_A ⪰_{fiber, U} ϕ_B`：`ℛ_{∼}(ϕ_A | U) ⊆ ℛ_{∼}(ϕ_B | U)`。 -/
+def FiberPreorder {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (U : Set X) (ϕA ϕB : Operator X bot) : Prop :=
+  RelGaugeZero d ϕA U ⊆ RelGaugeZero d ϕB U
+ 
+/-! ### CH03-D04: 点态零化半径 -/
+ 
+/-- 有限正半径 `r ∈ (0, +∞)` 在基点 `y`、受限域 `U` 上满足零化球包含条件。 -/
+def ValidNullRadius {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (y : X) (U : Set X) (r : ENNReal) : Prop :=
+  0 < r ∧ r < ⊤ ∧
+    ball d_in y r ∩ U ⊆ {x ∈ U | d_out (ϕ.func x) (ϕ.func y) = 0}
+ 
+/-- 点态零化内切半径 `r^N_{ϕ, d_in, d_out}(y | U)`。无合法有限正半径时按 `sSup ∅ = 0` 取 `0`。 -/
+noncomputable def pointwiseNullRadius {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (y : X) (U : Set X) : ENNReal :=
+  sSup {r : ENNReal | ValidNullRadius ϕ d_in d_out y U r}
+ 
+/-- 全域点态零化内切半径 `r^N_{ϕ, d_in, d_out}(y) := r^N_{ϕ, d_in, d_out}(y | dom(ϕ))`。 -/
+noncomputable def pointwiseNullRadiusGlobal {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (y : X) : ENNReal :=
+  pointwiseNullRadius ϕ d_in d_out y (dom ϕ)
+ 
+/-- 子族输出简写 `r^N_{ϕ, i, J}(y | U) := r^N_{ϕ, d_i, d_J}(y | U)`。 -/
+noncomputable def pointwiseNullRadiusSubfamily {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i : I) (J : Set I)
+    (y : X) (U : Set X) : ENNReal :=
+  pointwiseNullRadius ϕ (d i) (subfamily_pseudometric d J) y U
+ 
+/-- 单分量通道简写 `r^N_{ϕ, i, j}(y | U) := r^N_{ϕ, d_i, d_j}(y | U)`。 -/
+noncomputable def pointwiseNullRadiusComp {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i j : I)
+    (y : X) (U : Set X) : ENNReal :=
+  pointwiseNullRadius ϕ (d i) (d j) y U
+ 
+theorem pointwiseNullRadiusSubfamily_singleton {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i j : I) (y : X) (U : Set X) :
+    pointwiseNullRadiusSubfamily d ϕ i {j} y U = pointwiseNullRadiusComp d ϕ i j y U := by
+  unfold pointwiseNullRadiusSubfamily pointwiseNullRadiusComp
+  rw [subfamily_pseudometric_singleton]
+ 
+theorem ValidNullRadius_subfamily_iff_fiber {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i : I) (J : Set I)
+    (y : X) (U : Set X) (r : ENNReal) :
+    ValidNullRadius ϕ (d i) (subfamily_pseudometric d J) y U r ↔
+      0 < r ∧ r < ⊤ ∧ ball (d i) y r ∩ U ⊆ CompFiber d ϕ J (ϕ.func y) U := Iff.rfl
+ 
+theorem pointwiseNullRadius_eq_zero_of_no_valid {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (y : X) (U : Set X)
+    (hnone : ¬ ∃ r : ENNReal, ValidNullRadius ϕ d_in d_out y U r) :
+    pointwiseNullRadius ϕ d_in d_out y U = 0 := by
+  unfold pointwiseNullRadius
+  have hemp : {r : ENNReal | ValidNullRadius ϕ d_in d_out y U r} = ∅ := by
+    ext r
+    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    exact fun hr => hnone ⟨r, hr⟩
+  rw [hemp, sSup_empty]
+  rfl
+ 
+/-! ### CH03-D05: 统一半径与零化矩阵 -/
+ 
+/-- 基点集合 `A` 关于评估域 `U` 的统一零化半径 `\underline{r}^N_{ϕ, d_in, d_out}(A | U)`。 -/
+noncomputable def uniformNullRadiusOn {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (A U : Set X) : ENNReal :=
+  ⨅ y ∈ A, pointwiseNullRadius ϕ d_in d_out y U
+ 
+/-- 受限域统一零化半径 `\underline{r}^N_{ϕ, d_in, d_out}|_U := \underline{r}^N(U | U)`。 -/
+noncomputable def uniformNullRadius {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (U : Set X) : ENNReal :=
+  uniformNullRadiusOn ϕ d_in d_out U U
+ 
+/-- 全域统一零化半径 `\underline{r}^N_{ϕ, d_in, d_out} := \underline{r}^N|_{dom(ϕ)}`。 -/
+noncomputable def uniformNullRadiusGlobal {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) : ENNReal :=
+  uniformNullRadius ϕ d_in d_out (dom ϕ)
+ 
+/-- 子族输出统一零化半径 `\underline{r}^N_{ϕ, i, J}(A | U)`。 -/
+noncomputable def uniformNullRadiusSubfamilyOn {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i : I) (J : Set I)
+    (A U : Set X) : ENNReal :=
+  uniformNullRadiusOn ϕ (d i) (subfamily_pseudometric d J) A U
+ 
+/-- 子族输出受限统一零化半径 `\underline{r}^N_{ϕ, i, J}|_U`。 -/
+noncomputable def uniformNullRadiusSubfamily {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i : I) (J : Set I)
+    (U : Set X) : ENNReal :=
+  uniformNullRadius ϕ (d i) (subfamily_pseudometric d J) U
+ 
+/-- 单分量通道受限统一零化半径 `\underline{r}^N_{ϕ, i, j}|_U`。 -/
+noncomputable def uniformNullRadiusComp {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i j : I)
+    (U : Set X) : ENNReal :=
+  uniformNullRadius ϕ (d i) (d j) U
+ 
+/-- 受限零化矩阵 `[N(ϕ)|_U]_{j, i} := \underline{r}^N_{ϕ, i, j}|_U`（行指标为输出 `j`，列指标为输入 `i`）。 -/
+noncomputable def nullMatrix {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (j i : I) : ENNReal :=
+  uniformNullRadiusComp d ϕ i j U
+ 
+/-- 全域零化矩阵 `N(ϕ) := N(ϕ)|_{dom(ϕ)}`。 -/
+noncomputable def nullMatrixGlobal {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (j i : I) : ENNReal :=
+  nullMatrix d ϕ (dom ϕ) j i
+ 
+theorem uniformNullRadiusSubfamily_singleton {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (i j : I) (U : Set X) :
+    uniformNullRadiusSubfamily d ϕ i {j} U = nullMatrix d ϕ U j i := by
+  unfold uniformNullRadiusSubfamily nullMatrix uniformNullRadiusComp
+  rw [subfamily_pseudometric_singleton]
+ 
+/-! ### CH03-D06: 输入尺度与阈值分类 -/
+ 
+/-- 输入尺度函数族单调性公理：对任意非空子集 `A₁ ⊆ A₂`，`σ_i(A₁) ≤ σ_i(A₂)`。 -/
+def IsInputScaleFamily {X I : Type} (σ : I → Set X → ENNReal) : Prop :=
+  ∀ i : I, ∀ ⦃A₁ A₂ : Set X⦄, A₁.Nonempty → A₂.Nonempty → A₁ ⊆ A₂ → σ i A₁ ≤ σ i A₂
+ 
+/-- 集合关于伪度量 `d` 的直径 `diam_d(A) = sup_{x, y ∈ A} d(x, y)`。 -/
+noncomputable def setDiam {X : Type} (d : X → X → ENNReal) (A : Set X) : ENNReal :=
+  ⨆ x ∈ A, ⨆ y ∈ A, d x y
+ 
+/-- 默认直径尺度函数族 `σ_i(A) = diam_{d_i}(A)`。 -/
+noncomputable def diameterScaleFamily {X I : Type} (d : I → X → X → ENNReal) :
+    I → Set X → ENNReal :=
+  fun i A => setDiam (d i) A
+ 
+theorem diameterScaleFamily_isInputScaleFamily {X I : Type}
+    (d : I → X → X → ENNReal) :
+    IsInputScaleFamily (diameterScaleFamily d) := by
+  intro i A₁ A₂ _ _ hsub
+  unfold diameterScaleFamily setDiam
+  apply iSup₂_le
+  intro x hx
+  apply iSup₂_le
+  intro y hy
+  exact le_iSup₂_of_le x (hsub hx) (le_iSup₂_of_le y (hsub hy) le_rfl)
+ 
+/-- 命题指示函数 `1_{P} ∈ {0, 1}`（以 `Fin 2` 表示 `{0, 1}`）。 -/
+noncomputable def ind01 (P : Prop) : Fin 2 :=
+  open scoped Classical in
+  if P then 1 else 0
+ 
+/-- 通道 `(i, j)` 在尺度函数族 `σ` 与有限正阈值 `(τσ, τN)` 下的阈值分类 `Type_{f, A}(i, j) ∈ {0, 1}²`。 -/
+noncomputable def channelType {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (σ : I → Set X → ENNReal)
+    (f : Operator X bot) (A : Set X) (τσ τN : ENNReal) (i j : I) : Fin 2 × Fin 2 :=
+  (ind01 (σ i A < τσ), ind01 (τN ≤ uniformNullRadiusComp d f i j A))
+ 
+/-! ### CH03-D07: 内部覆盖数、熵与全有界接口 -/
+ 
+/-- 子族覆盖数 `𝒩_J(ε, U)`，直接复用第1章冻结覆盖数在子族复合伪度量 `d_J` 上的实例。 -/
+noncomputable def subfamily_covering_number {X I : Type}
+    (d : I → X → X → ENNReal) (J : Set I) (ε : ENNReal) (U : Set X) : ENNReal :=
+  covering_number (subfamily_pseudometric d J) ε U
+ 
+theorem subfamily_covering_number_singleton {X I : Type}
+    (d : I → X → X → ENNReal) (i : I) (ε : ENNReal) (U : Set X) :
+    subfamily_covering_number d ({i} : Set I) ε U = covering_number (d i) ε U := by
+  unfold subfamily_covering_number
+  rw [subfamily_pseudometric_singleton]
+ 
+/-- 验证第1章冻结 `InternalEpsilonNet` 与正文开球并集表述 `S ⊆ U ∧ U ⊆ ⋃_{s ∈ S} B_d(s, ε)` 完全一致。 -/
+theorem InternalEpsilonNet_iff_ball_cover {X : Type} (d : X → X → ENNReal)
+    (ε : ENNReal) (U : Set X) (S : Finset X) :
+    InternalEpsilonNet d ε U S ↔
+      (↑S : Set X) ⊆ U ∧ U ⊆ ⋃ s ∈ S, ball d s ε := by
+  unfold InternalEpsilonNet ball
+  constructor
+  · rintro ⟨hsub, hcov⟩
+    refine ⟨hsub, fun x hx => ?_⟩
+    rcases hcov x hx with ⟨s, hs, hdist⟩
+    exact Set.mem_iUnion₂.mpr ⟨s, hs, hdist⟩
+  · rintro ⟨hsub, hcov⟩
+    refine ⟨hsub, fun x hx => ?_⟩
+    rcases Set.mem_iUnion₂.mp (hcov hx) with ⟨s, hs, hdist⟩
+    exact ⟨s, hs, hdist⟩
+ 
+/-- `log2_ereal` 在 `ENNReal` 上单调不减。 -/
+theorem log2_ereal_mono {x y : ENNReal} (hxy : x ≤ y) :
+    log2_ereal x ≤ log2_ereal y := by
+  unfold log2_ereal
+  by_cases hx0 : x = 0
+  · simp [hx0]
+  · have hy0 : y ≠ 0 := ne_of_gt (lt_of_lt_of_le (pos_iff_ne_zero.mpr hx0) hxy)
+    by_cases hytop : y = ⊤
+    · simp [hx0, hytop]
+    · have hxtop : x ≠ ⊤ := ne_of_lt (lt_of_le_of_lt hxy (lt_top_iff_ne_top.mpr hytop))
+      simp only [if_neg hx0, if_neg hy0, if_neg hxtop, if_neg hytop, EReal.coe_le_coe_iff]
+      apply Real.logb_le_logb_of_le one_lt_two
+      · exact ENNReal.toReal_pos hx0 hxtop
+      · exact ENNReal.toReal_mono hytop hxy
+ 
+/-- 集合 `U` 在伪度量 `d` 下全有界：对一切有限正精度 `r ∈ (0, +∞)`，`𝒩_d(r, U) < +∞`。 -/
+def IsTotallyBounded {X : Type} (d : X → X → ENNReal) (U : Set X) : Prop :=
+  ∀ r : ENNReal, 0 < r → r < ⊤ → covering_number d r U < ⊤
+ 
+theorem metric_entropy_lt_top_iff {X : Type} (d : X → X → ENNReal)
+    (ε : ENNReal) (U : Set X) :
+    metric_entropy d ε U < ⊤ ↔ covering_number d ε U < ⊤ := by
+  unfold metric_entropy log2_ereal
+  by_cases h0 : covering_number d ε U = 0
+  · simp [h0]
+  · by_cases htop : covering_number d ε U = ⊤
+    · simp [htop]
+    · simp [h0, htop, lt_top_iff_ne_top]
+ 
+theorem metric_entropy_finite_of_totallyBounded {X : Type} (d : X → X → ENNReal)
+    (U : Set X) (hU : U.Nonempty) (htb : IsTotallyBounded d U)
+    {ε : ENNReal} (hε0 : 0 < ε) (hεtop : ε < ⊤) :
+    (0 : EReal) ≤ metric_entropy d ε U ∧ metric_entropy d ε U < ⊤ :=
+  ⟨metric_entropy_nonneg d ε U hU, (metric_entropy_lt_top_iff d ε U).mpr (htb ε hε0 hεtop)⟩
+ 
+/-! ### CH03-D08: 映射熵差 -/
+ 
+/-- 映射熵差良定前提：`U` 非空、`U ⊆ dom(ϕ)`、`Jin, Jout` 非空、`ε ∈ (0, +∞)`，且输入/输出覆盖数至少一个有限（排除 `∞ - ∞`）。 -/
+def MappingEntropyDiffWellDefined {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (Jin Jout : Set I) (ε : ENNReal) : Prop :=
+  U.Nonempty ∧ U ⊆ dom ϕ ∧ Jin.Nonempty ∧ Jout.Nonempty ∧
+  0 < ε ∧ ε < ⊤ ∧
+  (subfamily_covering_number d Jin ε U < ⊤ ∨
+    subfamily_covering_number d Jout ε (operator_image ϕ U) < ⊤)
+ 
+/-- 映射熵差 `ΔE_{ε, Jin, Jout}(ϕ | U)`：仅在 `MappingEntropyDiffWellDefined` 证明下有定义，不定义 `∞ - ∞`。 -/
+noncomputable def mappingEntropyDiff {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (Jin Jout : Set I) (ε : ENNReal)
+    (hwf : MappingEntropyDiffWellDefined d ϕ U Jin Jout ε) : EReal :=
+  open scoped Classical in
+  let Nin := subfamily_covering_number d Jin ε U
+  let Nout := subfamily_covering_number d Jout ε (operator_image ϕ U)
+  if hin : Nin < ⊤ then
+    if Nout < ⊤ then
+      ((Real.logb 2 Nin.toReal - Real.logb 2 Nout.toReal : ℝ) : EReal)
+    else
+      ⊥
+  else
+    if hout : Nout < ⊤ then
+      ⊤
+    else
+      False.elim (hwf.2.2.2.2.2.2.elim hin hout)
+ 
+/-- 同子族简写 `ΔE_{ε, J}(ϕ | U)` 的良定条件。 -/
+def MappingEntropyDiffSameWellDefined {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (J : Set I) (ε : ENNReal) : Prop :=
+  MappingEntropyDiffWellDefined d ϕ U J J ε
+ 
+/-- 同子族映射熵差 `ΔE_{ε, J}(ϕ | U)`。 -/
+noncomputable def mappingEntropyDiffSame {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (J : Set I) (ε : ENNReal)
+    (hwf : MappingEntropyDiffSameWellDefined d ϕ U J ε) : EReal :=
+  mappingEntropyDiff d ϕ U J J ε hwf
+ 
+/-- 单通道简写 `ΔE_{ε, i, j}(ϕ | U)` 的良定条件。 -/
+def MappingEntropyDiffCompWellDefined {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (i j : I) (ε : ENNReal) : Prop :=
+  MappingEntropyDiffWellDefined d ϕ U {i} {j} ε
+ 
+/-- 单通道映射熵差 `ΔE_{ε, i, j}(ϕ | U)`。 -/
+noncomputable def mappingEntropyDiffComp {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (i j : I) (ε : ENNReal)
+    (hwf : MappingEntropyDiffCompWellDefined d ϕ U i j ε) : EReal :=
+  mappingEntropyDiff d ϕ U {i} {j} ε hwf
+ 
+/-- 单分量简写 `ΔE_{ε, j}(ϕ | U)` 的良定条件。 -/
+def MappingEntropyDiffSingleWellDefined {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (j : I) (ε : ENNReal) : Prop :=
+  MappingEntropyDiffWellDefined d ϕ U {j} {j} ε
+ 
+/-- 单分量映射熵差 `ΔE_{ε, j}(ϕ | U)`。 -/
+noncomputable def mappingEntropyDiffSingle {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (j : I) (ε : ENNReal)
+    (hwf : MappingEntropyDiffSingleWellDefined d ϕ U j ε) : EReal :=
+  mappingEntropyDiff d ϕ U {j} {j} ε hwf
+ 
+/-- 在良定条件下，`mappingEntropyDiff` 与 `E_{ε, Jin}(U) - E_{ε, Jout}(ϕ(U))` 在有限、`+∞`、`-∞` 三种合法分支上严格一致。 -/
+theorem mappingEntropyDiff_eq_sub {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (Jin Jout : Set I) (ε : ENNReal)
+    (hwf : MappingEntropyDiffWellDefined d ϕ U Jin Jout ε) :
+    mappingEntropyDiff d ϕ U Jin Jout ε hwf =
+      subfamily_metric_entropy d Jin ε U -
+        subfamily_metric_entropy d Jout ε (operator_image ϕ U) := by
+  have hU : U.Nonempty := hwf.1
+  have hIm : (operator_image ϕ U).Nonempty := hU.image ϕ.func
+  have hin0 : covering_number (subfamily_pseudometric d Jin) ε U ≠ 0 :=
+    ne_of_gt (lt_of_lt_of_le zero_lt_one
+      (one_le_covering_number_of_nonempty (subfamily_pseudometric d Jin) ε U hU))
+  have hout0 : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) ≠ 0 :=
+    ne_of_gt (lt_of_lt_of_le zero_lt_one
+      (one_le_covering_number_of_nonempty (subfamily_pseudometric d Jout) ε (operator_image ϕ U) hIm))
+  unfold mappingEntropyDiff subfamily_metric_entropy subfamily_covering_number log2_ereal
+  dsimp only
+  by_cases hin : covering_number (subfamily_pseudometric d Jin) ε U < ⊤
+  · have hintop : covering_number (subfamily_pseudometric d Jin) ε U ≠ ⊤ := lt_top_iff_ne_top.mp hin
+    by_cases hout : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) < ⊤
+    · have houttop : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) ≠ ⊤ :=
+        lt_top_iff_ne_top.mp hout
+      simp [hin, hout, hin0, hout0, hintop, houttop, EReal.coe_sub]
+    · have houttop : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) = ⊤ :=
+        not_lt_top_iff.mp hout
+      simp [hin, hin0, hintop, houttop]
+  · have hintop : covering_number (subfamily_pseudometric d Jin) ε U = ⊤ := not_lt_top_iff.mp hin
+    rcases hwf.2.2.2.2.2.2 with hin' | hout
+    · exact False.elim (hin hin')
+    · change covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) < ⊤ at hout
+      have houttop : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) ≠ ⊤ :=
+        lt_top_iff_ne_top.mp hout
+      simp [hout, hout0, hintop, houttop]
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec01.lean
+import Ch03.Defs
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set Finset
+ 
+/-! ### 命题 3.1：分量类型的矩阵约束 (CH03-P01-01 .. 03) -/
+ 
+/-- CH03-P01-01: 命题 3.1(i) 常值分量输出零行上界。 -/
+theorem prop_3_1_i_zero_row_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i : I)
+    (_hU : U ⊆ dom ϕ) (hi : i ∈ I_const d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U,
+      d i (ϕ.func x) (ϕ.func y) ≤ ∑ k : I, (0 : ENNReal) * d k x y ∧
+      (∑ k : I, (0 : ENNReal) * d k x y) = 0 := by
+  intro x hx y hy
+  have h0 : d i (ϕ.func x) (ϕ.func y) = 0 := hi x hx y hy
+  simp [h0]
+ 
+/-- CH03-P01-01 补充：在任一受限 Lip 矩阵中将常值分量 `i` 对应输出行置零仍为合法受限 Lip 矩阵。 -/
+theorem prop_3_1_i_zero_row_lip_matrix {X I : Type} {bot : X} [Fintype I] [DecidableEq I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i : I)
+    (L : I → I → ENNReal) (hL : IsLipMatrix d ϕ U L) (hi : i ∈ I_const d ϕ U) :
+    IsLipMatrix d ϕ U (fun k j => if j = i then 0 else L k j) := by
+  refine ⟨hL.1, fun x hx y hy j => ?_⟩
+  by_cases hji : j = i
+  · subst hji
+    simp [hi x hx y hy]
+  · simpa [hji] using hL.2 x hx y hy j
+ 
+/-- CH03-P01-02: 命题 3.1(ii) 常值分量下存在正输入距离的源通道 co-Lip 条目必为零。 -/
+theorem prop_3_1_ii_colip_entry_zero {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i k : I)
+    (K : I → I → ENNReal) (_hU : U ⊆ dom ϕ)
+    (hi : i ∈ I_const d ϕ U) (hK : IsCoLipMatrix d ϕ U K)
+    (hpos : ∃ x ∈ U, ∃ y ∈ U, 0 < d k x y) :
+    K k i = 0 := by
+  rcases hpos with ⟨x, hx, y, hy, hkpos⟩
+  exact colip_entry_eq_zero_of_output_zero_input_pos d ϕ U K k i x y hK hx hy
+    (hi x hx y hy) hkpos
+ 
+/-- CH03-P01-03: 命题 3.1(iii) 恒等分量双向保距等式。 -/
+theorem prop_3_1_iii_id_preserves_dist {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (i : I)
+    (_hU : U ⊆ dom ϕ) (hi : i ∈ I_id d ϕ U) :
+    ∀ x ∈ U, ∀ y ∈ U, d i (ϕ.func x) (ϕ.func y) = d i x y := by
+  intro x hx y hy
+  have hx0 : d i (ϕ.func x) x = 0 := hi.2 x hx
+  have hy0 : d i (ϕ.func y) y = 0 := hi.2 y hy
+  apply le_antisymm
+  · calc
+      d i (ϕ.func x) (ϕ.func y)
+          ≤ d i (ϕ.func x) x + d i x (ϕ.func y) := (hd i).triangle _ _ _
+      _ ≤ d i (ϕ.func x) x + (d i x y + d i y (ϕ.func y)) :=
+          add_le_add le_rfl ((hd i).triangle _ _ _)
+      _ = d i x y := by
+          rw [hx0, (hd i).symm y (ϕ.func y), hy0, zero_add, add_zero]
+  · calc
+      d i x y
+          ≤ d i x (ϕ.func x) + d i (ϕ.func x) y := (hd i).triangle _ _ _
+      _ ≤ d i x (ϕ.func x) + (d i (ϕ.func x) (ϕ.func y) + d i (ϕ.func y) y) :=
+          add_le_add le_rfl ((hd i).triangle _ _ _)
+      _ = d i (ϕ.func x) (ϕ.func y) := by
+          rw [(hd i).symm x (ϕ.func x), hx0, hy0, zero_add, add_zero]
+ 
+/-! ### 命题 3.2：复合下的有效分量包含与恒等分量保留 (CH03-P02-01 .. 03) -/
+ 
+/-- 复合定义域包含关系：`U ⊆ dom(ϕ₂ ∘ ϕ₁)` 推出 `U ⊆ dom(ϕ₁)` 且 `ϕ₁(U) ⊆ dom(ϕ₂)`。 -/
+theorem comp_dom_inclusions {X : Type} {bot : X}
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) (hU : U ⊆ dom (ϕ₂ * ϕ₁)) :
+    U ⊆ dom ϕ₁ ∧ operator_image ϕ₁ U ⊆ dom ϕ₂ := by
+  refine ⟨fun x hx hbot => ?_, ?_⟩
+  · have hc : (ϕ₂ * ϕ₁).func x ≠ bot := hU hx
+    apply hc
+    change ϕ₂.func (ϕ₁.func x) = bot
+    rw [hbot, ϕ₂.preserves_bot]
+  · rintro y ⟨x, hx, rfl⟩
+    exact hU hx
+ 
+/-- CH03-P02-03: 命题 3.2(iii) 恒等分量保留（同时排除常值优先分支）。 -/
+theorem prop_3_2_iii_id_preserved {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) (hU : U ⊆ dom (ϕ₂ * ϕ₁)) :
+    I_id d ϕ₁ U ∩ I_id d ϕ₂ (operator_image ϕ₁ U) ⊆ I_id d (ϕ₂ * ϕ₁) U := by
+  rcases comp_dom_inclusions ϕ₁ ϕ₂ U hU with ⟨hU1, hU2⟩
+  rintro i ⟨hi1, hi2⟩
+  refine ⟨?_, ?_⟩
+  · intro hconst_comp
+    apply hi1.1
+    intro x hx y hy
+    have hiso := prop_3_1_iii_id_preserves_dist d hd ϕ₂ (operator_image ϕ₁ U) i hU2 hi2
+      (ϕ₁.func x) ⟨x, hx, rfl⟩ (ϕ₁.func y) ⟨y, hy, rfl⟩
+    rw [← hiso]
+    exact hconst_comp x hx y hy
+  · intro x hx
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i (ϕ₂.func (ϕ₁.func x)) x
+          ≤ d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) + d i (ϕ₁.func x) x := (hd i).triangle _ _ _
+      _ = 0 := by rw [hi2.2 (ϕ₁.func x) ⟨x, hx, rfl⟩, hi1.2 x hx, zero_add]
+ 
+/-- CH03-P02-01: 命题 3.2(i) 两步复合的有效分量包含（在实际中间像域 `ϕ₁(U)` 上读取）。 -/
+theorem prop_3_2_i_active_subset_union {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) (hU : U ⊆ dom (ϕ₂ * ϕ₁)) :
+    I_act d (ϕ₂ * ϕ₁) U ⊆ I_act d ϕ₁ U ∪ I_act d ϕ₂ (operator_image ϕ₁ U) := by
+  intro i hi
+  by_contra hnot
+  rw [Set.mem_union, not_or] at hnot
+  rcases hnot with ⟨hn1, hn2⟩
+  have h1 : i ∈ I_const d ϕ₁ U ∨ i ∈ I_id d ϕ₁ U := by
+    by_contra hc; exact hn1 ⟨trivial, hc⟩
+  have h2 : i ∈ I_const d ϕ₂ (operator_image ϕ₁ U) ∨ i ∈ I_id d ϕ₂ (operator_image ϕ₁ U) := by
+    by_contra hc; exact hn2 ⟨trivial, hc⟩
+  apply hi.2
+  rcases h1 with hc1 | hid1 <;> rcases h2 with hc2 | hid2
+  · -- (d) const + const
+    left
+    intro x hx y hy
+    exact hc2 (ϕ₁.func x) ⟨x, hx, rfl⟩ (ϕ₁.func y) ⟨y, hy, rfl⟩
+  · -- (c) const + id
+    left
+    intro x hx y hy
+    apply le_antisymm _ (zero_le _)
+    calc
+      d i (ϕ₂.func (ϕ₁.func x)) (ϕ₂.func (ϕ₁.func y))
+          ≤ d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) +
+            d i (ϕ₁.func x) (ϕ₂.func (ϕ₁.func y)) := (hd i).triangle _ _ _
+      _ ≤ d i (ϕ₂.func (ϕ₁.func x)) (ϕ₁.func x) +
+            (d i (ϕ₁.func x) (ϕ₁.func y) + d i (ϕ₁.func y) (ϕ₂.func (ϕ₁.func y))) :=
+          add_le_add le_rfl ((hd i).triangle _ _ _)
+      _ = 0 := by
+          rw [hid2.2 (ϕ₁.func x) ⟨x, hx, rfl⟩, hc1 x hx y hy,
+              (hd i).symm (ϕ₁.func y) (ϕ₂.func (ϕ₁.func y)),
+              hid2.2 (ϕ₁.func y) ⟨y, hy, rfl⟩, zero_add, add_zero]
+  · -- (b) id + const
+    left
+    intro x hx y hy
+    exact hc2 (ϕ₁.func x) ⟨x, hx, rfl⟩ (ϕ₁.func y) ⟨y, hy, rfl⟩
+  · -- (a) id + id
+    right
+    exact prop_3_2_iii_id_preserved d hd ϕ₁ ϕ₂ U hU ⟨hid1, hid2⟩
+ 
+/-- 有限复合链 `c_n = ϕ_n ∘ ⋯ ∘ ϕ_1`（0基索引：`chainCompSeq ϕs 0 = id_X`，`chainCompSeq ϕs (n+1) = ϕs n * chainCompSeq ϕs n`）。 -/
+def chainCompSeq {X : Type} {bot : X} (ϕs : ℕ → Operator X bot) : ℕ → Operator X bot
+  | 0 => operator_identity
+  | n + 1 => ϕs n * chainCompSeq ϕs n
+ 
+/-- 递归定义的实际中间像集 `U_{m+1} = ϕ_m(U_m)`（0基索引：`chainDomainSeq U₁ ϕs 0 = U₁`）。 -/
+def chainDomainSeq {X : Type} {bot : X} (U₁ : Set X) (ϕs : ℕ → Operator X bot) : ℕ → Set X
+  | 0 => U₁
+  | m + 1 => operator_image (ϕs m) (chainDomainSeq U₁ ϕs m)
+ 
+theorem chainDomainSeq_eq_image_chainCompSeq {X : Type} {bot : X}
+    (U₁ : Set X) (ϕs : ℕ → Operator X bot) (n : ℕ) :
+    chainDomainSeq U₁ ϕs n = operator_image (chainCompSeq ϕs n) U₁ := by
+  induction n with
+  | zero =>
+      ext x
+      simp [chainDomainSeq, chainCompSeq, operator_image, operator_identity]
+  | succ n ih =>
+      ext y
+      simp only [chainDomainSeq, chainCompSeq, ih, operator_image, Set.mem_image]
+      constructor
+      · rintro ⟨z, ⟨x, hx, rfl⟩, rfl⟩
+        exact ⟨x, hx, rfl⟩
+      · rintro ⟨x, hx, rfl⟩
+        exact ⟨(chainCompSeq ϕs n).func x, ⟨x, hx, rfl⟩, rfl⟩
+ 
+theorem chainDomainSeq_subset_dom {X : Type} {bot : X}
+    (U₁ : Set X) (ϕs : ℕ → Operator X bot) :
+    ∀ n : ℕ, U₁ ⊆ dom (chainCompSeq ϕs n) →
+      ∀ m < n, chainDomainSeq U₁ ϕs m ⊆ dom (ϕs m)
+  | 0, _, m, hm => False.elim (Nat.not_lt_zero m hm)
+  | n + 1, hU, m, hm => by
+      rcases comp_dom_inclusions (chainCompSeq ϕs n) (ϕs n) U₁ hU with ⟨hUn, hImg⟩
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hm with hlt | rfl
+      · exact chainDomainSeq_subset_dom U₁ ϕs n hUn m hlt
+      · simpa [chainDomainSeq_eq_image_chainCompSeq] using hImg
+ 
+/-- CH03-P02-02 (零步基例): 空复合 `c_0 = id_X` 的有效分量为 `∅`。 -/
+theorem prop_3_2_ii_zero_base {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (U₁ : Set X) :
+    I_act d (operator_identity : Operator X bot) U₁ = ∅ := by
+  ext i
+  simp only [I_act, Set.mem_diff, Set.mem_univ, Set.mem_union, true_and,
+    Set.mem_empty_iff_false, iff_false, not_not]
+  by_cases hconst : i ∈ I_const d (operator_identity : Operator X bot) U₁
+  · exact Or.inl hconst
+  · exact Or.inr ⟨hconst, fun x _ => (hd i).dist_self x⟩
+ 
+/-- CH03-P02-02: 命题 3.2(ii) 任意有限长度链的有效分量包含与非有效分量保持。 -/
+theorem prop_3_2_ii_chain_active_subset {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕs : ℕ → Operator X bot) (U₁ : Set X) :
+    ∀ n : ℕ, U₁ ⊆ dom (chainCompSeq ϕs n) →
+      I_act d (chainCompSeq ϕs n) U₁ ⊆
+        ⋃ m < n, I_act d (ϕs m) (chainDomainSeq U₁ ϕs m)
+  | 0, _ => by
+      simp [chainCompSeq, prop_3_2_ii_zero_base d hd U₁]
+  | n + 1, hU => by
+      rcases comp_dom_inclusions (chainCompSeq ϕs n) (ϕs n) U₁ hU with ⟨hUn, _⟩
+      intro i hi
+      have hstep := prop_3_2_i_active_subset_union d hd (chainCompSeq ϕs n) (ϕs n) U₁ hU hi
+      rw [ ← chainDomainSeq_eq_image_chainCompSeq] at hstep
+      rcases hstep with hprev | hlast
+      · have hih := prop_3_2_ii_chain_active_subset d hd ϕs U₁ n hUn hprev
+        rcases Set.mem_iUnion₂.mp hih with ⟨m, hm, hmem⟩
+        exact Set.mem_iUnion₂.mpr ⟨m, Nat.lt_succ_of_lt hm, hmem⟩
+      · exact Set.mem_iUnion₂.mpr ⟨n, Nat.lt_succ_self n, hlast⟩
+ 
+theorem prop_3_2_ii_chain_nonactive_preserved {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕs : ℕ → Operator X bot) (U₁ : Set X) (n : ℕ) (i : I)
+    (hU : U₁ ⊆ dom (chainCompSeq ϕs n))
+    (hnonact : ∀ m < n, i ∉ I_act d (ϕs m) (chainDomainSeq U₁ ϕs m)) :
+    i ∉ I_act d (chainCompSeq ϕs n) U₁ := by
+  intro hi
+  rcases Set.mem_iUnion₂.mp (prop_3_2_ii_chain_active_subset d hd ϕs U₁ n hU hi) with ⟨m, hm, hmem⟩
+  exact hnonact m hm hmem
+ 
+/-! ### 注：复合分量保持的逆向蕴含一般不成立 (CH03-P03-01) -/
+ 
+/-- 两点换位空间 `𝒳 = {bot, a, b}`。 -/
+inductive SwapSpace : Type
+  | bot : SwapSpace
+  | a : SwapSpace
+  | b : SwapSpace
+  deriving DecidableEq
+ 
+def swapDist (_ : Unit) : SwapSpace → SwapSpace → ENNReal
+  | .bot, .bot => 0
+  | .a, .a => 0
+  | .b, .b => 0
+  | .a, .b => 1
+  | .b, .a => 1
+  | .bot, _ => ⊤
+  | _, .bot => ⊤
+ 
+theorem swapDist_is_extended :
+    ∀ u : Unit, ExtendedPseudoMetric SwapSpace SwapSpace.bot (swapDist u) := by
+  intro u
+  refine
+    { nonabsorbing := ⟨.a, by decide⟩
+      dist_self := fun x => by cases x <;> rfl
+      symm := fun x y => by cases x <;> cases y <;> rfl
+      triangle := fun x y z => by cases x <;> cases y <;> cases z <;> simp [swapDist]
+      isolate_bot := fun x hx => by cases x <;> simp_all [swapDist] }
+ 
+def swapOp : Operator SwapSpace SwapSpace.bot where
+  func
+    | .bot => .bot
+    | .a => .b
+    | .b => .a
+  preserves_bot := rfl
+ 
+def swapU : Set SwapSpace := {.a, .b}
+ 
+/-- CH03-P03-01: 两点换位例完整计算并同时否定命题 3.2(i) 与 (iii) 的逆向包含。 -/
+theorem note_comp_converse_counterexample :
+    swapU ⊆ dom (swapOp * swapOp) ∧
+    operator_image swapOp swapU = swapU ∧
+    I_act swapDist swapOp swapU = {()} ∧
+    I_id swapDist swapOp swapU = ∅ ∧
+    I_act swapDist swapOp (operator_image swapOp swapU) = {()} ∧
+    I_id swapDist swapOp (operator_image swapOp swapU) = ∅ ∧
+    I_id swapDist (swapOp * swapOp) swapU = {()} ∧
+    I_act swapDist (swapOp * swapOp) swapU = ∅ ∧
+    ¬ (I_act swapDist swapOp swapU ∪ I_act swapDist swapOp (operator_image swapOp swapU) ⊆
+        I_act swapDist (swapOp * swapOp) swapU) ∧
+    ¬ (I_id swapDist (swapOp * swapOp) swapU ⊆
+        I_id swapDist swapOp swapU ∩ I_id swapDist swapOp (operator_image swapOp swapU)) := by
+  have himg : operator_image swapOp swapU = swapU := by
+    ext x
+    cases x <;> simp [operator_image, swapU, swapOp]
+  have hnconst_single : () ∉ I_const swapDist swapOp swapU := by
+    intro hc
+    have h := hc .a (by simp [swapU]) .b (by simp [swapU])
+    simp [swapOp, swapDist] at h
+  have hnid_single : () ∉ I_id swapDist swapOp swapU := by
+    intro hid
+    have h := hid.2 .a (by simp [swapU])
+    simp [swapOp, swapDist] at h
+  have hact_single : I_act swapDist swapOp swapU = {()} := by
+    ext u
+    cases u
+    simp [I_act, hnconst_single, hnid_single]
+  have hid_single : I_id swapDist swapOp swapU = ∅ := by
+    ext u
+    cases u
+    simp [hnid_single]
+  have hnconst_comp : () ∉ I_const swapDist (swapOp * swapOp) swapU := by
+    intro hc
+    have h := hc .a (by simp [swapU]) .b (by simp [swapU])
+    change swapDist () (swapOp.func (swapOp.func .a)) (swapOp.func (swapOp.func .b)) = 0 at h
+    simp [swapOp, swapDist] at h
+  have hid_comp_mem : () ∈ I_id swapDist (swapOp * swapOp) swapU := by
+    refine ⟨hnconst_comp, fun x hx => ?_⟩
+    rcases hx with rfl | rfl <;> rfl
+  have hid_comp : I_id swapDist (swapOp * swapOp) swapU = {()} := by
+    ext u; cases u; simp [hid_comp_mem]
+  have hact_comp : I_act swapDist (swapOp * swapOp) swapU = ∅ := by
+    ext u; cases u; simp [I_act, hid_comp_mem]
+  refine ⟨?_, himg, hact_single, hid_single, ?_, ?_, hid_comp, hact_comp, ?_, ?_⟩
+  · intro x hx
+    rcases hx with rfl | rfl <;> intro hbot <;> cases hbot
+  · rw [himg, hact_single]
+  · rw [himg, hid_single]
+  · rw [himg, hact_single, hact_comp]
+    simp
+  · rw [himg, hid_comp, hid_single]
+    simp
+ 
+/-! ### 命题 3.3：常值分量的单侧保持与非封闭性 (CH03-P04-01 .. 02) -/
+ 
+/-- CH03-P04-01: 命题 3.3(i) 外侧常值保持。 -/
+theorem prop_3_3_i_outer_const_preserved {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ ψ : Operator X bot) (U : Set X) (i : I)
+    (_hU : U ⊆ dom (ψ * ϕ))
+    (hi : i ∈ I_const d ψ (operator_image ϕ U)) :
+    i ∈ I_const d (ψ * ϕ) U := by
+  intro x hx y hy
+  exact hi (ϕ.func x) ⟨x, hx, rfl⟩ (ϕ.func y) ⟨y, hy, rfl⟩
+ 
+/-- 七点空间 `𝒳 = {bot, a, b, p, q, r, s}`。 -/
+inductive SevenSpace : Type
+  | bot | a | b | p | q | r | s
+  deriving DecidableEq
+ 
+/-- 双分量指标集 `I = {idx_i, idx_m}`。 -/
+inductive TwoIdx : Type
+  | idx_i | idx_m
+  deriving DecidableEq
+ 
+instance : Fintype TwoIdx where
+  elems := {.idx_i, .idx_m}
+  complete x := by cases x <;> simp
+ 
+instance : Nonempty TwoIdx := ⟨.idx_i⟩
+ 
+/-- 将 `p, q` 合为零距类的标签映射（用于构造 `d_i`）。 -/
+def sevenClassI : SevenSpace → Fin 5
+  | .a => 0
+  | .b => 1
+  | .p => 2
+  | .q => 2
+  | .r => 3
+  | .s => 4
+  | .bot => 0
+ 
+def sevenDist (k : TwoIdx) (x y : SevenSpace) : ENNReal :=
+  if x = .bot ∧ y = .bot then 0
+  else if x = .bot ∨ y = .bot then ⊤
+  else match k with
+    | .idx_i => if sevenClassI x = sevenClassI y then 0 else 1
+    | .idx_m => if x = y then 0 else 1
+ 
+theorem sevenDist_is_extended :
+    ∀ k : TwoIdx, ExtendedPseudoMetric SevenSpace SevenSpace.bot (sevenDist k) := by
+  intro k
+  refine
+    { nonabsorbing := ⟨.a, by decide⟩
+      dist_self := fun x => by
+        unfold sevenDist
+        by_cases hx : x = .bot <;> cases k <;> simp [hx]
+      symm := fun x y => by
+        unfold sevenDist
+        by_cases hx : x = .bot <;> by_cases hy : y = .bot <;>
+          cases k <;> simp [hx, hy, eq_comm]
+      triangle := fun x y z => by
+        unfold sevenDist
+        by_cases hx : x = .bot <;> by_cases hy : y = .bot <;> by_cases hz : z = .bot
+        all_goals try simp [hx, hy, hz]
+        cases k
+        · dsimp only
+          by_cases hxz : sevenClassI x = sevenClassI z
+          · simp [hxz]
+          · by_cases hxy : sevenClassI x = sevenClassI y
+            · have hyz : sevenClassI y ≠ sevenClassI z := fun h => hxz (hxy.trans h)
+              simp [hxy, hyz]
+            · simp [hxz, hxy]
+        · dsimp only
+          by_cases hxz : x = z
+          · simp [hxz]
+          · by_cases hxy : x = y
+            · have hyz : y ≠ z := fun h => hxz (hxy.trans h)
+              simp [hxy, hyz]
+            · simp [hxz, hxy]
+      isolate_bot := fun x hx => by
+        unfold sevenDist
+        simp [hx] }
+ 
+def sevenPhi : Operator SevenSpace SevenSpace.bot where
+  func
+    | .a => .p
+    | .b => .q
+    | _ => .bot
+  preserves_bot := rfl
+ 
+def sevenPsi : Operator SevenSpace SevenSpace.bot where
+  func
+    | .p => .r
+    | .q => .s
+    | _ => .bot
+  preserves_bot := rfl
+ 
+def sevenU : Set SevenSpace := {.a, .b}
+ 
+/-- CH03-P04-02: 命题 3.3(ii) 内侧常值未必保持的合法七点双分量反例。 -/
+theorem prop_3_3_ii_inner_const_counterexample :
+    (∀ k : TwoIdx, ExtendedPseudoMetric SevenSpace SevenSpace.bot (sevenDist k)) ∧
+    sevenU ⊆ dom (sevenPsi * sevenPhi) ∧
+    TwoIdx.idx_i ∈ I_const sevenDist sevenPhi sevenU ∧
+    sevenDist TwoIdx.idx_m (sevenPhi.func .a) (sevenPhi.func .b) = 1 ∧
+    sevenDist TwoIdx.idx_i ((sevenPsi * sevenPhi).func .a) ((sevenPsi * sevenPhi).func .b) = 1 ∧
+    TwoIdx.idx_i ∉ I_const sevenDist (sevenPsi * sevenPhi) sevenU := by
+  refine ⟨sevenDist_is_extended, ?_, ?_, rfl, rfl, ?_⟩
+  · intro x hx
+    rcases hx with rfl | rfl <;> intro hbot <;> cases hbot
+  · intro x hx y hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> rfl
+  · intro hconst
+    have h := hconst .a (by simp [sevenU]) .b (by simp [sevenU])
+    change sevenDist .idx_i (sevenPsi.func (sevenPhi.func .a))
+      (sevenPsi.func (sevenPhi.func .b)) = 0 at h
+    simp [sevenPhi, sevenPsi, sevenDist, sevenClassI] at h
+ 
+/-! ### 推论 3.4：常值分量在复合中的保持条件 (CH03-P05-01) -/
+ 
+/-- CH03-P05-01: 推论 3.4 外侧算子第 `j` 行除 `L j j` 外均为零时，内侧常值传给复合（允许 `L j j = ⊤`）。 -/
+theorem cor_3_4_const_preserved_of_single_row {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ ψ : Operator X bot) (U : Set X) (j : I)
+    (_hU : U ⊆ dom (ψ * ϕ))
+    (hj : j ∈ I_const d ϕ U)
+    (hexL : ∃ L : I → I → ENNReal,
+      IsLipMatrix d ψ (operator_image ϕ U) L ∧ ∀ k : I, k ≠ j → L k j = 0) :
+    j ∈ I_const d (ψ * ϕ) U := by
+  rcases hexL with ⟨L, hL, hrow⟩
+  intro x hx y hy
+  have hbound := lip_bound_of_single_input_row d ψ (operator_image ϕ U) L j j hL hrow
+    (ϕ.func x) ⟨x, hx, rfl⟩ (ϕ.func y) ⟨y, hy, rfl⟩
+  rw [hj x hx y hy, mul_zero] at hbound
+  exact le_antisymm hbound (zero_le _)
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec02.lean
+import Ch03.Sec01
+import Mathlib.Data.Setoid.Partition
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+ 
+/-! ### 命题 3.5：计算纤维的基本性质 (CH03-P06-01 .. 08) -/
+ 
+theorem subfamily_pseudometric_eq_zero_iff {X I : Type}
+    (d : I → X → X → ENNReal) (J : Set I) (x y : X) :
+    subfamily_pseudometric d J x y = 0 ↔ ∀ j ∈ J, d j x y = 0 := by
+  unfold subfamily_pseudometric
+  constructor
+  · intro h j hj
+    have hle : d j x y ≤ ⨆ k : {k // k ∈ J}, d k.1 x y :=
+      le_iSup (fun k : {k // k ∈ J} => d k.1 x y) ⟨j, hj⟩
+    rw [h] at hle
+    exact le_antisymm hle (zero_le _)
+  · intro hall
+    apply le_antisymm _ (zero_le _)
+    apply iSup_le
+    intro k
+    exact le_of_eq (hall k.1 k.2)
+ 
+/-- CH03-P06-01: 命题 3.5(i) 目标零距不变性（任意目标 `y, y' ∈ 𝒳`）。 -/
+theorem prop_3_5_i_target_zero_invariant {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (J : Set I) (y y' : X)
+    (_hU : U ⊆ dom ϕ) (_hJ : J.Nonempty)
+    (hyy' : subfamily_pseudometric d J y y' = 0) :
+    CompFiber d ϕ J y U = CompFiber d ϕ J y' U := by
+  have hy_all := (subfamily_pseudometric_eq_zero_iff d J y y').mp hyy'
+  ext x
+  simp only [CompFiber, Set.mem_setOf_eq, subfamily_pseudometric_eq_zero_iff]
+  refine and_congr_right fun _ => ⟨fun hx j hj => ?_, fun hx j hj => ?_⟩
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (ϕ.func x) y' ≤ d j (ϕ.func x) y + d j y y' := (hd j).triangle _ _ _
+      _ = 0 := by rw [hx j hj, hy_all j hj, zero_add]
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (ϕ.func x) y ≤ d j (ϕ.func x) y' + d j y' y := (hd j).triangle _ _ _
+      _ = 0 := by rw [hx j hj, (hd j).symm y' y, hy_all j hj, zero_add]
+ 
+/-- CH03-P06-02: 命题 3.5(ii-a) 像目标纤维非空且覆盖 `U`。 -/
+theorem prop_3_5_ii_a_nonempty_and_cover {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (J : Set I)
+    (_hU : U ⊆ dom ϕ) (_hJ : J.Nonempty) :
+    (∀ y ∈ operator_image ϕ U, (CompFiber d ϕ J y U).Nonempty) ∧
+    (⋃ y ∈ operator_image ϕ U, CompFiber d ϕ J y U) = U := by
+  have hself : ∀ z : X, subfamily_pseudometric d J z z = 0 := fun z =>
+    (subfamily_pseudometric_eq_zero_iff d J z z).mpr (fun j _ => (hd j).dist_self z)
+  refine ⟨?_, ?_⟩
+  · rintro y ⟨x, hx, rfl⟩
+    exact ⟨x, hx, hself (ϕ.func x)⟩
+  · ext x
+    simp only [Set.mem_iUnion, exists_prop]
+    constructor
+    · rintro ⟨_, _, hx⟩
+      exact hx.1
+    · intro hx
+      exact ⟨ϕ.func x, ⟨x, hx, rfl⟩, hx, hself (ϕ.func x)⟩
+ 
+/-- 去重后的计算纤维集合族 `{Fib_{ϕ, J}(y | U) : y ∈ ϕ(U)}`。 -/
+def CompFiberPartition {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (J : Set I) (U : Set X) : Set (Set X) :=
+  {F : Set X | ∃ y ∈ operator_image ϕ U, F = CompFiber d ϕ J y U}
+ 
+/-- 在子类型 `↥U` 上去重后的计算纤维集合族。 -/
+def CompFiberSubtypePartition {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (ϕ : Operator X bot) (J : Set I) (U : Set X) : Set (Set ↥U) :=
+  {F : Set ↥U | ∃ y ∈ operator_image ϕ U, F = {x : ↥U | x.1 ∈ CompFiber d ϕ J y U}}
+ 
+/-- CH03-P06-03: 命题 3.5(ii-b) 像目标纤维相等或不交；去重后构成 `U` 的分划。 -/
+theorem prop_3_5_ii_b_eq_or_disjoint_and_partition {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (J : Set I)
+    (hU : U ⊆ dom ϕ) (hJ : J.Nonempty) :
+    (∀ y₁ ∈ operator_image ϕ U, ∀ y₂ ∈ operator_image ϕ U,
+      CompFiber d ϕ J y₁ U = CompFiber d ϕ J y₂ U ∨
+        Disjoint (CompFiber d ϕ J y₁ U) (CompFiber d ϕ J y₂ U)) ∧
+    ∅ ∉ CompFiberPartition d ϕ J U ∧
+    ⋃₀ CompFiberPartition d ϕ J U = U ∧
+    (CompFiberPartition d ϕ J U).PairwiseDisjoint id ∧
+    Setoid.IsPartition (CompFiberSubtypePartition d ϕ J U) := by
+  rcases prop_3_5_ii_a_nonempty_and_cover d hd ϕ U J hU hJ with ⟨hne, hcov⟩
+  have heq_or_disj : ∀ y₁ ∈ operator_image ϕ U, ∀ y₂ ∈ operator_image ϕ U,
+      CompFiber d ϕ J y₁ U = CompFiber d ϕ J y₂ U ∨
+        Disjoint (CompFiber d ϕ J y₁ U) (CompFiber d ϕ J y₂ U) := by
+    intro y₁ _ y₂ _
+    by_cases hdisj : Disjoint (CompFiber d ϕ J y₁ U) (CompFiber d ϕ J y₂ U)
+    · exact Or.inr hdisj
+    · left
+      rcases Set.not_disjoint_iff.mp hdisj with ⟨x, hx₁, hx₂⟩
+      have h1 := (subfamily_pseudometric_eq_zero_iff d J (ϕ.func x) y₁).mp hx₁.2
+      have h2 := (subfamily_pseudometric_eq_zero_iff d J (ϕ.func x) y₂).mp hx₂.2
+      have hy12 : subfamily_pseudometric d J y₁ y₂ = 0 := by
+        rw [subfamily_pseudometric_eq_zero_iff]
+        intro j hj
+        apply le_antisymm _ (zero_le _)
+        calc
+          d j y₁ y₂ ≤ d j y₁ (ϕ.func x) + d j (ϕ.func x) y₂ := (hd j).triangle _ _ _
+          _ = 0 := by rw [(hd j).symm y₁ (ϕ.func x), h1 j hj, h2 j hj, zero_add]
+      exact prop_3_5_i_target_zero_invariant d hd ϕ U J y₁ y₂ hU hJ hy12
+  refine ⟨heq_or_disj, ?_, ?_, ?_, ?_⟩
+  · rintro ⟨y, hy, hemp⟩
+    rcases hne y hy with ⟨x, hx⟩
+    rw [← hemp] at hx
+    exact hx
+  · ext x
+    conv_rhs => rw [← hcov]
+    simp only [CompFiberPartition, Set.mem_sUnion, Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
+    constructor
+    · rintro ⟨F, ⟨y, hy, rfl⟩, hx⟩
+      exact ⟨y, hy, hx⟩
+    · rintro ⟨y, hy, hx⟩
+      exact ⟨CompFiber d ϕ J y U, ⟨y, hy, rfl⟩, hx⟩
+  · rintro F₁ ⟨y₁, hy₁, rfl⟩ F₂ ⟨y₂, hy₂, rfl⟩ hneF
+    rcases heq_or_disj y₁ hy₁ y₂ hy₂ with heq | hdisj
+    · exact False.elim (hneF heq)
+    · exact hdisj
+  · refine ⟨?_, ?_⟩
+    · rintro ⟨y, hy, hemp⟩
+      rcases hne y hy with ⟨x, hx⟩
+      have hmem : (⟨x, hx.1⟩ : ↥U) ∈ (∅ : Set ↥U) := by
+        rw [hemp]
+        exact hx
+      exact hmem
+    · intro x
+      have hself : subfamily_pseudometric d J (ϕ.func x.1) (ϕ.func x.1) = 0 :=
+        (subfamily_pseudometric_eq_zero_iff d J _ _).mpr (fun j _ => (hd j).dist_self _)
+      refine ⟨{z : ↥U | z.1 ∈ CompFiber d ϕ J (ϕ.func x.1) U}, ?_, ?_⟩
+      · exact ⟨⟨ϕ.func x.1, ⟨x.1, x.2, rfl⟩, rfl⟩, ⟨x.2, hself⟩⟩
+      · rintro G ⟨⟨y, hy, rfl⟩, hGx⟩
+        ext z
+        simp only [Set.mem_setOf_eq]
+        rcases heq_or_disj y hy (ϕ.func x.1) ⟨x.1, x.2, rfl⟩ with heq | hdisj
+        · rw [heq]
+        · exact False.elim (Set.disjoint_left.mp hdisj hGx ⟨x.2, hself⟩)
+ 
+/-- CH03-P06-04: 命题 3.5(iii) 有限非空子族的分量交集律。 -/
+theorem prop_3_5_iii_inter_eq {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (J : Set I) (y : X)
+    (_hU : U ⊆ dom ϕ) (hJ : J.Nonempty) :
+    CompFiber d ϕ J y U = ⋂ j ∈ J, CompFiberSingle d ϕ j y U := by
+  rcases hJ with ⟨j₀, hj₀⟩
+  ext x
+  simp only [CompFiber, CompFiberSingle_eq, Set.mem_setOf_eq, Set.mem_iInter,
+    subfamily_pseudometric_eq_zero_iff]
+  constructor
+  · rintro ⟨hxU, hall⟩ j hj
+    exact ⟨hxU, hall j hj⟩
+  · intro hall
+    exact ⟨(hall j₀ hj₀).1, fun j hj => (hall j hj).2⟩
+ 
+/-- CH03-P06-05: 命题 3.5(iv) 子族单调性（`J ⊆ K` 时纤维缩小）。 -/
+theorem prop_3_5_iv_subfamily_antitone {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (J K : Set I) (y : X)
+    (_hU : U ⊆ dom ϕ) (_hJ : J.Nonempty) (_hK : K.Nonempty) (hJK : J ⊆ K) :
+    CompFiber d ϕ K y U ⊆ CompFiber d ϕ J y U := by
+  rintro x ⟨hxU, hK0⟩
+  refine ⟨hxU, ?_⟩
+  rw [subfamily_pseudometric_eq_zero_iff] at hK0 ⊢
+  exact fun j hj => hK0 j (hJK hj)
+ 
+/-- CH03-P06-06: 命题 3.5(v) 子族边界（单分量等式与全子族向每分量包含）。 -/
+theorem prop_3_5_v_subfamily_boundary {X I : Type} {bot : X} [Nonempty I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (y : X)
+    (_hU : U ⊆ dom ϕ) :
+    (∀ i : I, CompFiber d ϕ {i} y U = CompFiberSingle d ϕ i y U ∧
+      CompFiberSingle d ϕ i y U = {x ∈ U | d i (ϕ.func x) y = 0}) ∧
+    (∀ i : I, CompFiber d ϕ Set.univ y U ⊆ CompFiberSingle d ϕ i y U) := by
+  refine ⟨fun i => ⟨rfl, CompFiberSingle_eq d ϕ i y U⟩, fun i => ?_⟩
+  exact prop_3_5_iv_subfamily_antitone d ϕ U {i} Set.univ y _hU
+    (Set.singleton_nonempty i) Set.univ_nonempty (Set.subset_univ _)
+ 
+/-- CH03-P06-07: 命题 3.5(vi-a) 恒等分量的任意目标纤维等于输入零距类。 -/
+theorem prop_3_5_vi_a_id_fiber {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (j : I) (y : X)
+    (_hU : U ⊆ dom ϕ) (hj : j ∈ I_id d ϕ U) :
+    CompFiberSingle d ϕ j y U = {x ∈ U | d j x y = 0} := by
+  rw [CompFiberSingle_eq]
+  ext x
+  simp only [Set.mem_setOf_eq]
+  refine and_congr_right fun hx => ⟨fun h0 => ?_, fun h0 => ?_⟩
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j x y ≤ d j x (ϕ.func x) + d j (ϕ.func x) y := (hd j).triangle _ _ _
+      _ = 0 := by rw [(hd j).symm x (ϕ.func x), hj.2 x hx, h0, zero_add]
+  · apply le_antisymm _ (zero_le _)
+    calc
+      d j (ϕ.func x) y ≤ d j (ϕ.func x) x + d j x y := (hd j).triangle _ _ _
+      _ = 0 := by rw [hj.2 x hx, h0, zero_add]
+ 
+/-- CH03-P06-08: 命题 3.5(vi-b) 常值分量在像目标的纤维为 `U`，正距离目标的纤维为空。 -/
+theorem prop_3_5_vi_b_const_fiber {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (j : I) (y₀ : X)
+    (_hU : U ⊆ dom ϕ) (hj : j ∈ I_const d ϕ U) (hy₀ : y₀ ∈ operator_image ϕ U) :
+    CompFiberSingle d ϕ j y₀ U = U ∧
+    ∀ y : X, 0 < d j y y₀ → CompFiberSingle d ϕ j y U = ∅ := by
+  rcases hy₀ with ⟨x₀, hx₀, rfl⟩
+  rw [CompFiberSingle_eq]
+  refine ⟨?_, ?_⟩
+  · ext x
+    simp only [Set.mem_setOf_eq, and_iff_left_iff_imp]
+    exact fun hx => hj x hx x₀ hx₀
+  · intro y hpos
+    rw [CompFiberSingle_eq]
+    ext x
+    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
+    intro hx hxy
+    have hzero : d j y (ϕ.func x₀) = 0 := by
+      apply le_antisymm _ (zero_le _)
+      calc
+        d j y (ϕ.func x₀) ≤ d j y (ϕ.func x) + d j (ϕ.func x) (ϕ.func x₀) :=
+          (hd j).triangle _ _ _
+        _ = 0 := by rw [(hd j).symm y (ϕ.func x), hxy, hj x hx x₀ hx₀, zero_add]
+    exact (ne_of_gt hpos) hzero
+ 
+/-! ### 命题 3.6：像值因子化与标量 Lip 界 (CH03-P07-01 .. 04) -/
+ 
+/-- 映射 `T : ϕ_A(U) → X` 在 `U` 上满足 `T ∘ ϕ_A = ϕ_B`。 -/
+def IsImageFactorMap {X : Type} {bot : X}
+    (ϕA ϕB : Operator X bot) (U : Set X) (T : ↥(operator_image ϕA U) → X) : Prop :=
+  ∀ x : X, ∀ hx : x ∈ U, T ⟨ϕA.func x, ⟨x, hx, rfl⟩⟩ = ϕB.func x
+ 
+/-- CH03-P07-01: 命题 3.6(i-必要) 点值像映射存在推出相等关系包含。 -/
+theorem prop_3_6_i_nec {X : Type} {bot : X}
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (_hU : U ⊆ dom ϕA ∩ dom ϕB)
+    (hex : ∃ T : ↥(operator_image ϕA U) → X, IsImageFactorMap ϕA ϕB U T) :
+    RelEq ϕA U ⊆ RelEq ϕB U := by
+  rcases hex with ⟨T, hT⟩
+  rintro ⟨x, y⟩ ⟨hx, hy, heqA⟩
+  refine ⟨hx, hy, ?_⟩
+  have hsub : (⟨ϕA.func x, ⟨x, hx, rfl⟩⟩ : ↥(operator_image ϕA U)) =
+      ⟨ϕA.func y, ⟨y, hy, rfl⟩⟩ := Subtype.ext heqA
+  calc
+    ϕB.func x = T ⟨ϕA.func x, ⟨x, hx, rfl⟩⟩ := (hT x hx).symm
+    _ = T ⟨ϕA.func y, ⟨y, hy, rfl⟩⟩ := congrArg T hsub
+    _ = ϕB.func y := hT y hy
+ 
+/-- 由 `ℛ_{=}(ϕ_A | U) ⊆ ℛ_{=}(ϕ_B | U)` 显式构造像值变换 `T : ϕ_A(U) → X`（含 `U = ∅` 情形）。 -/
+noncomputable def constructImageFactorMap {X : Type} {bot : X}
+    (ϕA ϕB : Operator X bot) (U : Set X) : ↥(operator_image ϕA U) → X :=
+  fun y => ϕB.func (Classical.choose y.2)
+ 
+/-- CH03-P07-02: 命题 3.6(i-充分及充要判据，含代表元无关性与 `U = ∅` 边界验证)。 -/
+theorem prop_3_6_i_suf_and_iff {X : Type} {bot : X}
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (hU : U ⊆ dom ϕA ∩ dom ϕB) :
+    (RelEq ϕA U ⊆ RelEq ϕB U →
+      IsImageFactorMap ϕA ϕB U (constructImageFactorMap ϕA ϕB U) ∧
+      ∀ (y : ↥(operator_image ϕA U)) (x : X), x ∈ U → ϕA.func x = y.1 →
+        constructImageFactorMap ϕA ϕB U y = ϕB.func x) ∧
+    ((∃ T : ↥(operator_image ϕA U) → X, IsImageFactorMap ϕA ϕB U T) ↔
+      RelEq ϕA U ⊆ RelEq ϕB U) := by
+  have hsuf : RelEq ϕA U ⊆ RelEq ϕB U →
+      IsImageFactorMap ϕA ϕB U (constructImageFactorMap ϕA ϕB U) ∧
+      ∀ (y : ↥(operator_image ϕA U)) (x : X), x ∈ U → ϕA.func x = y.1 →
+        constructImageFactorMap ϕA ϕB U y = ϕB.func x := by
+    intro hsub
+    have hind : ∀ (y : ↥(operator_image ϕA U)) (x : X), x ∈ U → ϕA.func x = y.1 →
+        constructImageFactorMap ϕA ϕB U y = ϕB.func x := by
+      intro y x hx hxeq
+      have hspec := Classical.choose_spec y.2
+      have hrelA : (Classical.choose y.2, x) ∈ RelEq ϕA U :=
+        ⟨hspec.1, hx, hspec.2.trans hxeq.symm⟩
+      exact (hsub hrelA).2.2
+    refine ⟨fun x hx => hind ⟨ϕA.func x, ⟨x, hx, rfl⟩⟩ x hx rfl, hind⟩
+  refine ⟨hsuf, ⟨prop_3_6_i_nec ϕA ϕB U hU, fun hsub => ⟨_, (hsuf hsub).1⟩⟩⟩
+ 
+theorem prop_3_6_i_empty_domain {X : Type} {bot : X}
+    (ϕA ϕB : Operator X bot) :
+    IsImageFactorMap ϕA ϕB ∅ (constructImageFactorMap ϕA ϕB ∅) ∧
+    RelEq ϕA ∅ = ∅ ∧ RelEq ϕB ∅ = ∅ := by
+  refine ⟨fun x hx => False.elim hx, ?_, ?_⟩ <;> ext p <;> simp [RelEq]
+ 
+/-- CH03-P07-03: 命题 3.6(ii) 双向点值像变换存在当且仅当点值相等关系相同。 -/
+theorem prop_3_6_ii_bidirectional_iff {X : Type} {bot : X}
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (hU : U ⊆ dom ϕA ∩ dom ϕB) :
+    ((∃ TAB : ↥(operator_image ϕA U) → X, IsImageFactorMap ϕA ϕB U TAB) ∧
+     (∃ TBA : ↥(operator_image ϕB U) → X, IsImageFactorMap ϕB ϕA U TBA)) ↔
+      RelEq ϕA U = RelEq ϕB U := by
+  have hU_symm : U ⊆ dom ϕB ∩ dom ϕA := fun x hx => ⟨(hU hx).2, (hU hx).1⟩
+  rw [(prop_3_6_i_suf_and_iff ϕA ϕB U hU).2,
+      (prop_3_6_i_suf_and_iff ϕB ϕA U hU_symm).2,
+      Set.Subset.antisymm_iff]
+ 
+/-- CH03-P07-04: 命题 3.6(iii) 单分量有限正 `K_A`、有限非负 `L_B` 下像值变换 `T` 在 `ϕ_A(U)` 上的 `L_B / K_A` 标量 Lip 界。 -/
+theorem prop_3_6_iii_scalar_lip_bound {X : Type} {bot : X}
+    (d : X → X → ENNReal) (ϕA ϕB : Operator X bot) (U : Set X)
+    (T : ↥(operator_image ϕA U) → X)
+    (KA LB : ENNReal)
+    (_hU : U ⊆ dom ϕA ∩ dom ϕB)
+    (hT : IsImageFactorMap ϕA ϕB U T)
+    (hKA0 : 0 < KA) (hKAtop : KA < ⊤) (_hLBtop : LB < ⊤)
+    (hCoLipA : ∀ x ∈ U, ∀ x' ∈ U, KA * d x x' ≤ d (ϕA.func x) (ϕA.func x'))
+    (hLipB : ∀ x ∈ U, ∀ x' ∈ U, d (ϕB.func x) (ϕB.func x') ≤ LB * d x x') :
+    ∀ y y' : ↥(operator_image ϕA U),
+      d (T y) (T y') ≤ (LB / KA) * d y.1 y'.1 := by
+  intro y y'
+  rcases y with ⟨yv, x, hx, rfl⟩
+  rcases y' with ⟨y'v, x', hx', rfl⟩
+  have hKA_ne0 : KA ≠ 0 := ne_of_gt hKA0
+  have hKA_netop : KA ≠ ⊤ := lt_top_iff_ne_top.mp hKAtop
+  have hinv : d x x' ≤ KA⁻¹ * d (ϕA.func x) (ϕA.func x') := by
+    calc
+      d x x' = (KA⁻¹ * KA) * d x x' := by rw [ENNReal.inv_mul_cancel hKA_ne0 hKA_netop, one_mul]
+      _ = KA⁻¹ * (KA * d x x') := mul_assoc _ _ _
+      _ ≤ KA⁻¹ * d (ϕA.func x) (ϕA.func x') := mul_le_mul_right (hCoLipA x hx x' hx') _
+  rw [hT x hx, hT x' hx']
+  calc
+    d (ϕB.func x) (ϕB.func x') ≤ LB * d x x' := hLipB x hx x' hx'
+    _ ≤ LB * (KA⁻¹ * d (ϕA.func x) (ϕA.func x')) := mul_le_mul_right hinv LB
+    _ = (LB / KA) * d (ϕA.func x) (ϕA.func x') := by
+        rw [← mul_assoc, div_eq_mul_inv]
+ 
+/-- CH03-P07-04 补充：单分量规范族 `[Subsingleton I]` 下从 `IsCoLipMatrix` 与 `IsLipMatrix` 接口直接读取命题 3.6(iii)。 -/
+theorem prop_3_6_iii_matrix_interface {X I : Type} {bot : X} [Fintype I] [Subsingleton I]
+    (d : I → X → X → ENNReal) (i : I) (ϕA ϕB : Operator X bot) (U : Set X)
+    (T : ↥(operator_image ϕA U) → X)
+    (K L : I → I → ENNReal)
+    (hU : U ⊆ dom ϕA ∩ dom ϕB)
+    (hT : IsImageFactorMap ϕA ϕB U T)
+    (hK : IsCoLipMatrix d ϕA U K) (hL : IsLipMatrix d ϕB U L)
+    (hK0 : 0 < K i i) (hKtop : K i i < ⊤) (hLtop : L i i < ⊤) :
+    ∀ y y' : ↥(operator_image ϕA U),
+      d i (T y) (T y') ≤ (L i i / K i i) * d i y.1 y'.1 := by
+  apply prop_3_6_iii_scalar_lip_bound (d i) ϕA ϕB U T (K i i) (L i i) hU hT hK0 hKtop hLtop
+  · intro x hx x' hx'
+    have h := hK.2.2 x hx x' hx' i
+    have hsum : (∑ k : I, K k i * d k x x') = K i i * d i x x' :=
+      Finset.sum_eq_single i (fun k _ hk => False.elim (hk (Subsingleton.elim k i)))
+        (fun hi => False.elim (hi (Finset.mem_univ i)))
+    simpa [hsum] using h
+  · exact single_component_lip_matrix_ineq d ϕB U L i hL
+ 
+/-! ### 命题 3.7：零距商上的像值因子化 (CH03-P08-01 .. 03) -/
+ 
+/-- 商映射 `Tbar : ϕ_A(U)/∼_𝒢 → ϕ_B(U)/∼_𝒢` 满足规定赋值公式 `Tbar([ϕ_A(x)]) = [ϕ_B(x)]` (`x ∈ U`)。 -/
+def IsQuotientFactorMap {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (Tbar : ImageGaugeQuotient d hd ϕA U → ImageGaugeQuotient d hd ϕB U) : Prop :=
+  ∀ x : X, ∀ hx : x ∈ U,
+    Tbar (imageQuotientClass d hd ϕA U hx) = imageQuotientClass d hd ϕB U hx
+ 
+/-- 由 `ℛ_{∼}(ϕ_A | U) ⊆ ℛ_{∼}(ϕ_B | U)` 通过 `Quotient.lift` 构造代表元无关的商映射。 -/
+noncomputable def constructQuotientFactorMap {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (hsub : RelGaugeZero d ϕA U ⊆ RelGaugeZero d ϕB U) :
+    ImageGaugeQuotient d hd ϕA U → ImageGaugeQuotient d hd ϕB U :=
+  Quotient.lift
+    (fun y : ↥(operator_image ϕA U) =>
+      imageQuotientClass d hd ϕB U (Classical.choose_spec y.2).1)
+    (by
+      intro y₁ y₂ hrel
+      have hs₁ := Classical.choose_spec y₁.2
+      have hs₂ := Classical.choose_spec y₂.2
+      apply Quotient.sound
+      change GaugeZeroRelated d _ _
+      have hrelA : (Classical.choose y₁.2, Classical.choose y₂.2) ∈ RelGaugeZero d ϕA U := by
+        refine ⟨hs₁.1, hs₂.1, ?_⟩
+        rw [hs₁.2, hs₂.2]
+        exact hrel
+      exact (hsub hrelA).2.2)
+ 
+/-- CH03-P08-01: 命题 3.7 单向商映射判据及显式构造验证。 -/
+theorem prop_3_7_unidirectional_quotient_iff {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (_hU : U ⊆ dom ϕA ∩ dom ϕB) :
+    (∀ hsub : RelGaugeZero d ϕA U ⊆ RelGaugeZero d ϕB U,
+      IsQuotientFactorMap d hd ϕA ϕB U (constructQuotientFactorMap d hd ϕA ϕB U hsub)) ∧
+    ((∃ Tbar : ImageGaugeQuotient d hd ϕA U → ImageGaugeQuotient d hd ϕB U,
+        IsQuotientFactorMap d hd ϕA ϕB U Tbar) ↔
+      RelGaugeZero d ϕA U ⊆ RelGaugeZero d ϕB U) := by
+  have hsuf : ∀ hsub : RelGaugeZero d ϕA U ⊆ RelGaugeZero d ϕB U,
+      IsQuotientFactorMap d hd ϕA ϕB U (constructQuotientFactorMap d hd ϕA ϕB U hsub) := by
+    intro hsub x hx
+    unfold constructQuotientFactorMap imageQuotientClass
+    dsimp only [Quotient.lift_mk]
+    apply Quotient.sound
+    change GaugeZeroRelated d _ _
+    set z := Classical.choose (⟨x, hx, rfl⟩ : ∃ z ∈ U, ϕA.func z = ϕA.func x)
+    have hspec : z ∈ U ∧ ϕA.func z = ϕA.func x :=
+      Classical.choose_spec (⟨x, hx, rfl⟩ : ∃ z ∈ U, ϕA.func z = ϕA.func x)
+    have hrelA : (z, x) ∈ RelGaugeZero d ϕA U := by
+      refine ⟨hspec.1, hx, fun i => ?_⟩
+      rw [hspec.2, (hd i).dist_self]
+    exact (hsub hrelA).2.2
+  refine ⟨hsuf, ⟨?_, fun hsub => ⟨_, hsuf hsub⟩⟩⟩
+  rintro ⟨Tbar, hTbar⟩ ⟨x, y⟩ ⟨hx, hy, hzeroA⟩
+  refine ⟨hx, hy, ?_⟩
+  have hcls : imageQuotientClass d hd ϕA U hx = imageQuotientClass d hd ϕA U hy :=
+    Quotient.sound hzeroA
+  have hclsB : imageQuotientClass d hd ϕB U hx = imageQuotientClass d hd ϕB U hy := by
+    rw [← hTbar x hx, ← hTbar y hy, hcls]
+  exact Quotient.exact hclsB
+ 
+/-- CH03-P08-02: 命题 3.7 双向商变换存在当且仅当零距关系相等。 -/
+theorem prop_3_7_bidirectional_quotient_iff {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (hU : U ⊆ dom ϕA ∩ dom ϕB) :
+    ((∃ TAB : ImageGaugeQuotient d hd ϕA U → ImageGaugeQuotient d hd ϕB U,
+        IsQuotientFactorMap d hd ϕA ϕB U TAB) ∧
+     (∃ TBA : ImageGaugeQuotient d hd ϕB U → ImageGaugeQuotient d hd ϕA U,
+        IsQuotientFactorMap d hd ϕB ϕA U TBA)) ↔
+      RelGaugeZero d ϕA U = RelGaugeZero d ϕB U := by
+  have hU_symm : U ⊆ dom ϕB ∩ dom ϕA := fun x hx => ⟨(hU hx).2, (hU hx).1⟩
+  rw [(prop_3_7_unidirectional_quotient_iff d hd ϕA ϕB U hU).2,
+      (prop_3_7_unidirectional_quotient_iff d hd ϕB ϕA U hU_symm).2,
+      Set.Subset.antisymm_iff]
+ 
+/-- 仅在实际像集 `ϕ(U)` 上分离时，`ℛ_{=}(ϕ | U) = ℛ_{∼}(ϕ | U)`。 -/
+theorem RelEq_eq_RelGaugeZero_of_separatingOn_image {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X)
+    (hsep : IsSeparatingOn d (operator_image ϕ U)) :
+    RelEq ϕ U = RelGaugeZero d ϕ U := by
+  ext ⟨x, y⟩
+  simp only [RelEq, RelGaugeZero, Set.mem_setOf_eq]
+  refine and_congr_right fun hx => and_congr_right fun hy => ⟨?_, ?_⟩
+  · intro heq i
+    rw [heq, (hd i).dist_self]
+  · intro hzero
+    exact hsep (ϕ.func x) ⟨x, hx, rfl⟩ (ϕ.func y) ⟨y, hy, rfl⟩ hzero
+ 
+/-- CH03-P08-03: 命题 3.7 仅在两个实际像集 `ϕ_A(U)` 与 `ϕ_B(U)` 各自分离的条件下，点值判据与商判据一致。 -/
+theorem prop_3_7_separating_image_equivalence {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕA ϕB : Operator X bot) (U : Set X)
+    (hU : U ⊆ dom ϕA ∩ dom ϕB)
+    (hsepA : IsSeparatingOn d (operator_image ϕA U))
+    (hsepB : IsSeparatingOn d (operator_image ϕB U)) :
+    RelEq ϕA U = RelGaugeZero d ϕA U ∧
+    RelEq ϕB U = RelGaugeZero d ϕB U ∧
+    ((∃ T : ↥(operator_image ϕA U) → X, IsImageFactorMap ϕA ϕB U T) ↔
+      (∃ Tbar : ImageGaugeQuotient d hd ϕA U → ImageGaugeQuotient d hd ϕB U,
+        IsQuotientFactorMap d hd ϕA ϕB U Tbar)) ∧
+    (((∃ TAB : ↥(operator_image ϕA U) → X, IsImageFactorMap ϕA ϕB U TAB) ∧
+      (∃ TBA : ↥(operator_image ϕB U) → X, IsImageFactorMap ϕB ϕA U TBA)) ↔
+     ((∃ TAB : ImageGaugeQuotient d hd ϕA U → ImageGaugeQuotient d hd ϕB U,
+        IsQuotientFactorMap d hd ϕA ϕB U TAB) ∧
+      (∃ TBA : ImageGaugeQuotient d hd ϕB U → ImageGaugeQuotient d hd ϕA U,
+        IsQuotientFactorMap d hd ϕB ϕA U TBA))) := by
+  have heqA := RelEq_eq_RelGaugeZero_of_separatingOn_image d hd ϕA U hsepA
+  have heqB := RelEq_eq_RelGaugeZero_of_separatingOn_image d hd ϕB U hsepB
+  refine ⟨heqA, heqB, ?_, ?_⟩
+  · rw [(prop_3_6_i_suf_and_iff ϕA ϕB U hU).2,
+        (prop_3_7_unidirectional_quotient_iff d hd ϕA ϕB U hU).2, heqA, heqB]
+  · rw [prop_3_6_ii_bidirectional_iff ϕA ϕB U hU,
+        prop_3_7_bidirectional_quotient_iff d hd ϕA ϕB U hU, heqA, heqB]
+ 
+/-! ### 注：纤维包含的传递 (CH03-P09-01 .. 03) -/
+ 
+/-- CH03-P09-01: 固定公共评估域 `U` 的零测距纤维预序满足自反性与传递性。 -/
+theorem note_fiber_preorder_refl_trans {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (U : Set X) :
+    (∀ ϕ : Operator X bot, U ⊆ dom ϕ → FiberPreorder d U ϕ ϕ) ∧
+    (∀ ϕ₁ ϕ₂ ϕ₃ : Operator X bot,
+      U ⊆ dom ϕ₁ → U ⊆ dom ϕ₂ → U ⊆ dom ϕ₃ →
+      FiberPreorder d U ϕ₁ ϕ₂ → FiberPreorder d U ϕ₂ ϕ₃ → FiberPreorder d U ϕ₁ ϕ₃) :=
+  ⟨fun _ _ => Set.Subset.refl _,
+   fun _ _ _ _ _ _ h12 h23 => Set.Subset.trans h12 h23⟩
+ 
+instance instPreorderFiberOnDomain {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (U : Set X) :
+    Preorder {ϕ : Operator X bot // U ⊆ dom ϕ} where
+  le a b := FiberPreorder d U a.1 b.1
+  le_refl _ := Set.Subset.refl _
+  le_trans _ _ _ h12 h23 := Set.Subset.trans h12 h23
+ 
+/-- CH03-P09-02: 公共评估域上的有限链任意两层 `0 ≤ a < b ≤ m`（及 `a ≤ b`）满足 `ϕ_a ⪰_{fiber, U} ϕ_b`。 -/
+theorem note_fiber_preorder_chain_le {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (U : Set X) {m : ℕ}
+    (ϕs : Fin (m + 1) → Operator X bot)
+    (_hdom : ∀ r : Fin (m + 1), U ⊆ dom (ϕs r))
+    (hstep : ∀ r : Fin m, FiberPreorder d U (ϕs r.castSucc) (ϕs r.succ)) :
+    (∀ a b : Fin (m + 1), a ≤ b → FiberPreorder d U (ϕs a) (ϕs b)) ∧
+    (∀ a b : Fin (m + 1), a < b → FiberPreorder d U (ϕs a) (ϕs b)) := by
+  have hle : ∀ a b : Fin (m + 1), a ≤ b → FiberPreorder d U (ϕs a) (ϕs b) := by
+    intro ⟨a, ha⟩ ⟨b, hb⟩ hab
+    change a ≤ b at hab
+    induction b with
+    | zero =>
+        have ha0 : a = 0 := Nat.eq_zero_of_le_zero hab
+        subst ha0
+        exact Set.Subset.refl _
+    | succ k ih =>
+        rcases Nat.of_le_succ hab with hk | rfl
+        · have hklt : k < m + 1 := Nat.lt_of_succ_lt hb
+          have h1 := ih hklt hk
+          have h2 := hstep ⟨k, Nat.lt_of_succ_lt_succ hb⟩
+          exact Set.Subset.trans h1 h2
+        · exact Set.Subset.refl _
+  exact ⟨hle, fun a b hab => hle a b (le_of_lt hab)⟩
+ 
+/-- CH03-P09-03: 链中某一步严格包含推出首尾端点严格包含，并显式给出差集见证。 -/
+theorem note_fiber_preorder_chain_strict {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (U : Set X) {m : ℕ}
+    (ϕs : Fin (m + 1) → Operator X bot)
+    (hdom : ∀ r : Fin (m + 1), U ⊆ dom (ϕs r))
+    (hstep : ∀ r : Fin m, FiberPreorder d U (ϕs r.castSucc) (ϕs r.succ))
+    (r : Fin m)
+    (hstrict : RelGaugeZero d (ϕs r.castSucc) U ⊂ RelGaugeZero d (ϕs r.succ) U) :
+    (∃ p : X × X,
+      p ∈ RelGaugeZero d (ϕs r.succ) U \ RelGaugeZero d (ϕs r.castSucc) U ∧
+      p ∈ RelGaugeZero d (ϕs (Fin.last m)) U \ RelGaugeZero d (ϕs 0) U) ∧
+    RelGaugeZero d (ϕs 0) U ⊂ RelGaugeZero d (ϕs (Fin.last m)) U := by
+  have hle := (note_fiber_preorder_chain_le d U ϕs hdom hstep).1
+  have h0_le : RelGaugeZero d (ϕs 0) U ⊆ RelGaugeZero d (ϕs r.castSucc) U :=
+    hle 0 r.castSucc (Fin.zero_le _)
+  have h_le_last : RelGaugeZero d (ϕs r.succ) U ⊆ RelGaugeZero d (ϕs (Fin.last m)) U :=
+    hle r.succ (Fin.last m) (Fin.le_last _)
+  have h0_last : RelGaugeZero d (ϕs 0) U ⊆ RelGaugeZero d (ϕs (Fin.last m)) U :=
+    hle 0 (Fin.last m) (Fin.zero_le _)
+  rcases Set.exists_of_ssubset hstrict with ⟨p, hpin, hpout⟩
+  have hp_end : p ∈ RelGaugeZero d (ϕs (Fin.last m)) U \ RelGaugeZero d (ϕs 0) U :=
+    ⟨h_le_last hpin, fun hp0 => hpout (h0_le hp0)⟩
+  refine ⟨⟨p, ⟨hpin, hpout⟩, hp_end⟩, Set.ssubset_iff_subset_ne.mpr ⟨h0_last, ?_⟩⟩
+  intro heq
+  rw [heq] at hp_end
+  exact hp_end.2 hp_end.1
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec03.lean
+import Ch03.Sec02
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set
+ 
+/-! ### 带吸收元的实数空间基础模型 (`ℝ ⊔ {⊥}`) -/
+ 
+/-- 带吸收元的实数空间 `𝒳 = ℝ ⊔ {⊥}`。 -/
+inductive RealWithBot : Type
+  | bot : RealWithBot
+  | val : ℝ → RealWithBot
+ 
+/-- 实数部分采用标准欧氏距离 `|x - y|`、吸收元隔离的扩展伪度量。 -/
+noncomputable def realStdDist : RealWithBot → RealWithBot → ENNReal
+  | .bot, .bot => 0
+  | .bot, .val _ => ⊤
+  | .val _, .bot => ⊤
+  | .val x, .val y => ENNReal.ofReal |x - y|
+ 
+theorem realStdDist_is_extended :
+    ExtendedPseudoMetric RealWithBot RealWithBot.bot realStdDist where
+  nonabsorbing := ⟨.val 0, fun h => by cases h⟩
+  dist_self x := by cases x <;> simp [realStdDist]
+  symm x y := by
+    cases x <;> cases y <;> simp [realStdDist, abs_sub_comm]
+  triangle x y z := by
+    cases x <;> cases y <;> cases z <;> simp [realStdDist]
+    rw [← ENNReal.ofReal_add (abs_nonneg _) (abs_nonneg _)]
+    exact ENNReal.ofReal_le_ofReal (abs_sub_le _ _ _)
+  isolate_bot x hx := by
+    cases x with
+    | bot => exact False.elim (hx rfl)
+    | val _ => rfl
+ 
+/-! ### 反例 3.1：处处正的零化半径未必有正的统一下界 (CH03-P10-01 .. 03) -/
+ 
+/-- 反例 3.1 中的阶跃算子 `f(x) = 0 (x < 0), 1 (x ≥ 0), f(⊥) = ⊥`。 -/
+noncomputable def stepOp : Operator RealWithBot RealWithBot.bot where
+  func
+    | .bot => .bot
+    | .val x => open scoped Classical in .val (if x < 0 then 0 else 1)
+  preserves_bot := rfl
+ 
+/-- 反例 3.1 中的评估域 `U = [-1, 0) ∪ (0, 1]`。 -/
+def stepU : Set RealWithBot :=
+  RealWithBot.val '' (Set.Ico (-1 : ℝ) 0 ∪ Set.Ioc (0 : ℝ) 1)
+ 
+/-- CH03-P10-01: 反例 3.1 构造带吸收元实线、阶跃算子并验证扩展伪度量与评估域条件。 -/
+theorem counterexample_3_1_setup :
+    ExtendedPseudoMetric RealWithBot RealWithBot.bot realStdDist ∧
+    stepU.Nonempty ∧
+    stepU ⊆ dom stepOp := by
+  refine ⟨realStdDist_is_extended, ?_, ?_⟩
+  · refine ⟨.val 1, 1, Or.inr ⟨by norm_num, le_rfl⟩, rfl⟩
+  · rintro _ ⟨x, _, rfl⟩ hbot
+    simp [stepOp] at hbot
+ 
+/-- CH03-P10-02: 反例 3.1 对每个 `y ∈ U`，合法有限正半径集恰为 `(0, |y|]`，点态零化半径为 `|y| > 0`。 -/
+theorem counterexample_3_1_pointwise_radius :
+    (∀ y : ℝ, y ∈ Set.Ico (-1 : ℝ) 0 ∪ Set.Ioc (0 : ℝ) 1 →
+      {r : ENNReal | ValidNullRadius stepOp realStdDist realStdDist (.val y) stepU r} =
+        Set.Ioc 0 (ENNReal.ofReal |y|) ∧
+      pointwiseNullRadius stepOp realStdDist realStdDist (.val y) stepU =
+        ENNReal.ofReal |y|) ∧
+    (∀ y_pt ∈ stepU,
+      0 < pointwiseNullRadius stepOp realStdDist realStdDist y_pt stepU) := by
+  have hmain : ∀ y : ℝ, y ∈ Set.Ico (-1 : ℝ) 0 ∪ Set.Ioc (0 : ℝ) 1 →
+      {r : ENNReal | ValidNullRadius stepOp realStdDist realStdDist (.val y) stepU r} =
+        Set.Ioc 0 (ENNReal.ofReal |y|) ∧
+      pointwiseNullRadius stepOp realStdDist realStdDist (.val y) stepU =
+        ENNReal.ofReal |y| := by
+    intro y hy
+    have habs_pos : 0 < |y| := by
+      rcases hy with ⟨_, hy0⟩ | ⟨hy0, _⟩
+      · exact abs_pos.mpr (ne_of_lt hy0)
+      · exact abs_pos.mpr (ne_of_gt hy0)
+    have hset : {r : ENNReal | ValidNullRadius stepOp realStdDist realStdDist (.val y) stepU r} =
+        Set.Ioc 0 (ENNReal.ofReal |y|) := by
+      ext r
+      simp only [Set.mem_setOf_eq, Set.mem_Ioc, ValidNullRadius]
+      constructor
+      · rintro ⟨hr0, hrtop, hsub⟩
+        refine ⟨hr0, ?_⟩
+        by_contra hnotle
+        push Not at hnotle
+        have hr_real_gt : |y| < r.toReal := by
+          have h1 := (ENNReal.ofReal_lt_iff_lt_toReal (le_of_lt habs_pos) (lt_top_iff_ne_top.mp hrtop)).mp hnotle
+          exact h1
+        rcases hy with ⟨_, hy0⟩ | ⟨hy0, _⟩
+        · have hy_abs : |y| = -y := abs_of_neg hy0
+          let x : ℝ := min 1 ((r.toReal - |y|) / 2)
+          have hx_pos : 0 < x := lt_min zero_lt_one (by linarith)
+          have hx_le1 : x ≤ 1 := min_le_left _ _
+          have hxU : RealWithBot.val x ∈ stepU := ⟨x, Or.inr ⟨hx_pos, hx_le1⟩, rfl⟩
+          have hx_dist : |x - y| < r.toReal := by
+            have hx_le_half : x ≤ (r.toReal - |y|) / 2 := min_le_right _ _
+            have hxy_pos : 0 < x - y := by linarith
+            rw [abs_of_pos hxy_pos]
+            linarith
+          have hx_ball : RealWithBot.val x ∈ ball realStdDist (.val y) r := by
+            change ENNReal.ofReal |x - y| < r
+            rw [← ENNReal.ofReal_toReal (lt_top_iff_ne_top.mp hrtop)]
+            exact ENNReal.ofReal_lt_ofReal_iff (ENNReal.toReal_pos (ne_of_gt hr0) (lt_top_iff_ne_top.mp hrtop)) |>.mpr hx_dist
+          have hout := (hsub ⟨hx_ball, hxU⟩).2
+          have hne : ¬ (x < 0) := not_lt_of_ge (le_of_lt hx_pos)
+          simp [stepOp, realStdDist, hy0, hne] at hout
+        · have hy_abs : |y| = y := abs_of_pos hy0
+          let x : ℝ := -min 1 ((r.toReal - |y|) / 2)
+          have hmin_pos : 0 < min 1 ((r.toReal - |y|) / 2) := lt_min zero_lt_one (by linarith)
+          have hx_neg : x < 0 := neg_lt_zero.mpr hmin_pos
+          have hx_ge : -1 ≤ x := neg_le_neg (min_le_left _ _)
+          have hxU : RealWithBot.val x ∈ stepU := ⟨x, Or.inl ⟨hx_ge, hx_neg⟩, rfl⟩
+          have hx_dist : |x - y| < r.toReal := by
+            have hmin_le : min 1 ((r.toReal - |y|) / 2) ≤ (r.toReal - |y|) / 2 := min_le_right _ _
+            have hxy_neg : x - y < 0 := by linarith
+            rw [abs_of_neg hxy_neg]
+            dsimp [x]
+            linarith
+          have hx_ball : RealWithBot.val x ∈ ball realStdDist (.val y) r := by
+            change ENNReal.ofReal |x - y| < r
+            rw [← ENNReal.ofReal_toReal (lt_top_iff_ne_top.mp hrtop)]
+            exact ENNReal.ofReal_lt_ofReal_iff (ENNReal.toReal_pos (ne_of_gt hr0) (lt_top_iff_ne_top.mp hrtop)) |>.mpr hx_dist
+          have hout := (hsub ⟨hx_ball, hxU⟩).2
+          have hne : ¬ (y < 0) := not_lt_of_ge (le_of_lt hy0)
+          simp [stepOp, realStdDist, hx_neg, hne] at hout
+      · rintro ⟨hr0, hrle⟩
+        have hrtop : r < ⊤ := lt_of_le_of_lt hrle ENNReal.ofReal_lt_top
+        refine ⟨hr0, hrtop, ?_⟩
+        rintro z ⟨hz_ball, x, hx_mem, rfl⟩
+        refine ⟨⟨x, hx_mem, rfl⟩, ?_⟩
+        have hlt_ofReal : ENNReal.ofReal |x - y| < ENNReal.ofReal |y| := lt_of_lt_of_le hz_ball hrle
+        have hxy_lt : |x - y| < |y| := (ENNReal.ofReal_lt_ofReal_iff habs_pos).mp hlt_ofReal
+        rcases abs_lt.mp hxy_lt with ⟨_, hright⟩
+        rcases abs_lt.mp hxy_lt with ⟨hleft, _⟩
+        rcases hy with ⟨_, hy0⟩ | ⟨hy0, _⟩
+        · have hy_abs : |y| = -y := abs_of_neg hy0
+          have hx_neg : x < 0 := by linarith
+          simp [stepOp, realStdDist, hx_neg, hy0]
+        · have hy_abs : |y| = y := abs_of_pos hy0
+          have hx_pos : 0 < x := by linarith
+          have hnx : ¬ (x < 0) := not_lt_of_ge (le_of_lt hx_pos)
+          have hny : ¬ (y < 0) := not_lt_of_ge (le_of_lt hy0)
+          simp [stepOp, realStdDist, hnx, hny]
+    have hsup : pointwiseNullRadius stepOp realStdDist realStdDist (.val y) stepU =
+        ENNReal.ofReal |y| := by
+      unfold pointwiseNullRadius
+      rw [hset]
+      apply le_antisymm
+      · exact sSup_le (fun _ hr => hr.2)
+      · exact le_sSup ⟨ENNReal.ofReal_pos.mpr habs_pos, le_rfl⟩
+    exact ⟨hset, hsup⟩
+  refine ⟨hmain, ?_⟩
+  rintro _ ⟨y, hy, rfl⟩
+  rw [(hmain y hy).2]
+  rcases hy with ⟨_, hy0⟩ | ⟨hy0, _⟩
+  · exact ENNReal.ofReal_pos.mpr (abs_pos.mpr (ne_of_lt hy0))
+  · exact ENNReal.ofReal_pos.mpr (abs_pos.mpr (ne_of_gt hy0))
+ 
+/-- CH03-P10-03: 反例 3.1 用趋零基点证明同一固定评估域 `U` 上的统一零化半径为 `0`。 -/
+theorem counterexample_3_1_uniform_radius_zero :
+    uniformNullRadius stepOp realStdDist realStdDist stepU = 0 := by
+  apply le_antisymm _ (zero_le _)
+  by_contra hnot
+  have hpos : 0 < uniformNullRadius stepOp realStdDist realStdDist stepU :=
+    pos_iff_ne_zero.mpr (fun h => hnot (le_of_eq h))
+  let δ : ℝ := if htop : uniformNullRadius stepOp realStdDist realStdDist stepU = ⊤ then 1 / 2
+    else min (1 / 2) ((uniformNullRadius stepOp realStdDist realStdDist stepU).toReal / 2)
+  have hδ_pos : 0 < δ := by
+    dsimp [δ]
+    split_ifs with htop
+    · norm_num
+    · exact lt_min (by norm_num)
+        (half_pos (ENNReal.toReal_pos (ne_of_gt hpos) htop))
+  have hδ_le : δ ≤ 1 := by
+    dsimp [δ]
+    split_ifs with htop
+    · norm_num
+    · exact le_trans (min_le_left _ _) (by norm_num)
+  have hy_mem : δ ∈ Set.Ico (-1 : ℝ) 0 ∪ Set.Ioc (0 : ℝ) 1 := Or.inr ⟨hδ_pos, hδ_le⟩
+  have hyU : RealWithBot.val δ ∈ stepU := ⟨δ, hy_mem, rfl⟩
+  have hle : uniformNullRadius stepOp realStdDist realStdDist stepU ≤
+      pointwiseNullRadius stepOp realStdDist realStdDist (RealWithBot.val δ) stepU :=
+    iInf₂_le (RealWithBot.val δ) hyU
+  rw [(counterexample_3_1_pointwise_radius.1 δ hy_mem).2, abs_of_pos hδ_pos] at hle
+  by_cases htop : uniformNullRadius stepOp realStdDist realStdDist stepU = ⊤
+  · rw [htop] at hle
+    exact not_lt_of_ge hle ENNReal.ofReal_lt_top
+  · have hlt : ENNReal.ofReal δ < uniformNullRadius stepOp realStdDist realStdDist stepU := by
+      rw [← ENNReal.ofReal_toReal htop]
+      apply ENNReal.ofReal_lt_ofReal_iff (ENNReal.toReal_pos (ne_of_gt hpos) htop) |>.mpr
+      have hδ_half : δ ≤ (uniformNullRadius stepOp realStdDist realStdDist stepU).toReal / 2 := by
+        dsimp [δ]
+        rw [if_neg htop]
+        exact min_le_right _ _
+      have hr_pos := ENNReal.toReal_pos (ne_of_gt hpos) htop
+      linarith
+    exact not_lt_of_ge hle hlt
+ 
+/-! ### 命题 3.8：常值分量与统一零化半径 (CH03-P11-01 .. 03) -/
+ 
+/-- CH03-P11-01: 命题 3.8(i-a) 输出子族常值时每个基点的像目标计算纤维等于 `U`。 -/
+theorem prop_3_8_i_a_const_subfamily_fiber {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (J : Set I)
+    (_hU_ne : U.Nonempty) (_hU : U ⊆ dom ϕ) (_hJ : J.Nonempty)
+    (hconst : J ⊆ I_const d ϕ U) :
+    ∀ y ∈ U, CompFiber d ϕ J (ϕ.func y) U = U := by
+  intro y hy
+  ext x
+  simp only [CompFiber, Set.mem_setOf_eq, subfamily_pseudometric_eq_zero_iff, and_iff_left_iff_imp]
+  intro hx j hj
+  exact hconst hj x hx y hy
+ 
+/-- `ENNReal` 中全体有限正数 `(0, ⊤)` 的上确界为 `⊤`。 -/
+theorem sSup_Ioo_zero_top : sSup (Set.Ioo (0 : ENNReal) ⊤) = ⊤ := by
+  by_contra hne
+  have hlt : sSup (Set.Ioo (0 : ENNReal) ⊤) < ⊤ := lt_top_iff_ne_top.mpr hne
+  let s := sSup (Set.Ioo (0 : ENNReal) ⊤)
+  have hs1_lt : s + 1 < ⊤ := ENNReal.add_lt_top.mpr ⟨hlt, ENNReal.one_lt_top⟩
+  have hs1_pos : (0 : ENNReal) < s + 1 := by simp
+  have hle : s + 1 ≤ s := le_sSup ⟨hs1_pos, hs1_lt⟩
+  exact not_lt_of_ge hle (ENNReal.lt_add_right hne one_ne_zero)
+ 
+/-- CH03-P11-02: 命题 3.8(i-b) 输出子族常值时任意输入分量的点态与统一零化半径均为 `+∞`。 -/
+theorem prop_3_8_i_b_const_subfamily_radius_top {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (J : Set I) (i : I)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) (hJ : J.Nonempty)
+    (hconst : J ⊆ I_const d ϕ U) :
+    (∀ y ∈ U, pointwiseNullRadiusSubfamily d ϕ i J y U = ⊤) ∧
+    uniformNullRadiusSubfamily d ϕ i J U = ⊤ := by
+  have hpt : ∀ y ∈ U, pointwiseNullRadiusSubfamily d ϕ i J y U = ⊤ := by
+    intro y hy
+    have hfib := prop_3_8_i_a_const_subfamily_fiber d ϕ U J hU_ne hU hJ hconst y hy
+    unfold pointwiseNullRadiusSubfamily pointwiseNullRadius
+    have hset : {r : ENNReal | ValidNullRadius ϕ (d i) (subfamily_pseudometric d J) y U r} =
+        Set.Ioo 0 ⊤ := by
+      ext r
+      simp only [Set.mem_setOf_eq, ValidNullRadius_subfamily_iff_fiber, hfib, Set.mem_Ioo]
+      simp [Set.inter_subset_right]
+    rw [hset, sSup_Ioo_zero_top]
+  refine ⟨hpt, ?_⟩
+  apply top_unique
+  apply le_iInf₂
+  intro y hy
+  exact le_of_eq (hpt y hy).symm
+ 
+/-- 命题 3.8(ii) 反例距离族：对任意 `I` 及指定输入指标 `i`，令 `d_i(a, b) = ⊤`，其余分量在 `{a, b}` 上取 `1`。 -/
+def infInputDist {I : Type} [DecidableEq I] (i : I) (k : I) (x y : SwapSpace) : ENNReal :=
+  if x = .bot ∧ y = .bot then 0
+  else if x = .bot ∨ y = .bot then ⊤
+  else if x = y then 0
+  else if k = i then ⊤ else 1
+ 
+/-- CH03-P11-03: 命题 3.8(ii) 合法两点无穷输入距离反例（统一涵盖 `i = j` 与 `i ≠ j`），无穷统一零化半径不推出常值分量。 -/
+theorem prop_3_8_ii_inf_radius_not_const {I : Type} [DecidableEq I] (i j : I) :
+    (∀ k : I, ExtendedPseudoMetric SwapSpace SwapSpace.bot (infInputDist i k)) ∧
+    swapU.Nonempty ∧
+    swapU ⊆ dom (operator_identity : Operator SwapSpace SwapSpace.bot) ∧
+    nullMatrix (infInputDist i) (operator_identity : Operator SwapSpace SwapSpace.bot) swapU j i = ⊤ ∧
+    j ∉ I_const (infInputDist i) (operator_identity : Operator SwapSpace SwapSpace.bot) swapU := by
+  have hd : ∀ k : I, ExtendedPseudoMetric SwapSpace SwapSpace.bot (infInputDist i k) := by
+    intro k
+    refine
+      { nonabsorbing := ⟨.a, by decide⟩
+        dist_self := fun x => by unfold infInputDist; by_cases hx : x = .bot <;> simp [hx]
+        symm := fun x y => by
+          unfold infInputDist
+          by_cases hx : x = .bot <;> by_cases hy : y = .bot <;> simp [hx, hy, eq_comm]
+        triangle := fun x y z => by
+          unfold infInputDist
+          by_cases hx : x = .bot <;> by_cases hy : y = .bot <;> by_cases hz : z = .bot
+          all_goals try simp [hx, hy, hz]
+          by_cases hxz : x = z
+          · simp [hxz]
+          · by_cases hxy : x = y
+            · have hyz : y ≠ z := fun h => hxz (hxy.trans h)
+              simp [hxy, hyz]
+            · simp [hxz, hxy]
+        isolate_bot := fun x hx => by unfold infInputDist; simp [hx] }
+  let idOp : Operator SwapSpace SwapSpace.bot := operator_identity
+  have hpt : ∀ y ∈ swapU,
+      pointwiseNullRadiusComp (infInputDist i) idOp i j y swapU = ⊤ := by
+    intro y hy
+    unfold pointwiseNullRadiusComp pointwiseNullRadius
+    have hset : {r : ENNReal | ValidNullRadius idOp (infInputDist i i)
+        (infInputDist i j) y swapU r} = Set.Ioo 0 ⊤ := by
+      ext r
+      simp only [ValidNullRadius, Set.mem_setOf_eq, Set.mem_Ioo]
+      refine ⟨fun h => ⟨h.1, h.2.1⟩, fun ⟨hr0, hrtop⟩ => ⟨hr0, hrtop, ?_⟩⟩
+      rintro x ⟨hx_ball, hxU⟩
+      refine ⟨hxU, ?_⟩
+      change infInputDist i i x y < r at hx_ball
+      have hxy : x = y := by
+        by_contra hne
+        have hxnb : x ≠ .bot := by rcases hxU with rfl | rfl <;> decide
+        have hynb : y ≠ .bot := by rcases hy with rfl | rfl <;> decide
+        have htop : infInputDist i i x y = ⊤ := by
+          unfold infInputDist
+          simp [hxnb, hynb, hne]
+        rw [htop] at hx_ball
+        exact not_lt_of_ge le_top (lt_trans hx_ball hrtop)
+      subst hxy
+      exact (hd j).dist_self x
+    rw [hset, sSup_Ioo_zero_top]
+  refine ⟨hd, ⟨.a, by simp [swapU]⟩, ?_, ?_, ?_⟩
+  · intro x hx
+    rcases hx with rfl | rfl <;> intro hbot <;> cases hbot
+  · unfold nullMatrix uniformNullRadiusComp uniformNullRadius uniformNullRadiusOn
+    apply top_unique
+    apply le_iInf₂
+    intro y hy
+    exact le_of_eq (hpt y hy).symm
+  · intro hconst
+    have h0 := hconst .a (by simp [swapU]) .b (by simp [swapU])
+    change infInputDist i j .a .b = 0 at h0
+    unfold infInputDist at h0
+    by_cases hji : j = i <;> simp [hji] at h0
+ 
+/-- 命题 3.8(ii) 同分量情形 `i = j` 实例与异分量情形 `i ≠ j` 实例。 -/
+theorem prop_3_8_ii_both_cases_explicit :
+    (nullMatrix (infInputDist ()) (operator_identity : Operator SwapSpace SwapSpace.bot) swapU () () = ⊤ ∧
+      () ∉ I_const (infInputDist ()) (operator_identity : Operator SwapSpace SwapSpace.bot) swapU) ∧
+    (nullMatrix (infInputDist TwoIdx.idx_i) (operator_identity : Operator SwapSpace SwapSpace.bot)
+        swapU TwoIdx.idx_m TwoIdx.idx_i = ⊤ ∧
+      TwoIdx.idx_m ∉ I_const (infInputDist TwoIdx.idx_i)
+        (operator_identity : Operator SwapSpace SwapSpace.bot) swapU) :=
+  ⟨⟨(prop_3_8_ii_inf_radius_not_const () ()).2.2.2.1,
+    (prop_3_8_ii_inf_radius_not_const () ()).2.2.2.2⟩,
+   ⟨(prop_3_8_ii_inf_radius_not_const TwoIdx.idx_i TwoIdx.idx_m).2.2.2.1,
+    (prop_3_8_ii_inf_radius_not_const TwoIdx.idx_i TwoIdx.idx_m).2.2.2.2⟩⟩
+ 
+/-! ### 命题 3.9：恒等分量的纤维与零化半径 (CH03-P12-01 .. 02) -/
+ 
+/-- CH03-P12-01: 命题 3.9(i) 恒等分量的像目标纤维等于输入零距类。 -/
+theorem prop_3_9_i_id_target_fiber {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (y : X) (i : I)
+    (hy : y ∈ U) (hU : U ⊆ dom ϕ) (hi : i ∈ I_id d ϕ U) :
+    CompFiberSingle d ϕ i (ϕ.func y) U = {x ∈ U | d i x y = 0} := by
+  rw [CompFiberSingle_eq]
+  ext x
+  simp only [Set.mem_setOf_eq]
+  refine and_congr_right fun hx => ?_
+  rw [prop_3_1_iii_id_preserves_dist d hd ϕ U i hU hi x hx y hy]
+ 
+/-- CH03-P12-02: 命题 3.9(ii) 有限正 `r₀` 球内仅含输入零距点时，点态零化半径 `≥ r₀ > 0`。 -/
+theorem prop_3_9_ii_id_radius_lower_bound {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (y : X) (i : I) (r₀ : ENNReal)
+    (hy : y ∈ U) (hU : U ⊆ dom ϕ) (hi : i ∈ I_id d ϕ U)
+    (hr0 : 0 < r₀) (hrtop : r₀ < ⊤)
+    (hball : ball (d i) y r₀ ∩ U ⊆ {x ∈ U | d i x y = 0}) :
+    r₀ ≤ pointwiseNullRadiusComp d ϕ i i y U ∧
+    0 < pointwiseNullRadiusComp d ϕ i i y U := by
+  have hfib := prop_3_9_i_id_target_fiber d hd ϕ U y i hy hU hi
+  rw [CompFiberSingle_eq] at hfib
+  have hval : ValidNullRadius ϕ (d i) (d i) y U r₀ := by
+    refine ⟨hr0, hrtop, ?_⟩
+    rw [hfib]
+    exact hball
+  have hle : r₀ ≤ pointwiseNullRadiusComp d ϕ i i y U := le_sSup hval
+  exact ⟨hle, lt_of_lt_of_le hr0 hle⟩
+ 
+/-! ### 命题 3.10：统一零化半径的分量最小值公式 (CH03-P13-01 .. 03) -/
+ 
+/-- 合法零化半径关于减小半径向下封闭。 -/
+theorem ValidNullRadius_mono_radius {X : Type} {bot : X} (ϕ : Operator X bot)
+    (d_in d_out : X → X → ENNReal) (y : X) (U : Set X) {r₁ r₂ : ENNReal}
+    (hr₁0 : 0 < r₁) (hle : r₁ ≤ r₂) (h₂ : ValidNullRadius ϕ d_in d_out y U r₂) :
+    ValidNullRadius ϕ d_in d_out y U r₁ := by
+  refine ⟨hr₁0, lt_of_le_of_lt hle h₂.2.1, ?_⟩
+  rintro x ⟨hx_ball, hxU⟩
+  exact h₂.2.2 ⟨lt_of_lt_of_le hx_ball hle, hxU⟩
+ 
+theorem ennreal_le_of_forall_lt {a b : ENNReal} (h : ∀ r < a, r ≤ b) : a ≤ b := by
+  by_contra hnot
+  push Not at hnot
+  rcases exists_between hnot with ⟨r, hbr, hra⟩
+  exact not_lt_of_ge (h r hra) hbr
+ 
+/-- CH03-P13-01: 命题 3.10 有限非空输出子族的点态零化半径等于单分量半径最小值（并由某个 `j ∈ J` 取得）。 -/
+theorem prop_3_10_pointwise_min_formula {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i : I) (J : Set I) (y : X)
+    (_hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) (hJ : J.Nonempty) (_hy : y ∈ U) :
+    pointwiseNullRadiusSubfamily d ϕ i J y U =
+      (⨅ j ∈ J, pointwiseNullRadiusComp d ϕ i j y U) ∧
+    ∃ jmin ∈ J, pointwiseNullRadiusSubfamily d ϕ i J y U =
+      pointwiseNullRadiusComp d ϕ i jmin y U := by
+  have heq : pointwiseNullRadiusSubfamily d ϕ i J y U =
+      ⨅ j ∈ J, pointwiseNullRadiusComp d ϕ i j y U := by
+    apply le_antisymm
+    · apply le_iInf₂
+      intro j hj
+      apply sSup_le
+      intro r hr
+      apply le_sSup
+      refine ⟨hr.1, hr.2.1, ?_⟩
+      rintro x hx
+      have hmem : x ∈ CompFiber d ϕ J (ϕ.func y) U := hr.2.2 hx
+      have hsub := prop_3_5_iii_inter_eq d ϕ U J (ϕ.func y) hU hJ
+      rw [hsub] at hmem
+      have hsingle := Set.mem_iInter₂.mp hmem j hj
+      rw [CompFiberSingle_eq] at hsingle
+      exact hsingle
+    · apply ennreal_le_of_forall_lt
+      intro r hr
+      by_cases hr0 : r = 0
+      · subst hr0; exact zero_le _
+      · have hr_pos : 0 < r := pos_iff_ne_zero.mpr hr0
+        have hr_top : r < ⊤ := lt_of_lt_of_le hr le_top
+        have hall : ∀ j ∈ J, ValidNullRadius ϕ (d i) (d j) y U r := by
+          intro j hj
+          have hrj : r < pointwiseNullRadiusComp d ϕ i j y U :=
+            lt_of_lt_of_le hr (iInf₂_le j hj)
+          rcases lt_sSup_iff.mp hrj with ⟨r', hr'val, hrr'⟩
+          exact ValidNullRadius_mono_radius ϕ (d i) (d j) y U hr_pos (le_of_lt hrr') hr'val
+        apply le_sSup
+        change ValidNullRadius ϕ (d i) (subfamily_pseudometric d J) y U r
+        rw [ValidNullRadius_subfamily_iff_fiber, prop_3_5_iii_inter_eq d ϕ U J (ϕ.func y) hU hJ]
+        refine ⟨hr_pos, hr_top, fun x hx => Set.mem_iInter₂.mpr (fun j hj => ?_)⟩
+        rw [CompFiberSingle_eq]
+        exact (hall j hj).2.2 hx
+  refine ⟨heq, ?_⟩
+  classical
+  have hfin_ne : J.toFinset.Nonempty := Set.toFinset_nonempty.mpr hJ
+  rcases Finset.exists_mem_eq_inf' hfin_ne (fun j => pointwiseNullRadiusComp d ϕ i j y U) with
+    ⟨jmin, hjmin_mem, hjmin_eq⟩
+  refine ⟨jmin, Set.mem_toFinset.mp hjmin_mem, ?_⟩
+  rw [heq, ← hjmin_eq, Finset.inf'_eq_inf]
+  simp [Finset.inf_eq_iInf]
+ 
+/-- CH03-P13-02: 命题 3.10 交换基点下确界与有限非空最小值，得到统一零化半径的分量最小值公式。 -/
+theorem prop_3_10_uniform_min_formula {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i : I) (J : Set I)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) (hJ : J.Nonempty) :
+    uniformNullRadiusSubfamily d ϕ i J U =
+      (⨅ j ∈ J, nullMatrix d ϕ U j i) ∧
+    ∃ jmin ∈ J, uniformNullRadiusSubfamily d ϕ i J U = nullMatrix d ϕ U jmin i := by
+  have heq : uniformNullRadiusSubfamily d ϕ i J U = ⨅ j ∈ J, nullMatrix d ϕ U j i := by
+    unfold uniformNullRadiusSubfamily nullMatrix uniformNullRadiusComp uniformNullRadius
+      uniformNullRadiusOn
+    apply le_antisymm
+    · apply le_iInf₂
+      intro j hj
+      apply le_iInf₂
+      intro y hy
+      have hpt := (prop_3_10_pointwise_min_formula d ϕ U i J y hU_ne hU hJ hy).1
+      exact le_trans (iInf₂_le y hy) (le_of_eq_of_le hpt (iInf₂_le j hj))
+    · apply le_iInf₂
+      intro y hy
+      have hpt := (prop_3_10_pointwise_min_formula d ϕ U i J y hU_ne hU hJ hy).1
+      change _ ≤ pointwiseNullRadiusSubfamily d ϕ i J y U
+      rw [hpt]
+      apply le_iInf₂
+      intro j hj
+      exact le_trans (iInf₂_le j hj) (iInf₂_le y hy)
+  refine ⟨heq, ?_⟩
+  classical
+  have hfin_ne : J.toFinset.Nonempty := Set.toFinset_nonempty.mpr hJ
+  rcases Finset.exists_mem_eq_inf' hfin_ne (fun j => nullMatrix d ϕ U j i) with
+    ⟨jmin, hjmin_mem, hjmin_eq⟩
+  refine ⟨jmin, Set.mem_toFinset.mp hjmin_mem, ?_⟩
+  rw [heq, ← hjmin_eq, Finset.inf'_eq_inf]
+  simp [Finset.inf_eq_iInf]
+ 
+/-- CH03-P13-03: 命题 3.10 当 `J ⊆ K` 时，统一零化半径关于输出子族反单调。 -/
+theorem prop_3_10_uniform_subfamily_antitone {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i : I) (J K : Set I)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (hJ : J.Nonempty) (hK : K.Nonempty) (hJK : J ⊆ K) :
+    uniformNullRadiusSubfamily d ϕ i K U ≤ uniformNullRadiusSubfamily d ϕ i J U := by
+  rw [(prop_3_10_uniform_min_formula d ϕ U i K hU_ne hU hK).1,
+      (prop_3_10_uniform_min_formula d ϕ U i J hU_ne hU hJ).1]
+  apply le_iInf₂
+  intro j hj
+  exact iInf₂_le j (hJK hj)
+ 
+/-! ### 命题 3.11：纤维截断的单步判据 (CH03-P14-01 .. 03) -/
+ 
+/-- CH03-P14-01: 命题 3.11 纤维成员条件推出输出零距。 -/
+theorem prop_3_11_fiber_mem_zero {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₂ : Operator X bot) (U₂ : Set X) (j : I) (y y' : X)
+    (_hU₂ : U₂ ⊆ dom ϕ₂) (_hy : y ∈ U₂) (_hy' : y' ∈ U₂)
+    (hmem : y' ∈ CompFiberSingle d ϕ₂ j (ϕ₂.func y) U₂) :
+    d j (ϕ₂.func y) (ϕ₂.func y') = 0 := by
+  rw [CompFiberSingle_eq] at hmem
+  rw [(hd j).symm (ϕ₂.func y) (ϕ₂.func y')]
+  exact hmem.2
+ 
+/-- CH03-P14-02: 命题 3.11 严格小于点态上确界时提取合法有限正半径 `ρ`，并推出输出零距。 -/
+theorem prop_3_11_lt_radius_zero {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₂ : Operator X bot) (U₂ : Set X) (i j : I) (y y' : X)
+    (hU₂ : U₂ ⊆ dom ϕ₂) (hy : y ∈ U₂) (hy' : y' ∈ U₂)
+    (hlt : d i y y' < pointwiseNullRadiusComp d ϕ₂ i j y U₂) :
+    (∃ ρ : ENNReal, ValidNullRadius ϕ₂ (d i) (d j) y U₂ ρ ∧ d i y y' < ρ) ∧
+    d j (ϕ₂.func y) (ϕ₂.func y') = 0 := by
+  rcases lt_sSup_iff.mp hlt with ⟨ρ, hρ_val, hlt_ρ⟩
+  refine ⟨⟨ρ, hρ_val, hlt_ρ⟩, ?_⟩
+  have hy'_ball : y' ∈ ball (d i) y ρ := by
+    change d i y' y < ρ
+    rw [(hd i).symm y' y]
+    exact hlt_ρ
+  have hmem : y' ∈ CompFiberSingle d ϕ₂ j (ϕ₂.func y) U₂ := by
+    rw [CompFiberSingle_eq]
+    exact hρ_val.2.2 ⟨hy'_ball, hy'⟩
+  exact prop_3_11_fiber_mem_zero d hd ϕ₂ U₂ j y y' hU₂ hy hy' hmem
+ 
+theorem prop_3_11_single_step_criterion {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₂ : Operator X bot) (U₂ : Set X) (i j : I) (y y' : X)
+    (hU₂ : U₂ ⊆ dom ϕ₂) (hy : y ∈ U₂) (hy' : y' ∈ U₂)
+    (hcond : y' ∈ CompFiberSingle d ϕ₂ j (ϕ₂.func y) U₂ ∨
+      d i y y' < pointwiseNullRadiusComp d ϕ₂ i j y U₂) :
+    d j (ϕ₂.func y) (ϕ₂.func y') = 0 := by
+  rcases hcond with hmem | hlt
+  · exact prop_3_11_fiber_mem_zero d hd ϕ₂ U₂ j y y' hU₂ hy hy' hmem
+  · exact (prop_3_11_lt_radius_zero d hd ϕ₂ U₂ i j y y' hU₂ hy hy' hlt).2
+ 
+/-- CH03-P14-03: 命题 3.11 复合输入实例：检查两像点属于下游域并代入纤维判据。 -/
+theorem prop_3_11_composite_instance {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U₂ : Set X) (j : I) (x x' : X)
+    (hU₂ : U₂ ⊆ dom ϕ₂) (_hx : x ∈ dom ϕ₁) (_hx' : x' ∈ dom ϕ₁)
+    (hϕx : ϕ₁.func x ∈ U₂) (hϕx' : ϕ₁.func x' ∈ U₂)
+    (hfib : ϕ₁.func x' ∈ CompFiberSingle d ϕ₂ j (ϕ₂.func (ϕ₁.func x)) U₂) :
+    d j ((ϕ₂ * ϕ₁).func x) ((ϕ₂ * ϕ₁).func x') = 0 :=
+  prop_3_11_fiber_mem_zero d hd ϕ₂ U₂ j (ϕ₁.func x) (ϕ₁.func x') hU₂ hϕx hϕx' hfib
+ 
+/-! ### 命题 3.12：统一零化半径的复合下界 (CH03-P15-01 .. 02) -/
+ 
+/-- CH03-P15-01: 命题 3.12(i) 下游在实际像域 `ϕ₁(U)` 上保持零距时，复合统一零化半径继承上游下界。 -/
+theorem prop_3_12_i_zero_preserving_propagation {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) (i j l : I)
+    (_hU_ne : U.Nonempty) (hU : U ⊆ dom (ϕ₂ * ϕ₁))
+    (hkeep : ∀ y ∈ operator_image ϕ₁ U, ∀ y' ∈ operator_image ϕ₁ U,
+      d l y y' = 0 → d j (ϕ₂.func y) (ϕ₂.func y') = 0) :
+    nullMatrix d ϕ₁ U l i ≤ nullMatrix d (ϕ₂ * ϕ₁) U j i := by
+  rcases comp_dom_inclusions ϕ₁ ϕ₂ U hU with ⟨hU1, _⟩
+  unfold nullMatrix uniformNullRadiusComp uniformNullRadius uniformNullRadiusOn
+  apply le_iInf₂
+  intro x hx
+  apply ennreal_le_of_forall_lt
+  intro r hr
+  by_cases hr0 : r = 0
+  · subst hr0; exact zero_le _
+  · have hr_pos : 0 < r := pos_iff_ne_zero.mpr hr0
+    have hr_top : r < ⊤ := lt_of_lt_of_le hr le_top
+    have hr_x : r < pointwiseNullRadiusComp d ϕ₁ i l x U :=
+      lt_of_lt_of_le hr (iInf₂_le x hx)
+    apply le_sSup
+    refine ⟨hr_pos, hr_top, ?_⟩
+    rintro x' ⟨hx'_ball, hx'U⟩
+    refine ⟨hx'U, ?_⟩
+    have hlt_xx' : d i x x' < pointwiseNullRadiusComp d ϕ₁ i l x U := by
+      rw [(hd i).symm x x']
+      exact lt_trans hx'_ball hr_x
+    have hl0 := (prop_3_11_lt_radius_zero d hd ϕ₁ U i l x x' hU1 hx hx'U hlt_xx').2
+    have hj0 := hkeep (ϕ₁.func x) ⟨x, hx, rfl⟩ (ϕ₁.func x') ⟨x', hx'U, rfl⟩ hl0
+    rw [(hd j).symm]
+    exact hj0
+ 
+/-- CH03-P15-02: 命题 3.12(ii) 有限正 `L` 的单通道 Lip 上界拉回下游实际像域零化半径（完整覆盖右端 `0` 与 `+∞` 情形）。 -/
+theorem prop_3_12_ii_lip_pullback {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ₁ ϕ₂ : Operator X bot) (U : Set X) (i j l : I) (L : ENNReal)
+    (_hU_ne : U.Nonempty) (hU : U ⊆ dom (ϕ₂ * ϕ₁))
+    (hL0 : 0 < L) (hLtop : L < ⊤)
+    (hLip : ∀ x ∈ U, ∀ x' ∈ U, d l (ϕ₁.func x) (ϕ₁.func x') ≤ L * d i x x') :
+    nullMatrix d ϕ₂ (operator_image ϕ₁ U) j l / L ≤ nullMatrix d (ϕ₂ * ϕ₁) U j i ∧
+    ((0 : ENNReal) / L = 0 ∧ (⊤ : ENNReal) / L = ⊤) := by
+  have hL_ne0 : L ≠ 0 := ne_of_gt hL0
+  have hL_netop : L ≠ ⊤ := lt_top_iff_ne_top.mp hLtop
+  refine ⟨?_, ⟨ENNReal.zero_div, ENNReal.top_div_of_lt_top hLtop⟩⟩
+  rcases comp_dom_inclusions ϕ₁ ϕ₂ U hU with ⟨_, hU2⟩
+  unfold nullMatrix uniformNullRadiusComp uniformNullRadius uniformNullRadiusOn
+  apply le_iInf₂
+  intro x hx
+  apply ennreal_le_of_forall_lt
+  intro r hr
+  by_cases hr0 : r = 0
+  · subst hr0; exact zero_le _
+  · have hr_pos : 0 < r := pos_iff_ne_zero.mpr hr0
+    have hr_top : r < ⊤ := lt_of_lt_of_le hr le_top
+    apply le_sSup
+    refine ⟨hr_pos, hr_top, ?_⟩
+    rintro x' ⟨hx'_ball, hx'U⟩
+    refine ⟨hx'U, ?_⟩
+    have hd_lt_r : d i x x' < r := by
+      rw [(hd i).symm x x']
+      exact hx'_ball
+    have hd_lt_div : d i x x' < (⨅ y ∈ operator_image ϕ₁ U,
+        pointwiseNullRadius ϕ₂ (d l) (d j) y (operator_image ϕ₁ U)) / L :=
+      lt_trans hd_lt_r hr
+    have hmul_lt : L * d i x x' < ⨅ y ∈ operator_image ϕ₁ U,
+        pointwiseNullRadius ϕ₂ (d l) (d j) y (operator_image ϕ₁ U) := by
+      calc
+        L * d i x x' = d i x x' * L := mul_comm _ _
+        _ < ((⨅ y ∈ operator_image ϕ₁ U,
+            pointwiseNullRadius ϕ₂ (d l) (d j) y (operator_image ϕ₁ U)) / L) * L :=
+          ENNReal.mul_lt_mul_left hL_ne0 hL_netop hd_lt_div
+        _ = L * ((⨅ y ∈ operator_image ϕ₁ U,
+            pointwiseNullRadius ϕ₂ (d l) (d j) y (operator_image ϕ₁ U)) / L) := mul_comm _ _
+        _ = ⨅ y ∈ operator_image ϕ₁ U,
+            pointwiseNullRadius ϕ₂ (d l) (d j) y (operator_image ϕ₁ U) :=
+          ENNReal.mul_div_cancel hL_ne0 hL_netop
+    have hdl_lt : d l (ϕ₁.func x) (ϕ₁.func x') <
+        pointwiseNullRadiusComp d ϕ₂ l j (ϕ₁.func x) (operator_image ϕ₁ U) :=
+      lt_of_le_of_lt (hLip x hx x' hx'U) (lt_of_lt_of_le hmul_lt (iInf₂_le (ϕ₁.func x) ⟨x, hx, rfl⟩))
+    have hj0 := (prop_3_11_lt_radius_zero d hd ϕ₂ (operator_image ϕ₁ U) l j
+      (ϕ₁.func x) (ϕ₁.func x') hU2 ⟨x, hx, rfl⟩ ⟨x', hx'U, rfl⟩ hdl_lt).2
+    rw [(hd j).symm]
+    exact hj0
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec04_05.lean
+import Ch03.Sec03
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set Finset
+ 
+/-! ### 3.4 输入尺度与零化阈值：引理 3.13 与命题 3.14 (CH03-P16-01 .. CH03-P17-04) -/
+ 
+theorem ind01_eq_one_iff (P : Prop) : ind01 P = 1 ↔ P := by
+  unfold ind01
+  by_cases h : P <;> simp [h]
+ 
+theorem ind01_eq_zero_iff (P : Prop) : ind01 P = 0 ↔ ¬ P := by
+  unfold ind01
+  by_cases h : P <;> simp [h]
+ 
+def Regime11 {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (σ : I → Set X → ENNReal) (f : Operator X bot) (A : Set X) (τσ τN : ENNReal) :
+    Set (I × I) :=
+  {p | σ p.1 A < τσ ∧ τN ≤ uniformNullRadiusComp d f p.1 p.2 A}
+ 
+def Regime10 {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (σ : I → Set X → ENNReal) (f : Operator X bot) (A : Set X) (τσ τN : ENNReal) :
+    Set (I × I) :=
+  {p | σ p.1 A < τσ ∧ uniformNullRadiusComp d f p.1 p.2 A < τN}
+ 
+def Regime01 {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (σ : I → Set X → ENNReal) (f : Operator X bot) (A : Set X) (τσ τN : ENNReal) :
+    Set (I × I) :=
+  {p | τσ ≤ σ p.1 A ∧ τN ≤ uniformNullRadiusComp d f p.1 p.2 A}
+ 
+def Regime00 {X I : Type} {bot : X} (d : I → X → X → ENNReal)
+    (σ : I → Set X → ENNReal) (f : Operator X bot) (A : Set X) (τσ τN : ENNReal) :
+    Set (I × I) :=
+  {p | τσ ≤ σ p.1 A ∧ uniformNullRadiusComp d f p.1 p.2 A < τN}
+ 
+/-- CH03-P16-01: 引理 3.13 四种阈值组合与 `channelType` 逐一对应，且互斥并穷尽 `I × I`。 -/
+theorem lemma_3_13_four_regimes_exclusive_exhaustive {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (σ : I → Set X → ENNReal)
+    (f : Operator X bot) (A : Set X) (τσ τN : ENNReal)
+    (_hA_ne : A.Nonempty) (_hA : A ⊆ dom f)
+    (_hτσ0 : 0 < τσ) (_hτσtop : τσ < ⊤) (_hτN0 : 0 < τN) (_hτNtop : τN < ⊤) :
+    (∀ p : I × I, p ∈ Regime11 d σ f A τσ τN ↔ channelType d σ f A τσ τN p.1 p.2 = (1, 1)) ∧
+    (∀ p : I × I, p ∈ Regime10 d σ f A τσ τN ↔ channelType d σ f A τσ τN p.1 p.2 = (1, 0)) ∧
+    (∀ p : I × I, p ∈ Regime01 d σ f A τσ τN ↔ channelType d σ f A τσ τN p.1 p.2 = (0, 1)) ∧
+    (∀ p : I × I, p ∈ Regime00 d σ f A τσ τN ↔ channelType d σ f A τσ τN p.1 p.2 = (0, 0)) ∧
+    Disjoint (Regime11 d σ f A τσ τN) (Regime10 d σ f A τσ τN) ∧
+    Disjoint (Regime11 d σ f A τσ τN) (Regime01 d σ f A τσ τN) ∧
+    Disjoint (Regime11 d σ f A τσ τN) (Regime00 d σ f A τσ τN) ∧
+    Disjoint (Regime10 d σ f A τσ τN) (Regime01 d σ f A τσ τN) ∧
+    Disjoint (Regime10 d σ f A τσ τN) (Regime00 d σ f A τσ τN) ∧
+    Disjoint (Regime01 d σ f A τσ τN) (Regime00 d σ f A τσ τN) ∧
+    Regime11 d σ f A τσ τN ∪ Regime10 d σ f A τσ τN ∪
+      Regime01 d σ f A τσ τN ∪ Regime00 d σ f A τσ τN = Set.univ := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro p
+    simp [Regime11, channelType, Prod.ext_iff, ind01_eq_one_iff]
+  · intro p
+    simp [Regime10, channelType, Prod.ext_iff, ind01_eq_one_iff, ind01_eq_zero_iff]
+  · intro p
+    simp [Regime01, channelType, Prod.ext_iff, ind01_eq_one_iff, ind01_eq_zero_iff]
+  · intro p
+    simp [Regime00, channelType, Prod.ext_iff, ind01_eq_zero_iff]
+  · exact Set.disjoint_left.mpr (fun _ h1 h2 => not_lt_of_ge h1.2 h2.2)
+  · exact Set.disjoint_left.mpr (fun _ h1 h2 => not_lt_of_ge h2.1 h1.1)
+  · exact Set.disjoint_left.mpr (fun _ h1 h2 => not_lt_of_ge h2.1 h1.1)
+  · exact Set.disjoint_left.mpr (fun _ h1 h2 => not_lt_of_ge h2.1 h1.1)
+  · exact Set.disjoint_left.mpr (fun _ h1 h2 => not_lt_of_ge h2.1 h1.1)
+  · exact Set.disjoint_left.mpr (fun _ h1 h2 => not_lt_of_ge h1.2 h2.2)
+  · ext p
+    simp only [Regime11, Regime10, Regime01, Regime00, Set.mem_union, Set.mem_setOf_eq,
+      Set.mem_univ, iff_true]
+    rcases lt_or_ge (σ p.1 A) τσ with hσ | hσ <;>
+      rcases lt_or_ge (uniformNullRadiusComp d f p.1 p.2 A) τN with hr | hr
+    · exact Or.inl (Or.inl (Or.inr ⟨hσ, hr⟩))
+    · exact Or.inl (Or.inl (Or.inl ⟨hσ, hr⟩))
+    · exact Or.inr ⟨hσ, hr⟩
+    · exact Or.inl (Or.inr ⟨hσ, hr⟩)
+ 
+/-- CH03-P16-02: 引理 3.13(i) 输入尺度阈值 `τσ` 增大时，第一项取 `1` 的通道集合单调不减。 -/
+theorem lemma_3_13_i_first_coord_mono {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (σ : I → Set X → ENNReal)
+    (f : Operator X bot) (A : Set X) (τσ τσ' τN : ENNReal)
+    (hτ : τσ ≤ τσ') :
+    {p : I × I | (channelType d σ f A τσ τN p.1 p.2).1 = 1} ⊆
+      {p : I × I | (channelType d σ f A τσ' τN p.1 p.2).1 = 1} := by
+  intro p hp
+  simp only [Set.mem_setOf_eq, channelType, ind01_eq_one_iff] at hp ⊢
+  exact lt_of_lt_of_le hp hτ
+ 
+/-- CH03-P16-03: 引理 3.13(ii) 零化阈值 `τN` 增大时，第二项取 `1` 的通道集合单调不增。 -/
+theorem lemma_3_13_ii_second_coord_antitone {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (σ : I → Set X → ENNReal)
+    (f : Operator X bot) (A : Set X) (τσ τN τN' : ENNReal)
+    (hτ : τN ≤ τN') :
+    {p : I × I | (channelType d σ f A τσ τN' p.1 p.2).2 = 1} ⊆
+      {p : I × I | (channelType d σ f A τσ τN p.1 p.2).2 = 1} := by
+  intro p hp
+  simp only [Set.mem_setOf_eq, channelType, ind01_eq_one_iff] at hp ⊢
+  exact le_trans hτ hp
+ 
+/-- CH03-P17-01: 命题 3.14(i) 任意单调尺度函数族在域缩小下的单调性及阈值推论。 -/
+theorem prop_3_14_i_scale_mono_on_subset {X I : Type} {bot : X}
+    (σ : I → Set X → ENNReal) (hσ : IsInputScaleFamily σ)
+    (f : Operator X bot) (A B : Set X) (τσ : ENNReal) (i : I)
+    (hB_ne : B.Nonempty) (hBA : B ⊆ A) (_hA : A ⊆ dom f) :
+    σ i B ≤ σ i A ∧ (σ i A < τσ → σ i B < τσ) := by
+  have hA_ne : A.Nonempty := hB_ne.mono hBA
+  have hle := hσ i hB_ne hA_ne hBA
+  exact ⟨hle, fun hlt => lt_of_le_of_lt hle hlt⟩
+ 
+/-- CH03-P17-02: 命题 3.14(ii-a) 固定基点 `x ∈ B` 时，缩小评估域 `B ⊆ A` 使点态零化半径不减。 -/
+theorem prop_3_14_ii_a_pointwise_radius_antitone {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (f : Operator X bot) (A B : Set X) (i j : I) (x : X)
+    (_hx : x ∈ B) (hBA : B ⊆ A) (_hA : A ⊆ dom f) :
+    pointwiseNullRadiusComp d f i j x A ≤ pointwiseNullRadiusComp d f i j x B := by
+  apply sSup_le
+  intro r hr
+  apply le_sSup
+  refine ⟨hr.1, hr.2.1, ?_⟩
+  rintro z ⟨hz_ball, hzB⟩
+  exact ⟨hzB, (hr.2.2 ⟨hz_ball, hBA hzB⟩).2⟩
+ 
+/-- CH03-P17-03: 命题 3.14(ii-b) 同时缩小评估域与取 `inf` 的基点集合，统一零化半径单调不减。 -/
+theorem prop_3_14_ii_b_uniform_radius_antitone {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (f : Operator X bot) (A B : Set X) (i j : I)
+    (_hB_ne : B.Nonempty) (hBA : B ⊆ A) (hA : A ⊆ dom f) :
+    uniformNullRadiusComp d f i j A ≤ uniformNullRadiusOn f (d i) (d j) B A ∧
+    uniformNullRadiusOn f (d i) (d j) B A ≤ uniformNullRadiusComp d f i j B ∧
+    uniformNullRadiusComp d f i j A ≤ uniformNullRadiusComp d f i j B := by
+  have h1 : uniformNullRadiusComp d f i j A ≤ uniformNullRadiusOn f (d i) (d j) B A := by
+    apply le_iInf₂
+    intro x hxB
+    exact iInf₂_le x (hBA hxB)
+  have h2 : uniformNullRadiusOn f (d i) (d j) B A ≤ uniformNullRadiusComp d f i j B := by
+    apply le_iInf₂
+    intro x hxB
+    exact le_trans (iInf₂_le x hxB)
+      (prop_3_14_ii_a_pointwise_radius_antitone d f A B i j x hxB hBA hA)
+  exact ⟨h1, h2, le_trans h1 h2⟩
+ 
+/-- CH03-P17-04: 命题 3.14(iii) 直径尺度在 `A = {0, 1}, B = {0}, τσ = 1/2` 上的二点/单点反例，否定反向尺度判断。 -/
+theorem prop_3_14_iii_reverse_scale_counterexample :
+    let A : Set RealWithBot := {.val 0, .val 1}
+    let B : Set RealWithBot := {.val 0}
+    let f : Operator RealWithBot RealWithBot.bot := operator_identity
+    let τσ : ENNReal := 1 / 2
+    B.Nonempty ∧ B ⊆ A ∧ A ⊆ dom f ∧
+    setDiam realStdDist B = 0 ∧
+    setDiam realStdDist B < τσ ∧
+    setDiam realStdDist A = 1 ∧
+    τσ ≤ setDiam realStdDist A ∧
+    ¬ (setDiam realStdDist B < τσ → setDiam realStdDist A < τσ) := by
+  dsimp only
+  have hB_diam : setDiam realStdDist ({RealWithBot.val 0} : Set RealWithBot) = 0 := by
+    unfold setDiam
+    apply le_antisymm _ (zero_le _)
+    apply iSup₂_le
+    rintro x rfl
+    apply iSup₂_le
+    rintro y rfl
+    simp [realStdDist]
+  have hA_diam : setDiam realStdDist ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot) = 1 := by
+    unfold setDiam
+    apply le_antisymm
+    · apply iSup₂_le
+      rintro x (rfl | rfl) <;> apply iSup₂_le <;> rintro y (rfl | rfl) <;>
+        simp [realStdDist]
+    · have h0 : RealWithBot.val 0 ∈ ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot) :=
+        Set.mem_insert _ _
+      have h1 : RealWithBot.val 1 ∈ ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot) :=
+        Set.mem_insert_of_mem _ (Set.mem_singleton _)
+      calc
+        (1 : ENNReal) = realStdDist (RealWithBot.val 0) (RealWithBot.val 1) := by
+          simp [realStdDist]
+        _ ≤ ⨆ y ∈ ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot),
+              realStdDist (RealWithBot.val 0) y :=
+          le_iSup₂ (f := fun y _ => realStdDist (RealWithBot.val 0) y) (RealWithBot.val 1) h1
+        _ ≤ ⨆ x ∈ ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot),
+              ⨆ y ∈ ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot),
+                realStdDist x y :=
+          le_iSup₂ (f := fun x _ => ⨆ y ∈ ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot),
+            realStdDist x y) (RealWithBot.val 0) h0
+  have hlt : (0 : ENNReal) < 1 / 2 := by norm_num
+  have hge : (1 / 2 : ENNReal) ≤ 1 := by norm_num
+  have hB_ne : ({RealWithBot.val 0} : Set RealWithBot).Nonempty := ⟨.val 0, Set.mem_singleton _⟩
+  have hBA : ({RealWithBot.val 0} : Set RealWithBot) ⊆ {.val 0, .val 1} := by
+    intro x hx
+    rw [Set.mem_singleton_iff.mp hx]
+    exact Set.mem_insert _ _
+  have hA_dom : ({RealWithBot.val 0, RealWithBot.val 1} : Set RealWithBot) ⊆
+      dom (operator_identity : Operator RealWithBot RealWithBot.bot) := by
+    intro x hx hbot
+    rcases hx with rfl | rfl <;> cases hbot
+  refine ⟨hB_ne, hBA, hA_dom, hB_diam, ?_, hA_diam, ?_, ?_⟩
+  · rw [hB_diam]; exact hlt
+  · rw [hA_diam]; exact hge
+  · rw [hB_diam, hA_diam]
+    intro himp
+    exact not_lt_of_ge hge (himp hlt)
+ 
+/-! ### 3.5 局部零化与覆盖数：命题 3.15、3.16、反例与推论 3.17 (CH03-P18-01 .. CH03-P21-02) -/
+ 
+/-- CH03-P18-01: 命题 3.15(i) 严格低于统一零化半径的输入点对输出必归零。 -/
+theorem prop_3_15_i_lt_uniform_radius_zero {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A : Set X) (i j : I)
+    (_hA_ne : A.Nonempty) (hA : A ⊆ dom f) :
+    ∀ x ∈ A, ∀ y ∈ A, d i x y < uniformNullRadiusComp d f i j A →
+      d j (f.func x) (f.func y) = 0 := by
+  intro x hx y hy hlt
+  have hlt_pt : d i x y < pointwiseNullRadiusComp d f i j x A :=
+    lt_of_lt_of_le hlt (iInf₂_le x hx)
+  exact (prop_3_11_lt_radius_zero d hd f A i j x y hA hx hy hlt_pt).2
+ 
+/-- CH03-P18-02: 命题 3.15(ii) 输出正分离推出输入距离不小于统一零化半径。 -/
+theorem prop_3_15_ii_pos_output_ge_uniform_radius {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A : Set X) (i j : I)
+    (hA_ne : A.Nonempty) (hA : A ⊆ dom f) :
+    ∀ x ∈ A, ∀ y ∈ A, 0 < d j (f.func x) (f.func y) →
+      uniformNullRadiusComp d f i j A ≤ d i x y := by
+  intro x hx y hy hpos
+  by_contra hnot
+  push Not at hnot
+  have h0 := prop_3_15_i_lt_uniform_radius_zero d hd f A i j hA_ne hA x hx y hy hnot
+  exact (ne_of_gt hpos) h0
+ 
+/-- CH03-P18-03: 命题 3.15(iii) 零化半径不足时的分离见证（含输出距离为 `+∞` 的情形）。 -/
+theorem prop_3_15_iii_separation_witness {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (_hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A : Set X) (i j : I) (τN α : ENNReal)
+    (_hA_ne : A.Nonempty) (_hA : A ⊆ dom f)
+    (_hτN0 : 0 < τN) (hτNtop : τN < ⊤)
+    (hr_lt_α : uniformNullRadiusComp d f i j A < α) (hα_lt : α < τN) :
+    ∃ x ∈ A, ∃ y ∈ A, ∃ ε : ENNReal,
+      0 < ε ∧ ε < ⊤ ∧ d i x y < α ∧ ε ≤ d j (f.func x) (f.func y) := by
+  have hα0 : 0 < α := lt_of_le_of_lt (zero_le _) hr_lt_α
+  have hαtop : α < ⊤ := lt_trans hα_lt hτNtop
+  have hex_y : ∃ y ∈ A, pointwiseNullRadiusComp d f i j y A < α := by
+    by_contra hall
+    push Not at hall
+    exact not_lt_of_ge (le_iInf₂ hall) hr_lt_α
+  rcases hex_y with ⟨y, hyA, hy_lt⟩
+  have hnot_valid : ¬ ValidNullRadius f (d i) (d j) y A α :=
+    fun hval => not_lt_of_ge (le_sSup (s := {r | ValidNullRadius f (d i) (d j) y A r}) hval) hy_lt
+  have hex_x : ∃ x ∈ A, d i x y < α ∧ 0 < d j (f.func x) (f.func y) := by
+    by_contra hno
+    push Not at hno
+    apply hnot_valid
+    refine ⟨hα0, hαtop, ?_⟩
+    rintro x ⟨hx_ball, hxA⟩
+    exact ⟨hxA, le_antisymm (hno x hxA hx_ball) (zero_le _)⟩
+  rcases hex_x with ⟨x, hxA, hdxy, hout_pos⟩
+  refine ⟨x, hxA, y, hyA, min 1 (d j (f.func x) (f.func y)), ?_, ?_, hdxy, min_le_right _ _⟩
+  · exact lt_min zero_lt_one hout_pos
+  · exact lt_of_le_of_lt (min_le_left _ _) ENNReal.one_lt_top
+ 
+/-- CH03-P19-01: 命题 3.16(i) 统一零化半径不小于有限正阈值 `τN` 时，每个基点的 `τN`-球包含于其计算纤维。 -/
+theorem prop_3_16_i_ball_subset_fiber {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A : Set X) (i j : I) (τN : ENNReal)
+    (hA_ne : A.Nonempty) (hA : A ⊆ dom f)
+    (_hτN0 : 0 < τN) (_hτNtop : τN < ⊤)
+    (hr_ge : τN ≤ uniformNullRadiusComp d f i j A) :
+    ∀ x ∈ A, ball (d i) x τN ∩ A ⊆ CompFiberSingle d f j (f.func x) A := by
+  intro x hx y ⟨hy_ball, hyA⟩
+  rw [CompFiberSingle_eq]
+  refine ⟨hyA, ?_⟩
+  have hlt : d i x y < uniformNullRadiusComp d f i j A := by
+    rw [(hd i).symm x y]
+    exact lt_of_lt_of_le hy_ball hr_ge
+  rw [(hd j).symm (f.func y) (f.func x)]
+  exact prop_3_15_i_lt_uniform_radius_zero d hd f A i j hA_ne hA x hx y hyA hlt
+ 
+/-- CH03-P19-02: 命题 3.16(ii-a) 对任意 `B ⊆ A`（含空集与无有限内覆盖情形）构造内部输出中心并证明覆盖数不等式。 -/
+theorem prop_3_16_ii_a_covering_number_le {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A B : Set X) (i j : I) (τN ε : ENNReal)
+    (hA_ne : A.Nonempty) (hA : A ⊆ dom f) (hBA : B ⊆ A)
+    (hτN0 : 0 < τN) (hτNtop : τN < ⊤)
+    (hε0 : 0 < ε) (_hεtop : ε < ⊤)
+    (hr_ge : τN ≤ uniformNullRadiusComp d f i j A) :
+    (∀ [DecidableEq X] (S : Finset X), InternalEpsilonNet (d i) τN B S →
+      InternalEpsilonNet (d j) ε (operator_image f B) (S.image f.func) ∧
+      (S.image f.func).card ≤ S.card) ∧
+    covering_number (d j) ε (operator_image f B) ≤ covering_number (d i) τN B := by
+  have hfib := prop_3_16_i_ball_subset_fiber d hd f A i j τN hA_ne hA hτN0 hτNtop hr_ge
+  have hpush : ∀ [DecidableEq X] (S : Finset X), InternalEpsilonNet (d i) τN B S →
+      InternalEpsilonNet (d j) ε (operator_image f B) (S.image f.func) ∧
+      (S.image f.func).card ≤ S.card := by
+    intro _ S hS
+    refine ⟨⟨?_, ?_⟩, Finset.card_image_le⟩
+    · intro z hz
+      rcases Finset.mem_image.mp (Finset.mem_coe.mp hz) with ⟨s, hs, rfl⟩
+      exact ⟨s, hS.1 hs, rfl⟩
+    · rintro y ⟨a, haB, rfl⟩
+      rcases hS.2 a haB with ⟨s, hsS, has⟩
+      have hsB : s ∈ B := hS.1 hsS
+      have hmem := hfib s (hBA hsB) ⟨has, hBA haB⟩
+      rw [CompFiberSingle_eq] at hmem
+      refine ⟨f.func s, Finset.mem_image_of_mem f.func hsS, ?_⟩
+      rw [hmem.2]
+      exact hε0
+  refine ⟨hpush, ?_⟩
+  classical
+  apply le_iInf₂
+  intro S hS
+  rcases hpush S hS with ⟨hnet_out, hcard_le⟩
+  calc
+    covering_number (d j) ε (operator_image f B)
+        ≤ ((S.image f.func).card : ENNReal) :=
+      iInf_le_of_le (S.image f.func) (iInf_le_of_le hnet_out le_rfl)
+    _ ≤ (S.card : ENNReal) := by exact_mod_cast hcard_le
+ 
+/-- CH03-P19-03: 命题 3.16(ii-b) 当 `B` 非空时，由覆盖数不等式与 `log2` 单调性推出度量熵不等式。 -/
+theorem prop_3_16_ii_b_metric_entropy_le {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A B : Set X) (i j : I) (τN ε : ENNReal)
+    (hA_ne : A.Nonempty) (hA : A ⊆ dom f) (hBA : B ⊆ A) (_hB_ne : B.Nonempty)
+    (hτN0 : 0 < τN) (hτNtop : τN < ⊤)
+    (hε0 : 0 < ε) (hεtop : ε < ⊤)
+    (hr_ge : τN ≤ uniformNullRadiusComp d f i j A) :
+    metric_entropy (d j) ε (operator_image f B) ≤ metric_entropy (d i) τN B := by
+  exact log2_ereal_mono
+    (prop_3_16_ii_a_covering_number_le d hd f A B i j τN ε
+      hA_ne hA hBA hτN0 hτNtop hε0 hεtop hr_ge).2
+ 
+/-- CH03-P20-01: 命题 3.16 后正文反例：在阶跃反例 `stepU` 上，对任意有限正 `τ` 选 `0 < a ≤ 1, 2a < τ`，构造二点集 `B = {-a, a}` 使输入覆盖数为 `1` 而输出在 `1/2` 尺度下覆盖数为 `2`。 -/
+theorem post_prop_3_16_pointwise_pos_insufficient :
+    (∀ y ∈ stepU, 0 < pointwiseNullRadius stepOp realStdDist realStdDist y stepU) ∧
+    (∀ τ : ENNReal, 0 < τ → τ < ⊤ →
+      ∃ a : ℝ, 0 < a ∧ a ≤ 1 ∧ ENNReal.ofReal (2 * a) < τ ∧
+        let B : Set RealWithBot := {.val (-a), .val a}
+        B ⊆ stepU ∧
+        covering_number realStdDist τ B = 1 ∧
+        covering_number realStdDist (1 / 2) (operator_image stepOp B) = 2 ∧
+        covering_number realStdDist τ B <
+          covering_number realStdDist (1 / 2) (operator_image stepOp B)) ∧
+    ¬ (∃ τ : ENNReal, 0 < τ ∧ τ < ⊤ ∧
+      ∀ B ⊆ stepU,
+        covering_number realStdDist (1 / 2) (operator_image stepOp B) ≤
+          covering_number realStdDist τ B) := by
+  have hpt := counterexample_3_1_pointwise_radius.2
+  have hforall : ∀ τ : ENNReal, 0 < τ → τ < ⊤ →
+      ∃ a : ℝ, 0 < a ∧ a ≤ 1 ∧ ENNReal.ofReal (2 * a) < τ ∧
+        let B : Set RealWithBot := {.val (-a), .val a}
+        B ⊆ stepU ∧
+        covering_number realStdDist τ B = 1 ∧
+        covering_number realStdDist (1 / 2) (operator_image stepOp B) = 2 ∧
+        covering_number realStdDist τ B <
+          covering_number realStdDist (1 / 2) (operator_image stepOp B) := by
+    intro τ hτ0 hτtop
+    have hτ_ne0 : τ ≠ 0 := ne_of_gt hτ0
+    have hτ_netop : τ ≠ ⊤ := lt_top_iff_ne_top.mp hτtop
+    have hτ_real_pos : 0 < τ.toReal := ENNReal.toReal_pos hτ_ne0 hτ_netop
+    let a : ℝ := min 1 (τ.toReal / 4)
+    have ha_pos : 0 < a := lt_min zero_lt_one (by linarith)
+    have ha_le1 : a ≤ 1 := min_le_left _ _
+    have ha_le_q : a ≤ τ.toReal / 4 := min_le_right _ _
+    have h2a_lt_real : 2 * a < τ.toReal := by linarith
+    have h2a_lt : ENNReal.ofReal (2 * a) < τ := by
+      rw [← ENNReal.ofReal_toReal hτ_netop]
+      exact (ENNReal.ofReal_lt_ofReal_iff hτ_real_pos).mpr h2a_lt_real
+    let B : Set RealWithBot := {.val (-a), .val a}
+    have hB_sub : B ⊆ stepU := by
+      intro z hz
+      rcases hz with rfl | rfl
+      · exact ⟨-a, Or.inl ⟨by linarith, by linarith⟩, rfl⟩
+      · exact ⟨a, Or.inr ⟨ha_pos, ha_le1⟩, rfl⟩
+    have hcov_in : covering_number realStdDist τ B = 1 := by
+      classical
+      apply le_antisymm
+      · have hnet : InternalEpsilonNet realStdDist τ B {RealWithBot.val a} := by
+          refine ⟨fun z hz => ?_, fun z hz => ?_⟩
+          · rw [Finset.coe_singleton, Set.mem_singleton_iff] at hz
+            rw [hz]
+            exact Set.mem_insert_of_mem _ (Set.mem_singleton _)
+          · refine ⟨RealWithBot.val a, Finset.mem_singleton_self _, ?_⟩
+            rcases hz with rfl | rfl
+            · change ENNReal.ofReal |-a - a| < τ
+              have habs : |-a - a| = 2 * a := by
+                have hneg : -a - a = -(2 * a) := by ring
+                rw [hneg, abs_neg, abs_of_pos (by linarith)]
+              rw [habs]
+              exact h2a_lt
+            · simpa [realStdDist] using hτ0
+        exact le_trans (iInf_le_of_le {RealWithBot.val a} (iInf_le_of_le hnet le_rfl)) (by simp)
+      · exact one_le_covering_number_of_nonempty realStdDist τ B ⟨.val (-a), Set.mem_insert _ _⟩
+    have himg : operator_image stepOp B = {.val 0, .val 1} := by
+      ext y
+      simp only [operator_image, B, Set.mem_image, Set.mem_insert_iff, Set.mem_singleton_iff]
+      constructor
+      · rintro ⟨z, rfl | rfl, rfl⟩
+        · have hneg : -a < 0 := by linarith
+          simp [stepOp, hneg]
+        · have hnotneg : ¬ (a < 0) := by linarith
+          simp [stepOp, hnotneg]
+      · rintro (rfl | rfl)
+        · refine ⟨.val (-a), Or.inl rfl, ?_⟩
+          have hneg : -a < 0 := by linarith
+          simp [stepOp, hneg]
+        · refine ⟨.val a, Or.inr rfl, ?_⟩
+          have hnotneg : ¬ (a < 0) := by linarith
+          simp [stepOp, hnotneg]
+    have hcov_out : covering_number realStdDist (1 / 2) (operator_image stepOp B) = 2 := by
+      classical
+      rw [himg]
+      let Y : Set RealWithBot := {.val 0, .val 1}
+      apply le_antisymm
+      · let S2 : Finset RealWithBot := {.val 0, .val 1}
+        have hnet2 : InternalEpsilonNet realStdDist (1 / 2) Y S2 := by
+          refine ⟨fun z hz => ?_, fun z hz => ?_⟩
+          · simpa [S2, Y] using hz
+          · rcases hz with rfl | rfl
+            · refine ⟨.val 0, by simp [S2], ?_⟩
+              simp [realStdDist]
+            · refine ⟨.val 1, by simp [S2], ?_⟩
+              simp [realStdDist]
+        have hcard2 : (S2.card : ENNReal) ≤ 2 := by
+          have hc : S2.card = 2 := by
+            rw [Finset.card_pair]
+            intro heq
+            have h01 := RealWithBot.val.inj heq
+            norm_num at h01
+          simp [hc]
+        exact le_trans (iInf_le_of_le S2 (iInf_le_of_le hnet2 le_rfl)) hcard2
+      · apply le_iInf₂
+        intro S hS
+        rcases hS.2 (.val 0) (Set.mem_insert _ _) with ⟨c0, hc0S, hd0⟩
+        rcases hS.2 (.val 1) (Set.mem_insert_of_mem _ (Set.mem_singleton _)) with ⟨c1, hc1S, hd1⟩
+        have hc0_eq : c0 = .val 0 := by
+          rcases hS.1 hc0S with rfl | rfl
+          · rfl
+          · exfalso
+            change ENNReal.ofReal |0 - 1| < 1 / 2 at hd0
+            norm_num at hd0
+        have hc1_eq : c1 = .val 1 := by
+          rcases hS.1 hc1S with rfl | rfl
+          · exfalso
+            change ENNReal.ofReal |1 - 0| < 1 / 2 at hd1
+            norm_num at hd1
+          · rfl
+        have hne01 : c0 ≠ c1 := by
+          rw [hc0_eq, hc1_eq]
+          intro heq
+          have h01 := RealWithBot.val.inj heq
+          norm_num at h01
+        have h2le : 2 ≤ S.card := Finset.one_lt_card.mpr ⟨c0, hc0S, c1, hc1S, hne01⟩
+        exact_mod_cast h2le
+    refine ⟨a, ha_pos, ha_le1, h2a_lt, hB_sub, hcov_in, hcov_out, ?_⟩
+    rw [hcov_in, hcov_out]
+    norm_num
+  refine ⟨hpt, hforall, ?_⟩
+  rintro ⟨τ, hτ0, hτtop, hall⟩
+  rcases hforall τ hτ0 hτtop with ⟨a, _, _, _, hB_sub, _, _, hlt⟩
+  exact not_lt_of_ge (hall _ hB_sub) hlt
+ 
+/-- CH03-P21-01: 推论 3.17 在 `diam_{d_i}(A) < τσ ≤ τN` 条件下，统一零化半径阈值与整体输出零距等价。 -/
+theorem cor_3_17_small_domain_nullification_iff {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A : Set X) (i j : I) (τσ τN : ENNReal)
+    (hA_ne : A.Nonempty) (hA : A ⊆ dom f)
+    (_hτσ0 : 0 < τσ) (_hτσtop : τσ < ⊤)
+    (_hτN0 : 0 < τN) (hτNtop : τN < ⊤)
+    (hdiam : setDiam (d i) A < τσ) (hτ : τσ ≤ τN) :
+    τN ≤ uniformNullRadiusComp d f i j A ↔
+      ∀ x ∈ A, ∀ y ∈ A, d j (f.func x) (f.func y) = 0 := by
+  constructor
+  · intro hr_ge x hx y hy
+    have hdxy_le : d i x y ≤ setDiam (d i) A :=
+      le_iSup₂_of_le x hx (le_iSup₂_of_le y hy le_rfl)
+    have hdxy_lt : d i x y < uniformNullRadiusComp d f i j A :=
+      lt_of_le_of_lt hdxy_le (lt_of_lt_of_le hdiam (le_trans hτ hr_ge))
+    exact prop_3_15_i_lt_uniform_radius_zero d hd f A i j hA_ne hA x hx y hy hdxy_lt
+  · intro hconst
+    have hj_const : ({j} : Set I) ⊆ I_const d f A := by
+      rintro k rfl
+      exact hconst
+    have htop := (prop_3_8_i_b_const_subfamily_radius_top d f A {j} i
+      hA_ne hA (Set.singleton_nonempty j) hj_const).2
+    rw [uniformNullRadiusSubfamily_singleton] at htop
+    change τN ≤ nullMatrix d f A j i
+    rw [htop]
+    exact le_of_lt hτNtop
+ 
+/-- CH03-P21-02: 推论 3.17 等价条件成立且 `A` 非空时，任意有限正 `ε` 下的输出内覆盖数恰为 `1`。 -/
+theorem cor_3_17_covering_number_eq_one {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (f : Operator X bot) (A : Set X) (i j : I) (τσ τN ε : ENNReal)
+    (hA_ne : A.Nonempty) (hA : A ⊆ dom f)
+    (hτσ0 : 0 < τσ) (hτσtop : τσ < ⊤)
+    (hτN0 : 0 < τN) (hτNtop : τN < ⊤)
+    (hε0 : 0 < ε) (_hεtop : ε < ⊤)
+    (hdiam : setDiam (d i) A < τσ) (hτ : τσ ≤ τN)
+    (hr_ge : τN ≤ uniformNullRadiusComp d f i j A) :
+    covering_number (d j) ε (operator_image f A) = 1 := by
+  have hconst := (cor_3_17_small_domain_nullification_iff d hd f A i j τσ τN
+    hA_ne hA hτσ0 hτσtop hτN0 hτNtop hdiam hτ).mp hr_ge
+  rcases hA_ne with ⟨a₀, ha₀⟩
+  classical
+  apply le_antisymm
+  · have hnet : InternalEpsilonNet (d j) ε (operator_image f A) {f.func a₀} := by
+      refine ⟨fun z hz => ?_, ?_⟩
+      · rw [Finset.coe_singleton, Set.mem_singleton_iff] at hz
+        rw [hz]
+        exact ⟨a₀, ha₀, rfl⟩
+      · rintro _ ⟨x, hxA, rfl⟩
+        refine ⟨f.func a₀, Finset.mem_singleton_self _, ?_⟩
+        rw [hconst x hxA a₀ ha₀]
+        exact hε0
+    exact le_trans (iInf_le_of_le {f.func a₀} (iInf_le_of_le hnet le_rfl)) (by simp)
+  · exact one_le_covering_number_of_nonempty (d j) ε (operator_image f A) ⟨f.func a₀, a₀, ha₀, rfl⟩
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec06.lean
+import Ch03.Sec04_05
+import Mathlib.Data.Set.Card
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set Finset
+ 
+/-! ### 3.6 映射熵差：有限集良定性注记与命题 3.18、3.19、3.20 (CH03-P22-01 .. CH03-P25-02) -/
+ 
+/-- 非空有限集以自身为内覆盖中心集时，覆盖数正且有限（不超过基数）。 -/
+theorem covering_number_le_toFinset_card {X : Type} (d : X → X → ENNReal)
+    (hself : ∀ x : X, d x x = 0)
+    (U : Set X) (hU_fin : U.Finite) {ε : ENNReal} (hε0 : 0 < ε) :
+    covering_number d ε U ≤ (hU_fin.toFinset.card : ENNReal) ∧
+    covering_number d ε U < ⊤ := by
+  have hnet : InternalEpsilonNet d ε U hU_fin.toFinset := by
+    refine ⟨by simp, fun x hx => ⟨x, hU_fin.mem_toFinset.mpr hx, ?_⟩⟩
+    rw [hself x]
+    exact hε0
+  have hle : covering_number d ε U ≤ (hU_fin.toFinset.card : ENNReal) :=
+    iInf_le_of_le hU_fin.toFinset (iInf_le_of_le hnet le_rfl)
+  exact ⟨hle, lt_of_le_of_lt hle (ENNReal.natCast_lt_top _)⟩
+ 
+/-- CH03-P22-01: 注（有限集上映射熵差的良定性）：非空有限 `U` 及任意两端非空子族的覆盖数正有限、熵为有限实数、熵差良定。 -/
+theorem note_finite_set_mapping_entropy_diff_well_defined {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (Jin Jout : Set I) (ε : ENNReal)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ) (hU_fin : U.Finite)
+    (hJin : Jin.Nonempty) (hJout : Jout.Nonempty)
+    (hε0 : 0 < ε) (hεtop : ε < ⊤) :
+    1 ≤ subfamily_covering_number d Jin ε U ∧
+    subfamily_covering_number d Jin ε U ≤ (hU_fin.toFinset.card : ENNReal) ∧
+    subfamily_covering_number d Jin ε U < ⊤ ∧
+    1 ≤ subfamily_covering_number d Jout ε (operator_image ϕ U) ∧
+    subfamily_covering_number d Jout ε (operator_image ϕ U) < ⊤ ∧
+    (∃ rin : ℝ, 0 ≤ rin ∧ subfamily_metric_entropy d Jin ε U = (rin : EReal)) ∧
+    (∃ rout : ℝ, 0 ≤ rout ∧
+      subfamily_metric_entropy d Jout ε (operator_image ϕ U) = (rout : EReal)) ∧
+    ∃ hwf : MappingEntropyDiffWellDefined d ϕ U Jin Jout ε,
+      ∃ δ : ℝ, mappingEntropyDiff d ϕ U Jin Jout ε hwf = (δ : EReal) := by
+  have hd_in := subfamily_pseudometric_is_extended d Jin hJin hd
+  have hd_out := subfamily_pseudometric_is_extended d Jout hJout hd
+  have hIm_ne : (operator_image ϕ U).Nonempty := hU_ne.image ϕ.func
+  have hIm_fin : (operator_image ϕ U).Finite := hU_fin.image ϕ.func
+  have h1_in := one_le_covering_number_of_nonempty (subfamily_pseudometric d Jin) ε U hU_ne
+  rcases covering_number_le_toFinset_card (subfamily_pseudometric d Jin) hd_in.dist_self
+      U hU_fin hε0 with ⟨hle_in, hlt_in⟩
+  have h1_out := one_le_covering_number_of_nonempty (subfamily_pseudometric d Jout)
+    ε (operator_image ϕ U) hIm_ne
+  rcases covering_number_le_toFinset_card (subfamily_pseudometric d Jout) hd_out.dist_self
+      (operator_image ϕ U) hIm_fin hε0 with ⟨_, hlt_out⟩
+  have hin0 : covering_number (subfamily_pseudometric d Jin) ε U ≠ 0 :=
+    ne_of_gt (lt_of_lt_of_le zero_lt_one h1_in)
+  have hout0 : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) ≠ 0 :=
+    ne_of_gt (lt_of_lt_of_le zero_lt_one h1_out)
+  have hintop : covering_number (subfamily_pseudometric d Jin) ε U ≠ ⊤ :=
+    lt_top_iff_ne_top.mp hlt_in
+  have houttop : covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U) ≠ ⊤ :=
+    lt_top_iff_ne_top.mp hlt_out
+  have hwf : MappingEntropyDiffWellDefined d ϕ U Jin Jout ε :=
+    ⟨hU_ne, hU, hJin, hJout, hε0, hεtop, Or.inl hlt_in⟩
+  refine ⟨h1_in, hle_in, hlt_in, h1_out, hlt_out, ?_, ?_, hwf, ?_⟩
+  · refine ⟨Real.logb 2 (covering_number (subfamily_pseudometric d Jin) ε U).toReal, ?_, ?_⟩
+    · apply Real.logb_nonneg one_lt_two
+      simpa using ENNReal.toReal_mono hintop h1_in
+    · simp [subfamily_metric_entropy, log2_ereal, hin0, hintop]
+  · refine ⟨Real.logb 2 (covering_number (subfamily_pseudometric d Jout)
+        ε (operator_image ϕ U)).toReal, ?_, ?_⟩
+    · apply Real.logb_nonneg one_lt_two
+      simpa using ENNReal.toReal_mono houttop h1_out
+    · simp [subfamily_metric_entropy, log2_ereal, hout0, houttop]
+  · refine ⟨Real.logb 2 (covering_number (subfamily_pseudometric d Jin) ε U).toReal -
+      Real.logb 2 (covering_number (subfamily_pseudometric d Jout) ε (operator_image ϕ U)).toReal, ?_⟩
+    unfold mappingEntropyDiff subfamily_covering_number
+    simp [hlt_in, hlt_out]
+ 
+/-! ### 命题 3.18：分量分划与映射熵差 (CH03-P23-01 .. 03) -/
+ 
+/-- CH03-P23-01: 命题 3.18(i) 常值分量输出覆盖数为 `1`、熵为 `0`，映射熵差良定且等于输入熵（允许输入熵为 `+∞`）。 -/
+theorem prop_3_18_i_const_entropy_diff {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (j : I) (ε : ENNReal)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (hε0 : 0 < ε) (hεtop : ε < ⊤) (hj : j ∈ I_const d ϕ U) :
+    covering_number (d j) ε (operator_image ϕ U) = 1 ∧
+    metric_entropy (d j) ε (operator_image ϕ U) = 0 ∧
+    ∃ hwf : MappingEntropyDiffSingleWellDefined d ϕ U j ε,
+      mappingEntropyDiffSingle d ϕ U j ε hwf = metric_entropy (d j) ε U := by
+  rcases hU_ne with ⟨u₀, hu₀⟩
+  have hcov1 : covering_number (d j) ε (operator_image ϕ U) = 1 := by
+    classical
+    apply le_antisymm
+    · have hnet : InternalEpsilonNet (d j) ε (operator_image ϕ U) {ϕ.func u₀} := by
+        refine ⟨fun z hz => ?_, ?_⟩
+        · rw [Finset.coe_singleton, Set.mem_singleton_iff] at hz
+          rw [hz]
+          exact ⟨u₀, hu₀, rfl⟩
+        · rintro _ ⟨x, hxU, rfl⟩
+          refine ⟨ϕ.func u₀, Finset.mem_singleton_self _, ?_⟩
+          rw [hj x hxU u₀ hu₀]
+          exact hε0
+      exact le_trans (iInf_le_of_le {ϕ.func u₀} (iInf_le_of_le hnet le_rfl)) (by simp)
+    · exact one_le_covering_number_of_nonempty (d j) ε (operator_image ϕ U)
+        ⟨ϕ.func u₀, u₀, hu₀, rfl⟩
+  have hent0 : metric_entropy (d j) ε (operator_image ϕ U) = 0 := by
+    unfold metric_entropy log2_ereal
+    rw [hcov1]
+    simp
+  have hwf : MappingEntropyDiffSingleWellDefined d ϕ U j ε := by
+    refine ⟨⟨u₀, hu₀⟩, hU, Set.singleton_nonempty j, Set.singleton_nonempty j, hε0, hεtop, Or.inr ?_⟩
+    rw [subfamily_covering_number_singleton, hcov1]
+    exact ENNReal.one_lt_top
+  refine ⟨hcov1, hent0, hwf, ?_⟩
+  unfold mappingEntropyDiffSingle
+  rw [mappingEntropyDiff_eq_sub, subfamily_metric_entropy_singleton,
+      subfamily_metric_entropy_singleton, hent0, sub_zero]
+ 
+/-- CH03-P23-02: 命题 3.18(ii-a) 恒等分量前向推中心与反向选代表元，证明覆盖数与度量熵相等。 -/
+theorem prop_3_18_ii_a_id_covering_and_entropy_eq {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (j : I) (ε : ENNReal)
+    (_hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (_hε0 : 0 < ε) (_hεtop : ε < ⊤) (hj : j ∈ I_id d ϕ U) :
+    (∀ [DecidableEq X] (S : Finset X), InternalEpsilonNet (d j) ε U S →
+      InternalEpsilonNet (d j) ε (operator_image ϕ U) (S.image ϕ.func) ∧
+      (S.image ϕ.func).card ≤ S.card) ∧
+    (∀ [DecidableEq X] (T : Finset X), InternalEpsilonNet (d j) ε (operator_image ϕ U) T →
+      ∃ S : Finset X, InternalEpsilonNet (d j) ε U S ∧ S.card ≤ T.card) ∧
+    covering_number (d j) ε (operator_image ϕ U) = covering_number (d j) ε U ∧
+    metric_entropy (d j) ε (operator_image ϕ U) = metric_entropy (d j) ε U := by
+  have hiso := prop_3_1_iii_id_preserves_dist d hd ϕ U j hU hj
+  have hfwd : ∀ [DecidableEq X] (S : Finset X), InternalEpsilonNet (d j) ε U S →
+      InternalEpsilonNet (d j) ε (operator_image ϕ U) (S.image ϕ.func) ∧
+      (S.image ϕ.func).card ≤ S.card := by
+    intro _ S hS
+    refine ⟨⟨?_, ?_⟩, Finset.card_image_le⟩
+    · intro z hz
+      rcases Finset.mem_image.mp (Finset.mem_coe.mp hz) with ⟨s, hs, rfl⟩
+      exact ⟨s, hS.1 hs, rfl⟩
+    · rintro _ ⟨x, hxU, rfl⟩
+      rcases hS.2 x hxU with ⟨s, hsS, hxs⟩
+      refine ⟨ϕ.func s, Finset.mem_image_of_mem ϕ.func hsS, ?_⟩
+      rw [hiso x hxU s (hS.1 hsS)]
+      exact hxs
+  have hbwd : ∀ [DecidableEq X] (T : Finset X), InternalEpsilonNet (d j) ε (operator_image ϕ U) T →
+      ∃ S : Finset X, InternalEpsilonNet (d j) ε U S ∧ S.card ≤ T.card := by
+    intro _ T hT
+    let rep : {t // t ∈ T} → X := fun t => Classical.choose (hT.1 t.2)
+    have hrep : ∀ t : {t // t ∈ T}, rep t ∈ U ∧ ϕ.func (rep t) = t.1 :=
+      fun t => Classical.choose_spec (hT.1 t.2)
+    let S : Finset X := T.attach.image rep
+    refine ⟨S, ⟨?_, ?_⟩, ?_⟩
+    · intro s hs
+      rcases Finset.mem_image.mp (Finset.mem_coe.mp hs) with ⟨t, _, rfl⟩
+      exact (hrep t).1
+    · intro x hxU
+      rcases hT.2 (ϕ.func x) ⟨x, hxU, rfl⟩ with ⟨t, htT, hxt⟩
+      refine ⟨rep ⟨t, htT⟩, Finset.mem_image_of_mem rep (Finset.mem_attach _ ⟨t, htT⟩), ?_⟩
+      rw [← hiso x hxU (rep ⟨t, htT⟩) (hrep ⟨t, htT⟩).1, (hrep ⟨t, htT⟩).2]
+      exact hxt
+    · exact le_trans Finset.card_image_le (by simp)
+  have hcov_eq : covering_number (d j) ε (operator_image ϕ U) = covering_number (d j) ε U := by
+    classical
+    apply le_antisymm
+    · apply le_iInf₂
+      intro S hS
+      rcases hfwd S hS with ⟨hnet_out, hcard⟩
+      exact le_trans
+        (iInf_le_of_le (S.image ϕ.func) (iInf_le_of_le hnet_out le_rfl))
+        (by exact_mod_cast hcard)
+    · apply le_iInf₂
+      intro T hT
+      rcases hbwd T hT with ⟨S, hnet_in, hcard⟩
+      exact le_trans
+        (iInf_le_of_le S (iInf_le_of_le hnet_in le_rfl))
+        (by exact_mod_cast hcard)
+  exact ⟨hfwd, hbwd, hcov_eq, by simp [metric_entropy, hcov_eq]⟩
+ 
+/-- CH03-P23-03: 命题 3.18(ii-b) 恒等分量仅在映射熵差良定时推出熵差为 `0`（不定义无穷减无穷）。 -/
+theorem prop_3_18_ii_b_id_entropy_diff_zero {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (j : I) (ε : ENNReal)
+    (hj : j ∈ I_id d ϕ U)
+    (hwf : MappingEntropyDiffSingleWellDefined d ϕ U j ε) :
+    mappingEntropyDiffSingle d ϕ U j ε hwf = 0 := by
+  have hcov_eq := (prop_3_18_ii_a_id_covering_and_entropy_eq d hd ϕ U j ε
+    hwf.1 hwf.2.1 hwf.2.2.2.2.1 hwf.2.2.2.2.2.1 hj).2.2.1
+  unfold mappingEntropyDiffSingle mappingEntropyDiff subfamily_covering_number
+  simp only [subfamily_pseudometric_singleton]
+  have hin_lt : covering_number (d j) ε U < ⊤ := by
+    rcases hwf.2.2.2.2.2.2 with hin | hout
+    · simpa [subfamily_covering_number_singleton] using hin
+    · rw [subfamily_covering_number_singleton, hcov_eq] at hout
+      exact hout
+  have hout_lt : covering_number (d j) ε (operator_image ϕ U) < ⊤ := by
+    rw [hcov_eq]; exact hin_lt
+  simp [hin_lt, hcov_eq]
+ 
+/-! ### 命题 3.19：单通道 Lip 上界与熵差下界 (CH03-P24-01 .. 02) -/
+ 
+/-- CH03-P24-01: 命题 3.19 有限正 `L` 将 `ε/L` 内部输入覆盖推到 `ε` 输出覆盖，基数不增，给出覆盖数上界。 -/
+theorem prop_3_19_covering_number_upper_bound {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i j : I) (ε L : ENNReal)
+    (_hU_ne : U.Nonempty) (_hU : U ⊆ dom ϕ)
+    (_hε0 : 0 < ε) (_hεtop : ε < ⊤)
+    (hL0 : 0 < L) (hLtop : L < ⊤)
+    (hLip : ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L * d i x y) :
+    (∀ [DecidableEq X] (S : Finset X), InternalEpsilonNet (d i) (ε / L) U S →
+      InternalEpsilonNet (d j) ε (operator_image ϕ U) (S.image ϕ.func) ∧
+      (S.image ϕ.func).card ≤ S.card) ∧
+    covering_number (d j) ε (operator_image ϕ U) ≤ covering_number (d i) (ε / L) U := by
+  have hL_ne0 : L ≠ 0 := ne_of_gt hL0
+  have hL_netop : L ≠ ⊤ := lt_top_iff_ne_top.mp hLtop
+  have hpush : ∀ [DecidableEq X] (S : Finset X), InternalEpsilonNet (d i) (ε / L) U S →
+      InternalEpsilonNet (d j) ε (operator_image ϕ U) (S.image ϕ.func) ∧
+      (S.image ϕ.func).card ≤ S.card := by
+    intro _ S hS
+    refine ⟨⟨?_, ?_⟩, Finset.card_image_le⟩
+    · intro z hz
+      rcases Finset.mem_image.mp (Finset.mem_coe.mp hz) with ⟨s, hs, rfl⟩
+      exact ⟨s, hS.1 hs, rfl⟩
+    · rintro _ ⟨x, hxU, rfl⟩
+      rcases hS.2 x hxU with ⟨c, hcS, hxc⟩
+      refine ⟨ϕ.func c, Finset.mem_image_of_mem ϕ.func hcS, ?_⟩
+      calc
+        d j (ϕ.func x) (ϕ.func c) ≤ L * d i x c := hLip x hxU c (hS.1 hcS)
+        _ = d i x c * L := mul_comm _ _
+        _ < (ε / L) * L := ENNReal.mul_lt_mul_left hL_ne0 hL_netop hxc
+        _ = ε := ENNReal.div_mul_cancel hL_ne0 hL_netop
+  refine ⟨hpush, ?_⟩
+  classical
+  apply le_iInf₂
+  intro S hS
+  rcases hpush S hS with ⟨hnet_out, hcard⟩
+  exact le_trans
+    (iInf_le_of_le (S.image ϕ.func) (iInf_le_of_le hnet_out le_rfl))
+    (by exact_mod_cast hcard)
+ 
+/-- CH03-P24-02: 命题 3.19 输入全有界给出两端有限熵、映射熵差良定及熵差下界。 -/
+theorem prop_3_19_entropy_diff_lower_bound {X I : Type} {bot : X}
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X) (i j : I) (ε L : ENNReal)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (htb : IsTotallyBounded (d i) U)
+    (hε0 : 0 < ε) (hεtop : ε < ⊤)
+    (hL0 : 0 < L) (hLtop : L < ⊤)
+    (hLip : ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L * d i x y) :
+    metric_entropy (d i) ε U < ⊤ ∧
+    metric_entropy (d i) (ε / L) U < ⊤ ∧
+    metric_entropy (d j) ε (operator_image ϕ U) < ⊤ ∧
+    ∃ hwf : MappingEntropyDiffCompWellDefined d ϕ U i j ε,
+      metric_entropy (d i) ε U - metric_entropy (d i) (ε / L) U ≤
+        mappingEntropyDiffComp d ϕ U i j ε hwf := by
+  have hcov_le := (prop_3_19_covering_number_upper_bound d ϕ U i j ε L
+    hU_ne hU hε0 hεtop hL0 hLtop hLip).2
+  have hdiv_pos : 0 < ε / L := ENNReal.div_pos (ne_of_gt hε0) (lt_top_iff_ne_top.mp hLtop)
+  have hdiv_top : ε / L < ⊤ := ENNReal.div_lt_top (lt_top_iff_ne_top.mp hεtop) (ne_of_gt hL0)
+  have hin_lt : covering_number (d i) ε U < ⊤ := htb ε hε0 hεtop
+  have hdiv_cov_lt : covering_number (d i) (ε / L) U < ⊤ := htb (ε / L) hdiv_pos hdiv_top
+  have hout_lt : covering_number (d j) ε (operator_image ϕ U) < ⊤ :=
+    lt_of_le_of_lt hcov_le hdiv_cov_lt
+  have hwf : MappingEntropyDiffCompWellDefined d ϕ U i j ε := by
+    refine ⟨hU_ne, hU, Set.singleton_nonempty i, Set.singleton_nonempty j, hε0, hεtop, Or.inl ?_⟩
+    simpa [subfamily_covering_number_singleton] using hin_lt
+  have hent_le : metric_entropy (d j) ε (operator_image ϕ U) ≤ metric_entropy (d i) (ε / L) U :=
+    log2_ereal_mono hcov_le
+  refine ⟨(metric_entropy_lt_top_iff _ _ _).mpr hin_lt,
+    (metric_entropy_lt_top_iff _ _ _).mpr hdiv_cov_lt,
+    (metric_entropy_lt_top_iff _ _ _).mpr hout_lt, hwf, ?_⟩
+  unfold mappingEntropyDiffComp
+  rw [mappingEntropyDiff_eq_sub, subfamily_metric_entropy_singleton,
+      subfamily_metric_entropy_singleton]
+  exact EReal.sub_le_sub le_rfl hent_le
+ 
+/-! ### 命题 3.20：co-Lip 常数与熵差上界 (CH03-P25-01 .. 02) -/
+ 
+/-- CH03-P25-01: 命题 3.20 正有限 co-Lip 条目将内部输出中心原像拉回为 `ε/K_{i→j}` 输入内覆盖，证明覆盖数下界。 -/
+theorem prop_3_20_covering_number_lower_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : I → I → ENNReal) (i j : I) (ε : ENNReal)
+    (_hU_ne : U.Nonempty) (_hU : U ⊆ dom ϕ)
+    (_hε0 : 0 < ε) (_hεtop : ε < ⊤)
+    (hK : IsCoLipMatrix d ϕ U K)
+    (hK0 : 0 < K i j) (hKtop : K i j < ⊤) :
+    (∀ [DecidableEq X] (T : Finset X), InternalEpsilonNet (d j) ε (operator_image ϕ U) T →
+      ∃ S : Finset X, InternalEpsilonNet (d i) (ε / K i j) U S ∧ S.card ≤ T.card) ∧
+    covering_number (d i) (ε / K i j) U ≤ covering_number (d j) ε (operator_image ϕ U) := by
+  have hK_ne0 : K i j ≠ 0 := ne_of_gt hK0
+  have hK_netop : K i j ≠ ⊤ := lt_top_iff_ne_top.mp hKtop
+  have hpull : ∀ [DecidableEq X] (T : Finset X), InternalEpsilonNet (d j) ε (operator_image ϕ U) T →
+      ∃ S : Finset X, InternalEpsilonNet (d i) (ε / K i j) U S ∧ S.card ≤ T.card := by
+    intro _ T hT
+    let rep : {t // t ∈ T} → X := fun t => Classical.choose (hT.1 t.2)
+    have hrep : ∀ t : {t // t ∈ T}, rep t ∈ U ∧ ϕ.func (rep t) = t.1 :=
+      fun t => Classical.choose_spec (hT.1 t.2)
+    let S : Finset X := T.attach.image rep
+    refine ⟨S, ⟨?_, ?_⟩, le_trans Finset.card_image_le (by simp)⟩
+    · intro s hs
+      rcases Finset.mem_image.mp (Finset.mem_coe.mp hs) with ⟨t, _, rfl⟩
+      exact (hrep t).1
+    · intro x hxU
+      rcases hT.2 (ϕ.func x) ⟨x, hxU, rfl⟩ with ⟨t, htT, hxt⟩
+      let ct := rep ⟨t, htT⟩
+      have hctU : ct ∈ U := (hrep ⟨t, htT⟩).1
+      have hct_eq : ϕ.func ct = t := (hrep ⟨t, htT⟩).2
+      have hmul_lt : K i j * d i x ct < ε := by
+        calc
+          K i j * d i x ct ≤ ∑ k : I, K k j * d k x ct :=
+            Finset.single_le_sum (f := fun k => K k j * d k x ct)
+              (fun _ _ => zero_le _) (Finset.mem_univ i)
+          _ ≤ d j (ϕ.func x) (ϕ.func ct) := hK.2.2 x hxU ct hctU j
+          _ = d j (ϕ.func x) t := by rw [hct_eq]
+          _ < ε := hxt
+      refine ⟨ct, Finset.mem_image_of_mem rep (Finset.mem_attach _ ⟨t, htT⟩), ?_⟩
+      calc
+        d i x ct = (K i j)⁻¹ * (K i j * d i x ct) := by
+          rw [← mul_assoc, ENNReal.inv_mul_cancel hK_ne0 hK_netop, one_mul]
+        _ = (K i j * d i x ct) * (K i j)⁻¹ := mul_comm _ _
+        _ < ε * (K i j)⁻¹ :=
+          ENNReal.mul_lt_mul_left (ENNReal.inv_ne_zero.mpr hK_netop)
+            (ENNReal.inv_ne_top.mpr hK_ne0) hmul_lt
+        _ = ε / K i j := rfl
+  refine ⟨hpull, ?_⟩
+  classical
+  apply le_iInf₂
+  intro T hT
+  rcases hpull T hT with ⟨S, hnet_in, hcard⟩
+  exact le_trans
+    (iInf_le_of_le S (iInf_le_of_le hnet_in le_rfl))
+    (by exact_mod_cast hcard)
+ 
+/-- CH03-P25-02: 命题 3.20 输入全有界（允许输出熵为 `+∞`）保证映射熵差良定及熵差上界。 -/
+theorem prop_3_20_entropy_diff_upper_bound {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (ϕ : Operator X bot) (U : Set X)
+    (K : I → I → ENNReal) (i j : I) (ε : ENNReal)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (htb : IsTotallyBounded (d i) U)
+    (hε0 : 0 < ε) (hεtop : ε < ⊤)
+    (hK : IsCoLipMatrix d ϕ U K)
+    (hK0 : 0 < K i j) (hKtop : K i j < ⊤) :
+    metric_entropy (d i) ε U < ⊤ ∧
+    metric_entropy (d i) (ε / K i j) U < ⊤ ∧
+    ∃ hwf : MappingEntropyDiffCompWellDefined d ϕ U i j ε,
+      mappingEntropyDiffComp d ϕ U i j ε hwf ≤
+        metric_entropy (d i) ε U - metric_entropy (d i) (ε / K i j) U := by
+  have hcov_ge := (prop_3_20_covering_number_lower_bound d ϕ U K i j ε
+    hU_ne hU hε0 hεtop hK hK0 hKtop).2
+  have hdiv_pos : 0 < ε / K i j := ENNReal.div_pos (ne_of_gt hε0) (lt_top_iff_ne_top.mp hKtop)
+  have hdiv_top : ε / K i j < ⊤ := ENNReal.div_lt_top (lt_top_iff_ne_top.mp hεtop) (ne_of_gt hK0)
+  have hin_lt : covering_number (d i) ε U < ⊤ := htb ε hε0 hεtop
+  have hdiv_cov_lt : covering_number (d i) (ε / K i j) U < ⊤ := htb (ε / K i j) hdiv_pos hdiv_top
+  have hwf : MappingEntropyDiffCompWellDefined d ϕ U i j ε := by
+    refine ⟨hU_ne, hU, Set.singleton_nonempty i, Set.singleton_nonempty j, hε0, hεtop, Or.inl ?_⟩
+    simpa [subfamily_covering_number_singleton] using hin_lt
+  have hent_ge : metric_entropy (d i) (ε / K i j) U ≤ metric_entropy (d j) ε (operator_image ϕ U) :=
+    log2_ereal_mono hcov_ge
+  refine ⟨(metric_entropy_lt_top_iff _ _ _).mpr hin_lt,
+    (metric_entropy_lt_top_iff _ _ _).mpr hdiv_cov_lt, hwf, ?_⟩
+  unfold mappingEntropyDiffComp
+  rw [mappingEntropyDiff_eq_sub, subfamily_metric_entropy_singleton,
+      subfamily_metric_entropy_singleton]
+  exact EReal.sub_le_sub le_rfl hent_ge
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec07_Ex1_3.lean
+import Ch03.Sec06
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set Finset
+ 
+/-! ### 绝对值读数伪度量 `d(x, y) = ||x| - |y||`（习题 3.1 与 3.3 共用） -/
+ 
+/-- 实数部分采用绝对值读数差 `|(|x| - |y|)|`、吸收元隔离的扩展伪度量。 -/
+noncomputable def realAbsDist : RealWithBot → RealWithBot → ENNReal
+  | .bot, .bot => 0
+  | .bot, .val _ => ⊤
+  | .val _, .bot => ⊤
+  | .val x, .val y => ENNReal.ofReal |(|x| - |y|)|
+ 
+@[simp] theorem realAbsDist_val (x y : ℝ) :
+    realAbsDist (.val x) (.val y) = ENNReal.ofReal |(|x| - |y|)| := rfl
+ 
+@[simp] theorem realAbsDist_val_eq_zero_iff (x y : ℝ) :
+    realAbsDist (.val x) (.val y) = 0 ↔ |x| = |y| := by
+  rw [realAbsDist_val, ENNReal.ofReal_eq_zero]
+  constructor
+  · intro h
+    have h0 : |(|x| - |y|)| = 0 := le_antisymm h (abs_nonneg _)
+    exact sub_eq_zero.mp (abs_eq_zero.mp h0)
+  · intro h
+    simp [h]
+ 
+theorem realAbsDist_is_extended :
+    ExtendedPseudoMetric RealWithBot RealWithBot.bot realAbsDist where
+  nonabsorbing := ⟨.val 0, fun h => by cases h⟩
+  dist_self x := by cases x <;> simp [realAbsDist]
+  symm x y := by
+    cases x <;> cases y <;> simp [realAbsDist, abs_sub_comm]
+  triangle x y z := by
+    cases x <;> cases y <;> cases z <;> simp [realAbsDist]
+    rw [← ENNReal.ofReal_add (abs_nonneg _) (abs_nonneg _)]
+    exact ENNReal.ofReal_le_ofReal (abs_sub_le _ _ _)
+  isolate_bot x hx := by
+    cases x with
+    | bot => exact False.elim (hx rfl)
+    | val _ => rfl
+ 
+noncomputable abbrev realAbsGauge : Unit → RealWithBot → RealWithBot → ENNReal := fun _ => realAbsDist
+ 
+/-! ### 习题 3.1：计算纤维与自复合 (CH03-P26-01 .. 03) -/
+ 
+/-- 习题 3.1 中的仿射算子 `ϕ(x) = 2x - 1, ϕ(⊥) = ⊥`。 -/
+noncomputable def ex31Phi : Operator RealWithBot RealWithBot.bot where
+  func
+    | .bot => .bot
+    | .val x => .val (2 * x - 1)
+  preserves_bot := rfl
+ 
+@[simp] theorem ex31Phi_val (x : ℝ) : ex31Phi.func (.val x) = .val (2 * x - 1) := rfl
+ 
+def ex31U : Set RealWithBot := {.val 0, .val 1}
+ 
+/-- CH03-P26-01: 习题 3.1(i-a) 验证绝对值读数伪度量与算子合法性，算出 `ϕ` 的纤维与分量类型。 -/
+theorem ex_3_1_i_a_phi_fiber_and_type :
+    ExtendedPseudoMetric RealWithBot RealWithBot.bot realAbsDist ∧
+    ex31U ⊆ dom ex31Phi ∧
+    CompFiberSingle realAbsGauge ex31Phi () (ex31Phi.func (.val 0)) ex31U = ex31U ∧
+    () ∈ I_const realAbsGauge ex31Phi ex31U ∧
+    I_const realAbsGauge ex31Phi ex31U = {()} ∧
+    I_id realAbsGauge ex31Phi ex31U = ∅ ∧
+    I_act realAbsGauge ex31Phi ex31U = ∅ := by
+  have hdom : ex31U ⊆ dom ex31Phi := by
+    intro x hx hbot
+    rcases hx with rfl | rfl <;> cases hbot
+  have hconst_mem : () ∈ I_const realAbsGauge ex31Phi ex31U := by
+    intro x hx y hy
+    rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
+      simp [realAbsGauge] <;> norm_num
+  have hfib : CompFiberSingle realAbsGauge ex31Phi ()
+      (ex31Phi.func (.val 0)) ex31U = ex31U := by
+    rw [CompFiberSingle_eq]
+    ext x
+    simp only [Set.mem_setOf_eq, and_iff_left_iff_imp]
+    intro hx
+    exact hconst_mem x hx (.val 0) (Set.mem_insert _ _)
+  refine ⟨realAbsDist_is_extended, hdom, hfib, hconst_mem, ?_, ?_, ?_⟩
+  · ext u; cases u; simp [hconst_mem]
+  · ext u; cases u; simp [I_id, hconst_mem]
+  · ext u; cases u; simp [I_act, hconst_mem]
+ 
+/-- CH03-P26-02: 习题 3.1(i-b) 算出自复合 `ϕ²` 在 `U = {0, 1}` 上的纤维与分量类型。 -/
+theorem ex_3_1_i_b_phi_sq_fiber_and_type :
+    ex31U ⊆ dom (ex31Phi * ex31Phi) ∧
+    CompFiberSingle realAbsGauge (ex31Phi * ex31Phi) ()
+      ((ex31Phi * ex31Phi).func (.val 0)) ex31U = {.val 0} ∧
+    CompFiberSingle realAbsGauge (ex31Phi * ex31Phi) ()
+      ((ex31Phi * ex31Phi).func (.val 1)) ex31U = {.val 1} ∧
+    () ∉ I_const realAbsGauge (ex31Phi * ex31Phi) ex31U ∧
+    () ∉ I_id realAbsGauge (ex31Phi * ex31Phi) ex31U ∧
+    () ∈ I_act realAbsGauge (ex31Phi * ex31Phi) ex31U ∧
+    I_act realAbsGauge (ex31Phi * ex31Phi) ex31U = {()} := by
+  have hdom : ex31U ⊆ dom (ex31Phi * ex31Phi) := by
+    intro x hx hbot
+    rcases hx with rfl | rfl <;> cases hbot
+  have hsq_val : ∀ x : ℝ, (ex31Phi * ex31Phi).func (.val x) = .val (2 * (2 * x - 1) - 1) :=
+    fun _ => rfl
+  have hfib0 : CompFiberSingle realAbsGauge (ex31Phi * ex31Phi) ()
+      ((ex31Phi * ex31Phi).func (.val 0)) ex31U = {.val 0} := by
+    rw [CompFiberSingle_eq]
+    ext x
+    simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl, h0⟩
+      · rfl
+      · exfalso
+        rw [hsq_val 1, hsq_val 0] at h0
+        simp [realAbsGauge] at h0
+        norm_num at h0
+    · rintro rfl
+      exact ⟨Set.mem_insert _ _, by rw [hsq_val 0]; simp [realAbsGauge]⟩
+  have hfib1 : CompFiberSingle realAbsGauge (ex31Phi * ex31Phi) ()
+      ((ex31Phi * ex31Phi).func (.val 1)) ex31U = {.val 1} := by
+    rw [CompFiberSingle_eq]
+    ext x
+    simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨rfl | rfl, h0⟩
+      · exfalso
+        rw [hsq_val 0, hsq_val 1] at h0
+        simp [realAbsGauge] at h0
+        norm_num at h0
+      · rfl
+    · rintro rfl
+      exact ⟨Set.mem_insert_of_mem _ (Set.mem_singleton _), by rw [hsq_val 1]; simp [realAbsGauge]⟩
+  have hnconst : () ∉ I_const realAbsGauge (ex31Phi * ex31Phi) ex31U := by
+    intro hc
+    have h := hc (.val 0) (Set.mem_insert _ _) (.val 1)
+      (Set.mem_insert_of_mem _ (Set.mem_singleton _))
+    rw [hsq_val 0, hsq_val 1] at h
+    simp [realAbsGauge] at h
+    norm_num at h
+  have hnid : () ∉ I_id realAbsGauge (ex31Phi * ex31Phi) ex31U := by
+    intro hid
+    have h := hid.2 (.val 0) (Set.mem_insert _ _)
+    rw [hsq_val 0] at h
+    simp [realAbsGauge] at h
+    norm_num at h
+  have hact : () ∈ I_act realAbsGauge (ex31Phi * ex31Phi) ex31U :=
+    ⟨trivial, fun hor => hor.elim hnconst hnid⟩
+  refine ⟨hdom, hfib0, hfib1, hnconst, hnid, hact, ?_⟩
+  ext u; cases u
+  exact ⟨fun _ => rfl, fun _ => hact⟩
+ 
+/-- CH03-P26-03: 习题 3.1(ii) 点值常算子在 `U` 上取同一实数值 `c` 时，自复合仍不能使 `0, 1` 落入不同纤维；并完整区分 `ψ(c) ≠ ⊥`（`U ⊆ dom(ψ²)`，常值单一纤维 `U`）与 `ψ(c) = ⊥`（`U ⊈ dom(ψ²)`，超出受限纤维适用域）两分支。 -/
+theorem ex_3_1_ii_pointwise_const_self_comp (ψ : Operator RealWithBot RealWithBot.bot) (c : ℝ)
+    (hconst_val : ∀ x ∈ ex31U, ψ.func x = .val c) :
+    ex31U ⊆ dom ψ ∧
+    (ψ * ψ).func (.val 0) = ψ.func (.val c) ∧
+    (ψ * ψ).func (.val 1) = ψ.func (.val c) ∧
+    (∀ y : RealWithBot,
+      .val 0 ∈ CompFiberSingle realAbsGauge (ψ * ψ) () y ex31U ↔
+        .val 1 ∈ CompFiberSingle realAbsGauge (ψ * ψ) () y ex31U) ∧
+    ((ψ.func (.val c) ≠ .bot →
+        ex31U ⊆ dom (ψ * ψ) ∧
+        () ∈ I_const realAbsGauge (ψ * ψ) ex31U ∧
+        CompFiberSingle realAbsGauge (ψ * ψ) () ((ψ * ψ).func (.val 0)) ex31U = ex31U) ∧
+     (ψ.func (.val c) = .bot →
+        dom (ψ * ψ) ∩ ex31U = ∅ ∧
+        ¬ (ex31U ⊆ dom (ψ * ψ)))) := by
+  have h0 : ψ.func (.val 0) = .val c := hconst_val (.val 0) (Set.mem_insert _ _)
+  have h1 : ψ.func (.val 1) = .val c :=
+    hconst_val (.val 1) (Set.mem_insert_of_mem _ (Set.mem_singleton _))
+  have hdomψ : ex31U ⊆ dom ψ := by
+    intro x hx hbot
+    rw [hconst_val x hx] at hbot
+    cases hbot
+  have hsq0 : (ψ * ψ).func (.val 0) = ψ.func (.val c) := by
+    change ψ.func (ψ.func (.val 0)) = _
+    rw [h0]
+  have hsq1 : (ψ * ψ).func (.val 1) = ψ.func (.val c) := by
+    change ψ.func (ψ.func (.val 1)) = _
+    rw [h1]
+  refine ⟨hdomψ, hsq0, hsq1, ?_, ⟨?_, ?_⟩⟩
+  · intro y
+    rw [CompFiberSingle_eq]
+    simp only [Set.mem_setOf_eq, hsq0, hsq1]
+    have hm0 : RealWithBot.val 0 ∈ ex31U := Set.mem_insert _ _
+    have hm1 : RealWithBot.val 1 ∈ ex31U := Set.mem_insert_of_mem _ (Set.mem_singleton _)
+    simp [hm0, hm1]
+  · intro hne_bot
+    have hdom2 : ex31U ⊆ dom (ψ * ψ) := by
+      intro x hx
+      rcases hx with rfl | rfl
+      · change (ψ * ψ).func (.val 0) ≠ .bot; rw [hsq0]; exact hne_bot
+      · change (ψ * ψ).func (.val 1) ≠ .bot; rw [hsq1]; exact hne_bot
+    have hc2 : () ∈ I_const realAbsGauge (ψ * ψ) ex31U := by
+      intro x hx y hy
+      have hsqx : (ψ * ψ).func x = ψ.func (.val c) := by
+        rcases hx with rfl | rfl <;> [exact hsq0; exact hsq1]
+      have hsqy : (ψ * ψ).func y = ψ.func (.val c) := by
+        rcases hy with rfl | rfl <;> [exact hsq0; exact hsq1]
+      rw [hsqx, hsqy]
+      exact realAbsDist_is_extended.dist_self _
+    have hfib2 : CompFiberSingle realAbsGauge (ψ * ψ) () ((ψ * ψ).func (.val 0)) ex31U = ex31U := by
+      rw [CompFiberSingle_eq]
+      ext x
+      simp only [Set.mem_setOf_eq, and_iff_left_iff_imp]
+      exact fun hx => hc2 x hx (.val 0) (Set.mem_insert _ _)
+    exact ⟨hdom2, hc2, hfib2⟩
+  · intro heq_bot
+    refine ⟨?_, ?_⟩
+    · ext x
+      simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
+      rintro hdomx (rfl | rfl)
+      · exact hdomx (by rw [hsq0, heq_bot])
+      · exact hdomx (by rw [hsq1, heq_bot])
+    · intro hsub
+      exact hsub (Set.mem_insert _ _) (by rw [hsq0, heq_bot])
+ 
+/-! ### 习题 3.2：零化半径与距离间隙 (CH03-P27-01 .. 02) -/
+ 
+/-- CH03-P27-01: 习题 3.2(i) 正 co-Lip 通道（无需有限）与点态正零化半径推出 `(0, r^N(y | U))` 内无输入距离。 -/
+theorem ex_3_2_i_pointwise_distance_gap {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal) (i j : I) (y : X)
+    (_hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (hK : IsCoLipMatrix d ϕ U K) (hK_pos : 0 < K i j)
+    (hy : y ∈ U) (_hr_pos : 0 < pointwiseNullRadiusComp d ϕ i j y U) :
+    ∀ x ∈ U, d i x y ∉ Set.Ioo 0 (pointwiseNullRadiusComp d ϕ i j y U) := by
+  intro x hx ⟨hd_pos, hd_lt⟩
+  have hyx_lt : d i y x < pointwiseNullRadiusComp d ϕ i j y U := by
+    rw [(hd i).symm y x]
+    exact hd_lt
+  have hout_zero : d j (ϕ.func y) (ϕ.func x) = 0 :=
+    (prop_3_11_lt_radius_zero d hd ϕ U i j y x hU hy hx hyx_lt).2
+  have hout_zero' : d j (ϕ.func x) (ϕ.func y) = 0 := by
+    rw [(hd j).symm]
+    exact hout_zero
+  have hout_pos : 0 < d j (ϕ.func x) (ϕ.func y) :=
+    (positive_colip_channels_preserve_distinguishability d ϕ U K hK).1 i j hK_pos x hx y hy hd_pos
+  exact (ne_of_gt hout_pos) hout_zero'
+ 
+/-- CH03-P27-02: 习题 3.2(ii) 正统一零化半径下，`U` 中任意点对的输入距离落入不交并 `{0} ⊔ [\underline{r}^N|_U, +∞]`。 -/
+theorem ex_3_2_ii_uniform_distance_dichotomy {X I : Type} {bot : X} [Fintype I]
+    (d : I → X → X → ENNReal) (hd : ∀ i : I, ExtendedPseudoMetric X bot (d i))
+    (ϕ : Operator X bot) (U : Set X) (K : I → I → ENNReal) (i j : I)
+    (hU_ne : U.Nonempty) (hU : U ⊆ dom ϕ)
+    (hK : IsCoLipMatrix d ϕ U K) (hK_pos : 0 < K i j)
+    (hr_pos : 0 < uniformNullRadiusComp d ϕ i j U) :
+    Disjoint ({0} : Set ENNReal) (Set.Ici (uniformNullRadiusComp d ϕ i j U)) ∧
+    ∀ x ∈ U, ∀ y ∈ U,
+      (d i x y = 0 ∨ uniformNullRadiusComp d ϕ i j U ≤ d i x y) ∧
+      d i x y ∈ ({0} : Set ENNReal) ∪ Set.Ici (uniformNullRadiusComp d ϕ i j U) := by
+  refine ⟨Set.disjoint_left.mpr (fun z hz0 hge => ?_), ?_⟩
+  · rw [Set.mem_singleton_iff.mp hz0] at hge
+    exact not_lt_of_ge hge hr_pos
+  · intro x hx y hy
+    have hpt_ge : uniformNullRadiusComp d ϕ i j U ≤ pointwiseNullRadiusComp d ϕ i j y U :=
+      iInf₂_le y hy
+    have hpt_pos : 0 < pointwiseNullRadiusComp d ϕ i j y U := lt_of_lt_of_le hr_pos hpt_ge
+    have hgap := ex_3_2_i_pointwise_distance_gap d hd ϕ U K i j y hU_ne hU hK hK_pos hy hpt_pos x hx
+    have hor : d i x y = 0 ∨ uniformNullRadiusComp d ϕ i j U ≤ d i x y := by
+      by_cases h0 : d i x y = 0
+      · exact Or.inl h0
+      · right
+        by_contra hlt
+        push Not at hlt
+        exact hgap ⟨pos_iff_ne_zero.mpr h0, lt_of_lt_of_le hlt hpt_ge⟩
+    exact ⟨hor, by simpa only [Set.mem_union, Set.mem_singleton_iff, Set.mem_Ici] using hor⟩
+ 
+/-! ### 习题 3.3：平移下的纤维与熵差 (CH03-P28-01 .. 02) -/
+ 
+/-- 习题 3.3 中的平移算子 `ϕ(x) = x + 1, ϕ(⊥) = ⊥`。 -/
+noncomputable def ex33Phi : Operator RealWithBot RealWithBot.bot where
+  func
+    | .bot => .bot
+    | .val x => .val (x + 1)
+  preserves_bot := rfl
+ 
+@[simp] theorem ex33Phi_val (x : ℝ) : ex33Phi.func (.val x) = .val (x + 1) := rfl
+ 
+def ex33U : Set RealWithBot := {.val (-3), .val (-2), .val 0, .val 2}
+ 
+private theorem mem_ex33U_iff (x : RealWithBot) :
+    x ∈ ex33U ↔ x = .val (-3) ∨ x = .val (-2) ∨ x = .val 0 ∨ x = .val 2 := by
+  simp [ex33U]
+ 
+/-- CH03-P28-01: 习题 3.3(i) 验证结构合法性，并完整列出恒等算子与平移算子在 `U` 上的计算纤维及分划。 -/
+theorem ex_3_3_i_fiber_partitions :
+    let idOp : Operator RealWithBot RealWithBot.bot := operator_identity
+    ExtendedPseudoMetric RealWithBot RealWithBot.bot realAbsDist ∧
+    ex33U ⊆ dom idOp ∧
+    ex33U ⊆ dom ex33Phi ∧
+    CompFiberSingle realAbsGauge idOp () (.val (-3)) ex33U = {.val (-3)} ∧
+    CompFiberSingle realAbsGauge idOp () (.val (-2)) ex33U = {.val (-2), .val 2} ∧
+    CompFiberSingle realAbsGauge idOp () (.val 0) ex33U = {.val 0} ∧
+    CompFiberSingle realAbsGauge idOp () (.val 2) ex33U = {.val (-2), .val 2} ∧
+    CompFiberPartition realAbsGauge idOp {()} ex33U =
+      {{.val (-3)}, {.val (-2), .val 2}, {.val 0}} ∧
+    CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val (-3))) ex33U = {.val (-3)} ∧
+    CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val (-2))) ex33U = {.val (-2), .val 0} ∧
+    CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val 0)) ex33U = {.val (-2), .val 0} ∧
+    CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val 2)) ex33U = {.val 2} ∧
+    CompFiberPartition realAbsGauge ex33Phi {()} ex33U =
+      {{.val (-3)}, {.val (-2), .val 0}, {.val 2}} := by
+  dsimp only
+  let idOp : Operator RealWithBot RealWithBot.bot := operator_identity
+  have hid_val : ∀ x : ℝ, idOp.func (.val x) = .val x := fun _ => rfl
+  have hdom_id : ex33U ⊆ dom idOp := by
+    intro x hx hbot
+    rcases (mem_ex33U_iff x).mp hx with rfl | rfl | rfl | rfl <;> cases hbot
+  have hdom_phi : ex33U ⊆ dom ex33Phi := by
+    intro x hx hbot
+    rcases (mem_ex33U_iff x).mp hx with rfl | rfl | rfl | rfl <;> cases hbot
+  have hid_m3 : CompFiberSingle realAbsGauge idOp () (.val (-3)) ex33U = {.val (-3)} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · rfl
+      all_goals rw [hid_val] at h0; rw [realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+    · rintro rfl; refine ⟨Or.inl rfl, ?_⟩; rw [hid_val]; simp [realAbsGauge]
+  have hid_m2 : CompFiberSingle realAbsGauge idOp () (.val (-2)) ex33U = {.val (-2), .val 2} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+      · exact Or.inl rfl
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+      · exact Or.inr rfl
+    · rintro (rfl | rfl)
+      · refine ⟨Or.inr (Or.inl rfl), ?_⟩; rw [hid_val]; simp [realAbsGauge]
+      · refine ⟨Or.inr (Or.inr (Or.inr rfl)), ?_⟩; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff]; norm_num
+  have hid_0 : CompFiberSingle realAbsGauge idOp () (.val 0) ex33U = {.val 0} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+      · rfl
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+    · rintro rfl; refine ⟨Or.inr (Or.inr (Or.inl rfl)), ?_⟩; rw [hid_val]; simp [realAbsGauge]
+  have hid_2 : CompFiberSingle realAbsGauge idOp () (.val 2) ex33U = {.val (-2), .val 2} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+      · exact Or.inl rfl
+      · exfalso; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff] at h0; norm_num at h0
+      · exact Or.inr rfl
+    · rintro (rfl | rfl)
+      · refine ⟨Or.inr (Or.inl rfl), ?_⟩; rw [hid_val, realAbsGauge, realAbsDist_val_eq_zero_iff]; norm_num
+      · refine ⟨Or.inr (Or.inr (Or.inr rfl)), ?_⟩; rw [hid_val]; simp [realAbsGauge]
+  have hpart_id : CompFiberPartition realAbsGauge idOp {()} ex33U =
+      {{.val (-3)}, {.val (-2), .val 2}, {.val 0}} := by
+    ext F
+    simp only [CompFiberPartition, operator_image, Set.mem_setOf_eq, Set.mem_image,
+      mem_ex33U_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨y, ⟨x, rfl | rfl | rfl | rfl, rfl⟩, rfl⟩
+      · exact Or.inl hid_m3
+      · exact Or.inr (Or.inl hid_m2)
+      · exact Or.inr (Or.inr hid_0)
+      · exact Or.inr (Or.inl hid_2)
+    · rintro (rfl | rfl | rfl)
+      · exact ⟨.val (-3), ⟨.val (-3), Or.inl rfl, rfl⟩, hid_m3.symm⟩
+      · exact ⟨.val (-2), ⟨.val (-2), Or.inr (Or.inl rfl), rfl⟩, hid_m2.symm⟩
+      · exact ⟨.val 0, ⟨.val 0, Or.inr (Or.inr (Or.inl rfl)), rfl⟩, hid_0.symm⟩
+  have hphi_m3 : CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val (-3))) ex33U =
+      {.val (-3)} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · rfl
+      all_goals simp [realAbsGauge] at h0; norm_num at h0
+    · rintro rfl; refine ⟨Or.inl rfl, ?_⟩; simp [realAbsGauge]
+  have hphi_m2 : CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val (-2))) ex33U =
+      {.val (-2), .val 0} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+    · rintro (rfl | rfl)
+      · refine ⟨Or.inr (Or.inl rfl), ?_⟩; simp [realAbsGauge]
+      · refine ⟨Or.inr (Or.inr (Or.inl rfl)), ?_⟩; simp [realAbsGauge]; norm_num
+  have hphi_0 : CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val 0)) ex33U =
+      {.val (-2), .val 0} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+    · rintro (rfl | rfl)
+      · refine ⟨Or.inr (Or.inl rfl), ?_⟩; simp [realAbsGauge]; norm_num
+      · refine ⟨Or.inr (Or.inr (Or.inl rfl)), ?_⟩; simp [realAbsGauge]
+  have hphi_2 : CompFiberSingle realAbsGauge ex33Phi () (ex33Phi.func (.val 2)) ex33U =
+      {.val 2} := by
+    rw [CompFiberSingle_eq]; ext x; rw [Set.mem_setOf_eq, mem_ex33U_iff]
+    constructor
+    · rintro ⟨rfl | rfl | rfl | rfl, h0⟩
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+      · exfalso; simp [realAbsGauge] at h0; norm_num at h0
+      · rfl
+    · rintro rfl; refine ⟨Or.inr (Or.inr (Or.inr rfl)), ?_⟩; simp [realAbsGauge]
+  have hpart_phi : CompFiberPartition realAbsGauge ex33Phi {()} ex33U =
+      {{.val (-3)}, {.val (-2), .val 0}, {.val 2}} := by
+    ext F
+    simp only [CompFiberPartition, operator_image, Set.mem_setOf_eq, Set.mem_image,
+      mem_ex33U_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨y, ⟨x, rfl | rfl | rfl | rfl, rfl⟩, rfl⟩
+      · exact Or.inl hphi_m3
+      · exact Or.inr (Or.inl hphi_m2)
+      · exact Or.inr (Or.inl hphi_0)
+      · exact Or.inr (Or.inr hphi_2)
+    · rintro (rfl | rfl | rfl)
+      · exact ⟨_, ⟨.val (-3), Or.inl rfl, rfl⟩, hphi_m3.symm⟩
+      · exact ⟨_, ⟨.val (-2), Or.inr (Or.inl rfl), rfl⟩, hphi_m2.symm⟩
+      · exact ⟨_, ⟨.val 2, Or.inr (Or.inr (Or.inr rfl)), rfl⟩, hphi_2.symm⟩
+  exact ⟨realAbsDist_is_extended, hdom_id, hdom_phi,
+    hid_m3, hid_m2, hid_0, hid_2, hpart_id,
+    hphi_m3, hphi_m2, hphi_0, hphi_2, hpart_phi⟩
+ 
+private theorem ennreal_three_halves : (3 / 2 : ENNReal) = ENNReal.ofReal (3 / 2) := by
+  rw [ENNReal.ofReal_div_of_pos (by norm_num)]
+  norm_num
+ 
+/-- CH03-P28-02: 习题 3.3(ii) 在精度 `ε = 3/2` 下给出上下界并精确计算 `𝒩_i(ε, U) = 2`、`𝒩_i(ε, ϕ(U)) = 1` 与 `ΔE_{ε, i}(ϕ | U) = 1`。 -/
+theorem ex_3_3_ii_covering_and_entropy_diff :
+    covering_number realAbsDist (3 / 2) ex33U ≤ 2 ∧
+    2 ≤ covering_number realAbsDist (3 / 2) ex33U ∧
+    covering_number realAbsDist (3 / 2) ex33U = 2 ∧
+    covering_number realAbsDist (3 / 2) (operator_image ex33Phi ex33U) ≤ 1 ∧
+    1 ≤ covering_number realAbsDist (3 / 2) (operator_image ex33Phi ex33U) ∧
+    covering_number realAbsDist (3 / 2) (operator_image ex33Phi ex33U) = 1 ∧
+    ∃ hwf : MappingEntropyDiffSingleWellDefined realAbsGauge ex33Phi ex33U () (3 / 2),
+      mappingEntropyDiffSingle realAbsGauge ex33Phi ex33U () (3 / 2) hwf = 1 := by
+  classical
+  have hε_pos : (0 : ENNReal) < 3 / 2 := by rw [ennreal_three_halves]; norm_num
+  have hε_top : (3 / 2 : ENNReal) < ⊤ := by rw [ennreal_three_halves]; exact ENNReal.ofReal_lt_top
+  have hlt0_32 : ENNReal.ofReal 0 < (3 / 2 : ENNReal) := by simp [hε_pos]
+  have hlt1_32 : ENNReal.ofReal 1 < (3 / 2 : ENNReal) := by
+    rw [ennreal_three_halves]
+    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+  have hnlt2_32 : ¬ (ENNReal.ofReal 2 < (3 / 2 : ENNReal)) := by
+    rw [ennreal_three_halves, ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+    norm_num
+  have hnlt3_32 : ¬ (ENNReal.ofReal 3 < (3 / 2 : ENNReal)) := by
+    rw [ennreal_three_halves, ENNReal.ofReal_lt_ofReal_iff (by norm_num)]
+    norm_num
+  -- 上界：`{.val 0, .val 2}` 构成 `ex33U` 的 `3/2`-内覆盖
+  have hin_le : covering_number realAbsDist (3 / 2) ex33U ≤ 2 := by
+    let S : Finset RealWithBot := {.val 0, .val 2}
+    have hnet : InternalEpsilonNet realAbsDist (3 / 2) ex33U S := by
+      refine ⟨fun x hx => ?_, fun x hx => ?_⟩
+      · rcases Finset.mem_insert.mp (Finset.mem_coe.mp hx) with rfl | hx2
+        · exact (mem_ex33U_iff _).mpr (Or.inr (Or.inr (Or.inl rfl)))
+        · rw [Finset.mem_singleton.mp hx2]
+          exact (mem_ex33U_iff _).mpr (Or.inr (Or.inr (Or.inr rfl)))
+      · rcases (mem_ex33U_iff x).mp hx with rfl | rfl | rfl | rfl
+        · refine ⟨.val 2, by simp [S], ?_⟩
+          rw [realAbsDist_val]
+          have h1 : |(|(-3 : ℝ)| - |2|)| = 1 := by norm_num
+          rw [h1]; exact hlt1_32
+        · refine ⟨.val 2, by simp [S], ?_⟩
+          rw [realAbsDist_val]
+          have h0 : |(|(-2 : ℝ)| - |2|)| = 0 := by norm_num
+          rw [h0]; exact hlt0_32
+        · refine ⟨.val 0, by simp [S], ?_⟩
+          rw [realAbsDist_val]
+          have h0 : |(|(0 : ℝ)| - |0|)| = 0 := by norm_num
+          rw [h0]; exact hlt0_32
+        · refine ⟨.val 2, by simp [S], ?_⟩
+          rw [realAbsDist_val]
+          have h0 : |(|(2 : ℝ)| - |2|)| = 0 := by norm_num
+          rw [h0]; exact hlt0_32
+    have hcard : (S.card : ENNReal) ≤ 2 := by
+      have hc : S.card = 2 := by
+        rw [Finset.card_pair]
+        intro heq; have h := RealWithBot.val.inj heq; norm_num at h
+      simp [hc]
+    exact le_trans (iInf_le_of_le S (iInf_le_of_le hnet le_rfl)) hcard
+  -- 下界：覆盖 `.val 0` 与 `.val 2` 需要不同内部中心
+  have hin_ge : 2 ≤ covering_number realAbsDist (3 / 2) ex33U := by
+    apply le_iInf₂
+    intro S hS
+    rcases hS.2 (.val 0) ((mem_ex33U_iff _).mpr (Or.inr (Or.inr (Or.inl rfl)))) with ⟨c0, hc0S, hd0⟩
+    rcases hS.2 (.val 2) ((mem_ex33U_iff _).mpr (Or.inr (Or.inr (Or.inr rfl)))) with ⟨c2, hc2S, hd2⟩
+    have hc0_eq : c0 = .val 0 := by
+      rcases (mem_ex33U_iff c0).mp (hS.1 hc0S) with rfl | rfl | rfl | rfl
+      · exfalso; rw [realAbsDist_val] at hd0
+        have h3 : |(|(0 : ℝ)| - |-3|)| = 3 := by norm_num
+        rw [h3] at hd0; exact hnlt3_32 hd0
+      · exfalso; rw [realAbsDist_val] at hd0
+        have h2 : |(|(0 : ℝ)| - |-2|)| = 2 := by norm_num
+        rw [h2] at hd0; exact hnlt2_32 hd0
+      · rfl
+      · exfalso; rw [realAbsDist_val] at hd0
+        have h2 : |(|(0 : ℝ)| - |2|)| = 2 := by norm_num
+        rw [h2] at hd0; exact hnlt2_32 hd0
+    have hc2_ne0 : c2 ≠ .val 0 := by
+      rintro rfl
+      rw [realAbsDist_val] at hd2
+      have h2 : |(|(2 : ℝ)| - |0|)| = 2 := by norm_num
+      rw [h2] at hd2; exact hnlt2_32 hd2
+    have hne : c0 ≠ c2 := by rw [hc0_eq]; exact Ne.symm hc2_ne0
+    have h2le : 2 ≤ S.card := Finset.one_lt_card.mpr ⟨c0, hc0S, c2, hc2S, hne⟩
+    exact_mod_cast h2le
+  have hin_eq : covering_number realAbsDist (3 / 2) ex33U = 2 := le_antisymm hin_le hin_ge
+  -- 像集上界：单中心 `{ex33Phi(.val (-3))} = {.val (-2)}` 覆盖整个 `ϕ(U)`
+  have hout_le : covering_number realAbsDist (3 / 2) (operator_image ex33Phi ex33U) ≤ 1 := by
+    let c : RealWithBot := ex33Phi.func (.val (-3))
+    have hc_mem : c ∈ operator_image ex33Phi ex33U :=
+      ⟨.val (-3), (mem_ex33U_iff _).mpr (Or.inl rfl), rfl⟩
+    have hnet : InternalEpsilonNet realAbsDist (3 / 2) (operator_image ex33Phi ex33U) {c} := by
+      refine ⟨fun z hz => ?_, ?_⟩
+      · rw [Finset.coe_singleton, Set.mem_singleton_iff] at hz
+        rw [hz]; exact hc_mem
+      · rintro _ ⟨x, hxU, rfl⟩
+        refine ⟨c, Finset.mem_singleton_self _, ?_⟩
+        rcases (mem_ex33U_iff x).mp hxU with rfl | rfl | rfl | rfl
+        · dsimp [c]
+          have h0 : |(|(-3 + 1 : ℝ)| - |-3 + 1|)| = 0 := by norm_num
+          rw [h0]; exact hlt0_32
+        · dsimp [c]
+          have h1 : |(|(-2 + 1 : ℝ)| - |-3 + 1|)| = 1 := by norm_num
+          rw [h1]; exact hlt1_32
+        · dsimp [c]
+          have h1 : |(|(0 + 1 : ℝ)| - |-3 + 1|)| = 1 := by norm_num
+          rw [h1]; exact hlt1_32
+        · dsimp [c]
+          have h1 : |(|(2 + 1 : ℝ)| - |-3 + 1|)| = 1 := by norm_num
+          rw [h1]; exact hlt1_32
+    exact le_trans (iInf_le_of_le {c} (iInf_le_of_le hnet le_rfl)) (by simp)
+  have hout_ge : 1 ≤ covering_number realAbsDist (3 / 2) (operator_image ex33Phi ex33U) :=
+    one_le_covering_number_of_nonempty realAbsDist (3 / 2) (operator_image ex33Phi ex33U)
+      ⟨ex33Phi.func (.val 0), .val 0, (mem_ex33U_iff _).mpr (Or.inr (Or.inr (Or.inl rfl))), rfl⟩
+  have hout_eq : covering_number realAbsDist (3 / 2) (operator_image ex33Phi ex33U) = 1 :=
+    le_antisymm hout_le hout_ge
+  have hwf : MappingEntropyDiffSingleWellDefined realAbsGauge ex33Phi ex33U () (3 / 2) := by
+    refine ⟨⟨.val 0, (mem_ex33U_iff _).mpr (Or.inr (Or.inr (Or.inl rfl)))⟩,
+      ex_3_3_i_fiber_partitions.2.2.1,
+      Set.singleton_nonempty (), Set.singleton_nonempty (),
+      hε_pos, hε_top, Or.inl ?_⟩
+    rw [subfamily_covering_number_singleton, realAbsGauge, hin_eq]
+    exact ENNReal.ofNat_lt_top
+  refine ⟨hin_le, hin_ge, hin_eq, hout_le, hout_ge, hout_eq, hwf, ?_⟩
+  unfold mappingEntropyDiffSingle
+  rw [mappingEntropyDiff_eq_sub, subfamily_metric_entropy_singleton,
+      subfamily_metric_entropy_singleton]
+  change metric_entropy realAbsDist (3 / 2) ex33U -
+      metric_entropy realAbsDist (3 / 2) (operator_image ex33Phi ex33U) = 1
+  unfold metric_entropy log2_ereal
+  rw [hin_eq, hout_eq]
+  have h2_ne0 : (2 : ENNReal) ≠ 0 := by norm_num
+  have h2_netop : (2 : ENNReal) ≠ ⊤ := ENNReal.ofNat_ne_top
+  have h1_ne0 : (1 : ENNReal) ≠ 0 := one_ne_zero
+  have h1_netop : (1 : ENNReal) ≠ ⊤ := ENNReal.one_ne_top
+  simp [h2_ne0, h2_netop, h1_ne0, h1_netop]
+ 
+end Ch03
+```
+
+```lean filename=Ch03/Sec07_Ex4_5.lean
+import Ch03.Sec07_Ex1_3
+ 
+namespace Ch03
+ 
+open formal_oet.vol_01.ch_01_foundations
+open formal_oet.vol_01.ch_02_operator_bounds
+open Set Finset
+ 
+/-! ### 习题 3.4：输入域改变下的阈值分类 (CH03-P29-01 .. 05) -/
+ 
+/-- 单分量通常距离规范族 `realStdGauge`。 -/
+noncomputable abbrev realStdGauge : Unit → RealWithBot → RealWithBot → ENNReal :=
+  fun _ => realStdDist
+ 
+@[simp] theorem realStdDist_val (x y : ℝ) :
+    realStdDist (.val x) (.val y) = ENNReal.ofReal |x - y| := rfl
+ 
+/-- 习题 3.4 中的向下取整算子 `f(x) = ⌊x⌋, f(⊥) = ⊥`。 -/
+noncomputable def ex34Floor : Operator RealWithBot RealWithBot.bot where
+  func
+    | .bot => .bot
+    | .val x => .val (Int.floor x : ℝ)
+  preserves_bot := rfl
+ 
+@[simp] theorem ex34Floor_val (x : ℝ) :
+    ex34Floor.func (.val x) = .val (Int.floor x : ℝ) := rfl
+ 
+private theorem val_image_sub_dom_ex34Floor (S : Set ℝ) :
+    RealWithBot.val '' S ⊆ dom ex34Floor := by
+  rintro _ ⟨x, _, rfl⟩ hbot
+  cases hbot
+ 
+/-- 实闭区间 `[a, b]`（`a ≤ b`）嵌入 `RealWithBot` 后的直径等于 `b - a`。 -/
+private theorem setDiam_val_Icc (a b : ℝ) (hab : a ≤ b) :
+    setDiam realStdDist (RealWithBot.val '' Set.Icc a b) = ENNReal.ofReal (b - a) := by
+  apply le_antisymm
+  · apply iSup₂_le
+    rintro _ ⟨x, ⟨hxa, hxb⟩, rfl⟩
+    apply iSup₂_le
+    rintro _ ⟨y, ⟨hya, hyb⟩, rfl⟩
+    rw [realStdDist_val]
+    apply ENNReal.ofReal_le_ofReal
+    rw [abs_le]
+    constructor <;> linarith
+  · have ha_mem : RealWithBot.val a ∈ RealWithBot.val '' Set.Icc a b :=
+      ⟨a, ⟨le_rfl, hab⟩, rfl⟩
+    have hb_mem : RealWithBot.val b ∈ RealWithBot.val '' Set.Icc a b :=
+      ⟨b, ⟨hab, le_rfl⟩, rfl⟩
+    refine le_iSup₂_of_le (.val a) ha_mem (le_iSup₂_of_le (.val b) hb_mem ?_)
+    rw [realStdDist_val, abs_sub_comm, abs_of_nonneg (sub_nonneg.mpr hab)]
+ 
+/-- 当闭区间 `[a, b]` 满足 `0 ≤ a < 1 ≤ b` 时，基点 `1` 处跨越跃变点，点态与统一零化半径均为 `0`。 -/
+private theorem ex34Floor_zero_radius_on_Icc (a b : ℝ) (ha0 : 0 ≤ a) (ha1 : a < 1) (hb1 : 1 ≤ b) :
+    pointwiseNullRadius ex34Floor realStdDist realStdDist (.val 1)
+      (RealWithBot.val '' Set.Icc a b) = 0 ∧
+    uniformNullRadiusComp realStdGauge ex34Floor () ()
+      (RealWithBot.val '' Set.Icc a b) = 0 := by
+  let D : Set RealWithBot := RealWithBot.val '' Set.Icc a b
+  have h1_mem : RealWithBot.val 1 ∈ D := ⟨1, ⟨le_of_lt ha1, hb1⟩, rfl⟩
+  have hpt : pointwiseNullRadius ex34Floor realStdDist realStdDist (.val 1) D = 0 := by
+    apply pointwiseNullRadius_eq_zero_of_no_valid
+    rintro ⟨r, hr0, hrtop, hsub⟩
+    have hr_ne_top : r ≠ ⊤ := lt_top_iff_ne_top.mp hrtop
+    let ρ : ℝ := r.toReal
+    have hρ_pos : 0 < ρ := ENNReal.toReal_pos (ne_of_gt hr0) hr_ne_top
+    let x : ℝ := max a (1 - ρ / 2)
+    have hax : a ≤ x := le_max_left _ _
+    have hx1 : x < 1 := max_lt ha1 (by linarith)
+    have hxb : x ≤ b := le_trans (le_of_lt hx1) hb1
+    have hx0 : 0 ≤ x := le_trans ha0 hax
+    have hxD : RealWithBot.val x ∈ D := ⟨x, ⟨hax, hxb⟩, rfl⟩
+    have hx_ball : RealWithBot.val x ∈ ball realStdDist (.val 1) r := by
+      simp only [ball, Set.mem_setOf_eq, realStdDist_val]
+      have hdist_lt : |x - 1| < ρ := by
+        have hge : 1 - ρ / 2 ≤ x := le_max_right _ _
+        rw [abs_of_neg (by linarith)]
+        linarith
+      rw [← ENNReal.ofReal_toReal hr_ne_top]
+      exact (ENNReal.ofReal_lt_ofReal_iff hρ_pos).mpr hdist_lt
+    have hout := (hsub ⟨hx_ball, hxD⟩).2
+    have hfx : Int.floor x = 0 :=
+      Int.floor_eq_iff.mpr ⟨by simpa using hx0, by simpa using hx1⟩
+    have hf1 : Int.floor (1 : ℝ) = 1 := by norm_num
+    rw [ex34Floor_val, ex34Floor_val, hfx, hf1, realStdDist_val] at hout
+    norm_num at hout
+  refine ⟨hpt, le_antisymm ?_ (zero_le _)⟩
+  unfold uniformNullRadiusComp uniformNullRadius uniformNullRadiusOn
+  have hle : (⨅ y ∈ D, pointwiseNullRadius ex34Floor realStdDist realStdDist y D) ≤
+      pointwiseNullRadius ex34Floor realStdDist realStdDist (RealWithBot.val 1) D :=
+    iInf₂_le (RealWithBot.val 1) h1_mem
+  rwa [hpt] at hle
+ 
+/-- 习题 3.4(i-a) 输入域 `D₁ = [0, 1/2]`。 -/
+def ex34D1 : Set RealWithBot := RealWithBot.val '' Set.Icc (0 : ℝ) (1 / 2)
+ 
+/-- 习题 3.4(i-b) 输入域 `D₂ = [9/10, 11/10]`。 -/
+def ex34D2 : Set RealWithBot := RealWithBot.val '' Set.Icc (9 / 10 : ℝ) (11 / 10)
+ 
+/-- 习题 3.4(i-c) 输入域 `D₃ = {0, 2}`。 -/
+def ex34D3 : Set RealWithBot := {.val 0, .val 2}
+ 
+/-- 习题 3.4(i-d) 输入域 `D₄ = [0, 2]`。 -/
+def ex34D4 : Set RealWithBot := RealWithBot.val '' Set.Icc (0 : ℝ) 2
+ 
+/-- CH03-P29-01: 习题 3.4(i-a) `D₁ = [0, 1/2]` 的直径为 `1/2`、统一零化半径为 `+∞`、阈值类型为 `(1, 1)`。 -/
+theorem ex_3_4_i_a_D1 :
+    ex34D1.Nonempty ∧
+    ex34D1 ⊆ dom ex34Floor ∧
+    setDiam realStdDist ex34D1 = 1 / 2 ∧
+    uniformNullRadiusComp realStdGauge ex34Floor () () ex34D1 = ⊤ ∧
+    channelType realStdGauge (diameterScaleFamily realStdGauge) ex34Floor ex34D1 1 1 () () =
+      (1, 1) := by
+  have hne : ex34D1.Nonempty := ⟨.val 0, 0, ⟨le_rfl, by norm_num⟩, rfl⟩
+  have hdom : ex34D1 ⊆ dom ex34Floor := val_image_sub_dom_ex34Floor _
+  have hhalf : ENNReal.ofReal (1 / 2 : ℝ) = (1 / 2 : ENNReal) := by
+    rw [ENNReal.ofReal_div_of_pos (by norm_num)]
+    norm_num
+  have hdiam : setDiam realStdDist ex34D1 = 1 / 2 := by
+    unfold ex34D1
+    rw [setDiam_val_Icc 0 (1 / 2) (by norm_num), sub_zero, hhalf]
+  have hconst : () ∈ I_const realStdGauge ex34Floor ex34D1 := by
+    rintro _ ⟨x, ⟨hx0, hx12⟩, rfl⟩ _ ⟨y, ⟨hy0, hy12⟩, rfl⟩
+    have hfx : Int.floor x = 0 :=
+      Int.floor_eq_iff.mpr ⟨by simpa using hx0, by norm_num; linarith⟩
+    have hfy : Int.floor y = 0 :=
+      Int.floor_eq_iff.mpr ⟨by simpa using hy0, by norm_num; linarith⟩
+    simp [realStdGauge, hfx, hfy]
+  have hunif : uniformNullRadiusComp realStdGauge ex34Floor () () ex34D1 = ⊤ := by
+    have hsub := (prop_3_8_i_b_const_subfamily_radius_top realStdGauge ex34Floor ex34D1 {()} ()
+      hne hdom (Set.singleton_nonempty ()) (Set.singleton_subset_iff.mpr hconst)).2
+    rwa [uniformNullRadiusSubfamily_singleton, nullMatrix] at hsub
+  refine ⟨hne, hdom, hdiam, hunif, ?_⟩
+  simp [channelType, diameterScaleFamily, realStdGauge, hdiam, hunif, ind01_eq_one_iff]
+ 
+/-- CH03-P29-02: 习题 3.4(i-b) `D₂ = [9/10, 11/10]` 的直径为 `1/5`、统一零化半径为 `0`、阈值类型为 `(1, 0)`。 -/
+theorem ex_3_4_i_b_D2 :
+    ex34D2.Nonempty ∧
+    ex34D2 ⊆ dom ex34Floor ∧
+    setDiam realStdDist ex34D2 = 1 / 5 ∧
+    uniformNullRadiusComp realStdGauge ex34Floor () () ex34D2 = 0 ∧
+    channelType realStdGauge (diameterScaleFamily realStdGauge) ex34Floor ex34D2 1 1 () () =
+      (1, 0) := by
+  have hne : ex34D2.Nonempty := ⟨.val 1, 1, ⟨by norm_num, by norm_num⟩, rfl⟩
+  have hdom : ex34D2 ⊆ dom ex34Floor := val_image_sub_dom_ex34Floor _
+  have hfifth : ENNReal.ofReal (1 / 5 : ℝ) = (1 / 5 : ENNReal) := by
+    rw [ENNReal.ofReal_div_of_pos (by norm_num)]
+    norm_num
+  have hdiam : setDiam realStdDist ex34D2 = 1 / 5 := by
+    unfold ex34D2
+    rw [setDiam_val_Icc (9 / 10) (11 / 10) (by norm_num)]
+    have hsub : (11 / 10 : ℝ) - 9 / 10 = 1 / 5 := by norm_num
+    rw [hsub, hfifth]
+  have hunif : uniformNullRadiusComp realStdGauge ex34Floor () () ex34D2 = 0 :=
+    (ex34Floor_zero_radius_on_Icc (9 / 10) (11 / 10) (by norm_num) (by norm_num) (by norm_num)).2
+  refine ⟨hne, hdom, hdiam, hunif, ?_⟩
+  simp [channelType, diameterScaleFamily, realStdGauge, hdiam, hunif,
+    ind01_eq_one_iff, ind01_eq_zero_iff]
+ 
+/-- CH03-P29-03: 习题 3.4(i-c) `D₃ = {0, 2}` 的直径为 `2`、各点与统一零化半径均为 `2`、阈值类型为 `(0, 1)`。 -/
+theorem ex_3_4_i_c_D3 :
+    ex34D3 = RealWithBot.val '' ({0, 2} : Set ℝ) ∧
+    ex34D3.Nonempty ∧
+    ex34D3 ⊆ dom ex34Floor ∧
+    setDiam realStdDist ex34D3 = 2 ∧
+    (∀ y ∈ ex34D3, pointwiseNullRadius ex34Floor realStdDist realStdDist y ex34D3 = 2) ∧
+    uniformNullRadiusComp realStdGauge ex34Floor () () ex34D3 = 2 ∧
+    channelType realStdGauge (diameterScaleFamily realStdGauge) ex34Floor ex34D3 1 1 () () =
+      (0, 1) := by
+  have himg : ex34D3 = RealWithBot.val '' ({0, 2} : Set ℝ) := by
+    ext z
+    simp [ex34D3, eq_comm]
+  have hne : ex34D3.Nonempty := ⟨.val 0, Set.mem_insert _ _⟩
+  have hdom : ex34D3 ⊆ dom ex34Floor := by
+    rw [himg]
+    exact val_image_sub_dom_ex34Floor _
+  have hdiam : setDiam realStdDist ex34D3 = 2 := by
+    apply le_antisymm
+    · apply iSup₂_le
+      rintro _ (rfl | rfl)
+      · apply iSup₂_le
+        rintro _ (rfl | rfl) <;> simp [realStdDist]
+      · apply iSup₂_le
+        rintro _ (rfl | rfl) <;> simp [realStdDist]
+    · refine le_iSup₂_of_le (.val 0) (Set.mem_insert _ _)
+        (le_iSup₂_of_le (.val 2) (Set.mem_insert_of_mem _ (Set.mem_singleton _)) ?_)
+      simp [realStdDist]
+  have hpt : ∀ y ∈ ex34D3,
+      pointwiseNullRadius ex34Floor realStdDist realStdDist y ex34D3 = 2 := by
+    intro y hy
+    have hset : {r : ENNReal | ValidNullRadius ex34Floor realStdDist realStdDist y ex34D3 r} =
+        Set.Ioc 0 2 := by
+      ext r
+      simp only [Set.mem_setOf_eq, Set.mem_Ioc, ValidNullRadius]
+      constructor
+      · rintro ⟨hr0, _, hsub⟩
+        refine ⟨hr0, ?_⟩
+        by_contra hgt2
+        push Not at hgt2
+        rcases hy with rfl | rfl
+        · have h2_ball : RealWithBot.val 2 ∈ ball realStdDist (.val 0) r := by
+            simpa [ball, realStdDist] using hgt2
+          have h2_mem : RealWithBot.val 2 ∈ ex34D3 :=
+            Set.mem_insert_of_mem _ (Set.mem_singleton _)
+          have hout := (hsub ⟨h2_ball, h2_mem⟩).2
+          have hf0 : Int.floor (0 : ℝ) = 0 := by norm_num
+          simp [hf0, realStdDist] at hout
+        · have h0_ball : RealWithBot.val 0 ∈ ball realStdDist (.val 2) r := by
+            simpa [ball, realStdDist] using hgt2
+          have h0_mem : RealWithBot.val 0 ∈ ex34D3 := Set.mem_insert _ _
+          have hout := (hsub ⟨h0_ball, h0_mem⟩).2
+          have hf0 : Int.floor (0 : ℝ) = 0 := by norm_num
+          simp [hf0, realStdDist] at hout
+      · rintro ⟨hr0, hrle2⟩
+        refine ⟨hr0, lt_of_le_of_lt hrle2 ENNReal.ofNat_lt_top, ?_⟩
+        rintro x ⟨hx_ball, hxD⟩
+        refine ⟨hxD, ?_⟩
+        rcases hy with rfl | rfl <;> rcases hxD with rfl | rfl
+        · simp [realStdDist]
+        · exfalso
+          simp [ball, realStdDist] at hx_ball
+          exact not_lt_of_ge hrle2 hx_ball
+        · exfalso
+          simp [ball, realStdDist] at hx_ball
+          exact not_lt_of_ge hrle2 hx_ball
+        · simp [realStdDist]
+    unfold pointwiseNullRadius
+    rw [hset]
+    apply le_antisymm
+    · exact sSup_le (fun _ hr => hr.2)
+    · exact le_sSup (s := Set.Ioc (0 : ENNReal) 2) ⟨by norm_num, le_rfl⟩
+  have hunif : uniformNullRadiusComp realStdGauge ex34Floor () () ex34D3 = 2 := by
+    unfold uniformNullRadiusComp uniformNullRadius uniformNullRadiusOn realStdGauge
+    apply le_antisymm
+    · exact le_trans (iInf₂_le (RealWithBot.val 0) (Set.mem_insert _ _))
+        (le_of_eq (hpt (RealWithBot.val 0) (Set.mem_insert _ _)))
+    · exact le_iInf₂ (fun y hy => le_of_eq (hpt y hy).symm)
+  have hnlt : ¬ ((2 : ENNReal) < 1) := by norm_num
+  have hge1 : (1 : ENNReal) ≤ 2 := by norm_num
+  refine ⟨himg, hne, hdom, hdiam, hpt, hunif, ?_⟩
+  simp [channelType, diameterScaleFamily, realStdGauge, hdiam, hunif,
+    ind01_eq_one_iff, ind01_eq_zero_iff, hnlt, hge1]
+ 
+/-- CH03-P29-04: 习题 3.4(i-d) `D₄ = [0, 2]` 的直径为 `2`、统一零化半径为 `0`、阈值类型为 `(0, 0)`。 -/
+theorem ex_3_4_i_d_D4 :
+    ex34D4.Nonempty ∧
+    ex34D4 ⊆ dom ex34Floor ∧
+    setDiam realStdDist ex34D4 = 2 ∧
+    uniformNullRadiusComp realStdGauge ex34Floor () () ex34D4 = 0 ∧
+    channelType realStdGauge (diameterScaleFamily realStdGauge) ex34Floor ex34D4 1 1 () () =
+      (0, 0) := by
+  have hne : ex34D4.Nonempty := ⟨.val 0, 0, ⟨le_rfl, by norm_num⟩, rfl⟩
+  have hdom : ex34D4 ⊆ dom ex34Floor := val_image_sub_dom_ex34Floor _
+  have hdiam : setDiam realStdDist ex34D4 = 2 := by
+    unfold ex34D4
+    rw [setDiam_val_Icc 0 2 (by norm_num), sub_zero]
+    simp
+  have hunif : uniformNullRadiusComp realStdGauge ex34Floor () () ex34D4 = 0 :=
+    (ex34Floor_zero_radius_on_Icc 0 2 le_rfl zero_lt_one (by norm_num)).2
+  have hnlt : ¬ ((2 : ENNReal) < 1) := by norm_num
+  refine ⟨hne, hdom, hdiam, hunif, ?_⟩
+  simp [channelType, diameterScaleFamily, realStdGauge, hdiam, hunif,
+    ind01_eq_zero_iff, hnlt]
+ 
+/-- CH03-P29-05: 习题 3.4(ii) 以 (i-c) 的合法离散反例 `D = {0, 2}` 否定缺少直径条件时“`\underline{r}^N ≥ 1` 即整体零化”，并刻画其正零化半径来源于两点距离为 `2` 使半径 `≤ 2` 的受限开球退化为单点集。 -/
+theorem ex_3_4_ii_no_diam_counterexample :
+    ¬ (∀ D : Set ℝ, D.Nonempty →
+        1 ≤ uniformNullRadiusComp realStdGauge ex34Floor () () (RealWithBot.val '' D) →
+        ∀ x ∈ D, ∀ y ∈ D,
+          realStdDist (ex34Floor.func (.val x)) (ex34Floor.func (.val y)) = 0) ∧
+    (({0, 2} : Set ℝ).Nonempty ∧
+     RealWithBot.val '' ({0, 2} : Set ℝ) = ex34D3 ∧
+     1 ≤ setDiam realStdDist ex34D3 ∧
+     uniformNullRadiusComp realStdGauge ex34Floor () () ex34D3 = 2 ∧
+     1 ≤ uniformNullRadiusComp realStdGauge ex34Floor () () ex34D3 ∧
+     realStdDist (ex34Floor.func (.val 0)) (ex34Floor.func (.val 2)) = 2 ∧
+     realStdDist (ex34Floor.func (.val 0)) (ex34Floor.func (.val 2)) ≠ 0 ∧
+     (∀ x ∈ ex34D3, ∀ y ∈ ex34D3, x ≠ y → realStdDist x y = 2) ∧
+     (∀ y ∈ ex34D3, ∀ r ∈ Set.Ioc (0 : ENNReal) 2,
+        ball realStdDist y r ∩ ex34D3 = {y})) := by
+  rcases ex_3_4_i_c_D3 with ⟨himg, _, _, hdiam, _, hunif, _⟩
+  have hout2 : realStdDist (ex34Floor.func (.val 0)) (ex34Floor.func (.val 2)) = 2 := by
+    have hf0 : Int.floor (0 : ℝ) = 0 := by norm_num
+    simp [hf0, realStdDist]
+  have hout_ne : realStdDist (ex34Floor.func (.val 0)) (ex34Floor.func (.val 2)) ≠ 0 := by
+    rw [hout2]; norm_num
+  have hge1 : (1 : ENNReal) ≤ uniformNullRadiusComp realStdGauge ex34Floor () () ex34D3 := by
+    rw [hunif]; norm_num
+  have hdiam_ge1 : (1 : ENNReal) ≤ setDiam realStdDist ex34D3 := by
+    rw [hdiam]; norm_num
+  have hnot : ¬ (∀ D : Set ℝ, D.Nonempty →
+      1 ≤ uniformNullRadiusComp realStdGauge ex34Floor () () (RealWithBot.val '' D) →
+      ∀ x ∈ D, ∀ y ∈ D,
+        realStdDist (ex34Floor.func (.val x)) (ex34Floor.func (.val y)) = 0) := by
+    intro hall
+    have hge1' : 1 ≤ uniformNullRadiusComp realStdGauge ex34Floor () ()
+        (RealWithBot.val '' ({0, 2} : Set ℝ)) := by
+      rwa [← himg]
+    have h0 := hall {0, 2} ⟨0, Set.mem_insert _ _⟩ hge1'
+      0 (Set.mem_insert _ _) 2 (Set.mem_insert_of_mem _ (Set.mem_singleton _))
+    exact hout_ne h0
+  refine ⟨hnot, ⟨0, Set.mem_insert _ _⟩, himg.symm, hdiam_ge1, hunif, hge1, hout2, hout_ne, ?_, ?_⟩
+  · rintro _ (rfl | rfl) _ (rfl | rfl) hne
+    · exact False.elim (hne rfl)
+    · simp [realStdDist]
+    · simp [realStdDist]
+    · exact False.elim (hne rfl)
+  · intro y hy r ⟨hr0, hrle2⟩
+    ext x
+    simp only [Set.mem_inter_iff, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨hx_ball, hxD⟩
+      rcases hy with rfl | rfl <;> rcases hxD with rfl | rfl
+      · rfl
+      · exfalso; simp [ball, realStdDist] at hx_ball; exact not_lt_of_ge hrle2 hx_ball
+      · exfalso; simp [ball, realStdDist] at hx_ball; exact not_lt_of_ge hrle2 hx_ball
+      · rfl
+    · rintro rfl
+      exact ⟨by simp [ball, realStdDist_is_extended.dist_self, hr0], hy⟩
+ 
+/-! ### 习题 3.5：像集重排与覆盖估计 (CH03-P30-01 .. 04) -/
+ 
+/-- 习题 3.5 的四点评估域 `U = {0, 1, 2, 3}`。 -/
+def ex35U : Set RealWithBot := {.val 0, .val 1, .val 2, .val 3}
+ 
+private theorem mem_ex35U_iff (x : RealWithBot) :
+    x ∈ ex35U ↔ x = .val 0 ∨ x = .val 1 ∨ x = .val 2 ∨ x = .val 3 := by
+  simp [ex35U]
+ 
+/-- 习题 3.5 算子 `f`：在 `U` 上保持 `0, 1, 2, 3`，在 `𝒳 \ U` 上取值 `⊥`。 -/
+noncomputable def ex35F : Operator RealWithBot RealWithBot.bot where
+  func x :=
+    open scoped Classical in
+    if x = .val 0 then .val 0
+    else if x = .val 1 then .val 1
+    else if x = .val 2 then .val 2
+    else if x = .val 3 then .val 3
+    else .bot
+  preserves_bot := by
+    classical
+    simp
+ 
+/-- 习题 3.5 算子 `g`：在 `U` 上重排为 `0 ↦ 0, 1 ↦ 3, 2 ↦ 1, 3 ↦ 2`，在 `𝒳 \ U` 上取值 `⊥`。 -/
+noncomputable def ex35G : Operator RealWithBot RealWithBot.bot where
+  func x :=
+    open scoped Classical in
+    if x = .val 0 then .val 0
+    else if x = .val 1 then .val 3
+    else if x = .val 2 then .val 1
+    else if x = .val 3 then .val 2
+    else .bot
+  preserves_bot := by
+    classical
+    simp
+ 
+@[simp] theorem ex35F_0 : ex35F.func (.val 0) = .val 0 := by classical simp [ex35F]
+@[simp] theorem ex35F_1 : ex35F.func (.val 1) = .val 1 := by
+  classical
+  have h10 : RealWithBot.val 1 ≠ .val 0 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  simp [ex35F, h10]
+@[simp] theorem ex35F_2 : ex35F.func (.val 2) = .val 2 := by
+  classical
+  have h20 : RealWithBot.val 2 ≠ .val 0 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  have h21 : RealWithBot.val 2 ≠ .val 1 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  simp [ex35F, h20, h21]
+@[simp] theorem ex35F_3 : ex35F.func (.val 3) = .val 3 := by
+  classical
+  have h30 : RealWithBot.val 3 ≠ .val 0 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  have h31 : RealWithBot.val 3 ≠ .val 1 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  have h32 : RealWithBot.val 3 ≠ .val 2 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  simp [ex35F, h30, h31, h32]
+ 
+@[simp] theorem ex35G_0 : ex35G.func (.val 0) = .val 0 := by classical simp [ex35G]
+@[simp] theorem ex35G_1 : ex35G.func (.val 1) = .val 3 := by
+  classical
+  have h10 : RealWithBot.val 1 ≠ .val 0 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  simp [ex35G, h10]
+@[simp] theorem ex35G_2 : ex35G.func (.val 2) = .val 1 := by
+  classical
+  have h20 : RealWithBot.val 2 ≠ .val 0 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  have h21 : RealWithBot.val 2 ≠ .val 1 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  simp [ex35G, h20, h21]
+@[simp] theorem ex35G_3 : ex35G.func (.val 3) = .val 2 := by
+  classical
+  have h30 : RealWithBot.val 3 ≠ .val 0 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  have h31 : RealWithBot.val 3 ≠ .val 1 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  have h32 : RealWithBot.val 3 ≠ .val 2 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+  simp [ex35G, h30, h31, h32]
+ 
+theorem ex35_domains_and_outside :
+    (∀ x ∉ ex35U, ex35F.func x = .bot) ∧
+    (∀ x ∉ ex35U, ex35G.func x = .bot) ∧
+    dom ex35F = ex35U ∧
+    dom ex35G = ex35U := by
+  classical
+  have houtF : ∀ x ∉ ex35U, ex35F.func x = .bot := by
+    intro x hx
+    rw [mem_ex35U_iff] at hx
+    push Not at hx
+    rcases hx with ⟨h0, h1, h2, h3⟩
+    simp [ex35F, h0, h1, h2, h3]
+  have houtG : ∀ x ∉ ex35U, ex35G.func x = .bot := by
+    intro x hx
+    rw [mem_ex35U_iff] at hx
+    push Not at hx
+    rcases hx with ⟨h0, h1, h2, h3⟩
+    simp [ex35G, h0, h1, h2, h3]
+  refine ⟨houtF, houtG, ?_, ?_⟩
+  · ext x
+    constructor
+    · intro hdom
+      by_contra hnot
+      exact hdom (houtF x hnot)
+    · intro hx hbot
+      rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl
+      · rw [ex35F_0] at hbot; cases hbot
+      · rw [ex35F_1] at hbot; cases hbot
+      · rw [ex35F_2] at hbot; cases hbot
+      · rw [ex35F_3] at hbot; cases hbot
+  · ext x
+    constructor
+    · intro hdom
+      by_contra hnot
+      exact hdom (houtG x hnot)
+    · intro hx hbot
+      rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl
+      · rw [ex35G_0] at hbot; cases hbot
+      · rw [ex35G_1] at hbot; cases hbot
+      · rw [ex35G_2] at hbot; cases hbot
+      · rw [ex35G_3] at hbot; cases hbot
+ 
+private theorem ennreal_seven_fourths : (7 / 4 : ENNReal) = ENNReal.ofReal (7 / 4) := by
+  rw [ENNReal.ofReal_div_of_pos (by norm_num)]
+  norm_num
+ 
+/-- CH03-P30-01: 习题 3.5(i) 对所有有限正 `ε` 给出 `𝒩(ε, U)` 的完整三段公式（含端点 `ε = 1` 取 `4`、`ε = 2` 取 `2`），并证明 `ε = 7/4` 时外部点 `3/2` 虽以开球覆盖 `U`，但因 `3/2 ∉ U` 不能成为合法内部覆盖中心，内部覆盖数为 `2`。 -/
+theorem ex_3_5_i_covering_piecewise_and_external_center :
+    (∀ ε : ENNReal, 0 < ε → ε < ⊤ →
+      covering_number realStdDist ε ex35U =
+        if ε ≤ 1 then 4 else if ε ≤ 2 then 2 else 1) ∧
+    covering_number realStdDist 1 ex35U = 4 ∧
+    covering_number realStdDist 2 ex35U = 2 ∧
+    ex35U ⊆ ball realStdDist (.val (3 / 2)) (7 / 4) ∧
+    RealWithBot.val (3 / 2) ∉ ex35U ∧
+    (∀ S : Finset RealWithBot, RealWithBot.val (3 / 2) ∈ S →
+      ¬ InternalEpsilonNet realStdDist (7 / 4) ex35U S) ∧
+    ¬ InternalEpsilonNet realStdDist (7 / 4) ex35U {.val (3 / 2)} ∧
+    covering_number realStdDist (7 / 4) ex35U = 2 := by
+  classical
+  have hmain : ∀ ε : ENNReal, 0 < ε → ε < ⊤ →
+      covering_number realStdDist ε ex35U =
+        if ε ≤ 1 then 4 else if ε ≤ 2 then 2 else 1 := by
+    intro ε hε0 _hεtop
+    by_cases hle1 : ε ≤ 1
+    · rw [if_pos hle1]
+      apply le_antisymm
+      · let S4 : Finset RealWithBot := {.val 0, .val 1, .val 2, .val 3}
+        have hnet4 : InternalEpsilonNet realStdDist ε ex35U S4 := by
+          refine ⟨fun x hx => ?_, fun x hx => ?_⟩
+          · simp [S4, mem_ex35U_iff] at hx ⊢; exact hx
+          · refine ⟨x, ?_, ?_⟩
+            · rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl <;> simp [S4]
+            · rw [realStdDist_is_extended.dist_self]; exact hε0
+        have hcard4 : (S4.card : ENNReal) ≤ 4 := by
+          have hc1 : ({.val 2, .val 3} : Finset RealWithBot).card ≤ 2 := Finset.card_le_two
+          have hc2 : ({.val 1, .val 2, .val 3} : Finset RealWithBot).card ≤ 3 :=
+            le_trans (Finset.card_insert_le _ _) (Nat.succ_le_succ hc1)
+          have hc3 : S4.card ≤ 4 :=
+            le_trans (Finset.card_insert_le _ _) (Nat.succ_le_succ hc2)
+          exact_mod_cast hc3
+        exact le_trans (iInf_le_of_le S4 (iInf_le_of_le hnet4 le_rfl)) hcard4
+      · apply le_iInf₂
+        intro S hS
+        let S4 : Finset RealWithBot := {.val 0, .val 1, .val 2, .val 3}
+        have hsub4 : S4 ⊆ S := by
+          intro x hxS4
+          have hxU : x ∈ ex35U := by
+            simp [S4, mem_ex35U_iff] at hxS4 ⊢; exact hxS4
+          rcases hS.2 x hxU with ⟨c, hcS, hdxc⟩
+          have hlt1 : realStdDist x c < 1 := lt_of_lt_of_le hdxc hle1
+          have hxeq : x = c := by
+            rcases (mem_ex35U_iff x).mp hxU with rfl | rfl | rfl | rfl <;>
+              rcases (mem_ex35U_iff c).mp (hS.1 hcS) with rfl | rfl | rfl | rfl
+            all_goals
+              first
+              | rfl
+              | (exfalso; rw [realStdDist_val] at hlt1;
+                 rw [← ENNReal.ofReal_one, ENNReal.ofReal_lt_ofReal_iff zero_lt_one] at hlt1;
+                 norm_num at hlt1)
+          rwa [hxeq]
+        have hc4 : S4.card = 4 := by
+          have hne01 : RealWithBot.val 0 ≠ .val 1 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+          have hne02 : RealWithBot.val 0 ≠ .val 2 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+          have hne03 : RealWithBot.val 0 ≠ .val 3 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+          have hne12 : RealWithBot.val 1 ≠ .val 2 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+          have hne13 : RealWithBot.val 1 ≠ .val 3 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+          have hne23 : RealWithBot.val 2 ≠ .val 3 := fun h => by have := RealWithBot.val.inj h; norm_num at this
+          simp [S4, hne01, hne02, hne03, hne12, hne13, hne23]
+        have h4le : 4 ≤ S.card := by rw [← hc4]; exact Finset.card_le_card hsub4
+        exact_mod_cast h4le
+    · rw [if_neg hle1]
+      have hgt1 : 1 < ε := lt_of_not_ge hle1
+      by_cases hle2 : ε ≤ 2
+      · rw [if_pos hle2]
+        apply le_antisymm
+        · let S2 : Finset RealWithBot := {.val 0, .val 2}
+          have hnet2 : InternalEpsilonNet realStdDist ε ex35U S2 := by
+            refine ⟨fun x hx => ?_, fun x hx => ?_⟩
+            · rcases Finset.mem_insert.mp (Finset.mem_coe.mp hx) with rfl | hx2
+              · exact (mem_ex35U_iff _).mpr (Or.inl rfl)
+              · rw [Finset.mem_singleton.mp hx2]
+                exact (mem_ex35U_iff _).mpr (Or.inr (Or.inr (Or.inl rfl)))
+            · rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl
+              · refine ⟨.val 0, by simp [S2], ?_⟩; simp [realStdDist, hε0]
+              · refine ⟨.val 0, by simp [S2], ?_⟩
+                simpa [realStdDist] using hgt1
+              · refine ⟨.val 2, by simp [S2], ?_⟩; simp [realStdDist, hε0]
+              · refine ⟨.val 2, by simp [S2], ?_⟩
+                have h32 : |(3 : ℝ) - 2| = 1 := by norm_num
+                rw [realStdDist_val, h32, ENNReal.ofReal_one]
+                exact hgt1
+          have hcard2 : (S2.card : ENNReal) ≤ 2 := by
+            exact_mod_cast (Finset.card_le_two : S2.card ≤ 2)
+          exact le_trans (iInf_le_of_le S2 (iInf_le_of_le hnet2 le_rfl)) hcard2
+        · apply le_iInf₂
+          intro S hS
+          rcases hS.2 (.val 0) ((mem_ex35U_iff _).mpr (Or.inl rfl)) with ⟨c0, hc0S, hd0⟩
+          rcases hS.2 (.val 3) ((mem_ex35U_iff _).mpr (Or.inr (Or.inr (Or.inr rfl)))) with ⟨c3, hc3S, hd3⟩
+          have hd0_lt2 : realStdDist (.val 0) c0 < 2 := lt_of_lt_of_le hd0 hle2
+          have hd3_lt2 : realStdDist (.val 3) c3 < 2 := lt_of_lt_of_le hd3 hle2
+          have hc0_01 : c0 = .val 0 ∨ c0 = .val 1 := by
+            rcases (mem_ex35U_iff c0).mp (hS.1 hc0S) with rfl | rfl | rfl | rfl
+            · exact Or.inl rfl
+            · exact Or.inr rfl
+            · exfalso; simp [realStdDist] at hd0_lt2
+            · exfalso
+              have h03 : |(0 : ℝ) - 3| = 3 := by norm_num
+              rw [realStdDist_val, h03] at hd0_lt2
+              have h3eq : ENNReal.ofReal 3 = (3 : ENNReal) := by norm_num
+              rw [h3eq] at hd0_lt2
+              norm_num at hd0_lt2
+          have hc3_23 : c3 = .val 2 ∨ c3 = .val 3 := by
+            rcases (mem_ex35U_iff c3).mp (hS.1 hc3S) with rfl | rfl | rfl | rfl
+            · exfalso
+              have h30 : |(3 : ℝ) - 0| = 3 := by norm_num
+              rw [realStdDist_val, h30] at hd3_lt2
+              have h3eq : ENNReal.ofReal 3 = (3 : ENNReal) := by norm_num
+              rw [h3eq] at hd3_lt2
+              norm_num at hd3_lt2
+            · exfalso
+              have h31 : |(3 : ℝ) - 1| = 2 := by norm_num
+              rw [realStdDist_val, h31] at hd3_lt2
+              simp at hd3_lt2
+            · exact Or.inl rfl
+            · exact Or.inr rfl
+          have hne : c0 ≠ c3 := by
+            rcases hc0_01 with rfl | rfl <;> rcases hc3_23 with rfl | rfl <;>
+              (intro h; have := RealWithBot.val.inj h; norm_num at this)
+          have h2le : 2 ≤ S.card := Finset.one_lt_card.mpr ⟨c0, hc0S, c3, hc3S, hne⟩
+          exact_mod_cast h2le
+      · rw [if_neg hle2]
+        have hgt2 : 2 < ε := lt_of_not_ge hle2
+        apply le_antisymm
+        · have hnet1 : InternalEpsilonNet realStdDist ε ex35U {.val 1} := by
+            refine ⟨fun x hx => ?_, fun x hx => ?_⟩
+            · rw [Finset.coe_singleton, Set.mem_singleton_iff] at hx
+              rw [hx]; exact (mem_ex35U_iff _).mpr (Or.inr (Or.inl rfl))
+            · refine ⟨.val 1, Finset.mem_singleton_self _, ?_⟩
+              rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl
+              · simp [realStdDist]; exact lt_trans (by norm_num : (1 : ENNReal) < 2) hgt2
+              · simp [realStdDist, hε0]
+              · have h21 : |(2 : ℝ) - 1| = 1 := by norm_num
+                rw [realStdDist_val, h21, ENNReal.ofReal_one]
+                exact lt_trans (by norm_num : (1 : ENNReal) < 2) hgt2
+              · have h31 : |(3 : ℝ) - 1| = 2 := by norm_num
+                rw [realStdDist_val, h31]
+                simpa using hgt2
+          exact le_trans (iInf_le_of_le {.val 1} (iInf_le_of_le hnet1 le_rfl)) (by simp)
+        · exact one_le_covering_number_of_nonempty realStdDist ε ex35U
+            ⟨.val 0, (mem_ex35U_iff _).mpr (Or.inl rfl)⟩
+  have hcov1 : covering_number realStdDist 1 ex35U = 4 := by
+    rw [hmain 1 zero_lt_one ENNReal.one_lt_top]
+    simp
+  have hcov2 : covering_number realStdDist 2 ex35U = 2 := by
+    rw [hmain 2 (by norm_num) ENNReal.ofNat_lt_top]
+    have hn1 : ¬ ((2 : ENNReal) ≤ 1) := by norm_num
+    simp [hn1]
+  have hball_ext : ex35U ⊆ ball realStdDist (.val (3 / 2)) (7 / 4) := by
+    intro x hx
+    simp only [ball, Set.mem_setOf_eq]
+    rw [ennreal_seven_fourths]
+    rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl <;>
+      (rw [realStdDist_val, ENNReal.ofReal_lt_ofReal_iff (by norm_num)]; norm_num)
+  have hnot_mem : RealWithBot.val (3 / 2) ∉ ex35U := by
+    rw [mem_ex35U_iff]
+    rintro (h | h | h | h) <;> (have := RealWithBot.val.inj h; norm_num at this)
+  have hno_internal : ∀ S : Finset RealWithBot, RealWithBot.val (3 / 2) ∈ S →
+      ¬ InternalEpsilonNet realStdDist (7 / 4) ex35U S := by
+    intro S hmem hnet
+    exact hnot_mem (hnet.1 hmem)
+  have h74_pos : (0 : ENNReal) < 7 / 4 := by
+    rw [ennreal_seven_fourths]
+    exact ENNReal.ofReal_pos.mpr (by norm_num)
+  have h74_top : (7 / 4 : ENNReal) < ⊤ := by
+    rw [ennreal_seven_fourths]; exact ENNReal.ofReal_lt_top
+  have h74_gt1 : ¬ ((7 / 4 : ENNReal) ≤ 1) := by
+    rw [ennreal_seven_fourths, ← ENNReal.ofReal_one, ENNReal.ofReal_le_ofReal_iff zero_le_one]
+    norm_num
+  have h74_le2 : (7 / 4 : ENNReal) ≤ 2 := by
+    have h2 : (2 : ENNReal) = ENNReal.ofReal 2 := by simp
+    rw [ennreal_seven_fourths, h2]
+    exact ENNReal.ofReal_le_ofReal (by norm_num)
+  have hcov74 : covering_number realStdDist (7 / 4) ex35U = 2 := by
+    rw [hmain (7 / 4) h74_pos h74_top, if_neg h74_gt1, if_pos h74_le2]
+  exact ⟨hmain, hcov1, hcov2, hball_ext, hnot_mem, hno_internal,
+    hno_internal {.val (3 / 2)} (Finset.mem_singleton_self _), hcov74⟩
+ 
+/-- CH03-P30-02: 习题 3.5(ii) `f(U) = U` 且 `g(U) = U`；任意有限正精度下两像集覆盖数相等且等于 `U` 的覆盖数，两算子映射熵差良定且均为 `0`。 -/
+theorem ex_3_5_ii_images_covering_and_entropy_diff :
+    operator_image ex35F ex35U = ex35U ∧
+    operator_image ex35G ex35U = ex35U ∧
+    (∀ ε : ENNReal, 0 < ε → ε < ⊤ →
+      covering_number realStdDist ε (operator_image ex35F ex35U) =
+        covering_number realStdDist ε ex35U ∧
+      covering_number realStdDist ε (operator_image ex35G ex35U) =
+        covering_number realStdDist ε ex35U ∧
+      covering_number realStdDist ε (operator_image ex35F ex35U) =
+        covering_number realStdDist ε (operator_image ex35G ex35U) ∧
+      (∃ hwfF : MappingEntropyDiffSingleWellDefined realStdGauge ex35F ex35U () ε,
+        mappingEntropyDiffSingle realStdGauge ex35F ex35U () ε hwfF = 0) ∧
+      (∃ hwfG : MappingEntropyDiffSingleWellDefined realStdGauge ex35G ex35U () ε,
+        mappingEntropyDiffSingle realStdGauge ex35G ex35U () ε hwfG = 0)) := by
+  have himF : operator_image ex35F ex35U = ex35U := by
+    ext y
+    simp only [operator_image, Set.mem_image, mem_ex35U_iff]
+    constructor
+    · rintro ⟨x, rfl | rfl | rfl | rfl, rfl⟩
+      · rw [ex35F_0]; exact Or.inl rfl
+      · rw [ex35F_1]; exact Or.inr (Or.inl rfl)
+      · rw [ex35F_2]; exact Or.inr (Or.inr (Or.inl rfl))
+      · rw [ex35F_3]; exact Or.inr (Or.inr (Or.inr rfl))
+    · rintro (rfl | rfl | rfl | rfl)
+      · exact ⟨.val 0, Or.inl rfl, ex35F_0⟩
+      · exact ⟨.val 1, Or.inr (Or.inl rfl), ex35F_1⟩
+      · exact ⟨.val 2, Or.inr (Or.inr (Or.inl rfl)), ex35F_2⟩
+      · exact ⟨.val 3, Or.inr (Or.inr (Or.inr rfl)), ex35F_3⟩
+  have himG : operator_image ex35G ex35U = ex35U := by
+    ext y
+    simp only [operator_image, Set.mem_image, mem_ex35U_iff]
+    constructor
+    · rintro ⟨x, rfl | rfl | rfl | rfl, rfl⟩
+      · rw [ex35G_0]; exact Or.inl rfl
+      · rw [ex35G_1]; exact Or.inr (Or.inr (Or.inr rfl))
+      · rw [ex35G_2]; exact Or.inr (Or.inl rfl)
+      · rw [ex35G_3]; exact Or.inr (Or.inr (Or.inl rfl))
+    · rintro (rfl | rfl | rfl | rfl)
+      · exact ⟨.val 0, Or.inl rfl, ex35G_0⟩
+      · exact ⟨.val 2, Or.inr (Or.inr (Or.inl rfl)), ex35G_2⟩
+      · exact ⟨.val 3, Or.inr (Or.inr (Or.inr rfl)), ex35G_3⟩
+      · exact ⟨.val 1, Or.inr (Or.inl rfl), ex35G_1⟩
+  refine ⟨himF, himG, ?_⟩
+  intro ε hε0 hεtop
+  have hcov_pw := ex_3_5_i_covering_piecewise_and_external_center.1 ε hε0 hεtop
+  have hcov_lt_top : covering_number realStdDist ε ex35U < ⊤ := by
+    rw [hcov_pw]
+    split_ifs <;> norm_num
+  have hne : ex35U.Nonempty := ⟨.val 0, (mem_ex35U_iff _).mpr (Or.inl rfl)⟩
+  have hdomF : ex35U ⊆ dom ex35F := le_of_eq ex35_domains_and_outside.2.2.1.symm
+  have hdomG : ex35U ⊆ dom ex35G := le_of_eq ex35_domains_and_outside.2.2.2.symm
+  have hwfF : MappingEntropyDiffSingleWellDefined realStdGauge ex35F ex35U () ε := by
+    refine ⟨hne, hdomF, Set.singleton_nonempty (), Set.singleton_nonempty (),
+      hε0, hεtop, Or.inl ?_⟩
+    simpa [subfamily_covering_number_singleton, realStdGauge] using hcov_lt_top
+  have hwfG : MappingEntropyDiffSingleWellDefined realStdGauge ex35G ex35U () ε := by
+    refine ⟨hne, hdomG, Set.singleton_nonempty (), Set.singleton_nonempty (),
+      hε0, hεtop, Or.inl ?_⟩
+    simpa [subfamily_covering_number_singleton, realStdGauge] using hcov_lt_top
+  refine ⟨by rw [himF], by rw [himG], by rw [himF, himG], ⟨hwfF, ?_⟩, ⟨hwfG, ?_⟩⟩
+  · unfold mappingEntropyDiffSingle mappingEntropyDiff subfamily_covering_number
+    simp [subfamily_pseudometric_singleton, realStdGauge, himF, hcov_lt_top]
+  · unfold mappingEntropyDiffSingle mappingEntropyDiff subfamily_covering_number
+    simp [subfamily_pseudometric_singleton, realStdGauge, himG, hcov_lt_top]
+ 
+/-- CH03-P30-03: 习题 3.5(iii-a) `f` 与 `g` 在 `U` 上最小标量 Lip 常数分别为 `1` 与 `3`（同时证明合法性与必要下界）。 -/
+theorem ex_3_5_iii_a_optimal_scalar_lip :
+    HasScalarLipBound realStdGauge ex35F ex35U () () 1 ∧
+    (∀ c : ENNReal, HasScalarLipBound realStdGauge ex35F ex35U () () c → 1 ≤ c) ∧
+    sInf {c : ENNReal | HasScalarLipBound realStdGauge ex35F ex35U () () c} = 1 ∧
+    HasScalarLipBound realStdGauge ex35G ex35U () () 3 ∧
+    (∀ c : ENNReal, HasScalarLipBound realStdGauge ex35G ex35U () () c → 3 ≤ c) ∧
+    sInf {c : ENNReal | HasScalarLipBound realStdGauge ex35G ex35U () () c} = 3 := by
+  have hdomF : ex35U ⊆ dom ex35F := le_of_eq ex35_domains_and_outside.2.2.1.symm
+  have hdomG : ex35U ⊆ dom ex35G := le_of_eq ex35_domains_and_outside.2.2.2.symm
+  have hlipF : HasScalarLipBound realStdGauge ex35F ex35U () () 1 := by
+    refine ⟨hdomF, fun x hx y hy => ?_⟩
+    have hfx : ex35F.func x = x := by
+      rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl
+      · exact ex35F_0
+      · exact ex35F_1
+      · exact ex35F_2
+      · exact ex35F_3
+    have hfy : ex35F.func y = y := by
+      rcases (mem_ex35U_iff y).mp hy with rfl | rfl | rfl | rfl
+      · exact ex35F_0
+      · exact ex35F_1
+      · exact ex35F_2
+      · exact ex35F_3
+    rw [hfx, hfy, one_mul]
+  have hlowF : ∀ c : ENNReal, HasScalarLipBound realStdGauge ex35F ex35U () () c → 1 ≤ c := by
+    intro c hc
+    have h01 := hc.2 (.val 0) ((mem_ex35U_iff _).mpr (Or.inl rfl))
+      (.val 1) ((mem_ex35U_iff _).mpr (Or.inr (Or.inl rfl)))
+    simpa [realStdGauge, realStdDist] using h01
+  have hinfF : sInf {c : ENNReal | HasScalarLipBound realStdGauge ex35F ex35U () () c} = 1 :=
+    le_antisymm (sInf_le hlipF) (le_sInf hlowF)
+  have h3_ofReal : (3 : ENNReal) = ENNReal.ofReal 3 := by norm_num
+  have hlipG : HasScalarLipBound realStdGauge ex35G ex35U () () 3 := by
+    refine ⟨hdomG, fun x hx y hy => ?_⟩
+    rcases (mem_ex35U_iff x).mp hx with rfl | rfl | rfl | rfl <;>
+      rcases (mem_ex35U_iff y).mp hy with rfl | rfl | rfl | rfl <;>
+      (simp only [realStdGauge, ex35G_0, ex35G_1, ex35G_2, ex35G_3, realStdDist_val];
+       rw [h3_ofReal, ← ENNReal.ofReal_mul (by norm_num)];
+       exact ENNReal.ofReal_le_ofReal (by norm_num))
+  have hlowG : ∀ c : ENNReal, HasScalarLipBound realStdGauge ex35G ex35U () () c → 3 ≤ c := by
+    intro c hc
+    have h01 := hc.2 (.val 0) ((mem_ex35U_iff _).mpr (Or.inl rfl))
+      (.val 1) ((mem_ex35U_iff _).mpr (Or.inr (Or.inl rfl)))
+    rw [realStdGauge, ex35G_0, ex35G_1, realStdDist_val, realStdDist_val] at h01
+    have h03 : |(0 : ℝ) - 3| = 3 := by norm_num
+    have h01' : |(0 : ℝ) - 1| = 1 := by norm_num
+    rw [h03, h01', ← h3_ofReal, ENNReal.ofReal_one, mul_one] at h01
+    exact h01
+  have hinfG : sInf {c : ENNReal | HasScalarLipBound realStdGauge ex35G ex35U () () c} = 3 :=
+    le_antisymm (sInf_le hlipG) (le_sInf hlowG)
+  exact ⟨hlipF, hlowF, hinfF, hlipG, hlowG, hinfG⟩
+ 
+/-- CH03-P30-04: 习题 3.5(iii-b) 在精度 `ε = 7/4` 下代入命题 3.19 的覆盖数上界 `𝒩(ε/L, U)`：对 `f`（`L = 1`）上界为 `2`，与真实像覆盖数 `2` 相等（紧）；对 `g`（`L = 3`）上界为 `𝒩(7/12, U) = 4`，严格大于真实像覆盖数 `2`。 -/
+theorem ex_3_5_iii_b_prop_3_19_bound_comparison :
+    let ε : ENNReal := 7 / 4
+    covering_number realStdDist ε (operator_image ex35F ex35U) ≤
+      covering_number realStdDist (ε / 1) ex35U ∧
+    covering_number realStdDist ε (operator_image ex35F ex35U) = 2 ∧
+    covering_number realStdDist (ε / 1) ex35U = 2 ∧
+    covering_number realStdDist ε (operator_image ex35F ex35U) =
+      covering_number realStdDist (ε / 1) ex35U ∧
+    covering_number realStdDist ε (operator_image ex35G ex35U) ≤
+      covering_number realStdDist (ε / 3) ex35U ∧
+    covering_number realStdDist ε (operator_image ex35G ex35U) = 2 ∧
+    covering_number realStdDist (ε / 3) ex35U = 4 ∧
+    covering_number realStdDist ε (operator_image ex35G ex35U) <
+      covering_number realStdDist (ε / 3) ex35U := by
+  dsimp only
+  have hne : ex35U.Nonempty := ⟨.val 0, (mem_ex35U_iff _).mpr (Or.inl rfl)⟩
+  have h74_pos : (0 : ENNReal) < 7 / 4 := by
+    rw [ennreal_seven_fourths]; exact ENNReal.ofReal_pos.mpr (by norm_num)
+  have h74_top : (7 / 4 : ENNReal) < ⊤ := by
+    rw [ennreal_seven_fourths]; exact ENNReal.ofReal_lt_top
+  rcases ex_3_5_iii_a_optimal_scalar_lip with ⟨hlipF, _, _, hlipG, _, _⟩
+  have hboundF := (prop_3_19_covering_number_upper_bound realStdGauge ex35F ex35U () ()
+    (7 / 4) 1 hne hlipF.1 h74_pos h74_top zero_lt_one ENNReal.one_lt_top hlipF.2).2
+  have hboundG := (prop_3_19_covering_number_upper_bound realStdGauge ex35G ex35U () ()
+    (7 / 4) 3 hne hlipG.1 h74_pos h74_top (by norm_num) ENNReal.ofNat_lt_top hlipG.2).2
+  have hcovU74 : covering_number realStdDist (7 / 4) ex35U = 2 :=
+    ex_3_5_i_covering_piecewise_and_external_center.2.2.2.2.2.2.2
+  have himF := ex_3_5_ii_images_covering_and_entropy_diff.1
+  have himG := ex_3_5_ii_images_covering_and_entropy_diff.2.1
+  have htrueF : covering_number realStdDist (7 / 4) (operator_image ex35F ex35U) = 2 := by
+    rw [himF, hcovU74]
+  have htrueG : covering_number realStdDist (7 / 4) (operator_image ex35G ex35U) = 2 := by
+    rw [himG, hcovU74]
+  have hdiv1 : covering_number realStdDist ((7 / 4 : ENNReal) / 1) ex35U = 2 := by
+    rw [div_one, hcovU74]
+  have h712_eq : ((7 / 4 : ENNReal) / 3) = ENNReal.ofReal (7 / 12) := by
+    have h3 : (3 : ENNReal) = ENNReal.ofReal 3 := by norm_num
+    rw [ennreal_seven_fourths, h3, ← ENNReal.ofReal_div_of_pos (by norm_num)]
+    norm_num
+  have h712_pos : (0 : ENNReal) < (7 / 4 : ENNReal) / 3 := by
+    rw [h712_eq]; exact ENNReal.ofReal_pos.mpr (by norm_num)
+  have h712_top : (7 / 4 : ENNReal) / 3 < ⊤ := by
+    rw [h712_eq]; exact ENNReal.ofReal_lt_top
+  have h712_le1 : (7 / 4 : ENNReal) / 3 ≤ 1 := by
+    rw [h712_eq, ← ENNReal.ofReal_one]
+    exact ENNReal.ofReal_le_ofReal (by norm_num)
+  have hdiv3 : covering_number realStdDist ((7 / 4 : ENNReal) / 3) ex35U = 4 := by
+    rw [ex_3_5_i_covering_piecewise_and_external_center.1 _ h712_pos h712_top, if_pos h712_le1]
+  refine ⟨hboundF, htrueF, hdiv1, by rw [htrueF, hdiv1], hboundG, htrueG, hdiv3, ?_⟩
+  rw [htrueG, hdiv3]
+  norm_num
+ 
+end Ch03
+```
+
+```lean filename=Main.lean
+import Ch03.Defs
+import Ch03.Sec01
+import Ch03.Sec02
+import Ch03.Sec03
+import Ch03.Sec04_05
+import Ch03.Sec06
+import Ch03.Sec07_Ex1_3
+import Ch03.Sec07_Ex4_5
+```
+
+```json filename=alignment.json
+{
+  "case_id": "MG-C003",
+  "version": "0.1.1",
+  "items": [
+    {
+      "id": "CH03-D01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.I_const"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.I_id"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.I_act"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.I_const_global"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.I_id_global"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.I_act_global"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.component_partition_props"
+        }
+      ],
+      "representation": "对规范族 d : I → X → X → ENNReal、算子 ϕ : Operator X bot 及子集 U : Set X，定义受限常值分量 I_const(ϕ|U)、按常值优先排除 I_const 后的恒等分量 I_id(ϕ|U) 与有效分量 I_act(ϕ|U) = univ \\ (I_const ∪ I_id)，以及 U = dom(ϕ) 的全域简写，并在 component_partition_props 中证明三者两两不交、并集为全集且满足常值优先约定。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.CompFiber"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.CompFiberGlobal"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.CompFiberSingle"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.CompFiberSingle_eq"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.CompFiber_eq_empty_of_pos_dist"
+        }
+      ],
+      "representation": "对子族 J : Set I、目标点 y : X 与受限域 U : Set X，以子族复合伪度量 d_J 定义受限计算纤维 Fib_{ϕ,J}(y|U) = {x ∈ U | d_J(ϕ(x), y) = 0}，同时给出全域纤维 Fib_{ϕ,J}(y)、单分量纤维 Fib_{ϕ,j}(y|U) 及其展开等式和正距离目标空纤维判据。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.RelEq"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.RelGaugeZero"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.mem_RelGaugeZero_iff_mem_CompFiber_univ"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.ImageGaugeSetoid"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.ImageGaugeQuotient"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.imageQuotientClass"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.IsSeparatingOn"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.FiberPreorder"
+        }
+      ],
+      "representation": "在 U × U 上定义点值相等点对集 RelEq(ϕ|U) 与族零距点对集 RelGaugeZero(ϕ|U)，证明其与全子族计算纤维的等价性；在实际像集子类型 ↥(operator_image ϕ U) 上定义族零距 Setoid 与像商 ImageGaugeQuotient = ϕ(U)/∼_𝒢、商类映射 imageQuotientClass、子集分离谓词 IsSeparatingOn，以及零测距纤维预序 FiberPreorder (ϕ_A ⪰_{fiber,U} ϕ_B)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-D04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.ValidNullRadius"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.pointwiseNullRadius"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.pointwiseNullRadiusGlobal"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.pointwiseNullRadiusSubfamily"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.pointwiseNullRadiusComp"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.pointwiseNullRadiusSubfamily_singleton"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.ValidNullRadius_subfamily_iff_fiber"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.pointwiseNullRadius_eq_zero_of_no_valid"
+        }
+      ],
+      "representation": "定义有限正合法半径谓词 ValidNullRadius (0 < r < ⊤ 且 B_{d_in}(y, r) ∩ U ⊆ {x ∈ U | d_out(ϕ(x), ϕ(y)) = 0})，以其在 ENNReal 上的上确界定义点态零化内切半径 pointwiseNullRadius（空集上确界自动取 0），并给出全域、子族输出与单分量通道简写及对应引理。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-D05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadiusOn"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadius"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadiusGlobal"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadiusSubfamilyOn"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadiusSubfamily"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadiusComp"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.nullMatrix"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.nullMatrixGlobal"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.uniformNullRadiusSubfamily_singleton"
+        }
+      ],
+      "representation": "对基点集 A 与评估域 U 定义统一零化半径 uniformNullRadiusOn = ⨅ y ∈ A, r^N(y|U)，受限统一半径 uniformNullRadius (A = U)、全域统一半径及子族/单分量简写；按正文行指标输出 j、列指标输入 i 的矩阵下标约定定义受限零化矩阵 nullMatrix d ϕ U j i := uniformNullRadiusComp d ϕ i j U 及全域零化矩阵 nullMatrixGlobal。",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-D06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.IsInputScaleFamily"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.setDiam"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.diameterScaleFamily"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.diameterScaleFamily_isInputScaleFamily"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.ind01"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.channelType"
+        }
+      ],
+      "representation": "定义非空子集包含单调的输入尺度函数族谓词 IsInputScaleFamily、集合直径 setDiam 与默认直径尺度族 diameterScaleFamily（并证明其满足尺度单调性），以 Fin 2 × Fin 2 上的指示函数对定义通道阈值分类 Type_{f,A}(i, j) = (1_{σ_i(A) < τσ}, 1_{r̲^N_{f,i,j}|_A ≥ τN})。",
+      "dependencies": [
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-D07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.covering_number"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy"
+        },
+        {
+          "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.subfamily_covering_number"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.subfamily_covering_number_singleton"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.InternalEpsilonNet_iff_ball_cover"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.log2_ereal_mono"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.IsTotallyBounded"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.metric_entropy_lt_top_iff"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.metric_entropy_finite_of_totallyBounded"
+        }
+      ],
+      "representation": "复用第1章冻结背景的 InternalEpsilonNet、covering_number、metric_entropy 与 subfamily_metric_entropy，并在 Ch03.Defs 中建立子族覆盖数简写 subfamily_covering_number、开球并覆盖等价定理 InternalEpsilonNet_iff_ball_cover、log2_ereal 单调性、全有界性谓词 IsTotallyBounded 及全有界推出有限非负度量熵的接口引理。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-D08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.MappingEntropyDiffWellDefined"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.mappingEntropyDiff"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.MappingEntropyDiffSameWellDefined"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.mappingEntropyDiffSame"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.MappingEntropyDiffCompWellDefined"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.mappingEntropyDiffComp"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.MappingEntropyDiffSingleWellDefined"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.mappingEntropyDiffSingle"
+        },
+        {
+          "file": "Ch03/Defs.lean",
+          "name": "Ch03.mappingEntropyDiff_eq_sub"
+        }
+      ],
+      "representation": "以 MappingEntropyDiffWellDefined 刻画 U 非空、U ⊆ dom(ϕ)、Jin/Jout 非空、0 < ε < ⊤ 且输入或输出覆盖数至少一端有限的良定前提（严格排除 ∞ - ∞）；仅在良定证明 hwf 下定义 EReal 值映射熵差 mappingEntropyDiff 及同子族/单通道/单分量简写，并在 mappingEntropyDiff_eq_sub 中证明其与子族度量熵之差在有限、+∞、-∞ 三种合法情形下一致。",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P01-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_1_i_zero_row_bound"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_1_i_zero_row_lip_matrix"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ) 与 i ∈ I_const(ϕ|U)，证明任意 x, y ∈ U 的第 i 分量像距受零行和 ∑_k 0 · d_k(x, y) = 0 控制，且将任意合法受限 Lip 矩阵的第 i 输出行置零仍保持 IsLipMatrix。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_1_ii_colip_entry_zero"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ)、i ∈ I_const(ϕ|U) 及任意受限 co-Lip 矩阵 K，若存在 x, y ∈ U 使 d_k(x, y) > 0，则证明通道条目 K k i (即 K_{k→i}) = 0。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P01-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_1_iii_id_preserves_dist"
+        }
+      ],
+      "representation": "在扩展伪度量公理与 U ⊆ dom(ϕ)、i ∈ I_id(ϕ|U) 下，由三角不等式双向证明对任意 x, y ∈ U 有 d_i(ϕ(x), ϕ(y)) = d_i(x, y)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P02-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.comp_dom_inclusions"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_2_i_active_subset_union"
+        }
+      ],
+      "representation": "设 U ⊆ dom(ϕ₂ * ϕ₁)，先证 U ⊆ dom(ϕ₁) 且实际中间像域 ϕ₁(U) ⊆ dom(ϕ₂)，再分四种非有效组合证明 I_act(ϕ₂ * ϕ₁ | U) ⊆ I_act(ϕ₁ | U) ∪ I_act(ϕ₂ | ϕ₁(U))。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P02-03"
+      ]
+    },
+    {
+      "id": "CH03-P02-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.chainCompSeq"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.chainDomainSeq"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.chainDomainSeq_eq_image_chainCompSeq"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.chainDomainSeq_subset_dom"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_2_ii_zero_base"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_2_ii_chain_active_subset"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_2_ii_chain_nonactive_preserved"
+        }
+      ],
+      "representation": "以 chainCompSeq 递归定义有限复合链 c_n（含 n = 0 空复合 id_X）并以 chainDomainSeq 递推实际像域序列 U_{m+1} = ϕ_m(U_m)，证明零步基例 I_act(id_X | U₁) = ∅、各步域合法性，以及任意长度 n 的有效分量并集包含与非有效分量保持。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P02-01"
+      ]
+    },
+    {
+      "id": "CH03-P02-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_2_iii_id_preserved"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ₂ * ϕ₁)，证明 I_id(ϕ₁ | U) ∩ I_id(ϕ₂ | ϕ₁(U)) ⊆ I_id(ϕ₂ * ϕ₁ | U)，其中利用 ϕ₂ 在 ϕ₁(U) 上的保距性排除复合落入常值优先分支 I_const(ϕ₂ * ϕ₁ | U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P03-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.SwapSpace"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.swapDist"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.swapDist_is_extended"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.swapOp"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.swapU"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.note_comp_converse_counterexample"
+        }
+      ],
+      "representation": "构造带吸收元的两点换位空间 SwapSpace = {bot, a, b}、合法扩展伪度量 swapDist 与换位算子 swapOp，在 U = {a, b} 上完整算出单步有效、自复合恒等，并同时证明命题 3.2(i) 与 (iii) 的逆向包含均不成立。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_3_i_outer_const_preserved"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ψ * ϕ)，证明若 i ∈ I_const(ψ | ϕ(U))（外侧算子在实际中间像域上常值），则 i ∈ I_const(ψ * ϕ | U)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P04-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.SevenSpace"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.TwoIdx"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.sevenDist"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.sevenDist_is_extended"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.sevenPhi"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.sevenPsi"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.sevenU"
+        },
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.prop_3_3_ii_inner_const_counterexample"
+        }
+      ],
+      "representation": "构造七点空间 {bot, a, b, p, q, r, s} 与双分量规范族 sevenDist，验证两个分量均满足扩展伪度量公理及 U = {a, b} ⊆ dom(ψ * ϕ)，并证明 idx_i ∈ I_const(ϕ | U)、跨分量正距传递导致 idx_i ∉ I_const(ψ * ϕ | U)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P05-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec01.lean",
+          "name": "Ch03.cor_3_4_const_preserved_of_single_row"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ψ * ϕ) 与 j ∈ I_const(ϕ | U)，若存在 ψ 在 ϕ(U) 上的受限 Lip 矩阵 L 使 ∀ k ≠ j, L k j = 0（允许同分量条目 L j j = ⊤，由 ENNReal 中 ⊤ * 0 = 0 自动覆盖），则证明 j ∈ I_const(ψ * ϕ | U)。",
+      "dependencies": [
+        "CH03-D01"
+      ]
+    },
+    {
+      "id": "CH03-P06-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.subfamily_pseudometric_eq_zero_iff"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_i_target_zero_invariant"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ)、非空子族 J 及任意目标 y, y' ∈ X（不要求属于像集），在 d_J(y, y') = 0 下由三角不等式证明 Fib_{ϕ,J}(y|U) = Fib_{ϕ,J}(y'|U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_ii_a_nonempty_and_cover"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ) 与非空子族 J，证明每个像目标 y ∈ ϕ(U) 的计算纤维 Fib_{ϕ,J}(y|U) 非空，且全体像目标计算纤维之并恰等于 U。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.CompFiberPartition"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.CompFiberSubtypePartition"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_ii_b_eq_or_disjoint_and_partition"
+        }
+      ],
+      "representation": "证明任意像目标 y₁, y₂ ∈ ϕ(U) 的纤维要么相等要么不交；去重后的集合族 CompFiberPartition 不含空集、两两不交、并集为 U，并在子类型 ↥U 上满足 Mathlib 的 Setoid.IsPartition。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P06-01",
+        "CH03-P06-02"
+      ]
+    },
+    {
+      "id": "CH03-P06-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_iii_inter_eq"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ)、非空子族 J 与任意 y ∈ X，证明 Fib_{ϕ,J}(y|U) = ⋂ j ∈ J, Fib_{ϕ,j}(y|U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_iv_subfamily_antitone"
+        }
+      ],
+      "representation": "对非空子族 J ⊆ K，证明子族扩大时计算纤维单调缩小：Fib_{ϕ,K}(y|U) ⊆ Fib_{ϕ,J}(y|U)。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-06",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_v_subfamily_boundary"
+        }
+      ],
+      "representation": "在非空指标集 I 上证明单元素子族纤维等于单分量零距原像 Fib_{ϕ,{i}}(y|U) = {x ∈ U | d_i(ϕ(x), y) = 0}，且全子族纤维 Fib_{ϕ,I}(y|U) 包含于每个单分量纤维。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P06-05"
+      ]
+    },
+    {
+      "id": "CH03-P06-07",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_vi_a_id_fiber"
+        }
+      ],
+      "representation": "对 j ∈ I_id(ϕ|U) 及任意目标点 y ∈ X，由恒等分量条件与三角不等式证明 Fib_{ϕ,j}(y|U) = {x ∈ U | d_j(x, y) = 0}。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P06-08",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_5_vi_b_const_fiber"
+        }
+      ],
+      "representation": "对 j ∈ I_const(ϕ|U) 及像点 y₀ ∈ ϕ(U)，证明 Fib_{ϕ,j}(y₀|U) = U，且对任意满足 d_j(y, y₀) > 0 的目标 y 有 Fib_{ϕ,j}(y|U) = ∅。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P07-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.IsImageFactorMap"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_6_i_nec"
+        }
+      ],
+      "representation": "以 IsImageFactorMap 刻画实际像集映射 T : ↥(ϕ_A(U)) → X 在 U 上满足 T(ϕ_A(x)) = ϕ_B(x)，证明其存在性推出 RelEq ϕ_A U ⊆ RelEq ϕ_B U。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P07-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.constructImageFactorMap"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_6_i_suf_and_iff"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_6_i_empty_domain"
+        }
+      ],
+      "representation": "由 RelEq ϕ_A U ⊆ RelEq ϕ_B U 显式构造映射 constructImageFactorMap : ↥(ϕ_A(U)) → X，证明代表元选取无关性、因子化等式 T ∘ ϕ_A = ϕ_B、充要判据，并在 prop_3_6_i_empty_domain 中专门验证 U = ∅ 空映射边界。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-01"
+      ]
+    },
+    {
+      "id": "CH03-P07-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_6_ii_bidirectional_iff"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ_A) ∩ dom(ϕ_B)，证明双向点值像变换 T_{A→B}, T_{B→A} 同时存在当且仅当 RelEq ϕ_A U = RelEq ϕ_B U。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-02"
+      ]
+    },
+    {
+      "id": "CH03-P07-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_6_iii_scalar_lip_bound"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_6_iii_matrix_interface"
+        }
+      ],
+      "representation": "在单分量有限正 co-Lip 常数 0 < K_A < ⊤、有限 Lip 常数 L_B < ⊤ 及点值因子化 T ∘ ϕ_A = ϕ_B 下，证明对实际像域 ↥(ϕ_A(U)) 中任意 y, y' 有 d(T(y), T(y')) ≤ (L_B / K_A) d(y, y')，同时提供单分量矩阵接口版本。",
+      "dependencies": [
+        "CH03-P07-01"
+      ]
+    },
+    {
+      "id": "CH03-P08-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.IsQuotientFactorMap"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.constructQuotientFactorMap"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_7_unidirectional_quotient_iff"
+        }
+      ],
+      "representation": "以 IsQuotientFactorMap 表示商映射 T̄ : ϕ_A(U)/∼_𝒢 → ϕ_B(U)/∼_𝒢 满足 T̄([ϕ_A(x)]) = [ϕ_B(x)] (x ∈ U)；由 RelGaugeZero 包含关系经 Quotient.lift 构造代表元无关映射 constructQuotientFactorMap，并证明单向充要性。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P08-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_7_bidirectional_quotient_iff"
+        }
+      ],
+      "representation": "对 U ⊆ dom(ϕ_A) ∩ dom(ϕ_B)，证明双向商映射 T̄_{A→B}, T̄_{B→A} 同时存在当且仅当 RelGaugeZero d ϕ_A U = RelGaugeZero d ϕ_B U。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P08-01"
+      ]
+    },
+    {
+      "id": "CH03-P08-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.RelEq_eq_RelGaugeZero_of_separatingOn_image"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.prop_3_7_separating_image_equivalence"
+        }
+      ],
+      "representation": "仅在两个实际像集各自分离（IsSeparatingOn d (operator_image ϕ_A U) 与 IsSeparatingOn d (operator_image ϕ_B U)，不要求全空间分离）的精确前提下，证明 RelEq = RelGaugeZero 并将单向与双向商因子化判据转回点值因子化判据。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P07-02",
+        "CH03-P07-03",
+        "CH03-P08-01",
+        "CH03-P08-02"
+      ]
+    },
+    {
+      "id": "CH03-P09-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.note_fiber_preorder_refl_trans"
+        },
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.instPreorderFiberOnDomain"
+        }
+      ],
+      "representation": "证明固定公共域 U 上的纤维预序 FiberPreorder 满足自反性与传递性，并在子类型 {ϕ // U ⊆ dom ϕ} 上注册 Preorder 实例。",
+      "dependencies": [
+        "CH03-D03"
+      ]
+    },
+    {
+      "id": "CH03-P09-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.note_fiber_preorder_chain_le"
+        }
+      ],
+      "representation": "对公共评估域 U 上的任意有限长算子链 ϕ_0, …, ϕ_m，由相邻步纤维预序归纳证明任意两层 a ≤ b（含严格序 0 ≤ a < b ≤ m）满足 ϕ_a ⪰_{fiber,U} ϕ_b。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P09-01"
+      ]
+    },
+    {
+      "id": "CH03-P09-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec02.lean",
+          "name": "Ch03.note_fiber_preorder_chain_strict"
+        }
+      ],
+      "representation": "当有限链中某一步 r 满足严格包含 RelGaugeZero(ϕ_r|U) ⊂ RelGaugeZero(ϕ_{r+1}|U) 时，显式提取差集见证点对 p ∈ RelGaugeZero(ϕ_{r+1}|U) \\ RelGaugeZero(ϕ_r|U)，证明其属于首尾差集并推出 RelGaugeZero(ϕ_0|U) ⊂ RelGaugeZero(ϕ_m|U)。",
+      "dependencies": [
+        "CH03-D03",
+        "CH03-P09-02"
+      ]
+    },
+    {
+      "id": "CH03-P10-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.RealWithBot"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.realStdDist"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.realStdDist_is_extended"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.stepOp"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.stepU"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.counterexample_3_1_setup"
+        }
+      ],
+      "representation": "构造带吸收元实直线 RealWithBot = ℝ ⊔ {bot}、通常距离扩展伪度量 realStdDist、阶跃算子 stepOp 与评估域 stepU = [-1, 0) ∪ (0, 1]，验证 ExtendedPseudoMetric 公理及 stepU 非空且包含于 dom(stepOp)。",
+      "dependencies": []
+    },
+    {
+      "id": "CH03-P10-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.counterexample_3_1_pointwise_radius"
+        }
+      ],
+      "representation": "对每个 y ∈ [-1, 0) ∪ (0, 1]，证明 stepOp 在基点 y、评估域 stepU 上的合法有限正半径集恰为 Ioc 0 (ofReal |y|)，从而点态零化半径等于 ofReal |y| > 0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P10-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.counterexample_3_1_uniform_radius_zero"
+        }
+      ],
+      "representation": "在同一固定评估域 stepU 上，利用可任意趋近于 0 的基点 δ ∈ (0, 1] 证明统一零化半径 uniformNullRadius stepOp realStdDist realStdDist stepU = 0。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P10-02"
+      ]
+    },
+    {
+      "id": "CH03-P11-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_8_i_a_const_subfamily_fiber"
+        }
+      ],
+      "representation": "对非空 U ⊆ dom(ϕ)、非空子族 J ⊆ I_const(ϕ|U)，证明任意基点 y ∈ U 的像目标计算纤维 Fib_{ϕ,J}(ϕ(y)|U) = U。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P11-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.sSup_Ioo_zero_top"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_8_i_b_const_subfamily_radius_top"
+        }
+      ],
+      "representation": "在非空 U ⊆ dom(ϕ) 与非空 J ⊆ I_const(ϕ|U) 下，证明对任意输入指标 i ∈ I，各基点 y ∈ U 的点态零化半径及受限统一零化半径 uniformNullRadiusSubfamily 均为 ⊤ (+∞)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-P11-01"
+      ]
+    },
+    {
+      "id": "CH03-P11-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.infInputDist"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_8_ii_inf_radius_not_const"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_8_ii_both_cases_explicit"
+        }
+      ],
+      "representation": "在 SwapSpace = {bot, a, b}、U = {a, b} 上对任意可判定指标集 I 及任意 i, j ∈ I（统一涵盖 i = j 与 i ≠ j，并给出两类显式实例）构造合法扩展伪度量族 infInputDist 与恒等算子，证明 [N(ϕ)|_U]_{ji} = ⊤ 但 j ∉ I_const(ϕ|U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-P12-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_9_i_id_target_fiber"
+        }
+      ],
+      "representation": "对 y ∈ U ⊆ dom(ϕ) 且 i ∈ I_id(ϕ|U)，由命题 3.1(iii) 保距等式证明像目标计算纤维 Fib_{ϕ,i}(ϕ(y)|U) = {x ∈ U | d_i(x, y) = 0}。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P12-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_9_ii_id_radius_lower_bound"
+        }
+      ],
+      "representation": "在 y ∈ U ⊆ dom(ϕ)、i ∈ I_id(ϕ|U) 及有限正半径 0 < r₀ < ⊤ 满足 B_i(y, r₀) ∩ U ⊆ {x ∈ U | d_i(x, y) = 0} 时，证明 r₀ ≤ r^N_{ϕ,i,i}(y|U) 且 0 < r^N_{ϕ,i,i}(y|U)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P12-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.ValidNullRadius_mono_radius"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_10_pointwise_min_formula"
+        }
+      ],
+      "representation": "在 [Fintype I]、非空子族 J ⊆ I 及 y ∈ U ⊆ dom(ϕ) 下，由分量交集律与合法半径向下封闭性证明 r^N_{ϕ,i,J}(y|U) = ⨅ j ∈ J, r^N_{ϕ,i,j}(y|U)，并证明该最小值在某个 jmin ∈ J 处取得。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P06-04"
+      ]
+    },
+    {
+      "id": "CH03-P13-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_10_uniform_min_formula"
+        }
+      ],
+      "representation": "对非空 U ⊆ dom(ϕ) 与有限非空子族 J ⊆ I，交换基点 y ∈ U 的下确界与 j ∈ J 的最小值，证明 r̲^N_{ϕ,i,J}|_U = ⨅ j ∈ J, [N(ϕ)|_U]_{ji} 并由某个 jmin ∈ J 取得。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P13-01"
+      ]
+    },
+    {
+      "id": "CH03-P13-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_10_uniform_subfamily_antitone"
+        }
+      ],
+      "representation": "对非空 U ⊆ dom(ϕ) 与非空子族 J ⊆ K ⊆ I，由统一零化半径的分量最小值公式证明 r̲^N_{ϕ,i,K}|_U ≤ r̲^N_{ϕ,i,J}|_U。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P13-02"
+      ]
+    },
+    {
+      "id": "CH03-P14-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_11_fiber_mem_zero"
+        }
+      ],
+      "representation": "对 y, y' ∈ U₂ ⊆ dom(ϕ₂)，证明若 y' ∈ Fib_{ϕ₂,j}(ϕ₂(y)|U₂)，则由纤维定义与伪度量对称性有 d_j(ϕ₂(y), ϕ₂(y')) = 0。",
+      "dependencies": [
+        "CH03-D02"
+      ]
+    },
+    {
+      "id": "CH03-P14-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_11_lt_radius_zero"
+        },
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_11_single_step_criterion"
+        }
+      ],
+      "representation": "对 y, y' ∈ U₂ ⊆ dom(ϕ₂)，当 d_i(y, y') < r^N_{ϕ₂,i,j}(y|U₂) 时从上确界显式提取满足 ValidNullRadius 且 d_i(y, y') < ρ 的有限正半径 ρ，并归结推出 d_j(ϕ₂(y), ϕ₂(y')) = 0。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P14-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_11_composite_instance"
+        }
+      ],
+      "representation": "对 x, x' ∈ dom(ϕ₁) 且像点 ϕ₁(x), ϕ₁(x') ∈ U₂ ⊆ dom(ϕ₂)，若 ϕ₁(x') ∈ Fib_{ϕ₂,j}(ϕ₂(ϕ₁(x))|U₂)，代入单步纤维判据得 d_j((ϕ₂ * ϕ₁)(x), (ϕ₂ * ϕ₁)(x')) = 0。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P14-01"
+      ]
+    },
+    {
+      "id": "CH03-P15-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_12_i_zero_preserving_propagation"
+        }
+      ],
+      "representation": "设非空 U ⊆ dom(ϕ₂ * ϕ₁)，若下游算子 ϕ₂ 在实际像域 ϕ₁(U) 上满足 d_l(y, y') = 0 ⇒ d_j(ϕ₂(y), ϕ₂(y')) = 0，则证明 [N(ϕ₁)|_U]_{li} ≤ [N(ϕ₂ * ϕ₁)|_U]_{ji}。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P15-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec03.lean",
+          "name": "Ch03.prop_3_12_ii_lip_pullback"
+        }
+      ],
+      "representation": "设非空 U ⊆ dom(ϕ₂ * ϕ₁) 且存在有限正 0 < L < ⊤ 使 U 上 d_l(ϕ₁(x), ϕ₁(x')) ≤ L · d_i(x, x')，证明 [N(ϕ₂)|_{ϕ₁(U)}]_{jl} / L ≤ [N(ϕ₂ * ϕ₁)|_U]_{ji}，并显式验证右端分子为 0 与 ⊤ 时的 ENNReal 除法行为。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P16-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.Regime11"
+        },
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.Regime10"
+        },
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.Regime01"
+        },
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.Regime00"
+        },
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.lemma_3_13_four_regimes_exclusive_exhaustive"
+        }
+      ],
+      "representation": "定义四个阈值体制集合 Regime11、Regime10、Regime01、Regime00，证明它们与 channelType 取值 (1,1),(1,0),(0,1),(0,0) 一一对应，且在 I × I 上两两不交、并集为全集。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.lemma_3_13_i_first_coord_mono"
+        }
+      ],
+      "representation": "证明当输入尺度阈值 τσ ≤ τσ' 增大时，阈值分类第一项为 1 的通道集合单调不减。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P16-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.lemma_3_13_ii_second_coord_antitone"
+        }
+      ],
+      "representation": "证明当零化阈值 τN ≤ τN' 增大时，阈值分类第二项为 1 的通道集合单调不增。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_14_i_scale_mono_on_subset"
+        }
+      ],
+      "representation": "对满足 IsInputScaleFamily 的任意尺度函数族 σ 及非空 B ⊆ A ⊆ dom(f)，证明 σ_i(B) ≤ σ_i(A) 及阈值传递 σ_i(A) < τσ → σ_i(B) < τσ。",
+      "dependencies": [
+        "CH03-D06"
+      ]
+    },
+    {
+      "id": "CH03-P17-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_14_ii_a_pointwise_radius_antitone"
+        }
+      ],
+      "representation": "对 B ⊆ A ⊆ dom(f) 及固定基点 x ∈ B，证明评估域缩小使点态零化半径不减：r^N_{f,i,j}(x|A) ≤ r^N_{f,i,j}(x|B)。",
+      "dependencies": [
+        "CH03-D04"
+      ]
+    },
+    {
+      "id": "CH03-P17-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_14_ii_b_uniform_radius_antitone"
+        }
+      ],
+      "representation": "对非空 B ⊆ A ⊆ dom(f)，分两步证明 r̲^N(A|A) ≤ r̲^N(B|A) ≤ r̲^N(B|B)，即同时缩小评估域与基点集使统一零化半径单调不减。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P17-02"
+      ]
+    },
+    {
+      "id": "CH03-P17-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_14_iii_reverse_scale_counterexample"
+        }
+      ],
+      "representation": "在 RealWithBot 通常距离下取 f = id、A = {0, 1}、B = {0}、τσ = 1/2，证明 diam(B) = 0 < τσ 且 diam(A) = 1 ≥ τσ，从而否定反向尺度蕴含。",
+      "dependencies": [
+        "CH03-D06",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_15_i_lt_uniform_radius_zero"
+        }
+      ],
+      "representation": "对非空 A ⊆ dom(f) 及 x, y ∈ A，若 d_i(x, y) < r̲^N_{f,i,j}|_A，则结合下确界与命题 3.11 证明 d_j(f(x), f(y)) = 0。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P18-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_15_ii_pos_output_ge_uniform_radius"
+        }
+      ],
+      "representation": "对非空 A ⊆ dom(f) 及 x, y ∈ A，由命题 3.15(i) 的逆否命题证明：若 0 < d_j(f(x), f(y))，则 r̲^N_{f,i,j}|_A ≤ d_i(x, y)。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P18-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_15_iii_separation_witness"
+        }
+      ],
+      "representation": "当 r̲^N_{f,i,j}|_A < α < τN (< ⊤) 时，证明存在 x, y ∈ A 与有限正数 ε = min 1 (d_j(f(x), f(y))) ∈ (0, ⊤)（兼容输出距离为 ⊤ 的情形），使得 d_i(x, y) < α 且 ε ≤ d_j(f(x), f(y))。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05"
+      ]
+    },
+    {
+      "id": "CH03-P19-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_16_i_ball_subset_fiber"
+        }
+      ],
+      "representation": "设非空 A ⊆ dom(f) 且有限正阈值 τN ≤ r̲^N_{f,i,j}|_A，证明对任意 x ∈ A 有 B_i(x, τN) ∩ A ⊆ Fib_{f,j}(f(x)|A)。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-D05",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_16_ii_a_covering_number_le"
+        }
+      ],
+      "representation": "在命题 3.16 条件下，对任意子集 B ⊆ A（含 B = ∅ 及输入无有限内覆盖的 ⊤ 情形）与任意 ε ∈ (0, ⊤)，将 B 的任意内部 τN-网 S 推至像内部 ε-网 S.image f.func（基数不增），证明 𝒩_j(ε, f(B)) ≤ 𝒩_i(τN, B)。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P19-01"
+      ]
+    },
+    {
+      "id": "CH03-P19-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.prop_3_16_ii_b_metric_entropy_le"
+        }
+      ],
+      "representation": "在 B ⊆ A 非空及命题 3.16 条件下，由覆盖数不等式与 log2_ereal_mono 推出度量熵不等式 E_{ε,j}(f(B)) ≤ E_{τN,i}(B)。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P19-02"
+      ]
+    },
+    {
+      "id": "CH03-P20-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.post_prop_3_16_pointwise_pos_insufficient"
+        }
+      ],
+      "representation": "在同一阶跃反例评估域 stepU 上（各点零化半径均为正），对任意有限正 τ ∈ (0, ⊤) 显式选取 0 < a ≤ 1 且 2a < τ，构造 B = {-a, a} ⊆ stepU，证明 𝒩_1(τ, B) = 1 < 2 = 𝒩_1(1/2, f(B))，从而否定存在对一切 B ⊆ stepU 同时生效的输入尺度 τ。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P10-02"
+      ]
+    },
+    {
+      "id": "CH03-P21-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.cor_3_17_small_domain_nullification_iff"
+        }
+      ],
+      "representation": "对非空 A ⊆ dom(f) 及有限正阈值满足 diam_{d_i}(A) < τσ ≤ τN，双向证明 τN ≤ r̲^N_{f,i,j}|_A 当且仅当 ∀ x, y ∈ A, d_j(f(x), f(y)) = 0。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P11-02",
+        "CH03-P18-01"
+      ]
+    },
+    {
+      "id": "CH03-P21-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec04_05.lean",
+          "name": "Ch03.cor_3_17_covering_number_eq_one"
+        }
+      ],
+      "representation": "在推论 3.17 的等价条件成立且 A 非空时，证明对任意有限正 ε ∈ (0, ⊤)，输出像集内部覆盖数 𝒩_j(ε, f(A)) = 1。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P21-01"
+      ]
+    },
+    {
+      "id": "CH03-P22-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.covering_number_le_toFinset_card"
+        },
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.note_finite_set_mapping_entropy_diff_well_defined"
+        }
+      ],
+      "representation": "对非空有限子集 U ⊆ dom(ϕ)、任意非空输入/输出子族 Jin, Jout 及有限正 ε，证明输入与像集覆盖数均 ≥ 1 且有限（输入覆盖数 ≤ |U|），两端度量熵均为非负有限实数，故映射熵差良定且取有限实数值。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_18_i_const_entropy_diff"
+        }
+      ],
+      "representation": "对非空 U ⊆ dom(ϕ)、ε ∈ (0, ⊤) 与 j ∈ I_const(ϕ|U)，证明 𝒩_j(ε, ϕ(U)) = 1、E_{ε,j}(ϕ(U)) = 0，因此映射熵差无条件良定（允许输入熵为 +∞）且等于 E_{ε,j}(U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-D08"
+      ]
+    },
+    {
+      "id": "CH03-P23-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_18_ii_a_id_covering_and_entropy_eq"
+        }
+      ],
+      "representation": "对 j ∈ I_id(ϕ|U)，分别证明内部 ε-覆盖的前向像推（基数不增）与像集内部 ε-覆盖的反向代表元拉回（基数不增），从而证明 𝒩_j(ε, ϕ(U)) = 𝒩_j(ε, U) 及 E_{ε,j}(ϕ(U)) = E_{ε,j}(U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D07",
+        "CH03-P01-03"
+      ]
+    },
+    {
+      "id": "CH03-P23-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_18_ii_b_id_entropy_diff_zero"
+        }
+      ],
+      "representation": "对 j ∈ I_id(ϕ|U)，显式以 MappingEntropyDiffSingleWellDefined 良定证明 hwf 为前提（绝不定义 ∞ - ∞），证明良定时 ΔE_{ε,j}(ϕ|U) = 0。",
+      "dependencies": [
+        "CH03-D08",
+        "CH03-P23-02"
+      ]
+    },
+    {
+      "id": "CH03-P24-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_19_covering_number_upper_bound"
+        }
+      ],
+      "representation": "在单通道有限正 Lip 上界 0 < L < ⊤ 下，证明 U 的任意内部 (ε/L)-覆盖 S 的像 S.image ϕ.func 构成 ϕ(U) 的内部 ε-覆盖且基数不增，从而 𝒩_j(ε, ϕ(U)) ≤ 𝒩_i(ε/L, U)。",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P24-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_19_entropy_diff_lower_bound"
+        }
+      ],
+      "representation": "在命题 3.19 的单通道有限正 Lip 上界与输入全有界 IsTotallyBounded (d i) U 下，证明 E_{ε,i}(U)、E_{ε/L,i}(U)、E_{ε,j}(ϕ(U)) 均有限，映射熵差良定且满足 E_{ε,i}(U) - E_{ε/L,i}(U) ≤ ΔE_{ε,{i},{j}}(ϕ|U)。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P24-01"
+      ]
+    },
+    {
+      "id": "CH03-P25-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_20_covering_number_lower_bound"
+        }
+      ],
+      "representation": "在受限 co-Lip 矩阵 K 的正有限条目 0 < K i j < ⊤ 下，对 ϕ(U) 的任意内部 ε-覆盖 T 选取 U 内原像代表元集 S（|S| ≤ |T|），证明 S 构成 U 的内部 (ε/K_{i→j})-覆盖，故 𝒩_i(ε/K_{i→j}, U) ≤ 𝒩_j(ε, ϕ(U))。",
+      "dependencies": [
+        "CH03-D07"
+      ]
+    },
+    {
+      "id": "CH03-P25-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec06.lean",
+          "name": "Ch03.prop_3_20_entropy_diff_upper_bound"
+        }
+      ],
+      "representation": "在命题 3.20 条件下且 U 在 d_i 下全有界（输出熵允许为 +∞），证明输入端两个尺度的熵有限从而映射熵差良定，并证明 ΔE_{ε,{i},{j}}(ϕ|U) ≤ E_{ε,i}(U) - E_{ε/K_{i→j},i}(U)。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P25-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.realAbsDist"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.realAbsDist_is_extended"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.realAbsGauge"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex31Phi"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex31U"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_1_i_a_phi_fiber_and_type"
+        }
+      ],
+      "representation": "定义绝对值读数伪度量 realAbsDist (||x| - |y||) 与仿射算子 ex31Phi (2x - 1)，验证扩展伪度量公理与 U = {0, 1} ⊆ dom(ϕ)，算出 Fib_{ϕ,i}(ϕ(0)|U) = U 并判定唯一分量属于 I_const(ϕ|U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_1_i_b_phi_sq_fiber_and_type"
+        }
+      ],
+      "representation": "对同一评估域 U = {0, 1} 验证 U ⊆ dom(ϕ²)，算出 Fib_{ϕ²,i}(ϕ²(0)|U) = {0}（及 ϕ²(1) 处纤维 {1}），并证明唯一分量既非 I_const 亦非 I_id，故属于 I_act(ϕ²|U)。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P26-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_1_ii_pointwise_const_self_comp"
+        }
+      ],
+      "representation": "设算子 ψ 在 U = {0, 1} 上取同一实数值 c，证明 ψ²(0) = ψ²(1) = ψ(c) 从而对任意目标 y 两点必同属或同不属于纤维（不能被区分）；同时完整分情况给出 ψ(c) ≠ bot（U ⊆ dom(ψ²)，ψ² 在 U 上常值且单一纤维为 U）与 ψ(c) = bot（dom(ψ²) ∩ U = ∅，U ⊈ dom(ψ²)，超出受限纤维适用域）两个分支。",
+      "dependencies": [
+        "CH03-D01",
+        "CH03-D02",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P27-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_2_i_pointwise_distance_gap"
+        }
+      ],
+      "representation": "对非空 U ⊆ dom(ϕ)、受限 co-Lip 矩阵 K 满足 K_{i→j} > 0（无需 K_{i→j} < ⊤）及 y ∈ U 满足 r^N_{ϕ,i,j}(y|U) > 0，结合命题 3.11 与第2章正 co-Lip 保可区分性证明 ∀ x ∈ U, d_i(x, y) ∉ (0, r^N_{ϕ,i,j}(y|U))。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-P14-02"
+      ]
+    },
+    {
+      "id": "CH03-P27-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_2_ii_uniform_distance_dichotomy"
+        }
+      ],
+      "representation": "在习题 3.2 条件下当统一零化半径 r̲^N_{ϕ,i,j}|_U > 0 时，证明 {0} 与 [r̲^N|_U, +∞] 不交，且对任意 x, y ∈ U 有 d_i(x, y) = 0 ∨ r̲^N|_U ≤ d_i(x, y)（即落入该不交并）。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-P27-01"
+      ]
+    },
+    {
+      "id": "CH03-P28-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex33Phi"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex33U"
+        },
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_3_i_fiber_partitions"
+        }
+      ],
+      "representation": "在绝对值读数伪度量与四点集 U = {-3, -2, 0, 2} 上验证恒等算子与平移算子 ϕ(x) = x + 1 的域合法性，逐点算出全部单分量纤维，并证明恒等算子的纤维分划为 {{-3}, {-2, 2}, {0}}、ϕ 的纤维分划为 {{-3}, {-2, 0}, {2}}。",
+      "dependencies": [
+        "CH03-D02",
+        "CH03-P06-03",
+        "CH03-P26-01"
+      ]
+    },
+    {
+      "id": "CH03-P28-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex1_3.lean",
+          "name": "Ch03.ex_3_3_ii_covering_and_entropy_diff"
+        }
+      ],
+      "representation": "在精确半径 ε = 3/2 下分别给出内部覆盖构造上界与分离下界，证明 𝒩_i(3/2, U) = 2、𝒩_i(3/2, ϕ(U)) = 1，并证明映射熵差良定且 ΔE_{3/2,i}(ϕ|U) = 1。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P28-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.realStdGauge"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex34Floor"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex34D1"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_4_i_a_D1"
+        }
+      ],
+      "representation": "定义向下取整算子 ex34Floor (⌊x⌋) 与局部输入域 D₁ = [0, 1/2]，验证非空与域合法性，并在 τσ = τN = 1 及直径尺度下证明 diam(D₁) = 1/2、r̲^N|_D₁ = ⊤、channelType = (1, 1)。",
+      "dependencies": [
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P10-01",
+        "CH03-P11-02"
+      ]
+    },
+    {
+      "id": "CH03-P29-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex34D2"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_4_i_b_D2"
+        }
+      ],
+      "representation": "对局部输入域 D₂ = [9/10, 11/10]，验证非空与域合法性，证明基点 1 处跨越取整跃变使点态及统一零化半径为 0，diam(D₂) = 1/5，channelType = (1, 0)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P29-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex34D3"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_4_i_c_D3"
+        }
+      ],
+      "representation": "对离散二点输入域 D₃ = {0, 2}，证明 diam(D₃) = 2、各点合法半径集为 (0, 2] 从而点态与统一零化半径均为 2，且 channelType = (0, 1)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P29-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex34D4"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_4_i_d_D4"
+        }
+      ],
+      "representation": "对闭区间输入域 D₄ = [0, 2]，证明 diam(D₄) = 2、统一零化半径 r̲^N|_D₄ = 0，且 channelType = (0, 0)。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P29-01"
+      ]
+    },
+    {
+      "id": "CH03-P29-05",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_4_ii_no_diam_counterexample"
+        }
+      ],
+      "representation": "用 (i-c) 中的合法非空子集 D = {0, 2} 证伪全称命题“∀ D ≠ ∅, r̲^N|_D ≥ 1 ⇒ ∀ x, y ∈ D, d(f(x), f(y)) = 0”，并形式化证明其正零化半径（= 2）源于离散点距为 2（diam = 2 ≥ 1）使任意 0 < r ≤ 2 的受限开球 B_d(y, r) ∩ D₃ = {y} 孤立为单点。",
+      "dependencies": [
+        "CH03-D04",
+        "CH03-D05",
+        "CH03-D06",
+        "CH03-P29-03"
+      ]
+    },
+    {
+      "id": "CH03-P30-01",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex35U"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_5_i_covering_piecewise_and_external_center"
+        }
+      ],
+      "representation": "对四点集 U = {0, 1, 2, 3} 与所有有限正 ε ∈ (0, ⊤)，证明内部覆盖数精确分段公式（ε ≤ 1 时为 4，1 < ε ≤ 2 时为 2，ε > 2 时为 1，并显式包含端点 ε = 1 与 ε = 2）；在 ε = 7/4 下证明外部点 3/2 的开球虽覆盖 U，但因 3/2 ∉ U 违反 InternalEpsilonNet 的中心内属条件而非法，故内部覆盖数为 2。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P10-01"
+      ]
+    },
+    {
+      "id": "CH03-P30-02",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex35F"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex35G"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex35_domains_and_outside"
+        },
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_5_ii_images_covering_and_entropy_diff"
+        }
+      ],
+      "representation": "按原文表格及 X \\ U 上取 bot 构造 ex35F 与 ex35G（证明 dom(f) = dom(g) = U），证明 f(U) = U 且 g(U) = U，从而对任意有限正精度 ε 两像集内部覆盖数相等且等于 𝒩(ε, U)，两算子映射熵差均良定且等于 0。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-D08",
+        "CH03-P30-01"
+      ]
+    },
+    {
+      "id": "CH03-P30-03",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_5_iii_a_optimal_scalar_lip"
+        }
+      ],
+      "representation": "使用第2章 HasScalarLipBound 分别证明 f 在 U 上满足标量 Lip 常数 1 且任意合法常数 c ≥ 1（最小值为 1），g 在 U 上满足标量 Lip 常数 3 且由点对 (0, 1) 给出任意合法常数 c ≥ 3（最小值为 3）。",
+      "dependencies": [
+        "CH03-P30-02"
+      ]
+    },
+    {
+      "id": "CH03-P30-04",
+      "status": "complete",
+      "declarations": [
+        {
+          "file": "Ch03/Sec07_Ex4_5.lean",
+          "name": "Ch03.ex_3_5_iii_b_prop_3_19_bound_comparison"
+        }
+      ],
+      "representation": "在精度 ε = 7/4 下应用命题 3.19 的覆盖数上界 𝒩(ε/L, U)：对 f (L = 1) 上界为 𝒩(7/4, U) = 2，等于真实像覆盖数 2；对 g (L = 3) 上界为 𝒩(7/12, U) = 4，严格大于真实像覆盖数 2。",
+      "dependencies": [
+        "CH03-D07",
+        "CH03-P24-01",
+        "CH03-P30-01",
+        "CH03-P30-02",
+        "CH03-P30-03"
+      ]
+    }
+  ]
+}
+```

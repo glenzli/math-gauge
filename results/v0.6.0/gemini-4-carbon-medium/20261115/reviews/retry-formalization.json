@@ -1,0 +1,3540 @@
+{
+  "schema": "math-gauge.formalization-engineering-review/v1",
+  "model_label": "Gemini 4 Carbon Medium",
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "formal_comparison_eligible": false,
+  "cases": [
+    {
+      "case_id": "LCH01",
+      "case_version": "0.1.0",
+      "slot_id": "LCH01:A1",
+      "original_response_sha256": "bdeb837c92bd7e9f9025be3ad89c73b8c6fd3f25ca96c87ab1b246123214828b",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "cabaf95f3332e5943c2114eec7d00a36815f15b1f71cd8018aabade09ce4179a",
+      "source_manifest": {
+        "path": "engineering/nonlogical_retry_3/manifests/LCH01-A1-cabaf95f3332.json",
+        "bytes": 712,
+        "sha256": "c8d89a17b82c5f7d580e45d81484d37c1afc3d9d3eb8b8520bdb7b47b5ee08b3"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/nonlogical_retry_3/kernel/LCH01-A1-cabaf95f3332.json",
+        "bytes": 19321,
+        "sha256": "411b4458417d667d07aeefb43ca25a831dad3031686df4113f741ca47c46cb7c"
+      },
+      "compiled_sources": {
+        "LCH01/ChannelInterface.lean": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772",
+        "Main.lean": "53bf4e94e28d33cf58125a2feaa079705e1444db98546d3086ee4276ae192e67"
+      },
+      "source_files": {
+        "LCH01/ChannelInterface.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/normal-final-byte-slices/LCH01/ChannelInterface.lean",
+          "bytes": 18207,
+          "sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+        },
+        "Main.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/normal-final-byte-slices/Main.lean",
+          "bytes": 30,
+          "sha256": "53bf4e94e28d33cf58125a2feaa079705e1444db98546d3086ee4276ae192e67"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "bound-components/engineering/LCH01/bdeb837c92bd7e9f/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/LCH01.json",
+        "bytes": 9110,
+        "sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsLipMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "lipCerts",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsRestrictedLipMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedLipCerts",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mem_lipCerts_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mem_restrictedLipCerts_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "isRestrictedLipMatrix_dom_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedLipCerts_dom",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "全域IsLipMatrix精确在dom(phi)上量化；受限谓词含U⊆dom(phi)，证书族定义为满足相应原不等式的矩阵集合。两种mem iff及受限dom=全域证书族均有实际声明，不把拟合／其他结论当作实例前提。"
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsRestrictedCoLipMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedCoLipCerts",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mem_restrictedCoLipCerts_iff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restrictedCoLipCerts_empty",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_coLip_entry_mul_le",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "受限co-Lip谓词显式包含U.Nonempty、U⊆dom(phi)及全部点对／输出分量的有限和下界，证书族及空集为空的引理均真实成立。未把非空条件漏掉，也未把扩展矩阵系数改为有限实数。"
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "GaugeMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "ofChanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_eq_row_col",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_ofChanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "ofChanEntry_apply",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "gaugeMatrixMul",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_mul",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_gaugeMatrixMul",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "gaugeMatrixMul_assoc",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "mulVec_eq_sum_chanEntry",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "GaugeMatrix=Matrix I I ENNReal，chanEntry M i j=M j i，ofChanEntry和其还原引理明确输出行／输入列。标准乘法M2*M1的通道展开式是sum_k M2[k→j]*M1[i→k]，另有结合律和向量作用式；不是仅用注释宣称转置约定。"
+        },
+        {
+          "id": "CH02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "ComponentChannel",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "diagChannel",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "channelCoeff",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsSingleInputRow",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsDiagInputRow",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "IsDiagonalGaugeMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "isDiagonalGaugeMatrix_iff_forall_diagInputRow",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "diagonalGaugeMatrix",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "isDiagonalGaugeMatrix_diagonal",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "chanEntry_diagonalGaugeMatrix_self",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "实际定义有序通道、同分量通道、单输入行、对角输入行与全矩阵对角条件；证明全矩阵对角等价逐行对角，并给Matrix.diagonal构造与正确条目取值。"
+        },
+        {
+          "id": "CH02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "single_input_row_sum_eq",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_single_input_row_reduction",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_single_input_row_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_diagonal_reduction",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "restricted_lip_diagonal_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "lip_single_input_row_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            },
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "lip_diagonal_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "single_input_row_sum_eq用完整有限和逐个消去非活动通道，给出原文<=sum=单项的整条链及单项界；受限、全域和每个对角通道特例均覆盖，不加强为全矩阵必须对角。"
+        },
+        {
+          "id": "CH02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "pos_coLip_channel_preserves_pos_dist",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "先由co-Lip完整和的非负性取得单通道标量下界，再用ENNReal正乘积推正输出距离。没有除以系数或距离，允许无穷值，前提保留受限域、点对和严格正通道。"
+        },
+        {
+          "id": "CH02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "pos_diag_coLip_reflects_gauge_zero",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "对每个j从正对角co-Lip和P20反证输入正距，与输出族零距冲突；结论仅为原冻结GaugeZeroRelated，保留非分离规范空间，不偷加分离性或加强为x=y。"
+        },
+        {
+          "id": "CH02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH01/ChannelInterface.lean",
+              "name": "exercise_2_2_scalar_two_sided_bound",
+              "source_sha256": "d64a5471f255b4347c8640281e4e75ddc9534432967e3a5b2e2e7ba763fab772"
+            }
+          ],
+          "notes": "上界仅要求指定输出j的Lip行除对角输入外为0；下界用一般co-Lip和中的j项。得到原题完整双侧不等式，不错误要求K也对角或所有Lip行稀疏。"
+        }
+      ],
+      "review_evidence": [],
+      "original_source_flags": {
+        "full_original_source_reviewed": true,
+        "hidden_reasoning_used": false,
+        "normal_final_workspace_supplement_used": false,
+        "source_repaired": false,
+        "semantic_alignment_verified_by_AI": true
+      },
+      "full_original_source_reviewed": true,
+      "full_proof_body_semantic_reviewed": null,
+      "proof_body_flag_not_inferred_from_compilation_or_score": true,
+      "source_representation": "exact selected normal-final Lean slices only",
+      "original_kernel_status": "passed",
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0,
+      "private_original_review_sha256": "558a31a93285219acc8dcc8683d1c9ed8bf20af7b64c220675331e1be2fd9680"
+    },
+    {
+      "case_id": "LCH02",
+      "case_version": "0.1.0",
+      "slot_id": "LCH02:A1",
+      "original_response_sha256": "ce807287390fd73d262c7994c2794de0a00d78d3f1167cc3867b2dfc81da0a37",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "9c92a0fc59227f26c638e6a1db1acfbd3aa0159cf082f9e9ae0a7d14a92e7cd7",
+      "source_manifest": {
+        "path": "engineering/nonlogical_retry_3/manifests/LCH02-A1-9c92a0fc5922.json",
+        "bytes": 711,
+        "sha256": "e8ca59ae32d854049fdb2ca80a7ba8989a3e20fd94a4fce3cff11d9dada28086"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/nonlogical_retry_3/kernel/LCH02-A1-9c92a0fc5922.json",
+        "bytes": 33001,
+        "sha256": "cf11188414b9c19c5a8bbee7cc4348ef37df831c10195aa4e29c4f064db80dec"
+      },
+      "compiled_sources": {
+        "LCH02/OperatorBounds.lean": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341",
+        "Main.lean": "ed156859dcc9e3a8ca9cddc2f01600e97a48513ef3805643dcf1e4dc3ac44fa0"
+      },
+      "source_files": {
+        "LCH02/OperatorBounds.lean": {
+          "path": "bound-components/engineering/LCH02/ce807287390fd73d/normal-final-byte-slices/LCH02/OperatorBounds.lean",
+          "bytes": 41795,
+          "sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+        },
+        "Main.lean": {
+          "path": "bound-components/engineering/LCH02/ce807287390fd73d/normal-final-byte-slices/Main.lean",
+          "bytes": 423,
+          "sha256": "ed156859dcc9e3a8ca9cddc2f01600e97a48513ef3805643dcf1e4dc3ac44fa0"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "bound-components/engineering/LCH02/ce807287390fd73d/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "bound-components/engineering/LCH02/ce807287390fd73d/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        }
+      },
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/LCH02.json",
+        "bytes": 22889,
+        "sha256": "a50e36b57d33962ba62c9f7eb215c6791696b0a791e0db30a83b19798ed0bc5d"
+      },
+      "obligations": [
+        {
+          "id": "CH02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "IsLipMatrix",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "LipCertFamily",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "IsRestrictedLipMatrix",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "RestrictedLipCertFamily",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "restrictedLipCertFamily_dom_eq",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "全域Lip族在dom上全称量化，受限族明确U⊆dom；相同sum_i L_ji*d_i定义与全域特化桥均正确，任意d的更强一般性可实例化到原规范。"
+        },
+        {
+          "id": "CH02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "IsRestrictedCoLipMatrix",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "RestrictedCoLipCertFamily",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "co-Lip受限族显式包含U.Nonempty、U⊆dom及完整有限和下界；没有把空域允许性错误迁入此族。"
+        },
+        {
+          "id": "CH02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "GaugeMatrix",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ioEntry",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ofIOEntry",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ioEntry_ofIOEntry",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ofIOEntry_ioEntry",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ioEntry_mul",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "GaugeMatrix采用输出行j/输入列i，ioEntry与ofIOEntry双向恢复，并证明M₂*M₁按执行次序的求和条目公式。"
+        },
+        {
+          "id": "CH02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "idMatrix",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ioEntry_idMatrix",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ioEntry_idMatrix_self",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "ioEntry_idMatrix_of_ne",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "emptyMatrixProd",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "matrixChainProd",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_one",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_succ",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_eq_matrixChainProd",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "单位/零步空乘积、任意长度有序乘积与正长度乘积均定义；n=1直接为M0且证明两种产品在n≥1相等。"
+        },
+        {
+          "id": "CH02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepChainComp",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepChainComp_eq_operatorChain_reverse",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "operatorChain_eq_stepChainComp",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepDomain",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepDomain_zero",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepDomain_succ",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepDomain_last",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "stepDomain_subset_dom",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "stepChainComp与原OperatorChain反向列表有双向桥，stepDomain以真实逐步像域递推，终像恒等式及各步合法域从原初始复合域假设推出。未把最终矩阵界塞进结构字段。"
+        },
+        {
+          "id": "CH02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "IndexPath",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "indexPathEquivIntermediate",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "indexPathUniqueOne",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "pathStepEntry",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "IsPositivePath",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "HasZeroStep",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "IndexPath量化全部固定端点路径，证明与Fin(n−1)中间序列等价及n=1唯一性；全正与含零只是独立谓词，不限制全部路径定义。"
+        },
+        {
+          "id": "CH02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "lip_matrix_iff_scalar_of_singleton",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "lip_matrix_iff_scalar_of_card_one",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "在单元素/基数1两种表述下完整证明全域矩阵条件与标量条件双向等价，未额外假设分离。"
+        },
+        {
+          "id": "CH02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "restricted_lip_cert_family_anti",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "由U⊆V⊆dom直接限制全称点对，给受限Lip证书族反单调包含，允许空U。"
+        },
+        {
+          "id": "CH02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "subset_dom_and_image_subset_dom_of_subset_dom_comp",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "restricted_lip_comp",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "先由复合域推出内层域及真实像域包含，再把两步逐点界与有限和交换合成为指定L₂*L₁。"
+        },
+        {
+          "id": "CH02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "restricted_colip_cert_family_anti",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "对非空U⊆V⊆dom限制co-Lip下界，保留非空性，不把原co-Lip证书用于非法域。"
+        },
+        {
+          "id": "CH02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "colip_entry_eq_zero_of_output_zero_input_pos",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "从真实点对输出距离0、输入距离>0，单项≤非负和≤0推出Kij*di=0，再排除di=0；系数/距离允许∞，没有不必要有限性。"
+        },
+        {
+          "id": "CH02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "image_nonempty_and_subset_dom_of_colip",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "restricted_colip_comp",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "K1携带初域非空并推出实际像域非空，随后按K₂*K₁合成全有限和下界，域与乘法方向均正确。"
+        },
+        {
+          "id": "CH02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "sum_idMatrix_mul_dist",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "idMatrix_mem_restricted_lip_identity",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "zero_step_lip_cert",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "单位矩阵求和恰为dj，从而给任意合法U上的identity Lip证书，并明确k=0空乘积版本。"
+        },
+        {
+          "id": "CH02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "idMatrix_mem_restricted_colip_identity",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "zero_step_colip_cert",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "idMatrix_mem_lip_inter_colip_identity",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "对非空合法U给identity co-Lip及k=0版本、Lip/co-Lip交集；没有遗漏原非空条件。"
+        },
+        {
+          "id": "CH02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_entry_pos_iff",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_one_entry_pos_iff",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_entry_pos_iff_intermediate",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "在任意正长度n上，用有限非负和正 iff 有正项及乘积正 iff 两因子正归纳，路径拼接/截取保持所有端点；包含n=1与全中间序列表述。"
+        },
+        {
+          "id": "CH02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "lip_cert_family_subset_restricted",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "经U=dom的族相等桥把P02特化为全域证书限制，量词和包含方向正确。"
+        },
+        {
+          "id": "CH02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "global_colip_cert_family_subset_restricted",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "全域co-Lip受限到非空U的直接特化与P05一致。"
+        },
+        {
+          "id": "CH02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "step_chain_lip_bound",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "step_chain_lip_bound_operatorChain",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "任意k≥1递归构造指定非空产品Lip证书；每步在stepDomain实际域读hL，域桥与最后步证书从初始假设推出，另提供OperatorChain表述。"
+        },
+        {
+          "id": "CH02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "step_chain_colip_bound",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "step_chain_colip_bound_operatorChain",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "任意k≥1用真实逐步co-Lip证书归纳到指定产品下界；初域非空来自首步证书，不能由最终结论回取，且提供原链表示桥。"
+        },
+        {
+          "id": "CH02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_entry_eq_zero_iff",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_one_entry_eq_zero_iff",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            },
+            {
+              "file": "LCH02/OperatorBounds.lean",
+              "name": "nonemptyMatrixProd_entry_eq_zero_iff_intermediate",
+              "source_sha256": "4d2f5eeeeaa334362f5bbd511634020a0d895e9c1a706f659569e9f9434a0341"
+            }
+          ],
+          "notes": "从全部路径的正性充要条件取否定，得到条目0 iff 每一条全部路径含零因子，n=1与中间序列版本均实际证明。"
+        }
+      ],
+      "review_evidence": [],
+      "original_source_flags": {
+        "full_original_source_reviewed": true,
+        "hidden_reasoning_used": false,
+        "normal_final_workspace_supplement_used": false,
+        "source_repaired": false
+      },
+      "full_original_source_reviewed": true,
+      "full_proof_body_semantic_reviewed": null,
+      "proof_body_flag_not_inferred_from_compilation_or_score": true,
+      "source_representation": "exact selected normal-final Lean slices only",
+      "original_kernel_status": "passed",
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0,
+      "private_original_review_sha256": "558a31a93285219acc8dcc8683d1c9ed8bf20af7b64c220675331e1be2fd9680"
+    },
+    {
+      "case_id": "HCH02",
+      "case_version": "0.1.0",
+      "slot_id": "HCH02:A1",
+      "original_response_sha256": "dc917fe4d834cdfdb2896b1f065134537ad082379651d5d23fb7a939ea28abbe",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "a927e3afde14eefab878e1f4aaf2a9cd466c089bcceaae5155a0339d00094c3c",
+      "source_manifest": {
+        "path": "engineering/nonlogical_retry_3/manifests/HCH02-A1-a927e3afde14.json",
+        "bytes": 873,
+        "sha256": "c7d6717cfbd0644295343f89d327c8ea9610b5c1da705a816d1959f1bdfed1b6"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/nonlogical_retry_3/kernel/HCH02-A1-a927e3afde14.json",
+        "bytes": 48410,
+        "sha256": "cc85e2672ec2a5b28a914637b1bfbf60311249a4c34e421402bd93c1d187aa30"
+      },
+      "compiled_sources": {
+        "OperatorBounds/MatrixBounds.lean": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc",
+        "OperatorBounds/ChannelBounds.lean": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086",
+        "Main.lean": "01550733dfae1860a04c220cdda52e6a517c38b95af543a898695a2c5671b06b"
+      },
+      "source_files": {
+        "OperatorBounds/MatrixBounds.lean": {
+          "path": "bound-components/engineering/HCH02/dc917fe4d834cdfd/normal-final-byte-slices/OperatorBounds/MatrixBounds.lean",
+          "bytes": 52726,
+          "sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+        },
+        "OperatorBounds/ChannelBounds.lean": {
+          "path": "bound-components/engineering/HCH02/dc917fe4d834cdfd/normal-final-byte-slices/OperatorBounds/ChannelBounds.lean",
+          "bytes": 29201,
+          "sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+        },
+        "Main.lean": {
+          "path": "bound-components/engineering/HCH02/dc917fe4d834cdfd/normal-final-byte-slices/Main.lean",
+          "bytes": 439,
+          "sha256": "01550733dfae1860a04c220cdda52e6a517c38b95af543a898695a2c5671b06b"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "bound-components/engineering/HCH02/dc917fe4d834cdfd/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "bound-components/engineering/HCH02/dc917fe4d834cdfd/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 11333,
+          "sha256": "336ba7b68faebb4a79a39f0327ead65285bc519316503f209ed992e527b8b549"
+        }
+      },
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/HCH02.json",
+        "bytes": 33433,
+        "sha256": "922b97922565b6bdbee8b25a588ece1b0502c7f0dc29c013d48f71f433471646"
+      },
+      "obligations": [
+        {
+          "id": "HC02-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.LipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.RestrictedLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_eq_restrictedLipSet_dom",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在有限非空指标集 [Fintype I] [Nonempty I]、扩展伪度量族 [∀ i : I, ExtendedPseudoMetric X bot (d i)] 与保吸收元算子 ϕ : Operator X bot 下，定义全域合法 Lip 矩阵集合 LipSet d ϕ : Set (BoundMatrix I) 与子集受限 Lip 矩阵集合 RestrictedLipSet d ϕ U : Set (BoundMatrix I)，其中系数与距离均取值于 ENNReal，RestrictedLipSet 包含 U ⊆ dom ϕ 及 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, d j (ϕ.func x) (ϕ.func y) ≤ ∑ i : I, L i j * d i x y，并证明 LipSet d ϕ = RestrictedLipSet d ϕ (dom ϕ)。"
+        },
+        {
+          "id": "HC02-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.RestrictedCoLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在相同扩展规范空间与算子语境下，定义受限 co-Lip 矩阵证书集合 RestrictedCoLipSet d ϕ U : Set (BoundMatrix I)，显式包含非空性 U.Nonempty、定义域包含 U ⊆ dom ϕ 以及 ∀ x ∈ U, ∀ y ∈ U, ∀ j : I, ∑ i : I, K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)；矩阵条目取值于 ENNReal，0 与 ⊤（+∞）均为合法系数。"
+        },
+        {
+          "id": "HC02-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.BoundMatrix",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplayMatrix",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ofDisplayMatrix",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.displayMatrixEquiv",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.boundMul",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.toDisplayMatrix_boundMul",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；以 BoundMatrix I := I → I → ENNReal 采用输入优先存储，M i j 表示输入分量 i 到输出分量 j 的条目 M_{i→j}；通过 toDisplayMatrix M j i = M i j 及双射 displayMatrixEquiv 与普通行列矩阵 Matrix I I ENNReal（第 j 行第 i 列为 M_{i→j}）建立精确对应；定义复合乘法 boundMul M₂ M₁ i j = ∑ k : I, M₂ k j * M₁ i k，并由 toDisplayMatrix_boundMul 证明其与显示矩阵标准乘法完全一致。"
+        },
+        {
+          "id": "HC02-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.boundId",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.boundId_diag",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.boundId_offDiag",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.orderedBoundProd",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.orderedBoundProd_zero",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.orderedBoundProd_one",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.orderedBoundProd_succ",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainComp",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainComp_eq_operatorChain",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；定义 Kronecker 单位矩阵 boundId（对角为 1、非对角为 0）；对按施行顺序索引的序列 Fin k → Operator X bot 与 Fin k → BoundMatrix I（0 到 k-1 对应原文第 1 到 k 步），定义复合算子 chainComp（并证明与前置模块 OperatorChain 逆序列表复合等价）和有序矩阵乘积 orderedBoundProd：k=0 时为空乘积等于 boundId，k=1 时等于唯一矩阵 M 0，k+1 时等于 boundMul (M (Fin.last k)) (orderedBoundProd k (Fin.init M))，即 L^{(k)}⋯L^{(1)}。"
+        },
+        {
+          "id": "HC02-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainStageDomain",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainStageDomain_zero",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainStageDomain_succ",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainStageDomain_last_eq_image",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chainStageDomain_subset_dom",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChainData",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChainData",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；通过 Fin.induction 定义实际中间像域族 chainStageDomain ϕ U₁ : Fin (k + 1) → Set X，满足初值 U₁ 及递推 U_{m+1} = operator_image (ϕ m) U_m；由 chainStageDomain_subset_dom 在 U₁ ⊆ dom (chainComp k ϕ) 下证明每步实际输入域均满足 U_m ⊆ dom (ϕ m)，由 chainStageDomain_last_eq_image 证明全复合像 operator_image (chainComp k ϕ) U₁ 等于最终逐次像；结构 LipChainData 与 CoLipChainData 仅存储起始域条件、逐步矩阵序列及各步在实际输入域 U_m 上的局部界，不含最终复合算子界字段。"
+        },
+        {
+          "id": "HC02-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IntermPath",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.instUniqueIntermPathOne",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathVertex",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathEdge",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pathWeight",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.PathAllPos",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.PathHasZero",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.orderedBoundProd_eq_sum_paths",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；对 1 ≤ n，定义无任何正性约束的中间指标序列类型 IntermPath I n := Fin (n - 1) → I（n=1 时由 instUniqueIntermPathOne 给出唯一空中间序列）；由 pathVertex 固定首尾指标 k_0 = i、k_n = j，pathEdge 提取第 m 步边条目 [M^{(m)}]_{k_{m-1}→k_m}，pathWeight 定义各层边条目的乘积；定义全正谓词 PathAllPos（∀ m, 0 < pathEdge）与含零谓词 PathHasZero（∃ m, pathEdge = 0），并证明矩阵连乘条目等于遍历全部中间路径的权重和 orderedBoundProd_eq_sum_paths。"
+        },
+        {
+          "id": "HC02-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.Channel",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRowSparseAt",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRowDecoupledMatrix",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsRowDecoupled",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsColSparseAt",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsColDecoupledMatrix",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsColDecoupled",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsDiagonalBound",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.IsCompletelyDecoupledCert",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；定义分量通道类型 Channel I := I × I；单行稀疏谓词 IsRowSparseAt L i j := ∀ k ≠ i, L k j = 0，矩阵行解耦 IsRowDecoupledMatrix L j := ∃ i, IsRowSparseAt L i j 及算子行解耦 IsRowDecoupled d ϕ U j := ∃ L ∈ RestrictedLipSet d ϕ U, ∃ i, IsRowSparseAt L i j；单列稀疏谓词 IsColSparseAt L i j := ∀ k ≠ j, L i k = 0，矩阵列解耦 IsColDecoupledMatrix L i := ∃ j, IsColSparseAt L i j 及算子列解耦 IsColDecoupled d ϕ U i；对角谓词 IsDiagonalBound L := ∀ i j, i ≠ j → L i j = 0 及完全解耦证书谓词 IsCompletelyDecoupledCert。"
+        },
+        {
+          "id": "HC02-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ChannelFeasibleScalars",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.channelLipConst",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.channelLipConst_of_empty",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；定义单通道可行标量集合 ChannelFeasibleScalars d ϕ U i j := {lam : ENNReal | ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ lam * d i x y} 及其下确界 channelLipConst d ϕ U i j := sInf (ChannelFeasibleScalars d ϕ U i j)，由 channelLipConst_of_empty 确认空集下确界为 ⊤（+∞），独立于任何多分量 Lip 矩阵条目。"
+        },
+        {
+          "id": "HC02-P01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_iff_scalar_of_singleton",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；当指标集满足 ∀ k : I, k = i（即 I = {i}）时，证明 L ∈ LipSet d ϕ 当且仅当 ∀ x ∈ dom ϕ, ∀ y ∈ dom ϕ, d i (ϕ.func x) (ϕ.func y) ≤ L i i * d i x y。"
+        },
+        {
+          "id": "HC02-P02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lipSet_subset_restrictedLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明当 U ⊆ dom ϕ 时，全域合法 Lip 证书族包含于受限证书族：LipSet d ϕ ⊆ RestrictedLipSet d ϕ U。"
+        },
+        {
+          "id": "HC02-P03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLipSet_anti",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明当 U ⊆ V 且 V ⊆ dom ϕ 时，缩小评估域扩大受限 Lip 证书族：RestrictedLipSet d ϕ V ⊆ RestrictedLipSet d ϕ U。"
+        },
+        {
+          "id": "HC02-P04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLipEntryInf",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLipEntryInf_mono",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；定义受限 Lip 矩阵族的逐条目下确界 restrictedLipEntryInf d ϕ U i j := sInf {v | ∃ M ∈ RestrictedLipSet d ϕ U, M i j = v}，并证明当 U ⊆ V 时 restrictedLipEntryInf d ϕ U i j ≤ restrictedLipEntryInf d ϕ V i j。"
+        },
+        {
+          "id": "HC02-P05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLip_comp",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；对复合算子 compOp ϕ₂ ϕ₁、起始子集 U₁ ⊆ dom (compOp ϕ₂ ϕ₁) 及实际像集 U₂ = operator_image ϕ₁ U₁，证明若 L₁ ∈ RestrictedLipSet d ϕ₁ U₁ 且 L₂ ∈ RestrictedLipSet d ϕ₂ U₂，则 boundMul L₂ L₁ ∈ RestrictedLipSet d (compOp ϕ₂ ϕ₁) U₁。"
+        },
+        {
+          "id": "HC02-P06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.global_coLip_entry_eq_zero_of_output_zero",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明若存在 x, y ∈ dom ϕ 使得 d j (ϕ.func x) (ϕ.func y) = 0 且 0 < d i x y，则任一全域 co-Lip 矩阵 K ∈ RestrictedCoLipSet d ϕ (dom ϕ) 必满足 K i j = 0。"
+        },
+        {
+          "id": "HC02-P07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedCoLip_comp",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在与 HC02-P05 相同的 U₁ ⊆ dom (compOp ϕ₂ ϕ₁) 与实际像域 operator_image ϕ₁ U₁ 下，证明若 K₁ ∈ RestrictedCoLipSet d ϕ₁ U₁ 且 K₂ ∈ RestrictedCoLipSet d ϕ₂ (operator_image ϕ₁ U₁)，则 boundMul K₂ K₁ ∈ RestrictedCoLipSet d (compOp ϕ₂ ϕ₁) U₁ 且 U₁.Nonempty。"
+        },
+        {
+          "id": "HC02-P08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pairwise_image_dist_perturb_forward",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pairwise_image_dist_perturb_forward_add",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；设 U ⊆ commonDom ϕ₁ ϕ₂（即 dom ϕ₁ ∩ dom ϕ₂），且 ∀ z ∈ U, ∀ j : I, d j (ϕ₁.func z) (ϕ₂.func z) ≤ δ j，对任意 x, y ∈ U 与 j : I，同时证明 2*δ_j 形式与 δ_j + δ_j 展开形式的正向像距扰动不等式 d j (ϕ₂.func x) (ϕ₂.func y) ≤ d j (ϕ₁.func x) (ϕ₁.func y) + δ j + δ j。"
+        },
+        {
+          "id": "HC02-P09",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pairwise_image_dist_perturb_reverse",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pairwise_image_dist_perturb_reverse_add",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在与 HC02-P08 完全相同的扰动前提下，利用伪度量对称性调用正向扰动界，对任意 x, y ∈ U 与 j : I 证明反向像距扰动不等式 d j (ϕ₁.func x) (ϕ₁.func y) ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j（及 + δ j + δ j 形式）。"
+        },
+        {
+          "id": "HC02-P10",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_lip_bridge",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_lip_bridge_symm",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在扰动前提及 L₁ ∈ RestrictedLipSet d ϕ₁ U 下，对任意 x, y ∈ U 与 j : I 证明 d j (ϕ₂.func x) (ϕ₂.func y) ≤ (∑ i : I, L₁ i j * d i x y) + 2 * δ j，并同时给出交换 ϕ₁, ϕ₂ 后的对称桥接结论 perturb_lip_bridge_symm。"
+        },
+        {
+          "id": "HC02-P11",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_coLip_bridge",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.perturb_coLip_bridge_symm",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在扰动前提及 K₁ ∈ RestrictedCoLipSet d ϕ₁ U 下，对任意 x, y ∈ U 与 j : I 证明 ∑ i : I, K₁ i j * d i x y ≤ d j (ϕ₂.func x) (ϕ₂.func y) + 2 * δ j，并给出交换 ϕ₁, ϕ₂ 后的对称桥接结论 perturb_coLip_bridge_symm。"
+        },
+        {
+          "id": "HC02-P12",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chain_restrictedLip_prod",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.LipChainData.composite_mem_restrictedLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；对任意长度 1 ≤ k 的算子链 ϕ : Fin k → Operator X bot、起始域 U₁ ⊆ dom (chainComp k ϕ) 及每步在实际中间像域 chainStageDomain ϕ U₁ m.castSucc 上合法的局部证书 L m ∈ RestrictedLipSet d (ϕ m) U_m，通过对 HC02-P05 有限归纳证明 orderedBoundProd k L ∈ RestrictedLipSet d (chainComp k ϕ) U₁（同时给出展开形式与 LipChainData 封装形式）。"
+        },
+        {
+          "id": "HC02-P13",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.chain_restrictedCoLip_prod",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.CoLipChainData.composite_mem_restrictedCoLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；对任意长度 1 ≤ k 的算子链，在 U₁ ⊆ dom (chainComp k ϕ) 及每步局部 co-Lip 证书 K m ∈ RestrictedCoLipSet d (ϕ m) U_m（含非空性义务）条件下，通过对 HC02-P07 有限归纳证明 orderedBoundProd k K ∈ RestrictedCoLipSet d (chainComp k ϕ) U₁。"
+        },
+        {
+          "id": "HC02-P14",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_step_boundId_mem_restrictedLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在零步边界 k = 0（chainComp 0 ϕ = idOp，orderedBoundProd 0 L = boundId）下，对任意非空子集 U.Nonempty 且 U ⊆ dom idOp，证明单位矩阵 boundId ∈ RestrictedLipSet d idOp U。"
+        },
+        {
+          "id": "HC02-P15",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_step_boundId_mem_restrictedCoLipSet",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在同一零步边界 k = 0 及非空子集 U.Nonempty、U ⊆ dom idOp 条件下，证明同一单位矩阵满足 boundId ∈ RestrictedCoLipSet d idOp U。"
+        },
+        {
+          "id": "HC02-P16",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_chain_prod_eq_zero_iff",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.lip_chain_prod_eq_zero_iff_one",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在非空有限复合链 1 ≤ n、U₁ ⊆ dom (chainComp n ϕ) 及实际局部证书序列 L m ∈ RestrictedLipSet d (ϕ m) U_m 条件下，证明 orderedBoundProd n L i j = 0 ↔ ∀ p : IntermPath I n, PathHasZero L hn i j p，并由 lip_chain_prod_eq_zero_iff_one 证明 n = 1 时退化为单条目条件 L 0 i j = 0。"
+        },
+        {
+          "id": "HC02-P17",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_chain_prod_pos_iff",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            },
+            {
+              "file": "OperatorBounds/MatrixBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_chain_prod_pos_iff_one",
+              "source_sha256": "c1e87a15df7d469ba361efd24b5da88294e7498eb0e876af808742639d17b7cc"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在同一非空有限复合链 1 ≤ n、U₁ ⊆ dom (chainComp n ϕ) 及实际局部证书序列 K m ∈ RestrictedCoLipSet d (ϕ m) U_m 条件下，证明 0 < orderedBoundProd n K i j ↔ ∃ p : IntermPath I n, PathAllPos K hn i j p，并由 coLip_chain_prod_pos_iff_one 证明 n = 1 时唯一空中间序列对应 0 < K 0 i j。"
+        },
+        {
+          "id": "HC02-P18",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.channelFeasibleScalars_empty_of_zero_input_pos_output",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在 U ⊆ dom ϕ 下，若存在 x, y ∈ U 使得 d i x y = 0 且 0 < d j (ϕ.func x) (ϕ.func y)，利用 ENNReal 中含 ⊤ * 0 = 0 的乘法性质证明 ChannelFeasibleScalars d ϕ U i j = ∅ 且 channelLipConst d ϕ U i j = ⊤。"
+        },
+        {
+          "id": "HC02-P19",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.channelLipConst_mem_of_pos_of_lt_top",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在 U ⊆ dom ϕ 且 0 < channelLipConst d ϕ U i j < ⊤ 条件下，按正文分 B=0、B=⊤ 与 0<B<⊤ 三种情形证明下确界可被取到：channelLipConst d ϕ U i j ∈ ChannelFeasibleScalars d ϕ U i j，即全部点对 x, y ∈ U 满足标量上界。"
+        },
+        {
+          "id": "HC02-P20",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.channelFeasibleScalars_upward_closed",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明单通道可行标量集合向上封闭：若 lam₀ ∈ ChannelFeasibleScalars d ϕ U i j 且 lam₀ ≤ lam₁，则 lam₁ ∈ ChannelFeasibleScalars d ϕ U i j。"
+        },
+        {
+          "id": "HC02-P21",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_channelFeasibleScalars_of_gt_inf",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在 U ⊆ dom ϕ 及 0 < channelLipConst d ϕ U i j < ⊤ 语境下，对任意严格大于下确界的常数 lam（含 lam = ⊤），由下确界定义与向上封闭性 HC02-P20 证明 lam ∈ ChannelFeasibleScalars d ϕ U i j。"
+        },
+        {
+          "id": "HC02-P22",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.mem_channelFeasibleScalars_of_inf_eq_zero",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在 U ⊆ dom ϕ 且 channelLipConst d ϕ U i j = 0 时，对任意满足 0 < lam < ⊤ 的有限正常数 lam，由下确界性质与 HC02-P20 证明 lam ∈ ChannelFeasibleScalars d ϕ U i j。"
+        },
+        {
+          "id": "HC02-P23",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.exists_zero_channelLipConst_not_attained",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ZeroInfCounterexample.instExtendedPseudoMetricCounterexample",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ZeroInfCounterexample.cChannelLipConst_eq_zero",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.ZeroInfCounterexample.zero_not_mem_cFeasible",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在四点空间 Fin 4（吸收元 0）与单分量指标集 Unit 上显式构造满足全部 ExtendedPseudoMetric 公理的伪度量 cd、保吸收元算子 cphi 及非空定义域子集 cU = {1, 2} ⊆ dom cphi，使得输入距离 cd () 1 2 = ⊤ 而输出距离为 1，从而证明 channelLipConst cd cphi cU () () = 0 但 0 ∉ ChannelFeasibleScalars cd cphi cU () ()。"
+        },
+        {
+          "id": "HC02-P24",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.channelLipConst_lt_top_iff",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；在 U ⊆ dom ϕ 下，结合零下确界分支 HC02-P22 与正有限下确界取到分支 HC02-P19，证明 channelLipConst d ϕ U i j < ⊤ 当且仅当存在 lam < ⊤ 使 ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ lam * d i x y。"
+        },
+        {
+          "id": "HC02-P25",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.zero_entry_removes_channel_term",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明当 L i j = 0 时，对任意点对 x, y（允许 d i x y = ⊤）恒有 L i j * d i x y = 0，输出分量 j 的全指标求和等于擦除指标 i 后的求和 Finset.univ.erase i，且当 L ∈ RestrictedLipSet d ϕ U 时 d j (ϕ.func x) (ϕ.func y) 受该删去 i 项的余项和控制。"
+        },
+        {
+          "id": "HC02-P26",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLip_of_isRowSparseAt",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明若 L ∈ RestrictedLipSet d ϕ U 且对任意唯一输入位置 i（不必等于输出指标 j）满足 IsRowSparseAt L i j（∀ k ≠ i, L k j = 0），则 ∀ x ∈ U, ∀ y ∈ U, d j (ϕ.func x) (ϕ.func y) ≤ L i j * d i x y。"
+        },
+        {
+          "id": "HC02-P27",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLip_of_isColSparseAt",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明若 L ∈ RestrictedLipSet d ϕ U 在固定输入列 i 上满足 IsColSparseAt L i j（∀ k ≠ j, L i k = 0），则对一切 k ≠ j 均有 L i k * d i x y = 0 且 d k (ϕ.func x) (ϕ.func y) 的证书上界求和可删去输入 i（即输入 i 至多向输出 j 贡献）。"
+        },
+        {
+          "id": "HC02-P28",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.restrictedLip_of_isDiagonalBound",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；证明若 L ∈ RestrictedLipSet d ϕ U 满足对角条件 IsDiagonalBound L（所有非对角条目为 0），则对所有分量 j : I 及所有 x, y ∈ U 有独立标量放缩上界 d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y。"
+        },
+        {
+          "id": "HC02-P29",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.diagonal_row_scalar_two_sided_bound",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；给定 L ∈ RestrictedLipSet d ϕ U 与 K ∈ RestrictedCoLipSet d ϕ U，仅对上界矩阵假设第 j 行除对角项外为零 IsRowSparseAt L j j（不对 K 作稀疏假设），证明 ∀ x ∈ U, ∀ y ∈ U, K j j * d j x y ≤ d j (ϕ.func x) (ϕ.func y) ≤ L j j * d j x y。"
+        },
+        {
+          "id": "HC02-P30",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.componentwise_scalar_two_sided_bound",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.componentwise_finite_scalar_two_sided_bound",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；当对所有 j : I 均满足 IsRowSparseAt L j j 时，由 componentwise_scalar_two_sided_bound 证明全部分量的标量双侧不等式同时成立；若进一步满足 ∀ j, L j j < ⊤ 且 ∀ j, K j j < ⊤，则由 componentwise_finite_scalar_two_sided_bound 提取有限非负实数标量族 κ, ℓ : I → NNReal 给出有限标量双侧放缩界。"
+        },
+        {
+          "id": "HC02-P31",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pos_coLip_channel_lower_bound",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            },
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.pos_coLip_preserves_distinguishability",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；设 K ∈ RestrictedCoLipSet d ϕ U 且 0 < K i j，先由 pos_coLip_channel_lower_bound 给出通道正下界传递 K i j * d i x y ≤ d j (ϕ.func x) (ϕ.func y)，进而证明对任意 x, y ∈ U，0 < d i x y → 0 < d j (ϕ.func x) (ϕ.func y)。"
+        },
+        {
+          "id": "HC02-P32",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "OperatorBounds/ChannelBounds.lean",
+              "name": "formal_oet.vol_01.ch_02_operator_bounds.coLip_reflects_gaugeZeroRelated",
+              "source_sha256": "e018a55f2d0576c81c5af835286bf4a523672f17af32e4809d14a2b3c171c086"
+            }
+          ],
+          "notes": "原final全文交付的定义/声明与原义务逐项对应，原样编译和公理检查通过；设 K ∈ RestrictedCoLipSet d ϕ U 且对所有 j : I 有 0 < K j j，利用前置模块的族零距关系 GaugeZeroRelated 及单通道可分辨保持 HC02-P31，证明对任意 x, y ∈ U，GaugeZeroRelated d (ϕ.func x) (ϕ.func y) → GaugeZeroRelated d x y。"
+        }
+      ],
+      "review_evidence": [],
+      "original_source_flags": {
+        "full_original_source_reviewed": false,
+        "hidden_reasoning_used": false,
+        "normal_final_workspace_supplement_used": false,
+        "source_repaired": false,
+        "proof_bodies_manually_read_in_full": false
+      },
+      "full_original_source_reviewed": false,
+      "full_proof_body_semantic_reviewed": null,
+      "proof_body_flag_not_inferred_from_compilation_or_score": true,
+      "source_representation": "exact selected normal-final Lean slices only",
+      "original_kernel_status": "passed",
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0,
+      "private_original_review_sha256": "558a31a93285219acc8dcc8683d1c9ed8bf20af7b64c220675331e1be2fd9680"
+    },
+    {
+      "case_id": "MG-C003",
+      "case_version": "0.1.1",
+      "slot_id": "MG-C003:A1",
+      "original_response_sha256": "e515066509567a3bc4dd7ecde078af1ff3c207efb3c5140031559df73af1b7e6",
+      "source_kind": "sealed_workspace",
+      "source_sha256": "338b1a4968a6a948a6c58950d24ae638cd51505965c7289911ef28f589fe37d2",
+      "source_manifest": {
+        "path": "engineering/nonlogical_retry_3/manifests/MG-C003-A1-338b1a4968a6.json",
+        "bytes": 1812,
+        "sha256": "f7ace97c2ffc2e67b2c5b0d9bfc60f97322fc56b60e83ca0d4a8d2bfdd81daef"
+      },
+      "kernel_status": "passed",
+      "kernel_report": {
+        "path": "engineering/nonlogical_retry_3/kernel/MG-C003-A1-338b1a4968a6.json",
+        "bytes": 84144,
+        "sha256": "7338e2746c6d7663bf90f1dae02d95dd644c76e490c52aa7d00894907b2e0176"
+      },
+      "compiled_sources": {
+        "Ch03/Defs.lean": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4",
+        "Ch03/Sec01.lean": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7",
+        "Ch03/Sec02.lean": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99",
+        "Ch03/Sec03.lean": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b",
+        "Ch03/Sec04_05.lean": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07",
+        "Ch03/Sec06.lean": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654",
+        "Ch03/Sec07_Ex1_3.lean": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf",
+        "Ch03/Sec07_Ex4_5.lean": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531",
+        "Main.lean": "006a29ab23ca61647e7b17e0d6a9ced2d7c35c9fed636763b3318c1c1bb68040"
+      },
+      "source_files": {
+        "Ch03/Defs.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Defs.lean",
+          "bytes": 23940,
+          "sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+        },
+        "Ch03/Sec01.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec01.lean",
+          "bytes": 19515,
+          "sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+        },
+        "Ch03/Sec02.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec02.lean",
+          "bytes": 27842,
+          "sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+        },
+        "Ch03/Sec03.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec03.lean",
+          "bytes": 31448,
+          "sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+        },
+        "Ch03/Sec04_05.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec04_05.lean",
+          "bytes": 26634,
+          "sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+        },
+        "Ch03/Sec06.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec06.lean",
+          "bytes": 20342,
+          "sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+        },
+        "Ch03/Sec07_Ex1_3.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec07_Ex1_3.lean",
+          "bytes": 28436,
+          "sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+        },
+        "Ch03/Sec07_Ex4_5.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Ch03/Sec07_Ex4_5.lean",
+          "bytes": 40992,
+          "sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+        },
+        "Main.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/normal-final-byte-slices/Main.lean",
+          "bytes": 158,
+          "sha256": "006a29ab23ca61647e7b17e0d6a9ced2d7c35c9fed636763b3318c1c1bb68040"
+        }
+      },
+      "background_inputs": {
+        "formal_oet/vol_01/ch_01_foundations/gauge_space.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/frozen-inputs/formal_oet/vol_01/ch_01_foundations/gauge_space.lean",
+          "bytes": 2169,
+          "sha256": "a34d6169c0424eafb6dc6d9844f7704fddb44b370d86c546d2ff130221a9bd0c"
+        },
+        "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/frozen-inputs/formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+          "bytes": 11435,
+          "sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+        },
+        "formal_oet/vol_01/ch_01_foundations/operator_space.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/frozen-inputs/formal_oet/vol_01/ch_01_foundations/operator_space.lean",
+          "bytes": 13211,
+          "sha256": "7171e02afc2742ce6ba266b40e6c9aa01f72c3ec5e42e4b1db9bdfd9b04a2060"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/frozen-inputs/formal_oet/vol_01/ch_02_operator_bounds/decoupling.lean",
+          "bytes": 4007,
+          "sha256": "01670f968b41d40151fba220ae9cec97a62e4496af4b3bad2940762f69aa38aa"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/frozen-inputs/formal_oet/vol_01/ch_02_operator_bounds/lip_matrix.lean",
+          "bytes": 9743,
+          "sha256": "5d2d647ec379b69d4cf273521f2460f9093c00b460ce7ec9f682d923ac107a6d"
+        },
+        "formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean": {
+          "path": "bound-components/engineering/MG-C003/e515066509567a3b/frozen-inputs/formal_oet/vol_01/ch_02_operator_bounds/single_channel.lean",
+          "bytes": 681,
+          "sha256": "06445eab7dd46844f2ce461f8c10185aeba3424973f50c35f53037ff3ea12465"
+        }
+      },
+      "case_contract": {
+        "path": "bound-components/engineering/contracts/MG-C003.json",
+        "bytes": 122710,
+        "sha256": "15c5fc79acd8ce0a9d4985ed3a9cf9497bb2e7a9b06bd6cb6beb05a369071527"
+      },
+      "obligations": [
+        {
+          "id": "CH03-D01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.I_const",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.I_id",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.I_act",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.I_const_global",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.I_id_global",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.I_act_global",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.component_partition_props",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对规范族 d : I → X → X → ENNReal、算子 ϕ : Operator X bot 及子集 U : Set X，定义受限常值分量 I_const(ϕ|U)、按常值优先排除 I_const 后的恒等分量 I_id(ϕ|U) 与有效分量 I_act(ϕ|U) = univ \\ (I_const ∪ I_id)，以及 U = dom(ϕ) 的全域简写，并在 component_partition_props 中证明三者两两不交、并集为全集且满足常值优先约定。"
+        },
+        {
+          "id": "CH03-D02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.CompFiber",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.CompFiberGlobal",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.CompFiberSingle",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.CompFiberSingle_eq",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.CompFiber_eq_empty_of_pos_dist",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对子族 J : Set I、目标点 y : X 与受限域 U : Set X，以子族复合伪度量 d_J 定义受限计算纤维 Fib_{ϕ,J}(y|U) = {x ∈ U | d_J(ϕ(x), y) = 0}，同时给出全域纤维 Fib_{ϕ,J}(y)、单分量纤维 Fib_{ϕ,j}(y|U) 及其展开等式和正距离目标空纤维判据。"
+        },
+        {
+          "id": "CH03-D03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.RelEq",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.RelGaugeZero",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.mem_RelGaugeZero_iff_mem_CompFiber_univ",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.ImageGaugeSetoid",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.ImageGaugeQuotient",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.imageQuotientClass",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.IsSeparatingOn",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.FiberPreorder",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在 U × U 上定义点值相等点对集 RelEq(ϕ|U) 与族零距点对集 RelGaugeZero(ϕ|U)，证明其与全子族计算纤维的等价性；在实际像集子类型 ↥(operator_image ϕ U) 上定义族零距 Setoid 与像商 ImageGaugeQuotient = ϕ(U)/∼_𝒢、商类映射 imageQuotientClass、子集分离谓词 IsSeparatingOn，以及零测距纤维预序 FiberPreorder (ϕ_A ⪰_{fiber,U} ϕ_B)。"
+        },
+        {
+          "id": "CH03-D04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.ValidNullRadius",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.pointwiseNullRadius",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.pointwiseNullRadiusGlobal",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.pointwiseNullRadiusSubfamily",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.pointwiseNullRadiusComp",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.pointwiseNullRadiusSubfamily_singleton",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.ValidNullRadius_subfamily_iff_fiber",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.pointwiseNullRadius_eq_zero_of_no_valid",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。定义有限正合法半径谓词 ValidNullRadius (0 < r < ⊤ 且 B_{d_in}(y, r) ∩ U ⊆ {x ∈ U | d_out(ϕ(x), ϕ(y)) = 0})，以其在 ENNReal 上的上确界定义点态零化内切半径 pointwiseNullRadius（空集上确界自动取 0），并给出全域、子族输出与单分量通道简写及对应引理。"
+        },
+        {
+          "id": "CH03-D05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadiusOn",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadius",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadiusGlobal",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadiusSubfamilyOn",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadiusSubfamily",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadiusComp",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.nullMatrix",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.nullMatrixGlobal",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.uniformNullRadiusSubfamily_singleton",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对基点集 A 与评估域 U 定义统一零化半径 uniformNullRadiusOn = ⨅ y ∈ A, r^N(y|U)，受限统一半径 uniformNullRadius (A = U)、全域统一半径及子族/单分量简写；按正文行指标输出 j、列指标输入 i 的矩阵下标约定定义受限零化矩阵 nullMatrix d ϕ U j i := uniformNullRadiusComp d ϕ i j U 及全域零化矩阵 nullMatrixGlobal。"
+        },
+        {
+          "id": "CH03-D06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.IsInputScaleFamily",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.setDiam",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.diameterScaleFamily",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.diameterScaleFamily_isInputScaleFamily",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.ind01",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.channelType",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。定义非空子集包含单调的输入尺度函数族谓词 IsInputScaleFamily、集合直径 setDiam 与默认直径尺度族 diameterScaleFamily（并证明其满足尺度单调性），以 Fin 2 × Fin 2 上的指示函数对定义通道阈值分类 Type_{f,A}(i, j) = (1_{σ_i(A) < τσ}, 1_{r̲^N_{f,i,j}|_A ≥ τN})。"
+        },
+        {
+          "id": "CH03-D07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.InternalEpsilonNet",
+              "source_sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.covering_number",
+              "source_sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.metric_entropy",
+              "source_sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+            },
+            {
+              "file": "formal_oet/vol_01/ch_01_foundations/metric_entropy.lean",
+              "name": "formal_oet.vol_01.ch_01_foundations.subfamily_metric_entropy",
+              "source_sha256": "28e6fc64f8eb5a53354913a356ac3a87f22a4440487858fe980afdcfe15ae284"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.subfamily_covering_number",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.subfamily_covering_number_singleton",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.InternalEpsilonNet_iff_ball_cover",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.log2_ereal_mono",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.IsTotallyBounded",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.metric_entropy_lt_top_iff",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.metric_entropy_finite_of_totallyBounded",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。复用第1章冻结背景的 InternalEpsilonNet、covering_number、metric_entropy 与 subfamily_metric_entropy，并在 Ch03.Defs 中建立子族覆盖数简写 subfamily_covering_number、开球并覆盖等价定理 InternalEpsilonNet_iff_ball_cover、log2_ereal 单调性、全有界性谓词 IsTotallyBounded 及全有界推出有限非负度量熵的接口引理。"
+        },
+        {
+          "id": "CH03-D08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.MappingEntropyDiffWellDefined",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.mappingEntropyDiff",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.MappingEntropyDiffSameWellDefined",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.mappingEntropyDiffSame",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.MappingEntropyDiffCompWellDefined",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.mappingEntropyDiffComp",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.MappingEntropyDiffSingleWellDefined",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.mappingEntropyDiffSingle",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            },
+            {
+              "file": "Ch03/Defs.lean",
+              "name": "Ch03.mappingEntropyDiff_eq_sub",
+              "source_sha256": "165c32706f260f5d5ca54bb095ec726ead77b70074e287280f7854a1cbb4c0a4"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。以 MappingEntropyDiffWellDefined 刻画 U 非空、U ⊆ dom(ϕ)、Jin/Jout 非空、0 < ε < ⊤ 且输入或输出覆盖数至少一端有限的良定前提（严格排除 ∞ - ∞）；仅在良定证明 hwf 下定义 EReal 值映射熵差 mappingEntropyDiff 及同子族/单通道/单分量简写，并在 mappingEntropyDiff_eq_sub 中证明其与子族度量熵之差在有限、+∞、-∞ 三种合法情形下一致。"
+        },
+        {
+          "id": "CH03-P01-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_1_i_zero_row_bound",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_1_i_zero_row_lip_matrix",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ) 与 i ∈ I_const(ϕ|U)，证明任意 x, y ∈ U 的第 i 分量像距受零行和 ∑_k 0 · d_k(x, y) = 0 控制，且将任意合法受限 Lip 矩阵的第 i 输出行置零仍保持 IsLipMatrix。"
+        },
+        {
+          "id": "CH03-P01-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_1_ii_colip_entry_zero",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ)、i ∈ I_const(ϕ|U) 及任意受限 co-Lip 矩阵 K，若存在 x, y ∈ U 使 d_k(x, y) > 0，则证明通道条目 K k i (即 K_{k→i}) = 0。"
+        },
+        {
+          "id": "CH03-P01-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_1_iii_id_preserves_dist",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在扩展伪度量公理与 U ⊆ dom(ϕ)、i ∈ I_id(ϕ|U) 下，由三角不等式双向证明对任意 x, y ∈ U 有 d_i(ϕ(x), ϕ(y)) = d_i(x, y)。"
+        },
+        {
+          "id": "CH03-P02-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.comp_dom_inclusions",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_2_i_active_subset_union",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。设 U ⊆ dom(ϕ₂ * ϕ₁)，先证 U ⊆ dom(ϕ₁) 且实际中间像域 ϕ₁(U) ⊆ dom(ϕ₂)，再分四种非有效组合证明 I_act(ϕ₂ * ϕ₁ | U) ⊆ I_act(ϕ₁ | U) ∪ I_act(ϕ₂ | ϕ₁(U))。"
+        },
+        {
+          "id": "CH03-P02-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.chainCompSeq",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.chainDomainSeq",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.chainDomainSeq_eq_image_chainCompSeq",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.chainDomainSeq_subset_dom",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_2_ii_zero_base",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_2_ii_chain_active_subset",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_2_ii_chain_nonactive_preserved",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。以 chainCompSeq 递归定义有限复合链 c_n（含 n = 0 空复合 id_X）并以 chainDomainSeq 递推实际像域序列 U_{m+1} = ϕ_m(U_m)，证明零步基例 I_act(id_X | U₁) = ∅、各步域合法性，以及任意长度 n 的有效分量并集包含与非有效分量保持。"
+        },
+        {
+          "id": "CH03-P02-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_2_iii_id_preserved",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ₂ * ϕ₁)，证明 I_id(ϕ₁ | U) ∩ I_id(ϕ₂ | ϕ₁(U)) ⊆ I_id(ϕ₂ * ϕ₁ | U)，其中利用 ϕ₂ 在 ϕ₁(U) 上的保距性排除复合落入常值优先分支 I_const(ϕ₂ * ϕ₁ | U)。"
+        },
+        {
+          "id": "CH03-P03-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.SwapSpace",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.swapDist",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.swapDist_is_extended",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.swapOp",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.swapU",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.note_comp_converse_counterexample",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。构造带吸收元的两点换位空间 SwapSpace = {bot, a, b}、合法扩展伪度量 swapDist 与换位算子 swapOp，在 U = {a, b} 上完整算出单步有效、自复合恒等，并同时证明命题 3.2(i) 与 (iii) 的逆向包含均不成立。"
+        },
+        {
+          "id": "CH03-P04-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_3_i_outer_const_preserved",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ψ * ϕ)，证明若 i ∈ I_const(ψ | ϕ(U))（外侧算子在实际中间像域上常值），则 i ∈ I_const(ψ * ϕ | U)。"
+        },
+        {
+          "id": "CH03-P04-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.SevenSpace",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.TwoIdx",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.sevenDist",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.sevenDist_is_extended",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.sevenPhi",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.sevenPsi",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.sevenU",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            },
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.prop_3_3_ii_inner_const_counterexample",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。构造七点空间 {bot, a, b, p, q, r, s} 与双分量规范族 sevenDist，验证两个分量均满足扩展伪度量公理及 U = {a, b} ⊆ dom(ψ * ϕ)，并证明 idx_i ∈ I_const(ϕ | U)、跨分量正距传递导致 idx_i ∉ I_const(ψ * ϕ | U)。"
+        },
+        {
+          "id": "CH03-P05-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec01.lean",
+              "name": "Ch03.cor_3_4_const_preserved_of_single_row",
+              "source_sha256": "8e8106d0950d8c9951e6863a9bfad71e405a0ee0a52d0c5d6aa5d7bdc8f884f7"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ψ * ϕ) 与 j ∈ I_const(ϕ | U)，若存在 ψ 在 ϕ(U) 上的受限 Lip 矩阵 L 使 ∀ k ≠ j, L k j = 0（允许同分量条目 L j j = ⊤，由 ENNReal 中 ⊤ * 0 = 0 自动覆盖），则证明 j ∈ I_const(ψ * ϕ | U)。"
+        },
+        {
+          "id": "CH03-P06-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.subfamily_pseudometric_eq_zero_iff",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_i_target_zero_invariant",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ)、非空子族 J 及任意目标 y, y' ∈ X（不要求属于像集），在 d_J(y, y') = 0 下由三角不等式证明 Fib_{ϕ,J}(y|U) = Fib_{ϕ,J}(y'|U)。"
+        },
+        {
+          "id": "CH03-P06-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_ii_a_nonempty_and_cover",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ) 与非空子族 J，证明每个像目标 y ∈ ϕ(U) 的计算纤维 Fib_{ϕ,J}(y|U) 非空，且全体像目标计算纤维之并恰等于 U。"
+        },
+        {
+          "id": "CH03-P06-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.CompFiberPartition",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.CompFiberSubtypePartition",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_ii_b_eq_or_disjoint_and_partition",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。证明任意像目标 y₁, y₂ ∈ ϕ(U) 的纤维要么相等要么不交；去重后的集合族 CompFiberPartition 不含空集、两两不交、并集为 U，并在子类型 ↥U 上满足 Mathlib 的 Setoid.IsPartition。"
+        },
+        {
+          "id": "CH03-P06-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_iii_inter_eq",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ)、非空子族 J 与任意 y ∈ X，证明 Fib_{ϕ,J}(y|U) = ⋂ j ∈ J, Fib_{ϕ,j}(y|U)。"
+        },
+        {
+          "id": "CH03-P06-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_iv_subfamily_antitone",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空子族 J ⊆ K，证明子族扩大时计算纤维单调缩小：Fib_{ϕ,K}(y|U) ⊆ Fib_{ϕ,J}(y|U)。"
+        },
+        {
+          "id": "CH03-P06-06",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_v_subfamily_boundary",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在非空指标集 I 上证明单元素子族纤维等于单分量零距原像 Fib_{ϕ,{i}}(y|U) = {x ∈ U | d_i(ϕ(x), y) = 0}，且全子族纤维 Fib_{ϕ,I}(y|U) 包含于每个单分量纤维。"
+        },
+        {
+          "id": "CH03-P06-07",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_vi_a_id_fiber",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 j ∈ I_id(ϕ|U) 及任意目标点 y ∈ X，由恒等分量条件与三角不等式证明 Fib_{ϕ,j}(y|U) = {x ∈ U | d_j(x, y) = 0}。"
+        },
+        {
+          "id": "CH03-P06-08",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_5_vi_b_const_fiber",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 j ∈ I_const(ϕ|U) 及像点 y₀ ∈ ϕ(U)，证明 Fib_{ϕ,j}(y₀|U) = U，且对任意满足 d_j(y, y₀) > 0 的目标 y 有 Fib_{ϕ,j}(y|U) = ∅。"
+        },
+        {
+          "id": "CH03-P07-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.IsImageFactorMap",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_6_i_nec",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。以 IsImageFactorMap 刻画实际像集映射 T : ↥(ϕ_A(U)) → X 在 U 上满足 T(ϕ_A(x)) = ϕ_B(x)，证明其存在性推出 RelEq ϕ_A U ⊆ RelEq ϕ_B U。"
+        },
+        {
+          "id": "CH03-P07-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.constructImageFactorMap",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_6_i_suf_and_iff",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_6_i_empty_domain",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。由 RelEq ϕ_A U ⊆ RelEq ϕ_B U 显式构造映射 constructImageFactorMap : ↥(ϕ_A(U)) → X，证明代表元选取无关性、因子化等式 T ∘ ϕ_A = ϕ_B、充要判据，并在 prop_3_6_i_empty_domain 中专门验证 U = ∅ 空映射边界。"
+        },
+        {
+          "id": "CH03-P07-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_6_ii_bidirectional_iff",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ_A) ∩ dom(ϕ_B)，证明双向点值像变换 T_{A→B}, T_{B→A} 同时存在当且仅当 RelEq ϕ_A U = RelEq ϕ_B U。"
+        },
+        {
+          "id": "CH03-P07-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_6_iii_scalar_lip_bound",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_6_iii_matrix_interface",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在单分量有限正 co-Lip 常数 0 < K_A < ⊤、有限 Lip 常数 L_B < ⊤ 及点值因子化 T ∘ ϕ_A = ϕ_B 下，证明对实际像域 ↥(ϕ_A(U)) 中任意 y, y' 有 d(T(y), T(y')) ≤ (L_B / K_A) d(y, y')，同时提供单分量矩阵接口版本。"
+        },
+        {
+          "id": "CH03-P08-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.IsQuotientFactorMap",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.constructQuotientFactorMap",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_7_unidirectional_quotient_iff",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。以 IsQuotientFactorMap 表示商映射 T̄ : ϕ_A(U)/∼_𝒢 → ϕ_B(U)/∼_𝒢 满足 T̄([ϕ_A(x)]) = [ϕ_B(x)] (x ∈ U)；由 RelGaugeZero 包含关系经 Quotient.lift 构造代表元无关映射 constructQuotientFactorMap，并证明单向充要性。"
+        },
+        {
+          "id": "CH03-P08-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_7_bidirectional_quotient_iff",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 U ⊆ dom(ϕ_A) ∩ dom(ϕ_B)，证明双向商映射 T̄_{A→B}, T̄_{B→A} 同时存在当且仅当 RelGaugeZero d ϕ_A U = RelGaugeZero d ϕ_B U。"
+        },
+        {
+          "id": "CH03-P08-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.RelEq_eq_RelGaugeZero_of_separatingOn_image",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.prop_3_7_separating_image_equivalence",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。仅在两个实际像集各自分离（IsSeparatingOn d (operator_image ϕ_A U) 与 IsSeparatingOn d (operator_image ϕ_B U)，不要求全空间分离）的精确前提下，证明 RelEq = RelGaugeZero 并将单向与双向商因子化判据转回点值因子化判据。"
+        },
+        {
+          "id": "CH03-P09-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.note_fiber_preorder_refl_trans",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            },
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.instPreorderFiberOnDomain",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。证明固定公共域 U 上的纤维预序 FiberPreorder 满足自反性与传递性，并在子类型 {ϕ // U ⊆ dom ϕ} 上注册 Preorder 实例。"
+        },
+        {
+          "id": "CH03-P09-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.note_fiber_preorder_chain_le",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对公共评估域 U 上的任意有限长算子链 ϕ_0, …, ϕ_m，由相邻步纤维预序归纳证明任意两层 a ≤ b（含严格序 0 ≤ a < b ≤ m）满足 ϕ_a ⪰_{fiber,U} ϕ_b。"
+        },
+        {
+          "id": "CH03-P09-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec02.lean",
+              "name": "Ch03.note_fiber_preorder_chain_strict",
+              "source_sha256": "c917d203481687fbc70e24d884ea38757e137321ab52c171f6cca2ac4ce5df99"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。当有限链中某一步 r 满足严格包含 RelGaugeZero(ϕ_r|U) ⊂ RelGaugeZero(ϕ_{r+1}|U) 时，显式提取差集见证点对 p ∈ RelGaugeZero(ϕ_{r+1}|U) \\ RelGaugeZero(ϕ_r|U)，证明其属于首尾差集并推出 RelGaugeZero(ϕ_0|U) ⊂ RelGaugeZero(ϕ_m|U)。"
+        },
+        {
+          "id": "CH03-P10-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.RealWithBot",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.realStdDist",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.realStdDist_is_extended",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.stepOp",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.stepU",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.counterexample_3_1_setup",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。构造带吸收元实直线 RealWithBot = ℝ ⊔ {bot}、通常距离扩展伪度量 realStdDist、阶跃算子 stepOp 与评估域 stepU = [-1, 0) ∪ (0, 1]，验证 ExtendedPseudoMetric 公理及 stepU 非空且包含于 dom(stepOp)。"
+        },
+        {
+          "id": "CH03-P10-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.counterexample_3_1_pointwise_radius",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对每个 y ∈ [-1, 0) ∪ (0, 1]，证明 stepOp 在基点 y、评估域 stepU 上的合法有限正半径集恰为 Ioc 0 (ofReal |y|)，从而点态零化半径等于 ofReal |y| > 0。"
+        },
+        {
+          "id": "CH03-P10-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.counterexample_3_1_uniform_radius_zero",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在同一固定评估域 stepU 上，利用可任意趋近于 0 的基点 δ ∈ (0, 1] 证明统一零化半径 uniformNullRadius stepOp realStdDist realStdDist stepU = 0。"
+        },
+        {
+          "id": "CH03-P11-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_8_i_a_const_subfamily_fiber",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 U ⊆ dom(ϕ)、非空子族 J ⊆ I_const(ϕ|U)，证明任意基点 y ∈ U 的像目标计算纤维 Fib_{ϕ,J}(ϕ(y)|U) = U。"
+        },
+        {
+          "id": "CH03-P11-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.sSup_Ioo_zero_top",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_8_i_b_const_subfamily_radius_top",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在非空 U ⊆ dom(ϕ) 与非空 J ⊆ I_const(ϕ|U) 下，证明对任意输入指标 i ∈ I，各基点 y ∈ U 的点态零化半径及受限统一零化半径 uniformNullRadiusSubfamily 均为 ⊤ (+∞)。"
+        },
+        {
+          "id": "CH03-P11-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.infInputDist",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_8_ii_inf_radius_not_const",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_8_ii_both_cases_explicit",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在 SwapSpace = {bot, a, b}、U = {a, b} 上对任意可判定指标集 I 及任意 i, j ∈ I（统一涵盖 i = j 与 i ≠ j，并给出两类显式实例）构造合法扩展伪度量族 infInputDist 与恒等算子，证明 [N(ϕ)|_U]_{ji} = ⊤ 但 j ∉ I_const(ϕ|U)。"
+        },
+        {
+          "id": "CH03-P12-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_9_i_id_target_fiber",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 y ∈ U ⊆ dom(ϕ) 且 i ∈ I_id(ϕ|U)，由命题 3.1(iii) 保距等式证明像目标计算纤维 Fib_{ϕ,i}(ϕ(y)|U) = {x ∈ U | d_i(x, y) = 0}。"
+        },
+        {
+          "id": "CH03-P12-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_9_ii_id_radius_lower_bound",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在 y ∈ U ⊆ dom(ϕ)、i ∈ I_id(ϕ|U) 及有限正半径 0 < r₀ < ⊤ 满足 B_i(y, r₀) ∩ U ⊆ {x ∈ U | d_i(x, y) = 0} 时，证明 r₀ ≤ r^N_{ϕ,i,i}(y|U) 且 0 < r^N_{ϕ,i,i}(y|U)。"
+        },
+        {
+          "id": "CH03-P13-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.ValidNullRadius_mono_radius",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_10_pointwise_min_formula",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在 [Fintype I]、非空子族 J ⊆ I 及 y ∈ U ⊆ dom(ϕ) 下，由分量交集律与合法半径向下封闭性证明 r^N_{ϕ,i,J}(y|U) = ⨅ j ∈ J, r^N_{ϕ,i,j}(y|U)，并证明该最小值在某个 jmin ∈ J 处取得。"
+        },
+        {
+          "id": "CH03-P13-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_10_uniform_min_formula",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 U ⊆ dom(ϕ) 与有限非空子族 J ⊆ I，交换基点 y ∈ U 的下确界与 j ∈ J 的最小值，证明 r̲^N_{ϕ,i,J}|_U = ⨅ j ∈ J, [N(ϕ)|_U]_{ji} 并由某个 jmin ∈ J 取得。"
+        },
+        {
+          "id": "CH03-P13-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_10_uniform_subfamily_antitone",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 U ⊆ dom(ϕ) 与非空子族 J ⊆ K ⊆ I，由统一零化半径的分量最小值公式证明 r̲^N_{ϕ,i,K}|_U ≤ r̲^N_{ϕ,i,J}|_U。"
+        },
+        {
+          "id": "CH03-P14-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_11_fiber_mem_zero",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 y, y' ∈ U₂ ⊆ dom(ϕ₂)，证明若 y' ∈ Fib_{ϕ₂,j}(ϕ₂(y)|U₂)，则由纤维定义与伪度量对称性有 d_j(ϕ₂(y), ϕ₂(y')) = 0。"
+        },
+        {
+          "id": "CH03-P14-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_11_lt_radius_zero",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            },
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_11_single_step_criterion",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 y, y' ∈ U₂ ⊆ dom(ϕ₂)，当 d_i(y, y') < r^N_{ϕ₂,i,j}(y|U₂) 时从上确界显式提取满足 ValidNullRadius 且 d_i(y, y') < ρ 的有限正半径 ρ，并归结推出 d_j(ϕ₂(y), ϕ₂(y')) = 0。"
+        },
+        {
+          "id": "CH03-P14-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_11_composite_instance",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 x, x' ∈ dom(ϕ₁) 且像点 ϕ₁(x), ϕ₁(x') ∈ U₂ ⊆ dom(ϕ₂)，若 ϕ₁(x') ∈ Fib_{ϕ₂,j}(ϕ₂(ϕ₁(x))|U₂)，代入单步纤维判据得 d_j((ϕ₂ * ϕ₁)(x), (ϕ₂ * ϕ₁)(x')) = 0。"
+        },
+        {
+          "id": "CH03-P15-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_12_i_zero_preserving_propagation",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。设非空 U ⊆ dom(ϕ₂ * ϕ₁)，若下游算子 ϕ₂ 在实际像域 ϕ₁(U) 上满足 d_l(y, y') = 0 ⇒ d_j(ϕ₂(y), ϕ₂(y')) = 0，则证明 [N(ϕ₁)|_U]_{li} ≤ [N(ϕ₂ * ϕ₁)|_U]_{ji}。"
+        },
+        {
+          "id": "CH03-P15-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec03.lean",
+              "name": "Ch03.prop_3_12_ii_lip_pullback",
+              "source_sha256": "2d3b212962258f319155bcbf957d30e7c712e2ab4cee83ee64f838c4e7bf4b5b"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。设非空 U ⊆ dom(ϕ₂ * ϕ₁) 且存在有限正 0 < L < ⊤ 使 U 上 d_l(ϕ₁(x), ϕ₁(x')) ≤ L · d_i(x, x')，证明 [N(ϕ₂)|_{ϕ₁(U)}]_{jl} / L ≤ [N(ϕ₂ * ϕ₁)|_U]_{ji}，并显式验证右端分子为 0 与 ⊤ 时的 ENNReal 除法行为。"
+        },
+        {
+          "id": "CH03-P16-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.Regime11",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            },
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.Regime10",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            },
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.Regime01",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            },
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.Regime00",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            },
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.lemma_3_13_four_regimes_exclusive_exhaustive",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。定义四个阈值体制集合 Regime11、Regime10、Regime01、Regime00，证明它们与 channelType 取值 (1,1),(1,0),(0,1),(0,0) 一一对应，且在 I × I 上两两不交、并集为全集。"
+        },
+        {
+          "id": "CH03-P16-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.lemma_3_13_i_first_coord_mono",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。证明当输入尺度阈值 τσ ≤ τσ' 增大时，阈值分类第一项为 1 的通道集合单调不减。"
+        },
+        {
+          "id": "CH03-P16-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.lemma_3_13_ii_second_coord_antitone",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。证明当零化阈值 τN ≤ τN' 增大时，阈值分类第二项为 1 的通道集合单调不增。"
+        },
+        {
+          "id": "CH03-P17-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_14_i_scale_mono_on_subset",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对满足 IsInputScaleFamily 的任意尺度函数族 σ 及非空 B ⊆ A ⊆ dom(f)，证明 σ_i(B) ≤ σ_i(A) 及阈值传递 σ_i(A) < τσ → σ_i(B) < τσ。"
+        },
+        {
+          "id": "CH03-P17-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_14_ii_a_pointwise_radius_antitone",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 B ⊆ A ⊆ dom(f) 及固定基点 x ∈ B，证明评估域缩小使点态零化半径不减：r^N_{f,i,j}(x|A) ≤ r^N_{f,i,j}(x|B)。"
+        },
+        {
+          "id": "CH03-P17-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_14_ii_b_uniform_radius_antitone",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 B ⊆ A ⊆ dom(f)，分两步证明 r̲^N(A|A) ≤ r̲^N(B|A) ≤ r̲^N(B|B)，即同时缩小评估域与基点集使统一零化半径单调不减。"
+        },
+        {
+          "id": "CH03-P17-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_14_iii_reverse_scale_counterexample",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在 RealWithBot 通常距离下取 f = id、A = {0, 1}、B = {0}、τσ = 1/2，证明 diam(B) = 0 < τσ 且 diam(A) = 1 ≥ τσ，从而否定反向尺度蕴含。"
+        },
+        {
+          "id": "CH03-P18-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_15_i_lt_uniform_radius_zero",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 A ⊆ dom(f) 及 x, y ∈ A，若 d_i(x, y) < r̲^N_{f,i,j}|_A，则结合下确界与命题 3.11 证明 d_j(f(x), f(y)) = 0。"
+        },
+        {
+          "id": "CH03-P18-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_15_ii_pos_output_ge_uniform_radius",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 A ⊆ dom(f) 及 x, y ∈ A，由命题 3.15(i) 的逆否命题证明：若 0 < d_j(f(x), f(y))，则 r̲^N_{f,i,j}|_A ≤ d_i(x, y)。"
+        },
+        {
+          "id": "CH03-P18-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_15_iii_separation_witness",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。当 r̲^N_{f,i,j}|_A < α < τN (< ⊤) 时，证明存在 x, y ∈ A 与有限正数 ε = min 1 (d_j(f(x), f(y))) ∈ (0, ⊤)（兼容输出距离为 ⊤ 的情形），使得 d_i(x, y) < α 且 ε ≤ d_j(f(x), f(y))。"
+        },
+        {
+          "id": "CH03-P19-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_16_i_ball_subset_fiber",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。设非空 A ⊆ dom(f) 且有限正阈值 τN ≤ r̲^N_{f,i,j}|_A，证明对任意 x ∈ A 有 B_i(x, τN) ∩ A ⊆ Fib_{f,j}(f(x)|A)。"
+        },
+        {
+          "id": "CH03-P19-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_16_ii_a_covering_number_le",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在命题 3.16 条件下，对任意子集 B ⊆ A（含 B = ∅ 及输入无有限内覆盖的 ⊤ 情形）与任意 ε ∈ (0, ⊤)，将 B 的任意内部 τN-网 S 推至像内部 ε-网 S.image f.func（基数不增），证明 𝒩_j(ε, f(B)) ≤ 𝒩_i(τN, B)。"
+        },
+        {
+          "id": "CH03-P19-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.prop_3_16_ii_b_metric_entropy_le",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在 B ⊆ A 非空及命题 3.16 条件下，由覆盖数不等式与 log2_ereal_mono 推出度量熵不等式 E_{ε,j}(f(B)) ≤ E_{τN,i}(B)。"
+        },
+        {
+          "id": "CH03-P20-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.post_prop_3_16_pointwise_pos_insufficient",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在同一阶跃反例评估域 stepU 上（各点零化半径均为正），对任意有限正 τ ∈ (0, ⊤) 显式选取 0 < a ≤ 1 且 2a < τ，构造 B = {-a, a} ⊆ stepU，证明 𝒩_1(τ, B) = 1 < 2 = 𝒩_1(1/2, f(B))，从而否定存在对一切 B ⊆ stepU 同时生效的输入尺度 τ。"
+        },
+        {
+          "id": "CH03-P21-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.cor_3_17_small_domain_nullification_iff",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 A ⊆ dom(f) 及有限正阈值满足 diam_{d_i}(A) < τσ ≤ τN，双向证明 τN ≤ r̲^N_{f,i,j}|_A 当且仅当 ∀ x, y ∈ A, d_j(f(x), f(y)) = 0。"
+        },
+        {
+          "id": "CH03-P21-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec04_05.lean",
+              "name": "Ch03.cor_3_17_covering_number_eq_one",
+              "source_sha256": "1af0808ea28f9e1e74e105d6d23330338346f4a85881957b8fd66dc102a82e07"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在推论 3.17 的等价条件成立且 A 非空时，证明对任意有限正 ε ∈ (0, ⊤)，输出像集内部覆盖数 𝒩_j(ε, f(A)) = 1。"
+        },
+        {
+          "id": "CH03-P22-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.covering_number_le_toFinset_card",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            },
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.note_finite_set_mapping_entropy_diff_well_defined",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空有限子集 U ⊆ dom(ϕ)、任意非空输入/输出子族 Jin, Jout 及有限正 ε，证明输入与像集覆盖数均 ≥ 1 且有限（输入覆盖数 ≤ |U|），两端度量熵均为非负有限实数，故映射熵差良定且取有限实数值。"
+        },
+        {
+          "id": "CH03-P23-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_18_i_const_entropy_diff",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 U ⊆ dom(ϕ)、ε ∈ (0, ⊤) 与 j ∈ I_const(ϕ|U)，证明 𝒩_j(ε, ϕ(U)) = 1、E_{ε,j}(ϕ(U)) = 0，因此映射熵差无条件良定（允许输入熵为 +∞）且等于 E_{ε,j}(U)。"
+        },
+        {
+          "id": "CH03-P23-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_18_ii_a_id_covering_and_entropy_eq",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 j ∈ I_id(ϕ|U)，分别证明内部 ε-覆盖的前向像推（基数不增）与像集内部 ε-覆盖的反向代表元拉回（基数不增），从而证明 𝒩_j(ε, ϕ(U)) = 𝒩_j(ε, U) 及 E_{ε,j}(ϕ(U)) = E_{ε,j}(U)。"
+        },
+        {
+          "id": "CH03-P23-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_18_ii_b_id_entropy_diff_zero",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对 j ∈ I_id(ϕ|U)，显式以 MappingEntropyDiffSingleWellDefined 良定证明 hwf 为前提（绝不定义 ∞ - ∞），证明良定时 ΔE_{ε,j}(ϕ|U) = 0。"
+        },
+        {
+          "id": "CH03-P24-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_19_covering_number_upper_bound",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在单通道有限正 Lip 上界 0 < L < ⊤ 下，证明 U 的任意内部 (ε/L)-覆盖 S 的像 S.image ϕ.func 构成 ϕ(U) 的内部 ε-覆盖且基数不增，从而 𝒩_j(ε, ϕ(U)) ≤ 𝒩_i(ε/L, U)。"
+        },
+        {
+          "id": "CH03-P24-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_19_entropy_diff_lower_bound",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在命题 3.19 的单通道有限正 Lip 上界与输入全有界 IsTotallyBounded (d i) U 下，证明 E_{ε,i}(U)、E_{ε/L,i}(U)、E_{ε,j}(ϕ(U)) 均有限，映射熵差良定且满足 E_{ε,i}(U) - E_{ε/L,i}(U) ≤ ΔE_{ε,{i},{j}}(ϕ|U)。"
+        },
+        {
+          "id": "CH03-P25-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_20_covering_number_lower_bound",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在受限 co-Lip 矩阵 K 的正有限条目 0 < K i j < ⊤ 下，对 ϕ(U) 的任意内部 ε-覆盖 T 选取 U 内原像代表元集 S（|S| ≤ |T|），证明 S 构成 U 的内部 (ε/K_{i→j})-覆盖，故 𝒩_i(ε/K_{i→j}, U) ≤ 𝒩_j(ε, ϕ(U))。"
+        },
+        {
+          "id": "CH03-P25-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec06.lean",
+              "name": "Ch03.prop_3_20_entropy_diff_upper_bound",
+              "source_sha256": "a4843c57eb1bd2cc3a6228d37ba11f98fcab9bc0bd2e6c3e2da58f8e3e494654"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在命题 3.20 条件下且 U 在 d_i 下全有界（输出熵允许为 +∞），证明输入端两个尺度的熵有限从而映射熵差良定，并证明 ΔE_{ε,{i},{j}}(ϕ|U) ≤ E_{ε,i}(U) - E_{ε/K_{i→j},i}(U)。"
+        },
+        {
+          "id": "CH03-P26-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.realAbsDist",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.realAbsDist_is_extended",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.realAbsGauge",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex31Phi",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex31U",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_1_i_a_phi_fiber_and_type",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。定义绝对值读数伪度量 realAbsDist (||x| - |y||) 与仿射算子 ex31Phi (2x - 1)，验证扩展伪度量公理与 U = {0, 1} ⊆ dom(ϕ)，算出 Fib_{ϕ,i}(ϕ(0)|U) = U 并判定唯一分量属于 I_const(ϕ|U)。"
+        },
+        {
+          "id": "CH03-P26-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_1_i_b_phi_sq_fiber_and_type",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对同一评估域 U = {0, 1} 验证 U ⊆ dom(ϕ²)，算出 Fib_{ϕ²,i}(ϕ²(0)|U) = {0}（及 ϕ²(1) 处纤维 {1}），并证明唯一分量既非 I_const 亦非 I_id，故属于 I_act(ϕ²|U)。"
+        },
+        {
+          "id": "CH03-P26-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_1_ii_pointwise_const_self_comp",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。设算子 ψ 在 U = {0, 1} 上取同一实数值 c，证明 ψ²(0) = ψ²(1) = ψ(c) 从而对任意目标 y 两点必同属或同不属于纤维（不能被区分）；同时完整分情况给出 ψ(c) ≠ bot（U ⊆ dom(ψ²)，ψ² 在 U 上常值且单一纤维为 U）与 ψ(c) = bot（dom(ψ²) ∩ U = ∅，U ⊈ dom(ψ²)，超出受限纤维适用域）两个分支。"
+        },
+        {
+          "id": "CH03-P27-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_2_i_pointwise_distance_gap",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对非空 U ⊆ dom(ϕ)、受限 co-Lip 矩阵 K 满足 K_{i→j} > 0（无需 K_{i→j} < ⊤）及 y ∈ U 满足 r^N_{ϕ,i,j}(y|U) > 0，结合命题 3.11 与第2章正 co-Lip 保可区分性证明 ∀ x ∈ U, d_i(x, y) ∉ (0, r^N_{ϕ,i,j}(y|U))。"
+        },
+        {
+          "id": "CH03-P27-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_2_ii_uniform_distance_dichotomy",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在习题 3.2 条件下当统一零化半径 r̲^N_{ϕ,i,j}|_U > 0 时，证明 {0} 与 [r̲^N|_U, +∞] 不交，且对任意 x, y ∈ U 有 d_i(x, y) = 0 ∨ r̲^N|_U ≤ d_i(x, y)（即落入该不交并）。"
+        },
+        {
+          "id": "CH03-P28-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex33Phi",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex33U",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            },
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_3_i_fiber_partitions",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在绝对值读数伪度量与四点集 U = {-3, -2, 0, 2} 上验证恒等算子与平移算子 ϕ(x) = x + 1 的域合法性，逐点算出全部单分量纤维，并证明恒等算子的纤维分划为 {{-3}, {-2, 2}, {0}}、ϕ 的纤维分划为 {{-3}, {-2, 0}, {2}}。"
+        },
+        {
+          "id": "CH03-P28-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex1_3.lean",
+              "name": "Ch03.ex_3_3_ii_covering_and_entropy_diff",
+              "source_sha256": "c4aaaff0ad912fe07f9f5e2341506101ee9e99774face3fc7806ef1eb1fe1cbf"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在精确半径 ε = 3/2 下分别给出内部覆盖构造上界与分离下界，证明 𝒩_i(3/2, U) = 2、𝒩_i(3/2, ϕ(U)) = 1，并证明映射熵差良定且 ΔE_{3/2,i}(ϕ|U) = 1。"
+        },
+        {
+          "id": "CH03-P29-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.realStdGauge",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex34Floor",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex34D1",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_4_i_a_D1",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。定义向下取整算子 ex34Floor (⌊x⌋) 与局部输入域 D₁ = [0, 1/2]，验证非空与域合法性，并在 τσ = τN = 1 及直径尺度下证明 diam(D₁) = 1/2、r̲^N|_D₁ = ⊤、channelType = (1, 1)。"
+        },
+        {
+          "id": "CH03-P29-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex34D2",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_4_i_b_D2",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对局部输入域 D₂ = [9/10, 11/10]，验证非空与域合法性，证明基点 1 处跨越取整跃变使点态及统一零化半径为 0，diam(D₂) = 1/5，channelType = (1, 0)。"
+        },
+        {
+          "id": "CH03-P29-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex34D3",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_4_i_c_D3",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对离散二点输入域 D₃ = {0, 2}，证明 diam(D₃) = 2、各点合法半径集为 (0, 2] 从而点态与统一零化半径均为 2，且 channelType = (0, 1)。"
+        },
+        {
+          "id": "CH03-P29-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex34D4",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_4_i_d_D4",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对闭区间输入域 D₄ = [0, 2]，证明 diam(D₄) = 2、统一零化半径 r̲^N|_D₄ = 0，且 channelType = (0, 0)。"
+        },
+        {
+          "id": "CH03-P29-05",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_4_ii_no_diam_counterexample",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。用 (i-c) 中的合法非空子集 D = {0, 2} 证伪全称命题“∀ D ≠ ∅, r̲^N|_D ≥ 1 ⇒ ∀ x, y ∈ D, d(f(x), f(y)) = 0”，并形式化证明其正零化半径（= 2）源于离散点距为 2（diam = 2 ≥ 1）使任意 0 < r ≤ 2 的受限开球 B_d(y, r) ∩ D₃ = {y} 孤立为单点。"
+        },
+        {
+          "id": "CH03-P30-01",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex35U",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_5_i_covering_piecewise_and_external_center",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。对四点集 U = {0, 1, 2, 3} 与所有有限正 ε ∈ (0, ⊤)，证明内部覆盖数精确分段公式（ε ≤ 1 时为 4，1 < ε ≤ 2 时为 2，ε > 2 时为 1，并显式包含端点 ε = 1 与 ε = 2）；在 ε = 7/4 下证明外部点 3/2 的开球虽覆盖 U，但因 3/2 ∉ U 违反 InternalEpsilonNet 的中心内属条件而非法，故内部覆盖数为 2。"
+        },
+        {
+          "id": "CH03-P30-02",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex35F",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex35G",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex35_domains_and_outside",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            },
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_5_ii_images_covering_and_entropy_diff",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。按原文表格及 X \\ U 上取 bot 构造 ex35F 与 ex35G（证明 dom(f) = dom(g) = U），证明 f(U) = U 且 g(U) = U，从而对任意有限正精度 ε 两像集内部覆盖数相等且等于 𝒩(ε, U)，两算子映射熵差均良定且等于 0。"
+        },
+        {
+          "id": "CH03-P30-03",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_5_iii_a_optimal_scalar_lip",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。使用第2章 HasScalarLipBound 分别证明 f 在 U 上满足标量 Lip 常数 1 且任意合法常数 c ≥ 1（最小值为 1），g 在 U 上满足标量 Lip 常数 3 且由点对 (0, 1) 给出任意合法常数 c ≥ 3（最小值为 3）。"
+        },
+        {
+          "id": "CH03-P30-04",
+          "complete": true,
+          "declarations": [
+            {
+              "file": "Ch03/Sec07_Ex4_5.lean",
+              "name": "Ch03.ex_3_5_iii_b_prop_3_19_bound_comparison",
+              "source_sha256": "d2c756b8227a060e05dd90dd41cb0a4f9d9e162ea3b6b25c318844cee3650531"
+            }
+          ],
+          "notes": "原文全部子要求、表示及边界已逐项核对；所列完整声明在实际交付文件及其公理闭包中验证。在精度 ε = 7/4 下应用命题 3.19 的覆盖数上界 𝒩(ε/L, U)：对 f (L = 1) 上界为 𝒩(7/4, U) = 2，等于真实像覆盖数 2；对 g (L = 3) 上界为 𝒩(7/12, U) = 4，严格大于真实像覆盖数 2。"
+        }
+      ],
+      "review_evidence": [],
+      "full_original_source_reviewed": true,
+      "full_proof_body_semantic_reviewed": true,
+      "proof_body_flag_not_inferred_from_compilation_or_score": true,
+      "source_representation": "Exact files from actual normal-final named blocks; independent all92 source/proof review.",
+      "original_kernel_status": "passed",
+      "post_observation": true,
+      "new_candidate_calls": 0,
+      "new_compilations": 0,
+      "private_original_review_sha256": "558a31a93285219acc8dcc8683d1c9ed8bf20af7b64c220675331e1be2fd9680"
+    }
+  ],
+  "source_rule": "Selected first normal final only; exact standard-report byte slices and existing AI obligation judgments. Failed deliveries remain unavailable, no workspace supplement.",
+  "post_observation": true,
+  "new_candidate_calls": 0,
+  "new_compilations": 0,
+  "policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+  "policy_binding_admission": {
+    "schema": "math-gauge.engineering-policy-binding/v1",
+    "post_observation": true,
+    "original_field_present": false,
+    "original_private_review_sha256": "aded42942f9613370e9dc8e77ec3c4d19fbcf09074866c95e3c57d15ef69fc59",
+    "source_policy_sha256": "a3ed485273be94a6be91dc42d4e514fd476380ea9407dd8affd579f8150baef6",
+    "original_source_bytes_rewritten": false,
+    "mathematical_judgments_changed": false,
+    "new_candidate_calls": 0
+  },
+  "new_C003_normal_final_adoption": true,
+  "previous_other_three_engineering_judgments_unchanged": true
+}

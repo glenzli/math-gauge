@@ -212,7 +212,7 @@ def project_assessment_score(score):
               "submission_method_version", "submission_policy_sha256", "submission_review_sha256", "submission_summary",
               "primary_metric", "model_label", "capacity", "group_capacity", "coverage", "whole_task_counts", "profile",
               "alignment_selfcheck", "strict_alignment_selfcheck", "lean_formalization_breakdown",
-              "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings",
+              "initial_answers_replaced", "attempt_condition", "retry_summary", "source_bindings", "c003_continuation",
               "source_math_policy_version", "engineering_review_sha256",
               "retry_policy_sha256", "retry_admission_sha256")
     result = {key: copy.deepcopy(score[key]) for key in fields if key in score}
@@ -1340,6 +1340,7 @@ def validate_current_written_reviews(root, record, *, policy, external=False):
     from .catalog import assessment_weights, candidate_message, validate_group_contract
     from .reliability_review import _validate_entry
     from .reliability import compose_material
+    from .stage_credit_reviews import REVIEW_SCHEMA as STAGE_CREDIT_SCHEMA, validate_entry as validate_stage_credit
 
     root = Path(root).resolve()
     items = [item for item in record.get("evidence", []) if item.get("path") == "scoring-inputs.json"]
@@ -1444,7 +1445,7 @@ def validate_current_written_reviews(root, record, *, policy, external=False):
         original_slot = json.loads(evidence_bytes(root, source["slot_record"]))
         review_hash = identity({key: value for key, value in review.items() if key != "review_sha256"})
         binding = review.get("binding", {})
-        if (review.get("schema") != "math-gauge.reliability-review/v1"
+        if (review.get("schema") not in {"math-gauge.reliability-review/v1", STAGE_CREDIT_SCHEMA}
                 or review.get("reviewer_kind") != "ai" or review.get("case_id") != cid
                 or review.get("slot_id") != sid or review.get("review_sha256") != review_hash
                 or scored.get("review_sha256") != review_hash or review.get("binding") != scored.get("binding")
@@ -1470,7 +1471,10 @@ def validate_current_written_reviews(root, record, *, policy, external=False):
         meta = {"plan": original_plan, "plan_sha256": source["execution_plan_sha256"],
                 "inputs": {cid: {"request": source["candidate_request"]["path"],
                                  "contract": source["case_contract"]["path"]}}}
-        result = _validate_entry(root, meta, {sid: replay_slot}, review)
+        result = (validate_stage_credit(root, meta, {sid: replay_slot}, review,
+                      source_row=row, evidence_reader=evidence_bytes)
+                  if review.get("schema") == STAGE_CREDIT_SCHEMA else
+                  _validate_entry(root, meta, {sid: replay_slot}, review))
         if (any(result.get(key) != scored.get(key) for key in (
                     "group_diagnostic", "completion", "strict_pass", "whole_math", "whole_strict", "focus_math"))
                 or row.get("evaluation", {}).get("completion") != scored.get("completion")
@@ -1525,6 +1529,9 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
         submission = submission_evidence.validate_record_component(root, record, public=not external)
         if record.get('first_assessment_source') is not None:
             submission_evidence.validate_first_assessment_source(root, record, assessment)
+        if record.get('source_assessment_admission') is not None:
+            from .source_assessments import validate as validate_source_assessment
+            validate_source_assessment(root, record, assessment)
         submission_evidence.validate_history(root, record)
     keys = {"capability": "capability_results", "partial": "assessment_results", "strict": "strict_results"}
     if mode not in keys:
@@ -1653,6 +1660,30 @@ def load_assessment_results(root, record, *, mode="partial", public_root=None):
                 raise ValueError("Public manuscript aggregate binds a different private source")
         scores[condition] = score
     return scores
+
+
+def load_c003_continuation(root, component, *, record, inputs, source_policy, condition, effective_scores):
+    """Load an explicit companion only after resolving current A1 corrections.
+
+    effective_scores must come from the normal archive validation followed by
+    result_corrections.verify_private for an adopted correction. Never pass the
+    pre-correction record views when a correction is selected. No record field
+    or original report is rewritten by this call.
+    """
+    from .c003_continuations import load
+    return load(root, component, record=record, inputs=inputs, source_policy=source_policy,
+                condition=condition, effective_scores=effective_scores)
+
+
+def validate_c003_continuation_score(root, item, *, base, policy, continuation, inputs, mode):
+    """Compare a derived report to the shared scorer; never accept a display delta."""
+    from .scoring import score_c003_continuation_overlay
+    actual = json.loads(evidence_bytes(root, item))
+    expected = score_c003_continuation_overlay(base, policy, continuation=continuation,
+                                             inputs=inputs, mode=mode)
+    if actual != expected:
+        raise ValueError('C003 companion report differs from its shared source scorer')
+    return actual
 
 
 def load_strict_results(root, record, *, public_root=None):

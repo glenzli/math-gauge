@@ -1,0 +1,15 @@
+{
+  "schema": "math-gauge.public-claim-evidence-excerpts/v1",
+  "case_id": "AHR02",
+  "quotes": [
+    "2. **正文包装定理的参数与前提耦合**：`path_guarantee_union_subset_proxy_error_text` 将单分量结论与联合结论捆绑在同一前置上下文中，使两类原本独立的量化命题（及其各自的路径可评估域 $\\{q : j \\in I_{\\mathrm{res}}(q)\\}$ 与 $\\{q : J \\subseteq I_{\\mathrm{res}}(q)\\}$）相互制约，且在 $I_{\\mathrm{res}} = \\emptyset$ 的空真情形下因前置 `J.Nonempty` 与 `J ⊆ I_res` 矛盾而无法调用单分量空真结论。",
+    "2. **空可评估集 $I_{\\mathrm{res}} = \\emptyset$ 下的空真退化受阻**：正文中“对任意 $j \\in I_{\\mathrm{res}}$……”在 $I_{\\mathrm{res}} = \\emptyset$ 时作为全称蕴含空真成立；但 `path_guarantee_union_subset_proxy_error_text` 同时前置了 `hJ_nonempty : J.Nonempty` 与 `hJ_evaluable : J ⊆ evaluable_components sample`，当 `evaluable_components sample = ∅` 时前提恒假，无法直接表达全称空真性（尽管底层非 `_text` 定理可绕开 `J.Nonempty`，但其自身仍受困于不足 1 的全局 `hLq`）。",
+    "2. **并集语法形态**：外层并集在源码中写为存在量词集合 `{x | ∃ q : N.ReachablePath, ... ∧ x ∈ ...}`，虽与 Mathlib 标准双层索引并 `⋃ (q : N.ReachablePath) (_ : ...), ...` 外延相等，但缺少直接面向 `⋃` 记号的桥接或定理形态（对比同章 [path_sampling.lean](file:///private/tmp/math-gauge-carbon-medium-parallel2-lane1-20261114-v5/attempts/AHR02/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean#L178) 已使用 `⋃`）。",
+    "1. **交集定义与非空性依赖**：正文（[source.md](file:///private/tmp/math-gauge-carbon-medium-parallel2-lane1-20261114-v5/attempts/AHR02/physical-1/session/work/source.md#L112-L116)）定义 $U_{q,J}(\\boldsymbol\\tau) = \\bigcap_{j \\in J} U_{q,j}(\\tau_j)$；源码中 `path_joint_empirical_guarantee_domain`（[path_guarantee_domains.lean](file:///private/tmp/math-gauge-carbon-medium-parallel2-lane1-20261114-v5/attempts/AHR02/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L39-L46)）展开为 `{x | x ∈ U_q ∧ ∀ j ∈ J, ...}`。当 `J.Nonempty` 成立时二者外延相等，但源码未证明该桥接引理；而在省略了 `J.Nonempty` 的 `path_joint_guarantee_union_subset_proxy_error`（[L552-L580](file:///private/tmp/math-gauge-carbon-medium-parallel2-lane1-20261114-v5/attempts/AHR02/physical-1/session/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean#L552-L580)）中，若取 $J = \\emptyset$，源码定义给出 $U_q \\subseteq U$，而标准交集 `⋂ j ∈ (∅ : Set I), U_{q,j}(τ_j)` 在 `Set X` 中等于全集 `Set.univ`（含吸收元 `bot ∉ N.U`），二者并不相等。"
+  ],
+  "original_private_claim_review_sha256": "ec47f0530ffa27243f10229b156163077dda65dd4ffd7f17910c3384f9601834",
+  "original_source_hashes": [
+    "5b867273c7328c2d5892c2f587f512f5d6693e9b82cbd9d84899789fe9d61c7f",
+    "47c4d02dbf88b1eafb6ca81bb8fc60734d561fb31b25cec8241f5024cd3fc9a8"
+  ]
+}

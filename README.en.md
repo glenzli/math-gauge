@@ -67,12 +67,13 @@ Rows are sorted by RMC. Every score is reported in the fixed 100-point frame. Pe
 | [Claude Sonnet 5.5 (max)](site/models/claude-sonnet-5.5-max/index.html) | Claude Code | 91.95 | 88.20 | 55.42 | 39 / 0 / 39 |
 | [Sol 6.1 (xhigh)](site/models/sol-6.1-xhigh/index.html) | Codex CLI | 90.12 | 87.96 | 68.00 | 39 / 0 / 39 |
 | [Terra 6.1 (max)](site/models/terra-6.1-max/index.html) | Codex CLI | 82.62 | 80.85 | 65.67 | 39 / 0 / 39 |
+| [Gemini 4 Carbon (medium)](site/models/gemini-4-carbon-medium/index.html) | AGY CLI⁴ | 91.78 | 79.74 | 64.50 | 38 / 1 / 39 |
 | [Terra 6.1 (xhigh)](site/models/terra-6.1-xhigh/index.html) | Codex CLI | 79.71 | 78.50 | 63.00 | 39 / 0 / 39 |
 | [Gemini 4 Hydrogen (xhigh)](site/models/gemini-4-hydrogen-xhigh/index.html) | AGY CLI⁴ | 87.80 | 76.81 | 47.92 | 39 / 0 / 39 |
 | [Kimi 3.1 Pro (max)](site/models/kimi-3.1-pro-max/index.html) | Claude Code | 75.28 | 70.41 | 43.67 | 38 / 0 / 39 |
+| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 86.33 | 70.24 | 37.92 | 38 / 1 / 39 |
 | [DeepSeek v4.1 Flash (max)](site/models/deepseek-v4.1-flash-1017/index.html) | Codex CLI² | 76.71 | 64.23 | 25.83 | 37 / 1 / 39 |
-| [Gemini 4 Argon (high)](site/models/gemini-4-argon/index.html) | AGY CLI⁴ | 77.00 | 60.91 | 37.92 | 38 / 1 / 39 |
-| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 61.82 | 40.43 | 13.75 | 38 / 1 / 39 |
+| [Gemini 3.8 Flash (high)](site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 59.94 | 39.77 | 13.75 | 38 / 1 / 39 |
 | [GLM 5.3 (max)](site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21 / 5 / 39 |
 
 Per-round sources and full score intervals are available in model details. Tested tasks that time out without a submission are scored under the failure rules.
@@ -87,7 +88,17 @@ Per-round sources and full score intervals are available in model details. Teste
 
 The recovered HCH02 reply has been adopted after an AGY delivery fault and reviewed under the existing rules. Original ERROR receipts and scores are retained; benchmark1.0.0 and its scoring methods are unchanged. See the [source correction](docs/harness-corrections.md).
 
-Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set, with sampled cross-checks by Astra 6 Max and Dot. See the [review process](docs/review-process.md) for reviewer identities, evidence and limitations, and the [results report](docs/results.md) for model-level analysis.
+Argon also completed a [sealed-project self-check supplement](docs/c003-sealed-continuation.md). All three projects verify 92/92 obligations; diagnosis earns 30, 25 and 15 out of 30, giving 9.33/10 for self-check. The original A1 failure and HCH02 scores remain unchanged.
+
+Flash also completed three engineering self-checks through the AGY subscription. All delivered normally but stayed at 74/92 with no new repairs; all three falsely claimed full completion, giving RMC −2/10 for self-check. See the [round answers, reviews and score changes](results/v0.6.0/gemini-3.8-flash-high/20261105/supplements/c003-20261114/README.md).
+
+Carbon Medium retains38normal finals and one forced-content A1. The latter uses only the original work from its final effective attempt for MC; task RMC/SMC are0. C003 A1 and three KEEP rounds each verified92/92, passing the whole Strict trajectory. See [model details](site/models/gemini-4-carbon-medium/index.html) and the [source-selection disclosure](results/v0.6.0/gemini-4-carbon-medium/20261115/source-selection-disclosure.json) for actual ordinals, system exclusions and reviews.
+
+The Carbon campaign, including High, Medium and environment troubleshooting, spans more than two days; the earlier Medium batch covered about47hours40minutes, before the additional C003 opportunity. AGY/GCP runs repeatedly suffered stream failures, timeouts and HTTP429. Argon and Carbon also exposed serious reasoning errors and completion problems on complex tasks; unstable calls remain a separate factor when attributing missing submissions. Carbon High did not yield a usable full Math Gauge answer set; no High total is published.
+
+The user explicitly accepted the retained extra trials after observation. Actual physical and effective attempt numbers and prior failures remain intact, including attempts beyond three; answers were selected by source and first normal delivery, without best-of scoring. This adoption retains AI-review/human-pending status and does not upgrade comparison eligibility.
+
+Results use AI review with partial human spot checks. Existing full-set reviews are attributed to Sol 6.1 Max, with sampled cross-checks by Astra 6 Max and Dot; Carbon retains its source-specific AI review attribution. See the [review process](docs/review-process.md) for source-specific identities, evidence and limitations, and the [results report](docs/results.md) for model-level analysis.
 
 ![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)
 
@@ -95,9 +106,9 @@ Results are AI reviewed with human spot checks: Sol 6.1 Max reviews the full set
 
 ![Math Gauge English time–RMC frontier](docs/screenshots/time-frontier-en.jpg)
 
-Both frontier plots default to RMC: total cost uses a linear dollar scale starting at zero, and typical-task time is measured in minutes. Solid points indicate normal final submissions on all 39 initial tasks; other points are hollow. Colors follow model brands. Interactive labels offer Auto, All and Selected modes; hover highlights the matching point, and clicking pins a label. Dotted label connectors appear only for hovered or pinned models; the frontier remains solid. The static figures show all names. Time includes tool use and waiting, and varies with harness, network and hardware; see the [method and sources](docs/answer-timings.md).
+Both frontier plots default to RMC: total cost uses a linear dollar scale starting at zero, and typical-task time is measured in minutes. Solid points indicate normal final submissions on all 39 initial tasks; other points are hollow. Colors follow model brands. Model names are shown beside the points; hover highlights the matching point, and clicking pins a label. The frontier uses a solid line. Time includes tool use and waiting, and varies with harness, network and hardware; see the [method and sources](docs/answer-timings.md).
 
-Cost counts only the retained attempt for each task, excluding other retries. Dot used a separate subscription-bundled allowance on its test date, with $0 additional cost. Models with verified tariffs use public API prices with cache discounts. Gemini 4 Hydrogen ran through the AGY subscription; its 42 native usage receipts yield a $51.63 reference cost at official Standard API rates. Argon's $33.84 uses introductory 50%-off rates through November 30, 2026; the same usage at December rates would cost about $67.67. See the [cost method](docs/cost-reference.md) for full usage, prices and sources. The [interactive plots](site/index.html?lang=en#cost-frontier) provide score and axis controls.
+Cost counts only the retained attempt for each task, excluding other retries. Dot used a separate subscription-bundled allowance on its test date, with $0 additional cost. Models with verified tariffs use public API prices with cache discounts. Gemini 4 Hydrogen ran through the AGY subscription; its 42 native usage receipts yield a $51.63 reference cost at official Standard API rates. Argon's reference cost including the three new self-check rounds is $37.74 at introductory 50%-off rates through November 30, 2026; the same usage at December rates would cost about $75.48. Carbon Medium's API reference total is $56.99, excluding auxiliary safety calls. See the [cost method](docs/cost-reference.md) for full usage, prices and sources. The [interactive plots](site/index.html?lang=en#cost-frontier) provide score and axis controls.
 
 The leaderboard publishes selected snapshots after their test process has ended; future tests are added after settlement. The [interactive page](site/index.html?lang=en) provides category leaderboards, two rates, score gaps, and separate cost and timing rankings, with MC/RMC/SMC controls, bilingual display and shareable URL state. Model pages retain task results, self-check execution states and score intervals.
 

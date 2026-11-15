@@ -9,7 +9,7 @@
   method:['计算口径 ↗','Method ↗'],scope:['每题只计留档采用的一次作答；全部未交卷时取最后留档尝试。三轮固定自查各计一次，其余重试不计。','One retained attempt per task; if none delivered, use the last retained failed attempt. Each prescribed self-check round is included once. Other retries are excluded.'],
   priceNote:['Dot 使用2026-11-08测试时订阅附赠的独立额度，额外费用 $0；有可核实单价的型号按公开 API 价格折算并计缓存优惠。DeepSeek 统一采用官方峰价，保留缓存优惠。','Dot used a separate subscription-bundled allowance on 2026-11-08, with $0 additional cost; models with verified tariffs use public API reference prices with cache discounts. DeepSeek uses uniform official peak rates, retaining cache discounts.'],
   argonPriceLabel:['Argon 限时五折：','Argon introductory 50% discount: '],
-  argonPriceNote:['当前 $33.84 按截至2026-11-30的优惠价计算；2026-12-01起单价翻倍，同一用量约 $67.67。','The $33.84 total uses the introductory rates through November 30, 2026. Unit prices double from December 1; the same usage would cost about $67.67.'],
+  argonPriceNote:['当前 {current} 按截至2026-11-30的优惠价计算；2026-12-01起单价翻倍，同一用量约 {regular}。','The {current} total uses the introductory rates through November 30, 2026. Unit prices double from December 1; the same usage would cost about {regular}.'],
   officialPrice:['官方定价 ↗','Official pricing ↗'],
   costSubtitle:['横轴为总成本（美元，从0开始的线性刻度），纵轴为{score}。越靠左上越好。','X: total cost in USD (linear scale starting at zero); Y: {score}. Upper left is better.'],
   timeSubtitle:['横轴为日常五题加权耗时（分钟），纵轴为{score}。越靠左上越好。','X: weighted time for the five everyday tasks (minutes); Y: {score}. Upper left is better.'],
@@ -173,7 +173,14 @@
   const params=new URLSearchParams(location.search);lang=params.get('lang')==='en'?'en':'zh';axis=params.get('cost-axis')==='time'?'time':'cost';mode=modes.includes(params.get('cost-score'))?params.get('cost-score'):'partial';
   const validIds=new Set(data.models.map(m=>m.model_id));selected=new Set((params.get('cost-selected')||'').split(',').filter(id=>validIds.has(id)));
   document.getElementById('cost-tooltip').hidden=true;
-  document.querySelectorAll('[data-cost-t]').forEach(n=>n.textContent=t(n.dataset.costT));
+  document.querySelectorAll('[data-cost-t]').forEach(n=>{
+   let text=t(n.dataset.costT);
+   if(n.dataset.costT==='argonPriceNote'){
+    const total=data.models.find(m=>m.model_id==='gemini-4-argon')?.total_usd;
+    text=text.replace('{current}',total==null?'—':money(total)).replace('{regular}',total==null?'—':money(total*2));
+   }
+   n.textContent=text;
+  });
   document.querySelectorAll('[data-cost-axis]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costAxis===axis)));
   document.querySelectorAll('[data-cost-score]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.costScore===mode)));
   document.getElementById('cost-selection-count').textContent=selected.size?t('selectionCount').replace('{count}',selected.size):'';

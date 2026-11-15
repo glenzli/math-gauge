@@ -22,14 +22,32 @@
       "local_tools_allowed": true,
       "tool_network_access": false,
       "search_allowed": false,
-      "version": "1.5.2",
-      "version_scope": "MG-MCP003",
+      "version": null,
+      "version_scope": "逐批次核实：MG-MCP003留档1.5.2；C003补充三轮订阅批次1.5.9",
       "cli_identity_sha256": "074e9e97879ae423263c7174dfb18bfe58ab4edfc3d1626b026d323a66195aa4",
       "execution_plan_sha256": "b026977082c6ad2b74a0ca5d7596567371a0bf32d1c71c00a1cc00fbdeb9d4cb",
-      "detail": "原生补测使用AGY CLI；MG-MCP003留档版本1.5.2。各批次具体条件见源记录。",
+      "detail": "原生补测使用AGY CLI；MG-MCP003留档版本1.5.2。C003另通过1.5.9订阅通道完成三轮工程补充自查，三轮正常交卷，均核实74／92，原39份初答及原运行身份保留。各批次具体条件见源记录。",
       "tool_usage": "MG-MCP003实际调用7次本地命令；允许工具不等于每题必须使用。",
       "note_marker": "⁴",
-      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。"
+      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。",
+      "observed_versions": [
+        "1.5.2",
+        "1.5.9"
+      ],
+      "detail_en": "Native supplemental tests use AGY CLI; MG-MCP003 records version1.5.2. Three additional C003 engineering self-checks ran through the1.5.9 subscription route and delivered normally, each verifying74/92 obligations. All39 A1 answers and original runtime identities are retained. Batch-specific conditions remain in the source records.",
+      "supplemental_execution": {
+        "case_id": "MG-C003",
+        "phases": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "version": "1.5.9",
+        "route": "AGY consumer subscription",
+        "execution_plan_sha256": "6926551908d0dfbde535a2a8814a4c82ac8b78f5a3f7a4fd8e90c4044c369b4b",
+        "cli_identity_sha256": "fad3628ad91fe8613a72f074a1c5fde7cd816517788a5b9be96703f7d256741a",
+        "source_component_sha256": "b95c33d8ad873014dac2da003b634a927e03748fd6bf827d7dac3f094496020e"
+      }
     },
     "deepseek-v4.1-flash-1017": {
       "name": "Codex CLI",
@@ -68,18 +86,19 @@
       "tool_network_access": false,
       "search_allowed": false,
       "version": null,
-      "version_scope": "逐批次核实：订阅批次1.5.2；GCP批次1.5.4",
+      "version_scope": "逐批次核实：订阅批次1.5.2；GCP批次1.5.4；C003补充三轮订阅批次1.5.9",
       "requested_model": "gemini-4-argon-high",
       "requested_effort": "high",
       "observed_model_labels": [
         "gemini-4-argon-high"
       ],
       "observed_effort": null,
-      "detail": "订阅批次AGY CLI1.5.2；GCP批次AGY CLI1.5.4。39道初答已结算：37份原CLI正常交卷，HCH02后端原答因回传故障恢复并接纳，C003仍未正常交卷。当前交付38／强收1；C003三轮未调用。原生ERROR、原记录与更正来源分别保留。",
+      "detail": "订阅批次AGY CLI1.5.2；GCP批次AGY CLI1.5.4。39道初答已结算：37份原CLI正常交卷，HCH02后端原答因回传故障恢复并接纳，C003仍未正常交卷。当前交付38／强收1；C003另用AGY CLI1.5.9订阅通道完成固定三轮工程补充自查，原初答失败和成绩保留。原生ERROR、原记录与更正来源分别保留。",
       "tool_usage": "允许本地文件、命令与固定Lean依赖；实际调用见逐题原始记录。",
       "observed_versions": [
         "1.5.2",
-        "1.5.4"
+        "1.5.4",
+        "1.5.9"
       ],
       "note_marker": "⁴",
       "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。"
@@ -291,6 +310,61 @@
       "tool_usage": "允许本地文件、命令与预装公开依赖；实际调用由逐题原生记录留证。",
       "note_marker": "⁴",
       "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。"
+    },
+    "gemini-4-carbon-medium": {
+      "name": "AGY CLI",
+      "version": null,
+      "authentication": "Google Cloud Platform",
+      "gcp_used": true,
+      "requested_model": "gemini-4-carbon",
+      "requested_effort": "medium",
+      "observed_model_labels": [
+        "gemini-4-carbon"
+      ],
+      "observed_effort": null,
+      "backend_sku": null,
+      "local_tools_allowed": true,
+      "tool_network_access": false,
+      "search_allowed": false,
+      "record_sha256": "074a9248e38e657194ea93eb073dfb120010a180ae92af8071128f4ff3b6ebed",
+      "shared_evaluator": "Math Gauge",
+      "version_scope": "逐批次核实：早期AGY1.5.7；后续恢复AGY1.5.9；GCP通道，SDK续接仅按实际来源批次标注。",
+      "observed_versions": [
+        "1.5.7",
+        "1.5.9"
+      ],
+      "detail": "早期答卷保留AGY CLI1.5.7实际条件，后续恢复批次使用1.5.9；通过GCP请求Carbon Medium。后续网关采用google-genai2.34.0／v1beta1 SDK续接，不回写到早期答卷。原生effort与后台SKU未独立回显认证。",
+      "tool_usage": "允许本地文件、命令及预装公开依赖；禁止联网检索和工具联网。模型服务与认证流量另计，逐题实际使用见原生记录。",
+      "note_marker": "⁴",
+      "note_text": "AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。",
+      "detail_en": "Earlier answers retain their actual AGY CLI1.5.7 conditions; later recovery batches use1.5.9 through GCP with Carbon Medium requested. The later gateway uses google-genai2.34.0/v1beta1 SDK continuation, which is not retroactively assigned to earlier answers. Native effort and backend SKU were not independently authenticated.",
+      "tool_usage_en": "Local files, commands and preinstalled public dependencies are allowed; external retrieval and tool networking are prohibited. Model-service and authentication traffic is accounted for separately. Actual tool usage is retained per task.",
+      "run_notes": [
+        {
+          "zh": "Carbon整轮测试及环境排查跨越两天以上；旧Medium批次约47小时40分，此后另按用户授权补测C003。AGY/GCP多次发生服务、断流和交卷错误，具体归因分别留证。",
+          "en": "Carbon testing and environment investigation spanned more than two days. The earlier Medium batch covered about47h40m, followed by the user-authorized extra C003 opportunity. AGY/GCP service, streaming and delivery failures retain their individual evidence."
+        },
+        {
+          "zh": "2026-11-15新加坡时间01:00后授权补测C003：累计物理第7次／有效第6次首次正常交卷，初答及三轮KEEP均AI核验92/92，诊断准确且无回退，轨迹Strict通过。物理第6次为已证实的本地上下文压缩准入故障，单独排除，原ERROR和计数保留。",
+          "en": "The extra C003 opportunity authorized after01:00 Singapore time on2026-11-15 delivered normally on physical7/effective6. A1 and three KEEP rounds each verified92/92; accurate diagnosis and no regression pass the whole Strict trajectory. Physical6 is separately excluded as a proven local native-context compaction admission failure; original ERROR and counters remain retained."
+        },
+        {
+          "zh": "已审Argon/Carbon答卷在部分复杂任务上也暴露出严重的推理与完整交付问题。这些数学判断与API／Harness调用不稳定分别记录；断流本身不能证明推理出错。",
+          "en": "Reviewed Argon/Carbon work also exposes serious reasoning and complete-delivery problems on some complex tasks. These mathematical findings are recorded separately from API and harness instability; a broken stream alone does not establish a reasoning error."
+        },
+        {
+          "zh": "此前Carbon High未形成有效成套成绩；High后续试跑单独留档，不继承Medium答卷或分数。",
+          "en": "Earlier Carbon High runs did not produce a usable complete score set. Subsequent High trials are retained separately and inherit no Medium answers or scores."
+        },
+        {
+          "zh": "最终强收原稿：一项私有手稿题在三次有效尝试后仍无正常交卷，现仅按最后一次截止时封存的完整原稿评审MC，RMC／SMC为0。三项总分为91.78／79.74／64.50；未改规则、未合并前轮内容。",
+          "en": "Final forced collection: One private manuscript task has no normal final after three effective attempts. Only its original work sealed at the final cutoff is reviewed for MC; task RMC/SMC remain0. Totals are91.78/79.74/64.50, with unchanged rules and no cross-attempt source union."
+        }
+      ],
+      "selection_note": {
+        "zh": "采用用户明确选定的固定快照，并保留首次正常交卷与所有原始请求。个别追加尝试由用户另行指定；原始物理编号与实际有效次数（包括第4／5次）分别留档，不混同、不改写成常规三次以内，也不按得分择优。 本快照另保留物理第7次／有效第6次及其先前全部失败，不将其改写为三次以内。",
+        "en": "This fixed snapshot was explicitly selected by the user. First normal finals and all original requests are retained. Specific additional trials were separately requested. Original physical request IDs and effective attempt counts, including effective attempts4/5, are kept distinct; they are not relabeled as within the ordinary three-attempt limit or selected by score. This snapshot also retains physical7/effective6 and all preceding failures without relabeling them within three attempts."
+      }
     }
   }
 }

@@ -143,6 +143,8 @@ class CurrentSiteTests(unittest.TestCase):
                 for suffix in ["", "-retry", "-strict", "-strict-retry", "-capability", "-capability-retry"]}
             downloads.add('downloads/timing-reference.json')
             downloads.add('downloads/cost-reference.json')
+            if SITE.load_execution_anomalies(SITE.ROOT) is not None:
+                downloads.add('downloads/execution-anomalies.json')
             self.assertEqual({p for p in before if p.startswith('downloads/')}, downloads)
             timings=json.loads(before['downloads/timing-reference.json'])
             self.assertEqual(timings,SITE.build_reference(SITE.ROOT,display_data=self.data))
@@ -370,6 +372,17 @@ class CurrentSiteTests(unittest.TestCase):
                     selection = json.loads(evidence_bytes(folder, record['attempt_condition_sources']))
                     self.assertEqual(selection['selection'], 'first_normal_delivery_after_counted_operational_failures')
                     self.assertEqual(set(selection['conditions']), {'single_attempt', 'nonlogical_retry_3'})
+            elif model.get('c003_continuation'):
+                continuation = model['retry']['combined']['c003_continuation']
+                self.assertFalse(continuation['initial_answers_replaced'])
+                self.assertEqual(continuation['scored_rounds'], [1, 2, 3])
+                for key in set(model['combined']['metrics']) - {'lean-selfcheck', 'lean', 'earned', 'overall'}:
+                    self.assertEqual(model['combined']['metrics'][key], model['retry']['combined']['metrics'][key])
+            elif summary.get('source') == 'user_selected_source_bound_recovery_snapshot':
+                self.assertEqual(len(summary['actual_history_sha256']), 64)
+                self.assertFalse(summary['all_original_attempts_independently_certified'])
+                self.assertTrue(summary['actual_physical_and_effective_ordinals_preserved'])
+                self.assertTrue(summary['additional_trials_not_relabelled_within_three'])
             else:
                 for scope in ["combined"]:
                     self.assertEqual(model[scope]["metrics"], model["retry"][scope]["metrics"])
@@ -399,6 +412,10 @@ class CurrentSiteTests(unittest.TestCase):
                     from math_gauge.records import evidence_bytes
                     manifest = json.loads(evidence_bytes(ROOT, model['harness_correction']['manifest']))
                     filename = manifest['scores']['strict']['path']
+                if model.get('c003_continuation') and condition == 'nonlogical_retry_3':
+                    from math_gauge.records import evidence_bytes
+                    manifest = json.loads(evidence_bytes(ROOT, model['c003_continuation']['manifest']))
+                    filename = manifest['scores']['strict']['path']
                 self.assertEqual(result, json.loads((folder / filename).read_bytes()))
                 self.assertEqual(result["attempt_condition"], condition)
                 reliable = model['combined'] if condition == 'single_attempt' else model['retry']['combined']
@@ -426,6 +443,10 @@ class CurrentSiteTests(unittest.TestCase):
                 if model.get('harness_correction') and condition in model['harness_correction']['affected_conditions']:
                     from math_gauge.records import evidence_bytes
                     manifest = json.loads(evidence_bytes(ROOT, model['harness_correction']['manifest']))
+                    filename = manifest['scores']['capability']['path']
+                if model.get('c003_continuation') and condition == 'nonlogical_retry_3':
+                    from math_gauge.records import evidence_bytes
+                    manifest = json.loads(evidence_bytes(ROOT, model['c003_continuation']['manifest']))
                     filename = manifest['scores']['capability']['path']
                 current = model["capability"][condition]
                 self.assertEqual(current, json.loads((folder / filename).read_bytes()))

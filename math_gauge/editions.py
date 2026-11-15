@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import re
 
+from .result_admissions import configured_admissions, verify_result_admissions
+
 
 def result_archive(edition, model=None):
     """Resolve an explicitly selected source edition, retaining legacy defaults.
@@ -19,6 +21,7 @@ def result_archive(edition, model=None):
             or any(key not in edition.get('selected_result_models', []) or value != version
                    for key, value in sources.items())):
         raise ValueError('Invalid selected result source edition')
+    admissions = configured_admissions(edition)
     adoption = edition.get('result_compatibility')
     if adoption is not None:
         source = adoption.get('source_benchmark_version')
@@ -28,8 +31,12 @@ def result_archive(edition, model=None):
                 or adoption.get('new_candidate_calls') != 0
                 or adoption.get('mathematical_judgments_changed') is not False):
             raise ValueError('Invalid edition compatibility boundary')
+        if model in admissions:
+            return admissions[model]['archive_root']
         if model not in sources:
             return adoption['archive_root']
+    elif admissions:
+        raise ValueError('Result admission requires an unchanged sealed compatibility manifest')
     return 'results/v' + version
 
 
@@ -39,6 +46,8 @@ def verify_compatibility(root):
     archive = result_archive(edition)
     adoption = edition.get('result_compatibility')
     if adoption is None:
+        if configured_admissions(edition):
+            raise ValueError('Result admission requires an unchanged sealed compatibility manifest')
         return edition
     manifest = json.loads((root / adoption['path']).read_bytes())
     if (manifest.get('schema') != 'math-gauge.edition-compatibility/v1'
@@ -67,8 +76,11 @@ def verify_compatibility(root):
                 or hashlib.sha256(path.read_bytes()).hexdigest() != row['sha256']):
             raise ValueError('Edition compatibility source changed: ' + row['path'])
     fresh = edition.get('selected_result_source_versions', {})
+    admissions = configured_admissions(edition)
+    if set(admissions).intersection(r['model_id'] for r in manifest.get('selected_records', [])):
+        raise ValueError('Admission cannot relocate a sealed legacy model')
     selected = {model: record_id for model, record_id in edition['selected_result_record_ids'].items()
-                if model not in fresh}
+                if model not in fresh and model not in admissions}
     selected['dot-underlying-model-20261108'] = '20261108'
     adopted = manifest.get('selected_records', [])
     if {row['model_id']: row['record_id'] for row in adopted} != selected or len(adopted) != len(selected):
@@ -91,4 +103,5 @@ def verify_compatibility(root):
                 or any(p.is_symlink() for p in (path, *path.parents))
                 or json.loads(path.read_bytes()).get('benchmark_version') != fresh[model]):
             raise ValueError('New result record differs from its selected source edition')
+    verify_result_admissions(root, edition, manifest)
     return edition
