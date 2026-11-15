@@ -2,6 +2,7 @@
 import copy
 import importlib.metadata
 import importlib.util
+import io
 import json
 from pathlib import Path
 import queue
@@ -48,7 +49,9 @@ class ContinuationTransportTests(unittest.TestCase):
             'contents': [{'role': 'user', 'parts': [{'text': 'Original offline task'}]},
                          {'role': 'model', 'parts': [{'text': 'same context',
                                                      'thoughtSignature': '-_8='}]}],
-            'systemInstruction': {'parts': [{'text': 'Original system instruction'}]},
+            'systemInstruction': {'parts': [{'text': 'Original system instruction\n'
+                '<user_information>\nCommand Working Directory: ' + str(session / 'work')
+                + '\nConversation ID: offline-context\n</user_information>'}]},
             'tools': [{'functionDeclarations': [{'name': 'finish', 'parameters': {
                 'type': 'OBJECT', 'properties': {'min_length': {'type': 'STRING',
                                                              'minLength': '1'}}}}]}],
@@ -60,6 +63,43 @@ class ContinuationTransportTests(unittest.TestCase):
         return httpx.Request('POST',
             'https://example.invalid/v1beta1/projects/offline/locations/global/'
             'publishers/google/models/fixture-model:streamGenerateContent', json=body)
+
+    def test_handler_admits_same_native_compaction_without_changing_payload(self):
+        received, statuses = [], []
+
+        def generate(body, logical, output, model, lane):
+            received.append(copy.deepcopy(body))
+            self.g.EXPECTED_TOOLS = {'finish'}
+            output.put({'candidates': []})
+
+        def post(body):
+            raw = json.dumps(body).encode()
+            handler = object.__new__(self.g.Handler)
+            handler.path = '/v1beta/models/fixture-model:streamGenerateContent?alt=sse'
+            handler.headers = {'x-goog-api-key': 'offline-loopback-key',
+                               'Content-Length': str(len(raw))}
+            handler.rfile, handler.wfile = io.BytesIO(raw), io.BytesIO()
+            handler.send_response = lambda code: statuses.append(code)
+            handler.send_header = lambda *args: None
+            handler.end_headers = lambda: None
+            handler.send_error = lambda code, *args: statuses.append(code)
+            handler.do_POST()
+
+        summary = copy.deepcopy(self.original)
+        summary['contents'] = [{'role': 'user', 'parts': [{'text':
+            '<CONTEXT_SUMMARY>\nNative summary of this conversation.\n</CONTEXT_SUMMARY>'}]}]
+        start = self.g.STARTED
+        with patch.object(self.g, 'generate', side_effect=generate):
+            post(self.original)
+            post(summary)
+            post(summary)
+        self.assertEqual(statuses, [200, 200, 400])
+        self.assertEqual(received, [self.original, summary])
+        self.assertEqual(self.g.CALLS, 2)
+        self.assertEqual(self.g.STARTED, start)
+        receipt = json.loads((self.g.OUT / '002-native-context-admission.json').read_text())
+        self.assertEqual(receipt['mode'], 'native-compaction')
+        self.assertFalse(receipt['native_payload_rewritten'])
 
     def test_exact_native_context_tools_and_signature_wire_are_preserved(self):
         received = []

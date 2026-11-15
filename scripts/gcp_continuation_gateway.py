@@ -20,6 +20,11 @@ import time
 
 import httpx
 
+try:
+    from scripts.gcp_native_context import NativeContextGuard
+except ImportError:
+    from gcp_native_context import NativeContextGuard
+
 OUT = SESSION = ADC = None
 KEY = PROJECT = LOCATION = CANDIDATE_MODEL = THINKING_LEVEL = None
 GUARD_MODELS = frozenset()
@@ -32,6 +37,7 @@ STARTED = None
 SPENT = 0
 TERMINAL = False
 EXPECTED_TOOLS = set()
+NATIVE_CONTEXT = None
 _CONFIGURED = False
 
 
@@ -291,7 +297,7 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def do_POST(self):
-        global CALLS, STARTED, TERMINAL, INCOMING
+        global CALLS, STARTED, TERMINAL, INCOMING, NATIVE_CONTEXT
         match = re.fullmatch(r'/v1beta/models/([A-Za-z0-9._-]+):streamGenerateContent\?alt=sse', self.path)
         if not match:
             self.send_error(404)
@@ -324,14 +330,14 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_error(409, 'The native terminal or transport failure locked this attempt')
                 return
             if lane == 'candidate':
-                prompt = (SESSION / 'input/task.md').read_text()
-                if not any(prompt in t for t in text_parts(original['contents'])):
-                    self.send_error(400, 'This request is not the frozen attempt task')
+                if NATIVE_CONTEXT is None:
+                    NATIVE_CONTEXT = NativeContextGuard(SESSION / 'input/task.md')
+                try:
+                    context = NATIVE_CONTEXT.validate(original, expected_tools=EXPECTED_TOOLS)
+                except ValueError as error:
+                    self.send_error(400, str(error))
                     return
-                if EXPECTED_TOOLS and not EXPECTED_TOOLS.intersection(
-                        r.get('name') for r in function_responses(original['contents'])):
-                    self.send_error(400, 'Missing original tool responses')
-                    return
+                dump(OUT / ('%03d-native-context-admission.json' % incoming), context)
             if STARTED is None:
                 STARTED = time.monotonic()
             CALLS += 1
