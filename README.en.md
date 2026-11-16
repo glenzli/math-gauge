@@ -4,7 +4,7 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge evaluates models on mathematical work: written proofs, Lean formalization and mathematical research tasks. The current version is **1.0.0**.
+Math Gauge evaluates models on mathematical work: written proofs, Lean formalization and mathematical research tasks. The current version is **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**.
 
 [Live leaderboard](https://glenzli.com/benchmarks/math-gauge/?lang=en) · [Full results](docs/results.md) · [Public tasks](cases/README.md) · [Harness guide](docs/harness-guide.md)
 

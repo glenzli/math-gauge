@@ -1,8 +1,8 @@
 # 运行入口
 
-Math Gauge0.6.0已封版。其他Harness按[统一运行与交付指南](harness-guide.md)执行；其中列出精确请求、作答结构、Lean工程、三组预算、独立首答、C003连续三轮、全部尝试记录与导入步骤。
+Math Gauge1.0.0已封版。其他Harness按[统一运行与交付指南](harness-guide.md)执行；其中列出精确请求、作答结构、Lean工程、三组预算、独立首答、C003连续三轮、全部尝试记录与导入步骤。
 
-- [公开发布](https://github.com/glenzli/math-gauge/releases/tag/v0.6.0)：25个A1候选题包。
+- [公开发布](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)：25个A1候选题包。
 - 受控私版：39个A1完整候选题包，已包含公版25题，不重复执行。
 - [三轮合同](../protocol/lean-alignment/study.json)及[固定提示](../protocol/lean-alignment/neutral-prompt.txt)：独立于A1清单，完整评测必须继续三轮。
 
@@ -10,12 +10,12 @@ Math Gauge0.6.0已封版。其他Harness按[统一运行与交付指南](harness
 
 ## 从固定源码重建公开发行
 
-在v0.6.0精确干净源提交中执行，输出使用仓库外新目录：
+在v1.0.0精确干净源提交中执行，输出使用仓库外新目录：
 
 ```sh
-python3 scripts/release.py build --version 0.6.0 --source-commit FULL_PUBLIC_COMMIT --out /absolute/path/to/new-assets
-python3 scripts/release.py check --archive /absolute/path/to/new-assets/benchmark-v0.6.0.zip --checksums /absolute/path/to/new-assets/SHA256SUMS --source-commit FULL_PUBLIC_COMMIT
-python3 scripts/release.py evaluator-plan --version 0.6.0 --source-commit FULL_PUBLIC_COMMIT --out /absolute/path/to/trusted-evaluator-plan.json
+python3 scripts/release.py build --version 1.0.0 --source-commit FULL_PUBLIC_COMMIT --out /absolute/path/to/new-assets
+python3 scripts/release.py check --archive /absolute/path/to/new-assets/benchmark-v1.0.0.zip --checksums /absolute/path/to/new-assets/SHA256SUMS --source-commit FULL_PUBLIC_COMMIT
+python3 scripts/release.py evaluator-plan --version 1.0.0 --source-commit FULL_PUBLIC_COMMIT --out /absolute/path/to/trusted-evaluator-plan.json
 ```
 
 完整私版从其锁定的公私两份源码和组合profile使用同一共享发布器构建；具体命令随私版提供。release-lock.json绑定实际公私提交和资产散列。准备、检查、导入与重建不调用模型。

@@ -4,7 +4,7 @@
 
 **Measure the capability, not just the answer.**
 
-Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前版本为 **1.0.0**。
+Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lean 形式化和数学研究任务。当前版本为 **[1.0.0](https://github.com/glenzli/math-gauge/releases/tag/v1.0.0)**。
 
 [在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh) · [完整结果](docs/results.md) · [公开题目](cases/README.md) · [运行指南](docs/harness-guide.md)
 
