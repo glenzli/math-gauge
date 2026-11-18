@@ -1,0 +1,48 @@
+{
+  "case_id": "MG-BC002",
+  "response_sha256": "078c5f53d7b7beb66666bd94ef4821624d7aadb46b355e922ee8e2f83d801e92",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "独立核查全部正确：保留真实强凸梯度流、收缩/能量衰减及条件性的prox证书；明确反驳exact flow为某凸prox的部署承诺。额外给出对每个固定τ>0的初值小参数Jacobian反对称项，而非只给一个小时间反例，证明严密。",
+  "findings": [],
+  "group_contract_sha256": "c48733f9226f6e58ba57fa8513efe510184e1fc7de2d181b70749858b789ad8f",
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "正确识别exact flow与任意凸prox的差别，保持原流/网络迭代定义和所有正确能量收缩结论，未以Φτ≠prox_{τf}偷换不存在任意r。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "对原f构造真实非对称Jacobian。积分两offdiag项分别e^(−τ−3s)、e^(−2τ−s)，乘−3后系数恰−e^-τ(1−e^-τ)^3；Duhamel余项Oτ(ε⁴)由原三次向量场和uniform小ε估计成立。每个τ>0均有实际初值反例，适用于任意proper lsc convex r的必要对称条件。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "给完整全局存在、唯一极小/平衡0、e^-t距离/e^-2t能量及堆栈nτ结论；独立证明条件prox三点证书和FNE、梯度势⇒Jacobian对称。末部署段保留真实可用保证，明确exact flow时间与implicit Euler/prox参数，全部原要求完成。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "078c5f53d7b7beb66666bd94ef4821624d7aadb46b355e922ee8e2f83d801e92",
+    "collection_sha256": "8a8f7bda39f73d0ffb3c9aaa60df9a7be7de498f86f8bed0735f98e5d98e3172",
+    "physical_attempt": 1,
+    "task_sha256": "8076e3d747fa3718ab295ee8984b35a04f6ce88130649b1f836f96387191d0af",
+    "rubric_sha256": "a9664da66d113b6ac0098ba8997a6fa247281873ebad84f726f3757f6216fd59",
+    "reference_sha256": "8f7c411edfcefc93092357be071ea0c1a3f56f1217ba51871e807f72602685f3"
+  },
+  "assessment": {
+    "background_check": {
+      "background_R": 3,
+      "complete": true,
+      "false_endorsement": false,
+      "notes": "Hessian=A+3(bTz)^2bbT≥I，能量子水平紧给全局存在；强单调/PL给e^-t距离和e^-2t能量。条件prox证书由强凸最小性取λ→0，FNE及C1 prox⇒对称Jacobian由显式共轭势G正确推出。实际初值(ε,0)的Duhamel展开在[0,τ]一致，z=εEte1+Oτ(ε³)、J=Et+Oτ(ε²)，二次修正反对称为−ε²e^-τ(1−e^-τ)^3+Oτ(ε⁴)，对每个τ>0小ε非零。故所有正时间流块均非任意凸prox；deployment准确区分时间τ和implicit Euler prox_{τf}。"
+    }
+  }
+}

@@ -8,6 +8,14 @@ window.MG = (() => {
  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n};
  const result=(m,c=state.condition,mode=state.score)=>mode==='partial'?(c==='single_attempt'?m.combined:m.retry.combined):m[mode][c];
  const headline=r=>r.metrics.earned.confirmed??r.metrics.earned.exact;
+ function compareScores(a,b,primary=state.score){
+  const order=[primary,...['partial','strict','capability'].filter(mode=>mode!==primary)];
+  const value=(m,mode)=>Object.hasOwn(m.ranking_values||{},mode)?m.ranking_values[mode]:
+   (headline(result(m,state.condition,mode))==null?null:Number(headline(result(m,state.condition,mode)).toFixed(2))*100);
+  for(const mode of order){const x=value(a,mode),y=value(b,mode);if(x==null||y==null){if(x!=null)return -1;if(y!=null)return 1}else if(x!==y)return y-x}
+  const x=a.test_order?.date,y=b.test_order?.date;
+  return x==null?(y==null?0:1):y==null?-1:x.localeCompare(y);
+ }
  const knownValue=v=>v.exact??((v.coverage.adjudicated>0||v.confirmed)?v.confirmed:null);
  const short=m=>m.short_label||(m.id.startsWith('terra')?'Terra':m.id.startsWith('deepseek')?'DeepSeek':m.id.startsWith('gemini')?'Gemini':m.label);
  const conditionLabel=()=> '规则允许的最终成绩';
@@ -54,5 +62,5 @@ window.MG = (() => {
   window.addEventListener('mg:updated',()=>{refreshModelLinks();renderKey=signature()});
   update();
  }
- return {d,state,modes,el,f,node,result,headline,knownValue,short,conditionLabel,table,points,href,download,taskValue,start};
+ return {d,state,modes,el,f,node,result,headline,compareScores,knownValue,short,conditionLabel,table,points,href,download,taskValue,start};
 })();

@@ -1,0 +1,45 @@
+{
+  "case_id": "AHR01",
+  "response_sha256": "0e5f025028e2a5e06cd7488d9e6d90eeb73fb9035593e76f0b4d37822550cd8a",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "主助手独立核查：准确判定旧关系过宽而实际构造与外延保持已存在；完整保留边域公式与实际输入像条件差异、合法反例及适度修复均完整。",
+  "findings": [],
+  "group_contract_sha256": "424e218451b9a24e51be7e50546aa79f5118d7a98bbcc039e628a414b6c36241",
+  "dimensions": [
+    {
+      "dimension_id": "judgment",
+      "score": 35,
+      "notes": "清楚区分具体构造正确/外延保持与关系定义不精确。NodeDomainRefinement的choice_projection仅作用于实际输入域的像；正文全保留边域公式作用于完整局域输出像，不能以外延相同代替定义精确。"
+    },
+    {
+      "dimension_id": "valid_parts",
+      "score": 20,
+      "notes": "完整承认NodePartitionData分划/限制算子/入口/路由/自环/回访路径/实际构造和network_extensional_eq；没有漏掉现有构造或否定有效外延定理。"
+    },
+    {
+      "dimension_id": "evidence",
+      "score": 30,
+      "notes": "四点实际网络反例满足全部reachability、相同U及局域算子条件；gamma完整像含c但实际只接a，beta_c由入口c独立可达，所以正文必须保留gamma→beta_c的c边而全stop网络仍满足弱relation。未拆beta的域{b,c}不存在亦排除改拆gamma的另一解释。完整公式四种边情形、删点后仍约束所有保留边均正确。"
+    },
+    {
+      "dimension_id": "repair_scope",
+      "score": 15,
+      "notes": "只要求关系加入完整edge_domain_eq及构造桥；指出直接扩大choice_projection到全部node_image会误排正确删点，U={a,b}例确证。一般路径投影/局部等价/同域推全局等式和实际深度相等均有效。原生item14编译24模块，item22最终Lean闭合witness及边域命题成功；作答内试编译修正不算额外model尝试。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "0e5f025028e2a5e06cd7488d9e6d90eeb73fb9035593e76f0b4d37822550cd8a",
+    "collection_sha256": "67e5e73ef67db4ccb413fcb54bc5c28e6bc7ff89f1dcdcf5c8c2377af1011c29",
+    "physical_attempt": 1,
+    "task_sha256": "b132445888745663e2a563816d853693a883dfd797de62a8acfd2e550805eca6",
+    "rubric_sha256": "e9ccdf117f57aa1c533096363e69193ec4364d801ee8ace17d5a2fc113aea5b2",
+    "reference_sha256": "ab2f881f9ec5e342434081fad5d2a59e8749451a2932bfa0a571eb7e4035094d"
+  }
+}

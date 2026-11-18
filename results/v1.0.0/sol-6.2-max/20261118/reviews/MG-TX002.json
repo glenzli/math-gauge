@@ -1,0 +1,48 @@
+{
+  "case_id": "MG-TX002",
+  "response_sha256": "d9355c40730faf7b0148991a09bde34bd157ff75e352fdd7661a222877fecb01",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "B2/R3。基础轨道平均严格成立，并实际给出完整坐标word及精确右轮转动力学。按既有实质等价解释0.1.0，逆映射按已占行递增/列递减唯一配对属于允许的常规补全；不额外记未陈述周期/轨道计数。",
+  "findings": [],
+  "group_contract_sha256": "82cf04537aee2d5f4d626edf4f5c1c8b89ffb9adae3d40a5694e31fadfac6053",
+  "criteria": [
+    {
+      "criterion_id": "local-refinement",
+      "score": 1,
+      "notes": "给出每一行和每一列占用的完整转移及相同轨道平均，有效并强于局部细化。"
+    },
+    {
+      "criterion_id": "substantive-extension",
+      "score": 1,
+      "notes": "已建立比所求单个平均更强的完整坐标封闭动力学，且全部边界坐标明确，包含统一轮转结构。"
+    },
+    {
+      "criterion_id": "complete-structure",
+      "score": 1,
+      "notes": "原答显式给w=(x1,…,xa,1−y1,…,1−yb)、重量b和精确右轮转。按原政策允许的唯一逆（已占行升序/列降序配对）验证，这是完整共轭；无需额外未陈述轨道分类/计数。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "d9355c40730faf7b0148991a09bde34bd157ff75e352fdd7661a222877fecb01",
+    "collection_sha256": "98357e2bfae34385347a364044bfbd27400d7636a016e611f3b416364dbb2e14",
+    "physical_attempt": 1,
+    "task_sha256": "2e499a6a924181afa9d13db24f78bdd25ca6e266a25c8f14c2cc93aa059153de",
+    "rubric_sha256": "71f24269061f30969a82c05bc03291e53dfb80a58c456771f58269c19327961c",
+    "reference_sha256": "116cf87ac1bd7f9d9f2399b42b1dbcabae47026d8a34559cc050b28acb1f81a7",
+    "structural_equivalence_policy_sha256": "f8ace16eb25f07062f4822690676ff2f16532097660b98976baeb93fa2d583d2"
+  },
+  "assessment": {
+    "theorem_extension": {
+      "baseline_B": 2,
+      "research_R": 3,
+      "notes": "原答给出全部补集最小角点及全部行/列占用的封闭转移，w=(x,1−y)为固定重量b的a+b位词且R对应精确右轮转。完整状态可逆：任意重量b词前段有k个1、后段有k个0，确定k行/k列并按行升列降唯一配对反链；此为已冻结政策明确允许的常规逆验证。没有补造本质引理，也不倒记轨道枚举。每位轨道平均相同且总重量b，故原均值ab/(a+b)，覆盖空/满边界和所有a,b≥2，B2。"
+    }
+  }
+}

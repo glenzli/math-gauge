@@ -12,6 +12,7 @@
 | Gemini 4 Carbon (medium) | 7 | 4/5 |
 | Claude Opus 5.5 (max) | 6 | 5/5 |
 | Claude Sonnet 5.5 (max) | 6 | 5/5 |
+| Sol 6.2 (max) | 5 | 5/5 |
 | Gemini 4 Carbon (high) | 3 | 4/5 |
 | Sol 6.1 (max) | 2 | 5/5 |
 | Astra 6 (xhigh) | 1 | 5/5 |
@@ -20,9 +21,9 @@
 | Astra 6 (max) | 0 | 5/5 |
 | DeepSeek v4.1 Flash (max) | 0 | 5/5 |
 | Dot Underlying (2026-11-08) | 0 | 5/5 |
-| GLM 5.3 (max) | 0 | 2/5 |
 | Gemini 3.8 Flash (high) | 0 | 5/5 |
 | Gemini 4 Argon (high) | 0 | 5/5 |
+| GLM 5.3 (max) | 0 | 2/5 |
 | Kimi 3.1 Pro (max) | 0 | 5/5 |
 | Terra 6.1 (xhigh) | 0 | 5/5 |
 

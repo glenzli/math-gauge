@@ -33,7 +33,7 @@ def result_view(result, *, model_page=False):
 
 def model_view(model, *, model_page=False):
     view = pick(model, ("id", "label", "short_label", "theme", "logo", "harness_display_name",
-                        "fully_evaluated", "answer_delivery", "evaluation_progress"))
+                        "fully_evaluated", "answer_delivery", "evaluation_progress", "test_order", "ranking_values"))
     view["harness"] = pick(model.get("harness"), ("name",))
     view["combined"] = result_view(model["combined"], model_page=model_page)
     view["retry"] = {"combined": result_view(model["retry"]["combined"], model_page=model_page)}

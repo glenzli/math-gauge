@@ -1,0 +1,96 @@
+{
+  "schema": "math-gauge.manuscript-observation/v1",
+  "version": "0.1.0",
+  "visibility": "public-projection",
+  "observation_id": "unrequested-manuscript-results",
+  "base_benchmark_version": "0.6.0",
+  "kind": "descriptive-observation",
+  "is_score": false,
+  "higher_is_better": null,
+  "capability_inference": false,
+  "model_id": "sol-6.2-max",
+  "record_id": "20261118",
+  "source_record": {
+    "path": "results/v1.0.0/sol-6.2-max/20261118/record.json",
+    "bytes": 41809,
+    "sha256": "e8fa5a1a64408dadff26d79f223ebb8db71821058656e7fab9ce89a6bd1651d5"
+  },
+  "policy": {
+    "path": "protocol/manuscript-observations-policy.json",
+    "bytes": 2096,
+    "sha256": "c360bcdcd222a5d20815b259a966627a079908d1b004e187eb6b608cf865bd08"
+  },
+  "source_bindings": {
+    "private_review_sha256": "90c02179b13f73925f2848b56513f21fbcb8d4871efdf134ebf1dc27cb5ce4e8",
+    "private_baseline_sha256": "7d7160405018606206b5e7a66e7ae006dd1da10799eeb49ad90a913dbc5d79c6",
+    "source_review_policy_sha256": "06d908003d46ae12b30a09f600c09eaee0a6964b7735f9961a862b9d7577fa40"
+  },
+  "counts": {
+    "confirmed_groups": 5,
+    "total_groups": 5,
+    "unit": "result_groups"
+  },
+  "coverage": {
+    "planned": 5,
+    "reviewed": 5,
+    "not_run": 0,
+    "delivery_failed": 0,
+    "unresolved": 0
+  },
+  "public_cases": [
+    {
+      "case_id": "MG-MCP003",
+      "family_id": "MG-MCP003",
+      "phase": "A1",
+      "condition": "nonlogical_retry_3",
+      "status": "reviewed",
+      "response_sha256": "9fa419407a47aae29efbe2b7ec880ef6ba3db22d31e28b5863deb40768b653d3",
+      "original_task": {
+        "strict_pass": true,
+        "completion": {
+          "lower": 1.0,
+          "upper": 1.0,
+          "exact": 1.0
+        },
+        "family_id": "matrix-operator-idea-to-manuscript"
+      },
+      "scope_audit": "M1-M6包括可行上下界、0/top与非分离边界、开闭阈值及基本性质。复合系数与阈值传递只是将实际中间距离代入同一不等式；模函数由定义取sup及r=q得到等价性，没有独立的非平凡新证明桥。均不额外计组。",
+      "candidates": [
+        {
+          "id": "S01",
+          "group_id": "G01",
+          "title": "模函数表示与复合传递",
+          "statement": "模函数表示与复合传递",
+          "scope": "direct_corollary",
+          "correctness": "proved",
+          "nontrivial": false,
+          "value": "moderate",
+          "independent_of_errors": true,
+          "scope_delta": "omega(q)上界、omega(r)=0与闭阈值等价、线性可行性由sup及r=q直接得到。复合部分只逐次代入p≤vs≤vuq及闭阈值条件，实际系数避开不取到端点；正确但不构成额外独立成果。",
+          "proof_review": "omega(q)上界、omega(r)=0与闭阈值等价、线性可行性由sup及r=q直接得到。复合部分只逐次代入p≤vs≤vuq及闭阈值条件，实际系数避开不取到端点；正确但不构成额外独立成果。",
+          "nontrivial_step": "omega(q)上界、omega(r)=0与闭阈值等价、线性可行性由sup及r=q直接得到。复合部分只逐次代入p≤vs≤vuq及闭阈值条件，实际系数避开不取到端点；正确但不构成额外独立成果。",
+          "value_rationale": "相对该题冻结必需目标的情境价值判断；不声称文献首创，不据数量推断研究能力。 omega(q)上界、omega(r)=0与闭阈值等价、线性可行性由sup及r=q直接得到。复合部分只逐次代入p≤vs≤vuq及闭阈值条件，实际系数避开不取到端点；正确但不构成额外独立成果。",
+          "reason": "omega(q)上界、omega(r)=0与闭阈值等价、线性可行性由sup及r=q直接得到。复合部分只逐次代入p≤vs≤vuq及闭阈值条件，实际系数避开不取到端点；正确但不构成额外独立成果。",
+          "decision": "rejected",
+          "citations": [
+            {
+              "source_sha256": "9fa419407a47aae29efbe2b7ec880ef6ba3db22d31e28b5863deb40768b653d3",
+              "start_byte": 4076,
+              "end_byte": 5660,
+              "quote": "如果希望每个算子都有一个实际成立的扩展上界，可以使用单调函数\n\\[\n\\omega^\\phi_{ij}(r)=\\sup\\{p\\mid q\\le r\\}.\n\\]\n总有 \\(p\\le\\omega^\\phi_{ij}(q)\\)，且 \\(r\\in C^\\phi_{ij}\\) 恰好等价于 \\(\\omega^\\phi_{ij}(r)=0\\)。线性上界 \\(u\\) 可行当且仅当对所有 \\(r\\in E\\) 都有 \\(\\omega^\\phi_{ij}(r)\\le ur\\)。正向由乘法的单调性和取上确界得到，反向取 \\(r=q\\) 即可。若输入条件同时约束多个分量，就在上确界中改用条件 \\(\\forall j,\\ d_j(x,y)\\le r_j\\)。所得上确界为零，恰好刻画这组联合条件下第 \\(i\\) 个输出分量的不可区分。\n\n### 三、复合\n\n考虑 \\(\\phi\\circ\\psi\\)，以 \\(s=d_k(\\psi(x),\\psi(y))\\) 为中间距离。若 \\(s\\le uq\\) 且复合后的输出距离 \\(p\\le vs\\)，则 \\(p\\le vuq\\)。下界同理。因此\n\\[\nu\\in U^\\psi_{kj},\\ v\\in U^\\phi_{ik}\n\\ \\Longrightarrow\\ vu\\in U^{\\phi\\circ\\psi}_{ij},\n\\qquad\n\\ell\\in L^\\psi_{kj},\\ m\\in L^\\phi_{ik}\n\\ \\Longrightarrow\\ m\\ell\\in L^{\\phi\\circ\\psi}_{ij}.\n\\]\n有多条经中间分量得到的界时，上界可取最小值，下界可取最大值。上界公式使用实际可行的系数。\n\n阈值也可以沿中间分量传递。若 \\(u\\in U^\\psi_{kj}\\) 且 \\(ur\\in C^\\phi_{ik}\\)，则 \\(r\\in C^{\\phi\\circ\\psi}_{ij}\\)，因为 \\(q\\le r\\) 蕴含 \\(s\\le ur\\)。若 \\(r\\in C^\\psi_{kj}\\) 且 \\(0\\in C^\\phi_{ik}\\)，也得到同一结论，因为此时 \\(s=0\\)。在有效定义域上比较时，这些推导仍成立，因为复合算子的有效输入属于 \\(\\mathrm{dom}(\\psi)\\)，其中间输出属于 \\(\\mathrm{dom}(\\phi)\\)。\n\n"
+            }
+          ],
+          "observation_included": false,
+          "observation_note": "属于正常必需交付、辅助步骤、直接推论、等价改写或无关内容，不计为额外独立成果。"
+        }
+      ]
+    }
+  ],
+  "reviewer_kind": "ai",
+  "human_review": "pending",
+  "post_observation": true,
+  "formal_comparison_eligible": false,
+  "new_candidate_calls": 0,
+  "main_scores_modified": false,
+  "novelty_scope": "relative to supplied material and required delivery; no claim of literature novelty"
+}

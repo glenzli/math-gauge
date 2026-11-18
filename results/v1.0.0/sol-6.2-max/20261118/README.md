@@ -1,0 +1,5 @@
+# Sol 6.2 Max · 2026-11-18
+
+Fresh benchmark1.0.0:39 normal initial answers and three fixed C003 rounds. MC93.2083 / RMC93.2083 / SMC89.1667. User selected this completed batch for retention on2026-11-19. AI review; human approval pending. All original answer/review bytes are retained. One proven controller-only failure is excluded from effective attempts;43 physical requests and42 effective deliveries remain separate. Local tools allowed; no external retrieval or tool networking. Requested gpt-6.2-sol/max; backend SKU/effort not independently returned. Official Sol6.2 Standard pricing was verified on2026-11-19; the42 selected native usage receipts give an API reference cost of$17.34925, not an actual subscription invoice. Original pre-lookup resource metadata is unchanged.
+
+Source wrappers were created after observation, add no candidate calls, and do not reclassify source execution or mathematical judgments. Both attempt conditions select the same first effective normal deliveries. Existing release assets and old model records remain unchanged.

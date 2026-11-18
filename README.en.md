@@ -48,6 +48,8 @@ All three use the same rule-selected answers and fixed weights, reported against
 
 The leaderboard defaults to RMC. The [interactive page](https://glenzli.com/benchmarks/math-gauge/?lang=en) lets you switch between the three scores, compare categories and open model pages with public answers and task reviews. The [full written report](docs/results.md) retains the score table, source corrections and supplementary tests.
 
+The fresh [Sol 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/sol-6.2-max/?lang=en) run on November 18 is now on the leaderboard: MC **93.21**, RMC **93.21**, SMC **89.17**. See the [full results](docs/results.md#sol-62-max--2026-11-18) for the changes from Sol 6.1 Max.
+
 [![Math Gauge English leaderboard](docs/screenshots/leaderboard-en.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=en)
 
 The results combine archived answers from different batches, including reused answers and later supplementary tests. They use **AI review, with partial human spot checks**. Actual conditions, failures and retries remain attached to their sources; see the [review process](docs/review-process.md) and [execution notes](docs/results.md#记录与复算) when comparing models.

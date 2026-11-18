@@ -5,10 +5,50 @@ its bounds are copied from metrics[group_id]; rounding affects ordering/ties
 only. Source result objects are never modified.
 """
 from decimal import Decimal
+from datetime import date
 import math
 
 SCORE_MODES = ("capability", "partial", "strict")
 PUBLISHED_PRECISION = 2
+TIE_PRIORITY = ("partial", "strict", "capability")
+
+
+def mode_order(primary):
+    if primary not in SCORE_MODES:
+        raise ValueError("Unknown score sort mode")
+    return (primary, *(mode for mode in TIE_PRIORITY if mode != primary))
+
+
+def published_value(value, precision=PUBLISHED_PRECISION):
+    return None if value is None else int(Decimal(f'{value:.{precision}f}') * 10 ** precision)
+
+
+def test_date(model):
+    value = model.get('test_order', {}).get('date')
+    if value is not None:
+        date.fromisoformat(value)
+    return value
+
+
+def ranking_key(values, primary, model, *, precision=PUBLISHED_PRECISION):
+    """Selected score, other RMC/SMC/MC scores, then a known test day.
+
+    Only display precision participates in ties. Equal/unknown dates preserve
+    source order through the stable sort; no model-name preference is added.
+    """
+    scores = tuple((values.get(mode) is None,
+                    0 if values.get(mode) is None else -published_value(values[mode], precision))
+                   for mode in mode_order(primary))
+    day = test_date(model)
+    return (*scores, day is None, day or '')
+
+
+def overall_key(model, primary='partial'):
+    values = {mode: (_selected_result(model, mode)['metrics']['earned'].get('confirmed')
+                     if 'confirmed' in _selected_result(model, mode)['metrics']['earned'] else
+                     _selected_result(model, mode)['metrics']['earned'].get('exact'))
+              for mode in SCORE_MODES}
+    return ranking_key(values, primary, model)
 
 
 def _selected_result(model, mode):
@@ -44,19 +84,19 @@ def _metric_row(model_id, metric):
             "status": "unknown" if value is None else "partial" if incomplete else "complete"}
 
 
-def _rank(rows, precision):
+def _rank(rows, precision, *, primary, views, models):
     # Use the same formatting precision as the published static score labels.
     # Decimal keys avoid hidden binary differences between identical labels.
     known = [(Decimal(f'{row["value"]:.{precision}f}'), row)
              for row in rows if row["value"] is not None]
-    known.sort(key=lambda item: (-item[0], item[1]["model_id"]))
-    previous, rank = None, None
-    for position, (published, row) in enumerate(known, 1):
-        if previous is None or published != previous:
-            rank = position  # Competition ranks: 1, 1, 3.
-        row["rank"] = rank
-        previous = published
-    unknown = sorted((row for row in rows if row["value"] is None), key=lambda row: row["model_id"])
+    def key(row):
+        mid = row['model_id']
+        return ranking_key({mode: views[mode][mid]['value'] for mode in SCORE_MODES},
+                           primary, models[mid], precision=precision)
+    known.sort(key=lambda item: key(item[1]))
+    for position, (_, row) in enumerate(known, 1):
+        row["rank"] = position
+    unknown = sorted((row for row in rows if row["value"] is None), key=key)
     return [row for _, row in known] + unknown
 
 
@@ -82,10 +122,12 @@ def category_rankings(models, groups, *, result_selector=None, precision=PUBLISH
                for model in models for mode in SCORE_MODES}
     boards = []
     for group in groups:
+        rows_by_mode = {mode: [_metric_row(model['id'], results[model['id'], mode]['metrics'][group['id']])
+                              for model in models] for mode in SCORE_MODES}
+        lookup = {mode: {row['model_id']: row for row in rows} for mode, rows in rows_by_mode.items()}
         views = {}
         for mode in SCORE_MODES:
-            rows = [_metric_row(model["id"], results[model["id"], mode]["metrics"][group["id"]])
-                    for model in models]
-            views[mode] = _rank(rows, precision)
+            views[mode] = _rank(rows_by_mode[mode], precision, primary=mode,
+                                views=lookup, models={model['id']:model for model in models})
         boards.append({"id": group["id"], "title": group["title"], "weight": group["weight"], "views": views})
     return boards

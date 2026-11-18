@@ -3,6 +3,8 @@ import copy
 import hashlib
 import json
 import unittest
+import tempfile
+from pathlib import Path
 
 from scripts import results_rankings as rankings
 
@@ -65,7 +67,7 @@ class CategoryRankingsTests(unittest.TestCase):
                 uniform('argon-lean',metric(13.214285714285714,exact=False,adjudicated=0,lower=1.7857142857,upper=70.3571428572)),
                 uniform('negative',metric(-2.5))]
         rows=self.project(models)[1]['views']['partial'];by_id={r['model_id']:r for r in rows}
-        self.assertEqual([r['model_id']for r in rows],['argon-lean','known-zero-partial','measured-zero','negative','unknown'])
+        self.assertEqual([r['model_id']for r in rows],['argon-lean','measured-zero','known-zero-partial','negative','unknown'])
         self.assertEqual(by_id['argon-lean']['value'],13.214285714285714)
         self.assertTrue(by_id['argon-lean']['incomplete'])
         self.assertEqual(by_id['measured-zero']['value'],0)
@@ -92,11 +94,46 @@ class CategoryRankingsTests(unittest.TestCase):
                 self.assertEqual([r['model_id']for r in board['views'][mode]],order)
                 self.assertEqual([r['rank']for r in board['views'][mode]],[1,2,3])
 
-    def test_identical_published_precision_uses_competition_ties_without_changing_saved_values(self):
+    def test_identical_published_scores_preserve_source_order_without_changing_values(self):
         models=[uniform('b',metric(80.004)),uniform('a',metric(80.003)),uniform('c',metric(79.99))]
         rows=self.project(models)[0]['views']['partial']
-        self.assertEqual([(r['model_id'],r['rank'])for r in rows],[('a',1),('b',1),('c',3)])
-        self.assertEqual([r['value']for r in rows],[80.003,80.004,79.99])
+        self.assertEqual([(r['model_id'],r['rank'])for r in rows],[('b',1),('a',2),('c',3)])
+        self.assertEqual([r['value']for r in rows],[80.004,80.003,79.99])
+
+    def test_ties_use_other_scores_then_known_test_date_for_each_category(self):
+        def triple(mid,mc,rmc,smc,day=None):
+            m=model(mid,{mode:{g['id']:metric(value)for g in GROUPS}
+                         for mode,value in zip(MODES,[mc,rmc,smc])})
+            m['test_order']={'date':day};return m
+        models=[triple('older',90,80,70,'2026-11-04'),triple('newer',90,80,70,'2026-11-18'),
+                triple('better-smc',90,80,75,'2026-11-19'),triple('better-rmc',90,85,70,'2026-11-19'),
+                triple('better-mc',95,80,70),triple('unknown-date',90,80,70)]
+        expected={'capability':['better-mc','better-rmc','better-smc','older','newer','unknown-date'],
+                  'partial':['better-rmc','better-smc','better-mc','older','newer','unknown-date'],
+                  'strict':['better-smc','better-rmc','better-mc','older','newer','unknown-date']}
+        before=digest(models)
+        for board in self.project(models):
+            for mode,ids in expected.items():self.assertEqual([r['model_id']for r in board['views'][mode]],ids)
+        self.assertEqual(digest(models),before)
+
+    def test_date_uses_only_bound_known_initial_clocks_in_local_timezone(self):
+        from scripts.render_results_site import recorded_test_order
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);record=root/'record.json';record.write_bytes(b'{}')
+            timing={'record':{'sha256':hashlib.sha256(record.read_bytes()).hexdigest()},'rows':[
+                {'phase':'R1','availability':'known','started_at':'2026-10-01T00:00:00+00:00'},
+                {'phase':'A1','availability':'unknown','started_at':'2026-10-02T00:00:00+00:00'},
+                {'phase':'A1','availability':'known','started_at':'2026-11-08T23:00:00+00:00'}]}
+            path=root/'answer-timings.json';path.write_text(json.dumps(timing))
+            self.assertEqual(recorded_test_order(root,{})['date'],'2026-11-09')
+            timing['record']['sha256']='0'*64;path.write_text(json.dumps(timing))
+            with self.assertRaisesRegex(ValueError,'different record'):recorded_test_order(root,{})
+
+    def test_missing_clocks_never_infer_a_test_date_from_the_record_id(self):
+        from scripts.render_results_site import recorded_test_order
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)/'20261101';root.mkdir()
+            self.assertIsNone(recorded_test_order(root,{'record_id':'20261101'})['date'])
 
 
 if __name__=='__main__':unittest.main()

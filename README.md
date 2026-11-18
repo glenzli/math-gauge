@@ -48,6 +48,8 @@ Math Gauge 是一套面向数学工作的模型评测，涵盖书面证明、Lea
 
 榜单默认按 RMC 排序。打开[在线榜单](https://glenzli.com/benchmarks/math-gauge/?lang=zh)，可以切换三种分数、查看分项，并从模型页进入公开原答与逐题评审；[完整文字结果](docs/results.md)保留成绩表、来源更正和补测说明。
 
+2026-11-18 的 [Sol 6.2 Max](https://glenzli.com/benchmarks/math-gauge/models/sol-6.2-max/?lang=zh) 已测完并入榜：MC **93.21**、RMC **93.21**、SMC **89.17**。与 Sol 6.1 Max 的逐项变化见[完整结果](docs/results.md#sol-62-max--2026-11-18)。
+
 [![Math Gauge 中文总榜](docs/screenshots/leaderboard-zh.jpg)](https://glenzli.com/benchmarks/math-gauge/?lang=zh)
 
 当前结果汇集不同批次的留档答卷，部分含旧答复用和后续补测；采用 **AI 审核，另有部分人工抽审**。实际运行条件、故障与重试经过随来源保留，阅读模型差异时可一并查看[审核方式](docs/review-process.md)和[运行记录](docs/results.md#记录与复算)。

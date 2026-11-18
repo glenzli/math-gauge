@@ -1,5 +1,5 @@
 (() => {
- const {d,state,modes,el,f,node,result,headline,short,table,points,href,download,start}=MG;
+ const {d,state,modes,el,f,node,result,headline,compareScores,short,table,points,href,download,start}=MG;
  const harnessName=m=>m.harness_display_name||m.harness.name;
  const visibleModels=()=>d.models;
  const deliveryLabel=m=>{const s=result(m).submission_summary||m.answer_delivery;if(s?.active_final!=null)return s.active_final+'／'+s.forced_content+'／'+s.planned;return s?.delivered==null?'—':s.delivered+'／'+s.planned;};
@@ -16,7 +16,7 @@
   Object.keys(sortDefaults).forEach(key=>{const value=q.get('sort-'+key);chartSort[key]=sortChoices[key].includes(value)?value:sortDefaults[key];document.querySelectorAll('[data-chart-sort="'+key+'"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sortValue===chartSort[key])))});
  }
  function orderedModels(value,ascending=false,key='overall'){
-  return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?a.id.localeCompare(b.id):1):-1;return (ascending?x-y:y-x)||a.id.localeCompare(b.id)});
+  return visibleModels(key).sort((a,b)=>{const x=value(a),y=value(b);if(x==null||y==null)return x==null?(y==null?compareScores(a,b,'partial'):1):-1;return (ascending?x-y:y-x)||compareScores(a,b,'partial')});
  }
  function orderChart(id,models){
   const chart=el(id);if(!chart)return;
@@ -41,7 +41,7 @@
  }
  function ranking(){
   const b=el('ranking-body');b.replaceChildren();
-  visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)).forEach((m,i)=>{
+  visibleModels().sort(compareScores).forEach((m,i)=>{
    const row=b.insertRow();row.style.setProperty('--model-ink',m.theme.ink);row.insertCell().append(node('span',String(i+1),'rank'+(i===0?' first':'')));
    const wrap=node('div',null,'model'),symbol=node('span',null,'model-symbol'),text=node('div');symbol.style.background=m.theme.tint;symbol.setAttribute('aria-hidden','true');
    const icon=node('img');icon.src=m.logo.data_url;icon.alt='';symbol.append(icon);
@@ -68,7 +68,7 @@
    if(expanded.has(g.id))g.children.forEach(id=>{const c=d.policy.subcategories.find(c=>c.id===id),h=node('th',c.title+' / '+c.weight,'taxonomy-child-heading');h.scope='col';head.append(h);columns.push({item:c,total:false})});
   });
   const body=t.createTBody();
-  visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)).forEach(m=>{
+  visibleModels().sort(compareScores).forEach(m=>{
    const row=body.insertRow(),label=node('th');label.scope='row';label.append(modelLink(m));row.append(label);
    columns.forEach(({item,total})=>{const c=row.insertCell();c.className=total?'taxonomy-total':'taxonomy-child';c.textContent=points(m,item.id,item.weight);const v=result(m).contributions[item.id];c.title='完整贡献区间 '+f(v.lower)+'–'+f(v.upper)+' / '+item.weight});
   });
@@ -113,7 +113,7 @@
  });
  start(()=>{
   syncSorts();renderView('ranking',ranking);renderView('taxonomy',taxonomy);categoryRanking();auxiliaryCharts();
-  orderChart('chart-groups',visibleModels().sort((a,b)=>(headline(result(b))??-Infinity)-(headline(result(a))??-Infinity)));
+  orderChart('chart-groups',visibleModels().sort(compareScores));
   const visibleIds=new Set(visibleModels().map(m=>m.id)),initiativeIds=new Set(visibleModels('initiative').map(m=>m.id));
   document.querySelectorAll('[data-model-note]').forEach(n=>n.hidden=!(n.closest('[data-board="initiative"]')?initiativeIds:visibleIds).has(n.dataset.modelNote));
   const selected=modes[state.score];el('leaderboard-desc').textContent='公开＋私有 · 按'+selected.abbreviation+'排序 · 满分100';el('score-explanation').textContent={capability:'累计有效数学成果。',partial:'按有效成果计分，扣除错误、回退和误报。',strict:'整题及规定自查轨迹全部达标才计分。'}[state.score];

@@ -1,0 +1,13 @@
+**Lean 实现准确、完整地覆盖了正文 #h-93b9c20ea18b4e59 的两个集合包含式。** 分量形式由 `path_component_guarantee_union_subset_proxy_error` 证明，联合形式由 `path_joint_guarantee_union_subset_proxy_error` 证明。`path_guarantee_union_subset_proxy_error_text` 将两者合在一起，并保留正文的全局可评估性、阈值有限性和 \(J\ne\varnothing\) 条件。 [数学正文](/private/tmp/math-gauge-sol62-max-20261118/sessions/AHR04/physical-1/work/source.md:242) · [Lean 汇总定理](/private/tmp/math-gauge-sol62-max-20261118/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:590)
+
+**对应关系**
+
+- \(U,\mathcal P,U_q,c_q\) 分别对应 `N.U`、`N.ReachablePath`、`N.path_domain q.nodes` 和 `N.path_chain q.nodes`。`path_component_sample` 取 \(S_j\cap U_q\)，`path_evaluable_components` 以该交集非空判定路径可评估性。路径残差使用同一批路径样本上的误差上确界，再加 \(\delta_{o,j}\)。 [路径采样定义](/private/tmp/math-gauge-sol62-max-20261118/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean:27)
+- 两个分支都用逐项相加的 \(\mathbf A_q=\mathbf L_q+\mathbf L^*\) 构造保证域。分量域展开后就是 \(x\in U_q\) 且共同锚点距离加路径残差不超过 \(\tau_j\)。联合域要求 \(x\in U_q\) 且每个 \(j\in J\) 都满足各自的阈值。它与正文的交集写法等价，反向只需任选 \(j_0\in J\)，由该分量域的成员条件取回 \(x\in U_q\)。 [保证域定义](/private/tmp/math-gauge-sol62-max-20261118/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:26)
+- 正文的受限并集在 Lean 中写成“存在一条可达路径，满足可评估条件，且 \(x\) 属于该路径的保证域”。联合分支把 \(J\subseteq I_{\mathrm{res}}(q)\) 放在同一个路径见证 \(q\) 下，量词顺序与正文一致。`hpathV` 也可直接由正文的 \(U_q\subseteq U\subseteq V^*\) 得到。 [两个包含式及证明](/private/tmp/math-gauge-sol62-max-20261118/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_guarantee_domains.lean:520)
+
+**源码已证明的内容**是两个并集到真实误差域的包含。证明取出路径见证后，由 \(x\in U_q\) 得到 \(x\in U\)，再应用已证明的局部误差界。分量分支直接调用代理误差界。联合分支对任意 \(j\in J\) 使用路径链误差界，并用 `path_chain_eq_represented_proxy_on_path` 将 \(c_q(x)\) 改写为 \(\phi(x)\)。审阅中补充的是上述并集和交集记号的集合论展开，无需补证该推论的任何分支。 [路径链与代理的等式](/private/tmp/math-gauge-sol62-max-20261118/sessions/AHR04/physical-1/work/formal_oet/vol_03/ch_14_empirical_network_fitting/path_sampling.lean:220)
+
+已用 Lean 4.29.1 重编译相关模块。三个定理的 `#print axioms` 均只列出 `propext`、`Classical.choice` 和 `Quot.sound`。
+
+审阅依据为 Zhe Li（Glen Li / glenzli）的《The Operator Evolution Theory》附件版本。 [官方作品页](https://glenzli.com/books/oet/) · [公开源码](https://gitlab.com/glenzli/oet-public) · [ORCID](https://orcid.org/0009-0006-6536-3453) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)

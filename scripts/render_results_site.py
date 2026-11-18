@@ -8,16 +8,17 @@ import html
 import json
 import math
 import re
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records, selected_paper_records
+from math_gauge.records import load_assessment_results, load_content_rates, validate_record, selected_cli_records, selected_paper_records, evidence_bytes
 from math_gauge.native_observations import load_public_record
 from math_gauge.paper_observations import load_public_record as load_paper_record
 from scripts.results_details import build_detail_pages, review_status
-from scripts.results_rankings import category_rankings
+from scripts.results_rankings import category_rankings, overall_key, published_value, SCORE_MODES
 from scripts.results_i18n import javascript_catalog, language_switch
 from scripts.results_surplus import load_observations, render_subboard
 from scripts.results_delivery import delivery_progress, load_legacy_projections
@@ -32,8 +33,10 @@ from math_gauge.execution_anomalies import load_public as load_execution_anomali
 from math_gauge.submission_evidence import load_review_completion
 from math_gauge.result_corrections import load_selected as load_result_correction
 from math_gauge.c003_continuations import load_selected_public as load_c003_continuation
+from math_gauge.evidence_retention import is_file as retained_file, read_bytes as retained_bytes
 
 MODEL_THEMES = {
+    "sol-6.2-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
     "glm-5.3-max": {"color": "#444b60", "ink": "#363d50", "tint": "#f1f2f5"},
     "kimi-3.1-pro-max": {"color": "#3568d4", "ink": "#244a9b", "tint": "#eef3ff"},
     "astra-6-max": {"color": "#252525", "ink": "#252525", "tint": "#f1f2f3"},
@@ -53,6 +56,7 @@ MODEL_THEMES = {
     "gemini-4-carbon-medium": {"color": "#68b77a", "ink": "#397a4a", "tint": "#f0f8f2"},
 }
 MODEL_PROVIDERS = {
+    "sol-6.2-max": ("OpenAI", "openai.svg"),
     "glm-5.3-max": ("Z.ai", "zai.svg"),
     "kimi-3.1-pro-max": ("Kimi", "kimi.svg"),
     "astra-6-max": ("OpenAI", "openai.svg"),
@@ -72,6 +76,7 @@ MODEL_PROVIDERS = {
     "gemini-4-carbon-medium": ("Google", "google.svg"),
 }
 MODEL_LABELS = {
+    "sol-6.2-max": "Sol 6.2 (max)",
     "dot-underlying-model-20261108": "Dot Underlying (2026-11-08)",
     "glm-5.3-max": "GLM 5.3 (max)",
     "kimi-3.1-pro-max": "Kimi 3.1 Pro (max)",
@@ -92,6 +97,7 @@ MODEL_LABELS = {
     "gemini-4-carbon-medium": "Gemini 4 Carbon (medium)"
 }
 MODEL_SHORT_LABELS = {
+    "sol-6.2-max": "Sol 6.2 (max)",
     "dot-underlying-model-20261108": "Dot (2026-11-08)",
     "glm-5.3-max": "GLM (max)",
     "kimi-3.1-pro-max": "Kimi (max)",
@@ -118,6 +124,36 @@ def bound_harness_display(harnesses, model, record_path):
     if harness['record_sha256'] != hashlib.sha256(Path(record_path).read_bytes()).hexdigest():
         raise ValueError('Harness display metadata binds a different retained record')
     return copy.deepcopy(harness)
+
+
+def recorded_test_order(folder, record):
+    """Use a bound actual dispatch or known public A1 clocks; never parse IDs."""
+    source = record.get('first_assessment_source')
+    stamps = []
+    if source:
+        proof = json.loads(evidence_bytes(folder, source))
+        first = proof['first_dispatch']
+        stamps = [json.loads(evidence_bytes(folder, first))['utc']]
+        digest, basis = first['sha256'], 'first_recorded_dispatch'
+    else:
+        path = folder / 'answer-timings.json'
+        if retained_file(path):
+            raw = retained_bytes(path)
+            timing = json.loads(raw)
+            if timing['record']['sha256'] != hashlib.sha256((folder / ('record.json' if (folder/'record.json').is_file()
+                                                                 else 'native-observation.json')).read_bytes()).hexdigest():
+                raise ValueError('Test date clock binds a different record')
+            stamps = [row['started_at'] for row in timing['rows']
+                      if row.get('phase') == 'A1' and row.get('availability') == 'known'
+                      and row.get('started_at')]
+            digest, basis = hashlib.sha256(raw).hexdigest(), 'earliest_recorded_public_initial_start'
+    if not stamps:
+        return {'date': None, 'basis': 'unavailable'}
+    first = min(datetime.fromisoformat(value.replace('Z', '+00:00')) for value in stamps)
+    if first.tzinfo is None:
+        raise ValueError('Test ordering needs a timezone-bound source clock')
+    return {'date':first.astimezone(timezone(timedelta(hours=8))).date().isoformat(),
+            'basis':basis,'source_sha256':digest}
 
 
 def build_data(source_root=ROOT):
@@ -286,6 +322,9 @@ def build_data(source_root=ROOT):
         model['fully_evaluated'] = is_fully_evaluated(model)
         record_bytes = (root / model['source_record']).read_bytes()
         original_record = json.loads(record_bytes)
+        model['test_order'] = recorded_test_order((root / model['source_record']).parent, original_record)
+        model['ranking_values'] = {mode: published_value(earned_value(selected_result(model, mode)))
+                                   for mode in SCORE_MODES}
         completion = load_review_completion((root / model['source_record']).parent, original_record)
         if completion is not None:
             model['review_completion'] = completion
@@ -478,7 +517,7 @@ def render_gap_chart(data):
               for table in diagnostic['tables']}
     def order(model):
         value = lookup['RG'][model['id']]['value']
-        return (value is None, 0 if value is None else abs(value), model['id'])
+        return (value is None, 0 if value is None else abs(value), *overall_key(model))
     ordered = sorted(data['models'], key=order)
     for model in ordered:
         row = lookup['RG'][model['id']]
@@ -519,8 +558,7 @@ def grouped_bars(data, category=None):
     scope = 'overall' if category is None else category['id']
     scope_attr = ' data-score-scope="'+html.escape(scope, quote=True)+'"'
     if category is None:
-        ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
-                         if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
+        ordered = sorted(data['models'], key=overall_key)
         views = {mode['id']: {m['id']: dict(selected_result(m, mode['id'])['metrics']['overall'],
                     value=earned_value(selected_result(m, mode['id']))) for m in ordered} for mode in modes}
     else:
@@ -572,7 +610,7 @@ def render_content_rates(data):
                    ('attainment', '目标达成率', 'confirmed', 'strict'))
     def order(model):
         value = (model.get('content_rates') or {}).get('metrics', {}).get('reliability', {}).get('observed')
-        return (value is None, 0 if value is None else -value, model['id'])
+        return (value is None, 0 if value is None else -value, *overall_key(model))
     for model in sorted(data['models'], key=order):
         report = model.get('content_rates')
         if report is not None and report['version'] != '0.2.0':
@@ -656,8 +694,7 @@ def render(data, *, timing_reference=None, cost_reference=None, anomaly_referenc
     # Only escaped data enters the standalone template; scores come from archives.
     payload = json.dumps(display_harness_labels(project_payload(data)), ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     rows = []
-    ordered = sorted(data['models'], key=lambda m: earned_value(selected_result(m))
-                     if earned_value(selected_result(m)) is not None else float('-inf'), reverse=True)
+    ordered = sorted(data['models'], key=overall_key)
     harness_notes = {}
     for model in ordered:
         harness = model['harness']

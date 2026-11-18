@@ -1,0 +1,61 @@
+{
+  "case_id": "MG-MCP003",
+  "response_sha256": "9fa419407a47aae29efbe2b7ec880ef6ba3db22d31e28b5863deb40768b653d3",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "主助手完整独立核查96行手稿：逐对系数矩阵、联合求和矩阵两种方案区分清楚；上下界、∞/0可行集、开闭零化阈值及复合均严格自洽。采用全空间默认比较且明示有效域替代和退化影响，属于原任务允许路线，不套其他题的fidelity附加规则。",
+  "findings": [],
+  "group_contract_sha256": "c033cb125bb4030ca0de329b2bc0ad5534588d5168495ca168ed8c68bde5a58d",
+  "dimensions": [
+    {
+      "dimension_id": "M1",
+      "score": 15,
+      "notes": "输出行i输入列j，默认全部X²含bot、φ/ψ严格算子与有效域区别明示；指出undefined点与bot令全空间下界退化，必要时可统一限制dom²。未隐加分离性、有限距离或点集单射。"
+    },
+    {
+      "dimension_id": "M2",
+      "score": 20,
+      "notes": "Uij全称p≤uq真实跨分量上界；精确可行集和实际系数复合，并明确与联合加权和矩阵分开。第四节另给标准AD联合上界和正确复合顺序AφAψ，覆盖原意允许的两种形式。"
+    },
+    {
+      "dimension_id": "M3",
+      "score": 20,
+      "notes": "Lij全称ℓq≤p、finite-q比下确界及infinite-q/finite-p仅0约束完整；max下界取得证明由真实交集分类成立。正下界仅反射零距，不机械取倒数或推出点值逆。联合BD下界及BφBψ复合方向正确。"
+    },
+    {
+      "dimension_id": "M4",
+      "score": 20,
+      "notes": "表格逐一覆盖q=0/finite-positive/top及p=0/finite/top，保留0×∞=0；U可空或(0,∞]、max scalar lower可取正确。两点含bot恒等例确证上界inf0不取到。全∞联合上界仅在保留全零距时可行；重复两分量的I与Swap例严密排除一般逐项最优A/B。"
+    },
+    {
+      "dimension_id": "M5",
+      "score": 20,
+      "notes": "ρ=inf坏输入距对r∈ENNReal给最大开阈值完整iff，闭阈值按ρ是否属于bad集合给端点0/top规则。有限非空输出族min、C交集及正coLip反射均正确；没有把伪零距当相等。ω及多分量共同条件的sup-zero描述与阈值一致。"
+    },
+    {
+      "dimension_id": "M6",
+      "score": 5,
+      "notes": "全部实际宣称性质均有充分论证：标量/联合表示区分，实际系数复合、有限候选min/max及两种阈值传播条件准确，dom受限变体使用真实复合中间域。ω上界与线性系数等价性直接由单调性/sup成立，不以参考术语或额外理论数量评分。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "9fa419407a47aae29efbe2b7ec880ef6ba3db22d31e28b5863deb40768b653d3",
+    "collection_sha256": "444eed6d78a80781186e1d8db340ea407896838e80ede41b8619dd85bc1e8fdd",
+    "physical_attempt": 1,
+    "task_sha256": "394108946a8285599803d21c03ef6d62faddf3144691a09b6f30161be28229ce",
+    "rubric_sha256": "c4b75963d5fcc90128d7e74776bc5a5cbd0eebc6d299b7556d412ff68823a920",
+    "reference_sha256": "12198e644f09e3050e91292336e79b347265791ce04edbacba842e268afa2c2d"
+  },
+  "assessment": {
+    "manuscript_completion": {
+      "complete": true,
+      "notes": "M1–M6全部完成。全空间包含bot的比较明确，保留非分离与严格算子语义。逐对U/L由精确全称不等式定义，有限正输入比值和0/∞输入例外给真实可行集；合法上界不保证存在或取最小，下界max分类正确。ρ=inf{q:p>0}给全部开阈值iff r≤ρ，闭阈值按端点是否bad区分，包含0/top；全族零距与点相等区分。ω正确提供非线性全算子上界，实际系数乘积/有限min/max及阈值复合正确。另给联合矩阵BD≤Dout≤AD、正确有序乘法、上界矩阵存在iff保留全分量零距及duplicated gauges下无共同逐项最优的合法反例。"
+    }
+  }
+}

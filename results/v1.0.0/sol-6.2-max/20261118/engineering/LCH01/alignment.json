@@ -1,0 +1,93 @@
+{
+  "case_id": "LCH01",
+  "version": "0.1.0",
+  "items": [
+    {
+      "id": "CH02-D01",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.IsRestrictedLipMatrix"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.IsLipMatrix"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.isLipMatrix_iff"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.lipMatrices"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.restrictedLipMatrices"}
+      ],
+      "representation": "G.dist i 对应 d_i。Gauge 打包分量及冻结的扩展伪度量公理，Fintype I 与 Nonempty I 表示有限非空指标集。φ.func 与 dom φ 是冻结的算子作用和定义域。受限谓词包含 U ⊆ dom φ 并对一切 x,y ∈ U 及 j ∈ I 要求输出距离不超过第 j 行加权和。全域谓词取 U = dom φ，isLipMatrix_iff 展开其量词。两个 Set 分别收集满足全域或受限谓词的全部矩阵。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D02",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.IsRestrictedCoLipMatrix"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.restrictedCoLipMatrices"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.coLip_term_le"}
+      ],
+      "representation": "U ⊆ dom φ 与 U.Nonempty 表示给定的非空受限域。对每个 x,y ∈ U 和输出 j，第 j 行加权和不超过 d_j(φ(x),φ(y))。restrictedCoLipMatrices 收集全部合法 K。辅助引理 coLip_term_le 用非负性从和中抽出任意一项作为下界。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-D03",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.BoundMatrix"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.BoundMatrix.coeff"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.BoundMatrix.rowSum"},
+        {"file": "LCH01/MatrixBounds.lean", "name": "LCH01.BoundMatrix.mul_coeff"}
+      ],
+      "representation": "BoundMatrix I 使用 Matrix I I ℝ≥0∞。M.coeff i j 是 M j i，即输出行 j 和输入列 i。rowSum 对有限输入集求加权和。mul_coeff 给出后步矩阵 B 左乘前步矩阵 A 时的 (B * A)_{i→j} = ∑ k, B_{k→j} A_{i→k}。",
+      "dependencies": []
+    },
+    {
+      "id": "CH02-D07",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.Channel"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.HasOnlyInput"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.zero_channel_term"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.isDiag_iff_onlyInput"}
+      ],
+      "representation": "Channel I 是有序对 (i,j)，依次表示输入和输出。HasOnlyInput L (i,j) 要求每个 k ≠ i 对应的 L_{k→j} 为零。zero_channel_term 证明零系数的乘积项为零。Matrix.IsDiag L 等价于每一行 j 都满足 HasOnlyInput L (j,j)。",
+      "dependencies": ["CH02-D03"]
+    },
+    {
+      "id": "CH02-P19",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.rowSum_eq_of_onlyInput"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.rowSum_eq_of_diagonal"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.lip_of_onlyInput"},
+        {"file": "LCH01/Channels.lean", "name": "LCH01.lip_of_diagonal"}
+      ],
+      "representation": "对稀疏行 j，取 v k = d_k(x,y) 后，rowSum_eq_of_onlyInput 给出第 j 行和等于 L_{i→j}d_i(x,y)。lip_of_onlyInput 对合法受限 L 与每对 x,y ∈ U 得到该单项上界。两个对角声明在 Matrix.IsDiag L 下对任意 j 给出同分量的行和等式及 Lip 上界。",
+      "dependencies": ["CH02-D01", "CH02-D03", "CH02-D07"]
+    },
+    {
+      "id": "CH02-P20",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.positive_coLip_channel"}
+      ],
+      "representation": "给定 K 属于受限 co-Lip 证书族及通道 (i,j) 的正系数，对任意 x,y ∈ U，从 0 < d_i(x,y) 推出 0 < d_j(φ(x),φ(y))。乘积正性与单项下界均在 ℝ≥0∞ 中成立。",
+      "dependencies": ["CH02-D02", "CH02-D03"]
+    },
+    {
+      "id": "CH02-P21",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.reflect_gauge_zero_of_positive_diagonal"}
+      ],
+      "representation": "给定合法受限 K，并假设每个 K_{j→j} 严格正。对任意 x,y ∈ U，由 φ(x) 与 φ(y) 的 GaugeZeroRelated 得到 x 与 y 的 GaugeZeroRelated，亦即对每个 j 都有 d_j(x,y) = 0。",
+      "dependencies": ["CH02-D02", "CH02-D03", "CH02-P20"]
+    },
+    {
+      "id": "CH02-P25",
+      "status": "complete",
+      "declarations": [
+        {"file": "LCH01/Channels.lean", "name": "LCH01.diagonal_scalar_bounds"}
+      ],
+      "representation": "L 和 K 分别属于 φ 在同一 U 上的受限 Lip 与 co-Lip 证书族。对给定输出 j，仅要求 HasOnlyInput L (j,j)。对任意 x,y ∈ U，以合取给出 K_{j→j}d_j(x,y) ≤ d_j(φ(x),φ(y)) 及 d_j(φ(x),φ(y)) ≤ L_{j→j}d_j(x,y)。",
+      "dependencies": ["CH02-D01", "CH02-D02", "CH02-D03", "CH02-D07", "CH02-P19"]
+    }
+  ]
+}

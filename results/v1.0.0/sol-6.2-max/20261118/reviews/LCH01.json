@@ -1,0 +1,231 @@
+{
+  "case_id": "LCH01",
+  "response_sha256": "b2fa1a4c2f539171ac51f1ac23afdd5ac6de0ea7cf1450b9bdd3c627c09c9b15",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "主助手完整读实际inline源码和全部8映射，逐项独立核对原义务、对象、量词、域及表示桥；8/8语义完成。共享隔离真实编译及公理审计另行通过，不以编译代替数学核查。",
+  "findings": [],
+  "group_contract_sha256": "814b78680f98ec72b458febc72f3f545e2ae7bcb76e21c36fa3a7928c7884e07",
+  "stages": [
+    {
+      "stage_id": "CH02-D01",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.IsRestrictedLipMatrix"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.IsLipMatrix"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.isLipMatrix_iff"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.lipMatrices"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.restrictedLipMatrices"
+        }
+      ],
+      "notes": "显式ENNReal行和；受限谓词包含U⊆真实dom并量化全部点对及输出，global取dom，两个Set收集全部合法矩阵，未把逐条目下确界当共同矩阵。Gauge从冻结分量公理直接打包，覆盖全部原实例。"
+    },
+    {
+      "stage_id": "CH02-D02",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.IsRestrictedCoLipMatrix"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.restrictedCoLipMatrices"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.coLip_term_le"
+        }
+      ],
+      "notes": "下界为完整有限加权和，非仅单项；U.Nonempty和U⊆dom均保留，合法族是真实谓词集合。coLip_term_le由非负项≤和抽出任意通道，实际正确。"
+    },
+    {
+      "stage_id": "CH02-D03",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.BoundMatrix"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.BoundMatrix.coeff"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.BoundMatrix.rowSum"
+        },
+        {
+          "file": "LCH01/MatrixBounds.lean",
+          "name": "LCH01.BoundMatrix.mul_coeff"
+        }
+      ],
+      "notes": "BoundMatrix采用输出行/输入列，coeff M i j=M j i；B*A条目sum_k B(k,j)A(i,k)明确保持后步左乘前步顺序。ENNReal有限求和含∞。"
+    },
+    {
+      "stage_id": "CH02-D07",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.Channel"
+        },
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.HasOnlyInput"
+        },
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.zero_channel_term"
+        },
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.isDiag_iff_onlyInput"
+        }
+      ],
+      "notes": "Channel=(input,output)，HasOnlyInput约束给定输出行其余输入位置为0；zero_channel_term保留0×∞=0，IsDiagiff全部对角行稀疏方向正确。"
+    },
+    {
+      "stage_id": "CH02-P19",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.rowSum_eq_of_onlyInput"
+        },
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.rowSum_eq_of_diagonal"
+        },
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.lip_of_onlyInput"
+        },
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.lip_of_diagonal"
+        }
+      ],
+      "notes": "对任意输入i与输出j用sum_eq_single证明完整行和化为指定单项，再由实际受限Lip证书导出上界；另有全对角特例，无有限系数或i=j限制偷换一般结论。"
+    },
+    {
+      "stage_id": "CH02-P20",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.positive_coLip_channel"
+        }
+      ],
+      "notes": "给定实际非空coLip证书及正通道系数，以ENNReal乘积正性和真实单项下界推出输出正距，允许∞且不除法。"
+    },
+    {
+      "stage_id": "CH02-P21",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.reflect_gauge_zero_of_positive_diagonal"
+        }
+      ],
+      "notes": "对每个正对角通道取P20逆否，反射所有分量零距；结论仅GaugeZeroRelated，未加强为点相等或额外假设分离。"
+    },
+    {
+      "stage_id": "CH02-P25",
+      "decision": "pass",
+      "assumption_fidelity": "clean",
+      "proof_validity": "valid",
+      "scope_accuracy": "correct",
+      "unnecessary_restriction": false,
+      "failure_category": "none",
+      "inherited_from": [],
+      "lean_status": "passed",
+      "declarations": [
+        {
+          "file": "LCH01/Channels.lean",
+          "name": "LCH01.diagonal_scalar_bounds"
+        }
+      ],
+      "notes": "同一U上的L/K证书，且只假设L第j输出行除对角外为0；K任意完整下界。合取得到正确标量双侧界，无需K对角，依赖均已验证。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "b2fa1a4c2f539171ac51f1ac23afdd5ac6de0ea7cf1450b9bdd3c627c09c9b15",
+    "collection_sha256": "e01b08e46ec6413b5ce3515b788cda0c15b64156d2c337218c736ed93ef46167",
+    "physical_attempt": 1,
+    "task_sha256": "0fed38a0b03927abdaff45eda71275277eb1626ce1ed27f007751dcacc4f2fdb",
+    "rubric_sha256": "f9dde5175f07705a851d0ff6da53a5380be220f1e1611ae44c64097979c90fad",
+    "reference_sha256": "7b389e141a34f6fb74a26a53a95e00be4134a3fb213bc5a94c1f681cc7e910f9"
+  },
+  "candidate_lean_report": "LCH01/root-candidate-lean-report.json",
+  "candidate_lean_report_sha256": "9193c05136ee8a3a87ad2572f42449f0cad6da3b9b77cb5e21ee81c11140055d"
+}

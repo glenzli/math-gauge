@@ -1,0 +1,48 @@
+{
+  "case_id": "MG-BC001",
+  "response_sha256": "1b9851be09f549fa2c3b26af83be1c608766008da66d8683fbd6af575b31d075",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "独立核查完整正确：反驳四井无两两秩一连接⇒正间隙的升级；交付实际零迹位移、统一梯度≤4和能量趋0，不是只给抽象矩阵混合。非取到与任意近优序列唯一相比例全部证明。",
+  "findings": [],
+  "group_contract_sha256": "8b7cdc0511da4d6e14a9df7322389b3e04722c46916d68b332b342703439c1de",
+  "criteria": [
+    {
+      "criterion_id": "gap-diagnosis",
+      "score": 1,
+      "notes": "准确判定e0=0、不取到、全部近优序列唯一相比例；六个两井差det非零是真的，但不能推出四相正间隙。"
+    },
+    {
+      "criterion_id": "model-specific-certificate",
+      "score": 1,
+      "notes": "实际给出四步rank-one循环及位移v=u+e_kη(s)φ(t)，φ两段斜率和零边界、有限矩形拼接、norm凸组合≤3加cross项≤1均合法；冻结过渡带、只细分仿射辅助矩形避免梯度误差累积。m轮有限构造E≤98·6^-m，满足原A而非仅Young measure。"
+    },
+    {
+      "criterion_id": "complete-correction",
+      "score": 1,
+      "notes": "∂2u1=∂1u2=0及原零边界强制u=0，0不在K所以不取到。对任意原近优序列，强L2最近井误差和grad/det均值0给完整四方程，唯一正解p=(1,3,3,3)/10；紧单纯形保证整列收敛，已构造u_m实现此极限。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "1b9851be09f549fa2c3b26af83be1c608766008da66d8683fbd6af575b31d075",
+    "collection_sha256": "97e5b1648a3c15ed8a8b1ebf9260d4f9135d00ec9af8478fc6cc83ea48a8f6b3",
+    "physical_attempt": 1,
+    "task_sha256": "07bb02318d5fe35f5f7fb005de996ed7b49cbd4a832b0a2fd1e68d68c6ea75a6",
+    "rubric_sha256": "685afb12d91f53a3f2478f02b3615fcda6b534a22ee461a58f84b19e1de5ab5a",
+    "reference_sha256": "eec5e4e01332a1e400946ae708a5f41d0ae54f0b7985cbb249da3a76215b02da"
+  },
+  "assessment": {
+    "background_check": {
+      "background_R": 3,
+      "complete": true,
+      "false_endorsement": false,
+      "notes": "四辅助矩阵及四次秩一分裂均核对。给轴矩形锯齿×横向cutoff的实际零边界扰动；选h使offdiag项≤1，凸组合部分norm≤3，因此Frob梯度≤4。仅在仿射辅助中央矩形递归，过渡带冻结不累积梯度。m轮活跃面积≤6^-m、过渡≤4mδ，δ=6^-m/(4m)给E≤98·6^-m。对角梯度+零迹排除零能取到；均梯度0与det null Lagrangian及L2最近井误差给唯一相比例(1,3,3,3)/10，构造序列实现。全部实质要求完成，无假背书。"
+    }
+  }
+}

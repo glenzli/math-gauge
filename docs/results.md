@@ -8,6 +8,7 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 |---|---|---:|---:|---:|---:|
 | [Astra 6 (max)](../site/models/astra-6-max/index.html) | Codex CLI | 94.32 | 94.32 | 89.17 | 39／0／39 |
 | [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | Codex CLI | 94.32 | 94.22 | 89.17 | 39／0／39 |
+| [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | Codex CLI | 93.21 | 93.21 | 89.17 | 39／0／39 |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | Claude Code | 93.76 | 91.44 | 59.42 | 39／0／39 |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | Codex CLI | 91.45 | 90.45 | 79.17 | 39／0／39 |
 | [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | Dot native harness¹ | 91.66 | 90.23 | 78.00 | 39／0／39 |
@@ -24,9 +25,19 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 | [Gemini 3.8 Flash (high)](../site/models/gemini-3.8-flash-high/index.html) | AGY CLI⁴ | 59.94 | 39.77 | 13.75 | 38／1／39 |
 | [GLM 5.3 (max)](../site/models/glm-5.3-max/index.html) | Claude Code³ | 41.48 | 27.34 | 14.08 | 21／5／39 |
 
+排序先看所选口径；显示到两位小数仍同分时，依次用其余的RMC、SMC、MC降序比较。三项全同，再按有来源的初答测试日期（UTC+8）升序；日期未知放后，同日保持原有顺序。新批次用已记录的首派日期，其余用留档公开初答中最早已记录的启动日；这只是展示顺序，不新增评分，也不从档号或提交时间推测测试日期。
+
 主动交卷与强收有内容互斥；强收表示留有可审核数学内容，MC可以为0。三轮自查另列，执行状态与完整区间见模型档案。后续测试完成结算并选定留档后再上榜。
 
 ⁴ AGY CLI留档中发现较严重的回传与终态处理缺陷，可能丢失模型回复或空等至超时。此类故障允许额外重跑，实际调用次数可能超过通常3次；已核实的末尾空等从展示耗时扣除，原始记录保留。正常交卷后不因数学错误重跑。
+
+## Sol 6.2 Max · 2026-11-18
+
+本轮为1.0.0题库的全新测试，39份正常初答及三轮正常自查均已审核。MC/RMC为93.2083，SMC为89.1667。相较Sol 6.1 Max，MC下降1.1111、RMC下降1.0111、SMC持平；主要差异是公开命题拓展TX001保留正确基础证明，但未完成上一版答卷中已有的尖锐性拓展。另有一份私有手稿消除了旧答独立附带错误的扣分。其余37题及整段自查的评分一致，不能据这两题推断普遍提升或下滑。
+
+内容可靠率100.00%、完整目标达成率90.92%；五份手稿的主动额外成果已按共同边界审核，观察结果不计入主分。实际43次物理请求含1次已证实的控制器误拦截；该次不占有效模型次数，选定42次交付均为首次有效作答。请求gpt-6.2-sol/max，CLI版本0.169.0-alpha.11.1，后端标签未回显。全部允许本地工具，禁止联网检索和工具联网。
+
+39份初答的原生执行耗时中位数约8.19分钟，三轮自查另计；实际批次跨度约4小时47分，包含并行、暂停与控制器恢复，不作为模型纯推理速度。原生用量完整保留；按已核实的Sol 6.2 Standard公开单价折算，采用42份答卷的API参考成本约$17.35，沿用原榜口径，不表示实际订阅扣费。AI审核、编译证据与人工批准继续分开。
 
 ## 本次方法调整
 
@@ -52,6 +63,7 @@ Benchmark **1.0.0**已封版。当前采用聚合 **0.9.0**／MC **0.3.0**／SMC
 |---|---:|---:|
 | [Astra 6 (max)](../site/models/astra-6-max/index.html) | 100.00% | 90.92% |
 | [Sol 6.1 (max)](../site/models/sol-6.1-max/index.html) | 99.90% | 90.92% |
+| [Sol 6.2 (max)](../site/models/sol-6.2-max/index.html) | 100.00% | 90.92% |
 | [Claude Opus 5.5 (max)](../site/models/claude-opus-5.5-max/index.html) | 94.22% | 85.84% |
 | [Astra 6 (xhigh)](../site/models/astra-6-xhigh/index.html) | 98.68% | 87.36% |
 | [Dot Underlying (2026-11-08)](../site/models/dot-underlying-model-20261108/index.html) | 99.65% | 85.29% |

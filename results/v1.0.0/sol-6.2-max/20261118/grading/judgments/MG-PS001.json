@@ -1,0 +1,54 @@
+{
+  "case_id": "MG-PS001",
+  "response_sha256": "e5f5d6ca82756cf71b73ecaa7929e5bf7b764090b5c9368306c4c0b7c316e446",
+  "reviewer": "Codex primary assistant; independent AI review requested by the user",
+  "reviewer_kind": "ai",
+  "decision": "pass",
+  "assumption_fidelity": "clean",
+  "proof_validity": "valid",
+  "scope_accuracy": "correct",
+  "unnecessary_restriction": false,
+  "notes": "完整正确，采用不同于作者参考的max稀疏台阶构造实现全部(ell,r)。其L_k上下界足够推出根极限，无需每个L_k闭式。块指标函数同时完成C_f无穷时不能下降及有限时最优常数尖锐性；未假定f(n)/n收敛或商完备。",
+  "findings": [],
+  "group_contract_sha256": "10194a7647fcc3f92c56aa060054a3528db1cf43693da0a664d18ac8b8abf14b",
+  "criteria": [
+    {
+      "criterion_id": "K1",
+      "score": 5,
+      "notes": "以rho=d(-,0)正确使用有界数列半范数及零距商；对x-y的同一估计给零距保持和商Lipschitz，属于原合同允许的完整直接使用，不要求重复三角公理。"
+    },
+    {
+      "criterion_id": "K2",
+      "score": 20,
+      "notes": "对任意f取f(n_i)/n_i趋C_f且旧块长度和o(n_i)，A为f(n_i+1)...f(n_i+m_i)的像块。任意N在f(n_i)与f(n_(i+1))间均有密度≤旧块和/f(n_i)，故C_f=∞给rho(1_A)=0而采样后rho≥epsilon/(1+epsilon)>0；必要性覆盖每个不允许f。有限C的商下降由基本部分和上界。"
+    },
+    {
+      "criterion_id": "K3",
+      "score": 20,
+      "notes": "同一块构造在有限C给rho(x)≤epsilon/C及rho(P_fx)≥epsilon/(1+epsilon)，任意K因而≥C/(1+epsilon)；令epsilon趋零得精确C。上界使用limsup，未偷换成全序列极限。早期块可能重叠不影响计数上界或当前块下界。"
+    },
+    {
+      "criterion_id": "K4",
+      "score": 15,
+      "notes": "逐采样位置填入任意有界y、其余填0给满射。C=1由f(n)/n趋1及漏采点数f(n)-n控制获得等距双射；C>1用像补集指标给正商范数核元。连续性由已证有限Lip界。"
+    },
+    {
+      "criterion_id": "K5",
+      "score": 15,
+      "notes": "T_f^k为实际f迭代采样，L_k=limsup f^k(n)/n，1≤L_k≤L_1^k。按k=qm+s的次乘分解直接证明根极限等于inf L_m^(1/m)，不调用不具前提的Banach谱公式。"
+    },
+    {
+      "criterion_id": "K6",
+      "score": 25,
+      "notes": "对所有1≤r≤ell，f(n)=n+max(floor((r-1)n),floor((ell-1)a(n)))，a_i=2^(i²)，确为严格递增整数函数且f≤ell n，a_i处达到ell的limsup。f≥rn-1给L_k≥r^k；固定k取最终台阶A及前级B，B/n≤ell^k B/A趋0。第一次越过A前用cB，之后用c n_s，逐步得L_k≤r^k(1+ck)，故R=r。r=1、ell=1和r=ell均由相同证明覆盖，合同不要求显式计算各L_k。"
+    }
+  ],
+  "source_bindings": {
+    "acquisition_plan_sha256": "1a7f599e17c74360a1ee2b76459a0f1865dbf0e2e936ffca302bf968d3535c5b",
+    "native_final_sha256": "e5f5d6ca82756cf71b73ecaa7929e5bf7b764090b5c9368306c4c0b7c316e446",
+    "collection_sha256": "436460e15d4acda2226c09d7cca8ed71e88644d00181ecf9043c91a65f7be661",
+    "task_sha256": "b6f9a55f70919c107935c72d204e234975b968561fdec1363b52c547ad978cb7",
+    "rubric_sha256": "390aa44a16523d40435f5e3b51f982a3268e2ead23a9ad6b939623c9adaa6186",
+    "reference_sha256": "5e200a349cfe6b7f3c5b012ccdd829b1aaa07896a785fab9467a7ae42e388017"
+  }
+}
