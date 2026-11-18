@@ -125,7 +125,9 @@ class CategoryRankingsTests(unittest.TestCase):
                 {'phase':'A1','availability':'unknown','started_at':'2026-10-02T00:00:00+00:00'},
                 {'phase':'A1','availability':'known','started_at':'2026-11-08T23:00:00+00:00'}]}
             path=root/'answer-timings.json';path.write_text(json.dumps(timing))
-            self.assertEqual(recorded_test_order(root,{})['date'],'2026-11-09')
+            observed=recorded_test_order(root,{})
+            self.assertEqual(observed['date'],'2026-11-09')
+            self.assertEqual(observed['started_at'],'2026-11-08T23:00:00+00:00')
             timing['record']['sha256']='0'*64;path.write_text(json.dumps(timing))
             with self.assertRaisesRegex(ValueError,'different record'):recorded_test_order(root,{})
 
@@ -134,6 +136,13 @@ class CategoryRankingsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)/'20261101';root.mkdir()
             self.assertIsNone(recorded_test_order(root,{'record_id':'20261101'})['date'])
+
+    def test_same_day_uses_actual_timestamp_when_it_is_known(self):
+        later=uniform('later-first-in-source',metric(80));earlier=uniform('earlier',metric(80))
+        for item,time in [(later,'2026-11-08T23:30:00+00:00'),(earlier,'2026-11-08T23:00:00+00:00')]:
+            item['test_order']={'date':'2026-11-09','started_at':time}
+        self.assertEqual([r['model_id']for r in self.project([later,earlier])[0]['views']['partial']],
+                         ['earlier','later-first-in-source'])
 
 
 if __name__=='__main__':unittest.main()

@@ -14,7 +14,10 @@ window.MG = (() => {
    (headline(result(m,state.condition,mode))==null?null:Number(headline(result(m,state.condition,mode)).toFixed(2))*100);
   for(const mode of order){const x=value(a,mode),y=value(b,mode);if(x==null||y==null){if(x!=null)return -1;if(y!=null)return 1}else if(x!==y)return y-x}
   const x=a.test_order?.date,y=b.test_order?.date;
-  return x==null?(y==null?0:1):y==null?-1:x.localeCompare(y);
+  if(x==null||y==null)return x==null?(y==null?0:1):-1;
+  if(x!==y)return x.localeCompare(y);
+  const t=a.test_order?.started_at,u=b.test_order?.started_at;
+  return t==null?(u==null?0:1):u==null?-1:t.localeCompare(u);
  }
  const knownValue=v=>v.exact??((v.coverage.adjudicated>0||v.confirmed)?v.confirmed:null);
  const short=m=>m.short_label||(m.id.startsWith('terra')?'Terra':m.id.startsWith('deepseek')?'DeepSeek':m.id.startsWith('gemini')?'Gemini':m.label);

@@ -31,16 +31,17 @@ def test_date(model):
 
 
 def ranking_key(values, primary, model, *, precision=PUBLISHED_PRECISION):
-    """Selected score, other RMC/SMC/MC scores, then a known test day.
+    """Selected score, other RMC/SMC/MC scores, then a known test day and start time.
 
-    Only display precision participates in ties. Equal/unknown dates preserve
+    Only display precision participates in ties. Equal/unknown timestamps preserve
     source order through the stable sort; no model-name preference is added.
     """
     scores = tuple((values.get(mode) is None,
                     0 if values.get(mode) is None else -published_value(values[mode], precision))
                    for mode in mode_order(primary))
     day = test_date(model)
-    return (*scores, day is None, day or '')
+    stamp = model.get('test_order', {}).get('started_at')
+    return (*scores, day is None, day or '', stamp is None, stamp or '')
 
 
 def overall_key(model, primary='partial'):

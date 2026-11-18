@@ -153,6 +153,7 @@ def recorded_test_order(folder, record):
     if first.tzinfo is None:
         raise ValueError('Test ordering needs a timezone-bound source clock')
     return {'date':first.astimezone(timezone(timedelta(hours=8))).date().isoformat(),
+            'started_at':first.astimezone(timezone.utc).isoformat(),
             'basis':basis,'source_sha256':digest}
 
 

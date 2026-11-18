@@ -25,3 +25,9 @@ test('known scores and dates precede unknowns; exact ties keep source order',()=
   ['earlier-z','earlier-a','later','no-date','unknown']);
  assert.equal(compare(models[2],models[3],'partial'),0);
 });
+test('an available native timestamp resolves ties within the same test day',()=>{
+ const compare=comparator(),later=m('later',80,80,80,'2026-11-09'),earlier=m('earlier',80,80,80,'2026-11-09');
+ later.test_order.started_at='2026-11-08T23:30:00+00:00';
+ earlier.test_order.started_at='2026-11-08T23:00:00+00:00';
+ assert.deepEqual([later,earlier].sort(compare).map(m=>m.id),['earlier','later']);
+});
